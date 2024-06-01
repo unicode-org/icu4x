@@ -68,7 +68,7 @@ impl CurrencyFormatter {
                 })?;
         let essential = crate::provider::Baked
             .load(DataRequest {
-                locale: &(&locale.id).into(),
+                langid: &locale.id,
                 ..Default::default()
             })?
             .take_payload()?;
@@ -102,7 +102,7 @@ impl CurrencyFormatter {
         })?;
         let essential = provider
             .load(DataRequest {
-                locale: &(&locale.id).into(),
+                langid: &locale.id,
                 ..Default::default()
             })?
             .take_payload()?;

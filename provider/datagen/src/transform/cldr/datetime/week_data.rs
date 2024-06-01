@@ -18,7 +18,7 @@ use std::collections::HashSet;
 impl IterableDataProviderCached<WeekDataV1Marker> for DatagenProvider {
     fn supported_locales_cached(
         &self,
-    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    ) -> Result<HashSet<(LanguageIdentifier, DataKeyAttributes)>, DataError> {
         let week_data: &cldr_serde::week_data::Resource = self
             .cldr()?
             .core()
@@ -34,7 +34,7 @@ impl IterableDataProviderCached<WeekDataV1Marker> for DatagenProvider {
                 _ => None,
             })
             .map(LanguageIdentifier::from)
-            .map(|l| (DataLocale::from(l), Default::default()))
+            .map(|l| (l.clone(), Default::default()))
             .collect())
     }
 }
@@ -43,8 +43,8 @@ impl DataProvider<WeekDataV1Marker> for DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<WeekDataV1Marker>, DataError> {
         self.check_req::<WeekDataV1Marker>(req)?;
         let territory = req
-            .locale
-            .region()
+            .langid
+            .region
             .map(|v| -> Result<Territory, DataError> { Ok(Territory::Region(v)) })
             .transpose()?
             .unwrap_or_else(|| DEFAULT_TERRITORY.clone());
@@ -96,7 +96,7 @@ fn basic_cldr_week_data() {
 
     let fr_week_data: DataPayload<WeekDataV1Marker> = provider
         .load(DataRequest {
-            locale: &langid!("und-FR").into(),
+            langid: &langid!("und-FR"),
             ..Default::default()
         })
         .unwrap()
@@ -107,7 +107,7 @@ fn basic_cldr_week_data() {
 
     let iq_week_data: DataPayload<WeekDataV1Marker> = provider
         .load(DataRequest {
-            locale: &langid!("und-IQ").into(),
+            langid: &langid!("und-IQ"),
             ..Default::default()
         })
         .unwrap()
@@ -122,7 +122,7 @@ fn basic_cldr_week_data() {
 
     let gg_week_data: DataPayload<WeekDataV1Marker> = provider
         .load(DataRequest {
-            locale: &langid!("und-GG").into(),
+            langid: &langid!("und-GG"),
             ..Default::default()
         })
         .unwrap()
@@ -140,8 +140,8 @@ impl DataProvider<WeekDataV2Marker> for DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<WeekDataV2Marker>, DataError> {
         self.check_req::<WeekDataV2Marker>(req)?;
         let territory = req
-            .locale
-            .region()
+            .langid
+            .region
             .map(Territory::Region)
             .unwrap_or_else(|| DEFAULT_TERRITORY.clone());
 
@@ -202,7 +202,7 @@ impl DataProvider<WeekDataV2Marker> for DatagenProvider {
 impl IterableDataProviderCached<WeekDataV2Marker> for DatagenProvider {
     fn supported_locales_cached(
         &self,
-    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    ) -> Result<HashSet<(LanguageIdentifier, DataKeyAttributes)>, DataError> {
         IterableDataProviderCached::<WeekDataV1Marker>::supported_locales_cached(self)
     }
 }
@@ -229,7 +229,7 @@ fn test_basic_cldr_week_data_v2() {
 
     let fr_week_data: DataPayload<WeekDataV2Marker> = provider
         .load(DataRequest {
-            locale: &langid!("und-FR").into(),
+            langid: &langid!("und-FR"),
             ..Default::default()
         })
         .unwrap()
@@ -244,7 +244,7 @@ fn test_basic_cldr_week_data_v2() {
 
     let iq_week_data: DataPayload<WeekDataV2Marker> = provider
         .load(DataRequest {
-            locale: &langid!("und-IQ").into(),
+            langid: &langid!("und-IQ"),
             ..Default::default()
         })
         .unwrap()
@@ -263,7 +263,7 @@ fn test_basic_cldr_week_data_v2() {
 
     let gg_week_data: DataPayload<WeekDataV2Marker> = provider
         .load(DataRequest {
-            locale: &langid!("und-GG").into(),
+            langid: &langid!("und-GG"),
             ..Default::default()
         })
         .unwrap()
@@ -282,7 +282,7 @@ fn test_basic_cldr_week_data_v2() {
 
     let ir_week_data: DataPayload<WeekDataV2Marker> = provider
         .load(DataRequest {
-            locale: &langid!("und-IR").into(),
+            langid: &langid!("und-IR"),
             ..Default::default()
         })
         .unwrap()

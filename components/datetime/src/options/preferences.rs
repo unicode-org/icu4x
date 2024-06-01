@@ -35,7 +35,7 @@
 //! ```
 use crate::fields;
 
-use icu_locale::Locale;
+use icu_locale_core::Locale;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 

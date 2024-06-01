@@ -98,7 +98,9 @@ impl DataProvider<UnitsInfoV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProvider<UnitsInfoV1Marker> for DatagenProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    fn supported_requests(
+        &self,
+    ) -> Result<HashSet<(LanguageIdentifier, DataKeyAttributes)>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
@@ -118,7 +120,7 @@ fn test_basic() {
 
     let und: DataPayload<UnitsInfoV1Marker> = provider
         .load(DataRequest {
-            locale: &langid!("und").into(),
+            langid: &langid!("und"),
             ..Default::default()
         })
         .unwrap()

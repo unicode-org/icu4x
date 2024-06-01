@@ -16,7 +16,7 @@ macro_rules! __impl_props_wb_v1 {
         #[clippy::msrv = "1.70"]
         impl icu_provider::DataProvider<icu::properties::provider::WordBreakV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::properties::provider::WordBreakV1Marker>, icu_provider::DataError> {
-                if req.locale.is_empty() {
+                if req.langid.is_und() {
                     Ok(icu_provider::DataResponse { payload: Some(icu_provider::DataPayload::from_static_ref(Self::SINGLETON_PROPS_WB_V1)), metadata: Default::default() })
                 } else {
                     Err(icu_provider::DataErrorKind::ExtraneousLocale.with_req(<icu::properties::provider::WordBreakV1Marker as icu_provider::KeyedDataMarker>::KEY, req))
@@ -34,7 +34,7 @@ macro_rules! __impliterable_props_wb_v1 {
     ($ provider : ty) => {
         #[clippy::msrv = "1.70"]
         impl icu_provider::datagen::IterableDataProvider<icu::properties::provider::WordBreakV1Marker> for $provider {
-            fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataKeyAttributes)>, icu_provider::DataError> {
+            fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::prelude::LanguageIdentifier, icu_provider::DataKeyAttributes)>, icu_provider::DataError> {
                 Ok(HashSet::from_iter([Default::default()]))
             }
         }

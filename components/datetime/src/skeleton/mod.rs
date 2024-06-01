@@ -37,9 +37,8 @@ mod test {
         DataPayload<GregorianDateLengthsV1Marker>,
         DataPayload<DateSkeletonPatternsV1Marker>,
     ) {
-        let locale = "en-u-ca-gregory".parse().unwrap();
         let req = DataRequest {
-            locale: &locale,
+            langid: &"en".parse().unwrap(),
             ..Default::default()
         };
         let patterns = crate::provider::Baked
@@ -48,7 +47,10 @@ mod test {
             .take_payload()
             .expect("Failed to retrieve payload");
         let skeletons = crate::provider::Baked
-            .load(req)
+            .load(DataRequest {
+                key_attributes: &"gregory".parse().unwrap(),
+                ..req
+            })
             .expect("Failed to load payload")
             .take_payload()
             .expect("Failed to retrieve payload");

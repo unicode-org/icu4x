@@ -15,12 +15,10 @@ use crate::provider::transform::cldr::cldr_serde::personnames::person_name_forma
 
 impl DataProvider<PersonNamesFormatV1Marker> for crate::DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<PersonNamesFormatV1Marker>, DataError> {
-        let langid = req.locale.get_langid();
-
         let data: &Resource = self
             .cldr()?
             .personnames()
-            .read_and_parse(&langid, "personNames.json")?;
+            .read_and_parse(req.langid, "personNames.json")?;
 
         Ok(DataResponse {
             metadata: Default::default(),
@@ -35,7 +33,9 @@ impl DataProvider<PersonNamesFormatV1Marker> for crate::DatagenProvider {
 }
 
 impl IterableDataProvider<PersonNamesFormatV1Marker> for crate::DatagenProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    fn supported_requests(
+        &self,
+    ) -> Result<HashSet<(LanguageIdentifier, DataKeyAttributes)>, DataError> {
         Ok(self
             .cldr()?
             .personnames()
@@ -48,7 +48,7 @@ impl IterableDataProvider<PersonNamesFormatV1Marker> for crate::DatagenProvider 
                     .file_exists(langid, "personNames.json")
                     .unwrap_or_default()
             })
-            .map(|l| (DataLocale::from(l), Default::default()))
+            .map(|l| (l.clone(), Default::default()))
             .collect())
     }
 }
@@ -164,7 +164,7 @@ mod tests {
 
         let data_payload: DataPayload<PersonNamesFormatV1Marker> = provider
             .load(DataRequest {
-                locale: &langid!("en-001").into(),
+                langid: &langid!("en-001"),
                 ..Default::default()
             })?
             .take_payload()?;
@@ -187,7 +187,7 @@ mod tests {
 
         let data_payload: DataPayload<PersonNamesFormatV1Marker> = provider
             .load(DataRequest {
-                locale: &langid!("en-001").into(),
+                langid: &langid!("en-001"),
                 ..Default::default()
             })?
             .take_payload()?;
@@ -235,7 +235,7 @@ mod tests {
 
         let data_payload: DataPayload<PersonNamesFormatV1Marker> = provider
             .load(DataRequest {
-                locale: &langid!("es").into(),
+                langid: &langid!("es"),
                 ..Default::default()
             })?
             .take_payload()?;

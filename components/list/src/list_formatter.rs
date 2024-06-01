@@ -51,7 +51,7 @@ macro_rules! constructor {
         ) -> Result<Self, ListError> {
             let data = provider
                 .load(DataRequest {
-                    locale: &(&locale.id).into(),
+                    langid: &locale.id,
                     ..Default::default()
                 })?
                 .take_payload()?.cast();

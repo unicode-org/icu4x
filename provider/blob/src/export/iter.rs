@@ -22,7 +22,7 @@ impl IterableDynamicDataProvider<BufferMarker> for BlobDataProvider {
     fn supported_requests_for_key(
         &self,
         key: DataKey,
-    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    ) -> Result<HashSet<(LanguageIdentifier, DataKeyAttributes)>, DataError> {
         self.data.get().list_requests(key)
     }
 }

@@ -14,7 +14,7 @@ use icu_provider_adapters::fork::MultiForkByErrorProvider;
 use icu_provider_adapters::fork::predicates::MissingLocalePredicate;
 use icu_provider_blob::BlobDataProvider;
 use icu_provider_fs::FsDataProvider;
-use icu_provider::DataLocale;
+use icu_provider::prelude::LanguageIdentifier;
 use icu_provider::hello_world::HelloWorldFormatter;
 use icu::locale::locale;
 use icu::locale::subtags::Language;
@@ -28,7 +28,7 @@ let mut provider = MultiForkByErrorProvider::new_with_predicate(
 );
 
 // Helper function to add data into the growable provider on demand:
-let mut get_hello_world_formatter = |loc: &DataLocale| {
+let mut get_hello_world_formatter = |loc: &LanguageIdentifier| {
     // Try to create the formatter a first time with data that has already been loaded.
     if let Ok(formatter) = HelloWorldFormatter::try_new_with_buffer_provider(&provider, loc) {
         return formatter;
@@ -87,16 +87,16 @@ pub struct LruDataCache<P> {
     provider: P,
 }
 
-/// Key for the cache: DataKey and DataLocale. The DataLocale is in a Cow
+/// Key for the cache: DataKey and LanguageIdentifier. The LanguageIdentifier is in a Cow
 /// so that it can be borrowed during lookup.
 #[derive(Debug, PartialEq, Eq, Hash)]
-struct CacheKey<'a>(DataKey, Cow<'a, DataLocale>);
+struct CacheKey<'a>(DataKey, Cow<'a, LanguageIdentifier>);
 
 /// Wrapper over a fully owned CacheKey, required for key borrowing.
 #[derive(Debug, PartialEq, Eq, Hash)]
 struct CacheKeyWrap(CacheKey<'static>);
 
-// This impl enables a borrowed DataLocale to be used during cache retrieval.
+// This impl enables a borrowed LanguageIdentifier to be used during cache retrieval.
 impl<'a> Borrow<CacheKey<'a>> for lru::KeyRef<CacheKeyWrap> {
     fn borrow(&self) -> &CacheKey<'a> {
         &Borrow::<CacheKeyWrap>::borrow(self).0
@@ -270,7 +270,7 @@ use std::sync::RwLock;
 pub struct ResolvedLocaleProvider<P> {
     inner: P,
     // This could be a RefCell if thread safety is not required:
-    resolved_locale: RwLock<Option<DataLocale>>,
+    resolved_locale: RwLock<Option<LanguageIdentifier>>,
 }
 
 impl<M, P> DataProvider<M> for ResolvedLocaleProvider<P>

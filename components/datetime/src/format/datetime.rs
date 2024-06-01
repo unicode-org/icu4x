@@ -889,7 +889,7 @@ mod tests {
 
         let locale = locale!("en-u-ca-gregory");
         let req = DataRequest {
-            locale: &(&locale.id).into(),
+            langid: &locale.id,
             ..Default::default()
         };
         let date_data: DataPayload<GregorianDateSymbolsV1Marker> = crate::provider::Baked

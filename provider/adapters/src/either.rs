@@ -85,7 +85,7 @@ impl<
     fn supported_requests_for_key(
         &self,
         key: DataKey,
-    ) -> Result<std::collections::HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    ) -> Result<std::collections::HashSet<(LanguageIdentifier, DataKeyAttributes)>, DataError> {
         use EitherProvider::*;
         match self {
             A(p) => p.supported_requests_for_key(key),
@@ -104,7 +104,7 @@ impl<
     #[inline]
     fn supported_requests(
         &self,
-    ) -> Result<std::collections::HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    ) -> Result<std::collections::HashSet<(LanguageIdentifier, DataKeyAttributes)>, DataError> {
         use EitherProvider::*;
         match self {
             A(p) => p.supported_requests(),

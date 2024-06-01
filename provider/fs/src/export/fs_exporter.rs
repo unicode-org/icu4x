@@ -106,13 +106,13 @@ impl DataExporter for FilesystemExporter {
     fn put_payload(
         &self,
         key: DataKey,
-        locale: &DataLocale,
+        langid: &LanguageIdentifier,
         key_attributes: &DataKeyAttributes,
         obj: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
         let mut path_buf = self.root.clone().into_os_string();
         write!(&mut path_buf, "/{key}").expect("infallible");
-        write!(&mut path_buf, "/{locale}").expect("infallible");
+        write!(&mut path_buf, "/{langid}").expect("infallible");
         if !key_attributes.is_empty() {
             write!(&mut path_buf, "-x-{}", key_attributes as &str).expect("infallible");
         }

@@ -58,7 +58,7 @@ impl DataProvider<CollationFallbackSupplementV1Marker> for DatagenProvider {
                             self.has_legacy_swedish_variants(),
                         )?
                         .0
-                        .language(),
+                        .language,
                     )
                 })
                 .collect::<HashSet<_>>();
@@ -116,7 +116,7 @@ impl DataProvider<CollationFallbackSupplementV1Marker> for DatagenProvider {
 impl IterableDataProviderCached<CollationFallbackSupplementV1Marker> for DatagenProvider {
     fn supported_locales_cached(
         &self,
-    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    ) -> Result<HashSet<(LanguageIdentifier, DataKeyAttributes)>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
@@ -136,15 +136,14 @@ impl DatagenProvider {
 }
 
 fn req_to_file_name(
-    locale: &DataLocale,
+    langid: &LanguageIdentifier,
     key_attributes: &DataKeyAttributes,
     has_legacy_swedish_variants: bool,
 ) -> String {
-    let mut s = if locale.get_langid() == LanguageIdentifier::UND {
+    let mut s = if langid.is_und() {
         "root".to_owned()
     } else {
-        locale
-            .get_langid()
+        langid
             .write_to_string()
             .replace('-', "_")
             .replace("posix", "POSIX")
@@ -159,10 +158,10 @@ fn req_to_file_name(
             "gb2312" => "gb2312han",
             extension => extension,
         });
-    } else if locale.get_langid().language == language!("zh") {
+    } else if langid.language == language!("zh") {
         // "zh" uses "_pinyin" as the default
         s.push_str("_pinyin");
-    } else if has_legacy_swedish_variants && locale.get_langid().language == language!("sv") {
+    } else if has_legacy_swedish_variants && langid.language == language!("sv") {
         // "sv" used to use "_reformed" as the default
         // TODO(#2856): Remove when dropping pre-42 support in 2.0
         s.push_str("_reformed");
@@ -176,10 +175,10 @@ fn req_to_file_name(
 fn file_name_to_req(
     file_name: &str,
     has_legacy_swedish_variants: bool,
-) -> Option<(DataLocale, DataKeyAttributes)> {
-    let (language, variant) = file_name.rsplit_once('_').unwrap();
+) -> Option<(LanguageIdentifier, DataKeyAttributes)> {
+    let (language, mut variant) = file_name.rsplit_once('_').unwrap();
     let locale = if language == "root" {
-        DataLocale::default()
+        LanguageIdentifier::default()
     } else {
         language.parse().ok()?
     };
@@ -187,15 +186,15 @@ fn file_name_to_req(
     // See above for the two special cases.
     if language == "zh" {
         if variant == "pinyin" {
-            return Some((locale, Default::default()));
+            variant = "";
         }
     } else if has_legacy_swedish_variants && language == "sv" {
         // TODO(#2856): Remove when dropping pre-42 support in 2.0
         if variant == "reformed" {
-            return Some((locale, Default::default()));
+            variant = "";
         }
     } else if variant == "standard" {
-        return Some((locale, Default::default()));
+        variant = "";
     }
 
     let key_attributes = match variant {
@@ -220,7 +219,7 @@ macro_rules! collation_provider {
                         .read_and_parse_toml(&format!(
                             "collation/{}/{}{}.toml",
                             self.collation_han_database(),
-                            req_to_file_name(&req.locale, &req.key_attributes, self.has_legacy_swedish_variants()),
+                            req_to_file_name(&req.langid, &req.key_attributes, self.has_legacy_swedish_variants()),
                             $suffix
                         ))
                         .map_err(|e| match e.kind {
@@ -242,7 +241,7 @@ macro_rules! collation_provider {
             }
 
             impl IterableDataProviderCached<$marker> for DatagenProvider {
-                fn supported_locales_cached(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+                fn supported_locales_cached(&self) -> Result<HashSet<(LanguageIdentifier, DataKeyAttributes)>, DataError> {
                     Ok(self
                         .icuexport()?
                         .list(&format!(

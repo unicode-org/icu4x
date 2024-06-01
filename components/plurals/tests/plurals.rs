@@ -21,7 +21,7 @@ fn test_static_load_works() {
     DataProvider::<CardinalV1Marker>::load(
         &icu_plurals::provider::Baked,
         DataRequest {
-            locale: &langid!("en").into(),
+            langid: &langid!("en"),
             ..Default::default()
         },
     )

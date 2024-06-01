@@ -68,7 +68,7 @@ impl BufferProvider for FsDataProvider {
         key: DataKey,
         req: DataRequest,
     ) -> Result<DataResponse<BufferMarker>, DataError> {
-        if key.metadata().singleton && !req.locale.is_empty() {
+        if key.metadata().singleton && !req.langid.is_und() {
             return Err(DataErrorKind::ExtraneousLocale.with_req(key, req));
         }
         let mut path = self.root.clone().into_os_string();
@@ -76,7 +76,7 @@ impl BufferProvider for FsDataProvider {
         if !Path::new(&path).exists() {
             return Err(DataErrorKind::MissingDataKey.with_req(key, req));
         }
-        write!(&mut path, "/{}", req.locale).expect("infallible");
+        write!(&mut path, "/{}", req.langid).expect("infallible");
         if !req.key_attributes.is_empty() {
             write!(&mut path, "-x-{}", req.key_attributes as &str).expect("infallible");
         }

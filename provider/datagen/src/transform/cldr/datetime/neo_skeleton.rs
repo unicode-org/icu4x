@@ -16,7 +16,7 @@ use icu_datetime::provider::neo::*;
 use icu_datetime::DateTimeFormatterOptions;
 use icu_locale_core::LanguageIdentifier;
 use icu_provider::prelude::*;
-use tinystr::{TinyAsciiStr, tinystr};
+use tinystr::{tinystr, TinyAsciiStr};
 
 use super::supported_cals;
 
@@ -40,7 +40,7 @@ impl DatagenProvider {
         let neo_components =
             from_id_str(id_str).expect("Skeleton data provider called with unknown skeleton");
         let packed_skeleton_data = self.make_packed_skeleton_data(
-            &req.locale.get_langid(),
+            req.langid,
             calendar,
             neo_components,
             to_components_bag,
@@ -129,7 +129,7 @@ impl DatagenProvider {
 
     fn neo_time_skeleton_supported_locales(
         &self,
-    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    ) -> Result<HashSet<(LanguageIdentifier, DataKeyAttributes)>, DataError> {
         Ok(self
             .cldr()?
             .dates("generic")
@@ -145,12 +145,7 @@ impl DatagenProvider {
                     })
                     .copied()
                     .map(NeoTimeComponents::id_str)
-                    .map(move |id| {
-                        (
-                            DataLocale::from(&langid),
-                            DataKeyAttributes::from_tinystr(id),
-                        )
-                    })
+                    .map(move |id| (langid.clone(), DataKeyAttributes::from_tinystr(id)))
             })
             .collect())
     }
@@ -158,7 +153,7 @@ impl DatagenProvider {
     fn neo_date_skeleton_supported_locales(
         &self,
         calendar: &TinyAsciiStr<8>,
-    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    ) -> Result<HashSet<(LanguageIdentifier, DataKeyAttributes)>, DataError> {
         let cldr_cal = supported_cals()
             .get(calendar)
             .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?;
@@ -176,12 +171,7 @@ impl DatagenProvider {
                     })
                     .copied()
                     .map(NeoDateComponents::id_str)
-                    .map(move |id| {
-                        (
-                            DataLocale::from(&langid),
-                            DataKeyAttributes::from_tinystr(id),
-                        )
-                    })
+                    .map(move |id| (langid.clone(), DataKeyAttributes::from_tinystr(id)))
             })
             .collect())
     }
@@ -207,7 +197,7 @@ impl DataProvider<TimeNeoSkeletonPatternsV1Marker> for DatagenProvider {
 impl IterableDataProviderCached<TimeNeoSkeletonPatternsV1Marker> for DatagenProvider {
     fn supported_locales_cached(
         &self,
-    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    ) -> Result<HashSet<(LanguageIdentifier, DataKeyAttributes)>, DataError> {
         self.neo_time_skeleton_supported_locales()
     }
 }
@@ -231,7 +221,7 @@ macro_rules! impl_neo_skeleton_datagen {
         impl IterableDataProviderCached<$marker> for DatagenProvider {
             fn supported_locales_cached(
                 &self,
-            ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+            ) -> Result<HashSet<(LanguageIdentifier, DataKeyAttributes)>, DataError> {
                 self.neo_date_skeleton_supported_locales(&tinystr!(8, $calendar))
             }
         }

@@ -41,8 +41,12 @@ pub struct DatagenProvider {
     trie_type: TrieType,
     collation_han_database: CollationHanDatabase,
     #[allow(clippy::type_complexity)] // not as complex as it appears
-    supported_locales_cache:
-        Arc<FrozenMap<DataKey, Box<Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError>>>>,
+    supported_locales_cache: Arc<
+        FrozenMap<
+            DataKey,
+            Box<Result<HashSet<(LanguageIdentifier, DataKeyAttributes)>, DataError>>,
+        >,
+    >,
 }
 
 macro_rules! cb {
@@ -350,14 +354,16 @@ impl std::fmt::Display for TrieType {
 trait IterableDataProviderCached<M: KeyedDataMarker>: DataProvider<M> {
     fn supported_locales_cached(
         &self,
-    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError>;
+    ) -> Result<HashSet<(LanguageIdentifier, DataKeyAttributes)>, DataError>;
 }
 
 impl<M: KeyedDataMarker> IterableDataProvider<M> for DatagenProvider
 where
     DatagenProvider: IterableDataProviderCached<M>,
 {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    fn supported_requests(
+        &self,
+    ) -> Result<HashSet<(LanguageIdentifier, DataKeyAttributes)>, DataError> {
         self.supported_locales_cache
             .insert_with(M::KEY, || Box::new(self.supported_locales_cached()))
             .clone()
@@ -365,13 +371,13 @@ where
 
     fn supports_request(
         &self,
-        locale: &DataLocale,
+        langid: &LanguageIdentifier,
         key_attributes: &DataKeyAttributes,
     ) -> Result<bool, DataError> {
         self.supported_locales_cache
             .insert_with(M::KEY, || Box::new(self.supported_locales_cached()))
             .as_ref()
             .map_err(|e| *e)
-            .map(|v| v.contains(&(locale.clone(), key_attributes.clone())))
+            .map(|v| v.contains(&(langid.clone(), key_attributes.clone())))
     }
 }

@@ -13,7 +13,7 @@ macro_rules! __impl_collator_meta_v1 {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::collator::provider::CollationMetadataV1Marker>, icu_provider::DataError> {
                 static UND: <icu::collator::provider::CollationMetadataV1Marker as icu_provider::DataMarker>::Yokeable = icu::collator::provider::CollationMetadataV1 { bits: 1u32 };
                 static VALUES: [&<icu::collator::provider::CollationMetadataV1Marker as icu_provider::DataMarker>::Yokeable; 3usize] = [&UND, &UND, &UND];
-                static KEYS: [&str; 3usize] = ["und", "und-u-co-emoji", "und-u-co-eor"];
+                static KEYS: [&str; 3usize] = ["und", "und-x-emoji", "und-x-eor"];
                 if let Ok(payload) = KEYS.binary_search_by(|k| req.legacy_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
                     Ok(icu_provider::DataResponse { payload: Some(icu_provider::DataPayload::from_static_ref(payload)), metadata: Default::default() })
                 } else {
@@ -32,8 +32,8 @@ macro_rules! __impliterable_collator_meta_v1 {
     ($ provider : ty) => {
         #[clippy::msrv = "1.70"]
         impl icu_provider::datagen::IterableDataProvider<icu::collator::provider::CollationMetadataV1Marker> for $provider {
-            fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataKeyAttributes)>, icu_provider::DataError> {
-                Ok(["und", "und-u-co-emoji", "und-u-co-eor"].into_iter().filter_map(icu_provider::DataRequest::legacy_decode).collect())
+            fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::prelude::LanguageIdentifier, icu_provider::DataKeyAttributes)>, icu_provider::DataError> {
+                Ok(["und", "und-x-emoji", "und-x-eor"].into_iter().filter_map(icu_provider::DataRequest::legacy_decode).collect())
             }
         }
     };

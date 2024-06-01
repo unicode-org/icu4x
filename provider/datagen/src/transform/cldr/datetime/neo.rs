@@ -11,14 +11,12 @@ use icu_datetime::pattern::{self, CoarseHourCycle};
 use icu_datetime::provider::calendar::{patterns::GenericLengthPatternsV1, DateSkeletonPatternsV1};
 use icu_datetime::provider::neo::key_attrs::{self, Context, Length, PatternLength};
 use icu_datetime::provider::neo::*;
-use icu_locale_core::{
-    LanguageIdentifier,
-};
+use icu_locale_core::LanguageIdentifier;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
-use tinystr::tinystr;
 use std::borrow::Cow;
 use std::collections::{BTreeMap, HashSet};
+use tinystr::tinystr;
 use tinystr::TinyAsciiStr;
 use zerovec::ule::UnvalidatedStr;
 
@@ -108,13 +106,12 @@ impl DatagenProvider {
         Self: IterableDataProvider<M>,
     {
         self.check_req::<M>(req)?;
-        let langid = req.locale.get_langid();
-        let data = self.load_calendar_dates(&langid, calendar)?;
+        let data = self.load_calendar_dates(req.langid, calendar)?;
         let attr = req.key_attributes.single().ok_or_else(|| {
             DataError::custom("Key attributes for datetime names must be single subtag")
         })?;
 
-        let data = conversion(&langid, data, attr)?;
+        let data = conversion(req.langid, data, attr)?;
 
         #[allow(clippy::redundant_closure_call)]
         Ok(DataResponse {
@@ -172,19 +169,16 @@ impl DatagenProvider {
         &self,
         calendar: TinyAsciiStr<8>,
         keylengths: &'static [TinyAsciiStr<8>],
-    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    ) -> Result<HashSet<(LanguageIdentifier, DataKeyAttributes)>, DataError> {
         let mut r = HashSet::new();
 
         let cldr_cal = supported_cals()
             .get(&calendar)
             .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?;
         r.extend(self.cldr()?.dates(cldr_cal).list_langs()?.flat_map(|lid| {
-            keylengths.iter().map(move |&length| {
-                (
-                    DataLocale::from(lid.clone()),
-                    DataKeyAttributes::from_tinystr(length),
-                )
-            })
+            keylengths
+                .iter()
+                .map(move |&length| (lid.clone(), DataKeyAttributes::from_tinystr(length)))
         }));
 
         Ok(r)
@@ -292,32 +286,33 @@ fn eras_convert(
         None
     };
 
-    let extra_japanese = if *calendar == tinystr!(8, "japanese") || *calendar == tinystr!(8, "japanext") {
-        let greg: &ca::Resource = datagen
-            .cldr()?
-            .dates("gregorian")
-            .read_and_parse(langid, "ca-gregorian.json")?;
+    let extra_japanese =
+        if *calendar == tinystr!(8, "japanese") || *calendar == tinystr!(8, "japanext") {
+            let greg: &ca::Resource = datagen
+                .cldr()?
+                .dates("gregorian")
+                .read_and_parse(langid, "ca-gregorian.json")?;
 
-        let greg_data = greg
-            .main
-            .value
-            .dates
-            .calendars
-            .get("gregorian")
-            .expect("CLDR gregorian.json contains the expected calendar");
+            let greg_data = greg
+                .main
+                .value
+                .dates
+                .calendars
+                .get("gregorian")
+                .expect("CLDR gregorian.json contains the expected calendar");
 
-        let eras = greg_data
-            .eras
-            .as_ref()
-            .expect("gregorian must have eras")
-            .load(length);
-        Some((
-            eras.get("0").expect("gregorian calendar must have 0 era"),
-            eras.get("1").expect("gregorian calendar must have 1 era"),
-        ))
-    } else {
-        None
-    };
+            let eras = greg_data
+                .eras
+                .as_ref()
+                .expect("gregorian must have eras")
+                .load(length);
+            Some((
+                eras.get("0").expect("gregorian calendar must have 0 era"),
+                eras.get("1").expect("gregorian calendar must have 1 era"),
+            ))
+        } else {
+            None
+        };
 
     for (cldr, code) in map {
         if let Some(name) = eras.get(cldr) {
@@ -395,7 +390,10 @@ fn years_convert(
 /// Returns the number of regular months in a calendar, as well as whether it is
 /// has leap months
 fn calendar_months(cal: &TinyAsciiStr<8>) -> (usize, bool) {
-    if *cal == tinystr!(8, "hebrew") || *cal == tinystr!(8, "chinese") || *cal == tinystr!(8, "dangi") {
+    if *cal == tinystr!(8, "hebrew")
+        || *cal == tinystr!(8, "chinese")
+        || *cal == tinystr!(8, "dangi")
+    {
         (24, true)
     } else if *cal == tinystr!(8, "coptic") || *cal == tinystr!(8, "ethiopic") {
         (13, false)
@@ -673,7 +671,7 @@ impl DataProvider<TimePatternV1Marker> for DatagenProvider {
 impl IterableDataProviderCached<TimePatternV1Marker> for DatagenProvider {
     fn supported_locales_cached(
         &self,
-    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    ) -> Result<HashSet<(LanguageIdentifier, DataKeyAttributes)>, DataError> {
         let calendar = tinystr!(8, "gregory");
 
         let cldr_cal = supported_cals()
@@ -716,12 +714,9 @@ impl IterableDataProviderCached<TimePatternV1Marker> for DatagenProvider {
                         key_attrs::PATTERN_SHORT24,
                     ),
                 ];
-                keylengths.into_iter().map(move |length| {
-                    (
-                        DataLocale::from(lid.clone()),
-                        DataKeyAttributes::from_tinystr(length),
-                    )
-                })
+                keylengths
+                    .into_iter()
+                    .map(move |length| (lid.clone(), DataKeyAttributes::from_tinystr(length)))
             })
             .collect())
     }
@@ -738,7 +733,7 @@ macro_rules! impl_symbols_datagen {
         impl IterableDataProviderCached<$marker> for DatagenProvider {
             fn supported_locales_cached(
                 &self,
-            ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+            ) -> Result<HashSet<(LanguageIdentifier, DataKeyAttributes)>, DataError> {
                 self.supported_locales_neo(tinystr!(8, $calendar), $lengths)
             }
         }
@@ -756,7 +751,7 @@ macro_rules! impl_pattern_datagen {
         impl IterableDataProviderCached<$marker> for DatagenProvider {
             fn supported_locales_cached(
                 &self,
-            ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+            ) -> Result<HashSet<(LanguageIdentifier, DataKeyAttributes)>, DataError> {
                 self.supported_locales_neo(tinystr!(8, $calendar), $lengths)
             }
         }

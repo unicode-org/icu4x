@@ -75,11 +75,10 @@ macro_rules! make_data_provider {
             impl DataProvider<$marker> for DatagenProvider {
                 fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
                     self.check_req::<$marker>(req)?;
-                    let langid = req.locale.get_langid();
                     let resource: &cldr_serde::date_fields::Resource = self
                         .cldr()?
                         .dates("gregorian")
-                        .read_and_parse(&langid, "dateFields.json")?;
+                        .read_and_parse(req.langid, "dateFields.json")?;
                     let fields = &resource.main.value.dates.fields;
 
                     let field = datakey_filters()
@@ -98,12 +97,12 @@ macro_rules! make_data_provider {
             }
 
             impl IterableDataProviderCached<$marker> for DatagenProvider {
-                fn supported_locales_cached(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+                fn supported_locales_cached(&self) -> Result<HashSet<(LanguageIdentifier, DataKeyAttributes)>, DataError> {
                     Ok(self
                         .cldr()?
                         .dates("gregorian")
                         .list_langs()?
-                        .map(|l| (DataLocale::from(l), Default::default()))
+                        .map(|l| (l.clone(), Default::default()))
                         .collect())
                 }
             }
@@ -193,7 +192,7 @@ mod tests {
         let provider = DatagenProvider::new_testing();
         let data: DataPayload<ShortQuarterRelativeTimeFormatDataV1Marker> = provider
             .load(DataRequest {
-                locale: &langid!("en").into(),
+                langid: &langid!("en"),
                 ..Default::default()
             })
             .unwrap()
@@ -213,7 +212,7 @@ mod tests {
         let provider = DatagenProvider::new_testing();
         let data: DataPayload<LongYearRelativeTimeFormatDataV1Marker> = provider
             .load(DataRequest {
-                locale: &langid!("ar").into(),
+                langid: &langid!("ar"),
                 ..Default::default()
             })
             .unwrap()

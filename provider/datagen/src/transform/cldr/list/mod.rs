@@ -16,12 +16,10 @@ fn load<M: KeyedDataMarker<Yokeable = ListFormatterPatternsV1<'static>>>(
     selff: &DatagenProvider,
     req: DataRequest,
 ) -> Result<DataResponse<M>, DataError> {
-    let langid = req.locale.get_langid();
-
     let resource: &cldr_serde::list_patterns::Resource = selff
         .cldr()?
         .misc()
-        .read_and_parse(&langid, "listPatterns.json")?;
+        .read_and_parse(req.langid, "listPatterns.json")?;
 
     let data = &resource.main.value.list_patterns;
 
@@ -50,7 +48,7 @@ fn load<M: KeyedDataMarker<Yokeable = ListFormatterPatternsV1<'static>>>(
         &narrow.pair,
     ])?;
 
-    if langid.language == language!("es") {
+    if req.langid.language == language!("es") {
         if M::KEY == AndListV1Marker::KEY || M::KEY == UnitListV1Marker::KEY {
             static I_SOUND: OnceLock<SerdeDFA<'static>> = OnceLock::new();
 
@@ -83,7 +81,7 @@ fn load<M: KeyedDataMarker<Yokeable = ListFormatterPatternsV1<'static>>>(
         }
     }
 
-    if langid.language == language!("he") {
+    if req.langid.language == language!("he") {
         // Cannot cache this because it depends on `selff`. However we don't expect many Hebrew locales.
         let non_hebrew = SerdeDFA::new(Cow::Owned(format!(
             "[^{}]",
@@ -130,12 +128,12 @@ macro_rules! implement {
         impl IterableDataProviderCached<$marker> for DatagenProvider {
             fn supported_locales_cached(
                 &self,
-            ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+            ) -> Result<HashSet<(LanguageIdentifier, DataKeyAttributes)>, DataError> {
                 Ok(self
                     .cldr()?
                     .misc()
                     .list_langs()?
-                    .map(|l| (DataLocale::from(l), Default::default()))
+                    .map(|l| (l.clone(), Default::default()))
                     .collect())
             }
         }

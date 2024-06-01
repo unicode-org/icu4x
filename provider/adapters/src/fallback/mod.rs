@@ -205,11 +205,11 @@ impl<P> LocaleFallbackProvider<P> {
         let mut fallback_iterator = self
             .fallbacker
             .for_config(key.fallback_config())
-            .fallback_for(base_req.locale.clone());
+            .fallback_for(base_req.langid.clone());
         let base_silent = core::mem::replace(&mut base_req.metadata.silent, true);
         loop {
             let result = f1(DataRequest {
-                locale: fallback_iterator.get(),
+                langid: fallback_iterator.get(),
                 ..base_req
             });
             if !result_is_err_missing_locale(&result) {

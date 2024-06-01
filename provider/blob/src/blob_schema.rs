@@ -46,7 +46,7 @@ impl<'data> BlobSchema<'data> {
     pub fn list_requests(
         &self,
         key: DataKey,
-    ) -> Result<std::collections::HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    ) -> Result<std::collections::HashSet<(LanguageIdentifier, DataKeyAttributes)>, DataError> {
         match self {
             BlobSchema::V001(s) => s.list_requests(key),
             BlobSchema::V002(s) => s.list_requests(key),
@@ -95,7 +95,7 @@ impl<'data> BlobSchemaV1<'data> {
             .get0(&key.hashed())
             .ok_or(DataErrorKind::MissingDataKey)
             .and_then(|cursor| {
-                if key.metadata().singleton && !req.locale.is_empty() {
+                if key.metadata().singleton && !req.langid.is_und() {
                     return Err(DataErrorKind::ExtraneousLocale);
                 }
                 cursor
@@ -112,7 +112,7 @@ impl<'data> BlobSchemaV1<'data> {
     pub fn list_requests(
         &self,
         key: DataKey,
-    ) -> Result<std::collections::HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    ) -> Result<std::collections::HashSet<(LanguageIdentifier, DataKeyAttributes)>, DataError> {
         Ok(self
             .keys
             .get0(&key.hashed())
@@ -192,7 +192,7 @@ impl<'data, LocaleVecFormat: VarZeroVecFormat> BlobSchemaV2<'data, LocaleVecForm
             .binary_search(&key.hashed())
             .ok()
             .ok_or_else(|| DataErrorKind::MissingDataKey.with_req(key, req))?;
-        if key.metadata().singleton && !req.locale.is_empty() {
+        if key.metadata().singleton && !req.langid.is_und() {
             return Err(DataErrorKind::ExtraneousLocale.with_req(key, req));
         }
         let zerotrie = self
@@ -200,8 +200,8 @@ impl<'data, LocaleVecFormat: VarZeroVecFormat> BlobSchemaV2<'data, LocaleVecForm
             .get(key_index)
             .ok_or_else(|| DataError::custom("Invalid blob bytes").with_req(key, req))?;
         let mut cursor = ZeroTrieSimpleAscii::from_store(zerotrie).into_cursor();
-        #[allow(clippy::unwrap_used)] // DataLocale::write_to produces ASCII only
-        req.locale.write_to(&mut cursor).unwrap();
+        #[allow(clippy::unwrap_used)] // LanguageIdentifier::write_to produces ASCII only
+        req.langid.write_to(&mut cursor).unwrap();
         if !req.key_attributes.is_empty() {
             #[allow(clippy::unwrap_used)] // ASCII
             "-x-".write_to(&mut cursor).unwrap();
@@ -223,7 +223,7 @@ impl<'data, LocaleVecFormat: VarZeroVecFormat> BlobSchemaV2<'data, LocaleVecForm
     pub fn list_requests(
         &self,
         key: DataKey,
-    ) -> Result<std::collections::HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    ) -> Result<std::collections::HashSet<(LanguageIdentifier, DataKeyAttributes)>, DataError> {
         let key_index = self
             .keys
             .binary_search(&key.hashed())

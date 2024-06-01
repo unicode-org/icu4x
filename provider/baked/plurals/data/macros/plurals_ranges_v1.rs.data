@@ -78,9 +78,9 @@ macro_rules! __impl_plurals_ranges_v1 {
                     payload
                 } else {
                     const FALLBACKER: icu::locale::fallback::LocaleFallbackerWithConfig<'static> = icu::locale::fallback::LocaleFallbacker::new().for_config(<icu::plurals::provider::PluralRangesV1Marker as icu_provider::KeyedDataMarker>::KEY.fallback_config());
-                    let mut fallback_iterator = FALLBACKER.fallback_for(req.locale.clone());
+                    let mut fallback_iterator = FALLBACKER.fallback_for(req.langid.clone());
                     loop {
-                        if let Ok(payload) = KEYS.binary_search_by(|k| icu_provider::DataRequest { locale: fallback_iterator.get(), ..req }.legacy_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
+                        if let Ok(payload) = KEYS.binary_search_by(|k| icu_provider::DataRequest { langid: fallback_iterator.get(), ..req }.legacy_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
                             metadata.locale = Some(fallback_iterator.take());
                             break payload;
                         }
@@ -104,7 +104,7 @@ macro_rules! __impliterable_plurals_ranges_v1 {
     ($ provider : ty) => {
         #[clippy::msrv = "1.70"]
         impl icu_provider::datagen::IterableDataProvider<icu::plurals::provider::PluralRangesV1Marker> for $provider {
-            fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataKeyAttributes)>, icu_provider::DataError> {
+            fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::prelude::LanguageIdentifier, icu_provider::DataKeyAttributes)>, icu_provider::DataError> {
                 Ok(["af", "ar", "bg", "ca", "en", "es", "et", "eu", "fa", "fi", "he", "ia", "ka", "lv", "mk", "no", "or", "pcm", "ro", "sd", "si", "sl", "sv", "und", "ur"].into_iter().filter_map(icu_provider::DataRequest::legacy_decode).collect())
             }
         }

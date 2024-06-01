@@ -927,7 +927,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         };
         let payload = provider
             .load_bound(DataRequest {
-                locale: &(&locale.id).into(),
+                langid: &locale.id,
                 key_attributes: &DataKeyAttributes::from_tinystr(key_attrs::symbol_attr_for(
                     key_attrs::Context::Format,
                     match field_length {
@@ -975,7 +975,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         };
         let payload = provider
             .load_bound(DataRequest {
-                locale: &(&locale.id).into(),
+                langid: &locale.id,
                 key_attributes: &DataKeyAttributes::from_tinystr(key_attrs::symbol_attr_for(
                     match field_symbol {
                         fields::Month::Format => key_attrs::Context::Format,
@@ -1025,7 +1025,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         let payload = R::DayPeriodNames::load_from(
             provider,
             DataRequest {
-                locale: &(&locale.id).into(),
+                langid: &locale.id,
                 key_attributes: &DataKeyAttributes::from_tinystr(key_attrs::symbol_attr_for(
                     key_attrs::Context::Format,
                     match field_length {
@@ -1075,7 +1075,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         };
         let payload = provider
             .load_bound(DataRequest {
-                locale: &(&locale.id).into(),
+                langid: &locale.id,
                 key_attributes: &DataKeyAttributes::from_tinystr(key_attrs::symbol_attr_for(
                     match field_symbol {
                         // UTS 35 says that "e" and "E" have the same non-numeric names

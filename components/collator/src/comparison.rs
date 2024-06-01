@@ -24,6 +24,7 @@ use crate::provider::CollationSpecialPrimariesV1Marker;
 use crate::{AlternateHandling, CollatorOptions, MaxVariable, ResolvedCollatorOptions, Strength};
 use core::cmp::Ordering;
 use core::convert::TryFrom;
+use icu_locale_core::extensions::unicode::key;
 use icu_normalizer::provider::CanonicalDecompositionDataV1Marker;
 use icu_normalizer::provider::CanonicalDecompositionTablesV1Marker;
 use icu_normalizer::Decomposition;
@@ -145,7 +146,14 @@ impl Collator {
             + ?Sized,
     {
         let req = DataRequest {
-            locale: &(&locale.id).into(),
+            langid: &locale.id,
+            key_attributes: &locale
+                .extensions
+                .unicode
+                .keywords
+                .get(&key!("nu"))
+                .map(DataKeyAttributes::from_unicode_value)
+                .unwrap_or_default(),
             ..Default::default()
         };
 

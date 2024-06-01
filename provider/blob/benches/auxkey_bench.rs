@@ -130,7 +130,7 @@ fn auxkey_bench_for_version(c: &mut Criterion, blob: &[u8], version_id: &str) {
     );
 
     for (locale_str, attr_str) in [("sr-Latn", "ym0d"), ("sr-ME", "ym0d")] {
-        let locale = locale_str.parse::<DataLocale>().unwrap();
+        let locale = locale_str.parse::<LanguageIdentifier>().unwrap();
         let attrs = attr_str.parse::<DataKeyAttributes>().unwrap();
 
         c.bench_function(
@@ -141,7 +141,7 @@ fn auxkey_bench_for_version(c: &mut Criterion, blob: &[u8], version_id: &str) {
                         DataProvider::<GregorianDateNeoSkeletonPatternsV1Marker>::load(
                             &provider.as_deserializing(),
                             DataRequest {
-                                locale: black_box(&locale),
+                                langid: black_box(&locale),
                                 key_attributes: black_box(&attrs),
                                 metadata: Default::default()
                             }

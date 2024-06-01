@@ -95,13 +95,13 @@ impl<E: DataExporter> DataExporter for StubExporter<E> {
     fn put_payload(
         &self,
         key: DataKey,
-        locale: &DataLocale,
+        langid: &LanguageIdentifier,
         key_attributes: &DataKeyAttributes,
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
         // put `und-*` but not any other locales
-        if locale.is_langid_und() {
-            self.0.put_payload(key, locale, key_attributes, payload)
+        if langid.is_und() {
+            self.0.put_payload(key, langid, key_attributes, payload)
         } else {
             Ok(())
         }
@@ -172,7 +172,7 @@ impl<F: Write + Send + Sync> DataExporter for PostcardTestingExporter<F> {
     fn put_payload(
         &self,
         key: DataKey,
-        locale: &DataLocale,
+        langid: &LanguageIdentifier,
         key_attributes: &DataKeyAttributes,
         payload_before: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
@@ -233,7 +233,7 @@ impl<F: Write + Send + Sync> DataExporter for PostcardTestingExporter<F> {
         if payload_before != &payload_after {
             self.rountrip_errors.lock().expect("poison").insert((
                 key,
-                locale.to_string()
+                langid.to_string()
                     + if key_attributes.is_empty() { "" } else { "-x" }
                     + key_attributes,
             ));
@@ -241,7 +241,7 @@ impl<F: Write + Send + Sync> DataExporter for PostcardTestingExporter<F> {
 
         if deallocated != allocated {
             if !EXPECTED_VIOLATIONS.contains(&key) {
-                eprintln!("Zerocopy violation {key} {locale}: {allocated}B allocated, {deallocated}B deallocated");
+                eprintln!("Zerocopy violation {key} {langid}: {allocated}B allocated, {deallocated}B deallocated");
             }
             self.zero_copy_violations
                 .lock()
@@ -249,7 +249,7 @@ impl<F: Write + Send + Sync> DataExporter for PostcardTestingExporter<F> {
                 .insert(key);
         } else if allocated > 0 {
             if !EXPECTED_TRANSIENT_VIOLATIONS.contains(&key) {
-                eprintln!("Transient zerocopy violation {key} {locale}: {allocated}B allocated/deallocated");
+                eprintln!("Transient zerocopy violation {key} {langid}: {allocated}B allocated/deallocated");
             }
             self.zero_copy_transient_violations
                 .lock()
@@ -261,7 +261,7 @@ impl<F: Write + Send + Sync> DataExporter for PostcardTestingExporter<F> {
             (
                 key,
                 DataRequest {
-                    locale,
+                    langid,
                     key_attributes,
                     ..Default::default()
                 }

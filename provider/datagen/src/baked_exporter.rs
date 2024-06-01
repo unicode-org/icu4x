@@ -355,13 +355,13 @@ impl DataExporter for BakedExporter {
     fn put_payload(
         &self,
         key: DataKey,
-        locale: &DataLocale,
+        langid: &LanguageIdentifier,
         key_attributes: &DataKeyAttributes,
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
         let payload = payload.tokenize(&self.dependencies);
         let payload = payload.to_string();
-        let locale = locale.to_string();
+        let locale = langid.to_string();
         let key_attributes = key_attributes.to_string();
         self.data
             .lock()
@@ -403,7 +403,7 @@ impl DataExporter for BakedExporter {
                     &self,
                     req: icu_provider::DataRequest,
                 ) -> Result<icu_provider::DataResponse<#marker>, icu_provider::DataError> {
-                    if req.locale.is_empty() {
+                    if req.langid.is_und() {
                         Ok(icu_provider::DataResponse {
                             payload: Some(icu_provider::DataPayload::from_static_ref(Self::#singleton_ident)),
                             metadata: Default::default(),
@@ -416,7 +416,7 @@ impl DataExporter for BakedExporter {
         }, quote! {
             #maybe_msrv
             impl icu_provider::datagen::IterableDataProvider<#marker> for $provider {
-                fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataKeyAttributes)>, icu_provider::DataError> {
+                fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::prelude::LanguageIdentifier, icu_provider::DataKeyAttributes)>, icu_provider::DataError> {
                     Ok(HashSet::from_iter([Default::default()]))
                 }
             }
@@ -506,7 +506,7 @@ impl BakedExporter {
                 let (first_locale, first_key_attributes) = reqs.iter().next().unwrap();
                 let anchor = proc_macro2::Ident::new(
                     &DataRequest {
-                        locale: &first_locale.parse().unwrap(),
+                        langid: &first_locale.parse().unwrap(),
                         key_attributes: &first_key_attributes.parse().unwrap(),
                         ..Default::default()
                     }
@@ -527,7 +527,7 @@ impl BakedExporter {
                 map.extend(reqs.into_iter().map(|(l, a)| {
                     (
                         DataRequest {
-                            locale: &l.parse().unwrap(),
+                            langid: &l.parse().unwrap(),
                             key_attributes: &a.parse().unwrap(),
                             ..Default::default()
                         }
@@ -576,10 +576,10 @@ impl BakedExporter {
                             const FALLBACKER: icu_locale::fallback::LocaleFallbackerWithConfig<'static> =
                                 icu_locale::fallback::LocaleFallbacker::new()
                                     .for_config(<#marker as icu_provider::KeyedDataMarker>::KEY.fallback_config());
-                            let mut fallback_iterator = FALLBACKER.fallback_for(req.locale.clone());
+                            let mut fallback_iterator = FALLBACKER.fallback_for(req.langid.clone());
                             loop {
                                 if let Ok(payload) = KEYS
-                                        .binary_search_by(|k| icu_provider::DataRequest { locale: fallback_iterator.get(), ..req }.legacy_cmp(k.as_bytes()).reverse())
+                                        .binary_search_by(|k| icu_provider::DataRequest { langid: fallback_iterator.get(), ..req }.legacy_cmp(k.as_bytes()).reverse())
                                         .map(|i| *unsafe { VALUES.get_unchecked(i) }) {
                                     metadata.locale = Some(fallback_iterator.take());
                                     break payload;
@@ -628,7 +628,7 @@ impl BakedExporter {
             quote! {
                 #maybe_msrv
                 impl icu_provider::datagen::IterableDataProvider<#marker> for $provider {
-                    fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataKeyAttributes)>, icu_provider::DataError> {
+                    fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::prelude::LanguageIdentifier, icu_provider::DataKeyAttributes)>, icu_provider::DataError> {
                         #iterable_body
                     }
                 }

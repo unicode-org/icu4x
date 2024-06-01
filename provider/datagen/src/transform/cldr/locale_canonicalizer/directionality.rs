@@ -24,7 +24,9 @@ impl DataProvider<ScriptDirectionV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProvider<ScriptDirectionV1Marker> for DatagenProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    fn supported_requests(
+        &self,
+    ) -> Result<HashSet<(LanguageIdentifier, DataKeyAttributes)>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }

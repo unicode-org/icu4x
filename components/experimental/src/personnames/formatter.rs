@@ -86,7 +86,7 @@ impl PersonNamesFormatter {
 
         let data_payload: DataPayload<PersonNamesFormatV1Marker> = provider
             .load(DataRequest {
-                locale: &(&effective_locale.id).into(),
+                langid: &effective_locale.id,
                 ..Default::default()
             })
             .map_err(PersonNamesFormatterError::Data)?

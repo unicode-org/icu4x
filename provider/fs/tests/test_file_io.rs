@@ -20,7 +20,7 @@ fn test_provider() {
         let provider = FsDataProvider::try_new(path).unwrap();
         for (locale, key_attributes) in HelloWorldProvider.supported_requests().unwrap() {
             let req = DataRequest {
-                locale: &locale,
+                langid: &locale,
                 key_attributes: &key_attributes,
                 ..Default::default()
             };
@@ -57,7 +57,7 @@ fn test_errors() {
 
         let err: Result<DataResponse<HelloWorldV1Marker>, DataError> =
             provider.as_deserializing().load(DataRequest {
-                locale: &langid!("zh-DE").into(),
+                langid: &langid!("zh-DE"),
                 ..Default::default()
             });
 

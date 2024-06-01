@@ -25,7 +25,9 @@ impl DataProvider<LikelySubtagsV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProvider<LikelySubtagsV1Marker> for DatagenProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    fn supported_requests(
+        &self,
+    ) -> Result<HashSet<(LanguageIdentifier, DataKeyAttributes)>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
@@ -48,7 +50,9 @@ impl DataProvider<LikelySubtagsExtendedV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProvider<LikelySubtagsExtendedV1Marker> for DatagenProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    fn supported_requests(
+        &self,
+    ) -> Result<HashSet<(LanguageIdentifier, DataKeyAttributes)>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
@@ -68,7 +72,9 @@ impl DataProvider<LikelySubtagsForLanguageV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProvider<LikelySubtagsForLanguageV1Marker> for DatagenProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    fn supported_requests(
+        &self,
+    ) -> Result<HashSet<(LanguageIdentifier, DataKeyAttributes)>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
@@ -88,7 +94,9 @@ impl DataProvider<LikelySubtagsForScriptRegionV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProvider<LikelySubtagsForScriptRegionV1Marker> for DatagenProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    fn supported_requests(
+        &self,
+    ) -> Result<HashSet<(LanguageIdentifier, DataKeyAttributes)>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
@@ -134,8 +142,7 @@ impl<'a> LikelySubtagsResources<'a> {
 
     fn common_predicate(&self, min_max: &(&LanguageIdentifier, &LanguageIdentifier)) -> bool {
         let (minimized, maximized) = min_max;
-        self.basic_plus_languages.contains(&maximized.language)
-            || **minimized == LanguageIdentifier::UND
+        self.basic_plus_languages.contains(&maximized.language) || minimized.is_und()
     }
 
     pub(in crate::provider) fn get_common(

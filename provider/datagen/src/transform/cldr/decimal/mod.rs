@@ -75,22 +75,17 @@ impl DatagenProvider {
 
     fn supported_locales_for_numbers(
         &self,
-    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    ) -> Result<HashSet<(LanguageIdentifier, DataKeyAttributes)>, DataError> {
         Ok(self
             .cldr()?
             .numbers()
             .list_langs()?
             .flat_map(|langid| {
-                let last = DataLocale::from(&langid);
+                let last = langid.clone();
                 self.get_supported_numsys_for_langid_without_default(&langid)
                     .expect("All languages from list_langs should be present")
                     .into_iter()
-                    .map(move |nsname| {
-                        (
-                            DataLocale::from(&langid),
-                            DataKeyAttributes::from_tinystr(nsname),
-                        )
-                    })
+                    .map(move |nsname| (langid.clone(), DataKeyAttributes::from_tinystr(nsname)))
                     .chain([(last, Default::default())])
             })
             .collect())

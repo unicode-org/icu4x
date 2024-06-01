@@ -36,7 +36,7 @@ pub trait DataExporter: Sync {
     fn put_payload(
         &self,
         key: DataKey,
-        locale: &DataLocale,
+        langid: &LanguageIdentifier,
         key_attributes: &DataKeyAttributes,
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError>;
@@ -92,11 +92,11 @@ impl DataExporter for Box<dyn DataExporter> {
     fn put_payload(
         &self,
         key: DataKey,
-        locale: &DataLocale,
+        langid: &LanguageIdentifier,
         key_attributes: &DataKeyAttributes,
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
-        (**self).put_payload(key, locale, key_attributes, payload)
+        (**self).put_payload(key, langid, key_attributes, payload)
     }
 
     fn flush_singleton(
@@ -149,7 +149,7 @@ impl<T> ExportableProvider for T where
 /// for `make_exportable_provider` are:
 /// * The data struct has to implement [`serde::Serialize`](::serde::Serialize) and [`databake::Bake`]
 /// * The provider needs to implement [`IterableDataProvider`] for all specified [`KeyedDataMarker`]s.
-///   This allows the generating code to know which [`DataLocale`] to collect.
+///   This allows the generating code to know which [`LanguageIdentifier`] to collect.
 ///
 /// [`BlobDataProvider`]: ../../icu_provider_blob/struct.BlobDataProvider.html
 /// [`BakedDataProvider`]: ../../icu_datagen/index.html
@@ -168,7 +168,7 @@ macro_rules! make_exportable_provider {
         );
 
         impl $crate::datagen::IterableDynamicDataProvider<$crate::datagen::ExportMarker> for $provider {
-            fn supported_requests_for_key(&self, key: $crate::DataKey) -> Result<std::collections::HashSet<($crate::DataLocale, $crate::DataKeyAttributes)>, $crate::DataError> {
+            fn supported_requests_for_key(&self, key: $crate::DataKey) -> Result<std::collections::HashSet<($crate::prelude::LanguageIdentifier, $crate::DataKeyAttributes)>, $crate::DataError> {
                 match key.hashed() {
                     $(
                         $(#[$cfg])?
@@ -206,13 +206,13 @@ impl DataExporter for MultiExporter {
     fn put_payload(
         &self,
         key: DataKey,
-        locale: &DataLocale,
+        langid: &LanguageIdentifier,
         key_attributes: &DataKeyAttributes,
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
         self.0
             .iter()
-            .try_for_each(|e| e.put_payload(key, locale, key_attributes, payload))
+            .try_for_each(|e| e.put_payload(key, langid, key_attributes, payload))
     }
 
     fn flush_singleton(

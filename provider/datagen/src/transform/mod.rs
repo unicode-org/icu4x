@@ -21,7 +21,9 @@ impl DataProvider<HelloWorldV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProvider<HelloWorldV1Marker> for DatagenProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    fn supported_requests(
+        &self,
+    ) -> Result<HashSet<(LanguageIdentifier, DataKeyAttributes)>, DataError> {
         HelloWorldProvider.supported_requests()
     }
 }
@@ -31,9 +33,9 @@ impl DatagenProvider {
     where
         DatagenProvider: IterableDataProvider<M>,
     {
-        if <M as KeyedDataMarker>::KEY.metadata().singleton && !req.locale.is_empty() {
+        if <M as KeyedDataMarker>::KEY.metadata().singleton && !req.langid.is_und() {
             Err(DataErrorKind::ExtraneousLocale)
-        } else if !self.supports_request(req.locale, req.key_attributes)? {
+        } else if !self.supports_request(req.langid, req.key_attributes)? {
             Err(DataErrorKind::MissingLocale)
         } else {
             Ok(())
@@ -49,7 +51,7 @@ fn test_missing_locale() {
     assert!(DataProvider::<HelloWorldV1Marker>::load(
         &provider,
         DataRequest {
-            locale: &langid!("fi").into(),
+            langid: &langid!("fi"),
             ..Default::default()
         }
     )
@@ -57,7 +59,7 @@ fn test_missing_locale() {
     assert!(DataProvider::<HelloWorldV1Marker>::load(
         &provider,
         DataRequest {
-            locale: &langid!("arc").into(),
+            langid: &langid!("arc"),
             ..Default::default()
         }
     )

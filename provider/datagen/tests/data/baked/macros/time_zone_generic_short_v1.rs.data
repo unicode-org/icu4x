@@ -41,7 +41,7 @@ macro_rules! __impliterable_time_zone_generic_short_v1 {
     ($ provider : ty) => {
         #[clippy::msrv = "1.70"]
         impl icu_provider::datagen::IterableDataProvider<icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker> for $provider {
-            fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataKeyAttributes)>, icu_provider::DataError> {
+            fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::prelude::LanguageIdentifier, icu_provider::DataKeyAttributes)>, icu_provider::DataError> {
                 Ok(["und"].into_iter().filter_map(icu_provider::DataRequest::legacy_decode).collect())
             }
         }

@@ -383,8 +383,7 @@ fn test_dayperiod_patterns() {
     {
         let locale: Locale = test.locale.parse().unwrap();
         let req = DataRequest {
-            locale: &(&locale.id).into(),
-            key_attributes: &DataKeyAttributes::from_tinystr(tinystr!(8, "gregory")),
+            langid: &locale.id,
             ..Default::default()
         };
         let mut date_patterns_data: DataPayload<GregorianDateLengthsV1Marker> =
@@ -419,7 +418,10 @@ fn test_dayperiod_patterns() {
         #[cfg(feature = "experimental")]
         let skeleton_data: DataPayload<DateSkeletonPatternsV1Marker> =
             icu_datetime::provider::Baked
-                .load(req)
+                .load(DataRequest {
+                    key_attributes: &DataKeyAttributes::from_tinystr(tinystr!(8, "gregory")),
+                    ..req
+                })
                 .unwrap()
                 .take_payload()
                 .unwrap();
@@ -430,7 +432,7 @@ fn test_dayperiod_patterns() {
             .unwrap();
         let decimal_data: DataPayload<DecimalSymbolsV1Marker> = icu_decimal::provider::Baked
             .load(DataRequest {
-                locale: &(&locale.id).into(),
+                langid: &locale.id,
                 ..Default::default()
             })
             .unwrap()
@@ -576,8 +578,7 @@ fn test_time_zone_patterns() {
     {
         let locale: Locale = test.locale.parse().unwrap();
         let req = DataRequest {
-            locale: &(&locale.id).into(),
-            key_attributes: &DataKeyAttributes::from_tinystr(tinystr!(8, "gregory")),
+            langid: &locale.id,
             ..Default::default()
         };
         let mut config = test.config;
@@ -602,7 +603,10 @@ fn test_time_zone_patterns() {
         #[cfg(feature = "experimental")]
         let skeleton_data: DataPayload<DateSkeletonPatternsV1Marker> =
             icu_datetime::provider::Baked
-                .load(req)
+                .load(DataRequest {
+                    key_attributes: &DataKeyAttributes::from_tinystr(tinystr!(8, "gregory")),
+                    ..req
+                })
                 .unwrap()
                 .take_payload()
                 .unwrap();

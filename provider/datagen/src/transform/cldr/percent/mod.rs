@@ -16,12 +16,10 @@ use tinystr::tinystr;
 impl DataProvider<PercentEssentialsV1Marker> for DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<PercentEssentialsV1Marker>, DataError> {
         self.check_req::<PercentEssentialsV1Marker>(req)?;
-        let langid = req.locale.get_langid();
-
         let numbers_resource: &cldr_serde::numbers::Resource = self
             .cldr()?
             .numbers()
-            .read_and_parse(&langid, "numbers.json")?;
+            .read_and_parse(req.langid, "numbers.json")?;
 
         let result = extract_percent_essentials(numbers_resource);
 
@@ -35,12 +33,12 @@ impl DataProvider<PercentEssentialsV1Marker> for DatagenProvider {
 impl IterableDataProviderCached<PercentEssentialsV1Marker> for DatagenProvider {
     fn supported_locales_cached(
         &self,
-    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    ) -> Result<HashSet<(LanguageIdentifier, DataKeyAttributes)>, DataError> {
         Ok(self
             .cldr()?
             .numbers()
             .list_langs()?
-            .map(|l| (DataLocale::from(l), Default::default()))
+            .map(|l| (l.clone(), Default::default()))
             .collect())
     }
 }
@@ -116,7 +114,7 @@ fn test_basic() {
 
     let en: DataPayload<PercentEssentialsV1Marker> = provider
         .load(DataRequest {
-            locale: &langid!("en").into(),
+            langid: &langid!("en"),
             ..Default::default()
         })
         .unwrap()
@@ -139,7 +137,7 @@ fn test_basic() {
 
     let fr: DataPayload<PercentEssentialsV1Marker> = provider
         .load(DataRequest {
-            locale: &langid!("fr").into(),
+            langid: &langid!("fr"),
             ..Default::default()
         })
         .unwrap()
@@ -162,7 +160,7 @@ fn test_basic() {
 
     let tr: DataPayload<PercentEssentialsV1Marker> = provider
         .load(DataRequest {
-            locale: &langid!("tr").into(),
+            langid: &langid!("tr"),
             ..Default::default()
         })
         .unwrap()
@@ -185,7 +183,7 @@ fn test_basic() {
 
     let ar_eg: DataPayload<PercentEssentialsV1Marker> = provider
         .load(DataRequest {
-            locale: &langid!("ar-EG").into(),
+            langid: &langid!("ar-EG"),
             ..Default::default()
         })
         .unwrap()

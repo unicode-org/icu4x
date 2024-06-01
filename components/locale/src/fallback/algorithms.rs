@@ -9,40 +9,38 @@ use icu_provider::FallbackPriority;
 use super::*;
 
 impl<'a> LocaleFallbackerWithConfig<'a> {
-    pub(crate) fn normalize(&self, locale: &mut DataLocale) {
-        let language = locale.language();
+    pub(crate) fn normalize(&self, langid: &mut LanguageIdentifier) {
+        let language = langid.language;
         // 1. Populate the region (required for region fallback only)
-        if self.config.priority == FallbackPriority::Region && locale.region().is_none() {
+        if self.config.priority == FallbackPriority::Region && langid.region.is_none() {
             // 1a. First look for region based on language+script
-            if let Some(script) = locale.script() {
-                locale.set_region(
-                    self.likely_subtags
-                        .ls2r
-                        .get_2d(
-                            &language.into_tinystr().to_unvalidated(),
-                            &script.into_tinystr().to_unvalidated(),
-                        )
-                        .copied(),
-                );
+            if let Some(script) = langid.script {
+                langid.region = self
+                    .likely_subtags
+                    .ls2r
+                    .get_2d(
+                        &language.into_tinystr().to_unvalidated(),
+                        &script.into_tinystr().to_unvalidated(),
+                    )
+                    .copied();
             }
             // 1b. If that fails, try language only
-            if locale.region().is_none() {
-                locale.set_region(
-                    self.likely_subtags
-                        .l2r
-                        .get(&language.into_tinystr().to_unvalidated())
-                        .copied(),
-                );
+            if langid.region.is_none() {
+                langid.region = self
+                    .likely_subtags
+                    .l2r
+                    .get(&language.into_tinystr().to_unvalidated())
+                    .copied();
             }
         }
         // 2. Remove the script if it is implied by the other subtags
-        if let Some(script) = locale.script() {
+        if let Some(script) = langid.script {
             let default_script = self
                 .likely_subtags
                 .l2s
                 .get_copied(&language.into_tinystr().to_unvalidated())
                 .unwrap_or(DEFAULT_SCRIPT);
-            if let Some(region) = locale.region() {
+            if let Some(region) = langid.region {
                 if script
                     == self
                         .likely_subtags
@@ -53,23 +51,23 @@ impl<'a> LocaleFallbackerWithConfig<'a> {
                         )
                         .unwrap_or(default_script)
                 {
-                    locale.set_script(None);
+                    langid.script = None;
                 }
             } else if script == default_script {
-                locale.set_script(None);
+                langid.script = None;
             }
         }
     }
 }
 
 impl<'a> LocaleFallbackIteratorInner<'a> {
-    pub fn step(&mut self, locale: &mut DataLocale) {
+    pub fn step(&mut self, langid: &mut LanguageIdentifier) {
         match self.config.priority {
-            FallbackPriority::Language => self.step_language(locale),
-            FallbackPriority::Region => self.step_region(locale),
+            FallbackPriority::Language => self.step_language(langid),
+            FallbackPriority::Region => self.step_region(langid),
             // TODO(#1964): Change the collation fallback rules to be different
             // from the language fallback fules.
-            FallbackPriority::Collation => self.step_language(locale),
+            FallbackPriority::Collation => self.step_language(langid),
             // This case should not normally happen, but `FallbackPriority` is non_exhaustive.
             // Make it go directly to `und`.
             _ => {
@@ -78,84 +76,84 @@ impl<'a> LocaleFallbackIteratorInner<'a> {
                     "Unknown FallbackPriority: {:?}",
                     self.config.priority
                 );
-                *locale = Default::default()
+                *langid = Default::default()
             }
         }
     }
 
-    fn step_language(&mut self, locale: &mut DataLocale) {
+    fn step_language(&mut self, langid: &mut LanguageIdentifier) {
         // 4. Remove variants
-        if locale.has_variants() {
-            self.backup_variants = Some(locale.clear_variants());
+        if !langid.variants.is_empty() {
+            self.backup_variants = Some(core::mem::take(&mut langid.variants));
             return;
         }
         // 5. Check for parent override
-        if let Some(parent) = self.get_explicit_parent(locale) {
-            locale.set_langid(parent);
-            self.restore_variants(locale);
+        if let Some(parent) = self.get_explicit_parent(langid) {
+            *langid = parent;
+            self.restore_variants(langid);
             return;
         }
         // 6. Add the script subtag if necessary
-        if locale.script().is_none() {
-            if let Some(region) = locale.region() {
-                let language = locale.language();
+        if langid.script.is_none() {
+            if let Some(region) = langid.region {
+                let language = langid.language;
                 if let Some(script) = self.likely_subtags.lr2s.get_copied_2d(
                     &language.into_tinystr().to_unvalidated(),
                     &region.into_tinystr().to_unvalidated(),
                 ) {
-                    locale.set_script(Some(script));
-                    self.restore_variants(locale);
+                    langid.script = Some(script);
+                    self.restore_variants(langid);
                     return;
                 }
             }
         }
         // 7. Remove region
-        if locale.region().is_some() {
-            locale.set_region(None);
-            self.restore_variants(locale);
+        if langid.region.is_some() {
+            langid.region = None;
+            self.restore_variants(langid);
             return;
         }
         // 8. Remove language+script
-        debug_assert!(!locale.language().is_empty()); // don't call .step() on und
-        locale.set_script(None);
-        locale.set_language(Language::UND);
+        debug_assert!(!langid.language.is_empty()); // don't call .step() on und
+        langid.script = None;
+        langid.language = Language::UND;
     }
 
-    fn step_region(&mut self, locale: &mut DataLocale) {
+    fn step_region(&mut self, langid: &mut LanguageIdentifier) {
         // 4. Remove variants
-        if locale.has_variants() {
-            self.backup_variants = Some(locale.clear_variants());
+        if !langid.variants.is_empty() {
+            self.backup_variants = Some(core::mem::take(&mut langid.variants));
             return;
         }
         // 5. Remove language+script
-        if !locale.language().is_empty() || locale.script().is_some() {
-            locale.set_script(None);
-            locale.set_language(Language::UND);
-            self.restore_variants(locale);
+        if !langid.language.is_empty() || langid.script.is_some() {
+            langid.script = None;
+            langid.language = Language::UND;
+            self.restore_variants(langid);
             return;
         }
         // 6. Remove region
-        debug_assert!(locale.region().is_some()); // don't call .step() on und
-        locale.set_region(None);
+        debug_assert!(langid.region.is_some()); // don't call .step() on und
+        langid.region = None;
     }
 
-    fn restore_variants(&mut self, locale: &mut DataLocale) {
+    fn restore_variants(&mut self, langid: &mut LanguageIdentifier) {
         if let Some(variants) = self.backup_variants.take() {
-            locale.set_variants(variants);
+            langid.variants = variants;
         }
     }
 
-    fn get_explicit_parent(&self, locale: &DataLocale) -> Option<LanguageIdentifier> {
+    fn get_explicit_parent(&self, langid: &LanguageIdentifier) -> Option<LanguageIdentifier> {
         self.supplement
             .and_then(|supplement| {
                 supplement
                     .parents
-                    .get_copied_by(|uvstr| locale.strict_cmp(uvstr).reverse())
+                    .get_copied_by(|uvstr| langid.strict_cmp(uvstr).reverse())
             })
             .or_else(|| {
                 self.parents
                     .parents
-                    .get_copied_by(|uvstr| locale.strict_cmp(uvstr).reverse())
+                    .get_copied_by(|uvstr| langid.strict_cmp(uvstr).reverse())
             })
             .map(LanguageIdentifier::from)
     }

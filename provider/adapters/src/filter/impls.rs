@@ -64,7 +64,7 @@ where
     ///     .supported_requests()
     ///     .expect("Should successfully make an iterator of supported locales")
     ///     .into_iter()
-    ///     .map(|(locale, _)| locale.get_langid())
+    ///     .map(|(locale, _)| locale)
     ///     .collect::<Vec<LanguageIdentifier>>();
     /// assert!(supported_langids.contains(&langid!("de")));
     /// assert!(!supported_langids.contains(&langid!("en")));
@@ -83,7 +83,7 @@ where
                 if !(old_predicate)(request) {
                     return false;
                 }
-                predicate(&request.locale.get_langid())
+                predicate(request.langid)
             }),
             filter_name: self.filter_name,
         }
@@ -153,7 +153,7 @@ where
                 if !(old_predicate)(request) {
                     return false;
                 }
-                request.locale.is_langid_und() || allowlist.contains(&request.locale.get_langid())
+                request.langid.is_und() || allowlist.contains(request.langid)
             }),
             filter_name: self.filter_name,
         }
@@ -208,7 +208,7 @@ where
                 if !(old_predicate)(request) {
                     return false;
                 }
-                !request.locale.is_langid_und()
+                !request.langid.is_und()
             }),
             filter_name: self.filter_name,
         }

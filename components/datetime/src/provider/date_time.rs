@@ -110,7 +110,7 @@ fn pattern_for_date_length_inner(data: DateLengthsV1, length: length::Date) -> P
 /// `time_h23_h24` provider data, and then manually modify the symbol in the pattern if needed.
 pub(crate) fn pattern_for_time_length<'a, D>(
     data_provider: &'a D,
-    locale: &'a LanguageIdentifier,
+    langid: &'a LanguageIdentifier,
     length: length::Time,
     preferences: Option<preferences::Bag>,
 ) -> Result<DataPayload<PatternPluralsFromPatternsV1Marker>, DataError>
@@ -119,7 +119,7 @@ where
 {
     Ok(data_provider
         .load(DataRequest {
-            locale: &locale.into(),
+            langid,
             ..Default::default()
         })?
         .take_payload()?
@@ -159,9 +159,9 @@ pub(crate) fn generic_pattern_for_date_length(
 pub struct PatternSelector<'a, D: ?Sized> {
     data_provider: &'a D,
     date_patterns_data: DataPayload<ErasedDateLengthsV1Marker>,
-    locale: &'a LanguageIdentifier,
+    langid: &'a LanguageIdentifier,
     #[allow(dead_code)] // non-experimental mode
-    cal_val: Option<&'a Value>,
+    key_attributes: DataKeyAttributes,
 }
 
 pub(crate) enum PatternForLengthError {
@@ -182,8 +182,8 @@ where
         let selector = PatternSelector {
             data_provider,
             date_patterns_data,
-            locale: &locale.id,
-            cal_val: None,
+            langid: &locale.id,
+            key_attributes: Default::default(),
         };
         match options {
             DateTimeFormatterOptions::Length(bag) => {
@@ -206,7 +206,7 @@ where
                 PatternPlurals::default(),
             ))),
             (None, Some(time_length)) => {
-                pattern_for_time_length(self.data_provider, self.locale, time_length, preferences)
+                pattern_for_time_length(self.data_provider, self.langid, time_length, preferences)
                     .map_err(PatternForLengthError::Data)
             }
             (Some(date_length), None) => Ok(pattern_for_date_length(
@@ -230,7 +230,7 @@ where
         let time_patterns_data = self
             .data_provider
             .load(DataRequest {
-                locale: &self.locale.into(),
+                langid: self.langid,
                 ..Default::default()
             })
             .and_then(DataResponse::take_payload)
@@ -283,8 +283,23 @@ where
         let selector = PatternSelector {
             data_provider,
             date_patterns_data,
-            locale: &locale.id,
-            cal_val: Some(cal_val),
+            langid: &locale.id,
+            key_attributes: {
+                use icu_locale_core::extensions::unicode::value;
+                use tinystr::tinystr;
+                if cal_val == &value!("ethioaa") {
+                    // Skeleton data for ethioaa is stored under ethiopic
+                    DataKeyAttributes::from_tinystr(tinystr!(8, "ethiopic"))
+                } else if cal_val == &value!("islamic")
+                    || cal_val == &value!("islamicc")
+                    || cal_val.as_tinystr_slice().first() == Some(&tinystr!(8, "islamic"))
+                {
+                    // All islamic calendars store skeleton data under islamic, not their individual extension keys
+                    DataKeyAttributes::from_tinystr(tinystr!(8, "islamic"))
+                } else {
+                    DataKeyAttributes::from_unicode_value(cal_val)
+                }
+            },
         };
         match options {
             DateTimeFormatterOptions::Length(bag) => selector
@@ -317,9 +332,16 @@ where
     ) -> Result<DataPayload<PatternPluralsFromPatternsV1Marker>, UnsupportedOptionsOrDataError>
     {
         use crate::skeleton;
-        let skeletons_data = self
-            .skeleton_data_payload()
-            .map_err(UnsupportedOptionsOrDataError::Data)?;
+        let skeletons_data = DataProvider::<DateSkeletonPatternsV1Marker>::load(
+            self.data_provider,
+            DataRequest {
+                langid: self.langid,
+                key_attributes: &self.key_attributes,
+                ..Default::default()
+            },
+        )
+        .and_then(DataResponse::take_payload)
+        .map_err(UnsupportedOptionsOrDataError::Data)?;
         // Not all skeletons are currently supported.
         // TODO(#594) - This should default should be the locale default, which is
         // region-based (h12 for US, h23 for GB, etc). This is in CLDR, but we need
@@ -342,36 +364,6 @@ where
         Ok(DataPayload::from_owned(PatternPluralsV1(
             patterns.into_owned(),
         )))
-    }
-
-    fn skeleton_data_payload(
-        &self,
-    ) -> Result<DataPayload<DateSkeletonPatternsV1Marker>, DataError> {
-        use icu_locale_core::extensions::unicode::value;
-        use tinystr::tinystr;
-        #[allow(clippy::expect_used)] // experimental
-        let cal_val = self.cal_val.expect("should be present for components bag");
-
-        // Skeleton data for ethioaa is stored under ethiopic
-        let key_attributes = if cal_val == &value!("ethioaa") {
-            DataKeyAttributes::from_tinystr(tinystr!(8, "ethiopic"))
-        } else if cal_val == &value!("islamic")
-            || cal_val == &value!("islamicc")
-            || cal_val.as_tinystr_slice().first() == Some(&tinystr!(8, "islamic"))
-        {
-            // All islamic calendars store skeleton data under islamic, not their individual extension keys
-            DataKeyAttributes::from_tinystr(tinystr!(8, "islamic"))
-        } else {
-            cal_val.to_string().parse().unwrap()
-        };
-
-        self.data_provider
-            .load(DataRequest {
-                locale: &self.locale.into(),
-                key_attributes: &key_attributes,
-                ..Default::default()
-            })
-            .and_then(DataResponse::take_payload)
     }
 }
 

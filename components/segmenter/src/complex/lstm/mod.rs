@@ -349,7 +349,7 @@ mod tests {
     fn segment_file_by_lstm() {
         let lstm: DataPayload<LstmForWordLineAutoV1Marker> = crate::provider::Baked
             .load(DataRequest {
-                locale: &langid!("th").into(),
+                langid: &langid!("th"),
                 ..Default::default()
             })
             .unwrap()

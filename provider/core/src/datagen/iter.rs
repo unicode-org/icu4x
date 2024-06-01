@@ -8,33 +8,35 @@ use std::collections::HashSet;
 
 use crate::prelude::*;
 
-/// A [`DynamicDataProvider`] that can iterate over all supported [`DataLocale`] for a certain key.
+/// A [`DynamicDataProvider`] that can iterate over all supported [`LanguageIdentifier`] for a certain key.
 ///
 /// Implementing this trait means that a data provider knows all of the data it can successfully
 /// return from a load request.
 pub trait IterableDynamicDataProvider<M: DataMarker>: DynamicDataProvider<M> {
-    /// Given a [`DataKey`], returns a list of [`DataLocale`].
+    /// Given a [`DataKey`], returns a list of [`LanguageIdentifier`].
     fn supported_requests_for_key(
         &self,
         key: DataKey,
-    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError>;
+    ) -> Result<HashSet<(LanguageIdentifier, DataKeyAttributes)>, DataError>;
 }
 
-/// A [`DataProvider`] that can iterate over all supported [`DataLocale`] for a certain key.
+/// A [`DataProvider`] that can iterate over all supported [`LanguageIdentifier`] for a certain key.
 ///
 /// Implementing this trait means that a data provider knows all of the data it can successfully
 /// return from a load request.
 pub trait IterableDataProvider<M: KeyedDataMarker>: DataProvider<M> {
-    /// Returns a list of [`DataLocale`].
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError>;
-    /// Returns whether a [`DataLocale`] is in the supported locales list.
+    /// Returns a list of [`LanguageIdentifier`].
+    fn supported_requests(
+        &self,
+    ) -> Result<HashSet<(LanguageIdentifier, DataKeyAttributes)>, DataError>;
+    /// Returns whether a [`LanguageIdentifier`] is in the supported locales list.
     fn supports_request(
         &self,
-        locale: &DataLocale,
+        langid: &LanguageIdentifier,
         key_attributes: &DataKeyAttributes,
     ) -> Result<bool, DataError> {
         self.supported_requests()
-            .map(|v| v.contains(&(locale.clone(), key_attributes.clone())))
+            .map(|v| v.contains(&(langid.clone(), key_attributes.clone())))
     }
 }
 
@@ -46,7 +48,7 @@ where
     fn supported_requests_for_key(
         &self,
         key: DataKey,
-    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    ) -> Result<HashSet<(LanguageIdentifier, DataKeyAttributes)>, DataError> {
         (**self).supported_requests_for_key(key)
     }
 }

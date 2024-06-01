@@ -55,7 +55,7 @@ macro_rules! make_exemplar_chars_unicode_set_property {
         ) -> Result<UnicodeSetData, PropertiesError> {
             Ok(provider.load(
                 DataRequest {
-                    locale: &(&locale.id).into(),
+                    langid: &locale.id,
                     ..Default::default()
                 })
                 .and_then(DataResponse::take_payload)
@@ -71,7 +71,7 @@ macro_rules! make_exemplar_chars_unicode_set_property {
                 DataProvider::<$keyed_data_marker>::load(
                     &crate::provider::Baked,
                     DataRequest {
-                        locale: &(&locale.id).into(),
+                        langid: &locale.id,
                         ..Default::default()
                     })
                     .and_then(DataResponse::take_payload)?

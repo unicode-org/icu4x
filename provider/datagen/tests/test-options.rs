@@ -61,7 +61,7 @@ impl DataProvider<HelloWorldV1Marker> for TestingProvider {
             payload: Some(DataPayload::from_owned(HelloWorldV1 {
                 message: (*self
                     .0
-                    .get(&(req.locale.to_string().as_str(), req.key_attributes as &str))
+                    .get(&(req.langid.to_string().as_str(), req.key_attributes as &str))
                     .ok_or(DataErrorKind::MissingLocale.into_error())?)
                 .into(),
             })),
@@ -97,7 +97,9 @@ impl DataProvider<CollationFallbackSupplementV1Marker> for TestingProvider {
 }
 
 impl IterableDataProvider<HelloWorldV1Marker> for TestingProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    fn supported_requests(
+        &self,
+    ) -> Result<HashSet<(LanguageIdentifier, DataKeyAttributes)>, DataError> {
         Ok(self
             .0
             .keys()
@@ -107,19 +109,25 @@ impl IterableDataProvider<HelloWorldV1Marker> for TestingProvider {
 }
 
 impl IterableDataProvider<LocaleFallbackLikelySubtagsV1Marker> for TestingProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    fn supported_requests(
+        &self,
+    ) -> Result<HashSet<(LanguageIdentifier, DataKeyAttributes)>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
 
 impl IterableDataProvider<LocaleFallbackParentsV1Marker> for TestingProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    fn supported_requests(
+        &self,
+    ) -> Result<HashSet<(LanguageIdentifier, DataKeyAttributes)>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
 
 impl IterableDataProvider<CollationFallbackSupplementV1Marker> for TestingProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    fn supported_requests(
+        &self,
+    ) -> Result<HashSet<(LanguageIdentifier, DataKeyAttributes)>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }

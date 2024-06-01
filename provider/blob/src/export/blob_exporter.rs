@@ -85,7 +85,7 @@ impl DataExporter for BlobExporter<'_> {
     fn put_payload(
         &self,
         key: DataKey,
-        locale: &DataLocale,
+        langid: &LanguageIdentifier,
         key_attributes: &DataKeyAttributes,
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
@@ -110,7 +110,7 @@ impl DataExporter for BlobExporter<'_> {
             .or_default()
             .entry(
                 DataRequest {
-                    locale,
+                    langid,
                     key_attributes,
                     ..Default::default()
                 }

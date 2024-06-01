@@ -18,7 +18,7 @@
 //! # Directory Structure
 //!
 //! The ICU4X data directory has a file named `manifest.json` at the root, and a nested structure
-//! with a data key ([`DataKey`](icu_provider::DataKey)), and locale ([`DataLocale`](icu_provider::DataLocale))
+//! with a data key ([`DataKey`](icu_provider::DataKey)), and locale ([`LanguageIdentifier`](icu_provider::prelude::LanguageIdentifier))
 //! as the leaf data files. For example, Arabic JSON data for cardinal plural rules lives at `plurals/cardinal@1/ar.json`.
 //!
 //! The exact form of the directory structure may change over time. ICU4X uses metadata from

@@ -53,13 +53,17 @@ impl DataProvider<LocaleFallbackParentsV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProvider<LocaleFallbackLikelySubtagsV1Marker> for DatagenProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    fn supported_requests(
+        &self,
+    ) -> Result<HashSet<(LanguageIdentifier, DataKeyAttributes)>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
 
 impl IterableDataProvider<LocaleFallbackParentsV1Marker> for DatagenProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    fn supported_requests(
+        &self,
+    ) -> Result<HashSet<(LanguageIdentifier, DataKeyAttributes)>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
@@ -142,10 +146,7 @@ impl From<&cldr_serde::parent_locales::Resource> for LocaleFallbackParentsV1<'st
 
         for (source, target) in source_data.supplemental.parent_locales.parent_locale.iter() {
             assert!(!source.language.is_empty());
-            if source.script.is_some()
-                && source.region.is_none()
-                && target == &LanguageIdentifier::UND
-            {
+            if source.script.is_some() && source.region.is_none() && target.is_und() {
                 // We always fall back from language-script to und
                 continue;
             }

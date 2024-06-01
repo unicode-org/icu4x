@@ -11,13 +11,13 @@ use icu_provider::prelude::*;
 use postcard::ser_flavors::{AllocVec, Flavor};
 
 #[derive(Default)]
-pub struct TestingExporter(FrozenMap<(DataLocale, DataKeyAttributes), Vec<u8>>);
+pub struct TestingExporter(FrozenMap<(LanguageIdentifier, DataKeyAttributes), Vec<u8>>);
 
 impl DataExporter for &mut TestingExporter {
     fn put_payload(
         &self,
         key: DataKey,
-        locale: &DataLocale,
+        langid: &LanguageIdentifier,
         key_attributes: &DataKeyAttributes,
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
@@ -29,9 +29,9 @@ impl DataExporter for &mut TestingExporter {
             .output
             .finalize()
             .expect("Failed to finalize serializer output");
-        println!("Putting: {key}/{}/{locale}", key_attributes as &str);
+        println!("Putting: {key}/{}/{langid}", key_attributes as &str);
         self.0
-            .insert((locale.clone(), key_attributes.clone()), output);
+            .insert((langid.clone(), key_attributes.clone()), output);
         Ok(())
     }
 }
@@ -44,7 +44,7 @@ impl TestingExporter {
             .map(|((locale, key_attributes), buffer)| {
                 (
                     DataRequest {
-                        locale: &locale,
+                        langid: &locale,
                         key_attributes: &key_attributes,
                         ..Default::default()
                     }

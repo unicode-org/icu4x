@@ -322,10 +322,10 @@ impl ComplexPayloads {
 
 fn try_load<M: KeyedDataMarker, P: DataProvider<M> + ?Sized>(
     provider: &P,
-    locale: LanguageIdentifier,
+    langid: LanguageIdentifier,
 ) -> Result<Option<DataPayload<M>>, DataError> {
     match provider.load(DataRequest {
-        locale: &locale.into(),
+        langid: &langid,
         metadata: {
             let mut m = DataRequestMetadata::default();
             m.silent = true;

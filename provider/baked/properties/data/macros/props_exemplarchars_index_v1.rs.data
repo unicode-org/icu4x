@@ -760,9 +760,9 @@ macro_rules! __impl_props_exemplarchars_index_v1 {
                     payload
                 } else {
                     const FALLBACKER: icu::locale::fallback::LocaleFallbackerWithConfig<'static> = icu::locale::fallback::LocaleFallbacker::new().for_config(<icu::properties::provider::ExemplarCharactersIndexV1Marker as icu_provider::KeyedDataMarker>::KEY.fallback_config());
-                    let mut fallback_iterator = FALLBACKER.fallback_for(req.locale.clone());
+                    let mut fallback_iterator = FALLBACKER.fallback_for(req.langid.clone());
                     loop {
-                        if let Ok(payload) = KEYS.binary_search_by(|k| icu_provider::DataRequest { locale: fallback_iterator.get(), ..req }.legacy_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
+                        if let Ok(payload) = KEYS.binary_search_by(|k| icu_provider::DataRequest { langid: fallback_iterator.get(), ..req }.legacy_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
                             metadata.locale = Some(fallback_iterator.take());
                             break payload;
                         }
@@ -786,7 +786,7 @@ macro_rules! __impliterable_props_exemplarchars_index_v1 {
     ($ provider : ty) => {
         #[clippy::msrv = "1.70"]
         impl icu_provider::datagen::IterableDataProvider<icu::properties::provider::ExemplarCharactersIndexV1Marker> for $provider {
-            fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataKeyAttributes)>, icu_provider::DataError> {
+            fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::prelude::LanguageIdentifier, icu_provider::DataKeyAttributes)>, icu_provider::DataError> {
                 Ok(["af", "am", "ar", "as", "ast", "az", "be", "bg", "bn", "br", "brx", "bs", "bs-Cyrl", "ca", "ceb", "chr", "cs", "cv", "cy", "da", "de", "de-AT", "doi", "dsb", "el", "en", "eo", "es", "et", "eu", "fa", "ff-Adlm", "fi", "fil", "fo", "fr", "fy", "ga", "gd", "gl", "gu", "ha", "ha-NE", "he", "hi", "hr", "hsb", "hu", "hy", "ia", "id", "ig", "is", "it", "ja", "jv", "ka", "kea", "kgp", "kk", "km", "kn", "ko", "kok", "ku", "ky", "lb", "lij", "lo", "lt", "lv", "mai", "mi", "mk", "ml", "mn", "mr", "ms", "mt", "my", "nds-NL", "ne", "nl", "no", "or", "pa", "pcm", "pl", "prg", "ps", "pt", "qu", "rm", "ro", "ru", "sa", "sah", "sc", "sd", "si", "sk", "sl", "so", "sq", "sr", "sr-Latn", "su", "sv", "sw", "syr", "szl", "ta", "te", "tg", "th", "ti", "tk", "to", "tr", "tt", "ug", "uk", "und", "ur", "uz", "vi", "wo", "xh", "yo", "yrl", "yue", "yue-Hans", "za", "zh", "zh-Hant", "zu"].into_iter().filter_map(icu_provider::DataRequest::legacy_decode).collect())
             }
         }

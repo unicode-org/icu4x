@@ -22,7 +22,7 @@ impl DatagenProvider {
         &self,
         req: DataRequest,
     ) -> Result<UCharDictionaryBreakDataV1<'static>, DataError> {
-        let model = crate::dictionary_data_locale_to_model_name(req.locale)
+        let model = crate::dictionary_data_locale_to_model_name(req.langid)
             .ok_or(DataErrorKind::MissingLocale.into_error())?;
 
         let filename = format!("segmenter/dictionary/{model}.toml");
@@ -53,7 +53,7 @@ macro_rules! implement {
         impl IterableDataProviderCached<$marker> for DatagenProvider {
             fn supported_locales_cached(
                 &self,
-            ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+            ) -> Result<HashSet<(LanguageIdentifier, DataKeyAttributes)>, DataError> {
                 Ok($supported
                     .into_iter()
                     .filter_map(crate::dictionary_model_name_to_data_locale)

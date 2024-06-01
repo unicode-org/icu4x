@@ -85,17 +85,15 @@ impl DataProvider<CurrencyEssentialsV1Marker> for DatagenProvider {
         req: DataRequest,
     ) -> Result<DataResponse<CurrencyEssentialsV1Marker>, DataError> {
         self.check_req::<CurrencyEssentialsV1Marker>(req)?;
-        let langid = req.locale.get_langid();
-
         let currencies_resource: &cldr_serde::currencies::Resource = self
             .cldr()?
             .numbers()
-            .read_and_parse(&langid, "currencies.json")?;
+            .read_and_parse(req.langid, "currencies.json")?;
 
         let numbers_resource: &cldr_serde::numbers::Resource = self
             .cldr()?
             .numbers()
-            .read_and_parse(&langid, "numbers.json")?;
+            .read_and_parse(req.langid, "numbers.json")?;
 
         let result = extract_currency_essentials(self, currencies_resource, numbers_resource);
 
@@ -109,12 +107,12 @@ impl DataProvider<CurrencyEssentialsV1Marker> for DatagenProvider {
 impl IterableDataProviderCached<CurrencyEssentialsV1Marker> for DatagenProvider {
     fn supported_locales_cached(
         &self,
-    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    ) -> Result<HashSet<(LanguageIdentifier, DataKeyAttributes)>, DataError> {
         Ok(self
             .cldr()?
             .numbers()
             .list_langs()?
-            .map(|l| (DataLocale::from(l), Default::default()))
+            .map(|l| (l.clone(), Default::default()))
             .collect())
     }
 }
@@ -358,7 +356,7 @@ fn test_basic() {
 
     let en: DataPayload<CurrencyEssentialsV1Marker> = provider
         .load(DataRequest {
-            locale: &langid!("en").into(),
+            langid: &langid!("en"),
             ..Default::default()
         })
         .unwrap()
@@ -397,7 +395,7 @@ fn test_basic() {
 
     let ar_eg: DataPayload<CurrencyEssentialsV1Marker> = provider
         .load(DataRequest {
-            locale: &langid!("ar-EG").into(),
+            langid: &langid!("ar-EG"),
             ..Default::default()
         })
         .unwrap()

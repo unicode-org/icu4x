@@ -1191,7 +1191,7 @@ fn test_nb_nn_no() {
         DataProvider::<CollationDataV1Marker>::load(
             &icu_collator::provider::Baked,
             DataRequest {
-                locale: &(&locale.id).into(),
+                langid: &locale.id,
                 ..Default::default()
             }
         )
@@ -1211,14 +1211,14 @@ fn test_nb_nn_no() {
         DataProvider::<CollationDataV1Marker>::load(
             &icu_collator::provider::Baked,
             DataRequest {
-                locale: &(&locale.id).into(),
+                langid: &locale.id,
                 ..Default::default()
             }
         )
         .unwrap()
         .metadata
         .locale,
-        Some(langid!("no").into())
+        Some(langid!("no"))
     );
 
     // And "nn" should work, too
@@ -1231,14 +1231,14 @@ fn test_nb_nn_no() {
         DataProvider::<CollationDataV1Marker>::load(
             &icu_collator::provider::Baked,
             DataRequest {
-                locale: &(&locale.id).into(),
+                langid: &locale.id,
                 ..Default::default()
             }
         )
         .unwrap()
         .metadata
         .locale,
-        Some(langid!("no").into())
+        Some(langid!("no"))
     );
 }
 

@@ -18,12 +18,10 @@ impl DataProvider<LanguageDisplayNamesV1Marker> for DatagenProvider {
         req: DataRequest,
     ) -> Result<DataResponse<LanguageDisplayNamesV1Marker>, DataError> {
         self.check_req::<LanguageDisplayNamesV1Marker>(req)?;
-        let langid = req.locale.get_langid();
-
         let data: &cldr_serde::displaynames::language::Resource = self
             .cldr()?
             .displaynames()
-            .read_and_parse(&langid, "languages.json")?;
+            .read_and_parse(req.langid, "languages.json")?;
 
         Ok(DataResponse {
             metadata: Default::default(),
@@ -37,12 +35,10 @@ impl DataProvider<LocaleDisplayNamesV1Marker> for DatagenProvider {
         req: DataRequest,
     ) -> Result<DataResponse<LocaleDisplayNamesV1Marker>, DataError> {
         self.check_req::<LocaleDisplayNamesV1Marker>(req)?;
-        let langid = req.locale.get_langid();
-
         let data: &cldr_serde::displaynames::language::Resource = self
             .cldr()?
             .displaynames()
-            .read_and_parse(&langid, "languages.json")?;
+            .read_and_parse(req.langid, "languages.json")?;
 
         Ok(DataResponse {
             metadata: Default::default(),
@@ -54,7 +50,7 @@ impl DataProvider<LocaleDisplayNamesV1Marker> for DatagenProvider {
 impl IterableDataProviderCached<LanguageDisplayNamesV1Marker> for DatagenProvider {
     fn supported_locales_cached(
         &self,
-    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    ) -> Result<HashSet<(LanguageIdentifier, DataKeyAttributes)>, DataError> {
         Ok(self
             .cldr()?
             .displaynames()
@@ -67,7 +63,7 @@ impl IterableDataProviderCached<LanguageDisplayNamesV1Marker> for DatagenProvide
                     .file_exists(langid, "languages.json")
                     .unwrap_or_default()
             })
-            .map(|l| (DataLocale::from(l), Default::default()))
+            .map(|l| (l.clone(), Default::default()))
             .collect())
     }
 }
@@ -75,7 +71,7 @@ impl IterableDataProviderCached<LanguageDisplayNamesV1Marker> for DatagenProvide
 impl IterableDataProviderCached<LocaleDisplayNamesV1Marker> for DatagenProvider {
     fn supported_locales_cached(
         &self,
-    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    ) -> Result<HashSet<(LanguageIdentifier, DataKeyAttributes)>, DataError> {
         Ok(self
             .cldr()?
             .displaynames()
@@ -88,7 +84,7 @@ impl IterableDataProviderCached<LocaleDisplayNamesV1Marker> for DatagenProvider 
                     .file_exists(langid, "languages.json")
                     .unwrap_or_default()
             })
-            .map(|l| (DataLocale::from(l), Default::default()))
+            .map(|l| (l.clone(), Default::default()))
             .collect())
     }
 }
@@ -213,7 +209,7 @@ mod tests {
 
         let data: DataPayload<LanguageDisplayNamesV1Marker> = provider
             .load(DataRequest {
-                locale: &langid!("en-001").into(),
+                langid: &langid!("en-001"),
                 ..Default::default()
             })
             .unwrap()
@@ -235,7 +231,7 @@ mod tests {
 
         let data: DataPayload<LanguageDisplayNamesV1Marker> = provider
             .load(DataRequest {
-                locale: &langid!("en-001").into(),
+                langid: &langid!("en-001"),
                 ..Default::default()
             })
             .unwrap()
@@ -257,7 +253,7 @@ mod tests {
 
         let data: DataPayload<LanguageDisplayNamesV1Marker> = provider
             .load(DataRequest {
-                locale: &langid!("en-001").into(),
+                langid: &langid!("en-001"),
                 ..Default::default()
             })
             .unwrap()
@@ -279,7 +275,7 @@ mod tests {
 
         let data: DataPayload<LanguageDisplayNamesV1Marker> = provider
             .load(DataRequest {
-                locale: &langid!("en-001").into(),
+                langid: &langid!("en-001"),
                 ..Default::default()
             })
             .unwrap()
@@ -301,7 +297,7 @@ mod tests {
 
         let data: DataPayload<LocaleDisplayNamesV1Marker> = provider
             .load(DataRequest {
-                locale: &langid!("en-001").into(),
+                langid: &langid!("en-001"),
                 ..Default::default()
             })
             .unwrap()

@@ -15,12 +15,10 @@ use tinystr::TinyAsciiStr;
 impl DataProvider<DecimalSymbolsV1Marker> for DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<DecimalSymbolsV1Marker>, DataError> {
         self.check_req::<DecimalSymbolsV1Marker>(req)?;
-        let langid = req.locale.get_langid();
-
         let resource: &cldr_serde::numbers::Resource = self
             .cldr()?
             .numbers()
-            .read_and_parse(&langid, "numbers.json")?;
+            .read_and_parse(req.langid, "numbers.json")?;
 
         let numbers = &resource.main.value.numbers;
 
@@ -48,7 +46,7 @@ impl DataProvider<DecimalSymbolsV1Marker> for DatagenProvider {
 impl IterableDataProviderCached<DecimalSymbolsV1Marker> for DatagenProvider {
     fn supported_locales_cached(
         &self,
-    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    ) -> Result<HashSet<(LanguageIdentifier, DataKeyAttributes)>, DataError> {
         self.supported_locales_for_numbers()
     }
 }
@@ -102,7 +100,7 @@ fn test_basic() {
 
     let ar_decimal: DataPayload<DecimalSymbolsV1Marker> = provider
         .load(DataRequest {
-            locale: &langid!("ar-EG").into(),
+            langid: &langid!("ar-EG"),
             ..Default::default()
         })
         .unwrap()

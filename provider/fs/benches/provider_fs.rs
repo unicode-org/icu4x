@@ -18,7 +18,7 @@ fn overview_bench(c: &mut Criterion) {
             let _: DataPayload<HelloWorldV1Marker> = black_box(&provider)
                 .as_deserializing()
                 .load(DataRequest {
-                    locale: &langid!("ru").into(),
+                    langid: &langid!("ru"),
                     ..Default::default()
                 })
                 .and_then(DataResponse::take_payload)
@@ -44,7 +44,7 @@ fn json_bench(c: &mut Criterion) {
             let _: DataPayload<HelloWorldV1Marker> = black_box(&provider)
                 .as_deserializing()
                 .load(DataRequest {
-                    locale: &langid!("ru").into(),
+                    langid: &langid!("ru"),
                     ..Default::default()
                 })
                 .and_then(DataResponse::take_payload)
@@ -57,7 +57,7 @@ fn json_bench(c: &mut Criterion) {
             let _: DataPayload<HelloWorldV1Marker> = black_box(&provider as &dyn BufferProvider)
                 .as_deserializing()
                 .load(DataRequest {
-                    locale: &langid!("ru").into(),
+                    langid: &langid!("ru"),
                     ..Default::default()
                 })
                 .and_then(DataResponse::take_payload)
@@ -76,7 +76,7 @@ fn bincode_bench(c: &mut Criterion) {
             let _: DataPayload<HelloWorldV1Marker> = black_box(&provider)
                 .as_deserializing()
                 .load(DataRequest {
-                    locale: &langid!("ru").into(),
+                    langid: &langid!("ru"),
                     ..Default::default()
                 })
                 .and_then(DataResponse::take_payload)
@@ -89,7 +89,7 @@ fn bincode_bench(c: &mut Criterion) {
             let _: DataPayload<HelloWorldV1Marker> = black_box(&provider as &dyn BufferProvider)
                 .as_deserializing()
                 .load(DataRequest {
-                    locale: &langid!("ru").into(),
+                    langid: &langid!("ru"),
                     ..Default::default()
                 })
                 .expect("The data should be valid")
@@ -109,7 +109,7 @@ fn postcard_bench(c: &mut Criterion) {
             let _: DataPayload<HelloWorldV1Marker> = black_box(&provider)
                 .as_deserializing()
                 .load(DataRequest {
-                    locale: &langid!("ru").into(),
+                    langid: &langid!("ru"),
                     ..Default::default()
                 })
                 .expect("The data should be valid")
@@ -123,7 +123,7 @@ fn postcard_bench(c: &mut Criterion) {
             let _: DataPayload<HelloWorldV1Marker> = black_box(&provider as &dyn BufferProvider)
                 .as_deserializing()
                 .load(DataRequest {
-                    locale: &langid!("ru").into(),
+                    langid: &langid!("ru"),
                     ..Default::default()
                 })
                 .and_then(DataResponse::take_payload)

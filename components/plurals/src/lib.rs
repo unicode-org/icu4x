@@ -379,7 +379,7 @@ impl PluralRules {
         Ok(Self(
             provider
                 .load(DataRequest {
-                    locale: &(&locale.id).into(),
+                    langid: &locale.id,
                     ..Default::default()
                 })?
                 .take_payload()?
@@ -441,7 +441,7 @@ impl PluralRules {
         Ok(Self(
             provider
                 .load(DataRequest {
-                    locale: &(&locale.id).into(),
+                    langid: &locale.id,
                     ..Default::default()
                 })?
                 .take_payload()?
@@ -785,7 +785,7 @@ where
     ) -> Result<Self, PluralsError> {
         let ranges = provider
             .load(DataRequest {
-                locale: &(&locale.id).into(),
+                langid: &locale.id,
                 ..Default::default()
             })?
             .take_payload()?;

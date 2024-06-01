@@ -112,7 +112,7 @@ where
     fn supported_requests_for_key(
         &self,
         key: DataKey,
-    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    ) -> Result<HashSet<(LanguageIdentifier, DataKeyAttributes)>, DataError> {
         let result = self.0.supported_requests_for_key(key);
         match result {
             Ok(ok) => return Ok(ok),
@@ -241,7 +241,7 @@ where
     fn supported_requests_for_key(
         &self,
         key: DataKey,
-    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    ) -> Result<HashSet<(LanguageIdentifier, DataKeyAttributes)>, DataError> {
         let mut last_error = F::UNIT_ERROR.with_key(key);
         for provider in self.providers.iter() {
             let result = provider.supported_requests_for_key(key);

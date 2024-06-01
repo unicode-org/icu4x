@@ -540,9 +540,9 @@ macro_rules! __impl_displaynames_variants_v1 {
                     payload
                 } else {
                     const FALLBACKER: icu::locale::fallback::LocaleFallbackerWithConfig<'static> = icu::locale::fallback::LocaleFallbacker::new().for_config(<icu::experimental::displaynames::provider::VariantDisplayNamesV1Marker as icu_provider::KeyedDataMarker>::KEY.fallback_config());
-                    let mut fallback_iterator = FALLBACKER.fallback_for(req.locale.clone());
+                    let mut fallback_iterator = FALLBACKER.fallback_for(req.langid.clone());
                     loop {
-                        if let Ok(payload) = KEYS.binary_search_by(|k| icu_provider::DataRequest { locale: fallback_iterator.get(), ..req }.legacy_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
+                        if let Ok(payload) = KEYS.binary_search_by(|k| icu_provider::DataRequest { langid: fallback_iterator.get(), ..req }.legacy_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
                             metadata.locale = Some(fallback_iterator.take());
                             break payload;
                         }
@@ -566,7 +566,7 @@ macro_rules! __impliterable_displaynames_variants_v1 {
     ($ provider : ty) => {
         #[clippy::msrv = "1.70"]
         impl icu_provider::datagen::IterableDataProvider<icu::experimental::displaynames::provider::VariantDisplayNamesV1Marker> for $provider {
-            fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataKeyAttributes)>, icu_provider::DataError> {
+            fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::prelude::LanguageIdentifier, icu_provider::DataKeyAttributes)>, icu_provider::DataError> {
                 Ok(["ar", "ast", "bg", "br", "brx", "bs", "bs-Cyrl", "ca", "cs", "cy", "da", "de", "el", "en", "es", "et", "eu", "fa", "ff-Adlm", "fi", "fil", "fo", "fr", "fy", "ga", "gd", "gu", "he", "hi", "hr", "hu", "hy", "id", "it", "ja", "kgp", "kk", "kn", "ko", "ks", "ku", "lb", "lo", "lt", "lv", "mk", "ml", "mr", "ms", "mt", "my", "ne", "nl", "nn", "no", "or", "pl", "pt", "pt-PT", "rm", "ro", "ru", "sc", "sd", "sk", "sl", "so", "sr", "sr-Latn", "sv", "ta", "te", "th", "ti", "tr", "ug", "uk", "vec", "vi", "yrl", "yrl-CO", "yrl-VE", "yue", "yue-Hans", "zh", "zh-HK", "zh-Hant", "zh-MO", "zu"].into_iter().filter_map(icu_provider::DataRequest::legacy_decode).collect())
             }
         }

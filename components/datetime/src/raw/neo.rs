@@ -83,7 +83,7 @@ impl DatePatternSelectionData {
     ) -> Result<Self, DataError> {
         let payload = provider
             .load_bound(DataRequest {
-                locale: &(&locale.id).into(),
+                langid: &locale.id,
                 key_attributes: &DataKeyAttributes::from_tinystr(key_attrs::pattern_key_attr_for(
                     match length {
                         length::Date::Full => key_attrs::PatternLength::Full,
@@ -108,7 +108,7 @@ impl DatePatternSelectionData {
     ) -> Result<Self, DataError> {
         let payload = provider
             .load_bound(DataRequest {
-                locale: &(&locale.id).into(),
+                langid: &locale.id,
                 key_attributes: &DataKeyAttributes::from_tinystr(components.id_str()),
                 ..Default::default()
             })?
@@ -173,7 +173,7 @@ impl TimePatternSelectionData {
     {
         let payload = provider
             .load(DataRequest {
-                locale: &(&locale.id).into(),
+                langid: &locale.id,
                 key_attributes: &DataKeyAttributes::from_tinystr(key_attrs::pattern_key_attr_for(
                     match length {
                         length::Time::Full => key_attrs::PatternLength::Full,
@@ -198,7 +198,7 @@ impl TimePatternSelectionData {
     ) -> Result<Self, DataError> {
         let payload = provider
             .load_bound(DataRequest {
-                locale: &(&locale.id).into(),
+                langid: &locale.id,
                 key_attributes: &DataKeyAttributes::from_tinystr(components.id_str()),
                 ..Default::default()
             })?
@@ -268,7 +268,7 @@ impl DateTimeGluePatternSelectionData {
         let time = TimePatternSelectionData::try_new_with_length(provider, locale, time_length)?;
         let glue = provider
             .load(DataRequest {
-                locale: &(&locale.id).into(),
+                langid: &locale.id,
                 key_attributes: &DataKeyAttributes::from_tinystr(key_attrs::pattern_key_attr_for(
                     // According to UTS 35, use the date length here: use the glue
                     // pattern "whose type matches the type of the date pattern"
@@ -309,7 +309,7 @@ impl DateTimeGluePatternSelectionData {
         )?;
         let glue = glue_provider
             .load_bound(DataRequest {
-                locale: &(&locale.id).into(),
+                langid: &locale.id,
                 key_attributes: &DataKeyAttributes::from_tinystr(key_attrs::pattern_key_attr_for(
                     // According to UTS 35, use the date length here: use the glue
                     // pattern "whose type matches the type of the date pattern"

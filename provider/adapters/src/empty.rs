@@ -95,7 +95,7 @@ where
 {
     fn supported_requests(
         &self,
-    ) -> Result<std::collections::HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    ) -> Result<std::collections::HashSet<(LanguageIdentifier, DataKeyAttributes)>, DataError> {
         Ok(Default::default())
     }
 }
@@ -108,7 +108,7 @@ where
     fn supported_requests_for_key(
         &self,
         _: DataKey,
-    ) -> Result<std::collections::HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    ) -> Result<std::collections::HashSet<(LanguageIdentifier, DataKeyAttributes)>, DataError> {
         Ok(Default::default())
     }
 }

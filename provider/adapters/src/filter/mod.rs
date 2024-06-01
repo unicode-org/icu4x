@@ -145,13 +145,13 @@ where
     fn supported_requests_for_key(
         &self,
         key: DataKey,
-    ) -> Result<std::collections::HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    ) -> Result<std::collections::HashSet<(LanguageIdentifier, DataKeyAttributes)>, DataError> {
         self.inner.supported_requests_for_key(key).map(|set| {
             // Use filter_map instead of filter to avoid cloning the locale
             set.into_iter()
                 .filter(|(locale, key_attributes)| {
                     (self.predicate)(DataRequest {
-                        locale,
+                        langid: locale,
                         key_attributes,
                         ..Default::default()
                     })
@@ -170,13 +170,13 @@ where
 {
     fn supported_requests(
         &self,
-    ) -> Result<std::collections::HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    ) -> Result<std::collections::HashSet<(LanguageIdentifier, DataKeyAttributes)>, DataError> {
         self.inner.supported_requests().map(|vec| {
             // Use filter_map instead of filter to avoid cloning the locale
             vec.into_iter()
                 .filter(|(locale, key_attributes)| {
                     (self.predicate)(DataRequest {
-                        locale,
+                        langid: locale,
                         key_attributes,
                         ..Default::default()
                     })

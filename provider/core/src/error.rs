@@ -48,7 +48,7 @@ pub enum DataErrorKind {
     #[displaydoc("Invalid state")]
     InvalidState,
 
-    /// The syntax of the [`DataKey`] or [`DataLocale`] was invalid.
+    /// The syntax of the [`DataKey`] or [`LanguageIdentifier`] was invalid.
     #[displaydoc("Parse error for data key or data locale")]
     KeyLocaleSyntax,
 

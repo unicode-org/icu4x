@@ -189,7 +189,7 @@ impl DataProvider<LstmForWordLineAutoV1Marker> for DatagenProvider {
     ) -> Result<DataResponse<LstmForWordLineAutoV1Marker>, DataError> {
         self.check_req::<LstmForWordLineAutoV1Marker>(req)?;
 
-        let model = crate::lstm_data_locale_to_model_name(req.locale)
+        let model = crate::lstm_data_locale_to_model_name(req.langid)
             .ok_or(DataErrorKind::MissingLocale.with_req(LstmForWordLineAutoV1Marker::KEY, req))?;
 
         let lstm_data = self
@@ -207,7 +207,9 @@ impl DataProvider<LstmForWordLineAutoV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProvider<LstmForWordLineAutoV1Marker> for DatagenProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    fn supported_requests(
+        &self,
+    ) -> Result<HashSet<(LanguageIdentifier, DataKeyAttributes)>, DataError> {
         Ok([
             "Burmese_codepoints_exclusive_model4_heavy",
             "Khmer_codepoints_exclusive_model4_heavy",

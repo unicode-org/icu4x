@@ -20,12 +20,12 @@ mod algorithms;
 /// algorithm. See *[the design doc]* for a detailed description and [#2243](
 /// https://github.com/unicode-org/icu4x/issues/2243) to track alignment with *UTS #35*.
 ///
-/// If running fallback in a loop, use [`DataLocale::is_und()`] to break from the loop.
+/// If running fallback in a loop, use [`LanguageIdentifier::is_und()`] to break from the loop.
 ///
 /// # Examples
 ///
 /// ```
-/// use icu::locale::locale;
+/// use icu::locale::langid;
 /// use icu::locale::fallback::LocaleFallbacker;
 ///
 /// // Set up a LocaleFallbacker with data.
@@ -35,20 +35,20 @@ mod algorithms;
 /// // By default, uses language priority with no additional extension keywords.
 /// let mut fallback_iterator = fallbacker
 ///     .for_config(Default::default())
-///     .fallback_for(locale!("hi-Latn-IN").into());
+///     .fallback_for(langid!("hi-Latn-IN"));
 ///
 /// // Run the algorithm and check the results.
-/// assert_eq!(fallback_iterator.get(), &locale!("hi-Latn-IN").into());
+/// assert_eq!(fallback_iterator.get(), &langid!("hi-Latn-IN"));
 /// fallback_iterator.step();
-/// assert_eq!(fallback_iterator.get(), &locale!("hi-Latn").into());
+/// assert_eq!(fallback_iterator.get(), &langid!("hi-Latn"));
 /// fallback_iterator.step();
-/// assert_eq!(fallback_iterator.get(), &locale!("en-IN").into());
+/// assert_eq!(fallback_iterator.get(), &langid!("en-IN"));
 /// fallback_iterator.step();
-/// assert_eq!(fallback_iterator.get(), &locale!("en-001").into());
+/// assert_eq!(fallback_iterator.get(), &langid!("en-001"));
 /// fallback_iterator.step();
-/// assert_eq!(fallback_iterator.get(), &locale!("en").into());
+/// assert_eq!(fallback_iterator.get(), &langid!("en"));
 /// fallback_iterator.step();
-/// assert_eq!(fallback_iterator.get(), &locale!("und").into());
+/// assert_eq!(fallback_iterator.get(), &langid!("und"));
 /// ```
 ///
 /// [UTS #35: Locale Inheritance and Matching]: https://www.unicode.org/reports/tr35/#Locale_Inheritance
@@ -95,7 +95,7 @@ struct LocaleFallbackIteratorInner<'a> {
 /// not implement that trait. Instead, use `.step()` and `.get()`.
 #[derive(Debug)]
 pub struct LocaleFallbackIterator<'a, 'b> {
-    current: DataLocale,
+    current: LanguageIdentifier,
     inner: LocaleFallbackIteratorInner<'a>,
     phantom: core::marker::PhantomData<&'b ()>,
 }
@@ -229,15 +229,18 @@ impl LocaleFallbackerBorrowed<'static> {
 }
 
 impl<'a> LocaleFallbackerWithConfig<'a> {
-    /// Creates an iterator based on a [`DataLocale`].
+    /// Creates an iterator based on a [`LanguageIdentifier`].
     ///
-    /// If you have a [`Locale`](icu_locale_core::Locale), call `.into()` to get a [`DataLocale`].
+    /// If you have a [`Locale`](icu_locale_core::Locale), call `.into()` to get a [`LanguageIdentifier`].
     ///
     /// When first initialized, the locale is normalized according to the fallback algorithm.
-    pub fn fallback_for(&self, mut locale: DataLocale) -> LocaleFallbackIterator<'a, 'static> {
-        self.normalize(&mut locale);
+    pub fn fallback_for(
+        &self,
+        mut langid: LanguageIdentifier,
+    ) -> LocaleFallbackIterator<'a, 'static> {
+        self.normalize(&mut langid);
         LocaleFallbackIterator {
-            current: locale,
+            current: langid,
             inner: LocaleFallbackIteratorInner {
                 likely_subtags: self.likely_subtags,
                 parents: self.parents,
@@ -251,19 +254,19 @@ impl<'a> LocaleFallbackerWithConfig<'a> {
 }
 
 impl LocaleFallbackIterator<'_, '_> {
-    /// Borrows the current [`DataLocale`] under fallback.
-    pub fn get(&self) -> &DataLocale {
+    /// Borrows the current [`LanguageIdentifier`] under fallback.
+    pub fn get(&self) -> &LanguageIdentifier {
         &self.current
     }
 
-    /// Takes the current [`DataLocale`] under fallback.
-    pub fn take(self) -> DataLocale {
+    /// Takes the current [`LanguageIdentifier`] under fallback.
+    pub fn take(self) -> LanguageIdentifier {
         self.current
     }
 
     /// Performs one step of the locale fallback algorithm.
     ///
-    /// The fallback is completed once the inner [`DataLocale`] becomes `und`.
+    /// The fallback is completed once the inner [`LanguageIdentifier`] becomes `und`.
     pub fn step(&mut self) -> &mut Self {
         self.inner.step(&mut self.current);
         self

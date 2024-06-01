@@ -69,7 +69,7 @@ impl KeyedDataMarker for HelloWorldV1Marker {
 /// let german_hello_world: DataPayload<HelloWorldV1Marker> =
 ///     HelloWorldProvider
 ///         .load(DataRequest {
-///             locale: &langid!("de").into(),
+///             locale: &langid!("de"),
 ///             ..Default::default()
 ///         })
 ///         .expect("Loading should succeed")
@@ -147,7 +147,7 @@ impl DataProvider<HelloWorldV1Marker> for HelloWorldProvider {
         let data = Self::DATA
             .iter()
             .find(|(l, a, _)| {
-                req.locale.strict_cmp(l.as_bytes()).is_eq() && **a == **req.key_attributes
+                req.langid.strict_cmp(l.as_bytes()).is_eq() && **a == **req.key_attributes
             })
             .map(|(_, _, v)| v)
             .ok_or_else(|| DataErrorKind::MissingLocale.with_req(HelloWorldV1Marker::KEY, req))?;
@@ -224,7 +224,9 @@ impl BufferProvider for HelloWorldJsonProvider {
 
 #[cfg(feature = "datagen")]
 impl icu_provider::datagen::IterableDataProvider<HelloWorldV1Marker> for HelloWorldProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    fn supported_requests(
+        &self,
+    ) -> Result<HashSet<(LanguageIdentifier, DataKeyAttributes)>, DataError> {
         #[allow(clippy::unwrap_used)] // datagen
         Ok(Self::DATA
             .iter()
@@ -293,7 +295,7 @@ impl HelloWorldFormatter {
     {
         let data = provider
             .load(DataRequest {
-                locale: &(&locale.id).into(),
+                langid: &locale.id,
                 ..Default::default()
             })?
             .take_payload()?;
@@ -339,33 +341,33 @@ fn test_iter() {
     assert_eq!(
         HelloWorldProvider.supported_requests().unwrap(),
         HashSet::from_iter([
-            (langid!("bn").into(), Default::default()),
-            (langid!("cs").into(), Default::default()),
-            (langid!("de").into(), Default::default()),
-            (langid!("de-AT").into(), Default::default()),
-            (langid!("el").into(), Default::default()),
-            (langid!("en").into(), Default::default()),
-            (langid!("en-001").into(), Default::default()),
-            (langid!("en-002").into(), Default::default()),
-            (langid!("en-019").into(), Default::default()),
-            (langid!("en-142").into(), Default::default()),
-            (langid!("en-GB").into(), Default::default()),
-            (langid!("en-GB").into(), "bri'ish".parse().unwrap()),
-            (langid!("en").into(), "reverse".parse().unwrap()),
-            (langid!("eo").into(), Default::default()),
-            (langid!("fa").into(), Default::default()),
-            (langid!("fi").into(), Default::default()),
-            (langid!("is").into(), Default::default()),
-            (langid!("ja").into(), Default::default()),
-            (langid!("ja").into(), "reverse".parse().unwrap()),
-            (langid!("la").into(), Default::default()),
-            (langid!("pt").into(), Default::default()),
-            (langid!("ro").into(), Default::default()),
-            (langid!("ru").into(), Default::default()),
-            (langid!("sr").into(), Default::default()),
-            (langid!("sr-Latn").into(), Default::default()),
-            (langid!("vi").into(), Default::default()),
-            (langid!("zh").into(), Default::default()),
+            (langid!("bn"), Default::default()),
+            (langid!("cs"), Default::default()),
+            (langid!("de"), Default::default()),
+            (langid!("de-AT"), Default::default()),
+            (langid!("el"), Default::default()),
+            (langid!("en"), Default::default()),
+            (langid!("en-001"), Default::default()),
+            (langid!("en-002"), Default::default()),
+            (langid!("en-019"), Default::default()),
+            (langid!("en-142"), Default::default()),
+            (langid!("en-GB"), Default::default()),
+            (langid!("en-GB"), "bri'ish".parse().unwrap()),
+            (langid!("en"), "reverse".parse().unwrap()),
+            (langid!("eo"), Default::default()),
+            (langid!("fa"), Default::default()),
+            (langid!("fi"), Default::default()),
+            (langid!("is"), Default::default()),
+            (langid!("ja"), Default::default()),
+            (langid!("ja"), "reverse".parse().unwrap()),
+            (langid!("la"), Default::default()),
+            (langid!("pt"), Default::default()),
+            (langid!("ro"), Default::default()),
+            (langid!("ru"), Default::default()),
+            (langid!("sr"), Default::default()),
+            (langid!("sr-Latn"), Default::default()),
+            (langid!("vi"), Default::default()),
+            (langid!("zh"), Default::default()),
         ])
     );
 }

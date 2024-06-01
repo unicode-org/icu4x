@@ -202,8 +202,6 @@ macro_rules! impl_data_provider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
                 self.check_req::<$marker>(req)?;
 
-                let langid = req.locale.get_langid();
-
                 let calendar = if DateSkeletonPatternsV1Marker::KEY == $marker::KEY {
                     req.key_attributes
                         .single()
@@ -212,7 +210,7 @@ macro_rules! impl_data_provider {
                     tinystr!(8, $calendar)
                 };
 
-                let data = self.get_datetime_resources(&langid, Either::Left(&calendar))?;
+                let data = self.get_datetime_resources(&req.langid, Either::Left(&calendar))?;
 
                 #[allow(clippy::redundant_closure_call)]
                 Ok(DataResponse {
@@ -228,13 +226,13 @@ macro_rules! impl_data_provider {
         impl IterableDataProviderCached<$marker> for DatagenProvider {
             fn supported_locales_cached(
                 &self,
-            ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+            ) -> Result<HashSet<(LanguageIdentifier, DataKeyAttributes)>, DataError> {
                 let mut r = HashSet::new();
                 if DateSkeletonPatternsV1Marker::KEY == $marker::KEY {
                     for (&cal_value, cldr_cal) in supported_cals() {
                         r.extend(self.cldr()?.dates(cldr_cal).list_langs()?.map(|lid| {
                             (
-                                DataLocale::from(lid),
+                                LanguageIdentifier::from(lid),
                                 DataKeyAttributes::from_tinystr(cal_value),
                             )
                         }));
@@ -247,15 +245,15 @@ macro_rules! impl_data_provider {
                         self.cldr()?
                             .dates(cldr_cal)
                             .list_langs()?
-                            .map(|l| (DataLocale::from(l), Default::default())),
+                            .map(|l| (l.clone(), Default::default())),
                     );
                 }
 
                 // TODO(#3212): Remove
                 if $marker::KEY == TimeLengthsV1Marker::KEY {
                     r.retain(|(l, _)| {
-                        l.get_langid() != icu_locale_core::langid!("byn")
-                            && l.get_langid() != icu_locale_core::langid!("ssy")
+                        l != &icu_locale_core::langid!("byn")
+                            && l != &icu_locale_core::langid!("ssy")
                     });
                 }
 
@@ -404,7 +402,7 @@ mod test {
 
         let cs_dates: DataPayload<GregorianDateLengthsV1Marker> = provider
             .load(DataRequest {
-                locale: &langid!("cs").into(),
+                langid: &langid!("cs"),
                 ..Default::default()
             })
             .expect("Failed to load payload")
@@ -420,7 +418,7 @@ mod test {
 
         let cs_dates: DataPayload<GregorianDateLengthsV1Marker> = provider
             .load(DataRequest {
-                locale: &langid!("haw").into(),
+                langid: &langid!("haw"),
                 ..Default::default()
             })
             .expect("Failed to load payload")
@@ -442,7 +440,7 @@ mod test {
 
         let skeletons: DataPayload<DateSkeletonPatternsV1Marker> = provider
             .load(DataRequest {
-                locale: &"fil-u-ca-gregory".parse().unwrap(),
+                langid: &"fil-u-ca-gregory".parse().unwrap(),
                 ..Default::default()
             })
             .expect("Failed to load payload")
@@ -485,7 +483,7 @@ mod test {
 
         let cs_dates: DataPayload<GregorianDateSymbolsV1Marker> = provider
             .load(DataRequest {
-                locale: &langid!("cs").into(),
+                langid: &langid!("cs"),
                 ..Default::default()
             })
             .unwrap()
@@ -515,7 +513,7 @@ mod test {
 
         let cs_dates: DataPayload<GregorianDateSymbolsV1Marker> = provider
             .load(DataRequest {
-                locale: &langid!("cs").into(),
+                langid: &langid!("cs"),
                 ..Default::default()
             })
             .unwrap()

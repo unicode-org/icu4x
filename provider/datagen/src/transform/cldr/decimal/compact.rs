@@ -16,16 +16,17 @@ impl DataProvider<ShortCompactDecimalFormatDataV1Marker> for DatagenProvider {
         req: DataRequest,
     ) -> Result<DataResponse<ShortCompactDecimalFormatDataV1Marker>, DataError> {
         self.check_req::<ShortCompactDecimalFormatDataV1Marker>(req)?;
-        let langid = req.locale.get_langid();
-
         let resource: &cldr_serde::numbers::Resource = self
             .cldr()?
             .numbers()
-            .read_and_parse(&langid, "numbers.json")?;
+            .read_and_parse(req.langid, "numbers.json")?;
 
         let numbers = &resource.main.value.numbers;
 
-        let nsname = req.key_attributes.single().unwrap_or(numbers.default_numbering_system);
+        let nsname = req
+            .key_attributes
+            .single()
+            .unwrap_or(numbers.default_numbering_system);
 
         let result = CompactDecimalPatternDataV1::try_from(
             &numbers
@@ -58,16 +59,17 @@ impl DataProvider<LongCompactDecimalFormatDataV1Marker> for DatagenProvider {
         req: DataRequest,
     ) -> Result<DataResponse<LongCompactDecimalFormatDataV1Marker>, DataError> {
         self.check_req::<LongCompactDecimalFormatDataV1Marker>(req)?;
-        let langid = req.locale.get_langid();
-
         let resource: &cldr_serde::numbers::Resource = self
             .cldr()?
             .numbers()
-            .read_and_parse(&langid, "numbers.json")?;
+            .read_and_parse(req.langid, "numbers.json")?;
 
         let numbers = &resource.main.value.numbers;
 
-        let nsname = req.key_attributes.single().unwrap_or(numbers.default_numbering_system);
+        let nsname = req
+            .key_attributes
+            .single()
+            .unwrap_or(numbers.default_numbering_system);
 
         let result = CompactDecimalPatternDataV1::try_from(
             &numbers
@@ -97,7 +99,7 @@ impl DataProvider<LongCompactDecimalFormatDataV1Marker> for DatagenProvider {
 impl IterableDataProviderCached<ShortCompactDecimalFormatDataV1Marker> for DatagenProvider {
     fn supported_locales_cached(
         &self,
-    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    ) -> Result<HashSet<(LanguageIdentifier, DataKeyAttributes)>, DataError> {
         self.supported_locales_for_numbers()
     }
 }
@@ -105,7 +107,7 @@ impl IterableDataProviderCached<ShortCompactDecimalFormatDataV1Marker> for Datag
 impl IterableDataProviderCached<LongCompactDecimalFormatDataV1Marker> for DatagenProvider {
     fn supported_locales_cached(
         &self,
-    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    ) -> Result<HashSet<(LanguageIdentifier, DataKeyAttributes)>, DataError> {
         self.supported_locales_for_numbers()
     }
 }
@@ -126,7 +128,7 @@ mod tests {
 
         let fr_compact_long: DataPayload<LongCompactDecimalFormatDataV1Marker> = provider
             .load(DataRequest {
-                locale: &langid!("en").into(),
+                langid: &langid!("en"),
                 ..Default::default()
             })
             .unwrap()
@@ -192,7 +194,7 @@ mod tests {
 
         let ja_compact_short: DataPayload<ShortCompactDecimalFormatDataV1Marker> = provider
             .load(DataRequest {
-                locale: &langid!("ja").into(),
+                langid: &langid!("ja"),
                 ..Default::default()
             })
             .unwrap()

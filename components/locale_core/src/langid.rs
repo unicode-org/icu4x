@@ -418,6 +418,18 @@ impl LanguageIdentifier {
             sink.write_str(subtag)
         })
     }
+
+    /// TODO
+    pub fn is_und(&self) -> bool {
+        *self == Self::UND
+    }
+}
+
+impl Default for &LanguageIdentifier {
+    fn default() -> Self {
+        static UND: LanguageIdentifier = LanguageIdentifier::UND;
+        &UND
+    }
 }
 
 impl AsRef<LanguageIdentifier> for LanguageIdentifier {

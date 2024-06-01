@@ -33,7 +33,7 @@ fn overview_bench(c: &mut Criterion) {
     c.bench_function("data_locale/overview", |b| {
         b.iter(|| {
             for s in black_box(BCP47_STRINGS).iter() {
-                let loc = DataLocale::from_str(s).unwrap();
+                let loc = LanguageIdentifier::from_str(s).unwrap();
                 let loc = loc.clone();
                 let s = loc.write_to_string();
                 loc.strict_cmp(s.as_bytes());
@@ -50,12 +50,13 @@ fn data_locale_bench(c: &mut Criterion) {
     c.bench_function("data_locale/parse", |b| {
         b.iter(|| {
             for s in black_box(BCP47_STRINGS).iter() {
-                DataLocale::from_str(s).unwrap();
+                LanguageIdentifier::from_str(s).unwrap();
             }
         });
     });
 
-    let data_locales: Vec<DataLocale> = BCP47_STRINGS.iter().map(|s| s.parse().unwrap()).collect();
+    let data_locales: Vec<LanguageIdentifier> =
+        BCP47_STRINGS.iter().map(|s| s.parse().unwrap()).collect();
 
     c.bench_function("data_locale/write_to_string", |b| {
         b.iter(|| {

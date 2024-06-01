@@ -466,7 +466,7 @@ mod tests {
     fn test_adapter_months_numeric() {
         let symbols: DataPayload<GregorianDateSymbolsV1Marker> = crate::provider::Baked
             .load(DataRequest {
-                locale: &langid!("en").into(),
+                langid: &langid!("en"),
                 ..Default::default()
             })
             .unwrap()
@@ -474,7 +474,7 @@ mod tests {
             .unwrap();
         let neo_month_abbreviated: DataPayload<GregorianMonthNamesV1Marker> = symbols
             .load(DataRequest {
-                locale: &"en".parse().unwrap(),
+                langid: &"en".parse().unwrap(),
                 key_attributes: &"3".parse().unwrap(),
                 ..Default::default()
             })
@@ -492,7 +492,7 @@ mod tests {
     fn test_adapter_months_map() {
         let symbols: DataPayload<HebrewDateSymbolsV1Marker> = crate::provider::Baked
             .load(DataRequest {
-                locale: &langid!("en").into(),
+                langid: &langid!("en"),
                 ..Default::default()
             })
             .unwrap()
@@ -500,7 +500,7 @@ mod tests {
             .unwrap();
         let neo_month_abbreviated: DataPayload<HebrewMonthNamesV1Marker> = symbols
             .load(DataRequest {
-                locale: &"en".parse().unwrap(),
+                langid: &"en".parse().unwrap(),
                 key_attributes: &"3".parse().unwrap(),
                 ..Default::default()
             })
@@ -518,7 +518,7 @@ mod tests {
     fn test_adapter_weekdays_abbreviated() {
         let symbols: DataPayload<HebrewDateSymbolsV1Marker> = crate::provider::Baked
             .load(DataRequest {
-                locale: &langid!("en").into(),
+                langid: &langid!("en"),
                 ..Default::default()
             })
             .unwrap()
@@ -526,7 +526,7 @@ mod tests {
             .unwrap();
         let neo_weekdays_abbreviated: DataPayload<WeekdayNamesV1Marker> = symbols
             .load(DataRequest {
-                locale: &"en".parse().unwrap(),
+                langid: &"en".parse().unwrap(),
                 key_attributes: &"3".parse().unwrap(),
                 ..Default::default()
             })
@@ -544,7 +544,7 @@ mod tests {
     fn test_adapter_weekdays_short() {
         let symbols: DataPayload<HebrewDateSymbolsV1Marker> = crate::provider::Baked
             .load(DataRequest {
-                locale: &langid!("en").into(),
+                langid: &langid!("en"),
                 ..Default::default()
             })
             .unwrap()
@@ -552,7 +552,7 @@ mod tests {
             .unwrap();
         let neo_weekdays_short: DataPayload<WeekdayNamesV1Marker> = symbols
             .load(DataRequest {
-                locale: &"en".parse().unwrap(),
+                langid: &"en".parse().unwrap(),
                 key_attributes: &"6s".parse().unwrap(),
                 ..Default::default()
             })
@@ -570,7 +570,7 @@ mod tests {
     fn test_adapter_eras() {
         let symbols: DataPayload<GregorianDateSymbolsV1Marker> = crate::provider::Baked
             .load(DataRequest {
-                locale: &langid!("en").into(),
+                langid: &langid!("en"),
                 ..Default::default()
             })
             .unwrap()
@@ -578,7 +578,7 @@ mod tests {
             .unwrap();
         let neo_eras_wide: DataPayload<GregorianYearNamesV1Marker> = symbols
             .load(DataRequest {
-                locale: &"en".parse().unwrap(),
+                langid: &"en".parse().unwrap(),
                 key_attributes: &"4".parse().unwrap(),
                 ..Default::default()
             })
@@ -596,7 +596,7 @@ mod tests {
     fn test_adapter_dayperiods() {
         let symbols: DataPayload<TimeSymbolsV1Marker> = crate::provider::Baked
             .load(DataRequest {
-                locale: &langid!("en").into(),
+                langid: &langid!("en"),
                 ..Default::default()
             })
             .unwrap()
@@ -604,7 +604,7 @@ mod tests {
             .unwrap();
         let neo_dayperiods_abbreviated: DataPayload<DayPeriodNamesV1Marker> = symbols
             .load(DataRequest {
-                locale: &"en".parse().unwrap(),
+                langid: &"en".parse().unwrap(),
                 key_attributes: &"3s".parse().unwrap(),
                 ..Default::default()
             })

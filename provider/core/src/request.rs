@@ -9,14 +9,12 @@ use core::fmt;
 use core::fmt::Debug;
 use core::hash::Hash;
 use core::str::FromStr;
-use icu_locale_core::extensions::unicode as unicode_ext;
-use icu_locale_core::subtags::{Language, Region, Script, Variants};
+use icu_locale_core::extensions::unicode::Value;
 use icu_locale_core::LanguageIdentifier;
-use writeable::{LengthHint, Writeable};
+use writeable::Writeable;
 
 use alloc::string::String;
 use core::ops::Deref;
-use icu_locale_core::extensions::private::Subtag;
 use tinystr::TinyAsciiStr;
 
 #[cfg(doc)]
@@ -30,7 +28,7 @@ pub struct DataRequest<'a> {
     ///
     /// If locale fallback is enabled, the resulting data may be from a different locale
     /// than the one requested here.
-    pub locale: &'a DataLocale,
+    pub langid: &'a LanguageIdentifier,
     /// Key-specific request attributes
     pub key_attributes: &'a DataKeyAttributes,
     /// Metadata that may affect the behavior of the data provider.
@@ -39,7 +37,7 @@ pub struct DataRequest<'a> {
 
 impl fmt::Display for DataRequest<'_> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        fmt::Display::fmt(&self.locale, f)
+        fmt::Display::fmt(&self.langid, f)
     }
 }
 
@@ -56,7 +54,7 @@ pub struct DataRequestMetadata {
 #[doc(hidden)]
 impl DataRequest<'_> {
     pub fn legacy_cmp(&self, bytes: &[u8]) -> Ordering {
-        struct LegacyComparator<'a>(&'a DataLocale, &'a DataKeyAttributes);
+        struct LegacyComparator<'a>(&'a LanguageIdentifier, &'a DataKeyAttributes);
         impl writeable::Writeable for LegacyComparator<'_> {
             fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
                 self.0.write_to(sink)?;
@@ -67,11 +65,11 @@ impl DataRequest<'_> {
                 Ok(())
             }
         }
-        LegacyComparator(self.locale, self.key_attributes).writeable_cmp_bytes(bytes)
+        LegacyComparator(self.langid, self.key_attributes).writeable_cmp_bytes(bytes)
     }
 
     pub fn legacy_encode(&self) -> String {
-        self.locale.write_to_string().into_owned()
+        self.langid.write_to_string().into_owned()
             + if self.key_attributes.is_empty() {
                 ""
             } else {
@@ -80,433 +78,12 @@ impl DataRequest<'_> {
             + self.key_attributes
     }
 
-    pub fn legacy_decode(encoded: &str) -> Option<(DataLocale, DataKeyAttributes)> {
+    pub fn legacy_decode(encoded: &str) -> Option<(LanguageIdentifier, DataKeyAttributes)> {
         let mut iter = encoded.splitn(2, "-x-");
         #[allow(clippy::unwrap_used)] // at least one element
         let l = iter.next().unwrap().parse().ok()?;
         let a = iter.next().unwrap_or("").parse().ok()?;
         Some((l, a))
-    }
-}
-
-/// A locale type optimized for use in fallbacking and the ICU4X data pipeline.
-///
-/// [`DataLocale`] contains less functionality than [`Locale`] but more than
-/// [`LanguageIdentifier`] for better size and performance while still meeting
-/// the needs of the ICU4X data pipeline.
-///
-/// # Examples
-///
-/// Convert a [`Locale`] to a [`DataLocale`] and back:
-///
-/// ```
-/// use icu_locale_core::locale;
-/// use icu_provider::DataLocale;
-///
-/// let locale = locale!("en-u-ca-buddhist");
-/// let data_locale = DataLocale::from(locale);
-/// let locale = data_locale.into_locale();
-///
-/// assert_eq!(locale, locale!("en-u-ca-buddhist"));
-/// ```
-///
-/// You can alternatively create a [`DataLocale`] from a borrowed [`Locale`], which is more
-/// efficient than cloning the [`Locale`], but less efficient than converting an owned
-/// [`Locale`]:
-///
-/// ```
-/// use icu_locale_core::locale;
-/// use icu_provider::DataLocale;
-///
-/// let locale1 = locale!("en-u-ca-buddhist");
-/// let data_locale = DataLocale::from(&locale1);
-/// let locale2 = data_locale.into_locale();
-///
-/// assert_eq!(locale1, locale2);
-/// ```
-///
-/// If you are sure that you have no Unicode keywords, start with [`LanguageIdentifier`]:
-///
-/// ```
-/// use icu_locale_core::langid;
-/// use icu_provider::DataLocale;
-///
-/// let langid = langid!("es-CA-valencia");
-/// let data_locale = DataLocale::from(langid);
-/// let langid = data_locale.get_langid();
-///
-/// assert_eq!(langid, langid!("es-CA-valencia"));
-/// ```
-///
-/// [`DataLocale`] only supports `-u` keywords, to reflect the current state of CLDR data
-/// lookup and fallback. This may change in the future.
-///
-/// ```
-/// use icu_locale_core::{locale, Locale};
-/// use icu_provider::DataLocale;
-///
-/// let locale = "hi-t-en-h0-hybrid-u-attr-ca-buddhist"
-///     .parse::<Locale>()
-///     .unwrap();
-/// let data_locale = DataLocale::from(locale);
-///
-/// assert_eq!(data_locale.into_locale(), locale!("hi-u-ca-buddhist"));
-/// ```
-#[derive(PartialEq, Clone, Default, Eq, Hash)]
-pub struct DataLocale {
-    langid: LanguageIdentifier,
-    keywords: unicode_ext::Keywords,
-}
-
-impl<'a> Default for &'a DataLocale {
-    fn default() -> Self {
-        static DEFAULT: DataLocale = DataLocale {
-            langid: LanguageIdentifier::UND,
-            keywords: unicode_ext::Keywords::new(),
-        };
-        &DEFAULT
-    }
-}
-
-impl fmt::Debug for DataLocale {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "DataLocale{{{self}}}")
-    }
-}
-
-impl Writeable for DataLocale {
-    fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
-        self.langid.write_to(sink)?;
-        if !self.keywords.is_empty() {
-            sink.write_str("-u-")?;
-            self.keywords.write_to(sink)?;
-        }
-        Ok(())
-    }
-
-    fn writeable_length_hint(&self) -> LengthHint {
-        let mut length_hint = self.langid.writeable_length_hint();
-        if !self.keywords.is_empty() {
-            length_hint += self.keywords.writeable_length_hint() + 3;
-        }
-        length_hint
-    }
-
-    fn write_to_string(&self) -> alloc::borrow::Cow<str> {
-        if self.keywords.is_empty() {
-            return self.langid.write_to_string();
-        }
-        let mut string =
-            alloc::string::String::with_capacity(self.writeable_length_hint().capacity());
-        let _ = self.write_to(&mut string);
-        alloc::borrow::Cow::Owned(string)
-    }
-}
-
-writeable::impl_display_with_writeable!(DataLocale);
-
-impl From<LanguageIdentifier> for DataLocale {
-    fn from(langid: LanguageIdentifier) -> Self {
-        Self {
-            langid,
-            keywords: unicode_ext::Keywords::new(),
-        }
-    }
-}
-
-impl From<&LanguageIdentifier> for DataLocale {
-    fn from(langid: &LanguageIdentifier) -> Self {
-        Self {
-            langid: langid.clone(),
-            keywords: unicode_ext::Keywords::new(),
-        }
-    }
-}
-
-impl FromStr for DataLocale {
-    type Err = DataError;
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let locale = LanguageIdentifier::from_str(s).map_err(|e| {
-            DataErrorKind::KeyLocaleSyntax
-                .into_error()
-                .with_display_context(s)
-                .with_display_context(&e)
-        })?;
-        Ok(DataLocale::from(locale))
-    }
-}
-
-impl DataLocale {
-    /// Compare this [`DataLocale`] with BCP-47 bytes.
-    ///
-    /// The return value is equivalent to what would happen if you first converted this
-    /// [`DataLocale`] to a BCP-47 string and then performed a byte comparison.
-    ///
-    /// This function is case-sensitive and results in a *total order*, so it is appropriate for
-    /// binary search. The only argument producing [`Ordering::Equal`] is `self.to_string()`.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu_provider::DataLocale;
-    /// use std::cmp::Ordering;
-    ///
-    /// let bcp47_strings: &[&str] = &[
-    ///     "ca",
-    ///     "ca-ES",
-    ///     "ca-ES-u-ca-buddhist",
-    ///     "ca-ES-valencia",
-    ///     "cat",
-    ///     "pl-Latn-PL",
-    ///     "und",
-    ///     "und-fonipa",
-    ///     "und-u-ca-hebrew",
-    ///     "und-u-ca-japanese",
-    ///     "zh",
-    /// ];
-    ///
-    /// for ab in bcp47_strings.windows(2) {
-    ///     let a = ab[0];
-    ///     let b = ab[1];
-    ///     assert_eq!(a.cmp(b), Ordering::Less, "strings: {} < {}", a, b);
-    ///     let a_loc: DataLocale = a.parse().unwrap();
-    ///     assert_eq!(
-    ///         a_loc.strict_cmp(a.as_bytes()),
-    ///         Ordering::Equal,
-    ///         "strict_cmp: {} == {}",
-    ///         a_loc,
-    ///         a
-    ///     );
-    ///     assert_eq!(
-    ///         a_loc.strict_cmp(b.as_bytes()),
-    ///         Ordering::Less,
-    ///         "strict_cmp: {} < {}",
-    ///         a_loc,
-    ///         b
-    ///     );
-    ///     let b_loc: DataLocale = b.parse().unwrap();
-    ///     assert_eq!(
-    ///         b_loc.strict_cmp(b.as_bytes()),
-    ///         Ordering::Equal,
-    ///         "strict_cmp: {} == {}",
-    ///         b_loc,
-    ///         b
-    ///     );
-    ///     assert_eq!(
-    ///         b_loc.strict_cmp(a.as_bytes()),
-    ///         Ordering::Greater,
-    ///         "strict_cmp: {} > {}",
-    ///         b_loc,
-    ///         a
-    ///     );
-    /// }
-    /// ```
-    ///
-    /// Comparison against invalid strings:
-    ///
-    /// ```
-    /// use icu_provider::DataLocale;
-    ///
-    /// let invalid_strings: &[&str] = &[
-    ///     // Less than "ca-ES"
-    ///     "CA",
-    ///     "ar-x-gbp-FOO",
-    ///     // Greater than "ca-AR"
-    ///     "ca_ES",
-    ///     "ca-ES-x-gbp-FOO",
-    /// ];
-    ///
-    /// let data_locale = "ca-ES".parse::<DataLocale>().unwrap();
-    ///
-    /// for s in invalid_strings.iter() {
-    ///     let expected_ordering = "ca-AR".cmp(s);
-    ///     let actual_ordering = data_locale.strict_cmp(s.as_bytes());
-    ///     assert_eq!(expected_ordering, actual_ordering, "{}", s);
-    /// }
-    /// ```
-    pub fn strict_cmp(&self, other: &[u8]) -> Ordering {
-        self.writeable_cmp_bytes(other)
-    }
-}
-
-impl DataLocale {
-    /// Returns whether this [`DataLocale`] has all empty fields (no components).
-    ///
-    /// See also:
-    ///
-    /// - [`DataLocale::is_und()`]
-    /// - [`DataLocale::is_langid_und()`]
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu_provider::DataLocale;
-    ///
-    /// assert!("und".parse::<DataLocale>().unwrap().is_empty());
-    /// assert!(!"und-u-ca-buddhist"
-    ///     .parse::<DataLocale>()
-    ///     .unwrap()
-    ///     .is_empty());
-    /// assert!(!"ca-ES".parse::<DataLocale>().unwrap().is_empty());
-    /// ```
-    pub fn is_empty(&self) -> bool {
-        self == <&DataLocale>::default()
-    }
-
-    /// Returns an ordering suitable for use in [`BTreeSet`].
-    ///
-    /// The ordering may or may not be equivalent to string ordering, and it
-    /// may or may not be stable across ICU4X releases.
-    ///
-    /// [`BTreeSet`]: alloc::collections::BTreeSet
-    pub fn total_cmp(&self, other: &Self) -> Ordering {
-        self.langid
-            .total_cmp(&other.langid)
-            .then_with(|| self.keywords.cmp(&other.keywords))
-    }
-
-    /// Returns whether this [`DataLocale`] is `und` in the locale and extensions portion.
-    ///
-    /// This ignores auxiliary keys.
-    ///
-    /// See also:
-    ///
-    /// - [`DataLocale::is_empty()`]
-    /// - [`DataLocale::is_langid_und()`]
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu_provider::DataLocale;
-    ///
-    /// assert!("und".parse::<DataLocale>().unwrap().is_und());
-    /// assert!(!"und-u-ca-buddhist".parse::<DataLocale>().unwrap().is_und());
-    /// assert!(!"ca-ES".parse::<DataLocale>().unwrap().is_und());
-    /// ```
-    pub fn is_und(&self) -> bool {
-        self.langid == LanguageIdentifier::UND && self.keywords.is_empty()
-    }
-
-    /// Returns whether the [`LanguageIdentifier`] associated with this request is `und`.
-    ///
-    /// This ignores extension keywords and auxiliary keys.
-    ///
-    /// See also:
-    ///
-    /// - [`DataLocale::is_empty()`]
-    /// - [`DataLocale::is_und()`]
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu_provider::DataLocale;
-    ///
-    /// assert!("und".parse::<DataLocale>().unwrap().is_langid_und());
-    /// assert!("und-u-ca-buddhist"
-    ///     .parse::<DataLocale>()
-    ///     .unwrap()
-    ///     .is_langid_und());
-    /// assert!(!"ca-ES".parse::<DataLocale>().unwrap().is_langid_und());
-    /// ```
-    pub fn is_langid_und(&self) -> bool {
-        self.langid == LanguageIdentifier::UND
-    }
-
-    /// Gets the [`LanguageIdentifier`] for this [`DataLocale`].
-    ///
-    /// This may allocate memory if there are variant subtags. If you need only the language,
-    /// script, and/or region subtag, use the specific getters for those subtags:
-    ///
-    /// - [`DataLocale::language()`]
-    /// - [`DataLocale::script()`]
-    /// - [`DataLocale::region()`]
-    ///
-    /// If you have ownership over the `DataLocale`, use [`DataLocale::into_locale()`]
-    /// and then access the `id` field.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu_locale_core::langid;
-    /// use icu_provider::prelude::*;
-    ///
-    /// const FOO_BAR: DataKey = icu_provider::data_key!("foo/bar@1");
-    ///
-    /// let req_no_langid = DataRequest {
-    ///     locale: &Default::default(),
-    ///     ..Default::default()
-    /// };
-    ///
-    /// let req_with_langid = DataRequest {
-    ///     locale: &langid!("ar-EG").into(),
-    ///     ..Default::default()
-    /// };
-    ///
-    /// assert_eq!(req_no_langid.locale.get_langid(), langid!("und"));
-    /// assert_eq!(req_with_langid.locale.get_langid(), langid!("ar-EG"));
-    /// ```
-    pub fn get_langid(&self) -> LanguageIdentifier {
-        self.langid.clone()
-    }
-
-    /// Overrides the entire [`LanguageIdentifier`] portion of this [`DataLocale`].
-    #[inline]
-    pub fn set_langid(&mut self, lid: LanguageIdentifier) {
-        self.langid = lid;
-    }
-
-    /// Returns the [`Language`] for this [`DataLocale`].
-    #[inline]
-    pub fn language(&self) -> Language {
-        self.langid.language
-    }
-
-    /// Returns the [`Language`] for this [`DataLocale`].
-    #[inline]
-    pub fn set_language(&mut self, language: Language) {
-        self.langid.language = language;
-    }
-
-    /// Returns the [`Script`] for this [`DataLocale`].
-    #[inline]
-    pub fn script(&self) -> Option<Script> {
-        self.langid.script
-    }
-
-    /// Sets the [`Script`] for this [`DataLocale`].
-    #[inline]
-    pub fn set_script(&mut self, script: Option<Script>) {
-        self.langid.script = script;
-    }
-
-    /// Returns the [`Region`] for this [`DataLocale`].
-    #[inline]
-    pub fn region(&self) -> Option<Region> {
-        self.langid.region
-    }
-
-    /// Sets the [`Region`] for this [`DataLocale`].
-    #[inline]
-    pub fn set_region(&mut self, region: Option<Region>) {
-        self.langid.region = region;
-    }
-
-    /// Returns whether there are any [`Variant`] subtags in this [`DataLocale`].
-    #[inline]
-    pub fn has_variants(&self) -> bool {
-        !self.langid.variants.is_empty()
-    }
-
-    /// Sets all [`Variants`] on this [`DataLocale`], overwriting any that were there previously.
-    #[inline]
-    pub fn set_variants(&mut self, variants: Variants) {
-        self.langid.variants = variants;
-    }
-
-    /// Removes all [`Variant`] subtags in this [`DataLocale`].
-    #[inline]
-    pub fn clear_variants(&mut self) -> Variants {
-        self.langid.variants.clear()
     }
 }
 
@@ -630,7 +207,9 @@ impl DataKeyAttributes {
     ///
     /// assert!(DataKeyAttributes::try_from_iter([]).is_err());
     /// ```
-    pub fn try_from_iter(iter: impl IntoIterator<Item = Subtag>) -> Result<Self, DataError> {
+    pub fn try_from_iter(
+        iter: impl IntoIterator<Item = TinyAsciiStr<8>>,
+    ) -> Result<Self, DataError> {
         // TODO: Avoid the allocation when possible
         let mut builder = String::new();
         for item in iter {
@@ -674,7 +253,20 @@ impl DataKeyAttributes {
     }
 
     /// TODO
+    pub fn from_unicode_value(value: &Value) -> Self {
+        if let Some(&tiny) = value.as_single_subtag() {
+            Self::from_tinystr(tiny)
+        } else {
+            #[allow(clippy::unwrap_used)] // valid subtags
+            Self::try_from_iter(value.as_tinystr_slice().iter().copied()).unwrap()
+        }
+    }
+
+    /// TODO
     pub fn single(&self) -> Option<TinyAsciiStr<8>> {
+        if self.is_empty() {
+            return None;
+        }
         let mut iter = self.split('-').filter_map(|x| match x.parse() {
             Ok(x) => Some(x),
             Err(_) => {
@@ -711,7 +303,7 @@ fn test_data_locale_to_string() {
             expected: "en-ZA-u-cu-gbp",
         },
     ] {
-        let locale = cas.locale.parse::<DataLocale>().unwrap();
+        let locale = cas.locale.parse::<LanguageIdentifier>().unwrap();
         writeable::assert_writeable_eq!(locale, cas.expected);
     }
 }
@@ -746,16 +338,16 @@ fn test_data_locale_from_string() {
             success: true,
         },
     ] {
-        let data_locale = match (DataLocale::from_str(cas.input), cas.success) {
+        let data_locale = match (LanguageIdentifier::from_str(cas.input), cas.success) {
             (Ok(l), true) => l,
             (Err(_), false) => {
                 continue;
             }
             (Ok(_), false) => {
-                panic!("DataLocale parsed but it was supposed to fail: {cas:?}");
+                panic!("LanguageIdentifier parsed but it was supposed to fail: {cas:?}");
             }
             (Err(_), true) => {
-                panic!("DataLocale was supposed to parse but it failed: {cas:?}");
+                panic!("LanguageIdentifier was supposed to parse but it failed: {cas:?}");
             }
         };
         writeable::assert_writeable_eq!(data_locale, cas.input);

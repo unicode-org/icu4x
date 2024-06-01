@@ -24,12 +24,10 @@ macro_rules! exemplar_chars_impls {
         impl DataProvider<$data_marker_name> for DatagenProvider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$data_marker_name>, DataError> {
                 self.check_req::<$data_marker_name>(req)?;
-                let langid = req.locale.get_langid();
-
                 let data: &cldr_serde::exemplar_chars::Resource = self
                     .cldr()?
                     .misc()
-                    .read_and_parse(&langid, "characters.json")?;
+                    .read_and_parse(req.langid, "characters.json")?;
 
                 Ok(DataResponse {
                     metadata: Default::default(),
@@ -50,12 +48,12 @@ macro_rules! exemplar_chars_impls {
         impl IterableDataProviderCached<$data_marker_name> for DatagenProvider {
             fn supported_locales_cached(
                 &self,
-            ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+            ) -> Result<HashSet<(LanguageIdentifier, DataKeyAttributes)>, DataError> {
                 Ok(self
                     .cldr()?
                     .misc()
                     .list_langs()?
-                    .map(|l| (DataLocale::from(l), Default::default()))
+                    .map(|l| (l.clone(), Default::default()))
                     .collect())
             }
         }
@@ -513,7 +511,7 @@ mod tests {
 
         let data: DataPayload<ExemplarCharactersMainV1Marker> = provider
             .load(DataRequest {
-                locale: &langid!("en-001").into(),
+                langid: &langid!("en-001"),
                 ..Default::default()
             })
             .unwrap()

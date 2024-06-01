@@ -131,7 +131,9 @@ impl DataProvider<TransliteratorRulesV1Marker> for DatagenProvider {
 
 impl IterableDataProvider<TransliteratorRulesV1Marker> for DatagenProvider {
     // Don't do caching for this one. It uses its own mutex
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    fn supported_requests(
+        &self,
+    ) -> Result<HashSet<(LanguageIdentifier, DataKeyAttributes)>, DataError> {
         self.cldr()?
             .transforms()?
             .lock()

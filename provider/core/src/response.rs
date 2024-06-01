@@ -5,12 +5,12 @@
 use crate::buf::BufferMarker;
 use crate::error::{DataError, DataErrorKind};
 use crate::marker::DataMarker;
-use crate::request::DataLocale;
 use alloc::boxed::Box;
 use core::convert::TryFrom;
 use core::fmt::Debug;
 use core::marker::PhantomData;
 use core::ops::Deref;
+use icu_locale_core::LanguageIdentifier;
 use yoke::cartable_ptr::CartableOptionPointer;
 use yoke::trait_hack::YokeTraitHack;
 use yoke::*;
@@ -25,7 +25,7 @@ use alloc::sync::Arc as SelectedRc;
 #[non_exhaustive]
 pub struct DataResponseMetadata {
     /// The resolved locale of the returned data, if locale fallbacking was performed.
-    pub locale: Option<DataLocale>,
+    pub locale: Option<LanguageIdentifier>,
     /// The format of the buffer for buffer-backed data, if known (for example, JSON).
     pub buffer_format: Option<crate::buf::BufferFormat>,
 }

@@ -47,7 +47,7 @@ macro_rules! __impliterable_datetime_patterns_coptic_skeleton_v1 {
     ($ provider : ty) => {
         #[clippy::msrv = "1.70"]
         impl icu_provider::datagen::IterableDataProvider<icu::datetime::provider::neo::CopticDateNeoSkeletonPatternsV1Marker> for $provider {
-            fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataKeyAttributes)>, icu_provider::DataError> {
+            fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::prelude::LanguageIdentifier, icu_provider::DataKeyAttributes)>, icu_provider::DataError> {
                 Ok(["und-x-a1", "und-x-a1e", "und-x-d", "und-x-de", "und-x-e", "und-x-gy", "und-x-gym0", "und-x-gym0d", "und-x-gym0de", "und-x-m0", "und-x-m0d", "und-x-m0de", "und-x-y", "und-x-y0w", "und-x-ym0", "und-x-ym0d", "und-x-ym0de"].into_iter().filter_map(icu_provider::DataRequest::legacy_decode).collect())
             }
         }

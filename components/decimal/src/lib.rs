@@ -98,6 +98,7 @@ pub mod provider;
 
 pub use error::DecimalError;
 pub use format::FormattedFixedDecimal;
+use icu_locale_core::extensions::unicode::key;
 
 #[doc(no_inline)]
 pub use DecimalError as Error;
@@ -144,7 +145,14 @@ impl FixedDecimalFormatter {
     ) -> Result<Self, DecimalError> {
         let symbols = provider
             .load(DataRequest {
-                locale: &(&locale.id).into(),
+                langid: &locale.id,
+                key_attributes: &locale
+                    .extensions
+                    .unicode
+                    .keywords
+                    .get(&key!("nu"))
+                    .map(DataKeyAttributes::from_unicode_value)
+                    .unwrap_or_default(),
                 ..Default::default()
             })?
             .take_payload()?;

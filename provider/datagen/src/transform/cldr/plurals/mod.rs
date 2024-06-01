@@ -57,7 +57,7 @@ macro_rules! implement {
                     payload: Some(DataPayload::from_owned(PluralRulesV1::from(
                         self.get_rules_for(<$marker>::KEY)?
                             .0
-                            .get(&req.locale.get_langid())
+                            .get(&req.langid)
                             .ok_or(DataErrorKind::MissingLocale.into_error())?,
                     ))),
                 })
@@ -67,12 +67,12 @@ macro_rules! implement {
         impl IterableDataProviderCached<$marker> for DatagenProvider {
             fn supported_locales_cached(
                 &self,
-            ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+            ) -> Result<HashSet<(LanguageIdentifier, DataKeyAttributes)>, DataError> {
                 Ok(self
                     .get_rules_for(<$marker>::KEY)?
                     .0
                     .keys()
-                    .map(|l| (DataLocale::from(l), Default::default()))
+                    .map(|l| (l.clone(), Default::default()))
                     .collect())
             }
         }
@@ -102,7 +102,7 @@ impl From<&cldr_serde::plurals::LocalePluralRules> for PluralRulesV1<'static> {
 impl DataProvider<PluralRangesV1Marker> for DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<PluralRangesV1Marker>, DataError> {
         self.check_req::<PluralRangesV1Marker>(req)?;
-        if req.locale.is_und() {
+        if req.langid.is_und() {
             Ok(DataResponse {
                 metadata: Default::default(),
                 payload: Some(DataPayload::from_owned(PluralRangesV1 {
@@ -115,7 +115,7 @@ impl DataProvider<PluralRangesV1Marker> for DatagenProvider {
                 payload: Some(DataPayload::from_owned(PluralRangesV1::from(
                     self.get_plural_ranges()?
                         .0
-                        .get(&req.locale.get_langid())
+                        .get(req.langid)
                         .ok_or(DataErrorKind::MissingLocale.into_error())?,
                 ))),
             })
@@ -126,12 +126,12 @@ impl DataProvider<PluralRangesV1Marker> for DatagenProvider {
 impl IterableDataProviderCached<PluralRangesV1Marker> for DatagenProvider {
     fn supported_locales_cached(
         &self,
-    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    ) -> Result<HashSet<(LanguageIdentifier, DataKeyAttributes)>, DataError> {
         Ok(self
             .get_plural_ranges()?
             .0
             .keys()
-            .map(|l| (DataLocale::from(l), Default::default()))
+            .map(|l| (l.clone(), Default::default()))
             .chain([Default::default()]) // `und` is not included in the locales of plural ranges.
             .collect())
     }
@@ -181,7 +181,7 @@ fn test_basic() {
     // Spot-check locale 'cs' since it has some interesting entries
     let cs_rules: DataPayload<CardinalV1Marker> = provider
         .load(DataRequest {
-            locale: &langid!("cs").into(),
+            langid: &langid!("cs"),
             ..Default::default()
         })
         .unwrap()
@@ -213,7 +213,7 @@ fn test_ranges() {
     // locale 'sl' seems to have a lot of interesting cases.
     let plural_ranges: DataPayload<PluralRangesV1Marker> = provider
         .load(DataRequest {
-            locale: &langid!("sl").into(),
+            langid: &langid!("sl"),
             ..Default::default()
         })
         .unwrap()

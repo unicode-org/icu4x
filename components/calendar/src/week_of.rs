@@ -65,7 +65,7 @@ impl WeekCalculator {
             DataProvider::<WeekDataV1Marker>::load(
                 &provider.as_downcasting(),
                 DataRequest {
-                    locale: &(&locale.id).into(),
+                    langid: &locale.id,
                     ..Default::default()
                 },
             )
@@ -85,7 +85,7 @@ impl WeekCalculator {
             DataProvider::<WeekDataV1Marker>::load(
                 &provider.as_deserializing(),
                 DataRequest {
-                    locale: &(&locale.id).into(),
+                    langid: &locale.id,
                     ..Default::default()
                 },
             )
@@ -102,7 +102,7 @@ impl WeekCalculator {
     {
         provider
             .load(DataRequest {
-                locale: &(&locale.id).into(),
+                langid: &locale.id,
                 ..Default::default()
             })
             .and_then(DataResponse::take_payload)

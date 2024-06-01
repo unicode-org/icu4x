@@ -21,7 +21,7 @@ fn parser(c: &mut Criterion) {
         let data_payload: DataPayload<icu_plurals::provider::CardinalV1Marker> =
             icu_plurals::provider::Baked
                 .load(DataRequest {
-                    locale: &(&locale.id).into(),
+                    langid: &locale.id,
                     ..Default::default()
                 })
                 .unwrap()
