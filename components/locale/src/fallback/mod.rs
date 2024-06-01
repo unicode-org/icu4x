@@ -231,8 +231,6 @@ impl LocaleFallbackerBorrowed<'static> {
 impl<'a> LocaleFallbackerWithConfig<'a> {
     /// Creates an iterator based on a [`LanguageIdentifier`].
     ///
-    /// If you have a [`Locale`](icu_locale_core::Locale), call `.into()` to get a [`LanguageIdentifier`].
-    ///
     /// When first initialized, the locale is normalized according to the fallback algorithm.
     pub fn fallback_for(
         &self,
