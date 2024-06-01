@@ -17,7 +17,7 @@ void main() {
             fallbackSupplement: LocaleFallbackSupplement.none))
         .fallbackForLocale(Locale.fromString('de-CH'));
     expect(iterator.moveNext(), true);
-    expect(iterator.current, Locale.fromString('und-CH'));
+    expect(iterator.current, Locale.fromString('de-CH'));
     expect(iterator.moveNext(), true);
     expect(iterator.current, Locale.fromString('und-CH'));
     expect(iterator.moveNext(), false);
