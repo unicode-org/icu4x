@@ -42,12 +42,10 @@ export class ICU4XLocaleFallbacker {
 
   for_config(arg_config) {
     const field_priority_arg_config = arg_config["priority"];
-    const field_extension_key_arg_config = arg_config["extension_key"];
-    const buf_field_extension_key_arg_config = diplomatRuntime.DiplomatBuf.str8(wasm, field_extension_key_arg_config);
     const field_fallback_supplement_arg_config = arg_config["fallback_supplement"];
-    const diplomat_out = (() => {
+    return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XLocaleFallbacker_for_config(diplomat_receive_buffer, this.underlying, ICU4XLocaleFallbackPriority_js_to_rust[field_priority_arg_config], buf_field_extension_key_arg_config.ptr, buf_field_extension_key_arg_config.size, ICU4XLocaleFallbackSupplement_js_to_rust[field_fallback_supplement_arg_config]);
+      wasm.ICU4XLocaleFallbacker_for_config(diplomat_receive_buffer, this.underlying, ICU4XLocaleFallbackPriority_js_to_rust[field_priority_arg_config], ICU4XLocaleFallbackSupplement_js_to_rust[field_fallback_supplement_arg_config]);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XLocaleFallbackerWithConfig(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, [this]);
@@ -59,7 +57,5 @@ export class ICU4XLocaleFallbacker {
         throw new diplomatRuntime.FFIError(throw_value);
       }
     })();
-    buf_field_extension_key_arg_config.free();
-    return diplomat_out;
   }
 }

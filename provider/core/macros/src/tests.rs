@@ -56,7 +56,7 @@ fn test_keyed_data_marker() {
             pub struct FooV1;
         ),
         quote!(
-            #[doc = "Marker type for [`FooV1`]: \"demo/bar@1\"\n\n- Fallback priority: language (default)\n- Extension keyword: none (default)"]
+            #[doc = "Marker type for [`FooV1`]: \"demo/bar@1\"\n\n- Fallback priority: language (default)"]
             pub struct BarV1Marker;
             impl icu_provider::DataMarker for BarV1Marker {
                 type Yokeable = FooV1;
@@ -66,7 +66,6 @@ fn test_keyed_data_marker() {
                     "demo/bar@1",
                     icu_provider::DataKeyMetadata::construct_internal(
                         icu_provider::_internal::LocaleFallbackPriority::const_default(),
-                        None,
                         None,
                         false,
                     ));
@@ -95,7 +94,7 @@ fn test_multi_named_keyed_data_marker() {
             impl icu_provider::DataMarker for FooV1Marker {
                 type Yokeable = FooV1<'static>;
             }
-            #[doc = "Marker type for [`FooV1`]: \"demo/bar@1\"\n\n- Fallback priority: language (default)\n- Extension keyword: none (default)"]
+            #[doc = "Marker type for [`FooV1`]: \"demo/bar@1\"\n\n- Fallback priority: language (default)"]
             pub struct BarV1Marker;
             impl icu_provider::DataMarker for BarV1Marker {
                 type Yokeable = FooV1<'static>;
@@ -106,11 +105,10 @@ fn test_multi_named_keyed_data_marker() {
                     icu_provider::DataKeyMetadata::construct_internal(
                         icu_provider::_internal::LocaleFallbackPriority::const_default(),
                         None,
-                        None,
                         false,
                     ));
             }
-            #[doc = "Marker type for [`FooV1`]: \"demo/baz@1\"\n\n- Fallback priority: language (default)\n- Extension keyword: none (default)"]
+            #[doc = "Marker type for [`FooV1`]: \"demo/baz@1\"\n\n- Fallback priority: language (default)"]
             pub struct BazV1Marker;
             impl icu_provider::DataMarker for BazV1Marker {
                 type Yokeable = FooV1<'static>;
@@ -120,7 +118,6 @@ fn test_multi_named_keyed_data_marker() {
                     "demo/baz@1",
                     icu_provider::DataKeyMetadata::construct_internal(
                         icu_provider::_internal::LocaleFallbackPriority::const_default(),
-                        None,
                         None,
                         false,
                     ));
@@ -140,7 +137,7 @@ fn test_databake() {
             pub struct FooV1;
         ),
         quote!(
-            #[doc = "Marker type for [`FooV1`]: \"demo/bar@1\"\n\n- Fallback priority: language (default)\n- Extension keyword: none (default)"]
+            #[doc = "Marker type for [`FooV1`]: \"demo/bar@1\"\n\n- Fallback priority: language (default)"]
             #[derive(databake::Bake)]
             #[databake(path = test::path)]
             pub struct BarV1Marker;
@@ -152,7 +149,6 @@ fn test_databake() {
                     "demo/bar@1",
                     icu_provider::DataKeyMetadata::construct_internal(
                         icu_provider::_internal::LocaleFallbackPriority::const_default(),
-                        None,
                         None,
                         false,
                     ));
@@ -166,7 +162,7 @@ fn test_databake() {
 
 #[test]
 fn test_attributes() {
-    // #[data_struct(FooV1Marker, marker(BarV1Marker, "demo/bar@1", fallback_by = "region", extension_kw = "ca"))]
+    // #[data_struct(FooV1Marker, marker(BarV1Marker, "demo/bar@1", fallback_by = "region"))]
     check(
         quote![
             FooV1Marker,
@@ -174,7 +170,6 @@ fn test_attributes() {
                 BarV1Marker,
                 "demo/bar@1",
                 fallback_by = "region",
-                extension_key = "ca",
                 fallback_supplement = "collation",
                 singleton,
             ),
@@ -188,7 +183,7 @@ fn test_attributes() {
             impl icu_provider::DataMarker for FooV1Marker {
                 type Yokeable = FooV1<'static>;
             }
-            #[doc = "Marker type for [`FooV1`]: \"demo/bar@1\"\n\n- Fallback priority: region\n- Extension keyword: ca"]
+            #[doc = "Marker type for [`FooV1`]: \"demo/bar@1\"\n\n- Fallback priority: region"]
             pub struct BarV1Marker;
             impl icu_provider::DataMarker for BarV1Marker {
                 type Yokeable = FooV1<'static>;
@@ -198,7 +193,6 @@ fn test_attributes() {
                     "demo/bar@1",
                     icu_provider::DataKeyMetadata::construct_internal(
                         icu_provider::_internal::LocaleFallbackPriority::Region,
-                        Some(icu_provider::_internal::locale_core::extensions::unicode::key!("ca")),
                         Some(icu_provider::_internal::LocaleFallbackSupplement::Collation),
                         true,
                     ));

@@ -14,7 +14,6 @@ namespace capi {
 
 typedef struct ICU4XLocaleFallbackConfig {
     ICU4XLocaleFallbackPriority priority;
-    DiplomatStringView extension_key;
     ICU4XLocaleFallbackSupplement fallback_supplement;
 } ICU4XLocaleFallbackConfig;
 #ifdef __cplusplus

@@ -12,7 +12,6 @@ void main() {
   test('LocaleFallbacker', () {
     final iterator = LocaleFallbacker(DataProvider.compiled())
         .forConfig(LocaleFallbackConfig(
-            extensionKey: 'ca',
             priority: LocaleFallbackPriority.region,
             fallbackSupplement: LocaleFallbackSupplement.none))
         .fallbackForLocale(Locale.fromString('de-CH'));

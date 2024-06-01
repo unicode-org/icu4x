@@ -29,11 +29,6 @@ struct ICU4XLocaleFallbackConfig {
   ICU4XLocaleFallbackPriority priority;
 
   /**
-   * An empty string is considered `None`.
-   */
-  std::string_view extension_key;
-
-  /**
    * Fallback supplement data key to customize fallback rules.
    */
   ICU4XLocaleFallbackSupplement fallback_supplement;

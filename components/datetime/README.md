@@ -47,8 +47,7 @@ let options =
     ));
 
 // You can work with a formatter that can select the calendar at runtime:
-let locale = locale!("en-u-ca-gregory");
-let dtf = DateTimeFormatter::try_new(&locale, options.clone())
+let dtf = DateTimeFormatter::try_new(&locale!("en-u-ca-gregory"), options.clone())
     .expect("Failed to create DateTimeFormatter instance.");
 
 // Or one that selects a calendar at compile time:

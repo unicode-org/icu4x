@@ -91,14 +91,12 @@ mod tests;
 ///     BarV1Marker::KEY.metadata().fallback_priority,
 ///     LocaleFallbackPriority::Language
 /// );
-/// assert_eq!(BarV1Marker::KEY.metadata().extension_key, None);
 ///
 /// assert_eq!(&*BazV1Marker::KEY.path(), "demo/baz@1");
 /// assert_eq!(
 ///     BazV1Marker::KEY.metadata().fallback_priority,
 ///     LocaleFallbackPriority::Region
 /// );
-/// assert_eq!(BazV1Marker::KEY.metadata().extension_key, Some(key!("ca")));
 /// ```
 ///
 /// If the `#[databake(path = ...)]` attribute is present on the data struct, this will also

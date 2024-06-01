@@ -9,6 +9,5 @@ import { ICU4XLocaleFallbackSupplement } from "./ICU4XLocaleFallbackSupplement";
  */
 export class ICU4XLocaleFallbackConfig {
   priority: ICU4XLocaleFallbackPriority;
-  extension_key: string;
   fallback_supplement: ICU4XLocaleFallbackSupplement;
 }

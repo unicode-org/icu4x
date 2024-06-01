@@ -60,7 +60,7 @@ pub struct LocaleFallbackConfig {
     /// Retain the language and script subtags until the final step:
     ///
     /// ```
-    /// use icu::locale::locale;
+    /// use icu::locale::langid;
     /// use icu::locale::fallback::LocaleFallbackConfig;
     /// use icu::locale::fallback::LocaleFallbackPriority;
     /// use icu::locale::LocaleFallbacker;
@@ -71,24 +71,24 @@ pub struct LocaleFallbackConfig {
     /// config.priority = LocaleFallbackPriority::Language;
     /// let mut fallback_iterator = fallbacker
     ///     .for_config(config)
-    ///     .fallback_for(locale!("ca-ES-valencia").into());
+    ///     .fallback_for(langid!("ca-ES-valencia").into());
     ///
     /// // Run the algorithm and check the results.
-    /// assert_eq!(fallback_iterator.get(), &locale!("ca-ES-valencia"));
+    /// assert_eq!(fallback_iterator.get(), &langid!("ca-ES-valencia"));
     /// fallback_iterator.step();
-    /// assert_eq!(fallback_iterator.get(), &locale!("ca-ES"));
+    /// assert_eq!(fallback_iterator.get(), &langid!("ca-ES"));
     /// fallback_iterator.step();
-    /// assert_eq!(fallback_iterator.get(), &locale!("ca-valencia"));
+    /// assert_eq!(fallback_iterator.get(), &langid!("ca-valencia"));
     /// fallback_iterator.step();
-    /// assert_eq!(fallback_iterator.get(), &locale!("ca"));
+    /// assert_eq!(fallback_iterator.get(), &langid!("ca"));
     /// fallback_iterator.step();
-    /// assert_eq!(fallback_iterator.get(), &locale!("und"));
+    /// assert_eq!(fallback_iterator.get(), &langid!("und"));
     /// ```
     ///
     /// Retain the region subtag until the final step:
     ///
     /// ```
-    /// use icu::locale::locale;
+    /// use icu::locale::langid;
     /// use icu::locale::fallback::LocaleFallbackConfig;
     /// use icu::locale::fallback::LocaleFallbackPriority;
     /// use icu::locale::LocaleFallbacker;
@@ -99,18 +99,18 @@ pub struct LocaleFallbackConfig {
     /// config.priority = LocaleFallbackPriority::Region;
     /// let mut fallback_iterator = fallbacker
     ///     .for_config(config)
-    ///     .fallback_for(locale!("ca-ES-valencia").into());
+    ///     .fallback_for(langid!("ca-ES-valencia").into());
     ///
     /// // Run the algorithm and check the results.
-    /// assert_eq!(fallback_iterator.get(), &locale!("ca-ES-valencia"));
+    /// assert_eq!(fallback_iterator.get(), &langid!("ca-ES-valencia"));
     /// fallback_iterator.step();
-    /// assert_eq!(fallback_iterator.get(), &locale!("ca-ES"));
+    /// assert_eq!(fallback_iterator.get(), &langid!("ca-ES"));
     /// fallback_iterator.step();
-    /// assert_eq!(fallback_iterator.get(), &locale!("und-ES-valencia"));
+    /// assert_eq!(fallback_iterator.get(), &langid!("und-ES-valencia"));
     /// fallback_iterator.step();
-    /// assert_eq!(fallback_iterator.get(), &locale!("und-ES"));
+    /// assert_eq!(fallback_iterator.get(), &langid!("und-ES"));
     /// fallback_iterator.step();
-    /// assert_eq!(fallback_iterator.get(), &locale!("und"));
+    /// assert_eq!(fallback_iterator.get(), &langid!("und"));
     /// ```
     pub priority: LocaleFallbackPriority,
     /// Fallback supplement data key to customize fallback rules.
@@ -124,7 +124,7 @@ pub struct LocaleFallbackConfig {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale::locale;
+    /// use icu::locale::langid;
     /// use icu::locale::fallback::LocaleFallbackConfig;
     /// use icu::locale::fallback::LocaleFallbackPriority;
     /// use icu::locale::fallback::LocaleFallbackSupplement;
@@ -137,18 +137,18 @@ pub struct LocaleFallbackConfig {
     /// config.fallback_supplement = Some(LocaleFallbackSupplement::Collation);
     /// let mut fallback_iterator = fallbacker
     ///     .for_config(config)
-    ///     .fallback_for(locale!("yue-HK").into());
+    ///     .fallback_for(langid!("yue-HK").into());
     ///
     /// // Run the algorithm and check the results.
-    /// assert_eq!(fallback_iterator.get(), &locale!("yue-HK"));
+    /// assert_eq!(fallback_iterator.get(), &langid!("yue-HK"));
     /// fallback_iterator.step();
-    /// assert_eq!(fallback_iterator.get(), &locale!("yue"));
+    /// assert_eq!(fallback_iterator.get(), &langid!("yue"));
     /// fallback_iterator.step();
-    /// assert_eq!(fallback_iterator.get(), &locale!("zh-Hant"));
+    /// assert_eq!(fallback_iterator.get(), &langid!("zh-Hant"));
     /// fallback_iterator.step();
-    /// assert_eq!(fallback_iterator.get(), &locale!("zh"));
+    /// assert_eq!(fallback_iterator.get(), &langid!("zh"));
     /// fallback_iterator.step();
-    /// assert_eq!(fallback_iterator.get(), &locale!("und"));
+    /// assert_eq!(fallback_iterator.get(), &langid!("und"));
     /// ```
     pub fallback_supplement: Option<LocaleFallbackSupplement>,
 }
