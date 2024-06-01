@@ -557,7 +557,7 @@ where
     ///
     /// Public but hidden in order to be able to use this from the
     /// collator.
-    #[doc(hidden)]
+    #[doc(hidden)] // used in collator
     pub fn new(
         delegate: I,
         decompositions: &'data DecompositionDataV1,
@@ -1781,7 +1781,6 @@ impl DecomposingNormalizer {
         })
     }
 
-    #[doc(hidden)]
     #[cfg(feature = "compiled_data")]
     pub(crate) const fn new_uts46_decomposed() -> Self {
         const _: () = assert!(
@@ -1856,9 +1855,6 @@ impl DecomposingNormalizer {
     /// Therefore, the output of this normalization may differ for different inputs that are
     /// canonically equivalent with each other if they differ by how U+0345 is ordered relative
     /// to other reorderable characters.
-    ///
-    /// Public for testing only.
-    #[doc(hidden)]
     pub(crate) fn try_new_uts46_decomposed_unstable<D>(
         provider: &D,
     ) -> Result<Self, NormalizerError>

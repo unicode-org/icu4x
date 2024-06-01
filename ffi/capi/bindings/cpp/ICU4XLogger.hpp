@@ -18,11 +18,6 @@ inline bool ICU4XLogger::init_simple_logger() {
   return result;
 }
 
-inline bool ICU4XLogger::init_console_logger() {
-  auto result = capi::ICU4XLogger_init_console_logger();
-  return result;
-}
-
 inline const capi::ICU4XLogger* ICU4XLogger::AsFFI() const {
   return reinterpret_cast<const capi::ICU4XLogger*>(this);
 }

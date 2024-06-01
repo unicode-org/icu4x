@@ -197,7 +197,7 @@ impl_writeable_for_subtag_list!(Value, "islamic", "civil");
 ///
 /// [`Value`]: crate::extensions::unicode::Value
 #[macro_export]
-#[doc(hidden)]
+#[doc(hidden)] // macro
 macro_rules! extensions_unicode_value {
     ($value:literal) => {{
         // What we want:

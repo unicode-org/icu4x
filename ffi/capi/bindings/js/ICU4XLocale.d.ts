@@ -140,20 +140,4 @@ export class ICU4XLocale {
    * See the {@link https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.total_cmp Rust documentation for `total_cmp`} for more information.
    */
   total_cmp(other: ICU4XLocale): ICU4XOrdering;
-
-  /**
-
-   * Deprecated
-
-   * Use `create_from_string("en").
-   */
-  static create_en(): ICU4XLocale;
-
-  /**
-
-   * Deprecated
-
-   * Use `create_from_string("bn").
-   */
-  static create_bn(): ICU4XLocale;
 }

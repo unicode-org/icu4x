@@ -11,7 +11,7 @@
 #include "ICU4XError.d.hpp"
 #include "ICU4XScriptWithExtensions.d.h"
 
-class CodePointRangeIterator;
+class ICU4XCodePointRangeIterator;
 class ICU4XDataProvider;
 class ICU4XScriptWithExtensionsBorrowed;
 class ICU4XError;
@@ -28,7 +28,7 @@ public:
 
   inline std::unique_ptr<ICU4XScriptWithExtensionsBorrowed> as_borrowed() const;
 
-  inline std::unique_ptr<CodePointRangeIterator> iter_ranges_for_script(uint16_t script) const;
+  inline std::unique_ptr<ICU4XCodePointRangeIterator> iter_ranges_for_script(uint16_t script) const;
 
   inline const capi::ICU4XScriptWithExtensions* AsFFI() const;
   inline capi::ICU4XScriptWithExtensions* AsFFI();

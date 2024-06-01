@@ -10,8 +10,8 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "CodePointRangeIterator.hpp"
 #include "ICU4XCodePointMapData8.h"
+#include "ICU4XCodePointRangeIterator.hpp"
 #include "ICU4XCodePointSetData.hpp"
 #include "ICU4XDataProvider.hpp"
 #include "ICU4XError.hpp"
@@ -34,22 +34,22 @@ inline uint32_t ICU4XCodePointMapData8::general_category_to_mask(uint8_t gc) {
   return result;
 }
 
-inline std::unique_ptr<CodePointRangeIterator> ICU4XCodePointMapData8::iter_ranges_for_value(uint8_t value) const {
+inline std::unique_ptr<ICU4XCodePointRangeIterator> ICU4XCodePointMapData8::iter_ranges_for_value(uint8_t value) const {
   auto result = capi::ICU4XCodePointMapData8_iter_ranges_for_value(this->AsFFI(),
     value);
-  return std::unique_ptr<CodePointRangeIterator>(CodePointRangeIterator::FromFFI(result));
+  return std::unique_ptr<ICU4XCodePointRangeIterator>(ICU4XCodePointRangeIterator::FromFFI(result));
 }
 
-inline std::unique_ptr<CodePointRangeIterator> ICU4XCodePointMapData8::iter_ranges_for_value_complemented(uint8_t value) const {
+inline std::unique_ptr<ICU4XCodePointRangeIterator> ICU4XCodePointMapData8::iter_ranges_for_value_complemented(uint8_t value) const {
   auto result = capi::ICU4XCodePointMapData8_iter_ranges_for_value_complemented(this->AsFFI(),
     value);
-  return std::unique_ptr<CodePointRangeIterator>(CodePointRangeIterator::FromFFI(result));
+  return std::unique_ptr<ICU4XCodePointRangeIterator>(ICU4XCodePointRangeIterator::FromFFI(result));
 }
 
-inline std::unique_ptr<CodePointRangeIterator> ICU4XCodePointMapData8::iter_ranges_for_mask(uint32_t mask) const {
+inline std::unique_ptr<ICU4XCodePointRangeIterator> ICU4XCodePointMapData8::iter_ranges_for_mask(uint32_t mask) const {
   auto result = capi::ICU4XCodePointMapData8_iter_ranges_for_mask(this->AsFFI(),
     mask);
-  return std::unique_ptr<CodePointRangeIterator>(CodePointRangeIterator::FromFFI(result));
+  return std::unique_ptr<ICU4XCodePointRangeIterator>(ICU4XCodePointRangeIterator::FromFFI(result));
 }
 
 inline std::unique_ptr<ICU4XCodePointSetData> ICU4XCodePointMapData8::get_set_for_value(uint8_t value) const {

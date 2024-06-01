@@ -135,8 +135,7 @@ extern crate alloc;
 
 mod data_provider;
 mod error;
-#[doc(hidden)]
-pub mod fallback;
+mod fallback;
 mod key;
 mod request;
 mod response;
@@ -247,26 +246,15 @@ pub mod prelude {
     #[doc(no_inline)]
     pub use crate::KeyedDataMarker;
 
-    #[doc(hidden)]
+    #[doc(no_inline)]
     pub use yoke;
-    #[doc(hidden)]
+    #[doc(no_inline)]
     pub use zerofrom;
 }
 
-// Additional crate re-exports for compatibility
-#[doc(hidden)]
-pub use fallback::LocaleFallbackPriority as FallbackPriority;
-#[doc(hidden)]
-pub use fallback::LocaleFallbackSupplement as FallbackSupplement;
-#[doc(hidden)]
-pub use yoke;
-#[doc(hidden)]
-pub use zerofrom;
-
-// For macros
-#[doc(hidden)]
+#[doc(hidden)] // macro use
 pub mod _internal {
-    pub use super::fallback::{LocaleFallbackPriority, LocaleFallbackSupplement};
+    pub use super::fallback::{LocaleFallbackPriority, LocaleFallbackSupplement, LocaleFallbackConfig};
     pub use icu_locale_core as locale_core;
 
     #[cfg(feature = "logging")]

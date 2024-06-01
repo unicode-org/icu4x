@@ -12,9 +12,9 @@
 #include "diplomat_runtime.hpp"
 #include "ICU4XError.hpp"
 #include "ICU4XFixedDecimal.h"
+#include "ICU4XFixedDecimalRoundingIncrement.hpp"
 #include "ICU4XFixedDecimalSign.hpp"
 #include "ICU4XFixedDecimalSignDisplay.hpp"
-#include "ICU4XRoundingIncrement.hpp"
 
 
 inline std::unique_ptr<ICU4XFixedDecimal> ICU4XFixedDecimal::create_from_i32(int32_t v) {
@@ -144,7 +144,7 @@ inline void ICU4XFixedDecimal::trunc(int16_t position) {
     position);
 }
 
-inline void ICU4XFixedDecimal::trunc_to_increment(int16_t position, ICU4XRoundingIncrement increment) {
+inline void ICU4XFixedDecimal::trunc_to_increment(int16_t position, ICU4XFixedDecimalRoundingIncrement increment) {
   capi::ICU4XFixedDecimal_trunc_to_increment(this->AsFFI(),
     position,
     increment.AsFFI());
@@ -155,7 +155,7 @@ inline void ICU4XFixedDecimal::half_trunc(int16_t position) {
     position);
 }
 
-inline void ICU4XFixedDecimal::half_trunc_to_increment(int16_t position, ICU4XRoundingIncrement increment) {
+inline void ICU4XFixedDecimal::half_trunc_to_increment(int16_t position, ICU4XFixedDecimalRoundingIncrement increment) {
   capi::ICU4XFixedDecimal_half_trunc_to_increment(this->AsFFI(),
     position,
     increment.AsFFI());
@@ -166,7 +166,7 @@ inline void ICU4XFixedDecimal::expand(int16_t position) {
     position);
 }
 
-inline void ICU4XFixedDecimal::expand_to_increment(int16_t position, ICU4XRoundingIncrement increment) {
+inline void ICU4XFixedDecimal::expand_to_increment(int16_t position, ICU4XFixedDecimalRoundingIncrement increment) {
   capi::ICU4XFixedDecimal_expand_to_increment(this->AsFFI(),
     position,
     increment.AsFFI());
@@ -177,7 +177,7 @@ inline void ICU4XFixedDecimal::half_expand(int16_t position) {
     position);
 }
 
-inline void ICU4XFixedDecimal::half_expand_to_increment(int16_t position, ICU4XRoundingIncrement increment) {
+inline void ICU4XFixedDecimal::half_expand_to_increment(int16_t position, ICU4XFixedDecimalRoundingIncrement increment) {
   capi::ICU4XFixedDecimal_half_expand_to_increment(this->AsFFI(),
     position,
     increment.AsFFI());
@@ -188,7 +188,7 @@ inline void ICU4XFixedDecimal::ceil(int16_t position) {
     position);
 }
 
-inline void ICU4XFixedDecimal::ceil_to_increment(int16_t position, ICU4XRoundingIncrement increment) {
+inline void ICU4XFixedDecimal::ceil_to_increment(int16_t position, ICU4XFixedDecimalRoundingIncrement increment) {
   capi::ICU4XFixedDecimal_ceil_to_increment(this->AsFFI(),
     position,
     increment.AsFFI());
@@ -199,7 +199,7 @@ inline void ICU4XFixedDecimal::half_ceil(int16_t position) {
     position);
 }
 
-inline void ICU4XFixedDecimal::half_ceil_to_increment(int16_t position, ICU4XRoundingIncrement increment) {
+inline void ICU4XFixedDecimal::half_ceil_to_increment(int16_t position, ICU4XFixedDecimalRoundingIncrement increment) {
   capi::ICU4XFixedDecimal_half_ceil_to_increment(this->AsFFI(),
     position,
     increment.AsFFI());
@@ -210,7 +210,7 @@ inline void ICU4XFixedDecimal::floor(int16_t position) {
     position);
 }
 
-inline void ICU4XFixedDecimal::floor_to_increment(int16_t position, ICU4XRoundingIncrement increment) {
+inline void ICU4XFixedDecimal::floor_to_increment(int16_t position, ICU4XFixedDecimalRoundingIncrement increment) {
   capi::ICU4XFixedDecimal_floor_to_increment(this->AsFFI(),
     position,
     increment.AsFFI());
@@ -221,7 +221,7 @@ inline void ICU4XFixedDecimal::half_floor(int16_t position) {
     position);
 }
 
-inline void ICU4XFixedDecimal::half_floor_to_increment(int16_t position, ICU4XRoundingIncrement increment) {
+inline void ICU4XFixedDecimal::half_floor_to_increment(int16_t position, ICU4XFixedDecimalRoundingIncrement increment) {
   capi::ICU4XFixedDecimal_half_floor_to_increment(this->AsFFI(),
     position,
     increment.AsFFI());
@@ -232,7 +232,7 @@ inline void ICU4XFixedDecimal::half_even(int16_t position) {
     position);
 }
 
-inline void ICU4XFixedDecimal::half_even_to_increment(int16_t position, ICU4XRoundingIncrement increment) {
+inline void ICU4XFixedDecimal::half_even_to_increment(int16_t position, ICU4XFixedDecimalRoundingIncrement increment) {
   capi::ICU4XFixedDecimal_half_even_to_increment(this->AsFFI(),
     position,
     increment.AsFFI());

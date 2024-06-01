@@ -77,18 +77,6 @@ pub mod ffi {
             )))
         }
 
-        /// Deprecated
-        ///
-        /// Use `create_compiled()`.
-        #[cfg(all(
-            feature = "provider_test",
-            any(feature = "any_provider", feature = "buffer_provider")
-        ))]
-        #[diplomat::attr(supports = constructors, disable)]
-        pub fn create_test() -> Box<ICU4XDataProvider> {
-            Self::create_compiled()
-        }
-
         /// Constructs a `BlobDataProvider` and returns it as an [`ICU4XDataProvider`].
         #[diplomat::rust_link(icu_provider_blob::BlobDataProvider, Struct)]
         #[cfg(feature = "buffer_provider")]

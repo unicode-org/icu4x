@@ -10,7 +10,7 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "CodePointRangeIterator.hpp"
+#include "ICU4XCodePointRangeIterator.hpp"
 #include "ICU4XDataProvider.hpp"
 #include "ICU4XError.hpp"
 #include "ICU4XScriptWithExtensions.h"
@@ -40,10 +40,10 @@ inline std::unique_ptr<ICU4XScriptWithExtensionsBorrowed> ICU4XScriptWithExtensi
   return std::unique_ptr<ICU4XScriptWithExtensionsBorrowed>(ICU4XScriptWithExtensionsBorrowed::FromFFI(result));
 }
 
-inline std::unique_ptr<CodePointRangeIterator> ICU4XScriptWithExtensions::iter_ranges_for_script(uint16_t script) const {
+inline std::unique_ptr<ICU4XCodePointRangeIterator> ICU4XScriptWithExtensions::iter_ranges_for_script(uint16_t script) const {
   auto result = capi::ICU4XScriptWithExtensions_iter_ranges_for_script(this->AsFFI(),
     script);
-  return std::unique_ptr<CodePointRangeIterator>(CodePointRangeIterator::FromFFI(result));
+  return std::unique_ptr<ICU4XCodePointRangeIterator>(ICU4XCodePointRangeIterator::FromFFI(result));
 }
 
 inline const capi::ICU4XScriptWithExtensions* ICU4XScriptWithExtensions::AsFFI() const {

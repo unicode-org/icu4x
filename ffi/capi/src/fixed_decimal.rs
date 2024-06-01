@@ -39,10 +39,9 @@ pub mod ffi {
         Negative,
     }
 
-    // TODO: Rename to `ICU4XFixedDecimalRoundingIncrement` for 2.0
     /// Increment used in a rounding operation.
     #[diplomat::rust_link(fixed_decimal::RoundingIncrement, Enum)]
-    pub enum ICU4XRoundingIncrement {
+    pub enum ICU4XFixedDecimalRoundingIncrement {
         MultiplesOf1,
         MultiplesOf2,
         MultiplesOf5,
@@ -261,7 +260,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        pub fn trunc_to_increment(&mut self, position: i16, increment: ICU4XRoundingIncrement) {
+        pub fn trunc_to_increment(&mut self, position: i16, increment: ICU4XFixedDecimalRoundingIncrement) {
             self.0.trunc_to_increment(position, increment.into())
         }
 
@@ -280,7 +279,7 @@ pub mod ffi {
         pub fn half_trunc_to_increment(
             &mut self,
             position: i16,
-            increment: ICU4XRoundingIncrement,
+            increment: ICU4XFixedDecimalRoundingIncrement,
         ) {
             self.0.half_trunc_to_increment(position, increment.into())
         }
@@ -297,7 +296,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        pub fn expand_to_increment(&mut self, position: i16, increment: ICU4XRoundingIncrement) {
+        pub fn expand_to_increment(&mut self, position: i16, increment: ICU4XFixedDecimalRoundingIncrement) {
             self.0.expand_to_increment(position, increment.into())
         }
 
@@ -316,7 +315,7 @@ pub mod ffi {
         pub fn half_expand_to_increment(
             &mut self,
             position: i16,
-            increment: ICU4XRoundingIncrement,
+            increment: ICU4XFixedDecimalRoundingIncrement,
         ) {
             self.0.half_expand_to_increment(position, increment.into())
         }
@@ -329,7 +328,7 @@ pub mod ffi {
 
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::ceil_to_increment, FnInStruct)]
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::ceiled_to_increment, FnInStruct, hidden)]
-        pub fn ceil_to_increment(&mut self, position: i16, increment: ICU4XRoundingIncrement) {
+        pub fn ceil_to_increment(&mut self, position: i16, increment: ICU4XFixedDecimalRoundingIncrement) {
             self.0.ceil_to_increment(position, increment.into())
         }
 
@@ -345,7 +344,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        pub fn half_ceil_to_increment(&mut self, position: i16, increment: ICU4XRoundingIncrement) {
+        pub fn half_ceil_to_increment(&mut self, position: i16, increment: ICU4XFixedDecimalRoundingIncrement) {
             self.0.half_ceil_to_increment(position, increment.into())
         }
 
@@ -361,7 +360,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        pub fn floor_to_increment(&mut self, position: i16, increment: ICU4XRoundingIncrement) {
+        pub fn floor_to_increment(&mut self, position: i16, increment: ICU4XFixedDecimalRoundingIncrement) {
             self.0.floor_to_increment(position, increment.into())
         }
 
@@ -380,7 +379,7 @@ pub mod ffi {
         pub fn half_floor_to_increment(
             &mut self,
             position: i16,
-            increment: ICU4XRoundingIncrement,
+            increment: ICU4XFixedDecimalRoundingIncrement,
         ) {
             self.0.half_floor_to_increment(position, increment.into())
         }
@@ -397,7 +396,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        pub fn half_even_to_increment(&mut self, position: i16, increment: ICU4XRoundingIncrement) {
+        pub fn half_even_to_increment(&mut self, position: i16, increment: ICU4XFixedDecimalRoundingIncrement) {
             self.0.half_even_to_increment(position, increment.into())
         }
 
@@ -456,13 +455,13 @@ impl From<ffi::ICU4XFixedDecimalSignDisplay> for SignDisplay {
     }
 }
 
-impl From<ffi::ICU4XRoundingIncrement> for RoundingIncrement {
-    fn from(value: ffi::ICU4XRoundingIncrement) -> Self {
+impl From<ffi::ICU4XFixedDecimalRoundingIncrement> for RoundingIncrement {
+    fn from(value: ffi::ICU4XFixedDecimalRoundingIncrement) -> Self {
         match value {
-            ffi::ICU4XRoundingIncrement::MultiplesOf1 => RoundingIncrement::MultiplesOf1,
-            ffi::ICU4XRoundingIncrement::MultiplesOf2 => RoundingIncrement::MultiplesOf2,
-            ffi::ICU4XRoundingIncrement::MultiplesOf5 => RoundingIncrement::MultiplesOf5,
-            ffi::ICU4XRoundingIncrement::MultiplesOf25 => RoundingIncrement::MultiplesOf25,
+            ffi::ICU4XFixedDecimalRoundingIncrement::MultiplesOf1 => RoundingIncrement::MultiplesOf1,
+            ffi::ICU4XFixedDecimalRoundingIncrement::MultiplesOf2 => RoundingIncrement::MultiplesOf2,
+            ffi::ICU4XFixedDecimalRoundingIncrement::MultiplesOf5 => RoundingIncrement::MultiplesOf5,
+            ffi::ICU4XFixedDecimalRoundingIncrement::MultiplesOf25 => RoundingIncrement::MultiplesOf25,
         }
     }
 }

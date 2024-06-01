@@ -90,7 +90,7 @@ pub mod adapters {
     pub use try_writeable::WriteableAsTryWriteableInfallible;
 }
 
-#[doc(hidden)]
+#[doc(hidden)] // for testing
 pub mod _internal {
     pub use super::testing::try_writeable_to_parts_for_test;
     pub use super::testing::writeable_to_parts_for_test;

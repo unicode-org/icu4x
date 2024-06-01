@@ -11,8 +11,6 @@ use writeable::Writeable;
 
 use super::Key;
 use super::Value;
-#[allow(deprecated)]
-use crate::ordering::SubtagOrderingResult;
 use crate::parser::ParserError;
 use crate::parser::SubtagIterator;
 use crate::shortvec::ShortBoxSlice;
@@ -307,61 +305,6 @@ impl Keywords {
     /// ```
     pub fn strict_cmp(&self, other: &[u8]) -> Ordering {
         self.writeable_cmp_bytes(other)
-    }
-
-    /// Compare this [`Keywords`] with an iterator of BCP-47 subtags.
-    ///
-    /// This function has the same equality semantics as [`Keywords::strict_cmp`]. It is intended as
-    /// a more modular version that allows multiple subtag iterators to be chained together.
-    ///
-    /// For an additional example, see [`SubtagOrderingResult`].
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::locale::locale;
-    /// use std::cmp::Ordering;
-    ///
-    /// let subtags: &[&[u8]] = &[b"ca", b"buddhist"];
-    ///
-    /// let kwds = locale!("und-u-ca-buddhist").extensions.unicode.keywords;
-    /// assert_eq!(
-    ///     Ordering::Equal,
-    ///     kwds.strict_cmp_iter(subtags.iter().copied()).end()
-    /// );
-    ///
-    /// let kwds = locale!("und").extensions.unicode.keywords;
-    /// assert_eq!(
-    ///     Ordering::Less,
-    ///     kwds.strict_cmp_iter(subtags.iter().copied()).end()
-    /// );
-    ///
-    /// let kwds = locale!("und-u-nu-latn").extensions.unicode.keywords;
-    /// assert_eq!(
-    ///     Ordering::Greater,
-    ///     kwds.strict_cmp_iter(subtags.iter().copied()).end()
-    /// );
-    /// ```
-    #[deprecated(since = "1.5.0", note = "if you need this, please file an issue")]
-    #[allow(deprecated)]
-    pub fn strict_cmp_iter<'l, I>(&self, mut subtags: I) -> SubtagOrderingResult<I>
-    where
-        I: Iterator<Item = &'l [u8]>,
-    {
-        let r = self.for_each_subtag_str(&mut |subtag| {
-            if let Some(other) = subtags.next() {
-                match subtag.as_bytes().cmp(other) {
-                    Ordering::Equal => Ok(()),
-                    not_equal => Err(not_equal),
-                }
-            } else {
-                Err(Ordering::Greater)
-            }
-        });
-        match r {
-            Ok(_) => SubtagOrderingResult::Subtags(subtags),
-            Err(o) => SubtagOrderingResult::Ordering(o),
-        }
     }
 
     pub(crate) fn try_from_iter(iter: &mut SubtagIterator) -> Result<Self, ParserError> {

@@ -184,7 +184,7 @@ macro_rules! impl_data_provider_never_marker {
     ($ty:path) => {
         impl<Y> $crate::DataProvider<$crate::NeverMarker<Y>> for $ty
         where
-            for<'a> Y: $crate::yoke::Yokeable<'a>,
+            for<'a> Y: $crate::prelude::yoke::Yokeable<'a>,
         {
             fn load(
                 &self,

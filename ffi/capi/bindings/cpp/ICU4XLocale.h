@@ -50,10 +50,6 @@ int8_t ICU4XLocale_strict_cmp_(const ICU4XLocale* self, const char* other_data, 
 
 int8_t ICU4XLocale_total_cmp_(const ICU4XLocale* self, const ICU4XLocale* other);
 
-ICU4XLocale* ICU4XLocale_create_en();
-
-ICU4XLocale* ICU4XLocale_create_bn();
-
 void ICU4XLocale_destroy(ICU4XLocale* self);
 
 

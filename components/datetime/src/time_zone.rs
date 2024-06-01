@@ -663,23 +663,6 @@ impl TimeZoneFormatter {
         Ok(self)
     }
 
-    /// Alias to [`TimeZoneFormatter::include_localized_gmt_format`].
-    #[deprecated(since = "1.3.0", note = "renamed to `include_localized_gmt_format`")]
-    pub fn load_localized_gmt_format(&mut self) -> Result<&mut TimeZoneFormatter, DateTimeError> {
-        self.include_localized_gmt_format()
-    }
-
-    /// Alias to [`TimeZoneFormatter::include_iso_8601_format`].
-    #[deprecated(since = "1.3.0", note = "renamed to `include_iso_8601_format`")]
-    pub fn load_iso_8601_format(
-        &mut self,
-        format: IsoFormat,
-        minutes: IsoMinutes,
-        seconds: IsoSeconds,
-    ) -> Result<&mut TimeZoneFormatter, DateTimeError> {
-        self.include_iso_8601_format(format, minutes, seconds)
-    }
-
     /// Takes a [`TimeZoneInput`] implementer and returns an instance of a [`FormattedTimeZone`]
     /// that contains all information necessary to display a formatted time zone and operate on it.
     ///

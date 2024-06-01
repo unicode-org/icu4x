@@ -36,8 +36,7 @@ const SCRIPT_X_SCRIPT_VAL: u16 = (1 << SCRIPT_VAL_LENGTH) - 1;
 #[cfg_attr(feature = "datagen", derive(databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_properties::script))]
 #[repr(transparent)]
-#[doc(hidden)]
-// `ScriptWithExt` not intended as public-facing but for `ScriptWithExtensionsPropertyV1` constructor
+#[doc(hidden)] // `ScriptWithExt` not intended as public-facing but for `ScriptWithExtensionsPropertyV1` constructor
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct ScriptWithExt(pub u16);
 
@@ -218,14 +217,12 @@ impl<'a> ScriptExtensionsSet<'a> {
     }
 
     /// For accessing this set as an array instead of an iterator
-    /// only needed for the FFI bindings; shouldn't be used directly from Rust
-    #[doc(hidden)]
+    #[doc(hidden)] // used by FFI code
     pub fn array_len(&self) -> usize {
         self.values.len()
     }
     /// For accessing this set as an array instead of an iterator
-    /// only needed for the FFI bindings; shouldn't be used directly from Rust
-    #[doc(hidden)]
+    #[doc(hidden)] // used by FFI code
     pub fn array_get(&self, index: usize) -> Option<Script> {
         self.values.get(index)
     }

@@ -182,24 +182,6 @@ pub mod ffi {
         pub fn total_cmp_(&self, other: &Self) -> core::cmp::Ordering {
             self.0.total_cmp(&other.0)
         }
-
-        /// Deprecated
-        ///
-        /// Use `create_from_string("en").
-        #[cfg(feature = "provider_test")]
-        #[diplomat::attr(supports = constructors, disable)]
-        pub fn create_en() -> Box<ICU4XLocale> {
-            Box::new(ICU4XLocale(icu_locale_core::locale!("en")))
-        }
-
-        /// Deprecated
-        ///
-        /// Use `create_from_string("bn").
-        #[cfg(feature = "provider_test")]
-        #[diplomat::attr(supports = constructors, disable)]
-        pub fn create_bn() -> Box<ICU4XLocale> {
-            Box::new(ICU4XLocale(icu_locale_core::locale!("bn")))
-        }
     }
 }
 

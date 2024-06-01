@@ -14,9 +14,9 @@ mod payload;
 pub use data_conversion::DataConverter;
 pub use iter::IterableDataProvider;
 
-#[doc(hidden)] // exposed for make_exportable_provider
+#[doc(hidden)] // macro use
 pub use iter::IterableDynamicDataProvider;
-#[doc(hidden)] // exposed for make_exportable_provider
+#[doc(hidden)] // macro use
 pub use payload::{ExportBox, ExportMarker};
 
 use crate::prelude::*;

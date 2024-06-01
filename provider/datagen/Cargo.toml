@@ -181,7 +181,6 @@ blob_input = [
     "icu_experimental?/datagen",
 ]
 fs_exporter = ["dep:icu_provider_fs"]
-legacy_api = ["fs_exporter", "blob_exporter", "baked_exporter", "provider"]
 bin = ["dep:clap", "dep:eyre", "dep:simple_logger"]
 rayon = ["dep:rayon"]
 # Use wasm for building codepointtries

@@ -11,7 +11,7 @@ use icu_locale_core::subtags::Variants;
 use icu_provider::prelude::*;
 
 #[doc(inline)]
-pub use icu_provider::fallback::*;
+pub use icu_provider::_internal::{LocaleFallbackPriority, LocaleFallbackSupplement, LocaleFallbackConfig};
 
 mod algorithms;
 
@@ -55,7 +55,7 @@ mod algorithms;
 /// [UTS #35: Locale Inheritance and Matching]: https://www.unicode.org/reports/tr35/#Locale_Inheritance
 /// [the design doc]: https://docs.google.com/document/d/1Mp7EUyl-sFh_HZYgyeVwj88vJGpCBIWxzlCwGgLCDwM/edit
 /// [language identifier]: icu::locale::LanguageIdentifier
-#[doc(hidden)]
+#[doc(hidden)] // canonical location in super
 #[derive(Debug, Clone, PartialEq)]
 pub struct LocaleFallbacker {
     likely_subtags: DataPayload<LocaleFallbackLikelySubtagsV1Marker>,
@@ -178,14 +178,6 @@ impl LocaleFallbacker {
     #[inline]
     pub fn for_config(&self, config: LocaleFallbackConfig) -> LocaleFallbackerWithConfig {
         self.as_borrowed().for_config(config)
-    }
-
-    /// Derives a configuration from a [`DataKey`] and associates it
-    /// with this fallbacker.
-    #[inline]
-    #[doc(hidden)] // will be removed in 2.0
-    pub fn for_key(&self, data_key: DataKey) -> LocaleFallbackerWithConfig {
-        self.for_config(data_key.fallback_config())
     }
 
     /// Creates a borrowed version of this fallbacker for performance.

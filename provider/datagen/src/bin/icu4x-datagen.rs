@@ -525,7 +525,7 @@ fn main() -> eyre::Result<()> {
                     Syntax::Json => Box::<serializers::Json>::default(),
                 },
                 {
-                    let mut options = ExporterOptions::default();
+                    let mut options = Options::default();
                     options.root = cli.output.unwrap_or_else(|| PathBuf::from("icu4x_data"));
                     if cli.overwrite {
                         options.overwrite = OverwriteOption::RemoveAndReplace

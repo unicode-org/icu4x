@@ -11,7 +11,7 @@
 #include "ICU4XCodePointSetData.d.h"
 #include "ICU4XError.d.hpp"
 
-class CodePointRangeIterator;
+class ICU4XCodePointRangeIterator;
 class ICU4XDataProvider;
 class ICU4XError;
 
@@ -23,9 +23,9 @@ public:
 
   inline bool contains32(uint32_t cp) const;
 
-  inline std::unique_ptr<CodePointRangeIterator> iter_ranges() const;
+  inline std::unique_ptr<ICU4XCodePointRangeIterator> iter_ranges() const;
 
-  inline std::unique_ptr<CodePointRangeIterator> iter_ranges_complemented() const;
+  inline std::unique_ptr<ICU4XCodePointRangeIterator> iter_ranges_complemented() const;
 
   inline static diplomat::result<std::unique_ptr<ICU4XCodePointSetData>, ICU4XError> load_for_general_category_group(const ICU4XDataProvider& provider, uint32_t group);
 

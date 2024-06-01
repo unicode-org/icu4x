@@ -6,8 +6,8 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include "diplomat_runtime.h"
-#include "CodePointRangeIterator.d.h"
-#include "CodePointRangeIterator.h"
+#include "ICU4XCodePointRangeIterator.d.h"
+#include "ICU4XCodePointRangeIterator.h"
 #include "ICU4XCodePointSetData.d.h"
 #include "ICU4XCodePointSetData.h"
 #include "ICU4XDataProvider.d.h"
@@ -26,9 +26,9 @@ uint16_t ICU4XCodePointMapData16_get(const ICU4XCodePointMapData16* self, char32
 
 uint16_t ICU4XCodePointMapData16_get32(const ICU4XCodePointMapData16* self, uint32_t cp);
 
-CodePointRangeIterator* ICU4XCodePointMapData16_iter_ranges_for_value(const ICU4XCodePointMapData16* self, uint16_t value);
+ICU4XCodePointRangeIterator* ICU4XCodePointMapData16_iter_ranges_for_value(const ICU4XCodePointMapData16* self, uint16_t value);
 
-CodePointRangeIterator* ICU4XCodePointMapData16_iter_ranges_for_value_complemented(const ICU4XCodePointMapData16* self, uint16_t value);
+ICU4XCodePointRangeIterator* ICU4XCodePointMapData16_iter_ranges_for_value_complemented(const ICU4XCodePointMapData16* self, uint16_t value);
 
 ICU4XCodePointSetData* ICU4XCodePointMapData16_get_set_for_value(const ICU4XCodePointMapData16* self, uint16_t value);
 

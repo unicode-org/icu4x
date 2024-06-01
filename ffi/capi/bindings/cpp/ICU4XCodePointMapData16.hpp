@@ -10,8 +10,8 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "CodePointRangeIterator.hpp"
 #include "ICU4XCodePointMapData16.h"
+#include "ICU4XCodePointRangeIterator.hpp"
 #include "ICU4XCodePointSetData.hpp"
 #include "ICU4XDataProvider.hpp"
 #include "ICU4XError.hpp"
@@ -29,16 +29,16 @@ inline uint16_t ICU4XCodePointMapData16::get32(uint32_t cp) const {
   return result;
 }
 
-inline std::unique_ptr<CodePointRangeIterator> ICU4XCodePointMapData16::iter_ranges_for_value(uint16_t value) const {
+inline std::unique_ptr<ICU4XCodePointRangeIterator> ICU4XCodePointMapData16::iter_ranges_for_value(uint16_t value) const {
   auto result = capi::ICU4XCodePointMapData16_iter_ranges_for_value(this->AsFFI(),
     value);
-  return std::unique_ptr<CodePointRangeIterator>(CodePointRangeIterator::FromFFI(result));
+  return std::unique_ptr<ICU4XCodePointRangeIterator>(ICU4XCodePointRangeIterator::FromFFI(result));
 }
 
-inline std::unique_ptr<CodePointRangeIterator> ICU4XCodePointMapData16::iter_ranges_for_value_complemented(uint16_t value) const {
+inline std::unique_ptr<ICU4XCodePointRangeIterator> ICU4XCodePointMapData16::iter_ranges_for_value_complemented(uint16_t value) const {
   auto result = capi::ICU4XCodePointMapData16_iter_ranges_for_value_complemented(this->AsFFI(),
     value);
-  return std::unique_ptr<CodePointRangeIterator>(CodePointRangeIterator::FromFFI(result));
+  return std::unique_ptr<ICU4XCodePointRangeIterator>(ICU4XCodePointRangeIterator::FromFFI(result));
 }
 
 inline std::unique_ptr<ICU4XCodePointSetData> ICU4XCodePointMapData16::get_set_for_value(uint16_t value) const {

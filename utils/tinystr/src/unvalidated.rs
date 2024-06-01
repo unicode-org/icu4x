@@ -33,8 +33,9 @@ impl<const N: usize> UnvalidatedTinyAsciiStr<N> {
         TinyAsciiStr::try_from_raw(self.0)
     }
 
-    #[doc(hidden)]
-    pub const fn from_bytes_unchecked(bytes: [u8; N]) -> Self {
+    #[inline]
+    // Unsafely converts into a [`TinyAsciiStr`].
+    pub const unsafe fn from_bytes_unchecked(bytes: [u8; N]) -> Self {
         Self(bytes)
     }
 }

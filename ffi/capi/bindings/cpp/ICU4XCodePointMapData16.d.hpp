@@ -11,7 +11,7 @@
 #include "ICU4XCodePointMapData16.d.h"
 #include "ICU4XError.d.hpp"
 
-class CodePointRangeIterator;
+class ICU4XCodePointRangeIterator;
 class ICU4XCodePointSetData;
 class ICU4XDataProvider;
 class ICU4XError;
@@ -24,9 +24,9 @@ public:
 
   inline uint16_t get32(uint32_t cp) const;
 
-  inline std::unique_ptr<CodePointRangeIterator> iter_ranges_for_value(uint16_t value) const;
+  inline std::unique_ptr<ICU4XCodePointRangeIterator> iter_ranges_for_value(uint16_t value) const;
 
-  inline std::unique_ptr<CodePointRangeIterator> iter_ranges_for_value_complemented(uint16_t value) const;
+  inline std::unique_ptr<ICU4XCodePointRangeIterator> iter_ranges_for_value_complemented(uint16_t value) const;
 
   inline std::unique_ptr<ICU4XCodePointSetData> get_set_for_value(uint16_t value) const;
 

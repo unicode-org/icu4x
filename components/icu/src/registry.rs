@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #[macro_export]
-#[doc(hidden)]
+#[doc(hidden)] // macro
 /// The list of all known [`DataMarker`](icu_provider::DataMarker)s.
 ///
 /// This is modeled as a macro that accepts a callback macro of the shape:

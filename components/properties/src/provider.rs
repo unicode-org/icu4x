@@ -26,7 +26,7 @@ use icu_collections::codepointinvlist::CodePointInversionList;
 use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
 use icu_collections::codepointtrie::{CodePointMapRange, CodePointTrie, TrieValue};
 use icu_provider::prelude::*;
-use icu_provider::{DataKeyMetadata, FallbackPriority};
+use icu_provider::DataKeyMetadata;
 use zerofrom::ZeroFrom;
 
 use zerovec::{VarZeroVec, ZeroSlice, ZeroVecError};
@@ -350,18 +350,6 @@ pub struct ScriptWithExtensionsPropertyV1<'data> {
     pub extensions: VarZeroVec<'data, ZeroSlice<Script>>,
 }
 
-impl<'data> ScriptWithExtensionsPropertyV1<'data> {
-    // This method is intended to be used by constructors of deserialized data
-    // in a data provider.
-    #[doc(hidden)]
-    pub fn new(
-        trie: CodePointTrie<'data, ScriptWithExt>,
-        extensions: VarZeroVec<'data, ZeroSlice<Script>>,
-    ) -> ScriptWithExtensionsPropertyV1<'data> {
-        ScriptWithExtensionsPropertyV1 { trie, extensions }
-    }
-}
-
 // See CodePointSetData for documentation of these functions
 impl<'data> PropertyCodePointSetV1<'data> {
     #[inline]
@@ -513,7 +501,7 @@ macro_rules! expand {
                     type Yokeable = PropertyCodePointSetV1<'static>;
                 }
                 impl KeyedDataMarker for $code_point_set_marker {
-                    const KEY: DataKey = data_key!(concat!("props/", $bin_cp_s, "@1"), DataKeyMetadata::construct_internal(FallbackPriority::Language, None, None, true));
+                    const KEY: DataKey = data_key!(concat!("props/", $bin_cp_s, "@1"), DataKeyMetadata::construct_internal(icu_provider::_internal::LocaleFallbackPriority::Language, None, None, true));
                 }
 
             )+
@@ -536,7 +524,7 @@ macro_rules! expand {
                     type Yokeable = PropertyUnicodeSetV1<'static>;
                 }
                 impl KeyedDataMarker for $unicode_set_marker {
-                    const KEY: DataKey = data_key!(concat!("props/", $bin_us_s, "@1"), DataKeyMetadata::construct_internal(FallbackPriority::Language, None, None, $us_singleton));
+                    const KEY: DataKey = data_key!(concat!("props/", $bin_us_s, "@1"), DataKeyMetadata::construct_internal(icu_provider::_internal::LocaleFallbackPriority::Language, None, None, $us_singleton));
                 }
             )+
 
@@ -557,7 +545,7 @@ macro_rules! expand {
                 }
 
                 impl KeyedDataMarker for $code_point_map_marker {
-                    const KEY: DataKey = data_key!(concat!("props/", $enum_s, "@1"), DataKeyMetadata::construct_internal(FallbackPriority::Language, None, None, true));
+                    const KEY: DataKey = data_key!(concat!("props/", $enum_s, "@1"), DataKeyMetadata::construct_internal(icu_provider::_internal::LocaleFallbackPriority::Language, None, None, true));
                 }
 
 
@@ -575,7 +563,7 @@ macro_rules! expand {
                 }
 
                 impl KeyedDataMarker for $name_value_marker {
-                    const KEY: DataKey = data_key!(concat!("propnames/from/", $enum_s, "@1"), DataKeyMetadata::construct_internal(FallbackPriority::Language, None, None, true));
+                    const KEY: DataKey = data_key!(concat!("propnames/from/", $enum_s, "@1"), DataKeyMetadata::construct_internal(icu_provider::_internal::LocaleFallbackPriority::Language, None, None, true));
                 }
 
                 $(
@@ -593,7 +581,7 @@ macro_rules! expand {
                     }
 
                     impl KeyedDataMarker for $value_short_name_marker_sparse {
-                        const KEY: DataKey = data_key!(concat!("propnames/to/short/sparse/", $enum_s, "@1"), DataKeyMetadata::construct_internal(FallbackPriority::Language, None, None, true));
+                        const KEY: DataKey = data_key!(concat!("propnames/to/short/sparse/", $enum_s, "@1"), DataKeyMetadata::construct_internal(icu_provider::_internal::LocaleFallbackPriority::Language, None, None, true));
                     }
 
                     #[doc = core::concat!("Data marker for producing long names of the values of the '", $enum_s, "' Unicode property")]
@@ -610,7 +598,7 @@ macro_rules! expand {
                     }
 
                     impl KeyedDataMarker for $value_long_name_marker_sparse {
-                        const KEY: DataKey = data_key!(concat!("propnames/to/long/sparse/", $enum_s, "@1"), DataKeyMetadata::construct_internal(FallbackPriority::Language, None, None, true));
+                        const KEY: DataKey = data_key!(concat!("propnames/to/long/sparse/", $enum_s, "@1"), DataKeyMetadata::construct_internal(icu_provider::_internal::LocaleFallbackPriority::Language, None, None, true));
                     }
                 )?
 
@@ -629,7 +617,7 @@ macro_rules! expand {
                     }
 
                     impl KeyedDataMarker for $value_short_name_marker_linear {
-                        const KEY: DataKey = data_key!(concat!("propnames/to/short/linear/", $enum_s, "@1"), DataKeyMetadata::construct_internal(FallbackPriority::Language, None, None, true));
+                        const KEY: DataKey = data_key!(concat!("propnames/to/short/linear/", $enum_s, "@1"), DataKeyMetadata::construct_internal(icu_provider::_internal::LocaleFallbackPriority::Language, None, None, true));
                     }
 
                     #[doc = core::concat!("Data marker for producing long names of the values of the '", $enum_s, "' Unicode property")]
@@ -646,7 +634,7 @@ macro_rules! expand {
                     }
 
                     impl KeyedDataMarker for $value_long_name_marker_linear {
-                        const KEY: DataKey = data_key!(concat!("propnames/to/long/linear/", $enum_s, "@1"), DataKeyMetadata::construct_internal(FallbackPriority::Language, None, None, true));
+                        const KEY: DataKey = data_key!(concat!("propnames/to/long/linear/", $enum_s, "@1"), DataKeyMetadata::construct_internal(icu_provider::_internal::LocaleFallbackPriority::Language, None, None, true));
                     }
                 )?
 
@@ -665,7 +653,7 @@ macro_rules! expand {
                     }
 
                     impl KeyedDataMarker for $value_short_name_marker_linear4 {
-                        const KEY: DataKey = data_key!(concat!("propnames/to/short/linear4/", $enum_s, "@1"), DataKeyMetadata::construct_internal(FallbackPriority::Language, None, None, true));
+                        const KEY: DataKey = data_key!(concat!("propnames/to/short/linear4/", $enum_s, "@1"), DataKeyMetadata::construct_internal(icu_provider::_internal::LocaleFallbackPriority::Language, None, None, true));
                     }
 
                     #[doc = core::concat!("Data marker for producing long names of the values of the '", $enum_s, "' Unicode property")]
@@ -683,7 +671,7 @@ macro_rules! expand {
                     }
 
                     impl KeyedDataMarker for $value_long_name_marker_linear4 {
-                        const KEY: DataKey = data_key!(concat!("propnames/to/long/linear/", $enum_s, "@1"), DataKeyMetadata::construct_internal(FallbackPriority::Language, None, None, true));
+                        const KEY: DataKey = data_key!(concat!("propnames/to/long/linear/", $enum_s, "@1"), DataKeyMetadata::construct_internal(icu_provider::_internal::LocaleFallbackPriority::Language, None, None, true));
                     }
                 )?
             )+

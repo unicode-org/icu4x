@@ -12,7 +12,6 @@
 #include "diplomat_runtime.hpp"
 #include "ICU4XCustomTimeZone.h"
 #include "ICU4XError.hpp"
-#include "ICU4XIanaToBcp47Mapper.hpp"
 #include "ICU4XIsoDateTime.hpp"
 #include "ICU4XMetazoneCalculator.hpp"
 #include "ICU4XTimeZoneIdMapper.hpp"
@@ -76,16 +75,8 @@ inline diplomat::result<std::monostate, ICU4XError> ICU4XCustomTimeZone::try_set
   return result.is_ok ? diplomat::result<std::monostate, ICU4XError>(diplomat::Ok<std::monostate>()) : diplomat::result<std::monostate, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::monostate, ICU4XError> ICU4XCustomTimeZone::try_set_iana_time_zone_id(const ICU4XIanaToBcp47Mapper& mapper, std::string_view id) {
+inline diplomat::result<std::monostate, ICU4XError> ICU4XCustomTimeZone::try_set_iana_time_zone_id(const ICU4XTimeZoneIdMapper& mapper, std::string_view id) {
   auto result = capi::ICU4XCustomTimeZone_try_set_iana_time_zone_id(this->AsFFI(),
-    mapper.AsFFI(),
-    id.data(),
-    id.size());
-  return result.is_ok ? diplomat::result<std::monostate, ICU4XError>(diplomat::Ok<std::monostate>()) : diplomat::result<std::monostate, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
-}
-
-inline diplomat::result<std::monostate, ICU4XError> ICU4XCustomTimeZone::try_set_iana_time_zone_id_2(const ICU4XTimeZoneIdMapper& mapper, std::string_view id) {
-  auto result = capi::ICU4XCustomTimeZone_try_set_iana_time_zone_id_2(this->AsFFI(),
     mapper.AsFFI(),
     id.data(),
     id.size());

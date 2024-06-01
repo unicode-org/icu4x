@@ -141,27 +141,7 @@ pub mod ffi {
         /// the corresponding BCP-47 string.
         ///
         /// Errors if the string is not a valid BCP-47 time zone ID.
-        #[diplomat::rust_link(icu::timezone::IanaToBcp47MapperBorrowed::get, FnInStruct)]
         pub fn try_set_iana_time_zone_id(
-            &mut self,
-            mapper: &crate::iana_bcp47_mapper::ffi::ICU4XIanaToBcp47Mapper,
-            id: &DiplomatStr,
-        ) -> Result<(), ICU4XError> {
-            let id = core::str::from_utf8(id)
-                .ok()
-                .and_then(|s| mapper.0.as_borrowed().get(s))
-                .ok_or(ICU4XError::TimeZoneInvalidIdError)?;
-            self.0.time_zone_id = Some(id);
-            Ok(())
-        }
-
-        // *** TODO: in 2.0 please replace try_set_iana_time_zone_id with try_set_iana_time_zone_id_2 ***
-
-        /// Sets the `time_zone_id` field from an IANA string by looking up
-        /// the corresponding BCP-47 string.
-        ///
-        /// Errors if the string is not a valid BCP-47 time zone ID.
-        pub fn try_set_iana_time_zone_id_2(
             &mut self,
             mapper: &crate::timezone_mapper::ffi::ICU4XTimeZoneIdMapper,
             id: &DiplomatStr,

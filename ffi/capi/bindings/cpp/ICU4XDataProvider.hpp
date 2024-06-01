@@ -26,11 +26,6 @@ inline diplomat::result<std::unique_ptr<ICU4XDataProvider>, ICU4XError> ICU4XDat
   return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XDataProvider>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XDataProvider>>(std::unique_ptr<ICU4XDataProvider>(ICU4XDataProvider::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XDataProvider>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
 }
 
-inline std::unique_ptr<ICU4XDataProvider> ICU4XDataProvider::create_test() {
-  auto result = capi::ICU4XDataProvider_create_test();
-  return std::unique_ptr<ICU4XDataProvider>(ICU4XDataProvider::FromFFI(result));
-}
-
 inline diplomat::result<std::unique_ptr<ICU4XDataProvider>, ICU4XError> ICU4XDataProvider::create_from_byte_slice(diplomat::span<const uint8_t> blob) {
   auto result = capi::ICU4XDataProvider_create_from_byte_slice(blob.data(),
     blob.size());

@@ -6,8 +6,8 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include "diplomat_runtime.h"
-#include "CodePointRangeIterator.d.h"
-#include "CodePointRangeIterator.h"
+#include "ICU4XCodePointRangeIterator.d.h"
+#include "ICU4XCodePointRangeIterator.h"
 #include "ICU4XCodePointSetData.d.h"
 #include "ICU4XCodePointSetData.h"
 #include "ICU4XDataProvider.d.h"
@@ -28,11 +28,11 @@ uint8_t ICU4XCodePointMapData8_get32(const ICU4XCodePointMapData8* self, uint32_
 
 uint32_t ICU4XCodePointMapData8_general_category_to_mask(uint8_t gc);
 
-CodePointRangeIterator* ICU4XCodePointMapData8_iter_ranges_for_value(const ICU4XCodePointMapData8* self, uint8_t value);
+ICU4XCodePointRangeIterator* ICU4XCodePointMapData8_iter_ranges_for_value(const ICU4XCodePointMapData8* self, uint8_t value);
 
-CodePointRangeIterator* ICU4XCodePointMapData8_iter_ranges_for_value_complemented(const ICU4XCodePointMapData8* self, uint8_t value);
+ICU4XCodePointRangeIterator* ICU4XCodePointMapData8_iter_ranges_for_value_complemented(const ICU4XCodePointMapData8* self, uint8_t value);
 
-CodePointRangeIterator* ICU4XCodePointMapData8_iter_ranges_for_mask(const ICU4XCodePointMapData8* self, uint32_t mask);
+ICU4XCodePointRangeIterator* ICU4XCodePointMapData8_iter_ranges_for_mask(const ICU4XCodePointMapData8* self, uint32_t mask);
 
 ICU4XCodePointSetData* ICU4XCodePointMapData8_get_set_for_value(const ICU4XCodePointMapData8* self, uint8_t value);
 

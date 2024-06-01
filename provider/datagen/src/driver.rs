@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::rayon_prelude::*;
-use crate::FallbackMode;
 use displaydoc::Display;
 use icu_locale::fallback::LocaleFallbackIterator;
 use icu_locale::LocaleFallbacker;
@@ -402,9 +401,6 @@ enum LocalesWithOrWithoutFallback {
 pub struct DatagenDriver {
     keys: Option<HashSet<DataKey>>,
     locales_fallback: Option<LocalesWithOrWithoutFallback>,
-    // `None` means not set, `Some(None)` means all
-    legacy_locales: Option<Option<Vec<LanguageIdentifier>>>,
-    legacy_fallback_mode: FallbackMode,
     additional_collations: HashSet<String>,
     segmenter_models: Vec<String>,
 }
@@ -418,8 +414,6 @@ impl DatagenDriver {
         Self {
             keys: None,
             locales_fallback: None,
-            legacy_fallback_mode: FallbackMode::default(),
-            legacy_locales: None,
             additional_collations: HashSet::new(),
             segmenter_models: Vec::new(),
         }
@@ -575,8 +569,6 @@ impl DatagenDriver {
         let Self {
             keys,
             locales_fallback,
-            legacy_locales,
-            legacy_fallback_mode,
             additional_collations,
             segmenter_models,
         } = self;
@@ -587,76 +579,9 @@ impl DatagenDriver {
             ));
         };
 
-        let map_legacy_locales_to_locales_with_expansion =
-            |legacy_locales: Option<Vec<LanguageIdentifier>>| match legacy_locales {
-                Some(v) => v
-                    .into_iter()
-                    .map(LocaleFamily::with_descendants)
-                    .map(LocaleFamily::into_parts)
-                    .collect(),
-                None => [LocaleFamily::FULL]
-                    .into_iter()
-                    .map(LocaleFamily::into_parts)
-                    .collect(),
-            };
-
-        let locales_fallback = match (locales_fallback, legacy_locales, legacy_fallback_mode) {
-            // 1.5 API
-            (Some(locales_fallback), _, _) => locales_fallback,
-            // 1.4 API
-            (_, Some(legacy_locales), FallbackMode::PreferredForExporter) => {
-                LocalesWithOrWithoutFallback::WithFallback {
-                    families: map_legacy_locales_to_locales_with_expansion(legacy_locales),
-                    options: FallbackOptions {
-                        runtime_fallback_location: None,
-                        deduplication_strategy: None,
-                    },
-                }
-            }
-            (_, Some(legacy_locales), FallbackMode::Runtime) => {
-                LocalesWithOrWithoutFallback::WithFallback {
-                    families: map_legacy_locales_to_locales_with_expansion(legacy_locales),
-                    options: FallbackOptions {
-                        runtime_fallback_location: Some(RuntimeFallbackLocation::Internal),
-                        deduplication_strategy: Some(DeduplicationStrategy::Maximal),
-                    },
-                }
-            }
-            (_, Some(legacy_locales), FallbackMode::RuntimeManual) => {
-                LocalesWithOrWithoutFallback::WithFallback {
-                    families: map_legacy_locales_to_locales_with_expansion(legacy_locales),
-                    options: FallbackOptions {
-                        runtime_fallback_location: Some(RuntimeFallbackLocation::External),
-                        deduplication_strategy: Some(DeduplicationStrategy::Maximal),
-                    },
-                }
-            }
-            (_, Some(Some(locales)), FallbackMode::Preresolved) => {
-                LocalesWithOrWithoutFallback::WithoutFallback {
-                    langids: locales.into_iter().collect(),
-                }
-            }
-            (_, Some(None), FallbackMode::Preresolved) => {
-                return Err(DataError::custom(
-                    "FallbackMode::Preresolved requires an explicit locale set",
-                ));
-            }
-            (_, Some(legacy_locales), FallbackMode::Hybrid) => {
-                LocalesWithOrWithoutFallback::WithFallback {
-                    families: map_legacy_locales_to_locales_with_expansion(legacy_locales),
-                    options: FallbackOptions {
-                        runtime_fallback_location: Some(RuntimeFallbackLocation::External),
-                        deduplication_strategy: Some(DeduplicationStrategy::None),
-                    },
-                }
-            }
-            // Failure case
-            _ => {
-                return Err(DataError::custom(
-                    "`DatagenDriver::with_locales` or `with_all_locales` or `with_locales_and_fallback` or `with_locales_no_fallback` needs to be called",
-                ));
-            }
-        };
+        let locales_fallback = locales_fallback.ok_or_else(|| DataError::custom(
+            "`DatagenDriver::with_locales_and_fallback` or `with_locales_no_fallback` needs to be called",
+        ))?;
 
         if keys.is_empty() {
             log::warn!("No keys selected");

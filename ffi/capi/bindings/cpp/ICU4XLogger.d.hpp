@@ -16,8 +16,6 @@ public:
 
   inline static bool init_simple_logger();
 
-  inline static bool init_console_logger();
-
   inline const capi::ICU4XLogger* AsFFI() const;
   inline capi::ICU4XLogger* AsFFI();
   inline static const ICU4XLogger* FromFFI(const capi::ICU4XLogger* ptr);

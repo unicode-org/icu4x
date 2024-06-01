@@ -16,7 +16,7 @@ use icu_timezone::{CustomTimeZone, GmtOffset, ZoneVariant};
 
 // TODO(#2630) fix up imports to directly import from icu_calendar
 pub(crate) use icu_calendar::types::{
-    DayOfMonth, DayOfWeekInMonth, DayOfYearInfo, FormattableMonth, FormattableYear, IsoHour,
+    DayOfMonth, DayOfYearInfo, FormattableMonth, FormattableYear, IsoHour,
     IsoMinute, IsoSecond, IsoWeekday, NanoSecond, Time, WeekOfMonth, WeekOfYear,
 };
 pub(crate) use icu_calendar::CalendarError;
@@ -152,31 +152,6 @@ pub trait TimeZoneInput {
 pub trait DateTimeInput: DateInput + IsoTimeInput {}
 
 impl<T> DateTimeInput for T where T: DateInput + IsoTimeInput {}
-
-/// A formattable calendar date and ISO time that takes the locale into account.
-#[deprecated(since = "1.5.0", note = "not used in any ICU4X APIs")]
-pub trait LocalizedDateTimeInput<T: DateTimeInput> {
-    /// A reference to this instance's [`DateTimeInput`].
-    fn datetime(&self) -> &T;
-
-    /// The week of the month.
-    ///
-    /// For example, January 1, 2021 is part of the first week of January.
-    fn week_of_month(&self) -> Result<WeekOfMonth, CalendarError>;
-
-    /// The week number of the year and the corresponding year.
-    ///
-    /// For example, December 31, 2020 is part of the first week of 2021.
-    fn week_of_year(&self) -> Result<(FormattableYear, WeekOfYear), CalendarError>;
-
-    /// The day of week in this month.
-    ///
-    /// For example, July 8, 2020 is the 2nd Wednesday of July.
-    fn day_of_week_in_month(&self) -> Result<DayOfWeekInMonth, CalendarError>;
-
-    /// TODO(#487): Implement flexible day periods.
-    fn flexible_day_period(&self);
-}
 
 /// A [`DateTimeInput`] type with all of the fields pre-extracted
 ///

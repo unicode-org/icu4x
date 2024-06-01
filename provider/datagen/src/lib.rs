@@ -124,7 +124,7 @@ pub mod prelude {
     pub use crate::provider::{CollationHanDatabase, CoverageLevel, DatagenProvider};
     #[doc(no_inline)]
     pub use crate::{
-        DatagenDriver, DeduplicationStrategy, FallbackMode, FallbackOptions, LocaleFamily,
+        DatagenDriver, DeduplicationStrategy, FallbackOptions, LocaleFamily,
         NoFallbackOptions, RuntimeFallbackLocation,
     };
     #[doc(no_inline)]
@@ -245,7 +245,7 @@ macro_rules! cb {
         }
 
         #[macro_export]
-        #[doc(hidden)]
+        #[doc(hidden)] // macro
         macro_rules! make_exportable_provider {
             ($ty:ty) => {
                 icu_provider::make_exportable_provider!(
@@ -266,96 +266,6 @@ macro_rules! cb {
     }
 }
 crate::registry!(cb);
-
-/// Defines how fallback will apply to the generated data.
-///
-/// If in doubt, use [`FallbackMode::PreferredForExporter`], which selects the best mode for your
-/// chosen data provider.
-///
-/// # Fallback Mode Comparison
-///
-/// The modes differ primarily in their approaches to runtime fallback and data size.
-///
-/// | Mode | Runtime Fallback | Data Size |
-/// |---|---|---|
-/// | [`Runtime`] | Required, Automatic | Smallest |
-/// | [`RuntimeManual`] | Required, Manual | Smallest |
-/// | [`Preresolved`] | Unsupported | Small |
-/// | [`Hybrid`] | Optional | Medium |
-///
-/// If you are not 100% certain of the closed set of locales you need at runtime, you should
-/// use a provider with runtime fallback enabled.
-///
-/// [`Runtime`]: FallbackMode::Runtime
-/// [`RuntimeManual`]: FallbackMode::RuntimeManual
-/// [`Preresolved`]: FallbackMode::Preresolved
-/// [`Hybrid`]: FallbackMode::Hybrid
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Default)]
-#[non_exhaustive]
-pub enum FallbackMode {
-    /// Selects the fallback mode based on [`DataExporter::supports_built_in_fallback()`](
-    /// icu_provider::datagen::DataExporter::supports_built_in_fallback()), resolving to either
-    /// [`Runtime`] or [`Hybrid`].
-    ///
-    /// [`Runtime`]: Self::Runtime
-    /// [`Hybrid`]: Self::Hybrid
-    #[default]
-    PreferredForExporter,
-    /// This mode generates the minimal set of locales that cover the requested locales when
-    /// fallback is used at runtime. For example, if "en" and "en-US" are both requested but
-    /// they contain the same value, only "en" will be included, since "en-US" falls back to
-    /// "en" at runtime.
-    ///
-    /// If an explicit list of locales is used, this mode includes all ancestors and descendants
-    /// (usually regional variants) of the explicitly listed locales. For example, if "pt-PT" is
-    /// requested, then "pt", "pt-PT", and children like "pt-MO" will be included. Note that the
-    /// children of "pt-PT" usually inherit from it and therefore don't take up a significant
-    /// amount of space in the data file.
-    ///
-    /// This mode is only supported with the baked data provider, and it builds fallback logic
-    /// into the generated code. To use this mode with other providers that don't bundle fallback
-    /// logic, use [`FallbackMode::RuntimeManual`] or [`FallbackMode::Hybrid`].
-    ///
-    /// This is the default fallback mode for the baked provider.
-    Runtime,
-    /// Same as [`FallbackMode::Runtime`] except that the fallback logic is not included in the
-    /// generated code. It must be enabled manually with a [`LocaleFallbackProvider`].
-    ///
-    /// This mode is supported on all data provider implementations.
-    ///
-    /// [`LocaleFallbackProvider`]: icu_provider_adapters::fallback::LocaleFallbackProvider
-    RuntimeManual,
-    /// This mode generates data for exactly the supplied locales. If data doesn't exist for a
-    /// locale, fallback will be performed and the fallback value will be exported.
-    ///
-    /// Requires using an explicit list of locales.
-    ///
-    /// Note: in data exporters that deduplicate values (such as `BakedExporter` and
-    /// `BlobDataExporter`), the impact on data size as compared to [`FallbackMode::Runtime`]
-    /// is limited to the pointers in the explicitly listed locales.
-    ///
-    /// Data generated in this mode can be used without runtime fallback and guarantees that all
-    /// locales are present. If you wish to also support locales that were not explicitly listed
-    /// with runtime fallback, see [`FallbackMode::Hybrid`].
-    Preresolved,
-    /// This mode passes through CLDR data without performing locale deduplication.
-    ///
-    /// If an explicit list of locales is used, this mode includes all ancestors and descendants
-    /// (usually regional variants) of the explicitly listed locales. For example, if "pt-PT" is
-    /// requested, then "pt", "pt-PT", and children like "pt-MO" will be included.
-    ///
-    /// Note: in data exporters that deduplicate values (such as `BakedExporter` and
-    /// `BlobDataExporter`), the impact on data size as compared to [`FallbackMode::Runtime`]
-    /// is limited to the pointers in the explicitly listed locales.
-    ///
-    /// Data generated in this mode is suitable for use with or without runtime fallback. To
-    /// enable runtime fallback, use a [`LocaleFallbackProvider`].
-    ///
-    /// This is the default fallback mode for the blob and filesystem providers.
-    ///
-    /// [`LocaleFallbackProvider`]: icu_provider_adapters::fallback::LocaleFallbackProvider
-    Hybrid,
-}
 
 /// Parses a list of human-readable key identifiers and returns a
 /// list of [`DataKey`]s.

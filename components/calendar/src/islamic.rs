@@ -156,12 +156,6 @@ impl IslamicCivil {
     pub fn new() -> Self {
         Self
     }
-
-    /// Construct a new [`IslamicCivil`] (deprecated: we will not add precomputation to this calendar)
-    #[deprecated = "Precomputation not needed for this calendar"]
-    pub fn new_always_calculating() -> Self {
-        Self
-    }
 }
 
 impl IslamicUmmAlQura {
@@ -207,12 +201,6 @@ impl IslamicUmmAlQura {
 impl IslamicTabular {
     /// Construct a new [`IslamicTabular`]
     pub fn new() -> Self {
-        Self
-    }
-
-    /// Construct a new [`IslamicTabular`] (deprecated: we will not add precomputation to this calendar)
-    #[deprecated = "Precomputation not needed for this calendar"]
-    pub fn new_always_calculating() -> Self {
         Self
     }
 }
