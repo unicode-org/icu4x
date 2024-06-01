@@ -54,7 +54,6 @@ icu_locale = { path = "../../components/locale" }
 criterion = { workspace = true }
 
 [features]
-bench = []
 std = ["icu_locale_core/std"]
 sync = []
 macros = ["dep:icu_provider_macros"]
@@ -78,10 +77,3 @@ datagen = ["serde", "dep:erased-serde", "dep:databake", "std", "sync"]
 denylist = ["macros"]
 # We have tons of features here, limit the amount of tests we run
 max_combination_size = 3
-
-[lib]
-bench = false  # This option is required for Benchmark CI
-
-[[bench]]
-name = "data_locale_bench"
-harness = false

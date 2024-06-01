@@ -231,7 +231,7 @@ impl DataProvider<FooV1Marker> for DatagenProvider {
 impl IterableDataProviderInternal<FooV1Marker> for FooProvider {
     fn supported_locales_impl(
         &self,
-    ) -> Result<HashSet<LanguageIdentifier>, DataError> {
+    ) -> Result<HashSet<DataLocale>, DataError> {
         // This should list all supported locales.
     }
 }

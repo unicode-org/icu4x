@@ -151,7 +151,7 @@ impl Collator {
                 .extensions
                 .unicode
                 .keywords
-                .get(&key!("nu"))
+                .get(&key!("co"))
                 .map(DataKeyAttributes::from_unicode_value)
                 .unwrap_or_default(),
             ..Default::default()

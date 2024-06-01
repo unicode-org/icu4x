@@ -22,17 +22,17 @@ fn blob_version_bench(c: &mut Criterion) {
     });
 
     let hello_world_provider = HelloWorldProvider;
-    let locales = hello_world_provider.supported_requests().unwrap();
+    let langids = hello_world_provider.supported_requests().unwrap();
 
     c.bench_function("provider/read/v1", |b| {
         let provider = BlobDataProvider::try_new_from_static_blob(black_box(BLOB_V1)).unwrap();
         b.iter(|| {
-            for (locale, key_attributes) in black_box(&locales).iter() {
+            for (langid, key_attributes) in black_box(&langids).iter() {
                 black_box(&provider)
                     .load_buffer(
                         HelloWorldV1Marker::KEY,
                         DataRequest {
-                            langid: locale,
+                            langid,
                             key_attributes,
                             ..Default::default()
                         },
@@ -44,7 +44,7 @@ fn blob_version_bench(c: &mut Criterion) {
     c.bench_function("provider/read/v2", |b| {
         let provider = BlobDataProvider::try_new_from_static_blob(black_box(BLOB_V2)).unwrap();
         b.iter(|| {
-            for (locale, key_attributes) in black_box(&locales).iter() {
+            for (locale, key_attributes) in black_box(&langids).iter() {
                 black_box(&provider)
                     .load_buffer(
                         HelloWorldV1Marker::KEY,

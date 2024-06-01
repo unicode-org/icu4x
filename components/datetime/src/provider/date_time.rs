@@ -24,6 +24,7 @@ use crate::provider::neo::SimpleSubstitutionPattern;
 use crate::{options::components, provider::calendar::DateSkeletonPatternsV1Marker};
 use icu_calendar::types::Era;
 use icu_calendar::types::MonthCode;
+#[cfg(feature = "experimental")]
 use icu_locale_core::extensions::unicode::Value;
 use icu_provider::prelude::*;
 

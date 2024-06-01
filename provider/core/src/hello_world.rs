@@ -116,7 +116,7 @@ impl HelloWorldProvider {
         ("en-019", "", "Hello from 🌎"),       // AMERICAS
         ("en-142", "", "Hello from 🌏"),       // ASIA
         ("en-GB", "", "Hello from 🇬🇧"),        // GREAT BRITAIN
-        ("en-GB", "bri'ish", "Hello from 🏴󠁧󠁢󠁥󠁮󠁧󠁿"), // ENGLAND
+        ("en-GB", "england", "Hello from 🏴󠁧󠁢󠁥󠁮󠁧󠁿"), // ENGLAND
         ("en", "reverse", "Olleh Dlrow"),
         ("eo", "", "Saluton, Mondo"),
         ("fa", "", "سلام دنیا‎"),
@@ -352,7 +352,7 @@ fn test_iter() {
             (langid!("en-019"), Default::default()),
             (langid!("en-142"), Default::default()),
             (langid!("en-GB"), Default::default()),
-            (langid!("en-GB"), "bri'ish".parse().unwrap()),
+            (langid!("en-GB"), "england".parse().unwrap()),
             (langid!("en"), "reverse".parse().unwrap()),
             (langid!("eo"), Default::default()),
             (langid!("fa"), Default::default()),
