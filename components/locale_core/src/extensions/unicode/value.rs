@@ -4,6 +4,7 @@
 
 use crate::parser::{ParserError, SubtagIterator};
 use crate::shortvec::ShortBoxSlice;
+use alloc::vec::Vec;
 use core::ops::RangeInclusive;
 use core::str::FromStr;
 use tinystr::TinyAsciiStr;
@@ -100,6 +101,31 @@ impl Value {
                 Self(ShortBoxSlice::new_single(val))
             }
         }
+    }
+
+    /// A constructor which takes a pre-sorted list of [`Value`] elements.
+    ///
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locale::extensions::unicode::Value;
+    /// use tinystr::{TinyAsciiStr, tinystr};
+    ///
+    /// let tinystr1: TinyAsciiStr<8> = tinystr!(8, "foobar");
+    /// let tinystr2: TinyAsciiStr<8> = tinystr!(8, "testing");
+    /// let mut v = vec![tinystr1, tinystr2];
+    /// v.sort();
+    /// v.dedup();
+    ///
+    /// let value = Value::from_vec_unchecked(v);
+    /// ```
+    ///
+    /// Notice: For performance- and memory-constrained environments, it is recommended
+    /// for the caller to use [`binary_search`](slice::binary_search) instead of [`sort`](slice::sort)
+    /// and [`dedup`](Vec::dedup()).
+    pub fn from_vec_unchecked(input: Vec<TinyAsciiStr<8>>) -> Self {
+        Self(input.into())
     }
 
     pub(crate) fn from_short_slice_unchecked(input: ShortBoxSlice<TinyAsciiStr<8>>) -> Self {

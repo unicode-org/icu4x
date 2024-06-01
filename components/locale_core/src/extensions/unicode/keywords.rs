@@ -5,6 +5,7 @@
 use core::borrow::Borrow;
 use core::cmp::Ordering;
 use core::iter::FromIterator;
+use core::str::FromStr;
 use litemap::LiteMap;
 use writeable::Writeable;
 
@@ -12,6 +13,8 @@ use super::Key;
 use super::Value;
 #[allow(deprecated)]
 use crate::ordering::SubtagOrderingResult;
+use crate::parser::ParserError;
+use crate::parser::SubtagIterator;
 use crate::shortvec::ShortBoxSlice;
 
 /// A list of [`Key`]-[`Value`] pairs representing functional information
@@ -88,6 +91,11 @@ impl Keywords {
         Self(LiteMap::from_sorted_store_unchecked(
             ShortBoxSlice::new_single((key, value)),
         ))
+    }
+
+    pub(crate) fn try_from_bytes(t: &[u8]) -> Result<Self, ParserError> {
+        let mut iter = SubtagIterator::new(t);
+        Self::try_from_iter(&mut iter)
     }
 
     /// Returns `true` if there are no keywords.
@@ -356,6 +364,44 @@ impl Keywords {
         }
     }
 
+    pub(crate) fn try_from_iter(iter: &mut SubtagIterator) -> Result<Self, ParserError> {
+        let mut keywords = LiteMap::new();
+
+        let mut current_keyword = None;
+        let mut current_value = ShortBoxSlice::new();
+
+        while let Some(subtag) = iter.peek() {
+            let slen = subtag.len();
+            if slen == 2 {
+                if let Some(kw) = current_keyword.take() {
+                    keywords.try_insert(kw, Value::from_short_slice_unchecked(current_value));
+                    current_value = ShortBoxSlice::new();
+                }
+                current_keyword = Some(Key::try_from_bytes(subtag)?);
+            } else if current_keyword.is_some() {
+                match Value::parse_subtag(subtag) {
+                    Ok(Some(t)) => current_value.push(t),
+                    Ok(None) => {}
+                    Err(_) => break,
+                }
+            } else {
+                break;
+            }
+            iter.next();
+        }
+
+        if let Some(kw) = current_keyword.take() {
+            keywords.try_insert(kw, Value::from_short_slice_unchecked(current_value));
+        }
+
+        Ok(keywords.into())
+    }
+
+    /// Produce an ordered iterator over key-value pairs
+    pub fn iter(&self) -> impl Iterator<Item = (&Key, &Value)> {
+        self.0.iter()
+    }
+
     pub(crate) fn for_each_subtag_str<E, F>(&self, f: &mut F) -> Result<(), E>
     where
         F: FnMut(&str) -> Result<(), E>,
@@ -386,4 +432,23 @@ impl FromIterator<(Key, Value)> for Keywords {
     }
 }
 
+impl FromStr for Keywords {
+    type Err = ParserError;
+
+    fn from_str(source: &str) -> Result<Self, Self::Err> {
+        Self::try_from_bytes(source.as_bytes())
+    }
+}
+
 impl_writeable_for_key_value!(Keywords, "ca", "islamic-civil", "mm", "mm");
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_keywords_fromstr() {
+        let kw: Keywords = "hc-h12".parse().expect("Failed to parse Keywords");
+        assert_eq!(kw.to_string(), "hc-h12");
+    }
+}
