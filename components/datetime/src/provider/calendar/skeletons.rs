@@ -16,7 +16,6 @@ size_test!(DateSkeletonPatternsV1, date_skeleton_patterns_v1_size, 24);
 // #[icu_provider::data_struct(marker(
 //     DateSkeletonPatternsV1Marker,
 //     "datetime/skeletons@1",
-//     extension_key = "ca"
 // ))]
 //
 /// Skeleton data for dates and times, along with the corresponding plural pattern
@@ -32,7 +31,6 @@ size_test!(DateSkeletonPatternsV1, date_skeleton_patterns_v1_size, 24);
     DateSkeletonPatternsV1Marker,
     "datetime/skeletons@1",
     fallback_by = "language",
-    extension_key = "ca",
 ))]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]

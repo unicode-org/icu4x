@@ -116,7 +116,6 @@ fn data_ce_to_primary(data_ce: u64, c: char) -> u32 {
 #[icu_provider::data_struct(marker(
     CollationDataV1Marker,
     "collator/data@1",
-    extension_key = "co",
     fallback_by = "collation",
     fallback_supplement = "collation"
 ))]
@@ -232,7 +231,6 @@ impl<'data> CollationDataV1<'data> {
 #[icu_provider::data_struct(marker(
     CollationDiacriticsV1Marker,
     "collator/dia@1",
-    extension_key = "co",
     fallback_by = "collation",
     fallback_supplement = "collation",
 ))]
@@ -276,7 +274,6 @@ pub struct CollationJamoV1<'data> {
 #[icu_provider::data_struct(marker(
     CollationReorderingV1Marker,
     "collator/reord@1",
-    extension_key = "co",
     fallback_by = "collation",
     fallback_supplement = "collation"
 ))]
@@ -366,7 +363,6 @@ impl<'data> CollationReorderingV1<'data> {
 #[icu_provider::data_struct(marker(
     CollationMetadataV1Marker,
     "collator/meta@1",
-    extension_key = "co",
     fallback_by = "collation",
     fallback_supplement = "collation"
 ))]

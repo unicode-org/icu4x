@@ -76,7 +76,6 @@ mod tests;
 ///         BazV1Marker,
 ///         "demo/baz@1",
 ///         fallback_by = "region",
-///         extension_key = "ca"
 ///     )
 /// )]
 /// pub struct FooV1<'data> {
@@ -164,7 +163,6 @@ impl Parse for DataStructArg {
             let mut marker_name: Option<Path> = None;
             let mut key_lit: Option<LitStr> = None;
             let mut fallback_by: Option<LitStr> = None;
-            let mut extension_key: Option<LitStr> = None;
             let mut fallback_supplement: Option<LitStr> = None;
             let mut singleton = false;
             let punct = content.parse_terminated(DataStructMarkerArg::parse, Token![,])?;
@@ -180,13 +178,6 @@ impl Parse for DataStructArg {
                                 &mut fallback_by,
                                 value,
                                 "fallback_by",
-                                paren.span.join(),
-                            )?;
-                        } else if name == "extension_key" {
-                            at_most_one_option(
-                                &mut extension_key,
-                                value,
-                                "extension_key",
                                 paren.span.join(),
                             )?;
                         } else if name == "fallback_supplement" {
