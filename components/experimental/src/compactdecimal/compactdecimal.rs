@@ -3,13 +3,13 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use alloc::borrow::Cow;
-use icu_locale::extensions::unicode::key;
 use core::convert::TryFrom;
 use fixed_decimal::{CompactDecimal, FixedDecimal};
 use icu_decimal::{
     options::{FixedDecimalFormatterOptions, GroupingStrategy},
     FixedDecimalFormatter,
 };
+use icu_locale::extensions::unicode::key;
 use icu_plurals::PluralRules;
 use icu_provider::prelude::*;
 use zerovec::maps::ZeroMap2dCursor;
