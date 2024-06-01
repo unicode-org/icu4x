@@ -21,7 +21,7 @@ use icu::locale::locale;
 use writeable::assert_writeable_eq;
 
 let fdf = FixedDecimalFormatter::try_new(
-    &locale!("bn"),
+    &locale!("bn").into(),
     Default::default(),
 )
 .expect("locale should be present");
@@ -60,7 +60,7 @@ use icu::locale::locale;
 use writeable::assert_writeable_eq;
 
 let fdf = FixedDecimalFormatter::try_new(
-    &locale!("th-u-nu-thai"),
+    &locale!("th-u-nu-thai").into(),
     Default::default(),
 )
 .expect("locale should be present");

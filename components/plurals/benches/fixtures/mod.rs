@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_locale_core::Locale;
+use icu_locale_core::LanguageIdentifier;
 use icu_plurals::PluralCategory;
 
 use serde::Deserialize;
@@ -18,7 +18,7 @@ pub struct NumbersFixture {
 
 #[derive(Debug, Deserialize)]
 pub struct PluralsFixture {
-    pub langs: Vec<Locale>,
+    pub langs: Vec<LanguageIdentifier>,
 }
 
 /// Describes a number to construct from plural operands, as `value * 10^(exponent)`.  Construction

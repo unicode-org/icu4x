@@ -41,7 +41,7 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
         ) -> Result<Box<ICU4XWeekCalculator>, ICU4XError> {
-            let locale = locale.to_locale();
+            let locale = locale.to_datalocale();
 
             Ok(Box::new(ICU4XWeekCalculator(call_constructor!(
                 WeekCalculator::try_new,

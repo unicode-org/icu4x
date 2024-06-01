@@ -98,7 +98,7 @@
 //! [`ICU4X`]: ../icu/index.html
 //! [`DataProvider`]: data_provider::DataProvider
 //! [`DataKey`]: key::DataKey
-//! [`LanguageIdentifier`]: icu_locale_core::LanguageIdentifier
+//! [`DataLocale`]: request::DataLocale
 //! [`IterableDynamicDataProvider`]: datagen::IterableDynamicDataProvider
 //! [`IterableDataProvider`]: datagen::IterableDataProvider
 //! [`AnyPayloadProvider`]: ../icu_provider_adapters/any_payload/struct.AnyPayloadProvider.html
@@ -164,6 +164,7 @@ pub use crate::key::DataKeyHash;
 pub use crate::key::DataKeyMetadata;
 pub use crate::key::DataKeyPath;
 pub use crate::request::DataKeyAttributes;
+pub use crate::request::DataLocale;
 pub use crate::request::DataRequest;
 pub use crate::request::DataRequestMetadata;
 pub use crate::response::Cart;
@@ -226,6 +227,8 @@ pub mod prelude {
     #[doc(no_inline)]
     pub use crate::DataKeyHash;
     #[doc(no_inline)]
+    pub use crate::DataLocale;
+    #[doc(no_inline)]
     pub use crate::DataMarker;
     #[doc(no_inline)]
     pub use crate::DataPayload;
@@ -243,9 +246,8 @@ pub mod prelude {
     pub use crate::DynamicDataProvider;
     #[doc(no_inline)]
     pub use crate::KeyedDataMarker;
-
+    #[doc(no_inline)]
     pub use icu_locale_core::LanguageIdentifier;
-    pub use icu_locale_core::Locale;
 
     #[doc(hidden)]
     pub use yoke;

@@ -52,8 +52,8 @@ pub use crate::provider::Baked;
 /// Finally, the pattern indicating noncompact notation for the first few powers
 /// of ten is omitted; that is, there is an implicit (1, other) ↦ 0.
 #[icu_provider::data_struct(
-    marker(LongCompactDecimalFormatDataV1Marker, "compactdecimal/long@1",),
-    marker(ShortCompactDecimalFormatDataV1Marker, "compactdecimal/short@1",)
+    marker(LongCompactDecimalFormatDataV1Marker, "compactdecimal/long@1"),
+    marker(ShortCompactDecimalFormatDataV1Marker, "compactdecimal/short@1")
 )]
 #[derive(Debug, Clone, Default, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]

@@ -137,7 +137,7 @@ impl<M: DataMarker> BoundDataProvider<M> for PhantomProvider {
 size_test!(
     TypedDateTimeNames<icu_calendar::Gregorian, DateTimeMarker>,
     typed_date_time_names_size,
-    576
+    464
 );
 
 /// A low-level type that formats datetime patterns with localized symbols.
@@ -165,7 +165,7 @@ size_test!(
 ///
 /// // Create an instance that can format abbreviated month, weekday, and day period names:
 /// let mut names: TypedDateTimeNames<Gregorian> =
-///     TypedDateTimeNames::try_new(&locale!("uk")).unwrap();
+///     TypedDateTimeNames::try_new(&locale!("uk").into()).unwrap();
 /// names
 ///     .include_month_names(fields::Month::Format, FieldLength::Abbreviated)
 ///     .unwrap()
@@ -196,7 +196,7 @@ size_test!(
 ///
 /// // Create an instance that can format abbreviated month, weekday, and day period names:
 /// let mut names: TypedDateTimeNames<Gregorian> =
-///     TypedDateTimeNames::try_new(&locale!("en")).unwrap();
+///     TypedDateTimeNames::try_new(&locale!("en").into()).unwrap();
 ///
 /// // Create a pattern from a pattern string:
 /// let pattern_str = "'It is:' E MMM d y G 'at' h:mm:ssSSS a";
@@ -214,7 +214,7 @@ size_test!(
 /// ```
 #[derive(Debug)]
 pub struct TypedDateTimeNames<C: CldrCalendar, R: DateTimeNamesMarker = DateTimeMarker> {
-    locale: Locale,
+    locale: DataLocale,
     inner: RawDateTimeNames<R>,
     _calendar: PhantomData<C>,
 }
@@ -388,7 +388,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub fn try_new(locale: &Locale) -> Result<Self, DataError> {
+    pub fn try_new(locale: &DataLocale) -> Result<Self, DataError> {
         let mut names = Self {
             locale: locale.clone(),
             inner: RawDateTimeNames::new_without_fixed_decimal_formatter(),
@@ -399,7 +399,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     }
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
-    pub fn try_new_unstable<P>(provider: &P, locale: &Locale) -> Result<Self, DataError>
+    pub fn try_new_unstable<P>(provider: &P, locale: &DataLocale) -> Result<Self, DataError>
     where
         P: DataProvider<DecimalSymbolsV1Marker> + ?Sized,
     {
@@ -445,7 +445,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// use icu::locale::locale;
     ///
     /// let mut names =
-    ///     TypedDateTimeNames::<Gregorian>::try_new(&locale!("und"))
+    ///     TypedDateTimeNames::<Gregorian>::try_new(&locale!("und").into())
     ///         .unwrap();
     ///
     /// // First length is successful:
@@ -506,7 +506,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// use icu::locale::locale;
     ///
     /// let mut names =
-    ///     TypedDateTimeNames::<Gregorian>::try_new(&locale!("und"))
+    ///     TypedDateTimeNames::<Gregorian>::try_new(&locale!("und").into())
     ///         .unwrap();
     /// let field_symbol = icu::datetime::fields::Month::Format;
     /// let alt_field_symbol = icu::datetime::fields::Month::StandAlone;
@@ -574,7 +574,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// use icu::locale::locale;
     ///
     /// let mut names =
-    ///     TypedDateTimeNames::<Gregorian>::try_new(&locale!("und"))
+    ///     TypedDateTimeNames::<Gregorian>::try_new(&locale!("und").into())
     ///         .unwrap();
     ///
     /// // First length is successful:
@@ -635,7 +635,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// use icu::locale::locale;
     ///
     /// let mut names =
-    ///     TypedDateTimeNames::<Gregorian>::try_new(&locale!("und"))
+    ///     TypedDateTimeNames::<Gregorian>::try_new(&locale!("und").into())
     ///         .unwrap();
     /// let field_symbol = icu::datetime::fields::Weekday::Format;
     /// let alt_field_symbol = icu::datetime::fields::Weekday::StandAlone;
@@ -686,12 +686,12 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let mut names =
-    ///     TypedDateTimeNames::<Gregorian>::try_new(&locale!("en"))
+    ///     TypedDateTimeNames::<Gregorian>::try_new(&locale!("en").into())
     ///         .unwrap();
     ///
     /// // Load the week calculator and set it here:
     /// let mut week_calculator =
-    ///     WeekCalculator::try_new(&locale!("en")).unwrap();
+    ///     WeekCalculator::try_new(&locale!("en").into()).unwrap();
     /// names.set_week_calculator(week_calculator);
     ///
     /// // Format a pattern needing week data:
@@ -793,7 +793,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let mut names =
-    ///     TypedDateTimeNames::<Gregorian>::try_new(&locale!("en"))
+    ///     TypedDateTimeNames::<Gregorian>::try_new(&locale!("en").into())
     ///         .unwrap();
     ///
     /// // Create a pattern from a pattern string:
@@ -908,7 +908,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
     pub(crate) fn load_year_names<P>(
         &mut self,
         provider: &P,
-        locale: &Locale,
+        locale: &DataLocale,
         field_length: FieldLength,
     ) -> Result<(), SingleLoadError>
     where
@@ -953,7 +953,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
     pub(crate) fn load_month_names<P>(
         &mut self,
         provider: &P,
-        locale: &Locale,
+        locale: &DataLocale,
         field_symbol: fields::Month,
         field_length: FieldLength,
     ) -> Result<(), SingleLoadError>
@@ -1004,7 +1004,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
     pub(crate) fn load_day_period_names<P>(
         &mut self,
         provider: &P,
-        locale: &Locale,
+        locale: &DataLocale,
         field_length: FieldLength,
     ) -> Result<(), SingleLoadError>
     where
@@ -1047,7 +1047,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
     pub(crate) fn load_weekday_names<P>(
         &mut self,
         provider: &P,
-        locale: &Locale,
+        locale: &DataLocale,
         field_symbol: fields::Weekday,
         field_length: FieldLength,
     ) -> Result<(), SingleLoadError>
@@ -1113,7 +1113,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
     pub(crate) fn load_fixed_decimal_formatter(
         &mut self,
         loader: &impl FixedDecimalFormatterLoader,
-        locale: &Locale,
+        locale: &DataLocale,
     ) -> Result<(), DataError> {
         let mut options = FixedDecimalFormatterOptions::default();
         options.grouping_strategy = GroupingStrategy::Never;
@@ -1148,7 +1148,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         dayperiod_provider: &(impl BoundDataProvider<DayPeriodNamesV1Marker> + ?Sized),
         fixed_decimal_formatter_loader: Option<&impl FixedDecimalFormatterLoader>,
         week_calculator_loader: Option<&impl WeekCalculatorLoader>,
-        locale: &Locale,
+        locale: &DataLocale,
         pattern_items: impl Iterator<Item = PatternItem>,
     ) -> Result<(), LoadError> {
         let fields = pattern_items.filter_map(|p| match p {
@@ -1267,7 +1267,7 @@ impl<'a, C: CldrCalendar> DateTimePatternFormatter<'a, C> {
     ///
     /// // Create an instance that can format wide month and era names:
     /// let mut names: TypedDateTimeNames<Gregorian> =
-    ///     TypedDateTimeNames::try_new(&locale!("en-GB")).unwrap();
+    ///     TypedDateTimeNames::try_new(&locale!("en-GB").into()).unwrap();
     /// names
     ///     .include_month_names(fields::Month::Format, FieldLength::Wide)
     ///     .unwrap()
@@ -1317,7 +1317,7 @@ impl<'a, C: CldrCalendar> DateTimePatternFormatter<'a, C> {
     ///
     /// // Create an instance that can format abbreviated day periods:
     /// let mut names: TypedDateTimeNames<Gregorian> =
-    ///     TypedDateTimeNames::try_new(&locale!("en-US")).unwrap();
+    ///     TypedDateTimeNames::try_new(&locale!("en-US").into()).unwrap();
     /// names
     ///     .include_day_period_names(FieldLength::Abbreviated)
     ///     .unwrap();
@@ -1544,7 +1544,7 @@ mod tests {
 
     #[test]
     fn test_basic_pattern_formatting() {
-        let locale = locale!("en");
+        let locale = locale!("en").into();
         let mut names: TypedDateTimeNames<Gregorian> =
             TypedDateTimeNames::try_new(&locale).unwrap();
         names
@@ -1579,7 +1579,7 @@ mod tests {
 
     #[test]
     fn test_era_coverage() {
-        let locale = locale!("uk");
+        let locale = locale!("uk").into();
         #[derive(Debug)]
         struct TestCase {
             pattern: &'static str,
@@ -1635,7 +1635,7 @@ mod tests {
     #[test]
     fn test_month_coverage() {
         // Ukrainian has different values for format and standalone
-        let locale = locale!("uk");
+        let locale = locale!("uk").into();
         #[derive(Debug)]
         struct TestCase {
             pattern: &'static str,
@@ -1705,7 +1705,7 @@ mod tests {
 
     #[test]
     fn test_weekday_coverage() {
-        let locale = locale!("uk");
+        let locale = locale!("uk").into();
         #[derive(Debug)]
         struct TestCase {
             pattern: &'static str,
@@ -1825,7 +1825,7 @@ mod tests {
     fn test_dayperiod_coverage() {
         // Thai has different values for different lengths of day periods
         // TODO(#487): Support flexible day periods, too
-        let locale = locale!("th");
+        let locale = locale!("th").into();
         #[derive(Debug)]
         struct TestCase {
             pattern: &'static str,

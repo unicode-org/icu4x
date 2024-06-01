@@ -129,12 +129,12 @@ fn auxkey_bench_for_version(c: &mut Criterion, blob: &[u8], version_id: &str) {
         LocaleFallbacker::new().static_to_owned(),
     );
 
-    for (locale_str, attr_str) in [("sr-Latn", "ym0d"), ("sr-ME", "ym0d")] {
-        let locale = locale_str.parse::<LanguageIdentifier>().unwrap();
-        let attrs = attr_str.parse::<DataKeyAttributes>().unwrap();
+    for (langid_str, attrs_str) in [("sr-Latn", "ym0d"), ("sr-ME", "ym0d")] {
+        let locale = langid_str.parse::<LanguageIdentifier>().unwrap();
+        let attrs = attrs_str.parse::<DataKeyAttributes>().unwrap();
 
         c.bench_function(
-            &format!("provider/auxkey/fallback/{locale_str}/{version_id}"),
+            &format!("provider/auxkey/fallback/{langid_str}/{attrs_str}/{version_id}"),
             |b| {
                 b.iter(|| {
                     assert!(

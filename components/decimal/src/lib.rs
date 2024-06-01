@@ -21,7 +21,7 @@
 //! use writeable::assert_writeable_eq;
 //!
 //! let fdf = FixedDecimalFormatter::try_new(
-//!     &locale!("bn"),
+//!     &locale!("bn").into(),
 //!     Default::default(),
 //! )
 //! .expect("locale should be present");
@@ -60,7 +60,7 @@
 //! use writeable::assert_writeable_eq;
 //!
 //! let fdf = FixedDecimalFormatter::try_new(
-//!     &locale!("th-u-nu-thai"),
+//!     &locale!("th-u-nu-thai").into(),
 //!     Default::default(),
 //! )
 //! .expect("locale should be present");
@@ -140,15 +140,13 @@ impl FixedDecimalFormatter {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<D: DataProvider<provider::DecimalSymbolsV1Marker> + ?Sized>(
         provider: &D,
-        locale: &Locale,
+        locale: &DataLocale,
         options: options::FixedDecimalFormatterOptions,
     ) -> Result<Self, DecimalError> {
         let symbols = provider
             .load(DataRequest {
                 langid: &locale.id,
                 key_attributes: &locale
-                    .extensions
-                    .unicode
                     .keywords
                     .get(&key!("nu"))
                     .map(DataKeyAttributes::from_unicode_value)

@@ -378,7 +378,7 @@ impl InternalCldrCalendar for Roc {}
 
 pub(crate) fn load_lengths_for_cldr_calendar<C, P>(
     provider: &P,
-    langid: &LanguageIdentifier,
+    locale: &DataLocale,
 ) -> Result<DataPayload<ErasedDateLengthsV1Marker>, DataError>
 where
     C: CldrCalendar,
@@ -386,7 +386,7 @@ where
 {
     let payload = provider
         .load(DataRequest {
-            langid,
+            langid: &locale.id,
             ..Default::default()
         })?
         .take_payload()?;
@@ -395,7 +395,7 @@ where
 
 pub(crate) fn load_symbols_for_cldr_calendar<C, P>(
     provider: &P,
-    langid: &LanguageIdentifier,
+    locale: &DataLocale,
 ) -> Result<DataPayload<ErasedDateSymbolsV1Marker>, DataError>
 where
     C: CldrCalendar,
@@ -403,7 +403,7 @@ where
 {
     let payload = provider
         .load(DataRequest {
-            langid,
+            langid: &locale.id,
             ..Default::default()
         })?
         .take_payload()?;
@@ -412,7 +412,7 @@ where
 
 pub(crate) fn load_lengths_for_any_calendar_kind<P>(
     provider: &P,
-    langid: &LanguageIdentifier,
+    locale: &DataLocale,
     kind: AnyCalendarKind,
 ) -> Result<DataPayload<ErasedDateLengthsV1Marker>, DataError>
 where
@@ -432,7 +432,7 @@ where
         + ?Sized,
 {
     let req = DataRequest {
-        langid,
+        langid: &locale.id,
         ..Default::default()
     };
     let payload = match kind {
@@ -533,7 +533,7 @@ where
 
 pub(crate) fn load_symbols_for_any_calendar_kind<P>(
     provider: &P,
-    langid: &LanguageIdentifier,
+    locale: &DataLocale,
     kind: AnyCalendarKind,
 ) -> Result<DataPayload<ErasedDateSymbolsV1Marker>, DataError>
 where
@@ -553,7 +553,7 @@ where
         + ?Sized,
 {
     let req = DataRequest {
-        langid,
+        langid: &locale.id,
         ..Default::default()
     };
     let payload = match kind {

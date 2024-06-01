@@ -46,7 +46,7 @@ macro_rules! constructor {
         #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::$name)]
         pub fn $name_unstable(
             provider: &(impl DataProvider<$marker> + ?Sized),
-            locale: &Locale,
+            locale: &DataLocale,
             length: ListLength,
         ) -> Result<Self, ListError> {
             let data = provider
@@ -99,7 +99,7 @@ impl ListFormatter {
     /// # use icu::locale::locale;
     /// # use writeable::*;
     /// let formatteur = ListFormatter::try_new_and_with_length(
-    ///     &locale!("fr"),
+    ///     &locale!("fr").into(),
     ///     ListLength::Wide,
     /// )
     /// .unwrap();

@@ -41,7 +41,7 @@ impl ZonedDateTimeFormatter {
     pub fn try_new(
         patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
         symbols_data_fn: impl FnOnce() -> Result<DataPayload<ErasedDateSymbolsV1Marker>, DataError>,
-        locale: &Locale,
+        locale: &DataLocale,
         time_zone_format_options: TimeZoneFormatterOptions,
     ) -> Result<Self, DateTimeError> {
         let required = datetime::analyze_patterns(&patterns.get().0, true)
@@ -112,7 +112,7 @@ impl ZonedDateTimeFormatter {
         provider: &P,
         patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
         symbols_data_fn: impl FnOnce() -> Result<DataPayload<ErasedDateSymbolsV1Marker>, DataError>,
-        locale: &Locale,
+        locale: &DataLocale,
         time_zone_format_options: TimeZoneFormatterOptions,
     ) -> Result<Self, DateTimeError>
     where

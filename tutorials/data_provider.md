@@ -14,7 +14,7 @@ use icu_provider_adapters::fork::MultiForkByErrorProvider;
 use icu_provider_adapters::fork::predicates::MissingLocalePredicate;
 use icu_provider_blob::BlobDataProvider;
 use icu_provider_fs::FsDataProvider;
-use icu_provider::prelude::LanguageIdentifier;
+use icu_provider::DataLocale;
 use icu_provider::hello_world::HelloWorldFormatter;
 use icu::locale::locale;
 use icu::locale::subtags::Language;
@@ -28,7 +28,7 @@ let mut provider = MultiForkByErrorProvider::new_with_predicate(
 );
 
 // Helper function to add data into the growable provider on demand:
-let mut get_hello_world_formatter = |loc: &_| {
+let mut get_hello_world_formatter = |loc: &DataLocale| {
     // Try to create the formatter a first time with data that has already been loaded.
     if let Ok(formatter) = HelloWorldFormatter::try_new_with_buffer_provider(&provider, loc) {
         return formatter;
@@ -54,11 +54,11 @@ let mut get_hello_world_formatter = |loc: &_| {
 
 // Test that it works:
 assert_eq!(
-    get_hello_world_formatter(&locale!("de")).format().write_to_string(),
+    get_hello_world_formatter(&locale!("de").into()).format().write_to_string(),
     "Hallo Welt"
 );
 assert_eq!(
-    get_hello_world_formatter(&locale!("ro")).format().write_to_string(),
+    get_hello_world_formatter(&locale!("ro").into()).format().write_to_string(),
     "Salut, lume"
 );
 ```
@@ -151,7 +151,7 @@ assert_eq!(
     // Note: It is necessary to use `try_new_unstable` with LruDataCache.
     HelloWorldFormatter::try_new_unstable(
         &provider,
-        &locale!("ja")
+        &locale!("ja").into()
     )
     .unwrap()
     .format_to_string()
@@ -164,7 +164,7 @@ assert_eq!(
     "ওহে বিশ্ব",
     HelloWorldFormatter::try_new_unstable(
         &provider,
-        &locale!("bn")
+        &locale!("bn").into()
     )
     .unwrap()
     .format_to_string()
@@ -177,7 +177,7 @@ assert_eq!(
     "こんにちは世界",
     HelloWorldFormatter::try_new_unstable(
         &provider,
-        &locale!("ja")
+        &locale!("ja").into()
     )
     .unwrap()
     .format_to_string()
@@ -236,7 +236,7 @@ let provider = CustomDecimalSymbolsProvider(
 
 let formatter = FixedDecimalFormatter::try_new_unstable(
     &provider,
-    &locale!("und"),
+    &locale!("und").into(),
     Default::default(),
 )
 .unwrap();
@@ -245,7 +245,7 @@ assert_eq!(formatter.format_to_string(&100007i64.into()), "100,007");
 
 let formatter = FixedDecimalFormatter::try_new_unstable(
     &provider,
-    &locale!("und-CH"),
+    &locale!("und-CH").into(),
     Default::default(),
 )
 .unwrap();
@@ -303,7 +303,7 @@ let provider = ResolvedLocaleProvider {
 // Request data for sr-ME...
 HelloWorldFormatter::try_new_unstable(
     &provider,
-    &locale!("sr-ME"),
+    &locale!("sr-ME").into(),
 )
 .unwrap();
 

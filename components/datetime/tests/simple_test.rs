@@ -74,7 +74,12 @@ fn neo_datetime_lengths() {
         length::Date::Short,
     ] {
         for time_length in [length::Time::Medium, length::Time::Short] {
-            for locale in [locale!("en"), locale!("fr"), locale!("zh"), locale!("hi")] {
+            for locale in [
+                locale!("en").into(),
+                locale!("fr").into(),
+                locale!("zh").into(),
+                locale!("hi").into(),
+            ] {
                 let formatter = TypedNeoDateTimeFormatter::try_new_with_lengths(
                     &locale,
                     date_length,
@@ -104,7 +109,12 @@ fn neo_date_lengths() {
         length::Date::Medium,
         length::Date::Short,
     ] {
-        for locale in [locale!("en"), locale!("fr"), locale!("zh"), locale!("hi")] {
+        for locale in [
+            locale!("en").into(),
+            locale!("fr").into(),
+            locale!("zh").into(),
+            locale!("hi").into(),
+        ] {
             let formatter =
                 TypedNeoDateTimeFormatter::try_new_with_date_length(&locale, date_length).unwrap();
             let formatted = formatter.format(&datetime);
@@ -125,7 +135,12 @@ fn old_datetime_lengths() {
         length::Date::Short,
     ] {
         for time_length in [length::Time::Medium, length::Time::Short] {
-            for locale in [locale!("en"), locale!("fr"), locale!("zh"), locale!("hi")] {
+            for locale in [
+                locale!("en").into(),
+                locale!("fr").into(),
+                locale!("zh").into(),
+                locale!("hi").into(),
+            ] {
                 let formatter = TypedDateTimeFormatter::try_new(
                     &locale,
                     DateTimeFormatterOptions::Length(length::Bag::from_date_time_style(
@@ -156,7 +171,12 @@ fn old_date_lengths() {
         length::Date::Medium,
         length::Date::Short,
     ] {
-        for locale in [locale!("en"), locale!("fr"), locale!("zh"), locale!("hi")] {
+        for locale in [
+            locale!("en").into(),
+            locale!("fr").into(),
+            locale!("zh").into(),
+            locale!("hi").into(),
+        ] {
             let formatter = TypedDateTimeFormatter::try_new(
                 &locale,
                 DateTimeFormatterOptions::Length(length::Bag::from_date_style(date_length)),

@@ -11,7 +11,7 @@ use icu::locale::locale;
 fn main() {
     let fmt = HelloWorldFormatter::try_new_unstable(
         &HelloWorldProvider,
-        &locale!("eo"),
+        &locale!("eo").into(),
     )
     .expect("locale exists");
     println!("{}", fmt.format());

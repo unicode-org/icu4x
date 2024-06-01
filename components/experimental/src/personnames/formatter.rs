@@ -4,7 +4,7 @@
 
 use alloc::string::String;
 use alloc::vec::Vec;
-use icu_locale::LocaleFallbacker;
+use icu_locale::{Locale, LocaleFallbacker};
 use icu_properties::names::PropertyEnumToValueNameLinearTiny4Mapper;
 use icu_properties::script::ScriptWithExtensions;
 

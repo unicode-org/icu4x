@@ -75,7 +75,7 @@ mod tests {
 
     #[test]
     pub fn test_en_us() {
-        let locale = locale!("en-US");
+        let locale = locale!("en-US").into();
         let fmt = CurrencyFormatter::try_new(&locale, Default::default()).unwrap();
         let value = "12345.67".parse().unwrap();
         let currency_code = CurrencyCode(tinystr!(3, "USD"));
@@ -87,7 +87,7 @@ mod tests {
 
     #[test]
     pub fn test_fr_fr() {
-        let locale = locale!("fr-FR");
+        let locale = locale!("fr-FR").into();
         let fmt = CurrencyFormatter::try_new(&locale, Default::default()).unwrap();
         let value = "12345.67".parse().unwrap();
         let currency_code = CurrencyCode(tinystr!(3, "EUR"));
@@ -99,7 +99,7 @@ mod tests {
 
     #[test]
     pub fn test_ar_eg() {
-        let locale = locale!("ar-EG");
+        let locale = locale!("ar-EG").into();
         let fmt = CurrencyFormatter::try_new(&locale, Default::default()).unwrap();
         let value = "12345.67".parse().unwrap();
         let currency_code = CurrencyCode(tinystr!(3, "EGP"));

@@ -74,13 +74,13 @@ let datetime_formatter = if locale == locale!("ccp") {
 
     DateTimeFormatter::try_new_with_buffer_provider(
         &provider,
-        &(&locale).into(),
+        &locale.into(),
         Default::default(),
     )
     .expect("should have data for selected locale")
 } else {
     // As before
-    DateTimeFormatter::try_new(&(&locale).into(), Default::default())
+    DateTimeFormatter::try_new(&locale.into(), Default::default())
         .expect("should have data for selected locale")
 };
 ```
@@ -160,7 +160,7 @@ We've seen that `DateFormatter` pulls in a lot of data. It would be nice if we c
 
 ```rust
 let date_formatter = TypedDateFormatter::<Gregorian>::try_new_with_length(
-    &(&locale).into(),
+    &locale.into(),
     length::Date::Medium,
 )
 .expect("should have data for selected locale");

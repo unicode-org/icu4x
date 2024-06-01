@@ -204,7 +204,10 @@ pub mod ffi {
 }
 
 impl ffi::ICU4XLocale {
-    pub fn to_locale(&self) -> &icu_locale_core::Locale {
-        &self.0
+    pub fn to_datalocale(&self) -> icu_provider::DataLocale {
+        icu_provider::DataLocale {
+            id: self.0.id.clone(),
+            keywords: self.0.extensions.unicode.keywords.clone(),
+        }
     }
 }

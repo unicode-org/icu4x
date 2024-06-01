@@ -26,7 +26,7 @@ use crate::relativetime::{options::RelativeTimeFormatterOptions, RelativeTimeErr
 /// use writeable::assert_writeable_eq;
 ///
 /// let relative_time_formatter = RelativeTimeFormatter::try_new_long_second(
-///     &locale!("en"),
+///     &locale!("en").into(),
 ///     RelativeTimeFormatterOptions::default(),
 /// )
 /// .expect("locale should be present");
@@ -53,7 +53,7 @@ use crate::relativetime::{options::RelativeTimeFormatterOptions, RelativeTimeErr
 /// use writeable::assert_writeable_eq;
 ///
 /// let relative_time_formatter = RelativeTimeFormatter::try_new_short_day(
-///     &locale!("es"),
+///     &locale!("es").into(),
 ///     RelativeTimeFormatterOptions {
 ///         numeric: Numeric::Auto,
 ///     },
@@ -88,7 +88,7 @@ use crate::relativetime::{options::RelativeTimeFormatterOptions, RelativeTimeErr
 /// use writeable::assert_writeable_eq;
 ///
 /// let relative_time_formatter = RelativeTimeFormatter::try_new_narrow_year(
-///     &locale!("bn"),
+///     &locale!("bn").into(),
 ///     RelativeTimeFormatterOptions::default(),
 /// )
 /// .expect("locale should be present");
@@ -119,7 +119,7 @@ macro_rules! constructor {
         /// [📚 Help choosing a constructor](icu_provider::constructors)
         #[cfg(feature = "compiled_data")]
         pub fn $baked(
-            locale: &Locale,
+            locale: &DataLocale,
             options: RelativeTimeFormatterOptions,
         ) -> Result<Self, RelativeTimeError> {
             let plural_rules = PluralRules::try_new_cardinal(locale)?;
@@ -161,7 +161,7 @@ macro_rules! constructor {
         #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::$baked)]
         pub fn $unstable<D>(
             provider: &D,
-            locale: &Locale,
+            locale: &DataLocale,
             options: RelativeTimeFormatterOptions,
         ) -> Result<Self, RelativeTimeError>
         where

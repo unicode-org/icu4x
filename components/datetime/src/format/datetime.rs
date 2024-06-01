@@ -47,7 +47,7 @@ use writeable::{Part, Writeable};
 /// use icu::datetime::TypedDateTimeFormatter;
 /// use icu::locale::locale;
 /// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new(
-///     &locale!("en"),
+///     &locale!("en").into(),
 ///     Default::default(),
 /// )
 /// .expect("Failed to create TypedDateTimeFormatter instance.");
@@ -850,6 +850,7 @@ mod tests {
     use super::*;
     use crate::pattern::runtime;
     use icu_decimal::options::{FixedDecimalFormatterOptions, GroupingStrategy};
+    use icu_locale::locale;
     use tinystr::tinystr;
 
     #[test]
@@ -859,8 +860,8 @@ mod tests {
         use icu_calendar::japanese::JapaneseExtended;
         use icu_calendar::Date;
 
-        let locale = "en-u-ca-japanese".parse().unwrap();
-        let dtf = NeoDateFormatter::try_new_with_length(&locale, length::Date::Medium)
+        let locale = locale!("en-u-ca-japanese");
+        let dtf = NeoDateFormatter::try_new_with_length(&locale.into(), length::Date::Medium)
             .expect("DateTimeFormat construction succeeds");
 
         let date = Date::try_new_gregorian_date(1800, 9, 1).expect("Failed to construct Date.");
@@ -905,7 +906,7 @@ mod tests {
         let pattern: runtime::Pattern = "MMM".parse().unwrap();
         let datetime = DateTime::try_new_gregorian_datetime(2020, 8, 1, 12, 34, 28).unwrap();
         let fixed_decimal_format =
-            FixedDecimalFormatter::try_new(&locale, Default::default()).unwrap();
+            FixedDecimalFormatter::try_new(&locale.into(), Default::default()).unwrap();
 
         let mut sink = String::new();
         try_write_pattern(
@@ -937,11 +938,9 @@ mod tests {
 
         let mut fixed_decimal_format_options = FixedDecimalFormatterOptions::default();
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
-        let fixed_decimal_format = FixedDecimalFormatter::try_new(
-            &icu_locale_core::locale!("en"),
-            fixed_decimal_format_options,
-        )
-        .unwrap();
+        let fixed_decimal_format =
+            FixedDecimalFormatter::try_new(&locale!("en").into(), fixed_decimal_format_options)
+                .unwrap();
 
         for (length, expected) in samples {
             for (value, expected) in values.iter().zip(expected) {

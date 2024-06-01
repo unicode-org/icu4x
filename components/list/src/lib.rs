@@ -17,7 +17,7 @@
 //! # use writeable::*;
 //! #
 //! let list_formatter = ListFormatter::try_new_and_with_length(
-//!     &locale!("es"),
+//!     &locale!("es").into(),
 //!     ListLength::Wide,
 //! )
 //! .expect("locale should be present");
@@ -42,7 +42,7 @@
 //! # use writeable::*;
 //! #
 //! let list_formatter = ListFormatter::try_new_or_with_length(
-//!     &locale!("th"),
+//!     &locale!("th").into(),
 //!     ListLength::Short,
 //! )
 //! .expect("locale should be present");
@@ -59,7 +59,7 @@
 //! # use writeable::*;
 //! #
 //! let list_formatter = ListFormatter::try_new_unit_with_length(
-//!     &locale!("en"),
+//!     &locale!("en").into(),
 //!     ListLength::Wide,
 //! )
 //! .expect("locale should be present");

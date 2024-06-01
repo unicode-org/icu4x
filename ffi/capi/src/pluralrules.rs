@@ -48,7 +48,7 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
         ) -> Result<Box<ICU4XPluralRules>, ICU4XError> {
-            let locale = locale.to_locale();
+            let locale = locale.to_datalocale();
             Ok(Box::new(ICU4XPluralRules(call_constructor!(
                 PluralRules::try_new_cardinal,
                 PluralRules::try_new_cardinal_with_any_provider,
@@ -67,7 +67,7 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
         ) -> Result<Box<ICU4XPluralRules>, ICU4XError> {
-            let locale = locale.to_locale();
+            let locale = locale.to_datalocale();
             Ok(Box::new(ICU4XPluralRules(call_constructor!(
                 PluralRules::try_new_ordinal,
                 PluralRules::try_new_ordinal_with_any_provider,

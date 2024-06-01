@@ -66,7 +66,7 @@ pub mod ffi {
             locale: &ICU4XLocale,
             options: ICU4XDisplayNamesOptionsV1,
         ) -> Result<Box<ICU4XLocaleDisplayNamesFormatter>, ICU4XError> {
-            let locale = locale.to_locale();
+            let locale = locale.to_datalocale();
             let options = DisplayNamesOptions::from(options);
 
             Ok(Box::new(ICU4XLocaleDisplayNamesFormatter(
@@ -96,7 +96,7 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
         ) -> Result<Box<ICU4XRegionDisplayNames>, ICU4XError> {
-            let locale = locale.to_locale();
+            let locale = locale.to_datalocale();
             Ok(Box::new(ICU4XRegionDisplayNames(call_constructor!(
                 RegionDisplayNames::try_new,
                 RegionDisplayNames::try_new_with_any_provider,

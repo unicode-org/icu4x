@@ -62,9 +62,9 @@ where
     /// // English should not appear in the iterator result:
     /// let supported_langids = provider
     ///     .supported_requests()
-    ///     .expect("Should successfully make an iterator of supported locales")
+    ///     .expect("Should successfully make an iterator of supported requests")
     ///     .into_iter()
-    ///     .map(|(locale, _)| locale)
+    ///     .map(|(langid, _)| langid)
     ///     .collect::<Vec<LanguageIdentifier>>();
     /// assert!(supported_langids.contains(&langid!("de")));
     /// assert!(!supported_langids.contains(&langid!("en")));

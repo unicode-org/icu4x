@@ -231,17 +231,15 @@ impl<F: Write + Send + Sync> DataExporter for PostcardTestingExporter<F> {
         crate::registry!(cb);
 
         if payload_before != &payload_after {
-            self.rountrip_errors.lock().expect("poison").insert((
-                key,
-                langid.to_string()
-                    + if key_attributes.is_empty() { "" } else { "-x" }
-                    + key_attributes,
-            ));
+            self.rountrip_errors
+                .lock()
+                .expect("poison")
+                .insert((key, langid.to_string() + "/" + key_attributes));
         }
 
         if deallocated != allocated {
             if !EXPECTED_VIOLATIONS.contains(&key) {
-                eprintln!("Zerocopy violation {key} {langid}: {allocated}B allocated, {deallocated}B deallocated");
+                eprintln!("Zerocopy violation {key} {langid} {}: {allocated}B allocated, {deallocated}B deallocated", key_attributes as &str);
             }
             self.zero_copy_violations
                 .lock()
@@ -249,7 +247,7 @@ impl<F: Write + Send + Sync> DataExporter for PostcardTestingExporter<F> {
                 .insert(key);
         } else if allocated > 0 {
             if !EXPECTED_TRANSIENT_VIOLATIONS.contains(&key) {
-                eprintln!("Transient zerocopy violation {key} {langid}: {allocated}B allocated/deallocated");
+                eprintln!("Transient zerocopy violation {key} {langid} {}: {allocated}B allocated/deallocated", key_attributes as &str);
             }
             self.zero_copy_transient_violations
                 .lock()

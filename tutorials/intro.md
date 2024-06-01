@@ -114,7 +114,7 @@ const LOCALE: Locale = locale!("ja"); // let's try some other language
 fn main() {
     let options = length::Bag::from_date_time_style(length::Date::Long, length::Time::Medium);
 
-    let dtf = DateTimeFormatter::try_new(&LOCALE, options.into())
+    let dtf = DateTimeFormatter::try_new(&LOCALE.into(), options.into())
         .expect("ja data should be available");
 
     let date = DateTime::try_new_iso_datetime(2020, 10, 14, 13, 21, 28)

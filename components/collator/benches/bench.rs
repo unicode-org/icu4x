@@ -129,6 +129,7 @@ pub fn collator_with_locale(criterion: &mut Criterion) {
         let (locale_under_bench, files_under_bench, benched_strength) = perf_parameter;
 
         let mut group = criterion.benchmark_group(locale_under_bench.to_string());
+        let locale_under_bench = locale_under_bench.into();
 
         for content_under_bench in files_under_bench {
             let (file_name, elements) = black_box(content_under_bench);

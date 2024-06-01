@@ -71,7 +71,7 @@ pub struct Collator {
 impl Collator {
     /// Creates a collator for the given locale and options from compiled data.
     #[cfg(feature = "compiled_data")]
-    pub fn try_new(locale: &Locale, options: CollatorOptions) -> Result<Self, CollatorError> {
+    pub fn try_new(locale: &DataLocale, options: CollatorOptions) -> Result<Self, CollatorError> {
         Self::try_new_unstable_internal(
             &crate::provider::Baked,
             DataPayload::from_static_ref(
@@ -101,7 +101,7 @@ impl Collator {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<D>(
         provider: &D,
-        locale: &Locale,
+        locale: &DataLocale,
         options: CollatorOptions,
     ) -> Result<Self, CollatorError>
     where
@@ -135,7 +135,7 @@ impl Collator {
             DataPayload<CollationSpecialPrimariesV1Marker>,
             DataError,
         >,
-        locale: &Locale,
+        locale: &DataLocale,
         options: CollatorOptions,
     ) -> Result<Self, CollatorError>
     where
@@ -148,8 +148,6 @@ impl Collator {
         let req = DataRequest {
             langid: &locale.id,
             key_attributes: &locale
-                .extensions
-                .unicode
                 .keywords
                 .get(&key!("co"))
                 .map(DataKeyAttributes::from_unicode_value)

@@ -26,7 +26,7 @@ use writeable::{adapters::CoreWriteAsPartsWrite, Part, Writeable};
 
 /// Loads a resource into its destination if the destination has not already been filled.
 fn load<D, P>(
-    locale: &Locale,
+    locale: &DataLocale,
     destination: &mut Option<DataPayload<D>>,
     provider: &P,
 ) -> Result<(), DateTimeError>
@@ -93,7 +93,7 @@ where
 ///
 /// // Set up the formatter
 /// let mut tzf = TimeZoneFormatter::try_new(
-///     &locale!("en"),
+///     &locale!("en").into(),
 ///     Default::default(),
 /// )
 /// .unwrap();
@@ -141,7 +141,7 @@ where
 /// [data provider]: icu_provider
 #[derive(Debug)]
 pub struct TimeZoneFormatter {
-    pub(super) locale: Locale,
+    pub(super) locale: DataLocale,
     pub(super) data_payloads: TimeZoneDataPayloads,
     pub(super) format_units: SmallVec<[TimeZoneFormatterUnit; 3]>,
     pub(super) fallback_unit: FallbackTimeZoneFormatterUnit,
@@ -173,7 +173,7 @@ impl TimeZoneFormatter {
     /// format the given pattern into the given locale.
     pub(super) fn try_new_for_pattern<ZP>(
         zone_provider: &ZP,
-        locale: &Locale,
+        locale: &DataLocale,
         patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
         options: &TimeZoneFormatterOptions,
     ) -> Result<Self, DateTimeError>
@@ -424,7 +424,7 @@ impl TimeZoneFormatter {
         /// use writeable::assert_writeable_eq;
         ///
         /// let tzf = TimeZoneFormatter::try_new(
-        ///     &locale!("es"),
+        ///     &locale!("es").into(),
         ///     TimeZoneFormatterOptions::default(),
         /// )
         /// .unwrap();
@@ -438,7 +438,7 @@ impl TimeZoneFormatter {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<P>(
         provider: &P,
-        locale: &Locale,
+        locale: &DataLocale,
         options: TimeZoneFormatterOptions,
     ) -> Result<Self, DateTimeError>
     where
@@ -694,7 +694,7 @@ impl TimeZoneFormatter {
     /// use writeable::assert_writeable_eq;
     ///
     /// let tzf = TimeZoneFormatter::try_new(
-    ///     &locale!("en"),
+    ///     &locale!("en").into(),
     ///     TimeZoneFormatterOptions::default(),
     /// )
     /// .expect("Failed to create TimeZoneFormatter");

@@ -278,17 +278,17 @@ macro_rules! gen_any_buffer_data_constructors {
         /// ✨ *Enabled with the `compiled_data` Cargo feature.*
         ///
         /// [📚 Help choosing a constructor](icu_provider::constructors)
-        pub fn $baked(locale: &$crate::prelude::Locale) -> Result<Self, $error_ty> {
+        pub fn $baked(locale: &$crate::DataLocale) -> Result<Self, $error_ty> {
             $($struct :: )? $unstable(&crate::provider::Baked, locale)
         }
         #[doc = $crate::gen_any_buffer_unstable_docs!(ANY, $($struct ::)? $baked)]
-        pub fn $any(provider: &(impl $crate::AnyProvider + ?Sized), locale: &$crate::prelude::Locale) -> Result<Self, $error_ty> {
+        pub fn $any(provider: &(impl $crate::AnyProvider + ?Sized), locale: &$crate::DataLocale) -> Result<Self, $error_ty> {
             use $crate::AsDowncastingAnyProvider;
             $($struct :: )? $unstable(&provider.as_downcasting(), locale)
         }
         #[cfg(feature = "serde")]
         #[doc = $crate::gen_any_buffer_unstable_docs!(BUFFER, $($struct ::)? $baked)]
-        pub fn $buffer(provider: &(impl $crate::BufferProvider + ?Sized), locale: &$crate::prelude::Locale) -> Result<Self, $error_ty> {
+        pub fn $buffer(provider: &(impl $crate::BufferProvider + ?Sized), locale: &$crate::DataLocale) -> Result<Self, $error_ty> {
             use $crate::AsDeserializingBufferProvider;
             $($struct :: )? $unstable(&provider.as_deserializing(), locale)
         }
@@ -317,17 +317,17 @@ macro_rules! gen_any_buffer_data_constructors {
         /// ✨ *Enabled with the `compiled_data` Cargo feature.*
         ///
         /// [📚 Help choosing a constructor](icu_provider::constructors)
-        pub fn $baked(locale: &$crate::prelude::Locale, $config_arg: $config_ty, $options_arg: $options_ty) -> Result<Self, $error_ty> {
+        pub fn $baked(locale: &$crate::DataLocale, $config_arg: $config_ty, $options_arg: $options_ty) -> Result<Self, $error_ty> {
             $($struct :: )? $unstable(&crate::provider::Baked, locale, $config_arg, $options_arg)
         }
         #[doc = $crate::gen_any_buffer_unstable_docs!(ANY, $($struct ::)? $baked)]
-        pub fn $any(provider: &(impl $crate::AnyProvider + ?Sized), locale: &$crate::prelude::Locale, $config_arg: $config_ty, $options_arg: $options_ty) -> Result<Self, $error_ty> {
+        pub fn $any(provider: &(impl $crate::AnyProvider + ?Sized), locale: &$crate::DataLocale, $config_arg: $config_ty, $options_arg: $options_ty) -> Result<Self, $error_ty> {
             use $crate::AsDowncastingAnyProvider;
             $($struct :: )? $unstable(&provider.as_downcasting(), locale, $config_arg, $options_arg)
         }
         #[cfg(feature = "serde")]
         #[doc = $crate::gen_any_buffer_unstable_docs!(BUFFER, $($struct ::)? $baked)]
-        pub fn $buffer(provider: &(impl $crate::BufferProvider + ?Sized), locale: &$crate::prelude::Locale, $config_arg: $config_ty, $options_arg: $options_ty) -> Result<Self, $error_ty> {
+        pub fn $buffer(provider: &(impl $crate::BufferProvider + ?Sized), locale: &$crate::DataLocale, $config_arg: $config_ty, $options_arg: $options_ty) -> Result<Self, $error_ty> {
             use $crate::AsDeserializingBufferProvider;
             $($struct :: )? $unstable(&provider.as_deserializing(), locale, $config_arg, $options_arg)
         }
@@ -355,17 +355,17 @@ macro_rules! gen_any_buffer_data_constructors {
         /// ✨ *Enabled with the `compiled_data` Cargo feature.*
         ///
         /// [📚 Help choosing a constructor](icu_provider::constructors)
-        pub fn $baked(locale: &$crate::prelude::Locale, $options_arg: $options_ty) -> Result<Self, $error_ty> {
+        pub fn $baked(locale: &$crate::DataLocale, $options_arg: $options_ty) -> Result<Self, $error_ty> {
             $($struct :: )? $unstable(&crate::provider::Baked, locale, $options_arg)
         }
         #[doc = $crate::gen_any_buffer_unstable_docs!(ANY, $($struct ::)? $baked)]
-        pub fn $any(provider: &(impl $crate::AnyProvider + ?Sized), locale: &$crate::prelude::Locale, $options_arg: $options_ty) -> Result<Self, $error_ty> {
+        pub fn $any(provider: &(impl $crate::AnyProvider + ?Sized), locale: &$crate::DataLocale, $options_arg: $options_ty) -> Result<Self, $error_ty> {
             use $crate::AsDowncastingAnyProvider;
             $($struct :: )? $unstable(&provider.as_downcasting(), locale, $options_arg)
         }
         #[cfg(feature = "serde")]
         #[doc = $crate::gen_any_buffer_unstable_docs!(BUFFER, $($struct ::)? $baked)]
-        pub fn $buffer(provider: &(impl $crate::BufferProvider + ?Sized), locale: &$crate::prelude::Locale, $options_arg: $options_ty) -> Result<Self, $error_ty> {
+        pub fn $buffer(provider: &(impl $crate::BufferProvider + ?Sized), locale: &$crate::DataLocale, $options_arg: $options_ty) -> Result<Self, $error_ty> {
             use $crate::AsDeserializingBufferProvider;
             $($struct :: )? $unstable(&provider.as_deserializing(), locale, $options_arg)
         }

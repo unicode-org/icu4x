@@ -46,7 +46,7 @@ use core::fmt;
 ///
 /// let locale = locale!("en-u-ca-japanese"); // English with the Japanese calendar
 ///
-/// let calendar = AnyCalendar::new_for_locale(&locale);
+/// let calendar = AnyCalendar::new_for_locale(&locale.into());
 /// let calendar = Rc::new(calendar); // Avoid cloning it each time
 ///                                   // If everything is a local reference, you may use icu::calendar::Ref instead.
 ///
@@ -750,8 +750,8 @@ impl AnyCalendar {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub fn new_for_locale(locale: &Locale) -> Self {
-        let kind = AnyCalendarKind::from_locale_with_fallback(locale);
+    pub fn new_for_locale(locale: &DataLocale) -> Self {
+        let kind = AnyCalendarKind::from_data_locale_with_fallback(locale);
         Self::new(kind)
     }
 
@@ -772,7 +772,7 @@ impl AnyCalendar {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_for_locale)]
     pub fn try_new_for_locale_unstable<P>(
         provider: &P,
-        locale: &Locale,
+        locale: &DataLocale,
     ) -> Result<Self, CalendarError>
     where
         P: DataProvider<crate::provider::JapaneseErasV1Marker>
@@ -783,7 +783,7 @@ impl AnyCalendar {
             + DataProvider<crate::provider::IslamicUmmAlQuraCacheV1Marker>
             + ?Sized,
     {
-        let kind = AnyCalendarKind::from_locale_with_fallback(locale);
+        let kind = AnyCalendarKind::from_data_locale_with_fallback(locale);
         Self::try_new_unstable(provider, kind)
     }
 
@@ -1075,19 +1075,22 @@ impl AnyCalendarKind {
 
     // Do not make public, this will eventually need fallback
     // data from the provider
-    fn from_locale_with_fallback(l: &Locale) -> Self {
-        if let Some(kind) = Self::get_for_locale(l) {
-            kind
-        } else if l.id.language == language!("th") {
-            Self::Buddhist
-        // Other known fallback routes for currently-unsupported calendars
-        // } else if l.id.language == language!("sa") {
-        //     Self::IslamicUmalqura
-        // } else if l.id.language == language!("af") || l.id.language == language!("ir") {
-        //     Self::Persian
-        } else {
-            Self::Gregorian
-        }
+    fn from_data_locale_with_fallback(l: &DataLocale) -> Self {
+        l.keywords
+            .get(&key!("ca"))
+            .and_then(Self::get_for_bcp47_value)
+            .unwrap_or_else(|| {
+                if l.id.language == language!("th") {
+                    Self::Buddhist
+                // Other known fallback routes for currently-unsupported calendars
+                // } else if lang == language!("sa") {
+                //     Self::IslamicUmalqura
+                // } else if lang == language!("af") || lang == language!("ir") {
+                //     Self::Persian
+                } else {
+                    Self::Gregorian
+                }
+            })
     }
 }
 

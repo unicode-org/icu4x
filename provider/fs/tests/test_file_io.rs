@@ -18,9 +18,9 @@ const PATHS: &[&str] = &[
 fn test_provider() {
     for path in PATHS {
         let provider = FsDataProvider::try_new(path).unwrap();
-        for (locale, key_attributes) in HelloWorldProvider.supported_requests().unwrap() {
+        for (langid, key_attributes) in HelloWorldProvider.supported_requests().unwrap() {
             let req = DataRequest {
-                langid: &locale,
+                langid: &langid,
                 key_attributes: &key_attributes,
                 ..Default::default()
             };

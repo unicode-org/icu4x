@@ -27,7 +27,7 @@ fn main() {
 
     let formatter = TypedDateTimeFormatter::<Gregorian>::try_new_with_buffer_provider(
         &provider,
-        &locale!("my"),
+        &locale!("my").into(),
         Default::default(),
     )
     .expect("locale 'my' should be present in compiled data");

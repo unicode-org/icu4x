@@ -48,7 +48,7 @@
 //! // Use the provider as a `BufferProvider`
 //! let formatter = HelloWorldFormatter::try_new_with_buffer_provider(
 //!     &provider,
-//!     &locale!("en"),
+//!     &locale!("en").into(),
 //! )
 //! .unwrap();
 //!

@@ -9,8 +9,9 @@ use core::fmt;
 use core::fmt::Debug;
 use core::hash::Hash;
 use core::str::FromStr;
+use icu_locale_core::extensions::unicode as unicode_ext;
 use icu_locale_core::extensions::unicode::Value;
-use icu_locale_core::LanguageIdentifier;
+use icu_locale_core::{LanguageIdentifier, Locale};
 use writeable::Writeable;
 
 use alloc::string::String;
@@ -84,6 +85,34 @@ impl DataRequest<'_> {
         let l = iter.next().unwrap().parse().ok()?;
         let a = iter.next().unwrap_or("").parse().ok()?;
         Some((l, a))
+    }
+}
+
+/// TODO: Replace by preferences everywhere
+#[derive(PartialEq, Clone, Default, Eq, Hash, Debug)]
+#[allow(clippy::exhaustive_structs)] // to be killed
+pub struct DataLocale {
+    /// Locale.id
+    pub id: LanguageIdentifier,
+    /// Locale.extensions.unicode.keywords
+    pub keywords: unicode_ext::Keywords,
+}
+
+impl From<Locale> for DataLocale {
+    fn from(locale: Locale) -> Self {
+        Self {
+            id: locale.id,
+            keywords: locale.extensions.unicode.keywords,
+        }
+    }
+}
+
+impl From<LanguageIdentifier> for DataLocale {
+    fn from(id: LanguageIdentifier) -> Self {
+        Self {
+            id,
+            keywords: unicode_ext::Keywords::new(),
+        }
     }
 }
 

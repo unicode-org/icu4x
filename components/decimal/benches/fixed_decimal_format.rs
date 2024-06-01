@@ -11,6 +11,7 @@ use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use fixed_decimal::FixedDecimal;
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_decimal::FixedDecimalFormatter;
+use icu_locale_core::Locale;
 use icu_provider_adapters::any_payload::AnyPayloadProvider;
 
 fn triangular_nums(range: f64) -> Vec<isize> {
@@ -33,7 +34,7 @@ fn overview_bench(c: &mut Criterion) {
             // ranging from -1e9 to 1e9.
             let fdf = FixedDecimalFormatter::try_new_unstable(
                 &provider,
-                &Default::default(),
+                &Locale::UND.into(),
                 Default::default(),
             )
             .unwrap();

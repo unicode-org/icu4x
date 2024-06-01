@@ -35,7 +35,7 @@ use icu::datetime::{
     options::length, DateTimeFormatter, DateTimeFormatterOptions,
     TypedDateTimeFormatter,
 };
-use icu::locale::locale;
+use icu::locale::{locale, Locale};
 use std::str::FromStr;
 use writeable::assert_writeable_eq;
 
@@ -47,12 +47,13 @@ let options =
     ));
 
 // You can work with a formatter that can select the calendar at runtime:
-let dtf = DateTimeFormatter::try_new(&locale!("en-u-ca-gregory"), options.clone())
+let locale = Locale::from_str("en-u-ca-gregory").unwrap();
+let dtf = DateTimeFormatter::try_new(&locale.into(), options.clone())
     .expect("Failed to create DateTimeFormatter instance.");
 
 // Or one that selects a calendar at compile time:
 let typed_dtf = TypedDateTimeFormatter::<Gregorian>::try_new(
-    &locale!("en"),
+    &locale!("en").into(),
     options,
 )
 .expect("Failed to create TypedDateTimeFormatter instance.");
@@ -92,7 +93,7 @@ let options = length::Bag::from_date_time_style(
 .into();
 
 let dtf = TypedDateTimeFormatter::<Gregorian>::try_new(
-    &locale!("en"),
+    &locale!("en").into(),
     options,
 );
 ```

@@ -3,6 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_datagen::prelude::*;
+use icu_locale::subtags::region;
+use icu_locale::subtags::script;
+use icu_locale::subtags::Language;
 use icu_locale_core::LanguageIdentifier;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::hello_world::*;
@@ -24,10 +27,10 @@ fn run_driver(exporter: BlobExporter) -> Result<(), DataError> {
 
 fn check_hello_world(blob_provider: impl DataProvider<HelloWorldV1Marker>) {
     let hello_world_provider = HelloWorldProvider;
-    for (locale, key_attributes) in hello_world_provider.supported_requests().unwrap() {
+    for (langid, key_attributes) in hello_world_provider.supported_requests().unwrap() {
         let blob_result = blob_provider
             .load(DataRequest {
-                langid: &locale,
+                langid: &langid,
                 key_attributes: &key_attributes,
                 ..Default::default()
             })
@@ -36,14 +39,14 @@ fn check_hello_world(blob_provider: impl DataProvider<HelloWorldV1Marker>) {
             .unwrap();
         let expected_result = hello_world_provider
             .load(DataRequest {
-                langid: &locale,
+                langid: &langid,
                 key_attributes: &key_attributes,
                 ..Default::default()
             })
             .unwrap()
             .take_payload()
             .unwrap();
-        assert_eq!(blob_result, expected_result, "{locale:?}");
+        assert_eq!(blob_result, expected_result, "{langid:?}");
     }
 }
 
@@ -106,25 +109,25 @@ fn test_v2_bigger() {
     );
     let blob_provider = blob_provider.as_deserializing();
 
-    for loc in &[
-        "abc-Latn-001",
-        "pqj-Latn-001",
-        "zlr-Latn-001",
-        "qfr-Latn-001",
-        "tyz-Latn-001",
-        "uaf-Latn-001",
+    for langid in &[
+        langid!("abc-Latn-001"),
+        langid!("pqj-Latn-001"),
+        langid!("zlr-Latn-001"),
+        langid!("qfr-Latn-001"),
+        langid!("tyz-Latn-001"),
+        langid!("uaf-Latn-001"),
     ] {
         let blob_result = DataProvider::<HelloWorldV1Marker>::load(
             &blob_provider,
             DataRequest {
-                langid: &loc.parse().expect("locale must parse"),
+                langid,
                 ..Default::default()
             },
         )
         .unwrap()
         .take_payload()
         .unwrap();
-        assert_eq!(blob_result.get().message, format!("Hello {loc}!"))
+        assert_eq!(blob_result.get().message, format!("Hello {langid}!"))
     }
 }
 
@@ -147,23 +150,22 @@ impl IterableDataProvider<HelloWorldV1Marker> for ManyLocalesProvider {
     fn supported_requests(
         &self,
     ) -> Result<HashSet<(LanguageIdentifier, DataKeyAttributes)>, DataError> {
-        let mut r = HashSet::new();
-        let mut bytes = [
-            b'a', b'a', b'a', b'-', b'L', b'a', b't', b'n', b'-', b'0', b'0', b'1',
-        ];
-        for i0 in LOWERCASE {
-            bytes[0] = i0;
-            for i1 in LOWERCASE {
-                bytes[1] = i1;
-                for i2 in LOWERCASE {
-                    bytes[2] = i2;
-                    let langid =
-                        LanguageIdentifier::try_from_bytes(&bytes).expect("locale must parse");
-                    r.insert((langid, Default::default()));
-                }
-            }
-        }
-        Ok(r)
+        Ok(LOWERCASE
+            .flat_map(|i0| {
+                LOWERCASE.flat_map(move |i1| {
+                    LOWERCASE.map(move |i2| {
+                        (
+                            LanguageIdentifier::from((
+                                Language::try_from_raw([i0, i1, i2]).unwrap(),
+                                Some(script!("Latn")),
+                                Some(region!("001")),
+                            )),
+                            Default::default(),
+                        )
+                    })
+                })
+            })
+            .collect())
     }
 }
 

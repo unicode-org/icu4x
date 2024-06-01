@@ -43,7 +43,7 @@ use icu::locale::locale;
 let options =
     length::Bag::from_date_time_style(length::Date::Long, length::Time::Medium).into();
 
-let dtf = DateTimeFormatter::try_new(&locale!("es"), options)
+let dtf = DateTimeFormatter::try_new(&locale!("es").into(), options)
     .expect("locale should be present in compiled data");
 
 let date = DateTime::try_new_iso_datetime(2020, 9, 12, 12, 35, 0).expect("datetime should be valid");

@@ -8,7 +8,7 @@ use icu_plurals::{PluralCategory, PluralOperands, PluralRuleType, PluralRulesWit
 #[test]
 fn test_plural_ranges_raw() {
     assert_eq!(
-        PluralRulesWithRanges::try_new_cardinal(&locale!("he"))
+        PluralRulesWithRanges::try_new_cardinal(&locale!("he").into())
             .unwrap()
             .resolve_range(PluralCategory::One, PluralCategory::Two),
         PluralCategory::Other
@@ -18,7 +18,7 @@ fn test_plural_ranges_raw() {
 #[test]
 fn test_plural_ranges_optimized_data() {
     assert_eq!(
-        PluralRulesWithRanges::try_new_ordinal(&locale!("en"))
+        PluralRulesWithRanges::try_new_ordinal(&locale!("en").into())
             .unwrap()
             .resolve_range(PluralCategory::One, PluralCategory::Other),
         PluralCategory::Other
@@ -28,7 +28,7 @@ fn test_plural_ranges_optimized_data() {
 #[test]
 fn test_plural_ranges_missing_data_fallback() {
     assert_eq!(
-        PluralRulesWithRanges::try_new_cardinal(&locale!("nl"))
+        PluralRulesWithRanges::try_new_cardinal(&locale!("nl").into())
             .unwrap()
             .resolve_range(PluralCategory::Two, PluralCategory::Many),
         PluralCategory::Many
@@ -37,7 +37,8 @@ fn test_plural_ranges_missing_data_fallback() {
 
 #[test]
 fn test_plural_ranges_full() {
-    let ranges = PluralRulesWithRanges::try_new(&locale!("sl"), PluralRuleType::Cardinal).unwrap();
+    let ranges =
+        PluralRulesWithRanges::try_new(&locale!("sl").into(), PluralRuleType::Cardinal).unwrap();
     let start: PluralOperands = "0.5".parse().unwrap(); // PluralCategory::Other
     let end: PluralOperands = PluralOperands::from(1); // PluralCategory::One
 

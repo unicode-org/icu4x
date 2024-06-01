@@ -42,7 +42,7 @@ pub mod ffi {
             date_length: ICU4XDateLength,
             time_length: ICU4XTimeLength,
         ) -> Result<Box<ICU4XGregorianZonedDateTimeFormatter>, ICU4XError> {
-            let locale = locale.to_locale();
+            let locale = locale.to_datalocale();
 
             Ok(Box::new(ICU4XGregorianZonedDateTimeFormatter(
                 call_constructor!(
@@ -71,7 +71,7 @@ pub mod ffi {
             time_length: ICU4XTimeLength,
             zone_options: ICU4XIsoTimeZoneOptions,
         ) -> Result<Box<ICU4XGregorianZonedDateTimeFormatter>, ICU4XError> {
-            let locale = locale.to_locale();
+            let locale = locale.to_datalocale();
 
             Ok(Box::new(ICU4XGregorianZonedDateTimeFormatter(
                 call_constructor!(
@@ -124,7 +124,7 @@ pub mod ffi {
             date_length: ICU4XDateLength,
             time_length: ICU4XTimeLength,
         ) -> Result<Box<ICU4XZonedDateTimeFormatter>, ICU4XError> {
-            let locale = locale.to_locale();
+            let locale = locale.to_datalocale();
 
             Ok(Box::new(ICU4XZonedDateTimeFormatter(call_constructor!(
                 ZonedDateTimeFormatter::try_new,
@@ -150,7 +150,7 @@ pub mod ffi {
             time_length: ICU4XTimeLength,
             zone_options: ICU4XIsoTimeZoneOptions,
         ) -> Result<Box<ICU4XZonedDateTimeFormatter>, ICU4XError> {
-            let locale = locale.to_locale();
+            let locale = locale.to_datalocale();
 
             Ok(Box::new(ICU4XZonedDateTimeFormatter(call_constructor!(
                 ZonedDateTimeFormatter::try_new,

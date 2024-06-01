@@ -15,7 +15,7 @@ fn assert_resolved_components(
     bag: &components::Bag,
     locale: Locale,
 ) {
-    let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_experimental(&locale, options)
+    let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_experimental(&locale.into(), options)
         .expect("Failed to create a TypedDateTimeFormatter.");
 
     assert_eq!(dtf.resolve_components(), *bag);

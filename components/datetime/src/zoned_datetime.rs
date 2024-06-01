@@ -62,7 +62,7 @@ use crate::{
 ///     length::Time::Long,
 /// );
 /// let zdtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new(
-///     &locale!("en"),
+///     &locale!("en").into(),
 ///     options.into(),
 ///     TimeZoneFormatterOptions::default(),
 /// )
@@ -105,7 +105,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     /// );
     ///
     /// let zdtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new(
-    ///     &locale!("en"),
+    ///     &locale!("en").into(),
     ///     options.into(),
     ///     TimeZoneFormatterOptions::default(),
     /// )
@@ -124,7 +124,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     #[inline]
     #[cfg(feature = "compiled_data")]
     pub fn try_new(
-        locale: &Locale,
+        locale: &DataLocale,
         date_time_format_options: DateTimeFormatterOptions,
         time_zone_format_options: TimeZoneFormatterOptions,
     ) -> Result<Self, DateTimeError>
@@ -134,7 +134,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     {
         let patterns = PatternSelector::for_options(
             &crate::provider::Baked,
-            calendar::load_lengths_for_cldr_calendar::<C, _>(&crate::provider::Baked, &locale.id)?,
+            calendar::load_lengths_for_cldr_calendar::<C, _>(&crate::provider::Baked, locale)?,
             locale,
             &date_time_format_options,
         )
@@ -148,7 +148,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
                 || {
                     calendar::load_symbols_for_cldr_calendar::<C, _>(
                         &crate::provider::Baked,
-                        &locale.id,
+                        locale,
                     )
                 },
                 locale,
@@ -170,7 +170,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     #[inline]
     pub fn try_new_unstable<P>(
         provider: &P,
-        locale: &Locale,
+        locale: &DataLocale,
         date_time_format_options: DateTimeFormatterOptions,
         time_zone_format_options: TimeZoneFormatterOptions,
     ) -> Result<Self, DateTimeError>
@@ -192,7 +192,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     {
         let patterns = PatternSelector::for_options(
             provider,
-            calendar::load_lengths_for_cldr_calendar::<C, _>(provider, &locale.id)?,
+            calendar::load_lengths_for_cldr_calendar::<C, _>(provider, locale)?,
             locale,
             &date_time_format_options,
         )
@@ -204,7 +204,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
             raw::ZonedDateTimeFormatter::try_new_unstable(
                 provider,
                 patterns,
-                || calendar::load_symbols_for_cldr_calendar::<C, _>(provider, &locale.id),
+                || calendar::load_symbols_for_cldr_calendar::<C, _>(provider, locale),
                 locale,
                 time_zone_format_options,
             )?,
@@ -244,7 +244,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     /// options.time_zone_name = Some(components::TimeZoneName::GmtOffset);
     ///
     /// let zdtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new_experimental(
-    ///     &locale!("en"),
+    ///     &locale!("en").into(),
     ///     options.into(),
     ///     TimeZoneFormatterOptions::default(),
     /// )
@@ -264,7 +264,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     #[cfg(feature = "compiled_data")]
     #[inline]
     pub fn try_new_experimental(
-        locale: &Locale,
+        locale: &DataLocale,
         date_time_format_options: DateTimeFormatterOptions,
         time_zone_format_options: TimeZoneFormatterOptions,
     ) -> Result<Self, DateTimeError>
@@ -274,7 +274,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     {
         let patterns = PatternSelector::for_options_experimental(
             &crate::provider::Baked,
-            calendar::load_lengths_for_cldr_calendar::<C, _>(&crate::provider::Baked, &locale.id)?,
+            calendar::load_lengths_for_cldr_calendar::<C, _>(&crate::provider::Baked, locale)?,
             locale,
             &C::DEFAULT_BCP_47_IDENTIFIER,
             &date_time_format_options,
@@ -292,7 +292,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
                 || {
                     calendar::load_symbols_for_cldr_calendar::<C, _>(
                         &crate::provider::Baked,
-                        &locale.id,
+                        locale,
                     )
                 },
                 locale,
@@ -307,7 +307,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     #[inline]
     pub fn try_new_experimental_unstable<P>(
         provider: &P,
-        locale: &Locale,
+        locale: &DataLocale,
         date_time_format_options: DateTimeFormatterOptions,
         time_zone_format_options: TimeZoneFormatterOptions,
     ) -> Result<Self, DateTimeError>
@@ -330,7 +330,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     {
         let patterns = PatternSelector::for_options_experimental(
             provider,
-            calendar::load_lengths_for_cldr_calendar::<C, _>(provider, &locale.id)?,
+            calendar::load_lengths_for_cldr_calendar::<C, _>(provider, locale)?,
             locale,
             &C::DEFAULT_BCP_47_IDENTIFIER,
             &date_time_format_options,
@@ -346,7 +346,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
             raw::ZonedDateTimeFormatter::try_new_unstable(
                 provider,
                 patterns,
-                || calendar::load_symbols_for_cldr_calendar::<C, _>(provider, &locale.id),
+                || calendar::load_symbols_for_cldr_calendar::<C, _>(provider, locale),
                 locale,
                 time_zone_format_options,
             )?,
@@ -373,7 +373,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     /// );
     ///
     /// let zdtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new(
-    ///     &locale!("en"),
+    ///     &locale!("en").into(),
     ///     options.into(),
     ///     Default::default(),
     /// )
@@ -413,7 +413,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     /// );
     ///
     /// let zdtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new(
-    ///     &locale!("en"),
+    ///     &locale!("en").into(),
     ///     options.into(),
     ///     Default::default(),
     /// )

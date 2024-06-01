@@ -43,13 +43,13 @@ impl TimeFormatter {
     #[inline(never)]
     #[cfg(feature = "compiled_data")]
     pub fn try_new(
-        locale: &Locale,
+        locale: &DataLocale,
         length: length::Time,
         preferences: Option<preferences::Bag>,
     ) -> Result<Self, DateTimeError> {
         let patterns = provider::date_time::pattern_for_time_length(
             &crate::provider::Baked,
-            &locale.id,
+            locale,
             length,
             preferences,
         )?;
@@ -82,7 +82,7 @@ impl TimeFormatter {
     #[inline(never)]
     pub fn try_new_unstable<D>(
         provider: &D,
-        locale: &Locale,
+        locale: &DataLocale,
         length: length::Time,
         preferences: Option<preferences::Bag>,
     ) -> Result<Self, DateTimeError>
@@ -92,12 +92,8 @@ impl TimeFormatter {
             + DataProvider<DecimalSymbolsV1Marker>
             + ?Sized,
     {
-        let patterns = provider::date_time::pattern_for_time_length(
-            provider,
-            &locale.id,
-            length,
-            preferences,
-        )?;
+        let patterns =
+            provider::date_time::pattern_for_time_length(provider, locale, length, preferences)?;
 
         let required = datetime::analyze_patterns(&patterns.get().0, false)
             .map_err(|field| DateTimeError::UnsupportedField(field.symbol))?;
@@ -175,7 +171,7 @@ impl DateFormatter {
     pub fn try_new(
         patterns_data: DataPayload<ErasedDateLengthsV1Marker>,
         symbols_data_fn: impl FnOnce() -> Result<DataPayload<ErasedDateSymbolsV1Marker>, DataError>,
-        locale: &Locale,
+        locale: &DataLocale,
         length: length::Date,
     ) -> Result<Self, DateTimeError> {
         let patterns = provider::date_time::pattern_for_date_length(length, patterns_data.clone());
@@ -225,7 +221,7 @@ impl DateFormatter {
         provider: &D,
         patterns_data: DataPayload<ErasedDateLengthsV1Marker>,
         symbols_data_fn: impl FnOnce() -> Result<DataPayload<ErasedDateSymbolsV1Marker>, DataError>,
-        locale: &Locale,
+        locale: &DataLocale,
         length: length::Date,
     ) -> Result<Self, DateTimeError>
     where
@@ -385,7 +381,7 @@ impl DateTimeFormatter {
     pub fn try_new(
         patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
         symbols_data_fn: impl FnOnce() -> Result<DataPayload<ErasedDateSymbolsV1Marker>, DataError>,
-        locale: &Locale,
+        locale: &DataLocale,
     ) -> Result<Self, DateTimeError> {
         let required = datetime::analyze_patterns(&patterns.get().0, false)
             .map_err(|field| DateTimeError::UnsupportedField(field.symbol))?;
@@ -440,7 +436,7 @@ impl DateTimeFormatter {
         provider: &D,
         patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
         symbols_data_fn: impl FnOnce() -> Result<DataPayload<ErasedDateSymbolsV1Marker>, DataError>,
-        locale: &Locale,
+        locale: &DataLocale,
     ) -> Result<Self, DateTimeError>
     where
         D: DataProvider<TimeSymbolsV1Marker>

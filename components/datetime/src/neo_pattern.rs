@@ -39,7 +39,7 @@ size_test!(DateTimePattern, date_time_pattern_size, 32);
 ///
 /// let data_pattern =
 ///     TypedNeoDateTimeFormatter::<Gregorian>::try_new_with_date_length(
-///         &locale!("es-MX"),
+///         &locale!("es-MX").into(),
 ///         length::Date::Medium,
 ///     )
 ///     .unwrap()

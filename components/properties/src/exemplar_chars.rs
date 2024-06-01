@@ -51,7 +51,7 @@ macro_rules! make_exemplar_chars_unicode_set_property {
         /// [📚 Help choosing a constructor](icu_provider::constructors)
         $vis fn $funcname(
             provider: &(impl DataProvider<$keyed_data_marker> + ?Sized),
-            locale: &Locale,
+            locale: &DataLocale,
         ) -> Result<UnicodeSetData, PropertiesError> {
             Ok(provider.load(
                 DataRequest {
@@ -65,7 +65,7 @@ macro_rules! make_exemplar_chars_unicode_set_property {
         $(#[$attr])*
         #[cfg(feature = "compiled_data")]
         $vis2 fn $constname(
-            locale: &Locale,
+            locale: &DataLocale,
         ) -> Result<UnicodeSetData, PropertiesError> {
             Ok(UnicodeSetData::from_data(
                 DataProvider::<$keyed_data_marker>::load(
@@ -98,7 +98,7 @@ make_exemplar_chars_unicode_set_property!(
     /// use icu::locale::locale;
     /// use icu::properties::exemplar_chars;
     ///
-    /// let data = exemplar_chars::exemplars_main(&locale!("en"))
+    /// let data = exemplar_chars::exemplars_main(&locale!("en").into())
     ///     .expect("locale should be present");
     /// let exemplars_main = data.as_borrowed();
     ///
@@ -131,7 +131,7 @@ make_exemplar_chars_unicode_set_property!(
     /// use icu::properties::exemplar_chars;
     ///
     /// let data =
-    ///     exemplar_chars::exemplars_auxiliary(&locale!("en"))
+    ///     exemplar_chars::exemplars_auxiliary(&locale!("en").into())
     ///     .expect("locale should be present");
     /// let exemplars_auxiliary = data.as_borrowed();
     ///
@@ -164,7 +164,7 @@ make_exemplar_chars_unicode_set_property!(
     /// use icu::properties::exemplar_chars;
     ///
     /// let data =
-    ///     exemplar_chars::exemplars_punctuation(&locale!("en"))
+    ///     exemplar_chars::exemplars_punctuation(&locale!("en").into())
     ///     .expect("locale should be present");
     /// let exemplars_punctuation = data.as_borrowed();
     ///
@@ -198,7 +198,7 @@ make_exemplar_chars_unicode_set_property!(
     /// use icu::properties::exemplar_chars;
     ///
     /// let data =
-    ///     exemplar_chars::exemplars_numbers(&locale!("en"))
+    ///     exemplar_chars::exemplars_numbers(&locale!("en").into())
     ///     .expect("locale should be present");
     /// let exemplars_numbers = data.as_borrowed();
     ///
@@ -232,7 +232,7 @@ make_exemplar_chars_unicode_set_property!(
     /// use icu::properties::exemplar_chars;
     ///
     /// let data =
-    ///     exemplar_chars::exemplars_index(&locale!("en"))
+    ///     exemplar_chars::exemplars_index(&locale!("en").into())
     ///     .expect("locale should be present");
     /// let exemplars_index = data.as_borrowed();
     ///

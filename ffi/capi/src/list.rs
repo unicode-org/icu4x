@@ -73,7 +73,7 @@ pub mod ffi {
             locale: &ICU4XLocale,
             length: ICU4XListLength,
         ) -> Result<Box<ICU4XListFormatter>, ICU4XError> {
-            let locale = locale.to_locale();
+            let locale = locale.to_datalocale();
             Ok(Box::new(ICU4XListFormatter(call_constructor!(
                 ListFormatter::try_new_and_with_length,
                 ListFormatter::try_new_and_with_length_with_any_provider,
@@ -91,7 +91,7 @@ pub mod ffi {
             locale: &ICU4XLocale,
             length: ICU4XListLength,
         ) -> Result<Box<ICU4XListFormatter>, ICU4XError> {
-            let locale = locale.to_locale();
+            let locale = locale.to_datalocale();
             Ok(Box::new(ICU4XListFormatter(call_constructor!(
                 ListFormatter::try_new_or_with_length,
                 ListFormatter::try_new_or_with_length_with_any_provider,
@@ -109,7 +109,7 @@ pub mod ffi {
             locale: &ICU4XLocale,
             length: ICU4XListLength,
         ) -> Result<Box<ICU4XListFormatter>, ICU4XError> {
-            let locale = locale.to_locale();
+            let locale = locale.to_datalocale();
             Ok(Box::new(ICU4XListFormatter(call_constructor!(
                 ListFormatter::try_new_unit_with_length,
                 ListFormatter::try_new_unit_with_length_with_any_provider,

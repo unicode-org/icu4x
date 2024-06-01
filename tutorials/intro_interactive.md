@@ -165,7 +165,7 @@ let iso_date = get_current_date();
 
 // Create and use an ICU4X date formatter:
 let date_formatter =
-    DateFormatter::try_new_with_length(&locale, length::Date::Medium)
+    DateFormatter::try_new_with_length(&locale.into(), length::Date::Medium)
         .expect("should have data for specified locale");
 println!(
     "Date: {}",

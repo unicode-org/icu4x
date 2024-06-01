@@ -9,7 +9,7 @@ use icu_provider::prelude::*;
 #[test]
 fn test_plural_rules() {
     assert_eq!(
-        PluralRules::try_new(&locale!("en"), PluralRuleType::Cardinal)
+        PluralRules::try_new(&locale!("en").into(), PluralRuleType::Cardinal)
             .unwrap()
             .category_for(5_usize),
         PluralCategory::Other

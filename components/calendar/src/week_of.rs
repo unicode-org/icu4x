@@ -52,14 +52,14 @@ impl WeekCalculator {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub fn try_new(locale: &Locale) -> Result<Self, CalendarError> {
+    pub fn try_new(locale: &DataLocale) -> Result<Self, CalendarError> {
         Self::try_new_unstable(&crate::provider::Baked, locale)
     }
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::try_new_unstable)]
     pub fn try_new_with_any_provider(
         provider: &(impl AnyProvider + ?Sized),
-        locale: &Locale,
+        locale: &DataLocale,
     ) -> Result<Self, CalendarError> {
         Self::try_new_unstable(&provider.as_downcasting(), locale).or_else(|e| {
             DataProvider::<WeekDataV1Marker>::load(
@@ -79,7 +79,7 @@ impl WeekCalculator {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER, Self::try_new_unstable)]
     pub fn try_new_with_buffer_provider(
         provider: &(impl BufferProvider + ?Sized),
-        locale: &Locale,
+        locale: &DataLocale,
     ) -> Result<Self, CalendarError> {
         Self::try_new_unstable(&provider.as_deserializing(), locale).or_else(|e| {
             DataProvider::<WeekDataV1Marker>::load(
@@ -96,7 +96,7 @@ impl WeekCalculator {
     }
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
-    pub fn try_new_unstable<P>(provider: &P, locale: &Locale) -> Result<Self, CalendarError>
+    pub fn try_new_unstable<P>(provider: &P, locale: &DataLocale) -> Result<Self, CalendarError>
     where
         P: DataProvider<crate::provider::WeekDataV2Marker> + ?Sized,
     {
@@ -714,7 +714,7 @@ fn test_weekend() {
     use icu_locale_core::locale;
 
     assert_eq!(
-        WeekCalculator::try_new(&locale!("und"))
+        WeekCalculator::try_new(&locale!("und").into())
             .unwrap()
             .weekend()
             .collect::<Vec<_>>(),
@@ -722,7 +722,7 @@ fn test_weekend() {
     );
 
     assert_eq!(
-        WeekCalculator::try_new(&locale!("und-FR"))
+        WeekCalculator::try_new(&locale!("und-FR").into())
             .unwrap()
             .weekend()
             .collect::<Vec<_>>(),
@@ -730,7 +730,7 @@ fn test_weekend() {
     );
 
     assert_eq!(
-        WeekCalculator::try_new(&locale!("und-IQ"))
+        WeekCalculator::try_new(&locale!("und-IQ").into())
             .unwrap()
             .weekend()
             .collect::<Vec<_>>(),
@@ -738,7 +738,7 @@ fn test_weekend() {
     );
 
     assert_eq!(
-        WeekCalculator::try_new(&locale!("und-IR"))
+        WeekCalculator::try_new(&locale!("und-IR").into())
             .unwrap()
             .weekend()
             .collect::<Vec<_>>(),

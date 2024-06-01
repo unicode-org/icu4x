@@ -109,7 +109,7 @@ fn main() {
 
     let options = length::Bag::from_date_time_style(length::Date::Long, length::Time::Medium);
 
-    let dtf = DateTimeFormatter::try_new_unstable(&baked_provider, &LOCALE, options.into())
+    let dtf = DateTimeFormatter::try_new_unstable(&baked_provider, &LOCALE.into(), options.into())
         .expect("ja data should be available");
 
     let date = DateTime::try_new_iso_datetime(2020, 10, 14, 13, 21, 28)
@@ -173,7 +173,7 @@ fn main() {
 
     let options = length::Bag::from_date_time_style(length::Date::Long, length::Time::Medium);
 
-    let dtf = DateTimeFormatter::try_new_with_buffer_provider(&buffer_provider, &LOCALE, options.into())
+    let dtf = DateTimeFormatter::try_new_with_buffer_provider(&buffer_provider, &LOCALE.into(), options.into())
         .expect("blob should contain required keys and `ja` data");
 
     let date = DateTime::try_new_iso_datetime(2020, 10, 14, 13, 21, 28)
@@ -222,7 +222,7 @@ fn main() {
 
     let options = length::Bag::from_date_time_style(length::Date::Long, length::Time::Medium);
 
-    let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_with_buffer_provider(&buffer_provider, &LOCALE, options.into())
+    let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_with_buffer_provider(&buffer_provider, &LOCALE.into(), options.into())
         .expect("blob should contain required data");
 
     let date = DateTime::try_new_gregorian_datetime(2020, 10, 14, 13, 21, 28)

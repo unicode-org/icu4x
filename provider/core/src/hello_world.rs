@@ -251,7 +251,7 @@ icu_provider::make_exportable_provider!(HelloWorldProvider, [HelloWorldV1Marker,
 ///
 /// let fmt = HelloWorldFormatter::try_new_unstable(
 ///     &HelloWorldProvider,
-///     &locale!("eo"),
+///     &locale!("eo").into(),
 /// )
 /// .expect("locale exists");
 ///
@@ -274,7 +274,7 @@ impl HelloWorldFormatter {
     /// Creates a new [`HelloWorldFormatter`] for the specified locale.
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
-    pub fn try_new(locale: &Locale) -> Result<Self, DataError> {
+    pub fn try_new(locale: &DataLocale) -> Result<Self, DataError> {
         Self::try_new_unstable(&HelloWorldProvider, locale)
     }
 
@@ -289,7 +289,7 @@ impl HelloWorldFormatter {
     ]);
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
-    pub fn try_new_unstable<P>(provider: &P, locale: &Locale) -> Result<Self, DataError>
+    pub fn try_new_unstable<P>(provider: &P, locale: &DataLocale) -> Result<Self, DataError>
     where
         P: DataProvider<HelloWorldV1Marker>,
     {

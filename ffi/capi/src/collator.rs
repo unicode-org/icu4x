@@ -116,7 +116,7 @@ pub mod ffi {
             locale: &ICU4XLocale,
             options: ICU4XCollatorOptionsV1,
         ) -> Result<Box<ICU4XCollator>, ICU4XError> {
-            let locale = locale.to_locale();
+            let locale = locale.to_datalocale();
             let options = CollatorOptions::from(options);
 
             Ok(Box::new(ICU4XCollator(call_constructor!(

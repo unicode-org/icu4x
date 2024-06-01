@@ -107,7 +107,7 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
         ) -> Result<Box<ICU4XCalendar>, ICU4XError> {
-            let locale = locale.to_locale();
+            let locale = locale.to_datalocale();
 
             Ok(Box::new(ICU4XCalendar(Arc::new(call_constructor!(
                 AnyCalendar::new_for_locale [r => Ok(r)],

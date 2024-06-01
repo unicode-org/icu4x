@@ -65,14 +65,14 @@ impl From<GroupingStrategy> for CompactDecimalFormatterOptions {
 /// use writeable::assert_writeable_eq;
 ///
 /// let short_french = CompactDecimalFormatter::try_new_short(
-///    &locale!("fr"),
+///    &locale!("fr").into(),
 ///    Default::default(),
 /// ).unwrap();
 ///
 /// let [long_french, long_japanese, long_bangla] = [locale!("fr"), locale!("ja"), locale!("bn")]
 ///     .map(|locale| {
 ///         CompactDecimalFormatter::try_new_long(
-///             &locale,
+///             &locale.into(),
 ///             Default::default(),
 ///         )
 ///         .unwrap()
@@ -113,13 +113,13 @@ impl CompactDecimalFormatter {
     /// use icu::locale::locale;
     ///
     /// CompactDecimalFormatter::try_new_short(
-    ///     &locale!("sv"),
+    ///     &locale!("sv").into(),
     ///     Default::default(),
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
     pub fn try_new_short(
-        locale: &Locale,
+        locale: &DataLocale,
         options: CompactDecimalFormatterOptions,
     ) -> Result<Self, CompactDecimalError> {
         Ok(Self {
@@ -157,7 +157,7 @@ impl CompactDecimalFormatter {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_short)]
     pub fn try_new_short_unstable<D>(
         provider: &D,
-        locale: &Locale,
+        locale: &DataLocale,
         options: CompactDecimalFormatterOptions,
     ) -> Result<Self, CompactDecimalError>
     where
@@ -200,13 +200,13 @@ impl CompactDecimalFormatter {
     /// use icu::locale::locale;
     ///
     /// CompactDecimalFormatter::try_new_long(
-    ///     &locale!("sv"),
+    ///     &locale!("sv").into(),
     ///     Default::default(),
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
     pub fn try_new_long(
-        locale: &Locale,
+        locale: &DataLocale,
         options: CompactDecimalFormatterOptions,
     ) -> Result<Self, CompactDecimalError> {
         Ok(Self {
@@ -244,7 +244,7 @@ impl CompactDecimalFormatter {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_long)]
     pub fn try_new_long_unstable<D>(
         provider: &D,
-        locale: &Locale,
+        locale: &DataLocale,
         options: CompactDecimalFormatterOptions,
     ) -> Result<Self, CompactDecimalError>
     where
@@ -287,7 +287,7 @@ impl CompactDecimalFormatter {
     /// use writeable::assert_writeable_eq;
     ///
     /// let short_english = CompactDecimalFormatter::try_new_short(
-    ///     &locale!("en"),
+    ///     &locale!("en").into(),
     ///     Default::default(),
     /// )
     /// .unwrap();
@@ -310,7 +310,7 @@ impl CompactDecimalFormatter {
     /// # use writeable::assert_writeable_eq;
     /// #
     /// # let short_english = CompactDecimalFormatter::try_new_short(
-    /// #    &locale!("en"),
+    /// #    &locale!("en").into(),
     /// #    Default::default(),
     /// # ).unwrap();
     /// assert_writeable_eq!(short_english.format_i64(999_499), "999K");
@@ -342,7 +342,7 @@ impl CompactDecimalFormatter {
     /// use writeable::assert_writeable_eq;
     ///
     /// let short_english = CompactDecimalFormatter::try_new_short(
-    ///     &locale!("en"),
+    ///     &locale!("en").into(),
     ///     Default::default(),
     /// )
     /// .unwrap();
@@ -365,7 +365,7 @@ impl CompactDecimalFormatter {
     /// # use writeable::assert_writeable_eq;
     /// #
     /// # let short_english = CompactDecimalFormatter::try_new_short(
-    /// #    &locale!("en"),
+    /// #    &locale!("en").into(),
     /// #    Default::default(),
     /// # ).unwrap();
     /// assert_writeable_eq!(short_english.format_f64(999_499.99).unwrap(), "999K");
@@ -407,7 +407,7 @@ impl CompactDecimalFormatter {
     /// use writeable::assert_writeable_eq;
     ///
     /// let short_english = CompactDecimalFormatter::try_new_short(
-    ///     &locale!("en"),
+    ///     &locale!("en").into(),
     ///     Default::default(),
     /// )
     /// .unwrap();
@@ -460,7 +460,7 @@ impl CompactDecimalFormatter {
     /// # use writeable::assert_writeable_eq;
     /// #
     /// # let short_english = CompactDecimalFormatter::try_new_short(
-    /// #    &locale!("en"),
+    /// #    &locale!("en").into(),
     /// #    Default::default(),
     /// # ).unwrap();
     /// assert_writeable_eq!(
@@ -556,15 +556,15 @@ impl CompactDecimalFormatter {
     /// use fixed_decimal::CompactDecimal;
     ///
     /// # let short_french = CompactDecimalFormatter::try_new_short(
-    /// #    &locale!("fr"),
+    /// #    &locale!("fr").into(),
     /// #    Default::default(),
     /// # ).unwrap();
     /// # let long_french = CompactDecimalFormatter::try_new_long(
-    /// #    &locale!("fr"),
+    /// #    &locale!("fr").into(),
     /// #    Default::default()
     /// # ).unwrap();
     /// # let long_bangla = CompactDecimalFormatter::try_new_long(
-    /// #    &locale!("bn"),
+    /// #    &locale!("bn").into(),
     /// #    Default::default()
     /// # ).unwrap();
     /// #
@@ -758,9 +758,9 @@ mod tests {
         ];
         for case in cases {
             let formatter = if case.short {
-                CompactDecimalFormatter::try_new_short(&locale!("en"), case.options.clone())
+                CompactDecimalFormatter::try_new_short(&locale!("en").into(), case.options.clone())
             } else {
-                CompactDecimalFormatter::try_new_long(&locale!("en"), case.options.clone())
+                CompactDecimalFormatter::try_new_long(&locale!("en").into(), case.options.clone())
             }
             .unwrap();
             let result1T = formatter.format_i64(1_000_000_000_000_000);

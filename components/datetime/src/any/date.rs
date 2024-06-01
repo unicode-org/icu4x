@@ -16,6 +16,7 @@ use icu_calendar::provider::{
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_plurals::provider::OrdinalV1Marker;
 use icu_provider::prelude::*;
+use icu_provider::DataLocale;
 use writeable::Writeable;
 
 size_test!(DateFormatter, date_formatter_size, 4456);
@@ -44,7 +45,7 @@ size_test!(DateFormatter, date_formatter_size, 4456);
 /// let length = length::Date::Medium;
 ///
 /// let df = DateFormatter::try_new_with_length(
-///     &locale!("en-u-ca-gregory"),
+///     &locale!("en-u-ca-gregory").into(),
 ///     length,
 /// )
 /// .expect("Failed to create TypedDateFormatter instance.");
@@ -103,7 +104,7 @@ impl DateFormatter {
     #[inline(never)]
     #[cfg(feature = "compiled_data")]
     pub fn try_new_with_length(
-        locale: &Locale,
+        locale: &DataLocale,
         length: length::Date,
     ) -> Result<Self, DateTimeError> {
         let calendar = AnyCalendar::new_for_locale(locale);
@@ -113,13 +114,13 @@ impl DateFormatter {
             raw::DateFormatter::try_new(
                 calendar::load_lengths_for_any_calendar_kind(
                     &crate::provider::Baked,
-                    &locale.id,
+                    locale,
                     kind,
                 )?,
                 || {
                     calendar::load_symbols_for_any_calendar_kind(
                         &crate::provider::Baked,
-                        &locale.id,
+                        locale,
                         kind,
                     )
                 },
@@ -134,7 +135,7 @@ impl DateFormatter {
     #[inline]
     pub fn try_new_with_length_with_any_provider(
         provider: &impl AnyProvider,
-        locale: &Locale,
+        locale: &DataLocale,
         length: length::Date,
     ) -> Result<Self, DateTimeError> {
         let downcasting = provider.as_downcasting();
@@ -146,7 +147,7 @@ impl DateFormatter {
     #[cfg(feature = "serde")]
     pub fn try_new_with_length_with_buffer_provider(
         provider: &impl BufferProvider,
-        locale: &Locale,
+        locale: &DataLocale,
         length: length::Date,
     ) -> Result<Self, DateTimeError> {
         let deserializing = provider.as_deserializing();
@@ -157,7 +158,7 @@ impl DateFormatter {
     #[inline(never)]
     pub fn try_new_with_length_unstable<P>(
         provider: &P,
-        locale: &Locale,
+        locale: &DataLocale,
         length: length::Date,
     ) -> Result<Self, DateTimeError>
     where
@@ -206,8 +207,8 @@ impl DateFormatter {
         Ok(Self(
             raw::DateFormatter::try_new_unstable(
                 provider,
-                calendar::load_lengths_for_any_calendar_kind(provider, &locale.id, kind)?,
-                || calendar::load_symbols_for_any_calendar_kind(provider, &locale.id, kind),
+                calendar::load_lengths_for_any_calendar_kind(provider, locale, kind)?,
+                || calendar::load_symbols_for_any_calendar_kind(provider, locale, kind),
                 locale,
                 length,
             )?,
@@ -262,7 +263,7 @@ fn serde_constructor() {
 
     let df = DateFormatter::try_new_with_length_with_buffer_provider(
         &provider,
-        &locale!("en"),
+        &locale!("en").into(),
         length::Date::Medium,
     )
     .unwrap();

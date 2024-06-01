@@ -78,7 +78,7 @@ pub(crate) enum DateTimePatternDataBorrowed<'a> {
 impl DatePatternSelectionData {
     pub(crate) fn try_new_with_length(
         provider: &(impl BoundDataProvider<DatePatternV1Marker> + ?Sized),
-        locale: &Locale,
+        locale: &DataLocale,
         length: length::Date,
     ) -> Result<Self, DataError> {
         let payload = provider
@@ -102,7 +102,7 @@ impl DatePatternSelectionData {
 
     pub(crate) fn try_new_with_skeleton(
         provider: &(impl BoundDataProvider<SkeletaV1Marker> + ?Sized),
-        locale: &Locale,
+        locale: &DataLocale,
         length: NeoSkeletonLength,
         components: NeoDateComponents,
     ) -> Result<Self, DataError> {
@@ -165,7 +165,7 @@ impl<'a> DatePatternDataBorrowed<'a> {
 impl TimePatternSelectionData {
     pub(crate) fn try_new_with_length<P>(
         provider: &P,
-        locale: &Locale,
+        locale: &DataLocale,
         length: length::Time,
     ) -> Result<Self, DataError>
     where
@@ -192,7 +192,7 @@ impl TimePatternSelectionData {
 
     pub(crate) fn try_new_with_skeleton(
         provider: &(impl BoundDataProvider<SkeletaV1Marker> + ?Sized),
-        locale: &Locale,
+        locale: &DataLocale,
         length: NeoSkeletonLength,
         components: NeoTimeComponents,
     ) -> Result<Self, DataError> {
@@ -253,7 +253,7 @@ impl DateTimeGluePatternSelectionData {
     pub(crate) fn try_new_with_lengths<P>(
         date_pattern_provider: &(impl BoundDataProvider<DatePatternV1Marker> + ?Sized),
         provider: &P,
-        locale: &Locale,
+        locale: &DataLocale,
         date_length: length::Date,
         time_length: length::Time,
     ) -> Result<Self, DataError>
@@ -290,7 +290,7 @@ impl DateTimeGluePatternSelectionData {
         date_provider: &(impl BoundDataProvider<SkeletaV1Marker> + ?Sized),
         time_provider: &(impl BoundDataProvider<SkeletaV1Marker> + ?Sized),
         glue_provider: &(impl BoundDataProvider<DateTimePatternV1Marker> + ?Sized),
-        locale: &Locale,
+        locale: &DataLocale,
         length: NeoSkeletonLength,
         day_components: NeoDayComponents,
         time_components: NeoTimeComponents,
@@ -340,7 +340,7 @@ impl DateTimePatternSelectionData {
         date_provider: &(impl BoundDataProvider<SkeletaV1Marker> + ?Sized),
         time_provider: &(impl BoundDataProvider<SkeletaV1Marker> + ?Sized),
         glue_provider: &(impl BoundDataProvider<DateTimePatternV1Marker> + ?Sized),
-        locale: &Locale,
+        locale: &DataLocale,
         length: NeoSkeletonLength,
         components: NeoComponents,
     ) -> Result<Self, DataError> {
