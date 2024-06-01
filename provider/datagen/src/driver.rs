@@ -946,20 +946,14 @@ fn select_locales_for_key<'a>(
 
     if key.path().get().starts_with("segmenter/dictionary/") {
         supported_map.retain(|_, locales| {
-            locales.retain(|(locale, _)| {
-                let model = crate::dictionary_data_locale_to_model_name(locale);
-                segmenter_models.iter().any(|m| Some(m.as_ref()) == model)
-            });
+            locales.retain(|(_, attrs)| segmenter_models.iter().any(|m| **m == **attrs));
             !locales.is_empty()
         });
         // Don't perform additional locale filtering
         return Ok(supported_map.into_values().flatten().collect());
     } else if key.path().get().starts_with("segmenter/lstm/") {
         supported_map.retain(|_, locales| {
-            locales.retain(|(locale, _)| {
-                let model = crate::lstm_data_locale_to_model_name(locale);
-                segmenter_models.iter().any(|m| Some(m.as_ref()) == model)
-            });
+            locales.retain(|(_, attrs)| segmenter_models.iter().any(|m| **m == **attrs));
             !locales.is_empty()
         });
         // Don't perform additional locale filtering

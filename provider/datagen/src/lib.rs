@@ -435,52 +435,6 @@ fn keys_from_bin_inner(bytes: &[u8]) -> Vec<DataKey> {
     result
 }
 
-use icu_locale_core::langid;
-
-#[cfg(feature = "provider")]
-fn lstm_model_name_to_data_locale(name: &str) -> Option<DataLocale> {
-    match name {
-        "Burmese_codepoints_exclusive_model4_heavy" => Some(langid!("my").into()),
-        "Khmer_codepoints_exclusive_model4_heavy" => Some(langid!("km").into()),
-        "Lao_codepoints_exclusive_model4_heavy" => Some(langid!("lo").into()),
-        "Thai_codepoints_exclusive_model4_heavy" => Some(langid!("th").into()),
-        _ => None,
-    }
-}
-
-fn lstm_data_locale_to_model_name(locale: &DataLocale) -> Option<&'static str> {
-    match locale.get_langid() {
-        id if id == langid!("my") => Some("Burmese_codepoints_exclusive_model4_heavy"),
-        id if id == langid!("km") => Some("Khmer_codepoints_exclusive_model4_heavy"),
-        id if id == langid!("lo") => Some("Lao_codepoints_exclusive_model4_heavy"),
-        id if id == langid!("th") => Some("Thai_codepoints_exclusive_model4_heavy"),
-        _ => None,
-    }
-}
-
-#[cfg(feature = "provider")]
-fn dictionary_model_name_to_data_locale(name: &str) -> Option<DataLocale> {
-    match name {
-        "khmerdict" => Some(langid!("km").into()),
-        "cjdict" => Some(langid!("ja").into()),
-        "laodict" => Some(langid!("lo").into()),
-        "burmesedict" => Some(langid!("my").into()),
-        "thaidict" => Some(langid!("th").into()),
-        _ => None,
-    }
-}
-
-fn dictionary_data_locale_to_model_name(locale: &DataLocale) -> Option<&'static str> {
-    match locale.get_langid() {
-        id if id == langid!("km") => Some("khmerdict"),
-        id if id == langid!("ja") => Some("cjdict"),
-        id if id == langid!("lo") => Some("laodict"),
-        id if id == langid!("my") => Some("burmesedict"),
-        id if id == langid!("th") => Some("thaidict"),
-        _ => None,
-    }
-}
-
 #[test]
 fn test_keys() {
     assert_eq!(
