@@ -124,7 +124,6 @@ struct DataStructArg {
     marker_name: Path,
     key_lit: Option<LitStr>,
     fallback_by: Option<LitStr>,
-    extension_key: Option<LitStr>,
     fallback_supplement: Option<LitStr>,
     singleton: bool,
 }
@@ -135,7 +134,6 @@ impl DataStructArg {
             marker_name,
             key_lit: None,
             fallback_by: None,
-            extension_key: None,
             fallback_supplement: None,
             singleton: false,
         }
@@ -228,7 +226,6 @@ impl Parse for DataStructArg {
                 marker_name,
                 key_lit,
                 fallback_by,
-                extension_key,
                 fallback_supplement,
                 singleton,
             })
@@ -325,7 +322,6 @@ fn data_struct_impl(attr: DataStructArgs, input: DeriveInput) -> TokenStream2 {
             marker_name,
             key_lit,
             fallback_by,
-            extension_key,
             fallback_supplement,
             singleton,
         } = single_attr;
@@ -335,11 +331,12 @@ fn data_struct_impl(attr: DataStructArgs, input: DeriveInput) -> TokenStream2 {
                 Some(ref fallback_by) => fallback_by.value(),
                 None => "language (default)".to_string(),
             };
-            let extension_key_docs_str = match extension_key {
-                Some(ref extension_key) => extension_key.value(),
-                None => "none (default)".to_string(),
-            };
-            format!("Marker type for [`{}`]: \"{}\"\n\n- Fallback priority: {}\n- Extension keyword: {}", name, key_lit.value(), fallback_by_docs_str, extension_key_docs_str)
+            format!(
+                "Marker type for [`{}`]: \"{}\"\n\n- Fallback priority: {}",
+                name,
+                key_lit.value(),
+                fallback_by_docs_str
+            )
         } else {
             format!("Marker type for [`{name}`]")
         };
@@ -371,11 +368,6 @@ fn data_struct_impl(attr: DataStructArgs, input: DeriveInput) -> TokenStream2 {
             } else {
                 quote! {icu_provider::_internal::LocaleFallbackPriority::const_default()}
             };
-            let extension_key_expr = if let Some(extension_key_lit) = extension_key {
-                quote! {Some(icu_provider::_internal::locale_core::extensions::unicode::key!(#extension_key_lit))}
-            } else {
-                quote! {None}
-            };
             let fallback_supplement_expr = if let Some(fallback_supplement_lit) =
                 fallback_supplement
             {
@@ -392,7 +384,6 @@ fn data_struct_impl(attr: DataStructArgs, input: DeriveInput) -> TokenStream2 {
                 impl icu_provider::KeyedDataMarker for #marker_name {
                     const KEY: icu_provider::DataKey = icu_provider::data_key!(#key_str, icu_provider::DataKeyMetadata::construct_internal(
                         #fallback_by_expr,
-                        #extension_key_expr,
                         #fallback_supplement_expr,
                         #singleton,
                     ));

@@ -195,8 +195,6 @@ impl Deref for DataKeyPath {
 pub struct DataKeyMetadata {
     /// What to prioritize when fallbacking on this [`DataKey`].
     pub fallback_priority: LocaleFallbackPriority,
-    /// A Unicode extension keyword to consider when loading data for this [`DataKey`].
-    pub extension_key: Option<icu_locale_core::extensions::unicode::Key>,
     /// Optional choice for additional fallbacking data required for loading this marker.
     ///
     /// For more information, see `LocaleFallbackConfig::fallback_supplement`.
@@ -212,7 +210,6 @@ impl DataKeyMetadata {
     pub const fn const_default() -> Self {
         Self {
             fallback_priority: LocaleFallbackPriority::const_default(),
-            extension_key: None,
             fallback_supplement: None,
             singleton: false,
         }
@@ -221,13 +218,11 @@ impl DataKeyMetadata {
     #[doc(hidden)]
     pub const fn construct_internal(
         fallback_priority: LocaleFallbackPriority,
-        extension_key: Option<icu_locale_core::extensions::unicode::Key>,
         fallback_supplement: Option<LocaleFallbackSupplement>,
         singleton: bool,
     ) -> Self {
         Self {
             fallback_priority,
-            extension_key,
             fallback_supplement,
             singleton,
         }
@@ -345,7 +340,6 @@ impl DataKey {
     pub const fn fallback_config(self) -> LocaleFallbackConfig {
         let mut config = LocaleFallbackConfig::const_default();
         config.priority = self.metadata.fallback_priority;
-        config.extension_key = self.metadata.extension_key;
         config.fallback_supplement = self.metadata.fallback_supplement;
         config
     }

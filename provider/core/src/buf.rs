@@ -45,7 +45,7 @@ impl DataMarker for BufferMarker {
 /// let buffer_provider = HelloWorldProvider.into_json_provider();
 ///
 /// let req = DataRequest {
-///     locale: &langid!("de").into(),
+///     langid: &langid!("de"),
 ///     ..Default::default()
 /// };
 ///

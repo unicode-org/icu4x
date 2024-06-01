@@ -180,21 +180,21 @@ impl FromStr for DataKeyAttributes {
 }
 
 impl DataKeyAttributes {
-    /// Creates a [`DataKeyAttributes`] from an iterator of individual keys.
+    /// Creates a [`DataKeyAttributes`] from an iterator of individual values.
     ///
     /// # Examples
     ///
     /// ```
-    /// use icu_locale_core::extensions::private::subtag;
+    /// use tinystr::tinystr;
     /// use icu_provider::prelude::*;
     ///
-    /// // Single auxiliary key:
-    /// let a = DataKeyAttributes::try_from_iter([subtag!("abc")]).unwrap();
+    /// // Single value:
+    /// let a = DataKeyAttributes::try_from_iter([tinystr!(8, "abc")]).unwrap();
     /// let b = "abc".parse::<DataKeyAttributes>().unwrap();
     /// assert_eq!(a, b);
     ///
-    /// // Multiple auxiliary keys:
-    /// let a = DataKeyAttributes::try_from_iter([subtag!("abc"), subtag!("defg")])
+    /// // Multiple values:
+    /// let a = DataKeyAttributes::try_from_iter([tinystr!(8, "abc"), tinystr!(8, "defg")])
     ///     .unwrap();
     /// let b = "abc-defg".parse::<DataKeyAttributes>().unwrap();
     /// assert_eq!(a, b);

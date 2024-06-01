@@ -69,7 +69,7 @@ impl KeyedDataMarker for HelloWorldV1Marker {
 /// let german_hello_world: DataPayload<HelloWorldV1Marker> =
 ///     HelloWorldProvider
 ///         .load(DataRequest {
-///             locale: &langid!("de"),
+///             langid: &langid!("de"),
 ///             ..Default::default()
 ///         })
 ///         .expect("Loading should succeed")
@@ -88,7 +88,7 @@ impl KeyedDataMarker for HelloWorldV1Marker {
 /// let reverse_hello_world: DataPayload<HelloWorldV1Marker> =
 ///     HelloWorldProvider
 ///         .load(DataRequest {
-///             locale: &"en".parse().unwrap(),
+///             langid: &"en".parse().unwrap(),
 ///             key_attributes: &"reverse".parse().unwrap(),
 ///             ..Default::default()
 ///         })
@@ -186,7 +186,7 @@ icu_provider::impl_dynamic_data_provider!(HelloWorldProvider, [HelloWorldV1Marke
 /// let german_hello_world = HelloWorldProvider
 ///     .into_json_provider()
 ///     .load_buffer(HelloWorldV1Marker::KEY, DataRequest {
-///         locale: &langid!("de").into(),
+///         langid: &langid!("de"),
 ///         ..Default::default()
 ///     })
 ///     .expect("Loading should succeed")

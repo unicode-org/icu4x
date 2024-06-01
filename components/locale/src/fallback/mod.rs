@@ -32,7 +32,7 @@ mod algorithms;
 /// let fallbacker = LocaleFallbacker::new();
 ///
 /// // Create a LocaleFallbackerIterator with a default configuration.
-/// // By default, uses language priority with no additional extension keywords.
+/// // By default, uses language priority.
 /// let mut fallback_iterator = fallbacker
 ///     .for_config(Default::default())
 ///     .fallback_for(langid!("hi-Latn-IN"));

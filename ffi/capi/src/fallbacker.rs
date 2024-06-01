@@ -54,11 +54,9 @@ pub mod ffi {
         FnInStruct,
         hidden
     )]
-    pub struct ICU4XLocaleFallbackConfig<'a> {
+    pub struct ICU4XLocaleFallbackConfig {
         /// Choice of priority mode.
         pub priority: ICU4XLocaleFallbackPriority,
-        /// An empty string is considered `None`.
-        pub extension_key: &'a DiplomatStr,
         /// Fallback supplement data key to customize fallback rules.
         pub fallback_supplement: ICU4XLocaleFallbackSupplement,
     }
@@ -106,9 +104,9 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        pub fn for_config<'a, 'temp>(
+        pub fn for_config<'a>(
             &'a self,
-            config: ICU4XLocaleFallbackConfig<'temp>,
+            config: ICU4XLocaleFallbackConfig,
         ) -> Result<Box<ICU4XLocaleFallbackerWithConfig<'a>>, ICU4XError> {
             Ok(Box::new(ICU4XLocaleFallbackerWithConfig(
                 self.0.for_config(LocaleFallbackConfig::try_from(config)?),
@@ -175,17 +173,11 @@ pub mod ffi {
     }
 }
 
-impl TryFrom<ffi::ICU4XLocaleFallbackConfig<'_>> for icu_locale::fallback::LocaleFallbackConfig {
+impl TryFrom<ffi::ICU4XLocaleFallbackConfig> for icu_locale::fallback::LocaleFallbackConfig {
     type Error = crate::errors::ffi::ICU4XError;
     fn try_from(other: ffi::ICU4XLocaleFallbackConfig) -> Result<Self, Self::Error> {
         let mut result = Self::default();
         result.priority = other.priority.into();
-        result.extension_key = match other.extension_key {
-            b"" => None,
-            s => Some(icu_locale_core::extensions::unicode::Key::try_from_bytes(
-                s,
-            )?),
-        };
         result.fallback_supplement = match other.fallback_supplement {
             ffi::ICU4XLocaleFallbackSupplement::None => None,
             ffi::ICU4XLocaleFallbackSupplement::Collation => {

@@ -7,8 +7,6 @@
 //! These options are consumed by the `LocaleFallbacker` in the `icu_locales` crate
 //! (or the `icu::locales` module), but are defined here because they are used by `DataKey`.
 
-use icu_locale_core::extensions::unicode::Key;
-
 /// Hint for which subtag to prioritize during fallback.
 ///
 /// For example, `"en-US"` might fall back to either `"en"` or `"und-US"` depending
@@ -115,35 +113,6 @@ pub struct LocaleFallbackConfig {
     /// assert_eq!(fallback_iterator.get(), &locale!("und").into());
     /// ```
     pub priority: LocaleFallbackPriority,
-    /// An extension keyword to retain during locale fallback.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::locale::locale;
-    /// use icu::locale::fallback::LocaleFallbackConfig;
-    /// use icu::locale::LocaleFallbacker;
-    ///
-    /// // Set up the fallback iterator.
-    /// let fallbacker = LocaleFallbacker::new();
-    /// let mut config = LocaleFallbackConfig::default();
-    /// config.extension_key = Some(icu::locale::extensions::unicode::key!("nu"));
-    /// let mut fallback_iterator = fallbacker
-    ///     .for_config(config)
-    ///     .fallback_for(locale!("ar-EG-u-nu-latn").into());
-    ///
-    /// // Run the algorithm and check the results.
-    /// assert_eq!(fallback_iterator.get(), &locale!("ar-EG-u-nu-latn").into());
-    /// fallback_iterator.step();
-    /// assert_eq!(fallback_iterator.get(), &locale!("ar-EG").into());
-    /// fallback_iterator.step();
-    /// assert_eq!(fallback_iterator.get(), &locale!("ar-u-nu-latn").into());
-    /// fallback_iterator.step();
-    /// assert_eq!(fallback_iterator.get(), &locale!("ar").into());
-    /// fallback_iterator.step();
-    /// assert_eq!(fallback_iterator.get(), &locale!("und").into());
-    /// ```
-    pub extension_key: Option<Key>,
     /// Fallback supplement data key to customize fallback rules.
     ///
     /// For example, most data keys for collation add additional parent locales, such as
@@ -189,7 +158,6 @@ impl LocaleFallbackConfig {
     pub const fn const_default() -> Self {
         Self {
             priority: LocaleFallbackPriority::const_default(),
-            extension_key: None,
             fallback_supplement: None,
         }
     }

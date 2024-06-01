@@ -117,7 +117,7 @@ pub trait KeyedDataMarker: DataMarker {
 /// let result = DataProvider::<NeverMarker<HelloWorldV1<'static>>>::load(
 ///     &buffer_provider.as_deserializing(),
 ///     DataRequest {
-///         locale: &langid!("en").into(),
+///         langid: &langid!("en"),
 ///         ..Default::default()
 ///     },
 /// );
@@ -166,7 +166,7 @@ where
 /// let result = DataProvider::<NeverMarker<HelloWorldV1<'static>>>::load(
 ///     &MyProvider,
 ///     DataRequest {
-///         locale: &langid!("und").into(),
+///         langid: &langid!("und"),
 ///         ..Default::default()
 ///     },
 /// );

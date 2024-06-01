@@ -108,7 +108,7 @@ macro_rules! impl_casting_upcast {
 /// icu_provider::impl_dynamic_data_provider!(HelloWorldProvider, [HelloWorldV1Marker,], AnyMarker);
 ///
 /// let req = DataRequest {
-///     locale: &icu_locale_core::langid!("de").into(),
+///     langid: &icu_locale_core::langid!("de"),
 ///     ..Default::default()
 /// };
 ///
@@ -148,7 +148,7 @@ macro_rules! impl_casting_upcast {
 /// }, AnyMarker);
 ///
 /// let req = DataRequest {
-///     locale: &icu_locale_core::langid!("de").into(),
+///     langid: &icu_locale_core::langid!("de"),
 ///     ..Default::default()
 /// };
 ///
