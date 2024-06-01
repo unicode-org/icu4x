@@ -157,21 +157,48 @@ impl Collator {
             ..Default::default()
         };
 
-        let metadata_payload: DataPayload<crate::provider::CollationMetadataV1Marker> =
-            provider.load(req)?.take_payload()?;
+        let metadata_payload: DataPayload<crate::provider::CollationMetadataV1Marker> = provider
+            .load(req)
+            .or_else(|_| {
+                provider.load(DataRequest {
+                    langid: req.langid,
+                    ..Default::default()
+                })
+            })?
+            .take_payload()?;
 
         let metadata = metadata_payload.get();
 
         let tailoring: Option<DataPayload<crate::provider::CollationDataV1Marker>> =
             if metadata.tailored() {
-                Some(provider.load(req)?.take_payload()?)
+                Some(
+                    provider
+                        .load(req)
+                        .or_else(|_| {
+                            provider.load(DataRequest {
+                                langid: req.langid,
+                                ..Default::default()
+                            })
+                        })?
+                        .take_payload()?,
+                )
             } else {
                 None
             };
 
         let reordering: Option<DataPayload<crate::provider::CollationReorderingV1Marker>> =
             if metadata.reordering() {
-                Some(provider.load(req)?.take_payload()?)
+                Some(
+                    provider
+                        .load(req)
+                        .or_else(|_| {
+                            provider.load(DataRequest {
+                                langid: req.langid,
+                                ..Default::default()
+                            })
+                        })?
+                        .take_payload()?,
+                )
             } else {
                 None
             };
