@@ -172,16 +172,16 @@ fn from_string_benches(c: &mut Criterion) {
 fn rounding_benches(c: &mut Criterion) {
     use fixed_decimal::FloatPrecision;
     #[allow(clippy::type_complexity)] // most compact representation in code
-    const ROUNDING_FNS: [(&str, fn(FixedDecimal, i16) -> FixedDecimal); 9] = [
-        ("ceil", FixedDecimal::ceiled),
-        ("floor", FixedDecimal::floored),
-        ("expand", FixedDecimal::expanded),
-        ("trunc", FixedDecimal::trunced),
-        ("half_ceil", FixedDecimal::half_ceiled),
-        ("half_floor", FixedDecimal::half_floored),
-        ("half_expand", FixedDecimal::half_expanded),
-        ("half_trunc", FixedDecimal::half_trunced),
-        ("half_even", FixedDecimal::half_evened),
+    const ROUNDING_FNS: [(&str, fn(&mut FixedDecimal, i16)); 9] = [
+        ("ceil", FixedDecimal::ceil),
+        ("floor", FixedDecimal::floor),
+        ("expand", FixedDecimal::expand),
+        ("trunc", FixedDecimal::trunc),
+        ("half_ceil", FixedDecimal::half_ceil),
+        ("half_floor", FixedDecimal::half_floor),
+        ("half_expand", FixedDecimal::half_expand),
+        ("half_trunc", FixedDecimal::half_trunc),
+        ("half_even", FixedDecimal::half_even),
     ];
 
     let nums: Vec<_> = triangular_floats(1e7)
@@ -195,7 +195,10 @@ fn rounding_benches(c: &mut Criterion) {
                 for offset in -5..=5 {
                     nums.iter()
                         .cloned()
-                        .map(|num| rounding_fn(black_box(num), offset))
+                        .map(|mut num| {
+                            rounding_fn(black_box(&mut num), offset);
+                            num
+                        })
                         .for_each(|num| {
                             black_box(num);
                         });

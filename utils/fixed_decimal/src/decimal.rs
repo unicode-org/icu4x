@@ -1012,8 +1012,6 @@ impl FixedDecimal {
     ///
     /// Positive numbers have no effect.
     ///
-    /// Also see [`FixedDecimal::trunced()`].
-    ///
     /// # Examples
     ///
     /// ```
@@ -1354,78 +1352,6 @@ impl FixedDecimal {
         self.check_invariants();
     }
 
-    /// Truncate the number on the right to a particular position, deleting
-    /// digits if necessary.
-    ///
-    /// Also see [`FixedDecimal::padded_end()`].
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use fixed_decimal::FixedDecimal;
-    /// # use std::str::FromStr;
-    ///
-    /// let dec = FixedDecimal::from_str("-1.5").unwrap();
-    /// assert_eq!("-1", dec.trunced(0).to_string());
-    /// let dec = FixedDecimal::from_str("0.4").unwrap();
-    /// assert_eq!("0", dec.trunced(0).to_string());
-    /// let dec = FixedDecimal::from_str("0.5").unwrap();
-    /// assert_eq!("0", dec.trunced(0).to_string());
-    /// let dec = FixedDecimal::from_str("0.6").unwrap();
-    /// assert_eq!("0", dec.trunced(0).to_string());
-    /// let dec = FixedDecimal::from_str("1.5").unwrap();
-    /// assert_eq!("1", dec.trunced(0).to_string());
-    /// ```
-    pub fn trunced(mut self, position: i16) -> Self {
-        self.trunc(position);
-        self
-    }
-
-    /// Truncates the number on the right to a particular position and rounding
-    /// increment, deleting digits if necessary.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use fixed_decimal::{FixedDecimal, RoundingIncrement};
-    /// # use std::str::FromStr;
-    ///
-    /// let mut dec = FixedDecimal::from_str("-3.5").unwrap();
-    /// assert_eq!(
-    ///     "-2",
-    ///     dec.trunced_to_increment(0, RoundingIncrement::MultiplesOf2)
-    ///         .to_string()
-    /// );
-    /// let mut dec = FixedDecimal::from_str("7.57").unwrap();
-    /// assert_eq!(
-    ///     "7.5",
-    ///     dec.trunced_to_increment(-1, RoundingIncrement::MultiplesOf5)
-    ///         .to_string()
-    /// );
-    /// let mut dec = FixedDecimal::from_str("5.45").unwrap();
-    /// assert_eq!(
-    ///     "5.25",
-    ///     dec.trunced_to_increment(-2, RoundingIncrement::MultiplesOf25)
-    ///         .to_string()
-    /// );
-    /// let mut dec = FixedDecimal::from_str("9.99").unwrap();
-    /// assert_eq!(
-    ///     "7.5",
-    ///     dec.trunced_to_increment(-1, RoundingIncrement::MultiplesOf25)
-    ///         .to_string()
-    /// );
-    /// let mut dec = FixedDecimal::from_str("9.99").unwrap();
-    /// assert_eq!(
-    ///     "9.98",
-    ///     dec.trunced_to_increment(-2, RoundingIncrement::MultiplesOf2)
-    ///         .to_string()
-    /// );
-    /// ```
-    pub fn trunced_to_increment(mut self, position: i16, increment: RoundingIncrement) -> Self {
-        self.trunc_to_increment(position, increment);
-        self
-    }
-
     /// Half Truncates the number on the right to a particular position, deleting
     /// digits if necessary.
     ///
@@ -1500,82 +1426,6 @@ impl FixedDecimal {
         } else {
             self.trunc_to_increment_internal(position, increment);
         }
-    }
-
-    /// Half Truncates the number on the right to a particular position, deleting
-    /// digits if necessary.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use fixed_decimal::FixedDecimal;
-    /// # use std::str::FromStr;
-    ///
-    /// let dec = FixedDecimal::from_str("-1.5").unwrap();
-    /// assert_eq!("-1", dec.half_trunced(0).to_string());
-    /// let dec = FixedDecimal::from_str("0.4").unwrap();
-    /// assert_eq!("0", dec.half_trunced(0).to_string());
-    /// let dec = FixedDecimal::from_str("0.5").unwrap();
-    /// assert_eq!("0", dec.half_trunced(0).to_string());
-    /// let dec = FixedDecimal::from_str("0.6").unwrap();
-    /// assert_eq!("1", dec.half_trunced(0).to_string());
-    /// let dec = FixedDecimal::from_str("1.5").unwrap();
-    /// assert_eq!("1", dec.half_trunced(0).to_string());
-    /// let dec = FixedDecimal::from_str("3.954").unwrap();
-    /// assert_eq!("4", dec.half_trunced(0).to_string());
-    /// ```
-    pub fn half_trunced(mut self, position: i16) -> Self {
-        self.half_trunc(position);
-        self
-    }
-
-    /// Half Truncates the number on the right to a particular position and rounding increment,
-    /// deleting digits if necessary.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use fixed_decimal::{FixedDecimal, RoundingIncrement};
-    /// # use std::str::FromStr;
-    ///
-    /// let mut dec = FixedDecimal::from_str("-3.5").unwrap();
-    /// assert_eq!(
-    ///     "-4",
-    ///     dec.half_trunced_to_increment(0, RoundingIncrement::MultiplesOf2)
-    ///         .to_string()
-    /// );
-    /// let mut dec = FixedDecimal::from_str("7.57").unwrap();
-    /// assert_eq!(
-    ///     "7.5",
-    ///     dec.half_trunced_to_increment(-1, RoundingIncrement::MultiplesOf5)
-    ///         .to_string()
-    /// );
-    /// let mut dec = FixedDecimal::from_str("5.45").unwrap();
-    /// assert_eq!(
-    ///     "5.50",
-    ///     dec.half_trunced_to_increment(-2, RoundingIncrement::MultiplesOf25)
-    ///         .to_string()
-    /// );
-    /// let mut dec = FixedDecimal::from_str("9.99").unwrap();
-    /// assert_eq!(
-    ///     "10.0",
-    ///     dec.half_trunced_to_increment(-1, RoundingIncrement::MultiplesOf25)
-    ///         .to_string()
-    /// );
-    /// let mut dec = FixedDecimal::from_str("9.99").unwrap();
-    /// assert_eq!(
-    ///     "9.98",
-    ///     dec.half_trunced_to_increment(-2, RoundingIncrement::MultiplesOf2)
-    ///         .to_string()
-    /// );
-    /// ```
-    pub fn half_trunced_to_increment(
-        mut self,
-        position: i16,
-        increment: RoundingIncrement,
-    ) -> Self {
-        self.half_trunc_to_increment(position, increment);
-        self
     }
 
     /// Take the expand of the number at a particular position.
@@ -1881,74 +1731,6 @@ impl FixedDecimal {
         self.check_invariants();
     }
 
-    /// Take the expand of the number at a particular position.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use fixed_decimal::FixedDecimal;
-    /// # use std::str::FromStr;
-    ///
-    /// let dec = FixedDecimal::from_str("-1.5").unwrap();
-    /// assert_eq!("-2", dec.expanded(0).to_string());
-    /// let dec = FixedDecimal::from_str("0.4").unwrap();
-    /// assert_eq!("1", dec.expanded(0).to_string());
-    /// let dec = FixedDecimal::from_str("0.5").unwrap();
-    /// assert_eq!("1", dec.expanded(0).to_string());
-    /// let dec = FixedDecimal::from_str("0.6").unwrap();
-    /// assert_eq!("1", dec.expanded(0).to_string());
-    /// let dec = FixedDecimal::from_str("1.5").unwrap();
-    /// assert_eq!("2", dec.expanded(0).to_string());
-    /// ```
-    pub fn expanded(mut self, position: i16) -> Self {
-        self.expand(position);
-        self
-    }
-
-    /// Take the expand of the number at a particular position and rounding increment.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use fixed_decimal::{FixedDecimal, RoundingIncrement};
-    /// # use std::str::FromStr;
-    ///
-    /// let mut dec = FixedDecimal::from_str("-3.5").unwrap();
-    /// assert_eq!(
-    ///     "-4",
-    ///     dec.expanded_to_increment(0, RoundingIncrement::MultiplesOf2)
-    ///         .to_string()
-    /// );
-    /// let mut dec = FixedDecimal::from_str("7.57").unwrap();
-    /// assert_eq!(
-    ///     "8.0",
-    ///     dec.expanded_to_increment(-1, RoundingIncrement::MultiplesOf5)
-    ///         .to_string()
-    /// );
-    /// let mut dec = FixedDecimal::from_str("5.45").unwrap();
-    /// assert_eq!(
-    ///     "5.50",
-    ///     dec.expanded_to_increment(-2, RoundingIncrement::MultiplesOf25)
-    ///         .to_string()
-    /// );
-    /// let mut dec = FixedDecimal::from_str("9.99").unwrap();
-    /// assert_eq!(
-    ///     "10.0",
-    ///     dec.expanded_to_increment(-1, RoundingIncrement::MultiplesOf25)
-    ///         .to_string()
-    /// );
-    /// let mut dec = FixedDecimal::from_str("9.99").unwrap();
-    /// assert_eq!(
-    ///     "10.00",
-    ///     dec.expanded_to_increment(-2, RoundingIncrement::MultiplesOf2)
-    ///         .to_string()
-    /// );
-    /// ```
-    pub fn expanded_to_increment(mut self, position: i16, increment: RoundingIncrement) -> Self {
-        self.expand_to_increment(position, increment);
-        self
-    }
-
     /// Take the half expand of the number at a particular position.
     ///
     /// # Examples
@@ -2019,78 +1801,6 @@ impl FixedDecimal {
         }
     }
 
-    /// Take the half expand of the number at a particular position.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use fixed_decimal::FixedDecimal;
-    /// # use std::str::FromStr;
-    ///
-    /// let dec = FixedDecimal::from_str("-1.5").unwrap();
-    /// assert_eq!("-2", dec.half_expanded(0).to_string());
-    /// let dec = FixedDecimal::from_str("0.4").unwrap();
-    /// assert_eq!("0", dec.half_expanded(0).to_string());
-    /// let dec = FixedDecimal::from_str("0.5").unwrap();
-    /// assert_eq!("1", dec.half_expanded(0).to_string());
-    /// let dec = FixedDecimal::from_str("0.6").unwrap();
-    /// assert_eq!("1", dec.half_expanded(0).to_string());
-    /// let dec = FixedDecimal::from_str("1.5").unwrap();
-    /// assert_eq!("2", dec.half_expanded(0).to_string());
-    /// ```
-    pub fn half_expanded(mut self, position: i16) -> Self {
-        self.half_expand(position);
-        self
-    }
-
-    /// Take the half expand of the number at a particular position and rounding increment.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use fixed_decimal::{FixedDecimal, RoundingIncrement};
-    /// # use std::str::FromStr;
-    ///
-    /// let mut dec = FixedDecimal::from_str("-3.5").unwrap();
-    /// assert_eq!(
-    ///     "-4",
-    ///     dec.half_expanded_to_increment(0, RoundingIncrement::MultiplesOf2)
-    ///         .to_string()
-    /// );
-    /// let mut dec = FixedDecimal::from_str("7.57").unwrap();
-    /// assert_eq!(
-    ///     "7.5",
-    ///     dec.half_expanded_to_increment(-1, RoundingIncrement::MultiplesOf5)
-    ///         .to_string()
-    /// );
-    /// let mut dec = FixedDecimal::from_str("5.45").unwrap();
-    /// assert_eq!(
-    ///     "5.50",
-    ///     dec.half_expanded_to_increment(-2, RoundingIncrement::MultiplesOf25)
-    ///         .to_string()
-    /// );
-    /// let mut dec = FixedDecimal::from_str("9.99").unwrap();
-    /// assert_eq!(
-    ///     "10.0",
-    ///     dec.half_expanded_to_increment(-1, RoundingIncrement::MultiplesOf25)
-    ///         .to_string()
-    /// );
-    /// let mut dec = FixedDecimal::from_str("9.99").unwrap();
-    /// assert_eq!(
-    ///     "10.00",
-    ///     dec.half_expanded_to_increment(-2, RoundingIncrement::MultiplesOf2)
-    ///         .to_string()
-    /// );
-    /// ```
-    pub fn half_expanded_to_increment(
-        mut self,
-        position: i16,
-        increment: RoundingIncrement,
-    ) -> Self {
-        self.half_expand_to_increment(position, increment);
-        self
-    }
-
     /// Take the ceiling of the number at a particular position.
     ///
     /// # Examples
@@ -2156,74 +1866,6 @@ impl FixedDecimal {
         }
 
         self.expand_to_increment_internal(position, increment);
-    }
-
-    /// Take the ceiling of the number at a particular position.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use fixed_decimal::FixedDecimal;
-    /// # use std::str::FromStr;
-    ///
-    /// let dec = FixedDecimal::from_str("-1.5").unwrap();
-    /// assert_eq!("-1", dec.ceiled(0).to_string());
-    /// let dec = FixedDecimal::from_str("0.4").unwrap();
-    /// assert_eq!("1", dec.ceiled(0).to_string());
-    /// let dec = FixedDecimal::from_str("0.5").unwrap();
-    /// assert_eq!("1", dec.ceiled(0).to_string());
-    /// let dec = FixedDecimal::from_str("0.6").unwrap();
-    /// assert_eq!("1", dec.ceiled(0).to_string());
-    /// let dec = FixedDecimal::from_str("1.5").unwrap();
-    /// assert_eq!("2", dec.ceiled(0).to_string());
-    /// ```
-    pub fn ceiled(mut self, position: i16) -> Self {
-        self.ceil(position);
-        self
-    }
-
-    /// Take the ceiling of the number at a particular position and rounding increment.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use fixed_decimal::{FixedDecimal, RoundingIncrement};
-    /// # use std::str::FromStr;
-    ///
-    /// let mut dec = FixedDecimal::from_str("-3.5").unwrap();
-    /// assert_eq!(
-    ///     "-2",
-    ///     dec.ceiled_to_increment(0, RoundingIncrement::MultiplesOf2)
-    ///         .to_string()
-    /// );
-    /// let mut dec = FixedDecimal::from_str("7.57").unwrap();
-    /// assert_eq!(
-    ///     "8.0",
-    ///     dec.ceiled_to_increment(-1, RoundingIncrement::MultiplesOf5)
-    ///         .to_string()
-    /// );
-    /// let mut dec = FixedDecimal::from_str("-5.45").unwrap();
-    /// assert_eq!(
-    ///     "-5.25",
-    ///     dec.ceiled_to_increment(-2, RoundingIncrement::MultiplesOf25)
-    ///         .to_string()
-    /// );
-    /// let mut dec = FixedDecimal::from_str("9.99").unwrap();
-    /// assert_eq!(
-    ///     "10.0",
-    ///     dec.ceiled_to_increment(-1, RoundingIncrement::MultiplesOf25)
-    ///         .to_string()
-    /// );
-    /// let mut dec = FixedDecimal::from_str("-9.99").unwrap();
-    /// assert_eq!(
-    ///     "-9.98",
-    ///     dec.ceiled_to_increment(-2, RoundingIncrement::MultiplesOf2)
-    ///         .to_string()
-    /// );
-    /// ```
-    pub fn ceiled_to_increment(mut self, position: i16, increment: RoundingIncrement) -> Self {
-        self.ceil_to_increment(position, increment);
-        self
     }
 
     /// Take the half ceiling of the number at a particular position.
@@ -2293,74 +1935,6 @@ impl FixedDecimal {
         self.half_expand_to_increment_internal(position, increment);
     }
 
-    /// Take the half ceiling of the number at a particular position.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use fixed_decimal::FixedDecimal;
-    /// # use std::str::FromStr;
-    ///
-    /// let dec = FixedDecimal::from_str("-1.5").unwrap();
-    /// assert_eq!("-1", dec.half_ceiled(0).to_string());
-    /// let dec = FixedDecimal::from_str("0.4").unwrap();
-    /// assert_eq!("0", dec.half_ceiled(0).to_string());
-    /// let dec = FixedDecimal::from_str("0.5").unwrap();
-    /// assert_eq!("1", dec.half_ceiled(0).to_string());
-    /// let dec = FixedDecimal::from_str("0.6").unwrap();
-    /// assert_eq!("1", dec.half_ceiled(0).to_string());
-    /// let dec = FixedDecimal::from_str("1.5").unwrap();
-    /// assert_eq!("2", dec.half_ceiled(0).to_string());
-    /// ```
-    pub fn half_ceiled(mut self, position: i16) -> Self {
-        self.half_ceil(position);
-        self
-    }
-
-    /// Take the half ceiling of the number at a particular position and rounding increment.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use fixed_decimal::{FixedDecimal, RoundingIncrement};
-    /// # use std::str::FromStr;
-    ///
-    /// let mut dec = FixedDecimal::from_str("-3.5").unwrap();
-    /// assert_eq!(
-    ///     "-4",
-    ///     dec.half_ceiled_to_increment(0, RoundingIncrement::MultiplesOf2)
-    ///         .to_string()
-    /// );
-    /// let mut dec = FixedDecimal::from_str("7.57").unwrap();
-    /// assert_eq!(
-    ///     "7.5",
-    ///     dec.half_ceiled_to_increment(-1, RoundingIncrement::MultiplesOf5)
-    ///         .to_string()
-    /// );
-    /// let mut dec = FixedDecimal::from_str("-5.45").unwrap();
-    /// assert_eq!(
-    ///     "-5.50",
-    ///     dec.half_ceiled_to_increment(-2, RoundingIncrement::MultiplesOf25)
-    ///         .to_string()
-    /// );
-    /// let mut dec = FixedDecimal::from_str("9.99").unwrap();
-    /// assert_eq!(
-    ///     "10.0",
-    ///     dec.half_ceiled_to_increment(-1, RoundingIncrement::MultiplesOf25)
-    ///         .to_string()
-    /// );
-    /// let mut dec = FixedDecimal::from_str("-9.99").unwrap();
-    /// assert_eq!(
-    ///     "-9.98",
-    ///     dec.half_ceiled_to_increment(-2, RoundingIncrement::MultiplesOf2)
-    ///         .to_string()
-    /// );
-    /// ```
-    pub fn half_ceiled_to_increment(mut self, position: i16, increment: RoundingIncrement) -> Self {
-        self.half_ceil_to_increment(position, increment);
-        self
-    }
-
     /// Take the floor of the number at a particular position.
     ///
     /// # Examples
@@ -2428,74 +2002,6 @@ impl FixedDecimal {
         self.trunc_to_increment_internal(position, increment);
     }
 
-    /// Take the floor of the number at a particular position.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use fixed_decimal::FixedDecimal;
-    /// # use std::str::FromStr;
-    ///
-    /// let dec = FixedDecimal::from_str("-1.5").unwrap();
-    /// assert_eq!("-2", dec.floored(0).to_string());
-    /// let dec = FixedDecimal::from_str("0.4").unwrap();
-    /// assert_eq!("0", dec.floored(0).to_string());
-    /// let dec = FixedDecimal::from_str("0.5").unwrap();
-    /// assert_eq!("0", dec.floored(0).to_string());
-    /// let dec = FixedDecimal::from_str("0.6").unwrap();
-    /// assert_eq!("0", dec.floored(0).to_string());
-    /// let dec = FixedDecimal::from_str("1.5").unwrap();
-    /// assert_eq!("1", dec.floored(0).to_string());
-    /// ```
-    pub fn floored(mut self, position: i16) -> Self {
-        self.floor(position);
-        self
-    }
-
-    /// Take the floor of the number at a particular position and rounding increment.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use fixed_decimal::{FixedDecimal, RoundingIncrement};
-    /// # use std::str::FromStr;
-    ///
-    /// let mut dec = FixedDecimal::from_str("-3.5").unwrap();
-    /// assert_eq!(
-    ///     "-4",
-    ///     dec.floored_to_increment(0, RoundingIncrement::MultiplesOf2)
-    ///         .to_string()
-    /// );
-    /// let mut dec = FixedDecimal::from_str("7.57").unwrap();
-    /// assert_eq!(
-    ///     "7.5",
-    ///     dec.floored_to_increment(-1, RoundingIncrement::MultiplesOf5)
-    ///         .to_string()
-    /// );
-    /// let mut dec = FixedDecimal::from_str("-5.45").unwrap();
-    /// assert_eq!(
-    ///     "-5.50",
-    ///     dec.floored_to_increment(-2, RoundingIncrement::MultiplesOf25)
-    ///         .to_string()
-    /// );
-    /// let mut dec = FixedDecimal::from_str("9.99").unwrap();
-    /// assert_eq!(
-    ///     "7.5",
-    ///     dec.floored_to_increment(-1, RoundingIncrement::MultiplesOf25)
-    ///         .to_string()
-    /// );
-    /// let mut dec = FixedDecimal::from_str("-9.99").unwrap();
-    /// assert_eq!(
-    ///     "-10.00",
-    ///     dec.floored_to_increment(-2, RoundingIncrement::MultiplesOf2)
-    ///         .to_string()
-    /// );
-    /// ```
-    pub fn floored_to_increment(mut self, position: i16, increment: RoundingIncrement) -> Self {
-        self.floor_to_increment(position, increment);
-        self
-    }
-
     /// Take the half floor of the number at a particular position.
     ///
     /// # Examples
@@ -2561,78 +2067,6 @@ impl FixedDecimal {
         }
 
         self.half_trunc_to_increment_internal(position, increment);
-    }
-
-    /// Take the half floor of the number at a particular position.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use fixed_decimal::FixedDecimal;
-    /// # use std::str::FromStr;
-    ///
-    /// let dec = FixedDecimal::from_str("-1.5").unwrap();
-    /// assert_eq!("-2", dec.half_floored(0).to_string());
-    /// let dec = FixedDecimal::from_str("0.4").unwrap();
-    /// assert_eq!("0", dec.half_floored(0).to_string());
-    /// let dec = FixedDecimal::from_str("0.5").unwrap();
-    /// assert_eq!("0", dec.half_floored(0).to_string());
-    /// let dec = FixedDecimal::from_str("0.6").unwrap();
-    /// assert_eq!("1", dec.half_floored(0).to_string());
-    /// let dec = FixedDecimal::from_str("1.5").unwrap();
-    /// assert_eq!("1", dec.half_floored(0).to_string());
-    /// ```
-    pub fn half_floored(mut self, position: i16) -> Self {
-        self.half_floor(position);
-        self
-    }
-
-    /// Take the half floor of the number at a particular position and rounding increment.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use fixed_decimal::{FixedDecimal, RoundingIncrement};
-    /// # use std::str::FromStr;
-    ///
-    /// let mut dec = FixedDecimal::from_str("-3.5").unwrap();
-    /// assert_eq!(
-    ///     "-4",
-    ///     dec.half_floored_to_increment(0, RoundingIncrement::MultiplesOf2)
-    ///         .to_string()
-    /// );
-    /// let mut dec = FixedDecimal::from_str("7.57").unwrap();
-    /// assert_eq!(
-    ///     "7.5",
-    ///     dec.half_floored_to_increment(-1, RoundingIncrement::MultiplesOf5)
-    ///         .to_string()
-    /// );
-    /// let mut dec = FixedDecimal::from_str("-5.45").unwrap();
-    /// assert_eq!(
-    ///     "-5.50",
-    ///     dec.half_floored_to_increment(-2, RoundingIncrement::MultiplesOf25)
-    ///         .to_string()
-    /// );
-    /// let mut dec = FixedDecimal::from_str("9.99").unwrap();
-    /// assert_eq!(
-    ///     "10.0",
-    ///     dec.half_floored_to_increment(-1, RoundingIncrement::MultiplesOf25)
-    ///         .to_string()
-    /// );
-    /// let mut dec = FixedDecimal::from_str("-9.99").unwrap();
-    /// assert_eq!(
-    ///     "-10.00",
-    ///     dec.half_floored_to_increment(-2, RoundingIncrement::MultiplesOf2)
-    ///         .to_string()
-    /// );
-    /// ```
-    pub fn half_floored_to_increment(
-        mut self,
-        position: i16,
-        increment: RoundingIncrement,
-    ) -> Self {
-        self.half_floor_to_increment(position, increment);
-        self
     }
 
     /// Take the half even of the number at a particular position.
@@ -2744,74 +2178,6 @@ impl FixedDecimal {
         } else {
             self.trunc_to_increment_internal(position, increment);
         }
-    }
-
-    /// Take the half even of the number at a particular position.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use fixed_decimal::FixedDecimal;
-    /// # use std::str::FromStr;
-    ///
-    /// let dec = FixedDecimal::from_str("-1.5").unwrap();
-    /// assert_eq!("-2", dec.half_evened(0).to_string());
-    /// let dec = FixedDecimal::from_str("0.4").unwrap();
-    /// assert_eq!("0", dec.half_evened(0).to_string());
-    /// let dec = FixedDecimal::from_str("0.5").unwrap();
-    /// assert_eq!("0", dec.half_evened(0).to_string());
-    /// let dec = FixedDecimal::from_str("0.6").unwrap();
-    /// assert_eq!("1", dec.half_evened(0).to_string());
-    /// let dec = FixedDecimal::from_str("1.5").unwrap();
-    /// assert_eq!("2", dec.half_evened(0).to_string());
-    /// ```
-    pub fn half_evened(mut self, position: i16) -> Self {
-        self.half_even(position);
-        self
-    }
-
-    /// Take the half even of the number at a particular position and rounding increment.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use fixed_decimal::{FixedDecimal, RoundingIncrement};
-    /// # use std::str::FromStr;
-    ///
-    /// let mut dec = FixedDecimal::from_str("-3.5").unwrap();
-    /// assert_eq!(
-    ///     "-4",
-    ///     dec.half_evened_to_increment(0, RoundingIncrement::MultiplesOf2)
-    ///         .to_string()
-    /// );
-    /// let mut dec = FixedDecimal::from_str("7.57").unwrap();
-    /// assert_eq!(
-    ///     "7.5",
-    ///     dec.half_evened_to_increment(-1, RoundingIncrement::MultiplesOf5)
-    ///         .to_string()
-    /// );
-    /// let mut dec = FixedDecimal::from_str("5.45").unwrap();
-    /// assert_eq!(
-    ///     "5.50",
-    ///     dec.half_evened_to_increment(-2, RoundingIncrement::MultiplesOf25)
-    ///         .to_string()
-    /// );
-    /// let mut dec = FixedDecimal::from_str("9.99").unwrap();
-    /// assert_eq!(
-    ///     "10.0",
-    ///     dec.half_evened_to_increment(-1, RoundingIncrement::MultiplesOf25)
-    ///         .to_string()
-    /// );
-    /// let mut dec = FixedDecimal::from_str("9.99").unwrap();
-    /// assert_eq!(
-    ///     "10.00",
-    ///     dec.half_evened_to_increment(-2, RoundingIncrement::MultiplesOf2)
-    ///         .to_string()
-    /// );
-    /// ```
-    pub fn half_evened_to_increment(mut self, position: i16, increment: RoundingIncrement) -> Self {
-        self.half_even_to_increment(position, increment);
-        self
     }
 
     /// Concatenate another `FixedDecimal` into the end of this `FixedDecimal`.
@@ -4441,18 +3807,6 @@ fn test_rounding() {
     let mut dec = FixedDecimal::from_str("0.009").unwrap();
     dec.trunc(-1);
     assert_eq!("0.0", dec.to_string());
-
-    // Test trunced
-    let dec = FixedDecimal::from(4235970).multiplied_pow10(-3);
-    assert_eq!("4235.970", dec.to_string());
-
-    assert_eq!("4235.97000", dec.clone().trunced(-5).to_string());
-
-    assert_eq!("4230", dec.clone().trunced(1).to_string());
-
-    assert_eq!("4200", dec.clone().trunced(2).to_string());
-
-    assert_eq!("00000", dec.trunced(5).to_string());
 
     //Test expand
     let mut dec = FixedDecimal::from_str("3.234").unwrap();
