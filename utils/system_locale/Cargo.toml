@@ -1,0 +1,14 @@
+[package]
+name = "system_locale"
+version.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+edition.workspace = true
+repository.workspace = true
+homepage.workspace = true
+license.workspace = true
+categories.workspace = true
+include.workspace = true
+
+[dependencies]
+locale = "0.2.2"
