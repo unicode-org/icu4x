@@ -10,7 +10,6 @@
 #include "ICU4XCustomTimeZone.hpp"
 #include "ICU4XTimeZoneIdMapper.hpp"
 #include "ICU4XTimeZoneIdMapperWithFastCanonicalization.hpp"
-#include "ICU4XBcp47ToIanaMapper.hpp"
 #include "ICU4XGregorianZonedDateTimeFormatter.hpp"
 #include "ICU4XZonedDateTimeFormatter.hpp"
 
