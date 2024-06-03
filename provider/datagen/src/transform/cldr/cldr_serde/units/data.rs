@@ -9,17 +9,20 @@
 
 use serde::Deserialize;
 use std::collections::BTreeMap;
+use serde_json::Value;
 
+
+// TODO: replace Value with specific structs
 #[derive(PartialEq, Debug, Deserialize)]
 pub struct UnitsData {
-    pub long: BTreeMap<String, String>,
+    pub long: BTreeMap<String, Value>,
 
-    pub short: BTreeMap<String, String>,
+    pub short: BTreeMap<String, Value>,
 
-    pub narrow: BTreeMap<String, String>,
+    pub narrow: BTreeMap<String, Value>,
 
     #[serde(flatten)]
-    pub anything_else: BTreeMap<String, String>,
+    extra: Value,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]

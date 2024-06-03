@@ -26,7 +26,10 @@ impl DataProvider<UnitsDisplayNameV1Marker> for DatagenProvider {
 
         // Get langid and quantity
         let langid = req.locale.get_langid();
-        let aux_keys = req.locale.get_aux().ok_or(DataError::custom("Failed to get aux keys"))?;
+        let aux_keys = req
+            .locale
+            .get_aux()
+            .ok_or(DataError::custom("Failed to get aux keys"))?;
         let mut aux_keys_iter = aux_keys.iter();
         let subtag = aux_keys_iter
             .next()
@@ -36,10 +39,8 @@ impl DataProvider<UnitsDisplayNameV1Marker> for DatagenProvider {
         }
 
         // Get units
-        let units_format_data: &cldr_serde::units::data::Resource = self
-            .cldr()?
-            .units()
-            .read_and_parse(&langid, "units.json")?;
+        let units_format_data: &cldr_serde::units::data::Resource =
+            self.cldr()?.units().read_and_parse(&langid, "units.json")?;
         let units_format_data = &units_format_data.main.value.units;
 
         let mut long = ZeroMap2d::new();
@@ -66,7 +67,13 @@ impl IterableDataProvider<UnitsDisplayNameV1Marker> for DatagenProvider {
             quantity: &str,
         ) -> Result<DataLocale, DataError> {
             let mut data_locale = DataLocale::from(langid);
-            let subtag = Subtag::from_str(quantity).map_err(|_| DataError::custom("Failed to parse subtag"))?;
+            let subtag = match Subtag::from_str(quantity) {
+                Ok(subtag) => subtag,
+                Err(e) => {
+                    println!("Error FromStr: {:?}", e);
+                    return Err(DataError::custom("Failed to parse subtag").with_debug_context(quantity));
+                }
+            };
             data_locale.set_aux(AuxiliaryKeys::from_subtag(subtag));
             Ok(data_locale)
         }
@@ -76,27 +83,38 @@ impl IterableDataProvider<UnitsDisplayNameV1Marker> for DatagenProvider {
         let numbers = self.cldr()?.numbers();
         let langids = numbers.list_langs()?;
         for langid in langids {
-            let units_format_data: &cldr_serde::units::data::Resource = self
-                .cldr()?
-                .units()
-                .read_and_parse(&langid, "units.json")?;
+            let units_format_data: &cldr_serde::units::data::Resource =
+                self.cldr()?.units().read_and_parse(&langid, "units.json")?;
             let units_format_data = &units_format_data.main.value.units;
-            let mut hit_times = false;
             let mut quantities = HashSet::new();
             for (long_key, _) in units_format_data.long.iter() {
-                if !hit_times {
-                    if long_key.starts_with("times") {
-                        hit_times = true;
-                    }
+                if long_key.chars().next().unwrap_or_default().is_digit(10)
+                    || long_key.starts_with("per")
+                    || long_key.starts_with("times")
+                    || long_key.starts_with("power")
+                {
                     continue;
                 }
 
-                let quantity = long_key.split("-").next().ok_or(DataError::custom("Failed to split long_key"))?;
+                let quantity = long_key
+                    .split("-")
+                    .next()
+                    .ok_or(DataError::custom("Failed to split long_key"))?;
                 quantities.insert(quantity);
             }
 
             for quantity in quantities {
-                data_locales.push(make_data_locale_with_langid_and_quantity(&langid, quantity)?);
+                use std::io::{self, Write};
+                println!("Quantity: {}", quantity);
+                io::stdout().flush().expect("Failed to flush stdout");
+
+                let finl_locale = make_data_locale_with_langid_and_quantity(
+                    &langid, quantity,
+                );
+                match finl_locale {
+                    Ok(data_locale) => data_locales.push(data_locale),
+                    Err(e) => println!("Error Quantity: {}", quantity),
+                }
             }
         }
 

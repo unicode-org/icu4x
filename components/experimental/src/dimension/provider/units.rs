@@ -28,7 +28,7 @@ use zerovec::{VarZeroVec, ZeroMap2d};
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),
-    databake(path = icu_experimental::dimension::provider::currency),
+    databake(path = icu_experimental::dimension::provider::units),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
