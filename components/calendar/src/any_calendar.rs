@@ -1091,11 +1091,10 @@ impl AnyCalendarKind {
             let lang = l.language();
             if lang == language!("th") {
                 Self::Buddhist
-            // Other known fallback routes for currently-unsupported calendars
-            // } else if lang == language!("sa") {
-            //     Self::IslamicUmalqura
-            // } else if lang == language!("af") || lang == language!("ir") {
-            //     Self::Persian
+            } else if lang == language!("sa") {
+                Self::IslamicUmmAlQura
+            } else if lang == language!("af") || lang == language!("ir") {
+                Self::Persian
             } else {
                 Self::Gregorian
             }
