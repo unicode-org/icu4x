@@ -365,7 +365,7 @@ trait IterableDataProviderCached<M: KeyedDataMarker>: DataProvider<M> {
 
 impl DatagenProvider {
     #[allow(clippy::type_complexity)] // not as complex as it appears
-    fn populate<M: KeyedDataMarker>(
+    fn populate_supported_requests_cache<M: KeyedDataMarker>(
         &self,
     ) -> Result<&HashSet<(Cow<'static, DataLocale>, Cow<'static, DataKeyAttributes>)>, DataError>
     where
@@ -390,7 +390,7 @@ where
 {
     fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
         Ok(self
-            .populate()?
+            .populate_supported_requests_cache()?
             .iter()
             .map(|(k, v)| (k.clone().into_owned(), v.clone().into_owned()))
             .collect())
@@ -402,7 +402,7 @@ where
         key_attributes: &DataKeyAttributes,
     ) -> Result<bool, DataError> {
         Ok(self
-            .populate()?
+            .populate_supported_requests_cache()?
             .contains(&(Cow::Borrowed(locale), Cow::Borrowed(key_attributes))))
     }
 }
