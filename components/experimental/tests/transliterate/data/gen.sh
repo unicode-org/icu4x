@@ -1,5 +1,5 @@
 #!/bin/sh
-cargo run -p icu_datagen --features experimental_components -- \
+cargo run -p icu4x-datagen --features experimental_components -- \
 --markers "transliterator/rules@1" "normalizer/comp@1" "normalizer/decomp@1" "normalizer/nfd@1" "normalizer/nfdex@1" "normalizer/nfkd@1" "normalizer/nfkdex@1" "normalizer/uts46d@1" \
 --locales full \
 --runtime-fallback-location external \
