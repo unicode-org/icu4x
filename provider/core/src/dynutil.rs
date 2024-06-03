@@ -11,8 +11,8 @@
 /// [`DataPayload::downcast`]: crate::DataPayload::downcast
 pub trait UpcastDataPayload<M>
 where
-    M: crate::DataMarker,
-    Self: Sized + crate::DataMarker,
+    M: crate::DynDataMarker,
+    Self: Sized + crate::DynDataMarker,
 {
     /// Upcast a `DataPayload<T>` to a `DataPayload<S>` where `T` implements trait `S`.
     ///
@@ -38,7 +38,7 @@ where
 }
 
 /// Implements [`UpcastDataPayload`] from several data markers to a single data marker
-/// that all share the same [`DataMarker::Yokeable`].
+/// that all share the same [`DynDataMarker::Yokeable`].
 ///
 /// # Examples
 ///
@@ -61,7 +61,7 @@ where
 /// );
 /// ```
 ///
-/// [`DataMarker::Yokeable`]: crate::DataMarker::Yokeable
+/// [`DynDataMarker::Yokeable`]: crate::DynDataMarker::Yokeable
 #[macro_export]
 macro_rules! impl_casting_upcast {
     ($dyn_m:path, [ $($struct_m:ident),+, ]) => {

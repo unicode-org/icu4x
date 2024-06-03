@@ -33,8 +33,8 @@ impl<P0: AnyProvider, P1: AnyProvider> AnyProvider for EitherProvider<P0, P1> {
     }
 }
 
-impl<M: DataMarker, P0: DynamicDataProvider<M>, P1: DynamicDataProvider<M>> DynamicDataProvider<M>
-    for EitherProvider<P0, P1>
+impl<M: DynDataMarker, P0: DynamicDataProvider<M>, P1: DynamicDataProvider<M>>
+    DynamicDataProvider<M> for EitherProvider<P0, P1>
 {
     #[inline]
     fn load_data(&self, key: DataKey, req: DataRequest) -> Result<DataResponse<M>, DataError> {
@@ -61,7 +61,7 @@ impl<M: KeyedDataMarker, P0: DataProvider<M>, P1: DataProvider<M>> DataProvider<
 
 #[cfg(feature = "datagen")]
 impl<
-        M: DataMarker,
+        M: DynDataMarker,
         P0: datagen::IterableDynamicDataProvider<M>,
         P1: datagen::IterableDynamicDataProvider<M>,
     > datagen::IterableDynamicDataProvider<M> for EitherProvider<P0, P1>

@@ -83,7 +83,7 @@
 //! ## Types and Lifetimes
 //!
 //! Types compatible with [`Yokeable`] can be passed through the data provider, so long as they are
-//! associated with a marker type implementing [`DataMarker`].
+//! associated with a marker type implementing [`DynDataMarker`].
 //!
 //! Data structs should generally have one lifetime argument: `'data`. This lifetime allows data
 //! structs to borrow zero-copy data.
@@ -184,7 +184,7 @@ pub use crate::any::AsDynamicDataProviderAnyMarkerWrap;
 pub use crate::any::MaybeSendSync;
 pub use crate::buf::BufferMarker;
 pub use crate::buf::BufferProvider;
-pub use crate::marker::DataMarker;
+pub use crate::marker::DynDataMarker;
 pub use crate::marker::KeyedDataMarker;
 pub use crate::marker::NeverMarker;
 #[cfg(feature = "serde")]
@@ -228,8 +228,6 @@ pub mod prelude {
     #[doc(no_inline)]
     pub use crate::DataLocale;
     #[doc(no_inline)]
-    pub use crate::DataMarker;
-    #[doc(no_inline)]
     pub use crate::DataPayload;
     #[doc(no_inline)]
     pub use crate::DataProvider;
@@ -241,6 +239,8 @@ pub mod prelude {
     pub use crate::DataResponse;
     #[doc(no_inline)]
     pub use crate::DataResponseMetadata;
+    #[doc(no_inline)]
+    pub use crate::DynDataMarker;
     #[doc(no_inline)]
     pub use crate::DynamicDataProvider;
     #[doc(no_inline)]

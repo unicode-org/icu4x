@@ -4,7 +4,7 @@
 
 #[macro_export]
 #[doc(hidden)] // macro
-/// The list of all known [`DataMarker`](icu_provider::DataMarker)s.
+/// The list of all known [`KeyedDataMarker`](icu_provider::KeyedDataMarker)s.
 ///
 /// This is modeled as a macro that accepts a callback macro of the shape:
 ///

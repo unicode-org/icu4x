@@ -14,9 +14,9 @@ use yoke::Yokeable;
 ///
 /// Structs implementing this trait are normally generated with the [`data_struct`] macro.
 ///
-/// By convention, the non-standard `Marker` suffix is used by types implementing DataMarker.
+/// By convention, the non-standard `Marker` suffix is used by types implementing DynDataMarker.
 ///
-/// In addition to a marker type implementing DataMarker, the following impls must also be present
+/// In addition to a marker type implementing DynDataMarker, the following impls must also be present
 /// for the data struct:
 ///
 /// - `impl<'a> Yokeable<'a>` (required)
@@ -24,13 +24,13 @@ use yoke::Yokeable;
 ///
 /// Also see [`KeyedDataMarker`].
 ///
-/// Note: `DataMarker`s are quasi-const-generic compile-time objects, and as such are expected
+/// Note: `DynDataMarker`s are quasi-const-generic compile-time objects, and as such are expected
 /// to be unit structs. As this is not something that can be enforced by the type system, we
 /// currently only have a `'static` bound on them (which is needed by a lot of our code).
 ///
 /// # Examples
 ///
-/// Manually implementing DataMarker for a custom type:
+/// Manually implementing DynDataMarker for a custom type:
 ///
 /// ```
 /// use icu_provider::prelude::*;
@@ -43,7 +43,7 @@ use yoke::Yokeable;
 ///
 /// struct MyDataStructMarker;
 ///
-/// impl DataMarker for MyDataStructMarker {
+/// impl DynDataMarker for MyDataStructMarker {
 ///     type Yokeable = MyDataStruct<'static>;
 /// }
 ///
@@ -56,13 +56,13 @@ use yoke::Yokeable;
 /// ```
 ///
 /// [`data_struct`]: crate::data_struct
-pub trait DataMarker: 'static {
+pub trait DynDataMarker: 'static {
     /// A type that implements [`Yokeable`]. This should typically be the `'static` version of a
     /// data struct.
     type Yokeable: for<'a> Yokeable<'a>;
 }
 
-/// A [`DataMarker`] with a [`DataKey`] attached.
+/// A [`DynDataMarker`] with a [`DataKey`] attached.
 ///
 /// Structs implementing this trait are normally generated with the [`data_struct!`] macro.
 ///
@@ -81,7 +81,7 @@ pub trait DataMarker: 'static {
 /// [`DataProvider`]: crate::DataProvider
 /// [`BufferMarker`]: crate::BufferMarker
 /// [`AnyMarker`]: crate::AnyMarker
-pub trait KeyedDataMarker: DataMarker {
+pub trait KeyedDataMarker: DynDataMarker {
     /// The single [`DataKey`] associated with this marker.
     const KEY: DataKey;
 
@@ -95,7 +95,7 @@ pub trait KeyedDataMarker: DataMarker {
     }
 }
 
-/// A [`DataMarker`] that never returns data.
+/// A [`DynDataMarker`] that never returns data.
 ///
 /// All types that have non-blanket impls of `DataProvider<M>` are expected to explicitly
 /// implement `DataProvider<NeverMarker<Y>>`, returning [`DataErrorKind::MissingDataKey`].
@@ -133,7 +133,7 @@ pub trait KeyedDataMarker: DataMarker {
 #[derive(Debug, Copy, Clone)]
 pub struct NeverMarker<Y>(PhantomData<Y>);
 
-impl<Y> DataMarker for NeverMarker<Y>
+impl<Y> DynDataMarker for NeverMarker<Y>
 where
     for<'a> Y: Yokeable<'a>,
 {

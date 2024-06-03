@@ -160,6 +160,6 @@ pub struct Pattern<'data> {
 }
 pub(crate) struct ErasedCompactDecimalFormatDataV1Marker;
 
-impl DataMarker for ErasedCompactDecimalFormatDataV1Marker {
+impl DynDataMarker for ErasedCompactDecimalFormatDataV1Marker {
     type Yokeable = CompactDecimalPatternDataV1<'static>;
 }

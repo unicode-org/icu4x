@@ -73,7 +73,7 @@ fn test_errors() {
         );
 
         struct WrongV1Marker;
-        impl DataMarker for WrongV1Marker {
+        impl DynDataMarker for WrongV1Marker {
             type Yokeable = HelloWorldV1<'static>;
         }
         impl KeyedDataMarker for WrongV1Marker {

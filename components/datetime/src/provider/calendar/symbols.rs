@@ -63,7 +63,7 @@ pub struct DateSymbolsV1<'data> {
 /// For more information on date time symbols, see [`FieldSymbol`](crate::fields::FieldSymbol).
 pub(crate) struct ErasedDateSymbolsV1Marker;
 
-impl DataMarker for ErasedDateSymbolsV1Marker {
+impl DynDataMarker for ErasedDateSymbolsV1Marker {
     type Yokeable = DateSymbolsV1<'static>;
 }
 

@@ -47,7 +47,7 @@ mod tests;
 /// - `Apply #[derive(Yokeable, ZeroFrom)]`. The `ZeroFrom` derive can
 ///    be customized with `#[zerofrom(clone)]` on non-ZeroFrom fields.
 ///
-/// In addition, the attribute can be used to implement `DataMarker` and/or `KeyedDataMarker`
+/// In addition, the attribute can be used to implement `DynDataMarker` and/or `KeyedDataMarker`
 /// by adding symbols with optional key strings:
 ///
 /// ```
@@ -81,7 +81,7 @@ mod tests;
 ///     message: Cow<'data, str>,
 /// };
 ///
-/// // Note: FooV1Marker implements `DataMarker` but not `KeyedDataMarker`.
+/// // Note: FooV1Marker implements `DynDataMarker` but not `KeyedDataMarker`.
 /// // The other two implement `KeyedDataMarker`.
 ///
 /// assert_eq!(&*BarV1Marker::KEY.path(), "demo/bar@1");
@@ -346,7 +346,7 @@ fn data_struct_impl(attr: DataStructArgs, input: DeriveInput) -> TokenStream2 {
             #[doc = #docs]
             #bake_derive
             pub struct #marker_name;
-            impl icu_provider::DataMarker for #marker_name {
+            impl icu_provider::DynDataMarker for #marker_name {
                 type Yokeable = #name_with_lt;
             }
         ));

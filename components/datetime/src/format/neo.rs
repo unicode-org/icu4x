@@ -119,7 +119,7 @@ impl<M: KeyedDataMarker> DataProvider<M> for PhantomProvider {
     }
 }
 
-impl<M: DataMarker> BoundDataProvider<M> for PhantomProvider {
+impl<M: DynDataMarker> BoundDataProvider<M> for PhantomProvider {
     #[inline]
     fn load_bound(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         debug_assert!(false);
@@ -229,11 +229,11 @@ pub trait DateTimeNamesMarker {
 pub trait MaybePayload<Y: for<'a> Yokeable<'a>> {
     fn maybe_from_payload<M>(payload: DataPayload<M>) -> Option<Self>
     where
-        M: DataMarker<Yokeable = Y>,
+        M: DynDataMarker<Yokeable = Y>,
         Self: Sized;
     fn load_from<P, M>(provider: &P, req: DataRequest) -> Option<Result<Self, DataError>>
     where
-        M: DataMarker<Yokeable = Y>,
+        M: DynDataMarker<Yokeable = Y>,
         P: BoundDataProvider<M> + ?Sized,
         Self: Sized;
     #[allow(clippy::needless_lifetimes)] // Yokeable is involved
@@ -242,19 +242,19 @@ pub trait MaybePayload<Y: for<'a> Yokeable<'a>> {
 
 impl<M0, Y: for<'a> Yokeable<'a>> MaybePayload<Y> for DataPayload<M0>
 where
-    M0: DataMarker<Yokeable = Y>,
+    M0: DynDataMarker<Yokeable = Y>,
 {
     #[inline]
     fn maybe_from_payload<M>(payload: DataPayload<M>) -> Option<Self>
     where
-        M: DataMarker<Yokeable = Y>,
+        M: DynDataMarker<Yokeable = Y>,
     {
         Some(payload.cast())
     }
     #[inline]
     fn load_from<P, M>(provider: &P, req: DataRequest) -> Option<Result<Self, DataError>>
     where
-        M: DataMarker<Yokeable = Y>,
+        M: DynDataMarker<Yokeable = Y>,
         P: BoundDataProvider<M> + ?Sized,
         Self: Sized,
     {
@@ -276,14 +276,14 @@ impl<Y: for<'a> Yokeable<'a>> MaybePayload<Y> for () {
     #[inline]
     fn maybe_from_payload<M>(_payload: DataPayload<M>) -> Option<Self>
     where
-        M: DataMarker<Yokeable = Y>,
+        M: DynDataMarker<Yokeable = Y>,
     {
         None
     }
     #[inline]
     fn load_from<P, M>(_provider: &P, _req: DataRequest) -> Option<Result<Self, DataError>>
     where
-        M: DataMarker<Yokeable = Y>,
+        M: DynDataMarker<Yokeable = Y>,
         P: BoundDataProvider<M> + ?Sized,
         Self: Sized,
     {
