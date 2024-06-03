@@ -7,11 +7,11 @@ use std::borrow::Cow;
 use std::collections::HashSet;
 
 use icu_experimental::personnames::provider::*;
-use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use zerovec::VarZeroVec;
 
 use crate::provider::transform::cldr::cldr_serde::personnames::person_name_format_json_struct::Resource;
+use crate::provider::IterableDataProviderCached;
 
 impl DataProvider<PersonNamesFormatV1Marker> for crate::DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<PersonNamesFormatV1Marker>, DataError> {
@@ -34,8 +34,10 @@ impl DataProvider<PersonNamesFormatV1Marker> for crate::DatagenProvider {
     }
 }
 
-impl IterableDataProvider<PersonNamesFormatV1Marker> for crate::DatagenProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+impl IterableDataProviderCached<PersonNamesFormatV1Marker> for crate::DatagenProvider {
+    fn supported_requests_cached(
+        &self,
+    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
         Ok(self
             .cldr()?
             .personnames()

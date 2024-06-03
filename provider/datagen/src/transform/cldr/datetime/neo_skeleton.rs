@@ -206,7 +206,7 @@ impl DataProvider<TimeNeoSkeletonPatternsV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProviderCached<TimeNeoSkeletonPatternsV1Marker> for DatagenProvider {
-    fn supported_locales_cached(
+    fn supported_requests_cached(
         &self,
     ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
         self.neo_time_skeleton_supported_locales()
@@ -230,7 +230,7 @@ macro_rules! impl_neo_skeleton_datagen {
         }
 
         impl IterableDataProviderCached<$marker> for DatagenProvider {
-            fn supported_locales_cached(
+            fn supported_requests_cached(
                 &self,
             ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
                 self.neo_date_skeleton_supported_locales(&value!($calendar))
