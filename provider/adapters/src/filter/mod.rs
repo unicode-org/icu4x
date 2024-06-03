@@ -99,26 +99,6 @@ where
     }
 }
 
-impl<D, F> BufferProvider for RequestFilterDataProvider<D, F>
-where
-    F: Fn(DataRequest) -> bool,
-    D: BufferProvider,
-{
-    fn load_buffer(
-        &self,
-        key: DataKey,
-        req: DataRequest,
-    ) -> Result<DataResponse<BufferMarker>, DataError> {
-        if (self.predicate)(req) {
-            self.inner.load_buffer(key, req)
-        } else {
-            Err(DataErrorKind::FilteredResource
-                .with_str_context(self.filter_name)
-                .with_req(key, req))
-        }
-    }
-}
-
 impl<D, F> AnyProvider for RequestFilterDataProvider<D, F>
 where
     F: Fn(DataRequest) -> bool,

@@ -8,16 +8,6 @@ use crate::BlobDataProvider;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 
-impl DynamicDataProvider<BufferMarker> for BlobDataProvider {
-    fn load_data(
-        &self,
-        key: DataKey,
-        req: DataRequest,
-    ) -> Result<DataResponse<BufferMarker>, DataError> {
-        self.load_buffer(key, req)
-    }
-}
-
 impl IterableDynamicDataProvider<BufferMarker> for BlobDataProvider {
     fn supported_requests_for_key(
         &self,

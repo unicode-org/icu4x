@@ -65,8 +65,8 @@ use predicates::MissingDataKeyPredicate;
 /// use icu_provider_adapters::fork::ForkByKeyProvider;
 ///
 /// struct DummyBufferProvider;
-/// impl BufferProvider for DummyBufferProvider {
-///     fn load_buffer(
+/// impl DynamicDataProvider<BufferMarker> for DummyBufferProvider {
+///     fn load_data(
 ///         &self,
 ///         key: DataKey,
 ///         req: DataRequest,
