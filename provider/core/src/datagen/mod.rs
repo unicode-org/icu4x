@@ -242,4 +242,8 @@ impl DataExporter for MultiExporter {
     fn close(&mut self) -> Result<(), DataError> {
         self.0.iter_mut().try_for_each(|e| e.close())
     }
+
+    fn supports_built_in_fallback(&self) -> bool {
+        self.0.iter().all(|e| e.supports_built_in_fallback())
+    }
 }
