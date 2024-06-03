@@ -72,7 +72,10 @@ pub mod ffi {
             icu::properties::maps::CodePointMapDataBorrowed::iter_ranges_for_value,
             FnInStruct
         )]
-        pub fn iter_ranges_for_value<'a>(&'a self, value: u8) -> Box<ICU4XCodePointRangeIterator<'a>> {
+        pub fn iter_ranges_for_value<'a>(
+            &'a self,
+            value: u8,
+        ) -> Box<ICU4XCodePointRangeIterator<'a>> {
             Box::new(ICU4XCodePointRangeIterator(Box::new(
                 self.0.as_borrowed().iter_ranges_for_value(value),
             )))
@@ -106,7 +109,10 @@ pub mod ffi {
             icu::properties::maps::CodePointMapDataBorrowed::iter_ranges_for_group,
             FnInStruct
         )]
-        pub fn iter_ranges_for_mask<'a>(&'a self, mask: u32) -> Box<ICU4XCodePointRangeIterator<'a>> {
+        pub fn iter_ranges_for_mask<'a>(
+            &'a self,
+            mask: u32,
+        ) -> Box<ICU4XCodePointRangeIterator<'a>> {
             let ranges = self
                 .0
                 .as_borrowed()
@@ -293,7 +299,10 @@ pub mod ffi {
             icu::properties::maps::CodePointMapDataBorrowed::iter_ranges_for_value,
             FnInStruct
         )]
-        pub fn iter_ranges_for_value<'a>(&'a self, value: u16) -> Box<ICU4XCodePointRangeIterator<'a>> {
+        pub fn iter_ranges_for_value<'a>(
+            &'a self,
+            value: u16,
+        ) -> Box<ICU4XCodePointRangeIterator<'a>> {
             Box::new(ICU4XCodePointRangeIterator(Box::new(
                 self.0.as_borrowed().iter_ranges_for_value(value),
             )))

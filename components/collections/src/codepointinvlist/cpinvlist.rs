@@ -54,8 +54,7 @@ impl<'de: 'a, 'a> serde::Deserialize<'de> for CodePointInversionList<'a> {
 
         let parsed_inv_list = if deserializer.is_human_readable() {
             let parsed_strings = Vec::<alloc::borrow::Cow<'de, str>>::deserialize(deserializer)?;
-            let mut inv_list =
-                ZeroVec::new_owned(Vec::with_capacity(parsed_strings.len() * 2));
+            let mut inv_list = ZeroVec::new_owned(Vec::with_capacity(parsed_strings.len() * 2));
             for range in parsed_strings {
                 fn internal(range: &str) -> Option<(u32, u32)> {
                     let (start, range) = UnicodeCodePoint::parse(range)?;

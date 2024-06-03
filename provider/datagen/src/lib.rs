@@ -124,8 +124,8 @@ pub mod prelude {
     pub use crate::provider::{CollationHanDatabase, CoverageLevel, DatagenProvider};
     #[doc(no_inline)]
     pub use crate::{
-        DatagenDriver, DeduplicationStrategy, FallbackOptions, LocaleFamily,
-        NoFallbackOptions, RuntimeFallbackLocation,
+        DatagenDriver, DeduplicationStrategy, FallbackOptions, LocaleFamily, NoFallbackOptions,
+        RuntimeFallbackLocation,
     };
     #[doc(no_inline)]
     pub use icu_locale_core::{langid, LanguageIdentifier};

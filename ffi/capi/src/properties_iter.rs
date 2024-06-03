@@ -24,7 +24,9 @@ pub mod ffi {
     /// An iterator over code point ranges, produced by `ICU4XCodePointSetData` or
     /// one of the `ICU4XCodePointMapData` types
     #[diplomat::opaque]
-    pub struct ICU4XCodePointRangeIterator<'a>(pub Box<dyn Iterator<Item = RangeInclusive<u32>> + 'a>);
+    pub struct ICU4XCodePointRangeIterator<'a>(
+        pub Box<dyn Iterator<Item = RangeInclusive<u32>> + 'a>,
+    );
 
     impl<'a> ICU4XCodePointRangeIterator<'a> {
         /// Advance the iterator by one and return the next range.

@@ -374,7 +374,8 @@ impl DataKey {
         }
     }
 
-    #[doc(hidden)] // macro use
+    #[doc(hidden)]
+    // macro use
     // Error is a str of the expected character class and the index where it wasn't encountered
     // The indexing operations in this function have been reviewed in detail and won't panic.
     #[allow(clippy::indexing_slicing)]

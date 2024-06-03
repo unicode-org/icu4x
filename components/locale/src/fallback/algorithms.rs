@@ -2,10 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use super::LocaleFallbackPriority;
 use icu_locale_core::extensions::unicode::{key, Key};
 use icu_locale_core::subtags::Language;
 use icu_locale_core::LanguageIdentifier;
-use super::LocaleFallbackPriority;
 
 use super::*;
 

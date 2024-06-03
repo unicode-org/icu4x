@@ -374,7 +374,7 @@ where
     }
 
     /// Construct a [`DataPayload`] from a static reference.
-    /// 
+    ///
     /// This is mainly used by databake.
     #[inline]
     pub const fn from_static_ref(data: &'static M::Yokeable) -> Self {

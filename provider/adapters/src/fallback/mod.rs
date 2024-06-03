@@ -6,8 +6,8 @@
 
 use crate::helpers::result_is_err_missing_locale;
 use icu_locale::provider::*;
-use icu_provider::prelude::*;
 use icu_locale::LocaleFallbacker;
+use icu_provider::prelude::*;
 
 /// A data provider wrapper that performs locale fallback. This enables arbitrary locales to be
 /// handled at runtime.

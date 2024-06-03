@@ -11,7 +11,9 @@ use icu_locale_core::subtags::Variants;
 use icu_provider::prelude::*;
 
 #[doc(inline)]
-pub use icu_provider::_internal::{LocaleFallbackPriority, LocaleFallbackSupplement, LocaleFallbackConfig};
+pub use icu_provider::_internal::{
+    LocaleFallbackConfig, LocaleFallbackPriority, LocaleFallbackSupplement,
+};
 
 mod algorithms;
 

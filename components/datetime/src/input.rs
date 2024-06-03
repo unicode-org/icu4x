@@ -16,8 +16,8 @@ use icu_timezone::{CustomTimeZone, GmtOffset, ZoneVariant};
 
 // TODO(#2630) fix up imports to directly import from icu_calendar
 pub(crate) use icu_calendar::types::{
-    DayOfMonth, DayOfYearInfo, FormattableMonth, FormattableYear, IsoHour,
-    IsoMinute, IsoSecond, IsoWeekday, NanoSecond, Time, WeekOfMonth, WeekOfYear,
+    DayOfMonth, DayOfYearInfo, FormattableMonth, FormattableYear, IsoHour, IsoMinute, IsoSecond,
+    IsoWeekday, NanoSecond, Time, WeekOfMonth, WeekOfYear,
 };
 pub(crate) use icu_calendar::CalendarError;
 
