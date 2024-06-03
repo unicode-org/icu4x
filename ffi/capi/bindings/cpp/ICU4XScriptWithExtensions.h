@@ -6,8 +6,8 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include "diplomat_runtime.h"
-#include "CodePointRangeIterator.d.h"
-#include "CodePointRangeIterator.h"
+#include "ICU4XCodePointRangeIterator.d.h"
+#include "ICU4XCodePointRangeIterator.h"
 #include "ICU4XDataProvider.d.h"
 #include "ICU4XDataProvider.h"
 #include "ICU4XScriptWithExtensionsBorrowed.d.h"
@@ -30,7 +30,7 @@ bool ICU4XScriptWithExtensions_has_script(const ICU4XScriptWithExtensions* self,
 
 ICU4XScriptWithExtensionsBorrowed* ICU4XScriptWithExtensions_as_borrowed(const ICU4XScriptWithExtensions* self);
 
-CodePointRangeIterator* ICU4XScriptWithExtensions_iter_ranges_for_script(const ICU4XScriptWithExtensions* self, uint16_t script);
+ICU4XCodePointRangeIterator* ICU4XScriptWithExtensions_iter_ranges_for_script(const ICU4XScriptWithExtensions* self, uint16_t script);
 
 void ICU4XScriptWithExtensions_destroy(ICU4XScriptWithExtensions* self);
 

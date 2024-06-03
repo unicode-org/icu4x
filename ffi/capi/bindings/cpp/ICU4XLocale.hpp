@@ -130,16 +130,6 @@ inline int8_t ICU4XLocale::total_cmp_(const ICU4XLocale& other) const {
   return result;
 }
 
-inline std::unique_ptr<ICU4XLocale> ICU4XLocale::create_en() {
-  auto result = capi::ICU4XLocale_create_en();
-  return std::unique_ptr<ICU4XLocale>(ICU4XLocale::FromFFI(result));
-}
-
-inline std::unique_ptr<ICU4XLocale> ICU4XLocale::create_bn() {
-  auto result = capi::ICU4XLocale_create_bn();
-  return std::unique_ptr<ICU4XLocale>(ICU4XLocale::FromFFI(result));
-}
-
 inline const capi::ICU4XLocale* ICU4XLocale::AsFFI() const {
   return reinterpret_cast<const capi::ICU4XLocale*>(this);
 }

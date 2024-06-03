@@ -2,8 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#![allow(deprecated)]
-
 use elsa::sync::FrozenMap;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
@@ -336,9 +334,8 @@ pub enum CoverageLevel {
 
 /// Specifies the trie type to use.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Default, serde::Serialize, serde::Deserialize)]
-#[doc(hidden)]
 #[non_exhaustive]
-pub enum TrieType {
+enum TrieType {
     /// Fast tries are optimized for speed
     #[serde(rename = "fast")]
     Fast,

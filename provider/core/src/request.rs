@@ -52,8 +52,7 @@ pub struct DataRequestMetadata {
     pub silent: bool,
 }
 
-// TODO: replace the `-x-` encoding by something more flexible
-#[doc(hidden)]
+#[doc(hidden)] // TODO: replace the `-x-` encoding by something more flexible
 impl DataRequest<'_> {
     pub fn legacy_cmp(&self, bytes: &[u8]) -> Ordering {
         struct LegacyComparator<'a>(&'a DataLocale, &'a DataKeyAttributes);

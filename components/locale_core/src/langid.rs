@@ -5,8 +5,6 @@
 use core::cmp::Ordering;
 use core::str::FromStr;
 
-#[allow(deprecated)]
-use crate::ordering::SubtagOrderingResult;
 use crate::parser::{
     parse_language_identifier, parse_language_identifier_with_single_variant, ParserError,
     ParserMode, SubtagIterator,
@@ -92,7 +90,7 @@ impl LanguageIdentifier {
         parse_language_identifier(v, ParserMode::LanguageIdentifier)
     }
 
-    #[doc(hidden)]
+    #[doc(hidden)] // macro use
     #[allow(clippy::type_complexity)]
     // The return type should be `Result<Self, ParserError>` once the `const_precise_live_drops`
     // is stabilized ([rust-lang#73255](https://github.com/rust-lang/rust/issues/73255)).
@@ -222,61 +220,6 @@ impl LanguageIdentifier {
     /// [`BTreeMap`]: alloc::collections::BTreeMap
     pub fn total_cmp(&self, other: &Self) -> Ordering {
         self.as_tuple().cmp(&other.as_tuple())
-    }
-
-    /// Compare this [`LanguageIdentifier`] with an iterator of BCP-47 subtags.
-    ///
-    /// This function has the same equality semantics as [`LanguageIdentifier::strict_cmp`]. It is intended as
-    /// a more modular version that allows multiple subtag iterators to be chained together.
-    ///
-    /// For an additional example, see [`SubtagOrderingResult`].
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::locale::LanguageIdentifier;
-    /// use std::cmp::Ordering;
-    ///
-    /// let subtags: &[&[u8]] = &[b"ca", b"ES", b"valencia"];
-    ///
-    /// let loc = "ca-ES-valencia".parse::<LanguageIdentifier>().unwrap();
-    /// assert_eq!(
-    ///     Ordering::Equal,
-    ///     loc.strict_cmp_iter(subtags.iter().copied()).end()
-    /// );
-    ///
-    /// let loc = "ca-ES".parse::<LanguageIdentifier>().unwrap();
-    /// assert_eq!(
-    ///     Ordering::Less,
-    ///     loc.strict_cmp_iter(subtags.iter().copied()).end()
-    /// );
-    ///
-    /// let loc = "ca-ZA".parse::<LanguageIdentifier>().unwrap();
-    /// assert_eq!(
-    ///     Ordering::Greater,
-    ///     loc.strict_cmp_iter(subtags.iter().copied()).end()
-    /// );
-    /// ```
-    #[deprecated(since = "1.5.0", note = "if you need this, please file an issue")]
-    #[allow(deprecated)]
-    pub fn strict_cmp_iter<'l, I>(&self, mut subtags: I) -> SubtagOrderingResult<I>
-    where
-        I: Iterator<Item = &'l [u8]>,
-    {
-        let r = self.for_each_subtag_str(&mut |subtag| {
-            if let Some(other) = subtags.next() {
-                match subtag.as_bytes().cmp(other) {
-                    Ordering::Equal => Ok(()),
-                    not_equal => Err(not_equal),
-                }
-            } else {
-                Err(Ordering::Greater)
-            }
-        });
-        match r {
-            Ok(_) => SubtagOrderingResult::Subtags(subtags),
-            Err(o) => SubtagOrderingResult::Ordering(o),
-        }
     }
 
     /// Compare this `LanguageIdentifier` with a potentially unnormalized BCP-47 string.

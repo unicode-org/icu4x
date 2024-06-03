@@ -52,7 +52,10 @@ impl DataProvider<ScriptWithExtensionsPropertyV1Marker> for DatagenProvider {
         let scx_vzv: VarZeroVec<ZeroSlice<Script>> =
             VarZeroVec::from(ule_scx_array_data.as_slice());
 
-        let data_struct = ScriptWithExtensionsPropertyV1::new(trie, scx_vzv);
+        let data_struct = ScriptWithExtensionsPropertyV1 {
+            trie,
+            extensions: scx_vzv,
+        };
 
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),

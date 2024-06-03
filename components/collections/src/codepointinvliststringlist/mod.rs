@@ -112,7 +112,7 @@ impl<'data> CodePointInversionListAndStringList<'data> {
         })
     }
 
-    #[doc(hidden)]
+    #[doc(hidden)] // databake internal
     pub const fn from_parts_unchecked(
         cp_inv_list: CodePointInversionList<'data>,
         str_list: VarZeroVec<'data, str>,

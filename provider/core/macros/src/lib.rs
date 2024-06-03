@@ -64,9 +64,7 @@ mod tests;
 /// # }
 /// use icu::locale::extensions::unicode::key;
 /// use icu::locale::fallback::*;
-/// use icu_provider::yoke;
-/// use icu_provider::zerofrom;
-/// use icu_provider::KeyedDataMarker;
+/// use icu_provider::prelude::*;
 /// use std::borrow::Cow;
 ///
 /// #[icu_provider::data_struct(

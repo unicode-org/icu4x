@@ -49,10 +49,6 @@ public:
 
   inline int8_t total_cmp_(const ICU4XLocale& other) const;
 
-  inline static std::unique_ptr<ICU4XLocale> create_en();
-
-  inline static std::unique_ptr<ICU4XLocale> create_bn();
-
   inline const capi::ICU4XLocale* AsFFI() const;
   inline capi::ICU4XLocale* AsFFI();
   inline static const ICU4XLocale* FromFFI(const capi::ICU4XLocale* ptr);

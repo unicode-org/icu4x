@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #[macro_export]
-#[doc(hidden)]
+#[doc(hidden)] // macro
 /// The list of all known [`DataMarker`](icu_provider::DataMarker)s.
 ///
 /// This is modeled as a macro that accepts a callback macro of the shape:
@@ -224,7 +224,6 @@ macro_rules! registry(
             icu::segmenter::provider::WordBreakDataV1Marker = "segmenter/word@1",
             icu::timezone::provider::MetazonePeriodV1Marker = "time_zone/metazone_period@1",
             icu::timezone::provider::names::Bcp47ToIanaMapV1Marker = "time_zone/bcp47_to_iana@1",
-            icu::timezone::provider::names::IanaToBcp47MapV1Marker = "time_zone/iana_to_bcp47@1",
             icu::timezone::provider::names::IanaToBcp47MapV2Marker = "time_zone/iana_to_bcp47@2",
             #[experimental]
             icu::datetime::provider::calendar::DateSkeletonPatternsV1Marker = "datetime/skeletons@1",

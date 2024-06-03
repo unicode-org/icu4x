@@ -41,7 +41,7 @@ fn make_testdata() {
                 crate::fs_exporter::FilesystemExporter::try_new(
                     Box::new(crate::fs_exporter::serializers::Json::pretty()),
                     {
-                        let mut options = crate::fs_exporter::ExporterOptions::default();
+                        let mut options = crate::fs_exporter::Options::default();
                         options.root = "tests/data/json".into();
                         options.overwrite = crate::fs_exporter::OverwriteOption::RemoveAndReplace;
                         options

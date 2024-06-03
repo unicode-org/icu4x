@@ -6,8 +6,8 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include "diplomat_runtime.h"
-#include "CodePointRangeIterator.d.h"
-#include "CodePointRangeIterator.h"
+#include "ICU4XCodePointRangeIterator.d.h"
+#include "ICU4XCodePointRangeIterator.h"
 #include "ICU4XDataProvider.d.h"
 #include "ICU4XDataProvider.h"
 #include "diplomat_result_box_ICU4XCodePointSetData_ICU4XError.d.h"
@@ -24,9 +24,9 @@ bool ICU4XCodePointSetData_contains(const ICU4XCodePointSetData* self, char32_t 
 
 bool ICU4XCodePointSetData_contains32(const ICU4XCodePointSetData* self, uint32_t cp);
 
-CodePointRangeIterator* ICU4XCodePointSetData_iter_ranges(const ICU4XCodePointSetData* self);
+ICU4XCodePointRangeIterator* ICU4XCodePointSetData_iter_ranges(const ICU4XCodePointSetData* self);
 
-CodePointRangeIterator* ICU4XCodePointSetData_iter_ranges_complemented(const ICU4XCodePointSetData* self);
+ICU4XCodePointRangeIterator* ICU4XCodePointSetData_iter_ranges_complemented(const ICU4XCodePointSetData* self);
 
 diplomat_result_box_ICU4XCodePointSetData_ICU4XError ICU4XCodePointSetData_load_for_general_category_group(const ICU4XDataProvider* provider, uint32_t group);
 

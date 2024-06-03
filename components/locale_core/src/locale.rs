@@ -2,8 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#[allow(deprecated)]
-use crate::ordering::SubtagOrderingResult;
 use crate::parser::{
     parse_locale, parse_locale_with_single_variant_single_keyword_unicode_keyword_extension,
     ParserError, ParserMode, SubtagIterator,
@@ -237,62 +235,6 @@ impl Locale {
         self.as_tuple().cmp(&other.as_tuple())
     }
 
-    /// Compare this [`Locale`] with an iterator of BCP-47 subtags.
-    ///
-    /// This function has the same equality semantics as [`Locale::strict_cmp`]. It is intended as
-    /// a more modular version that allows multiple subtag iterators to be chained together.
-    ///
-    /// For an additional example, see [`SubtagOrderingResult`].
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::locale::locale;
-    /// use std::cmp::Ordering;
-    ///
-    /// let subtags: &[&[u8]] =
-    ///     &[b"ca", b"ES", b"valencia", b"u", b"ca", b"hebrew"];
-    ///
-    /// let loc = locale!("ca-ES-valencia-u-ca-hebrew");
-    /// assert_eq!(
-    ///     Ordering::Equal,
-    ///     loc.strict_cmp_iter(subtags.iter().copied()).end()
-    /// );
-    ///
-    /// let loc = locale!("ca-ES-valencia");
-    /// assert_eq!(
-    ///     Ordering::Less,
-    ///     loc.strict_cmp_iter(subtags.iter().copied()).end()
-    /// );
-    ///
-    /// let loc = locale!("ca-ES-valencia-u-nu-arab");
-    /// assert_eq!(
-    ///     Ordering::Greater,
-    ///     loc.strict_cmp_iter(subtags.iter().copied()).end()
-    /// );
-    /// ```
-    #[deprecated(since = "1.5.0", note = "if you need this, please file an issue")]
-    #[allow(deprecated)]
-    pub fn strict_cmp_iter<'l, I>(&self, mut subtags: I) -> SubtagOrderingResult<I>
-    where
-        I: Iterator<Item = &'l [u8]>,
-    {
-        let r = self.for_each_subtag_str(&mut |subtag| {
-            if let Some(other) = subtags.next() {
-                match subtag.as_bytes().cmp(other) {
-                    Ordering::Equal => Ok(()),
-                    not_equal => Err(not_equal),
-                }
-            } else {
-                Err(Ordering::Greater)
-            }
-        });
-        match r {
-            Ok(_) => SubtagOrderingResult::Subtags(subtags),
-            Err(o) => SubtagOrderingResult::Ordering(o),
-        }
-    }
-
     /// Compare this `Locale` with a potentially unnormalized BCP-47 string.
     ///
     /// The return value is equivalent to what would happen if you first parsed the
@@ -360,7 +302,7 @@ impl Locale {
         iter.next().is_none()
     }
 
-    #[doc(hidden)]
+    #[doc(hidden)] // macro use
     #[allow(clippy::type_complexity)]
     pub const fn try_from_bytes_with_single_variant_single_keyword_unicode_extension(
         v: &[u8],

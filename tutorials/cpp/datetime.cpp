@@ -10,7 +10,6 @@
 #include "ICU4XCustomTimeZone.hpp"
 #include "ICU4XTimeZoneIdMapper.hpp"
 #include "ICU4XTimeZoneIdMapperWithFastCanonicalization.hpp"
-#include "ICU4XBcp47ToIanaMapper.hpp"
 #include "ICU4XGregorianZonedDateTimeFormatter.hpp"
 #include "ICU4XZonedDateTimeFormatter.hpp"
 
@@ -69,7 +68,7 @@ int main() {
     }
     std::unique_ptr<ICU4XMetazoneCalculator> mzcalc = ICU4XMetazoneCalculator::create(*dp.get()).ok().value();
     std::unique_ptr<ICU4XTimeZoneIdMapper> mapper = ICU4XTimeZoneIdMapper::create(*dp.get()).ok().value();
-    time_zone->try_set_iana_time_zone_id_2(*mapper.get(), "america/chicago").ok().value();
+    time_zone->try_set_iana_time_zone_id(*mapper.get(), "america/chicago").ok().value();
     std::string time_zone_id_return = time_zone->time_zone_id().value();
     if (time_zone_id_return != "uschi") {
         std::cout << "Time zone ID does not roundtrip: " << time_zone_id_return << std::endl;

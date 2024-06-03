@@ -39,12 +39,8 @@ pub struct Options {
     pub overwrite: OverwriteOption,
 }
 
-#[doc(hidden)]
-pub type ExporterOptions = Options;
-
 impl Default for Options {
     fn default() -> Self {
-        #[allow(deprecated)] // obviously
         Self {
             root: PathBuf::from("icu4x_data"),
             overwrite: Default::default(),

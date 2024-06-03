@@ -22,8 +22,6 @@ public:
 
   inline static diplomat::result<std::unique_ptr<ICU4XDataProvider>, ICU4XError> create_fs(std::string_view path);
 
-  inline static std::unique_ptr<ICU4XDataProvider> create_test();
-
   inline static diplomat::result<std::unique_ptr<ICU4XDataProvider>, ICU4XError> create_from_byte_slice(diplomat::span<const uint8_t> blob);
 
   inline static std::unique_ptr<ICU4XDataProvider> create_empty();

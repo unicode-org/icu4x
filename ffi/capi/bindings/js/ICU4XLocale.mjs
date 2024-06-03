@@ -192,12 +192,4 @@ export class ICU4XLocale {
   total_cmp(arg_other) {
     return ICU4XOrdering_rust_to_js[wasm.ICU4XLocale_total_cmp(this.underlying, arg_other.underlying)];
   }
-
-  static create_en() {
-    return new ICU4XLocale(wasm.ICU4XLocale_create_en(), true, []);
-  }
-
-  static create_bn() {
-    return new ICU4XLocale(wasm.ICU4XLocale_create_bn(), true, []);
-  }
 }

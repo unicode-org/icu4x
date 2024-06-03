@@ -10,7 +10,7 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "CodePointRangeIterator.hpp"
+#include "ICU4XCodePointRangeIterator.hpp"
 #include "ICU4XCodePointSetData.h"
 #include "ICU4XDataProvider.hpp"
 #include "ICU4XError.hpp"
@@ -28,14 +28,14 @@ inline bool ICU4XCodePointSetData::contains32(uint32_t cp) const {
   return result;
 }
 
-inline std::unique_ptr<CodePointRangeIterator> ICU4XCodePointSetData::iter_ranges() const {
+inline std::unique_ptr<ICU4XCodePointRangeIterator> ICU4XCodePointSetData::iter_ranges() const {
   auto result = capi::ICU4XCodePointSetData_iter_ranges(this->AsFFI());
-  return std::unique_ptr<CodePointRangeIterator>(CodePointRangeIterator::FromFFI(result));
+  return std::unique_ptr<ICU4XCodePointRangeIterator>(ICU4XCodePointRangeIterator::FromFFI(result));
 }
 
-inline std::unique_ptr<CodePointRangeIterator> ICU4XCodePointSetData::iter_ranges_complemented() const {
+inline std::unique_ptr<ICU4XCodePointRangeIterator> ICU4XCodePointSetData::iter_ranges_complemented() const {
   auto result = capi::ICU4XCodePointSetData_iter_ranges_complemented(this->AsFFI());
-  return std::unique_ptr<CodePointRangeIterator>(CodePointRangeIterator::FromFFI(result));
+  return std::unique_ptr<ICU4XCodePointRangeIterator>(ICU4XCodePointRangeIterator::FromFFI(result));
 }
 
 inline diplomat::result<std::unique_ptr<ICU4XCodePointSetData>, ICU4XError> ICU4XCodePointSetData::load_for_general_category_group(const ICU4XDataProvider& provider, uint32_t group) {

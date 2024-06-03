@@ -11,7 +11,6 @@
 #include "ICU4XCustomTimeZone.d.h"
 #include "ICU4XError.d.hpp"
 
-class ICU4XIanaToBcp47Mapper;
 class ICU4XIsoDateTime;
 class ICU4XMetazoneCalculator;
 class ICU4XTimeZoneIdMapper;
@@ -43,9 +42,7 @@ public:
 
   inline diplomat::result<std::monostate, ICU4XError> try_set_time_zone_id(std::string_view id);
 
-  inline diplomat::result<std::monostate, ICU4XError> try_set_iana_time_zone_id(const ICU4XIanaToBcp47Mapper& mapper, std::string_view id);
-
-  inline diplomat::result<std::monostate, ICU4XError> try_set_iana_time_zone_id_2(const ICU4XTimeZoneIdMapper& mapper, std::string_view id);
+  inline diplomat::result<std::monostate, ICU4XError> try_set_iana_time_zone_id(const ICU4XTimeZoneIdMapper& mapper, std::string_view id);
 
   inline void clear_time_zone_id();
 

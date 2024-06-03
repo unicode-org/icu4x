@@ -6,8 +6,6 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include "diplomat_runtime.h"
-#include "ICU4XIanaToBcp47Mapper.d.h"
-#include "ICU4XIanaToBcp47Mapper.h"
 #include "ICU4XIsoDateTime.d.h"
 #include "ICU4XIsoDateTime.h"
 #include "ICU4XMetazoneCalculator.d.h"
@@ -50,9 +48,7 @@ diplomat_result_bool_void ICU4XCustomTimeZone_gmt_offset_has_seconds(const ICU4X
 
 diplomat_result_void_ICU4XError ICU4XCustomTimeZone_try_set_time_zone_id(ICU4XCustomTimeZone* self, const char* id_data, size_t id_len);
 
-diplomat_result_void_ICU4XError ICU4XCustomTimeZone_try_set_iana_time_zone_id(ICU4XCustomTimeZone* self, const ICU4XIanaToBcp47Mapper* mapper, const char* id_data, size_t id_len);
-
-diplomat_result_void_ICU4XError ICU4XCustomTimeZone_try_set_iana_time_zone_id_2(ICU4XCustomTimeZone* self, const ICU4XTimeZoneIdMapper* mapper, const char* id_data, size_t id_len);
+diplomat_result_void_ICU4XError ICU4XCustomTimeZone_try_set_iana_time_zone_id(ICU4XCustomTimeZone* self, const ICU4XTimeZoneIdMapper* mapper, const char* id_data, size_t id_len);
 
 void ICU4XCustomTimeZone_clear_time_zone_id(ICU4XCustomTimeZone* self);
 

@@ -10,14 +10,14 @@
 #include "diplomat_runtime.hpp"
 #include "ICU4XError.d.hpp"
 #include "ICU4XFixedDecimal.d.h"
+#include "ICU4XFixedDecimalRoundingIncrement.d.hpp"
 #include "ICU4XFixedDecimalSign.d.hpp"
 #include "ICU4XFixedDecimalSignDisplay.d.hpp"
-#include "ICU4XRoundingIncrement.d.hpp"
 
 class ICU4XError;
+class ICU4XFixedDecimalRoundingIncrement;
 class ICU4XFixedDecimalSign;
 class ICU4XFixedDecimalSignDisplay;
-class ICU4XRoundingIncrement;
 
 
 class ICU4XFixedDecimal {
@@ -73,39 +73,39 @@ public:
 
   inline void trunc(int16_t position);
 
-  inline void trunc_to_increment(int16_t position, ICU4XRoundingIncrement increment);
+  inline void trunc_to_increment(int16_t position, ICU4XFixedDecimalRoundingIncrement increment);
 
   inline void half_trunc(int16_t position);
 
-  inline void half_trunc_to_increment(int16_t position, ICU4XRoundingIncrement increment);
+  inline void half_trunc_to_increment(int16_t position, ICU4XFixedDecimalRoundingIncrement increment);
 
   inline void expand(int16_t position);
 
-  inline void expand_to_increment(int16_t position, ICU4XRoundingIncrement increment);
+  inline void expand_to_increment(int16_t position, ICU4XFixedDecimalRoundingIncrement increment);
 
   inline void half_expand(int16_t position);
 
-  inline void half_expand_to_increment(int16_t position, ICU4XRoundingIncrement increment);
+  inline void half_expand_to_increment(int16_t position, ICU4XFixedDecimalRoundingIncrement increment);
 
   inline void ceil(int16_t position);
 
-  inline void ceil_to_increment(int16_t position, ICU4XRoundingIncrement increment);
+  inline void ceil_to_increment(int16_t position, ICU4XFixedDecimalRoundingIncrement increment);
 
   inline void half_ceil(int16_t position);
 
-  inline void half_ceil_to_increment(int16_t position, ICU4XRoundingIncrement increment);
+  inline void half_ceil_to_increment(int16_t position, ICU4XFixedDecimalRoundingIncrement increment);
 
   inline void floor(int16_t position);
 
-  inline void floor_to_increment(int16_t position, ICU4XRoundingIncrement increment);
+  inline void floor_to_increment(int16_t position, ICU4XFixedDecimalRoundingIncrement increment);
 
   inline void half_floor(int16_t position);
 
-  inline void half_floor_to_increment(int16_t position, ICU4XRoundingIncrement increment);
+  inline void half_floor_to_increment(int16_t position, ICU4XFixedDecimalRoundingIncrement increment);
 
   inline void half_even(int16_t position);
 
-  inline void half_even_to_increment(int16_t position, ICU4XRoundingIncrement increment);
+  inline void half_even_to_increment(int16_t position, ICU4XFixedDecimalRoundingIncrement increment);
 
   inline diplomat::result<std::monostate, std::monostate> concatenate_end(ICU4XFixedDecimal& other);
 

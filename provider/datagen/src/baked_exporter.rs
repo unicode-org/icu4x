@@ -314,7 +314,7 @@ impl BakedExporter {
                 #[doc = #doc]
                 /// hardcoded in this file. This allows the struct to be used with
                 /// `icu`'s `_unstable` constructors.
-                #[doc(hidden)]
+                #[doc(hidden)] // macro
                 #[macro_export]
                 macro_rules! #prefixed_macro_ident {
                     ($provider:ty) => {
@@ -326,7 +326,7 @@ impl BakedExporter {
                 #[doc = #doc_iterable]
                 /// hardcoded in this file. This allows the struct to be used with
                 /// `DatagenDriver` for this key.
-                #[doc(hidden)]
+                #[doc(hidden)] // macro
                 #[macro_export]
                 macro_rules! #prefixed_macro_ident_iterable {
                     ($provider:ty) => {
@@ -393,7 +393,7 @@ impl DataExporter for BakedExporter {
             #maybe_msrv
             impl $provider {
                 // Exposing singleton structs as consts allows us to get rid of fallibility
-                #[doc(hidden)]
+                #[doc(hidden)] // singletons might be used cross-crate
                 pub const #singleton_ident: &'static <#marker as icu_provider::DataMarker>::Yokeable = &#bake;
             }
 
@@ -692,15 +692,14 @@ impl BakedExporter {
                 ///     impl_core_helloworld_v1!(MyProvider);
                 /// }
                 /// ```
-                #[doc(hidden)]
+                #[doc(hidden)] // macro
                 #[macro_export]
                 macro_rules! __make_provider {
                     ($name:ty) => {
                         #maybe_msrv
                         impl $name {
-                            #[doc(hidden)]
                             #[allow(dead_code)]
-                            pub const MUST_USE_MAKE_PROVIDER_MACRO: () = ();
+                            pub(crate) const MUST_USE_MAKE_PROVIDER_MACRO: () = ();
                         }
                         icu_provider::impl_data_provider_never_marker!($name);
                     };
