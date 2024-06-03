@@ -47,8 +47,8 @@ macro_rules! implement {
             }
         }
 
-        impl IterableDataProvider<$marker> for DatagenProvider {
-            fn supported_requests(
+        impl IterableDataProviderCached<$marker> for DatagenProvider {
+            fn supported_locales_cached(
                 &self,
             ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
                 Ok($supported
