@@ -1,30 +1,32 @@
 #ifndef ICU4XDecomposed_HPP
 #define ICU4XDecomposed_HPP
+
+#include "ICU4XDecomposed.d.hpp"
+
+#include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
-#include <algorithm>
 #include <memory>
-#include <variant>
 #include <optional>
 #include "diplomat_runtime.hpp"
-
 #include "ICU4XDecomposed.h"
 
 
 
-/**
- * The outcome of non-recursive canonical decomposition of a character.
- * `second` will be NUL when the decomposition expands to a single character
- * (which may or may not be the original one)
- * 
- * See the [Rust documentation for `Decomposed`](https://docs.rs/icu/latest/icu/normalizer/properties/enum.Decomposed.html) for more information.
- */
-struct ICU4XDecomposed {
- public:
-  char32_t first;
-  char32_t second;
-};
+inline capi::ICU4XDecomposed ICU4XDecomposed::AsFFI() const {
+  return capi::ICU4XDecomposed {
+    .first = first,
+    .second = second,
+  };
+}
+
+inline ICU4XDecomposed ICU4XDecomposed::FromFFI(capi::ICU4XDecomposed c_struct) {
+  return ICU4XDecomposed {
+    .first = c_struct.first,
+    .second = c_struct.second,
+  };
+}
 
 
-#endif
+#endif // ICU4XDecomposed_HPP

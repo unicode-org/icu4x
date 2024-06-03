@@ -1,27 +1,22 @@
 #ifndef ICU4XLocale_H
 #define ICU4XLocale_H
+
 #include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
 #include "diplomat_runtime.h"
+#include "diplomat_result_box_ICU4XLocale_ICU4XError.d.h"
+#include "diplomat_result_void_ICU4XError.d.h"
+#include "diplomat_result_void_void.d.h"
 
-#ifdef __cplusplus
-namespace capi {
-#endif
+#include "ICU4XLocale.d.h"
 
-typedef struct ICU4XLocale ICU4XLocale;
-#ifdef __cplusplus
-} // namespace capi
-#endif
-#include "diplomat_result_box_ICU4XLocale_ICU4XError.h"
-#include "diplomat_result_void_void.h"
-#include "diplomat_result_void_ICU4XError.h"
-#include "ICU4XOrdering.h"
 #ifdef __cplusplus
 namespace capi {
 extern "C" {
-#endif
+#endif // __cplusplus
+
 
 diplomat_result_box_ICU4XLocale_ICU4XError ICU4XLocale_create_from_string(const char* name_data, size_t name_len);
 
@@ -51,17 +46,20 @@ void ICU4XLocale_to_string(const ICU4XLocale* self, DiplomatWrite* write);
 
 bool ICU4XLocale_normalizing_eq(const ICU4XLocale* self, const char* other_data, size_t other_len);
 
-ICU4XOrdering ICU4XLocale_strict_cmp(const ICU4XLocale* self, const char* other_data, size_t other_len);
+int8_t ICU4XLocale_strict_cmp_(const ICU4XLocale* self, const char* other_data, size_t other_len);
 
-ICU4XOrdering ICU4XLocale_total_cmp(const ICU4XLocale* self, const ICU4XLocale* other);
+int8_t ICU4XLocale_total_cmp_(const ICU4XLocale* self, const ICU4XLocale* other);
 
 ICU4XLocale* ICU4XLocale_create_en();
 
 ICU4XLocale* ICU4XLocale_create_bn();
+
 void ICU4XLocale_destroy(ICU4XLocale* self);
+
 
 #ifdef __cplusplus
 } // extern "C"
 } // namespace capi
-#endif
-#endif
+#endif // __cplusplus
+
+#endif // ICU4XLocale_H

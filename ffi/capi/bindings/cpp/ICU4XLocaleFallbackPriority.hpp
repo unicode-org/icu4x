@@ -1,27 +1,30 @@
 #ifndef ICU4XLocaleFallbackPriority_HPP
 #define ICU4XLocaleFallbackPriority_HPP
+
+#include "ICU4XLocaleFallbackPriority.d.hpp"
+
+#include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
-#include <algorithm>
 #include <memory>
-#include <variant>
 #include <optional>
 #include "diplomat_runtime.hpp"
-
 #include "ICU4XLocaleFallbackPriority.h"
 
 
+inline capi::ICU4XLocaleFallbackPriority ICU4XLocaleFallbackPriority::AsFFI() const {
+  return static_cast<capi::ICU4XLocaleFallbackPriority>(value);
+}
 
-/**
- * Priority mode for the ICU4X fallback algorithm.
- * 
- * See the [Rust documentation for `LocaleFallbackPriority`](https://docs.rs/icu/latest/icu/locale/fallback/enum.LocaleFallbackPriority.html) for more information.
- */
-enum struct ICU4XLocaleFallbackPriority {
-  Language = 0,
-  Region = 1,
-  Collation = 2,
-};
-
-#endif
+inline ICU4XLocaleFallbackPriority ICU4XLocaleFallbackPriority::FromFFI(capi::ICU4XLocaleFallbackPriority c_enum) {
+  switch (c_enum) {
+    case capi::ICU4XLocaleFallbackPriority_Language:
+    case capi::ICU4XLocaleFallbackPriority_Region:
+    case capi::ICU4XLocaleFallbackPriority_Collation:
+      return static_cast<ICU4XLocaleFallbackPriority::Value>(c_enum);
+    default:
+      abort();
+  }
+}
+#endif // ICU4XLocaleFallbackPriority_HPP

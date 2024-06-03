@@ -1,26 +1,31 @@
 #ifndef ICU4XFixedDecimalGroupingStrategy_HPP
 #define ICU4XFixedDecimalGroupingStrategy_HPP
+
+#include "ICU4XFixedDecimalGroupingStrategy.d.hpp"
+
+#include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
-#include <algorithm>
 #include <memory>
-#include <variant>
 #include <optional>
 #include "diplomat_runtime.hpp"
-
 #include "ICU4XFixedDecimalGroupingStrategy.h"
 
 
+inline capi::ICU4XFixedDecimalGroupingStrategy ICU4XFixedDecimalGroupingStrategy::AsFFI() const {
+  return static_cast<capi::ICU4XFixedDecimalGroupingStrategy>(value);
+}
 
-/**
- * See the [Rust documentation for `GroupingStrategy`](https://docs.rs/icu/latest/icu/decimal/options/enum.GroupingStrategy.html) for more information.
- */
-enum struct ICU4XFixedDecimalGroupingStrategy {
-  Auto = 0,
-  Never = 1,
-  Always = 2,
-  Min2 = 3,
-};
-
-#endif
+inline ICU4XFixedDecimalGroupingStrategy ICU4XFixedDecimalGroupingStrategy::FromFFI(capi::ICU4XFixedDecimalGroupingStrategy c_enum) {
+  switch (c_enum) {
+    case capi::ICU4XFixedDecimalGroupingStrategy_Auto:
+    case capi::ICU4XFixedDecimalGroupingStrategy_Never:
+    case capi::ICU4XFixedDecimalGroupingStrategy_Always:
+    case capi::ICU4XFixedDecimalGroupingStrategy_Min2:
+      return static_cast<ICU4XFixedDecimalGroupingStrategy::Value>(c_enum);
+    default:
+      abort();
+  }
+}
+#endif // ICU4XFixedDecimalGroupingStrategy_HPP

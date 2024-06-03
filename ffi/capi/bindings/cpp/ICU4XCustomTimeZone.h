@@ -1,32 +1,32 @@
 #ifndef ICU4XCustomTimeZone_H
 #define ICU4XCustomTimeZone_H
+
 #include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
 #include "diplomat_runtime.h"
-
-#ifdef __cplusplus
-namespace capi {
-#endif
-
-typedef struct ICU4XCustomTimeZone ICU4XCustomTimeZone;
-#ifdef __cplusplus
-} // namespace capi
-#endif
-#include "diplomat_result_box_ICU4XCustomTimeZone_ICU4XError.h"
-#include "diplomat_result_void_ICU4XError.h"
-#include "diplomat_result_int32_t_void.h"
-#include "diplomat_result_bool_void.h"
+#include "ICU4XIanaToBcp47Mapper.d.h"
 #include "ICU4XIanaToBcp47Mapper.h"
-#include "ICU4XTimeZoneIdMapper.h"
-#include "diplomat_result_void_void.h"
-#include "ICU4XMetazoneCalculator.h"
+#include "ICU4XIsoDateTime.d.h"
 #include "ICU4XIsoDateTime.h"
+#include "ICU4XMetazoneCalculator.d.h"
+#include "ICU4XMetazoneCalculator.h"
+#include "ICU4XTimeZoneIdMapper.d.h"
+#include "ICU4XTimeZoneIdMapper.h"
+#include "diplomat_result_bool_void.d.h"
+#include "diplomat_result_box_ICU4XCustomTimeZone_ICU4XError.d.h"
+#include "diplomat_result_int32_t_void.d.h"
+#include "diplomat_result_void_ICU4XError.d.h"
+#include "diplomat_result_void_void.d.h"
+
+#include "ICU4XCustomTimeZone.d.h"
+
 #ifdef __cplusplus
 namespace capi {
 extern "C" {
-#endif
+#endif // __cplusplus
+
 
 diplomat_result_box_ICU4XCustomTimeZone_ICU4XError ICU4XCustomTimeZone_create_from_string(const char* s_data, size_t s_len);
 
@@ -79,10 +79,13 @@ diplomat_result_bool_void ICU4XCustomTimeZone_is_standard_time(const ICU4XCustom
 diplomat_result_bool_void ICU4XCustomTimeZone_is_daylight_time(const ICU4XCustomTimeZone* self);
 
 void ICU4XCustomTimeZone_maybe_calculate_metazone(ICU4XCustomTimeZone* self, const ICU4XMetazoneCalculator* metazone_calculator, const ICU4XIsoDateTime* local_datetime);
+
 void ICU4XCustomTimeZone_destroy(ICU4XCustomTimeZone* self);
+
 
 #ifdef __cplusplus
 } // extern "C"
 } // namespace capi
-#endif
-#endif
+#endif // __cplusplus
+
+#endif // ICU4XCustomTimeZone_H

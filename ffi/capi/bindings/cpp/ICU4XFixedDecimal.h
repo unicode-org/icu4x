@@ -1,28 +1,27 @@
 #ifndef ICU4XFixedDecimal_H
 #define ICU4XFixedDecimal_H
+
 #include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
 #include "diplomat_runtime.h"
-
-#ifdef __cplusplus
-namespace capi {
-#endif
-
-typedef struct ICU4XFixedDecimal ICU4XFixedDecimal;
-#ifdef __cplusplus
-} // namespace capi
-#endif
-#include "diplomat_result_box_ICU4XFixedDecimal_ICU4XError.h"
+#include "ICU4XFixedDecimalSign.d.h"
 #include "ICU4XFixedDecimalSign.h"
+#include "ICU4XFixedDecimalSignDisplay.d.h"
 #include "ICU4XFixedDecimalSignDisplay.h"
+#include "ICU4XRoundingIncrement.d.h"
 #include "ICU4XRoundingIncrement.h"
-#include "diplomat_result_void_void.h"
+#include "diplomat_result_box_ICU4XFixedDecimal_ICU4XError.d.h"
+#include "diplomat_result_void_void.d.h"
+
+#include "ICU4XFixedDecimal.d.h"
+
 #ifdef __cplusplus
 namespace capi {
 extern "C" {
-#endif
+#endif // __cplusplus
+
 
 ICU4XFixedDecimal* ICU4XFixedDecimal_create_from_i32(int32_t v);
 
@@ -110,11 +109,14 @@ void ICU4XFixedDecimal_half_even_to_increment(ICU4XFixedDecimal* self, int16_t p
 
 diplomat_result_void_void ICU4XFixedDecimal_concatenate_end(ICU4XFixedDecimal* self, ICU4XFixedDecimal* other);
 
-void ICU4XFixedDecimal_to_string(const ICU4XFixedDecimal* self, DiplomatWrite* to);
+void ICU4XFixedDecimal_to_string(const ICU4XFixedDecimal* self, DiplomatWrite* write);
+
 void ICU4XFixedDecimal_destroy(ICU4XFixedDecimal* self);
+
 
 #ifdef __cplusplus
 } // extern "C"
 } // namespace capi
-#endif
-#endif
+#endif // __cplusplus
+
+#endif // ICU4XFixedDecimal_H

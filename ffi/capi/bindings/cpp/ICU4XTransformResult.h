@@ -1,31 +1,26 @@
 #ifndef ICU4XTransformResult_H
 #define ICU4XTransformResult_H
+
 #include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
 #include "diplomat_runtime.h"
 
-#ifdef __cplusplus
-namespace capi {
-#endif
+#include "ICU4XTransformResult.d.h"
 
-typedef enum ICU4XTransformResult {
-  ICU4XTransformResult_Modified = 0,
-  ICU4XTransformResult_Unmodified = 1,
-} ICU4XTransformResult;
-#ifdef __cplusplus
-} // namespace capi
-#endif
 #ifdef __cplusplus
 namespace capi {
 extern "C" {
-#endif
+#endif // __cplusplus
 
-void ICU4XTransformResult_destroy(ICU4XTransformResult* self);
+
+// No Content
+
 
 #ifdef __cplusplus
 } // extern "C"
 } // namespace capi
-#endif
-#endif
+#endif // __cplusplus
+
+#endif // ICU4XTransformResult_H

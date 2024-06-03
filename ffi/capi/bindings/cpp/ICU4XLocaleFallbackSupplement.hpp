@@ -1,26 +1,29 @@
 #ifndef ICU4XLocaleFallbackSupplement_HPP
 #define ICU4XLocaleFallbackSupplement_HPP
+
+#include "ICU4XLocaleFallbackSupplement.d.hpp"
+
+#include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
-#include <algorithm>
 #include <memory>
-#include <variant>
 #include <optional>
 #include "diplomat_runtime.hpp"
-
 #include "ICU4XLocaleFallbackSupplement.h"
 
 
+inline capi::ICU4XLocaleFallbackSupplement ICU4XLocaleFallbackSupplement::AsFFI() const {
+  return static_cast<capi::ICU4XLocaleFallbackSupplement>(value);
+}
 
-/**
- * What additional data is required to load when performing fallback.
- * 
- * See the [Rust documentation for `LocaleFallbackSupplement`](https://docs.rs/icu/latest/icu/locale/fallback/enum.LocaleFallbackSupplement.html) for more information.
- */
-enum struct ICU4XLocaleFallbackSupplement {
-  None = 0,
-  Collation = 1,
-};
-
-#endif
+inline ICU4XLocaleFallbackSupplement ICU4XLocaleFallbackSupplement::FromFFI(capi::ICU4XLocaleFallbackSupplement c_enum) {
+  switch (c_enum) {
+    case capi::ICU4XLocaleFallbackSupplement_None:
+    case capi::ICU4XLocaleFallbackSupplement_Collation:
+      return static_cast<ICU4XLocaleFallbackSupplement::Value>(c_enum);
+    default:
+      abort();
+  }
+}
+#endif // ICU4XLocaleFallbackSupplement_HPP

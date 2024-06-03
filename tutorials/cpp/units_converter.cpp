@@ -11,16 +11,16 @@
 #include <iostream>
 
 int main() {
-  ICU4XDataProvider dp = ICU4XDataProvider::create_compiled();
-  auto converter_factory = ICU4XUnitsConverterFactory::create(dp).ok().value();
-  auto parser = converter_factory.parser();
-  auto from = parser.parse("meter").value();
-  auto to = parser.parse("foot").value();
-  auto converter = converter_factory.converter(from, to).value();
-  auto result = converter.convert_f64(1.0);
+  auto dp = ICU4XDataProvider::create_compiled();
+  auto converter_factory = ICU4XUnitsConverterFactory::create(*dp.get()).ok().value();
+  auto parser = converter_factory->parser();
+  auto from = parser->parse("meter");
+  auto to = parser->parse("foot");
+  auto converter = converter_factory->converter(*from.get(), *to.get());
+  auto result = converter->convert_f64(1.0);
 
-  auto converter_cloned = converter.clone();
-  auto result_cloned = converter_cloned.convert_f64(1.0);
+  auto converter_cloned = converter->clone();
+  auto result_cloned = converter_cloned->convert_f64(1.0);
 
   if (std::abs(result - 3.28084) > 0.00001 &&
       std::abs(result_cloned - 3.28084) > 0.00001) {
