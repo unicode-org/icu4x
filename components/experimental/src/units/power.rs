@@ -31,10 +31,10 @@ const POWERS_TRIE: ZeroTrieSimpleAscii<[u8; 64]> = ZeroTrieSimpleAscii::from_sor
 /// Extracts the power from the given CLDR ID part.
 ///     - If the power is not found, the function returns (1, part).
 ///     - If the power is found, the function will return (power, part without the string of the power).
-pub fn get_power(part: &str) -> (u8, &str) {
+pub fn get_power(part: &[u8]) -> (u8, &[u8]) {
     let mut cursor = POWERS_TRIE.cursor();
     let mut longest_match = (1, part);
-    for (i, b) in part.bytes().enumerate() {
+    for (i, &b) in part.iter().enumerate() {
         cursor.step(b);
         if cursor.is_empty() {
             break;

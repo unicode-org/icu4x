@@ -7,7 +7,7 @@ use std::marker::PhantomData;
 
 use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
-use crate::provider::IterableDataProviderInternal;
+use crate::provider::IterableDataProviderCached;
 use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
 use icu_properties::provider::*;
 use icu_provider::prelude::*;
@@ -47,13 +47,15 @@ macro_rules! exemplar_chars_impls {
             }
         }
 
-        impl IterableDataProviderInternal<$data_marker_name> for DatagenProvider {
-            fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
+        impl IterableDataProviderCached<$data_marker_name> for DatagenProvider {
+            fn supported_requests_cached(
+                &self,
+            ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
                 Ok(self
                     .cldr()?
                     .misc()
                     .list_langs()?
-                    .map(DataLocale::from)
+                    .map(|l| (DataLocale::from(l), Default::default()))
                     .collect())
             }
         }
@@ -320,7 +322,7 @@ fn string_to_prop_unicodeset(s: &str) -> PropertyUnicodeSetV1<'static> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_locid::locale;
+    use icu_locale_core::langid;
     use icu_properties::sets::UnicodeSetData;
 
     #[test]
@@ -511,8 +513,8 @@ mod tests {
 
         let data: DataPayload<ExemplarCharactersMainV1Marker> = provider
             .load(DataRequest {
-                locale: &DataLocale::from(locale!("en-001")),
-                metadata: Default::default(),
+                locale: &langid!("en-001").into(),
+                ..Default::default()
             })
             .unwrap()
             .take_payload()

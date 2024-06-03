@@ -108,8 +108,8 @@ macro_rules! impl_casting_upcast {
 /// icu_provider::impl_dynamic_data_provider!(HelloWorldProvider, [HelloWorldV1Marker,], AnyMarker);
 ///
 /// let req = DataRequest {
-///     locale: &icu_locid::locale!("de").into(),
-///     metadata: Default::default(),
+///     locale: &icu_locale_core::langid!("de").into(),
+///     ..Default::default()
 /// };
 ///
 /// // Successful because the key matches:
@@ -148,8 +148,8 @@ macro_rules! impl_casting_upcast {
 /// }, AnyMarker);
 ///
 /// let req = DataRequest {
-///     locale: &icu_locid::locale!("de").into(),
-///     metadata: Default::default(),
+///     locale: &icu_locale_core::langid!("de").into(),
+///     ..Default::default()
 /// };
 ///
 /// // Successful because the key matches:

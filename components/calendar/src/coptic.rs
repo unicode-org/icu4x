@@ -31,7 +31,6 @@
 //! assert_eq!(datetime_coptic.time.second.number(), 0);
 //! ```
 
-use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::iso::Iso;
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime, Time};
@@ -87,7 +86,7 @@ impl CalendarArithmetic for Coptic {
     }
 
     fn is_leap_year(year: i32, _data: ()) -> bool {
-        year % 4 == 3
+        year.rem_euclid(4) == 3
     }
 
     fn last_month_day_in_year(year: i32, _data: ()) -> (u8, u8) {
@@ -206,8 +205,8 @@ impl Calendar for Coptic {
         "Coptic"
     }
 
-    fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
-        Some(AnyCalendarKind::Coptic)
+    fn any_calendar_kind(&self) -> Option<crate::AnyCalendarKind> {
+        Some(crate::any_calendar::IntoAnyCalendar::kind(self))
     }
 }
 

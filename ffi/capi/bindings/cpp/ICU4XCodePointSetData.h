@@ -1,26 +1,24 @@
 #ifndef ICU4XCodePointSetData_H
 #define ICU4XCodePointSetData_H
+
 #include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
 #include "diplomat_runtime.h"
-
-#ifdef __cplusplus
-namespace capi {
-#endif
-
-typedef struct ICU4XCodePointSetData ICU4XCodePointSetData;
-#ifdef __cplusplus
-} // namespace capi
-#endif
+#include "CodePointRangeIterator.d.h"
 #include "CodePointRangeIterator.h"
+#include "ICU4XDataProvider.d.h"
 #include "ICU4XDataProvider.h"
-#include "diplomat_result_box_ICU4XCodePointSetData_ICU4XError.h"
+#include "diplomat_result_box_ICU4XCodePointSetData_ICU4XError.d.h"
+
+#include "ICU4XCodePointSetData.d.h"
+
 #ifdef __cplusplus
 namespace capi {
 extern "C" {
-#endif
+#endif // __cplusplus
+
 
 bool ICU4XCodePointSetData_contains(const ICU4XCodePointSetData* self, char32_t cp);
 
@@ -163,10 +161,13 @@ diplomat_result_box_ICU4XCodePointSetData_ICU4XError ICU4XCodePointSetData_load_
 diplomat_result_box_ICU4XCodePointSetData_ICU4XError ICU4XCodePointSetData_load_xid_start(const ICU4XDataProvider* provider);
 
 diplomat_result_box_ICU4XCodePointSetData_ICU4XError ICU4XCodePointSetData_load_for_ecma262(const ICU4XDataProvider* provider, const char* property_name_data, size_t property_name_len);
+
 void ICU4XCodePointSetData_destroy(ICU4XCodePointSetData* self);
+
 
 #ifdef __cplusplus
 } // extern "C"
 } // namespace capi
-#endif
-#endif
+#endif // __cplusplus
+
+#endif // ICU4XCodePointSetData_H

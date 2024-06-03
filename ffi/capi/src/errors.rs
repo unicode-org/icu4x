@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use self::ffi::ICU4XError;
-use core::fmt;
 #[cfg(feature = "icu_decimal")]
 use fixed_decimal::FixedDecimalError;
 #[cfg(any(
@@ -18,13 +17,11 @@ use icu_collator::CollatorError;
 use icu_datetime::DateTimeError;
 #[cfg(any(feature = "icu_decimal", feature = "icu_datetime"))]
 use icu_decimal::DecimalError;
-#[cfg(feature = "experimental_components")]
-use icu_experimental::units::ConversionError;
 #[cfg(feature = "icu_list")]
 use icu_list::ListError;
-use icu_locid::ParserError;
-#[cfg(feature = "icu_locid_transform")]
-use icu_locid_transform::LocaleTransformError;
+#[cfg(feature = "icu_locale")]
+use icu_locale::LocaleTransformError;
+use icu_locale_core::ParserError;
 #[cfg(feature = "icu_normalizer")]
 use icu_normalizer::NormalizerError;
 #[cfg(any(feature = "icu_plurals", feature = "icu_datetime"))]
@@ -36,7 +33,6 @@ use icu_provider::{DataError, DataErrorKind};
 use icu_segmenter::SegmenterError;
 #[cfg(any(feature = "icu_timezone", feature = "icu_datetime"))]
 use icu_timezone::TimeZoneError;
-use tinystr::TinyStrError;
 
 #[diplomat::bridge]
 pub mod ffi {
@@ -54,8 +50,8 @@ pub mod ffi {
     #[diplomat::rust_link(icu::datetime::MismatchedCalendarError, Struct, hidden)]
     #[diplomat::rust_link(icu::decimal::DecimalError, Enum, compact)]
     #[diplomat::rust_link(icu::list::ListError, Enum, compact)]
-    #[diplomat::rust_link(icu::locid::ParserError, Enum, compact)]
-    #[diplomat::rust_link(icu::locid_transform::LocaleTransformError, Enum, compact)]
+    #[diplomat::rust_link(icu::locale::ParserError, Enum, compact)]
+    #[diplomat::rust_link(icu::locale::LocaleTransformError, Enum, compact)]
     #[diplomat::rust_link(icu::normalizer::NormalizerError, Enum, compact)]
     #[diplomat::rust_link(icu::plurals::PluralsError, Enum, compact)]
     #[diplomat::rust_link(icu::properties::PropertiesError, Enum, compact)]
@@ -63,18 +59,10 @@ pub mod ffi {
     #[diplomat::rust_link(icu::provider::DataErrorKind, Enum, compact)]
     #[diplomat::rust_link(icu::segmenter::SegmenterError, Enum, compact)]
     #[diplomat::rust_link(icu::timezone::TimeZoneError, Enum, compact)]
-    #[diplomat::rust_link(icu_experimental::units::ConversionError, Enum, compact)]
     pub enum ICU4XError {
-        // general errors
         /// The error is not currently categorized as ICU4XError.
         /// Please file a bug
         UnknownError = 0x00,
-        /// An error arising from writing to a string
-        /// Typically found when not enough space is allocated
-        /// Most APIs that return a string may return this error
-        WriteableError = 0x01,
-        // Some input was out of bounds
-        OutOfBoundsError = 0x02,
 
         // general data errors
         // See DataError
@@ -94,8 +82,6 @@ pub mod ffi {
         DataMismatchedAnyBufferError = 0x1_0D,
 
         // locale errors
-        /// The subtag being requested was not set
-        LocaleUndefinedSubtagError = 0x2_00,
         /// The locale or subtag string failed to parse
         LocaleParserLanguageError = 0x2_01,
         LocaleParserSubtagError = 0x2_02,
@@ -139,6 +125,7 @@ pub mod ffi {
         DateTimeFixedDecimalError = 0x8_07,
         DateTimeMismatchedCalendarError = 0x8_08,
 
+        // dead
         // tinystr errors
         TinyStrTooLargeError = 0x9_00,
         TinyStrContainsNullError = 0x9_01,
@@ -147,16 +134,11 @@ pub mod ffi {
         // timezone errors
         TimeZoneOffsetOutOfBoundsError = 0xA_00,
         TimeZoneInvalidOffsetError = 0xA_01,
-        TimeZoneMissingInputError = 0xA_02,
         TimeZoneInvalidIdError = 0xA_03,
 
         // normalizer errors
         NormalizerFutureExtensionError = 0xB_00,
         NormalizerValidationError = 0xB_01,
-
-        // Units errors
-        #[cfg(feature = "experimental_components")]
-        InvalidCldrUnitIdentifierError = 0x0C_00,
     }
 }
 
@@ -178,12 +160,6 @@ impl ICU4XError {
     #[inline]
     pub(crate) fn log_original<T: core::fmt::Display + ?Sized>(self, _e: &T) -> Self {
         self
-    }
-}
-
-impl From<fmt::Error> for ICU4XError {
-    fn from(e: fmt::Error) -> Self {
-        ICU4XError::WriteableError.log_original(&e)
     }
 }
 
@@ -275,7 +251,6 @@ impl From<DateTimeError> for ICU4XError {
     fn from(e: DateTimeError) -> Self {
         match e {
             DateTimeError::Pattern(_) => ICU4XError::DateTimePatternError,
-            DateTimeError::Format(err) => err.into(),
             DateTimeError::Data(err) => err.into(),
             DateTimeError::MissingInputField(_) => ICU4XError::DateTimeMissingInputFieldError,
             // TODO(#1324): Add back skeleton errors
@@ -331,7 +306,7 @@ impl From<DecimalError> for ICU4XError {
     }
 }
 
-#[cfg(feature = "icu_locid_transform")]
+#[cfg(feature = "icu_locale")]
 impl From<LocaleTransformError> for ICU4XError {
     fn from(e: LocaleTransformError) -> Self {
         match e {
@@ -377,18 +352,6 @@ impl From<ParserError> for ICU4XError {
     }
 }
 
-impl From<TinyStrError> for ICU4XError {
-    fn from(e: TinyStrError) -> Self {
-        match e {
-            TinyStrError::TooLarge { .. } => ICU4XError::TinyStrTooLargeError,
-            TinyStrError::ContainsNull => ICU4XError::TinyStrContainsNullError,
-            TinyStrError::NonAscii => ICU4XError::TinyStrNonAsciiError,
-            _ => ICU4XError::UnknownError,
-        }
-        .log_original(&e)
-    }
-}
-
 #[cfg(any(feature = "icu_timezone", feature = "icu_datetime"))]
 impl From<TimeZoneError> for ICU4XError {
     fn from(e: TimeZoneError) -> Self {
@@ -412,15 +375,5 @@ impl From<NormalizerError> for ICU4XError {
             _ => ICU4XError::UnknownError,
         }
         .log_original(&e)
-    }
-}
-
-#[cfg(feature = "experimental_components")]
-impl From<ConversionError> for ICU4XError {
-    fn from(value: ConversionError) -> Self {
-        match value {
-            ConversionError::InvalidUnit => ICU4XError::InvalidCldrUnitIdentifierError,
-            _ => ICU4XError::UnknownError,
-        }
     }
 }

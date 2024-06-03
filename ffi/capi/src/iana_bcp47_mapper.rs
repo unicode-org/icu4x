@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#![allow(deprecated)] // these APIs are deprecated in Rust
+
 #[diplomat::bridge]
 pub mod ffi {
     use crate::errors::ffi::ICU4XError;
@@ -10,6 +12,7 @@ pub mod ffi {
     use icu_timezone::IanaBcp47RoundTripMapper;
     use icu_timezone::IanaToBcp47Mapper;
     use icu_timezone::TimeZoneBcp47Id;
+    use writeable::Writeable;
 
     /// An object capable of mapping from an IANA time zone ID to a BCP-47 ID.
     ///
@@ -50,15 +53,14 @@ pub mod ffi {
         pub fn get(
             &self,
             value: &DiplomatStr,
-            write: &mut diplomat_runtime::DiplomatWriteable,
+            write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), ICU4XError> {
-            use writeable::Writeable;
             let handle = self.0.as_borrowed();
-            if let Some(s) = handle.get_bytes(value) {
-                Ok(s.0.write_to(write)?)
-            } else {
-                Err(ICU4XError::TimeZoneInvalidIdError)
-            }
+            let s = handle
+                .get_bytes(value)
+                .ok_or(ICU4XError::TimeZoneInvalidIdError)?;
+            let _infallible = s.0.write_to(write);
+            Ok(())
         }
     }
 
@@ -97,16 +99,14 @@ pub mod ffi {
         pub fn get(
             &self,
             value: &DiplomatStr,
-            write: &mut diplomat_runtime::DiplomatWriteable,
+            write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), ICU4XError> {
-            use writeable::Writeable;
             let handle = self.0.as_borrowed();
-            tinystr::TinyAsciiStr::from_bytes(value)
+            let iana = tinystr::TinyAsciiStr::from_bytes(value)
                 .ok()
-                .map(TimeZoneBcp47Id)
-                .and_then(|bcp47_id| handle.bcp47_to_iana(bcp47_id))
-                .ok_or(ICU4XError::TimeZoneInvalidIdError)?
-                .write_to(write)?;
+                .and_then(|bcp47_id| handle.bcp47_to_iana(TimeZoneBcp47Id(bcp47_id)))
+                .ok_or(ICU4XError::TimeZoneInvalidIdError)?;
+            let _infallible = iana.write_to(write);
             Ok(())
         }
     }

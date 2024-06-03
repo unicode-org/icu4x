@@ -15,6 +15,7 @@
 use crate::islamic::IslamicYearInfo;
 use calendrical_calculations::islamic::IslamicBasedMarker;
 use calendrical_calculations::rata_die::RataDie;
+use core::fmt;
 use icu_provider::prelude::*;
 use zerovec::ule::{AsULE, ULE};
 use zerovec::ZeroVec;
@@ -78,12 +79,7 @@ impl<'data> IslamicCacheV1<'data> {
             return None;
         };
 
-        let days_in_prev_year = prev_packed.days_in_year();
-
-        Some(IslamicYearInfo::new(
-            days_in_prev_year == IslamicYearInfo::LONG_YEAR_LEN,
-            this_packed,
-        ))
+        Some(IslamicYearInfo::new(prev_packed, this_packed, extended_year).0)
     }
     /// Get the cached data for the Islamic Year corresponding to a given day.
     ///
@@ -108,11 +104,9 @@ impl<'data> IslamicCacheV1<'data> {
 
         if fixed < this_ny {
             let prev2_packed = self.data.get(delta - 2)?;
-            return Some((
-                IslamicYearInfo::new(
-                    prev2_packed.days_in_year() == IslamicYearInfo::LONG_YEAR_LEN,
-                    prev_packed,
-                ),
+            return Some(IslamicYearInfo::new(
+                prev2_packed,
+                prev_packed,
                 extended_year - 1,
             ));
         }
@@ -120,19 +114,15 @@ impl<'data> IslamicCacheV1<'data> {
         let next_ny = next_packed.ny::<IB>(extended_year + 1);
 
         if fixed >= next_ny {
-            Some((
-                IslamicYearInfo::new(
-                    this_packed.days_in_year() == IslamicYearInfo::LONG_YEAR_LEN,
-                    next_packed,
-                ),
+            Some(IslamicYearInfo::new(
+                this_packed,
+                next_packed,
                 extended_year + 1,
             ))
         } else {
-            Some((
-                IslamicYearInfo::new(
-                    prev_packed.days_in_year() == IslamicYearInfo::LONG_YEAR_LEN,
-                    this_packed,
-                ),
+            Some(IslamicYearInfo::new(
+                prev_packed,
+                this_packed,
                 extended_year,
             ))
         }
@@ -159,7 +149,7 @@ impl<'data> IslamicCacheV1<'data> {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[derive(Copy, Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord, ULE)]
+#[derive(Copy, Clone, Hash, PartialEq, Eq, PartialOrd, Ord, ULE)]
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),
@@ -168,6 +158,15 @@ impl<'data> IslamicCacheV1<'data> {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[repr(packed)]
 pub struct PackedIslamicYearInfo(pub u8, pub u8);
+
+impl fmt::Debug for PackedIslamicYearInfo {
+    fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
+        fmt.debug_struct("PackedIslamicYearInfo")
+            .field("ny_offset", &self.ny_offset())
+            .field("month_lengths", &self.month_lengths())
+            .finish()
+    }
+}
 
 impl PackedIslamicYearInfo {
     pub(crate) fn new(month_lengths: [bool; 12], ny_offset: i8) -> Self {
@@ -191,6 +190,11 @@ impl PackedIslamicYearInfo {
         all |= u16::from(ny_offset.unsigned_abs()) << 13;
         let le = all.to_le_bytes();
         Self(le[0], le[1])
+    }
+
+    fn month_lengths(self) -> [u8; 12] {
+        let months: [u8; 12] = core::array::from_fn(|i| 1 + i as u8);
+        months.map(|x| if self.month_has_30_days(x) { 30 } else { 29 })
     }
 
     // Get the new year offset from the mean synodic new year

@@ -22,6 +22,7 @@ use eyre::WrapErr;
 use icu_datagen::prelude::*;
 use icu_provider::datagen::ExportableProvider;
 use simple_logger::SimpleLogger;
+use std::collections::HashSet;
 use std::path::PathBuf;
 
 #[derive(Parser)]
@@ -33,7 +34,7 @@ struct Cli {
     #[arg(help = "Requests verbose output")]
     verbose: bool,
 
-    #[arg(long, value_enum, default_value_t = Format::DeprecatedDefault, hide_default_value = true)]
+    #[arg(long, value_enum)]
     #[arg(
         help = "Select the output format: a directory tree of files, a single blob, or a Rust module."
     )]
@@ -132,10 +133,6 @@ struct Cli {
     )]
     include_collations: Vec<CollationTable>,
 
-    #[arg(long, hide = true)]
-    #[arg(help = "Deprecated, use --locales full or --locales modern")]
-    cldr_locale_subset: bool,
-
     #[arg(long, short, num_args = 1..)]
     #[arg(
         help = "Include these resource keys in the output. Accepts multiple arguments.\n\
@@ -143,22 +140,9 @@ struct Cli {
     )]
     keys: Vec<String>,
 
-    #[arg(long, value_name = "KEY_FILE")]
-    #[arg(
-        help = "Path to text file with resource keys to include, one per line. Empty lines \
-                  and lines starting with '#' are ignored.\n
-                  Requires the `legacy_api` Cargo feature."
-    )]
-    #[cfg(feature = "legacy_api")]
-    key_file: Option<PathBuf>,
-
     #[arg(long, value_name = "BINARY")]
     #[arg(help = "Analyzes the binary and only includes keys that are used by the binary.")]
     keys_for_bin: Option<PathBuf>,
-
-    #[arg(long, hide = true)]
-    #[arg(help = "Deprecated: alias for --keys all")]
-    all_keys: bool,
 
     #[arg(long, short, num_args = 0..)]
     #[cfg_attr(feature = "provider", arg(default_value = "recommended"))]
@@ -169,10 +153,6 @@ struct Cli {
     )]
     locales: Vec<String>,
 
-    #[arg(long, hide = true)]
-    #[arg(help = "Deprecated: alias for --locales full")]
-    all_locales: bool,
-
     #[arg(long = "out", short, value_name = "PATH")]
     #[arg(
         help = "Path to output directory or file. Must be empty or non-existent, unless \
@@ -182,30 +162,16 @@ struct Cli {
     )]
     output: Option<PathBuf>,
 
-    #[arg(long, hide = true)]
-    #[arg(
-        help = "--format=mod only: insert feature gates for individual `icu_*` crates. Requires --use-separate-crates"
-    )]
-    insert_feature_gates: bool,
-
     #[arg(long)]
     #[arg(
         help = "--format=mod only: use types from individual `icu_*` crates instead of the `icu` meta-crate."
     )]
     use_separate_crates: bool,
 
-    // TODO(#2856): Change the default to Auto in 2.0
-    #[arg(short, long, value_enum, default_value_t = Fallback::Hybrid)]
-    #[arg(
-        hide = true,
-        help = "Deprecated: use --deduplication-strategy, --runtime-fallback-location, or --without-fallback"
-    )]
-    fallback: Fallback,
-
     #[arg(long)]
     #[arg(
         help = "disables locale fallback, instead exporting exactly the locales specified in --locales. \
-                Cannot be used with --deduplication-strategy, --runtime-fallback-location"
+                Cannot be used with --deduplication, --runtime-fallback-location"
     )]
     without_fallback: bool,
 
@@ -223,7 +189,7 @@ struct Cli {
                 if internal fallback is enabled, a more aggressive deduplication strategy is used. \
                 Cannot be used with --without-fallback"
     )]
-    deduplication_strategy: Option<DeduplicationStrategy>,
+    deduplication: Option<Deduplication>,
 
     #[arg(long, num_args = 0.., default_value = "recommended")]
     #[arg(
@@ -244,7 +210,6 @@ enum Format {
     Blob,
     Blob2,
     Mod,
-    DeprecatedDefault,
 }
 
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
@@ -301,8 +266,9 @@ enum Fallback {
 
 // Mirrors crate::DeduplicationStrategy
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
-enum DeduplicationStrategy {
+enum Deduplication {
     Maximal,
+    RetainBaseLanguages,
     None,
 }
 
@@ -331,11 +297,16 @@ fn main() -> eyre::Result<()> {
             .unwrap()
     }
 
+    enum PreprocessedLocales {
+        LanguageIdentifiers(Vec<LanguageIdentifier>),
+        Full,
+    }
+
     #[allow(unused_mut)]
     let mut preprocessed_locales = if cli.locales.as_slice() == ["none"] {
         Some(PreprocessedLocales::LanguageIdentifiers(vec![]))
-    } else if cli.locales.as_slice() == ["full"] || cli.all_locales {
-        Some(PreprocessedLocales::All)
+    } else if cli.locales.as_slice() == ["full"] {
+        Some(PreprocessedLocales::Full)
     } else {
         if cli.locales.as_slice() == ["all"] {
             log::warn!(
@@ -452,18 +423,10 @@ fn main() -> eyre::Result<()> {
 
     let mut driver = DatagenDriver::new();
 
-    driver = driver.with_keys(if cli.all_keys {
-        icu_datagen::all_keys()
-    } else if !cli.keys.is_empty() {
+    driver = driver.with_keys(if !cli.keys.is_empty() {
         match cli.keys.as_slice() {
             [x] if x == "none" => Default::default(),
             [x] if x == "all" => icu_datagen::all_keys(),
-            [x] if x == "experimental-all" => {
-                log::warn!("--keys=experimental-all is deprecated, using --keys=all.");
-                log::warn!("--keys=all behavior is dependent on activated Cargo features, so");
-                log::warn!("building with experimental features includes experimental keys");
-                icu_datagen::all_keys()
-            }
             keys => keys
                 .iter()
                 .map(|k| icu_datagen::key(k).ok_or(eyre::eyre!(k.to_string())))
@@ -472,30 +435,13 @@ fn main() -> eyre::Result<()> {
     } else if let Some(bin_path) = &cli.keys_for_bin {
         icu_datagen::keys_from_bin(bin_path)?.into_iter().collect()
     } else {
-        #[cfg(feature = "legacy_api")]
-        if let Some(key_file_path) = &cli.key_file {
-            log::warn!("The --key-file argument is deprecated.");
-            #[allow(deprecated)]
-            icu_datagen::keys_from_file(key_file_path)
-                .with_context(|| key_file_path.to_string_lossy().into_owned())?
-                .into_iter()
-                .collect()
-        } else {
-            eyre::bail!("--keys or --keys-for-bin are required.")
-        }
-        #[cfg(not(feature = "legacy_api"))]
         eyre::bail!("--keys or --keys-for-bin are required.")
     });
 
-    enum PreprocessedLocales {
-        LanguageIdentifiers(Vec<LanguageIdentifier>),
-        All,
-    }
-
-    if cli.without_fallback || matches!(cli.fallback, Fallback::Preresolved) {
+    if cli.without_fallback {
         driver = driver.with_locales_no_fallback(
             match preprocessed_locales {
-                Some(PreprocessedLocales::All) => {
+                Some(PreprocessedLocales::Full) => {
                     eyre::bail!("--without-fallback needs an explicit locale list")
                 }
                 Some(PreprocessedLocales::LanguageIdentifiers(lids)) => lids,
@@ -509,7 +455,7 @@ fn main() -> eyre::Result<()> {
         );
     } else {
         let locale_families = match preprocessed_locales {
-            Some(PreprocessedLocales::All) => vec![LocaleFamily::full()],
+            Some(PreprocessedLocales::Full) => vec![LocaleFamily::FULL],
             Some(PreprocessedLocales::LanguageIdentifiers(lids)) => lids
                 .into_iter()
                 .map(LocaleFamily::with_descendants)
@@ -520,52 +466,22 @@ fn main() -> eyre::Result<()> {
                 .map(|family_str| family_str.parse().wrap_err(family_str))
                 .collect::<eyre::Result<Vec<_>>>()?,
         };
-        let mut options: FallbackOptions = Default::default();
-        options.deduplication_strategy = match (
-            cli.deduplication_strategy,
-            cli.fallback,
-            cli.without_fallback,
-        ) {
-            (None, _, true) => None,
-            (Some(_), _, true) => {
-                eyre::bail!("cannot combine --without-fallback and --deduplication-strategy")
+        let mut options = FallbackOptions::default();
+        options.deduplication_strategy = match cli.deduplication {
+            Some(Deduplication::Maximal) => Some(icu_datagen::DeduplicationStrategy::Maximal),
+            Some(Deduplication::RetainBaseLanguages) => {
+                Some(icu_datagen::DeduplicationStrategy::RetainBaseLanguages)
             }
-            (Some(x), _, false) => match x {
-                DeduplicationStrategy::Maximal => Some(icu_datagen::DeduplicationStrategy::Maximal),
-                DeduplicationStrategy::None => Some(icu_datagen::DeduplicationStrategy::None),
-            },
-            (None, fallback_mode, false) => match fallback_mode {
-                Fallback::Auto => None,
-                Fallback::Hybrid => Some(icu_datagen::DeduplicationStrategy::None),
-                Fallback::Runtime => Some(icu_datagen::DeduplicationStrategy::Maximal),
-                Fallback::RuntimeManual => Some(icu_datagen::DeduplicationStrategy::Maximal),
-                Fallback::Preresolved => None,
-            },
+            Some(Deduplication::None) | None => Some(icu_datagen::DeduplicationStrategy::None),
         };
-        options.runtime_fallback_location = match (
-            cli.runtime_fallback_location,
-            cli.fallback,
-            cli.without_fallback,
-        ) {
-            (None, _, true) => None,
-            (Some(_), _, true) => {
-                eyre::bail!("cannot combine --without-fallback and --runtime-fallback-location")
-            }
-            (Some(RuntimeFallbackLocation::Internal), _, false) => {
+        options.runtime_fallback_location = match cli.runtime_fallback_location {
+            Some(RuntimeFallbackLocation::Internal) => {
                 Some(icu_datagen::RuntimeFallbackLocation::Internal)
             }
-            (Some(RuntimeFallbackLocation::External), _, false) => {
+            Some(RuntimeFallbackLocation::External) => {
                 Some(icu_datagen::RuntimeFallbackLocation::External)
             }
-            (None, Fallback::Auto, false) => None,
-            (None, Fallback::Hybrid, false) => Some(icu_datagen::RuntimeFallbackLocation::External),
-            (None, Fallback::Runtime, false) => {
-                Some(icu_datagen::RuntimeFallbackLocation::Internal)
-            }
-            (None, Fallback::RuntimeManual, false) => {
-                Some(icu_datagen::RuntimeFallbackLocation::External)
-            }
-            (None, Fallback::Preresolved, false) => None,
+            None => Some(icu_datagen::RuntimeFallbackLocation::External),
         };
         driver = driver.with_locales_and_fallback(locale_families, options);
     }
@@ -592,19 +508,13 @@ fn main() -> eyre::Result<()> {
         driver.with_segmenter_models(cli.segmenter_models.clone())
     };
 
-    if cli.format == Format::DeprecatedDefault {
-        log::warn!(
-            "Defaulting to --format=dir. This will become a required parameter in the future."
-        );
-    }
-
     match cli.format {
         #[cfg(not(feature = "fs_exporter"))]
-        Format::Dir | Format::DeprecatedDefault => {
+        Format::Dir => {
             eyre::bail!("Exporting to an FsProvider requires the `fs_exporter` Cargo feature")
         }
         #[cfg(feature = "fs_exporter")]
-        Format::Dir | Format::DeprecatedDefault => driver.export(&provider, {
+        Format::Dir => driver.export(&provider, {
             use icu_provider_fs::export::*;
 
             FilesystemExporter::try_new(
@@ -619,10 +529,6 @@ fn main() -> eyre::Result<()> {
                     options.root = cli.output.unwrap_or_else(|| PathBuf::from("icu4x_data"));
                     if cli.overwrite {
                         options.overwrite = OverwriteOption::RemoveAndReplace
-                    }
-                    #[allow(deprecated)] // obviously
-                    {
-                        options.fingerprint = cli.fingerprint;
                     }
                     options
                 },
@@ -662,7 +568,6 @@ fn main() -> eyre::Result<()> {
                 {
                     let mut options = icu_datagen::baked_exporter::Options::default();
                     options.pretty = cli.pretty;
-                    options.insert_feature_gates = cli.insert_feature_gates;
                     options.use_separate_crates = cli.use_separate_crates;
                     options.overwrite = cli.overwrite;
                     options
@@ -703,8 +608,8 @@ where
     BlobDataProvider: AsDeserializingBufferProvider,
     for<'a> DeserializingBufferProvider<'a, BlobDataProvider>: DataProvider<M>,
 {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        self.0.supported_locales_for_key(M::KEY)
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+        self.0.supported_requests_for_key(M::KEY)
     }
 }
 

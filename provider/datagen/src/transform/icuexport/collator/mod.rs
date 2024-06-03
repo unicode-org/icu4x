@@ -6,23 +6,21 @@
 //! exported from ICU.
 
 use crate::provider::DatagenProvider;
-use crate::provider::IterableDataProviderInternal;
+use crate::provider::IterableDataProviderCached;
 use icu_collator::provider::*;
 use icu_collections::codepointtrie::CodePointTrie;
-use icu_locid::extensions::unicode::key;
-use icu_locid::extensions::unicode::Value;
-use icu_locid::subtags::language;
-use icu_locid::subtags::Language;
-use icu_locid::subtags::Region;
-use icu_locid::subtags::Script;
-use icu_locid::LanguageIdentifier;
-use icu_locid::Locale;
-use icu_locid_transform::provider::CollationFallbackSupplementV1Marker;
-use icu_locid_transform::provider::LocaleFallbackSupplementV1;
+use icu_locale::provider::CollationFallbackSupplementV1Marker;
+use icu_locale::provider::LocaleFallbackSupplementV1;
+use icu_locale_core::extensions::unicode::{key, value};
+use icu_locale_core::subtags::language;
+use icu_locale_core::subtags::Language;
+use icu_locale_core::subtags::Region;
+use icu_locale_core::subtags::Script;
+use icu_locale_core::LanguageIdentifier;
+use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 use std::convert::TryFrom;
-use std::str::FromStr;
 use writeable::Writeable;
 use zerovec::ule::UnvalidatedStr;
 use zerovec::ZeroVec;
@@ -36,24 +34,62 @@ impl DataProvider<CollationFallbackSupplementV1Marker> for DatagenProvider {
     ) -> Result<DataResponse<CollationFallbackSupplementV1Marker>, DataError> {
         self.check_req::<CollationFallbackSupplementV1Marker>(req)?;
 
-        let data = LocaleFallbackSupplementV1 {
-            parents: self
-                .cldr()?
-                .core()
-                .read_and_parse::<crate::provider::transform::cldr::cldr_serde::parent_locales::Resource>(
-                    "supplemental/parentLocales.json",
-                )?
-                .supplemental
-                .parent_locales
-                .collations
-                .iter()
-                .map(|(from, to)| {
-                    (
-                        <&UnvalidatedStr>::from(from.as_str()),
-                        <(Language, Option<Script>, Option<Region>)>::from(to),
+        let parent_locales = &self
+            .cldr()?
+            .core()
+            .read_and_parse::<crate::provider::transform::cldr::cldr_serde::parent_locales::Resource>(
+                "supplemental/parentLocales.json",
+            )?.supplemental.parent_locales;
+
+        let additional = if parent_locales
+            .rules
+            .collations
+            .as_ref()
+            .map(|c| &c.non_likely_scripts)
+            != Some(&String::from("root"))
+        {
+            let collation_locales = self
+                .icuexport()?
+                .list(&format!("collation/{}", self.collation_han_database()))?
+                .filter_map(|s| {
+                    Some(
+                        file_name_to_locale(
+                            s.rsplit_once('_')?.0,
+                            self.has_legacy_swedish_variants(),
+                        )?
+                        .language(),
                     )
                 })
-                .collect(),
+                .collect::<HashSet<_>>();
+
+            parent_locales
+                .parent_locale
+                .iter()
+                .filter(|(k, _)| collation_locales.contains(&k.language))
+                .filter(|(from, to)| {
+                    // Script gets removed while language changes. For collation we want to insert the script-removal as its
+                    // own step.
+                    from.script.is_some() && to.script.is_none() && from.language != to.language
+                })
+                .map(|(from, _)| (from.to_string(), (from.language, None, from.region)))
+                .collect()
+        } else {
+            HashSet::new()
+        };
+
+        let parents = additional
+            .iter()
+            .map(|(k, v)| (UnvalidatedStr::from_str(k), *v))
+            .chain(parent_locales.collations.iter().map(|(from, to)| {
+                (
+                    <&UnvalidatedStr>::from(from.as_str()),
+                    <(Language, Option<Script>, Option<Region>)>::from(to),
+                )
+            }))
+            .collect();
+
+        let data = LocaleFallbackSupplementV1 {
+            parents,
             unicode_extension_defaults: [
                 (
                     key!("co"),
@@ -76,8 +112,8 @@ impl DataProvider<CollationFallbackSupplementV1Marker> for DatagenProvider {
     }
 }
 
-impl IterableDataProviderInternal<CollationFallbackSupplementV1Marker> for DatagenProvider {
-    fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
+impl IterableDataProvider<CollationFallbackSupplementV1Marker> for DatagenProvider {
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
@@ -129,14 +165,13 @@ fn locale_to_file_name(locale: &DataLocale, has_legacy_swedish_variants: bool) -
     s
 }
 
-fn file_name_to_locale(file_name: &str, has_legacy_swedish_variants: bool) -> Option<Locale> {
+fn file_name_to_locale(file_name: &str, has_legacy_swedish_variants: bool) -> Option<DataLocale> {
     let (language, variant) = file_name.rsplit_once('_').unwrap();
-    let langid = if language == "root" {
-        LanguageIdentifier::UND
+    let mut locale = if language == "root" {
+        DataLocale::default()
     } else {
         language.parse().ok()?
     };
-    let mut locale = Locale::from(langid);
 
     // See above for the two special cases.
     if language == "zh" {
@@ -152,17 +187,17 @@ fn file_name_to_locale(file_name: &str, has_legacy_swedish_variants: bool) -> Op
         return Some(locale);
     }
 
-    let shortened = match variant {
-        "traditional" => "trad",
-        "phonebook" => "phonebk",
-        "dictionary" => "dict",
-        "gb2312han" => "gb2312",
-        _ => variant,
-    };
-    locale.extensions.unicode.keywords.set(
+    locale.set_unicode_ext(
         key!("co"),
-        Value::from_str(shortened).expect("valid extension subtag"),
+        match variant {
+            "traditional" => value!("trad"),
+            "phonebook" => value!("phonebk"),
+            "dictionary" => value!("dict"),
+            "gb2312han" => value!("gb2312"),
+            _ => variant.parse().unwrap(),
+        },
     );
+
     Some(locale)
 }
 
@@ -198,8 +233,8 @@ macro_rules! collation_provider {
                 }
             }
 
-            impl IterableDataProviderInternal<$marker> for DatagenProvider {
-                fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
+            impl IterableDataProviderCached<$marker> for DatagenProvider {
+                fn supported_requests_cached(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
                     Ok(self
                         .icuexport()?
                         .list(&format!(
@@ -214,7 +249,7 @@ macro_rules! collation_provider {
                             })
                         })
                         .filter_map(|s| file_name_to_locale(&s, self.has_legacy_swedish_variants()))
-                        .map(DataLocale::from)
+                        .map(|l| (DataLocale::from(l), Default::default()))
                         .collect())
                 }
             }

@@ -81,6 +81,15 @@ use core::fmt;
 
 pub use try_writeable::TryWriteable;
 
+/// Helper types for trait impls.
+pub mod adapters {
+    use super::*;
+
+    pub use parts_write_adapter::CoreWriteAsPartsWrite;
+    pub use try_writeable::TryWriteableInfallibleAsWriteable;
+    pub use try_writeable::WriteableAsTryWriteableInfallible;
+}
+
 #[doc(hidden)]
 pub mod _internal {
     pub use super::testing::try_writeable_to_parts_for_test;

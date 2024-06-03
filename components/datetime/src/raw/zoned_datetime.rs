@@ -13,8 +13,7 @@ use icu_provider::prelude::*;
 
 use crate::{
     format::{datetime, zoned_datetime::FormattedZonedDateTime},
-    input::{DateTimeInput, TimeZoneInput},
-    input::{ExtractedDateTimeInput, ExtractedTimeZoneInput},
+    input::{DateTimeInput, ExtractedTimeZoneInput, TimeZoneInput},
     pattern::runtime::PatternPlurals,
     provider::{
         self,
@@ -50,7 +49,7 @@ impl ZonedDateTimeFormatter {
 
         let req = DataRequest {
             locale,
-            metadata: Default::default(),
+            ..Default::default()
         };
 
         let week_data = if required.week_data {
@@ -135,7 +134,7 @@ impl ZonedDateTimeFormatter {
 
         let req = DataRequest {
             locale,
-            metadata: Default::default(),
+            ..Default::default()
         };
 
         let week_data = if required.week_data {
@@ -144,7 +143,7 @@ impl ZonedDateTimeFormatter {
                     provider,
                     DataRequest {
                         locale,
-                        metadata: Default::default(),
+                        ..Default::default()
                     },
                 )?
                 .take_payload()?
@@ -217,8 +216,8 @@ impl ZonedDateTimeFormatter {
     ) -> FormattedZonedDateTime<'l> {
         // Todo: optimize extraction #2143
         FormattedZonedDateTime {
-            zoned_datetime_format: self,
-            datetime: ExtractedDateTimeInput::extract_from(date),
+            formatted_datetime: self.datetime_format.format(date),
+            time_zone_format: &self.time_zone_format,
             time_zone: ExtractedTimeZoneInput::extract_from(time_zone),
         }
     }

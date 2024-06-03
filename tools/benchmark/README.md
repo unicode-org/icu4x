@@ -15,7 +15,7 @@ chart to allow seeing how memory changes over time.
 cargo run --package icu_benchmark_memory
 
 # Run memory benchmarks on examples "filter_langids" and "work_log"
-cargo run --package icu_benchmark_memory -- icu_locid/filter_langids icu_datetime/work_log
+cargo run --package icu_benchmark_memory -- icu_locale_core/filter_langids icu_datetime/work_log
 
 # In CI, include the OS, and the data will be saved out per-OS.
 cargo run --package icu_benchmark_memory -- --os macos-latest icu_datetime/work_log

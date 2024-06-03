@@ -9,10 +9,12 @@ use alloc::format;
 use alloc::string::{String, ToString};
 use alloc::vec::Vec;
 use core::cell::RefCell;
-use icu_locid::Locale;
+use icu_locale_core::Locale;
 use icu_normalizer::provider::*;
 use icu_properties::{provider::*, sets, PropertiesError};
 use icu_provider::prelude::*;
+#[cfg(feature = "datagen")]
+use std::collections::HashSet;
 
 mod parse;
 mod pass1;
@@ -94,7 +96,7 @@ pub struct RuleCollection {
     id_mapping: BTreeMap<String, Locale>, // alias -> bcp id
     // these two maps need to lock together
     data: RefCell<(
-        BTreeMap<String, (String, bool, bool)>, // locale -> source/reverse/visible
+        BTreeMap<String, (String, bool, bool)>, // key-attributes -> source/reverse/visible
         BTreeMap<String, Result<DataResponse<TransliteratorRulesV1Marker>, DataError>>, // cache
     )>,
 }
@@ -103,14 +105,14 @@ impl RuleCollection {
     /// Add a new transliteration source to the collection.
     pub fn register_source<'a>(
         &mut self,
-        id: &icu_locid::Locale,
+        id: &icu_locale_core::Locale,
         source: String,
         aliases: impl IntoIterator<Item = &'a str>,
         reverse: bool,
         visible: bool,
     ) {
         self.data.borrow_mut().0.insert(
-            super::ids::bcp47_to_data_locale(id).to_string(),
+            id.to_string().to_ascii_lowercase(),
             (source, reverse, visible),
         );
 
@@ -316,16 +318,16 @@ where
         &self,
         req: DataRequest,
     ) -> Result<DataResponse<TransliteratorRulesV1Marker>, DataError> {
-        let locale = req.locale.to_string();
-
         let mut exclusive_data = self.collection.data.borrow_mut();
 
-        if let Some(response) = exclusive_data.1.get(&locale) {
+        if let Some(response) = exclusive_data.1.get(req.key_attributes as &str) {
             return response.clone();
         };
 
-        let result = |value: Option<(String, bool, bool)>| -> Result<DataResponse<TransliteratorRulesV1Marker>, DataError> {
-            let Some((source, reverse, visible)) = value else {
+        let result = || -> Result<DataResponse<TransliteratorRulesV1Marker>, DataError> {
+            let Some((source, reverse, visible)) =
+                exclusive_data.0.remove(req.key_attributes as &str)
+            else {
                 return Err(
                     DataErrorKind::MissingLocale.with_req(TransliteratorRulesV1Marker::KEY, req)
                 );
@@ -376,9 +378,11 @@ where
                 metadata: Default::default(),
                 payload: Some(DataPayload::from_owned(transliterator)),
             })
-        }(exclusive_data.0.remove(&locale));
+        }();
 
-        exclusive_data.1.insert(locale, result.clone());
+        exclusive_data
+            .1
+            .insert(req.key_attributes.to_string(), result.clone());
 
         result
     }
@@ -472,16 +476,15 @@ where
         + DataProvider<XidStartV1Marker>,
     NP: ?Sized,
 {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
         let exclusive_data = self.collection.data.borrow();
-        #[allow(clippy::unwrap_used)] // the maps' keys are valid DataLocales
         Ok(exclusive_data
             .0
             .keys()
             .cloned()
             .chain(exclusive_data.1.keys().cloned())
-            .map(|s| s.parse().unwrap())
-            .collect::<Vec<_>>())
+            .filter_map(|s| Some((Default::default(), s.parse().ok()?)))
+            .collect())
     }
 }
 
@@ -595,7 +598,7 @@ mod tests {
 
     use super::*;
     use crate::transliterate::provider as ds;
-    use icu_locid::locale;
+    use icu_locale_core::locale;
     use std::collections::HashSet;
     use zerovec::VarZeroVec;
 
@@ -647,8 +650,8 @@ mod tests {
         let forward: DataPayload<TransliteratorRulesV1Marker> = collection
             .as_provider()
             .load(DataRequest {
-                locale: &super::super::ids::bcp47_to_data_locale(&locale!("fwd")),
-                metadata: Default::default(),
+                key_attributes: &"fwd".parse().unwrap(),
+                ..Default::default()
             })
             .unwrap()
             .take_payload()
@@ -657,8 +660,8 @@ mod tests {
         let reverse: DataPayload<TransliteratorRulesV1Marker> = collection
             .as_provider()
             .load(DataRequest {
-                locale: &super::super::ids::bcp47_to_data_locale(&locale!("rev")),
-                metadata: Default::default(),
+                key_attributes: &"rev".parse().unwrap(),
+                ..Default::default()
             })
             .unwrap()
             .take_payload()

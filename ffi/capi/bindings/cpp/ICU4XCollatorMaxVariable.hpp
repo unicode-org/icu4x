@@ -1,27 +1,32 @@
 #ifndef ICU4XCollatorMaxVariable_HPP
 #define ICU4XCollatorMaxVariable_HPP
+
+#include "ICU4XCollatorMaxVariable.d.hpp"
+
+#include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
-#include <algorithm>
 #include <memory>
-#include <variant>
 #include <optional>
 #include "diplomat_runtime.hpp"
-
 #include "ICU4XCollatorMaxVariable.h"
 
 
+inline capi::ICU4XCollatorMaxVariable ICU4XCollatorMaxVariable::AsFFI() const {
+  return static_cast<capi::ICU4XCollatorMaxVariable>(value);
+}
 
-/**
- * See the [Rust documentation for `MaxVariable`](https://docs.rs/icu/latest/icu/collator/enum.MaxVariable.html) for more information.
- */
-enum struct ICU4XCollatorMaxVariable {
-  Auto = 0,
-  Space = 1,
-  Punctuation = 2,
-  Symbol = 3,
-  Currency = 4,
-};
-
-#endif
+inline ICU4XCollatorMaxVariable ICU4XCollatorMaxVariable::FromFFI(capi::ICU4XCollatorMaxVariable c_enum) {
+  switch (c_enum) {
+    case capi::ICU4XCollatorMaxVariable_Auto:
+    case capi::ICU4XCollatorMaxVariable_Space:
+    case capi::ICU4XCollatorMaxVariable_Punctuation:
+    case capi::ICU4XCollatorMaxVariable_Symbol:
+    case capi::ICU4XCollatorMaxVariable_Currency:
+      return static_cast<ICU4XCollatorMaxVariable::Value>(c_enum);
+    default:
+      abort();
+  }
+}
+#endif // ICU4XCollatorMaxVariable_HPP

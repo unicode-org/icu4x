@@ -11,6 +11,7 @@ use icu_timezone::provider::names::*;
 use icu_timezone::TimeZoneBcp47Id;
 use std::collections::BTreeMap;
 use std::collections::BTreeSet;
+use std::collections::HashSet;
 use std::hash::Hasher;
 use zerotrie::{ZeroAsciiIgnoreCaseTrie, ZeroTriePerfectHash};
 use zerovec::{ZeroSlice, ZeroVec};
@@ -58,8 +59,8 @@ impl DataProvider<IanaToBcp47MapV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProvider<IanaToBcp47MapV1Marker> for DatagenProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        Ok(vec![Default::default()])
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+        Ok(HashSet::from_iter([Default::default()]))
     }
 }
 
@@ -112,8 +113,8 @@ impl DataProvider<IanaToBcp47MapV2Marker> for DatagenProvider {
 }
 
 impl IterableDataProvider<IanaToBcp47MapV2Marker> for DatagenProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        Ok(vec![Default::default()])
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+        Ok(HashSet::from_iter([Default::default()]))
     }
 }
 
@@ -144,8 +145,8 @@ impl DataProvider<Bcp47ToIanaMapV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProvider<Bcp47ToIanaMapV1Marker> for DatagenProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        Ok(vec![Default::default()])
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+        Ok(HashSet::from_iter([Default::default()]))
     }
 }
 
@@ -243,4 +244,32 @@ fn test_compute_bcp47_ids_hash() {
     assert_ne!(checksum3, checksum6);
     assert_ne!(checksum4, checksum5);
     assert_ne!(checksum4, checksum6);
+}
+
+/// Tests that all IANA time zone IDs normalize and canonicalize to their correct form.
+#[test]
+fn test_normalize_canonicalize_iana_coverage() {
+    let provider = crate::DatagenProvider::new_testing();
+
+    let resource: &cldr_serde::time_zones::bcp47_tzid::Resource = provider
+        .cldr()
+        .unwrap()
+        .bcp47()
+        .read_and_parse("timezone.json")
+        .unwrap();
+    let iana2bcp = &compute_bcp47_tzids_btreemap(&resource.keyword.u.time_zones.values);
+
+    let mapper = icu_timezone::TimeZoneIdMapper::try_new_unstable(&provider).unwrap();
+    let mapper = mapper.as_borrowed();
+
+    for iana_id in iana2bcp.keys() {
+        let normalized = mapper.normalize_iana(iana_id).unwrap().0;
+        assert_eq!(&normalized, iana_id);
+    }
+
+    let bcp2iana = compute_canonical_tzids_btreemap(&resource.keyword.u.time_zones.values);
+    for (iana_id, bcp47_id) in iana2bcp.iter() {
+        let canonicalized = mapper.canonicalize_iana(iana_id).unwrap().0;
+        assert_eq!(&canonicalized, bcp2iana.get(bcp47_id).unwrap());
+    }
 }

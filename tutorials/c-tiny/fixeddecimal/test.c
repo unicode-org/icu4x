@@ -31,11 +31,11 @@ int main(int argc, char *argv[]) {
     ICU4XFixedDecimalFormatter* fdf = fdf_result.ok;
     char output[40];
 
-    DiplomatWriteable write = diplomat_simple_writeable(output, 40);
+    DiplomatWrite write = diplomat_simple_write(output, 40);
 
-    bool success = ICU4XFixedDecimalFormatter_format(fdf, decimal, &write).is_ok;
-    if (!success) {
-        printf("Failed to write result of FixedDecimalFormatter::format to string.\n");
+    ICU4XFixedDecimalFormatter_format(fdf, decimal, &write);
+    if (write.grow_failed) {
+        printf("format overflowed the string.\n");
         return 1;
     }
     printf("Output is %s\n", output);

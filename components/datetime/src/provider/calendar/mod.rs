@@ -17,7 +17,6 @@ pub use symbols::*;
 size_test!(DateLengthsV1, date_lengths_v1_size, 224);
 
 /// Pattern data for dates.
-///
 #[doc = date_lengths_v1_size!()]
 ///
 /// <div class="stab unstable">
@@ -66,7 +65,6 @@ impl DataMarker for ErasedDateLengthsV1Marker {
 size_test!(TimeLengthsV1, time_lengths_v1_size, 264);
 
 /// Pattern data for times.
-///
 #[doc = time_lengths_v1_size!()]
 ///
 /// <div class="stab unstable">

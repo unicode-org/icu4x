@@ -149,8 +149,8 @@ pub(in crate::provider) fn extract_conversion_info<'data>(
     let factor_fraction = convert_slices_to_fraction(&factor.clean_num, &factor.clean_den)?;
     let offset_fraction = convert_slices_to_fraction(&offset.clean_num, &offset.clean_den)?;
 
-    let (factor_num, factor_den, factor_sign) = flatten_fraction(&factor_fraction);
-    let (offset_num, offset_den, offset_sign) = flatten_fraction(&offset_fraction);
+    let (factor_num, factor_den, factor_sign) = flatten_fraction(factor_fraction);
+    let (offset_num, offset_den, offset_sign) = flatten_fraction(offset_fraction);
 
     let exactness = if factor.exactness == Exactness::Exact && offset.exactness == Exactness::Exact
     {
@@ -159,7 +159,7 @@ pub(in crate::provider) fn extract_conversion_info<'data>(
         Exactness::Approximate
     };
 
-    let base_unit = match parser.try_from_identifier(base_unit) {
+    let base_unit = match parser.try_from_bytes(base_unit.as_bytes()) {
         Ok(base_unit) => base_unit,
         Err(_) => return Err(DataError::custom("the base unit is not valid")),
     };
@@ -193,7 +193,7 @@ pub(in crate::provider) fn process_constants<'a>(
         if constant.is_free_of_non_scientific() {
             clean_constants_map.insert(cons_name, constant);
         } else {
-            constants_with_non_scientific.push_back((&cons_name, constant));
+            constants_with_non_scientific.push_back((cons_name, constant));
         }
     }
     let mut no_update_count = 0;
@@ -309,7 +309,7 @@ pub(in crate::provider) fn is_scientific_number(s: &str) -> bool {
 }
 
 /// Converts a fractional number into its byte representation for numerator and denominator, along with its sign.
-pub(in crate::provider) fn flatten_fraction(fraction: &IcuRatio) -> (Vec<u8>, Vec<u8>, Sign) {
+pub(in crate::provider) fn flatten_fraction(fraction: IcuRatio) -> (Vec<u8>, Vec<u8>, Sign) {
     let fraction = fraction.get_ratio();
     let numer_bytes = fraction.numer().to_bytes_le().1;
     let denom_bytes = fraction.denom().to_bytes_le().1;

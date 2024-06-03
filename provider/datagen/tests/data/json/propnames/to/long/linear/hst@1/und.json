@@ -1,0 +1,10 @@
+{
+  "map": [
+    "Not_Applicable",
+    "Leading_Jamo",
+    "Vowel_Jamo",
+    "Trailing_Jamo",
+    "LV_Syllable",
+    "LVT_Syllable"
+  ]
+}

@@ -13,7 +13,11 @@ fn main() -> std::io::Result<()> {
 
     diplomat_tool::gen(
         &capi.join("src/lib.rs"),
-        &lang,
+        match lang.as_str() {
+            "cpp" => "cpp2",
+            "c" => "c2",
+            l => l,
+        },
         &{
             let include = capi.join("bindings").join(&lang);
             std::fs::remove_dir_all(&include)?;

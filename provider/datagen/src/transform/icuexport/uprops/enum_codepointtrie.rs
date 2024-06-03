@@ -8,6 +8,7 @@ use icu_properties::provider::{names::*, *};
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;
+use std::collections::HashSet;
 use std::convert::TryFrom;
 use tinystr::TinyStr4;
 
@@ -244,11 +245,9 @@ macro_rules! expand {
             }
 
             impl IterableDataProvider<$marker> for DatagenProvider {
-                fn supported_locales(
-                    &self,
-                ) -> Result<Vec<DataLocale>, DataError> {
+                fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError>  {
                     self.get_enumerated_prop($prop_name)?;
-                    Ok(vec![Default::default()])
+                    Ok(HashSet::from_iter([Default::default()]))
                 }
             }
 
@@ -269,11 +268,9 @@ macro_rules! expand {
             }
 
             impl IterableDataProvider<$marker_n2e> for DatagenProvider {
-                fn supported_locales(
-                    &self,
-                ) -> Result<Vec<DataLocale>, DataError> {
+                                fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError>  {
                     self.get_enumerated_prop($prop_name)?;
-                    Ok(vec![Default::default()])
+                    Ok(HashSet::from_iter([Default::default()]))
                 }
             }
 
@@ -287,11 +284,9 @@ macro_rules! expand {
                 }
 
                 impl IterableDataProvider<$marker_e2sns> for DatagenProvider {
-                    fn supported_locales(
-                        &self,
-                    ) -> Result<Vec<DataLocale>, DataError> {
+                    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError>  {
                         self.get_enumerated_prop($prop_name)?;
-                        Ok(vec![Default::default()])
+                        Ok(HashSet::from_iter([Default::default()]))
                     }
                 }
 
@@ -304,11 +299,9 @@ macro_rules! expand {
                 }
 
                 impl IterableDataProvider<$marker_e2lns> for DatagenProvider {
-                    fn supported_locales(
-                        &self,
-                    ) -> Result<Vec<DataLocale>, DataError> {
+                    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError>  {
                         self.get_enumerated_prop($prop_name)?;
-                        Ok(vec![Default::default()])
+                        Ok(HashSet::from_iter([Default::default()]))
                     }
                 }
             )?
@@ -323,11 +316,9 @@ macro_rules! expand {
                 }
 
                 impl IterableDataProvider<$marker_e2snl> for DatagenProvider {
-                    fn supported_locales(
-                        &self,
-                    ) -> Result<Vec<DataLocale>, DataError> {
+                    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError>  {
                         self.get_enumerated_prop($prop_name)?;
-                        Ok(vec![Default::default()])
+                        Ok(HashSet::from_iter([Default::default()]))
                     }
                 }
 
@@ -340,11 +331,9 @@ macro_rules! expand {
                 }
 
                 impl IterableDataProvider<$marker_e2lnl> for DatagenProvider {
-                    fn supported_locales(
-                        &self,
-                    ) -> Result<Vec<DataLocale>, DataError> {
+                    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError>  {
                         self.get_enumerated_prop($prop_name)?;
-                        Ok(vec![Default::default()])
+                        Ok(HashSet::from_iter([Default::default()]))
                     }
                 }
             )?
@@ -359,11 +348,9 @@ macro_rules! expand {
                 }
 
                 impl IterableDataProvider<$marker_e2snl4> for DatagenProvider {
-                    fn supported_locales(
-                        &self,
-                    ) -> Result<Vec<DataLocale>, DataError> {
+                    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError>  {
                         self.get_enumerated_prop($prop_name)?;
-                        Ok(vec![Default::default()])
+                        Ok(HashSet::from_iter([Default::default()]))
                     }
                 }
 
@@ -377,11 +364,9 @@ macro_rules! expand {
                 }
 
                 impl IterableDataProvider<$marker_e2lnl4> for DatagenProvider {
-                    fn supported_locales(
-                        &self,
-                    ) -> Result<Vec<DataLocale>, DataError> {
+                    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError>  {
                         self.get_enumerated_prop($prop_name)?;
-                        Ok(vec![Default::default()])
+                        Ok(HashSet::from_iter([Default::default()]))
                     }
                 }
             )?
@@ -420,9 +405,9 @@ impl DataProvider<GeneralCategoryMaskNameToValueV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProvider<GeneralCategoryMaskNameToValueV1Marker> for DatagenProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
         self.get_mask_prop("gcm")?;
-        Ok(vec![Default::default()])
+        Ok(HashSet::from_iter([Default::default()]))
     }
 }
 
@@ -462,6 +447,15 @@ expand!(
             ScriptValueToLongNameV1Marker
         ),
         "sc"
+    ),
+    (
+        HangulSyllableTypeV1Marker,
+        HangulSyllableTypeNameToValueV1Marker,
+        (
+            linear: HangulSyllableTypeValueToShortNameV1Marker,
+            HangulSyllableTypeValueToLongNameV1Marker
+        ),
+        "hst"
     ),
     (
         EastAsianWidthV1Marker,

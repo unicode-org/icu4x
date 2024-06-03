@@ -6,9 +6,9 @@
 #[macro_export]
 macro_rules! __impl_datetime_chinese_datelengths_v1 {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.67"]
+        #[clippy::msrv = "1.70"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
-        #[clippy::msrv = "1.67"]
+        #[clippy::msrv = "1.70"]
         impl icu_provider::DataProvider<icu::datetime::provider::calendar::ChineseDateLengthsV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::datetime::provider::calendar::ChineseDateLengthsV1Marker>, icu_provider::DataError> {
                 static HR: <icu::datetime::provider::calendar::ChineseDateLengthsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::calendar::DateLengthsV1 { date: icu::datetime::provider::calendar::patterns::LengthPatternsV1 { full: icu::datetime::pattern::runtime::Pattern { items: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x80P\x01\0\0,\0\0 \x80@\x01\0\0.\0\0 \x80 \x01\0\0.\0\0 \x80\x10\x01\0\0.") }, metadata: icu::datetime::pattern::runtime::PatternMetadata::from_time_granularity(icu::datetime::pattern::TimeGranularity::None) }, long: icu::datetime::pattern::runtime::Pattern { items: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x80@\x01\0\0.\0\0 \x80 \x01\0\0.\0\0 \x80\x10\x01\0\0.") }, metadata: icu::datetime::pattern::runtime::PatternMetadata::from_time_granularity(icu::datetime::pattern::TimeGranularity::None) }, medium: icu::datetime::pattern::runtime::Pattern { items: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x80@\x01\0\0.\0\0 \x80 \x01\0\0.\0\0 \x80\x10\x01\0\0.") }, metadata: icu::datetime::pattern::runtime::PatternMetadata::from_time_granularity(icu::datetime::pattern::TimeGranularity::None) }, short: icu::datetime::pattern::runtime::Pattern { items: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x80@\x01\0\0.\0\0 \x80 \x01\0\0.\0\0 \x80\x10\x01\0\0.") }, metadata: icu::datetime::pattern::runtime::PatternMetadata::from_time_granularity(icu::datetime::pattern::TimeGranularity::None) } }, length_combinations: icu::datetime::provider::calendar::patterns::GenericLengthPatternsV1 { full: icu::datetime::pattern::runtime::GenericPattern { items: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x80\0\x01\0\0 \x80\0\0") } }, long: icu::datetime::pattern::runtime::GenericPattern { items: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x80\0\x01\0\0 \x80\0\0") } }, medium: icu::datetime::pattern::runtime::GenericPattern { items: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x80\0\x01\0\0 \x80\0\0") } }, short: icu::datetime::pattern::runtime::GenericPattern { items: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x80\0\x01\0\0 \x80\0\0") } } } };
@@ -56,13 +56,13 @@ macro_rules! __impl_datetime_chinese_datelengths_v1 {
                 static VALUES: [&<icu::datetime::provider::calendar::ChineseDateLengthsV1Marker as icu_provider::DataMarker>::Yokeable; 48usize] = [&BR, &BS, &CA, &CS, &DE, &EN, &EN_001, &EN_001, &EN_CA, &EN_CH, &ES, &FF_ADLM, &FI, &FR, &FY, &GD, &HR, &ID, &IT, &JA, &KGP, &KO, &DE, &ID, &LT, &MN, &MS, &FY, &NO, &PL, &PT, &PT_PT, &RU, &SC, &SV, &TA, &TH, &UG, &UND, &VI, &YRL, &YUE, &YUE_HANS, &YUE_HANS, &ZH_HK, &ZH_HANT, &ZH_HK, &ZH_SG];
                 static KEYS: [&str; 48usize] = ["br", "bs", "ca", "cs", "de", "en", "en-001", "en-AE", "en-CA", "en-CH", "es", "ff-Adlm", "fi", "fr", "fy", "gd", "hr", "id", "it", "ja", "kgp", "ko", "lb", "lo", "lt", "mn", "ms", "nl", "no", "pl", "pt", "pt-PT", "ru", "sc", "sv", "ta", "th", "ug", "und", "vi", "yrl", "yue", "yue-Hans", "zh", "zh-HK", "zh-Hant", "zh-MO", "zh-SG"];
                 let mut metadata = icu_provider::DataResponseMetadata::default();
-                let payload = if let Ok(payload) = KEYS.binary_search_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
+                let payload = if let Ok(payload) = KEYS.binary_search_by(|k| req.legacy_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
                     payload
                 } else {
-                    const FALLBACKER: icu::locid_transform::fallback::LocaleFallbackerWithConfig<'static> = icu::locid_transform::fallback::LocaleFallbacker::new().for_config(<icu::datetime::provider::calendar::ChineseDateLengthsV1Marker as icu_provider::KeyedDataMarker>::KEY.fallback_config());
+                    const FALLBACKER: icu::locale::fallback::LocaleFallbackerWithConfig<'static> = icu::locale::fallback::LocaleFallbacker::new().for_config(<icu::datetime::provider::calendar::ChineseDateLengthsV1Marker as icu_provider::KeyedDataMarker>::KEY.fallback_config());
                     let mut fallback_iterator = FALLBACKER.fallback_for(req.locale.clone());
                     loop {
-                        if let Ok(payload) = KEYS.binary_search_by(|k| fallback_iterator.get().strict_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
+                        if let Ok(payload) = KEYS.binary_search_by(|k| icu_provider::DataRequest { locale: fallback_iterator.get(), ..req }.legacy_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
                             metadata.locale = Some(fallback_iterator.take());
                             break payload;
                         }
@@ -73,6 +73,21 @@ macro_rules! __impl_datetime_chinese_datelengths_v1 {
                     }
                 };
                 Ok(icu_provider::DataResponse { payload: Some(icu_provider::DataPayload::from_static_ref(payload)), metadata })
+            }
+        }
+    };
+}
+/// Implement `IterableDataProvider<ChineseDateLengthsV1Marker>` on the given struct using the data
+/// hardcoded in this file. This allows the struct to be used with
+/// `DatagenDriver` for this key.
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __impliterable_datetime_chinese_datelengths_v1 {
+    ($ provider : ty) => {
+        #[clippy::msrv = "1.70"]
+        impl icu_provider::datagen::IterableDataProvider<icu::datetime::provider::calendar::ChineseDateLengthsV1Marker> for $provider {
+            fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataKeyAttributes)>, icu_provider::DataError> {
+                Ok(["br", "bs", "ca", "cs", "de", "en", "en-001", "en-AE", "en-CA", "en-CH", "es", "ff-Adlm", "fi", "fr", "fy", "gd", "hr", "id", "it", "ja", "kgp", "ko", "lb", "lo", "lt", "mn", "ms", "nl", "no", "pl", "pt", "pt-PT", "ru", "sc", "sv", "ta", "th", "ug", "und", "vi", "yrl", "yue", "yue-Hans", "zh", "zh-HK", "zh-Hant", "zh-MO", "zh-SG"].into_iter().filter_map(icu_provider::DataRequest::legacy_decode).collect())
             }
         }
     };

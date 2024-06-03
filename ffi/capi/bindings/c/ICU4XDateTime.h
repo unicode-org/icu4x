@@ -1,32 +1,33 @@
 #ifndef ICU4XDateTime_H
 #define ICU4XDateTime_H
+
 #include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
 #include "diplomat_runtime.h"
-
-#ifdef __cplusplus
-namespace capi {
-#endif
-
-typedef struct ICU4XDateTime ICU4XDateTime;
-#ifdef __cplusplus
-} // namespace capi
-#endif
+#include "ICU4XCalendar.d.h"
 #include "ICU4XCalendar.h"
-#include "diplomat_result_box_ICU4XDateTime_ICU4XError.h"
+#include "ICU4XDate.d.h"
 #include "ICU4XDate.h"
-#include "ICU4XTime.h"
+#include "ICU4XIsoDateTime.d.h"
 #include "ICU4XIsoDateTime.h"
+#include "ICU4XIsoWeekday.d.h"
 #include "ICU4XIsoWeekday.h"
+#include "ICU4XTime.d.h"
+#include "ICU4XTime.h"
+#include "ICU4XWeekCalculator.d.h"
 #include "ICU4XWeekCalculator.h"
-#include "diplomat_result_ICU4XWeekOf_ICU4XError.h"
-#include "diplomat_result_void_ICU4XError.h"
+#include "diplomat_result_ICU4XWeekOf_ICU4XError.d.h"
+#include "diplomat_result_box_ICU4XDateTime_ICU4XError.d.h"
+
+#include "ICU4XDateTime.d.h"
+
 #ifdef __cplusplus
 namespace capi {
 extern "C" {
-#endif
+#endif // __cplusplus
+
 
 diplomat_result_box_ICU4XDateTime_ICU4XError ICU4XDateTime_create_from_iso_in_calendar(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond, const ICU4XCalendar* calendar);
 
@@ -50,6 +51,8 @@ uint8_t ICU4XDateTime_second(const ICU4XDateTime* self);
 
 uint32_t ICU4XDateTime_nanosecond(const ICU4XDateTime* self);
 
+uint16_t ICU4XDateTime_day_of_year(const ICU4XDateTime* self);
+
 uint32_t ICU4XDateTime_day_of_month(const ICU4XDateTime* self);
 
 ICU4XIsoWeekday ICU4XDateTime_day_of_week(const ICU4XDateTime* self);
@@ -60,11 +63,11 @@ diplomat_result_ICU4XWeekOf_ICU4XError ICU4XDateTime_week_of_year(const ICU4XDat
 
 uint32_t ICU4XDateTime_ordinal_month(const ICU4XDateTime* self);
 
-diplomat_result_void_ICU4XError ICU4XDateTime_month_code(const ICU4XDateTime* self, DiplomatWriteable* write);
+void ICU4XDateTime_month_code(const ICU4XDateTime* self, DiplomatWrite* write);
 
 int32_t ICU4XDateTime_year_in_era(const ICU4XDateTime* self);
 
-diplomat_result_void_ICU4XError ICU4XDateTime_era(const ICU4XDateTime* self, DiplomatWriteable* write);
+void ICU4XDateTime_era(const ICU4XDateTime* self, DiplomatWrite* write);
 
 uint8_t ICU4XDateTime_months_in_year(const ICU4XDateTime* self);
 
@@ -73,10 +76,13 @@ uint8_t ICU4XDateTime_days_in_month(const ICU4XDateTime* self);
 uint16_t ICU4XDateTime_days_in_year(const ICU4XDateTime* self);
 
 ICU4XCalendar* ICU4XDateTime_calendar(const ICU4XDateTime* self);
+
 void ICU4XDateTime_destroy(ICU4XDateTime* self);
+
 
 #ifdef __cplusplus
 } // extern "C"
 } // namespace capi
-#endif
-#endif
+#endif // __cplusplus
+
+#endif // ICU4XDateTime_H

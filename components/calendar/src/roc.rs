@@ -32,8 +32,8 @@
 //! ```
 
 use crate::{
-    calendar_arithmetic::ArithmeticDate, iso::IsoDateInner, types, AnyCalendarKind, Calendar,
-    CalendarError, Date, DateTime, Iso, Time,
+    calendar_arithmetic::ArithmeticDate, iso::IsoDateInner, types, Calendar, CalendarError, Date,
+    DateTime, Iso, Time,
 };
 use calendrical_calculations::helpers::i64_to_saturated_i32;
 use tinystr::tinystr;
@@ -170,9 +170,8 @@ impl Calendar for Roc {
         }
     }
 
-    /// The [`AnyCalendarKind`] corresponding to this calendar
-    fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
-        Some(AnyCalendarKind::Roc)
+    fn any_calendar_kind(&self) -> Option<crate::AnyCalendarKind> {
+        Some(crate::any_calendar::IntoAnyCalendar::kind(self))
     }
 }
 

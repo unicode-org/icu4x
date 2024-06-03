@@ -551,7 +551,7 @@ macro_rules! to {
             while i < N && $self.bytes[i] as u8 != AsciiByte::B0 as u8 {
                 // SAFETY: AsciiByte is repr(u8) and has same size as u8
                 unsafe {
-                    $self.bytes[i] = core::mem::transmute(
+                    $self.bytes[i] = core::mem::transmute::<u8, AsciiByte>(
                         ($self.bytes[i] as u8).$later_char_to()
                     );
                 }
@@ -560,7 +560,7 @@ macro_rules! to {
             // SAFETY: AsciiByte is repr(u8) and has same size as u8
             $(
                 $self.bytes[0] = unsafe {
-                    core::mem::transmute(($self.bytes[0] as u8).$first_char_to())
+                    core::mem::transmute::<u8, AsciiByte>(($self.bytes[0] as u8).$first_char_to())
                 };
             )?
         }
@@ -656,7 +656,7 @@ impl<const N: usize> Deref for TinyAsciiStr<N> {
 impl<const N: usize> FromStr for TinyAsciiStr<N> {
     type Err = TinyStrError;
     #[inline]
-    fn from_str(s: &str) -> Result<Self, TinyStrError> {
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
         Self::from_str(s)
     }
 }

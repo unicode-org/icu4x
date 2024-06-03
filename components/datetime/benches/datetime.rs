@@ -12,8 +12,9 @@ use icu_calendar::{DateTime, Gregorian};
 use icu_datetime::neo::TypedNeoDateTimeFormatter;
 use icu_datetime::TypedDateTimeFormatter;
 use icu_datetime::{time_zone::TimeZoneFormatterOptions, TypedZonedDateTimeFormatter};
-use icu_locid::Locale;
+use icu_locale_core::Locale;
 use icu_timezone::CustomTimeZone;
+use writeable::TryWriteable;
 
 #[path = "../tests/mock.rs"]
 mod mock;
@@ -93,7 +94,9 @@ fn datetime_benches(c: &mut Criterion) {
 
                         for dt in &datetimes {
                             let fdt = dtf.format(dt);
-                            write!(result, "{fdt}").expect("Failed to write to date time format.");
+                            fdt.try_write_to(&mut result)
+                                .unwrap()
+                                .expect("Failed to write to date time format.");
                             result.clear();
                         }
                     }

@@ -6,14 +6,14 @@
 //!
 //! For more information, see the tutorial [cargo.md](../../cargo.md).
 
-use icu::locid::locale;
+use icu::locale::locale;
 use icu::plurals::PluralCategory;
 use icu::plurals::PluralRules;
 
 fn main() {
     let rules = PluralRules::try_new_cardinal(&locale!("ru").into())
         .expect("locale 'ru' should be present in the compiled data");
-    let result = rules.category_for(&3.into());
+    let result = rules.category_for(3);
     assert_eq!(result, PluralCategory::Few);
     println!("{result:?}");
 }

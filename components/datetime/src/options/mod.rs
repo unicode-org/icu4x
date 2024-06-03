@@ -9,7 +9,7 @@
 //! the date, with an optional `Preferences` which represent user preferences and
 //! may alter how the selected pattern is formatted.
 //!
-//! [`Locale`]: icu_locid::Locale
+//! [`Locale`]: icu_locale_core::Locale
 //! [`TypedDateTimeFormatter`]: crate::TypedDateTimeFormatter
 //!
 //! # Examples
@@ -35,7 +35,7 @@ pub mod preferences;
 #[cfg(not(any(feature = "datagen", feature = "experimental")))]
 pub(crate) mod preferences;
 
-/// A bag of options which, together with [`Locale`](icu_locid::Locale), defines how
+/// A bag of options which, together with [`Locale`](icu_locale_core::Locale), defines how
 /// dates will be formatted with a [`TypedDateTimeFormatter`](crate::TypedDateTimeFormatter) instance.
 ///
 /// Each variant of the bag is a combination of settings defining how to format
@@ -70,7 +70,7 @@ pub enum DateTimeFormatterOptions {
     /// of the icu meta-crate. Use with caution.
     /// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
     /// </div>
-    #[cfg(feature = "experimental")]
+    #[cfg(any(feature = "datagen", feature = "experimental"))]
     Components(components::Bag),
 }
 

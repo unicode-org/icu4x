@@ -346,7 +346,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// # Examples
     ///
     /// ```
-    /// use icu_collections::codepointtrie::planes;
+    /// use icu::collections::codepointtrie::planes;
     /// let trie = planes::get_planes_trie();
     ///
     /// assert_eq!(0, trie.get32(0x41)); // 'A' as u32
@@ -367,7 +367,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// # Examples
     ///
     /// ```
-    /// use icu_collections::codepointtrie::planes;
+    /// use icu::collections::codepointtrie::planes;
     /// let trie = planes::get_planes_trie();
     ///
     /// assert_eq!(0, trie.get('A')); // 'A' as u32
@@ -384,7 +384,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// # Examples
     ///
     /// ```
-    /// use icu_collections::codepointtrie::planes;
+    /// use icu::collections::codepointtrie::planes;
     /// let trie = planes::get_planes_trie();
     ///
     /// assert_eq!(Some(&0), trie.get32_ule(0x41)); // 'A' as u32
@@ -429,8 +429,8 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// # Examples
     ///
     /// ```no_run
-    /// use icu_collections::codepointtrie::planes;
-    /// use icu_collections::codepointtrie::CodePointTrie;
+    /// use icu::collections::codepointtrie::planes;
+    /// use icu::collections::codepointtrie::CodePointTrie;
     ///
     /// let planes_trie_u8: CodePointTrie<u8> = planes::get_planes_trie();
     /// let planes_trie_i8: CodePointTrie<i8> =
@@ -468,8 +468,8 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// # Examples
     ///
     /// ```
-    /// use icu_collections::codepointtrie::planes;
-    /// use icu_collections::codepointtrie::CodePointTrie;
+    /// use icu::collections::codepointtrie::planes;
+    /// use icu::collections::codepointtrie::CodePointTrie;
     ///
     /// let planes_trie_u8: CodePointTrie<u8> = planes::get_planes_trie();
     /// let planes_trie_u16: CodePointTrie<u16> = planes_trie_u8
@@ -513,7 +513,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// # Examples
     ///
     /// ```
-    /// use icu_collections::codepointtrie::planes;
+    /// use icu::collections::codepointtrie::planes;
     ///
     /// let trie = planes::get_planes_trie();
     ///
@@ -525,7 +525,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// assert_eq!(trie.get32(exp_end), start_val);
     /// assert_ne!(trie.get32(exp_end + 1), start_val);
     ///
-    /// use icu_collections::codepointtrie::CodePointMapRange;
+    /// use icu::collections::codepointtrie::CodePointMapRange;
     ///
     /// let cpm_range: CodePointMapRange<u8> = trie.get_range(start).unwrap();
     ///
@@ -856,7 +856,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// ```
     /// use core::ops::RangeInclusive;
     /// use icu::collections::codepointtrie::planes;
-    /// use icu_collections::codepointtrie::CodePointMapRange;
+    /// use icu::collections::codepointtrie::CodePointMapRange;
     ///
     /// let planes_trie = planes::get_planes_trie();
     ///
@@ -896,7 +896,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// # Examples
     ///
     /// ```
-    /// use icu_collections::codepointtrie::planes;
+    /// use icu::collections::codepointtrie::planes;
     ///
     /// let trie = planes::get_planes_trie();
     ///
@@ -926,7 +926,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// # Examples
     ///
     /// ```
-    /// use icu_collections::codepointtrie::planes;
+    /// use icu::collections::codepointtrie::planes;
     ///
     /// let trie = planes::get_planes_trie();
     ///
@@ -956,7 +956,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// # Examples
     ///
     /// ```
-    /// use icu_collections::codepointtrie::planes;
+    /// use icu::collections::codepointtrie::planes;
     ///
     /// let trie = planes::get_planes_trie();
     ///
@@ -1001,7 +1001,7 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
     /// # Examples
     ///
     /// ```
-    /// use icu_collections::codepointtrie::planes;
+    /// use icu::collections::codepointtrie::planes;
     /// let trie = planes::get_planes_trie();
     ///
     /// let cp = '𑖎' as u32;

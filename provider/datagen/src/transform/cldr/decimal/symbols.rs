@@ -4,14 +4,13 @@
 
 use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
-use crate::provider::IterableDataProviderInternal;
+use crate::provider::IterableDataProviderCached;
 use icu_decimal::provider::*;
-use icu_locid::extensions::unicode::key;
+use icu_locale_core::{extensions::unicode::key, subtags::Subtag};
 use icu_provider::prelude::*;
 use std::borrow::Cow;
 use std::collections::HashSet;
 use std::convert::TryFrom;
-use tinystr::TinyAsciiStr;
 
 impl DataProvider<DecimalSymbolsV1Marker> for DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<DecimalSymbolsV1Marker>, DataError> {
@@ -27,10 +26,10 @@ impl DataProvider<DecimalSymbolsV1Marker> for DatagenProvider {
 
         let nsname = match req.locale.get_unicode_ext(&key!("nu")) {
             Some(v) => *v
-                .as_tinystr_slice()
+                .as_subtags_slice()
                 .first()
                 .expect("expecting subtag if key is present"),
-            None => numbers.default_numbering_system,
+            None => Subtag::from_tinystr_unvalidated(numbers.default_numbering_system),
         };
 
         let mut result =
@@ -49,16 +48,18 @@ impl DataProvider<DecimalSymbolsV1Marker> for DatagenProvider {
     }
 }
 
-impl IterableDataProviderInternal<DecimalSymbolsV1Marker> for DatagenProvider {
-    fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
-        self.supported_locales_for_numbers()
+impl IterableDataProviderCached<DecimalSymbolsV1Marker> for DatagenProvider {
+    fn supported_requests_cached(
+        &self,
+    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+        self.supported_requests_for_numbers()
     }
 }
 
 #[derive(Debug)]
 struct NumbersWithNumsys<'a>(
     pub(in crate::provider) &'a cldr_serde::numbers::Numbers,
-    pub(in crate::provider) TinyAsciiStr<8>,
+    pub(in crate::provider) Subtag,
 );
 
 impl TryFrom<NumbersWithNumsys<'_>> for DecimalSymbolsV1<'static> {
@@ -69,12 +70,12 @@ impl TryFrom<NumbersWithNumsys<'_>> for DecimalSymbolsV1<'static> {
         let symbols = numbers
             .numsys_data
             .symbols
-            .get(&nsname)
+            .get(&nsname.as_tinystr())
             .ok_or("Could not find symbols for numbering system")?;
         let formats = numbers
             .numsys_data
             .formats
-            .get(&nsname)
+            .get(&nsname.as_tinystr())
             .ok_or("Could not find formats for numbering system")?;
         let parsed_pattern: super::decimal_pattern::DecimalPattern = formats
             .standard
@@ -98,14 +99,14 @@ impl TryFrom<NumbersWithNumsys<'_>> for DecimalSymbolsV1<'static> {
 
 #[test]
 fn test_basic() {
-    use icu_locid::locale;
+    use icu_locale_core::langid;
 
     let provider = DatagenProvider::new_testing();
 
     let ar_decimal: DataPayload<DecimalSymbolsV1Marker> = provider
         .load(DataRequest {
-            locale: &locale!("ar-EG").into(),
-            metadata: Default::default(),
+            locale: &langid!("ar-EG").into(),
+            ..Default::default()
         })
         .unwrap()
         .take_payload()

@@ -27,11 +27,11 @@ int main() {
     ICU4XFixedDecimalFormatter* fdf = fdf_result.ok;
     char output[40];
 
-    DiplomatWriteable write = diplomat_simple_writeable(output, 40);
+    DiplomatWrite write = diplomat_simple_write(output, 40);
 
-    bool success = ICU4XFixedDecimalFormatter_format(fdf, decimal, &write).is_ok;
-    if (!success) {
-        printf("Failed to write result of FixedDecimalFormatter::format to string.\n");
+    ICU4XFixedDecimalFormatter_format(fdf, decimal, &write);
+    if (write.grow_failed) {
+        printf("format overflowed the string.\n");
         return 1;
     }
     printf("Output is %s\n", output);
@@ -43,18 +43,14 @@ int main() {
     }
 
     ICU4XFixedDecimal_multiply_pow10(decimal, 2);
-    if (!success) {
-        printf("Failed to multiply FixedDecimal\n");
-        return 1;
-    }
 
     ICU4XFixedDecimal_set_sign(decimal, ICU4XFixedDecimalSign_Negative);
 
-    write = diplomat_simple_writeable(output, 40);
+    write = diplomat_simple_write(output, 40);
 
-    success = ICU4XFixedDecimalFormatter_format(fdf, decimal, &write).is_ok;
-    if (!success) {
-        printf("Failed to write result of FixedDecimalFormatter::format to string.\n");
+    ICU4XFixedDecimalFormatter_format(fdf, decimal, &write);
+    if (write.grow_failed) {
+        printf("format overflowed the string.\n");
         return 1;
     }
     printf("Output x100 and negated is %s\n", output);
@@ -74,11 +70,11 @@ int main() {
     }
     decimal = fd_result.ok;
 
-    write = diplomat_simple_writeable(output, 40);
+    write = diplomat_simple_write(output, 40);
 
-    success = ICU4XFixedDecimalFormatter_format(fdf, decimal, &write).is_ok;
-    if (!success) {
-        printf("Failed to write result of FixedDecimalFormatter::format to string.\n");
+    ICU4XFixedDecimalFormatter_format(fdf, decimal, &write);
+    if (write.grow_failed) {
+        printf("format overflowed the string.\n");
         return 1;
     }
     printf("Output is %s\n", output);

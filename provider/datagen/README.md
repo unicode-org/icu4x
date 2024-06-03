@@ -21,7 +21,7 @@ use std::fs::File;
 
 DatagenDriver::new()
     .with_keys([icu::list::provider::AndListV1Marker::KEY])
-    .with_all_locales()
+    .with_locales_and_fallback([LocaleFamily::FULL], Default::default())
     .export(
         &DatagenProvider::new_latest_tested(),
         BlobExporter::new_v2_with_sink(Box::new(
@@ -69,10 +69,6 @@ can be disabled to reduce dependencies:
   * see the documentation on [`icu_codepointtrie_builder`](icu_codepointtrie_builder#build-configuration)
 * `bin`
   * required by the CLI and enabled by default to make `cargo install` work
-* `legacy_api`
-  * enables the deprecated pre-1.3 API
-  * enabled by default for semver stability
-  * will be removed in 2.0.
 * `icu_experimental`
   * enables data generation for keys defined in the unstable `icu_experimental` crate
   * note that this features affects the behaviour of `all_keys`

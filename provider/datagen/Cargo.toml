@@ -26,7 +26,7 @@ edition.workspace = true
 homepage.workspace = true
 repository.workspace = true
 rust-version.workspace = true
-version = "1.4.1"
+version.workspace = true
 
 [package.metadata.docs.rs]
 all-features = true
@@ -35,11 +35,10 @@ all-features = true
 
 # DatagenDriver
 displaydoc = { workspace = true }
-icu_locid = { workspace = true, features = ["std"] }
-icu_provider = { workspace = true, features = ["std", "logging", "datagen", "experimental"]}
+icu_locale_core = { workspace = true, features = ["std"] }
+icu_provider = { workspace = true, features = ["std", "logging", "datagen"]}
 log = { workspace = true }
 memchr = { workspace = true }
-once_cell = { workspace = true, features = ["std"] }
 rayon = { workspace = true, optional = true }
 writeable = { workspace = true }
 
@@ -58,7 +57,7 @@ icu_collator = { workspace = true }
 icu_datetime = { workspace = true }
 icu_decimal = { workspace = true }
 icu_list = { workspace = true }
-icu_locid_transform = { workspace = true }
+icu_locale = { workspace = true }
 icu_normalizer = { workspace = true }
 icu_plurals = { workspace = true }
 icu_properties = { workspace = true }
@@ -74,6 +73,7 @@ icu_codepointtrie_builder = { workspace = true, optional = true }
 icu_collections = { workspace = true, features = ["serde"], optional = true }
 icu_pattern = { workspace = true, features = ["alloc"], optional = true }
 icu_provider_adapters = { workspace = true, optional = true }
+litemap = { workspace = true, optional = true, features = ["serde"] }
 tinystr = { workspace = true, features = ["alloc", "serde", "zerovec"], optional = true }
 zerotrie = { workspace = true, features = ["alloc"], optional = true }
 zerovec = { workspace = true, features = ["serde", "yoke"], optional = true }
@@ -81,7 +81,7 @@ zerovec = { workspace = true, features = ["serde", "yoke"], optional = true }
 ## External dependencies
 either = { workspace = true, optional = true }
 elsa = { workspace = true, optional = true }
-itertools = { workspace = true, features = ["use_alloc"], optional = true }
+itertools = { workspace = true, optional = true }
 ndarray = { workspace = true, optional = true }
 num-bigint = { workspace = true, optional = true }
 num-rational = { workspace = true, optional = true }
@@ -91,12 +91,12 @@ serde_json = { workspace = true, optional = true }
 serde-aux = { workspace = true, optional = true }
 toml = { workspace = true, optional = true }
 twox-hash = { workspace = true, optional = true }
-ureq = { workspace = true, features = ["tls"], optional = true }
+ureq = { workspace = true, optional = true }
 zip = { workspace = true, features = ["deflate"], optional = true }
 
 # "bin" feature
-clap = { workspace = true, optional = true, features = ["derive", "std"] }
-eyre = { workspace = true, optional = true, features = ["default"] }
+clap = { workspace = true, optional = true, features = ["derive"] }
+eyre = { workspace = true, optional = true }
 simple_logger = { workspace = true, optional = true }
 
 [dev-dependencies]
@@ -107,7 +107,7 @@ postcard = { workspace = true }
 simple_logger = { workspace = true }
 
 [features]
-default = ["bin", "use_wasm", "networking", "legacy_api", "rayon", "fs_exporter", "blob_exporter", "baked_exporter", "provider"]
+default = ["bin", "use_wasm", "networking", "rayon", "fs_exporter", "blob_exporter", "baked_exporter", "provider"]
 provider = [
     "icu_calendar/datagen",
     "icu_casemap/datagen",
@@ -116,8 +116,8 @@ provider = [
     "icu_decimal/datagen",
     "icu_experimental?/datagen",
     "icu_list/datagen",
-    "icu_locid_transform/datagen",
-    "icu_locid/serde",
+    "icu_locale/datagen",
+    "icu_locale_core/serde",
     "icu_normalizer/datagen",
     "icu_plurals/datagen",
     "icu_properties/datagen",
@@ -129,6 +129,7 @@ provider = [
     "dep:icu_collections",
     "dep:icu_pattern",
     "dep:icu_provider_adapters",
+    "dep:litemap",
     "dep:tinystr",
     "dep:zerotrie",
     "dep:zerovec",
@@ -154,7 +155,7 @@ baked_exporter = [
     "icu_datetime/datagen",
     "icu_decimal/datagen",
     "icu_list/datagen",
-    "icu_locid_transform/datagen",
+    "icu_locale/datagen",
     "icu_normalizer/datagen",
     "icu_plurals/datagen",
     "icu_properties/datagen",
@@ -171,7 +172,7 @@ blob_input = [
     "icu_datetime/datagen",
     "icu_decimal/datagen",
     "icu_list/datagen",
-    "icu_locid_transform/datagen",
+    "icu_locale/datagen",
     "icu_normalizer/datagen",
     "icu_plurals/datagen",
     "icu_properties/datagen",

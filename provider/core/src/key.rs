@@ -173,10 +173,10 @@ impl DataKeyPath {
     pub const fn get(self) -> &'static str {
         unsafe {
             // Safe due to invariant that self.path is tagged correctly
-            core::str::from_utf8_unchecked(core::mem::transmute((
+            core::str::from_utf8_unchecked(core::slice::from_raw_parts(
                 self.tagged.as_ptr().add(leading_tag!().len()),
                 self.tagged.len() - trailing_tag!().len() - leading_tag!().len(),
-            )))
+            ))
         }
     }
 }
@@ -196,7 +196,7 @@ pub struct DataKeyMetadata {
     /// What to prioritize when fallbacking on this [`DataKey`].
     pub fallback_priority: LocaleFallbackPriority,
     /// A Unicode extension keyword to consider when loading data for this [`DataKey`].
-    pub extension_key: Option<icu_locid::extensions::unicode::Key>,
+    pub extension_key: Option<icu_locale_core::extensions::unicode::Key>,
     /// Optional choice for additional fallbacking data required for loading this marker.
     ///
     /// For more information, see `LocaleFallbackConfig::fallback_supplement`.
@@ -221,7 +221,7 @@ impl DataKeyMetadata {
     #[doc(hidden)]
     pub const fn construct_internal(
         fallback_priority: LocaleFallbackPriority,
-        extension_key: Option<icu_locid::extensions::unicode::Key>,
+        extension_key: Option<icu_locale_core::extensions::unicode::Key>,
         fallback_supplement: Option<LocaleFallbackSupplement>,
         singleton: bool,
     ) -> Self {

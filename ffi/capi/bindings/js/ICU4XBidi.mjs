@@ -37,7 +37,10 @@ export class ICU4XBidi {
 
   for_text(arg_text, arg_default_level) {
     const buf_arg_text = diplomatRuntime.DiplomatBuf.str8(wasm, arg_text);
-    const diplomat_out = new ICU4XBidiInfo(wasm.ICU4XBidi_for_text(this.underlying, buf_arg_text.ptr, buf_arg_text.size, arg_default_level), true, [buf_arg_text]);
+    const diplomat_out = (() => {
+      const option_ptr = wasm.ICU4XBidi_for_text(this.underlying, buf_arg_text.ptr, buf_arg_text.size, arg_default_level);
+      return (option_ptr == 0) ? undefined : new ICU4XBidiInfo(option_ptr, true, [buf_arg_text]);
+    })();
     buf_arg_text.garbageCollect();
     return diplomat_out;
   }

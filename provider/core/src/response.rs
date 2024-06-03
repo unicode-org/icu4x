@@ -92,7 +92,7 @@ pub struct DataPayload<M: DataMarker>(pub(crate) DataPayloadInner<M>);
 /// let payload: DataPayload<HelloWorldV1Marker> = HelloWorldProvider
 ///     .load(DataRequest {
 ///         locale: &"de".parse().unwrap(),
-///         metadata: Default::default(),
+///         ..Default::default()
 ///     })
 ///     .expect("Loading should succeed")
 ///     .take_payload()
@@ -743,7 +743,7 @@ where
     /// Change the results of a particular request based on key:
     ///
     /// ```
-    /// use icu_locid::locale;
+    /// use icu_locale_core::locale;
     /// use icu_provider::hello_world::*;
     /// use icu_provider::prelude::*;
     ///

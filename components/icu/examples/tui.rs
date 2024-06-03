@@ -10,7 +10,7 @@
 use icu::calendar::{DateTime, Gregorian};
 use icu::datetime::time_zone::TimeZoneFormatterOptions;
 use icu::datetime::{DateTimeFormatterOptions, TypedZonedDateTimeFormatter};
-use icu::locid::{locale, Locale};
+use icu::locale::locale;
 use icu::plurals::{PluralCategory, PluralRules};
 use icu::timezone::CustomTimeZone;
 use icu_collections::codepointinvlist::CodePointInversionListBuilder;
@@ -26,10 +26,10 @@ fn print<T: AsRef<str>>(_input: T) {
 fn main(_argc: isize, _argv: *const *const u8) -> isize {
     let args: Vec<String> = env::args().collect();
 
-    let locale: Locale = args
+    let locale = args
         .get(1)
         .map(|s| s.parse().expect("Failed to parse locale"))
-        .unwrap_or_else(|| locale!("en"));
+        .unwrap_or_else(|| locale!("en").into());
 
     let user_name = args.as_slice().get(2).map(String::as_str).unwrap_or("John");
 
@@ -47,7 +47,7 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
 
     {
         let dtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new(
-            &locale.into(),
+            &locale,
             DateTimeFormatterOptions::default(),
             TimeZoneFormatterOptions::default(),
         )

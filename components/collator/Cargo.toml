@@ -5,13 +5,13 @@
 [package]
 name = "icu_collator"
 description = "API for comparing strings according to language-dependent conventions"
-license = "Unicode-3.0"
 
 authors.workspace = true
 categories.workspace = true
 edition.workspace = true
 homepage.workspace = true
 include.workspace = true
+license.workspace = true
 repository.workspace = true
 rust-version.workspace = true
 version.workspace = true
@@ -21,7 +21,6 @@ all-features = true
 [dependencies]
 displaydoc = { workspace = true }
 icu_collections = { workspace = true }
-icu_locid = { workspace = true }
 icu_normalizer = { workspace = true }
 icu_properties = { workspace = true }
 icu_provider = { workspace = true, features = ["macros"] }
@@ -34,22 +33,23 @@ databake = { workspace = true, optional = true, features = ["derive"] }
 serde = { workspace = true, features = ["derive", "alloc"], optional = true }
 
 icu_collator_data = { workspace = true, optional = true }
-icu_locid_transform = { workspace = true, optional = true, features = ["compiled_data"] }
+icu_locale = { workspace = true, optional = true, features = ["compiled_data"] }
 
 [dev-dependencies]
 arraystring = { workspace = true }
 atoi = { workspace = true }
 icu = { path = "../../components/icu", default-features = false }
+icu_locale_core = { path = "../../components/locale_core" }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
 criterion = { workspace = true }
 
 [features]
 default = ["compiled_data"]
-std = ["icu_collections/std", "icu_locid/std", "icu_normalizer/std", "icu_properties/std", "icu_provider/std"]
+std = ["icu_collections/std", "icu_locale_core/std", "icu_normalizer/std", "icu_properties/std", "icu_provider/std"]
 serde = ["dep:serde", "zerovec/serde", "icu_properties/serde", "icu_normalizer/serde", "icu_collections/serde", "icu_provider/serde"]
 datagen = ["serde", "dep:databake", "zerovec/databake", "icu_properties/datagen", "icu_normalizer/datagen", "icu_collections/databake"]
-compiled_data = ["dep:icu_collator_data", "icu_normalizer/compiled_data", "dep:icu_locid_transform"]
+compiled_data = ["dep:icu_collator_data", "icu_normalizer/compiled_data", "dep:icu_locale"]
 
 [[bench]]
 name = "bench"

@@ -56,7 +56,7 @@ locale is Chakma:
 
 ```rust
 // At the top of the file:
-use icu::locid::locale;
+use icu::locale::locale;
 use icu_provider_blob::BlobDataProvider;
 
 // Just below the imports (fill in the path):

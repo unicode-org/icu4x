@@ -6,9 +6,10 @@ use std::collections::HashSet;
 
 use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
-use icu_locid::extensions::unicode::key;
-use icu_locid::extensions::unicode::Value;
-use icu_locid::LanguageIdentifier;
+use icu_locale::subtags::Subtag;
+use icu_locale_core::extensions::unicode::key;
+use icu_locale_core::extensions::unicode::Value;
+use icu_locale_core::LanguageIdentifier;
 use icu_provider::prelude::*;
 use tinystr::TinyAsciiStr;
 
@@ -21,10 +22,7 @@ mod symbols;
 
 impl DatagenProvider {
     /// Returns the digits for the given numbering system name.
-    fn get_digits_for_numbering_system(
-        &self,
-        nsname: TinyAsciiStr<8>,
-    ) -> Result<[char; 10], DataError> {
+    fn get_digits_for_numbering_system(&self, nsname: Subtag) -> Result<[char; 10], DataError> {
         let resource: &cldr_serde::numbering_systems::Resource = self
             .cldr()?
             .core()
@@ -46,7 +44,11 @@ impl DatagenProvider {
             ])
         }
 
-        match resource.supplemental.numbering_systems.get(&nsname) {
+        match resource
+            .supplemental
+            .numbering_systems
+            .get(&nsname.as_tinystr())
+        {
             Some(ns) => ns.digits.as_deref().and_then(digits_str_to_chars),
             None => None,
         }
@@ -75,7 +77,9 @@ impl DatagenProvider {
             .collect())
     }
 
-    fn supported_locales_for_numbers(&self) -> Result<HashSet<DataLocale>, DataError> {
+    fn supported_requests_for_numbers(
+        &self,
+    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
         Ok(self
             .cldr()?
             .numbers()
@@ -89,12 +93,12 @@ impl DatagenProvider {
                         let mut data_locale = DataLocale::from(&langid);
                         data_locale.set_unicode_ext(
                             key!("nu"),
-                            Value::try_from_single_subtag(nsname.as_bytes())
+                            Value::try_from_bytes(nsname.as_bytes())
                                 .expect("CLDR should have valid numbering system names"),
                         );
-                        data_locale
+                        (data_locale, Default::default())
                     })
-                    .chain([last])
+                    .chain([(last, Default::default())])
             })
             .collect())
     }

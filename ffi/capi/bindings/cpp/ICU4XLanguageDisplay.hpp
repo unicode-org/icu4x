@@ -1,24 +1,29 @@
 #ifndef ICU4XLanguageDisplay_HPP
 #define ICU4XLanguageDisplay_HPP
+
+#include "ICU4XLanguageDisplay.d.hpp"
+
+#include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
-#include <algorithm>
 #include <memory>
-#include <variant>
 #include <optional>
 #include "diplomat_runtime.hpp"
-
 #include "ICU4XLanguageDisplay.h"
 
 
+inline capi::ICU4XLanguageDisplay ICU4XLanguageDisplay::AsFFI() const {
+  return static_cast<capi::ICU4XLanguageDisplay>(value);
+}
 
-/**
- * See the [Rust documentation for `LanguageDisplay`](https://docs.rs/icu/latest/icu/displaynames/options/enum.LanguageDisplay.html) for more information.
- */
-enum struct ICU4XLanguageDisplay {
-  Dialect = 0,
-  Standard = 1,
-};
-
-#endif
+inline ICU4XLanguageDisplay ICU4XLanguageDisplay::FromFFI(capi::ICU4XLanguageDisplay c_enum) {
+  switch (c_enum) {
+    case capi::ICU4XLanguageDisplay_Dialect:
+    case capi::ICU4XLanguageDisplay_Standard:
+      return static_cast<ICU4XLanguageDisplay::Value>(c_enum);
+    default:
+      abort();
+  }
+}
+#endif // ICU4XLanguageDisplay_HPP

@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! This module contains various types used by `icu_calendar` and `icu_datetime`
+//! This module contains various types used by `icu_calendar` and `icu::datetime`
 
 use crate::error::CalendarError;
 use core::convert::TryFrom;

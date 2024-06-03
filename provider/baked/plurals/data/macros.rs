@@ -14,7 +14,7 @@
 #[macro_export]
 macro_rules! __make_provider {
     ($ name : ty) => {
-        #[clippy::msrv = "1.67"]
+        #[clippy::msrv = "1.70"]
         impl $name {
             #[doc(hidden)]
             #[allow(dead_code)]
@@ -30,13 +30,19 @@ pub use __make_provider as make_provider;
 mod plurals_cardinal_v1;
 #[doc(inline)]
 pub use __impl_plurals_cardinal_v1 as impl_plurals_cardinal_v1;
+#[doc(inline)]
+pub use __impliterable_plurals_cardinal_v1 as impliterable_plurals_cardinal_v1;
 #[macro_use]
 #[path = "macros/plurals_ordinal_v1.rs.data"]
 mod plurals_ordinal_v1;
 #[doc(inline)]
 pub use __impl_plurals_ordinal_v1 as impl_plurals_ordinal_v1;
+#[doc(inline)]
+pub use __impliterable_plurals_ordinal_v1 as impliterable_plurals_ordinal_v1;
 #[macro_use]
 #[path = "macros/plurals_ranges_v1.rs.data"]
 mod plurals_ranges_v1;
 #[doc(inline)]
 pub use __impl_plurals_ranges_v1 as impl_plurals_ranges_v1;
+#[doc(inline)]
+pub use __impliterable_plurals_ranges_v1 as impliterable_plurals_ranges_v1;

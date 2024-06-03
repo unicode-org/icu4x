@@ -299,9 +299,6 @@
       "dt": "Daylight Time sa Lorde Howe",
       "st": "Standard na Oras sa Lord Howe"
     },
-    "macq": {
-      "st": "Oras sa Macquarie Island"
-    },
     "maga": {
       "dt": "Oras sa Tag-init ng Magadan",
       "st": "Standard na Oras sa Magadan"
@@ -324,10 +321,6 @@
     },
     "maws": {
       "st": "Oras sa Mawson"
-    },
-    "meno": {
-      "dt": "Daylight na Oras sa Hilagang-kanlurang Mexico",
-      "st": "Standard na Oras sa Hilagang-kanlurang Mexico"
     },
     "mepa": {
       "dt": "Daylight na Oras sa Pasipiko ng Mexico",

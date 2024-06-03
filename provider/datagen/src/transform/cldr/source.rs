@@ -7,33 +7,34 @@
 use crate::provider::source::SerdeCache;
 use crate::provider::CoverageLevel;
 use icu_calendar::provider::EraStartDate;
-use icu_locid::LanguageIdentifier;
-use icu_locid_transform::provider::{
+use icu_locale::provider::{
     LikelySubtagsExtendedV1Marker, LikelySubtagsForLanguageV1Marker,
     LikelySubtagsForScriptRegionV1Marker,
 };
-use icu_locid_transform::LocaleExpander;
+use icu_locale::LocaleExpander;
+use icu_locale_core::LanguageIdentifier;
 use icu_provider::prelude::*;
 use icu_provider::DataError;
 use icu_provider_adapters::any_payload::AnyPayloadProvider;
 use icu_provider_adapters::fork::ForkByKeyProvider;
 use icu_provider_adapters::make_forking_provider;
-use once_cell::sync::OnceCell;
 use std::collections::BTreeSet;
 use std::collections::HashSet;
 use std::fmt::Debug;
 use std::str::FromStr;
+use std::sync::OnceLock;
 
 #[derive(Debug)]
 pub(in crate::provider) struct CldrCache {
     pub(in crate::provider) serde_cache: SerdeCache,
-    dir_suffix: OnceCell<&'static str>,
-    extended_locale_expander: OnceCell<LocaleExpander>,
-    modern_japanese_eras: OnceCell<BTreeSet<String>>,
+    dir_suffix: OnceLock<Result<&'static str, DataError>>,
+    extended_locale_expander: OnceLock<Result<LocaleExpander, DataError>>,
+    modern_japanese_eras: OnceLock<Result<BTreeSet<String>, DataError>>,
     #[cfg(feature = "experimental_components")]
     // used by transforms/mod.rs
-    pub(in crate::provider) transforms:
-        OnceCell<std::sync::Mutex<icu_experimental::transliterate::RuleCollection>>,
+    pub(in crate::provider) transforms: OnceLock<
+        Result<std::sync::Mutex<icu_experimental::transliterate::RuleCollection>, DataError>,
+    >,
 }
 
 impl CldrCache {
@@ -64,6 +65,10 @@ impl CldrCache {
         CldrDirNoLang(self, "cldr-bcp47/bcp47".to_string())
     }
 
+    pub(in crate::provider) fn personnames(&self) -> CldrDirLang<'_> {
+        CldrDirLang(self, "cldr-person-names".to_owned())
+    }
+
     pub(in crate::provider) fn displaynames(&self) -> CldrDirLang<'_> {
         CldrDirLang(self, "cldr-localenames".to_owned())
     }
@@ -82,7 +87,7 @@ impl CldrCache {
     pub(in crate::provider) fn locales(
         &self,
         levels: impl IntoIterator<Item = CoverageLevel>,
-    ) -> Result<Vec<icu_locid::LanguageIdentifier>, DataError> {
+    ) -> Result<Vec<icu_locale_core::LanguageIdentifier>, DataError> {
         let levels = levels.into_iter().collect::<HashSet<_>>();
         Ok(self
             .serde_cache
@@ -99,73 +104,78 @@ impl CldrCache {
     }
 
     pub(in crate::provider) fn dir_suffix(&self) -> Result<&'static str, DataError> {
-        self.dir_suffix
-            .get_or_try_init(|| {
-                if self.serde_cache.list("cldr-misc-full")?.next().is_some() {
-                    Ok("full")
-                } else {
-                    Ok("modern")
-                }
-            })
-            .copied()
+        *self.dir_suffix.get_or_init(|| {
+            if self.serde_cache.list("cldr-misc-full")?.next().is_some() {
+                Ok("full")
+            } else {
+                Ok("modern")
+            }
+        })
     }
 
     fn extended_locale_expander(&self) -> Result<&LocaleExpander, DataError> {
         use super::locale_canonicalizer::likely_subtags::*;
-        self.extended_locale_expander.get_or_try_init(|| {
-            let common_data =
-                transform(LikelySubtagsResources::try_from_cldr_cache(self)?.get_common());
-            let extended_data =
-                transform(LikelySubtagsResources::try_from_cldr_cache(self)?.get_extended());
-            let provider = make_forking_provider!(
-                ForkByKeyProvider::new,
-                [
-                    AnyPayloadProvider::from_owned::<LikelySubtagsForLanguageV1Marker>(
-                        common_data.clone().into(),
-                    ),
-                    AnyPayloadProvider::from_owned::<LikelySubtagsForScriptRegionV1Marker>(
-                        common_data.into(),
-                    ),
-                    AnyPayloadProvider::from_owned::<LikelySubtagsExtendedV1Marker>(
-                        extended_data.into()
-                    ),
-                ]
-            );
-            LocaleExpander::try_new_extended_unstable(&provider.as_downcasting()).map_err(|e| {
-                DataError::custom("creating LocaleExpander in CldrCache").with_display_context(&e)
+        self.extended_locale_expander
+            .get_or_init(|| {
+                let common_data =
+                    transform(LikelySubtagsResources::try_from_cldr_cache(self)?.get_common());
+                let extended_data =
+                    transform(LikelySubtagsResources::try_from_cldr_cache(self)?.get_extended());
+                let provider = make_forking_provider!(
+                    ForkByKeyProvider::new,
+                    [
+                        AnyPayloadProvider::from_owned::<LikelySubtagsForLanguageV1Marker>(
+                            common_data.clone().into(),
+                        ),
+                        AnyPayloadProvider::from_owned::<LikelySubtagsForScriptRegionV1Marker>(
+                            common_data.into(),
+                        ),
+                        AnyPayloadProvider::from_owned::<LikelySubtagsExtendedV1Marker>(
+                            extended_data.into()
+                        ),
+                    ]
+                );
+                LocaleExpander::try_new_extended_unstable(&provider.as_downcasting()).map_err(|e| {
+                    DataError::custom("creating LocaleExpander in CldrCache")
+                        .with_display_context(&e)
+                })
             })
-        })
+            .as_ref()
+            .map_err(|&e| e)
     }
 
     /// Get the list of eras in the japanese calendar considered "modern" (post-Meiji, inclusive)
     ///
     /// These will be in CLDR era index form; these are usually numbers
     pub(in crate::provider) fn modern_japanese_eras(&self) -> Result<&BTreeSet<String>, DataError> {
-        self.modern_japanese_eras.get_or_try_init(|| {
-            let era_dates: &super::cldr_serde::japanese::Resource = self
-                .core()
-                .read_and_parse("supplemental/calendarData.json")?;
-            let mut set = BTreeSet::<String>::new();
-            for (era_index, date) in era_dates.supplemental.calendar_data.japanese.eras.iter() {
-                let start_date =
-                    EraStartDate::from_str(if let Some(start_date) = date.start.as_ref() {
-                        start_date
-                    } else {
-                        continue;
-                    })
-                    .map_err(|_| {
-                        DataError::custom(
-                            "calendarData.json contains unparseable data for a japanese era",
-                        )
-                        .with_display_context(&format!("era index {}", era_index))
-                    })?;
+        self.modern_japanese_eras
+            .get_or_init(|| {
+                let era_dates: &super::cldr_serde::japanese::Resource = self
+                    .core()
+                    .read_and_parse("supplemental/calendarData.json")?;
+                let mut set = BTreeSet::<String>::new();
+                for (era_index, date) in era_dates.supplemental.calendar_data.japanese.eras.iter() {
+                    let start_date =
+                        EraStartDate::from_str(if let Some(start_date) = date.start.as_ref() {
+                            start_date
+                        } else {
+                            continue;
+                        })
+                        .map_err(|_| {
+                            DataError::custom(
+                                "calendarData.json contains unparseable data for a japanese era",
+                            )
+                            .with_display_context(&format!("era index {}", era_index))
+                        })?;
 
-                if start_date.year >= 1868 {
-                    set.insert(era_index.into());
+                    if start_date.year >= 1868 {
+                        set.insert(era_index.into());
+                    }
                 }
-            }
-            Ok(set)
-        })
+                Ok(set)
+            })
+            .as_ref()
+            .map_err(|&e| e)
     }
 
     /// CLDR sometimes stores locales with default scripts.

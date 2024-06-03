@@ -14,7 +14,7 @@
 #[macro_export]
 macro_rules! __make_provider {
     ($ name : ty) => {
-        #[clippy::msrv = "1.67"]
+        #[clippy::msrv = "1.70"]
         impl $name {
             #[doc(hidden)]
             #[allow(dead_code)]
@@ -30,13 +30,19 @@ pub use __make_provider as make_provider;
 mod list_and_v1;
 #[doc(inline)]
 pub use __impl_list_and_v1 as impl_list_and_v1;
+#[doc(inline)]
+pub use __impliterable_list_and_v1 as impliterable_list_and_v1;
 #[macro_use]
 #[path = "macros/list_or_v1.rs.data"]
 mod list_or_v1;
 #[doc(inline)]
 pub use __impl_list_or_v1 as impl_list_or_v1;
+#[doc(inline)]
+pub use __impliterable_list_or_v1 as impliterable_list_or_v1;
 #[macro_use]
 #[path = "macros/list_unit_v1.rs.data"]
 mod list_unit_v1;
 #[doc(inline)]
 pub use __impl_list_unit_v1 as impl_list_unit_v1;
+#[doc(inline)]
+pub use __impliterable_list_unit_v1 as impliterable_list_unit_v1;

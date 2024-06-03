@@ -9,7 +9,8 @@ use core::fmt::Display;
 
 use ::serde::{Deserialize, Deserializer, Serialize, Serializer};
 
-type HumanReadablePattern<'a, B> = Vec<PatternItemCow<'a, <B as PatternBackend>::PlaceholderKey>>;
+type HumanReadablePattern<'a, B> =
+    Vec<PatternItemCow<'a, <B as PatternBackend>::PlaceholderKeyCow<'a>>>;
 
 impl<'de, 'data, B, Store> Deserialize<'de> for Pattern<B, Store>
 where
@@ -17,7 +18,7 @@ where
     B: PatternBackend,
     B::Store: ToOwned + 'de,
     &'de B::Store: Deserialize<'de>,
-    B::PlaceholderKey: Deserialize<'de>,
+    B::PlaceholderKeyCow<'data>: Deserialize<'de>,
     Store: TryFrom<Cow<'data, B::Store>> + AsRef<B::Store>,
     Store::Error: Display,
 {
@@ -53,7 +54,7 @@ impl<B, Store> Serialize for Pattern<B, Store>
 where
     B: PatternBackend,
     B::Store: Serialize,
-    B::PlaceholderKey: Serialize,
+    for<'a> B::PlaceholderKeyCow<'a>: Serialize + From<B::PlaceholderKey<'a>>,
     Store: AsRef<B::Store>,
 {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
@@ -79,7 +80,7 @@ mod tests {
 
     #[test]
     fn test_json() {
-        let pattern_owned = SinglePlaceholderPattern::try_from_str("Hello, {0}!").unwrap();
+        let pattern_owned = SinglePlaceholderPattern::from_str("Hello, {0}!").unwrap();
         let pattern_cow: SinglePlaceholderPattern<Cow<str>> =
             SinglePlaceholderPattern::from_store_unchecked(Cow::Owned(pattern_owned.take_store()));
         let pattern_json = serde_json::to_string(&pattern_cow).unwrap();
@@ -95,13 +96,29 @@ mod tests {
 
     #[test]
     fn test_postcard() {
-        let pattern_owned = SinglePlaceholderPattern::try_from_str("Hello, {0}!").unwrap();
+        let pattern_owned = SinglePlaceholderPattern::from_str("Hello, {0}!").unwrap();
         let pattern_cow: SinglePlaceholderPattern<Cow<str>> =
             SinglePlaceholderPattern::from_store_unchecked(Cow::Owned(pattern_owned.take_store()));
         let pattern_postcard = postcard::to_stdvec(&pattern_cow).unwrap();
         assert_eq!(pattern_postcard, b"\x09\x08Hello, !");
         let pattern_deserialized: SinglePlaceholderPattern<Cow<str>> =
             postcard::from_bytes(&pattern_postcard).unwrap();
+        assert_eq!(pattern_cow, pattern_deserialized);
+        assert!(matches!(
+            pattern_deserialized.take_store(),
+            Cow::Borrowed(_)
+        ));
+    }
+
+    #[test]
+    fn test_rmp() {
+        let pattern_owned = SinglePlaceholderPattern::from_str("Hello, {0}!").unwrap();
+        let pattern_cow: SinglePlaceholderPattern<Cow<str>> =
+            SinglePlaceholderPattern::from_store_unchecked(Cow::Owned(pattern_owned.take_store()));
+        let pattern_rmp = rmp_serde::to_vec(&pattern_cow).unwrap();
+        assert_eq!(pattern_rmp, b"\xA9\x08Hello, !");
+        let pattern_deserialized: SinglePlaceholderPattern<Cow<str>> =
+            rmp_serde::from_slice(&pattern_rmp).unwrap();
         assert_eq!(pattern_cow, pattern_deserialized);
         assert!(matches!(
             pattern_deserialized.take_store(),
@@ -131,7 +148,7 @@ mod tests {
 
     #[test]
     fn test_serde_stores() {
-        let store = SinglePlaceholderPattern::try_from_str("Hello, {0}!")
+        let store = SinglePlaceholderPattern::from_str("Hello, {0}!")
             .unwrap()
             .take_store();
 

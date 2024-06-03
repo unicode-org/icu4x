@@ -7,17 +7,14 @@
 //! ```rust
 //! use icu::calendar::{Date, DateTime};
 //!
-//!
 //! // `Date` type
-//! let hebrew_date =
-//!     Date::try_new_hebrew_date(3425, 10, 11)
-//!         .expect("Failed to initialize hebrew Date instance.");
+//! let hebrew_date = Date::try_new_hebrew_date(3425, 10, 11)
+//!     .expect("Failed to initialize hebrew Date instance.");
 //!
 //! // `DateTime` type
-//! let hebrew_datetime = DateTime::try_new_hebrew_datetime(
-//!     3425, 10, 11, 13, 1, 0
-//! )
-//! .expect("Failed to initialize hebrew DateTime instance.");
+//! let hebrew_datetime =
+//!     DateTime::try_new_hebrew_datetime(3425, 10, 11, 13, 1, 0)
+//!         .expect("Failed to initialize hebrew DateTime instance.");
 //!
 //! // `Date` checks
 //! assert_eq!(hebrew_date.year().number, 3425);
@@ -36,7 +33,6 @@
 use crate::calendar_arithmetic::PrecomputedDataSource;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::types::FormattableMonth;
-use crate::AnyCalendarKind;
 use crate::AsCalendar;
 use crate::Iso;
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime, Time};
@@ -343,8 +339,9 @@ impl Calendar for Hebrew {
             next_year: Self::year_as_hebrew(next_year),
         }
     }
-    fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
-        Some(AnyCalendarKind::Hebrew)
+
+    fn any_calendar_kind(&self) -> Option<crate::AnyCalendarKind> {
+        Some(crate::any_calendar::IntoAnyCalendar::kind(self))
     }
 }
 
@@ -367,11 +364,10 @@ impl Date<Hebrew> {
     ///
     ///
     /// ```rust
-    /// use icu_calendar::Date;
+    /// use icu::calendar::Date;
     ///
-    /// let date_hebrew =
-    ///     Date::try_new_hebrew_date(3425, 4, 25)
-    ///         .expect("Failed to initialize Hebrew Date instance.");
+    /// let date_hebrew = Date::try_new_hebrew_date(3425, 4, 25)
+    ///     .expect("Failed to initialize Hebrew Date instance.");
     ///
     /// assert_eq!(date_hebrew.year().number, 3425);
     /// assert_eq!(date_hebrew.month().ordinal, 4);
@@ -416,10 +412,9 @@ impl DateTime<Hebrew> {
     /// ```rust
     /// use icu::calendar::DateTime;
     ///
-    /// let datetime_hebrew = DateTime::try_new_hebrew_datetime(
-    ///     4201, 10, 11, 13, 1, 0,
-    /// )
-    /// .expect("Failed to initialize Hebrew DateTime instance");
+    /// let datetime_hebrew =
+    ///     DateTime::try_new_hebrew_datetime(4201, 10, 11, 13, 1, 0)
+    ///         .expect("Failed to initialize Hebrew DateTime instance");
     ///
     /// assert_eq!(datetime_hebrew.date.year().number, 4201);
     /// assert_eq!(datetime_hebrew.date.month().ordinal, 10);
@@ -470,7 +465,7 @@ impl<A: AsCalendar<Calendar = Hebrew>> DateTime<A> {
 mod tests {
 
     use super::*;
-    use crate::types::MonthCode;
+    use crate::types::{Era, MonthCode};
     use calendrical_calculations::hebrew_keviyah::*;
 
     // Sentinel value for Adar I
@@ -586,5 +581,18 @@ mod tests {
     fn test_icu_bug_22441() {
         let yi = YearInfo::compute_for(88369);
         assert_eq!(yi.keviyah.year_length(), 383);
+    }
+
+    #[test]
+    fn test_weekdays() {
+        // https://github.com/unicode-org/icu4x/issues/4893
+        let cal = Hebrew::new();
+        let era = "am".parse::<Era>().unwrap();
+        let month_code = "M01".parse::<MonthCode>().unwrap();
+        let dt = cal.date_from_codes(era, 3760, month_code, 1).unwrap();
+
+        // Should be Saturday per:
+        // https://www.hebcal.com/converter?hd=1&hm=Tishrei&hy=3760&h2g=1
+        assert_eq!(6, cal.day_of_week(&dt) as usize);
     }
 }

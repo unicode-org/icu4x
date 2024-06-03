@@ -5,7 +5,7 @@
 .DEFAULT_GOAL := build
 FORCE:
 
-PINNED_CI_NIGHTLY ?= "nightly-2022-12-26"
+PINNED_CI_NIGHTLY ?= "nightly-2023-08-08"
 
 # 100 KiB, working around a bug in older rustc
 # https://github.com/unicode-org/icu4x/issues/2753

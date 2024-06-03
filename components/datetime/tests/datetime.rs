@@ -37,9 +37,9 @@ use icu_datetime::{
     TypedDateTimeFormatter, TypedZonedDateTimeFormatter,
 };
 use icu_decimal::provider::DecimalSymbolsV1Marker;
-use icu_locid::{
+use icu_locale_core::{
     extensions::unicode::{key, value},
-    langid, locale, LanguageIdentifier, Locale,
+    locale, LanguageIdentifier, Locale,
 };
 use icu_provider::prelude::*;
 use icu_provider_adapters::any_payload::AnyPayloadProvider;
@@ -397,7 +397,7 @@ fn test_dayperiod_patterns() {
         let mut data_locale = DataLocale::from(&locale);
         let req = DataRequest {
             locale: &data_locale,
-            metadata: Default::default(),
+            ..Default::default()
         };
         let mut date_patterns_data: DataPayload<GregorianDateLengthsV1Marker> =
             icu_datetime::provider::Baked
@@ -444,7 +444,7 @@ fn test_dayperiod_patterns() {
         let decimal_data: DataPayload<DecimalSymbolsV1Marker> = icu_decimal::provider::Baked
             .load(DataRequest {
                 locale: &data_locale,
-                metadata: Default::default(),
+                ..Default::default()
             })
             .unwrap()
             .take_payload()
@@ -555,7 +555,7 @@ fn test_time_zone_format_configs() {
 
 #[test]
 #[cfg(debug_assertions)]
-#[should_panic(expected = "using last-resort time zone fallback")]
+#[should_panic(expected = "MissingInputField(Some(\"gmt_offset\"))")]
 fn test_time_zone_format_gmt_offset_not_set_debug_assert_panic() {
     let time_zone = CustomTimeZone {
         gmt_offset: None,
@@ -563,7 +563,7 @@ fn test_time_zone_format_gmt_offset_not_set_debug_assert_panic() {
         metazone_id: Some(MetazoneId(tinystr!(4, "ampa"))),
         zone_variant: Some(ZoneVariant::daylight()),
     };
-    let tzf = TimeZoneFormatter::try_new(&langid!("en").into(), Default::default()).unwrap();
+    let tzf = TimeZoneFormatter::try_new(&locale!("en").into(), Default::default()).unwrap();
     tzf.format_to_string(&time_zone);
 }
 
@@ -576,7 +576,7 @@ fn test_time_zone_format_gmt_offset_not_set_no_debug_assert() {
         metazone_id: Some(MetazoneId(tinystr!(4, "ampa"))),
         zone_variant: Some(ZoneVariant::daylight()),
     };
-    let tzf = TimeZoneFormatter::try_new(&langid!("en").into(), Default::default()).unwrap();
+    let tzf = TimeZoneFormatter::try_new(&locale!("en").into(), Default::default()).unwrap();
     assert_writeable_eq!(tzf.format(&time_zone), "GMT+?");
 }
 
@@ -596,7 +596,7 @@ fn test_time_zone_patterns() {
         let data_locale = DataLocale::from(&locale);
         let req = DataRequest {
             locale: &data_locale,
-            metadata: Default::default(),
+            ..Default::default()
         };
         let mut config = test.config;
         let (datetime, mut time_zone) =

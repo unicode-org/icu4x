@@ -6,7 +6,7 @@
 
 use core::marker::PhantomData;
 
-use crate::{data_key, key::DataKey};
+use crate::{data_key, DataKey, DataProvider, DataProviderWithKey};
 use yoke::Yokeable;
 
 /// Trait marker for data structs. All types delivered by the data provider must be associated with
@@ -84,6 +84,15 @@ pub trait DataMarker: 'static {
 pub trait KeyedDataMarker: DataMarker {
     /// The single [`DataKey`] associated with this marker.
     const KEY: DataKey;
+
+    /// Binds this [`KeyedDataMarker`] to a provider supporting it.
+    fn bind<P>(provider: P) -> DataProviderWithKey<Self, P>
+    where
+        P: DataProvider<Self>,
+        Self: Sized,
+    {
+        DataProviderWithKey::new(provider)
+    }
 }
 
 /// A [`DataMarker`] that never returns data.
@@ -98,7 +107,7 @@ pub trait KeyedDataMarker: DataMarker {
 /// # Examples
 ///
 /// ```
-/// use icu_locid::locale;
+/// use icu_locale_core::langid;
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
 /// use icu_provider::NeverMarker;
@@ -108,8 +117,8 @@ pub trait KeyedDataMarker: DataMarker {
 /// let result = DataProvider::<NeverMarker<HelloWorldV1<'static>>>::load(
 ///     &buffer_provider.as_deserializing(),
 ///     DataRequest {
-///         locale: &locale!("en").into(),
-///         metadata: Default::default(),
+///         locale: &langid!("en").into(),
+///         ..Default::default()
 ///     },
 /// );
 ///
@@ -145,7 +154,7 @@ where
 /// # Examples
 ///
 /// ```
-/// use icu_locid::locale;
+/// use icu_locale_core::langid;
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
 /// use icu_provider::NeverMarker;
@@ -157,8 +166,8 @@ where
 /// let result = DataProvider::<NeverMarker<HelloWorldV1<'static>>>::load(
 ///     &MyProvider,
 ///     DataRequest {
-///         locale: &locale!("und").into(),
-///         metadata: Default::default(),
+///         locale: &langid!("und").into(),
+///         ..Default::default()
 ///     },
 /// );
 ///

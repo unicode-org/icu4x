@@ -47,8 +47,8 @@ exec --fail-on-error target/debug/icu4x-datagen --keys "core/helloworld@1" --loc
 exec --fail-on-error target/debug/icu4x-datagen --keys "core/helloworld@1" --locales full --format blob2 --overwrite --out provider/blob/tests/data/v2.postcard
 
 exec --fail-on-error target/debug/icu4x-datagen --keys "core/helloworld@1" "fallback/likelysubtags@1" "fallback/parents@1" "fallback/supplement/co@1" --locales full --format blob --out provider/adapters/tests/data/blob.postcard --overwrite
-exec --fail-on-error target/debug/icu4x-datagen --keys "core/helloworld@1" --fallback preresolved --locales de --format dir --syntax json --out provider/adapters/tests/data/langtest/de --overwrite
-exec --fail-on-error target/debug/icu4x-datagen --keys "core/helloworld@1" --fallback preresolved --locales ro --format dir --syntax json --out provider/adapters/tests/data/langtest/ro --overwrite
+exec --fail-on-error target/debug/icu4x-datagen --keys "core/helloworld@1" --without-fallback --locales de --format dir --syntax json --out provider/adapters/tests/data/langtest/de --overwrite
+exec --fail-on-error target/debug/icu4x-datagen --keys "core/helloworld@1" --without-fallback --locales ro --format dir --syntax json --out provider/adapters/tests/data/langtest/ro --overwrite
 '''
 
 [tasks.testdata-check]
@@ -74,30 +74,6 @@ if greater_than ${output_length} 0
     trigger_error ${msg}
 end
 '''
-
-[tasks.testdata-legacy]
-description = "Build the data for the legacy icu_testdata crate"
-category = "ICU4X Data"
-command = "cargo"
-args = [
-    "run",
-    "--bin=make-testdata-legacy",
-    "--release",
-    "--manifest-path=tools/testdata-scripts/Cargo.toml", # avoid global feature resolution
-]
-
-[tasks.testdata-legacy-test]
-description = "Verify the data for the legacy icu_testdata crate"
-category = "ICU4X Data"
-script_runner = "@duckscript"
-script = """
-    cd provider/testdata
-    set_env CARGO_TARGET_DIR "../../target"
-    exec --fail-on-error cargo check-all-features
-    exec --fail-on-error cargo test --all-features --all-targets
-    set_env RUSTDOCFLAGS -Dwarnings
-    exec --fail-on-error cargo doc --all-features --no-deps
-"""
 
 [tasks.bakeddata]
 description = "Builds full baked data"

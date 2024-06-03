@@ -4,7 +4,7 @@ part of 'lib.g.dart';
 
 /// An object that runs the ICU4X locale fallback algorithm.
 ///
-/// See the [Rust documentation for `LocaleFallbacker`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbacker.html) for more information.
+/// See the [Rust documentation for `LocaleFallbacker`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbacker.html) for more information.
 final class LocaleFallbacker implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -26,7 +26,7 @@ final class LocaleFallbacker implements ffi.Finalizable {
 
   /// Creates a new `LocaleFallbacker` from a data provider.
   ///
-  /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbacker.html#method.new) for more information.
+  /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbacker.html#method.new) for more information.
   ///
   /// Throws [Error] on failure.
   factory LocaleFallbacker(DataProvider provider) {
@@ -39,7 +39,7 @@ final class LocaleFallbacker implements ffi.Finalizable {
 
   /// Creates a new `LocaleFallbacker` without data for limited functionality.
   ///
-  /// See the [Rust documentation for `new_without_data`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbacker.html#method.new_without_data) for more information.
+  /// See the [Rust documentation for `new_without_data`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbacker.html#method.new_without_data) for more information.
   factory LocaleFallbacker.withoutData() {
     final result = _ICU4XLocaleFallbacker_create_without_data();
     return LocaleFallbacker._fromFfi(result, []);
@@ -47,7 +47,7 @@ final class LocaleFallbacker implements ffi.Finalizable {
 
   /// Associates this `LocaleFallbacker` with configuration options.
   ///
-  /// See the [Rust documentation for `for_config`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbacker.html#method.for_config) for more information.
+  /// See the [Rust documentation for `for_config`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbacker.html#method.for_config) for more information.
   ///
   /// Throws [Error] on failure.
   LocaleFallbackerWithConfig forConfig(LocaleFallbackConfig config) {

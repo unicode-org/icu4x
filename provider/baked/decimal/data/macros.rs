@@ -14,7 +14,7 @@
 #[macro_export]
 macro_rules! __make_provider {
     ($ name : ty) => {
-        #[clippy::msrv = "1.67"]
+        #[clippy::msrv = "1.70"]
         impl $name {
             #[doc(hidden)]
             #[allow(dead_code)]
@@ -30,3 +30,5 @@ pub use __make_provider as make_provider;
 mod decimal_symbols_v1;
 #[doc(inline)]
 pub use __impl_decimal_symbols_v1 as impl_decimal_symbols_v1;
+#[doc(inline)]
+pub use __impliterable_decimal_symbols_v1 as impliterable_decimal_symbols_v1;
