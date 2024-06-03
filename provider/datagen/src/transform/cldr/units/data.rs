@@ -66,7 +66,7 @@ impl IterableDataProvider<UnitsDisplayNameV1Marker> for DatagenProvider {
             quantity: &str,
         ) -> DataLocale {
             let mut data_locale = DataLocale::from(langid);
-            let subtag = Subtag::from_str(quantity)?;
+            let subtag = Subtag::from_str(quantity).map_err(|_| DataError::custom("Failed to parse subtag"))?;
             data_locale.set_aux(AuxiliaryKeys::from_subtag(subtag));
             data_locale
         }
