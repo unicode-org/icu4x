@@ -12,8 +12,13 @@ use std::collections::BTreeMap;
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub struct UnitsData {
+    #[serde(flatten)]
     pub long: BTreeMap<String, String>,
+
+    #[serde(flatten)]
     pub short: BTreeMap<String, String>,
+
+    #[serde(flatten)]
     pub narrow: BTreeMap<String, String>,
 }
 
