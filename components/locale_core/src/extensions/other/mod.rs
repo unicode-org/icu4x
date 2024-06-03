@@ -111,7 +111,11 @@ impl Other {
             iter.next();
         }
 
-        Ok(Self::from_short_slice_unchecked(ext, keys))
+        if keys.is_empty() {
+            Err(ParserError::InvalidExtension)
+        } else {
+            Ok(Self::from_short_slice_unchecked(ext, keys))
+        }
     }
 
     /// Gets the tag character for this extension as a &str.
@@ -187,6 +191,9 @@ writeable::impl_display_with_writeable!(Other);
 
 impl writeable::Writeable for Other {
     fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
+        if self.keys.is_empty() {
+            return Ok(());
+        }
         sink.write_str(self.get_ext_str())?;
         for key in self.keys.iter() {
             sink.write_char('-')?;
@@ -197,6 +204,9 @@ impl writeable::Writeable for Other {
     }
 
     fn writeable_length_hint(&self) -> writeable::LengthHint {
+        if self.keys.is_empty() {
+            return writeable::LengthHint::exact(0);
+        };
         let mut result = writeable::LengthHint::exact(1);
         for key in self.keys.iter() {
             result += writeable::Writeable::writeable_length_hint(key) + 1;
@@ -206,7 +216,7 @@ impl writeable::Writeable for Other {
 
     fn write_to_string(&self) -> alloc::borrow::Cow<str> {
         if self.keys.is_empty() {
-            return alloc::borrow::Cow::Borrowed(self.get_ext_str());
+            return alloc::borrow::Cow::Borrowed("");
         }
         let mut string =
             alloc::string::String::with_capacity(self.writeable_length_hint().capacity());
@@ -221,7 +231,10 @@ mod tests {
 
     #[test]
     fn test_other_extension_fromstr() {
-        let pe: Other = "o-foo-bar".parse().expect("Failed to parse Other");
-        assert_eq!(pe.to_string(), "o-foo-bar");
+        let oe: Other = "o-foo-bar".parse().expect("Failed to parse Other");
+        assert_eq!(oe.to_string(), "o-foo-bar");
+
+        let oe: Result<Other, _> = "o".parse();
+        assert!(oe.is_err());
     }
 }
