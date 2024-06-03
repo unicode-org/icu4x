@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::parser::{ParserError, SubtagIterator};
-use crate::shortvec::ShortBoxSlice;
+use crate::shortvec::{ShortBoxSlice, ShortBoxSliceIntoIter};
 use crate::subtags::{subtag, Subtag};
 use alloc::vec::Vec;
 use core::str::FromStr;
@@ -67,8 +67,45 @@ impl Value {
     }
 
     #[doc(hidden)]
+    pub fn into_single_subtag(self) -> Option<Subtag> {
+        self.0.into_single()
+    }
+
+    #[doc(hidden)]
     pub fn as_subtags_slice(&self) -> &[Subtag] {
         &self.0
+    }
+
+    #[doc(hidden)]
+    pub fn push_subtag(&mut self, subtag: Subtag) {
+        self.0.push(subtag);
+    }
+
+    #[doc(hidden)]
+    pub fn extend(&mut self, rest: &Self) {
+        for i in rest.0.iter() {
+            self.0.push(*i);
+        }
+    }
+
+    #[doc(hidden)]
+    pub fn len(&self) -> usize {
+        self.0.len()
+    }
+
+    #[doc(hidden)]
+    pub fn remove_subtag(&mut self, idx: usize) -> Option<Subtag> {
+        if self.0.len() < idx {
+            None
+        } else {
+            let item = self.0.remove(idx);
+            Some(item)
+        }
+    }
+
+    #[doc(hidden)]
+    pub fn get_subtag(&self, idx: usize) -> Option<&Subtag> {
+        self.0.get(idx)
     }
 
     #[doc(hidden)]
@@ -129,6 +166,22 @@ impl Value {
         F: FnMut(&str) -> Result<(), E>,
     {
         self.0.iter().map(Subtag::as_str).try_for_each(f)
+    }
+}
+
+impl IntoIterator for Value {
+    type Item = Subtag;
+
+    type IntoIter = ShortBoxSliceIntoIter<Subtag>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.0.into_iter()
+    }
+}
+
+impl FromIterator<Subtag> for Value {
+    fn from_iter<T: IntoIterator<Item = Subtag>>(iter: T) -> Self {
+        Self(ShortBoxSlice::from_iter(iter.into_iter()))
     }
 }
 

@@ -30,6 +30,7 @@ mod attribute;
 mod attributes;
 mod key;
 mod keywords;
+mod subdivision;
 mod value;
 
 use core::cmp::Ordering;
@@ -41,6 +42,7 @@ pub use attributes::Attributes;
 #[doc(inline)]
 pub use key::{key, Key};
 pub use keywords::Keywords;
+pub use subdivision::{subdivision_suffix, SubdivisionId, SubdivisionSuffix};
 #[doc(inline)]
 pub use value::{value, Value};
 

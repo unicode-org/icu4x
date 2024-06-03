@@ -97,6 +97,11 @@ impl Subtag {
     }
 
     #[doc(hidden)]
+    pub fn len(&self) -> usize {
+        self.0.len()
+    }
+
+    #[doc(hidden)]
     pub fn from_tinystr_unvalidated(input: tinystr::TinyAsciiStr<8>) -> Self {
         Self(input)
     }
