@@ -26,7 +26,7 @@ impl DataProvider<UnitsDisplayNameV1Marker> for DatagenProvider {
 
         // Get langid and quantity
         let langid = req.locale.get_langid();
-        let aux_keys = req.locale.get_aux().unwrap();
+        let aux_keys = req.locale.get_aux().ok_or(DataError::custom("Failed to get aux keys"))?;
         let mut aux_keys_iter = aux_keys.iter();
         let subtag = aux_keys_iter
             .next()
@@ -66,7 +66,7 @@ impl IterableDataProvider<UnitsDisplayNameV1Marker> for DatagenProvider {
             quantity: &str,
         ) -> DataLocale {
             let mut data_locale = DataLocale::from(langid);
-            let subtag = Subtag::from_str(quantity).unwrap();
+            let subtag = Subtag::from_str(quantity)?;
             data_locale.set_aux(AuxiliaryKeys::from_subtag(subtag));
             data_locale
         }
@@ -91,7 +91,7 @@ impl IterableDataProvider<UnitsDisplayNameV1Marker> for DatagenProvider {
                     continue;
                 }
 
-                let quantity = long_key.split("-").next().unwrap();
+                let quantity = long_key.split("-").next().ok_or(DataError::custom("Failed to split long_key"))?;
                 quantities.insert(quantity);
             }
 
