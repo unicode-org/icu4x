@@ -32,21 +32,21 @@ use zerovec::{VarZeroVec, ZeroMap2d};
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub struct UnitsDisplayName<'data> {
+pub struct UnitsDisplayNameV1<'data> {
     // TODO: store the pattern in a SinglePattern.
     /// Contains the long width patterns for the units.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    long_width: ZeroMap2d<'data, str, Count, str>,
+    pub long_width: ZeroMap2d<'data, str, Count, str>,
 
     // TODO: store the pattern in a SinglePattern.
     /// Contains the short width patterns for the units.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    short_width: ZeroMap2d<'data, str, Count, str>,
+    pub short_width: ZeroMap2d<'data, str, Count, str>,
 
     // TODO: store the pattern in a SinglePattern.
     /// Contains the narrow width patterns for the units.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    narrow_width: ZeroMap2d<'data, str, Count, str>,
+    pub narrow_width: ZeroMap2d<'data, str, Count, str>,
 }
 
 // TODO: revise this.

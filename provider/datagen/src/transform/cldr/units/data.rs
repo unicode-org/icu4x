@@ -9,7 +9,7 @@ use crate::provider::transform::cldr::cldr_serde::units::data;
 use crate::provider::transform::cldr::cldr_serde::{self};
 use crate::provider::DatagenProvider;
 
-use icu_experimental::dimension::provider::units::UnitsDisplayNameV1Marker;
+use icu_experimental::dimension::provider::units::{UnitsDisplayNameV1, UnitsDisplayNameV1Marker};
 
 use icu_locid::extensions::private::Subtag;
 use icu_locid::LanguageIdentifier;
@@ -18,6 +18,7 @@ use icu_provider::{
     datagen::IterableDataProvider, DataError, DataLocale, DataPayload, DataProvider, DataRequest,
     DataResponse,
 };
+use zerovec::ZeroMap2d;
 
 impl DataProvider<UnitsDisplayNameV1Marker> for DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<UnitsDisplayNameV1Marker>, DataError> {
@@ -40,6 +41,21 @@ impl DataProvider<UnitsDisplayNameV1Marker> for DatagenProvider {
             .displaynames()
             .read_and_parse(&langid, "units.json")?;
         let units_format_data = &units_format_data.main.value.units;
+
+        let mut long = ZeroMap2d::new();
+        let mut short = ZeroMap2d::new();
+        let mut narrow = ZeroMap2d::new();
+
+        let result = UnitsDisplayNameV1 {
+            long_width: long,
+            short_width: short,
+            narrow_width: narrow,
+        };
+
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: Some(DataPayload::from_owned(result)),
+        })
     }
 }
 
