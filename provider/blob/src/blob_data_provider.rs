@@ -118,8 +118,8 @@ impl BlobDataProvider {
     }
 }
 
-impl BufferProvider for BlobDataProvider {
-    fn load_buffer(
+impl DynamicDataProvider<BufferMarker> for BlobDataProvider {
+    fn load_data(
         &self,
         key: DataKey,
         req: DataRequest,
@@ -168,7 +168,7 @@ mod test {
 
             assert!(
                 matches!(
-                    provider.load_buffer(HelloWorldV1Marker::KEY, Default::default()),
+                    provider.load_data(HelloWorldV1Marker::KEY, Default::default()),
                     Err(DataError {
                         kind: DataErrorKind::MissingLocale,
                         ..
@@ -200,7 +200,7 @@ mod test {
 
             assert!(
                 matches!(
-                    provider.load_buffer(
+                    provider.load_data(
                         HelloSingletonV1Marker::KEY,
                         DataRequest {
                             locale: &icu_locale_core::langid!("de").into(),
@@ -217,7 +217,7 @@ mod test {
 
             assert!(
                 matches!(
-                    provider.load_buffer(HelloSingletonV1Marker::KEY, Default::default()),
+                    provider.load_data(HelloSingletonV1Marker::KEY, Default::default()),
                     Err(DataError {
                         kind: DataErrorKind::MissingLocale,
                         ..

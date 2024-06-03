@@ -893,7 +893,7 @@ fn select_locales_for_key<'a>(
                     return true;
                 };
                 additional_collations.contains(collation.as_str())
-                    || if collation.starts_with("search") {
+                    || if collation.as_str().starts_with("search") {
                         additional_collations.contains("search*")
                     } else {
                         !["big5han", "gb2312"].contains(&collation.as_str())

@@ -185,8 +185,10 @@ dependencies = [
 name = "bakeddata-scripts"
 version = "1.5.0"
 dependencies = [
+ "crlify",
  "icu",
  "icu_datagen",
+ "icu_provider",
  "log",
  "simple_logger",
 ]

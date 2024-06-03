@@ -13,9 +13,11 @@ use icu_calendar::{
     islamic::IslamicUmmAlQura, japanese::Japanese, japanese::JapaneseExtended, persian::Persian,
     Gregorian,
 };
-use icu_locale_core::extensions::unicode::{value, Value};
+use icu_locale_core::{
+    extensions::unicode::{value, Value},
+    subtags::{subtag, Subtag},
+};
 use icu_provider::prelude::*;
-use tinystr::{tinystr, TinyAsciiStr};
 
 #[cfg(any(feature = "datagen", feature = "experimental"))]
 use crate::provider::neo::*;
@@ -84,9 +86,9 @@ pub trait CldrCalendar: InternalCldrCalendar {
 }
 
 /// Check if the provided value is of the form `islamic-{subcal}`
-fn is_islamic_subcal(value: &Value, subcal: TinyAsciiStr<8>) -> bool {
-    if let &[first, second] = value.as_tinystr_slice() {
-        first == "islamic" && second == subcal
+fn is_islamic_subcal(value: &Value, subcal: Subtag) -> bool {
+    if let &[first, second] = value.as_subtags_slice() {
+        first == *"islamic" && second == subcal
     } else {
         false
     }
@@ -243,7 +245,7 @@ impl CldrCalendar for IslamicCivil {
     #[cfg(any(feature = "datagen", feature = "experimental"))]
     type SkeletaV1Marker = IslamicDateNeoSkeletonPatternsV1Marker;
     fn is_identifier_allowed_for_calendar(value: &Value) -> bool {
-        *value == value!("islamicc") || is_islamic_subcal(value, tinystr!(8, "civil"))
+        *value == value!("islamicc") || is_islamic_subcal(value, subtag!("civil"))
     }
 }
 
@@ -277,7 +279,7 @@ impl CldrCalendar for IslamicTabular {
     #[cfg(any(feature = "datagen", feature = "experimental"))]
     type SkeletaV1Marker = IslamicDateNeoSkeletonPatternsV1Marker;
     fn is_identifier_allowed_for_calendar(value: &Value) -> bool {
-        is_islamic_subcal(value, tinystr!(8, "tbla"))
+        is_islamic_subcal(value, subtag!("tbla"))
     }
 }
 
@@ -297,7 +299,7 @@ impl CldrCalendar for IslamicUmmAlQura {
     #[cfg(any(feature = "datagen", feature = "experimental"))]
     type SkeletaV1Marker = IslamicDateNeoSkeletonPatternsV1Marker;
     fn is_identifier_allowed_for_calendar(value: &Value) -> bool {
-        is_islamic_subcal(value, tinystr!(8, "umalqura"))
+        is_islamic_subcal(value, subtag!("umalqura"))
     }
 }
 

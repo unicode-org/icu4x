@@ -33,21 +33,6 @@ impl<P0: AnyProvider, P1: AnyProvider> AnyProvider for EitherProvider<P0, P1> {
     }
 }
 
-impl<P0: BufferProvider, P1: BufferProvider> BufferProvider for EitherProvider<P0, P1> {
-    #[inline]
-    fn load_buffer(
-        &self,
-        key: DataKey,
-        req: DataRequest,
-    ) -> Result<DataResponse<BufferMarker>, DataError> {
-        use EitherProvider::*;
-        match self {
-            A(p) => p.load_buffer(key, req),
-            B(p) => p.load_buffer(key, req),
-        }
-    }
-}
-
 impl<M: DataMarker, P0: DynamicDataProvider<M>, P1: DynamicDataProvider<M>> DynamicDataProvider<M>
     for EitherProvider<P0, P1>
 {

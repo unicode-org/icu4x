@@ -243,24 +243,6 @@ where
     }
 }
 
-impl<P> BufferProvider for LocaleFallbackProvider<P>
-where
-    P: BufferProvider,
-{
-    fn load_buffer(
-        &self,
-        key: DataKey,
-        base_req: DataRequest,
-    ) -> Result<DataResponse<BufferMarker>, DataError> {
-        self.run_fallback(
-            key,
-            base_req,
-            |req| self.inner.load_buffer(key, req),
-            |res| &mut res.metadata,
-        )
-    }
-}
-
 impl<P, M> DynamicDataProvider<M> for LocaleFallbackProvider<P>
 where
     P: DynamicDataProvider<M>,

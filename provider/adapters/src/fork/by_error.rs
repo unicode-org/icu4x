@@ -45,27 +45,6 @@ impl<P0, P1, F> ForkByErrorProvider<P0, P1, F> {
     }
 }
 
-impl<P0, P1, F> BufferProvider for ForkByErrorProvider<P0, P1, F>
-where
-    P0: BufferProvider,
-    P1: BufferProvider,
-    F: ForkByErrorPredicate,
-{
-    fn load_buffer(
-        &self,
-        key: DataKey,
-        req: DataRequest,
-    ) -> Result<DataResponse<BufferMarker>, DataError> {
-        let result = self.0.load_buffer(key, req);
-        match result {
-            Ok(ok) => return Ok(ok),
-            Err(err) if !self.2.test(key, Some(req), err) => return Err(err),
-            _ => (),
-        };
-        self.1.load_buffer(key, req)
-    }
-}
-
 impl<P0, P1, F> AnyProvider for ForkByErrorProvider<P0, P1, F>
 where
     P0: AnyProvider,
@@ -166,29 +145,6 @@ impl<P, F> MultiForkByErrorProvider<P, F> {
     /// Adds an additional child provider.
     pub fn push(&mut self, provider: P) {
         self.providers.push(provider);
-    }
-}
-
-impl<P, F> BufferProvider for MultiForkByErrorProvider<P, F>
-where
-    P: BufferProvider,
-    F: ForkByErrorPredicate,
-{
-    fn load_buffer(
-        &self,
-        key: DataKey,
-        req: DataRequest,
-    ) -> Result<DataResponse<BufferMarker>, DataError> {
-        let mut last_error = F::UNIT_ERROR.with_key(key);
-        for provider in self.providers.iter() {
-            let result = provider.load_buffer(key, req);
-            match result {
-                Ok(ok) => return Ok(ok),
-                Err(err) if !self.predicate.test(key, Some(req), err) => return Err(err),
-                Err(err) => last_error = err,
-            };
-        }
-        Err(last_error)
     }
 }
 

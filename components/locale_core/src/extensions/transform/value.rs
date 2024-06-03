@@ -4,9 +4,9 @@
 
 use crate::parser::{ParserError, SubtagIterator};
 use crate::shortvec::ShortBoxSlice;
+use crate::subtags::{subtag, Subtag};
 use core::ops::RangeInclusive;
 use core::str::FromStr;
-use tinystr::TinyAsciiStr;
 
 /// A value used in a list of [`Fields`](super::Fields).
 ///
@@ -27,10 +27,10 @@ use tinystr::TinyAsciiStr;
 /// "no".parse::<Value>().expect_err("Invalid Value.");
 /// ```
 #[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord, Default)]
-pub struct Value(ShortBoxSlice<TinyAsciiStr<{ *TYPE_LENGTH.end() }>>);
+pub struct Value(ShortBoxSlice<Subtag>);
 
 const TYPE_LENGTH: RangeInclusive<usize> = 3..=8;
-const TRUE_TVALUE: TinyAsciiStr<8> = tinystr::tinystr!(8, "true");
+const TRUE_TVALUE: Subtag = subtag!("true");
 
 impl Value {
     /// A constructor which takes a utf8 slice, parses it and
@@ -52,8 +52,7 @@ impl Value {
                 return Err(ParserError::InvalidExtension);
             }
             has_value = true;
-            let val =
-                TinyAsciiStr::from_bytes(subtag).map_err(|_| ParserError::InvalidExtension)?;
+            let val = Subtag::try_from_bytes(subtag).map_err(|_| ParserError::InvalidExtension)?;
             if val != TRUE_TVALUE {
                 v.push(val);
             }
@@ -65,9 +64,7 @@ impl Value {
         Ok(Self(v))
     }
 
-    pub(crate) fn from_short_slice_unchecked(
-        input: ShortBoxSlice<TinyAsciiStr<{ *TYPE_LENGTH.end() }>>,
-    ) -> Self {
+    pub(crate) fn from_short_slice_unchecked(input: ShortBoxSlice<Subtag>) -> Self {
         Self(input)
     }
 
@@ -75,13 +72,11 @@ impl Value {
         TYPE_LENGTH.contains(&t.len()) && t.iter().all(u8::is_ascii_alphanumeric)
     }
 
-    pub(crate) fn parse_subtag(
-        t: &[u8],
-    ) -> Result<Option<TinyAsciiStr<{ *TYPE_LENGTH.end() }>>, ParserError> {
-        let s = TinyAsciiStr::from_bytes(t).map_err(|_| ParserError::InvalidSubtag)?;
-        if !TYPE_LENGTH.contains(&t.len()) || !s.is_ascii_alphanumeric() {
+    pub(crate) fn parse_subtag(t: &[u8]) -> Result<Option<Subtag>, ParserError> {
+        if !TYPE_LENGTH.contains(&t.len()) {
             return Err(ParserError::InvalidExtension);
         }
+        let s = Subtag::try_from_bytes(t).map_err(|_| ParserError::InvalidSubtag)?;
 
         let s = s.to_ascii_lowercase();
 
@@ -97,9 +92,9 @@ impl Value {
         F: FnMut(&str) -> Result<(), E>,
     {
         if self.0.is_empty() {
-            f("true")?;
+            f(TRUE_TVALUE.as_str())?;
         } else {
-            self.0.iter().map(TinyAsciiStr::as_str).try_for_each(f)?;
+            self.0.iter().map(Subtag::as_str).try_for_each(f)?;
         }
         Ok(())
     }
@@ -131,4 +126,18 @@ fn test_writeable() {
         Value::from_short_slice_unchecked(vec![hybrid, foobar].into()),
         "hybrid-foobar"
     );
+}
+
+#[test]
+fn test_short_tvalue() {
+    let value = Value::from_str("foo-longstag");
+    assert!(value.is_ok());
+    let value = value.unwrap();
+    assert_eq!(value.0.len(), 2);
+    for (s, reference) in value.0.iter().zip(&[subtag!("foo"), subtag!("longstag")]) {
+        assert_eq!(s, reference);
+    }
+
+    let value = Value::from_str("foo-ba");
+    assert!(value.is_err());
 }

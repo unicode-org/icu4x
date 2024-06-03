@@ -185,7 +185,7 @@ icu_provider::impl_dynamic_data_provider!(HelloWorldProvider, [HelloWorldV1Marke
 ///
 /// let german_hello_world = HelloWorldProvider
 ///     .into_json_provider()
-///     .load_buffer(HelloWorldV1Marker::KEY, DataRequest {
+///     .load_data(HelloWorldV1Marker::KEY, DataRequest {
 ///         locale: &langid!("de").into(),
 ///         ..Default::default()
 ///     })
@@ -198,8 +198,8 @@ icu_provider::impl_dynamic_data_provider!(HelloWorldProvider, [HelloWorldV1Marke
 pub struct HelloWorldJsonProvider;
 
 #[cfg(feature = "deserialize_json")]
-impl BufferProvider for HelloWorldJsonProvider {
-    fn load_buffer(
+impl DynamicDataProvider<BufferMarker> for HelloWorldJsonProvider {
+    fn load_data(
         &self,
         key: DataKey,
         req: DataRequest,

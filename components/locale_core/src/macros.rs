@@ -141,7 +141,7 @@ macro_rules! locale {
                             $crate::extensions::unicode::Unicode {
                                 keywords: $crate::extensions::unicode::Keywords::new_single(
                                     k.0,
-                                    $crate::extensions::unicode::Value::from_tinystr(k.1),
+                                    $crate::extensions::unicode::Value::from_subtag(k.1),
                                 ),
 
                                 attributes: $crate::extensions::unicode::Attributes::new(),
