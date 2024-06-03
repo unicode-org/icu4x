@@ -1092,7 +1092,7 @@ impl AnyCalendarKind {
             if lang == language!("th") {
                 Self::Buddhist
             } else if lang == language!("sa") {
-                Self::IslamicUmalqura
+                Self::IslamicUmmAlQura
             } else if lang == language!("af") || lang == language!("ir") {
                 Self::Persian
             } else {
