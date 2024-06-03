@@ -377,14 +377,14 @@ macro_rules! impl_writeable_for_subtag_list {
         fn test_writeable() {
             writeable::assert_writeable_eq!(&$type::default(), "");
             writeable::assert_writeable_eq!(
-                &$type::from_short_slice_unchecked(alloc::vec![$sample1.parse().unwrap()].into()),
+                &$type::from_vec_unchecked(alloc::vec![$sample1.parse().unwrap()]),
                 $sample1,
             );
             writeable::assert_writeable_eq!(
-                &$type::from_short_slice_unchecked(vec![
+                &$type::from_vec_unchecked(vec![
                     $sample1.parse().unwrap(),
                     $sample2.parse().unwrap()
-                ].into()),
+                ]),
                 core::concat!($sample1, "-", $sample2),
             );
         }

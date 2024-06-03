@@ -4,9 +4,12 @@
 
 use super::Attribute;
 
+use crate::parser::SubtagIterator;
 use crate::shortvec::ShortBoxSlice;
+use crate::ParserError;
 use alloc::vec::Vec;
 use core::ops::Deref;
+use core::str::FromStr;
 
 /// A set of [`Attribute`] elements as defined in [`Unicode Extension Attributes`].
 ///
@@ -72,8 +75,9 @@ impl Attributes {
         Self(input.into())
     }
 
-    pub(crate) fn from_short_slice_unchecked(input: ShortBoxSlice<Attribute>) -> Self {
-        Self(input)
+    pub(crate) fn try_from_bytes(t: &[u8]) -> Result<Self, ParserError> {
+        let mut iter = SubtagIterator::new(t);
+        Self::try_from_iter(&mut iter)
     }
 
     /// Empties the [`Attributes`] list.
@@ -101,11 +105,35 @@ impl Attributes {
         core::mem::take(self)
     }
 
+    pub(crate) fn try_from_iter(iter: &mut SubtagIterator) -> Result<Self, ParserError> {
+        let mut attributes = ShortBoxSlice::new();
+
+        while let Some(subtag) = iter.peek() {
+            if let Ok(attr) = Attribute::try_from_bytes(subtag) {
+                if let Err(idx) = attributes.binary_search(&attr) {
+                    attributes.insert(idx, attr);
+                }
+            } else {
+                break;
+            }
+            iter.next();
+        }
+        Ok(Self(attributes))
+    }
+
     pub(crate) fn for_each_subtag_str<E, F>(&self, f: &mut F) -> Result<(), E>
     where
         F: FnMut(&str) -> Result<(), E>,
     {
         self.deref().iter().map(|t| t.as_str()).try_for_each(f)
+    }
+}
+
+impl FromStr for Attributes {
+    type Err = ParserError;
+
+    fn from_str(source: &str) -> Result<Self, Self::Err> {
+        Self::try_from_bytes(source.as_bytes())
     }
 }
 
@@ -116,5 +144,16 @@ impl Deref for Attributes {
 
     fn deref(&self) -> &[Attribute] {
         self.0.deref()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_attributes_fromstr() {
+        let attrs: Attributes = "foo-bar".parse().expect("Failed to parse Attributes");
+        assert_eq!(attrs.to_string(), "bar-foo");
     }
 }
