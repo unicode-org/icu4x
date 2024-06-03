@@ -189,12 +189,12 @@ impl DataProvider<LstmForWordLineAutoV1Marker> for DatagenProvider {
     ) -> Result<DataResponse<LstmForWordLineAutoV1Marker>, DataError> {
         self.check_req::<LstmForWordLineAutoV1Marker>(req)?;
 
-        let model = crate::lstm_data_locale_to_model_name(req.langid)
-            .ok_or(DataErrorKind::MissingLocale.with_req(LstmForWordLineAutoV1Marker::KEY, req))?;
-
         let lstm_data = self
             .segmenter_lstm()?
-            .read_and_parse_json::<RawLstmData>(&format!("{model}/weights.json"))
+            .read_and_parse_json::<RawLstmData>(&format!(
+                "{}/weights.json",
+                req.key_attributes as &str
+            ))
             .map_err(|_| DataErrorKind::MissingLocale.into_error())?;
 
         let data = lstm_data.try_convert()?;
@@ -217,8 +217,7 @@ impl IterableDataProvider<LstmForWordLineAutoV1Marker> for DatagenProvider {
             "Thai_codepoints_exclusive_model4_heavy",
         ]
         .into_iter()
-        .filter_map(crate::lstm_model_name_to_data_locale)
-        .map(|l| (l, Default::default()))
+        .map(|m| (Default::default(), m.parse().unwrap()))
         .collect())
     }
 }
