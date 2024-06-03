@@ -30,7 +30,7 @@ impl DataProvider<AliasesV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProvider<AliasesV1Marker> for DatagenProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
@@ -50,7 +50,7 @@ impl DataProvider<AliasesV2Marker> for DatagenProvider {
 }
 
 impl IterableDataProvider<AliasesV2Marker> for DatagenProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }

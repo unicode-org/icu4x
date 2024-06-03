@@ -84,15 +84,17 @@ impl DatePatternSelectionData {
         let payload = provider
             .load_bound(DataRequest {
                 locale,
-                key_attributes: &DataKeyAttributes::from_tinystr(key_attrs::pattern_key_attr_for(
-                    match length {
-                        length::Date::Full => key_attrs::PatternLength::Full,
-                        length::Date::Long => key_attrs::PatternLength::Long,
-                        length::Date::Medium => key_attrs::PatternLength::Medium,
-                        length::Date::Short => key_attrs::PatternLength::Short,
-                    },
-                    None, // no hour cycle for date patterns
-                )),
+                marker_attributes: &DataMarkerAttributes::from_tinystr(
+                    marker_attrs::pattern_marker_attr_for(
+                        match length {
+                            length::Date::Full => marker_attrs::PatternLength::Full,
+                            length::Date::Long => marker_attrs::PatternLength::Long,
+                            length::Date::Medium => marker_attrs::PatternLength::Medium,
+                            length::Date::Short => marker_attrs::PatternLength::Short,
+                        },
+                        None, // no hour cycle for date patterns
+                    ),
+                ),
                 ..Default::default()
             })?
             .take_payload()?
@@ -109,7 +111,7 @@ impl DatePatternSelectionData {
         let payload = provider
             .load_bound(DataRequest {
                 locale,
-                key_attributes: &DataKeyAttributes::from_tinystr(components.id_str()),
+                marker_attributes: &DataMarkerAttributes::from_tinystr(components.id_str()),
                 ..Default::default()
             })?
             .take_payload()?
@@ -174,15 +176,17 @@ impl TimePatternSelectionData {
         let payload = provider
             .load(DataRequest {
                 locale,
-                key_attributes: &DataKeyAttributes::from_tinystr(key_attrs::pattern_key_attr_for(
-                    match length {
-                        length::Time::Full => key_attrs::PatternLength::Full,
-                        length::Time::Long => key_attrs::PatternLength::Long,
-                        length::Time::Medium => key_attrs::PatternLength::Medium,
-                        length::Time::Short => key_attrs::PatternLength::Short,
-                    },
-                    None, // no hour cycle for date patterns
-                )),
+                marker_attributes: &DataMarkerAttributes::from_tinystr(
+                    marker_attrs::pattern_marker_attr_for(
+                        match length {
+                            length::Time::Full => marker_attrs::PatternLength::Full,
+                            length::Time::Long => marker_attrs::PatternLength::Long,
+                            length::Time::Medium => marker_attrs::PatternLength::Medium,
+                            length::Time::Short => marker_attrs::PatternLength::Short,
+                        },
+                        None, // no hour cycle for date patterns
+                    ),
+                ),
                 ..Default::default()
             })?
             .take_payload()?
@@ -199,7 +203,7 @@ impl TimePatternSelectionData {
         let payload = provider
             .load_bound(DataRequest {
                 locale,
-                key_attributes: &DataKeyAttributes::from_tinystr(components.id_str()),
+                marker_attributes: &DataMarkerAttributes::from_tinystr(components.id_str()),
                 ..Default::default()
             })?
             .take_payload()?
@@ -269,17 +273,19 @@ impl DateTimeGluePatternSelectionData {
         let glue = provider
             .load(DataRequest {
                 locale,
-                key_attributes: &DataKeyAttributes::from_tinystr(key_attrs::pattern_key_attr_for(
-                    // According to UTS 35, use the date length here: use the glue
-                    // pattern "whose type matches the type of the date pattern"
-                    match date_length {
-                        length::Date::Full => key_attrs::PatternLength::Full,
-                        length::Date::Long => key_attrs::PatternLength::Long,
-                        length::Date::Medium => key_attrs::PatternLength::Medium,
-                        length::Date::Short => key_attrs::PatternLength::Short,
-                    },
-                    None, // no hour cycle for date patterns
-                )),
+                marker_attributes: &DataMarkerAttributes::from_tinystr(
+                    marker_attrs::pattern_marker_attr_for(
+                        // According to UTS 35, use the date length here: use the glue
+                        // pattern "whose type matches the type of the date pattern"
+                        match date_length {
+                            length::Date::Full => marker_attrs::PatternLength::Full,
+                            length::Date::Long => marker_attrs::PatternLength::Long,
+                            length::Date::Medium => marker_attrs::PatternLength::Medium,
+                            length::Date::Short => marker_attrs::PatternLength::Short,
+                        },
+                        None, // no hour cycle for date patterns
+                    ),
+                ),
                 ..Default::default()
             })?
             .take_payload()?;
@@ -310,16 +316,18 @@ impl DateTimeGluePatternSelectionData {
         let glue = glue_provider
             .load_bound(DataRequest {
                 locale,
-                key_attributes: &DataKeyAttributes::from_tinystr(key_attrs::pattern_key_attr_for(
-                    // According to UTS 35, use the date length here: use the glue
-                    // pattern "whose type matches the type of the date pattern"
-                    match length {
-                        NeoSkeletonLength::Long => key_attrs::PatternLength::Long,
-                        NeoSkeletonLength::Medium => key_attrs::PatternLength::Medium,
-                        NeoSkeletonLength::Short => key_attrs::PatternLength::Short,
-                    },
-                    None, // no hour cycle for date patterns
-                )),
+                marker_attributes: &DataMarkerAttributes::from_tinystr(
+                    marker_attrs::pattern_marker_attr_for(
+                        // According to UTS 35, use the date length here: use the glue
+                        // pattern "whose type matches the type of the date pattern"
+                        match length {
+                            NeoSkeletonLength::Long => marker_attrs::PatternLength::Long,
+                            NeoSkeletonLength::Medium => marker_attrs::PatternLength::Medium,
+                            NeoSkeletonLength::Short => marker_attrs::PatternLength::Short,
+                        },
+                        None, // no hour cycle for date patterns
+                    ),
+                ),
                 ..Default::default()
             })?
             .take_payload()?;

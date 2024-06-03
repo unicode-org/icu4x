@@ -131,7 +131,7 @@ impl DataProvider<TransliteratorRulesV1Marker> for DatagenProvider {
 
 impl IterableDataProvider<TransliteratorRulesV1Marker> for DatagenProvider {
     // Don't do caching for this one. It uses its own mutex
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         self.cldr()?
             .transforms()?
             .lock()
@@ -151,7 +151,7 @@ mod tests {
 
         let _data: DataPayload<TransliteratorRulesV1Marker> = provider
             .load(DataRequest {
-                key_attributes: &"de-t-de-d0-ascii".parse().unwrap(),
+                marker_attributes: &"de-t-de-d0-ascii".parse().unwrap(),
                 ..Default::default()
             })
             .unwrap()
@@ -165,7 +165,7 @@ mod tests {
 
         let _data: DataPayload<TransliteratorRulesV1Marker> = provider
             .load(DataRequest {
-                key_attributes: &"und-latn-t-s0-ascii".parse().unwrap(),
+                marker_attributes: &"und-latn-t-s0-ascii".parse().unwrap(),
                 ..Default::default()
             })
             .unwrap()

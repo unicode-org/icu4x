@@ -337,10 +337,10 @@ where
 macro_rules! make_code_point_set_property {
     (
         // currently unused
-        property: $property:expr;
+        property: $p:expr;
         // currently unused
-        marker: $marker_name:ident;
-        keyed_data_marker: $keyed_data_marker:ty;
+        dyn_marker: $d:ident;
+        data_marker: $data_marker:ty;
         func:
         $(#[$doc:meta])+
         $cvis:vis const fn $constname:ident() => $singleton_name:ident;
@@ -351,7 +351,7 @@ macro_rules! make_code_point_set_property {
         /// Note that this will return an owned version of the data. Functionality is available on
         /// the borrowed version, accessible through [`CodePointSetData::as_borrowed`].
         $vis fn $funcname(
-            provider: &(impl DataProvider<$keyed_data_marker> + ?Sized)
+            provider: &(impl DataProvider<$data_marker> + ?Sized)
         ) -> Result<CodePointSetData, PropertiesError> {
             load_set_data(provider)
         }
@@ -368,8 +368,8 @@ macro_rules! make_code_point_set_property {
 
 make_code_point_set_property! {
     property: "ASCII_Hex_Digit";
-    marker: AsciiHexDigitProperty;
-    keyed_data_marker: AsciiHexDigitV1Marker;
+    dyn_marker: AsciiHexDigitProperty;
+    data_marker: AsciiHexDigitV1Marker;
     func:
     /// ASCII characters commonly used for the representation of hexadecimal numbers
     ///
@@ -395,8 +395,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "Alnum";
-    marker: AlnumProperty;
-    keyed_data_marker: AlnumV1Marker;
+    dyn_marker: AlnumProperty;
+    data_marker: AlnumV1Marker;
     func:
     /// Characters with the Alphabetic or Decimal_Number property
     /// This is defined for POSIX compatibility.
@@ -407,8 +407,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "Alphabetic";
-    marker: AlphabeticProperty;
-    keyed_data_marker: AlphabeticV1Marker;
+    dyn_marker: AlphabeticProperty;
+    data_marker: AlphabeticV1Marker;
     func:
     /// Alphabetic characters
     ///
@@ -435,8 +435,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "Bidi_Control";
-    marker: BidiControlProperty;
-    keyed_data_marker: BidiControlV1Marker;
+    dyn_marker: BidiControlProperty;
+    data_marker: BidiControlV1Marker;
     func:
     /// Format control characters which have specific functions in the Unicode Bidirectional
     /// Algorithm
@@ -462,8 +462,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "Bidi_Mirrored";
-    marker: BidiMirroredProperty;
-    keyed_data_marker: BidiMirroredV1Marker;
+    dyn_marker: BidiMirroredProperty;
+    data_marker: BidiMirroredV1Marker;
     func:
     /// Characters that are mirrored in bidirectional text
     ///
@@ -490,8 +490,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "Blank";
-    marker: BlankProperty;
-    keyed_data_marker: BlankV1Marker;
+    dyn_marker: BlankProperty;
+    data_marker: BlankV1Marker;
     func:
     /// Horizontal whitespace characters
 
@@ -501,8 +501,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "Cased";
-    marker: CasedProperty;
-    keyed_data_marker: CasedV1Marker;
+    dyn_marker: CasedProperty;
+    data_marker: CasedV1Marker;
     func:
     /// Uppercase, lowercase, and titlecase characters
     ///
@@ -527,8 +527,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "Case_Ignorable";
-    marker: CaseIgnorableProperty;
-    keyed_data_marker: CaseIgnorableV1Marker;
+    dyn_marker: CaseIgnorableProperty;
+    data_marker: CaseIgnorableV1Marker;
     func:
     /// Characters which are ignored for casing purposes
     ///
@@ -553,8 +553,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "Full_Composition_Exclusion";
-    marker: FullCompositionExclusionProperty;
-    keyed_data_marker: FullCompositionExclusionV1Marker;
+    dyn_marker: FullCompositionExclusionProperty;
+    data_marker: FullCompositionExclusionV1Marker;
     func:
     /// Characters that are excluded from composition
     /// See <https://unicode.org/Public/UNIDATA/CompositionExclusions.txt>
@@ -565,8 +565,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "Changes_When_Casefolded";
-    marker: ChangesWhenCasefoldedProperty;
-    keyed_data_marker: ChangesWhenCasefoldedV1Marker;
+    dyn_marker: ChangesWhenCasefoldedProperty;
+    data_marker: ChangesWhenCasefoldedV1Marker;
     func:
     /// Characters whose normalized forms are not stable under case folding
     ///
@@ -591,8 +591,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "Changes_When_Casemapped";
-    marker: ChangesWhenCasemappedProperty;
-    keyed_data_marker: ChangesWhenCasemappedV1Marker;
+    dyn_marker: ChangesWhenCasemappedProperty;
+    data_marker: ChangesWhenCasemappedV1Marker;
     func:
     /// Characters which may change when they undergo case mapping
 
@@ -602,8 +602,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "Changes_When_NFKC_Casefolded";
-    marker: ChangesWhenNfkcCasefoldedProperty;
-    keyed_data_marker: ChangesWhenNfkcCasefoldedV1Marker;
+    dyn_marker: ChangesWhenNfkcCasefoldedProperty;
+    data_marker: ChangesWhenNfkcCasefoldedV1Marker;
     func:
     /// Characters which are not identical to their NFKC_Casefold mapping
     ///
@@ -628,8 +628,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "Changes_When_Lowercased";
-    marker: ChangesWhenLowercasedProperty;
-    keyed_data_marker: ChangesWhenLowercasedV1Marker;
+    dyn_marker: ChangesWhenLowercasedProperty;
+    data_marker: ChangesWhenLowercasedV1Marker;
     func:
     /// Characters whose normalized forms are not stable under a toLowercase mapping
     ///
@@ -654,8 +654,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "Changes_When_Titlecased";
-    marker: ChangesWhenTitlecasedProperty;
-    keyed_data_marker: ChangesWhenTitlecasedV1Marker;
+    dyn_marker: ChangesWhenTitlecasedProperty;
+    data_marker: ChangesWhenTitlecasedV1Marker;
     func:
     /// Characters whose normalized forms are not stable under a toTitlecase mapping
     ///
@@ -680,8 +680,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "Changes_When_Uppercased";
-    marker: ChangesWhenUppercasedProperty;
-    keyed_data_marker: ChangesWhenUppercasedV1Marker;
+    dyn_marker: ChangesWhenUppercasedProperty;
+    data_marker: ChangesWhenUppercasedV1Marker;
     func:
     /// Characters whose normalized forms are not stable under a toUppercase mapping
     ///
@@ -706,8 +706,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "Dash";
-    marker: DashProperty;
-    keyed_data_marker: DashV1Marker;
+    dyn_marker: DashProperty;
+    data_marker: DashV1Marker;
     func:
     /// Punctuation characters explicitly called out as dashes in the Unicode Standard, plus
     /// their compatibility equivalents
@@ -734,8 +734,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "Deprecated";
-    marker: DeprecatedProperty;
-    keyed_data_marker: DeprecatedV1Marker;
+    dyn_marker: DeprecatedProperty;
+    data_marker: DeprecatedV1Marker;
     func:
     /// Deprecated characters. No characters will ever be removed from the standard, but the
     /// usage of deprecated characters is strongly discouraged.
@@ -761,8 +761,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "Default_Ignorable_Code_Point";
-    marker: DefaultIgnorableCodePointProperty;
-    keyed_data_marker: DefaultIgnorableCodePointV1Marker;
+    dyn_marker: DefaultIgnorableCodePointProperty;
+    data_marker: DefaultIgnorableCodePointV1Marker;
     func:
     /// For programmatic determination of default ignorable code points.  New characters that
     /// should be ignored in rendering (unless explicitly supported) will be assigned in these
@@ -790,8 +790,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "Diacritic";
-    marker: DiacriticProperty;
-    keyed_data_marker: DiacriticV1Marker;
+    dyn_marker: DiacriticProperty;
+    data_marker: DiacriticV1Marker;
     func:
     /// Characters that linguistically modify the meaning of another character to which they apply
     ///
@@ -816,8 +816,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "Emoji_Modifier_Base";
-    marker: EmojiModifierBaseProperty;
-    keyed_data_marker: EmojiModifierBaseV1Marker;
+    dyn_marker: EmojiModifierBaseProperty;
+    data_marker: EmojiModifierBaseV1Marker;
     func:
     /// Characters that can serve as a base for emoji modifiers
     ///
@@ -842,8 +842,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "Emoji_Component";
-    marker: EmojiComponentProperty;
-    keyed_data_marker: EmojiComponentV1Marker;
+    dyn_marker: EmojiComponentProperty;
+    data_marker: EmojiComponentV1Marker;
     func:
     /// Characters used in emoji sequences that normally do not appear on emoji keyboards as
     /// separate choices, such as base characters for emoji keycaps
@@ -871,8 +871,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "Emoji_Modifier";
-    marker: EmojiModifierProperty;
-    keyed_data_marker: EmojiModifierV1Marker;
+    dyn_marker: EmojiModifierProperty;
+    data_marker: EmojiModifierV1Marker;
     func:
     /// Characters that are emoji modifiers
     ///
@@ -897,8 +897,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "Emoji";
-    marker: EmojiProperty;
-    keyed_data_marker: EmojiV1Marker;
+    dyn_marker: EmojiProperty;
+    data_marker: EmojiV1Marker;
     func:
     /// Characters that are emoji
     ///
@@ -923,8 +923,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "Emoji_Presentation";
-    marker: EmojiPresentationProperty;
-    keyed_data_marker: EmojiPresentationV1Marker;
+    dyn_marker: EmojiPresentationProperty;
+    data_marker: EmojiPresentationV1Marker;
     func:
     /// Characters that have emoji presentation by default
     ///
@@ -949,8 +949,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "Extender";
-    marker: ExtenderProperty;
-    keyed_data_marker: ExtenderV1Marker;
+    dyn_marker: ExtenderProperty;
+    data_marker: ExtenderV1Marker;
     func:
     /// Characters whose principal function is to extend the value of a preceding alphabetic
     /// character or to extend the shape of adjacent characters.
@@ -977,8 +977,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "Extended_Pictographic";
-    marker: ExtendedPictographicProperty;
-    keyed_data_marker: ExtendedPictographicV1Marker;
+    dyn_marker: ExtendedPictographicProperty;
+    data_marker: ExtendedPictographicV1Marker;
     func:
     /// Pictographic symbols, as well as reserved ranges in blocks largely associated with
     /// emoji characters
@@ -1004,8 +1004,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "Graph";
-    marker: GraphProperty;
-    keyed_data_marker: GraphV1Marker;
+    dyn_marker: GraphProperty;
+    data_marker: GraphV1Marker;
     func:
     /// Visible characters.
     /// This is defined for POSIX compatibility.
@@ -1016,8 +1016,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "Grapheme_Base";
-    marker: GraphemeBaseProperty;
-    keyed_data_marker: GraphemeBaseV1Marker;
+    dyn_marker: GraphemeBaseProperty;
+    data_marker: GraphemeBaseV1Marker;
     func:
     /// Property used together with the definition of Standard Korean Syllable Block to define
     /// "Grapheme base". See D58 in Chapter 3, Conformance in the Unicode Standard.
@@ -1044,8 +1044,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "Grapheme_Extend";
-    marker: GraphemeExtendProperty;
-    keyed_data_marker: GraphemeExtendV1Marker;
+    dyn_marker: GraphemeExtendProperty;
+    data_marker: GraphemeExtendV1Marker;
     func:
     /// Property used to define "Grapheme extender". See D59 in Chapter 3, Conformance in the
     /// Unicode Standard.
@@ -1072,8 +1072,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "Grapheme_Link";
-    marker: GraphemeLinkProperty;
-    keyed_data_marker: GraphemeLinkV1Marker;
+    dyn_marker: GraphemeLinkProperty;
+    data_marker: GraphemeLinkV1Marker;
     func:
     /// Deprecated property. Formerly proposed for programmatic determination of grapheme
     /// cluster boundaries.
@@ -1084,8 +1084,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "Hex_Digit";
-    marker: HexDigitProperty;
-    keyed_data_marker: HexDigitV1Marker;
+    dyn_marker: HexDigitProperty;
+    data_marker: HexDigitV1Marker;
     func:
     /// Characters commonly used for the representation of hexadecimal numbers, plus their
     /// compatibility equivalents
@@ -1115,8 +1115,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "Hyphen";
-    marker: HyphenProperty;
-    keyed_data_marker: HyphenV1Marker;
+    dyn_marker: HyphenProperty;
+    data_marker: HyphenV1Marker;
     func:
     /// Deprecated property. Dashes which are used to mark connections between pieces of
     /// words, plus the Katakana middle dot.
@@ -1127,8 +1127,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "Id_Continue";
-    marker: IdContinueProperty;
-    keyed_data_marker: IdContinueV1Marker;
+    dyn_marker: IdContinueProperty;
+    data_marker: IdContinueV1Marker;
     func:
     /// Characters that can come after the first character in an identifier. If using NFKC to
     /// fold differences between characters, use [`load_xid_continue`] instead.  See
@@ -1160,8 +1160,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "Ideographic";
-    marker: IdeographicProperty;
-    keyed_data_marker: IdeographicV1Marker;
+    dyn_marker: IdeographicProperty;
+    data_marker: IdeographicV1Marker;
     func:
     /// Characters considered to be CJKV (Chinese, Japanese, Korean, and Vietnamese)
     /// ideographs, or related siniform ideographs
@@ -1187,8 +1187,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "Id_Start";
-    marker: IdStartProperty;
-    keyed_data_marker: IdStartV1Marker;
+    dyn_marker: IdStartProperty;
+    data_marker: IdStartV1Marker;
     func:
     /// Characters that can begin an identifier. If using NFKC to fold differences between
     /// characters, use [`load_xid_start`] instead.  See [`Unicode Standard Annex
@@ -1219,8 +1219,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "Ids_Binary_Operator";
-    marker: IdsBinaryOperatorProperty;
-    keyed_data_marker: IdsBinaryOperatorV1Marker;
+    dyn_marker: IdsBinaryOperatorProperty;
+    data_marker: IdsBinaryOperatorV1Marker;
     func:
     /// Characters used in Ideographic Description Sequences
     ///
@@ -1245,8 +1245,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "Ids_Trinary_Operator";
-    marker: IdsTrinaryOperatorProperty;
-    keyed_data_marker: IdsTrinaryOperatorV1Marker;
+    dyn_marker: IdsTrinaryOperatorProperty;
+    data_marker: IdsTrinaryOperatorV1Marker;
     func:
     /// Characters used in Ideographic Description Sequences
     ///
@@ -1274,8 +1274,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "Join_Control";
-    marker: JoinControlProperty;
-    keyed_data_marker: JoinControlV1Marker;
+    dyn_marker: JoinControlProperty;
+    data_marker: JoinControlV1Marker;
     func:
     /// Format control characters which have specific functions for control of cursive joining
     /// and ligation
@@ -1302,8 +1302,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "Logical_Order_Exception";
-    marker: LogicalOrderExceptionProperty;
-    keyed_data_marker: LogicalOrderExceptionV1Marker;
+    dyn_marker: LogicalOrderExceptionProperty;
+    data_marker: LogicalOrderExceptionV1Marker;
     func:
     /// A small number of spacing vowel letters occurring in certain Southeast Asian scripts such as Thai and Lao
     ///
@@ -1328,8 +1328,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "Lowercase";
-    marker: LowercaseProperty;
-    keyed_data_marker: LowercaseV1Marker;
+    dyn_marker: LowercaseProperty;
+    data_marker: LowercaseV1Marker;
     func:
     /// Lowercase characters
     ///
@@ -1354,8 +1354,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "Math";
-    marker: MathProperty;
-    keyed_data_marker: MathV1Marker;
+    dyn_marker: MathProperty;
+    data_marker: MathV1Marker;
     func:
     /// Characters used in mathematical notation
     ///
@@ -1384,8 +1384,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "Noncharacter_Code_Point";
-    marker: NoncharacterCodePointProperty;
-    keyed_data_marker: NoncharacterCodePointV1Marker;
+    dyn_marker: NoncharacterCodePointProperty;
+    data_marker: NoncharacterCodePointV1Marker;
     func:
     /// Code points permanently reserved for internal use
     ///
@@ -1411,8 +1411,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "NFC_Inert";
-    marker: NfcInertProperty;
-    keyed_data_marker: NfcInertV1Marker;
+    dyn_marker: NfcInertProperty;
+    data_marker: NfcInertV1Marker;
     func:
     /// Characters that are inert under NFC, i.e., they do not interact with adjacent characters
 
@@ -1422,8 +1422,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "NFD_Inert";
-    marker: NfdInertProperty;
-    keyed_data_marker: NfdInertV1Marker;
+    dyn_marker: NfdInertProperty;
+    data_marker: NfdInertV1Marker;
     func:
     /// Characters that are inert under NFD, i.e., they do not interact with adjacent characters
 
@@ -1433,8 +1433,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "NFKC_Inert";
-    marker: NfkcInertProperty;
-    keyed_data_marker: NfkcInertV1Marker;
+    dyn_marker: NfkcInertProperty;
+    data_marker: NfkcInertV1Marker;
     func:
     /// Characters that are inert under NFKC, i.e., they do not interact with adjacent characters
 
@@ -1444,8 +1444,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "NFKD_Inert";
-    marker: NfkdInertProperty;
-    keyed_data_marker: NfkdInertV1Marker;
+    dyn_marker: NfkdInertProperty;
+    data_marker: NfkdInertV1Marker;
     func:
     /// Characters that are inert under NFKD, i.e., they do not interact with adjacent characters
 
@@ -1455,8 +1455,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "Pattern_Syntax";
-    marker: PatternSyntaxProperty;
-    keyed_data_marker: PatternSyntaxV1Marker;
+    dyn_marker: PatternSyntaxProperty;
+    data_marker: PatternSyntaxV1Marker;
     func:
     /// Characters used as syntax in patterns (such as regular expressions). See [`Unicode
     /// Standard Annex #31`](https://www.unicode.org/reports/tr31/tr31-35.html) for more
@@ -1484,8 +1484,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "Pattern_White_Space";
-    marker: PatternWhiteSpaceProperty;
-    keyed_data_marker: PatternWhiteSpaceV1Marker;
+    dyn_marker: PatternWhiteSpaceProperty;
+    data_marker: PatternWhiteSpaceV1Marker;
     func:
     /// Characters used as whitespace in patterns (such as regular expressions).  See
     /// [`Unicode Standard Annex #31`](https://www.unicode.org/reports/tr31/tr31-35.html) for
@@ -1514,8 +1514,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "Prepended_Concatenation_Mark";
-    marker: PrependedConcatenationMarkProperty;
-    keyed_data_marker: PrependedConcatenationMarkV1Marker;
+    dyn_marker: PrependedConcatenationMarkProperty;
+    data_marker: PrependedConcatenationMarkV1Marker;
     func:
     /// A small class of visible format controls, which precede and then span a sequence of
     /// other characters, usually digits.
@@ -1526,8 +1526,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "Print";
-    marker: PrintProperty;
-    keyed_data_marker: PrintV1Marker;
+    dyn_marker: PrintProperty;
+    data_marker: PrintV1Marker;
     func:
     /// Printable characters (visible characters and whitespace).
     /// This is defined for POSIX compatibility.
@@ -1538,8 +1538,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "Quotation_Mark";
-    marker: QuotationMarkProperty;
-    keyed_data_marker: QuotationMarkV1Marker;
+    dyn_marker: QuotationMarkProperty;
+    data_marker: QuotationMarkV1Marker;
     func:
     /// Punctuation characters that function as quotation marks.
     ///
@@ -1565,8 +1565,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "Radical";
-    marker: RadicalProperty;
-    keyed_data_marker: RadicalV1Marker;
+    dyn_marker: RadicalProperty;
+    data_marker: RadicalV1Marker;
     func:
     /// Characters used in the definition of Ideographic Description Sequences
     ///
@@ -1591,8 +1591,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "Regional_Indicator";
-    marker: RegionalIndicatorProperty;
-    keyed_data_marker: RegionalIndicatorV1Marker;
+    dyn_marker: RegionalIndicatorProperty;
+    data_marker: RegionalIndicatorV1Marker;
     func:
     /// Regional indicator characters, U+1F1E6..U+1F1FF
     ///
@@ -1618,8 +1618,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "Soft_Dotted";
-    marker: SoftDottedProperty;
-    keyed_data_marker: SoftDottedV1Marker;
+    dyn_marker: SoftDottedProperty;
+    data_marker: SoftDottedV1Marker;
     func:
     /// Characters with a "soft dot", like i or j. An accent placed on these characters causes
     /// the dot to disappear.
@@ -1645,8 +1645,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "Segment_Starter";
-    marker: SegmentStarterProperty;
-    keyed_data_marker: SegmentStarterV1Marker;
+    dyn_marker: SegmentStarterProperty;
+    data_marker: SegmentStarterV1Marker;
     func:
     /// Characters that are starters in terms of Unicode normalization and combining character
     /// sequences
@@ -1657,8 +1657,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "Case_Sensitive";
-    marker: CaseSensitiveProperty;
-    keyed_data_marker: CaseSensitiveV1Marker;
+    dyn_marker: CaseSensitiveProperty;
+    data_marker: CaseSensitiveV1Marker;
     func:
     /// Characters that are either the source of a case mapping or in the target of a case
     /// mapping
@@ -1669,8 +1669,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "Sentence_Terminal";
-    marker: SentenceTerminalProperty;
-    keyed_data_marker: SentenceTerminalV1Marker;
+    dyn_marker: SentenceTerminalProperty;
+    data_marker: SentenceTerminalV1Marker;
     func:
     /// Punctuation characters that generally mark the end of sentences
     ///
@@ -1698,8 +1698,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "Terminal_Punctuation";
-    marker: TerminalPunctuationProperty;
-    keyed_data_marker: TerminalPunctuationV1Marker;
+    dyn_marker: TerminalPunctuationProperty;
+    data_marker: TerminalPunctuationV1Marker;
     func:
     /// Punctuation characters that generally mark the end of textual units
     ///
@@ -1727,8 +1727,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "Unified_Ideograph";
-    marker: UnifiedIdeographProperty;
-    keyed_data_marker: UnifiedIdeographV1Marker;
+    dyn_marker: UnifiedIdeographProperty;
+    data_marker: UnifiedIdeographV1Marker;
     func:
     /// A property which specifies the exact set of Unified CJK Ideographs in the standard
     ///
@@ -1754,8 +1754,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "Uppercase";
-    marker: UppercaseProperty;
-    keyed_data_marker: UppercaseV1Marker;
+    dyn_marker: UppercaseProperty;
+    data_marker: UppercaseV1Marker;
     func:
     /// Uppercase characters
     ///
@@ -1780,8 +1780,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "Variation_Selector";
-    marker: VariationSelectorProperty;
-    keyed_data_marker: VariationSelectorV1Marker;
+    dyn_marker: VariationSelectorProperty;
+    data_marker: VariationSelectorV1Marker;
     func:
     /// Characters that are Variation Selectors.
     ///
@@ -1809,8 +1809,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "White_Space";
-    marker: WhiteSpaceProperty;
-    keyed_data_marker: WhiteSpaceV1Marker;
+    dyn_marker: WhiteSpaceProperty;
+    data_marker: WhiteSpaceV1Marker;
     func:
     /// Spaces, separator characters and other control characters which should be treated by
     /// programming languages as "white space" for the purpose of parsing elements
@@ -1838,8 +1838,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "Xdigit";
-    marker: XdigitProperty;
-    keyed_data_marker: XdigitV1Marker;
+    dyn_marker: XdigitProperty;
+    data_marker: XdigitV1Marker;
     func:
     /// Hexadecimal digits
     /// This is defined for POSIX compatibility.
@@ -1850,8 +1850,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "XID_Continue";
-    marker: XidContinueProperty;
-    keyed_data_marker: XidContinueV1Marker;
+    dyn_marker: XidContinueProperty;
+    data_marker: XidContinueV1Marker;
     func:
     /// Characters that can come after the first character in an identifier.  See [`Unicode Standard Annex
     /// #31`](https://www.unicode.org/reports/tr31/tr31-35.html) for more details.
@@ -1881,8 +1881,8 @@ make_code_point_set_property! {
 
 make_code_point_set_property! {
     property: "XID_Start";
-    marker: XidStartProperty;
-    keyed_data_marker: XidStartV1Marker;
+    dyn_marker: XidStartProperty;
+    data_marker: XidStartV1Marker;
     func:
     /// Characters that can begin an identifier. See [`Unicode
     /// Standard Annex #31`](https://www.unicode.org/reports/tr31/tr31-35.html) for more
@@ -1921,8 +1921,8 @@ macro_rules! make_unicode_set_property {
         // currently unused
         property: $property:expr;
         // currently unused
-        marker: $marker_name:ident;
-        keyed_data_marker: $keyed_data_marker:ty;
+        dyn_marker: $marker_name:ident;
+        data_marker: $data_marker:ty;
         func:
         $(#[$doc:meta])+
         $cvis:vis const fn $constname:ident() => $singleton:ident;
@@ -1930,7 +1930,7 @@ macro_rules! make_unicode_set_property {
     ) => {
         #[doc = concat!("A version of [`", stringify!($constname), "()`] that uses custom data provided by a [`DataProvider`].")]
         $vis fn $funcname(
-            provider: &(impl DataProvider<$keyed_data_marker> + ?Sized)
+            provider: &(impl DataProvider<$data_marker> + ?Sized)
         ) -> Result<UnicodeSetData, PropertiesError> {
             Ok(provider.load(Default::default()).and_then(DataResponse::take_payload).map(UnicodeSetData::from_data)?)
         }
@@ -1946,8 +1946,8 @@ macro_rules! make_unicode_set_property {
 
 make_unicode_set_property! {
     property: "Basic_Emoji";
-    marker: BasicEmojiProperty;
-    keyed_data_marker: BasicEmojiV1Marker;
+    dyn_marker: BasicEmojiProperty;
+    data_marker: BasicEmojiV1Marker;
     func:
     /// Characters and character sequences intended for general-purpose, independent, direct input.
     /// See [`Unicode Technical Standard #51`](https://unicode.org/reports/tr51/) for more

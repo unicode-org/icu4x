@@ -115,7 +115,7 @@ impl<M: DataMarker> DataProvider<M> for PhantomProvider {
     #[inline]
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         debug_assert!(false);
-        Err(DataErrorKind::MissingDataKey.with_req(M::KEY, req))
+        Err(DataErrorKind::MissingDataMarker.with_req(M::INFO, req))
     }
 }
 
@@ -123,14 +123,14 @@ impl<M: DynDataMarker> BoundDataProvider<M> for PhantomProvider {
     #[inline]
     fn load_bound(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         debug_assert!(false);
-        let key = BoundDataProvider::<M>::bound_key(self);
-        Err(DataErrorKind::MissingDataKey
+        let marker = BoundDataProvider::<M>::bound_marker(self);
+        Err(DataErrorKind::MissingDataMarker
             .into_error()
-            .with_req(key, req))
+            .with_req(marker, req))
     }
     #[inline]
-    fn bound_key(&self) -> DataKey {
-        NeverMarker::<M::Yokeable>::KEY
+    fn bound_marker(&self) -> DataMarkerInfo {
+        NeverMarker::<M::Yokeable>::INFO
     }
 }
 
@@ -290,7 +290,7 @@ impl<Y: for<'a> Yokeable<'a>> MaybePayload<Y> for () {
         // TODO: Is it better to return DataError or SingleLoadError?
         // SingleLoadError needs to be from the caller because it needs `field`.
         None
-        // Err(DataError::custom("cannot load into this type").with_req(provider.key(), req))
+        // Err(DataError::custom("cannot load into this type").with_req(provider.marker(), req))
     }
     #[allow(clippy::needless_lifetimes)] // Yokeable is involved
     #[inline]
@@ -928,15 +928,17 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         let payload = provider
             .load_bound(DataRequest {
                 locale,
-                key_attributes: &DataKeyAttributes::from_tinystr(key_attrs::symbol_attr_for(
-                    key_attrs::Context::Format,
-                    match field_length {
-                        FieldLength::Abbreviated => key_attrs::Length::Abbr,
-                        FieldLength::Narrow => key_attrs::Length::Narrow,
-                        FieldLength::Wide => key_attrs::Length::Wide,
-                        _ => return Err(SingleLoadError::UnsupportedField(field)),
-                    },
-                )),
+                marker_attributes: &DataMarkerAttributes::from_tinystr(
+                    marker_attrs::symbol_attr_for(
+                        marker_attrs::Context::Format,
+                        match field_length {
+                            FieldLength::Abbreviated => marker_attrs::Length::Abbr,
+                            FieldLength::Narrow => marker_attrs::Length::Narrow,
+                            FieldLength::Wide => marker_attrs::Length::Wide,
+                            _ => return Err(SingleLoadError::UnsupportedField(field)),
+                        },
+                    ),
+                ),
                 ..Default::default()
             })
             .and_then(DataResponse::take_payload)
@@ -976,18 +978,20 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         let payload = provider
             .load_bound(DataRequest {
                 locale,
-                key_attributes: &DataKeyAttributes::from_tinystr(key_attrs::symbol_attr_for(
-                    match field_symbol {
-                        fields::Month::Format => key_attrs::Context::Format,
-                        fields::Month::StandAlone => key_attrs::Context::Standalone,
-                    },
-                    match field_length {
-                        FieldLength::Abbreviated => key_attrs::Length::Abbr,
-                        FieldLength::Narrow => key_attrs::Length::Narrow,
-                        FieldLength::Wide => key_attrs::Length::Wide,
-                        _ => return Err(SingleLoadError::UnsupportedField(field)),
-                    },
-                )),
+                marker_attributes: &DataMarkerAttributes::from_tinystr(
+                    marker_attrs::symbol_attr_for(
+                        match field_symbol {
+                            fields::Month::Format => marker_attrs::Context::Format,
+                            fields::Month::StandAlone => marker_attrs::Context::Standalone,
+                        },
+                        match field_length {
+                            FieldLength::Abbreviated => marker_attrs::Length::Abbr,
+                            FieldLength::Narrow => marker_attrs::Length::Narrow,
+                            FieldLength::Wide => marker_attrs::Length::Wide,
+                            _ => return Err(SingleLoadError::UnsupportedField(field)),
+                        },
+                    ),
+                ),
                 ..Default::default()
             })
             .and_then(DataResponse::take_payload)
@@ -1011,7 +1015,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         P: BoundDataProvider<DayPeriodNamesV1Marker> + ?Sized,
     {
         let field = fields::Field {
-            // Names for 'a' and 'b' are stored in the same data key
+            // Names for 'a' and 'b' are stored in the same data marker
             symbol: FieldSymbol::DayPeriod(fields::DayPeriod::NoonMidnight),
             length: field_length,
         };
@@ -1026,15 +1030,17 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
             provider,
             DataRequest {
                 locale,
-                key_attributes: &DataKeyAttributes::from_tinystr(key_attrs::symbol_attr_for(
-                    key_attrs::Context::Format,
-                    match field_length {
-                        FieldLength::Abbreviated => key_attrs::Length::Abbr,
-                        FieldLength::Narrow => key_attrs::Length::Narrow,
-                        FieldLength::Wide => key_attrs::Length::Wide,
-                        _ => return Err(SingleLoadError::UnsupportedField(field)),
-                    },
-                )),
+                marker_attributes: &DataMarkerAttributes::from_tinystr(
+                    marker_attrs::symbol_attr_for(
+                        marker_attrs::Context::Format,
+                        match field_length {
+                            FieldLength::Abbreviated => marker_attrs::Length::Abbr,
+                            FieldLength::Narrow => marker_attrs::Length::Narrow,
+                            FieldLength::Wide => marker_attrs::Length::Wide,
+                            _ => return Err(SingleLoadError::UnsupportedField(field)),
+                        },
+                    ),
+                ),
                 ..Default::default()
             },
         )
@@ -1076,22 +1082,24 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         let payload = provider
             .load_bound(DataRequest {
                 locale,
-                key_attributes: &DataKeyAttributes::from_tinystr(key_attrs::symbol_attr_for(
-                    match field_symbol {
-                        // UTS 35 says that "e" and "E" have the same non-numeric names
-                        fields::Weekday::Format | fields::Weekday::Local => {
-                            key_attrs::Context::Format
-                        }
-                        fields::Weekday::StandAlone => key_attrs::Context::Standalone,
-                    },
-                    match field_length {
-                        FieldLength::Abbreviated => key_attrs::Length::Abbr,
-                        FieldLength::Narrow => key_attrs::Length::Narrow,
-                        FieldLength::Wide => key_attrs::Length::Wide,
-                        FieldLength::Six => key_attrs::Length::Short,
-                        _ => return Err(SingleLoadError::UnsupportedField(field)),
-                    },
-                )),
+                marker_attributes: &DataMarkerAttributes::from_tinystr(
+                    marker_attrs::symbol_attr_for(
+                        match field_symbol {
+                            // UTS 35 says that "e" and "E" have the same non-numeric names
+                            fields::Weekday::Format | fields::Weekday::Local => {
+                                marker_attrs::Context::Format
+                            }
+                            fields::Weekday::StandAlone => marker_attrs::Context::Standalone,
+                        },
+                        match field_length {
+                            FieldLength::Abbreviated => marker_attrs::Length::Abbr,
+                            FieldLength::Narrow => marker_attrs::Length::Narrow,
+                            FieldLength::Wide => marker_attrs::Length::Wide,
+                            FieldLength::Six => marker_attrs::Length::Short,
+                            _ => return Err(SingleLoadError::UnsupportedField(field)),
+                        },
+                    ),
+                ),
                 ..Default::default()
             })
             .and_then(DataResponse::take_payload)

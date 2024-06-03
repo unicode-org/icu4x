@@ -817,27 +817,27 @@ where
             ),
         }
     }
-    fn bound_key(&self) -> DataKey {
+    fn bound_marker(&self) -> DataMarkerInfo {
         use AnyCalendarKind::*;
         match self.kind {
-            Buddhist => H::Buddhist::KEY,
-            Chinese => H::Chinese::KEY,
-            Coptic => H::Coptic::KEY,
-            Dangi => H::Dangi::KEY,
-            Ethiopian => H::Ethiopian::KEY,
-            EthiopianAmeteAlem => H::EthiopianAmeteAlem::KEY,
-            Gregorian => H::Gregorian::KEY,
-            Hebrew => H::Hebrew::KEY,
-            Indian => H::Indian::KEY,
-            IslamicCivil => H::IslamicCivil::KEY,
-            IslamicObservational => H::IslamicObservational::KEY,
-            IslamicTabular => H::IslamicTabular::KEY,
-            IslamicUmmAlQura => H::IslamicUmmAlQura::KEY,
-            Japanese => H::Japanese::KEY,
-            JapaneseExtended => H::JapaneseExtended::KEY,
-            Persian => H::Persian::KEY,
-            Roc => H::Roc::KEY,
-            _ => NeverMarker::<M::Yokeable>::KEY,
+            Buddhist => H::Buddhist::INFO,
+            Chinese => H::Chinese::INFO,
+            Coptic => H::Coptic::INFO,
+            Dangi => H::Dangi::INFO,
+            Ethiopian => H::Ethiopian::INFO,
+            EthiopianAmeteAlem => H::EthiopianAmeteAlem::INFO,
+            Gregorian => H::Gregorian::INFO,
+            Hebrew => H::Hebrew::INFO,
+            Indian => H::Indian::INFO,
+            IslamicCivil => H::IslamicCivil::INFO,
+            IslamicObservational => H::IslamicObservational::INFO,
+            IslamicTabular => H::IslamicTabular::INFO,
+            IslamicUmmAlQura => H::IslamicUmmAlQura::INFO,
+            Japanese => H::Japanese::INFO,
+            JapaneseExtended => H::JapaneseExtended::INFO,
+            Persian => H::Persian::INFO,
+            Roc => H::Roc::INFO,
+            _ => NeverMarker::<M::Yokeable>::INFO,
         }
     }
 }

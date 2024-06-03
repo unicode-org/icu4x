@@ -659,13 +659,13 @@ Note: A subset of crates received patch releases in the 1.2 stream.
   - Renaming of many traits and functions in `icu_provider` (#2207, #2222, #2223)
   - Passing `DataLocale` by reference (#2224)
   - Fix feature specification in provider/fs (#2527)
-  - Rename `DataKey` methods and return `DataKeyPath` (#2565)
+  - Rename `DataMarkerInfo` methods and return `DataMarkerPath` (#2565)
   - Add some useful data provider impls; refactor `AnyPayloadProvider` (#2564)
   - Removing `StaticDataProvider` (#2582)
   - Removing `InvariantDataProvider` (#2159)
   - Renaming load_payload, load_resource (#2222)
   - Renaming `DataOptions` to `DataLocale` (#2223)
-  - Use an abstract predicate function in `ForkByKeyProvider` (#2249)
+  - Use an abstract predicate function in `ForkByMarkerProvider` (#2249)
   - Add `UnvalidatedStr` and use it in `LocaleFallbackParentsV1` (#2502)
   - Add some useful data provider impls; refactor `AnyPayloadProvider` (#2564)
 - Components:
@@ -920,7 +920,7 @@ Note: A subset of crates received patch releases in the 1.2 stream.
 
   - General data model
     - `DataPayload` no longer needs a lifetime (#1297, #1279)
-    - Re-write DataKey (#1511)
+    - Re-write DataMarkerInfo (#1511)
     - Rewrite ErasedDataProvider as AnyProvider (#1495)
     - Add EitherProvider and rename IterableDataProviderCore to IterableProvider (#1455)
     - Change DataRequest to be borrowed in BufferProvider (#1416)

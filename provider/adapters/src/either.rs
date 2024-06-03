@@ -24,11 +24,11 @@ pub enum EitherProvider<P0, P1> {
 
 impl<P0: AnyProvider, P1: AnyProvider> AnyProvider for EitherProvider<P0, P1> {
     #[inline]
-    fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
+    fn load_any(&self, marker: DataMarkerInfo, req: DataRequest) -> Result<AnyResponse, DataError> {
         use EitherProvider::*;
         match self {
-            A(p) => p.load_any(key, req),
-            B(p) => p.load_any(key, req),
+            A(p) => p.load_any(marker, req),
+            B(p) => p.load_any(marker, req),
         }
     }
 }
@@ -37,11 +37,15 @@ impl<M: DynDataMarker, P0: DynamicDataProvider<M>, P1: DynamicDataProvider<M>>
     DynamicDataProvider<M> for EitherProvider<P0, P1>
 {
     #[inline]
-    fn load_data(&self, key: DataKey, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+    fn load_data(
+        &self,
+        marker: DataMarkerInfo,
+        req: DataRequest,
+    ) -> Result<DataResponse<M>, DataError> {
         use EitherProvider::*;
         match self {
-            A(p) => p.load_data(key, req),
-            B(p) => p.load_data(key, req),
+            A(p) => p.load_data(marker, req),
+            B(p) => p.load_data(marker, req),
         }
     }
 }
@@ -67,14 +71,14 @@ impl<
     > datagen::IterableDynamicDataProvider<M> for EitherProvider<P0, P1>
 {
     #[inline]
-    fn supported_requests_for_key(
+    fn supported_requests_for_marker(
         &self,
-        key: DataKey,
-    ) -> Result<std::collections::HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+        marker: DataMarkerInfo,
+    ) -> Result<std::collections::HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         use EitherProvider::*;
         match self {
-            A(p) => p.supported_requests_for_key(key),
-            B(p) => p.supported_requests_for_key(key),
+            A(p) => p.supported_requests_for_marker(marker),
+            B(p) => p.supported_requests_for_marker(marker),
         }
     }
 }
@@ -86,7 +90,7 @@ impl<M: DataMarker, P0: datagen::IterableDataProvider<M>, P1: datagen::IterableD
     #[inline]
     fn supported_requests(
         &self,
-    ) -> Result<std::collections::HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    ) -> Result<std::collections::HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         use EitherProvider::*;
         match self {
             A(p) => p.supported_requests(),

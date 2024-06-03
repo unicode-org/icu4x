@@ -79,7 +79,7 @@ impl DatagenProvider {
 
     fn supported_requests_for_numbers(
         &self,
-    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         Ok(self
             .cldr()?
             .numbers()

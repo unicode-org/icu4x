@@ -109,7 +109,7 @@ impl DataProvider<CurrencyEssentialsV1Marker> for DatagenProvider {
 impl IterableDataProviderCached<CurrencyEssentialsV1Marker> for DatagenProvider {
     fn supported_requests_cached(
         &self,
-    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         Ok(self
             .cldr()?
             .numbers()

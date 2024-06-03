@@ -25,7 +25,7 @@ impl DatagenProvider {
             ))?
             .enum_property
             .first()
-            .ok_or_else(|| DataErrorKind::MissingDataKey.into_error())
+            .ok_or_else(|| DataErrorKind::MissingDataMarker.into_error())
     }
     fn get_mask_prop<'a>(
         &'a self,
@@ -245,7 +245,7 @@ macro_rules! expand {
             }
 
             impl IterableDataProvider<$marker> for DatagenProvider {
-                fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError>  {
+                fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError>  {
                     self.get_enumerated_prop($prop_name)?;
                     Ok(HashSet::from_iter([Default::default()]))
                 }
@@ -268,7 +268,7 @@ macro_rules! expand {
             }
 
             impl IterableDataProvider<$marker_n2e> for DatagenProvider {
-                                fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError>  {
+                                fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError>  {
                     self.get_enumerated_prop($prop_name)?;
                     Ok(HashSet::from_iter([Default::default()]))
                 }
@@ -284,7 +284,7 @@ macro_rules! expand {
                 }
 
                 impl IterableDataProvider<$marker_e2sns> for DatagenProvider {
-                    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError>  {
+                    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError>  {
                         self.get_enumerated_prop($prop_name)?;
                         Ok(HashSet::from_iter([Default::default()]))
                     }
@@ -299,7 +299,7 @@ macro_rules! expand {
                 }
 
                 impl IterableDataProvider<$marker_e2lns> for DatagenProvider {
-                    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError>  {
+                    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError>  {
                         self.get_enumerated_prop($prop_name)?;
                         Ok(HashSet::from_iter([Default::default()]))
                     }
@@ -316,7 +316,7 @@ macro_rules! expand {
                 }
 
                 impl IterableDataProvider<$marker_e2snl> for DatagenProvider {
-                    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError>  {
+                    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError>  {
                         self.get_enumerated_prop($prop_name)?;
                         Ok(HashSet::from_iter([Default::default()]))
                     }
@@ -331,7 +331,7 @@ macro_rules! expand {
                 }
 
                 impl IterableDataProvider<$marker_e2lnl> for DatagenProvider {
-                    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError>  {
+                    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError>  {
                         self.get_enumerated_prop($prop_name)?;
                         Ok(HashSet::from_iter([Default::default()]))
                     }
@@ -348,7 +348,7 @@ macro_rules! expand {
                 }
 
                 impl IterableDataProvider<$marker_e2snl4> for DatagenProvider {
-                    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError>  {
+                    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError>  {
                         self.get_enumerated_prop($prop_name)?;
                         Ok(HashSet::from_iter([Default::default()]))
                     }
@@ -364,7 +364,7 @@ macro_rules! expand {
                 }
 
                 impl IterableDataProvider<$marker_e2lnl4> for DatagenProvider {
-                    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError>  {
+                    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError>  {
                         self.get_enumerated_prop($prop_name)?;
                         Ok(HashSet::from_iter([Default::default()]))
                     }
@@ -405,7 +405,7 @@ impl DataProvider<GeneralCategoryMaskNameToValueV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProvider<GeneralCategoryMaskNameToValueV1Marker> for DatagenProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         self.get_mask_prop("gcm")?;
         Ok(HashSet::from_iter([Default::default()]))
     }

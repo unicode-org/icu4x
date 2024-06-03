@@ -53,7 +53,7 @@ impl DynDataMarker for BufferMarker {
 /// assert_eq!(
 ///     serde_json::from_slice::<HelloWorldV1>(
 ///         buffer_provider
-///             .load_data(HelloWorldV1Marker::KEY, req)
+///             .load_data(HelloWorldV1Marker::INFO, req)
 ///             .expect("load should succeed")
 ///             .take_payload()
 ///             .unwrap()

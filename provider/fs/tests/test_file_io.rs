@@ -18,10 +18,10 @@ const PATHS: &[&str] = &[
 fn test_provider() {
     for path in PATHS {
         let provider = FsDataProvider::try_new(path).unwrap();
-        for (locale, key_attributes) in HelloWorldProvider.supported_requests().unwrap() {
+        for (locale, marker_attributes) in HelloWorldProvider.supported_requests().unwrap() {
             let req = DataRequest {
                 locale: &locale,
-                key_attributes: &key_attributes,
+                marker_attributes: &marker_attributes,
                 ..Default::default()
             };
 
@@ -77,7 +77,11 @@ fn test_errors() {
             type Yokeable = HelloWorldV1<'static>;
         }
         impl DataMarker for WrongV1Marker {
-            const KEY: DataKey = data_key!("nope@1");
+            const INFO: DataMarkerInfo = DataMarkerInfo {
+                path: icu_provider::data_marker_path!("nope@1"),
+                is_singleton: false,
+                fallback_config: icu_provider::_internal::LocaleFallbackConfig::const_default(),
+            };
         }
 
         let err: Result<DataResponse<WrongV1Marker>, DataError> =
@@ -87,7 +91,7 @@ fn test_errors() {
             matches!(
                 err,
                 Err(DataError {
-                    kind: DataErrorKind::MissingDataKey,
+                    kind: DataErrorKind::MissingDataMarker,
                     ..
                 })
             ),

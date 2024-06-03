@@ -98,7 +98,7 @@ impl DataProvider<UnitsInfoV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProvider<UnitsInfoV1Marker> for DatagenProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }

@@ -20,7 +20,7 @@ inline capi::ICU4XError ICU4XError::AsFFI() const {
 inline ICU4XError ICU4XError::FromFFI(capi::ICU4XError c_enum) {
   switch (c_enum) {
     case capi::ICU4XError_UnknownError:
-    case capi::ICU4XError_DataMissingDataKeyError:
+    case capi::ICU4XError_DataMissingDataMarkerError:
     case capi::ICU4XError_DataMissingVariantError:
     case capi::ICU4XError_DataMissingLocaleError:
     case capi::ICU4XError_DataNeedsVariantError:

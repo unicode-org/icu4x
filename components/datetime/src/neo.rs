@@ -172,7 +172,7 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
     pub fn try_new_with_length(locale: &DataLocale, length: length::Date) -> Result<Self, LoadError>
     where
         crate::provider::Baked: Sized
-            // Calendar-specific date formatting keys
+            // Calendar-specific date formatting markers
             + DataProvider<C::DatePatternV1Marker>
             + DataProvider<C::YearNamesV1Marker>
             + DataProvider<C::MonthNamesV1Marker>,
@@ -201,14 +201,14 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
     ) -> Result<Self, LoadError>
     where
         P: ?Sized
-            // Date formatting keys
+            // Date formatting markers
             + DataProvider<C::DatePatternV1Marker>
             + DataProvider<C::YearNamesV1Marker>
             + DataProvider<C::MonthNamesV1Marker>
             + DataProvider<WeekdayNamesV1Marker>
-            // FixedDecimalFormatter keys
+            // FixedDecimalFormatter markers
             + DataProvider<DecimalSymbolsV1Marker>
-            // WeekCalculator keys
+            // WeekCalculator markers
             + DataProvider<WeekDataV2Marker>,
     {
         Self::try_new_with_length_internal(
@@ -227,7 +227,7 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
     ) -> Result<Self, LoadError>
     where
         P: ?Sized
-            // Date formatting keys
+            // Date formatting markers
             + DataProvider<C::DatePatternV1Marker>
             + DataProvider<C::YearNamesV1Marker>
             + DataProvider<C::MonthNamesV1Marker>
@@ -327,7 +327,7 @@ impl<C: CldrCalendar, R: TypedNeoFormatterMarker<C>> TypedNeoFormatter<C, R> {
     pub fn try_new(locale: &DataLocale, length: NeoSkeletonLength) -> Result<Self, LoadError>
     where
         crate::provider::Baked: Sized
-            // Date formatting keys
+            // Date formatting markers
             + DataProvider<<R::D as TypedDateMarkers<C>>::YearNamesV1Marker>
             + DataProvider<<R::D as TypedDateMarkers<C>>::MonthNamesV1Marker>
             + DataProvider<<R::D as TypedDateMarkers<C>>::DateSkeletonPatternsV1Marker>
@@ -360,7 +360,7 @@ impl<C: CldrCalendar, R: TypedNeoFormatterMarker<C>> TypedNeoFormatter<C, R> {
     ) -> Result<Self, LoadError>
     where
         P: ?Sized
-            // Date formatting keys
+            // Date formatting markers
             + DataProvider<<R::D as TypedDateMarkers<C>>::YearNamesV1Marker>
             + DataProvider<<R::D as TypedDateMarkers<C>>::MonthNamesV1Marker>
             + DataProvider<<R::D as TypedDateMarkers<C>>::DateSkeletonPatternsV1Marker>
@@ -368,9 +368,9 @@ impl<C: CldrCalendar, R: TypedNeoFormatterMarker<C>> TypedNeoFormatter<C, R> {
             + DataProvider<<R::T as TimeMarkers>::DayPeriodNamesV1Marker>
             + DataProvider<<R::T as TimeMarkers>::TimeSkeletonPatternsV1Marker>
             + DataProvider<R::DateTimePatternV1Marker>
-            // FixedDecimalFormatter keys
+            // FixedDecimalFormatter markers
             + DataProvider<DecimalSymbolsV1Marker>
-            // WeekCalculator keys
+            // WeekCalculator markers
             + DataProvider<WeekDataV2Marker>,
     {
         Self::try_new_internal(provider, &ExternalLoaderUnstable(provider), locale, length)
@@ -384,7 +384,7 @@ impl<C: CldrCalendar, R: TypedNeoFormatterMarker<C>> TypedNeoFormatter<C, R> {
     ) -> Result<Self, LoadError>
     where
         P: ?Sized
-            // Date formatting keys
+            // Date formatting markers
             + DataProvider<<R::D as TypedDateMarkers<C>>::YearNamesV1Marker>
             + DataProvider<<R::D as TypedDateMarkers<C>>::MonthNamesV1Marker>
             + DataProvider<<R::D as TypedDateMarkers<C>>::DateSkeletonPatternsV1Marker>
@@ -561,7 +561,7 @@ impl<R: NeoFormatterMarker> NeoFormatter<R> {
     pub fn try_new(locale: &DataLocale, length: NeoSkeletonLength) -> Result<Self, LoadError>
     where
         crate::provider::Baked: Sized
-    // Date formatting keys
+    // Date formatting markers
             + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Buddhist>
             + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Chinese>
             + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Coptic>
@@ -642,7 +642,7 @@ impl<R: NeoFormatterMarker> NeoFormatter<R> {
     ) -> Result<Self, LoadError>
     where
         P: ?Sized
-    // Date formatting keys
+    // Date formatting markers
             + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Buddhist>
             + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Chinese>
             + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Coptic>
@@ -698,16 +698,16 @@ impl<R: NeoFormatterMarker> NeoFormatter<R> {
             + DataProvider<<R::T as TimeMarkers>::DayPeriodNamesV1Marker>
             + DataProvider<<R::T as TimeMarkers>::TimeSkeletonPatternsV1Marker>
             + DataProvider<R::DateTimePatternV1Marker>
-    // AnyCalendar constructor keys
+    // AnyCalendar constructor markers
             + DataProvider<ChineseCacheV1Marker>
             + DataProvider<DangiCacheV1Marker>
             + DataProvider<IslamicObservationalCacheV1Marker>
             + DataProvider<IslamicUmmAlQuraCacheV1Marker>
             + DataProvider<JapaneseErasV1Marker>
             + DataProvider<JapaneseExtendedErasV1Marker>
-    // FixedDecimalFormatter keys
+    // FixedDecimalFormatter markers
             + DataProvider<DecimalSymbolsV1Marker>
-    // WeekCalculator keys
+    // WeekCalculator markers
             + DataProvider<WeekDataV2Marker>,
     {
         Self::try_new_internal(provider, &ExternalLoaderUnstable(provider), locale, length)
@@ -721,7 +721,7 @@ impl<R: NeoFormatterMarker> NeoFormatter<R> {
     ) -> Result<Self, LoadError>
     where
         P: ?Sized
-    // Date formatting keys
+    // Date formatting markers
             + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Buddhist>
             + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Chinese>
             + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Coptic>
@@ -1057,7 +1057,7 @@ impl NeoDateFormatter {
     ) -> Result<Self, LoadError>
     where
         P: ?Sized
-            // DatePattern, YearNames, and MonthNames keys
+            // DatePattern, YearNames, and MonthNames markers
             + DataProvider<<FullData as CalMarkers<YearNamesV1Marker>>::Buddhist>
             + DataProvider<<FullData as CalMarkers<YearNamesV1Marker>>::Chinese>
             + DataProvider<<FullData as CalMarkers<YearNamesV1Marker>>::Coptic>
@@ -1109,18 +1109,18 @@ impl NeoDateFormatter {
             + DataProvider<<FullData as CalMarkers<DatePatternV1Marker>>::JapaneseExtended>
             + DataProvider<<FullData as CalMarkers<DatePatternV1Marker>>::Persian>
             + DataProvider<<FullData as CalMarkers<DatePatternV1Marker>>::Roc>
-            // Other date formatting keys
+            // Other date formatting markers
             + DataProvider<WeekdayNamesV1Marker>
-            // AnyCalendar constructor keys
+            // AnyCalendar constructor markers
             + DataProvider<ChineseCacheV1Marker>
             + DataProvider<DangiCacheV1Marker>
             + DataProvider<IslamicObservationalCacheV1Marker>
             + DataProvider<IslamicUmmAlQuraCacheV1Marker>
             + DataProvider<JapaneseErasV1Marker>
             + DataProvider<JapaneseExtendedErasV1Marker>
-            // FixedDecimalFormatter keys
+            // FixedDecimalFormatter markers
             + DataProvider<DecimalSymbolsV1Marker>
-            // WeekCalculator keys
+            // WeekCalculator markers
             + DataProvider<WeekDataV2Marker>,
     {
         Self::try_new_with_length_internal(
@@ -1139,7 +1139,7 @@ impl NeoDateFormatter {
     ) -> Result<Self, LoadError>
     where
         P: ?Sized
-            // DatePattern, YearNames, and MonthNames keys
+            // DatePattern, YearNames, and MonthNames markers
             + DataProvider<<FullData as CalMarkers<YearNamesV1Marker>>::Buddhist>
             + DataProvider<<FullData as CalMarkers<YearNamesV1Marker>>::Chinese>
             + DataProvider<<FullData as CalMarkers<YearNamesV1Marker>>::Coptic>
@@ -1191,7 +1191,7 @@ impl NeoDateFormatter {
             + DataProvider<<FullData as CalMarkers<DatePatternV1Marker>>::JapaneseExtended>
             + DataProvider<<FullData as CalMarkers<DatePatternV1Marker>>::Persian>
             + DataProvider<<FullData as CalMarkers<DatePatternV1Marker>>::Roc>
-            // Other date formatting keys
+            // Other date formatting markers
             + DataProvider<WeekdayNamesV1Marker>,
         L: FixedDecimalFormatterLoader + WeekCalculatorLoader + AnyCalendarLoader,
     {
@@ -1356,10 +1356,10 @@ impl NeoTimeFormatter {
     ) -> Result<Self, LoadError>
     where
         P: ?Sized
-            // Time formatting keys
+            // Time formatting markers
             + DataProvider<TimePatternV1Marker>
             + DataProvider<DayPeriodNamesV1Marker>
-            // FixedDecimalFormatter keys
+            // FixedDecimalFormatter markers
             + DataProvider<DecimalSymbolsV1Marker>,
     {
         Self::try_new_with_length_internal(
@@ -1378,7 +1378,7 @@ impl NeoTimeFormatter {
     ) -> Result<Self, LoadError>
     where
         P: ?Sized
-            // Time formatting keys
+            // Time formatting markers
             + DataProvider<TimePatternV1Marker>
             + DataProvider<DayPeriodNamesV1Marker>,
         L: FixedDecimalFormatterLoader,
@@ -1517,7 +1517,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
     ) -> Result<Self, LoadError>
     where
         crate::provider::Baked: Sized
-            // Calendar-specific date formatting keys
+            // Calendar-specific date formatting markers
             + DataProvider<C::DatePatternV1Marker>
             + DataProvider<C::YearNamesV1Marker>
             + DataProvider<C::MonthNamesV1Marker>,
@@ -1546,14 +1546,14 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
     ) -> Result<Self, LoadError>
     where
         P: ?Sized
-            // Date formatting keys
+            // Date formatting markers
             + DataProvider<C::DatePatternV1Marker>
             + DataProvider<C::YearNamesV1Marker>
             + DataProvider<C::MonthNamesV1Marker>
             + DataProvider<WeekdayNamesV1Marker>
-            // FixedDecimalFormatter keys
+            // FixedDecimalFormatter markers
             + DataProvider<DecimalSymbolsV1Marker>
-            // WeekCalculator keys
+            // WeekCalculator markers
             + DataProvider<WeekDataV2Marker>,
     {
         Self::try_new_with_date_length_internal(
@@ -1572,7 +1572,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
     ) -> Result<Self, LoadError>
     where
         P: ?Sized
-            // Date formatting keys
+            // Date formatting markers
             + DataProvider<C::DatePatternV1Marker>
             + DataProvider<C::YearNamesV1Marker>
             + DataProvider<C::MonthNamesV1Marker>
@@ -1645,10 +1645,10 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
     ) -> Result<Self, LoadError>
     where
         P: ?Sized
-            // Time formatting keys
+            // Time formatting markers
             + DataProvider<TimePatternV1Marker>
             + DataProvider<DayPeriodNamesV1Marker>
-            // FixedDecimalFormatter keys
+            // FixedDecimalFormatter markers
             + DataProvider<DecimalSymbolsV1Marker>,
     {
         Self::try_new_with_time_length_internal(
@@ -1667,7 +1667,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
     ) -> Result<Self, LoadError>
     where
         P: ?Sized
-            // Time formatting keys
+            // Time formatting markers
             + DataProvider<TimePatternV1Marker>
             + DataProvider<DayPeriodNamesV1Marker>,
         L: FixedDecimalFormatterLoader,
@@ -1717,7 +1717,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
     ) -> Result<Self, LoadError>
     where
         crate::provider::Baked: Sized
-            // Calendar-specific date formatting keys
+            // Calendar-specific date formatting markers
             + DataProvider<C::DatePatternV1Marker>
             + DataProvider<C::YearNamesV1Marker>
             + DataProvider<C::MonthNamesV1Marker>,
@@ -1749,19 +1749,19 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
     ) -> Result<Self, LoadError>
     where
         P: ?Sized
-            // Date formatting keys
+            // Date formatting markers
             + DataProvider<C::DatePatternV1Marker>
             + DataProvider<C::YearNamesV1Marker>
             + DataProvider<C::MonthNamesV1Marker>
             + DataProvider<WeekdayNamesV1Marker>
-            // Time formatting keys
+            // Time formatting markers
             + DataProvider<TimePatternV1Marker>
             + DataProvider<DayPeriodNamesV1Marker>
-            // DateTime glue key
+            // DateTime glue marker
             + DataProvider<DateTimePatternV1Marker>
-            // FixedDecimalFormatter key
+            // FixedDecimalFormatter marker
             + DataProvider<DecimalSymbolsV1Marker>
-            // WeekCalculator key
+            // WeekCalculator marker
             + DataProvider<WeekDataV2Marker>,
     {
         Self::try_new_with_lengths_internal(
@@ -1782,15 +1782,15 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
     ) -> Result<Self, LoadError>
     where
         P: ?Sized
-            // Date formatting keys
+            // Date formatting markers
             + DataProvider<C::DatePatternV1Marker>
             + DataProvider<C::YearNamesV1Marker>
             + DataProvider<C::MonthNamesV1Marker>
             + DataProvider<WeekdayNamesV1Marker>
-            // Time formatting keys
+            // Time formatting markers
             + DataProvider<TimePatternV1Marker>
             + DataProvider<DayPeriodNamesV1Marker>
-            // DateTime glue key
+            // DateTime glue marker
             + DataProvider<DateTimePatternV1Marker>,
         L: FixedDecimalFormatterLoader + WeekCalculatorLoader,
     {
@@ -1839,7 +1839,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
     ) -> Result<Self, LoadError>
     where
         crate::provider::Baked: Sized
-            // Calendar-specific date formatting keys
+            // Calendar-specific date formatting markers
             + DataProvider<C::DatePatternV1Marker>
             + DataProvider<C::YearNamesV1Marker>
             + DataProvider<C::MonthNamesV1Marker>,
@@ -1966,7 +1966,7 @@ impl NeoDateTimeFormatter {
     ) -> Result<Self, LoadError>
     where
         P: ?Sized
-            // DatePattern, YearNames, and MonthNames keys
+            // DatePattern, YearNames, and MonthNames markers
             + DataProvider<<FullData as CalMarkers<YearNamesV1Marker>>::Buddhist>
             + DataProvider<<FullData as CalMarkers<YearNamesV1Marker>>::Chinese>
             + DataProvider<<FullData as CalMarkers<YearNamesV1Marker>>::Coptic>
@@ -2018,18 +2018,18 @@ impl NeoDateTimeFormatter {
             + DataProvider<<FullData as CalMarkers<DatePatternV1Marker>>::JapaneseExtended>
             + DataProvider<<FullData as CalMarkers<DatePatternV1Marker>>::Persian>
             + DataProvider<<FullData as CalMarkers<DatePatternV1Marker>>::Roc>
-            // Other date formatting keys
+            // Other date formatting markers
             + DataProvider<WeekdayNamesV1Marker>
-            // AnyCalendar constructor keys
+            // AnyCalendar constructor markers
             + DataProvider<ChineseCacheV1Marker>
             + DataProvider<DangiCacheV1Marker>
             + DataProvider<IslamicObservationalCacheV1Marker>
             + DataProvider<IslamicUmmAlQuraCacheV1Marker>
             + DataProvider<JapaneseErasV1Marker>
             + DataProvider<JapaneseExtendedErasV1Marker>
-            // FixedDecimalFormatter keys
+            // FixedDecimalFormatter markers
             + DataProvider<DecimalSymbolsV1Marker>
-            // WeekCalculator keys
+            // WeekCalculator markers
             + DataProvider<WeekDataV2Marker>,
     {
         Self::try_new_with_date_length_internal(
@@ -2048,7 +2048,7 @@ impl NeoDateTimeFormatter {
     ) -> Result<Self, LoadError>
     where
         P: ?Sized
-            // DatePattern, YearNames, and MonthNames keys
+            // DatePattern, YearNames, and MonthNames markers
             + DataProvider<<FullData as CalMarkers<YearNamesV1Marker>>::Buddhist>
             + DataProvider<<FullData as CalMarkers<YearNamesV1Marker>>::Chinese>
             + DataProvider<<FullData as CalMarkers<YearNamesV1Marker>>::Coptic>
@@ -2100,7 +2100,7 @@ impl NeoDateTimeFormatter {
             + DataProvider<<FullData as CalMarkers<DatePatternV1Marker>>::JapaneseExtended>
             + DataProvider<<FullData as CalMarkers<DatePatternV1Marker>>::Persian>
             + DataProvider<<FullData as CalMarkers<DatePatternV1Marker>>::Roc>
-            // Other date formatting keys
+            // Other date formatting markers
             + DataProvider<WeekdayNamesV1Marker>,
         L: FixedDecimalFormatterLoader + WeekCalculatorLoader + AnyCalendarLoader,
     {
@@ -2180,17 +2180,17 @@ impl NeoDateTimeFormatter {
     ) -> Result<Self, LoadError>
     where
         P: ?Sized
-            // Time formatting keys
+            // Time formatting markers
             + DataProvider<TimePatternV1Marker>
             + DataProvider<DayPeriodNamesV1Marker>
-            // AnyCalendar constructor keys
+            // AnyCalendar constructor markers
             + DataProvider<ChineseCacheV1Marker>
             + DataProvider<DangiCacheV1Marker>
             + DataProvider<IslamicObservationalCacheV1Marker>
             + DataProvider<IslamicUmmAlQuraCacheV1Marker>
             + DataProvider<JapaneseErasV1Marker>
             + DataProvider<JapaneseExtendedErasV1Marker>
-            // FixedDecimalFormatter keys
+            // FixedDecimalFormatter markers
             + DataProvider<DecimalSymbolsV1Marker>,
     {
         Self::try_new_with_time_length_internal(
@@ -2209,7 +2209,7 @@ impl NeoDateTimeFormatter {
     ) -> Result<Self, LoadError>
     where
         P: ?Sized
-            // Time formatting keys
+            // Time formatting markers
             + DataProvider<TimePatternV1Marker>
             + DataProvider<DayPeriodNamesV1Marker>,
         L: FixedDecimalFormatterLoader + AnyCalendarLoader,
@@ -2287,7 +2287,7 @@ impl NeoDateTimeFormatter {
     ) -> Result<Self, LoadError>
     where
         P: ?Sized
-            // DatePattern, YearNames, and MonthNames keys
+            // DatePattern, YearNames, and MonthNames markers
             + DataProvider<<FullData as CalMarkers<YearNamesV1Marker>>::Buddhist>
             + DataProvider<<FullData as CalMarkers<YearNamesV1Marker>>::Chinese>
             + DataProvider<<FullData as CalMarkers<YearNamesV1Marker>>::Coptic>
@@ -2339,23 +2339,23 @@ impl NeoDateTimeFormatter {
             + DataProvider<<FullData as CalMarkers<DatePatternV1Marker>>::JapaneseExtended>
             + DataProvider<<FullData as CalMarkers<DatePatternV1Marker>>::Persian>
             + DataProvider<<FullData as CalMarkers<DatePatternV1Marker>>::Roc>
-            // Other date formatting keys
+            // Other date formatting markers
             + DataProvider<WeekdayNamesV1Marker>
-            // Time formatting keys
+            // Time formatting markers
             + DataProvider<TimePatternV1Marker>
             + DataProvider<DayPeriodNamesV1Marker>
-            // DateTime glue key
+            // DateTime glue marker
             + DataProvider<DateTimePatternV1Marker>
-            // AnyCalendar constructor keys
+            // AnyCalendar constructor markers
             + DataProvider<ChineseCacheV1Marker>
             + DataProvider<DangiCacheV1Marker>
             + DataProvider<IslamicObservationalCacheV1Marker>
             + DataProvider<IslamicUmmAlQuraCacheV1Marker>
             + DataProvider<JapaneseErasV1Marker>
             + DataProvider<JapaneseExtendedErasV1Marker>
-            // FixedDecimalFormatter key
+            // FixedDecimalFormatter marker
             + DataProvider<DecimalSymbolsV1Marker>
-            // WeekCalculator key
+            // WeekCalculator marker
             + DataProvider<WeekDataV2Marker>,
     {
         Self::try_new_with_lengths_internal(
@@ -2376,7 +2376,7 @@ impl NeoDateTimeFormatter {
     ) -> Result<Self, LoadError>
     where
         P: ?Sized
-            // DatePattern, YearNames, and MonthNames keys
+            // DatePattern, YearNames, and MonthNames markers
             + DataProvider<<FullData as CalMarkers<YearNamesV1Marker>>::Buddhist>
             + DataProvider<<FullData as CalMarkers<YearNamesV1Marker>>::Chinese>
             + DataProvider<<FullData as CalMarkers<YearNamesV1Marker>>::Coptic>
@@ -2428,12 +2428,12 @@ impl NeoDateTimeFormatter {
             + DataProvider<<FullData as CalMarkers<DatePatternV1Marker>>::JapaneseExtended>
             + DataProvider<<FullData as CalMarkers<DatePatternV1Marker>>::Persian>
             + DataProvider<<FullData as CalMarkers<DatePatternV1Marker>>::Roc>
-            // Other date formatting keys
+            // Other date formatting markers
             + DataProvider<WeekdayNamesV1Marker>
-            // Time formatting keys
+            // Time formatting markers
             + DataProvider<TimePatternV1Marker>
             + DataProvider<DayPeriodNamesV1Marker>
-            // DateTime glue key
+            // DateTime glue marker
             + DataProvider<DateTimePatternV1Marker>,
         L: FixedDecimalFormatterLoader + WeekCalculatorLoader + AnyCalendarLoader,
     {

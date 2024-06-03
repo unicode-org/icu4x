@@ -29,7 +29,7 @@ where
     P: DataMarker<Yokeable = MonthNamesV1<'static>>,
 {
     let attribute = req
-        .key_attributes
+        .marker_attributes
         .single()
         .ok_or_else(|| DataError::custom("TODO"))?;
     let new_payload = payload.try_map_project_cloned(|payload, _| {
@@ -48,8 +48,8 @@ where
             STADLN_WIDE | FORMAT_WIDE => &payload.months.format.wide,
             STADLN_NARW | FORMAT_NARW => &payload.months.format.narrow,
             _ => {
-                return Err(DataError::custom("Unknown key attribute")
-                    .with_key(M::KEY)
+                return Err(DataError::custom("Unknown marker attribute")
+                    .with_marker(M::INFO)
                     .with_display_context(&attribute))
             }
         };
@@ -70,7 +70,7 @@ where
     P: DataMarker<Yokeable = LinearNamesV1<'static>>,
 {
     let attribute = req
-        .key_attributes
+        .marker_attributes
         .single()
         .ok_or_else(|| DataError::custom("TODO"))?;
     let new_payload = payload.try_map_project_cloned(|payload, _| {
@@ -99,8 +99,8 @@ where
             STADLN_WIDE | FORMAT_WIDE => &payload.weekdays.format.wide,
             STADLN_NARW | FORMAT_NARW => &payload.weekdays.format.narrow,
             _ => {
-                return Err(DataError::custom("Unknown key attribute")
-                    .with_key(M::KEY)
+                return Err(DataError::custom("Unknown marker attribute")
+                    .with_marker(M::INFO)
                     .with_display_context(&attribute))
             }
         };
@@ -121,7 +121,7 @@ where
     P: DataMarker<Yokeable = YearNamesV1<'static>>,
 {
     let attribute = req
-        .key_attributes
+        .marker_attributes
         .single()
         .ok_or_else(|| DataError::custom("TODO"))?;
     let new_payload = payload.try_map_project_cloned(|payload, _| {
@@ -131,8 +131,8 @@ where
             FORMAT_WIDE => &payload.eras.names,
             FORMAT_NARW => &payload.eras.narrow,
             _ => {
-                return Err(DataError::custom("Unknown key attribute")
-                    .with_key(M::KEY)
+                return Err(DataError::custom("Unknown marker attribute")
+                    .with_marker(M::INFO)
                     .with_display_context(&attribute))
             }
         };
@@ -153,7 +153,7 @@ where
     P: DataMarker<Yokeable = LinearNamesV1<'static>>,
 {
     let attribute = req
-        .key_attributes
+        .marker_attributes
         .single()
         .ok_or_else(|| DataError::custom("TODO"))?;
     let new_payload = payload.try_map_project_cloned(|payload, _| {
@@ -172,8 +172,8 @@ where
             STADLN_WIDE | FORMAT_WIDE => &payload.day_periods.format.wide,
             STADLN_NARW | FORMAT_NARW => &payload.day_periods.format.narrow,
             _ => {
-                return Err(DataError::custom("Unknown key attribute")
-                    .with_key(M::KEY)
+                return Err(DataError::custom("Unknown marker attribute")
+                    .with_marker(M::INFO)
                     .with_display_context(&attribute))
             }
         };
@@ -475,7 +475,7 @@ mod tests {
         let neo_month_abbreviated: DataPayload<GregorianMonthNamesV1Marker> = symbols
             .load(DataRequest {
                 locale: &"en".parse().unwrap(),
-                key_attributes: &"3".parse().unwrap(),
+                marker_attributes: &"3".parse().unwrap(),
                 ..Default::default()
             })
             .unwrap()
@@ -501,7 +501,7 @@ mod tests {
         let neo_month_abbreviated: DataPayload<HebrewMonthNamesV1Marker> = symbols
             .load(DataRequest {
                 locale: &"en".parse().unwrap(),
-                key_attributes: &"3".parse().unwrap(),
+                marker_attributes: &"3".parse().unwrap(),
                 ..Default::default()
             })
             .unwrap()
@@ -527,7 +527,7 @@ mod tests {
         let neo_weekdays_abbreviated: DataPayload<WeekdayNamesV1Marker> = symbols
             .load(DataRequest {
                 locale: &"en".parse().unwrap(),
-                key_attributes: &"3".parse().unwrap(),
+                marker_attributes: &"3".parse().unwrap(),
                 ..Default::default()
             })
             .unwrap()
@@ -553,7 +553,7 @@ mod tests {
         let neo_weekdays_short: DataPayload<WeekdayNamesV1Marker> = symbols
             .load(DataRequest {
                 locale: &"en".parse().unwrap(),
-                key_attributes: &"6s".parse().unwrap(),
+                marker_attributes: &"6s".parse().unwrap(),
                 ..Default::default()
             })
             .unwrap()
@@ -579,7 +579,7 @@ mod tests {
         let neo_eras_wide: DataPayload<GregorianYearNamesV1Marker> = symbols
             .load(DataRequest {
                 locale: &"en".parse().unwrap(),
-                key_attributes: &"4".parse().unwrap(),
+                marker_attributes: &"4".parse().unwrap(),
                 ..Default::default()
             })
             .unwrap()
@@ -605,7 +605,7 @@ mod tests {
         let neo_dayperiods_abbreviated: DataPayload<DayPeriodNamesV1Marker> = symbols
             .load(DataRequest {
                 locale: &"en".parse().unwrap(),
-                key_attributes: &"3s".parse().unwrap(),
+                marker_attributes: &"3s".parse().unwrap(),
                 ..Default::default()
             })
             .unwrap()

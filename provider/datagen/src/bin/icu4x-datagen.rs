@@ -63,7 +63,7 @@ struct Cli {
         help = "Download CLDR JSON data from this GitHub tag (https://github.com/unicode-org/cldr-json/tags)\n\
                     Use 'latest' for the latest version verified to work with this version of the binary.\n\
                     Ignored if '--cldr-root' is present. Requires binary to be built with `networking` Cargo feature (enabled by default).\n\
-                    Note that some keys do not support versions before 41.0.0."
+                    Note that some markers do not support versions before 41.0.0."
     )]
     #[cfg(feature = "provider")]
     #[cfg_attr(not(feature = "networking"), arg(hide = true))]
@@ -72,7 +72,7 @@ struct Cli {
     #[arg(long, value_name = "PATH")]
     #[arg(
         help = "Path to a local cldr-{version}-json-full.zip directory (see https://github.com/unicode-org/cldr-json/releases).\n\
-                  Note that some keys do not support versions before 41.0.0."
+                  Note that some markers do not support versions before 41.0.0."
     )]
     #[cfg(feature = "provider")]
     cldr_root: Option<PathBuf>,
@@ -82,7 +82,7 @@ struct Cli {
         help = "Download ICU data from this GitHub tag (https://github.com/unicode-org/icu/tags)\n\
                   Use 'latest' for the latest version verified to work with this version of the binary.\n\
                   Ignored if '--icuexport-root' is present. Requires binary to be built with `networking` Cargo feature (enabled by default).\n\
-                  Note that some keys do not support versions before release-71-1."
+                  Note that some markers do not support versions before release-71-1."
     )]
     #[cfg_attr(not(feature = "networking"), arg(hide = true))]
     #[cfg(feature = "provider")]
@@ -91,7 +91,7 @@ struct Cli {
     #[arg(long, value_name = "PATH")]
     #[arg(
         help = "Path to a local icuexport directory (see https://github.com/unicode-org/icu/releases).\n\
-                  Note that some keys do not support versions before release-71-1."
+                  Note that some markers do not support versions before release-71-1."
     )]
     #[cfg(feature = "provider")]
     icuexport_root: Option<PathBuf>,
@@ -135,14 +135,14 @@ struct Cli {
 
     #[arg(long, short, num_args = 1..)]
     #[arg(
-        help = "Include these resource keys in the output. Accepts multiple arguments.\n\
-                Set to 'all' for all keys, or 'none' for no keys."
+        help = "Include these data markers in the output. Accepts multiple arguments.\n\
+                Set to 'all' for all markers, or 'none' for no markers."
     )]
-    keys: Vec<String>,
+    markers: Vec<String>,
 
     #[arg(long, value_name = "BINARY")]
-    #[arg(help = "Analyzes the binary and only includes keys that are used by the binary.")]
-    keys_for_bin: Option<PathBuf>,
+    #[arg(help = "Analyzes the binary and only includes markers that are used by the binary.")]
+    markers_for_bin: Option<PathBuf>,
 
     #[arg(long, short, num_args = 0..)]
     #[cfg_attr(feature = "provider", arg(default_value = "recommended"))]
@@ -423,19 +423,21 @@ fn main() -> eyre::Result<()> {
 
     let mut driver = DatagenDriver::new();
 
-    driver = driver.with_keys(if !cli.keys.is_empty() {
-        match cli.keys.as_slice() {
+    driver = driver.with_markers(if !cli.markers.is_empty() {
+        match cli.markers.as_slice() {
             [x] if x == "none" => Default::default(),
-            [x] if x == "all" => icu_datagen::all_keys(),
-            keys => keys
+            [x] if x == "all" => icu_datagen::all_markers(),
+            markers => markers
                 .iter()
-                .map(|k| icu_datagen::key(k).ok_or(eyre::eyre!(k.to_string())))
+                .map(|k| icu_datagen::marker(k).ok_or(eyre::eyre!(k.to_string())))
                 .collect::<Result<_, _>>()?,
         }
-    } else if let Some(bin_path) = &cli.keys_for_bin {
-        icu_datagen::keys_from_bin(bin_path)?.into_iter().collect()
+    } else if let Some(bin_path) = &cli.markers_for_bin {
+        icu_datagen::markers_from_bin(bin_path)?
+            .into_iter()
+            .collect()
     } else {
-        eyre::bail!("--keys or --keys-for-bin are required.")
+        eyre::bail!("--markers or --markers-for-bin are required.")
     });
 
     if cli.without_fallback {
@@ -608,8 +610,8 @@ where
     BlobDataProvider: AsDeserializingBufferProvider,
     for<'a> DeserializingBufferProvider<'a, BlobDataProvider>: DataProvider<M>,
 {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
-        self.0.supported_requests_for_key(M::KEY)
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+        self.0.supported_requests_for_marker(M::INFO)
     }
 }
 

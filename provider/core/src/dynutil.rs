@@ -86,12 +86,13 @@ macro_rules! impl_casting_upcast {
 /// ## Wrapping DataProvider
 ///
 /// If your type implements [`DataProvider`], pass a list of markers as the second argument.
-/// This results in a `DynamicDataProvider` that delegates to a specific marker if the key
-/// matches or else returns [`DataErrorKind::MissingDataKey`].
+/// This results in a `DynamicDataProvider` that delegates to a specific marker if the marker
+/// matches or else returns [`DataErrorKind::MissingDataMarker`].
 ///
 /// ```
 /// use icu_provider::prelude::*;
 /// use icu_provider::hello_world::*;
+/// use icu_provider::NeverMarker;
 /// #
 /// # // Duplicating HelloWorldProvider because the real one already implements DynamicDataProvider<AnyMarker>
 /// # struct HelloWorldProvider;
@@ -112,20 +113,31 @@ macro_rules! impl_casting_upcast {
 ///     ..Default::default()
 /// };
 ///
-/// // Successful because the key matches:
-/// HelloWorldProvider.load_data(HelloWorldV1Marker::KEY, req).unwrap();
+/// // Successful because the marker matches:
+/// HelloWorldProvider.load_data(HelloWorldV1Marker::INFO, req).unwrap();
 ///
-/// // MissingDataKey error as the key does not match:
+/// # struct DummyMarker;
+/// # impl DynDataMarker for DummyMarker {
+/// #     type Yokeable = <HelloWorldV1Marker as DynDataMarker>::Yokeable;
+/// # }
+/// # impl DataMarker for DummyMarker {
+/// #     const INFO: DataMarkerInfo = DataMarkerInfo {
+/// #         path: icu_provider::data_marker_path!("dummy@1"),
+/// #         is_singleton: false,
+/// #         fallback_config: icu_provider::_internal::LocaleFallbackConfig::const_default(),
+/// #     };
+/// # }
+/// // MissingDataMarker error as the marker does not match:
 /// assert_eq!(
-///     HelloWorldProvider.load_data(icu_provider::data_key!("dummy@1"), req).unwrap_err().kind,
-///     DataErrorKind::MissingDataKey,
+///     HelloWorldProvider.load_data(DummyMarker::INFO, req).unwrap_err().kind,
+///     DataErrorKind::MissingDataMarker,
 /// );
 /// ```
 ///
 /// ## Wrapping DynamicDataProvider
 ///
 /// It is also possible to wrap a [`DynamicDataProvider`] to create another [`DynamicDataProvider`]. To do this,
-/// pass a match-like statement for keys as the second argument:
+/// pass a match-like statement for markers as the second argument:
 ///
 /// ```
 /// use icu_provider::prelude::*;
@@ -133,7 +145,7 @@ macro_rules! impl_casting_upcast {
 /// #
 /// # struct HelloWorldProvider;
 /// # impl DynamicDataProvider<HelloWorldV1Marker> for HelloWorldProvider {
-/// #     fn load_data(&self, key: DataKey, req: DataRequest)
+/// #     fn load_data(&self, marker: DataMarkerInfo, req: DataRequest)
 /// #             -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
 /// #         icu_provider::hello_world::HelloWorldProvider.load(req)
 /// #     }
@@ -141,8 +153,8 @@ macro_rules! impl_casting_upcast {
 ///
 /// // Implement DataProvider<AnyMarker> on HelloWorldProvider: DynamicDataProvider<HelloWorldV1Marker>
 /// icu_provider::impl_dynamic_data_provider!(HelloWorldProvider, {
-///     // Match HelloWorldV1Marker::KEY and delegate to DynamicDataProvider<HelloWorldV1Marker>.
-///     HW = HelloWorldV1Marker::KEY => HelloWorldV1Marker,
+///     // Match HelloWorldV1Marker::INFO and delegate to DynamicDataProvider<HelloWorldV1Marker>.
+///     HW = HelloWorldV1Marker::INFO => HelloWorldV1Marker,
 ///     // Send the wildcard match also to DynamicDataProvider<HelloWorldV1Marker>.
 ///     _ => HelloWorldV1Marker,
 /// }, AnyMarker);
@@ -152,17 +164,28 @@ macro_rules! impl_casting_upcast {
 ///     ..Default::default()
 /// };
 ///
-/// // Successful because the key matches:
-/// HelloWorldProvider.as_any_provider().load_any(HelloWorldV1Marker::KEY, req).unwrap();
+/// // Successful because the marker matches:
+/// HelloWorldProvider.as_any_provider().load_any(HelloWorldV1Marker::INFO, req).unwrap();
 ///
-/// // Because of the wildcard, any key actually works:
-/// HelloWorldProvider.as_any_provider().load_any(icu_provider::data_key!("dummy@1"), req).unwrap();
+/// // Because of the wildcard, any marker actually works:
+/// struct DummyMarker;
+/// impl DynDataMarker for DummyMarker {
+///     type Yokeable = <HelloWorldV1Marker as DynDataMarker>::Yokeable;
+/// }
+/// impl DataMarker for DummyMarker {
+///     const INFO: DataMarkerInfo = DataMarkerInfo {
+///         path: icu_provider::data_marker_path!("dummy@1"),
+///         is_singleton: false,
+///         fallback_config: icu_provider::_internal::LocaleFallbackConfig::const_default(),
+///     };
+/// }
+/// HelloWorldProvider.as_any_provider().load_any(DummyMarker::INFO, req).unwrap();
 /// ```
 ///
 /// [`DynamicDataProvider`]: crate::DynamicDataProvider
 /// [`DataProvider`]: crate::DataProvider
 /// [`AnyPayload`]: (crate::any::AnyPayload)
-/// [`DataErrorKind::MissingDataKey`]: (crate::DataErrorKind::MissingDataKey)
+/// [`DataErrorKind::MissingDataMarker`]: (crate::DataErrorKind::MissingDataMarker)
 /// [`SerializeMarker`]: (crate::serde::SerializeMarker)
 #[macro_export]
 macro_rules! impl_dynamic_data_provider {
@@ -181,22 +204,22 @@ macro_rules! impl_dynamic_data_provider {
         );
     };
 
-    ($provider:ty, { $($ident:ident = $key:path => $struct_m:ty),+, $(_ => $struct_d:ty,)?}, $dyn_m:ty) => {
+    ($provider:ty, { $($ident:ident = $marker:path => $struct_m:ty),+, $(_ => $struct_d:ty,)?}, $dyn_m:ty) => {
         impl $crate::DynamicDataProvider<$dyn_m> for $provider
         {
             fn load_data(
                 &self,
-                key: $crate::DataKey,
+                marker: $crate::DataMarkerInfo,
                 req: $crate::DataRequest,
             ) -> Result<
                 $crate::DataResponse<$dyn_m>,
                 $crate::DataError,
             > {
-                match key.hashed() {
+                match marker.path.hashed() {
                     $(
-                        h if h == $key.hashed() => {
+                        h if h == $marker.path.hashed() => {
                             let result: $crate::DataResponse<$struct_m> =
-                                $crate::DynamicDataProvider::<$struct_m>::load_data(self, key, req)?;
+                                $crate::DynamicDataProvider::<$struct_m>::load_data(self, marker, req)?;
                             Ok($crate::DataResponse {
                                 metadata: result.metadata,
                                 payload: result.payload.map(|p| {
@@ -208,7 +231,7 @@ macro_rules! impl_dynamic_data_provider {
                     $(
                         _ => {
                             let result: $crate::DataResponse<$struct_d> =
-                                $crate::DynamicDataProvider::<$struct_d>::load_data(self, key, req)?;
+                                $crate::DynamicDataProvider::<$struct_d>::load_data(self, marker, req)?;
                             Ok($crate::DataResponse {
                                 metadata: result.metadata,
                                 payload: result.payload.map(|p| {
@@ -217,7 +240,7 @@ macro_rules! impl_dynamic_data_provider {
                             })
                         }
                     )?
-                    _ => Err($crate::DataErrorKind::MissingDataKey.with_req(key, req))
+                    _ => Err($crate::DataErrorKind::MissingDataMarker.with_req(marker, req))
                 }
             }
         }
@@ -228,16 +251,16 @@ macro_rules! impl_dynamic_data_provider {
         {
             fn load_data(
                 &self,
-                key: $crate::DataKey,
+                marker: $crate::DataMarkerInfo,
                 req: $crate::DataRequest,
             ) -> Result<
                 $crate::DataResponse<$dyn_m>,
                 $crate::DataError,
             > {
-                match key.hashed() {
+                match marker.path.hashed() {
                     $(
                         $(#[$cfg])?
-                        h if h == <$struct_m>::KEY.hashed() => {
+                        h if h == <$struct_m>::INFO.path.hashed() => {
                             let result: $crate::DataResponse<$struct_m> =
                                 $crate::DataProvider::load(self, req)?;
                             Ok($crate::DataResponse {
@@ -248,7 +271,7 @@ macro_rules! impl_dynamic_data_provider {
                             })
                         }
                     )+,
-                    _ => Err($crate::DataErrorKind::MissingDataKey.with_req(key, req))
+                    _ => Err($crate::DataErrorKind::MissingDataMarker.with_req(marker, req))
                 }
             }
         }

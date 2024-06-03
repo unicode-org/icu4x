@@ -18,7 +18,7 @@ macro_rules! __impl_datetime_symbols_weekdays_v1 {
                 if let Ok(payload) = KEYS.binary_search_by(|k| req.legacy_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
                     Ok(icu_provider::DataResponse { payload: Some(icu_provider::DataPayload::from_static_ref(payload)), metadata: Default::default() })
                 } else {
-                    Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::datetime::provider::neo::WeekdayNamesV1Marker as icu_provider::DataMarker>::KEY, req))
+                    Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::datetime::provider::neo::WeekdayNamesV1Marker as icu_provider::DataMarker>::INFO, req))
                 }
             }
         }
@@ -26,14 +26,14 @@ macro_rules! __impl_datetime_symbols_weekdays_v1 {
 }
 /// Implement `IterableDataProvider<WeekdayNamesV1Marker>` on the given struct using the data
 /// hardcoded in this file. This allows the struct to be used with
-/// `DatagenDriver` for this key.
+/// `DatagenDriver` for this marker.
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __impliterable_datetime_symbols_weekdays_v1 {
     ($ provider : ty) => {
         #[clippy::msrv = "1.70"]
         impl icu_provider::datagen::IterableDataProvider<icu::datetime::provider::neo::WeekdayNamesV1Marker> for $provider {
-            fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataKeyAttributes)>, icu_provider::DataError> {
+            fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataMarkerAttributes)>, icu_provider::DataError> {
                 Ok(["und-x-3", "und-x-3s", "und-x-4", "und-x-4s", "und-x-5", "und-x-5s", "und-x-6", "und-x-6s"].into_iter().filter_map(icu_provider::DataRequest::legacy_decode).collect())
             }
         }

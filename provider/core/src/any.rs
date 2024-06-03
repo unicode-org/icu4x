@@ -316,7 +316,7 @@ where
 /// // Downcasting manually
 /// assert_eq!(
 ///     any_provider
-///         .load_any(HelloWorldV1Marker::KEY, req)
+///         .load_any(HelloWorldV1Marker::INFO, req)
 ///         .expect("load should succeed")
 ///         .downcast::<HelloWorldV1Marker>()
 ///         .expect("types should match")
@@ -345,36 +345,36 @@ where
 /// );
 /// ```
 pub trait AnyProvider {
-    /// Loads an [`AnyPayload`] according to the key and request.
-    fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError>;
+    /// Loads an [`AnyPayload`] according to the marker and request.
+    fn load_any(&self, marker: DataMarkerInfo, req: DataRequest) -> Result<AnyResponse, DataError>;
 }
 
 impl<'a, T: AnyProvider + ?Sized> AnyProvider for &'a T {
     #[inline]
-    fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
-        (**self).load_any(key, req)
+    fn load_any(&self, marker: DataMarkerInfo, req: DataRequest) -> Result<AnyResponse, DataError> {
+        (**self).load_any(marker, req)
     }
 }
 
 impl<T: AnyProvider + ?Sized> AnyProvider for alloc::boxed::Box<T> {
     #[inline]
-    fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
-        (**self).load_any(key, req)
+    fn load_any(&self, marker: DataMarkerInfo, req: DataRequest) -> Result<AnyResponse, DataError> {
+        (**self).load_any(marker, req)
     }
 }
 
 impl<T: AnyProvider + ?Sized> AnyProvider for alloc::rc::Rc<T> {
     #[inline]
-    fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
-        (**self).load_any(key, req)
+    fn load_any(&self, marker: DataMarkerInfo, req: DataRequest) -> Result<AnyResponse, DataError> {
+        (**self).load_any(marker, req)
     }
 }
 
 #[cfg(target_has_atomic = "ptr")]
 impl<T: AnyProvider + ?Sized> AnyProvider for alloc::sync::Arc<T> {
     #[inline]
-    fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
-        (**self).load_any(key, req)
+    fn load_any(&self, marker: DataMarkerInfo, req: DataRequest) -> Result<AnyResponse, DataError> {
+        (**self).load_any(marker, req)
     }
 }
 
@@ -404,8 +404,8 @@ where
     P: DynamicDataProvider<AnyMarker> + ?Sized,
 {
     #[inline]
-    fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
-        self.0.load_data(key, req)?.try_into()
+    fn load_any(&self, marker: DataMarkerInfo, req: DataRequest) -> Result<AnyResponse, DataError> {
+        self.0.load_data(marker, req)?.try_into()
     }
 }
 
@@ -441,9 +441,9 @@ where
     #[inline]
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         self.0
-            .load_any(M::KEY, req)?
+            .load_any(M::INFO, req)?
             .downcast()
-            .map_err(|e| e.with_req(M::KEY, req))
+            .map_err(|e| e.with_req(M::INFO, req))
     }
 }
 
@@ -456,11 +456,15 @@ where
     M::Yokeable: MaybeSendSync,
 {
     #[inline]
-    fn load_data(&self, key: DataKey, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+    fn load_data(
+        &self,
+        marker: DataMarkerInfo,
+        req: DataRequest,
+    ) -> Result<DataResponse<M>, DataError> {
         self.0
-            .load_any(key, req)?
+            .load_any(marker, req)?
             .downcast()
-            .map_err(|e| e.with_req(key, req))
+            .map_err(|e| e.with_req(marker, req))
     }
 }
 

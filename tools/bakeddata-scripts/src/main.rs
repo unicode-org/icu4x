@@ -18,22 +18,30 @@ use std::sync::Mutex;
 
 const REPO_VERSION: &str = env!("CARGO_PKG_VERSION");
 const EXPERIMENTAL_VERSION: &str = "0.1.0";
-const COMPONENTS: &[(&str, &[DataKey], &str)] = &[
-    ("calendar", icu::calendar::provider::KEYS, REPO_VERSION),
-    ("casemap", icu::casemap::provider::KEYS, REPO_VERSION),
-    ("collator", icu::collator::provider::KEYS, REPO_VERSION),
-    ("datetime", icu::datetime::provider::KEYS, REPO_VERSION),
-    ("decimal", icu::decimal::provider::KEYS, REPO_VERSION),
-    ("list", icu::list::provider::KEYS, REPO_VERSION),
-    ("locale", icu::locale::provider::KEYS, REPO_VERSION),
-    ("normalizer", icu::normalizer::provider::KEYS, REPO_VERSION),
-    ("plurals", icu::plurals::provider::KEYS, REPO_VERSION),
-    ("properties", icu::properties::provider::KEYS, REPO_VERSION),
-    ("segmenter", icu::segmenter::provider::KEYS, REPO_VERSION),
-    ("timezone", icu::timezone::provider::KEYS, REPO_VERSION),
+const COMPONENTS: &[(&str, &[DataMarkerInfo], &str)] = &[
+    ("calendar", icu::calendar::provider::MARKERS, REPO_VERSION),
+    ("casemap", icu::casemap::provider::MARKERS, REPO_VERSION),
+    ("collator", icu::collator::provider::MARKERS, REPO_VERSION),
+    ("datetime", icu::datetime::provider::MARKERS, REPO_VERSION),
+    ("decimal", icu::decimal::provider::MARKERS, REPO_VERSION),
+    ("list", icu::list::provider::MARKERS, REPO_VERSION),
+    ("locale", icu::locale::provider::MARKERS, REPO_VERSION),
+    (
+        "normalizer",
+        icu::normalizer::provider::MARKERS,
+        REPO_VERSION,
+    ),
+    ("plurals", icu::plurals::provider::MARKERS, REPO_VERSION),
+    (
+        "properties",
+        icu::properties::provider::MARKERS,
+        REPO_VERSION,
+    ),
+    ("segmenter", icu::segmenter::provider::MARKERS, REPO_VERSION),
+    ("timezone", icu::timezone::provider::MARKERS, REPO_VERSION),
     (
         "experimental",
-        icu::experimental::provider::KEYS,
+        icu::experimental::provider::MARKERS,
         EXPERIMENTAL_VERSION,
     ),
 ];
@@ -50,18 +58,19 @@ fn main() {
     let components = if args.is_empty() {
         COMPONENTS
             .iter()
-            .map(|(krate, keys, version)| (krate.to_string(), *keys, *version))
+            .map(|(krate, markers, version)| (krate.to_string(), *markers, *version))
             .collect::<Vec<_>>()
     } else {
-        let map = std::collections::HashMap::<&str, (&'static [DataKey], &'static str)>::from_iter(
-            COMPONENTS
-                .iter()
-                .map(|(krate, keys, version)| (*krate, (*keys, *version))),
-        );
+        let map =
+            std::collections::HashMap::<&str, (&'static [DataMarkerInfo], &'static str)>::from_iter(
+                COMPONENTS
+                    .iter()
+                    .map(|(krate, markers, version)| (*krate, (*markers, *version))),
+            );
         args.into_iter()
             .filter_map(|krate| {
                 map.get(krate.as_str())
-                    .map(|(keys, version)| (krate, *keys, *version))
+                    .map(|(markers, version)| (krate, *markers, *version))
             })
             .collect()
     };
@@ -87,7 +96,7 @@ fn main() {
     options.overwrite = true;
     options.pretty = true;
 
-    for (component, keys, version) in &components {
+    for (component, markers, version) in &components {
         let path = Path::new("provider/baked").join(component);
 
         let _ = std::fs::remove_dir_all(&path);
@@ -136,7 +145,7 @@ fn main() {
 
         driver
             .clone()
-            .with_keys(keys.iter().copied())
+            .with_markers(markers.iter().copied())
             .export(
                 &source,
                 MultiExporter::new(vec![Box::new(baked_exporter), Box::new(fingerprinter)]),
@@ -150,16 +159,16 @@ fn main() {
 }
 
 struct PostcardFingerprintExporter<F> {
-    size_hash: Mutex<BTreeMap<(DataKey, String), (usize, u64)>>,
+    size_hash: Mutex<BTreeMap<(DataMarkerInfo, String), (usize, u64)>>,
     fingerprints: F,
 }
 
 impl<F: Write + Send + Sync> DataExporter for PostcardFingerprintExporter<F> {
     fn put_payload(
         &self,
-        key: DataKey,
+        marker: DataMarkerInfo,
         locale: &DataLocale,
-        key_attributes: &DataKeyAttributes,
+        marker_attributes: &DataMarkerAttributes,
         payload_before: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
         let mut serialized = vec![];
@@ -180,10 +189,10 @@ impl<F: Write + Send + Sync> DataExporter for PostcardFingerprintExporter<F> {
 
         self.size_hash.lock().expect("poison").insert(
             (
-                key,
+                marker,
                 DataRequest {
                     locale,
-                    key_attributes,
+                    marker_attributes,
                     ..Default::default()
                 }
                 .legacy_encode(),
@@ -194,21 +203,21 @@ impl<F: Write + Send + Sync> DataExporter for PostcardFingerprintExporter<F> {
         Ok(())
     }
 
-    fn flush(&self, _key: DataKey) -> Result<(), DataError> {
+    fn flush(&self, _marker: DataMarkerInfo) -> Result<(), DataError> {
         Ok(())
     }
 
     fn flush_with_built_in_fallback(
         &self,
-        _key: DataKey,
+        _marker: DataMarkerInfo,
         _fallback_mode: BuiltInFallbackMode,
     ) -> Result<(), DataError> {
         Ok(())
     }
 
     fn close(&mut self) -> Result<(), DataError> {
-        for ((key, req), (size, hash)) in self.size_hash.get_mut().expect("poison") {
-            writeln!(&mut self.fingerprints, "{key}, {req}, {size}B, {hash:x}")?;
+        for ((marker, req), (size, hash)) in self.size_hash.get_mut().expect("poison") {
+            writeln!(&mut self.fingerprints, "{marker}, {req}, {size}B, {hash:x}")?;
         }
         Ok(())
     }

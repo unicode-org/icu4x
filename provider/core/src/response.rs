@@ -701,7 +701,7 @@ where
     ///
     /// This happens if they both have the same [`DynDataMarker::Yokeable`] type.
     ///
-    /// Can be used to erase the key of a data payload in cases where multiple keys correspond
+    /// Can be used to erase the marker of a data payload in cases where multiple markers correspond
     /// to the same data struct.
     ///
     /// For runtime dynamic casting, use [`DataPayload::dynamic_cast_mut()`].
@@ -742,7 +742,7 @@ where
     ///
     /// # Examples
     ///
-    /// Change the results of a particular request based on key:
+    /// Change the results of a particular request based on marker:
     ///
     /// ```
     /// use icu_locale_core::locale;
@@ -925,7 +925,7 @@ where
     ///
     /// This happens if they both have the same [`DynDataMarker::Yokeable`] type.
     ///
-    /// Can be used to erase the key of a data payload in cases where multiple keys correspond
+    /// Can be used to erase the marker of a data payload in cases where multiple markers correspond
     /// to the same data struct.
     ///
     /// For runtime dynamic casting, use [`DataPayload::dynamic_cast_mut()`].

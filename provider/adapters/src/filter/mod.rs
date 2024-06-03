@@ -44,7 +44,7 @@ use icu_provider::prelude::*;
 ///
 /// Data requests that are rejected by the filter will return a [`DataError`] with kind
 /// [`FilteredResource`](DataErrorKind::FilteredResource), and they will not be returned
-/// by [`datagen::IterableDynamicDataProvider::supported_requests_for_key`].
+/// by [`datagen::IterableDynamicDataProvider::supported_requests_for_marker`].
 ///
 /// Although this struct can be created directly, the traits in this module provide helper
 /// functions for common filtering patterns.
@@ -71,13 +71,17 @@ where
     M: DynDataMarker,
     D: DynamicDataProvider<M>,
 {
-    fn load_data(&self, key: DataKey, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+    fn load_data(
+        &self,
+        marker: DataMarkerInfo,
+        req: DataRequest,
+    ) -> Result<DataResponse<M>, DataError> {
         if (self.predicate)(req) {
-            self.inner.load_data(key, req)
+            self.inner.load_data(marker, req)
         } else {
             Err(DataErrorKind::FilteredResource
                 .with_str_context(self.filter_name)
-                .with_req(key, req))
+                .with_req(marker, req))
         }
     }
 }
@@ -94,7 +98,7 @@ where
         } else {
             Err(DataErrorKind::FilteredResource
                 .with_str_context(self.filter_name)
-                .with_req(M::KEY, req))
+                .with_req(M::INFO, req))
         }
     }
 }
@@ -104,13 +108,13 @@ where
     F: Fn(DataRequest) -> bool,
     D: AnyProvider,
 {
-    fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
+    fn load_any(&self, marker: DataMarkerInfo, req: DataRequest) -> Result<AnyResponse, DataError> {
         if (self.predicate)(req) {
-            self.inner.load_any(key, req)
+            self.inner.load_any(marker, req)
         } else {
             Err(DataErrorKind::FilteredResource
                 .with_str_context(self.filter_name)
-                .with_req(key, req))
+                .with_req(marker, req))
         }
     }
 }
@@ -122,17 +126,17 @@ where
     F: Fn(DataRequest) -> bool,
     D: datagen::IterableDynamicDataProvider<M>,
 {
-    fn supported_requests_for_key(
+    fn supported_requests_for_marker(
         &self,
-        key: DataKey,
-    ) -> Result<std::collections::HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
-        self.inner.supported_requests_for_key(key).map(|set| {
+        marker: DataMarkerInfo,
+    ) -> Result<std::collections::HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+        self.inner.supported_requests_for_marker(marker).map(|set| {
             // Use filter_map instead of filter to avoid cloning the locale
             set.into_iter()
-                .filter(|(locale, key_attributes)| {
+                .filter(|(locale, marker_attributes)| {
                     (self.predicate)(DataRequest {
                         locale,
-                        key_attributes,
+                        marker_attributes,
                         ..Default::default()
                     })
                 })
@@ -150,14 +154,14 @@ where
 {
     fn supported_requests(
         &self,
-    ) -> Result<std::collections::HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    ) -> Result<std::collections::HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         self.inner.supported_requests().map(|vec| {
             // Use filter_map instead of filter to avoid cloning the locale
             vec.into_iter()
-                .filter(|(locale, key_attributes)| {
+                .filter(|(locale, marker_attributes)| {
                     (self.predicate)(DataRequest {
                         locale,
-                        key_attributes,
+                        marker_attributes,
                         ..Default::default()
                     })
                 })
@@ -176,11 +180,11 @@ where
 {
     fn convert(
         &self,
-        key: DataKey,
+        marker: DataMarkerInfo,
         from: DataPayload<MFrom>,
     ) -> Result<DataPayload<MTo>, (DataPayload<MFrom>, DataError)> {
         // Conversions are type-agnostic
-        self.inner.convert(key, from)
+        self.inner.convert(marker, from)
     }
 }
 

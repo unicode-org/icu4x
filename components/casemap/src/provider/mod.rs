@@ -53,8 +53,8 @@ const _: () = {
 };
 
 #[cfg(feature = "datagen")]
-/// The latest minimum set of keys required by this component.
-pub const KEYS: &[DataKey] = &[CaseMapUnfoldV1Marker::KEY, CaseMapV1Marker::KEY];
+/// The latest minimum set of markers required by this component.
+pub const MARKERS: &[DataMarkerInfo] = &[CaseMapUnfoldV1Marker::INFO, CaseMapV1Marker::INFO];
 
 pub use self::unfold::{CaseMapUnfoldV1, CaseMapUnfoldV1Marker};
 

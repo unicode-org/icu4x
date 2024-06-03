@@ -16,7 +16,7 @@ use icu_locale_core::LanguageIdentifier;
 use icu_provider::prelude::*;
 use icu_provider::DataError;
 use icu_provider_adapters::any_payload::AnyPayloadProvider;
-use icu_provider_adapters::fork::ForkByKeyProvider;
+use icu_provider_adapters::fork::ForkByMarkerProvider;
 use icu_provider_adapters::make_forking_provider;
 use std::collections::BTreeSet;
 use std::collections::HashSet;
@@ -122,7 +122,7 @@ impl CldrCache {
                 let extended_data =
                     transform(LikelySubtagsResources::try_from_cldr_cache(self)?.get_extended());
                 let provider = make_forking_provider!(
-                    ForkByKeyProvider::new,
+                    ForkByMarkerProvider::new,
                     [
                         AnyPayloadProvider::from_owned::<LikelySubtagsForLanguageV1Marker>(
                             common_data.clone().into(),

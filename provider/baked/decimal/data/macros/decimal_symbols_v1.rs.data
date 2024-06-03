@@ -62,7 +62,7 @@ macro_rules! __impl_decimal_symbols_v1 {
                 let payload = if let Ok(payload) = KEYS.binary_search_by(|k| req.legacy_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
                     payload
                 } else {
-                    const FALLBACKER: icu::locale::fallback::LocaleFallbackerWithConfig<'static> = icu::locale::fallback::LocaleFallbacker::new().for_config(<icu::decimal::provider::DecimalSymbolsV1Marker as icu_provider::DataMarker>::KEY.fallback_config());
+                    const FALLBACKER: icu::locale::fallback::LocaleFallbackerWithConfig<'static> = icu::locale::fallback::LocaleFallbacker::new().for_config(<icu::decimal::provider::DecimalSymbolsV1Marker as icu_provider::DataMarker>::INFO.fallback_config);
                     let mut fallback_iterator = FALLBACKER.fallback_for(req.locale.clone());
                     loop {
                         if let Ok(payload) = KEYS.binary_search_by(|k| icu_provider::DataRequest { locale: fallback_iterator.get(), ..req }.legacy_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
@@ -70,7 +70,7 @@ macro_rules! __impl_decimal_symbols_v1 {
                             break payload;
                         }
                         if fallback_iterator.get().is_und() {
-                            return Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::decimal::provider::DecimalSymbolsV1Marker as icu_provider::DataMarker>::KEY, req));
+                            return Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::decimal::provider::DecimalSymbolsV1Marker as icu_provider::DataMarker>::INFO, req));
                         }
                         fallback_iterator.step();
                     }
@@ -82,14 +82,14 @@ macro_rules! __impl_decimal_symbols_v1 {
 }
 /// Implement `IterableDataProvider<DecimalSymbolsV1Marker>` on the given struct using the data
 /// hardcoded in this file. This allows the struct to be used with
-/// `DatagenDriver` for this key.
+/// `DatagenDriver` for this marker.
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __impliterable_decimal_symbols_v1 {
     ($ provider : ty) => {
         #[clippy::msrv = "1.70"]
         impl icu_provider::datagen::IterableDataProvider<icu::decimal::provider::DecimalSymbolsV1Marker> for $provider {
-            fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataKeyAttributes)>, icu_provider::DataError> {
+            fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataMarkerAttributes)>, icu_provider::DataError> {
                 Ok(["af", "ar", "ar-AE", "ar-AE-u-nu-arab", "ar-BH-u-nu-latn", "ar-DJ-u-nu-latn", "ar-DZ", "ar-DZ-u-nu-arab", "ar-EG-u-nu-latn", "ar-EH", "ar-EH-u-nu-arab", "ar-ER-u-nu-latn", "ar-IL-u-nu-latn", "ar-IQ-u-nu-latn", "ar-JO-u-nu-latn", "ar-KM-u-nu-latn", "ar-KW-u-nu-latn", "ar-LB-u-nu-latn", "ar-LY", "ar-LY-u-nu-arab", "ar-MA", "ar-MA-u-nu-arab", "ar-MR-u-nu-latn", "ar-OM-u-nu-latn", "ar-PS-u-nu-latn", "ar-QA-u-nu-latn", "ar-SA-u-nu-latn", "ar-SD-u-nu-latn", "ar-SO-u-nu-latn", "ar-SS-u-nu-latn", "ar-SY-u-nu-latn", "ar-TD-u-nu-latn", "ar-TN", "ar-TN-u-nu-arab", "ar-YE-u-nu-latn", "ar-u-nu-latn", "as", "as-u-nu-latn", "ast", "az", "be", "bg", "bgc", "bgc-u-nu-latn", "bho", "bho-u-nu-latn", "blo", "bn", "bn-IN-u-nu-latn", "bn-u-nu-latn", "br", "brx", "brx-u-nu-deva", "bs", "bs-Cyrl", "ca", "cs", "cv", "da", "de", "de-AT", "de-CH", "de-LI", "doi-u-nu-deva", "dsb", "el", "en-AT", "en-BE", "en-CH", "en-DE", "en-DK", "en-FI", "en-ID", "en-IN", "en-NL", "en-SE", "en-SI", "eo", "es", "es-419", "es-AR", "es-BO", "es-CL", "es-CO", "es-CR", "es-EC", "es-PY", "es-UY", "es-VE", "et", "eu", "fa", "fa-AF-u-nu-latn", "fa-u-nu-latn", "ff-Adlm", "ff-Adlm-BF-u-nu-latn", "ff-Adlm-CM-u-nu-latn", "ff-Adlm-GH-u-nu-latn", "ff-Adlm-GM-u-nu-latn", "ff-Adlm-GW-u-nu-latn", "ff-Adlm-LR-u-nu-latn", "ff-Adlm-MR-u-nu-latn", "ff-Adlm-NE-u-nu-latn", "ff-Adlm-NG-u-nu-latn", "ff-Adlm-SL-u-nu-latn", "ff-Adlm-SN-u-nu-latn", "ff-Adlm-u-nu-latn", "fi", "fo", "fr", "fr-CA", "fr-LU", "fr-MA", "fy", "gl", "gu", "gu-u-nu-gujr", "he", "hi", "hi-u-nu-deva", "hr", "hsb", "hu", "hy", "ia", "id", "ie", "is", "it", "it-CH", "jv", "jv-u-nu-java", "ka", "kea", "kgp", "kk", "km-u-nu-khmr", "kn-u-nu-knda", "kok-u-nu-deva", "ks", "ks-u-nu-latn", "ku", "kxv", "kxv-Deva", "kxv-Deva-u-nu-deva", "kxv-Orya", "kxv-Orya-u-nu-orya", "kxv-Telu", "kxv-Telu-u-nu-telu", "ky", "lb", "lij", "lmo", "lo", "lo-u-nu-laoo", "lt", "lv", "mai-u-nu-deva", "mk", "ml", "ml-u-nu-mlym", "mni", "mni-u-nu-latn", "mr", "mr-u-nu-latn", "ms-BN", "ms-ID", "my", "my-u-nu-latn", "nds", "ne", "ne-IN-u-nu-latn", "ne-u-nu-latn", "nl", "no", "nqo", "nqo-u-nu-latn", "oc", "or", "or-u-nu-orya", "pa", "pa-u-nu-guru", "pl", "prg", "ps", "ps-PK-u-nu-latn", "ps-u-nu-latn", "pt", "pt-AO", "pt-PT", "qu-BO", "raj", "raj-u-nu-latn", "rm", "ro", "ru", "ru-UA", "sa", "sa-u-nu-latn", "sah", "sat", "sat-u-nu-latn", "sc", "sd", "sd-u-nu-latn", "sk", "sl", "sq", "sr", "sr-Latn", "su", "sv", "sw-CD", "szl", "ta", "ta-LK-u-nu-tamldec", "ta-MY", "ta-MY-u-nu-tamldec", "ta-SG", "ta-SG-u-nu-tamldec", "ta-u-nu-tamldec", "te", "te-u-nu-telu", "tg", "th-u-nu-thai", "tk", "tr", "tt", "ug-u-nu-arabext", "uk", "und", "ur", "ur-IN", "ur-IN-u-nu-latn", "ur-u-nu-arabext", "uz", "uz-Cyrl", "vec", "vi", "vmw", "wo", "xh", "xnr", "xnr-u-nu-deva", "yrl", "yue-Hans-u-nu-hanidec", "yue-u-nu-hanidec", "zh-HK-u-nu-hanidec", "zh-Hant-u-nu-hanidec", "zh-MO-u-nu-hanidec", "zh-SG-u-nu-hanidec", "zh-u-nu-hanidec"].into_iter().filter_map(icu_provider::DataRequest::legacy_decode).collect())
             }
         }

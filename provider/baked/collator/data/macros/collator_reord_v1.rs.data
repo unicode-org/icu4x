@@ -47,7 +47,7 @@ macro_rules! __impl_collator_reord_v1 {
                 let payload = if let Ok(payload) = KEYS.binary_search_by(|k| req.legacy_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
                     payload
                 } else {
-                    const FALLBACKER: icu::locale::fallback::LocaleFallbackerWithConfig<'static> = icu::locale::fallback::LocaleFallbacker::new().for_config(<icu::collator::provider::CollationReorderingV1Marker as icu_provider::DataMarker>::KEY.fallback_config());
+                    const FALLBACKER: icu::locale::fallback::LocaleFallbackerWithConfig<'static> = icu::locale::fallback::LocaleFallbacker::new().for_config(<icu::collator::provider::CollationReorderingV1Marker as icu_provider::DataMarker>::INFO.fallback_config);
                     let mut fallback_iterator = FALLBACKER.fallback_for(req.locale.clone());
                     loop {
                         if let Ok(payload) = KEYS.binary_search_by(|k| icu_provider::DataRequest { locale: fallback_iterator.get(), ..req }.legacy_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
@@ -55,7 +55,7 @@ macro_rules! __impl_collator_reord_v1 {
                             break payload;
                         }
                         if fallback_iterator.get().is_und() {
-                            return Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::collator::provider::CollationReorderingV1Marker as icu_provider::DataMarker>::KEY, req));
+                            return Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::collator::provider::CollationReorderingV1Marker as icu_provider::DataMarker>::INFO, req));
                         }
                         fallback_iterator.step();
                     }
@@ -67,14 +67,14 @@ macro_rules! __impl_collator_reord_v1 {
 }
 /// Implement `IterableDataProvider<CollationReorderingV1Marker>` on the given struct using the data
 /// hardcoded in this file. This allows the struct to be used with
-/// `DatagenDriver` for this key.
+/// `DatagenDriver` for this marker.
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __impliterable_collator_reord_v1 {
     ($ provider : ty) => {
         #[clippy::msrv = "1.70"]
         impl icu_provider::datagen::IterableDataProvider<icu::collator::provider::CollationReorderingV1Marker> for $provider {
-            fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataKeyAttributes)>, icu_provider::DataError> {
+            fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataMarkerAttributes)>, icu_provider::DataError> {
                 Ok(["am", "ar", "as", "az", "be", "bg", "bn", "bs", "bs-Cyrl", "chr", "el", "fa", "gu", "he", "hi", "hr", "hy", "ja", "ka", "kk", "km", "kn", "ko", "kok", "ku", "ky", "lo", "mk", "ml", "mn", "mr", "my", "ne", "or", "pa", "ps", "ru", "si", "sr", "sr-Latn", "ta", "te", "th", "ug", "uk", "ur", "yue-u-co-stroke", "yue-u-co-unihan", "yue-u-co-zhuyin", "zh", "zh-Hant-u-co-stroke", "zh-Hant-u-co-unihan", "zh-Hant-u-co-zhuyin", "zh-u-co-stroke", "zh-u-co-unihan", "zh-u-co-zhuyin"].into_iter().filter_map(icu_provider::DataRequest::legacy_decode).collect())
             }
         }

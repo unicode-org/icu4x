@@ -28,11 +28,11 @@ enum VersionConfig {
 /// A data exporter that writes data to a single-file blob.
 /// See the module-level docs for an example.
 pub struct BlobExporter<'w> {
-    /// Map of key hash -> locale byte string -> blob ID
+    /// Map of marker path hash -> locale byte string -> blob ID
     #[allow(clippy::type_complexity)]
-    resources: Mutex<BTreeMap<DataKeyHash, BTreeMap<Vec<u8>, usize>>>,
-    // All seen keys
-    all_keys: Mutex<BTreeSet<DataKeyHash>>,
+    resources: Mutex<BTreeMap<DataMarkerPathHash, BTreeMap<Vec<u8>, usize>>>,
+    // All seen markers
+    all_markers: Mutex<BTreeSet<DataMarkerPathHash>>,
     /// Map from blob to blob ID
     unique_resources: Mutex<HashMap<Vec<u8>, usize>>,
     sink: Box<dyn std::io::Write + Sync + 'w>,
@@ -44,7 +44,7 @@ impl core::fmt::Debug for BlobExporter<'_> {
         f.debug_struct("BlobExporter")
             .field("resources", &self.resources)
             .field("unique_resources", &self.unique_resources)
-            .field("all_keys", &self.all_keys)
+            .field("all_markers", &self.all_markers)
             .field("sink", &"<sink>")
             .finish()
     }
@@ -59,7 +59,7 @@ impl<'w> BlobExporter<'w> {
         Self {
             resources: Default::default(),
             unique_resources: Default::default(),
-            all_keys: Default::default(),
+            all_markers: Default::default(),
             sink,
             version: VersionConfig::V001,
         }
@@ -74,7 +74,7 @@ impl<'w> BlobExporter<'w> {
         Self {
             resources: Default::default(),
             unique_resources: Default::default(),
-            all_keys: Default::default(),
+            all_markers: Default::default(),
             sink,
             version: VersionConfig::V002,
         }
@@ -84,9 +84,9 @@ impl<'w> BlobExporter<'w> {
 impl DataExporter for BlobExporter<'_> {
     fn put_payload(
         &self,
-        key: DataKey,
+        marker: DataMarkerInfo,
         locale: &DataLocale,
-        key_attributes: &DataKeyAttributes,
+        marker_attributes: &DataMarkerAttributes,
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
         let mut serializer = postcard::Serializer {
@@ -106,12 +106,12 @@ impl DataExporter for BlobExporter<'_> {
         self.resources
             .lock()
             .expect("poison")
-            .entry(key.hashed())
+            .entry(marker.path.hashed())
             .or_default()
             .entry(
                 DataRequest {
                     locale,
-                    key_attributes,
+                    marker_attributes,
                     ..Default::default()
                 }
                 .legacy_encode()
@@ -121,8 +121,11 @@ impl DataExporter for BlobExporter<'_> {
         Ok(())
     }
 
-    fn flush(&self, key: DataKey) -> Result<(), DataError> {
-        self.all_keys.lock().expect("poison").insert(key.hashed());
+    fn flush(&self, marker: DataMarkerInfo) -> Result<(), DataError> {
+        self.all_markers
+            .lock()
+            .expect("poison")
+            .insert(marker.path.hashed());
         Ok(())
     }
 
@@ -192,17 +195,17 @@ impl BlobExporter<'_> {
                     remap.get(old_id).expect("in-bound index"),
                 )
             })
-            .collect::<ZeroMap2d<DataKeyHash, Index32U8, usize>>();
+            .collect::<ZeroMap2d<DataMarkerPathHash, Index32U8, usize>>();
 
-        for key in self.all_keys.lock().expect("poison").iter() {
-            if zm.get0(key).is_none() {
-                zm.insert(key, Index32U8::SENTINEL, &vzv.len());
+        for marker in self.all_markers.lock().expect("poison").iter() {
+            if zm.get0(marker).is_none() {
+                zm.insert(marker, Index32U8::SENTINEL, &vzv.len());
             }
         }
 
         if !zm.is_empty() {
             let blob = BlobSchema::V001(BlobSchemaV1 {
-                keys: zm.as_borrowed(),
+                markers: zm.as_borrowed(),
                 buffers: &vzv,
             });
             log::info!("Serializing blob to output stream...");
@@ -216,14 +219,14 @@ impl BlobExporter<'_> {
     fn close_v2(&mut self) -> Result<(), DataError> {
         let FinalizedBuffers { vzv, remap } = self.finalize_buffers();
 
-        let all_keys = self.all_keys.lock().expect("poison");
+        let all_markers = self.all_markers.lock().expect("poison");
         let resources = self.resources.lock().expect("poison");
 
-        let keys: ZeroVec<DataKeyHash> = all_keys.iter().copied().collect();
+        let markers: ZeroVec<DataMarkerPathHash> = all_markers.iter().copied().collect();
 
-        let locales_vec: Vec<Vec<u8>> = all_keys
+        let locales_vec: Vec<Vec<u8>> = all_markers
             .iter()
-            .map(|data_key_hash| resources.get(data_key_hash))
+            .map(|marker_path_hash| resources.get(marker_path_hash))
             .map(|option_sub_map| {
                 if let Some(sub_map) = option_sub_map {
                     let mut sub_map = sub_map.clone();
@@ -239,12 +242,12 @@ impl BlobExporter<'_> {
             })
             .collect();
 
-        if !keys.is_empty() {
+        if !markers.is_empty() {
             if let Ok(locales_vzv) =
                 VarZeroVecOwned::<[u8]>::try_from_elements(locales_vec.as_slice())
             {
                 let blob = BlobSchema::V002(BlobSchemaV2 {
-                    keys: &keys,
+                    markers: &markers,
                     locales: &locales_vzv,
                     buffers: &vzv,
                 });
@@ -258,7 +261,7 @@ impl BlobExporter<'_> {
                     VarZeroVecOwned::<[u8], Index32>::try_from_elements(locales_vec.as_slice())
                         .expect("Locales vector does not fit in Index32 buffer!");
                 let blob = BlobSchema::V002Bigger(BlobSchemaV2 {
-                    keys: &keys,
+                    markers: &markers,
                     locales: &locales_vzv,
                     buffers: &vzv,
                 });

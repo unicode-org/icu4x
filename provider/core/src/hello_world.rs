@@ -7,6 +7,7 @@
 #![allow(clippy::exhaustive_structs)] // data struct module
 
 use crate as icu_provider;
+use crate::fallback::LocaleFallbackConfig;
 
 use crate::prelude::*;
 use alloc::borrow::Cow;
@@ -52,7 +53,11 @@ impl DynDataMarker for HelloWorldV1Marker {
 }
 
 impl DataMarker for HelloWorldV1Marker {
-    const KEY: DataKey = icu_provider::data_key!("core/helloworld@1");
+    const INFO: icu_provider::DataMarkerInfo = DataMarkerInfo {
+        path: icu_provider::data_marker_path!("core/helloworld@1"),
+        is_singleton: false,
+        fallback_config: LocaleFallbackConfig::const_default(),
+    };
 }
 
 /// A data provider returning Hello World strings in different languages.
@@ -89,7 +94,7 @@ impl DataMarker for HelloWorldV1Marker {
 ///     HelloWorldProvider
 ///         .load(DataRequest {
 ///             locale: &"en".parse().unwrap(),
-///             key_attributes: &"reverse".parse().unwrap(),
+///             marker_attributes: &"reverse".parse().unwrap(),
 ///             ..Default::default()
 ///         })
 ///         .expect("Loading should succeed")
@@ -147,10 +152,10 @@ impl DataProvider<HelloWorldV1Marker> for HelloWorldProvider {
         let data = Self::DATA
             .iter()
             .find(|(l, a, _)| {
-                req.locale.strict_cmp(l.as_bytes()).is_eq() && **a == **req.key_attributes
+                req.locale.strict_cmp(l.as_bytes()).is_eq() && **a == **req.marker_attributes
             })
             .map(|(_, _, v)| v)
-            .ok_or_else(|| DataErrorKind::MissingLocale.with_req(HelloWorldV1Marker::KEY, req))?;
+            .ok_or_else(|| DataErrorKind::MissingLocale.with_req(HelloWorldV1Marker::INFO, req))?;
         Ok(DataResponse {
             metadata: Default::default(),
             payload: Some(DataPayload::from_static_str(data)),
@@ -185,7 +190,7 @@ icu_provider::impl_dynamic_data_provider!(HelloWorldProvider, [HelloWorldV1Marke
 ///
 /// let german_hello_world = HelloWorldProvider
 ///     .into_json_provider()
-///     .load_data(HelloWorldV1Marker::KEY, DataRequest {
+///     .load_data(HelloWorldV1Marker::INFO, DataRequest {
 ///         locale: &langid!("de").into(),
 ///         ..Default::default()
 ///     })
@@ -201,10 +206,10 @@ pub struct HelloWorldJsonProvider;
 impl DynamicDataProvider<BufferMarker> for HelloWorldJsonProvider {
     fn load_data(
         &self,
-        key: DataKey,
+        marker: DataMarkerInfo,
         req: DataRequest,
     ) -> Result<DataResponse<BufferMarker>, DataError> {
-        key.match_key(HelloWorldV1Marker::KEY)?;
+        marker.match_marker(HelloWorldV1Marker::INFO)?;
         let result = HelloWorldProvider.load(req)?;
         let (mut metadata, old_payload) =
             DataResponse::<HelloWorldV1Marker>::take_metadata_and_payload(result)?;
@@ -224,7 +229,7 @@ impl DynamicDataProvider<BufferMarker> for HelloWorldJsonProvider {
 
 #[cfg(feature = "datagen")]
 impl icu_provider::datagen::IterableDataProvider<HelloWorldV1Marker> for HelloWorldProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         #[allow(clippy::unwrap_used)] // datagen
         Ok(Self::DATA
             .iter()

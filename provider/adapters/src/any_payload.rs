@@ -33,14 +33,25 @@ use zerofrom::ZeroFrom;
 ///     &provider,
 ///     &Default::default(),
 /// )
-/// .expect("key matches");
+/// .expect("marker matches");
 /// assert_writeable_eq!(formatter.format(), "custom hello world");
 ///
-/// // Requests for invalid keys get MissingDataKey
+/// # struct DummyMarker;
+/// # impl DynDataMarker for DummyMarker {
+/// #     type Yokeable = <HelloWorldV1Marker as DynDataMarker>::Yokeable;
+/// # }
+/// # impl DataMarker for DummyMarker {
+/// #     const INFO: DataMarkerInfo = DataMarkerInfo {
+/// #         path: icu_provider::data_marker_path!("dummy@1"),
+/// #         is_singleton: false,
+/// #         fallback_config: icu_provider::_internal::LocaleFallbackConfig::const_default(),
+/// #     };
+/// # }
+/// // Requests for invalid markers get MissingDataMarker
 /// assert!(matches!(
-///     provider.load_any(icu_provider::data_key!("foo@1"), Default::default()),
+///     provider.load_any(DummyMarker::INFO, Default::default()),
 ///     Err(DataError {
-///         kind: DataErrorKind::MissingDataKey,
+///         kind: DataErrorKind::MissingDataMarker,
 ///         ..
 ///     })
 /// ))
@@ -48,9 +59,9 @@ use zerofrom::ZeroFrom;
 #[derive(Debug)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct AnyPayloadProvider {
-    /// The [`DataKey`] for which to provide data. All others will receive a
-    /// [`DataErrorKind::MissingDataKey`].
-    key: DataKey,
+    /// The [`DataMarkerInfo`] for which to provide data. All others will receive a
+    /// [`DataErrorKind::MissingDataMarker`].
+    marker: DataMarkerInfo,
     /// The [`AnyPayload`] to return on matching requests.
     data: AnyPayload,
 }
@@ -67,7 +78,7 @@ impl AnyPayloadProvider {
     /// Creates an `AnyPayloadProvider` with a statically borrowed payload of the given data.
     pub fn from_static<M: DataMarker>(data: &'static M::Yokeable) -> Self {
         AnyPayloadProvider {
-            key: M::KEY,
+            marker: M::INFO,
             data: AnyPayload::from_static_ref(data),
         }
     }
@@ -78,7 +89,7 @@ impl AnyPayloadProvider {
         M::Yokeable: icu_provider::MaybeSendSync,
     {
         AnyPayloadProvider {
-            key: M::KEY,
+            marker: M::INFO,
             data: payload.wrap_into_any_payload(),
         }
     }
@@ -86,7 +97,7 @@ impl AnyPayloadProvider {
     /// Creates an `AnyPayloadProvider` from an existing [`AnyPayload`].
     pub fn from_any_payload<M: DataMarker>(payload: AnyPayload) -> Self {
         AnyPayloadProvider {
-            key: M::KEY,
+            marker: M::INFO,
             data: payload,
         }
     }
@@ -102,8 +113,8 @@ impl AnyPayloadProvider {
 }
 
 impl AnyProvider for AnyPayloadProvider {
-    fn load_any(&self, key: DataKey, _: DataRequest) -> Result<AnyResponse, DataError> {
-        key.match_key(self.key)?;
+    fn load_any(&self, marker: DataMarkerInfo, _: DataRequest) -> Result<AnyResponse, DataError> {
+        marker.match_marker(self.marker)?;
         Ok(AnyResponse {
             metadata: DataResponseMetadata::default(),
             payload: Some(self.data.clone()),

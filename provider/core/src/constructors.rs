@@ -53,8 +53,8 @@
 //! [`DataProvider`]. Examples:
 //!
 //! 1. [`AnyPayloadProvider`]
-//! 2. [`ForkByKeyProvider`] between two providers implementing [`AnyProvider`]
-//! 3. Providers that cache or override certain keys but not others and therefore
+//! 2. [`ForkByMarkerProvider`] between two providers implementing [`AnyProvider`]
+//! 3. Providers that cache or override certain markers but not others and therefore
 //!    can't implement [`DataProvider`]
 //!
 //! ## When to use `*_with_buffer_provider`
@@ -64,7 +64,7 @@
 //!
 //! 1. [`BlobDataProvider`]
 //! 2. [`FsDataProvider`]
-//! 3. [`ForkByKeyProvider`] between two providers implementing [`BufferProvider`]
+//! 3. [`ForkByMarkerProvider`] between two providers implementing [`BufferProvider`]
 //!
 //! Please note that you must enable the `serde` Cargo feature on each crate in which you use the
 //! `*_with_buffer_provider` constructor.
@@ -72,10 +72,10 @@
 //! # Data Versioning Policy
 //!
 //! The `*_with_any_provider` and `*_with_buffer_provider` functions will succeed to compile and
-//! run if given a data provider supporting all of the keys required for the object being
+//! run if given a data provider supporting all of the markers required for the object being
 //! constructed, either the current or any previous version within the same SemVer major release.
 //! For example, if a data file is built to support FooFormatter version 1.1, then FooFormatter
-//! version 1.2 will be able to read the same data file. Likewise, backwards-compatible keys can
+//! version 1.2 will be able to read the same data file. Likewise, backwards-compatible markers can
 //! always be included by `icu_datagen` to support older library versions.
 //!
 //! The `*_unstable` functions are only guaranteed to work on data built for the exact same minor version
@@ -105,7 +105,7 @@
 //! [`BufferProvider`]: crate::BufferProvider
 //! [`AnyProvider`]: crate::AnyProvider
 //! [`AnyPayloadProvider`]: ../../icu_provider_adapters/any_payload/struct.AnyPayloadProvider.html
-//! [`ForkByKeyProvider`]: ../../icu_provider_adapters/fork/struct.ForkByKeyProvider.html
+//! [`ForkByMarkerProvider`]: ../../icu_provider_adapters/fork/struct.ForkByMarkerProvider.html
 //! [`BlobDataProvider`]: ../../icu_provider_blob/struct.BlobDataProvider.html
 //! [`StaticDataProvider`]: ../../icu_provider_blob/struct.StaticDataProvider.html
 //! [`FsDataProvider`]: ../../icu_provider_blob/struct.FsDataProvider.html

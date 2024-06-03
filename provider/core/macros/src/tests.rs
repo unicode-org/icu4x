@@ -28,7 +28,7 @@ fn test_basic() {
 }
 
 #[test]
-fn test_data_marker() {
+fn test_dyn_data_marker() {
     // #[data_struct(FooV1Marker)]
     check(
         quote!(FooV1Marker),
@@ -48,7 +48,7 @@ fn test_data_marker() {
 }
 
 #[test]
-fn test_keyed_data_marker() {
+fn test_data_marker() {
     // #[data_struct(BarV1Marker = "demo/bar@1")]
     check(
         quote!(BarV1Marker = "demo/bar@1"),
@@ -62,14 +62,17 @@ fn test_keyed_data_marker() {
                 type Yokeable = FooV1;
             }
             impl icu_provider::DataMarker for BarV1Marker {
-                const KEY: icu_provider::DataKey = icu_provider::data_key!(
-                    "demo/bar@1",
-                    icu_provider::DataKeyMetadata::construct_internal(
-                        icu_provider::_internal::LocaleFallbackPriority::const_default(),
-                        None,
-                        None,
-                        false,
-                    ));
+                const INFO: icu_provider::DataMarkerInfo = icu_provider::DataMarkerInfo {
+                    path: icu_provider::data_marker_path!("demo/bar@1"),
+                    is_singleton: false,
+                    fallback_config: {
+                        let mut config = icu_provider::_internal::LocaleFallbackConfig::const_default();
+                        config.priority = icu_provider::_internal::LocaleFallbackPriority::const_default();
+                        config.extension_key = None;
+                        config.fallback_supplement = None;
+                        config
+                    }
+                };
             }
             #[derive(icu_provider::prelude::yoke::Yokeable, icu_provider::prelude::zerofrom::ZeroFrom)]
             pub struct FooV1;
@@ -101,14 +104,17 @@ fn test_multi_named_keyed_data_marker() {
                 type Yokeable = FooV1<'static>;
             }
             impl icu_provider::DataMarker for BarV1Marker {
-                const KEY: icu_provider::DataKey = icu_provider::data_key!(
-                    "demo/bar@1",
-                    icu_provider::DataKeyMetadata::construct_internal(
-                        icu_provider::_internal::LocaleFallbackPriority::const_default(),
-                        None,
-                        None,
-                        false,
-                    ));
+                const INFO: icu_provider::DataMarkerInfo = icu_provider::DataMarkerInfo {
+                    path: icu_provider::data_marker_path!("demo/bar@1"),
+                    is_singleton: false,
+                    fallback_config: {
+                        let mut config = icu_provider::_internal::LocaleFallbackConfig::const_default();
+                        config.priority = icu_provider::_internal::LocaleFallbackPriority::const_default();
+                        config.extension_key = None;
+                        config.fallback_supplement = None;
+                        config
+                    }
+                };
             }
             #[doc = "Marker type for [`FooV1`]: \"demo/baz@1\"\n\n- Fallback priority: language (default)\n- Extension keyword: none (default)"]
             pub struct BazV1Marker;
@@ -116,14 +122,17 @@ fn test_multi_named_keyed_data_marker() {
                 type Yokeable = FooV1<'static>;
             }
             impl icu_provider::DataMarker for BazV1Marker {
-                const KEY: icu_provider::DataKey = icu_provider::data_key!(
-                    "demo/baz@1",
-                    icu_provider::DataKeyMetadata::construct_internal(
-                        icu_provider::_internal::LocaleFallbackPriority::const_default(),
-                        None,
-                        None,
-                        false,
-                    ));
+                const INFO: icu_provider::DataMarkerInfo = icu_provider::DataMarkerInfo {
+                    path: icu_provider::data_marker_path!("demo/baz@1"),
+                    is_singleton: false,
+                    fallback_config: {
+                        let mut config = icu_provider::_internal::LocaleFallbackConfig::const_default();
+                        config.priority = icu_provider::_internal::LocaleFallbackPriority::const_default();
+                        config.extension_key = None;
+                        config.fallback_supplement = None;
+                        config
+                    }
+                };
             }
             #[derive(icu_provider::prelude::yoke::Yokeable, icu_provider::prelude::zerofrom::ZeroFrom)]
             pub struct FooV1<'data>;
@@ -148,14 +157,17 @@ fn test_databake() {
                 type Yokeable = FooV1;
             }
             impl icu_provider::DataMarker for BarV1Marker {
-                const KEY: icu_provider::DataKey = icu_provider::data_key!(
-                    "demo/bar@1",
-                    icu_provider::DataKeyMetadata::construct_internal(
-                        icu_provider::_internal::LocaleFallbackPriority::const_default(),
-                        None,
-                        None,
-                        false,
-                    ));
+                const INFO: icu_provider::DataMarkerInfo = icu_provider::DataMarkerInfo {
+                    path: icu_provider::data_marker_path!("demo/bar@1"),
+                    is_singleton: false,
+                    fallback_config: {
+                        let mut config = icu_provider::_internal::LocaleFallbackConfig::const_default();
+                        config.priority = icu_provider::_internal::LocaleFallbackPriority::const_default();
+                        config.extension_key = None;
+                        config.fallback_supplement = None;
+                        config
+                    }
+                };
             }
             #[derive(icu_provider::prelude::yoke::Yokeable, icu_provider::prelude::zerofrom::ZeroFrom)]
             #[databake(path = test::path)]
@@ -194,14 +206,17 @@ fn test_attributes() {
                 type Yokeable = FooV1<'static>;
             }
             impl icu_provider::DataMarker for BarV1Marker {
-                const KEY: icu_provider::DataKey = icu_provider::data_key!(
-                    "demo/bar@1",
-                    icu_provider::DataKeyMetadata::construct_internal(
-                        icu_provider::_internal::LocaleFallbackPriority::Region,
-                        Some(icu_provider::_internal::locale_core::extensions::unicode::key!("ca")),
-                        Some(icu_provider::_internal::LocaleFallbackSupplement::Collation),
-                        true,
-                    ));
+                const INFO: icu_provider::DataMarkerInfo = icu_provider::DataMarkerInfo {
+                    path: icu_provider::data_marker_path!("demo/bar@1"),
+                    is_singleton: true,
+                    fallback_config: {
+                        let mut config = icu_provider::_internal::LocaleFallbackConfig::const_default();
+                        config.priority = icu_provider::_internal::LocaleFallbackPriority::Region;
+                        config.extension_key = Some(icu_provider::_internal::locale_core::extensions::unicode::key!("ca"));
+                        config.fallback_supplement = Some(icu_provider::_internal::LocaleFallbackSupplement::Collation);
+                        config
+                    }
+                };
             }
             #[derive(icu_provider::prelude::yoke::Yokeable, icu_provider::prelude::zerofrom::ZeroFrom)]
             pub struct FooV1<'data>;

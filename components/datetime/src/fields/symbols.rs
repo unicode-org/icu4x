@@ -348,8 +348,8 @@ impl Ord for FieldSymbol {
 }
 
 macro_rules! field_type {
-    ($(#[$enum_attr:meta])* $i:ident; { $( $(#[$variant_attr:meta])* $key:literal => $val:ident = $idx:expr,)* }; $length_type:ident; $ule_name:ident) => (
-        field_type!($(#[$enum_attr])* $i; {$( $(#[$variant_attr])* $key => $val = $idx,)*}; $ule_name);
+    ($(#[$enum_attr:meta])* $i:ident; { $( $(#[$variant_attr:meta])* $marker:literal => $val:ident = $idx:expr,)* }; $length_type:ident; $ule_name:ident) => (
+        field_type!($(#[$enum_attr])* $i; {$( $(#[$variant_attr])* $marker => $val = $idx,)*}; $ule_name);
 
         #[cfg(any(feature = "datagen", feature = "experimental"))] // only referenced in experimental code
         impl LengthType for $i {
@@ -358,7 +358,7 @@ macro_rules! field_type {
             }
         }
     );
-    ($(#[$enum_attr:meta])* $i:ident; { $( $(#[$variant_attr:meta])* $key:literal => $val:ident = $idx:expr,)* }; $ule_name:ident) => (
+    ($(#[$enum_attr:meta])* $i:ident; { $( $(#[$variant_attr:meta])* $marker:literal => $val:ident = $idx:expr,)* }; $ule_name:ident) => (
         #[derive(Debug, Eq, PartialEq, Ord, PartialOrd, Clone, Copy, yoke::Yokeable, zerofrom::ZeroFrom)]
         // FIXME: This should be replaced with a custom derive.
         // See: https://github.com/unicode-org/icu4x/issues/1044
@@ -377,7 +377,7 @@ macro_rules! field_type {
         pub enum $i {
             $(
                 $(#[$variant_attr])*
-                #[doc = core::concat!("\n\nThis field symbol is represented by the character `", $key, "` in a date formatting pattern string.")]
+                #[doc = core::concat!("\n\nThis field symbol is represented by the character `", $marker, "` in a date formatting pattern string.")]
                 #[doc = "\n\nFor more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table)."]
                 $val = $idx,
             )*
@@ -432,7 +432,7 @@ macro_rules! field_type {
             fn try_from(ch: char) -> Result<Self, Self::Error> {
                 match ch {
                     $(
-                        $key => Ok(Self::$val),
+                        $marker => Ok(Self::$val),
                     )*
                     _ => Err(SymbolError::Unknown(ch)),
                 }
@@ -449,7 +449,7 @@ macro_rules! field_type {
             fn from(input: $i) -> char {
                 match input {
                     $(
-                        $i::$val => $key,
+                        $i::$val => $marker,
                     )*
                 }
             }

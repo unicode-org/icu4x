@@ -23,7 +23,7 @@ impl DatagenProvider {
             ))?
             .enum_property
             .first()
-            .ok_or_else(|| DataErrorKind::MissingDataKey.into_error())
+            .ok_or_else(|| DataErrorKind::MissingDataMarker.into_error())
     }
 }
 
@@ -112,7 +112,7 @@ impl DataProvider<BidiAuxiliaryPropertiesV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProvider<BidiAuxiliaryPropertiesV1Marker> for DatagenProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }

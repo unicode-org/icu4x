@@ -12,12 +12,12 @@ different business and technological needs of customers.
 
 `icu_provider` defines traits and structs for transmitting data through the ICU4X locale
 data pipeline. The primary trait is [`DataProvider`]. It is parameterized by a
-[`DataMarker`], which contains the data type and a [`DataKey`]. It has one method,
+[`DataMarker`], which contains the data type and a [`DataMarkerInfo`]. It has one method,
 [`DataProvider::load`], which transforms a [`DataRequest`]
 into a [`DataResponse`].
 
-- [`DataKey`] is a fixed identifier for the data type, such as `"plurals/cardinal@1"`.
-- [`DataRequest`] contains additional annotations to choose a specific variant of the key,
+- [`DataMarkerInfo`] is a fixed identifier for the data type, such as `"plurals/cardinal@1"`.
+- [`DataRequest`] contains additional annotations to choose a specific variant of the marker,
   such as a locale.
 - [`DataResponse`] contains the data if the request was successful.
 
@@ -97,7 +97,7 @@ data generation implementation.
 
 [`ICU4X`]: ../icu/index.html
 [`DataProvider`]: data_provider::DataProvider
-[`DataKey`]: key::DataKey
+[`DataMarkerInfo`]: key::DataMarkerInfo
 [`DataLocale`]: request::DataLocale
 [`IterableDynamicDataProvider`]: datagen::IterableDynamicDataProvider
 [`IterableDataProvider`]: datagen::IterableDataProvider

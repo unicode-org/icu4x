@@ -23,7 +23,7 @@ mod tests;
 
 /// An [`ExportableProvider`](icu_provider::datagen::ExportableProvider) backed by raw CLDR and ICU data.
 ///
-/// This provider covers all keys that are used by ICU4X. It is intended as the canonical
+/// This provider covers all markers that are used by ICU4X. It is intended as the canonical
 /// provider for [`DatagenDriver::export`](crate::DatagenDriver::export).
 ///
 /// If a required data source has not been set, `DataProvider::load` will
@@ -42,10 +42,10 @@ pub struct DatagenProvider {
     #[allow(clippy::type_complexity)] // not as complex as it appears
     supported_requests_cache: Arc<
         FrozenMap<
-            DataKey,
+            DataMarkerInfo,
             Box<
                 Result<
-                    HashSet<(Cow<'static, DataLocale>, Cow<'static, DataKeyAttributes>)>,
+                    HashSet<(Cow<'static, DataLocale>, Cow<'static, DataMarkerAttributes>)>,
                     DataError,
                 >,
             >,
@@ -215,19 +215,19 @@ impl DatagenProvider {
 
     /// Identifies errors that are due to missing CLDR data.
     pub fn is_missing_cldr_error(mut e: DataError) -> bool {
-        e.key = None;
+        e.marker = None;
         e == Self::MISSING_CLDR_ERROR
     }
 
     /// Identifies errors that are due to missing ICU export data.
     pub fn is_missing_icuexport_error(mut e: DataError) -> bool {
-        e.key = None;
+        e.marker = None;
         e == Self::MISSING_ICUEXPORT_ERROR
     }
 
     /// Identifies errors that are due to missing segmenter LSTM data.
     pub fn is_missing_segmenter_lstm_error(mut e: DataError) -> bool {
-        e.key = None;
+        e.marker = None;
         e == Self::MISSING_SEGMENTER_LSTM_ERROR
     }
 
@@ -357,19 +357,19 @@ impl std::fmt::Display for TrieType {
 trait IterableDataProviderCached<M: DataMarker>: DataProvider<M> {
     fn supported_requests_cached(
         &self,
-    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError>;
+    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError>;
 }
 
 impl DatagenProvider {
     #[allow(clippy::type_complexity)] // not as complex as it appears
     fn populate_supported_requests_cache<M: DataMarker>(
         &self,
-    ) -> Result<&HashSet<(Cow<'static, DataLocale>, Cow<'static, DataKeyAttributes>)>, DataError>
+    ) -> Result<&HashSet<(Cow<'static, DataLocale>, Cow<'static, DataMarkerAttributes>)>, DataError>
     where
         DatagenProvider: IterableDataProviderCached<M>,
     {
         self.supported_requests_cache
-            .insert_with(M::KEY, || {
+            .insert_with(M::INFO, || {
                 Box::new(self.supported_requests_cached().map(|m| {
                     m.into_iter()
                         .map(|(k, v)| (Cow::Owned(k), Cow::Owned(v)))
@@ -385,7 +385,7 @@ impl<M: DataMarker> IterableDataProvider<M> for DatagenProvider
 where
     DatagenProvider: IterableDataProviderCached<M>,
 {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         Ok(self
             .populate_supported_requests_cache()?
             .iter()
@@ -396,10 +396,10 @@ where
     fn supports_request(
         &self,
         locale: &DataLocale,
-        key_attributes: &DataKeyAttributes,
+        marker_attributes: &DataMarkerAttributes,
     ) -> Result<bool, DataError> {
         Ok(self
             .populate_supported_requests_cache()?
-            .contains(&(Cow::Borrowed(locale), Cow::Borrowed(key_attributes))))
+            .contains(&(Cow::Borrowed(locale), Cow::Borrowed(marker_attributes))))
     }
 }
