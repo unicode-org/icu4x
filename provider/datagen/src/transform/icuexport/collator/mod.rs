@@ -17,6 +17,7 @@ use icu_locale_core::subtags::Language;
 use icu_locale_core::subtags::Region;
 use icu_locale_core::subtags::Script;
 use icu_locale_core::LanguageIdentifier;
+use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 use std::convert::TryFrom;
@@ -111,10 +112,8 @@ impl DataProvider<CollationFallbackSupplementV1Marker> for DatagenProvider {
     }
 }
 
-impl IterableDataProviderCached<CollationFallbackSupplementV1Marker> for DatagenProvider {
-    fn supported_locales_cached(
-        &self,
-    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+impl IterableDataProvider<CollationFallbackSupplementV1Marker> for DatagenProvider {
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
@@ -235,7 +234,7 @@ macro_rules! collation_provider {
             }
 
             impl IterableDataProviderCached<$marker> for DatagenProvider {
-                fn supported_locales_cached(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+                fn supported_requests_cached(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
                     Ok(self
                         .icuexport()?
                         .list(&format!(

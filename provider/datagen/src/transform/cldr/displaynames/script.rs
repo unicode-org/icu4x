@@ -37,7 +37,7 @@ impl DataProvider<ScriptDisplayNamesV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProviderCached<ScriptDisplayNamesV1Marker> for DatagenProvider {
-    fn supported_locales_cached(
+    fn supported_requests_cached(
         &self,
     ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
         Ok(self

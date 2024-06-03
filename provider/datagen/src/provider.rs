@@ -8,6 +8,7 @@ use elsa::sync::FrozenMap;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use source::{AbstractFs, SerdeCache};
+use std::borrow::Cow;
 use std::collections::HashSet;
 use std::fmt::Debug;
 use std::path::PathBuf;
@@ -41,8 +42,17 @@ pub struct DatagenProvider {
     trie_type: TrieType,
     collation_han_database: CollationHanDatabase,
     #[allow(clippy::type_complexity)] // not as complex as it appears
-    supported_locales_cache:
-        Arc<FrozenMap<DataKey, Box<Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError>>>>,
+    supported_requests_cache: Arc<
+        FrozenMap<
+            DataKey,
+            Box<
+                Result<
+                    HashSet<(Cow<'static, DataLocale>, Cow<'static, DataKeyAttributes>)>,
+                    DataError,
+                >,
+            >,
+        >,
+    >,
 }
 
 macro_rules! cb {
@@ -109,7 +119,7 @@ impl DatagenProvider {
             segmenter_lstm_paths: None,
             trie_type: Default::default(),
             collation_han_database: Default::default(),
-            supported_locales_cache: Default::default(),
+            supported_requests_cache: Default::default(),
         }
     }
 
@@ -348,9 +358,30 @@ impl std::fmt::Display for TrieType {
 }
 
 trait IterableDataProviderCached<M: KeyedDataMarker>: DataProvider<M> {
-    fn supported_locales_cached(
+    fn supported_requests_cached(
         &self,
     ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError>;
+}
+
+impl DatagenProvider {
+    #[allow(clippy::type_complexity)] // not as complex as it appears
+    fn populate_supported_requests_cache<M: KeyedDataMarker>(
+        &self,
+    ) -> Result<&HashSet<(Cow<'static, DataLocale>, Cow<'static, DataKeyAttributes>)>, DataError>
+    where
+        DatagenProvider: IterableDataProviderCached<M>,
+    {
+        self.supported_requests_cache
+            .insert_with(M::KEY, || {
+                Box::new(self.supported_requests_cached().map(|m| {
+                    m.into_iter()
+                        .map(|(k, v)| (Cow::Owned(k), Cow::Owned(v)))
+                        .collect()
+                }))
+            })
+            .as_ref()
+            .map_err(|&e| e)
+    }
 }
 
 impl<M: KeyedDataMarker> IterableDataProvider<M> for DatagenProvider
@@ -358,9 +389,11 @@ where
     DatagenProvider: IterableDataProviderCached<M>,
 {
     fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
-        self.supported_locales_cache
-            .insert_with(M::KEY, || Box::new(self.supported_locales_cached()))
-            .clone()
+        Ok(self
+            .populate_supported_requests_cache()?
+            .iter()
+            .map(|(k, v)| (k.clone().into_owned(), v.clone().into_owned()))
+            .collect())
     }
 
     fn supports_request(
@@ -368,10 +401,8 @@ where
         locale: &DataLocale,
         key_attributes: &DataKeyAttributes,
     ) -> Result<bool, DataError> {
-        self.supported_locales_cache
-            .insert_with(M::KEY, || Box::new(self.supported_locales_cached()))
-            .as_ref()
-            .map_err(|e| *e)
-            .map(|v| v.contains(&(locale.clone(), key_attributes.clone())))
+        Ok(self
+            .populate_supported_requests_cache()?
+            .contains(&(Cow::Borrowed(locale), Cow::Borrowed(key_attributes))))
     }
 }

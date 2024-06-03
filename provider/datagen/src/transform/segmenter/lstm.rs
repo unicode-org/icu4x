@@ -4,7 +4,7 @@
 
 //! This module contains provider implementations backed by LSTM segmentation data.
 
-use crate::provider::DatagenProvider;
+use crate::provider::{DatagenProvider, IterableDataProviderCached};
 use icu_locale_core::langid;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
@@ -206,8 +206,10 @@ impl DataProvider<LstmForWordLineAutoV1Marker> for DatagenProvider {
     }
 }
 
-impl IterableDataProvider<LstmForWordLineAutoV1Marker> for DatagenProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+impl IterableDataProviderCached<LstmForWordLineAutoV1Marker> for DatagenProvider {
+    fn supported_requests_cached(
+        &self,
+    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
         Ok([
             "Burmese_codepoints_exclusive_model4_heavy",
             "Khmer_codepoints_exclusive_model4_heavy",

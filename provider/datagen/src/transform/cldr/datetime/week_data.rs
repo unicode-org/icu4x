@@ -16,7 +16,7 @@ use icu_provider::prelude::*;
 use std::collections::HashSet;
 
 impl IterableDataProviderCached<WeekDataV1Marker> for DatagenProvider {
-    fn supported_locales_cached(
+    fn supported_requests_cached(
         &self,
     ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
         let week_data: &cldr_serde::week_data::Resource = self
@@ -200,10 +200,10 @@ impl DataProvider<WeekDataV2Marker> for DatagenProvider {
 }
 
 impl IterableDataProviderCached<WeekDataV2Marker> for DatagenProvider {
-    fn supported_locales_cached(
+    fn supported_requests_cached(
         &self,
     ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
-        IterableDataProviderCached::<WeekDataV1Marker>::supported_locales_cached(self)
+        IterableDataProviderCached::<WeekDataV1Marker>::supported_requests_cached(self)
     }
 }
 
