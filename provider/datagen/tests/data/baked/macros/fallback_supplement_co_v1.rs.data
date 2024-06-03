@@ -28,7 +28,7 @@ macro_rules! __impl_fallback_supplement_co_v1 {
                 if req.locale.is_empty() {
                     Ok(icu_provider::DataResponse { payload: Some(icu_provider::DataPayload::from_static_ref(Self::SINGLETON_FALLBACK_SUPPLEMENT_CO_V1)), metadata: Default::default() })
                 } else {
-                    Err(icu_provider::DataErrorKind::ExtraneousLocale.with_req(<icu::locale::provider::CollationFallbackSupplementV1Marker as icu_provider::KeyedDataMarker>::KEY, req))
+                    Err(icu_provider::DataErrorKind::ExtraneousLocale.with_req(<icu::locale::provider::CollationFallbackSupplementV1Marker as icu_provider::DataMarker>::KEY, req))
                 }
             }
         }

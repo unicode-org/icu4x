@@ -85,7 +85,7 @@ where
 impl<D, F, M> DataProvider<M> for RequestFilterDataProvider<D, F>
 where
     F: Fn(DataRequest) -> bool,
-    M: KeyedDataMarker,
+    M: DataMarker,
     D: DataProvider<M>,
 {
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
@@ -144,7 +144,7 @@ where
 #[cfg(feature = "datagen")]
 impl<M, D, F> datagen::IterableDataProvider<M> for RequestFilterDataProvider<D, F>
 where
-    M: KeyedDataMarker,
+    M: DataMarker,
     F: Fn(DataRequest) -> bool,
     D: datagen::IterableDataProvider<M>,
 {

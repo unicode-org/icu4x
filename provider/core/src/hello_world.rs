@@ -51,7 +51,7 @@ impl DynDataMarker for HelloWorldV1Marker {
     type Yokeable = HelloWorldV1<'static>;
 }
 
-impl KeyedDataMarker for HelloWorldV1Marker {
+impl DataMarker for HelloWorldV1Marker {
     const KEY: DataKey = icu_provider::data_key!("core/helloworld@1");
 }
 

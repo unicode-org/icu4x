@@ -22,7 +22,7 @@ use yoke::Yokeable;
 /// - `impl<'a> Yokeable<'a>` (required)
 /// - `impl ZeroFrom<Self>`
 ///
-/// Also see [`KeyedDataMarker`].
+/// Also see [`DataMarker`].
 ///
 /// Note: `DynDataMarker`s are quasi-const-generic compile-time objects, and as such are expected
 /// to be unit structs. As this is not something that can be enforced by the type system, we
@@ -73,7 +73,7 @@ pub trait DynDataMarker: 'static {
 /// [`BufferMarker`] and [`AnyMarker`] are examples of markers that do _not_ implement this trait
 /// because they are not specific to a single key.
 ///
-/// Note: `KeyedDataMarker`s are quasi-const-generic compile-time objects, and as such are expected
+/// Note: `DataMarker`s are quasi-const-generic compile-time objects, and as such are expected
 /// to be unit structs. As this is not something that can be enforced by the type system, we
 /// currently only have a `'static` bound on them (which is needed by a lot of our code).
 ///
@@ -81,11 +81,11 @@ pub trait DynDataMarker: 'static {
 /// [`DataProvider`]: crate::DataProvider
 /// [`BufferMarker`]: crate::BufferMarker
 /// [`AnyMarker`]: crate::AnyMarker
-pub trait KeyedDataMarker: DynDataMarker {
+pub trait DataMarker: DynDataMarker {
     /// The single [`DataKey`] associated with this marker.
     const KEY: DataKey;
 
-    /// Binds this [`KeyedDataMarker`] to a provider supporting it.
+    /// Binds this [`DataMarker`] to a provider supporting it.
     fn bind<P>(provider: P) -> DataProviderWithKey<Self, P>
     where
         P: DataProvider<Self>,
@@ -140,7 +140,7 @@ where
     type Yokeable = Y;
 }
 
-impl<Y> KeyedDataMarker for NeverMarker<Y>
+impl<Y> DataMarker for NeverMarker<Y>
 where
     for<'a> Y: Yokeable<'a>,
 {
@@ -190,10 +190,8 @@ macro_rules! impl_data_provider_never_marker {
                 &self,
                 req: $crate::DataRequest,
             ) -> Result<$crate::DataResponse<$crate::NeverMarker<Y>>, $crate::DataError> {
-                Err($crate::DataErrorKind::MissingDataKey.with_req(
-                    <$crate::NeverMarker<Y> as $crate::KeyedDataMarker>::KEY,
-                    req,
-                ))
+                Err($crate::DataErrorKind::MissingDataKey
+                    .with_req(<$crate::NeverMarker<Y> as $crate::DataMarker>::KEY, req))
             }
         }
     };

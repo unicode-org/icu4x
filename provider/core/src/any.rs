@@ -433,7 +433,7 @@ where
 impl<M, P> DataProvider<M> for DowncastingAnyProvider<'_, P>
 where
     P: AnyProvider + ?Sized,
-    M: KeyedDataMarker,
+    M: DataMarker,
     for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
     M::Yokeable: ZeroFrom<'static, M::Yokeable>,
     M::Yokeable: MaybeSendSync,

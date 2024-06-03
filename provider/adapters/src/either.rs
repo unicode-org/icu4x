@@ -46,7 +46,7 @@ impl<M: DynDataMarker, P0: DynamicDataProvider<M>, P1: DynamicDataProvider<M>>
     }
 }
 
-impl<M: KeyedDataMarker, P0: DataProvider<M>, P1: DataProvider<M>> DataProvider<M>
+impl<M: DataMarker, P0: DataProvider<M>, P1: DataProvider<M>> DataProvider<M>
     for EitherProvider<P0, P1>
 {
     #[inline]
@@ -80,11 +80,8 @@ impl<
 }
 
 #[cfg(feature = "datagen")]
-impl<
-        M: KeyedDataMarker,
-        P0: datagen::IterableDataProvider<M>,
-        P1: datagen::IterableDataProvider<M>,
-    > datagen::IterableDataProvider<M> for EitherProvider<P0, P1>
+impl<M: DataMarker, P0: datagen::IterableDataProvider<M>, P1: datagen::IterableDataProvider<M>>
+    datagen::IterableDataProvider<M> for EitherProvider<P0, P1>
 {
     #[inline]
     fn supported_requests(

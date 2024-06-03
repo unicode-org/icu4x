@@ -755,7 +755,7 @@ where
     ///
     /// impl<M, P> DataProvider<M> for MyWrapper<P>
     /// where
-    ///     M: KeyedDataMarker,
+    ///     M: DataMarker,
     ///     P: DataProvider<M>,
     /// {
     ///     #[inline]

@@ -320,7 +320,7 @@ impl UnicodeSetDataBorrowed<'static> {
 
 pub(crate) fn load_set_data<M, P>(provider: &P) -> Result<CodePointSetData, PropertiesError>
 where
-    M: KeyedDataMarker<Yokeable = PropertyCodePointSetV1<'static>>,
+    M: DataMarker<Yokeable = PropertyCodePointSetV1<'static>>,
     P: DataProvider<M> + ?Sized,
 {
     Ok(provider

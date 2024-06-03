@@ -24,7 +24,7 @@ pub trait IterableDynamicDataProvider<M: DynDataMarker>: DynamicDataProvider<M> 
 ///
 /// Implementing this trait means that a data provider knows all of the data it can successfully
 /// return from a load request.
-pub trait IterableDataProvider<M: KeyedDataMarker>: DataProvider<M> {
+pub trait IterableDataProvider<M: DataMarker>: DataProvider<M> {
     /// Returns a list of [`DataLocale`].
     fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError>;
     /// Returns whether a [`DataLocale`] is in the supported locales list.

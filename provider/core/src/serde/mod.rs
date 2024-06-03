@@ -182,7 +182,7 @@ where
 
 impl<P, M> DataProvider<M> for DeserializingBufferProvider<'_, P>
 where
-    M: KeyedDataMarker,
+    M: DataMarker,
     P: BufferProvider + ?Sized,
     // Actual bound:
     //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: Deserialize<'de>,

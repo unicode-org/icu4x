@@ -12,7 +12,7 @@
 //!
 //! `icu_provider` defines traits and structs for transmitting data through the ICU4X locale
 //! data pipeline. The primary trait is [`DataProvider`]. It is parameterized by a
-//! [`KeyedDataMarker`], which contains the data type and a [`DataKey`]. It has one method,
+//! [`DataMarker`], which contains the data type and a [`DataKey`]. It has one method,
 //! [`DataProvider::load`], which transforms a [`DataRequest`]
 //! into a [`DataResponse`].
 //!
@@ -184,8 +184,8 @@ pub use crate::any::AsDynamicDataProviderAnyMarkerWrap;
 pub use crate::any::MaybeSendSync;
 pub use crate::buf::BufferMarker;
 pub use crate::buf::BufferProvider;
+pub use crate::marker::DataMarker;
 pub use crate::marker::DynDataMarker;
-pub use crate::marker::KeyedDataMarker;
 pub use crate::marker::NeverMarker;
 #[cfg(feature = "serde")]
 pub use crate::serde::AsDeserializingBufferProvider;
@@ -228,6 +228,8 @@ pub mod prelude {
     #[doc(no_inline)]
     pub use crate::DataLocale;
     #[doc(no_inline)]
+    pub use crate::DataMarker;
+    #[doc(no_inline)]
     pub use crate::DataPayload;
     #[doc(no_inline)]
     pub use crate::DataProvider;
@@ -243,8 +245,6 @@ pub mod prelude {
     pub use crate::DynDataMarker;
     #[doc(no_inline)]
     pub use crate::DynamicDataProvider;
-    #[doc(no_inline)]
-    pub use crate::KeyedDataMarker;
 
     #[doc(no_inline)]
     pub use yoke;

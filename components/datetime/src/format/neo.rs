@@ -111,7 +111,7 @@ where
 /// Helper for type resolution with optional DataProvider arguments
 pub(crate) struct PhantomProvider;
 
-impl<M: KeyedDataMarker> DataProvider<M> for PhantomProvider {
+impl<M: DataMarker> DataProvider<M> for PhantomProvider {
     #[inline]
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         debug_assert!(false);

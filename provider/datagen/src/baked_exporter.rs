@@ -409,7 +409,7 @@ impl DataExporter for BakedExporter {
                             metadata: Default::default(),
                         })
                     } else {
-                        Err(icu_provider::DataErrorKind::ExtraneousLocale.with_req(<#marker as icu_provider::KeyedDataMarker>::KEY, req))
+                        Err(icu_provider::DataErrorKind::ExtraneousLocale.with_req(<#marker as icu_provider::DataMarker>::KEY, req))
                     }
                 }
             }
@@ -495,7 +495,7 @@ impl BakedExporter {
 
         let (load_body, iterable_body) = if values.is_empty() {
             (
-                quote!(Err(icu_provider::DataErrorKind::MissingLocale.with_req(<#marker as icu_provider::KeyedDataMarker>::KEY, req))),
+                quote!(Err(icu_provider::DataErrorKind::MissingLocale.with_req(<#marker as icu_provider::DataMarker>::KEY, req))),
                 quote!(Ok(Default::default())),
             )
         } else {
@@ -557,7 +557,7 @@ impl BakedExporter {
                                 metadata: Default::default(),
                             })
                         } else {
-                            Err(icu_provider::DataErrorKind::MissingLocale.with_req(<#marker as icu_provider::KeyedDataMarker>::KEY, req))
+                            Err(icu_provider::DataErrorKind::MissingLocale.with_req(<#marker as icu_provider::DataMarker>::KEY, req))
                         }
                     }
                 }
@@ -575,7 +575,7 @@ impl BakedExporter {
                         } else {
                             const FALLBACKER: icu_locale::fallback::LocaleFallbackerWithConfig<'static> =
                                 icu_locale::fallback::LocaleFallbacker::new()
-                                    .for_config(<#marker as icu_provider::KeyedDataMarker>::KEY.fallback_config());
+                                    .for_config(<#marker as icu_provider::DataMarker>::KEY.fallback_config());
                             let mut fallback_iterator = FALLBACKER.fallback_for(req.locale.clone());
                             loop {
                                 if let Ok(payload) = KEYS
@@ -585,7 +585,7 @@ impl BakedExporter {
                                     break payload;
                                 }
                                 if fallback_iterator.get().is_und() {
-                                    return Err(icu_provider::DataErrorKind::MissingLocale.with_req(<#marker as icu_provider::KeyedDataMarker>::KEY, req));
+                                    return Err(icu_provider::DataErrorKind::MissingLocale.with_req(<#marker as icu_provider::DataMarker>::KEY, req));
                                 }
                                 fallback_iterator.step();
                             }
@@ -745,7 +745,7 @@ impl BakedExporter {
                             fn load_any(&self, key: icu_provider::DataKey, req: icu_provider::DataRequest) -> Result<icu_provider::AnyResponse, icu_provider::DataError> {
                                 match key.hashed() {
                                     #(
-                                        h if h == <#markers as icu_provider::KeyedDataMarker>::KEY.hashed() =>
+                                        h if h == <#markers as icu_provider::DataMarker>::KEY.hashed() =>
                                             icu_provider::DataProvider::<#markers>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                                     )*
                                     _ => Err(icu_provider::DataErrorKind::MissingDataKey.with_req(key, req)),

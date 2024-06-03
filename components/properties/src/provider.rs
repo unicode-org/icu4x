@@ -437,7 +437,7 @@ macro_rules! data_struct_generic {
             impl icu_provider::DynDataMarker for $marker {
                 type Yokeable = PropertyCodePointMapV1<'static, crate::$ty>;
             }
-            impl icu_provider::KeyedDataMarker for $marker {
+            impl icu_provider::DataMarker for $marker {
                 const KEY: icu_provider::DataKey = icu_provider::data_key!($path, icu_provider::DataKeyMetadata::construct_internal(icu_provider::_internal::LocaleFallbackPriority::Language, None, None, true));
             }
         )+

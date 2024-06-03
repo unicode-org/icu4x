@@ -3167,7 +3167,7 @@ macro_rules! __impl_datetime_islamic_datesymbols_v1 {
                 let payload = if let Ok(payload) = KEYS.binary_search_by(|k| req.legacy_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
                     payload
                 } else {
-                    const FALLBACKER: icu::locale::fallback::LocaleFallbackerWithConfig<'static> = icu::locale::fallback::LocaleFallbacker::new().for_config(<icu::datetime::provider::calendar::IslamicDateSymbolsV1Marker as icu_provider::KeyedDataMarker>::KEY.fallback_config());
+                    const FALLBACKER: icu::locale::fallback::LocaleFallbackerWithConfig<'static> = icu::locale::fallback::LocaleFallbacker::new().for_config(<icu::datetime::provider::calendar::IslamicDateSymbolsV1Marker as icu_provider::DataMarker>::KEY.fallback_config());
                     let mut fallback_iterator = FALLBACKER.fallback_for(req.locale.clone());
                     loop {
                         if let Ok(payload) = KEYS.binary_search_by(|k| icu_provider::DataRequest { locale: fallback_iterator.get(), ..req }.legacy_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
@@ -3175,7 +3175,7 @@ macro_rules! __impl_datetime_islamic_datesymbols_v1 {
                             break payload;
                         }
                         if fallback_iterator.get().is_und() {
-                            return Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::datetime::provider::calendar::IslamicDateSymbolsV1Marker as icu_provider::KeyedDataMarker>::KEY, req));
+                            return Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::datetime::provider::calendar::IslamicDateSymbolsV1Marker as icu_provider::DataMarker>::KEY, req));
                         }
                         fallback_iterator.step();
                     }

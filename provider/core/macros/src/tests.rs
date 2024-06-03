@@ -61,7 +61,7 @@ fn test_keyed_data_marker() {
             impl icu_provider::DynDataMarker for BarV1Marker {
                 type Yokeable = FooV1;
             }
-            impl icu_provider::KeyedDataMarker for BarV1Marker {
+            impl icu_provider::DataMarker for BarV1Marker {
                 const KEY: icu_provider::DataKey = icu_provider::data_key!(
                     "demo/bar@1",
                     icu_provider::DataKeyMetadata::construct_internal(
@@ -100,7 +100,7 @@ fn test_multi_named_keyed_data_marker() {
             impl icu_provider::DynDataMarker for BarV1Marker {
                 type Yokeable = FooV1<'static>;
             }
-            impl icu_provider::KeyedDataMarker for BarV1Marker {
+            impl icu_provider::DataMarker for BarV1Marker {
                 const KEY: icu_provider::DataKey = icu_provider::data_key!(
                     "demo/bar@1",
                     icu_provider::DataKeyMetadata::construct_internal(
@@ -115,7 +115,7 @@ fn test_multi_named_keyed_data_marker() {
             impl icu_provider::DynDataMarker for BazV1Marker {
                 type Yokeable = FooV1<'static>;
             }
-            impl icu_provider::KeyedDataMarker for BazV1Marker {
+            impl icu_provider::DataMarker for BazV1Marker {
                 const KEY: icu_provider::DataKey = icu_provider::data_key!(
                     "demo/baz@1",
                     icu_provider::DataKeyMetadata::construct_internal(
@@ -147,7 +147,7 @@ fn test_databake() {
             impl icu_provider::DynDataMarker for BarV1Marker {
                 type Yokeable = FooV1;
             }
-            impl icu_provider::KeyedDataMarker for BarV1Marker {
+            impl icu_provider::DataMarker for BarV1Marker {
                 const KEY: icu_provider::DataKey = icu_provider::data_key!(
                     "demo/bar@1",
                     icu_provider::DataKeyMetadata::construct_internal(
@@ -193,7 +193,7 @@ fn test_attributes() {
             impl icu_provider::DynDataMarker for BarV1Marker {
                 type Yokeable = FooV1<'static>;
             }
-            impl icu_provider::KeyedDataMarker for BarV1Marker {
+            impl icu_provider::DataMarker for BarV1Marker {
                 const KEY: icu_provider::DataKey = icu_provider::data_key!(
                     "demo/bar@1",
                     icu_provider::DataKeyMetadata::construct_internal(

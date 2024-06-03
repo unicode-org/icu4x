@@ -7,14 +7,14 @@ use yoke::Yokeable;
 
 use crate::error::DataError;
 use crate::key::DataKey;
-use crate::marker::{DynDataMarker, KeyedDataMarker};
+use crate::marker::{DataMarker, DynDataMarker};
 use crate::request::DataRequest;
 use crate::response::DataResponse;
 
 /// A data provider that loads data for a specific [`DataKey`].
 pub trait DataProvider<M>
 where
-    M: KeyedDataMarker,
+    M: DataMarker,
 {
     /// Query the provider for data, returning the result.
     ///
@@ -25,7 +25,7 @@ where
 
 impl<'a, M, P> DataProvider<M> for &'a P
 where
-    M: KeyedDataMarker,
+    M: DataMarker,
     P: DataProvider<M> + ?Sized,
 {
     #[inline]
@@ -36,7 +36,7 @@ where
 
 impl<M, P> DataProvider<M> for alloc::boxed::Box<P>
 where
-    M: KeyedDataMarker,
+    M: DataMarker,
     P: DataProvider<M> + ?Sized,
 {
     #[inline]
@@ -47,7 +47,7 @@ where
 
 impl<M, P> DataProvider<M> for alloc::rc::Rc<P>
 where
-    M: KeyedDataMarker,
+    M: DataMarker,
     P: DataProvider<M> + ?Sized,
 {
     #[inline]
@@ -59,7 +59,7 @@ where
 #[cfg(target_has_atomic = "ptr")]
 impl<M, P> DataProvider<M> for alloc::sync::Arc<P>
 where
-    M: KeyedDataMarker,
+    M: DataMarker,
     P: DataProvider<M> + ?Sized,
 {
     #[inline]
@@ -225,10 +225,10 @@ pub struct DataProviderWithKey<M, P> {
 
 impl<M, P> DataProviderWithKey<M, P>
 where
-    M: KeyedDataMarker,
+    M: DataMarker,
     P: DataProvider<M>,
 {
-    /// Creates a [`DataProviderWithKey`] from a [`DataProvider`] with a [`KeyedDataMarker`].
+    /// Creates a [`DataProviderWithKey`] from a [`DataProvider`] with a [`DataMarker`].
     pub const fn new(inner: P) -> Self {
         Self {
             inner,
@@ -239,7 +239,7 @@ where
 
 impl<M, M0, Y, P> BoundDataProvider<M0> for DataProviderWithKey<M, P>
 where
-    M: KeyedDataMarker<Yokeable = Y>,
+    M: DataMarker<Yokeable = Y>,
     M0: DynDataMarker<Yokeable = Y>,
     Y: for<'a> Yokeable<'a>,
     P: DataProvider<M>,
@@ -287,7 +287,7 @@ mod test {
         type Yokeable = HelloAlt;
     }
 
-    impl KeyedDataMarker for HelloAltMarker {
+    impl DataMarker for HelloAltMarker {
         const KEY: DataKey = HELLO_ALT_KEY;
     }
 

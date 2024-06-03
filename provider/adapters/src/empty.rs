@@ -71,7 +71,7 @@ where
 
 impl<M> DataProvider<M> for EmptyDataProvider
 where
-    M: KeyedDataMarker,
+    M: DataMarker,
 {
     fn load(&self, base_req: DataRequest) -> Result<DataResponse<M>, DataError> {
         Err(self.error_kind.with_req(M::KEY, base_req))
@@ -81,7 +81,7 @@ where
 #[cfg(feature = "datagen")]
 impl<M> icu_provider::datagen::IterableDataProvider<M> for EmptyDataProvider
 where
-    M: KeyedDataMarker,
+    M: DataMarker,
 {
     fn supported_requests(
         &self,

@@ -56,26 +56,26 @@ pub trait CldrCalendar: InternalCldrCalendar {
     const DEFAULT_BCP_47_IDENTIFIER: Value;
 
     /// The data marker for loading symbols for this calendar.
-    type DateSymbolsV1Marker: KeyedDataMarker<Yokeable = DateSymbolsV1<'static>>;
+    type DateSymbolsV1Marker: DataMarker<Yokeable = DateSymbolsV1<'static>>;
 
     /// The data marker for loading length-patterns for this calendar.
-    type DateLengthsV1Marker: KeyedDataMarker<Yokeable = DateLengthsV1<'static>>;
+    type DateLengthsV1Marker: DataMarker<Yokeable = DateLengthsV1<'static>>;
 
     #[cfg(any(feature = "datagen", feature = "experimental"))]
     /// The data marker for loading year symbols for this calendar.
-    type YearNamesV1Marker: KeyedDataMarker<Yokeable = YearNamesV1<'static>>;
+    type YearNamesV1Marker: DataMarker<Yokeable = YearNamesV1<'static>>;
 
     #[cfg(any(feature = "datagen", feature = "experimental"))]
     /// The data marker for loading month symbols for this calendar.
-    type MonthNamesV1Marker: KeyedDataMarker<Yokeable = MonthNamesV1<'static>>;
+    type MonthNamesV1Marker: DataMarker<Yokeable = MonthNamesV1<'static>>;
 
     #[cfg(any(feature = "datagen", feature = "experimental"))]
     /// The data marker for loading a single date pattern for this calendar.
-    type DatePatternV1Marker: KeyedDataMarker<Yokeable = DatePatternV1<'static>>;
+    type DatePatternV1Marker: DataMarker<Yokeable = DatePatternV1<'static>>;
 
     #[cfg(any(feature = "datagen", feature = "experimental"))]
     /// The data marker for loading skeleton patterns for this calendar.
-    type SkeletaV1Marker: KeyedDataMarker<Yokeable = PackedSkeletonDataV1<'static>>;
+    type SkeletaV1Marker: DataMarker<Yokeable = PackedSkeletonDataV1<'static>>;
 
     /// Checks if a given BCP 47 identifier is allowed to be used with this calendar
     ///
@@ -671,39 +671,39 @@ where
     M: DynDataMarker,
 {
     /// The type for a [`Buddhist`] calendar
-    type Buddhist: KeyedDataMarker<Yokeable = M::Yokeable>;
+    type Buddhist: DataMarker<Yokeable = M::Yokeable>;
     /// The type for a [`Chinese`] calendar
-    type Chinese: KeyedDataMarker<Yokeable = M::Yokeable>;
+    type Chinese: DataMarker<Yokeable = M::Yokeable>;
     /// The type for a [`Coptic`] calendar
-    type Coptic: KeyedDataMarker<Yokeable = M::Yokeable>;
+    type Coptic: DataMarker<Yokeable = M::Yokeable>;
     /// The type for a [`Dangi`] calendar
-    type Dangi: KeyedDataMarker<Yokeable = M::Yokeable>;
+    type Dangi: DataMarker<Yokeable = M::Yokeable>;
     /// The type for an [`Ethiopian`] calendar, with Amete Mihret era
-    type Ethiopian: KeyedDataMarker<Yokeable = M::Yokeable>;
+    type Ethiopian: DataMarker<Yokeable = M::Yokeable>;
     /// The type for an [`Ethiopian`] calendar, with Amete Alem era
-    type EthiopianAmeteAlem: KeyedDataMarker<Yokeable = M::Yokeable>;
+    type EthiopianAmeteAlem: DataMarker<Yokeable = M::Yokeable>;
     /// The type for a [`Gregorian`] calendar
-    type Gregorian: KeyedDataMarker<Yokeable = M::Yokeable>;
+    type Gregorian: DataMarker<Yokeable = M::Yokeable>;
     /// The type for a [`Hebrew`] calendar
-    type Hebrew: KeyedDataMarker<Yokeable = M::Yokeable>;
+    type Hebrew: DataMarker<Yokeable = M::Yokeable>;
     /// The type for a [`Indian`] calendar
-    type Indian: KeyedDataMarker<Yokeable = M::Yokeable>;
+    type Indian: DataMarker<Yokeable = M::Yokeable>;
     /// The type for an [`IslamicCivil`] calendar
-    type IslamicCivil: KeyedDataMarker<Yokeable = M::Yokeable>;
+    type IslamicCivil: DataMarker<Yokeable = M::Yokeable>;
     /// The type for an [`IslamicObservational`] calendar
-    type IslamicObservational: KeyedDataMarker<Yokeable = M::Yokeable>;
+    type IslamicObservational: DataMarker<Yokeable = M::Yokeable>;
     /// The type for an [`IslamicTabular`] calendar
-    type IslamicTabular: KeyedDataMarker<Yokeable = M::Yokeable>;
+    type IslamicTabular: DataMarker<Yokeable = M::Yokeable>;
     /// The type for an [`IslamicUmmAlQura`] calendar
-    type IslamicUmmAlQura: KeyedDataMarker<Yokeable = M::Yokeable>;
+    type IslamicUmmAlQura: DataMarker<Yokeable = M::Yokeable>;
     /// The type for a [`Japanese`] calendar
-    type Japanese: KeyedDataMarker<Yokeable = M::Yokeable>;
+    type Japanese: DataMarker<Yokeable = M::Yokeable>;
     /// The type for a [`JapaneseExtended`] calendar
-    type JapaneseExtended: KeyedDataMarker<Yokeable = M::Yokeable>;
+    type JapaneseExtended: DataMarker<Yokeable = M::Yokeable>;
     /// The type for a [`Persian`] calendar
-    type Persian: KeyedDataMarker<Yokeable = M::Yokeable>;
+    type Persian: DataMarker<Yokeable = M::Yokeable>;
     /// The type for a [`Roc`] calendar
-    type Roc: KeyedDataMarker<Yokeable = M::Yokeable>;
+    type Roc: DataMarker<Yokeable = M::Yokeable>;
 }
 
 /// Implementation of [`CalMarkers`] that includes data for all calendars.

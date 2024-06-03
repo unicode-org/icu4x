@@ -27,18 +27,18 @@ impl IterableDataProvider<HelloWorldV1Marker> for DatagenProvider {
 }
 
 impl DatagenProvider {
-    fn check_req<M: KeyedDataMarker>(&self, req: DataRequest) -> Result<(), DataError>
+    fn check_req<M: DataMarker>(&self, req: DataRequest) -> Result<(), DataError>
     where
         DatagenProvider: IterableDataProvider<M>,
     {
-        if <M as KeyedDataMarker>::KEY.metadata().singleton && !req.locale.is_empty() {
+        if <M as DataMarker>::KEY.metadata().singleton && !req.locale.is_empty() {
             Err(DataErrorKind::ExtraneousLocale)
         } else if !self.supports_request(req.locale, req.key_attributes)? {
             Err(DataErrorKind::MissingLocale)
         } else {
             Ok(())
         }
-        .map_err(|e| e.with_req(<M as KeyedDataMarker>::KEY, req))
+        .map_err(|e| e.with_req(<M as DataMarker>::KEY, req))
     }
 }
 
