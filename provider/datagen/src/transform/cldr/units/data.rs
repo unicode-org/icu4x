@@ -64,11 +64,11 @@ impl IterableDataProvider<UnitsDisplayNameV1Marker> for DatagenProvider {
         fn make_data_locale_with_langid_and_quantity(
             langid: &LanguageIdentifier,
             quantity: &str,
-        ) -> DataLocale {
+        ) -> Result<DataLocale, DataError> {
             let mut data_locale = DataLocale::from(langid);
             let subtag = Subtag::from_str(quantity).map_err(|_| DataError::custom("Failed to parse subtag"))?;
             data_locale.set_aux(AuxiliaryKeys::from_subtag(subtag));
-            data_locale
+            Ok(data_locale)
         }
 
         let mut data_locales = Vec::new();
@@ -96,7 +96,7 @@ impl IterableDataProvider<UnitsDisplayNameV1Marker> for DatagenProvider {
             }
 
             for quantity in quantities {
-                data_locales.push(make_data_locale_with_langid_and_quantity(&langid, quantity));
+                data_locales.push(make_data_locale_with_langid_and_quantity(&langid, quantity)?);
             }
         }
 
