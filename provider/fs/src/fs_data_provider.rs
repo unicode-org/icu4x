@@ -62,8 +62,8 @@ impl FsDataProvider {
     }
 }
 
-impl BufferProvider for FsDataProvider {
-    fn load_buffer(
+impl DynamicDataProvider<BufferMarker> for FsDataProvider {
+    fn load_data(
         &self,
         key: DataKey,
         req: DataRequest,

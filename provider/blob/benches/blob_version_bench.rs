@@ -29,7 +29,7 @@ fn blob_version_bench(c: &mut Criterion) {
         b.iter(|| {
             for (locale, key_attributes) in black_box(&locales).iter() {
                 black_box(&provider)
-                    .load_buffer(
+                    .load_data(
                         HelloWorldV1Marker::KEY,
                         DataRequest {
                             locale,
@@ -46,7 +46,7 @@ fn blob_version_bench(c: &mut Criterion) {
         b.iter(|| {
             for (locale, key_attributes) in black_box(&locales).iter() {
                 black_box(&provider)
-                    .load_buffer(
+                    .load_data(
                         HelloWorldV1Marker::KEY,
                         DataRequest {
                             locale,

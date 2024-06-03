@@ -60,16 +60,6 @@ impl AnyProvider for EmptyDataProvider {
     }
 }
 
-impl BufferProvider for EmptyDataProvider {
-    fn load_buffer(
-        &self,
-        key: DataKey,
-        base_req: DataRequest,
-    ) -> Result<DataResponse<BufferMarker>, DataError> {
-        Err(self.error_kind.with_req(key, base_req))
-    }
-}
-
 impl<M> DynamicDataProvider<M> for EmptyDataProvider
 where
     M: DataMarker,
