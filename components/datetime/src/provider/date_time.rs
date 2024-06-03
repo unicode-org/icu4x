@@ -346,8 +346,10 @@ where
     fn skeleton_data_payload(
         &self,
     ) -> Result<DataPayload<DateSkeletonPatternsV1Marker>, DataError> {
-        use icu_locale_core::extensions::unicode::{key, value};
-        use tinystr::tinystr;
+        use icu_locale_core::{
+            extensions::unicode::{key, value},
+            subtags::subtag,
+        };
         let mut locale = self.locale.clone();
         #[allow(clippy::expect_used)] // experimental
         let cal_val = self.cal_val.expect("should be present for components bag");
@@ -356,7 +358,7 @@ where
             locale.set_unicode_ext(key!("ca"), value!("ethiopic"));
         } else if cal_val == &value!("islamic")
             || cal_val == &value!("islamicc")
-            || cal_val.as_tinystr_slice().first() == Some(&tinystr!(8, "islamic"))
+            || cal_val.as_subtags_slice().first() == Some(&subtag!("islamic"))
         {
             // All islamic calendars store skeleton data under islamic, not their individual extension keys
             locale.set_unicode_ext(key!("ca"), value!("islamic"));

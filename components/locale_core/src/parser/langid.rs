@@ -7,9 +7,9 @@ use crate::extensions::unicode::{Attribute, Key, Value};
 use crate::extensions::ExtensionType;
 use crate::parser::SubtagIterator;
 use crate::shortvec::ShortBoxSlice;
+use crate::subtags::Subtag;
 use crate::LanguageIdentifier;
 use crate::{extensions, subtags};
-use tinystr::TinyAsciiStr;
 
 #[derive(PartialEq, Clone, Copy)]
 pub enum ParserMode {
@@ -117,7 +117,7 @@ pub const fn parse_locale_with_single_variant_single_keyword_unicode_extension_f
         Option<subtags::Script>,
         Option<subtags::Region>,
         Option<subtags::Variant>,
-        Option<(extensions::unicode::Key, Option<TinyAsciiStr<8>>)>,
+        Option<(extensions::unicode::Key, Option<Subtag>)>,
     ),
     ParserError,
 > {

@@ -95,6 +95,20 @@ impl Subtag {
     pub(crate) const fn valid_key(v: &[u8]) -> bool {
         2 <= v.len() && v.len() <= 8
     }
+
+    #[doc(hidden)]
+    pub fn from_tinystr_unvalidated(input: tinystr::TinyAsciiStr<8>) -> Self {
+        Self(input)
+    }
+
+    #[doc(hidden)]
+    pub fn as_tinystr(&self) -> tinystr::TinyAsciiStr<8> {
+        self.0
+    }
+
+    pub(crate) fn to_ascii_lowercase(self) -> Self {
+        Self(self.0.to_ascii_lowercase())
+    }
 }
 
 impl<const N: usize> TryFrom<tinystr::TinyAsciiStr<N>> for Subtag {
@@ -102,6 +116,12 @@ impl<const N: usize> TryFrom<tinystr::TinyAsciiStr<N>> for Subtag {
 
     fn try_from(value: tinystr::TinyAsciiStr<N>) -> Result<Self, Self::Error> {
         Self::try_from_bytes(value.as_bytes())
+    }
+}
+
+impl PartialEq<str> for Subtag {
+    fn eq(&self, other: &str) -> bool {
+        self.0 == other
     }
 }
 
