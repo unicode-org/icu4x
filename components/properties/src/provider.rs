@@ -445,12 +445,28 @@ macro_rules! data_struct_generic {
 }
 data_struct_generic!(
     marker(BidiClassV1Marker, BidiClass, "props/bc@1"),
-    marker(CanonicalCombiningClassV1Marker, CanonicalCombiningClass, "props/ccc@1"),
+    marker(
+        CanonicalCombiningClassV1Marker,
+        CanonicalCombiningClass,
+        "props/ccc@1"
+    ),
     marker(EastAsianWidthV1Marker, EastAsianWidth, "props/ea@1"),
     marker(GeneralCategoryV1Marker, GeneralCategory, "props/gc@1"),
-    marker(GraphemeClusterBreakV1Marker, GraphemeClusterBreak, "props/GCB@1"),
-    marker(HangulSyllableTypeV1Marker, HangulSyllableType, "props/hst@1"),
-    marker(IndicSyllabicCategoryV1Marker, IndicSyllabicCategory, "props/InSC@1"),
+    marker(
+        GraphemeClusterBreakV1Marker,
+        GraphemeClusterBreak,
+        "props/GCB@1"
+    ),
+    marker(
+        HangulSyllableTypeV1Marker,
+        HangulSyllableType,
+        "props/hst@1"
+    ),
+    marker(
+        IndicSyllabicCategoryV1Marker,
+        IndicSyllabicCategory,
+        "props/InSC@1"
+    ),
     marker(JoiningTypeV1Marker, JoiningType, "props/jt@1"),
     marker(LineBreakV1Marker, LineBreak, "props/lb@1"),
     marker(ScriptV1Marker, Script, "props/sc@1"),
@@ -471,7 +487,10 @@ data_struct_generic!(
     marker(ExemplarCharactersIndexV1Marker, "props/exemplarchars/index@1"),
     marker(ExemplarCharactersMainV1Marker, "props/exemplarchars/main@1"),
     marker(ExemplarCharactersNumbersV1Marker, "props/exemplarchars/numbers@1"),
-    marker(ExemplarCharactersPunctuationV1Marker, "props/exemplarchars/punctuation@1"),
+    marker(
+        ExemplarCharactersPunctuationV1Marker,
+        "props/exemplarchars/punctuation@1"
+    )
 )]
 #[derive(Debug, Eq, PartialEq, Clone)]
 #[cfg_attr(

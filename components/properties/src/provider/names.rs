@@ -189,18 +189,38 @@ impl NormalizedPropertyNameStr {
 #[derive(Debug, Clone, PartialEq)]
 #[icu_provider::data_struct(
     marker(BidiClassNameToValueV1Marker, "propnames/from/bc@1", singleton),
-    marker(CanonicalCombiningClassNameToValueV1Marker, "propnames/from/ccc@1", singleton),
+    marker(
+        CanonicalCombiningClassNameToValueV1Marker,
+        "propnames/from/ccc@1",
+        singleton
+    ),
     marker(EastAsianWidthNameToValueV1Marker, "propnames/from/ea@1", singleton),
-    marker(GeneralCategoryMaskNameToValueV1Marker, "propnames/from/gcm@1", singleton),
+    marker(
+        GeneralCategoryMaskNameToValueV1Marker,
+        "propnames/from/gcm@1",
+        singleton
+    ),
     marker(GeneralCategoryNameToValueV1Marker, "propnames/from/gc@1", singleton),
-    marker(GraphemeClusterBreakNameToValueV1Marker, "propnames/from/GCB@1", singleton),
-    marker(HangulSyllableTypeNameToValueV1Marker, "propnames/from/hst@1", singleton),
-    marker(IndicSyllabicCategoryNameToValueV1Marker, "propnames/from/InSC@1", singleton),
+    marker(
+        GraphemeClusterBreakNameToValueV1Marker,
+        "propnames/from/GCB@1",
+        singleton
+    ),
+    marker(
+        HangulSyllableTypeNameToValueV1Marker,
+        "propnames/from/hst@1",
+        singleton
+    ),
+    marker(
+        IndicSyllabicCategoryNameToValueV1Marker,
+        "propnames/from/InSC@1",
+        singleton
+    ),
     marker(JoiningTypeNameToValueV1Marker, "propnames/from/jt@1", singleton),
     marker(LineBreakNameToValueV1Marker, "propnames/from/lb@1", singleton),
     marker(ScriptNameToValueV1Marker, "propnames/from/sc@1", singleton),
     marker(SentenceBreakNameToValueV1Marker, "propnames/from/SB@1", singleton),
-    marker(WordBreakNameToValueV1Marker, "propnames/from/WB@1", singleton),
+    marker(WordBreakNameToValueV1Marker, "propnames/from/WB@1", singleton)
 )]
 #[cfg_attr(
     feature = "datagen", 
@@ -225,8 +245,16 @@ pub struct PropertyValueNameToEnumMapV1<'data> {
 /// </div>
 #[derive(Debug, Clone, PartialEq)]
 #[icu_provider::data_struct(
-    marker(CanonicalCombiningClassValueToLongNameV1Marker, "propnames/to/long/sparse/ccc@1", singleton),
-    marker(CanonicalCombiningClassValueToShortNameV1Marker, "propnames/to/short/sparse/ccc@1", singleton),
+    marker(
+        CanonicalCombiningClassValueToLongNameV1Marker,
+        "propnames/to/long/sparse/ccc@1",
+        singleton
+    ),
+    marker(
+        CanonicalCombiningClassValueToShortNameV1Marker,
+        "propnames/to/short/sparse/ccc@1",
+        singleton
+    )
 )]
 #[cfg_attr(
     feature = "datagen", 
@@ -251,27 +279,111 @@ pub struct PropertyEnumToValueNameSparseMapV1<'data> {
 /// </div>
 #[derive(Debug, Clone, PartialEq)]
 #[icu_provider::data_struct(
-    marker(BidiClassValueToLongNameV1Marker, "propnames/to/long/linear/bc@1", singleton),
-    marker(BidiClassValueToShortNameV1Marker, "propnames/to/short/linear/bc@1", singleton),
-    marker(EastAsianWidthValueToLongNameV1Marker, "propnames/to/long/linear/ea@1", singleton),
-    marker(EastAsianWidthValueToShortNameV1Marker, "propnames/to/short/linear/ea@1", singleton),
-    marker(GeneralCategoryValueToLongNameV1Marker, "propnames/to/long/linear/gc@1", singleton),
-    marker(GeneralCategoryValueToShortNameV1Marker, "propnames/to/short/linear/gc@1", singleton),
-    marker(GraphemeClusterBreakValueToLongNameV1Marker, "propnames/to/long/linear/GCB@1", singleton),
-    marker(GraphemeClusterBreakValueToShortNameV1Marker, "propnames/to/short/linear/GCB@1", singleton),
-    marker(HangulSyllableTypeValueToLongNameV1Marker, "propnames/to/long/linear/hst@1", singleton),
-    marker(HangulSyllableTypeValueToShortNameV1Marker, "propnames/to/short/linear/hst@1", singleton),
-    marker(IndicSyllabicCategoryValueToLongNameV1Marker, "propnames/to/long/linear/InSC@1", singleton),
-    marker(IndicSyllabicCategoryValueToShortNameV1Marker, "propnames/to/short/linear/InSC@1", singleton),
-    marker(JoiningTypeValueToLongNameV1Marker, "propnames/to/long/linear/jt@1", singleton),
-    marker(JoiningTypeValueToShortNameV1Marker, "propnames/to/short/linear/jt@1", singleton),
-    marker(LineBreakValueToLongNameV1Marker, "propnames/to/long/linear/lb@1", singleton),
-    marker(LineBreakValueToShortNameV1Marker, "propnames/to/short/linear/lb@1", singleton),
-    marker(ScriptValueToLongNameV1Marker, "propnames/to/long/linear/sc@1", singleton),
-    marker(SentenceBreakValueToLongNameV1Marker, "propnames/to/long/linear/SB@1", singleton),
-    marker(SentenceBreakValueToShortNameV1Marker, "propnames/to/short/linear/SB@1", singleton),
-    marker(WordBreakValueToLongNameV1Marker, "propnames/to/long/linear/WB@1", singleton),
-    marker(WordBreakValueToShortNameV1Marker, "propnames/to/short/linear/WB@1", singleton),
+    marker(
+        BidiClassValueToLongNameV1Marker,
+        "propnames/to/long/linear/bc@1",
+        singleton
+    ),
+    marker(
+        BidiClassValueToShortNameV1Marker,
+        "propnames/to/short/linear/bc@1",
+        singleton
+    ),
+    marker(
+        EastAsianWidthValueToLongNameV1Marker,
+        "propnames/to/long/linear/ea@1",
+        singleton
+    ),
+    marker(
+        EastAsianWidthValueToShortNameV1Marker,
+        "propnames/to/short/linear/ea@1",
+        singleton
+    ),
+    marker(
+        GeneralCategoryValueToLongNameV1Marker,
+        "propnames/to/long/linear/gc@1",
+        singleton
+    ),
+    marker(
+        GeneralCategoryValueToShortNameV1Marker,
+        "propnames/to/short/linear/gc@1",
+        singleton
+    ),
+    marker(
+        GraphemeClusterBreakValueToLongNameV1Marker,
+        "propnames/to/long/linear/GCB@1",
+        singleton
+    ),
+    marker(
+        GraphemeClusterBreakValueToShortNameV1Marker,
+        "propnames/to/short/linear/GCB@1",
+        singleton
+    ),
+    marker(
+        HangulSyllableTypeValueToLongNameV1Marker,
+        "propnames/to/long/linear/hst@1",
+        singleton
+    ),
+    marker(
+        HangulSyllableTypeValueToShortNameV1Marker,
+        "propnames/to/short/linear/hst@1",
+        singleton
+    ),
+    marker(
+        IndicSyllabicCategoryValueToLongNameV1Marker,
+        "propnames/to/long/linear/InSC@1",
+        singleton
+    ),
+    marker(
+        IndicSyllabicCategoryValueToShortNameV1Marker,
+        "propnames/to/short/linear/InSC@1",
+        singleton
+    ),
+    marker(
+        JoiningTypeValueToLongNameV1Marker,
+        "propnames/to/long/linear/jt@1",
+        singleton
+    ),
+    marker(
+        JoiningTypeValueToShortNameV1Marker,
+        "propnames/to/short/linear/jt@1",
+        singleton
+    ),
+    marker(
+        LineBreakValueToLongNameV1Marker,
+        "propnames/to/long/linear/lb@1",
+        singleton
+    ),
+    marker(
+        LineBreakValueToShortNameV1Marker,
+        "propnames/to/short/linear/lb@1",
+        singleton
+    ),
+    marker(
+        ScriptValueToLongNameV1Marker,
+        "propnames/to/long/linear/sc@1",
+        singleton
+    ),
+    marker(
+        SentenceBreakValueToLongNameV1Marker,
+        "propnames/to/long/linear/SB@1",
+        singleton
+    ),
+    marker(
+        SentenceBreakValueToShortNameV1Marker,
+        "propnames/to/short/linear/SB@1",
+        singleton
+    ),
+    marker(
+        WordBreakValueToLongNameV1Marker,
+        "propnames/to/long/linear/WB@1",
+        singleton
+    ),
+    marker(
+        WordBreakValueToShortNameV1Marker,
+        "propnames/to/short/linear/WB@1",
+        singleton
+    )
 )]
 #[cfg_attr(
     feature = "datagen", 
@@ -296,9 +408,11 @@ pub struct PropertyEnumToValueNameLinearMapV1<'data> {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[derive(Debug, Clone, PartialEq)]
-#[icu_provider::data_struct(
-    marker(ScriptValueToShortNameV1Marker, "propnames/to/short/linear4/sc@1", singleton),
-)]
+#[icu_provider::data_struct(marker(
+    ScriptValueToShortNameV1Marker,
+    "propnames/to/short/linear4/sc@1",
+    singleton
+))]
 #[cfg_attr(
     feature = "datagen", 
     derive(serde::Serialize, databake::Bake),
