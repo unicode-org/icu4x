@@ -105,16 +105,11 @@ impl IterableDataProvider<UnitsDisplayNameV1Marker> for DatagenProvider {
                 quantities.insert(quantity);
             }
 
-            for quantity in quantities {
-                use std::io::{self, Write};
-                println!("Quantity: {}", quantity);
-                io::stdout().flush().expect("Failed to flush stdout");
-
-                let finl_locale = make_data_locale_with_langid_and_quantity(&langid, quantity);
-                match finl_locale {
-                    Ok(data_locale) => data_locales.push(data_locale),
-                    Err(e) => println!("Error Quantity: {}", quantity),
-                }
+            for quantity in &quantities {
+                let truncated_quantity = quantity.get(..8).unwrap_or(quantity);
+                data_locales.push(make_data_locale_with_langid_and_quantity(
+                    &langid, truncated_quantity,
+                )?);
             }
         }
 
