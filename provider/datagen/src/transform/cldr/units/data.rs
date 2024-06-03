@@ -71,7 +71,9 @@ impl IterableDataProvider<UnitsDisplayNameV1Marker> for DatagenProvider {
                 Ok(subtag) => subtag,
                 Err(e) => {
                     println!("Error FromStr: {:?}", e);
-                    return Err(DataError::custom("Failed to parse subtag").with_debug_context(quantity));
+                    return Err(
+                        DataError::custom("Failed to parse subtag").with_debug_context(quantity)
+                    );
                 }
             };
             data_locale.set_aux(AuxiliaryKeys::from_subtag(subtag));
@@ -108,9 +110,7 @@ impl IterableDataProvider<UnitsDisplayNameV1Marker> for DatagenProvider {
                 println!("Quantity: {}", quantity);
                 io::stdout().flush().expect("Failed to flush stdout");
 
-                let finl_locale = make_data_locale_with_langid_and_quantity(
-                    &langid, quantity,
-                );
+                let finl_locale = make_data_locale_with_langid_and_quantity(&langid, quantity);
                 match finl_locale {
                     Ok(data_locale) => data_locales.push(data_locale),
                     Err(e) => println!("Error Quantity: {}", quantity),

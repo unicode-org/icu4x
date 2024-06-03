@@ -8,9 +8,8 @@
 //! <https://github.com/unicode-org/cldr-json/blob/master/cldr-json/cldr-units-full/main/en/units.json>
 
 use serde::Deserialize;
-use std::collections::BTreeMap;
 use serde_json::Value;
-
+use std::collections::BTreeMap;
 
 // TODO: replace Value with specific structs
 #[derive(PartialEq, Debug, Deserialize)]
