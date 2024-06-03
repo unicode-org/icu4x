@@ -67,15 +67,8 @@ impl IterableDataProvider<UnitsDisplayNameV1Marker> for DatagenProvider {
             quantity: &str,
         ) -> Result<DataLocale, DataError> {
             let mut data_locale = DataLocale::from(langid);
-            let subtag = match Subtag::from_str(quantity) {
-                Ok(subtag) => subtag,
-                Err(e) => {
-                    println!("Error FromStr: {:?}", e);
-                    return Err(
-                        DataError::custom("Failed to parse subtag").with_debug_context(quantity)
-                    );
-                }
-            };
+            let subtag = Subtag::from_str(quantity)
+                .map_err(|e| DataError::custom("Failed to parse subtag").with_debug_context(quantity))?;
             data_locale.set_aux(AuxiliaryKeys::from_subtag(subtag));
             Ok(data_locale)
         }
@@ -88,27 +81,25 @@ impl IterableDataProvider<UnitsDisplayNameV1Marker> for DatagenProvider {
             let units_format_data: &cldr_serde::units::data::Resource =
                 self.cldr()?.units().read_and_parse(&langid, "units.json")?;
             let units_format_data = &units_format_data.main.value.units;
-            let mut quantities = HashSet::new();
-            for (long_key, _) in units_format_data.long.iter() {
-                if long_key.chars().next().unwrap_or_default().is_digit(10)
-                    || long_key.starts_with("per")
-                    || long_key.starts_with("times")
-                    || long_key.starts_with("power")
-                {
-                    continue;
-                }
+            let quantities: HashSet<_> = units_format_data
+                .long
+                .keys()
+                .filter(|&long_key| {
+                    !long_key.starts_with(|c: char| c.is_digit(10))
+                        && !["per", "times", "power"]
+                            .iter()
+                            .any(|&prefix| long_key.starts_with(prefix))
+                })
+                .filter_map(|long_key| long_key.split('-').next())
+                // Truncate each quantity to 8 characters, the maximum length of a subtag.
+                // According to the CLDR spec, the first 8 characters of a quantity are sufficient for uniqueness. ?? // TODO: check this
+                .map(|quantity| quantity.get(..8).unwrap_or(quantity))
+                .collect();
 
-                let quantity = long_key
-                    .split("-")
-                    .next()
-                    .ok_or(DataError::custom("Failed to split long_key"))?;
-                quantities.insert(quantity);
-            }
-
-            for quantity in &quantities {
-                let truncated_quantity = quantity.get(..8).unwrap_or(quantity);
+            for &truncated_quantity in &quantities {
                 data_locales.push(make_data_locale_with_langid_and_quantity(
-                    &langid, truncated_quantity,
+                    &langid,
+                    truncated_quantity,
                 )?);
             }
         }
