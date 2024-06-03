@@ -1220,6 +1220,7 @@ dependencies = [
  "icu_locale_core",
  "icu_locale_data",
  "icu_normalizer",
+ "icu_normalizer_data",
  "icu_pattern",
  "icu_plurals",
  "icu_properties",
