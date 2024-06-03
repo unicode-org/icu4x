@@ -4,9 +4,17 @@
 
 extern crate icu_datagen;
 
-use icu_datagen::baked_exporter::*;
+use icu_datagen::baked_exporter;
+use icu_datagen::fs_exporter;
+use icu_datagen::fs_exporter::serializers::AbstractSerializer;
 use icu_datagen::prelude::*;
+use icu_provider::datagen::*;
+use icu_provider::prelude::*;
+use std::collections::BTreeMap;
+use std::fs::File;
+use std::io::Write;
 use std::path::Path;
+use std::sync::Mutex;
 
 const REPO_VERSION: &str = env!("CARGO_PKG_VERSION");
 const EXPERIMENTAL_VERSION: &str = "0.1.0";
@@ -37,9 +45,9 @@ fn main() {
         .init()
         .unwrap();
 
-    let args = std::env::args();
+    let args = std::env::args().skip(1).collect::<Vec<_>>();
 
-    let components = if args.len() == 1 {
+    let components = if args.is_empty() {
         COMPONENTS
             .iter()
             .map(|(krate, keys, version)| (krate.to_string(), *keys, *version))
@@ -50,7 +58,7 @@ fn main() {
                 .iter()
                 .map(|(krate, keys, version)| (*krate, (*keys, *version))),
         );
-        args.skip(1)
+        args.into_iter()
             .filter_map(|krate| {
                 map.get(krate.as_str())
                     .map(|(keys, version)| (krate, *keys, *version))
@@ -75,7 +83,7 @@ fn main() {
         )
         .with_recommended_segmenter_models();
 
-    let mut options = Options::default();
+    let mut options = baked_exporter::Options::default();
     options.overwrite = true;
     options.pretty = true;
 
@@ -117,17 +125,94 @@ fn main() {
             .unwrap();
         }
 
+        let baked_exporter =
+            baked_exporter::BakedExporter::new(path.join("data"), options).unwrap();
+        let fingerprinter = PostcardFingerprintExporter {
+            size_hash: Default::default(),
+            fingerprints: crlify::BufWriterWithLineEndingFix::new(
+                File::create(path.join("fingerprints.csv")).unwrap(),
+            ),
+        };
+
         driver
             .clone()
             .with_keys(keys.iter().copied())
             .export(
                 &source,
-                BakedExporter::new(path.join("data"), options).unwrap(),
+                MultiExporter::new(vec![Box::new(baked_exporter), Box::new(fingerprinter)]),
             )
             .unwrap();
 
         for file in ["data/any.rs", "data/mod.rs"] {
             std::fs::remove_file(path.join(file)).unwrap();
         }
+    }
+}
+
+struct PostcardFingerprintExporter<F> {
+    size_hash: Mutex<BTreeMap<(DataKey, String), (usize, u64)>>,
+    fingerprints: F,
+}
+
+impl<F: Write + Send + Sync> DataExporter for PostcardFingerprintExporter<F> {
+    fn put_payload(
+        &self,
+        key: DataKey,
+        locale: &DataLocale,
+        key_attributes: &DataKeyAttributes,
+        payload_before: &DataPayload<ExportMarker>,
+    ) -> Result<(), DataError> {
+        let mut serialized = vec![];
+
+        fs_exporter::serializers::Postcard::new(Default::default())
+            .serialize(payload_before, &mut serialized)?;
+
+        let size = serialized.len();
+
+        // We're using SipHash, which is deprecated, but we want a stable hasher
+        // (we're fine with it not being cryptographically secure since we're just using it to track diffs)
+        #[allow(deprecated)]
+        use std::hash::{Hash, Hasher, SipHasher};
+        #[allow(deprecated)]
+        let mut hasher = SipHasher::new();
+        serialized.iter().for_each(|b| b.hash(&mut hasher));
+        let hash = hasher.finish();
+
+        self.size_hash.lock().expect("poison").insert(
+            (
+                key,
+                DataRequest {
+                    locale,
+                    key_attributes,
+                    ..Default::default()
+                }
+                .legacy_encode(),
+            ),
+            (size, hash),
+        );
+
+        Ok(())
+    }
+
+    fn flush(&self, _key: DataKey) -> Result<(), DataError> {
+        Ok(())
+    }
+
+    fn flush_with_built_in_fallback(
+            &self,
+            _key: DataKey,
+            _fallback_mode: BuiltInFallbackMode,
+        ) -> Result<(), DataError> {
+        Ok(())
+    }
+
+    fn close(&mut self) -> Result<(), DataError> {
+        for ((key, req), (size, hash)) in self.size_hash.get_mut().expect("poison") {
+            writeln!(&mut self.fingerprints, "{key}, {req}, {size}B, {hash:x}")?;
+        }
+        Ok(())
+    }
+    fn supports_built_in_fallback(&self) -> bool {
+        true
     }
 }
