@@ -38,7 +38,7 @@ impl DataProvider<UnitsDisplayNameV1Marker> for DatagenProvider {
         // Get units
         let units_format_data: &cldr_serde::units::data::Resource = self
             .cldr()?
-            .displaynames()
+            .units()
             .read_and_parse(&langid, "units.json")?;
         let units_format_data = &units_format_data.main.value.units;
 
@@ -78,12 +78,12 @@ impl IterableDataProvider<UnitsDisplayNameV1Marker> for DatagenProvider {
         for langid in langids {
             let units_format_data: &cldr_serde::units::data::Resource = self
                 .cldr()?
-                .displaynames()
+                .units()
                 .read_and_parse(&langid, "units.json")?;
             let units_format_data = &units_format_data.main.value.units;
             let mut hit_times = false;
             let mut quantities = HashSet::new();
-            for (long_key, _) in units_format_data.data.long.iter() {
+            for (long_key, _) in units_format_data.long.iter() {
                 if !hit_times {
                     if long_key.starts_with("times") {
                         hit_times = true;

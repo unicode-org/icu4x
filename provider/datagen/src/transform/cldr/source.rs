@@ -72,6 +72,10 @@ impl CldrCache {
         CldrDirLang(self, "cldr-localenames".to_owned())
     }
 
+    pub(in crate::provider) fn units(&self) -> CldrDirLang<'_> {
+        CldrDirLang(self, "cldr-units".to_owned())
+    }
+
     pub(in crate::provider) fn dates(&self, cal: &str) -> CldrDirLang<'_> {
         CldrDirLang(
             self,

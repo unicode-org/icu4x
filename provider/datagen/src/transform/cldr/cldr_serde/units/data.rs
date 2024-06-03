@@ -23,13 +23,8 @@ pub struct UnitsData {
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct Units {
-    pub data: UnitsData,
-}
-
-#[derive(PartialEq, Debug, Deserialize)]
 pub struct LangUnits {
-    pub units: Units,
+    pub units: UnitsData,
 }
 
 pub type Resource = super::super::LocaleResource<LangUnits>;
