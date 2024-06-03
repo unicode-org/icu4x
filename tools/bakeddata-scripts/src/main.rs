@@ -199,10 +199,10 @@ impl<F: Write + Send + Sync> DataExporter for PostcardFingerprintExporter<F> {
     }
 
     fn flush_with_built_in_fallback(
-            &self,
-            _key: DataKey,
-            _fallback_mode: BuiltInFallbackMode,
-        ) -> Result<(), DataError> {
+        &self,
+        _key: DataKey,
+        _fallback_mode: BuiltInFallbackMode,
+    ) -> Result<(), DataError> {
         Ok(())
     }
 
