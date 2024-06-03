@@ -12,14 +12,14 @@ use std::collections::BTreeMap;
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub struct UnitsData {
-    long: BTreeMap<String, String>,
-    short: BTreeMap<String, String>,
-    narrow: BTreeMap<String, String>,
+    pub long: BTreeMap<String, String>,
+    pub short: BTreeMap<String, String>,
+    pub narrow: BTreeMap<String, String>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub struct Units {
-    pub units: UnitsData,
+    pub data: UnitsData,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
@@ -27,5 +27,4 @@ pub struct LangUnits {
     pub units: Units,
 }
 
-// uncomment when LocaleResource is used
-// pub type Resource = super::super::LocaleResource<LangUnits>;
+pub type Resource = super::super::LocaleResource<LangUnits>;

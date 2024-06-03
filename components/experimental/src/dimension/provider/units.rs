@@ -23,7 +23,7 @@ use zerovec::{VarZeroVec, ZeroMap2d};
 //     - one for the narrow width (e.g. "{0} m")
 //     - one for the DisplayNames (e.g. "meter")
 
-#[icu_provider::data_struct(UnitsDisplayNameV1Marker = "units-display-name/essentials@1")]
+#[icu_provider::data_struct(UnitsDisplayNameV1Marker = "units/displaynames@1")]
 #[derive(Clone, PartialEq, Debug)]
 #[cfg_attr(
     feature = "datagen",
@@ -33,12 +33,18 @@ use zerovec::{VarZeroVec, ZeroMap2d};
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct UnitsDisplayName<'data> {
+    // TODO: store the pattern in a SinglePattern.
+    /// Contains the long width patterns for the units.
     #[cfg_attr(feature = "serde", serde(borrow))]
     long_width: ZeroMap2d<'data, str, Count, str>,
 
+    // TODO: store the pattern in a SinglePattern.
+    /// Contains the short width patterns for the units.
     #[cfg_attr(feature = "serde", serde(borrow))]
     short_width: ZeroMap2d<'data, str, Count, str>,
 
+    // TODO: store the pattern in a SinglePattern.
+    /// Contains the narrow width patterns for the units.
     #[cfg_attr(feature = "serde", serde(borrow))]
     narrow_width: ZeroMap2d<'data, str, Count, str>,
 }
