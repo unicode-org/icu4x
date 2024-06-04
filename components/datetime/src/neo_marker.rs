@@ -717,7 +717,7 @@ macro_rules! impl_date_marker {
         /// In [`NeoFormatter`](crate::neo::NeoFormatter):
         ///
         /// ```
-        /// use icu::calendar::DateTime;
+        /// use icu::calendar::Date;
         /// use icu::datetime::neo::NeoFormatter;
         #[doc = concat!("use icu::datetime::neo_marker::", stringify!($type), ";")]
         /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
@@ -728,7 +728,7 @@ macro_rules! impl_date_marker {
         ///     NeoSkeletonLength::Medium,
         /// )
         /// .unwrap();
-        /// let dt = DateTime::try_new_iso_datetime(2024, 5, 17, 15, 47, 50).unwrap();
+        /// let dt = Date::try_new_iso_date(2024, 5, 17).unwrap();
         ///
         /// assert_try_writeable_eq!(
         ///     fmt.convert_and_format(&dt),
@@ -873,6 +873,7 @@ macro_rules! impl_time_marker {
         /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
         /// use icu::locale::locale;
         /// use writeable::assert_try_writeable_eq;
+        ///
         #[doc = concat!("let fmt = NeoFormatter::<", stringify!($type), ">::try_new(")]
         ///     &locale!("en").into(),
         ///     NeoSkeletonLength::Medium,
@@ -952,6 +953,31 @@ macro_rules! impl_datetime_marker {
         #[doc = concat!("Marker for ", $description, ": ", $expectation)]
         ///
         /// # Examples
+        ///
+        /// In [`NeoFormatter`](crate::neo::NeoFormatter):
+        ///
+        /// ```
+        /// use icu::calendar::DateTime;
+        /// use icu::datetime::neo::NeoFormatter;
+        #[doc = concat!("use icu::datetime::neo_marker::", stringify!($type), ";")]
+        /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
+        /// use icu::locale::locale;
+        /// use writeable::assert_try_writeable_eq;
+        ///
+        #[doc = concat!("let fmt = NeoFormatter::<", stringify!($type), ">::try_new(")]
+        ///     &locale!("en").into(),
+        ///     NeoSkeletonLength::Medium,
+        /// )
+        /// .unwrap();
+        /// let dt = DateTime::try_new_iso_datetime(2024, 5, 17, 15, 47, 50).unwrap();
+        ///
+        /// assert_try_writeable_eq!(
+        ///     fmt.convert_and_format(&dt),
+        #[doc = concat!("    \"", $expectation, "\"")]
+        /// );
+        /// ```
+        ///
+        /// In [`TypedNeoFormatter`](crate::neo::TypedNeoFormatter):
         ///
         /// ```
         /// use icu::calendar::DateTime;
@@ -1066,3 +1092,106 @@ impl_date_marker!(
     input_day_of_year = no,
     input_any_calendar_kind = yes,
 );
+
+/// Marker for a date skeleton provided at runtime.
+///
+/// # Examples
+///
+/// In [`NeoFormatter`](crate::neo::NeoFormatter):
+///
+/// ```
+/// use icu::calendar::DateTime;
+/// use icu::datetime::neo::NeoFormatter;
+/// use icu::datetime::neo_marker::NeoAnyDateMarker;
+/// use icu::datetime::neo_skeleton::NeoDateComponents;
+/// use icu::datetime::neo_skeleton::NeoSkeletonLength;
+/// use icu::locale::locale;
+/// use writeable::assert_try_writeable_eq;
+///
+/// let fmt = NeoFormatter::<NeoAnyDateMarker>::try_new_with_skeleton(
+///     &locale!("en").into(),
+///     NeoDateComponents::EraYearMonth,
+///     NeoSkeletonLength::Long,
+/// )
+/// .unwrap();
+/// let dt = DateTime::try_new_iso_datetime(2024, 5, 17, 15, 47, 50).unwrap();
+///
+/// assert_try_writeable_eq!(
+///     fmt.convert_and_format(&dt),
+////    "xyz"
+/// );
+/// ```
+///
+/// In [`TypedNeoFormatter`](crate::neo::TypedNeoFormatter):
+///
+/// ```
+/// use icu::calendar::Date;
+/// use icu::calendar::Gregorian;
+/// use icu::datetime::neo::TypedNeoFormatter;
+/// use icu::datetime::neo_marker::NeoAnyDateMarker;
+/// use icu::datetime::neo_skeleton::NeoSkeletonLength;
+/// use icu::locale::locale;
+/// use writeable::assert_try_writeable_eq;
+///
+/// let fmt = TypedNeoFormatter::<Gregorian, NeoAnyDateMarker>::try_new(
+///     &locale!("en").into(),
+///     NeoSkeletonLength::Medium,
+/// )
+/// .unwrap();
+/// let dt = Date::try_new_gregorian_date(2024, 5, 17).unwrap();
+///
+/// assert_try_writeable_eq!(
+///     fmt.format(&dt),
+///     \"", $expectation, "\"")]
+/// );
+/// ```
+#[derive(Debug)]
+#[allow(clippy::exhaustive_enums)] // empty enum
+pub enum NeoAnyDateMarker {}
+
+impl private::Sealed for NeoAnyDateMarker {}
+
+impl<C: CldrCalendar> TypedDateMarkers<C> for NeoAnyDateMarker {
+    type DateSkeletonPatternsV1Marker = datetime_marker_helper!(@dates/typed, yes);
+    type TypedInputMarker = datetime_marker_helper!(@input/typed, yes);
+    type YearInput = datetime_marker_helper!(@input/year, yes);
+    type MonthInput = datetime_marker_helper!(@input/month, yes);
+    type DayOfMonthInput = datetime_marker_helper!(@input/day_of_month, yes);
+    type DayOfWeekInput = datetime_marker_helper!(@input/day_of_week, yes);
+    type DayOfYearInput = datetime_marker_helper!(@input/day_of_year, yes);
+    type AnyCalendarKindInput = datetime_marker_helper!(@input/any_calendar_kind, yes);
+    type YearNamesV1Marker = datetime_marker_helper!(@years/typed, yes);
+    type MonthNamesV1Marker = datetime_marker_helper!(@months/typed, yes);
+    type WeekdayNamesV1Marker = datetime_marker_helper!(@weekdays, yes);
+}
+
+impl DateMarkers for NeoAnyDateMarker {
+    type Skel = datetime_marker_helper!(@calmarkers, yes);
+    type YearInput = datetime_marker_helper!(@input/year, yes);
+    type MonthInput = datetime_marker_helper!(@input/month, yes);
+    type DayOfMonthInput = datetime_marker_helper!(@input/day_of_month, yes);
+    type DayOfWeekInput = datetime_marker_helper!(@input/day_of_week, yes);
+    type DayOfYearInput = datetime_marker_helper!(@input/day_of_year, yes);
+    type AnyCalendarKindInput = datetime_marker_helper!(@input/any_calendar_kind, yes);
+    type Year = datetime_marker_helper!(@calmarkers, yes);
+    type Month = datetime_marker_helper!(@calmarkers, yes);
+    type WeekdayNamesV1Marker = datetime_marker_helper!(@weekdays, yes);
+}
+
+/*
+impl<C: CldrCalendar> TypedNeoFormatterMarker<C> for NeoAnyDateMarker {
+    const COMPONENTS: NeoComponents = NeoComponents::Date($components);
+    type D = Self;
+    type T = NeoNeverMarker;
+    type DateTimeNamesMarker = DateMarker;
+    type DateTimePatternV1Marker = datetime_marker_helper!(@datetimes, no);
+}
+
+impl NeoFormatterMarker for NeoAnyDateMarker {
+    const COMPONENTS: NeoComponents = NeoComponents::Date($components);
+    type D = Self;
+    type T = NeoNeverMarker;
+    type DateTimeNamesMarker = DateMarker;
+    type DateTimePatternV1Marker = datetime_marker_helper!(@datetimes, no);
+}
+*/
