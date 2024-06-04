@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! The parser module contains the implementation details for `IXDTFParser` and `ISODurationParser`
+//! The parser module contains the implementation details for `IxdtfParser` and `IsoDurationParser`
 
 use crate::{ParserError, ParserResult};
 
@@ -50,7 +50,7 @@ macro_rules! assert_syntax {
 ///
 /// let ixdtf_str = "2024-03-02T08:48:00-05:00[America/New_York]";
 ///
-/// let result = IxdtfParser::new(ixdtf_str.as_bytes()).parse().unwrap();
+/// let result = IxdtfParser::from_str(ixdtf_str).parse().unwrap();
 ///
 /// let date = result.date.unwrap();
 /// let time = result.time.unwrap();
@@ -77,11 +77,21 @@ pub struct IxdtfParser<'a> {
 }
 
 impl<'a> IxdtfParser<'a> {
-    /// Creates a new `IxdtfParser` from a provided `&str`.
-    pub fn new(value: &'a [u8]) -> Self {
+    /// Creates a new `IxdtfParser` from a slice of utf-8 bytes.
+    #[inline]
+    #[must_use]
+    pub fn from_utf8(source: &'a [u8]) -> Self {
         Self {
-            cursor: Cursor::new(value),
+            cursor: Cursor::new(source),
         }
+    }
+
+    /// Creates a new `IxdtfParser` from a source `&str`.
+    #[inline]
+    #[must_use]
+    #[allow(clippy::should_implement_trait)]
+    pub fn from_str(source: &'a str) -> Self {
+        Self::from_utf8(source.as_bytes())
     }
 
     /// Parses the source as an [extended Date/Time string][rfc9557].
@@ -115,7 +125,7 @@ impl<'a> IxdtfParser<'a> {
     ///
     /// let extended_year_month = "2020-11[u-ca=iso8601]";
     ///
-    /// let result = IxdtfParser::new(extended_year_month.as_bytes())
+    /// let result = IxdtfParser::from_str(extended_year_month)
     ///     .parse_year_month()
     ///     .unwrap();
     ///
@@ -148,7 +158,7 @@ impl<'a> IxdtfParser<'a> {
     /// # use ixdtf::parsers::IxdtfParser;
     /// let extended_month_day = "1107[+04:00]";
     ///
-    /// let result = IxdtfParser::new(extended_month_day.as_bytes())
+    /// let result = IxdtfParser::from_str(extended_month_day)
     ///     .parse_month_day()
     ///     .unwrap();
     ///
@@ -181,7 +191,7 @@ impl<'a> IxdtfParser<'a> {
     /// # use ixdtf::parsers::{IxdtfParser, records::{Sign, TimeZoneRecord}};
     /// let extended_time = "12:01:04-05:00[America/New_York][u-ca=iso8601]";
     ///
-    /// let result = IxdtfParser::new(extended_time.as_bytes()).parse_time().unwrap();
+    /// let result = IxdtfParser::from_str(extended_time).parse_time().unwrap();
     ///
     /// let time = result.time.unwrap();
     /// let offset = result.offset.unwrap();
@@ -224,7 +234,7 @@ impl<'a> IxdtfParser<'a> {
 ///
 /// let duration_str = "P1Y2M1DT2H10M30S";
 ///
-/// let result = IsoDurationParser::new(duration_str.as_bytes()).parse().unwrap();
+/// let result = IsoDurationParser::from_str(duration_str).parse().unwrap();
 ///
 /// let date_duration = result.date.unwrap();
 ///
@@ -257,11 +267,21 @@ pub struct IsoDurationParser<'a> {
 
 #[cfg(feature = "duration")]
 impl<'a> IsoDurationParser<'a> {
-    /// Creates a new `IsoDurationParser` from a target `&str`.
-    pub fn new(value: &'a [u8]) -> Self {
+    /// Creates a new `IsoDurationParser` from a slice of utf-8 bytes.
+    #[inline]
+    #[must_use]
+    pub fn from_utf8(source: &'a [u8]) -> Self {
         Self {
-            cursor: Cursor::new(value),
+            cursor: Cursor::new(source),
         }
+    }
+
+    /// Creates a new `IsoDurationParser` from a source `&str`.
+    #[inline]
+    #[must_use]
+    #[allow(clippy::should_implement_trait)]
+    pub fn from_str(source: &'a str) -> Self {
+        Self::from_utf8(source.as_bytes())
     }
 
     /// Parse the contents of this `IsoDurationParser` into a `DurationParseRecord`.
@@ -274,7 +294,7 @@ impl<'a> IsoDurationParser<'a> {
     /// # use ixdtf::parsers::{IsoDurationParser, records::DurationParseRecord };
     /// let date_duration = "P1Y2M3W1D";
     ///
-    /// let result = IsoDurationParser::new(date_duration.as_bytes()).parse().unwrap();
+    /// let result = IsoDurationParser::from_str(date_duration).parse().unwrap();
     ///
     /// let date_duration = result.date.unwrap();
     ///
@@ -291,7 +311,7 @@ impl<'a> IsoDurationParser<'a> {
     /// # use ixdtf::parsers::{IsoDurationParser, records::{DurationParseRecord, TimeDurationRecord }};
     /// let time_duration = "PT2H10M30S";
     ///
-    /// let result = IsoDurationParser::new(time_duration.as_bytes()).parse().unwrap();
+    /// let result = IsoDurationParser::from_str(time_duration).parse().unwrap();
     ///
     /// let (hours, minutes, seconds, fraction) = match result.time {
     ///     // Hours variant is defined as { hours: u32, fraction: u64 }
@@ -398,7 +418,7 @@ impl<'a> Cursor<'a> {
     ///   - Returns a SyntaxError if value is not an ascii digit
     ///   - Returns an AbruptEnd error if cursor ends.
     fn next_digit(&mut self) -> ParserResult<Option<u8>> {
-        // Safety: Char digit with a radix of ten must be in the range of a u8
+        // Note: Char digit with a radix of ten must be in the range of a u8
         Ok(self
             .next_or(ParserError::InvalidEnd)?
             .to_digit(10)

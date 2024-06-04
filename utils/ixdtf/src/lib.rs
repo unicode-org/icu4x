@@ -25,7 +25,7 @@
 //!
 //! let ixdtf_str = "2024-03-02T08:48:00-05:00[America/New_York]";
 //!
-//! let result = IxdtfParser::new(ixdtf_str.as_bytes()).parse().unwrap();
+//! let result = IxdtfParser::from_str(ixdtf_str).parse().unwrap();
 //!
 //! let date = result.date.unwrap();
 //! let time = result.time.unwrap();
@@ -142,7 +142,7 @@
 //! let example_one =
 //!     "2024-03-02T08:48:00-05:00[u-ca=iso8601][America/New_York]";
 //!
-//! let result = IxdtfParser::new(example_one.as_bytes()).parse();
+//! let result = IxdtfParser::from_str(example_one).parse();
 //!
 //! assert_eq!(result, Err(ParserError::AnnotationKeyLeadingChar));
 //! ```
@@ -158,7 +158,7 @@
 //!
 //! let example_two = "2024-03-02T08:48:00-05:00[u-ca=iso8601][!u-ca=japanese]";
 //!
-//! let result = IxdtfParser::new(example_two.as_bytes()).parse();
+//! let result = IxdtfParser::from_str(example_two).parse();
 //!
 //! assert_eq!(result, Err(ParserError::CriticalDuplicateCalendar));
 //! ```
@@ -174,7 +174,7 @@
 //! let example_three =
 //!     "2024-03-02T08:48:00-05:00[u-ca=iso8601][!answer-to-universe=fortytwo]";
 //!
-//! let result = IxdtfParser::new(example_three.as_bytes()).parse();
+//! let result = IxdtfParser::from_str(example_three).parse();
 //!
 //! assert_eq!(result, Err(ParserError::UnrecognizedCritical));
 //! ```
@@ -207,7 +207,7 @@
 //!
 //! let example_two = "2024-03-02T08:48:00+01:00[!America/New_York]";
 //!
-//! let result = IxdtfParser::new(example_two.as_bytes()).parse().unwrap();
+//! let result = IxdtfParser::from_str(example_two).parse().unwrap();
 //!
 //! let tz_annotation = result.tz.unwrap();
 //! let offset = result.offset.unwrap();
@@ -250,7 +250,7 @@
 //!
 //! let mut answer = None;
 //!
-//! let _ = IxdtfParser::new(example_with_custom_key.as_bytes()).parse_with_annotation_handler(|annotation| {
+//! let _ = IxdtfParser::from_str(example_with_custom_key).parse_with_annotation_handler(|annotation| {
 //!     if annotation.key == "answer-to-universe".as_bytes() {
 //!         answer.get_or_insert(annotation);
 //!         // Found our value! We don't need `ixdtf` to handle this annotation.
