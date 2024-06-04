@@ -17,7 +17,7 @@ pub struct IxdtfParseRecord<'a> {
     /// Parsed `TimeZone` annotation with critical flag and data (UTCOffset | IANA name)
     pub tz: Option<TimeZoneAnnotation<'a>>,
     /// The parsed calendar value.
-    pub calendar: Option<&'a str>,
+    pub calendar: Option<&'a [u8]>,
 }
 
 #[non_exhaustive]
@@ -27,9 +27,9 @@ pub struct Annotation<'a> {
     /// Whether this annotation is flagged as critical
     pub critical: bool,
     /// The parsed key value of the annotation
-    pub key: &'a str,
+    pub key: &'a [u8],
     /// The parsed value of the annotation
-    pub value: &'a str,
+    pub value: &'a [u8],
 }
 
 #[allow(clippy::exhaustive_structs)] // DateRecord only allows for a year, month, and day value.
@@ -73,7 +73,7 @@ pub struct TimeZoneAnnotation<'a> {
 #[derive(Debug, Clone, PartialEq)]
 pub enum TimeZoneRecord<'a> {
     /// TimeZoneIANAName
-    Name(&'a str),
+    Name(&'a [u8]),
     /// TimeZoneOffset
     Offset(UTCOffsetRecord),
 }
