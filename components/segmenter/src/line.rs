@@ -887,16 +887,30 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
             }
         }
 
+        // The state prior to a sequence of CM and ZWJ affected by rule LB9.
+        let mut lb9_left: Option<u8> = None;
+        // Whether LB8a applies, so that breaks at the current position must be suppressed.
+        let mut lb8a_applies = false;
+
         'a: loop {
             debug_assert!(!self.is_eof());
             let left_codepoint = self.get_current_codepoint()?;
-            let mut left_prop = self.get_linebreak_property(left_codepoint);
+            let mut left_prop = lb9_left.unwrap_or_else(|| { self.get_linebreak_property(left_codepoint)});
+            let after_zwj = lb8a_applies;
             self.advance_iter();
 
             let Some(right_codepoint) = self.get_current_codepoint() else {
                 return Some(self.len);
             };
             let right_prop = self.get_linebreak_property(right_codepoint);
+            if (right_prop == CM || right_prop == ZWJ) && left_prop != BK  && left_prop !=  CR  && left_prop != LF  && left_prop !=  NL  && left_prop !=  SP  && left_prop !=  ZW {
+                lb9_left = Some(left_prop);
+                lb8a_applies = right_prop == ZWJ;
+                continue;
+            } else {
+                lb9_left = None;
+                lb8a_applies = false;
+            }
 
             // CSS word-break property handling
             match (self.options.word_option, left_prop, right_prop) {
@@ -917,7 +931,7 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
             // CSS line-break property handling
             match self.options.strictness {
                 LineBreakStrictness::Normal => {
-                    if self.is_break_by_normal(right_codepoint) {
+                    if self.is_break_by_normal(right_codepoint) && !after_zwj {
                         return self.get_current_position();
                     }
                 }
@@ -928,13 +942,16 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
                         right_prop,
                         self.options.ja_zh,
                     ) {
-                        if breakable {
+                        if breakable && !after_zwj {
                             return self.get_current_position();
                         }
                         continue;
                     }
                 }
                 LineBreakStrictness::Anywhere => {
+                    // TODO(egg): My reading of the CSS standard is that this
+                    // should break around extended grapheme clusters, not at
+                    // arbitrary code points, so this seems wrong.
                     return self.get_current_position();
                 }
                 _ => (),
@@ -958,15 +975,18 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
                 // Line break uses more that 64 states, so they spill over into the intermediate range,
                 // and we cannot change that at the moment
                 BreakState::Intermediate(index) => index + 64,
-                BreakState::Break | BreakState::NoMatch => return self.get_current_position(),
+                BreakState::Break | BreakState::NoMatch => if after_zwj { continue } else { return self.get_current_position() },
                 BreakState::Keep => continue,
             };
 
             let mut previous_iter = self.iter.clone();
             let mut previous_pos_data = self.current_pos_data;
 
+            lb8a_applies = false;
+            left_prop = right_prop;
             loop {
                 self.advance_iter();
+                let after_zwj = lb8a_applies;
 
                 let Some(prop) = self.get_current_linebreak_property() else {
                     // Reached EOF. But we are analyzing multiple characters now, so next break may be previous point.
@@ -982,14 +1002,21 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
                     return Some(self.len);
                 };
 
+                if (prop == CM || prop == ZWJ) && left_prop != BK  && left_prop !=  CR  && left_prop != LF  && left_prop !=  NL  && left_prop !=  SP  && left_prop !=  ZW {
+                    lb8a_applies = prop == ZWJ;
+                    continue;
+                } else {
+                    lb8a_applies = false;
+                }
+
                 match self.data.get_break_state_from_table(index, prop) {
                     BreakState::Keep => continue 'a,
                     BreakState::NoMatch => {
                         self.iter = previous_iter;
                         self.current_pos_data = previous_pos_data;
-                        return self.get_current_position();
+                        if after_zwj {  continue 'a } else {return self.get_current_position()}
                     }
-                    BreakState::Break => return self.get_current_position(),
+                    BreakState::Break => if after_zwj { continue 'a } else {return self.get_current_position()},
                     BreakState::Index(i) => {
                         index = i;
                         previous_iter = self.iter.clone();
@@ -1001,6 +1028,7 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
                         previous_pos_data = self.current_pos_data;
                     }
                 }
+                left_prop = prop;
             }
         }
     }
