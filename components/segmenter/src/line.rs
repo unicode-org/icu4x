@@ -889,14 +889,15 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
 
         // The state prior to a sequence of CM and ZWJ affected by rule LB9.
         let mut lb9_left: Option<u8> = None;
-        // Whether LB8a applies, so that breaks at the current position must be suppressed.
-        let mut lb8a_applies = false;
+        // Whether LB9 was applied to a ZWJ, so that breaks at the current
+        // position must be suppressed.
+        let mut lb8a_after_lb9 = false;
 
         'a: loop {
             debug_assert!(!self.is_eof());
             let left_codepoint = self.get_current_codepoint()?;
             let mut left_prop = lb9_left.unwrap_or_else(|| { self.get_linebreak_property(left_codepoint)});
-            let after_zwj = lb8a_applies;
+            let after_zwj = lb8a_after_lb9 || (lb9_left.is_none() && left_prop == ZWJ);
             self.advance_iter();
 
             let Some(right_codepoint) = self.get_current_codepoint() else {
@@ -905,11 +906,11 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
             let right_prop = self.get_linebreak_property(right_codepoint);
             if (right_prop == CM || right_prop == ZWJ) && left_prop != BK  && left_prop !=  CR  && left_prop != LF  && left_prop !=  NL  && left_prop !=  SP  && left_prop !=  ZW {
                 lb9_left = Some(left_prop);
-                lb8a_applies = right_prop == ZWJ;
+                lb8a_after_lb9 = right_prop == ZWJ;
                 continue;
             } else {
                 lb9_left = None;
-                lb8a_applies = false;
+                lb8a_after_lb9 = false;
             }
 
             // CSS word-break property handling
@@ -982,11 +983,14 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
             let mut previous_iter = self.iter.clone();
             let mut previous_pos_data = self.current_pos_data;
 
-            lb8a_applies = false;
-            left_prop = right_prop;
+            // Since we are building up a state in this inner loop, we do not
+            // need an analogue of lb9_left; continuing the inner loop preserves
+            // `index` which is the current state, and thus implements the
+            // “treat as” rule.
+            let mut left_prop_pre_lb9 = right_prop;
             loop {
                 self.advance_iter();
-                let after_zwj = lb8a_applies;
+                let after_zwj = left_prop_pre_lb9 == ZWJ;
 
                 let Some(prop) = self.get_current_linebreak_property() else {
                     // Reached EOF. But we are analyzing multiple characters now, so next break may be previous point.
@@ -1002,11 +1006,9 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
                     return Some(self.len);
                 };
 
-                if (prop == CM || prop == ZWJ) && left_prop != BK  && left_prop !=  CR  && left_prop != LF  && left_prop !=  NL  && left_prop !=  SP  && left_prop !=  ZW {
-                    lb8a_applies = prop == ZWJ;
+                if (prop == CM || prop == ZWJ) && left_prop_pre_lb9 != BK  && left_prop_pre_lb9 !=  CR  && left_prop_pre_lb9 != LF  && left_prop_pre_lb9 !=  NL  && left_prop_pre_lb9 !=  SP  && left_prop_pre_lb9 !=  ZW {
+                    left_prop_pre_lb9 = prop;
                     continue;
-                } else {
-                    lb8a_applies = false;
                 }
 
                 match self.data.get_break_state_from_table(index, prop) {
@@ -1028,7 +1030,7 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
                         previous_pos_data = self.current_pos_data;
                     }
                 }
-                left_prop = prop;
+                left_prop_pre_lb9 = prop;
             }
         }
     }
