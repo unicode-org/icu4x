@@ -1,7 +1,9 @@
 /// Represents a duration of time (intuitively, how long something took / will take).
 /// Can be constructed ergonomically using the [`Default`](core::default::Default) trait like so:
+///
 /// ```rust
-/// let duration = Duration {
+/// # use icu_experimental::duration::Duration;
+/// let d = Duration {
 ///     years: 1,
 ///     months: 2,
 ///     weeks: 3,
