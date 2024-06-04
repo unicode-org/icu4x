@@ -4,7 +4,7 @@ segmenter/dictionary/wl_ext@1, und-x-khmerdict, 798377B, e1da910a05c02674
 segmenter/dictionary/wl_ext@1, und-x-laodict, 292463B, 13c58c252d049c90
 segmenter/dictionary/wl_ext@1, und-x-thaidict, 224981B, f2d574736bb1a754
 segmenter/grapheme@1, und, 9730B, 922c04bad19f0d2e
-segmenter/line@1, und, 24183B, 817be8a85b29478d
+segmenter/line@1, und, 18103B, bc1058e4fa0ece84
 segmenter/lstm/wl_auto@1, und-x-Burmese_codepoints_exclusive_model4_heavy, 91074B, eec2f7a1f6819f91
 segmenter/lstm/wl_auto@1, und-x-Khmer_codepoints_exclusive_model4_heavy, 74372B, b25f5219c4b970f2
 segmenter/lstm/wl_auto@1, und-x-Lao_codepoints_exclusive_model4_heavy, 71867B, 7e0c3ea7801791bd
