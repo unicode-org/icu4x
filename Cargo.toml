@@ -246,6 +246,7 @@ serde = { version = "1.0.110", default-features = false }
 serde-json-core = { version = "0.4.0", default-features = false }
 smallvec = { version = "1.10.0", default-features = false }
 stable_deref_trait = { version = "1.2.0", default-features = false }
+twox-hash = { version = "1.4.2", default-features = false }
 unicode-bidi = { version = "0.3.11", default-features = false }
 utf16_iter = { version = "1.0.2", default-features = false }
 utf8_iter = { version = "1.0.2", default-features = false }
@@ -287,7 +288,6 @@ simple_logger = "4.0.0"
 syn = "2.0.21"
 synstructure = "0.13.0"
 toml = "0.5.8"
-twox-hash = "1.4.2"
 ureq = "2.3.0"
 walkdir = "2.3.2"
 wasmi = "0.31.2"
