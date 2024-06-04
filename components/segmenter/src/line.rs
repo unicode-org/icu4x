@@ -905,7 +905,11 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
                 return Some(self.len);
             };
             let right_prop = self.get_linebreak_property(right_codepoint);
-            if (right_prop == CM || right_prop == ZWJ)
+            // NOTE(egg): The special-casing of `LineBreakStrictness::Anywhere` allows us to pass
+            // a test, but eventually that option should just be simplified to call the extended
+            // grapheme cluster segmenter.
+            if (right_prop == CM
+                || (right_prop == ZWJ && self.options.strictness != LineBreakStrictness::Anywhere))
                 && left_prop != BK
                 && left_prop != CR
                 && left_prop != LF
