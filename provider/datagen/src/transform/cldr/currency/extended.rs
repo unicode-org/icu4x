@@ -4,10 +4,16 @@
 
 use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::IterableDataProviderInternal;
+use crate::DatagenProvider;
 
 use std::borrow::Cow;
+use std::str::FromStr;
 
+use icu_experimental::dimension::currency::formatter::CurrencyCode;
 use icu_experimental::dimension::provider::currency::PatternSelection;
+use icu_provider::datagen::IterableDataProvider;
+use tinystr::TinyAsciiStr;
+use tinystr::UnvalidatedTinyAsciiStr;
 
 use std::collections::HashSet;
 use tinystr::tinystr;
@@ -26,7 +32,7 @@ impl DataProvider<CurrencyExtendedDataV1Marker> for crate::DatagenProvider {
     ) -> Result<DataResponse<CurrencyExtendedDataV1Marker>, DataError> {
         self.check_req::<CurrencyExtendedDataV1Marker>(req)?;
 
-        let langid: icu_locid::LanguageIdentifier = req.locale.get_langid();
+        let langid = req.locale.get_langid();
         let currencies_resource: &cldr_serde::currencies::data::Resource =
             self.cldr()?
                 .numbers()
@@ -72,35 +78,35 @@ impl DataProvider<CurrencyExtendedDataV1Marker> for crate::DatagenProvider {
     }
 }
 
-// impl DatagenProvider {
-//     fn supported_locales_currencies(
-//         &self,
-//         currency: Value,
-//         keylengths: &'static [Subtag],
-//         currencies: &BTreeMap<UnvalidatedTinyAsciiStr<3>, CurrencyPatterns>,
-//         lang_id: &icu_locid::LanguageIdentifier,
-//     ) -> Result<HashSet<DataLocale>, DataError> {
-//         let mut r = HashSet::new();
+impl IterableDataProvider<CurrencyExtendedDataV1Marker> for DatagenProvider {
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+        return Err(DataError::custom("not implemented"));
 
-//         r.extend(currencies.keys().flat_map(|currency_iso| {
-//             let locale: Locale = lang_id.clone().into();
-//             let mut locale = DataLocale::from(locale);
+        // Make a DataKeyAttributes from a currency code.
+        fn make_data_aux_attr(currency: &CurrencyCode) -> Result<DataKeyAttributes, DataError> {
+            Ok(
+                DataKeyAttributes::try_from_iter(currency.0.as_bytes().iter())
+                    .map_err(|_| DataError::custom("Failed to parse subtag"))?,
+            )
+        }
 
-//             locale.set_aux();
-//             locale
-//         }));
+        let mut result = HashSet::new();
 
-//         Ok(r)
-//     }
-// }
+        let numbers = self.cldr()?.numbers();
+        let langids = numbers.list_langs()?;
+        for langid in langids {
+            let currencies_resource: &cldr_serde::currencies::data::Resource = self
+                .cldr()?
+                .numbers()
+                .read_and_parse(&langid, "currencies.json")?;
 
-impl IterableDataProviderInternal<CurrencyExtendedDataV1Marker> for crate::DatagenProvider {
-    fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
-        Ok(self
-            .cldr()?
-            .numbers()
-            .list_langs()?
-            .map(DataLocale::from)
-            .collect())
+            let currencies = &currencies_resource.main.value.numbers.currencies;
+            for (key, value) in currencies {
+                let attributes = make_data_aux_attr(&key.into())?;
+                result.insert((DataLocale::from(&langid), attributes));
+            }
+        }
+
+        Ok(result)
     }
 }
