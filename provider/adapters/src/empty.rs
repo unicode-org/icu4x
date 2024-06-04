@@ -60,16 +60,6 @@ impl AnyProvider for EmptyDataProvider {
     }
 }
 
-impl BufferProvider for EmptyDataProvider {
-    fn load_buffer(
-        &self,
-        key: DataKey,
-        base_req: DataRequest,
-    ) -> Result<DataResponse<BufferMarker>, DataError> {
-        Err(self.error_kind.with_req(key, base_req))
-    }
-}
-
 impl<M> DynamicDataProvider<M> for EmptyDataProvider
 where
     M: DataMarker,
@@ -93,8 +83,10 @@ impl<M> icu_provider::datagen::IterableDataProvider<M> for EmptyDataProvider
 where
     M: KeyedDataMarker,
 {
-    fn supported_locales(&self) -> Result<alloc::vec::Vec<DataLocale>, DataError> {
-        Ok(vec![])
+    fn supported_requests(
+        &self,
+    ) -> Result<std::collections::HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+        Ok(Default::default())
     }
 }
 
@@ -103,10 +95,10 @@ impl<M> icu_provider::datagen::IterableDynamicDataProvider<M> for EmptyDataProvi
 where
     M: DataMarker,
 {
-    fn supported_locales_for_key(
+    fn supported_requests_for_key(
         &self,
         _: DataKey,
-    ) -> Result<alloc::vec::Vec<DataLocale>, DataError> {
-        Ok(vec![])
+    ) -> Result<std::collections::HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+        Ok(Default::default())
     }
 }

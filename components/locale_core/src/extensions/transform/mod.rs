@@ -35,18 +35,23 @@ mod key;
 mod value;
 
 use core::cmp::Ordering;
+use core::str::FromStr;
 
 pub use fields::Fields;
 #[doc(inline)]
 pub use key::{key, Key};
 pub use value::Value;
 
+use super::ExtensionType;
 use crate::parser::SubtagIterator;
 use crate::parser::{parse_language_identifier_from_iter, ParseError, ParserMode};
 use crate::shortvec::ShortBoxSlice;
 use crate::subtags::{self, Language};
 use crate::LanguageIdentifier;
 use litemap::LiteMap;
+
+pub(crate) const TRANSFORM_EXT_CHAR: char = 't';
+pub(crate) const TRANSFORM_EXT_STR: &str = "t";
 
 /// A list of [`Unicode BCP47 T Extensions`] as defined in [`Unicode Locale
 /// Identifier`] specification.
@@ -115,6 +120,17 @@ impl Transform {
     /// ```
     pub fn is_empty(&self) -> bool {
         self.lang.is_none() && self.fields.is_empty()
+    }
+
+    pub(crate) fn try_from_bytes(t: &[u8]) -> Result<Self, ParseError> {
+        let mut iter = SubtagIterator::new(t);
+
+        let ext = iter.next().ok_or(ParseError::InvalidExtension)?;
+        if let ExtensionType::Transform = ExtensionType::try_from_byte_slice(ext)? {
+            return Self::try_from_iter(&mut iter);
+        }
+
+        Err(ParseError::InvalidExtension)
     }
 
     /// Clears the transform extension, effectively removing it from the locale.
@@ -214,18 +230,28 @@ impl Transform {
         })
     }
 
-    pub(crate) fn for_each_subtag_str<E, F>(&self, f: &mut F) -> Result<(), E>
+    pub(crate) fn for_each_subtag_str<E, F>(&self, f: &mut F, with_ext: bool) -> Result<(), E>
     where
         F: FnMut(&str) -> Result<(), E>,
     {
         if self.is_empty() {
             return Ok(());
         }
-        f("t")?;
+        if with_ext {
+            f(TRANSFORM_EXT_STR)?;
+        }
         if let Some(lang) = &self.lang {
             lang.for_each_subtag_str_lowercased(f)?;
         }
         self.fields.for_each_subtag_str(f)
+    }
+}
+
+impl FromStr for Transform {
+    type Err = ParseError;
+
+    fn from_str(source: &str) -> Result<Self, Self::Err> {
+        Self::try_from_bytes(source.as_bytes())
     }
 }
 
@@ -236,7 +262,7 @@ impl writeable::Writeable for Transform {
         if self.is_empty() {
             return Ok(());
         }
-        sink.write_str("t")?;
+        sink.write_char(TRANSFORM_EXT_CHAR)?;
         if let Some(lang) = &self.lang {
             sink.write_char('-')?;
             lang.write_lowercased_to(sink)?;
@@ -260,5 +286,18 @@ impl writeable::Writeable for Transform {
             result += writeable::Writeable::writeable_length_hint(&self.fields) + 1;
         }
         result
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_transform_extension_fromstr() {
+        let te: Transform = "t-en-us-h0-hybrid"
+            .parse()
+            .expect("Failed to parse Transform");
+        assert_eq!(te.to_string(), "t-en-us-h0-hybrid");
     }
 }

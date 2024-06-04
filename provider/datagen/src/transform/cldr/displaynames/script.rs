@@ -4,7 +4,7 @@
 
 use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
-use crate::provider::IterableDataProviderInternal;
+use crate::provider::IterableDataProviderCached;
 use core::convert::TryFrom;
 use icu_experimental::displaynames::provider::*;
 use icu_locale_core::{subtags::Script, ParseError};
@@ -36,8 +36,10 @@ impl DataProvider<ScriptDisplayNamesV1Marker> for DatagenProvider {
     }
 }
 
-impl IterableDataProviderInternal<ScriptDisplayNamesV1Marker> for DatagenProvider {
-    fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
+impl IterableDataProviderCached<ScriptDisplayNamesV1Marker> for DatagenProvider {
+    fn supported_requests_cached(
+        &self,
+    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
         Ok(self
             .cldr()?
             .displaynames()
@@ -50,7 +52,7 @@ impl IterableDataProviderInternal<ScriptDisplayNamesV1Marker> for DatagenProvide
                     .file_exists(langid, "scripts.json")
                     .unwrap_or_default()
             })
-            .map(DataLocale::from)
+            .map(|l| (DataLocale::from(l), Default::default()))
             .collect())
     }
 }
@@ -102,7 +104,7 @@ mod tests {
         let data: DataPayload<ScriptDisplayNamesV1Marker> = provider
             .load(DataRequest {
                 locale: &langid!("en-001").into(),
-                metadata: Default::default(),
+                ..Default::default()
             })
             .unwrap()
             .take_payload()
@@ -124,7 +126,7 @@ mod tests {
         let data: DataPayload<ScriptDisplayNamesV1Marker> = provider
             .load(DataRequest {
                 locale: &langid!("en-001").into(),
-                metadata: Default::default(),
+                ..Default::default()
             })
             .unwrap()
             .take_payload()

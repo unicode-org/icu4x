@@ -6,7 +6,7 @@
 //! exported from ICU.
 
 use crate::provider::DatagenProvider;
-use crate::provider::IterableDataProviderInternal;
+use crate::provider::IterableDataProviderCached;
 use icu_collator::provider::*;
 use icu_collections::codepointtrie::CodePointTrie;
 use icu_locale::provider::CollationFallbackSupplementV1Marker;
@@ -17,6 +17,7 @@ use icu_locale_core::subtags::Language;
 use icu_locale_core::subtags::Region;
 use icu_locale_core::subtags::Script;
 use icu_locale_core::LanguageIdentifier;
+use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 use std::convert::TryFrom;
@@ -50,15 +51,7 @@ impl DataProvider<CollationFallbackSupplementV1Marker> for DatagenProvider {
             let collation_locales = self
                 .icuexport()?
                 .list(&format!("collation/{}", self.collation_han_database()))?
-                .filter_map(|s| {
-                    Some(
-                        file_name_to_locale(
-                            s.rsplit_once('_')?.0,
-                            self.has_legacy_swedish_variants(),
-                        )?
-                        .language(),
-                    )
-                })
+                .filter_map(|s| Some(file_name_to_locale(s.rsplit_once('_')?.0)?.language()))
                 .collect::<HashSet<_>>();
 
             parent_locales
@@ -111,27 +104,13 @@ impl DataProvider<CollationFallbackSupplementV1Marker> for DatagenProvider {
     }
 }
 
-impl IterableDataProviderInternal<CollationFallbackSupplementV1Marker> for DatagenProvider {
-    fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
+impl IterableDataProvider<CollationFallbackSupplementV1Marker> for DatagenProvider {
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
 
-impl DatagenProvider {
-    /// Backward compatibility for https://unicode-org.atlassian.net/browse/CLDR-15603
-    fn has_legacy_swedish_variants(&self) -> bool {
-        self.icuexport()
-            .and_then(|i| {
-                i.file_exists(&format!(
-                    "collation/{}/sv_reformed_meta.toml",
-                    self.collation_han_database(),
-                ))
-            })
-            .unwrap_or(false)
-    }
-}
-
-fn locale_to_file_name(locale: &DataLocale, has_legacy_swedish_variants: bool) -> String {
+fn locale_to_file_name(locale: &DataLocale) -> String {
     let mut s = if locale.get_langid() == LanguageIdentifier::UND {
         "root".to_owned()
     } else {
@@ -153,10 +132,6 @@ fn locale_to_file_name(locale: &DataLocale, has_legacy_swedish_variants: bool) -
     } else if locale.get_langid().language == language!("zh") {
         // "zh" uses "_pinyin" as the default
         s.push_str("_pinyin");
-    } else if has_legacy_swedish_variants && locale.get_langid().language == language!("sv") {
-        // "sv" used to use "_reformed" as the default
-        // TODO(#2856): Remove when dropping pre-42 support in 2.0
-        s.push_str("_reformed");
     } else {
         // Everyting else uses "_standard"
         s.push_str("_standard");
@@ -164,7 +139,7 @@ fn locale_to_file_name(locale: &DataLocale, has_legacy_swedish_variants: bool) -
     s
 }
 
-fn file_name_to_locale(file_name: &str, has_legacy_swedish_variants: bool) -> Option<DataLocale> {
+fn file_name_to_locale(file_name: &str) -> Option<DataLocale> {
     let (language, variant) = file_name.rsplit_once('_').unwrap();
     let mut locale = if language == "root" {
         DataLocale::default()
@@ -175,11 +150,6 @@ fn file_name_to_locale(file_name: &str, has_legacy_swedish_variants: bool) -> Op
     // See above for the two special cases.
     if language == "zh" {
         if variant == "pinyin" {
-            return Some(locale);
-        }
-    } else if has_legacy_swedish_variants && language == "sv" {
-        // TODO(#2856): Remove when dropping pre-42 support in 2.0
-        if variant == "reformed" {
             return Some(locale);
         }
     } else if variant == "standard" {
@@ -211,7 +181,7 @@ macro_rules! collation_provider {
                         .read_and_parse_toml(&format!(
                             "collation/{}/{}{}.toml",
                             self.collation_han_database(),
-                            locale_to_file_name(&req.locale, self.has_legacy_swedish_variants()),
+                            locale_to_file_name(&req.locale),
                             $suffix
                         ))
                         .map_err(|e| match e.kind {
@@ -232,8 +202,8 @@ macro_rules! collation_provider {
                 }
             }
 
-            impl IterableDataProviderInternal<$marker> for DatagenProvider {
-                fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
+            impl IterableDataProviderCached<$marker> for DatagenProvider {
+                fn supported_requests_cached(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
                     Ok(self
                         .icuexport()?
                         .list(&format!(
@@ -247,8 +217,8 @@ macro_rules! collation_provider {
                                 file_name
                             })
                         })
-                        .filter_map(|s| file_name_to_locale(&s, self.has_legacy_swedish_variants()))
-                        .map(DataLocale::from)
+                        .filter_map(|s| file_name_to_locale(&s))
+                        .map(|l| (DataLocale::from(l), Default::default()))
                         .collect())
                 }
             }

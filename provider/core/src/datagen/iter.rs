@@ -4,6 +4,8 @@
 
 //! Collection of iteration APIs for data providers.
 
+use std::collections::HashSet;
+
 use crate::prelude::*;
 
 /// A [`DynamicDataProvider`] that can iterate over all supported [`DataLocale`] for a certain key.
@@ -12,7 +14,10 @@ use crate::prelude::*;
 /// return from a load request.
 pub trait IterableDynamicDataProvider<M: DataMarker>: DynamicDataProvider<M> {
     /// Given a [`DataKey`], returns a list of [`DataLocale`].
-    fn supported_locales_for_key(&self, key: DataKey) -> Result<Vec<DataLocale>, DataError>;
+    fn supported_requests_for_key(
+        &self,
+        key: DataKey,
+    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError>;
 }
 
 /// A [`DataProvider`] that can iterate over all supported [`DataLocale`] for a certain key.
@@ -21,10 +26,15 @@ pub trait IterableDynamicDataProvider<M: DataMarker>: DynamicDataProvider<M> {
 /// return from a load request.
 pub trait IterableDataProvider<M: KeyedDataMarker>: DataProvider<M> {
     /// Returns a list of [`DataLocale`].
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError>;
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError>;
     /// Returns whether a [`DataLocale`] is in the supported locales list.
-    fn supports_locale(&self, locale: &DataLocale) -> Result<bool, DataError> {
-        self.supported_locales().map(|v| v.contains(locale))
+    fn supports_request(
+        &self,
+        locale: &DataLocale,
+        key_attributes: &DataKeyAttributes,
+    ) -> Result<bool, DataError> {
+        self.supported_requests()
+            .map(|v| v.contains(&(locale.clone(), key_attributes.clone())))
     }
 }
 
@@ -33,7 +43,10 @@ where
     M: DataMarker,
     P: IterableDynamicDataProvider<M> + ?Sized,
 {
-    fn supported_locales_for_key(&self, key: DataKey) -> Result<Vec<DataLocale>, DataError> {
-        (**self).supported_locales_for_key(key)
+    fn supported_requests_for_key(
+        &self,
+        key: DataKey,
+    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+        (**self).supported_requests_for_key(key)
     }
 }

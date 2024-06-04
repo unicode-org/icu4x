@@ -26,7 +26,7 @@ pub(crate) fn parse_ambiguous_tz_annotation<'a>(
     // Peek position + 1 to check for critical flag.
     let mut current_peek = 1;
     let critical = cursor
-        .peek_n_char(current_peek)
+        .peek_n(current_peek)
         .map(is_critical_flag)
         .ok_or(ParserError::abrupt_end("AmbiguousAnnotation"))?;
 
@@ -36,14 +36,14 @@ pub(crate) fn parse_ambiguous_tz_annotation<'a>(
     }
 
     let leading_char = cursor
-        .peek_n_char(current_peek)
+        .peek_n(current_peek)
         .ok_or(ParserError::abrupt_end("AmbiguousAnnotation"))?;
 
     if is_tz_leading_char(leading_char) || is_sign(leading_char) {
         // Ambigious start values when lowercase alpha that is shared between `TzLeadingChar` and `KeyLeadingChar`.
         if is_a_key_leading_char(leading_char) {
             let mut peek_pos = current_peek + 1;
-            while let Some(ch) = cursor.peek_n_char(peek_pos) {
+            while let Some(ch) = cursor.peek_n(peek_pos) {
                 if is_tz_name_separator(ch) || (is_tz_char(ch) && !is_a_key_char(ch)) {
                     let tz = parse_tz_annotation(cursor)?;
                     return Ok(Some(tz));
@@ -147,7 +147,7 @@ pub(crate) fn parse_date_time_utc(cursor: &mut Cursor) -> ParserResult<UTCOffset
         });
     }
 
-    let separated = cursor.peek_n_char(3).map_or(false, is_time_separator);
+    let separated = cursor.peek_n(3).map_or(false, is_time_separator);
 
     let (mut utc_to_minute, parsed_minute) = parse_utc_offset_minute_precision(cursor)?;
 

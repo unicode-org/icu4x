@@ -158,14 +158,14 @@ enum MachineSer<'a, T> {
 
 #[derive(serde::Deserialize, Debug)]
 #[serde(untagged)]
-#[doc(hidden)]
+#[doc(hidden)] // appears in public bound
 #[allow(clippy::exhaustive_enums)] // internal type
 pub enum HumanDe<T> {
     Value(T),
     Fallback([usize; 1]),
 }
 
-#[doc(hidden)]
+#[doc(hidden)] // appears in public bound
 #[derive(Debug)]
 #[allow(clippy::exhaustive_enums)] // internal type
 pub enum MachineDe<T> {

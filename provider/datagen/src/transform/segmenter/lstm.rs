@@ -4,13 +4,13 @@
 
 //! This module contains provider implementations backed by LSTM segmentation data.
 
-use crate::provider::DatagenProvider;
+use crate::provider::{DatagenProvider, IterableDataProviderCached};
 use icu_locale_core::langid;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use icu_segmenter::provider::*;
 use ndarray::{Array, Array1, Array2, ArrayBase, Dim, Dimension, OwnedRepr};
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::fmt::Debug;
 use zerovec::{ule::UnvalidatedStr, ZeroVec};
 
@@ -189,12 +189,12 @@ impl DataProvider<LstmForWordLineAutoV1Marker> for DatagenProvider {
     ) -> Result<DataResponse<LstmForWordLineAutoV1Marker>, DataError> {
         self.check_req::<LstmForWordLineAutoV1Marker>(req)?;
 
-        let model = crate::lstm_data_locale_to_model_name(req.locale)
-            .ok_or(DataErrorKind::MissingLocale.with_req(LstmForWordLineAutoV1Marker::KEY, req))?;
-
         let lstm_data = self
             .segmenter_lstm()?
-            .read_and_parse_json::<RawLstmData>(&format!("{model}/weights.json"))
+            .read_and_parse_json::<RawLstmData>(&format!(
+                "{}/weights.json",
+                req.key_attributes as &str
+            ))
             .map_err(|_| DataErrorKind::MissingLocale.into_error())?;
 
         let data = lstm_data.try_convert()?;
@@ -206,8 +206,10 @@ impl DataProvider<LstmForWordLineAutoV1Marker> for DatagenProvider {
     }
 }
 
-impl IterableDataProvider<LstmForWordLineAutoV1Marker> for DatagenProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+impl IterableDataProviderCached<LstmForWordLineAutoV1Marker> for DatagenProvider {
+    fn supported_requests_cached(
+        &self,
+    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
         Ok([
             "Burmese_codepoints_exclusive_model4_heavy",
             "Khmer_codepoints_exclusive_model4_heavy",
@@ -215,7 +217,7 @@ impl IterableDataProvider<LstmForWordLineAutoV1Marker> for DatagenProvider {
             "Thai_codepoints_exclusive_model4_heavy",
         ]
         .into_iter()
-        .filter_map(crate::lstm_model_name_to_data_locale)
+        .map(|m| (Default::default(), m.parse().unwrap()))
         .collect())
     }
 }

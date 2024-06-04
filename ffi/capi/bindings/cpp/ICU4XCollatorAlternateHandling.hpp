@@ -1,25 +1,30 @@
 #ifndef ICU4XCollatorAlternateHandling_HPP
 #define ICU4XCollatorAlternateHandling_HPP
+
+#include "ICU4XCollatorAlternateHandling.d.hpp"
+
+#include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
-#include <algorithm>
 #include <memory>
-#include <variant>
 #include <optional>
 #include "diplomat_runtime.hpp"
-
 #include "ICU4XCollatorAlternateHandling.h"
 
 
+inline capi::ICU4XCollatorAlternateHandling ICU4XCollatorAlternateHandling::AsFFI() const {
+  return static_cast<capi::ICU4XCollatorAlternateHandling>(value);
+}
 
-/**
- * See the [Rust documentation for `AlternateHandling`](https://docs.rs/icu/latest/icu/collator/enum.AlternateHandling.html) for more information.
- */
-enum struct ICU4XCollatorAlternateHandling {
-  Auto = 0,
-  NonIgnorable = 1,
-  Shifted = 2,
-};
-
-#endif
+inline ICU4XCollatorAlternateHandling ICU4XCollatorAlternateHandling::FromFFI(capi::ICU4XCollatorAlternateHandling c_enum) {
+  switch (c_enum) {
+    case capi::ICU4XCollatorAlternateHandling_Auto:
+    case capi::ICU4XCollatorAlternateHandling_NonIgnorable:
+    case capi::ICU4XCollatorAlternateHandling_Shifted:
+      return static_cast<ICU4XCollatorAlternateHandling::Value>(c_enum);
+    default:
+      abort();
+  }
+}
+#endif // ICU4XCollatorAlternateHandling_HPP

@@ -26,9 +26,7 @@ pub mod transliterate;
 pub mod unicodeset_parse;
 pub mod units;
 
-#[doc(hidden)]
-// Compiled constructors look for the baked provider at crate::provider::Baked,
-// which is why we have to hook it up here.
+#[doc(hidden)] // compiled constructors look for the baked provider here
 pub mod provider {
     #[cfg(feature = "compiled_data")]
     pub struct Baked;

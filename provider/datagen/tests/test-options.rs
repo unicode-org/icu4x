@@ -6,6 +6,7 @@
 mod testutil;
 
 use std::collections::BTreeMap;
+use std::collections::HashSet;
 
 use icu_datagen::prelude::*;
 use icu_datagen::DeduplicationStrategy;
@@ -17,38 +18,38 @@ use icu_provider::make_exportable_provider;
 use icu_provider::prelude::*;
 use testutil::TestingExporter;
 
-struct TestingProvider(BTreeMap<&'static str, &'static str>);
+struct TestingProvider(BTreeMap<(&'static str, &'static str), &'static str>);
 
 impl TestingProvider {
-    fn new<const N: usize>(data: [(&'static str, &'static str); N]) -> Self {
+    fn new<const N: usize>(data: [((&'static str, &'static str), &'static str); N]) -> Self {
         Self(BTreeMap::from_iter(data))
     }
 
     fn with_decimal_symbol_like_data() -> Self {
         Self::new([
-            ("ar", "c3f15eb63fa35608"),
-            ("ar-EG", "c3f15eb63fa35608"),
-            ("ar-EG-u-nu-latn", "29e2dc764329c56"),
-            ("ar-u-nu-latn", "29e2dc764329c56"),
-            ("bn", "31828215dcef2fcb"),
-            ("bn-u-nu-latn", "1be94084ee7dcfbf"),
-            ("ccp", "c39715a84718596"),
-            ("ccp-u-nu-latn", "1be94084ee7dcfbf"),
-            ("en", "8df59f98704d3b0c"),
-            ("en-001", "8df59f98704d3b0c"),
-            ("en-ZA", "8df59f98704d3b0c"),
-            ("es", "2c22710b06ef69b6"),
-            ("es-AR", "3ec76252c7ed8d8c"),
-            ("fil", "8df59f98704d3b0c"),
-            ("fr", "bd076f44d0623175"),
-            ("ja", "8df59f98704d3b0c"),
-            ("ru", "8f773f51e85a65c1"),
-            ("sr", "3ec76252c7ed8d8c"),
-            ("sr-Latn", "3ec76252c7ed8d8c"),
-            ("th", "8df59f98704d3b0c"),
-            ("th-u-nu-thai", "db1d187d375ccfd2"),
-            ("tr", "3ec76252c7ed8d8c"),
-            ("und", "8df59f98704d3b0c"),
+            (("ar", ""), "c3f15eb63fa35608"),
+            (("ar-EG", ""), "c3f15eb63fa35608"),
+            (("ar-EG-u-nu-latn", ""), "29e2dc764329c56"),
+            (("ar-u-nu-latn", ""), "29e2dc764329c56"),
+            (("bn", ""), "31828215dcef2fcb"),
+            (("bn-u-nu-latn", ""), "1be94084ee7dcfbf"),
+            (("ccp", ""), "c39715a84718596"),
+            (("ccp-u-nu-latn", ""), "1be94084ee7dcfbf"),
+            (("en", ""), "8df59f98704d3b0c"),
+            (("en-001", ""), "8df59f98704d3b0c"),
+            (("en-ZA", ""), "8df59f98704d3b0c"),
+            (("es", ""), "2c22710b06ef69b6"),
+            (("es-AR", ""), "3ec76252c7ed8d8c"),
+            (("fil", ""), "8df59f98704d3b0c"),
+            (("fr", ""), "bd076f44d0623175"),
+            (("ja", ""), "8df59f98704d3b0c"),
+            (("ru", ""), "8f773f51e85a65c1"),
+            (("sr", ""), "3ec76252c7ed8d8c"),
+            (("sr-Latn", ""), "3ec76252c7ed8d8c"),
+            (("th", ""), "8df59f98704d3b0c"),
+            (("th-u-nu-thai", ""), "db1d187d375ccfd2"),
+            (("tr", ""), "3ec76252c7ed8d8c"),
+            (("und", ""), "8df59f98704d3b0c"),
         ])
     }
 }
@@ -60,7 +61,7 @@ impl DataProvider<HelloWorldV1Marker> for TestingProvider {
             payload: Some(DataPayload::from_owned(HelloWorldV1 {
                 message: (*self
                     .0
-                    .get(req.locale.to_string().as_str())
+                    .get(&(req.locale.to_string().as_str(), req.key_attributes as &str))
                     .ok_or(DataErrorKind::MissingLocale.into_error())?)
                 .into(),
             })),
@@ -96,30 +97,30 @@ impl DataProvider<CollationFallbackSupplementV1Marker> for TestingProvider {
 }
 
 impl IterableDataProvider<HelloWorldV1Marker> for TestingProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
         Ok(self
             .0
             .keys()
-            .map(|s| s.parse::<DataLocale>().unwrap())
+            .map(|(l, a)| (l.parse().unwrap(), a.parse().unwrap()))
             .collect())
     }
 }
 
 impl IterableDataProvider<LocaleFallbackLikelySubtagsV1Marker> for TestingProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        Ok(vec![Default::default()])
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+        Ok(HashSet::from_iter([Default::default()]))
     }
 }
 
 impl IterableDataProvider<LocaleFallbackParentsV1Marker> for TestingProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        Ok(vec![Default::default()])
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+        Ok(HashSet::from_iter([Default::default()]))
     }
 }
 
 impl IterableDataProvider<CollationFallbackSupplementV1Marker> for TestingProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        Ok(vec![Default::default()])
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+        Ok(HashSet::from_iter([Default::default()]))
     }
 }
 

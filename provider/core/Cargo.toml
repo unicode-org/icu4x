@@ -57,12 +57,9 @@ criterion = { workspace = true }
 bench = []
 std = ["icu_locale_core/std"]
 sync = []
-experimental = []
 macros = ["dep:icu_provider_macros"]
 # Enable logging of additional context of data errors
 logging = ["dep:log"]
-# Legacy name
-log_error_context = ["logging"]
 
 # Enable BufferProvider and other deserialization infrastructure
 serde = ["dep:serde", "yoke/serde"]

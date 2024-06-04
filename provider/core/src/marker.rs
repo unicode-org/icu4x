@@ -118,7 +118,7 @@ pub trait KeyedDataMarker: DataMarker {
 ///     &buffer_provider.as_deserializing(),
 ///     DataRequest {
 ///         locale: &langid!("en").into(),
-///         metadata: Default::default(),
+///         ..Default::default()
 ///     },
 /// );
 ///
@@ -167,7 +167,7 @@ where
 ///     &MyProvider,
 ///     DataRequest {
 ///         locale: &langid!("und").into(),
-///         metadata: Default::default(),
+///         ..Default::default()
 ///     },
 /// );
 ///
@@ -184,7 +184,7 @@ macro_rules! impl_data_provider_never_marker {
     ($ty:path) => {
         impl<Y> $crate::DataProvider<$crate::NeverMarker<Y>> for $ty
         where
-            for<'a> Y: $crate::yoke::Yokeable<'a>,
+            for<'a> Y: $crate::prelude::yoke::Yokeable<'a>,
         {
             fn load(
                 &self,

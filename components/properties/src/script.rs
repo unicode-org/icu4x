@@ -217,14 +217,12 @@ impl<'a> ScriptExtensionsSet<'a> {
     }
 
     /// For accessing this set as an array instead of an iterator
-    /// only needed for the FFI bindings; shouldn't be used directly from Rust
-    #[doc(hidden)]
+    #[doc(hidden)] // used by FFI code
     pub fn array_len(&self) -> usize {
         self.values.len()
     }
     /// For accessing this set as an array instead of an iterator
-    /// only needed for the FFI bindings; shouldn't be used directly from Rust
-    #[doc(hidden)]
+    #[doc(hidden)] // used by FFI code
     pub fn array_get(&self, index: usize) -> Option<Script> {
         self.values.get(index)
     }

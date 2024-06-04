@@ -1,32 +1,26 @@
 #ifndef ICU4XCollatorBackwardSecondLevel_H
 #define ICU4XCollatorBackwardSecondLevel_H
+
 #include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
 #include "diplomat_runtime.h"
 
-#ifdef __cplusplus
-namespace capi {
-#endif
+#include "ICU4XCollatorBackwardSecondLevel.d.h"
 
-typedef enum ICU4XCollatorBackwardSecondLevel {
-  ICU4XCollatorBackwardSecondLevel_Auto = 0,
-  ICU4XCollatorBackwardSecondLevel_Off = 1,
-  ICU4XCollatorBackwardSecondLevel_On = 2,
-} ICU4XCollatorBackwardSecondLevel;
-#ifdef __cplusplus
-} // namespace capi
-#endif
 #ifdef __cplusplus
 namespace capi {
 extern "C" {
-#endif
+#endif // __cplusplus
 
-void ICU4XCollatorBackwardSecondLevel_destroy(ICU4XCollatorBackwardSecondLevel* self);
+
+// No Content
+
 
 #ifdef __cplusplus
 } // extern "C"
 } // namespace capi
-#endif
-#endif
+#endif // __cplusplus
+
+#endif // ICU4XCollatorBackwardSecondLevel_H

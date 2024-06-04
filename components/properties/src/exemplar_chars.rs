@@ -55,7 +55,7 @@ macro_rules! make_exemplar_chars_unicode_set_property {
             provider.load(
                 DataRequest {
                     locale,
-                    metadata: Default::default(),
+                    ..Default::default()
                 })
                 .and_then(DataResponse::take_payload)
                 .map(UnicodeSetData::from_data)
@@ -69,7 +69,7 @@ macro_rules! make_exemplar_chars_unicode_set_property {
                 &crate::provider::Baked,
                 DataRequest {
                     locale,
-                    metadata: Default::default(),
+                    ..Default::default()
                 })
                 .and_then(DataResponse::take_payload)
                 .map(UnicodeSetData::from_data)

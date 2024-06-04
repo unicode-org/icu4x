@@ -66,7 +66,7 @@ pub(crate) const fn is_time_designator(ch: char) -> bool {
 #[inline]
 /// Checks if char is a space.
 pub(crate) const fn is_space(ch: char) -> bool {
-    ch == '\u{0020}'
+    ch == ' '
 }
 
 /// Checks if char is a `DateTimeSeparator`.

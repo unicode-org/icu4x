@@ -1,7 +1,6 @@
 import { i32 } from "./diplomat-runtime"
 import { FFIError } from "./diplomat-runtime"
 import { ICU4XError } from "./ICU4XError";
-import { ICU4XIanaToBcp47Mapper } from "./ICU4XIanaToBcp47Mapper";
 import { ICU4XIsoDateTime } from "./ICU4XIsoDateTime";
 import { ICU4XMetazoneCalculator } from "./ICU4XMetazoneCalculator";
 import { ICU4XTimeZoneIdMapper } from "./ICU4XTimeZoneIdMapper";
@@ -130,20 +129,9 @@ export class ICU4XCustomTimeZone {
    * Sets the `time_zone_id` field from an IANA string by looking up the corresponding BCP-47 string.
 
    * Errors if the string is not a valid BCP-47 time zone ID.
-
-   * See the {@link https://docs.rs/icu/latest/icu/timezone/struct.IanaToBcp47MapperBorrowed.html#method.get Rust documentation for `get`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  try_set_iana_time_zone_id(mapper: ICU4XIanaToBcp47Mapper, id: string): void | never;
-
-  /**
-
-   * Sets the `time_zone_id` field from an IANA string by looking up the corresponding BCP-47 string.
-
-   * Errors if the string is not a valid BCP-47 time zone ID.
-   * @throws {@link FFIError}<{@link ICU4XError}>
-   */
-  try_set_iana_time_zone_id_2(mapper: ICU4XTimeZoneIdMapper, id: string): void | never;
+  try_set_iana_time_zone_id(mapper: ICU4XTimeZoneIdMapper, id: string): void | never;
 
   /**
 

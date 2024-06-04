@@ -145,7 +145,7 @@ impl Collator {
     {
         let req = DataRequest {
             locale,
-            metadata: Default::default(),
+            ..Default::default()
         };
 
         let metadata_payload: DataPayload<crate::provider::CollationMetadataV1Marker> =

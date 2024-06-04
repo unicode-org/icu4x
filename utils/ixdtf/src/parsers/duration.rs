@@ -66,7 +66,7 @@ pub(crate) fn parse_date_duration(cursor: &mut Cursor) -> ParserResult<DateDurat
 
     while cursor.check_or(false, |ch| ch.is_ascii_digit()) {
         let mut value: u32 = 0;
-        while cursor.check_or(false, |c| c.is_ascii_digit()) {
+        while cursor.check_or(false, |ch| ch.is_ascii_digit()) {
             let digit = cursor
                 .next_digit()?
                 .ok_or_else(|| ParserError::abrupt_end("DateDuration"))?;
@@ -127,13 +127,13 @@ pub(crate) fn parse_time_duration(cursor: &mut Cursor) -> ParserResult<Option<Ti
 
     cursor.advance();
     assert_syntax!(
-        cursor.check_or(false, |ch| ch.is_ascii_digit()),
+        cursor.check_or(false, |c| c.is_ascii_digit()),
         TimeDurationDesignator,
     );
 
     let mut time: (u32, u32, u32, Option<u32>) = (0, 0, 0, None);
     let mut previous_unit = TimeUnit::None;
-    while cursor.check_or(false, |ch| ch.is_ascii_digit()) {
+    while cursor.check_or(false, |c| c.is_ascii_digit()) {
         let mut value: u32 = 0;
         while cursor.check_or(false, |c| c.is_ascii_digit()) {
             let digit = cursor

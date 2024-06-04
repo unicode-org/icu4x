@@ -1,134 +1,67 @@
 #ifndef ICU4XTimeZoneIdMapperWithFastCanonicalization_HPP
 #define ICU4XTimeZoneIdMapperWithFastCanonicalization_HPP
+
+#include "ICU4XTimeZoneIdMapperWithFastCanonicalization.d.hpp"
+
+#include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
-#include <algorithm>
 #include <memory>
-#include <variant>
 #include <optional>
 #include "diplomat_runtime.hpp"
-
+#include "ICU4XDataProvider.hpp"
+#include "ICU4XError.hpp"
 #include "ICU4XTimeZoneIdMapperWithFastCanonicalization.h"
 
-class ICU4XDataProvider;
-class ICU4XTimeZoneIdMapperWithFastCanonicalization;
-#include "ICU4XError.hpp"
 
-/**
- * A destruction policy for using ICU4XTimeZoneIdMapperWithFastCanonicalization with std::unique_ptr.
- */
-struct ICU4XTimeZoneIdMapperWithFastCanonicalizationDeleter {
-  void operator()(capi::ICU4XTimeZoneIdMapperWithFastCanonicalization* l) const noexcept {
-    capi::ICU4XTimeZoneIdMapperWithFastCanonicalization_destroy(l);
-  }
-};
-
-/**
- * A mapper between IANA time zone identifiers and BCP-47 time zone identifiers.
- * 
- * This mapper supports two-way mapping, but it is optimized for the case of IANA to BCP-47.
- * It also supports normalizing and canonicalizing the IANA strings.
- * 
- * See the [Rust documentation for `TimeZoneIdMapperWithFastCanonicalization`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneIdMapperWithFastCanonicalization.html) for more information.
- */
-class ICU4XTimeZoneIdMapperWithFastCanonicalization {
- public:
-
-  /**
-   * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneIdMapperWithFastCanonicalization.html#method.new) for more information.
-   */
-  static diplomat::result<ICU4XTimeZoneIdMapperWithFastCanonicalization, ICU4XError> create(const ICU4XDataProvider& provider);
-
-  /**
-   * See the [Rust documentation for `canonicalize_iana`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneIdMapperWithFastCanonicalizationBorrowed.html#method.canonicalize_iana) for more information.
-   * 
-   * Warning: Passing ill-formed UTF-8 is undefined behavior (and may be memory-unsafe).
-   */
-  template<typename W> diplomat::result<std::monostate, ICU4XError> canonicalize_iana_to_write(const std::string_view value, W& write) const;
-
-  /**
-   * See the [Rust documentation for `canonicalize_iana`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneIdMapperWithFastCanonicalizationBorrowed.html#method.canonicalize_iana) for more information.
-   * 
-   * Warning: Passing ill-formed UTF-8 is undefined behavior (and may be memory-unsafe).
-   */
-  diplomat::result<std::string, ICU4XError> canonicalize_iana(const std::string_view value) const;
-
-  /**
-   * See the [Rust documentation for `canonical_iana_from_bcp47`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneIdMapperWithFastCanonicalizationBorrowed.html#method.canonical_iana_from_bcp47) for more information.
-   */
-  template<typename W> diplomat::result<std::monostate, ICU4XError> canonical_iana_from_bcp47_to_write(const std::string_view value, W& write) const;
-
-  /**
-   * See the [Rust documentation for `canonical_iana_from_bcp47`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneIdMapperWithFastCanonicalizationBorrowed.html#method.canonical_iana_from_bcp47) for more information.
-   */
-  diplomat::result<std::string, ICU4XError> canonical_iana_from_bcp47(const std::string_view value) const;
-  inline const capi::ICU4XTimeZoneIdMapperWithFastCanonicalization* AsFFI() const { return this->inner.get(); }
-  inline capi::ICU4XTimeZoneIdMapperWithFastCanonicalization* AsFFIMut() { return this->inner.get(); }
-  inline explicit ICU4XTimeZoneIdMapperWithFastCanonicalization(capi::ICU4XTimeZoneIdMapperWithFastCanonicalization* i) : inner(i) {}
-  ICU4XTimeZoneIdMapperWithFastCanonicalization() = default;
-  ICU4XTimeZoneIdMapperWithFastCanonicalization(ICU4XTimeZoneIdMapperWithFastCanonicalization&&) noexcept = default;
-  ICU4XTimeZoneIdMapperWithFastCanonicalization& operator=(ICU4XTimeZoneIdMapperWithFastCanonicalization&& other) noexcept = default;
- private:
-  std::unique_ptr<capi::ICU4XTimeZoneIdMapperWithFastCanonicalization, ICU4XTimeZoneIdMapperWithFastCanonicalizationDeleter> inner;
-};
-
-#include "ICU4XDataProvider.hpp"
-
-inline diplomat::result<ICU4XTimeZoneIdMapperWithFastCanonicalization, ICU4XError> ICU4XTimeZoneIdMapperWithFastCanonicalization::create(const ICU4XDataProvider& provider) {
-  auto diplomat_result_raw_out_value = capi::ICU4XTimeZoneIdMapperWithFastCanonicalization_create(provider.AsFFI());
-  diplomat::result<ICU4XTimeZoneIdMapperWithFastCanonicalization, ICU4XError> diplomat_result_out_value;
-  if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XTimeZoneIdMapperWithFastCanonicalization>(ICU4XTimeZoneIdMapperWithFastCanonicalization(diplomat_result_raw_out_value.ok));
-  } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
-  }
-  return diplomat_result_out_value;
+inline diplomat::result<std::unique_ptr<ICU4XTimeZoneIdMapperWithFastCanonicalization>, ICU4XError> ICU4XTimeZoneIdMapperWithFastCanonicalization::create(const ICU4XDataProvider& provider) {
+  auto result = capi::ICU4XTimeZoneIdMapperWithFastCanonicalization_create(provider.AsFFI());
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XTimeZoneIdMapperWithFastCanonicalization>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XTimeZoneIdMapperWithFastCanonicalization>>(std::unique_ptr<ICU4XTimeZoneIdMapperWithFastCanonicalization>(ICU4XTimeZoneIdMapperWithFastCanonicalization::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XTimeZoneIdMapperWithFastCanonicalization>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
 }
-template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XTimeZoneIdMapperWithFastCanonicalization::canonicalize_iana_to_write(const std::string_view value, W& write) const {
-  capi::DiplomatWrite write_writer = diplomat::WriteTrait<W>::Construct(write);
-  auto diplomat_result_raw_out_value = capi::ICU4XTimeZoneIdMapperWithFastCanonicalization_canonicalize_iana(this->inner.get(), value.data(), value.size(), &write_writer);
-  diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
-  if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
-  } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
+
+inline diplomat::result<diplomat::result<std::string, ICU4XError>, diplomat::Utf8Error> ICU4XTimeZoneIdMapperWithFastCanonicalization::canonicalize_iana(std::string_view value) const {
+  if (!capi::diplomat_is_str(value.data(), value.size())) {
+    return diplomat::Err<diplomat::Utf8Error>(diplomat::Utf8Error());
   }
-  return diplomat_result_out_value;
+  std::string output;
+  capi::DiplomatWrite write = diplomat::WriteFromString(output);
+  auto result = capi::ICU4XTimeZoneIdMapperWithFastCanonicalization_canonicalize_iana(this->AsFFI(),
+    value.data(),
+    value.size(),
+    &write);
+  return diplomat::Ok<diplomat::result<std::string, ICU4XError>>(std::move(result.is_ok ? diplomat::result<std::string, ICU4XError>(diplomat::Ok<std::string>(std::move(output))) : diplomat::result<std::string, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)))));
 }
-inline diplomat::result<std::string, ICU4XError> ICU4XTimeZoneIdMapperWithFastCanonicalization::canonicalize_iana(const std::string_view value) const {
-  std::string diplomat_write_string;
-  capi::DiplomatWrite diplomat_write_out = diplomat::WriteFromString(diplomat_write_string);
-  auto diplomat_result_raw_out_value = capi::ICU4XTimeZoneIdMapperWithFastCanonicalization_canonicalize_iana(this->inner.get(), value.data(), value.size(), &diplomat_write_out);
-  diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
-  if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
-  } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
-  }
-  return diplomat_result_out_value.replace_ok(std::move(diplomat_write_string));
+
+inline diplomat::result<std::string, ICU4XError> ICU4XTimeZoneIdMapperWithFastCanonicalization::canonical_iana_from_bcp47(std::string_view value) const {
+  std::string output;
+  capi::DiplomatWrite write = diplomat::WriteFromString(output);
+  auto result = capi::ICU4XTimeZoneIdMapperWithFastCanonicalization_canonical_iana_from_bcp47(this->AsFFI(),
+    value.data(),
+    value.size(),
+    &write);
+  return result.is_ok ? diplomat::result<std::string, ICU4XError>(diplomat::Ok<std::string>(std::move(output))) : diplomat::result<std::string, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
 }
-template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XTimeZoneIdMapperWithFastCanonicalization::canonical_iana_from_bcp47_to_write(const std::string_view value, W& write) const {
-  capi::DiplomatWrite write_writer = diplomat::WriteTrait<W>::Construct(write);
-  auto diplomat_result_raw_out_value = capi::ICU4XTimeZoneIdMapperWithFastCanonicalization_canonical_iana_from_bcp47(this->inner.get(), value.data(), value.size(), &write_writer);
-  diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
-  if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
-  } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
-  }
-  return diplomat_result_out_value;
+
+inline const capi::ICU4XTimeZoneIdMapperWithFastCanonicalization* ICU4XTimeZoneIdMapperWithFastCanonicalization::AsFFI() const {
+  return reinterpret_cast<const capi::ICU4XTimeZoneIdMapperWithFastCanonicalization*>(this);
 }
-inline diplomat::result<std::string, ICU4XError> ICU4XTimeZoneIdMapperWithFastCanonicalization::canonical_iana_from_bcp47(const std::string_view value) const {
-  std::string diplomat_write_string;
-  capi::DiplomatWrite diplomat_write_out = diplomat::WriteFromString(diplomat_write_string);
-  auto diplomat_result_raw_out_value = capi::ICU4XTimeZoneIdMapperWithFastCanonicalization_canonical_iana_from_bcp47(this->inner.get(), value.data(), value.size(), &diplomat_write_out);
-  diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
-  if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
-  } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
-  }
-  return diplomat_result_out_value.replace_ok(std::move(diplomat_write_string));
+
+inline capi::ICU4XTimeZoneIdMapperWithFastCanonicalization* ICU4XTimeZoneIdMapperWithFastCanonicalization::AsFFI() {
+  return reinterpret_cast<capi::ICU4XTimeZoneIdMapperWithFastCanonicalization*>(this);
 }
-#endif
+
+inline const ICU4XTimeZoneIdMapperWithFastCanonicalization* ICU4XTimeZoneIdMapperWithFastCanonicalization::FromFFI(const capi::ICU4XTimeZoneIdMapperWithFastCanonicalization* ptr) {
+  return reinterpret_cast<const ICU4XTimeZoneIdMapperWithFastCanonicalization*>(ptr);
+}
+
+inline ICU4XTimeZoneIdMapperWithFastCanonicalization* ICU4XTimeZoneIdMapperWithFastCanonicalization::FromFFI(capi::ICU4XTimeZoneIdMapperWithFastCanonicalization* ptr) {
+  return reinterpret_cast<ICU4XTimeZoneIdMapperWithFastCanonicalization*>(ptr);
+}
+
+inline void ICU4XTimeZoneIdMapperWithFastCanonicalization::operator delete(void* ptr) {
+  capi::ICU4XTimeZoneIdMapperWithFastCanonicalization_destroy(reinterpret_cast<capi::ICU4XTimeZoneIdMapperWithFastCanonicalization*>(ptr));
+}
+
+
+#endif // ICU4XTimeZoneIdMapperWithFastCanonicalization_HPP

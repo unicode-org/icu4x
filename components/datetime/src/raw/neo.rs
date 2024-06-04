@@ -12,7 +12,6 @@ use crate::options::length;
 use crate::pattern::runtime::{PatternBorrowed, PatternMetadata};
 use crate::pattern::{runtime, PatternItem};
 use crate::provider::neo::*;
-use icu_locale_core::extensions::private::Subtag;
 use icu_provider::prelude::*;
 use zerovec::ule::AsULE;
 use zerovec::ZeroSlice;
@@ -82,20 +81,19 @@ impl DatePatternSelectionData {
         locale: &DataLocale,
         length: length::Date,
     ) -> Result<Self, DataError> {
-        let mut locale = locale.clone();
-        locale.set_aux(AuxiliaryKeys::from_subtag(aux::pattern_subtag_for(
-            match length {
-                length::Date::Full => aux::PatternLength::Full,
-                length::Date::Long => aux::PatternLength::Long,
-                length::Date::Medium => aux::PatternLength::Medium,
-                length::Date::Short => aux::PatternLength::Short,
-            },
-            None, // no hour cycle for date patterns
-        )));
         let payload = provider
             .load_bound(DataRequest {
-                locale: &locale,
-                metadata: Default::default(),
+                locale,
+                key_attributes: &DataKeyAttributes::from_tinystr(key_attrs::pattern_key_attr_for(
+                    match length {
+                        length::Date::Full => key_attrs::PatternLength::Full,
+                        length::Date::Long => key_attrs::PatternLength::Long,
+                        length::Date::Medium => key_attrs::PatternLength::Medium,
+                        length::Date::Short => key_attrs::PatternLength::Short,
+                    },
+                    None, // no hour cycle for date patterns
+                )),
+                ..Default::default()
             })?
             .take_payload()?
             .cast();
@@ -108,22 +106,11 @@ impl DatePatternSelectionData {
         length: NeoSkeletonLength,
         components: NeoDateComponents,
     ) -> Result<Self, DataError> {
-        let mut locale = locale.clone();
-        let subtag = match Subtag::try_from_raw(*components.id_str().all_bytes()) {
-            Ok(subtag) => subtag,
-            Err(e) => {
-                debug_assert!(
-                    false,
-                    "invalid neo skeleton components: {components:?}: {e:?}"
-                );
-                return Err(DataError::custom("invalid neo skeleton components"));
-            }
-        };
-        locale.set_aux(AuxiliaryKeys::from_subtag(subtag));
         let payload = provider
             .load_bound(DataRequest {
-                locale: &locale,
-                metadata: Default::default(),
+                locale,
+                key_attributes: &DataKeyAttributes::from_tinystr(components.id_str()),
+                ..Default::default()
             })?
             .take_payload()?
             .cast();
@@ -184,20 +171,19 @@ impl TimePatternSelectionData {
     where
         P: DataProvider<TimePatternV1Marker> + ?Sized,
     {
-        let mut locale = locale.clone();
-        locale.set_aux(AuxiliaryKeys::from_subtag(aux::pattern_subtag_for(
-            match length {
-                length::Time::Full => aux::PatternLength::Full,
-                length::Time::Long => aux::PatternLength::Long,
-                length::Time::Medium => aux::PatternLength::Medium,
-                length::Time::Short => aux::PatternLength::Short,
-            },
-            None, // no hour cycle for date patterns
-        )));
         let payload = provider
             .load(DataRequest {
-                locale: &locale,
-                metadata: Default::default(),
+                locale,
+                key_attributes: &DataKeyAttributes::from_tinystr(key_attrs::pattern_key_attr_for(
+                    match length {
+                        length::Time::Full => key_attrs::PatternLength::Full,
+                        length::Time::Long => key_attrs::PatternLength::Long,
+                        length::Time::Medium => key_attrs::PatternLength::Medium,
+                        length::Time::Short => key_attrs::PatternLength::Short,
+                    },
+                    None, // no hour cycle for date patterns
+                )),
+                ..Default::default()
             })?
             .take_payload()?
             .cast();
@@ -210,22 +196,11 @@ impl TimePatternSelectionData {
         length: NeoSkeletonLength,
         components: NeoTimeComponents,
     ) -> Result<Self, DataError> {
-        let mut locale = locale.clone();
-        let subtag = match Subtag::try_from_raw(*components.id_str().all_bytes()) {
-            Ok(subtag) => subtag,
-            Err(e) => {
-                debug_assert!(
-                    false,
-                    "invalid neo skeleton components: {components:?}: {e:?}"
-                );
-                return Err(DataError::custom("invalid neo skeleton components"));
-            }
-        };
-        locale.set_aux(AuxiliaryKeys::from_subtag(subtag));
         let payload = provider
             .load_bound(DataRequest {
-                locale: &locale,
-                metadata: Default::default(),
+                locale,
+                key_attributes: &DataKeyAttributes::from_tinystr(components.id_str()),
+                ..Default::default()
             })?
             .take_payload()?
             .cast();
@@ -291,22 +266,21 @@ impl DateTimeGluePatternSelectionData {
             date_length,
         )?;
         let time = TimePatternSelectionData::try_new_with_length(provider, locale, time_length)?;
-        let mut locale = locale.clone();
-        locale.set_aux(AuxiliaryKeys::from_subtag(aux::pattern_subtag_for(
-            // According to UTS 35, use the date length here: use the glue
-            // pattern "whose type matches the type of the date pattern"
-            match date_length {
-                length::Date::Full => aux::PatternLength::Full,
-                length::Date::Long => aux::PatternLength::Long,
-                length::Date::Medium => aux::PatternLength::Medium,
-                length::Date::Short => aux::PatternLength::Short,
-            },
-            None, // no hour cycle for date patterns
-        )));
         let glue = provider
             .load(DataRequest {
-                locale: &locale,
-                metadata: Default::default(),
+                locale,
+                key_attributes: &DataKeyAttributes::from_tinystr(key_attrs::pattern_key_attr_for(
+                    // According to UTS 35, use the date length here: use the glue
+                    // pattern "whose type matches the type of the date pattern"
+                    match date_length {
+                        length::Date::Full => key_attrs::PatternLength::Full,
+                        length::Date::Long => key_attrs::PatternLength::Long,
+                        length::Date::Medium => key_attrs::PatternLength::Medium,
+                        length::Date::Short => key_attrs::PatternLength::Short,
+                    },
+                    None, // no hour cycle for date patterns
+                )),
+                ..Default::default()
             })?
             .take_payload()?;
         Ok(Self { date, time, glue })
@@ -333,21 +307,20 @@ impl DateTimeGluePatternSelectionData {
             length,
             time_components,
         )?;
-        let mut locale = locale.clone();
-        locale.set_aux(AuxiliaryKeys::from_subtag(aux::pattern_subtag_for(
-            // According to UTS 35, use the date length here: use the glue
-            // pattern "whose type matches the type of the date pattern"
-            match length {
-                NeoSkeletonLength::Long => aux::PatternLength::Long,
-                NeoSkeletonLength::Medium => aux::PatternLength::Medium,
-                NeoSkeletonLength::Short => aux::PatternLength::Short,
-            },
-            None, // no hour cycle for date patterns
-        )));
         let glue = glue_provider
             .load_bound(DataRequest {
-                locale: &locale,
-                metadata: Default::default(),
+                locale,
+                key_attributes: &DataKeyAttributes::from_tinystr(key_attrs::pattern_key_attr_for(
+                    // According to UTS 35, use the date length here: use the glue
+                    // pattern "whose type matches the type of the date pattern"
+                    match length {
+                        NeoSkeletonLength::Long => key_attrs::PatternLength::Long,
+                        NeoSkeletonLength::Medium => key_attrs::PatternLength::Medium,
+                        NeoSkeletonLength::Short => key_attrs::PatternLength::Short,
+                    },
+                    None, // no hour cycle for date patterns
+                )),
+                ..Default::default()
             })?
             .take_payload()?;
         Ok(Self { date, time, glue })

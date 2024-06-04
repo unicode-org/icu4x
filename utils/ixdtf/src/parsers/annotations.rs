@@ -21,7 +21,7 @@ use crate::{
 /// Strictly a parsing intermediary for the checking the common annotation backing.
 pub(crate) struct AnnotationSet<'a> {
     pub(crate) tz: Option<TimeZoneAnnotation<'a>>,
-    pub(crate) calendar: Option<&'a str>,
+    pub(crate) calendar: Option<&'a [u8]>,
 }
 
 /// Parse a `TimeZoneAnnotation` `Annotations` set
@@ -53,7 +53,7 @@ pub(crate) fn parse_annotation_set<'a>(
 pub(crate) fn parse_annotations<'a>(
     cursor: &mut Cursor<'a>,
     mut handler: impl FnMut(Annotation<'a>) -> Option<Annotation<'a>>,
-) -> ParserResult<Option<&'a str>> {
+) -> ParserResult<Option<&'a [u8]>> {
     let mut calendar: Option<Annotation<'a>> = None;
 
     while cursor.check_or(false, is_annotation_open) {
@@ -61,7 +61,7 @@ pub(crate) fn parse_annotations<'a>(
 
         match annotation {
             // Check if the key is the registered key "u-ca".
-            Some(kv) if kv.key == "u-ca" => {
+            Some(kv) if kv.key == "u-ca".as_bytes() => {
                 // Check the calendar
                 match calendar {
                     Some(calendar)
@@ -124,7 +124,7 @@ fn parse_kv_annotation<'a>(cursor: &mut Cursor<'a>) -> ParserResult<Annotation<'
 }
 
 /// Parse an `AnnotationKey`.
-fn parse_annotation_key<'a>(cursor: &mut Cursor<'a>) -> ParserResult<&'a str> {
+fn parse_annotation_key<'a>(cursor: &mut Cursor<'a>) -> ParserResult<&'a [u8]> {
     let key_start = cursor.pos();
     assert_syntax!(
         is_a_key_leading_char(cursor.next_or(ParserError::AnnotationKeyLeadingChar)?),
@@ -147,7 +147,7 @@ fn parse_annotation_key<'a>(cursor: &mut Cursor<'a>) -> ParserResult<&'a str> {
 }
 
 /// Parse an `AnnotationValue`.
-fn parse_annotation_value<'a>(cursor: &mut Cursor<'a>) -> ParserResult<&'a str> {
+fn parse_annotation_value<'a>(cursor: &mut Cursor<'a>) -> ParserResult<&'a [u8]> {
     let value_start = cursor.pos();
     cursor.advance();
     while let Some(potential_value_char) = cursor.next() {

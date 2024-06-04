@@ -2,12 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use tinystr::TinyAsciiStr;
-
 use crate::extensions::{self, Extensions};
 use crate::parser::errors::ParseError;
 use crate::parser::{parse_language_identifier_from_iter, ParserMode, SubtagIterator};
-use crate::{subtags, Locale};
+use crate::{
+    subtags::{self, Subtag},
+    Locale,
+};
 
 use super::parse_locale_with_single_variant_single_keyword_unicode_extension_from_iter;
 
@@ -33,7 +34,7 @@ pub const fn parse_locale_with_single_variant_single_keyword_unicode_keyword_ext
         Option<subtags::Script>,
         Option<subtags::Region>,
         Option<subtags::Variant>,
-        Option<(extensions::unicode::Key, Option<TinyAsciiStr<8>>)>,
+        Option<(extensions::unicode::Key, Option<Subtag>)>,
     ),
     ParseError,
 > {

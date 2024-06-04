@@ -248,7 +248,7 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
     /// have a use case first.
     ///
     /// FFI needs this since it operates on erased maps and can't use `iter_ranges_for_group()`
-    #[doc(hidden)]
+    #[doc(hidden)] // used by FFI code
     pub fn iter_ranges_mapped<U: Eq + 'a>(
         self,
         predicate: impl FnMut(T) -> U + Copy + 'a,

@@ -66,7 +66,7 @@ impl WeekCalculator {
                 &provider.as_downcasting(),
                 DataRequest {
                     locale,
-                    metadata: Default::default(),
+                    ..Default::default()
                 },
             )
             .and_then(DataResponse::take_payload)
@@ -86,7 +86,7 @@ impl WeekCalculator {
                 &provider.as_deserializing(),
                 DataRequest {
                     locale,
-                    metadata: Default::default(),
+                    ..Default::default()
                 },
             )
             .and_then(DataResponse::take_payload)
@@ -103,7 +103,7 @@ impl WeekCalculator {
         provider
             .load(DataRequest {
                 locale,
-                metadata: Default::default(),
+                ..Default::default()
             })
             .and_then(DataResponse::take_payload)
             .map(|payload| WeekCalculator {

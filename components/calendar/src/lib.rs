@@ -147,7 +147,7 @@ pub mod week {
     pub use week_of::RelativeUnit;
     pub use week_of::WeekCalculator;
     pub use week_of::WeekOf;
-    #[doc(hidden)]
+    #[doc(hidden)] // for debug-assert in datetime
     pub use week_of::MIN_UNIT_DAYS;
 }
 
@@ -156,7 +156,7 @@ pub use any_calendar::{AnyCalendar, AnyCalendarKind};
 pub use calendar::Calendar;
 pub use date::{AsCalendar, Date, Ref};
 pub use datetime::DateTime;
-#[doc(hidden)]
+#[doc(hidden)] // unstable
 pub use duration::{DateDuration, DateDurationUnit};
 pub use error::{DateError, RangeError};
 #[doc(no_inline)]

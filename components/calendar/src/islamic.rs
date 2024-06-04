@@ -157,12 +157,6 @@ impl IslamicCivil {
     pub fn new() -> Self {
         Self
     }
-
-    /// Construct a new [`IslamicCivil`] (deprecated: we will not add precomputation to this calendar)
-    #[deprecated = "Precomputation not needed for this calendar"]
-    pub fn new_always_calculating() -> Self {
-        Self
-    }
 }
 
 impl IslamicUmmAlQura {
@@ -208,12 +202,6 @@ impl IslamicUmmAlQura {
 impl IslamicTabular {
     /// Construct a new [`IslamicTabular`]
     pub fn new() -> Self {
-        Self
-    }
-
-    /// Construct a new [`IslamicTabular`] (deprecated: we will not add precomputation to this calendar)
-    #[deprecated = "Precomputation not needed for this calendar"]
-    pub fn new_always_calculating() -> Self {
         Self
     }
 }
@@ -1054,7 +1042,7 @@ impl<A: AsCalendar<Calendar = IslamicCivil>> Date<A> {
     /// use icu::calendar::islamic::IslamicCivil;
     /// use icu::calendar::Date;
     ///
-    /// let islamic = IslamicCivil::new_always_calculating();
+    /// let islamic = IslamicCivil::new();
     ///
     /// let date_islamic =
     ///     Date::try_new_islamic_civil_date_with_calendar(1392, 4, 25, islamic)
@@ -1083,7 +1071,7 @@ impl<A: AsCalendar<Calendar = IslamicCivil>> DateTime<A> {
     /// use icu::calendar::islamic::IslamicCivil;
     /// use icu::calendar::DateTime;
     ///
-    /// let islamic = IslamicCivil::new_always_calculating();
+    /// let islamic = IslamicCivil::new();
     ///
     /// let datetime_islamic =
     ///     DateTime::try_new_islamic_civil_datetime_with_calendar(
@@ -1297,7 +1285,7 @@ impl<A: AsCalendar<Calendar = IslamicTabular>> Date<A> {
     /// use icu::calendar::islamic::IslamicTabular;
     /// use icu::calendar::Date;
     ///
-    /// let islamic = IslamicTabular::new_always_calculating();
+    /// let islamic = IslamicTabular::new();
     ///
     /// let date_islamic =
     ///     Date::try_new_islamic_tabular_date_with_calendar(1392, 4, 25, islamic)
@@ -1326,7 +1314,7 @@ impl<A: AsCalendar<Calendar = IslamicTabular>> DateTime<A> {
     /// use icu::calendar::islamic::IslamicTabular;
     /// use icu::calendar::DateTime;
     ///
-    /// let islamic = IslamicTabular::new_always_calculating();
+    /// let islamic = IslamicTabular::new();
     ///
     /// let datetime_islamic =
     ///     DateTime::try_new_islamic_tabular_datetime_with_calendar(

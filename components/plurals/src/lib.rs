@@ -375,7 +375,7 @@ impl PluralRules {
             provider
                 .load(DataRequest {
                     locale,
-                    metadata: Default::default(),
+                    ..Default::default()
                 })?
                 .take_payload()?
                 .cast(),
@@ -437,7 +437,7 @@ impl PluralRules {
             provider
                 .load(DataRequest {
                     locale,
-                    metadata: Default::default(),
+                    ..Default::default()
                 })?
                 .take_payload()?
                 .cast(),
@@ -781,7 +781,7 @@ where
         let ranges = provider
             .load(DataRequest {
                 locale,
-                metadata: Default::default(),
+                ..Default::default()
             })?
             .take_payload()?;
 

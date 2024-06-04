@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::rayon_prelude::*;
-use crate::FallbackMode;
 use displaydoc::Display;
 use icu_locale::fallback::LocaleFallbackIterator;
 use icu_locale::LocaleFallbacker;
@@ -402,9 +401,6 @@ enum LocalesWithOrWithoutFallback {
 pub struct DatagenDriver {
     keys: Option<HashSet<DataKey>>,
     locales_fallback: Option<LocalesWithOrWithoutFallback>,
-    // `None` means not set, `Some(None)` means all
-    legacy_locales: Option<Option<Vec<LanguageIdentifier>>>,
-    legacy_fallback_mode: FallbackMode,
     additional_collations: HashSet<String>,
     segmenter_models: Vec<String>,
 }
@@ -418,8 +414,6 @@ impl DatagenDriver {
         Self {
             keys: None,
             locales_fallback: None,
-            legacy_fallback_mode: FallbackMode::default(),
-            legacy_locales: None,
             additional_collations: HashSet::new(),
             segmenter_models: Vec::new(),
         }
@@ -575,8 +569,6 @@ impl DatagenDriver {
         let Self {
             keys,
             locales_fallback,
-            legacy_locales,
-            legacy_fallback_mode,
             additional_collations,
             segmenter_models,
         } = self;
@@ -587,76 +579,9 @@ impl DatagenDriver {
             ));
         };
 
-        let map_legacy_locales_to_locales_with_expansion =
-            |legacy_locales: Option<Vec<LanguageIdentifier>>| match legacy_locales {
-                Some(v) => v
-                    .into_iter()
-                    .map(LocaleFamily::with_descendants)
-                    .map(LocaleFamily::into_parts)
-                    .collect(),
-                None => [LocaleFamily::FULL]
-                    .into_iter()
-                    .map(LocaleFamily::into_parts)
-                    .collect(),
-            };
-
-        let locales_fallback = match (locales_fallback, legacy_locales, legacy_fallback_mode) {
-            // 1.5 API
-            (Some(locales_fallback), _, _) => locales_fallback,
-            // 1.4 API
-            (_, Some(legacy_locales), FallbackMode::PreferredForExporter) => {
-                LocalesWithOrWithoutFallback::WithFallback {
-                    families: map_legacy_locales_to_locales_with_expansion(legacy_locales),
-                    options: FallbackOptions {
-                        runtime_fallback_location: None,
-                        deduplication_strategy: None,
-                    },
-                }
-            }
-            (_, Some(legacy_locales), FallbackMode::Runtime) => {
-                LocalesWithOrWithoutFallback::WithFallback {
-                    families: map_legacy_locales_to_locales_with_expansion(legacy_locales),
-                    options: FallbackOptions {
-                        runtime_fallback_location: Some(RuntimeFallbackLocation::Internal),
-                        deduplication_strategy: Some(DeduplicationStrategy::Maximal),
-                    },
-                }
-            }
-            (_, Some(legacy_locales), FallbackMode::RuntimeManual) => {
-                LocalesWithOrWithoutFallback::WithFallback {
-                    families: map_legacy_locales_to_locales_with_expansion(legacy_locales),
-                    options: FallbackOptions {
-                        runtime_fallback_location: Some(RuntimeFallbackLocation::External),
-                        deduplication_strategy: Some(DeduplicationStrategy::Maximal),
-                    },
-                }
-            }
-            (_, Some(Some(locales)), FallbackMode::Preresolved) => {
-                LocalesWithOrWithoutFallback::WithoutFallback {
-                    langids: locales.into_iter().collect(),
-                }
-            }
-            (_, Some(None), FallbackMode::Preresolved) => {
-                return Err(DataError::custom(
-                    "FallbackMode::Preresolved requires an explicit locale set",
-                ));
-            }
-            (_, Some(legacy_locales), FallbackMode::Hybrid) => {
-                LocalesWithOrWithoutFallback::WithFallback {
-                    families: map_legacy_locales_to_locales_with_expansion(legacy_locales),
-                    options: FallbackOptions {
-                        runtime_fallback_location: Some(RuntimeFallbackLocation::External),
-                        deduplication_strategy: Some(DeduplicationStrategy::None),
-                    },
-                }
-            }
-            // Failure case
-            _ => {
-                return Err(DataError::custom(
-                    "`DatagenDriver::with_locales` or `with_all_locales` or `with_locales_and_fallback` or `with_locales_no_fallback` needs to be called",
-                ));
-            }
-        };
+        let locales_fallback = locales_fallback.ok_or_else(|| DataError::custom(
+            "`DatagenDriver::with_locales_and_fallback` or `with_locales_no_fallback` needs to be called",
+        ))?;
 
         if keys.is_empty() {
             log::warn!("No keys selected");
@@ -727,7 +652,7 @@ impl DatagenDriver {
                 .map_err(|&e| e)
         };
 
-        let load_with_fallback = |key, locale: &_| {
+        let load_with_fallback = |key, locale: &_, key_attributes: &_| {
             log::trace!("Generating key/locale: {key}/{locale:}");
             let mut metadata = DataRequestMetadata::default();
             metadata.silent = true;
@@ -736,6 +661,7 @@ impl DatagenDriver {
             loop {
                 let req = DataRequest {
                     locale: locale_iter.as_ref().map(|i| i.get()).unwrap_or(locale),
+                    key_attributes,
                     metadata,
                 };
                 match provider.load_data(key, req) {
@@ -784,7 +710,9 @@ impl DatagenDriver {
             let instant1 = Instant::now();
 
             if key.metadata().singleton {
-                if provider.supported_locales_for_key(key)? != [Default::default()] {
+                if provider.supported_requests_for_key(key)?
+                    != HashSet::from_iter([Default::default()])
+                {
                     return Err(
                         DataError::custom("Invalid supported locales for singleton key")
                             .with_key(key),
@@ -830,10 +758,13 @@ impl DatagenDriver {
                 DeduplicationStrategy::Maximal => {
                     let payloads = locales_to_export
                         .into_par_iter()
-                        .filter_map(|locale| {
+                        .filter_map(|(locale, key_attributes)| {
                             let instant2 = Instant::now();
-                            load_with_fallback(key, &locale)
-                                .map(|r| r.map(|payload| (locale, (payload, instant2.elapsed()))))
+                            load_with_fallback(key, &locale, &key_attributes).map(|r| {
+                                r.map(|payload| {
+                                    ((locale, key_attributes), (payload, instant2.elapsed()))
+                                })
+                            })
                         })
                         .collect::<Result<HashMap<_, _>, _>>()?;
                     deduplicate_payloads::<true>(key, &payloads, fallbacker()?, sink)?
@@ -841,21 +772,26 @@ impl DatagenDriver {
                 DeduplicationStrategy::RetainBaseLanguages => {
                     let payloads = locales_to_export
                         .into_par_iter()
-                        .filter_map(|locale| {
+                        .filter_map(|(locale, key_attributes)| {
                             let instant2 = Instant::now();
-                            load_with_fallback(key, &locale)
-                                .map(|r| r.map(|payload| (locale, (payload, instant2.elapsed()))))
+                            load_with_fallback(key, &locale, &key_attributes).map(|r| {
+                                r.map(|payload| {
+                                    ((locale, key_attributes), (payload, instant2.elapsed()))
+                                })
+                            })
                         })
                         .collect::<Result<HashMap<_, _>, _>>()?;
                     deduplicate_payloads::<false>(key, &payloads, fallbacker()?, sink)?
                 }
                 DeduplicationStrategy::None => locales_to_export
                     .into_par_iter()
-                    .filter_map(|locale| {
+                    .filter_map(|(locale, key_attributes)| {
                         let instant2 = Instant::now();
-                        let result = load_with_fallback(key, &locale)?;
+                        let result = load_with_fallback(key, &locale, &key_attributes)?;
                         let result = result
-                            .and_then(|payload| sink.put_payload(key, &locale, &payload))
+                            .and_then(|payload| {
+                                sink.put_payload(key, &locale, &key_attributes, &payload)
+                            })
                             // Note: in Hybrid mode the elapsed time includes sink.put_payload.
                             // In Runtime mode the elapsed time is only load_with_fallback.
                             .map(|_| (instant2.elapsed(), locale.write_to_string().into_owned()))
@@ -864,7 +800,8 @@ impl DatagenDriver {
                                     key,
                                     DataRequest {
                                         locale: &locale,
-                                        metadata: Default::default(),
+                                        key_attributes: &key_attributes,
+                                        ..Default::default()
                                     },
                                 )
                             });
@@ -917,43 +854,38 @@ fn select_locales_for_key<'a>(
     additional_collations: &HashSet<String>,
     segmenter_models: &[String],
     fallbacker: impl Fn() -> Result<&'a LocaleFallbacker, DataError>,
-) -> Result<HashSet<icu_provider::DataLocale>, DataError> {
+) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
     // Map from all supported LanguageIdentifiers to their
     // corresponding supported DataLocales.
-    let mut supported_map = HashMap::<LanguageIdentifier, HashSet<DataLocale>>::new();
-    for locale in provider
-        .supported_locales_for_key(key)
+    let mut supported_map =
+        HashMap::<LanguageIdentifier, HashSet<(DataLocale, DataKeyAttributes)>>::new();
+    for (locale, key_attributes) in provider
+        .supported_requests_for_key(key)
         .map_err(|e| e.with_key(key))?
     {
         supported_map
             .entry(locale.get_langid())
             .or_default()
-            .insert(locale);
+            .insert((locale, key_attributes));
     }
 
     if key.path().get().starts_with("segmenter/dictionary/") {
         supported_map.retain(|_, locales| {
-            locales.retain(|locale| {
-                let model = crate::dictionary_data_locale_to_model_name(locale);
-                segmenter_models.iter().any(|m| Some(m.as_ref()) == model)
-            });
+            locales.retain(|(_, attrs)| segmenter_models.iter().any(|m| **m == **attrs));
             !locales.is_empty()
         });
         // Don't perform additional locale filtering
         return Ok(supported_map.into_values().flatten().collect());
     } else if key.path().get().starts_with("segmenter/lstm/") {
         supported_map.retain(|_, locales| {
-            locales.retain(|locale| {
-                let model = crate::lstm_data_locale_to_model_name(locale);
-                segmenter_models.iter().any(|m| Some(m.as_ref()) == model)
-            });
+            locales.retain(|(_, attrs)| segmenter_models.iter().any(|m| **m == **attrs));
             !locales.is_empty()
         });
         // Don't perform additional locale filtering
         return Ok(supported_map.into_values().flatten().collect());
     } else if key.path().get().starts_with("collator/") {
         supported_map.retain(|_, locales| {
-            locales.retain(|locale| {
+            locales.retain(|(locale, _)| {
                 let Some(collation) = locale
                     .get_unicode_ext(&key!("co"))
                     .and_then(|co| co.as_single_subtag().copied())
@@ -961,7 +893,7 @@ fn select_locales_for_key<'a>(
                     return true;
                 };
                 additional_collations.contains(collation.as_str())
-                    || if collation.starts_with("search") {
+                    || if collation.as_str().starts_with("search") {
                         additional_collations.contains("search*")
                     } else {
                         !["big5han", "gb2312"].contains(&collation.as_str())
@@ -1025,63 +957,71 @@ fn select_locales_for_key<'a>(
     // Compute a map from LanguageIdentifiers to DataLocales, including inherited auxiliary keys
     // and extensions. Also resolve the ancestors and descendants while building this map.
     let mut selected_langids = requested_families.keys().cloned().collect::<HashSet<_>>();
-    let expansion_map: HashMap<&LanguageIdentifier, HashSet<DataLocale>> = all_candidate_langids
-        .into_iter()
-        .map(|current_langid| {
-            let mut expansion = supported_map
-                .get(current_langid)
-                .cloned()
-                .unwrap_or_default();
-            if include_full && !selected_langids.contains(current_langid) {
-                log::trace!("Including {current_langid}: full locale family: {key}");
-                selected_langids.insert(current_langid.clone());
-            }
-            if current_langid.language.is_empty() && current_langid != &LanguageIdentifier::UND {
-                log::trace!("Including {current_langid}: und variant: {key}");
-                selected_langids.insert(current_langid.clone());
-            }
-            let include_ancestors = requested_families
-                .get(current_langid)
-                .map(|family| family.include_ancestors)
-                // default to `false` if the langid was not requested
-                .unwrap_or(false);
-            let mut iter = fallbacker_with_config.fallback_for(current_langid.into());
-            loop {
-                // Inherit aux keys and extension keywords from parent locales
-                let parent_langid: LanguageIdentifier = iter.get().get_langid();
-                let maybe_parent_locales = supported_map.get(&parent_langid);
-                let include_descendants = requested_families
-                    .get(&parent_langid)
-                    .map(|family| family.include_descendants)
-                    // default to `false` if the langid was not requested
-                    .unwrap_or(false);
-                if include_descendants && !selected_langids.contains(current_langid) {
-                    log::trace!("Including {current_langid}: descendant of {parent_langid}: {key}");
+    let expansion_map: HashMap<&LanguageIdentifier, HashSet<(DataLocale, DataKeyAttributes)>> =
+        all_candidate_langids
+            .into_iter()
+            .map(|current_langid| {
+                let mut expansion = supported_map
+                    .get(current_langid)
+                    .cloned()
+                    .unwrap_or_default();
+                if include_full && !selected_langids.contains(current_langid) {
+                    log::trace!("Including {current_langid}: full locale family: {key}");
                     selected_langids.insert(current_langid.clone());
                 }
-                if include_ancestors && !selected_langids.contains(&parent_langid) {
-                    log::trace!("Including {parent_langid}: ancestor of {current_langid}: {key}");
-                    selected_langids.insert(parent_langid);
+                if current_langid.language.is_empty() && current_langid != &LanguageIdentifier::UND
+                {
+                    log::trace!("Including {current_langid}: und variant: {key}");
+                    selected_langids.insert(current_langid.clone());
                 }
-                if let Some(parent_locales) = maybe_parent_locales {
-                    for morphed_locale in parent_locales.iter() {
-                        // Special case: don't pull extensions or aux keys up from the root.
-                        if morphed_locale.is_langid_und() && !morphed_locale.is_empty() {
-                            continue;
-                        }
-                        let mut morphed_locale = morphed_locale.clone();
-                        morphed_locale.set_langid(current_langid.clone());
-                        expansion.insert(morphed_locale);
+                let include_ancestors = requested_families
+                    .get(current_langid)
+                    .map(|family| family.include_ancestors)
+                    // default to `false` if the langid was not requested
+                    .unwrap_or(false);
+                let mut iter = fallbacker_with_config.fallback_for(current_langid.into());
+                loop {
+                    // Inherit aux keys and extension keywords from parent locales
+                    let parent_langid: LanguageIdentifier = iter.get().get_langid();
+                    let maybe_parent_locales = supported_map.get(&parent_langid);
+                    let include_descendants = requested_families
+                        .get(&parent_langid)
+                        .map(|family| family.include_descendants)
+                        // default to `false` if the langid was not requested
+                        .unwrap_or(false);
+                    if include_descendants && !selected_langids.contains(current_langid) {
+                        log::trace!(
+                            "Including {current_langid}: descendant of {parent_langid}: {key}"
+                        );
+                        selected_langids.insert(current_langid.clone());
                     }
+                    if include_ancestors && !selected_langids.contains(&parent_langid) {
+                        log::trace!(
+                            "Including {parent_langid}: ancestor of {current_langid}: {key}"
+                        );
+                        selected_langids.insert(parent_langid);
+                    }
+                    if let Some(parent_locales) = maybe_parent_locales {
+                        for morphed_req in parent_locales.iter() {
+                            // Special case: don't pull extensions or aux keys up from the root.
+                            if morphed_req.0.is_langid_und()
+                                && !(morphed_req.0.is_empty() && morphed_req.1.is_empty())
+                            {
+                                continue;
+                            }
+                            let mut morphed_req = morphed_req.clone();
+                            morphed_req.0.set_langid(current_langid.clone());
+                            expansion.insert(morphed_req);
+                        }
+                    }
+                    if iter.get().is_und() {
+                        break;
+                    }
+                    iter.step();
                 }
-                if iter.get().is_und() {
-                    break;
-                }
-                iter.step();
-            }
-            (current_langid, expansion)
-        })
-        .collect();
+                (current_langid, expansion)
+            })
+            .collect();
 
     let selected_locales = expansion_map
         .into_iter()
@@ -1093,25 +1033,27 @@ fn select_locales_for_key<'a>(
 
 fn deduplicate_payloads<const MAXIMAL: bool>(
     key: DataKey,
-    payloads: &HashMap<DataLocale, (DataPayload<ExportMarker>, Duration)>,
+    payloads: &HashMap<(DataLocale, DataKeyAttributes), (DataPayload<ExportMarker>, Duration)>,
     fallbacker: &LocaleFallbacker,
     sink: &dyn DataExporter,
 ) -> Result<Option<(Duration, String)>, DataError> {
     let fallbacker_with_config = fallbacker.for_config(key.fallback_config());
     payloads
         .iter()
-        .try_for_each(|(locale, (payload, _duration))| {
+        .try_for_each(|((locale, key_attributes), (payload, _duration))| {
             // Always export `und`. This prevents calling `step` on an empty locale.
             if locale.is_und() {
-                return sink.put_payload(key, locale, payload).map_err(|e| {
-                    e.with_req(
-                        key,
-                        DataRequest {
-                            locale,
-                            metadata: Default::default(),
-                        },
-                    )
-                });
+                return sink
+                    .put_payload(key, locale, key_attributes, payload)
+                    .map_err(|e| {
+                        e.with_req(
+                            key,
+                            DataRequest {
+                                locale,
+                                ..Default::default()
+                            },
+                        )
+                    });
             }
             let mut iter = fallbacker_with_config.fallback_for(locale.clone());
             loop {
@@ -1128,7 +1070,9 @@ fn deduplicate_payloads<const MAXIMAL: bool>(
                     iter.step();
                 }
 
-                if let Some((inherited_payload, _duration)) = payloads.get(iter.get()) {
+                if let Some((inherited_payload, _duration)) =
+                    payloads.get(&(iter.get().clone(), key_attributes.clone()))
+                {
                     if inherited_payload == payload {
                         // Found a match: don't need to write anything
                         log::trace!(
@@ -1143,21 +1087,27 @@ fn deduplicate_payloads<const MAXIMAL: bool>(
                 }
             }
             // Did not find a match: export this payload
-            sink.put_payload(key, locale, payload).map_err(|e| {
-                e.with_req(
-                    key,
-                    DataRequest {
-                        locale,
-                        metadata: Default::default(),
-                    },
-                )
-            })
+            sink.put_payload(key, locale, key_attributes, payload)
+                .map_err(|e| {
+                    e.with_req(
+                        key,
+                        DataRequest {
+                            locale,
+                            ..Default::default()
+                        },
+                    )
+                })
         })?;
 
     // Slowest locale calculation:
     Ok(payloads
         .iter()
-        .map(|(locale, (_payload, duration))| (*duration, locale.write_to_string().into_owned()))
+        .map(|((locale, key_attributes), (_payload, duration))| {
+            (
+                *duration,
+                locale.write_to_string().into_owned() + "/" + key_attributes,
+            )
+        })
         .max())
 }
 
@@ -1273,7 +1223,7 @@ fn test_collation_filtering() {
         )
         .unwrap()
         .into_iter()
-        .map(|l| l.to_string())
+        .map(|(l, _)| l.to_string())
         .collect::<BTreeSet<_>>();
         let expected_locales = cas
             .expected

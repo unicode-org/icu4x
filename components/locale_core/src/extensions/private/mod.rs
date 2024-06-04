@@ -31,13 +31,18 @@ mod other;
 
 use alloc::vec::Vec;
 use core::ops::Deref;
+use core::str::FromStr;
 
 #[doc(inline)]
 pub use other::{subtag, Subtag};
 
+use super::ExtensionType;
 use crate::parser::ParseError;
 use crate::parser::SubtagIterator;
 use crate::shortvec::ShortBoxSlice;
+
+pub(crate) const PRIVATE_EXT_CHAR: char = 'x';
+pub(crate) const PRIVATE_EXT_STR: &str = "x";
 
 /// A list of [`Private Use Extensions`] as defined in [`Unicode Locale
 /// Identifier`] specification.
@@ -110,6 +115,17 @@ impl Private {
         Self(ShortBoxSlice::new_single(input))
     }
 
+    pub(crate) fn try_from_bytes(t: &[u8]) -> Result<Self, ParseError> {
+        let mut iter = SubtagIterator::new(t);
+
+        let ext = iter.next().ok_or(ParseError::InvalidExtension)?;
+        if let ExtensionType::Private = ExtensionType::try_from_byte_slice(ext)? {
+            return Self::try_from_iter(&mut iter);
+        }
+
+        Err(ParseError::InvalidExtension)
+    }
+
     /// Empties the [`Private`] list.
     ///
     /// # Examples
@@ -139,15 +155,25 @@ impl Private {
         Ok(Self(keys))
     }
 
-    pub(crate) fn for_each_subtag_str<E, F>(&self, f: &mut F) -> Result<(), E>
+    pub(crate) fn for_each_subtag_str<E, F>(&self, f: &mut F, with_ext: bool) -> Result<(), E>
     where
         F: FnMut(&str) -> Result<(), E>,
     {
         if self.is_empty() {
             return Ok(());
         }
-        f("x")?;
+        if with_ext {
+            f(PRIVATE_EXT_STR)?;
+        }
         self.deref().iter().map(|t| t.as_str()).try_for_each(f)
+    }
+}
+
+impl FromStr for Private {
+    type Err = ParseError;
+
+    fn from_str(source: &str) -> Result<Self, Self::Err> {
+        Self::try_from_bytes(source.as_bytes())
     }
 }
 
@@ -158,7 +184,7 @@ impl writeable::Writeable for Private {
         if self.is_empty() {
             return Ok(());
         }
-        sink.write_str("x")?;
+        sink.write_char(PRIVATE_EXT_CHAR)?;
         for key in self.iter() {
             sink.write_char('-')?;
             writeable::Writeable::write_to(key, sink)?;
@@ -183,5 +209,16 @@ impl Deref for Private {
 
     fn deref(&self) -> &Self::Target {
         self.0.deref()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_private_extension_fromstr() {
+        let pe: Private = "x-foo-bar-l-baz".parse().expect("Failed to parse Private");
+        assert_eq!(pe.to_string(), "x-foo-bar-l-baz");
     }
 }

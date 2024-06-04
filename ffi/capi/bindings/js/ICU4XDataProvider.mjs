@@ -40,10 +40,6 @@ export class ICU4XDataProvider {
     return diplomat_out;
   }
 
-  static create_test() {
-    return new ICU4XDataProvider(wasm.ICU4XDataProvider_create_test(), true, []);
-  }
-
   static create_from_byte_slice(arg_blob) {
     const buf_arg_blob = diplomatRuntime.DiplomatBuf.slice(wasm, arg_blob, "u8");
     const diplomat_out = (() => {

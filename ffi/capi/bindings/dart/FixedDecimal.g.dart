@@ -191,7 +191,7 @@ final class FixedDecimal implements ffi.Finalizable {
   }
 
   /// See the [Rust documentation for `trunc_to_increment`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.trunc_to_increment) for more information.
-  void truncToIncrement(int position, RoundingIncrement increment) {
+  void truncToIncrement(int position, FixedDecimalRoundingIncrement increment) {
     _ICU4XFixedDecimal_trunc_to_increment(_ffi, position, increment.index);
   }
 
@@ -201,7 +201,7 @@ final class FixedDecimal implements ffi.Finalizable {
   }
 
   /// See the [Rust documentation for `half_trunc_to_increment`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_trunc_to_increment) for more information.
-  void halfTruncToIncrement(int position, RoundingIncrement increment) {
+  void halfTruncToIncrement(int position, FixedDecimalRoundingIncrement increment) {
     _ICU4XFixedDecimal_half_trunc_to_increment(_ffi, position, increment.index);
   }
 
@@ -211,7 +211,7 @@ final class FixedDecimal implements ffi.Finalizable {
   }
 
   /// See the [Rust documentation for `expand_to_increment`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.expand_to_increment) for more information.
-  void expandToIncrement(int position, RoundingIncrement increment) {
+  void expandToIncrement(int position, FixedDecimalRoundingIncrement increment) {
     _ICU4XFixedDecimal_expand_to_increment(_ffi, position, increment.index);
   }
 
@@ -221,7 +221,7 @@ final class FixedDecimal implements ffi.Finalizable {
   }
 
   /// See the [Rust documentation for `half_expand_to_increment`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_expand_to_increment) for more information.
-  void halfExpandToIncrement(int position, RoundingIncrement increment) {
+  void halfExpandToIncrement(int position, FixedDecimalRoundingIncrement increment) {
     _ICU4XFixedDecimal_half_expand_to_increment(_ffi, position, increment.index);
   }
 
@@ -231,7 +231,7 @@ final class FixedDecimal implements ffi.Finalizable {
   }
 
   /// See the [Rust documentation for `ceil_to_increment`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.ceil_to_increment) for more information.
-  void ceilToIncrement(int position, RoundingIncrement increment) {
+  void ceilToIncrement(int position, FixedDecimalRoundingIncrement increment) {
     _ICU4XFixedDecimal_ceil_to_increment(_ffi, position, increment.index);
   }
 
@@ -241,7 +241,7 @@ final class FixedDecimal implements ffi.Finalizable {
   }
 
   /// See the [Rust documentation for `half_ceil_to_increment`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_ceil_to_increment) for more information.
-  void halfCeilToIncrement(int position, RoundingIncrement increment) {
+  void halfCeilToIncrement(int position, FixedDecimalRoundingIncrement increment) {
     _ICU4XFixedDecimal_half_ceil_to_increment(_ffi, position, increment.index);
   }
 
@@ -251,7 +251,7 @@ final class FixedDecimal implements ffi.Finalizable {
   }
 
   /// See the [Rust documentation for `floor_to_increment`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.floor_to_increment) for more information.
-  void floorToIncrement(int position, RoundingIncrement increment) {
+  void floorToIncrement(int position, FixedDecimalRoundingIncrement increment) {
     _ICU4XFixedDecimal_floor_to_increment(_ffi, position, increment.index);
   }
 
@@ -261,7 +261,7 @@ final class FixedDecimal implements ffi.Finalizable {
   }
 
   /// See the [Rust documentation for `half_floor_to_increment`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_floor_to_increment) for more information.
-  void halfFloorToIncrement(int position, RoundingIncrement increment) {
+  void halfFloorToIncrement(int position, FixedDecimalRoundingIncrement increment) {
     _ICU4XFixedDecimal_half_floor_to_increment(_ffi, position, increment.index);
   }
 
@@ -271,7 +271,7 @@ final class FixedDecimal implements ffi.Finalizable {
   }
 
   /// See the [Rust documentation for `half_even_to_increment`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_even_to_increment) for more information.
-  void halfEvenToIncrement(int position, RoundingIncrement increment) {
+  void halfEvenToIncrement(int position, FixedDecimalRoundingIncrement increment) {
     _ICU4XFixedDecimal_half_even_to_increment(_ffi, position, increment.index);
   }
 

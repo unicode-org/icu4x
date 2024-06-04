@@ -7,6 +7,7 @@ use icu_collections::codepointinvlist::CodePointInversionListBuilder;
 use icu_properties::provider::*;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
+use std::collections::HashSet;
 
 impl DatagenProvider {
     // get the source data for a Unicode binary property that only defines values for code points
@@ -53,12 +54,10 @@ macro_rules! expand {
             }
 
             impl IterableDataProvider<$marker> for DatagenProvider {
-                fn supported_locales(
-                    &self,
-                ) -> Result<Vec<DataLocale>, DataError> {
+                fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
                     self.get_binary_prop_for_code_point_set($prop_name)?;
 
-                    Ok(vec![Default::default()])
+                    Ok(HashSet::from_iter([Default::default()]))
                 }
             }
         )+

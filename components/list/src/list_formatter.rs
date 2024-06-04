@@ -51,7 +51,7 @@ macro_rules! constructor {
             let data = provider
                 .load(DataRequest {
                     locale,
-                    metadata: Default::default(),
+                    ..Default::default()
                 })?
                 .take_payload()?.cast();
             Ok(Self { data, length })

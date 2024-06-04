@@ -36,16 +36,8 @@ export class ICU4XCodePointSetBuilder {
     wasm.ICU4XCodePointSetBuilder_add_char(this.underlying, diplomatRuntime.extractCodePoint(arg_ch, 'arg_ch'));
   }
 
-  add_u32(arg_ch) {
-    wasm.ICU4XCodePointSetBuilder_add_u32(this.underlying, arg_ch);
-  }
-
   add_inclusive_range(arg_start, arg_end) {
     wasm.ICU4XCodePointSetBuilder_add_inclusive_range(this.underlying, diplomatRuntime.extractCodePoint(arg_start, 'arg_start'), diplomatRuntime.extractCodePoint(arg_end, 'arg_end'));
-  }
-
-  add_inclusive_range_u32(arg_start, arg_end) {
-    wasm.ICU4XCodePointSetBuilder_add_inclusive_range_u32(this.underlying, arg_start, arg_end);
   }
 
   add_set(arg_data) {

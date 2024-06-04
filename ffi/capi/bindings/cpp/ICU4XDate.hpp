@@ -1,280 +1,146 @@
 #ifndef ICU4XDate_HPP
 #define ICU4XDate_HPP
+
+#include "ICU4XDate.d.hpp"
+
+#include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
-#include <algorithm>
 #include <memory>
-#include <variant>
 #include <optional>
 #include "diplomat_runtime.hpp"
-
-#include "ICU4XDate.h"
-
-class ICU4XCalendar;
-class ICU4XDate;
-#include "ICU4XError.hpp"
-class ICU4XIsoDate;
-#include "ICU4XIsoWeekday.hpp"
-class ICU4XWeekCalculator;
-struct ICU4XWeekOf;
-
-/**
- * A destruction policy for using ICU4XDate with std::unique_ptr.
- */
-struct ICU4XDateDeleter {
-  void operator()(capi::ICU4XDate* l) const noexcept {
-    capi::ICU4XDate_destroy(l);
-  }
-};
-
-/**
- * An ICU4X Date object capable of containing a date and time for any calendar.
- * 
- * See the [Rust documentation for `Date`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html) for more information.
- */
-class ICU4XDate {
- public:
-
-  /**
-   * Creates a new [`ICU4XDate`] representing the ISO date and time
-   * given but in a given calendar
-   * 
-   * See the [Rust documentation for `new_from_iso`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.new_from_iso) for more information.
-   */
-  static diplomat::result<ICU4XDate, ICU4XError> create_from_iso_in_calendar(int32_t year, uint8_t month, uint8_t day, const ICU4XCalendar& calendar);
-
-  /**
-   * Creates a new [`ICU4XDate`] from the given codes, which are interpreted in the given calendar system
-   * 
-   * See the [Rust documentation for `try_new_from_codes`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.try_new_from_codes) for more information.
-   */
-  static diplomat::result<ICU4XDate, ICU4XError> create_from_codes_in_calendar(const std::string_view era_code, int32_t year, const std::string_view month_code, uint8_t day, const ICU4XCalendar& calendar);
-
-  /**
-   * Convert this date to one in a different calendar
-   * 
-   * See the [Rust documentation for `to_calendar`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.to_calendar) for more information.
-   */
-  ICU4XDate to_calendar(const ICU4XCalendar& calendar) const;
-
-  /**
-   * Converts this date to ISO
-   * 
-   * See the [Rust documentation for `to_iso`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.to_iso) for more information.
-   */
-  ICU4XIsoDate to_iso() const;
-
-  /**
-   * Returns the 1-indexed day in the year for this date
-   * 
-   * See the [Rust documentation for `day_of_year_info`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_year_info) for more information.
-   */
-  uint16_t day_of_year() const;
-
-  /**
-   * Returns the 1-indexed day in the month for this date
-   * 
-   * See the [Rust documentation for `day_of_month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_month) for more information.
-   */
-  uint32_t day_of_month() const;
-
-  /**
-   * Returns the day in the week for this day
-   * 
-   * See the [Rust documentation for `day_of_week`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_week) for more information.
-   */
-  ICU4XIsoWeekday day_of_week() const;
-
-  /**
-   * Returns the week number in this month, 1-indexed, based on what
-   * is considered the first day of the week (often a locale preference).
-   * 
-   * `first_weekday` can be obtained via `first_weekday()` on [`ICU4XWeekCalculator`]
-   * 
-   * See the [Rust documentation for `week_of_month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.week_of_month) for more information.
-   */
-  uint32_t week_of_month(ICU4XIsoWeekday first_weekday) const;
-
-  /**
-   * Returns the week number in this year, using week data
-   * 
-   * See the [Rust documentation for `week_of_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.week_of_year) for more information.
-   */
-  ICU4XWeekOf week_of_year(const ICU4XWeekCalculator& calculator) const;
-
-  /**
-   * Returns 1-indexed number of the month of this date in its year
-   * 
-   * Note that for lunar calendars this may not lead to the same month
-   * having the same ordinal month across years; use month_code if you care
-   * about month identity.
-   * 
-   * See the [Rust documentation for `month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.month) for more information.
-   */
-  uint32_t ordinal_month() const;
-
-  /**
-   * Returns the month code for this date. Typically something
-   * like "M01", "M02", but can be more complicated for lunar calendars.
-   * 
-   * See the [Rust documentation for `month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.month) for more information.
-   */
-  template<typename W> void month_code_to_write(W& write) const;
-
-  /**
-   * Returns the month code for this date. Typically something
-   * like "M01", "M02", but can be more complicated for lunar calendars.
-   * 
-   * See the [Rust documentation for `month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.month) for more information.
-   */
-  std::string month_code() const;
-
-  /**
-   * Returns the year number in the current era for this date
-   * 
-   * See the [Rust documentation for `year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year) for more information.
-   */
-  int32_t year_in_era() const;
-
-  /**
-   * Returns the era for this date,
-   * 
-   * See the [Rust documentation for `year`](https://docs.rs/icu/latest/icu/struct.Date.html#method.year) for more information.
-   * 
-   * Additional information: [1](https://docs.rs/icu/latest/icu/types/struct.Era.html)
-   */
-  template<typename W> void era_to_write(W& write) const;
-
-  /**
-   * Returns the era for this date,
-   * 
-   * See the [Rust documentation for `year`](https://docs.rs/icu/latest/icu/struct.Date.html#method.year) for more information.
-   * 
-   * Additional information: [1](https://docs.rs/icu/latest/icu/types/struct.Era.html)
-   */
-  std::string era() const;
-
-  /**
-   * Returns the number of months in the year represented by this date
-   * 
-   * See the [Rust documentation for `months_in_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.months_in_year) for more information.
-   */
-  uint8_t months_in_year() const;
-
-  /**
-   * Returns the number of days in the month represented by this date
-   * 
-   * See the [Rust documentation for `days_in_month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.days_in_month) for more information.
-   */
-  uint8_t days_in_month() const;
-
-  /**
-   * Returns the number of days in the year represented by this date
-   * 
-   * See the [Rust documentation for `days_in_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.days_in_year) for more information.
-   */
-  uint16_t days_in_year() const;
-
-  /**
-   * Returns the [`ICU4XCalendar`] object backing this date
-   * 
-   * See the [Rust documentation for `calendar`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.calendar) for more information.
-   */
-  ICU4XCalendar calendar() const;
-  inline const capi::ICU4XDate* AsFFI() const { return this->inner.get(); }
-  inline capi::ICU4XDate* AsFFIMut() { return this->inner.get(); }
-  inline explicit ICU4XDate(capi::ICU4XDate* i) : inner(i) {}
-  ICU4XDate() = default;
-  ICU4XDate(ICU4XDate&&) noexcept = default;
-  ICU4XDate& operator=(ICU4XDate&& other) noexcept = default;
- private:
-  std::unique_ptr<capi::ICU4XDate, ICU4XDateDeleter> inner;
-};
-
 #include "ICU4XCalendar.hpp"
+#include "ICU4XDate.h"
+#include "ICU4XError.hpp"
 #include "ICU4XIsoDate.hpp"
+#include "ICU4XIsoWeekday.hpp"
 #include "ICU4XWeekCalculator.hpp"
 #include "ICU4XWeekOf.hpp"
 
-inline diplomat::result<ICU4XDate, ICU4XError> ICU4XDate::create_from_iso_in_calendar(int32_t year, uint8_t month, uint8_t day, const ICU4XCalendar& calendar) {
-  auto diplomat_result_raw_out_value = capi::ICU4XDate_create_from_iso_in_calendar(year, month, day, calendar.AsFFI());
-  diplomat::result<ICU4XDate, ICU4XError> diplomat_result_out_value;
-  if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XDate>(ICU4XDate(diplomat_result_raw_out_value.ok));
-  } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
-  }
-  return diplomat_result_out_value;
+
+inline diplomat::result<std::unique_ptr<ICU4XDate>, ICU4XError> ICU4XDate::create_from_iso_in_calendar(int32_t year, uint8_t month, uint8_t day, const ICU4XCalendar& calendar) {
+  auto result = capi::ICU4XDate_create_from_iso_in_calendar(year,
+    month,
+    day,
+    calendar.AsFFI());
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XDate>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XDate>>(std::unique_ptr<ICU4XDate>(ICU4XDate::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XDate>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
 }
-inline diplomat::result<ICU4XDate, ICU4XError> ICU4XDate::create_from_codes_in_calendar(const std::string_view era_code, int32_t year, const std::string_view month_code, uint8_t day, const ICU4XCalendar& calendar) {
-  auto diplomat_result_raw_out_value = capi::ICU4XDate_create_from_codes_in_calendar(era_code.data(), era_code.size(), year, month_code.data(), month_code.size(), day, calendar.AsFFI());
-  diplomat::result<ICU4XDate, ICU4XError> diplomat_result_out_value;
-  if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XDate>(ICU4XDate(diplomat_result_raw_out_value.ok));
-  } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
-  }
-  return diplomat_result_out_value;
+
+inline diplomat::result<std::unique_ptr<ICU4XDate>, ICU4XError> ICU4XDate::create_from_codes_in_calendar(std::string_view era_code, int32_t year, std::string_view month_code, uint8_t day, const ICU4XCalendar& calendar) {
+  auto result = capi::ICU4XDate_create_from_codes_in_calendar(era_code.data(),
+    era_code.size(),
+    year,
+    month_code.data(),
+    month_code.size(),
+    day,
+    calendar.AsFFI());
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XDate>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XDate>>(std::unique_ptr<ICU4XDate>(ICU4XDate::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XDate>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
 }
-inline ICU4XDate ICU4XDate::to_calendar(const ICU4XCalendar& calendar) const {
-  return ICU4XDate(capi::ICU4XDate_to_calendar(this->inner.get(), calendar.AsFFI()));
+
+inline std::unique_ptr<ICU4XDate> ICU4XDate::to_calendar(const ICU4XCalendar& calendar) const {
+  auto result = capi::ICU4XDate_to_calendar(this->AsFFI(),
+    calendar.AsFFI());
+  return std::unique_ptr<ICU4XDate>(ICU4XDate::FromFFI(result));
 }
-inline ICU4XIsoDate ICU4XDate::to_iso() const {
-  return ICU4XIsoDate(capi::ICU4XDate_to_iso(this->inner.get()));
+
+inline std::unique_ptr<ICU4XIsoDate> ICU4XDate::to_iso() const {
+  auto result = capi::ICU4XDate_to_iso(this->AsFFI());
+  return std::unique_ptr<ICU4XIsoDate>(ICU4XIsoDate::FromFFI(result));
 }
+
 inline uint16_t ICU4XDate::day_of_year() const {
-  return capi::ICU4XDate_day_of_year(this->inner.get());
+  auto result = capi::ICU4XDate_day_of_year(this->AsFFI());
+  return result;
 }
+
 inline uint32_t ICU4XDate::day_of_month() const {
-  return capi::ICU4XDate_day_of_month(this->inner.get());
+  auto result = capi::ICU4XDate_day_of_month(this->AsFFI());
+  return result;
 }
+
 inline ICU4XIsoWeekday ICU4XDate::day_of_week() const {
-  return static_cast<ICU4XIsoWeekday>(capi::ICU4XDate_day_of_week(this->inner.get()));
+  auto result = capi::ICU4XDate_day_of_week(this->AsFFI());
+  return ICU4XIsoWeekday::FromFFI(result);
 }
+
 inline uint32_t ICU4XDate::week_of_month(ICU4XIsoWeekday first_weekday) const {
-  return capi::ICU4XDate_week_of_month(this->inner.get(), static_cast<capi::ICU4XIsoWeekday>(first_weekday));
+  auto result = capi::ICU4XDate_week_of_month(this->AsFFI(),
+    first_weekday.AsFFI());
+  return result;
 }
+
 inline ICU4XWeekOf ICU4XDate::week_of_year(const ICU4XWeekCalculator& calculator) const {
-  capi::ICU4XWeekOf diplomat_raw_struct_out_value = capi::ICU4XDate_week_of_year(this->inner.get(), calculator.AsFFI());
-  return ICU4XWeekOf{ .week = std::move(diplomat_raw_struct_out_value.week), .unit = std::move(static_cast<ICU4XWeekRelativeUnit>(diplomat_raw_struct_out_value.unit)) };
+  auto result = capi::ICU4XDate_week_of_year(this->AsFFI(),
+    calculator.AsFFI());
+  return ICU4XWeekOf::FromFFI(result);
 }
+
 inline uint32_t ICU4XDate::ordinal_month() const {
-  return capi::ICU4XDate_ordinal_month(this->inner.get());
+  auto result = capi::ICU4XDate_ordinal_month(this->AsFFI());
+  return result;
 }
-template<typename W> inline void ICU4XDate::month_code_to_write(W& write) const {
-  capi::DiplomatWrite write_writer = diplomat::WriteTrait<W>::Construct(write);
-  capi::ICU4XDate_month_code(this->inner.get(), &write_writer);
-}
+
 inline std::string ICU4XDate::month_code() const {
-  std::string diplomat_write_string;
-  capi::DiplomatWrite diplomat_write_out = diplomat::WriteFromString(diplomat_write_string);
-  capi::ICU4XDate_month_code(this->inner.get(), &diplomat_write_out);
-  return diplomat_write_string;
+  std::string output;
+  capi::DiplomatWrite write = diplomat::WriteFromString(output);
+  capi::ICU4XDate_month_code(this->AsFFI(),
+    &write);
+  return output;
 }
+
 inline int32_t ICU4XDate::year_in_era() const {
-  return capi::ICU4XDate_year_in_era(this->inner.get());
+  auto result = capi::ICU4XDate_year_in_era(this->AsFFI());
+  return result;
 }
-template<typename W> inline void ICU4XDate::era_to_write(W& write) const {
-  capi::DiplomatWrite write_writer = diplomat::WriteTrait<W>::Construct(write);
-  capi::ICU4XDate_era(this->inner.get(), &write_writer);
-}
+
 inline std::string ICU4XDate::era() const {
-  std::string diplomat_write_string;
-  capi::DiplomatWrite diplomat_write_out = diplomat::WriteFromString(diplomat_write_string);
-  capi::ICU4XDate_era(this->inner.get(), &diplomat_write_out);
-  return diplomat_write_string;
+  std::string output;
+  capi::DiplomatWrite write = diplomat::WriteFromString(output);
+  capi::ICU4XDate_era(this->AsFFI(),
+    &write);
+  return output;
 }
+
 inline uint8_t ICU4XDate::months_in_year() const {
-  return capi::ICU4XDate_months_in_year(this->inner.get());
+  auto result = capi::ICU4XDate_months_in_year(this->AsFFI());
+  return result;
 }
+
 inline uint8_t ICU4XDate::days_in_month() const {
-  return capi::ICU4XDate_days_in_month(this->inner.get());
+  auto result = capi::ICU4XDate_days_in_month(this->AsFFI());
+  return result;
 }
+
 inline uint16_t ICU4XDate::days_in_year() const {
-  return capi::ICU4XDate_days_in_year(this->inner.get());
+  auto result = capi::ICU4XDate_days_in_year(this->AsFFI());
+  return result;
 }
-inline ICU4XCalendar ICU4XDate::calendar() const {
-  return ICU4XCalendar(capi::ICU4XDate_calendar(this->inner.get()));
+
+inline std::unique_ptr<ICU4XCalendar> ICU4XDate::calendar() const {
+  auto result = capi::ICU4XDate_calendar(this->AsFFI());
+  return std::unique_ptr<ICU4XCalendar>(ICU4XCalendar::FromFFI(result));
 }
-#endif
+
+inline const capi::ICU4XDate* ICU4XDate::AsFFI() const {
+  return reinterpret_cast<const capi::ICU4XDate*>(this);
+}
+
+inline capi::ICU4XDate* ICU4XDate::AsFFI() {
+  return reinterpret_cast<capi::ICU4XDate*>(this);
+}
+
+inline const ICU4XDate* ICU4XDate::FromFFI(const capi::ICU4XDate* ptr) {
+  return reinterpret_cast<const ICU4XDate*>(ptr);
+}
+
+inline ICU4XDate* ICU4XDate::FromFFI(capi::ICU4XDate* ptr) {
+  return reinterpret_cast<ICU4XDate*>(ptr);
+}
+
+inline void ICU4XDate::operator delete(void* ptr) {
+  capi::ICU4XDate_destroy(reinterpret_cast<capi::ICU4XDate*>(ptr));
+}
+
+
+#endif // ICU4XDate_HPP

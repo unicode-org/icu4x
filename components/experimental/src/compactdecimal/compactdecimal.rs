@@ -133,7 +133,7 @@ impl CompactDecimalFormatter {
                 &crate::provider::Baked,
                 DataRequest {
                     locale,
-                    metadata: Default::default(),
+                    ..Default::default()
                 },
             )?
             .take_payload()?
@@ -178,7 +178,7 @@ impl CompactDecimalFormatter {
                 provider,
                 DataRequest {
                     locale,
-                    metadata: Default::default(),
+                    ..Default::default()
                 },
             )?
             .take_payload()?
@@ -220,7 +220,7 @@ impl CompactDecimalFormatter {
                 &crate::provider::Baked,
                 DataRequest {
                     locale,
-                    metadata: Default::default(),
+                    ..Default::default()
                 },
             )?
             .take_payload()?
@@ -265,7 +265,7 @@ impl CompactDecimalFormatter {
                 provider,
                 DataRequest {
                     locale,
-                    metadata: Default::default(),
+                    ..Default::default()
                 },
             )?
             .take_payload()?

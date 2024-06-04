@@ -22,6 +22,7 @@ use eyre::WrapErr;
 use icu_datagen::prelude::*;
 use icu_provider::datagen::ExportableProvider;
 use simple_logger::SimpleLogger;
+use std::collections::HashSet;
 use std::path::PathBuf;
 
 #[derive(Parser)]
@@ -524,7 +525,7 @@ fn main() -> eyre::Result<()> {
                     Syntax::Json => Box::<serializers::Json>::default(),
                 },
                 {
-                    let mut options = ExporterOptions::default();
+                    let mut options = Options::default();
                     options.root = cli.output.unwrap_or_else(|| PathBuf::from("icu4x_data"));
                     if cli.overwrite {
                         options.overwrite = OverwriteOption::RemoveAndReplace
@@ -607,8 +608,8 @@ where
     BlobDataProvider: AsDeserializingBufferProvider,
     for<'a> DeserializingBufferProvider<'a, BlobDataProvider>: DataProvider<M>,
 {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        self.0.supported_locales_for_key(M::KEY)
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+        self.0.supported_requests_for_key(M::KEY)
     }
 }
 

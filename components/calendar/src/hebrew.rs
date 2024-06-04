@@ -34,7 +34,6 @@ use crate::calendar_arithmetic::PrecomputedDataSource;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::error::DateError;
 use crate::types::FormattableMonth;
-use crate::AsCalendar;
 use crate::Iso;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, Time};
 use ::tinystr::tinystr;
@@ -72,14 +71,6 @@ pub struct HebrewDateInner(ArithmeticDate<Hebrew>);
 impl Hebrew {
     /// Construct a new [`Hebrew`]
     pub fn new() -> Self {
-        Hebrew
-    }
-
-    /// Construct a new [`Hebrew`]
-    ///
-    /// This is deprecated since the new implementation does not need precomputed data.
-    #[deprecated(since = "1.5.0", note = "Use Hebrew::new()")]
-    pub fn new_always_calculating() -> Self {
         Hebrew
     }
 }
@@ -377,26 +368,6 @@ impl Date<Hebrew> {
     }
 }
 
-impl<A: AsCalendar<Calendar = Hebrew>> Date<A> {
-    /// Construct new Hebrew Date given a calendar.
-    ///
-    /// This is deprecated since `Hebrew` is a zero-sized type,
-    /// but if you find yourself needing this functionality please let us know.
-    #[deprecated(since = "1.5.0", note = "Use Date::try_new_hebrew_date()")]
-    pub fn try_new_hebrew_date_with_calendar(
-        year: i32,
-        month: u8,
-        day: u8,
-        calendar: A,
-    ) -> Result<Date<A>, DateError> {
-        let year_info = HebrewYearInfo::compute(year);
-
-        ArithmeticDate::new_from_ordinals_with_info(year, month, day, year_info)
-            .map(HebrewDateInner)
-            .map(|inner| Date::from_raw(inner, calendar))
-    }
-}
-
 impl DateTime<Hebrew> {
     /// Construct a new Hebrew datetime from integers.
     ///
@@ -424,29 +395,6 @@ impl DateTime<Hebrew> {
     ) -> Result<DateTime<Hebrew>, DateError> {
         Ok(DateTime {
             date: Date::try_new_hebrew_date(year, month, day)?,
-            time: Time::try_new(hour, minute, second, 0)?,
-        })
-    }
-}
-
-impl<A: AsCalendar<Calendar = Hebrew>> DateTime<A> {
-    /// Construct new Hebrew DateTime given a calendar.
-    ///
-    /// This is deprecated since `Hebrew` is a zero-sized type,
-    /// but if you find yourself needing this functionality please let us know.
-    #[deprecated(since = "1.5.0", note = "Use DateTime::try_new_hebrew_datetime()")]
-    pub fn try_new_hebrew_datetime_with_calendar(
-        year: i32,
-        month: u8,
-        day: u8,
-        hour: u8,
-        minute: u8,
-        second: u8,
-        calendar: A,
-    ) -> Result<DateTime<A>, DateError> {
-        #[allow(deprecated)]
-        Ok(DateTime {
-            date: Date::try_new_hebrew_date_with_calendar(year, month, day, calendar)?,
             time: Time::try_new(hour, minute, second, 0)?,
         })
     }

@@ -496,12 +496,12 @@ impl LocaleCanonicalizer {
         if !extensions.unicode.keywords.is_empty() {
             for key in [key!("rg"), key!("sd")] {
                 if let Some(value) = extensions.unicode.keywords.get_mut(&key) {
-                    if let &[only_value] = value.as_tinystr_slice() {
+                    if let Some(only_value) = value.as_single_subtag() {
                         if let Some(modified_value) = self
                             .aliases
                             .get()
                             .subdivision
-                            .get(&only_value.resize().to_unvalidated())
+                            .get(&only_value.into_tinystr().resize().to_unvalidated())
                         {
                             if let Ok(modified_value) = modified_value.parse() {
                                 *value = modified_value;

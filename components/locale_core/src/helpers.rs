@@ -8,7 +8,7 @@ macro_rules! impl_tinystr_subtag {
         $name:ident,
         $($path:ident)::+,
         $macro_name:ident,
-        $legacy_macro_name:ident,
+        $internal_macro_name:ident,
         $len_start:literal..=$len_end:literal,
         $tinystr_ident:ident,
         $validate:expr,
@@ -187,8 +187,8 @@ macro_rules! impl_tinystr_subtag {
         ///
         #[doc = concat!("[`", stringify!($name), "`]: crate::", $(stringify!($path), "::",)+ stringify!($name))]
         #[macro_export]
-        #[doc(hidden)]
-        macro_rules! $legacy_macro_name {
+        #[doc(hidden)] // macro
+        macro_rules! $internal_macro_name {
             ($string:literal) => {{
                 use $crate::$($path ::)+ $name;
                 const R: $name =
@@ -201,7 +201,7 @@ macro_rules! impl_tinystr_subtag {
             }};
         }
         #[doc(inline)]
-        pub use $legacy_macro_name as $macro_name;
+        pub use $internal_macro_name as $macro_name;
 
         #[cfg(feature = "databake")]
         impl databake::Bake for $name {
@@ -377,14 +377,14 @@ macro_rules! impl_writeable_for_subtag_list {
         fn test_writeable() {
             writeable::assert_writeable_eq!(&$type::default(), "");
             writeable::assert_writeable_eq!(
-                &$type::from_short_slice_unchecked(alloc::vec![$sample1.parse().unwrap()].into()),
+                &$type::from_vec_unchecked(alloc::vec![$sample1.parse().unwrap()]),
                 $sample1,
             );
             writeable::assert_writeable_eq!(
-                &$type::from_short_slice_unchecked(vec![
+                &$type::from_vec_unchecked(vec![
                     $sample1.parse().unwrap(),
                     $sample2.parse().unwrap()
-                ].into()),
+                ]),
                 core::concat!($sample1, "-", $sample2),
             );
         }

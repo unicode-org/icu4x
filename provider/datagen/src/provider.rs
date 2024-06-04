@@ -2,12 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#![allow(deprecated)]
-
 use elsa::sync::FrozenMap;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use source::{AbstractFs, SerdeCache};
+use std::borrow::Cow;
 use std::collections::HashSet;
 use std::fmt::Debug;
 use std::path::PathBuf;
@@ -41,7 +40,17 @@ pub struct DatagenProvider {
     trie_type: TrieType,
     collation_han_database: CollationHanDatabase,
     #[allow(clippy::type_complexity)] // not as complex as it appears
-    supported_locales_cache: Arc<FrozenMap<DataKey, Box<Result<HashSet<DataLocale>, DataError>>>>,
+    supported_requests_cache: Arc<
+        FrozenMap<
+            DataKey,
+            Box<
+                Result<
+                    HashSet<(Cow<'static, DataLocale>, Cow<'static, DataKeyAttributes>)>,
+                    DataError,
+                >,
+            >,
+        >,
+    >,
 }
 
 macro_rules! cb {
@@ -108,7 +117,7 @@ impl DatagenProvider {
             segmenter_lstm_paths: None,
             trie_type: Default::default(),
             collation_han_database: Default::default(),
-            supported_locales_cache: Default::default(),
+            supported_requests_cache: Default::default(),
         }
     }
 
@@ -269,17 +278,6 @@ impl DatagenProvider {
     ) -> Result<impl IntoIterator<Item = icu_locale_core::LanguageIdentifier>, DataError> {
         self.cldr()?.locales(levels)
     }
-
-    fn supported_locales_set<M>(&self) -> Result<&HashSet<DataLocale>, DataError>
-    where
-        M: KeyedDataMarker,
-        Self: IterableDataProviderInternal<M>,
-    {
-        self.supported_locales_cache
-            .insert_with(M::KEY, || Box::new(self.supported_locales_impl()))
-            .as_ref()
-            .map_err(|e| *e)
-    }
 }
 
 /// Specifies the collation Han database to use.
@@ -336,9 +334,8 @@ pub enum CoverageLevel {
 
 /// Specifies the trie type to use.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Default, serde::Serialize, serde::Deserialize)]
-#[doc(hidden)]
 #[non_exhaustive]
-pub enum TrieType {
+enum TrieType {
     /// Fast tries are optimized for speed
     #[serde(rename = "fast")]
     Fast,
@@ -357,20 +354,52 @@ impl std::fmt::Display for TrieType {
     }
 }
 
-trait IterableDataProviderInternal<M: KeyedDataMarker>: DataProvider<M> {
-    fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError>;
+trait IterableDataProviderCached<M: KeyedDataMarker>: DataProvider<M> {
+    fn supported_requests_cached(
+        &self,
+    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError>;
+}
+
+impl DatagenProvider {
+    #[allow(clippy::type_complexity)] // not as complex as it appears
+    fn populate_supported_requests_cache<M: KeyedDataMarker>(
+        &self,
+    ) -> Result<&HashSet<(Cow<'static, DataLocale>, Cow<'static, DataKeyAttributes>)>, DataError>
+    where
+        DatagenProvider: IterableDataProviderCached<M>,
+    {
+        self.supported_requests_cache
+            .insert_with(M::KEY, || {
+                Box::new(self.supported_requests_cached().map(|m| {
+                    m.into_iter()
+                        .map(|(k, v)| (Cow::Owned(k), Cow::Owned(v)))
+                        .collect()
+                }))
+            })
+            .as_ref()
+            .map_err(|&e| e)
+    }
 }
 
 impl<M: KeyedDataMarker> IterableDataProvider<M> for DatagenProvider
 where
-    DatagenProvider: IterableDataProviderInternal<M>,
+    DatagenProvider: IterableDataProviderCached<M>,
 {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        self.supported_locales_set()
-            .map(|v| v.iter().cloned().collect())
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+        Ok(self
+            .populate_supported_requests_cache()?
+            .iter()
+            .map(|(k, v)| (k.clone().into_owned(), v.clone().into_owned()))
+            .collect())
     }
 
-    fn supports_locale(&self, locale: &DataLocale) -> Result<bool, DataError> {
-        self.supported_locales_set().map(|v| v.contains(locale))
+    fn supports_request(
+        &self,
+        locale: &DataLocale,
+        key_attributes: &DataKeyAttributes,
+    ) -> Result<bool, DataError> {
+        Ok(self
+            .populate_supported_requests_cache()?
+            .contains(&(Cow::Borrowed(locale), Cow::Borrowed(key_attributes))))
     }
 }

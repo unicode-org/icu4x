@@ -92,7 +92,7 @@ pub struct DataPayload<M: DataMarker>(pub(crate) DataPayloadInner<M>);
 /// let payload: DataPayload<HelloWorldV1Marker> = HelloWorldProvider
 ///     .load(DataRequest {
 ///         locale: &"de".parse().unwrap(),
-///         metadata: Default::default(),
+///         ..Default::default()
 ///     })
 ///     .expect("Loading should succeed")
 ///     .take_payload()
@@ -373,7 +373,9 @@ where
         ))
     }
 
-    #[doc(hidden)]
+    /// Construct a [`DataPayload`] from a static reference.
+    ///
+    /// This is mainly used by databake.
     #[inline]
     pub const fn from_static_ref(data: &'static M::Yokeable) -> Self {
         Self(DataPayloadInner::StaticRef(data))

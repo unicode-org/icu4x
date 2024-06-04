@@ -396,7 +396,7 @@ fn test_dayperiod_patterns() {
         let mut data_locale = DataLocale::from(&locale);
         let req = DataRequest {
             locale: &data_locale,
-            metadata: Default::default(),
+            ..Default::default()
         };
         let mut date_patterns_data: DataPayload<GregorianDateLengthsV1Marker> =
             icu_datetime::provider::Baked
@@ -443,7 +443,7 @@ fn test_dayperiod_patterns() {
         let decimal_data: DataPayload<DecimalSymbolsV1Marker> = icu_decimal::provider::Baked
             .load(DataRequest {
                 locale: &data_locale,
-                metadata: Default::default(),
+                ..Default::default()
             })
             .unwrap()
             .take_payload()
@@ -595,7 +595,7 @@ fn test_time_zone_patterns() {
         let data_locale = DataLocale::from(&locale);
         let req = DataRequest {
             locale: &data_locale,
-            metadata: Default::default(),
+            ..Default::default()
         };
         let mut config = test.config;
         let (datetime, mut time_zone) = mock::parse_zoned_gregorian_from_str(&test.datetime);

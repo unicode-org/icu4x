@@ -135,8 +135,7 @@ extern crate alloc;
 
 mod data_provider;
 mod error;
-#[doc(hidden)]
-pub mod fallback;
+mod fallback;
 mod key;
 mod request;
 mod response;
@@ -163,8 +162,7 @@ pub use crate::key::DataKey;
 pub use crate::key::DataKeyHash;
 pub use crate::key::DataKeyMetadata;
 pub use crate::key::DataKeyPath;
-#[cfg(feature = "experimental")]
-pub use crate::request::AuxiliaryKeys;
+pub use crate::request::DataKeyAttributes;
 pub use crate::request::DataLocale;
 pub use crate::request::DataRequest;
 pub use crate::request::DataRequestMetadata;
@@ -212,9 +210,6 @@ pub mod prelude {
     #[doc(no_inline)]
     pub use crate::AsDynamicDataProviderAnyMarkerWrap;
     #[doc(no_inline)]
-    #[cfg(feature = "experimental")]
-    pub use crate::AuxiliaryKeys;
-    #[doc(no_inline)]
     pub use crate::BoundDataProvider;
     #[doc(no_inline)]
     pub use crate::BufferMarker;
@@ -226,6 +221,8 @@ pub mod prelude {
     pub use crate::DataErrorKind;
     #[doc(no_inline)]
     pub use crate::DataKey;
+    #[doc(no_inline)]
+    pub use crate::DataKeyAttributes;
     #[doc(no_inline)]
     pub use crate::DataKeyHash;
     #[doc(no_inline)]
@@ -249,26 +246,17 @@ pub mod prelude {
     #[doc(no_inline)]
     pub use crate::KeyedDataMarker;
 
-    #[doc(hidden)]
+    #[doc(no_inline)]
     pub use yoke;
-    #[doc(hidden)]
+    #[doc(no_inline)]
     pub use zerofrom;
 }
 
-// Additional crate re-exports for compatibility
-#[doc(hidden)]
-pub use fallback::LocaleFallbackPriority as FallbackPriority;
-#[doc(hidden)]
-pub use fallback::LocaleFallbackSupplement as FallbackSupplement;
-#[doc(hidden)]
-pub use yoke;
-#[doc(hidden)]
-pub use zerofrom;
-
-// For macros
-#[doc(hidden)]
+#[doc(hidden)] // macro use
 pub mod _internal {
-    pub use super::fallback::{LocaleFallbackPriority, LocaleFallbackSupplement};
+    pub use super::fallback::{
+        LocaleFallbackConfig, LocaleFallbackPriority, LocaleFallbackSupplement,
+    };
     pub use icu_locale_core as locale_core;
 
     #[cfg(feature = "logging")]

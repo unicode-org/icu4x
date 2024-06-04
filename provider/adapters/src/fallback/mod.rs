@@ -6,14 +6,8 @@
 
 use crate::helpers::result_is_err_missing_locale;
 use icu_locale::provider::*;
+use icu_locale::LocaleFallbacker;
 use icu_provider::prelude::*;
-
-#[doc(hidden)] // moved
-pub use icu_locale::fallback::{
-    LocaleFallbackIterator, LocaleFallbacker, LocaleFallbackerWithConfig,
-};
-#[doc(hidden)] // moved
-pub use icu_provider::fallback::LocaleFallbackConfig;
 
 /// A data provider wrapper that performs locale fallback. This enables arbitrary locales to be
 /// handled at runtime.
@@ -31,7 +25,7 @@ pub use icu_provider::fallback::LocaleFallbackConfig;
 ///
 /// let req = DataRequest {
 ///     locale: &langid!("ja-JP").into(),
-///     metadata: Default::default(),
+///     ..Default::default()
 /// };
 ///
 /// // The provider does not have data for "ja-JP":
@@ -135,7 +129,7 @@ impl<P> LocaleFallbackProvider<P> {
     ///
     /// let req = DataRequest {
     ///     locale: &langid!("de-CH").into(),
-    ///     metadata: Default::default(),
+    ///     ..Default::default()
     /// };
     ///
     /// // There is no "de-CH" data in the `HelloWorldProvider`
@@ -210,7 +204,7 @@ impl<P> LocaleFallbackProvider<P> {
         loop {
             let result = f1(DataRequest {
                 locale: fallback_iterator.get(),
-                metadata: base_req.metadata,
+                ..base_req
             });
             if !result_is_err_missing_locale(&result) {
                 return result
@@ -244,24 +238,6 @@ where
             key,
             base_req,
             |req| self.inner.load_any(key, req),
-            |res| &mut res.metadata,
-        )
-    }
-}
-
-impl<P> BufferProvider for LocaleFallbackProvider<P>
-where
-    P: BufferProvider,
-{
-    fn load_buffer(
-        &self,
-        key: DataKey,
-        base_req: DataRequest,
-    ) -> Result<DataResponse<BufferMarker>, DataError> {
-        self.run_fallback(
-            key,
-            base_req,
-            |req| self.inner.load_buffer(key, req),
             |res| &mut res.metadata,
         )
     }
