@@ -1,3 +1,5 @@
+//! Duration formatting
+
 /// Represents a duration of time (intuitively, how long something took / will take).
 /// Can be constructed ergonomically using the [`Default`](core::default::Default) trait like so:
 ///
