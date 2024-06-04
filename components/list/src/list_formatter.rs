@@ -52,7 +52,7 @@ macro_rules! constructor {
             let data = provider
                 .load(DataRequest {
                     locale,
-                    metadata: Default::default(),
+                    ..Default::default()
                 })?
                 .take_payload()?.cast();
             Ok(Self { data, length })
@@ -96,7 +96,7 @@ impl ListFormatter {
     ///
     /// ```
     /// use icu::list::*;
-    /// # use icu::locid::locale;
+    /// # use icu::locale::locale;
     /// # use writeable::*;
     /// let formatteur = ListFormatter::try_new_and_with_length(
     ///     &locale!("fr").into(),
@@ -372,7 +372,7 @@ mod tests {
     macro_rules! test {
         ($locale:literal, $type:ident, $(($input:expr, $output:literal),)+) => {
             let f = ListFormatter::$type(
-                &icu::locid::locale!($locale).into(),
+                &icu::locale::locale!($locale).into(),
                 ListLength::Wide
             ).unwrap();
             $(

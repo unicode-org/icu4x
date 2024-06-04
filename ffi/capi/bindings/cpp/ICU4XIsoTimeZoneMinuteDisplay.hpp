@@ -1,24 +1,29 @@
 #ifndef ICU4XIsoTimeZoneMinuteDisplay_HPP
 #define ICU4XIsoTimeZoneMinuteDisplay_HPP
+
+#include "ICU4XIsoTimeZoneMinuteDisplay.d.hpp"
+
+#include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
-#include <algorithm>
 #include <memory>
-#include <variant>
 #include <optional>
 #include "diplomat_runtime.hpp"
-
 #include "ICU4XIsoTimeZoneMinuteDisplay.h"
 
 
+inline capi::ICU4XIsoTimeZoneMinuteDisplay ICU4XIsoTimeZoneMinuteDisplay::AsFFI() const {
+  return static_cast<capi::ICU4XIsoTimeZoneMinuteDisplay>(value);
+}
 
-/**
- * See the [Rust documentation for `IsoMinutes`](https://docs.rs/icu/latest/icu/datetime/time_zone/enum.IsoMinutes.html) for more information.
- */
-enum struct ICU4XIsoTimeZoneMinuteDisplay {
-  Required = 0,
-  Optional = 1,
-};
-
-#endif
+inline ICU4XIsoTimeZoneMinuteDisplay ICU4XIsoTimeZoneMinuteDisplay::FromFFI(capi::ICU4XIsoTimeZoneMinuteDisplay c_enum) {
+  switch (c_enum) {
+    case capi::ICU4XIsoTimeZoneMinuteDisplay_Required:
+    case capi::ICU4XIsoTimeZoneMinuteDisplay_Optional:
+      return static_cast<ICU4XIsoTimeZoneMinuteDisplay::Value>(c_enum);
+    default:
+      abort();
+  }
+}
+#endif // ICU4XIsoTimeZoneMinuteDisplay_HPP

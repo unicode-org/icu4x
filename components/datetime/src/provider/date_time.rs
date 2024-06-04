@@ -24,7 +24,7 @@ use crate::provider::neo::SimpleSubstitutionPattern;
 use crate::{options::components, provider::calendar::DateSkeletonPatternsV1Marker};
 use icu_calendar::types::Era;
 use icu_calendar::types::MonthCode;
-use icu_locid::extensions::unicode::Value;
+use icu_locale_core::extensions::unicode::Value;
 use icu_provider::prelude::*;
 
 pub(crate) enum GetSymbolForMonthError {
@@ -120,7 +120,7 @@ where
     Ok(data_provider
         .load(DataRequest {
             locale,
-            metadata: Default::default(),
+            ..Default::default()
         })?
         .take_payload()?
         .map_project(|data, _| pattern_for_time_length_inner(data, length, &preferences).into()))
@@ -230,7 +230,7 @@ where
             .data_provider
             .load(DataRequest {
                 locale: self.locale,
-                metadata: Default::default(),
+                ..Default::default()
             })
             .and_then(DataResponse::take_payload)
             .map_err(PatternForLengthError::Data)?;
@@ -346,8 +346,10 @@ where
     fn skeleton_data_payload(
         &self,
     ) -> Result<DataPayload<DateSkeletonPatternsV1Marker>, DataError> {
-        use icu_locid::extensions::unicode::{key, value};
-        use tinystr::tinystr;
+        use icu_locale_core::{
+            extensions::unicode::{key, value},
+            subtags::subtag,
+        };
         let mut locale = self.locale.clone();
         #[allow(clippy::expect_used)] // experimental
         let cal_val = self.cal_val.expect("should be present for components bag");
@@ -356,7 +358,7 @@ where
             locale.set_unicode_ext(key!("ca"), value!("ethiopic"));
         } else if cal_val == &value!("islamic")
             || cal_val == &value!("islamicc")
-            || cal_val.as_tinystr_slice().first() == Some(&tinystr!(8, "islamic"))
+            || cal_val.as_subtags_slice().first() == Some(&subtag!("islamic"))
         {
             // All islamic calendars store skeleton data under islamic, not their individual extension keys
             locale.set_unicode_ext(key!("ca"), value!("islamic"));
@@ -367,7 +369,7 @@ where
         self.data_provider
             .load(DataRequest {
                 locale: &locale,
-                metadata: Default::default(),
+                ..Default::default()
             })
             .and_then(DataResponse::take_payload)
     }

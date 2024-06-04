@@ -10,5 +10,5 @@ use std::collections::HashMap;
 pub(in crate::provider) struct Resource {
     #[serde(rename = "coverageLevels")]
     pub(in crate::provider) coverage_levels:
-        HashMap<icu_locid::LanguageIdentifier, crate::CoverageLevel>,
+        HashMap<icu_locale_core::LanguageIdentifier, crate::CoverageLevel>,
 }

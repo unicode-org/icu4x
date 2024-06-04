@@ -19,7 +19,7 @@
 //! # let _ = std::fs::remove_dir_all(&demo_path);
 //!
 //! // Set up the exporter
-//! let mut options = ExporterOptions::default();
+//! let mut options = Options::default();
 //! options.root = demo_path.clone();
 //! let serializer = Box::new(serializers::Json::default());
 //! let mut exporter = FilesystemExporter::try_new(serializer, options)
@@ -38,7 +38,7 @@
 //! The resulting files can now be used like this:
 //!
 //! ```
-//! use icu_locid::locale;
+//! use icu_locale_core::locale;
 //! use icu_provider::hello_world::*;
 //! use icu_provider::prelude::*;
 //! use icu_provider_fs::FsDataProvider;

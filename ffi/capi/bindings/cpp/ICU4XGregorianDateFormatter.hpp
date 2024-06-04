@@ -1,119 +1,68 @@
 #ifndef ICU4XGregorianDateFormatter_HPP
 #define ICU4XGregorianDateFormatter_HPP
+
+#include "ICU4XGregorianDateFormatter.d.hpp"
+
+#include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
-#include <algorithm>
 #include <memory>
-#include <variant>
 #include <optional>
 #include "diplomat_runtime.hpp"
-
-#include "ICU4XGregorianDateFormatter.h"
-
-class ICU4XDataProvider;
-class ICU4XLocale;
-#include "ICU4XDateLength.hpp"
-class ICU4XGregorianDateFormatter;
-#include "ICU4XError.hpp"
-class ICU4XIsoDate;
-class ICU4XIsoDateTime;
-
-/**
- * A destruction policy for using ICU4XGregorianDateFormatter with std::unique_ptr.
- */
-struct ICU4XGregorianDateFormatterDeleter {
-  void operator()(capi::ICU4XGregorianDateFormatter* l) const noexcept {
-    capi::ICU4XGregorianDateFormatter_destroy(l);
-  }
-};
-
-/**
- * An ICU4X TypedDateFormatter object capable of formatting a [`ICU4XIsoDateTime`] as a string,
- * using the Gregorian Calendar.
- * 
- * See the [Rust documentation for `TypedDateFormatter`](https://docs.rs/icu/latest/icu/datetime/struct.TypedDateFormatter.html) for more information.
- */
-class ICU4XGregorianDateFormatter {
- public:
-
-  /**
-   * Creates a new [`ICU4XGregorianDateFormatter`] from locale data.
-   * 
-   * See the [Rust documentation for `try_new_with_length`](https://docs.rs/icu/latest/icu/datetime/struct.TypedDateFormatter.html#method.try_new_with_length) for more information.
-   */
-  static diplomat::result<ICU4XGregorianDateFormatter, ICU4XError> create_with_length(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDateLength length);
-
-  /**
-   * Formats a [`ICU4XIsoDate`] to a string.
-   * 
-   * See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.TypedDateFormatter.html#method.format) for more information.
-   */
-  template<typename W> void format_iso_date_to_writeable(const ICU4XIsoDate& value, W& write) const;
-
-  /**
-   * Formats a [`ICU4XIsoDate`] to a string.
-   * 
-   * See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.TypedDateFormatter.html#method.format) for more information.
-   */
-  std::string format_iso_date(const ICU4XIsoDate& value) const;
-
-  /**
-   * Formats a [`ICU4XIsoDateTime`] to a string.
-   * 
-   * See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.TypedDateFormatter.html#method.format) for more information.
-   */
-  template<typename W> void format_iso_datetime_to_writeable(const ICU4XIsoDateTime& value, W& write) const;
-
-  /**
-   * Formats a [`ICU4XIsoDateTime`] to a string.
-   * 
-   * See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.TypedDateFormatter.html#method.format) for more information.
-   */
-  std::string format_iso_datetime(const ICU4XIsoDateTime& value) const;
-  inline const capi::ICU4XGregorianDateFormatter* AsFFI() const { return this->inner.get(); }
-  inline capi::ICU4XGregorianDateFormatter* AsFFIMut() { return this->inner.get(); }
-  inline explicit ICU4XGregorianDateFormatter(capi::ICU4XGregorianDateFormatter* i) : inner(i) {}
-  ICU4XGregorianDateFormatter() = default;
-  ICU4XGregorianDateFormatter(ICU4XGregorianDateFormatter&&) noexcept = default;
-  ICU4XGregorianDateFormatter& operator=(ICU4XGregorianDateFormatter&& other) noexcept = default;
- private:
-  std::unique_ptr<capi::ICU4XGregorianDateFormatter, ICU4XGregorianDateFormatterDeleter> inner;
-};
-
 #include "ICU4XDataProvider.hpp"
-#include "ICU4XLocale.hpp"
+#include "ICU4XDateLength.hpp"
+#include "ICU4XError.hpp"
+#include "ICU4XGregorianDateFormatter.h"
 #include "ICU4XIsoDate.hpp"
 #include "ICU4XIsoDateTime.hpp"
+#include "ICU4XLocale.hpp"
 
-inline diplomat::result<ICU4XGregorianDateFormatter, ICU4XError> ICU4XGregorianDateFormatter::create_with_length(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDateLength length) {
-  auto diplomat_result_raw_out_value = capi::ICU4XGregorianDateFormatter_create_with_length(provider.AsFFI(), locale.AsFFI(), static_cast<capi::ICU4XDateLength>(length));
-  diplomat::result<ICU4XGregorianDateFormatter, ICU4XError> diplomat_result_out_value;
-  if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XGregorianDateFormatter>(ICU4XGregorianDateFormatter(diplomat_result_raw_out_value.ok));
-  } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
-  }
-  return diplomat_result_out_value;
+
+inline diplomat::result<std::unique_ptr<ICU4XGregorianDateFormatter>, ICU4XError> ICU4XGregorianDateFormatter::create_with_length(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDateLength length) {
+  auto result = capi::ICU4XGregorianDateFormatter_create_with_length(provider.AsFFI(),
+    locale.AsFFI(),
+    length.AsFFI());
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XGregorianDateFormatter>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XGregorianDateFormatter>>(std::unique_ptr<ICU4XGregorianDateFormatter>(ICU4XGregorianDateFormatter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XGregorianDateFormatter>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
 }
-template<typename W> inline void ICU4XGregorianDateFormatter::format_iso_date_to_writeable(const ICU4XIsoDate& value, W& write) const {
-  capi::DiplomatWriteable write_writer = diplomat::WriteableTrait<W>::Construct(write);
-  capi::ICU4XGregorianDateFormatter_format_iso_date(this->inner.get(), value.AsFFI(), &write_writer);
-}
+
 inline std::string ICU4XGregorianDateFormatter::format_iso_date(const ICU4XIsoDate& value) const {
-  std::string diplomat_writeable_string;
-  capi::DiplomatWriteable diplomat_writeable_out = diplomat::WriteableFromString(diplomat_writeable_string);
-  capi::ICU4XGregorianDateFormatter_format_iso_date(this->inner.get(), value.AsFFI(), &diplomat_writeable_out);
-  return diplomat_writeable_string;
+  std::string output;
+  capi::DiplomatWrite write = diplomat::WriteFromString(output);
+  capi::ICU4XGregorianDateFormatter_format_iso_date(this->AsFFI(),
+    value.AsFFI(),
+    &write);
+  return output;
 }
-template<typename W> inline void ICU4XGregorianDateFormatter::format_iso_datetime_to_writeable(const ICU4XIsoDateTime& value, W& write) const {
-  capi::DiplomatWriteable write_writer = diplomat::WriteableTrait<W>::Construct(write);
-  capi::ICU4XGregorianDateFormatter_format_iso_datetime(this->inner.get(), value.AsFFI(), &write_writer);
-}
+
 inline std::string ICU4XGregorianDateFormatter::format_iso_datetime(const ICU4XIsoDateTime& value) const {
-  std::string diplomat_writeable_string;
-  capi::DiplomatWriteable diplomat_writeable_out = diplomat::WriteableFromString(diplomat_writeable_string);
-  capi::ICU4XGregorianDateFormatter_format_iso_datetime(this->inner.get(), value.AsFFI(), &diplomat_writeable_out);
-  return diplomat_writeable_string;
+  std::string output;
+  capi::DiplomatWrite write = diplomat::WriteFromString(output);
+  capi::ICU4XGregorianDateFormatter_format_iso_datetime(this->AsFFI(),
+    value.AsFFI(),
+    &write);
+  return output;
 }
-#endif
+
+inline const capi::ICU4XGregorianDateFormatter* ICU4XGregorianDateFormatter::AsFFI() const {
+  return reinterpret_cast<const capi::ICU4XGregorianDateFormatter*>(this);
+}
+
+inline capi::ICU4XGregorianDateFormatter* ICU4XGregorianDateFormatter::AsFFI() {
+  return reinterpret_cast<capi::ICU4XGregorianDateFormatter*>(this);
+}
+
+inline const ICU4XGregorianDateFormatter* ICU4XGregorianDateFormatter::FromFFI(const capi::ICU4XGregorianDateFormatter* ptr) {
+  return reinterpret_cast<const ICU4XGregorianDateFormatter*>(ptr);
+}
+
+inline ICU4XGregorianDateFormatter* ICU4XGregorianDateFormatter::FromFFI(capi::ICU4XGregorianDateFormatter* ptr) {
+  return reinterpret_cast<ICU4XGregorianDateFormatter*>(ptr);
+}
+
+inline void ICU4XGregorianDateFormatter::operator delete(void* ptr) {
+  capi::ICU4XGregorianDateFormatter_destroy(reinterpret_cast<capi::ICU4XGregorianDateFormatter*>(ptr));
+}
+
+
+#endif // ICU4XGregorianDateFormatter_HPP

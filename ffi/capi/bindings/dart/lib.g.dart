@@ -9,7 +9,6 @@ import 'dart:typed_data';
 import 'package:ffi/ffi.dart' as ffi2 show Arena, calloc;
 import 'package:meta/meta.dart' as meta;
 part 'AnyCalendarKind.g.dart';
-part 'Bcp47ToIanaMapper.g.dart';
 part 'Bidi.g.dart';
 part 'BidiDirection.g.dart';
 part 'BidiInfo.g.dart';
@@ -52,6 +51,7 @@ part 'Error.g.dart';
 part 'FixedDecimal.g.dart';
 part 'FixedDecimalFormatter.g.dart';
 part 'FixedDecimalGroupingStrategy.g.dart';
+part 'FixedDecimalRoundingIncrement.g.dart';
 part 'FixedDecimalSign.g.dart';
 part 'FixedDecimalSignDisplay.g.dart';
 part 'GeneralCategoryNameToMaskMapper.g.dart';
@@ -62,7 +62,6 @@ part 'GraphemeClusterSegmenter.g.dart';
 part 'GregorianDateFormatter.g.dart';
 part 'GregorianDateTimeFormatter.g.dart';
 part 'GregorianZonedDateTimeFormatter.g.dart';
-part 'IanaToBcp47Mapper.g.dart';
 part 'IsoDate.g.dart';
 part 'IsoDateTime.g.dart';
 part 'IsoTimeZoneFormat.g.dart';
@@ -105,7 +104,6 @@ part 'PropertyValueNameToEnumMapper.g.dart';
 part 'RegionDisplayNames.g.dart';
 part 'ReorderedIndexMap.g.dart';
 part 'ResolvedCollatorOptions.g.dart';
-part 'RoundingIncrement.g.dart';
 part 'ScriptExtensionsSet.g.dart';
 part 'ScriptWithExtensions.g.dart';
 part 'ScriptWithExtensionsBorrowed.g.dart';
@@ -530,31 +528,13 @@ class _Float64ListView {
   int get length => _values.length;
 }
 
-final class _ResultBoolInt32Union extends ffi.Union {
+final class _ResultBoolVoidUnion extends ffi.Union {
   @ffi.Bool()
   external bool ok;
-
-  @ffi.Int32()
-  external int err;
 }
 
-final class _ResultBoolInt32 extends ffi.Struct {
-  external _ResultBoolInt32Union union;
-
-  @ffi.Bool()
-  external bool isOk;
-}
-
-final class _ResultInt32Int32Union extends ffi.Union {
-  @ffi.Int32()
-  external int ok;
-
-  @ffi.Int32()
-  external int err;
-}
-
-final class _ResultInt32Int32 extends ffi.Struct {
-  external _ResultInt32Int32Union union;
+final class _ResultBoolVoid extends ffi.Struct {
+  external _ResultBoolVoidUnion union;
 
   @ffi.Bool()
   external bool isOk;
@@ -733,40 +713,40 @@ final class _SliceUtf8 extends ffi.Struct {
   }
 }
 
-final class _Writeable {
+final class _Write {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
-  _Writeable() : _ffi = _diplomat_buffer_writeable_create(0);
+  _Write() : _ffi = _diplomat_buffer_write_create(0);
   
   String finalize() {
     try {
-      final buf = _diplomat_buffer_writeable_get_bytes(_ffi);
+      final buf = _diplomat_buffer_write_get_bytes(_ffi);
       if (buf == ffi.Pointer.fromAddress(0)) {
         throw core.OutOfMemoryError();
       }
-      return Utf8Decoder().convert(buf.asTypedList(_diplomat_buffer_writeable_len(_ffi)));
+      return Utf8Decoder().convert(buf.asTypedList(_diplomat_buffer_write_len(_ffi)));
     } finally {
-      _diplomat_buffer_writeable_destroy(_ffi);
+      _diplomat_buffer_write_destroy(_ffi);
     }
   }
 }
 
-@meta.ResourceIdentifier('diplomat_buffer_writeable_create')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Size)>(symbol: 'diplomat_buffer_writeable_create', isLeaf: true)
+@meta.ResourceIdentifier('diplomat_buffer_write_create')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Size)>(symbol: 'diplomat_buffer_write_create', isLeaf: true)
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _diplomat_buffer_writeable_create(int len);
+external ffi.Pointer<ffi.Opaque> _diplomat_buffer_write_create(int len);
 
-@meta.ResourceIdentifier('diplomat_buffer_writeable_len')
-@ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>(symbol: 'diplomat_buffer_writeable_len', isLeaf: true)
+@meta.ResourceIdentifier('diplomat_buffer_write_len')
+@ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>(symbol: 'diplomat_buffer_write_len', isLeaf: true)
 // ignore: non_constant_identifier_names
-external int _diplomat_buffer_writeable_len(ffi.Pointer<ffi.Opaque> ptr);
+external int _diplomat_buffer_write_len(ffi.Pointer<ffi.Opaque> ptr);
 
-@meta.ResourceIdentifier('diplomat_buffer_writeable_get_bytes')
-@ffi.Native<ffi.Pointer<ffi.Uint8> Function(ffi.Pointer<ffi.Opaque>)>(symbol: 'diplomat_buffer_writeable_get_bytes', isLeaf: true)
+@meta.ResourceIdentifier('diplomat_buffer_write_get_bytes')
+@ffi.Native<ffi.Pointer<ffi.Uint8> Function(ffi.Pointer<ffi.Opaque>)>(symbol: 'diplomat_buffer_write_get_bytes', isLeaf: true)
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Uint8> _diplomat_buffer_writeable_get_bytes(ffi.Pointer<ffi.Opaque> ptr);
+external ffi.Pointer<ffi.Uint8> _diplomat_buffer_write_get_bytes(ffi.Pointer<ffi.Opaque> ptr);
 
-@meta.ResourceIdentifier('diplomat_buffer_writeable_destroy')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>(symbol: 'diplomat_buffer_writeable_destroy', isLeaf: true)
+@meta.ResourceIdentifier('diplomat_buffer_write_destroy')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>(symbol: 'diplomat_buffer_write_destroy', isLeaf: true)
 // ignore: non_constant_identifier_names
-external void _diplomat_buffer_writeable_destroy(ffi.Pointer<ffi.Opaque> ptr);
+external void _diplomat_buffer_write_destroy(ffi.Pointer<ffi.Opaque> ptr);

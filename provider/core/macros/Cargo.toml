@@ -26,4 +26,4 @@ quote = { workspace = true }
 syn = { workspace = true }
 
 [dev-dependencies]
-icu_provider = { path = ".." }
+icu_provider = { path = "..", features = ["macros"] }

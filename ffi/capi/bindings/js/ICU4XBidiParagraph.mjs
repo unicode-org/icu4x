@@ -1,7 +1,6 @@
 import wasm from "./diplomat-wasm.mjs"
 import * as diplomatRuntime from "./diplomat-runtime.mjs"
 import { ICU4XBidiDirection_js_to_rust, ICU4XBidiDirection_rust_to_js } from "./ICU4XBidiDirection.mjs"
-import { ICU4XError_js_to_rust, ICU4XError_rust_to_js } from "./ICU4XError.mjs"
 
 const ICU4XBidiParagraph_box_destroy_registry = new FinalizationRegistry(underlying => {
   wasm.ICU4XBidiParagraph_destroy(underlying);
@@ -18,20 +17,7 @@ export class ICU4XBidiParagraph {
   }
 
   set_paragraph_in_text(arg_n) {
-    return (() => {
-      const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XBidiParagraph_set_paragraph_in_text(diplomat_receive_buffer, this.underlying, arg_n);
-      const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
-      if (is_ok) {
-        const ok_value = {};
-        wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        return ok_value;
-      } else {
-        const throw_value = ICU4XError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
-        wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        throw new diplomatRuntime.FFIError(throw_value);
-      }
-    })();
+    return wasm.ICU4XBidiParagraph_set_paragraph_in_text(this.underlying, arg_n);
   }
 
   direction() {
@@ -51,20 +37,10 @@ export class ICU4XBidiParagraph {
   }
 
   reorder_line(arg_range_start, arg_range_end) {
-    return diplomatRuntime.withWriteable(wasm, (writeable) => {
+    return diplomatRuntime.withDiplomatWrite(wasm, (write) => {
       return (() => {
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        wasm.ICU4XBidiParagraph_reorder_line(diplomat_receive_buffer, this.underlying, arg_range_start, arg_range_end, writeable);
-        const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
-        if (is_ok) {
-          const ok_value = {};
-          wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-          return ok_value;
-        } else {
-          const throw_value = ICU4XError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
-          wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-          throw new diplomatRuntime.FFIError(throw_value);
-        }
+        const is_ok = wasm.ICU4XBidiParagraph_reorder_line(this.underlying, arg_range_start, arg_range_end, write) == 1;
+        if (!is_ok) return;
       })();
     });
   }

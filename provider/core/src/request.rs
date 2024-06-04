@@ -9,22 +9,18 @@ use core::fmt;
 use core::fmt::Debug;
 use core::hash::Hash;
 use core::str::FromStr;
-use icu_locid::extensions::unicode as unicode_ext;
-use icu_locid::subtags::{Language, Region, Script, Variants};
-use icu_locid::{LanguageIdentifier, Locale};
+use icu_locale_core::extensions::unicode as unicode_ext;
+use icu_locale_core::subtags::{Language, Region, Script, Variants};
+use icu_locale_core::{LanguageIdentifier, Locale};
 use writeable::{LengthHint, Writeable};
 
-#[cfg(feature = "experimental")]
 use alloc::string::String;
-#[cfg(feature = "experimental")]
 use core::ops::Deref;
-#[cfg(feature = "experimental")]
-use icu_locid::extensions::private::Subtag;
-#[cfg(feature = "experimental")]
+use icu_locale_core::extensions::private::Subtag;
 use tinystr::TinyAsciiStr;
 
 #[cfg(doc)]
-use icu_locid::subtags::Variant;
+use icu_locale_core::subtags::Variant;
 
 /// The request type passed into all data provider implementations.
 #[derive(Default, Debug, Clone, Copy, PartialEq, Eq)]
@@ -35,6 +31,8 @@ pub struct DataRequest<'a> {
     /// If locale fallback is enabled, the resulting data may be from a different locale
     /// than the one requested here.
     pub locale: &'a DataLocale,
+    /// Key-specific request attributes
+    pub key_attributes: &'a DataKeyAttributes,
     /// Metadata that may affect the behavior of the data provider.
     pub metadata: DataRequestMetadata,
 }
@@ -54,6 +52,42 @@ pub struct DataRequestMetadata {
     pub silent: bool,
 }
 
+#[doc(hidden)] // TODO: replace the `-x-` encoding by something more flexible
+impl DataRequest<'_> {
+    pub fn legacy_cmp(&self, bytes: &[u8]) -> Ordering {
+        struct LegacyComparator<'a>(&'a DataLocale, &'a DataKeyAttributes);
+        impl writeable::Writeable for LegacyComparator<'_> {
+            fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
+                self.0.write_to(sink)?;
+                if !self.1.is_empty() {
+                    "-x-".write_to(sink)?;
+                    self.1.write_to(sink)?;
+                }
+                Ok(())
+            }
+        }
+        LegacyComparator(self.locale, self.key_attributes).writeable_cmp_bytes(bytes)
+    }
+
+    pub fn legacy_encode(&self) -> String {
+        self.locale.write_to_string().into_owned()
+            + if self.key_attributes.is_empty() {
+                ""
+            } else {
+                "-x-"
+            }
+            + self.key_attributes
+    }
+
+    pub fn legacy_decode(encoded: &str) -> Option<(DataLocale, DataKeyAttributes)> {
+        let mut iter = encoded.splitn(2, "-x-");
+        #[allow(clippy::unwrap_used)] // at least one element
+        let l = iter.next().unwrap().parse().ok()?;
+        let a = iter.next().unwrap_or("").parse().ok()?;
+        Some((l, a))
+    }
+}
+
 /// A locale type optimized for use in fallbacking and the ICU4X data pipeline.
 ///
 /// [`DataLocale`] contains less functionality than [`Locale`] but more than
@@ -65,7 +99,7 @@ pub struct DataRequestMetadata {
 /// Convert a [`Locale`] to a [`DataLocale`] and back:
 ///
 /// ```
-/// use icu_locid::locale;
+/// use icu_locale_core::locale;
 /// use icu_provider::DataLocale;
 ///
 /// let locale = locale!("en-u-ca-buddhist");
@@ -80,7 +114,7 @@ pub struct DataRequestMetadata {
 /// [`Locale`]:
 ///
 /// ```
-/// use icu_locid::locale;
+/// use icu_locale_core::locale;
 /// use icu_provider::DataLocale;
 ///
 /// let locale1 = locale!("en-u-ca-buddhist");
@@ -93,7 +127,7 @@ pub struct DataRequestMetadata {
 /// If you are sure that you have no Unicode keywords, start with [`LanguageIdentifier`]:
 ///
 /// ```
-/// use icu_locid::langid;
+/// use icu_locale_core::langid;
 /// use icu_provider::DataLocale;
 ///
 /// let langid = langid!("es-CA-valencia");
@@ -107,7 +141,7 @@ pub struct DataRequestMetadata {
 /// lookup and fallback. This may change in the future.
 ///
 /// ```
-/// use icu_locid::{locale, Locale};
+/// use icu_locale_core::{locale, Locale};
 /// use icu_provider::DataLocale;
 ///
 /// let locale = "hi-t-en-h0-hybrid-u-attr-ca-buddhist"
@@ -121,8 +155,6 @@ pub struct DataRequestMetadata {
 pub struct DataLocale {
     langid: LanguageIdentifier,
     keywords: unicode_ext::Keywords,
-    #[cfg(feature = "experimental")]
-    aux: Option<AuxiliaryKeys>,
 }
 
 impl<'a> Default for &'a DataLocale {
@@ -130,8 +162,6 @@ impl<'a> Default for &'a DataLocale {
         static DEFAULT: DataLocale = DataLocale {
             langid: LanguageIdentifier::UND,
             keywords: unicode_ext::Keywords::new(),
-            #[cfg(feature = "experimental")]
-            aux: None,
         };
         &DEFAULT
     }
@@ -150,11 +180,6 @@ impl Writeable for DataLocale {
             sink.write_str("-u-")?;
             self.keywords.write_to(sink)?;
         }
-        #[cfg(feature = "experimental")]
-        if let Some(aux) = self.aux.as_ref() {
-            sink.write_str("-x-")?;
-            aux.write_to(sink)?;
-        }
         Ok(())
     }
 
@@ -163,21 +188,11 @@ impl Writeable for DataLocale {
         if !self.keywords.is_empty() {
             length_hint += self.keywords.writeable_length_hint() + 3;
         }
-        #[cfg(feature = "experimental")]
-        if let Some(aux) = self.aux.as_ref() {
-            length_hint += aux.writeable_length_hint() + 3;
-        }
         length_hint
     }
 
     fn write_to_string(&self) -> alloc::borrow::Cow<str> {
-        #[cfg_attr(not(feature = "experimental"), allow(unused_mut))]
-        let mut is_only_langid = self.keywords.is_empty();
-        #[cfg(feature = "experimental")]
-        {
-            is_only_langid = is_only_langid && self.aux.is_none();
-        }
-        if is_only_langid {
+        if self.keywords.is_empty() {
             return self.langid.write_to_string();
         }
         let mut string =
@@ -194,8 +209,6 @@ impl From<LanguageIdentifier> for DataLocale {
         Self {
             langid,
             keywords: unicode_ext::Keywords::new(),
-            #[cfg(feature = "experimental")]
-            aux: None,
         }
     }
 }
@@ -205,8 +218,6 @@ impl From<Locale> for DataLocale {
         Self {
             langid: locale.id,
             keywords: locale.extensions.unicode.keywords,
-            #[cfg(feature = "experimental")]
-            aux: AuxiliaryKeys::try_from_iter(locale.extensions.private.iter().copied()).ok(),
         }
     }
 }
@@ -216,8 +227,6 @@ impl From<&LanguageIdentifier> for DataLocale {
         Self {
             langid: langid.clone(),
             keywords: unicode_ext::Keywords::new(),
-            #[cfg(feature = "experimental")]
-            aux: None,
         }
     }
 }
@@ -227,8 +236,6 @@ impl From<&Locale> for DataLocale {
         Self {
             langid: locale.id.clone(),
             keywords: locale.extensions.unicode.keywords.clone(),
-            #[cfg(feature = "experimental")]
-            aux: AuxiliaryKeys::try_from_iter(locale.extensions.private.iter().copied()).ok(),
         }
     }
 }
@@ -266,18 +273,12 @@ impl DataLocale {
     ///     "ca-ES",
     ///     "ca-ES-u-ca-buddhist",
     ///     "ca-ES-valencia",
-    ///     "ca-ES-x-gbp",
-    ///     "ca-ES-x-gbp-short",
-    ///     "ca-ES-x-usd",
-    ///     "ca-ES-xyzabc",
-    ///     "ca-x-eur",
     ///     "cat",
     ///     "pl-Latn-PL",
     ///     "und",
     ///     "und-fonipa",
     ///     "und-u-ca-hebrew",
     ///     "und-u-ca-japanese",
-    ///     "und-x-mxn",
     ///     "zh",
     /// ];
     ///
@@ -327,15 +328,15 @@ impl DataLocale {
     ///     // Less than "ca-ES"
     ///     "CA",
     ///     "ar-x-gbp-FOO",
-    ///     // Greater than "ca-ES-x-gbp"
+    ///     // Greater than "ca-AR"
     ///     "ca_ES",
     ///     "ca-ES-x-gbp-FOO",
     /// ];
     ///
-    /// let data_locale = "ca-ES-x-gbp".parse::<DataLocale>().unwrap();
+    /// let data_locale = "ca-ES".parse::<DataLocale>().unwrap();
     ///
     /// for s in invalid_strings.iter() {
-    ///     let expected_ordering = "ca-ES-x-gbp".cmp(s);
+    ///     let expected_ordering = "ca-AR".cmp(s);
     ///     let actual_ordering = data_locale.strict_cmp(s.as_bytes());
     ///     assert_eq!(expected_ordering, actual_ordering, "{}", s);
     /// }
@@ -363,7 +364,6 @@ impl DataLocale {
     ///     .parse::<DataLocale>()
     ///     .unwrap()
     ///     .is_empty());
-    /// assert!(!"und-x-aux".parse::<DataLocale>().unwrap().is_empty());
     /// assert!(!"ca-ES".parse::<DataLocale>().unwrap().is_empty());
     /// ```
     pub fn is_empty(&self) -> bool {
@@ -380,12 +380,6 @@ impl DataLocale {
         self.langid
             .total_cmp(&other.langid)
             .then_with(|| self.keywords.cmp(&other.keywords))
-            .then_with(|| {
-                #[cfg(feature = "experimental")]
-                return self.aux.cmp(&other.aux);
-                #[cfg(not(feature = "experimental"))]
-                return Ordering::Equal;
-            })
     }
 
     /// Returns whether this [`DataLocale`] is `und` in the locale and extensions portion.
@@ -404,7 +398,6 @@ impl DataLocale {
     ///
     /// assert!("und".parse::<DataLocale>().unwrap().is_und());
     /// assert!(!"und-u-ca-buddhist".parse::<DataLocale>().unwrap().is_und());
-    /// assert!("und-x-aux".parse::<DataLocale>().unwrap().is_und());
     /// assert!(!"ca-ES".parse::<DataLocale>().unwrap().is_und());
     /// ```
     pub fn is_und(&self) -> bool {
@@ -430,7 +423,6 @@ impl DataLocale {
     ///     .parse::<DataLocale>()
     ///     .unwrap()
     ///     .is_langid_und());
-    /// assert!("und-x-aux".parse::<DataLocale>().unwrap().is_langid_und());
     /// assert!(!"ca-ES".parse::<DataLocale>().unwrap().is_langid_und());
     /// ```
     pub fn is_langid_und(&self) -> bool {
@@ -452,19 +444,19 @@ impl DataLocale {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::langid;
+    /// use icu_locale_core::langid;
     /// use icu_provider::prelude::*;
     ///
     /// const FOO_BAR: DataKey = icu_provider::data_key!("foo/bar@1");
     ///
     /// let req_no_langid = DataRequest {
     ///     locale: &Default::default(),
-    ///     metadata: Default::default(),
+    ///     ..Default::default()
     /// };
     ///
     /// let req_with_langid = DataRequest {
     ///     locale: &langid!("ar-EG").into(),
-    ///     metadata: Default::default(),
+    ///     ..Default::default()
     /// };
     ///
     /// assert_eq!(req_no_langid.locale.get_langid(), langid!("und"));
@@ -487,7 +479,7 @@ impl DataLocale {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::{
+    /// use icu_locale_core::{
     ///     langid, locale,
     ///     subtags::{language, region},
     /// };
@@ -503,30 +495,12 @@ impl DataLocale {
     /// let locale = locale.into_locale();
     /// assert_eq!(locale, locale!("it-IT-u-ca-coptic"));
     /// ```
-    ///
-    /// Auxiliary keys are retained:
-    ///
-    /// ```
-    /// use icu_provider::prelude::*;
-    /// use writeable::assert_writeable_eq;
-    ///
-    /// let data_locale: DataLocale = "und-u-nu-arab-x-gbp".parse().unwrap();
-    /// assert_writeable_eq!(data_locale, "und-u-nu-arab-x-gbp");
-    ///
-    /// let recovered_locale = data_locale.into_locale();
-    /// assert_writeable_eq!(recovered_locale, "und-u-nu-arab-x-gbp");
-    /// ```
     pub fn into_locale(self) -> Locale {
         let mut loc = Locale {
             id: self.langid,
             ..Default::default()
         };
         loc.extensions.unicode.keywords = self.keywords;
-        #[cfg(feature = "experimental")]
-        if let Some(aux) = self.aux {
-            loc.extensions.private =
-                icu_locid::extensions::private::Private::from_vec_unchecked(aux.iter().collect());
-        }
         loc
     }
 
@@ -608,7 +582,7 @@ impl DataLocale {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::extensions::unicode::{key, value};
+    /// use icu_locale_core::extensions::unicode::{key, value};
     /// use icu_provider::prelude::*;
     ///
     /// let locale: DataLocale = "it-IT-u-ca-coptic".parse().expect("Valid BCP-47");
@@ -647,259 +621,118 @@ impl DataLocale {
     {
         self.keywords.retain_by_key(predicate)
     }
-
-    /// Gets the auxiliary key for this [`DataLocale`].
-    ///
-    /// For more information and examples, see [`AuxiliaryKeys`].
-    #[cfg(feature = "experimental")]
-    pub fn get_aux(&self) -> Option<&AuxiliaryKeys> {
-        self.aux.as_ref()
-    }
-
-    /// Returns whether this [`DataLocale`] has an auxiliary key.
-    ///
-    /// For more information and examples, see [`AuxiliaryKeys`].
-    #[cfg(feature = "experimental")]
-    pub fn has_aux(&self) -> bool {
-        self.aux.is_some()
-    }
-
-    /// Sets an auxiliary key on this [`DataLocale`].
-    ///
-    /// Returns the previous auxiliary key if present.
-    ///
-    /// For more information and examples, see [`AuxiliaryKeys`].
-    #[cfg(feature = "experimental")]
-    pub fn set_aux(&mut self, value: AuxiliaryKeys) -> Option<AuxiliaryKeys> {
-        self.aux.replace(value)
-    }
-
-    /// Remove an auxiliary key, if present. Returns the removed auxiliary key.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu_locid::langid;
-    /// use icu_provider::prelude::*;
-    /// use writeable::assert_writeable_eq;
-    ///
-    /// let mut data_locale: DataLocale = langid!("ar-EG").into();
-    /// let aux = "gbp"
-    ///     .parse::<AuxiliaryKeys>()
-    ///     .expect("contains valid characters");
-    /// data_locale.set_aux(aux);
-    /// assert_writeable_eq!(data_locale, "ar-EG-x-gbp");
-    ///
-    /// let maybe_aux = data_locale.remove_aux();
-    /// assert_writeable_eq!(data_locale, "ar-EG");
-    /// assert_writeable_eq!(maybe_aux.unwrap(), "gbp");
-    /// ```
-    #[cfg(feature = "experimental")]
-    pub fn remove_aux(&mut self) -> Option<AuxiliaryKeys> {
-        self.aux.take()
-    }
 }
 
-/// The "auxiliary key" is an annotation on [`DataLocale`] that can contain an arbitrary
-/// information that does not fit into the [`LanguageIdentifier`] or [`Keywords`].
-///
-/// A [`DataLocale`] can have multiple auxiliary keys, represented by this struct. The auxiliary
-/// keys are stored as private use subtags following `-x-`.
-///
-/// An auxiliary key currently allows 1-8 lowercase alphanumerics.
-///
-/// <div class="stab unstable">
-/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
-/// of the `icu_provider` crate. Use with caution.
-/// <a href="https://github.com/unicode-org/icu4x/issues/3632">#3632</a>
-/// </div>
-///
-/// # Examples
-///
-/// ```
-/// use icu_locid::langid;
-/// use icu_provider::prelude::*;
-/// use writeable::assert_writeable_eq;
-///
-/// let mut data_locale: DataLocale = langid!("ar-EG").into();
-/// assert_writeable_eq!(data_locale, "ar-EG");
-/// assert!(!data_locale.has_aux());
-/// assert_eq!(data_locale.get_aux(), None);
-///
-/// let aux = "gbp"
-///     .parse::<AuxiliaryKeys>()
-///     .expect("contains valid characters");
-///
-/// data_locale.set_aux(aux);
-/// assert_writeable_eq!(data_locale, "ar-EG-x-gbp");
-/// assert!(data_locale.has_aux());
-/// assert_eq!(data_locale.get_aux(), Some(&"gbp".parse().unwrap()));
-/// ```
-///
-/// Multiple auxiliary keys are allowed:
-///
-/// ```
-/// use icu_provider::prelude::*;
-/// use writeable::assert_writeable_eq;
-///
-/// let data_locale = "ar-EG-x-gbp-long".parse::<DataLocale>().unwrap();
-/// assert_writeable_eq!(data_locale, "ar-EG-x-gbp-long");
-/// assert_eq!(data_locale.get_aux().unwrap().iter().count(), 2);
-/// ```
-///
-/// Not all strings are valid auxiliary keys.
-/// The string must be well-formed and case-normalized:
-///
-/// ```
-/// use icu_provider::prelude::*;
-///
-/// assert!("abcdefg".parse::<AuxiliaryKeys>().is_ok());
-/// assert!("abc-xyz".parse::<AuxiliaryKeys>().is_ok());
-///
-/// assert!("".parse::<AuxiliaryKeys>().is_err());
-/// assert!("!@#$%".parse::<AuxiliaryKeys>().is_err());
-/// assert!("abc_xyz".parse::<AuxiliaryKeys>().is_err());
-/// assert!("ABC123".parse::<AuxiliaryKeys>().is_err());
-/// ```
-///
-/// [`Keywords`]: unicode_ext::Keywords
-#[derive(Debug, PartialEq, Clone, Eq, Hash, PartialOrd, Ord)]
-#[cfg(feature = "experimental")]
-pub struct AuxiliaryKeys {
-    value: AuxiliaryKeysInner,
+/// TODO
+#[derive(Clone, Default)]
+pub struct DataKeyAttributes {
+    value: DataKeyAttributesInner,
 }
 
-#[cfg(feature = "experimental")]
-#[derive(Clone)]
-enum AuxiliaryKeysInner {
+#[derive(Clone, Default)]
+enum DataKeyAttributesInner {
+    #[default]
+    Empty,
     Boxed(alloc::boxed::Box<str>),
     Stack(TinyAsciiStr<23>),
     // NOTE: In the future, a `Static` variant could be added to allow `data_locale!("...")`
     // Static(&'static str),
 }
 
-#[cfg(feature = "experimental")]
-impl Deref for AuxiliaryKeysInner {
+impl<'a> Default for &'a DataKeyAttributes {
+    fn default() -> Self {
+        static DEFAULT: DataKeyAttributes = DataKeyAttributes {
+            value: DataKeyAttributesInner::Empty,
+        };
+        &DEFAULT
+    }
+}
+
+impl Deref for DataKeyAttributes {
     type Target = str;
     #[inline]
     fn deref(&self) -> &Self::Target {
-        match self {
-            Self::Boxed(s) => s.deref(),
-            Self::Stack(s) => s.as_str(),
+        match &self.value {
+            DataKeyAttributesInner::Empty => "",
+            DataKeyAttributesInner::Boxed(s) => s.deref(),
+            DataKeyAttributesInner::Stack(s) => s.as_str(),
         }
     }
 }
 
-#[cfg(feature = "experimental")]
-impl PartialEq for AuxiliaryKeysInner {
+impl PartialEq for DataKeyAttributes {
     #[inline]
     fn eq(&self, other: &Self) -> bool {
         self.deref() == other.deref()
     }
 }
 
-#[cfg(feature = "experimental")]
-impl Eq for AuxiliaryKeysInner {}
+impl Eq for DataKeyAttributes {}
 
-#[cfg(feature = "experimental")]
-impl PartialOrd for AuxiliaryKeysInner {
+impl PartialOrd for DataKeyAttributes {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         Some(self.cmp(other))
     }
 }
 
-#[cfg(feature = "experimental")]
-impl Ord for AuxiliaryKeysInner {
+impl Ord for DataKeyAttributes {
     fn cmp(&self, other: &Self) -> Ordering {
         self.deref().cmp(other.deref())
     }
 }
 
-#[cfg(feature = "experimental")]
-impl Debug for AuxiliaryKeysInner {
+impl Debug for DataKeyAttributes {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         self.deref().fmt(f)
     }
 }
 
-#[cfg(feature = "experimental")]
-impl Hash for AuxiliaryKeysInner {
+impl Hash for DataKeyAttributes {
     #[inline]
     fn hash<H: core::hash::Hasher>(&self, state: &mut H) {
         self.deref().hash(state)
     }
 }
 
-#[cfg(feature = "experimental")]
-writeable::impl_display_with_writeable!(AuxiliaryKeys);
-
-#[cfg(feature = "experimental")]
-impl Writeable for AuxiliaryKeys {
-    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
-        self.value.write_to(sink)
-    }
-    fn writeable_length_hint(&self) -> LengthHint {
-        self.value.writeable_length_hint()
-    }
-    fn write_to_string(&self) -> alloc::borrow::Cow<str> {
-        self.value.write_to_string()
-    }
-}
-
-#[cfg(feature = "experimental")]
-impl FromStr for AuxiliaryKeys {
-    type Err = DataError;
+impl FromStr for DataKeyAttributes {
+    type Err = core::convert::Infallible;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        if !s.is_empty()
-            && s.split(Self::separator()).all(|b| {
-                if let Ok(subtag) = Subtag::from_str(b) {
-                    // Enforces normalization:
-                    b == subtag.as_str()
-                } else {
-                    false
-                }
+        if s.is_empty() {
+            Ok(Self {
+                value: DataKeyAttributesInner::Empty,
             })
-        {
-            if s.len() <= 23 {
-                #[allow(clippy::unwrap_used)] // we just checked that the string is ascii
-                Ok(Self {
-                    value: AuxiliaryKeysInner::Stack(s.parse().unwrap()),
-                })
-            } else {
-                Ok(Self {
-                    value: AuxiliaryKeysInner::Boxed(s.into()),
-                })
-            }
+        } else if let Ok(tiny) = s.parse() {
+            Ok(Self {
+                value: DataKeyAttributesInner::Stack(tiny),
+            })
         } else {
-            Err(DataErrorKind::KeyLocaleSyntax
-                .into_error()
-                .with_display_context(s))
+            Ok(Self {
+                value: DataKeyAttributesInner::Boxed(s.into()),
+            })
         }
     }
 }
 
-#[cfg(feature = "experimental")]
-impl AuxiliaryKeys {
-    /// Creates an [`AuxiliaryKeys`] from an iterator of individual keys.
+impl DataKeyAttributes {
+    /// Creates a [`DataKeyAttributes`] from an iterator of individual keys.
     ///
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::extensions::private::subtag;
+    /// use icu_locale_core::extensions::private::subtag;
     /// use icu_provider::prelude::*;
     ///
     /// // Single auxiliary key:
-    /// let a = AuxiliaryKeys::try_from_iter([subtag!("abc")]).unwrap();
-    /// let b = "abc".parse::<AuxiliaryKeys>().unwrap();
+    /// let a = DataKeyAttributes::try_from_iter([subtag!("abc")]).unwrap();
+    /// let b = "abc".parse::<DataKeyAttributes>().unwrap();
     /// assert_eq!(a, b);
     ///
     /// // Multiple auxiliary keys:
-    /// let a = AuxiliaryKeys::try_from_iter([subtag!("abc"), subtag!("defg")])
+    /// let a = DataKeyAttributes::try_from_iter([subtag!("abc"), subtag!("defg")])
     ///     .unwrap();
-    /// let b = "abc-defg".parse::<AuxiliaryKeys>().unwrap();
+    /// let b = "abc-defg".parse::<DataKeyAttributes>().unwrap();
     /// assert_eq!(a, b);
     /// ```
     ///
@@ -908,14 +741,14 @@ impl AuxiliaryKeys {
     /// ```
     /// use icu_provider::prelude::*;
     ///
-    /// assert!(AuxiliaryKeys::try_from_iter([]).is_err());
+    /// assert!(DataKeyAttributes::try_from_iter([]).is_err());
     /// ```
     pub fn try_from_iter(iter: impl IntoIterator<Item = Subtag>) -> Result<Self, DataError> {
         // TODO: Avoid the allocation when possible
         let mut builder = String::new();
         for item in iter {
             if !builder.is_empty() {
-                builder.push(AuxiliaryKeys::separator());
+                builder.push('-');
             }
             builder.push_str(item.as_str())
         }
@@ -925,79 +758,48 @@ impl AuxiliaryKeys {
         if builder.len() <= 23 {
             #[allow(clippy::unwrap_used)] // we just checked that the string is ascii
             Ok(Self {
-                value: AuxiliaryKeysInner::Stack(builder.parse().unwrap()),
+                value: DataKeyAttributesInner::Stack(builder.parse().unwrap()),
             })
         } else {
             Ok(Self {
-                value: AuxiliaryKeysInner::Boxed(builder.into()),
+                value: DataKeyAttributesInner::Boxed(builder.into()),
             })
         }
     }
 
-    /// Creates an [`AuxiliaryKeys`] from a single subtag.
+    /// Creates a [`DataKeyAttributes`] from a single subtag.
     ///
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::extensions::private::subtag;
+    /// use icu_locale_core::extensions::private::subtag;
     /// use icu_provider::prelude::*;
     ///
     /// // Single auxiliary key:
-    /// let a = AuxiliaryKeys::from_subtag(subtag!("abc"));
-    /// let b = "abc".parse::<AuxiliaryKeys>().unwrap();
+    /// let a = DataKeyAttributes::from_tinystr("abc".parse().unwrap());
+    /// let b = "abc".parse::<DataKeyAttributes>().unwrap();
     /// assert_eq!(a, b);
     /// ```
-    pub const fn from_subtag(input: Subtag) -> Self {
+    pub const fn from_tinystr(input: TinyAsciiStr<8>) -> Self {
         Self {
-            value: AuxiliaryKeysInner::Stack(input.into_tinystr().resize()),
+            value: DataKeyAttributesInner::Stack(input.resize()),
         }
     }
 
-    /// Iterates over the components of the auxiliary key.
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use icu_locid::extensions::private::subtag;
-    /// use icu_provider::AuxiliaryKeys;
-    ///
-    /// let aux: AuxiliaryKeys = "abc-defg".parse().unwrap();
-    /// assert_eq!(
-    ///     aux.iter().collect::<Vec<_>>(),
-    ///     vec![subtag!("abc"), subtag!("defg")]
-    /// );
-    /// ```
-    pub fn iter(&self) -> impl Iterator<Item = Subtag> + '_ {
-        self.value
-            .split(Self::separator())
-            .filter_map(|x| match x.parse() {
-                Ok(x) => Some(x),
-                Err(_) => {
-                    debug_assert!(false, "failed to convert to subtag: {x}");
-                    None
-                }
-            })
-    }
-
-    /// Returns the internal separator byte used for auxiliary keys in data locales.
-    ///
-    /// This is, according to BCP-47, an ASCII hyphen.
-    #[inline]
-    pub(crate) const fn separator() -> char {
-        '-'
-    }
-}
-
-#[cfg(feature = "experimental")]
-impl From<Subtag> for AuxiliaryKeys {
-    fn from(subtag: Subtag) -> Self {
-        #[allow(clippy::expect_used)] // subtags definitely fit within auxiliary keys
-        Self {
-            value: AuxiliaryKeysInner::Stack(
-                TinyAsciiStr::from_bytes(subtag.as_str().as_bytes())
-                    .expect("Subtags are capped to 8 elements, AuxiliaryKeys supports up to 23"),
-            ),
+    /// TODO
+    pub fn single(&self) -> Option<TinyAsciiStr<8>> {
+        let mut iter = self.split('-').filter_map(|x| match x.parse() {
+            Ok(x) => Some(x),
+            Err(_) => {
+                debug_assert!(false, "failed to convert to subtag: {x}");
+                None
+            }
+        });
+        let subtag = iter.next()?;
+        if iter.next().is_some() {
+            return None;
         }
+        Some(subtag)
     }
 }
 
@@ -1005,38 +807,24 @@ impl From<Subtag> for AuxiliaryKeys {
 fn test_data_locale_to_string() {
     struct TestCase {
         pub locale: &'static str,
-        pub aux: Option<&'static str>,
         pub expected: &'static str,
     }
 
     for cas in [
         TestCase {
             locale: "und",
-            aux: None,
             expected: "und",
         },
         TestCase {
             locale: "und-u-cu-gbp",
-            aux: None,
             expected: "und-u-cu-gbp",
         },
         TestCase {
             locale: "en-ZA-u-cu-gbp",
-            aux: None,
             expected: "en-ZA-u-cu-gbp",
         },
-        #[cfg(feature = "experimental")]
-        TestCase {
-            locale: "en-ZA-u-nu-arab",
-            aux: Some("gbp"),
-            expected: "en-ZA-u-nu-arab-x-gbp",
-        },
     ] {
-        let mut locale = cas.locale.parse::<DataLocale>().unwrap();
-        #[cfg(feature = "experimental")]
-        if let Some(aux) = cas.aux {
-            locale.set_aux(aux.parse().unwrap());
-        }
+        let locale = cas.locale.parse::<DataLocale>().unwrap();
         writeable::assert_writeable_eq!(locale, cas.expected);
     }
 }
@@ -1066,15 +854,9 @@ fn test_data_locale_from_string() {
             input: "en...",
             success: false,
         },
-        #[cfg(feature = "experimental")]
         TestCase {
-            input: "en-ZA-u-nu-arab-x-gbp",
+            input: "en-ZA-u-nu-arab",
             success: true,
-        },
-        #[cfg(not(feature = "experimental"))]
-        TestCase {
-            input: "en-ZA-u-nu-arab-x-gbp",
-            success: false,
         },
     ] {
         let data_locale = match (DataLocale::from_str(cas.input), cas.success) {

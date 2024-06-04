@@ -10,6 +10,7 @@ use icu_casemap::provider::{CaseMapUnfoldV1, CaseMapUnfoldV1Marker, CaseMapV1, C
 use icu_collections::codepointtrie::toml::CodePointDataSlice;
 use icu_collections::codepointtrie::CodePointTrieHeader;
 use icu_provider::prelude::*;
+use std::collections::HashSet;
 use std::convert::TryFrom;
 
 mod ucase_serde;
@@ -48,8 +49,8 @@ impl DataProvider<CaseMapV1Marker> for DatagenProvider {
 }
 
 impl icu_provider::datagen::IterableDataProvider<CaseMapV1Marker> for DatagenProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        Ok(vec![Default::default()])
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+        Ok(HashSet::from_iter([Default::default()]))
     }
 }
 
@@ -75,7 +76,7 @@ impl DataProvider<CaseMapUnfoldV1Marker> for DatagenProvider {
 }
 
 impl icu_provider::datagen::IterableDataProvider<CaseMapUnfoldV1Marker> for DatagenProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        Ok(vec![Default::default()])
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+        Ok(HashSet::from_iter([Default::default()]))
     }
 }

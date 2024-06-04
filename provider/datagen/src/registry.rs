@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #[macro_export]
-#[doc(hidden)]
+#[doc(hidden)] // macro
 /// The list of all known [`DataMarker`](icu_provider::DataMarker)s.
 ///
 /// This is modeled as a macro that accepts a callback macro of the shape:
@@ -74,16 +74,16 @@ macro_rules! registry(
             icu::list::provider::AndListV1Marker = "list/and@1",
             icu::list::provider::OrListV1Marker = "list/or@1",
             icu::list::provider::UnitListV1Marker = "list/unit@1",
-            icu::locid_transform::provider::AliasesV1Marker = "locid_transform/aliases@1",
-            icu::locid_transform::provider::AliasesV2Marker = "locid_transform/aliases@2",
-            icu::locid_transform::provider::CollationFallbackSupplementV1Marker = "fallback/supplement/co@1",
-            icu::locid_transform::provider::LikelySubtagsV1Marker = "locid_transform/likelysubtags@1",
-            icu::locid_transform::provider::LikelySubtagsExtendedV1Marker = "locid_transform/likelysubtags_ext@1",
-            icu::locid_transform::provider::LikelySubtagsForLanguageV1Marker = "locid_transform/likelysubtags_l@1",
-            icu::locid_transform::provider::LikelySubtagsForScriptRegionV1Marker = "locid_transform/likelysubtags_sr@1",
-            icu::locid_transform::provider::LocaleFallbackLikelySubtagsV1Marker = "fallback/likelysubtags@1",
-            icu::locid_transform::provider::LocaleFallbackParentsV1Marker = "fallback/parents@1",
-            icu::locid_transform::provider::ScriptDirectionV1Marker = "locid_transform/script_dir@1",
+            icu::locale::provider::AliasesV1Marker = "locid_transform/aliases@1",
+            icu::locale::provider::AliasesV2Marker = "locid_transform/aliases@2",
+            icu::locale::provider::CollationFallbackSupplementV1Marker = "fallback/supplement/co@1",
+            icu::locale::provider::LikelySubtagsV1Marker = "locid_transform/likelysubtags@1",
+            icu::locale::provider::LikelySubtagsExtendedV1Marker = "locid_transform/likelysubtags_ext@1",
+            icu::locale::provider::LikelySubtagsForLanguageV1Marker = "locid_transform/likelysubtags_l@1",
+            icu::locale::provider::LikelySubtagsForScriptRegionV1Marker = "locid_transform/likelysubtags_sr@1",
+            icu::locale::provider::LocaleFallbackLikelySubtagsV1Marker = "fallback/likelysubtags@1",
+            icu::locale::provider::LocaleFallbackParentsV1Marker = "fallback/parents@1",
+            icu::locale::provider::ScriptDirectionV1Marker = "locid_transform/script_dir@1",
             icu::normalizer::provider::CanonicalCompositionsV1Marker = "normalizer/comp@1",
             icu::normalizer::provider::CanonicalDecompositionDataV1Marker = "normalizer/nfd@1",
             icu::normalizer::provider::CanonicalDecompositionTablesV1Marker = "normalizer/nfdex@1",
@@ -224,7 +224,6 @@ macro_rules! registry(
             icu::segmenter::provider::WordBreakDataV1Marker = "segmenter/word@1",
             icu::timezone::provider::MetazonePeriodV1Marker = "time_zone/metazone_period@1",
             icu::timezone::provider::names::Bcp47ToIanaMapV1Marker = "time_zone/bcp47_to_iana@1",
-            icu::timezone::provider::names::IanaToBcp47MapV1Marker = "time_zone/iana_to_bcp47@1",
             icu::timezone::provider::names::IanaToBcp47MapV2Marker = "time_zone/iana_to_bcp47@2",
             #[experimental]
             icu::datetime::provider::calendar::DateSkeletonPatternsV1Marker = "datetime/skeletons@1",

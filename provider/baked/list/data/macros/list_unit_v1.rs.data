@@ -6,9 +6,9 @@
 #[macro_export]
 macro_rules! __impl_list_unit_v1 {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.67"]
+        #[clippy::msrv = "1.70"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
-        #[clippy::msrv = "1.67"]
+        #[clippy::msrv = "1.70"]
         impl icu_provider::DataProvider<icu::list::provider::UnitListV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::list::provider::UnitListV1Marker>, icu_provider::DataError> {
                 static BE: <icu::list::provider::UnitListV1Marker as icu_provider::DataMarker>::Yokeable = icu::list::provider::ListFormatterPatternsV1([icu::list::provider::ConditionalListJoinerPattern { default: icu::list::provider::ListJoinerPattern::from_parts(" ", 1u8), special_case: None }, icu::list::provider::ConditionalListJoinerPattern { default: icu::list::provider::ListJoinerPattern::from_parts(" ", 1u8), special_case: None }, icu::list::provider::ConditionalListJoinerPattern { default: icu::list::provider::ListJoinerPattern::from_parts(" ", 1u8), special_case: None }, icu::list::provider::ConditionalListJoinerPattern { default: icu::list::provider::ListJoinerPattern::from_parts(" ", 1u8), special_case: None }, icu::list::provider::ConditionalListJoinerPattern { default: icu::list::provider::ListJoinerPattern::from_parts(" ", 1u8), special_case: None }, icu::list::provider::ConditionalListJoinerPattern { default: icu::list::provider::ListJoinerPattern::from_parts(" ", 1u8), special_case: None }, icu::list::provider::ConditionalListJoinerPattern { default: icu::list::provider::ListJoinerPattern::from_parts(" ", 1u8), special_case: None }, icu::list::provider::ConditionalListJoinerPattern { default: icu::list::provider::ListJoinerPattern::from_parts(" ", 1u8), special_case: None }, icu::list::provider::ConditionalListJoinerPattern { default: icu::list::provider::ListJoinerPattern::from_parts(" ", 1u8), special_case: None }, icu::list::provider::ConditionalListJoinerPattern { default: icu::list::provider::ListJoinerPattern::from_parts(" ", 1u8), special_case: None }, icu::list::provider::ConditionalListJoinerPattern { default: icu::list::provider::ListJoinerPattern::from_parts(" ", 1u8), special_case: None }, icu::list::provider::ConditionalListJoinerPattern { default: icu::list::provider::ListJoinerPattern::from_parts(" ", 1u8), special_case: None }]);
@@ -94,13 +94,13 @@ macro_rules! __impl_list_unit_v1 {
                 static VALUES: [&<icu::list::provider::UnitListV1Marker as icu_provider::DataMarker>::Yokeable; 126usize] = [&AF, &AM, &AR, &AS, &AST, &BE, &BG, &BLO, &BRX, &BS, &BS_CYRL, &BS, &AS, &AS, &CS, &BE, &DA, &DE, &DOI, &DSB, &AS, &AS, &ES, &ES_DO, &ES_PY, &ES_PY, &AS, &EU, &FA, &FF_ADLM, &FI, &AS, &FO, &FR, &FY, &GA, &GD, &GL, &GU, &HE, &HI, &HI_LATN, &HR, &DSB, &HU, &HY, &AS, &IG, &IS, &IT, &JA, &AS, &KEA, &KGP, &BE, &BE, &KN, &BE, &AS, &KS, &KS_DEVA, &KU, &AS, &AS, &AS, &AS, &LT, &LV, &MAI, &AS, &BS_CYRL, &ML, &BE, &MNI, &AS, &MS, &MT, &MY, &NE, &NL, &AS, &NO, &AS, &AS, &AS, &BS, &PS, &IT, &PT_PT, &IT, &RO, &BE, &SA, &SAH, &IT, &SI, &SL, &SO, &PT_PT, &BS_CYRL, &BS, &SU, &AS, &SW, &SYR, &AS, &TH, &TI, &AS, &TO, &BE, &TT, &UG, &UK, &UND, &UR, &BE, &IT, &AS, &XNR, &YRL, &JA, &JA, &ZH, &JA, &ZU];
                 static KEYS: [&str; 126usize] = ["af", "am", "ar", "as", "ast", "be", "bg", "blo", "brx", "bs", "bs-Cyrl", "ca", "ceb", "chr", "cs", "cv", "da", "de", "doi", "dsb", "el", "en", "es", "es-DO", "es-PY", "es-US", "et", "eu", "fa", "ff-Adlm", "fi", "fil", "fo", "fr", "fy", "ga", "gd", "gl", "gu", "he", "hi", "hi-Latn", "hr", "hsb", "hu", "hy", "ia", "ig", "is", "it", "ja", "jv", "kea", "kgp", "kk", "km", "kn", "ko", "kok", "ks", "ks-Deva", "ku", "kxv", "ky", "lb", "lo", "lt", "lv", "mai", "mi", "mk", "ml", "mn", "mni", "mr", "ms", "mt", "my", "ne", "nl", "nn", "no", "or", "pa", "pcm", "pl", "ps", "pt", "pt-PT", "rm", "ro", "ru", "sa", "sah", "sc", "si", "sl", "so", "sq", "sr", "sr-Latn", "su", "sv", "sw", "syr", "ta", "th", "ti", "tk", "to", "tr", "tt", "ug", "uk", "und", "ur", "uz", "vec", "vi", "xnr", "yrl", "yue", "yue-Hans", "zh", "zh-Hant", "zu"];
                 let mut metadata = icu_provider::DataResponseMetadata::default();
-                let payload = if let Ok(payload) = KEYS.binary_search_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
+                let payload = if let Ok(payload) = KEYS.binary_search_by(|k| req.legacy_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
                     payload
                 } else {
-                    const FALLBACKER: icu::locid_transform::fallback::LocaleFallbackerWithConfig<'static> = icu::locid_transform::fallback::LocaleFallbacker::new().for_config(<icu::list::provider::UnitListV1Marker as icu_provider::KeyedDataMarker>::KEY.fallback_config());
+                    const FALLBACKER: icu::locale::fallback::LocaleFallbackerWithConfig<'static> = icu::locale::fallback::LocaleFallbacker::new().for_config(<icu::list::provider::UnitListV1Marker as icu_provider::KeyedDataMarker>::KEY.fallback_config());
                     let mut fallback_iterator = FALLBACKER.fallback_for(req.locale.clone());
                     loop {
-                        if let Ok(payload) = KEYS.binary_search_by(|k| fallback_iterator.get().strict_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
+                        if let Ok(payload) = KEYS.binary_search_by(|k| icu_provider::DataRequest { locale: fallback_iterator.get(), ..req }.legacy_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
                             metadata.locale = Some(fallback_iterator.take());
                             break payload;
                         }
@@ -122,10 +122,10 @@ macro_rules! __impl_list_unit_v1 {
 #[macro_export]
 macro_rules! __impliterable_list_unit_v1 {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.67"]
+        #[clippy::msrv = "1.70"]
         impl icu_provider::datagen::IterableDataProvider<icu::list::provider::UnitListV1Marker> for $provider {
-            fn supported_locales(&self) -> Result<alloc::vec::Vec<icu_provider::DataLocale>, icu_provider::DataError> {
-                Ok(["af", "am", "ar", "as", "ast", "be", "bg", "blo", "brx", "bs", "bs-Cyrl", "ca", "ceb", "chr", "cs", "cv", "da", "de", "doi", "dsb", "el", "en", "es", "es-DO", "es-PY", "es-US", "et", "eu", "fa", "ff-Adlm", "fi", "fil", "fo", "fr", "fy", "ga", "gd", "gl", "gu", "he", "hi", "hi-Latn", "hr", "hsb", "hu", "hy", "ia", "ig", "is", "it", "ja", "jv", "kea", "kgp", "kk", "km", "kn", "ko", "kok", "ks", "ks-Deva", "ku", "kxv", "ky", "lb", "lo", "lt", "lv", "mai", "mi", "mk", "ml", "mn", "mni", "mr", "ms", "mt", "my", "ne", "nl", "nn", "no", "or", "pa", "pcm", "pl", "ps", "pt", "pt-PT", "rm", "ro", "ru", "sa", "sah", "sc", "si", "sl", "so", "sq", "sr", "sr-Latn", "su", "sv", "sw", "syr", "ta", "th", "ti", "tk", "to", "tr", "tt", "ug", "uk", "und", "ur", "uz", "vec", "vi", "xnr", "yrl", "yue", "yue-Hans", "zh", "zh-Hant", "zu"].into_iter().map(|s| <icu_provider::DataLocale as core::str::FromStr>::from_str(s).unwrap()).collect())
+            fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataKeyAttributes)>, icu_provider::DataError> {
+                Ok(["af", "am", "ar", "as", "ast", "be", "bg", "blo", "brx", "bs", "bs-Cyrl", "ca", "ceb", "chr", "cs", "cv", "da", "de", "doi", "dsb", "el", "en", "es", "es-DO", "es-PY", "es-US", "et", "eu", "fa", "ff-Adlm", "fi", "fil", "fo", "fr", "fy", "ga", "gd", "gl", "gu", "he", "hi", "hi-Latn", "hr", "hsb", "hu", "hy", "ia", "ig", "is", "it", "ja", "jv", "kea", "kgp", "kk", "km", "kn", "ko", "kok", "ks", "ks-Deva", "ku", "kxv", "ky", "lb", "lo", "lt", "lv", "mai", "mi", "mk", "ml", "mn", "mni", "mr", "ms", "mt", "my", "ne", "nl", "nn", "no", "or", "pa", "pcm", "pl", "ps", "pt", "pt-PT", "rm", "ro", "ru", "sa", "sah", "sc", "si", "sl", "so", "sq", "sr", "sr-Latn", "su", "sv", "sw", "syr", "ta", "th", "ti", "tk", "to", "tr", "tt", "ug", "uk", "und", "ur", "uz", "vec", "vi", "xnr", "yrl", "yue", "yue-Hans", "zh", "zh-Hant", "zu"].into_iter().filter_map(icu_provider::DataRequest::legacy_decode).collect())
             }
         }
     };

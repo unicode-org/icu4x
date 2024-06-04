@@ -7,7 +7,7 @@ extern crate alloc;
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use icu_datagen::prelude::*;
 use icu_datetime::provider::neo::*;
-use icu_locid_transform::LocaleFallbacker;
+use icu_locale::LocaleFallbacker;
 use icu_provider::prelude::*;
 use icu_provider_adapters::fallback::LocaleFallbackProvider;
 use icu_provider_blob::export::BlobExporter;
@@ -19,7 +19,7 @@ const _: () = {
     pub mod icu {
         pub use icu_datetime as datetime;
         #[allow(unused_imports)] // baked data may or may not need this
-        pub use icu_locid_transform as locid_transform;
+        pub use icu_locale as locale;
     }
     icu_datetime_data::make_provider!(Baked);
 
@@ -94,7 +94,7 @@ fn make_blob_v1() -> Vec<u8> {
         .with_locales_and_fallback([LocaleFamily::FULL], Default::default())
         .export(&Baked, exporter)
         .unwrap();
-    assert_eq!(blob.len(), 684197);
+    assert_eq!(blob.len(), 450725);
     assert!(blob.len() > 100);
     blob
 }
@@ -107,7 +107,7 @@ fn make_blob_v2() -> Vec<u8> {
         .with_locales_and_fallback([LocaleFamily::FULL], Default::default())
         .export(&Baked, exporter)
         .unwrap();
-    assert_eq!(blob.len(), 308744);
+    assert_eq!(blob.len(), 241278);
     assert!(blob.len() > 100);
     blob
 }
@@ -129,8 +129,9 @@ fn auxkey_bench_for_version(c: &mut Criterion, blob: &[u8], version_id: &str) {
         LocaleFallbacker::new().static_to_owned(),
     );
 
-    for locale_str in ["sr-Latn-x-ym0d", "sr-ME-x-ym0d"] {
+    for (locale_str, attr_str) in [("sr-Latn", "ym0d"), ("sr-ME", "ym0d")] {
         let locale = locale_str.parse::<DataLocale>().unwrap();
+        let attrs = attr_str.parse::<DataKeyAttributes>().unwrap();
 
         c.bench_function(
             &format!("provider/auxkey/fallback/{locale_str}/{version_id}"),
@@ -141,6 +142,7 @@ fn auxkey_bench_for_version(c: &mut Criterion, blob: &[u8], version_id: &str) {
                             &provider.as_deserializing(),
                             DataRequest {
                                 locale: black_box(&locale),
+                                key_attributes: black_box(&attrs),
                                 metadata: Default::default()
                             }
                         )

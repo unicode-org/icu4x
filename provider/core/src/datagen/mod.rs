@@ -14,9 +14,9 @@ mod payload;
 pub use data_conversion::DataConverter;
 pub use iter::IterableDataProvider;
 
-#[doc(hidden)] // exposed for make_exportable_provider
+#[doc(hidden)] // macro use
 pub use iter::IterableDynamicDataProvider;
-#[doc(hidden)] // exposed for make_exportable_provider
+#[doc(hidden)] // macro use
 pub use payload::{ExportBox, ExportMarker};
 
 use crate::prelude::*;
@@ -37,6 +37,7 @@ pub trait DataExporter: Sync {
         &self,
         key: DataKey,
         locale: &DataLocale,
+        key_attributes: &DataKeyAttributes,
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError>;
 
@@ -47,7 +48,7 @@ pub trait DataExporter: Sync {
         key: DataKey,
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
-        self.put_payload(key, &Default::default(), payload)?;
+        self.put_payload(key, Default::default(), Default::default(), payload)?;
         self.flush(key)
     }
 
@@ -92,9 +93,10 @@ impl DataExporter for Box<dyn DataExporter> {
         &self,
         key: DataKey,
         locale: &DataLocale,
+        key_attributes: &DataKeyAttributes,
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
-        (**self).put_payload(key, locale, payload)
+        (**self).put_payload(key, locale, key_attributes, payload)
     }
 
     fn flush_singleton(
@@ -166,12 +168,12 @@ macro_rules! make_exportable_provider {
         );
 
         impl $crate::datagen::IterableDynamicDataProvider<$crate::datagen::ExportMarker> for $provider {
-            fn supported_locales_for_key(&self, key: $crate::DataKey) -> Result<Vec<$crate::DataLocale>, $crate::DataError> {
+            fn supported_requests_for_key(&self, key: $crate::DataKey) -> Result<std::collections::HashSet<($crate::DataLocale, $crate::DataKeyAttributes)>, $crate::DataError> {
                 match key.hashed() {
                     $(
                         $(#[$cfg])?
                         h if h == <$struct_m as $crate::KeyedDataMarker>::KEY.hashed() => {
-                            $crate::datagen::IterableDataProvider::<$struct_m>::supported_locales(self)
+                            $crate::datagen::IterableDataProvider::<$struct_m>::supported_requests(self)
                         }
                     )+,
                     _ => Err($crate::DataErrorKind::MissingDataKey.with_key(key))
@@ -205,11 +207,12 @@ impl DataExporter for MultiExporter {
         &self,
         key: DataKey,
         locale: &DataLocale,
+        key_attributes: &DataKeyAttributes,
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
         self.0
             .iter()
-            .try_for_each(|e| e.put_payload(key, locale, payload))
+            .try_for_each(|e| e.put_payload(key, locale, key_attributes, payload))
     }
 
     fn flush_singleton(
@@ -238,5 +241,9 @@ impl DataExporter for MultiExporter {
 
     fn close(&mut self) -> Result<(), DataError> {
         self.0.iter_mut().try_for_each(|e| e.close())
+    }
+
+    fn supports_built_in_fallback(&self) -> bool {
+        self.0.iter().all(|e| e.supports_built_in_fallback())
     }
 }

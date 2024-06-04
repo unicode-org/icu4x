@@ -37,7 +37,7 @@ impl DataMarker for BufferMarker {
 ///
 /// ```
 /// # #[cfg(feature = "deserialize_json")] {
-/// use icu_locid::langid;
+/// use icu_locale_core::langid;
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
 /// use std::borrow::Cow;
@@ -46,14 +46,14 @@ impl DataMarker for BufferMarker {
 ///
 /// let req = DataRequest {
 ///     locale: &langid!("de").into(),
-///     metadata: Default::default(),
+///     ..Default::default()
 /// };
 ///
 /// // Deserializing manually
 /// assert_eq!(
 ///     serde_json::from_slice::<HelloWorldV1>(
 ///         buffer_provider
-///             .load_buffer(HelloWorldV1Marker::KEY, req)
+///             .load_data(HelloWorldV1Marker::KEY, req)
 ///             .expect("load should succeed")
 ///             .take_payload()
 ///             .unwrap()
@@ -84,59 +84,9 @@ impl DataMarker for BufferMarker {
 /// ```
 ///
 /// [`as_deserializing()`]: AsDeserializingBufferProvider::as_deserializing
-pub trait BufferProvider {
-    /// Loads a [`DataPayload`]`<`[`BufferMarker`]`>` according to the key and request.
-    fn load_buffer(
-        &self,
-        key: DataKey,
-        req: DataRequest,
-    ) -> Result<DataResponse<BufferMarker>, DataError>;
-}
+pub trait BufferProvider: DynamicDataProvider<BufferMarker> {}
 
-impl<'a, T: BufferProvider + ?Sized> BufferProvider for &'a T {
-    #[inline]
-    fn load_buffer(
-        &self,
-        key: DataKey,
-        req: DataRequest,
-    ) -> Result<DataResponse<BufferMarker>, DataError> {
-        (**self).load_buffer(key, req)
-    }
-}
-
-impl<T: BufferProvider + ?Sized> BufferProvider for alloc::boxed::Box<T> {
-    #[inline]
-    fn load_buffer(
-        &self,
-        key: DataKey,
-        req: DataRequest,
-    ) -> Result<DataResponse<BufferMarker>, DataError> {
-        (**self).load_buffer(key, req)
-    }
-}
-
-impl<T: BufferProvider + ?Sized> BufferProvider for alloc::rc::Rc<T> {
-    #[inline]
-    fn load_buffer(
-        &self,
-        key: DataKey,
-        req: DataRequest,
-    ) -> Result<DataResponse<BufferMarker>, DataError> {
-        (**self).load_buffer(key, req)
-    }
-}
-
-#[cfg(target_has_atomic = "ptr")]
-impl<T: BufferProvider + ?Sized> BufferProvider for alloc::sync::Arc<T> {
-    #[inline]
-    fn load_buffer(
-        &self,
-        key: DataKey,
-        req: DataRequest,
-    ) -> Result<DataResponse<BufferMarker>, DataError> {
-        (**self).load_buffer(key, req)
-    }
-}
+impl<P: DynamicDataProvider<BufferMarker> + ?Sized> BufferProvider for P {}
 
 /// An enum expressing all Serde formats known to ICU4X.
 #[derive(Debug, PartialEq, Eq, Hash, Copy, Clone)]

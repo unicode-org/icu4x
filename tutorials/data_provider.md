@@ -16,8 +16,8 @@ use icu_provider_blob::BlobDataProvider;
 use icu_provider_fs::FsDataProvider;
 use icu_provider::DataLocale;
 use icu_provider::hello_world::HelloWorldFormatter;
-use icu::locid::locale;
-use icu::locid::subtags::Language;
+use icu::locale::locale;
+use icu::locale::subtags::Language;
 use std::path::Path;
 use writeable::Writeable;
 
@@ -72,7 +72,7 @@ The following example illustrates an LRU cache on top of a data provider. A prac
 ```rust
 use icu_provider::hello_world::{HelloWorldFormatter, HelloWorldProvider};
 use icu_provider::prelude::*;
-use icu::locid::locale;
+use icu::locale::locale;
 use lru::LruCache;
 use std::borrow::{Borrow, Cow};
 use std::convert::TryInto;
@@ -199,8 +199,8 @@ use icu::decimal::FixedDecimalFormatter;
 use icu::decimal::provider::DecimalSymbolsV1Marker;
 use icu_provider::prelude::*;
 use icu_provider_adapters::any_payload::AnyPayloadProvider;
-use icu::locid::locale;
-use icu::locid::{subtags_region as region};
+use icu::locale::locale;
+use icu::locale::{subtags_region as region};
 use std::borrow::Cow;
 use tinystr::tinystr;
 
@@ -263,8 +263,8 @@ However, for environments that require this behavior, such as ECMA-402, the data
 use icu_provider::prelude::*;
 use icu_provider::hello_world::*;
 use icu_provider_adapters::fallback::LocaleFallbackProvider;
-use icu_provider_adapters::fallback::LocaleFallbacker;
-use icu::locid::locale;
+use icu::locale::LocaleFallbacker;
+use icu::locale::locale;
 use std::sync::RwLock;
 
 pub struct ResolvedLocaleProvider<P> {

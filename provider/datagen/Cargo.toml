@@ -35,11 +35,10 @@ all-features = true
 
 # DatagenDriver
 displaydoc = { workspace = true }
-icu_locid = { workspace = true, features = ["std"] }
-icu_provider = { workspace = true, features = ["std", "logging", "datagen", "experimental"]}
+icu_locale_core = { workspace = true, features = ["std"] }
+icu_provider = { workspace = true, features = ["std", "logging", "datagen"]}
 log = { workspace = true }
 memchr = { workspace = true }
-once_cell = { workspace = true, features = ["std"] }
 rayon = { workspace = true, optional = true }
 writeable = { workspace = true }
 
@@ -58,7 +57,7 @@ icu_collator = { workspace = true }
 icu_datetime = { workspace = true }
 icu_decimal = { workspace = true }
 icu_list = { workspace = true }
-icu_locid_transform = { workspace = true }
+icu_locale = { workspace = true }
 icu_normalizer = { workspace = true }
 icu_plurals = { workspace = true }
 icu_properties = { workspace = true }
@@ -117,8 +116,8 @@ provider = [
     "icu_decimal/datagen",
     "icu_experimental?/datagen",
     "icu_list/datagen",
-    "icu_locid_transform/datagen",
-    "icu_locid/serde",
+    "icu_locale/datagen",
+    "icu_locale_core/serde",
     "icu_normalizer/datagen",
     "icu_plurals/datagen",
     "icu_properties/datagen",
@@ -156,7 +155,7 @@ baked_exporter = [
     "icu_datetime/datagen",
     "icu_decimal/datagen",
     "icu_list/datagen",
-    "icu_locid_transform/datagen",
+    "icu_locale/datagen",
     "icu_normalizer/datagen",
     "icu_plurals/datagen",
     "icu_properties/datagen",
@@ -173,7 +172,7 @@ blob_input = [
     "icu_datetime/datagen",
     "icu_decimal/datagen",
     "icu_list/datagen",
-    "icu_locid_transform/datagen",
+    "icu_locale/datagen",
     "icu_normalizer/datagen",
     "icu_plurals/datagen",
     "icu_properties/datagen",
@@ -182,7 +181,6 @@ blob_input = [
     "icu_experimental?/datagen",
 ]
 fs_exporter = ["dep:icu_provider_fs"]
-legacy_api = ["fs_exporter", "blob_exporter", "baked_exporter", "provider"]
 bin = ["dep:clap", "dep:eyre", "dep:simple_logger"]
 rayon = ["dep:rayon"]
 # Use wasm for building codepointtries

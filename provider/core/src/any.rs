@@ -309,8 +309,8 @@ where
 /// let any_provider = HelloWorldProvider.as_any_provider();
 ///
 /// let req = DataRequest {
-///     locale: &icu_locid::langid!("de").into(),
-///     metadata: Default::default(),
+///     locale: &icu_locale_core::langid!("de").into(),
+///     ..Default::default()
 /// };
 ///
 /// // Downcasting manually

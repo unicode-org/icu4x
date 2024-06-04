@@ -9,16 +9,16 @@ use icu_datagen::prelude::*;
 use icu_provider::datagen::ExportMarker;
 use icu_provider::prelude::*;
 use postcard::ser_flavors::{AllocVec, Flavor};
-use writeable::Writeable;
 
 #[derive(Default)]
-pub struct TestingExporter(FrozenMap<DataLocale, Vec<u8>>);
+pub struct TestingExporter(FrozenMap<(DataLocale, DataKeyAttributes), Vec<u8>>);
 
 impl DataExporter for &mut TestingExporter {
     fn put_payload(
         &self,
         key: DataKey,
         locale: &DataLocale,
+        key_attributes: &DataKeyAttributes,
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
         let mut serializer = postcard::Serializer {
@@ -29,8 +29,9 @@ impl DataExporter for &mut TestingExporter {
             .output
             .finalize()
             .expect("Failed to finalize serializer output");
-        println!("Putting: {key}/{locale}");
-        self.0.insert(locale.clone(), output);
+        println!("Putting: {key}/{}/{locale}", key_attributes as &str);
+        self.0
+            .insert((locale.clone(), key_attributes.clone()), output);
         Ok(())
     }
 }
@@ -40,7 +41,17 @@ impl TestingExporter {
         self.0
             .into_tuple_vec()
             .into_iter()
-            .map(|(data_locale, buffer)| (data_locale.write_to_string().into_owned(), buffer))
+            .map(|((locale, key_attributes), buffer)| {
+                (
+                    DataRequest {
+                        locale: &locale,
+                        key_attributes: &key_attributes,
+                        ..Default::default()
+                    }
+                    .legacy_encode(),
+                    buffer,
+                )
+            })
             .collect()
     }
 }

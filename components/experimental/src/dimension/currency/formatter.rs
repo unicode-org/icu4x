@@ -69,7 +69,7 @@ impl CurrencyFormatter {
         let essential = crate::provider::Baked
             .load(DataRequest {
                 locale,
-                metadata: Default::default(),
+                ..Default::default()
             })?
             .take_payload()?;
 
@@ -103,7 +103,7 @@ impl CurrencyFormatter {
         let essential = provider
             .load(DataRequest {
                 locale,
-                metadata: Default::default(),
+                ..Default::default()
             })?
             .take_payload()?;
 
@@ -121,7 +121,7 @@ impl CurrencyFormatter {
     /// use icu::experimental::dimension::currency::formatter::{
     ///     CurrencyCode, CurrencyFormatter,
     /// };
-    /// use icu::locid::locale;
+    /// use icu::locale::locale;
     /// use tinystr::*;
     /// use writeable::Writeable;
     ///

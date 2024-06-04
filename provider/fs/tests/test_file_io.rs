@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_locid::langid;
+use icu_locale_core::langid;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::hello_world::{HelloWorldProvider, HelloWorldV1, HelloWorldV1Marker};
 use icu_provider::prelude::*;
@@ -18,10 +18,11 @@ const PATHS: &[&str] = &[
 fn test_provider() {
     for path in PATHS {
         let provider = FsDataProvider::try_new(path).unwrap();
-        for locale in HelloWorldProvider.supported_locales().unwrap() {
+        for (locale, key_attributes) in HelloWorldProvider.supported_requests().unwrap() {
             let req = DataRequest {
                 locale: &locale,
-                metadata: Default::default(),
+                key_attributes: &key_attributes,
+                ..Default::default()
             };
 
             let expected = HelloWorldProvider
@@ -57,7 +58,7 @@ fn test_errors() {
         let err: Result<DataResponse<HelloWorldV1Marker>, DataError> =
             provider.as_deserializing().load(DataRequest {
                 locale: &langid!("zh-DE").into(),
-                metadata: Default::default(),
+                ..Default::default()
             });
 
         assert!(

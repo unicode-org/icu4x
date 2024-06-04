@@ -36,8 +36,8 @@ export class ICU4XGregorianDateTimeFormatter {
   }
 
   format_iso_datetime(arg_value) {
-    return diplomatRuntime.withWriteable(wasm, (writeable) => {
-      return wasm.ICU4XGregorianDateTimeFormatter_format_iso_datetime(this.underlying, arg_value.underlying, writeable);
+    return diplomatRuntime.withDiplomatWrite(wasm, (write) => {
+      return wasm.ICU4XGregorianDateTimeFormatter_format_iso_datetime(this.underlying, arg_value.underlying, write);
     });
   }
 }

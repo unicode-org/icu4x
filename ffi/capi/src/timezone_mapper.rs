@@ -47,7 +47,7 @@ pub mod ffi {
         pub fn iana_to_bcp47(
             &self,
             value: &DiplomatStr,
-            write: &mut diplomat_runtime::DiplomatWriteable,
+            write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), ICU4XError> {
             let handle = self.0.as_borrowed();
             let bcp47 = handle
@@ -61,7 +61,7 @@ pub mod ffi {
         pub fn normalize_iana(
             &self,
             value: &str,
-            write: &mut diplomat_runtime::DiplomatWriteable,
+            write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), ICU4XError> {
             let handle = self.0.as_borrowed();
             let iana = handle
@@ -78,7 +78,7 @@ pub mod ffi {
         pub fn canonicalize_iana(
             &self,
             value: &str,
-            write: &mut diplomat_runtime::DiplomatWriteable,
+            write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), ICU4XError> {
             let handle = self.0.as_borrowed();
             let iana = handle
@@ -95,7 +95,7 @@ pub mod ffi {
         pub fn find_canonical_iana_from_bcp47(
             &self,
             value: &DiplomatStr,
-            write: &mut diplomat_runtime::DiplomatWriteable,
+            write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), ICU4XError> {
             let handle = self.0.as_borrowed();
             let iana = TinyAsciiStr::from_bytes(value)
@@ -163,7 +163,7 @@ pub mod ffi {
         pub fn canonicalize_iana(
             &self,
             value: &str,
-            write: &mut diplomat_runtime::DiplomatWriteable,
+            write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), ICU4XError> {
             let handle = self.0.as_borrowed();
             let iana = handle
@@ -180,7 +180,7 @@ pub mod ffi {
         pub fn canonical_iana_from_bcp47(
             &self,
             value: &DiplomatStr,
-            write: &mut diplomat_runtime::DiplomatWriteable,
+            write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), ICU4XError> {
             let handle = self.0.as_borrowed();
             let iana = TinyAsciiStr::from_bytes(value)

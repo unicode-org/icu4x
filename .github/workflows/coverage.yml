@@ -24,7 +24,7 @@ jobs:
   
       - uses:                   actions-rs/toolchain@v1
         with:
-          toolchain:            nightly-2022-12-26
+          toolchain:            nightly-2023-08-08
           override:             true
 
       - run: cargo test --all-features --no-fail-fast

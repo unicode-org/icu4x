@@ -26,9 +26,7 @@ pub mod transliterate;
 pub mod unicodeset_parse;
 pub mod units;
 
-#[doc(hidden)]
-// Compiled constructors look for the baked provider at crate::provider::Baked,
-// which is why we have to hook it up here.
+#[doc(hidden)] // compiled constructors look for the baked provider here
 pub mod provider {
     #[cfg(feature = "compiled_data")]
     pub struct Baked;
@@ -38,7 +36,7 @@ pub mod provider {
         pub mod icu {
             pub use crate as experimental;
             #[allow(unused_imports)] // baked data may or may not need this
-            pub use icu_locid_transform as locid_transform;
+            pub use icu_locale as locale;
         }
         icu_experimental_data::make_provider!(Baked);
         icu_experimental_data::impl_compactdecimal_long_v1!(Baked);

@@ -35,20 +35,20 @@ export class ICU4XTimeFormatter {
   }
 
   format_time(arg_value) {
-    return diplomatRuntime.withWriteable(wasm, (writeable) => {
-      return wasm.ICU4XTimeFormatter_format_time(this.underlying, arg_value.underlying, writeable);
+    return diplomatRuntime.withDiplomatWrite(wasm, (write) => {
+      return wasm.ICU4XTimeFormatter_format_time(this.underlying, arg_value.underlying, write);
     });
   }
 
   format_datetime(arg_value) {
-    return diplomatRuntime.withWriteable(wasm, (writeable) => {
-      return wasm.ICU4XTimeFormatter_format_datetime(this.underlying, arg_value.underlying, writeable);
+    return diplomatRuntime.withDiplomatWrite(wasm, (write) => {
+      return wasm.ICU4XTimeFormatter_format_datetime(this.underlying, arg_value.underlying, write);
     });
   }
 
   format_iso_datetime(arg_value) {
-    return diplomatRuntime.withWriteable(wasm, (writeable) => {
-      return wasm.ICU4XTimeFormatter_format_iso_datetime(this.underlying, arg_value.underlying, writeable);
+    return diplomatRuntime.withDiplomatWrite(wasm, (write) => {
+      return wasm.ICU4XTimeFormatter_format_iso_datetime(this.underlying, arg_value.underlying, write);
     });
   }
 }

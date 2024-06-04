@@ -6,9 +6,9 @@
 #[macro_export]
 macro_rules! __impl_displaynames_variants_v1 {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.67"]
+        #[clippy::msrv = "1.70"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
-        #[clippy::msrv = "1.67"]
+        #[clippy::msrv = "1.70"]
         impl icu_provider::DataProvider<icu::experimental::displaynames::provider::VariantDisplayNamesV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::experimental::displaynames::provider::VariantDisplayNamesV1Marker>, icu_provider::DataError> {
                 Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::experimental::displaynames::provider::VariantDisplayNamesV1Marker as icu_provider::KeyedDataMarker>::KEY, req))
@@ -23,10 +23,10 @@ macro_rules! __impl_displaynames_variants_v1 {
 #[macro_export]
 macro_rules! __impliterable_displaynames_variants_v1 {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.67"]
+        #[clippy::msrv = "1.70"]
         impl icu_provider::datagen::IterableDataProvider<icu::experimental::displaynames::provider::VariantDisplayNamesV1Marker> for $provider {
-            fn supported_locales(&self) -> Result<alloc::vec::Vec<icu_provider::DataLocale>, icu_provider::DataError> {
-                Ok(vec![])
+            fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataKeyAttributes)>, icu_provider::DataError> {
+                Ok(Default::default())
             }
         }
     };

@@ -320,7 +320,6 @@ fn compute_hc<'a>(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_locid::langid;
     use icu_provider::prelude::*;
     use serde::Deserialize;
 
@@ -349,8 +348,8 @@ mod tests {
     fn segment_file_by_lstm() {
         let lstm: DataPayload<LstmForWordLineAutoV1Marker> = crate::provider::Baked
             .load(DataRequest {
-                locale: &langid!("th").into(),
-                metadata: Default::default(),
+                key_attributes: &"Thai_codepoints_exclusive_model4_heavy".parse().unwrap(),
+                ..Default::default()
             })
             .unwrap()
             .take_payload()

@@ -32,7 +32,6 @@
 //! assert_eq!(datetime_ethiopian.time.second.number(), 0);
 //! ```
 
-use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::iso::Iso;
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime, Time};
@@ -228,12 +227,8 @@ impl Calendar for Ethiopian {
         "Ethiopian"
     }
 
-    fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
-        if self.0 {
-            Some(AnyCalendarKind::EthiopianAmeteAlem)
-        } else {
-            Some(AnyCalendarKind::Ethiopian)
-        }
+    fn any_calendar_kind(&self) -> Option<crate::AnyCalendarKind> {
+        Some(crate::any_calendar::IntoAnyCalendar::kind(self))
     }
 }
 

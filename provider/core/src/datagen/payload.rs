@@ -61,7 +61,7 @@ where
     }
 }
 
-#[doc(hidden)] // exposed for make_exportable_provider
+#[doc(hidden)] // macro
 #[derive(yoke::Yokeable)]
 pub struct ExportBox {
     payload: Box<dyn ExportableDataPayload + Sync + Send>,

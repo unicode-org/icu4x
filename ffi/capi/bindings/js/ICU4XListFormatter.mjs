@@ -69,8 +69,8 @@ export class ICU4XListFormatter {
   }
 
   format(arg_list) {
-    return diplomatRuntime.withWriteable(wasm, (writeable) => {
-      return wasm.ICU4XListFormatter_format(this.underlying, arg_list.underlying, writeable);
+    return diplomatRuntime.withDiplomatWrite(wasm, (write) => {
+      return wasm.ICU4XListFormatter_format(this.underlying, arg_list.underlying, write);
     });
   }
 }

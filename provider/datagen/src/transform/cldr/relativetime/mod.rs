@@ -6,15 +6,15 @@ use std::borrow::Borrow;
 
 use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
-use crate::provider::IterableDataProviderInternal;
+use crate::provider::IterableDataProviderCached;
 use icu_experimental::relativetime::provider::*;
 use icu_provider::prelude::*;
-use once_cell::sync::OnceCell;
 use std::collections::{BTreeMap, HashMap, HashSet};
 use std::str::FromStr;
+use std::sync::OnceLock;
 
-pub(in crate::provider) static DATAKEY_FILTERS: OnceCell<HashMap<DataKey, &'static str>> =
-    OnceCell::new();
+pub(in crate::provider) static DATAKEY_FILTERS: OnceLock<HashMap<DataKey, &'static str>> =
+    OnceLock::new();
 
 fn datakey_filters() -> &'static HashMap<DataKey, &'static str> {
     DATAKEY_FILTERS.get_or_init(|| {
@@ -91,19 +91,19 @@ macro_rules! make_data_provider {
                     ))?;
 
                     Ok(DataResponse {
-                        metadata: Default::default(),
+            metadata: Default::default(),
                         payload: Some(DataPayload::from_owned(data.try_into()?)),
                     })
                 }
             }
 
-            impl IterableDataProviderInternal<$marker> for DatagenProvider {
-                fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
+            impl IterableDataProviderCached<$marker> for DatagenProvider {
+                fn supported_requests_cached(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
                     Ok(self
                         .cldr()?
                         .dates("gregorian")
                         .list_langs()?
-                        .map(DataLocale::from)
+                        .map(|l| (DataLocale::from(l), Default::default()))
                         .collect())
                 }
             }
@@ -186,7 +186,7 @@ make_data_provider!(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_locid::langid;
+    use icu_locale_core::langid;
 
     #[test]
     fn test_basic() {
@@ -194,7 +194,7 @@ mod tests {
         let data: DataPayload<ShortQuarterRelativeTimeFormatDataV1Marker> = provider
             .load(DataRequest {
                 locale: &langid!("en").into(),
-                metadata: Default::default(),
+                ..Default::default()
             })
             .unwrap()
             .take_payload()
@@ -214,7 +214,7 @@ mod tests {
         let data: DataPayload<LongYearRelativeTimeFormatDataV1Marker> = provider
             .load(DataRequest {
                 locale: &langid!("ar").into(),
-                metadata: Default::default(),
+                ..Default::default()
             })
             .unwrap()
             .take_payload()

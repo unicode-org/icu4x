@@ -24,24 +24,24 @@ namespace capi {
 extern "C" {
 #endif
 
-typedef struct DiplomatWriteable {
+typedef struct DiplomatWrite {
     void* context;
     char* buf;
     size_t len;
     size_t cap;
     bool grow_failed;
-    void (*flush)(struct DiplomatWriteable*);
-    bool (*grow)(struct DiplomatWriteable*, size_t);
-} DiplomatWriteable;
+    void (*flush)(struct DiplomatWrite*);
+    bool (*grow)(struct DiplomatWrite*, size_t);
+} DiplomatWrite;
 
-DiplomatWriteable diplomat_simple_writeable(char* buf, size_t buf_size);
+DiplomatWrite diplomat_simple_write(char* buf, size_t buf_size);
 
-DiplomatWriteable* diplomat_buffer_writeable_create(size_t cap);
-char* diplomat_buffer_writeable_get_bytes(DiplomatWriteable* t);
-size_t diplomat_buffer_writeable_len(DiplomatWriteable* t);
-void diplomat_buffer_writeable_destroy(DiplomatWriteable* t);
+DiplomatWrite* diplomat_buffer_write_create(size_t cap);
+char* diplomat_buffer_write_get_bytes(DiplomatWrite* t);
+size_t diplomat_buffer_write_len(DiplomatWrite* t);
+void diplomat_buffer_write_destroy(DiplomatWrite* t);
 
-bool diplomat_is_str(char* buf, size_t len);
+bool diplomat_is_str(const char* buf, size_t len);
 
 #define MAKE_SLICES(name, c_ty) \
     typedef struct Diplomat##name##View { \
@@ -68,7 +68,9 @@ MAKE_SLICES(F64, double)
 MAKE_SLICES(Bool, bool)
 MAKE_SLICES(Char, char32_t)
 MAKE_SLICES(String, char)
-MAKE_SLICES(U16String, char16_t)
+MAKE_SLICES(String16, char16_t)
+MAKE_SLICES(Strings, DiplomatStringView)
+MAKE_SLICES(Strings16, DiplomatString16View)
 
 
 #ifdef __cplusplus

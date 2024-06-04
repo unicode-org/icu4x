@@ -31,12 +31,6 @@ final class Logger implements ffi.Finalizable {
     final result = _ICU4XLogger_init_simple_logger();
     return result;
   }
-
-  /// Deprecated: since ICU4X 1.4, this now happens automatically if the `log` feature is enabled.
-  static bool initConsoleLogger() {
-    final result = _ICU4XLogger_init_console_logger();
-    return result;
-  }
 }
 
 @meta.ResourceIdentifier('ICU4XLogger_destroy')
@@ -48,8 +42,3 @@ external void _ICU4XLogger_destroy(ffi.Pointer<ffi.Void> self);
 @ffi.Native<ffi.Bool Function()>(isLeaf: true, symbol: 'ICU4XLogger_init_simple_logger')
 // ignore: non_constant_identifier_names
 external bool _ICU4XLogger_init_simple_logger();
-
-@meta.ResourceIdentifier('ICU4XLogger_init_console_logger')
-@ffi.Native<ffi.Bool Function()>(isLeaf: true, symbol: 'ICU4XLogger_init_console_logger')
-// ignore: non_constant_identifier_names
-external bool _ICU4XLogger_init_console_logger();

@@ -1,60 +1,42 @@
 #ifndef ICU4XLogger_HPP
 #define ICU4XLogger_HPP
+
+#include "ICU4XLogger.d.hpp"
+
+#include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
-#include <algorithm>
 #include <memory>
-#include <variant>
 #include <optional>
 #include "diplomat_runtime.hpp"
-
 #include "ICU4XLogger.h"
 
 
-/**
- * A destruction policy for using ICU4XLogger with std::unique_ptr.
- */
-struct ICU4XLoggerDeleter {
-  void operator()(capi::ICU4XLogger* l) const noexcept {
-    capi::ICU4XLogger_destroy(l);
-  }
-};
-
-/**
- * An object allowing control over the logging used
- */
-class ICU4XLogger {
- public:
-
-  /**
-   * Initialize the logger using `simple_logger`
-   * 
-   * Requires the `simple_logger` Cargo feature.
-   * 
-   * Returns `false` if there was already a logger set.
-   */
-  static bool init_simple_logger();
-
-  /**
-   * Deprecated: since ICU4X 1.4, this now happens automatically if the `log` feature is enabled.
-   */
-  static bool init_console_logger();
-  inline const capi::ICU4XLogger* AsFFI() const { return this->inner.get(); }
-  inline capi::ICU4XLogger* AsFFIMut() { return this->inner.get(); }
-  inline explicit ICU4XLogger(capi::ICU4XLogger* i) : inner(i) {}
-  ICU4XLogger() = default;
-  ICU4XLogger(ICU4XLogger&&) noexcept = default;
-  ICU4XLogger& operator=(ICU4XLogger&& other) noexcept = default;
- private:
-  std::unique_ptr<capi::ICU4XLogger, ICU4XLoggerDeleter> inner;
-};
-
-
 inline bool ICU4XLogger::init_simple_logger() {
-  return capi::ICU4XLogger_init_simple_logger();
+  auto result = capi::ICU4XLogger_init_simple_logger();
+  return result;
 }
-inline bool ICU4XLogger::init_console_logger() {
-  return capi::ICU4XLogger_init_console_logger();
+
+inline const capi::ICU4XLogger* ICU4XLogger::AsFFI() const {
+  return reinterpret_cast<const capi::ICU4XLogger*>(this);
 }
-#endif
+
+inline capi::ICU4XLogger* ICU4XLogger::AsFFI() {
+  return reinterpret_cast<capi::ICU4XLogger*>(this);
+}
+
+inline const ICU4XLogger* ICU4XLogger::FromFFI(const capi::ICU4XLogger* ptr) {
+  return reinterpret_cast<const ICU4XLogger*>(ptr);
+}
+
+inline ICU4XLogger* ICU4XLogger::FromFFI(capi::ICU4XLogger* ptr) {
+  return reinterpret_cast<ICU4XLogger*>(ptr);
+}
+
+inline void ICU4XLogger::operator delete(void* ptr) {
+  capi::ICU4XLogger_destroy(reinterpret_cast<capi::ICU4XLogger*>(ptr));
+}
+
+
+#endif // ICU4XLogger_HPP

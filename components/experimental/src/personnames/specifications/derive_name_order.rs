@@ -2,9 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_locid::subtags::Language;
-use icu_locid::Locale;
-use icu_locid_transform::fallback::LocaleFallbackerBorrowed;
+use icu_locale::fallback::LocaleFallbackerBorrowed;
+use icu_locale_core::subtags::Language;
+use icu_locale_core::Locale;
 use writeable::Writeable;
 use zerovec::VarZeroVec;
 
@@ -51,8 +51,8 @@ pub fn name_order_derive(
 
 #[cfg(test)]
 mod tests {
-    use icu_locid::locale;
-    use icu_locid_transform::LocaleFallbacker;
+    use icu_locale::LocaleFallbacker;
+    use icu_locale_core::locale;
     use zerovec::VarZeroVec;
 
     use super::name_order_derive;
