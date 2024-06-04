@@ -1,5 +1,9 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
 /// Represents a duration of time (intuitively, how long something took / will take).
-/// Can be constructed ergonomically using the [`Default`](core::default::Default) trait like so:
+/// Can be constructed ergonomically using the [`Default`] trait like so:
 ///
 /// ```rust
 /// # use icu_experimental::duration::Duration;
@@ -38,7 +42,7 @@ pub struct Duration {
     pub nanoseconds: u64,
 }
 
-/// Describes whether a [`Duration`](Duration) is positive or negative.
+/// Describes whether a [`Duration`] is positive or negative.
 #[derive(Debug, Default, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub enum DurationSign {
     #[default]
@@ -50,7 +54,7 @@ pub enum DurationSign {
 }
 
 impl Duration {
-    /// Create a new positive [`Duration`](Duration) with all fields set to 0.
+    /// Create a new positive [`Duration`] with all fields set to 0.
     pub fn new() -> Self {
         Self::default()
     }
