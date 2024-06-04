@@ -289,9 +289,9 @@ size_test!(TypedNeoFormatter<icu_calendar::Gregorian, crate::neo_marker::NeoYear
 /// <a href="https://github.com/unicode-org/icu4x/issues/3347">#3347</a>
 /// </div>
 #[derive(Debug)]
-pub struct TypedNeoFormatter<C: CldrCalendar, R: TypedNeoFormatterMarker<C>> {
+pub struct TypedNeoFormatter<C: CldrCalendar, R: DateTimeNamesMarker> {
     selection: DateTimePatternSelectionData,
-    names: RawDateTimeNames<R::DateTimeNamesMarker>,
+    names: RawDateTimeNames<R>,
     _calendar: PhantomData<C>,
 }
 
@@ -511,9 +511,9 @@ size_test!(
 /// <a href="https://github.com/unicode-org/icu4x/issues/3347">#3347</a>
 /// </div>
 #[derive(Debug)]
-pub struct NeoFormatter<R: NeoFormatterMarker> {
+pub struct NeoFormatter<R: DateTimeNamesMarker> {
     selection: DateTimePatternSelectionData,
-    names: RawDateTimeNames<R::DateTimeNamesMarker>,
+    names: RawDateTimeNames<R>,
     calendar: AnyCalendar,
 }
 

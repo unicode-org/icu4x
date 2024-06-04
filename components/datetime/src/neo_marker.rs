@@ -498,30 +498,26 @@ impl TimeMarkers for NeoNeverMarker {
 
 /// A trait associating constants and types implementing various other traits
 /// required for datetime formatting in a specific calendar.
-pub trait TypedNeoFormatterMarker<C>: private::Sealed {
+pub trait TypedNeoFormatterMarker<C>: private::Sealed + DateTimeNamesMarker {
     /// The associated components.
     const COMPONENTS: NeoComponents;
     /// Associated types for date formatting.
     type D: TypedDateMarkers<C>;
     /// Associated types for time formatting.
     type T: TimeMarkers;
-    /// Fields for [`TypedDateTimeNames`].
-    type DateTimeNamesMarker: DateTimeNamesMarker;
     /// Marker for loading the date/time glue pattern.
     type DateTimePatternV1Marker: DataMarker<Yokeable = DateTimePatternV1<'static>>;
 }
 
 /// A trait associating constants and types implementing various other traits
 /// required for datetime formatting in any calendar.
-pub trait NeoFormatterMarker: private::Sealed {
+pub trait NeoFormatterMarker: private::Sealed + DateTimeNamesMarker {
     /// The associated components.
     const COMPONENTS: NeoComponents;
     /// Associated types for date formatting.
     type D: DateMarkers;
     /// Associated types for time formatting.
     type T: TimeMarkers;
-    /// Fields for [`TypedDateTimeNames`].
-    type DateTimeNamesMarker: DateTimeNamesMarker;
     /// Marker for loading the date/time glue pattern.
     type DateTimePatternV1Marker: DataMarker<Yokeable = DateTimePatternV1<'static>>;
 }
@@ -538,71 +534,96 @@ pub struct DateTimeCombo<D, T> {
 
 impl<D, T> private::Sealed for DateTimeCombo<D, T> {}
 
+impl<D> DateTimeNamesMarker for DateTimeCombo<D, NeoNeverMarker>
+where
+    D: DateTimeNamesMarker
+{
+    type YearNames = D::YearNames;
+    type MonthNames = D::MonthNames;
+    type WeekdayNames = D::WeekdayNames;
+    type DayPeriodNames = ();
+}
+
 impl<C, D> TypedNeoFormatterMarker<C> for DateTimeCombo<D, NeoNeverMarker>
 where
-    D: HasDateComponents + TypedDateMarkers<C>,
+    D: HasDateComponents + TypedDateMarkers<C> + DateTimeNamesMarker,
 {
     const COMPONENTS: NeoComponents = NeoComponents::Date(D::COMPONENTS);
     type D = D;
     type T = NeoNeverMarker;
-    type DateTimeNamesMarker = DateMarker;
     type DateTimePatternV1Marker = NeverMarker<DateTimePatternV1<'static>>;
 }
 
 impl<D> NeoFormatterMarker for DateTimeCombo<D, NeoNeverMarker>
 where
-    D: HasDateComponents + DateMarkers,
+    D: HasDateComponents + DateMarkers + DateTimeNamesMarker,
 {
     const COMPONENTS: NeoComponents = NeoComponents::Date(D::COMPONENTS);
     type D = D;
     type T = NeoNeverMarker;
-    type DateTimeNamesMarker = DateMarker;
     type DateTimePatternV1Marker = NeverMarker<DateTimePatternV1<'static>>;
+}
+
+impl<T> DateTimeNamesMarker for DateTimeCombo<NeoNeverMarker, T>
+where
+    T: DateTimeNamesMarker
+{
+    type YearNames = ();
+    type MonthNames = ();
+    type WeekdayNames = ();
+    type DayPeriodNames = T::DayPeriodNames;
 }
 
 impl<C, T> TypedNeoFormatterMarker<C> for DateTimeCombo<NeoNeverMarker, T>
 where
-    T: HasTimeComponents + TimeMarkers,
+    T: HasTimeComponents + TimeMarkers + DateTimeNamesMarker,
 {
     const COMPONENTS: NeoComponents = NeoComponents::Time(T::COMPONENTS);
     type D = NeoNeverMarker;
     type T = T;
-    type DateTimeNamesMarker = TimeMarker;
     type DateTimePatternV1Marker = NeverMarker<DateTimePatternV1<'static>>;
 }
 
 impl<T> NeoFormatterMarker for DateTimeCombo<NeoNeverMarker, T>
 where
-    T: HasTimeComponents + TimeMarkers,
+    T: HasTimeComponents + TimeMarkers + DateTimeNamesMarker,
 {
     const COMPONENTS: NeoComponents = NeoComponents::Time(T::COMPONENTS);
     type D = NeoNeverMarker;
     type T = T;
-    type DateTimeNamesMarker = TimeMarker;
     type DateTimePatternV1Marker = NeverMarker<DateTimePatternV1<'static>>;
+}
+
+impl<D, T> DateTimeNamesMarker for DateTimeCombo<D, T>
+where
+    D: DateTimeNamesMarker,
+    T: DateTimeNamesMarker
+{
+    type YearNames = D::YearNames;
+    type MonthNames = D::MonthNames;
+    type WeekdayNames = D::WeekdayNames;
+    type DayPeriodNames = T::DayPeriodNames;
 }
 
 impl<C, D, T> TypedNeoFormatterMarker<C> for DateTimeCombo<D, T>
 where
-    D: HasDayComponents + TypedDateMarkers<C>,
-    T: HasTimeComponents + TimeMarkers,
+    D: HasDayComponents + TypedDateMarkers<C> + DateTimeNamesMarker,
+    T: HasTimeComponents + TimeMarkers + DateTimeNamesMarker,
 {
     const COMPONENTS: NeoComponents = NeoComponents::DateTime(D::COMPONENTS, T::COMPONENTS);
     type D = D;
     type T = T;
-    type DateTimeNamesMarker = DateTimeMarker;
     type DateTimePatternV1Marker = DateTimePatternV1Marker;
 }
 
 impl<D, T> NeoFormatterMarker for DateTimeCombo<D, T>
 where
-    D: HasDayComponents + DateMarkers,
-    T: HasTimeComponents + TimeMarkers,
+    D: HasDayComponents + DateMarkers + DateTimeNamesMarker,
+    T: HasTimeComponents + TimeMarkers + DateTimeNamesMarker,
 {
     const COMPONENTS: NeoComponents = NeoComponents::DateTime(D::COMPONENTS, T::COMPONENTS);
     type D = D;
     type T = T;
-    type DateTimeNamesMarker = DateTimeMarker;
     type DateTimePatternV1Marker = DateTimePatternV1Marker;
 }
 
@@ -691,6 +712,21 @@ macro_rules! datetime_marker_helper {
     (@input/$any:ident, no) => {
         NeverField
     };
+    (@names/year, yes) => {
+        DataPayload<YearNamesV1Marker>
+    };
+    (@names/month, yes) => {
+        DataPayload<MonthNamesV1Marker>
+    };
+    (@names/weekday, yes) => {
+        DataPayload<WeekdayNamesV1Marker>
+    };
+    (@names/dayperiod, yes) => {
+        DataPayload<DayPeriodNamesV1Marker>
+    };
+    (@names/$any:ident, no) => {
+        ()
+    };
 }
 
 macro_rules! impl_date_marker {
@@ -763,6 +799,12 @@ macro_rules! impl_date_marker {
         #[allow(clippy::exhaustive_enums)] // empty enum
         pub enum $type {}
         impl private::Sealed for $type {}
+        impl DateTimeNamesMarker for $type {
+            type YearNames = datetime_marker_helper!(@names/year, $years_yesno);
+            type MonthNames = datetime_marker_helper!(@names/month, $months_yesno);
+            type WeekdayNames = datetime_marker_helper!(@names/weekday, $weekdays_yesno);
+            type DayPeriodNames = datetime_marker_helper!(@names/dayperiod, no);
+        }
         impl HasDateComponents for $type {
             const COMPONENTS: NeoDateComponents = $components;
         }
@@ -795,14 +837,12 @@ macro_rules! impl_date_marker {
             const COMPONENTS: NeoComponents = NeoComponents::Date($components);
             type D = Self;
             type T = NeoNeverMarker;
-            type DateTimeNamesMarker = DateMarker;
             type DateTimePatternV1Marker = datetime_marker_helper!(@datetimes, no);
         }
         impl NeoFormatterMarker for $type {
             const COMPONENTS: NeoComponents = NeoComponents::Date($components);
             type D = Self;
             type T = NeoNeverMarker;
-            type DateTimeNamesMarker = DateMarker;
             type DateTimePatternV1Marker = datetime_marker_helper!(@datetimes, no);
         }
     };
@@ -914,6 +954,12 @@ macro_rules! impl_time_marker {
         #[allow(clippy::exhaustive_enums)] // empty enum
         pub enum $type {}
         impl private::Sealed for $type {}
+        impl DateTimeNamesMarker for $type {
+            type YearNames = datetime_marker_helper!(@names/year, no);
+            type MonthNames = datetime_marker_helper!(@names/month, no);
+            type WeekdayNames = datetime_marker_helper!(@names/weekday, no);
+            type DayPeriodNames = datetime_marker_helper!(@names/dayperiod, $dayperiods_yesno);
+        }
         impl HasTimeComponents for $type {
             const COMPONENTS: NeoTimeComponents = $components;
         }
@@ -929,14 +975,12 @@ macro_rules! impl_time_marker {
             const COMPONENTS: NeoComponents = NeoComponents::Time($components);
             type D = NeoNeverMarker;
             type T = Self;
-            type DateTimeNamesMarker = TimeMarker;
             type DateTimePatternV1Marker = datetime_marker_helper!(@datetimes, no);
         }
         impl NeoFormatterMarker for $type {
             const COMPONENTS: NeoComponents = NeoComponents::Time($components);
             type D = NeoNeverMarker;
             type T = Self;
-            type DateTimeNamesMarker = TimeMarker;
             type DateTimePatternV1Marker = datetime_marker_helper!(@datetimes, no);
         }
     };
@@ -1093,6 +1137,7 @@ impl_date_marker!(
     input_any_calendar_kind = yes,
 );
 
+/*
 /// Marker for a date skeleton provided at runtime.
 ///
 /// # Examples
@@ -1178,7 +1223,6 @@ impl DateMarkers for NeoAnyDateMarker {
     type WeekdayNamesV1Marker = datetime_marker_helper!(@weekdays, yes);
 }
 
-/*
 impl<C: CldrCalendar> TypedNeoFormatterMarker<C> for NeoAnyDateMarker {
     const COMPONENTS: NeoComponents = NeoComponents::Date($components);
     type D = Self;
