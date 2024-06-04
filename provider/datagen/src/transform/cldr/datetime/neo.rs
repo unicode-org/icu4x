@@ -94,7 +94,7 @@ impl DatagenProvider {
         Ok(data)
     }
 
-    fn load_neo_key<M: KeyedDataMarker>(
+    fn load_neo_key<M: DataMarker>(
         &self,
         req: DataRequest,
         calendar: &Value,
@@ -123,7 +123,7 @@ impl DatagenProvider {
         })
     }
 
-    fn load_neo_symbols_key<M: KeyedDataMarker>(
+    fn load_neo_symbols_key<M: DataMarker>(
         &self,
         req: DataRequest,
         calendar: Value,
@@ -147,7 +147,7 @@ impl DatagenProvider {
         })
     }
 
-    fn load_neo_patterns_key<M: KeyedDataMarker>(
+    fn load_neo_patterns_key<M: DataMarker>(
         &self,
         req: DataRequest,
         calendar: Value,

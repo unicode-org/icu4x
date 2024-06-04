@@ -15,7 +15,7 @@ use alloc::boxed::Box;
 /// A type implementing [`DataConverter`] will essentially have a "registry" mapping keys to
 /// concrete marker types M, and reifying the input to a `DataPayload<M>`, performing some conversion
 /// or computation, and erasing the result to `DataPayload<MTo>`.
-pub trait DataConverter<MFrom: DataMarker, MTo: DataMarker> {
+pub trait DataConverter<MFrom: DynamicDataMarker, MTo: DynamicDataMarker> {
     /// Attempt to convert a payload corresponding to the given data key
     /// from one marker type to another marker type.
     ///
@@ -30,8 +30,8 @@ pub trait DataConverter<MFrom: DataMarker, MTo: DataMarker> {
 
 impl<MFrom, MTo, P> DataConverter<MFrom, MTo> for Box<P>
 where
-    MFrom: DataMarker,
-    MTo: DataMarker,
+    MFrom: DynamicDataMarker,
+    MTo: DynamicDataMarker,
     P: DataConverter<MFrom, MTo> + ?Sized,
 {
     fn convert(

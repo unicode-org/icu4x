@@ -317,7 +317,7 @@ macro_rules! call_constructor_unstable {
 #[cfg(not(feature = "buffer_provider"))]
 impl<M> DataProvider<M> for ICU4XDataProviderInner
 where
-    M: KeyedDataMarker,
+    M: DataMarker,
 {
     load!();
 }
@@ -325,7 +325,7 @@ where
 #[cfg(feature = "buffer_provider")]
 impl<M> DataProvider<M> for ICU4XDataProviderInner
 where
-    M: KeyedDataMarker,
+    M: DataMarker,
     // Actual bound:
     //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: Deserialize<'de>,
     // Necessary workaround bound (see `yoke::trait_hack` docs):

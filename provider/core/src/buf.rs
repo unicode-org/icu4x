@@ -6,7 +6,7 @@
 
 use crate::prelude::*;
 
-/// [`DataMarker`] for raw buffers. Returned by [`BufferProvider`].
+/// [`DynamicDataMarker`] for raw buffers. Returned by [`BufferProvider`].
 ///
 /// The data is expected to be deserialized before it can be used; see
 /// [`DataPayload::into_deserialized`].
@@ -14,7 +14,7 @@ use crate::prelude::*;
 #[derive(Debug)]
 pub struct BufferMarker;
 
-impl DataMarker for BufferMarker {
+impl DynamicDataMarker for BufferMarker {
     type Yokeable = &'static [u8];
 }
 

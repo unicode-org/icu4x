@@ -354,7 +354,7 @@ impl std::fmt::Display for TrieType {
     }
 }
 
-trait IterableDataProviderCached<M: KeyedDataMarker>: DataProvider<M> {
+trait IterableDataProviderCached<M: DataMarker>: DataProvider<M> {
     fn supported_requests_cached(
         &self,
     ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError>;
@@ -362,7 +362,7 @@ trait IterableDataProviderCached<M: KeyedDataMarker>: DataProvider<M> {
 
 impl DatagenProvider {
     #[allow(clippy::type_complexity)] // not as complex as it appears
-    fn populate_supported_requests_cache<M: KeyedDataMarker>(
+    fn populate_supported_requests_cache<M: DataMarker>(
         &self,
     ) -> Result<&HashSet<(Cow<'static, DataLocale>, Cow<'static, DataKeyAttributes>)>, DataError>
     where
@@ -381,7 +381,7 @@ impl DatagenProvider {
     }
 }
 
-impl<M: KeyedDataMarker> IterableDataProvider<M> for DatagenProvider
+impl<M: DataMarker> IterableDataProvider<M> for DatagenProvider
 where
     DatagenProvider: IterableDataProviderCached<M>,
 {

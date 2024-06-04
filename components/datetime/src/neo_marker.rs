@@ -388,7 +388,7 @@ pub trait HasTimeComponents {
 /// required for date formatting in a specific calendar.
 pub trait TypedDateMarkers<C>: private::Sealed {
     /// Marker for loading date skeleton patterns.
-    type DateSkeletonPatternsV1Marker: KeyedDataMarker<Yokeable = PackedSkeletonDataV1<'static>>;
+    type DateSkeletonPatternsV1Marker: DataMarker<Yokeable = PackedSkeletonDataV1<'static>>;
     /// Marker for associating input with the specific calendar.
     type TypedInputMarker: Into<Option<NeoTypedInput<C>>>;
     /// Marker for resolving the year input field.
@@ -404,11 +404,11 @@ pub trait TypedDateMarkers<C>: private::Sealed {
     /// Marker for resolving the any-calendar-kind input field.
     type AnyCalendarKindInput: Into<Option<AnyCalendarKind>>;
     /// Marker for loading year names.
-    type YearNamesV1Marker: KeyedDataMarker<Yokeable = YearNamesV1<'static>>;
+    type YearNamesV1Marker: DataMarker<Yokeable = YearNamesV1<'static>>;
     /// Marker for loading month names.
-    type MonthNamesV1Marker: KeyedDataMarker<Yokeable = MonthNamesV1<'static>>;
+    type MonthNamesV1Marker: DataMarker<Yokeable = MonthNamesV1<'static>>;
     /// Marker for loading weekday names.
-    type WeekdayNamesV1Marker: KeyedDataMarker<Yokeable = LinearNamesV1<'static>>;
+    type WeekdayNamesV1Marker: DataMarker<Yokeable = LinearNamesV1<'static>>;
 }
 
 /// A trait associating types implementing various other traits
@@ -433,7 +433,7 @@ pub trait DateMarkers: private::Sealed {
     /// Cross-calendar data markers for month names.
     type Month: CalMarkers<MonthNamesV1Marker>;
     /// Marker for loading weekday names.
-    type WeekdayNamesV1Marker: KeyedDataMarker<Yokeable = LinearNamesV1<'static>>;
+    type WeekdayNamesV1Marker: DataMarker<Yokeable = LinearNamesV1<'static>>;
 }
 
 /// A trait associating types implementing various other traits
@@ -448,9 +448,9 @@ pub trait TimeMarkers: private::Sealed {
     /// Marker for resolving the any-calendar-kind input field.
     type NanoSecondInput: Into<Option<NanoSecond>>;
     /// Marker for loading time skeleton patterns.
-    type TimeSkeletonPatternsV1Marker: KeyedDataMarker<Yokeable = PackedSkeletonDataV1<'static>>;
+    type TimeSkeletonPatternsV1Marker: DataMarker<Yokeable = PackedSkeletonDataV1<'static>>;
     /// Marker for loading day period names.
-    type DayPeriodNamesV1Marker: KeyedDataMarker<Yokeable = LinearNamesV1<'static>>;
+    type DayPeriodNamesV1Marker: DataMarker<Yokeable = LinearNamesV1<'static>>;
 }
 
 /// A struct implementing traits for never loading data.
@@ -508,7 +508,7 @@ pub trait TypedNeoFormatterMarker<C>: private::Sealed {
     /// Fields for [`TypedDateTimeNames`].
     type DateTimeNamesMarker: DateTimeNamesMarker;
     /// Marker for loading the date/time glue pattern.
-    type DateTimePatternV1Marker: KeyedDataMarker<Yokeable = DateTimePatternV1<'static>>;
+    type DateTimePatternV1Marker: DataMarker<Yokeable = DateTimePatternV1<'static>>;
 }
 
 /// A trait associating constants and types implementing various other traits
@@ -523,7 +523,7 @@ pub trait NeoFormatterMarker: private::Sealed {
     /// Fields for [`TypedDateTimeNames`].
     type DateTimeNamesMarker: DateTimeNamesMarker;
     /// Marker for loading the date/time glue pattern.
-    type DateTimePatternV1Marker: KeyedDataMarker<Yokeable = DateTimePatternV1<'static>>;
+    type DateTimePatternV1Marker: DataMarker<Yokeable = DateTimePatternV1<'static>>;
 }
 
 /// A struct that supports formatting both a date and a time.
