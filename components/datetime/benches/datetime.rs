@@ -12,7 +12,7 @@ use icu_calendar::{DateTime, Gregorian};
 use icu_datetime::neo::TypedNeoDateTimeFormatter;
 use icu_datetime::TypedDateTimeFormatter;
 use icu_datetime::{time_zone::TimeZoneFormatterOptions, TypedZonedDateTimeFormatter};
-use icu_locid::Locale;
+use icu_locale_core::Locale;
 use icu_timezone::CustomTimeZone;
 use writeable::TryWriteable;
 

@@ -7,9 +7,6 @@ use core::fmt;
 use displaydoc::Display;
 use zerovec::ule::{AsULE, ZeroVecError, ULE};
 
-#[cfg(doc)]
-use crate::fields::{Hour, Weekday};
-
 /// An error relating to the length of a field within a date pattern.
 #[derive(Display, Debug, PartialEq, Copy, Clone)]
 #[non_exhaustive]
@@ -47,8 +44,8 @@ pub enum FieldLength {
     Wide,
     /// Narrow / Long / Full  (spellout) format.
     Narrow,
-    /// Meaning is field-dependent, for patterns that are 6 characters long. Ex: a [`Weekday`] pattern like
-    /// `EEEEEE` means "Short", but `jjjjjj` or `CCCCCC` for [`Hour`] may mean
+    /// Meaning is field-dependent, for patterns that are 6 characters long. Ex: a [`Weekday`](super::Weekday) pattern like
+    /// `EEEEEE` means "Short", but `jjjjjj` or `CCCCCC` for [`Hour`](super::Hour) may mean
     /// "Numeric hour (2 digits, zero pad if needed), narrow dayPeriod if used". See the
     /// [LDML documentation in UTS 35](https://unicode.org/reports/tr35/tr35-dates.html#Date_Format_Patterns)
     /// for more details.

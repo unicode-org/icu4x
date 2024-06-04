@@ -198,7 +198,7 @@ fn test_attributes() {
                     "demo/bar@1",
                     icu_provider::DataKeyMetadata::construct_internal(
                         icu_provider::_internal::LocaleFallbackPriority::Region,
-                        Some(icu_provider::_internal::locid::extensions::unicode::key!("ca")),
+                        Some(icu_provider::_internal::locale_core::extensions::unicode::key!("ca")),
                         Some(icu_provider::_internal::LocaleFallbackSupplement::Collation),
                         true,
                     ));

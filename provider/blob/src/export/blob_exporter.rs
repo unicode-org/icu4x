@@ -10,10 +10,10 @@ use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::sync::Mutex;
-use writeable::Writeable;
 use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::ule::VarULE;
 use zerovec::vecs::Index32;
+use zerovec::vecs::VarZeroVecOwned;
 use zerovec::VarZeroVec;
 use zerovec::ZeroMap2d;
 use zerovec::ZeroVec;
@@ -86,6 +86,7 @@ impl DataExporter for BlobExporter<'_> {
         &self,
         key: DataKey,
         locale: &DataLocale,
+        key_attributes: &DataKeyAttributes,
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
         let mut serializer = postcard::Serializer {
@@ -107,7 +108,15 @@ impl DataExporter for BlobExporter<'_> {
             .expect("poison")
             .entry(key.hashed())
             .or_default()
-            .entry(locale.write_to_string().into_owned().into_bytes())
+            .entry(
+                DataRequest {
+                    locale,
+                    key_attributes,
+                    ..Default::default()
+                }
+                .legacy_encode()
+                .into_bytes(),
+            )
             .or_insert(idx);
         Ok(())
     }
@@ -230,19 +239,36 @@ impl BlobExporter<'_> {
             })
             .collect();
 
-        let locales_vzv: VarZeroVec<[u8]> = locales_vec.as_slice().into();
-
         if !keys.is_empty() {
-            let blob = BlobSchema::V002(BlobSchemaV2 {
-                keys: &keys,
-                locales: &locales_vzv,
-                buffers: &vzv,
-            });
-            log::info!("Serializing blob to output stream...");
+            if let Ok(locales_vzv) =
+                VarZeroVecOwned::<[u8]>::try_from_elements(locales_vec.as_slice())
+            {
+                let blob = BlobSchema::V002(BlobSchemaV2 {
+                    keys: &keys,
+                    locales: &locales_vzv,
+                    buffers: &vzv,
+                });
+                log::info!("Serializing blob to output stream...");
 
-            let output = postcard::to_allocvec(&blob)?;
-            self.sink.write_all(&output)?;
+                let output = postcard::to_allocvec(&blob)?;
+                self.sink.write_all(&output)?;
+            } else {
+                log::info!("Upgrading to BlobSchemaV2 (bigger)...");
+                let locales_vzv =
+                    VarZeroVecOwned::<[u8], Index32>::try_from_elements(locales_vec.as_slice())
+                        .expect("Locales vector does not fit in Index32 buffer!");
+                let blob = BlobSchema::V002Bigger(BlobSchemaV2 {
+                    keys: &keys,
+                    locales: &locales_vzv,
+                    buffers: &vzv,
+                });
+                log::info!("Serializing blob to output stream...");
+
+                let output = postcard::to_allocvec(&blob)?;
+                self.sink.write_all(&output)?;
+            }
         }
+
         Ok(())
     }
 }

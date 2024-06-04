@@ -51,6 +51,14 @@ export class ICU4XDate {
 
   /**
 
+   * Returns the 1-indexed day in the year for this date
+
+   * See the {@link https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_year_info Rust documentation for `day_of_year_info`} for more information.
+   */
+  day_of_year(): u16;
+
+  /**
+
    * Returns the 1-indexed day in the month for this date
 
    * See the {@link https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_month Rust documentation for `day_of_month`} for more information.
@@ -99,9 +107,8 @@ export class ICU4XDate {
    * Returns the month code for this date. Typically something like "M01", "M02", but can be more complicated for lunar calendars.
 
    * See the {@link https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.month Rust documentation for `month`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  month_code(): string | never;
+  month_code(): string;
 
   /**
 
@@ -118,9 +125,8 @@ export class ICU4XDate {
    * See the {@link https://docs.rs/icu/latest/icu/struct.Date.html#method.year Rust documentation for `year`} for more information.
 
    * Additional information: {@link https://docs.rs/icu/latest/icu/types/struct.Era.html 1}
-   * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  era(): string | never;
+  era(): string;
 
   /**
 

@@ -6,6 +6,7 @@ use icu_normalizer::properties::CanonicalCombiningClassMap;
 use icu_normalizer::properties::CanonicalComposition;
 use icu_normalizer::properties::CanonicalDecomposition;
 use icu_normalizer::properties::Decomposed;
+use icu_normalizer::uts46::Uts46Mapper;
 use icu_normalizer::ComposingNormalizer;
 use icu_normalizer::DecomposingNormalizer;
 
@@ -42,34 +43,6 @@ fn test_nfkd_basic() {
     // ligature expanded
     assert_eq!(normalizer.normalize("㈎"), "(\u{1100}\u{1161})"); // parenthetical expanded
     assert_eq!(normalizer.normalize("\u{0345}"), "\u{0345}"); // Iota subscript
-}
-
-#[test]
-#[cfg(feature = "experimental")]
-fn test_uts46d_basic() {
-    let normalizer: DecomposingNormalizer =
-        DecomposingNormalizer::new_uts46_decomposed_without_ignored_and_disallowed();
-    assert_eq!(normalizer.normalize("ä"), "a\u{0308}");
-    assert_eq!(normalizer.normalize("Ä"), "a\u{0308}");
-    assert_eq!(normalizer.normalize("ệ"), "e\u{0323}\u{0302}");
-    assert_eq!(normalizer.normalize("Ệ"), "e\u{0323}\u{0302}");
-    assert_eq!(normalizer.normalize("𝅗𝅥"), "𝅗\u{1D165}");
-    assert_eq!(normalizer.normalize("\u{2126}"), "ω"); // ohm sign
-    assert_eq!(normalizer.normalize("ﾍﾞ"), "ヘ\u{3099}"); // half-width to full-width
-    assert_eq!(normalizer.normalize("ﾍﾟ"), "ヘ\u{309A}"); // half-width to full-width
-    assert_eq!(normalizer.normalize("ﬁ"), "fi"); // ligature expanded
-    assert_eq!(normalizer.normalize("\u{FDFA}"), "\u{635}\u{644}\u{649} \u{627}\u{644}\u{644}\u{647} \u{639}\u{644}\u{64A}\u{647} \u{648}\u{633}\u{644}\u{645}");
-    // ligature expanded
-    assert_eq!(normalizer.normalize("㈎"), "(\u{1100}\u{1161})"); // parenthetical expanded
-
-    // Deviations (UTS 46, 6 Mapping Table Derivation, Step 4)
-    assert_eq!(normalizer.normalize("\u{200C}"), "\u{200C}");
-    assert_eq!(normalizer.normalize("\u{200D}"), "\u{200D}");
-    assert_eq!(normalizer.normalize("ß"), "ß");
-    assert_eq!(normalizer.normalize("ς"), "ς");
-
-    // Iota subscript
-    assert_eq!(normalizer.normalize("\u{0345}"), "ι");
 }
 
 #[test]
@@ -110,32 +83,186 @@ fn test_nfkc_basic() {
 }
 
 #[test]
-#[cfg(feature = "experimental")]
-fn test_uts46_basic() {
-    let normalizer: ComposingNormalizer =
-        ComposingNormalizer::new_uts46_without_ignored_and_disallowed();
-    assert_eq!(normalizer.normalize("a\u{0308}"), "ä");
-    assert_eq!(normalizer.normalize("A\u{0308}"), "ä");
-    assert_eq!(normalizer.normalize("e\u{0323}\u{0302}"), "ệ");
-    assert_eq!(normalizer.normalize("E\u{0323}\u{0302}"), "ệ");
-    assert_eq!(normalizer.normalize("𝅗𝅥"), "𝅗\u{1D165}"); // Composition exclusion
+fn test_uts46_map_normalize() {
+    let mapper: Uts46Mapper = Uts46Mapper::new();
+    assert_eq!(
+        mapper
+            .map_normalize("a\u{0308}".chars())
+            .collect::<String>(),
+        "ä"
+    );
+    assert_eq!(
+        mapper
+            .map_normalize("A\u{0308}".chars())
+            .collect::<String>(),
+        "ä"
+    );
+    assert_eq!(
+        mapper
+            .map_normalize("e\u{0323}\u{0302}".chars())
+            .collect::<String>(),
+        "ệ"
+    );
+    assert_eq!(
+        mapper
+            .map_normalize("E\u{0323}\u{0302}".chars())
+            .collect::<String>(),
+        "ệ"
+    );
+    assert_eq!(
+        mapper.map_normalize("𝅗𝅥".chars()).collect::<String>(),
+        "𝅗\u{1D165}"
+    ); // Composition exclusion
 
-    assert_eq!(normalizer.normalize("\u{2126}"), "ω"); // ohm sign
-    assert_eq!(normalizer.normalize("ﾍﾞ"), "ベ"); // half-width to full-width, the compose
-    assert_eq!(normalizer.normalize("ﾍﾟ"), "ペ"); // half-width to full-width, the compose
-    assert_eq!(normalizer.normalize("ﬁ"), "fi"); // ligature expanded
-    assert_eq!(normalizer.normalize("\u{FDFA}"), "\u{0635}\u{0644}\u{0649} \u{0627}\u{0644}\u{0644}\u{0647} \u{0639}\u{0644}\u{064A}\u{0647} \u{0648}\u{0633}\u{0644}\u{0645}");
+    assert_eq!(
+        mapper.map_normalize("\u{2126}".chars()).collect::<String>(),
+        "ω"
+    ); // ohm sign
+    assert_eq!(mapper.map_normalize("ﾍﾞ".chars()).collect::<String>(), "ベ"); // half-width to full-width, the compose
+    assert_eq!(mapper.map_normalize("ﾍﾟ".chars()).collect::<String>(), "ペ"); // half-width to full-width, the compose
+    assert_eq!(mapper.map_normalize("ﬁ".chars()).collect::<String>(), "fi"); // ligature expanded
+    assert_eq!(mapper.map_normalize("\u{FDFA}".chars()).collect::<String>(), "\u{0635}\u{0644}\u{0649} \u{0627}\u{0644}\u{0644}\u{0647} \u{0639}\u{0644}\u{064A}\u{0647} \u{0648}\u{0633}\u{0644}\u{0645}");
     // ligature expanded
-    assert_eq!(normalizer.normalize("㈎"), "(가)"); // parenthetical expanded and partially recomposed
+    assert_eq!(
+        mapper.map_normalize("㈎".chars()).collect::<String>(),
+        "(가)"
+    ); // parenthetical expanded and partially recomposed
 
     // Deviations (UTS 46, 6 Mapping Table Derivation, Step 4)
-    assert_eq!(normalizer.normalize("\u{200C}"), "\u{200C}");
-    assert_eq!(normalizer.normalize("\u{200D}"), "\u{200D}");
-    assert_eq!(normalizer.normalize("ß"), "ß");
-    assert_eq!(normalizer.normalize("ς"), "ς");
+    assert_eq!(
+        mapper.map_normalize("\u{200C}".chars()).collect::<String>(),
+        "\u{200C}"
+    );
+    assert_eq!(
+        mapper.map_normalize("\u{200D}".chars()).collect::<String>(),
+        "\u{200D}"
+    );
+    assert_eq!(mapper.map_normalize("ß".chars()).collect::<String>(), "ß");
+    assert_eq!(mapper.map_normalize("ς".chars()).collect::<String>(), "ς");
 
     // Iota subscript
-    assert_eq!(normalizer.normalize("\u{0345}"), "ι");
+    assert_eq!(
+        mapper.map_normalize("\u{0345}".chars()).collect::<String>(),
+        "ι"
+    );
+
+    // Disallowed
+    assert_eq!(
+        mapper.map_normalize("\u{061C}".chars()).collect::<String>(),
+        "\u{FFFD}"
+    );
+
+    // Ignored
+    assert_eq!(
+        mapper
+            .map_normalize("a\u{180B}b".chars())
+            .collect::<String>(),
+        "ab"
+    );
+}
+
+#[test]
+fn test_uts46_normalize_validate() {
+    let mapper: Uts46Mapper = Uts46Mapper::new();
+    assert_eq!(
+        mapper
+            .normalize_validate("a\u{0308}".chars())
+            .collect::<String>(),
+        "ä"
+    );
+    assert_eq!(
+        mapper
+            .normalize_validate("A\u{0308}".chars())
+            .collect::<String>(),
+        "ä"
+    );
+    assert_eq!(
+        mapper
+            .normalize_validate("e\u{0323}\u{0302}".chars())
+            .collect::<String>(),
+        "ệ"
+    );
+    assert_eq!(
+        mapper
+            .normalize_validate("E\u{0323}\u{0302}".chars())
+            .collect::<String>(),
+        "ệ"
+    );
+    assert_eq!(
+        mapper.normalize_validate("𝅗𝅥".chars()).collect::<String>(),
+        "𝅗\u{1D165}"
+    ); // Composition exclusion
+
+    assert_eq!(
+        mapper
+            .normalize_validate("\u{2126}".chars())
+            .collect::<String>(),
+        "ω"
+    ); // ohm sign
+    assert_eq!(
+        mapper.normalize_validate("ﾍﾞ".chars()).collect::<String>(),
+        "ベ"
+    ); // half-width to full-width, the compose
+    assert_eq!(
+        mapper.normalize_validate("ﾍﾟ".chars()).collect::<String>(),
+        "ペ"
+    ); // half-width to full-width, the compose
+    assert_eq!(
+        mapper.normalize_validate("ﬁ".chars()).collect::<String>(),
+        "fi"
+    ); // ligature expanded
+    assert_eq!(mapper.normalize_validate("\u{FDFA}".chars()).collect::<String>(), "\u{0635}\u{0644}\u{0649} \u{0627}\u{0644}\u{0644}\u{0647} \u{0639}\u{0644}\u{064A}\u{0647} \u{0648}\u{0633}\u{0644}\u{0645}");
+    // ligature expanded
+    assert_eq!(
+        mapper.normalize_validate("㈎".chars()).collect::<String>(),
+        "(가)"
+    ); // parenthetical expanded and partially recomposed
+
+    // Deviations (UTS 46, 6 Mapping Table Derivation, Step 4)
+    assert_eq!(
+        mapper
+            .normalize_validate("\u{200C}".chars())
+            .collect::<String>(),
+        "\u{200C}"
+    );
+    assert_eq!(
+        mapper
+            .normalize_validate("\u{200D}".chars())
+            .collect::<String>(),
+        "\u{200D}"
+    );
+    assert_eq!(
+        mapper.normalize_validate("ß".chars()).collect::<String>(),
+        "ß"
+    );
+    assert_eq!(
+        mapper.normalize_validate("ς".chars()).collect::<String>(),
+        "ς"
+    );
+
+    // Iota subscript
+    assert_eq!(
+        mapper
+            .normalize_validate("\u{0345}".chars())
+            .collect::<String>(),
+        "ι"
+    );
+
+    // Disallowed
+    assert_eq!(
+        mapper
+            .normalize_validate("\u{061C}".chars())
+            .collect::<String>(),
+        "\u{FFFD}"
+    );
+
+    // Ignored
+    assert_eq!(
+        mapper
+            .normalize_validate("a\u{180B}b".chars())
+            .collect::<String>(),
+        "a\u{FFFD}b"
+    );
 }
 
 type StackString = arraystring::ArrayString<arraystring::typenum::U48>;

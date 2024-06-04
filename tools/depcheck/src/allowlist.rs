@@ -7,6 +7,8 @@
 /// Dependencies that are always allowed as runtime dependencies
 /// In general it is fine to add new ICU4X components or utils here
 /// For other crates, please get approval from @unicode-org/icu4x-owners
+///
+/// Keep in sync with Cargo.toml crates.io dependencies.
 pub const BASIC_RUNTIME_DEPS: &[&str] = &[
     // ICU4X components
     "icu",
@@ -17,8 +19,8 @@ pub const BASIC_RUNTIME_DEPS: &[&str] = &[
     "icu_datetime",
     "icu_decimal",
     "icu_list",
-    "icu_locid_transform",
-    "icu_locid",
+    "icu_locale",
+    "icu_locale_core",
     "icu_normalizer",
     "icu_plurals",
     "icu_properties",
@@ -67,6 +69,8 @@ pub const BASIC_BUILD_DEPS: &[&str] = &[
 
 /// Dependencies allowed when opting in to serialization
 /// This should almost never change
+///
+/// Keep in sync with Cargo.toml crates.io dependencies.
 pub const EXTRA_SERDE_DEPS: &[&str] = &["deduplicating_array", "serde", "serde_derive"];
 
 /// Dependencies allowed when opting in to compiled data
@@ -77,7 +81,7 @@ pub const EXTRA_DATA_DEPS: &[&str] = &[
     "icu_datetime_data",
     "icu_decimal_data",
     "icu_list_data",
-    "icu_locid_transform_data",
+    "icu_locale_data",
     "icu_normalizer_data",
     "icu_plurals_data",
     "icu_properties_data",
@@ -87,6 +91,8 @@ pub const EXTRA_DATA_DEPS: &[&str] = &[
 
 /// Dependencies allowed when opting in to experimental code
 /// This will likely grow when we add experimental crates
+///
+/// Keep in sync with Cargo.toml crates.io dependencies.
 pub const EXTRA_EXPERIMENTAL_DEPS: &[&str] = &[
     "icu_experimental",
     "icu_pattern",
@@ -101,14 +107,20 @@ pub const EXTRA_EXPERIMENTAL_DEPS: &[&str] = &[
 pub const EXTRA_EXPERIMENTAL_DATA_DEPS: &[&str] = &["icu_experimental_data"];
 
 /// Dependencies allowed when opting in to LSTM segmenter
+///
+/// Keep in sync with Cargo.toml crates.io dependencies.
 pub const EXTRA_LSTM_DEPS: &[&str] = &[];
 
 /// Dependencies allowed when opting in to fixed_decimal's `ryu` backend
 /// This should never change
+///
+/// Keep in sync with Cargo.toml crates.io dependencies.
 pub const EXTRA_RYU_DEPS: &[&str] = &["ryu"];
 
 /// Runtime dependencies allowed when building `icu_capi`
 /// This shuld almost never change
+///
+/// Keep in sync with Cargo.toml crates.io dependencies.
 pub const EXTRA_CAPI_DEPS: &[&str] = &[
     "diplomat-runtime",
     "icu_capi",
@@ -128,10 +140,14 @@ pub const EXTRA_CAPI_BUILD_DEPS: &[&str] = &[
 
 /// Dependencies allowed when opting in to blob providers on FFI
 /// This shuld rarely change
+///
+/// Keep in sync with Cargo.toml crates.io dependencies.
 pub const EXTRA_BLOB_DEPS: &[&str] = &["cobs", "icu_provider_blob", "postcard"];
 
 /// Dependencies allowed when opting in to FS providers on FFI
 /// This shuld rarely change
+///
+/// Keep in sync with Cargo.toml crates.io dependencies.
 pub const EXTRA_FS_DEPS: &[&str] = &["icu_provider_fs", "serde-json-core"];
 
 /// Dependencies needed by datagen (not counting `log`, `zip`, and `rayon` deps)
@@ -153,7 +169,6 @@ pub const EXTRA_DATAGEN_DEPS: &[&str] = &[
     "num-complex",
     "num-integer",
     "num-traits",
-    "once_cell",
     "rawpointer",
     "regex-syntax",
     "ryu",
@@ -166,6 +181,8 @@ pub const EXTRA_DATAGEN_DEPS: &[&str] = &[
 
 /// Dependencies needed by the `log` crate
 /// This should rarely change, and if it does consider toggling features until it doesn't
+///
+/// Keep in sync with Cargo.toml crates.io dependencies.
 pub const EXTRA_LOGGING_DEPS: &[&str] = &["cfg-if", "log"];
 
 /// Dependencies needed by the `zip` crate

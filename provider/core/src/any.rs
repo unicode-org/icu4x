@@ -309,8 +309,8 @@ where
 /// let any_provider = HelloWorldProvider.as_any_provider();
 ///
 /// let req = DataRequest {
-///     locale: &icu_locid::locale!("de").into(),
-///     metadata: Default::default(),
+///     locale: &icu_locale_core::langid!("de").into(),
+///     ..Default::default()
 /// };
 ///
 /// // Downcasting manually
@@ -350,18 +350,21 @@ pub trait AnyProvider {
 }
 
 impl<'a, T: AnyProvider + ?Sized> AnyProvider for &'a T {
+    #[inline]
     fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
         (**self).load_any(key, req)
     }
 }
 
 impl<T: AnyProvider + ?Sized> AnyProvider for alloc::boxed::Box<T> {
+    #[inline]
     fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
         (**self).load_any(key, req)
     }
 }
 
 impl<T: AnyProvider + ?Sized> AnyProvider for alloc::rc::Rc<T> {
+    #[inline]
     fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
         (**self).load_any(key, req)
     }
@@ -369,6 +372,7 @@ impl<T: AnyProvider + ?Sized> AnyProvider for alloc::rc::Rc<T> {
 
 #[cfg(target_has_atomic = "ptr")]
 impl<T: AnyProvider + ?Sized> AnyProvider for alloc::sync::Arc<T> {
+    #[inline]
     fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
         (**self).load_any(key, req)
     }

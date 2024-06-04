@@ -6,14 +6,14 @@ use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
 
 use super::locale_canonicalizer::likely_subtags::LikelySubtagsResources;
-use icu_locid::{
+use icu_locale::provider::*;
+use icu_locale_core::{
     subtags::{Language, Region, Script},
     LanguageIdentifier,
 };
-use icu_locid_transform::provider::*;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, HashSet};
 use writeable::Writeable;
 use zerovec::{maps::ZeroMap2d, ule::UnvalidatedStr};
 
@@ -53,14 +53,14 @@ impl DataProvider<LocaleFallbackParentsV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProvider<LocaleFallbackLikelySubtagsV1Marker> for DatagenProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        Ok(vec![Default::default()])
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+        Ok(HashSet::from_iter([Default::default()]))
     }
 }
 
 impl IterableDataProvider<LocaleFallbackParentsV1Marker> for DatagenProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        Ok(vec![Default::default()])
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+        Ok(HashSet::from_iter([Default::default()]))
     }
 }
 
@@ -163,7 +163,7 @@ impl From<&cldr_serde::parent_locales::Resource> for LocaleFallbackParentsV1<'st
 
 #[test]
 fn test_basic() {
-    use icu_locid::{
+    use icu_locale_core::{
         langid,
         subtags::{language, region, script},
     };

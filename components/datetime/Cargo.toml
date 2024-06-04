@@ -5,13 +5,13 @@
 [package]
 name = "icu_datetime"
 description = "API for formatting date and time to user readable textual representation"
-license = "Unicode-3.0"
 
 authors.workspace = true
 categories.workspace = true
 edition.workspace = true
 homepage.workspace = true
 include.workspace = true
+license.workspace = true
 repository.workspace = true
 rust-version.workspace = true
 version.workspace = true
@@ -25,9 +25,9 @@ either = { workspace = true }
 fixed_decimal = { workspace = true }
 icu_calendar = { workspace = true }
 icu_decimal = { workspace = true }
-icu_locid = { workspace = true }
+icu_locale_core = { workspace = true }
 icu_plurals = { workspace = true }
-icu_provider = { workspace = true, features = ["macros", "experimental"] }
+icu_provider = { workspace = true, features = ["macros"] }
 icu_timezone = { workspace = true }
 smallvec = { workspace = true }
 tinystr = { workspace = true, features = ["alloc", "zerovec"] }
@@ -38,7 +38,7 @@ serde = { workspace = true, features = ["derive", "alloc"], optional = true }
 databake = { workspace = true, features = ["derive"], optional = true}
 
 icu_datetime_data = { workspace = true, optional = true }
-icu_locid_transform = { workspace = true, optional = true, features = ["compiled_data"] }
+icu_locale = { workspace = true, optional = true, features = ["compiled_data"] }
 
 # Experimental
 litemap = { workspace = true, optional = true }
@@ -63,7 +63,7 @@ default = ["compiled_data"]
 std = [
     "icu_calendar/std",
     "icu_decimal/std",
-    "icu_locid/std",
+    "icu_locale_core/std",
     "icu_plurals/std",
     "icu_provider/std",
     "icu_timezone/std",
@@ -88,10 +88,11 @@ datagen = [
     "icu_timezone/datagen",
     "serde",
     "std",
-    ]
+]
+logging = ["icu_calendar/logging"]
 experimental = ["dep:litemap"]
 bench = ["serde"]
-compiled_data = ["dep:icu_datetime_data", "dep:icu_locid_transform", "icu_calendar/compiled_data", "icu_decimal/compiled_data", "icu_plurals/compiled_data", "icu_timezone/compiled_data"]
+compiled_data = ["dep:icu_datetime_data", "dep:icu_locale", "icu_calendar/compiled_data", "icu_decimal/compiled_data", "icu_plurals/compiled_data", "icu_timezone/compiled_data"]
 
 [lib]
 bench = false  # This option is required for Benchmark CI

@@ -5,7 +5,7 @@
 //! Serde structs representing CLDR JSON units.json file.
 //!
 //! The file:
-//! <https://github.com/unicode-org/cldr-json/blob/master/cldr-json/supplemental/units.json>
+//! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/supplemental/units.json>
 
 use serde::Deserialize;
 use std::collections::BTreeMap;

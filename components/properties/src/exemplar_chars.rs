@@ -16,7 +16,7 @@
 //! # Examples
 //!
 //! ```
-//! use icu::locid::locale;
+//! use icu::locale::locale;
 //! use icu::properties::exemplar_chars;
 //!
 //! let locale = locale!("en-001").into();
@@ -56,7 +56,7 @@ macro_rules! make_exemplar_chars_unicode_set_property {
             Ok(provider.load(
                 DataRequest {
                     locale,
-                    metadata: Default::default(),
+                    ..Default::default()
                 })
                 .and_then(DataResponse::take_payload)
                 .map(UnicodeSetData::from_data)?
@@ -72,7 +72,7 @@ macro_rules! make_exemplar_chars_unicode_set_property {
                     &crate::provider::Baked,
                     DataRequest {
                         locale,
-                        metadata: Default::default(),
+                        ..Default::default()
                     })
                     .and_then(DataResponse::take_payload)?
             ))
@@ -95,7 +95,7 @@ make_exemplar_chars_unicode_set_property!(
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::locale;
+    /// use icu::locale::locale;
     /// use icu::properties::exemplar_chars;
     ///
     /// let data = exemplar_chars::exemplars_main(&locale!("en").into())
@@ -127,7 +127,7 @@ make_exemplar_chars_unicode_set_property!(
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::locale;
+    /// use icu::locale::locale;
     /// use icu::properties::exemplar_chars;
     ///
     /// let data =
@@ -160,7 +160,7 @@ make_exemplar_chars_unicode_set_property!(
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::locale;
+    /// use icu::locale::locale;
     /// use icu::properties::exemplar_chars;
     ///
     /// let data =
@@ -194,7 +194,7 @@ make_exemplar_chars_unicode_set_property!(
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::locale;
+    /// use icu::locale::locale;
     /// use icu::properties::exemplar_chars;
     ///
     /// let data =
@@ -228,7 +228,7 @@ make_exemplar_chars_unicode_set_property!(
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::locale;
+    /// use icu::locale::locale;
     /// use icu::properties::exemplar_chars;
     ///
     /// let data =

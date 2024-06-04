@@ -4,10 +4,10 @@
 
 use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
-use crate::provider::IterableDataProviderInternal;
+use crate::provider::IterableDataProviderCached;
 use core::convert::TryFrom;
 use icu_experimental::displaynames::provider::*;
-use icu_locid::{subtags::Variant, ParserError};
+use icu_locale_core::{subtags::Variant, ParserError};
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
 use std::str::FromStr;
@@ -36,8 +36,10 @@ impl DataProvider<VariantDisplayNamesV1Marker> for DatagenProvider {
     }
 }
 
-impl IterableDataProviderInternal<VariantDisplayNamesV1Marker> for DatagenProvider {
-    fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
+impl IterableDataProviderCached<VariantDisplayNamesV1Marker> for DatagenProvider {
+    fn supported_requests_cached(
+        &self,
+    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
         Ok(self
             .cldr()?
             .displaynames()
@@ -50,7 +52,7 @@ impl IterableDataProviderInternal<VariantDisplayNamesV1Marker> for DatagenProvid
                     .file_exists(langid, "variants.json")
                     .unwrap_or_default()
             })
-            .map(DataLocale::from)
+            .map(|l| (DataLocale::from(l), Default::default()))
             .collect())
     }
 }
@@ -83,7 +85,7 @@ impl TryFrom<&cldr_serde::displaynames::variant::Resource> for VariantDisplayNam
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_locid::{locale, subtags::variant};
+    use icu_locale_core::{langid, subtags::variant};
 
     #[test]
     fn test_basic_variant_display_names() {
@@ -91,8 +93,8 @@ mod tests {
 
         let data: DataPayload<VariantDisplayNamesV1Marker> = provider
             .load(DataRequest {
-                locale: &locale!("en-001").into(),
-                metadata: Default::default(),
+                locale: &langid!("en-001").into(),
+                ..Default::default()
             })
             .unwrap()
             .take_payload()

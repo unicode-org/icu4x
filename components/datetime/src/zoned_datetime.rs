@@ -10,6 +10,9 @@ use icu_plurals::provider::OrdinalV1Marker;
 use icu_provider::prelude::*;
 use writeable::Writeable;
 
+use crate::provider::date_time::PatternForLengthError;
+#[cfg(feature = "experimental")]
+use crate::provider::date_time::UnsupportedOptionsOrDataOrPatternError;
 use crate::{
     calendar,
     calendar::CldrCalendar,
@@ -49,7 +52,7 @@ use crate::{
 /// use icu::calendar::{DateTime, Gregorian};
 /// use icu::datetime::time_zone::TimeZoneFormatterOptions;
 /// use icu::datetime::{options::length, TypedZonedDateTimeFormatter};
-/// use icu::locid::locale;
+/// use icu::locale::locale;
 /// use icu::timezone::CustomTimeZone;
 /// use std::str::FromStr;
 /// use writeable::assert_writeable_eq;
@@ -92,7 +95,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     /// use icu::calendar::{DateTime, Gregorian};
     /// use icu::datetime::time_zone::TimeZoneFormatterOptions;
     /// use icu::datetime::{options::length, TypedZonedDateTimeFormatter};
-    /// use icu::locid::locale;
+    /// use icu::locale::locale;
     /// use icu::timezone::CustomTimeZone;
     /// use writeable::assert_writeable_eq;
     ///
@@ -134,7 +137,11 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
             calendar::load_lengths_for_cldr_calendar::<C, _>(&crate::provider::Baked, locale)?,
             locale,
             &date_time_format_options,
-        )?;
+        )
+        .map_err(|e| match e {
+            PatternForLengthError::Data(e) => DateTimeError::Data(e),
+            PatternForLengthError::Pattern(e) => DateTimeError::Pattern(e),
+        })?;
         Ok(Self(
             raw::ZonedDateTimeFormatter::try_new(
                 patterns,
@@ -188,7 +195,11 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
             calendar::load_lengths_for_cldr_calendar::<C, _>(provider, locale)?,
             locale,
             &date_time_format_options,
-        )?;
+        )
+        .map_err(|e| match e {
+            PatternForLengthError::Data(e) => DateTimeError::Data(e),
+            PatternForLengthError::Pattern(e) => DateTimeError::Pattern(e),
+        })?;
         Ok(Self(
             raw::ZonedDateTimeFormatter::try_new_unstable(
                 provider,
@@ -221,7 +232,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     /// use icu::calendar::{DateTime, Gregorian};
     /// use icu::datetime::time_zone::TimeZoneFormatterOptions;
     /// use icu::datetime::{options::components, TypedZonedDateTimeFormatter};
-    /// use icu::locid::locale;
+    /// use icu::locale::locale;
     /// use icu::timezone::CustomTimeZone;
     /// use writeable::assert_writeable_eq;
     ///
@@ -267,7 +278,14 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
             locale,
             &C::DEFAULT_BCP_47_IDENTIFIER,
             &date_time_format_options,
-        )?;
+        )
+        .map_err(|e| match e {
+            UnsupportedOptionsOrDataOrPatternError::UnsupportedOptions => {
+                DateTimeError::UnsupportedOptions
+            }
+            UnsupportedOptionsOrDataOrPatternError::Data(e) => DateTimeError::Data(e),
+            UnsupportedOptionsOrDataOrPatternError::Pattern(e) => DateTimeError::Pattern(e),
+        })?;
         Ok(Self(
             raw::ZonedDateTimeFormatter::try_new(
                 patterns,
@@ -316,7 +334,14 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
             locale,
             &C::DEFAULT_BCP_47_IDENTIFIER,
             &date_time_format_options,
-        )?;
+        )
+        .map_err(|e| match e {
+            UnsupportedOptionsOrDataOrPatternError::UnsupportedOptions => {
+                DateTimeError::UnsupportedOptions
+            }
+            UnsupportedOptionsOrDataOrPatternError::Data(e) => DateTimeError::Data(e),
+            UnsupportedOptionsOrDataOrPatternError::Pattern(e) => DateTimeError::Pattern(e),
+        })?;
         Ok(Self(
             raw::ZonedDateTimeFormatter::try_new_unstable(
                 provider,
@@ -337,7 +362,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     /// ```
     /// use icu::calendar::{DateTime, Gregorian};
     /// use icu::datetime::{options::length, TypedZonedDateTimeFormatter};
-    /// use icu::locid::locale;
+    /// use icu::locale::locale;
     /// use icu::timezone::CustomTimeZone;
     /// use std::str::FromStr;
     /// use writeable::assert_writeable_eq;
@@ -378,7 +403,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     /// ```
     /// use icu::calendar::{DateTime, Gregorian};
     /// use icu::datetime::{options::length, TypedZonedDateTimeFormatter};
-    /// use icu::locid::locale;
+    /// use icu::locale::locale;
     /// use icu::timezone::CustomTimeZone;
     /// use std::str::FromStr;
     ///

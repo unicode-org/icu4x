@@ -5,16 +5,16 @@
 [package]
 name = "icu_normalizer"
 description = "API for normalizing text into Unicode Normalization Forms"
-license = "Unicode-3.0"
 
-version = "1.4.1"
-rust-version.workspace = true
 authors.workspace = true
-edition.workspace = true
-repository.workspace = true
-homepage.workspace = true
 categories.workspace = true
+edition.workspace = true
+homepage.workspace = true
 include.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+version.workspace = true
+license.workspace = true
 
 [package.metadata.docs.rs]
 all-features = true
@@ -40,6 +40,7 @@ arraystring = { workspace = true }
 arrayvec = { workspace = true }
 atoi = { workspace = true }
 detone = { workspace = true }
+icu = { path = "../../components/icu", default-features = false }
 write16 = { workspace = true, features = ["arrayvec"] }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]

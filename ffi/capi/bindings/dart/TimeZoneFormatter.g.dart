@@ -158,15 +158,10 @@ final class TimeZoneFormatter implements ffi.Finalizable {
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.format) for more information.
   ///
   /// See the [Rust documentation for `format_to_string`](https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.format_to_string) for more information.
-  ///
-  /// Throws [Error] on failure.
   String formatCustomTimeZone(CustomTimeZone value) {
-    final writeable = _Writeable();
-    final result = _ICU4XTimeZoneFormatter_format_custom_time_zone(_ffi, value._ffi, writeable._ffi);
-    if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
-    }
-    return writeable.finalize();
+    final write = _Write();
+    _ICU4XTimeZoneFormatter_format_custom_time_zone(_ffi, value._ffi, write._ffi);
+    return write.finalize();
   }
 
   /// Formats a [`CustomTimeZone`] to a string, performing no fallback
@@ -175,12 +170,12 @@ final class TimeZoneFormatter implements ffi.Finalizable {
   ///
   /// Throws [Error] on failure.
   String formatCustomTimeZoneNoFallback(CustomTimeZone value) {
-    final writeable = _Writeable();
-    final result = _ICU4XTimeZoneFormatter_format_custom_time_zone_no_fallback(_ffi, value._ffi, writeable._ffi);
+    final write = _Write();
+    final result = _ICU4XTimeZoneFormatter_format_custom_time_zone_no_fallback(_ffi, value._ffi, write._ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
     }
-    return writeable.finalize();
+    return write.finalize();
   }
 }
 
@@ -235,11 +230,11 @@ external _ResultVoidInt32 _ICU4XTimeZoneFormatter_include_localized_gmt_format(f
 external _ResultVoidInt32 _ICU4XTimeZoneFormatter_load_iso_8601_format(ffi.Pointer<ffi.Opaque> self, _IsoTimeZoneOptionsFfi options);
 
 @meta.ResourceIdentifier('ICU4XTimeZoneFormatter_format_custom_time_zone')
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XTimeZoneFormatter_format_custom_time_zone')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XTimeZoneFormatter_format_custom_time_zone')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _ICU4XTimeZoneFormatter_format_custom_time_zone(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> value, ffi.Pointer<ffi.Opaque> writeable);
+external void _ICU4XTimeZoneFormatter_format_custom_time_zone(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> value, ffi.Pointer<ffi.Opaque> write);
 
 @meta.ResourceIdentifier('ICU4XTimeZoneFormatter_format_custom_time_zone_no_fallback')
 @ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XTimeZoneFormatter_format_custom_time_zone_no_fallback')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _ICU4XTimeZoneFormatter_format_custom_time_zone_no_fallback(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> value, ffi.Pointer<ffi.Opaque> writeable);
+external _ResultVoidInt32 _ICU4XTimeZoneFormatter_format_custom_time_zone_no_fallback(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> value, ffi.Pointer<ffi.Opaque> write);

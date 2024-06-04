@@ -55,18 +55,16 @@ mod tests;
 /// # // because that will rebuild the whole tree in proc macro mode
 /// # // when using cargo test --all-features --all-targets.
 /// # pub mod icu {
-/// #   pub mod locid_transform {
+/// #   pub mod locale {
 /// #     pub mod fallback {
 /// #       pub use icu_provider::_internal::LocaleFallbackPriority;
 /// #     }
+/// #     pub use icu_provider::_internal::locale_core::*;
 /// #   }
-/// #   pub use icu_provider::_internal::locid;
 /// # }
-/// use icu::locid_transform::fallback::*;
-/// use icu::locid::extensions::unicode::key;
-/// use icu_provider::KeyedDataMarker;
-/// use icu_provider::yoke;
-/// use icu_provider::zerofrom;
+/// use icu::locale::extensions::unicode::key;
+/// use icu::locale::fallback::*;
+/// use icu_provider::prelude::*;
 /// use std::borrow::Cow;
 ///
 /// #[icu_provider::data_struct(
@@ -98,10 +96,7 @@ mod tests;
 ///     BazV1Marker::KEY.metadata().fallback_priority,
 ///     LocaleFallbackPriority::Region
 /// );
-/// assert_eq!(
-///     BazV1Marker::KEY.metadata().extension_key,
-///     Some(key!("ca"))
-/// );
+/// assert_eq!(BazV1Marker::KEY.metadata().extension_key, Some(key!("ca")));
 /// ```
 ///
 /// If the `#[databake(path = ...)]` attribute is present on the data struct, this will also
@@ -375,7 +370,7 @@ fn data_struct_impl(attr: DataStructArgs, input: DeriveInput) -> TokenStream2 {
                 quote! {icu_provider::_internal::LocaleFallbackPriority::const_default()}
             };
             let extension_key_expr = if let Some(extension_key_lit) = extension_key {
-                quote! {Some(icu_provider::_internal::locid::extensions::unicode::key!(#extension_key_lit))}
+                quote! {Some(icu_provider::_internal::locale_core::extensions::unicode::key!(#extension_key_lit))}
             } else {
                 quote! {None}
             };

@@ -32,6 +32,7 @@ const CLDR_JSON_GLOB: &[&str] = &[
     "cldr-core/supplemental/pluralRanges.json",
     "cldr-core/supplemental/plurals.json",
     "cldr-core/supplemental/weekData.json",
+    "cldr-dates-full/main/$LOCALES/ca-generic.json",
     "cldr-dates-full/main/$LOCALES/ca-gregorian.json",
     "cldr-dates-full/main/$LOCALES/dateFields.json",
     "cldr-dates-full/main/$LOCALES/timeZoneNames.json",
@@ -47,6 +48,7 @@ const CLDR_JSON_GLOB: &[&str] = &[
     "cldr-misc-full/main/$LOCALES/listPatterns.json",
     "cldr-numbers-full/main/$LOCALES/currencies.json",
     "cldr-numbers-full/main/$LOCALES/numbers.json",
+    "cldr-units-full/main/$LOCALES/units.json",
     "cldr-person-names-full/main/$LOCALES/personNames.json",
 ];
 
@@ -133,6 +135,7 @@ const ICUEXPORTDATA_GLOB: &[&str] = &[
     "uprops/small/Gr_Link.toml",
     "uprops/small/graph.toml",
     "uprops/small/Hex.toml",
+    "uprops/small/hst.toml",
     "uprops/small/Hyphen.toml",
     "uprops/small/IDC.toml",
     "uprops/small/Ideo.toml",

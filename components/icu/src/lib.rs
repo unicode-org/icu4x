@@ -14,7 +14,7 @@
 //! It does not bring any unique functionality, but rather,
 //! it re-exports the relevant crates as modules.
 //! The exported crate corresponding to each module is also
-//! available in a stand-alone manner, i.e. `icu::list` as `icu_list`.
+//! available in a stand-alone manner, i.e. `icu::list` as `icu::list`.
 //!
 //! # Data Management
 //!
@@ -29,7 +29,7 @@
 //!
 //! ```
 //! use icu::datetime::DateTimeFormatter;
-//! use icu::locid::locale;
+//! use icu::locale::locale;
 //!
 //! let dtf = DateTimeFormatter::try_new(
 //!     &locale!("es-US").into(),
@@ -52,7 +52,7 @@
 //!
 //! ```no_run
 //! use icu::datetime::DateTimeFormatter;
-//! use icu::locid::locale;
+//! use icu::locale::locale;
 //! use icu_provider_adapters::fallback::LocaleFallbackProvider;
 //! use icu_provider_blob::BlobDataProvider;
 //!
@@ -114,7 +114,7 @@
 //!
 //! # Experimental modules
 //!
-//! Experimental, unstable functionality can be found in the `icu_experimental` crate. The modules in that crate
+//! Experimental, unstable functionality can be found in the `icu::experimental` crate. The modules in that crate
 //! are on track to be eventually stabilized into this crate.
 //!
 //!
@@ -125,7 +125,7 @@
 //! [`BlobDataProvider`]: https://docs.rs/icu_provider_blob/latest/icu_provider_blob/struct.BlobDataProvider.html
 //! [`icu_provider_adapters`]: https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/
 //! [`icu_datagen`]: https://docs.rs/icu_datagen/latest/icu_datagen/
-//! [`Locale`]: crate::locid::Locale
+//! [`Locale`]: crate::locale::Locale
 //! [`SymbolsV1`]: crate::decimal::provider::DecimalSymbolsV1
 //! [`icu4x-datagen`]: https://docs.rs/icu_datagen/latest/icu_datagen/
 //! [data management tutorial]: https://github.com/unicode-org/icu4x/blob/main/tutorials/data_provider.md#loading-additional-data-at-runtime
@@ -169,10 +169,7 @@ pub use icu_decimal as decimal;
 pub use icu_list as list;
 
 #[doc(inline)]
-pub use icu_locid_transform as locid_transform;
-
-#[doc(inline)]
-pub use icu_locid as locid;
+pub use icu_locale as locale;
 
 #[doc(inline)]
 pub use icu_normalizer as normalizer;

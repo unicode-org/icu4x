@@ -35,7 +35,7 @@
 //!     options::length, DateTimeFormatter, DateTimeFormatterOptions,
 //!     TypedDateTimeFormatter,
 //! };
-//! use icu::locid::{locale, Locale};
+//! use icu::locale::{locale, Locale};
 //! use std::str::FromStr;
 //! use writeable::assert_writeable_eq;
 //!
@@ -85,7 +85,7 @@
 //! use icu::datetime::{
 //!     options::length, DateTimeFormatterOptions, TypedDateTimeFormatter,
 //! };
-//! use icu::locid::locale;
+//! use icu::locale::locale;
 //! let options = length::Bag::from_date_time_style(
 //!     length::Date::Medium,
 //!     length::Time::Short,
@@ -134,6 +134,7 @@ mod any;
 mod calendar;
 mod datetime;
 mod error;
+#[cfg(feature = "experimental")]
 mod external_loaders;
 pub mod fields;
 mod format;
@@ -142,6 +143,8 @@ pub(crate) mod helpers;
 pub mod input;
 #[cfg(feature = "experimental")]
 pub mod neo;
+#[cfg(feature = "experimental")]
+pub mod neo_marker;
 #[cfg(feature = "experimental")]
 pub mod neo_pattern;
 #[cfg(any(feature = "datagen", feature = "experimental"))]
@@ -165,9 +168,11 @@ pub use calendar::{InternalCldrCalendar, NeverCalendar};
 pub use datetime::{TimeFormatter, TypedDateFormatter, TypedDateTimeFormatter};
 pub use error::DateTimeError;
 pub use error::MismatchedCalendarError;
+#[cfg(feature = "experimental")]
+pub use format::datetime::DateTimeWriteError;
 pub use format::datetime::FormattedDateTime;
 #[cfg(feature = "experimental")]
-pub use format::neo::{FormattedDateTimePattern, TypedDateTimeNames};
+pub use format::neo::{FormattedDateTimePattern, LoadError, SingleLoadError, TypedDateTimeNames};
 pub use format::time_zone::FormattedTimeZone;
 pub use format::zoned_datetime::FormattedZonedDateTime;
 pub use options::DateTimeFormatterOptions;

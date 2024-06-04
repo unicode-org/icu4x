@@ -14,7 +14,7 @@ together in one place.
 It does not bring any unique functionality, but rather,
 it re-exports the relevant crates as modules.
 The exported crate corresponding to each module is also
-available in a stand-alone manner, i.e. `icu::list` as `icu_list`.
+available in a stand-alone manner, i.e. `icu::list` as `icu::list`.
 
 ## Data Management
 
@@ -29,7 +29,7 @@ Compiled data is exposed through idiomatic Rust constructors like `new` or `try_
 
 ```rust
 use icu::datetime::DateTimeFormatter;
-use icu::locid::locale;
+use icu::locale::locale;
 
 let dtf = DateTimeFormatter::try_new(
     &locale!("es-US").into(),
@@ -52,7 +52,7 @@ special constructors:
 
 ```rust
 use icu::datetime::DateTimeFormatter;
-use icu::locid::locale;
+use icu::locale::locale;
 use icu_provider_adapters::fallback::LocaleFallbackProvider;
 use icu_provider_blob::BlobDataProvider;
 
@@ -114,7 +114,7 @@ The following Cargo features are only available on the individual crates, but no
 
 ## Experimental modules
 
-Experimental, unstable functionality can be found in the `icu_experimental` crate. The modules in that crate
+Experimental, unstable functionality can be found in the `icu::experimental` crate. The modules in that crate
 are on track to be eventually stabilized into this crate.
 
 

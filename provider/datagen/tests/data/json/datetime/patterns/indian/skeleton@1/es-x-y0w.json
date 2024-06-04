@@ -5,6 +5,6 @@
     "has_plurals": false
   },
   "patterns": [
-    "'semana' w 'de' Y"
+    "Y w"
   ]
 }

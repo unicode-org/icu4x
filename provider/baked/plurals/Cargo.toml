@@ -6,7 +6,7 @@
 name = "icu_plurals_data"
 description = "Data for the icu_plurals crate"
 license = "Unicode-3.0"
-version = "1.4.0"
+version = "1.5.0"
 
 authors.workspace = true
 categories.workspace = true
@@ -17,6 +17,6 @@ repository.workspace = true
 rust-version.workspace = true
 
 [package.metadata.sources]
-cldr = { tagged = "44.1.0" }
-icuexport = { tagged = "release-74-2" }
+cldr = { tagged = "45.0.0" }
+icuexport = { tagged = "icu4x/2024-05-16/75.x" }
 segmenter_lstm = { tagged = "v0.1.0" }

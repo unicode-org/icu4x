@@ -144,7 +144,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix: 
-        behavior: [local, cratesio]
+        behavior: [local] # reenable cratesio for 2.0
       fail-fast: false
     steps:
     - uses: actions/checkout@v4
@@ -160,12 +160,6 @@ jobs:
       run: rustup show
 
     # Job-specific dependencies
-    - name: Attempt to load download cache
-      uses: actions/cache@v3
-      with:
-        key: download-cache
-        path: /tmp/icu4x-source-cache
-
     - name: Install harfbuzz
       run: sudo apt install libharfbuzz-dev
 
@@ -195,51 +189,12 @@ jobs:
       run: rustup show
 
     # Job-specific dependencies
-    - name: Attempt to load download cache
-      uses: actions/cache@v3
-      with:
-        key: download-cache
-        path: /tmp/icu4x-source-cache
     - name: Install rustfmt
       run: rustup component add rustfmt
 
     # Actual job
     - name: Run `cargo make ci-job-testdata`
       run: cargo make ci-job-testdata
-
-
-  # ci-job-testdata-legacy
-  testdata-legacy:
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v4
-
-    # Cargo-make boilerplate
-    - name: Install cargo-make
-      uses: taiki-e/install-action@cargo-make
-
-    # Toolchain boilerplate
-    - name: Potentially override rust version with nightly
-      run: cargo make set-ci-toolchain
-    - name: Show the selected Rust toolchain
-      run: rustup show
-
-    # Job-specific dependencies
-    - name: Attempt to load download cache
-      uses: actions/cache@v3
-      with:
-        key: download-cache
-        path: /tmp/icu4x-source-cache
-    - name: Install cargo-binstall 
-      uses: taiki-e/install-action@cargo-binstall
-    - name: Install cargo-all-features
-      run: cargo-binstall -y cargo-all-features
-
-    # Actual job
-    - name: Run `cargo make ci-job-testdata-legacy`
-      run: cargo make ci-job-testdata-legacy
-
 
   # ci-job-full-datagen
   full-datagen:
@@ -258,11 +213,6 @@ jobs:
       run: rustup show
 
     # Job-specific dependencies
-    - name: Attempt to load download cache
-      uses: actions/cache@v3
-      with:
-        key: download-cache
-        path: /tmp/icu4x-source-cache
     - name: Install rustfmt
       run: rustup component add rustfmt
 
@@ -311,11 +261,6 @@ jobs:
     - name: Install jq
       run: |
         apt-get install -y jq
-    - name: Attempt to load download cache
-      uses: actions/cache@v3
-      with:
-        key: download-cache
-        path: /tmp/icu4x-source-cache
 
     # Actual job
     - name: Run `cargo make ci-job-test-c`
@@ -362,9 +307,9 @@ jobs:
     - name: Run apt-get update
       run: |
         apt-get update
-    - name: Install lld-15
+    - name: Install lld-16
       run: |
-        apt-get install -y lld-15
+        apt-get install -y lld-16
     - name: Install jq
       run: |
         apt-get install -y jq
@@ -472,7 +417,7 @@ jobs:
       with:
         path: |
           tutorials/gn/third_party_tools
-        key: ${{ runner.os }}-${{ hashFiles('tools/make/gn.toml', 'tutorials/gn/Cargo.lock') }}
+        key: gn-third-party-${{ runner.os }}-${{ hashFiles('tools/make/gn.toml', 'tutorials/gn/Cargo.lock') }}
     - name: Install GN Third-Party Tools
       if: steps.gn-third-party-tools-cache.outputs.cache-hit != 'true'
       run: cargo make gn-install
@@ -587,7 +532,7 @@ jobs:
 
   # Notify on slack  
   notify-slack:
-    needs: [msrv, test, testdata, testdata-legacy, test-docs, full-datagen, test-c, test-js, test-dart, nostd, diplomat, gn, fmt, tidy, clippy, doc]
+    needs: [msrv, test, testdata, test-docs, full-datagen, test-c, test-js, test-dart, nostd, diplomat, gn, fmt, tidy, clippy, doc]
     if: ${{ always() && contains(needs.*.result, 'failure') && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref_name == 'main')) }}
     runs-on: ubuntu-latest
     steps:

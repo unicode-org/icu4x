@@ -7,7 +7,7 @@ pub mod ffi {
     use alloc::boxed::Box;
     use core::ops::RangeInclusive;
 
-    /// Result of a single iteration of [`CodePointRangeIterator`].
+    /// Result of a single iteration of [`ICU4XCodePointRangeIterator`].
     /// Logically can be considered to be an `Option<RangeInclusive<u32>>`,
     ///
     /// `start` and `end` represent an inclusive range of code points [start, end],
@@ -15,7 +15,7 @@ pub mod ffi {
     /// iteration will NOT produce a range done=true, in other words `start` and `end` are useful
     /// values if and only if `done=false`.
     #[diplomat::out]
-    pub struct CodePointRangeIteratorResult {
+    pub struct ICU4XCodePointRangeIteratorResult {
         pub start: u32,
         pub end: u32,
         pub done: bool,
@@ -24,21 +24,23 @@ pub mod ffi {
     /// An iterator over code point ranges, produced by `ICU4XCodePointSetData` or
     /// one of the `ICU4XCodePointMapData` types
     #[diplomat::opaque]
-    pub struct CodePointRangeIterator<'a>(pub Box<dyn Iterator<Item = RangeInclusive<u32>> + 'a>);
+    pub struct ICU4XCodePointRangeIterator<'a>(
+        pub Box<dyn Iterator<Item = RangeInclusive<u32>> + 'a>,
+    );
 
-    impl<'a> CodePointRangeIterator<'a> {
+    impl<'a> ICU4XCodePointRangeIterator<'a> {
         /// Advance the iterator by one and return the next range.
         ///
         /// If the iterator is out of items, `done` will be true
-        pub fn next(&mut self) -> CodePointRangeIteratorResult {
+        pub fn next(&mut self) -> ICU4XCodePointRangeIteratorResult {
             self.0
                 .next()
-                .map(|r| CodePointRangeIteratorResult {
+                .map(|r| ICU4XCodePointRangeIteratorResult {
                     start: *r.start(),
                     end: *r.end(),
                     done: false,
                 })
-                .unwrap_or(CodePointRangeIteratorResult {
+                .unwrap_or(ICU4XCodePointRangeIteratorResult {
                     start: 0,
                     end: 0,
                     done: true,

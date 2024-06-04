@@ -2,13 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_locid::Locale;
+use icu_locale_core::Locale;
 
 const DEFAULT_FOREIGN_SPACE_REPLACEMENT: &str = " ";
 
 ///
 /// https://www.unicode.org/reports/tr35/tr35-personNames.html#setting-the-spacereplacement
-///
 pub fn space_replacement<'lt>(
     formatting_locale: &Locale,
     person_name_locale: &Locale,
@@ -29,8 +28,8 @@ pub fn space_replacement<'lt>(
 
 #[cfg(test)]
 mod tests {
-    use icu_locid::locale;
-    use icu_locid_transform::LocaleExpander;
+    use icu_locale::LocaleExpander;
+    use icu_locale_core::locale;
 
     #[test]
     fn test_formatter_and_name_language_match() {

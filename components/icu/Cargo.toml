@@ -5,13 +5,13 @@
 [package]
 name = "icu"
 description = "International Components for Unicode"
-license = "Unicode-3.0"
 
 authors.workspace = true
 categories.workspace = true
 edition.workspace = true
 homepage.workspace = true
 include.workspace = true
+license.workspace = true
 repository.workspace = true
 rust-version.workspace = true
 version.workspace = true
@@ -27,8 +27,7 @@ icu_collections = { workspace = true }
 icu_datetime = { workspace = true }
 icu_decimal = { workspace = true }
 icu_list = { workspace = true }
-icu_locid = { workspace = true }
-icu_locid_transform = { workspace = true }
+icu_locale = { workspace = true }
 icu_normalizer = { workspace = true }
 icu_plurals = { workspace = true }
 icu_properties = { workspace = true }
@@ -53,7 +52,7 @@ default = [
     "icu_datetime/default",
     "icu_decimal/default",
     "icu_list/default",
-    "icu_locid_transform/default",
+    "icu_locale/default",
     "icu_normalizer/default",
     "icu_plurals/default",
     "icu_properties/default",
@@ -69,8 +68,7 @@ std = [
     "icu_datetime/std",
     "icu_decimal/std",
     "icu_list/std",
-    "icu_locid_transform/std",
-    "icu_locid/std",
+    "icu_locale/std",
     "icu_normalizer/std",
     "icu_plurals/std",
     "icu_properties/std",
@@ -86,8 +84,7 @@ serde = [
     "icu_datetime/serde",
     "icu_decimal/serde",
     "icu_list/serde",
-    "icu_locid_transform/serde",
-    "icu_locid/serde",
+    "icu_locale/serde",
     "icu_normalizer/serde",
     "icu_plurals/serde",
     "icu_properties/serde",
@@ -102,7 +99,7 @@ compiled_data = [
     "icu_datetime/compiled_data",
     "icu_decimal/compiled_data",
     "icu_list/compiled_data",
-    "icu_locid_transform/compiled_data",
+    "icu_locale/compiled_data",
     "icu_normalizer/compiled_data",
     "icu_plurals/compiled_data",
     "icu_properties/compiled_data",
@@ -125,7 +122,7 @@ experimental = [
     "dep:icu_experimental",
 ]
 sync = ["icu_provider/sync"]
-logging = ["icu_provider/logging"]
+logging = ["icu_provider/logging", "icu_datetime/logging"]
 
 [package.metadata.cargo-all-features]
 # Components are tested individually, and there's no logic in this crate

@@ -27,7 +27,7 @@ pub enum Strength {
     /// to ECMA-402 sensitivity "case" with [`CaseLevel::On`].
     ///
     /// ```
-    /// use icu_collator::*;
+    /// use icu::collator::*;
     ///
     /// let mut options = CollatorOptions::new();
     /// options.strength = Some(Strength::Primary);
@@ -41,7 +41,7 @@ pub enum Strength {
     /// to the ECMA-402 sensitivity "accent".
     ///
     /// ```
-    /// use icu_collator::*;
+    /// use icu::collator::*;
     ///
     /// let mut options = CollatorOptions::new();
     /// options.strength = Some(Strength::Secondary);
@@ -65,7 +65,7 @@ pub enum Strength {
     /// sensitivity "variant".
     ///
     /// ```
-    /// use icu_collator::*;
+    /// use icu::collator::*;
     ///
     /// let mut options = CollatorOptions::new();
     /// options.strength = Some(Strength::Tertiary);
@@ -85,10 +85,9 @@ pub enum Strength {
     /// assert_eq!(collator.compare("e", "ｅ"), // Full-width e
     ///            core::cmp::Ordering::Less);
     ///
-    /// let locale = icu_locid::locale!("ja");
+    /// let locale = icu::locale::locale!("ja").into();
     /// let ja_collator =
-    ///   Collator::try_new(&locale.into(),
-    ///                     options).unwrap();
+    ///   Collator::try_new(&locale, options).unwrap();
     /// assert_eq!(ja_collator.compare("E", "e"),
     ///            core::cmp::Ordering::Greater);
     /// assert_eq!(ja_collator.compare("e", "é"),
@@ -111,15 +110,14 @@ pub enum Strength {
     /// level.
     ///
     /// ```
-    /// use icu_collator::*;
+    /// use icu::collator::*;
     ///
     /// let mut options = CollatorOptions::new();
     /// options.strength = Some(Strength::Quaternary);
     ///
-    /// let ja_locale = icu_locid::locale!("ja");
+    /// let ja_locale = icu::locale::locale!("ja").into();
     /// let ja_collator =
-    ///   Collator::try_new(&ja_locale.into(),
-    ///                     options).unwrap();
+    ///   Collator::try_new(&ja_locale, options).unwrap();
     /// assert_eq!(ja_collator.compare("あ", "ア"),
     ///            core::cmp::Ordering::Less);
     /// assert_eq!(ja_collator.compare("ア", "ｱ"),
@@ -148,15 +146,14 @@ pub enum Strength {
     /// distinguishing full-width and half-width forms.
     ///
     /// ```
-    /// use icu_collator::*;
+    /// use icu::collator::*;
     ///
     /// let mut options = CollatorOptions::new();
     /// options.strength = Some(Strength::Identical);
     ///
-    /// let ja_locale = icu_locid::locale!("ja");
+    /// let ja_locale = icu::locale::locale!("ja").into();
     /// let ja_collator =
-    ///   Collator::try_new(&ja_locale.into(),
-    ///                     options).unwrap();
+    ///   Collator::try_new(&ja_locale, options).unwrap();
     /// assert_eq!(ja_collator.compare("ア", "ｱ"),
     ///            core::cmp::Ordering::Less);
     /// assert_eq!(ja_collator.compare("e", "ｅ"), // Full-width e
@@ -357,7 +354,7 @@ pub enum BackwardSecondLevel {
 /// Due to the very limited utility, ICU4X data does not include search collations
 /// by default.
 #[non_exhaustive]
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, Default)]
 pub struct CollatorOptions {
     /// User-specified strength collation option.
     pub strength: Option<Strength>,

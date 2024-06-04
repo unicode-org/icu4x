@@ -8,7 +8,7 @@ use crate::displaynames::options::*;
 use crate::displaynames::provider::*;
 use alloc::borrow::Cow;
 use alloc::string::String;
-use icu_locid::{
+use icu_locale_core::{
     subtags::Language, subtags::Region, subtags::Script, subtags::Variant, LanguageIdentifier,
     Locale,
 };
@@ -20,12 +20,14 @@ use zerovec::ule::UnvalidatedStr;
 /// # Example
 ///
 /// ```
-/// use icu::experimental::displaynames::{DisplayNamesOptions, RegionDisplayNames};
-/// use icu::locid::{locale, subtags::region};
+/// use icu::experimental::displaynames::{
+///     DisplayNamesOptions, RegionDisplayNames,
+/// };
+/// use icu::locale::{locale, subtags::region};
 ///
-/// let locale = locale!("en-001");
+/// let locale = locale!("en-001").into();
 /// let options: DisplayNamesOptions = Default::default();
-/// let display_name = RegionDisplayNames::try_new(&locale.into(), options)
+/// let display_name = RegionDisplayNames::try_new(&locale, options)
 ///     .expect("Data should load successfully");
 ///
 /// assert_eq!(display_name.of(region!("AE")), Some("United Arab Emirates"));
@@ -64,7 +66,7 @@ impl RegionDisplayNames {
         let region_data = provider
             .load(DataRequest {
                 locale,
-                metadata: Default::default(),
+                ..Default::default()
             })?
             .take_payload()?;
 
@@ -93,12 +95,14 @@ impl RegionDisplayNames {
 /// # Example
 ///
 /// ```
-/// use icu::experimental::displaynames::{DisplayNamesOptions, ScriptDisplayNames};
-/// use icu::locid::{locale, subtags::script};
+/// use icu::experimental::displaynames::{
+///     DisplayNamesOptions, ScriptDisplayNames,
+/// };
+/// use icu::locale::{locale, subtags::script};
 ///
-/// let locale = locale!("en-001");
+/// let locale = locale!("en-001").into();
 /// let options: DisplayNamesOptions = Default::default();
-/// let display_name = ScriptDisplayNames::try_new(&locale.into(), options)
+/// let display_name = ScriptDisplayNames::try_new(&locale, options)
 ///     .expect("Data should load successfully");
 ///
 /// assert_eq!(display_name.of(script!("Maya")), Some("Mayan hieroglyphs"));
@@ -137,7 +141,7 @@ impl ScriptDisplayNames {
         let script_data = provider
             .load(DataRequest {
                 locale,
-                metadata: Default::default(),
+                ..Default::default()
             })?
             .take_payload()?;
 
@@ -166,12 +170,14 @@ impl ScriptDisplayNames {
 /// # Example
 ///
 /// ```
-/// use icu::experimental::displaynames::{DisplayNamesOptions, VariantDisplayNames};
-/// use icu::locid::{locale, subtags::variant};
+/// use icu::experimental::displaynames::{
+///     DisplayNamesOptions, VariantDisplayNames,
+/// };
+/// use icu::locale::{locale, subtags::variant};
 ///
-/// let locale = locale!("en-001");
+/// let locale = locale!("en-001").into();
 /// let options: DisplayNamesOptions = Default::default();
-/// let display_name = VariantDisplayNames::try_new(&locale.into(), options)
+/// let display_name = VariantDisplayNames::try_new(&locale, options)
 ///     .expect("Data should load successfully");
 ///
 /// assert_eq!(display_name.of(variant!("POSIX")), Some("Computer"));
@@ -211,7 +217,7 @@ impl VariantDisplayNames {
         let variant_data = provider
             .load(DataRequest {
                 locale,
-                metadata: Default::default(),
+                ..Default::default()
             })?
             .take_payload()?;
 
@@ -234,12 +240,14 @@ impl VariantDisplayNames {
 /// # Example
 ///
 /// ```
-/// use icu::experimental::displaynames::{DisplayNamesOptions, LanguageDisplayNames};
-/// use icu::locid::{locale, subtags::language};
+/// use icu::experimental::displaynames::{
+///     DisplayNamesOptions, LanguageDisplayNames,
+/// };
+/// use icu::locale::{locale, subtags::language};
 ///
-/// let locale = locale!("en-001");
+/// let locale = locale!("en-001").into();
 /// let options: DisplayNamesOptions = Default::default();
-/// let display_name = LanguageDisplayNames::try_new(&locale.into(), options)
+/// let display_name = LanguageDisplayNames::try_new(&locale, options)
 ///     .expect("Data should load successfully");
 ///
 /// assert_eq!(display_name.of(language!("de")), Some("German"));
@@ -278,7 +286,7 @@ impl LanguageDisplayNames {
         let language_data = provider
             .load(DataRequest {
                 locale,
-                metadata: Default::default(),
+                ..Default::default()
             })?
             .take_payload()?;
 
@@ -313,14 +321,15 @@ impl LanguageDisplayNames {
 /// # Example
 ///
 /// ```
-/// use icu::experimental::displaynames::{DisplayNamesOptions, LocaleDisplayNamesFormatter};
-/// use icu::locid::locale;
+/// use icu::experimental::displaynames::{
+///     DisplayNamesOptions, LocaleDisplayNamesFormatter,
+/// };
+/// use icu::locale::locale;
 ///
-/// let locale = locale!("en-001");
+/// let locale = locale!("en-001").into();
 /// let options: DisplayNamesOptions = Default::default();
-/// let display_name =
-///     LocaleDisplayNamesFormatter::try_new(&locale.into(), options)
-///         .expect("Data should load successfully");
+/// let display_name = LocaleDisplayNamesFormatter::try_new(&locale, options)
+///     .expect("Data should load successfully");
 ///
 /// assert_eq!(display_name.of(&locale!("en-GB")), "British English");
 /// assert_eq!(display_name.of(&locale!("en")), "English");
@@ -363,7 +372,7 @@ impl LocaleDisplayNamesFormatter {
     );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
-    pub fn try_new_unstable<D: ?Sized>(
+    pub fn try_new_unstable<D>(
         provider: &D,
         locale: &DataLocale,
         options: DisplayNamesOptions,
@@ -373,11 +382,12 @@ impl LocaleDisplayNamesFormatter {
             + DataProvider<LanguageDisplayNamesV1Marker>
             + DataProvider<ScriptDisplayNamesV1Marker>
             + DataProvider<RegionDisplayNamesV1Marker>
-            + DataProvider<VariantDisplayNamesV1Marker>,
+            + DataProvider<VariantDisplayNamesV1Marker>
+            + ?Sized,
     {
         let req = DataRequest {
             locale,
-            metadata: Default::default(),
+            ..Default::default()
         };
 
         Ok(Self {
@@ -528,7 +538,7 @@ impl LocaleDisplayNamesFormatter {
 
 #[test]
 fn test_language_display() {
-    use icu_locid::locale;
+    use icu_locale_core::locale;
 
     let dialect = LocaleDisplayNamesFormatter::try_new(
         &locale!("en").into(),

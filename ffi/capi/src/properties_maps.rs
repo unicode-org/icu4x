@@ -10,7 +10,7 @@ pub mod ffi {
     use icu_properties::{maps, GeneralCategory, GeneralCategoryGroup};
 
     use crate::errors::ffi::ICU4XError;
-    use crate::properties_iter::ffi::CodePointRangeIterator;
+    use crate::properties_iter::ffi::ICU4XCodePointRangeIterator;
     use crate::properties_sets::ffi::ICU4XCodePointSetData;
 
     #[diplomat::opaque]
@@ -72,8 +72,11 @@ pub mod ffi {
             icu::properties::maps::CodePointMapDataBorrowed::iter_ranges_for_value,
             FnInStruct
         )]
-        pub fn iter_ranges_for_value<'a>(&'a self, value: u8) -> Box<CodePointRangeIterator<'a>> {
-            Box::new(CodePointRangeIterator(Box::new(
+        pub fn iter_ranges_for_value<'a>(
+            &'a self,
+            value: u8,
+        ) -> Box<ICU4XCodePointRangeIterator<'a>> {
+            Box::new(ICU4XCodePointRangeIterator(Box::new(
                 self.0.as_borrowed().iter_ranges_for_value(value),
             )))
         }
@@ -86,8 +89,8 @@ pub mod ffi {
         pub fn iter_ranges_for_value_complemented<'a>(
             &'a self,
             value: u8,
-        ) -> Box<CodePointRangeIterator<'a>> {
-            Box::new(CodePointRangeIterator(Box::new(
+        ) -> Box<ICU4XCodePointRangeIterator<'a>> {
+            Box::new(ICU4XCodePointRangeIterator(Box::new(
                 self.0
                     .as_borrowed()
                     .iter_ranges_for_value_complemented(value),
@@ -106,7 +109,10 @@ pub mod ffi {
             icu::properties::maps::CodePointMapDataBorrowed::iter_ranges_for_group,
             FnInStruct
         )]
-        pub fn iter_ranges_for_mask<'a>(&'a self, mask: u32) -> Box<CodePointRangeIterator<'a>> {
+        pub fn iter_ranges_for_mask<'a>(
+            &'a self,
+            mask: u32,
+        ) -> Box<ICU4XCodePointRangeIterator<'a>> {
             let ranges = self
                 .0
                 .as_borrowed()
@@ -116,7 +122,7 @@ pub mod ffi {
                 })
                 .filter(|v| v.value)
                 .map(|v| v.range);
-            Box::new(CodePointRangeIterator(Box::new(ranges)))
+            Box::new(ICU4XCodePointRangeIterator(Box::new(ranges)))
         }
 
         /// Gets a [`ICU4XCodePointSetData`] representing all entries in this map that map to the given value
@@ -165,6 +171,19 @@ pub mod ffi {
             Ok(convert_8(call_constructor_unstable!(
                 maps::east_asian_width [r => Ok(r.static_to_owned())],
                 maps::load_east_asian_width,
+                provider,
+            )?))
+        }
+
+        #[diplomat::rust_link(icu::properties::maps::hangul_syllable_type, Fn)]
+        #[diplomat::rust_link(icu::properties::maps::load_hangul_syllable_type, Fn, hidden)]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "hangul_syllable_type")]
+        pub fn load_hangul_syllable_type(
+            provider: &ICU4XDataProvider,
+        ) -> Result<Box<ICU4XCodePointMapData8>, ICU4XError> {
+            Ok(convert_8(call_constructor_unstable!(
+                maps::hangul_syllable_type [r => Ok(r.static_to_owned())],
+                maps::load_hangul_syllable_type,
                 provider,
             )?))
         }
@@ -280,8 +299,11 @@ pub mod ffi {
             icu::properties::maps::CodePointMapDataBorrowed::iter_ranges_for_value,
             FnInStruct
         )]
-        pub fn iter_ranges_for_value<'a>(&'a self, value: u16) -> Box<CodePointRangeIterator<'a>> {
-            Box::new(CodePointRangeIterator(Box::new(
+        pub fn iter_ranges_for_value<'a>(
+            &'a self,
+            value: u16,
+        ) -> Box<ICU4XCodePointRangeIterator<'a>> {
+            Box::new(ICU4XCodePointRangeIterator(Box::new(
                 self.0.as_borrowed().iter_ranges_for_value(value),
             )))
         }
@@ -294,8 +316,8 @@ pub mod ffi {
         pub fn iter_ranges_for_value_complemented<'a>(
             &'a self,
             value: u16,
-        ) -> Box<CodePointRangeIterator<'a>> {
-            Box::new(CodePointRangeIterator(Box::new(
+        ) -> Box<ICU4XCodePointRangeIterator<'a>> {
+            Box::new(ICU4XCodePointRangeIterator(Box::new(
                 self.0
                     .as_borrowed()
                     .iter_ranges_for_value_complemented(value),

@@ -2,7 +2,7 @@
   "supplemental": {
     "version": {
       "_unicodeVersion": "15.1.0",
-      "_cldrVersion": "44.1"
+      "_cldrVersion": "45"
     },
     "plurals-type-ordinal": {
       "af": {

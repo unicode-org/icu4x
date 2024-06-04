@@ -4,13 +4,14 @@
 
 use core::convert::TryFrom;
 use std::borrow::Cow;
+use std::collections::HashSet;
 
 use icu_experimental::personnames::provider::*;
-use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use zerovec::VarZeroVec;
 
 use crate::provider::transform::cldr::cldr_serde::personnames::person_name_format_json_struct::Resource;
+use crate::provider::IterableDataProviderCached;
 
 impl DataProvider<PersonNamesFormatV1Marker> for crate::DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<PersonNamesFormatV1Marker>, DataError> {
@@ -33,8 +34,10 @@ impl DataProvider<PersonNamesFormatV1Marker> for crate::DatagenProvider {
     }
 }
 
-impl IterableDataProvider<PersonNamesFormatV1Marker> for crate::DatagenProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+impl IterableDataProviderCached<PersonNamesFormatV1Marker> for crate::DatagenProvider {
+    fn supported_requests_cached(
+        &self,
+    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
         Ok(self
             .cldr()?
             .personnames()
@@ -47,7 +50,7 @@ impl IterableDataProvider<PersonNamesFormatV1Marker> for crate::DatagenProvider 
                     .file_exists(langid, "personNames.json")
                     .unwrap_or_default()
             })
-            .map(DataLocale::from)
+            .map(|l| (DataLocale::from(l), Default::default()))
             .collect())
     }
 }
@@ -84,7 +87,6 @@ fn to_mask(ordering: &str, size: &str, referring: &str, formality: &str) -> Resu
 /// Transform the JSON Resource into a single PersonNamesFormattingDefinitionV1
 ///
 /// The JSON Structure is expected to be perfect and all combination should be provided.
-///
 impl TryFrom<&'_ Resource> for PersonNamesFormatV1<'_> {
     type Error = DataError;
     fn try_from(other: &'_ Resource) -> Result<Self, Self::Error> {
@@ -153,7 +155,7 @@ impl TryFrom<&'_ Resource> for PersonNamesFormatV1<'_> {
 
 #[cfg(test)]
 mod tests {
-    use icu_locid::locale;
+    use icu_locale_core::langid;
     use zerofrom::ZeroFrom;
 
     use super::*;
@@ -164,8 +166,8 @@ mod tests {
 
         let data_payload: DataPayload<PersonNamesFormatV1Marker> = provider
             .load(DataRequest {
-                locale: &DataLocale::from(&locale!("en-001")),
-                metadata: Default::default(),
+                locale: &langid!("en-001").into(),
+                ..Default::default()
             })?
             .take_payload()?;
 
@@ -187,8 +189,8 @@ mod tests {
 
         let data_payload: DataPayload<PersonNamesFormatV1Marker> = provider
             .load(DataRequest {
-                locale: &DataLocale::from(&locale!("en-001")),
-                metadata: Default::default(),
+                locale: &langid!("en-001").into(),
+                ..Default::default()
             })?
             .take_payload()?;
 
@@ -235,8 +237,8 @@ mod tests {
 
         let data_payload: DataPayload<PersonNamesFormatV1Marker> = provider
             .load(DataRequest {
-                locale: &DataLocale::from(&locale!("es")),
-                metadata: Default::default(),
+                locale: &langid!("es").into(),
+                ..Default::default()
             })?
             .take_payload()?;
 

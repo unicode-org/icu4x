@@ -18,7 +18,9 @@ use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use icu_segmenter::provider::*;
 use icu_segmenter::WordType;
+use std::collections::HashSet;
 use std::fmt::Debug;
+use std::sync::OnceLock;
 use zerovec::ZeroVec;
 
 mod dictionary;
@@ -602,25 +604,24 @@ macro_rules! implement {
         }
 
         impl IterableDataProvider<$marker> for DatagenProvider {
-            fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-                Ok(vec![Default::default()])
+            fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+                Ok(HashSet::from_iter([Default::default()]))
             }
         }
     }
 }
 
 fn hardcoded_segmenter_provider() -> DatagenProvider {
-    #![allow(deprecated)]
     use crate::provider::{
         source::{AbstractFs, SerdeCache},
         DatagenProvider,
     };
     // Singleton so that all instantiations share the same cache.
-    static SINGLETON: once_cell::sync::OnceCell<DatagenProvider> = once_cell::sync::OnceCell::new();
+    static SINGLETON: OnceLock<DatagenProvider> = OnceLock::new();
     SINGLETON
         .get_or_init(|| {
             let mut provider = DatagenProvider::new_custom();
-            provider.source.icuexport_paths =
+            provider.icuexport_paths =
                 Some(std::sync::Arc::new(SerdeCache::new(AbstractFs::Memory(
                     [
                         (

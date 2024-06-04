@@ -27,21 +27,16 @@ final class MeasureUnitParser implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XMeasureUnitParser_destroy));
 
-  /// Parses the CLDR unit identifier (e.g. `meter-per-square-second`) and returns the corresponding [`MeasureUnit`].
-  /// Returns an error if the unit identifier is not valid.
+  /// Parses the CLDR unit identifier (e.g. `meter-per-square-second`) and returns the corresponding [`MeasureUnit`],
+  /// if the identifier is valid.
   ///
   /// See the [Rust documentation for `parse`](https://docs.rs/icu/latest/icu/experimental/units/measureunit/struct.MeasureUnitParser.html#method.parse) for more information.
-  ///
-  /// Throws [Error] on failure.
-  MeasureUnit parseMeasureUnit(String unitId) {
+  MeasureUnit? parse(String unitId) {
     final temp = ffi2.Arena();
     final unitIdView = unitId.utf8View;
-    final result = _ICU4XMeasureUnitParser_parse_measure_unit(_ffi, unitIdView.allocIn(temp), unitIdView.length);
+    final result = _ICU4XMeasureUnitParser_parse(_ffi, unitIdView.allocIn(temp), unitIdView.length);
     temp.releaseAll();
-    if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
-    }
-    return MeasureUnit._fromFfi(result.union.ok, []);
+    return result.address == 0 ? null : MeasureUnit._fromFfi(result, []);
   }
 }
 
@@ -50,7 +45,7 @@ final class MeasureUnitParser implements ffi.Finalizable {
 // ignore: non_constant_identifier_names
 external void _ICU4XMeasureUnitParser_destroy(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('ICU4XMeasureUnitParser_parse_measure_unit')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XMeasureUnitParser_parse_measure_unit')
+@meta.ResourceIdentifier('ICU4XMeasureUnitParser_parse')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XMeasureUnitParser_parse')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XMeasureUnitParser_parse_measure_unit(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> unitIdData, int unitIdLength);
+external ffi.Pointer<ffi.Opaque> _ICU4XMeasureUnitParser_parse(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> unitIdData, int unitIdLength);

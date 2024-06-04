@@ -3,7 +3,7 @@
     "fr": {
       "identity": {
         "version": {
-          "_cldrVersion": "44.1"
+          "_cldrVersion": "45"
         },
         "language": "fr"
       },
@@ -423,7 +423,7 @@
           "ng": "ndonga",
           "nia": "niha",
           "niu": "niuéen",
-          "njo": "Ao",
+          "njo": "ao",
           "nl": "néerlandais",
           "nl-BE": "flamand",
           "nmg": "ngoumba",

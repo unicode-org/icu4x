@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_locid::subtags::script;
-use icu_locid::{subtags, Locale};
+use icu_locale_core::subtags::script;
+use icu_locale_core::{subtags, Locale};
 use icu_properties::names::PropertyEnumToValueNameLinearTiny4MapperBorrowed;
 use icu_properties::script::ScriptWithExtensionsBorrowed;
 
@@ -17,7 +17,6 @@ use crate::personnames::api::{NameFieldKind, PersonName, PersonNamesFormatterErr
 /// https://www.unicode.org/reports/tr35/tr35-personNames.html#switch-the-formatting-locale-if-necessary
 ///
 /// The formatter locale and name locale must be maximized first.
-///
 pub fn effective_locale<'a>(
     formatter_locale: &'a Locale,
     person_name_locale: &'a Locale,
@@ -104,8 +103,8 @@ where
 
 #[cfg(test)]
 mod tests {
-    use icu_locid::locale;
-    use icu_locid_transform::LocaleExpander;
+    use icu_locale::LocaleExpander;
+    use icu_locale_core::locale;
     use litemap::LiteMap;
 
     use super::{effective_locale, likely_person_name_locale};

@@ -4,7 +4,7 @@
 
 use alloc::string::String;
 use alloc::vec::Vec;
-use icu_locid_transform::LocaleFallbacker;
+use icu_locale::LocaleFallbacker;
 use icu_properties::names::PropertyEnumToValueNameLinearTiny4Mapper;
 use icu_properties::script::ScriptWithExtensions;
 
@@ -17,7 +17,7 @@ use super::provider::{
     PersonNamesFormattingAttributesMask, PersonNamesFormattingData,
 };
 use super::specifications;
-use icu_locid::Locale;
+use icu_locale_core::Locale;
 use icu_provider::{DataLocale, DataPayload, DataProvider, DataRequest};
 use zerofrom::ZeroFrom;
 
@@ -46,10 +46,10 @@ impl PersonNamesFormatter {
         P: ?Sized
             + DataProvider<icu_properties::provider::ScriptWithExtensionsPropertyV1Marker>
             + DataProvider<icu_properties::provider::ScriptValueToShortNameV1Marker>
-            + DataProvider<icu_locid_transform::provider::LocaleFallbackLikelySubtagsV1Marker>
-            + DataProvider<icu_locid_transform::provider::LocaleFallbackParentsV1Marker>
+            + DataProvider<icu_locale::provider::LocaleFallbackLikelySubtagsV1Marker>
+            + DataProvider<icu_locale::provider::LocaleFallbackParentsV1Marker>
             // TODO: We shouldn't need the collation supplement here
-            + DataProvider<icu_locid_transform::provider::CollationFallbackSupplementV1Marker>,
+            + DataProvider<icu_locale::provider::CollationFallbackSupplementV1Marker>,
     {
         let swe = icu_properties::script::load_script_with_extensions_unstable(provider)?;
         let scripts = icu_properties::Script::get_enum_to_short_name_mapper(provider)?;
@@ -88,7 +88,7 @@ impl PersonNamesFormatter {
         let data_payload: DataPayload<PersonNamesFormatV1Marker> = provider
             .load(DataRequest {
                 locale: &DataLocale::from(effective_locale),
-                metadata: Default::default(),
+                ..Default::default()
             })
             .map_err(PersonNamesFormatterError::Data)?
             .take_payload()

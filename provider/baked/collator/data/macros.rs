@@ -14,11 +14,10 @@
 #[macro_export]
 macro_rules! __make_provider {
     ($ name : ty) => {
-        #[clippy::msrv = "1.67"]
+        #[clippy::msrv = "1.70"]
         impl $name {
-            #[doc(hidden)]
             #[allow(dead_code)]
-            pub const MUST_USE_MAKE_PROVIDER_MACRO: () = ();
+            pub(crate) const MUST_USE_MAKE_PROVIDER_MACRO: () = ();
         }
         icu_provider::impl_data_provider_never_marker!($name);
     };
@@ -30,28 +29,40 @@ pub use __make_provider as make_provider;
 mod collator_data_v1;
 #[doc(inline)]
 pub use __impl_collator_data_v1 as impl_collator_data_v1;
+#[doc(inline)]
+pub use __impliterable_collator_data_v1 as impliterable_collator_data_v1;
 #[macro_use]
 #[path = "macros/collator_dia_v1.rs.data"]
 mod collator_dia_v1;
 #[doc(inline)]
 pub use __impl_collator_dia_v1 as impl_collator_dia_v1;
+#[doc(inline)]
+pub use __impliterable_collator_dia_v1 as impliterable_collator_dia_v1;
 #[macro_use]
 #[path = "macros/collator_jamo_v1.rs.data"]
 mod collator_jamo_v1;
 #[doc(inline)]
 pub use __impl_collator_jamo_v1 as impl_collator_jamo_v1;
+#[doc(inline)]
+pub use __impliterable_collator_jamo_v1 as impliterable_collator_jamo_v1;
 #[macro_use]
 #[path = "macros/collator_meta_v1.rs.data"]
 mod collator_meta_v1;
 #[doc(inline)]
 pub use __impl_collator_meta_v1 as impl_collator_meta_v1;
+#[doc(inline)]
+pub use __impliterable_collator_meta_v1 as impliterable_collator_meta_v1;
 #[macro_use]
 #[path = "macros/collator_prim_v1.rs.data"]
 mod collator_prim_v1;
 #[doc(inline)]
 pub use __impl_collator_prim_v1 as impl_collator_prim_v1;
+#[doc(inline)]
+pub use __impliterable_collator_prim_v1 as impliterable_collator_prim_v1;
 #[macro_use]
 #[path = "macros/collator_reord_v1.rs.data"]
 mod collator_reord_v1;
 #[doc(inline)]
 pub use __impl_collator_reord_v1 as impl_collator_reord_v1;
+#[doc(inline)]
+pub use __impliterable_collator_reord_v1 as impliterable_collator_reord_v1;

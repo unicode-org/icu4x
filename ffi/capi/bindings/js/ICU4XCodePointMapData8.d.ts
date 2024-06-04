@@ -1,6 +1,6 @@
 import { u8, u32, char } from "./diplomat-runtime"
 import { FFIError } from "./diplomat-runtime"
-import { CodePointRangeIterator } from "./CodePointRangeIterator";
+import { ICU4XCodePointRangeIterator } from "./ICU4XCodePointRangeIterator";
 import { ICU4XCodePointSetData } from "./ICU4XCodePointSetData";
 import { ICU4XDataProvider } from "./ICU4XDataProvider";
 import { ICU4XError } from "./ICU4XError";
@@ -49,7 +49,7 @@ export class ICU4XCodePointMapData8 {
 
    * See the {@link https://docs.rs/icu/latest/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value Rust documentation for `iter_ranges_for_value`} for more information.
    */
-  iter_ranges_for_value(value: u8): CodePointRangeIterator;
+  iter_ranges_for_value(value: u8): ICU4XCodePointRangeIterator;
 
   /**
 
@@ -57,7 +57,7 @@ export class ICU4XCodePointMapData8 {
 
    * See the {@link https://docs.rs/icu/latest/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value_complemented Rust documentation for `iter_ranges_for_value_complemented`} for more information.
    */
-  iter_ranges_for_value_complemented(value: u8): CodePointRangeIterator;
+  iter_ranges_for_value_complemented(value: u8): ICU4XCodePointRangeIterator;
 
   /**
 
@@ -69,7 +69,7 @@ export class ICU4XCodePointMapData8 {
 
    * See the {@link https://docs.rs/icu/latest/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_group Rust documentation for `iter_ranges_for_group`} for more information.
    */
-  iter_ranges_for_mask(mask: u32): CodePointRangeIterator;
+  iter_ranges_for_mask(mask: u32): ICU4XCodePointRangeIterator;
 
   /**
 
@@ -99,6 +99,13 @@ export class ICU4XCodePointMapData8 {
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static load_east_asian_width(provider: ICU4XDataProvider): ICU4XCodePointMapData8 | never;
+
+  /**
+
+   * See the {@link https://docs.rs/icu/latest/icu/properties/maps/fn.hangul_syllable_type.html Rust documentation for `hangul_syllable_type`} for more information.
+   * @throws {@link FFIError}<{@link ICU4XError}>
+   */
+  static load_hangul_syllable_type(provider: ICU4XDataProvider): ICU4XCodePointMapData8 | never;
 
   /**
 

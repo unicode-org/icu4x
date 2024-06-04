@@ -17,7 +17,7 @@ use crate::pattern::runtime::PatternBorrowed;
 #[cfg(feature = "experimental")]
 use core::ops::Range;
 
-/// Helpers involving the auxiliary subtags used for date symbols.
+/// Helpers involving the data key attributes used for date symbols.
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -25,36 +25,36 @@ use core::ops::Range;
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[allow(missing_docs)]
-pub mod aux {
+pub mod key_attrs {
     use crate::pattern::CoarseHourCycle;
-    use icu_locid::extensions::private::{subtag, Subtag};
+    use tinystr::{tinystr, TinyAsciiStr};
 
-    pub const NUMERIC: Subtag = subtag!("1");
-    pub const ABBR: Subtag = subtag!("3");
-    pub const NARROW: Subtag = subtag!("4");
-    pub const WIDE: Subtag = subtag!("5");
-    pub const SHORT: Subtag = subtag!("6");
-    pub const ABBR_STANDALONE: Subtag = subtag!("3s");
-    pub const NARROW_STANDALONE: Subtag = subtag!("4s");
-    pub const WIDE_STANDALONE: Subtag = subtag!("5s");
-    pub const SHORT_STANDALONE: Subtag = subtag!("6s");
+    pub const NUMERIC: TinyAsciiStr<8> = tinystr!(8, "1");
+    pub const ABBR: TinyAsciiStr<8> = tinystr!(8, "3");
+    pub const NARROW: TinyAsciiStr<8> = tinystr!(8, "4");
+    pub const WIDE: TinyAsciiStr<8> = tinystr!(8, "5");
+    pub const SHORT: TinyAsciiStr<8> = tinystr!(8, "6");
+    pub const ABBR_STANDALONE: TinyAsciiStr<8> = tinystr!(8, "3s");
+    pub const NARROW_STANDALONE: TinyAsciiStr<8> = tinystr!(8, "4s");
+    pub const WIDE_STANDALONE: TinyAsciiStr<8> = tinystr!(8, "5s");
+    pub const SHORT_STANDALONE: TinyAsciiStr<8> = tinystr!(8, "6s");
 
-    pub const PATTERN_FULL: Subtag = subtag!("f");
-    pub const PATTERN_LONG: Subtag = subtag!("l");
-    pub const PATTERN_MEDIUM: Subtag = subtag!("m");
-    pub const PATTERN_SHORT: Subtag = subtag!("s");
+    pub const PATTERN_FULL: TinyAsciiStr<8> = tinystr!(8, "f");
+    pub const PATTERN_LONG: TinyAsciiStr<8> = tinystr!(8, "l");
+    pub const PATTERN_MEDIUM: TinyAsciiStr<8> = tinystr!(8, "m");
+    pub const PATTERN_SHORT: TinyAsciiStr<8> = tinystr!(8, "s");
 
-    pub const PATTERN_FULL12: Subtag = subtag!("f12");
-    pub const PATTERN_LONG12: Subtag = subtag!("l12");
-    pub const PATTERN_MEDIUM12: Subtag = subtag!("m12");
-    pub const PATTERN_SHORT12: Subtag = subtag!("s12");
+    pub const PATTERN_FULL12: TinyAsciiStr<8> = tinystr!(8, "f12");
+    pub const PATTERN_LONG12: TinyAsciiStr<8> = tinystr!(8, "l12");
+    pub const PATTERN_MEDIUM12: TinyAsciiStr<8> = tinystr!(8, "m12");
+    pub const PATTERN_SHORT12: TinyAsciiStr<8> = tinystr!(8, "s12");
 
-    pub const PATTERN_FULL24: Subtag = subtag!("f24");
-    pub const PATTERN_LONG24: Subtag = subtag!("l24");
-    pub const PATTERN_MEDIUM24: Subtag = subtag!("m24");
-    pub const PATTERN_SHORT24: Subtag = subtag!("s24");
+    pub const PATTERN_FULL24: TinyAsciiStr<8> = tinystr!(8, "f24");
+    pub const PATTERN_LONG24: TinyAsciiStr<8> = tinystr!(8, "l24");
+    pub const PATTERN_MEDIUM24: TinyAsciiStr<8> = tinystr!(8, "m24");
+    pub const PATTERN_SHORT24: TinyAsciiStr<8> = tinystr!(8, "s24");
 
-    /// Field lengths supported in auxiliary subtags.
+    /// Field lengths supported in data key attribute.
     ///
     /// For a stable version of this enum, use [`FieldLength`].
     ///
@@ -75,7 +75,7 @@ pub mod aux {
         Numeric,
     }
 
-    /// Pattern lengths supported in auxiliary subtags.
+    /// Pattern lengths supported in data key attributes.
     ///
     /// For a stable version of this enum, use [`length::Date`] or [`length::Time`].
     ///
@@ -95,7 +95,7 @@ pub mod aux {
         Short,
     }
 
-    /// Field contexts supported in auxiliary subtags.
+    /// Field contexts supported in data key attributes.
     ///
     /// For a stable version of this enum, use one of the specific field symbol enums in [`fields`].
     ///
@@ -113,16 +113,16 @@ pub mod aux {
         Standalone,
     }
 
-    /// Parses a symbol aux key subtag to enum values.
+    /// Parses a symbol data key attribute to enum values.
     ///
     /// <div class="stab unstable">
     /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
     /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
     /// to be stable, their Rust representation might not be. Use with caution.
     /// </div>
-    pub fn symbol_subtag_info(subtag: Subtag) -> Option<(Context, Length)> {
+    pub fn symbol_key_attr_info(key_attr: TinyAsciiStr<8>) -> Option<(Context, Length)> {
         use {Context::*, Length::*};
-        match subtag {
+        match key_attr {
             NUMERIC => Some((Format, Numeric)),
             ABBR => Some((Format, Abbr)),
             NARROW => Some((Format, Narrow)),
@@ -136,16 +136,18 @@ pub mod aux {
         }
     }
 
-    /// Parses a pattern aux key subtag to enum values.
+    /// Parses a pattern data key attribute to enum values.
     ///
     /// <div class="stab unstable">
     /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
     /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
     /// to be stable, their Rust representation might not be. Use with caution.
     /// </div>
-    pub fn pattern_subtag_info(subtag: Subtag) -> Option<(PatternLength, Option<CoarseHourCycle>)> {
+    pub fn pattern_key_attr_info(
+        key_attr: TinyAsciiStr<8>,
+    ) -> Option<(PatternLength, Option<CoarseHourCycle>)> {
         use {CoarseHourCycle::*, PatternLength::*};
-        match subtag {
+        match key_attr {
             PATTERN_FULL => Some((Full, None)),
             PATTERN_LONG => Some((Long, None)),
             PATTERN_MEDIUM => Some((Medium, None)),
@@ -164,14 +166,14 @@ pub mod aux {
         }
     }
 
-    /// Creates a symbol aux key from the enum values.
+    /// Creates a symbol data key attribute from the enum values.
     ///
     /// <div class="stab unstable">
     /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
     /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
     /// to be stable, their Rust representation might not be. Use with caution.
     /// </div>
-    pub fn symbol_subtag_for(context: Context, length: Length) -> Subtag {
+    pub fn symbol_attr_for(context: Context, length: Length) -> TinyAsciiStr<8> {
         use {Context::*, Length::*};
         match (context, length) {
             (Format, Numeric) => NUMERIC,
@@ -187,17 +189,17 @@ pub mod aux {
         }
     }
 
-    /// Creates a pattern aux key from the enum values.
+    /// Creates a pattern data key attribute from the enum values.
     ///
     /// <div class="stab unstable">
     /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
     /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
     /// to be stable, their Rust representation might not be. Use with caution.
     /// </div>
-    pub fn pattern_subtag_for(
+    pub fn pattern_key_attr_for(
         length: PatternLength,
         hour_cycle: Option<CoarseHourCycle>,
-    ) -> Subtag {
+    ) -> TinyAsciiStr<8> {
         use {CoarseHourCycle::*, PatternLength::*};
         match (length, hour_cycle) {
             (Full, None) => PATTERN_FULL,
@@ -222,9 +224,9 @@ size_test!(YearNamesV1, year_names_v1_size, 48);
 
 /// Symbols used for representing the year name
 ///
-/// This uses an auxiliary subtag for length. The subtag is simply the number of
+/// This uses a data key attribute for length. The value is simply the number of
 /// characters in the equivalent CLDR field syntax name, plus "s" for standalone contexts. For example,
-/// "abbreviated" (e.g. `MMM`) is `-x-3` or `-x-3s` depending on whether it is format or standalone
+/// "abbreviated" (e.g. `MMM`) is `3` or `3s` depending on whether it is format or standalone
 /// respectively.
 ///
 /// The full list is:
@@ -232,7 +234,6 @@ size_test!(YearNamesV1, year_names_v1_size, 48);
 /// - 4 is "narrow"
 /// - 5 is "wide"
 /// - 6 is "short" (weekdays only)
-///
 #[doc = year_names_v1_size!()]
 ///
 /// <div class="stab unstable">
@@ -275,9 +276,8 @@ size_test!(MonthNamesV1, month_names_v1_size, 32);
 
 /// Symbols used for representing the month name
 ///
-/// This uses an auxiliary subtag for length. See [`YearNamesV1`] for more information on the scheme. This
-/// has an additional `-x-1` subtag value used for numeric symbols, only found for calendars with leap months.
-///
+/// This uses a data key attribute for length. See [`YearNamesV1`] for more information on the scheme. This
+/// has an additional `1` value used for numeric symbols, only found for calendars with leap months.
 #[doc = month_names_v1_size!()]
 ///
 /// <div class="stab unstable">
@@ -378,8 +378,7 @@ size_test!(LinearNamesV1, linear_names_v1_size, 24);
 ///   In the case noon is missing but midnight is present, the noon value can be the empty string. This is unlikely.
 /// - For day names element 0 is the first day of the month
 ///
-/// This uses an auxiliary subtag for length. See [`YearNamesV1`] for more information on the scheme.
-///
+/// This uses a data key attribute for length. See [`YearNamesV1`] for more information on the scheme.
 #[doc = linear_names_v1_size!()]
 ///
 /// <div class="stab unstable">
@@ -441,9 +440,8 @@ size_test!(DatePatternV1, date_pattern_v1_size, 32);
 
 /// The default per-length patterns associated with dates
 ///
-/// This uses an auxiliary subtag for length. The subtag can be "f", "l", "m", "s" for
+/// This uses a data key attribute for length. The value can be "f", "l", "m", "s" for
 /// "full", "long", "medium", or "short".
-///
 #[doc = date_pattern_v1_size!()]
 ///
 /// <div class="stab unstable">
@@ -491,13 +489,12 @@ size_test!(TimePatternV1, time_pattern_v1_size, 32);
 
 /// The default per-length patterns associated with times
 ///
-/// This uses an auxiliary subtag for length. See [`DatePatternV1`] for more information on the scheme.
+/// This uses an data key attribute for length. See [`DatePatternV1`] for more information on the scheme.
 ///
-/// It also uses the subtag to track hour cycles; the data for the default hour cycle will
-/// use a regular length auxiliary subtag (e.g. `-x-f` for full), and the non-default
+/// It also uses the attribute to track hour cycles; the data for the default hour cycle will
+/// use a regular length attribute (e.g. `f` for full), and the non-default
 /// one will tack on a `h` or `k` depending on whether it is H11H12 or H23H24
-/// (`-x-fk` for full, non-default, 23/24 hours)
-///
+/// (`fk` for full, non-default, 23/24 hours)
 #[doc = time_pattern_v1_size!()]
 ///
 /// <div class="stab unstable">
@@ -524,8 +521,7 @@ size_test!(DateTimePatternV1, date_time_pattern_v1_size, 24);
 
 /// The default per-length patterns used for combining dates and times into datetimes
 ///
-/// This uses an auxiliary subtag for length. See [`DatePatternV1`] for more information on the scheme.
-///
+/// This uses a data key attribute for length. See [`DatePatternV1`] for more information on the scheme.
 #[doc = date_time_pattern_v1_size!()]
 ///
 /// <div class="stab unstable">
@@ -693,22 +689,30 @@ pub struct DateTimeSkeletonsV1<'data> {
     pub map: ZeroMap<'data, str, PatternULE>,
 }
 
-pub(crate) struct ErasedYearNamesV1Marker;
-impl DataMarker for ErasedYearNamesV1Marker {
+/// Calendar-agnostic year name data marker
+#[derive(Debug)]
+pub struct YearNamesV1Marker;
+impl DataMarker for YearNamesV1Marker {
     type Yokeable = YearNamesV1<'static>;
 }
 
-pub(crate) struct ErasedMonthNamesV1Marker;
-impl DataMarker for ErasedMonthNamesV1Marker {
+/// Calendar-agnostic month name data marker
+#[derive(Debug)]
+pub struct MonthNamesV1Marker;
+impl DataMarker for MonthNamesV1Marker {
     type Yokeable = MonthNamesV1<'static>;
 }
 
-pub(crate) struct ErasedDatePatternV1Marker;
-impl DataMarker for ErasedDatePatternV1Marker {
+/// Calendar-agnostic date pattern data marker
+#[derive(Debug)]
+pub struct DatePatternV1Marker;
+impl DataMarker for DatePatternV1Marker {
     type Yokeable = DatePatternV1<'static>;
 }
 
-pub(crate) struct ErasedPackedSkeletonDataV1Marker;
-impl DataMarker for ErasedPackedSkeletonDataV1Marker {
+/// Calendar-agnostic date skeleta data marker
+#[derive(Debug)]
+pub struct SkeletaV1Marker;
+impl DataMarker for SkeletaV1Marker {
     type Yokeable = PackedSkeletonDataV1<'static>;
 }

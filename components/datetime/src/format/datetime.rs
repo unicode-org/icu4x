@@ -4,21 +4,28 @@
 
 use crate::fields::{self, Field, FieldLength, FieldSymbol, Second, Week, Year};
 use crate::input::{
-    DateTimeInput, DateTimeInputWithWeekConfig, ExtractedDateTimeInput, LocalizedDateTimeInput,
+    DateInput, ExtractedDateTimeInput, ExtractedDateTimeInputWeekCalculatorError, IsoTimeInput,
 };
-use crate::pattern::runtime::PatternMetadata;
+use crate::pattern::runtime::{PatternBorrowed, PatternMetadata};
 use crate::pattern::{
     runtime::{Pattern, PatternPlurals},
     PatternItem,
 };
 use crate::provider;
 use crate::provider::calendar::patterns::PatternPluralsFromPatternsV1Marker;
-use crate::provider::date_time::MonthPlaceholderValue;
-use crate::provider::date_time::{DateSymbols, TimeSymbols};
-use crate::Error;
+#[cfg(feature = "experimental")]
+use crate::provider::date_time::GetSymbolForDayPeriodError;
+use crate::provider::date_time::{
+    DateSymbols, GetSymbolForEraError, GetSymbolForMonthError, GetSymbolForWeekdayError,
+    MonthPlaceholderValue, TimeSymbols,
+};
 
-use core::fmt;
+use core::fmt::{self, Write};
+use core::iter::Peekable;
 use fixed_decimal::FixedDecimal;
+use icu_calendar::types::{
+    Era, {DayOfWeekInMonth, IsoWeekday, MonthCode},
+};
 use icu_calendar::week::WeekCalculator;
 use icu_calendar::AnyCalendarKind;
 use icu_decimal::FixedDecimalFormatter;
@@ -38,7 +45,7 @@ use writeable::{Part, Writeable};
 /// ```no_run
 /// use icu::calendar::{DateTime, Gregorian};
 /// use icu::datetime::TypedDateTimeFormatter;
-/// use icu::locid::locale;
+/// use icu::locale::locale;
 /// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new(
 ///     &locale!("en").into(),
 ///     Default::default(),
@@ -54,28 +61,84 @@ use writeable::{Part, Writeable};
 /// ```
 #[derive(Debug, Copy, Clone)]
 pub struct FormattedDateTime<'l> {
+    pub(crate) datetime: ExtractedDateTimeInput,
     pub(crate) patterns: &'l DataPayload<PatternPluralsFromPatternsV1Marker>,
     pub(crate) date_symbols: Option<&'l provider::calendar::DateSymbolsV1<'l>>,
     pub(crate) time_symbols: Option<&'l provider::calendar::TimeSymbolsV1<'l>>,
-    pub(crate) datetime: ExtractedDateTimeInput,
     pub(crate) week_data: Option<&'l WeekCalculator>,
     pub(crate) ordinal_rules: Option<&'l PluralRules>,
     pub(crate) fixed_decimal_format: &'l FixedDecimalFormatter,
 }
 
+impl<'l> FormattedDateTime<'l> {
+    pub(crate) fn select_pattern_lossy<'a>(
+        &'a self,
+    ) -> (&'l Pattern<'l>, Result<(), DateTimeWriteError>) {
+        let mut r = Ok(());
+        let pattern = match self.patterns.get().0 {
+            PatternPlurals::SinglePattern(ref pattern) => pattern,
+            PatternPlurals::MultipleVariants(ref plural_pattern) => {
+                let week_number = match plural_pattern.pivot_field() {
+                    Week::WeekOfMonth => self
+                        .week_data
+                        .ok_or(DateTimeWriteError::MissingWeekCalculator)
+                        .and_then(|w| {
+                            self.datetime.week_of_month(w).map_err(|e| match e {
+                                ExtractedDateTimeInputWeekCalculatorError::Missing(s) => {
+                                    DateTimeWriteError::MissingInputField(s)
+                                }
+                            })
+                        })
+                        .map(|w| w.0)
+                        .unwrap_or_else(|e| {
+                            r = r.and(Err(e));
+                            0
+                        }),
+                    Week::WeekOfYear => self
+                        .week_data
+                        .ok_or(DateTimeWriteError::MissingWeekCalculator)
+                        .and_then(|w| {
+                            self.datetime.week_of_year(w).map_err(|e| match e {
+                                ExtractedDateTimeInputWeekCalculatorError::Missing(s) => {
+                                    DateTimeWriteError::MissingInputField(s)
+                                }
+                            })
+                        })
+                        .map(|w| w.1 .0)
+                        .unwrap_or_else(|e| {
+                            r = r.and(Err(e));
+                            0
+                        }),
+                };
+                let category = self
+                    .ordinal_rules
+                    .map(|p| p.category_for(week_number))
+                    .unwrap_or_else(|| {
+                        r = r.and(Err(DateTimeWriteError::MissingOrdinalRules));
+                        icu_plurals::PluralCategory::One
+                    });
+                plural_pattern.variant(category)
+            }
+        };
+        (pattern, r)
+    }
+}
+
 impl<'l> Writeable for FormattedDateTime<'l> {
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
-        let _lossy = write_pattern_plurals(
-            &self.patterns.get().0,
+        let (pattern, mut r) = self.select_pattern_lossy();
+
+        r = r.and(try_write_pattern(
+            pattern.as_borrowed(),
+            &self.datetime,
             self.date_symbols,
             self.time_symbols,
-            &self.datetime,
             self.week_data,
-            self.ordinal_rules,
             Some(self.fixed_decimal_format),
             &mut writeable::adapters::CoreWriteAsPartsWrite(sink),
-        )?;
-        debug_assert!(matches!(_lossy, Ok(())));
+        )?);
+
+        debug_assert!(r.is_ok(), "{r:?}");
         Ok(())
     }
 
@@ -94,7 +157,7 @@ fn try_write_number<W>(
     fixed_decimal_format: Option<&FixedDecimalFormatter>,
     mut num: FixedDecimal,
     length: FieldLength,
-) -> Result<Result<(), Error>, fmt::Error>
+) -> Result<Result<(), DateTimeWriteError>, fmt::Error>
 where
     W: writeable::PartsWrite + ?Sized,
 {
@@ -127,409 +190,432 @@ where
         Ok(Ok(()))
     } else {
         result.with_part(writeable::Part::ERROR, |r| num.write_to(r))?;
-        Ok(Err(Error::FixedDecimal))
+        Ok(Err(DateTimeWriteError::MissingFixedDecimalFormatter))
     }
 }
 
-pub(crate) fn try_write_pattern<'data, T, W, DS, TS>(
-    pattern_items: impl Iterator<Item = PatternItem>,
-    pattern_metadata: PatternMetadata,
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn try_write_pattern<'data, W, DS, TS>(
+    pattern: PatternBorrowed<'data>,
+    datetime: &ExtractedDateTimeInput,
     date_symbols: Option<&DS>,
     time_symbols: Option<&TS>,
-    loc_datetime: &impl LocalizedDateTimeInput<T>,
+    week_data: Option<&'data WeekCalculator>,
     fixed_decimal_format: Option<&FixedDecimalFormatter>,
     w: &mut W,
-) -> Result<Result<(), Error>, fmt::Error>
+) -> Result<Result<(), DateTimeWriteError>, fmt::Error>
 where
-    T: DateTimeInput,
+    W: writeable::PartsWrite + ?Sized,
+    DS: DateSymbols<'data>,
+    TS: TimeSymbols,
+{
+    try_write_pattern_items(
+        pattern.metadata,
+        pattern.items.iter(),
+        datetime,
+        date_symbols,
+        time_symbols,
+        week_data,
+        fixed_decimal_format,
+        w,
+    )
+}
+
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn try_write_pattern_items<'data, W, DS, TS>(
+    pattern_metadata: PatternMetadata,
+    pattern_items: impl Iterator<Item = PatternItem>,
+    datetime: &ExtractedDateTimeInput,
+    date_symbols: Option<&DS>,
+    time_symbols: Option<&TS>,
+    week_data: Option<&'data WeekCalculator>,
+    fixed_decimal_format: Option<&FixedDecimalFormatter>,
+    w: &mut W,
+) -> Result<Result<(), DateTimeWriteError>, fmt::Error>
+where
     W: writeable::PartsWrite + ?Sized,
     DS: DateSymbols<'data>,
     TS: TimeSymbols,
 {
     let mut r = Ok(());
     let mut iter = pattern_items.peekable();
-    loop {
-        match iter.next() {
-            Some(PatternItem::Field(field)) => {
+    while let Some(item) = iter.next() {
+        match item {
+            PatternItem::Literal(ch) => w.write_char(ch)?,
+            PatternItem::Field(field) => {
                 r = r.and(try_write_field(
-                    pattern_metadata,
                     field,
-                    iter.peek(),
+                    &mut iter,
+                    pattern_metadata,
+                    datetime,
                     date_symbols,
                     time_symbols,
-                    loc_datetime,
+                    week_data,
                     fixed_decimal_format,
                     w,
                 )?)
             }
-            Some(PatternItem::Literal(ch)) => w.write_char(ch)?,
-            None => break,
         }
     }
     Ok(r)
 }
 
-#[allow(clippy::too_many_arguments)]
-pub fn write_pattern_plurals<T, W>(
-    patterns: &PatternPlurals,
-    date_symbols: Option<&provider::calendar::DateSymbolsV1>,
-    time_symbols: Option<&provider::calendar::TimeSymbolsV1>,
-    datetime: &T,
-    week_data: Option<&WeekCalculator>,
-    ordinal_rules: Option<&PluralRules>,
-    fixed_decimal_format: Option<&FixedDecimalFormatter>,
-    w: &mut W,
-) -> Result<Result<(), Error>, fmt::Error>
-where
-    T: DateTimeInput,
-    W: writeable::PartsWrite + ?Sized,
-{
-    let mut r = Ok(());
+#[non_exhaustive]
+#[derive(Debug, PartialEq, Copy, Clone, displaydoc::Display)]
+/// Error for `TryWriteable` implementations
+pub enum DateTimeWriteError {
+    // Data not loaded
+    /// Missing FixedDecimalFormatter
+    #[displaydoc("FixedDecimalFormatter not loaded")]
+    MissingFixedDecimalFormatter,
+    /// Missing DateSymbols
+    #[displaydoc("DateSymbols not loaded")]
+    MissingDateSymbols,
+    /// Missing TimeSymbols
+    #[displaydoc("TimeSymbols not loaded")]
+    MissingTimeSymbols,
+    /// Missing OrdinalRules
+    #[displaydoc("OrdinalRules not loaded")]
+    MissingOrdinalRules,
+    /// Missing WeekCalculator
+    #[displaydoc("WeekCalculator not loaded")]
+    MissingWeekCalculator,
+    /// TODO
+    #[displaydoc("Names for {0:?} not loaded")]
+    #[cfg(feature = "experimental")]
+    MissingNames(Field),
 
-    let loc_datetime = DateTimeInputWithWeekConfig::new(datetime, week_data);
-    let pattern = patterns
-        .select(&loc_datetime, ordinal_rules)
-        .unwrap_or_else(|e| {
-            r = Err(e);
-            todo!("fallback pattern")
-        });
+    // Something not found in data
+    // TODO: Are these actionable? Can clients even invent their own months and days?
+    /// Missing month symbol
+    #[displaydoc("Cannot find symbol for month {0:?}")]
+    MissingMonthSymbol(MonthCode),
+    /// Missing era symbol
+    #[displaydoc("Cannot find symbol for era {0:?}")]
+    MissingEraSymbol(Era),
+    /// Missing weekday symbol
+    #[displaydoc("Cannot find symbol for weekday {0:?}")]
+    MissingWeekdaySymbol(IsoWeekday),
 
-    r = r.and(try_write_pattern(
-        pattern.items.iter(),
-        pattern.metadata,
-        date_symbols,
-        time_symbols,
-        &loc_datetime,
-        fixed_decimal_format,
-        w,
-    )?);
-
-    Ok(r)
+    // Invalid input
+    /// Incomplete input
+    #[displaydoc("Incomplete input, missing value for {0:?}")]
+    MissingInputField(&'static str),
+    /// Cyclic year overflow
+    #[displaydoc("Cyclic year overflow, found {value}, maximum {max}")]
+    CyclicYearOverflow {
+        /// Value
+        value: usize,
+        /// Max
+        max: usize,
+    },
+    /// Unsupported field
+    #[displaydoc("Unsupported field {0:?}")]
+    UnsupportedField(Field),
 }
 
-const CHINESE_CYCLIC_YEARS: [&str; 60] = [
-    "甲子", "乙丑", "丙寅", "丁卯", "戊辰", "己巳", "庚午", "辛未", "壬申", "癸酉", "甲戌", "乙亥",
-    "丙子", "丁丑", "戊寅", "己卯", "庚辰", "辛巳", "壬午", "癸未", "甲申", "乙酉", "丙戌", "丁亥",
-    "戊子", "己丑", "庚寅", "辛卯", "壬辰", "癸巳", "甲午", "乙未", "丙申", "丁酉", "戊戌", "己亥",
-    "庚子", "辛丑", "壬寅", "癸卯", "甲辰", "乙巳", "丙午", "丁未", "戊申", "己酉", "庚戌", "辛亥",
-    "壬子", "癸丑", "甲寅", "乙卯", "丙辰", "丁巳", "戊午", "己未", "庚申", "辛酉", "壬戌", "癸亥",
-];
-const DANGI_CYCLIC_YEARS: [&str; 60] = [
-    "갑자", "을축", "병인", "정묘", "무진", "기사", "경오", "신미", "임신", "계유", "갑술", "을해",
-    "병자", "정축", "무인", "기묘", "경진", "신사", "임오", "계미", "갑신", "을유", "병술", "정해",
-    "무자", "기축", "경인", "신묘", "임진", "계사", "갑오", "을미", "병신", "정유", "무술", "기해",
-    "경자", "신축", "임인", "계묘", "갑진", "을사", "병오", "정미", "무신", "기유", "경술", "신해",
-    "임자", "계축", "갑인", "을묘", "병진", "정사", "무오", "기미", "경신", "신유", "임술", "계해",
-];
-
-const CHINESE_LEAP_PREFIX: &str = "閏";
-const DANGI_LEAP_PREFIX: &str = "윤";
-const PLACEHOLDER_LEAP_PREFIX: &str = "(leap)";
 // This function assumes that the correct decision has been
 // made regarding availability of symbols in the caller.
 //
 // When modifying the list of fields using symbols,
 // update the matching query in `analyze_pattern` function.
 #[allow(clippy::too_many_arguments)]
-pub(super) fn try_write_field<'data, T, W, DS, TS>(
-    pattern_metadata: PatternMetadata,
+pub(crate) fn try_write_field<'data, W, DS, TS>(
     field: fields::Field,
-    next_item: Option<&PatternItem>,
+    iter: &mut Peekable<impl Iterator<Item = PatternItem>>,
+    pattern_metadata: PatternMetadata,
+    datetime: &ExtractedDateTimeInput,
     date_symbols: Option<&DS>,
     time_symbols: Option<&TS>,
-    datetime: &impl LocalizedDateTimeInput<T>,
-    fixed_decimal_format: Option<&FixedDecimalFormatter>,
+    week_data: Option<&WeekCalculator>,
+    fdf: Option<&FixedDecimalFormatter>,
     w: &mut W,
-) -> Result<Result<(), Error>, fmt::Error>
+) -> Result<Result<(), DateTimeWriteError>, fmt::Error>
 where
-    T: DateTimeInput,
     W: writeable::PartsWrite + ?Sized,
     DS: DateSymbols<'data>,
     TS: TimeSymbols,
 {
-    let mut r = Ok(());
+    // Writes an error string for the given symbol
+    fn write_value_missing(
+        w: &mut (impl writeable::PartsWrite + ?Sized),
+        field: fields::Field,
+    ) -> Result<(), fmt::Error> {
+        w.with_part(Part::ERROR, |w| {
+            "{".write_to(w)?;
+            char::from(field.symbol).write_to(w)?;
+            "}".write_to(w)
+        })
+    }
 
-    match field.symbol {
-        FieldSymbol::Era => {
-            let era = datetime
-                .datetime()
-                .year()
-                .ok_or(Error::MissingInputField(Some("year")))
-                .map(|x| x.era);
-
-            let symbol = era.as_ref().map_err(|&e| e).and_then(|era| {
-                Ok(date_symbols
-                    .ok_or(Error::MissingDateSymbols)?
-                    .get_symbol_for_era(field.length, era)?
-                    .unwrap_or(&era.0))
-            });
-
-            let () = match symbol {
-                Ok(s) => w.write_str(s)?,
-                Err(e) => {
-                    r = r.and(Err(e));
-                    w.with_part(Part::ERROR, |w| "<ICU4X ERROR>".write_to(w))?
-                }
-            };
-        }
-        FieldSymbol::Year(year) => match year {
-            Year::Calendar => {
-                let () = match datetime
-                    .datetime()
-                    .year()
-                    .ok_or(Error::MissingInputField(Some("year")))
-                    .map(|x| x.number)
-                    .map(FixedDecimal::from)
-                {
-                    Ok(x) => r = r.and(try_write_number(w, fixed_decimal_format, x, field.length)?),
-                    Err(e) => {
-                        r = r.and(Err(e));
-                        w.with_part(Part::ERROR, |w| "<ICU4X ERROR>".write_to(w))?
-                    }
-                };
+    Ok(match (field.symbol, field.length) {
+        (FieldSymbol::Era, l) => match datetime.year() {
+            None => {
+                write_value_missing(w, field)?;
+                Err(DateTimeWriteError::MissingInputField("year"))
             }
-            Year::WeekOf => {
-                let () = match datetime
-                    .week_of_year()
-                    .map_err(Error::DateTimeInput)
-                    .map(|x| x.0.number)
-                    .map(FixedDecimal::from)
-                {
-                    Ok(x) => r = r.and(try_write_number(w, fixed_decimal_format, x, field.length)?),
-                    Err(e) => {
-                        r = r.and(Err(e));
-                        w.with_part(Part::ERROR, |w| "<ICU4X ERROR>".write_to(w))?
-                    }
-                };
-            }
-            Year::Cyclic => {
-                let datetime = datetime.datetime();
-
-                // TODO(#3761): This is a hack, we should use actual data for cyclic years
-                let cyclics = match datetime.any_calendar_kind() {
-                    Some(AnyCalendarKind::Dangi) => &DANGI_CYCLIC_YEARS,
-                    _ => &CHINESE_CYCLIC_YEARS, /* for now assume all other calendars use the stem-branch model */
-                };
-
-                let () = match datetime
-                    .year()
-                    .ok_or(Error::MissingInputField(Some("year")))
-                    .and_then(|year| {
-                        cyclics
-                            .get(
-                                usize::from(
-                                    year.cyclic
-                                        .ok_or(Error::MissingInputField(Some("cyclic")))?
-                                        .get(),
-                                ) - 1,
-                            )
-                            .copied()
-                            .ok_or(Error::DateTimeInput(
-                                icu_calendar::CalendarError::Overflow {
-                                    field: "cyclic",
-                                    max: 60,
-                                },
-                            ))
-                    }) {
-                    Ok(cyclic_str) => w.write_str(cyclic_str)?,
-                    Err(e) => {
-                        r = r.and(Err(e));
-                        w.with_part(Part::ERROR, |w| "<ICU4X ERROR>".write_to(w))?
-                    }
-                };
-            }
-            Year::RelatedIso => {
-                let () = match datetime
-                    .datetime()
-                    .year()
-                    .ok_or(Error::MissingInputField(Some("year")))
-                    .and_then(|x| {
-                        x.related_iso
-                            .ok_or(Error::MissingInputField(Some("related_iso")))
+            Some(year) => match date_symbols
+                .ok_or(DateTimeWriteError::MissingDateSymbols)
+                .and_then(|ds| {
+                    ds.get_symbol_for_era(l, &year.era).map_err(|e| match e {
+                        GetSymbolForEraError::Missing => {
+                            DateTimeWriteError::MissingEraSymbol(year.era)
+                        }
+                        #[cfg(feature = "experimental")]
+                        GetSymbolForEraError::MissingNames(f) => {
+                            DateTimeWriteError::MissingNames(f)
+                        }
                     })
-                    .map(FixedDecimal::from)
-                {
-                    Ok(x) => r = r.and(try_write_number(w, fixed_decimal_format, x, field.length)?),
-                    Err(e) => {
-                        r = r.and(Err(e));
-                        w.with_part(Part::ERROR, |w| "<ICU4X ERROR>".write_to(w))?
-                    }
-                };
-            }
-        },
-        FieldSymbol::Month(month) => {
-            match field.length {
-                FieldLength::One | FieldLength::TwoDigit => {
-                    let () = match datetime
-                        .datetime()
-                        .month()
-                        .ok_or(Error::MissingInputField(Some("month")))
-                        .map(|x| x.ordinal)
-                        .map(FixedDecimal::from)
-                    {
-                        Ok(x) => {
-                            r = r.and(try_write_number(w, fixed_decimal_format, x, field.length)?)
-                        }
-                        Err(e) => {
-                            r = r.and(Err(e));
-                            w.with_part(Part::ERROR, |w| "<ICU4X ERROR>".write_to(w))?
-                        }
-                    };
+                }) {
+                Err(e) => {
+                    w.with_part(Part::ERROR, |w| w.write_str(&year.era.0))?;
+                    Err(e)
                 }
-                length => {
-                    let datetime = datetime.datetime();
-                    let formattable_month = datetime
-                        .month()
-                        .ok_or(Error::MissingInputField(Some("month")));
-
-                    let month_placeholder_value = formattable_month.and_then(|formattable_month| {
-                        date_symbols.ok_or(Error::MissingDateSymbols).and_then(|x| {
-                            x.get_symbol_for_month(month, length, formattable_month.code)
-                        })
-                    });
-
-                    let () = match month_placeholder_value {
-                        Ok(MonthPlaceholderValue::PlainString(symbol)) => {
-                            w.write_str(symbol)?;
-                        }
-                        Ok(MonthPlaceholderValue::StringNeedingLeapPrefix(symbol)) => {
-                            // FIXME (#3766) this should be using actual data for leap months
-                            let leap_str = match datetime.any_calendar_kind() {
-                                Some(AnyCalendarKind::Chinese) => CHINESE_LEAP_PREFIX,
-                                Some(AnyCalendarKind::Dangi) => DANGI_LEAP_PREFIX,
-                                _ => PLACEHOLDER_LEAP_PREFIX,
-                            };
-                            w.write_str(leap_str)?;
-                            w.write_str(symbol)?;
-                        }
-                        #[cfg(feature = "experimental")]
-                        Ok(MonthPlaceholderValue::Numeric) => match formattable_month {
-                            Ok(x) => {
-                                r = r.and(try_write_number(
-                                    w,
-                                    fixed_decimal_format,
-                                    FixedDecimal::from(x.ordinal),
-                                    field.length,
-                                )?)
-                            }
-                            Err(e) => {
-                                r = r.and(Err(e));
-                                w.with_part(Part::ERROR, |w| "<ICU4X ERROR>".write_to(w))?
-                            }
-                        },
-                        #[cfg(feature = "experimental")]
-                        Ok(MonthPlaceholderValue::NumericPattern(substitution_pattern)) => {
-                            match formattable_month {
-                                Ok(x) => {
-                                    w.write_str(substitution_pattern.get_prefix())?;
-                                    r = r.and(try_write_number(
-                                        w,
-                                        fixed_decimal_format,
-                                        FixedDecimal::from(x.ordinal),
-                                        field.length,
-                                    )?);
-                                    w.write_str(substitution_pattern.get_suffix())?;
-                                }
-                                Err(e) => {
-                                    r = r.and(Err(e));
-                                    w.with_part(Part::ERROR, |w| "<ICU4X ERROR>".write_to(w))?
-                                }
-                            }
-                        }
-                        Err(e) => {
-                            r = r.and(Err(e));
-                            w.with_part(Part::ERROR, |w| "<ICU4X ERROR>".write_to(w))?
-                        }
-                    };
-                }
-            };
-        }
-        FieldSymbol::Week(week) => match week {
-            Week::WeekOfYear => {
-                let () = match datetime
-                    .week_of_year()
-                    .map_err(Error::DateTimeInput)
-                    .map(|x| x.1 .0)
-                {
-                    Ok(x) => {
-                        r = r.and(try_write_number(
-                            w,
-                            fixed_decimal_format,
-                            FixedDecimal::from(x),
-                            field.length,
-                        )?)
-                    }
-                    Err(e) => {
-                        r = r.and(Err(e));
-                        w.with_part(Part::ERROR, |w| "<ICU4X ERROR>".write_to(w))?
-                    }
-                };
-            }
-            Week::WeekOfMonth => {
-                let () = match datetime
-                    .week_of_month()
-                    .map_err(Error::DateTimeInput)
-                    .map(|x| x.0)
-                    .map(FixedDecimal::from)
-                {
-                    Ok(x) => r = r.and(try_write_number(w, fixed_decimal_format, x, field.length)?),
-                    Err(e) => {
-                        r = r.and(Err(e));
-                        w.with_part(Part::ERROR, |w| "<ICU4X ERROR>".write_to(w))?
-                    }
-                };
-            }
+                Ok(era) => Ok(w.write_str(era)?),
+            },
         },
-        FieldSymbol::Weekday(weekday) => {
-            let () = match date_symbols.ok_or(Error::MissingDateSymbols).and_then(|x| {
-                x.get_symbol_for_weekday(
-                    weekday,
-                    field.length,
-                    datetime
-                        .datetime()
-                        .iso_weekday()
-                        .ok_or(Error::MissingInputField(Some("iso_weekday")))?,
-                )
+        (FieldSymbol::Year(Year::Calendar), l) => match datetime.year() {
+            None => {
+                write_value_missing(w, field)?;
+                Err(DateTimeWriteError::MissingInputField("year"))
+            }
+            Some(year) => try_write_number(w, fdf, year.number.into(), l)?,
+        },
+        (FieldSymbol::Year(Year::WeekOf), l) => match week_data
+            .ok_or(DateTimeWriteError::MissingWeekCalculator)
+            .and_then(|w| {
+                datetime.week_of_year(w).map_err(|e| match e {
+                    ExtractedDateTimeInputWeekCalculatorError::Missing(s) => {
+                        DateTimeWriteError::MissingInputField(s)
+                    }
+                })
             }) {
-                Ok(symbol) => w.write_str(symbol)?,
-                Err(e) => {
-                    r = r.and(Err(e));
-                    w.with_part(Part::ERROR, |w| "<ICU4X ERROR>".write_to(w))?
-                }
-            };
-        }
-
-        symbol @ FieldSymbol::Day(day) => {
-            let x = match day {
-                fields::Day::DayOfMonth => datetime
-                    .datetime()
-                    .day_of_month()
-                    .ok_or(Error::MissingInputField(Some("day_of_month")))
-                    .map(|x| x.0),
-                fields::Day::DayOfWeekInMonth => datetime
-                    .day_of_week_in_month()
-                    .map_err(Error::DateTimeInput)
-                    .map(|x| x.0),
-                _ => Err(Error::UnsupportedField(symbol)),
+            Err(e) => {
+                write_value_missing(w, field)?;
+                Err(e)
             }
-            .map(FixedDecimal::from);
-
-            let () = match x {
-                Ok(x) => r = r.and(try_write_number(w, fixed_decimal_format, x, field.length)?),
-                Err(e) => {
-                    r = r.and(Err(e));
-                    w.with_part(Part::ERROR, |w| "<ICU4X ERROR>".write_to(w))?
+            Ok((year, _)) => try_write_number(w, fdf, year.number.into(), l)?,
+        },
+        (FieldSymbol::Year(Year::Cyclic), l) => match datetime.year() {
+            None => {
+                write_value_missing(w, field)?;
+                Err(DateTimeWriteError::MissingInputField("year"))
+            }
+            Some(year) => {
+                let r = year
+                    .cyclic
+                    .ok_or(DateTimeWriteError::MissingInputField("cyclic"))
+                    .and_then(|cyclic| {
+                        // TODO(#3761): This is a hack, we should use actual data for cyclic years
+                        let cyclics: &[&str; 60] = match datetime.any_calendar_kind() {
+                            Some(AnyCalendarKind::Dangi) => &[
+                                "갑자", "을축", "병인", "정묘", "무진", "기사", "경오", "신미",
+                                "임신", "계유", "갑술", "을해", "병자", "정축", "무인", "기묘",
+                                "경진", "신사", "임오", "계미", "갑신", "을유", "병술", "정해",
+                                "무자", "기축", "경인", "신묘", "임진", "계사", "갑오", "을미",
+                                "병신", "정유", "무술", "기해", "경자", "신축", "임인", "계묘",
+                                "갑진", "을사", "병오", "정미", "무신", "기유", "경술", "신해",
+                                "임자", "계축", "갑인", "을묘", "병진", "정사", "무오", "기미",
+                                "경신", "신유", "임술", "계해",
+                            ],
+                            // for now assume all other calendars use the stem-branch model
+                            _ => &[
+                                "甲子", "乙丑", "丙寅", "丁卯", "戊辰", "己巳", "庚午", "辛未",
+                                "壬申", "癸酉", "甲戌", "乙亥", "丙子", "丁丑", "戊寅", "己卯",
+                                "庚辰", "辛巳", "壬午", "癸未", "甲申", "乙酉", "丙戌", "丁亥",
+                                "戊子", "己丑", "庚寅", "辛卯", "壬辰", "癸巳", "甲午", "乙未",
+                                "丙申", "丁酉", "戊戌", "己亥", "庚子", "辛丑", "壬寅", "癸卯",
+                                "甲辰", "乙巳", "丙午", "丁未", "戊申", "己酉", "庚戌", "辛亥",
+                                "壬子", "癸丑", "甲寅", "乙卯", "丙辰", "丁巳", "戊午", "己未",
+                                "庚申", "辛酉", "壬戌", "癸亥",
+                            ],
+                        };
+                        let value: usize = cyclic.get() as usize;
+                        cyclics
+                            .get(value - 1)
+                            .ok_or(DateTimeWriteError::CyclicYearOverflow {
+                                value,
+                                max: cyclics.len() + 1,
+                            })
+                    });
+                match r {
+                    Err(e) => {
+                        w.with_part(Part::ERROR, |w| {
+                            try_write_number(w, fdf, year.number.into(), l).map(|_| ())
+                        })?;
+                        Err(e)
+                    }
+                    Ok(cyclic_str) => Ok(w.write_str(cyclic_str)?),
                 }
-            };
+            }
+        },
+        (FieldSymbol::Year(Year::RelatedIso), l) => {
+            match datetime
+                .year()
+                .ok_or(DateTimeWriteError::MissingInputField("year"))
+                .and_then(|year| {
+                    year.related_iso
+                        .ok_or(DateTimeWriteError::MissingInputField("related_iso"))
+                }) {
+                Err(e) => {
+                    write_value_missing(w, field)?;
+                    Err(e)
+                }
+                Ok(iso) => try_write_number(w, fdf, iso.into(), l)?,
+            }
         }
-        FieldSymbol::Hour(hour) => {
-            let value = datetime
-                .datetime()
-                .hour()
-                .ok_or(Error::MissingInputField(Some("hour")))
-                .map(usize::from)
-                .map(|u| u as isize)
-                .map(|h| match hour {
+        (FieldSymbol::Month(_), l @ (FieldLength::One | FieldLength::TwoDigit)) => {
+            match datetime.month() {
+                None => {
+                    write_value_missing(w, field)?;
+                    Err(DateTimeWriteError::MissingInputField("month"))
+                }
+                Some(month) => try_write_number(w, fdf, month.ordinal.into(), l)?,
+            }
+        }
+        (FieldSymbol::Month(month), l) => match datetime.month() {
+            None => {
+                write_value_missing(w, field)?;
+                Err(DateTimeWriteError::MissingInputField("month"))
+            }
+            Some(formattable_month) => match date_symbols
+                .ok_or(DateTimeWriteError::MissingDateSymbols)
+                .and_then(|ds| {
+                    ds.get_symbol_for_month(month, l, formattable_month.code)
+                        .map_err(|e| match e {
+                            GetSymbolForMonthError::Missing => {
+                                DateTimeWriteError::MissingMonthSymbol(formattable_month.code)
+                            }
+                            #[cfg(feature = "experimental")]
+                            GetSymbolForMonthError::MissingNames(f) => {
+                                DateTimeWriteError::MissingNames(f)
+                            }
+                        })
+                }) {
+                Err(e) => {
+                    w.with_part(Part::ERROR, |w| w.write_str(&formattable_month.code.0))?;
+                    Err(e)
+                }
+                Ok(MonthPlaceholderValue::PlainString(symbol)) => {
+                    w.write_str(symbol)?;
+                    Ok(())
+                }
+                Ok(MonthPlaceholderValue::StringNeedingLeapPrefix(symbol)) => {
+                    // FIXME (#3766) this should be using actual data for leap months
+                    let leap_str = match datetime.any_calendar_kind() {
+                        Some(AnyCalendarKind::Chinese) => "閏",
+                        Some(AnyCalendarKind::Dangi) => "윤",
+                        _ => "(leap)",
+                    };
+                    w.write_str(leap_str)?;
+                    w.write_str(symbol)?;
+                    Ok(())
+                }
+                #[cfg(feature = "experimental")]
+                Ok(MonthPlaceholderValue::Numeric) => {
+                    try_write_number(w, fdf, formattable_month.ordinal.into(), l)?
+                }
+                #[cfg(feature = "experimental")]
+                Ok(MonthPlaceholderValue::NumericPattern(substitution_pattern)) => {
+                    w.write_str(substitution_pattern.get_prefix())?;
+                    let r = try_write_number(w, fdf, formattable_month.ordinal.into(), l)?;
+                    w.write_str(substitution_pattern.get_suffix())?;
+                    r
+                }
+            },
+        },
+        (FieldSymbol::Week(week), l) => match week {
+            Week::WeekOfYear => match week_data
+                .ok_or(DateTimeWriteError::MissingWeekCalculator)
+                .and_then(|w| {
+                    datetime.week_of_year(w).map_err(|e| match e {
+                        ExtractedDateTimeInputWeekCalculatorError::Missing(s) => {
+                            DateTimeWriteError::MissingInputField(s)
+                        }
+                    })
+                }) {
+                Err(e) => {
+                    write_value_missing(w, field)?;
+                    Err(e)
+                }
+                Ok((_, week_of_year)) => try_write_number(w, fdf, week_of_year.0.into(), l)?,
+            },
+            Week::WeekOfMonth => match week_data
+                .ok_or(DateTimeWriteError::MissingWeekCalculator)
+                .and_then(|w| {
+                    datetime.week_of_month(w).map_err(|e| match e {
+                        ExtractedDateTimeInputWeekCalculatorError::Missing(s) => {
+                            DateTimeWriteError::MissingInputField(s)
+                        }
+                    })
+                }) {
+                Err(e) => {
+                    write_value_missing(w, field)?;
+                    Err(e)
+                }
+                Ok(week_of_month) => try_write_number(w, fdf, week_of_month.0.into(), l)?,
+            },
+        },
+        (FieldSymbol::Weekday(weekday), l) => match datetime.iso_weekday() {
+            None => {
+                write_value_missing(w, field)?;
+                Err(DateTimeWriteError::MissingInputField("iso_weekday"))
+            }
+            Some(wd) => match date_symbols
+                .ok_or(DateTimeWriteError::MissingDateSymbols)
+                .and_then(|ds| {
+                    ds.get_symbol_for_weekday(weekday, l, wd)
+                        .map_err(|e| match e {
+                            GetSymbolForWeekdayError::Missing => {
+                                DateTimeWriteError::MissingWeekdaySymbol(wd)
+                            }
+                            #[cfg(feature = "experimental")]
+                            GetSymbolForWeekdayError::MissingNames(f) => {
+                                DateTimeWriteError::MissingNames(f)
+                            }
+                        })
+                }) {
+                Err(e) => {
+                    w.with_part(Part::ERROR, |w| {
+                        w.write_str(match wd {
+                            IsoWeekday::Monday => "mon",
+                            IsoWeekday::Tuesday => "tue",
+                            IsoWeekday::Wednesday => "wed",
+                            IsoWeekday::Thursday => "thu",
+                            IsoWeekday::Friday => "fri",
+                            IsoWeekday::Saturday => "sat",
+                            IsoWeekday::Sunday => "sun",
+                        })
+                    })?;
+                    Err(e)
+                }
+                Ok(s) => Ok(w.write_str(s)?),
+            },
+        },
+        (FieldSymbol::Day(fields::Day::DayOfMonth), l) => match datetime.day_of_month() {
+            None => {
+                write_value_missing(w, field)?;
+                Err(DateTimeWriteError::MissingInputField("day_of_month"))
+            }
+            Some(d) => try_write_number(w, fdf, d.0.into(), l)?,
+        },
+        (FieldSymbol::Day(fields::Day::DayOfWeekInMonth), l) => {
+            match datetime.day_of_month().map(DayOfWeekInMonth::from) {
+                None => {
+                    write_value_missing(w, field)?;
+                    Err(DateTimeWriteError::MissingInputField("day_of_month"))
+                }
+                Some(d) => try_write_number(w, fdf, d.0.into(), l)?,
+            }
+        }
+        (FieldSymbol::Hour(hour), l) => match datetime.hour() {
+            None => {
+                write_value_missing(w, field)?;
+                Err(DateTimeWriteError::MissingInputField("hour"))
+            }
+            Some(h) => {
+                let h = usize::from(h) as isize;
+                let h = match hour {
                     fields::Hour::H11 => h % 12,
                     fields::Hour::H12 => {
                         let v = h % 12;
@@ -547,126 +633,133 @@ where
                             h
                         }
                     }
-                });
-
-            let () = match value {
-                Ok(value) => {
-                    r = r.and(try_write_number(
-                        w,
-                        fixed_decimal_format,
-                        FixedDecimal::from(value),
-                        field.length,
-                    )?)
-                }
-                Err(e) => {
-                    r = r.and(Err(e));
-                    w.with_part(Part::ERROR, |w| "<ICU4X ERROR>".write_to(w))?
-                }
-            };
-        }
-        FieldSymbol::Minute => {
-            let () = match datetime
-                .datetime()
-                .minute()
-                .ok_or(Error::MissingInputField(Some("minute")))
-                .map(usize::from)
-                .map(FixedDecimal::from)
-            {
-                Ok(x) => r = r.and(try_write_number(w, fixed_decimal_format, x, field.length)?),
-                Err(e) => {
-                    r = r.and(Err(e));
-                    w.with_part(Part::ERROR, |w| "<ICU4X ERROR>".write_to(w))?
-                }
-            };
-        }
-        FieldSymbol::Second(Second::Second) => {
-            let seconds = datetime
-                .datetime()
-                .second()
-                .ok_or(Error::MissingInputField(Some("second")))
-                .map(usize::from)
-                .map(FixedDecimal::from)
-                .and_then(|mut seconds| {
-                    if let Some(PatternItem::Field(next_field)) = next_item {
-                        if let FieldSymbol::Second(Second::FractionalSecond) = next_field.symbol {
-                            let mut fraction = FixedDecimal::from(usize::from(
-                                datetime
-                                    .datetime()
-                                    .nanosecond()
-                                    .ok_or(Error::MissingInputField(Some("nanosecond")))?,
-                            ));
-
-                            // We only support fixed field length for fractional seconds.
-                            let precision = match next_field.length {
-                                FieldLength::Fixed(p) => p,
-                                _ => {
-                                    return Err(Error::Pattern(
-                                        crate::pattern::PatternError::FieldLengthInvalid(
-                                            FieldSymbol::Second(Second::FractionalSecond),
-                                        ),
-                                    ))
-                                }
-                            };
-
-                            // We store fractional seconds as nanoseconds, convert to seconds.
-                            fraction.multiply_pow10(-9);
-
-                            seconds
-                                .concatenate_end(fraction)
-                                .map_err(|_| Error::FixedDecimal)?;
-                            seconds.pad_end(-(precision as i16));
-                        }
+                };
+                try_write_number(w, fdf, h.into(), l)?
+            }
+        },
+        (FieldSymbol::Minute, l) => match datetime.minute() {
+            None => {
+                write_value_missing(w, field)?;
+                Err(DateTimeWriteError::MissingInputField("minute"))
+            }
+            Some(iso_minute) => try_write_number(w, fdf, usize::from(iso_minute).into(), l)?,
+        },
+        (FieldSymbol::Second(Second::Second), l) => match (datetime.second(), iter.peek()) {
+            (
+                None,
+                Some(&PatternItem::Field(
+                    next_field @ Field {
+                        symbol: FieldSymbol::Second(Second::FractionalSecond),
+                        ..
+                    },
+                )),
+            ) => {
+                iter.next(); // Advance over nanosecond symbol
+                write_value_missing(w, field)?;
+                // Write error value for nanos even if we have them
+                write_value_missing(w, next_field)?;
+                Err(DateTimeWriteError::MissingInputField("second"))
+            }
+            (None, _) => {
+                write_value_missing(w, field)?;
+                Err(DateTimeWriteError::MissingInputField("second"))
+            }
+            (
+                Some(second),
+                Some(&PatternItem::Field(
+                    next_field @ Field {
+                        symbol: FieldSymbol::Second(Second::FractionalSecond),
+                        length,
+                    },
+                )),
+            ) => {
+                iter.next(); // Advance over nanosecond symbol
+                let r = datetime
+                    .nanosecond()
+                    .ok_or(DateTimeWriteError::MissingInputField("nanosecond"))
+                    .and_then(|ns| {
+                        // We only support fixed field length for fractional seconds.
+                        let FieldLength::Fixed(p) = length else {
+                            return Err(DateTimeWriteError::UnsupportedField(next_field));
+                        };
+                        Ok((ns, p))
+                    });
+                match r {
+                    Err(e) => {
+                        let seconds_result =
+                            try_write_number(w, fdf, usize::from(second).into(), l)?;
+                        write_value_missing(w, next_field)?;
+                        // Return the earlier error
+                        seconds_result.and(Err(e))
                     }
-                    Ok(seconds)
-                });
-
-            let () = match seconds {
-                Ok(s) => r = r.and(try_write_number(w, fixed_decimal_format, s, field.length)?),
-                Err(e) => {
-                    r = r.and(Err(e));
-                    w.with_part(Part::ERROR, |w| "<ICU4X ERROR>".write_to(w))?
-                }
-            };
-        }
-        FieldSymbol::Second(Second::FractionalSecond) => {
-            // Formatting of fractional seconds is handled when formatting seconds.
-        }
-        FieldSymbol::Second(Second::Millisecond) => {
-            r = r.and(Err(Error::UnsupportedField(field.symbol)));
-            w.with_part(Part::ERROR, |w| "<ICU4X ERROR>".write_to(w))?
-        }
-        FieldSymbol::DayPeriod(period) => {
-            let symbol = time_symbols.ok_or(Error::MissingTimeSymbols).and_then(|x| {
-                x.get_symbol_for_day_period(
-                    period,
-                    field.length,
-                    datetime
-                        .datetime()
-                        .hour()
-                        .ok_or(Error::MissingInputField(Some("hour")))?,
-                    pattern_metadata.time_granularity().is_top_of_hour(
-                        datetime.datetime().minute().map(u8::from).unwrap_or(0),
-                        datetime.datetime().second().map(u8::from).unwrap_or(0),
-                        datetime.datetime().nanosecond().map(u32::from).unwrap_or(0),
-                    ),
-                )
-            });
-
-            match symbol {
-                Ok(symbol) => w.write_str(symbol)?,
-                Err(e) => {
-                    r = r.and(Err(e));
-                    w.with_part(Part::ERROR, |w| "<ICU4X ERROR>".write_to(w))?
+                    Ok((ns, p)) => {
+                        let mut s = FixedDecimal::from(usize::from(second));
+                        let _infallible = s.concatenate_end(
+                            FixedDecimal::from(usize::from(ns)).multiplied_pow10(-9),
+                        );
+                        debug_assert!(_infallible.is_ok());
+                        s.pad_end(-(p as i16));
+                        try_write_number(w, fdf, s, l)?
+                    }
                 }
             }
+            (Some(second), _) => try_write_number(w, fdf, usize::from(second).into(), l)?,
+        },
+        (FieldSymbol::Second(Second::FractionalSecond), _) => {
+            // Fractional second not following second
+            write_value_missing(w, field)?;
+            Err(DateTimeWriteError::UnsupportedField(field))
         }
-        FieldSymbol::TimeZone(_) => {
-            r = r.and(Err(Error::UnsupportedField(field.symbol)));
-            w.with_part(Part::ERROR, |w| "<ICU4X ERROR>".write_to(w))?
+        (FieldSymbol::DayPeriod(period), l) => match datetime.hour() {
+            None => {
+                write_value_missing(w, field)?;
+                Err(DateTimeWriteError::MissingInputField("hour"))
+            }
+            Some(hour) => {
+                match time_symbols
+                    .ok_or(DateTimeWriteError::MissingTimeSymbols)
+                    .and_then(|ts| {
+                        ts.get_symbol_for_day_period(
+                            period,
+                            l,
+                            hour,
+                            pattern_metadata.time_granularity().is_top_of_hour(
+                                datetime.minute().map(u8::from).unwrap_or(0),
+                                datetime.second().map(u8::from).unwrap_or(0),
+                                datetime.nanosecond().map(u32::from).unwrap_or(0),
+                            ),
+                        )
+                        .map_err(|e| match e {
+                            #[cfg(feature = "experimental")]
+                            GetSymbolForDayPeriodError::MissingNames(f) => {
+                                DateTimeWriteError::MissingNames(f)
+                            }
+                        })
+                    }) {
+                    Err(e) => {
+                        w.with_part(Part::ERROR, |w| {
+                            w.write_str(if usize::from(hour) < 12 { "AM" } else { "PM" })
+                        })?;
+                        Err(e)
+                    }
+                    Ok(s) => Ok(w.write_str(s)?),
+                }
+            }
+        },
+        (
+            FieldSymbol::TimeZone(_)
+            | FieldSymbol::Day(_)
+            | FieldSymbol::Second(Second::Millisecond),
+            _,
+        ) => {
+            w.with_part(Part::ERROR, |w| {
+                w.write_str("{unsupported:")?;
+                w.write_char(char::from(field.symbol))?;
+                w.write_str("}")
+            })?;
+            Err(DateTimeWriteError::UnsupportedField(field))
         }
-    };
-
-    Ok(r)
+    })
 }
 
 /// What data is required to format a given pattern.
@@ -757,17 +850,17 @@ mod tests {
     use super::*;
     use crate::pattern::runtime;
     use icu_decimal::options::{FixedDecimalFormatterOptions, GroupingStrategy};
-    use icu_locid::Locale;
+    use tinystr::tinystr;
 
     #[test]
     fn test_mixed_calendar_eras() {
-        use icu::calendar::japanese::JapaneseExtended;
-        use icu::calendar::Date;
-        use icu::datetime::options::length;
-        use icu::datetime::DateFormatter;
+        use crate::neo::NeoDateFormatter;
+        use crate::options::length;
+        use icu_calendar::japanese::JapaneseExtended;
+        use icu_calendar::Date;
 
-        let locale: Locale = "en-u-ca-japanese".parse().unwrap();
-        let dtf = DateFormatter::try_new_with_length(&locale.into(), length::Date::Medium)
+        let locale = "en-u-ca-japanese".parse().unwrap();
+        let dtf = NeoDateFormatter::try_new_with_length(&locale, length::Date::Medium)
             .expect("DateTimeFormat construction succeeds");
 
         let date = Date::try_new_gregorian_date(1800, 9, 1).expect("Failed to construct Date.");
@@ -776,7 +869,14 @@ mod tests {
             .into_japanese_date()
             .to_any();
 
-        writeable::assert_writeable_eq!(dtf.format(&date).unwrap(), "Sep 1, 12 kansei-1789")
+        writeable::assert_try_writeable_eq!(
+            dtf.format(&date).unwrap(),
+            "Sep 1, 12 kansei-1789",
+            Err(DateTimeWriteError::MissingEraSymbol(Era(tinystr!(
+                16,
+                "kansei-1789"
+            ))))
+        );
     }
 
     #[test]
@@ -786,10 +886,10 @@ mod tests {
         use icu_calendar::DateTime;
         use icu_provider::prelude::*;
 
-        let locale = "en-u-ca-gregory".parse::<Locale>().unwrap().into();
+        let locale = "en-u-ca-gregory".parse().unwrap();
         let req = DataRequest {
             locale: &locale,
-            metadata: Default::default(),
+            ..Default::default()
         };
         let date_data: DataPayload<GregorianDateSymbolsV1Marker> = crate::provider::Baked
             .load(req)
@@ -807,13 +907,12 @@ mod tests {
             FixedDecimalFormatter::try_new(&locale, Default::default()).unwrap();
 
         let mut sink = String::new();
-        let loc_datetime = DateTimeInputWithWeekConfig::new(&datetime, None);
         try_write_pattern(
-            pattern.items.iter(),
-            pattern.metadata,
+            pattern.as_borrowed(),
+            &ExtractedDateTimeInput::extract_from(&datetime),
             Some(date_data.get()),
             Some(time_data.get()),
-            &loc_datetime,
+            None,
             Some(&fixed_decimal_format),
             &mut writeable::adapters::CoreWriteAsPartsWrite(&mut sink),
         )
@@ -838,7 +937,7 @@ mod tests {
         let mut fixed_decimal_format_options = FixedDecimalFormatterOptions::default();
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
         let fixed_decimal_format = FixedDecimalFormatter::try_new(
-            &icu_locid::locale!("en").into(),
+            &icu_locale_core::locale!("en").into(),
             fixed_decimal_format_options,
         )
         .unwrap();

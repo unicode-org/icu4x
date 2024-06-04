@@ -2,6 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::provider::date_time::PatternForLengthError;
+#[cfg(feature = "experimental")]
+use crate::provider::date_time::UnsupportedOptionsOrDataOrPatternError;
 use crate::{calendar, options::DateTimeFormatterOptions, raw};
 use alloc::string::String;
 
@@ -23,7 +26,7 @@ use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_plurals::provider::OrdinalV1Marker;
 use writeable::Writeable;
 
-size_test!(ZonedDateTimeFormatter, zoned_date_time_formatter_size, 6248);
+size_test!(ZonedDateTimeFormatter, zoned_date_time_formatter_size, 6224);
 
 /// [`ZonedDateTimeFormatter`] is a formatter capable of formatting
 /// date/times with time zones from any calendar, selected at runtime. For the difference between this and [`TypedZonedDateTimeFormatter`](crate::TypedZonedDateTimeFormatter),
@@ -42,7 +45,6 @@ size_test!(ZonedDateTimeFormatter, zoned_date_time_formatter_size, 6248);
 /// For that reason, one should think of the process of formatting a zoned datetime in two steps:
 /// first, a computationally heavy construction of [`ZonedDateTimeFormatter`], and then fast formatting
 /// of the data using the instance.
-///
 #[doc = zoned_date_time_formatter_size!()]
 ///
 /// # Examples
@@ -52,7 +54,7 @@ size_test!(ZonedDateTimeFormatter, zoned_date_time_formatter_size, 6248);
 /// ```
 /// use icu::calendar::DateTime;
 /// use icu::datetime::{options::length, ZonedDateTimeFormatter};
-/// use icu::locid::locale;
+/// use icu::locale::locale;
 /// use icu::timezone::CustomTimeZone;
 /// use writeable::assert_writeable_eq;
 ///
@@ -85,7 +87,7 @@ size_test!(ZonedDateTimeFormatter, zoned_date_time_formatter_size, 6248);
 /// ```
 /// use icu::calendar::DateTime;
 /// use icu::datetime::{options::length, ZonedDateTimeFormatter};
-/// use icu::locid::locale;
+/// use icu::locale::locale;
 /// use icu::timezone::{CustomTimeZone, GmtOffset, MetazoneCalculator, ZoneVariant};
 /// use tinystr::TinyAsciiStr;
 /// use writeable::assert_writeable_eq;
@@ -151,7 +153,7 @@ impl ZonedDateTimeFormatter {
     /// use icu::calendar::DateTime;
     /// use icu::datetime::options::components;
     /// use icu::datetime::ZonedDateTimeFormatter;
-    /// use icu::locid::locale;
+    /// use icu::locale::locale;
     /// use icu::timezone::CustomTimeZone;
     /// use std::str::FromStr;
     /// use writeable::assert_writeable_eq;
@@ -196,7 +198,14 @@ impl ZonedDateTimeFormatter {
             locale,
             &kind.as_bcp47_value(),
             &date_time_format_options,
-        )?;
+        )
+        .map_err(|e| match e {
+            UnsupportedOptionsOrDataOrPatternError::UnsupportedOptions => {
+                DateTimeError::UnsupportedOptions
+            }
+            UnsupportedOptionsOrDataOrPatternError::Data(e) => DateTimeError::Data(e),
+            UnsupportedOptionsOrDataOrPatternError::Pattern(e) => DateTimeError::Pattern(e),
+        })?;
 
         Ok(Self(
             raw::ZonedDateTimeFormatter::try_new(
@@ -281,7 +290,14 @@ impl ZonedDateTimeFormatter {
             locale,
             &kind.as_bcp47_value(),
             &date_time_format_options,
-        )?;
+        )
+        .map_err(|e| match e {
+            UnsupportedOptionsOrDataOrPatternError::UnsupportedOptions => {
+                DateTimeError::UnsupportedOptions
+            }
+            UnsupportedOptionsOrDataOrPatternError::Data(e) => DateTimeError::Data(e),
+            UnsupportedOptionsOrDataOrPatternError::Pattern(e) => DateTimeError::Pattern(e),
+        })?;
 
         Ok(Self(
             raw::ZonedDateTimeFormatter::try_new_unstable(
@@ -312,7 +328,7 @@ impl ZonedDateTimeFormatter {
     /// use icu::datetime::options::length;
     /// use icu::datetime::time_zone::TimeZoneFormatterOptions;
     /// use icu::datetime::ZonedDateTimeFormatter;
-    /// use icu::locid::locale;
+    /// use icu::locale::locale;
     /// use icu::timezone::CustomTimeZone;
     /// use std::str::FromStr;
     /// use writeable::assert_writeable_eq;
@@ -321,10 +337,10 @@ impl ZonedDateTimeFormatter {
     ///     length::Date::Medium,
     ///     length::Time::Long,
     /// );
-    /// let locale = locale!("en-u-ca-gregory");
+    /// let locale = locale!("en-u-ca-gregory").into();
     ///
     /// let zdtf = ZonedDateTimeFormatter::try_new(
-    ///     &locale.into(),
+    ///     &locale,
     ///     options.into(),
     ///     TimeZoneFormatterOptions::default(),
     /// )
@@ -354,7 +370,11 @@ impl ZonedDateTimeFormatter {
             calendar::load_lengths_for_any_calendar_kind(&crate::provider::Baked, locale, kind)?,
             locale,
             &date_time_format_options,
-        )?;
+        )
+        .map_err(|e| match e {
+            PatternForLengthError::Data(e) => DateTimeError::Data(e),
+            PatternForLengthError::Pattern(e) => DateTimeError::Pattern(e),
+        })?;
 
         Ok(Self(
             raw::ZonedDateTimeFormatter::try_new(
@@ -436,7 +456,11 @@ impl ZonedDateTimeFormatter {
             calendar::load_lengths_for_any_calendar_kind(provider, locale, kind)?,
             locale,
             &date_time_format_options,
-        )?;
+        )
+        .map_err(|e| match e {
+            PatternForLengthError::Data(e) => DateTimeError::Data(e),
+            PatternForLengthError::Pattern(e) => DateTimeError::Pattern(e),
+        })?;
 
         Ok(Self(
             raw::ZonedDateTimeFormatter::try_new_unstable(
@@ -550,7 +574,7 @@ fn buffer_constructor() {
     use icu::calendar::DateTime;
     use icu::datetime::options::length;
     use icu::datetime::ZonedDateTimeFormatter;
-    use icu::locid::locale;
+    use icu::locale::locale;
     use icu::timezone::CustomTimeZone;
     use std::str::FromStr;
     use writeable::assert_writeable_eq;

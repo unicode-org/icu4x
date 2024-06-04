@@ -3,7 +3,7 @@
     "fil": {
       "identity": {
         "version": {
-          "_cldrVersion": "44.1"
+          "_cldrVersion": "45"
         },
         "language": "fil"
       },
@@ -93,9 +93,6 @@
               "Rankin_Inlet": {
                 "exemplarCity": "Makipot na Look ng Rankin"
               },
-              "Santa_Isabel": {
-                "exemplarCity": "Santa Isabel"
-              },
               "Scoresbysund": {
                 "exemplarCity": "Ittoqqortoormiit"
               },
@@ -172,11 +169,6 @@
             "Indian": {
               "Reunion": {
                 "exemplarCity": "Réunion"
-              }
-            },
-            "Australia": {
-              "Currie": {
-                "exemplarCity": "Currie"
               }
             },
             "Pacific": {
@@ -733,11 +725,6 @@
                 "daylight": "Daylight Time sa Lorde Howe"
               }
             },
-            "Macquarie": {
-              "long": {
-                "standard": "Oras sa Macquarie Island"
-              }
-            },
             "Magadan": {
               "long": {
                 "generic": "Oras sa Magadan",
@@ -775,13 +762,6 @@
             "Mawson": {
               "long": {
                 "standard": "Oras sa Mawson"
-              }
-            },
-            "Mexico_Northwest": {
-              "long": {
-                "generic": "Oras sa Hilagang-kanlurang Mexico",
-                "standard": "Standard na Oras sa Hilagang-kanlurang Mexico",
-                "daylight": "Daylight na Oras sa Hilagang-kanlurang Mexico"
               }
             },
             "Mexico_Pacific": {

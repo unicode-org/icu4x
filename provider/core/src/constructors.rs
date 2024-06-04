@@ -111,7 +111,7 @@
 //! [`FsDataProvider`]: ../../icu_provider_blob/struct.FsDataProvider.html
 //! [`ICU4XDataProvider`]: ../../icu_capi/provider/ffi/struct.ICU4XDataProvider.html
 
-#[doc(hidden)]
+#[doc(hidden)] // macro
 #[macro_export]
 macro_rules! gen_any_buffer_unstable_docs {
     (ANY, $data:path) => {
@@ -140,7 +140,7 @@ macro_rules! gen_any_buffer_unstable_docs {
 }
 
 #[allow(clippy::crate_in_macro_def)] // by convention each crate's data provider is `crate::provider::Baked`
-#[doc(hidden)]
+#[doc(hidden)] // macro
 #[macro_export]
 macro_rules! gen_any_buffer_data_constructors {
     (locale: skip, options: skip, error: $error_ty:path, $(#[$doc:meta])+) => {

@@ -242,7 +242,7 @@ pub use crate::zerovec::{ZeroSlice, ZeroVec};
 
 pub(crate) use flexzerovec::chunk_to_usize;
 
-#[doc(hidden)]
+#[doc(hidden)] // macro use
 pub mod __zerovec_internal_reexport {
     pub use zerofrom::ZeroFrom;
 

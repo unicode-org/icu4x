@@ -6,6 +6,7 @@
 pub mod ffi {
     use crate::{errors::ffi::ICU4XError, provider::ffi::ICU4XDataProvider};
     use alloc::boxed::Box;
+    use diplomat_runtime::DiplomatStr;
     use icu_experimental::units::converter::UnitsConverter;
     use icu_experimental::units::converter_factory::ConverterFactory;
     use icu_experimental::units::measureunit::MeasureUnit;
@@ -69,19 +70,18 @@ pub mod ffi {
     pub struct ICU4XMeasureUnitParser<'a>(pub MeasureUnitParser<'a>);
 
     impl<'a> ICU4XMeasureUnitParser<'a> {
-        /// Parses the CLDR unit identifier (e.g. `meter-per-square-second`) and returns the corresponding [`ICU4XMeasureUnit`].
-        /// Returns an error if the unit identifier is not valid.
+        /// Parses the CLDR unit identifier (e.g. `meter-per-square-second`) and returns the corresponding [`ICU4XMeasureUnit`],
+        /// if the identifier is valid.
         #[diplomat::rust_link(
             icu::experimental::units::measureunit::MeasureUnitParser::parse,
             FnInStruct
         )]
-        pub fn parse_measure_unit(
-            &self,
-            unit_id: &str,
-        ) -> Result<Box<ICU4XMeasureUnit>, ICU4XError> {
-            Ok(Box::new(ICU4XMeasureUnit(
-                self.0.try_from_identifier(unit_id)?,
-            )))
+        pub fn parse(&self, unit_id: &DiplomatStr) -> Option<Box<ICU4XMeasureUnit>> {
+            self.0
+                .try_from_bytes(unit_id)
+                .ok()
+                .map(ICU4XMeasureUnit)
+                .map(Box::new)
         }
     }
 

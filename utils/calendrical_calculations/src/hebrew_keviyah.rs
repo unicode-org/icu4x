@@ -124,7 +124,7 @@ fn months_preceding_molad(h_year: i32) -> i64 {
     // This math essentially comes from the Metonic cycle of 19 years containing
     // 235 months: 12 months per year, plus an extra month for each of the 7 leap years.
 
-    (235 * (i64::from(h_year) - 1) + 1) / 19
+    (235 * (i64::from(h_year) - 1) + 1).div_euclid(19)
 }
 
 /// Conveniently create a constant for a ḥalakim (by default in 1-indexed notation). Produces a constant
@@ -177,13 +177,13 @@ const ḤALAKIM_IN_WEEK: i64 = 1080 * 24 * 7;
 const HEBREW_CALENDAR_EPOCH: RataDie = crate::julian::fixed_from_julian_book_version(-3761, 10, 7);
 
 /// The minumum hebrew year supported by this code (this is the minimum value for i32)
-pub const HEBREW_MIN_YEAR: i32 = i32::min_value();
+pub const HEBREW_MIN_YEAR: i32 = i32::MIN;
 /// The minumum R.D. supported by this code (this code will clamp outside of it)
 // (this constant is verified by tests)
-pub const HEBREW_MIN_RD: RataDie = RataDie::new(-784362951949);
+pub const HEBREW_MIN_RD: RataDie = RataDie::new(-784362951979);
 /// The maximum hebrew year supported by this code (this is the maximum alue for i32)
 // (this constant is verified by tests)
-pub const HEBREW_MAX_YEAR: i32 = i32::max_value();
+pub const HEBREW_MAX_YEAR: i32 = i32::MAX;
 /// The maximum R.D. supported by this code (this is the last day in [`HEBREW_MAX_YEAR`])
 // (this constant is verified by tests)
 pub const HEBREW_MAX_RD: RataDie = RataDie::new(784360204356);
@@ -256,9 +256,6 @@ impl YearInfo {
         let days_since_epoch = (date - HEBREW_CALENDAR_EPOCH) as f64;
         let maybe_approx =
             i64_to_i32(1 + days_since_epoch.div_euclid(HEBREW_APPROX_YEAR_LENGTH) as i64);
-        debug_assert!(maybe_approx.is_ok(),
-                     "year_containing_rd should have clamped {date:?} between {HEBREW_MIN_RD:?} and {HEBREW_MAX_RD:?} \
-                      and thus be well in bounds for year calculation math");
         let approx = maybe_approx.unwrap_or_else(|e| e.saturate());
 
         let yi = Self::compute_for(approx);
@@ -1026,5 +1023,20 @@ mod test {
         let (recomputed_yi, recomputed_y) = YearInfo::year_containing_rd(max_last);
         assert_eq!(recomputed_y, HEBREW_MAX_YEAR);
         assert_eq!(recomputed_yi, max);
+    }
+
+    #[test]
+    fn test_leap_agreement() {
+        for year0 in -1000..1000 {
+            let year1 = year0 + 1;
+            let info0 = YearInfo::compute_for(year0);
+            let info1 = YearInfo::compute_for(year1);
+            let num_months = (info1.new_year() - info0.new_year()) / 29;
+            if info0.keviyah.is_leap() {
+                assert_eq!(num_months, 13, "{year0}");
+            } else {
+                assert_eq!(num_months, 12, "{year0}");
+            }
+        }
     }
 }

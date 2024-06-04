@@ -159,7 +159,7 @@ pub(in crate::provider) fn extract_conversion_info<'data>(
         Exactness::Approximate
     };
 
-    let base_unit = match parser.try_from_identifier(base_unit) {
+    let base_unit = match parser.try_from_bytes(base_unit.as_bytes()) {
         Ok(base_unit) => base_unit,
         Err(_) => return Err(DataError::custom("the base unit is not valid")),
     };
@@ -193,7 +193,7 @@ pub(in crate::provider) fn process_constants<'a>(
         if constant.is_free_of_non_scientific() {
             clean_constants_map.insert(cons_name, constant);
         } else {
-            constants_with_non_scientific.push_back((&cons_name, constant));
+            constants_with_non_scientific.push_back((cons_name, constant));
         }
     }
     let mut no_update_count = 0;

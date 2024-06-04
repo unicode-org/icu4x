@@ -29,7 +29,6 @@
 //! assert_eq!(datetime_iso.time.second.number(), 0);
 //! ```
 
-use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime, Time};
 use calendrical_calculations::helpers::{i64_to_saturated_i32, I32CastError};
@@ -135,7 +134,9 @@ impl Calendar for Iso {
 
         // The days of the week are the same every 400 years
         // so we normalize to the nearest multiple of 400
-        let years_since_400 = date.0.year % 400;
+        let years_since_400 = date.0.year.rem_euclid(400);
+        debug_assert!(years_since_400 >= 0); // rem_euclid returns positive numbers
+        let years_since_400 = years_since_400 as u32;
         let leap_years_since_400 = years_since_400 / 4 - years_since_400 / 100;
         // The number of days to the current year
         // Can never cause an overflow because years_since_400 has a maximum value of 399.
@@ -169,7 +170,7 @@ impl Calendar for Iso {
             }
         };
         let january_1_2000 = 5; // Saturday
-        let day_offset = (january_1_2000 + year_offset + month_offset + date.0.day as i32) % 7;
+        let day_offset = (january_1_2000 + year_offset + month_offset + date.0.day as u32) % 7;
 
         // We calculated in a zero-indexed fashion, but ISO specifies one-indexed
         types::IsoWeekday::from((day_offset + 1) as usize)
@@ -226,8 +227,8 @@ impl Calendar for Iso {
         "ISO"
     }
 
-    fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
-        Some(AnyCalendarKind::Iso)
+    fn any_calendar_kind(&self) -> Option<crate::AnyCalendarKind> {
+        Some(crate::any_calendar::IntoAnyCalendar::kind(self))
     }
 }
 

@@ -5,6 +5,7 @@
 //! The collection of code that is needed for handling formatting operations for DateTimes.
 //! Central to this is the [`DateTimeFormatter`].
 
+use crate::format::datetime::FormattedDateTime;
 use crate::{
     format::datetime,
     input::{DateInput, DateTimeInput, ExtractedDateTimeInput, IsoTimeInput},
@@ -18,7 +19,7 @@ use crate::{
             TimeSymbolsV1Marker,
         },
     },
-    DateTimeError, FormattedDateTime,
+    DateTimeError,
 };
 
 use icu_calendar::provider::WeekDataV1Marker;
@@ -61,7 +62,7 @@ impl TimeFormatter {
                 crate::provider::Baked
                     .load(DataRequest {
                         locale,
-                        metadata: Default::default(),
+                        ..Default::default()
                     })?
                     .take_payload()?,
             )
@@ -102,7 +103,7 @@ impl TimeFormatter {
                 provider
                     .load(DataRequest {
                         locale,
-                        metadata: Default::default(),
+                        ..Default::default()
                     })?
                     .take_payload()?,
             )
@@ -243,7 +244,7 @@ impl DateFormatter {
                     provider,
                     DataRequest {
                         locale,
-                        metadata: Default::default(),
+                        ..Default::default()
                     },
                 )?
                 .take_payload()?
@@ -387,7 +388,7 @@ impl DateTimeFormatter {
 
         let req = DataRequest {
             locale,
-            metadata: Default::default(),
+            ..Default::default()
         };
 
         let week_data = if required.week_data {
@@ -450,7 +451,7 @@ impl DateTimeFormatter {
 
         let req = DataRequest {
             locale,
-            metadata: Default::default(),
+            ..Default::default()
         };
 
         let week_data = if required.week_data {
@@ -459,7 +460,7 @@ impl DateTimeFormatter {
                     provider,
                     DataRequest {
                         locale,
-                        metadata: Default::default(),
+                        ..Default::default()
                     },
                 )?
                 .take_payload()?

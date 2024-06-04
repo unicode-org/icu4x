@@ -6,7 +6,7 @@ use alloc::string::String;
 use alloc::vec::Vec;
 use core::fmt;
 use displaydoc::Display;
-use icu_locid::Locale;
+use icu_locale_core::Locale;
 use icu_provider::DataError;
 
 /// Trait for providing person name data.
@@ -351,7 +351,7 @@ impl PersonNamesFormatterOptions {
         usage: FormattingUsage,
         formality: FormattingFormality,
     ) -> Self {
-        let lc = icu_locid_transform::LocaleExpander::new();
+        let lc = icu_locale::LocaleExpander::new();
         let mut final_locale = target_locale.clone();
         lc.maximize(&mut final_locale);
         Self {

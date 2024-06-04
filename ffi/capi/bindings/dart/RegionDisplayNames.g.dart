@@ -45,13 +45,13 @@ final class RegionDisplayNames implements ffi.Finalizable {
   String of(String region) {
     final temp = ffi2.Arena();
     final regionView = region.utf8View;
-    final writeable = _Writeable();
-    final result = _ICU4XRegionDisplayNames_of(_ffi, regionView.allocIn(temp), regionView.length, writeable._ffi);
+    final write = _Write();
+    final result = _ICU4XRegionDisplayNames_of(_ffi, regionView.allocIn(temp), regionView.length, write._ffi);
     temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
     }
-    return writeable.finalize();
+    return write.finalize();
   }
 }
 
@@ -68,4 +68,4 @@ external _ResultOpaqueInt32 _ICU4XRegionDisplayNames_create(ffi.Pointer<ffi.Opaq
 @meta.ResourceIdentifier('ICU4XRegionDisplayNames_of')
 @ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XRegionDisplayNames_of')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _ICU4XRegionDisplayNames_of(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> regionData, int regionLength, ffi.Pointer<ffi.Opaque> writeable);
+external _ResultVoidInt32 _ICU4XRegionDisplayNames_of(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> regionData, int regionLength, ffi.Pointer<ffi.Opaque> write);

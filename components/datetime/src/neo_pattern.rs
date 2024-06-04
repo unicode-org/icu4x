@@ -20,7 +20,6 @@ size_test!(DateTimePattern, date_time_pattern_size, 32);
 ///
 /// 1. From a custom pattern string: [`DateTimePattern::try_from_pattern_str`]
 /// 2. From a formatted datetime: [`FormattedNeoDateTime::pattern`]
-///
 #[doc = date_time_pattern_size!()]
 ///
 /// # Examples
@@ -33,7 +32,7 @@ size_test!(DateTimePattern, date_time_pattern_size, 32);
 /// use icu::datetime::neo::TypedNeoDateTimeFormatter;
 /// use icu::datetime::neo_pattern::DateTimePattern;
 /// use icu::datetime::options::length;
-/// use icu::locid::locale;
+/// use icu::locale::locale;
 ///
 /// let custom_pattern =
 ///     DateTimePattern::try_from_pattern_str("d MMM y").unwrap();

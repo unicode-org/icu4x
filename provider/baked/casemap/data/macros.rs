@@ -14,11 +14,10 @@
 #[macro_export]
 macro_rules! __make_provider {
     ($ name : ty) => {
-        #[clippy::msrv = "1.67"]
+        #[clippy::msrv = "1.70"]
         impl $name {
-            #[doc(hidden)]
             #[allow(dead_code)]
-            pub const MUST_USE_MAKE_PROVIDER_MACRO: () = ();
+            pub(crate) const MUST_USE_MAKE_PROVIDER_MACRO: () = ();
         }
         icu_provider::impl_data_provider_never_marker!($name);
     };
@@ -30,8 +29,12 @@ pub use __make_provider as make_provider;
 mod props_casemap_v1;
 #[doc(inline)]
 pub use __impl_props_casemap_v1 as impl_props_casemap_v1;
+#[doc(inline)]
+pub use __impliterable_props_casemap_v1 as impliterable_props_casemap_v1;
 #[macro_use]
 #[path = "macros/props_casemap_unfold_v1.rs.data"]
 mod props_casemap_unfold_v1;
 #[doc(inline)]
 pub use __impl_props_casemap_unfold_v1 as impl_props_casemap_unfold_v1;
+#[doc(inline)]
+pub use __impliterable_props_casemap_unfold_v1 as impliterable_props_casemap_unfold_v1;
