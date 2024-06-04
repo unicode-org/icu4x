@@ -662,13 +662,13 @@ mod private {
 /// A collection of marker types associated with all calendars.
 ///
 /// This is used to group together the calendar-specific marker types that produce a common
-/// [`DynDataMarker`]. For example, this trait can be implemented for [`YearNamesV1Marker`].
+/// [`DynamicDataMarker`]. For example, this trait can be implemented for [`YearNamesV1Marker`].
 ///
 /// This trait serves as a building block for a cross-calendar [`BoundDataProvider`].
 #[cfg(any(feature = "datagen", feature = "experimental"))]
 pub trait CalMarkers<M>: private::Sealed
 where
-    M: DynDataMarker,
+    M: DynamicDataMarker,
 {
     /// The type for a [`Buddhist`] calendar
     type Buddhist: DataMarker<Yokeable = M::Yokeable>;
@@ -727,7 +727,7 @@ impl private::Sealed for NoDataCalMarkers {}
 #[cfg(any(feature = "datagen", feature = "experimental"))]
 impl<M> CalMarkers<M> for NoDataCalMarkers
 where
-    M: DynDataMarker,
+    M: DynamicDataMarker,
 {
     type Buddhist = NeverMarker<M::Yokeable>;
     type Chinese = NeverMarker<M::Yokeable>;
@@ -769,7 +769,7 @@ impl<H, P> AnyCalendarProvider<H, P> {
 #[cfg(feature = "experimental")]
 impl<M, H, P> BoundDataProvider<M> for AnyCalendarProvider<H, P>
 where
-    M: DynDataMarker,
+    M: DynamicDataMarker,
     H: CalMarkers<M>,
     P: Sized
         + DataProvider<H::Buddhist>

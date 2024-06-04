@@ -18,7 +18,7 @@
 use crate::ListLength;
 use alloc::borrow::Cow;
 use icu_provider::prelude::*;
-use icu_provider::DynDataMarker;
+use icu_provider::DynamicDataMarker;
 
 mod serde_dfa;
 pub use serde_dfa::SerdeDFA;
@@ -102,7 +102,7 @@ impl<'de> serde::Deserialize<'de> for ListFormatterPatternsV1<'de> {
 
 pub(crate) struct ErasedListV1Marker;
 
-impl DynDataMarker for ErasedListV1Marker {
+impl DynamicDataMarker for ErasedListV1Marker {
     type Yokeable = ListFormatterPatternsV1<'static>;
 }
 

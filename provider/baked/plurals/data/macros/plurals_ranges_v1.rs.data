@@ -11,67 +11,67 @@ macro_rules! __impl_plurals_ranges_v1 {
         #[clippy::msrv = "1.70"]
         impl icu_provider::DataProvider<icu::plurals::provider::PluralRangesV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::plurals::provider::PluralRangesV1Marker>, icu_provider::DataError> {
-                static RO: <icu::plurals::provider::PluralRangesV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::plurals::provider::PluralRangesV1 {
+                static RO: <icu::plurals::provider::PluralRangesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::plurals::provider::PluralRangesV1 {
                     ranges: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"B") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x04") })
                     },
                 };
-                static FA: <icu::plurals::provider::PluralRangesV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::plurals::provider::PluralRangesV1 {
+                static FA: <icu::plurals::provider::PluralRangesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::plurals::provider::PluralRangesV1 {
                     ranges: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\"") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") })
                     },
                 };
-                static LV: <icu::plurals::provider::PluralRangesV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::plurals::provider::PluralRangesV1 {
+                static LV: <icu::plurals::provider::PluralRangesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::plurals::provider::PluralRangesV1 {
                     ranges: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x11!") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0\0") })
                     },
                 };
-                static KA: <icu::plurals::provider::PluralRangesV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::plurals::provider::PluralRangesV1 {
+                static KA: <icu::plurals::provider::PluralRangesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::plurals::provider::PluralRangesV1 {
                     ranges: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02 ") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\x02") })
                     },
                 };
-                static AF: <icu::plurals::provider::PluralRangesV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::plurals::provider::PluralRangesV1 {
+                static AF: <icu::plurals::provider::PluralRangesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::plurals::provider::PluralRangesV1 {
                     ranges: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") })
                     },
                 };
-                static MK: <icu::plurals::provider::PluralRangesV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::plurals::provider::PluralRangesV1 {
+                static MK: <icu::plurals::provider::PluralRangesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::plurals::provider::PluralRangesV1 {
                     ranges: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02\"") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0") })
                     },
                 };
-                static SL: <icu::plurals::provider::PluralRangesV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::plurals::provider::PluralRangesV1 {
+                static SL: <icu::plurals::provider::PluralRangesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::plurals::provider::PluralRangesV1 {
                     ranges: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02\"2B") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x04\x04\x04\x04") })
                     },
                 };
-                static HE: <icu::plurals::provider::PluralRangesV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::plurals::provider::PluralRangesV1 {
+                static HE: <icu::plurals::provider::PluralRangesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::plurals::provider::PluralRangesV1 {
                     ranges: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02\x03#") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0\0") })
                     },
                 };
-                static AR: <icu::plurals::provider::PluralRangesV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::plurals::provider::PluralRangesV1 {
+                static AR: <icu::plurals::provider::PluralRangesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::plurals::provider::PluralRangesV1 {
                     ranges: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02\x03\x12\x13#") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0\x01\x01\0") })
                     },
                 };
-                static UND: <icu::plurals::provider::PluralRangesV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::plurals::provider::PluralRangesV1 {
+                static UND: <icu::plurals::provider::PluralRangesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::plurals::provider::PluralRangesV1 {
                     ranges: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::ZeroVec::new())
                     },
                 };
-                static VALUES: [&<icu::plurals::provider::PluralRangesV1Marker as icu_provider::DynDataMarker>::Yokeable; 25usize] = [&AF, &AR, &AF, &AF, &AF, &AF, &AF, &AF, &FA, &AF, &HE, &AF, &KA, &LV, &MK, &AF, &FA, &AF, &RO, &FA, &AF, &SL, &AF, &UND, &AF];
+                static VALUES: [&<icu::plurals::provider::PluralRangesV1Marker as icu_provider::DynamicDataMarker>::Yokeable; 25usize] = [&AF, &AR, &AF, &AF, &AF, &AF, &AF, &AF, &FA, &AF, &HE, &AF, &KA, &LV, &MK, &AF, &FA, &AF, &RO, &FA, &AF, &SL, &AF, &UND, &AF];
                 static KEYS: [&str; 25usize] = ["af", "ar", "bg", "ca", "en", "es", "et", "eu", "fa", "fi", "he", "ia", "ka", "lv", "mk", "no", "or", "pcm", "ro", "sd", "si", "sl", "sv", "und", "ur"];
                 let mut metadata = icu_provider::DataResponseMetadata::default();
                 let payload = if let Ok(payload) = KEYS.binary_search_by(|k| req.legacy_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {

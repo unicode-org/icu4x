@@ -17,7 +17,7 @@
 
 use crate::rules::runtime::ast::Rule;
 use icu_provider::prelude::*;
-use icu_provider::DynDataMarker;
+use icu_provider::DynamicDataMarker;
 
 #[cfg(feature = "compiled_data")]
 #[derive(Debug)]
@@ -94,7 +94,7 @@ pub struct PluralRulesV1<'data> {
 
 pub(crate) struct ErasedPluralRulesV1Marker;
 
-impl DynDataMarker for ErasedPluralRulesV1Marker {
+impl DynamicDataMarker for ErasedPluralRulesV1Marker {
     type Yokeable = PluralRulesV1<'static>;
 }
 
