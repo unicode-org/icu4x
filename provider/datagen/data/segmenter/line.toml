@@ -452,7 +452,7 @@ break_state = false
 # LB23
 # (LB1 AL = AI, AL, SA or XX)
 # (LB10 AL = CM)
-left = [ "AI", "AL", "SA", "XX", "HL", "CM" ]
+left = [ "AI", "AL", "SA", "XX", "HL", "CM", "ZWJ" ]
 right = [ "NU" ]
 break_state = false
 
@@ -487,7 +487,7 @@ break_state = false
 # LB24
 # (LB1 AL = AI, AL, SA or XX)
 # (LB10 AL = CM)
-left = [ "AI", "AL", "SA", "XX", "HL", "CM" ]
+left = [ "AI", "AL", "SA", "XX", "HL", "CM", "ZWJ" ]
 right = [ "PR", "PO", "PR_EAW", "PO_EAW" ]
 break_state = false
 
@@ -543,7 +543,7 @@ break_state = false
 # LB28
 # (LB1 AL = AI, AL, SA or XX)
 # (LB10 AL = CM)
-left = [ "AL", "HL", "AI", "XX", "SA", "CM" ]
+left = [ "AL", "HL", "AI", "XX", "SA", "CM", "ZWJ" ]
 right = [ "AL", "HL", "AI", "XX", "SA" ]
 break_state = false
 
@@ -558,7 +558,7 @@ break_state = false
 # LB30
 # (LB1 AL = AI, AL, SA or XX)
 # (LB10 AL = CM)
-left = [ "AL", "HL", "NU", "AI", "XX", "SA", "CM" ]
+left = [ "AL", "HL", "NU", "AI", "XX", "SA", "CM", "ZWJ" ]
 right = [ "OP_OP30" ]
 break_state = false
 
