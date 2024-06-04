@@ -896,7 +896,8 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
         'a: loop {
             debug_assert!(!self.is_eof());
             let left_codepoint = self.get_current_codepoint()?;
-            let mut left_prop = lb9_left.unwrap_or_else(|| { self.get_linebreak_property(left_codepoint)});
+            let mut left_prop =
+                lb9_left.unwrap_or_else(|| self.get_linebreak_property(left_codepoint));
             let after_zwj = lb8a_after_lb9 || (lb9_left.is_none() && left_prop == ZWJ);
             self.advance_iter();
 
@@ -904,7 +905,14 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
                 return Some(self.len);
             };
             let right_prop = self.get_linebreak_property(right_codepoint);
-            if (right_prop == CM || right_prop == ZWJ) && left_prop != BK  && left_prop !=  CR  && left_prop != LF  && left_prop !=  NL  && left_prop !=  SP  && left_prop !=  ZW {
+            if (right_prop == CM || right_prop == ZWJ)
+                && left_prop != BK
+                && left_prop != CR
+                && left_prop != LF
+                && left_prop != NL
+                && left_prop != SP
+                && left_prop != ZW
+            {
                 lb9_left = Some(left_prop);
                 lb8a_after_lb9 = right_prop == ZWJ;
                 continue;
@@ -976,7 +984,13 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
                 // Line break uses more that 64 states, so they spill over into the intermediate range,
                 // and we cannot change that at the moment
                 BreakState::Intermediate(index) => index + 64,
-                BreakState::Break | BreakState::NoMatch => if after_zwj { continue } else { return self.get_current_position() },
+                BreakState::Break | BreakState::NoMatch => {
+                    if after_zwj {
+                        continue;
+                    } else {
+                        return self.get_current_position();
+                    }
+                }
                 BreakState::Keep => continue,
             };
 
@@ -1006,7 +1020,14 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
                     return Some(self.len);
                 };
 
-                if (prop == CM || prop == ZWJ) && left_prop_pre_lb9 != BK  && left_prop_pre_lb9 !=  CR  && left_prop_pre_lb9 != LF  && left_prop_pre_lb9 !=  NL  && left_prop_pre_lb9 !=  SP  && left_prop_pre_lb9 !=  ZW {
+                if (prop == CM || prop == ZWJ)
+                    && left_prop_pre_lb9 != BK
+                    && left_prop_pre_lb9 != CR
+                    && left_prop_pre_lb9 != LF
+                    && left_prop_pre_lb9 != NL
+                    && left_prop_pre_lb9 != SP
+                    && left_prop_pre_lb9 != ZW
+                {
                     left_prop_pre_lb9 = prop;
                     continue;
                 }
@@ -1016,9 +1037,19 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
                     BreakState::NoMatch => {
                         self.iter = previous_iter;
                         self.current_pos_data = previous_pos_data;
-                        if after_zwj {  continue 'a } else {return self.get_current_position()}
+                        if after_zwj {
+                            continue 'a;
+                        } else {
+                            return self.get_current_position();
+                        }
                     }
-                    BreakState::Break => if after_zwj { continue 'a } else {return self.get_current_position()},
+                    BreakState::Break => {
+                        if after_zwj {
+                            continue 'a;
+                        } else {
+                            return self.get_current_position();
+                        }
+                    }
                     BreakState::Index(i) => {
                         index = i;
                         previous_iter = self.iter.clone();
