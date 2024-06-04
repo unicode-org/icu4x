@@ -4,6 +4,7 @@
 
 - `icu_datetime`
   - Fix incorrect assertion in week-of-year formatting (https://github.com/unicode-org/icu4x/issues/4977)
+  - Fix Japanese calendar Gregorian era year 0 (https://github.com/unicode-org/icu4x/issues/4968)
 
 ## icu4x 1.5 (May 28, 2024)
 
