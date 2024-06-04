@@ -3,7 +3,3 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 //! Experimental.
-
-pub mod currency;
-pub mod provider;
-pub mod units;
