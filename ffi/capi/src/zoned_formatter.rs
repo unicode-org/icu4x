@@ -12,7 +12,7 @@ pub mod ffi {
     use crate::{
         datetime::ffi::ICU4XDateTime, datetime::ffi::ICU4XIsoDateTime,
         datetime_formatter::ffi::ICU4XDateLength, datetime_formatter::ffi::ICU4XTimeLength,
-        errors::ffi::ICU4XError, locale::ffi::ICU4XLocale, provider::ffi::ICU4XDataProvider,
+        errors::ffi::ICU4XError, locale_core::ffi::ICU4XLocale, provider::ffi::ICU4XDataProvider,
         timezone::ffi::ICU4XCustomTimeZone, timezone_formatter::ffi::ICU4XIsoTimeZoneOptions,
     };
 
@@ -98,11 +98,10 @@ pub mod ffi {
             &self,
             datetime: &ICU4XIsoDateTime,
             time_zone: &ICU4XCustomTimeZone,
-            write: &mut diplomat_runtime::DiplomatWriteable,
-        ) -> Result<(), ICU4XError> {
+            write: &mut diplomat_runtime::DiplomatWrite,
+        ) {
             let greg = DateTime::new_from_iso(datetime.0, Gregorian);
-            self.0.format(&greg, &time_zone.0).write_to(write)?;
-            Ok(())
+            let _infallible = self.0.format(&greg, &time_zone.0).write_to(write);
         }
     }
 
@@ -176,9 +175,9 @@ pub mod ffi {
             &self,
             datetime: &ICU4XDateTime,
             time_zone: &ICU4XCustomTimeZone,
-            write: &mut diplomat_runtime::DiplomatWriteable,
+            write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), ICU4XError> {
-            self.0.format(&datetime.0, &time_zone.0)?.write_to(write)?;
+            let _infallible = self.0.format(&datetime.0, &time_zone.0)?.write_to(write);
             Ok(())
         }
 
@@ -193,11 +192,12 @@ pub mod ffi {
             &self,
             datetime: &ICU4XIsoDateTime,
             time_zone: &ICU4XCustomTimeZone,
-            write: &mut diplomat_runtime::DiplomatWriteable,
+            write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), ICU4XError> {
-            self.0
+            let _infallible = self
+                .0
                 .format(&datetime.0.to_any(), &time_zone.0)?
-                .write_to(write)?;
+                .write_to(write);
             Ok(())
         }
     }

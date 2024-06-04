@@ -165,7 +165,7 @@ where
     /// - `deserialize_postcard_1`
     /// - `deserialize_bincode_1`
     fn load_data(&self, key: DataKey, req: DataRequest) -> Result<DataResponse<M>, DataError> {
-        let buffer_response = BufferProvider::load_buffer(self.0, key, req)?;
+        let buffer_response = self.0.load_data(key, req)?;
         let buffer_format = buffer_response.metadata.buffer_format.ok_or_else(|| {
             DataError::custom("BufferProvider didn't set BufferFormat").with_req(key, req)
         })?;

@@ -4,7 +4,7 @@ part of 'lib.g.dart';
 
 /// An ICU4X Locale, capable of representing strings like `"en-US"`.
 ///
-/// See the [Rust documentation for `Locale`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html) for more information.
+/// See the [Rust documentation for `Locale`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html) for more information.
 final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -30,7 +30,7 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
   /// performance are critical and the locale is of a known shape (such as
   /// `aa-BB`) use `create_und`, `set_language`, `set_script`, and `set_region`.
   ///
-  /// See the [Rust documentation for `try_from_bytes`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#method.try_from_bytes) for more information.
+  /// See the [Rust documentation for `try_from_bytes`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.try_from_bytes) for more information.
   ///
   /// Throws [Error] on failure.
   factory Locale.fromString(String name) {
@@ -46,7 +46,7 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
 
   /// Construct a default undefined [`Locale`] "und".
   ///
-  /// See the [Rust documentation for `UND`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#associatedconstant.UND) for more information.
+  /// See the [Rust documentation for `UND`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#associatedconstant.UND) for more information.
   factory Locale.und() {
     final result = _ICU4XLocale_create_und();
     return Locale._fromFfi(result, []);
@@ -54,61 +54,49 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
 
   /// Clones the [`Locale`].
   ///
-  /// See the [Rust documentation for `Locale`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html) for more information.
+  /// See the [Rust documentation for `Locale`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html) for more information.
   Locale clone() {
     final result = _ICU4XLocale_clone(_ffi);
     return Locale._fromFfi(result, []);
   }
 
-  /// Write a string representation of the `LanguageIdentifier` part of
-  /// [`Locale`] to `write`.
+  /// Returns a string representation of the `LanguageIdentifier` part of
+  /// [`Locale`].
   ///
-  /// See the [Rust documentation for `id`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#structfield.id) for more information.
-  ///
-  /// Throws [Error] on failure.
+  /// See the [Rust documentation for `id`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#structfield.id) for more information.
   String get basename {
-    final writeable = _Writeable();
-    final result = _ICU4XLocale_basename(_ffi, writeable._ffi);
-    if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
-    }
-    return writeable.finalize();
+    final write = _Write();
+    _ICU4XLocale_basename(_ffi, write._ffi);
+    return write.finalize();
   }
 
-  /// Write a string representation of the unicode extension to `write`
+  /// Returns a string representation of the unicode extension.
   ///
-  /// See the [Rust documentation for `extensions`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#structfield.extensions) for more information.
-  ///
-  /// Throws [Error] on failure.
-  String getUnicodeExtension(String bytes) {
+  /// See the [Rust documentation for `extensions`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#structfield.extensions) for more information.
+  String? getUnicodeExtension(String bytes) {
     final temp = ffi2.Arena();
     final bytesView = bytes.utf8View;
-    final writeable = _Writeable();
-    final result = _ICU4XLocale_get_unicode_extension(_ffi, bytesView.allocIn(temp), bytesView.length, writeable._ffi);
+    final write = _Write();
+    final result = _ICU4XLocale_get_unicode_extension(_ffi, bytesView.allocIn(temp), bytesView.length, write._ffi);
     temp.releaseAll();
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      return null;
     }
-    return writeable.finalize();
+    return write.finalize();
   }
 
-  /// Write a string representation of [`Locale`] language to `write`
+  /// Returns a string representation of [`Locale`] language.
   ///
-  /// See the [Rust documentation for `id`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#structfield.id) for more information.
-  ///
-  /// Throws [Error] on failure.
+  /// See the [Rust documentation for `id`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#structfield.id) for more information.
   String get language {
-    final writeable = _Writeable();
-    final result = _ICU4XLocale_language(_ffi, writeable._ffi);
-    if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
-    }
-    return writeable.finalize();
+    final write = _Write();
+    _ICU4XLocale_language(_ffi, write._ffi);
+    return write.finalize();
   }
 
   /// Set the language part of the [`Locale`].
   ///
-  /// See the [Rust documentation for `try_from_bytes`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#method.try_from_bytes) for more information.
+  /// See the [Rust documentation for `try_from_bytes`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.try_from_bytes) for more information.
   ///
   /// Throws [Error] on failure.
   set language(String bytes) {
@@ -122,26 +110,24 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
     
   }
 
-  /// Write a string representation of [`Locale`] region to `write`
+  /// Returns a string representation of [`Locale`] region.
   ///
-  /// See the [Rust documentation for `id`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#structfield.id) for more information.
-  ///
-  /// Throws [Error] on failure.
-  String get region {
-    final writeable = _Writeable();
-    final result = _ICU4XLocale_region(_ffi, writeable._ffi);
+  /// See the [Rust documentation for `id`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#structfield.id) for more information.
+  String? get region {
+    final write = _Write();
+    final result = _ICU4XLocale_region(_ffi, write._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      return null;
     }
-    return writeable.finalize();
+    return write.finalize();
   }
 
   /// Set the region part of the [`Locale`].
   ///
-  /// See the [Rust documentation for `try_from_bytes`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#method.try_from_bytes) for more information.
+  /// See the [Rust documentation for `try_from_bytes`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.try_from_bytes) for more information.
   ///
   /// Throws [Error] on failure.
-  set region(String bytes) {
+  void setRegion(String bytes) {
     final temp = ffi2.Arena();
     final bytesView = bytes.utf8View;
     final result = _ICU4XLocale_set_region(_ffi, bytesView.allocIn(temp), bytesView.length);
@@ -152,26 +138,24 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
     
   }
 
-  /// Write a string representation of [`Locale`] script to `write`
+  /// Returns a string representation of [`Locale`] script.
   ///
-  /// See the [Rust documentation for `id`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#structfield.id) for more information.
-  ///
-  /// Throws [Error] on failure.
-  String get script {
-    final writeable = _Writeable();
-    final result = _ICU4XLocale_script(_ffi, writeable._ffi);
+  /// See the [Rust documentation for `id`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#structfield.id) for more information.
+  String? get script {
+    final write = _Write();
+    final result = _ICU4XLocale_script(_ffi, write._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      return null;
     }
-    return writeable.finalize();
+    return write.finalize();
   }
 
   /// Set the script part of the [`Locale`]. Pass an empty string to remove the script.
   ///
-  /// See the [Rust documentation for `try_from_bytes`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#method.try_from_bytes) for more information.
+  /// See the [Rust documentation for `try_from_bytes`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.try_from_bytes) for more information.
   ///
   /// Throws [Error] on failure.
-  set script(String bytes) {
+  void setScript(String bytes) {
     final temp = ffi2.Arena();
     final bytesView = bytes.utf8View;
     final result = _ICU4XLocale_set_script(_ffi, bytesView.allocIn(temp), bytesView.length);
@@ -186,37 +170,32 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
   ///
   /// Use ICU4XLocaleCanonicalizer for better control and functionality
   ///
-  /// See the [Rust documentation for `canonicalize`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#method.canonicalize) for more information.
+  /// See the [Rust documentation for `canonicalize`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.canonicalize) for more information.
   ///
   /// Throws [Error] on failure.
   static String canonicalize(String bytes) {
     final temp = ffi2.Arena();
     final bytesView = bytes.utf8View;
-    final writeable = _Writeable();
-    final result = _ICU4XLocale_canonicalize(bytesView.allocIn(temp), bytesView.length, writeable._ffi);
+    final write = _Write();
+    final result = _ICU4XLocale_canonicalize(bytesView.allocIn(temp), bytesView.length, write._ffi);
     temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
     }
-    return writeable.finalize();
+    return write.finalize();
   }
 
-  /// Write a string representation of [`Locale`] to `write`
+  /// Returns a string representation of [`Locale`].
   ///
-  /// See the [Rust documentation for `write_to`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#method.write_to) for more information.
-  ///
-  /// Throws [Error] on failure.
+  /// See the [Rust documentation for `write_to`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.write_to) for more information.
   @override
   String toString() {
-    final writeable = _Writeable();
-    final result = _ICU4XLocale_to_string(_ffi, writeable._ffi);
-    if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
-    }
-    return writeable.finalize();
+    final write = _Write();
+    _ICU4XLocale_to_string(_ffi, write._ffi);
+    return write.finalize();
   }
 
-  /// See the [Rust documentation for `normalizing_eq`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#method.normalizing_eq) for more information.
+  /// See the [Rust documentation for `normalizing_eq`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.normalizing_eq) for more information.
   bool normalizingEq(String other) {
     final temp = ffi2.Arena();
     final otherView = other.utf8View;
@@ -225,7 +204,7 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
     return result;
   }
 
-  /// See the [Rust documentation for `strict_cmp`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#method.strict_cmp) for more information.
+  /// See the [Rust documentation for `strict_cmp`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.strict_cmp) for more information.
   int compareToString(String other) {
     final temp = ffi2.Arena();
     final otherView = other.utf8View;
@@ -234,7 +213,7 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
     return result;
   }
 
-  /// See the [Rust documentation for `total_cmp`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#method.total_cmp) for more information.
+  /// See the [Rust documentation for `total_cmp`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.total_cmp) for more information.
   int compareTo(Locale other) {
     final result = _ICU4XLocale_total_cmp_(_ffi, other._ffi);
     return result;
@@ -267,19 +246,19 @@ external ffi.Pointer<ffi.Opaque> _ICU4XLocale_create_und();
 external ffi.Pointer<ffi.Opaque> _ICU4XLocale_clone(ffi.Pointer<ffi.Opaque> self);
 
 @meta.ResourceIdentifier('ICU4XLocale_basename')
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocale_basename')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocale_basename')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _ICU4XLocale_basename(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> writeable);
+external void _ICU4XLocale_basename(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> write);
 
 @meta.ResourceIdentifier('ICU4XLocale_get_unicode_extension')
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocale_get_unicode_extension')
+@ffi.Native<_ResultVoidVoid Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocale_get_unicode_extension')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _ICU4XLocale_get_unicode_extension(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> bytesData, int bytesLength, ffi.Pointer<ffi.Opaque> writeable);
+external _ResultVoidVoid _ICU4XLocale_get_unicode_extension(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> bytesData, int bytesLength, ffi.Pointer<ffi.Opaque> write);
 
 @meta.ResourceIdentifier('ICU4XLocale_language')
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocale_language')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocale_language')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _ICU4XLocale_language(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> writeable);
+external void _ICU4XLocale_language(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> write);
 
 @meta.ResourceIdentifier('ICU4XLocale_set_language')
 @ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XLocale_set_language')
@@ -287,9 +266,9 @@ external _ResultVoidInt32 _ICU4XLocale_language(ffi.Pointer<ffi.Opaque> self, ff
 external _ResultVoidInt32 _ICU4XLocale_set_language(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> bytesData, int bytesLength);
 
 @meta.ResourceIdentifier('ICU4XLocale_region')
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocale_region')
+@ffi.Native<_ResultVoidVoid Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocale_region')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _ICU4XLocale_region(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> writeable);
+external _ResultVoidVoid _ICU4XLocale_region(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> write);
 
 @meta.ResourceIdentifier('ICU4XLocale_set_region')
 @ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XLocale_set_region')
@@ -297,9 +276,9 @@ external _ResultVoidInt32 _ICU4XLocale_region(ffi.Pointer<ffi.Opaque> self, ffi.
 external _ResultVoidInt32 _ICU4XLocale_set_region(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> bytesData, int bytesLength);
 
 @meta.ResourceIdentifier('ICU4XLocale_script')
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocale_script')
+@ffi.Native<_ResultVoidVoid Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocale_script')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _ICU4XLocale_script(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> writeable);
+external _ResultVoidVoid _ICU4XLocale_script(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> write);
 
 @meta.ResourceIdentifier('ICU4XLocale_set_script')
 @ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XLocale_set_script')
@@ -309,12 +288,12 @@ external _ResultVoidInt32 _ICU4XLocale_set_script(ffi.Pointer<ffi.Opaque> self, 
 @meta.ResourceIdentifier('ICU4XLocale_canonicalize')
 @ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocale_canonicalize')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _ICU4XLocale_canonicalize(ffi.Pointer<ffi.Uint8> bytesData, int bytesLength, ffi.Pointer<ffi.Opaque> writeable);
+external _ResultVoidInt32 _ICU4XLocale_canonicalize(ffi.Pointer<ffi.Uint8> bytesData, int bytesLength, ffi.Pointer<ffi.Opaque> write);
 
 @meta.ResourceIdentifier('ICU4XLocale_to_string')
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocale_to_string')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocale_to_string')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _ICU4XLocale_to_string(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> writeable);
+external void _ICU4XLocale_to_string(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> write);
 
 @meta.ResourceIdentifier('ICU4XLocale_normalizing_eq')
 @ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XLocale_normalizing_eq')

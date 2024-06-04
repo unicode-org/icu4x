@@ -39,7 +39,7 @@ size_test!(DateFormatter, date_formatter_size, 4456);
 /// ```
 /// use icu::calendar::Date;
 /// use icu::datetime::{options::length, DateFormatter};
-/// use icu::locid::locale;
+/// use icu::locale::locale;
 /// use writeable::assert_writeable_eq;
 ///
 /// let length = length::Date::Medium;
@@ -81,7 +81,7 @@ impl DateFormatter {
     /// ```
     /// use icu::calendar::Date;
     /// use icu::datetime::{options::length, DateFormatter};
-    /// use icu::locid::locale;
+    /// use icu::locale::locale;
     /// use writeable::assert_writeable_eq;
     ///
     /// let length = length::Date::Medium;
@@ -253,7 +253,7 @@ impl DateFormatter {
 fn serde_constructor() {
     use icu::calendar::Date;
     use icu::datetime::{options::length, DateFormatter};
-    use icu::locid::locale;
+    use icu::locale::locale;
     use writeable::assert_writeable_eq;
 
     let provider = icu_provider_blob::BlobDataProvider::try_new_from_static_blob(include_bytes!(

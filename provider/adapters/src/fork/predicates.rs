@@ -73,7 +73,7 @@ impl ForkByErrorPredicate for MissingDataKeyPredicate {
 /// use icu_provider_fs::FsDataProvider;
 /// use icu_provider::prelude::*;
 /// use icu_provider::hello_world::HelloWorldV1Marker;
-/// use icu_locid::langid;
+/// use icu_locale_core::langid;
 ///
 /// // The `tests` directory contains two separate "language packs" for Hello World data.
 /// let provider_de = FsDataProvider::try_new("tests/data/langtest/de").unwrap();
@@ -92,7 +92,7 @@ impl ForkByErrorPredicate for MissingDataKeyPredicate {
 ///     .as_deserializing()
 ///     .load(DataRequest {
 ///         locale: &langid!("de").into(),
-///         metadata: Default::default(),
+///         ..Default::default()
 ///     })
 ///     .expect("Loading should succeed")
 ///     .take_payload()
@@ -104,7 +104,7 @@ impl ForkByErrorPredicate for MissingDataKeyPredicate {
 ///     .as_deserializing()
 ///     .load(DataRequest {
 ///         locale: &langid!("ro").into(),
-///         metadata: Default::default(),
+///         ..Default::default()
 ///     })
 ///     .expect("Loading should succeed")
 ///     .take_payload()
@@ -118,7 +118,7 @@ impl ForkByErrorPredicate for MissingDataKeyPredicate {
 ///     &provider.as_deserializing(),
 ///     DataRequest {
 ///         locale: &langid!("en").into(),
-///         metadata: Default::default(),
+///         ..Default::default()
 ///     }
 /// )
 /// .expect_err("No English data");

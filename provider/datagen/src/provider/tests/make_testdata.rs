@@ -41,7 +41,7 @@ fn make_testdata() {
                 crate::fs_exporter::FilesystemExporter::try_new(
                     Box::new(crate::fs_exporter::serializers::Json::pretty()),
                     {
-                        let mut options = crate::fs_exporter::ExporterOptions::default();
+                        let mut options = crate::fs_exporter::Options::default();
                         options.root = "tests/data/json".into();
                         options.overwrite = crate::fs_exporter::OverwriteOption::RemoveAndReplace;
                         options
@@ -96,11 +96,12 @@ impl<E: DataExporter> DataExporter for StubExporter<E> {
         &self,
         key: DataKey,
         locale: &DataLocale,
+        key_attributes: &DataKeyAttributes,
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
         // put `und-*` but not any other locales
         if locale.is_langid_und() {
-            self.0.put_payload(key, locale, payload)
+            self.0.put_payload(key, locale, key_attributes, payload)
         } else {
             Ok(())
         }
@@ -172,6 +173,7 @@ impl<F: Write + Send + Sync> DataExporter for PostcardTestingExporter<F> {
         &self,
         key: DataKey,
         locale: &DataLocale,
+        key_attributes: &DataKeyAttributes,
         payload_before: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
         use postcard::{
@@ -229,10 +231,12 @@ impl<F: Write + Send + Sync> DataExporter for PostcardTestingExporter<F> {
         crate::registry!(cb);
 
         if payload_before != &payload_after {
-            self.rountrip_errors
-                .lock()
-                .expect("poison")
-                .insert((key, locale.to_string()));
+            self.rountrip_errors.lock().expect("poison").insert((
+                key,
+                locale.to_string()
+                    + if key_attributes.is_empty() { "" } else { "-x" }
+                    + key_attributes,
+            ));
         }
 
         if deallocated != allocated {
@@ -253,17 +257,25 @@ impl<F: Write + Send + Sync> DataExporter for PostcardTestingExporter<F> {
                 .insert(key);
         }
 
-        self.size_hash
-            .lock()
-            .expect("poison")
-            .insert((key, locale.to_string()), (size, hash));
+        self.size_hash.lock().expect("poison").insert(
+            (
+                key,
+                DataRequest {
+                    locale,
+                    key_attributes,
+                    ..Default::default()
+                }
+                .legacy_encode(),
+            ),
+            (size, hash),
+        );
 
         Ok(())
     }
 
     fn close(&mut self) -> Result<(), DataError> {
-        for ((key, locale), (size, hash)) in self.size_hash.get_mut().expect("poison") {
-            writeln!(&mut self.fingerprints, "{key}, {locale}, {size}B, {hash:x}")?;
+        for ((key, req), (size, hash)) in self.size_hash.get_mut().expect("poison") {
+            writeln!(&mut self.fingerprints, "{key}, {req}, {size}B, {hash:x}")?;
         }
 
         assert_eq!(

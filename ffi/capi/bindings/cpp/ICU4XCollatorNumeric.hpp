@@ -1,25 +1,30 @@
 #ifndef ICU4XCollatorNumeric_HPP
 #define ICU4XCollatorNumeric_HPP
+
+#include "ICU4XCollatorNumeric.d.hpp"
+
+#include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
-#include <algorithm>
 #include <memory>
-#include <variant>
 #include <optional>
 #include "diplomat_runtime.hpp"
-
 #include "ICU4XCollatorNumeric.h"
 
 
+inline capi::ICU4XCollatorNumeric ICU4XCollatorNumeric::AsFFI() const {
+  return static_cast<capi::ICU4XCollatorNumeric>(value);
+}
 
-/**
- * See the [Rust documentation for `Numeric`](https://docs.rs/icu/latest/icu/collator/enum.Numeric.html) for more information.
- */
-enum struct ICU4XCollatorNumeric {
-  Auto = 0,
-  Off = 1,
-  On = 2,
-};
-
-#endif
+inline ICU4XCollatorNumeric ICU4XCollatorNumeric::FromFFI(capi::ICU4XCollatorNumeric c_enum) {
+  switch (c_enum) {
+    case capi::ICU4XCollatorNumeric_Auto:
+    case capi::ICU4XCollatorNumeric_Off:
+    case capi::ICU4XCollatorNumeric_On:
+      return static_cast<ICU4XCollatorNumeric::Value>(c_enum);
+    default:
+      abort();
+  }
+}
+#endif // ICU4XCollatorNumeric_HPP

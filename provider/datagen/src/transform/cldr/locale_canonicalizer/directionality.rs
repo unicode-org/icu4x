@@ -2,9 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use std::collections::HashSet;
+
 use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
-use icu_locid_transform::provider::*;
+use icu_locale::provider::*;
 
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
@@ -22,8 +24,8 @@ impl DataProvider<ScriptDirectionV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProvider<ScriptDirectionV1Marker> for DatagenProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        Ok(vec![Default::default()])
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+        Ok(HashSet::from_iter([Default::default()]))
     }
 }
 
@@ -50,7 +52,7 @@ impl From<&cldr_serde::directionality::Resource> for ScriptDirectionV1<'_> {
 
 #[test]
 fn test_basic() {
-    use icu_locid::subtags::script;
+    use icu_locale_core::subtags::script;
 
     let provider = DatagenProvider::new_testing();
     let data: DataPayload<ScriptDirectionV1Marker> = provider

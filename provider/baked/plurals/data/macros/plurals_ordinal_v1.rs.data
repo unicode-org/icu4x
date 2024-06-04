@@ -6,9 +6,9 @@
 #[macro_export]
 macro_rules! __impl_plurals_ordinal_v1 {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.67"]
+        #[clippy::msrv = "1.70"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
-        #[clippy::msrv = "1.67"]
+        #[clippy::msrv = "1.70"]
         impl icu_provider::DataProvider<icu::plurals::provider::OrdinalV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::plurals::provider::OrdinalV1Marker>, icu_provider::DataError> {
                 static UND: <icu::plurals::provider::OrdinalV1Marker as icu_provider::DataMarker>::Yokeable = icu::plurals::provider::PluralRulesV1 { zero: None, one: None, two: None, few: None, many: None };
@@ -38,13 +38,13 @@ macro_rules! __impl_plurals_ordinal_v1 {
                 static VALUES: [&<icu::plurals::provider::OrdinalV1Marker as icu_provider::DataMarker>::Yokeable; 35usize] = [&AS, &AZ, &BE, &BLO, &AS, &CA, &CY, &EN, &FIL, &FIL, &FIL, &GD, &GU, &GU, &HU, &FIL, &IT, &KA, &KK, &LIJ, &FIL, &MK, &MR, &FIL, &NE, &OR, &FIL, &IT, &SQ, &SV, &TK, &UK, &UND, &IT, &FIL];
                 static KEYS: [&str; 35usize] = ["as", "az", "be", "blo", "bn", "ca", "cy", "en", "fil", "fr", "ga", "gd", "gu", "hi", "hu", "hy", "it", "ka", "kk", "lij", "lo", "mk", "mr", "ms", "ne", "or", "ro", "sc", "sq", "sv", "tk", "uk", "und", "vec", "vi"];
                 let mut metadata = icu_provider::DataResponseMetadata::default();
-                let payload = if let Ok(payload) = KEYS.binary_search_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
+                let payload = if let Ok(payload) = KEYS.binary_search_by(|k| req.legacy_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
                     payload
                 } else {
-                    const FALLBACKER: icu::locid_transform::fallback::LocaleFallbackerWithConfig<'static> = icu::locid_transform::fallback::LocaleFallbacker::new().for_config(<icu::plurals::provider::OrdinalV1Marker as icu_provider::KeyedDataMarker>::KEY.fallback_config());
+                    const FALLBACKER: icu::locale::fallback::LocaleFallbackerWithConfig<'static> = icu::locale::fallback::LocaleFallbacker::new().for_config(<icu::plurals::provider::OrdinalV1Marker as icu_provider::KeyedDataMarker>::KEY.fallback_config());
                     let mut fallback_iterator = FALLBACKER.fallback_for(req.locale.clone());
                     loop {
-                        if let Ok(payload) = KEYS.binary_search_by(|k| fallback_iterator.get().strict_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
+                        if let Ok(payload) = KEYS.binary_search_by(|k| icu_provider::DataRequest { locale: fallback_iterator.get(), ..req }.legacy_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
                             metadata.locale = Some(fallback_iterator.take());
                             break payload;
                         }
@@ -66,10 +66,10 @@ macro_rules! __impl_plurals_ordinal_v1 {
 #[macro_export]
 macro_rules! __impliterable_plurals_ordinal_v1 {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.67"]
+        #[clippy::msrv = "1.70"]
         impl icu_provider::datagen::IterableDataProvider<icu::plurals::provider::OrdinalV1Marker> for $provider {
-            fn supported_locales(&self) -> Result<alloc::vec::Vec<icu_provider::DataLocale>, icu_provider::DataError> {
-                Ok(["as", "az", "be", "blo", "bn", "ca", "cy", "en", "fil", "fr", "ga", "gd", "gu", "hi", "hu", "hy", "it", "ka", "kk", "lij", "lo", "mk", "mr", "ms", "ne", "or", "ro", "sc", "sq", "sv", "tk", "uk", "und", "vec", "vi"].into_iter().map(|s| <icu_provider::DataLocale as core::str::FromStr>::from_str(s).unwrap()).collect())
+            fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataKeyAttributes)>, icu_provider::DataError> {
+                Ok(["as", "az", "be", "blo", "bn", "ca", "cy", "en", "fil", "fr", "ga", "gd", "gu", "hi", "hu", "hy", "it", "ka", "kk", "lij", "lo", "mk", "mr", "ms", "ne", "or", "ro", "sc", "sq", "sv", "tk", "uk", "und", "vec", "vi"].into_iter().filter_map(icu_provider::DataRequest::legacy_decode).collect())
             }
         }
     };

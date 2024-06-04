@@ -8,15 +8,18 @@ export function readString16(wasm, ptr, len) {
   return String.fromCharCode.apply(null, buf)
 }
 
-export function withWriteable(wasm, callback) {
-  const writeable = wasm.diplomat_buffer_writeable_create(0);
+export function withDiplomatWrite(wasm, callback) {
+  const write = wasm.diplomat_buffer_write_create(0);
   try {
-    callback(writeable);
-    const outStringPtr = wasm.diplomat_buffer_writeable_get_bytes(writeable);
-    const outStringLen = wasm.diplomat_buffer_writeable_len(writeable);
+    callback(write);
+    const outStringPtr = wasm.diplomat_buffer_write_get_bytes(write);
+    if (outStringPtr == null) {
+      throw FFIError("Out of memory");
+    }
+    const outStringLen = wasm.diplomat_buffer_write_len(write);
     return readString8(wasm, outStringPtr, outStringLen);
   } finally {
-    wasm.diplomat_buffer_writeable_destroy(writeable);
+    wasm.diplomat_buffer_write_destroy(write);
   }
 }
 

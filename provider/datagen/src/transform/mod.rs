@@ -6,6 +6,8 @@ pub(in crate::provider) mod cldr;
 pub(in crate::provider) mod icuexport;
 pub(in crate::provider) mod segmenter;
 
+use std::collections::HashSet;
+
 use crate::provider::DatagenProvider;
 use icu_provider::datagen::*;
 use icu_provider::hello_world::*;
@@ -19,8 +21,8 @@ impl DataProvider<HelloWorldV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProvider<HelloWorldV1Marker> for DatagenProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        HelloWorldProvider.supported_locales()
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+        HelloWorldProvider.supported_requests()
     }
 }
 
@@ -31,7 +33,7 @@ impl DatagenProvider {
     {
         if <M as KeyedDataMarker>::KEY.metadata().singleton && !req.locale.is_empty() {
             Err(DataErrorKind::ExtraneousLocale)
-        } else if !self.supports_locale(req.locale)? {
+        } else if !self.supports_request(req.locale, req.key_attributes)? {
             Err(DataErrorKind::MissingLocale)
         } else {
             Ok(())
@@ -42,13 +44,13 @@ impl DatagenProvider {
 
 #[test]
 fn test_missing_locale() {
-    use icu_locid::langid;
+    use icu_locale_core::langid;
     let provider = DatagenProvider::new_testing();
     assert!(DataProvider::<HelloWorldV1Marker>::load(
         &provider,
         DataRequest {
             locale: &langid!("fi").into(),
-            metadata: Default::default()
+            ..Default::default()
         }
     )
     .is_ok());
@@ -56,7 +58,7 @@ fn test_missing_locale() {
         &provider,
         DataRequest {
             locale: &langid!("arc").into(),
-            metadata: Default::default()
+            ..Default::default()
         }
     )
     .is_err());

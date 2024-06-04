@@ -30,7 +30,7 @@ use yoke::*;
 /// Load "hello world" data from a postcard blob loaded at runtime:
 ///
 /// ```
-/// use icu_locid::locale;
+/// use icu_locale_core::locale;
 /// use icu_provider::hello_world::HelloWorldFormatter;
 /// use icu_provider_blob::BlobDataProvider;
 /// use writeable::assert_writeable_eq;
@@ -58,7 +58,7 @@ use yoke::*;
 /// Load "hello world" data from a postcard blob statically linked at compile time:
 ///
 /// ```
-/// use icu_locid::locale;
+/// use icu_locale_core::locale;
 /// use icu_provider::hello_world::HelloWorldFormatter;
 /// use icu_provider_blob::BlobDataProvider;
 /// use writeable::assert_writeable_eq;
@@ -112,15 +112,14 @@ impl BlobDataProvider {
         })
     }
 
-    /// For testing purposes only: checks if it is using the V2Bigger format
-    #[doc(hidden)]
+    #[doc(hidden)] // for testing purposes only: checks if it is using the V2Bigger format
     pub fn internal_is_using_v2_bigger_format(&self) -> bool {
         matches!(self.data.get(), BlobSchema::V002Bigger(..))
     }
 }
 
-impl BufferProvider for BlobDataProvider {
-    fn load_buffer(
+impl DynamicDataProvider<BufferMarker> for BlobDataProvider {
+    fn load_data(
         &self,
         key: DataKey,
         req: DataRequest,
@@ -169,7 +168,7 @@ mod test {
 
             assert!(
                 matches!(
-                    provider.load_buffer(HelloWorldV1Marker::KEY, Default::default()),
+                    provider.load_data(HelloWorldV1Marker::KEY, Default::default()),
                     Err(DataError {
                         kind: DataErrorKind::MissingLocale,
                         ..
@@ -201,11 +200,11 @@ mod test {
 
             assert!(
                 matches!(
-                    provider.load_buffer(
+                    provider.load_data(
                         HelloSingletonV1Marker::KEY,
                         DataRequest {
-                            locale: &icu_locid::langid!("de").into(),
-                            metadata: Default::default()
+                            locale: &icu_locale_core::langid!("de").into(),
+                            ..Default::default()
                         }
                     ),
                     Err(DataError {
@@ -218,7 +217,7 @@ mod test {
 
             assert!(
                 matches!(
-                    provider.load_buffer(HelloSingletonV1Marker::KEY, Default::default()),
+                    provider.load_data(HelloSingletonV1Marker::KEY, Default::default()),
                     Err(DataError {
                         kind: DataErrorKind::MissingLocale,
                         ..

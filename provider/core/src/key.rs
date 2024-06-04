@@ -12,7 +12,7 @@ use core::ops::Deref;
 use writeable::{LengthHint, Writeable};
 use zerovec::ule::*;
 
-#[doc(hidden)]
+#[doc(hidden)] // macro
 #[macro_export]
 macro_rules! leading_tag {
     () => {
@@ -20,7 +20,7 @@ macro_rules! leading_tag {
     };
 }
 
-#[doc(hidden)]
+#[doc(hidden)] // macro
 #[macro_export]
 macro_rules! trailing_tag {
     () => {
@@ -28,7 +28,7 @@ macro_rules! trailing_tag {
     };
 }
 
-#[doc(hidden)]
+#[doc(hidden)] // macro
 #[macro_export]
 macro_rules! tagged {
     ($without_tags:expr) => {
@@ -196,7 +196,7 @@ pub struct DataKeyMetadata {
     /// What to prioritize when fallbacking on this [`DataKey`].
     pub fallback_priority: LocaleFallbackPriority,
     /// A Unicode extension keyword to consider when loading data for this [`DataKey`].
-    pub extension_key: Option<icu_locid::extensions::unicode::Key>,
+    pub extension_key: Option<icu_locale_core::extensions::unicode::Key>,
     /// Optional choice for additional fallbacking data required for loading this marker.
     ///
     /// For more information, see `LocaleFallbackConfig::fallback_supplement`.
@@ -218,10 +218,10 @@ impl DataKeyMetadata {
         }
     }
 
-    #[doc(hidden)]
+    #[doc(hidden)] // macro use
     pub const fn construct_internal(
         fallback_priority: LocaleFallbackPriority,
-        extension_key: Option<icu_locid::extensions::unicode::Key>,
+        extension_key: Option<icu_locale_core::extensions::unicode::Key>,
         fallback_supplement: Option<LocaleFallbackSupplement>,
         singleton: bool,
     ) -> Self {
@@ -375,6 +375,7 @@ impl DataKey {
     }
 
     #[doc(hidden)]
+    // macro use
     // Error is a str of the expected character class and the index where it wasn't encountered
     // The indexing operations in this function have been reviewed in detail and won't panic.
     #[allow(clippy::indexing_slicing)]

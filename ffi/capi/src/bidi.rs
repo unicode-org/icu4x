@@ -227,16 +227,14 @@ pub mod ffi {
         ///
         /// This is equivalent to calling `paragraph_at()` on `ICU4XBidiInfo` but doesn't
         /// create a new object
-        pub fn set_paragraph_in_text(&mut self, n: usize) -> Result<(), ICU4XError> {
-            let para = self
-                .0
-                .info
-                .paragraphs
-                .get(n)
-                .ok_or(ICU4XError::OutOfBoundsError)?;
+        pub fn set_paragraph_in_text(&mut self, n: usize) -> bool {
+            let Some(para) = self.0.info.paragraphs.get(n) else {
+                return false;
+            };
             self.0 = Paragraph::new(self.0.info, para);
-            Ok(())
+            true
         }
+
         #[diplomat::rust_link(unicode_bidi::Paragraph::level_at, FnInStruct)]
         #[diplomat::attr(supports = accessors, getter)]
         /// The primary direction of this paragraph
@@ -270,10 +268,10 @@ pub mod ffi {
             &self,
             range_start: usize,
             range_end: usize,
-            out: &mut DiplomatWriteable,
-        ) -> Result<(), ICU4XError> {
+            out: &mut DiplomatWrite,
+        ) -> Option<()> {
             if range_start < self.range_start() || range_end > self.range_end() {
-                return Err(ICU4XError::OutOfBoundsError);
+                return None;
             }
 
             let info = self.0.info;
@@ -281,7 +279,9 @@ pub mod ffi {
 
             let reordered = info.reorder_line(para, range_start..range_end);
 
-            Ok(out.write_str(&reordered)?)
+            let _infallible = out.write_str(&reordered);
+
+            Some(())
         }
 
         /// Get the BIDI level at a particular byte index in this paragraph.

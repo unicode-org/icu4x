@@ -11,7 +11,7 @@
 //!
 //! ```rust
 //! use icu::casemap::CaseMapper;
-//! use icu::locid::langid;
+//! use icu::locale::langid;
 //!
 //! let cm = CaseMapper::new();
 //!
@@ -53,7 +53,7 @@ pub mod provider;
 mod set;
 pub mod titlecase;
 
-#[doc(hidden)]
+#[doc(hidden)] // testing
 #[allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
 pub mod greek_to_me;
 mod internals;

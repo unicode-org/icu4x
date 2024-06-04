@@ -8,7 +8,7 @@ use crate::displaynames::options::*;
 use crate::displaynames::provider::*;
 use alloc::borrow::Cow;
 use alloc::string::String;
-use icu_locid::{
+use icu_locale_core::{
     subtags::Language, subtags::Region, subtags::Script, subtags::Variant, LanguageIdentifier,
     Locale,
 };
@@ -23,7 +23,7 @@ use zerovec::ule::UnvalidatedStr;
 /// use icu::experimental::displaynames::{
 ///     DisplayNamesOptions, RegionDisplayNames,
 /// };
-/// use icu::locid::{locale, subtags::region};
+/// use icu::locale::{locale, subtags::region};
 ///
 /// let locale = locale!("en-001").into();
 /// let options: DisplayNamesOptions = Default::default();
@@ -66,7 +66,7 @@ impl RegionDisplayNames {
         let region_data = provider
             .load(DataRequest {
                 locale,
-                metadata: Default::default(),
+                ..Default::default()
             })?
             .take_payload()?;
 
@@ -98,7 +98,7 @@ impl RegionDisplayNames {
 /// use icu::experimental::displaynames::{
 ///     DisplayNamesOptions, ScriptDisplayNames,
 /// };
-/// use icu::locid::{locale, subtags::script};
+/// use icu::locale::{locale, subtags::script};
 ///
 /// let locale = locale!("en-001").into();
 /// let options: DisplayNamesOptions = Default::default();
@@ -141,7 +141,7 @@ impl ScriptDisplayNames {
         let script_data = provider
             .load(DataRequest {
                 locale,
-                metadata: Default::default(),
+                ..Default::default()
             })?
             .take_payload()?;
 
@@ -173,7 +173,7 @@ impl ScriptDisplayNames {
 /// use icu::experimental::displaynames::{
 ///     DisplayNamesOptions, VariantDisplayNames,
 /// };
-/// use icu::locid::{locale, subtags::variant};
+/// use icu::locale::{locale, subtags::variant};
 ///
 /// let locale = locale!("en-001").into();
 /// let options: DisplayNamesOptions = Default::default();
@@ -217,7 +217,7 @@ impl VariantDisplayNames {
         let variant_data = provider
             .load(DataRequest {
                 locale,
-                metadata: Default::default(),
+                ..Default::default()
             })?
             .take_payload()?;
 
@@ -243,7 +243,7 @@ impl VariantDisplayNames {
 /// use icu::experimental::displaynames::{
 ///     DisplayNamesOptions, LanguageDisplayNames,
 /// };
-/// use icu::locid::{locale, subtags::language};
+/// use icu::locale::{locale, subtags::language};
 ///
 /// let locale = locale!("en-001").into();
 /// let options: DisplayNamesOptions = Default::default();
@@ -286,7 +286,7 @@ impl LanguageDisplayNames {
         let language_data = provider
             .load(DataRequest {
                 locale,
-                metadata: Default::default(),
+                ..Default::default()
             })?
             .take_payload()?;
 
@@ -324,7 +324,7 @@ impl LanguageDisplayNames {
 /// use icu::experimental::displaynames::{
 ///     DisplayNamesOptions, LocaleDisplayNamesFormatter,
 /// };
-/// use icu::locid::locale;
+/// use icu::locale::locale;
 ///
 /// let locale = locale!("en-001").into();
 /// let options: DisplayNamesOptions = Default::default();
@@ -387,7 +387,7 @@ impl LocaleDisplayNamesFormatter {
     {
         let req = DataRequest {
             locale,
-            metadata: Default::default(),
+            ..Default::default()
         };
 
         Ok(Self {
@@ -538,7 +538,7 @@ impl LocaleDisplayNamesFormatter {
 
 #[test]
 fn test_language_display() {
-    use icu_locid::locale;
+    use icu_locale_core::locale;
 
     let dialect = LocaleDisplayNamesFormatter::try_new(
         &locale!("en").into(),

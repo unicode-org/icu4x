@@ -125,12 +125,6 @@ impl CodePointInversionListBuilder {
         }
     }
 
-    /// Same as [`Self::add32`].
-    #[deprecated(since = "1.5.0", note = "Use `add32`")]
-    pub fn add_u32(&mut self, c: u32) {
-        self.add32(c)
-    }
-
     /// Add the range of characters to the [`CodePointInversionListBuilder`]
     ///
     /// # Examples
@@ -164,12 +158,6 @@ impl CodePointInversionListBuilder {
         if start <= end && end <= char::MAX as u32 + 1 {
             self.add(start, end);
         }
-    }
-
-    /// Same as [`Self::add_range32`].
-    #[deprecated(since = "1.5.0", note = "Use `add_range32`")]
-    pub fn add_range_u32(&mut self, range: &impl RangeBounds<u32>) {
-        self.add_range32(range)
     }
 
     /// Add the [`CodePointInversionList`] reference to the [`CodePointInversionListBuilder`]

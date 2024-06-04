@@ -1,30 +1,29 @@
 #ifndef ICU4XDate_H
 #define ICU4XDate_H
+
 #include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
 #include "diplomat_runtime.h"
-
-#ifdef __cplusplus
-namespace capi {
-#endif
-
-typedef struct ICU4XDate ICU4XDate;
-#ifdef __cplusplus
-} // namespace capi
-#endif
+#include "ICU4XCalendar.d.h"
 #include "ICU4XCalendar.h"
-#include "diplomat_result_box_ICU4XDate_ICU4XError.h"
+#include "ICU4XIsoDate.d.h"
 #include "ICU4XIsoDate.h"
+#include "ICU4XIsoWeekday.d.h"
 #include "ICU4XIsoWeekday.h"
+#include "ICU4XWeekCalculator.d.h"
 #include "ICU4XWeekCalculator.h"
-#include "diplomat_result_ICU4XWeekOf_ICU4XError.h"
-#include "diplomat_result_void_ICU4XError.h"
+#include "diplomat_result_ICU4XWeekOf_ICU4XError.d.h"
+#include "diplomat_result_box_ICU4XDate_ICU4XError.d.h"
+
+#include "ICU4XDate.d.h"
+
 #ifdef __cplusplus
 namespace capi {
 extern "C" {
-#endif
+#endif // __cplusplus
+
 
 diplomat_result_box_ICU4XDate_ICU4XError ICU4XDate_create_from_iso_in_calendar(int32_t year, uint8_t month, uint8_t day, const ICU4XCalendar* calendar);
 
@@ -46,11 +45,11 @@ diplomat_result_ICU4XWeekOf_ICU4XError ICU4XDate_week_of_year(const ICU4XDate* s
 
 uint32_t ICU4XDate_ordinal_month(const ICU4XDate* self);
 
-diplomat_result_void_ICU4XError ICU4XDate_month_code(const ICU4XDate* self, DiplomatWriteable* write);
+void ICU4XDate_month_code(const ICU4XDate* self, DiplomatWrite* write);
 
 int32_t ICU4XDate_year_in_era(const ICU4XDate* self);
 
-diplomat_result_void_ICU4XError ICU4XDate_era(const ICU4XDate* self, DiplomatWriteable* write);
+void ICU4XDate_era(const ICU4XDate* self, DiplomatWrite* write);
 
 uint8_t ICU4XDate_months_in_year(const ICU4XDate* self);
 
@@ -59,10 +58,13 @@ uint8_t ICU4XDate_days_in_month(const ICU4XDate* self);
 uint16_t ICU4XDate_days_in_year(const ICU4XDate* self);
 
 ICU4XCalendar* ICU4XDate_calendar(const ICU4XDate* self);
+
 void ICU4XDate_destroy(ICU4XDate* self);
+
 
 #ifdef __cplusplus
 } // extern "C"
 } // namespace capi
-#endif
-#endif
+#endif // __cplusplus
+
+#endif // ICU4XDate_H

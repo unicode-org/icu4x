@@ -8,7 +8,7 @@ use icu_calendar::week::WeekOf;
 pub mod ffi {
     use crate::date::ffi::ICU4XIsoWeekday;
     use crate::errors::ffi::ICU4XError;
-    use crate::locale::ffi::ICU4XLocale;
+    use crate::locale_core::ffi::ICU4XLocale;
     use crate::provider::ffi::ICU4XDataProvider;
     use alloc::boxed::Box;
     use icu_calendar::types::IsoWeekday;

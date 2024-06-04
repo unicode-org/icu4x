@@ -5,6 +5,8 @@
 //! A collection of utilities for representing and working with dates as an input to
 //! formatting operations.
 
+#[cfg(feature = "experimental")]
+use crate::neo_marker::{DateMarkers, NeoGetField, TimeMarkers, TypedDateMarkers};
 use crate::provider::time_zones::{MetazoneId, TimeZoneBcp47Id};
 use icu_calendar::any_calendar::AnyCalendarKind;
 use icu_calendar::week::{RelativeUnit, WeekCalculator};
@@ -14,8 +16,8 @@ use icu_timezone::{CustomTimeZone, GmtOffset, ZoneVariant};
 
 // TODO(#2630) fix up imports to directly import from icu_calendar
 pub(crate) use icu_calendar::types::{
-    DayOfMonth, DayOfWeekInMonth, DayOfYearInfo, FormattableMonth, FormattableYear, IsoHour,
-    IsoMinute, IsoSecond, IsoWeekday, NanoSecond, Time, WeekOfMonth, WeekOfYear,
+    DayOfMonth, DayOfYearInfo, FormattableMonth, FormattableYear, IsoHour, IsoMinute, IsoSecond,
+    IsoWeekday, NanoSecond, Time, WeekOfMonth, WeekOfYear,
 };
 pub(crate) use icu_calendar::CalendarError;
 
@@ -107,7 +109,7 @@ pub trait TimeZoneInput {
 /// use icu::datetime::{DateTimeWriteError, TypedDateTimeNames};
 /// use icu::datetime::fields::{Field, FieldLength, FieldSymbol, Weekday};
 /// use icu::datetime::neo_pattern::DateTimePattern;
-/// use icu::locid::locale;
+/// use icu::locale::locale;
 /// use writeable::assert_try_writeable_eq;
 ///
 /// struct Empty;
@@ -150,30 +152,6 @@ pub trait TimeZoneInput {
 pub trait DateTimeInput: DateInput + IsoTimeInput {}
 
 impl<T> DateTimeInput for T where T: DateInput + IsoTimeInput {}
-
-/// A formattable calendar date and ISO time that takes the locale into account.
-pub trait LocalizedDateTimeInput<T: DateTimeInput> {
-    /// A reference to this instance's [`DateTimeInput`].
-    fn datetime(&self) -> &T;
-
-    /// The week of the month.
-    ///
-    /// For example, January 1, 2021 is part of the first week of January.
-    fn week_of_month(&self) -> Result<WeekOfMonth, CalendarError>;
-
-    /// The week number of the year and the corresponding year.
-    ///
-    /// For example, December 31, 2020 is part of the first week of 2021.
-    fn week_of_year(&self) -> Result<(FormattableYear, WeekOfYear), CalendarError>;
-
-    /// The day of week in this month.
-    ///
-    /// For example, July 8, 2020 is the 2nd Wednesday of July.
-    fn day_of_week_in_month(&self) -> Result<DayOfWeekInMonth, CalendarError>;
-
-    /// TODO(#487): Implement flexible day periods.
-    fn flexible_day_period(&self);
-}
 
 /// A [`DateTimeInput`] type with all of the fields pre-extracted
 ///
@@ -239,6 +217,68 @@ impl ExtractedDateTimeInput {
             second: input.second(),
             nanosecond: input.nanosecond(),
             ..Default::default()
+        }
+    }
+    /// Construct given neo date input instances.
+    #[cfg(feature = "experimental")]
+    pub(crate) fn extract_from_typed_neo_input<C, D, T, I>(input: &I) -> Self
+    where
+        D: TypedDateMarkers<C>,
+        T: TimeMarkers,
+        I: ?Sized
+            + NeoGetField<D::YearInput>
+            + NeoGetField<D::MonthInput>
+            + NeoGetField<D::DayOfMonthInput>
+            + NeoGetField<D::DayOfWeekInput>
+            + NeoGetField<D::DayOfYearInput>
+            + NeoGetField<D::AnyCalendarKindInput>
+            + NeoGetField<T::HourInput>
+            + NeoGetField<T::MinuteInput>
+            + NeoGetField<T::SecondInput>
+            + NeoGetField<T::NanoSecondInput>,
+    {
+        Self {
+            year: NeoGetField::<D::YearInput>::get_field(input).into(),
+            month: NeoGetField::<D::MonthInput>::get_field(input).into(),
+            day_of_month: NeoGetField::<D::DayOfMonthInput>::get_field(input).into(),
+            iso_weekday: NeoGetField::<D::DayOfWeekInput>::get_field(input).into(),
+            day_of_year_info: NeoGetField::<D::DayOfYearInput>::get_field(input).into(),
+            any_calendar_kind: NeoGetField::<D::AnyCalendarKindInput>::get_field(input).into(),
+            hour: NeoGetField::<T::HourInput>::get_field(input).into(),
+            minute: NeoGetField::<T::MinuteInput>::get_field(input).into(),
+            second: NeoGetField::<T::SecondInput>::get_field(input).into(),
+            nanosecond: NeoGetField::<T::NanoSecondInput>::get_field(input).into(),
+        }
+    }
+    /// Construct given neo date input instances.
+    #[cfg(feature = "experimental")]
+    pub(crate) fn extract_from_any_neo_input<D, T, I>(input: &I) -> Self
+    where
+        D: DateMarkers,
+        T: TimeMarkers,
+        I: ?Sized
+            + NeoGetField<D::YearInput>
+            + NeoGetField<D::MonthInput>
+            + NeoGetField<D::DayOfMonthInput>
+            + NeoGetField<D::DayOfWeekInput>
+            + NeoGetField<D::DayOfYearInput>
+            + NeoGetField<D::AnyCalendarKindInput>
+            + NeoGetField<T::HourInput>
+            + NeoGetField<T::MinuteInput>
+            + NeoGetField<T::SecondInput>
+            + NeoGetField<T::NanoSecondInput>,
+    {
+        Self {
+            year: NeoGetField::<D::YearInput>::get_field(input).into(),
+            month: NeoGetField::<D::MonthInput>::get_field(input).into(),
+            day_of_month: NeoGetField::<D::DayOfMonthInput>::get_field(input).into(),
+            iso_weekday: NeoGetField::<D::DayOfWeekInput>::get_field(input).into(),
+            day_of_year_info: NeoGetField::<D::DayOfYearInput>::get_field(input).into(),
+            any_calendar_kind: NeoGetField::<D::AnyCalendarKindInput>::get_field(input).into(),
+            hour: NeoGetField::<T::HourInput>::get_field(input).into(),
+            minute: NeoGetField::<T::MinuteInput>::get_field(input).into(),
+            second: NeoGetField::<T::SecondInput>::get_field(input).into(),
+            nanosecond: NeoGetField::<T::NanoSecondInput>::get_field(input).into(),
         }
     }
 }

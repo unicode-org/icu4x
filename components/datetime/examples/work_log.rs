@@ -11,7 +11,7 @@ icu_benchmark_macros::static_setup!();
 
 use icu_calendar::{DateTime, Gregorian};
 use icu_datetime::{options::length, TypedDateTimeFormatter};
-use icu_locid::locale;
+use icu_locale_core::locale;
 
 const DATES_ISO: &[(i32, u8, u8, u8, u8, u8)] = &[
     (2001, 9, 8, 18, 46, 40),

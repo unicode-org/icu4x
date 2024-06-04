@@ -7,22 +7,24 @@ use crate::provider::transform::cldr::cldr_serde::{
     week_data::{Territory, DEFAULT_TERRITORY},
 };
 use crate::provider::DatagenProvider;
-use crate::provider::IterableDataProviderInternal;
+use crate::provider::IterableDataProviderCached;
 use icu_calendar::provider::{
     WeekDataV1, WeekDataV1Marker, WeekDataV2, WeekDataV2Marker, WeekdaySet,
 };
-use icu_locid::LanguageIdentifier;
+use icu_locale_core::LanguageIdentifier;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 
-impl IterableDataProviderInternal<WeekDataV1Marker> for DatagenProvider {
-    fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
+impl IterableDataProviderCached<WeekDataV1Marker> for DatagenProvider {
+    fn supported_requests_cached(
+        &self,
+    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
         let week_data: &cldr_serde::week_data::Resource = self
             .cldr()?
             .core()
             .read_and_parse("supplemental/weekData.json")?;
         let week_data = &week_data.supplemental.week_data;
-        let regions: HashSet<DataLocale> = week_data
+        Ok(week_data
             .min_days
             .keys()
             .chain(week_data.first_day.keys())
@@ -32,9 +34,8 @@ impl IterableDataProviderInternal<WeekDataV1Marker> for DatagenProvider {
                 _ => None,
             })
             .map(LanguageIdentifier::from)
-            .map(DataLocale::from)
-            .collect();
-        Ok(regions.into_iter().collect())
+            .map(|l| (DataLocale::from(l), Default::default()))
+            .collect())
     }
 }
 
@@ -81,7 +82,7 @@ impl DataProvider<WeekDataV1Marker> for DatagenProvider {
 #[test]
 fn basic_cldr_week_data() {
     use icu_calendar::types::IsoWeekday;
-    use icu_locid::langid;
+    use icu_locale_core::langid;
 
     let provider = DatagenProvider::new_testing();
 
@@ -96,7 +97,7 @@ fn basic_cldr_week_data() {
     let fr_week_data: DataPayload<WeekDataV1Marker> = provider
         .load(DataRequest {
             locale: &langid!("und-FR").into(),
-            metadata: Default::default(),
+            ..Default::default()
         })
         .unwrap()
         .take_payload()
@@ -107,7 +108,7 @@ fn basic_cldr_week_data() {
     let iq_week_data: DataPayload<WeekDataV1Marker> = provider
         .load(DataRequest {
             locale: &langid!("und-IQ").into(),
-            metadata: Default::default(),
+            ..Default::default()
         })
         .unwrap()
         .take_payload()
@@ -122,7 +123,7 @@ fn basic_cldr_week_data() {
     let gg_week_data: DataPayload<WeekDataV1Marker> = provider
         .load(DataRequest {
             locale: &langid!("und-GG").into(),
-            metadata: Default::default(),
+            ..Default::default()
         })
         .unwrap()
         .take_payload()
@@ -198,9 +199,11 @@ impl DataProvider<WeekDataV2Marker> for DatagenProvider {
     }
 }
 
-impl IterableDataProviderInternal<WeekDataV2Marker> for DatagenProvider {
-    fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
-        IterableDataProviderInternal::<WeekDataV1Marker>::supported_locales_impl(self)
+impl IterableDataProviderCached<WeekDataV2Marker> for DatagenProvider {
+    fn supported_requests_cached(
+        &self,
+    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+        IterableDataProviderCached::<WeekDataV1Marker>::supported_requests_cached(self)
     }
 }
 
@@ -208,7 +211,7 @@ impl IterableDataProviderInternal<WeekDataV2Marker> for DatagenProvider {
 fn test_basic_cldr_week_data_v2() {
     use icu_calendar::provider::WeekdaySet;
     use icu_calendar::types::IsoWeekday::*;
-    use icu_locid::langid;
+    use icu_locale_core::langid;
 
     let provider = DatagenProvider::new_testing();
 
@@ -227,7 +230,7 @@ fn test_basic_cldr_week_data_v2() {
     let fr_week_data: DataPayload<WeekDataV2Marker> = provider
         .load(DataRequest {
             locale: &langid!("und-FR").into(),
-            metadata: Default::default(),
+            ..Default::default()
         })
         .unwrap()
         .take_payload()
@@ -242,7 +245,7 @@ fn test_basic_cldr_week_data_v2() {
     let iq_week_data: DataPayload<WeekDataV2Marker> = provider
         .load(DataRequest {
             locale: &langid!("und-IQ").into(),
-            metadata: Default::default(),
+            ..Default::default()
         })
         .unwrap()
         .take_payload()
@@ -261,7 +264,7 @@ fn test_basic_cldr_week_data_v2() {
     let gg_week_data: DataPayload<WeekDataV2Marker> = provider
         .load(DataRequest {
             locale: &langid!("und-GG").into(),
-            metadata: Default::default(),
+            ..Default::default()
         })
         .unwrap()
         .take_payload()
@@ -280,7 +283,7 @@ fn test_basic_cldr_week_data_v2() {
     let ir_week_data: DataPayload<WeekDataV2Marker> = provider
         .load(DataRequest {
             locale: &langid!("und-IR").into(),
-            metadata: Default::default(),
+            ..Default::default()
         })
         .unwrap()
         .take_payload()

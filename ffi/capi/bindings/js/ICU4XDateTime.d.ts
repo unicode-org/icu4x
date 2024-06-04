@@ -165,9 +165,8 @@ export class ICU4XDateTime {
    * Returns the month code for this date. Typically something like "M01", "M02", but can be more complicated for lunar calendars.
 
    * See the {@link https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.month Rust documentation for `month`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  month_code(): string | never;
+  month_code(): string;
 
   /**
 
@@ -182,9 +181,8 @@ export class ICU4XDateTime {
    * Returns the era for this date,
 
    * See the {@link https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year Rust documentation for `year`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  era(): string | never;
+  era(): string;
 
   /**
 

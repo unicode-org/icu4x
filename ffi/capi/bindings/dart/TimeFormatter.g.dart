@@ -40,43 +40,28 @@ final class TimeFormatter implements ffi.Finalizable {
   /// Formats a [`Time`] to a string.
   ///
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.TimeFormatter.html#method.format) for more information.
-  ///
-  /// Throws [Error] on failure.
   String formatTime(Time value) {
-    final writeable = _Writeable();
-    final result = _ICU4XTimeFormatter_format_time(_ffi, value._ffi, writeable._ffi);
-    if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
-    }
-    return writeable.finalize();
+    final write = _Write();
+    _ICU4XTimeFormatter_format_time(_ffi, value._ffi, write._ffi);
+    return write.finalize();
   }
 
   /// Formats a [`DateTime`] to a string.
   ///
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.TimeFormatter.html#method.format) for more information.
-  ///
-  /// Throws [Error] on failure.
   String formatDatetime(DateTime value) {
-    final writeable = _Writeable();
-    final result = _ICU4XTimeFormatter_format_datetime(_ffi, value._ffi, writeable._ffi);
-    if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
-    }
-    return writeable.finalize();
+    final write = _Write();
+    _ICU4XTimeFormatter_format_datetime(_ffi, value._ffi, write._ffi);
+    return write.finalize();
   }
 
   /// Formats a [`IsoDateTime`] to a string.
   ///
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.TimeFormatter.html#method.format) for more information.
-  ///
-  /// Throws [Error] on failure.
   String formatIsoDatetime(IsoDateTime value) {
-    final writeable = _Writeable();
-    final result = _ICU4XTimeFormatter_format_iso_datetime(_ffi, value._ffi, writeable._ffi);
-    if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
-    }
-    return writeable.finalize();
+    final write = _Write();
+    _ICU4XTimeFormatter_format_iso_datetime(_ffi, value._ffi, write._ffi);
+    return write.finalize();
   }
 }
 
@@ -91,16 +76,16 @@ external void _ICU4XTimeFormatter_destroy(ffi.Pointer<ffi.Void> self);
 external _ResultOpaqueInt32 _ICU4XTimeFormatter_create_with_length(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, int length);
 
 @meta.ResourceIdentifier('ICU4XTimeFormatter_format_time')
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XTimeFormatter_format_time')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XTimeFormatter_format_time')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _ICU4XTimeFormatter_format_time(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> value, ffi.Pointer<ffi.Opaque> writeable);
+external void _ICU4XTimeFormatter_format_time(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> value, ffi.Pointer<ffi.Opaque> write);
 
 @meta.ResourceIdentifier('ICU4XTimeFormatter_format_datetime')
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XTimeFormatter_format_datetime')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XTimeFormatter_format_datetime')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _ICU4XTimeFormatter_format_datetime(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> value, ffi.Pointer<ffi.Opaque> writeable);
+external void _ICU4XTimeFormatter_format_datetime(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> value, ffi.Pointer<ffi.Opaque> write);
 
 @meta.ResourceIdentifier('ICU4XTimeFormatter_format_iso_datetime')
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XTimeFormatter_format_iso_datetime')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XTimeFormatter_format_iso_datetime')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _ICU4XTimeFormatter_format_iso_datetime(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> value, ffi.Pointer<ffi.Opaque> writeable);
+external void _ICU4XTimeFormatter_format_iso_datetime(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> value, ffi.Pointer<ffi.Opaque> write);

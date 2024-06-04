@@ -62,7 +62,7 @@ impl TimeFormatter {
                 crate::provider::Baked
                     .load(DataRequest {
                         locale,
-                        metadata: Default::default(),
+                        ..Default::default()
                     })?
                     .take_payload()?,
             )
@@ -103,7 +103,7 @@ impl TimeFormatter {
                 provider
                     .load(DataRequest {
                         locale,
-                        metadata: Default::default(),
+                        ..Default::default()
                     })?
                     .take_payload()?,
             )
@@ -244,7 +244,7 @@ impl DateFormatter {
                     provider,
                     DataRequest {
                         locale,
-                        metadata: Default::default(),
+                        ..Default::default()
                     },
                 )?
                 .take_payload()?
@@ -388,7 +388,7 @@ impl DateTimeFormatter {
 
         let req = DataRequest {
             locale,
-            metadata: Default::default(),
+            ..Default::default()
         };
 
         let week_data = if required.week_data {
@@ -451,7 +451,7 @@ impl DateTimeFormatter {
 
         let req = DataRequest {
             locale,
-            metadata: Default::default(),
+            ..Default::default()
         };
 
         let week_data = if required.week_data {
@@ -460,7 +460,7 @@ impl DateTimeFormatter {
                     provider,
                     DataRequest {
                         locale,
-                        metadata: Default::default(),
+                        ..Default::default()
                     },
                 )?
                 .take_payload()?

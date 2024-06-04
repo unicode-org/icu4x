@@ -8,7 +8,7 @@ pub mod ffi {
     use icu_collator::{Collator, CollatorOptions};
 
     use crate::{
-        common::ffi::ICU4XOrdering, errors::ffi::ICU4XError, locale::ffi::ICU4XLocale,
+        common::ffi::ICU4XOrdering, errors::ffi::ICU4XError, locale_core::ffi::ICU4XLocale,
         provider::ffi::ICU4XDataProvider,
     };
 
@@ -134,7 +134,7 @@ pub mod ffi {
         /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
         /// to the WHATWG Encoding Standard.
         #[diplomat::rust_link(icu::collator::Collator::compare_utf8, FnInStruct)]
-        #[diplomat::attr(dart, disable)]
+        #[diplomat::attr(*, disable)]
         pub fn compare(&self, left: &DiplomatStr, right: &DiplomatStr) -> ICU4XOrdering {
             self.0.compare_utf8(left, right).into()
         }
@@ -151,7 +151,7 @@ pub mod ffi {
         /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
         /// to the WHATWG Encoding Standard.
         #[diplomat::rust_link(icu::collator::Collator::compare_utf16, FnInStruct)]
-        #[diplomat::attr(dart, disable)]
+        #[diplomat::attr(*, disable)]
         pub fn compare_utf16(&self, left: &DiplomatStr16, right: &DiplomatStr16) -> ICU4XOrdering {
             self.0.compare_utf16(left, right).into()
         }
@@ -163,12 +163,25 @@ pub mod ffi {
         #[diplomat::rust_link(icu::collator::Collator::compare_utf16, FnInStruct)]
         #[diplomat::skip_if_ast]
         #[diplomat::attr(dart, rename = "compare")]
+        #[diplomat::attr(cpp, rename = "compare16")]
         pub fn compare_utf16_(
             &self,
             left: &DiplomatStr16,
             right: &DiplomatStr16,
         ) -> core::cmp::Ordering {
             self.0.compare_utf16(left, right)
+        }
+
+        /// Compare two strings.
+        ///
+        /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+        /// to the WHATWG Encoding Standard.
+        #[diplomat::rust_link(icu::collator::Collator::compare_utf16, FnInStruct)]
+        #[diplomat::skip_if_ast]
+        #[diplomat::attr(dart, disable)]
+        #[diplomat::attr(cpp, rename = "compare")]
+        pub fn compare_(&self, left: &DiplomatStr, right: &DiplomatStr) -> core::cmp::Ordering {
+            self.0.compare_utf8(left, right)
         }
 
         /// The resolved options showing how the default options, the requested options,

@@ -39,7 +39,6 @@
 //! assert_eq!(chinese_datetime.time.second.number(), 0);
 //! ```
 
-use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::CalendarArithmetic;
 use crate::calendar_arithmetic::PrecomputedDataSource;
 use crate::chinese_based::{
@@ -306,9 +305,8 @@ impl Calendar for Chinese {
         }
     }
 
-    /// The [`AnyCalendarKind`] corresponding to this calendar
-    fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
-        Some(AnyCalendarKind::Chinese)
+    fn any_calendar_kind(&self) -> Option<crate::AnyCalendarKind> {
+        Some(crate::any_calendar::IntoAnyCalendar::kind(self))
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {

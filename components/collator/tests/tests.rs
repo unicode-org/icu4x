@@ -7,7 +7,7 @@ use core::cmp::Ordering;
 use atoi::FromRadix16;
 use icu_collator::provider::*;
 use icu_collator::*;
-use icu_locid::{langid, locale, Locale};
+use icu_locale_core::{langid, locale, Locale};
 use icu_provider::prelude::*;
 
 type StackString = arraystring::ArrayString<arraystring::typenum::U32>;
@@ -1192,7 +1192,7 @@ fn test_nb_nn_no() {
             &icu_collator::provider::Baked,
             DataRequest {
                 locale: &locale,
-                metadata: Default::default()
+                ..Default::default()
             }
         )
         .unwrap()
@@ -1212,7 +1212,7 @@ fn test_nb_nn_no() {
             &icu_collator::provider::Baked,
             DataRequest {
                 locale: &locale,
-                metadata: Default::default()
+                ..Default::default()
             }
         )
         .unwrap()
@@ -1232,7 +1232,7 @@ fn test_nb_nn_no() {
             &icu_collator::provider::Baked,
             DataRequest {
                 locale: &locale,
-                metadata: Default::default()
+                ..Default::default()
             }
         )
         .unwrap()

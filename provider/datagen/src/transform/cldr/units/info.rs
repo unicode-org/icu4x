@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, HashSet};
 
 use crate::provider::transform::cldr::{
     cldr_serde::{self},
@@ -13,10 +13,7 @@ use icu_experimental::units::{
     measureunit::MeasureUnitParser,
     provider::{ConversionInfo, UnitsInfoV1, UnitsInfoV1Marker},
 };
-use icu_provider::{
-    datagen::IterableDataProvider, DataError, DataLocale, DataPayload, DataProvider, DataRequest,
-    DataResponse,
-};
+use icu_provider::{datagen::IterableDataProvider, prelude::*};
 use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::VarZeroVec;
 
@@ -101,15 +98,15 @@ impl DataProvider<UnitsInfoV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProvider<UnitsInfoV1Marker> for DatagenProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        Ok(vec![Default::default()])
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+        Ok(HashSet::from_iter([Default::default()]))
     }
 }
 
 #[test]
 fn test_basic() {
     use icu_experimental::units::provider::*;
-    use icu_locid::langid;
+    use icu_locale_core::langid;
     use icu_provider::prelude::*;
     use num_bigint::BigUint;
     use num_rational::Ratio;
@@ -122,7 +119,7 @@ fn test_basic() {
     let und: DataPayload<UnitsInfoV1Marker> = provider
         .load(DataRequest {
             locale: &langid!("und").into(),
-            metadata: Default::default(),
+            ..Default::default()
         })
         .unwrap()
         .take_payload()

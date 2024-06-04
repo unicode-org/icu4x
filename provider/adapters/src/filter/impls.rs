@@ -6,7 +6,7 @@ use super::*;
 use alloc::boxed::Box;
 use icu_provider::prelude::*;
 
-use icu_locid::LanguageIdentifier;
+use icu_locale_core::LanguageIdentifier;
 
 type RequestFilterDataProviderOutput<'a, D> =
     RequestFilterDataProvider<D, Box<dyn Fn(DataRequest) -> bool + Sync + 'a>>;
@@ -24,8 +24,8 @@ where
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::LanguageIdentifier;
-    /// use icu_locid::{langid, subtags::language};
+    /// use icu_locale_core::LanguageIdentifier;
+    /// use icu_locale_core::{langid, subtags::language};
     /// use icu_provider::datagen::*;
     /// use icu_provider::hello_world::*;
     /// use icu_provider::prelude::*;
@@ -38,7 +38,7 @@ where
     /// // German requests should succeed:
     /// let req_de = DataRequest {
     ///     locale: &langid!("de").into(),
-    ///     metadata: Default::default(),
+    ///     ..Default::default()
     /// };
     /// let response: Result<DataResponse<HelloWorldV1Marker>, _> =
     ///     provider.load(req_de);
@@ -47,7 +47,7 @@ where
     /// // English requests should fail:
     /// let req_en = DataRequest {
     ///     locale: &langid!("en-US").into(),
-    ///     metadata: Default::default(),
+    ///     ..Default::default()
     /// };
     /// let response: Result<DataResponse<HelloWorldV1Marker>, _> =
     ///     provider.load(req_en);
@@ -61,10 +61,10 @@ where
     ///
     /// // English should not appear in the iterator result:
     /// let supported_langids = provider
-    ///     .supported_locales()
+    ///     .supported_requests()
     ///     .expect("Should successfully make an iterator of supported locales")
     ///     .into_iter()
-    ///     .map(|options| options.get_langid())
+    ///     .map(|(locale, _)| locale.get_langid())
     ///     .collect::<Vec<LanguageIdentifier>>();
     /// assert!(supported_langids.contains(&langid!("de")));
     /// assert!(!supported_langids.contains(&langid!("en")));
@@ -101,7 +101,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::langid;
+    /// use icu_locale_core::langid;
     /// use icu_provider::hello_world::*;
     /// use icu_provider::prelude::*;
     /// use icu_provider_adapters::filter::Filterable;
@@ -114,7 +114,7 @@ where
     /// // German requests should succeed:
     /// let req_de = DataRequest {
     ///     locale: &langid!("de").into(),
-    ///     metadata: Default::default(),
+    ///     ..Default::default()
     /// };
     /// let response: Result<DataResponse<HelloWorldV1Marker>, _> =
     ///     provider.load(req_de);
@@ -123,7 +123,7 @@ where
     /// // English requests should fail:
     /// let req_en = DataRequest {
     ///     locale: &langid!("en-US").into(),
-    ///     metadata: Default::default(),
+    ///     ..Default::default()
     /// };
     /// let response: Result<DataResponse<HelloWorldV1Marker>, _> =
     ///     provider.load(req_en);
@@ -164,7 +164,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::langid;
+    /// use icu_locale_core::langid;
     /// use icu_provider::hello_world::*;
     /// use icu_provider::prelude::*;
     /// use icu_provider_adapters::filter::Filterable;
@@ -176,7 +176,7 @@ where
     /// // Requests with a langid should succeed:
     /// let req_with_langid = DataRequest {
     ///     locale: &langid!("de").into(),
-    ///     metadata: Default::default(),
+    ///     ..Default::default()
     /// };
     /// let response: Result<DataResponse<HelloWorldV1Marker>, _> =
     ///     provider.load(req_with_langid);
@@ -185,7 +185,7 @@ where
     /// // Requests without a langid should fail:
     /// let req_no_langid = DataRequest {
     ///     locale: Default::default(),
-    ///     metadata: Default::default(),
+    ///     ..Default::default()
     /// };
     /// let response: Result<DataResponse<HelloWorldV1Marker>, _> =
     ///     provider.load(req_no_langid);

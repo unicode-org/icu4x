@@ -14,10 +14,4 @@ export class ICU4XLogger {
    * Returns `false` if there was already a logger set.
    */
   static init_simple_logger(): boolean;
-
-  /**
-
-   * Deprecated: since ICU4X 1.4, this now happens automatically if the `log` feature is enabled.
-   */
-  static init_console_logger(): boolean;
 }

@@ -4,16 +4,16 @@
 
 use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
-use crate::provider::IterableDataProviderInternal;
+use crate::provider::IterableDataProviderCached;
 use either::Either;
 use icu_datetime::provider::calendar::*;
-use icu_locid::extensions::unicode::Value;
-use icu_locid::extensions::unicode::{key, value};
-use icu_locid::LanguageIdentifier;
+use icu_locale_core::extensions::unicode::Value;
+use icu_locale_core::extensions::unicode::{key, value};
+use icu_locale_core::LanguageIdentifier;
 use icu_provider::prelude::*;
-use once_cell::sync::OnceCell;
 use std::collections::HashMap;
 use std::collections::HashSet;
+use std::sync::OnceLock;
 
 mod neo;
 mod neo_skeleton;
@@ -22,11 +22,11 @@ mod skeletons;
 mod symbols;
 pub(in crate::provider) mod week_data;
 
-pub(in crate::provider) static SUPPORTED_CALS: OnceCell<
-    HashMap<icu_locid::extensions::unicode::Value, &'static str>,
-> = OnceCell::new();
+pub(in crate::provider) static SUPPORTED_CALS: OnceLock<
+    HashMap<icu_locale_core::extensions::unicode::Value, &'static str>,
+> = OnceLock::new();
 
-fn supported_cals() -> &'static HashMap<icu_locid::extensions::unicode::Value, &'static str> {
+fn supported_cals() -> &'static HashMap<icu_locale_core::extensions::unicode::Value, &'static str> {
     SUPPORTED_CALS.get_or_init(|| {
         [
             (value!("buddhist"), "buddhist"),
@@ -227,15 +227,17 @@ macro_rules! impl_data_provider {
             }
         }
 
-        impl IterableDataProviderInternal<$marker> for DatagenProvider {
-            fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
+        impl IterableDataProviderCached<$marker> for DatagenProvider {
+            fn supported_requests_cached(
+                &self,
+            ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
                 let mut r = HashSet::new();
                 if DateSkeletonPatternsV1Marker::KEY == $marker::KEY {
                     for (cal_value, cldr_cal) in supported_cals() {
                         r.extend(self.cldr()?.dates(cldr_cal).list_langs()?.map(|lid| {
                             let mut locale = DataLocale::from(lid);
                             locale.set_unicode_ext(key!("ca"), cal_value.clone());
-                            locale
+                            (locale, Default::default())
                         }));
                     }
                 } else {
@@ -246,15 +248,15 @@ macro_rules! impl_data_provider {
                         self.cldr()?
                             .dates(cldr_cal)
                             .list_langs()?
-                            .map(DataLocale::from),
+                            .map(|l| (DataLocale::from(l), Default::default())),
                     );
                 }
 
                 // TODO(#3212): Remove
                 if $marker::KEY == TimeLengthsV1Marker::KEY {
-                    r.retain(|l| {
-                        l.get_langid() != icu_locid::langid!("byn")
-                            && l.get_langid() != icu_locid::langid!("ssy")
+                    r.retain(|(l, _)| {
+                        l.get_langid() != icu_locale_core::langid!("byn")
+                            && l.get_langid() != icu_locale_core::langid!("ssy")
                     });
                 }
 
@@ -395,7 +397,7 @@ impl_data_provider!(
 #[cfg(test)]
 mod test {
     use super::*;
-    use icu_locid::langid;
+    use icu_locale_core::langid;
 
     #[test]
     fn test_basic_patterns() {
@@ -404,7 +406,7 @@ mod test {
         let cs_dates: DataPayload<GregorianDateLengthsV1Marker> = provider
             .load(DataRequest {
                 locale: &langid!("cs").into(),
-                metadata: Default::default(),
+                ..Default::default()
             })
             .expect("Failed to load payload")
             .take_payload()
@@ -420,7 +422,7 @@ mod test {
         let cs_dates: DataPayload<GregorianDateLengthsV1Marker> = provider
             .load(DataRequest {
                 locale: &langid!("haw").into(),
-                metadata: Default::default(),
+                ..Default::default()
             })
             .expect("Failed to load payload")
             .take_payload()
@@ -442,7 +444,7 @@ mod test {
         let skeletons: DataPayload<DateSkeletonPatternsV1Marker> = provider
             .load(DataRequest {
                 locale: &"fil-u-ca-gregory".parse().unwrap(),
-                metadata: Default::default(),
+                ..Default::default()
             })
             .expect("Failed to load payload")
             .take_payload()
@@ -485,7 +487,7 @@ mod test {
         let cs_dates: DataPayload<GregorianDateSymbolsV1Marker> = provider
             .load(DataRequest {
                 locale: &langid!("cs").into(),
-                metadata: Default::default(),
+                ..Default::default()
             })
             .unwrap()
             .take_payload()
@@ -515,7 +517,7 @@ mod test {
         let cs_dates: DataPayload<GregorianDateSymbolsV1Marker> = provider
             .load(DataRequest {
                 locale: &langid!("cs").into(),
-                metadata: Default::default(),
+                ..Default::default()
             })
             .unwrap()
             .take_payload()
