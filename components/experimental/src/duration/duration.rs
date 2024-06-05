@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! Duration formatting
+
 /// Represents a duration of time (intuitively, how long something took / will take).
 /// Can be constructed ergonomically using the [`Default`] trait like so:
 ///
@@ -14,7 +16,6 @@
 ///     ..Default::default()
 /// };
 /// ```
-
 #[allow(clippy::exhaustive_structs)] // this type should be stable (and is intended to be constructed manually)
 #[derive(Debug, Default, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Duration {
