@@ -361,7 +361,7 @@ impl ComplexPayloads {
     }
 }
 
-fn try_load<M: KeyedDataMarker, P: DataProvider<M> + ?Sized>(
+fn try_load<M: DataMarker, P: DataProvider<M> + ?Sized>(
     provider: &P,
     model: &'static str,
 ) -> Result<Option<DataPayload<M>>, DataError> {

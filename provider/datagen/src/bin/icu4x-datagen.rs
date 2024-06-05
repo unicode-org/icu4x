@@ -592,7 +592,7 @@ use icu_provider_blob::BlobDataProvider;
 struct ReexportableBlobDataProvider(icu_provider_blob::BlobDataProvider);
 
 #[cfg(feature = "blob_input")]
-impl<M: KeyedDataMarker> DataProvider<M> for ReexportableBlobDataProvider
+impl<M: DataMarker> DataProvider<M> for ReexportableBlobDataProvider
 where
     BlobDataProvider: AsDeserializingBufferProvider,
     for<'a> DeserializingBufferProvider<'a, BlobDataProvider>: DataProvider<M>,
@@ -603,7 +603,7 @@ where
 }
 
 #[cfg(feature = "blob_input")]
-impl<M: KeyedDataMarker> IterableDataProvider<M> for ReexportableBlobDataProvider
+impl<M: DataMarker> IterableDataProvider<M> for ReexportableBlobDataProvider
 where
     BlobDataProvider: AsDeserializingBufferProvider,
     for<'a> DeserializingBufferProvider<'a, BlobDataProvider>: DataProvider<M>,

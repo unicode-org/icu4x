@@ -105,7 +105,7 @@ impl<'a> Borrow<CacheKey<'a>> for lru::KeyRef<CacheKeyWrap> {
 
 impl<M, P> DataProvider<M> for LruDataCache<P>
 where
-    M: KeyedDataMarker,
+    M: DataMarker,
     M::Yokeable: ZeroFrom<'static, M::Yokeable>,
     M::Yokeable: icu_provider::MaybeSendSync,
     for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
@@ -209,7 +209,7 @@ pub struct CustomDecimalSymbolsProvider<P>(P);
 impl<P, M> DataProvider<M> for CustomDecimalSymbolsProvider<P>
 where
     P: DataProvider<M>,
-    M: KeyedDataMarker,
+    M: DataMarker,
 {
     #[inline]
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
@@ -275,7 +275,7 @@ pub struct ResolvedLocaleProvider<P> {
 
 impl<M, P> DataProvider<M> for ResolvedLocaleProvider<P>
 where
-    M: KeyedDataMarker,
+    M: DataMarker,
     P: DataProvider<M>
 {
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {

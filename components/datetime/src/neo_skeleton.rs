@@ -22,16 +22,16 @@ use tinystr::TinyAsciiStr;
 pub trait NeoSkeletonCommonData {
     /// Marker for loading weekday names.
     /// Can be [`NeverMarker`] if not needed for this skeleton.
-    type WeekdayNamesV1Marker: KeyedDataMarker<Yokeable = LinearNamesV1<'static>>;
+    type WeekdayNamesV1Marker: DataMarker<Yokeable = LinearNamesV1<'static>>;
     /// Marker for loading day period names.
     /// Can be [`NeverMarker`] if not needed for this skeleton.
-    type DayPeriodNamesV1Marker: KeyedDataMarker<Yokeable = LinearNamesV1<'static>>;
+    type DayPeriodNamesV1Marker: DataMarker<Yokeable = LinearNamesV1<'static>>;
     /// Marker for loading time skeleton patterns.
     /// Can be [`NeverMarker`] if not needed for this skeleton.
-    type TimeSkeletonPatternsV1Marker: KeyedDataMarker<Yokeable = PackedSkeletonDataV1<'static>>;
+    type TimeSkeletonPatternsV1Marker: DataMarker<Yokeable = PackedSkeletonDataV1<'static>>;
     /// Marker for loading the date/time glue pattern.
     /// Can be [`NeverMarker`] if not needed for this skeleton.
-    type DateTimePatternV1Marker: KeyedDataMarker<Yokeable = DateTimePatternV1<'static>>;
+    type DateTimePatternV1Marker: DataMarker<Yokeable = DateTimePatternV1<'static>>;
 }
 
 /// Sealed trait implemented by neo skeleton marker types.
@@ -41,13 +41,13 @@ where
 {
     /// Marker for loading year names.
     /// Can be [`NeverMarker`] if not needed for this skeleton.
-    type YearNamesV1Marker: KeyedDataMarker<Yokeable = YearNamesV1<'static>>;
+    type YearNamesV1Marker: DataMarker<Yokeable = YearNamesV1<'static>>;
     /// Marker for loading month names.
     /// Can be [`NeverMarker`] if not needed for this skeleton.
-    type MonthNamesV1Marker: KeyedDataMarker<Yokeable = MonthNamesV1<'static>>;
+    type MonthNamesV1Marker: DataMarker<Yokeable = MonthNamesV1<'static>>;
     /// Marker for loading date skeleton patterns.
     /// Can be [`NeverMarker`] if not needed for this skeleton.
-    type DateSkeletonPatternsV1Marker: KeyedDataMarker<Yokeable = PackedSkeletonDataV1<'static>>;
+    type DateSkeletonPatternsV1Marker: DataMarker<Yokeable = PackedSkeletonDataV1<'static>>;
 }
 
 /// Sealed trait implemented by neo skeleton marker types.
