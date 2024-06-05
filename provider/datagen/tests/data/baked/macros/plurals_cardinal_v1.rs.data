@@ -11,13 +11,13 @@ macro_rules! __impl_plurals_cardinal_v1 {
         #[clippy::msrv = "1.70"]
         impl icu_provider::DataProvider<icu::plurals::provider::CardinalV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::plurals::provider::CardinalV1Marker>, icu_provider::DataError> {
-                static UND: <icu::plurals::provider::CardinalV1Marker as icu_provider::DataMarker>::Yokeable = icu::plurals::provider::PluralRulesV1 { zero: None, one: None, two: None, few: None, many: None };
-                static VALUES: [&<icu::plurals::provider::CardinalV1Marker as icu_provider::DataMarker>::Yokeable; 1usize] = [&UND];
+                static UND: <icu::plurals::provider::CardinalV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::plurals::provider::PluralRulesV1 { zero: None, one: None, two: None, few: None, many: None };
+                static VALUES: [&<icu::plurals::provider::CardinalV1Marker as icu_provider::DynamicDataMarker>::Yokeable; 1usize] = [&UND];
                 static KEYS: [&str; 1usize] = ["und"];
                 if let Ok(payload) = KEYS.binary_search_by(|k| req.legacy_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
                     Ok(icu_provider::DataResponse { payload: Some(icu_provider::DataPayload::from_static_ref(payload)), metadata: Default::default() })
                 } else {
-                    Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::plurals::provider::CardinalV1Marker as icu_provider::KeyedDataMarker>::KEY, req))
+                    Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::plurals::provider::CardinalV1Marker as icu_provider::DataMarker>::KEY, req))
                 }
             }
         }

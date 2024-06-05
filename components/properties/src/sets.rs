@@ -41,7 +41,7 @@ pub struct CodePointSetData {
 /// to work for all set properties at once
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
 pub(crate) struct ErasedSetlikeMarker;
-impl DataMarker for ErasedSetlikeMarker {
+impl DynamicDataMarker for ErasedSetlikeMarker {
     type Yokeable = PropertyCodePointSetV1<'static>;
 }
 
@@ -61,7 +61,7 @@ impl CodePointSetData {
     /// Typically it is preferable to use getters like [`load_ascii_hex_digit()`] instead
     pub fn from_data<M>(data: DataPayload<M>) -> Self
     where
-        M: DataMarker<Yokeable = PropertyCodePointSetV1<'static>>,
+        M: DynamicDataMarker<Yokeable = PropertyCodePointSetV1<'static>>,
     {
         Self { data: data.cast() }
     }
@@ -211,7 +211,7 @@ pub struct UnicodeSetData {
 
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
 pub(crate) struct ErasedUnicodeSetlikeMarker;
-impl DataMarker for ErasedUnicodeSetlikeMarker {
+impl DynamicDataMarker for ErasedUnicodeSetlikeMarker {
     type Yokeable = PropertyUnicodeSetV1<'static>;
 }
 
@@ -232,7 +232,7 @@ impl UnicodeSetData {
     /// Typically it is preferable to use getters instead
     pub fn from_data<M>(data: DataPayload<M>) -> Self
     where
-        M: DataMarker<Yokeable = PropertyUnicodeSetV1<'static>>,
+        M: DynamicDataMarker<Yokeable = PropertyUnicodeSetV1<'static>>,
     {
         Self { data: data.cast() }
     }
@@ -320,7 +320,7 @@ impl UnicodeSetDataBorrowed<'static> {
 
 pub(crate) fn load_set_data<M, P>(provider: &P) -> Result<CodePointSetData, PropertiesError>
 where
-    M: KeyedDataMarker<Yokeable = PropertyCodePointSetV1<'static>>,
+    M: DataMarker<Yokeable = PropertyCodePointSetV1<'static>>,
     P: DataProvider<M> + ?Sized,
 {
     Ok(provider

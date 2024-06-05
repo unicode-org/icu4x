@@ -11,7 +11,7 @@ macro_rules! __impl_time_zone_formats_v1 {
         #[clippy::msrv = "1.70"]
         impl icu_provider::DataProvider<icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker>, icu_provider::DataError> {
-                static UND: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
+                static UND: <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                     gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -23,12 +23,12 @@ macro_rules! __impl_time_zone_formats_v1 {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                static VALUES: [&<icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::Yokeable; 1usize] = [&UND];
+                static VALUES: [&<icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DynamicDataMarker>::Yokeable; 1usize] = [&UND];
                 static KEYS: [&str; 1usize] = ["und"];
                 if let Ok(payload) = KEYS.binary_search_by(|k| req.legacy_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
                     Ok(icu_provider::DataResponse { payload: Some(icu_provider::DataPayload::from_static_ref(payload)), metadata: Default::default() })
                 } else {
-                    Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::KeyedDataMarker>::KEY, req))
+                    Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::KEY, req))
                 }
             }
         }

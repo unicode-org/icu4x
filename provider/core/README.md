@@ -12,7 +12,7 @@ different business and technological needs of customers.
 
 `icu_provider` defines traits and structs for transmitting data through the ICU4X locale
 data pipeline. The primary trait is [`DataProvider`]. It is parameterized by a
-[`KeyedDataMarker`], which contains the data type and a [`DataKey`]. It has one method,
+[`DataMarker`], which contains the data type and a [`DataKey`]. It has one method,
 [`DataProvider::load`], which transforms a [`DataRequest`]
 into a [`DataResponse`].
 
@@ -83,7 +83,7 @@ This crate also contains a concrete provider for demonstration purposes:
 ### Types and Lifetimes
 
 Types compatible with [`Yokeable`] can be passed through the data provider, so long as they are
-associated with a marker type implementing [`DataMarker`].
+associated with a marker type implementing [`DynamicDataMarker`].
 
 Data structs should generally have one lifetime argument: `'data`. This lifetime allows data
 structs to borrow zero-copy data.

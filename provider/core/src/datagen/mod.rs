@@ -148,7 +148,7 @@ impl<T> ExportableProvider for T where
 /// them to an efficient format like [`BlobDataProvider`] or [`BakedDataProvider`]. The requirements
 /// for `make_exportable_provider` are:
 /// * The data struct has to implement [`serde::Serialize`](::serde::Serialize) and [`databake::Bake`]
-/// * The provider needs to implement [`IterableDataProvider`] for all specified [`KeyedDataMarker`]s.
+/// * The provider needs to implement [`IterableDataProvider`] for all specified [`DataMarker`]s.
 ///   This allows the generating code to know which [`DataLocale`] to collect.
 ///
 /// [`BlobDataProvider`]: ../../icu_provider_blob/struct.BlobDataProvider.html
@@ -172,7 +172,7 @@ macro_rules! make_exportable_provider {
                 match key.hashed() {
                     $(
                         $(#[$cfg])?
-                        h if h == <$struct_m as $crate::KeyedDataMarker>::KEY.hashed() => {
+                        h if h == <$struct_m as $crate::DataMarker>::KEY.hashed() => {
                             $crate::datagen::IterableDataProvider::<$struct_m>::supported_requests(self)
                         }
                     )+,

@@ -62,7 +62,7 @@ impl AnyProvider for EmptyDataProvider {
 
 impl<M> DynamicDataProvider<M> for EmptyDataProvider
 where
-    M: DataMarker,
+    M: DynamicDataMarker,
 {
     fn load_data(&self, key: DataKey, base_req: DataRequest) -> Result<DataResponse<M>, DataError> {
         Err(self.error_kind.with_req(key, base_req))
@@ -71,7 +71,7 @@ where
 
 impl<M> DataProvider<M> for EmptyDataProvider
 where
-    M: KeyedDataMarker,
+    M: DataMarker,
 {
     fn load(&self, base_req: DataRequest) -> Result<DataResponse<M>, DataError> {
         Err(self.error_kind.with_req(M::KEY, base_req))
@@ -81,7 +81,7 @@ where
 #[cfg(feature = "datagen")]
 impl<M> icu_provider::datagen::IterableDataProvider<M> for EmptyDataProvider
 where
-    M: KeyedDataMarker,
+    M: DataMarker,
 {
     fn supported_requests(
         &self,
@@ -93,7 +93,7 @@ where
 #[cfg(feature = "datagen")]
 impl<M> icu_provider::datagen::IterableDynamicDataProvider<M> for EmptyDataProvider
 where
-    M: DataMarker,
+    M: DynamicDataMarker,
 {
     fn supported_requests_for_key(
         &self,

@@ -47,7 +47,7 @@ mod tests;
 /// - `Apply #[derive(Yokeable, ZeroFrom)]`. The `ZeroFrom` derive can
 ///    be customized with `#[zerofrom(clone)]` on non-ZeroFrom fields.
 ///
-/// In addition, the attribute can be used to implement `DataMarker` and/or `KeyedDataMarker`
+/// In addition, the attribute can be used to implement `DynamicDataMarker` and/or `DataMarker`
 /// by adding symbols with optional key strings:
 ///
 /// ```
@@ -81,8 +81,8 @@ mod tests;
 ///     message: Cow<'data, str>,
 /// };
 ///
-/// // Note: FooV1Marker implements `DataMarker` but not `KeyedDataMarker`.
-/// // The other two implement `KeyedDataMarker`.
+/// // Note: FooV1Marker implements `DynamicDataMarker` but not `DataMarker`.
+/// // The other two implement `DataMarker`.
 ///
 /// assert_eq!(&*BarV1Marker::KEY.path(), "demo/bar@1");
 /// assert_eq!(
@@ -346,7 +346,7 @@ fn data_struct_impl(attr: DataStructArgs, input: DeriveInput) -> TokenStream2 {
             #[doc = #docs]
             #bake_derive
             pub struct #marker_name;
-            impl icu_provider::DataMarker for #marker_name {
+            impl icu_provider::DynamicDataMarker for #marker_name {
                 type Yokeable = #name_with_lt;
             }
         ));
@@ -387,7 +387,7 @@ fn data_struct_impl(attr: DataStructArgs, input: DeriveInput) -> TokenStream2 {
                 quote! {None}
             };
             result.extend(quote!(
-                impl icu_provider::KeyedDataMarker for #marker_name {
+                impl icu_provider::DataMarker for #marker_name {
                     const KEY: icu_provider::DataKey = icu_provider::data_key!(#key_str, icu_provider::DataKeyMetadata::construct_internal(
                         #fallback_by_expr,
                         #extension_key_expr,
