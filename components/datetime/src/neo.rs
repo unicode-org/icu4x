@@ -12,11 +12,10 @@ use crate::format::neo::*;
 use crate::input::ExtractedDateTimeInput;
 use crate::input::{DateInput, DateTimeInput, IsoTimeInput};
 use crate::neo_marker::{
-    ConvertCalendar, DateMarkers, IsAnyCalendarKind, NeoFormatterMarker, NeoGetField, TimeMarkers,
-    TypedDateMarkers, TypedNeoFormatterMarker,
+    ConvertCalendar, DateMarkers, DateTimeMarkers, IsAnyCalendarKind, NeoFormatterMarker, NeoGetField, TimeMarkers, TypedDateMarkers, TypedDateTimeMarkers, TypedNeoFormatterMarker
 };
 use crate::neo_pattern::DateTimePattern;
-use crate::neo_skeleton::NeoSkeletonLength;
+use crate::neo_skeleton::{NeoComponents, NeoSkeletonLength};
 use crate::options::length;
 use crate::provider::neo::*;
 use crate::raw::neo::*;
@@ -76,6 +75,43 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
                 &provider.as_deserializing(),
                 &ExternalLoaderBuffer(provider),
                 locale,
+                $($arg),+
+            )
+        }
+    };
+    (R, $compiled_fn:ident, $any_fn:ident, $buffer_fn:ident, $internal_fn:ident, $($arg:ident: $ty:path),+) => {
+        #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::$compiled_fn)]
+        pub fn $any_fn<P>(
+            provider: &P,
+            locale: &DataLocale,
+            $($arg: $ty),+
+        ) -> Result<Self, LoadError>
+        where
+            P: AnyProvider + ?Sized,
+        {
+            Self::$internal_fn(
+                &provider.as_downcasting(),
+                &ExternalLoaderAny(provider),
+                locale,
+                R::COMPONENTS,
+                $($arg),+
+            )
+        }
+        #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER, Self::$compiled_fn)]
+        #[cfg(feature = "serde")]
+        pub fn $buffer_fn<P>(
+            provider: &P,
+            locale: &DataLocale,
+            $($arg: $ty),+
+        ) -> Result<Self, LoadError>
+        where
+            P: BufferProvider + ?Sized,
+        {
+            Self::$internal_fn(
+                &provider.as_deserializing(),
+                &ExternalLoaderBuffer(provider),
+                locale,
+                R::COMPONENTS,
                 $($arg),+
             )
         }
@@ -340,11 +376,13 @@ impl<C: CldrCalendar, R: TypedNeoFormatterMarker<C>> TypedNeoFormatter<C, R> {
             &crate::provider::Baked,
             &ExternalLoaderCompiledData,
             locale,
+            R::COMPONENTS,
             length,
         )
     }
 
     gen_any_buffer_constructors_with_external_loader!(
+        R,
         try_new,
         try_new_with_any_provider,
         try_new_with_buffer_provider,
@@ -373,13 +411,16 @@ impl<C: CldrCalendar, R: TypedNeoFormatterMarker<C>> TypedNeoFormatter<C, R> {
             // WeekCalculator keys
             + DataProvider<WeekDataV2Marker>,
     {
-        Self::try_new_internal(provider, &ExternalLoaderUnstable(provider), locale, length)
+        Self::try_new_internal(provider, &ExternalLoaderUnstable(provider), locale, R::COMPONENTS, length)
     }
+}
 
+impl<C: CldrCalendar, R: TypedDateTimeMarkers<C>> TypedNeoFormatter<C, R> {
     fn try_new_internal<P, L>(
         provider: &P,
         loader: &L,
         locale: &DataLocale,
+        components: NeoComponents,
         length: NeoSkeletonLength,
     ) -> Result<Self, LoadError>
     where
@@ -400,7 +441,7 @@ impl<C: CldrCalendar, R: TypedNeoFormatterMarker<C>> TypedNeoFormatter<C, R> {
             &R::DateTimePatternV1Marker::bind(provider),
             locale,
             length,
-            R::COMPONENTS,
+            components,
         )
         .map_err(LoadError::Data)?;
         let mut names = RawDateTimeNames::new_without_fixed_decimal_formatter();
@@ -622,11 +663,13 @@ impl<R: NeoFormatterMarker> NeoFormatter<R> {
             &crate::provider::Baked,
             &ExternalLoaderCompiledData,
             locale,
+            R::COMPONENTS,
             length,
         )
     }
 
     gen_any_buffer_constructors_with_external_loader!(
+        R,
         try_new,
         try_new_with_any_provider,
         try_new_with_buffer_provider,
@@ -710,13 +753,16 @@ impl<R: NeoFormatterMarker> NeoFormatter<R> {
     // WeekCalculator keys
             + DataProvider<WeekDataV2Marker>,
     {
-        Self::try_new_internal(provider, &ExternalLoaderUnstable(provider), locale, length)
+        Self::try_new_internal(provider, &ExternalLoaderUnstable(provider), locale, R::COMPONENTS, length)
     }
+}
 
+impl<R: DateTimeMarkers> NeoFormatter<R> {
     fn try_new_internal<P, L>(
         provider: &P,
         loader: &L,
         locale: &DataLocale,
+        components: NeoComponents,
         length: NeoSkeletonLength,
     ) -> Result<Self, LoadError>
     where
@@ -787,7 +833,7 @@ impl<R: NeoFormatterMarker> NeoFormatter<R> {
             &R::DateTimePatternV1Marker::bind(provider),
             locale,
             length,
-            R::COMPONENTS,
+            components,
         )
         .map_err(LoadError::Data)?;
         let mut names = RawDateTimeNames::new_without_fixed_decimal_formatter();
