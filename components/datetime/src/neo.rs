@@ -12,10 +12,10 @@ use crate::format::neo::*;
 use crate::input::ExtractedDateTimeInput;
 use crate::input::{DateInput, DateTimeInput, IsoTimeInput};
 use crate::neo_marker::{
-    ConvertCalendar, DateMarkers, DateTimeMarkers, IsAnyCalendarKind, NeoFormatterMarker, NeoGetField, TimeMarkers, TypedDateMarkers, TypedDateTimeMarkers, TypedNeoFormatterMarker
+    ConvertCalendar, DateMarkers, DateTimeMarkers, IsAnyCalendarKind, NeoAnyDateMarker, NeoFormatterMarker, NeoGetField, TimeMarkers, TypedDateMarkers, TypedDateTimeMarkers, TypedNeoFormatterMarker
 };
 use crate::neo_pattern::DateTimePattern;
-use crate::neo_skeleton::{NeoComponents, NeoSkeletonLength};
+use crate::neo_skeleton::{NeoComponents, NeoDateComponents, NeoSkeletonLength};
 use crate::options::length;
 use crate::provider::neo::*;
 use crate::raw::neo::*;
@@ -415,6 +415,50 @@ impl<C: CldrCalendar, R: TypedNeoFormatterMarker<C>> TypedNeoFormatter<C, R> {
     }
 }
 
+impl<C: CldrCalendar> TypedNeoFormatter<C, NeoAnyDateMarker> {
+    ///
+    /// ```
+    /// use icu::calendar::Date;
+    /// use icu::calendar::Gregorian;
+    /// use icu::datetime::neo::TypedNeoFormatter;
+    /// use icu::datetime::neo_marker::NeoAnyDateMarker;
+    /// use icu::datetime::neo_skeleton::NeoDateComponents;
+    /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
+    /// use icu::locale::locale;
+    /// use writeable::assert_try_writeable_eq;
+    ///
+    /// let fmt = TypedNeoFormatter::<Gregorian, NeoAnyDateMarker>::try_new_with_date_components(
+    ///     &locale!("es-MX").into(),
+    ///     NeoDateComponents::EraYearMonth,
+    ///     NeoSkeletonLength::Medium,
+    /// )
+    /// .unwrap();
+    /// let dt = Date::try_new_gregorian_date(2024, 1, 10).unwrap();
+    ///
+    /// assert_try_writeable_eq!(
+    ///     fmt.format(&dt),
+    ///     "ene 2024 d.C."
+    /// );
+    /// ```
+    pub fn try_new_with_date_components(locale: &DataLocale, date_components: NeoDateComponents, length: NeoSkeletonLength) -> Result<Self, LoadError>
+    where
+    crate::provider::Baked: Sized
+    // Date formatting keys
+    + DataProvider<<NeoAnyDateMarker as TypedDateMarkers<C>>::YearNamesV1Marker>
+    + DataProvider<<NeoAnyDateMarker as TypedDateMarkers<C>>::MonthNamesV1Marker>
+    + DataProvider<<NeoAnyDateMarker as TypedDateMarkers<C>>::DateSkeletonPatternsV1Marker>
+    + DataProvider<<NeoAnyDateMarker as TypedDateMarkers<C>>::WeekdayNamesV1Marker>
+    {
+        Self::try_new_internal(
+            &crate::provider::Baked,
+            &ExternalLoaderCompiledData,
+            locale,
+            NeoComponents::Date(date_components),
+            length,
+        )
+    }
+}
+
 impl<C: CldrCalendar, R: TypedDateTimeMarkers<C>> TypedNeoFormatter<C, R> {
     fn try_new_internal<P, L>(
         provider: &P,
@@ -754,6 +798,97 @@ impl<R: NeoFormatterMarker> NeoFormatter<R> {
             + DataProvider<WeekDataV2Marker>,
     {
         Self::try_new_internal(provider, &ExternalLoaderUnstable(provider), locale, R::COMPONENTS, length)
+    }
+}
+
+impl NeoFormatter<NeoAnyDateMarker> {
+    ///
+    /// ```
+    /// use icu::calendar::Date;
+    /// use icu::datetime::neo::NeoFormatter;
+    /// use icu::datetime::neo_marker::NeoAnyDateMarker;
+    /// use icu::datetime::neo_skeleton::NeoDateComponents;
+    /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
+    /// use icu::locale::locale;
+    /// use writeable::assert_try_writeable_eq;
+    ///
+    /// let fmt = NeoFormatter::<NeoAnyDateMarker>::try_new_with_date_components(
+    ///     &locale!("es-MX").into(),
+    ///     NeoDateComponents::EraYearMonth,
+    ///     NeoSkeletonLength::Medium,
+    /// )
+    /// .unwrap();
+    /// let dt = Date::try_new_iso_date(2024, 1, 10).unwrap();
+    ///
+    /// assert_try_writeable_eq!(
+    ///     fmt.convert_and_format(&dt),
+    ///     "ene 2024 d.C."
+    /// );
+    /// ```
+    pub fn try_new_with_date_components(locale: &DataLocale, date_components: NeoDateComponents, length: NeoSkeletonLength) -> Result<Self, LoadError>
+    where
+    crate::provider::Baked: Sized
+    // Date formatting keys
+            + DataProvider<<<NeoAnyDateMarker as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Buddhist>
+            + DataProvider<<<NeoAnyDateMarker as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Chinese>
+            + DataProvider<<<NeoAnyDateMarker as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Coptic>
+            + DataProvider<<<NeoAnyDateMarker as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Dangi>
+            + DataProvider<<<NeoAnyDateMarker as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Ethiopian>
+            + DataProvider<<<NeoAnyDateMarker as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::EthiopianAmeteAlem>
+            + DataProvider<<<NeoAnyDateMarker as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Gregorian>
+            + DataProvider<<<NeoAnyDateMarker as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Hebrew>
+            + DataProvider<<<NeoAnyDateMarker as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Indian>
+            + DataProvider<<<NeoAnyDateMarker as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::IslamicCivil>
+            + DataProvider<<<NeoAnyDateMarker as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::IslamicObservational>
+            + DataProvider<<<NeoAnyDateMarker as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::IslamicTabular>
+            + DataProvider<<<NeoAnyDateMarker as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::IslamicUmmAlQura>
+            + DataProvider<<<NeoAnyDateMarker as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Japanese>
+            + DataProvider<<<NeoAnyDateMarker as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::JapaneseExtended>
+            + DataProvider<<<NeoAnyDateMarker as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Persian>
+            + DataProvider<<<NeoAnyDateMarker as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Roc>
+            + DataProvider<<<NeoAnyDateMarker as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::Buddhist>
+            + DataProvider<<<NeoAnyDateMarker as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::Chinese>
+            + DataProvider<<<NeoAnyDateMarker as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::Coptic>
+            + DataProvider<<<NeoAnyDateMarker as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::Dangi>
+            + DataProvider<<<NeoAnyDateMarker as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::Ethiopian>
+            + DataProvider<<<NeoAnyDateMarker as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::EthiopianAmeteAlem>
+            + DataProvider<<<NeoAnyDateMarker as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::Gregorian>
+            + DataProvider<<<NeoAnyDateMarker as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::Hebrew>
+            + DataProvider<<<NeoAnyDateMarker as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::Indian>
+            + DataProvider<<<NeoAnyDateMarker as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::IslamicCivil>
+            + DataProvider<<<NeoAnyDateMarker as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::IslamicObservational>
+            + DataProvider<<<NeoAnyDateMarker as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::IslamicTabular>
+            + DataProvider<<<NeoAnyDateMarker as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::IslamicUmmAlQura>
+            + DataProvider<<<NeoAnyDateMarker as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::Japanese>
+            + DataProvider<<<NeoAnyDateMarker as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::JapaneseExtended>
+            + DataProvider<<<NeoAnyDateMarker as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::Persian>
+            + DataProvider<<<NeoAnyDateMarker as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::Roc>
+            + DataProvider<<<NeoAnyDateMarker as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::Buddhist>
+            + DataProvider<<<NeoAnyDateMarker as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::Chinese>
+            + DataProvider<<<NeoAnyDateMarker as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::Coptic>
+            + DataProvider<<<NeoAnyDateMarker as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::Dangi>
+            + DataProvider<<<NeoAnyDateMarker as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::Ethiopian>
+            + DataProvider<<<NeoAnyDateMarker as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::EthiopianAmeteAlem>
+            + DataProvider<<<NeoAnyDateMarker as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::Gregorian>
+            + DataProvider<<<NeoAnyDateMarker as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::Hebrew>
+            + DataProvider<<<NeoAnyDateMarker as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::Indian>
+            + DataProvider<<<NeoAnyDateMarker as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::IslamicCivil>
+            + DataProvider<<<NeoAnyDateMarker as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::IslamicObservational>
+            + DataProvider<<<NeoAnyDateMarker as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::IslamicTabular>
+            + DataProvider<<<NeoAnyDateMarker as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::IslamicUmmAlQura>
+            + DataProvider<<<NeoAnyDateMarker as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::Japanese>
+            + DataProvider<<<NeoAnyDateMarker as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::JapaneseExtended>
+            + DataProvider<<<NeoAnyDateMarker as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::Persian>
+            + DataProvider<<<NeoAnyDateMarker as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::Roc>
+            + DataProvider<<NeoAnyDateMarker as DateMarkers>::WeekdayNamesV1Marker>
+    {
+        Self::try_new_internal(
+            &crate::provider::Baked,
+            &ExternalLoaderCompiledData,
+            locale,
+            NeoComponents::Date(date_components),
+            length,
+        )
     }
 }
 

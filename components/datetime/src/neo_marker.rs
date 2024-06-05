@@ -1195,64 +1195,19 @@ impl_date_marker!(
     input_any_calendar_kind = yes,
 );
 
-/*
 /// Marker for a date skeleton provided at runtime.
-///
-/// # Examples
-///
-/// In [`NeoFormatter`](crate::neo::NeoFormatter):
-///
-/// ```
-/// use icu::calendar::DateTime;
-/// use icu::datetime::neo::NeoFormatter;
-/// use icu::datetime::neo_marker::NeoAnyDateMarker;
-/// use icu::datetime::neo_skeleton::NeoDateComponents;
-/// use icu::datetime::neo_skeleton::NeoSkeletonLength;
-/// use icu::locale::locale;
-/// use writeable::assert_try_writeable_eq;
-///
-/// let fmt = NeoFormatter::<NeoAnyDateMarker>::try_new_with_skeleton(
-///     &locale!("en").into(),
-///     NeoDateComponents::EraYearMonth,
-///     NeoSkeletonLength::Long,
-/// )
-/// .unwrap();
-/// let dt = DateTime::try_new_iso_datetime(2024, 5, 17, 15, 47, 50).unwrap();
-///
-/// assert_try_writeable_eq!(
-///     fmt.convert_and_format(&dt),
-////    "xyz"
-/// );
-/// ```
-///
-/// In [`TypedNeoFormatter`](crate::neo::TypedNeoFormatter):
-///
-/// ```
-/// use icu::calendar::Date;
-/// use icu::calendar::Gregorian;
-/// use icu::datetime::neo::TypedNeoFormatter;
-/// use icu::datetime::neo_marker::NeoAnyDateMarker;
-/// use icu::datetime::neo_skeleton::NeoSkeletonLength;
-/// use icu::locale::locale;
-/// use writeable::assert_try_writeable_eq;
-///
-/// let fmt = TypedNeoFormatter::<Gregorian, NeoAnyDateMarker>::try_new(
-///     &locale!("en").into(),
-///     NeoSkeletonLength::Medium,
-/// )
-/// .unwrap();
-/// let dt = Date::try_new_gregorian_date(2024, 5, 17).unwrap();
-///
-/// assert_try_writeable_eq!(
-///     fmt.format(&dt),
-///     \"", $expectation, "\"")]
-/// );
-/// ```
 #[derive(Debug)]
 #[allow(clippy::exhaustive_enums)] // empty enum
 pub enum NeoAnyDateMarker {}
 
 impl private::Sealed for NeoAnyDateMarker {}
+
+impl DateTimeNamesMarker for NeoAnyDateMarker {
+    type YearNames = datetime_marker_helper!(@names/year, yes);
+    type MonthNames = datetime_marker_helper!(@names/month, yes);
+    type WeekdayNames = datetime_marker_helper!(@names/weekday, yes);
+    type DayPeriodNames = datetime_marker_helper!(@names/dayperiod, no);
+}
 
 impl<C: CldrCalendar> TypedDateMarkers<C> for NeoAnyDateMarker {
     type DateSkeletonPatternsV1Marker = datetime_marker_helper!(@dates/typed, yes);
@@ -1281,19 +1236,14 @@ impl DateMarkers for NeoAnyDateMarker {
     type WeekdayNamesV1Marker = datetime_marker_helper!(@weekdays, yes);
 }
 
-impl<C: CldrCalendar> TypedNeoFormatterMarker<C> for NeoAnyDateMarker {
-    const COMPONENTS: NeoComponents = NeoComponents::Date($components);
+impl<C: CldrCalendar> TypedDateTimeMarkers<C> for NeoAnyDateMarker {
     type D = Self;
     type T = NeoNeverMarker;
-    type DateTimeNamesMarker = DateMarker;
     type DateTimePatternV1Marker = datetime_marker_helper!(@datetimes, no);
 }
 
-impl NeoFormatterMarker for NeoAnyDateMarker {
-    const COMPONENTS: NeoComponents = NeoComponents::Date($components);
+impl DateTimeMarkers for NeoAnyDateMarker {
     type D = Self;
     type T = NeoNeverMarker;
-    type DateTimeNamesMarker = DateMarker;
     type DateTimePatternV1Marker = datetime_marker_helper!(@datetimes, no);
 }
-*/
