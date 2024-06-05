@@ -16,7 +16,6 @@
 ///     ..Default::default()
 /// };
 /// ```
-
 #[allow(clippy::exhaustive_structs)] // this type should be stable (and is intended to be constructed manually)
 #[derive(Debug, Default, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Duration {
