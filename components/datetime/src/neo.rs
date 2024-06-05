@@ -489,6 +489,7 @@ impl<C: CldrCalendar, R: TypedDateTimeMarkers<C> + HasRuntimeComponents> TypedNe
     ///     "04 p.m."
     /// );
     /// ```
+    #[cfg(feature = "compiled_data")]
     pub fn try_new_with_components(
         locale: &DataLocale,
         components: R::ComponentsStruct,
@@ -967,6 +968,7 @@ impl<R: DateTimeMarkers + HasRuntimeComponents> NeoFormatter<R> {
     ///     "04 p.m."
     /// );
     /// ```
+    #[cfg(feature = "compiled_data")]
     pub fn try_new_with_components(locale: &DataLocale, date_components: R::ComponentsStruct, length: NeoSkeletonLength) -> Result<Self, LoadError>
     where
     crate::provider::Baked: Sized
