@@ -8,7 +8,7 @@
 //! <https://github.com/unicode-org/cldr-json/blob/master/cldr-json/cldr-numbers-full/main/en/currencies.json>
 
 use serde::Deserialize;
-use std::collections::{BTreeMap};
+use std::collections::BTreeMap;
 use tinystr::UnvalidatedTinyAsciiStr;
 
 // TODO: uncomment when we have a use case for this

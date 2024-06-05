@@ -12,7 +12,7 @@
 use alloc::borrow::Cow;
 use icu_plurals::PluralCategory;
 use icu_provider::prelude::*;
-use zerovec::{ZeroMap};
+use zerovec::ZeroMap;
 
 #[cfg(feature = "compiled_data")]
 /// Baked data
@@ -23,7 +23,6 @@ use zerovec::{ZeroMap};
 /// guaranteed to match with this version's `*_unstable` providers. Use with caution.
 /// </div>
 pub use crate::provider::Baked;
-
 
 /// Currency Extended V1 data struct.
 #[icu_provider::data_struct(marker(CurrencyExtendedDataV1Marker, "currency/extended@1"))]
