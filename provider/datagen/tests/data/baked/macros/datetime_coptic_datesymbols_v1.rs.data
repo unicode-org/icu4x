@@ -11,7 +11,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
         #[clippy::msrv = "1.70"]
         impl icu_provider::DataProvider<icu::datetime::provider::calendar::CopticDateSymbolsV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::datetime::provider::calendar::CopticDateSymbolsV1Marker>, icu_provider::DataError> {
-                static UND: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static UND: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -46,7 +46,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static VALUES: [&<icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable; 1usize] = [&UND];
+                static VALUES: [&<icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable; 1usize] = [&UND];
                 static KEYS: [&str; 1usize] = ["und"];
                 if let Ok(payload) = KEYS.binary_search_by(|k| req.legacy_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
                     Ok(icu_provider::DataResponse { payload: Some(icu_provider::DataPayload::from_static_ref(payload)), metadata: Default::default() })

@@ -33,7 +33,7 @@ impl<P0: AnyProvider, P1: AnyProvider> AnyProvider for EitherProvider<P0, P1> {
     }
 }
 
-impl<M: DynDataMarker, P0: DynamicDataProvider<M>, P1: DynamicDataProvider<M>>
+impl<M: DynamicDataMarker, P0: DynamicDataProvider<M>, P1: DynamicDataProvider<M>>
     DynamicDataProvider<M> for EitherProvider<P0, P1>
 {
     #[inline]
@@ -65,7 +65,7 @@ impl<M: DataMarker, P0: DataProvider<M>, P1: DataProvider<M>> DataProvider<M>
 
 #[cfg(feature = "datagen")]
 impl<
-        M: DynDataMarker,
+        M: DynamicDataMarker,
         P0: datagen::IterableDynamicDataProvider<M>,
         P1: datagen::IterableDynamicDataProvider<M>,
     > datagen::IterableDynamicDataProvider<M> for EitherProvider<P0, P1>

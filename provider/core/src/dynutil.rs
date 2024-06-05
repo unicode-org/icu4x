@@ -11,8 +11,8 @@
 /// [`DataPayload::downcast`]: crate::DataPayload::downcast
 pub trait UpcastDataPayload<M>
 where
-    M: crate::DynDataMarker,
-    Self: Sized + crate::DynDataMarker,
+    M: crate::DynamicDataMarker,
+    Self: Sized + crate::DynamicDataMarker,
 {
     /// Upcast a `DataPayload<T>` to a `DataPayload<S>` where `T` implements trait `S`.
     ///
@@ -38,7 +38,7 @@ where
 }
 
 /// Implements [`UpcastDataPayload`] from several data markers to a single data marker
-/// that all share the same [`DynDataMarker::Yokeable`].
+/// that all share the same [`DynamicDataMarker::Yokeable`].
 ///
 /// # Examples
 ///
@@ -61,7 +61,7 @@ where
 /// );
 /// ```
 ///
-/// [`DynDataMarker::Yokeable`]: crate::DynDataMarker::Yokeable
+/// [`DynamicDataMarker::Yokeable`]: crate::DynamicDataMarker::Yokeable
 #[macro_export]
 macro_rules! impl_casting_upcast {
     ($dyn_m:path, [ $($struct_m:ident),+, ]) => {
@@ -117,8 +117,8 @@ macro_rules! impl_casting_upcast {
 /// HelloWorldProvider.load_data(HelloWorldV1Marker::INFO, req).unwrap();
 ///
 /// # struct DummyMarker;
-/// # impl DynDataMarker for DummyMarker {
-/// #     type Yokeable = <HelloWorldV1Marker as DynDataMarker>::Yokeable;
+/// # impl DynamicDataMarker for DummyMarker {
+/// #     type Yokeable = <HelloWorldV1Marker as DynamicDataMarker>::Yokeable;
 /// # }
 /// # impl DataMarker for DummyMarker {
 /// #     const INFO: DataMarkerInfo = DataMarkerInfo {
@@ -169,8 +169,8 @@ macro_rules! impl_casting_upcast {
 ///
 /// // Because of the wildcard, any marker actually works:
 /// struct DummyMarker;
-/// impl DynDataMarker for DummyMarker {
-///     type Yokeable = <HelloWorldV1Marker as DynDataMarker>::Yokeable;
+/// impl DynamicDataMarker for DummyMarker {
+///     type Yokeable = <HelloWorldV1Marker as DynamicDataMarker>::Yokeable;
 /// }
 /// impl DataMarker for DummyMarker {
 ///     const INFO: DataMarkerInfo = DataMarkerInfo {

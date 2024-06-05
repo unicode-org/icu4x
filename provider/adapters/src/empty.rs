@@ -66,7 +66,7 @@ impl AnyProvider for EmptyDataProvider {
 
 impl<M> DynamicDataProvider<M> for EmptyDataProvider
 where
-    M: DynDataMarker,
+    M: DynamicDataMarker,
 {
     fn load_data(
         &self,
@@ -101,7 +101,7 @@ where
 #[cfg(feature = "datagen")]
 impl<M> icu_provider::datagen::IterableDynamicDataProvider<M> for EmptyDataProvider
 where
-    M: DynDataMarker,
+    M: DynamicDataMarker,
 {
     fn supported_requests_for_marker(
         &self,

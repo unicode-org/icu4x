@@ -382,8 +382,8 @@ impl DataMarkerInfo {
     /// use icu_provider::prelude::*;
     /// use icu_provider::hello_world::*;
     /// # struct DummyMarker;
-    /// # impl DynDataMarker for DummyMarker {
-    /// #     type Yokeable = <HelloWorldV1Marker as DynDataMarker>::Yokeable;
+    /// # impl DynamicDataMarker for DummyMarker {
+    /// #     type Yokeable = <HelloWorldV1Marker as DynamicDataMarker>::Yokeable;
     /// # }
     /// # impl DataMarker for DummyMarker {
     /// #     const INFO: DataMarkerInfo = DataMarkerInfo {

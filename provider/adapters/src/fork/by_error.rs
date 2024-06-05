@@ -64,7 +64,7 @@ where
 
 impl<M, P0, P1, F> DynamicDataProvider<M> for ForkByErrorProvider<P0, P1, F>
 where
-    M: DynDataMarker,
+    M: DynamicDataMarker,
     P0: DynamicDataProvider<M>,
     P1: DynamicDataProvider<M>,
     F: ForkByErrorPredicate,
@@ -87,7 +87,7 @@ where
 #[cfg(feature = "datagen")]
 impl<M, P0, P1, F> datagen::IterableDynamicDataProvider<M> for ForkByErrorProvider<P0, P1, F>
 where
-    M: DynDataMarker,
+    M: DynamicDataMarker,
     P0: datagen::IterableDynamicDataProvider<M>,
     P1: datagen::IterableDynamicDataProvider<M>,
     F: ForkByErrorPredicate,
@@ -173,7 +173,7 @@ where
 
 impl<M, P, F> DynamicDataProvider<M> for MultiForkByErrorProvider<P, F>
 where
-    M: DynDataMarker,
+    M: DynamicDataMarker,
     P: DynamicDataProvider<M>,
     F: ForkByErrorPredicate,
 {
@@ -198,7 +198,7 @@ where
 #[cfg(feature = "datagen")]
 impl<M, P, F> datagen::IterableDynamicDataProvider<M> for MultiForkByErrorProvider<P, F>
 where
-    M: DynDataMarker,
+    M: DynamicDataMarker,
     P: datagen::IterableDynamicDataProvider<M>,
     F: ForkByErrorPredicate,
 {
@@ -224,8 +224,8 @@ impl<P, MFrom, MTo, F> datagen::DataConverter<MFrom, MTo> for MultiForkByErrorPr
 where
     P: datagen::DataConverter<MFrom, MTo>,
     F: ForkByErrorPredicate,
-    MFrom: DynDataMarker,
-    MTo: DynDataMarker,
+    MFrom: DynamicDataMarker,
+    MTo: DynamicDataMarker,
 {
     fn convert(
         &self,
@@ -257,8 +257,8 @@ where
     P0: datagen::DataConverter<MFrom, MTo>,
     P1: datagen::DataConverter<MFrom, MTo>,
     F: ForkByErrorPredicate,
-    MFrom: DynDataMarker,
-    MTo: DynDataMarker,
+    MFrom: DynamicDataMarker,
+    MTo: DynamicDataMarker,
 {
     fn convert(
         &self,

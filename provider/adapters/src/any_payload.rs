@@ -37,8 +37,8 @@ use zerofrom::ZeroFrom;
 /// assert_writeable_eq!(formatter.format(), "custom hello world");
 ///
 /// # struct DummyMarker;
-/// # impl DynDataMarker for DummyMarker {
-/// #     type Yokeable = <HelloWorldV1Marker as DynDataMarker>::Yokeable;
+/// # impl DynamicDataMarker for DummyMarker {
+/// #     type Yokeable = <HelloWorldV1Marker as DynamicDataMarker>::Yokeable;
 /// # }
 /// # impl DataMarker for DummyMarker {
 /// #     const INFO: DataMarkerInfo = DataMarkerInfo {

@@ -692,27 +692,27 @@ pub struct DateTimeSkeletonsV1<'data> {
 /// Calendar-agnostic year name data marker
 #[derive(Debug)]
 pub struct YearNamesV1Marker;
-impl DynDataMarker for YearNamesV1Marker {
+impl DynamicDataMarker for YearNamesV1Marker {
     type Yokeable = YearNamesV1<'static>;
 }
 
 /// Calendar-agnostic month name data marker
 #[derive(Debug)]
 pub struct MonthNamesV1Marker;
-impl DynDataMarker for MonthNamesV1Marker {
+impl DynamicDataMarker for MonthNamesV1Marker {
     type Yokeable = MonthNamesV1<'static>;
 }
 
 /// Calendar-agnostic date pattern data marker
 #[derive(Debug)]
 pub struct DatePatternV1Marker;
-impl DynDataMarker for DatePatternV1Marker {
+impl DynamicDataMarker for DatePatternV1Marker {
     type Yokeable = DatePatternV1<'static>;
 }
 
 /// Calendar-agnostic date skeleta data marker
 #[derive(Debug)]
 pub struct SkeletaV1Marker;
-impl DynDataMarker for SkeletaV1Marker {
+impl DynamicDataMarker for SkeletaV1Marker {
     type Yokeable = PackedSkeletonDataV1<'static>;
 }

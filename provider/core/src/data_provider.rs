@@ -7,7 +7,7 @@ use yoke::Yokeable;
 
 use crate::error::DataError;
 use crate::key::DataMarkerInfo;
-use crate::marker::{DataMarker, DynDataMarker};
+use crate::marker::{DataMarker, DynamicDataMarker};
 use crate::request::DataRequest;
 use crate::response::DataResponse;
 
@@ -76,7 +76,7 @@ where
 /// [`AnyMarker`]: crate::any::AnyMarker
 pub trait DynamicDataProvider<M>
 where
-    M: DynDataMarker,
+    M: DynamicDataMarker,
 {
     /// Query the provider for data, returning the result.
     ///
@@ -91,7 +91,7 @@ where
 
 impl<'a, M, P> DynamicDataProvider<M> for &'a P
 where
-    M: DynDataMarker,
+    M: DynamicDataMarker,
     P: DynamicDataProvider<M> + ?Sized,
 {
     #[inline]
@@ -106,7 +106,7 @@ where
 
 impl<M, P> DynamicDataProvider<M> for alloc::boxed::Box<P>
 where
-    M: DynDataMarker,
+    M: DynamicDataMarker,
     P: DynamicDataProvider<M> + ?Sized,
 {
     #[inline]
@@ -121,7 +121,7 @@ where
 
 impl<M, P> DynamicDataProvider<M> for alloc::rc::Rc<P>
 where
-    M: DynDataMarker,
+    M: DynamicDataMarker,
     P: DynamicDataProvider<M> + ?Sized,
 {
     #[inline]
@@ -137,7 +137,7 @@ where
 #[cfg(target_has_atomic = "ptr")]
 impl<M, P> DynamicDataProvider<M> for alloc::sync::Arc<P>
 where
-    M: DynDataMarker,
+    M: DynamicDataMarker,
     P: DynamicDataProvider<M> + ?Sized,
 {
     #[inline]
@@ -162,7 +162,7 @@ where
 /// [`AnyMarker`]: crate::any::AnyMarker
 pub trait BoundDataProvider<M>
 where
-    M: DynDataMarker,
+    M: DynamicDataMarker,
 {
     /// Query the provider for data, returning the result.
     ///
@@ -175,7 +175,7 @@ where
 
 impl<'a, M, P> BoundDataProvider<M> for &'a P
 where
-    M: DynDataMarker,
+    M: DynamicDataMarker,
     P: BoundDataProvider<M> + ?Sized,
 {
     #[inline]
@@ -190,7 +190,7 @@ where
 
 impl<M, P> BoundDataProvider<M> for alloc::boxed::Box<P>
 where
-    M: DynDataMarker,
+    M: DynamicDataMarker,
     P: BoundDataProvider<M> + ?Sized,
 {
     #[inline]
@@ -205,7 +205,7 @@ where
 
 impl<M, P> BoundDataProvider<M> for alloc::rc::Rc<P>
 where
-    M: DynDataMarker,
+    M: DynamicDataMarker,
     P: BoundDataProvider<M> + ?Sized,
 {
     #[inline]
@@ -221,7 +221,7 @@ where
 #[cfg(target_has_atomic = "ptr")]
 impl<M, P> BoundDataProvider<M> for alloc::sync::Arc<P>
 where
-    M: DynDataMarker,
+    M: DynamicDataMarker,
     P: BoundDataProvider<M> + ?Sized,
 {
     #[inline]
@@ -260,7 +260,7 @@ where
 impl<M, M0, Y, P> BoundDataProvider<M0> for DataProviderWithMarker<M, P>
 where
     M: DataMarker<Yokeable = Y>,
-    M0: DynDataMarker<Yokeable = Y>,
+    M0: DynamicDataMarker<Yokeable = Y>,
     Y: for<'a> Yokeable<'a>,
     P: DataProvider<M>,
 {
@@ -307,7 +307,7 @@ mod test {
     /// Marker type for [`HelloAlt`].
     struct HelloAltMarker {}
 
-    impl DynDataMarker for HelloAltMarker {
+    impl DynamicDataMarker for HelloAltMarker {
         type Yokeable = HelloAlt;
     }
 

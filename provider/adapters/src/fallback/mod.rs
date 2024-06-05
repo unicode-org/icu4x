@@ -250,7 +250,7 @@ where
 impl<P, M> DynamicDataProvider<M> for LocaleFallbackProvider<P>
 where
     P: DynamicDataProvider<M>,
-    M: DynDataMarker,
+    M: DynamicDataMarker,
 {
     fn load_data(
         &self,
