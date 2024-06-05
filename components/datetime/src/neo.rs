@@ -977,10 +977,7 @@ impl<R: DateTimeMarkers + HasRuntimeComponents> NeoFormatter<R> {
     /// .unwrap();
     /// let dt = Date::try_new_iso_date(2024, 1, 10).unwrap();
     ///
-    /// assert_try_writeable_eq!(
-    ///     fmt.convert_and_format(&dt),
-    ///     "ene 2024 d.C."
-    /// );
+    /// assert_try_writeable_eq!(fmt.convert_and_format(&dt), "ene 2024 d.C.");
     /// ```
     ///
     /// Time components:
@@ -989,8 +986,8 @@ impl<R: DateTimeMarkers + HasRuntimeComponents> NeoFormatter<R> {
     /// use icu::calendar::Time;
     /// use icu::datetime::neo::NeoFormatter;
     /// use icu::datetime::neo_marker::NeoAnyTimeMarker;
-    /// use icu::datetime::neo_skeleton::NeoTimeComponents;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
+    /// use icu::datetime::neo_skeleton::NeoTimeComponents;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
@@ -1002,10 +999,7 @@ impl<R: DateTimeMarkers + HasRuntimeComponents> NeoFormatter<R> {
     /// .unwrap();
     /// let dt = Time::try_new(16, 20, 0, 0).unwrap();
     ///
-    /// assert_try_writeable_eq!(
-    ///     fmt.convert_and_format(&dt),
-    ///     "04 p.m."
-    /// );
+    /// assert_try_writeable_eq!(fmt.convert_and_format(&dt), "04 p.m.");
     /// ```
     ///
     /// Date and time components:
@@ -1014,10 +1008,10 @@ impl<R: DateTimeMarkers + HasRuntimeComponents> NeoFormatter<R> {
     /// use icu::calendar::DateTime;
     /// use icu::datetime::neo::NeoFormatter;
     /// use icu::datetime::neo_marker::NeoAnyDateTimeMarker;
-    /// use icu::datetime::neo_skeleton::NeoDayComponents;
-    /// use icu::datetime::neo_skeleton::NeoTimeComponents;
     /// use icu::datetime::neo_skeleton::NeoComponents;
+    /// use icu::datetime::neo_skeleton::NeoDayComponents;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
+    /// use icu::datetime::neo_skeleton::NeoTimeComponents;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
