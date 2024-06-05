@@ -9,19 +9,11 @@ use std::borrow::Cow;
 use std::collections::BTreeMap;
 use std::str::FromStr;
 
-use icu_experimental::dimension::currency;
-use icu_experimental::dimension::currency::formatter::CurrencyCode;
-use icu_experimental::dimension::provider::currency::PatternSelection;
 use icu_experimental::dimension::provider::extended_currency::Count;
-use icu_locale::extensions::other;
 use icu_provider::datagen::IterableDataProvider;
 use tinystr::TinyAsciiStr;
-use tinystr::UnvalidatedTinyAsciiStr;
 
 use std::collections::HashSet;
-use tinystr::tinystr;
-use zerovec::VarZeroVec;
-use zerovec::ZeroMap;
 
 use icu_provider::DataProvider;
 
@@ -40,8 +32,6 @@ impl DataProvider<CurrencyExtendedDataV1Marker> for crate::DatagenProvider {
             self.cldr()?
                 .numbers()
                 .read_and_parse(&langid, "currencies.json")?;
-
-        // let currencies = &currencies_resource.main.value.numbers.currencies;
 
         let aux = req
             .key_attributes
