@@ -27,7 +27,7 @@ macro_rules! __impl_normalizer_uts46d_v1 {
 }
 /// Implement `IterableDataProvider<Uts46DecompositionSupplementV1Marker>` on the given struct using the data
 /// hardcoded in this file. This allows the struct to be used with
-/// `DatagenDriver` for this key.
+/// `DatagenDriver` for this marker.
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __impliterable_normalizer_uts46d_v1 {
