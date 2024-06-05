@@ -653,7 +653,7 @@ impl DatagenDriver {
         };
 
         let load_with_fallback = |key, locale: &_, key_attributes: &_| {
-            log::trace!("Generating key/locale: {key}/{locale:}");
+            log::trace!("Generating key/locale: {key}/{key_attributes:?}/{locale:}");
             let mut metadata = DataRequestMetadata::default();
             metadata.silent = true;
             // Lazy-compute the fallback iterator so that we don't always require CLDR data
@@ -668,7 +668,7 @@ impl DatagenDriver {
                     Ok(data_response) => {
                         if let Some(iter) = locale_iter.as_ref() {
                             if iter.get().is_und() && !locale.is_und() {
-                                log::debug!("Falling back to und: {key}/{locale}");
+                                log::debug!("Falling back to und: {key}/{key_attributes:?}/{locale}");
                             }
                         }
                         return Some(
@@ -683,7 +683,7 @@ impl DatagenDriver {
                     }) => {
                         if let Some(iter) = locale_iter.as_mut() {
                             if iter.get().is_und() {
-                                log::debug!("Could not find data for: {key}/{locale}");
+                                log::debug!("Could not find data for: {key}/{key_attributes:?}/{locale}");
                                 return None;
                             }
                             iter.step();
@@ -1050,6 +1050,7 @@ fn deduplicate_payloads<const MAXIMAL: bool>(
                             key,
                             DataRequest {
                                 locale,
+                                key_attributes,
                                 ..Default::default()
                             },
                         )
@@ -1076,7 +1077,7 @@ fn deduplicate_payloads<const MAXIMAL: bool>(
                     if inherited_payload == payload {
                         // Found a match: don't need to write anything
                         log::trace!(
-                            "Deduplicating {key}/{locale} (inherits from {})",
+                            "Deduplicating {key}/{key_attributes:?}/{locale} (inherits from {})",
                             iter.get()
                         );
                         return Ok(());
@@ -1093,6 +1094,7 @@ fn deduplicate_payloads<const MAXIMAL: bool>(
                         key,
                         DataRequest {
                             locale,
+                            key_attributes,
                             ..Default::default()
                         },
                     )
