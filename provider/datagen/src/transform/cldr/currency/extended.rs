@@ -7,7 +7,6 @@ use crate::DatagenProvider;
 
 use std::borrow::Cow;
 use std::collections::BTreeMap;
-use std::str::FromStr;
 
 use icu_experimental::dimension::provider::extended_currency::Count;
 use icu_provider::datagen::IterableDataProvider;
@@ -63,8 +62,8 @@ impl DataProvider<CurrencyExtendedDataV1Marker> for crate::DatagenProvider {
         add_placeholder(&mut placeholders, Count::Few, currency.few.clone());
         add_placeholder(&mut placeholders, Count::Many, currency.many.clone());
 
-        let other_placeholder = currency.other.clone().map(|s| Cow::Owned(s));
-        let display_name = currency.display_name.clone().map(|s| Cow::Owned(s));
+        let other_placeholder = currency.other.clone().map(Cow::Owned);
+        let display_name = currency.display_name.clone().map(Cow::Owned);
 
         let data = CurrencyExtendedDataV1 {
             placeholders: placeholders
