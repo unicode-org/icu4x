@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "franco oro francés"
   },
-  "extended_placeholders": [
-    "franco oro francés",
-    "franco oro francés",
-    "francos oro franceses"
-  ]
+  "other_placeholder": "francos oro franceses",
+  "display_name": "franco oro francés"
 }

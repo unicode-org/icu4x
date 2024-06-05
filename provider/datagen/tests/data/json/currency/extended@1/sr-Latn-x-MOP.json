@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "makaoska pataka",
+    "Few": "makaoske patake"
   },
-  "extended_placeholders": [
-    "makaoska pataka",
-    "makaoska pataka",
-    "makaoske patake",
-    "makaoskih pataka"
-  ]
+  "other_placeholder": "makaoskih pataka",
+  "display_name": "makaoska pataka"
 }

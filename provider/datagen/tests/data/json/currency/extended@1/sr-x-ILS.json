@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "израелски нови шекел",
+    "Few": "израелска нова шекела"
   },
-  "extended_placeholders": [
-    "израелски нови шекел",
-    "израелски нови шекел",
-    "израелска нова шекела",
-    "израелских нових шекела"
-  ]
+  "other_placeholder": "израелских нових шекела",
+  "display_name": "израелски нови шекел"
 }

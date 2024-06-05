@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "(hindi kilalang unit ng currency)"
   },
-  "extended_placeholders": [
-    "Hindi Kilalang Pera",
-    "(hindi kilalang unit ng currency)",
-    "(hindi kilalang pera)"
-  ]
+  "other_placeholder": "(hindi kilalang pera)",
+  "display_name": "Hindi Kilalang Pera"
 }

@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "mark convertible bosniaque"
   },
-  "extended_placeholders": [
-    "mark convertible bosniaque",
-    "mark convertible bosniaque",
-    "marks convertibles bosniaques"
-  ]
+  "other_placeholder": "marks convertibles bosniaques",
+  "display_name": "mark convertible bosniaque"
 }

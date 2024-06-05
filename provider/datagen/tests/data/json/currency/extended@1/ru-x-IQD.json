@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "иракский динар",
+    "Few": "иракских динара",
+    "Many": "иракских динаров"
   },
-  "extended_placeholders": [
-    "иракский динар",
-    "иракский динар",
-    "иракских динара",
-    "иракских динаров",
-    "иракского динара"
-  ]
+  "other_placeholder": "иракского динара",
+  "display_name": "иракский динар"
 }

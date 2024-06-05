@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "avganistanski avgani (1927–2002)",
+    "Few": "avganistanska avgana (1927–2002)"
   },
-  "extended_placeholders": [
-    "Avganistanski avgani (1927–2002)",
-    "avganistanski avgani (1927–2002)",
-    "avganistanska avgana (1927–2002)",
-    "avganistanskih avgana (1927–2002)"
-  ]
+  "other_placeholder": "avganistanskih avgana (1927–2002)",
+  "display_name": "Avganistanski avgani (1927–2002)"
 }

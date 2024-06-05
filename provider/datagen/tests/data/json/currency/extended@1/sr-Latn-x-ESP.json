@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "španska pezeta",
+    "Few": "španska pezeta"
   },
-  "extended_placeholders": [
-    "Španska pezeta",
-    "španska pezeta",
-    "španska pezeta",
-    "španske pezete"
-  ]
+  "other_placeholder": "španske pezete",
+  "display_name": "Španska pezeta"
 }

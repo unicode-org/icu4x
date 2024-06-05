@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "соломонски долар",
+    "Few": "соломонска долара"
   },
-  "extended_placeholders": [
-    "соломонски долар",
-    "соломонски долар",
-    "соломонска долара",
-    "соломонских долара"
-  ]
+  "other_placeholder": "соломонских долара",
+  "display_name": "соломонски долар"
 }

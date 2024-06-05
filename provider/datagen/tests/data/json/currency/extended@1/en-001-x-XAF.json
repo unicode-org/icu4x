@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Central African CFA franc"
   },
-  "extended_placeholders": [
-    "Central African CFA Franc",
-    "Central African CFA franc",
-    "Central African CFA francs"
-  ]
+  "other_placeholder": "Central African CFA francs",
+  "display_name": "Central African CFA Franc"
 }

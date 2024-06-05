@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "finska marka",
+    "Few": "finske marke"
   },
-  "extended_placeholders": [
-    "Finska marka",
-    "finska marka",
-    "finske marke",
-    "finskih maraka"
-  ]
+  "other_placeholder": "finskih maraka",
+  "display_name": "Finska marka"
 }

@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "somoni tayiko"
   },
-  "extended_placeholders": [
-    "somoni tayiko",
-    "somoni tayiko",
-    "somonis tayikos"
-  ]
+  "other_placeholder": "somonis tayikos",
+  "display_name": "somoni tayiko"
 }

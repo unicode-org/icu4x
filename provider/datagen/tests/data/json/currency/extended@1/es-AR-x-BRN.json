@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "nuevo cruzado brasileño"
   },
-  "extended_placeholders": [
-    "nuevo cruzado brasileño",
-    "nuevo cruzado brasileño",
-    "nuevos cruzados brasileños"
-  ]
+  "other_placeholder": "nuevos cruzados brasileños",
+  "display_name": "nuevo cruzado brasileño"
 }

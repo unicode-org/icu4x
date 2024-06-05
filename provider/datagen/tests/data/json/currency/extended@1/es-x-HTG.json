@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "gurde haitiano"
   },
-  "extended_placeholders": [
-    "gurde haitiano",
-    "gurde haitiano",
-    "gurdes haitianos"
-  ]
+  "other_placeholder": "gurdes haitianos",
+  "display_name": "gurde haitiano"
 }

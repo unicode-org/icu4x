@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "angolijska nova kvanza",
+    "Few": "angolijske nove kvanze"
   },
-  "extended_placeholders": [
-    "Angolijska nova kvanza (1990–2000)",
-    "angolijska nova kvanza",
-    "angolijske nove kvanze",
-    "angolijskih novih kvanzi"
-  ]
+  "other_placeholder": "angolijskih novih kvanzi",
+  "display_name": "Angolijska nova kvanza (1990–2000)"
 }

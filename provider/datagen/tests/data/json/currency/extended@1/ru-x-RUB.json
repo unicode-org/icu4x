@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "российский рубль",
+    "Few": "российских рубля",
+    "Many": "российских рублей"
   },
-  "extended_placeholders": [
-    "российский рубль",
-    "российский рубль",
-    "российских рубля",
-    "российских рублей",
-    "российского рубля"
-  ]
+  "other_placeholder": "российского рубля",
+  "display_name": "российский рубль"
 }

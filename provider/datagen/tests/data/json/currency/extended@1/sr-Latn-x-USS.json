@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "SAD dolar (isti dan)",
+    "Few": "SAD dolara (isti dan)"
   },
-  "extended_placeholders": [
-    "SAD dolar (isti dan)",
-    "SAD dolar (isti dan)",
-    "SAD dolara (isti dan)",
-    "SAD dolara (isti dan)"
-  ]
+  "other_placeholder": "SAD dolara (isti dan)",
+  "display_name": "SAD dolar (isti dan)"
 }

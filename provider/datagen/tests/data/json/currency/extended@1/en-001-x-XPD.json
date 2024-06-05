@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "troy ounce of palladium"
   },
-  "extended_placeholders": [
-    "Palladium",
-    "troy ounce of palladium",
-    "troy ounces of palladium"
-  ]
+  "other_placeholder": "troy ounces of palladium",
+  "display_name": "Palladium"
 }

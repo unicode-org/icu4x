@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "исландская крона",
+    "Few": "исландские кроны",
+    "Many": "исландских крон"
   },
-  "extended_placeholders": [
-    "исландская крона",
-    "исландская крона",
-    "исландские кроны",
-    "исландских крон",
-    "исландской кроны"
-  ]
+  "other_placeholder": "исландской кроны",
+  "display_name": "исландская крона"
 }

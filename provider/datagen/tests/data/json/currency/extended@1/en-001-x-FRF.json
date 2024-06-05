@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "French franc"
   },
-  "extended_placeholders": [
-    "French Franc",
-    "French franc",
-    "French francs"
-  ]
+  "other_placeholder": "French francs",
+  "display_name": "French Franc"
 }

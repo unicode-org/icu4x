@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "córdoba nicaragüense (1988–1991)"
   },
-  "extended_placeholders": [
-    "córdoba nicaragüense (1988–1991)",
-    "córdoba nicaragüense (1988–1991)",
-    "córdobas nicaragüenses (1988–1991)"
-  ]
+  "other_placeholder": "córdobas nicaragüenses (1988–1991)",
+  "display_name": "córdoba nicaragüense (1988–1991)"
 }

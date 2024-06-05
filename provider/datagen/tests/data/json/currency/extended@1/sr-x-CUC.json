@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "кубански конвертибилни пезос",
+    "Few": "кубанска конвертибилна пезоса"
   },
-  "extended_placeholders": [
-    "кубански конвертибилни пезос",
-    "кубански конвертибилни пезос",
-    "кубанска конвертибилна пезоса",
-    "кубанских конвертибилних пезоса"
-  ]
+  "other_placeholder": "кубанских конвертибилних пезоса",
+  "display_name": "кубански конвертибилни пезос"
 }

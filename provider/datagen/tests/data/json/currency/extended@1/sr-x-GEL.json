@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "грузијски лари",
+    "Few": "грузијска ларија"
   },
-  "extended_placeholders": [
-    "грузијски лари",
-    "грузијски лари",
-    "грузијска ларија",
-    "грузијских ларија"
-  ]
+  "other_placeholder": "грузијских ларија",
+  "display_name": "грузијски лари"
 }

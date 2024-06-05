@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Uruguayan peso (indexed units)"
   },
-  "extended_placeholders": [
-    "Uruguayan Peso (Indexed Units)",
-    "Uruguayan peso (indexed units)",
-    "Uruguayan pesos (indexed units)"
-  ]
+  "other_placeholder": "Uruguayan pesos (indexed units)",
+  "display_name": "Uruguayan Peso (Indexed Units)"
 }

@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "surinamski dolar",
+    "Few": "surinamska dolara"
   },
-  "extended_placeholders": [
-    "surinamski dolar",
-    "surinamski dolar",
-    "surinamska dolara",
-    "surinamskih dolara"
-  ]
+  "other_placeholder": "surinamskih dolara",
+  "display_name": "surinamski dolar"
 }

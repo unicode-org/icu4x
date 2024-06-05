@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "šrilančanska rupija",
+    "Few": "šrilančanske rupije"
   },
-  "extended_placeholders": [
-    "šrilančanska rupija",
-    "šrilančanska rupija",
-    "šrilančanske rupije",
-    "šrilančanskih rupija"
-  ]
+  "other_placeholder": "šrilančanskih rupija",
+  "display_name": "šrilančanska rupija"
 }

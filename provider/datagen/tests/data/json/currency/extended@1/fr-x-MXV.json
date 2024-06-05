@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "unité de conversion mexicaine (UDI)"
   },
-  "extended_placeholders": [
-    "unité de conversion mexicaine (UDI)",
-    "unité de conversion mexicaine (UDI)",
-    "unités de conversion mexicaines (UDI)"
-  ]
+  "other_placeholder": "unités de conversion mexicaines (UDI)",
+  "display_name": "unité de conversion mexicaine (UDI)"
 }

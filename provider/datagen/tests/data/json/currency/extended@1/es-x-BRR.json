@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "cruceiro brasileño"
   },
-  "extended_placeholders": [
-    "cruceiro brasileño",
-    "cruceiro brasileño",
-    "cruceiros brasileños"
-  ]
+  "other_placeholder": "cruceiros brasileños",
+  "display_name": "cruceiro brasileño"
 }

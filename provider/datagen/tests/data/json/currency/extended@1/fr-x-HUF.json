@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "forint hongrois"
   },
-  "extended_placeholders": [
-    "forint hongrois",
-    "forint hongrois",
-    "forints hongrois"
-  ]
+  "other_placeholder": "forints hongrois",
+  "display_name": "forint hongrois"
 }

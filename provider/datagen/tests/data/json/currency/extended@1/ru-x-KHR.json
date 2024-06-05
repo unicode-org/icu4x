@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "камбоджийский риель",
+    "Few": "камбоджийских риеля",
+    "Many": "камбоджийских риелей"
   },
-  "extended_placeholders": [
-    "камбоджийский риель",
-    "камбоджийский риель",
-    "камбоджийских риеля",
-    "камбоджийских риелей",
-    "камбоджийского риеля"
-  ]
+  "other_placeholder": "камбоджийского риеля",
+  "display_name": "камбоджийский риель"
 }

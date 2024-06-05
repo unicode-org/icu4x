@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "египетский фунт",
+    "Few": "египетских фунта",
+    "Many": "египетских фунтов"
   },
-  "extended_placeholders": [
-    "египетский фунт",
-    "египетский фунт",
-    "египетских фунта",
-    "египетских фунтов",
-    "египетского фунта"
-  ]
+  "other_placeholder": "египетского фунта",
+  "display_name": "египетский фунт"
 }

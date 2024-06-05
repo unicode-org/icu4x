@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "somoni tadjik"
   },
-  "extended_placeholders": [
-    "somoni tadjik",
-    "somoni tadjik",
-    "somonis tadjiks"
-  ]
+  "other_placeholder": "somonis tadjiks",
+  "display_name": "somoni tadjik"
 }

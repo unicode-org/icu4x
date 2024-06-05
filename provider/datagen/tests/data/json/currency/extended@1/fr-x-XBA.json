@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "unité composée européenne (EURCO)"
   },
-  "extended_placeholders": [
-    "unité européenne composée",
-    "unité composée européenne (EURCO)",
-    "unités composées européennes (EURCO)"
-  ]
+  "other_placeholder": "unités composées européennes (EURCO)",
+  "display_name": "unité européenne composée"
 }

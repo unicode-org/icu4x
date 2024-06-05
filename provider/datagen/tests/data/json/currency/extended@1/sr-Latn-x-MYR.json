@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "malezijski ringit",
+    "Few": "malezijska ringita"
   },
-  "extended_placeholders": [
-    "malezijski ringit",
-    "malezijski ringit",
-    "malezijska ringita",
-    "malezijskih ringita"
-  ]
+  "other_placeholder": "malezijskih ringita",
+  "display_name": "malezijski ringit"
 }

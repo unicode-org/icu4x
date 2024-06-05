@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Swedish krona"
   },
-  "extended_placeholders": [
-    "Swedish Krona",
-    "Swedish krona",
-    "Swedish kronor"
-  ]
+  "other_placeholder": "Swedish kronor",
+  "display_name": "Swedish Krona"
 }

@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Maltese pound"
   },
-  "extended_placeholders": [
-    "Maltese Pound",
-    "Maltese pound",
-    "Maltese pounds"
-  ]
+  "other_placeholder": "Maltese pounds",
+  "display_name": "Maltese Pound"
 }

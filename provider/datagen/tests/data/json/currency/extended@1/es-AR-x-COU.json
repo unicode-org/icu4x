@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "unidad de valor real"
   },
-  "extended_placeholders": [
-    "unidad de valor real colombiana",
-    "unidad de valor real",
-    "unidades de valor reales"
-  ]
+  "other_placeholder": "unidades de valor reales",
+  "display_name": "unidad de valor real colombiana"
 }

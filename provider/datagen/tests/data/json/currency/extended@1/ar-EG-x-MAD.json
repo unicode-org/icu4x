@@ -1,15 +1,11 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "Zero": "درهم مغربي",
+    "One": "درهم مغربي",
+    "Two": "درهمان مغربيان",
+    "Few": "دراهم مغربية",
+    "Many": "درهمًا مغربيًا"
   },
-  "extended_placeholders": [
-    "درهم مغربي",
-    "درهم مغربي",
-    "درهمان مغربيان",
-    "دراهم مغربية",
-    "درهمًا مغربيًا",
-    "درهم مغربي"
-  ]
+  "other_placeholder": "درهم مغربي",
+  "display_name": "درهم مغربي"
 }

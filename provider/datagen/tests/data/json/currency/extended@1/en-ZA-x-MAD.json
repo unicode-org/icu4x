@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Moroccan dirham"
   },
-  "extended_placeholders": [
-    "Moroccan Dirham",
-    "Moroccan dirham",
-    "Moroccan dirhams"
-  ]
+  "other_placeholder": "Moroccan dirhams",
+  "display_name": "Moroccan Dirham"
 }

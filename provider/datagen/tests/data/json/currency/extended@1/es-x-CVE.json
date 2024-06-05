@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "escudo de Cabo Verde"
   },
-  "extended_placeholders": [
-    "escudo de Cabo Verde",
-    "escudo de Cabo Verde",
-    "escudos de Cabo Verde"
-  ]
+  "other_placeholder": "escudos de Cabo Verde",
+  "display_name": "escudo de Cabo Verde"
 }

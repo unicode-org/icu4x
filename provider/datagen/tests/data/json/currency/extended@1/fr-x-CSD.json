@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "dinar serbo-monténégrin"
   },
-  "extended_placeholders": [
-    "dinar serbo-monténégrin",
-    "dinar serbo-monténégrin",
-    "dinars serbo-monténégrins"
-  ]
+  "other_placeholder": "dinars serbo-monténégrins",
+  "display_name": "dinar serbo-monténégrin"
 }

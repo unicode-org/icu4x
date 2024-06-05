@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "fidžijski dolar",
+    "Few": "fidžijska dolara"
   },
-  "extended_placeholders": [
-    "fidžijski dolar",
-    "fidžijski dolar",
-    "fidžijska dolara",
-    "fidžijskih dolara"
-  ]
+  "other_placeholder": "fidžijskih dolara",
+  "display_name": "fidžijski dolar"
 }

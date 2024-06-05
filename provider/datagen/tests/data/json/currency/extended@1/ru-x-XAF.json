@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "франк КФА ВЕАС",
+    "Few": "франка КФА ВЕАС",
+    "Many": "франков КФА ВЕАС"
   },
-  "extended_placeholders": [
-    "франк КФА BEAC",
-    "франк КФА ВЕАС",
-    "франка КФА ВЕАС",
-    "франков КФА ВЕАС",
-    "франка КФА ВЕАС"
-  ]
+  "other_placeholder": "франка КФА ВЕАС",
+  "display_name": "франк КФА BEAC"
 }

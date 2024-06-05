@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Papua New Guinean kina"
   },
-  "extended_placeholders": [
-    "Papua New Guinean Kina",
-    "Papua New Guinean kina",
-    "Papua New Guinean kina"
-  ]
+  "other_placeholder": "Papua New Guinean kina",
+  "display_name": "Papua New Guinean Kina"
 }

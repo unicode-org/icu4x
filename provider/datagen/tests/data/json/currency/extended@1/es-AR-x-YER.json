@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "rial yemení"
   },
-  "extended_placeholders": [
-    "rial yemení",
-    "rial yemení",
-    "riales yemeníes"
-  ]
+  "other_placeholder": "riales yemeníes",
+  "display_name": "rial yemení"
 }

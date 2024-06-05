@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Bolivian peso"
   },
-  "extended_placeholders": [
-    "Bolivian Peso",
-    "Bolivian peso",
-    "Bolivian pesos"
-  ]
+  "other_placeholder": "Bolivian pesos",
+  "display_name": "Bolivian Peso"
 }

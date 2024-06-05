@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "somalijski šiling",
+    "Few": "somalijska šilinga"
   },
-  "extended_placeholders": [
-    "somalijski šiling",
-    "somalijski šiling",
-    "somalijska šilinga",
-    "somalijskih šilinga"
-  ]
+  "other_placeholder": "somalijskih šilinga",
+  "display_name": "somalijski šiling"
 }

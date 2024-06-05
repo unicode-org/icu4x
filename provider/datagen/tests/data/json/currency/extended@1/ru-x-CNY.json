@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "китайский юань",
+    "Few": "китайских юаня",
+    "Many": "китайских юаней"
   },
-  "extended_placeholders": [
-    "китайский юань",
-    "китайский юань",
-    "китайских юаня",
-    "китайских юаней",
-    "китайского юаня"
-  ]
+  "other_placeholder": "китайского юаня",
+  "display_name": "китайский юань"
 }

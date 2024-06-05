@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "SAD dolar (sledeći dan)",
+    "Few": "SAD dolara (sledeći dan)"
   },
-  "extended_placeholders": [
-    "SAD dolar (sledeći dan)",
-    "SAD dolar (sledeći dan)",
-    "SAD dolara (sledeći dan)",
-    "SAD dolara (sledeći dan)"
-  ]
+  "other_placeholder": "SAD dolara (sledeći dan)",
+  "display_name": "SAD dolar (sledeći dan)"
 }

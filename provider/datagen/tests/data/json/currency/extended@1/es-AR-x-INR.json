@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "rupia india"
   },
-  "extended_placeholders": [
-    "rupia india",
-    "rupia india",
-    "rupias indias"
-  ]
+  "other_placeholder": "rupias indias",
+  "display_name": "rupia india"
 }

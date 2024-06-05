@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "dolyar ng Jamaica"
   },
-  "extended_placeholders": [
-    "Dolyar ng Jamaica",
-    "dolyar ng Jamaica",
-    "dolyares ng Jamaica"
-  ]
+  "other_placeholder": "dolyares ng Jamaica",
+  "display_name": "Dolyar ng Jamaica"
 }

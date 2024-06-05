@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "belgijski franak (konvertibilni)",
+    "Few": "belgijska franka (konvertibilna)"
   },
-  "extended_placeholders": [
-    "Belgijski franak (konvertibilni)",
-    "belgijski franak (konvertibilni)",
-    "belgijska franka (konvertibilna)",
-    "belgijskih franaka (konvertibilnih)"
-  ]
+  "other_placeholder": "belgijskih franaka (konvertibilnih)",
+  "display_name": "Belgijski franak (konvertibilni)"
 }

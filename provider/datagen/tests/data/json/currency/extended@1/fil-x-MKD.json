@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "denar ng North Macedonia"
   },
-  "extended_placeholders": [
-    "Denar ng Macedonia",
-    "denar ng North Macedonia",
-    "denari ng North Macedonia"
-  ]
+  "other_placeholder": "denari ng North Macedonia",
+  "display_name": "Denar ng Macedonia"
 }

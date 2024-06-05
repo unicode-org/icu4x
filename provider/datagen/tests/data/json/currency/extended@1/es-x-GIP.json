@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "libra gibraltareña"
   },
-  "extended_placeholders": [
-    "libra gibraltareña",
-    "libra gibraltareña",
-    "libras gibraltareñas"
-  ]
+  "other_placeholder": "libras gibraltareñas",
+  "display_name": "libra gibraltareña"
 }

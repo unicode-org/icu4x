@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "rublo ruso"
   },
-  "extended_placeholders": [
-    "rublo ruso",
-    "rublo ruso",
-    "rublos rusos"
-  ]
+  "other_placeholder": "rublos rusos",
+  "display_name": "rublo ruso"
 }

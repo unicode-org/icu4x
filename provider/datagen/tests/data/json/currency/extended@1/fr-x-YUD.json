@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "dinar fort yougoslave (1966–1989)"
   },
-  "extended_placeholders": [
-    "nouveau dinar yougoslave",
-    "dinar fort yougoslave (1966–1989)",
-    "dinars forts yougoslaves (1966–1989)"
-  ]
+  "other_placeholder": "dinars forts yougoslaves (1966–1989)",
+  "display_name": "nouveau dinar yougoslave"
 }

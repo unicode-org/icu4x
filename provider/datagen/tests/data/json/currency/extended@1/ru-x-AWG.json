@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "арубанский флорин",
+    "Few": "арубанских флорина",
+    "Many": "арубанских флоринов"
   },
-  "extended_placeholders": [
-    "арубанский флорин",
-    "арубанский флорин",
-    "арубанских флорина",
-    "арубанских флоринов",
-    "арубанского флорина"
-  ]
+  "other_placeholder": "арубанского флорина",
+  "display_name": "арубанский флорин"
 }

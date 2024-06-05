@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "roupie indienne"
   },
-  "extended_placeholders": [
-    "roupie indienne",
-    "roupie indienne",
-    "roupies indiennes"
-  ]
+  "other_placeholder": "roupies indiennes",
+  "display_name": "roupie indienne"
 }

@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "румынский лей",
+    "Few": "румынских лея",
+    "Many": "румынских леев"
   },
-  "extended_placeholders": [
-    "румынский лей",
-    "румынский лей",
-    "румынских лея",
-    "румынских леев",
-    "румынского лея"
-  ]
+  "other_placeholder": "румынского лея",
+  "display_name": "румынский лей"
 }

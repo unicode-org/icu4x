@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "islandska kruna",
+    "Few": "islandske krune"
   },
-  "extended_placeholders": [
-    "islandska kruna",
-    "islandska kruna",
-    "islandske krune",
-    "islandskih kruna"
-  ]
+  "other_placeholder": "islandskih kruna",
+  "display_name": "islandska kruna"
 }

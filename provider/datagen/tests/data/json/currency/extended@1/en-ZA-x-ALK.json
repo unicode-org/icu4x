@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Albanian lek (1946–1965)"
   },
-  "extended_placeholders": [
-    "Albanian Lek (1946–1965)",
-    "Albanian lek (1946–1965)",
-    "Albanian lekë (1946–1965)"
-  ]
+  "other_placeholder": "Albanian lekë (1946–1965)",
+  "display_name": "Albanian Lek (1946–1965)"
 }

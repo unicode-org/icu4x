@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "won nord-coréen"
   },
-  "extended_placeholders": [
-    "won nord-coréen",
-    "won nord-coréen",
-    "wons nord-coréens"
-  ]
+  "other_placeholder": "wons nord-coréens",
+  "display_name": "won nord-coréen"
 }

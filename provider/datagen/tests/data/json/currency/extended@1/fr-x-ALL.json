@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "lek albanais"
   },
-  "extended_placeholders": [
-    "lek albanais",
-    "lek albanais",
-    "leks albanais"
-  ]
+  "other_placeholder": "leks albanais",
+  "display_name": "lek albanais"
 }

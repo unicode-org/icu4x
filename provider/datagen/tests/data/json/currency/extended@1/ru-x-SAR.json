@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "саудовский риял",
+    "Few": "саудовских рияла",
+    "Many": "саудовских риялов"
   },
-  "extended_placeholders": [
-    "саудовский риял",
-    "саудовский риял",
-    "саудовских рияла",
-    "саудовских риялов",
-    "саудовского рияла"
-  ]
+  "other_placeholder": "саудовского рияла",
+  "display_name": "саудовский риял"
 }

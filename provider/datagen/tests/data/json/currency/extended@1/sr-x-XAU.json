@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "злато",
+    "Few": "злата"
   },
-  "extended_placeholders": [
-    "Злато",
-    "злато",
-    "злата",
-    "злата"
-  ]
+  "other_placeholder": "злата",
+  "display_name": "Злато"
 }

@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "quetzal ng Guatemala"
   },
-  "extended_placeholders": [
-    "Quetzal ng Guatemala",
-    "quetzal ng Guatemala",
-    "quetzals ng Guatemala"
-  ]
+  "other_placeholder": "quetzals ng Guatemala",
+  "display_name": "Quetzal ng Guatemala"
 }

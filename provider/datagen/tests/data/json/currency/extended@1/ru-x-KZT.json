@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "казахский тенге",
+    "Few": "казахских тенге",
+    "Many": "казахских тенге"
   },
-  "extended_placeholders": [
-    "казахский тенге",
-    "казахский тенге",
-    "казахских тенге",
-    "казахских тенге",
-    "казахского тенге"
-  ]
+  "other_placeholder": "казахского тенге",
+  "display_name": "казахский тенге"
 }

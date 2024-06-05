@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "стара суданска фунта",
+    "Few": "старе суданске фунте"
   },
-  "extended_placeholders": [
-    "Стара суданска фунта",
-    "стара суданска фунта",
-    "старе суданске фунте",
-    "старих суданских фунти"
-  ]
+  "other_placeholder": "старих суданских фунти",
+  "display_name": "Стара суданска фунта"
 }

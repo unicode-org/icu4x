@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "pound ng Lebanon"
   },
-  "extended_placeholders": [
-    "Pound ng Lebanon",
-    "pound ng Lebanon",
-    "pounds ng Lebanon"
-  ]
+  "other_placeholder": "pounds ng Lebanon",
+  "display_name": "Pound ng Lebanon"
 }

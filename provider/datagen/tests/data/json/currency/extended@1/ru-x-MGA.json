@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "малагасийский ариари",
+    "Few": "малагасийских ариари",
+    "Many": "малагасийских ариари"
   },
-  "extended_placeholders": [
-    "малагасийский ариари",
-    "малагасийский ариари",
-    "малагасийских ариари",
-    "малагасийских ариари",
-    "малагасийского ариари"
-  ]
+  "other_placeholder": "малагасийского ариари",
+  "display_name": "малагасийский ариари"
 }

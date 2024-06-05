@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "malgaški arijari",
+    "Few": "malgaška arijarija"
   },
-  "extended_placeholders": [
-    "malgaški arijari",
-    "malgaški arijari",
-    "malgaška arijarija",
-    "malgaških arijarija"
-  ]
+  "other_placeholder": "malgaških arijarija",
+  "display_name": "malgaški arijari"
 }

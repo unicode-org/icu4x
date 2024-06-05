@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "латвийский лат",
+    "Few": "латвийских лата",
+    "Many": "латвийских латов"
   },
-  "extended_placeholders": [
-    "Латвийский лат",
-    "латвийский лат",
-    "латвийских лата",
-    "латвийских латов",
-    "латвийского лата"
-  ]
+  "other_placeholder": "латвийского лата",
+  "display_name": "Латвийский лат"
 }

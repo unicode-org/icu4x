@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "pakistanska rupija",
+    "Few": "pakistanske rupije"
   },
-  "extended_placeholders": [
-    "pakistanska rupija",
-    "pakistanska rupija",
-    "pakistanske rupije",
-    "pakistanskih rupija"
-  ]
+  "other_placeholder": "pakistanskih rupija",
+  "display_name": "pakistanska rupija"
 }

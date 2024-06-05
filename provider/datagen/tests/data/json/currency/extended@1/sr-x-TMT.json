@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "туркменистански манат",
+    "Few": "туркменистанскa манатa"
   },
-  "extended_placeholders": [
-    "туркменистански манат",
-    "туркменистански манат",
-    "туркменистанскa манатa",
-    "туркменистанских маната"
-  ]
+  "other_placeholder": "туркменистанских маната",
+  "display_name": "туркменистански манат"
 }

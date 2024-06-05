@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "малезијски рингит",
+    "Few": "малезијска рингита"
   },
-  "extended_placeholders": [
-    "малезијски рингит",
-    "малезијски рингит",
-    "малезијска рингита",
-    "малезијских рингита"
-  ]
+  "other_placeholder": "малезијских рингита",
+  "display_name": "малезијски рингит"
 }

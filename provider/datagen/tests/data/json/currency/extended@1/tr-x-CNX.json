@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Çin Halk Cumhuriyeti Merkez Bankası doları"
   },
-  "extended_placeholders": [
-    "Çin Halk Cumhuriyeti Merkez Bankası Doları",
-    "Çin Halk Cumhuriyeti Merkez Bankası doları",
-    "Çin Halk Cumhuriyeti Merkez Bankası doları"
-  ]
+  "other_placeholder": "Çin Halk Cumhuriyeti Merkez Bankası doları",
+  "display_name": "Çin Halk Cumhuriyeti Merkez Bankası Doları"
 }

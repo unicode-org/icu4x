@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Belarusian rouble"
   },
-  "extended_placeholders": [
-    "Belarusian Rouble",
-    "Belarusian rouble",
-    "Belarusian roubles"
-  ]
+  "other_placeholder": "Belarusian roubles",
+  "display_name": "Belarusian Rouble"
 }

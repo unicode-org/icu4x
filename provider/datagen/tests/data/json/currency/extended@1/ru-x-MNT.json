@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "монгольский тугрик",
+    "Few": "монгольских тугрика",
+    "Many": "монгольских тугриков"
   },
-  "extended_placeholders": [
-    "монгольский тугрик",
-    "монгольский тугрик",
-    "монгольских тугрика",
-    "монгольских тугриков",
-    "монгольского тугрика"
-  ]
+  "other_placeholder": "монгольского тугрика",
+  "display_name": "монгольский тугрик"
 }

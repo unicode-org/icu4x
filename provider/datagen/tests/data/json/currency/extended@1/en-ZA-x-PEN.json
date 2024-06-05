@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Peruvian sol"
   },
-  "extended_placeholders": [
-    "Peruvian Sol",
-    "Peruvian sol",
-    "Peruvian soles"
-  ]
+  "other_placeholder": "Peruvian soles",
+  "display_name": "Peruvian Sol"
 }

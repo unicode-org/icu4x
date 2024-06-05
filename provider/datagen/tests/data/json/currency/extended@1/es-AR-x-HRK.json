@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "kuna"
   },
-  "extended_placeholders": [
-    "kuna",
-    "kuna",
-    "kunas"
-  ]
+  "other_placeholder": "kunas",
+  "display_name": "kuna"
 }

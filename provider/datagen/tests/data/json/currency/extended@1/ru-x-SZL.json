@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "свазилендский лилангени",
+    "Few": "свазилендских лилангени",
+    "Many": "свазилендских лилангени"
   },
-  "extended_placeholders": [
-    "свазилендский лилангени",
-    "свазилендский лилангени",
-    "свазилендских лилангени",
-    "свазилендских лилангени",
-    "свазилендского лилангени"
-  ]
+  "other_placeholder": "свазилендского лилангени",
+  "display_name": "свазилендский лилангени"
 }

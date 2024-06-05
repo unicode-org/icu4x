@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Moroccan franc"
   },
-  "extended_placeholders": [
-    "Moroccan Franc",
-    "Moroccan franc",
-    "Moroccan francs"
-  ]
+  "other_placeholder": "Moroccan francs",
+  "display_name": "Moroccan Franc"
 }

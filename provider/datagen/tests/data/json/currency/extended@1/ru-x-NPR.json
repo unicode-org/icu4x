@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "непальская рупия",
+    "Few": "непальские рупии",
+    "Many": "непальских рупий"
   },
-  "extended_placeholders": [
-    "непальская рупия",
-    "непальская рупия",
-    "непальские рупии",
-    "непальских рупий",
-    "непальской рупии"
-  ]
+  "other_placeholder": "непальской рупии",
+  "display_name": "непальская рупия"
 }

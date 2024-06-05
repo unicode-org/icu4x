@@ -1,10 +1,5 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
-  },
-  "extended_placeholders": [
-    "アンゴラ 新クワンザ (1990–2000)"
-  ]
+  "placeholders": {},
+  "other_placeholder": null,
+  "display_name": "アンゴラ 新クワンザ (1990–2000)"
 }

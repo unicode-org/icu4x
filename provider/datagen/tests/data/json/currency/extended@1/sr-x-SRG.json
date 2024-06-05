@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "суринамски гилдер",
+    "Few": "суринамска гилдера"
   },
-  "extended_placeholders": [
-    "Суринамски гилдер",
-    "суринамски гилдер",
-    "суринамска гилдера",
-    "суринамских гилдера"
-  ]
+  "other_placeholder": "суринамских гилдера",
+  "display_name": "Суринамски гилдер"
 }

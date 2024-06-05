@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Güney Kore hwanı (1953–1962)"
   },
-  "extended_placeholders": [
-    "Güney Kore Hwanı (1953–1962)",
-    "Güney Kore hwanı (1953–1962)",
-    "Güney Kore hwanı (1953–1962)"
-  ]
+  "other_placeholder": "Güney Kore hwanı (1953–1962)",
+  "display_name": "Güney Kore Hwanı (1953–1962)"
 }

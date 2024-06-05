@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Brazilian real"
   },
-  "extended_placeholders": [
-    "Brazilian Real",
-    "Brazilian real",
-    "Brazilian reals"
-  ]
+  "other_placeholder": "Brazilian reals",
+  "display_name": "Brazilian Real"
 }

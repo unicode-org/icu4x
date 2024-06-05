@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "angolska kvanza",
+    "Few": "angolske kvanze"
   },
-  "extended_placeholders": [
-    "angolska kvanza",
-    "angolska kvanza",
-    "angolske kvanze",
-    "angolskih kvanzi"
-  ]
+  "other_placeholder": "angolskih kvanzi",
+  "display_name": "angolska kvanza"
 }

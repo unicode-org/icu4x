@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "panamska balboa",
+    "Few": "panamske balboe"
   },
-  "extended_placeholders": [
-    "panamska balboa",
-    "panamska balboa",
-    "panamske balboe",
-    "panamskih balboa"
-  ]
+  "other_placeholder": "panamskih balboa",
+  "display_name": "panamska balboa"
 }

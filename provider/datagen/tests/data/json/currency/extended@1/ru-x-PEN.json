@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "перуанский соль",
+    "Few": "перуанских соля",
+    "Many": "перуанских солей"
   },
-  "extended_placeholders": [
-    "перуанский соль",
-    "перуанский соль",
-    "перуанских соля",
-    "перуанских солей",
-    "перуанского соля"
-  ]
+  "other_placeholder": "перуанского соля",
+  "display_name": "перуанский соль"
 }

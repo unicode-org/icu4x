@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "малтешка фунта",
+    "Few": "малтешке фунте"
   },
-  "extended_placeholders": [
-    "Малтешка фунта",
-    "малтешка фунта",
-    "малтешке фунте",
-    "малтешких фунти"
-  ]
+  "other_placeholder": "малтешких фунти",
+  "display_name": "Малтешка фунта"
 }

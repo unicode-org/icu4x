@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "বুলগেরীয় লেভ"
   },
-  "extended_placeholders": [
-    "বুলগেরীয় লেভ",
-    "বুলগেরীয় লেভ",
-    "বুলগেরীয় লেভা"
-  ]
+  "other_placeholder": "বুলগেরীয় লেভা",
+  "display_name": "বুলগেরীয় লেভ"
 }

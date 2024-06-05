@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Zimbabwean dollar (2009)"
   },
-  "extended_placeholders": [
-    "Zimbabwean Dollar (2009)",
-    "Zimbabwean dollar (2009)",
-    "Zimbabwean dollars (2009)"
-  ]
+  "other_placeholder": "Zimbabwean dollars (2009)",
+  "display_name": "Zimbabwean Dollar (2009)"
 }

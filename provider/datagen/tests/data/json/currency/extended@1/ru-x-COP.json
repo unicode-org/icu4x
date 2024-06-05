@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "колумбийский песо",
+    "Few": "колумбийских песо",
+    "Many": "колумбийских песо"
   },
-  "extended_placeholders": [
-    "колумбийский песо",
-    "колумбийский песо",
-    "колумбийских песо",
-    "колумбийских песо",
-    "колумбийского песо"
-  ]
+  "other_placeholder": "колумбийского песо",
+  "display_name": "колумбийский песо"
 }

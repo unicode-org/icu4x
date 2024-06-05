@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Chilean escudo"
   },
-  "extended_placeholders": [
-    "Chilean Escudo",
-    "Chilean escudo",
-    "Chilean escudos"
-  ]
+  "other_placeholder": "Chilean escudos",
+  "display_name": "Chilean Escudo"
 }

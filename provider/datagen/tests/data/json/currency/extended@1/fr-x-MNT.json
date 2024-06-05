@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "tugrik mongol"
   },
-  "extended_placeholders": [
-    "tugrik mongol",
-    "tugrik mongol",
-    "tugriks mongols"
-  ]
+  "other_placeholder": "tugriks mongols",
+  "display_name": "tugrik mongol"
 }

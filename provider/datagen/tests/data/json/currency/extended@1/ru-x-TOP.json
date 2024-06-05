@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "тонганская паанга",
+    "Few": "тонганские паанги",
+    "Many": "тонганских паанг"
   },
-  "extended_placeholders": [
-    "тонганская паанга",
-    "тонганская паанга",
-    "тонганские паанги",
-    "тонганских паанг",
-    "тонганской паанги"
-  ]
+  "other_placeholder": "тонганской паанги",
+  "display_name": "тонганская паанга"
 }

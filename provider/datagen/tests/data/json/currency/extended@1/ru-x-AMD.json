@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "армянский драм",
+    "Few": "армянских драма",
+    "Many": "армянских драмов"
   },
-  "extended_placeholders": [
-    "армянский драм",
-    "армянский драм",
-    "армянских драма",
-    "армянских драмов",
-    "армянского драма"
-  ]
+  "other_placeholder": "армянского драма",
+  "display_name": "армянский драм"
 }

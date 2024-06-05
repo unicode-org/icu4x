@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "эфиопский быр",
+    "Few": "эфиопских быра",
+    "Many": "эфиопских быров"
   },
-  "extended_placeholders": [
-    "эфиопский быр",
-    "эфиопский быр",
-    "эфиопских быра",
-    "эфиопских быров",
-    "эфиопского быра"
-  ]
+  "other_placeholder": "эфиопского быра",
+  "display_name": "эфиопский быр"
 }

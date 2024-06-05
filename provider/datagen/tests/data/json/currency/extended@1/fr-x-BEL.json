@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "franc belge (financier)"
   },
-  "extended_placeholders": [
-    "franc belge (financier)",
-    "franc belge (financier)",
-    "francs belges (financiers)"
-  ]
+  "other_placeholder": "francs belges (financiers)",
+  "display_name": "franc belge (financier)"
 }

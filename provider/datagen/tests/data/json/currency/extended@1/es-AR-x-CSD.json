@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "antiguo dinar serbio"
   },
-  "extended_placeholders": [
-    "antiguo dinar serbio",
-    "antiguo dinar serbio",
-    "antiguos dinares serbios"
-  ]
+  "other_placeholder": "antiguos dinares serbios",
+  "display_name": "antiguo dinar serbio"
 }

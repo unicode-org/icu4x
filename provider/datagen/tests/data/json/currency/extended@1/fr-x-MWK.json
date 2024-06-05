@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "kwacha malawite"
   },
-  "extended_placeholders": [
-    "kwacha malawite",
-    "kwacha malawite",
-    "kwachas malawites"
-  ]
+  "other_placeholder": "kwachas malawites",
+  "display_name": "kwacha malawite"
 }

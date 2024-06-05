@@ -1,10 +1,5 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
-  },
-  "extended_placeholders": [
-    "ইথিওপিয়ান বির"
-  ]
+  "placeholders": {},
+  "other_placeholder": null,
+  "display_name": "ইথিওপিয়ান বির"
 }

@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "замбијска квача",
+    "Few": "замбијске кваче"
   },
-  "extended_placeholders": [
-    "замбијска квача",
-    "замбијска квача",
-    "замбијске кваче",
-    "замбијских квача"
-  ]
+  "other_placeholder": "замбијских квача",
+  "display_name": "замбијска квача"
 }

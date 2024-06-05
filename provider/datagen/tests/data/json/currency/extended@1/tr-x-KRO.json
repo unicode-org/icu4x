@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Güney Kore wonu (1945–1953)"
   },
-  "extended_placeholders": [
-    "Güney Kore Wonu (1945–1953)",
-    "Güney Kore wonu (1945–1953)",
-    "Güney Kore wonu (1945–1953)"
-  ]
+  "other_placeholder": "Güney Kore wonu (1945–1953)",
+  "display_name": "Güney Kore Wonu (1945–1953)"
 }

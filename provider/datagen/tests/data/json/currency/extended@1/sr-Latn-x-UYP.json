@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "urugvajski pezo (1975–1993)",
+    "Few": "urugvajska pezosa (1975–1993)"
   },
-  "extended_placeholders": [
-    "Urugvajski pezo (1975–1993)",
-    "urugvajski pezo (1975–1993)",
-    "urugvajska pezosa (1975–1993)",
-    "urugvajskih pezosa (1975–1993)"
-  ]
+  "other_placeholder": "urugvajskih pezosa (1975–1993)",
+  "display_name": "Urugvajski pezo (1975–1993)"
 }

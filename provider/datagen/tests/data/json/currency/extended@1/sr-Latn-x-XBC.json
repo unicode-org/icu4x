@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "evropska jedinica računa (XBC)",
+    "Few": "evropske jedinice računa (XBC)"
   },
-  "extended_placeholders": [
-    "Evropska jedinica računa (XBC)",
-    "evropska jedinica računa (XBC)",
-    "evropske jedinice računa (XBC)",
-    "evropskih jedinica računa (XBC)"
-  ]
+  "other_placeholder": "evropskih jedinica računa (XBC)",
+  "display_name": "Evropska jedinica računa (XBC)"
 }

@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "француски франак",
+    "Few": "француска франка"
   },
-  "extended_placeholders": [
-    "Француски франак",
-    "француски франак",
-    "француска франка",
-    "француских франака"
-  ]
+  "other_placeholder": "француских франака",
+  "display_name": "Француски франак"
 }

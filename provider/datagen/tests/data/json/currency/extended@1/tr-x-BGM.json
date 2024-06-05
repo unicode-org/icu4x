@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Sosyalist Bulgaristan levası"
   },
-  "extended_placeholders": [
-    "Sosyalist Bulgaristan Levası",
-    "Sosyalist Bulgaristan levası",
-    "Sosyalist Bulgaristan levası"
-  ]
+  "other_placeholder": "Sosyalist Bulgaristan levası",
+  "display_name": "Sosyalist Bulgaristan Levası"
 }

@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "litvanski litas",
+    "Few": "litvanska litasa"
   },
-  "extended_placeholders": [
-    "Litvanski litas",
-    "litvanski litas",
-    "litvanska litasa",
-    "litvanskih litasa"
-  ]
+  "other_placeholder": "litvanskih litasa",
+  "display_name": "Litvanski litas"
 }

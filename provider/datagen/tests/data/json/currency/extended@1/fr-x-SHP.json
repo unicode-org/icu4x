@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "livre de Sainte-Hélène"
   },
-  "extended_placeholders": [
-    "livre de Sainte-Hélène",
-    "livre de Sainte-Hélène",
-    "livres de Sainte-Hélène"
-  ]
+  "other_placeholder": "livres de Sainte-Hélène",
+  "display_name": "livre de Sainte-Hélène"
 }

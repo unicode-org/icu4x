@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "dólar de las Islas Caimán"
   },
-  "extended_placeholders": [
-    "dólar de las Islas Caimán",
-    "dólar de las Islas Caimán",
-    "dólares de las Islas Caimán"
-  ]
+  "other_placeholder": "dólares de las Islas Caimán",
+  "display_name": "dólar de las Islas Caimán"
 }

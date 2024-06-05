@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "peseta andorrane"
   },
-  "extended_placeholders": [
-    "peseta andorrane",
-    "peseta andorrane",
-    "pesetas andorranes"
-  ]
+  "other_placeholder": "pesetas andorranes",
+  "display_name": "peseta andorrane"
 }

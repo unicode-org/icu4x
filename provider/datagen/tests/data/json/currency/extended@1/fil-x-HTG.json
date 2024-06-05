@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "gourde ng Haiti"
   },
-  "extended_placeholders": [
-    "Gourde ng Haiti",
-    "gourde ng Haiti",
-    "gourdes ng Haiti"
-  ]
+  "other_placeholder": "gourdes ng Haiti",
+  "display_name": "Gourde ng Haiti"
 }

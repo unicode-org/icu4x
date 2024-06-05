@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "zloty ng Poland"
   },
-  "extended_placeholders": [
-    "Zloty ng Poland",
-    "zloty ng Poland",
-    "zlotys ng Poland"
-  ]
+  "other_placeholder": "zlotys ng Poland",
+  "display_name": "Zloty ng Poland"
 }

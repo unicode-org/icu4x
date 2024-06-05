@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "ирачки динар",
+    "Few": "ирачка динара"
   },
-  "extended_placeholders": [
-    "ирачки динар",
-    "ирачки динар",
-    "ирачка динара",
-    "ирачких динара"
-  ]
+  "other_placeholder": "ирачких динара",
+  "display_name": "ирачки динар"
 }

@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "livre sterling"
   },
-  "extended_placeholders": [
-    "livre sterling",
-    "livre sterling",
-    "livres sterling"
-  ]
+  "other_placeholder": "livres sterling",
+  "display_name": "livre sterling"
 }

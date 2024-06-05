@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "metical mozambicain"
   },
-  "extended_placeholders": [
-    "metical mozambicain",
-    "metical mozambicain",
-    "meticais mozambicains"
-  ]
+  "other_placeholder": "meticais mozambicains",
+  "display_name": "metical mozambicain"
 }

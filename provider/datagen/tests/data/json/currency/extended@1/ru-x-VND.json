@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "вьетнамский донг",
+    "Few": "вьетнамских донга",
+    "Many": "вьетнамских донгов"
   },
-  "extended_placeholders": [
-    "вьетнамский донг",
-    "вьетнамский донг",
-    "вьетнамских донга",
-    "вьетнамских донгов",
-    "вьетнамского донга"
-  ]
+  "other_placeholder": "вьетнамского донга",
+  "display_name": "вьетнамский донг"
 }

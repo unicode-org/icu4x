@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "бермудский доллар",
+    "Few": "бермудских доллара",
+    "Many": "бермудских долларов"
   },
-  "extended_placeholders": [
-    "бермудский доллар",
-    "бермудский доллар",
-    "бермудских доллара",
-    "бермудских долларов",
-    "бермудского доллара"
-  ]
+  "other_placeholder": "бермудского доллара",
+  "display_name": "бермудский доллар"
 }

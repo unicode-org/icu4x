@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "omanski rijal",
+    "Few": "omanska rijala"
   },
-  "extended_placeholders": [
-    "omanski rijal",
-    "omanski rijal",
-    "omanska rijala",
-    "omanskih rijala"
-  ]
+  "other_placeholder": "omanskih rijala",
+  "display_name": "omanski rijal"
 }

@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "libra egipcia"
   },
-  "extended_placeholders": [
-    "libra egipcia",
-    "libra egipcia",
-    "libras egipcias"
-  ]
+  "other_placeholder": "libras egipcias",
+  "display_name": "libra egipcia"
 }

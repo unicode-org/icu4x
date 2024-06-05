@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "evropska kompozitna jedinica",
+    "Few": "evropske kompozitne jedinice"
   },
-  "extended_placeholders": [
-    "Evropska kompozitna jedinica",
-    "evropska kompozitna jedinica",
-    "evropske kompozitne jedinice",
-    "evropskih kompozitnih jedinica"
-  ]
+  "other_placeholder": "evropskih kompozitnih jedinica",
+  "display_name": "Evropska kompozitna jedinica"
 }

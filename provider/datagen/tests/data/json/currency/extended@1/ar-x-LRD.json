@@ -1,15 +1,11 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "Zero": "دولار ليبيري",
+    "One": "دولار ليبيري",
+    "Two": "دولاران ليبيريان",
+    "Few": "دولارات ليبيرية",
+    "Many": "دولارًا ليبيريًا"
   },
-  "extended_placeholders": [
-    "دولار ليبيري",
-    "دولار ليبيري",
-    "دولاران ليبيريان",
-    "دولارات ليبيرية",
-    "دولارًا ليبيريًا",
-    "دولار ليبيري"
-  ]
+  "other_placeholder": "دولار ليبيري",
+  "display_name": "دولار ليبيري"
 }

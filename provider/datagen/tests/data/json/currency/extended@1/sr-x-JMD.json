@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "jамајчански долар",
+    "Few": "jамајчанска долара"
   },
-  "extended_placeholders": [
-    "јамајчански долар",
-    "jамајчански долар",
-    "jамајчанска долара",
-    "jамајчанскиx долара"
-  ]
+  "other_placeholder": "jамајчанскиx долара",
+  "display_name": "јамајчански долар"
 }

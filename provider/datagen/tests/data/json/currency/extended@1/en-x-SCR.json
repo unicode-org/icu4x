@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Seychellois rupee"
   },
-  "extended_placeholders": [
-    "Seychellois Rupee",
-    "Seychellois rupee",
-    "Seychellois rupees"
-  ]
+  "other_placeholder": "Seychellois rupees",
+  "display_name": "Seychellois Rupee"
 }

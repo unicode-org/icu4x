@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "еквадорски сакр",
+    "Few": "еквадорска сакра"
   },
-  "extended_placeholders": [
-    "Еквадорски сакр",
-    "еквадорски сакр",
-    "еквадорска сакра",
-    "еквадорских сакра"
-  ]
+  "other_placeholder": "еквадорских сакра",
+  "display_name": "Еквадорски сакр"
 }

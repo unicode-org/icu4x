@@ -1,10 +1,5 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
-  },
-  "extended_placeholders": [
-    "ดอลลาร์ซิมบับเว (2009)"
-  ]
+  "placeholders": {},
+  "other_placeholder": null,
+  "display_name": "ดอลลาร์ซิมบับเว (2009)"
 }

@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "čileanski pezos",
+    "Few": "čileanska pezosa"
   },
-  "extended_placeholders": [
-    "čileanski pezos",
-    "čileanski pezos",
-    "čileanska pezosa",
-    "čileanskih pezosa"
-  ]
+  "other_placeholder": "čileanskih pezosa",
+  "display_name": "čileanski pezos"
 }

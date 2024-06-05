@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "босанско-херцеговачки динар",
+    "Few": "босанско-херцеговачка динара"
   },
-  "extended_placeholders": [
-    "Босанско-Херцеговачки динар",
-    "босанско-херцеговачки динар",
-    "босанско-херцеговачка динара",
-    "босанско-херцеговачких динара"
-  ]
+  "other_placeholder": "босанско-херцеговачких динара",
+  "display_name": "Босанско-Херцеговачки динар"
 }

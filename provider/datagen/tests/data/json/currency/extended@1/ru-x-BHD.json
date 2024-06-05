@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "бахрейнский динар",
+    "Few": "бахрейнских динара",
+    "Many": "бахрейнских динаров"
   },
-  "extended_placeholders": [
-    "бахрейнский динар",
-    "бахрейнский динар",
-    "бахрейнских динара",
-    "бахрейнских динаров",
-    "бахрейнского динара"
-  ]
+  "other_placeholder": "бахрейнского динара",
+  "display_name": "бахрейнский динар"
 }

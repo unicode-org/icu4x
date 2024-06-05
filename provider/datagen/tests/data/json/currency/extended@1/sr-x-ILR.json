@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "стари израелски шекели",
+    "Few": "стари израелски шекели"
   },
-  "extended_placeholders": [
-    "Стари израелски шекели",
-    "стари израелски шекели",
-    "стари израелски шекели",
-    "стари израелски шекели"
-  ]
+  "other_placeholder": "стари израелски шекели",
+  "display_name": "Стари израелски шекели"
 }

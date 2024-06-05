@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Şili esküdosu"
   },
-  "extended_placeholders": [
-    "Şili Esküdosu",
-    "Şili esküdosu",
-    "Şili esküdosu"
-  ]
+  "other_placeholder": "Şili esküdosu",
+  "display_name": "Şili Esküdosu"
 }

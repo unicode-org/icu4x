@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "rublo bielorruso (2000–2016)"
   },
-  "extended_placeholders": [
-    "rublo bielorruso (2000–2016)",
-    "rublo bielorruso (2000–2016)",
-    "rublos bielorrusos (2000–2016)"
-  ]
+  "other_placeholder": "rublos bielorrusos (2000–2016)",
+  "display_name": "rublo bielorruso (2000–2016)"
 }

@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Zimbabve doları (2008)"
   },
-  "extended_placeholders": [
-    "Zimbabve Doları (2008)",
-    "Zimbabve doları (2008)",
-    "Zimbabve doları (2008)"
-  ]
+  "other_placeholder": "Zimbabve doları (2008)",
+  "display_name": "Zimbabve Doları (2008)"
 }

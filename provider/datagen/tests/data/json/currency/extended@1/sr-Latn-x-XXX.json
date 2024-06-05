@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "nepoznata jedinica valute",
+    "Few": "nepoznate valute"
   },
-  "extended_placeholders": [
-    "Nepoznata valuta",
-    "nepoznata jedinica valute",
-    "nepoznate valute",
-    "nepoznatih valuta"
-  ]
+  "other_placeholder": "nepoznatih valuta",
+  "display_name": "Nepoznata valuta"
 }

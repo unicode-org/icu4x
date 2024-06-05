@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Surinamese dollar"
   },
-  "extended_placeholders": [
-    "Surinamese Dollar",
-    "Surinamese dollar",
-    "Surinamese dollars"
-  ]
+  "other_placeholder": "Surinamese dollars",
+  "display_name": "Surinamese Dollar"
 }

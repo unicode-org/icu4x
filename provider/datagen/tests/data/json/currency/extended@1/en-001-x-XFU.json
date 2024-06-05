@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "French UIC-franc"
   },
-  "extended_placeholders": [
-    "French UIC-Franc",
-    "French UIC-franc",
-    "French UIC-francs"
-  ]
+  "other_placeholder": "French UIC-francs",
+  "display_name": "French UIC-Franc"
 }

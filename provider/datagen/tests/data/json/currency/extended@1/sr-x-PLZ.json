@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "пољски злот (1950–1995)",
+    "Few": "пољска злота (1950–1995)"
   },
-  "extended_placeholders": [
-    "Пољски злоти (1950–1995)",
-    "пољски злот (1950–1995)",
-    "пољска злота (1950–1995)",
-    "пољских злота (1950–1995)"
-  ]
+  "other_placeholder": "пољских злота (1950–1995)",
+  "display_name": "Пољски злоти (1950–1995)"
 }

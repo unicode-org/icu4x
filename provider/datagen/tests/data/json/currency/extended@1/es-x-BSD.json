@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "dólar bahameño"
   },
-  "extended_placeholders": [
-    "dólar bahameño",
-    "dólar bahameño",
-    "dólares bahameños"
-  ]
+  "other_placeholder": "dólares bahameños",
+  "display_name": "dólar bahameño"
 }

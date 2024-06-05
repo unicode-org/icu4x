@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "мексички пезос",
+    "Few": "мексичка пезоса"
   },
-  "extended_placeholders": [
-    "мексички пезос",
-    "мексички пезос",
-    "мексичка пезоса",
-    "мексичких пезоса"
-  ]
+  "other_placeholder": "мексичких пезоса",
+  "display_name": "мексички пезос"
 }

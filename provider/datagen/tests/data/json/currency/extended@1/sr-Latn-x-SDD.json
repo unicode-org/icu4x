@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "stari sudanski dinar",
+    "Few": "stara sudanska dinara"
   },
-  "extended_placeholders": [
-    "Stari sudanski dinar",
-    "stari sudanski dinar",
-    "stara sudanska dinara",
-    "starih sudanskih dinara"
-  ]
+  "other_placeholder": "starih sudanskih dinara",
+  "display_name": "Stari sudanski dinar"
 }

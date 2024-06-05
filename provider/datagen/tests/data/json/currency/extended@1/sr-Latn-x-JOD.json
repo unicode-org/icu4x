@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "jordanski dinar",
+    "Few": "jordanska dinara"
   },
-  "extended_placeholders": [
-    "jordanski dinar",
-    "jordanski dinar",
-    "jordanska dinara",
-    "jordanskih dinara"
-  ]
+  "other_placeholder": "jordanskih dinara",
+  "display_name": "jordanski dinar"
 }

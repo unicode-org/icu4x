@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "nafka érythréen"
   },
-  "extended_placeholders": [
-    "nafka érythréen",
-    "nafka érythréen",
-    "nafkas érythréens"
-  ]
+  "other_placeholder": "nafkas érythréens",
+  "display_name": "nafka érythréen"
 }

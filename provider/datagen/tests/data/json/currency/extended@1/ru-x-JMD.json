@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "ямайский доллар",
+    "Few": "ямайских доллара",
+    "Many": "ямайских долларов"
   },
-  "extended_placeholders": [
-    "ямайский доллар",
-    "ямайский доллар",
-    "ямайских доллара",
-    "ямайских долларов",
-    "ямайского доллара"
-  ]
+  "other_placeholder": "ямайского доллара",
+  "display_name": "ямайский доллар"
 }

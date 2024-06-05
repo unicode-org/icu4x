@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "dalasi gambien"
   },
-  "extended_placeholders": [
-    "dalasi gambien",
-    "dalasi gambien",
-    "dalasis gambiens"
-  ]
+  "other_placeholder": "dalasis gambiens",
+  "display_name": "dalasi gambien"
 }

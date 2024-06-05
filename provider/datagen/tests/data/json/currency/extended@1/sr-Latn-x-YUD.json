@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "jugoslovenski tvrdi dinar",
+    "Few": "jugoslovenska tvrda dinara"
   },
-  "extended_placeholders": [
-    "Jugoslovenski tvrdi dinar",
-    "jugoslovenski tvrdi dinar",
-    "jugoslovenska tvrda dinara",
-    "jugoslovenskih tvrdih dinara"
-  ]
+  "other_placeholder": "jugoslovenskih tvrdih dinara",
+  "display_name": "Jugoslovenski tvrdi dinar"
 }

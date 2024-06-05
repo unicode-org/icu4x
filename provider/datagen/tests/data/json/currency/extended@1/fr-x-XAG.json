@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "once troy d’argent"
   },
-  "extended_placeholders": [
-    "argent",
-    "once troy d’argent",
-    "onces troy d’argent"
-  ]
+  "other_placeholder": "onces troy d’argent",
+  "display_name": "argent"
 }

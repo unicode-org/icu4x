@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "кубинский песо",
+    "Few": "кубинских песо",
+    "Many": "кубинских песо"
   },
-  "extended_placeholders": [
-    "кубинский песо",
-    "кубинский песо",
-    "кубинских песо",
-    "кубинских песо",
-    "кубинского песо"
-  ]
+  "other_placeholder": "кубинского песо",
+  "display_name": "кубинский песо"
 }

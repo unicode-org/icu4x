@@ -1,15 +1,11 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "Zero": "ليمبيرا هندوراس",
+    "One": "ليمبيرا هندوراس",
+    "Two": "ليمبيرا هندوراس",
+    "Few": "ليمبيرا هندوراس",
+    "Many": "ليمبيرا هندوراس"
   },
-  "extended_placeholders": [
-    "ليمبيرا هنداروس",
-    "ليمبيرا هندوراس",
-    "ليمبيرا هندوراس",
-    "ليمبيرا هندوراس",
-    "ليمبيرا هندوراس",
-    "ليمبيرا هندوراس"
-  ]
+  "other_placeholder": "ليمبيرا هندوراس",
+  "display_name": "ليمبيرا هنداروس"
 }

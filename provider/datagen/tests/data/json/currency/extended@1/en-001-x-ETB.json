@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Ethiopian birr"
   },
-  "extended_placeholders": [
-    "Ethiopian Birr",
-    "Ethiopian birr",
-    "Ethiopian birr"
-  ]
+  "other_placeholder": "Ethiopian birr",
+  "display_name": "Ethiopian Birr"
 }

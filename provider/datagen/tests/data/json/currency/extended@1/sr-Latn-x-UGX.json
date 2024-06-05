@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "ugandski šiling",
+    "Few": "ugandska šilinga"
   },
-  "extended_placeholders": [
-    "ugandski šiling",
-    "ugandski šiling",
-    "ugandska šilinga",
-    "ugandskih šilinga"
-  ]
+  "other_placeholder": "ugandskih šilinga",
+  "display_name": "ugandski šiling"
 }

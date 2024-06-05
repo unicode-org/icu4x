@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "ringgit malais"
   },
-  "extended_placeholders": [
-    "ringgit malais",
-    "ringgit malais",
-    "ringgits malais"
-  ]
+  "other_placeholder": "ringgits malais",
+  "display_name": "ringgit malais"
 }

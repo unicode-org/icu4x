@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "rumunski lej",
+    "Few": "rumunska leja"
   },
-  "extended_placeholders": [
-    "rumunski lej",
-    "rumunski lej",
-    "rumunska leja",
-    "rumunskih leja"
-  ]
+  "other_placeholder": "rumunskih leja",
+  "display_name": "rumunski lej"
 }

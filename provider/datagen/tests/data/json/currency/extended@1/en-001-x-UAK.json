@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Ukrainian karbovanets"
   },
-  "extended_placeholders": [
-    "Ukrainian Karbovanets",
-    "Ukrainian karbovanets",
-    "Ukrainian karbovantsiv"
-  ]
+  "other_placeholder": "Ukrainian karbovantsiv",
+  "display_name": "Ukrainian Karbovanets"
 }

@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "peruanski sol",
+    "Few": "peruanska sola"
   },
-  "extended_placeholders": [
-    "peruanski sol",
-    "peruanski sol",
-    "peruanska sola",
-    "peruanskih sola"
-  ]
+  "other_placeholder": "peruanskih sola",
+  "display_name": "peruanski sol"
 }

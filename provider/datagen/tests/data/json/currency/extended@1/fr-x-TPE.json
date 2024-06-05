@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "escudo timorais"
   },
-  "extended_placeholders": [
-    "escudo timorais",
-    "escudo timorais",
-    "escudos timorais"
-  ]
+  "other_placeholder": "escudos timorais",
+  "display_name": "escudo timorais"
 }

@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "libra israelí"
   },
-  "extended_placeholders": [
-    "libra israelí",
-    "libra israelí",
-    "libras israelíes"
-  ]
+  "other_placeholder": "libras israelíes",
+  "display_name": "libra israelí"
 }

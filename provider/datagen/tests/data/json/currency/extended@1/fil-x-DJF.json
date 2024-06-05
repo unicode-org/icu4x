@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Djiboutian franc"
   },
-  "extended_placeholders": [
-    "Djiboutian Franc",
-    "Djiboutian franc",
-    "Djiboutian francs"
-  ]
+  "other_placeholder": "Djiboutian francs",
+  "display_name": "Djiboutian Franc"
 }

@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "florin ng Aruba"
   },
-  "extended_placeholders": [
-    "Florin ng Aruba",
-    "florin ng Aruba",
-    "florin ng Aruba"
-  ]
+  "other_placeholder": "florin ng Aruba",
+  "display_name": "Florin ng Aruba"
 }

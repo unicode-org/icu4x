@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Lesotho loti"
   },
-  "extended_placeholders": [
-    "Lesotho Loti",
-    "Lesotho loti",
-    "Lesotho maloti"
-  ]
+  "other_placeholder": "Lesotho maloti",
+  "display_name": "Lesotho Loti"
 }

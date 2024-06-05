@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "франк Руанды",
+    "Few": "франка Руанды",
+    "Many": "франков Руанды"
   },
-  "extended_placeholders": [
-    "франк Руанды",
-    "франк Руанды",
-    "франка Руанды",
-    "франков Руанды",
-    "франка Руанды"
-  ]
+  "other_placeholder": "франка Руанды",
+  "display_name": "франк Руанды"
 }

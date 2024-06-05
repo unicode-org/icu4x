@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "папуанска кина",
+    "Few": "папуанскe кинe"
   },
-  "extended_placeholders": [
-    "папуанска кина",
-    "папуанска кина",
-    "папуанскe кинe",
-    "папуанских кинa"
-  ]
+  "other_placeholder": "папуанских кинa",
+  "display_name": "папуанска кина"
 }

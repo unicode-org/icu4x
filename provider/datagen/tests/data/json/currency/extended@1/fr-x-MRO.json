@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "ouguiya mauritanien (1973–2017)"
   },
-  "extended_placeholders": [
-    "ouguiya mauritanien (1973–2017)",
-    "ouguiya mauritanien (1973–2017)",
-    "ouguiyas mauritaniens (1973–2017)"
-  ]
+  "other_placeholder": "ouguiyas mauritaniens (1973–2017)",
+  "display_name": "ouguiya mauritanien (1973–2017)"
 }

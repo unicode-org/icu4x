@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "libra de Santa Elena"
   },
-  "extended_placeholders": [
-    "libra de Santa Elena",
-    "libra de Santa Elena",
-    "libras de Santa Elena"
-  ]
+  "other_placeholder": "libras de Santa Elena",
+  "display_name": "libra de Santa Elena"
 }

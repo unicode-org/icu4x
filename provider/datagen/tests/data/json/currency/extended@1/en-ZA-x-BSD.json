@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Bahamian dollar"
   },
-  "extended_placeholders": [
-    "Bahamian Dollar",
-    "Bahamian dollar",
-    "Bahamian dollars"
-  ]
+  "other_placeholder": "Bahamian dollars",
+  "display_name": "Bahamian Dollar"
 }

@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "posebno crtaće pravo",
+    "Few": "posebna crtaća prava"
   },
-  "extended_placeholders": [
-    "Posebna crtaća prava",
-    "posebno crtaće pravo",
-    "posebna crtaća prava",
-    "posebnih crtaćih prava"
-  ]
+  "other_placeholder": "posebnih crtaćih prava",
+  "display_name": "Posebna crtaća prava"
 }

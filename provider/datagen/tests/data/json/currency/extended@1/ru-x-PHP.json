@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "филиппинский песо",
+    "Few": "филиппинских песо",
+    "Many": "филиппинских песо"
   },
-  "extended_placeholders": [
-    "филиппинский песо",
-    "филиппинский песо",
-    "филиппинских песо",
-    "филиппинских песо",
-    "филиппинского песо"
-  ]
+  "other_placeholder": "филиппинского песо",
+  "display_name": "филиппинский песо"
 }

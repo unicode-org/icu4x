@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "nepalska rupija",
+    "Few": "nepalske rupije"
   },
-  "extended_placeholders": [
-    "nepalska rupija",
-    "nepalska rupija",
-    "nepalske rupije",
-    "nepalskih rupija"
-  ]
+  "other_placeholder": "nepalskih rupija",
+  "display_name": "nepalska rupija"
 }

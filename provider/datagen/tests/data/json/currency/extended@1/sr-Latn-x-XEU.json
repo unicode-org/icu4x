@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "evropska novčana jedinica (XEU)",
+    "Few": "evropske novčane jedinice (XEU)"
   },
-  "extended_placeholders": [
-    "Evropska valutna jedinica",
-    "evropska novčana jedinica (XEU)",
-    "evropske novčane jedinice (XEU)",
-    "evropskih novčanih jedinica"
-  ]
+  "other_placeholder": "evropskih novčanih jedinica",
+  "display_name": "Evropska valutna jedinica"
 }

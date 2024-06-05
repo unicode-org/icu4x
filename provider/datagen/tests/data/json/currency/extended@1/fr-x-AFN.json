@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "afghani afghan"
   },
-  "extended_placeholders": [
-    "afghani afghan",
-    "afghani afghan",
-    "afghanis afghan"
-  ]
+  "other_placeholder": "afghanis afghan",
+  "display_name": "afghani afghan"
 }

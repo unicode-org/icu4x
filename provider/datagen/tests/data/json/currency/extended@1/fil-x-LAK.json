@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Laotian kip"
   },
-  "extended_placeholders": [
-    "Laotian Kip",
-    "Laotian kip",
-    "Laotian kips"
-  ]
+  "other_placeholder": "Laotian kips",
+  "display_name": "Laotian Kip"
 }

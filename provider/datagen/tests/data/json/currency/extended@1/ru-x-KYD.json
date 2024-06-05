@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "доллар Островов Кайман",
+    "Few": "доллара Островов Кайман",
+    "Many": "долларов Островов Кайман"
   },
-  "extended_placeholders": [
-    "доллар Островов Кайман",
-    "доллар Островов Кайман",
-    "доллара Островов Кайман",
-    "долларов Островов Кайман",
-    "доллара Островов Кайман"
-  ]
+  "other_placeholder": "доллара Островов Кайман",
+  "display_name": "доллар Островов Кайман"
 }

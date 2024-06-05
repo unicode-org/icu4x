@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Falkland Islands pound"
   },
-  "extended_placeholders": [
-    "Falkland Islands Pound",
-    "Falkland Islands pound",
-    "Falkland Islands pounds"
-  ]
+  "other_placeholder": "Falkland Islands pounds",
+  "display_name": "Falkland Islands Pound"
 }

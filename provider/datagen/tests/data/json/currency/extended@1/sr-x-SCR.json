@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "сејшелска рупија",
+    "Few": "сејшелске рупије"
   },
-  "extended_placeholders": [
-    "сејшелска рупија",
-    "сејшелска рупија",
-    "сејшелске рупије",
-    "сејшелских рупија"
-  ]
+  "other_placeholder": "сејшелских рупија",
+  "display_name": "сејшелска рупија"
 }

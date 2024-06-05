@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "rupia nepalí"
   },
-  "extended_placeholders": [
-    "rupia nepalí",
-    "rupia nepalí",
-    "rupias nepalíes"
-  ]
+  "other_placeholder": "rupias nepalíes",
+  "display_name": "rupia nepalí"
 }

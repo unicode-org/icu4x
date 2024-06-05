@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "мозамбикский метикал",
+    "Few": "мозамбикских метикала",
+    "Many": "мозамбикских метикалов"
   },
-  "extended_placeholders": [
-    "мозамбикский метикал",
-    "мозамбикский метикал",
-    "мозамбикских метикала",
-    "мозамбикских метикалов",
-    "мозамбикского метикала"
-  ]
+  "other_placeholder": "мозамбикского метикала",
+  "display_name": "мозамбикский метикал"
 }

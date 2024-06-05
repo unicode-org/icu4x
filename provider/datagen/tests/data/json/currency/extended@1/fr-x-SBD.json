@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "dollar des îles Salomon"
   },
-  "extended_placeholders": [
-    "dollar des îles Salomon",
-    "dollar des îles Salomon",
-    "dollars des îles Salomon"
-  ]
+  "other_placeholder": "dollars des îles Salomon",
+  "display_name": "dollar des îles Salomon"
 }

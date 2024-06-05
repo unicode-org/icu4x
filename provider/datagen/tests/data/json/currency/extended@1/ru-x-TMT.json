@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "новый туркменский манат",
+    "Few": "новых туркменских маната",
+    "Many": "новых туркменских манатов"
   },
-  "extended_placeholders": [
-    "новый туркменский манат",
-    "новый туркменский манат",
-    "новых туркменских маната",
-    "новых туркменских манатов",
-    "нового туркменского маната"
-  ]
+  "other_placeholder": "нового туркменского маната",
+  "display_name": "новый туркменский манат"
 }

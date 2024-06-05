@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "German mark"
   },
-  "extended_placeholders": [
-    "German Mark",
-    "German mark",
-    "German marks"
-  ]
+  "other_placeholder": "German marks",
+  "display_name": "German Mark"
 }

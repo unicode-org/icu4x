@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "peso uruguayo"
   },
-  "extended_placeholders": [
-    "peso uruguayo",
-    "peso uruguayo",
-    "pesos uruguayos"
-  ]
+  "other_placeholder": "pesos uruguayos",
+  "display_name": "peso uruguayo"
 }

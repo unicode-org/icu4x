@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "аргентински пезо (1983–1985)",
+    "Few": "аргентинска пезоса (1983–1985)"
   },
-  "extended_placeholders": [
-    "Аргентински пезо (1983–1985)",
-    "аргентински пезо (1983–1985)",
-    "аргентинска пезоса (1983–1985)",
-    "аргентинских пезоса (1983–1985)"
-  ]
+  "other_placeholder": "аргентинских пезоса (1983–1985)",
+  "display_name": "Аргентински пезо (1983–1985)"
 }

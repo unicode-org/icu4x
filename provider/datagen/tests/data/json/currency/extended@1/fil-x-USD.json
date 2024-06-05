@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "dolyar ng US"
   },
-  "extended_placeholders": [
-    "Dolyar ng US",
-    "dolyar ng US",
-    "dolyares ng US"
-  ]
+  "other_placeholder": "dolyares ng US",
+  "display_name": "Dolyar ng US"
 }

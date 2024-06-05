@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "US dollar (same day)"
   },
-  "extended_placeholders": [
-    "US Dollar (Same day)",
-    "US dollar (same day)",
-    "US dollars (same day)"
-  ]
+  "other_placeholder": "US dollars (same day)",
+  "display_name": "US Dollar (Same day)"
 }

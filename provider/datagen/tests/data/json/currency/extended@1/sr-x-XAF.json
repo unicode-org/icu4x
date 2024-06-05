@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "централноафрички франак",
+    "Few": "централноафричка франка"
   },
-  "extended_placeholders": [
-    "централноафрички франак",
-    "централноафрички франак",
-    "централноафричка франка",
-    "централноафричких франака"
-  ]
+  "other_placeholder": "централноафричких франака",
+  "display_name": "централноафрички франак"
 }

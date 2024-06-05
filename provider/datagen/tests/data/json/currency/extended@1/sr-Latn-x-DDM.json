@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "istočno-nemačka marka",
+    "Few": "istočno-nemačke marke"
   },
-  "extended_placeholders": [
-    "Istočno-nemačka marka",
-    "istočno-nemačka marka",
-    "istočno-nemačke marke",
-    "istočno-nemačkih maraka"
-  ]
+  "other_placeholder": "istočno-nemačkih maraka",
+  "display_name": "Istočno-nemačka marka"
 }

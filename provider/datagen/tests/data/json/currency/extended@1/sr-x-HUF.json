@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "мађарска форинта",
+    "Few": "мађарске форинте"
   },
-  "extended_placeholders": [
-    "мађарска форинта",
-    "мађарска форинта",
-    "мађарске форинте",
-    "мађарских форинти"
-  ]
+  "other_placeholder": "мађарских форинти",
+  "display_name": "мађарска форинта"
 }

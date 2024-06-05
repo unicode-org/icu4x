@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "dinar convertible yugoslavo"
   },
-  "extended_placeholders": [
-    "dinar convertible yugoslavo",
-    "dinar convertible yugoslavo",
-    "dinares convertibles yugoslavos"
-  ]
+  "other_placeholder": "dinares convertibles yugoslavos",
+  "display_name": "dinar convertible yugoslavo"
 }

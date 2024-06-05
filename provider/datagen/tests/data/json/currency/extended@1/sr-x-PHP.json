@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "филипински пезос",
+    "Few": "филипинска пезоса"
   },
-  "extended_placeholders": [
-    "филипински пезос",
-    "филипински пезос",
-    "филипинска пезоса",
-    "филипинских пезоса"
-  ]
+  "other_placeholder": "филипинских пезоса",
+  "display_name": "филипински пезос"
 }

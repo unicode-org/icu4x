@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "луксембуршки франак",
+    "Few": "луксембуршка франка"
   },
-  "extended_placeholders": [
-    "Луксембуршки франак",
-    "луксембуршки франак",
-    "луксембуршка франка",
-    "луксембуршки франци"
-  ]
+  "other_placeholder": "луксембуршки франци",
+  "display_name": "Луксембуршки франак"
 }

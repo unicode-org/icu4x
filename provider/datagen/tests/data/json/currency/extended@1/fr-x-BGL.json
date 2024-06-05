@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "lev bulgare (1962–1999)"
   },
-  "extended_placeholders": [
-    "lev bulgare (1962–1999)",
-    "lev bulgare (1962–1999)",
-    "levs bulgares (1962–1999)"
-  ]
+  "other_placeholder": "levs bulgares (1962–1999)",
+  "display_name": "lev bulgare (1962–1999)"
 }

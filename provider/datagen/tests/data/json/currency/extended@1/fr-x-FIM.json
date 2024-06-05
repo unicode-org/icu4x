@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "mark finlandais"
   },
-  "extended_placeholders": [
-    "mark finlandais",
-    "mark finlandais",
-    "marks finlandais"
-  ]
+  "other_placeholder": "marks finlandais",
+  "display_name": "mark finlandais"
 }

@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "бразильский реал",
+    "Few": "бразильских реала",
+    "Many": "бразильских реалов"
   },
-  "extended_placeholders": [
-    "бразильский реал",
-    "бразильский реал",
-    "бразильских реала",
-    "бразильских реалов",
-    "бразильского реала"
-  ]
+  "other_placeholder": "бразильского реала",
+  "display_name": "бразильский реал"
 }

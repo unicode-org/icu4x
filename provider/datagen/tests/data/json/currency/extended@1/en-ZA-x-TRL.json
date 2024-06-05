@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Turkish lira (1922–2005)"
   },
-  "extended_placeholders": [
-    "Turkish Lira (1922–2005)",
-    "Turkish lira (1922–2005)",
-    "Turkish Lira (1922–2005)"
-  ]
+  "other_placeholder": "Turkish Lira (1922–2005)",
+  "display_name": "Turkish Lira (1922–2005)"
 }

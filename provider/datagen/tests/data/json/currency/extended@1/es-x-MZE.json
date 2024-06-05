@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "escudo mozambiqueño"
   },
-  "extended_placeholders": [
-    "escudo mozambiqueño",
-    "escudo mozambiqueño",
-    "escudos mozambiqueños"
-  ]
+  "other_placeholder": "escudos mozambiqueños",
+  "display_name": "escudo mozambiqueño"
 }

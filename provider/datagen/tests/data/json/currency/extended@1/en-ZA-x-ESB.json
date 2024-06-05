@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Spanish peseta (convertible account)"
   },
-  "extended_placeholders": [
-    "Spanish Peseta (convertible account)",
-    "Spanish peseta (convertible account)",
-    "Spanish pesetas (convertible account)"
-  ]
+  "other_placeholder": "Spanish pesetas (convertible account)",
+  "display_name": "Spanish Peseta (convertible account)"
 }

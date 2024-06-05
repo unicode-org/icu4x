@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "tonganska panga",
+    "Few": "tonganske pange"
   },
-  "extended_placeholders": [
-    "tonganska panga",
-    "tonganska panga",
-    "tonganske pange",
-    "tonganskih pangi"
-  ]
+  "other_placeholder": "tonganskih pangi",
+  "display_name": "tonganska panga"
 }

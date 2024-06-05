@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Lebanese pound"
   },
-  "extended_placeholders": [
-    "Lebanese Pound",
-    "Lebanese pound",
-    "Lebanese pounds"
-  ]
+  "other_placeholder": "Lebanese pounds",
+  "display_name": "Lebanese Pound"
 }

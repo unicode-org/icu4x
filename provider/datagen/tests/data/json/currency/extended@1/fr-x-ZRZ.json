@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "zaïre zaïrois"
   },
-  "extended_placeholders": [
-    "zaïre zaïrois",
-    "zaïre zaïrois",
-    "zaïres zaïrois"
-  ]
+  "other_placeholder": "zaïres zaïrois",
+  "display_name": "zaïre zaïrois"
 }

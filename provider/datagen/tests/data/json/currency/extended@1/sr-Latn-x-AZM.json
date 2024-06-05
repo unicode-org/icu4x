@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "azerbejdžanski manat (1993–2006)",
+    "Few": "azerbejdžanska manata (1993–2006)"
   },
-  "extended_placeholders": [
-    "Azerbejdžanski manat (1993–2006)",
-    "azerbejdžanski manat (1993–2006)",
-    "azerbejdžanska manata (1993–2006)",
-    "azerbejdžanskih manata (1993–2006)"
-  ]
+  "other_placeholder": "azerbejdžanskih manata (1993–2006)",
+  "display_name": "Azerbejdžanski manat (1993–2006)"
 }

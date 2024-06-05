@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Malian franc"
   },
-  "extended_placeholders": [
-    "Malian Franc",
-    "Malian franc",
-    "Malian francs"
-  ]
+  "other_placeholder": "Malian francs",
+  "display_name": "Malian Franc"
 }

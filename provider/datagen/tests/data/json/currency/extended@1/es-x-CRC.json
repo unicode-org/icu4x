@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "colón costarricense"
   },
-  "extended_placeholders": [
-    "colón costarricense",
-    "colón costarricense",
-    "colones costarricenses"
-  ]
+  "other_placeholder": "colones costarricenses",
+  "display_name": "colón costarricense"
 }

@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "kuna croate"
   },
-  "extended_placeholders": [
-    "kuna croate",
-    "kuna croate",
-    "kunas croates"
-  ]
+  "other_placeholder": "kunas croates",
+  "display_name": "kuna croate"
 }

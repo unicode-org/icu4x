@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "franc rwandais"
   },
-  "extended_placeholders": [
-    "franc rwandais",
-    "franc rwandais",
-    "francs rwandais"
-  ]
+  "other_placeholder": "francs rwandais",
+  "display_name": "franc rwandais"
 }

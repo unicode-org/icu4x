@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Chinese yuan (offshore)"
   },
-  "extended_placeholders": [
-    "Chinese Yuan (offshore)",
-    "Chinese yuan (offshore)",
-    "Chinese yuan (offshore)"
-  ]
+  "other_placeholder": "Chinese yuan (offshore)",
+  "display_name": "Chinese Yuan (offshore)"
 }

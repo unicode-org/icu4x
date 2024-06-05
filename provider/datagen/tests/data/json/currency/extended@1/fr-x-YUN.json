@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "dinar convertible yougoslave (1990–1992)"
   },
-  "extended_placeholders": [
-    "dinar yougoslave convertible",
-    "dinar convertible yougoslave (1990–1992)",
-    "dinars convertibles yougoslaves (1990–1992)"
-  ]
+  "other_placeholder": "dinars convertibles yougoslaves (1990–1992)",
+  "display_name": "dinar yougoslave convertible"
 }

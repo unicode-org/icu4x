@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "южнокорейская вона",
+    "Few": "южнокорейские воны",
+    "Many": "южнокорейских вон"
   },
-  "extended_placeholders": [
-    "южнокорейская вона",
-    "южнокорейская вона",
-    "южнокорейские воны",
-    "южнокорейских вон",
-    "южнокорейской воны"
-  ]
+  "other_placeholder": "южнокорейской воны",
+  "display_name": "южнокорейская вона"
 }

@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "ливийский динар",
+    "Few": "ливийских динара",
+    "Many": "ливийских динаров"
   },
-  "extended_placeholders": [
-    "ливийский динар",
-    "ливийский динар",
-    "ливийских динара",
-    "ливийских динаров",
-    "ливийского динара"
-  ]
+  "other_placeholder": "ливийского динара",
+  "display_name": "ливийский динар"
 }

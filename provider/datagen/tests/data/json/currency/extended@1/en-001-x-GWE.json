@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Portuguese Guinea escudo"
   },
-  "extended_placeholders": [
-    "Portuguese Guinea Escudo",
-    "Portuguese Guinea escudo",
-    "Portuguese Guinea escudos"
-  ]
+  "other_placeholder": "Portuguese Guinea escudos",
+  "display_name": "Portuguese Guinea Escudo"
 }

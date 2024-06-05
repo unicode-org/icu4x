@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "escudo de Guinée portugaise"
   },
-  "extended_placeholders": [
-    "escudo de Guinée portugaise",
-    "escudo de Guinée portugaise",
-    "escudos de Guinée portugaise"
-  ]
+  "other_placeholder": "escudos de Guinée portugaise",
+  "display_name": "escudo de Guinée portugaise"
 }

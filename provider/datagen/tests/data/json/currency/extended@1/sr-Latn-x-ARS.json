@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "argentinski pezos",
+    "Few": "argentinska pezosa"
   },
-  "extended_placeholders": [
-    "argentinski pezos",
-    "argentinski pezos",
-    "argentinska pezosa",
-    "argentinskih pezosa"
-  ]
+  "other_placeholder": "argentinskih pezosa",
+  "display_name": "argentinski pezos"
 }

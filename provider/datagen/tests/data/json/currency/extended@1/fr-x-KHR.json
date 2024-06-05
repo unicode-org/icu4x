@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "riel cambodgien"
   },
-  "extended_placeholders": [
-    "riel cambodgien",
-    "riel cambodgien",
-    "riels cambodgiens"
-  ]
+  "other_placeholder": "riels cambodgiens",
+  "display_name": "riel cambodgien"
 }

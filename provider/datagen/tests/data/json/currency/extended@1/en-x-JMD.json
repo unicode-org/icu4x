@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Jamaican dollar"
   },
-  "extended_placeholders": [
-    "Jamaican Dollar",
-    "Jamaican dollar",
-    "Jamaican dollars"
-  ]
+  "other_placeholder": "Jamaican dollars",
+  "display_name": "Jamaican Dollar"
 }

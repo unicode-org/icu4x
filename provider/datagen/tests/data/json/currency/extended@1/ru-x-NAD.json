@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "доллар Намибии",
+    "Few": "доллара Намибии",
+    "Many": "долларов Намибии"
   },
-  "extended_placeholders": [
-    "доллар Намибии",
-    "доллар Намибии",
-    "доллара Намибии",
-    "долларов Намибии",
-    "доллара Намибии"
-  ]
+  "other_placeholder": "доллара Намибии",
+  "display_name": "доллар Намибии"
 }

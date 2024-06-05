@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "бугарски тврди лев",
+    "Few": "бугарска тврда лева"
   },
-  "extended_placeholders": [
-    "Бугарски тврди лев",
-    "бугарски тврди лев",
-    "бугарска тврда лева",
-    "бугарских тврдих лева"
-  ]
+  "other_placeholder": "бугарских тврдих лева",
+  "display_name": "Бугарски тврди лев"
 }

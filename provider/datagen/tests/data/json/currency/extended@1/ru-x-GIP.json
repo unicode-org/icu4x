@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "гибралтарский фунт",
+    "Few": "гибралтарских фунта",
+    "Many": "гибралтарских фунтов"
   },
-  "extended_placeholders": [
-    "гибралтарский фунт",
-    "гибралтарский фунт",
-    "гибралтарских фунта",
-    "гибралтарских фунтов",
-    "гибралтарского фунта"
-  ]
+  "other_placeholder": "гибралтарского фунта",
+  "display_name": "гибралтарский фунт"
 }

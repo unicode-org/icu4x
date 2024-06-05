@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "dólar del Caribe Oriental"
   },
-  "extended_placeholders": [
-    "dólar del Caribe Oriental",
-    "dólar del Caribe Oriental",
-    "dólares del Caribe Oriental"
-  ]
+  "other_placeholder": "dólares del Caribe Oriental",
+  "display_name": "dólar del Caribe Oriental"
 }

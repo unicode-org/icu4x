@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "rupia indonesia"
   },
-  "extended_placeholders": [
-    "rupia indonesia",
-    "rupia indonesia",
-    "rupias indonesias"
-  ]
+  "other_placeholder": "rupias indonesias",
+  "display_name": "rupia indonesia"
 }

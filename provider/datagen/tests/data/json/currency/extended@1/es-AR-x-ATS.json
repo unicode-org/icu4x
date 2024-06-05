@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "chelín austriaco"
   },
-  "extended_placeholders": [
-    "chelín austriaco",
-    "chelín austriaco",
-    "chelines austriacos"
-  ]
+  "other_placeholder": "chelines austriacos",
+  "display_name": "chelín austriaco"
 }

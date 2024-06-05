@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "стари српски динар",
+    "Few": "стара српска динара"
   },
-  "extended_placeholders": [
-    "Стари српски динар",
-    "стари српски динар",
-    "стара српска динара",
-    "старих српских динара"
-  ]
+  "other_placeholder": "старих српских динара",
+  "display_name": "Стари српски динар"
 }

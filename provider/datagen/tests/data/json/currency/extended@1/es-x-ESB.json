@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "peseta española (cuenta convertible)"
   },
-  "extended_placeholders": [
-    "peseta española (cuenta convertible)",
-    "peseta española (cuenta convertible)",
-    "pesetas españolas (cuenta convertible)"
-  ]
+  "other_placeholder": "pesetas españolas (cuenta convertible)",
+  "display_name": "peseta española (cuenta convertible)"
 }

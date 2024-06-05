@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Swiss franc"
   },
-  "extended_placeholders": [
-    "Swiss Franc",
-    "Swiss franc",
-    "Swiss francs"
-  ]
+  "other_placeholder": "Swiss francs",
+  "display_name": "Swiss Franc"
 }

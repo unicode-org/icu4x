@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "colón salvadorien"
   },
-  "extended_placeholders": [
-    "colón salvadorien",
-    "colón salvadorien",
-    "colóns salvadoriens"
-  ]
+  "other_placeholder": "colóns salvadoriens",
+  "display_name": "colón salvadorien"
 }

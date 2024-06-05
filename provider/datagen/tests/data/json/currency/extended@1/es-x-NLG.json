@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "florín neerlandés"
   },
-  "extended_placeholders": [
-    "florín neerlandés",
-    "florín neerlandés",
-    "florines neerlandeses"
-  ]
+  "other_placeholder": "florines neerlandeses",
+  "display_name": "florín neerlandés"
 }

@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Maldivian rufiyaa"
   },
-  "extended_placeholders": [
-    "Maldivian Rufiyaa",
-    "Maldivian rufiyaa",
-    "Maldivian rufiyaa"
-  ]
+  "other_placeholder": "Maldivian rufiyaa",
+  "display_name": "Maldivian Rufiyaa"
 }

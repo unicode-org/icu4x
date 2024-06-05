@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "won ng Hilagang Korea"
   },
-  "extended_placeholders": [
-    "Won ng Hilagang Korea",
-    "won ng Hilagang Korea",
-    "won ng Hilagang Korea"
-  ]
+  "other_placeholder": "won ng Hilagang Korea",
+  "display_name": "Won ng Hilagang Korea"
 }

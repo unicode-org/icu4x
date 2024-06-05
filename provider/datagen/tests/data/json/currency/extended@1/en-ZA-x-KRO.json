@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "South Korean won (1945–1953)"
   },
-  "extended_placeholders": [
-    "South Korean Won (1945–1953)",
-    "South Korean won (1945–1953)",
-    "South Korean won (1945–1953)"
-  ]
+  "other_placeholder": "South Korean won (1945–1953)",
+  "display_name": "South Korean Won (1945–1953)"
 }

@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "gruzijski lari",
+    "Few": "gruzijska larija"
   },
-  "extended_placeholders": [
-    "gruzijski lari",
-    "gruzijski lari",
-    "gruzijska larija",
-    "gruzijskih larija"
-  ]
+  "other_placeholder": "gruzijskih larija",
+  "display_name": "gruzijski lari"
 }

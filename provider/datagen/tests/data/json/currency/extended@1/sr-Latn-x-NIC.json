@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "nikaragvanska kordoba (1988–1991)",
+    "Few": "nikaragvanske kordobe (1988–1991)"
   },
-  "extended_placeholders": [
-    "nikaragvanska kordoba (1988–1991)",
-    "nikaragvanska kordoba (1988–1991)",
-    "nikaragvanske kordobe (1988–1991)",
-    "nikaragvanskih kordoba (1988–1991)"
-  ]
+  "other_placeholder": "nikaragvanskih kordoba (1988–1991)",
+  "display_name": "nikaragvanska kordoba (1988–1991)"
 }

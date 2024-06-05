@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Bulgar levası (1879–1952)"
   },
-  "extended_placeholders": [
-    "Bulgar Levası (1879–1952)",
-    "Bulgar levası (1879–1952)",
-    "Bulgar levası (1879–1952)"
-  ]
+  "other_placeholder": "Bulgar levası (1879–1952)",
+  "display_name": "Bulgar Levası (1879–1952)"
 }

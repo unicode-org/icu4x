@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "jamajčanski dolar",
+    "Few": "jamajčanska dolara"
   },
-  "extended_placeholders": [
-    "jamajčanski dolar",
-    "jamajčanski dolar",
-    "jamajčanska dolara",
-    "jamajčanskix dolara"
-  ]
+  "other_placeholder": "jamajčanskix dolara",
+  "display_name": "jamajčanski dolar"
 }

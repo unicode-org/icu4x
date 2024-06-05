@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "pataca de Macao"
   },
-  "extended_placeholders": [
-    "pataca de Macao",
-    "pataca de Macao",
-    "patacas de Macao"
-  ]
+  "other_placeholder": "patacas de Macao",
+  "display_name": "pataca de Macao"
 }

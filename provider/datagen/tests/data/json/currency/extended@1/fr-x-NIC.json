@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "córdoba nicaraguayen (1912–1988)"
   },
-  "extended_placeholders": [
-    "cordoba",
-    "córdoba nicaraguayen (1912–1988)",
-    "córdobas nicaraguayens (1912–1988)"
-  ]
+  "other_placeholder": "córdobas nicaraguayens (1912–1988)",
+  "display_name": "cordoba"
 }

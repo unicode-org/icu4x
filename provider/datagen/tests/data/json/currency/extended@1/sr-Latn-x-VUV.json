@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "vanuatski vatu",
+    "Few": "vanuatska vatua"
   },
-  "extended_placeholders": [
-    "vanuatski vatu",
-    "vanuatski vatu",
-    "vanuatska vatua",
-    "vanuatskih vatua"
-  ]
+  "other_placeholder": "vanuatskih vatua",
+  "display_name": "vanuatski vatu"
 }

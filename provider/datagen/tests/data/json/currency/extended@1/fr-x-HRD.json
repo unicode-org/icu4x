@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "dinar croate"
   },
-  "extended_placeholders": [
-    "dinar croate",
-    "dinar croate",
-    "dinars croates"
-  ]
+  "other_placeholder": "dinars croates",
+  "display_name": "dinar croate"
 }

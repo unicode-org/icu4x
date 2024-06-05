@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "syli guinéen"
   },
-  "extended_placeholders": [
-    "syli guinéen",
-    "syli guinéen",
-    "sylis guinéens"
-  ]
+  "other_placeholder": "sylis guinéens",
+  "display_name": "syli guinéen"
 }

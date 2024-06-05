@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "ADB unit of account"
   },
-  "extended_placeholders": [
-    "ADB Unit of Account",
-    "ADB unit of account",
-    "ADB units of account"
-  ]
+  "other_placeholder": "ADB units of account",
+  "display_name": "ADB Unit of Account"
 }

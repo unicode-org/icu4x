@@ -1,11 +1,5 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
-  },
-  "extended_placeholders": [
-    "アラブ首長国連邦ディルハム",
-    "UAE ディルハム"
-  ]
+  "placeholders": {},
+  "other_placeholder": "UAE ディルハム",
+  "display_name": "アラブ首長国連邦ディルハム"
 }

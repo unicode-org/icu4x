@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "MVDOL boliviano"
   },
-  "extended_placeholders": [
-    "MVDOL boliviano",
-    "MVDOL boliviano",
-    "MVDOL bolivianos"
-  ]
+  "other_placeholder": "MVDOL bolivianos",
+  "display_name": "MVDOL boliviano"
 }

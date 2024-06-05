@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "tugrik"
   },
-  "extended_placeholders": [
-    "tugrik",
-    "tugrik",
-    "tugriks"
-  ]
+  "other_placeholder": "tugriks",
+  "display_name": "tugrik"
 }

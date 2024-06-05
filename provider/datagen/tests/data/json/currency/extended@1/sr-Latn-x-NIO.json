@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "nikaragvanska kordoba",
+    "Few": "nikaragvanske kordobe"
   },
-  "extended_placeholders": [
-    "nikaragvanska kordoba",
-    "nikaragvanska kordoba",
-    "nikaragvanske kordobe",
-    "nikaragvanskih kordoba"
-  ]
+  "other_placeholder": "nikaragvanskih kordoba",
+  "display_name": "nikaragvanska kordoba"
 }

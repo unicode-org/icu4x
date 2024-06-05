@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "сингапурский доллар",
+    "Few": "сингапурских доллара",
+    "Many": "сингапурских долларов"
   },
-  "extended_placeholders": [
-    "сингапурский доллар",
-    "сингапурский доллар",
-    "сингапурских доллара",
-    "сингапурских долларов",
-    "сингапурского доллара"
-  ]
+  "other_placeholder": "сингапурского доллара",
+  "display_name": "сингапурский доллар"
 }

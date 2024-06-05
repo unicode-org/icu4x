@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "латвијска рубља",
+    "Few": "латвијске рубље"
   },
-  "extended_placeholders": [
-    "Латвијска рубља",
-    "латвијска рубља",
-    "латвијске рубље",
-    "латвијских рубљи"
-  ]
+  "other_placeholder": "латвијских рубљи",
+  "display_name": "Латвијска рубља"
 }

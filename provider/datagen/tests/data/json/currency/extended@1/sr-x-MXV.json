@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "мексички унидадс де инверзион",
+    "Few": "мексичка унидадс де инверзиона"
   },
-  "extended_placeholders": [
-    "Мексички унидад де инверсион (UDI)",
-    "мексички унидадс де инверзион",
-    "мексичка унидадс де инверзиона",
-    "мексичких унидадс де инверзиона"
-  ]
+  "other_placeholder": "мексичких унидадс де инверзиона",
+  "display_name": "Мексички унидад де инверсион (UDI)"
 }

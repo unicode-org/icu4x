@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Algerian dinar"
   },
-  "extended_placeholders": [
-    "Algerian Dinar",
-    "Algerian dinar",
-    "Algerian dinars"
-  ]
+  "other_placeholder": "Algerian dinars",
+  "display_name": "Algerian Dinar"
 }

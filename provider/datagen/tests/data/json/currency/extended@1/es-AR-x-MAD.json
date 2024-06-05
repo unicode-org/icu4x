@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "dírham marroquí"
   },
-  "extended_placeholders": [
-    "dírham marroquí",
-    "dírham marroquí",
-    "dírhams marroquíes"
-  ]
+  "other_placeholder": "dírhams marroquíes",
+  "display_name": "dírham marroquí"
 }

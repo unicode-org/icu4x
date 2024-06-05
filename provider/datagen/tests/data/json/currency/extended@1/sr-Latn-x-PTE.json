@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "portugalski eskudo",
+    "Few": "portugalska eskuda"
   },
-  "extended_placeholders": [
-    "Portugalski eskudo",
-    "portugalski eskudo",
-    "portugalska eskuda",
-    "portugalskih eskuda"
-  ]
+  "other_placeholder": "portugalskih eskuda",
+  "display_name": "Portugalski eskudo"
 }

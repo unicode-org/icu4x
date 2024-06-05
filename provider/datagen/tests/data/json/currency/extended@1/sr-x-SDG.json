@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "суданска фунта",
+    "Few": "суданске фунте"
   },
-  "extended_placeholders": [
-    "суданска фунта",
-    "суданска фунта",
-    "суданске фунте",
-    "суданских фунти"
-  ]
+  "other_placeholder": "суданских фунти",
+  "display_name": "суданска фунта"
 }

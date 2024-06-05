@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "chelín somalí"
   },
-  "extended_placeholders": [
-    "chelín somalí",
-    "chelín somalí",
-    "chelines somalíes"
-  ]
+  "other_placeholder": "chelines somalíes",
+  "display_name": "chelín somalí"
 }

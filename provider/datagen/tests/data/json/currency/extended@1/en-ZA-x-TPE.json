@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Timorese escudo"
   },
-  "extended_placeholders": [
-    "Timorese Escudo",
-    "Timorese escudo",
-    "Timorese escudos"
-  ]
+  "other_placeholder": "Timorese escudos",
+  "display_name": "Timorese Escudo"
 }

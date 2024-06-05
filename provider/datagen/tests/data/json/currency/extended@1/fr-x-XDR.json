@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "droit de tirage spécial"
   },
-  "extended_placeholders": [
-    "droit de tirage spécial",
-    "droit de tirage spécial",
-    "droits de tirage spéciaux"
-  ]
+  "other_placeholder": "droits de tirage spéciaux",
+  "display_name": "droit de tirage spécial"
 }

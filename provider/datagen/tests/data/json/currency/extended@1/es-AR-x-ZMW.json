@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "kuacha zambiano"
   },
-  "extended_placeholders": [
-    "kuacha zambiano",
-    "kuacha zambiano",
-    "kuachas zambianos"
-  ]
+  "other_placeholder": "kuachas zambianos",
+  "display_name": "kuacha zambiano"
 }

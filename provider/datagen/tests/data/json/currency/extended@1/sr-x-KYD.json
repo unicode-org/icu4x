@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "кајмански долар",
+    "Few": "кајманска долара"
   },
-  "extended_placeholders": [
-    "кајмански долар",
-    "кајмански долар",
-    "кајманска долара",
-    "кајманских долара"
-  ]
+  "other_placeholder": "кајманских долара",
+  "display_name": "кајмански долар"
 }

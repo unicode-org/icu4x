@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "sejšelska rupija",
+    "Few": "sejšelske rupije"
   },
-  "extended_placeholders": [
-    "sejšelska rupija",
-    "sejšelska rupija",
-    "sejšelske rupije",
-    "sejšelskih rupija"
-  ]
+  "other_placeholder": "sejšelskih rupija",
+  "display_name": "sejšelska rupija"
 }

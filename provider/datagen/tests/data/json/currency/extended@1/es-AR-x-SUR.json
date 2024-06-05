@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "rublo soviético"
   },
-  "extended_placeholders": [
-    "rublo soviético",
-    "rublo soviético",
-    "rublos soviéticos"
-  ]
+  "other_placeholder": "rublos soviéticos",
+  "display_name": "rublo soviético"
 }

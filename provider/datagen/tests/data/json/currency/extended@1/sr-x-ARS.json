@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "аргентински пезос",
+    "Few": "аргентинска пезоса"
   },
-  "extended_placeholders": [
-    "аргентински пезос",
-    "аргентински пезос",
-    "аргентинска пезоса",
-    "аргентинских пезоса"
-  ]
+  "other_placeholder": "аргентинских пезоса",
+  "display_name": "аргентински пезос"
 }

@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Estonian kroon"
   },
-  "extended_placeholders": [
-    "Estonian Kroon",
-    "Estonian kroon",
-    "Estonian kroons"
-  ]
+  "other_placeholder": "Estonian kroons",
+  "display_name": "Estonian Kroon"
 }

@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "turkmenistanski manat (1993–2009)",
+    "Few": "turkmenistanska manata (1993–2009)"
   },
-  "extended_placeholders": [
-    "Turkmenistanski manat (1993–2009)",
-    "turkmenistanski manat (1993–2009)",
-    "turkmenistanska manata (1993–2009)",
-    "turkmenistanski manat (1993–2009)"
-  ]
+  "other_placeholder": "turkmenistanski manat (1993–2009)",
+  "display_name": "Turkmenistanski manat (1993–2009)"
 }

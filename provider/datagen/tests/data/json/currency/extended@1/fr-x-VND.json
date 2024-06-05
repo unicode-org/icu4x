@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "dông vietnamien"
   },
-  "extended_placeholders": [
-    "dông vietnamien",
-    "dông vietnamien",
-    "dôngs vietnamiens"
-  ]
+  "other_placeholder": "dôngs vietnamiens",
+  "display_name": "dông vietnamien"
 }

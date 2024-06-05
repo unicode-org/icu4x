@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "evropska novčana jedinica (XBB)",
+    "Few": "evropske novčane jedinice (XBB)"
   },
-  "extended_placeholders": [
-    "Evropska novčana jedinica",
-    "evropska novčana jedinica (XBB)",
-    "evropske novčane jedinice (XBB)",
-    "evropske novčane jedinice (XBB)"
-  ]
+  "other_placeholder": "evropske novčane jedinice (XBB)",
+  "display_name": "Evropska novčana jedinica"
 }

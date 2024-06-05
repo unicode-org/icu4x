@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "дирхам ОАЭ",
+    "Few": "дирхама ОАЭ",
+    "Many": "дирхамов ОАЭ"
   },
-  "extended_placeholders": [
-    "дирхам ОАЭ",
-    "дирхам ОАЭ",
-    "дирхама ОАЭ",
-    "дирхамов ОАЭ",
-    "дирхама ОАЭ"
-  ]
+  "other_placeholder": "дирхама ОАЭ",
+  "display_name": "дирхам ОАЭ"
 }

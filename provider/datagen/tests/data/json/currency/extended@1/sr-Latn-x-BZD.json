@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "beliski dolar",
+    "Few": "beliska dolara"
   },
-  "extended_placeholders": [
-    "beliski dolar",
-    "beliski dolar",
-    "beliska dolara",
-    "beliskih dolara"
-  ]
+  "other_placeholder": "beliskih dolara",
+  "display_name": "beliski dolar"
 }

@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "саотомска добра (1977–2017)",
+    "Few": "саотомске добре (1977–2017)"
   },
-  "extended_placeholders": [
-    "Саотомска добра (1977–2017)",
-    "саотомска добра (1977–2017)",
-    "саотомске добре (1977–2017)",
-    "саотомских добри (1977–2017)"
-  ]
+  "other_placeholder": "саотомских добри (1977–2017)",
+  "display_name": "Саотомска добра (1977–2017)"
 }

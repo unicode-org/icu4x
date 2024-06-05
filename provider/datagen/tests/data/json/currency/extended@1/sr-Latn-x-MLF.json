@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "malijski franak",
+    "Few": "malijska franka"
   },
-  "extended_placeholders": [
-    "Malijanski franak",
-    "malijski franak",
-    "malijska franka",
-    "malijskih franaka"
-  ]
+  "other_placeholder": "malijskih franaka",
+  "display_name": "Malijanski franak"
 }

@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Yeni Bosna Hersek dinarı (1994–1997)"
   },
-  "extended_placeholders": [
-    "Yeni Bosna Hersek Dinarı (1994–1997)",
-    "Yeni Bosna Hersek dinarı (1994–1997)",
-    "Yeni Bosna Hersek dinarı (1994–1997)"
-  ]
+  "other_placeholder": "Yeni Bosna Hersek dinarı (1994–1997)",
+  "display_name": "Yeni Bosna Hersek Dinarı (1994–1997)"
 }

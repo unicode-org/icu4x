@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "dollar néo-zélandais"
   },
-  "extended_placeholders": [
-    "dollar néo-zélandais",
-    "dollar néo-zélandais",
-    "dollars néo-zélandais"
-  ]
+  "other_placeholder": "dollars néo-zélandais",
+  "display_name": "dollar néo-zélandais"
 }

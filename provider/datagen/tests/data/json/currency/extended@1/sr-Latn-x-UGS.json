@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "ugandijski šiling (1966–1987)",
+    "Few": "ugandijska šilinga (1966–1987)"
   },
-  "extended_placeholders": [
-    "Ugandski šiling (1966–1987)",
-    "ugandijski šiling (1966–1987)",
-    "ugandijska šilinga (1966–1987)",
-    "ugandijskih šilinga (1966–1987)"
-  ]
+  "other_placeholder": "ugandijskih šilinga (1966–1987)",
+  "display_name": "Ugandski šiling (1966–1987)"
 }

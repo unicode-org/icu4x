@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "franco ruandés"
   },
-  "extended_placeholders": [
-    "franco ruandés",
-    "franco ruandés",
-    "francos ruandeses"
-  ]
+  "other_placeholder": "francos ruandeses",
+  "display_name": "franco ruandés"
 }

@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Angolan readjusted kwanza (1995–1999)"
   },
-  "extended_placeholders": [
-    "Angolan Readjusted Kwanza (1995–1999)",
-    "Angolan readjusted kwanza (1995–1999)",
-    "Angolan readjusted kwanzas (1995–1999)"
-  ]
+  "other_placeholder": "Angolan readjusted kwanzas (1995–1999)",
+  "display_name": "Angolan Readjusted Kwanza (1995–1999)"
 }

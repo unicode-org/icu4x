@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "unidad de inversión (UDI) mexicana"
   },
-  "extended_placeholders": [
-    "unidad de inversión (UDI) mexicana",
-    "unidad de inversión (UDI) mexicana",
-    "unidades de inversión (UDI) mexicanas"
-  ]
+  "other_placeholder": "unidades de inversión (UDI) mexicanas",
+  "display_name": "unidad de inversión (UDI) mexicana"
 }

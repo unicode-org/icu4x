@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "угандийский шиллинг",
+    "Few": "угандийских шиллинга",
+    "Many": "угандийских шиллингов"
   },
-  "extended_placeholders": [
-    "угандийский шиллинг",
-    "угандийский шиллинг",
-    "угандийских шиллинга",
-    "угандийских шиллингов",
-    "угандийского шиллинга"
-  ]
+  "other_placeholder": "угандийского шиллинга",
+  "display_name": "угандийский шиллинг"
 }

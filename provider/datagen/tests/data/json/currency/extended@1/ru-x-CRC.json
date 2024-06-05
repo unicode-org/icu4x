@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "костариканский колон",
+    "Few": "костариканских колона",
+    "Many": "костариканских колонов"
   },
-  "extended_placeholders": [
-    "костариканский колон",
-    "костариканский колон",
-    "костариканских колона",
-    "костариканских колонов",
-    "костариканского колона"
-  ]
+  "other_placeholder": "костариканского колона",
+  "display_name": "костариканский колон"
 }

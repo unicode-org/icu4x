@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "shilling kényan"
   },
-  "extended_placeholders": [
-    "shilling kényan",
-    "shilling kényan",
-    "shillings kényans"
-  ]
+  "other_placeholder": "shillings kényans",
+  "display_name": "shilling kényan"
 }

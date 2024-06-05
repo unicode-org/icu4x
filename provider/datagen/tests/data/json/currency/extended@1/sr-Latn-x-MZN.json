@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "mozambički metikal",
+    "Few": "mozambička metikala"
   },
-  "extended_placeholders": [
-    "mozambički metikal",
-    "mozambički metikal",
-    "mozambička metikala",
-    "mozambičkih metikala"
-  ]
+  "other_placeholder": "mozambičkih metikala",
+  "display_name": "mozambički metikal"
 }

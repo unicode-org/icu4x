@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "kubanski pezos",
+    "Few": "kubanska pezosa"
   },
-  "extended_placeholders": [
-    "kubanski pezos",
-    "kubanski pezos",
-    "kubanska pezosa",
-    "kubanskih pezosa"
-  ]
+  "other_placeholder": "kubanskih pezosa",
+  "display_name": "kubanski pezos"
 }

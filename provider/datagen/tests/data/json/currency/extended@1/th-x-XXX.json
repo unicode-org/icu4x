@@ -1,11 +1,5 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
-  },
-  "extended_placeholders": [
-    "ไม่ทราบชื่อสกุลเงิน",
-    "(ไม่ทราบชื่อสกุลเงิน)"
-  ]
+  "placeholders": {},
+  "other_placeholder": "(ไม่ทราบชื่อสกุลเงิน)",
+  "display_name": "ไม่ทราบชื่อสกุลเงิน"
 }

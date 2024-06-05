@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "хрватска куна",
+    "Few": "хрватске куне"
   },
-  "extended_placeholders": [
-    "хрватска куна",
-    "хрватска куна",
-    "хрватске куне",
-    "хрватских куна"
-  ]
+  "other_placeholder": "хрватских куна",
+  "display_name": "хрватска куна"
 }

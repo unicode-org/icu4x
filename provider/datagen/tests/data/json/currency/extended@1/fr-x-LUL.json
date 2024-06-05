@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "franc financier luxembourgeois"
   },
-  "extended_placeholders": [
-    "franc financier luxembourgeois",
-    "franc financier luxembourgeois",
-    "francs financiers luxembourgeois"
-  ]
+  "other_placeholder": "francs financiers luxembourgeois",
+  "display_name": "franc financier luxembourgeois"
 }

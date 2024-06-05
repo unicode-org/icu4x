@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Georgian lari"
   },
-  "extended_placeholders": [
-    "Georgian Lari",
-    "Georgian lari",
-    "Georgian laris"
-  ]
+  "other_placeholder": "Georgian laris",
+  "display_name": "Georgian Lari"
 }

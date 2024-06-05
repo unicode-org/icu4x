@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Belgian franc"
   },
-  "extended_placeholders": [
-    "Belgian Franc",
-    "Belgian franc",
-    "Belgian francs"
-  ]
+  "other_placeholder": "Belgian francs",
+  "display_name": "Belgian Franc"
 }

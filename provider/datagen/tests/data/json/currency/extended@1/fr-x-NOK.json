@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "couronne norvégienne"
   },
-  "extended_placeholders": [
-    "couronne norvégienne",
-    "couronne norvégienne",
-    "couronnes norvégiennes"
-  ]
+  "other_placeholder": "couronnes norvégiennes",
+  "display_name": "couronne norvégienne"
 }

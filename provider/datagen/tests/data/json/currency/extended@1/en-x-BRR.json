@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Brazilian cruzeiro (1993–1994)"
   },
-  "extended_placeholders": [
-    "Brazilian Cruzeiro (1993–1994)",
-    "Brazilian cruzeiro (1993–1994)",
-    "Brazilian cruzeiros (1993–1994)"
-  ]
+  "other_placeholder": "Brazilian cruzeiros (1993–1994)",
+  "display_name": "Brazilian Cruzeiro (1993–1994)"
 }

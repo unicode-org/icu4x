@@ -1,15 +1,11 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "Zero": "جنيه سوداني",
+    "One": "جنيه سوداني",
+    "Two": "جنيه سوداني",
+    "Few": "جنيهات سودانية",
+    "Many": "جنيهًا سودانيًا"
   },
-  "extended_placeholders": [
-    "جنيه سوداني",
-    "جنيه سوداني",
-    "جنيه سوداني",
-    "جنيهات سودانية",
-    "جنيهًا سودانيًا",
-    "جنيه سوداني"
-  ]
+  "other_placeholder": "جنيه سوداني",
+  "display_name": "جنيه سوداني"
 }

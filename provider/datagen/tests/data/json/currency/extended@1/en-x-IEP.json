@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Irish pound"
   },
-  "extended_placeholders": [
-    "Irish Pound",
-    "Irish pound",
-    "Irish pounds"
-  ]
+  "other_placeholder": "Irish pounds",
+  "display_name": "Irish Pound"
 }

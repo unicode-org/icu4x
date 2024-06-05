@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "единица неизвестной валюты",
+    "Few": "единицы неизвестной валюты",
+    "Many": "единиц неизвестной валюты"
   },
-  "extended_placeholders": [
-    "неизвестная валюта",
-    "единица неизвестной валюты",
-    "единицы неизвестной валюты",
-    "единиц неизвестной валюты",
-    "единицы неизвестной валюты"
-  ]
+  "other_placeholder": "единицы неизвестной валюты",
+  "display_name": "неизвестная валюта"
 }

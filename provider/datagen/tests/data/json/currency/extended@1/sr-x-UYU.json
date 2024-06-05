@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "уругвајски пезос",
+    "Few": "уругвајска пезоса"
   },
-  "extended_placeholders": [
-    "уругвајски пезос",
-    "уругвајски пезос",
-    "уругвајска пезоса",
-    "уругвајских пезоса"
-  ]
+  "other_placeholder": "уругвајских пезоса",
+  "display_name": "уругвајски пезос"
 }

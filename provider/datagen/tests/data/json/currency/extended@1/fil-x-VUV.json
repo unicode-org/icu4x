@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Vanuatu vatu"
   },
-  "extended_placeholders": [
-    "Vanuatu Vatu",
-    "Vanuatu vatu",
-    "Vanuatu vatus"
-  ]
+  "other_placeholder": "Vanuatu vatus",
+  "display_name": "Vanuatu Vatu"
 }

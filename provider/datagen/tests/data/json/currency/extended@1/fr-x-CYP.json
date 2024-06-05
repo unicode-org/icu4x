@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "livre chypriote"
   },
-  "extended_placeholders": [
-    "livre chypriote",
-    "livre chypriote",
-    "livres chypriotes"
-  ]
+  "other_placeholder": "livres chypriotes",
+  "display_name": "livre chypriote"
 }

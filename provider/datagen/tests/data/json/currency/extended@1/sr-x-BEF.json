@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "белгијски франак",
+    "Few": "белгијска франка"
   },
-  "extended_placeholders": [
-    "Белгијски франак",
-    "белгијски франак",
-    "белгијска франка",
-    "белгијских франака"
-  ]
+  "other_placeholder": "белгијских франака",
+  "display_name": "Белгијски франак"
 }

@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "нигерийская найра",
+    "Few": "нигерийские найры",
+    "Many": "нигерийских найр"
   },
-  "extended_placeholders": [
-    "нигерийская найра",
-    "нигерийская найра",
-    "нигерийские найры",
-    "нигерийских найр",
-    "нигерийской найры"
-  ]
+  "other_placeholder": "нигерийской найры",
+  "display_name": "нигерийская найра"
 }

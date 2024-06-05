@@ -1,15 +1,11 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "Zero": "لاري جورجي",
+    "One": "لاري جورجي",
+    "Two": "لاري جورجي",
+    "Few": "لاري جورجي",
+    "Many": "لاري جورجي"
   },
-  "extended_placeholders": [
-    "لارى جورجي",
-    "لاري جورجي",
-    "لاري جورجي",
-    "لاري جورجي",
-    "لاري جورجي",
-    "لاري جورجي"
-  ]
+  "other_placeholder": "لاري جورجي",
+  "display_name": "لارى جورجي"
 }

@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "dobra santoméen"
   },
-  "extended_placeholders": [
-    "dobra santoméen",
-    "dobra santoméen",
-    "dobras santoméens"
-  ]
+  "other_placeholder": "dobras santoméens",
+  "display_name": "dobra santoméen"
 }

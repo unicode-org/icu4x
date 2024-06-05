@@ -1,10 +1,5 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
-  },
-  "extended_placeholders": [
-    "ভিয়েতনামি ডঙ্গ"
-  ]
+  "placeholders": {},
+  "other_placeholder": null,
+  "display_name": "ভিয়েতনামি ডঙ্গ"
 }

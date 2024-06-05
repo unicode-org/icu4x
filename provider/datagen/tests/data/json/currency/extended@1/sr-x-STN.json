@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "саотомска добра",
+    "Few": "саотомске добре"
   },
-  "extended_placeholders": [
-    "саотомска добра",
-    "саотомска добра",
-    "саотомске добре",
-    "саотомских добри"
-  ]
+  "other_placeholder": "саотомских добри",
+  "display_name": "саотомска добра"
 }

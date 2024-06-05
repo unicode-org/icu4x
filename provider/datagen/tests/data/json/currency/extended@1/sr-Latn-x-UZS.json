@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "uzbekistanski som",
+    "Few": "uzbekistanska soma"
   },
-  "extended_placeholders": [
-    "uzbekistanski som",
-    "uzbekistanski som",
-    "uzbekistanska soma",
-    "uzbekistanskih soma"
-  ]
+  "other_placeholder": "uzbekistanskih soma",
+  "display_name": "uzbekistanski som"
 }

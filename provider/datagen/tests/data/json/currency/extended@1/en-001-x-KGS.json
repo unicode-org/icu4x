@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Kyrgystani som"
   },
-  "extended_placeholders": [
-    "Kyrgystani Som",
-    "Kyrgystani som",
-    "Kyrgystani soms"
-  ]
+  "other_placeholder": "Kyrgystani soms",
+  "display_name": "Kyrgystani Som"
 }

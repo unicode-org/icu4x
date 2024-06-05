@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "белоруска рубља",
+    "Few": "белоруске рубље"
   },
-  "extended_placeholders": [
-    "белоруска рубља",
-    "белоруска рубља",
-    "белоруске рубље",
-    "белоруских рубљи"
-  ]
+  "other_placeholder": "белоруских рубљи",
+  "display_name": "белоруска рубља"
 }

@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Tanzanian shilling"
   },
-  "extended_placeholders": [
-    "Tanzanian Shilling",
-    "Tanzanian shilling",
-    "Tanzanian shillings"
-  ]
+  "other_placeholder": "Tanzanian shillings",
+  "display_name": "Tanzanian Shilling"
 }

@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "jugoslovenski konvertibilni dinar",
+    "Few": "jugoslovenska konvertibilna dinara"
   },
-  "extended_placeholders": [
-    "Jugoslovenski konvertibilni dinar",
-    "jugoslovenski konvertibilni dinar",
-    "jugoslovenska konvertibilna dinara",
-    "jugoslovenskih konvertibilnih dinara"
-  ]
+  "other_placeholder": "jugoslovenskih konvertibilnih dinara",
+  "display_name": "Jugoslovenski konvertibilni dinar"
 }

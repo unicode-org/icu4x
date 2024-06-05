@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "француски златни франак",
+    "Few": "француска златна франка"
   },
-  "extended_placeholders": [
-    "Француски златни франак",
-    "француски златни франак",
-    "француска златна франка",
-    "француских златних франака"
-  ]
+  "other_placeholder": "француских златних франака",
+  "display_name": "Француски златни франак"
 }

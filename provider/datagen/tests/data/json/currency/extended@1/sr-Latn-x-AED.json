@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "dirham UAE",
+    "Few": "dirhama UAE"
   },
-  "extended_placeholders": [
-    "dirham UAE",
-    "dirham UAE",
-    "dirhama UAE",
-    "dirhama UAE"
-  ]
+  "other_placeholder": "dirhama UAE",
+  "display_name": "dirham UAE"
 }

@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "boliviano"
   },
-  "extended_placeholders": [
-    "boliviano",
-    "boliviano",
-    "bolivianos"
-  ]
+  "other_placeholder": "bolivianos",
+  "display_name": "boliviano"
 }

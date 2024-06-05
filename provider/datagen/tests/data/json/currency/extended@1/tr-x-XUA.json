@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "ADB hesap birimi"
   },
-  "extended_placeholders": [
-    "ADB Hesap Birimi",
-    "ADB hesap birimi",
-    "ADB hesap birimi"
-  ]
+  "other_placeholder": "ADB hesap birimi",
+  "display_name": "ADB Hesap Birimi"
 }

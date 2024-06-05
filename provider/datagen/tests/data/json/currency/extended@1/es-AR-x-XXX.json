@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "(unidad de moneda desconocida)"
   },
-  "extended_placeholders": [
-    "moneda desconocida",
-    "(unidad de moneda desconocida)",
-    "(moneda desconocida)"
-  ]
+  "other_placeholder": "(moneda desconocida)",
+  "display_name": "moneda desconocida"
 }

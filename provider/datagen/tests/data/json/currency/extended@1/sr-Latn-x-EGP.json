@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "egipatska funta",
+    "Few": "egipatske funte"
   },
-  "extended_placeholders": [
-    "egipatska funta",
-    "egipatska funta",
-    "egipatske funte",
-    "egipatskih funti"
-  ]
+  "other_placeholder": "egipatskih funti",
+  "display_name": "egipatska funta"
 }

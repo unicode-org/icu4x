@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "peso de plata mexicano (MXP)"
   },
-  "extended_placeholders": [
-    "peso de plata mexicano (1861–1992)",
-    "peso de plata mexicano (MXP)",
-    "pesos de plata mexicanos (MXP)"
-  ]
+  "other_placeholder": "pesos de plata mexicanos (MXP)",
+  "display_name": "peso de plata mexicano (1861–1992)"
 }

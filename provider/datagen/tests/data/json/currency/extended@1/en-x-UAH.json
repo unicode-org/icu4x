@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Ukrainian hryvnia"
   },
-  "extended_placeholders": [
-    "Ukrainian Hryvnia",
-    "Ukrainian hryvnia",
-    "Ukrainian hryvnias"
-  ]
+  "other_placeholder": "Ukrainian hryvnias",
+  "display_name": "Ukrainian Hryvnia"
 }

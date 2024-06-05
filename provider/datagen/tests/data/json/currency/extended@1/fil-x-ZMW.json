@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Zambian kwacha"
   },
-  "extended_placeholders": [
-    "Zambian Kwacha",
-    "Zambian kwacha",
-    "Zambian kwachas"
-  ]
+  "other_placeholder": "Zambian kwachas",
+  "display_name": "Zambian Kwacha"
 }

@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "нигеријска наира",
+    "Few": "нигеријске наире"
   },
-  "extended_placeholders": [
-    "нигеријска наира",
-    "нигеријска наира",
-    "нигеријске наире",
-    "нигеријских наира"
-  ]
+  "other_placeholder": "нигеријских наира",
+  "display_name": "нигеријска наира"
 }

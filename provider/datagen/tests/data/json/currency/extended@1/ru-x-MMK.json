@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "мьянманский кьят",
+    "Few": "мьянманских кьята",
+    "Many": "мьянманских кьятов"
   },
-  "extended_placeholders": [
-    "мьянманский кьят",
-    "мьянманский кьят",
-    "мьянманских кьята",
-    "мьянманских кьятов",
-    "мьянманского кьята"
-  ]
+  "other_placeholder": "мьянманского кьята",
+  "display_name": "мьянманский кьят"
 }

@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "marco de la República Democrática Alemana"
   },
-  "extended_placeholders": [
-    "ostmark de Alemania del Este",
-    "marco de la República Democrática Alemana",
-    "marcos de la República Democrática Alemana"
-  ]
+  "other_placeholder": "marcos de la República Democrática Alemana",
+  "display_name": "ostmark de Alemania del Este"
 }

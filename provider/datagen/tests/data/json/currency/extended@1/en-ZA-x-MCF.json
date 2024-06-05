@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Monegasque franc"
   },
-  "extended_placeholders": [
-    "Monegasque Franc",
-    "Monegasque franc",
-    "Monegasque francs"
-  ]
+  "other_placeholder": "Monegasque francs",
+  "display_name": "Monegasque Franc"
 }

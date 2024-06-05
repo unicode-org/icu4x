@@ -1,15 +1,11 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "Zero": "دينار تونسي",
+    "One": "دينار تونسي",
+    "Two": "ديناران تونسيان",
+    "Few": "دينارات تونسية",
+    "Many": "دينارًا تونسيًا"
   },
-  "extended_placeholders": [
-    "دينار تونسي",
-    "دينار تونسي",
-    "ديناران تونسيان",
-    "دينارات تونسية",
-    "دينارًا تونسيًا",
-    "دينار تونسي"
-  ]
+  "other_placeholder": "دينار تونسي",
+  "display_name": "دينار تونسي"
 }

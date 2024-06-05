@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "француски UIC-франак",
+    "Few": "француска UIC-франка"
   },
-  "extended_placeholders": [
-    "Француски UIC-франак",
-    "француски UIC-франак",
-    "француска UIC-франка",
-    "француских UIC-франака"
-  ]
+  "other_placeholder": "француских UIC-франака",
+  "display_name": "Француски UIC-франак"
 }

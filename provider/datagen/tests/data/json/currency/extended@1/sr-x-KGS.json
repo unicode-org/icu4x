@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "киргистански сом",
+    "Few": "киргистанска сома"
   },
-  "extended_placeholders": [
-    "киргистански сом",
-    "киргистански сом",
-    "киргистанска сома",
-    "киргистанских сома"
-  ]
+  "other_placeholder": "киргистанских сома",
+  "display_name": "киргистански сом"
 }

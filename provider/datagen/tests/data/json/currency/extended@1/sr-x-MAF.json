@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "марокански франак",
+    "Few": "мароканска франка"
   },
-  "extended_placeholders": [
-    "Марокански франак",
-    "марокански франак",
-    "мароканска франка",
-    "мароканских франака"
-  ]
+  "other_placeholder": "мароканских франака",
+  "display_name": "Марокански франак"
 }

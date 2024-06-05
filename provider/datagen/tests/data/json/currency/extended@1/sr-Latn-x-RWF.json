@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "ruandski franak",
+    "Few": "ruandska franka"
   },
-  "extended_placeholders": [
-    "ruandski franak",
-    "ruandski franak",
-    "ruandska franka",
-    "ruandskih franaka"
-  ]
+  "other_placeholder": "ruandskih franaka",
+  "display_name": "ruandski franak"
 }

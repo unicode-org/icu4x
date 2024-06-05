@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Iraqi dinar"
   },
-  "extended_placeholders": [
-    "Iraqi Dinar",
-    "Iraqi dinar",
-    "Iraqi dinars"
-  ]
+  "other_placeholder": "Iraqi dinars",
+  "display_name": "Iraqi Dinar"
 }

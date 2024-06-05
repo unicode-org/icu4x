@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "југословенски нови динар",
+    "Few": "југословенска нова динара"
   },
-  "extended_placeholders": [
-    "Југословенски нови динар",
-    "југословенски нови динар",
-    "југословенска нова динара",
-    "југословенских нових динара"
-  ]
+  "other_placeholder": "југословенских нових динара",
+  "display_name": "Југословенски нови динар"
 }

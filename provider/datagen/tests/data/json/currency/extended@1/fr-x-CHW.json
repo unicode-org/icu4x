@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "franc WIR"
   },
-  "extended_placeholders": [
-    "franc WIR",
-    "franc WIR",
-    "francs WIR"
-  ]
+  "other_placeholder": "francs WIR",
+  "display_name": "franc WIR"
 }

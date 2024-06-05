@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "италијанска лира",
+    "Few": "италијанске лире"
   },
-  "extended_placeholders": [
-    "Италијанска лира",
-    "италијанска лира",
-    "италијанске лире",
-    "италијанске лире"
-  ]
+  "other_placeholder": "италијанске лире",
+  "display_name": "Италијанска лира"
 }

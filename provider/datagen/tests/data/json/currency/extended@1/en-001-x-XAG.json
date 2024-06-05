@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "troy ounce of silver"
   },
-  "extended_placeholders": [
-    "Silver",
-    "troy ounce of silver",
-    "troy ounces of silver"
-  ]
+  "other_placeholder": "troy ounces of silver",
+  "display_name": "Silver"
 }

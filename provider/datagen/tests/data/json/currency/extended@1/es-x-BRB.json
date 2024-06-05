@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "nuevo cruzado brasileño (BRB)"
   },
-  "extended_placeholders": [
-    "nuevo cruceiro brasileño (1967–1986)",
-    "nuevo cruzado brasileño (BRB)",
-    "nuevos cruzados brasileños (BRB)"
-  ]
+  "other_placeholder": "nuevos cruzados brasileños (BRB)",
+  "display_name": "nuevo cruceiro brasileño (1967–1986)"
 }

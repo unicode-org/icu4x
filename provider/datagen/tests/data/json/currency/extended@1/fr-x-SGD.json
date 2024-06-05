@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "dollar de Singapour"
   },
-  "extended_placeholders": [
-    "dollar de Singapour",
-    "dollar de Singapour",
-    "dollars de Singapour"
-  ]
+  "other_placeholder": "dollars de Singapour",
+  "display_name": "dollar de Singapour"
 }

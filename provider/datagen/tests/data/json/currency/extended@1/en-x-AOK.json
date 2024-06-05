@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Angolan kwanza (1977–1991)"
   },
-  "extended_placeholders": [
-    "Angolan Kwanza (1977–1991)",
-    "Angolan kwanza (1977–1991)",
-    "Angolan kwanzas (1977–1991)"
-  ]
+  "other_placeholder": "Angolan kwanzas (1977–1991)",
+  "display_name": "Angolan Kwanza (1977–1991)"
 }

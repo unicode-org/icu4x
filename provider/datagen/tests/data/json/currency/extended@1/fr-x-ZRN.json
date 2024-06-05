@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "nouveau zaïre zaïrien"
   },
-  "extended_placeholders": [
-    "nouveau zaïre zaïrien",
-    "nouveau zaïre zaïrien",
-    "nouveaux zaïres zaïriens"
-  ]
+  "other_placeholder": "nouveaux zaïres zaïriens",
+  "display_name": "nouveau zaïre zaïrien"
 }

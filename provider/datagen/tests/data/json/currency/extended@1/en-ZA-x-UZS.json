@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Uzbekistani som"
   },
-  "extended_placeholders": [
-    "Uzbekistani Som",
-    "Uzbekistani som",
-    "Uzbekistani som"
-  ]
+  "other_placeholder": "Uzbekistani som",
+  "display_name": "Uzbekistani Som"
 }

@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Cape Verdean escudo"
   },
-  "extended_placeholders": [
-    "Cape Verdean Escudo",
-    "Cape Verdean escudo",
-    "Cape Verdean escudos"
-  ]
+  "other_placeholder": "Cape Verdean escudos",
+  "display_name": "Cape Verdean Escudo"
 }

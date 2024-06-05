@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "roupie des Seychelles"
   },
-  "extended_placeholders": [
-    "roupie des Seychelles",
-    "roupie des Seychelles",
-    "roupies des Seychelles"
-  ]
+  "other_placeholder": "roupies des Seychelles",
+  "display_name": "roupie des Seychelles"
 }

@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "аустралијски долар",
+    "Few": "аустралијска долара"
   },
-  "extended_placeholders": [
-    "аустралијски долар",
-    "аустралијски долар",
-    "аустралијска долара",
-    "аустралијских долара"
-  ]
+  "other_placeholder": "аустралијских долара",
+  "display_name": "аустралијски долар"
 }

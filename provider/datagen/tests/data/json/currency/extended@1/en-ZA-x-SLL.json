@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Sierra Leonean leone (1964—2022)"
   },
-  "extended_placeholders": [
-    "Sierra Leonean Leone (1964—2022)",
-    "Sierra Leonean leone (1964—2022)",
-    "Sierra Leonean leones (1964—2022)"
-  ]
+  "other_placeholder": "Sierra Leonean leones (1964—2022)",
+  "display_name": "Sierra Leonean Leone (1964—2022)"
 }

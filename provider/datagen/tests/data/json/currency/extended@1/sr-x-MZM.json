@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "стари мозамбијски метикал",
+    "Few": "стара мозамбијска метикала"
   },
-  "extended_placeholders": [
-    "Стари мозамбијски метикал",
-    "стари мозамбијски метикал",
-    "стара мозамбијска метикала",
-    "старих мозамбијских метикала"
-  ]
+  "other_placeholder": "старих мозамбијских метикала",
+  "display_name": "Стари мозамбијски метикал"
 }

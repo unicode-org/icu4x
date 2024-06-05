@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "gvajanski dolar",
+    "Few": "gvajanska dolara"
   },
-  "extended_placeholders": [
-    "gvajanski dolar",
-    "gvajanski dolar",
-    "gvajanska dolara",
-    "gvajanskih dolara"
-  ]
+  "other_placeholder": "gvajanskih dolara",
+  "display_name": "gvajanski dolar"
 }

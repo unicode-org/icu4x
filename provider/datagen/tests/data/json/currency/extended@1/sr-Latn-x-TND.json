@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "tuniski dinar",
+    "Few": "tuniska dinara"
   },
-  "extended_placeholders": [
-    "tuniski dinar",
-    "tuniski dinar",
-    "tuniska dinara",
-    "tuniskih dinara"
-  ]
+  "other_placeholder": "tuniskih dinara",
+  "display_name": "tuniski dinar"
 }

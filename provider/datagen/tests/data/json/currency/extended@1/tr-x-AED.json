@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "BAE dirhemi"
   },
-  "extended_placeholders": [
-    "Birleşik Arap Emirlikleri dirhemi",
-    "BAE dirhemi",
-    "BAE dirhemi"
-  ]
+  "other_placeholder": "BAE dirhemi",
+  "display_name": "Birleşik Arap Emirlikleri dirhemi"
 }

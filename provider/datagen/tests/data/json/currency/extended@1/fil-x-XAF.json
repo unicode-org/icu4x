@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "CFA franc BEAC"
   },
-  "extended_placeholders": [
-    "CFA Franc BEAC",
-    "CFA franc BEAC",
-    "CFA francs BEAC"
-  ]
+  "other_placeholder": "CFA francs BEAC",
+  "display_name": "CFA Franc BEAC"
 }

@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "барбадошки долар",
+    "Few": "барбадошка долара"
   },
-  "extended_placeholders": [
-    "барбадошки долар",
-    "барбадошки долар",
-    "барбадошка долара",
-    "барбадошких долара"
-  ]
+  "other_placeholder": "барбадошких долара",
+  "display_name": "барбадошки долар"
 }

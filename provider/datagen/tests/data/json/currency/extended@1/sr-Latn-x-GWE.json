@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "portugalsko-gvinejski eskudo",
+    "Few": "portugalsko-gvinejska eskuda"
   },
-  "extended_placeholders": [
-    "Portugalska gvineja eskudo",
-    "portugalsko-gvinejski eskudo",
-    "portugalsko-gvinejska eskuda",
-    "portugalsko-gvinejskih eskuda"
-  ]
+  "other_placeholder": "portugalsko-gvinejskih eskuda",
+  "display_name": "Portugalska gvineja eskudo"
 }

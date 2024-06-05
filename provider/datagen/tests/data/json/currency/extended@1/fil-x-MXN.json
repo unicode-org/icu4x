@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "piso ng Mexico"
   },
-  "extended_placeholders": [
-    "Piso ng Mexico",
-    "piso ng Mexico",
-    "piso ng Mexico"
-  ]
+  "other_placeholder": "piso ng Mexico",
+  "display_name": "Piso ng Mexico"
 }

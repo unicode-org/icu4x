@@ -1,15 +1,11 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "Zero": "جنيه مصري",
+    "One": "جنيه مصري",
+    "Two": "جنيهان مصريان",
+    "Few": "جنيهات مصرية",
+    "Many": "جنيهًا مصريًا"
   },
-  "extended_placeholders": [
-    "جنيه مصري",
-    "جنيه مصري",
-    "جنيهان مصريان",
-    "جنيهات مصرية",
-    "جنيهًا مصريًا",
-    "جنيه مصري"
-  ]
+  "other_placeholder": "جنيه مصري",
+  "display_name": "جنيه مصري"
 }

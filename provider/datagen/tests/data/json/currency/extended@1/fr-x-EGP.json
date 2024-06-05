@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "livre égyptienne"
   },
-  "extended_placeholders": [
-    "livre égyptienne",
-    "livre égyptienne",
-    "livres égyptiennes"
-  ]
+  "other_placeholder": "livres égyptiennes",
+  "display_name": "livre égyptienne"
 }

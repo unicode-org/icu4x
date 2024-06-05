@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "leone sierra-léonais"
   },
-  "extended_placeholders": [
-    "leone sierra-léonais",
-    "leone sierra-léonais",
-    "leones sierra-léonais"
-  ]
+  "other_placeholder": "leones sierra-léonais",
+  "display_name": "leone sierra-léonais"
 }

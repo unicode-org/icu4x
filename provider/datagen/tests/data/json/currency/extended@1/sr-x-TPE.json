@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "тиморшки ескудо",
+    "Few": "тиморшка ескуда"
   },
-  "extended_placeholders": [
-    "Тиморшки ескудо",
-    "тиморшки ескудо",
-    "тиморшка ескуда",
-    "тиморшких ескуда"
-  ]
+  "other_placeholder": "тиморшких ескуда",
+  "display_name": "Тиморшки ескудо"
 }

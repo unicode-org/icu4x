@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Dutch guilder"
   },
-  "extended_placeholders": [
-    "Dutch Guilder",
-    "Dutch guilder",
-    "Dutch guilders"
-  ]
+  "other_placeholder": "Dutch guilders",
+  "display_name": "Dutch Guilder"
 }

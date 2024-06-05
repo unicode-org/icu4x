@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "грузијски купон ларит",
+    "Few": "грузијска купон ларита"
   },
-  "extended_placeholders": [
-    "Грузијски купон ларит",
-    "грузијски купон ларит",
-    "грузијска купон ларита",
-    "грузијских купон ларита"
-  ]
+  "other_placeholder": "грузијских купон ларита",
+  "display_name": "Грузијски купон ларит"
 }

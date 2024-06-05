@@ -1,10 +1,5 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
-  },
-  "extended_placeholders": [
-    "কমোরিয়ান ফ্রাঙ্ক"
-  ]
+  "placeholders": {},
+  "other_placeholder": null,
+  "display_name": "কমোরিয়ান ফ্রাঙ্ক"
 }

@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "dinar kuwaití"
   },
-  "extended_placeholders": [
-    "dinar kuwaití",
-    "dinar kuwaití",
-    "dinares kuwaitíes"
-  ]
+  "other_placeholder": "dinares kuwaitíes",
+  "display_name": "dinar kuwaití"
 }

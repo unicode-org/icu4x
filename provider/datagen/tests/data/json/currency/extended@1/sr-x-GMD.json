@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "гамбијски даласи",
+    "Few": "гамбијских даласија"
   },
-  "extended_placeholders": [
-    "гамбијски даласи",
-    "гамбијски даласи",
-    "гамбијских даласија",
-    "гамбијских даласија"
-  ]
+  "other_placeholder": "гамбијских даласија",
+  "display_name": "гамбијски даласи"
 }

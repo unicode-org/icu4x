@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Congolese franc"
   },
-  "extended_placeholders": [
-    "Congolese Franc",
-    "Congolese franc",
-    "Congolese francs"
-  ]
+  "other_placeholder": "Congolese francs",
+  "display_name": "Congolese Franc"
 }

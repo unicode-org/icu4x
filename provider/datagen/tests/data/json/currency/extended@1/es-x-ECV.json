@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "unidad de valor constante (UVC) ecuatoriana"
   },
-  "extended_placeholders": [
-    "unidad de valor constante (UVC) ecuatoriana",
-    "unidad de valor constante (UVC) ecuatoriana",
-    "unidades de valor constante (UVC) ecuatorianas"
-  ]
+  "other_placeholder": "unidades de valor constante (UVC) ecuatorianas",
+  "display_name": "unidad de valor constante (UVC) ecuatoriana"
 }

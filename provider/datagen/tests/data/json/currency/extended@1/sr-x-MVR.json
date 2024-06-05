@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "малдивскa руфија",
+    "Few": "малдивскe руфијe"
   },
-  "extended_placeholders": [
-    "малдивска руфија",
-    "малдивскa руфија",
-    "малдивскe руфијe",
-    "малдивских руфија"
-  ]
+  "other_placeholder": "малдивских руфија",
+  "display_name": "малдивска руфија"
 }

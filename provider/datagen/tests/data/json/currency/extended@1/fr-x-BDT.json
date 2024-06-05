@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "taka bangladeshi"
   },
-  "extended_placeholders": [
-    "taka bangladeshi",
-    "taka bangladeshi",
-    "takas bangladeshis"
-  ]
+  "other_placeholder": "takas bangladeshis",
+  "display_name": "taka bangladeshi"
 }

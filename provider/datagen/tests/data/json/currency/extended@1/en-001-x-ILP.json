@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Israeli pound"
   },
-  "extended_placeholders": [
-    "Israeli Pound",
-    "Israeli pound",
-    "Israeli pounds"
-  ]
+  "other_placeholder": "Israeli pounds",
+  "display_name": "Israeli Pound"
 }

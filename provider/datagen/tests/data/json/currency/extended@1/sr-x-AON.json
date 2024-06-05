@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "анголијска нова кванза",
+    "Few": "анголијске нове кванзе"
   },
-  "extended_placeholders": [
-    "Анголијска нова кванза (1990–2000)",
-    "анголијска нова кванза",
-    "анголијске нове кванзе",
-    "анголијских нових кванзи"
-  ]
+  "other_placeholder": "анголијских нових кванзи",
+  "display_name": "Анголијска нова кванза (1990–2000)"
 }

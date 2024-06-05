@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "kubanski konvertibilni pezos",
+    "Few": "kubanska konvertibilna pezosa"
   },
-  "extended_placeholders": [
-    "kubanski konvertibilni pezos",
-    "kubanski konvertibilni pezos",
-    "kubanska konvertibilna pezosa",
-    "kubanskih konvertibilnih pezosa"
-  ]
+  "other_placeholder": "kubanskih konvertibilnih pezosa",
+  "display_name": "kubanski konvertibilni pezos"
 }

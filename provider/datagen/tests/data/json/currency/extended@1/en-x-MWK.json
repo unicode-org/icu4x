@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Malawian kwacha"
   },
-  "extended_placeholders": [
-    "Malawian Kwacha",
-    "Malawian kwacha",
-    "Malawian kwachas"
-  ]
+  "other_placeholder": "Malawian kwachas",
+  "display_name": "Malawian Kwacha"
 }

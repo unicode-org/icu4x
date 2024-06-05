@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "японская иена",
+    "Few": "японские иены",
+    "Many": "японских иен"
   },
-  "extended_placeholders": [
-    "японская иена",
-    "японская иена",
-    "японские иены",
-    "японских иен",
-    "японской иены"
-  ]
+  "other_placeholder": "японской иены",
+  "display_name": "японская иена"
 }

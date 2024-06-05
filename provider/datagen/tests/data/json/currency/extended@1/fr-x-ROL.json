@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "leu roumain (1952–2005)"
   },
-  "extended_placeholders": [
-    "ancien leu roumain",
-    "leu roumain (1952–2005)",
-    "lei roumains (1952–2005)"
-  ]
+  "other_placeholder": "lei roumains (1952–2005)",
+  "display_name": "ancien leu roumain"
 }

@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "bosansko-hercegovačka konvertibilna marka",
+    "Few": "bosansko-hercegovačke konvertibilne marke"
   },
-  "extended_placeholders": [
-    "bosansko-hercegovačka konvertibilna marka",
-    "bosansko-hercegovačka konvertibilna marka",
-    "bosansko-hercegovačke konvertibilne marke",
-    "bosansko-hercegovačkih konvertibilnih maraka"
-  ]
+  "other_placeholder": "bosansko-hercegovačkih konvertibilnih maraka",
+  "display_name": "bosansko-hercegovačka konvertibilna marka"
 }

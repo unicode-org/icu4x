@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Mexican silver peso (1861–1992)"
   },
-  "extended_placeholders": [
-    "Mexican Silver Peso (1861–1992)",
-    "Mexican silver peso (1861–1992)",
-    "Mexican silver pesos (1861–1992)"
-  ]
+  "other_placeholder": "Mexican silver pesos (1861–1992)",
+  "display_name": "Mexican Silver Peso (1861–1992)"
 }

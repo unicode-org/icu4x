@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "couronne estonienne"
   },
-  "extended_placeholders": [
-    "couronne estonienne",
-    "couronne estonienne",
-    "couronnes estoniennes"
-  ]
+  "other_placeholder": "couronnes estoniennes",
+  "display_name": "couronne estonienne"
 }

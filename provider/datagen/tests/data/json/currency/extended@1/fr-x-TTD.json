@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "dollar de Trinité-et-Tobago"
   },
-  "extended_placeholders": [
-    "dollar de Trinité-et-Tobago",
-    "dollar de Trinité-et-Tobago",
-    "dollars de Trinité-et-Tobago"
-  ]
+  "other_placeholder": "dollars de Trinité-et-Tobago",
+  "display_name": "dollar de Trinité-et-Tobago"
 }

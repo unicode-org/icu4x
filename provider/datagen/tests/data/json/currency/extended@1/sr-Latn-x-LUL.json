@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "luksemburški finansijski franak",
+    "Few": "luksemburška finansijska franka"
   },
-  "extended_placeholders": [
-    "Luksemburški finansijski franak",
-    "luksemburški finansijski franak",
-    "luksemburška finansijska franka",
-    "luksemburških finansijskih franaka"
-  ]
+  "other_placeholder": "luksemburških finansijskih franaka",
+  "display_name": "Luksemburški finansijski franak"
 }

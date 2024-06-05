@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "dólar barbadense"
   },
-  "extended_placeholders": [
-    "dólar barbadense",
-    "dólar barbadense",
-    "dólares barbadenses"
-  ]
+  "other_placeholder": "dólares barbadenses",
+  "display_name": "dólar barbadense"
 }

@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "dollar brunéien"
   },
-  "extended_placeholders": [
-    "dollar brunéien",
-    "dollar brunéien",
-    "dollars brunéiens"
-  ]
+  "other_placeholder": "dollars brunéiens",
+  "display_name": "dollar brunéien"
 }

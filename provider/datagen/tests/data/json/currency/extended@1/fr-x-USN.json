@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "dollar des États-Unis (jour suivant)"
   },
-  "extended_placeholders": [
-    "dollar des Etats-Unis (jour suivant)",
-    "dollar des États-Unis (jour suivant)",
-    "dollars des États-Unis (jour suivant)"
-  ]
+  "other_placeholder": "dollars des États-Unis (jour suivant)",
+  "display_name": "dollar des Etats-Unis (jour suivant)"
 }

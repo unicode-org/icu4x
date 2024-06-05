@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "сербский динар",
+    "Few": "сербских динара",
+    "Many": "сербских динаров"
   },
-  "extended_placeholders": [
-    "сербский динар",
-    "сербский динар",
-    "сербских динара",
-    "сербских динаров",
-    "сербского динара"
-  ]
+  "other_placeholder": "сербского динара",
+  "display_name": "сербский динар"
 }

@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "East German mark"
   },
-  "extended_placeholders": [
-    "East German Mark",
-    "East German mark",
-    "East German marks"
-  ]
+  "other_placeholder": "East German marks",
+  "display_name": "East German Mark"
 }

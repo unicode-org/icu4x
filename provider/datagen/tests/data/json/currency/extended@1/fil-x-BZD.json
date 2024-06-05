@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "dolyar ng Belize"
   },
-  "extended_placeholders": [
-    "Dolyar ng Belize",
-    "dolyar ng Belize",
-    "dolyares ng Belize"
-  ]
+  "other_placeholder": "dolyares ng Belize",
+  "display_name": "Dolyar ng Belize"
 }

@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "novozelandski dolar",
+    "Few": "novozelandska dolara"
   },
-  "extended_placeholders": [
-    "novozelandski dolar",
-    "novozelandski dolar",
-    "novozelandska dolara",
-    "novozelandskih dolara"
-  ]
+  "other_placeholder": "novozelandskih dolara",
+  "display_name": "novozelandski dolar"
 }

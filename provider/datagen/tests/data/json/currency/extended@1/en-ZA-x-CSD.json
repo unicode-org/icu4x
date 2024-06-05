@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Serbian dinar (2002–2006)"
   },
-  "extended_placeholders": [
-    "Serbian Dinar (2002–2006)",
-    "Serbian dinar (2002–2006)",
-    "Serbian dinars (2002–2006)"
-  ]
+  "other_placeholder": "Serbian dinars (2002–2006)",
+  "display_name": "Serbian Dinar (2002–2006)"
 }

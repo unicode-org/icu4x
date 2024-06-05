@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "кувейтский динар",
+    "Few": "кувейтских динара",
+    "Many": "кувейтских динаров"
   },
-  "extended_placeholders": [
-    "кувейтский динар",
-    "кувейтский динар",
-    "кувейтских динара",
-    "кувейтских динаров",
-    "кувейтского динара"
-  ]
+  "other_placeholder": "кувейтского динара",
+  "display_name": "кувейтский динар"
 }

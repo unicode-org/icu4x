@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "катарский риал",
+    "Few": "катарских риала",
+    "Many": "катарских риалов"
   },
-  "extended_placeholders": [
-    "катарский риал",
-    "катарский риал",
-    "катарских риала",
-    "катарских риалов",
-    "катарского риала"
-  ]
+  "other_placeholder": "катарского риала",
+  "display_name": "катарский риал"
 }

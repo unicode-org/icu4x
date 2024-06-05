@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "European unit of account (XBC)"
   },
-  "extended_placeholders": [
-    "European Unit of Account (XBC)",
-    "European unit of account (XBC)",
-    "European units of account (XBC)"
-  ]
+  "other_placeholder": "European units of account (XBC)",
+  "display_name": "European Unit of Account (XBC)"
 }

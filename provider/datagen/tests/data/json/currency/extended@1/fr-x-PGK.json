@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "kina papouan-néo-guinéen"
   },
-  "extended_placeholders": [
-    "kina papouan-néo-guinéen",
-    "kina papouan-néo-guinéen",
-    "kinas papouan-néo-guinéens"
-  ]
+  "other_placeholder": "kinas papouan-néo-guinéens",
+  "display_name": "kina papouan-néo-guinéen"
 }

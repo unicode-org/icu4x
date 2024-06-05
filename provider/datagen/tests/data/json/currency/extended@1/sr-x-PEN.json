@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "перуански сол",
+    "Few": "перуанска сола"
   },
-  "extended_placeholders": [
-    "перуански сол",
-    "перуански сол",
-    "перуанска сола",
-    "перуанских сола"
-  ]
+  "other_placeholder": "перуанских сола",
+  "display_name": "перуански сол"
 }

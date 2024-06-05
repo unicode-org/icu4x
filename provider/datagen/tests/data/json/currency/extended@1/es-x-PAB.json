@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "balboa panameño"
   },
-  "extended_placeholders": [
-    "balboa panameño",
-    "balboa panameño",
-    "balboas panameños"
-  ]
+  "other_placeholder": "balboas panameños",
+  "display_name": "balboa panameño"
 }

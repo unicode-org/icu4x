@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "тринидад-тобагошки долар",
+    "Few": "тринидад-тобагошка долара"
   },
-  "extended_placeholders": [
-    "Тринидад-тобагошки долар",
-    "тринидад-тобагошки долар",
-    "тринидад-тобагошка долара",
-    "тринидад-тобагошких долара"
-  ]
+  "other_placeholder": "тринидад-тобагошких долара",
+  "display_name": "Тринидад-тобагошки долар"
 }

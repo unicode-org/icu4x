@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "јерменски драм",
+    "Few": "јерменска драма"
   },
-  "extended_placeholders": [
-    "јерменски драм",
-    "јерменски драм",
-    "јерменска драма",
-    "јерменска драма"
-  ]
+  "other_placeholder": "јерменска драма",
+  "display_name": "јерменски драм"
 }

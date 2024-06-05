@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "ganski sedi",
+    "Few": "ganska sedija"
   },
-  "extended_placeholders": [
-    "ganski sedi",
-    "ganski sedi",
-    "ganska sedija",
-    "ganskih sedija"
-  ]
+  "other_placeholder": "ganskih sedija",
+  "display_name": "ganski sedi"
 }

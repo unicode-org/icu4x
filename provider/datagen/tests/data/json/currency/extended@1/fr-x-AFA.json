@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "afghani (1927–2002)"
   },
-  "extended_placeholders": [
-    "afghani (1927–2002)",
-    "afghani (1927–2002)",
-    "afghanis (1927–2002)"
-  ]
+  "other_placeholder": "afghanis (1927–2002)",
+  "display_name": "afghani (1927–2002)"
 }

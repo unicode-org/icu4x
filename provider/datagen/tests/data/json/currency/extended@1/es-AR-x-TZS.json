@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "chelín tanzano"
   },
-  "extended_placeholders": [
-    "chelín tanzano",
-    "chelín tanzano",
-    "chelines tanzanos"
-  ]
+  "other_placeholder": "chelines tanzanos",
+  "display_name": "chelín tanzano"
 }

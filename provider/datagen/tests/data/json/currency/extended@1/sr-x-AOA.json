@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "анголска кванза",
+    "Few": "анголске кванзе"
   },
-  "extended_placeholders": [
-    "анголска кванза",
-    "анголска кванза",
-    "анголске кванзе",
-    "анголских кванзи"
-  ]
+  "other_placeholder": "анголских кванзи",
+  "display_name": "анголска кванза"
 }

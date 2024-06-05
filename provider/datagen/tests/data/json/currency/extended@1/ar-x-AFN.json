@@ -1,15 +1,11 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "Zero": "أفغاني أفغانستاني",
+    "One": "أفغاني أفغانستاني",
+    "Two": "أفغاني أفغانستاني",
+    "Few": "أفغاني أفغانستاني",
+    "Many": "أفغاني أفغانستاني"
   },
-  "extended_placeholders": [
-    "أفغاني",
-    "أفغاني أفغانستاني",
-    "أفغاني أفغانستاني",
-    "أفغاني أفغانستاني",
-    "أفغاني أفغانستاني",
-    "أفغاني أفغانستاني"
-  ]
+  "other_placeholder": "أفغاني أفغانستاني",
+  "display_name": "أفغاني"
 }

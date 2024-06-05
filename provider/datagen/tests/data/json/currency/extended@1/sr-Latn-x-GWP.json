@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "gvineja-bisaoški pezo",
+    "Few": "gvineja-bisaoška pezosa"
   },
-  "extended_placeholders": [
-    "Gvineja Bisao Pezo",
-    "gvineja-bisaoški pezo",
-    "gvineja-bisaoška pezosa",
-    "gvineja-bisaoških pezosa"
-  ]
+  "other_placeholder": "gvineja-bisaoških pezosa",
+  "display_name": "Gvineja Bisao Pezo"
 }

@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "norveška kruna",
+    "Few": "norveške krune"
   },
-  "extended_placeholders": [
-    "norveška kruna",
-    "norveška kruna",
-    "norveške krune",
-    "norveških kruna"
-  ]
+  "other_placeholder": "norveških kruna",
+  "display_name": "norveška kruna"
 }

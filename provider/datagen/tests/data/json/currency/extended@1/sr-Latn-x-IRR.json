@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "iranski rijal",
+    "Few": "iranska rijala"
   },
-  "extended_placeholders": [
-    "iranski rijal",
-    "iranski rijal",
-    "iranska rijala",
-    "iranskih rijala"
-  ]
+  "other_placeholder": "iranskih rijala",
+  "display_name": "iranski rijal"
 }

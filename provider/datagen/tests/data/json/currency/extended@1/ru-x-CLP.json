@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "чилийский песо",
+    "Few": "чилийских песо",
+    "Many": "чилийских песо"
   },
-  "extended_placeholders": [
-    "чилийский песо",
-    "чилийский песо",
-    "чилийских песо",
-    "чилийских песо",
-    "чилийского песо"
-  ]
+  "other_placeholder": "чилийского песо",
+  "display_name": "чилийский песо"
 }

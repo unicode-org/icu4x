@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "саудијски ријал",
+    "Few": "саудијска ријала"
   },
-  "extended_placeholders": [
-    "саудијски ријал",
-    "саудијски ријал",
-    "саудијска ријала",
-    "саудијских ријала"
-  ]
+  "other_placeholder": "саудијских ријала",
+  "display_name": "саудијски ријал"
 }

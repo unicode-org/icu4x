@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "rial catarí"
   },
-  "extended_placeholders": [
-    "rial catarí",
-    "rial catarí",
-    "riales cataríes"
-  ]
+  "other_placeholder": "riales cataríes",
+  "display_name": "rial catarí"
 }

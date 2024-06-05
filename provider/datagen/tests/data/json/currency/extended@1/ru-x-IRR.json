@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "иранский риал",
+    "Few": "иранских риала",
+    "Many": "иранских риалов"
   },
-  "extended_placeholders": [
-    "иранский риал",
-    "иранский риал",
-    "иранских риала",
-    "иранских риалов",
-    "иранского риала"
-  ]
+  "other_placeholder": "иранского риала",
+  "display_name": "иранский риал"
 }

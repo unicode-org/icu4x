@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "colón ng Costa Rica"
   },
-  "extended_placeholders": [
-    "Colón ng Costa Rica",
-    "colón ng Costa Rica",
-    "colóns ng Costa Rica"
-  ]
+  "other_placeholder": "colóns ng Costa Rica",
+  "display_name": "Colón ng Costa Rica"
 }

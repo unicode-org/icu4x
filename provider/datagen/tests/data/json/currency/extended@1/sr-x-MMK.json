@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "мјанмарски кјат",
+    "Few": "мјанмарскa кјатa"
   },
-  "extended_placeholders": [
-    "мјанмарски кјат",
-    "мјанмарски кјат",
-    "мјанмарскa кјатa",
-    "мјанмарских кјатa"
-  ]
+  "other_placeholder": "мјанмарских кјатa",
+  "display_name": "мјанмарски кјат"
 }

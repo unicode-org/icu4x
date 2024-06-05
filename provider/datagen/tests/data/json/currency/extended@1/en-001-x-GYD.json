@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Guyanaese dollar"
   },
-  "extended_placeholders": [
-    "Guyanaese Dollar",
-    "Guyanaese dollar",
-    "Guyanaese dollars"
-  ]
+  "other_placeholder": "Guyanaese dollars",
+  "display_name": "Guyanaese Dollar"
 }

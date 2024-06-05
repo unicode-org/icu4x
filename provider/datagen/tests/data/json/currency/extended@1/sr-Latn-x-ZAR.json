@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "južnoafrički rand",
+    "Few": "južnoafrička randa"
   },
-  "extended_placeholders": [
-    "južnoafrički rand",
-    "južnoafrički rand",
-    "južnoafrička randa",
-    "južnoafričkih randa"
-  ]
+  "other_placeholder": "južnoafričkih randa",
+  "display_name": "južnoafrički rand"
 }

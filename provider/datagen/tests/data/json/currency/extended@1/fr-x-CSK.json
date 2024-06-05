@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "couronne forte tchécoslovaque"
   },
-  "extended_placeholders": [
-    "couronne forte tchécoslovaque",
-    "couronne forte tchécoslovaque",
-    "couronnes fortes tchécoslovaques"
-  ]
+  "other_placeholder": "couronnes fortes tchécoslovaques",
+  "display_name": "couronne forte tchécoslovaque"
 }

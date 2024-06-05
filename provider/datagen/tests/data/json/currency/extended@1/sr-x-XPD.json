@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "паладијум",
+    "Few": "паладијума"
   },
-  "extended_placeholders": [
-    "Паладијум",
-    "паладијум",
-    "паладијума",
-    "паладијума"
-  ]
+  "other_placeholder": "паладијума",
+  "display_name": "Паладијум"
 }

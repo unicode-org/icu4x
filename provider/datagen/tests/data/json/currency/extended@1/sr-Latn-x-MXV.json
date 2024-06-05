@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "meksički unidads de inverzion",
+    "Few": "meksička unidads de inverziona"
   },
-  "extended_placeholders": [
-    "Meksički unidad de inversion (UDI)",
-    "meksički unidads de inverzion",
-    "meksička unidads de inverziona",
-    "meksičkih unidads de inverziona"
-  ]
+  "other_placeholder": "meksičkih unidads de inverziona",
+  "display_name": "Meksički unidad de inversion (UDI)"
 }

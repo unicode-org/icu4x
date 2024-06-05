@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "белизский доллар",
+    "Few": "белизских доллара",
+    "Many": "белизских долларов"
   },
-  "extended_placeholders": [
-    "белизский доллар",
-    "белизский доллар",
-    "белизских доллара",
-    "белизских долларов",
-    "белизского доллара"
-  ]
+  "other_placeholder": "белизского доллара",
+  "display_name": "белизский доллар"
 }

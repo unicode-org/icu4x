@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "katarski rijal",
+    "Few": "katarska rijala"
   },
-  "extended_placeholders": [
-    "katarski rijal",
-    "katarski rijal",
-    "katarska rijala",
-    "katarskih rijala"
-  ]
+  "other_placeholder": "katarskih rijala",
+  "display_name": "katarski rijal"
 }

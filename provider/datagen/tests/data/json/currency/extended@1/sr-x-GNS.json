@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "гвинејски сили",
+    "Few": "гвинејска сила"
   },
-  "extended_placeholders": [
-    "Гвинејски сили",
-    "гвинејски сили",
-    "гвинејска сила",
-    "гвинејских сила"
-  ]
+  "other_placeholder": "гвинејских сила",
+  "display_name": "Гвинејски сили"
 }

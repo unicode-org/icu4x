@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Panamanian balboa"
   },
-  "extended_placeholders": [
-    "Panamanian Balboa",
-    "Panamanian balboa",
-    "Panamanian balboas"
-  ]
+  "other_placeholder": "Panamanian balboas",
+  "display_name": "Panamanian Balboa"
 }

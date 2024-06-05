@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "йеменский риал",
+    "Few": "йеменских риала",
+    "Many": "йеменских риалов"
   },
-  "extended_placeholders": [
-    "йеменский риал",
-    "йеменский риал",
-    "йеменских риала",
-    "йеменских риалов",
-    "йеменского риала"
-  ]
+  "other_placeholder": "йеменского риала",
+  "display_name": "йеменский риал"
 }

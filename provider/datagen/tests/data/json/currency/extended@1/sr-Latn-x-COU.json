@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "unidad de valorški real",
+    "Few": "nidad de valor reala"
   },
-  "extended_placeholders": [
-    "Unidad de valorški real",
-    "unidad de valorški real",
-    "nidad de valor reala",
-    "unidad de valorških reala"
-  ]
+  "other_placeholder": "unidad de valorških reala",
+  "display_name": "Unidad de valorški real"
 }

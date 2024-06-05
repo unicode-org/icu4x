@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "venecuelanski bolivar (2008–2018)",
+    "Few": "venecuelanska bolivara (2008–2018)"
   },
-  "extended_placeholders": [
-    "Venecuelanski bolivar (2008–2018)",
-    "venecuelanski bolivar (2008–2018)",
-    "venecuelanska bolivara (2008–2018)",
-    "venecuelanskih bolivara (2008–2018)"
-  ]
+  "other_placeholder": "venecuelanskih bolivara (2008–2018)",
+  "display_name": "Venecuelanski bolivar (2008–2018)"
 }

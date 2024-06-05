@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "dolyar ng Liberia"
   },
-  "extended_placeholders": [
-    "Dolyar ng Liberia",
-    "dolyar ng Liberia",
-    "dolyares ng Liberia"
-  ]
+  "other_placeholder": "dolyares ng Liberia",
+  "display_name": "Dolyar ng Liberia"
 }

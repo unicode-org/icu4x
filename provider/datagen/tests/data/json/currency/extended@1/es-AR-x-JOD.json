@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "dinar jordano"
   },
-  "extended_placeholders": [
-    "dinar jordano",
-    "dinar jordano",
-    "dinares jordanos"
-  ]
+  "other_placeholder": "dinares jordanos",
+  "display_name": "dinar jordano"
 }

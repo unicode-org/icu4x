@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "izraelska funta",
+    "Few": "izraelske funte"
   },
-  "extended_placeholders": [
-    "Izraelska funta",
-    "izraelska funta",
-    "izraelske funte",
-    "izraelskih funti"
-  ]
+  "other_placeholder": "izraelskih funti",
+  "display_name": "Izraelska funta"
 }

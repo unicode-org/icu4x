@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "irska funta",
+    "Few": "irske funte"
   },
-  "extended_placeholders": [
-    "Irska funta",
-    "irska funta",
-    "irske funte",
-    "irskih funti"
-  ]
+  "other_placeholder": "irskih funti",
+  "display_name": "Irska funta"
 }

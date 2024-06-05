@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "dobra santoméen (1977–2017)"
   },
-  "extended_placeholders": [
-    "dobra santoméen (1977–2017)",
-    "dobra santoméen (1977–2017)",
-    "dobras santoméens (1977–2017)"
-  ]
+  "other_placeholder": "dobras santoméens (1977–2017)",
+  "display_name": "dobra santoméen (1977–2017)"
 }

@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "novi tajvanski dolar",
+    "Few": "nova tajvanska dolara"
   },
-  "extended_placeholders": [
-    "novi tajvanski dolar",
-    "novi tajvanski dolar",
-    "nova tajvanska dolara",
-    "novih tajvanskih dolara"
-  ]
+  "other_placeholder": "novih tajvanskih dolara",
+  "display_name": "novi tajvanski dolar"
 }

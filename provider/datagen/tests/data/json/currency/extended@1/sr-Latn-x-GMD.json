@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "gambijski dalasi",
+    "Few": "gambijskih dalasija"
   },
-  "extended_placeholders": [
-    "gambijski dalasi",
-    "gambijski dalasi",
-    "gambijskih dalasija",
-    "gambijskih dalasija"
-  ]
+  "other_placeholder": "gambijskih dalasija",
+  "display_name": "gambijski dalasi"
 }

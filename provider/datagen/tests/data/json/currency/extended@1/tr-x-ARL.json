@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Arjantin peso leyi (1970–1983)"
   },
-  "extended_placeholders": [
-    "Arjantin Peso Leyi (1970–1983)",
-    "Arjantin peso leyi (1970–1983)",
-    "Arjantin peso leyi (1970–1983)"
-  ]
+  "other_placeholder": "Arjantin peso leyi (1970–1983)",
+  "display_name": "Arjantin Peso Leyi (1970–1983)"
 }

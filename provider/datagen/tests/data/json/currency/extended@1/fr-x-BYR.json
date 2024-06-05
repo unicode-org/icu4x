@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "rouble biélorusse (2000–2016)"
   },
-  "extended_placeholders": [
-    "rouble biélorusse (2000–2016)",
-    "rouble biélorusse (2000–2016)",
-    "roubles biélorusses (2000–2016)"
-  ]
+  "other_placeholder": "roubles biélorusses (2000–2016)",
+  "display_name": "rouble biélorusse (2000–2016)"
 }

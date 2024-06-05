@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "грузинский лари",
+    "Few": "грузинских лари",
+    "Many": "грузинских лари"
   },
-  "extended_placeholders": [
-    "грузинский лари",
-    "грузинский лари",
-    "грузинских лари",
-    "грузинских лари",
-    "грузинского лари"
-  ]
+  "other_placeholder": "грузинского лари",
+  "display_name": "грузинский лари"
 }

@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "som kirghize"
   },
-  "extended_placeholders": [
-    "som kirghize",
-    "som kirghize",
-    "soms kirghizes"
-  ]
+  "other_placeholder": "soms kirghizes",
+  "display_name": "som kirghize"
 }

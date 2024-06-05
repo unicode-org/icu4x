@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Czechoslovak hard koruna"
   },
-  "extended_placeholders": [
-    "Czechoslovak Hard Koruna",
-    "Czechoslovak hard koruna",
-    "Czechoslovak hard korunas"
-  ]
+  "other_placeholder": "Czechoslovak hard korunas",
+  "display_name": "Czechoslovak Hard Koruna"
 }

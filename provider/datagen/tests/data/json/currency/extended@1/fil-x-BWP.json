@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Botswanan pula"
   },
-  "extended_placeholders": [
-    "Botswanan Pula",
-    "Botswanan pula",
-    "Botswanan pulas"
-  ]
+  "other_placeholder": "Botswanan pulas",
+  "display_name": "Botswanan Pula"
 }

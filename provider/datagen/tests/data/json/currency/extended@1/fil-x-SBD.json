@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "dolyar ng Solomon Islands"
   },
-  "extended_placeholders": [
-    "Dolyar ng Solomon Islands",
-    "dolyar ng Solomon Islands",
-    "dolyar ng Solomon Islands"
-  ]
+  "other_placeholder": "dolyar ng Solomon Islands",
+  "display_name": "Dolyar ng Solomon Islands"
 }

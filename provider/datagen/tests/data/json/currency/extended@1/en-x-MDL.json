@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Moldovan leu"
   },
-  "extended_placeholders": [
-    "Moldovan Leu",
-    "Moldovan leu",
-    "Moldovan lei"
-  ]
+  "other_placeholder": "Moldovan lei",
+  "display_name": "Moldovan Leu"
 }

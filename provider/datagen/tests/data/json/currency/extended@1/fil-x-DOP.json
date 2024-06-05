@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Piso ng Dominican"
   },
-  "extended_placeholders": [
-    "Piso ng Dominican",
-    "Piso ng Dominican",
-    "piso ng Dominican"
-  ]
+  "other_placeholder": "piso ng Dominican",
+  "display_name": "Piso ng Dominican"
 }

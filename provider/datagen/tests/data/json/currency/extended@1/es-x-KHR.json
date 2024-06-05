@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "riel"
   },
-  "extended_placeholders": [
-    "riel",
-    "riel",
-    "rieles"
-  ]
+  "other_placeholder": "rieles",
+  "display_name": "riel"
 }

@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "corona fuerte checoslovaca"
   },
-  "extended_placeholders": [
-    "corona fuerte checoslovaca",
-    "corona fuerte checoslovaca",
-    "coronas fuertes checoslovacas"
-  ]
+  "other_placeholder": "coronas fuertes checoslovacas",
+  "display_name": "corona fuerte checoslovaca"
 }

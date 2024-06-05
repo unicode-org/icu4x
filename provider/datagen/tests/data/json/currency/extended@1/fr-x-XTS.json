@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "(devise de test)"
   },
-  "extended_placeholders": [
-    "(devise de test)",
-    "(devise de test)",
-    "(devises de test)"
-  ]
+  "other_placeholder": "(devises de test)",
+  "display_name": "(devise de test)"
 }

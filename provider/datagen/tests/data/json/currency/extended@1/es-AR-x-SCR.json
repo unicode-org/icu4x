@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "rupia seychellense"
   },
-  "extended_placeholders": [
-    "rupia seychellense",
-    "rupia seychellense",
-    "rupias seychellenses"
-  ]
+  "other_placeholder": "rupias seychellenses",
+  "display_name": "rupia seychellense"
 }

@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Macanese pataca"
   },
-  "extended_placeholders": [
-    "Macanese Pataca",
-    "Macanese pataca",
-    "Macanese patacas"
-  ]
+  "other_placeholder": "Macanese patacas",
+  "display_name": "Macanese Pataca"
 }

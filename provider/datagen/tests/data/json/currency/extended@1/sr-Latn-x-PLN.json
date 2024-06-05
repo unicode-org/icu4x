@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "poljski zlot",
+    "Few": "poljska zlota"
   },
-  "extended_placeholders": [
-    "poljski zlot",
-    "poljski zlot",
-    "poljska zlota",
-    "poljskih zlota"
-  ]
+  "other_placeholder": "poljskih zlota",
+  "display_name": "poljski zlot"
 }

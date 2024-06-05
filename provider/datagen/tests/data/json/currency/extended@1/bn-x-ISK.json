@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "আইসল্যান্ডীয় ক্রোনা"
   },
-  "extended_placeholders": [
-    "আইসল্যান্ডীয় ক্রোনা",
-    "আইসল্যান্ডীয় ক্রোনা",
-    "আইসল্যান্ড ক্রৌন"
-  ]
+  "other_placeholder": "আইসল্যান্ড ক্রৌন",
+  "display_name": "আইসল্যান্ডীয় ক্রোনা"
 }

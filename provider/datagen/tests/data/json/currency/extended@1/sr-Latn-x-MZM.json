@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "stari mozambijski metikal",
+    "Few": "stara mozambijska metikala"
   },
-  "extended_placeholders": [
-    "Stari mozambijski metikal",
-    "stari mozambijski metikal",
-    "stara mozambijska metikala",
-    "starih mozambijskih metikala"
-  ]
+  "other_placeholder": "starih mozambijskih metikala",
+  "display_name": "Stari mozambijski metikal"
 }

@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Cypriot pound"
   },
-  "extended_placeholders": [
-    "Cypriot Pound",
-    "Cypriot pound",
-    "Cypriot pounds"
-  ]
+  "other_placeholder": "Cypriot pounds",
+  "display_name": "Cypriot Pound"
 }

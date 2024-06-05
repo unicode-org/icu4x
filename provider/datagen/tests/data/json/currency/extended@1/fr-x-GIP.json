@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "livre de Gibraltar"
   },
-  "extended_placeholders": [
-    "livre de Gibraltar",
-    "livre de Gibraltar",
-    "livres de Gibraltar"
-  ]
+  "other_placeholder": "livres de Gibraltar",
+  "display_name": "livre de Gibraltar"
 }

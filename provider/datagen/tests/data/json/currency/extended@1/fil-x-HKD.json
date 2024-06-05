@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "dolyar ng Hong Kong"
   },
-  "extended_placeholders": [
-    "Dolyar ng Hong Kong",
-    "dolyar ng Hong Kong",
-    "dolyares ng Hong Kong"
-  ]
+  "other_placeholder": "dolyares ng Hong Kong",
+  "display_name": "Dolyar ng Hong Kong"
 }

@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "jermenski dram",
+    "Few": "jermenska drama"
   },
-  "extended_placeholders": [
-    "jermenski dram",
-    "jermenski dram",
-    "jermenska drama",
-    "jermenska drama"
-  ]
+  "other_placeholder": "jermenska drama",
+  "display_name": "jermenski dram"
 }

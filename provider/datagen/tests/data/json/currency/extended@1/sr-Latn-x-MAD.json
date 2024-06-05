@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "marokanski dirham",
+    "Few": "marokanska dirhama"
   },
-  "extended_placeholders": [
-    "marokanski dirham",
-    "marokanski dirham",
-    "marokanska dirhama",
-    "marokanskih dirhama"
-  ]
+  "other_placeholder": "marokanskih dirhama",
+  "display_name": "marokanski dirham"
 }

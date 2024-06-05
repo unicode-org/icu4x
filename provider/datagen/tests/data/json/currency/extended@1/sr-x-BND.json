@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "брунејски долар",
+    "Few": "брунејска долара"
   },
-  "extended_placeholders": [
-    "брунејски долар",
-    "брунејски долар",
-    "брунејска долара",
-    "брунејских долара"
-  ]
+  "other_placeholder": "брунејских долара",
+  "display_name": "брунејски долар"
 }

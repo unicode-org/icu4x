@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "mauritanska ogija",
+    "Few": "mauritanske ogije"
   },
-  "extended_placeholders": [
-    "mauritanska ogija",
-    "mauritanska ogija",
-    "mauritanske ogije",
-    "mauritanskih ogija"
-  ]
+  "other_placeholder": "mauritanskih ogija",
+  "display_name": "mauritanska ogija"
 }

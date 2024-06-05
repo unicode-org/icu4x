@@ -1,15 +1,11 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "Zero": "جنيه جنوب السودان",
+    "One": "جنيه جنوب السودان",
+    "Two": "جنيهان جنوب السودان",
+    "Few": "جنيهات جنوب السودان",
+    "Many": "جنيهًا جنوب السودان"
   },
-  "extended_placeholders": [
-    "جنيه جنوب السودان",
-    "جنيه جنوب السودان",
-    "جنيهان جنوب السودان",
-    "جنيهات جنوب السودان",
-    "جنيهًا جنوب السودان",
-    "جنيه جنوب السودان"
-  ]
+  "other_placeholder": "جنيه جنوب السودان",
+  "display_name": "جنيه جنوب السودان"
 }

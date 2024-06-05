@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "сейшельская рупия",
+    "Few": "сейшельские рупии",
+    "Many": "сейшельских рупий"
   },
-  "extended_placeholders": [
-    "сейшельская рупия",
-    "сейшельская рупия",
-    "сейшельские рупии",
-    "сейшельских рупий",
-    "сейшельской рупии"
-  ]
+  "other_placeholder": "сейшельской рупии",
+  "display_name": "сейшельская рупия"
 }

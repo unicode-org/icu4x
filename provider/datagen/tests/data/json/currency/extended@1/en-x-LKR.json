@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Sri Lankan rupee"
   },
-  "extended_placeholders": [
-    "Sri Lankan Rupee",
-    "Sri Lankan rupee",
-    "Sri Lankan rupees"
-  ]
+  "other_placeholder": "Sri Lankan rupees",
+  "display_name": "Sri Lankan Rupee"
 }

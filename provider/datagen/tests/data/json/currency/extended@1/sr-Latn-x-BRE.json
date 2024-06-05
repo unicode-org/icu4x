@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "brazilski kruzeiro (1990–1993)",
+    "Few": "brazilska kruzeira (1990–1993)"
   },
-  "extended_placeholders": [
-    "Brazilski kruzeiro (1990–1993)",
-    "brazilski kruzeiro (1990–1993)",
-    "brazilska kruzeira (1990–1993)",
-    "brazilskih kruzeira (1990–1993)"
-  ]
+  "other_placeholder": "brazilskih kruzeira (1990–1993)",
+  "display_name": "Brazilski kruzeiro (1990–1993)"
 }

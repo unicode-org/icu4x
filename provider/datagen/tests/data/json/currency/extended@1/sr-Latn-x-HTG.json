@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "haićanski gurd",
+    "Few": "haićanska gurda"
   },
-  "extended_placeholders": [
-    "haićanski gurd",
-    "haićanski gurd",
-    "haićanska gurda",
-    "haićanskih gurda"
-  ]
+  "other_placeholder": "haićanskih gurda",
+  "display_name": "haićanski gurd"
 }

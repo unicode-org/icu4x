@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "funta Svete Jelene",
+    "Few": "funte Svete Jelene"
   },
-  "extended_placeholders": [
-    "funta Svete Jelene",
-    "funta Svete Jelene",
-    "funte Svete Jelene",
-    "funti Svete Jelene"
-  ]
+  "other_placeholder": "funti Svete Jelene",
+  "display_name": "funta Svete Jelene"
 }

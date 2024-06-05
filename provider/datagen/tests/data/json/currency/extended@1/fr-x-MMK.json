@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "kyat myanmarais"
   },
-  "extended_placeholders": [
-    "kyat myanmarais",
-    "kyat myanmarais",
-    "kyats myanmarais"
-  ]
+  "other_placeholder": "kyats myanmarais",
+  "display_name": "kyat myanmarais"
 }

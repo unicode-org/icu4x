@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "пакистанская рупия",
+    "Few": "пакистанские рупии",
+    "Many": "пакистанских рупий"
   },
-  "extended_placeholders": [
-    "пакистанская рупия",
-    "пакистанская рупия",
-    "пакистанские рупии",
-    "пакистанских рупий",
-    "пакистанской рупии"
-  ]
+  "other_placeholder": "пакистанской рупии",
+  "display_name": "пакистанская рупия"
 }

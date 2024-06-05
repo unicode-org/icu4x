@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "барбадосский доллар",
+    "Few": "барбадосских доллара",
+    "Many": "барбадосских долларов"
   },
-  "extended_placeholders": [
-    "барбадосский доллар",
-    "барбадосский доллар",
-    "барбадосских доллара",
-    "барбадосских долларов",
-    "барбадосского доллара"
-  ]
+  "other_placeholder": "барбадосского доллара",
+  "display_name": "барбадосский доллар"
 }

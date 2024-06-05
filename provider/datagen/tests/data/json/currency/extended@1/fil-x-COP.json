@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "piso ng Colombia"
   },
-  "extended_placeholders": [
-    "Piso ng Colombia",
-    "piso ng Colombia",
-    "Piso ng Colombia"
-  ]
+  "other_placeholder": "Piso ng Colombia",
+  "display_name": "Piso ng Colombia"
 }

@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "гондурасская лемпира",
+    "Few": "гондурасские лемпиры",
+    "Many": "гондурасских лемпир"
   },
-  "extended_placeholders": [
-    "гондурасская лемпира",
-    "гондурасская лемпира",
-    "гондурасские лемпиры",
-    "гондурасских лемпир",
-    "гондурасской лемпиры"
-  ]
+  "other_placeholder": "гондурасской лемпиры",
+  "display_name": "гондурасская лемпира"
 }

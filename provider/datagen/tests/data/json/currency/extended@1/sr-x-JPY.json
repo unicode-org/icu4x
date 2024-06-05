@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "јапански јен",
+    "Few": "јапанска јена"
   },
-  "extended_placeholders": [
-    "јапански јен",
-    "јапански јен",
-    "јапанска јена",
-    "јапанских јена"
-  ]
+  "other_placeholder": "јапанских јена",
+  "display_name": "јапански јен"
 }

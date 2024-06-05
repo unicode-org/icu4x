@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "makedonski denar",
+    "Few": "makedonska denara"
   },
-  "extended_placeholders": [
-    "makedonski denar",
-    "makedonski denar",
-    "makedonska denara",
-    "makedonskih denara"
-  ]
+  "other_placeholder": "makedonskih denara",
+  "display_name": "makedonski denar"
 }

@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "kolumbijski pezos",
+    "Few": "kolumbijska pezosa"
   },
-  "extended_placeholders": [
-    "kolumbijski pezos",
-    "kolumbijski pezos",
-    "kolumbijska pezosa",
-    "kolumbijskih pezosa"
-  ]
+  "other_placeholder": "kolumbijskih pezosa",
+  "display_name": "kolumbijski pezos"
 }

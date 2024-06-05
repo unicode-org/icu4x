@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Chinese People’s Bank dollar"
   },
-  "extended_placeholders": [
-    "Chinese People’s Bank Dollar",
-    "Chinese People’s Bank dollar",
-    "Chinese People’s Bank dollars"
-  ]
+  "other_placeholder": "Chinese People’s Bank dollars",
+  "display_name": "Chinese People’s Bank Dollar"
 }

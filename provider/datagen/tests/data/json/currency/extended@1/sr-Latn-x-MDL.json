@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "moldavski lej",
+    "Few": "moldavska leja"
   },
-  "extended_placeholders": [
-    "moldavski lej",
-    "moldavski lej",
-    "moldavska leja",
-    "moldavskih leja"
-  ]
+  "other_placeholder": "moldavskih leja",
+  "display_name": "moldavski lej"
 }

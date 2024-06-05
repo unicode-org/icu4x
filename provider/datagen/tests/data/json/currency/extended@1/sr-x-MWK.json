@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "малавијска квача",
+    "Few": "малавијске кваче"
   },
-  "extended_placeholders": [
-    "малавијска квача",
-    "малавијска квача",
-    "малавијске кваче",
-    "малавијских квача"
-  ]
+  "other_placeholder": "малавијских квача",
+  "display_name": "малавијска квача"
 }

@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "albanski lek",
+    "Few": "albanska leka"
   },
-  "extended_placeholders": [
-    "albanski lek",
-    "albanski lek",
-    "albanska leka",
-    "albanskih leka"
-  ]
+  "other_placeholder": "albanskih leka",
+  "display_name": "albanski lek"
 }

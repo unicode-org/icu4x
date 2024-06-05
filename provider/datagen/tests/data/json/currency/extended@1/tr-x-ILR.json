@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "İsrail şekeli (1980–1985)"
   },
-  "extended_placeholders": [
-    "İsrail Şekeli (1980–1985)",
-    "İsrail şekeli (1980–1985)",
-    "İsrail şekeli (1980–1985)"
-  ]
+  "other_placeholder": "İsrail şekeli (1980–1985)",
+  "display_name": "İsrail Şekeli (1980–1985)"
 }

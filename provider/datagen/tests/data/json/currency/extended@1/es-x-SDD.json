@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "dinar sudanés"
   },
-  "extended_placeholders": [
-    "dinar sudanés",
-    "dinar sudanés",
-    "dinares sudaneses"
-  ]
+  "other_placeholder": "dinares sudaneses",
+  "display_name": "dinar sudanés"
 }

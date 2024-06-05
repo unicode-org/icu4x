@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "irački dinar",
+    "Few": "iračka dinara"
   },
-  "extended_placeholders": [
-    "irački dinar",
-    "irački dinar",
-    "iračka dinara",
-    "iračkih dinara"
-  ]
+  "other_placeholder": "iračkih dinara",
+  "display_name": "irački dinar"
 }

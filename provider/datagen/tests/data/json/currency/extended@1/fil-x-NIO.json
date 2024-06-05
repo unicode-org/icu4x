@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "córdoba ng Nicaragua"
   },
-  "extended_placeholders": [
-    "Córdoba ng Nicaragua",
-    "córdoba ng Nicaragua",
-    "Córdoba ng Nicaragua"
-  ]
+  "other_placeholder": "Córdoba ng Nicaragua",
+  "display_name": "Córdoba ng Nicaragua"
 }

@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "андорска пезета",
+    "Few": "андорске пезете"
   },
-  "extended_placeholders": [
-    "Андорска пезета",
-    "андорска пезета",
-    "андорске пезете",
-    "андорске пезете"
-  ]
+  "other_placeholder": "андорске пезете",
+  "display_name": "Андорска пезета"
 }

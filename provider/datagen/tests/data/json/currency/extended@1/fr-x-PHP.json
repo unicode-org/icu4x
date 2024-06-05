@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "peso philippin"
   },
-  "extended_placeholders": [
-    "peso philippin",
-    "peso philippin",
-    "pesos philippins"
-  ]
+  "other_placeholder": "pesos philippins",
+  "display_name": "peso philippin"
 }

@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "колумбијски пезос",
+    "Few": "колумбијска пезоса"
   },
-  "extended_placeholders": [
-    "колумбијски пезос",
-    "колумбијски пезос",
-    "колумбијска пезоса",
-    "колумбијских пезоса"
-  ]
+  "other_placeholder": "колумбијских пезоса",
+  "display_name": "колумбијски пезос"
 }

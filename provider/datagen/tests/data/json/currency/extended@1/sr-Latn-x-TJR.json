@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "tadžihistanska rublja",
+    "Few": "tadžihistanske rublje"
   },
-  "extended_placeholders": [
-    "Tadžihistanska rublja",
-    "tadžihistanska rublja",
-    "tadžihistanske rublje",
-    "tadžihistanskih rublji"
-  ]
+  "other_placeholder": "tadžihistanskih rublji",
+  "display_name": "Tadžihistanska rublja"
 }

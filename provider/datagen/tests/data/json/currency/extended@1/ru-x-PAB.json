@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "панамский бальбоа",
+    "Few": "панамских бальбоа",
+    "Many": "панамских бальбоа"
   },
-  "extended_placeholders": [
-    "панамский бальбоа",
-    "панамский бальбоа",
-    "панамских бальбоа",
-    "панамских бальбоа",
-    "панамского бальбоа"
-  ]
+  "other_placeholder": "панамского бальбоа",
+  "display_name": "панамский бальбоа"
 }

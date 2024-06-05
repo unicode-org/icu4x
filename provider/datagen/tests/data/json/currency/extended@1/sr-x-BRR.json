@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "бразилски крузеиро",
+    "Few": "бразилска крузеира"
   },
-  "extended_placeholders": [
-    "Бразилски крузеиро",
-    "бразилски крузеиро",
-    "бразилска крузеира",
-    "бразилских крузеира"
-  ]
+  "other_placeholder": "бразилских крузеира",
+  "display_name": "Бразилски крузеиро"
 }

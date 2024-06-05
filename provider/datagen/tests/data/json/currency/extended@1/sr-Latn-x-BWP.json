@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "bocvanska pula",
+    "Few": "bocvanske pule"
   },
-  "extended_placeholders": [
-    "bocvanska pula",
-    "bocvanska pula",
-    "bocvanske pule",
-    "bocvanskih pula"
-  ]
+  "other_placeholder": "bocvanskih pula",
+  "display_name": "bocvanska pula"
 }

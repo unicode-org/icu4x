@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "европска јединица рачуна (XBD)",
+    "Few": "европске јединице рачуна (XBD)"
   },
-  "extended_placeholders": [
-    "Европска јединица рачуна (XBD)",
-    "европска јединица рачуна (XBD)",
-    "европске јединице рачуна (XBD)",
-    "европских јединица рачуна (XBD)"
-  ]
+  "other_placeholder": "европских јединица рачуна (XBD)",
+  "display_name": "Европска јединица рачуна (XBD)"
 }

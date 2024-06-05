@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "West African CFA franc"
   },
-  "extended_placeholders": [
-    "West African CFA Franc",
-    "West African CFA franc",
-    "West African CFA francs"
-  ]
+  "other_placeholder": "West African CFA francs",
+  "display_name": "West African CFA Franc"
 }

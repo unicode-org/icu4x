@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "ekwélé équatoguinéen"
   },
-  "extended_placeholders": [
-    "ekwélé équatoguinéen",
-    "ekwélé équatoguinéen",
-    "ekwélés équatoguinéens"
-  ]
+  "other_placeholder": "ekwélés équatoguinéens",
+  "display_name": "ekwélé équatoguinéen"
 }

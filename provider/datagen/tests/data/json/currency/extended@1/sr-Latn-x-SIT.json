@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "slovenački tolar",
+    "Few": "slovenačka tolara"
   },
-  "extended_placeholders": [
-    "Slovenački tolar",
-    "slovenački tolar",
-    "slovenačka tolara",
-    "slovenačkih tolara"
-  ]
+  "other_placeholder": "slovenačkih tolara",
+  "display_name": "Slovenački tolar"
 }

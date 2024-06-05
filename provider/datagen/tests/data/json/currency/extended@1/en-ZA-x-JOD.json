@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Jordanian dinar"
   },
-  "extended_placeholders": [
-    "Jordanian Dinar",
-    "Jordanian dinar",
-    "Jordanian dinars"
-  ]
+  "other_placeholder": "Jordanian dinars",
+  "display_name": "Jordanian Dinar"
 }

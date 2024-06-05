@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "East Caribbean dollar"
   },
-  "extended_placeholders": [
-    "East Caribbean Dollar",
-    "East Caribbean dollar",
-    "East Caribbean dollars"
-  ]
+  "other_placeholder": "East Caribbean dollars",
+  "display_name": "East Caribbean Dollar"
 }

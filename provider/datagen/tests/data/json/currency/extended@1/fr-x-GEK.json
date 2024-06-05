@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "coupon de lari géorgien"
   },
-  "extended_placeholders": [
-    "coupon de lari géorgien",
-    "coupon de lari géorgien",
-    "coupons de lari géorgiens"
-  ]
+  "other_placeholder": "coupons de lari géorgiens",
+  "display_name": "coupon de lari géorgien"
 }

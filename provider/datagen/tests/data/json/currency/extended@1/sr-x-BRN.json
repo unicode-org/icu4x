@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "бразилски нови крузадо",
+    "Few": "бразилска нова крузада"
   },
-  "extended_placeholders": [
-    "Бразилијски нови крузадо",
-    "бразилски нови крузадо",
-    "бразилска нова крузада",
-    "бразилских нових крузада"
-  ]
+  "other_placeholder": "бразилских нових крузада",
+  "display_name": "Бразилијски нови крузадо"
 }

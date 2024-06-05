@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "franco CFA de África Central"
   },
-  "extended_placeholders": [
-    "franco CFA de África Central",
-    "franco CFA de África Central",
-    "francos CFA de África Central"
-  ]
+  "other_placeholder": "francos CFA de África Central",
+  "display_name": "franco CFA de África Central"
 }

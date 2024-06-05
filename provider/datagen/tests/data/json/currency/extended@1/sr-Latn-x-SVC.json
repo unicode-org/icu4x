@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "salvadorski kolon",
+    "Few": "salvadorska kolona"
   },
-  "extended_placeholders": [
-    "Salvadorski kolon",
-    "salvadorski kolon",
-    "salvadorska kolona",
-    "salvadorskih kolona"
-  ]
+  "other_placeholder": "salvadorskih kolona",
+  "display_name": "Salvadorski kolon"
 }

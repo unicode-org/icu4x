@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "bahreinski dinar",
+    "Few": "bahreinska dinara"
   },
-  "extended_placeholders": [
-    "bahreinski dinar",
-    "bahreinski dinar",
-    "bahreinska dinara",
-    "bahreinskih dinara"
-  ]
+  "other_placeholder": "bahreinskih dinara",
+  "display_name": "bahreinski dinar"
 }

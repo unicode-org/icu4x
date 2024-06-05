@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "сребро",
+    "Few": "сребра"
   },
-  "extended_placeholders": [
-    "Сребро",
-    "сребро",
-    "сребра",
-    "сребра"
-  ]
+  "other_placeholder": "сребра",
+  "display_name": "Сребро"
 }

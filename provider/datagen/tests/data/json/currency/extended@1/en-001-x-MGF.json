@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Malagasy franc"
   },
-  "extended_placeholders": [
-    "Malagasy Franc",
-    "Malagasy franc",
-    "Malagasy francs"
-  ]
+  "other_placeholder": "Malagasy francs",
+  "display_name": "Malagasy Franc"
 }

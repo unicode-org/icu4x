@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "латвијски лат",
+    "Few": "латвијска лата"
   },
-  "extended_placeholders": [
-    "Латвијски лати",
-    "латвијски лат",
-    "латвијска лата",
-    "латвијских лата"
-  ]
+  "other_placeholder": "латвијских лата",
+  "display_name": "Латвијски лати"
 }

@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "бутански нгултрум",
+    "Few": "бутанска нгултрума"
   },
-  "extended_placeholders": [
-    "бутански нгултрум",
-    "бутански нгултрум",
-    "бутанска нгултрума",
-    "бутанских нгултрума"
-  ]
+  "other_placeholder": "бутанских нгултрума",
+  "display_name": "бутански нгултрум"
 }

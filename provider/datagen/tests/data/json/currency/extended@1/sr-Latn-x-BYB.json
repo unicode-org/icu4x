@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "beloruska nova rublja (1994–1999)",
+    "Few": "beloruske nove rublja (1994–1999)"
   },
-  "extended_placeholders": [
-    "Beloruska nova rublja (1994–1999)",
-    "beloruska nova rublja (1994–1999)",
-    "beloruske nove rublja (1994–1999)",
-    "beloruskih novih rublji (1994–1999)"
-  ]
+  "other_placeholder": "beloruskih novih rublji (1994–1999)",
+  "display_name": "Beloruska nova rublja (1994–1999)"
 }

@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Luxembourgian convertible franc"
   },
-  "extended_placeholders": [
-    "Luxembourgian Convertible Franc",
-    "Luxembourgian convertible franc",
-    "Luxembourgian convertible francs"
-  ]
+  "other_placeholder": "Luxembourgian convertible francs",
+  "display_name": "Luxembourgian Convertible Franc"
 }

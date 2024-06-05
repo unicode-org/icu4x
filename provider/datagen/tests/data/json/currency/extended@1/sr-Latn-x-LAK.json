@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "laoski kip",
+    "Few": "laoska kipa"
   },
-  "extended_placeholders": [
-    "laoski kip",
-    "laoski kip",
-    "laoska kipa",
-    "laoskih kipa"
-  ]
+  "other_placeholder": "laoskih kipa",
+  "display_name": "laoski kip"
 }

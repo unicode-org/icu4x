@@ -1,15 +1,11 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "Zero": "دينار مقدوني",
+    "One": "دينار مقدوني",
+    "Two": "ديناران مقدونيان",
+    "Few": "دينارات مقدونية",
+    "Many": "دينارًا مقدونيًا"
   },
-  "extended_placeholders": [
-    "دينار مقدوني",
-    "دينار مقدوني",
-    "ديناران مقدونيان",
-    "دينارات مقدونية",
-    "دينارًا مقدونيًا",
-    "دينار مقدوني"
-  ]
+  "other_placeholder": "دينار مقدوني",
+  "display_name": "دينار مقدوني"
 }

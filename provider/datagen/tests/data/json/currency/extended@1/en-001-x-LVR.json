@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Latvian rouble"
   },
-  "extended_placeholders": [
-    "Latvian Rouble",
-    "Latvian rouble",
-    "Latvian roubles"
-  ]
+  "other_placeholder": "Latvian roubles",
+  "display_name": "Latvian Rouble"
 }

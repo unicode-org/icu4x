@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "зимбабвејски долар (2008)",
+    "Few": "зимбабвејска долара (2008)"
   },
-  "extended_placeholders": [
-    "Зимбабвеански долар (2008)",
-    "зимбабвејски долар (2008)",
-    "зимбабвејска долара (2008)",
-    "зимбабвејских долара (2008)"
-  ]
+  "other_placeholder": "зимбабвејских долара (2008)",
+  "display_name": "Зимбабвеански долар (2008)"
 }

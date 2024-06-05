@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "јужноафрички ранд",
+    "Few": "јужноафричка ранда"
   },
-  "extended_placeholders": [
-    "јужноафрички ранд",
-    "јужноафрички ранд",
-    "јужноафричка ранда",
-    "јужноафричких ранда"
-  ]
+  "other_placeholder": "јужноафричких ранда",
+  "display_name": "јужноафрички ранд"
 }

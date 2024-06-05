@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "trinidad-tobagoški dolar",
+    "Few": "trinidad-tobagoška dolara"
   },
-  "extended_placeholders": [
-    "Trinidad-tobagoški dolar",
-    "trinidad-tobagoški dolar",
-    "trinidad-tobagoška dolara",
-    "trinidad-tobagoških dolara"
-  ]
+  "other_placeholder": "trinidad-tobagoških dolara",
+  "display_name": "Trinidad-tobagoški dolar"
 }

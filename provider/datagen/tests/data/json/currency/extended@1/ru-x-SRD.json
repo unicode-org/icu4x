@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "суринамский доллар",
+    "Few": "суринамских доллара",
+    "Many": "суринамских долларов"
   },
-  "extended_placeholders": [
-    "суринамский доллар",
-    "суринамский доллар",
-    "суринамских доллара",
-    "суринамских долларов",
-    "суринамского доллара"
-  ]
+  "other_placeholder": "суринамского доллара",
+  "display_name": "суринамский доллар"
 }

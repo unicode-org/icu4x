@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "литовский лит",
+    "Few": "литовских лита",
+    "Many": "литовских литов"
   },
-  "extended_placeholders": [
-    "Литовский лит",
-    "литовский лит",
-    "литовских лита",
-    "литовских литов",
-    "литовского лита"
-  ]
+  "other_placeholder": "литовского лита",
+  "display_name": "Литовский лит"
 }

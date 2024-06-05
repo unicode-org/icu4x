@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "лесотски лоти",
+    "Few": "лесотска лотија"
   },
-  "extended_placeholders": [
-    "лесотски лоти",
-    "лесотски лоти",
-    "лесотска лотија",
-    "лесотских лотија"
-  ]
+  "other_placeholder": "лесотских лотија",
+  "display_name": "лесотски лоти"
 }

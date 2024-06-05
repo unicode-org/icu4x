@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "bolivijski pezo",
+    "Few": "bolivijska pezosa"
   },
-  "extended_placeholders": [
-    "Bolivijski pezo",
-    "bolivijski pezo",
-    "bolivijska pezosa",
-    "bolivijskih pezosa"
-  ]
+  "other_placeholder": "bolivijskih pezosa",
+  "display_name": "Bolivijski pezo"
 }

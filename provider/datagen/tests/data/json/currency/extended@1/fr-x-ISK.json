@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "couronne islandaise"
   },
-  "extended_placeholders": [
-    "couronne islandaise",
-    "couronne islandaise",
-    "couronnes islandaises"
-  ]
+  "other_placeholder": "couronnes islandaises",
+  "display_name": "couronne islandaise"
 }

@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "dolyar ng Suriname"
   },
-  "extended_placeholders": [
-    "Dolyar ng Suriname",
-    "dolyar ng Suriname",
-    "dolyares ng Suriname"
-  ]
+  "other_placeholder": "dolyares ng Suriname",
+  "display_name": "Dolyar ng Suriname"
 }

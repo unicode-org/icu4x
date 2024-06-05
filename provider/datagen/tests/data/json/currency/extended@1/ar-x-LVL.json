@@ -1,15 +1,11 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "Zero": "لاتس لاتفي",
+    "One": "لاتس لاتفي",
+    "Two": "لاتس لاتفي",
+    "Few": "لاتس لاتفي",
+    "Many": "لاتس لاتفي"
   },
-  "extended_placeholders": [
-    "لاتس لاتفيا",
-    "لاتس لاتفي",
-    "لاتس لاتفي",
-    "لاتس لاتفي",
-    "لاتس لاتفي",
-    "لاتس لاتفي"
-  ]
+  "other_placeholder": "لاتس لاتفي",
+  "display_name": "لاتس لاتفيا"
 }

@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "leona (1964—2022)"
   },
-  "extended_placeholders": [
-    "leona (1964—2022)",
-    "leona (1964—2022)",
-    "leonas (1964—2022)"
-  ]
+  "other_placeholder": "leonas (1964—2022)",
+  "display_name": "leona (1964—2022)"
 }

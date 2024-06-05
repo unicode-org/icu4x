@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Monako frangı"
   },
-  "extended_placeholders": [
-    "Monako Frangı",
-    "Monako frangı",
-    "Monako frangı"
-  ]
+  "other_placeholder": "Monako frangı",
+  "display_name": "Monako Frangı"
 }

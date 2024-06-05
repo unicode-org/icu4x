@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "balboa ng Panama"
   },
-  "extended_placeholders": [
-    "Balboa ng Panama",
-    "balboa ng Panama",
-    "Balboas ng Panama"
-  ]
+  "other_placeholder": "Balboas ng Panama",
+  "display_name": "Balboa ng Panama"
 }

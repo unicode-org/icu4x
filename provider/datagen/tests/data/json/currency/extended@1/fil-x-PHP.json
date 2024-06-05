@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "piso ng Pilipinas"
   },
-  "extended_placeholders": [
-    "Piso ng Pilipinas",
-    "piso ng Pilipinas",
-    "piso ng Pilipinas"
-  ]
+  "other_placeholder": "piso ng Pilipinas",
+  "display_name": "Piso ng Pilipinas"
 }

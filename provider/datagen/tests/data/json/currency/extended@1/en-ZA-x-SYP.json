@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Syrian pound"
   },
-  "extended_placeholders": [
-    "Syrian Pound",
-    "Syrian pound",
-    "Syrian pounds"
-  ]
+  "other_placeholder": "Syrian pounds",
+  "display_name": "Syrian Pound"
 }

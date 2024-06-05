@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "mauricijska rupija",
+    "Few": "mauricijske rupije"
   },
-  "extended_placeholders": [
-    "mauricijska rupija",
-    "mauricijska rupija",
-    "mauricijske rupije",
-    "mauricijskih rupija"
-  ]
+  "other_placeholder": "mauricijskih rupija",
+  "display_name": "mauricijska rupija"
 }

@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "kina"
   },
-  "extended_placeholders": [
-    "kina",
-    "kina",
-    "kinas"
-  ]
+  "other_placeholder": "kinas",
+  "display_name": "kina"
 }

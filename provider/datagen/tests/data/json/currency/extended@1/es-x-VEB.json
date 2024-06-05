@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "bolívar venezolano (1871–2008)"
   },
-  "extended_placeholders": [
-    "bolívar venezolano (1871–2008)",
-    "bolívar venezolano (1871–2008)",
-    "bolívares venezolanos (1871–2008)"
-  ]
+  "other_placeholder": "bolívares venezolanos (1871–2008)",
+  "display_name": "bolívar venezolano (1871–2008)"
 }

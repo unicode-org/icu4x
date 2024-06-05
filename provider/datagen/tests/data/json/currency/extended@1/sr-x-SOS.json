@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "сомалијски шилинг",
+    "Few": "сомалијска шилинга"
   },
-  "extended_placeholders": [
-    "сомалијски шилинг",
-    "сомалијски шилинг",
-    "сомалијска шилинга",
-    "сомалијских шилинга"
-  ]
+  "other_placeholder": "сомалијских шилинга",
+  "display_name": "сомалијски шилинг"
 }

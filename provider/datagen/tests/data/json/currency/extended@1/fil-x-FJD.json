@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "dolyar ng Fiji"
   },
-  "extended_placeholders": [
-    "Dolyar ng Fiji",
-    "dolyar ng Fiji",
-    "dolyares ng Fiji"
-  ]
+  "other_placeholder": "dolyares ng Fiji",
+  "display_name": "Dolyar ng Fiji"
 }

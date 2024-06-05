@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "sijeraleonski leone (1964—2022)",
+    "Few": "sijeraleonska leona (1964—2022)"
   },
-  "extended_placeholders": [
-    "sijeraleonski leone (1964—2022)",
-    "sijeraleonski leone (1964—2022)",
-    "sijeraleonska leona (1964—2022)",
-    "sijeraleonskih leona (1964—2022)"
-  ]
+  "other_placeholder": "sijeraleonskih leona (1964—2022)",
+  "display_name": "sijeraleonski leone (1964—2022)"
 }

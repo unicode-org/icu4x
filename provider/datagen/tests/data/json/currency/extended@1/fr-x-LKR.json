@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "roupie srilankaise"
   },
-  "extended_placeholders": [
-    "roupie srilankaise",
-    "roupie srilankaise",
-    "roupies srilankaises"
-  ]
+  "other_placeholder": "roupies srilankaises",
+  "display_name": "roupie srilankaise"
 }

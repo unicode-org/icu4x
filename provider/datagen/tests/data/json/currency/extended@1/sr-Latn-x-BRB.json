@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "brazilski novi kruzeiro (1967–1986)",
+    "Few": "brazilska nova kruzeira (1967–1986)"
   },
-  "extended_placeholders": [
-    "Brazilski novi kruzeiro (1967–1986)",
-    "brazilski novi kruzeiro (1967–1986)",
-    "brazilska nova kruzeira (1967–1986)",
-    "brazilskih novih kruzeira (1967–1986)"
-  ]
+  "other_placeholder": "brazilskih novih kruzeira (1967–1986)",
+  "display_name": "Brazilski novi kruzeiro (1967–1986)"
 }

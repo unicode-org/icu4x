@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "код тестиране валуте",
+    "Few": "кода тестиране валуте"
   },
-  "extended_placeholders": [
-    "Код тестиране валуте",
-    "код тестиране валуте",
-    "кода тестиране валуте",
-    "кодова тестиране валуте"
-  ]
+  "other_placeholder": "кодова тестиране валуте",
+  "display_name": "Код тестиране валуте"
 }

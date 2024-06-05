@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "парагвайский гуарани",
+    "Few": "парагвайских гуарани",
+    "Many": "парагвайских гуарани"
   },
-  "extended_placeholders": [
-    "парагвайский гуарани",
-    "парагвайский гуарани",
-    "парагвайских гуарани",
-    "парагвайских гуарани",
-    "парагвайского гуарани"
-  ]
+  "other_placeholder": "парагвайского гуарани",
+  "display_name": "парагвайский гуарани"
 }

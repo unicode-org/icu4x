@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Austrian schilling"
   },
-  "extended_placeholders": [
-    "Austrian Schilling",
-    "Austrian schilling",
-    "Austrian schillings"
-  ]
+  "other_placeholder": "Austrian schillings",
+  "display_name": "Austrian Schilling"
 }

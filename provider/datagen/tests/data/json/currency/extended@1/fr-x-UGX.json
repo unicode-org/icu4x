@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "shilling ougandais"
   },
-  "extended_placeholders": [
-    "shilling ougandais",
-    "shilling ougandais",
-    "shillings ougandais"
-  ]
+  "other_placeholder": "shillings ougandais",
+  "display_name": "shilling ougandais"
 }

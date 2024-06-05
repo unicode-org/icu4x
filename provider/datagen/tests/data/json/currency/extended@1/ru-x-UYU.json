@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "уругвайский песо",
+    "Few": "уругвайских песо",
+    "Many": "уругвайских песо"
   },
-  "extended_placeholders": [
-    "уругвайский песо",
-    "уругвайский песо",
-    "уругвайских песо",
-    "уругвайских песо",
-    "уругвайского песо"
-  ]
+  "other_placeholder": "уругвайского песо",
+  "display_name": "уругвайский песо"
 }

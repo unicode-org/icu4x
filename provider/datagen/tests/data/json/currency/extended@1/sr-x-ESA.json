@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "шпанска пезета (А рачун)",
+    "Few": "шпанске пезете (А рачун)"
   },
-  "extended_placeholders": [
-    "Шпанска пезета (рачун)",
-    "шпанска пезета (А рачун)",
-    "шпанске пезете (А рачун)",
-    "шпанских пезета (А рачун)"
-  ]
+  "other_placeholder": "шпанских пезета (А рачун)",
+  "display_name": "Шпанска пезета (рачун)"
 }

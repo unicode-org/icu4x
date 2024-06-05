@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "jemenski rijal",
+    "Few": "jemenska rijala"
   },
-  "extended_placeholders": [
-    "jemenski rijal",
-    "jemenski rijal",
-    "jemenska rijala",
-    "jemenskih rijala"
-  ]
+  "other_placeholder": "jemenskih rijala",
+  "display_name": "jemenski rijal"
 }

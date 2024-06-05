@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "азербайджанский манат",
+    "Few": "азербайджанских маната",
+    "Many": "азербайджанских манатов"
   },
-  "extended_placeholders": [
-    "азербайджанский манат",
-    "азербайджанский манат",
-    "азербайджанских маната",
-    "азербайджанских манатов",
-    "азербайджанского маната"
-  ]
+  "other_placeholder": "азербайджанского маната",
+  "display_name": "азербайджанский манат"
 }

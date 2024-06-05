@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Russian rouble (1991–1998)"
   },
-  "extended_placeholders": [
-    "Russian Rouble (1991–1998)",
-    "Russian rouble (1991–1998)",
-    "Russian roubles (1991–1998)"
-  ]
+  "other_placeholder": "Russian roubles (1991–1998)",
+  "display_name": "Russian Rouble (1991–1998)"
 }

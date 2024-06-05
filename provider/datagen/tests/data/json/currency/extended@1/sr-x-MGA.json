@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "малгашки аријари",
+    "Few": "малгашка аријарија"
   },
-  "extended_placeholders": [
-    "малгашки аријари",
-    "малгашки аријари",
-    "малгашка аријарија",
-    "малгашких аријарија"
-  ]
+  "other_placeholder": "малгашких аријарија",
+  "display_name": "малгашки аријари"
 }

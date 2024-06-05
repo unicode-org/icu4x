@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "marco finlandés"
   },
-  "extended_placeholders": [
-    "marco finlandés",
-    "marco finlandés",
-    "marcos finlandeses"
-  ]
+  "other_placeholder": "marcos finlandeses",
+  "display_name": "marco finlandés"
 }

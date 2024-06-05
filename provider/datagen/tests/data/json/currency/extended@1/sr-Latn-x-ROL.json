@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "rumunski lej (1952–2006)",
+    "Few": "rumunska leja (1952–2006)"
   },
-  "extended_placeholders": [
-    "Rumunski lej (1952–2006)",
-    "rumunski lej (1952–2006)",
-    "rumunska leja (1952–2006)",
-    "rumunskih leja (1952–2006)"
-  ]
+  "other_placeholder": "rumunskih leja (1952–2006)",
+  "display_name": "Rumunski lej (1952–2006)"
 }

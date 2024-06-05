@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "бангладешка така",
+    "Few": "бангладешке таке"
   },
-  "extended_placeholders": [
-    "бангладешка така",
-    "бангладешка така",
-    "бангладешке таке",
-    "бангладешких така"
-  ]
+  "other_placeholder": "бангладешких така",
+  "display_name": "бангладешка така"
 }

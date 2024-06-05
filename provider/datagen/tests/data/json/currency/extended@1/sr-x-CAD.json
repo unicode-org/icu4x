@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "канадски долар",
+    "Few": "канадска долара"
   },
-  "extended_placeholders": [
-    "канадски долар",
-    "канадски долар",
-    "канадска долара",
-    "канадских долара"
-  ]
+  "other_placeholder": "канадских долара",
+  "display_name": "канадски долар"
 }

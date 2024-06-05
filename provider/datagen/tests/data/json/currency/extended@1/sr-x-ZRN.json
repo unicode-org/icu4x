@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "заирски нови заир",
+    "Few": "заирска нова заира"
   },
-  "extended_placeholders": [
-    "Заирски нови заир",
-    "заирски нови заир",
-    "заирска нова заира",
-    "заирских нових заира"
-  ]
+  "other_placeholder": "заирских нових заира",
+  "display_name": "Заирски нови заир"
 }

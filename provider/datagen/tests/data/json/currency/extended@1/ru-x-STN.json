@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "добра Сан-Томе и Принсипи",
+    "Few": "добры Сан-Томе и Принсипи",
+    "Many": "добр Сан-Томе и Принсипи"
   },
-  "extended_placeholders": [
-    "добра Сан-Томе и Принсипи",
-    "добра Сан-Томе и Принсипи",
-    "добры Сан-Томе и Принсипи",
-    "добр Сан-Томе и Принсипи",
-    "добры Сан-Томе и Принсипи"
-  ]
+  "other_placeholder": "добры Сан-Томе и Принсипи",
+  "display_name": "добра Сан-Томе и Принсипи"
 }

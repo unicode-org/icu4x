@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "dolyar ng New Taiwan"
   },
-  "extended_placeholders": [
-    "Dolyar ng New Taiwan",
-    "dolyar ng New Taiwan",
-    "dolyares ng New Taiwan"
-  ]
+  "other_placeholder": "dolyares ng New Taiwan",
+  "display_name": "Dolyar ng New Taiwan"
 }

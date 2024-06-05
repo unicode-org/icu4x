@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "молдавский лей",
+    "Few": "молдавских лея",
+    "Many": "молдавских леев"
   },
-  "extended_placeholders": [
-    "молдавский лей",
-    "молдавский лей",
-    "молдавских лея",
-    "молдавских леев",
-    "молдавского лея"
-  ]
+  "other_placeholder": "молдавского лея",
+  "display_name": "молдавский лей"
 }

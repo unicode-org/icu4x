@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "kirgistanski som",
+    "Few": "kirgistanska soma"
   },
-  "extended_placeholders": [
-    "kirgistanski som",
-    "kirgistanski som",
-    "kirgistanska soma",
-    "kirgistanskih soma"
-  ]
+  "other_placeholder": "kirgistanskih soma",
+  "display_name": "kirgistanski som"
 }

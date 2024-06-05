@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "belgijski franak (finansijski)",
+    "Few": "belgijska franka (finansijska)"
   },
-  "extended_placeholders": [
-    "Belgijski franak (finansijski)",
-    "belgijski franak (finansijski)",
-    "belgijska franka (finansijska)",
-    "belgijskih franaka (finansijskih)"
-  ]
+  "other_placeholder": "belgijskih franaka (finansijskih)",
+  "display_name": "Belgijski franak (finansijski)"
 }

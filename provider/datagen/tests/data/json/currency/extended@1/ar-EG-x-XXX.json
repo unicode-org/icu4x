@@ -1,15 +1,11 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "Zero": "(عملة غير معروفة)",
+    "One": "(عملة غير معروفة)",
+    "Two": "(عملة غير معروفة)",
+    "Few": "(عملة غير معروفة)",
+    "Many": "(عملة غير معروفة)"
   },
-  "extended_placeholders": [
-    "عملة غير معروفة",
-    "(عملة غير معروفة)",
-    "(عملة غير معروفة)",
-    "(عملة غير معروفة)",
-    "(عملة غير معروفة)",
-    "(عملة غير معروفة)"
-  ]
+  "other_placeholder": "(عملة غير معروفة)",
+  "display_name": "عملة غير معروفة"
 }

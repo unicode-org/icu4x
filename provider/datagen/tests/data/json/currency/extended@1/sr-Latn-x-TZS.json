@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "tanzanijski šiling",
+    "Few": "tanzanijska šilinga"
   },
-  "extended_placeholders": [
-    "tanzanijski šiling",
-    "tanzanijski šiling",
-    "tanzanijska šilinga",
-    "tanzanijskih šilinga"
-  ]
+  "other_placeholder": "tanzanijskih šilinga",
+  "display_name": "tanzanijski šiling"
 }

@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "stara sudanska funta",
+    "Few": "stare sudanske funte"
   },
-  "extended_placeholders": [
-    "Stara sudanska funta",
-    "stara sudanska funta",
-    "stare sudanske funte",
-    "starih sudanskih funti"
-  ]
+  "other_placeholder": "starih sudanskih funti",
+  "display_name": "Stara sudanska funta"
 }

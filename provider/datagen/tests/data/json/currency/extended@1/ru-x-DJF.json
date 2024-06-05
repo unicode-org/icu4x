@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "франк Джибути",
+    "Few": "франка Джибути",
+    "Many": "франков Джибути"
   },
-  "extended_placeholders": [
-    "франк Джибути",
-    "франк Джибути",
-    "франка Джибути",
-    "франков Джибути",
-    "франка Джибути"
-  ]
+  "other_placeholder": "франка Джибути",
+  "display_name": "франк Джибути"
 }

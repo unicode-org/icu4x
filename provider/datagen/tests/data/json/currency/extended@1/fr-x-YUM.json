@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "nouveau dinar yougoslave (1994–2003)"
   },
-  "extended_placeholders": [
-    "dinar yougoslave Noviy",
-    "nouveau dinar yougoslave (1994–2003)",
-    "nouveaux dinars yougoslaves (1994–2003)"
-  ]
+  "other_placeholder": "nouveaux dinars yougoslaves (1994–2003)",
+  "display_name": "dinar yougoslave Noviy"
 }

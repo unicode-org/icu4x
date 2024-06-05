@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Indian rupee"
   },
-  "extended_placeholders": [
-    "Indian Rupee",
-    "Indian rupee",
-    "Indian rupees"
-  ]
+  "other_placeholder": "Indian rupees",
+  "display_name": "Indian Rupee"
 }

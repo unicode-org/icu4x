@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "китайский офшорный юань",
+    "Few": "китайских офшорных юаня",
+    "Many": "китайских офшорных юаней"
   },
-  "extended_placeholders": [
-    "китайский офшорный юань",
-    "китайский офшорный юань",
-    "китайских офшорных юаня",
-    "китайских офшорных юаней",
-    "китайского офшорного юаня"
-  ]
+  "other_placeholder": "китайского офшорного юаня",
+  "display_name": "китайский офшорный юань"
 }

@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "austrijski šiling",
+    "Few": "austrijska šilinga"
   },
-  "extended_placeholders": [
-    "Austrijski šiling",
-    "austrijski šiling",
-    "austrijska šilinga",
-    "austrijskih šilinga"
-  ]
+  "other_placeholder": "austrijskih šilinga",
+  "display_name": "Austrijski šiling"
 }

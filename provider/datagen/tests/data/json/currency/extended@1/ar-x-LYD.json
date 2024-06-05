@@ -1,15 +1,11 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "Zero": "دينار ليبي",
+    "One": "دينار ليبي",
+    "Two": "ديناران ليبيان",
+    "Few": "دينارات ليبية",
+    "Many": "دينارًا ليبيًا"
   },
-  "extended_placeholders": [
-    "دينار ليبي",
-    "دينار ليبي",
-    "ديناران ليبيان",
-    "دينارات ليبية",
-    "دينارًا ليبيًا",
-    "دينار ليبي"
-  ]
+  "other_placeholder": "دينار ليبي",
+  "display_name": "دينار ليبي"
 }

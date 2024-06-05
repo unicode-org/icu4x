@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "mongolski tugrik",
+    "Few": "mongolska tugrika"
   },
-  "extended_placeholders": [
-    "mongolski tugrik",
-    "mongolski tugrik",
-    "mongolska tugrika",
-    "mongolskih tugrika"
-  ]
+  "other_placeholder": "mongolskih tugrika",
+  "display_name": "mongolski tugrik"
 }

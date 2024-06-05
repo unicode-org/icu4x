@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "брунейский доллар",
+    "Few": "брунейских доллара",
+    "Many": "брунейских долларов"
   },
-  "extended_placeholders": [
-    "брунейский доллар",
-    "брунейский доллар",
-    "брунейских доллара",
-    "брунейских долларов",
-    "брунейского доллара"
-  ]
+  "other_placeholder": "брунейского доллара",
+  "display_name": "брунейский доллар"
 }

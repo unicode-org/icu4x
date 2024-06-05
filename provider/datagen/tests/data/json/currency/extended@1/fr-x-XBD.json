@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "unité de compte 17 européenne (UEC–17)"
   },
-  "extended_placeholders": [
-    "unité de compte européenne (XBD)",
-    "unité de compte 17 européenne (UEC–17)",
-    "unités de compte 17 européennes (UEC–17)"
-  ]
+  "other_placeholder": "unités de compte 17 européennes (UEC–17)",
+  "display_name": "unité de compte européenne (XBD)"
 }

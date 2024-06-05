@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "escudo portugais"
   },
-  "extended_placeholders": [
-    "escudo portugais",
-    "escudo portugais",
-    "escudos portugais"
-  ]
+  "other_placeholder": "escudos portugais",
+  "display_name": "escudo portugais"
 }

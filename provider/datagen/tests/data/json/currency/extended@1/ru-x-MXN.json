@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "мексиканский песо",
+    "Few": "мексиканских песо",
+    "Many": "мексиканских песо"
   },
-  "extended_placeholders": [
-    "мексиканский песо",
-    "мексиканский песо",
-    "мексиканских песо",
-    "мексиканских песо",
-    "мексиканского песо"
-  ]
+  "other_placeholder": "мексиканского песо",
+  "display_name": "мексиканский песо"
 }

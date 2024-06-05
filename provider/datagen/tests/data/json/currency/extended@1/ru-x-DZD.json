@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "алжирский динар",
+    "Few": "алжирских динара",
+    "Many": "алжирских динаров"
   },
-  "extended_placeholders": [
-    "алжирский динар",
-    "алжирский динар",
-    "алжирских динара",
-    "алжирских динаров",
-    "алжирского динара"
-  ]
+  "other_placeholder": "алжирского динара",
+  "display_name": "алжирский динар"
 }

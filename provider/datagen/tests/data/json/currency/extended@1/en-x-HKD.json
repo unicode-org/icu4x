@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Hong Kong dollar"
   },
-  "extended_placeholders": [
-    "Hong Kong Dollar",
-    "Hong Kong dollar",
-    "Hong Kong dollars"
-  ]
+  "other_placeholder": "Hong Kong dollars",
+  "display_name": "Hong Kong Dollar"
 }

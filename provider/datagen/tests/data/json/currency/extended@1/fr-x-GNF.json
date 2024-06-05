@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "franc guinéen"
   },
-  "extended_placeholders": [
-    "franc guinéen",
-    "franc guinéen",
-    "francs guinéens"
-  ]
+  "other_placeholder": "francs guinéens",
+  "display_name": "franc guinéen"
 }

@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "jemenski dolar",
+    "Few": "jemenska dolara"
   },
-  "extended_placeholders": [
-    "Jemenski dinar",
-    "jemenski dolar",
-    "jemenska dolara",
-    "jemenskih dolara"
-  ]
+  "other_placeholder": "jemenskih dolara",
+  "display_name": "Jemenski dinar"
 }

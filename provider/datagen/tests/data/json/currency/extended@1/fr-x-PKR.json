@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "roupie pakistanaise"
   },
-  "extended_placeholders": [
-    "roupie pakistanaise",
-    "roupie pakistanaise",
-    "roupies pakistanaises"
-  ]
+  "other_placeholder": "roupies pakistanaises",
+  "display_name": "roupie pakistanaise"
 }

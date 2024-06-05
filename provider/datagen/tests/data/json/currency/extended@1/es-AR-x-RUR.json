@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "rublo ruso (RUR)"
   },
-  "extended_placeholders": [
-    "rublo ruso (1991–1998)",
-    "rublo ruso (RUR)",
-    "rublos rusos (RUR)"
-  ]
+  "other_placeholder": "rublos rusos (RUR)",
+  "display_name": "rublo ruso (1991–1998)"
 }

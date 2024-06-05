@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "bolivar vénézuélien"
   },
-  "extended_placeholders": [
-    "bolivar vénézuélien",
-    "bolivar vénézuélien",
-    "bolivars vénézuéliens"
-  ]
+  "other_placeholder": "bolivars vénézuéliens",
+  "display_name": "bolivar vénézuélien"
 }

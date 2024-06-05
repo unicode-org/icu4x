@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "гонконгский доллар",
+    "Few": "гонконгских доллара",
+    "Many": "гонконгских долларов"
   },
-  "extended_placeholders": [
-    "гонконгский доллар",
-    "гонконгский доллар",
-    "гонконгских доллара",
-    "гонконгских долларов",
-    "гонконгского доллара"
-  ]
+  "other_placeholder": "гонконгского доллара",
+  "display_name": "гонконгский доллар"
 }

@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "US dollar (next day)"
   },
-  "extended_placeholders": [
-    "US Dollar (Next day)",
-    "US dollar (next day)",
-    "US dollars (next day)"
-  ]
+  "other_placeholder": "US dollars (next day)",
+  "display_name": "US Dollar (Next day)"
 }

@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "livre soudanaise (1956–2007)"
   },
-  "extended_placeholders": [
-    "livre soudanaise (1956–2007)",
-    "livre soudanaise (1956–2007)",
-    "livres soudanaises (1956–2007)"
-  ]
+  "other_placeholder": "livres soudanaises (1956–2007)",
+  "display_name": "livre soudanaise (1956–2007)"
 }

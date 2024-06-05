@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "real ng Brazil"
   },
-  "extended_placeholders": [
-    "Real ng Barzil",
-    "real ng Brazil",
-    "reals ng Brazil"
-  ]
+  "other_placeholder": "reals ng Brazil",
+  "display_name": "Real ng Barzil"
 }

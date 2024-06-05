@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "bolivijski mvdol",
+    "Few": "bolivijska mvdola"
   },
-  "extended_placeholders": [
-    "Bolivijski mvdol",
-    "bolivijski mvdol",
-    "bolivijska mvdola",
-    "bolivijskih mvdola"
-  ]
+  "other_placeholder": "bolivijskih mvdola",
+  "display_name": "Bolivijski mvdol"
 }

@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "ariary malgache"
   },
-  "extended_placeholders": [
-    "ariary malgache",
-    "ariary malgache",
-    "ariarys malgaches"
-  ]
+  "other_placeholder": "ariarys malgaches",
+  "display_name": "ariary malgache"
 }

@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Solomon Islands dollar"
   },
-  "extended_placeholders": [
-    "Solomon Islands Dollar",
-    "Solomon Islands dollar",
-    "Solomon Islands dollars"
-  ]
+  "other_placeholder": "Solomon Islands dollars",
+  "display_name": "Solomon Islands Dollar"
 }

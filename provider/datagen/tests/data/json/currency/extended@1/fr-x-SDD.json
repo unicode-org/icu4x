@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "dinar soudanais (1992–2007)"
   },
-  "extended_placeholders": [
-    "dinar soudanais",
-    "dinar soudanais (1992–2007)",
-    "dinars soudanais (1992–2007)"
-  ]
+  "other_placeholder": "dinars soudanais (1992–2007)",
+  "display_name": "dinar soudanais"
 }

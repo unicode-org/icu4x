@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Yugoslavian reformed dinar (1992–1993)"
   },
-  "extended_placeholders": [
-    "Yugoslavian Reformed Dinar (1992–1993)",
-    "Yugoslavian reformed dinar (1992–1993)",
-    "Yugoslavian reformed dinars (1992–1993)"
-  ]
+  "other_placeholder": "Yugoslavian reformed dinars (1992–1993)",
+  "display_name": "Yugoslavian Reformed Dinar (1992–1993)"
 }

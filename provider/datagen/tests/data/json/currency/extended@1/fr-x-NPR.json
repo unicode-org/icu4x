@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "roupie népalaise"
   },
-  "extended_placeholders": [
-    "roupie népalaise",
-    "roupie népalaise",
-    "roupies népalaises"
-  ]
+  "other_placeholder": "roupies népalaises",
+  "display_name": "roupie népalaise"
 }

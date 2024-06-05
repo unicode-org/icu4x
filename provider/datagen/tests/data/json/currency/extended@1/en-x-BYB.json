@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Belarusian ruble (1994–1999)"
   },
-  "extended_placeholders": [
-    "Belarusian Ruble (1994–1999)",
-    "Belarusian ruble (1994–1999)",
-    "Belarusian rubles (1994–1999)"
-  ]
+  "other_placeholder": "Belarusian rubles (1994–1999)",
+  "display_name": "Belarusian Ruble (1994–1999)"
 }

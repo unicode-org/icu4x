@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Polish zloty"
   },
-  "extended_placeholders": [
-    "Polish Zloty",
-    "Polish zloty",
-    "Polish zlotys"
-  ]
+  "other_placeholder": "Polish zlotys",
+  "display_name": "Polish Zloty"
 }

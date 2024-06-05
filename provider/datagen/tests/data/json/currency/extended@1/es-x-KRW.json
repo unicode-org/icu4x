@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "won surcoreano"
   },
-  "extended_placeholders": [
-    "won surcoreano",
-    "won surcoreano",
-    "wons surcoreanos"
-  ]
+  "other_placeholder": "wons surcoreanos",
+  "display_name": "won surcoreano"
 }

@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "новозеландский доллар",
+    "Few": "новозеландских доллара",
+    "Many": "новозеландских долларов"
   },
-  "extended_placeholders": [
-    "новозеландский доллар",
-    "новозеландский доллар",
-    "новозеландских доллара",
-    "новозеландских долларов",
-    "новозеландского доллара"
-  ]
+  "other_placeholder": "новозеландского доллара",
+  "display_name": "новозеландский доллар"
 }

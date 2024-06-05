@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Armenian dram"
   },
-  "extended_placeholders": [
-    "Armenian Dram",
-    "Armenian dram",
-    "Armenian drams"
-  ]
+  "other_placeholder": "Armenian drams",
+  "display_name": "Armenian Dram"
 }

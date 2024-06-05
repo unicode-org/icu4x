@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "kongoanski franak",
+    "Few": "kongoanska franka"
   },
-  "extended_placeholders": [
-    "kongoanski franak",
-    "kongoanski franak",
-    "kongoanska franka",
-    "kongoanskih franaka"
-  ]
+  "other_placeholder": "kongoanskih franaka",
+  "display_name": "kongoanski franak"
 }

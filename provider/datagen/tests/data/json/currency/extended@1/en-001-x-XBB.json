@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "European monetary unit"
   },
-  "extended_placeholders": [
-    "European Monetary Unit",
-    "European monetary unit",
-    "European monetary units"
-  ]
+  "other_placeholder": "European monetary units",
+  "display_name": "European Monetary Unit"
 }

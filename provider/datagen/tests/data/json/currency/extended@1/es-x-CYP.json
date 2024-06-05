@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "libra chipriota"
   },
-  "extended_placeholders": [
-    "libra chipriota",
-    "libra chipriota",
-    "libras chipriotas"
-  ]
+  "other_placeholder": "libras chipriotas",
+  "display_name": "libra chipriota"
 }

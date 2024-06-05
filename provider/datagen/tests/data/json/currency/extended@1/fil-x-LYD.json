@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "dinar ng Libya"
   },
-  "extended_placeholders": [
-    "Dinar ng Libya",
-    "dinar ng Libya",
-    "mga dinar ng Libya"
-  ]
+  "other_placeholder": "mga dinar ng Libya",
+  "display_name": "Dinar ng Libya"
 }

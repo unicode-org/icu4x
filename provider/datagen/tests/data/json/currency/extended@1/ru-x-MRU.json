@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "мавританская угия",
+    "Few": "мавританские угии",
+    "Many": "мавританских угий"
   },
-  "extended_placeholders": [
-    "мавританская угия",
-    "мавританская угия",
-    "мавританские угии",
-    "мавританских угий",
-    "мавританской угии"
-  ]
+  "other_placeholder": "мавританской угии",
+  "display_name": "мавританская угия"
 }

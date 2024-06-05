@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "mozambijski eskudo",
+    "Few": "mozambijska eskuda"
   },
-  "extended_placeholders": [
-    "Mozambijski eskudo",
-    "mozambijski eskudo",
-    "mozambijska eskuda",
-    "mozambijskih eskuda"
-  ]
+  "other_placeholder": "mozambijskih eskuda",
+  "display_name": "Mozambijski eskudo"
 }

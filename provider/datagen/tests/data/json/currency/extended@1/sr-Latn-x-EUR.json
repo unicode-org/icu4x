@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "evro",
+    "Few": "evra"
   },
-  "extended_placeholders": [
-    "Evro",
-    "evro",
-    "evra",
-    "evra"
-  ]
+  "other_placeholder": "evra",
+  "display_name": "Evro"
 }

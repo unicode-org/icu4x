@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "urugvajski pezo en unidades indeksades",
+    "Few": "urugvajska pezosa en unidades indeksadesa"
   },
-  "extended_placeholders": [
-    "Urugvajski pezo en unidades indeksadas",
-    "urugvajski pezo en unidades indeksades",
-    "urugvajska pezosa en unidades indeksadesa",
-    "ugvajskih pezosa en unidades indeksadesa"
-  ]
+  "other_placeholder": "ugvajskih pezosa en unidades indeksadesa",
+  "display_name": "Urugvajski pezo en unidades indeksadas"
 }

@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "inti péruvien"
   },
-  "extended_placeholders": [
-    "inti péruvien",
-    "inti péruvien",
-    "intis péruviens"
-  ]
+  "other_placeholder": "intis péruviens",
+  "display_name": "inti péruvien"
 }

@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "ganski ced (1979–2007)",
+    "Few": "ganska ceda (1979–2007)"
   },
-  "extended_placeholders": [
-    "Ganski cedi (1979–2007)",
-    "ganski ced (1979–2007)",
-    "ganska ceda (1979–2007)",
-    "ganskih ceda (1979–2007)"
-  ]
+  "other_placeholder": "ganskih ceda (1979–2007)",
+  "display_name": "Ganski cedi (1979–2007)"
 }

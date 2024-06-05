@@ -1,10 +1,5 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
-  },
-  "extended_placeholders": [
-    "ソ連 ルーブル"
-  ]
+  "placeholders": {},
+  "other_placeholder": null,
+  "display_name": "ソ連 ルーブル"
 }

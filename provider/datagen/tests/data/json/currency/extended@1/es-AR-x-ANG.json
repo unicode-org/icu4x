@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "florín de las Antillas Neerlandesas"
   },
-  "extended_placeholders": [
-    "florín de las Antillas Neerlandesas",
-    "florín de las Antillas Neerlandesas",
-    "florines de las Antillas Neerlandesas"
-  ]
+  "other_placeholder": "florines de las Antillas Neerlandesas",
+  "display_name": "florín de las Antillas Neerlandesas"
 }

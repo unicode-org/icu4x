@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "dólar de Bermudas"
   },
-  "extended_placeholders": [
-    "dólar de Bermudas",
-    "dólar de Bermudas",
-    "dólares de Bermudas"
-  ]
+  "other_placeholder": "dólares de Bermudas",
+  "display_name": "dólar de Bermudas"
 }

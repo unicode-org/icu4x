@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "sijeraleonski leone",
+    "Few": "sijeraleonska leona"
   },
-  "extended_placeholders": [
-    "sijeraleonski leone",
-    "sijeraleonski leone",
-    "sijeraleonska leona",
-    "sijeraleonskih leona"
-  ]
+  "other_placeholder": "sijeraleonskih leona",
+  "display_name": "sijeraleonski leone"
 }

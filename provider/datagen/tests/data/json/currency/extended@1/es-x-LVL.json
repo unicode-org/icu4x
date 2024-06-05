@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "lats letón"
   },
-  "extended_placeholders": [
-    "lats letón",
-    "lats letón",
-    "lats letónes"
-  ]
+  "other_placeholder": "lats letónes",
+  "display_name": "lats letón"
 }

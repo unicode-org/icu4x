@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "slovačka kruna",
+    "Few": "slovačke krune"
   },
-  "extended_placeholders": [
-    "Slovačka kruna",
-    "slovačka kruna",
-    "slovačke krune",
-    "slovačkih kruna"
-  ]
+  "other_placeholder": "slovačkih kruna",
+  "display_name": "Slovačka kruna"
 }

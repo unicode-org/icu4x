@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "гватемальский кетсаль",
+    "Few": "гватемальских кетсаля",
+    "Many": "гватемальских кетсалей"
   },
-  "extended_placeholders": [
-    "гватемальский кетсаль",
-    "гватемальский кетсаль",
-    "гватемальских кетсаля",
-    "гватемальских кетсалей",
-    "гватемальского кетсаля"
-  ]
+  "other_placeholder": "гватемальского кетсаля",
+  "display_name": "гватемальский кетсаль"
 }

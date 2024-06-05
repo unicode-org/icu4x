@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "dolyar ng Silangang Caribbean"
   },
-  "extended_placeholders": [
-    "Dolyar ng Silangang Caribbean",
-    "dolyar ng Silangang Caribbean",
-    "dolyares ng Silangang Caribbean"
-  ]
+  "other_placeholder": "dolyares ng Silangang Caribbean",
+  "display_name": "Dolyar ng Silangang Caribbean"
 }

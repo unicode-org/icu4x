@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Bolivya bolivyanosu (1863–1963)"
   },
-  "extended_placeholders": [
-    "Bolivya Bolivyanosu (1863–1963)",
-    "Bolivya bolivyanosu (1863–1963)",
-    "Bolivya bolivyanosu (1863–1963)"
-  ]
+  "other_placeholder": "Bolivya bolivyanosu (1863–1963)",
+  "display_name": "Bolivya Bolivyanosu (1863–1963)"
 }

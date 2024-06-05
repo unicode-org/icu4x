@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "индонезийская рупия",
+    "Few": "индонезийские рупии",
+    "Many": "индонезийских рупий"
   },
-  "extended_placeholders": [
-    "индонезийская рупия",
-    "индонезийская рупия",
-    "индонезийские рупии",
-    "индонезийских рупий",
-    "индонезийской рупии"
-  ]
+  "other_placeholder": "индонезийской рупии",
+  "display_name": "индонезийская рупия"
 }

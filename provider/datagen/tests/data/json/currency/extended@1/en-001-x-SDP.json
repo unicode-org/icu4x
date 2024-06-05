@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Sudanese pound (1957–1998)"
   },
-  "extended_placeholders": [
-    "Sudanese Pound (1957–1998)",
-    "Sudanese pound (1957–1998)",
-    "Sudanese pounds (1957–1998)"
-  ]
+  "other_placeholder": "Sudanese pounds (1957–1998)",
+  "display_name": "Sudanese Pound (1957–1998)"
 }

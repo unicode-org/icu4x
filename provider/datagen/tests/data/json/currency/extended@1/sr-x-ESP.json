@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "шпанска пезета",
+    "Few": "шпанска пезета"
   },
-  "extended_placeholders": [
-    "Шпанска пезета",
-    "шпанска пезета",
-    "шпанска пезета",
-    "шпанске пезете"
-  ]
+  "other_placeholder": "шпанске пезете",
+  "display_name": "Шпанска пезета"
 }

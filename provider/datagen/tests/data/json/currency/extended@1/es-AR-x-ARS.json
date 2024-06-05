@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "peso argentino"
   },
-  "extended_placeholders": [
-    "peso argentino",
-    "peso argentino",
-    "pesos argentinos"
-  ]
+  "other_placeholder": "pesos argentinos",
+  "display_name": "peso argentino"
 }

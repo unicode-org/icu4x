@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "gvinejski sili",
+    "Few": "gvinejska sila"
   },
-  "extended_placeholders": [
-    "Gvinejski sili",
-    "gvinejski sili",
-    "gvinejska sila",
-    "gvinejskih sila"
-  ]
+  "other_placeholder": "gvinejskih sila",
+  "display_name": "Gvinejski sili"
 }

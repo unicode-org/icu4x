@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "livre sud-soudanaise"
   },
-  "extended_placeholders": [
-    "livre sud-soudanaise",
-    "livre sud-soudanaise",
-    "livres sud-soudanaises"
-  ]
+  "other_placeholder": "livres sud-soudanaises",
+  "display_name": "livre sud-soudanaise"
 }

@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "corona noruega"
   },
-  "extended_placeholders": [
-    "corona noruega",
-    "corona noruega",
-    "coronas noruegas"
-  ]
+  "other_placeholder": "coronas noruegas",
+  "display_name": "corona noruega"
 }

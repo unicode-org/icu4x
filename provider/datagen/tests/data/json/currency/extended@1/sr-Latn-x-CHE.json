@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "WIR evro",
+    "Few": "WIR evra"
   },
-  "extended_placeholders": [
-    "WIR evro",
-    "WIR evro",
-    "WIR evra",
-    "WIR evra"
-  ]
+  "other_placeholder": "WIR evra",
+  "display_name": "WIR evro"
 }

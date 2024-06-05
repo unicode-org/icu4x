@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "marco alemán"
   },
-  "extended_placeholders": [
-    "marco alemán",
-    "marco alemán",
-    "marcos alemanes"
-  ]
+  "other_placeholder": "marcos alemanes",
+  "display_name": "marco alemán"
 }

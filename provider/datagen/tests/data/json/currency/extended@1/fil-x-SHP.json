@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Saint Helena pound"
   },
-  "extended_placeholders": [
-    "Saint Helena Pound",
-    "Saint Helena pound",
-    "Saint Helena pounds"
-  ]
+  "other_placeholder": "Saint Helena pounds",
+  "display_name": "Saint Helena Pound"
 }

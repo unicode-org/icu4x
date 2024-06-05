@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "livre des îles Malouines"
   },
-  "extended_placeholders": [
-    "livre des îles Malouines",
-    "livre des îles Malouines",
-    "livres des îles Malouines"
-  ]
+  "other_placeholder": "livres des îles Malouines",
+  "display_name": "livre des îles Malouines"
 }

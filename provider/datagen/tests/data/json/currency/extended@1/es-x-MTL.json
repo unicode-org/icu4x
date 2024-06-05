@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "lira maltesa"
   },
-  "extended_placeholders": [
-    "lira maltesa",
-    "lira maltesa",
-    "liras maltesas"
-  ]
+  "other_placeholder": "liras maltesas",
+  "display_name": "lira maltesa"
 }

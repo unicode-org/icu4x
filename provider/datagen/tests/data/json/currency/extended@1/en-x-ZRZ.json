@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Zairean zaire (1971–1993)"
   },
-  "extended_placeholders": [
-    "Zairean Zaire (1971–1993)",
-    "Zairean zaire (1971–1993)",
-    "Zairean zaires (1971–1993)"
-  ]
+  "other_placeholder": "Zairean zaires (1971–1993)",
+  "display_name": "Zairean Zaire (1971–1993)"
 }

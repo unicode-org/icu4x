@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "European composite unit"
   },
-  "extended_placeholders": [
-    "European Composite Unit",
-    "European composite unit",
-    "European composite units"
-  ]
+  "other_placeholder": "European composite units",
+  "display_name": "European Composite Unit"
 }

@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "dinar bahreïni"
   },
-  "extended_placeholders": [
-    "dinar bahreïni",
-    "dinar bahreïni",
-    "dinars bahreïnis"
-  ]
+  "other_placeholder": "dinars bahreïnis",
+  "display_name": "dinar bahreïni"
 }

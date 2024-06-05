@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "ekvadorski unidad de valor konstante",
+    "Few": "ekvadorska unidad de valor konstanta"
   },
-  "extended_placeholders": [
-    "Ekvadorski unidad de valor konstante",
-    "ekvadorski unidad de valor konstante",
-    "ekvadorska unidad de valor konstanta",
-    "ekvadorskih unidad de valor konstanta"
-  ]
+  "other_placeholder": "ekvadorskih unidad de valor konstanta",
+  "display_name": "Ekvadorski unidad de valor konstante"
 }

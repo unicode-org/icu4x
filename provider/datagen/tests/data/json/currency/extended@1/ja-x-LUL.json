@@ -1,10 +1,5 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
-  },
-  "extended_placeholders": [
-    "ルクセンブルク 金融フラン"
-  ]
+  "placeholders": {},
+  "other_placeholder": null,
+  "display_name": "ルクセンブルク 金融フラン"
 }

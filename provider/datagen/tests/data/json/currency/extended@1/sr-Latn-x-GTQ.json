@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "gvatemalski kecal",
+    "Few": "gvatemalska kecala"
   },
-  "extended_placeholders": [
-    "gvatemalski kecal",
-    "gvatemalski kecal",
-    "gvatemalska kecala",
-    "gvatemalskih kecala"
-  ]
+  "other_placeholder": "gvatemalskih kecala",
+  "display_name": "gvatemalski kecal"
 }

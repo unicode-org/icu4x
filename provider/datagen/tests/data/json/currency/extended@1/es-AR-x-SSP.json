@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "libra sursudanesa"
   },
-  "extended_placeholders": [
-    "libra sursudanesa",
-    "libra sursudanesa",
-    "libras sursudanesas"
-  ]
+  "other_placeholder": "libras sursudanesas",
+  "display_name": "libra sursudanesa"
 }

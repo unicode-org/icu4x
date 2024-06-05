@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "guaraní paraguayen"
   },
-  "extended_placeholders": [
-    "guaraní paraguayen",
-    "guaraní paraguayen",
-    "guaranís paraguayens"
-  ]
+  "other_placeholder": "guaranís paraguayens",
+  "display_name": "guaraní paraguayen"
 }

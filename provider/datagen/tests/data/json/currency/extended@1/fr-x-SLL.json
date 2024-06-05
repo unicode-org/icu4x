@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "leone sierra-léonais (1964—2022)"
   },
-  "extended_placeholders": [
-    "leone sierra-léonais (1964—2022)",
-    "leone sierra-léonais (1964—2022)",
-    "leones sierra-léonais (1964—2022)"
-  ]
+  "other_placeholder": "leones sierra-léonais (1964—2022)",
+  "display_name": "leone sierra-léonais (1964—2022)"
 }

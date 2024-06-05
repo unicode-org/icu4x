@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Cuban convertible peso"
   },
-  "extended_placeholders": [
-    "Cuban Convertible Peso",
-    "Cuban convertible peso",
-    "Cuban convertible pesos"
-  ]
+  "other_placeholder": "Cuban convertible pesos",
+  "display_name": "Cuban Convertible Peso"
 }

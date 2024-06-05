@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Sucre"
   },
-  "extended_placeholders": [
-    "Sucre",
-    "Sucre",
-    "Sucres"
-  ]
+  "other_placeholder": "Sucres",
+  "display_name": "Sucre"
 }

@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "pound ng Gibraltar"
   },
-  "extended_placeholders": [
-    "Pound ng Gibraltar",
-    "pound ng Gibraltar",
-    "pounds ng Gilbraltar"
-  ]
+  "other_placeholder": "pounds ng Gilbraltar",
+  "display_name": "Pound ng Gibraltar"
 }

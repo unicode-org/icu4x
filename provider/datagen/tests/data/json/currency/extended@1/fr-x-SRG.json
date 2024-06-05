@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "florin surinamais"
   },
-  "extended_placeholders": [
-    "florin surinamais",
-    "florin surinamais",
-    "florins surinamais"
-  ]
+  "other_placeholder": "florins surinamais",
+  "display_name": "florin surinamais"
 }

@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "franc comorien"
   },
-  "extended_placeholders": [
-    "franc comorien",
-    "franc comorien",
-    "francs comoriens"
-  ]
+  "other_placeholder": "francs comoriens",
+  "display_name": "franc comorien"
 }

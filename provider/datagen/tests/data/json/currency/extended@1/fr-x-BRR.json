@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "cruzeiro réal brésilien (1993–1994)"
   },
-  "extended_placeholders": [
-    "cruzeiro",
-    "cruzeiro réal brésilien (1993–1994)",
-    "cruzeiros réals brésiliens (1993–1994)"
-  ]
+  "other_placeholder": "cruzeiros réals brésiliens (1993–1994)",
+  "display_name": "cruzeiro"
 }

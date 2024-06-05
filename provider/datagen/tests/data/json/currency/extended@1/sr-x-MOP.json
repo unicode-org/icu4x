@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "макаоска патака",
+    "Few": "макаоске патаке"
   },
-  "extended_placeholders": [
-    "макаоска патака",
-    "макаоска патака",
-    "макаоске патаке",
-    "макаоских патака"
-  ]
+  "other_placeholder": "макаоских патака",
+  "display_name": "макаоска патака"
 }

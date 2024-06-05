@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "inti peruano"
   },
-  "extended_placeholders": [
-    "inti peruano",
-    "inti peruano",
-    "intis peruanos"
-  ]
+  "other_placeholder": "intis peruanos",
+  "display_name": "inti peruano"
 }

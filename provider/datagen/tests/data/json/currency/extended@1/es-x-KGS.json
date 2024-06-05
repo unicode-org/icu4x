@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "som"
   },
-  "extended_placeholders": [
-    "som",
-    "som",
-    "soms"
-  ]
+  "other_placeholder": "soms",
+  "display_name": "som"
 }

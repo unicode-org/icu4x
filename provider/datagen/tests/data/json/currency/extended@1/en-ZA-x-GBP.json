@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "British pound"
   },
-  "extended_placeholders": [
-    "British Pound",
-    "British pound",
-    "British pounds"
-  ]
+  "other_placeholder": "British pounds",
+  "display_name": "British Pound"
 }

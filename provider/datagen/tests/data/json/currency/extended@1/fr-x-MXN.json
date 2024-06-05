@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "peso mexicain"
   },
-  "extended_placeholders": [
-    "peso mexicain",
-    "peso mexicain",
-    "pesos mexicains"
-  ]
+  "other_placeholder": "pesos mexicains",
+  "display_name": "peso mexicain"
 }

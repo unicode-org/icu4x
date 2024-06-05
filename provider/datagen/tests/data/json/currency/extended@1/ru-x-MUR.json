@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "маврикийская рупия",
+    "Few": "маврикийские рупии",
+    "Many": "маврикийских рупий"
   },
-  "extended_placeholders": [
-    "маврикийская рупия",
-    "маврикийская рупия",
-    "маврикийские рупии",
-    "маврикийских рупий",
-    "маврикийской рупии"
-  ]
+  "other_placeholder": "маврикийской рупии",
+  "display_name": "маврикийская рупия"
 }

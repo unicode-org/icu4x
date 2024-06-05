@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "rial saudí"
   },
-  "extended_placeholders": [
-    "rial saudí",
-    "rial saudí",
-    "riales saudíes"
-  ]
+  "other_placeholder": "riales saudíes",
+  "display_name": "rial saudí"
 }

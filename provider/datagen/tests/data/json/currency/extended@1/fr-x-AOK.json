@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "kwanza angolais (1977–1990)"
   },
-  "extended_placeholders": [
-    "kwanza angolais (1977–1990)",
-    "kwanza angolais (1977–1990)",
-    "kwanzas angolais (1977–1990)"
-  ]
+  "other_placeholder": "kwanzas angolais (1977–1990)",
+  "display_name": "kwanza angolais (1977–1990)"
 }

@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Convertible na piso ng Cuba"
   },
-  "extended_placeholders": [
-    "Convertible na Piso ng Cuba",
-    "Convertible na piso ng Cuba",
-    "Convertible na piso ng Cuba"
-  ]
+  "other_placeholder": "Convertible na piso ng Cuba",
+  "display_name": "Convertible na Piso ng Cuba"
 }

@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Belize dollar"
   },
-  "extended_placeholders": [
-    "Belize Dollar",
-    "Belize dollar",
-    "Belize dollars"
-  ]
+  "other_placeholder": "Belize dollars",
+  "display_name": "Belize Dollar"
 }

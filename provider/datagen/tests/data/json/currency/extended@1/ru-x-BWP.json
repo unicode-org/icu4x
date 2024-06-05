@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "ботсванская пула",
+    "Few": "ботсванские пулы",
+    "Many": "ботсванских пул"
   },
-  "extended_placeholders": [
-    "ботсванская пула",
-    "ботсванская пула",
-    "ботсванские пулы",
-    "ботсванских пул",
-    "ботсванской пулы"
-  ]
+  "other_placeholder": "ботсванской пулы",
+  "display_name": "ботсванская пула"
 }

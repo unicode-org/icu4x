@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "платина",
+    "Few": "платине"
   },
-  "extended_placeholders": [
-    "Платина",
-    "платина",
-    "платине",
-    "платина"
-  ]
+  "other_placeholder": "платина",
+  "display_name": "Платина"
 }

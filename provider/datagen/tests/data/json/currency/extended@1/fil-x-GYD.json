@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "dolyar ng Guyanese"
   },
-  "extended_placeholders": [
-    "Dolyar ng Guyanese",
-    "dolyar ng Guyanese",
-    "dolyares ng Guyanese"
-  ]
+  "other_placeholder": "dolyares ng Guyanese",
+  "display_name": "Dolyar ng Guyanese"
 }

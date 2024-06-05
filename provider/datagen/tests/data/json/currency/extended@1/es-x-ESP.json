@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "peseta española"
   },
-  "extended_placeholders": [
-    "peseta española",
-    "peseta española",
-    "pesetas españolas"
-  ]
+  "other_placeholder": "pesetas españolas",
+  "display_name": "peseta española"
 }

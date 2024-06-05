@@ -1,15 +1,11 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "Zero": "مانت أذربيجاني",
+    "One": "مانت أذربيجاني",
+    "Two": "مانت أذربيجاني",
+    "Few": "مانت أذربيجاني",
+    "Many": "مانت أذربيجاني"
   },
-  "extended_placeholders": [
-    "مانات أذربيجان",
-    "مانت أذربيجاني",
-    "مانت أذربيجاني",
-    "مانت أذربيجاني",
-    "مانت أذربيجاني",
-    "مانت أذربيجاني"
-  ]
+  "other_placeholder": "مانت أذربيجاني",
+  "display_name": "مانات أذربيجان"
 }

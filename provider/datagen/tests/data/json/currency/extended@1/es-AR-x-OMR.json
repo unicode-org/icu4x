@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "rial omaní"
   },
-  "extended_placeholders": [
-    "rial omaní",
-    "rial omaní",
-    "riales omaníes"
-  ]
+  "other_placeholder": "riales omaníes",
+  "display_name": "rial omaní"
 }

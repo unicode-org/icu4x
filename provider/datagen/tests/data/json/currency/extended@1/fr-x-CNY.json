@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "yuan renminbi chinois"
   },
-  "extended_placeholders": [
-    "yuan renminbi chinois",
-    "yuan renminbi chinois",
-    "yuans renminbi chinois"
-  ]
+  "other_placeholder": "yuans renminbi chinois",
+  "display_name": "yuan renminbi chinois"
 }

@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Egyptian pound"
   },
-  "extended_placeholders": [
-    "Egyptian Pound",
-    "Egyptian pound",
-    "Egyptian pounds"
-  ]
+  "other_placeholder": "Egyptian pounds",
+  "display_name": "Egyptian Pound"
 }

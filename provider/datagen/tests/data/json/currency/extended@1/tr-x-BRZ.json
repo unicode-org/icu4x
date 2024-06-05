@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Brezilya kruzeirosu (1942–1967)"
   },
-  "extended_placeholders": [
-    "Brezilya Kruzeirosu (1942–1967)",
-    "Brezilya kruzeirosu (1942–1967)",
-    "Brezilya kruzeirosu (1942–1967)"
-  ]
+  "other_placeholder": "Brezilya kruzeirosu (1942–1967)",
+  "display_name": "Brezilya Kruzeirosu (1942–1967)"
 }

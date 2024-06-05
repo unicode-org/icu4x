@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "malteška lira",
+    "Few": "malteške lire"
   },
-  "extended_placeholders": [
-    "Malteška lira",
-    "malteška lira",
-    "malteške lire",
-    "malteških lira"
-  ]
+  "other_placeholder": "malteških lira",
+  "display_name": "Malteška lira"
 }

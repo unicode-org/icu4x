@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "бахамски долар",
+    "Few": "бахамска долара"
   },
-  "extended_placeholders": [
-    "бахамски долар",
-    "бахамски долар",
-    "бахамска долара",
-    "бахамских долара"
-  ]
+  "other_placeholder": "бахамских долара",
+  "display_name": "бахамски долар"
 }

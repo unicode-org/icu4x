@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Georgian kupon larit"
   },
-  "extended_placeholders": [
-    "Georgian Kupon Larit",
-    "Georgian kupon larit",
-    "Georgian kupon larits"
-  ]
+  "other_placeholder": "Georgian kupon larits",
+  "display_name": "Georgian Kupon Larit"
 }

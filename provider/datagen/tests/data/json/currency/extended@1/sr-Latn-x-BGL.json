@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "bugarski tvrdi lev",
+    "Few": "bugarska tvrda leva"
   },
-  "extended_placeholders": [
-    "Bugarski tvrdi lev",
-    "bugarski tvrdi lev",
-    "bugarska tvrda leva",
-    "bugarskih tvrdih leva"
-  ]
+  "other_placeholder": "bugarskih tvrdih leva",
+  "display_name": "Bugarski tvrdi lev"
 }

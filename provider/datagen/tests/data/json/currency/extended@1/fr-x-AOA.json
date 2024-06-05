@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "kwanza angolais"
   },
-  "extended_placeholders": [
-    "kwanza angolais",
-    "kwanza angolais",
-    "kwanzas angolais"
-  ]
+  "other_placeholder": "kwanzas angolais",
+  "display_name": "kwanza angolais"
 }

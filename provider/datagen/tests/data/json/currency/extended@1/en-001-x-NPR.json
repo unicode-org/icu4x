@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Nepalese rupee"
   },
-  "extended_placeholders": [
-    "Nepalese Rupee",
-    "Nepalese rupee",
-    "Nepalese rupees"
-  ]
+  "other_placeholder": "Nepalese rupees",
+  "display_name": "Nepalese Rupee"
 }

@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Mozambican escudo"
   },
-  "extended_placeholders": [
-    "Mozambican Escudo",
-    "Mozambican escudo",
-    "Mozambican escudos"
-  ]
+  "other_placeholder": "Mozambican escudos",
+  "display_name": "Mozambican Escudo"
 }

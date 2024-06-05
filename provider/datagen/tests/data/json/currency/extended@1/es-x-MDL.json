@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "leu moldavo"
   },
-  "extended_placeholders": [
-    "leu moldavo",
-    "leu moldavo",
-    "leus moldavos"
-  ]
+  "other_placeholder": "leus moldavos",
+  "display_name": "leu moldavo"
 }

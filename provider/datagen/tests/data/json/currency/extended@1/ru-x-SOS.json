@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "сомалийский шиллинг",
+    "Few": "сомалийских шиллинга",
+    "Many": "сомалийских шиллингов"
   },
-  "extended_placeholders": [
-    "сомалийский шиллинг",
-    "сомалийский шиллинг",
-    "сомалийских шиллинга",
-    "сомалийских шиллингов",
-    "сомалийского шиллинга"
-  ]
+  "other_placeholder": "сомалийского шиллинга",
+  "display_name": "сомалийский шиллинг"
 }

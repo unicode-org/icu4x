@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "UAE dirham"
   },
-  "extended_placeholders": [
-    "United Arab Emirates Dirham",
-    "UAE dirham",
-    "UAE dirhams"
-  ]
+  "other_placeholder": "UAE dirhams",
+  "display_name": "United Arab Emirates Dirham"
 }

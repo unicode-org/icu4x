@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "израелска фунта",
+    "Few": "израелске фунте"
   },
-  "extended_placeholders": [
-    "Израелска фунта",
-    "израелска фунта",
-    "израелске фунте",
-    "израелских фунти"
-  ]
+  "other_placeholder": "израелских фунти",
+  "display_name": "Израелска фунта"
 }

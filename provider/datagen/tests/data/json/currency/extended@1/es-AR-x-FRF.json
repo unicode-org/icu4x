@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "franco francés"
   },
-  "extended_placeholders": [
-    "franco francés",
-    "franco francés",
-    "francos franceses"
-  ]
+  "other_placeholder": "francos franceses",
+  "display_name": "franco francés"
 }

@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "peso argentino (ARP)"
   },
-  "extended_placeholders": [
-    "peso argentino (1983–1985)",
-    "peso argentino (ARP)",
-    "pesos argentinos (ARP)"
-  ]
+  "other_placeholder": "pesos argentinos (ARP)",
+  "display_name": "peso argentino (1983–1985)"
 }

@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Antillean guilder ng Netherlands"
   },
-  "extended_placeholders": [
-    "Antillean Guilder ng Netherlands",
-    "Antillean guilder ng Netherlands",
-    "Antillean guilders ng Netherlands"
-  ]
+  "other_placeholder": "Antillean guilders ng Netherlands",
+  "display_name": "Antillean Guilder ng Netherlands"
 }

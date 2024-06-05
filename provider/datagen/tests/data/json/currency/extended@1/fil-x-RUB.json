@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "ruble ng Russia"
   },
-  "extended_placeholders": [
-    "Ruble ng Russia",
-    "ruble ng Russia",
-    "Russian rubles"
-  ]
+  "other_placeholder": "Russian rubles",
+  "display_name": "Ruble ng Russia"
 }

@@ -1,10 +1,5 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
-  },
-  "extended_placeholders": [
-    "𑄌𑄬𑄇𑄮𑄥𑄳𑄣𑄮𑄞𑄇𑄴 𑄦𑄢𑄴𑄓𑄴 𑄇𑄮𑄢𑄪𑄚"
-  ]
+  "placeholders": {},
+  "other_placeholder": null,
+  "display_name": "𑄌𑄬𑄇𑄮𑄥𑄳𑄣𑄮𑄞𑄇𑄴 𑄦𑄢𑄴𑄓𑄴 𑄇𑄮𑄢𑄪𑄚"
 }

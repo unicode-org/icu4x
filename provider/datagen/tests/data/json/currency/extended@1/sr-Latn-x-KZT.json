@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "kazahstanski tenge",
+    "Few": "kazahstanska tengea"
   },
-  "extended_placeholders": [
-    "kazahstanski tenge",
-    "kazahstanski tenge",
-    "kazahstanska tengea",
-    "kazahstanskih tengea"
-  ]
+  "other_placeholder": "kazahstanskih tengea",
+  "display_name": "kazahstanski tenge"
 }

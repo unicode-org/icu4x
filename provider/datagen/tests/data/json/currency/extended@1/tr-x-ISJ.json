@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "İzlanda kronu (1918–1981)"
   },
-  "extended_placeholders": [
-    "İzlanda Kronu (1918–1981)",
-    "İzlanda kronu (1918–1981)",
-    "İzlanda kronu (1918–1981)"
-  ]
+  "other_placeholder": "İzlanda kronu (1918–1981)",
+  "display_name": "İzlanda Kronu (1918–1981)"
 }

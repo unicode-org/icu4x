@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Testing Currency unit"
   },
-  "extended_placeholders": [
-    "Testing Currency Code",
-    "Testing Currency unit",
-    "Testing Currency units"
-  ]
+  "other_placeholder": "Testing Currency units",
+  "display_name": "Testing Currency Code"
 }

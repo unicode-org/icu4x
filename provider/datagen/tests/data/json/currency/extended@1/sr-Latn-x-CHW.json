@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "WIR franak",
+    "Few": "WIR franka"
   },
-  "extended_placeholders": [
-    "WIR franak",
-    "WIR franak",
-    "WIR franka",
-    "WIR franaka"
-  ]
+  "other_placeholder": "WIR franaka",
+  "display_name": "WIR franak"
 }

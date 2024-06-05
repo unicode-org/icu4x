@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "венгерский форинт",
+    "Few": "венгерских форинта",
+    "Many": "венгерских форинтов"
   },
-  "extended_placeholders": [
-    "венгерский форинт",
-    "венгерский форинт",
-    "венгерских форинта",
-    "венгерских форинтов",
-    "венгерского форинта"
-  ]
+  "other_placeholder": "венгерского форинта",
+  "display_name": "венгерский форинт"
 }

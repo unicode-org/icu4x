@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "baht tailandes"
   },
-  "extended_placeholders": [
-    "baht tailandes",
-    "baht tailandes",
-    "bahts tailandeses"
-  ]
+  "other_placeholder": "bahts tailandeses",
+  "display_name": "baht tailandes"
 }

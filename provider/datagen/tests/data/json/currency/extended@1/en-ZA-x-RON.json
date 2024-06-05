@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Romanian leu"
   },
-  "extended_placeholders": [
-    "Romanian Leu",
-    "Romanian leu",
-    "Romanian lei"
-  ]
+  "other_placeholder": "Romanian lei",
+  "display_name": "Romanian Leu"
 }

@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "nouveau shekel israélien"
   },
-  "extended_placeholders": [
-    "nouveau shekel israélien",
-    "nouveau shekel israélien",
-    "nouveaux shekels israéliens"
-  ]
+  "other_placeholder": "nouveaux shekels israéliens",
+  "display_name": "nouveau shekel israélien"
 }

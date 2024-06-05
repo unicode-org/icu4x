@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "украинская гривна",
+    "Few": "украинские гривны",
+    "Many": "украинских гривен"
   },
-  "extended_placeholders": [
-    "украинская гривна",
-    "украинская гривна",
-    "украинские гривны",
-    "украинских гривен",
-    "украинской гривны"
-  ]
+  "other_placeholder": "украинской гривны",
+  "display_name": "украинская гривна"
 }

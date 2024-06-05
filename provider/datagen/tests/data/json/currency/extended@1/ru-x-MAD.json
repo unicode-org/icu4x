@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "марокканский дирхам",
+    "Few": "марокканских дирхама",
+    "Many": "марокканских дирхамов"
   },
-  "extended_placeholders": [
-    "марокканский дирхам",
-    "марокканский дирхам",
-    "марокканских дирхама",
-    "марокканских дирхамов",
-    "марокканского дирхама"
-  ]
+  "other_placeholder": "марокканского дирхама",
+  "display_name": "марокканский дирхам"
 }

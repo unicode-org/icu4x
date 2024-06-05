@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "гайанский доллар",
+    "Few": "гайанских доллара",
+    "Many": "гайанских долларов"
   },
-  "extended_placeholders": [
-    "гайанский доллар",
-    "гайанский доллар",
-    "гайанских доллара",
-    "гайанских долларов",
-    "гайанского доллара"
-  ]
+  "other_placeholder": "гайанского доллара",
+  "display_name": "гайанский доллар"
 }

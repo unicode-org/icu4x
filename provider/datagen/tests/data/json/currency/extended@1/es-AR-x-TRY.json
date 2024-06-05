@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "lira turca"
   },
-  "extended_placeholders": [
-    "lira turca",
-    "lira turca",
-    "liras turcas"
-  ]
+  "other_placeholder": "liras turcas",
+  "display_name": "lira turca"
 }

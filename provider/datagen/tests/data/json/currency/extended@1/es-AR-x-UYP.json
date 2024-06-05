@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "peso uruguayo (UYP)"
   },
-  "extended_placeholders": [
-    "peso uruguayo (1975–1993)",
-    "peso uruguayo (UYP)",
-    "pesos uruguayos (UYP)"
-  ]
+  "other_placeholder": "pesos uruguayos (UYP)",
+  "display_name": "peso uruguayo (1975–1993)"
 }

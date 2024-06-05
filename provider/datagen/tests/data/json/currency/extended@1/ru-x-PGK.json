@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "кина Папуа – Новой Гвинеи",
+    "Few": "кины Папуа – Новой Гвинеи",
+    "Many": "кин Папуа – Новой Гвинеи"
   },
-  "extended_placeholders": [
-    "кина Папуа – Новой Гвинеи",
-    "кина Папуа – Новой Гвинеи",
-    "кины Папуа – Новой Гвинеи",
-    "кин Папуа – Новой Гвинеи",
-    "кины Папуа – Новой Гвинеи"
-  ]
+  "other_placeholder": "кины Папуа – Новой Гвинеи",
+  "display_name": "кина Папуа – Новой Гвинеи"
 }

@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "либеријски долар",
+    "Few": "либеријска долара"
   },
-  "extended_placeholders": [
-    "либеријски долар",
-    "либеријски долар",
-    "либеријска долара",
-    "либеријских долара"
-  ]
+  "other_placeholder": "либеријских долара",
+  "display_name": "либеријски долар"
 }

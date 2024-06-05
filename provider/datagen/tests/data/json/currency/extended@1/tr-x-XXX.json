@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "(bilinmeyen para birimi)"
   },
-  "extended_placeholders": [
-    "Bilinmeyen Para Birimi",
-    "(bilinmeyen para birimi)",
-    "(bilinmeyen para birimi)"
-  ]
+  "other_placeholder": "(bilinmeyen para birimi)",
+  "display_name": "Bilinmeyen Para Birimi"
 }

@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "holandski gulden",
+    "Few": "holandska guldena"
   },
-  "extended_placeholders": [
-    "Holandski gulden",
-    "holandski gulden",
-    "holandska guldena",
-    "holandskih guldena"
-  ]
+  "other_placeholder": "holandskih guldena",
+  "display_name": "Holandski gulden"
 }

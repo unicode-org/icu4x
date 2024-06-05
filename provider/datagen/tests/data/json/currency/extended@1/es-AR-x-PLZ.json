@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "zloty polaco (PLZ)"
   },
-  "extended_placeholders": [
-    "zloty polaco (1950–1995)",
-    "zloty polaco (PLZ)",
-    "zlotys polacos (PLZ)"
-  ]
+  "other_placeholder": "zlotys polacos (PLZ)",
+  "display_name": "zloty polaco (1950–1995)"
 }

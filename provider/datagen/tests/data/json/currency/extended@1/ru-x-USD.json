@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "доллар США",
+    "Few": "доллара США",
+    "Many": "долларов США"
   },
-  "extended_placeholders": [
-    "доллар США",
-    "доллар США",
-    "доллара США",
-    "долларов США",
-    "доллара США"
-  ]
+  "other_placeholder": "доллара США",
+  "display_name": "доллар США"
 }

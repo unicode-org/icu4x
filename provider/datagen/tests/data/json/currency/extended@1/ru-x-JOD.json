@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "иорданский динар",
+    "Few": "иорданских динара",
+    "Many": "иорданских динаров"
   },
-  "extended_placeholders": [
-    "иорданский динар",
-    "иорданский динар",
-    "иорданских динара",
-    "иорданских динаров",
-    "иорданского динара"
-  ]
+  "other_placeholder": "иорданского динара",
+  "display_name": "иорданский динар"
 }

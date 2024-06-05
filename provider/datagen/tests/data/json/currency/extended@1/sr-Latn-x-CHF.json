@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "švajcarski franak",
+    "Few": "švajcarska franka"
   },
-  "extended_placeholders": [
-    "švajcarski franak",
-    "švajcarski franak",
-    "švajcarska franka",
-    "švajcarskih franaka"
-  ]
+  "other_placeholder": "švajcarskih franaka",
+  "display_name": "švajcarski franak"
 }

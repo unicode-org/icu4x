@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Yugoslavian hard dinar (1966–1990)"
   },
-  "extended_placeholders": [
-    "Yugoslavian Hard Dinar (1966–1990)",
-    "Yugoslavian hard dinar (1966–1990)",
-    "Yugoslavian hard dinars (1966–1990)"
-  ]
+  "other_placeholder": "Yugoslavian hard dinars (1966–1990)",
+  "display_name": "Yugoslavian Hard Dinar (1966–1990)"
 }

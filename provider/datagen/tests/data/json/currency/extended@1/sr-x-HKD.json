@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "хонгконшки долар",
+    "Few": "хонгконшка долара"
   },
-  "extended_placeholders": [
-    "хонгконшки долар",
-    "хонгконшки долар",
-    "хонгконшка долара",
-    "хонгконшких долара"
-  ]
+  "other_placeholder": "хонгконшких долара",
+  "display_name": "хонгконшки долар"
 }

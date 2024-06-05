@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "butanski ngultrum",
+    "Few": "butanska ngultruma"
   },
-  "extended_placeholders": [
-    "butanski ngultrum",
-    "butanski ngultrum",
-    "butanska ngultruma",
-    "butanskih ngultruma"
-  ]
+  "other_placeholder": "butanskih ngultruma",
+  "display_name": "butanski ngultrum"
 }

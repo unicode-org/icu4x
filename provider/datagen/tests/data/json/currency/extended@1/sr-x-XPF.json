@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "CFP франак",
+    "Few": "CFP франка"
   },
-  "extended_placeholders": [
-    "CFP франак",
-    "CFP франак",
-    "CFP франка",
-    "CFP франака"
-  ]
+  "other_placeholder": "CFP франака",
+  "display_name": "CFP франак"
 }

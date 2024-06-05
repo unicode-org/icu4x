@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "francuski UIC-franak",
+    "Few": "francuska UIC-franka"
   },
-  "extended_placeholders": [
-    "Francuski UIC-franak",
-    "francuski UIC-franak",
-    "francuska UIC-franka",
-    "francuskih UIC-franaka"
-  ]
+  "other_placeholder": "francuskih UIC-franaka",
+  "display_name": "Francuski UIC-franak"
 }

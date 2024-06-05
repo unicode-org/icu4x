@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "malavijska kvača",
+    "Few": "malavijske kvače"
   },
-  "extended_placeholders": [
-    "malavijska kvača",
-    "malavijska kvača",
-    "malavijske kvače",
-    "malavijskih kvača"
-  ]
+  "other_placeholder": "malavijskih kvača",
+  "display_name": "malavijska kvača"
 }

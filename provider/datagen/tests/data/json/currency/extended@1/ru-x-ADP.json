@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "андоррская песета",
+    "Few": "андоррские песеты",
+    "Many": "андоррских песет"
   },
-  "extended_placeholders": [
-    "Андоррская песета",
-    "андоррская песета",
-    "андоррские песеты",
-    "андоррских песет",
-    "андоррских песет"
-  ]
+  "other_placeholder": "андоррских песет",
+  "display_name": "Андоррская песета"
 }

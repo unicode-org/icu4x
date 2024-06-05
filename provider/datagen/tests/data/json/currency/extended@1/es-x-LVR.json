@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "rublo letón"
   },
-  "extended_placeholders": [
-    "rublo letón",
-    "rublo letón",
-    "rublos letones"
-  ]
+  "other_placeholder": "rublos letones",
+  "display_name": "rublo letón"
 }

@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "sovjetska rublja",
+    "Few": "sovjetske rublje"
   },
-  "extended_placeholders": [
-    "Sovjetska rublja",
-    "sovjetska rublja",
-    "sovjetske rublje",
-    "sovjetskih rublji"
-  ]
+  "other_placeholder": "sovjetskih rublji",
+  "display_name": "Sovjetska rublja"
 }

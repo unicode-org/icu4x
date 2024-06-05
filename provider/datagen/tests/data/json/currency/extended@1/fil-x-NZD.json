@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "dolyares ng New Zealand"
   },
-  "extended_placeholders": [
-    "Dolyar ng New Zealand",
-    "dolyares ng New Zealand",
-    "dolyares ng New Zealand"
-  ]
+  "other_placeholder": "dolyares ng New Zealand",
+  "display_name": "Dolyar ng New Zealand"
 }

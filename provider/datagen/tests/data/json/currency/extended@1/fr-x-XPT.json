@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "once troy de platine"
   },
-  "extended_placeholders": [
-    "platine",
-    "once troy de platine",
-    "onces troy de platine"
-  ]
+  "other_placeholder": "onces troy de platine",
+  "display_name": "platine"
 }

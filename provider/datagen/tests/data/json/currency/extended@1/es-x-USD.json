@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "dólar estadounidense"
   },
-  "extended_placeholders": [
-    "dólar estadounidense",
-    "dólar estadounidense",
-    "dólares estadounidenses"
-  ]
+  "other_placeholder": "dólares estadounidenses",
+  "display_name": "dólar estadounidense"
 }

@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "dolyar ng Namibia"
   },
-  "extended_placeholders": [
-    "Dolyar ng Namibia",
-    "dolyar ng Namibia",
-    "dolyares ng Namibia"
-  ]
+  "other_placeholder": "dolyares ng Namibia",
+  "display_name": "Dolyar ng Namibia"
 }

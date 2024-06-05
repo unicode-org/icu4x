@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "indonežanska rupija",
+    "Few": "indonežanske rupije"
   },
-  "extended_placeholders": [
-    "indonežanska rupija",
-    "indonežanska rupija",
-    "indonežanske rupije",
-    "indonežanskih rupija"
-  ]
+  "other_placeholder": "indonežanskih rupija",
+  "display_name": "indonežanska rupija"
 }

@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "dinar nord-yéménite"
   },
-  "extended_placeholders": [
-    "dinar du Yémen",
-    "dinar nord-yéménite",
-    "dinars nord-yéménites"
-  ]
+  "other_placeholder": "dinars nord-yéménites",
+  "display_name": "dinar du Yémen"
 }

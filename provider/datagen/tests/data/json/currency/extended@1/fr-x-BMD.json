@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "dollar bermudien"
   },
-  "extended_placeholders": [
-    "dollar bermudien",
-    "dollar bermudien",
-    "dollars bermudiens"
-  ]
+  "other_placeholder": "dollars bermudiens",
+  "display_name": "dollar bermudien"
 }

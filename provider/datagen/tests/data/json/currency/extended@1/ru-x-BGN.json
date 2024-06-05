@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "болгарский лев",
+    "Few": "болгарских лева",
+    "Many": "болгарских левов"
   },
-  "extended_placeholders": [
-    "болгарский лев",
-    "болгарский лев",
-    "болгарских лева",
-    "болгарских левов",
-    "болгарского лева"
-  ]
+  "other_placeholder": "болгарского лева",
+  "display_name": "болгарский лев"
 }

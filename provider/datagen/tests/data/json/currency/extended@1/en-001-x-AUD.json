@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Australian dollar"
   },
-  "extended_placeholders": [
-    "Australian Dollar",
-    "Australian dollar",
-    "Australian dollars"
-  ]
+  "other_placeholder": "Australian dollars",
+  "display_name": "Australian Dollar"
 }

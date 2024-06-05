@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "вијетнамски донг (1978–1985)",
+    "Few": "вијетнамска донга (1978–1985)"
   },
-  "extended_placeholders": [
-    "Вијетнамски донг (1978–1985)",
-    "вијетнамски донг (1978–1985)",
-    "вијетнамска донга (1978–1985)",
-    "вијетнамских донга (1978–1985)"
-  ]
+  "other_placeholder": "вијетнамских донга (1978–1985)",
+  "display_name": "Вијетнамски донг (1978–1985)"
 }

@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "боливијски мвдол",
+    "Few": "боливијска мвдола"
   },
-  "extended_placeholders": [
-    "Боливијски мвдол",
-    "боливијски мвдол",
-    "боливијска мвдола",
-    "боливијских мвдола"
-  ]
+  "other_placeholder": "боливијских мвдола",
+  "display_name": "Боливијски мвдол"
 }

@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Makedonya dinarı (1992–1993)"
   },
-  "extended_placeholders": [
-    "Makedonya Dinarı (1992–1993)",
-    "Makedonya dinarı (1992–1993)",
-    "Makedonya dinarı (1992–1993)"
-  ]
+  "other_placeholder": "Makedonya dinarı (1992–1993)",
+  "display_name": "Makedonya Dinarı (1992–1993)"
 }

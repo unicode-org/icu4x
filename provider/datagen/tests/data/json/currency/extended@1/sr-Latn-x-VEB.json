@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "venecuelanski bolivar (1871–2008)",
+    "Few": "venecuelanska bolivara (1871–2008)"
   },
-  "extended_placeholders": [
-    "Venecuelanski bolivar (1871–2008)",
-    "venecuelanski bolivar (1871–2008)",
-    "venecuelanska bolivara (1871–2008)",
-    "venecuelanskih bolivara (1871–2008)"
-  ]
+  "other_placeholder": "venecuelanskih bolivara (1871–2008)",
+  "display_name": "Venecuelanski bolivar (1871–2008)"
 }

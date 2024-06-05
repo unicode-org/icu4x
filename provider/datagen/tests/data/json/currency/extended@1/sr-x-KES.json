@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "кенијски шилинг",
+    "Few": "кенијска шилинга"
   },
-  "extended_placeholders": [
-    "кенијски шилинг",
-    "кенијски шилинг",
-    "кенијска шилинга",
-    "кенијских шилинга"
-  ]
+  "other_placeholder": "кенијских шилинга",
+  "display_name": "кенијски шилинг"
 }

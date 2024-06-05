@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Brazilian new cruzado (1989–1990)"
   },
-  "extended_placeholders": [
-    "Brazilian New Cruzado (1989–1990)",
-    "Brazilian new cruzado (1989–1990)",
-    "Brazilian new cruzados (1989–1990)"
-  ]
+  "other_placeholder": "Brazilian new cruzados (1989–1990)",
+  "display_name": "Brazilian New Cruzado (1989–1990)"
 }

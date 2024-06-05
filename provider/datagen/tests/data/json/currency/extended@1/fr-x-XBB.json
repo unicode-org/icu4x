@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "unité monétaire européenne (UME–6)"
   },
-  "extended_placeholders": [
-    "unité monétaire européenne",
-    "unité monétaire européenne (UME–6)",
-    "unités monétaires européennes (UME–6)"
-  ]
+  "other_placeholder": "unités monétaires européennes (UME–6)",
+  "display_name": "unité monétaire européenne"
 }

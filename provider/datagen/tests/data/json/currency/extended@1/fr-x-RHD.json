@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "dollar rhodésien"
   },
-  "extended_placeholders": [
-    "dollar rhodésien",
-    "dollar rhodésien",
-    "dollars rhodésiens"
-  ]
+  "other_placeholder": "dollars rhodésiens",
+  "display_name": "dollar rhodésien"
 }

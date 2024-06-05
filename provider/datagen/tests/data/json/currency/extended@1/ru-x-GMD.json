@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "гамбийский даласи",
+    "Few": "гамбийских даласи",
+    "Many": "гамбийских даласи"
   },
-  "extended_placeholders": [
-    "гамбийский даласи",
-    "гамбийский даласи",
-    "гамбийских даласи",
-    "гамбийских даласи",
-    "гамбийского даласи"
-  ]
+  "other_placeholder": "гамбийского даласи",
+  "display_name": "гамбийский даласи"
 }

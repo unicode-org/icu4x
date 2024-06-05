@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "ливанский фунт",
+    "Few": "ливанских фунта",
+    "Many": "ливанских фунтов"
   },
-  "extended_placeholders": [
-    "ливанский фунт",
-    "ливанский фунт",
-    "ливанских фунта",
-    "ливанских фунтов",
-    "ливанского фунта"
-  ]
+  "other_placeholder": "ливанского фунта",
+  "display_name": "ливанский фунт"
 }

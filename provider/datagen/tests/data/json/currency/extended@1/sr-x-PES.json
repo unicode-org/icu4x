@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "перуански сол (1863–1965)",
+    "Few": "перуанска сола (1863–1965)"
   },
-  "extended_placeholders": [
-    "Перуански сол (1863–1965)",
-    "перуански сол (1863–1965)",
-    "перуанска сола (1863–1965)",
-    "перуанских сола (1863–1965)"
-  ]
+  "other_placeholder": "перуанских сола (1863–1965)",
+  "display_name": "Перуански сол (1863–1965)"
 }

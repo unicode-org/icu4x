@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "македонски денар",
+    "Few": "македонска денара"
   },
-  "extended_placeholders": [
-    "македонски денар",
-    "македонски денар",
-    "македонска денара",
-    "македонских денара"
-  ]
+  "other_placeholder": "македонских денара",
+  "display_name": "македонски денар"
 }

@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "honduraška lempira",
+    "Few": "honduraške lempire"
   },
-  "extended_placeholders": [
-    "honduraška lempira",
-    "honduraška lempira",
-    "honduraške lempire",
-    "honduraških lempira"
-  ]
+  "other_placeholder": "honduraških lempira",
+  "display_name": "honduraška lempira"
 }

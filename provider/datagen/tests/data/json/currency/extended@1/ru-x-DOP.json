@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "доминиканский песо",
+    "Few": "доминиканских песо",
+    "Many": "доминиканских песо"
   },
-  "extended_placeholders": [
-    "доминиканский песо",
-    "доминиканский песо",
-    "доминиканских песо",
-    "доминиканских песо",
-    "доминиканского песо"
-  ]
+  "other_placeholder": "доминиканского песо",
+  "display_name": "доминиканский песо"
 }

@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Chilean peso"
   },
-  "extended_placeholders": [
-    "Chilean Peso",
-    "Chilean peso",
-    "Chilean pesos"
-  ]
+  "other_placeholder": "Chilean pesos",
+  "display_name": "Chilean Peso"
 }

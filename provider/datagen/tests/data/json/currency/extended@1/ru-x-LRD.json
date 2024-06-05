@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "либерийский доллар",
+    "Few": "либерийских доллара",
+    "Many": "либерийских долларов"
   },
-  "extended_placeholders": [
-    "либерийский доллар",
-    "либерийский доллар",
-    "либерийских доллара",
-    "либерийских долларов",
-    "либерийского доллара"
-  ]
+  "other_placeholder": "либерийского доллара",
+  "display_name": "либерийский доллар"
 }

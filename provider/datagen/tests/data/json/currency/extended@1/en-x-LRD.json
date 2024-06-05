@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "Liberian dollar"
   },
-  "extended_placeholders": [
-    "Liberian Dollar",
-    "Liberian dollar",
-    "Liberian dollars"
-  ]
+  "other_placeholder": "Liberian dollars",
+  "display_name": "Liberian Dollar"
 }

@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "швајцарски франак",
+    "Few": "швајцарска франка"
   },
-  "extended_placeholders": [
-    "швајцарски франак",
-    "швајцарски франак",
-    "швајцарска франка",
-    "швајцарских франака"
-  ]
+  "other_placeholder": "швајцарских франака",
+  "display_name": "швајцарски франак"
 }

@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "dollar namibien"
   },
-  "extended_placeholders": [
-    "dollar namibien",
-    "dollar namibien",
-    "dollars namibiens"
-  ]
+  "other_placeholder": "dollars namibiens",
+  "display_name": "dollar namibien"
 }

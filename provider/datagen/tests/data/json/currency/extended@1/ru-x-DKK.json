@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "датская крона",
+    "Few": "датские кроны",
+    "Many": "датских крон"
   },
-  "extended_placeholders": [
-    "датская крона",
-    "датская крона",
-    "датские кроны",
-    "датских крон",
-    "датской кроны"
-  ]
+  "other_placeholder": "датской кроны",
+  "display_name": "датская крона"
 }

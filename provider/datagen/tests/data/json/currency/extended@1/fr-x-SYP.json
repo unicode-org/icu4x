@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "livre syrienne"
   },
-  "extended_placeholders": [
-    "livre syrienne",
-    "livre syrienne",
-    "livres syriennes"
-  ]
+  "other_placeholder": "livres syriennes",
+  "display_name": "livre syrienne"
 }

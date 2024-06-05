@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "мексички сребрни пезо",
+    "Few": "мексичка сребрна пезоса"
   },
-  "extended_placeholders": [
-    "Мексички сребрни пезо (1861–1992)",
-    "мексички сребрни пезо",
-    "мексичка сребрна пезоса",
-    "мексичких сребрних пезоса"
-  ]
+  "other_placeholder": "мексичких сребрних пезоса",
+  "display_name": "Мексички сребрни пезо (1861–1992)"
 }

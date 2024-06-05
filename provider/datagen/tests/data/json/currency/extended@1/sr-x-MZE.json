@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "мозамбијски ескудо",
+    "Few": "мозамбијска ескуда"
   },
-  "extended_placeholders": [
-    "Мозамбијски ескудо",
-    "мозамбијски ескудо",
-    "мозамбијска ескуда",
-    "мозамбијских ескуда"
-  ]
+  "other_placeholder": "мозамбијских ескуда",
+  "display_name": "Мозамбијски ескудо"
 }

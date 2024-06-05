@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "dírham de los Emiratos Árabes Unidos"
   },
-  "extended_placeholders": [
-    "dírham de los Emiratos Árabes Unidos",
-    "dírham de los Emiratos Árabes Unidos",
-    "dírhams de los Emiratos Árabes Unidos"
-  ]
+  "other_placeholder": "dírhams de los Emiratos Árabes Unidos",
+  "display_name": "dírham de los Emiratos Árabes Unidos"
 }

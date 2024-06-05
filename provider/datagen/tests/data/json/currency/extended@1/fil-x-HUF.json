@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "forint ng Hungary"
   },
-  "extended_placeholders": [
-    "Forint ng Hungary",
-    "forint ng Hungary",
-    "forints ng Hungary"
-  ]
+  "other_placeholder": "forints ng Hungary",
+  "display_name": "Forint ng Hungary"
 }

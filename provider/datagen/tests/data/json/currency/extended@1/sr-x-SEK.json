@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "шведска круна",
+    "Few": "шведске круне"
   },
-  "extended_placeholders": [
-    "шведска круна",
-    "шведска круна",
-    "шведске круне",
-    "шведских круна"
-  ]
+  "other_placeholder": "шведских круна",
+  "display_name": "шведска круна"
 }

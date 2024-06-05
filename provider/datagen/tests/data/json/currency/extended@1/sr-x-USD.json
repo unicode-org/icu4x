@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "амерички долар",
+    "Few": "америчка долара"
   },
-  "extended_placeholders": [
-    "амерички долар",
-    "амерички долар",
-    "америчка долара",
-    "америчких долара"
-  ]
+  "other_placeholder": "америчких долара",
+  "display_name": "амерички долар"
 }

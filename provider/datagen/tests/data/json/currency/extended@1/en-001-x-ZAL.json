@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "South African rand (financial)"
   },
-  "extended_placeholders": [
-    "South African Rand (financial)",
-    "South African rand (financial)",
-    "South African rands (financial)"
-  ]
+  "other_placeholder": "South African rands (financial)",
+  "display_name": "South African Rand (financial)"
 }

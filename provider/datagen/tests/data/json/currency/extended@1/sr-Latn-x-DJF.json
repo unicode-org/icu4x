@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "džibutski franak",
+    "Few": "džibutska franka"
   },
-  "extended_placeholders": [
-    "džibutski franak",
-    "džibutski franak",
-    "džibutska franka",
-    "džibutskih franaka"
-  ]
+  "other_placeholder": "džibutskih franaka",
+  "display_name": "džibutski franak"
 }

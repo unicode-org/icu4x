@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "sucre ecuatoriano"
   },
-  "extended_placeholders": [
-    "sucre ecuatoriano",
-    "sucre ecuatoriano",
-    "sucres ecuatorianos"
-  ]
+  "other_placeholder": "sucres ecuatorianos",
+  "display_name": "sucre ecuatoriano"
 }

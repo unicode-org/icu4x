@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "austral argentin"
   },
-  "extended_placeholders": [
-    "austral argentin",
-    "austral argentin",
-    "australs argentins"
-  ]
+  "other_placeholder": "australs argentins",
+  "display_name": "austral argentin"
 }

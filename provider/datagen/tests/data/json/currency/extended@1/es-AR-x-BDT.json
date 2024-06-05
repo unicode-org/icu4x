@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "taka"
   },
-  "extended_placeholders": [
-    "taka",
-    "taka",
-    "takas"
-  ]
+  "other_placeholder": "takas",
+  "display_name": "taka"
 }

@@ -1,13 +1,8 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "angolijska kvanza reađustado (1995–1999)",
+    "Few": "angolijske kvanze reađustado (1995–1999)"
   },
-  "extended_placeholders": [
-    "Angolijska kvanza reađustado (1995–1999)",
-    "angolijska kvanza reađustado (1995–1999)",
-    "angolijske kvanze reađustado (1995–1999)",
-    "angolijskih kvanzi reađustado (1995–1999)"
-  ]
+  "other_placeholder": "angolijskih kvanzi reađustado (1995–1999)",
+  "display_name": "Angolijska kvanza reađustado (1995–1999)"
 }

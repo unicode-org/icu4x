@@ -1,15 +1,11 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "Zero": "دينار جزائري",
+    "One": "دينار جزائري",
+    "Two": "ديناران جزائريان",
+    "Few": "دينارات جزائرية",
+    "Many": "دينارًا جزائريًا"
   },
-  "extended_placeholders": [
-    "دينار جزائري",
-    "دينار جزائري",
-    "ديناران جزائريان",
-    "دينارات جزائرية",
-    "دينارًا جزائريًا",
-    "دينار جزائري"
-  ]
+  "other_placeholder": "دينار جزائري",
+  "display_name": "دينار جزائري"
 }

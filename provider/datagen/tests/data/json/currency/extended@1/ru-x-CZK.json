@@ -1,14 +1,9 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "чешская крона",
+    "Few": "чешские кроны",
+    "Many": "чешских крон"
   },
-  "extended_placeholders": [
-    "чешская крона",
-    "чешская крона",
-    "чешские кроны",
-    "чешских крон",
-    "чешской кроны"
-  ]
+  "other_placeholder": "чешской кроны",
+  "display_name": "чешская крона"
 }

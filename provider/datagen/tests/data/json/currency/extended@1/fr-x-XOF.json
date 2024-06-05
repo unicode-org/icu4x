@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "franc CFA (BCEAO)"
   },
-  "extended_placeholders": [
-    "franc CFA (BCEAO)",
-    "franc CFA (BCEAO)",
-    "francs CFA (BCEAO)"
-  ]
+  "other_placeholder": "francs CFA (BCEAO)",
+  "display_name": "franc CFA (BCEAO)"
 }

@@ -1,12 +1,7 @@
 {
-  "patterns_config": {},
-  "other_pattern_config": {
-    "pattern_selection": "Standard",
-    "placeholder_index": null
+  "placeholders": {
+    "One": "North Korean won"
   },
-  "extended_placeholders": [
-    "North Korean Won",
-    "North Korean won",
-    "North Korean won"
-  ]
+  "other_placeholder": "North Korean won",
+  "display_name": "North Korean Won"
 }
