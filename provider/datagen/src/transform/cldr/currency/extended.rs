@@ -6,10 +6,14 @@ use crate::provider::transform::cldr::cldr_serde;
 use crate::DatagenProvider;
 
 use std::borrow::Cow;
+use std::collections::BTreeMap;
 use std::str::FromStr;
 
+use icu_experimental::dimension::currency;
 use icu_experimental::dimension::currency::formatter::CurrencyCode;
 use icu_experimental::dimension::provider::currency::PatternSelection;
+use icu_experimental::dimension::provider::extended_currency::Count;
+use icu_locale::extensions::other;
 use icu_provider::datagen::IterableDataProvider;
 use tinystr::TinyAsciiStr;
 use tinystr::UnvalidatedTinyAsciiStr;
@@ -43,7 +47,7 @@ impl DataProvider<CurrencyExtendedDataV1Marker> for crate::DatagenProvider {
             .key_attributes
             .parse::<TinyAsciiStr<3>>()
             .map_err(|_| DataError::custom("failed to parse aux key into tinystr"))?;
-        let usd = currencies_resource
+        let currency = currencies_resource
             .main
             .value
             .numbers
@@ -51,27 +55,37 @@ impl DataProvider<CurrencyExtendedDataV1Marker> for crate::DatagenProvider {
             .get(&aux.to_unvalidated())
             .ok_or(DataError::custom("remove"))?;
 
-        let extended_placeholders = vec![
-            usd.display_name.as_deref(),
-            usd.one.as_deref(),
-            usd.two.as_deref(),
-            usd.few.as_deref(),
-            usd.many.as_deref(),
-            usd.other.as_deref(),
-        ]
-        .into_iter()
-        .flatten()
-        .collect::<Vec<&str>>();
+        let mut placeholders: BTreeMap<Count, String> = BTreeMap::new();
 
-        let patterns_config = ZeroMap::new();
+        fn add_placeholder(
+            placeholders: &mut BTreeMap<Count, String>,
+            key: Count,
+            value: Option<&str>,
+        ) {
+            if let Some(val) = value {
+                placeholders.insert(key, val.to_string());
+            }
+        }
+
+        add_placeholder(&mut placeholders, Count::Zero, currency.zero.as_deref());
+        add_placeholder(&mut placeholders, Count::One, currency.one.as_deref());
+        add_placeholder(&mut placeholders, Count::Two, currency.two.as_deref());
+        add_placeholder(&mut placeholders, Count::Few, currency.few.as_deref());
+        add_placeholder(&mut placeholders, Count::Many, currency.many.as_deref());
+
+        let other_placeholder = currency.other.as_deref().map(|s| Cow::Owned(s.to_string()));
+        let display_name = currency
+            .display_name
+            .as_deref()
+            .map(|s| Cow::Owned(s.to_string()));
 
         let data = CurrencyExtendedDataV1 {
-            patterns_config,
-            other_pattern_config: ExtendedCurrencyPatternConfig {
-                pattern_selection: PatternSelection::Standard,
-                placeholder_index: None,
-            },
-            extended_placeholders: VarZeroVec::from(&extended_placeholders),
+            placeholders: placeholders
+                .into_iter()
+                .map(|(k, v)| (k, Cow::Owned(v)))
+                .collect(),
+            other_placeholder,
+            display_name,
         };
 
         Ok(DataResponse {

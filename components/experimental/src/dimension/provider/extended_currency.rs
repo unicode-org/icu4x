@@ -38,24 +38,21 @@ use super::currency::{CurrencyPatternConfig, PatternSelection};
 )]
 #[yoke(prove_covariance_manually)]
 pub struct CurrencyExtendedDataV1<'data> {
-    // Using CurrencyPatternConfig until implementing AsULE for ExtendedCurrencyPatternConfig.
-    // use short for long right now.
-    /// A mapping from each currency's ISO code to its associated formatting patterns.
+    // TODO: use SinglePlaceholder for the placeholders
+    /// Contains the placeholders for the currency except the `other` count.
+    /// For example, for "en" locale, and "USD" currency:
+    ///     "US Dollars" for `zero` count,
+    ///  ... etc.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub patterns_config: ZeroMap<'data, Count, ExtendedCurrencyPatternConfig>,
+    pub placeholders: ZeroMap<'data, Count, str>,
 
     /// A currency pattern config for the `other` count
     /// or there is no specific pattern for the currency has been found
     /// in the `patterns_config` map.
-    pub other_pattern_config: ExtendedCurrencyPatternConfig,
+    pub other_placeholder: Option<Cow<'data, str>>,
 
-    /// Contains the counted display names for the currency.
-    /// For example, for "en" locale, and "USD" currency:
-    ///        "US Dollars" for `zero` count,
-    ///        "US Dollar"  for `one`  count,
-    ///     ... etc.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub extended_placeholders: VarZeroVec<'data, str>,
+    /// The display name for the currency.
+    pub display_name: Option<Cow<'data, str>>,
 }
 
 /// A CLDR plural keyword, or the explicit value 1.
@@ -102,20 +99,4 @@ impl From<PluralCategory> for Count {
             Other => Count::Other,
         }
     }
-}
-
-#[zerovec::make_ule(ExtendedCurrencyPatternConfigULE)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_experimental::dimension::provider::extended_currency),
-)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[derive(Copy, Debug, Clone, Default, PartialEq, PartialOrd, Eq, Ord)]
-pub struct ExtendedCurrencyPatternConfig {
-    /// The pattern selection for the current placeholder.
-    pub pattern_selection: PatternSelection,
-
-    /// Points to the index of the placeholder in the extended placeholders list.
-    pub placeholder_index: Option<u16>,
 }
