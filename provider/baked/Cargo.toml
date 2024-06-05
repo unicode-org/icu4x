@@ -1,0 +1,33 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+[package]
+name = "icu_provider_baked"
+
+version.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+edition.workspace = true
+repository.workspace = true
+homepage.workspace = true
+license.workspace = true
+categories.workspace = true
+include.workspace = true
+
+[dependencies]
+icu_provider = { workspace = true }
+
+crlify = { workspace = true, optional = true }
+databake = { workspace = true, optional = true}
+icu_registry = { workspace = true, optional = true }
+itertools = { workspace = true, optional = true }
+log = { workspace = true, optional = true }
+proc-macro2 = { workspace = true, optional = true }
+
+[dev-dependencies]
+icu_provider = { path = "../core", features = ["datagen"] }
+icu_datagen = { path = "../datagen" }
+
+[features]
+export = ["dep:icu_registry", "dep:databake", "dep:proc-macro2", "dep:itertools", "dep:crlify", "dep:log", "icu_provider/datagen"]

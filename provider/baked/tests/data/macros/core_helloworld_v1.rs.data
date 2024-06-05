@@ -1,0 +1,68 @@
+// @generated
+/// Implement `DataProvider<HelloWorldV1Marker>` on the given struct using the data
+/// hardcoded in this file. This allows the struct to be used with
+/// `icu`'s `_unstable` constructors.
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __impl_core_helloworld_v1 {
+    ($ provider : ty) => {
+        #[clippy::msrv = "1.70"]
+        const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
+        #[clippy::msrv = "1.70"]
+        impl icu_provider::DataProvider<icu_provider::hello_world::HelloWorldV1Marker> for $provider {
+            fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu_provider::hello_world::HelloWorldV1Marker>, icu_provider::DataError> {
+                static CS: <icu_provider::hello_world::HelloWorldV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Ahoj světe") };
+                static LA: <icu_provider::hello_world::HelloWorldV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Ave, munde") };
+                static DE: <icu_provider::hello_world::HelloWorldV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Hallo Welt") };
+                static IS: <icu_provider::hello_world::HelloWorldV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Halló, heimur") };
+                static EN: <icu_provider::hello_world::HelloWorldV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Hello World") };
+                static EN_GB: <icu_provider::hello_world::HelloWorldV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Hello from 🇬🇧") };
+                static EN_002: <icu_provider::hello_world::HelloWorldV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Hello from 🌍") };
+                static EN_019: <icu_provider::hello_world::HelloWorldV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Hello from 🌎") };
+                static EN_142: <icu_provider::hello_world::HelloWorldV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Hello from 🌏") };
+                static EN_GB_U_SD_GBENG: <icu_provider::hello_world::HelloWorldV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Hello from 🏴\u{e0067}\u{e0062}\u{e0065}\u{e006e}\u{e0067}\u{e007f}") };
+                static EN_001: <icu_provider::hello_world::HelloWorldV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Hello from 🗺\u{fe0f}") };
+                static EN_X_REVERSE: <icu_provider::hello_world::HelloWorldV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Olleh Dlrow") };
+                static PT: <icu_provider::hello_world::HelloWorldV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Olá, mundo") };
+                static SR_LATN: <icu_provider::hello_world::HelloWorldV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Pozdrav svete") };
+                static RO: <icu_provider::hello_world::HelloWorldV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Salut, lume") };
+                static EO: <icu_provider::hello_world::HelloWorldV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Saluton, Mondo") };
+                static DE_AT: <icu_provider::hello_world::HelloWorldV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Servus Welt") };
+                static VI: <icu_provider::hello_world::HelloWorldV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Xin chào thế giới") };
+                static FI: <icu_provider::hello_world::HelloWorldV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("hei maailma") };
+                static EL: <icu_provider::hello_world::HelloWorldV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Καλημέρα κόσμε") };
+                static SR: <icu_provider::hello_world::HelloWorldV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Поздрав свете") };
+                static RU: <icu_provider::hello_world::HelloWorldV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Привет, мир") };
+                static FA: <icu_provider::hello_world::HelloWorldV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("سلام دنیا\u{200e}") };
+                static BN: <icu_provider::hello_world::HelloWorldV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("ওহে বিশ\u{9cd}ব") };
+                static JA: <icu_provider::hello_world::HelloWorldV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("こんにちは世界") };
+                static ZH: <icu_provider::hello_world::HelloWorldV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("你好世界") };
+                static JA_X_REVERSE: <icu_provider::hello_world::HelloWorldV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("界世はちにんこ") };
+                static DATA: [(&str, &<icu_provider::hello_world::HelloWorldV1Marker as icu_provider::DynamicDataMarker>::Yokeable); 27usize] = [("bn", &BN), ("cs", &CS), ("de", &DE), ("de-AT", &DE_AT), ("el", &EL), ("en", &EN), ("en-001", &EN_001), ("en-002", &EN_002), ("en-019", &EN_019), ("en-142", &EN_142), ("en-GB", &EN_GB), ("en-GB-u-sd-gbeng", &EN_GB_U_SD_GBENG), ("en-x-reverse", &EN_X_REVERSE), ("eo", &EO), ("fa", &FA), ("fi", &FI), ("is", &IS), ("ja", &JA), ("ja-x-reverse", &JA_X_REVERSE), ("la", &LA), ("pt", &PT), ("ro", &RO), ("ru", &RU), ("sr", &SR), ("sr-Latn", &SR_LATN), ("vi", &VI), ("zh", &ZH)];
+                fn lookup(req: icu_provider::DataRequest) -> Option<&'static <icu_provider::hello_world::HelloWorldV1Marker as icu_provider::DynamicDataMarker>::Yokeable> {
+                    DATA.binary_search_by(|(k, _)| req.legacy_cmp(k.as_bytes()).reverse()).map(|i| (*unsafe { DATA.get_unchecked(i) }).1).ok()
+                }
+                if let Some(payload) = lookup(req) {
+                    Ok(icu_provider::DataResponse { payload: Some(icu_provider::DataPayload::from_static_ref(payload)), metadata: Default::default() })
+                } else {
+                    Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu_provider::hello_world::HelloWorldV1Marker as icu_provider::DataMarker>::INFO, req))
+                }
+            }
+        }
+    };
+}
+/// Implement `IterableDataProvider<HelloWorldV1Marker>` on the given struct using the data
+/// hardcoded in this file. This allows the struct to be used with
+/// `DatagenDriver` for this marker.
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __impliterable_core_helloworld_v1 {
+    ($ provider : ty) => {
+        #[clippy::msrv = "1.70"]
+        impl icu_provider::datagen::IterableDataProvider<icu_provider::hello_world::HelloWorldV1Marker> for $provider {
+            fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataMarkerAttributes)>, icu_provider::DataError> {
+                Ok(["bn", "cs", "de", "de-AT", "el", "en", "en-001", "en-002", "en-019", "en-142", "en-GB", "en-GB-u-sd-gbeng", "en-x-reverse", "eo", "fa", "fi", "is", "ja", "ja-x-reverse", "la", "pt", "ro", "ru", "sr", "sr-Latn", "vi", "zh"].into_iter().filter_map(icu_provider::DataRequest::legacy_decode).collect())
+            }
+        }
+    };
+}

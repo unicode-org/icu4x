@@ -42,8 +42,6 @@ impl Default for HelloWorldV1<'_> {
 }
 
 /// Marker type for [`HelloWorldV1`].
-#[cfg_attr(feature = "datagen", derive(Default, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_provider::hello_world))]
 #[derive(Debug)]
 pub struct HelloWorldV1Marker;
 

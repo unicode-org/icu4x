@@ -1078,8 +1078,6 @@ version = "1.5.0"
 dependencies = [
  "calendrical_calculations",
  "clap",
- "crlify",
- "databake",
  "displaydoc",
  "either",
  "elsa",
@@ -1102,6 +1100,7 @@ dependencies = [
  "icu_properties",
  "icu_provider",
  "icu_provider_adapters",
+ "icu_provider_baked",
  "icu_provider_blob",
  "icu_provider_fs",
  "icu_registry",
@@ -1116,7 +1115,6 @@ dependencies = [
  "num-rational",
  "num-traits",
  "postcard",
- "proc-macro2",
  "rayon",
  "serde",
  "serde-aux",
@@ -1465,6 +1463,20 @@ dependencies = [
  "tinystr",
  "writeable",
  "zerovec",
+]
+
+[[package]]
+name = "icu_provider_baked"
+version = "1.5.0"
+dependencies = [
+ "crlify",
+ "databake",
+ "icu_datagen",
+ "icu_provider",
+ "icu_registry",
+ "itertools",
+ "log",
+ "proc-macro2",
 ]
 
 [[package]]
