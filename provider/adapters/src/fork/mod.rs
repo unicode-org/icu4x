@@ -6,7 +6,7 @@
 //!
 //! # Types of Forking Providers
 //!
-//! ## Mcararker-Based
+//! ## Marker-Based
 //!
 //! To fork between providers that support different data markers, see:
 //!
