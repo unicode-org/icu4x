@@ -7,7 +7,6 @@
 #![allow(clippy::exhaustive_structs)] // data struct module
 
 use crate as icu_provider;
-use crate::fallback::LocaleFallbackConfig;
 
 use crate::prelude::*;
 use alloc::borrow::Cow;
@@ -53,11 +52,8 @@ impl DynamicDataMarker for HelloWorldV1Marker {
 }
 
 impl DataMarker for HelloWorldV1Marker {
-    const INFO: icu_provider::DataMarkerInfo = DataMarkerInfo {
-        path: icu_provider::data_marker_path!("core/helloworld@1"),
-        is_singleton: false,
-        fallback_config: LocaleFallbackConfig::const_default(),
-    };
+    const INFO: icu_provider::DataMarkerInfo =
+        DataMarkerInfo::from_path(icu_provider::data_marker_path!("core/helloworld@1"));
 }
 
 /// A data provider returning Hello World strings in different languages.

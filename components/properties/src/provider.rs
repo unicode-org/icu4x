@@ -438,10 +438,10 @@ macro_rules! data_struct_generic {
                 type Yokeable = PropertyCodePointMapV1<'static, crate::$ty>;
             }
             impl icu_provider::DataMarker for $marker {
-                const INFO: icu_provider::DataMarkerInfo = DataMarkerInfo {
-                    path: icu_provider::data_marker_path!($path),
-                    is_singleton: true,
-                    fallback_config: icu_provider::_internal::LocaleFallbackConfig::const_default(),
+                const INFO: icu_provider::DataMarkerInfo = {
+                    let mut info = DataMarkerInfo::from_path(icu_provider::data_marker_path!($path));
+                    info.is_singleton = true;
+                    info
                 };
             }
         )+

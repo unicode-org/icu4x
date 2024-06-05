@@ -77,11 +77,8 @@ fn test_errors() {
             type Yokeable = HelloWorldV1<'static>;
         }
         impl DataMarker for WrongV1Marker {
-            const INFO: DataMarkerInfo = DataMarkerInfo {
-                path: icu_provider::data_marker_path!("nope@1"),
-                is_singleton: false,
-                fallback_config: icu_provider::_internal::LocaleFallbackConfig::const_default(),
-            };
+            const INFO: DataMarkerInfo =
+                DataMarkerInfo::from_path(icu_provider::data_marker_path!("nope@1"));
         }
 
         let err: Result<DataResponse<WrongV1Marker>, DataError> =

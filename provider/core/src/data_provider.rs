@@ -289,11 +289,8 @@ mod test {
     // JSON string. It also exercises most of the data provider code paths.
 
     /// Key for HelloAlt, used for testing mismatched types
-    const HELLO_ALT_KEY: DataMarkerInfo = DataMarkerInfo {
-        path: crate::data_marker_path!("core/helloalt1@1"),
-        is_singleton: false,
-        fallback_config: crate::fallback::LocaleFallbackConfig::const_default(),
-    };
+    const HELLO_ALT_KEY: DataMarkerInfo =
+        DataMarkerInfo::from_path(crate::data_marker_path!("core/helloalt1@1"));
 
     /// A data struct serialization-compatible with HelloWorldV1 used for testing mismatched types
     #[derive(

@@ -177,7 +177,7 @@ pub struct DataMarkerPath {
 impl PartialEq for DataMarkerPath {
     #[inline]
     fn eq(&self, other: &Self) -> bool {
-        self.hash == other.hash
+        self.hash == other.hash && self.tagged == other.tagged
     }
 }
 
@@ -340,7 +340,7 @@ impl Deref for DataMarkerPath {
 /// Therefore, users should not generally create DataMarkerInfo instances; they should instead use
 /// the ones exported by a component.
 #[derive(Copy, Clone, PartialEq, Eq)]
-#[allow(clippy::exhaustive_structs)] // TODO
+#[non_exhaustive]
 pub struct DataMarkerInfo {
     /// The human-readable path string ends with `@` followed by one or more digits (the version
     /// number). Paths do not contain characters other than ASCII letters and digits, `_`, `/`.
@@ -372,6 +372,15 @@ impl core::hash::Hash for DataMarkerInfo {
 }
 
 impl DataMarkerInfo {
+    /// See [`Default::default`]
+    pub const fn from_path(path: DataMarkerPath) -> Self {
+        Self {
+            path,
+            is_singleton: false,
+            fallback_config: LocaleFallbackConfig::const_default(),
+        }
+    }
+
     /// Returns [`Ok`] if this data marker matches the argument, or the appropriate error.
     ///
     /// Convenience method for data providers that support a single [`DataMarkerInfo`].
@@ -386,11 +395,7 @@ impl DataMarkerInfo {
     /// #     type Yokeable = <HelloWorldV1Marker as DynamicDataMarker>::Yokeable;
     /// # }
     /// # impl DataMarker for DummyMarker {
-    /// #     const INFO: DataMarkerInfo = DataMarkerInfo {
-    /// #         path: icu_provider::data_marker_path!("dummy@1"),
-    /// #         is_singleton: false,
-    /// #         fallback_config: icu_provider::_internal::LocaleFallbackConfig::const_default(),
-    /// #     };
+    /// #     const INFO: DataMarkerInfo = DataMarkerInfo::from_path(icu_provider::data_marker_path!("dummy@1"));
     /// # }
     ///
     /// assert!(matches!(HelloWorldV1Marker::INFO.match_marker(HelloWorldV1Marker::INFO), Ok(())));

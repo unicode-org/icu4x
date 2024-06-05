@@ -388,16 +388,13 @@ fn data_struct_impl(attr: DataStructArgs, input: DeriveInput) -> TokenStream2 {
             };
             result.extend(quote!(
                 impl icu_provider::DataMarker for #marker_name {
-                    const INFO: icu_provider::DataMarkerInfo = icu_provider::DataMarkerInfo {
-                        path: icu_provider::data_marker_path!(#path_str),
-                        is_singleton: #singleton,
-                        fallback_config: {
-                            let mut config = icu_provider::_internal::LocaleFallbackConfig::const_default();
-                            config.priority = #fallback_by_expr;
-                            config.extension_key = #extension_key_expr;
-                            config.fallback_supplement = #fallback_supplement_expr;
-                            config
-                        }
+                    const INFO: icu_provider::DataMarkerInfo = {
+                        let mut info = icu_provider::DataMarkerInfo::from_path(icu_provider::data_marker_path!(#path_str));
+                        info.is_singleton = #singleton;
+                        info.fallback_config.priority = #fallback_by_expr;
+                        info.fallback_config.extension_key = #extension_key_expr;
+                        info.fallback_config.fallback_supplement = #fallback_supplement_expr;
+                        info
                     };
                 }
             ));

@@ -6,10 +6,7 @@
 
 use core::marker::PhantomData;
 
-use crate::{
-    data_marker_path, fallback::LocaleFallbackConfig, DataMarkerInfo, DataProvider,
-    DataProviderWithMarker,
-};
+use crate::{data_marker_path, DataMarkerInfo, DataProvider, DataProviderWithMarker};
 use yoke::Yokeable;
 
 /// Trait marker for data structs. All types delivered by the data provider must be associated with
@@ -147,11 +144,7 @@ impl<Y> DataMarker for NeverMarker<Y>
 where
     for<'a> Y: Yokeable<'a>,
 {
-    const INFO: DataMarkerInfo = DataMarkerInfo {
-        path: data_marker_path!("_never@1"),
-        is_singleton: false,
-        fallback_config: LocaleFallbackConfig::const_default(),
-    };
+    const INFO: DataMarkerInfo = DataMarkerInfo::from_path(data_marker_path!("_never@1"));
 }
 
 /// Implements `DataProvider<NeverMarker<Y>>` on a struct.

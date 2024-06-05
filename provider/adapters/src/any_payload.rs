@@ -41,11 +41,7 @@ use zerofrom::ZeroFrom;
 /// #     type Yokeable = <HelloWorldV1Marker as DynamicDataMarker>::Yokeable;
 /// # }
 /// # impl DataMarker for DummyMarker {
-/// #     const INFO: DataMarkerInfo = DataMarkerInfo {
-/// #         path: icu_provider::data_marker_path!("dummy@1"),
-/// #         is_singleton: false,
-/// #         fallback_config: icu_provider::_internal::LocaleFallbackConfig::const_default(),
-/// #     };
+/// #     const INFO: DataMarkerInfo = DataMarkerInfo::from_path(icu_provider::data_marker_path!("dummy@1"));
 /// # }
 /// // Requests for invalid markers get MissingDataMarker
 /// assert!(matches!(

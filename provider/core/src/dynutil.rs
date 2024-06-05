@@ -121,11 +121,7 @@ macro_rules! impl_casting_upcast {
 /// #     type Yokeable = <HelloWorldV1Marker as DynamicDataMarker>::Yokeable;
 /// # }
 /// # impl DataMarker for DummyMarker {
-/// #     const INFO: DataMarkerInfo = DataMarkerInfo {
-/// #         path: icu_provider::data_marker_path!("dummy@1"),
-/// #         is_singleton: false,
-/// #         fallback_config: icu_provider::_internal::LocaleFallbackConfig::const_default(),
-/// #     };
+/// #     const INFO: DataMarkerInfo = DataMarkerInfo::from_path(icu_provider::data_marker_path!("dummy@1"));
 /// # }
 /// // MissingDataMarker error as the marker does not match:
 /// assert_eq!(
@@ -173,11 +169,7 @@ macro_rules! impl_casting_upcast {
 ///     type Yokeable = <HelloWorldV1Marker as DynamicDataMarker>::Yokeable;
 /// }
 /// impl DataMarker for DummyMarker {
-///     const INFO: DataMarkerInfo = DataMarkerInfo {
-///         path: icu_provider::data_marker_path!("dummy@1"),
-///         is_singleton: false,
-///         fallback_config: icu_provider::_internal::LocaleFallbackConfig::const_default(),
-///     };
+///     const INFO: DataMarkerInfo = DataMarkerInfo::from_path(icu_provider::data_marker_path!("dummy@1"));
 /// }
 /// HelloWorldProvider.as_any_provider().load_any(DummyMarker::INFO, req).unwrap();
 /// ```

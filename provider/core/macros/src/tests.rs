@@ -62,16 +62,13 @@ fn test_data_marker() {
                 type Yokeable = FooV1;
             }
             impl icu_provider::DataMarker for BarV1Marker {
-                const INFO: icu_provider::DataMarkerInfo = icu_provider::DataMarkerInfo {
-                    path: icu_provider::data_marker_path!("demo/bar@1"),
-                    is_singleton: false,
-                    fallback_config: {
-                        let mut config = icu_provider::_internal::LocaleFallbackConfig::const_default();
-                        config.priority = icu_provider::_internal::LocaleFallbackPriority::const_default();
-                        config.extension_key = None;
-                        config.fallback_supplement = None;
-                        config
-                    }
+                const INFO: icu_provider::DataMarkerInfo = {
+                    let mut info = icu_provider::DataMarkerInfo::from_path(icu_provider::data_marker_path!("demo/bar@1"));
+                    info.is_singleton = false;
+                    info.fallback_config.priority = icu_provider::_internal::LocaleFallbackPriority::const_default();
+                    info.fallback_config.extension_key = None;
+                    info.fallback_config.fallback_supplement = None;
+                    info
                 };
             }
             #[derive(icu_provider::prelude::yoke::Yokeable, icu_provider::prelude::zerofrom::ZeroFrom)]
@@ -104,16 +101,13 @@ fn test_multi_named_keyed_data_marker() {
                 type Yokeable = FooV1<'static>;
             }
             impl icu_provider::DataMarker for BarV1Marker {
-                const INFO: icu_provider::DataMarkerInfo = icu_provider::DataMarkerInfo {
-                    path: icu_provider::data_marker_path!("demo/bar@1"),
-                    is_singleton: false,
-                    fallback_config: {
-                        let mut config = icu_provider::_internal::LocaleFallbackConfig::const_default();
-                        config.priority = icu_provider::_internal::LocaleFallbackPriority::const_default();
-                        config.extension_key = None;
-                        config.fallback_supplement = None;
-                        config
-                    }
+                const INFO: icu_provider::DataMarkerInfo = {
+                    let mut info = icu_provider::DataMarkerInfo::from_path(icu_provider::data_marker_path!("demo/bar@1"));
+                    info.is_singleton = false;
+                    info.fallback_config.priority = icu_provider::_internal::LocaleFallbackPriority::const_default();
+                    info.fallback_config.extension_key = None;
+                    info.fallback_config.fallback_supplement = None;
+                    info
                 };
             }
             #[doc = "Marker type for [`FooV1`]: \"demo/baz@1\"\n\n- Fallback priority: language (default)\n- Extension keyword: none (default)"]
@@ -122,16 +116,13 @@ fn test_multi_named_keyed_data_marker() {
                 type Yokeable = FooV1<'static>;
             }
             impl icu_provider::DataMarker for BazV1Marker {
-                const INFO: icu_provider::DataMarkerInfo = icu_provider::DataMarkerInfo {
-                    path: icu_provider::data_marker_path!("demo/baz@1"),
-                    is_singleton: false,
-                    fallback_config: {
-                        let mut config = icu_provider::_internal::LocaleFallbackConfig::const_default();
-                        config.priority = icu_provider::_internal::LocaleFallbackPriority::const_default();
-                        config.extension_key = None;
-                        config.fallback_supplement = None;
-                        config
-                    }
+                const INFO: icu_provider::DataMarkerInfo =  {
+                    let mut info = icu_provider::DataMarkerInfo::from_path(icu_provider::data_marker_path!("demo/baz@1"));
+                    info.is_singleton = false;
+                    info.fallback_config.priority = icu_provider::_internal::LocaleFallbackPriority::const_default();
+                    info.fallback_config.extension_key = None;
+                    info.fallback_config.fallback_supplement = None;
+                    info
                 };
             }
             #[derive(icu_provider::prelude::yoke::Yokeable, icu_provider::prelude::zerofrom::ZeroFrom)]
@@ -157,16 +148,13 @@ fn test_databake() {
                 type Yokeable = FooV1;
             }
             impl icu_provider::DataMarker for BarV1Marker {
-                const INFO: icu_provider::DataMarkerInfo = icu_provider::DataMarkerInfo {
-                    path: icu_provider::data_marker_path!("demo/bar@1"),
-                    is_singleton: false,
-                    fallback_config: {
-                        let mut config = icu_provider::_internal::LocaleFallbackConfig::const_default();
-                        config.priority = icu_provider::_internal::LocaleFallbackPriority::const_default();
-                        config.extension_key = None;
-                        config.fallback_supplement = None;
-                        config
-                    }
+                const INFO: icu_provider::DataMarkerInfo = {
+                    let mut info = icu_provider::DataMarkerInfo::from_path(icu_provider::data_marker_path!("demo/bar@1"));
+                    info.is_singleton = false;
+                    info.fallback_config.priority = icu_provider::_internal::LocaleFallbackPriority::const_default();
+                    info.fallback_config.extension_key = None;
+                    info.fallback_config.fallback_supplement = None;
+                    info
                 };
             }
             #[derive(icu_provider::prelude::yoke::Yokeable, icu_provider::prelude::zerofrom::ZeroFrom)]
@@ -206,16 +194,13 @@ fn test_attributes() {
                 type Yokeable = FooV1<'static>;
             }
             impl icu_provider::DataMarker for BarV1Marker {
-                const INFO: icu_provider::DataMarkerInfo = icu_provider::DataMarkerInfo {
-                    path: icu_provider::data_marker_path!("demo/bar@1"),
-                    is_singleton: true,
-                    fallback_config: {
-                        let mut config = icu_provider::_internal::LocaleFallbackConfig::const_default();
-                        config.priority = icu_provider::_internal::LocaleFallbackPriority::Region;
-                        config.extension_key = Some(icu_provider::_internal::locale_core::extensions::unicode::key!("ca"));
-                        config.fallback_supplement = Some(icu_provider::_internal::LocaleFallbackSupplement::Collation);
-                        config
-                    }
+                const INFO: icu_provider::DataMarkerInfo = {
+                    let mut info = icu_provider::DataMarkerInfo::from_path(icu_provider::data_marker_path!("demo/bar@1"));
+                    info.is_singleton = true;
+                    info.fallback_config.priority = icu_provider::_internal::LocaleFallbackPriority::Region;
+                    info.fallback_config.extension_key = Some(icu_provider::_internal::locale_core::extensions::unicode::key!("ca"));
+                    info.fallback_config.fallback_supplement = Some(icu_provider::_internal::LocaleFallbackSupplement::Collation);
+                    info
                 };
             }
             #[derive(icu_provider::prelude::yoke::Yokeable, icu_provider::prelude::zerofrom::ZeroFrom)]
