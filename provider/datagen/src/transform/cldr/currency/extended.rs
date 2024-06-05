@@ -42,7 +42,7 @@ impl DataProvider<CurrencyExtendedDataV1Marker> for crate::DatagenProvider {
             .numbers
             .currencies
             .get(&aux.to_unvalidated())
-            .ok_or(DataError::custom("remove"))?;
+            .ok_or(DataError::custom("No currency associated with the aux key"))?;
 
         let mut placeholders: BTreeMap<Count, String> = BTreeMap::new();
 
