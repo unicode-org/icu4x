@@ -1439,12 +1439,7 @@ mod tests {
         assert_eq!(is_break(AL, SP), false);
         assert_eq!(is_break(AL, ZW), false);
         // LB8
-        // LB8a
-        assert_eq!(is_break(ZWJ, AL), false);
-        // LB9
-        assert_eq!(is_break(AL, ZWJ), false);
-        assert_eq!(is_break(AL, CM), false);
-        assert_eq!(is_break(ID, ZWJ), false);
+        // LB8a and LB9 omitted: These are handled outside of the state table.
         // LB10
         assert_eq!(is_break(ZWJ, SP), false);
         assert_eq!(is_break(SP, CM), true);
