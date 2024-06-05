@@ -6,5 +6,7 @@
 
 #![warn(missing_docs)]
 
-pub mod duration;
+mod duration;
 pub mod options;
+
+pub use duration::{Duration, DurationSign};
