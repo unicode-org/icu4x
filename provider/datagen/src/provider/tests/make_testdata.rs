@@ -304,6 +304,7 @@ impl<F: Write + Send + Sync> DataExporter for PostcardTestingExporter<F> {
             If the new list is smaller, please update EXPECTED_VIOLATIONS in make-testdata.rs\n\
             If it is bigger and that was unexpected, please make sure the key remains zero-copy, or ask ICU4X team members if it is okay \
             to temporarily allow for this key to be allowlisted.\n\
+            Common cause: did you forget to add `serde(borrow)` to all of the fields in your data struct?\n\
             Expected:\n{EXPECTED_VIOLATIONS:?}\nFound:\n{violations:?}\nExpected (transient):\n{EXPECTED_TRANSIENT_VIOLATIONS:?}\nFound (transient):\n{transient_violations:?}"
         );
 
