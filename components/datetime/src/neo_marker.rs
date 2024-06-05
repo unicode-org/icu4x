@@ -1195,12 +1195,23 @@ impl_date_marker!(
     input_any_calendar_kind = yes,
 );
 
+/// Marker to indicate that the specific components being formatted
+/// will be provided at runtime.
+pub trait HasRuntimeComponents: private::Sealed {
+    /// The type of components that may be provided at runtime.
+    type ComponentsStruct: Into<NeoComponents>;
+}
+
 /// Marker for a date skeleton provided at runtime.
 #[derive(Debug)]
 #[allow(clippy::exhaustive_enums)] // empty enum
 pub enum NeoAnyDateMarker {}
 
 impl private::Sealed for NeoAnyDateMarker {}
+
+impl HasRuntimeComponents for NeoAnyDateMarker {
+    type ComponentsStruct = NeoDateComponents;
+}
 
 impl DateTimeNamesMarker for NeoAnyDateMarker {
     type YearNames = datetime_marker_helper!(@names/year, yes);
