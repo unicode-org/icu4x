@@ -1,0 +1,12 @@
+{
+  "patterns_config": {},
+  "other_pattern_config": {
+    "pattern_selection": "Standard",
+    "placeholder_index": null
+  },
+  "extended_placeholders": [
+    "unidad de cuenta europea (XBD)",
+    "unidad de cuenta europea (XBD)",
+    "unidades de cuenta europeas (XBD)"
+  ]
+}

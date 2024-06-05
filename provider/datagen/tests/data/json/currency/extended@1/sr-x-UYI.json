@@ -1,0 +1,13 @@
+{
+  "patterns_config": {},
+  "other_pattern_config": {
+    "pattern_selection": "Standard",
+    "placeholder_index": null
+  },
+  "extended_placeholders": [
+    "Уругвајски пезо ен унидадес индексадас",
+    "уругвајски пезо ен унидадес индексадес",
+    "уругвајска пезоса ен унидадес индексадеса",
+    "угвајских пезоса ен унидадес индексадеса"
+  ]
+}

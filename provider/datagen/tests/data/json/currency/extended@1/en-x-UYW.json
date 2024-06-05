@@ -1,0 +1,12 @@
+{
+  "patterns_config": {},
+  "other_pattern_config": {
+    "pattern_selection": "Standard",
+    "placeholder_index": null
+  },
+  "extended_placeholders": [
+    "Uruguayan Nominal Wage Index Unit",
+    "Uruguayan nominal wage index unit",
+    "Uruguayan nominal wage index units"
+  ]
+}

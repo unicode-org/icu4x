@@ -1,0 +1,15 @@
+{
+  "patterns_config": {},
+  "other_pattern_config": {
+    "pattern_selection": "Standard",
+    "placeholder_index": null
+  },
+  "extended_placeholders": [
+    "دينار صربي",
+    "دينار صربي",
+    "ديناران صربيان",
+    "دينارات صربية",
+    "دينارًا صربيًا",
+    "دينار صربي"
+  ]
+}

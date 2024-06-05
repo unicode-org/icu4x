@@ -1,0 +1,14 @@
+{
+  "patterns_config": {},
+  "other_pattern_config": {
+    "pattern_selection": "Standard",
+    "placeholder_index": null
+  },
+  "extended_placeholders": [
+    "Белорусский рубль (2000–2016)",
+    "белорусский рубль (2000–2016)",
+    "белорусских рубля (2000–2016)",
+    "белорусских рублей (2000–2016)",
+    "белорусского рубля (2000–2016)"
+  ]
+}

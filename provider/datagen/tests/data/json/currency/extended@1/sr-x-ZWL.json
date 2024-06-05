@@ -1,0 +1,13 @@
+{
+  "patterns_config": {},
+  "other_pattern_config": {
+    "pattern_selection": "Standard",
+    "placeholder_index": null
+  },
+  "extended_placeholders": [
+    "Зимбабвеански долар (2009)",
+    "зимбабвејски долар (2009)",
+    "зимбабвејска долара (2009)",
+    "зимбабвејских долара (2009)"
+  ]
+}

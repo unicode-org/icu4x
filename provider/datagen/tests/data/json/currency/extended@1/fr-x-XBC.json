@@ -1,0 +1,12 @@
+{
+  "patterns_config": {},
+  "other_pattern_config": {
+    "pattern_selection": "Standard",
+    "placeholder_index": null
+  },
+  "extended_placeholders": [
+    "unité de compte européenne (XBC)",
+    "unité de compte 9 européenne (UEC–9)",
+    "unités de compte 9 européennes (UEC–9)"
+  ]
+}

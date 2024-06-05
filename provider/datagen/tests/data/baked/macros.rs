@@ -134,6 +134,8 @@ pub use __impliterable_currency_essentials_v1 as impliterable_currency_essential
 mod currency_extended_v1;
 #[doc(inline)]
 pub use __impl_currency_extended_v1 as impl_currency_extended_v1;
+#[doc(inline)]
+pub use __impliterable_currency_extended_v1 as impliterable_currency_extended_v1;
 #[macro_use]
 #[path = "macros/datetime_buddhist_datelengths_v1.rs.data"]
 mod datetime_buddhist_datelengths_v1;

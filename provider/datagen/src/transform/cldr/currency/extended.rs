@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::provider::transform::cldr::cldr_serde;
-use crate::provider::IterableDataProviderInternal;
 use crate::DatagenProvider;
 
 use std::borrow::Cow;
@@ -40,16 +39,20 @@ impl DataProvider<CurrencyExtendedDataV1Marker> for crate::DatagenProvider {
 
         // let currencies = &currencies_resource.main.value.numbers.currencies;
 
+        let aux = req
+            .key_attributes
+            .parse::<TinyAsciiStr<3>>()
+            .map_err(|_| DataError::custom("failed to parse aux key into tinystr"))?;
         let usd = currencies_resource
             .main
             .value
             .numbers
             .currencies
-            .get(&tinystr!(3, "USD").to_unvalidated())
+            .get(&aux.to_unvalidated())
             .ok_or(DataError::custom("remove"))?;
 
         let extended_placeholders = vec![
-            usd.zero.as_deref(),
+            usd.display_name.as_deref(),
             usd.one.as_deref(),
             usd.two.as_deref(),
             usd.few.as_deref(),
@@ -80,18 +83,7 @@ impl DataProvider<CurrencyExtendedDataV1Marker> for crate::DatagenProvider {
 
 impl IterableDataProvider<CurrencyExtendedDataV1Marker> for DatagenProvider {
     fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
-        return Err(DataError::custom("not implemented"));
-
-        // Make a DataKeyAttributes from a currency code.
-        fn make_data_aux_attr(currency: &CurrencyCode) -> Result<DataKeyAttributes, DataError> {
-            Ok(
-                DataKeyAttributes::try_from_iter(currency.0.as_bytes().iter())
-                    .map_err(|_| DataError::custom("Failed to parse subtag"))?,
-            )
-        }
-
         let mut result = HashSet::new();
-
         let numbers = self.cldr()?.numbers();
         let langids = numbers.list_langs()?;
         for langid in langids {
@@ -101,8 +93,12 @@ impl IterableDataProvider<CurrencyExtendedDataV1Marker> for DatagenProvider {
                 .read_and_parse(&langid, "currencies.json")?;
 
             let currencies = &currencies_resource.main.value.numbers.currencies;
-            for (key, value) in currencies {
-                let attributes = make_data_aux_attr(&key.into())?;
+            for (key, _) in currencies {
+                let key = key
+                    .try_into_tinystr()
+                    .map_err(|_| DataError::custom("failed to parse currency code into tinystr"))?;
+
+                let attributes = DataKeyAttributes::from_tinystr(key.resize());
                 result.insert((DataLocale::from(&langid), attributes));
             }
         }

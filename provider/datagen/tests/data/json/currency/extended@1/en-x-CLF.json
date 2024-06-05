@@ -1,0 +1,12 @@
+{
+  "patterns_config": {},
+  "other_pattern_config": {
+    "pattern_selection": "Standard",
+    "placeholder_index": null
+  },
+  "extended_placeholders": [
+    "Chilean Unit of Account (UF)",
+    "Chilean unit of account (UF)",
+    "Chilean units of account (UF)"
+  ]
+}

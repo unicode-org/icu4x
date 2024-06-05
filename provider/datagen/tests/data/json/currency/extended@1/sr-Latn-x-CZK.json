@@ -1,0 +1,13 @@
+{
+  "patterns_config": {},
+  "other_pattern_config": {
+    "pattern_selection": "Standard",
+    "placeholder_index": null
+  },
+  "extended_placeholders": [
+    "češka kruna",
+    "češka kruna",
+    "češke krune",
+    "čeških kruna"
+  ]
+}
