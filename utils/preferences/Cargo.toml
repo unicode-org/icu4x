@@ -5,7 +5,7 @@
 [package]
 name = "icu_preferences"
 description = "API for resolving preferences"
-version = "0.0.1"
+version = "0.0.0"
 categories = ["internationalization"]
 license-file = "LICENSE"
 
