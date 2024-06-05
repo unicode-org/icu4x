@@ -9,7 +9,7 @@ use data_provider::{get_default_prefs, resolve_options};
 use icu_datetime::options::length;
 use icu_locale_core::extensions::unicode;
 use icu_preferences::{
-    extensions::unicode::{errors::Error, keywords},
+    extensions::unicode::{errors::PreferencesParseError, keywords},
     options, preferences,
     preferences::PreferenceKey,
 };
@@ -22,10 +22,10 @@ pub struct DatePattern(pub TinyAsciiStr<8>);
 impl preferences::PreferenceKey for DatePattern {}
 
 impl TryFrom<unicode::Value> for DatePattern {
-    type Error = Error;
+    type Error = PreferencesParseError;
 
     fn try_from(_: unicode::Value) -> Result<Self, Self::Error> {
-        Err(Error::UnknownKeyword)
+        Err(Self::Error::UnknownKeyword)
     }
 }
 

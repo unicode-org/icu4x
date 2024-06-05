@@ -4,7 +4,7 @@
 
 #[non_exhaustive]
 #[derive(Debug)]
-pub enum Error {
+pub enum PreferencesParseError {
     UnknownKeyword,
     InvalidKeywordValue,
 }

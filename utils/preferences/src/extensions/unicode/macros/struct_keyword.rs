@@ -9,7 +9,7 @@ macro_rules! struct_keyword {
         pub struct $name(pub $value);
 
         impl TryFrom<icu_locale_core::extensions::unicode::Value> for $name {
-            type Error = $crate::extensions::unicode::errors::Error;
+            type Error = $crate::extensions::unicode::errors::PreferencesParseError;
 
             fn try_from(
                 input: icu_locale_core::extensions::unicode::Value,
@@ -58,7 +58,7 @@ mod tests {
                         return Ok(DummyKeyword(subtag));
                     }
                 }
-                Err(crate::extensions::unicode::errors::Error::InvalidKeywordValue)
+                Err(crate::extensions::unicode::errors::PreferencesParseError::InvalidKeywordValue)
             },
             |input: DummyKeyword| { unicode::Value::from_subtag(Some(input.0)) }
         );

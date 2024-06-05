@@ -19,7 +19,7 @@ macro_rules! enum_keyword_inner {
 #[macro_export]
 macro_rules! enum_keyword {
     ($name:ident {
-        $($key:expr => $variant:ident $([$v2:ident] {$($subk:expr => $subv:ident),*})?),* $(,)?
+        $($key:expr => $variant:ident $(($v2:ident) {$($subk:expr => $subv:ident),*})?),* $(,)?
     }) => {
         #[non_exhaustive]
         #[derive(Debug, Clone, Eq, PartialEq)]
@@ -53,7 +53,7 @@ macro_rules! enum_keyword {
         }
 
         impl TryFrom<icu_locale_core::extensions::unicode::Value> for $name {
-            type Error = $crate::extensions::unicode::errors::Error;
+            type Error = $crate::extensions::unicode::errors::PreferencesParseError;
 
             fn try_from(mut s: icu_locale_core::extensions::unicode::Value) -> Result<Self, Self::Error> {
                 let first_subtag = s.get_subtag(0).unwrap();
@@ -80,9 +80,9 @@ macro_rules! enum_keyword {
         }
     };
     ($name:ident {
-        $($key:expr => $variant:ident $([$v2:ident] {$($subk:expr => $subv:ident),*})?),* $(,)?
+        $($key:expr => $variant:ident $(($v2:ident) {$($subk:expr => $subv:ident),*})?),* $(,)?
     }, $ext_key:literal) => {
-        $crate::enum_keyword!($name {$($key => $variant $([$v2] {$($subk => $subv),*})?),*});
+        $crate::enum_keyword!($name {$($key => $variant $(($v2) {$($subk => $subv),*})?),*});
 
         impl $crate::preferences::PreferenceKey for $name {
             fn unicode_extension_key() -> Option<icu_locale_core::extensions::unicode::Key> {
@@ -136,7 +136,7 @@ mod tests {
 
         enum_keyword!(DummyKeyword {
             "default" => Default,
-            "sub" => Sub[DummySubKeyword] {
+            "sub" => Sub(DummySubKeyword) {
                 "standard" => Standard,
                 "rare" => Rare
             }

@@ -4,7 +4,7 @@
 
 use core::ops::Deref;
 
-use crate::extensions::unicode::errors::Error;
+use crate::extensions::unicode::errors::PreferencesParseError;
 use crate::struct_keyword;
 use icu_locale_core::{
     extensions::unicode::{SubdivisionId, Value},
@@ -19,7 +19,7 @@ struct_keyword!(
         input
             .into_single_subtag()
             .and_then(|subtag| subtag.as_str().parse().ok().map(Self))
-            .ok_or(Error::InvalidKeywordValue)
+            .ok_or(PreferencesParseError::InvalidKeywordValue)
     },
     |input: RegionalSubdivision| {
         Value::from_subtag(Some(

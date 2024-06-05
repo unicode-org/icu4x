@@ -24,7 +24,7 @@ enum_keyword!(Calendar {
     "gregory" => Gregory,
     "hebrew" => Hebrew,
     "indian" => Indian,
-    "islamic" => Islamic[IslamicCalendar] {
+    "islamic" => Islamic(IslamicCalendar) {
         "umalqura" => Umalqura,
         "tbla" => Tbla,
         "civil" => Civil,
