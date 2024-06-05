@@ -436,6 +436,10 @@ impl<C: CldrCalendar, R: TypedDateTimeMarkers<C> + HasRuntimeComponents> TypedNe
     /// If you know the datetime components at build time, use
     /// [`TypedNeoFormatter::try_new`] for smaller data size and memory use.
     ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    ///
     /// # Examples
     ///
     /// Date components:
@@ -916,6 +920,10 @@ impl<R: DateTimeMarkers + HasRuntimeComponents> NeoFormatter<R> {
     ///
     /// If you know the datetime components at build time, use
     /// [`NeoFormatter::try_new`] for smaller data size and memory use.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
     ///
     /// # Examples
     ///
