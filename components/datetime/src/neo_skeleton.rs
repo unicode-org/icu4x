@@ -801,6 +801,18 @@ pub enum NeoComponents {
     DateTime(NeoDayComponents, NeoTimeComponents),
 }
 
+impl From<NeoDateComponents> for NeoComponents {
+    fn from(value: NeoDateComponents) -> Self {
+        Self::Date(value)
+    }
+}
+
+impl From<NeoTimeComponents> for NeoComponents {
+    fn from(value: NeoTimeComponents) -> Self {
+        Self::Time(value)
+    }
+}
+
 /// Specification of the time zone display style
 #[derive(Debug, Copy, Clone, Default)]
 #[non_exhaustive]
