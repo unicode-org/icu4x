@@ -493,6 +493,37 @@ impl<C: CldrCalendar, R: TypedDateTimeMarkers<C> + HasRuntimeComponents> TypedNe
     ///     "04 p.m."
     /// );
     /// ```
+    ///
+    /// Date and time components:
+    ///
+    /// ```
+    /// use icu::calendar::DateTime;
+    /// use icu::calendar::Gregorian;
+    /// use icu::datetime::neo::TypedNeoFormatter;
+    /// use icu::datetime::neo_marker::NeoAnyDateTimeMarker;
+    /// use icu::datetime::neo_skeleton::NeoDayComponents;
+    /// use icu::datetime::neo_skeleton::NeoTimeComponents;
+    /// use icu::datetime::neo_skeleton::NeoComponents;
+    /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
+    /// use icu::locale::locale;
+    /// use writeable::assert_try_writeable_eq;
+    ///
+    /// let fmt = TypedNeoFormatter::<Gregorian, NeoAnyDateTimeMarker>::try_new_with_components(
+    ///     &locale!("es-MX").into(),
+    ///     NeoComponents::DateTime(
+    ///         NeoDayComponents::Weekday,
+    ///         NeoTimeComponents::HourMinute,
+    ///     ),
+    ///     NeoSkeletonLength::Long,
+    /// )
+    /// .unwrap();
+    /// let dt = DateTime::try_new_gregorian_datetime(2024, 1, 10, 16, 20, 0).unwrap();
+    ///
+    /// assert_try_writeable_eq!(
+    ///     fmt.format(&dt),
+    ///     "miércoles, 04:20 p.m."
+    /// );
+    /// ```
     #[cfg(feature = "compiled_data")]
     pub fn try_new_with_components(
         locale: &DataLocale,
@@ -974,6 +1005,36 @@ impl<R: DateTimeMarkers + HasRuntimeComponents> NeoFormatter<R> {
     /// assert_try_writeable_eq!(
     ///     fmt.convert_and_format(&dt),
     ///     "04 p.m."
+    /// );
+    /// ```
+    ///
+    /// Date and time components:
+    ///
+    /// ```
+    /// use icu::calendar::DateTime;
+    /// use icu::datetime::neo::NeoFormatter;
+    /// use icu::datetime::neo_marker::NeoAnyDateTimeMarker;
+    /// use icu::datetime::neo_skeleton::NeoDayComponents;
+    /// use icu::datetime::neo_skeleton::NeoTimeComponents;
+    /// use icu::datetime::neo_skeleton::NeoComponents;
+    /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
+    /// use icu::locale::locale;
+    /// use writeable::assert_try_writeable_eq;
+    ///
+    /// let fmt = NeoFormatter::<NeoAnyDateTimeMarker>::try_new_with_components(
+    ///     &locale!("es-MX").into(),
+    ///     NeoComponents::DateTime(
+    ///         NeoDayComponents::Weekday,
+    ///         NeoTimeComponents::HourMinute,
+    ///     ),
+    ///     NeoSkeletonLength::Long,
+    /// )
+    /// .unwrap();
+    /// let dt = DateTime::try_new_iso_datetime(2024, 1, 10, 16, 20, 0).unwrap();
+    ///
+    /// assert_try_writeable_eq!(
+    ///     fmt.convert_and_format(&dt),
+    ///     "miércoles, 04:20 p.m."
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
