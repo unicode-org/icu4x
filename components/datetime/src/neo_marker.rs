@@ -1202,7 +1202,7 @@ pub trait HasRuntimeComponents: private::Sealed {
     type ComponentsStruct: Into<NeoComponents>;
 }
 
-/// Marker for a date skeleton provided at runtime.
+/// Marker for date components provided at runtime.
 #[derive(Debug)]
 #[allow(clippy::exhaustive_enums)] // empty enum
 pub enum NeoAnyDateMarker {}
@@ -1256,5 +1256,44 @@ impl<C: CldrCalendar> TypedDateTimeMarkers<C> for NeoAnyDateMarker {
 impl DateTimeMarkers for NeoAnyDateMarker {
     type D = Self;
     type T = NeoNeverMarker;
+    type DateTimePatternV1Marker = datetime_marker_helper!(@datetimes, no);
+}
+
+/// Marker for time components provided at runtime.
+#[derive(Debug)]
+#[allow(clippy::exhaustive_enums)] // empty enum
+pub enum NeoAnyTimeMarker {}
+
+impl private::Sealed for NeoAnyTimeMarker {}
+
+impl HasRuntimeComponents for NeoAnyTimeMarker {
+    type ComponentsStruct = NeoTimeComponents;
+}
+
+impl DateTimeNamesMarker for NeoAnyTimeMarker {
+    type YearNames = datetime_marker_helper!(@names/year, no);
+    type MonthNames = datetime_marker_helper!(@names/month, no);
+    type WeekdayNames = datetime_marker_helper!(@names/weekday, no);
+    type DayPeriodNames = datetime_marker_helper!(@names/dayperiod, yes);
+}
+
+impl TimeMarkers for NeoAnyTimeMarker {
+    type DayPeriodNamesV1Marker = datetime_marker_helper!(@dayperiods, yes);
+    type TimeSkeletonPatternsV1Marker = datetime_marker_helper!(@times, yes);
+    type HourInput = datetime_marker_helper!(@input/hour, yes);
+    type MinuteInput = datetime_marker_helper!(@input/minute, yes);
+    type SecondInput = datetime_marker_helper!(@input/second, yes);
+    type NanoSecondInput = datetime_marker_helper!(@input/nanosecond, yes);
+}
+
+impl<C: CldrCalendar> TypedDateTimeMarkers<C> for NeoAnyTimeMarker {
+    type D = NeoNeverMarker;
+    type T = Self;
+    type DateTimePatternV1Marker = datetime_marker_helper!(@datetimes, no);
+}
+
+impl DateTimeMarkers for NeoAnyTimeMarker {
+    type D = NeoNeverMarker;
+    type T = Self;
     type DateTimePatternV1Marker = datetime_marker_helper!(@datetimes, no);
 }

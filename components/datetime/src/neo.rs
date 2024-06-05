@@ -436,6 +436,10 @@ impl<C: CldrCalendar, R: TypedDateTimeMarkers<C> + HasRuntimeComponents> TypedNe
     /// If you know the datetime components at build time, use
     /// [`TypedNeoFormatter::try_new`] for smaller data size and memory use.
     ///
+    /// # Examples
+    ///
+    /// Date components:
+    ///
     /// ```
     /// use icu::calendar::Date;
     /// use icu::calendar::Gregorian;
@@ -457,6 +461,32 @@ impl<C: CldrCalendar, R: TypedDateTimeMarkers<C> + HasRuntimeComponents> TypedNe
     /// assert_try_writeable_eq!(
     ///     fmt.format(&dt),
     ///     "ene 2024 d.C."
+    /// );
+    /// ```
+    ///
+    /// Time components:
+    ///
+    /// ```
+    /// use icu::calendar::Time;
+    /// use icu::calendar::Gregorian;
+    /// use icu::datetime::neo::TypedNeoFormatter;
+    /// use icu::datetime::neo_marker::NeoAnyTimeMarker;
+    /// use icu::datetime::neo_skeleton::NeoTimeComponents;
+    /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
+    /// use icu::locale::locale;
+    /// use writeable::assert_try_writeable_eq;
+    ///
+    /// let fmt = TypedNeoFormatter::<Gregorian, NeoAnyTimeMarker>::try_new_with_components(
+    ///     &locale!("es-MX").into(),
+    ///     NeoTimeComponents::Hour,
+    ///     NeoSkeletonLength::Medium,
+    /// )
+    /// .unwrap();
+    /// let dt = Time::try_new(16, 20, 0, 0).unwrap();
+    ///
+    /// assert_try_writeable_eq!(
+    ///     fmt.format(&dt),
+    ///     "04 p.m."
     /// );
     /// ```
     pub fn try_new_with_components(
@@ -886,6 +916,10 @@ impl<R: DateTimeMarkers + HasRuntimeComponents> NeoFormatter<R> {
     /// If you know the datetime components at build time, use
     /// [`NeoFormatter::try_new`] for smaller data size and memory use.
     ///
+    /// # Examples
+    ///
+    /// Date components:
+    ///
     /// ```
     /// use icu::calendar::Date;
     /// use icu::datetime::neo::NeoFormatter;
@@ -906,6 +940,31 @@ impl<R: DateTimeMarkers + HasRuntimeComponents> NeoFormatter<R> {
     /// assert_try_writeable_eq!(
     ///     fmt.convert_and_format(&dt),
     ///     "ene 2024 d.C."
+    /// );
+    /// ```
+    ///
+    /// Time components:
+    ///
+    /// ```
+    /// use icu::calendar::Time;
+    /// use icu::datetime::neo::NeoFormatter;
+    /// use icu::datetime::neo_marker::NeoAnyTimeMarker;
+    /// use icu::datetime::neo_skeleton::NeoTimeComponents;
+    /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
+    /// use icu::locale::locale;
+    /// use writeable::assert_try_writeable_eq;
+    ///
+    /// let fmt = NeoFormatter::<NeoAnyTimeMarker>::try_new_with_components(
+    ///     &locale!("es-MX").into(),
+    ///     NeoTimeComponents::Hour,
+    ///     NeoSkeletonLength::Medium,
+    /// )
+    /// .unwrap();
+    /// let dt = Time::try_new(16, 20, 0, 0).unwrap();
+    ///
+    /// assert_try_writeable_eq!(
+    ///     fmt.convert_and_format(&dt),
+    ///     "04 p.m."
     /// );
     /// ```
     pub fn try_new_with_components(locale: &DataLocale, date_components: R::ComponentsStruct, length: NeoSkeletonLength) -> Result<Self, LoadError>
