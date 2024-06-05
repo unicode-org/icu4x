@@ -41,6 +41,7 @@ log = { workspace = true }
 memchr = { workspace = true }
 rayon = { workspace = true, optional = true }
 writeable = { workspace = true }
+icu_registry = { workspace = true }
 
 # Exporters
 icu_provider_blob = { workspace = true, features = ["export"], optional = true }

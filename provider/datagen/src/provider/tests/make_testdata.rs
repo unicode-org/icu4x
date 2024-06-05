@@ -229,7 +229,7 @@ impl<F: Write + Send + Sync> DataExporter for PostcardTestingExporter<F> {
                 };
             }
         }
-        crate::registry!(cb);
+        icu_registry::registry!(cb);
 
         if payload_before != &payload_after {
             self.rountrip_errors.lock().expect("poison").insert((
