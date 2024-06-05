@@ -12,7 +12,9 @@ use crate::format::neo::*;
 use crate::input::ExtractedDateTimeInput;
 use crate::input::{DateInput, DateTimeInput, IsoTimeInput};
 use crate::neo_marker::{
-    ConvertCalendar, DateMarkers, DateTimeMarkers, IsAnyCalendarKind, NeoAnyDateMarker, NeoFormatterMarker, NeoGetField, TimeMarkers, TypedDateMarkers, TypedDateTimeMarkers, TypedNeoFormatterMarker
+    ConvertCalendar, DateMarkers, DateTimeMarkers, IsAnyCalendarKind, NeoAnyDateMarker,
+    NeoFormatterMarker, NeoGetField, TimeMarkers, TypedDateMarkers, TypedDateTimeMarkers,
+    TypedNeoFormatterMarker,
 };
 use crate::neo_pattern::DateTimePattern;
 use crate::neo_skeleton::{NeoComponents, NeoDateComponents, NeoSkeletonLength};
@@ -332,7 +334,13 @@ pub struct TypedNeoFormatter<C: CldrCalendar, R: DateTimeNamesMarker> {
 }
 
 impl<C: CldrCalendar, R: TypedNeoFormatterMarker<C>> TypedNeoFormatter<C, R> {
-    /// Creates a [`TypedNeoFormatter`] for a date skeleton.
+    /// Creates a new [`TypedNeoFormatter`] from compiled data with
+    /// datetime components specified at build time.
+    ///
+    /// Use this constructor for optimal data size and memory use
+    /// if you know the required datetime components at build time.
+    /// If you do not know the datetime components until runtime,
+    /// use a `with_components` constructor.
     ///
     /// # Examples
     ///
@@ -411,23 +419,33 @@ impl<C: CldrCalendar, R: TypedNeoFormatterMarker<C>> TypedNeoFormatter<C, R> {
             // WeekCalculator keys
             + DataProvider<WeekDataV2Marker>,
     {
-        Self::try_new_internal(provider, &ExternalLoaderUnstable(provider), locale, R::COMPONENTS, length)
+        Self::try_new_internal(
+            provider,
+            &ExternalLoaderUnstable(provider),
+            locale,
+            R::COMPONENTS,
+            length,
+        )
     }
 }
 
 impl<C: CldrCalendar> TypedNeoFormatter<C, NeoAnyDateMarker> {
+    /// Creates a new [`TypedNeoFormatter`] from compiled data with
+    /// date components specified at runtime.
+    ///
+    /// If you know the date components at build time, use
+    /// [`TypedNeoFormatter::try_new`] for smaller data size and memory use.
     ///
     /// ```
     /// use icu::calendar::Date;
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::neo::TypedNeoFormatter;
-    /// use icu::datetime::neo_marker::NeoAnyDateMarker;
     /// use icu::datetime::neo_skeleton::NeoDateComponents;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let fmt = TypedNeoFormatter::<Gregorian, NeoAnyDateMarker>::try_new_with_date_components(
+    /// let fmt = TypedNeoFormatter::<Gregorian, _>::try_new_with_date_components(
     ///     &locale!("es-MX").into(),
     ///     NeoDateComponents::EraYearMonth,
     ///     NeoSkeletonLength::Medium,
@@ -440,14 +458,18 @@ impl<C: CldrCalendar> TypedNeoFormatter<C, NeoAnyDateMarker> {
     ///     "ene 2024 d.C."
     /// );
     /// ```
-    pub fn try_new_with_date_components(locale: &DataLocale, date_components: NeoDateComponents, length: NeoSkeletonLength) -> Result<Self, LoadError>
+    pub fn try_new_with_date_components(
+        locale: &DataLocale,
+        date_components: NeoDateComponents,
+        length: NeoSkeletonLength,
+    ) -> Result<Self, LoadError>
     where
-    crate::provider::Baked: Sized
-    // Date formatting keys
-    + DataProvider<<NeoAnyDateMarker as TypedDateMarkers<C>>::YearNamesV1Marker>
-    + DataProvider<<NeoAnyDateMarker as TypedDateMarkers<C>>::MonthNamesV1Marker>
-    + DataProvider<<NeoAnyDateMarker as TypedDateMarkers<C>>::DateSkeletonPatternsV1Marker>
-    + DataProvider<<NeoAnyDateMarker as TypedDateMarkers<C>>::WeekdayNamesV1Marker>
+        crate::provider::Baked: Sized
+            // Date formatting keys
+            + DataProvider<<NeoAnyDateMarker as TypedDateMarkers<C>>::YearNamesV1Marker>
+            + DataProvider<<NeoAnyDateMarker as TypedDateMarkers<C>>::MonthNamesV1Marker>
+            + DataProvider<<NeoAnyDateMarker as TypedDateMarkers<C>>::DateSkeletonPatternsV1Marker>
+            + DataProvider<<NeoAnyDateMarker as TypedDateMarkers<C>>::WeekdayNamesV1Marker>,
     {
         Self::try_new_internal(
             &crate::provider::Baked,
@@ -603,10 +625,16 @@ pub struct NeoFormatter<R: DateTimeNamesMarker> {
 }
 
 impl<R: NeoFormatterMarker> NeoFormatter<R> {
-    /// Construct a new [`NeoFormatter`] from compiled data.
+    /// Creates a new [`NeoFormatter`] from compiled data with
+    /// datetime components specified at build time.
     ///
     /// This method will pick the calendar off of the locale; and if unspecified or unknown will fall back to the default
     /// calendar for the locale. See [`AnyCalendarKind`] for a list of supported calendars.
+    ///
+    /// Use this constructor for optimal data size and memory use
+    /// if you know the required datetime components at build time.
+    /// If you do not know the datetime components until runtime,
+    /// use a `with_components` constructor.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
@@ -797,22 +825,32 @@ impl<R: NeoFormatterMarker> NeoFormatter<R> {
     // WeekCalculator keys
             + DataProvider<WeekDataV2Marker>,
     {
-        Self::try_new_internal(provider, &ExternalLoaderUnstable(provider), locale, R::COMPONENTS, length)
+        Self::try_new_internal(
+            provider,
+            &ExternalLoaderUnstable(provider),
+            locale,
+            R::COMPONENTS,
+            length,
+        )
     }
 }
 
 impl NeoFormatter<NeoAnyDateMarker> {
+    /// Creates a new [`NeoFormatter`] from compiled data with
+    /// date components specified at runtime.
+    ///
+    /// If you know the date components at build time, use
+    /// [`NeoFormatter::try_new`] for smaller data size and memory use.
     ///
     /// ```
     /// use icu::calendar::Date;
     /// use icu::datetime::neo::NeoFormatter;
-    /// use icu::datetime::neo_marker::NeoAnyDateMarker;
     /// use icu::datetime::neo_skeleton::NeoDateComponents;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let fmt = NeoFormatter::<NeoAnyDateMarker>::try_new_with_date_components(
+    /// let fmt = NeoFormatter::try_new_with_date_components(
     ///     &locale!("es-MX").into(),
     ///     NeoDateComponents::EraYearMonth,
     ///     NeoSkeletonLength::Medium,

@@ -548,7 +548,7 @@ impl<D, T> private::Sealed for DateTimeCombo<D, T> {}
 
 impl<D> DateTimeNamesMarker for DateTimeCombo<D, NeoNeverMarker>
 where
-    D: DateTimeNamesMarker
+    D: DateTimeNamesMarker,
 {
     type YearNames = D::YearNames;
     type MonthNames = D::MonthNames;
@@ -590,7 +590,7 @@ where
 
 impl<T> DateTimeNamesMarker for DateTimeCombo<NeoNeverMarker, T>
 where
-    T: DateTimeNamesMarker
+    T: DateTimeNamesMarker,
 {
     type YearNames = ();
     type MonthNames = ();
@@ -633,7 +633,7 @@ where
 impl<D, T> DateTimeNamesMarker for DateTimeCombo<D, T>
 where
     D: DateTimeNamesMarker,
-    T: DateTimeNamesMarker
+    T: DateTimeNamesMarker,
 {
     type YearNames = D::YearNames;
     type MonthNames = D::MonthNames;
