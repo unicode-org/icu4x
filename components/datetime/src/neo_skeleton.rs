@@ -883,7 +883,9 @@ impl NeoDateSkeleton {
         Self { length, components }
     }
 
-    pub(crate) fn day_from_date_length(
+    /// Converts a [`length::Date`] to a [`NeoDayComponents`] and [`NeoSkeletonLength`].
+    #[doc(hidden)] // the types involved in this mapping may change
+    pub fn day_from_date_length(
         date_length: length::Date,
     ) -> (NeoDayComponents, NeoSkeletonLength) {
         match date_length {

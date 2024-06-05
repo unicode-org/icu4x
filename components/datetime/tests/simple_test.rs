@@ -6,7 +6,7 @@ use icu_calendar::DateTime;
 use icu_datetime::neo::TypedNeoFormatter;
 use icu_datetime::neo_marker::{NeoAnyDateMarker, NeoAnyDateTimeMarker};
 use icu_datetime::neo_skeleton::{
-    NeoComponents, NeoDateComponents, NeoDayComponents, NeoSkeletonLength, NeoTimeComponents,
+    NeoComponents, NeoDateComponents, NeoDateSkeleton, NeoTimeComponents,
 };
 use icu_datetime::options::length;
 use icu_datetime::{DateTimeFormatterOptions, TypedDateTimeFormatter};
@@ -71,16 +71,15 @@ const EXPECTED_DATE: &[&str] = &[
 fn neo_datetime_lengths() {
     let datetime = DateTime::try_new_gregorian_datetime(2023, 12, 22, 21, 22, 53).unwrap();
     let mut expected_iter = EXPECTED_DATETIME.iter();
-    for (day_components, length) in [
-        (NeoDayComponents::AutoWeekday, NeoSkeletonLength::Long),
-        (NeoDayComponents::Auto, NeoSkeletonLength::Long),
-        (NeoDayComponents::Auto, NeoSkeletonLength::Medium),
-        (NeoDayComponents::Auto, NeoSkeletonLength::Short),
+    for date_length in [
+        length::Date::Full,
+        length::Date::Long,
+        length::Date::Medium,
+        length::Date::Short,
     ] {
-        for time_components in [
-            NeoTimeComponents::HourMinuteSecond,
-            NeoTimeComponents::HourMinute,
-        ] {
+        let (day_components, length) = NeoDateSkeleton::day_from_date_length(date_length);
+        for time_length in [length::Time::Medium, length::Time::Short] {
+            let time_components = NeoTimeComponents::from_time_length(time_length);
             for locale in [
                 locale!("en").into(),
                 locale!("fr").into(),
@@ -111,12 +110,13 @@ fn neo_datetime_lengths() {
 fn neo_date_lengths() {
     let datetime = DateTime::try_new_gregorian_datetime(2023, 12, 22, 21, 22, 53).unwrap();
     let mut expected_iter = EXPECTED_DATE.iter();
-    for (day_components, length) in [
-        (NeoDayComponents::AutoWeekday, NeoSkeletonLength::Long),
-        (NeoDayComponents::Auto, NeoSkeletonLength::Long),
-        (NeoDayComponents::Auto, NeoSkeletonLength::Medium),
-        (NeoDayComponents::Auto, NeoSkeletonLength::Short),
+    for date_length in [
+        length::Date::Full,
+        length::Date::Long,
+        length::Date::Medium,
+        length::Date::Short,
     ] {
+        let (day_components, length) = NeoDateSkeleton::day_from_date_length(date_length);
         for locale in [
             locale!("en").into(),
             locale!("fr").into(),
