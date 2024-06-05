@@ -3,7 +3,11 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_calendar::DateTime;
-use icu_datetime::neo::TypedNeoDateTimeFormatter;
+use icu_datetime::neo::TypedNeoFormatter;
+use icu_datetime::neo_marker::{NeoAnyDateMarker, NeoAnyDateTimeMarker};
+use icu_datetime::neo_skeleton::{
+    NeoComponents, NeoDateComponents, NeoDayComponents, NeoSkeletonLength, NeoTimeComponents,
+};
 use icu_datetime::options::length;
 use icu_datetime::{DateTimeFormatterOptions, TypedDateTimeFormatter};
 use icu_locale_core::locale;
@@ -67,32 +71,36 @@ const EXPECTED_DATE: &[&str] = &[
 fn neo_datetime_lengths() {
     let datetime = DateTime::try_new_gregorian_datetime(2023, 12, 22, 21, 22, 53).unwrap();
     let mut expected_iter = EXPECTED_DATETIME.iter();
-    for date_length in [
-        length::Date::Full,
-        length::Date::Long,
-        length::Date::Medium,
-        length::Date::Short,
+    for (day_components, length) in [
+        (NeoDayComponents::AutoWeekday, NeoSkeletonLength::Long),
+        (NeoDayComponents::Auto, NeoSkeletonLength::Long),
+        (NeoDayComponents::Auto, NeoSkeletonLength::Medium),
+        (NeoDayComponents::Auto, NeoSkeletonLength::Short),
     ] {
-        for time_length in [length::Time::Medium, length::Time::Short] {
+        for time_components in [
+            NeoTimeComponents::HourMinuteSecond,
+            NeoTimeComponents::HourMinute,
+        ] {
             for locale in [
                 locale!("en").into(),
                 locale!("fr").into(),
                 locale!("zh").into(),
                 locale!("hi").into(),
             ] {
-                let formatter = TypedNeoDateTimeFormatter::try_new_with_lengths(
-                    &locale,
-                    date_length,
-                    time_length,
-                )
-                .unwrap();
+                let formatter =
+                    TypedNeoFormatter::<_, NeoAnyDateTimeMarker>::try_new_with_components(
+                        &locale,
+                        NeoComponents::DateTime(day_components, time_components),
+                        length,
+                    )
+                    .unwrap();
                 let formatted = formatter.format(&datetime);
                 let expected = expected_iter.next().unwrap();
                 assert_try_writeable_eq!(
                     formatted,
                     *expected,
                     Ok(()),
-                    "{date_length:?} {time_length:?} {locale:?}"
+                    "{day_components:?} {time_components:?} {length:?} {locale:?}"
                 );
             }
         }
@@ -103,11 +111,11 @@ fn neo_datetime_lengths() {
 fn neo_date_lengths() {
     let datetime = DateTime::try_new_gregorian_datetime(2023, 12, 22, 21, 22, 53).unwrap();
     let mut expected_iter = EXPECTED_DATE.iter();
-    for date_length in [
-        length::Date::Full,
-        length::Date::Long,
-        length::Date::Medium,
-        length::Date::Short,
+    for (day_components, length) in [
+        (NeoDayComponents::AutoWeekday, NeoSkeletonLength::Long),
+        (NeoDayComponents::Auto, NeoSkeletonLength::Long),
+        (NeoDayComponents::Auto, NeoSkeletonLength::Medium),
+        (NeoDayComponents::Auto, NeoSkeletonLength::Short),
     ] {
         for locale in [
             locale!("en").into(),
@@ -115,11 +123,20 @@ fn neo_date_lengths() {
             locale!("zh").into(),
             locale!("hi").into(),
         ] {
-            let formatter =
-                TypedNeoDateTimeFormatter::try_new_with_date_length(&locale, date_length).unwrap();
+            let formatter = TypedNeoFormatter::<_, NeoAnyDateMarker>::try_new_with_components(
+                &locale,
+                NeoDateComponents::Day(day_components),
+                length,
+            )
+            .unwrap();
             let formatted = formatter.format(&datetime);
             let expected = expected_iter.next().unwrap();
-            assert_try_writeable_eq!(formatted, *expected, Ok(()), "{date_length:?} {locale:?}");
+            assert_try_writeable_eq!(
+                formatted,
+                *expected,
+                Ok(()),
+                "{day_components:?} {length:?} {locale:?}"
+            );
         }
     }
 }
