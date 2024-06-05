@@ -83,7 +83,7 @@ This crate also contains a concrete provider for demonstration purposes:
 ### Types and Lifetimes
 
 Types compatible with [`Yokeable`] can be passed through the data provider, so long as they are
-associated with a marker type implementing [`DynamicDataMarker`].
+associated with a marker type implementing [`DynDataMarker`].
 
 Data structs should generally have one lifetime argument: `'data`. This lifetime allows data
 structs to borrow zero-copy data.

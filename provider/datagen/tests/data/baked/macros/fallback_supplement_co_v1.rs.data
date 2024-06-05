@@ -11,7 +11,7 @@ macro_rules! __impl_fallback_supplement_co_v1 {
         #[clippy::msrv = "1.70"]
         impl $provider {
             #[doc(hidden)]
-            pub const SINGLETON_FALLBACK_SUPPLEMENT_CO_V1: &'static <icu::locale::provider::CollationFallbackSupplementV1Marker as icu_provider::DynamicDataMarker>::Yokeable = &icu::locale::provider::LocaleFallbackSupplementV1 {
+            pub const SINGLETON_FALLBACK_SUPPLEMENT_CO_V1: &'static <icu::locale::provider::CollationFallbackSupplementV1Marker as icu_provider::DynDataMarker>::Yokeable = &icu::locale::provider::LocaleFallbackSupplementV1 {
                 parents: unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x08\0\0\0\0\0\n\0\x11\0\x14\0\x1A\0\"\0-\x005\0sr-Cyrl-MEsr-Latnyueyue-CNyue-Hansyue-Hans-CNyue-Hantzh-Hant") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"sr\0\0\0\0\0\0\x01ME\0sr\0\0\0\0\0\0\0\0\0\0zh\0\x01Hant\0\0\0\0zh\0\x01Hans\0\0\0\0zh\0\x01Hans\0\0\0\0zh\0\x01Hans\0\0\0\0zh\0\x01Hant\0\0\0\0zh\0\0\0\0\0\0\0\0\0\0") })

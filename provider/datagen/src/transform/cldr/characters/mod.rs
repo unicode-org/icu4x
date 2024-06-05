@@ -14,7 +14,7 @@ use icu_provider::prelude::*;
 use itertools::Itertools;
 
 #[derive(Debug)]
-struct AnnotatedResource<'a, M: DynamicDataMarker>(
+struct AnnotatedResource<'a, M: DynDataMarker>(
     &'a cldr_serde::exemplar_chars::Resource,
     PhantomData<M>,
 );

@@ -11,11 +11,11 @@ macro_rules! __impl_datetime_symbols_indian_years_v1 {
         #[clippy::msrv = "1.70"]
         impl icu_provider::DataProvider<icu::datetime::provider::neo::IndianYearNamesV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::datetime::provider::neo::IndianYearNamesV1Marker>, icu_provider::DataError> {
-                static UND_X_3: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                static UND_X_3: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0Saka") })
                 });
-                static VALUES: [&<icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable; 3usize] = [&UND_X_3, &UND_X_3, &UND_X_3];
+                static VALUES: [&<icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DynDataMarker>::Yokeable; 3usize] = [&UND_X_3, &UND_X_3, &UND_X_3];
                 static KEYS: [&str; 3usize] = ["und-x-3", "und-x-4", "und-x-5"];
                 if let Ok(payload) = KEYS.binary_search_by(|k| req.legacy_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
                     Ok(icu_provider::DataResponse { payload: Some(icu_provider::DataPayload::from_static_ref(payload)), metadata: Default::default() })

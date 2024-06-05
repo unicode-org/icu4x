@@ -21,7 +21,7 @@ trait ExportableDataPayload {
     fn eq_dyn(&self, other: &dyn ExportableDataPayload) -> bool;
 }
 
-impl<M: DynamicDataMarker> ExportableDataPayload for DataPayload<M>
+impl<M: DynDataMarker> ExportableDataPayload for DataPayload<M>
 where
     for<'a> <M::Yokeable as Yokeable<'a>>::Output: Bake + serde::Serialize,
     for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: PartialEq,
@@ -83,7 +83,7 @@ impl core::fmt::Debug for ExportBox {
 
 impl<M> UpcastDataPayload<M> for ExportMarker
 where
-    M: DynamicDataMarker,
+    M: DynDataMarker,
     M::Yokeable: Sync + Send,
     for<'a> <M::Yokeable as Yokeable<'a>>::Output: Bake + serde::Serialize,
     for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: PartialEq,
@@ -172,7 +172,7 @@ impl DataPayload<ExportMarker> {
 #[derive(Debug)]
 pub struct ExportMarker {}
 
-impl DynamicDataMarker for ExportMarker {
+impl DynDataMarker for ExportMarker {
     type Yokeable = ExportBox;
 }
 

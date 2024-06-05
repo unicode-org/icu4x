@@ -11,7 +11,7 @@ macro_rules! __impl_propnames_to_short_linear_hst_v1 {
         #[clippy::msrv = "1.70"]
         impl $provider {
             #[doc(hidden)]
-            pub const SINGLETON_PROPNAMES_TO_SHORT_LINEAR_HST_V1: &'static <icu::properties::provider::names::HangulSyllableTypeValueToShortNameV1Marker as icu_provider::DynamicDataMarker>::Yokeable = &icu::properties::provider::names::PropertyEnumToValueNameLinearMapV1 { map: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x06\0\0\0\0\0\x02\0\x03\0\x04\0\x05\0\x07\0NALVTLVLVT") } };
+            pub const SINGLETON_PROPNAMES_TO_SHORT_LINEAR_HST_V1: &'static <icu::properties::provider::names::HangulSyllableTypeValueToShortNameV1Marker as icu_provider::DynDataMarker>::Yokeable = &icu::properties::provider::names::PropertyEnumToValueNameLinearMapV1 { map: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x06\0\0\0\0\0\x02\0\x03\0\x04\0\x05\0\x07\0NALVTLVLVT") } };
         }
         #[clippy::msrv = "1.70"]
         impl icu_provider::DataProvider<icu::properties::provider::names::HangulSyllableTypeValueToShortNameV1Marker> for $provider {

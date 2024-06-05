@@ -11,7 +11,7 @@ macro_rules! __impl_propnames_to_long_linear_hst_v1 {
         #[clippy::msrv = "1.70"]
         impl $provider {
             #[doc(hidden)]
-            pub const SINGLETON_PROPNAMES_TO_LONG_LINEAR_HST_V1: &'static <icu::properties::provider::names::HangulSyllableTypeValueToLongNameV1Marker as icu_provider::DynamicDataMarker>::Yokeable = &icu::properties::provider::names::PropertyEnumToValueNameLinearMapV1 { map: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x06\0\0\0\0\0\x0E\0\x1A\0$\x001\0<\0Not_ApplicableLeading_JamoVowel_JamoTrailing_JamoLV_SyllableLVT_Syllable") } };
+            pub const SINGLETON_PROPNAMES_TO_LONG_LINEAR_HST_V1: &'static <icu::properties::provider::names::HangulSyllableTypeValueToLongNameV1Marker as icu_provider::DynDataMarker>::Yokeable = &icu::properties::provider::names::PropertyEnumToValueNameLinearMapV1 { map: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x06\0\0\0\0\0\x0E\0\x1A\0$\x001\0<\0Not_ApplicableLeading_JamoVowel_JamoTrailing_JamoLV_SyllableLVT_Syllable") } };
         }
         #[clippy::msrv = "1.70"]
         impl icu_provider::DataProvider<icu::properties::provider::names::HangulSyllableTypeValueToLongNameV1Marker> for $provider {

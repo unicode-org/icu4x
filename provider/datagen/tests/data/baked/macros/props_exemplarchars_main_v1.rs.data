@@ -11,14 +11,14 @@ macro_rules! __impl_props_exemplarchars_main_v1 {
         #[clippy::msrv = "1.70"]
         impl icu_provider::DataProvider<icu::properties::provider::ExemplarCharactersMainV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::properties::provider::ExemplarCharactersMainV1Marker>, icu_provider::DataError> {
-                static UND: <icu::properties::provider::ExemplarCharactersMainV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
+                static UND: <icu::properties::provider::ExemplarCharactersMainV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
                     unsafe {
                         #[allow(unused_unsafe)]
                         icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(zerovec::ZeroVec::new(), 0u32)
                     },
                     zerovec::VarZeroVec::new(),
                 ));
-                static VALUES: [&<icu::properties::provider::ExemplarCharactersMainV1Marker as icu_provider::DynamicDataMarker>::Yokeable; 1usize] = [&UND];
+                static VALUES: [&<icu::properties::provider::ExemplarCharactersMainV1Marker as icu_provider::DynDataMarker>::Yokeable; 1usize] = [&UND];
                 static KEYS: [&str; 1usize] = ["und"];
                 if let Ok(payload) = KEYS.binary_search_by(|k| req.legacy_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
                     Ok(icu_provider::DataResponse { payload: Some(icu_provider::DataPayload::from_static_ref(payload)), metadata: Default::default() })

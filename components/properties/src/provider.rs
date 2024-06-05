@@ -434,7 +434,7 @@ macro_rules! data_struct_generic {
                 databake(path = icu_properties::provider),
             )]
             pub struct $marker;
-            impl icu_provider::DynamicDataMarker for $marker {
+            impl icu_provider::DynDataMarker for $marker {
                 type Yokeable = PropertyCodePointMapV1<'static, crate::$ty>;
             }
             impl icu_provider::DataMarker for $marker {

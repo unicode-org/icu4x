@@ -394,7 +394,7 @@ impl DataExporter for BakedExporter {
             impl $provider {
                 // Exposing singleton structs as consts allows us to get rid of fallibility
                 #[doc(hidden)] // singletons might be used cross-crate
-                pub const #singleton_ident: &'static <#marker as icu_provider::DynamicDataMarker>::Yokeable = &#bake;
+                pub const #singleton_ident: &'static <#marker as icu_provider::DynDataMarker>::Yokeable = &#bake;
             }
 
             #maybe_msrv
@@ -479,7 +479,7 @@ impl BakedExporter {
             )
         } else {
             (
-                quote!(<#marker as icu_provider::DynamicDataMarker>::Yokeable),
+                quote!(<#marker as icu_provider::DynDataMarker>::Yokeable),
                 quote!(icu_provider::DataPayload::from_static_ref(payload)),
             )
         };

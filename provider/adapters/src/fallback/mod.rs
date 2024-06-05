@@ -246,7 +246,7 @@ where
 impl<P, M> DynamicDataProvider<M> for LocaleFallbackProvider<P>
 where
     P: DynamicDataProvider<M>,
-    M: DynamicDataMarker,
+    M: DynDataMarker,
 {
     fn load_data(&self, key: DataKey, base_req: DataRequest) -> Result<DataResponse<M>, DataError> {
         self.run_fallback(

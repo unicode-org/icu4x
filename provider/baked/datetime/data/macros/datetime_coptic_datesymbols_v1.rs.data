@@ -11,7 +11,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
         #[clippy::msrv = "1.70"]
         impl icu_provider::DataProvider<icu::datetime::provider::calendar::CopticDateSymbolsV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::datetime::provider::calendar::CopticDateSymbolsV1Marker>, icu_provider::DataError> {
-                static FI: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static FI: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -57,7 +57,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static JA: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static JA: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -92,7 +92,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static GU: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static GU: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -127,7 +127,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static MR: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static MR: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -162,7 +162,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static TA: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static TA: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -205,7 +205,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static FY: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static FY: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -240,7 +240,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static NL: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static NL: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -275,7 +275,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static DA: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static DA: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -310,7 +310,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static HU: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static HU: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -345,7 +345,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static SV: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static SV: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -391,7 +391,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static FR_CA: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static FR_CA: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -426,7 +426,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static FR: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static FR: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -461,7 +461,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static TR: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static TR: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -496,7 +496,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static SR_LATN: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static SR_LATN: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -531,7 +531,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static SR_ME: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static SR_ME: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -566,7 +566,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static SR_LATN_BA: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static SR_LATN_BA: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -601,7 +601,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static JV: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static JV: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -636,7 +636,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static MS: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static MS: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -671,7 +671,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static SO: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static SO: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -706,7 +706,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static AZ: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static AZ: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -741,7 +741,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static VI: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static VI: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -776,7 +776,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static XH: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static XH: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -811,7 +811,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static GD: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static GD: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -846,7 +846,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static WO: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static WO: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -881,7 +881,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static CEB: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static CEB: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -916,7 +916,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static QU: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static QU: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -951,7 +951,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static GA: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static GA: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -986,7 +986,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static SW: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static SW: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -1021,7 +1021,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static HA: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static HA: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -1056,7 +1056,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static FIL: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static FIL: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -1091,7 +1091,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static ID: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static ID: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -1126,7 +1126,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static SU: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static SU: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -1161,7 +1161,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static ET: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static ET: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -1196,7 +1196,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static HI_LATN: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static HI_LATN: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -1231,7 +1231,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static MI: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static MI: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -1266,7 +1266,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static AF: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static AF: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -1301,7 +1301,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static ZU: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static ZU: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -1336,7 +1336,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static LB: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static LB: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -1371,7 +1371,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static CY: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static CY: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -1406,7 +1406,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static BR: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static BR: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -1441,7 +1441,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static EN: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static EN: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -1476,7 +1476,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static UND: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static UND: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -1511,7 +1511,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static EN_AU: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static EN_AU: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -1546,7 +1546,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static NDS: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static NDS: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -1581,7 +1581,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static TO: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static TO: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -1616,7 +1616,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static PCM: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static PCM: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -1651,7 +1651,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static IG: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static IG: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -1686,7 +1686,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static UZ: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static UZ: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -1721,7 +1721,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static KXV: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static KXV: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -1756,7 +1756,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static BLO: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static BLO: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -1791,7 +1791,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static CA: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static CA: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -1826,7 +1826,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static EO: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static EO: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -1861,7 +1861,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static SQ: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static SQ: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -1896,7 +1896,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static OC: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static OC: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -1931,7 +1931,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static AST: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static AST: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -1966,7 +1966,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static IT: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static IT: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -2001,7 +2001,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static IA: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static IA: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -2036,7 +2036,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static VEC: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static VEC: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -2071,7 +2071,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static ES_419: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static ES_419: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -2106,7 +2106,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static ES_VE: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static ES_VE: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -2141,7 +2141,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static ES_PY: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static ES_PY: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -2176,7 +2176,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static ES_CL: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static ES_CL: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -2211,7 +2211,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static ES_CO: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static ES_CO: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -2246,7 +2246,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static GL: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static GL: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -2281,7 +2281,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static PT: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static PT: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -2316,7 +2316,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static LMO: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static LMO: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -2351,7 +2351,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static LIJ: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static LIJ: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -2386,7 +2386,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static PT_PT: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static PT_PT: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -2421,7 +2421,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static RM: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static RM: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -2456,7 +2456,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static KEA: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static KEA: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -2491,7 +2491,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static VMW: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static VMW: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -2526,7 +2526,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static EU: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static EU: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -2561,7 +2561,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static YRL: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static YRL: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -2596,7 +2596,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static PRG: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static PRG: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -2631,7 +2631,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static HR_BA: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static HR_BA: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -2666,7 +2666,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static BS: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static BS: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -2701,7 +2701,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static SL: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static SL: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -2736,7 +2736,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static ZA: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static ZA: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -2771,7 +2771,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static PL: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static PL: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -2806,7 +2806,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static SZL: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static SZL: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -2841,7 +2841,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static DSB: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static DSB: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -2876,7 +2876,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static HSB: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static HSB: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -2911,7 +2911,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static KGP: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static KGP: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -2946,7 +2946,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static LT: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static LT: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -2981,7 +2981,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static IE: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static IE: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -3016,7 +3016,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static FO: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static FO: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -3051,7 +3051,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static KU: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static KU: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -3086,7 +3086,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static YO_BJ: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static YO_BJ: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -3121,7 +3121,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static YO: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static YO: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -3156,7 +3156,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static TK: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static TK: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -3191,7 +3191,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static MT: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static MT: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -3226,7 +3226,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static MN: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static MN: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -3261,7 +3261,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static TG: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static TG: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -3296,7 +3296,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static SAH: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static SAH: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -3331,7 +3331,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static CV: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static CV: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -3366,7 +3366,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static KY: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static KY: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -3401,7 +3401,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static BE: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static BE: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -3436,7 +3436,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static BG: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static BG: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -3471,7 +3471,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static UZ_CYRL: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static UZ_CYRL: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -3506,7 +3506,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static TT: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static TT: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -3541,7 +3541,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static HY: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static HY: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -3576,7 +3576,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static KS: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static KS: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -3611,7 +3611,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static SD: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static SD: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -3646,7 +3646,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static PS: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static PS: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -3681,7 +3681,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static UG: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static UG: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -3716,7 +3716,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static SYR: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static SYR: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -3751,7 +3751,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static NQO: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static NQO: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -3786,7 +3786,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static NE: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static NE: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -3821,7 +3821,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static KS_DEVA: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static KS_DEVA: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -3856,7 +3856,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static KXV_DEVA: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static KXV_DEVA: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -3891,7 +3891,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static KOK: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static KOK: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -3926,7 +3926,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static SD_DEVA: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static SD_DEVA: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -3961,7 +3961,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static DOI: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static DOI: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -3996,7 +3996,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static BGC: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static BGC: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -4031,7 +4031,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static XNR: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static XNR: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -4066,7 +4066,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static BRX: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static BRX: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -4101,7 +4101,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static BHO: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static BHO: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -4136,7 +4136,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static SA: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static SA: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -4171,7 +4171,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static HI: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static HI: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -4206,7 +4206,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static MAI: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static MAI: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -4241,7 +4241,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static RAJ: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static RAJ: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -4276,7 +4276,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static AS: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static AS: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -4311,7 +4311,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static MNI: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static MNI: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -4346,7 +4346,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static KXV_ORYA: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static KXV_ORYA: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -4381,7 +4381,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static OR: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static OR: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -4416,7 +4416,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static KXV_TELU: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static KXV_TELU: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -4451,7 +4451,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static SI: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static SI: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -4486,7 +4486,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static MY: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static MY: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -4521,7 +4521,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static KA: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static KA: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -4556,7 +4556,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static TI: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static TI: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -4591,7 +4591,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static AM: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static AM: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -4626,7 +4626,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static CHR: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static CHR: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -4661,7 +4661,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static CSW: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static CSW: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -4696,7 +4696,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static KM: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static KM: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -4731,7 +4731,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static SAT: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static SAT: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -4766,7 +4766,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static ES: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static ES: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -4801,7 +4801,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static SC: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static SC: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -4836,7 +4836,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static IS: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static IS: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -4871,7 +4871,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static NN: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static NN: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -4906,7 +4906,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static NO: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static NO: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -4941,7 +4941,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static SK: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static SK: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -4976,7 +4976,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static YUE_HANS: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static YUE_HANS: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -5011,7 +5011,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static YUE: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static YUE: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -5046,7 +5046,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static ZH_HANT: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static ZH_HANT: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -5081,7 +5081,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static ZH: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static ZH: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -5116,7 +5116,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static CS: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static CS: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -5151,7 +5151,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static LV: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static LV: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -5186,7 +5186,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static DE_CH: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static DE_CH: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -5221,7 +5221,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static DE: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static DE: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -5256,7 +5256,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static RO_MD: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static RO_MD: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -5291,7 +5291,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static RO: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static RO: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -5326,7 +5326,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static UK: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static UK: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -5369,7 +5369,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static FA: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static FA: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -5404,7 +5404,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static AR: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static AR: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -5439,7 +5439,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static RU: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static RU: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -5474,7 +5474,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static MK: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static MK: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -5509,7 +5509,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static KK: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static KK: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -5544,7 +5544,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static KO: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static KO: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -5579,7 +5579,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static HE: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static HE: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -5614,7 +5614,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static UR: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static UR: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -5649,7 +5649,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static SR: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static SR: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -5684,7 +5684,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static SR_BA: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static SR_BA: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -5719,7 +5719,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static BS_CYRL: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static BS_CYRL: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -5754,7 +5754,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static EL: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static EL: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -5789,7 +5789,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static LO: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static LO: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -5835,7 +5835,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static PA: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static PA: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -5870,7 +5870,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static BN_IN: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static BN_IN: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -5905,7 +5905,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static BN: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static BN: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -5940,7 +5940,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static TE: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static TE: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -5975,7 +5975,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static KN: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static KN: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -6010,7 +6010,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static TH: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static TH: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -6045,7 +6045,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static FF_ADLM: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static FF_ADLM: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -6080,7 +6080,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static ML: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                static ML: <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
                     months: icu::datetime::provider::calendar::months::ContextsV1 {
                         format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
                             abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
@@ -6115,7 +6115,7 @@ macro_rules! __impl_datetime_coptic_datesymbols_v1 {
                         },
                     },
                 };
-                static VALUES: [&<icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynamicDataMarker>::Yokeable; 174usize] = [&AF, &AM, &AR, &AS, &AST, &AZ, &BE, &BG, &BGC, &BHO, &BLO, &BN, &BN_IN, &BR, &BRX, &BS, &BS_CYRL, &CA, &CEB, &CHR, &CS, &CSW, &CV, &CY, &DA, &DE, &DE_CH, &DOI, &DSB, &EL, &EN, &EN_AU, &EO, &ES, &ES_419, &ES_CL, &ES_CO, &ES_PY, &ES_VE, &ET, &EU, &FA, &FF_ADLM, &FI, &FIL, &FO, &FR, &FR_CA, &FY, &GA, &GD, &GL, &GU, &HA, &HE, &HI, &HI_LATN, &BS, &HR_BA, &HSB, &HU, &HY, &IA, &ID, &IE, &IG, &IS, &IT, &JA, &JV, &KA, &KEA, &KGP, &KK, &KM, &KN, &KO, &KOK, &KS, &KS_DEVA, &KU, &KXV, &KXV_DEVA, &KXV_ORYA, &KXV_TELU, &KY, &LB, &LIJ, &LMO, &LO, &LT, &LV, &MAI, &MI, &MK, &ML, &MN, &MNI, &MR, &MS, &MT, &MY, &NDS, &NE, &NL, &NN, &NO, &NQO, &OC, &OR, &PA, &PCM, &PL, &PRG, &PS, &PT, &PT_PT, &QU, &RAJ, &RM, &RO, &RO_MD, &RU, &SA, &SAH, &SAT, &SC, &SD, &SD_DEVA, &SI, &SK, &SL, &SO, &SQ, &SR, &SR_BA, &SR_LATN, &SR_LATN_BA, &SR_ME, &SU, &SV, &SW, &SYR, &SZL, &TA, &TE, &TG, &TH, &TI, &TK, &TO, &TR, &TT, &UG, &UK, &UND, &UR, &UZ, &UZ_CYRL, &VEC, &VI, &VMW, &WO, &XH, &XNR, &YO, &YO_BJ, &YRL, &YUE, &YUE_HANS, &ZA, &ZH, &ZH_HANT, &ZU];
+                static VALUES: [&<icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DynDataMarker>::Yokeable; 174usize] = [&AF, &AM, &AR, &AS, &AST, &AZ, &BE, &BG, &BGC, &BHO, &BLO, &BN, &BN_IN, &BR, &BRX, &BS, &BS_CYRL, &CA, &CEB, &CHR, &CS, &CSW, &CV, &CY, &DA, &DE, &DE_CH, &DOI, &DSB, &EL, &EN, &EN_AU, &EO, &ES, &ES_419, &ES_CL, &ES_CO, &ES_PY, &ES_VE, &ET, &EU, &FA, &FF_ADLM, &FI, &FIL, &FO, &FR, &FR_CA, &FY, &GA, &GD, &GL, &GU, &HA, &HE, &HI, &HI_LATN, &BS, &HR_BA, &HSB, &HU, &HY, &IA, &ID, &IE, &IG, &IS, &IT, &JA, &JV, &KA, &KEA, &KGP, &KK, &KM, &KN, &KO, &KOK, &KS, &KS_DEVA, &KU, &KXV, &KXV_DEVA, &KXV_ORYA, &KXV_TELU, &KY, &LB, &LIJ, &LMO, &LO, &LT, &LV, &MAI, &MI, &MK, &ML, &MN, &MNI, &MR, &MS, &MT, &MY, &NDS, &NE, &NL, &NN, &NO, &NQO, &OC, &OR, &PA, &PCM, &PL, &PRG, &PS, &PT, &PT_PT, &QU, &RAJ, &RM, &RO, &RO_MD, &RU, &SA, &SAH, &SAT, &SC, &SD, &SD_DEVA, &SI, &SK, &SL, &SO, &SQ, &SR, &SR_BA, &SR_LATN, &SR_LATN_BA, &SR_ME, &SU, &SV, &SW, &SYR, &SZL, &TA, &TE, &TG, &TH, &TI, &TK, &TO, &TR, &TT, &UG, &UK, &UND, &UR, &UZ, &UZ_CYRL, &VEC, &VI, &VMW, &WO, &XH, &XNR, &YO, &YO_BJ, &YRL, &YUE, &YUE_HANS, &ZA, &ZH, &ZH_HANT, &ZU];
                 static KEYS: [&str; 174usize] = ["af", "am", "ar", "as", "ast", "az", "be", "bg", "bgc", "bho", "blo", "bn", "bn-IN", "br", "brx", "bs", "bs-Cyrl", "ca", "ceb", "chr", "cs", "csw", "cv", "cy", "da", "de", "de-CH", "doi", "dsb", "el", "en", "en-AU", "eo", "es", "es-419", "es-CL", "es-CO", "es-PY", "es-VE", "et", "eu", "fa", "ff-Adlm", "fi", "fil", "fo", "fr", "fr-CA", "fy", "ga", "gd", "gl", "gu", "ha", "he", "hi", "hi-Latn", "hr", "hr-BA", "hsb", "hu", "hy", "ia", "id", "ie", "ig", "is", "it", "ja", "jv", "ka", "kea", "kgp", "kk", "km", "kn", "ko", "kok", "ks", "ks-Deva", "ku", "kxv", "kxv-Deva", "kxv-Orya", "kxv-Telu", "ky", "lb", "lij", "lmo", "lo", "lt", "lv", "mai", "mi", "mk", "ml", "mn", "mni", "mr", "ms", "mt", "my", "nds", "ne", "nl", "nn", "no", "nqo", "oc", "or", "pa", "pcm", "pl", "prg", "ps", "pt", "pt-PT", "qu", "raj", "rm", "ro", "ro-MD", "ru", "sa", "sah", "sat", "sc", "sd", "sd-Deva", "si", "sk", "sl", "so", "sq", "sr", "sr-BA", "sr-Latn", "sr-Latn-BA", "sr-ME", "su", "sv", "sw", "syr", "szl", "ta", "te", "tg", "th", "ti", "tk", "to", "tr", "tt", "ug", "uk", "und", "ur", "uz", "uz-Cyrl", "vec", "vi", "vmw", "wo", "xh", "xnr", "yo", "yo-BJ", "yrl", "yue", "yue-Hans", "za", "zh", "zh-Hant", "zu"];
                 let mut metadata = icu_provider::DataResponseMetadata::default();
                 let payload = if let Ok(payload) = KEYS.binary_search_by(|k| req.legacy_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {

@@ -11,8 +11,8 @@ macro_rules! __impl_datetime_patterns_datetime_v1 {
         #[clippy::msrv = "1.70"]
         impl icu_provider::DataProvider<icu::datetime::provider::neo::DateTimePatternV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::datetime::provider::neo::DateTimePatternV1Marker>, icu_provider::DataError> {
-                static UND_X_F: <icu::datetime::provider::neo::DateTimePatternV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::DateTimePatternV1 { pattern: icu::datetime::pattern::runtime::GenericPattern { items: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x80\0\x01\0\0 \x80\0\0") } } };
-                static VALUES: [&<icu::datetime::provider::neo::DateTimePatternV1Marker as icu_provider::DynamicDataMarker>::Yokeable; 4usize] = [&UND_X_F, &UND_X_F, &UND_X_F, &UND_X_F];
+                static UND_X_F: <icu::datetime::provider::neo::DateTimePatternV1Marker as icu_provider::DynDataMarker>::Yokeable = icu::datetime::provider::neo::DateTimePatternV1 { pattern: icu::datetime::pattern::runtime::GenericPattern { items: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x80\0\x01\0\0 \x80\0\0") } } };
+                static VALUES: [&<icu::datetime::provider::neo::DateTimePatternV1Marker as icu_provider::DynDataMarker>::Yokeable; 4usize] = [&UND_X_F, &UND_X_F, &UND_X_F, &UND_X_F];
                 static KEYS: [&str; 4usize] = ["und-x-f", "und-x-l", "und-x-m", "und-x-s"];
                 if let Ok(payload) = KEYS.binary_search_by(|k| req.legacy_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
                     Ok(icu_provider::DataResponse { payload: Some(icu_provider::DataPayload::from_static_ref(payload)), metadata: Default::default() })
