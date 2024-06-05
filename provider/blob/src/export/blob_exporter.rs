@@ -7,7 +7,7 @@
 
 use crate::blob_schema::*;
 use icu_provider::datagen::*;
-use icu_provider::prelude::*;
+use icu_provider::{DataMarkerPathHash, prelude::*};
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::sync::Mutex;
 use zerotrie::ZeroTrieSimpleAscii;

@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use alloc::boxed::Box;
-use icu_provider::prelude::*;
+use icu_provider::{DataMarkerPathHash, prelude::*};
 use serde::Deserialize;
 use writeable::Writeable;
 use zerotrie::ZeroTrieSimpleAscii;
