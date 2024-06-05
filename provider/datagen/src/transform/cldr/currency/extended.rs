@@ -50,24 +50,21 @@ impl DataProvider<CurrencyExtendedDataV1Marker> for crate::DatagenProvider {
         fn add_placeholder(
             placeholders: &mut BTreeMap<Count, String>,
             key: Count,
-            value: Option<&str>,
+            value: Option<String>,
         ) {
             if let Some(val) = value {
-                placeholders.insert(key, val.to_string());
+                placeholders.insert(key, val);
             }
         }
 
-        add_placeholder(&mut placeholders, Count::Zero, currency.zero.as_deref());
-        add_placeholder(&mut placeholders, Count::One, currency.one.as_deref());
-        add_placeholder(&mut placeholders, Count::Two, currency.two.as_deref());
-        add_placeholder(&mut placeholders, Count::Few, currency.few.as_deref());
-        add_placeholder(&mut placeholders, Count::Many, currency.many.as_deref());
+        add_placeholder(&mut placeholders, Count::Zero, currency.zero.clone());
+        add_placeholder(&mut placeholders, Count::One, currency.one.clone());
+        add_placeholder(&mut placeholders, Count::Two, currency.two.clone());
+        add_placeholder(&mut placeholders, Count::Few, currency.few.clone());
+        add_placeholder(&mut placeholders, Count::Many, currency.many.clone());
 
-        let other_placeholder = currency.other.as_deref().map(|s| Cow::Owned(s.to_string()));
-        let display_name = currency
-            .display_name
-            .as_deref()
-            .map(|s| Cow::Owned(s.to_string()));
+        let other_placeholder = currency.other.clone().map(|s| Cow::Owned(s));
+        let display_name = currency.display_name.clone().map(|s| Cow::Owned(s));
 
         let data = CurrencyExtendedDataV1 {
             placeholders: placeholders

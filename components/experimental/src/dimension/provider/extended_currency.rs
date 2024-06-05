@@ -42,16 +42,18 @@ pub struct CurrencyExtendedDataV1<'data> {
     /// Contains the placeholders for the currency except the `other` count.
     /// For example, for "en" locale, and "USD" currency:
     ///     "US Dollars" for `zero` count,
+    ///     "US Dollar" for `one` count,
     ///  ... etc.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub placeholders: ZeroMap<'data, Count, str>,
 
+    // TODO: make this the default pattern.
     /// A currency pattern config for the `other` count
-    /// or there is no specific pattern for the currency has been found
-    /// in the `patterns_config` map.
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub other_placeholder: Option<Cow<'data, str>>,
 
     /// The display name for the currency.
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub display_name: Option<Cow<'data, str>>,
 }
 
