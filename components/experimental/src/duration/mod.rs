@@ -6,6 +6,6 @@
 
 #![warn(missing_docs)]
 
-pub mod duration;
+mod duration;
 
-pub use duration::Duration;
+pub use duration::{Duration, DurationSign};
