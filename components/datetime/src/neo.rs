@@ -397,7 +397,7 @@ impl<C: CldrCalendar, R: TypedDateTimeMarkers<C> + HasRuntimeComponents> TypedNe
         try_new_with_components_with_any_provider,
         try_new_with_components_with_buffer_provider,
         try_new_internal,
-        date_components: R::ComponentsStruct,
+        components: R::ComponentsStruct,
         length: NeoSkeletonLength
     );
 
@@ -405,7 +405,7 @@ impl<C: CldrCalendar, R: TypedDateTimeMarkers<C> + HasRuntimeComponents> TypedNe
     pub fn try_new_with_components_unstable<P>(
         provider: &P,
         locale: &DataLocale,
-        date_components: R::ComponentsStruct,
+        components: R::ComponentsStruct,
         length: NeoSkeletonLength,
     ) -> Result<Self, LoadError>
     where
@@ -427,7 +427,7 @@ impl<C: CldrCalendar, R: TypedDateTimeMarkers<C> + HasRuntimeComponents> TypedNe
             provider,
             &ExternalLoaderUnstable(provider),
             locale,
-            date_components,
+            components,
             length,
         )
     }
@@ -874,7 +874,7 @@ impl<R: DateTimeMarkers + HasRuntimeComponents> NeoFormatter<R> {
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
-    pub fn try_new_with_components(locale: &DataLocale, date_components: R::ComponentsStruct, length: NeoSkeletonLength) -> Result<Self, LoadError>
+    pub fn try_new_with_components(locale: &DataLocale, components: R::ComponentsStruct, length: NeoSkeletonLength) -> Result<Self, LoadError>
     where
     crate::provider::Baked: Sized
     // Date formatting keys
@@ -938,7 +938,7 @@ impl<R: DateTimeMarkers + HasRuntimeComponents> NeoFormatter<R> {
             &crate::provider::Baked,
             &ExternalLoaderCompiledData,
             locale,
-            date_components,
+            components,
             length,
         )
     }
