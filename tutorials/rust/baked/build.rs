@@ -4,6 +4,7 @@
 
 use icu_datagen::baked_exporter::*;
 use icu_datagen::prelude::*;
+use icu_datagen_bikeshed::DatagenProvider;
 use std::path::PathBuf;
 
 fn main() {

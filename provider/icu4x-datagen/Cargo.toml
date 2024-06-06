@@ -20,6 +20,7 @@ version.workspace = true
 icu_provider = { workspace = true, features = ["datagen"] }
 icu = { workspace = true }
 icu_datagen = { workspace = true, features = ["rayon"] }
+icu_datagen_bikeshed = { workspace = true, optional = true }
 
 icu_provider_blob = { workspace = true, features = ["export"], optional = true }
 # Needed to make the exportable blob exporter
@@ -49,7 +50,7 @@ simple_logger = { workspace = true }
 
 [features]
 default = ["use_wasm", "networking", "fs_exporter", "blob_exporter", "baked_exporter", "provider"]
-provider = ["icu_datagen/provider"]
+provider = ["dep:icu_datagen_bikeshed"]
 baked_exporter = ["icu_datagen/baked_exporter"]
 blob_exporter = ["icu_datagen/blob_exporter"]
 blob_input = [
@@ -71,14 +72,14 @@ blob_input = [
 ]
 fs_exporter = ["icu_datagen/fs_exporter"]
 # Use wasm for building codepointtries
-use_wasm = ["icu_datagen/use_wasm"]
+use_wasm = ["icu_datagen_bikeshed?/use_wasm"]
 # Use local ICU4C libraries for building codepointtries
 # (will do nothing if used with `use_wasm`)
 # If neither `use_wasm` nor `use_icu4c` are enabled,
 # rule based segmenter data will not be generated.
-use_icu4c = ["icu_datagen/use_icu4c"]
-networking = ["icu_datagen/networking"]
-experimental_components = ["icu_datagen/experimental_components", "icu/experimental"]
+use_icu4c = ["icu_datagen_bikeshed?/use_icu4c"]
+networking = ["icu_datagen_bikeshed?/networking"]
+experimental = ["icu_datagen/experimental", "icu_datagen_bikeshed?/experimental", "icu/experimental"]
 
 [package.metadata.cargo-all-features]
 # We don't need working CPT builders for check

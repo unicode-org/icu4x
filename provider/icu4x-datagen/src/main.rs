@@ -29,7 +29,10 @@
 use clap::{Parser, ValueEnum};
 use eyre::WrapErr;
 use icu_datagen::prelude::*;
+#[cfg(feature = "provider")]
+use icu_datagen_bikeshed::DatagenProvider;
 use icu_provider::datagen::ExportableProvider;
+use icu_provider::hello_world::HelloWorldV1Marker;
 use simple_logger::SimpleLogger;
 use std::path::PathBuf;
 
@@ -289,6 +292,23 @@ fn main() -> eyre::Result<()> {
             .unwrap()
     }
 
+    let markers = if !cli.markers.is_empty() {
+        match cli.markers.as_slice() {
+            [x] if x == "none" => Default::default(),
+            [x] if x == "all" => icu_datagen::all_markers(),
+            markers => markers
+                .iter()
+                .map(|k| icu_datagen::marker(k).ok_or(eyre::eyre!(k.to_string())))
+                .collect::<Result<_, _>>()?,
+        }
+    } else if let Some(bin_path) = &cli.markers_for_bin {
+        icu_datagen::markers_from_bin(bin_path)?
+            .into_iter()
+            .collect()
+    } else {
+        eyre::bail!("--markers or --markers-for-bin are required.")
+    };
+
     enum PreprocessedLocales {
         LanguageIdentifiers(Vec<LanguageIdentifier>),
         Full,
@@ -309,6 +329,12 @@ fn main() -> eyre::Result<()> {
     };
 
     let provider: Box<dyn ExportableProvider> = match () {
+        () if markers == [HelloWorldV1Marker::INFO] => {
+            Box::new(icu_provider::hello_world::HelloWorldProvider)
+        }
+        () if markers.contains(&HelloWorldV1Marker::INFO) => {
+            eyre::bail!("HelloWorldV1Marker is only allowed as the only marker")
+        }
         #[cfg(feature = "blob_input")]
         () if cli.input_blob.is_some() => Box::new(ReexportableBlobDataProvider(
             icu_provider_blob::BlobDataProvider::try_new_from_blob(
@@ -324,8 +350,10 @@ fn main() -> eyre::Result<()> {
             let mut p = DatagenProvider::new_custom();
 
             p = p.with_collation_han_database(match cli.collation_han_database {
-                CollationHanDatabase::Unihan => icu_datagen::CollationHanDatabase::Unihan,
-                CollationHanDatabase::Implicit => icu_datagen::CollationHanDatabase::Implicit,
+                CollationHanDatabase::Unihan => icu_datagen_bikeshed::CollationHanDatabase::Unihan,
+                CollationHanDatabase::Implicit => {
+                    icu_datagen_bikeshed::CollationHanDatabase::Implicit
+                }
             });
 
             if cli.trie_type == TrieType::Fast {
@@ -381,9 +409,9 @@ fn main() -> eyre::Result<()> {
             if cli.locales.as_slice() == ["recommended"] {
                 preprocessed_locales = Some(PreprocessedLocales::LanguageIdentifiers(
                     p.locales_for_coverage_levels([
-                        CoverageLevel::Modern,
-                        CoverageLevel::Moderate,
-                        CoverageLevel::Basic,
+                        icu_datagen_bikeshed::CoverageLevel::Modern,
+                        icu_datagen_bikeshed::CoverageLevel::Moderate,
+                        icu_datagen_bikeshed::CoverageLevel::Basic,
                     ])?
                     .into_iter()
                     .collect(),
@@ -392,9 +420,9 @@ fn main() -> eyre::Result<()> {
                 .locales
                 .iter()
                 .map(|s| match &**s {
-                    "basic" => Some(CoverageLevel::Basic),
-                    "moderate" => Some(CoverageLevel::Moderate),
-                    "modern" => Some(CoverageLevel::Modern),
+                    "basic" => Some(icu_datagen_bikeshed::CoverageLevel::Basic),
+                    "moderate" => Some(icu_datagen_bikeshed::CoverageLevel::Moderate),
+                    "modern" => Some(icu_datagen_bikeshed::CoverageLevel::Modern),
                     _ => None,
                 })
                 .collect::<Option<Vec<_>>>()
@@ -415,22 +443,7 @@ fn main() -> eyre::Result<()> {
 
     let mut driver = DatagenDriver::new();
 
-    driver = driver.with_markers(if !cli.markers.is_empty() {
-        match cli.markers.as_slice() {
-            [x] if x == "none" => Default::default(),
-            [x] if x == "all" => icu_datagen::all_markers(),
-            markers => markers
-                .iter()
-                .map(|k| icu_datagen::marker(k).ok_or(eyre::eyre!(k.to_string())))
-                .collect::<Result<_, _>>()?,
-        }
-    } else if let Some(bin_path) = &cli.markers_for_bin {
-        icu_datagen::markers_from_bin(bin_path)?
-            .into_iter()
-            .collect()
-    } else {
-        eyre::bail!("--markers or --markers-for-bin are required.")
-    });
+    driver = driver.with_markers(markers);
 
     if cli.without_fallback {
         driver = driver.with_locales_no_fallback(
