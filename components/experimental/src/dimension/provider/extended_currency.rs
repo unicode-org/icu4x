@@ -9,8 +9,6 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use alloc::borrow::Cow;
-use icu_plurals::PluralCategory;
 use icu_provider::prelude::*;
 use zerovec::ZeroMap;
 
@@ -35,14 +33,13 @@ pub use crate::provider::Baked;
 )]
 #[yoke(prove_covariance_manually)]
 pub struct CurrencyExtendedDataV1<'data> {
-    // TODO: use SinglePlaceholder for the placeholders
-    /// Contains the placeholders for the currency except the `other` count.
-    /// For example, for "en" locale, and "USD" currency:
-    ///     "US Dollars" for `zero` count,
-    ///     "US Dollar" for `one` count,
-    ///  ... etc.
+    /// Contains the localized display names for a currency based on plural rules.
+    /// For instance, in the "en" locale for the "USD" currency:
+    ///     - "US Dollars" when count is `zero`,
+    ///     - "US Dollar" when count is `one`,
+    ///     ... etc.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub placeholders: ZeroMap<'data, Count, str>,
+    pub display_names: ZeroMap<'data, Count, str>,
 }
 
 /// A CLDR plural keyword, or the explicit value 1.
@@ -75,6 +72,7 @@ pub enum Count {
     Explicit1 = 6,
     // NOTE(egg): No explicit 0, because the compact decimal pattern selection
     // algorithm does not allow such a thing to arise.
+    // TODO(younies): implment this case.
     /// The default case.
     /// NOTE:
     ///     Used as the default when there is no match.

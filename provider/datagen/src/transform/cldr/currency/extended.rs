@@ -69,7 +69,7 @@ impl DataProvider<CurrencyExtendedDataV1Marker> for crate::DatagenProvider {
         );
 
         let data = CurrencyExtendedDataV1 {
-            placeholders: placeholders
+            display_names: placeholders
                 .into_iter()
                 .map(|(k, v)| (k, Cow::Owned(v)))
                 .collect(),
