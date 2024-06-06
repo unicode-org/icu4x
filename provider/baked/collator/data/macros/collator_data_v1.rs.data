@@ -106,7 +106,7 @@ macro_rules! __impl_collator_data_v1 {
                 let payload = if let Ok(payload) = KEYS.binary_search_by(|k| req.legacy_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
                     payload
                 } else {
-                    const FALLBACKER: icu::locale::fallback::LocaleFallbackerWithConfig<'static> = icu::locale::fallback::LocaleFallbacker::new().for_config(<icu::collator::provider::CollationDataV1Marker as icu_provider::DataMarker>::KEY.fallback_config());
+                    const FALLBACKER: icu::locale::fallback::LocaleFallbackerWithConfig<'static> = icu::locale::fallback::LocaleFallbacker::new().for_config(<icu::collator::provider::CollationDataV1Marker as icu_provider::DataMarker>::INFO.fallback_config);
                     let mut fallback_iterator = FALLBACKER.fallback_for(req.locale.clone());
                     loop {
                         if let Ok(payload) = KEYS.binary_search_by(|k| icu_provider::DataRequest { locale: fallback_iterator.get(), ..req }.legacy_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
@@ -114,7 +114,7 @@ macro_rules! __impl_collator_data_v1 {
                             break payload;
                         }
                         if fallback_iterator.get().is_und() {
-                            return Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::collator::provider::CollationDataV1Marker as icu_provider::DataMarker>::KEY, req));
+                            return Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::collator::provider::CollationDataV1Marker as icu_provider::DataMarker>::INFO, req));
                         }
                         fallback_iterator.step();
                     }
@@ -126,14 +126,14 @@ macro_rules! __impl_collator_data_v1 {
 }
 /// Implement `IterableDataProvider<CollationDataV1Marker>` on the given struct using the data
 /// hardcoded in this file. This allows the struct to be used with
-/// `DatagenDriver` for this key.
+/// `DatagenDriver` for this marker.
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __impliterable_collator_data_v1 {
     ($ provider : ty) => {
         #[clippy::msrv = "1.70"]
         impl icu_provider::datagen::IterableDataProvider<icu::collator::provider::CollationDataV1Marker> for $provider {
-            fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataKeyAttributes)>, icu_provider::DataError> {
+            fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataMarkerAttributes)>, icu_provider::DataError> {
                 Ok(["af", "ar", "ar-u-co-compat", "as", "az", "be", "bn", "bn-u-co-trad", "br", "bs", "bs-Cyrl", "ceb", "cs", "cy", "da", "de-AT-u-co-phonebk", "de-u-co-phonebk", "dsb", "en-US-posix", "eo", "es", "es-u-co-trad", "et", "fa", "fa-AF", "ff-Adlm", "fi", "fi-u-co-trad", "fil", "fo", "fy", "gl", "gu", "ha", "hi", "hr", "hsb", "hu", "hy", "ig", "is", "ja", "ja-u-co-unihan", "kk", "km", "kn", "kn-u-co-trad", "ko", "ko-u-co-unihan", "kok", "ku", "ky", "lt", "lv", "mk", "ml", "mr", "mt", "my", "no", "or", "pa", "pl", "ps", "ro", "si", "si-u-co-dict", "sk", "sl", "sq", "sr", "sr-Latn", "sv", "sv-u-co-trad", "ta", "te", "th", "tk", "to", "tr", "ug", "uk", "und", "und-u-co-emoji", "und-u-co-eor", "ur", "uz", "vi", "vi-u-co-trad", "wo", "yo", "yue-u-co-stroke", "yue-u-co-unihan", "yue-u-co-zhuyin", "zh", "zh-Hant-u-co-stroke", "zh-Hant-u-co-unihan", "zh-Hant-u-co-zhuyin", "zh-u-co-stroke", "zh-u-co-unihan", "zh-u-co-zhuyin"].into_iter().filter_map(icu_provider::DataRequest::legacy_decode).collect())
             }
         }

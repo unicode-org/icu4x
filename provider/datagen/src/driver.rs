@@ -389,7 +389,7 @@ enum LocalesWithOrWithoutFallback {
 /// use icu_datagen::prelude::*;
 ///
 /// DatagenDriver::new()
-///     .with_keys([icu::list::provider::AndListV1Marker::KEY])
+///     .with_markers([icu::list::provider::AndListV1Marker::INFO])
 ///     .with_locales_and_fallback([LocaleFamily::FULL], Default::default())
 ///     .export(
 ///         &DatagenProvider::new_latest_tested(),
@@ -399,7 +399,7 @@ enum LocalesWithOrWithoutFallback {
 /// ```
 #[derive(Debug, Clone)]
 pub struct DatagenDriver {
-    keys: Option<HashSet<DataKey>>,
+    markers: Option<HashSet<DataMarkerInfo>>,
     locales_fallback: Option<LocalesWithOrWithoutFallback>,
     additional_collations: HashSet<String>,
     segmenter_models: Vec<String>,
@@ -408,11 +408,11 @@ pub struct DatagenDriver {
 impl DatagenDriver {
     /// Creates an empty [`DatagenDriver`].
     ///
-    /// Note that keys and locales need to be set before calling [`export`](Self::export).
+    /// Note that markers and locales need to be set before calling [`export`](Self::export).
     #[allow(clippy::new_without_default)] // this is not directly usable
     pub fn new() -> Self {
         Self {
-            keys: None,
+            markers: None,
             locales_fallback: None,
             additional_collations: HashSet::new(),
             segmenter_models: Vec::new(),
@@ -420,17 +420,17 @@ impl DatagenDriver {
         .with_recommended_segmenter_models()
     }
 
-    /// Sets this driver to generate the given keys.
+    /// Sets this driver to generate the given data markers.
     ///
-    /// See [`icu_datagen::keys`], [`icu_datagen::all_keys`], [`icu_datagen::key`] and [`icu_datagen::keys_from_bin`].
+    /// See [`icu_datagen::markers`], [`icu_datagen::all_markers`], [`icu_datagen::marker`] and [`icu_datagen::markers_from_bin`].
     ///
-    /// [`icu_datagen::keys`]: crate::keys
-    /// [`icu_datagen::all_keys`]: crate::all_keys
-    /// [`icu_datagen::key`]: crate::key
-    /// [`icu_datagen::keys_from_bin`]: crate::keys_from_bin
-    pub fn with_keys(self, keys: impl IntoIterator<Item = DataKey>) -> Self {
+    /// [`icu_datagen::markers`]: crate::markers
+    /// [`icu_datagen::all_markers`]: crate::all_markers
+    /// [`icu_datagen::marker`]: crate::marker
+    /// [`icu_datagen::markers_from_bin`]: crate::markers_from_bin
+    pub fn with_markers(self, markers: impl IntoIterator<Item = DataMarkerInfo>) -> Self {
         Self {
-            keys: Some(keys.into_iter().collect()),
+            markers: Some(markers.into_iter().collect()),
             ..self
         }
     }
@@ -498,7 +498,7 @@ impl DatagenDriver {
     /// This option is only relevant if using `icu::segmenter`.
     ///
     /// Sets this driver to generate the recommended segmentation models, to the extent required by the
-    /// chosen data keys.
+    /// chosen data markers.
     pub fn with_recommended_segmenter_models(self) -> Self {
         self.with_segmenter_models([
             "cjdict".into(),
@@ -516,7 +516,7 @@ impl DatagenDriver {
     /// This option is only relevant if using `icu::segmenter`.
     ///
     /// Sets this driver to generate the given segmentation models, to the extent required by the
-    /// chosen data keys.
+    /// chosen data markers.
     ///
     /// The currently supported dictionary models are
     /// * `cjdict`
@@ -567,15 +567,15 @@ impl DatagenDriver {
         sink: &mut dyn DataExporter,
     ) -> Result<(), DataError> {
         let Self {
-            keys,
+            markers,
             locales_fallback,
             additional_collations,
             segmenter_models,
         } = self;
 
-        let Some(keys) = keys else {
+        let Some(markers) = markers else {
             return Err(DataError::custom(
-                "`DatagenDriver::with_keys` needs to be called",
+                "`DatagenDriver::with_markers` needs to be called",
             ));
         };
 
@@ -583,8 +583,8 @@ impl DatagenDriver {
             "`DatagenDriver::with_locales_and_fallback` or `with_locales_no_fallback` needs to be called",
         ))?;
 
-        if keys.is_empty() {
-            log::warn!("No keys selected");
+        if markers.is_empty() {
+            log::warn!("No markers selected");
         }
 
         let (uses_internal_fallback, deduplication_strategy) = match &locales_fallback {
@@ -652,8 +652,8 @@ impl DatagenDriver {
                 .map_err(|&e| e)
         };
 
-        let load_with_fallback = |key, locale: &_, key_attributes: &_| {
-            log::trace!("Generating key/locale: {key}/{locale:}");
+        let load_with_fallback = |marker, locale: &_, marker_attributes: &_| {
+            log::trace!("Generating marker/locale: {marker}/{locale:}");
             let mut metadata = DataRequestMetadata::default();
             metadata.silent = true;
             // Lazy-compute the fallback iterator so that we don't always require CLDR data
@@ -661,20 +661,20 @@ impl DatagenDriver {
             loop {
                 let req = DataRequest {
                     locale: locale_iter.as_ref().map(|i| i.get()).unwrap_or(locale),
-                    key_attributes,
+                    marker_attributes,
                     metadata,
                 };
-                match provider.load_data(key, req) {
+                match provider.load_data(marker, req) {
                     Ok(data_response) => {
                         if let Some(iter) = locale_iter.as_ref() {
                             if iter.get().is_und() && !locale.is_und() {
-                                log::debug!("Falling back to und: {key}/{locale}");
+                                log::debug!("Falling back to und: {marker}/{locale}");
                             }
                         }
                         return Some(
                             data_response
                                 .take_payload()
-                                .map_err(|e| e.with_req(key, req)),
+                                .map_err(|e| e.with_req(marker, req)),
                         );
                     }
                     Err(DataError {
@@ -683,7 +683,7 @@ impl DatagenDriver {
                     }) => {
                         if let Some(iter) = locale_iter.as_mut() {
                             if iter.get().is_und() {
-                                log::debug!("Could not find data for: {key}/{locale}");
+                                log::debug!("Could not find data for: {marker}/{locale}");
                                 return None;
                             }
                             iter.step();
@@ -692,7 +692,7 @@ impl DatagenDriver {
                                 Ok(fallbacker) => {
                                     locale_iter = Some(
                                         fallbacker
-                                            .for_config(key.fallback_config())
+                                            .for_config(marker.fallback_config)
                                             .fallback_for(locale.clone()),
                                     )
                                 }
@@ -700,54 +700,54 @@ impl DatagenDriver {
                             }
                         }
                     }
-                    Err(e) => return Some(Err(e.with_req(key, req))),
+                    Err(e) => return Some(Err(e.with_req(marker, req))),
                 }
             }
         };
 
-        keys.clone().into_par_iter().try_for_each(|key| {
-            log::trace!("Generating key {key}");
+        markers.clone().into_par_iter().try_for_each(|marker| {
+            log::trace!("Generating marker {marker}");
             let instant1 = Instant::now();
 
-            if key.metadata().singleton {
-                if provider.supported_requests_for_key(key)?
+            if marker.is_singleton {
+                if provider.supported_requests_for_marker(marker)?
                     != HashSet::from_iter([Default::default()])
                 {
-                    return Err(
-                        DataError::custom("Invalid supported locales for singleton key")
-                            .with_key(key),
-                    );
+                    return Err(DataError::custom(
+                        "Invalid supported locales for singleton marker",
+                    )
+                    .with_marker(marker));
                 }
 
                 let payload = provider
-                    .load_data(key, Default::default())
+                    .load_data(marker, Default::default())
                     .and_then(DataResponse::take_payload)
-                    .map_err(|e| e.with_req(key, Default::default()))?;
+                    .map_err(|e| e.with_req(marker, Default::default()))?;
 
                 let transform_duration = instant1.elapsed();
 
-                sink.flush_singleton(key, &payload)
-                    .map_err(|e| e.with_req(key, Default::default()))?;
+                sink.flush_singleton(marker, &payload)
+                    .map_err(|e| e.with_req(marker, Default::default()))?;
 
                 let final_duration = instant1.elapsed();
                 let flush_duration = final_duration - transform_duration;
 
                 if final_duration > Duration::new(0, 500_000_000) {
-                    // Print durations if the key took longer than 500 ms
+                    // Print durations if the marker took longer than 500 ms
                     log::info!(
-                        "Generated key {key} ({}, flushed in {})",
+                        "Generated marker {marker} ({}, flushed in {})",
                         DisplayDuration(final_duration),
                         DisplayDuration(flush_duration)
                     );
                 } else {
-                    log::info!("Generated key {key}");
+                    log::info!("Generated marker {marker}");
                 }
                 return Ok(());
             }
 
-            let locales_to_export = select_locales_for_key(
+            let locales_to_export = select_locales_for_marker(
                 provider,
-                key,
+                marker,
                 &locales_fallback,
                 &additional_collations,
                 &segmenter_models,
@@ -758,49 +758,49 @@ impl DatagenDriver {
                 DeduplicationStrategy::Maximal => {
                     let payloads = locales_to_export
                         .into_par_iter()
-                        .filter_map(|(locale, key_attributes)| {
+                        .filter_map(|(locale, marker_attributes)| {
                             let instant2 = Instant::now();
-                            load_with_fallback(key, &locale, &key_attributes).map(|r| {
+                            load_with_fallback(marker, &locale, &marker_attributes).map(|r| {
                                 r.map(|payload| {
-                                    ((locale, key_attributes), (payload, instant2.elapsed()))
+                                    ((locale, marker_attributes), (payload, instant2.elapsed()))
                                 })
                             })
                         })
                         .collect::<Result<HashMap<_, _>, _>>()?;
-                    deduplicate_payloads::<true>(key, &payloads, fallbacker()?, sink)?
+                    deduplicate_payloads::<true>(marker, &payloads, fallbacker()?, sink)?
                 }
                 DeduplicationStrategy::RetainBaseLanguages => {
                     let payloads = locales_to_export
                         .into_par_iter()
-                        .filter_map(|(locale, key_attributes)| {
+                        .filter_map(|(locale, marker_attributes)| {
                             let instant2 = Instant::now();
-                            load_with_fallback(key, &locale, &key_attributes).map(|r| {
+                            load_with_fallback(marker, &locale, &marker_attributes).map(|r| {
                                 r.map(|payload| {
-                                    ((locale, key_attributes), (payload, instant2.elapsed()))
+                                    ((locale, marker_attributes), (payload, instant2.elapsed()))
                                 })
                             })
                         })
                         .collect::<Result<HashMap<_, _>, _>>()?;
-                    deduplicate_payloads::<false>(key, &payloads, fallbacker()?, sink)?
+                    deduplicate_payloads::<false>(marker, &payloads, fallbacker()?, sink)?
                 }
                 DeduplicationStrategy::None => locales_to_export
                     .into_par_iter()
-                    .filter_map(|(locale, key_attributes)| {
+                    .filter_map(|(locale, marker_attributes)| {
                         let instant2 = Instant::now();
-                        let result = load_with_fallback(key, &locale, &key_attributes)?;
+                        let result = load_with_fallback(marker, &locale, &marker_attributes)?;
                         let result = result
                             .and_then(|payload| {
-                                sink.put_payload(key, &locale, &key_attributes, &payload)
+                                sink.put_payload(marker, &locale, &marker_attributes, &payload)
                             })
                             // Note: in Hybrid mode the elapsed time includes sink.put_payload.
                             // In Runtime mode the elapsed time is only load_with_fallback.
                             .map(|_| (instant2.elapsed(), locale.write_to_string().into_owned()))
                             .map_err(|e| {
                                 e.with_req(
-                                    key,
+                                    marker,
                                     DataRequest {
                                         locale: &locale,
-                                        key_attributes: &key_attributes,
+                                        marker_attributes: &marker_attributes,
                                         ..Default::default()
                                     },
                                 )
@@ -817,26 +817,26 @@ impl DatagenDriver {
 
             // segmenter uses hardcoded locales internally, so fallback is not necessary.
             // TODO(#4511): Use auxiliary keys for segmenter
-            if uses_internal_fallback && !key.path().get().starts_with("segmenter") {
-                sink.flush_with_built_in_fallback(key, BuiltInFallbackMode::Standard)
+            if uses_internal_fallback && !marker.path.get().starts_with("segmenter") {
+                sink.flush_with_built_in_fallback(marker, BuiltInFallbackMode::Standard)
             } else {
-                sink.flush(key)
+                sink.flush(marker)
             }
-            .map_err(|e| e.with_key(key))?;
+            .map_err(|e| e.with_marker(marker))?;
 
             let final_duration = instant1.elapsed();
             let flush_duration = final_duration - transform_duration;
 
             if final_duration > Duration::new(0, 500_000_000) {
-                // Print durations if the key took longer than 500 ms
+                // Print durations if the marker took longer than 500 ms
                 log::info!(
-                    "Generated key {key} ({}, '{slowest_locale}' in {}, flushed in {})",
+                    "Generated marker {marker} ({}, '{slowest_locale}' in {}, flushed in {})",
                     DisplayDuration(final_duration),
                     DisplayDuration(slowest_duration),
                     DisplayDuration(flush_duration)
                 );
             } else {
-                log::info!("Generated key {key}");
+                log::info!("Generated marker {marker}");
             }
             Ok(())
         })?;
@@ -845,45 +845,45 @@ impl DatagenDriver {
     }
 }
 
-/// Selects the maximal set of locales to export based on a [`DataKey`] and this datagen
+/// Selects the maximal set of locales to export based on a [`DataMarkerInfo`] and this datagen
 /// provider's options bag. The locales may be later optionally deduplicated for fallback.
-fn select_locales_for_key<'a>(
+fn select_locales_for_marker<'a>(
     provider: &dyn ExportableProvider,
-    key: DataKey,
+    marker: DataMarkerInfo,
     locales_fallback: &LocalesWithOrWithoutFallback,
     additional_collations: &HashSet<String>,
     segmenter_models: &[String],
     fallbacker: impl Fn() -> Result<&'a LocaleFallbacker, DataError>,
-) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
     // Map from all supported LanguageIdentifiers to their
     // corresponding supported DataLocales.
     let mut supported_map =
-        HashMap::<LanguageIdentifier, HashSet<(DataLocale, DataKeyAttributes)>>::new();
-    for (locale, key_attributes) in provider
-        .supported_requests_for_key(key)
-        .map_err(|e| e.with_key(key))?
+        HashMap::<LanguageIdentifier, HashSet<(DataLocale, DataMarkerAttributes)>>::new();
+    for (locale, marker_attributes) in provider
+        .supported_requests_for_marker(marker)
+        .map_err(|e| e.with_marker(marker))?
     {
         supported_map
             .entry(locale.get_langid())
             .or_default()
-            .insert((locale, key_attributes));
+            .insert((locale, marker_attributes));
     }
 
-    if key.path().get().starts_with("segmenter/dictionary/") {
+    if marker.path.get().starts_with("segmenter/dictionary/") {
         supported_map.retain(|_, locales| {
             locales.retain(|(_, attrs)| segmenter_models.iter().any(|m| **m == **attrs));
             !locales.is_empty()
         });
         // Don't perform additional locale filtering
         return Ok(supported_map.into_values().flatten().collect());
-    } else if key.path().get().starts_with("segmenter/lstm/") {
+    } else if marker.path.get().starts_with("segmenter/lstm/") {
         supported_map.retain(|_, locales| {
             locales.retain(|(_, attrs)| segmenter_models.iter().any(|m| **m == **attrs));
             !locales.is_empty()
         });
         // Don't perform additional locale filtering
         return Ok(supported_map.into_values().flatten().collect());
-    } else if key.path().get().starts_with("collator/") {
+    } else if marker.path.get().starts_with("collator/") {
         supported_map.retain(|_, locales| {
             locales.retain(|(locale, _)| {
                 let Some(collation) = locale
@@ -946,7 +946,7 @@ fn select_locales_for_key<'a>(
     }
 
     // Need the fallbacker now.
-    let fallbacker_with_config = fallbacker()?.for_config(key.fallback_config());
+    let fallbacker_with_config = fallbacker()?.for_config(marker.fallback_config);
 
     // The "candidate" langids that could be exported is the union of requested and supported.
     let all_candidate_langids = supported_map
@@ -957,7 +957,7 @@ fn select_locales_for_key<'a>(
     // Compute a map from LanguageIdentifiers to DataLocales, including inherited auxiliary keys
     // and extensions. Also resolve the ancestors and descendants while building this map.
     let mut selected_langids = requested_families.keys().cloned().collect::<HashSet<_>>();
-    let expansion_map: HashMap<&LanguageIdentifier, HashSet<(DataLocale, DataKeyAttributes)>> =
+    let expansion_map: HashMap<&LanguageIdentifier, HashSet<(DataLocale, DataMarkerAttributes)>> =
         all_candidate_langids
             .into_iter()
             .map(|current_langid| {
@@ -966,12 +966,12 @@ fn select_locales_for_key<'a>(
                     .cloned()
                     .unwrap_or_default();
                 if include_full && !selected_langids.contains(current_langid) {
-                    log::trace!("Including {current_langid}: full locale family: {key}");
+                    log::trace!("Including {current_langid}: full locale family: {marker}");
                     selected_langids.insert(current_langid.clone());
                 }
                 if current_langid.language.is_empty() && current_langid != &LanguageIdentifier::UND
                 {
-                    log::trace!("Including {current_langid}: und variant: {key}");
+                    log::trace!("Including {current_langid}: und variant: {marker}");
                     selected_langids.insert(current_langid.clone());
                 }
                 let include_ancestors = requested_families
@@ -991,13 +991,13 @@ fn select_locales_for_key<'a>(
                         .unwrap_or(false);
                     if include_descendants && !selected_langids.contains(current_langid) {
                         log::trace!(
-                            "Including {current_langid}: descendant of {parent_langid}: {key}"
+                            "Including {current_langid}: descendant of {parent_langid}: {marker}"
                         );
                         selected_langids.insert(current_langid.clone());
                     }
                     if include_ancestors && !selected_langids.contains(&parent_langid) {
                         log::trace!(
-                            "Including {parent_langid}: ancestor of {current_langid}: {key}"
+                            "Including {parent_langid}: ancestor of {current_langid}: {marker}"
                         );
                         selected_langids.insert(parent_langid);
                     }
@@ -1032,22 +1032,22 @@ fn select_locales_for_key<'a>(
 }
 
 fn deduplicate_payloads<const MAXIMAL: bool>(
-    key: DataKey,
-    payloads: &HashMap<(DataLocale, DataKeyAttributes), (DataPayload<ExportMarker>, Duration)>,
+    marker: DataMarkerInfo,
+    payloads: &HashMap<(DataLocale, DataMarkerAttributes), (DataPayload<ExportMarker>, Duration)>,
     fallbacker: &LocaleFallbacker,
     sink: &dyn DataExporter,
 ) -> Result<Option<(Duration, String)>, DataError> {
-    let fallbacker_with_config = fallbacker.for_config(key.fallback_config());
+    let fallbacker_with_config = fallbacker.for_config(marker.fallback_config);
     payloads
         .iter()
-        .try_for_each(|((locale, key_attributes), (payload, _duration))| {
+        .try_for_each(|((locale, marker_attributes), (payload, _duration))| {
             // Always export `und`. This prevents calling `step` on an empty locale.
             if locale.is_und() {
                 return sink
-                    .put_payload(key, locale, key_attributes, payload)
+                    .put_payload(marker, locale, marker_attributes, payload)
                     .map_err(|e| {
                         e.with_req(
-                            key,
+                            marker,
                             DataRequest {
                                 locale,
                                 ..Default::default()
@@ -1071,12 +1071,12 @@ fn deduplicate_payloads<const MAXIMAL: bool>(
                 }
 
                 if let Some((inherited_payload, _duration)) =
-                    payloads.get(&(iter.get().clone(), key_attributes.clone()))
+                    payloads.get(&(iter.get().clone(), marker_attributes.clone()))
                 {
                     if inherited_payload == payload {
                         // Found a match: don't need to write anything
                         log::trace!(
-                            "Deduplicating {key}/{locale} (inherits from {})",
+                            "Deduplicating {marker}/{locale} (inherits from {})",
                             iter.get()
                         );
                         return Ok(());
@@ -1087,10 +1087,10 @@ fn deduplicate_payloads<const MAXIMAL: bool>(
                 }
             }
             // Did not find a match: export this payload
-            sink.put_payload(key, locale, key_attributes, payload)
+            sink.put_payload(marker, locale, marker_attributes, payload)
                 .map_err(|e| {
                     e.with_req(
-                        key,
+                        marker,
                         DataRequest {
                             locale,
                             ..Default::default()
@@ -1102,10 +1102,10 @@ fn deduplicate_payloads<const MAXIMAL: bool>(
     // Slowest locale calculation:
     Ok(payloads
         .iter()
-        .map(|((locale, key_attributes), (_payload, duration))| {
+        .map(|((locale, marker_attributes), (_payload, duration))| {
             (
                 *duration,
-                locale.write_to_string().into_owned() + "/" + key_attributes,
+                locale.write_to_string().into_owned() + "/" + marker_attributes,
             )
         })
         .max())
@@ -1211,9 +1211,9 @@ fn test_collation_filtering() {
     ];
     let fallbacker = LocaleFallbacker::new_without_data();
     for cas in cases {
-        let resolved_locales = select_locales_for_key(
+        let resolved_locales = select_locales_for_marker(
             &crate::provider::DatagenProvider::new_testing(),
-            icu_collator::provider::CollationDataV1Marker::KEY,
+            icu_collator::provider::CollationDataV1Marker::INFO,
             &LocalesWithOrWithoutFallback::WithoutFallback {
                 langids: [cas.language.clone()].into_iter().collect(),
             },

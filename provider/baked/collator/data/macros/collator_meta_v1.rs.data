@@ -26,7 +26,7 @@ macro_rules! __impl_collator_meta_v1 {
                 let payload = if let Ok(payload) = KEYS.binary_search_by(|k| req.legacy_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
                     payload
                 } else {
-                    const FALLBACKER: icu::locale::fallback::LocaleFallbackerWithConfig<'static> = icu::locale::fallback::LocaleFallbacker::new().for_config(<icu::collator::provider::CollationMetadataV1Marker as icu_provider::DataMarker>::KEY.fallback_config());
+                    const FALLBACKER: icu::locale::fallback::LocaleFallbackerWithConfig<'static> = icu::locale::fallback::LocaleFallbacker::new().for_config(<icu::collator::provider::CollationMetadataV1Marker as icu_provider::DataMarker>::INFO.fallback_config);
                     let mut fallback_iterator = FALLBACKER.fallback_for(req.locale.clone());
                     loop {
                         if let Ok(payload) = KEYS.binary_search_by(|k| icu_provider::DataRequest { locale: fallback_iterator.get(), ..req }.legacy_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
@@ -34,7 +34,7 @@ macro_rules! __impl_collator_meta_v1 {
                             break payload;
                         }
                         if fallback_iterator.get().is_und() {
-                            return Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::collator::provider::CollationMetadataV1Marker as icu_provider::DataMarker>::KEY, req));
+                            return Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::collator::provider::CollationMetadataV1Marker as icu_provider::DataMarker>::INFO, req));
                         }
                         fallback_iterator.step();
                     }
@@ -46,14 +46,14 @@ macro_rules! __impl_collator_meta_v1 {
 }
 /// Implement `IterableDataProvider<CollationMetadataV1Marker>` on the given struct using the data
 /// hardcoded in this file. This allows the struct to be used with
-/// `DatagenDriver` for this key.
+/// `DatagenDriver` for this marker.
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __impliterable_collator_meta_v1 {
     ($ provider : ty) => {
         #[clippy::msrv = "1.70"]
         impl icu_provider::datagen::IterableDataProvider<icu::collator::provider::CollationMetadataV1Marker> for $provider {
-            fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataKeyAttributes)>, icu_provider::DataError> {
+            fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataMarkerAttributes)>, icu_provider::DataError> {
                 Ok(["af", "am", "ar", "as", "az", "be", "bg", "bn", "br", "bs", "ceb", "chr", "cs", "cy", "da", "de-AT-u-co-phonebk", "de-u-co-phonebk", "dsb", "el", "en-US-posix", "eo", "es", "et", "fa", "ff-Adlm", "fi", "fil", "fo", "fr-CA", "fy", "gl", "gu", "ha", "he", "hi", "hr", "hsb", "hu", "hy", "ig", "is", "ja", "ka", "kk", "km", "kn", "ko", "kok", "ku", "ky", "lo", "lt", "lv", "mk", "ml", "mn", "mr", "mt", "my", "ne", "no", "or", "pa", "pl", "ps", "ro", "ru", "si", "sk", "sl", "sq", "sr", "sv", "ta", "te", "th", "tk", "to", "tr", "ug", "uk", "und", "ur", "uz", "vi", "wo", "yo", "zh"].into_iter().filter_map(icu_provider::DataRequest::legacy_decode).collect())
             }
         }

@@ -213,7 +213,7 @@ impl<C: CldrCalendar, R: TypedNeoFormatterMarker<C>> TypedNeoFormatter<C, R> {
     pub fn try_new(locale: &DataLocale, length: NeoSkeletonLength) -> Result<Self, LoadError>
     where
         crate::provider::Baked: Sized
-            // Date formatting keys
+            // Date formatting markers
             + DataProvider<<R::D as TypedDateMarkers<C>>::YearNamesV1Marker>
             + DataProvider<<R::D as TypedDateMarkers<C>>::MonthNamesV1Marker>
             + DataProvider<<R::D as TypedDateMarkers<C>>::DateSkeletonPatternsV1Marker>
@@ -248,7 +248,7 @@ impl<C: CldrCalendar, R: TypedNeoFormatterMarker<C>> TypedNeoFormatter<C, R> {
     ) -> Result<Self, LoadError>
     where
         P: ?Sized
-            // Date formatting keys
+            // Date formatting markers
             + DataProvider<<R::D as TypedDateMarkers<C>>::YearNamesV1Marker>
             + DataProvider<<R::D as TypedDateMarkers<C>>::MonthNamesV1Marker>
             + DataProvider<<R::D as TypedDateMarkers<C>>::DateSkeletonPatternsV1Marker>
@@ -256,9 +256,9 @@ impl<C: CldrCalendar, R: TypedNeoFormatterMarker<C>> TypedNeoFormatter<C, R> {
             + DataProvider<<R::T as TimeMarkers>::DayPeriodNamesV1Marker>
             + DataProvider<<R::T as TimeMarkers>::TimeSkeletonPatternsV1Marker>
             + DataProvider<R::DateTimePatternV1Marker>
-            // FixedDecimalFormatter keys
+            // FixedDecimalFormatter markers
             + DataProvider<DecimalSymbolsV1Marker>
-            // WeekCalculator keys
+            // WeekCalculator markers
             + DataProvider<WeekDataV2Marker>,
     {
         Self::try_new_internal(
@@ -363,7 +363,7 @@ impl<C: CldrCalendar, R: TypedDateTimeMarkers<C> + IsRuntimeComponents> TypedNeo
     ) -> Result<Self, LoadError>
     where
         crate::provider::Baked: Sized
-            // Date formatting keys
+            // Date formatting markers
             + DataProvider<<R::D as TypedDateMarkers<C>>::YearNamesV1Marker>
             + DataProvider<<R::D as TypedDateMarkers<C>>::MonthNamesV1Marker>
             + DataProvider<<R::D as TypedDateMarkers<C>>::DateSkeletonPatternsV1Marker>
@@ -399,7 +399,7 @@ impl<C: CldrCalendar, R: TypedDateTimeMarkers<C> + IsRuntimeComponents> TypedNeo
     ) -> Result<Self, LoadError>
     where
         P: ?Sized
-            // Date formatting keys
+            // Date formatting markers
             + DataProvider<<R::D as TypedDateMarkers<C>>::YearNamesV1Marker>
             + DataProvider<<R::D as TypedDateMarkers<C>>::MonthNamesV1Marker>
             + DataProvider<<R::D as TypedDateMarkers<C>>::DateSkeletonPatternsV1Marker>
@@ -407,9 +407,9 @@ impl<C: CldrCalendar, R: TypedDateTimeMarkers<C> + IsRuntimeComponents> TypedNeo
             + DataProvider<<R::T as TimeMarkers>::DayPeriodNamesV1Marker>
             + DataProvider<<R::T as TimeMarkers>::TimeSkeletonPatternsV1Marker>
             + DataProvider<R::DateTimePatternV1Marker>
-            // FixedDecimalFormatter keys
+            // FixedDecimalFormatter markers
             + DataProvider<DecimalSymbolsV1Marker>
-            // WeekCalculator keys
+            // WeekCalculator markers
             + DataProvider<WeekDataV2Marker>,
     {
         Self::try_new_internal(
@@ -432,7 +432,7 @@ impl<C: CldrCalendar, R: TypedDateTimeMarkers<C>> TypedNeoFormatter<C, R> {
     ) -> Result<Self, LoadError>
     where
         P: ?Sized
-            // Date formatting keys
+            // Date formatting markers
             + DataProvider<<R::D as TypedDateMarkers<C>>::YearNamesV1Marker>
             + DataProvider<<R::D as TypedDateMarkers<C>>::MonthNamesV1Marker>
             + DataProvider<<R::D as TypedDateMarkers<C>>::DateSkeletonPatternsV1Marker>
@@ -615,7 +615,7 @@ impl<R: NeoFormatterMarker> NeoFormatter<R> {
     pub fn try_new(locale: &DataLocale, length: NeoSkeletonLength) -> Result<Self, LoadError>
     where
         crate::provider::Baked: Sized
-    // Date formatting keys
+    // Date formatting markers
             + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Buddhist>
             + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Chinese>
             + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Coptic>
@@ -698,7 +698,7 @@ impl<R: NeoFormatterMarker> NeoFormatter<R> {
     ) -> Result<Self, LoadError>
     where
         P: ?Sized
-    // Date formatting keys
+    // Date formatting markers
             + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Buddhist>
             + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Chinese>
             + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Coptic>
@@ -754,16 +754,16 @@ impl<R: NeoFormatterMarker> NeoFormatter<R> {
             + DataProvider<<R::T as TimeMarkers>::DayPeriodNamesV1Marker>
             + DataProvider<<R::T as TimeMarkers>::TimeSkeletonPatternsV1Marker>
             + DataProvider<R::DateTimePatternV1Marker>
-    // AnyCalendar constructor keys
+    // AnyCalendar constructor markers
             + DataProvider<ChineseCacheV1Marker>
             + DataProvider<DangiCacheV1Marker>
             + DataProvider<IslamicObservationalCacheV1Marker>
             + DataProvider<IslamicUmmAlQuraCacheV1Marker>
             + DataProvider<JapaneseErasV1Marker>
             + DataProvider<JapaneseExtendedErasV1Marker>
-    // FixedDecimalFormatter keys
+    // FixedDecimalFormatter markers
             + DataProvider<DecimalSymbolsV1Marker>
-    // WeekCalculator keys
+    // WeekCalculator markers
             + DataProvider<WeekDataV2Marker>,
     {
         Self::try_new_internal(
@@ -863,7 +863,7 @@ impl<R: DateTimeMarkers + IsRuntimeComponents> NeoFormatter<R> {
     pub fn try_new_with_components(locale: &DataLocale, components: R, length: NeoSkeletonLength) -> Result<Self, LoadError>
     where
     crate::provider::Baked: Sized
-    // Date formatting keys
+    // Date formatting markers
             + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Buddhist>
             + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Chinese>
             + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Coptic>
@@ -947,7 +947,7 @@ impl<R: DateTimeMarkers + IsRuntimeComponents> NeoFormatter<R> {
     ) -> Result<Self, LoadError>
     where
         P: ?Sized
-    // Date formatting keys
+    // Date formatting markers
             + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Buddhist>
             + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Chinese>
             + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Coptic>
@@ -1003,16 +1003,16 @@ impl<R: DateTimeMarkers + IsRuntimeComponents> NeoFormatter<R> {
             + DataProvider<<R::T as TimeMarkers>::DayPeriodNamesV1Marker>
             + DataProvider<<R::T as TimeMarkers>::TimeSkeletonPatternsV1Marker>
             + DataProvider<R::DateTimePatternV1Marker>
-    // AnyCalendar constructor keys
+    // AnyCalendar constructor markers
             + DataProvider<ChineseCacheV1Marker>
             + DataProvider<DangiCacheV1Marker>
             + DataProvider<IslamicObservationalCacheV1Marker>
             + DataProvider<IslamicUmmAlQuraCacheV1Marker>
             + DataProvider<JapaneseErasV1Marker>
             + DataProvider<JapaneseExtendedErasV1Marker>
-    // FixedDecimalFormatter keys
+    // FixedDecimalFormatter markers
             + DataProvider<DecimalSymbolsV1Marker>
-    // WeekCalculator keys
+    // WeekCalculator markers
             + DataProvider<WeekDataV2Marker>,
     {
         Self::try_new_internal(
@@ -1035,7 +1035,7 @@ impl<R: DateTimeMarkers> NeoFormatter<R> {
     ) -> Result<Self, LoadError>
     where
         P: ?Sized
-    // Date formatting keys
+    // Date formatting markers
             + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Buddhist>
             + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Chinese>
             + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Coptic>

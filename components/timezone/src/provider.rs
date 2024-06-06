@@ -47,11 +47,11 @@ const _: () = {
 };
 
 #[cfg(feature = "datagen")]
-/// The latest minimum set of keys required by this component.
-pub const KEYS: &[DataKey] = &[
-    MetazonePeriodV1Marker::KEY,
-    names::Bcp47ToIanaMapV1Marker::KEY,
-    names::IanaToBcp47MapV2Marker::KEY,
+/// The latest minimum set of markers required by this component.
+pub const MARKERS: &[DataMarkerInfo] = &[
+    MetazonePeriodV1Marker::INFO,
+    names::Bcp47ToIanaMapV1Marker::INFO,
+    names::IanaToBcp47MapV2Marker::INFO,
 ];
 
 /// TimeZone ID in BCP47 format

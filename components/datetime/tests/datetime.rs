@@ -43,7 +43,7 @@ use icu_locale_core::{
 };
 use icu_provider::prelude::*;
 use icu_provider_adapters::any_payload::AnyPayloadProvider;
-use icu_provider_adapters::fork::MultiForkByKeyProvider;
+use icu_provider_adapters::fork::MultiForkByMarkerProvider;
 use icu_timezone::{CustomTimeZone, ZoneVariant};
 use patterns::{
     dayperiods::{DayPeriodExpectation, DayPeriodTests},
@@ -460,7 +460,7 @@ fn test_dayperiod_patterns() {
                             data.time_h11_h12.medium = new_pattern1;
                             data.time_h23_h24.medium = new_pattern2;
                         });
-                        let local_provider = MultiForkByKeyProvider::new(vec![
+                        let local_provider = MultiForkByMarkerProvider::new(vec![
                             AnyPayloadProvider::from_payload::<GregorianDateSymbolsV1Marker>(
                                 date_symbols_data.clone(), //
                             ),
@@ -694,7 +694,7 @@ fn test_time_zone_patterns() {
                     data.time_h11_h12.medium = new_pattern1;
                     data.time_h23_h24.medium = new_pattern2;
                 });
-                let local_provider = MultiForkByKeyProvider::new(vec![
+                let local_provider = MultiForkByMarkerProvider::new(vec![
                     AnyPayloadProvider::from_payload::<GregorianDateSymbolsV1Marker>(
                         symbols_data.clone(), //
                     ),

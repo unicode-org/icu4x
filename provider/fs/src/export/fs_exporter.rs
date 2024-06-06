@@ -101,16 +101,16 @@ impl FilesystemExporter {
 impl DataExporter for FilesystemExporter {
     fn put_payload(
         &self,
-        key: DataKey,
+        marker: DataMarkerInfo,
         locale: &DataLocale,
-        key_attributes: &DataKeyAttributes,
+        marker_attributes: &DataMarkerAttributes,
         obj: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
         let mut path_buf = self.root.clone().into_os_string();
-        write!(&mut path_buf, "/{key}").expect("infallible");
+        write!(&mut path_buf, "/{marker}").expect("infallible");
         write!(&mut path_buf, "/{locale}").expect("infallible");
-        if !key_attributes.is_empty() {
-            write!(&mut path_buf, "-x-{}", key_attributes as &str).expect("infallible");
+        if !marker_attributes.is_empty() {
+            write!(&mut path_buf, "-x-{}", marker_attributes as &str).expect("infallible");
         }
         write!(&mut path_buf, ".{}", self.manifest.file_extension).expect("infallible");
 
@@ -138,9 +138,9 @@ impl DataExporter for FilesystemExporter {
         Ok(())
     }
 
-    fn flush(&self, key: DataKey) -> Result<(), DataError> {
+    fn flush(&self, marker: DataMarkerInfo) -> Result<(), DataError> {
         let mut path_buf = self.root.clone().into_os_string();
-        write!(&mut path_buf, "/{key}").expect("infallible");
+        write!(&mut path_buf, "/{marker}").expect("infallible");
 
         if !Path::new(&path_buf).exists() {
             fs::create_dir_all(&path_buf)

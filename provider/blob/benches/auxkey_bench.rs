@@ -78,9 +78,9 @@ macro_rules! make_exportable_provider_cb {
     };
 }
 
-macro_rules! key_array_cb {
+macro_rules! marker_array_cb {
     ([$($marker:path,)+]) => {
-        [$(<$marker>::KEY,)+]
+        [$(<$marker>::INFO,)+]
     };
 }
 
@@ -90,7 +90,7 @@ fn make_blob_v1() -> Vec<u8> {
     let mut blob: Vec<u8> = Vec::new();
     let exporter = BlobExporter::new_with_sink(Box::new(&mut blob));
     DatagenDriver::new()
-        .with_keys(skeleton_markers!(key_array_cb))
+        .with_markers(skeleton_markers!(marker_array_cb))
         .with_locales_and_fallback([LocaleFamily::FULL], Default::default())
         .export(&Baked, exporter)
         .unwrap();
@@ -103,7 +103,7 @@ fn make_blob_v2() -> Vec<u8> {
     let mut blob: Vec<u8> = Vec::new();
     let exporter = BlobExporter::new_v2_with_sink(Box::new(&mut blob));
     DatagenDriver::new()
-        .with_keys(skeleton_markers!(key_array_cb))
+        .with_markers(skeleton_markers!(marker_array_cb))
         .with_locales_and_fallback([LocaleFamily::FULL], Default::default())
         .export(&Baked, exporter)
         .unwrap();
@@ -131,7 +131,7 @@ fn auxkey_bench_for_version(c: &mut Criterion, blob: &[u8], version_id: &str) {
 
     for (locale_str, attr_str) in [("sr-Latn", "ym0d"), ("sr-ME", "ym0d")] {
         let locale = locale_str.parse::<DataLocale>().unwrap();
-        let attrs = attr_str.parse::<DataKeyAttributes>().unwrap();
+        let attrs = attr_str.parse::<DataMarkerAttributes>().unwrap();
 
         c.bench_function(
             &format!("provider/auxkey/fallback/{locale_str}/{version_id}"),
@@ -142,7 +142,7 @@ fn auxkey_bench_for_version(c: &mut Criterion, blob: &[u8], version_id: &str) {
                             &provider.as_deserializing(),
                             DataRequest {
                                 locale: black_box(&locale),
-                                key_attributes: black_box(&attrs),
+                                marker_attributes: black_box(&attrs),
                                 metadata: Default::default()
                             }
                         )

@@ -105,7 +105,7 @@ impl DataProvider<CollationFallbackSupplementV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProvider<CollationFallbackSupplementV1Marker> for DatagenProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
@@ -186,7 +186,7 @@ macro_rules! collation_provider {
                         ))
                         .map_err(|e| match e.kind {
                             DataErrorKind::Io(std::io::ErrorKind::NotFound) => {
-                                DataErrorKind::MissingLocale.with_req($marker::KEY, req)
+                                DataErrorKind::MissingLocale.with_req($marker::INFO, req)
                             }
                             _ => e,
                         })?;
@@ -203,7 +203,7 @@ macro_rules! collation_provider {
             }
 
             impl IterableDataProviderCached<$marker> for DatagenProvider {
-                fn supported_requests_cached(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+                fn supported_requests_cached(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
                     Ok(self
                         .icuexport()?
                         .list(&format!(

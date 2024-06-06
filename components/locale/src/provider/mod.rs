@@ -56,16 +56,16 @@ const _: () = {
 use icu_provider::prelude::*;
 
 #[cfg(feature = "datagen")]
-/// The latest minimum set of keys required by this component.
-pub const KEYS: &[DataKey] = &[
-    AliasesV2Marker::KEY,
-    CollationFallbackSupplementV1Marker::KEY,
-    LikelySubtagsExtendedV1Marker::KEY,
-    LikelySubtagsForLanguageV1Marker::KEY,
-    LikelySubtagsForScriptRegionV1Marker::KEY,
-    LocaleFallbackLikelySubtagsV1Marker::KEY,
-    LocaleFallbackParentsV1Marker::KEY,
-    ScriptDirectionV1Marker::KEY,
+/// The latest minimum set of markers required by this component.
+pub const MARKERS: &[DataMarkerInfo] = &[
+    AliasesV2Marker::INFO,
+    CollationFallbackSupplementV1Marker::INFO,
+    LikelySubtagsExtendedV1Marker::INFO,
+    LikelySubtagsForLanguageV1Marker::INFO,
+    LikelySubtagsForScriptRegionV1Marker::INFO,
+    LocaleFallbackLikelySubtagsV1Marker::INFO,
+    LocaleFallbackParentsV1Marker::INFO,
+    ScriptDirectionV1Marker::INFO,
 ];
 
 use alloc::borrow::Cow;

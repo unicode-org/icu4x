@@ -6,7 +6,7 @@
 
 use core::marker::PhantomData;
 
-use crate::{data_key, DataKey, DataProvider, DataProviderWithKey};
+use crate::{data_marker_path, DataMarkerInfo, DataProvider, DataProviderWithMarker};
 use yoke::Yokeable;
 
 /// Trait marker for data structs. All types delivered by the data provider must be associated with
@@ -62,16 +62,16 @@ pub trait DynamicDataMarker: 'static {
     type Yokeable: for<'a> Yokeable<'a>;
 }
 
-/// A [`DynamicDataMarker`] with a [`DataKey`] attached.
+/// A [`DynamicDataMarker`] with a [`DataMarkerInfo`] attached.
 ///
 /// Structs implementing this trait are normally generated with the [`data_struct!`] macro.
 ///
 /// Implementing this trait enables this marker to be used with the main [`DataProvider`] trait.
-/// Most markers should be associated with a specific key and should therefore implement this
+/// Most markers should be associated with a specific marker and should therefore implement this
 /// trait.
 ///
 /// [`BufferMarker`] and [`AnyMarker`] are examples of markers that do _not_ implement this trait
-/// because they are not specific to a single key.
+/// because they are not specific to a single marker.
 ///
 /// Note: `DataMarker`s are quasi-const-generic compile-time objects, and as such are expected
 /// to be unit structs. As this is not something that can be enforced by the type system, we
@@ -82,26 +82,26 @@ pub trait DynamicDataMarker: 'static {
 /// [`BufferMarker`]: crate::BufferMarker
 /// [`AnyMarker`]: crate::AnyMarker
 pub trait DataMarker: DynamicDataMarker {
-    /// The single [`DataKey`] associated with this marker.
-    const KEY: DataKey;
+    /// The single [`DataMarkerInfo`] associated with this marker.
+    const INFO: DataMarkerInfo;
 
     /// Binds this [`DataMarker`] to a provider supporting it.
-    fn bind<P>(provider: P) -> DataProviderWithKey<Self, P>
+    fn bind<P>(provider: P) -> DataProviderWithMarker<Self, P>
     where
         P: DataProvider<Self>,
         Self: Sized,
     {
-        DataProviderWithKey::new(provider)
+        DataProviderWithMarker::new(provider)
     }
 }
 
 /// A [`DynamicDataMarker`] that never returns data.
 ///
 /// All types that have non-blanket impls of `DataProvider<M>` are expected to explicitly
-/// implement `DataProvider<NeverMarker<Y>>`, returning [`DataErrorKind::MissingDataKey`].
+/// implement `DataProvider<NeverMarker<Y>>`, returning [`DataErrorKind::MissingDataMarker`].
 /// See [`impl_data_provider_never_marker!`].
 ///
-/// [`DataErrorKind::MissingDataKey`]: crate::DataErrorKind::MissingDataKey
+/// [`DataErrorKind::MissingDataMarker`]: crate::DataErrorKind::MissingDataMarker
 /// [`impl_data_provider_never_marker!`]: crate::impl_data_provider_never_marker
 ///
 /// # Examples
@@ -125,7 +125,7 @@ pub trait DataMarker: DynamicDataMarker {
 /// assert!(matches!(
 ///     result,
 ///     Err(DataError {
-///         kind: DataErrorKind::MissingDataKey,
+///         kind: DataErrorKind::MissingDataMarker,
 ///         ..
 ///     })
 /// ));
@@ -144,7 +144,7 @@ impl<Y> DataMarker for NeverMarker<Y>
 where
     for<'a> Y: Yokeable<'a>,
 {
-    const KEY: DataKey = data_key!("_never@1");
+    const INFO: DataMarkerInfo = DataMarkerInfo::from_path(data_marker_path!("_never@1"));
 }
 
 /// Implements `DataProvider<NeverMarker<Y>>` on a struct.
@@ -174,7 +174,7 @@ where
 /// assert!(matches!(
 ///     result,
 ///     Err(DataError {
-///         kind: DataErrorKind::MissingDataKey,
+///         kind: DataErrorKind::MissingDataMarker,
 ///         ..
 ///     })
 /// ));
@@ -190,8 +190,8 @@ macro_rules! impl_data_provider_never_marker {
                 &self,
                 req: $crate::DataRequest,
             ) -> Result<$crate::DataResponse<$crate::NeverMarker<Y>>, $crate::DataError> {
-                Err($crate::DataErrorKind::MissingDataKey
-                    .with_req(<$crate::NeverMarker<Y> as $crate::DataMarker>::KEY, req))
+                Err($crate::DataErrorKind::MissingDataMarker
+                    .with_req(<$crate::NeverMarker<Y> as $crate::DataMarker>::INFO, req))
             }
         }
     };

@@ -50,7 +50,7 @@ macro_rules! exemplar_chars_impls {
         impl IterableDataProviderCached<$data_marker_name> for DatagenProvider {
             fn supported_requests_cached(
                 &self,
-            ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+            ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
                 Ok(self
                     .cldr()?
                     .misc()

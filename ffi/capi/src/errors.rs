@@ -66,7 +66,7 @@ pub mod ffi {
 
         // general data errors
         // See DataError
-        DataMissingDataKeyError = 0x1_00,
+        DataMissingDataMarkerError = 0x1_00,
         DataMissingVariantError = 0x1_01,
         DataMissingLocaleError = 0x1_02,
         DataNeedsVariantError = 0x1_03,
@@ -166,7 +166,7 @@ impl ICU4XError {
 impl From<DataError> for ICU4XError {
     fn from(e: DataError) -> Self {
         match e.kind {
-            DataErrorKind::MissingDataKey => ICU4XError::DataMissingDataKeyError,
+            DataErrorKind::MissingDataMarker => ICU4XError::DataMissingDataMarkerError,
             DataErrorKind::MissingLocale => ICU4XError::DataMissingLocaleError,
             DataErrorKind::NeedsLocale => ICU4XError::DataNeedsLocaleError,
             DataErrorKind::ExtraneousLocale => ICU4XError::DataExtraneousLocaleError,

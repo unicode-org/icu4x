@@ -35,7 +35,7 @@ impl DataProvider<PercentEssentialsV1Marker> for DatagenProvider {
 impl IterableDataProviderCached<PercentEssentialsV1Marker> for DatagenProvider {
     fn supported_requests_cached(
         &self,
-    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         Ok(self
             .cldr()?
             .numbers()

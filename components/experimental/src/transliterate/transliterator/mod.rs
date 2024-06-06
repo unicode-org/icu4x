@@ -407,14 +407,14 @@ impl Transliterator {
     }
 
     fn load_rbt<P>(
-        key_attributes: &DataKeyAttributes,
+        marker_attributes: &DataMarkerAttributes,
         provider: &P,
     ) -> Result<DataPayload<TransliteratorRulesV1Marker>, DataError>
     where
         P: DataProvider<TransliteratorRulesV1Marker> + ?Sized,
     {
         let req = DataRequest {
-            key_attributes,
+            marker_attributes,
             ..Default::default()
         };
         let payload = provider.load(req)?.take_payload()?;

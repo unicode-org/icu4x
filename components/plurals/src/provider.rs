@@ -45,12 +45,12 @@ const _: () = {
 };
 
 #[cfg(feature = "datagen")]
-/// The latest minimum set of keys required by this component.
-pub const KEYS: &[DataKey] = &[
-    CardinalV1Marker::KEY,
-    OrdinalV1Marker::KEY,
+/// The latest minimum set of markers required by this component.
+pub const MARKERS: &[DataMarkerInfo] = &[
+    CardinalV1Marker::INFO,
+    OrdinalV1Marker::INFO,
     #[cfg(feature = "experimental")]
-    PluralRangesV1Marker::KEY,
+    PluralRangesV1Marker::INFO,
 ];
 
 /// Plural rule strings conforming to UTS 35 syntax. Includes separate fields for five of the six

@@ -18,7 +18,7 @@
 //! # Directory Structure
 //!
 //! The ICU4X data directory has a file named `manifest.json` at the root, and a nested structure
-//! with a data key ([`DataKey`](icu_provider::DataKey)), and locale ([`DataLocale`](icu_provider::DataLocale))
+//! with a data marker ([`DataMarkerInfo`](icu_provider::DataMarkerInfo)), and locale ([`DataLocale`](icu_provider::DataLocale))
 //! as the leaf data files. For example, Arabic JSON data for cardinal plural rules lives at `plurals/cardinal@1/ar.json`.
 //!
 //! The exact form of the directory structure may change over time. ICU4X uses metadata from
@@ -65,13 +65,13 @@
 //! To generate the data required for [`FsDataProvider`], run the following:
 //!
 //! ```bash
-//! icu4x-datagen --keys all --locales full --format dir
+//! icu4x-datagen --markers all --locales full --format dir
 //! ```
 //!
 //! To export `postcard` format, use
 //!
 //! ```bash
-//! icu4x-datagen --keys all --locales full --format dir --syntax postcard
+//! icu4x-datagen --markers all --locales full --format dir --syntax postcard
 //! ```
 //!
 //! [`ICU4X`]: ../icu/index.html

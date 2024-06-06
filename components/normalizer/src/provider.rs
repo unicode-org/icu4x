@@ -48,15 +48,15 @@ const _: () = {
 };
 
 #[cfg(feature = "datagen")]
-/// The latest minimum set of keys required by this component.
-pub const KEYS: &[DataKey] = &[
-    CanonicalCompositionsV1Marker::KEY,
-    CanonicalDecompositionDataV1Marker::KEY,
-    CanonicalDecompositionTablesV1Marker::KEY,
-    CompatibilityDecompositionSupplementV1Marker::KEY,
-    CompatibilityDecompositionTablesV1Marker::KEY,
-    NonRecursiveDecompositionSupplementV1Marker::KEY,
-    Uts46DecompositionSupplementV1Marker::KEY,
+/// The latest minimum set of markers required by this component.
+pub const MARKERS: &[DataMarkerInfo] = &[
+    CanonicalCompositionsV1Marker::INFO,
+    CanonicalDecompositionDataV1Marker::INFO,
+    CanonicalDecompositionTablesV1Marker::INFO,
+    CompatibilityDecompositionSupplementV1Marker::INFO,
+    CompatibilityDecompositionTablesV1Marker::INFO,
+    NonRecursiveDecompositionSupplementV1Marker::INFO,
+    Uts46DecompositionSupplementV1Marker::INFO,
 ];
 
 /// Main data for NFD

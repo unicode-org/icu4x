@@ -96,7 +96,7 @@ pub struct RuleCollection {
     id_mapping: BTreeMap<String, Locale>, // alias -> bcp id
     // these two maps need to lock together
     data: RefCell<(
-        BTreeMap<String, (String, bool, bool)>, // key-attributes -> source/reverse/visible
+        BTreeMap<String, (String, bool, bool)>, // marker-attributes -> source/reverse/visible
         BTreeMap<String, Result<DataResponse<TransliteratorRulesV1Marker>, DataError>>, // cache
     )>,
 }
@@ -320,16 +320,16 @@ where
     ) -> Result<DataResponse<TransliteratorRulesV1Marker>, DataError> {
         let mut exclusive_data = self.collection.data.borrow_mut();
 
-        if let Some(response) = exclusive_data.1.get(req.key_attributes as &str) {
+        if let Some(response) = exclusive_data.1.get(req.marker_attributes as &str) {
             return response.clone();
         };
 
         let result = || -> Result<DataResponse<TransliteratorRulesV1Marker>, DataError> {
             let Some((source, reverse, visible)) =
-                exclusive_data.0.remove(req.key_attributes as &str)
+                exclusive_data.0.remove(req.marker_attributes as &str)
             else {
                 return Err(
-                    DataErrorKind::MissingLocale.with_req(TransliteratorRulesV1Marker::KEY, req)
+                    DataErrorKind::MissingLocale.with_req(TransliteratorRulesV1Marker::INFO, req)
                 );
             };
 
@@ -342,7 +342,7 @@ where
             )
             .map_err(|e| {
                 e.explain(&source)
-                    .with_req(TransliteratorRulesV1Marker::KEY, req)
+                    .with_req(TransliteratorRulesV1Marker::INFO, req)
             })?;
 
             let pass1 = pass1::Pass1::run(
@@ -355,7 +355,7 @@ where
             )
             .map_err(|e| {
                 e.explain(&source)
-                    .with_req(TransliteratorRulesV1Marker::KEY, req)
+                    .with_req(TransliteratorRulesV1Marker::INFO, req)
             })?;
 
             let mut transliterator = pass2::Pass2::run(
@@ -369,7 +369,7 @@ where
             )
             .map_err(|e| {
                 e.explain(&source)
-                    .with_req(TransliteratorRulesV1Marker::KEY, req)
+                    .with_req(TransliteratorRulesV1Marker::INFO, req)
             })?;
 
             transliterator.visibility = visible;
@@ -382,7 +382,7 @@ where
 
         exclusive_data
             .1
-            .insert(req.key_attributes.to_string(), result.clone());
+            .insert(req.marker_attributes.to_string(), result.clone());
 
         result
     }
@@ -476,7 +476,7 @@ where
         + DataProvider<XidStartV1Marker>,
     NP: ?Sized,
 {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         let exclusive_data = self.collection.data.borrow();
         Ok(exclusive_data
             .0
@@ -650,7 +650,7 @@ mod tests {
         let forward: DataPayload<TransliteratorRulesV1Marker> = collection
             .as_provider()
             .load(DataRequest {
-                key_attributes: &"fwd".parse().unwrap(),
+                marker_attributes: &"fwd".parse().unwrap(),
                 ..Default::default()
             })
             .unwrap()
@@ -660,7 +660,7 @@ mod tests {
         let reverse: DataPayload<TransliteratorRulesV1Marker> = collection
             .as_provider()
             .load(DataRequest {
-                key_attributes: &"rev".parse().unwrap(),
+                marker_attributes: &"rev".parse().unwrap(),
                 ..Default::default()
             })
             .unwrap()

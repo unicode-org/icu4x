@@ -23,7 +23,7 @@ impl DatagenProvider {
             ))?
             .binary_property
             .first()
-            .ok_or_else(|| DataErrorKind::MissingDataKey.into_error())
+            .ok_or_else(|| DataErrorKind::MissingDataMarker.into_error())
     }
 }
 
@@ -54,7 +54,7 @@ macro_rules! expand {
             }
 
             impl IterableDataProvider<$marker> for DatagenProvider {
-                fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+                fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
                     self.get_binary_prop_for_code_point_set($prop_name)?;
 
                     Ok(HashSet::from_iter([Default::default()]))

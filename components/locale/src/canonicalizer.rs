@@ -635,16 +635,20 @@ mod tests {
     use icu_locale_core::locale;
 
     struct RejectByKeyProvider {
-        keys: Vec<DataKey>,
+        markers: Vec<DataMarkerInfo>,
     }
 
     impl AnyProvider for RejectByKeyProvider {
-        fn load_any(&self, key: DataKey, _: DataRequest) -> Result<AnyResponse, DataError> {
+        fn load_any(
+            &self,
+            marker: DataMarkerInfo,
+            _: DataRequest,
+        ) -> Result<AnyResponse, DataError> {
             use alloc::borrow::Cow;
 
-            println!("{:#?}", key);
-            if self.keys.contains(&key) {
-                return Err(DataErrorKind::MissingDataKey.with_str_context("rejected"));
+            println!("{:#?}", marker);
+            if self.markers.contains(&marker) {
+                return Err(DataErrorKind::MissingDataMarker.with_str_context("rejected"));
             }
 
             let aliases_v2 = crate::provider::Baked::SINGLETON_LOCID_TRANSFORM_ALIASES_V2;
@@ -652,7 +656,7 @@ mod tests {
             let ext = crate::provider::Baked::SINGLETON_LOCID_TRANSFORM_LIKELYSUBTAGS_EXT_V1;
             let sr = crate::provider::Baked::SINGLETON_LOCID_TRANSFORM_LIKELYSUBTAGS_SR_V1;
 
-            let payload = if key.hashed() == AliasesV1Marker::KEY.hashed() {
+            let payload = if marker.path.hashed() == AliasesV1Marker::INFO.path.hashed() {
                 let aliases_v1 = AliasesV1 {
                     language_variants: zerovec::VarZeroVec::from(&[StrStrPair(
                         Cow::Borrowed("aa-saaho"),
@@ -661,19 +665,21 @@ mod tests {
                     ..Default::default()
                 };
                 DataPayload::<AliasesV1Marker>::from_owned(aliases_v1).wrap_into_any_payload()
-            } else if key.hashed() == AliasesV2Marker::KEY.hashed() {
+            } else if marker.path.hashed() == AliasesV2Marker::INFO.path.hashed() {
                 DataPayload::<AliasesV2Marker>::from_static_ref(aliases_v2).wrap_into_any_payload()
-            } else if key.hashed() == LikelySubtagsForLanguageV1Marker::KEY.hashed() {
+            } else if marker.path.hashed() == LikelySubtagsForLanguageV1Marker::INFO.path.hashed() {
                 DataPayload::<LikelySubtagsForLanguageV1Marker>::from_static_ref(l)
                     .wrap_into_any_payload()
-            } else if key.hashed() == LikelySubtagsExtendedV1Marker::KEY.hashed() {
+            } else if marker.path.hashed() == LikelySubtagsExtendedV1Marker::INFO.path.hashed() {
                 DataPayload::<LikelySubtagsExtendedV1Marker>::from_static_ref(ext)
                     .wrap_into_any_payload()
-            } else if key.hashed() == LikelySubtagsForScriptRegionV1Marker::KEY.hashed() {
+            } else if marker.path.hashed()
+                == LikelySubtagsForScriptRegionV1Marker::INFO.path.hashed()
+            {
                 DataPayload::<LikelySubtagsForScriptRegionV1Marker>::from_static_ref(sr)
                     .wrap_into_any_payload()
             } else {
-                return Err(DataErrorKind::MissingDataKey.into_error());
+                return Err(DataErrorKind::MissingDataMarker.into_error());
             };
 
             Ok(AnyResponse {
@@ -686,7 +692,7 @@ mod tests {
     #[test]
     fn test_old_keys() {
         let provider = RejectByKeyProvider {
-            keys: vec![AliasesV2Marker::KEY],
+            markers: vec![AliasesV2Marker::INFO],
         };
         let lc = LocaleCanonicalizer::try_new_with_any_provider(&provider)
             .expect("should create with old keys");
@@ -698,7 +704,7 @@ mod tests {
     #[test]
     fn test_new_keys() {
         let provider = RejectByKeyProvider {
-            keys: vec![AliasesV1Marker::KEY],
+            markers: vec![AliasesV1Marker::INFO],
         };
         let lc = LocaleCanonicalizer::try_new_with_any_provider(&provider)
             .expect("should create with old keys");
@@ -710,7 +716,7 @@ mod tests {
     #[test]
     fn test_no_keys() {
         let provider = RejectByKeyProvider {
-            keys: vec![AliasesV1Marker::KEY, AliasesV2Marker::KEY],
+            markers: vec![AliasesV1Marker::INFO, AliasesV2Marker::INFO],
         };
         if LocaleCanonicalizer::try_new_with_any_provider(&provider).is_ok() {
             panic!("should not create: no data present")

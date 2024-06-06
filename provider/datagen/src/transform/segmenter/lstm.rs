@@ -193,7 +193,7 @@ impl DataProvider<LstmForWordLineAutoV1Marker> for DatagenProvider {
             .segmenter_lstm()?
             .read_and_parse_json::<RawLstmData>(&format!(
                 "{}/weights.json",
-                req.key_attributes as &str
+                req.marker_attributes as &str
             ))
             .map_err(|_| DataErrorKind::MissingLocale.into_error())?;
 
@@ -209,7 +209,7 @@ impl DataProvider<LstmForWordLineAutoV1Marker> for DatagenProvider {
 impl IterableDataProviderCached<LstmForWordLineAutoV1Marker> for DatagenProvider {
     fn supported_requests_cached(
         &self,
-    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         Ok([
             "Burmese_codepoints_exclusive_model4_heavy",
             "Khmer_codepoints_exclusive_model4_heavy",
@@ -226,7 +226,7 @@ impl IterableDataProviderCached<LstmForWordLineAutoV1Marker> for DatagenProvider
 mod tests {
     use super::*;
     use icu_provider_adapters::any_payload::AnyPayloadProvider;
-    use icu_provider_adapters::fork::ForkByKeyProvider;
+    use icu_provider_adapters::fork::ForkByMarkerProvider;
     use icu_segmenter::LineSegmenter;
 
     #[test]
@@ -237,7 +237,7 @@ mod tests {
             .unwrap()
             .read_and_parse_json::<RawLstmData>("Thai_graphclust_model4_heavy/weights.json")
             .unwrap();
-        let provider = ForkByKeyProvider::new(
+        let provider = ForkByMarkerProvider::new(
             AnyPayloadProvider::from_owned::<LstmForWordLineAutoV1Marker>(
                 raw_data.try_convert().unwrap(),
             ),
