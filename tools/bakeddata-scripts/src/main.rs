@@ -134,6 +134,32 @@ fn main() {
             .unwrap();
         }
 
+        // Crates with non-singleton markers need fallback
+        if markers.iter().any(|m| !m.is_singleton) {
+            writeln!(
+                &mut crlify::BufWriterWithLineEndingFix::new(
+                    std::fs::OpenOptions::new()
+                        .write(true)
+                        .append(true)
+                        .open(path.join("Cargo.toml"))
+                        .unwrap()
+                ),
+                r#"icu_locale = {{ workspace = true, features = ["compiled_data"] }}"#
+            )
+            .unwrap();
+            writeln!(
+                &mut crlify::BufWriterWithLineEndingFix::new(
+                    std::fs::OpenOptions::new()
+                        .write(true)
+                        .append(true)
+                        .open(path.join("src/lib.rs"))
+                        .unwrap()
+                ),
+                "pub use icu_locale;"
+            )
+            .unwrap();
+        }
+
         let baked_exporter =
             baked_exporter::BakedExporter::new(path.join("data"), options).unwrap();
         let fingerprinter = PostcardFingerprintExporter {

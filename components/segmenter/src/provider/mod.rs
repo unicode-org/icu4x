@@ -35,20 +35,22 @@ use zerovec::ZeroVec;
 pub struct Baked;
 
 #[cfg(feature = "compiled_data")]
+#[allow(unused_imports)]
 const _: () = {
+    use icu_segmenter_data::*;
     pub mod icu {
         pub use crate as segmenter;
         pub use icu_collections as collections;
     }
-    icu_segmenter_data::make_provider!(Baked);
-    icu_segmenter_data::impl_segmenter_dictionary_w_auto_v1!(Baked);
-    icu_segmenter_data::impl_segmenter_dictionary_wl_ext_v1!(Baked);
-    icu_segmenter_data::impl_segmenter_grapheme_v1!(Baked);
-    icu_segmenter_data::impl_segmenter_line_v1!(Baked);
+    make_provider!(Baked);
+    impl_segmenter_dictionary_w_auto_v1!(Baked);
+    impl_segmenter_dictionary_wl_ext_v1!(Baked);
+    impl_segmenter_grapheme_v1!(Baked);
+    impl_segmenter_line_v1!(Baked);
     #[cfg(feature = "lstm")]
-    icu_segmenter_data::impl_segmenter_lstm_wl_auto_v1!(Baked);
-    icu_segmenter_data::impl_segmenter_sentence_v1!(Baked);
-    icu_segmenter_data::impl_segmenter_word_v1!(Baked);
+    impl_segmenter_lstm_wl_auto_v1!(Baked);
+    impl_segmenter_sentence_v1!(Baked);
+    impl_segmenter_word_v1!(Baked);
 };
 
 #[cfg(feature = "datagen")]

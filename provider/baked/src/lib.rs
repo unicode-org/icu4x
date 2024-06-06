@@ -9,5 +9,4 @@ pub mod export;
 
 pub use icu_provider::prelude::*;
 
-#[macro_use]
 pub mod binary_search;

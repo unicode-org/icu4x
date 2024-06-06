@@ -38,7 +38,6 @@ serde = { workspace = true, features = ["derive", "alloc"], optional = true }
 databake = { workspace = true, features = ["derive"], optional = true}
 
 icu_datetime_data = { workspace = true, optional = true }
-icu_locale = { workspace = true, optional = true, features = ["compiled_data"] }
 
 # Experimental
 litemap = { workspace = true, optional = true }
@@ -92,7 +91,7 @@ datagen = [
 logging = ["icu_calendar/logging"]
 experimental = ["dep:litemap"]
 bench = ["serde"]
-compiled_data = ["dep:icu_datetime_data", "dep:icu_locale", "icu_calendar/compiled_data", "icu_decimal/compiled_data", "icu_plurals/compiled_data", "icu_timezone/compiled_data"]
+compiled_data = ["dep:icu_datetime_data", "icu_calendar/compiled_data", "icu_decimal/compiled_data", "icu_plurals/compiled_data", "icu_timezone/compiled_data"]
 
 [lib]
 bench = false  # This option is required for Benchmark CI
