@@ -677,14 +677,6 @@ where
     const COMPONENTS: NeoComponents = NeoComponents::DateTime(D::COMPONENTS, T::COMPONENTS);
 }
 
-impl<D, T> HasRuntimeComponents for DateTimeCombo<D, T>
-where
-    D: HasRuntimeComponents,
-    T: HasRuntimeComponents,
-{
-    type ComponentsStruct = NeoComponents;
-}
-
 macro_rules! datetime_marker_helper {
     (@years/typed, yes) => {
         C::YearNamesV1Marker
@@ -1203,32 +1195,21 @@ impl_date_marker!(
     input_any_calendar_kind = yes,
 );
 
-/// Marker to indicate that the specific components being formatted
-/// will be provided at runtime.
-pub trait HasRuntimeComponents: private::Sealed {
-    /// The type of components that may be provided at runtime.
-    type ComponentsStruct: Into<NeoComponents>;
-}
+/// Trait for components that can be formatted at runtime.
+pub trait IsRuntimeComponents: private::Sealed + Into<NeoComponents> {}
 
-/// Marker for date components provided at runtime.
-#[derive(Debug)]
-#[allow(clippy::exhaustive_enums)] // empty enum
-pub enum NeoAnyDateMarker {}
+impl private::Sealed for NeoDateComponents {}
 
-impl private::Sealed for NeoAnyDateMarker {}
+impl IsRuntimeComponents for NeoDateComponents {}
 
-impl HasRuntimeComponents for NeoAnyDateMarker {
-    type ComponentsStruct = NeoDateComponents;
-}
-
-impl DateTimeNamesMarker for NeoAnyDateMarker {
+impl DateTimeNamesMarker for NeoDateComponents {
     type YearNames = datetime_marker_helper!(@names/year, yes);
     type MonthNames = datetime_marker_helper!(@names/month, yes);
     type WeekdayNames = datetime_marker_helper!(@names/weekday, yes);
     type DayPeriodNames = datetime_marker_helper!(@names/dayperiod, no);
 }
 
-impl<C: CldrCalendar> TypedDateMarkers<C> for NeoAnyDateMarker {
+impl<C: CldrCalendar> TypedDateMarkers<C> for NeoDateComponents {
     type DateSkeletonPatternsV1Marker = datetime_marker_helper!(@dates/typed, yes);
     type TypedInputMarker = datetime_marker_helper!(@input/typed, yes);
     type YearInput = datetime_marker_helper!(@input/year, yes);
@@ -1242,7 +1223,7 @@ impl<C: CldrCalendar> TypedDateMarkers<C> for NeoAnyDateMarker {
     type WeekdayNamesV1Marker = datetime_marker_helper!(@weekdays, yes);
 }
 
-impl DateMarkers for NeoAnyDateMarker {
+impl DateMarkers for NeoDateComponents {
     type Skel = datetime_marker_helper!(@calmarkers, yes);
     type YearInput = datetime_marker_helper!(@input/year, yes);
     type MonthInput = datetime_marker_helper!(@input/month, yes);
@@ -1255,37 +1236,30 @@ impl DateMarkers for NeoAnyDateMarker {
     type WeekdayNamesV1Marker = datetime_marker_helper!(@weekdays, yes);
 }
 
-impl<C: CldrCalendar> TypedDateTimeMarkers<C> for NeoAnyDateMarker {
+impl<C: CldrCalendar> TypedDateTimeMarkers<C> for NeoDateComponents {
     type D = Self;
     type T = NeoNeverMarker;
     type DateTimePatternV1Marker = datetime_marker_helper!(@datetimes, no);
 }
 
-impl DateTimeMarkers for NeoAnyDateMarker {
+impl DateTimeMarkers for NeoDateComponents {
     type D = Self;
     type T = NeoNeverMarker;
     type DateTimePatternV1Marker = datetime_marker_helper!(@datetimes, no);
 }
 
-/// Marker for time components provided at runtime.
-#[derive(Debug)]
-#[allow(clippy::exhaustive_enums)] // empty enum
-pub enum NeoAnyTimeMarker {}
+impl private::Sealed for NeoTimeComponents {}
 
-impl private::Sealed for NeoAnyTimeMarker {}
+impl IsRuntimeComponents for NeoTimeComponents {}
 
-impl HasRuntimeComponents for NeoAnyTimeMarker {
-    type ComponentsStruct = NeoTimeComponents;
-}
-
-impl DateTimeNamesMarker for NeoAnyTimeMarker {
+impl DateTimeNamesMarker for NeoTimeComponents {
     type YearNames = datetime_marker_helper!(@names/year, no);
     type MonthNames = datetime_marker_helper!(@names/month, no);
     type WeekdayNames = datetime_marker_helper!(@names/weekday, no);
     type DayPeriodNames = datetime_marker_helper!(@names/dayperiod, yes);
 }
 
-impl TimeMarkers for NeoAnyTimeMarker {
+impl TimeMarkers for NeoTimeComponents {
     type DayPeriodNamesV1Marker = datetime_marker_helper!(@dayperiods, yes);
     type TimeSkeletonPatternsV1Marker = datetime_marker_helper!(@times, yes);
     type HourInput = datetime_marker_helper!(@input/hour, yes);
@@ -1294,17 +1268,37 @@ impl TimeMarkers for NeoAnyTimeMarker {
     type NanoSecondInput = datetime_marker_helper!(@input/nanosecond, yes);
 }
 
-impl<C: CldrCalendar> TypedDateTimeMarkers<C> for NeoAnyTimeMarker {
+impl<C: CldrCalendar> TypedDateTimeMarkers<C> for NeoTimeComponents {
     type D = NeoNeverMarker;
     type T = Self;
     type DateTimePatternV1Marker = datetime_marker_helper!(@datetimes, no);
 }
 
-impl DateTimeMarkers for NeoAnyTimeMarker {
+impl DateTimeMarkers for NeoTimeComponents {
     type D = NeoNeverMarker;
     type T = Self;
     type DateTimePatternV1Marker = datetime_marker_helper!(@datetimes, no);
 }
 
-/// Marker for date and time components provided at runtime.
-pub type NeoAnyDateTimeMarker = DateTimeCombo<NeoAnyDateMarker, NeoAnyTimeMarker>;
+impl private::Sealed for NeoComponents {}
+
+impl IsRuntimeComponents for NeoComponents {}
+
+impl DateTimeNamesMarker for NeoComponents {
+    type YearNames = datetime_marker_helper!(@names/year, yes);
+    type MonthNames = datetime_marker_helper!(@names/month, yes);
+    type WeekdayNames = datetime_marker_helper!(@names/weekday, yes);
+    type DayPeriodNames = datetime_marker_helper!(@names/dayperiod, yes);
+}
+
+impl<C: CldrCalendar> TypedDateTimeMarkers<C> for NeoComponents {
+    type D = NeoDateComponents;
+    type T = NeoTimeComponents;
+    type DateTimePatternV1Marker = datetime_marker_helper!(@datetimes, yes);
+}
+
+impl DateTimeMarkers for NeoComponents {
+    type D = NeoDateComponents;
+    type T = NeoTimeComponents;
+    type DateTimePatternV1Marker = datetime_marker_helper!(@datetimes, yes);
+}

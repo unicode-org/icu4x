@@ -4,7 +4,6 @@
 
 use icu_calendar::DateTime;
 use icu_datetime::neo::TypedNeoFormatter;
-use icu_datetime::neo_marker::{NeoAnyDateMarker, NeoAnyDateTimeMarker};
 use icu_datetime::neo_skeleton::{
     NeoComponents, NeoDateComponents, NeoDateSkeleton, NeoTimeComponents,
 };
@@ -86,13 +85,12 @@ fn neo_datetime_lengths() {
                 locale!("zh").into(),
                 locale!("hi").into(),
             ] {
-                let formatter =
-                    TypedNeoFormatter::<_, NeoAnyDateTimeMarker>::try_new_with_components(
-                        &locale,
-                        NeoComponents::DateTime(day_components, time_components),
-                        length,
-                    )
-                    .unwrap();
+                let formatter = TypedNeoFormatter::try_new_with_components(
+                    &locale,
+                    NeoComponents::DateTime(day_components, time_components),
+                    length,
+                )
+                .unwrap();
                 let formatted = formatter.format(&datetime);
                 let expected = expected_iter.next().unwrap();
                 assert_try_writeable_eq!(
@@ -123,7 +121,7 @@ fn neo_date_lengths() {
             locale!("zh").into(),
             locale!("hi").into(),
         ] {
-            let formatter = TypedNeoFormatter::<_, NeoAnyDateMarker>::try_new_with_components(
+            let formatter = TypedNeoFormatter::try_new_with_components(
                 &locale,
                 NeoDateComponents::Day(day_components),
                 length,
