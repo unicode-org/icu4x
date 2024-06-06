@@ -12,39 +12,39 @@ use std::collections::BTreeMap;
 
 // TODO(youneis): Check if there are more cases.
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct Patterns {
+pub(in crate::provider) struct Patterns {
     #[serde(rename = "unitPattern-count-zero")]
-    pub zero: Option<String>,
+    pub(in crate::provider) zero: Option<String>,
 
     #[serde(rename = "unitPattern-count-one")]
-    pub one: Option<String>,
+    pub(in crate::provider) one: Option<String>,
 
     #[serde(rename = "unitPattern-count-two")]
-    pub two: Option<String>,
+    pub(in crate::provider) two: Option<String>,
 
     #[serde(rename = "unitPattern-count-few")]
-    pub few: Option<String>,
+    pub(in crate::provider) few: Option<String>,
 
     #[serde(rename = "unitPattern-count-many")]
-    pub many: Option<String>,
+    pub(in crate::provider) many: Option<String>,
 
     #[serde(rename = "unitPattern-count-other")]
-    pub other: Option<String>,
+    pub(in crate::provider) other: Option<String>,
 }
 
 // TODO: replace Value with specific structs
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct UnitsData {
-    pub long: BTreeMap<String, Patterns>,
+pub(in crate::provider) struct UnitsData {
+    pub(in crate::provider) long: BTreeMap<String, Patterns>,
 
-    pub short: BTreeMap<String, Patterns>,
+    pub(in crate::provider) short: BTreeMap<String, Patterns>,
 
-    pub narrow: BTreeMap<String, Patterns>,
+    pub(in crate::provider) narrow: BTreeMap<String, Patterns>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct LangUnits {
-    pub units: UnitsData,
+pub(in crate::provider) struct LangUnits {
+    pub(in crate::provider) units: UnitsData,
 }
 
-pub type Resource = super::super::LocaleResource<LangUnits>;
+pub(in crate::provider) type Resource = super::super::LocaleResource<LangUnits>;
