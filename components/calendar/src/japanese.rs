@@ -665,7 +665,7 @@ impl Japanese {
         // for japanext, meiji for japanese),
         // In such a case, we instead fall back to Gregorian era codes
         if date < start {
-            if date.year < 0 {
+            if date.year <= 0 {
                 (1 - date.year, tinystr!(16, "bce"))
             } else {
                 (date.year, tinystr!(16, "ce"))
@@ -826,7 +826,11 @@ mod tests {
         assert_eq!(
             date, reconstructed,
             "Failed to roundtrip with {era:?}, {year}, {month}, {day}"
-        )
+        );
+
+        // Extra coverage for https://github.com/unicode-org/icu4x/issues/4968
+        assert_eq!(reconstructed.year().era, era);
+        assert_eq!(reconstructed.year().number, year);
     }
 
     fn single_test_roundtrip_ext(
