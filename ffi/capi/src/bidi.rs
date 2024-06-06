@@ -223,7 +223,7 @@ pub mod ffi {
 
     impl<'info> ICU4XBidiParagraph<'info> {
         /// Given a paragraph index `n` within the surrounding text, this sets this
-        /// object to the paragraph at that index. Returns `ICU4XDataError::OutOfBoundsError` when out of bounds.
+        /// object to the paragraph at that index. Returns nothing when out of bounds.
         ///
         /// This is equivalent to calling `paragraph_at()` on `ICU4XBidiInfo` but doesn't
         /// create a new object
