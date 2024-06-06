@@ -6,12 +6,12 @@
 #[macro_export]
 macro_rules! __impl_units_displaynames_v1 {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.67"]
+        #[clippy::msrv = "1.70"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
-        #[clippy::msrv = "1.67"]
+        #[clippy::msrv = "1.70"]
         impl icu_provider::DataProvider<icu::experimental::dimension::provider::units::UnitsDisplayNameV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::experimental::dimension::provider::units::UnitsDisplayNameV1Marker>, icu_provider::DataError> {
-                static UND_X_ACCELERA: <icu::experimental::dimension::provider::units::UnitsDisplayNameV1Marker as icu_provider::DataMarker>::Yokeable = icu::experimental::dimension::provider::units::UnitsDisplayNameV1 {
+                static UND_X_ASTRONOMICAL: <icu::experimental::dimension::provider::units::UnitsDisplayNameV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::experimental::dimension::provider::units::UnitsDisplayNameV1 {
                     long_width: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap2d::from_parts_unchecked(zerovec::VarZeroVec::new(), zerovec::ZeroVec::new(), zerovec::ZeroVec::new(), zerovec::VarZeroVec::new())
@@ -25,12 +25,12 @@ macro_rules! __impl_units_displaynames_v1 {
                         zerovec::ZeroMap2d::from_parts_unchecked(zerovec::VarZeroVec::new(), zerovec::ZeroVec::new(), zerovec::ZeroVec::new(), zerovec::VarZeroVec::new())
                     },
                 };
-                static VALUES: [&<icu::experimental::dimension::provider::units::UnitsDisplayNameV1Marker as icu_provider::DataMarker>::Yokeable; 21usize] = [&UND_X_ACCELERA, &UND_X_ACCELERA, &UND_X_ACCELERA, &UND_X_ACCELERA, &UND_X_ACCELERA, &UND_X_ACCELERA, &UND_X_ACCELERA, &UND_X_ACCELERA, &UND_X_ACCELERA, &UND_X_ACCELERA, &UND_X_ACCELERA, &UND_X_ACCELERA, &UND_X_ACCELERA, &UND_X_ACCELERA, &UND_X_ACCELERA, &UND_X_ACCELERA, &UND_X_ACCELERA, &UND_X_ACCELERA, &UND_X_ACCELERA, &UND_X_ACCELERA, &UND_X_ACCELERA];
-                static KEYS: [&str; 21usize] = ["und-x-accelera", "und-x-angle", "und-x-area", "und-x-concentr", "und-x-consumpt", "und-x-coordina", "und-x-digital", "und-x-duration", "und-x-electric", "und-x-energy", "und-x-force", "und-x-frequenc", "und-x-graphics", "und-x-length", "und-x-light", "und-x-mass", "und-x-pressure", "und-x-speed", "und-x-temperat", "und-x-torque", "und-x-volume"];
-                if let Ok(payload) = KEYS.binary_search_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
+                static VALUES: [&<icu::experimental::dimension::provider::units::UnitsDisplayNameV1Marker as icu_provider::DynamicDataMarker>::Yokeable; 34usize] = [&UND_X_ASTRONOMICAL, &UND_X_ASTRONOMICAL, &UND_X_ASTRONOMICAL, &UND_X_ASTRONOMICAL, &UND_X_ASTRONOMICAL, &UND_X_ASTRONOMICAL, &UND_X_ASTRONOMICAL, &UND_X_ASTRONOMICAL, &UND_X_ASTRONOMICAL, &UND_X_ASTRONOMICAL, &UND_X_ASTRONOMICAL, &UND_X_ASTRONOMICAL, &UND_X_ASTRONOMICAL, &UND_X_ASTRONOMICAL, &UND_X_ASTRONOMICAL, &UND_X_ASTRONOMICAL, &UND_X_ASTRONOMICAL, &UND_X_ASTRONOMICAL, &UND_X_ASTRONOMICAL, &UND_X_ASTRONOMICAL, &UND_X_ASTRONOMICAL, &UND_X_ASTRONOMICAL, &UND_X_ASTRONOMICAL, &UND_X_ASTRONOMICAL, &UND_X_ASTRONOMICAL, &UND_X_ASTRONOMICAL, &UND_X_ASTRONOMICAL, &UND_X_ASTRONOMICAL, &UND_X_ASTRONOMICAL, &UND_X_ASTRONOMICAL, &UND_X_ASTRONOMICAL, &UND_X_ASTRONOMICAL, &UND_X_ASTRONOMICAL, &UND_X_ASTRONOMICAL];
+                static KEYS: [&str; 34usize] = ["und-x-astronomical", "und-x-centimeter", "und-x-century", "und-x-day", "und-x-decade", "und-x-decimeter", "und-x-earth", "und-x-fathom", "und-x-foot", "und-x-furlong", "und-x-hour", "und-x-inch", "und-x-kilometer", "und-x-light", "und-x-meter", "und-x-micrometer", "und-x-microsecond", "und-x-mile", "und-x-millimeter", "und-x-millisecond", "und-x-minute", "und-x-month", "und-x-nanometer", "und-x-nanosecond", "und-x-nautical", "und-x-parsec", "und-x-picometer", "und-x-point", "und-x-quarter", "und-x-second", "und-x-solar", "und-x-week", "und-x-yard", "und-x-year"];
+                if let Ok(payload) = KEYS.binary_search_by(|k| req.legacy_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
                     Ok(icu_provider::DataResponse { payload: Some(icu_provider::DataPayload::from_static_ref(payload)), metadata: Default::default() })
                 } else {
-                    Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::experimental::dimension::provider::units::UnitsDisplayNameV1Marker as icu_provider::KeyedDataMarker>::KEY, req))
+                    Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::experimental::dimension::provider::units::UnitsDisplayNameV1Marker as icu_provider::DataMarker>::KEY, req))
                 }
             }
         }
@@ -43,10 +43,10 @@ macro_rules! __impl_units_displaynames_v1 {
 #[macro_export]
 macro_rules! __impliterable_units_displaynames_v1 {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.67"]
+        #[clippy::msrv = "1.70"]
         impl icu_provider::datagen::IterableDataProvider<icu::experimental::dimension::provider::units::UnitsDisplayNameV1Marker> for $provider {
-            fn supported_locales(&self) -> Result<alloc::vec::Vec<icu_provider::DataLocale>, icu_provider::DataError> {
-                Ok(["und-x-accelera", "und-x-angle", "und-x-area", "und-x-concentr", "und-x-consumpt", "und-x-coordina", "und-x-digital", "und-x-duration", "und-x-electric", "und-x-energy", "und-x-force", "und-x-frequenc", "und-x-graphics", "und-x-length", "und-x-light", "und-x-mass", "und-x-pressure", "und-x-speed", "und-x-temperat", "und-x-torque", "und-x-volume"].into_iter().map(|s| <icu_provider::DataLocale as core::str::FromStr>::from_str(s).unwrap()).collect())
+            fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataKeyAttributes)>, icu_provider::DataError> {
+                Ok(["und-x-astronomical", "und-x-centimeter", "und-x-century", "und-x-day", "und-x-decade", "und-x-decimeter", "und-x-earth", "und-x-fathom", "und-x-foot", "und-x-furlong", "und-x-hour", "und-x-inch", "und-x-kilometer", "und-x-light", "und-x-meter", "und-x-micrometer", "und-x-microsecond", "und-x-mile", "und-x-millimeter", "und-x-millisecond", "und-x-minute", "und-x-month", "und-x-nanometer", "und-x-nanosecond", "und-x-nautical", "und-x-parsec", "und-x-picometer", "und-x-point", "und-x-quarter", "und-x-second", "und-x-solar", "und-x-week", "und-x-yard", "und-x-year"].into_iter().filter_map(icu_provider::DataRequest::legacy_decode).collect())
             }
         }
     };

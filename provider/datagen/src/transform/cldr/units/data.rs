@@ -11,9 +11,9 @@ use crate::provider::DatagenProvider;
 
 use icu_experimental::dimension::provider::units::{UnitsDisplayNameV1, UnitsDisplayNameV1Marker};
 
-use icu_locid::extensions::private::Subtag;
-use icu_locid::LanguageIdentifier;
-use icu_provider::AuxiliaryKeys;
+use icu_locale::extensions::private::Subtag;
+use icu_locale::LanguageIdentifier;
+use icu_provider::DataKeyAttributes;
 use icu_provider::{
     datagen::IterableDataProvider, DataError, DataLocale, DataPayload, DataProvider, DataRequest,
     DataResponse,
@@ -24,19 +24,12 @@ impl DataProvider<UnitsDisplayNameV1Marker> for DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<UnitsDisplayNameV1Marker>, DataError> {
         self.check_req::<UnitsDisplayNameV1Marker>(req)?;
 
-        // Get langid and quantity
+        // Get langid and the unit.
         let langid = req.locale.get_langid();
-        let aux_keys = req
-            .locale
-            .get_aux()
-            .ok_or(DataError::custom("Failed to get aux keys"))?;
-        let mut aux_keys_iter = aux_keys.iter();
-        let subtag = aux_keys_iter
-            .next()
-            .ok_or(DataError::custom("aux_keys is empty"))?;
-        if aux_keys_iter.next().is_some() {
-            return Err(DataError::custom("aux_keys has more than one key"));
-        }
+        let unit = match req.key_attributes.parse::<String>() {
+            Ok(aux_keys) => aux_keys,
+            Err(_) => return Err(DataError::custom("Failed to get aux keys")),
+        };
 
         // Get units
         let units_format_data: &cldr_serde::units::data::Resource =
@@ -61,19 +54,19 @@ impl DataProvider<UnitsDisplayNameV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProvider<UnitsDisplayNameV1Marker> for DatagenProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        fn make_data_locale_with_langid_and_quantity(
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+        fn make_request_element(
             langid: &LanguageIdentifier,
-            quantity: &str,
-        ) -> Result<DataLocale, DataError> {
-            let mut data_locale = DataLocale::from(langid);
-            let subtag = Subtag::from_str(quantity)
-                .map_err(|e| DataError::custom("Failed to parse subtag").with_debug_context(quantity))?;
-            data_locale.set_aux(AuxiliaryKeys::from_subtag(subtag));
-            Ok(data_locale)
+            unit: &str,
+        ) -> Result<(DataLocale, DataKeyAttributes), DataError> {
+            let data_locale = DataLocale::from(langid);
+            let attribute = unit.parse().map_err(|e| {
+                DataError::custom("Failed to parse the attribute").with_debug_context(unit)
+            })?;
+            Ok((data_locale, attribute))
         }
 
-        let mut data_locales = Vec::new();
+        let mut data_locales = HashSet::new();
 
         let numbers = self.cldr()?.numbers();
         let langids = numbers.list_langs()?;
@@ -82,6 +75,7 @@ impl IterableDataProvider<UnitsDisplayNameV1Marker> for DatagenProvider {
                 self.cldr()?.units().read_and_parse(&langid, "units.json")?;
             let units_format_data = &units_format_data.main.value.units;
             let quantities: HashSet<_> = units_format_data
+                // TODO(younies): shall we filter also on short and narrow, in case there are another units in these.
                 .long
                 .keys()
                 .filter(|&long_key| {
@@ -90,17 +84,15 @@ impl IterableDataProvider<UnitsDisplayNameV1Marker> for DatagenProvider {
                             .iter()
                             .any(|&prefix| long_key.starts_with(prefix))
                 })
-                .filter_map(|long_key| long_key.split('-').next())
-                // Truncate each quantity to 8 characters, the maximum length of a subtag.
-                // According to the CLDR spec, the first 8 characters of a quantity are sufficient for uniqueness. ?? // TODO: check this
-                .map(|quantity| quantity.get(..8).unwrap_or(quantity))
+                // TODO(younies): this filter just as a start, Add the other categories later after finalizing the design.
+                .filter(|&long_key| {
+                    long_key.starts_with("length") || long_key.starts_with("duration")
+                })
+                .filter_map(|long_key| long_key.split('-').nth(1))
                 .collect();
 
             for &truncated_quantity in &quantities {
-                data_locales.push(make_data_locale_with_langid_and_quantity(
-                    &langid,
-                    truncated_quantity,
-                )?);
+                data_locales.insert(make_request_element(&langid, truncated_quantity)?);
             }
         }
 
