@@ -9,10 +9,8 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use alloc::borrow::Cow;
 use icu_provider::prelude::*;
-use tinystr::UnvalidatedTinyAsciiStr;
-use zerovec::{VarZeroVec, ZeroMap, ZeroMap2d};
+use zerovec::ZeroMap;
 
 // TODO: implement the units provider
 // thoughts:

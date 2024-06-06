@@ -90,7 +90,7 @@ impl IterableDataProvider<UnitsDisplayNameV1Marker> for DatagenProvider {
             unit: &str,
         ) -> Result<(DataLocale, DataKeyAttributes), DataError> {
             let data_locale = DataLocale::from(langid);
-            let attribute = unit.parse().map_err(|e| {
+            let attribute = unit.parse().map_err(|_| {
                 DataError::custom("Failed to parse the attribute").with_debug_context(unit)
             })?;
             Ok((data_locale, attribute))
@@ -109,7 +109,7 @@ impl IterableDataProvider<UnitsDisplayNameV1Marker> for DatagenProvider {
                 .long
                 .keys()
                 .filter(|&long_key| {
-                    !long_key.starts_with(|c: char| c.is_digit(10))
+                    !long_key.starts_with(|c: char| c.is_ascii_digit())
                         && !["per", "times", "power"]
                             .iter()
                             .any(|&prefix| long_key.starts_with(prefix))
