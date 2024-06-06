@@ -94,7 +94,7 @@ impl IterableDataProvider<CurrencyExtendedDataV1Marker> for DatagenProvider {
                 .read_and_parse(&langid, "currencies.json")?;
 
             let currencies = &currencies_resource.main.value.numbers.currencies;
-            for (key, _) in currencies {
+            for key in currencies.keys() {
                 let key = key
                     .try_into_tinystr()
                     .map_err(|_| DataError::custom("failed to parse currency code into tinystr"))?;
