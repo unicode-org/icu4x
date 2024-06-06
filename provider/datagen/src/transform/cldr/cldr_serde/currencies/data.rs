@@ -11,26 +11,6 @@ use serde::Deserialize;
 use std::collections::BTreeMap;
 use tinystr::UnvalidatedTinyAsciiStr;
 
-// TODO: uncomment when we have a use case for this
-// #[derive(PartialEq, PartialOrd, Ord, Eq, Debug, Deserialize)]
-// pub struct LocaleDisplayNames {
-//     #[serde(rename = "displayName-count-zero")]
-//     pub zero: Option<String>,
-//     #[serde(rename = "displayName-count-one")]
-//     pub one: Option<String>,
-//     #[serde(rename = "displayName-count-two")]
-//     pub two: Option<String>,
-//     #[serde(rename = "displayName-count-few")]
-//     pub few: Option<String>,
-//     #[serde(rename = "displayName-count-many")]
-//     pub many: Option<String>,
-//     #[serde(rename = "displayName-count-other")]
-//     pub other: Option<String>,
-// }
-
-// #[derive(PartialEq, Debug, Deserialize)]
-// pub struct DisplayNames(pub HashMap<UnvalidatedTinyAsciiStr<3>, LocaleDisplayNames>);
-
 #[derive(PartialEq, Debug, Deserialize)]
 pub struct CurrencyPatterns {
     #[serde(rename = "symbol")]
