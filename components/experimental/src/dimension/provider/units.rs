@@ -51,7 +51,8 @@ pub struct UnitsDisplayNameV1<'data> {
 }
 
 // TODO: revise this.
-/// A CLDR plural keyword, or the explicit value 1.
+// TODO(younies): add a field to store the most commonly used unit pattern as the default.
+/// Represents either a CLDR plural keyword or the explicit value 1.
 /// See <https://www.unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules>.
 #[zerovec::make_ule(CountULE)]
 #[zerovec::derive(Debug)]
