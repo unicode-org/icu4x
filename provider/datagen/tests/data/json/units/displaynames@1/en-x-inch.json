@@ -1,5 +1,14 @@
 {
-  "long_width": {},
-  "short_width": {},
-  "narrow_width": {}
+  "long": {
+    "One": "{0} inch",
+    "Other": "{0} inches"
+  },
+  "short": {
+    "One": "{0} in",
+    "Other": "{0} in"
+  },
+  "narrow": {
+    "One": "{0}″",
+    "Other": "{0}″"
+  }
 }

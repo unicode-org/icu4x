@@ -1,5 +1,14 @@
 {
-  "long_width": {},
-  "short_width": {},
-  "narrow_width": {}
+  "long": {
+    "One": "{0} গজ",
+    "Other": "{0} গজ"
+  },
+  "short": {
+    "One": "{0} গজ",
+    "Other": "{0} গজ"
+  },
+  "narrow": {
+    "One": "{0} গজ",
+    "Other": "{0} গজ"
+  }
 }

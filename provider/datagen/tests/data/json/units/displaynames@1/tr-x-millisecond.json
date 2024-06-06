@@ -1,5 +1,14 @@
 {
-  "long_width": {},
-  "short_width": {},
-  "narrow_width": {}
+  "long": {
+    "One": "{0} milisaniye",
+    "Other": "{0} milisaniye"
+  },
+  "short": {
+    "One": "{0} msn",
+    "Other": "{0} msn"
+  },
+  "narrow": {
+    "One": "{0}msn",
+    "Other": "{0}msn"
+  }
 }

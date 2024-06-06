@@ -1,5 +1,17 @@
 {
-  "long_width": {},
-  "short_width": {},
-  "narrow_width": {}
+  "long": {
+    "One": "{0} инч",
+    "Few": "{0} инча",
+    "Other": "{0} инча"
+  },
+  "short": {
+    "One": "{0} инч",
+    "Few": "{0} инча",
+    "Other": "{0} инча"
+  },
+  "narrow": {
+    "One": "{0} in",
+    "Few": "{0} in",
+    "Other": "{0} in"
+  }
 }

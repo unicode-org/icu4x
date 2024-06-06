@@ -1,5 +1,14 @@
 {
-  "long_width": {},
-  "short_width": {},
-  "narrow_width": {}
+  "long": {
+    "One": "{0} picometre",
+    "Other": "{0} picometres"
+  },
+  "short": {
+    "One": "{0} pm",
+    "Other": "{0} pm"
+  },
+  "narrow": {
+    "One": "{0}pm",
+    "Other": "{0}pm"
+  }
 }

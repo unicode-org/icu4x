@@ -1,5 +1,12 @@
 {
-  "long_width": {},
-  "short_width": {},
-  "narrow_width": {}
+  "long": {
+    "One": "{0} মাইক্রোমিটার",
+    "Other": "{0} মাইক্রোমিটার"
+  },
+  "short": {
+    "Other": "{0} μm"
+  },
+  "narrow": {
+    "Other": "{0} μm"
+  }
 }

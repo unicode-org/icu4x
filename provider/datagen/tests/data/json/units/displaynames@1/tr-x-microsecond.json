@@ -1,5 +1,14 @@
 {
-  "long_width": {},
-  "short_width": {},
-  "narrow_width": {}
+  "long": {
+    "One": "{0} mikrosaniye",
+    "Other": "{0} mikrosaniye"
+  },
+  "short": {
+    "One": "{0} μsn",
+    "Other": "{0} μsn"
+  },
+  "narrow": {
+    "One": "{0} μsn",
+    "Other": "{0} μsn"
+  }
 }

@@ -1,5 +1,15 @@
 {
-  "long_width": {},
-  "short_width": {},
-  "narrow_width": {}
+  "long": {
+    "One": "{0} миља",
+    "Few": "{0} миље",
+    "Other": "{0} миља"
+  },
+  "short": {
+    "Other": "{0} mi"
+  },
+  "narrow": {
+    "One": "{0} миља",
+    "Few": "{0} миље",
+    "Other": "{0} миља"
+  }
 }

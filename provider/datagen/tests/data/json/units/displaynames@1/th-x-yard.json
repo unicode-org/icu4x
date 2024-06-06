@@ -1,5 +1,11 @@
 {
-  "long_width": {},
-  "short_width": {},
-  "narrow_width": {}
+  "long": {
+    "Other": "{0} หลา"
+  },
+  "short": {
+    "Other": "{0} หลา"
+  },
+  "narrow": {
+    "Other": "{0}หลา"
+  }
 }

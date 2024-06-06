@@ -1,5 +1,14 @@
 {
-  "long_width": {},
-  "short_width": {},
-  "narrow_width": {}
+  "long": {
+    "One": "{0} শতাব্দী",
+    "Other": "{0} শতাব্দী"
+  },
+  "short": {
+    "One": "{0} শতক",
+    "Other": "{0} শতক"
+  },
+  "narrow": {
+    "One": "{0} শতক",
+    "Other": "{0} শতক"
+  }
 }

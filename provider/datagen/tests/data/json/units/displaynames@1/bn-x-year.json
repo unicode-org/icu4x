@@ -1,5 +1,14 @@
 {
-  "long_width": {},
-  "short_width": {},
-  "narrow_width": {}
+  "long": {
+    "One": "{0} বছর",
+    "Other": "{0} বছর"
+  },
+  "short": {
+    "One": "{0} বছর",
+    "Other": "{0} বছর"
+  },
+  "narrow": {
+    "One": "{0} বছর",
+    "Other": "{0} বছর"
+  }
 }

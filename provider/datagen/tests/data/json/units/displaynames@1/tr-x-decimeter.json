@@ -1,5 +1,12 @@
 {
-  "long_width": {},
-  "short_width": {},
-  "narrow_width": {}
+  "long": {
+    "One": "{0} desimetre",
+    "Other": "{0} desimetre"
+  },
+  "short": {
+    "Other": "{0} dm"
+  },
+  "narrow": {
+    "Other": "{0} dm"
+  }
 }

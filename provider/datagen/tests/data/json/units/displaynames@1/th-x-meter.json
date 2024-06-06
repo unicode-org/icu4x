@@ -1,5 +1,11 @@
 {
-  "long_width": {},
-  "short_width": {},
-  "narrow_width": {}
+  "long": {
+    "Other": "{0} เมตร"
+  },
+  "short": {
+    "Other": "{0} ม."
+  },
+  "narrow": {
+    "Other": "{0}ม."
+  }
 }

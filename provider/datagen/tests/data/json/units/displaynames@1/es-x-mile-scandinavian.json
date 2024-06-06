@@ -1,0 +1,14 @@
+{
+  "long": {
+    "One": "{0} milla escandinava",
+    "Other": "{0} millas escandinavas"
+  },
+  "short": {
+    "One": "{0} mi esc.",
+    "Other": "{0} mi esc."
+  },
+  "narrow": {
+    "One": "{0}mi esc",
+    "Other": "{0}mi esc"
+  }
+}

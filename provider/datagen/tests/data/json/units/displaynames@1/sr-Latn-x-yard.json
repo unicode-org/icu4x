@@ -1,5 +1,17 @@
 {
-  "long_width": {},
-  "short_width": {},
-  "narrow_width": {}
+  "long": {
+    "One": "{0} jard",
+    "Few": "{0} jarda",
+    "Other": "{0} jardi"
+  },
+  "short": {
+    "One": "{0} jrd",
+    "Few": "{0} jrd",
+    "Other": "{0} jrd"
+  },
+  "narrow": {
+    "One": "{0} yd",
+    "Few": "{0} yd",
+    "Other": "{0} yd"
+  }
 }

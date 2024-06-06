@@ -1,5 +1,14 @@
 {
-  "long_width": {},
-  "short_width": {},
-  "narrow_width": {}
+  "long": {
+    "One": "{0} quarter",
+    "Other": "{0} quarters"
+  },
+  "short": {
+    "One": "{0} qtr",
+    "Other": "{0} qtrs"
+  },
+  "narrow": {
+    "One": "{0}q",
+    "Other": "{0}q"
+  }
 }

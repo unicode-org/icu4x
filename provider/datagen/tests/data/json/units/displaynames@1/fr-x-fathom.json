@@ -1,5 +1,14 @@
 {
-  "long_width": {},
-  "short_width": {},
-  "narrow_width": {}
+  "long": {
+    "One": "{0} brasse",
+    "Other": "{0} brasses"
+  },
+  "short": {
+    "One": "{0} fm",
+    "Other": "{0} fm"
+  },
+  "narrow": {
+    "One": "{0} fm",
+    "Other": "{0} fm"
+  }
 }

@@ -1,5 +1,17 @@
 {
-  "long_width": {},
-  "short_width": {},
-  "narrow_width": {}
+  "long": {
+    "One": "{0} mesec",
+    "Few": "{0} meseca",
+    "Other": "{0} meseci"
+  },
+  "short": {
+    "One": "{0} mes.",
+    "Few": "{0} mes.",
+    "Other": "{0} mes."
+  },
+  "narrow": {
+    "One": "{0} m",
+    "Few": "{0} m",
+    "Other": "{0} m"
+  }
 }

@@ -1,5 +1,13 @@
 {
-  "long_width": {},
-  "short_width": {},
-  "narrow_width": {}
+  "long": {
+    "One": "{0} nanosegundo",
+    "Other": "{0} nanosegundos"
+  },
+  "short": {
+    "Other": "{0} ns"
+  },
+  "narrow": {
+    "One": "{0}ns",
+    "Other": "{0}ns"
+  }
 }

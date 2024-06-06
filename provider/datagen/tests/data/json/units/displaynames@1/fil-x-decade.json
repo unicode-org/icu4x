@@ -1,5 +1,12 @@
 {
-  "long_width": {},
-  "short_width": {},
-  "narrow_width": {}
+  "long": {
+    "One": "{0} dekada",
+    "Other": "{0} dekada"
+  },
+  "short": {
+    "Other": "{0} dec"
+  },
+  "narrow": {
+    "Other": "{0} dec"
+  }
 }

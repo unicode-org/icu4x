@@ -1,5 +1,14 @@
 {
-  "long_width": {},
-  "short_width": {},
-  "narrow_width": {}
+  "long": {
+    "One": "{0} siècle",
+    "Other": "{0} siècles"
+  },
+  "short": {
+    "One": "{0} s.",
+    "Other": "{0} s."
+  },
+  "narrow": {
+    "One": "{0}s.",
+    "Other": "{0}s."
+  }
 }

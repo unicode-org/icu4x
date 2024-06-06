@@ -11,14 +11,36 @@ use serde::Deserialize;
 use serde_json::Value;
 use std::collections::BTreeMap;
 
+// TODO(youneis): Check if there are more cases.
+#[derive(PartialEq, Debug, Deserialize)]
+pub struct Patterns {
+    #[serde(rename = "unitPattern-count-zero")]
+    pub zero: Option<String>,
+
+    #[serde(rename = "unitPattern-count-one")]
+    pub one: Option<String>,
+
+    #[serde(rename = "unitPattern-count-two")]
+    pub two: Option<String>,
+
+    #[serde(rename = "unitPattern-count-few")]
+    pub few: Option<String>,
+
+    #[serde(rename = "unitPattern-count-many")]
+    pub many: Option<String>,
+
+    #[serde(rename = "unitPattern-count-other")]
+    pub other: Option<String>,
+}
+
 // TODO: replace Value with specific structs
 #[derive(PartialEq, Debug, Deserialize)]
 pub struct UnitsData {
-    pub long: BTreeMap<String, Value>,
+    pub long: BTreeMap<String, Patterns>,
 
-    pub short: BTreeMap<String, Value>,
+    pub short: BTreeMap<String, Patterns>,
 
-    pub narrow: BTreeMap<String, Value>,
+    pub narrow: BTreeMap<String, Patterns>,
 
     #[serde(flatten)]
     extra: Value,

@@ -1,5 +1,12 @@
 {
-  "long_width": {},
-  "short_width": {},
-  "narrow_width": {}
+  "long": {
+    "One": "{0} yarda",
+    "Other": "{0} yarda"
+  },
+  "short": {
+    "Other": "{0} yd"
+  },
+  "narrow": {
+    "Other": "{0} yd"
+  }
 }

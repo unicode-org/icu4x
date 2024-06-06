@@ -1,5 +1,14 @@
 {
-  "long_width": {},
-  "short_width": {},
-  "narrow_width": {}
+  "long": {
+    "One": "{0} buwan",
+    "Other": "{0} buwan"
+  },
+  "short": {
+    "One": "{0} buwan",
+    "Other": "{0} buwan"
+  },
+  "narrow": {
+    "One": "{0}buwan",
+    "Other": "{0} buwan"
+  }
 }

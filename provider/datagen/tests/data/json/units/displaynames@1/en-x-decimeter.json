@@ -1,5 +1,14 @@
 {
-  "long_width": {},
-  "short_width": {},
-  "narrow_width": {}
+  "long": {
+    "One": "{0} decimeter",
+    "Other": "{0} decimeters"
+  },
+  "short": {
+    "One": "{0} dm",
+    "Other": "{0} dm"
+  },
+  "narrow": {
+    "One": "{0}dm",
+    "Other": "{0}dm"
+  }
 }

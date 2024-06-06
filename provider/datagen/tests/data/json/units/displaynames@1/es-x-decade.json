@@ -1,5 +1,14 @@
 {
-  "long_width": {},
-  "short_width": {},
-  "narrow_width": {}
+  "long": {
+    "One": "{0} década",
+    "Other": "{0} décadas"
+  },
+  "short": {
+    "One": "{0} déc.",
+    "Other": "{0} déc."
+  },
+  "narrow": {
+    "One": "{0}déc",
+    "Other": "{0}déc"
+  }
 }

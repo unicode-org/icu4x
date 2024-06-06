@@ -1,5 +1,14 @@
 {
-  "long_width": {},
-  "short_width": {},
-  "narrow_width": {}
+  "long": {
+    "One": "{0} milliseconde",
+    "Other": "{0} millisecondes"
+  },
+  "short": {
+    "One": "{0} ms",
+    "Other": "{0} ms"
+  },
+  "narrow": {
+    "One": "{0}ms",
+    "Other": "{0}ms"
+  }
 }

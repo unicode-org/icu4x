@@ -1,5 +1,13 @@
 {
-  "long_width": {},
-  "short_width": {},
-  "narrow_width": {}
+  "long": {
+    "One": "{0} микросекунда",
+    "Few": "{0} микросекунде",
+    "Other": "{0} микросекунди"
+  },
+  "short": {
+    "Other": "{0} μs"
+  },
+  "narrow": {
+    "Other": "{0} μs"
+  }
 }

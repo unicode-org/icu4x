@@ -1,5 +1,11 @@
 {
-  "long_width": {},
-  "short_width": {},
-  "narrow_width": {}
+  "long": {
+    "Other": "{0} マイル"
+  },
+  "short": {
+    "Other": "{0} mi"
+  },
+  "narrow": {
+    "Other": "{0}mi"
+  }
 }

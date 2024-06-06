@@ -1,5 +1,14 @@
 {
-  "long_width": {},
-  "short_width": {},
-  "narrow_width": {}
+  "long": {
+    "One": "{0} semana",
+    "Other": "{0} semanas"
+  },
+  "short": {
+    "One": "{0} sem.",
+    "Other": "{0} sems."
+  },
+  "narrow": {
+    "One": "{0}sem.",
+    "Other": "{0}sems."
+  }
 }

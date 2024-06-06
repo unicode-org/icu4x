@@ -1,5 +1,15 @@
 {
-  "long_width": {},
-  "short_width": {},
-  "narrow_width": {}
+  "long": {
+    "One": "{0} milja",
+    "Few": "{0} milje",
+    "Other": "{0} milja"
+  },
+  "short": {
+    "Other": "{0} mi"
+  },
+  "narrow": {
+    "One": "{0} milja",
+    "Few": "{0} milje",
+    "Other": "{0} milja"
+  }
 }

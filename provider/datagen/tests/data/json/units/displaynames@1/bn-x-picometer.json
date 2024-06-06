@@ -1,5 +1,14 @@
 {
-  "long_width": {},
-  "short_width": {},
-  "narrow_width": {}
+  "long": {
+    "One": "{0} পিকোমিটার",
+    "Other": "{0} পিকোমিটার"
+  },
+  "short": {
+    "One": "{0} পিমি",
+    "Other": "{0} পিমি"
+  },
+  "narrow": {
+    "One": "{0} পিমি",
+    "Other": "{0} পিমি"
+  }
 }

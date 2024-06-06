@@ -1,5 +1,14 @@
 {
-  "long_width": {},
-  "short_width": {},
-  "narrow_width": {}
+  "long": {
+    "One": "{0} point typographique",
+    "Other": "{0} points typographiques"
+  },
+  "short": {
+    "One": "{0} pt typog.",
+    "Other": "{0} pts typog."
+  },
+  "narrow": {
+    "One": "{0} pt typog.",
+    "Other": "{0} pts typog."
+  }
 }

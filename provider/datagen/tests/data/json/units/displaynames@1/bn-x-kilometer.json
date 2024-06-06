@@ -1,5 +1,14 @@
 {
-  "long_width": {},
-  "short_width": {},
-  "narrow_width": {}
+  "long": {
+    "One": "{0} কিলোমিটার",
+    "Other": "{0} কিলোমিটার"
+  },
+  "short": {
+    "One": "{0} কিমি",
+    "Other": "{0} কিমি"
+  },
+  "narrow": {
+    "One": "{0} কিমি",
+    "Other": "{0} কিমি"
+  }
 }

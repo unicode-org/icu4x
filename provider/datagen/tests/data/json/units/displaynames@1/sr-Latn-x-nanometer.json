@@ -1,5 +1,13 @@
 {
-  "long_width": {},
-  "short_width": {},
-  "narrow_width": {}
+  "long": {
+    "One": "{0} nanometar",
+    "Few": "{0} nanometra",
+    "Other": "{0} nanometara"
+  },
+  "short": {
+    "Other": "{0} nm"
+  },
+  "narrow": {
+    "Other": "{0} nm"
+  }
 }

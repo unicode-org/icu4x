@@ -1,5 +1,20 @@
 {
-  "long_width": {},
-  "short_width": {},
-  "narrow_width": {}
+  "long": {
+    "One": "{0} час",
+    "Few": "{0} часа",
+    "Many": "{0} часов",
+    "Other": "{0} часа"
+  },
+  "short": {
+    "One": "{0} ч",
+    "Few": "{0} ч",
+    "Many": "{0} ч",
+    "Other": "{0} ч"
+  },
+  "narrow": {
+    "One": "{0} ч",
+    "Few": "{0} ч",
+    "Many": "{0} ч",
+    "Other": "{0} ч"
+  }
 }

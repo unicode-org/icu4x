@@ -1,5 +1,14 @@
 {
-  "long_width": {},
-  "short_width": {},
-  "narrow_width": {}
+  "long": {
+    "One": "{0} ডেসিমিটার",
+    "Other": "{0} ডেসিমিটার"
+  },
+  "short": {
+    "One": "{0} ডেমি",
+    "Other": "{0} ডেমি"
+  },
+  "narrow": {
+    "One": "{0} ডেমি",
+    "Other": "{0} ডেমি"
+  }
 }

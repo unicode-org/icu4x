@@ -1,5 +1,13 @@
 {
-  "long_width": {},
-  "short_width": {},
-  "narrow_width": {}
+  "long": {
+    "One": "{0} parsec",
+    "Other": "{0} parsecs"
+  },
+  "short": {
+    "Other": "{0} pc"
+  },
+  "narrow": {
+    "One": "{0}pc",
+    "Other": "{0}pc"
+  }
 }

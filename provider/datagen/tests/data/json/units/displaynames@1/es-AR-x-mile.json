@@ -1,5 +1,13 @@
 {
-  "long_width": {},
-  "short_width": {},
-  "narrow_width": {}
+  "long": {
+    "One": "{0} milla",
+    "Other": "{0} millas"
+  },
+  "short": {
+    "Other": "{0} mi"
+  },
+  "narrow": {
+    "One": "{0}mi",
+    "Other": "{0}mi"
+  }
 }

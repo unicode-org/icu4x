@@ -1,5 +1,14 @@
 {
-  "long_width": {},
-  "short_width": {},
-  "narrow_width": {}
+  "long": {
+    "One": "{0} fit",
+    "Other": "{0} fit"
+  },
+  "short": {
+    "One": "{0} fit",
+    "Other": "{0} fit"
+  },
+  "narrow": {
+    "One": "{0}′",
+    "Other": "{0}′"
+  }
 }

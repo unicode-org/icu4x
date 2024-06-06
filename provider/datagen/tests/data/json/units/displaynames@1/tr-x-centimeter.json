@@ -1,5 +1,12 @@
 {
-  "long_width": {},
-  "short_width": {},
-  "narrow_width": {}
+  "long": {
+    "One": "{0} santimetre",
+    "Other": "{0} santimetre"
+  },
+  "short": {
+    "Other": "{0} cm"
+  },
+  "narrow": {
+    "Other": "{0} cm"
+  }
 }

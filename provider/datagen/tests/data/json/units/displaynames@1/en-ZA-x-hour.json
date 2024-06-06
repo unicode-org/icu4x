@@ -1,5 +1,14 @@
 {
-  "long_width": {},
-  "short_width": {},
-  "narrow_width": {}
+  "long": {
+    "One": "{0} hour",
+    "Other": "{0} hours"
+  },
+  "short": {
+    "One": "{0} hr",
+    "Other": "{0} hrs"
+  },
+  "narrow": {
+    "One": "{0}h",
+    "Other": "{0}h"
+  }
 }

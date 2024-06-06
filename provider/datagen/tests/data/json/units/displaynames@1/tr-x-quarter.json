@@ -1,5 +1,14 @@
 {
-  "long_width": {},
-  "short_width": {},
-  "narrow_width": {}
+  "long": {
+    "One": "{0} çeyrek",
+    "Other": "{0} çeyrek"
+  },
+  "short": {
+    "One": "{0} çey.",
+    "Other": "{0} çey."
+  },
+  "narrow": {
+    "One": "{0} çey.",
+    "Other": "{0} çey."
+  }
 }

@@ -1,5 +1,13 @@
 {
-  "long_width": {},
-  "short_width": {},
-  "narrow_width": {}
+  "long": {
+    "One": "{0} milimetro",
+    "Other": "{0} na milimetro"
+  },
+  "short": {
+    "Other": "{0} mm"
+  },
+  "narrow": {
+    "One": "{0}mm",
+    "Other": "{0}mm"
+  }
 }

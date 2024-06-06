@@ -3,22 +3,22 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use std::collections::{BTreeMap, HashSet};
-use std::str::FromStr;
 
-use crate::provider::transform::cldr::cldr_serde::units::data;
+use crate::provider::transform::cldr::cldr_serde::units::data::Patterns;
 use crate::provider::transform::cldr::cldr_serde::{self};
 use crate::provider::DatagenProvider;
 
-use icu_experimental::dimension::provider::units::{UnitsDisplayNameV1, UnitsDisplayNameV1Marker};
+use icu_experimental::dimension::provider::units::{
+    Count, UnitsDisplayNameV1, UnitsDisplayNameV1Marker,
+};
 
-use icu_locale::extensions::private::Subtag;
 use icu_locale::LanguageIdentifier;
 use icu_provider::DataKeyAttributes;
 use icu_provider::{
     datagen::IterableDataProvider, DataError, DataLocale, DataPayload, DataProvider, DataRequest,
     DataResponse,
 };
-use zerovec::ZeroMap2d;
+use zerovec::ZeroMap;
 
 impl DataProvider<UnitsDisplayNameV1Marker> for DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<UnitsDisplayNameV1Marker>, DataError> {
@@ -36,14 +36,44 @@ impl DataProvider<UnitsDisplayNameV1Marker> for DatagenProvider {
             self.cldr()?.units().read_and_parse(&langid, "units.json")?;
         let units_format_data = &units_format_data.main.value.units;
 
-        let mut long = ZeroMap2d::new();
-        let mut short = ZeroMap2d::new();
-        let mut narrow = ZeroMap2d::new();
+        fn add_unit_to_map(map: &mut ZeroMap<'_, Count, str>, count: &Count, unit: Option<&str>) {
+            if let Some(unit) = unit {
+                map.insert(count, unit);
+            }
+        }
+
+        fn add_correct_map(
+            length: &BTreeMap<String, Patterns>,
+            unit: &str,
+            map: &mut ZeroMap<'_, Count, str>,
+        ) {
+            let mut prefixed_unit = String::from("-");
+            prefixed_unit.push_str(unit);
+            for (key, value) in length.iter() {
+                if let Some(prefix) = key.strip_suffix(&prefixed_unit) {
+                    if !prefix.contains('-') {
+                        add_unit_to_map(map, &Count::One, value.one.as_deref());
+                        add_unit_to_map(map, &Count::Two, value.two.as_deref());
+                        add_unit_to_map(map, &Count::Few, value.few.as_deref());
+                        add_unit_to_map(map, &Count::Many, value.many.as_deref());
+                        add_unit_to_map(map, &Count::Other, value.other.as_deref());
+                    }
+                }
+            }
+        }
+
+        let mut long = ZeroMap::new();
+        let mut short = ZeroMap::new();
+        let mut narrow = ZeroMap::new();
+
+        add_correct_map(&units_format_data.long, unit.as_str(), &mut long);
+        add_correct_map(&units_format_data.short, unit.as_str(), &mut short);
+        add_correct_map(&units_format_data.narrow, unit.as_str(), &mut narrow);
 
         let result = UnitsDisplayNameV1 {
-            long_width: long,
-            short_width: short,
-            narrow_width: narrow,
+            long,
+            short,
+            narrow,
         };
 
         Ok(DataResponse {
@@ -88,7 +118,7 @@ impl IterableDataProvider<UnitsDisplayNameV1Marker> for DatagenProvider {
                 .filter(|&long_key| {
                     long_key.starts_with("length") || long_key.starts_with("duration")
                 })
-                .filter_map(|long_key| long_key.split('-').nth(1))
+                .filter_map(|long_key| long_key.split_once('-').map(|(_, rest)| rest))
                 .collect();
 
             for &truncated_quantity in &quantities {

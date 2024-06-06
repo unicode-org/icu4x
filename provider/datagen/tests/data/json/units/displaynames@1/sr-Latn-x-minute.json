@@ -1,5 +1,17 @@
 {
-  "long_width": {},
-  "short_width": {},
-  "narrow_width": {}
+  "long": {
+    "One": "{0} minut",
+    "Few": "{0} minuta",
+    "Other": "{0} minuta"
+  },
+  "short": {
+    "One": "{0} min",
+    "Few": "{0} min",
+    "Other": "{0} min"
+  },
+  "narrow": {
+    "One": "{0} m",
+    "Few": "{0} m",
+    "Other": "{0} m"
+  }
 }

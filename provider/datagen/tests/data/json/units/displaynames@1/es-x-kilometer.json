@@ -1,5 +1,13 @@
 {
-  "long_width": {},
-  "short_width": {},
-  "narrow_width": {}
+  "long": {
+    "One": "{0} kilómetro",
+    "Other": "{0} kilómetros"
+  },
+  "short": {
+    "Other": "{0} km"
+  },
+  "narrow": {
+    "One": "{0}km",
+    "Other": "{0}km"
+  }
 }

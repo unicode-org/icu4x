@@ -1,5 +1,13 @@
 {
-  "long_width": {},
-  "short_width": {},
-  "narrow_width": {}
+  "long": {
+    "One": "{0} стопа",
+    "Few": "{0} стопе",
+    "Other": "{0} стопа"
+  },
+  "short": {
+    "Other": "{0} ft"
+  },
+  "narrow": {
+    "Other": "{0} ft"
+  }
 }

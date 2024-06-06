@@ -1,5 +1,13 @@
 {
-  "long_width": {},
-  "short_width": {},
-  "narrow_width": {}
+  "long": {
+    "One": "{0} puntos",
+    "Other": "{0} puntos"
+  },
+  "short": {
+    "Other": "{0} pt"
+  },
+  "narrow": {
+    "One": "{0}pt",
+    "Other": "{0}pt"
+  }
 }

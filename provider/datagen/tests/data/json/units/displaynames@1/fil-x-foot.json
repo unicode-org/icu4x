@@ -1,5 +1,13 @@
 {
-  "long_width": {},
-  "short_width": {},
-  "narrow_width": {}
+  "long": {
+    "One": "{0} talampakan",
+    "Other": "{0} na talampakan"
+  },
+  "short": {
+    "Other": "{0} ft"
+  },
+  "narrow": {
+    "One": "{0}′",
+    "Other": "{0}′"
+  }
 }
