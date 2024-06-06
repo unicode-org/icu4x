@@ -14,7 +14,7 @@ use icu_provider::prelude::*;
 use itertools::Itertools;
 
 #[derive(Debug)]
-struct AnnotatedResource<'a, M: DataMarker>(
+struct AnnotatedResource<'a, M: DynamicDataMarker>(
     &'a cldr_serde::exemplar_chars::Resource,
     PhantomData<M>,
 );
@@ -50,7 +50,7 @@ macro_rules! exemplar_chars_impls {
         impl IterableDataProviderCached<$data_marker_name> for DatagenProvider {
             fn supported_requests_cached(
                 &self,
-            ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+            ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
                 Ok(self
                     .cldr()?
                     .misc()

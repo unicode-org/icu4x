@@ -836,19 +836,19 @@ pub fn analyze_patterns(
 #[cfg(feature = "compiled_data")]
 mod tests {
     use super::*;
-    use crate::pattern::runtime;
+    use crate::{neo_marker::NeoAutoDateMarker, neo_skeleton::NeoSkeletonLength, pattern::runtime};
     use icu_decimal::options::{FixedDecimalFormatterOptions, GroupingStrategy};
     use tinystr::tinystr;
 
     #[test]
     fn test_mixed_calendar_eras() {
-        use crate::neo::NeoDateFormatter;
+        use crate::neo::NeoFormatter;
         use crate::options::length;
         use icu_calendar::japanese::JapaneseExtended;
         use icu_calendar::Date;
 
         let locale = "en-u-ca-japanese".parse().unwrap();
-        let dtf = NeoDateFormatter::try_new_with_length(&locale, length::Date::Medium)
+        let dtf = NeoFormatter::<NeoAutoDateMarker>::try_new(&locale, NeoSkeletonLength::Medium)
             .expect("DateTimeFormat construction succeeds");
 
         let date = Date::try_new_gregorian_date(1800, 9, 1).expect("Failed to construct Date.");
@@ -858,7 +858,7 @@ mod tests {
             .to_any();
 
         writeable::assert_try_writeable_eq!(
-            dtf.format(&date).unwrap(),
+            dtf.strict_format(&date).unwrap(),
             "Sep 1, 12 kansei-1789",
             Err(DateTimeWriteError::MissingEraSymbol(Era(tinystr!(
                 16,

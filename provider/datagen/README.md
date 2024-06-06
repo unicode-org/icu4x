@@ -20,7 +20,7 @@ use icu_datagen::prelude::*;
 use std::fs::File;
 
 DatagenDriver::new()
-    .with_keys([icu::list::provider::AndListV1Marker::KEY])
+    .with_markers([icu::list::provider::AndListV1Marker::INFO])
     .with_locales_and_fallback([LocaleFamily::FULL], Default::default())
     .export(
         &DatagenProvider::new_latest_tested(),
@@ -42,7 +42,7 @@ $ cargo install icu_datagen
 Once the tool is installed, you can invoke it like this:
 
 ```bash
-$ icu4x-datagen --keys all --locales de en-AU --format blob --out data.postcard
+$ icu4x-datagen --markers all --locales de en-AU --format blob --out data.postcard
 ```
 
 More details can be found by running `--help`.
@@ -70,8 +70,8 @@ can be disabled to reduce dependencies:
 * `bin`
   * required by the CLI and enabled by default to make `cargo install` work
 * `icu_experimental`
-  * enables data generation for keys defined in the unstable `icu_experimental` crate
-  * note that this features affects the behaviour of `all_keys`
+  * enables data generation for markers defined in the unstable `icu_experimental` crate
+  * note that this features affects the behaviour of `all_markers`
 
 The meta-feature `experimental_components` is available to activate all experimental components.
 

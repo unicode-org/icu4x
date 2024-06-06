@@ -3,7 +3,10 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_calendar::DateTime;
-use icu_datetime::neo::TypedNeoDateTimeFormatter;
+use icu_datetime::neo::TypedNeoFormatter;
+use icu_datetime::neo_skeleton::{
+    NeoComponents, NeoDateComponents, NeoDateSkeleton, NeoTimeComponents,
+};
 use icu_datetime::options::length;
 use icu_datetime::{DateTimeFormatterOptions, TypedDateTimeFormatter};
 use icu_locale_core::locale;
@@ -73,17 +76,19 @@ fn neo_datetime_lengths() {
         length::Date::Medium,
         length::Date::Short,
     ] {
+        let (day_components, length) = NeoDateSkeleton::day_from_date_length(date_length);
         for time_length in [length::Time::Medium, length::Time::Short] {
+            let time_components = NeoTimeComponents::from_time_length(time_length);
             for locale in [
                 locale!("en").into(),
                 locale!("fr").into(),
                 locale!("zh").into(),
                 locale!("hi").into(),
             ] {
-                let formatter = TypedNeoDateTimeFormatter::try_new_with_lengths(
+                let formatter = TypedNeoFormatter::try_new_with_components(
                     &locale,
-                    date_length,
-                    time_length,
+                    NeoComponents::DateTime(day_components, time_components),
+                    length,
                 )
                 .unwrap();
                 let formatted = formatter.format(&datetime);
@@ -92,7 +97,7 @@ fn neo_datetime_lengths() {
                     formatted,
                     *expected,
                     Ok(()),
-                    "{date_length:?} {time_length:?} {locale:?}"
+                    "{day_components:?} {time_components:?} {length:?} {locale:?}"
                 );
             }
         }
@@ -109,17 +114,27 @@ fn neo_date_lengths() {
         length::Date::Medium,
         length::Date::Short,
     ] {
+        let (day_components, length) = NeoDateSkeleton::day_from_date_length(date_length);
         for locale in [
             locale!("en").into(),
             locale!("fr").into(),
             locale!("zh").into(),
             locale!("hi").into(),
         ] {
-            let formatter =
-                TypedNeoDateTimeFormatter::try_new_with_date_length(&locale, date_length).unwrap();
+            let formatter = TypedNeoFormatter::try_new_with_components(
+                &locale,
+                NeoDateComponents::Day(day_components),
+                length,
+            )
+            .unwrap();
             let formatted = formatter.format(&datetime);
             let expected = expected_iter.next().unwrap();
-            assert_try_writeable_eq!(formatted, *expected, Ok(()), "{date_length:?} {locale:?}");
+            assert_try_writeable_eq!(
+                formatted,
+                *expected,
+                Ok(()),
+                "{day_components:?} {length:?} {locale:?}"
+            );
         }
     }
 }

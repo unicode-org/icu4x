@@ -17,7 +17,7 @@
 
 use crate::rules::runtime::ast::Rule;
 use icu_provider::prelude::*;
-use icu_provider::DataMarker;
+use icu_provider::DynamicDataMarker;
 
 #[cfg(feature = "compiled_data")]
 #[derive(Debug)]
@@ -45,12 +45,12 @@ const _: () = {
 };
 
 #[cfg(feature = "datagen")]
-/// The latest minimum set of keys required by this component.
-pub const KEYS: &[DataKey] = &[
-    CardinalV1Marker::KEY,
-    OrdinalV1Marker::KEY,
+/// The latest minimum set of markers required by this component.
+pub const MARKERS: &[DataMarkerInfo] = &[
+    CardinalV1Marker::INFO,
+    OrdinalV1Marker::INFO,
     #[cfg(feature = "experimental")]
-    PluralRangesV1Marker::KEY,
+    PluralRangesV1Marker::INFO,
 ];
 
 /// Plural rule strings conforming to UTS 35 syntax. Includes separate fields for five of the six
@@ -94,7 +94,7 @@ pub struct PluralRulesV1<'data> {
 
 pub(crate) struct ErasedPluralRulesV1Marker;
 
-impl DataMarker for ErasedPluralRulesV1Marker {
+impl DynamicDataMarker for ErasedPluralRulesV1Marker {
     type Yokeable = PluralRulesV1<'static>;
 }
 

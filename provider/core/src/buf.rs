@@ -6,7 +6,7 @@
 
 use crate::prelude::*;
 
-/// [`DataMarker`] for raw buffers. Returned by [`BufferProvider`].
+/// [`DynamicDataMarker`] for raw buffers. Returned by [`BufferProvider`].
 ///
 /// The data is expected to be deserialized before it can be used; see
 /// [`DataPayload::into_deserialized`].
@@ -14,7 +14,7 @@ use crate::prelude::*;
 #[derive(Debug)]
 pub struct BufferMarker;
 
-impl DataMarker for BufferMarker {
+impl DynamicDataMarker for BufferMarker {
     type Yokeable = &'static [u8];
 }
 
@@ -53,7 +53,7 @@ impl DataMarker for BufferMarker {
 /// assert_eq!(
 ///     serde_json::from_slice::<HelloWorldV1>(
 ///         buffer_provider
-///             .load_data(HelloWorldV1Marker::KEY, req)
+///             .load_data(HelloWorldV1Marker::INFO, req)
 ///             .expect("load should succeed")
 ///             .take_payload()
 ///             .unwrap()

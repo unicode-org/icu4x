@@ -12,20 +12,11 @@
 //!
 //! `icu_provider` defines traits and structs for transmitting data through the ICU4X locale
 //! data pipeline. The primary trait is [`DataProvider`]. It is parameterized by a
-//! [`KeyedDataMarker`], which contains the data type and a [`DataKey`]. It has one method,
-//! [`DataProvider::load`], which transforms a [`DataRequest`]
-//! into a [`DataResponse`].
+//! [`DataMarker`], which is the type-system-level data identifier. [`DataProvider`] has a single method,
+//! [`DataProvider::load`], which transforms a [`DataRequest`] into a [`DataResponse`].
 //!
-//! - [`DataKey`] is a fixed identifier for the data type, such as `"plurals/cardinal@1"`.
-//! - [`DataRequest`] contains additional annotations to choose a specific variant of the key,
-//!   such as a locale.
+//! - [`DataRequest`] contains selectors to choose a specific variant of the marker, such as a locale.
 //! - [`DataResponse`] contains the data if the request was successful.
-//!
-//! In addition, there are three other traits which are widely implemented:
-//!
-//! - [`AnyProvider`] returns data as `dyn Any` trait objects.
-//! - [`BufferProvider`] returns data as `[u8]` buffers.
-//! - [`DynamicDataProvider`] returns structured data but is not specific to a key.
 //!
 //! The most common types required for this crate are included via the prelude:
 //!
@@ -33,18 +24,19 @@
 //! use icu_provider::prelude::*;
 //! ```
 //!
-//! ## Types of Data Providers
+//! ## Dynamic Data Providers
 //!
-//! All nontrivial data providers can fit into one of two classes.
+//! If the type system cannot be leveraged to load data (such as when dynamically loading from I/O),
+//! there's another form of the [`DataProvider`]: [`DynamicDataProvider`]. While [`DataProvider`] is parametrized
+//! on the type-system level by a [`DataMarker`] (which are distinct types implementing this trait),
+//! [`DynamicDataProvider`]s are parametrized at runtime by a [`DataMarkerInfo`] struct, which essentially is the runtime
+//! representation of the [`DataMarker`] type.
 //!
-//! 1. [`AnyProvider`]: Those whose data originates as structured Rust objects
-//! 2. [`BufferProvider`]: Those whose data originates as unstructured `[u8]` buffers
+//! The [`DynamicDataProvider`] is still type-level parametrized by the type that it loads, and there are two
+//! implementations that should be called out
 //!
-//! **✨ Key Insight:** A given data provider is generally *either* an [`AnyProvider`] *or* a
-//! [`BufferProvider`]. Which type depends on the data source, and it is not generally possible
-//! to convert one to the other.
-//!
-//! See also [crate::constructors].
+//! - [`DynamicDataProvider<AnyMarker>`], and [`AnyProvider`] (a slightly optimized alternative) return data as `dyn Any` trait objects.
+//! - [`DynamicDataProvider<BufferMarker>`], a.k.a. [`BufferProvider`] returns data as `[u8]` buffers.
 //!
 //! ### AnyProvider
 //!
@@ -54,9 +46,7 @@
 //!
 //! Examples of AnyProviders:
 //!
-//! - [`DatagenProvider`] reads structured data from CLDR source files and returns ICU4X data structs.
 //! - [`AnyPayloadProvider`] wraps a specific data struct and returns it.
-//! - The `BakedDataProvider` which encodes structured data directly in Rust source
 //!
 //! ### BufferProvider
 //!
@@ -83,7 +73,7 @@
 //! ## Types and Lifetimes
 //!
 //! Types compatible with [`Yokeable`] can be passed through the data provider, so long as they are
-//! associated with a marker type implementing [`DataMarker`].
+//! associated with a marker type implementing [`DynamicDataMarker`].
 //!
 //! Data structs should generally have one lifetime argument: `'data`. This lifetime allows data
 //! structs to borrow zero-copy data.
@@ -97,7 +87,7 @@
 //!
 //! [`ICU4X`]: ../icu/index.html
 //! [`DataProvider`]: data_provider::DataProvider
-//! [`DataKey`]: key::DataKey
+//! [`DataMarkerInfo`]: key::DataMarkerInfo
 //! [`DataLocale`]: request::DataLocale
 //! [`IterableDynamicDataProvider`]: datagen::IterableDynamicDataProvider
 //! [`IterableDataProvider`]: datagen::IterableDataProvider
@@ -154,16 +144,15 @@ pub mod serde;
 // Types from private modules
 pub use crate::data_provider::BoundDataProvider;
 pub use crate::data_provider::DataProvider;
-pub use crate::data_provider::DataProviderWithKey;
+pub use crate::data_provider::DataProviderWithMarker;
 pub use crate::data_provider::DynamicDataProvider;
 pub use crate::error::DataError;
 pub use crate::error::DataErrorKind;
-pub use crate::key::DataKey;
-pub use crate::key::DataKeyHash;
-pub use crate::key::DataKeyMetadata;
-pub use crate::key::DataKeyPath;
-pub use crate::request::DataKeyAttributes;
+pub use crate::key::DataMarkerInfo;
+pub use crate::key::DataMarkerPath;
+pub use crate::key::DataMarkerPathHash;
 pub use crate::request::DataLocale;
+pub use crate::request::DataMarkerAttributes;
 pub use crate::request::DataRequest;
 pub use crate::request::DataRequestMetadata;
 pub use crate::response::Cart;
@@ -185,7 +174,7 @@ pub use crate::any::MaybeSendSync;
 pub use crate::buf::BufferMarker;
 pub use crate::buf::BufferProvider;
 pub use crate::marker::DataMarker;
-pub use crate::marker::KeyedDataMarker;
+pub use crate::marker::DynamicDataMarker;
 pub use crate::marker::NeverMarker;
 #[cfg(feature = "serde")]
 pub use crate::serde::AsDeserializingBufferProvider;
@@ -193,7 +182,7 @@ pub use crate::serde::AsDeserializingBufferProvider;
 /// Core selection of APIs and structures for the ICU4X data provider.
 pub mod prelude {
     #[doc(no_inline)]
-    pub use crate::data_key;
+    pub use crate::data_marker_path;
     #[doc(no_inline)]
     pub use crate::AnyMarker;
     #[doc(no_inline)]
@@ -220,15 +209,13 @@ pub mod prelude {
     #[doc(no_inline)]
     pub use crate::DataErrorKind;
     #[doc(no_inline)]
-    pub use crate::DataKey;
-    #[doc(no_inline)]
-    pub use crate::DataKeyAttributes;
-    #[doc(no_inline)]
-    pub use crate::DataKeyHash;
-    #[doc(no_inline)]
     pub use crate::DataLocale;
     #[doc(no_inline)]
     pub use crate::DataMarker;
+    #[doc(no_inline)]
+    pub use crate::DataMarkerAttributes;
+    #[doc(no_inline)]
+    pub use crate::DataMarkerInfo;
     #[doc(no_inline)]
     pub use crate::DataPayload;
     #[doc(no_inline)]
@@ -242,9 +229,9 @@ pub mod prelude {
     #[doc(no_inline)]
     pub use crate::DataResponseMetadata;
     #[doc(no_inline)]
-    pub use crate::DynamicDataProvider;
+    pub use crate::DynamicDataMarker;
     #[doc(no_inline)]
-    pub use crate::KeyedDataMarker;
+    pub use crate::DynamicDataProvider;
 
     #[doc(no_inline)]
     pub use yoke;

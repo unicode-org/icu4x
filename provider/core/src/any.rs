@@ -64,18 +64,18 @@ pub struct AnyPayload {
     type_name: &'static str,
 }
 
-/// The [`DataMarker`] marker type for [`AnyPayload`].
+/// The [`DynamicDataMarker`] marker type for [`AnyPayload`].
 #[allow(clippy::exhaustive_structs)] // marker type
 #[derive(Debug)]
 pub struct AnyMarker;
 
-impl DataMarker for AnyMarker {
+impl DynamicDataMarker for AnyMarker {
     type Yokeable = AnyPayload;
 }
 
 impl<M> crate::dynutil::UpcastDataPayload<M> for AnyMarker
 where
-    M: DataMarker,
+    M: DynamicDataMarker,
     M::Yokeable: MaybeSendSync,
 {
     #[inline]
@@ -92,7 +92,7 @@ impl AnyPayload {
     /// the type stored in the `AnyPayload`.
     pub fn downcast<M>(self) -> Result<DataPayload<M>, DataError>
     where
-        M: DataMarker,
+        M: DynamicDataMarker,
         // For the StructRef case:
         M::Yokeable: ZeroFrom<'static, M::Yokeable>,
         // For the PayloadRc case:
@@ -120,7 +120,7 @@ impl AnyPayload {
     /// Clones and then transforms a type-erased `AnyPayload` into a concrete `DataPayload<M>`.
     pub fn downcast_cloned<M>(&self) -> Result<DataPayload<M>, DataError>
     where
-        M: DataMarker,
+        M: DynamicDataMarker,
         // For the StructRef case:
         M::Yokeable: ZeroFrom<'static, M::Yokeable>,
         // For the PayloadRc case:
@@ -164,7 +164,7 @@ impl AnyPayload {
 
 impl<M> DataPayload<M>
 where
-    M: DataMarker,
+    M: DynamicDataMarker,
     M::Yokeable: MaybeSendSync,
 {
     /// Converts this DataPayload into a type-erased `AnyPayload`. Unless the payload stores a static
@@ -204,7 +204,7 @@ impl DataPayload<AnyMarker> {
     #[inline]
     pub fn downcast<M>(self) -> Result<DataPayload<M>, DataError>
     where
-        M: DataMarker,
+        M: DynamicDataMarker,
         for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
         M::Yokeable: ZeroFrom<'static, M::Yokeable>,
         M::Yokeable: MaybeSendSync,
@@ -252,7 +252,7 @@ impl AnyResponse {
     #[inline]
     pub fn downcast<M>(self) -> Result<DataResponse<M>, DataError>
     where
-        M: DataMarker,
+        M: DynamicDataMarker,
         for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
         M::Yokeable: ZeroFrom<'static, M::Yokeable>,
         M::Yokeable: MaybeSendSync,
@@ -266,7 +266,7 @@ impl AnyResponse {
     /// Clones and then transforms a type-erased `AnyResponse` into a concrete `DataResponse<M>`.
     pub fn downcast_cloned<M>(&self) -> Result<DataResponse<M>, DataError>
     where
-        M: DataMarker,
+        M: DynamicDataMarker,
         M::Yokeable: ZeroFrom<'static, M::Yokeable>,
         M::Yokeable: MaybeSendSync,
         for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
@@ -284,7 +284,7 @@ impl AnyResponse {
 
 impl<M> DataResponse<M>
 where
-    M: DataMarker,
+    M: DynamicDataMarker,
     M::Yokeable: MaybeSendSync,
 {
     /// Moves the inner DataPayload to the heap (requiring an allocation) and returns it as an
@@ -316,7 +316,7 @@ where
 /// // Downcasting manually
 /// assert_eq!(
 ///     any_provider
-///         .load_any(HelloWorldV1Marker::KEY, req)
+///         .load_any(HelloWorldV1Marker::INFO, req)
 ///         .expect("load should succeed")
 ///         .downcast::<HelloWorldV1Marker>()
 ///         .expect("types should match")
@@ -345,36 +345,36 @@ where
 /// );
 /// ```
 pub trait AnyProvider {
-    /// Loads an [`AnyPayload`] according to the key and request.
-    fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError>;
+    /// Loads an [`AnyPayload`] according to the marker and request.
+    fn load_any(&self, marker: DataMarkerInfo, req: DataRequest) -> Result<AnyResponse, DataError>;
 }
 
 impl<'a, T: AnyProvider + ?Sized> AnyProvider for &'a T {
     #[inline]
-    fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
-        (**self).load_any(key, req)
+    fn load_any(&self, marker: DataMarkerInfo, req: DataRequest) -> Result<AnyResponse, DataError> {
+        (**self).load_any(marker, req)
     }
 }
 
 impl<T: AnyProvider + ?Sized> AnyProvider for alloc::boxed::Box<T> {
     #[inline]
-    fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
-        (**self).load_any(key, req)
+    fn load_any(&self, marker: DataMarkerInfo, req: DataRequest) -> Result<AnyResponse, DataError> {
+        (**self).load_any(marker, req)
     }
 }
 
 impl<T: AnyProvider + ?Sized> AnyProvider for alloc::rc::Rc<T> {
     #[inline]
-    fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
-        (**self).load_any(key, req)
+    fn load_any(&self, marker: DataMarkerInfo, req: DataRequest) -> Result<AnyResponse, DataError> {
+        (**self).load_any(marker, req)
     }
 }
 
 #[cfg(target_has_atomic = "ptr")]
 impl<T: AnyProvider + ?Sized> AnyProvider for alloc::sync::Arc<T> {
     #[inline]
-    fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
-        (**self).load_any(key, req)
+    fn load_any(&self, marker: DataMarkerInfo, req: DataRequest) -> Result<AnyResponse, DataError> {
+        (**self).load_any(marker, req)
     }
 }
 
@@ -404,8 +404,8 @@ where
     P: DynamicDataProvider<AnyMarker> + ?Sized,
 {
     #[inline]
-    fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
-        self.0.load_data(key, req)?.try_into()
+    fn load_any(&self, marker: DataMarkerInfo, req: DataRequest) -> Result<AnyResponse, DataError> {
+        self.0.load_data(marker, req)?.try_into()
     }
 }
 
@@ -433,7 +433,7 @@ where
 impl<M, P> DataProvider<M> for DowncastingAnyProvider<'_, P>
 where
     P: AnyProvider + ?Sized,
-    M: KeyedDataMarker,
+    M: DataMarker,
     for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
     M::Yokeable: ZeroFrom<'static, M::Yokeable>,
     M::Yokeable: MaybeSendSync,
@@ -441,26 +441,30 @@ where
     #[inline]
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         self.0
-            .load_any(M::KEY, req)?
+            .load_any(M::INFO, req)?
             .downcast()
-            .map_err(|e| e.with_req(M::KEY, req))
+            .map_err(|e| e.with_req(M::INFO, req))
     }
 }
 
 impl<M, P> DynamicDataProvider<M> for DowncastingAnyProvider<'_, P>
 where
     P: AnyProvider + ?Sized,
-    M: DataMarker,
+    M: DynamicDataMarker,
     for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
     M::Yokeable: ZeroFrom<'static, M::Yokeable>,
     M::Yokeable: MaybeSendSync,
 {
     #[inline]
-    fn load_data(&self, key: DataKey, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+    fn load_data(
+        &self,
+        marker: DataMarkerInfo,
+        req: DataRequest,
+    ) -> Result<DataResponse<M>, DataError> {
         self.0
-            .load_any(key, req)?
+            .load_any(marker, req)?
             .downcast()
-            .map_err(|e| e.with_req(key, req))
+            .map_err(|e| e.with_req(marker, req))
     }
 }
 
@@ -488,7 +492,7 @@ mod test {
 
         struct WrongMarker;
 
-        impl DataMarker for WrongMarker {
+        impl DynamicDataMarker for WrongMarker {
             type Yokeable = u8;
         }
 

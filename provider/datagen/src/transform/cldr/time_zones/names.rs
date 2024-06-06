@@ -59,7 +59,7 @@ impl DataProvider<IanaToBcp47MapV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProvider<IanaToBcp47MapV1Marker> for DatagenProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
@@ -113,7 +113,7 @@ impl DataProvider<IanaToBcp47MapV2Marker> for DatagenProvider {
 }
 
 impl IterableDataProvider<IanaToBcp47MapV2Marker> for DatagenProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
@@ -145,7 +145,7 @@ impl DataProvider<Bcp47ToIanaMapV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProvider<Bcp47ToIanaMapV1Marker> for DatagenProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }

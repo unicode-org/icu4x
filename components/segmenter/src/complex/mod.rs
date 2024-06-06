@@ -361,12 +361,12 @@ impl ComplexPayloads {
     }
 }
 
-fn try_load<M: KeyedDataMarker, P: DataProvider<M> + ?Sized>(
+fn try_load<M: DataMarker, P: DataProvider<M> + ?Sized>(
     provider: &P,
     model: &'static str,
 ) -> Result<Option<DataPayload<M>>, DataError> {
     match provider.load(DataRequest {
-        key_attributes: &model.parse().unwrap(),
+        marker_attributes: &model.parse().unwrap(),
         metadata: {
             let mut m = DataRequestMetadata::default();
             m.silent = true;

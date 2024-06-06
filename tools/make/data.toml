@@ -39,16 +39,16 @@ exit_on_error true
 
 exec --fail-on-error cargo build -p icu_datagen --no-default-features --features fs_exporter,blob_exporter,bin,networking,provider
 
-exec --fail-on-error target/debug/icu4x-datagen --keys "core/helloworld@1" --locales full --format dir --syntax json --out provider/fs/tests/data/json --overwrite
-exec --fail-on-error target/debug/icu4x-datagen --keys "core/helloworld@1" --locales full --format dir --syntax bincode --out provider/fs/tests/data/bincode --overwrite
-exec --fail-on-error target/debug/icu4x-datagen --keys "core/helloworld@1" --locales full --format dir --syntax postcard --out provider/fs/tests/data/postcard --overwrite
+exec --fail-on-error target/debug/icu4x-datagen --markers "core/helloworld@1" --locales full --format dir --syntax json --out provider/fs/tests/data/json --overwrite
+exec --fail-on-error target/debug/icu4x-datagen --markers "core/helloworld@1" --locales full --format dir --syntax bincode --out provider/fs/tests/data/bincode --overwrite
+exec --fail-on-error target/debug/icu4x-datagen --markers "core/helloworld@1" --locales full --format dir --syntax postcard --out provider/fs/tests/data/postcard --overwrite
 
-exec --fail-on-error target/debug/icu4x-datagen --keys "core/helloworld@1" --locales full --format blob --overwrite --out provider/blob/tests/data/v1.postcard
-exec --fail-on-error target/debug/icu4x-datagen --keys "core/helloworld@1" --locales full --format blob2 --overwrite --out provider/blob/tests/data/v2.postcard
+exec --fail-on-error target/debug/icu4x-datagen --markers "core/helloworld@1" --locales full --format blob --overwrite --out provider/blob/tests/data/v1.postcard
+exec --fail-on-error target/debug/icu4x-datagen --markers "core/helloworld@1" --locales full --format blob2 --overwrite --out provider/blob/tests/data/v2.postcard
 
-exec --fail-on-error target/debug/icu4x-datagen --keys "core/helloworld@1" "fallback/likelysubtags@1" "fallback/parents@1" "fallback/supplement/co@1" --locales full --format blob --out provider/adapters/tests/data/blob.postcard --overwrite
-exec --fail-on-error target/debug/icu4x-datagen --keys "core/helloworld@1" --without-fallback --locales de --format dir --syntax json --out provider/adapters/tests/data/langtest/de --overwrite
-exec --fail-on-error target/debug/icu4x-datagen --keys "core/helloworld@1" --without-fallback --locales ro --format dir --syntax json --out provider/adapters/tests/data/langtest/ro --overwrite
+exec --fail-on-error target/debug/icu4x-datagen --markers "core/helloworld@1" "fallback/likelysubtags@1" "fallback/parents@1" "fallback/supplement/co@1" --locales full --format blob --out provider/adapters/tests/data/blob.postcard --overwrite
+exec --fail-on-error target/debug/icu4x-datagen --markers "core/helloworld@1" --without-fallback --locales de --format dir --syntax json --out provider/adapters/tests/data/langtest/de --overwrite
+exec --fail-on-error target/debug/icu4x-datagen --markers "core/helloworld@1" --without-fallback --locales ro --format dir --syntax json --out provider/adapters/tests/data/langtest/ro --overwrite
 '''
 
 [tasks.testdata-check]

@@ -11,7 +11,7 @@
 /// ```
 /// macro_rules! cb {
 ///     ($($marker:path = $path:literal,)+ #[experimental] $($emarker:path = $epath:literal,)+) => {
-///         // Do something for each key, or each experimental key
+///         // Do something for each marker, or each experimental marker
 ///     };
 /// }
 /// ```

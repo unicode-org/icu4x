@@ -12,7 +12,7 @@ enum Error {
   /// Please file a bug
   unknownError,
 
-  dataMissingDataKeyError,
+  dataMissingDataMarkerError,
 
   dataMissingVariantError,
 
@@ -90,7 +90,7 @@ enum Error {
     switch (this) {
       case unknownError:
         return 0;
-      case dataMissingDataKeyError:
+      case dataMissingDataMarkerError:
         return 256;
       case dataMissingVariantError:
         return 257;

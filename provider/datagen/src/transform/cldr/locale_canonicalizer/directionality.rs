@@ -24,7 +24,7 @@ impl DataProvider<ScriptDirectionV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProvider<ScriptDirectionV1Marker> for DatagenProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
@@ -37,7 +37,7 @@ impl From<&cldr_serde::directionality::Resource> for ScriptDirectionV1<'_> {
             match metadata.rtl {
                 cldr_serde::directionality::Rtl::Yes => rtl.push(script.to_unvalidated()),
                 cldr_serde::directionality::Rtl::No => ltr.push(script.to_unvalidated()),
-                // not storing, because it is the default return value for unknown keys downstream
+                // not storing, because it is the default return value for unknown markers downstream
                 cldr_serde::directionality::Rtl::Unknown => (),
             }
         }

@@ -22,7 +22,7 @@ use serde::{Deserialize, Serialize};
 /// to work for all properties at once
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
 pub(crate) struct ErasedNameToEnumMapV1Marker;
-impl DataMarker for ErasedNameToEnumMapV1Marker {
+impl DynamicDataMarker for ErasedNameToEnumMapV1Marker {
     type Yokeable = PropertyValueNameToEnumMapV1<'static>;
 }
 
@@ -100,7 +100,7 @@ impl<T: TrieValue> PropertyValueNameToEnumMapper<T> {
 
     pub(crate) fn from_data<M>(data: DataPayload<M>) -> Self
     where
-        M: DataMarker<Yokeable = PropertyValueNameToEnumMapV1<'static>>,
+        M: DynamicDataMarker<Yokeable = PropertyValueNameToEnumMapV1<'static>>,
     {
         Self {
             map: data.cast(),
@@ -260,7 +260,7 @@ fn get_loose_u16(payload: &PropertyValueNameToEnumMapV1<'_>, name: &str) -> Opti
 /// to work for all properties at once
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
 pub(crate) struct ErasedEnumToValueNameSparseMapV1Marker;
-impl DataMarker for ErasedEnumToValueNameSparseMapV1Marker {
+impl DynamicDataMarker for ErasedEnumToValueNameSparseMapV1Marker {
     type Yokeable = PropertyEnumToValueNameSparseMapV1<'static>;
 }
 
@@ -322,7 +322,7 @@ impl<T: TrieValue> PropertyEnumToValueNameSparseMapper<T> {
     /// (like [`Script::TBD()`]) instead.
     pub(crate) fn from_data<M>(data: DataPayload<M>) -> Self
     where
-        M: DataMarker<Yokeable = PropertyEnumToValueNameSparseMapV1<'static>>,
+        M: DynamicDataMarker<Yokeable = PropertyEnumToValueNameSparseMapV1<'static>>,
     {
         Self {
             map: data.cast(),
@@ -373,7 +373,7 @@ impl<T: TrieValue> PropertyEnumToValueNameSparseMapperBorrowed<'static, T> {
 /// to work for all properties at once
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
 pub(crate) struct ErasedEnumToValueNameLinearMapV1Marker;
-impl DataMarker for ErasedEnumToValueNameLinearMapV1Marker {
+impl DynamicDataMarker for ErasedEnumToValueNameLinearMapV1Marker {
     type Yokeable = PropertyEnumToValueNameLinearMapV1<'static>;
 }
 
@@ -435,7 +435,7 @@ impl<T: TrieValue> PropertyEnumToValueNameLinearMapper<T> {
     /// (like [`Script::TBD()`]) instead.
     pub(crate) fn from_data<M>(data: DataPayload<M>) -> Self
     where
-        M: DataMarker<Yokeable = PropertyEnumToValueNameLinearMapV1<'static>>,
+        M: DynamicDataMarker<Yokeable = PropertyEnumToValueNameLinearMapV1<'static>>,
     {
         Self {
             map: data.cast(),
@@ -480,7 +480,7 @@ impl<T: TrieValue> PropertyEnumToValueNameLinearMapperBorrowed<'static, T> {
 /// to work for all properties at once
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
 pub(crate) struct ErasedEnumToValueNameLinearTiny4MapV1Marker;
-impl DataMarker for ErasedEnumToValueNameLinearTiny4MapV1Marker {
+impl DynamicDataMarker for ErasedEnumToValueNameLinearTiny4MapV1Marker {
     type Yokeable = PropertyEnumToValueNameLinearTiny4MapV1<'static>;
 }
 
@@ -535,7 +535,7 @@ impl<T: TrieValue> PropertyEnumToValueNameLinearTiny4Mapper<T> {
     /// (like [`Script::TBD()`]) instead.
     pub(crate) fn from_data<M>(data: DataPayload<M>) -> Self
     where
-        M: DataMarker<Yokeable = PropertyEnumToValueNameLinearTiny4MapV1<'static>>,
+        M: DynamicDataMarker<Yokeable = PropertyEnumToValueNameLinearTiny4MapV1<'static>>,
     {
         Self {
             map: data.cast(),

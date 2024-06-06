@@ -60,7 +60,7 @@ macro_rules! impl_data_provider {
                     Ok(DataResponse {
             metadata: Default::default(),
                         payload: Some(DataPayload::from_owned(
-                            <$marker as DataMarker>::Yokeable::from(CldrTimeZonesData {
+                            <$marker as DynamicDataMarker>::Yokeable::from(CldrTimeZonesData {
                                 time_zone_names_resource,
                                 bcp47_tzids_resource,
                                 meta_zone_ids_resource,
@@ -72,8 +72,8 @@ macro_rules! impl_data_provider {
             }
 
             impl IterableDataProviderCached<$marker> for DatagenProvider {
-                fn supported_requests_cached(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
-                    if <$marker>::KEY == MetazonePeriodV1Marker::KEY {
+                fn supported_requests_cached(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+                    if <$marker>::INFO == MetazonePeriodV1Marker::INFO {
                         // MetazonePeriodV1 does not require localized time zone data
                         Ok([Default::default()].into_iter().collect())
                     } else {

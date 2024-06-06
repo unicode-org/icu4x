@@ -38,8 +38,8 @@ use icu_provider::prelude::*;
 macro_rules! make_exemplar_chars_unicode_set_property {
     (
         // currently unused
-        marker: $marker_name:ident;
-        keyed_data_marker: $keyed_data_marker:ty;
+        dyn_data_marker: $d:ident;
+        data_marker: $data_marker:ty;
         func:
         $vis:vis fn $funcname:ident();
         $(#[$attr:meta])*
@@ -49,7 +49,7 @@ macro_rules! make_exemplar_chars_unicode_set_property {
         ///
         /// [📚 Help choosing a constructor](icu_provider::constructors)
         $vis fn $funcname(
-            provider: &(impl DataProvider<$keyed_data_marker> + ?Sized),
+            provider: &(impl DataProvider<$data_marker> + ?Sized),
             locale: &DataLocale,
         ) -> Result<UnicodeSetData, DataError> {
             provider.load(
@@ -65,7 +65,7 @@ macro_rules! make_exemplar_chars_unicode_set_property {
         $vis2 fn $constname(
             locale: &DataLocale,
         ) -> Result<UnicodeSetData, DataError> {
-            DataProvider::<$keyed_data_marker>::load(
+            DataProvider::<$data_marker>::load(
                 &crate::provider::Baked,
                 DataRequest {
                     locale,
@@ -78,8 +78,8 @@ macro_rules! make_exemplar_chars_unicode_set_property {
 }
 
 make_exemplar_chars_unicode_set_property!(
-    marker: ExemplarCharactersMain;
-    keyed_data_marker: ExemplarCharactersMainV1Marker;
+    dyn_data_marker: ExemplarCharactersMain;
+    data_marker: ExemplarCharactersMainV1Marker;
     func:
     pub fn load_exemplars_main();
 
@@ -110,8 +110,8 @@ make_exemplar_chars_unicode_set_property!(
 );
 
 make_exemplar_chars_unicode_set_property!(
-    marker: ExemplarCharactersAuxiliary;
-    keyed_data_marker: ExemplarCharactersAuxiliaryV1Marker;
+    dyn_data_marker: ExemplarCharactersAuxiliary;
+    data_marker: ExemplarCharactersAuxiliaryV1Marker;
     func:
     pub fn load_exemplars_auxiliary();
 
@@ -143,8 +143,8 @@ make_exemplar_chars_unicode_set_property!(
 );
 
 make_exemplar_chars_unicode_set_property!(
-    marker: ExemplarCharactersPunctuation;
-    keyed_data_marker: ExemplarCharactersPunctuationV1Marker;
+    dyn_data_marker: ExemplarCharactersPunctuation;
+    data_marker: ExemplarCharactersPunctuationV1Marker;
     func:
     pub fn load_exemplars_punctuation();
 
@@ -177,8 +177,8 @@ make_exemplar_chars_unicode_set_property!(
 );
 
 make_exemplar_chars_unicode_set_property!(
-    marker: ExemplarCharactersNumbers;
-    keyed_data_marker: ExemplarCharactersNumbersV1Marker;
+    dyn_data_marker: ExemplarCharactersNumbers;
+    data_marker: ExemplarCharactersNumbersV1Marker;
     func:
     pub fn load_exemplars_numbers();
 
@@ -211,8 +211,8 @@ make_exemplar_chars_unicode_set_property!(
 );
 
 make_exemplar_chars_unicode_set_property!(
-    marker: ExemplarCharactersIndex;
-    keyed_data_marker: ExemplarCharactersIndexV1Marker;
+    dyn_data_marker: ExemplarCharactersIndex;
+    data_marker: ExemplarCharactersIndexV1Marker;
     func:
     pub fn load_exemplars_index();
 

@@ -15,7 +15,7 @@ class ICU4XError {
 public:
   enum Value {
     UnknownError = 0,
-    DataMissingDataKeyError = 256,
+    DataMissingDataMarkerError = 256,
     DataMissingVariantError = 257,
     DataMissingLocaleError = 258,
     DataNeedsVariantError = 259,

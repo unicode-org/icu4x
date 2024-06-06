@@ -38,7 +38,7 @@ macro_rules! normalization_provider {
         impl IterableDataProvider<$marker> for DatagenProvider {
             fn supported_requests(
                 &self,
-            ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+            ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
                 Ok(HashSet::from_iter([Default::default()]))
             }
         }

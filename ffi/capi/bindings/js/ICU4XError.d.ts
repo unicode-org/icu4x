@@ -15,7 +15,7 @@ export enum ICU4XError {
   UnknownError = 'UnknownError',
   /**
    */
-  DataMissingDataKeyError = 'DataMissingDataKeyError',
+  DataMissingDataMarkerError = 'DataMissingDataMarkerError',
   /**
    */
   DataMissingVariantError = 'DataMissingVariantError',

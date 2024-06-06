@@ -6,7 +6,7 @@
 
 use core::marker::PhantomData;
 
-use crate::{data_key, DataKey, DataProvider, DataProviderWithKey};
+use crate::{data_marker_path, DataMarkerInfo, DataProvider, DataProviderWithMarker};
 use yoke::Yokeable;
 
 /// Trait marker for data structs. All types delivered by the data provider must be associated with
@@ -14,23 +14,23 @@ use yoke::Yokeable;
 ///
 /// Structs implementing this trait are normally generated with the [`data_struct`] macro.
 ///
-/// By convention, the non-standard `Marker` suffix is used by types implementing DataMarker.
+/// By convention, the non-standard `Marker` suffix is used by types implementing DynamicDataMarker.
 ///
-/// In addition to a marker type implementing DataMarker, the following impls must also be present
+/// In addition to a marker type implementing DynamicDataMarker, the following impls must also be present
 /// for the data struct:
 ///
 /// - `impl<'a> Yokeable<'a>` (required)
 /// - `impl ZeroFrom<Self>`
 ///
-/// Also see [`KeyedDataMarker`].
+/// Also see [`DataMarker`].
 ///
-/// Note: `DataMarker`s are quasi-const-generic compile-time objects, and as such are expected
+/// Note: `DynamicDataMarker`s are quasi-const-generic compile-time objects, and as such are expected
 /// to be unit structs. As this is not something that can be enforced by the type system, we
 /// currently only have a `'static` bound on them (which is needed by a lot of our code).
 ///
 /// # Examples
 ///
-/// Manually implementing DataMarker for a custom type:
+/// Manually implementing DynamicDataMarker for a custom type:
 ///
 /// ```
 /// use icu_provider::prelude::*;
@@ -43,7 +43,7 @@ use yoke::Yokeable;
 ///
 /// struct MyDataStructMarker;
 ///
-/// impl DataMarker for MyDataStructMarker {
+/// impl DynamicDataMarker for MyDataStructMarker {
 ///     type Yokeable = MyDataStruct<'static>;
 /// }
 ///
@@ -56,24 +56,24 @@ use yoke::Yokeable;
 /// ```
 ///
 /// [`data_struct`]: crate::data_struct
-pub trait DataMarker: 'static {
+pub trait DynamicDataMarker: 'static {
     /// A type that implements [`Yokeable`]. This should typically be the `'static` version of a
     /// data struct.
     type Yokeable: for<'a> Yokeable<'a>;
 }
 
-/// A [`DataMarker`] with a [`DataKey`] attached.
+/// A [`DynamicDataMarker`] with a [`DataMarkerInfo`] attached.
 ///
 /// Structs implementing this trait are normally generated with the [`data_struct!`] macro.
 ///
 /// Implementing this trait enables this marker to be used with the main [`DataProvider`] trait.
-/// Most markers should be associated with a specific key and should therefore implement this
+/// Most markers should be associated with a specific marker and should therefore implement this
 /// trait.
 ///
 /// [`BufferMarker`] and [`AnyMarker`] are examples of markers that do _not_ implement this trait
-/// because they are not specific to a single key.
+/// because they are not specific to a single marker.
 ///
-/// Note: `KeyedDataMarker`s are quasi-const-generic compile-time objects, and as such are expected
+/// Note: `DataMarker`s are quasi-const-generic compile-time objects, and as such are expected
 /// to be unit structs. As this is not something that can be enforced by the type system, we
 /// currently only have a `'static` bound on them (which is needed by a lot of our code).
 ///
@@ -81,27 +81,27 @@ pub trait DataMarker: 'static {
 /// [`DataProvider`]: crate::DataProvider
 /// [`BufferMarker`]: crate::BufferMarker
 /// [`AnyMarker`]: crate::AnyMarker
-pub trait KeyedDataMarker: DataMarker {
-    /// The single [`DataKey`] associated with this marker.
-    const KEY: DataKey;
+pub trait DataMarker: DynamicDataMarker {
+    /// The single [`DataMarkerInfo`] associated with this marker.
+    const INFO: DataMarkerInfo;
 
-    /// Binds this [`KeyedDataMarker`] to a provider supporting it.
-    fn bind<P>(provider: P) -> DataProviderWithKey<Self, P>
+    /// Binds this [`DataMarker`] to a provider supporting it.
+    fn bind<P>(provider: P) -> DataProviderWithMarker<Self, P>
     where
         P: DataProvider<Self>,
         Self: Sized,
     {
-        DataProviderWithKey::new(provider)
+        DataProviderWithMarker::new(provider)
     }
 }
 
-/// A [`DataMarker`] that never returns data.
+/// A [`DynamicDataMarker`] that never returns data.
 ///
 /// All types that have non-blanket impls of `DataProvider<M>` are expected to explicitly
-/// implement `DataProvider<NeverMarker<Y>>`, returning [`DataErrorKind::MissingDataKey`].
+/// implement `DataProvider<NeverMarker<Y>>`, returning [`DataErrorKind::MissingDataMarker`].
 /// See [`impl_data_provider_never_marker!`].
 ///
-/// [`DataErrorKind::MissingDataKey`]: crate::DataErrorKind::MissingDataKey
+/// [`DataErrorKind::MissingDataMarker`]: crate::DataErrorKind::MissingDataMarker
 /// [`impl_data_provider_never_marker!`]: crate::impl_data_provider_never_marker
 ///
 /// # Examples
@@ -125,7 +125,7 @@ pub trait KeyedDataMarker: DataMarker {
 /// assert!(matches!(
 ///     result,
 ///     Err(DataError {
-///         kind: DataErrorKind::MissingDataKey,
+///         kind: DataErrorKind::MissingDataMarker,
 ///         ..
 ///     })
 /// ));
@@ -133,18 +133,18 @@ pub trait KeyedDataMarker: DataMarker {
 #[derive(Debug, Copy, Clone)]
 pub struct NeverMarker<Y>(PhantomData<Y>);
 
-impl<Y> DataMarker for NeverMarker<Y>
+impl<Y> DynamicDataMarker for NeverMarker<Y>
 where
     for<'a> Y: Yokeable<'a>,
 {
     type Yokeable = Y;
 }
 
-impl<Y> KeyedDataMarker for NeverMarker<Y>
+impl<Y> DataMarker for NeverMarker<Y>
 where
     for<'a> Y: Yokeable<'a>,
 {
-    const KEY: DataKey = data_key!("_never@1");
+    const INFO: DataMarkerInfo = DataMarkerInfo::from_path(data_marker_path!("_never@1"));
 }
 
 /// Implements `DataProvider<NeverMarker<Y>>` on a struct.
@@ -174,7 +174,7 @@ where
 /// assert!(matches!(
 ///     result,
 ///     Err(DataError {
-///         kind: DataErrorKind::MissingDataKey,
+///         kind: DataErrorKind::MissingDataMarker,
 ///         ..
 ///     })
 /// ));
@@ -190,10 +190,8 @@ macro_rules! impl_data_provider_never_marker {
                 &self,
                 req: $crate::DataRequest,
             ) -> Result<$crate::DataResponse<$crate::NeverMarker<Y>>, $crate::DataError> {
-                Err($crate::DataErrorKind::MissingDataKey.with_req(
-                    <$crate::NeverMarker<Y> as $crate::KeyedDataMarker>::KEY,
-                    req,
-                ))
+                Err($crate::DataErrorKind::MissingDataMarker
+                    .with_req(<$crate::NeverMarker<Y> as $crate::DataMarker>::INFO, req))
             }
         }
     };

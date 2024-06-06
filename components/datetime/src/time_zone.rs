@@ -31,7 +31,7 @@ fn load<D, P>(
     provider: &P,
 ) -> Result<(), DateTimeError>
 where
-    D: KeyedDataMarker,
+    D: DataMarker,
     P: DataProvider<D> + ?Sized,
 {
     if destination.is_none() {

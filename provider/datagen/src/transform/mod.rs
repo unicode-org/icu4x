@@ -21,24 +21,24 @@ impl DataProvider<HelloWorldV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProvider<HelloWorldV1Marker> for DatagenProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         HelloWorldProvider.supported_requests()
     }
 }
 
 impl DatagenProvider {
-    fn check_req<M: KeyedDataMarker>(&self, req: DataRequest) -> Result<(), DataError>
+    fn check_req<M: DataMarker>(&self, req: DataRequest) -> Result<(), DataError>
     where
         DatagenProvider: IterableDataProvider<M>,
     {
-        if <M as KeyedDataMarker>::KEY.metadata().singleton && !req.locale.is_empty() {
+        if <M as DataMarker>::INFO.is_singleton && !req.locale.is_empty() {
             Err(DataErrorKind::ExtraneousLocale)
-        } else if !self.supports_request(req.locale, req.key_attributes)? {
+        } else if !self.supports_request(req.locale, req.marker_attributes)? {
             Err(DataErrorKind::MissingLocale)
         } else {
             Ok(())
         }
-        .map_err(|e| e.with_req(<M as KeyedDataMarker>::KEY, req))
+        .map_err(|e| e.with_req(<M as DataMarker>::INFO, req))
     }
 }
 

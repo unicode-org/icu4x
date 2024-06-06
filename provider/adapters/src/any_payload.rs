@@ -33,14 +33,21 @@ use zerofrom::ZeroFrom;
 ///     &provider,
 ///     &Default::default(),
 /// )
-/// .expect("key matches");
+/// .expect("marker matches");
 /// assert_writeable_eq!(formatter.format(), "custom hello world");
 ///
-/// // Requests for invalid keys get MissingDataKey
+/// # struct DummyMarker;
+/// # impl DynamicDataMarker for DummyMarker {
+/// #     type Yokeable = <HelloWorldV1Marker as DynamicDataMarker>::Yokeable;
+/// # }
+/// # impl DataMarker for DummyMarker {
+/// #     const INFO: DataMarkerInfo = DataMarkerInfo::from_path(icu_provider::data_marker_path!("dummy@1"));
+/// # }
+/// // Requests for invalid markers get MissingDataMarker
 /// assert!(matches!(
-///     provider.load_any(icu_provider::data_key!("foo@1"), Default::default()),
+///     provider.load_any(DummyMarker::INFO, Default::default()),
 ///     Err(DataError {
-///         kind: DataErrorKind::MissingDataKey,
+///         kind: DataErrorKind::MissingDataMarker,
 ///         ..
 ///     })
 /// ))
@@ -48,16 +55,16 @@ use zerofrom::ZeroFrom;
 #[derive(Debug)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct AnyPayloadProvider {
-    /// The [`DataKey`] for which to provide data. All others will receive a
-    /// [`DataErrorKind::MissingDataKey`].
-    key: DataKey,
+    /// The [`DataMarkerInfo`] for which to provide data. All others will receive a
+    /// [`DataErrorKind::MissingDataMarker`].
+    marker: DataMarkerInfo,
     /// The [`AnyPayload`] to return on matching requests.
     data: AnyPayload,
 }
 
 impl AnyPayloadProvider {
     /// Creates an `AnyPayloadProvider` with an owned (allocated) payload of the given data.
-    pub fn from_owned<M: KeyedDataMarker>(data: M::Yokeable) -> Self
+    pub fn from_owned<M: DataMarker>(data: M::Yokeable) -> Self
     where
         M::Yokeable: icu_provider::MaybeSendSync,
     {
@@ -65,34 +72,34 @@ impl AnyPayloadProvider {
     }
 
     /// Creates an `AnyPayloadProvider` with a statically borrowed payload of the given data.
-    pub fn from_static<M: KeyedDataMarker>(data: &'static M::Yokeable) -> Self {
+    pub fn from_static<M: DataMarker>(data: &'static M::Yokeable) -> Self {
         AnyPayloadProvider {
-            key: M::KEY,
+            marker: M::INFO,
             data: AnyPayload::from_static_ref(data),
         }
     }
 
     /// Creates an `AnyPayloadProvider` from an existing [`DataPayload`].
-    pub fn from_payload<M: KeyedDataMarker>(payload: DataPayload<M>) -> Self
+    pub fn from_payload<M: DataMarker>(payload: DataPayload<M>) -> Self
     where
         M::Yokeable: icu_provider::MaybeSendSync,
     {
         AnyPayloadProvider {
-            key: M::KEY,
+            marker: M::INFO,
             data: payload.wrap_into_any_payload(),
         }
     }
 
     /// Creates an `AnyPayloadProvider` from an existing [`AnyPayload`].
-    pub fn from_any_payload<M: KeyedDataMarker>(payload: AnyPayload) -> Self {
+    pub fn from_any_payload<M: DataMarker>(payload: AnyPayload) -> Self {
         AnyPayloadProvider {
-            key: M::KEY,
+            marker: M::INFO,
             data: payload,
         }
     }
 
     /// Creates an `AnyPayloadProvider` with the default (allocated) version of the data struct.
-    pub fn new_default<M: KeyedDataMarker>() -> Self
+    pub fn new_default<M: DataMarker>() -> Self
     where
         M::Yokeable: Default,
         M::Yokeable: icu_provider::MaybeSendSync,
@@ -102,8 +109,8 @@ impl AnyPayloadProvider {
 }
 
 impl AnyProvider for AnyPayloadProvider {
-    fn load_any(&self, key: DataKey, _: DataRequest) -> Result<AnyResponse, DataError> {
-        key.match_key(self.key)?;
+    fn load_any(&self, marker: DataMarkerInfo, _: DataRequest) -> Result<AnyResponse, DataError> {
+        marker.match_marker(self.marker)?;
         Ok(AnyResponse {
             metadata: DataResponseMetadata::default(),
             payload: Some(self.data.clone()),
@@ -113,7 +120,7 @@ impl AnyProvider for AnyPayloadProvider {
 
 impl<M> DataProvider<M> for AnyPayloadProvider
 where
-    M: KeyedDataMarker,
+    M: DataMarker,
     for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
     M::Yokeable: ZeroFrom<'static, M::Yokeable>,
     M::Yokeable: icu_provider::MaybeSendSync,

@@ -4,14 +4,14 @@
 
 #[macro_export]
 #[doc(hidden)] // macro
-/// The list of all known [`DataMarker`](icu_provider::DataMarker)s.
+/// The list of all known [`DynamicDataMarker`](icu_provider::DynamicDataMarker)s.
 ///
 /// This is modeled as a macro that accepts a callback macro of the shape:
 ///
 /// ```
 /// macro_rules! cb {
 ///     ($($marker:path = $path:literal,)+ #[experimental] $($emarker:path = $epath:literal,)+) => {
-///         // Do something for each key, or each experimental key
+///         // Do something for each marker, or each experimental marker
 ///     };
 /// }
 /// ```

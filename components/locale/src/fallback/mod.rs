@@ -154,7 +154,7 @@ impl LocaleFallbacker {
             Ok(response) => Some(response.take_payload()?),
             // It is expected that not all keys are present
             Err(DataError {
-                kind: DataErrorKind::MissingDataKey,
+                kind: DataErrorKind::MissingDataMarker,
                 ..
             }) => None,
             Err(e) => return Err(e),

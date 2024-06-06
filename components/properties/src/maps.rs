@@ -34,7 +34,7 @@ pub struct CodePointMapData<T: TrieValue> {
 /// to work for all same-value map properties at once
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
 struct ErasedMaplikeMarker<T>(PhantomData<T>);
-impl<T: TrieValue> DataMarker for ErasedMaplikeMarker<T> {
+impl<T: TrieValue> DynamicDataMarker for ErasedMaplikeMarker<T> {
     type Yokeable = PropertyCodePointMapV1<'static, T>;
 }
 
@@ -88,7 +88,7 @@ impl<T: TrieValue> CodePointMapData<T> {
     /// Typically it is preferable to use getters like [`load_general_category()`] instead
     pub fn from_data<M>(data: DataPayload<M>) -> Self
     where
-        M: DataMarker<Yokeable = PropertyCodePointMapV1<'static, T>>,
+        M: DynamicDataMarker<Yokeable = PropertyCodePointMapV1<'static, T>>,
     {
         Self { data: data.cast() }
     }
@@ -305,11 +305,11 @@ impl<'a> CodePointMapDataBorrowed<'a, crate::GeneralCategory> {
 macro_rules! make_map_property {
     (
         // currently unused
-        property: $prop_name:expr;
+        property: $p:expr;
         // currently unused
-        marker: $marker_name:ident;
+        dyn_marker: $d:ident;
         value: $value_ty:path;
-        keyed_data_marker: $keyed_data_marker:ty;
+        data_marker: $data_marker:ty;
         func:
         $(#[$doc:meta])*
         $vis2:vis const $constname:ident => $singleton:ident;
@@ -322,7 +322,7 @@ macro_rules! make_map_property {
         ///
         /// [📚 Help choosing a constructor](icu_provider::constructors)
         $vis fn $name(
-            provider: &(impl DataProvider<$keyed_data_marker> + ?Sized)
+            provider: &(impl DataProvider<$data_marker> + ?Sized)
         ) -> Result<CodePointMapData<$value_ty>, DataError> {
             provider.load(Default::default()).and_then(DataResponse::take_payload).map(CodePointMapData::from_data)
         }
@@ -338,9 +338,9 @@ macro_rules! make_map_property {
 
 make_map_property! {
     property: "General_Category";
-    marker: GeneralCategoryProperty;
+    dyn_marker: GeneralCategoryProperty;
     value: crate::GeneralCategory;
-    keyed_data_marker: GeneralCategoryV1Marker;
+    data_marker: GeneralCategoryV1Marker;
     func:
     /// Return a [`CodePointMapDataBorrowed`] for the General_Category Unicode enumerated property. See [`GeneralCategory`].
     ///
@@ -362,9 +362,9 @@ make_map_property! {
 
 make_map_property! {
     property: "Bidi_Class";
-    marker: BidiClassProperty;
+    dyn_marker: BidiClassProperty;
     value: crate::BidiClass;
-    keyed_data_marker: BidiClassV1Marker;
+    data_marker: BidiClassV1Marker;
     func:
     /// Return a [`CodePointMapDataBorrowed`] for the Bidi_Class Unicode enumerated property. See [`BidiClass`].
     ///
@@ -386,9 +386,9 @@ make_map_property! {
 
 make_map_property! {
     property: "Script";
-    marker: ScriptProperty;
+    dyn_marker: ScriptProperty;
     value: crate::Script;
-    keyed_data_marker: ScriptV1Marker;
+    data_marker: ScriptV1Marker;
     func:
     /// Return a [`CodePointMapDataBorrowed`] for the Script Unicode enumerated property. See [`Script`].
     ///
@@ -417,9 +417,9 @@ make_map_property! {
 
 make_map_property! {
     property: "Hangul_Syllable_Type";
-    marker: HangulSyllableTypeProperty;
+    dyn_marker: HangulSyllableTypeProperty;
     value: crate::HangulSyllableType;
-    keyed_data_marker: HangulSyllableTypeV1Marker;
+    data_marker: HangulSyllableTypeV1Marker;
     func:
     /// Returns a [`CodePointMapDataBorrowed`] for the Hangul_Syllable_Type
     /// Unicode enumerated property. See [`HangulSyllableType`].
@@ -443,9 +443,9 @@ make_map_property! {
 
 make_map_property! {
     property: "East_Asian_Width";
-    marker: EastAsianWidthProperty;
+    dyn_marker: EastAsianWidthProperty;
     value: crate::EastAsianWidth;
-    keyed_data_marker: EastAsianWidthV1Marker;
+    data_marker: EastAsianWidthV1Marker;
     func:
     /// Return a [`CodePointMapDataBorrowed`] for the East_Asian_Width Unicode enumerated
     /// property. See [`EastAsianWidth`].
@@ -468,9 +468,9 @@ make_map_property! {
 
 make_map_property! {
     property: "Line_Break";
-    marker: LineBreakProperty;
+    dyn_marker: LineBreakProperty;
     value: crate::LineBreak;
-    keyed_data_marker: LineBreakV1Marker;
+    data_marker: LineBreakV1Marker;
     func:
     /// Return a [`CodePointMapDataBorrowed`] for the Line_Break Unicode enumerated
     /// property. See [`LineBreak`].
@@ -495,9 +495,9 @@ make_map_property! {
 
 make_map_property! {
     property: "Grapheme_Cluster_Break";
-    marker: GraphemeClusterBreakProperty;
+    dyn_marker: GraphemeClusterBreakProperty;
     value: crate::GraphemeClusterBreak;
-    keyed_data_marker: GraphemeClusterBreakV1Marker;
+    data_marker: GraphemeClusterBreakV1Marker;
     func:
     /// Return a [`CodePointMapDataBorrowed`] for the Grapheme_Cluster_Break Unicode enumerated
     /// property. See [`GraphemeClusterBreak`].
@@ -522,9 +522,9 @@ make_map_property! {
 
 make_map_property! {
     property: "Word_Break";
-    marker: WordBreakProperty;
+    dyn_marker: WordBreakProperty;
     value: crate::WordBreak;
-    keyed_data_marker: WordBreakV1Marker;
+    data_marker: WordBreakV1Marker;
     func:
     /// Return a [`CodePointMapDataBorrowed`] for the Word_Break Unicode enumerated
     /// property. See [`WordBreak`].
@@ -549,9 +549,9 @@ make_map_property! {
 
 make_map_property! {
     property: "Sentence_Break";
-    marker: SentenceBreakProperty;
+    dyn_marker: SentenceBreakProperty;
     value: crate::SentenceBreak;
-    keyed_data_marker: SentenceBreakV1Marker;
+    data_marker: SentenceBreakV1Marker;
     func:
     /// Return a [`CodePointMapDataBorrowed`] for the Sentence_Break Unicode enumerated
     /// property. See [`SentenceBreak`].
@@ -576,9 +576,9 @@ make_map_property! {
 
 make_map_property! {
     property: "Canonical_Combining_Class";
-    marker: CanonicalCombiningClassProperty;
+    dyn_marker: CanonicalCombiningClassProperty;
     value: crate::CanonicalCombiningClass;
-    keyed_data_marker: CanonicalCombiningClassV1Marker;
+    data_marker: CanonicalCombiningClassV1Marker;
     func:
     /// Return a [`CodePointMapData`] for the Canonical_Combining_Class Unicode property. See
     /// [`CanonicalCombiningClass`].
@@ -604,9 +604,9 @@ make_map_property! {
 
 make_map_property! {
     property: "Indic_Syllabic_Category";
-    marker: IndicSyllabicCategoryProperty;
+    dyn_marker: IndicSyllabicCategoryProperty;
     value: crate::IndicSyllabicCategory;
-    keyed_data_marker: IndicSyllabicCategoryV1Marker;
+    data_marker: IndicSyllabicCategoryV1Marker;
     func:
     /// Return a [`CodePointMapData`] for the Indic_Syllabic_Category Unicode property. See
     /// [`IndicSyllabicCategory`].
@@ -629,9 +629,9 @@ make_map_property! {
 
 make_map_property! {
     property: "Joining_Type";
-    marker: JoiningTypeProperty;
+    dyn_marker: JoiningTypeProperty;
     value: crate::JoiningType;
-    keyed_data_marker: JoiningTypeV1Marker;
+    data_marker: JoiningTypeV1Marker;
     func:
     /// Return a [`CodePointMapDataBorrowed`] for the Joining_Type Unicode enumerated
     /// property. See [`JoiningType`].

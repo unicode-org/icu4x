@@ -9802,7 +9802,7 @@ relativetime/short/year@1, tr, 107B, a182ac8d5087b3cb
 relativetime/short/year@1, und, 62B, 45e258268a1e1f9
 segmenter/dictionary/wl_ext@1, und-x-thaidict, 224981B, f2d574736bb1a754
 segmenter/grapheme@1, und, 9730B, 922c04bad19f0d2e
-segmenter/line@1, und, 24183B, 817be8a85b29478d
+segmenter/line@1, und, 18103B, f922c8477455abdd
 segmenter/lstm/wl_auto@1, und-x-Thai_codepoints_exclusive_model4_heavy, 72034B, c46e2e0c098c1fc1
 segmenter/sentence@1, und, 14422B, cb9b72ee7305a6
 segmenter/word@1, und, 14663B, adc1316fb98e05e

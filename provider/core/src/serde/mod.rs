@@ -62,7 +62,7 @@ fn deserialize_impl<'data, M>(
     buffer_format: BufferFormat,
 ) -> Result<<M::Yokeable as Yokeable<'data>>::Output, DataError>
 where
-    M: DataMarker,
+    M: DynamicDataMarker,
     // Actual bound:
     //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: Deserialize<'de>,
     // Necessary workaround bound (see `yoke::trait_hack` docs):
@@ -137,7 +137,7 @@ impl DataPayload<BufferMarker> {
         buffer_format: BufferFormat,
     ) -> Result<DataPayload<M>, DataError>
     where
-        M: DataMarker,
+        M: DynamicDataMarker,
         // Actual bound:
         //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: Deserialize<'de>,
         // Necessary workaround bound (see `yoke::trait_hack` docs):
@@ -149,7 +149,7 @@ impl DataPayload<BufferMarker> {
 
 impl<P, M> DynamicDataProvider<M> for DeserializingBufferProvider<'_, P>
 where
-    M: DataMarker,
+    M: DynamicDataMarker,
     P: BufferProvider + ?Sized,
     // Actual bound:
     //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: serde::de::Deserialize<'de>,
@@ -164,10 +164,14 @@ where
     /// - `deserialize_json`
     /// - `deserialize_postcard_1`
     /// - `deserialize_bincode_1`
-    fn load_data(&self, key: DataKey, req: DataRequest) -> Result<DataResponse<M>, DataError> {
-        let buffer_response = self.0.load_data(key, req)?;
+    fn load_data(
+        &self,
+        marker: DataMarkerInfo,
+        req: DataRequest,
+    ) -> Result<DataResponse<M>, DataError> {
+        let buffer_response = self.0.load_data(marker, req)?;
         let buffer_format = buffer_response.metadata.buffer_format.ok_or_else(|| {
-            DataError::custom("BufferProvider didn't set BufferFormat").with_req(key, req)
+            DataError::custom("BufferProvider didn't set BufferFormat").with_req(marker, req)
         })?;
         Ok(DataResponse {
             metadata: buffer_response.metadata,
@@ -175,14 +179,14 @@ where
                 .payload
                 .map(|p| p.into_deserialized(buffer_format))
                 .transpose()
-                .map_err(|e| e.with_req(key, req))?,
+                .map_err(|e| e.with_req(marker, req))?,
         })
     }
 }
 
 impl<P, M> DataProvider<M> for DeserializingBufferProvider<'_, P>
 where
-    M: KeyedDataMarker,
+    M: DataMarker,
     P: BufferProvider + ?Sized,
     // Actual bound:
     //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: Deserialize<'de>,
@@ -198,7 +202,7 @@ where
     /// - `deserialize_postcard_1`
     /// - `deserialize_bincode_1`
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
-        self.load_data(M::KEY, req)
+        self.load_data(M::INFO, req)
     }
 }
 
