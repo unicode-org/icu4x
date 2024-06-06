@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "lari"
-  },
-  "other_placeholder": "laris",
-  "display_name": "lari"
+    "One": "lari",
+    "Other": "laris",
+    "DisplayName": "lari"
+  }
 }

@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "gvajanski dolar",
-    "Few": "gvajanska dolara"
-  },
-  "other_placeholder": "gvajanskih dolara",
-  "display_name": "gvajanski dolar"
+    "Few": "gvajanska dolara",
+    "Other": "gvajanskih dolara",
+    "DisplayName": "gvajanski dolar"
+  }
 }

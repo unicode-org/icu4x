@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dinar soudanais (1992–2007)"
-  },
-  "other_placeholder": "dinars soudanais (1992–2007)",
-  "display_name": "dinar soudanais"
+    "One": "dinar soudanais (1992–2007)",
+    "Other": "dinars soudanais (1992–2007)",
+    "DisplayName": "dinar soudanais"
+  }
 }

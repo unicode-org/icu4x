@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "evropska novčana jedinica (XEU)",
-    "Few": "evropske novčane jedinice (XEU)"
-  },
-  "other_placeholder": "evropskih novčanih jedinica",
-  "display_name": "Evropska valutna jedinica"
+    "Few": "evropske novčane jedinice (XEU)",
+    "Other": "evropskih novčanih jedinica",
+    "DisplayName": "Evropska valutna jedinica"
+  }
 }

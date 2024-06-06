@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Bolivian boliviano"
-  },
-  "other_placeholder": "Bolivian bolivianos",
-  "display_name": "Bolivian Boliviano"
+    "One": "Bolivian boliviano",
+    "Other": "Bolivian bolivianos",
+    "DisplayName": "Bolivian Boliviano"
+  }
 }

@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "SAD dolar (isti dan)",
-    "Few": "SAD dolara (isti dan)"
-  },
-  "other_placeholder": "SAD dolara (isti dan)",
-  "display_name": "SAD dolar (isti dan)"
+    "Few": "SAD dolara (isti dan)",
+    "Other": "SAD dolara (isti dan)",
+    "DisplayName": "SAD dolar (isti dan)"
+  }
 }

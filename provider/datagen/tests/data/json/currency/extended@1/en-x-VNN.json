@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Vietnamese dong (1978–1985)"
-  },
-  "other_placeholder": "Vietnamese dong (1978–1985)",
-  "display_name": "Vietnamese Dong (1978–1985)"
+    "One": "Vietnamese dong (1978–1985)",
+    "Other": "Vietnamese dong (1978–1985)",
+    "DisplayName": "Vietnamese Dong (1978–1985)"
+  }
 }

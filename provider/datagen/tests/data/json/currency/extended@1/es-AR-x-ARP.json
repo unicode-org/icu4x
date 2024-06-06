@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "peso argentino (ARP)"
-  },
-  "other_placeholder": "pesos argentinos (ARP)",
-  "display_name": "peso argentino (1983–1985)"
+    "One": "peso argentino (ARP)",
+    "Other": "pesos argentinos (ARP)",
+    "DisplayName": "peso argentino (1983–1985)"
+  }
 }

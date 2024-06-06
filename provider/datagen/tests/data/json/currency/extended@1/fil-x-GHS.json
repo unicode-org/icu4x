@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Ghanaian cedi"
-  },
-  "other_placeholder": "Ghanian cedis",
-  "display_name": "Ghanaian Cedi"
+    "One": "Ghanaian cedi",
+    "Other": "Ghanian cedis",
+    "DisplayName": "Ghanaian Cedi"
+  }
 }

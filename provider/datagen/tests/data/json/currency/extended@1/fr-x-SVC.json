@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "colón salvadorien"
-  },
-  "other_placeholder": "colóns salvadoriens",
-  "display_name": "colón salvadorien"
+    "One": "colón salvadorien",
+    "Other": "colóns salvadoriens",
+    "DisplayName": "colón salvadorien"
+  }
 }

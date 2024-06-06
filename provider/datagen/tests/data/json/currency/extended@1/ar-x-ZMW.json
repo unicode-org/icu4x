@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "كواشا زامبي"
+  "placeholders": {
+    "DisplayName": "كواشا زامبي"
+  }
 }

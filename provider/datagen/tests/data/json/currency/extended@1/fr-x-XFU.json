@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "franc UIC"
-  },
-  "other_placeholder": "francs UIC",
-  "display_name": "franc UIC"
+    "One": "franc UIC",
+    "Other": "francs UIC",
+    "DisplayName": "franc UIC"
+  }
 }

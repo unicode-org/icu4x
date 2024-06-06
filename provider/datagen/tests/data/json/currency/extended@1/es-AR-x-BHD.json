@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dinar bareiní"
-  },
-  "other_placeholder": "dinares bareiníes",
-  "display_name": "dinar bareiní"
+    "One": "dinar bareiní",
+    "Other": "dinares bareiníes",
+    "DisplayName": "dinar bareiní"
+  }
 }

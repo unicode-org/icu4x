@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "shilling kényan"
-  },
-  "other_placeholder": "shillings kényans",
-  "display_name": "shilling kényan"
+    "One": "shilling kényan",
+    "Other": "shillings kényans",
+    "DisplayName": "shilling kényan"
+  }
 }

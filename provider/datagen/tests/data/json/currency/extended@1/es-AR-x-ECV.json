@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "unidad de valor constante (UVC) ecuatoriana"
-  },
-  "other_placeholder": "unidades de valor constante (UVC) ecuatorianas",
-  "display_name": "unidad de valor constante (UVC) ecuatoriana"
+    "One": "unidad de valor constante (UVC) ecuatoriana",
+    "Other": "unidades de valor constante (UVC) ecuatorianas",
+    "DisplayName": "unidad de valor constante (UVC) ecuatoriana"
+  }
 }

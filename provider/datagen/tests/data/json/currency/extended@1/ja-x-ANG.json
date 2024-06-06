@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "オランダ領アンティル ギルダー"
+  "placeholders": {
+    "DisplayName": "オランダ領アンティル ギルダー"
+  }
 }

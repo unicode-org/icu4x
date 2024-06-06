@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "sol peruano (1863–1965)"
-  },
-  "other_placeholder": "soles peruanos (1863–1965)",
-  "display_name": "sol peruano (1863–1965)"
+    "One": "sol peruano (1863–1965)",
+    "Other": "soles peruanos (1863–1965)",
+    "DisplayName": "sol peruano (1863–1965)"
+  }
 }

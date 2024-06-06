@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Mauritian rupee"
-  },
-  "other_placeholder": "Mauritian rupees",
-  "display_name": "Mauritian Rupee"
+    "One": "Mauritian rupee",
+    "Other": "Mauritian rupees",
+    "DisplayName": "Mauritian Rupee"
+  }
 }

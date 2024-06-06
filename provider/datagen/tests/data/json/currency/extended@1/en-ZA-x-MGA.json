@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Malagasy ariary"
-  },
-  "other_placeholder": "Malagasy ariary",
-  "display_name": "Malagasy Ariary"
+    "One": "Malagasy ariary",
+    "Other": "Malagasy ariary",
+    "DisplayName": "Malagasy Ariary"
+  }
 }

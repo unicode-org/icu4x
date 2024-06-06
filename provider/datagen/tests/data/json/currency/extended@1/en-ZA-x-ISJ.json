@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Icelandic króna (1918–1981)"
-  },
-  "other_placeholder": "Icelandic krónur (1918–1981)",
-  "display_name": "Icelandic Króna (1918–1981)"
+    "One": "Icelandic króna (1918–1981)",
+    "Other": "Icelandic krónur (1918–1981)",
+    "DisplayName": "Icelandic Króna (1918–1981)"
+  }
 }

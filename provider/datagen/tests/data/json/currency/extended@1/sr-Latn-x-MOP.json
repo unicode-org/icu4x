@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "makaoska pataka",
-    "Few": "makaoske patake"
-  },
-  "other_placeholder": "makaoskih pataka",
-  "display_name": "makaoska pataka"
+    "Few": "makaoske patake",
+    "Other": "makaoskih pataka",
+    "DisplayName": "makaoska pataka"
+  }
 }

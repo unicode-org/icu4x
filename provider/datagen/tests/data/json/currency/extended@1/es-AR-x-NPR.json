@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "rupia nepalí"
-  },
-  "other_placeholder": "rupias nepalíes",
-  "display_name": "rupia nepalí"
+    "One": "rupia nepalí",
+    "Other": "rupias nepalíes",
+    "DisplayName": "rupia nepalí"
+  }
 }

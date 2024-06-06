@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "লিবিয়ান দিনার"
+  "placeholders": {
+    "DisplayName": "লিবিয়ান দিনার"
+  }
 }

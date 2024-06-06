@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "kiat"
-  },
-  "other_placeholder": "kiats",
-  "display_name": "kiat"
+    "One": "kiat",
+    "Other": "kiats",
+    "DisplayName": "kiat"
+  }
 }

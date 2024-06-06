@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Finnish markka"
-  },
-  "other_placeholder": "Finnish markkas",
-  "display_name": "Finnish Markka"
+    "One": "Finnish markka",
+    "Other": "Finnish markkas",
+    "DisplayName": "Finnish Markka"
+  }
 }

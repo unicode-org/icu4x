@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dinar croate"
-  },
-  "other_placeholder": "dinars croates",
-  "display_name": "dinar croate"
+    "One": "dinar croate",
+    "Other": "dinars croates",
+    "DisplayName": "dinar croate"
+  }
 }

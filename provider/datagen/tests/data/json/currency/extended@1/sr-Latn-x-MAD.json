@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "marokanski dirham",
-    "Few": "marokanska dirhama"
-  },
-  "other_placeholder": "marokanskih dirhama",
-  "display_name": "marokanski dirham"
+    "Few": "marokanska dirhama",
+    "Other": "marokanskih dirhama",
+    "DisplayName": "marokanski dirham"
+  }
 }

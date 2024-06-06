@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "বতসোয়ানা পুলা"
+  "placeholders": {
+    "DisplayName": "বতসোয়ানা পুলা"
+  }
 }

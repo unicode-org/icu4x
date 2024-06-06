@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "karbovanet ucraniano"
-  },
-  "other_placeholder": "karbovanets ucranianos",
-  "display_name": "karbovanet ucraniano"
+    "One": "karbovanet ucraniano",
+    "Other": "karbovanets ucranianos",
+    "DisplayName": "karbovanet ucraniano"
+  }
 }

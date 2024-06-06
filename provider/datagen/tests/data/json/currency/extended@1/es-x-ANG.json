@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "florín antillano"
-  },
-  "other_placeholder": "florines antillanos",
-  "display_name": "florín antillano"
+    "One": "florín antillano",
+    "Other": "florines antillanos",
+    "DisplayName": "florín antillano"
+  }
 }

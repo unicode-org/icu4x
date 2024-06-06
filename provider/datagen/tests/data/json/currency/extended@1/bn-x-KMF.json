@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "কমোরিয়ান ফ্রাঙ্ক"
+  "placeholders": {
+    "DisplayName": "কমোরিয়ান ফ্রাঙ্ক"
+  }
 }

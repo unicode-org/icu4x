@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Mexican silver peso (1861–1992)"
-  },
-  "other_placeholder": "Mexican silver pesos (1861–1992)",
-  "display_name": "Mexican Silver Peso (1861–1992)"
+    "One": "Mexican silver peso (1861–1992)",
+    "Other": "Mexican silver pesos (1861–1992)",
+    "DisplayName": "Mexican Silver Peso (1861–1992)"
+  }
 }

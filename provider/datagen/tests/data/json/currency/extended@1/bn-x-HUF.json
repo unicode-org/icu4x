@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "হাঙ্গেরিয়ান ফোরিন্ট"
+  "placeholders": {
+    "DisplayName": "হাঙ্গেরিয়ান ফোরিন্ট"
+  }
 }

@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "بولا بتسواني"
+  "placeholders": {
+    "DisplayName": "بولا بتسواني"
+  }
 }

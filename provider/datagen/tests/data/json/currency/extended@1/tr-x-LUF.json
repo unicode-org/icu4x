@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "Lüksemburg Frangı"
+  "placeholders": {
+    "DisplayName": "Lüksemburg Frangı"
+  }
 }

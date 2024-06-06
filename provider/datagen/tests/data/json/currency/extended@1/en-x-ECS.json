@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Ecuadorian sucre"
-  },
-  "other_placeholder": "Ecuadorian sucres",
-  "display_name": "Ecuadorian Sucre"
+    "One": "Ecuadorian sucre",
+    "Other": "Ecuadorian sucres",
+    "DisplayName": "Ecuadorian Sucre"
+  }
 }

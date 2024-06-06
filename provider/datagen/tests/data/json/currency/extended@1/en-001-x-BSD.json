@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Bahamian dollar"
-  },
-  "other_placeholder": "Bahamian dollars",
-  "display_name": "Bahamian Dollar"
+    "One": "Bahamian dollar",
+    "Other": "Bahamian dollars",
+    "DisplayName": "Bahamian Dollar"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "West African CFA franc"
-  },
-  "other_placeholder": "West African CFA francs",
-  "display_name": "West African CFA Franc"
+    "One": "West African CFA franc",
+    "Other": "West African CFA francs",
+    "DisplayName": "West African CFA Franc"
+  }
 }

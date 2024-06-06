@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Turkmenistani manat (1993–2009)"
-  },
-  "other_placeholder": "Turkmenistani manat (1993–2009)",
-  "display_name": "Turkmenistani Manat (1993–2009)"
+    "One": "Turkmenistani manat (1993–2009)",
+    "Other": "Turkmenistani manat (1993–2009)",
+    "DisplayName": "Turkmenistani Manat (1993–2009)"
+  }
 }

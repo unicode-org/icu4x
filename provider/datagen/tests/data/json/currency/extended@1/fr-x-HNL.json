@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "lempira hondurien"
-  },
-  "other_placeholder": "lempiras honduriens",
-  "display_name": "lempira hondurien"
+    "One": "lempira hondurien",
+    "Other": "lempiras honduriens",
+    "DisplayName": "lempira hondurien"
+  }
 }

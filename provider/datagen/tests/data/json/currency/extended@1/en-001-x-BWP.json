@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Botswanan pula"
-  },
-  "other_placeholder": "Botswanan pulas",
-  "display_name": "Botswanan Pula"
+    "One": "Botswanan pula",
+    "Other": "Botswanan pulas",
+    "DisplayName": "Botswanan Pula"
+  }
 }

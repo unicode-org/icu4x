@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "severnokorejski von",
-    "Few": "severnokorejska vona"
-  },
-  "other_placeholder": "severnokorejskih vona",
-  "display_name": "severnokorejski von"
+    "Few": "severnokorejska vona",
+    "Other": "severnokorejskih vona",
+    "DisplayName": "severnokorejski von"
+  }
 }

@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "Венесуэльский боливар (1871–2008)"
+  "placeholders": {
+    "DisplayName": "Венесуэльский боливар (1871–2008)"
+  }
 }

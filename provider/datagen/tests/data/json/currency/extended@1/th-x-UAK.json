@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "คาร์โบวาเนตซ์ยูเครน"
+  "placeholders": {
+    "DisplayName": "คาร์โบวาเนตซ์ยูเครน"
+  }
 }

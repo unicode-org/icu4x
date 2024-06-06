@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dólar canadiense"
-  },
-  "other_placeholder": "dólares canadienses",
-  "display_name": "dólar canadiense"
+    "One": "dólar canadiense",
+    "Other": "dólares canadienses",
+    "DisplayName": "dólar canadiense"
+  }
 }

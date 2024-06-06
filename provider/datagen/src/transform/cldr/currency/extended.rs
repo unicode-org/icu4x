@@ -61,17 +61,18 @@ impl DataProvider<CurrencyExtendedDataV1Marker> for crate::DatagenProvider {
         add_placeholder(&mut placeholders, Count::Two, currency.two.clone());
         add_placeholder(&mut placeholders, Count::Few, currency.few.clone());
         add_placeholder(&mut placeholders, Count::Many, currency.many.clone());
-
-        let other_placeholder = currency.other.clone().map(Cow::Owned);
-        let display_name = currency.display_name.clone().map(Cow::Owned);
+        add_placeholder(&mut placeholders, Count::Other, currency.other.clone());
+        add_placeholder(
+            &mut placeholders,
+            Count::DisplayName,
+            currency.display_name.clone(),
+        );
 
         let data = CurrencyExtendedDataV1 {
             placeholders: placeholders
                 .into_iter()
                 .map(|(k, v)| (k, Cow::Owned(v)))
                 .collect(),
-            other_placeholder,
-            display_name,
         };
 
         Ok(DataResponse {

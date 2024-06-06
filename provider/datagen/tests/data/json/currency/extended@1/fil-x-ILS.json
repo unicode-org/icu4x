@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "new shekel ng Israel"
-  },
-  "other_placeholder": "new shekels ng Israel",
-  "display_name": "New Shekel ng Israel"
+    "One": "new shekel ng Israel",
+    "Other": "new shekels ng Israel",
+    "DisplayName": "New Shekel ng Israel"
+  }
 }

@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "Batı Afrika CFA frangı"
+  "placeholders": {
+    "DisplayName": "Batı Afrika CFA frangı"
+  }
 }

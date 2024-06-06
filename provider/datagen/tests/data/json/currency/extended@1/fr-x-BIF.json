@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "franc burundais"
-  },
-  "other_placeholder": "francs burundais",
-  "display_name": "franc burundais"
+    "One": "franc burundais",
+    "Other": "francs burundais",
+    "DisplayName": "franc burundais"
+  }
 }

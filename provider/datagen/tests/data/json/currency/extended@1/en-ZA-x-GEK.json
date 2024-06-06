@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Georgian kupon larit"
-  },
-  "other_placeholder": "Georgian kupon larits",
-  "display_name": "Georgian Kupon Larit"
+    "One": "Georgian kupon larit",
+    "Other": "Georgian kupon larits",
+    "DisplayName": "Georgian Kupon Larit"
+  }
 }

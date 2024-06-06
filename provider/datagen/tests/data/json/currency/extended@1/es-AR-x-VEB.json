@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "bolívar venezolano (1871–2008)"
-  },
-  "other_placeholder": "bolívares venezolanos (1871–2008)",
-  "display_name": "bolívar venezolano (1871–2008)"
+    "One": "bolívar venezolano (1871–2008)",
+    "Other": "bolívares venezolanos (1871–2008)",
+    "DisplayName": "bolívar venezolano (1871–2008)"
+  }
 }

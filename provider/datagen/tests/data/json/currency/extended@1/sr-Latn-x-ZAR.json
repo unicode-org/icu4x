@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "južnoafrički rand",
-    "Few": "južnoafrička randa"
-  },
-  "other_placeholder": "južnoafričkih randa",
-  "display_name": "južnoafrički rand"
+    "Few": "južnoafrička randa",
+    "Other": "južnoafričkih randa",
+    "DisplayName": "južnoafrički rand"
+  }
 }

@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "মায়ানমার কিয়াত"
+  "placeholders": {
+    "DisplayName": "মায়ানমার কিয়াত"
+  }
 }

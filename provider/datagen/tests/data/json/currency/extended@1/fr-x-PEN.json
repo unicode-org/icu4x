@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "sol péruvien"
-  },
-  "other_placeholder": "sols péruviens",
-  "display_name": "sol péruvien"
+    "One": "sol péruvien",
+    "Other": "sols péruviens",
+    "DisplayName": "sol péruvien"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "peso uruguayen (unités indexées)"
-  },
-  "other_placeholder": "pesos uruguayen (unités indexées)",
-  "display_name": "peso uruguayen (unités indexées)"
+    "One": "peso uruguayen (unités indexées)",
+    "Other": "pesos uruguayen (unités indexées)",
+    "DisplayName": "peso uruguayen (unités indexées)"
+  }
 }

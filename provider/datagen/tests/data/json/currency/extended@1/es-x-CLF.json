@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "unidad de fomento chilena"
-  },
-  "other_placeholder": "unidades de fomento chilenas",
-  "display_name": "unidad de fomento chilena"
+    "One": "unidad de fomento chilena",
+    "Other": "unidades de fomento chilenas",
+    "DisplayName": "unidad de fomento chilena"
+  }
 }

@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "danska kruna",
-    "Few": "danske krune"
-  },
-  "other_placeholder": "danskih kruna",
-  "display_name": "danska kruna"
+    "Few": "danske krune",
+    "Other": "danskih kruna",
+    "DisplayName": "danska kruna"
+  }
 }

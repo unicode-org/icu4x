@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "rand"
-  },
-  "other_placeholder": "rands",
-  "display_name": "rand"
+    "One": "rand",
+    "Other": "rands",
+    "DisplayName": "rand"
+  }
 }

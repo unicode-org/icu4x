@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Thai baht"
-  },
-  "other_placeholder": "Thai baht",
-  "display_name": "Thai Baht"
+    "One": "Thai baht",
+    "Other": "Thai baht",
+    "DisplayName": "Thai Baht"
+  }
 }

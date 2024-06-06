@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dobra santoméen (1977–2017)"
-  },
-  "other_placeholder": "dobras santoméens (1977–2017)",
-  "display_name": "dobra santoméen (1977–2017)"
+    "One": "dobra santoméen (1977–2017)",
+    "Other": "dobras santoméens (1977–2017)",
+    "DisplayName": "dobra santoméen (1977–2017)"
+  }
 }

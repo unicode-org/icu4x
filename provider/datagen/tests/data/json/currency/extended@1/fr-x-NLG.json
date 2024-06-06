@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "florin néerlandais"
-  },
-  "other_placeholder": "florins néerlandais",
-  "display_name": "florin néerlandais"
+    "One": "florin néerlandais",
+    "Other": "florins néerlandais",
+    "DisplayName": "florin néerlandais"
+  }
 }

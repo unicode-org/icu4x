@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Uzbekistani som"
-  },
-  "other_placeholder": "Uzbekistani som",
-  "display_name": "Uzbekistani Som"
+    "One": "Uzbekistani som",
+    "Other": "Uzbekistani som",
+    "DisplayName": "Uzbekistani Som"
+  }
 }

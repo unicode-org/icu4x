@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "svazilendski lilangeni",
-    "Few": "svazilendska lilangenija"
-  },
-  "other_placeholder": "svazilendskih lilangenija",
-  "display_name": "svazilendski lilangeni"
+    "Few": "svazilendska lilangenija",
+    "Other": "svazilendskih lilangenija",
+    "DisplayName": "svazilendski lilangeni"
+  }
 }

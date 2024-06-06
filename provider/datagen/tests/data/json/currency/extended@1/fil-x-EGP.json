@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "pound ng Egypt"
-  },
-  "other_placeholder": "Egyptian pounds",
-  "display_name": "Pound ng Egypt"
+    "One": "pound ng Egypt",
+    "Other": "Egyptian pounds",
+    "DisplayName": "Pound ng Egypt"
+  }
 }

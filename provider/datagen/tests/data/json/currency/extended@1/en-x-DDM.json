@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "East German mark"
-  },
-  "other_placeholder": "East German marks",
-  "display_name": "East German Mark"
+    "One": "East German mark",
+    "Other": "East German marks",
+    "DisplayName": "East German Mark"
+  }
 }

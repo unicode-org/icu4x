@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "livre de Gibraltar"
-  },
-  "other_placeholder": "livres de Gibraltar",
-  "display_name": "livre de Gibraltar"
+    "One": "livre de Gibraltar",
+    "Other": "livres de Gibraltar",
+    "DisplayName": "livre de Gibraltar"
+  }
 }

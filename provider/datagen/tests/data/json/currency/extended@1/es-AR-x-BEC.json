@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "franco belga (convertible)"
-  },
-  "other_placeholder": "francos belgas (convertibles)",
-  "display_name": "franco belga (convertible)"
+    "One": "franco belga (convertible)",
+    "Other": "francos belgas (convertibles)",
+    "DisplayName": "franco belga (convertible)"
+  }
 }

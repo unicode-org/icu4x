@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "colón salvadoreño"
-  },
-  "other_placeholder": "colones salvadoreños",
-  "display_name": "colón salvadoreño"
+    "One": "colón salvadoreño",
+    "Other": "colones salvadoreños",
+    "DisplayName": "colón salvadoreño"
+  }
 }

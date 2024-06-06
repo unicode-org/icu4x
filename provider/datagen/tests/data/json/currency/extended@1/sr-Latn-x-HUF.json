@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "mađarska forinta",
-    "Few": "mađarske forinte"
-  },
-  "other_placeholder": "mađarskih forinti",
-  "display_name": "mađarska forinta"
+    "Few": "mađarske forinte",
+    "Other": "mađarskih forinti",
+    "DisplayName": "mađarska forinta"
+  }
 }

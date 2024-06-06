@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "তাজিকিস্তান রুবল"
+  "placeholders": {
+    "DisplayName": "তাজিকিস্তান রুবল"
+  }
 }

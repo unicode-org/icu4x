@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "manat azéri"
-  },
-  "other_placeholder": "manats azéris",
-  "display_name": "manat azéri"
+    "One": "manat azéri",
+    "Other": "manats azéris",
+    "DisplayName": "manat azéri"
+  }
 }

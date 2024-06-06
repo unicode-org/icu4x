@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "ouguiya mauritanien"
-  },
-  "other_placeholder": "ouguiyas mauritaniens",
-  "display_name": "ouguiya mauritanien"
+    "One": "ouguiya mauritanien",
+    "Other": "ouguiyas mauritaniens",
+    "DisplayName": "ouguiya mauritanien"
+  }
 }

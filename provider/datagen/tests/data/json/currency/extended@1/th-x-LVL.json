@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "ลัตส์ลัตเวีย"
+  "placeholders": {
+    "DisplayName": "ลัตส์ลัตเวีย"
+  }
 }

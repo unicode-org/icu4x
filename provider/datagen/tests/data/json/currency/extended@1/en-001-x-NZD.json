@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "New Zealand dollar"
-  },
-  "other_placeholder": "New Zealand dollars",
-  "display_name": "New Zealand Dollar"
+    "One": "New Zealand dollar",
+    "Other": "New Zealand dollars",
+    "DisplayName": "New Zealand Dollar"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Turkmenistani manat"
-  },
-  "other_placeholder": "Turkmenistani manat",
-  "display_name": "Turkmenistani Manat"
+    "One": "Turkmenistani manat",
+    "Other": "Turkmenistani manat",
+    "DisplayName": "Turkmenistani Manat"
+  }
 }

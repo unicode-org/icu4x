@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dracma griego"
-  },
-  "other_placeholder": "dracmas griegos",
-  "display_name": "dracma griego"
+    "One": "dracma griego",
+    "Other": "dracmas griegos",
+    "DisplayName": "dracma griego"
+  }
 }

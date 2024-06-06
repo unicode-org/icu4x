@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "somalijski šiling",
-    "Few": "somalijska šilinga"
-  },
-  "other_placeholder": "somalijskih šilinga",
-  "display_name": "somalijski šiling"
+    "Few": "somalijska šilinga",
+    "Other": "somalijskih šilinga",
+    "DisplayName": "somalijski šiling"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "córdoba oro nicaraguayen"
-  },
-  "other_placeholder": "córdobas oro nicaraguayens",
-  "display_name": "córdoba oro nicaraguayen"
+    "One": "córdoba oro nicaraguayen",
+    "Other": "córdobas oro nicaraguayens",
+    "DisplayName": "córdoba oro nicaraguayen"
+  }
 }

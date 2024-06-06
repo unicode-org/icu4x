@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "kwacha malawite"
-  },
-  "other_placeholder": "kwachas malawites",
-  "display_name": "kwacha malawite"
+    "One": "kwacha malawite",
+    "Other": "kwachas malawites",
+    "DisplayName": "kwacha malawite"
+  }
 }

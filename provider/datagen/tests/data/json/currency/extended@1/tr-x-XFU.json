@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "Fransız UIC-Frangı"
+  "placeholders": {
+    "DisplayName": "Fransız UIC-Frangı"
+  }
 }

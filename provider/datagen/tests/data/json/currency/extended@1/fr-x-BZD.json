@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dollar bélizéen"
-  },
-  "other_placeholder": "dollars bélizéens",
-  "display_name": "dollar bélizéen"
+    "One": "dollar bélizéen",
+    "Other": "dollars bélizéens",
+    "DisplayName": "dollar bélizéen"
+  }
 }

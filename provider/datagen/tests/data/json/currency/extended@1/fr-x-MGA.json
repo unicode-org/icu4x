@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "ariary malgache"
-  },
-  "other_placeholder": "ariarys malgaches",
-  "display_name": "ariary malgache"
+    "One": "ariary malgache",
+    "Other": "ariarys malgaches",
+    "DisplayName": "ariary malgache"
+  }
 }

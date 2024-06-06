@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "จ๊าตพม่า"
+  "placeholders": {
+    "DisplayName": "จ๊าตพม่า"
+  }
 }

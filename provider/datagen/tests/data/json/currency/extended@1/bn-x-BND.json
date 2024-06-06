@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "ব্রুনেই ডলার"
+  "placeholders": {
+    "DisplayName": "ব্রুনেই ডলার"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Gambian dalasi"
-  },
-  "other_placeholder": "Gambian dalasis",
-  "display_name": "Gambian Dalasi"
+    "One": "Gambian dalasi",
+    "Other": "Gambian dalasis",
+    "DisplayName": "Gambian Dalasi"
+  }
 }

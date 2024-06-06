@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Guinean syli"
-  },
-  "other_placeholder": "Guinean sylis",
-  "display_name": "Guinean Syli"
+    "One": "Guinean syli",
+    "Other": "Guinean sylis",
+    "DisplayName": "Guinean Syli"
+  }
 }

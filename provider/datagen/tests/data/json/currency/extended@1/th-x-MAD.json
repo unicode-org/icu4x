@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "ดีแรห์มโมร็อกโก"
+  "placeholders": {
+    "DisplayName": "ดีแรห์มโมร็อกโก"
+  }
 }

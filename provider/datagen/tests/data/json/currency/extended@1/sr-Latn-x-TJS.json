@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "tadžikistanski somon",
-    "Few": "tadžikistanska somona"
-  },
-  "other_placeholder": "tadžikistanskih somona",
-  "display_name": "tadžikistanski somon"
+    "Few": "tadžikistanska somona",
+    "Other": "tadžikistanskih somona",
+    "DisplayName": "tadžikistanski somon"
+  }
 }

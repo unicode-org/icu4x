@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "egipatska funta",
-    "Few": "egipatske funte"
-  },
-  "other_placeholder": "egipatskih funti",
-  "display_name": "egipatska funta"
+    "Few": "egipatske funte",
+    "Other": "egipatskih funti",
+    "DisplayName": "egipatska funta"
+  }
 }

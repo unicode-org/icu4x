@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "Avrupa Para Birimi"
+  "placeholders": {
+    "DisplayName": "Avrupa Para Birimi"
+  }
 }

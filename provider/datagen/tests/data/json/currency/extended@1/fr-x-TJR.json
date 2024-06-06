@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "rouble tadjik"
-  },
-  "other_placeholder": "roubles tadjiks",
-  "display_name": "rouble tadjik"
+    "One": "rouble tadjik",
+    "Other": "roubles tadjiks",
+    "DisplayName": "rouble tadjik"
+  }
 }

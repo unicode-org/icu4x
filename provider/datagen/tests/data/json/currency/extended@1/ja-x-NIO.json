@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "ニカラグア コルドバ オロ"
+  "placeholders": {
+    "DisplayName": "ニカラグア コルドバ オロ"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "birr éthiopien"
-  },
-  "other_placeholder": "birrs éthiopiens",
-  "display_name": "birr éthiopien"
+    "One": "birr éthiopien",
+    "Other": "birrs éthiopiens",
+    "DisplayName": "birr éthiopien"
+  }
 }

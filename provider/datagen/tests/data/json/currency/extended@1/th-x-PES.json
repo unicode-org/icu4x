@@ -1,5 +1,6 @@
 {
-  "placeholders": {},
-  "other_placeholder": "ซอลเปรู(1863–1965)",
-  "display_name": "ซอลเปรู (1863–1965)"
+  "placeholders": {
+    "Other": "ซอลเปรู(1863–1965)",
+    "DisplayName": "ซอลเปรู (1863–1965)"
+  }
 }

@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "francuski zlatni franak",
-    "Few": "francuska zlatna franka"
-  },
-  "other_placeholder": "francuskih zlatnih franaka",
-  "display_name": "Francuski zlatni franak"
+    "Few": "francuska zlatna franka",
+    "Other": "francuskih zlatnih franaka",
+    "DisplayName": "Francuski zlatni franak"
+  }
 }

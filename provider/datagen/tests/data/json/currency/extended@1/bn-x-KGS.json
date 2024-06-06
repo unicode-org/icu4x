@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "কিরগিজস্তান সোম"
+  "placeholders": {
+    "DisplayName": "কিরগিজস্তান সোম"
+  }
 }

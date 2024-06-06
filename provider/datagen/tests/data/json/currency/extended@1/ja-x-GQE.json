@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "赤道ギニア エクウェレ"
+  "placeholders": {
+    "DisplayName": "赤道ギニア エクウェレ"
+  }
 }

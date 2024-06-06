@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "quetzal guatemalteco"
-  },
-  "other_placeholder": "quetzales guatemaltecos",
-  "display_name": "quetzal guatemalteco"
+    "One": "quetzal guatemalteco",
+    "Other": "quetzales guatemaltecos",
+    "DisplayName": "quetzal guatemalteco"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "forint ng Hungary"
-  },
-  "other_placeholder": "forints ng Hungary",
-  "display_name": "Forint ng Hungary"
+    "One": "forint ng Hungary",
+    "Other": "forints ng Hungary",
+    "DisplayName": "Forint ng Hungary"
+  }
 }

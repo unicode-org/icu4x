@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "gruzijski lari",
-    "Few": "gruzijska larija"
-  },
-  "other_placeholder": "gruzijskih larija",
-  "display_name": "gruzijski lari"
+    "Few": "gruzijska larija",
+    "Other": "gruzijskih larija",
+    "DisplayName": "gruzijski lari"
+  }
 }

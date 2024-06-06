@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "colón ng Costa Rica"
-  },
-  "other_placeholder": "colóns ng Costa Rica",
-  "display_name": "Colón ng Costa Rica"
+    "One": "colón ng Costa Rica",
+    "Other": "colóns ng Costa Rica",
+    "DisplayName": "Colón ng Costa Rica"
+  }
 }

@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "WIR franak",
-    "Few": "WIR franka"
-  },
-  "other_placeholder": "WIR franaka",
-  "display_name": "WIR franak"
+    "Few": "WIR franka",
+    "Other": "WIR franaka",
+    "DisplayName": "WIR franak"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "corona eslovaca"
-  },
-  "other_placeholder": "coronas eslovacas",
-  "display_name": "corona eslovaca"
+    "One": "corona eslovaca",
+    "Other": "coronas eslovacas",
+    "DisplayName": "corona eslovaca"
+  }
 }

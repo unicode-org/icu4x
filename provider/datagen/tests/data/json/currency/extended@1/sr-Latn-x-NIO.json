@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "nikaragvanska kordoba",
-    "Few": "nikaragvanske kordobe"
-  },
-  "other_placeholder": "nikaragvanskih kordoba",
-  "display_name": "nikaragvanska kordoba"
+    "Few": "nikaragvanske kordobe",
+    "Other": "nikaragvanskih kordoba",
+    "DisplayName": "nikaragvanska kordoba"
+  }
 }

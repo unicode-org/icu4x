@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "সেয়চেল্লোইস রুপি"
+  "placeholders": {
+    "DisplayName": "সেয়চেল্লোইস রুপি"
+  }
 }

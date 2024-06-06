@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "tengue kazajo"
-  },
-  "other_placeholder": "tengues kazajos",
-  "display_name": "tengue kazajo"
+    "One": "tengue kazajo",
+    "Other": "tengues kazajos",
+    "DisplayName": "tengue kazajo"
+  }
 }

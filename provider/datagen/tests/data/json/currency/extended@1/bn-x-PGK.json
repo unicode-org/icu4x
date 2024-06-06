@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "পাপুয়া নিউ গিনিয়ান কিনা"
+  "placeholders": {
+    "DisplayName": "পাপুয়া নিউ গিনিয়ান কিনা"
+  }
 }

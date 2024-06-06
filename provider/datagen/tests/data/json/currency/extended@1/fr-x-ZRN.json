@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "nouveau zaïre zaïrien"
-  },
-  "other_placeholder": "nouveaux zaïres zaïriens",
-  "display_name": "nouveau zaïre zaïrien"
+    "One": "nouveau zaïre zaïrien",
+    "Other": "nouveaux zaïres zaïriens",
+    "DisplayName": "nouveau zaïre zaïrien"
+  }
 }

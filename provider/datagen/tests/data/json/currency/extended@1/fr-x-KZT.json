@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "tenge kazakh"
-  },
-  "other_placeholder": "tenges kazakhs",
-  "display_name": "tenge kazakh"
+    "One": "tenge kazakh",
+    "Other": "tenges kazakhs",
+    "DisplayName": "tenge kazakh"
+  }
 }

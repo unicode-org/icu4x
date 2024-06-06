@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "franco CFA de África Central"
-  },
-  "other_placeholder": "francos CFA de África Central",
-  "display_name": "franco CFA de África Central"
+    "One": "franco CFA de África Central",
+    "Other": "francos CFA de África Central",
+    "DisplayName": "franco CFA de África Central"
+  }
 }

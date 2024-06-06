@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "زائير زائيري جديد"
+  "placeholders": {
+    "DisplayName": "زائير زائيري جديد"
+  }
 }

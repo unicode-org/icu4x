@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Chinese yuan (offshore)"
-  },
-  "other_placeholder": "Chinese yuan (offshore)",
-  "display_name": "Chinese Yuan (offshore)"
+    "One": "Chinese yuan (offshore)",
+    "Other": "Chinese yuan (offshore)",
+    "DisplayName": "Chinese Yuan (offshore)"
+  }
 }

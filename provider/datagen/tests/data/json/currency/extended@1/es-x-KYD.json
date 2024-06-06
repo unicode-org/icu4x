@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dólar de las Islas Caimán"
-  },
-  "other_placeholder": "dólares de las Islas Caimán",
-  "display_name": "dólar de las Islas Caimán"
+    "One": "dólar de las Islas Caimán",
+    "Other": "dólares de las Islas Caimán",
+    "DisplayName": "dólar de las Islas Caimán"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "tólar esloveno"
-  },
-  "other_placeholder": "tólares eslovenos",
-  "display_name": "tólar esloveno"
+    "One": "tólar esloveno",
+    "Other": "tólares eslovenos",
+    "DisplayName": "tólar esloveno"
+  }
 }

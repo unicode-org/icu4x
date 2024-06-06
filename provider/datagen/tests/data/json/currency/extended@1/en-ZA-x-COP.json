@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Colombian peso"
-  },
-  "other_placeholder": "Colombian pesos",
-  "display_name": "Colombian Peso"
+    "One": "Colombian peso",
+    "Other": "Colombian pesos",
+    "DisplayName": "Colombian Peso"
+  }
 }

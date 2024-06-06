@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Piso ng Dominican"
-  },
-  "other_placeholder": "piso ng Dominican",
-  "display_name": "Piso ng Dominican"
+    "One": "Piso ng Dominican",
+    "Other": "piso ng Dominican",
+    "DisplayName": "Piso ng Dominican"
+  }
 }

@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "كوردوبة نيكاراجوا"
+  "placeholders": {
+    "DisplayName": "كوردوبة نيكاراجوا"
+  }
 }

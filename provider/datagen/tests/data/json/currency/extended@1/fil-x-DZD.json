@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dinar ng Algeria"
-  },
-  "other_placeholder": "Algerian dinars",
-  "display_name": "Algerian Dinar"
+    "One": "dinar ng Algeria",
+    "Other": "Algerian dinars",
+    "DisplayName": "Algerian Dinar"
+  }
 }

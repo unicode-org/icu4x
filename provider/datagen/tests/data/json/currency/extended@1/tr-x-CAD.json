@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "Kanada doları"
+  "placeholders": {
+    "DisplayName": "Kanada doları"
+  }
 }

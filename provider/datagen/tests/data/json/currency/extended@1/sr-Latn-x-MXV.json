@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "meksički unidads de inverzion",
-    "Few": "meksička unidads de inverziona"
-  },
-  "other_placeholder": "meksičkih unidads de inverziona",
-  "display_name": "Meksički unidad de inversion (UDI)"
+    "Few": "meksička unidads de inverziona",
+    "Other": "meksičkih unidads de inverziona",
+    "DisplayName": "Meksički unidad de inversion (UDI)"
+  }
 }

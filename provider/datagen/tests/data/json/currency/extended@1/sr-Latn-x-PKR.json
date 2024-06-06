@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "pakistanska rupija",
-    "Few": "pakistanske rupije"
-  },
-  "other_placeholder": "pakistanskih rupija",
-  "display_name": "pakistanska rupija"
+    "Few": "pakistanske rupije",
+    "Other": "pakistanskih rupija",
+    "DisplayName": "pakistanska rupija"
+  }
 }

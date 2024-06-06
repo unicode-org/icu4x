@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "naira nigérian"
-  },
-  "other_placeholder": "nairas nigérians",
-  "display_name": "naira nigérian"
+    "One": "naira nigérian",
+    "Other": "nairas nigérians",
+    "DisplayName": "naira nigérian"
+  }
 }

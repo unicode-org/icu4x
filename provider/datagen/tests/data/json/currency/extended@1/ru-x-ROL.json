@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "Старый Румынский лей"
+  "placeholders": {
+    "DisplayName": "Старый Румынский лей"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Swedish krona"
-  },
-  "other_placeholder": "Swedish kronor",
-  "display_name": "Swedish Krona"
+    "One": "Swedish krona",
+    "Other": "Swedish kronor",
+    "DisplayName": "Swedish Krona"
+  }
 }

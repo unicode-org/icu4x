@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "ড্যানিশ ক্রোন"
-  },
-  "other_placeholder": "ড্যানিশ ক্রৌন",
-  "display_name": "ড্যানিশ ক্রোন"
+    "One": "ড্যানিশ ক্রোন",
+    "Other": "ড্যানিশ ক্রৌন",
+    "DisplayName": "ড্যানিশ ক্রোন"
+  }
 }

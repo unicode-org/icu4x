@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "Yugoslav Dinarı (Hard)"
+  "placeholders": {
+    "DisplayName": "Yugoslav Dinarı (Hard)"
+  }
 }

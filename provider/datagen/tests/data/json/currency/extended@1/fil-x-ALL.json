@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "lek ng Albania"
-  },
-  "other_placeholder": "leke ng Albania",
-  "display_name": "Lek ng Albania"
+    "One": "lek ng Albania",
+    "Other": "leke ng Albania",
+    "DisplayName": "Lek ng Albania"
+  }
 }

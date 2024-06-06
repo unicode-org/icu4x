@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "argentinski pezo (1983–1985)",
-    "Few": "argentinska pezosa (1983–1985)"
-  },
-  "other_placeholder": "argentinskih pezosa (1983–1985)",
-  "display_name": "Argentinski pezo (1983–1985)"
+    "Few": "argentinska pezosa (1983–1985)",
+    "Other": "argentinskih pezosa (1983–1985)",
+    "DisplayName": "Argentinski pezo (1983–1985)"
+  }
 }

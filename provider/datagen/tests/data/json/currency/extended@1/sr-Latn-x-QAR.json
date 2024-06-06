@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "katarski rijal",
-    "Few": "katarska rijala"
-  },
-  "other_placeholder": "katarskih rijala",
-  "display_name": "katarski rijal"
+    "Few": "katarska rijala",
+    "Other": "katarskih rijala",
+    "DisplayName": "katarski rijal"
+  }
 }

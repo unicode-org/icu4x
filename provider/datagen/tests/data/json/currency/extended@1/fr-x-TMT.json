@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "nouveau manat turkmène"
-  },
-  "other_placeholder": "nouveaux manats turkmènes",
-  "display_name": "nouveau manat turkmène"
+    "One": "nouveau manat turkmène",
+    "Other": "nouveaux manats turkmènes",
+    "DisplayName": "nouveau manat turkmène"
+  }
 }

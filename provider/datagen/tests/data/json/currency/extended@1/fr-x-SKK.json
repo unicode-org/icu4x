@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "couronne slovaque"
-  },
-  "other_placeholder": "couronnes slovaques",
-  "display_name": "couronne slovaque"
+    "One": "couronne slovaque",
+    "Other": "couronnes slovaques",
+    "DisplayName": "couronne slovaque"
+  }
 }

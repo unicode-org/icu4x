@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "MVDOL boliviano"
-  },
-  "other_placeholder": "MVDOL bolivianos",
-  "display_name": "MVDOL boliviano"
+    "One": "MVDOL boliviano",
+    "Other": "MVDOL bolivianos",
+    "DisplayName": "MVDOL boliviano"
+  }
 }

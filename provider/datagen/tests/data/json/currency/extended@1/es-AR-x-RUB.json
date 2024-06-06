@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "rublo ruso"
-  },
-  "other_placeholder": "rublos rusos",
-  "display_name": "rublo ruso"
+    "One": "rublo ruso",
+    "Other": "rublos rusos",
+    "DisplayName": "rublo ruso"
+  }
 }

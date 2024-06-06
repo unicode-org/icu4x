@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "সুইজারল্যান্ড ইউরো"
+  "placeholders": {
+    "DisplayName": "সুইজারল্যান্ড ইউরো"
+  }
 }

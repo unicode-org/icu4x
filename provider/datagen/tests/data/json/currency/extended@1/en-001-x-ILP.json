@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Israeli pound"
-  },
-  "other_placeholder": "Israeli pounds",
-  "display_name": "Israeli Pound"
+    "One": "Israeli pound",
+    "Other": "Israeli pounds",
+    "DisplayName": "Israeli Pound"
+  }
 }

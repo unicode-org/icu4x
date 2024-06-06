@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "indijska rupija",
-    "Few": "indijske rupije"
-  },
-  "other_placeholder": "indijskih rupija",
-  "display_name": "indijska rupija"
+    "Few": "indijske rupije",
+    "Other": "indijskih rupija",
+    "DisplayName": "indijska rupija"
+  }
 }

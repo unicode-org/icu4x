@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Croatian kuna"
-  },
-  "other_placeholder": "Croatian kunas",
-  "display_name": "Croatian Kuna"
+    "One": "Croatian kuna",
+    "Other": "Croatian kunas",
+    "DisplayName": "Croatian Kuna"
+  }
 }

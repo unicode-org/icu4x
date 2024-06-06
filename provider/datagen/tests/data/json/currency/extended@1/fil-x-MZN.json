@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Mozambican metical"
-  },
-  "other_placeholder": "Mozambican meticals",
-  "display_name": "Mozambican Metical"
+    "One": "Mozambican metical",
+    "Other": "Mozambican meticals",
+    "DisplayName": "Mozambican Metical"
+  }
 }

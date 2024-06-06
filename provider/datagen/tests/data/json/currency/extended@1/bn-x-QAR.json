@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "কাতার রিয়াল"
+  "placeholders": {
+    "DisplayName": "কাতার রিয়াল"
+  }
 }

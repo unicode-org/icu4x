@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "rupia india"
-  },
-  "other_placeholder": "rupias indias",
-  "display_name": "rupia india"
+    "One": "rupia india",
+    "Other": "rupias indias",
+    "DisplayName": "rupia india"
+  }
 }

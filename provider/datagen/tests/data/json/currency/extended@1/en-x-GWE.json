@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Portuguese Guinea escudo"
-  },
-  "other_placeholder": "Portuguese Guinea escudos",
-  "display_name": "Portuguese Guinea Escudo"
+    "One": "Portuguese Guinea escudo",
+    "Other": "Portuguese Guinea escudos",
+    "DisplayName": "Portuguese Guinea Escudo"
+  }
 }

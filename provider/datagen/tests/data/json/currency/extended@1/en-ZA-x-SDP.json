@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Sudanese pound (1957–1998)"
-  },
-  "other_placeholder": "Sudanese pounds (1957–1998)",
-  "display_name": "Sudanese Pound (1957–1998)"
+    "One": "Sudanese pound (1957–1998)",
+    "Other": "Sudanese pounds (1957–1998)",
+    "DisplayName": "Sudanese Pound (1957–1998)"
+  }
 }

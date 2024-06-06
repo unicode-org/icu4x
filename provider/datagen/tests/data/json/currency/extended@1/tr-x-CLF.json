@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "Şili Unidades de Fomento"
+  "placeholders": {
+    "DisplayName": "Şili Unidades de Fomento"
+  }
 }

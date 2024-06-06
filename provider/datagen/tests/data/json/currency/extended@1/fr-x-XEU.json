@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "unité de compte européenne (ECU)"
+  "placeholders": {
+    "DisplayName": "unité de compte européenne (ECU)"
+  }
 }

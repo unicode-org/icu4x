@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "দক্ষিণ সুদানি পাউন্ড"
+  "placeholders": {
+    "DisplayName": "দক্ষিণ সুদানি পাউন্ড"
+  }
 }

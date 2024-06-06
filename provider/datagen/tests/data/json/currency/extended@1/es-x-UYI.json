@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "peso uruguayo en unidades indexadas"
-  },
-  "other_placeholder": "pesos uruguayos en unidades indexadas",
-  "display_name": "peso uruguayo en unidades indexadas"
+    "One": "peso uruguayo en unidades indexadas",
+    "Other": "pesos uruguayos en unidades indexadas",
+    "DisplayName": "peso uruguayo en unidades indexadas"
+  }
 }

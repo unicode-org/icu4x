@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "španska pezeta",
-    "Few": "španska pezeta"
-  },
-  "other_placeholder": "španske pezete",
-  "display_name": "Španska pezeta"
+    "Few": "španska pezeta",
+    "Other": "španske pezete",
+    "DisplayName": "Španska pezeta"
+  }
 }

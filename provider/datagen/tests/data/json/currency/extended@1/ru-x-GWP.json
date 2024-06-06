@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "Песо Гвинеи-Бисау"
+  "placeholders": {
+    "DisplayName": "Песо Гвинеи-Бисау"
+  }
 }

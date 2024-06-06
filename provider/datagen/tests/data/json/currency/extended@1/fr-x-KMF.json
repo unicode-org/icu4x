@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "franc comorien"
-  },
-  "other_placeholder": "francs comoriens",
-  "display_name": "franc comorien"
+    "One": "franc comorien",
+    "Other": "francs comoriens",
+    "DisplayName": "franc comorien"
+  }
 }

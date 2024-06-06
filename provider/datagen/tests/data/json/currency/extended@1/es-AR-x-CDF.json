@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "franco congoleño"
-  },
-  "other_placeholder": "francos congoleños",
-  "display_name": "franco congoleño"
+    "One": "franco congoleño",
+    "Other": "francos congoleños",
+    "DisplayName": "franco congoleño"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "rupia esrilanquesa"
-  },
-  "other_placeholder": "rupias esrilanquesas",
-  "display_name": "rupia esrilanquesa"
+    "One": "rupia esrilanquesa",
+    "Other": "rupias esrilanquesas",
+    "DisplayName": "rupia esrilanquesa"
+  }
 }

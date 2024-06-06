@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "nemačka marka",
-    "Few": "nemačke marke"
-  },
-  "other_placeholder": "nemačkih maraka",
-  "display_name": "Nemačka marka"
+    "Few": "nemačke marke",
+    "Other": "nemačkih maraka",
+    "DisplayName": "Nemačka marka"
+  }
 }

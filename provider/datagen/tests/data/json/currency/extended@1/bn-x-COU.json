@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "উনিদাদ দি ভ্যালোর রিয়েল"
+  "placeholders": {
+    "DisplayName": "উনিদাদ দি ভ্যালোর রিয়েল"
+  }
 }

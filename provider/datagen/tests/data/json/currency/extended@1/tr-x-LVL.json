@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Letonya latı"
-  },
-  "other_placeholder": "Letonya latı",
-  "display_name": "Letonya Latı"
+    "One": "Letonya latı",
+    "Other": "Letonya latı",
+    "DisplayName": "Letonya Latı"
+  }
 }

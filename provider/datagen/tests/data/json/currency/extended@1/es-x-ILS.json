@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "nuevo séquel israelí"
-  },
-  "other_placeholder": "nuevos séqueles israelíes",
-  "display_name": "nuevo séquel israelí"
+    "One": "nuevo séquel israelí",
+    "Other": "nuevos séqueles israelíes",
+    "DisplayName": "nuevo séquel israelí"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Brazilian cruzado (1986–1989)"
-  },
-  "other_placeholder": "Brazilian cruzados (1986–1989)",
-  "display_name": "Brazilian Cruzado (1986–1989)"
+    "One": "Brazilian cruzado (1986–1989)",
+    "Other": "Brazilian cruzados (1986–1989)",
+    "DisplayName": "Brazilian Cruzado (1986–1989)"
+  }
 }

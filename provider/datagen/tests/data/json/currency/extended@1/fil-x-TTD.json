@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dolyar ng Trinidad and Tobago"
-  },
-  "other_placeholder": "dolyares ng Trinidad and Tobago",
-  "display_name": "Dolyar ng Trinidad and Tobago"
+    "One": "dolyar ng Trinidad and Tobago",
+    "Other": "dolyares ng Trinidad and Tobago",
+    "DisplayName": "Dolyar ng Trinidad and Tobago"
+  }
 }

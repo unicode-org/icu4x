@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "srebro",
-    "Few": "srebra"
-  },
-  "other_placeholder": "srebra",
-  "display_name": "Srebro"
+    "Few": "srebra",
+    "Other": "srebra",
+    "DisplayName": "Srebro"
+  }
 }

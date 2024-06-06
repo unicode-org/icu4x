@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "gultrum"
-  },
-  "other_placeholder": "gultrums",
-  "display_name": "gultrum"
+    "One": "gultrum",
+    "Other": "gultrums",
+    "DisplayName": "gultrum"
+  }
 }

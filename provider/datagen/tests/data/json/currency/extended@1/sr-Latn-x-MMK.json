@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "mjanmarski kjat",
-    "Few": "mjanmarska kjata"
-  },
-  "other_placeholder": "mjanmarskih kjata",
-  "display_name": "mjanmarski kjat"
+    "Few": "mjanmarska kjata",
+    "Other": "mjanmarskih kjata",
+    "DisplayName": "mjanmarski kjat"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "won nord-coréen"
-  },
-  "other_placeholder": "wons nord-coréens",
-  "display_name": "won nord-coréen"
+    "One": "won nord-coréen",
+    "Other": "wons nord-coréens",
+    "DisplayName": "won nord-coréen"
+  }
 }

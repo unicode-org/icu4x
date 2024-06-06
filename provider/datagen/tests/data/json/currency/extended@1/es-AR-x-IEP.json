@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "libra irlandesa"
-  },
-  "other_placeholder": "libras irlandesas",
-  "display_name": "libra irlandesa"
+    "One": "libra irlandesa",
+    "Other": "libras irlandesas",
+    "DisplayName": "libra irlandesa"
+  }
 }

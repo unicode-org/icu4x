@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "special drawing rights"
-  },
-  "other_placeholder": "special drawing rights",
-  "display_name": "Special Drawing Rights"
+    "One": "special drawing rights",
+    "Other": "special drawing rights",
+    "DisplayName": "Special Drawing Rights"
+  }
 }

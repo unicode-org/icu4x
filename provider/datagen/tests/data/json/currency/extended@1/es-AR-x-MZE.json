@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "escudo mozambiqueño"
-  },
-  "other_placeholder": "escudos mozambiqueños",
-  "display_name": "escudo mozambiqueño"
+    "One": "escudo mozambiqueño",
+    "Other": "escudos mozambiqueños",
+    "DisplayName": "escudo mozambiqueño"
+  }
 }

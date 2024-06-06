@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "kuacha zambiano"
-  },
-  "other_placeholder": "kuachas zambianos",
-  "display_name": "kuacha zambiano"
+    "One": "kuacha zambiano",
+    "Other": "kuachas zambianos",
+    "DisplayName": "kuacha zambiano"
+  }
 }

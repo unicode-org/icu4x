@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "ليو روماني قديم"
+  "placeholders": {
+    "DisplayName": "ليو روماني قديم"
+  }
 }

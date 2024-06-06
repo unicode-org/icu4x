@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "トリニダード・トバゴ ドル"
+  "placeholders": {
+    "DisplayName": "トリニダード・トバゴ ドル"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Solomon Islands dollar"
-  },
-  "other_placeholder": "Solomon Islands dollars",
-  "display_name": "Solomon Islands Dollar"
+    "One": "Solomon Islands dollar",
+    "Other": "Solomon Islands dollars",
+    "DisplayName": "Solomon Islands Dollar"
+  }
 }

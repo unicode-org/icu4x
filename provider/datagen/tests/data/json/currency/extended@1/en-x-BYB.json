@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Belarusian ruble (1994–1999)"
-  },
-  "other_placeholder": "Belarusian rubles (1994–1999)",
-  "display_name": "Belarusian Ruble (1994–1999)"
+    "One": "Belarusian ruble (1994–1999)",
+    "Other": "Belarusian rubles (1994–1999)",
+    "DisplayName": "Belarusian Ruble (1994–1999)"
+  }
 }

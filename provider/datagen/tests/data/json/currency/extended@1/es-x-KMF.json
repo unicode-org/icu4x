@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "franco comorense"
-  },
-  "other_placeholder": "francos comorenses",
-  "display_name": "franco comorense"
+    "One": "franco comorense",
+    "Other": "francos comorenses",
+    "DisplayName": "franco comorense"
+  }
 }

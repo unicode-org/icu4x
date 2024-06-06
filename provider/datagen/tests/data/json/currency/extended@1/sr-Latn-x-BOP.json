@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "bolivijski pezo",
-    "Few": "bolivijska pezosa"
-  },
-  "other_placeholder": "bolivijskih pezosa",
-  "display_name": "Bolivijski pezo"
+    "Few": "bolivijska pezosa",
+    "Other": "bolivijskih pezosa",
+    "DisplayName": "Bolivijski pezo"
+  }
 }

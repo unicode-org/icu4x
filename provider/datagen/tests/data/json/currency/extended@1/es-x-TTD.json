@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dólar de Trinidad y Tobago"
-  },
-  "other_placeholder": "dólares de Trinidad y Tobago",
-  "display_name": "dólar de Trinidad y Tobago"
+    "One": "dólar de Trinidad y Tobago",
+    "Other": "dólares de Trinidad y Tobago",
+    "DisplayName": "dólar de Trinidad y Tobago"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dólar singapurense"
-  },
-  "other_placeholder": "dólares singapurenses",
-  "display_name": "dólar singapurense"
+    "One": "dólar singapurense",
+    "Other": "dólares singapurenses",
+    "DisplayName": "dólar singapurense"
+  }
 }

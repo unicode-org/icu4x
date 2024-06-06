@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "bolívar ng Venezuela (2008–2018)"
-  },
-  "other_placeholder": "bolívars ng Venezuela (2008–2018)",
-  "display_name": "Bolívar ng Venezuela (2008–2018)"
+    "One": "bolívar ng Venezuela (2008–2018)",
+    "Other": "bolívars ng Venezuela (2008–2018)",
+    "DisplayName": "Bolívar ng Venezuela (2008–2018)"
+  }
 }

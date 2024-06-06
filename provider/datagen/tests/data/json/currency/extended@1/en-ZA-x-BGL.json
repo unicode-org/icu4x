@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Bulgarian hard lev"
-  },
-  "other_placeholder": "Bulgarian hard leva",
-  "display_name": "Bulgarian Hard Lev"
+    "One": "Bulgarian hard lev",
+    "Other": "Bulgarian hard leva",
+    "DisplayName": "Bulgarian Hard Lev"
+  }
 }

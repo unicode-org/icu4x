@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dólar australiano"
-  },
-  "other_placeholder": "dólares australianos",
-  "display_name": "dólar australiano"
+    "One": "dólar australiano",
+    "Other": "dólares australianos",
+    "DisplayName": "dólar australiano"
+  }
 }

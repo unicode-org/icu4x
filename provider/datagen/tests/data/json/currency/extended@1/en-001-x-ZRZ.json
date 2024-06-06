@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Zairean zaire (1971–1993)"
-  },
-  "other_placeholder": "Zairean zaires (1971–1993)",
-  "display_name": "Zairean Zaire (1971–1993)"
+    "One": "Zairean zaire (1971–1993)",
+    "Other": "Zairean zaires (1971–1993)",
+    "DisplayName": "Zairean Zaire (1971–1993)"
+  }
 }

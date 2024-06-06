@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "evropska kompozitna jedinica",
-    "Few": "evropske kompozitne jedinice"
-  },
-  "other_placeholder": "evropskih kompozitnih jedinica",
-  "display_name": "Evropska kompozitna jedinica"
+    "Few": "evropske kompozitne jedinice",
+    "Other": "evropskih kompozitnih jedinica",
+    "DisplayName": "Evropska kompozitna jedinica"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "franc marocain"
-  },
-  "other_placeholder": "francs marocains",
-  "display_name": "franc marocain"
+    "One": "franc marocain",
+    "Other": "francs marocains",
+    "DisplayName": "franc marocain"
+  }
 }

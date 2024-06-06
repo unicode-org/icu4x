@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "čehoslovačka tvrda kruna",
-    "Few": "čehoslovačke tvrde krune"
-  },
-  "other_placeholder": "čehoslovačkih tvrdih kruna",
-  "display_name": "Čehoslovačka tvrda kruna"
+    "Few": "čehoslovačke tvrde krune",
+    "Other": "čehoslovačkih tvrdih kruna",
+    "DisplayName": "Čehoslovačka tvrda kruna"
+  }
 }

@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "urugvajski pezo (1975–1993)",
-    "Few": "urugvajska pezosa (1975–1993)"
-  },
-  "other_placeholder": "urugvajskih pezosa (1975–1993)",
-  "display_name": "Urugvajski pezo (1975–1993)"
+    "Few": "urugvajska pezosa (1975–1993)",
+    "Other": "urugvajskih pezosa (1975–1993)",
+    "DisplayName": "Urugvajski pezo (1975–1993)"
+  }
 }

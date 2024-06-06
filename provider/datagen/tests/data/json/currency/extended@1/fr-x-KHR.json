@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "riel cambodgien"
-  },
-  "other_placeholder": "riels cambodgiens",
-  "display_name": "riel cambodgien"
+    "One": "riel cambodgien",
+    "Other": "riels cambodgiens",
+    "DisplayName": "riel cambodgien"
+  }
 }

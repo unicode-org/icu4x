@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "balboa ng Panama"
-  },
-  "other_placeholder": "Balboas ng Panama",
-  "display_name": "Balboa ng Panama"
+    "One": "balboa ng Panama",
+    "Other": "Balboas ng Panama",
+    "DisplayName": "Balboa ng Panama"
+  }
 }

@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "ekvadorski sakr",
-    "Few": "ekvadorska sakra"
-  },
-  "other_placeholder": "ekvadorskih sakra",
-  "display_name": "Ekvadorski sakr"
+    "Few": "ekvadorska sakra",
+    "Other": "ekvadorskih sakra",
+    "DisplayName": "Ekvadorski sakr"
+  }
 }

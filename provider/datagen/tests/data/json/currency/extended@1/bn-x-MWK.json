@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "মালাউইয়ান কোয়াচা"
+  "placeholders": {
+    "DisplayName": "মালাউইয়ান কোয়াচা"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "ekuele de Guinea Ecuatorial"
-  },
-  "other_placeholder": "ekueles de Guinea Ecuatorial",
-  "display_name": "ekuele de Guinea Ecuatorial"
+    "One": "ekuele de Guinea Ecuatorial",
+    "Other": "ekueles de Guinea Ecuatorial",
+    "DisplayName": "ekuele de Guinea Ecuatorial"
+  }
 }

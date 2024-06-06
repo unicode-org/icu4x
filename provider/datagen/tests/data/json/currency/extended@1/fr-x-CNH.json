@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "yuan chinois (zone extracôtière)"
-  },
-  "other_placeholder": "yuans chinois (zone extracôtière)",
-  "display_name": "yuan chinois (zone extracôtière)"
+    "One": "yuan chinois (zone extracôtière)",
+    "Other": "yuans chinois (zone extracôtière)",
+    "DisplayName": "yuan chinois (zone extracôtière)"
+  }
 }

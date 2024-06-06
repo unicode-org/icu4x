@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Angolan readjusted kwanza (1995–1999)"
-  },
-  "other_placeholder": "Angolan readjusted kwanzas (1995–1999)",
-  "display_name": "Angolan Readjusted Kwanza (1995–1999)"
+    "One": "Angolan readjusted kwanza (1995–1999)",
+    "Other": "Angolan readjusted kwanzas (1995–1999)",
+    "DisplayName": "Angolan Readjusted Kwanza (1995–1999)"
+  }
 }

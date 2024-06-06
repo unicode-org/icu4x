@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "মাল্টা লিরা"
+  "placeholders": {
+    "DisplayName": "মাল্টা লিরা"
+  }
 }

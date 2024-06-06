@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "unité de conversion mexicaine (UDI)"
-  },
-  "other_placeholder": "unités de conversion mexicaines (UDI)",
-  "display_name": "unité de conversion mexicaine (UDI)"
+    "One": "unité de conversion mexicaine (UDI)",
+    "Other": "unités de conversion mexicaines (UDI)",
+    "DisplayName": "unité de conversion mexicaine (UDI)"
+  }
 }

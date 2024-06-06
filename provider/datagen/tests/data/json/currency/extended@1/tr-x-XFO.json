@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "Fransız Altın Frangı"
+  "placeholders": {
+    "DisplayName": "Fransız Altın Frangı"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "franc français"
-  },
-  "other_placeholder": "francs français",
-  "display_name": "franc français"
+    "One": "franc français",
+    "Other": "francs français",
+    "DisplayName": "franc français"
+  }
 }

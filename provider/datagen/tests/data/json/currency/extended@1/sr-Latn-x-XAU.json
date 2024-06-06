@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "zlato",
-    "Few": "zlata"
-  },
-  "other_placeholder": "zlata",
-  "display_name": "Zlato"
+    "Few": "zlata",
+    "Other": "zlata",
+    "DisplayName": "Zlato"
+  }
 }

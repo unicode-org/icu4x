@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Mozambican escudo"
-  },
-  "other_placeholder": "Mozambican escudos",
-  "display_name": "Mozambican Escudo"
+    "One": "Mozambican escudo",
+    "Other": "Mozambican escudos",
+    "DisplayName": "Mozambican Escudo"
+  }
 }

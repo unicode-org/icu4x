@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "leu roumain (1952–2005)"
-  },
-  "other_placeholder": "lei roumains (1952–2005)",
-  "display_name": "ancien leu roumain"
+    "One": "leu roumain (1952–2005)",
+    "Other": "lei roumains (1952–2005)",
+    "DisplayName": "ancien leu roumain"
+  }
 }

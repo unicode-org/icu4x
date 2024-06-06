@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "slovačka kruna",
-    "Few": "slovačke krune"
-  },
-  "other_placeholder": "slovačkih kruna",
-  "display_name": "Slovačka kruna"
+    "Few": "slovačke krune",
+    "Other": "slovačkih kruna",
+    "DisplayName": "Slovačka kruna"
+  }
 }

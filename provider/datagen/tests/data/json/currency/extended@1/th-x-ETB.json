@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "เบอรร์เอธิโอเปีย"
+  "placeholders": {
+    "DisplayName": "เบอรร์เอธิโอเปีย"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Serbian dinar (2002–2006)"
-  },
-  "other_placeholder": "Serbian dinars (2002–2006)",
-  "display_name": "Serbian Dinar (2002–2006)"
+    "One": "Serbian dinar (2002–2006)",
+    "Other": "Serbian dinars (2002–2006)",
+    "DisplayName": "Serbian Dinar (2002–2006)"
+  }
 }

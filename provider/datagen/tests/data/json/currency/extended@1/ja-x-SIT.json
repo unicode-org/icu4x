@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "スロベニア トラール"
+  "placeholders": {
+    "DisplayName": "スロベニア トラール"
+  }
 }

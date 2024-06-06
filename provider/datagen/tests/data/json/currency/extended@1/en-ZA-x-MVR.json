@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Maldivian rufiyaa"
-  },
-  "other_placeholder": "Maldivian rufiyaa",
-  "display_name": "Maldivian Rufiyaa"
+    "One": "Maldivian rufiyaa",
+    "Other": "Maldivian rufiyaa",
+    "DisplayName": "Maldivian Rufiyaa"
+  }
 }

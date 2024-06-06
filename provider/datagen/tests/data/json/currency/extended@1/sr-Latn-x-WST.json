@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "samoanska tala",
-    "Few": "samoanske tale"
-  },
-  "other_placeholder": "samoanskih tala",
-  "display_name": "samoanska tala"
+    "Few": "samoanske tale",
+    "Other": "samoanskih tala",
+    "DisplayName": "samoanska tala"
+  }
 }

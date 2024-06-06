@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "bolivar vénézuélien"
-  },
-  "other_placeholder": "bolivars vénézuéliens",
-  "display_name": "bolivar vénézuélien"
+    "One": "bolivar vénézuélien",
+    "Other": "bolivars vénézuéliens",
+    "DisplayName": "bolivar vénézuélien"
+  }
 }

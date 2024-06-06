@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "peso argentin (1983–1985)"
-  },
-  "other_placeholder": "pesos argentins (1983–1985)",
-  "display_name": "peso argentin (1983–1985)"
+    "One": "peso argentin (1983–1985)",
+    "Other": "pesos argentins (1983–1985)",
+    "DisplayName": "peso argentin (1983–1985)"
+  }
 }

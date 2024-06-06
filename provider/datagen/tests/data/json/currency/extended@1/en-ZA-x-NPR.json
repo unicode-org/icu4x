@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Nepalese rupee"
-  },
-  "other_placeholder": "Nepalese rupees",
-  "display_name": "Nepalese Rupee"
+    "One": "Nepalese rupee",
+    "Other": "Nepalese rupees",
+    "DisplayName": "Nepalese Rupee"
+  }
 }

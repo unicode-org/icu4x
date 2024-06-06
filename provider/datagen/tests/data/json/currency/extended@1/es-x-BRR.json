@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "cruceiro brasileño"
-  },
-  "other_placeholder": "cruceiros brasileños",
-  "display_name": "cruceiro brasileño"
+    "One": "cruceiro brasileño",
+    "Other": "cruceiros brasileños",
+    "DisplayName": "cruceiro brasileño"
+  }
 }

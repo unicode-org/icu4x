@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "poljski zlot",
-    "Few": "poljska zlota"
-  },
-  "other_placeholder": "poljskih zlota",
-  "display_name": "poljski zlot"
+    "Few": "poljska zlota",
+    "Other": "poljskih zlota",
+    "DisplayName": "poljski zlot"
+  }
 }

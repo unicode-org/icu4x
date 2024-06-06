@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "ওমানি রিয়াল"
+  "placeholders": {
+    "DisplayName": "ওমানি রিয়াল"
+  }
 }

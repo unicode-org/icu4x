@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "peruvijski inti",
-    "Few": "peruvijska intija"
-  },
-  "other_placeholder": "peruvijskih intija",
-  "display_name": "Peruanski inti"
+    "Few": "peruvijska intija",
+    "Other": "peruvijskih intija",
+    "DisplayName": "Peruanski inti"
+  }
 }

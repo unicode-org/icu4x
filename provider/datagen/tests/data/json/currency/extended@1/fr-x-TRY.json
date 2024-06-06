@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "livre turque"
-  },
-  "other_placeholder": "livres turques",
-  "display_name": "livre turque"
+    "One": "livre turque",
+    "Other": "livres turques",
+    "DisplayName": "livre turque"
+  }
 }

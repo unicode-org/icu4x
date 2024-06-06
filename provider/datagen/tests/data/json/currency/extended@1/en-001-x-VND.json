@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Vietnamese dong"
-  },
-  "other_placeholder": "Vietnamese dong",
-  "display_name": "Vietnamese Dong"
+    "One": "Vietnamese dong",
+    "Other": "Vietnamese dong",
+    "DisplayName": "Vietnamese Dong"
+  }
 }

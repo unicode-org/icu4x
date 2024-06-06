@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "Ekvator Ginesi Ekuelesi"
+  "placeholders": {
+    "DisplayName": "Ekvator Ginesi Ekuelesi"
+  }
 }

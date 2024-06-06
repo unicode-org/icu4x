@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "bir"
-  },
-  "other_placeholder": "bires",
-  "display_name": "bir"
+    "One": "bir",
+    "Other": "bires",
+    "DisplayName": "bir"
+  }
 }

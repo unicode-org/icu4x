@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "brazilski novi kruzeiro (1967–1986)",
-    "Few": "brazilska nova kruzeira (1967–1986)"
-  },
-  "other_placeholder": "brazilskih novih kruzeira (1967–1986)",
-  "display_name": "Brazilski novi kruzeiro (1967–1986)"
+    "Few": "brazilska nova kruzeira (1967–1986)",
+    "Other": "brazilskih novih kruzeira (1967–1986)",
+    "DisplayName": "Brazilski novi kruzeiro (1967–1986)"
+  }
 }

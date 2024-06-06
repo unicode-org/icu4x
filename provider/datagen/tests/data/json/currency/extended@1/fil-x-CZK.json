@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "koruna ng Czech Republic"
-  },
-  "other_placeholder": "korunas ng Czech Republic",
-  "display_name": "Koruna ng Czech Republic"
+    "One": "koruna ng Czech Republic",
+    "Other": "korunas ng Czech Republic",
+    "DisplayName": "Koruna ng Czech Republic"
+  }
 }

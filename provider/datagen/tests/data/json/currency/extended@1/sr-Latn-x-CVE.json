@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "zelenortski eskudo",
-    "Few": "zelenortska eskuda"
-  },
-  "other_placeholder": "zelenortskih eskuda",
-  "display_name": "zelenortski eskudo"
+    "Few": "zelenortska eskuda",
+    "Other": "zelenortskih eskuda",
+    "DisplayName": "zelenortski eskudo"
+  }
 }

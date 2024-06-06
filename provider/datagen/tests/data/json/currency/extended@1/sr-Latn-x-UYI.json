@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "urugvajski pezo en unidades indeksades",
-    "Few": "urugvajska pezosa en unidades indeksadesa"
-  },
-  "other_placeholder": "ugvajskih pezosa en unidades indeksadesa",
-  "display_name": "Urugvajski pezo en unidades indeksadas"
+    "Few": "urugvajska pezosa en unidades indeksadesa",
+    "Other": "ugvajskih pezosa en unidades indeksadesa",
+    "DisplayName": "Urugvajski pezo en unidades indeksadas"
+  }
 }

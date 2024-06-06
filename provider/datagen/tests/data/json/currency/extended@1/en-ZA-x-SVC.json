@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Salvadoran colón"
-  },
-  "other_placeholder": "Salvadoran colones",
-  "display_name": "Salvadoran Colón"
+    "One": "Salvadoran colón",
+    "Other": "Salvadoran colones",
+    "DisplayName": "Salvadoran Colón"
+  }
 }

@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "কেপ ভার্দে এসকুডো"
+  "placeholders": {
+    "DisplayName": "কেপ ভার্দে এসকুডো"
+  }
 }

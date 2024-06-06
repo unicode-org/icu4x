@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "schilling autrichien"
-  },
-  "other_placeholder": "schillings autrichiens",
-  "display_name": "schilling autrichien"
+    "One": "schilling autrichien",
+    "Other": "schillings autrichiens",
+    "DisplayName": "schilling autrichien"
+  }
 }

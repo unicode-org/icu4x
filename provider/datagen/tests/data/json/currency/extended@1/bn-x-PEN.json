@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "পেরুভিয়ান সোল"
+  "placeholders": {
+    "DisplayName": "পেরুভিয়ান সোল"
+  }
 }

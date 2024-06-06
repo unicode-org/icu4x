@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Macedonian denar"
-  },
-  "other_placeholder": "Macedonian denari",
-  "display_name": "Macedonian Denar"
+    "One": "Macedonian denar",
+    "Other": "Macedonian denari",
+    "DisplayName": "Macedonian Denar"
+  }
 }

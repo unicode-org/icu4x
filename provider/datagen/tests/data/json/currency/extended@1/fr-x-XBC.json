@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "unité de compte 9 européenne (UEC–9)"
-  },
-  "other_placeholder": "unités de compte 9 européennes (UEC–9)",
-  "display_name": "unité de compte européenne (XBC)"
+    "One": "unité de compte 9 européenne (UEC–9)",
+    "Other": "unités de compte 9 européennes (UEC–9)",
+    "DisplayName": "unité de compte européenne (XBC)"
+  }
 }

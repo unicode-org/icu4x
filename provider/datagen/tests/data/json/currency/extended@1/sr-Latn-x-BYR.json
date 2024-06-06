@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "beloruska rublja (2000–2016)",
-    "Few": "beloruske rublje (2000–2016)"
-  },
-  "other_placeholder": "beloruskih rublji (2000–2016)",
-  "display_name": "Beloruska rublja (2000–2016)"
+    "Few": "beloruske rublje (2000–2016)",
+    "Other": "beloruskih rublji (2000–2016)",
+    "DisplayName": "Beloruska rublja (2000–2016)"
+  }
 }

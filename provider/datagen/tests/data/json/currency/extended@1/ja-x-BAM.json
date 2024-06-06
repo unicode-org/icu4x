@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "ボスニア・ヘルツェゴビナ 兌換マルク (BAM)"
+  "placeholders": {
+    "DisplayName": "ボスニア・ヘルツェゴビナ 兌換マルク (BAM)"
+  }
 }

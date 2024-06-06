@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dirham marocain"
-  },
-  "other_placeholder": "dirhams marocains",
-  "display_name": "dirham marocain"
+    "One": "dirham marocain",
+    "Other": "dirhams marocains",
+    "DisplayName": "dirham marocain"
+  }
 }

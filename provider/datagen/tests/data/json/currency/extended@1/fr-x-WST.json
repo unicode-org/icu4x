@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "tala samoan"
-  },
-  "other_placeholder": "talas samoans",
-  "display_name": "tala samoan"
+    "One": "tala samoan",
+    "Other": "talas samoans",
+    "DisplayName": "tala samoan"
+  }
 }

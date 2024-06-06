@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Bulgar levası (1879–1952)"
-  },
-  "other_placeholder": "Bulgar levası (1879–1952)",
-  "display_name": "Bulgar Levası (1879–1952)"
+    "One": "Bulgar levası (1879–1952)",
+    "Other": "Bulgar levası (1879–1952)",
+    "DisplayName": "Bulgar Levası (1879–1952)"
+  }
 }

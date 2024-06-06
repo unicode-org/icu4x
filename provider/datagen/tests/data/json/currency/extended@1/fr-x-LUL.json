@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "franc financier luxembourgeois"
-  },
-  "other_placeholder": "francs financiers luxembourgeois",
-  "display_name": "franc financier luxembourgeois"
+    "One": "franc financier luxembourgeois",
+    "Other": "francs financiers luxembourgeois",
+    "DisplayName": "franc financier luxembourgeois"
+  }
 }

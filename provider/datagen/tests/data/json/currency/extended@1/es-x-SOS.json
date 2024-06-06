@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "chelín somalí"
-  },
-  "other_placeholder": "chelines somalíes",
-  "display_name": "chelín somalí"
+    "One": "chelín somalí",
+    "Other": "chelines somalíes",
+    "DisplayName": "chelín somalí"
+  }
 }

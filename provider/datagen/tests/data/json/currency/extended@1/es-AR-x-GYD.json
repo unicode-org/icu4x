@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dólar guyanés"
-  },
-  "other_placeholder": "dólares guyaneses",
-  "display_name": "dólar guyanés"
+    "One": "dólar guyanés",
+    "Other": "dólares guyaneses",
+    "DisplayName": "dólar guyanés"
+  }
 }

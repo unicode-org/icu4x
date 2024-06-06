@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Bangladeshi taka"
-  },
-  "other_placeholder": "Bangladeshi takas",
-  "display_name": "Bangladeshi Taka"
+    "One": "Bangladeshi taka",
+    "Other": "Bangladeshi takas",
+    "DisplayName": "Bangladeshi Taka"
+  }
 }

@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "নিউজিল্যান্ড ডলার"
+  "placeholders": {
+    "DisplayName": "নিউজিল্যান্ড ডলার"
+  }
 }

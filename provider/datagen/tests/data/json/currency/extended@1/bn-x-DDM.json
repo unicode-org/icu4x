@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "পূর্ব জার্মান মার্ক"
+  "placeholders": {
+    "DisplayName": "পূর্ব জার্মান মার্ক"
+  }
 }

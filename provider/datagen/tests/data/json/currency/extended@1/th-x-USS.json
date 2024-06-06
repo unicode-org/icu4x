@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "ดอลลาร์สหรัฐ (วันเดียวกัน)"
+  "placeholders": {
+    "DisplayName": "ดอลลาร์สหรัฐ (วันเดียวกัน)"
+  }
 }

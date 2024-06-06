@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Zimbabwean dollar (1980–2008)"
-  },
-  "other_placeholder": "Zimbabwean dollars (1980–2008)",
-  "display_name": "Zimbabwean Dollar (1980–2008)"
+    "One": "Zimbabwean dollar (1980–2008)",
+    "Other": "Zimbabwean dollars (1980–2008)",
+    "DisplayName": "Zimbabwean Dollar (1980–2008)"
+  }
 }

@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "Kuzey Kore wonu"
+  "placeholders": {
+    "DisplayName": "Kuzey Kore wonu"
+  }
 }

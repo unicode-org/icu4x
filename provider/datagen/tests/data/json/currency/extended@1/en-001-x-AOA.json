@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Angolan kwanza"
-  },
-  "other_placeholder": "Angolan kwanzas",
-  "display_name": "Angolan Kwanza"
+    "One": "Angolan kwanza",
+    "Other": "Angolan kwanzas",
+    "DisplayName": "Angolan Kwanza"
+  }
 }

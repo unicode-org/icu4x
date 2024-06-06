@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dinar convertible yugoslavo"
-  },
-  "other_placeholder": "dinares convertibles yugoslavos",
-  "display_name": "dinar convertible yugoslavo"
+    "One": "dinar convertible yugoslavo",
+    "Other": "dinares convertibles yugoslavos",
+    "DisplayName": "dinar convertible yugoslavo"
+  }
 }

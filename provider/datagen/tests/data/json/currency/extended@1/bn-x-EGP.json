@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "মিশরীয় পাউন্ড"
+  "placeholders": {
+    "DisplayName": "মিশরীয় পাউন্ড"
+  }
 }

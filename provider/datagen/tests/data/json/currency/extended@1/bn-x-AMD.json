@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "আরমেনিয়ান দ্রাম"
+  "placeholders": {
+    "DisplayName": "আরমেনিয়ান দ্রাম"
+  }
 }

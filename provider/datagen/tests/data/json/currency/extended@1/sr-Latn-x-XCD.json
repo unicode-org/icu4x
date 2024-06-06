@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "istočnokaripski dolar",
-    "Few": "istočnokaripska dolara"
-  },
-  "other_placeholder": "istočnokaripskix dolara",
-  "display_name": "istočnokaripski dolar"
+    "Few": "istočnokaripska dolara",
+    "Other": "istočnokaripskix dolara",
+    "DisplayName": "istočnokaripski dolar"
+  }
 }

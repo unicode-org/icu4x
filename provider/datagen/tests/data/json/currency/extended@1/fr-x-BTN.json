@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "ngultrum bouthanais"
-  },
-  "other_placeholder": "ngultrums bouthanais",
-  "display_name": "ngultrum bouthanais"
+    "One": "ngultrum bouthanais",
+    "Other": "ngultrums bouthanais",
+    "DisplayName": "ngultrum bouthanais"
+  }
 }

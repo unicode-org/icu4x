@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "স্লোভানিয়া টোলার"
+  "placeholders": {
+    "DisplayName": "স্লোভানিয়া টোলার"
+  }
 }

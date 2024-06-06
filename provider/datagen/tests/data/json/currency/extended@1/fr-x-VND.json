@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dông vietnamien"
-  },
-  "other_placeholder": "dôngs vietnamiens",
-  "display_name": "dông vietnamien"
+    "One": "dông vietnamien",
+    "Other": "dôngs vietnamiens",
+    "DisplayName": "dông vietnamien"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Sosyalist Bulgaristan levası"
-  },
-  "other_placeholder": "Sosyalist Bulgaristan levası",
-  "display_name": "Sosyalist Bulgaristan Levası"
+    "One": "Sosyalist Bulgaristan levası",
+    "Other": "Sosyalist Bulgaristan levası",
+    "DisplayName": "Sosyalist Bulgaristan Levası"
+  }
 }

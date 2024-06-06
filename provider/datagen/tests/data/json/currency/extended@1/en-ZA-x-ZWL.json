@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Zimbabwean dollar (2009)"
-  },
-  "other_placeholder": "Zimbabwean dollars (2009)",
-  "display_name": "Zimbabwean Dollar (2009)"
+    "One": "Zimbabwean dollar (2009)",
+    "Other": "Zimbabwean dollars (2009)",
+    "DisplayName": "Zimbabwean Dollar (2009)"
+  }
 }

@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "Динар Боснии и Герцеговины"
+  "placeholders": {
+    "DisplayName": "Динар Боснии и Герцеговины"
+  }
 }

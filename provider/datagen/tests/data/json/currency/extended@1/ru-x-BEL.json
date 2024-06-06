@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "Бельгийский франк (финансовый)"
+  "placeholders": {
+    "DisplayName": "Бельгийский франк (финансовый)"
+  }
 }

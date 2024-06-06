@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "El Salvador Kolonu"
+  "placeholders": {
+    "DisplayName": "El Salvador Kolonu"
+  }
 }

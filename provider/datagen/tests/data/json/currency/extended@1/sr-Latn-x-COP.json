@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "kolumbijski pezos",
-    "Few": "kolumbijska pezosa"
-  },
-  "other_placeholder": "kolumbijskih pezosa",
-  "display_name": "kolumbijski pezos"
+    "Few": "kolumbijska pezosa",
+    "Other": "kolumbijskih pezosa",
+    "DisplayName": "kolumbijski pezos"
+  }
 }

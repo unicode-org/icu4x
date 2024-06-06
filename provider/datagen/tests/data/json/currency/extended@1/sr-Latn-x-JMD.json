@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "jamajčanski dolar",
-    "Few": "jamajčanska dolara"
-  },
-  "other_placeholder": "jamajčanskix dolara",
-  "display_name": "jamajčanski dolar"
+    "Few": "jamajčanska dolara",
+    "Other": "jamajčanskix dolara",
+    "DisplayName": "jamajčanski dolar"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "peso filipino"
-  },
-  "other_placeholder": "pesos filipinos",
-  "display_name": "peso filipino"
+    "One": "peso filipino",
+    "Other": "pesos filipinos",
+    "DisplayName": "peso filipino"
+  }
 }

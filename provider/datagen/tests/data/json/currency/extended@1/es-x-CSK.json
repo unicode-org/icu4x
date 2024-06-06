@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "corona fuerte checoslovaca"
-  },
-  "other_placeholder": "coronas fuertes checoslovacas",
-  "display_name": "corona fuerte checoslovaca"
+    "One": "corona fuerte checoslovaca",
+    "Other": "coronas fuertes checoslovacas",
+    "DisplayName": "corona fuerte checoslovaca"
+  }
 }

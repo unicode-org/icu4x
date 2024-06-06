@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "alžirski dinar",
-    "Few": "alžirska dinara"
-  },
-  "other_placeholder": "alžirskih dinara",
-  "display_name": "alžirski dinar"
+    "Few": "alžirska dinara",
+    "Other": "alžirskih dinara",
+    "DisplayName": "alžirski dinar"
+  }
 }

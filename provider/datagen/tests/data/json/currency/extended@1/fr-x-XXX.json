@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "devise inconnue"
-  },
-  "other_placeholder": "devises inconnues",
-  "display_name": "devise inconnue ou non valide"
+    "One": "devise inconnue",
+    "Other": "devises inconnues",
+    "DisplayName": "devise inconnue ou non valide"
+  }
 }

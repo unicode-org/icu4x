@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "tolar slovène"
-  },
-  "other_placeholder": "tolars slovènes",
-  "display_name": "tolar slovène"
+    "One": "tolar slovène",
+    "Other": "tolars slovènes",
+    "DisplayName": "tolar slovène"
+  }
 }

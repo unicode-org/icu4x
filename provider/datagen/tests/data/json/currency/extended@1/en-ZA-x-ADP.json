@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Andorran peseta"
-  },
-  "other_placeholder": "Andorran pesetas",
-  "display_name": "Andorran Peseta"
+    "One": "Andorran peseta",
+    "Other": "Andorran pesetas",
+    "DisplayName": "Andorran Peseta"
+  }
 }

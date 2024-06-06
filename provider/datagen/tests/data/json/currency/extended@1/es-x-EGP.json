@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "libra egipcia"
-  },
-  "other_placeholder": "libras egipcias",
-  "display_name": "libra egipcia"
+    "One": "libra egipcia",
+    "Other": "libras egipcias",
+    "DisplayName": "libra egipcia"
+  }
 }

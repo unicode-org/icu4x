@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Comorian franc"
-  },
-  "other_placeholder": "Comorian francs",
-  "display_name": "Comorian Franc"
+    "One": "Comorian franc",
+    "Other": "Comorian francs",
+    "DisplayName": "Comorian Franc"
+  }
 }

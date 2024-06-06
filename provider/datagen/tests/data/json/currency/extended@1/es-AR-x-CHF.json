@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "franco suizo"
-  },
-  "other_placeholder": "francos suizos",
-  "display_name": "franco suizo"
+    "One": "franco suizo",
+    "Other": "francos suizos",
+    "DisplayName": "franco suizo"
+  }
 }

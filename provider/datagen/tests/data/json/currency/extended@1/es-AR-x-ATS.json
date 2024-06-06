@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "chelín austriaco"
-  },
-  "other_placeholder": "chelines austriacos",
-  "display_name": "chelín austriaco"
+    "One": "chelín austriaco",
+    "Other": "chelines austriacos",
+    "DisplayName": "chelín austriaco"
+  }
 }

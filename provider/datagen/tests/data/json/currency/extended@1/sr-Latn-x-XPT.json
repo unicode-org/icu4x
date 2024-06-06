@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "platina",
-    "Few": "platine"
-  },
-  "other_placeholder": "platina",
-  "display_name": "Platina"
+    "Few": "platine",
+    "Other": "platina",
+    "DisplayName": "Platina"
+  }
 }

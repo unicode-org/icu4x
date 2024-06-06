@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "peso chilien"
-  },
-  "other_placeholder": "pesos chiliens",
-  "display_name": "peso chilien"
+    "One": "peso chilien",
+    "Other": "pesos chiliens",
+    "DisplayName": "peso chilien"
+  }
 }

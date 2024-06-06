@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Laotian kip"
-  },
-  "other_placeholder": "Laotian kips",
-  "display_name": "Laotian Kip"
+    "One": "Laotian kip",
+    "Other": "Laotian kips",
+    "DisplayName": "Laotian Kip"
+  }
 }

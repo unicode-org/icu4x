@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "เอ็งกุลตรัมภูฏาน"
+  "placeholders": {
+    "DisplayName": "เอ็งกุลตรัมภูฏาน"
+  }
 }

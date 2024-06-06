@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "tajlandski bat",
-    "Few": "tajlandska bata"
-  },
-  "other_placeholder": "tajlandskih bata",
-  "display_name": "tajlandski bat"
+    "Few": "tajlandska bata",
+    "Other": "tajlandskih bata",
+    "DisplayName": "tajlandski bat"
+  }
 }

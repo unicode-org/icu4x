@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "peso d’argent mexicain (1861–1992)"
-  },
-  "other_placeholder": "pesos d’argent mexicains (1861–1992)",
-  "display_name": "peso d’argent mexicain (1861–1992)"
+    "One": "peso d’argent mexicain (1861–1992)",
+    "Other": "pesos d’argent mexicains (1861–1992)",
+    "DisplayName": "peso d’argent mexicain (1861–1992)"
+  }
 }

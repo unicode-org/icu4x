@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "riel"
-  },
-  "other_placeholder": "rieles",
-  "display_name": "riel"
+    "One": "riel",
+    "Other": "rieles",
+    "DisplayName": "riel"
+  }
 }

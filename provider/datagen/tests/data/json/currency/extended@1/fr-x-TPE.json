@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "escudo timorais"
-  },
-  "other_placeholder": "escudos timorais",
-  "display_name": "escudo timorais"
+    "One": "escudo timorais",
+    "Other": "escudos timorais",
+    "DisplayName": "escudo timorais"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "rand sud-africain"
-  },
-  "other_placeholder": "rands sud-africains",
-  "display_name": "rand sud-africain"
+    "One": "rand sud-africain",
+    "Other": "rands sud-africains",
+    "DisplayName": "rand sud-africain"
+  }
 }

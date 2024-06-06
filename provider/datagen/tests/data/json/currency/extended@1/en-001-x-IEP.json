@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Irish pound"
-  },
-  "other_placeholder": "Irish pounds",
-  "display_name": "Irish Pound"
+    "One": "Irish pound",
+    "Other": "Irish pounds",
+    "DisplayName": "Irish Pound"
+  }
 }

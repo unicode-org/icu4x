@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "zambijska kvača",
-    "Few": "zambijske kvače"
-  },
-  "other_placeholder": "zambijskih kvača",
-  "display_name": "zambijska kvača"
+    "Few": "zambijske kvače",
+    "Other": "zambijskih kvača",
+    "DisplayName": "zambijska kvača"
+  }
 }

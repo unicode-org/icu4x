@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Sierra Leonean leone"
-  },
-  "other_placeholder": "Sierra Leonean leones",
-  "display_name": "Sierra Leonean Leone"
+    "One": "Sierra Leonean leone",
+    "Other": "Sierra Leonean leones",
+    "DisplayName": "Sierra Leonean Leone"
+  }
 }

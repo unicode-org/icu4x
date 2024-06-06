@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Falkland Islands pound"
-  },
-  "other_placeholder": "Falkland Islands pounds",
-  "display_name": "Falkland Islands Pound"
+    "One": "Falkland Islands pound",
+    "Other": "Falkland Islands pounds",
+    "DisplayName": "Falkland Islands Pound"
+  }
 }

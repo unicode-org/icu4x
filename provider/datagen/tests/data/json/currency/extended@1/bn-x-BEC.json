@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "বেলজিয়ান ফ্রাঙ্ক (রূপান্তরযোগ্য)"
+  "placeholders": {
+    "DisplayName": "বেলজিয়ান ফ্রাঙ্ক (রূপান্তরযোগ্য)"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Slovak koruna"
-  },
-  "other_placeholder": "Slovak korunas",
-  "display_name": "Slovak Koruna"
+    "One": "Slovak koruna",
+    "Other": "Slovak korunas",
+    "DisplayName": "Slovak Koruna"
+  }
 }

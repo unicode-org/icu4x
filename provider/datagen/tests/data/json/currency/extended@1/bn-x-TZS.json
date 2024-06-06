@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "তাঞ্জনিয়া শিলিং"
+  "placeholders": {
+    "DisplayName": "তাঞ্জনিয়া শিলিং"
+  }
 }

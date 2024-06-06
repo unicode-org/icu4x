@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "peseta española (cuenta convertible)"
-  },
-  "other_placeholder": "pesetas españolas (cuenta convertible)",
-  "display_name": "peseta española (cuenta convertible)"
+    "One": "peseta española (cuenta convertible)",
+    "Other": "pesetas españolas (cuenta convertible)",
+    "DisplayName": "peseta española (cuenta convertible)"
+  }
 }

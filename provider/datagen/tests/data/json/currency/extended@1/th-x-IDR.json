@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "รูเปียห์อินโดนีเซีย"
+  "placeholders": {
+    "DisplayName": "รูเปียห์อินโดนีเซีย"
+  }
 }

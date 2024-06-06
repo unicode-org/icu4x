@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "franc congolais"
-  },
-  "other_placeholder": "francs congolais",
-  "display_name": "franc congolais"
+    "One": "franc congolais",
+    "Other": "francs congolais",
+    "DisplayName": "franc congolais"
+  }
 }

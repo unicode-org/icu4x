@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "платина",
-    "Few": "платине"
-  },
-  "other_placeholder": "платина",
-  "display_name": "Платина"
+    "Few": "платине",
+    "Other": "платина",
+    "DisplayName": "Платина"
+  }
 }

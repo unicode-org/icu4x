@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "honduraška lempira",
-    "Few": "honduraške lempire"
-  },
-  "other_placeholder": "honduraških lempira",
-  "display_name": "honduraška lempira"
+    "Few": "honduraške lempire",
+    "Other": "honduraških lempira",
+    "DisplayName": "honduraška lempira"
+  }
 }

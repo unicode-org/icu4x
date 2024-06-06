@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "franc or"
-  },
-  "other_placeholder": "francs or",
-  "display_name": "franc or"
+    "One": "franc or",
+    "Other": "francs or",
+    "DisplayName": "franc or"
+  }
 }

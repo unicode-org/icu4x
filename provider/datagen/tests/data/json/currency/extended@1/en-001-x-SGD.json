@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Singapore dollar"
-  },
-  "other_placeholder": "Singapore dollars",
-  "display_name": "Singapore Dollar"
+    "One": "Singapore dollar",
+    "Other": "Singapore dollars",
+    "DisplayName": "Singapore Dollar"
+  }
 }

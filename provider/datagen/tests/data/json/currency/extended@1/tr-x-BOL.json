@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Bolivya bolivyanosu (1863–1963)"
-  },
-  "other_placeholder": "Bolivya bolivyanosu (1863–1963)",
-  "display_name": "Bolivya Bolivyanosu (1863–1963)"
+    "One": "Bolivya bolivyanosu (1863–1963)",
+    "Other": "Bolivya bolivyanosu (1863–1963)",
+    "DisplayName": "Bolivya Bolivyanosu (1863–1963)"
+  }
 }

@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "ruandski franak",
-    "Few": "ruandska franka"
-  },
-  "other_placeholder": "ruandskih franaka",
-  "display_name": "ruandski franak"
+    "Few": "ruandska franka",
+    "Other": "ruandskih franaka",
+    "DisplayName": "ruandski franak"
+  }
 }

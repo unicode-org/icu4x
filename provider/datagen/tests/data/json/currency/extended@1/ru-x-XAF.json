@@ -2,8 +2,8 @@
   "placeholders": {
     "One": "франк КФА ВЕАС",
     "Few": "франка КФА ВЕАС",
-    "Many": "франков КФА ВЕАС"
-  },
-  "other_placeholder": "франка КФА ВЕАС",
-  "display_name": "франк КФА BEAC"
+    "Many": "франков КФА ВЕАС",
+    "Other": "франка КФА ВЕАС",
+    "DisplayName": "франк КФА BEAC"
+  }
 }

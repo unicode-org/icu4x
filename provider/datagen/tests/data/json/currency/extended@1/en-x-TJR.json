@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Tajikistani ruble"
-  },
-  "other_placeholder": "Tajikistani rubles",
-  "display_name": "Tajikistani Ruble"
+    "One": "Tajikistani ruble",
+    "Other": "Tajikistani rubles",
+    "DisplayName": "Tajikistani Ruble"
+  }
 }

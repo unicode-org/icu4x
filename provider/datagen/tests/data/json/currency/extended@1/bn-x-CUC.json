@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "কিউবান রূপান্তরযোগ্য পেসো"
+  "placeholders": {
+    "DisplayName": "কিউবান রূপান্তরযোগ্য পেসো"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dobra (1977–2017)"
-  },
-  "other_placeholder": "dobras (1977–2017)",
-  "display_name": "dobra (1977–2017)"
+    "One": "dobra (1977–2017)",
+    "Other": "dobras (1977–2017)",
+    "DisplayName": "dobra (1977–2017)"
+  }
 }

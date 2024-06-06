@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "libra malvinense"
-  },
-  "other_placeholder": "libras malvinenses",
-  "display_name": "libra malvinense"
+    "One": "libra malvinense",
+    "Other": "libras malvinenses",
+    "DisplayName": "libra malvinense"
+  }
 }

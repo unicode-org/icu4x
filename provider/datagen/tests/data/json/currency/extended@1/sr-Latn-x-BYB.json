@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "beloruska nova rublja (1994–1999)",
-    "Few": "beloruske nove rublja (1994–1999)"
-  },
-  "other_placeholder": "beloruskih novih rublji (1994–1999)",
-  "display_name": "Beloruska nova rublja (1994–1999)"
+    "Few": "beloruske nove rublja (1994–1999)",
+    "Other": "beloruskih novih rublji (1994–1999)",
+    "DisplayName": "Beloruska nova rublja (1994–1999)"
+  }
 }

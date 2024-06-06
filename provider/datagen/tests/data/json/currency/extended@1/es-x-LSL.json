@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "loti lesotense"
-  },
-  "other_placeholder": "lotis lesotenses",
-  "display_name": "loti lesotense"
+    "One": "loti lesotense",
+    "Other": "lotis lesotenses",
+    "DisplayName": "loti lesotense"
+  }
 }

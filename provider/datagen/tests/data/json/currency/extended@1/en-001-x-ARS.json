@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Argentine peso"
-  },
-  "other_placeholder": "Argentine pesos",
-  "display_name": "Argentine Peso"
+    "One": "Argentine peso",
+    "Other": "Argentine pesos",
+    "DisplayName": "Argentine Peso"
+  }
 }

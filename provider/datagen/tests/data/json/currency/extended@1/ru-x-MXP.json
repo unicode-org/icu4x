@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "Мексиканское серебряное песо (1861–1992)"
+  "placeholders": {
+    "DisplayName": "Мексиканское серебряное песо (1861–1992)"
+  }
 }

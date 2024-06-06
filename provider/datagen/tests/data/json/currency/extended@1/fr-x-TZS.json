@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "shilling tanzanien"
-  },
-  "other_placeholder": "shillings tanzaniens",
-  "display_name": "shilling tanzanien"
+    "One": "shilling tanzanien",
+    "Other": "shillings tanzaniens",
+    "DisplayName": "shilling tanzanien"
+  }
 }

@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "avganistanski avgani",
-    "Few": "avganistanska avgana"
-  },
-  "other_placeholder": "avganistanskih avgana",
-  "display_name": "avganistanski avgani"
+    "Few": "avganistanska avgana",
+    "Other": "avganistanskih avgana",
+    "DisplayName": "avganistanski avgani"
+  }
 }

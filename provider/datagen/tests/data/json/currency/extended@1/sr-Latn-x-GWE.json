@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "portugalsko-gvinejski eskudo",
-    "Few": "portugalsko-gvinejska eskuda"
-  },
-  "other_placeholder": "portugalsko-gvinejskih eskuda",
-  "display_name": "Portugalska gvineja eskudo"
+    "Few": "portugalsko-gvinejska eskuda",
+    "Other": "portugalsko-gvinejskih eskuda",
+    "DisplayName": "Portugalska gvineja eskudo"
+  }
 }

@@ -1,5 +1,6 @@
 {
-  "placeholders": {},
-  "other_placeholder": "円",
-  "display_name": "日本円"
+  "placeholders": {
+    "Other": "円",
+    "DisplayName": "日本円"
+  }
 }

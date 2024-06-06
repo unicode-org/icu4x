@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "RINET Funds unit"
-  },
-  "other_placeholder": "RINET Funds units",
-  "display_name": "RINET Funds"
+    "One": "RINET Funds unit",
+    "Other": "RINET Funds units",
+    "DisplayName": "RINET Funds"
+  }
 }

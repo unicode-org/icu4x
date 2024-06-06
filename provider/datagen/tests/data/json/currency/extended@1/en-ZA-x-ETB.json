@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Ethiopian birr"
-  },
-  "other_placeholder": "Ethiopian birr",
-  "display_name": "Ethiopian Birr"
+    "One": "Ethiopian birr",
+    "Other": "Ethiopian birr",
+    "DisplayName": "Ethiopian Birr"
+  }
 }

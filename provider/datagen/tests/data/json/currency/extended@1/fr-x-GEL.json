@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "lari géorgien"
-  },
-  "other_placeholder": "lari géorgiens",
-  "display_name": "lari géorgien"
+    "One": "lari géorgien",
+    "Other": "lari géorgiens",
+    "DisplayName": "lari géorgien"
+  }
 }

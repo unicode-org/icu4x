@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "couronne islandaise"
-  },
-  "other_placeholder": "couronnes islandaises",
-  "display_name": "couronne islandaise"
+    "One": "couronne islandaise",
+    "Other": "couronnes islandaises",
+    "DisplayName": "couronne islandaise"
+  }
 }

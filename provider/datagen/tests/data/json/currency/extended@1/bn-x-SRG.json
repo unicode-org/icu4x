@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "সুরিনাম গিল্ডার"
+  "placeholders": {
+    "DisplayName": "সুরিনাম গিল্ডার"
+  }
 }

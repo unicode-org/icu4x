@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "vatu"
-  },
-  "other_placeholder": "vatus",
-  "display_name": "vatu"
+    "One": "vatu",
+    "Other": "vatus",
+    "DisplayName": "vatu"
+  }
 }

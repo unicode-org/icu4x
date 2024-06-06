@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Uruguayan nominal wage index unit"
-  },
-  "other_placeholder": "Uruguayan nominal wage index units",
-  "display_name": "Uruguayan Nominal Wage Index Unit"
+    "One": "Uruguayan nominal wage index unit",
+    "Other": "Uruguayan nominal wage index units",
+    "DisplayName": "Uruguayan Nominal Wage Index Unit"
+  }
 }

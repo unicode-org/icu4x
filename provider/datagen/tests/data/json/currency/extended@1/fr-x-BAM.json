@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "mark convertible bosniaque"
-  },
-  "other_placeholder": "marks convertibles bosniaques",
-  "display_name": "mark convertible bosniaque"
+    "One": "mark convertible bosniaque",
+    "Other": "marks convertibles bosniaques",
+    "DisplayName": "mark convertible bosniaque"
+  }
 }

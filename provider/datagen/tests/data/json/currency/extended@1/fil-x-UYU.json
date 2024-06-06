@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "piso ng Uruguay"
-  },
-  "other_placeholder": "piso ng Uruguay",
-  "display_name": "Piso ng Uruguay"
+    "One": "piso ng Uruguay",
+    "Other": "piso ng Uruguay",
+    "DisplayName": "Piso ng Uruguay"
+  }
 }

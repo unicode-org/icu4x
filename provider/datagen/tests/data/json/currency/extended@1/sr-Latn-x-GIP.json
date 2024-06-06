@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "gibraltarska funta",
-    "Few": "gibraltarske funte"
-  },
-  "other_placeholder": "gibraltarskih funti",
-  "display_name": "gibraltarska funta"
+    "Few": "gibraltarske funte",
+    "Other": "gibraltarskih funti",
+    "DisplayName": "gibraltarska funta"
+  }
 }

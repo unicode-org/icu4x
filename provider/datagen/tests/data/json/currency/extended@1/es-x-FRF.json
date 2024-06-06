@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "franco francés"
-  },
-  "other_placeholder": "francos franceses",
-  "display_name": "franco francés"
+    "One": "franco francés",
+    "Other": "francos franceses",
+    "DisplayName": "franco francés"
+  }
 }

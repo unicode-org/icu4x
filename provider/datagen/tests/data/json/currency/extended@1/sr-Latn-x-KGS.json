@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "kirgistanski som",
-    "Few": "kirgistanska soma"
-  },
-  "other_placeholder": "kirgistanskih soma",
-  "display_name": "kirgistanski som"
+    "Few": "kirgistanska soma",
+    "Other": "kirgistanskih soma",
+    "DisplayName": "kirgistanski som"
+  }
 }

@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "ฟรังก์มาดากัสการ์"
+  "placeholders": {
+    "DisplayName": "ฟรังก์มาดากัสการ์"
+  }
 }

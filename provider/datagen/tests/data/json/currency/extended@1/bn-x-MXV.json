@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "মেক্সিকান উনিদাদ দি ইনভার্সান (UDI)"
+  "placeholders": {
+    "DisplayName": "মেক্সিকান উনিদাদ দি ইনভার্সান (UDI)"
+  }
 }

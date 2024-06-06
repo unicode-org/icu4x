@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Argentine peso ley (1970–1983)"
-  },
-  "other_placeholder": "Argentine pesos ley (1970–1983)",
-  "display_name": "Argentine Peso Ley (1970–1983)"
+    "One": "Argentine peso ley (1970–1983)",
+    "Other": "Argentine pesos ley (1970–1983)",
+    "DisplayName": "Argentine Peso Ley (1970–1983)"
+  }
 }

@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "saudijski rijal",
-    "Few": "saudijska rijala"
-  },
-  "other_placeholder": "saudijskih rijala",
-  "display_name": "saudijski rijal"
+    "Few": "saudijska rijala",
+    "Other": "saudijskih rijala",
+    "DisplayName": "saudijski rijal"
+  }
 }

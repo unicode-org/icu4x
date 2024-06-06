@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Kyrgystani som"
-  },
-  "other_placeholder": "Kyrgystani soms",
-  "display_name": "Kyrgystani Som"
+    "One": "Kyrgystani som",
+    "Other": "Kyrgystani soms",
+    "DisplayName": "Kyrgystani Som"
+  }
 }

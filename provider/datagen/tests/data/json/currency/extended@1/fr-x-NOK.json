@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "couronne norvégienne"
-  },
-  "other_placeholder": "couronnes norvégiennes",
-  "display_name": "couronne norvégienne"
+    "One": "couronne norvégienne",
+    "Other": "couronnes norvégiennes",
+    "DisplayName": "couronne norvégienne"
+  }
 }

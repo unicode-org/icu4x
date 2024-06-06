@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "brazilski kruzados",
-    "Few": "brazilska kruzadosa"
-  },
-  "other_placeholder": "brazilskih kruzadosa",
-  "display_name": "Brazilijski kruzado"
+    "Few": "brazilska kruzadosa",
+    "Other": "brazilskih kruzadosa",
+    "DisplayName": "Brazilijski kruzado"
+  }
 }

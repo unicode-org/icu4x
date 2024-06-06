@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "Meksika pesosu"
+  "placeholders": {
+    "DisplayName": "Meksika pesosu"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Aruban florin"
-  },
-  "other_placeholder": "Aruban florin",
-  "display_name": "Aruban Florin"
+    "One": "Aruban florin",
+    "Other": "Aruban florin",
+    "DisplayName": "Aruban Florin"
+  }
 }

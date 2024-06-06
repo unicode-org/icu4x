@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "BAE dirhemi"
-  },
-  "other_placeholder": "BAE dirhemi",
-  "display_name": "Birleşik Arap Emirlikleri dirhemi"
+    "One": "BAE dirhemi",
+    "Other": "BAE dirhemi",
+    "DisplayName": "Birleşik Arap Emirlikleri dirhemi"
+  }
 }

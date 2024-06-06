@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "zapadnoafrički franak",
-    "Few": "zapadnoafrička franka"
-  },
-  "other_placeholder": "zapadnoafričkih franaka",
-  "display_name": "zapadnoafrički franak"
+    "Few": "zapadnoafrička franka",
+    "Other": "zapadnoafričkih franaka",
+    "DisplayName": "zapadnoafrički franak"
+  }
 }

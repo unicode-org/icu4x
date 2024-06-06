@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "কানাডিয়ান ডলার"
+  "placeholders": {
+    "DisplayName": "কানাডিয়ান ডলার"
+  }
 }

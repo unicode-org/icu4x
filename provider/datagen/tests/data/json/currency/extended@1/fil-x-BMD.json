@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dolyar ng Bermuda"
-  },
-  "other_placeholder": "dolyares ng Bermuda",
-  "display_name": "Dolyar ng Bermuda"
+    "One": "dolyar ng Bermuda",
+    "Other": "dolyares ng Bermuda",
+    "DisplayName": "Dolyar ng Bermuda"
+  }
 }

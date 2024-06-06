@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "ليتا ليتوانية"
+  "placeholders": {
+    "DisplayName": "ليتا ليتوانية"
+  }
 }

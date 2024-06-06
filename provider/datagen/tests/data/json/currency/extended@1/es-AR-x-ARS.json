@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "peso argentino"
-  },
-  "other_placeholder": "pesos argentinos",
-  "display_name": "peso argentino"
+    "One": "peso argentino",
+    "Other": "pesos argentinos",
+    "DisplayName": "peso argentino"
+  }
 }

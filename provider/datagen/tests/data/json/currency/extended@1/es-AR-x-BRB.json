@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "nuevo cruzado brasileño (BRB)"
-  },
-  "other_placeholder": "nuevos cruzados brasileños (BRB)",
-  "display_name": "nuevo cruceiro brasileño (1967–1986)"
+    "One": "nuevo cruzado brasileño (BRB)",
+    "Other": "nuevos cruzados brasileños (BRB)",
+    "DisplayName": "nuevo cruceiro brasileño (1967–1986)"
+  }
 }

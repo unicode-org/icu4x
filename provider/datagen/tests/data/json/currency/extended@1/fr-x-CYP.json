@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "livre chypriote"
-  },
-  "other_placeholder": "livres chypriotes",
-  "display_name": "livre chypriote"
+    "One": "livre chypriote",
+    "Other": "livres chypriotes",
+    "DisplayName": "livre chypriote"
+  }
 }

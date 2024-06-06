@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "Белорусский рубль (1994–1999)"
+  "placeholders": {
+    "DisplayName": "Белорусский рубль (1994–1999)"
+  }
 }

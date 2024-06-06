@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "livre sterling"
-  },
-  "other_placeholder": "livres sterling",
-  "display_name": "livre sterling"
+    "One": "livre sterling",
+    "Other": "livres sterling",
+    "DisplayName": "livre sterling"
+  }
 }

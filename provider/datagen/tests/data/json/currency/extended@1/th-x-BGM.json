@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "โซเชียลลิสต์เลฟบัลแกเรีย"
+  "placeholders": {
+    "DisplayName": "โซเชียลลิสต์เลฟบัลแกเรีย"
+  }
 }

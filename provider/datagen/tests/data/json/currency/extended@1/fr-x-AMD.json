@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dram arménien"
-  },
-  "other_placeholder": "drams arméniens",
-  "display_name": "dram arménien"
+    "One": "dram arménien",
+    "Other": "drams arméniens",
+    "DisplayName": "dram arménien"
+  }
 }

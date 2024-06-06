@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dinar tunisien"
-  },
-  "other_placeholder": "dinars tunisiens",
-  "display_name": "dinar tunisien"
+    "One": "dinar tunisien",
+    "Other": "dinars tunisiens",
+    "DisplayName": "dinar tunisien"
+  }
 }

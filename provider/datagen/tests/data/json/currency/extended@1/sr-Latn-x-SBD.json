@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "solomonski dolar",
-    "Few": "solomonska dolara"
-  },
-  "other_placeholder": "solomonskih dolara",
-  "display_name": "solomonski dolar"
+    "Few": "solomonska dolara",
+    "Other": "solomonskih dolara",
+    "DisplayName": "solomonski dolar"
+  }
 }

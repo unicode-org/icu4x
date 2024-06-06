@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "chelín ugandés"
-  },
-  "other_placeholder": "chelines ugandeses",
-  "display_name": "chelín ugandés"
+    "One": "chelín ugandés",
+    "Other": "chelines ugandeses",
+    "DisplayName": "chelín ugandés"
+  }
 }

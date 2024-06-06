@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Moldovan leu"
-  },
-  "other_placeholder": "Moldovan lei",
-  "display_name": "Moldovan Leu"
+    "One": "Moldovan leu",
+    "Other": "Moldovan lei",
+    "DisplayName": "Moldovan Leu"
+  }
 }

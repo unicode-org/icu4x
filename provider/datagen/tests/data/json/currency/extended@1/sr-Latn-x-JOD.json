@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "jordanski dinar",
-    "Few": "jordanska dinara"
-  },
-  "other_placeholder": "jordanskih dinara",
-  "display_name": "jordanski dinar"
+    "Few": "jordanska dinara",
+    "Other": "jordanskih dinara",
+    "DisplayName": "jordanski dinar"
+  }
 }

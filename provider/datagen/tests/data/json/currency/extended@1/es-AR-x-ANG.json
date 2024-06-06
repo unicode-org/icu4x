@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "florín de las Antillas Neerlandesas"
-  },
-  "other_placeholder": "florines de las Antillas Neerlandesas",
-  "display_name": "florín de las Antillas Neerlandesas"
+    "One": "florín de las Antillas Neerlandesas",
+    "Other": "florines de las Antillas Neerlandesas",
+    "DisplayName": "florín de las Antillas Neerlandesas"
+  }
 }

@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "južnosudanska funta",
-    "Few": "južnosudanske funte"
-  },
-  "other_placeholder": "južnosudanskih funti",
-  "display_name": "južnosudanska funta"
+    "Few": "južnosudanske funte",
+    "Other": "južnosudanskih funti",
+    "DisplayName": "južnosudanska funta"
+  }
 }

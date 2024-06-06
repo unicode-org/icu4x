@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "mauricijska rupija",
-    "Few": "mauricijske rupije"
-  },
-  "other_placeholder": "mauricijskih rupija",
-  "display_name": "mauricijska rupija"
+    "Few": "mauricijske rupije",
+    "Other": "mauricijskih rupija",
+    "DisplayName": "mauricijska rupija"
+  }
 }

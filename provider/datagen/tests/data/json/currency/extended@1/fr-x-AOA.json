@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "kwanza angolais"
-  },
-  "other_placeholder": "kwanzas angolais",
-  "display_name": "kwanza angolais"
+    "One": "kwanza angolais",
+    "Other": "kwanzas angolais",
+    "DisplayName": "kwanza angolais"
+  }
 }

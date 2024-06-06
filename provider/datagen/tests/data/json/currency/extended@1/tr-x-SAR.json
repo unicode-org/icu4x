@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "Suudi Arabistan riyali"
+  "placeholders": {
+    "DisplayName": "Suudi Arabistan riyali"
+  }
 }

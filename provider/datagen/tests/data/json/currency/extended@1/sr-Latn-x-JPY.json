@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "japanski jen",
-    "Few": "japanska jena"
-  },
-  "other_placeholder": "japanskih jena",
-  "display_name": "japanski jen"
+    "Few": "japanska jena",
+    "Other": "japanskih jena",
+    "DisplayName": "japanski jen"
+  }
 }

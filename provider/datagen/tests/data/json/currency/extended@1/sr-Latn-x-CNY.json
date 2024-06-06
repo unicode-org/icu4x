@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "kineski juan",
-    "Few": "kineska juana"
-  },
-  "other_placeholder": "kineskih juana",
-  "display_name": "kineski juan"
+    "Few": "kineska juana",
+    "Other": "kineskih juana",
+    "DisplayName": "kineski juan"
+  }
 }

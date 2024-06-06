@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "evropska novčana jedinica (XBB)",
-    "Few": "evropske novčane jedinice (XBB)"
-  },
-  "other_placeholder": "evropske novčane jedinice (XBB)",
-  "display_name": "Evropska novčana jedinica"
+    "Few": "evropske novčane jedinice (XBB)",
+    "Other": "evropske novčane jedinice (XBB)",
+    "DisplayName": "Evropska novčana jedinica"
+  }
 }

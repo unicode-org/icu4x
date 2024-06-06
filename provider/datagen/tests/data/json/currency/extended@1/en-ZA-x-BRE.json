@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Brazilian cruzeiro (1990–1993)"
-  },
-  "other_placeholder": "Brazilian cruzeiros (1990–1993)",
-  "display_name": "Brazilian Cruzeiro (1990–1993)"
+    "One": "Brazilian cruzeiro (1990–1993)",
+    "Other": "Brazilian cruzeiros (1990–1993)",
+    "DisplayName": "Brazilian Cruzeiro (1990–1993)"
+  }
 }

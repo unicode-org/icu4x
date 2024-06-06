@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "peseta espagnole (compte A)"
-  },
-  "other_placeholder": "pesetas espagnoles (compte A)",
-  "display_name": "peseta espagnole (compte A)"
+    "One": "peseta espagnole (compte A)",
+    "Other": "pesetas espagnoles (compte A)",
+    "DisplayName": "peseta espagnole (compte A)"
+  }
 }

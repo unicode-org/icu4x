@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Venezuelan bolívar (1871–2008)"
-  },
-  "other_placeholder": "Venezuelan bolívars (1871–2008)",
-  "display_name": "Venezuelan Bolívar (1871–2008)"
+    "One": "Venezuelan bolívar (1871–2008)",
+    "Other": "Venezuelan bolívars (1871–2008)",
+    "DisplayName": "Venezuelan Bolívar (1871–2008)"
+  }
 }

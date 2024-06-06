@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "حقوق السحب الخاصة"
+  "placeholders": {
+    "DisplayName": "حقوق السحب الخاصة"
+  }
 }

@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "dólar de Zimbabue"
+  "placeholders": {
+    "DisplayName": "dólar de Zimbabue"
+  }
 }

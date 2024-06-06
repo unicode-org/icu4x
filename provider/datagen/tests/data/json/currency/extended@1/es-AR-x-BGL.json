@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "lev fuerte búlgaro"
-  },
-  "other_placeholder": "leva fuertes búlgaros",
-  "display_name": "lev fuerte búlgaro"
+    "One": "lev fuerte búlgaro",
+    "Other": "leva fuertes búlgaros",
+    "DisplayName": "lev fuerte búlgaro"
+  }
 }

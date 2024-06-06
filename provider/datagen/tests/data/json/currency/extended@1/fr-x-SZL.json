@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "lilangeni swazi"
-  },
-  "other_placeholder": "lilangenis swazis",
-  "display_name": "lilangeni swazi"
+    "One": "lilangeni swazi",
+    "Other": "lilangenis swazis",
+    "DisplayName": "lilangeni swazi"
+  }
 }

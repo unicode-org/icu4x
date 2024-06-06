@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "jugoslovenski konvertibilni dinar",
-    "Few": "jugoslovenska konvertibilna dinara"
-  },
-  "other_placeholder": "jugoslovenskih konvertibilnih dinara",
-  "display_name": "Jugoslovenski konvertibilni dinar"
+    "Few": "jugoslovenska konvertibilna dinara",
+    "Other": "jugoslovenskih konvertibilnih dinara",
+    "DisplayName": "Jugoslovenski konvertibilni dinar"
+  }
 }

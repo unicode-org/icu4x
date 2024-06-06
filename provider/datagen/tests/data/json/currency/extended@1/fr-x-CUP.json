@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "peso cubain"
-  },
-  "other_placeholder": "pesos cubains",
-  "display_name": "peso cubain"
+    "One": "peso cubain",
+    "Other": "pesos cubains",
+    "DisplayName": "peso cubain"
+  }
 }

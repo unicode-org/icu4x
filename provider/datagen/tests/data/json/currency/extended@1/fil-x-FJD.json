@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dolyar ng Fiji"
-  },
-  "other_placeholder": "dolyares ng Fiji",
-  "display_name": "Dolyar ng Fiji"
+    "One": "dolyar ng Fiji",
+    "Other": "dolyares ng Fiji",
+    "DisplayName": "Dolyar ng Fiji"
+  }
 }

@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "kuvajtski dinar",
-    "Few": "kuvajtska dinara"
-  },
-  "other_placeholder": "kuvajtskih dinara",
-  "display_name": "kuvajtski dinar"
+    "Few": "kuvajtska dinara",
+    "Other": "kuvajtskih dinara",
+    "DisplayName": "kuvajtski dinar"
+  }
 }

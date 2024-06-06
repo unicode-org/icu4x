@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Cypriot pound"
-  },
-  "other_placeholder": "Cypriot pounds",
-  "display_name": "Cypriot Pound"
+    "One": "Cypriot pound",
+    "Other": "Cypriot pounds",
+    "DisplayName": "Cypriot Pound"
+  }
 }

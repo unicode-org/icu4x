@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "kubanski konvertibilni pezos",
-    "Few": "kubanska konvertibilna pezosa"
-  },
-  "other_placeholder": "kubanskih konvertibilnih pezosa",
-  "display_name": "kubanski konvertibilni pezos"
+    "Few": "kubanska konvertibilna pezosa",
+    "Other": "kubanskih konvertibilnih pezosa",
+    "DisplayName": "kubanski konvertibilni pezos"
+  }
 }

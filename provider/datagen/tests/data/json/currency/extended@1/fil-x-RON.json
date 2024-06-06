@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "leu ng Romania"
-  },
-  "other_placeholder": "lei ng Romania",
-  "display_name": "Leu ng Romania"
+    "One": "leu ng Romania",
+    "Other": "lei ng Romania",
+    "DisplayName": "Leu ng Romania"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Malagasy franc"
-  },
-  "other_placeholder": "Malagasy francs",
-  "display_name": "Malagasy Franc"
+    "One": "Malagasy franc",
+    "Other": "Malagasy francs",
+    "DisplayName": "Malagasy Franc"
+  }
 }

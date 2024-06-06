@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "European currency unit"
-  },
-  "other_placeholder": "European currency units",
-  "display_name": "European Currency Unit"
+    "One": "European currency unit",
+    "Other": "European currency units",
+    "DisplayName": "European Currency Unit"
+  }
 }

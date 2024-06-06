@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "lesotski loti",
-    "Few": "lesotska lotija"
-  },
-  "other_placeholder": "lesotskih lotija",
-  "display_name": "lesotski loti"
+    "Few": "lesotska lotija",
+    "Other": "lesotskih lotija",
+    "DisplayName": "lesotski loti"
+  }
 }

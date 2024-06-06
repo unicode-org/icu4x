@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "filipinski pezos",
-    "Few": "filipinska pezosa"
-  },
-  "other_placeholder": "filipinskih pezosa",
-  "display_name": "filipinski pezos"
+    "Few": "filipinska pezosa",
+    "Other": "filipinskih pezosa",
+    "DisplayName": "filipinski pezos"
+  }
 }

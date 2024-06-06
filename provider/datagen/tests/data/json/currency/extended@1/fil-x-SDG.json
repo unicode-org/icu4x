@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "pound ng Sudan"
-  },
-  "other_placeholder": "pounds ng Sudan",
-  "display_name": "Pound ng Sudan"
+    "One": "pound ng Sudan",
+    "Other": "pounds ng Sudan",
+    "DisplayName": "Pound ng Sudan"
+  }
 }

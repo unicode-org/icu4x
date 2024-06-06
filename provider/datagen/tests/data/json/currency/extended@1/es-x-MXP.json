@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "peso de plata mexicano (MXP)"
-  },
-  "other_placeholder": "pesos de plata mexicanos (MXP)",
-  "display_name": "peso de plata mexicano (1861–1992)"
+    "One": "peso de plata mexicano (MXP)",
+    "Other": "pesos de plata mexicanos (MXP)",
+    "DisplayName": "peso de plata mexicano (1861–1992)"
+  }
 }

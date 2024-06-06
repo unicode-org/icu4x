@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "piso ng Cuba"
-  },
-  "other_placeholder": "piso ng Cuba",
-  "display_name": "Piso ng Cuba"
+    "One": "piso ng Cuba",
+    "Other": "piso ng Cuba",
+    "DisplayName": "Piso ng Cuba"
+  }
 }

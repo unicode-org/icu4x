@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "rumunski lej",
-    "Few": "rumunska leja"
-  },
-  "other_placeholder": "rumunskih leja",
-  "display_name": "rumunski lej"
+    "Few": "rumunska leja",
+    "Other": "rumunskih leja",
+    "DisplayName": "rumunski lej"
+  }
 }

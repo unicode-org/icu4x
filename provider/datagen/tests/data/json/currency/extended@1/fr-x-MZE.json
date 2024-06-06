@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "escudo mozambicain"
-  },
-  "other_placeholder": "escudos mozambicains",
-  "display_name": "escudo mozambicain"
+    "One": "escudo mozambicain",
+    "Other": "escudos mozambicains",
+    "DisplayName": "escudo mozambicain"
+  }
 }

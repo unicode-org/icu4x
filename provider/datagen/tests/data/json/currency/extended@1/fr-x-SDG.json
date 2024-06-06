@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "livre soudanaise"
-  },
-  "other_placeholder": "livres soudanaises",
-  "display_name": "livre soudanaise"
+    "One": "livre soudanaise",
+    "Other": "livres soudanaises",
+    "DisplayName": "livre soudanaise"
+  }
 }

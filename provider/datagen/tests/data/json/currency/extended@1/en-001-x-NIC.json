@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Nicaraguan córdoba (1988–1991)"
-  },
-  "other_placeholder": "Nicaraguan córdobas (1988–1991)",
-  "display_name": "Nicaraguan Córdoba (1988–1991)"
+    "One": "Nicaraguan córdoba (1988–1991)",
+    "Other": "Nicaraguan córdobas (1988–1991)",
+    "DisplayName": "Nicaraguan Córdoba (1988–1991)"
+  }
 }

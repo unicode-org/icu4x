@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "US dollar (next day)"
-  },
-  "other_placeholder": "US dollars (next day)",
-  "display_name": "US Dollar (Next day)"
+    "One": "US dollar (next day)",
+    "Other": "US dollars (next day)",
+    "DisplayName": "US Dollar (Next day)"
+  }
 }

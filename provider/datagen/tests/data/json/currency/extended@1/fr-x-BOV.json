@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "mvdol bolivien"
-  },
-  "other_placeholder": "mvdols boliviens",
-  "display_name": "mvdol bolivien"
+    "One": "mvdol bolivien",
+    "Other": "mvdols boliviens",
+    "DisplayName": "mvdol bolivien"
+  }
 }

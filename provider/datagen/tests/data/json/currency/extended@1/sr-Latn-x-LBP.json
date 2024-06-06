@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "libanska funta",
-    "Few": "libanske funte"
-  },
-  "other_placeholder": "libanskih funti",
-  "display_name": "libanska funta"
+    "Few": "libanske funte",
+    "Other": "libanskih funti",
+    "DisplayName": "libanska funta"
+  }
 }

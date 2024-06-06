@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "евро",
-    "Few": "евра"
-  },
-  "other_placeholder": "евра",
-  "display_name": "Евро"
+    "Few": "евра",
+    "Other": "евра",
+    "DisplayName": "Евро"
+  }
 }

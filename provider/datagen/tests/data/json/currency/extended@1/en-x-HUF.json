@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Hungarian forint"
-  },
-  "other_placeholder": "Hungarian forints",
-  "display_name": "Hungarian Forint"
+    "One": "Hungarian forint",
+    "Other": "Hungarian forints",
+    "DisplayName": "Hungarian Forint"
+  }
 }

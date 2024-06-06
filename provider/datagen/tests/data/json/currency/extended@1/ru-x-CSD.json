@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "Старый Сербский динар"
+  "placeholders": {
+    "DisplayName": "Старый Сербский динар"
+  }
 }

@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "メキシコ (UDI)"
+  "placeholders": {
+    "DisplayName": "メキシコ (UDI)"
+  }
 }

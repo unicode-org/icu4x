@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Yemeni dinar"
-  },
-  "other_placeholder": "Yemeni dinars",
-  "display_name": "Yemeni Dinar"
+    "One": "Yemeni dinar",
+    "Other": "Yemeni dinars",
+    "DisplayName": "Yemeni Dinar"
+  }
 }

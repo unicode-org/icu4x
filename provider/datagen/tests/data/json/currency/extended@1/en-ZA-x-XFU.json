@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "French UIC-franc"
-  },
-  "other_placeholder": "French UIC-francs",
-  "display_name": "French UIC-Franc"
+    "One": "French UIC-franc",
+    "Other": "French UIC-francs",
+    "DisplayName": "French UIC-Franc"
+  }
 }

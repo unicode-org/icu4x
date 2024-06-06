@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Kenyan shilling"
-  },
-  "other_placeholder": "Kenyan shillings",
-  "display_name": "Kenyan Shilling"
+    "One": "Kenyan shilling",
+    "Other": "Kenyan shillings",
+    "DisplayName": "Kenyan Shilling"
+  }
 }

@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "beloruska rublja",
-    "Few": "beloruske rublje"
-  },
-  "other_placeholder": "beloruskih rublji",
-  "display_name": "beloruska rublja"
+    "Few": "beloruske rublje",
+    "Other": "beloruskih rublji",
+    "DisplayName": "beloruska rublja"
+  }
 }

@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "peruanski sol",
-    "Few": "peruanska sola"
-  },
-  "other_placeholder": "peruanskih sola",
-  "display_name": "peruanski sol"
+    "Few": "peruanska sola",
+    "Other": "peruanskih sola",
+    "DisplayName": "peruanski sol"
+  }
 }

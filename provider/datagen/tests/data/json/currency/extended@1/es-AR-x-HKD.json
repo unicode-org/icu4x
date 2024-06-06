@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dólar hongkonés"
-  },
-  "other_placeholder": "dólares hongkoneses",
-  "display_name": "dólar hongkonés"
+    "One": "dólar hongkonés",
+    "Other": "dólares hongkoneses",
+    "DisplayName": "dólar hongkonés"
+  }
 }

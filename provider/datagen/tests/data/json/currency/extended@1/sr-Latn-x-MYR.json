@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "malezijski ringit",
-    "Few": "malezijska ringita"
-  },
-  "other_placeholder": "malezijskih ringita",
-  "display_name": "malezijski ringit"
+    "Few": "malezijska ringita",
+    "Other": "malezijskih ringita",
+    "DisplayName": "malezijski ringit"
+  }
 }

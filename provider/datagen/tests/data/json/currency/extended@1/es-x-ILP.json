@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "libra israelí"
-  },
-  "other_placeholder": "libras israelíes",
-  "display_name": "libra israelí"
+    "One": "libra israelí",
+    "Other": "libras israelíes",
+    "DisplayName": "libra israelí"
+  }
 }

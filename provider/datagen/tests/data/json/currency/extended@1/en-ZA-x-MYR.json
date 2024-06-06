@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Malaysian ringgit"
-  },
-  "other_placeholder": "Malaysian ringgits",
-  "display_name": "Malaysian Ringgit"
+    "One": "Malaysian ringgit",
+    "Other": "Malaysian ringgits",
+    "DisplayName": "Malaysian Ringgit"
+  }
 }

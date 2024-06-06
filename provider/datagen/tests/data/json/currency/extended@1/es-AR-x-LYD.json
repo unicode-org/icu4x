@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dinar libio"
-  },
-  "other_placeholder": "dinares libios",
-  "display_name": "dinar libio"
+    "One": "dinar libio",
+    "Other": "dinares libios",
+    "DisplayName": "dinar libio"
+  }
 }

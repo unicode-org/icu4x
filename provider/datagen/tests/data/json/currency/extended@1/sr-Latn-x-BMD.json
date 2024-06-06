@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "bermudski dolar",
-    "Few": "bermudska dolara"
-  },
-  "other_placeholder": "bermudskih dolara",
-  "display_name": "bermudski dolar"
+    "Few": "bermudska dolara",
+    "Other": "bermudskih dolara",
+    "DisplayName": "bermudski dolar"
+  }
 }

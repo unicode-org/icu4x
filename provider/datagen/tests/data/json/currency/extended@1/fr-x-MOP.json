@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "pataca macanaise"
-  },
-  "other_placeholder": "patacas macanaises",
-  "display_name": "pataca macanaise"
+    "One": "pataca macanaise",
+    "Other": "patacas macanaises",
+    "DisplayName": "pataca macanaise"
+  }
 }

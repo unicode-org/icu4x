@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "กอร์โดบานิการากัว"
+  "placeholders": {
+    "DisplayName": "กอร์โดบานิการากัว"
+  }
 }

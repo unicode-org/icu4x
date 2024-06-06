@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "rouble biélorusse (2000–2016)"
-  },
-  "other_placeholder": "roubles biélorusses (2000–2016)",
-  "display_name": "rouble biélorusse (2000–2016)"
+    "One": "rouble biélorusse (2000–2016)",
+    "Other": "roubles biélorusses (2000–2016)",
+    "DisplayName": "rouble biélorusse (2000–2016)"
+  }
 }

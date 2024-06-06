@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "ฟอรินต์ฮังการี"
+  "placeholders": {
+    "DisplayName": "ฟอรินต์ฮังการี"
+  }
 }

@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "প্যালেডিয়াম"
+  "placeholders": {
+    "DisplayName": "প্যালেডিয়াম"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dolyar ng Jamaica"
-  },
-  "other_placeholder": "dolyares ng Jamaica",
-  "display_name": "Dolyar ng Jamaica"
+    "One": "dolyar ng Jamaica",
+    "Other": "dolyares ng Jamaica",
+    "DisplayName": "Dolyar ng Jamaica"
+  }
 }

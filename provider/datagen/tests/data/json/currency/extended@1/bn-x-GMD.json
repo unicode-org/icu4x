@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "গাম্বিয়া ডালাসি"
+  "placeholders": {
+    "DisplayName": "গাম্বিয়া ডালাসি"
+  }
 }

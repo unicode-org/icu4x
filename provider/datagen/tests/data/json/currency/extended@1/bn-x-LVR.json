@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "ল্যাটভিয়ান রুবল"
+  "placeholders": {
+    "DisplayName": "ল্যাটভিয়ান রুবল"
+  }
 }

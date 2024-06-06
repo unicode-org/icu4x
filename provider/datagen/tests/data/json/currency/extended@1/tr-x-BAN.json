@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Yeni Bosna Hersek dinarı (1994–1997)"
-  },
-  "other_placeholder": "Yeni Bosna Hersek dinarı (1994–1997)",
-  "display_name": "Yeni Bosna Hersek Dinarı (1994–1997)"
+    "One": "Yeni Bosna Hersek dinarı (1994–1997)",
+    "Other": "Yeni Bosna Hersek dinarı (1994–1997)",
+    "DisplayName": "Yeni Bosna Hersek Dinarı (1994–1997)"
+  }
 }

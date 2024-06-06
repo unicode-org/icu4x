@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "kip"
-  },
-  "other_placeholder": "kips",
-  "display_name": "kip"
+    "One": "kip",
+    "Other": "kips",
+    "DisplayName": "kip"
+  }
 }

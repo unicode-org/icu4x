@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "rand sudafricano (financiero)"
+  "placeholders": {
+    "DisplayName": "rand sudafricano (financiero)"
+  }
 }

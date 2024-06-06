@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dollar namibien"
-  },
-  "other_placeholder": "dollars namibiens",
-  "display_name": "dollar namibien"
+    "One": "dollar namibien",
+    "Other": "dollars namibiens",
+    "DisplayName": "dollar namibien"
+  }
 }

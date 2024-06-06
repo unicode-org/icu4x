@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "bahamski dolar",
-    "Few": "bahamska dolara"
-  },
-  "other_placeholder": "bahamskih dolara",
-  "display_name": "bahamski dolar"
+    "Few": "bahamska dolara",
+    "Other": "bahamskih dolara",
+    "DisplayName": "bahamski dolar"
+  }
 }

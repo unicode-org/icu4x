@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dinar kuwaití"
-  },
-  "other_placeholder": "dinares kuwaitíes",
-  "display_name": "dinar kuwaití"
+    "One": "dinar kuwaití",
+    "Other": "dinares kuwaitíes",
+    "DisplayName": "dinar kuwaití"
+  }
 }

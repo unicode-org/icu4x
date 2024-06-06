@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "South Korean hwan (1953–1962)"
-  },
-  "other_placeholder": "South Korean hwan (1953–1962)",
-  "display_name": "South Korean Hwan (1953–1962)"
+    "One": "South Korean hwan (1953–1962)",
+    "Other": "South Korean hwan (1953–1962)",
+    "DisplayName": "South Korean Hwan (1953–1962)"
+  }
 }

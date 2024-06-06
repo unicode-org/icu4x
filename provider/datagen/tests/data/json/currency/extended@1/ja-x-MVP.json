@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "モルディブ諸島 ルピー"
+  "placeholders": {
+    "DisplayName": "モルディブ諸島 ルピー"
+  }
 }

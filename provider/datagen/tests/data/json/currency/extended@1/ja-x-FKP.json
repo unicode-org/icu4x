@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "フォークランド（マルビナス）諸島 ポンド"
+  "placeholders": {
+    "DisplayName": "フォークランド（マルビナス）諸島 ポンド"
+  }
 }

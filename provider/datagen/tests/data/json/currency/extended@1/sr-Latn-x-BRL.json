@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "brazilski real",
-    "Few": "brazilska reala"
-  },
-  "other_placeholder": "brazilskih reala",
-  "display_name": "brazilski real"
+    "Few": "brazilska reala",
+    "Other": "brazilskih reala",
+    "DisplayName": "brazilski real"
+  }
 }

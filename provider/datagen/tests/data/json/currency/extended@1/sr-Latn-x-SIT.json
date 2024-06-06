@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "slovenački tolar",
-    "Few": "slovenačka tolara"
-  },
-  "other_placeholder": "slovenačkih tolara",
-  "display_name": "Slovenački tolar"
+    "Few": "slovenačka tolara",
+    "Other": "slovenačkih tolara",
+    "DisplayName": "Slovenački tolar"
+  }
 }

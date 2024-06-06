@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "South Korean won (1945–1953)"
-  },
-  "other_placeholder": "South Korean won (1945–1953)",
-  "display_name": "South Korean Won (1945–1953)"
+    "One": "South Korean won (1945–1953)",
+    "Other": "South Korean won (1945–1953)",
+    "DisplayName": "South Korean Won (1945–1953)"
+  }
 }

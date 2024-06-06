@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "austrijski šiling",
-    "Few": "austrijska šilinga"
-  },
-  "other_placeholder": "austrijskih šilinga",
-  "display_name": "Austrijski šiling"
+    "Few": "austrijska šilinga",
+    "Other": "austrijskih šilinga",
+    "DisplayName": "Austrijski šiling"
+  }
 }

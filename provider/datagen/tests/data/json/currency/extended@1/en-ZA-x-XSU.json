@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Sucre"
-  },
-  "other_placeholder": "Sucres",
-  "display_name": "Sucre"
+    "One": "Sucre",
+    "Other": "Sucres",
+    "DisplayName": "Sucre"
+  }
 }

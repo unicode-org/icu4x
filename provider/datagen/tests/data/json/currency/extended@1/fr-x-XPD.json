@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "once troy de palladium"
-  },
-  "other_placeholder": "onces troy de palladium",
-  "display_name": "palladium"
+    "One": "once troy de palladium",
+    "Other": "onces troy de palladium",
+    "DisplayName": "palladium"
+  }
 }

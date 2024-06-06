@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "jemenski dolar",
-    "Few": "jemenska dolara"
-  },
-  "other_placeholder": "jemenskih dolara",
-  "display_name": "Jemenski dinar"
+    "Few": "jemenska dolara",
+    "Other": "jemenskih dolara",
+    "DisplayName": "Jemenski dinar"
+  }
 }

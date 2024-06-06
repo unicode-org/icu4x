@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "florin ng Aruba"
-  },
-  "other_placeholder": "florin ng Aruba",
-  "display_name": "Florin ng Aruba"
+    "One": "florin ng Aruba",
+    "Other": "florin ng Aruba",
+    "DisplayName": "Florin ng Aruba"
+  }
 }

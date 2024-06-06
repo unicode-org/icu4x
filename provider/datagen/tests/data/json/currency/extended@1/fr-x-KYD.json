@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dollar des îles Caïmans"
-  },
-  "other_placeholder": "dollars des îles Caïmans",
-  "display_name": "dollar des îles Caïmans"
+    "One": "dollar des îles Caïmans",
+    "Other": "dollars des îles Caïmans",
+    "DisplayName": "dollar des îles Caïmans"
+  }
 }

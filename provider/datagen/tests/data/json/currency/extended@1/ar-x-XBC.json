@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "الوحدة الحسابية الأوروبية"
+  "placeholders": {
+    "DisplayName": "الوحدة الحسابية الأوروبية"
+  }
 }

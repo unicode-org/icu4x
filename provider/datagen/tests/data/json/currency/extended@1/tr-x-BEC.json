@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "Belçika Frangı (konvertibl)"
+  "placeholders": {
+    "DisplayName": "Belçika Frangı (konvertibl)"
+  }
 }

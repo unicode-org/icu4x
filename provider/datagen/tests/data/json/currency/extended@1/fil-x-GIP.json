@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "pound ng Gibraltar"
-  },
-  "other_placeholder": "pounds ng Gilbraltar",
-  "display_name": "Pound ng Gibraltar"
+    "One": "pound ng Gibraltar",
+    "Other": "pounds ng Gilbraltar",
+    "DisplayName": "Pound ng Gibraltar"
+  }
 }

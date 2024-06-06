@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "australijski dolar",
-    "Few": "australijska dolara"
-  },
-  "other_placeholder": "australijskih dolara",
-  "display_name": "australijski dolar"
+    "Few": "australijska dolara",
+    "Other": "australijskih dolara",
+    "DisplayName": "australijski dolar"
+  }
 }

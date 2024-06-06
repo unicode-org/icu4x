@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "peso boliviano"
-  },
-  "other_placeholder": "pesos bolivianos",
-  "display_name": "peso boliviano"
+    "One": "peso boliviano",
+    "Other": "pesos bolivianos",
+    "DisplayName": "peso boliviano"
+  }
 }

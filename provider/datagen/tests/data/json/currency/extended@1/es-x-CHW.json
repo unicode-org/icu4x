@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "franco WIR"
-  },
-  "other_placeholder": "francos WIR",
-  "display_name": "franco WIR"
+    "One": "franco WIR",
+    "Other": "francos WIR",
+    "DisplayName": "franco WIR"
+  }
 }

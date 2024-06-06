@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "džibutski franak",
-    "Few": "džibutska franka"
-  },
-  "other_placeholder": "džibutskih franaka",
-  "display_name": "džibutski franak"
+    "Few": "džibutska franka",
+    "Other": "džibutskih franaka",
+    "DisplayName": "džibutski franak"
+  }
 }

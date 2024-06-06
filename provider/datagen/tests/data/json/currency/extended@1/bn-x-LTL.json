@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "লিথুইনিয়ান লিটা"
+  "placeholders": {
+    "DisplayName": "লিথুইনিয়ান লিটা"
+  }
 }

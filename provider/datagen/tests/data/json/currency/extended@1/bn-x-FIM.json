@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "ফিনিস মার্কা"
+  "placeholders": {
+    "DisplayName": "ফিনিস মার্কা"
+  }
 }

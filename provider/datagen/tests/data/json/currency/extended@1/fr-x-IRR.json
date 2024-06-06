@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "riyal iranien"
-  },
-  "other_placeholder": "riyals iraniens",
-  "display_name": "riyal iranien"
+    "One": "riyal iranien",
+    "Other": "riyals iraniens",
+    "DisplayName": "riyal iranien"
+  }
 }

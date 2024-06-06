@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "リビア ディナール"
+  "placeholders": {
+    "DisplayName": "リビア ディナール"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Sri Lankan rupee"
-  },
-  "other_placeholder": "Sri Lankan rupees",
-  "display_name": "Sri Lankan Rupee"
+    "One": "Sri Lankan rupee",
+    "Other": "Sri Lankan rupees",
+    "DisplayName": "Sri Lankan Rupee"
+  }
 }

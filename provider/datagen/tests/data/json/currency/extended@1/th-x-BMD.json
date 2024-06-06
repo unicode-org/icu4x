@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "ดอลลาร์เบอร์มิวดา"
+  "placeholders": {
+    "DisplayName": "ดอลลาร์เบอร์มิวดา"
+  }
 }

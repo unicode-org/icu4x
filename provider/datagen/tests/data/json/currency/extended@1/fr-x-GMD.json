@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dalasi gambien"
-  },
-  "other_placeholder": "dalasis gambiens",
-  "display_name": "dalasi gambien"
+    "One": "dalasi gambien",
+    "Other": "dalasis gambiens",
+    "DisplayName": "dalasi gambien"
+  }
 }

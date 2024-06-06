@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "дирхам УАЕ",
-    "Few": "дирхама УАЕ"
-  },
-  "other_placeholder": "дирхама УАЕ",
-  "display_name": "дирхам УАЕ"
+    "Few": "дирхама УАЕ",
+    "Other": "дирхама УАЕ",
+    "DisplayName": "дирхам УАЕ"
+  }
 }

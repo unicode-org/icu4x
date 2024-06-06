@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Testing Currency unit"
-  },
-  "other_placeholder": "Testing Currency units",
-  "display_name": "Testing Currency Code"
+    "One": "Testing Currency unit",
+    "Other": "Testing Currency units",
+    "DisplayName": "Testing Currency Code"
+  }
 }

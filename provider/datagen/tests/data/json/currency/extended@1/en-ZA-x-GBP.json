@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "British pound"
-  },
-  "other_placeholder": "British pounds",
-  "display_name": "British Pound"
+    "One": "British pound",
+    "Other": "British pounds",
+    "DisplayName": "British Pound"
+  }
 }

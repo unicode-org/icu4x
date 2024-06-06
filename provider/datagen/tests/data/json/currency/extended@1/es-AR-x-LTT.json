@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "talonas lituana"
-  },
-  "other_placeholder": "talonas lituanas",
-  "display_name": "talonas lituano"
+    "One": "talonas lituana",
+    "Other": "talonas lituanas",
+    "DisplayName": "talonas lituano"
+  }
 }

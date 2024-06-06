@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "nigerijska naira",
-    "Few": "nigerijske naire"
-  },
-  "other_placeholder": "nigerijskih naira",
-  "display_name": "nigerijska naira"
+    "Few": "nigerijske naire",
+    "Other": "nigerijskih naira",
+    "DisplayName": "nigerijska naira"
+  }
 }

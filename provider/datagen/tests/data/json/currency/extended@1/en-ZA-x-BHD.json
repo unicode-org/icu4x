@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Bahraini dinar"
-  },
-  "other_placeholder": "Bahraini dinars",
-  "display_name": "Bahraini Dinar"
+    "One": "Bahraini dinar",
+    "Other": "Bahraini dinars",
+    "DisplayName": "Bahraini Dinar"
+  }
 }

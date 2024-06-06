@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "holandski gulden",
-    "Few": "holandska guldena"
-  },
-  "other_placeholder": "holandskih guldena",
-  "display_name": "Holandski gulden"
+    "Few": "holandska guldena",
+    "Other": "holandskih guldena",
+    "DisplayName": "Holandski gulden"
+  }
 }

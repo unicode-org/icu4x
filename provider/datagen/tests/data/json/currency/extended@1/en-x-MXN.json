@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Mexican peso"
-  },
-  "other_placeholder": "Mexican pesos",
-  "display_name": "Mexican Peso"
+    "One": "Mexican peso",
+    "Other": "Mexican pesos",
+    "DisplayName": "Mexican Peso"
+  }
 }

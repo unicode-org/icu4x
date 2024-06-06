@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "marco convertible de Bosnia y Herzegovina"
-  },
-  "other_placeholder": "marcos convertibles de Bosnia y Herzegovina",
-  "display_name": "marco convertible de Bosnia y Herzegovina"
+    "One": "marco convertible de Bosnia y Herzegovina",
+    "Other": "marcos convertibles de Bosnia y Herzegovina",
+    "DisplayName": "marco convertible de Bosnia y Herzegovina"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "rouble biélorusse"
-  },
-  "other_placeholder": "roubles biélorusses",
-  "display_name": "rouble biélorusse"
+    "One": "rouble biélorusse",
+    "Other": "roubles biélorusses",
+    "DisplayName": "rouble biélorusse"
+  }
 }

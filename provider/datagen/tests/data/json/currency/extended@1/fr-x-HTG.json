@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "gourde haïtienne"
-  },
-  "other_placeholder": "gourdes haïtiennes",
-  "display_name": "gourde haïtienne"
+    "One": "gourde haïtienne",
+    "Other": "gourdes haïtiennes",
+    "DisplayName": "gourde haïtienne"
+  }
 }

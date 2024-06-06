@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Lithuanian litas"
-  },
-  "other_placeholder": "Lithuanian litai",
-  "display_name": "Lithuanian Litas"
+    "One": "Lithuanian litas",
+    "Other": "Lithuanian litai",
+    "DisplayName": "Lithuanian Litas"
+  }
 }

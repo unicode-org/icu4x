@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dólar fiyiano"
-  },
-  "other_placeholder": "dólares fiyianos",
-  "display_name": "dólar fiyiano"
+    "One": "dólar fiyiano",
+    "Other": "dólares fiyianos",
+    "DisplayName": "dólar fiyiano"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "bolívar ng Venezuela"
-  },
-  "other_placeholder": "bolívars ng Venezuela",
-  "display_name": "Bolívar ng Venezuela"
+    "One": "bolívar ng Venezuela",
+    "Other": "bolívars ng Venezuela",
+    "DisplayName": "Bolívar ng Venezuela"
+  }
 }

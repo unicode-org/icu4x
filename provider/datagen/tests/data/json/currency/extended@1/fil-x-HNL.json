@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "lempira ng Honduras"
-  },
-  "other_placeholder": "lempiras ng Honduras",
-  "display_name": "Lempira ng Honduras"
+    "One": "lempira ng Honduras",
+    "Other": "lempiras ng Honduras",
+    "DisplayName": "Lempira ng Honduras"
+  }
 }

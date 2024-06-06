@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Moldova kuponu"
-  },
-  "other_placeholder": "Moldova kuponu",
-  "display_name": "Moldova Kuponu"
+    "One": "Moldova kuponu",
+    "Other": "Moldova kuponu",
+    "DisplayName": "Moldova Kuponu"
+  }
 }

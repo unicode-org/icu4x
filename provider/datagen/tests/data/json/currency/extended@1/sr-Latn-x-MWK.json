@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "malavijska kvača",
-    "Few": "malavijske kvače"
-  },
-  "other_placeholder": "malavijskih kvača",
-  "display_name": "malavijska kvača"
+    "Few": "malavijske kvače",
+    "Other": "malavijskih kvača",
+    "DisplayName": "malavijska kvača"
+  }
 }

@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "meksički pezos",
-    "Few": "meksička pezosa"
-  },
-  "other_placeholder": "meksičkih pezosa",
-  "display_name": "meksički pezos"
+    "Few": "meksička pezosa",
+    "Other": "meksičkih pezosa",
+    "DisplayName": "meksički pezos"
+  }
 }

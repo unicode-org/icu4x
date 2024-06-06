@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Myanmar kyat"
-  },
-  "other_placeholder": "Myanmar kyats",
-  "display_name": "Myanmar Kyat"
+    "One": "Myanmar kyat",
+    "Other": "Myanmar kyats",
+    "DisplayName": "Myanmar Kyat"
+  }
 }

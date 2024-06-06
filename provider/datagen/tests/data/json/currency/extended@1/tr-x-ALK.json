@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Arnavutluk leki (1946–1965)"
-  },
-  "other_placeholder": "Arnavutluk leki (1946–1965)",
-  "display_name": "Arnavutluk Leki (1946–1965)"
+    "One": "Arnavutluk leki (1946–1965)",
+    "Other": "Arnavutluk leki (1946–1965)",
+    "DisplayName": "Arnavutluk Leki (1946–1965)"
+  }
 }

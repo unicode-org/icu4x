@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "franc CFA (BEAC)"
-  },
-  "other_placeholder": "francs CFA (BEAC)",
-  "display_name": "franc CFA (BEAC)"
+    "One": "franc CFA (BEAC)",
+    "Other": "francs CFA (BEAC)",
+    "DisplayName": "franc CFA (BEAC)"
+  }
 }

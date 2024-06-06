@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "libra gibraltareña"
-  },
-  "other_placeholder": "libras gibraltareñas",
-  "display_name": "libra gibraltareña"
+    "One": "libra gibraltareña",
+    "Other": "libras gibraltareñas",
+    "DisplayName": "libra gibraltareña"
+  }
 }

@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "angolska kvanza",
-    "Few": "angolske kvanze"
-  },
-  "other_placeholder": "angolskih kvanzi",
-  "display_name": "angolska kvanza"
+    "Few": "angolske kvanze",
+    "Other": "angolskih kvanzi",
+    "DisplayName": "angolska kvanza"
+  }
 }

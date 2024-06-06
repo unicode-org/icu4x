@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "livre libanaise"
-  },
-  "other_placeholder": "livres libanaises",
-  "display_name": "livre libanaise"
+    "One": "livre libanaise",
+    "Other": "livres libanaises",
+    "DisplayName": "livre libanaise"
+  }
 }

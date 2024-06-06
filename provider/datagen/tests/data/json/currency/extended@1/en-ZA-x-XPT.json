@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "troy ounce of platinum"
-  },
-  "other_placeholder": "troy ounces of platinum",
-  "display_name": "Platinum"
+    "One": "troy ounce of platinum",
+    "Other": "troy ounces of platinum",
+    "DisplayName": "Platinum"
+  }
 }

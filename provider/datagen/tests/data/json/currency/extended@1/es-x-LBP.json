@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "libra libanesa"
-  },
-  "other_placeholder": "libras libanesas",
-  "display_name": "libra libanesa"
+    "One": "libra libanesa",
+    "Other": "libras libanesas",
+    "DisplayName": "libra libanesa"
+  }
 }

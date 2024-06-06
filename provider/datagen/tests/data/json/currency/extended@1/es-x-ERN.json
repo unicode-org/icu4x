@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "nakfa"
-  },
-  "other_placeholder": "nakfas",
-  "display_name": "nakfa"
+    "One": "nakfa",
+    "Other": "nakfas",
+    "DisplayName": "nakfa"
+  }
 }

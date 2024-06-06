@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "রুয়ান্ডান ফ্রাঙ্ক"
+  "placeholders": {
+    "DisplayName": "রুয়ান্ডান ফ্রাঙ্ক"
+  }
 }

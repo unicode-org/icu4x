@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Surinamese guilder"
-  },
-  "other_placeholder": "Surinamese guilders",
-  "display_name": "Surinamese Guilder"
+    "One": "Surinamese guilder",
+    "Other": "Surinamese guilders",
+    "DisplayName": "Surinamese Guilder"
+  }
 }

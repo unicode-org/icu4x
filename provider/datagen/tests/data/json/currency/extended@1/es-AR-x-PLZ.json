@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "zloty polaco (PLZ)"
-  },
-  "other_placeholder": "zlotys polacos (PLZ)",
-  "display_name": "zloty polaco (1950–1995)"
+    "One": "zloty polaco (PLZ)",
+    "Other": "zlotys polacos (PLZ)",
+    "DisplayName": "zloty polaco (1950–1995)"
+  }
 }

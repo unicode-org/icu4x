@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "cédi ghanéen"
-  },
-  "other_placeholder": "cédis ghanéens",
-  "display_name": "cédi ghanéen"
+    "One": "cédi ghanéen",
+    "Other": "cédis ghanéens",
+    "DisplayName": "cédi ghanéen"
+  }
 }

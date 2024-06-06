@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "মোজাম্বিক এসকুডো"
+  "placeholders": {
+    "DisplayName": "মোজাম্বিক এসকুডো"
+  }
 }

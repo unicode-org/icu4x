@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "ruska rublja",
-    "Few": "ruske rublje"
-  },
-  "other_placeholder": "ruskih rublji",
-  "display_name": "ruska rublja"
+    "Few": "ruske rublje",
+    "Other": "ruskih rublji",
+    "DisplayName": "ruska rublja"
+  }
 }

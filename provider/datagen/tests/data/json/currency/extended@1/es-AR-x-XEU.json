@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "unidad de moneda europea"
-  },
-  "other_placeholder": "unidades de moneda europeas",
-  "display_name": "unidad de moneda europea"
+    "One": "unidad de moneda europea",
+    "Other": "unidades de moneda europeas",
+    "DisplayName": "unidad de moneda europea"
+  }
 }

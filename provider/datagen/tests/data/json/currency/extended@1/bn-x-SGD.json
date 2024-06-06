@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "সিঙ্গাপুর ডলার"
+  "placeholders": {
+    "DisplayName": "সিঙ্গাপুর ডলার"
+  }
 }

@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "İspanyol Pezetası (konvertibl hesap)"
+  "placeholders": {
+    "DisplayName": "İspanyol Pezetası (konvertibl hesap)"
+  }
 }

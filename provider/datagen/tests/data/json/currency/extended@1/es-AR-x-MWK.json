@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "kwacha malauí"
-  },
-  "other_placeholder": "kwachas malauíes",
-  "display_name": "kwacha malauí"
+    "One": "kwacha malauí",
+    "Other": "kwachas malauíes",
+    "DisplayName": "kwacha malauí"
+  }
 }

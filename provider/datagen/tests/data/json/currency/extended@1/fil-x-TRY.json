@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Turkish lira"
-  },
-  "other_placeholder": "Turkish Lira",
-  "display_name": "Turkish Lira"
+    "One": "Turkish lira",
+    "Other": "Turkish Lira",
+    "DisplayName": "Turkish Lira"
+  }
 }

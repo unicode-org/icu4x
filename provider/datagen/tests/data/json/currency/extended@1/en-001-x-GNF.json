@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Guinean franc"
-  },
-  "other_placeholder": "Guinean francs",
-  "display_name": "Guinean Franc"
+    "One": "Guinean franc",
+    "Other": "Guinean francs",
+    "DisplayName": "Guinean Franc"
+  }
 }

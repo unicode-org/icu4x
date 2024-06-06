@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "franc rwandais"
-  },
-  "other_placeholder": "francs rwandais",
-  "display_name": "franc rwandais"
+    "One": "franc rwandais",
+    "Other": "francs rwandais",
+    "DisplayName": "franc rwandais"
+  }
 }

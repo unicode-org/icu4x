@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Danish krone"
-  },
-  "other_placeholder": "Danish kroner",
-  "display_name": "Danish Krone"
+    "One": "Danish krone",
+    "Other": "Danish kroner",
+    "DisplayName": "Danish Krone"
+  }
 }

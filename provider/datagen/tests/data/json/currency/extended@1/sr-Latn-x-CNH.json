@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "kineski juan (ostrvski)",
-    "Few": "kineska juana (ostrvska)"
-  },
-  "other_placeholder": "kineskih juana (ostrvskih)",
-  "display_name": "kineski juan (ostrvski)"
+    "Few": "kineska juana (ostrvska)",
+    "Other": "kineskih juana (ostrvskih)",
+    "DisplayName": "kineski juan (ostrvski)"
+  }
 }

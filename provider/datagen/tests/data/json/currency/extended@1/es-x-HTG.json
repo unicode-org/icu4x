@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "gurde haitiano"
-  },
-  "other_placeholder": "gurdes haitianos",
-  "display_name": "gurde haitiano"
+    "One": "gurde haitiano",
+    "Other": "gurdes haitianos",
+    "DisplayName": "gurde haitiano"
+  }
 }

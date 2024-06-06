@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "либанскa фунтa",
-    "Few": "либанскe фунтe"
-  },
-  "other_placeholder": "либанских фунти",
-  "display_name": "либанска фунта"
+    "Few": "либанскe фунтe",
+    "Other": "либанских фунти",
+    "DisplayName": "либанска фунта"
+  }
 }

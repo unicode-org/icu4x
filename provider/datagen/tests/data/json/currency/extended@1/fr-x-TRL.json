@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "livre turque (1844–2005)"
-  },
-  "other_placeholder": "livres turques (1844–2005)",
-  "display_name": "livre turque (1844–2005)"
+    "One": "livre turque (1844–2005)",
+    "Other": "livres turques (1844–2005)",
+    "DisplayName": "livre turque (1844–2005)"
+  }
 }

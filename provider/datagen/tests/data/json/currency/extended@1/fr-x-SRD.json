@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dollar surinamais"
-  },
-  "other_placeholder": "dollars surinamais",
-  "display_name": "dollar surinamais"
+    "One": "dollar surinamais",
+    "Other": "dollars surinamais",
+    "DisplayName": "dollar surinamais"
+  }
 }

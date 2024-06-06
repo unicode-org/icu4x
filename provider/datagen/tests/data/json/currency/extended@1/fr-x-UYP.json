@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "peso uruguayen (1975–1993)"
-  },
-  "other_placeholder": "pesos uruguayens (1975–1993)",
-  "display_name": "peso uruguayen (1975–1993)"
+    "One": "peso uruguayen (1975–1993)",
+    "Other": "pesos uruguayens (1975–1993)",
+    "DisplayName": "peso uruguayen (1975–1993)"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dólar salomonense"
-  },
-  "other_placeholder": "dólares salomonenses",
-  "display_name": "dólar salomonense"
+    "One": "dólar salomonense",
+    "Other": "dólares salomonenses",
+    "DisplayName": "dólar salomonense"
+  }
 }

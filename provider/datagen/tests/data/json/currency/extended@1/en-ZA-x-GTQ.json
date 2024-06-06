@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Guatemalan quetzal"
-  },
-  "other_placeholder": "Guatemalan quetzals",
-  "display_name": "Guatemalan Quetzal"
+    "One": "Guatemalan quetzal",
+    "Other": "Guatemalan quetzals",
+    "DisplayName": "Guatemalan Quetzal"
+  }
 }

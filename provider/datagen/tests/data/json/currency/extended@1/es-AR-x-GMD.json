@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dalasi"
-  },
-  "other_placeholder": "dalasis",
-  "display_name": "dalasi"
+    "One": "dalasi",
+    "Other": "dalasis",
+    "DisplayName": "dalasi"
+  }
 }

@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "лаоски кип",
-    "Few": "лаоска кипа"
-  },
-  "other_placeholder": "лаоских кипа",
-  "display_name": "лаоски кип"
+    "Few": "лаоска кипа",
+    "Other": "лаоских кипа",
+    "DisplayName": "лаоски кип"
+  }
 }

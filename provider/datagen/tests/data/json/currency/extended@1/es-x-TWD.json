@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "nuevo dólar taiwanés"
-  },
-  "other_placeholder": "nuevos dólares taiwaneses",
-  "display_name": "nuevo dólar taiwanés"
+    "One": "nuevo dólar taiwanés",
+    "Other": "nuevos dólares taiwaneses",
+    "DisplayName": "nuevo dólar taiwanés"
+  }
 }

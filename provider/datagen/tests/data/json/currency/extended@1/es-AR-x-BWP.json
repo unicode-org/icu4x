@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "pula"
-  },
-  "other_placeholder": "pulas",
-  "display_name": "pula"
+    "One": "pula",
+    "Other": "pulas",
+    "DisplayName": "pula"
+  }
 }

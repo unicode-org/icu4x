@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "Sierra Leone leonesi"
+  "placeholders": {
+    "DisplayName": "Sierra Leone leonesi"
+  }
 }

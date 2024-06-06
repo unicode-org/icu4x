@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "som kirghize"
-  },
-  "other_placeholder": "soms kirghizes",
-  "display_name": "som kirghize"
+    "One": "som kirghize",
+    "Other": "soms kirghizes",
+    "DisplayName": "som kirghize"
+  }
 }

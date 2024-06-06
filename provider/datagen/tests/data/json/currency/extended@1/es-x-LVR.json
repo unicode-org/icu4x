@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "rublo letón"
-  },
-  "other_placeholder": "rublos letones",
-  "display_name": "rublo letón"
+    "One": "rublo letón",
+    "Other": "rublos letones",
+    "DisplayName": "rublo letón"
+  }
 }

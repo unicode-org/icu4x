@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "kwacha zambien"
-  },
-  "other_placeholder": "kwachas zambiens",
-  "display_name": "kwacha zambien"
+    "One": "kwacha zambien",
+    "Other": "kwachas zambiens",
+    "DisplayName": "kwacha zambien"
+  }
 }

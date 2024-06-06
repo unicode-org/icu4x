@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Belize dollar"
-  },
-  "other_placeholder": "Belize dollars",
-  "display_name": "Belize Dollar"
+    "One": "Belize dollar",
+    "Other": "Belize dollars",
+    "DisplayName": "Belize Dollar"
+  }
 }

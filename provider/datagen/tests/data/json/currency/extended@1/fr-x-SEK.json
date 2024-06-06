@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "couronne suédoise"
-  },
-  "other_placeholder": "couronnes suédoises",
-  "display_name": "couronne suédoise"
+    "One": "couronne suédoise",
+    "Other": "couronnes suédoises",
+    "DisplayName": "couronne suédoise"
+  }
 }

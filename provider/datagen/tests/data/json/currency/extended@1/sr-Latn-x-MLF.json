@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "malijski franak",
-    "Few": "malijska franka"
-  },
-  "other_placeholder": "malijskih franaka",
-  "display_name": "Malijanski franak"
+    "Few": "malijska franka",
+    "Other": "malijskih franaka",
+    "DisplayName": "Malijanski franak"
+  }
 }

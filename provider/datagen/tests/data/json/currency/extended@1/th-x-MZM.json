@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "เมติคัลโมซัมบิกเก่า"
+  "placeholders": {
+    "DisplayName": "เมติคัลโมซัมบิกเก่า"
+  }
 }

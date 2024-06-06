@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dolyar ng Singapore"
-  },
-  "other_placeholder": "dolyares ng Singapore",
-  "display_name": "Dolyar ng Singapore"
+    "One": "dolyar ng Singapore",
+    "Other": "dolyares ng Singapore",
+    "DisplayName": "Dolyar ng Singapore"
+  }
 }

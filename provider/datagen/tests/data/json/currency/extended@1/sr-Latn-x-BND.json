@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "brunejski dolar",
-    "Few": "brunejska dolara"
-  },
-  "other_placeholder": "brunejskih dolara",
-  "display_name": "brunejski dolar"
+    "Few": "brunejska dolara",
+    "Other": "brunejskih dolara",
+    "DisplayName": "brunejski dolar"
+  }
 }

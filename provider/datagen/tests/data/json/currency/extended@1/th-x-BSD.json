@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "ดอลลาร์บาฮามาส"
+  "placeholders": {
+    "DisplayName": "ดอลลาร์บาฮามาส"
+  }
 }

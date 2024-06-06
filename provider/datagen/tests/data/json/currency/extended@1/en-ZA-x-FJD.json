@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Fijian dollar"
-  },
-  "other_placeholder": "Fijian dollars",
-  "display_name": "Fijian Dollar"
+    "One": "Fijian dollar",
+    "Other": "Fijian dollars",
+    "DisplayName": "Fijian Dollar"
+  }
 }

@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "burundski franak",
-    "Few": "burundska franka"
-  },
-  "other_placeholder": "burundskih franaka",
-  "display_name": "burundski franak"
+    "Few": "burundska franka",
+    "Other": "burundskih franaka",
+    "DisplayName": "burundski franak"
+  }
 }

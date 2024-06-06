@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dólar bruneano"
-  },
-  "other_placeholder": "dólares bruneanos",
-  "display_name": "dólar bruneano"
+    "One": "dólar bruneano",
+    "Other": "dólares bruneanos",
+    "DisplayName": "dólar bruneano"
+  }
 }

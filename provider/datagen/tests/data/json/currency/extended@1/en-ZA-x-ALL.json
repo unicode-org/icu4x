@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Albanian lek"
-  },
-  "other_placeholder": "Albanian lekë",
-  "display_name": "Albanian Lek"
+    "One": "Albanian lek",
+    "Other": "Albanian lekë",
+    "DisplayName": "Albanian Lek"
+  }
 }

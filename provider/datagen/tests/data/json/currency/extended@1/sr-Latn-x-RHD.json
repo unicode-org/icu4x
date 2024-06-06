@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "rodežanski dolar",
-    "Few": "rodežanska dolara"
-  },
-  "other_placeholder": "rodežanskih dolara",
-  "display_name": "Rodejskidolar"
+    "Few": "rodežanska dolara",
+    "Other": "rodežanskih dolara",
+    "DisplayName": "Rodejskidolar"
+  }
 }

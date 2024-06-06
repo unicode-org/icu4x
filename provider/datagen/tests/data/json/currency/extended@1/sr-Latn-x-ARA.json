@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "argentinski austral",
-    "Few": "argentinska australa"
-  },
-  "other_placeholder": "argentinskih australa",
-  "display_name": "Argentinski austral"
+    "Few": "argentinska australa",
+    "Other": "argentinskih australa",
+    "DisplayName": "Argentinski austral"
+  }
 }

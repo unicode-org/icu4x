@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "piso ng Pilipinas"
-  },
-  "other_placeholder": "piso ng Pilipinas",
-  "display_name": "Piso ng Pilipinas"
+    "One": "piso ng Pilipinas",
+    "Other": "piso ng Pilipinas",
+    "DisplayName": "Piso ng Pilipinas"
+  }
 }

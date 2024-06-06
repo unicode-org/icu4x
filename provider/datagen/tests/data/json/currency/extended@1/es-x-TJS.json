@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "somoni tayiko"
-  },
-  "other_placeholder": "somonis tayikos",
-  "display_name": "somoni tayiko"
+    "One": "somoni tayiko",
+    "Other": "somonis tayikos",
+    "DisplayName": "somoni tayiko"
+  }
 }

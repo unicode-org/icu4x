@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "syli guinéen"
-  },
-  "other_placeholder": "sylis guinéens",
-  "display_name": "syli guinéen"
+    "One": "syli guinéen",
+    "Other": "sylis guinéens",
+    "DisplayName": "syli guinéen"
+  }
 }

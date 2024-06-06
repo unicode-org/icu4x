@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dinar tunecino"
-  },
-  "other_placeholder": "dinares tunecinos",
-  "display_name": "dinar tunecino"
+    "One": "dinar tunecino",
+    "Other": "dinares tunecinos",
+    "DisplayName": "dinar tunecino"
+  }
 }

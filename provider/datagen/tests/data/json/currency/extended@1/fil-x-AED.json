@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dirham ng UAE"
-  },
-  "other_placeholder": "UAE dirhams",
-  "display_name": "United Arab Emirates Dirham"
+    "One": "dirham ng UAE",
+    "Other": "UAE dirhams",
+    "DisplayName": "United Arab Emirates Dirham"
+  }
 }

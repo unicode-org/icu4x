@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "ইকুয়েটোরিয়াল গিনি ইকুয়িলি"
+  "placeholders": {
+    "DisplayName": "ইকুয়েটোরিয়াল গিনি ইকুয়িলি"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "esloti"
-  },
-  "other_placeholder": "eslotis",
-  "display_name": "esloti"
+    "One": "esloti",
+    "Other": "eslotis",
+    "DisplayName": "esloti"
+  }
 }

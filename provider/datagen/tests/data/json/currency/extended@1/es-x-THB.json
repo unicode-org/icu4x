@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "bat"
-  },
-  "other_placeholder": "bats",
-  "display_name": "bat"
+    "One": "bat",
+    "Other": "bats",
+    "DisplayName": "bat"
+  }
 }

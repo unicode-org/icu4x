@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "kyat birman"
-  },
-  "other_placeholder": "kyats birmans",
-  "display_name": "kyat birman"
+    "One": "kyat birman",
+    "Other": "kyats birmans",
+    "DisplayName": "kyat birman"
+  }
 }

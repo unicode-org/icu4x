@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "marokanski franak",
-    "Few": "marokanska franka"
-  },
-  "other_placeholder": "marokanskih franaka",
-  "display_name": "Marokanski franak"
+    "Few": "marokanska franka",
+    "Other": "marokanskih franaka",
+    "DisplayName": "Marokanski franak"
+  }
 }

@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "irački dinar",
-    "Few": "iračka dinara"
-  },
-  "other_placeholder": "iračkih dinara",
-  "display_name": "irački dinar"
+    "Few": "iračka dinara",
+    "Other": "iračkih dinara",
+    "DisplayName": "irački dinar"
+  }
 }

@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "azerbejdžanski manat (1993–2006)",
-    "Few": "azerbejdžanska manata (1993–2006)"
-  },
-  "other_placeholder": "azerbejdžanskih manata (1993–2006)",
-  "display_name": "Azerbejdžanski manat (1993–2006)"
+    "Few": "azerbejdžanska manata (1993–2006)",
+    "Other": "azerbejdžanskih manata (1993–2006)",
+    "DisplayName": "Azerbejdžanski manat (1993–2006)"
+  }
 }

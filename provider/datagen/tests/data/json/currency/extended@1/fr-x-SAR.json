@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "riyal saoudien"
-  },
-  "other_placeholder": "riyals saoudiens",
-  "display_name": "riyal saoudien"
+    "One": "riyal saoudien",
+    "Other": "riyals saoudiens",
+    "DisplayName": "riyal saoudien"
+  }
 }

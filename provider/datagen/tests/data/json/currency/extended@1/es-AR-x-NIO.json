@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "córdoba nicaragüense"
-  },
-  "other_placeholder": "córdobas nicaragüenses",
-  "display_name": "córdoba nicaragüense"
+    "One": "córdoba nicaragüense",
+    "Other": "córdobas nicaragüenses",
+    "DisplayName": "córdoba nicaragüense"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Cayman Islands dollar"
-  },
-  "other_placeholder": "Cayman Islands dollars",
-  "display_name": "Cayman Islands Dollar"
+    "One": "Cayman Islands dollar",
+    "Other": "Cayman Islands dollars",
+    "DisplayName": "Cayman Islands Dollar"
+  }
 }

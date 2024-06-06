@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "শ্রীলঙ্কান রুপি"
+  "placeholders": {
+    "DisplayName": "শ্রীলঙ্কান রুপি"
+  }
 }

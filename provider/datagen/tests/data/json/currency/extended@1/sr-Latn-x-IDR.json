@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "indonežanska rupija",
-    "Few": "indonežanske rupije"
-  },
-  "other_placeholder": "indonežanskih rupija",
-  "display_name": "indonežanska rupija"
+    "Few": "indonežanske rupije",
+    "Other": "indonežanskih rupija",
+    "DisplayName": "indonežanska rupija"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Bosnia-Herzegovina new dinar (1994–1997)"
-  },
-  "other_placeholder": "Bosnia-Herzegovina new dinars (1994–1997)",
-  "display_name": "Bosnia-Herzegovina New Dinar (1994–1997)"
+    "One": "Bosnia-Herzegovina new dinar (1994–1997)",
+    "Other": "Bosnia-Herzegovina new dinars (1994–1997)",
+    "DisplayName": "Bosnia-Herzegovina New Dinar (1994–1997)"
+  }
 }

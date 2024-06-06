@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "češka kruna",
-    "Few": "češke krune"
-  },
-  "other_placeholder": "čeških kruna",
-  "display_name": "češka kruna"
+    "Few": "češke krune",
+    "Other": "čeških kruna",
+    "DisplayName": "češka kruna"
+  }
 }

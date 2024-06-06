@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "জাইরিয়ান জাইরে"
+  "placeholders": {
+    "DisplayName": "জাইরিয়ান জাইরে"
+  }
 }

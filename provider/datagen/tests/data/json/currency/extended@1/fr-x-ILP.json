@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "livre israélienne"
-  },
-  "other_placeholder": "livres israéliennes",
-  "display_name": "livre israélienne"
+    "One": "livre israélienne",
+    "Other": "livres israéliennes",
+    "DisplayName": "livre israélienne"
+  }
 }

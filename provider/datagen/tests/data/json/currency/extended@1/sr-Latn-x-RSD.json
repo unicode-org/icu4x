@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "srpski dinar",
-    "Few": "srpska dinara"
-  },
-  "other_placeholder": "srpskih dinara",
-  "display_name": "srpski dinar"
+    "Few": "srpska dinara",
+    "Other": "srpskih dinara",
+    "DisplayName": "srpski dinar"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "lek albanais (1947–1961)"
-  },
-  "other_placeholder": "leks albanais (1947–1961)",
-  "display_name": "lek albanais (1947–1961)"
+    "One": "lek albanais (1947–1961)",
+    "Other": "leks albanais (1947–1961)",
+    "DisplayName": "lek albanais (1947–1961)"
+  }
 }

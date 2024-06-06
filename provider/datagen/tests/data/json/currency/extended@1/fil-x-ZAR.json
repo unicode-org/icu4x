@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "rand ng Timog Africa"
-  },
-  "other_placeholder": "rand ng Timog Africa",
-  "display_name": "Rand ng Timog Africa"
+    "One": "rand ng Timog Africa",
+    "Other": "rand ng Timog Africa",
+    "DisplayName": "Rand ng Timog Africa"
+  }
 }

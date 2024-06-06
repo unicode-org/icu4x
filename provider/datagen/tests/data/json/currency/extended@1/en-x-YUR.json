@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Yugoslavian reformed dinar (1992–1993)"
-  },
-  "other_placeholder": "Yugoslavian reformed dinars (1992–1993)",
-  "display_name": "Yugoslavian Reformed Dinar (1992–1993)"
+    "One": "Yugoslavian reformed dinar (1992–1993)",
+    "Other": "Yugoslavian reformed dinars (1992–1993)",
+    "DisplayName": "Yugoslavian Reformed Dinar (1992–1993)"
+  }
 }

@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "তিমুর এসকুডো"
+  "placeholders": {
+    "DisplayName": "তিমুর এসকুডো"
+  }
 }

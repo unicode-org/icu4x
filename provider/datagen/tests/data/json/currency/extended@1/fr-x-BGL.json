@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "lev bulgare (1962–1999)"
-  },
-  "other_placeholder": "levs bulgares (1962–1999)",
-  "display_name": "lev bulgare (1962–1999)"
+    "One": "lev bulgare (1962–1999)",
+    "Other": "levs bulgares (1962–1999)",
+    "DisplayName": "lev bulgare (1962–1999)"
+  }
 }

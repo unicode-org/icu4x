@@ -2,8 +2,8 @@
   "placeholders": {
     "One": "доллар США",
     "Few": "доллара США",
-    "Many": "долларов США"
-  },
-  "other_placeholder": "доллара США",
-  "display_name": "доллар США"
+    "Many": "долларов США",
+    "Other": "доллара США",
+    "DisplayName": "доллар США"
+  }
 }

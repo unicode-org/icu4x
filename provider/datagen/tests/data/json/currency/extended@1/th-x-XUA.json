@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "หน่วยบัญชี เอดีบี"
+  "placeholders": {
+    "DisplayName": "หน่วยบัญชี เอดีบี"
+  }
 }

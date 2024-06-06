@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "Hırvatistan Dinarı"
+  "placeholders": {
+    "DisplayName": "Hırvatistan Dinarı"
+  }
 }

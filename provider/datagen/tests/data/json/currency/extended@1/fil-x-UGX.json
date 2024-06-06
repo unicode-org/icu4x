@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Ugandan shilling"
-  },
-  "other_placeholder": "Ugandan shillings",
-  "display_name": "Ugandan Shilling"
+    "One": "Ugandan shilling",
+    "Other": "Ugandan shillings",
+    "DisplayName": "Ugandan Shilling"
+  }
 }

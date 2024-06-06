@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "ماركا فنلندي"
+  "placeholders": {
+    "DisplayName": "ماركا فنلندي"
+  }
 }

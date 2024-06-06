@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Iranian rial"
-  },
-  "other_placeholder": "Iranian rials",
-  "display_name": "Iranian Rial"
+    "One": "Iranian rial",
+    "Other": "Iranian rials",
+    "DisplayName": "Iranian Rial"
+  }
 }

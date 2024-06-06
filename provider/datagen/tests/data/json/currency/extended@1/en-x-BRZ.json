@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Brazilian cruzeiro (1942–1967)"
-  },
-  "other_placeholder": "Brazilian cruzeiros (1942–1967)",
-  "display_name": "Brazilian Cruzeiro (1942–1967)"
+    "One": "Brazilian cruzeiro (1942–1967)",
+    "Other": "Brazilian cruzeiros (1942–1967)",
+    "DisplayName": "Brazilian Cruzeiro (1942–1967)"
+  }
 }

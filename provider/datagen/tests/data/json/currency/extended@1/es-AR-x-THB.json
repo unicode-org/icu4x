@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "baht tailandes"
-  },
-  "other_placeholder": "bahts tailandeses",
-  "display_name": "baht tailandes"
+    "One": "baht tailandes",
+    "Other": "bahts tailandeses",
+    "DisplayName": "baht tailandes"
+  }
 }

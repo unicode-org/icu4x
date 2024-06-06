@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Macanese pataca"
-  },
-  "other_placeholder": "Macanese patacas",
-  "display_name": "Macanese Pataca"
+    "One": "Macanese pataca",
+    "Other": "Macanese patacas",
+    "DisplayName": "Macanese Pataca"
+  }
 }

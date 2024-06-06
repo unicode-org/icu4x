@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "Falkland Adaları lirası"
+  "placeholders": {
+    "DisplayName": "Falkland Adaları lirası"
+  }
 }

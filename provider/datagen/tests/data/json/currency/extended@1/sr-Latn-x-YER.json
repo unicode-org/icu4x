@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "jemenski rijal",
-    "Few": "jemenska rijala"
-  },
-  "other_placeholder": "jemenskih rijala",
-  "display_name": "jemenski rijal"
+    "Few": "jemenska rijala",
+    "Other": "jemenskih rijala",
+    "DisplayName": "jemenski rijal"
+  }
 }

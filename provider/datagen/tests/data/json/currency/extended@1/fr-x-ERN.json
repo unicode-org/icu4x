@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "nafka érythréen"
-  },
-  "other_placeholder": "nafkas érythréens",
-  "display_name": "nafka érythréen"
+    "One": "nafka érythréen",
+    "Other": "nafkas érythréens",
+    "DisplayName": "nafka érythréen"
+  }
 }

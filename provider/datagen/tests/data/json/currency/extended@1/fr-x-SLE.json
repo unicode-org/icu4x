@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "leone sierra-léonais"
-  },
-  "other_placeholder": "leones sierra-léonais",
-  "display_name": "leone sierra-léonais"
+    "One": "leone sierra-léonais",
+    "Other": "leones sierra-léonais",
+    "DisplayName": "leone sierra-léonais"
+  }
 }

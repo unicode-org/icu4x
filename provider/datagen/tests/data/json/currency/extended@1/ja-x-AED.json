@@ -1,5 +1,6 @@
 {
-  "placeholders": {},
-  "other_placeholder": "UAE ディルハム",
-  "display_name": "アラブ首長国連邦ディルハム"
+  "placeholders": {
+    "Other": "UAE ディルハム",
+    "DisplayName": "アラブ首長国連邦ディルハム"
+  }
 }

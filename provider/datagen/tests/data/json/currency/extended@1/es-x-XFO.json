@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "franco oro francés"
-  },
-  "other_placeholder": "francos oro franceses",
-  "display_name": "franco oro francés"
+    "One": "franco oro francés",
+    "Other": "francos oro franceses",
+    "DisplayName": "franco oro francés"
+  }
 }

@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "azerbejdžanski manat",
-    "Few": "azerbejdžanska manata"
-  },
-  "other_placeholder": "azerbejdžanskih manata",
-  "display_name": "azerbejdžanski manat"
+    "Few": "azerbejdžanska manata",
+    "Other": "azerbejdžanskih manata",
+    "DisplayName": "azerbejdžanski manat"
+  }
 }

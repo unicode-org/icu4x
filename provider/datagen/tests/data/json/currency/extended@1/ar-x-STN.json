@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "دوبرا ساو تومي وبرينسيبي"
+  "placeholders": {
+    "DisplayName": "دوبرا ساو تومي وبرينسيبي"
+  }
 }

@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "ইউরোপীয় আর্থিক একক"
+  "placeholders": {
+    "DisplayName": "ইউরোপীয় আর্থিক একক"
+  }
 }

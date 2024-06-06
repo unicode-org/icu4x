@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "won surcoreano"
-  },
-  "other_placeholder": "wons surcoreanos",
-  "display_name": "won surcoreano"
+    "One": "won surcoreano",
+    "Other": "wons surcoreanos",
+    "DisplayName": "won surcoreano"
+  }
 }

@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "সেন্ট হেলেনা পাউন্ড"
+  "placeholders": {
+    "DisplayName": "সেন্ট হেলেনা পাউন্ড"
+  }
 }

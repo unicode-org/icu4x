@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "Meksika Unidad de Inversion (UDI)"
+  "placeholders": {
+    "DisplayName": "Meksika Unidad de Inversion (UDI)"
+  }
 }

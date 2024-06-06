@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Moldovan cupon"
-  },
-  "other_placeholder": "Moldovan cupon",
-  "display_name": "Moldovan Cupon"
+    "One": "Moldovan cupon",
+    "Other": "Moldovan cupon",
+    "DisplayName": "Moldovan Cupon"
+  }
 }

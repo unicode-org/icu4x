@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Azerbaijani manat (1993–2006)"
-  },
-  "other_placeholder": "Azerbaijani manats (1993–2006)",
-  "display_name": "Azerbaijani Manat (1993–2006)"
+    "One": "Azerbaijani manat (1993–2006)",
+    "Other": "Azerbaijani manats (1993–2006)",
+    "DisplayName": "Azerbaijani Manat (1993–2006)"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Namibian dollar"
-  },
-  "other_placeholder": "Namibian dollars",
-  "display_name": "Namibian Dollar"
+    "One": "Namibian dollar",
+    "Other": "Namibian dollars",
+    "DisplayName": "Namibian Dollar"
+  }
 }

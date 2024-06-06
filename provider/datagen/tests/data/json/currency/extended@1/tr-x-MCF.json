@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Monako frangı"
-  },
-  "other_placeholder": "Monako frangı",
-  "display_name": "Monako Frangı"
+    "One": "Monako frangı",
+    "Other": "Monako frangı",
+    "DisplayName": "Monako Frangı"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dinar koweïtien"
-  },
-  "other_placeholder": "dinar koweïtiens",
-  "display_name": "dinar koweïtien"
+    "One": "dinar koweïtien",
+    "Other": "dinar koweïtiens",
+    "DisplayName": "dinar koweïtien"
+  }
 }

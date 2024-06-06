@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "franc convertible luxembourgeois"
-  },
-  "other_placeholder": "francs convertibles luxembourgeois",
-  "display_name": "franc convertible luxembourgeois"
+    "One": "franc convertible luxembourgeois",
+    "Other": "francs convertibles luxembourgeois",
+    "DisplayName": "franc convertible luxembourgeois"
+  }
 }

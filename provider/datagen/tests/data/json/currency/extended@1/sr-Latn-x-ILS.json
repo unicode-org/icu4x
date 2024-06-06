@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "izraelski novi šekel",
-    "Few": "izraelska nova šekela"
-  },
-  "other_placeholder": "izraelskih novih šekela",
-  "display_name": "izraelski novi šekel"
+    "Few": "izraelska nova šekela",
+    "Other": "izraelskih novih šekela",
+    "DisplayName": "izraelski novi šekel"
+  }
 }

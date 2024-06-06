@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Chinese People’s Bank dollar"
-  },
-  "other_placeholder": "Chinese People’s Bank dollars",
-  "display_name": "Chinese People’s Bank Dollar"
+    "One": "Chinese People’s Bank dollar",
+    "Other": "Chinese People’s Bank dollars",
+    "DisplayName": "Chinese People’s Bank Dollar"
+  }
 }

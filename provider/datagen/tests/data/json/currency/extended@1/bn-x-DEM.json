@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "ডয়চ্ মার্ক"
+  "placeholders": {
+    "DisplayName": "ডয়চ্ মার্ক"
+  }
 }

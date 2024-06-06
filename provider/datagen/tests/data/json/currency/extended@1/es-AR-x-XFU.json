@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "franco UIC francés"
-  },
-  "other_placeholder": "francos UIC franceses",
-  "display_name": "franco UIC francés"
+    "One": "franco UIC francés",
+    "Other": "francos UIC franceses",
+    "DisplayName": "franco UIC francés"
+  }
 }

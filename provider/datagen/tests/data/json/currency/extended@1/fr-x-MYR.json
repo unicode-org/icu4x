@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "ringgit malais"
-  },
-  "other_placeholder": "ringgits malais",
-  "display_name": "ringgit malais"
+    "One": "ringgit malais",
+    "Other": "ringgits malais",
+    "DisplayName": "ringgit malais"
+  }
 }

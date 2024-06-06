@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "turska lira",
-    "Few": "turske lire"
-  },
-  "other_placeholder": "turskih lira",
-  "display_name": "turska lira"
+    "Few": "turske lire",
+    "Other": "turskih lira",
+    "DisplayName": "turska lira"
+  }
 }

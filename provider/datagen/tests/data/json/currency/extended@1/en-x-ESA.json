@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Spanish peseta (A account)"
-  },
-  "other_placeholder": "Spanish pesetas (A account)",
-  "display_name": "Spanish Peseta (A account)"
+    "One": "Spanish peseta (A account)",
+    "Other": "Spanish pesetas (A account)",
+    "DisplayName": "Spanish Peseta (A account)"
+  }
 }

@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "surinamski dolar",
-    "Few": "surinamska dolara"
-  },
-  "other_placeholder": "surinamskih dolara",
-  "display_name": "surinamski dolar"
+    "Few": "surinamska dolara",
+    "Other": "surinamskih dolara",
+    "DisplayName": "surinamski dolar"
+  }
 }

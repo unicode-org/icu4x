@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Guinea-Bissau peso"
-  },
-  "other_placeholder": "Guinea-Bissau pesos",
-  "display_name": "Guinea-Bissau Peso"
+    "One": "Guinea-Bissau peso",
+    "Other": "Guinea-Bissau pesos",
+    "DisplayName": "Guinea-Bissau Peso"
+  }
 }

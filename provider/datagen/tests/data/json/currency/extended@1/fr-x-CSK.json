@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "couronne forte tchécoslovaque"
-  },
-  "other_placeholder": "couronnes fortes tchécoslovaques",
-  "display_name": "couronne forte tchécoslovaque"
+    "One": "couronne forte tchécoslovaque",
+    "Other": "couronnes fortes tchécoslovaques",
+    "DisplayName": "couronne forte tchécoslovaque"
+  }
 }

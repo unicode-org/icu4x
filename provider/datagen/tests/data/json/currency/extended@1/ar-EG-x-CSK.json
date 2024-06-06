@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "كرونة تشيكوسلوفاكيا"
+  "placeholders": {
+    "DisplayName": "كرونة تشيكوسلوفاكيا"
+  }
 }

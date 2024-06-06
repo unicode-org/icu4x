@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "São Tomé & Príncipe dobra (1977–2017)"
-  },
-  "other_placeholder": "São Tomé & Príncipe dobras (1977–2017)",
-  "display_name": "São Tomé & Príncipe Dobra (1977–2017)"
+    "One": "São Tomé & Príncipe dobra (1977–2017)",
+    "Other": "São Tomé & Príncipe dobras (1977–2017)",
+    "DisplayName": "São Tomé & Príncipe Dobra (1977–2017)"
+  }
 }

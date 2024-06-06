@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dollar de Hong Kong"
-  },
-  "other_placeholder": "dollars de Hong Kong",
-  "display_name": "dollar de Hong Kong"
+    "One": "dollar de Hong Kong",
+    "Other": "dollars de Hong Kong",
+    "DisplayName": "dollar de Hong Kong"
+  }
 }

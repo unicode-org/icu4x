@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "সলোমন দ্বীপপুঞ্জ ডলার"
+  "placeholders": {
+    "DisplayName": "সলোমন দ্বীপপুঞ্জ ডলার"
+  }
 }

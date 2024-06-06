@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "metical mozambicain"
-  },
-  "other_placeholder": "meticais mozambicains",
-  "display_name": "metical mozambicain"
+    "One": "metical mozambicain",
+    "Other": "meticais mozambicains",
+    "DisplayName": "metical mozambicain"
+  }
 }

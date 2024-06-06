@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "sejšelska rupija",
-    "Few": "sejšelske rupije"
-  },
-  "other_placeholder": "sejšelskih rupija",
-  "display_name": "sejšelska rupija"
+    "Few": "sejšelske rupije",
+    "Other": "sejšelskih rupija",
+    "DisplayName": "sejšelska rupija"
+  }
 }

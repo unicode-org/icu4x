@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "লুক্সেমবার্গ রুপান্তযোগ্য ফ্রাঙ্ক"
+  "placeholders": {
+    "DisplayName": "লুক্সেমবার্গ রুপান্তযোগ্য ফ্রাঙ্ক"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "franco guineano"
-  },
-  "other_placeholder": "francos guineanos",
-  "display_name": "franco guineano"
+    "One": "franco guineano",
+    "Other": "francos guineanos",
+    "DisplayName": "franco guineano"
+  }
 }

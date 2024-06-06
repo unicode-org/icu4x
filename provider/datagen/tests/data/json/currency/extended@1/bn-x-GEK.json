@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "জর্জিয়ান কুপন লারিট"
+  "placeholders": {
+    "DisplayName": "জর্জিয়ান কুপন লারিট"
+  }
 }

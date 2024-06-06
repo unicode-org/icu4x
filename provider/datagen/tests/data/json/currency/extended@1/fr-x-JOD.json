@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dinar jordanien"
-  },
-  "other_placeholder": "dinars jordaniens",
-  "display_name": "dinar jordanien"
+    "One": "dinar jordanien",
+    "Other": "dinars jordaniens",
+    "DisplayName": "dinar jordanien"
+  }
 }

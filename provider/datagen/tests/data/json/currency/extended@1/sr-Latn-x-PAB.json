@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "panamska balboa",
-    "Few": "panamske balboe"
-  },
-  "other_placeholder": "panamskih balboa",
-  "display_name": "panamska balboa"
+    "Few": "panamske balboe",
+    "Other": "panamskih balboa",
+    "DisplayName": "panamska balboa"
+  }
 }

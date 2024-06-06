@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "チリ ウニダ・デ・フォメント (UF)"
+  "placeholders": {
+    "DisplayName": "チリ ウニダ・デ・フォメント (UF)"
+  }
 }

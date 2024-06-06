@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Şili esküdosu"
-  },
-  "other_placeholder": "Şili esküdosu",
-  "display_name": "Şili Esküdosu"
+    "One": "Şili esküdosu",
+    "Other": "Şili esküdosu",
+    "DisplayName": "Şili Esküdosu"
+  }
 }

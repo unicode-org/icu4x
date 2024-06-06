@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "beliski dolar",
-    "Few": "beliska dolara"
-  },
-  "other_placeholder": "beliskih dolara",
-  "display_name": "beliski dolar"
+    "Few": "beliska dolara",
+    "Other": "beliskih dolara",
+    "DisplayName": "beliski dolar"
+  }
 }

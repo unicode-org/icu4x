@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "won ng Timog Korea"
-  },
-  "other_placeholder": "won ng Timog Korea",
-  "display_name": "Won ng Timog Korea"
+    "One": "won ng Timog Korea",
+    "Other": "won ng Timog Korea",
+    "DisplayName": "Won ng Timog Korea"
+  }
 }

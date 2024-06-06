@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "ADB unit of account"
-  },
-  "other_placeholder": "ADB units of account",
-  "display_name": "ADB Unit of Account"
+    "One": "ADB unit of account",
+    "Other": "ADB units of account",
+    "DisplayName": "ADB Unit of Account"
+  }
 }

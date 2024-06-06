@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Swazi lilangeni"
-  },
-  "other_placeholder": "Swazi emalangeni",
-  "display_name": "Swazi Lilangeni"
+    "One": "Swazi lilangeni",
+    "Other": "Swazi emalangeni",
+    "DisplayName": "Swazi Lilangeni"
+  }
 }

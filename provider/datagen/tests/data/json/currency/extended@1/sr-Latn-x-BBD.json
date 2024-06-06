@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "barbadoški dolar",
-    "Few": "barbadoška dolara"
-  },
-  "other_placeholder": "barbadoških dolara",
-  "display_name": "barbadoški dolar"
+    "Few": "barbadoška dolara",
+    "Other": "barbadoških dolara",
+    "DisplayName": "barbadoški dolar"
+  }
 }

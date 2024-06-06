@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dólar estadounidense (mismo día)"
-  },
-  "other_placeholder": "dólares estadounidenses (mismo día)",
-  "display_name": "dólar estadounidense (mismo día)"
+    "One": "dólar estadounidense (mismo día)",
+    "Other": "dólares estadounidenses (mismo día)",
+    "DisplayName": "dólar estadounidense (mismo día)"
+  }
 }

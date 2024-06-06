@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Soviet rouble"
-  },
-  "other_placeholder": "Soviet roubles",
-  "display_name": "Soviet Rouble"
+    "One": "Soviet rouble",
+    "Other": "Soviet roubles",
+    "DisplayName": "Soviet Rouble"
+  }
 }

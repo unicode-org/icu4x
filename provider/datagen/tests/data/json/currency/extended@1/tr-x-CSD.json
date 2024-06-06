@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "Eski Sırbistan Dinarı"
+  "placeholders": {
+    "DisplayName": "Eski Sırbistan Dinarı"
+  }
 }

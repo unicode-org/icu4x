@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "US dollar"
-  },
-  "other_placeholder": "US dollars",
-  "display_name": "US Dollar"
+    "One": "US dollar",
+    "Other": "US dollars",
+    "DisplayName": "US Dollar"
+  }
 }

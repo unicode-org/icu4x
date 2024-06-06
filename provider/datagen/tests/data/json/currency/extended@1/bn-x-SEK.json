@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "সুইডিশ ক্রোনা"
+  "placeholders": {
+    "DisplayName": "সুইডিশ ক্রোনা"
+  }
 }

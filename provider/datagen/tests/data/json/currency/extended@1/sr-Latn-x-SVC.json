@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "salvadorski kolon",
-    "Few": "salvadorska kolona"
-  },
-  "other_placeholder": "salvadorskih kolona",
-  "display_name": "Salvadorski kolon"
+    "Few": "salvadorska kolona",
+    "Other": "salvadorskih kolona",
+    "DisplayName": "Salvadorski kolon"
+  }
 }

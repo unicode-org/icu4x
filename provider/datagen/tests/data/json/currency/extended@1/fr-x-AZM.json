@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "manat azéri (1993–2006)"
-  },
-  "other_placeholder": "manats azéris (1993–2006)",
-  "display_name": "manat azéri (1993–2006)"
+    "One": "manat azéri (1993–2006)",
+    "Other": "manats azéris (1993–2006)",
+    "DisplayName": "manat azéri (1993–2006)"
+  }
 }

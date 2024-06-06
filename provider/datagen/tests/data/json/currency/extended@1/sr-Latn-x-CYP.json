@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "kiparska funta",
-    "Few": "kiparske funte"
-  },
-  "other_placeholder": "kiparskih funti",
-  "display_name": "Kiparska funta"
+    "Few": "kiparske funte",
+    "Other": "kiparskih funti",
+    "DisplayName": "Kiparska funta"
+  }
 }

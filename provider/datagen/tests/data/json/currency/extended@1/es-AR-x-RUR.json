@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "rublo ruso (RUR)"
-  },
-  "other_placeholder": "rublos rusos (RUR)",
-  "display_name": "rublo ruso (1991–1998)"
+    "One": "rublo ruso (RUR)",
+    "Other": "rublos rusos (RUR)",
+    "DisplayName": "rublo ruso (1991–1998)"
+  }
 }

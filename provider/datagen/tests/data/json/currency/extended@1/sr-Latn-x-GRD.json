@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "grčka drahma",
-    "Few": "grčke drahme"
-  },
-  "other_placeholder": "grčkih drahmi",
-  "display_name": "Grčka drahma"
+    "Few": "grčke drahme",
+    "Other": "grčkih drahmi",
+    "DisplayName": "Grčka drahma"
+  }
 }

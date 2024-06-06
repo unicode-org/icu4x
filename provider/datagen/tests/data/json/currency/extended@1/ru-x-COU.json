@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "Единица реальной стоимости Колумбии"
+  "placeholders": {
+    "DisplayName": "Единица реальной стоимости Колумбии"
+  }
 }

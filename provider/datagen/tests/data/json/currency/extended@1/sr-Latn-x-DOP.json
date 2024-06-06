@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "dominikanski pezos",
-    "Few": "dominikanska pezosa"
-  },
-  "other_placeholder": "dominikanskih pezosa",
-  "display_name": "dominikanski pezos"
+    "Few": "dominikanska pezosa",
+    "Other": "dominikanskih pezosa",
+    "DisplayName": "dominikanski pezos"
+  }
 }

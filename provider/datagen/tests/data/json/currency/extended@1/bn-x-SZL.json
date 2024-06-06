@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "সোয়াজিল্যান্ড লিলাঙ্গেনি"
+  "placeholders": {
+    "DisplayName": "সোয়াজিল্যান্ড লিলাঙ্গেনি"
+  }
 }

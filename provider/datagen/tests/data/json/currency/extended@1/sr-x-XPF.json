@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "CFP франак",
-    "Few": "CFP франка"
-  },
-  "other_placeholder": "CFP франака",
-  "display_name": "CFP франак"
+    "Few": "CFP франка",
+    "Other": "CFP франака",
+    "DisplayName": "CFP франак"
+  }
 }

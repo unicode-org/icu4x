@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Estonian kroon"
-  },
-  "other_placeholder": "Estonian kroons",
-  "display_name": "Estonian Kroon"
+    "One": "Estonian kroon",
+    "Other": "Estonian kroons",
+    "DisplayName": "Estonian Kroon"
+  }
 }

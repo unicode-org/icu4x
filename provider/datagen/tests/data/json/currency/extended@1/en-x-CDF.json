@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Congolese franc"
-  },
-  "other_placeholder": "Congolese francs",
-  "display_name": "Congolese Franc"
+    "One": "Congolese franc",
+    "Other": "Congolese francs",
+    "DisplayName": "Congolese Franc"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dolyar ng Canada"
-  },
-  "other_placeholder": "Dolyares ng Canada",
-  "display_name": "Dolyar ng Canada"
+    "One": "dolyar ng Canada",
+    "Other": "Dolyares ng Canada",
+    "DisplayName": "Dolyar ng Canada"
+  }
 }

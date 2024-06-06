@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "Cayman Adaları doları"
+  "placeholders": {
+    "DisplayName": "Cayman Adaları doları"
+  }
 }

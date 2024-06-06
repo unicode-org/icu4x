@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "albanski lek",
-    "Few": "albanska leka"
-  },
-  "other_placeholder": "albanskih leka",
-  "display_name": "albanski lek"
+    "Few": "albanska leka",
+    "Other": "albanskih leka",
+    "DisplayName": "albanski lek"
+  }
 }

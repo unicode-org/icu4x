@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "timorški eskudo",
-    "Few": "timorška eskuda"
-  },
-  "other_placeholder": "timorških eskuda",
-  "display_name": "Timorški eskudo"
+    "Few": "timorška eskuda",
+    "Other": "timorških eskuda",
+    "DisplayName": "Timorški eskudo"
+  }
 }

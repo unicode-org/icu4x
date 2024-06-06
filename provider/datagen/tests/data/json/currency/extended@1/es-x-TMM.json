@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "manat turcomano (1993–2009)"
-  },
-  "other_placeholder": "manats turcomanos (1993–2009)",
-  "display_name": "manat turcomano (1993–2009)"
+    "One": "manat turcomano (1993–2009)",
+    "Other": "manats turcomanos (1993–2009)",
+    "DisplayName": "manat turcomano (1993–2009)"
+  }
 }

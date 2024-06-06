@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "Sao Tome ve Principe dobrası"
+  "placeholders": {
+    "DisplayName": "Sao Tome ve Principe dobrası"
+  }
 }

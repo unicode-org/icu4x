@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "kod testirane valute",
-    "Few": "koda testirane valute"
-  },
-  "other_placeholder": "kodova testirane valute",
-  "display_name": "Kod testirane valute"
+    "Few": "koda testirane valute",
+    "Other": "kodova testirane valute",
+    "DisplayName": "Kod testirane valute"
+  }
 }

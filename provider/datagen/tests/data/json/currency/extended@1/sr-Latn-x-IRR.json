@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "iranski rijal",
-    "Few": "iranska rijala"
-  },
-  "other_placeholder": "iranskih rijala",
-  "display_name": "iranski rijal"
+    "Few": "iranska rijala",
+    "Other": "iranskih rijala",
+    "DisplayName": "iranski rijal"
+  }
 }

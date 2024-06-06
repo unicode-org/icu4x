@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Slovenian tolar"
-  },
-  "other_placeholder": "Slovenian tolars",
-  "display_name": "Slovenian Tolar"
+    "One": "Slovenian tolar",
+    "Other": "Slovenian tolars",
+    "DisplayName": "Slovenian Tolar"
+  }
 }

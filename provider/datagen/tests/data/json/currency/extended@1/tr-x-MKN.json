@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Makedonya dinarı (1992–1993)"
-  },
-  "other_placeholder": "Makedonya dinarı (1992–1993)",
-  "display_name": "Makedonya Dinarı (1992–1993)"
+    "One": "Makedonya dinarı (1992–1993)",
+    "Other": "Makedonya dinarı (1992–1993)",
+    "DisplayName": "Makedonya Dinarı (1992–1993)"
+  }
 }

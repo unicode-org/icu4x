@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "stari izraelski šekeli",
-    "Few": "stari izraelski šekeli"
-  },
-  "other_placeholder": "stari izraelski šekeli",
-  "display_name": "Stari izraelski šekeli"
+    "Few": "stari izraelski šekeli",
+    "Other": "stari izraelski šekeli",
+    "DisplayName": "Stari izraelski šekeli"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "chelín keniano"
-  },
-  "other_placeholder": "chelines kenianos",
-  "display_name": "chelín keniano"
+    "One": "chelín keniano",
+    "Other": "chelines kenianos",
+    "DisplayName": "chelín keniano"
+  }
 }

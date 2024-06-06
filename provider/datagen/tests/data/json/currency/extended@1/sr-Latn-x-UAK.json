@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "ukrajinski karbovanec",
-    "Few": "ukrajinska karbovanciva"
-  },
-  "other_placeholder": "ukrajinskih karbovanciva",
-  "display_name": "Ukrajinski karbovaneti"
+    "Few": "ukrajinska karbovanciva",
+    "Other": "ukrajinskih karbovanciva",
+    "DisplayName": "Ukrajinski karbovaneti"
+  }
 }

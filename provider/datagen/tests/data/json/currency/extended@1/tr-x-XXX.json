@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "(bilinmeyen para birimi)"
-  },
-  "other_placeholder": "(bilinmeyen para birimi)",
-  "display_name": "Bilinmeyen Para Birimi"
+    "One": "(bilinmeyen para birimi)",
+    "Other": "(bilinmeyen para birimi)",
+    "DisplayName": "Bilinmeyen Para Birimi"
+  }
 }

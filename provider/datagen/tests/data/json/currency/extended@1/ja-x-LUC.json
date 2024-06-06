@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "ルクセンブルク 兌換フラン"
+  "placeholders": {
+    "DisplayName": "ルクセンブルク 兌換フラン"
+  }
 }

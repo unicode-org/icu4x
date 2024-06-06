@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "yen japonais"
-  },
-  "other_placeholder": "yens japonais",
-  "display_name": "yen japonais"
+    "One": "yen japonais",
+    "Other": "yens japonais",
+    "DisplayName": "yen japonais"
+  }
 }

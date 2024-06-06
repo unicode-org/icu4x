@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "Sovyet Rublesi"
+  "placeholders": {
+    "DisplayName": "Sovyet Rublesi"
+  }
 }

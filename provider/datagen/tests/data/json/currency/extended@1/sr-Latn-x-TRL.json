@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "turska lira (1922–2005)",
-    "Few": "turske lire (1922–2005)"
-  },
-  "other_placeholder": "turskih lira (1922–2005)",
-  "display_name": "Turska lira (1922–2005)"
+    "Few": "turske lire (1922–2005)",
+    "Other": "turskih lira (1922–2005)",
+    "DisplayName": "Turska lira (1922–2005)"
+  }
 }

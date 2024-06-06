@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "franco convertible luxemburgués"
-  },
-  "other_placeholder": "francos convertibles luxemburgueses",
-  "display_name": "franco convertible luxemburgués"
+    "One": "franco convertible luxemburgués",
+    "Other": "francos convertibles luxemburgueses",
+    "DisplayName": "franco convertible luxemburgués"
+  }
 }

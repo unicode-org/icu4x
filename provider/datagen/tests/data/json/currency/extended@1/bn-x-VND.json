@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "ভিয়েতনামি ডঙ্গ"
+  "placeholders": {
+    "DisplayName": "ভিয়েতনামি ডঙ্গ"
+  }
 }

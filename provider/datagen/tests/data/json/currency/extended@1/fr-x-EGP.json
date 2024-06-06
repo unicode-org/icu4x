@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "livre égyptienne"
-  },
-  "other_placeholder": "livres égyptiennes",
-  "display_name": "livre égyptienne"
+    "One": "livre égyptienne",
+    "Other": "livres égyptiennes",
+    "DisplayName": "livre égyptienne"
+  }
 }

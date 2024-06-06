@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "กิลเดอร์ซูรินาเม"
+  "placeholders": {
+    "DisplayName": "กิลเดอร์ซูรินาเม"
+  }
 }

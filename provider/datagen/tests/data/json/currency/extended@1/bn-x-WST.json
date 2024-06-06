@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "সামোয়ান টালা"
+  "placeholders": {
+    "DisplayName": "সামোয়ান টালা"
+  }
 }

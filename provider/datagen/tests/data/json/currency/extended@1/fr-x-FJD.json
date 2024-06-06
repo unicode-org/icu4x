@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dollar fidjien"
-  },
-  "other_placeholder": "dollars fidjiens",
-  "display_name": "dollar fidjien"
+    "One": "dollar fidjien",
+    "Other": "dollars fidjiens",
+    "DisplayName": "dollar fidjien"
+  }
 }

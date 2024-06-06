@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "CFP franc"
-  },
-  "other_placeholder": "CFP francs",
-  "display_name": "CFP Franc"
+    "One": "CFP franc",
+    "Other": "CFP francs",
+    "DisplayName": "CFP Franc"
+  }
 }

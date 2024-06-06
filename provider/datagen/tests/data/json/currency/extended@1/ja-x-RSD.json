@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "ディナール (セルビア)"
+  "placeholders": {
+    "DisplayName": "ディナール (セルビア)"
+  }
 }

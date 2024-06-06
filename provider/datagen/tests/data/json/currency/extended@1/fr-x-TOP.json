@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "pa’anga tongan"
-  },
-  "other_placeholder": "pa’angas tongans",
-  "display_name": "pa’anga tongan"
+    "One": "pa’anga tongan",
+    "Other": "pa’angas tongans",
+    "DisplayName": "pa’anga tongan"
+  }
 }

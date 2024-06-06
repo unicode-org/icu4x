@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "gvineja-bisaoški pezo",
-    "Few": "gvineja-bisaoška pezosa"
-  },
-  "other_placeholder": "gvineja-bisaoških pezosa",
-  "display_name": "Gvineja Bisao Pezo"
+    "Few": "gvineja-bisaoška pezosa",
+    "Other": "gvineja-bisaoških pezosa",
+    "DisplayName": "Gvineja Bisao Pezo"
+  }
 }

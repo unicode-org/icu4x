@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "(devise de test)"
-  },
-  "other_placeholder": "(devises de test)",
-  "display_name": "(devise de test)"
+    "One": "(devise de test)",
+    "Other": "(devises de test)",
+    "DisplayName": "(devise de test)"
+  }
 }

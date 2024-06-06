@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "Испанская песета (конвертируемая)"
+  "placeholders": {
+    "DisplayName": "Испанская песета (конвертируемая)"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "peso uruguayo (UYP)"
-  },
-  "other_placeholder": "pesos uruguayos (UYP)",
-  "display_name": "peso uruguayo (1975–1993)"
+    "One": "peso uruguayo (UYP)",
+    "Other": "pesos uruguayos (UYP)",
+    "DisplayName": "peso uruguayo (1975–1993)"
+  }
 }

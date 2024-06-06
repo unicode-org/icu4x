@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "француски UIC-франак",
-    "Few": "француска UIC-франка"
-  },
-  "other_placeholder": "француских UIC-франака",
-  "display_name": "Француски UIC-франак"
+    "Few": "француска UIC-франка",
+    "Other": "француских UIC-франака",
+    "DisplayName": "Француски UIC-франак"
+  }
 }

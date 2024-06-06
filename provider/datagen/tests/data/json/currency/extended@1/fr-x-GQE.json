@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "ekwélé équatoguinéen"
-  },
-  "other_placeholder": "ekwélés équatoguinéens",
-  "display_name": "ekwélé équatoguinéen"
+    "One": "ekwélé équatoguinéen",
+    "Other": "ekwélés équatoguinéens",
+    "DisplayName": "ekwélé équatoguinéen"
+  }
 }

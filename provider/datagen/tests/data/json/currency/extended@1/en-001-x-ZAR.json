@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "South African rand"
-  },
-  "other_placeholder": "South African rand",
-  "display_name": "South African Rand"
+    "One": "South African rand",
+    "Other": "South African rand",
+    "DisplayName": "South African Rand"
+  }
 }

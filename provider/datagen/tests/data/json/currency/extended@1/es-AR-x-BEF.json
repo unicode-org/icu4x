@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "franco belga"
-  },
-  "other_placeholder": "francos belgas",
-  "display_name": "franco belga"
+    "One": "franco belga",
+    "Other": "francos belgas",
+    "DisplayName": "franco belga"
+  }
 }

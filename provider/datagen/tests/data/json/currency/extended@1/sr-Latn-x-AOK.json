@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "angolijska kvanza (1977–1990)",
-    "Few": "angolijske kvanze (1977–1990)"
-  },
-  "other_placeholder": "angolijskih kvanzi (1977–1990)",
-  "display_name": "Angolijska kvanza (1977–1990)"
+    "Few": "angolijske kvanze (1977–1990)",
+    "Other": "angolijskih kvanzi (1977–1990)",
+    "DisplayName": "Angolijska kvanza (1977–1990)"
+  }
 }

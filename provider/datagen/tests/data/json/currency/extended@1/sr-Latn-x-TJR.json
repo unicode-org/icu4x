@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "tadžihistanska rublja",
-    "Few": "tadžihistanske rublje"
-  },
-  "other_placeholder": "tadžihistanskih rublji",
-  "display_name": "Tadžihistanska rublja"
+    "Few": "tadžihistanske rublje",
+    "Other": "tadžihistanskih rublji",
+    "DisplayName": "Tadžihistanska rublja"
+  }
 }

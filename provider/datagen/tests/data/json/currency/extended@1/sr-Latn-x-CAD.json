@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "kanadski dolar",
-    "Few": "kanadska dolara"
-  },
-  "other_placeholder": "kanadskih dolara",
-  "display_name": "kanadski dolar"
+    "Few": "kanadska dolara",
+    "Other": "kanadskih dolara",
+    "DisplayName": "kanadski dolar"
+  }
 }

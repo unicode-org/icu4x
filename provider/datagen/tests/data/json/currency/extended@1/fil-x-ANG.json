@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Antillean guilder ng Netherlands"
-  },
-  "other_placeholder": "Antillean guilders ng Netherlands",
-  "display_name": "Antillean Guilder ng Netherlands"
+    "One": "Antillean guilder ng Netherlands",
+    "Other": "Antillean guilders ng Netherlands",
+    "DisplayName": "Antillean Guilder ng Netherlands"
+  }
 }

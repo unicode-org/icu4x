@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "leu rumano"
-  },
-  "other_placeholder": "leus rumanos",
-  "display_name": "leu rumano"
+    "One": "leu rumano",
+    "Other": "leus rumanos",
+    "DisplayName": "leu rumano"
+  }
 }

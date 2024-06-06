@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "паладијум",
-    "Few": "паладијума"
-  },
-  "other_placeholder": "паладијума",
-  "display_name": "Паладијум"
+    "Few": "паладијума",
+    "Other": "паладијума",
+    "DisplayName": "Паладијум"
+  }
 }

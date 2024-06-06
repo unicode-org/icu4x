@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "florin surinamais"
-  },
-  "other_placeholder": "florins surinamais",
-  "display_name": "florin surinamais"
+    "One": "florin surinamais",
+    "Other": "florins surinamais",
+    "DisplayName": "florin surinamais"
+  }
 }

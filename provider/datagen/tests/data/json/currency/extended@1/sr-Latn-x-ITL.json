@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "italijanska lira",
-    "Few": "italijanske lire"
-  },
-  "other_placeholder": "italijanske lire",
-  "display_name": "Italijanska lira"
+    "Few": "italijanske lire",
+    "Other": "italijanske lire",
+    "DisplayName": "Italijanska lira"
+  }
 }

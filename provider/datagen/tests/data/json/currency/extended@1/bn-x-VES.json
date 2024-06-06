@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "ভেনিজুয়েলীয় বলিভার"
+  "placeholders": {
+    "DisplayName": "ভেনিজুয়েলীয় বলিভার"
+  }
 }

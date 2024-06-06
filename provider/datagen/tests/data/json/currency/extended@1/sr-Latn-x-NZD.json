@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "novozelandski dolar",
-    "Few": "novozelandska dolara"
-  },
-  "other_placeholder": "novozelandskih dolara",
-  "display_name": "novozelandski dolar"
+    "Few": "novozelandska dolara",
+    "Other": "novozelandskih dolara",
+    "DisplayName": "novozelandski dolar"
+  }
 }

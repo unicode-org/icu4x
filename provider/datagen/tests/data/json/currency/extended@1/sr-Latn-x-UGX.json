@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "ugandski šiling",
-    "Few": "ugandska šilinga"
-  },
-  "other_placeholder": "ugandskih šilinga",
-  "display_name": "ugandski šiling"
+    "Few": "ugandska šilinga",
+    "Other": "ugandskih šilinga",
+    "DisplayName": "ugandski šiling"
+  }
 }

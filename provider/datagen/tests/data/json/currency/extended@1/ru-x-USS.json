@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "Доллар США текущего дня"
+  "placeholders": {
+    "DisplayName": "Доллар США текущего дня"
+  }
 }

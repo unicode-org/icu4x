@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "rand sud-africain (financier)"
-  },
-  "other_placeholder": "rands sud-africains (financiers)",
-  "display_name": "rand sud-africain (financier)"
+    "One": "rand sud-africain (financier)",
+    "Other": "rands sud-africains (financiers)",
+    "DisplayName": "rand sud-africain (financier)"
+  }
 }

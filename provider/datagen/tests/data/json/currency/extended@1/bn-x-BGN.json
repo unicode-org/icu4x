@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "বুলগেরীয় লেভ"
-  },
-  "other_placeholder": "বুলগেরীয় লেভা",
-  "display_name": "বুলগেরীয় লেভ"
+    "One": "বুলগেরীয় লেভ",
+    "Other": "বুলগেরীয় লেভা",
+    "DisplayName": "বুলগেরীয় লেভ"
+  }
 }

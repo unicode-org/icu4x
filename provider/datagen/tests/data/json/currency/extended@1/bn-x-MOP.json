@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "ম্যাক্যাও পাটাকা"
+  "placeholders": {
+    "DisplayName": "ম্যাক্যাও পাটাকা"
+  }
 }

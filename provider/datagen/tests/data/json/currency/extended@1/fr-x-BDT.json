@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "taka bangladeshi"
-  },
-  "other_placeholder": "takas bangladeshis",
-  "display_name": "taka bangladeshi"
+    "One": "taka bangladeshi",
+    "Other": "takas bangladeshis",
+    "DisplayName": "taka bangladeshi"
+  }
 }

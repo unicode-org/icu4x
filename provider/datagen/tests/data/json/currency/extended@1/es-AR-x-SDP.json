@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "libra sudanesa antigua"
-  },
-  "other_placeholder": "libras sudanesas antiguas",
-  "display_name": "libra sudanesa antigua"
+    "One": "libra sudanesa antigua",
+    "Other": "libras sudanesas antiguas",
+    "DisplayName": "libra sudanesa antigua"
+  }
 }

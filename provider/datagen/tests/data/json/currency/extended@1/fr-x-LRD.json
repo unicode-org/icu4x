@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dollar libérien"
-  },
-  "other_placeholder": "dollars libériens",
-  "display_name": "dollar libérien"
+    "One": "dollar libérien",
+    "Other": "dollars libériens",
+    "DisplayName": "dollar libérien"
+  }
 }

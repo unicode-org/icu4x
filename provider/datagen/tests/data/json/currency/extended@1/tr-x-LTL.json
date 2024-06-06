@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Litvanya litası"
-  },
-  "other_placeholder": "Litvanya litası",
-  "display_name": "Litvanya Litası"
+    "One": "Litvanya litası",
+    "Other": "Litvanya litası",
+    "DisplayName": "Litvanya Litası"
+  }
 }

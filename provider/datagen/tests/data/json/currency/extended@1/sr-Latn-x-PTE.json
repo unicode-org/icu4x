@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "portugalski eskudo",
-    "Few": "portugalska eskuda"
-  },
-  "other_placeholder": "portugalskih eskuda",
-  "display_name": "Portugalski eskudo"
+    "Few": "portugalska eskuda",
+    "Other": "portugalskih eskuda",
+    "DisplayName": "Portugalski eskudo"
+  }
 }

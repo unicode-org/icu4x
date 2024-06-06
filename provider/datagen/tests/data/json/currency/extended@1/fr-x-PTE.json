@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "escudo portugais"
-  },
-  "other_placeholder": "escudos portugais",
-  "display_name": "escudo portugais"
+    "One": "escudo portugais",
+    "Other": "escudos portugais",
+    "DisplayName": "escudo portugais"
+  }
 }

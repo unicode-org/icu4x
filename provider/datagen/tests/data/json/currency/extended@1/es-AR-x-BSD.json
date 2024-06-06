@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dólar bahameño"
-  },
-  "other_placeholder": "dólares bahameños",
-  "display_name": "dólar bahameño"
+    "One": "dólar bahameño",
+    "Other": "dólares bahameños",
+    "DisplayName": "dólar bahameño"
+  }
 }

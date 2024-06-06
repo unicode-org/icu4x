@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "lek albanais"
-  },
-  "other_placeholder": "leks albanais",
-  "display_name": "lek albanais"
+    "One": "lek albanais",
+    "Other": "leks albanais",
+    "DisplayName": "lek albanais"
+  }
 }

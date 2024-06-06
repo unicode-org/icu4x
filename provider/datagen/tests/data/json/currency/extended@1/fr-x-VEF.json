@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "bolivar vénézuélien (2008–2018)"
-  },
-  "other_placeholder": "bolivars vénézuéliens (2008–2018)",
-  "display_name": "bolivar vénézuélien (2008–2018)"
+    "One": "bolivar vénézuélien (2008–2018)",
+    "Other": "bolivars vénézuéliens (2008–2018)",
+    "DisplayName": "bolivar vénézuélien (2008–2018)"
+  }
 }

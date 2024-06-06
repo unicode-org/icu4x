@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "saotomska dobra (1977–2017)",
-    "Few": "saotomske dobre (1977–2017)"
-  },
-  "other_placeholder": "saotomskih dobri (1977–2017)",
-  "display_name": "Saotomska dobra (1977–2017)"
+    "Few": "saotomske dobre (1977–2017)",
+    "Other": "saotomskih dobri (1977–2017)",
+    "DisplayName": "Saotomska dobra (1977–2017)"
+  }
 }

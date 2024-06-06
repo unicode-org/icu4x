@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dolyar ng Silangang Caribbean"
-  },
-  "other_placeholder": "dolyares ng Silangang Caribbean",
-  "display_name": "Dolyar ng Silangang Caribbean"
+    "One": "dolyar ng Silangang Caribbean",
+    "Other": "dolyares ng Silangang Caribbean",
+    "DisplayName": "Dolyar ng Silangang Caribbean"
+  }
 }

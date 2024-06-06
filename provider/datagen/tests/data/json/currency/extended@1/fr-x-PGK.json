@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "kina papouan-néo-guinéen"
-  },
-  "other_placeholder": "kinas papouan-néo-guinéens",
-  "display_name": "kina papouan-néo-guinéen"
+    "One": "kina papouan-néo-guinéen",
+    "Other": "kinas papouan-néo-guinéens",
+    "DisplayName": "kina papouan-néo-guinéen"
+  }
 }

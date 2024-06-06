@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "กองทุนไรเน็ต"
+  "placeholders": {
+    "DisplayName": "กองทุนไรเน็ต"
+  }
 }

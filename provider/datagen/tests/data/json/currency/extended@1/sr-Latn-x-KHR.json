@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "kambodžanski rijel",
-    "Few": "kambodžanska rijela"
-  },
-  "other_placeholder": "kambodžanskih rijela",
-  "display_name": "kambodžanski rijel"
+    "Few": "kambodžanska rijela",
+    "Other": "kambodžanskih rijela",
+    "DisplayName": "kambodžanski rijel"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Dutch guilder"
-  },
-  "other_placeholder": "Dutch guilders",
-  "display_name": "Dutch Guilder"
+    "One": "Dutch guilder",
+    "Other": "Dutch guilders",
+    "DisplayName": "Dutch Guilder"
+  }
 }

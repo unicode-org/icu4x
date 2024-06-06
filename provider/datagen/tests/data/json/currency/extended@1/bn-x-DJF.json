@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "জিবুতি ফ্রাঙ্ক"
+  "placeholders": {
+    "DisplayName": "জিবুতি ফ্রাঙ্ক"
+  }
 }

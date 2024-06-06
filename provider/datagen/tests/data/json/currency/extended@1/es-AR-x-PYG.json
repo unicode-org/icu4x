@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "guaraní paraguayo"
-  },
-  "other_placeholder": "guaraníes paraguayos",
-  "display_name": "guaraní paraguayo"
+    "One": "guaraní paraguayo",
+    "Other": "guaraníes paraguayos",
+    "DisplayName": "guaraní paraguayo"
+  }
 }

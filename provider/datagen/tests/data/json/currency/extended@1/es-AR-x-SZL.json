@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "lilangeni"
-  },
-  "other_placeholder": "lilangenis",
-  "display_name": "lilangeni"
+    "One": "lilangeni",
+    "Other": "lilangenis",
+    "DisplayName": "lilangeni"
+  }
 }

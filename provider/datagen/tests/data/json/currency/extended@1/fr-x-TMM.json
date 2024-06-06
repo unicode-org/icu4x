@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "manat turkmène"
-  },
-  "other_placeholder": "manats turkmènes",
-  "display_name": "manat turkmène"
+    "One": "manat turkmène",
+    "Other": "manats turkmènes",
+    "DisplayName": "manat turkmène"
+  }
 }

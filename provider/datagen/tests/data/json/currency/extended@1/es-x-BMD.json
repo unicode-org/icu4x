@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dólar bermudeño"
-  },
-  "other_placeholder": "dólares bermudeños",
-  "display_name": "dólar bermudeño"
+    "One": "dólar bermudeño",
+    "Other": "dólares bermudeños",
+    "DisplayName": "dólar bermudeño"
+  }
 }

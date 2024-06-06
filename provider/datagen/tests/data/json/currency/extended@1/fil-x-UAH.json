@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "hryvnia ng Ukraine"
-  },
-  "other_placeholder": "hryvnias ng Ukraine",
-  "display_name": "Hryvnia ng Ukraine"
+    "One": "hryvnia ng Ukraine",
+    "Other": "hryvnias ng Ukraine",
+    "DisplayName": "Hryvnia ng Ukraine"
+  }
 }

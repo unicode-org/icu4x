@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "shilling somalien"
-  },
-  "other_placeholder": "shillings somaliens",
-  "display_name": "shilling somalien"
+    "One": "shilling somalien",
+    "Other": "shillings somaliens",
+    "DisplayName": "shilling somalien"
+  }
 }

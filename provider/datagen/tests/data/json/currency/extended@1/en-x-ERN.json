@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Eritrean nakfa"
-  },
-  "other_placeholder": "Eritrean nakfas",
-  "display_name": "Eritrean Nakfa"
+    "One": "Eritrean nakfa",
+    "Other": "Eritrean nakfas",
+    "DisplayName": "Eritrean Nakfa"
+  }
 }

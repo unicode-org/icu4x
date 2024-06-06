@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "arubanski florin",
-    "Few": "arubanska florina"
-  },
-  "other_placeholder": "arubanskih florina",
-  "display_name": "arubanski florin"
+    "Few": "arubanska florina",
+    "Other": "arubanskih florina",
+    "DisplayName": "arubanski florin"
+  }
 }

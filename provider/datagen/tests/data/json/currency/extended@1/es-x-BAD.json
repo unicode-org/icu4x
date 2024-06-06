@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dinar bosnio"
-  },
-  "other_placeholder": "dinares bosnios",
-  "display_name": "dinar bosnio"
+    "One": "dinar bosnio",
+    "Other": "dinares bosnios",
+    "DisplayName": "dinar bosnio"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "unité composée européenne (EURCO)"
-  },
-  "other_placeholder": "unités composées européennes (EURCO)",
-  "display_name": "unité européenne composée"
+    "One": "unité composée européenne (EURCO)",
+    "Other": "unités composées européennes (EURCO)",
+    "DisplayName": "unité européenne composée"
+  }
 }

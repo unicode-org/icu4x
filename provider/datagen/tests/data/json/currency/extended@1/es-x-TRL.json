@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "lira turca (1922–2005)"
-  },
-  "other_placeholder": "liras turcas (1922–2005)",
-  "display_name": "lira turca (1922–2005)"
+    "One": "lira turca (1922–2005)",
+    "Other": "liras turcas (1922–2005)",
+    "DisplayName": "lira turca (1922–2005)"
+  }
 }

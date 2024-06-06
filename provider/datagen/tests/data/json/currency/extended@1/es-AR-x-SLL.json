@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "leona (1964—2022)"
-  },
-  "other_placeholder": "leonas (1964—2022)",
-  "display_name": "leona (1964—2022)"
+    "One": "leona (1964—2022)",
+    "Other": "leonas (1964—2022)",
+    "DisplayName": "leona (1964—2022)"
+  }
 }

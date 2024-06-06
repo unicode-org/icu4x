@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dinar serbe"
-  },
-  "other_placeholder": "dinars serbes",
-  "display_name": "dinar serbe"
+    "One": "dinar serbe",
+    "Other": "dinars serbes",
+    "DisplayName": "dinar serbe"
+  }
 }

@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "istočno-nemačka marka",
-    "Few": "istočno-nemačke marke"
-  },
-  "other_placeholder": "istočno-nemačkih maraka",
-  "display_name": "Istočno-nemačka marka"
+    "Few": "istočno-nemačke marke",
+    "Other": "istočno-nemačkih maraka",
+    "DisplayName": "Istočno-nemačka marka"
+  }
 }

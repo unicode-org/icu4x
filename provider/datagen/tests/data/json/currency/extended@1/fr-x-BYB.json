@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "nouveau rouble biélorusse (1994–1999)"
-  },
-  "other_placeholder": "nouveaux roubles biélorusses (1994–1999)",
-  "display_name": "nouveau rouble biélorusse (1994–1999)"
+    "One": "nouveau rouble biélorusse (1994–1999)",
+    "Other": "nouveaux roubles biélorusses (1994–1999)",
+    "DisplayName": "nouveau rouble biélorusse (1994–1999)"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "livre maltaise"
-  },
-  "other_placeholder": "livres maltaises",
-  "display_name": "livre maltaise"
+    "One": "livre maltaise",
+    "Other": "livres maltaises",
+    "DisplayName": "livre maltaise"
+  }
 }

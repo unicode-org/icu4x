@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "ирска фунта",
-    "Few": "ирске фунте"
-  },
-  "other_placeholder": "ирских фунти",
-  "display_name": "Ирска фунта"
+    "Few": "ирске фунте",
+    "Other": "ирских фунти",
+    "DisplayName": "Ирска фунта"
+  }
 }

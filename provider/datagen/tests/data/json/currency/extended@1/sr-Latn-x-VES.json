@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "venecuelanski bolivar",
-    "Few": "venecuelanska bolivara"
-  },
-  "other_placeholder": "venecuelanskih bolivara",
-  "display_name": "venecuelanski bolivar"
+    "Few": "venecuelanska bolivara",
+    "Other": "venecuelanskih bolivara",
+    "DisplayName": "venecuelanski bolivar"
+  }
 }

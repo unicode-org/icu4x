@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Swiss franc"
-  },
-  "other_placeholder": "Swiss francs",
-  "display_name": "Swiss Franc"
+    "One": "Swiss franc",
+    "Other": "Swiss francs",
+    "DisplayName": "Swiss Franc"
+  }
 }

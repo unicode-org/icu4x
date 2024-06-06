@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "zimbabvejski dolar (2008)",
-    "Few": "zimbabvejska dolara (2008)"
-  },
-  "other_placeholder": "zimbabvejskih dolara (2008)",
-  "display_name": "Zimbabveanski dolar (2008)"
+    "Few": "zimbabvejska dolara (2008)",
+    "Other": "zimbabvejskih dolara (2008)",
+    "DisplayName": "Zimbabveanski dolar (2008)"
+  }
 }

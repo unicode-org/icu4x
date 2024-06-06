@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "kajmanski dolar",
-    "Few": "kajmanska dolara"
-  },
-  "other_placeholder": "kajmanskih dolara",
-  "display_name": "kajmanski dolar"
+    "Few": "kajmanska dolara",
+    "Other": "kajmanskih dolara",
+    "DisplayName": "kajmanski dolar"
+  }
 }

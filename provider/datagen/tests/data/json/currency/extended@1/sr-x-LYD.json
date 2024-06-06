@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "либијски динар",
-    "Few": "либијскa динарa"
-  },
-  "other_placeholder": "либијских динарa",
-  "display_name": "либијски динар"
+    "Few": "либијскa динарa",
+    "Other": "либијских динарa",
+    "DisplayName": "либијски динар"
+  }
 }

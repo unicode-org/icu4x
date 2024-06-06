@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "super dinar yugoslavo"
+  "placeholders": {
+    "DisplayName": "super dinar yugoslavo"
+  }
 }

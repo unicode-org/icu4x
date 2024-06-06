@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "roupie indonésienne"
-  },
-  "other_placeholder": "roupies indonésiennes",
-  "display_name": "roupie indonésienne"
+    "One": "roupie indonésienne",
+    "Other": "roupies indonésiennes",
+    "DisplayName": "roupie indonésienne"
+  }
 }

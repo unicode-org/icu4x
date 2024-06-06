@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "กูร์ดเฮติ"
+  "placeholders": {
+    "DisplayName": "กูร์ดเฮติ"
+  }
 }

@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "ganski sedi",
-    "Few": "ganska sedija"
-  },
-  "other_placeholder": "ganskih sedija",
-  "display_name": "ganski sedi"
+    "Few": "ganska sedija",
+    "Other": "ganskih sedija",
+    "DisplayName": "ganski sedi"
+  }
 }

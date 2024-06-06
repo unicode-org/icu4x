@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "komorski franak",
-    "Few": "komorska franka"
-  },
-  "other_placeholder": "komorskih franaka",
-  "display_name": "komorski franak"
+    "Few": "komorska franka",
+    "Other": "komorskih franaka",
+    "DisplayName": "komorski franak"
+  }
 }

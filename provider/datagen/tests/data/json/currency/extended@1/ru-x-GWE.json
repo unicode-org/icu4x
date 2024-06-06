@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "Эскудо Португальской Гвинеи"
+  "placeholders": {
+    "DisplayName": "Эскудо Португальской Гвинеи"
+  }
 }

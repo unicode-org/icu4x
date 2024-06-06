@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "nepalska rupija",
-    "Few": "nepalske rupije"
-  },
-  "other_placeholder": "nepalskih rupija",
-  "display_name": "nepalska rupija"
+    "Few": "nepalske rupije",
+    "Other": "nepalskih rupija",
+    "DisplayName": "nepalska rupija"
+  }
 }

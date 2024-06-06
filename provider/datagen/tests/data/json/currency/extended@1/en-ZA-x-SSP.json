@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "South Sudanese pound"
-  },
-  "other_placeholder": "South Sudanese pounds",
-  "display_name": "South Sudanese Pound"
+    "One": "South Sudanese pound",
+    "Other": "South Sudanese pounds",
+    "DisplayName": "South Sudanese Pound"
+  }
 }

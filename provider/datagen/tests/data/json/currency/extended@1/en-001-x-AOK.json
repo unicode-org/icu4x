@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Angolan kwanza (1977–1991)"
-  },
-  "other_placeholder": "Angolan kwanzas (1977–1991)",
-  "display_name": "Angolan Kwanza (1977–1991)"
+    "One": "Angolan kwanza (1977–1991)",
+    "Other": "Angolan kwanzas (1977–1991)",
+    "DisplayName": "Angolan Kwanza (1977–1991)"
+  }
 }

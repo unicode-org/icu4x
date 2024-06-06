@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "roupie des Seychelles"
-  },
-  "other_placeholder": "roupies des Seychelles",
-  "display_name": "roupie des Seychelles"
+    "One": "roupie des Seychelles",
+    "Other": "roupies des Seychelles",
+    "DisplayName": "roupie des Seychelles"
+  }
 }

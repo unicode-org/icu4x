@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Mozambican metical (1980–2006)"
-  },
-  "other_placeholder": "Mozambican meticals (1980–2006)",
-  "display_name": "Mozambican Metical (1980–2006)"
+    "One": "Mozambican metical (1980–2006)",
+    "Other": "Mozambican meticals (1980–2006)",
+    "DisplayName": "Mozambican Metical (1980–2006)"
+  }
 }

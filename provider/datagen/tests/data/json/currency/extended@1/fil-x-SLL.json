@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Sierra Leonean leone (1964—2022)"
-  },
-  "other_placeholder": "Sierra Leonean leones (1964—2022)",
-  "display_name": "Sierra Leonean Leone (1964—2022)"
+    "One": "Sierra Leonean leone (1964—2022)",
+    "Other": "Sierra Leonean leones (1964—2022)",
+    "DisplayName": "Sierra Leonean Leone (1964—2022)"
+  }
 }

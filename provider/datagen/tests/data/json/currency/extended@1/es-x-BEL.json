@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "franco belga (financiero)"
-  },
-  "other_placeholder": "francos belgas (financieros)",
-  "display_name": "franco belga (financiero)"
+    "One": "franco belga (financiero)",
+    "Other": "francos belgas (financieros)",
+    "DisplayName": "franco belga (financiero)"
+  }
 }

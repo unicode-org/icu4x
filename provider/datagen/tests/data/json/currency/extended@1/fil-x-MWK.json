@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Malawian Kwacha"
-  },
-  "other_placeholder": "Malawian Kwachas",
-  "display_name": "Malawian Kwacha"
+    "One": "Malawian Kwacha",
+    "Other": "Malawian Kwachas",
+    "DisplayName": "Malawian Kwacha"
+  }
 }

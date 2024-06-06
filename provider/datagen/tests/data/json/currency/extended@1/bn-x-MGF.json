@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "মাদাগাস্কার ফ্রাঙ্ক"
+  "placeholders": {
+    "DisplayName": "মাদাগাস্কার ফ্রাঙ্ক"
+  }
 }

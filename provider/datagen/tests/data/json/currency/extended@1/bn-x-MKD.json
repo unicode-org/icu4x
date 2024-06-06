@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "ম্যাসেডোনিয়ান দিনার"
+  "placeholders": {
+    "DisplayName": "ম্যাসেডোনিয়ান দিনার"
+  }
 }

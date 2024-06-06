@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "córdoba nicaraguayen (1912–1988)"
-  },
-  "other_placeholder": "córdobas nicaraguayens (1912–1988)",
-  "display_name": "cordoba"
+    "One": "córdoba nicaraguayen (1912–1988)",
+    "Other": "córdobas nicaraguayens (1912–1988)",
+    "DisplayName": "cordoba"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "New Taiwan dollar"
-  },
-  "other_placeholder": "New Taiwan dollars",
-  "display_name": "New Taiwan Dollar"
+    "One": "New Taiwan dollar",
+    "Other": "New Taiwan dollars",
+    "DisplayName": "New Taiwan Dollar"
+  }
 }

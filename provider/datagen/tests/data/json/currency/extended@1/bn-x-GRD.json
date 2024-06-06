@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "গ্রীক দ্রাচমা"
+  "placeholders": {
+    "DisplayName": "গ্রীক দ্রাচমা"
+  }
 }

@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "španska pezeta (konvertibilan račun)",
-    "Few": "španske pezete (konvertibilan račun)"
-  },
-  "other_placeholder": "španskih pezeta (konvertibilan račun)",
-  "display_name": "Španska pezeta (konvertibilniračun)"
+    "Few": "španske pezete (konvertibilan račun)",
+    "Other": "španskih pezeta (konvertibilan račun)",
+    "DisplayName": "Španska pezeta (konvertibilniračun)"
+  }
 }

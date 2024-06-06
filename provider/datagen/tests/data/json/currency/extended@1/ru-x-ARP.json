@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "Аргентинское песо (1983–1985)"
+  "placeholders": {
+    "DisplayName": "Аргентинское песо (1983–1985)"
+  }
 }

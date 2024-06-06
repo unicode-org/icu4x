@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "rufiya"
-  },
-  "other_placeholder": "rufiyas",
-  "display_name": "rufiya"
+    "One": "rufiya",
+    "Other": "rufiyas",
+    "DisplayName": "rufiya"
+  }
 }

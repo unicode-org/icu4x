@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "エチオピア ブル"
+  "placeholders": {
+    "DisplayName": "エチオピア ブル"
+  }
 }

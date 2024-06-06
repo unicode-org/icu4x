@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "หน่วยสกุลเงินยุโรป"
+  "placeholders": {
+    "DisplayName": "หน่วยสกุลเงินยุโรป"
+  }
 }

@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "kongoanski franak",
-    "Few": "kongoanska franka"
-  },
-  "other_placeholder": "kongoanskih franaka",
-  "display_name": "kongoanski franak"
+    "Few": "kongoanska franka",
+    "Other": "kongoanskih franaka",
+    "DisplayName": "kongoanski franak"
+  }
 }

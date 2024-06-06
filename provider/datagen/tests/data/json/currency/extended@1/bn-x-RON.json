@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "রুমানিয়া লেয়ু"
+  "placeholders": {
+    "DisplayName": "রুমানিয়া লেয়ু"
+  }
 }

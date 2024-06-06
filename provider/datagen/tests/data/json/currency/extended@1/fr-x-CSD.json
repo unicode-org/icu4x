@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dinar serbo-monténégrin"
-  },
-  "other_placeholder": "dinars serbo-monténégrins",
-  "display_name": "dinar serbo-monténégrin"
+    "One": "dinar serbo-monténégrin",
+    "Other": "dinars serbo-monténégrins",
+    "DisplayName": "dinar serbo-monténégrin"
+  }
 }

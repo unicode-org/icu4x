@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "ガーナ セディ"
+  "placeholders": {
+    "DisplayName": "ガーナ セディ"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "franc malgache"
-  },
-  "other_placeholder": "francs malgaches",
-  "display_name": "franc malgache"
+    "One": "franc malgache",
+    "Other": "francs malgaches",
+    "DisplayName": "franc malgache"
+  }
 }

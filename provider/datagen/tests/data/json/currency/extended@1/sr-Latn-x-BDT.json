@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "bangladeška taka",
-    "Few": "bangladeške take"
-  },
-  "other_placeholder": "bangladeških taka",
-  "display_name": "bangladeška taka"
+    "Few": "bangladeške take",
+    "Other": "bangladeških taka",
+    "DisplayName": "bangladeška taka"
+  }
 }

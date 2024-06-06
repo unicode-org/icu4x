@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Pakistani rupee"
-  },
-  "other_placeholder": "Pakistani rupees",
-  "display_name": "Pakistani Rupee"
+    "One": "Pakistani rupee",
+    "Other": "Pakistani rupees",
+    "DisplayName": "Pakistani Rupee"
+  }
 }

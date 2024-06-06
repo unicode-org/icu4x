@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "Barbados doları"
+  "placeholders": {
+    "DisplayName": "Barbados doları"
+  }
 }

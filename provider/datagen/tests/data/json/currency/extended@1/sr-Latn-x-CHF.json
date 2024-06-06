@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "švajcarski franak",
-    "Few": "švajcarska franka"
-  },
-  "other_placeholder": "švajcarskih franaka",
-  "display_name": "švajcarski franak"
+    "Few": "švajcarska franka",
+    "Other": "švajcarskih franaka",
+    "DisplayName": "švajcarski franak"
+  }
 }

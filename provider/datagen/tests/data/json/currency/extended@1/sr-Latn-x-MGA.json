@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "malgaški arijari",
-    "Few": "malgaška arijarija"
-  },
-  "other_placeholder": "malgaških arijarija",
-  "display_name": "malgaški arijari"
+    "Few": "malgaška arijarija",
+    "Other": "malgaških arijarija",
+    "DisplayName": "malgaški arijari"
+  }
 }

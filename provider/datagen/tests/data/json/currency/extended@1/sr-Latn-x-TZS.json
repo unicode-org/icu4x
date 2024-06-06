@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "tanzanijski šiling",
-    "Few": "tanzanijska šilinga"
-  },
-  "other_placeholder": "tanzanijskih šilinga",
-  "display_name": "tanzanijski šiling"
+    "Few": "tanzanijska šilinga",
+    "Other": "tanzanijskih šilinga",
+    "DisplayName": "tanzanijski šiling"
+  }
 }

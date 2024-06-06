@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Costa Rican colón"
-  },
-  "other_placeholder": "Costa Rican colóns",
-  "display_name": "Costa Rican Colón"
+    "One": "Costa Rican colón",
+    "Other": "Costa Rican colóns",
+    "DisplayName": "Costa Rican Colón"
+  }
 }

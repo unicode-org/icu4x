@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "libra esterlina"
-  },
-  "other_placeholder": "libras esterlinas",
-  "display_name": "libra esterlina"
+    "One": "libra esterlina",
+    "Other": "libras esterlinas",
+    "DisplayName": "libra esterlina"
+  }
 }

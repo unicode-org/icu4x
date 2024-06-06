@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "florín caribeño"
-  },
-  "other_placeholder": "florines caribeños",
-  "display_name": "florín caribeño"
+    "One": "florín caribeño",
+    "Other": "florines caribeños",
+    "DisplayName": "florín caribeño"
+  }
 }

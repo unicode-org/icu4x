@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Armenian dram"
-  },
-  "other_placeholder": "Armenian drams",
-  "display_name": "Armenian Dram"
+    "One": "Armenian dram",
+    "Other": "Armenian drams",
+    "DisplayName": "Armenian Dram"
+  }
 }

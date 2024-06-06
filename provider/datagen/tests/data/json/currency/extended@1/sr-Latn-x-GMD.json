@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "gambijski dalasi",
-    "Few": "gambijskih dalasija"
-  },
-  "other_placeholder": "gambijskih dalasija",
-  "display_name": "gambijski dalasi"
+    "Few": "gambijskih dalasija",
+    "Other": "gambijskih dalasija",
+    "DisplayName": "gambijski dalasi"
+  }
 }

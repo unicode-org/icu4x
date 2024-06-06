@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Guyanaese dollar"
-  },
-  "other_placeholder": "Guyanaese dollars",
-  "display_name": "Guyanaese Dollar"
+    "One": "Guyanaese dollar",
+    "Other": "Guyanaese dollars",
+    "DisplayName": "Guyanaese Dollar"
+  }
 }

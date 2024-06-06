@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "bosansko-hercegovačka konvertibilna marka",
-    "Few": "bosansko-hercegovačke konvertibilne marke"
-  },
-  "other_placeholder": "bosansko-hercegovačkih konvertibilnih maraka",
-  "display_name": "bosansko-hercegovačka konvertibilna marka"
+    "Few": "bosansko-hercegovačke konvertibilne marke",
+    "Other": "bosansko-hercegovačkih konvertibilnih maraka",
+    "DisplayName": "bosansko-hercegovačka konvertibilna marka"
+  }
 }

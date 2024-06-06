@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "Komorlar frangı"
+  "placeholders": {
+    "DisplayName": "Komorlar frangı"
+  }
 }

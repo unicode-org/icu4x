@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "marco de la República Democrática Alemana"
-  },
-  "other_placeholder": "marcos de la República Democrática Alemana",
-  "display_name": "ostmark de Alemania del Este"
+    "One": "marco de la República Democrática Alemana",
+    "Other": "marcos de la República Democrática Alemana",
+    "DisplayName": "ostmark de Alemania del Este"
+  }
 }

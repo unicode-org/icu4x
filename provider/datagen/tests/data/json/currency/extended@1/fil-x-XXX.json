@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "(hindi kilalang unit ng currency)"
-  },
-  "other_placeholder": "(hindi kilalang pera)",
-  "display_name": "Hindi Kilalang Pera"
+    "One": "(hindi kilalang unit ng currency)",
+    "Other": "(hindi kilalang pera)",
+    "DisplayName": "Hindi Kilalang Pera"
+  }
 }

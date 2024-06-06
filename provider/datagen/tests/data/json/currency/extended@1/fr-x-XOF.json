@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "franc CFA (BCEAO)"
-  },
-  "other_placeholder": "francs CFA (BCEAO)",
-  "display_name": "franc CFA (BCEAO)"
+    "One": "franc CFA (BCEAO)",
+    "Other": "francs CFA (BCEAO)",
+    "DisplayName": "franc CFA (BCEAO)"
+  }
 }

@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "escudo de Guinea Portuguesa"
+  "placeholders": {
+    "DisplayName": "escudo de Guinea Portuguesa"
+  }
 }

@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "evropska jedinica računa (XBC)",
-    "Few": "evropske jedinice računa (XBC)"
-  },
-  "other_placeholder": "evropskih jedinica računa (XBC)",
-  "display_name": "Evropska jedinica računa (XBC)"
+    "Few": "evropske jedinice računa (XBC)",
+    "Other": "evropskih jedinica računa (XBC)",
+    "DisplayName": "Evropska jedinica računa (XBC)"
+  }
 }

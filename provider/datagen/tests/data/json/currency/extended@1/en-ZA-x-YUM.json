@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Yugoslavian new dinar (1994–2002)"
-  },
-  "other_placeholder": "Yugoslavian new dinars (1994–2002)",
-  "display_name": "Yugoslavian New Dinar (1994–2002)"
+    "One": "Yugoslavian new dinar (1994–2002)",
+    "Other": "Yugoslavian new dinars (1994–2002)",
+    "DisplayName": "Yugoslavian New Dinar (1994–2002)"
+  }
 }

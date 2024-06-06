@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "ইতালীয় লিরা"
+  "placeholders": {
+    "DisplayName": "ইতালীয় লিরা"
+  }
 }

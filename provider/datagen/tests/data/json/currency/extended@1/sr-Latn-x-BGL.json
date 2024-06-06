@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "bugarski tvrdi lev",
-    "Few": "bugarska tvrda leva"
-  },
-  "other_placeholder": "bugarskih tvrdih leva",
-  "display_name": "Bugarski tvrdi lev"
+    "Few": "bugarska tvrda leva",
+    "Other": "bugarskih tvrdih leva",
+    "DisplayName": "Bugarski tvrdi lev"
+  }
 }

@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "সংযুক্ত আরব আমিরাত দিরহাম"
+  "placeholders": {
+    "DisplayName": "সংযুক্ত আরব আমিরাত দিরহাম"
+  }
 }

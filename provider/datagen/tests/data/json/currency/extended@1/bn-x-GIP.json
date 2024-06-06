@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "জিব্রাল্টার পাউন্ড"
+  "placeholders": {
+    "DisplayName": "জিব্রাল্টার পাউন্ড"
+  }
 }

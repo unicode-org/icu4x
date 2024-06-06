@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Georgian lari"
-  },
-  "other_placeholder": "Georgian laris",
-  "display_name": "Georgian Lari"
+    "One": "Georgian lari",
+    "Other": "Georgian laris",
+    "DisplayName": "Georgian Lari"
+  }
 }

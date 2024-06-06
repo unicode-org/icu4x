@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "lira maltesa"
-  },
-  "other_placeholder": "liras maltesas",
-  "display_name": "lira maltesa"
+    "One": "lira maltesa",
+    "Other": "liras maltesas",
+    "DisplayName": "lira maltesa"
+  }
 }

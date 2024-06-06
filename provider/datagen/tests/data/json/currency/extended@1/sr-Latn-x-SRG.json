@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "surinamski gilder",
-    "Few": "surinamska gildera"
-  },
-  "other_placeholder": "surinamskih gildera",
-  "display_name": "Surinamski gilder"
+    "Few": "surinamska gildera",
+    "Other": "surinamskih gildera",
+    "DisplayName": "Surinamski gilder"
+  }
 }

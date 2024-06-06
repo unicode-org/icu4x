@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "som uzbeko"
-  },
-  "other_placeholder": "soms uzbekos",
-  "display_name": "som uzbeko"
+    "One": "som uzbeko",
+    "Other": "soms uzbekos",
+    "DisplayName": "som uzbeko"
+  }
 }

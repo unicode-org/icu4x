@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "couronne danoise"
-  },
-  "other_placeholder": "couronnes danoises",
-  "display_name": "couronne danoise"
+    "One": "couronne danoise",
+    "Other": "couronnes danoises",
+    "DisplayName": "couronne danoise"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "North Korean won"
-  },
-  "other_placeholder": "North Korean won",
-  "display_name": "North Korean Won"
+    "One": "North Korean won",
+    "Other": "North Korean won",
+    "DisplayName": "North Korean Won"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Arjantin peso leyi (1970–1983)"
-  },
-  "other_placeholder": "Arjantin peso leyi (1970–1983)",
-  "display_name": "Arjantin Peso Leyi (1970–1983)"
+    "One": "Arjantin peso leyi (1970–1983)",
+    "Other": "Arjantin peso leyi (1970–1983)",
+    "DisplayName": "Arjantin Peso Leyi (1970–1983)"
+  }
 }

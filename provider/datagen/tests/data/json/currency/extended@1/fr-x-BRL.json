@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "réal brésilien"
-  },
-  "other_placeholder": "réals brésiliens",
-  "display_name": "réal brésilien"
+    "One": "réal brésilien",
+    "Other": "réals brésiliens",
+    "DisplayName": "réal brésilien"
+  }
 }

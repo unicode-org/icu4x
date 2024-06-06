@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "belgijski franak (konvertibilni)",
-    "Few": "belgijska franka (konvertibilna)"
-  },
-  "other_placeholder": "belgijskih franaka (konvertibilnih)",
-  "display_name": "Belgijski franak (konvertibilni)"
+    "Few": "belgijska franka (konvertibilna)",
+    "Other": "belgijskih franaka (konvertibilnih)",
+    "DisplayName": "Belgijski franak (konvertibilni)"
+  }
 }

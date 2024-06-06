@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "вануатски вату",
-    "Few": "вануатскa ватуa"
-  },
-  "other_placeholder": "вануатских ватуa",
-  "display_name": "вануатски вату"
+    "Few": "вануатскa ватуa",
+    "Other": "вануатских ватуa",
+    "DisplayName": "вануатски вату"
+  }
 }

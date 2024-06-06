@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dinar sudanés"
-  },
-  "other_placeholder": "dinares sudaneses",
-  "display_name": "dinar sudanés"
+    "One": "dinar sudanés",
+    "Other": "dinares sudaneses",
+    "DisplayName": "dinar sudanés"
+  }
 }

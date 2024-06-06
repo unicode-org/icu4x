@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "omanski rijal",
-    "Few": "omanska rijala"
-  },
-  "other_placeholder": "omanskih rijala",
-  "display_name": "omanski rijal"
+    "Few": "omanska rijala",
+    "Other": "omanskih rijala",
+    "DisplayName": "omanski rijal"
+  }
 }

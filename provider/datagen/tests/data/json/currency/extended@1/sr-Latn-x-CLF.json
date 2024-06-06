@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "čileanski unidades de fomento",
-    "Few": "čileanska unidades de fomenta"
-  },
-  "other_placeholder": "čileanski unidadesi de fomento",
-  "display_name": "Čileovski unidades se fomento"
+    "Few": "čileanska unidades de fomenta",
+    "Other": "čileanski unidadesi de fomento",
+    "DisplayName": "Čileovski unidades se fomento"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "peso colombiano"
-  },
-  "other_placeholder": "pesos colombianos",
-  "display_name": "peso colombiano"
+    "One": "peso colombiano",
+    "Other": "pesos colombianos",
+    "DisplayName": "peso colombiano"
+  }
 }

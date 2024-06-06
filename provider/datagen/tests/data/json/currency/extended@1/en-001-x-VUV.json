@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Vanuatu vatu"
-  },
-  "other_placeholder": "Vanuatu vatu",
-  "display_name": "Vanuatu Vatu"
+    "One": "Vanuatu vatu",
+    "Other": "Vanuatu vatu",
+    "DisplayName": "Vanuatu Vatu"
+  }
 }

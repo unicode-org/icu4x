@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "roupie srilankaise"
-  },
-  "other_placeholder": "roupies srilankaises",
-  "display_name": "roupie srilankaise"
+    "One": "roupie srilankaise",
+    "Other": "roupies srilankaises",
+    "DisplayName": "roupie srilankaise"
+  }
 }

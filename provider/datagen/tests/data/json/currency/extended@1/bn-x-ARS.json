@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "আর্জেন্টিনা পেসো"
+  "placeholders": {
+    "DisplayName": "আর্জেন্টিনা পেসো"
+  }
 }

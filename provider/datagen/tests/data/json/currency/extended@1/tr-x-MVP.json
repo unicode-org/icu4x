@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Maldiv rupisi"
-  },
-  "other_placeholder": "Maldiv rupisi",
-  "display_name": "Maldiv Rupisi"
+    "One": "Maldiv rupisi",
+    "Other": "Maldiv rupisi",
+    "DisplayName": "Maldiv Rupisi"
+  }
 }

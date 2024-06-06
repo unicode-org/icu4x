@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Qatari rial"
-  },
-  "other_placeholder": "Qatari rials",
-  "display_name": "Qatari Rial"
+    "One": "Qatari rial",
+    "Other": "Qatari rials",
+    "DisplayName": "Qatari Rial"
+  }
 }

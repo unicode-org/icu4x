@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "mark est-allemand"
-  },
-  "other_placeholder": "marks est-allemands",
-  "display_name": "mark est-allemand"
+    "One": "mark est-allemand",
+    "Other": "marks est-allemands",
+    "DisplayName": "mark est-allemand"
+  }
 }

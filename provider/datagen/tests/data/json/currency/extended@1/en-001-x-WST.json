@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Samoan tala"
-  },
-  "other_placeholder": "Samoan tala",
-  "display_name": "Samoan Tala"
+    "One": "Samoan tala",
+    "Other": "Samoan tala",
+    "DisplayName": "Samoan Tala"
+  }
 }

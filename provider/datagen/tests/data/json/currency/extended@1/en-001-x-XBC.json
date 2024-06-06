@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "European unit of account (XBC)"
-  },
-  "other_placeholder": "European units of account (XBC)",
-  "display_name": "European Unit of Account (XBC)"
+    "One": "European unit of account (XBC)",
+    "Other": "European units of account (XBC)",
+    "DisplayName": "European Unit of Account (XBC)"
+  }
 }

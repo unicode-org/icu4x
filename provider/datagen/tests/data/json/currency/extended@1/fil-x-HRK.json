@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "kuna ng Croatia"
-  },
-  "other_placeholder": "kunas ng Croatia",
-  "display_name": "Kuna ng Croatia"
+    "One": "kuna ng Croatia",
+    "Other": "kunas ng Croatia",
+    "DisplayName": "Kuna ng Croatia"
+  }
 }

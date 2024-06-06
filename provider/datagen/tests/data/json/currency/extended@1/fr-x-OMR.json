@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "riyal omanais"
-  },
-  "other_placeholder": "riyals omanis",
-  "display_name": "riyal omanais"
+    "One": "riyal omanais",
+    "Other": "riyals omanis",
+    "DisplayName": "riyal omanais"
+  }
 }

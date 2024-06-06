@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "ポルトガル領ギニア エスクード"
+  "placeholders": {
+    "DisplayName": "ポルトガル領ギニア エスクード"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "kwanza angolais (1977–1990)"
-  },
-  "other_placeholder": "kwanzas angolais (1977–1990)",
-  "display_name": "kwanza angolais (1977–1990)"
+    "One": "kwanza angolais (1977–1990)",
+    "Other": "kwanzas angolais (1977–1990)",
+    "DisplayName": "kwanza angolais (1977–1990)"
+  }
 }

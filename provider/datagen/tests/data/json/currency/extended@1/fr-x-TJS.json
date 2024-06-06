@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "somoni tadjik"
-  },
-  "other_placeholder": "somonis tadjiks",
-  "display_name": "somoni tadjik"
+    "One": "somoni tadjik",
+    "Other": "somonis tadjiks",
+    "DisplayName": "somoni tadjik"
+  }
 }

@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "CFP franak",
-    "Few": "CFP franka"
-  },
-  "other_placeholder": "CFP franaka",
-  "display_name": "CFP franak"
+    "Few": "CFP franka",
+    "Other": "CFP franaka",
+    "DisplayName": "CFP franak"
+  }
 }

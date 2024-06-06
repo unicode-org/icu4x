@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "forinto húngaro"
-  },
-  "other_placeholder": "forintos húngaros",
-  "display_name": "forinto húngaro"
+    "One": "forinto húngaro",
+    "Other": "forintos húngaros",
+    "DisplayName": "forinto húngaro"
+  }
 }

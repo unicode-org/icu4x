@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "laoski kip",
-    "Few": "laoska kipa"
-  },
-  "other_placeholder": "laoskih kipa",
-  "display_name": "laoski kip"
+    "Few": "laoska kipa",
+    "Other": "laoskih kipa",
+    "DisplayName": "laoski kip"
+  }
 }

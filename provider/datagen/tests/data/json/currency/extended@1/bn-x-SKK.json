@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "স্লোভাক কোরুনা"
+  "placeholders": {
+    "DisplayName": "স্লোভাক কোরুনা"
+  }
 }

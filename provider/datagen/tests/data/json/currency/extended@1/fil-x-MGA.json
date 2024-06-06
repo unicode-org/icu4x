@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Malagasy Ariary"
-  },
-  "other_placeholder": "Malagasy Ariaries",
-  "display_name": "Malagasy Ariary"
+    "One": "Malagasy Ariary",
+    "Other": "Malagasy Ariaries",
+    "DisplayName": "Malagasy Ariary"
+  }
 }

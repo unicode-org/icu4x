@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "singapurski dolar",
-    "Few": "singapurska dolara"
-  },
-  "other_placeholder": "singapurskih dolara",
-  "display_name": "singapurski dolar"
+    "Few": "singapurska dolara",
+    "Other": "singapurskih dolara",
+    "DisplayName": "singapurski dolar"
+  }
 }

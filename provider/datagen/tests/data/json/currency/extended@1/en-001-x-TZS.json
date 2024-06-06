@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Tanzanian shilling"
-  },
-  "other_placeholder": "Tanzanian shillings",
-  "display_name": "Tanzanian Shilling"
+    "One": "Tanzanian shilling",
+    "Other": "Tanzanian shillings",
+    "DisplayName": "Tanzanian Shilling"
+  }
 }

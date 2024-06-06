@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Maltese pound"
-  },
-  "other_placeholder": "Maltese pounds",
-  "display_name": "Maltese Pound"
+    "One": "Maltese pound",
+    "Other": "Maltese pounds",
+    "DisplayName": "Maltese Pound"
+  }
 }

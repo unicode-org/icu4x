@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "unidad de cuenta europea (XBD)"
-  },
-  "other_placeholder": "unidades de cuenta europeas (XBD)",
-  "display_name": "unidad de cuenta europea (XBD)"
+    "One": "unidad de cuenta europea (XBD)",
+    "Other": "unidades de cuenta europeas (XBD)",
+    "DisplayName": "unidad de cuenta europea (XBD)"
+  }
 }

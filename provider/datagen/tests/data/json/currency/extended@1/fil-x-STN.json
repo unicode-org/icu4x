@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "São Tomé & Príncipe dobra"
-  },
-  "other_placeholder": "São Tomé & Príncipe dobras",
-  "display_name": "São Tomé & Príncipe Dobra"
+    "One": "São Tomé & Príncipe dobra",
+    "Other": "São Tomé & Príncipe dobras",
+    "DisplayName": "São Tomé & Príncipe Dobra"
+  }
 }

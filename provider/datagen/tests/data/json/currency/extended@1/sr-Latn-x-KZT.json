@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "kazahstanski tenge",
-    "Few": "kazahstanska tengea"
-  },
-  "other_placeholder": "kazahstanskih tengea",
-  "display_name": "kazahstanski tenge"
+    "Few": "kazahstanska tengea",
+    "Other": "kazahstanskih tengea",
+    "DisplayName": "kazahstanski tenge"
+  }
 }

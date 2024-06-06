@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Zambian kwacha"
-  },
-  "other_placeholder": "Zambian kwachas",
-  "display_name": "Zambian Kwacha"
+    "One": "Zambian kwacha",
+    "Other": "Zambian kwachas",
+    "DisplayName": "Zambian Kwacha"
+  }
 }

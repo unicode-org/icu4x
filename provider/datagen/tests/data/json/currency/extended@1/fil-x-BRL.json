@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "real ng Brazil"
-  },
-  "other_placeholder": "reals ng Brazil",
-  "display_name": "Real ng Barzil"
+    "One": "real ng Brazil",
+    "Other": "reals ng Brazil",
+    "DisplayName": "Real ng Barzil"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "nouveau kwanza angolais (1990–2000)"
-  },
-  "other_placeholder": "nouveaux kwanzas angolais (1990–2000)",
-  "display_name": "nouveau kwanza angolais (1990–2000)"
+    "One": "nouveau kwanza angolais (1990–2000)",
+    "Other": "nouveaux kwanzas angolais (1990–2000)",
+    "DisplayName": "nouveau kwanza angolais (1990–2000)"
+  }
 }

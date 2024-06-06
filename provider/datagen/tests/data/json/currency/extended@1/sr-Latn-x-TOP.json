@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "tonganska panga",
-    "Few": "tonganske pange"
-  },
-  "other_placeholder": "tonganskih pangi",
-  "display_name": "tonganska panga"
+    "Few": "tonganske pange",
+    "Other": "tonganskih pangi",
+    "DisplayName": "tonganska panga"
+  }
 }

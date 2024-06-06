@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "RINET фонд",
-    "Few": "RINET фонда"
-  },
-  "other_placeholder": "RINET фондова",
-  "display_name": "RINET фонд"
+    "Few": "RINET фонда",
+    "Other": "RINET фондова",
+    "DisplayName": "RINET фонд"
+  }
 }

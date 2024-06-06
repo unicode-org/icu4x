@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "sijeraleonski leone",
-    "Few": "sijeraleonska leona"
-  },
-  "other_placeholder": "sijeraleonskih leona",
-  "display_name": "sijeraleonski leone"
+    "Few": "sijeraleonska leona",
+    "Other": "sijeraleonskih leona",
+    "DisplayName": "sijeraleonski leone"
+  }
 }

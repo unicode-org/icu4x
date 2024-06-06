@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dollar barbadien"
-  },
-  "other_placeholder": "dollars barbadiens",
-  "display_name": "dollar barbadien"
+    "One": "dollar barbadien",
+    "Other": "dollars barbadiens",
+    "DisplayName": "dollar barbadien"
+  }
 }

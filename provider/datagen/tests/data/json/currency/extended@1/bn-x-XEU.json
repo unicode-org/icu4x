@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "ইউরোপীয় মুদ্রা একক"
+  "placeholders": {
+    "DisplayName": "ইউরোপীয় মুদ্রা একক"
+  }
 }

@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "vijetnamski dong",
-    "Few": "vijetnamska donga"
-  },
-  "other_placeholder": "vijetnamskih donga",
-  "display_name": "vijetnamski dong"
+    "Few": "vijetnamska donga",
+    "Other": "vijetnamskih donga",
+    "DisplayName": "vijetnamski dong"
+  }
 }

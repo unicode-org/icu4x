@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "francuski franak",
-    "Few": "francuska franka"
-  },
-  "other_placeholder": "francuskih franaka",
-  "display_name": "Francuski franak"
+    "Few": "francuska franka",
+    "Other": "francuskih franaka",
+    "DisplayName": "Francuski franak"
+  }
 }

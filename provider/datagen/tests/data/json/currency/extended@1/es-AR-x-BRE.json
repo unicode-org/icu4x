@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "cruceiro brasileño (BRE)"
-  },
-  "other_placeholder": "cruceiros brasileños (BRE)",
-  "display_name": "cruceiro brasileño (1990–1993)"
+    "One": "cruceiro brasileño (BRE)",
+    "Other": "cruceiros brasileños (BRE)",
+    "DisplayName": "cruceiro brasileño (1990–1993)"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "riyal yéménite"
-  },
-  "other_placeholder": "riyals yéménites",
-  "display_name": "riyal yéménite"
+    "One": "riyal yéménite",
+    "Other": "riyals yéménites",
+    "DisplayName": "riyal yéménite"
+  }
 }

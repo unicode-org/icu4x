@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "kwacha zambien (1968–2012)"
-  },
-  "other_placeholder": "kwachas zambiens (1968–2012)",
-  "display_name": "kwacha zambien (1968–2012)"
+    "One": "kwacha zambien (1968–2012)",
+    "Other": "kwachas zambiens (1968–2012)",
+    "DisplayName": "kwacha zambien (1968–2012)"
+  }
 }

@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "কেম্যান দ্বীপপুঞ্জের ডলার"
+  "placeholders": {
+    "DisplayName": "কেম্যান দ্বীপপুঞ্জের ডলার"
+  }
 }

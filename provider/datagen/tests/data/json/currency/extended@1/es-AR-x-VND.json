@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dong"
-  },
-  "other_placeholder": "dongs",
-  "display_name": "dong"
+    "One": "dong",
+    "Other": "dongs",
+    "DisplayName": "dong"
+  }
 }

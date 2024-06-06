@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "(unknown unit of currency)"
-  },
-  "other_placeholder": "(unknown currency)",
-  "display_name": "Unknown Currency"
+    "One": "(unknown unit of currency)",
+    "Other": "(unknown currency)",
+    "DisplayName": "Unknown Currency"
+  }
 }

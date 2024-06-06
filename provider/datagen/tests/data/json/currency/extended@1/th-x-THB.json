@@ -1,5 +1,6 @@
 {
-  "placeholders": {},
-  "other_placeholder": "บาทไทย",
-  "display_name": "บาท"
+  "placeholders": {
+    "Other": "บาทไทย",
+    "DisplayName": "บาท"
+  }
 }

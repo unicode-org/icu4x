@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "unidad previsional uruguayo"
-  },
-  "other_placeholder": "unidades previsionales uruguayos",
-  "display_name": "unidad previsional uruguayo"
+    "One": "unidad previsional uruguayo",
+    "Other": "unidades previsionales uruguayos",
+    "DisplayName": "unidad previsional uruguayo"
+  }
 }

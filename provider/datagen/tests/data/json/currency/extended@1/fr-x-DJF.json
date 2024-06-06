@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "franc djiboutien"
-  },
-  "other_placeholder": "francs djiboutiens",
-  "display_name": "franc djiboutien"
+    "One": "franc djiboutien",
+    "Other": "francs djiboutiens",
+    "DisplayName": "franc djiboutien"
+  }
 }

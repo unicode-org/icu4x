@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Azerbaijani manat"
-  },
-  "other_placeholder": "Azerbaijani manats",
-  "display_name": "Azerbaijani Manat"
+    "One": "Azerbaijani manat",
+    "Other": "Azerbaijani manats",
+    "DisplayName": "Azerbaijani Manat"
+  }
 }

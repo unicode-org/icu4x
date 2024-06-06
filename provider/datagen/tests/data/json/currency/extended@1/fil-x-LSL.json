@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Lesotho loti"
-  },
-  "other_placeholder": "Lesotho lotis",
-  "display_name": "Lesotho Loti"
+    "One": "Lesotho loti",
+    "Other": "Lesotho lotis",
+    "DisplayName": "Lesotho Loti"
+  }
 }

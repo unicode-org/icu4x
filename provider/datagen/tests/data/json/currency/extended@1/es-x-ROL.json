@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "antiguo leu rumano"
-  },
-  "other_placeholder": "antiguos lei rumanos",
-  "display_name": "antiguo leu rumano"
+    "One": "antiguo leu rumano",
+    "Other": "antiguos lei rumanos",
+    "DisplayName": "antiguo leu rumano"
+  }
 }

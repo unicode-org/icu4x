@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "peseta andorrane"
-  },
-  "other_placeholder": "pesetas andorranes",
-  "display_name": "peseta andorrane"
+    "One": "peseta andorrane",
+    "Other": "pesetas andorranes",
+    "DisplayName": "peseta andorrane"
+  }
 }

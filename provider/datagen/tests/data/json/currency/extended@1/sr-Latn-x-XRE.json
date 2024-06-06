@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "RINET fond",
-    "Few": "RINET fonda"
-  },
-  "other_placeholder": "RINET fondova",
-  "display_name": "RINET fond"
+    "Few": "RINET fonda",
+    "Other": "RINET fondova",
+    "DisplayName": "RINET fond"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "corona estonia"
-  },
-  "other_placeholder": "coronas estonias",
-  "display_name": "corona estonia"
+    "One": "corona estonia",
+    "Other": "coronas estonias",
+    "DisplayName": "corona estonia"
+  }
 }

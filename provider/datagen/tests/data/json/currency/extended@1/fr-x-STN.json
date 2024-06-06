@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dobra santoméen"
-  },
-  "other_placeholder": "dobras santoméens",
-  "display_name": "dobra santoméen"
+    "One": "dobra santoméen",
+    "Other": "dobras santoméens",
+    "DisplayName": "dobra santoméen"
+  }
 }

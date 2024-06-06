@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "jugoslovenski tvrdi dinar",
-    "Few": "jugoslovenska tvrda dinara"
-  },
-  "other_placeholder": "jugoslovenskih tvrdih dinara",
-  "display_name": "Jugoslovenski tvrdi dinar"
+    "Few": "jugoslovenska tvrda dinara",
+    "Other": "jugoslovenskih tvrdih dinara",
+    "DisplayName": "Jugoslovenski tvrdi dinar"
+  }
 }

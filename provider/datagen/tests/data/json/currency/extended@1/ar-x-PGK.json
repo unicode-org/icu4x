@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "كينا بابوا غينيا الجديدة"
+  "placeholders": {
+    "DisplayName": "كينا بابوا غينيا الجديدة"
+  }
 }

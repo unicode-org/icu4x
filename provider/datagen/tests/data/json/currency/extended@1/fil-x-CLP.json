@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "piso ng Chile"
-  },
-  "other_placeholder": "piso ng Chile",
-  "display_name": "Piso ng Chile"
+    "One": "piso ng Chile",
+    "Other": "piso ng Chile",
+    "DisplayName": "Piso ng Chile"
+  }
 }

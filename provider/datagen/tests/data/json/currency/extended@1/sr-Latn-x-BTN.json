@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "butanski ngultrum",
-    "Few": "butanska ngultruma"
-  },
-  "other_placeholder": "butanskih ngultruma",
-  "display_name": "butanski ngultrum"
+    "Few": "butanska ngultruma",
+    "Other": "butanskih ngultruma",
+    "DisplayName": "butanski ngultrum"
+  }
 }

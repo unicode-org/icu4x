@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "sirijska funta",
-    "Few": "sirijske funte"
-  },
-  "other_placeholder": "sirijskih funti",
-  "display_name": "sirijska funta"
+    "Few": "sirijske funte",
+    "Other": "sirijskih funti",
+    "DisplayName": "sirijska funta"
+  }
 }

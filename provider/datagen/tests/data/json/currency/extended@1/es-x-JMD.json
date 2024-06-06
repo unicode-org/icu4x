@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dólar jamaicano"
-  },
-  "other_placeholder": "dólares jamaicanos",
-  "display_name": "dólar jamaicano"
+    "One": "dólar jamaicano",
+    "Other": "dólares jamaicanos",
+    "DisplayName": "dólar jamaicano"
+  }
 }

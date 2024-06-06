@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "once troy de platine"
-  },
-  "other_placeholder": "onces troy de platine",
-  "display_name": "platine"
+    "One": "once troy de platine",
+    "Other": "onces troy de platine",
+    "DisplayName": "platine"
+  }
 }

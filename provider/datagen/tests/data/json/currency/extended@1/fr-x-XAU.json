@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "once troy d’or"
-  },
-  "other_placeholder": "onces troy d’or",
-  "display_name": "or"
+    "One": "once troy d’or",
+    "Other": "onces troy d’or",
+    "DisplayName": "or"
+  }
 }

@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "โครูนาสาธารณรัฐเช็ก"
+  "placeholders": {
+    "DisplayName": "โครูนาสาธารณรัฐเช็ก"
+  }
 }

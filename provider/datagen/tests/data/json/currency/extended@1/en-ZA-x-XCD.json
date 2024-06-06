@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "East Caribbean dollar"
-  },
-  "other_placeholder": "East Caribbean dollars",
-  "display_name": "East Caribbean Dollar"
+    "One": "East Caribbean dollar",
+    "Other": "East Caribbean dollars",
+    "DisplayName": "East Caribbean Dollar"
+  }
 }

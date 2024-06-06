@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "cedi"
-  },
-  "other_placeholder": "cedis",
-  "display_name": "cedi"
+    "One": "cedi",
+    "Other": "cedis",
+    "DisplayName": "cedi"
+  }
 }

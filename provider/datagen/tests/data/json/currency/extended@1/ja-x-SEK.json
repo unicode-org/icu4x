@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "スウェーデン クローナ"
+  "placeholders": {
+    "DisplayName": "スウェーデン クローナ"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Afghan afghani (1927–2002)"
-  },
-  "other_placeholder": "Afghan afghanis (1927–2002)",
-  "display_name": "Afghan Afghani (1927–2002)"
+    "One": "Afghan afghani (1927–2002)",
+    "Other": "Afghan afghanis (1927–2002)",
+    "DisplayName": "Afghan Afghani (1927–2002)"
+  }
 }

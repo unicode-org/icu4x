@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "libra siria"
-  },
-  "other_placeholder": "libras sirias",
-  "display_name": "libra siria"
+    "One": "libra siria",
+    "Other": "libras sirias",
+    "DisplayName": "libra siria"
+  }
 }

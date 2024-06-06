@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Güney Kore wonu (1945–1953)"
-  },
-  "other_placeholder": "Güney Kore wonu (1945–1953)",
-  "display_name": "Güney Kore Wonu (1945–1953)"
+    "One": "Güney Kore wonu (1945–1953)",
+    "Other": "Güney Kore wonu (1945–1953)",
+    "DisplayName": "Güney Kore Wonu (1945–1953)"
+  }
 }

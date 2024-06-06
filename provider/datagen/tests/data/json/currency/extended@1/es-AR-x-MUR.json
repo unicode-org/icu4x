@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "rupia mauriciana"
-  },
-  "other_placeholder": "rupias mauricianas",
-  "display_name": "rupia mauriciana"
+    "One": "rupia mauriciana",
+    "Other": "rupias mauricianas",
+    "DisplayName": "rupia mauriciana"
+  }
 }

@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "venecuelanski bolivar (2008–2018)",
-    "Few": "venecuelanska bolivara (2008–2018)"
-  },
-  "other_placeholder": "venecuelanskih bolivara (2008–2018)",
-  "display_name": "Venecuelanski bolivar (2008–2018)"
+    "Few": "venecuelanska bolivara (2008–2018)",
+    "Other": "venecuelanskih bolivara (2008–2018)",
+    "DisplayName": "Venecuelanski bolivar (2008–2018)"
+  }
 }

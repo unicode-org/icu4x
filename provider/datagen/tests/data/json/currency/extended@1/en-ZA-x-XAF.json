@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Central African CFA franc"
-  },
-  "other_placeholder": "Central African CFA francs",
-  "display_name": "Central African CFA Franc"
+    "One": "Central African CFA franc",
+    "Other": "Central African CFA francs",
+    "DisplayName": "Central African CFA Franc"
+  }
 }

@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "mozambijski eskudo",
-    "Few": "mozambijska eskuda"
-  },
-  "other_placeholder": "mozambijskih eskuda",
-  "display_name": "Mozambijski eskudo"
+    "Few": "mozambijska eskuda",
+    "Other": "mozambijskih eskuda",
+    "DisplayName": "Mozambijski eskudo"
+  }
 }

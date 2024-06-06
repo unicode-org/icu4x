@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "florín arubeño"
-  },
-  "other_placeholder": "florines arubeños",
-  "display_name": "florín arubeño"
+    "One": "florín arubeño",
+    "Other": "florines arubeños",
+    "DisplayName": "florín arubeño"
+  }
 }

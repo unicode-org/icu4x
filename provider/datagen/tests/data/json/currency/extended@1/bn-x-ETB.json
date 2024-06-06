@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "ইথিওপিয়ান বির"
+  "placeholders": {
+    "DisplayName": "ইথিওপিয়ান বির"
+  }
 }

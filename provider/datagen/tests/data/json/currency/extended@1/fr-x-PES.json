@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "sol péruvien (1863–1985)"
-  },
-  "other_placeholder": "sols péruviens (1863–1985)",
-  "display_name": "sol péruvien (1863–1985)"
+    "One": "sol péruvien (1863–1985)",
+    "Other": "sols péruviens (1863–1985)",
+    "DisplayName": "sol péruvien (1863–1985)"
+  }
 }

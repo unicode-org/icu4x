@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "lire italienne"
-  },
-  "other_placeholder": "lires italiennes",
-  "display_name": "lire italienne"
+    "One": "lire italienne",
+    "Other": "lires italiennes",
+    "DisplayName": "lire italienne"
+  }
 }

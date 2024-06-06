@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "বলিভিয়ান মভডোল"
+  "placeholders": {
+    "DisplayName": "বলিভিয়ান মভডোল"
+  }
 }

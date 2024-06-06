@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "lek"
-  },
-  "other_placeholder": "leks",
-  "display_name": "lek"
+    "One": "lek",
+    "Other": "leks",
+    "DisplayName": "lek"
+  }
 }

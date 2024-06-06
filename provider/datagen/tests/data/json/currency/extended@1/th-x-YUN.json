@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "คอนเวอร์ทิเบิลดีนาร์ยูโกสลาเวีย"
+  "placeholders": {
+    "DisplayName": "คอนเวอร์ทิเบิลดีนาร์ยูโกสลาเวีย"
+  }
 }

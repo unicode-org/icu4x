@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "ruska rublja (1991–1998)",
-    "Few": "ruske rublje (1991–1998)"
-  },
-  "other_placeholder": "ruskih rublji (1991–1998)",
-  "display_name": "Ruska rublja (1991–1998)"
+    "Few": "ruske rublje (1991–1998)",
+    "Other": "ruskih rublji (1991–1998)",
+    "DisplayName": "Ruska rublja (1991–1998)"
+  }
 }

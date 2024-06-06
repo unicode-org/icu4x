@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "পানামানিয়ান বালবোয়া"
+  "placeholders": {
+    "DisplayName": "পানামানিয়ান বালবোয়া"
+  }
 }

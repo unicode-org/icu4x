@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "ยูโรดับเบิลยูไออาร์"
+  "placeholders": {
+    "DisplayName": "ยูโรดับเบิลยูไออาร์"
+  }
 }

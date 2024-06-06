@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "britanska funta",
-    "Few": "britanske funte"
-  },
-  "other_placeholder": "britanskih funti",
-  "display_name": "britanska funta"
+    "Few": "britanske funte",
+    "Other": "britanskih funti",
+    "DisplayName": "britanska funta"
+  }
 }

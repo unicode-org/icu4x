@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "islandska kruna",
-    "Few": "islandske krune"
-  },
-  "other_placeholder": "islandskih kruna",
-  "display_name": "islandska kruna"
+    "Few": "islandske krune",
+    "Other": "islandskih kruna",
+    "DisplayName": "islandska kruna"
+  }
 }

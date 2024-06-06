@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "ดอลลาร์โรดีเซีย"
+  "placeholders": {
+    "DisplayName": "ดอลลาร์โรดีเซีย"
+  }
 }

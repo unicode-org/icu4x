@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Caribbean guilder"
-  },
-  "other_placeholder": "Caribbean guilders",
-  "display_name": "Caribbean guilder"
+    "One": "Caribbean guilder",
+    "Other": "Caribbean guilders",
+    "DisplayName": "Caribbean guilder"
+  }
 }

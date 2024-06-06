@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "foklandska funta",
-    "Few": "foklandske funte"
-  },
-  "other_placeholder": "foklandskih funti",
-  "display_name": "folklandska funta"
+    "Few": "foklandske funte",
+    "Other": "foklandskih funti",
+    "DisplayName": "folklandska funta"
+  }
 }

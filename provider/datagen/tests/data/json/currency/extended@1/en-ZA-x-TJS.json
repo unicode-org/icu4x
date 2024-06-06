@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Tajikistani somoni"
-  },
-  "other_placeholder": "Tajikistani somonis",
-  "display_name": "Tajikistani Somoni"
+    "One": "Tajikistani somoni",
+    "Other": "Tajikistani somonis",
+    "DisplayName": "Tajikistani Somoni"
+  }
 }

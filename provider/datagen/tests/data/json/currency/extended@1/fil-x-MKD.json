@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "denar ng North Macedonia"
-  },
-  "other_placeholder": "denari ng North Macedonia",
-  "display_name": "Denar ng Macedonia"
+    "One": "denar ng North Macedonia",
+    "Other": "denari ng North Macedonia",
+    "DisplayName": "Denar ng Macedonia"
+  }
 }

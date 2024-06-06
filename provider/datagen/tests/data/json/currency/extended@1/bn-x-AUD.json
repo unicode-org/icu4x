@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "অস্ট্রেলিয়ান ডলার"
+  "placeholders": {
+    "DisplayName": "অস্ট্রেলিয়ান ডলার"
+  }
 }

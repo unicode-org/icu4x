@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dinar fort yougoslave (1966–1989)"
-  },
-  "other_placeholder": "dinars forts yougoslaves (1966–1989)",
-  "display_name": "nouveau dinar yougoslave"
+    "One": "dinar fort yougoslave (1966–1989)",
+    "Other": "dinars forts yougoslaves (1966–1989)",
+    "DisplayName": "nouveau dinar yougoslave"
+  }
 }

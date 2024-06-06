@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "zambijska kvača (1968–2012)",
-    "Few": "zambijske kvače (1968–2012)"
-  },
-  "other_placeholder": "zambijskih kvača (1968–2012)",
-  "display_name": "Zambijska kvača (1968–2012)"
+    "Few": "zambijske kvače (1968–2012)",
+    "Other": "zambijskih kvača (1968–2012)",
+    "DisplayName": "Zambijska kvača (1968–2012)"
+  }
 }

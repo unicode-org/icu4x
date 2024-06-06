@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "papuanska kina",
-    "Few": "papuanske kine"
-  },
-  "other_placeholder": "papuanskih kina",
-  "display_name": "papuanska kina"
+    "Few": "papuanske kine",
+    "Other": "papuanskih kina",
+    "DisplayName": "papuanska kina"
+  }
 }

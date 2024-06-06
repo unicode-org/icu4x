@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "UA (アフリカ開発銀行)"
+  "placeholders": {
+    "DisplayName": "UA (アフリカ開発銀行)"
+  }
 }

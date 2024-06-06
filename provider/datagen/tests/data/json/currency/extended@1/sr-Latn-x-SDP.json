@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "stara sudanska funta",
-    "Few": "stare sudanske funte"
-  },
-  "other_placeholder": "starih sudanskih funti",
-  "display_name": "Stara sudanska funta"
+    "Few": "stare sudanske funte",
+    "Other": "starih sudanskih funti",
+    "DisplayName": "Stara sudanska funta"
+  }
 }

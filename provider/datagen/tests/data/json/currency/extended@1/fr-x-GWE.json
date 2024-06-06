@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "escudo de Guinée portugaise"
-  },
-  "other_placeholder": "escudos de Guinée portugaise",
-  "display_name": "escudo de Guinée portugaise"
+    "One": "escudo de Guinée portugaise",
+    "Other": "escudos de Guinée portugaise",
+    "DisplayName": "escudo de Guinée portugaise"
+  }
 }

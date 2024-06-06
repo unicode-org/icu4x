@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "মাদাগাস্কার আরিয়ারি"
+  "placeholders": {
+    "DisplayName": "মাদাগাস্কার আরিয়ারি"
+  }
 }

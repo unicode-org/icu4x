@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "sudanska funta",
-    "Few": "sudanske funte"
-  },
-  "other_placeholder": "sudanskih funti",
-  "display_name": "sudanska funta"
+    "Few": "sudanske funte",
+    "Other": "sudanskih funti",
+    "DisplayName": "sudanska funta"
+  }
 }

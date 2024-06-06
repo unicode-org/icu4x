@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "Konvertibl Yugoslav Dinarı"
+  "placeholders": {
+    "DisplayName": "Konvertibl Yugoslav Dinarı"
+  }
 }

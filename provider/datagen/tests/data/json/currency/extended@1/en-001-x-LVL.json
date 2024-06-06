@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Latvian lats"
-  },
-  "other_placeholder": "Latvian lati",
-  "display_name": "Latvian Lats"
+    "One": "Latvian lats",
+    "Other": "Latvian lati",
+    "DisplayName": "Latvian Lats"
+  }
 }

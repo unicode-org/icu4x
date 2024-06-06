@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "ルクセンブルク 金融フラン"
+  "placeholders": {
+    "DisplayName": "ルクセンブルク 金融フラン"
+  }
 }

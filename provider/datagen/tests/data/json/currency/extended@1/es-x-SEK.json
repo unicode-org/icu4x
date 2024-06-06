@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "corona sueca"
-  },
-  "other_placeholder": "coronas suecas",
-  "display_name": "corona sueca"
+    "One": "corona sueca",
+    "Other": "coronas suecas",
+    "DisplayName": "corona sueca"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "US dollar (same day)"
-  },
-  "other_placeholder": "US dollars (same day)",
-  "display_name": "US Dollar (Same day)"
+    "One": "US dollar (same day)",
+    "Other": "US dollars (same day)",
+    "DisplayName": "US Dollar (Same day)"
+  }
 }

@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "eritrejska nakfa",
-    "Few": "eritrejske nakfe"
-  },
-  "other_placeholder": "eritrejskih nakfi",
-  "display_name": "eritrejska nakfa"
+    "Few": "eritrejske nakfe",
+    "Other": "eritrejskih nakfi",
+    "DisplayName": "eritrejska nakfa"
+  }
 }

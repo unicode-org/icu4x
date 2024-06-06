@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "ekvatorijalno-gvinejski ekvele",
-    "Few": "ekvatorijalno-gvinejska ekvela"
-  },
-  "other_placeholder": "ekvatorijalno-gvinejskih ekvela",
-  "display_name": "Ekvatorijalno-gvinejski ekvele"
+    "Few": "ekvatorijalno-gvinejska ekvela",
+    "Other": "ekvatorijalno-gvinejskih ekvela",
+    "DisplayName": "Ekvatorijalno-gvinejski ekvele"
+  }
 }

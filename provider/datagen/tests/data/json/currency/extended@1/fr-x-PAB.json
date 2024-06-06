@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "balboa panaméen"
-  },
-  "other_placeholder": "balboas panaméens",
-  "display_name": "balboa panaméen"
+    "One": "balboa panaméen",
+    "Other": "balboas panaméens",
+    "DisplayName": "balboa panaméen"
+  }
 }

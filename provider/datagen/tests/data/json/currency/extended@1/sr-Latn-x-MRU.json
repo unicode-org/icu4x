@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "mauritanska ogija",
-    "Few": "mauritanske ogije"
-  },
-  "other_placeholder": "mauritanskih ogija",
-  "display_name": "mauritanska ogija"
+    "Few": "mauritanske ogije",
+    "Other": "mauritanskih ogija",
+    "DisplayName": "mauritanska ogija"
+  }
 }

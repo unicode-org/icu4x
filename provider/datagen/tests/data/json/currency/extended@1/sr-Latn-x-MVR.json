@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "maldivska rufija",
-    "Few": "maldivske rufije"
-  },
-  "other_placeholder": "maldivskih rufija",
-  "display_name": "maldivska rufija"
+    "Few": "maldivske rufije",
+    "Other": "maldivskih rufija",
+    "DisplayName": "maldivska rufija"
+  }
 }

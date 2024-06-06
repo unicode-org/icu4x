@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Honduran lempira"
-  },
-  "other_placeholder": "Honduran lempiras",
-  "display_name": "Honduran Lempira"
+    "One": "Honduran lempira",
+    "Other": "Honduran lempiras",
+    "DisplayName": "Honduran Lempira"
+  }
 }

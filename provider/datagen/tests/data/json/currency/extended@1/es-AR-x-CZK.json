@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "corona checa"
-  },
-  "other_placeholder": "coronas checas",
-  "display_name": "corona checa"
+    "One": "corona checa",
+    "Other": "coronas checas",
+    "DisplayName": "corona checa"
+  }
 }

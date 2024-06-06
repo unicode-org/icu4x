@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "Papua Yeni Gine kinası"
+  "placeholders": {
+    "DisplayName": "Papua Yeni Gine kinası"
+  }
 }

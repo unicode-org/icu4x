@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "French gold franc"
-  },
-  "other_placeholder": "French gold francs",
-  "display_name": "French Gold Franc"
+    "One": "French gold franc",
+    "Other": "French gold francs",
+    "DisplayName": "French Gold Franc"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Icelandic króna"
-  },
-  "other_placeholder": "Icelandic krónur",
-  "display_name": "Icelandic Króna"
+    "One": "Icelandic króna",
+    "Other": "Icelandic krónur",
+    "DisplayName": "Icelandic Króna"
+  }
 }

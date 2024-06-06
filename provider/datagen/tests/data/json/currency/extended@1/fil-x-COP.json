@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "piso ng Colombia"
-  },
-  "other_placeholder": "Piso ng Colombia",
-  "display_name": "Piso ng Colombia"
+    "One": "piso ng Colombia",
+    "Other": "Piso ng Colombia",
+    "DisplayName": "Piso ng Colombia"
+  }
 }

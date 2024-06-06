@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "คอนเวอร์ทิเบิลฟรังก์ลักเซมเบิร์ก"
+  "placeholders": {
+    "DisplayName": "คอนเวอร์ทิเบิลฟรังก์ลักเซมเบิร์ก"
+  }
 }

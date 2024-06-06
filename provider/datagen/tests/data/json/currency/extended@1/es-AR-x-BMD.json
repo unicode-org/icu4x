@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dólar de Bermudas"
-  },
-  "other_placeholder": "dólares de Bermudas",
-  "display_name": "dólar de Bermudas"
+    "One": "dólar de Bermudas",
+    "Other": "dólares de Bermudas",
+    "DisplayName": "dólar de Bermudas"
+  }
 }

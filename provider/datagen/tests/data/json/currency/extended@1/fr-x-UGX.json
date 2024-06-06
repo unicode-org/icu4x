@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "shilling ougandais"
-  },
-  "other_placeholder": "shillings ougandais",
-  "display_name": "shilling ougandais"
+    "One": "shilling ougandais",
+    "Other": "shillings ougandais",
+    "DisplayName": "shilling ougandais"
+  }
 }

@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "Старый мозамбикский метикал"
+  "placeholders": {
+    "DisplayName": "Старый мозамбикский метикал"
+  }
 }

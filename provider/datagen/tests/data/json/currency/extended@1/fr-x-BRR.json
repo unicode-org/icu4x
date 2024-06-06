@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "cruzeiro réal brésilien (1993–1994)"
-  },
-  "other_placeholder": "cruzeiros réals brésiliens (1993–1994)",
-  "display_name": "cruzeiro"
+    "One": "cruzeiro réal brésilien (1993–1994)",
+    "Other": "cruzeiros réals brésiliens (1993–1994)",
+    "DisplayName": "cruzeiro"
+  }
 }

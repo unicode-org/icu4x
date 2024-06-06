@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "franc malien"
-  },
-  "other_placeholder": "francs maliens",
-  "display_name": "franc malien"
+    "One": "franc malien",
+    "Other": "francs maliens",
+    "DisplayName": "franc malien"
+  }
 }

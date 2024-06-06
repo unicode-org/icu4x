@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "Doğu Alman Markı"
+  "placeholders": {
+    "DisplayName": "Doğu Alman Markı"
+  }
 }

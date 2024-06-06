@@ -43,15 +43,6 @@ pub struct CurrencyExtendedDataV1<'data> {
     ///  ... etc.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub placeholders: ZeroMap<'data, Count, str>,
-
-    // TODO: make this the default pattern.
-    /// A currency pattern config for the `other` count
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub other_placeholder: Option<Cow<'data, str>>,
-
-    /// The display name for the currency.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub display_name: Option<Cow<'data, str>>,
 }
 
 /// A CLDR plural keyword, or the explicit value 1.
@@ -79,23 +70,17 @@ pub enum Count {
     Many = 4,
     /// The CLDR keyword `other`.
     Other = 5,
+    // TODO(younies): revise this for currency
     /// The explicit 1 case, see <https://www.unicode.org/reports/tr35/tr35-numbers.html#Explicit_0_1_rules>.
     Explicit1 = 6,
-    // TODO(younies): revise this for currency
     // NOTE(egg): No explicit 0, because the compact decimal pattern selection
     // algorithm does not allow such a thing to arise.
-}
+    /// The default case.
+    /// NOTE:
+    ///     Used as the default when there is no match.
+    ///     This is also used to replace the most frequently occurring case in all plural rules.
+    Default = 7,
 
-impl From<PluralCategory> for Count {
-    fn from(other: PluralCategory) -> Self {
-        use PluralCategory::*;
-        match other {
-            Zero => Count::Zero,
-            One => Count::One,
-            Two => Count::Two,
-            Few => Count::Few,
-            Many => Count::Many,
-            Other => Count::Other,
-        }
-    }
+    /// The display name for the currency.
+    DisplayName = 8,
 }

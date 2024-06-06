@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Afghan afghani"
-  },
-  "other_placeholder": "Afghan afghanis",
-  "display_name": "Afghan Afghani"
+    "One": "Afghan afghani",
+    "Other": "Afghan afghanis",
+    "DisplayName": "Afghan Afghani"
+  }
 }

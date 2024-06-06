@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "rial omaní"
-  },
-  "other_placeholder": "riales omaníes",
-  "display_name": "rial omaní"
+    "One": "rial omaní",
+    "Other": "riales omaníes",
+    "DisplayName": "rial omaní"
+  }
 }

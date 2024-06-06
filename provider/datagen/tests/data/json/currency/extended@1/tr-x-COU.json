@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "Unidad de Valor Real"
+  "placeholders": {
+    "DisplayName": "Unidad de Valor Real"
+  }
 }

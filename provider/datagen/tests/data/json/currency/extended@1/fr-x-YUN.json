@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dinar convertible yougoslave (1990–1992)"
-  },
-  "other_placeholder": "dinars convertibles yougoslaves (1990–1992)",
-  "display_name": "dinar yougoslave convertible"
+    "One": "dinar convertible yougoslave (1990–1992)",
+    "Other": "dinars convertibles yougoslaves (1990–1992)",
+    "DisplayName": "dinar yougoslave convertible"
+  }
 }

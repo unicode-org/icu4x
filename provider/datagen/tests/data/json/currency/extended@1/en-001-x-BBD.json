@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Barbadian dollar"
-  },
-  "other_placeholder": "Barbadian dollars",
-  "display_name": "Barbadian Dollar"
+    "One": "Barbadian dollar",
+    "Other": "Barbadian dollars",
+    "DisplayName": "Barbadian Dollar"
+  }
 }

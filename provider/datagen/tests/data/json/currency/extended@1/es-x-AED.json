@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dírham de los Emiratos Árabes Unidos"
-  },
-  "other_placeholder": "dírhams de los Emiratos Árabes Unidos",
-  "display_name": "dírham de los Emiratos Árabes Unidos"
+    "One": "dírham de los Emiratos Árabes Unidos",
+    "Other": "dírhams de los Emiratos Árabes Unidos",
+    "DisplayName": "dírham de los Emiratos Árabes Unidos"
+  }
 }

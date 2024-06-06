@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "izraelska funta",
-    "Few": "izraelske funte"
-  },
-  "other_placeholder": "izraelskih funti",
-  "display_name": "Izraelska funta"
+    "Few": "izraelske funte",
+    "Other": "izraelskih funti",
+    "DisplayName": "Izraelska funta"
+  }
 }

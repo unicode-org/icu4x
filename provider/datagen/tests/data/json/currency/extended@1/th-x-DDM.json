@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "มาร์กเยอรมันตะวันออก"
+  "placeholders": {
+    "DisplayName": "มาร์กเยอรมันตะวันออก"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "coupon de lari géorgien"
-  },
-  "other_placeholder": "coupons de lari géorgiens",
-  "display_name": "coupon de lari géorgien"
+    "One": "coupon de lari géorgien",
+    "Other": "coupons de lari géorgiens",
+    "DisplayName": "coupon de lari géorgien"
+  }
 }

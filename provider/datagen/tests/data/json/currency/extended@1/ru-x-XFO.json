@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "Французский золотой франк"
+  "placeholders": {
+    "DisplayName": "Французский золотой франк"
+  }
 }

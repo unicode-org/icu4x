@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "córdoba ng Nicaragua"
-  },
-  "other_placeholder": "Córdoba ng Nicaragua",
-  "display_name": "Córdoba ng Nicaragua"
+    "One": "córdoba ng Nicaragua",
+    "Other": "Córdoba ng Nicaragua",
+    "DisplayName": "Córdoba ng Nicaragua"
+  }
 }

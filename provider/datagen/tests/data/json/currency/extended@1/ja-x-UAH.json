@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "ウクライナ グリブナ"
+  "placeholders": {
+    "DisplayName": "ウクライナ グリブナ"
+  }
 }

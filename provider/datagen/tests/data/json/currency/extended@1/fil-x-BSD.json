@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dolyar ng Bahamas"
-  },
-  "other_placeholder": "dolyares ng Bahamas",
-  "display_name": "Dolyar ng Bahamas"
+    "One": "dolyar ng Bahamas",
+    "Other": "dolyares ng Bahamas",
+    "DisplayName": "Dolyar ng Bahamas"
+  }
 }

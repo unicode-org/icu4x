@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "มาร์กกาฟินแลนด์"
+  "placeholders": {
+    "DisplayName": "มาร์กกาฟินแลนด์"
+  }
 }

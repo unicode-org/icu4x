@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "metical"
-  },
-  "other_placeholder": "meticales",
-  "display_name": "metical"
+    "One": "metical",
+    "Other": "meticales",
+    "DisplayName": "metical"
+  }
 }

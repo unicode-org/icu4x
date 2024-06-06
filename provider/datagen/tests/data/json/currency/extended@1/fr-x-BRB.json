@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "nouveau cruzeiro brésilien (1967–1986)"
-  },
-  "other_placeholder": "nouveaux cruzeiros brésiliens (1967–1986)",
-  "display_name": "nouveau cruzeiro brésilien (1967–1986)"
+    "One": "nouveau cruzeiro brésilien (1967–1986)",
+    "Other": "nouveaux cruzeiros brésiliens (1967–1986)",
+    "DisplayName": "nouveau cruzeiro brésilien (1967–1986)"
+  }
 }

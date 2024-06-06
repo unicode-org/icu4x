@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "vanuatski vatu",
-    "Few": "vanuatska vatua"
-  },
-  "other_placeholder": "vanuatskih vatua",
-  "display_name": "vanuatski vatu"
+    "Few": "vanuatska vatua",
+    "Other": "vanuatskih vatua",
+    "DisplayName": "vanuatski vatu"
+  }
 }

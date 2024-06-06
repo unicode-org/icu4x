@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "молдaвски леј",
-    "Few": "молдaвскa леја"
-  },
-  "other_placeholder": "молдaвских леја",
-  "display_name": "молдавски леј"
+    "Few": "молдaвскa леја",
+    "Other": "молдaвских леја",
+    "DisplayName": "молдавски леј"
+  }
 }

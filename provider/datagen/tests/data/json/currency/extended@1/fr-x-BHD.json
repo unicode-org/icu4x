@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dinar bahreïni"
-  },
-  "other_placeholder": "dinars bahreïnis",
-  "display_name": "dinar bahreïni"
+    "One": "dinar bahreïni",
+    "Other": "dinars bahreïnis",
+    "DisplayName": "dinar bahreïni"
+  }
 }

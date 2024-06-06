@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "Чехословацкая твердая крона"
+  "placeholders": {
+    "DisplayName": "Чехословацкая твердая крона"
+  }
 }

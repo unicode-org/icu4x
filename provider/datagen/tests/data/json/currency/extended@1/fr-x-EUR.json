@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "euro"
-  },
-  "other_placeholder": "euros",
-  "display_name": "euro"
+    "One": "euro",
+    "Other": "euros",
+    "DisplayName": "euro"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dollar brunéien"
-  },
-  "other_placeholder": "dollars brunéiens",
-  "display_name": "dollar brunéien"
+    "One": "dollar brunéien",
+    "Other": "dollars brunéiens",
+    "DisplayName": "dollar brunéien"
+  }
 }

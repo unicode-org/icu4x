@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "malagašajski franak",
-    "Few": "malagašajska franka"
-  },
-  "other_placeholder": "malagašajski franci",
-  "display_name": "Malagasijski franak"
+    "Few": "malagašajska franka",
+    "Other": "malagašajski franci",
+    "DisplayName": "Malagasijski franak"
+  }
 }

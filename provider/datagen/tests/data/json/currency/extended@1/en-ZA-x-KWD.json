@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Kuwaiti dinar"
-  },
-  "other_placeholder": "Kuwaiti dinars",
-  "display_name": "Kuwaiti Dinar"
+    "One": "Kuwaiti dinar",
+    "Other": "Kuwaiti dinars",
+    "DisplayName": "Kuwaiti Dinar"
+  }
 }

@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "malteška funta",
-    "Few": "malteške funte"
-  },
-  "other_placeholder": "malteških funti",
-  "display_name": "Malteška funta"
+    "Few": "malteške funte",
+    "Other": "malteških funti",
+    "DisplayName": "Malteška funta"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Papua New Guinean kina"
-  },
-  "other_placeholder": "Papua New Guinean kina",
-  "display_name": "Papua New Guinean Kina"
+    "One": "Papua New Guinean kina",
+    "Other": "Papua New Guinean kina",
+    "DisplayName": "Papua New Guinean Kina"
+  }
 }

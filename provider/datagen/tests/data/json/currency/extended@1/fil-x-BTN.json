@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Bhutanese ngultrum"
-  },
-  "other_placeholder": "Bhutanese ngultrums",
-  "display_name": "Bhutanese Ngultrum"
+    "One": "Bhutanese ngultrum",
+    "Other": "Bhutanese ngultrums",
+    "DisplayName": "Bhutanese Ngultrum"
+  }
 }

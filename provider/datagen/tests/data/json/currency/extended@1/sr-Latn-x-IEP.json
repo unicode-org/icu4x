@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "irska funta",
-    "Few": "irske funte"
-  },
-  "other_placeholder": "irskih funti",
-  "display_name": "Irska funta"
+    "Few": "irske funte",
+    "Other": "irskih funti",
+    "DisplayName": "Irska funta"
+  }
 }

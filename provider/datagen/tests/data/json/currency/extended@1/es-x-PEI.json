@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "inti peruano"
-  },
-  "other_placeholder": "intis peruanos",
-  "display_name": "inti peruano"
+    "One": "inti peruano",
+    "Other": "intis peruanos",
+    "DisplayName": "inti peruano"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Kazakhstani tenge"
-  },
-  "other_placeholder": "Kazakhstani tenges",
-  "display_name": "Kazakhstani Tenge"
+    "One": "Kazakhstani tenge",
+    "Other": "Kazakhstani tenges",
+    "DisplayName": "Kazakhstani Tenge"
+  }
 }

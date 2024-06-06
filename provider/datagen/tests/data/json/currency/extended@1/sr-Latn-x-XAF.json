@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "centralnoafrički franak",
-    "Few": "centralnoafrička franka"
-  },
-  "other_placeholder": "centralnoafričkih franaka",
-  "display_name": "centralnoafrički franak"
+    "Few": "centralnoafrička franka",
+    "Other": "centralnoafričkih franaka",
+    "DisplayName": "centralnoafrički franak"
+  }
 }

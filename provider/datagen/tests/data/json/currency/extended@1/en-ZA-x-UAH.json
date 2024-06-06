@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Ukrainian hryvnia"
-  },
-  "other_placeholder": "Ukrainian hryvnias",
-  "display_name": "Ukrainian Hryvnia"
+    "One": "Ukrainian hryvnia",
+    "Other": "Ukrainian hryvnias",
+    "DisplayName": "Ukrainian Hryvnia"
+  }
 }

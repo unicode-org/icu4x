@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Liberian dollar"
-  },
-  "other_placeholder": "Liberian dollars",
-  "display_name": "Liberian Dollar"
+    "One": "Liberian dollar",
+    "Other": "Liberian dollars",
+    "DisplayName": "Liberian Dollar"
+  }
 }

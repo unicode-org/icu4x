@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "ปอนด์ซูดานเก่า"
+  "placeholders": {
+    "DisplayName": "ปอนด์ซูดานเก่า"
+  }
 }

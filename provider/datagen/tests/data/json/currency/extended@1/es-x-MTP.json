@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "libra maltesa"
-  },
-  "other_placeholder": "libras maltesas",
-  "display_name": "libra maltesa"
+    "One": "libra maltesa",
+    "Other": "libras maltesas",
+    "DisplayName": "libra maltesa"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "naira"
-  },
-  "other_placeholder": "nairas",
-  "display_name": "naira"
+    "One": "naira",
+    "Other": "nairas",
+    "DisplayName": "naira"
+  }
 }

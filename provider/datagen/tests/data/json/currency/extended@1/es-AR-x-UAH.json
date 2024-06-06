@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "grivna"
-  },
-  "other_placeholder": "grivnas",
-  "display_name": "grivna"
+    "One": "grivna",
+    "Other": "grivnas",
+    "DisplayName": "grivna"
+  }
 }

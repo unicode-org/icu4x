@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "livre syrienne"
-  },
-  "other_placeholder": "livres syriennes",
-  "display_name": "livre syrienne"
+    "One": "livre syrienne",
+    "Other": "livres syriennes",
+    "DisplayName": "livre syrienne"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Seychellois rupee"
-  },
-  "other_placeholder": "Seychellois rupees",
-  "display_name": "Seychellois Rupee"
+    "One": "Seychellois rupee",
+    "Other": "Seychellois rupees",
+    "DisplayName": "Seychellois Rupee"
+  }
 }

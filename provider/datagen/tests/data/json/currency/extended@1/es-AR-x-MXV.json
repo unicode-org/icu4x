@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "unidad de inversión (UDI) mexicana"
-  },
-  "other_placeholder": "unidades de inversión (UDI) mexicanas",
-  "display_name": "unidad de inversión (UDI) mexicana"
+    "One": "unidad de inversión (UDI) mexicana",
+    "Other": "unidades de inversión (UDI) mexicanas",
+    "DisplayName": "unidad de inversión (UDI) mexicana"
+  }
 }

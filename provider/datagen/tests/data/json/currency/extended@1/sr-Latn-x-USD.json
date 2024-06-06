@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "američki dolar",
-    "Few": "američka dolara"
-  },
-  "other_placeholder": "američkih dolara",
-  "display_name": "američki dolar"
+    "Few": "američka dolara",
+    "Other": "američkih dolara",
+    "DisplayName": "američki dolar"
+  }
 }

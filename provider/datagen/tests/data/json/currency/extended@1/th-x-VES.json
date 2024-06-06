@@ -1,5 +1,6 @@
 {
-  "placeholders": {},
-  "other_placeholder": "โบลีวาร์แห่งเวเนซุเอลา",
-  "display_name": "โบลีวาร์เวเนซุเอลา"
+  "placeholders": {
+    "Other": "โบลีวาร์แห่งเวเนซุเอลา",
+    "DisplayName": "โบลีวาร์เวเนซุเอลา"
+  }
 }

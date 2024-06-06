@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "Venezuelan Bolívar (1871–2008)"
+  "placeholders": {
+    "DisplayName": "Venezuelan Bolívar (1871–2008)"
+  }
 }

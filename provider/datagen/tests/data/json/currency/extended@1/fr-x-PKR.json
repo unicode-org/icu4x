@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "roupie pakistanaise"
-  },
-  "other_placeholder": "roupies pakistanaises",
-  "display_name": "roupie pakistanaise"
+    "One": "roupie pakistanaise",
+    "Other": "roupies pakistanaises",
+    "DisplayName": "roupie pakistanaise"
+  }
 }

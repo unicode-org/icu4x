@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "paragvajski gvarani",
-    "Few": "paragvajska gvaranija"
-  },
-  "other_placeholder": "paragvajskih gvaranija",
-  "display_name": "paragvajski gvarani"
+    "Few": "paragvajska gvaranija",
+    "Other": "paragvajskih gvaranija",
+    "DisplayName": "paragvajski gvarani"
+  }
 }

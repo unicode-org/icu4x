@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "zaïre zaïrois"
-  },
-  "other_placeholder": "zaïres zaïrois",
-  "display_name": "zaïre zaïrois"
+    "One": "zaïre zaïrois",
+    "Other": "zaïres zaïrois",
+    "DisplayName": "zaïre zaïrois"
+  }
 }

@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "unidad de valorški real",
-    "Few": "nidad de valor reala"
-  },
-  "other_placeholder": "unidad de valorških reala",
-  "display_name": "Unidad de valorški real"
+    "Few": "nidad de valor reala",
+    "Other": "unidad de valorških reala",
+    "DisplayName": "Unidad de valorški real"
+  }
 }

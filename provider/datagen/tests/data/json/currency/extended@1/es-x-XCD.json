@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dólar del Caribe Oriental"
-  },
-  "other_placeholder": "dólares del Caribe Oriental",
-  "display_name": "dólar del Caribe Oriental"
+    "One": "dólar del Caribe Oriental",
+    "Other": "dólares del Caribe Oriental",
+    "DisplayName": "dólar del Caribe Oriental"
+  }
 }

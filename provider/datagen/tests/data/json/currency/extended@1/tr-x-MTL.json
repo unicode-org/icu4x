@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "Malta Lirası"
+  "placeholders": {
+    "DisplayName": "Malta Lirası"
+  }
 }

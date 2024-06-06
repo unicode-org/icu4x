@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "posebno crtaće pravo",
-    "Few": "posebna crtaća prava"
-  },
-  "other_placeholder": "posebnih crtaćih prava",
-  "display_name": "Posebna crtaća prava"
+    "Few": "posebna crtaća prava",
+    "Other": "posebnih crtaćih prava",
+    "DisplayName": "Posebna crtaća prava"
+  }
 }

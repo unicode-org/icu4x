@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "テスト用通貨コード"
+  "placeholders": {
+    "DisplayName": "テスト用通貨コード"
+  }
 }

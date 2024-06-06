@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "cruzado brasileño"
-  },
-  "other_placeholder": "cruzados brasileños",
-  "display_name": "cruzado brasileño"
+    "One": "cruzado brasileño",
+    "Other": "cruzados brasileños",
+    "DisplayName": "cruzado brasileño"
+  }
 }

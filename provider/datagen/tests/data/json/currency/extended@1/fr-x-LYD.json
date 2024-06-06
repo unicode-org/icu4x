@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dinar libyen"
-  },
-  "other_placeholder": "dinars libyens",
-  "display_name": "dinar libyen"
+    "One": "dinar libyen",
+    "Other": "dinars libyens",
+    "DisplayName": "dinar libyen"
+  }
 }

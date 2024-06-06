@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "stari mozambijski metikal",
-    "Few": "stara mozambijska metikala"
-  },
-  "other_placeholder": "starih mozambijskih metikala",
-  "display_name": "Stari mozambijski metikal"
+    "Few": "stara mozambijska metikala",
+    "Other": "starih mozambijskih metikala",
+    "DisplayName": "Stari mozambijski metikal"
+  }
 }

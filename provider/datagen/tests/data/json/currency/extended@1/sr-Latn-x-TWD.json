@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "novi tajvanski dolar",
-    "Few": "nova tajvanska dolara"
-  },
-  "other_placeholder": "novih tajvanskih dolara",
-  "display_name": "novi tajvanski dolar"
+    "Few": "nova tajvanska dolara",
+    "Other": "novih tajvanskih dolara",
+    "DisplayName": "novi tajvanski dolar"
+  }
 }

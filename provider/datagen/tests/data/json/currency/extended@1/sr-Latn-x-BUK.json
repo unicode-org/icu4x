@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "burmanski kjat",
-    "Few": "burmanska kjata"
-  },
-  "other_placeholder": "burmanskih kjata",
-  "display_name": "Burmanski kjat"
+    "Few": "burmanska kjata",
+    "Other": "burmanskih kjata",
+    "DisplayName": "Burmanski kjat"
+  }
 }

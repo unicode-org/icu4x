@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "haićanski gurd",
-    "Few": "haićanska gurda"
-  },
-  "other_placeholder": "haićanskih gurda",
-  "display_name": "haićanski gurd"
+    "Few": "haićanska gurda",
+    "Other": "haićanskih gurda",
+    "DisplayName": "haićanski gurd"
+  }
 }

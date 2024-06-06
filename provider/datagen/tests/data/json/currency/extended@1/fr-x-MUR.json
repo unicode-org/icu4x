@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "roupie mauricienne"
-  },
-  "other_placeholder": "roupies mauriciennes",
-  "display_name": "roupie mauricienne"
+    "One": "roupie mauricienne",
+    "Other": "roupies mauriciennes",
+    "DisplayName": "roupie mauricienne"
+  }
 }

@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "中央アフリカ CFA フラン"
+  "placeholders": {
+    "DisplayName": "中央アフリカ CFA フラン"
+  }
 }

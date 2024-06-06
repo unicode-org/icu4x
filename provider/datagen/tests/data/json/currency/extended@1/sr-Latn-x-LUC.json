@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "luksemburški konvertibilni franak",
-    "Few": "luksemburška konvertibilna franka"
-  },
-  "other_placeholder": "luksemburških konvertibilnih franaka",
-  "display_name": "Luksemburški konvertibilni franak"
+    "Few": "luksemburška konvertibilna franka",
+    "Other": "luksemburških konvertibilnih franaka",
+    "DisplayName": "Luksemburški konvertibilni franak"
+  }
 }

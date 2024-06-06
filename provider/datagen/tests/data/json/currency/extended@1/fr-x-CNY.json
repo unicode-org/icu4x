@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "yuan renminbi chinois"
-  },
-  "other_placeholder": "yuans renminbi chinois",
-  "display_name": "yuan renminbi chinois"
+    "One": "yuan renminbi chinois",
+    "Other": "yuans renminbi chinois",
+    "DisplayName": "yuan renminbi chinois"
+  }
 }

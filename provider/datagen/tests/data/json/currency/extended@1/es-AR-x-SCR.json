@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "rupia seychellense"
-  },
-  "other_placeholder": "rupias seychellenses",
-  "display_name": "rupia seychellense"
+    "One": "rupia seychellense",
+    "Other": "rupias seychellenses",
+    "DisplayName": "rupia seychellense"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "rial catarí"
-  },
-  "other_placeholder": "riales cataríes",
-  "display_name": "rial catarí"
+    "One": "rial catarí",
+    "Other": "riales cataríes",
+    "DisplayName": "rial catarí"
+  }
 }

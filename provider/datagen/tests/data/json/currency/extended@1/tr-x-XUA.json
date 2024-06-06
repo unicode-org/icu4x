@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "ADB hesap birimi"
-  },
-  "other_placeholder": "ADB hesap birimi",
-  "display_name": "ADB Hesap Birimi"
+    "One": "ADB hesap birimi",
+    "Other": "ADB hesap birimi",
+    "DisplayName": "ADB Hesap Birimi"
+  }
 }

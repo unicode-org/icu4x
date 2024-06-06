@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Spanish peseta (convertible account)"
-  },
-  "other_placeholder": "Spanish pesetas (convertible account)",
-  "display_name": "Spanish Peseta (convertible account)"
+    "One": "Spanish peseta (convertible account)",
+    "Other": "Spanish pesetas (convertible account)",
+    "DisplayName": "Spanish Peseta (convertible account)"
+  }
 }

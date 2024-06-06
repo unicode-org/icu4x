@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "livre de Sainte-Hélène"
-  },
-  "other_placeholder": "livres de Sainte-Hélène",
-  "display_name": "livre de Sainte-Hélène"
+    "One": "livre de Sainte-Hélène",
+    "Other": "livres de Sainte-Hélène",
+    "DisplayName": "livre de Sainte-Hélène"
+  }
 }

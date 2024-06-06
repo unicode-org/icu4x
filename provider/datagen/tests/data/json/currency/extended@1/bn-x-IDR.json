@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "ইন্দোনেশিয়ান রুপিয়াহ"
+  "placeholders": {
+    "DisplayName": "ইন্দোনেশিয়ান রুপিয়াহ"
+  }
 }

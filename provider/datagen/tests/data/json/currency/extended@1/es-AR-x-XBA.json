@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "unidad compuesta europea"
-  },
-  "other_placeholder": "unidades compuestas europeas",
-  "display_name": "unidad compuesta europea"
+    "One": "unidad compuesta europea",
+    "Other": "unidades compuestas europeas",
+    "DisplayName": "unidad compuesta europea"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dólar estadounidense (día siguiente)"
-  },
-  "other_placeholder": "dólares estadounidenses (día siguiente)",
-  "display_name": "dólar estadounidense (día siguiente)"
+    "One": "dólar estadounidense (día siguiente)",
+    "Other": "dólares estadounidenses (día siguiente)",
+    "DisplayName": "dólar estadounidense (día siguiente)"
+  }
 }

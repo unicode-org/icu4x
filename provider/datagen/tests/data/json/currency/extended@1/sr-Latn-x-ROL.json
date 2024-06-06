@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "rumunski lej (1952–2006)",
-    "Few": "rumunska leja (1952–2006)"
-  },
-  "other_placeholder": "rumunskih leja (1952–2006)",
-  "display_name": "Rumunski lej (1952–2006)"
+    "Few": "rumunska leja (1952–2006)",
+    "Other": "rumunskih leja (1952–2006)",
+    "DisplayName": "Rumunski lej (1952–2006)"
+  }
 }

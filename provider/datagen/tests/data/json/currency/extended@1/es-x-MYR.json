@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "ringit"
-  },
-  "other_placeholder": "ringits",
-  "display_name": "ringit"
+    "One": "ringit",
+    "Other": "ringits",
+    "DisplayName": "ringit"
+  }
 }

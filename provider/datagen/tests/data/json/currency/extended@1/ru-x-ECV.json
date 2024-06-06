@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "Постоянная единица стоимости Эквадора"
+  "placeholders": {
+    "DisplayName": "Постоянная единица стоимости Эквадора"
+  }
 }

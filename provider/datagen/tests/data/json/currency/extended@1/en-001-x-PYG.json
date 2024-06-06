@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Paraguayan guarani"
-  },
-  "other_placeholder": "Paraguayan guaranis",
-  "display_name": "Paraguayan Guarani"
+    "One": "Paraguayan guarani",
+    "Other": "Paraguayan guaranis",
+    "DisplayName": "Paraguayan Guarani"
+  }
 }

@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "ইউক্রেইন হৃভনিয়া"
+  "placeholders": {
+    "DisplayName": "ইউক্রেইন হৃভনিয়া"
+  }
 }

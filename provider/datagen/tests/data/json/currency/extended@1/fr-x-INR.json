@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "roupie indienne"
-  },
-  "other_placeholder": "roupies indiennes",
-  "display_name": "roupie indienne"
+    "One": "roupie indienne",
+    "Other": "roupies indiennes",
+    "DisplayName": "roupie indienne"
+  }
 }

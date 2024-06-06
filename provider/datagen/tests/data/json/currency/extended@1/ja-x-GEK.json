@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "ジョージア クーポン ラリ"
+  "placeholders": {
+    "DisplayName": "ジョージア クーポン ラリ"
+  }
 }

@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "ブルガリア社会主義 レフ"
+  "placeholders": {
+    "DisplayName": "ブルガリア社会主義 レフ"
+  }
 }

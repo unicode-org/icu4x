@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dinar nord-yéménite"
-  },
-  "other_placeholder": "dinars nord-yéménites",
-  "display_name": "dinar du Yémen"
+    "One": "dinar nord-yéménite",
+    "Other": "dinars nord-yéménites",
+    "DisplayName": "dinar du Yémen"
+  }
 }

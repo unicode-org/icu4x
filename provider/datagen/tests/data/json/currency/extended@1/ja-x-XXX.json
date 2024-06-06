@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "不明または無効な通貨"
+  "placeholders": {
+    "DisplayName": "不明または無効な通貨"
+  }
 }

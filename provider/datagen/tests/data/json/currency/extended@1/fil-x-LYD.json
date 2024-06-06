@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dinar ng Libya"
-  },
-  "other_placeholder": "mga dinar ng Libya",
-  "display_name": "Dinar ng Libya"
+    "One": "dinar ng Libya",
+    "Other": "mga dinar ng Libya",
+    "DisplayName": "Dinar ng Libya"
+  }
 }

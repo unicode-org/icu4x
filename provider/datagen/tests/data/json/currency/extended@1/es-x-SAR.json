@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "rial saudí"
-  },
-  "other_placeholder": "riales saudíes",
-  "display_name": "rial saudí"
+    "One": "rial saudí",
+    "Other": "riales saudíes",
+    "DisplayName": "rial saudí"
+  }
 }

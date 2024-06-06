@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "couronne tchèque"
-  },
-  "other_placeholder": "couronnes tchèques",
-  "display_name": "couronne tchèque"
+    "One": "couronne tchèque",
+    "Other": "couronnes tchèques",
+    "DisplayName": "couronne tchèque"
+  }
 }

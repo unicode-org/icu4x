@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Zimbabve doları (2008)"
-  },
-  "other_placeholder": "Zimbabve doları (2008)",
-  "display_name": "Zimbabve Doları (2008)"
+    "One": "Zimbabve doları (2008)",
+    "Other": "Zimbabve doları (2008)",
+    "DisplayName": "Zimbabve Doları (2008)"
+  }
 }

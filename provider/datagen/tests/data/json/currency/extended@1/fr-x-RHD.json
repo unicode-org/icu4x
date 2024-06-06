@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dollar rhodésien"
-  },
-  "other_placeholder": "dollars rhodésiens",
-  "display_name": "dollar rhodésien"
+    "One": "dollar rhodésien",
+    "Other": "dollars rhodésiens",
+    "DisplayName": "dollar rhodésien"
+  }
 }

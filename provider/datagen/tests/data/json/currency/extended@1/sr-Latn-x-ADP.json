@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "andorska pezeta",
-    "Few": "andorske pezete"
-  },
-  "other_placeholder": "andorske pezete",
-  "display_name": "Andorska pezeta"
+    "Few": "andorske pezete",
+    "Other": "andorske pezete",
+    "DisplayName": "Andorska pezeta"
+  }
 }

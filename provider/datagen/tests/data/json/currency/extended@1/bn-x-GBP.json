@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "ব্রিটিশ পাউন্ড"
+  "placeholders": {
+    "DisplayName": "ব্রিটিশ পাউন্ড"
+  }
 }

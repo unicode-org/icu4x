@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "franc guinéen"
-  },
-  "other_placeholder": "francs guinéens",
-  "display_name": "franc guinéen"
+    "One": "franc guinéen",
+    "Other": "francs guinéens",
+    "DisplayName": "franc guinéen"
+  }
 }

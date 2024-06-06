@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Indonesian rupiah"
-  },
-  "other_placeholder": "Indonesian rupiahs",
-  "display_name": "Indonesian Rupiah"
+    "One": "Indonesian rupiah",
+    "Other": "Indonesian rupiahs",
+    "DisplayName": "Indonesian Rupiah"
+  }
 }

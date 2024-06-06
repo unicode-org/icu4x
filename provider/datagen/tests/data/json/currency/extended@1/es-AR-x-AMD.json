@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dram"
-  },
-  "other_placeholder": "drams",
-  "display_name": "dram"
+    "One": "dram",
+    "Other": "drams",
+    "DisplayName": "dram"
+  }
 }

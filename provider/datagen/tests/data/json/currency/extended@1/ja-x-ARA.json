@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "アルゼンチン アゥストラール"
+  "placeholders": {
+    "DisplayName": "アルゼンチン アゥストラール"
+  }
 }

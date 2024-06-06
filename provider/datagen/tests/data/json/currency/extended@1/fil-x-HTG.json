@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "gourde ng Haiti"
-  },
-  "other_placeholder": "gourdes ng Haiti",
-  "display_name": "Gourde ng Haiti"
+    "One": "gourde ng Haiti",
+    "Other": "gourdes ng Haiti",
+    "DisplayName": "Gourde ng Haiti"
+  }
 }

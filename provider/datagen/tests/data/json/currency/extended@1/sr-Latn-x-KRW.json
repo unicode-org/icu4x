@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "južnokorejski von",
-    "Few": "južnokorejska vona"
-  },
-  "other_placeholder": "južnokorejskih vona",
-  "display_name": "južnokorejski von"
+    "Few": "južnokorejska vona",
+    "Other": "južnokorejskih vona",
+    "DisplayName": "južnokorejski von"
+  }
 }

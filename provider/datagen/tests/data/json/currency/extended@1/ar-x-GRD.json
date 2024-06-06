@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "دراخما يوناني"
+  "placeholders": {
+    "DisplayName": "دراخما يوناني"
+  }
 }

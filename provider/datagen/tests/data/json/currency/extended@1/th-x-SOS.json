@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "ชิลลิงโซมาเลีย"
+  "placeholders": {
+    "DisplayName": "ชิลลิงโซมาเลีย"
+  }
 }

@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "Konvertibl Bosna Hersek markı"
+  "placeholders": {
+    "DisplayName": "Konvertibl Bosna Hersek markı"
+  }
 }

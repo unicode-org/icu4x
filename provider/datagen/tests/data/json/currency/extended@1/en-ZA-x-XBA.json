@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "European composite unit"
-  },
-  "other_placeholder": "European composite units",
-  "display_name": "European Composite Unit"
+    "One": "European composite unit",
+    "Other": "European composite units",
+    "DisplayName": "European Composite Unit"
+  }
 }

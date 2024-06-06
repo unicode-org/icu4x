@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "دولار روديسي"
+  "placeholders": {
+    "DisplayName": "دولار روديسي"
+  }
 }

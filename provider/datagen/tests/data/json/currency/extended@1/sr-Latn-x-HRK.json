@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "hrvatska kuna",
-    "Few": "hrvatske kune"
-  },
-  "other_placeholder": "hrvatskih kuna",
-  "display_name": "hrvatska kuna"
+    "Few": "hrvatske kune",
+    "Other": "hrvatskih kuna",
+    "DisplayName": "hrvatska kuna"
+  }
 }

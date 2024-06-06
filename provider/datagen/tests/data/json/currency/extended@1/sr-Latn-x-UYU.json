@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "urugvajski pezos",
-    "Few": "urugvajska pezosa"
-  },
-  "other_placeholder": "urugvajskih pezosa",
-  "display_name": "urugvajski pezos"
+    "Few": "urugvajska pezosa",
+    "Other": "urugvajskih pezosa",
+    "DisplayName": "urugvajski pezos"
+  }
 }

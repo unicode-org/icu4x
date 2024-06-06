@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "trinidad-tobagoški dolar",
-    "Few": "trinidad-tobagoška dolara"
-  },
-  "other_placeholder": "trinidad-tobagoških dolara",
-  "display_name": "Trinidad-tobagoški dolar"
+    "Few": "trinidad-tobagoška dolara",
+    "Other": "trinidad-tobagoških dolara",
+    "DisplayName": "Trinidad-tobagoški dolar"
+  }
 }

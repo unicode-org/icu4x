@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "roupie népalaise"
-  },
-  "other_placeholder": "roupies népalaises",
-  "display_name": "roupie népalaise"
+    "One": "roupie népalaise",
+    "Other": "roupies népalaises",
+    "DisplayName": "roupie népalaise"
+  }
 }

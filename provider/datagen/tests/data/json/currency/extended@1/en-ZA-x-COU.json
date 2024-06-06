@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Colombian real value unit"
-  },
-  "other_placeholder": "Colombian real value units",
-  "display_name": "Colombian Real Value Unit"
+    "One": "Colombian real value unit",
+    "Other": "Colombian real value units",
+    "DisplayName": "Colombian Real Value Unit"
+  }
 }

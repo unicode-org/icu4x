@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dinar macedonio"
-  },
-  "other_placeholder": "dinares macedonios",
-  "display_name": "dinar macedonio"
+    "One": "dinar macedonio",
+    "Other": "dinares macedonios",
+    "DisplayName": "dinar macedonio"
+  }
 }

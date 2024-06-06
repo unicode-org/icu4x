@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "ইউক্রেইন কার্বোভ্যান্টস"
+  "placeholders": {
+    "DisplayName": "ইউক্রেইন কার্বোভ্যান্টস"
+  }
 }

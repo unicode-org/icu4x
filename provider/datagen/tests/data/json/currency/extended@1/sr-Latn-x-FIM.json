@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "finska marka",
-    "Few": "finske marke"
-  },
-  "other_placeholder": "finskih maraka",
-  "display_name": "Finska marka"
+    "Few": "finske marke",
+    "Other": "finskih maraka",
+    "DisplayName": "Finska marka"
+  }
 }

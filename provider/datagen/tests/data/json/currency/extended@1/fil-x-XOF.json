@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "CFA franc ng Kanlurang Africa"
-  },
-  "other_placeholder": "CFA francs ng Kanlurang Africa",
-  "display_name": "CFA Franc ng Kanlurang Africa"
+    "One": "CFA franc ng Kanlurang Africa",
+    "Other": "CFA francs ng Kanlurang Africa",
+    "DisplayName": "CFA Franc ng Kanlurang Africa"
+  }
 }

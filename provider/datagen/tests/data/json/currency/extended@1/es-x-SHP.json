@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "libra de Santa Elena"
-  },
-  "other_placeholder": "libras de Santa Elena",
-  "display_name": "libra de Santa Elena"
+    "One": "libra de Santa Elena",
+    "Other": "libras de Santa Elena",
+    "DisplayName": "libra de Santa Elena"
+  }
 }

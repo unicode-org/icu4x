@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "папуанска кина",
-    "Few": "папуанскe кинe"
-  },
-  "other_placeholder": "папуанских кинa",
-  "display_name": "папуанска кина"
+    "Few": "папуанскe кинe",
+    "Other": "папуанских кинa",
+    "DisplayName": "папуанска кина"
+  }
 }

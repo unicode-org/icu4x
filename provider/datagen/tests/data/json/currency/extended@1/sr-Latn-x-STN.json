@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "saotomska dobra",
-    "Few": "saotomske dobre"
-  },
-  "other_placeholder": "saotomskih dobri",
-  "display_name": "saotomska dobra"
+    "Few": "saotomske dobre",
+    "Other": "saotomskih dobri",
+    "DisplayName": "saotomska dobra"
+  }
 }

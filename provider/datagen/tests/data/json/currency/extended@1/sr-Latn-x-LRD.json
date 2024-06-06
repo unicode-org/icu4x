@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "liberijski dolar",
-    "Few": "liberijska dolara"
-  },
-  "other_placeholder": "liberijskih dolara",
-  "display_name": "liberijski dolar"
+    "Few": "liberijska dolara",
+    "Other": "liberijskih dolara",
+    "DisplayName": "liberijski dolar"
+  }
 }

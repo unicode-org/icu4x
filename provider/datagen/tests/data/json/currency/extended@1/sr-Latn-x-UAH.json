@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "ukrajinska grivna",
-    "Few": "ukrajinske grivne"
-  },
-  "other_placeholder": "ukrajinskih hrivnji",
-  "display_name": "ukrajinska grivna"
+    "Few": "ukrajinske grivne",
+    "Other": "ukrajinskih hrivnji",
+    "DisplayName": "ukrajinska grivna"
+  }
 }

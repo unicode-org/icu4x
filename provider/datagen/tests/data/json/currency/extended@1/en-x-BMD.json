@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Bermudan dollar"
-  },
-  "other_placeholder": "Bermudan dollars",
-  "display_name": "Bermudan Dollar"
+    "One": "Bermudan dollar",
+    "Other": "Bermudan dollars",
+    "DisplayName": "Bermudan Dollar"
+  }
 }

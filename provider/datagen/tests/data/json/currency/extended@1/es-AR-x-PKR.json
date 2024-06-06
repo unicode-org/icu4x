@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "rupia pakistaní"
-  },
-  "other_placeholder": "rupias pakistaníes",
-  "display_name": "rupia pakistaní"
+    "One": "rupia pakistaní",
+    "Other": "rupias pakistaníes",
+    "DisplayName": "rupia pakistaní"
+  }
 }

@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "meksički srebrni pezo",
-    "Few": "meksička srebrna pezosa"
-  },
-  "other_placeholder": "meksičkih srebrnih pezosa",
-  "display_name": "Meksički srebrni pezo (1861–1992)"
+    "Few": "meksička srebrna pezosa",
+    "Other": "meksičkih srebrnih pezosa",
+    "DisplayName": "Meksički srebrni pezo (1861–1992)"
+  }
 }

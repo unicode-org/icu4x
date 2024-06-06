@@ -1,5 +1,6 @@
 {
-  "placeholders": {},
-  "other_placeholder": "(ไม่ทราบชื่อสกุลเงิน)",
-  "display_name": "ไม่ทราบชื่อสกุลเงิน"
+  "placeholders": {
+    "Other": "(ไม่ทราบชื่อสกุลเงิน)",
+    "DisplayName": "ไม่ทราบชื่อสกุลเงิน"
+  }
 }

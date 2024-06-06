@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Jamaican dollar"
-  },
-  "other_placeholder": "Jamaican dollars",
-  "display_name": "Jamaican Dollar"
+    "One": "Jamaican dollar",
+    "Other": "Jamaican dollars",
+    "DisplayName": "Jamaican Dollar"
+  }
 }

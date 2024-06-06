@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "leu moldavo"
-  },
-  "other_placeholder": "leus moldavos",
-  "display_name": "leu moldavo"
+    "One": "leu moldavo",
+    "Other": "leus moldavos",
+    "DisplayName": "leu moldavo"
+  }
 }

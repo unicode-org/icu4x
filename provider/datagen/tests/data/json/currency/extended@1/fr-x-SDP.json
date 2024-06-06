@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "livre soudanaise (1956–2007)"
-  },
-  "other_placeholder": "livres soudanaises (1956–2007)",
-  "display_name": "livre soudanaise (1956–2007)"
+    "One": "livre soudanaise (1956–2007)",
+    "Other": "livres soudanaises (1956–2007)",
+    "DisplayName": "livre soudanaise (1956–2007)"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Rhodesian dollar"
-  },
-  "other_placeholder": "Rhodesian dollars",
-  "display_name": "Rhodesian Dollar"
+    "One": "Rhodesian dollar",
+    "Other": "Rhodesian dollars",
+    "DisplayName": "Rhodesian Dollar"
+  }
 }

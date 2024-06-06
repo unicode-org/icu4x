@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Lebanese pound"
-  },
-  "other_placeholder": "Lebanese pounds",
-  "display_name": "Lebanese Pound"
+    "One": "Lebanese pound",
+    "Other": "Lebanese pounds",
+    "DisplayName": "Lebanese Pound"
+  }
 }

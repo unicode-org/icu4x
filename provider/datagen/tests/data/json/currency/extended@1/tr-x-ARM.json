@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Arjantin pesosu (1881–1970)"
-  },
-  "other_placeholder": "Arjantin pesosu (1881–1970)",
-  "display_name": "Arjantin Pesosu (1881–1970)"
+    "One": "Arjantin pesosu (1881–1970)",
+    "Other": "Arjantin pesosu (1881–1970)",
+    "DisplayName": "Arjantin Pesosu (1881–1970)"
+  }
 }

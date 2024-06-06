@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "Güney Kıbrıs Lirası"
+  "placeholders": {
+    "DisplayName": "Güney Kıbrıs Lirası"
+  }
 }

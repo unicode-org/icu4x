@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "peruanski sol (1863–1965)",
-    "Few": "peruanska sola (1863–1965)"
-  },
-  "other_placeholder": "peruanskih sola (1863–1965)",
-  "display_name": "Peruanski sol (1863–1965)"
+    "Few": "peruanska sola (1863–1965)",
+    "Other": "peruanskih sola (1863–1965)",
+    "DisplayName": "Peruanski sol (1863–1965)"
+  }
 }

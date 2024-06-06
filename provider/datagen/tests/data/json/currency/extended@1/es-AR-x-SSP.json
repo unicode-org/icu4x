@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "libra sursudanesa"
-  },
-  "other_placeholder": "libras sursudanesas",
-  "display_name": "libra sursudanesa"
+    "One": "libra sursudanesa",
+    "Other": "libras sursudanesas",
+    "DisplayName": "libra sursudanesa"
+  }
 }

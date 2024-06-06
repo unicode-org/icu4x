@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "เดอร์แฮมสหรัฐอาหรับเอมิเรตส์"
+  "placeholders": {
+    "DisplayName": "เดอร์แฮมสหรัฐอาหรับเอมิเรตส์"
+  }
 }

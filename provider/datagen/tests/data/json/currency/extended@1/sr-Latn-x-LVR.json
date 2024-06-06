@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "latvijska rublja",
-    "Few": "latvijske rublje"
-  },
-  "other_placeholder": "latvijskih rublji",
-  "display_name": "Latvijska rublja"
+    "Few": "latvijske rublje",
+    "Other": "latvijskih rublji",
+    "DisplayName": "Latvijska rublja"
+  }
 }

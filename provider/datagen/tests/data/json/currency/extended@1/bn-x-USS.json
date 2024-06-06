@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "মার্কিন ডলার (একই দিন)"
+  "placeholders": {
+    "DisplayName": "মার্কিন ডলার (একই দিন)"
+  }
 }

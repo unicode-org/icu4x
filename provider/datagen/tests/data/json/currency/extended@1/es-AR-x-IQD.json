@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dinar iraquí"
-  },
-  "other_placeholder": "dinares iraquíes",
-  "display_name": "dinar iraquí"
+    "One": "dinar iraquí",
+    "Other": "dinares iraquíes",
+    "DisplayName": "dinar iraquí"
+  }
 }

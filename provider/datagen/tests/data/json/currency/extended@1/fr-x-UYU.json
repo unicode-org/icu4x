@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "peso uruguayen"
-  },
-  "other_placeholder": "pesos uruguayens",
-  "display_name": "peso uruguayen"
+    "One": "peso uruguayen",
+    "Other": "pesos uruguayens",
+    "DisplayName": "peso uruguayen"
+  }
 }

@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "namibijski dolar",
-    "Few": "namibijska dolara"
-  },
-  "other_placeholder": "namibijskih dolara",
-  "display_name": "namibijski dolar"
+    "Few": "namibijska dolara",
+    "Other": "namibijskih dolara",
+    "DisplayName": "namibijski dolar"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "İzlanda kronu (1918–1981)"
-  },
-  "other_placeholder": "İzlanda kronu (1918–1981)",
-  "display_name": "İzlanda Kronu (1918–1981)"
+    "One": "İzlanda kronu (1918–1981)",
+    "Other": "İzlanda kronu (1918–1981)",
+    "DisplayName": "İzlanda Kronu (1918–1981)"
+  }
 }

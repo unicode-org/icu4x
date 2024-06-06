@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "มาร์กบอสเนีย-เฮอร์เซโกวีนา"
+  "placeholders": {
+    "DisplayName": "มาร์กบอสเนีย-เฮอร์เซโกวีนา"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "tugrik mongol"
-  },
-  "other_placeholder": "tugriks mongols",
-  "display_name": "tugrik mongol"
+    "One": "tugrik mongol",
+    "Other": "tugriks mongols",
+    "DisplayName": "tugrik mongol"
+  }
 }

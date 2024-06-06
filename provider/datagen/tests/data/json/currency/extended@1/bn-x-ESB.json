@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "স্প্যানিশ পেসেতা (রূপান্তরযোগ্য হিসাব)"
+  "placeholders": {
+    "DisplayName": "স্প্যানিশ পেসেতা (রূপান্তরযোগ্য হিসাব)"
+  }
 }

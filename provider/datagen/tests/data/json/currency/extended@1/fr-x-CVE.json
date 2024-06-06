@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "escudo capverdien"
-  },
-  "other_placeholder": "escudos capverdiens",
-  "display_name": "escudo capverdien"
+    "One": "escudo capverdien",
+    "Other": "escudos capverdiens",
+    "DisplayName": "escudo capverdien"
+  }
 }

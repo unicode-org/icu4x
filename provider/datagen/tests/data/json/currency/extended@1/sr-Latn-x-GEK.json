@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "gruzijski kupon larit",
-    "Few": "gruzijska kupon larita"
-  },
-  "other_placeholder": "gruzijskih kupon larita",
-  "display_name": "Gruzijski kupon larit"
+    "Few": "gruzijska kupon larita",
+    "Other": "gruzijskih kupon larita",
+    "DisplayName": "Gruzijski kupon larit"
+  }
 }

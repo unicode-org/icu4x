@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Brezilya kruzeirosu (1942–1967)"
-  },
-  "other_placeholder": "Brezilya kruzeirosu (1942–1967)",
-  "display_name": "Brezilya Kruzeirosu (1942–1967)"
+    "One": "Brezilya kruzeirosu (1942–1967)",
+    "Other": "Brezilya kruzeirosu (1942–1967)",
+    "DisplayName": "Brezilya Kruzeirosu (1942–1967)"
+  }
 }

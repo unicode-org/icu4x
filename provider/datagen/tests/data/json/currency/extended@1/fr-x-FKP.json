@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "livre des îles Malouines"
-  },
-  "other_placeholder": "livres des îles Malouines",
-  "display_name": "livre des îles Malouines"
+    "One": "livre des îles Malouines",
+    "Other": "livres des îles Malouines",
+    "DisplayName": "livre des îles Malouines"
+  }
 }

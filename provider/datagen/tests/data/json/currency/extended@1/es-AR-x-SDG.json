@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "libra sudanesa"
-  },
-  "other_placeholder": "libras sudanesas",
-  "display_name": "libra sudanesa"
+    "One": "libra sudanesa",
+    "Other": "libras sudanesas",
+    "DisplayName": "libra sudanesa"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dólar beliceño"
-  },
-  "other_placeholder": "dólares beliceños",
-  "display_name": "dólar beliceño"
+    "One": "dólar beliceño",
+    "Other": "dólares beliceños",
+    "DisplayName": "dólar beliceño"
+  }
 }

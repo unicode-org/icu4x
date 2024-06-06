@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "piso ng Mexico"
-  },
-  "other_placeholder": "piso ng Mexico",
-  "display_name": "Piso ng Mexico"
+    "One": "piso ng Mexico",
+    "Other": "piso ng Mexico",
+    "DisplayName": "Piso ng Mexico"
+  }
 }

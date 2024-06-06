@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "franco burundés"
-  },
-  "other_placeholder": "francos burundeses",
-  "display_name": "franco burundés"
+    "One": "franco burundés",
+    "Other": "francos burundeses",
+    "DisplayName": "franco burundés"
+  }
 }

@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "румунски леј",
-    "Few": "румунскa леја"
-  },
-  "other_placeholder": "румунских леја",
-  "display_name": "румунски леј"
+    "Few": "румунскa леја",
+    "Other": "румунских леја",
+    "DisplayName": "румунски леј"
+  }
 }

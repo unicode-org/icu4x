@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Latvian ruble"
-  },
-  "other_placeholder": "Latvian rubles",
-  "display_name": "Latvian Ruble"
+    "One": "Latvian ruble",
+    "Other": "Latvian rubles",
+    "DisplayName": "Latvian Ruble"
+  }
 }

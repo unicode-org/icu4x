@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "পাকিস্তানি রুপি"
+  "placeholders": {
+    "DisplayName": "পাকিস্তানি রুপি"
+  }
 }

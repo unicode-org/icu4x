@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dolyar ng New Taiwan"
-  },
-  "other_placeholder": "dolyares ng New Taiwan",
-  "display_name": "Dolyar ng New Taiwan"
+    "One": "dolyar ng New Taiwan",
+    "Other": "dolyares ng New Taiwan",
+    "DisplayName": "Dolyar ng New Taiwan"
+  }
 }

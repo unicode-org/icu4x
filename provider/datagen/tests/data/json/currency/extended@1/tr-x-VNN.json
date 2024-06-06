@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Vietnam dongu (1978–1985)"
-  },
-  "other_placeholder": "Vietnam dongu (1978–1985)",
-  "display_name": "Vietnam Dongu (1978–1985)"
+    "One": "Vietnam dongu (1978–1985)",
+    "Other": "Vietnam dongu (1978–1985)",
+    "DisplayName": "Vietnam Dongu (1978–1985)"
+  }
 }

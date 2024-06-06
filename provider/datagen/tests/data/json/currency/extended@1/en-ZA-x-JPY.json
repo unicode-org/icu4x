@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Japanese yen"
-  },
-  "other_placeholder": "Japanese yen",
-  "display_name": "Japanese Yen"
+    "One": "Japanese yen",
+    "Other": "Japanese yen",
+    "DisplayName": "Japanese Yen"
+  }
 }

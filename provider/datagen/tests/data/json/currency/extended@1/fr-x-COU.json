@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "unité de valeur réelle colombienne"
-  },
-  "other_placeholder": "unités de valeur réelle colombiennes",
-  "display_name": "unité de valeur réelle colombienne"
+    "One": "unité de valeur réelle colombienne",
+    "Other": "unités de valeur réelle colombiennes",
+    "DisplayName": "unité de valeur réelle colombienne"
+  }
 }

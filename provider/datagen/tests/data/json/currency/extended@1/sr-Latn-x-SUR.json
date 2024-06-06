@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "sovjetska rublja",
-    "Few": "sovjetske rublje"
-  },
-  "other_placeholder": "sovjetskih rublji",
-  "display_name": "Sovjetska rublja"
+    "Few": "sovjetske rublje",
+    "Other": "sovjetskih rublji",
+    "DisplayName": "Sovjetska rublja"
+  }
 }

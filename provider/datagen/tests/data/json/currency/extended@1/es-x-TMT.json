@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "manat turcomano"
-  },
-  "other_placeholder": "manats turcomanos",
-  "display_name": "manat turcomano"
+    "One": "manat turcomano",
+    "Other": "manats turcomanos",
+    "DisplayName": "manat turcomano"
+  }
 }

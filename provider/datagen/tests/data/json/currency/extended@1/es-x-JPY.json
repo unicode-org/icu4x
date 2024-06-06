@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "yen"
-  },
-  "other_placeholder": "yenes",
-  "display_name": "yen"
+    "One": "yen",
+    "Other": "yenes",
+    "DisplayName": "yen"
+  }
 }

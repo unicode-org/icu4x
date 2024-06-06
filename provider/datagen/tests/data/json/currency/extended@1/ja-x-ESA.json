@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "スペインペセタ（勘定A）"
+  "placeholders": {
+    "DisplayName": "スペインペセタ（勘定A）"
+  }
 }

@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "แรนด์แอฟริกาใต้"
+  "placeholders": {
+    "DisplayName": "แรนด์แอฟริกาใต้"
+  }
 }

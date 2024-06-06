@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "ฟรังก์บุรุนดี"
+  "placeholders": {
+    "DisplayName": "ฟรังก์บุรุนดี"
+  }
 }

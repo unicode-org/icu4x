@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Equatorial Guinean ekwele"
-  },
-  "other_placeholder": "Equatorial Guinean ekwele",
-  "display_name": "Equatorial Guinean Ekwele"
+    "One": "Equatorial Guinean ekwele",
+    "Other": "Equatorial Guinean ekwele",
+    "DisplayName": "Equatorial Guinean Ekwele"
+  }
 }

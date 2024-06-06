@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "中国人民元"
+  "placeholders": {
+    "DisplayName": "中国人民元"
+  }
 }

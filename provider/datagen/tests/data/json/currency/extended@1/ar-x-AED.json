@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "درهم إماراتي"
+  "placeholders": {
+    "DisplayName": "درهم إماراتي"
+  }
 }

@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "bolivijski bolivijano",
-    "Few": "bolivijska bolivijana"
-  },
-  "other_placeholder": "bolivijskih bolivijana",
-  "display_name": "bolivijski bolivijano"
+    "Few": "bolivijska bolivijana",
+    "Other": "bolivijskih bolivijana",
+    "DisplayName": "bolivijski bolivijano"
+  }
 }

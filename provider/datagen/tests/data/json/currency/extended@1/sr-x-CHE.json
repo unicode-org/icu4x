@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "WIR евро",
-    "Few": "WIR евра"
-  },
-  "other_placeholder": "WIR евра",
-  "display_name": "WIR евро"
+    "Few": "WIR евра",
+    "Other": "WIR евра",
+    "DisplayName": "WIR евро"
+  }
 }

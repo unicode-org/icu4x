@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "ব্রাজিলিয়ান রিয়েল"
+  "placeholders": {
+    "DisplayName": "ব্রাজিলিয়ান রিয়েল"
+  }
 }

@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "hongkonški dolar",
-    "Few": "hongkonška dolara"
-  },
-  "other_placeholder": "hongkonških dolara",
-  "display_name": "hongkonški dolar"
+    "Few": "hongkonška dolara",
+    "Other": "hongkonških dolara",
+    "DisplayName": "hongkonški dolar"
+  }
 }

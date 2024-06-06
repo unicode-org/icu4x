@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Timorese escudo"
-  },
-  "other_placeholder": "Timorese escudos",
-  "display_name": "Timorese Escudo"
+    "One": "Timorese escudo",
+    "Other": "Timorese escudos",
+    "DisplayName": "Timorese Escudo"
+  }
 }

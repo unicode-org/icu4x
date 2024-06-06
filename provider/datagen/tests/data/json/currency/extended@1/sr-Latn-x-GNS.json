@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "gvinejski sili",
-    "Few": "gvinejska sila"
-  },
-  "other_placeholder": "gvinejskih sila",
-  "display_name": "Gvinejski sili"
+    "Few": "gvinejska sila",
+    "Other": "gvinejskih sila",
+    "DisplayName": "Gvinejski sili"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Saint Helena pound"
-  },
-  "other_placeholder": "Saint Helena pounds",
-  "display_name": "Saint Helena Pound"
+    "One": "Saint Helena pound",
+    "Other": "Saint Helena pounds",
+    "DisplayName": "Saint Helena Pound"
+  }
 }

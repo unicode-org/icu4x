@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Somali shilling"
-  },
-  "other_placeholder": "Somali shillings",
-  "display_name": "Somali Shilling"
+    "One": "Somali shilling",
+    "Other": "Somali shillings",
+    "DisplayName": "Somali Shilling"
+  }
 }

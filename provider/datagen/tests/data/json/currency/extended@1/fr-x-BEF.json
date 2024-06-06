@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "franc belge"
-  },
-  "other_placeholder": "francs belges",
-  "display_name": "franc belge"
+    "One": "franc belge",
+    "Other": "francs belges",
+    "DisplayName": "franc belge"
+  }
 }

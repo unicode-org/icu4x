@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Maldivian rupee (1947–1981)"
-  },
-  "other_placeholder": "Maldivian rupees (1947–1981)",
-  "display_name": "Maldivian Rupee (1947–1981)"
+    "One": "Maldivian rupee (1947–1981)",
+    "Other": "Maldivian rupees (1947–1981)",
+    "DisplayName": "Maldivian Rupee (1947–1981)"
+  }
 }

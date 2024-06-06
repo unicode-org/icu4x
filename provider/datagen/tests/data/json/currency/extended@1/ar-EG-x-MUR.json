@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "روبية موريشيوسية"
+  "placeholders": {
+    "DisplayName": "روبية موريشيوسية"
+  }
 }

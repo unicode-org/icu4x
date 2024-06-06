@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "ইয়েমেনি রিয়াল"
+  "placeholders": {
+    "DisplayName": "ইয়েমেনি রিয়াল"
+  }
 }

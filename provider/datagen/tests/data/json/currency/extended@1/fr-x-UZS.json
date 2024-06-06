@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "sum ouzbek"
-  },
-  "other_placeholder": "sums ouzbeks",
-  "display_name": "sum ouzbek"
+    "One": "sum ouzbek",
+    "Other": "sums ouzbeks",
+    "DisplayName": "sum ouzbek"
+  }
 }

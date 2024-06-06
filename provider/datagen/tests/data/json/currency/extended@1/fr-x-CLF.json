@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "unité d’investissement chilienne"
-  },
-  "other_placeholder": "unités d’investissement chiliennes",
-  "display_name": "unité d’investissement chilienne"
+    "One": "unité d’investissement chilienne",
+    "Other": "unités d’investissement chiliennes",
+    "DisplayName": "unité d’investissement chilienne"
+  }
 }

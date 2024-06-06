@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "austral argentino"
-  },
-  "other_placeholder": "australes argentinos",
-  "display_name": "austral argentino"
+    "One": "austral argentino",
+    "Other": "australes argentinos",
+    "DisplayName": "austral argentino"
+  }
 }

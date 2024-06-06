@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Chilean escudo"
-  },
-  "other_placeholder": "Chilean escudos",
-  "display_name": "Chilean Escudo"
+    "One": "Chilean escudo",
+    "Other": "Chilean escudos",
+    "DisplayName": "Chilean Escudo"
+  }
 }

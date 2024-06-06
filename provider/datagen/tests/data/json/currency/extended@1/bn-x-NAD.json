@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "নামিবিয়া ডলার"
+  "placeholders": {
+    "DisplayName": "নামিবিয়া ডলার"
+  }
 }

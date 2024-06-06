@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "বাংলাদেশী টাকা"
+  "placeholders": {
+    "DisplayName": "বাংলাদেশী টাকা"
+  }
 }

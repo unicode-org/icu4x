@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "Güney Kore wonu"
+  "placeholders": {
+    "DisplayName": "Güney Kore wonu"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "franco marroquí"
-  },
-  "other_placeholder": "francos marroquíes",
-  "display_name": "franco marroquí"
+    "One": "franco marroquí",
+    "Other": "francos marroquíes",
+    "DisplayName": "franco marroquí"
+  }
 }

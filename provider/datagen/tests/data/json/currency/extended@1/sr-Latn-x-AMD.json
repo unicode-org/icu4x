@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "jermenski dram",
-    "Few": "jermenska drama"
-  },
-  "other_placeholder": "jermenska drama",
-  "display_name": "jermenski dram"
+    "Few": "jermenska drama",
+    "Other": "jermenska drama",
+    "DisplayName": "jermenski dram"
+  }
 }

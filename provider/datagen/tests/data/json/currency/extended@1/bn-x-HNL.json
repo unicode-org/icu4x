@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "হন্ডুরাস লেম্পিরা"
+  "placeholders": {
+    "DisplayName": "হন্ডুরাস লেম্পিরা"
+  }
 }

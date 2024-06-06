@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "couronne estonienne"
-  },
-  "other_placeholder": "couronnes estoniennes",
-  "display_name": "couronne estonienne"
+    "One": "couronne estonienne",
+    "Other": "couronnes estoniennes",
+    "DisplayName": "couronne estonienne"
+  }
 }

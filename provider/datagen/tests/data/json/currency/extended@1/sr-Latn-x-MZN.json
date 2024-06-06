@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "mozambički metikal",
-    "Few": "mozambička metikala"
-  },
-  "other_placeholder": "mozambičkih metikala",
-  "display_name": "mozambički metikal"
+    "Few": "mozambička metikala",
+    "Other": "mozambičkih metikala",
+    "DisplayName": "mozambički metikal"
+  }
 }

@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "উত্তর কোরিয়ার ওন"
+  "placeholders": {
+    "DisplayName": "উত্তর কোরিয়ার ওন"
+  }
 }

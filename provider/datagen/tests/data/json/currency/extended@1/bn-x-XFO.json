@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "ফরাসি গোল্ড ফ্রাঙ্ক"
+  "placeholders": {
+    "DisplayName": "ফরাসি গোল্ড ফ্রাঙ্ক"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "rial yemení"
-  },
-  "other_placeholder": "riales yemeníes",
-  "display_name": "rial yemení"
+    "One": "rial yemení",
+    "Other": "riales yemeníes",
+    "DisplayName": "rial yemení"
+  }
 }

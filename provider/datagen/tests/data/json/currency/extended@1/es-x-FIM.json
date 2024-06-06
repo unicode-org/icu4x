@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "marco finlandés"
-  },
-  "other_placeholder": "marcos finlandeses",
-  "display_name": "marco finlandés"
+    "One": "marco finlandés",
+    "Other": "marcos finlandeses",
+    "DisplayName": "marco finlandés"
+  }
 }

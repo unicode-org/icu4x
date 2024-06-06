@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "দক্ষিণ আফ্রিকান রেন্ড"
+  "placeholders": {
+    "DisplayName": "দক্ষিণ আফ্রিকান রেন্ড"
+  }
 }

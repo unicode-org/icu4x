@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dinar argelino"
-  },
-  "other_placeholder": "dinares argelinos",
-  "display_name": "dinar argelino"
+    "One": "dinar argelino",
+    "Other": "dinares argelinos",
+    "DisplayName": "dinar argelino"
+  }
 }

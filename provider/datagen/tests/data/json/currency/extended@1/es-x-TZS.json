@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "chelín tanzano"
-  },
-  "other_placeholder": "chelines tanzanos",
-  "display_name": "chelín tanzano"
+    "One": "chelín tanzano",
+    "Other": "chelines tanzanos",
+    "DisplayName": "chelín tanzano"
+  }
 }

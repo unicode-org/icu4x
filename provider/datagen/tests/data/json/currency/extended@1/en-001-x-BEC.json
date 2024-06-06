@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Belgian franc (convertible)"
-  },
-  "other_placeholder": "Belgian francs (convertible)",
-  "display_name": "Belgian Franc (convertible)"
+    "One": "Belgian franc (convertible)",
+    "Other": "Belgian francs (convertible)",
+    "DisplayName": "Belgian Franc (convertible)"
+  }
 }

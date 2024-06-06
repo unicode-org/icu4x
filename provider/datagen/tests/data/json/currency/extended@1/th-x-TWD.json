@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "ดอลลาร์ไต้หวันใหม่"
+  "placeholders": {
+    "DisplayName": "ดอลลาร์ไต้หวันใหม่"
+  }
 }

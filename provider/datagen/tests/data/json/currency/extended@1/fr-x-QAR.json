@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "riyal qatari"
-  },
-  "other_placeholder": "riyals qataris",
-  "display_name": "riyal qatari"
+    "One": "riyal qatari",
+    "Other": "riyals qataris",
+    "DisplayName": "riyal qatari"
+  }
 }

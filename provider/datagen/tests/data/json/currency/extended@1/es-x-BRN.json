@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "nuevo cruzado brasileño"
-  },
-  "other_placeholder": "nuevos cruzados brasileños",
-  "display_name": "nuevo cruzado brasileño"
+    "One": "nuevo cruzado brasileño",
+    "Other": "nuevos cruzados brasileños",
+    "DisplayName": "nuevo cruzado brasileño"
+  }
 }

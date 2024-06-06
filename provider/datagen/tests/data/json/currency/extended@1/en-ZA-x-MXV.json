@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Mexican investment unit"
-  },
-  "other_placeholder": "Mexican investment units",
-  "display_name": "Mexican Investment Unit"
+    "One": "Mexican investment unit",
+    "Other": "Mexican investment units",
+    "DisplayName": "Mexican Investment Unit"
+  }
 }

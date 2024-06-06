@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "Gine frangı"
+  "placeholders": {
+    "DisplayName": "Gine frangı"
+  }
 }

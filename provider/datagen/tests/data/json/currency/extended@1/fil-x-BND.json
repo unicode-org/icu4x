@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dolyar ng Brunei"
-  },
-  "other_placeholder": "dolyar ng Brunei",
-  "display_name": "Dolyar ng Brunei"
+    "One": "dolyar ng Brunei",
+    "Other": "dolyar ng Brunei",
+    "DisplayName": "Dolyar ng Brunei"
+  }
 }

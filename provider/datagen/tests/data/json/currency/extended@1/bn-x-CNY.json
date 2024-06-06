@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "চীনা য়ুয়ান"
+  "placeholders": {
+    "DisplayName": "চীনা য়ুয়ান"
+  }
 }

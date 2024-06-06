@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "lire maltaise"
-  },
-  "other_placeholder": "lires maltaises",
-  "display_name": "lire maltaise"
+    "One": "lire maltaise",
+    "Other": "lires maltaises",
+    "DisplayName": "lire maltaise"
+  }
 }

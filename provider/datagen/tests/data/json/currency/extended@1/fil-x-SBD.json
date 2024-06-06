@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dolyar ng Solomon Islands"
-  },
-  "other_placeholder": "dolyar ng Solomon Islands",
-  "display_name": "Dolyar ng Solomon Islands"
+    "One": "dolyar ng Solomon Islands",
+    "Other": "dolyar ng Solomon Islands",
+    "DisplayName": "Dolyar ng Solomon Islands"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Bolívar Soberano"
-  },
-  "other_placeholder": "Bolívar Soberanos",
-  "display_name": "Bolívar Soberano"
+    "One": "Bolívar Soberano",
+    "Other": "Bolívar Soberanos",
+    "DisplayName": "Bolívar Soberano"
+  }
 }

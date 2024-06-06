@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "florin arubais"
-  },
-  "other_placeholder": "florins arubais",
-  "display_name": "florin arubais"
+    "One": "florin arubais",
+    "Other": "florins arubais",
+    "DisplayName": "florin arubais"
+  }
 }

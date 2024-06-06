@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Polish zloty (PLZ)"
-  },
-  "other_placeholder": "Polish zlotys (PLZ)",
-  "display_name": "Polish Zloty (1950–1995)"
+    "One": "Polish zloty (PLZ)",
+    "Other": "Polish zlotys (PLZ)",
+    "DisplayName": "Polish Zloty (1950–1995)"
+  }
 }

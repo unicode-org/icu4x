@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "mongolski tugrik",
-    "Few": "mongolska tugrika"
-  },
-  "other_placeholder": "mongolskih tugrika",
-  "display_name": "mongolski tugrik"
+    "Few": "mongolska tugrika",
+    "Other": "mongolskih tugrika",
+    "DisplayName": "mongolski tugrik"
+  }
 }

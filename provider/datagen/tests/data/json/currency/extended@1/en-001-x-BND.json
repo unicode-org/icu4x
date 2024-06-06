@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Brunei dollar"
-  },
-  "other_placeholder": "Brunei dollars",
-  "display_name": "Brunei Dollar"
+    "One": "Brunei dollar",
+    "Other": "Brunei dollars",
+    "DisplayName": "Brunei Dollar"
+  }
 }

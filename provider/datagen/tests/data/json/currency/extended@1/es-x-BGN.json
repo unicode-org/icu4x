@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "leva búlgara"
-  },
-  "other_placeholder": "levas búlgaras",
-  "display_name": "leva búlgara"
+    "One": "leva búlgara",
+    "Other": "levas búlgaras",
+    "DisplayName": "leva búlgara"
+  }
 }

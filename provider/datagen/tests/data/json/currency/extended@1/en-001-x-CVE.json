@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Cape Verdean escudo"
-  },
-  "other_placeholder": "Cape Verdean escudos",
-  "display_name": "Cape Verdean Escudo"
+    "One": "Cape Verdean escudo",
+    "Other": "Cape Verdean escudos",
+    "DisplayName": "Cape Verdean Escudo"
+  }
 }

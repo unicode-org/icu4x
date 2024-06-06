@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Bulgarian socialist lev"
-  },
-  "other_placeholder": "Bulgarian socialist leva",
-  "display_name": "Bulgarian Socialist Lev"
+    "One": "Bulgarian socialist lev",
+    "Other": "Bulgarian socialist leva",
+    "DisplayName": "Bulgarian Socialist Lev"
+  }
 }

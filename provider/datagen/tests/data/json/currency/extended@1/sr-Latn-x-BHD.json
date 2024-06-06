@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "bahreinski dinar",
-    "Few": "bahreinska dinara"
-  },
-  "other_placeholder": "bahreinskih dinara",
-  "display_name": "bahreinski dinar"
+    "Few": "bahreinska dinara",
+    "Other": "bahreinskih dinara",
+    "DisplayName": "bahreinski dinar"
+  }
 }

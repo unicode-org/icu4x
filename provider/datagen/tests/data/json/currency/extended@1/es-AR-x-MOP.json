@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "pataca de Macao"
-  },
-  "other_placeholder": "patacas de Macao",
-  "display_name": "pataca de Macao"
+    "One": "pataca de Macao",
+    "Other": "patacas de Macao",
+    "DisplayName": "pataca de Macao"
+  }
 }

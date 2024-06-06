@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "kuanza"
-  },
-  "other_placeholder": "kuanzas",
-  "display_name": "kuanza"
+    "One": "kuanza",
+    "Other": "kuanzas",
+    "DisplayName": "kuanza"
+  }
 }

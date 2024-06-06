@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "tuniski dinar",
-    "Few": "tuniska dinara"
-  },
-  "other_placeholder": "tuniskih dinara",
-  "display_name": "tuniski dinar"
+    "Few": "tuniska dinara",
+    "Other": "tuniskih dinara",
+    "DisplayName": "tuniski dinar"
+  }
 }

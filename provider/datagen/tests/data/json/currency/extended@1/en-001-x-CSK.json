@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Czechoslovak hard koruna"
-  },
-  "other_placeholder": "Czechoslovak hard korunas",
-  "display_name": "Czechoslovak Hard Koruna"
+    "One": "Czechoslovak hard koruna",
+    "Other": "Czechoslovak hard korunas",
+    "DisplayName": "Czechoslovak Hard Koruna"
+  }
 }

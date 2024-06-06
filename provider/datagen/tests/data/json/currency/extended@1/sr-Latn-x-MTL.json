@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "malteška lira",
-    "Few": "malteške lire"
-  },
-  "other_placeholder": "malteških lira",
-  "display_name": "Malteška lira"
+    "Few": "malteške lire",
+    "Other": "malteških lira",
+    "DisplayName": "Malteška lira"
+  }
 }

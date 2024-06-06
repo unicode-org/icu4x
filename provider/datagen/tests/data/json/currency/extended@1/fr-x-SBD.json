@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dollar des îles Salomon"
-  },
-  "other_placeholder": "dollars des îles Salomon",
-  "display_name": "dollar des îles Salomon"
+    "One": "dollar des îles Salomon",
+    "Other": "dollars des îles Salomon",
+    "DisplayName": "dollar des îles Salomon"
+  }
 }

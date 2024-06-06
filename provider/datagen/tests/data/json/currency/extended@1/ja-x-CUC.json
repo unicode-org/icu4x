@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "キューバ 兌換ペソ"
+  "placeholders": {
+    "DisplayName": "キューバ 兌換ペソ"
+  }
 }

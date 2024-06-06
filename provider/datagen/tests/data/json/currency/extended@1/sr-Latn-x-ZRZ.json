@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "zairski zair",
-    "Few": "zairska zaira"
-  },
-  "other_placeholder": "zairskih zaira",
-  "display_name": "Zairski zair"
+    "Few": "zairska zaira",
+    "Other": "zairskih zaira",
+    "DisplayName": "Zairski zair"
+  }
 }

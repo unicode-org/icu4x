@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "bolivijski mvdol",
-    "Few": "bolivijska mvdola"
-  },
-  "other_placeholder": "bolivijskih mvdola",
-  "display_name": "Bolivijski mvdol"
+    "Few": "bolivijska mvdola",
+    "Other": "bolivijskih mvdola",
+    "DisplayName": "Bolivijski mvdol"
+  }
 }

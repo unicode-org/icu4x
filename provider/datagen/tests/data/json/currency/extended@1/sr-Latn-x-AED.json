@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "dirham UAE",
-    "Few": "dirhama UAE"
-  },
-  "other_placeholder": "dirhama UAE",
-  "display_name": "dirham UAE"
+    "Few": "dirhama UAE",
+    "Other": "dirhama UAE",
+    "DisplayName": "dirham UAE"
+  }
 }

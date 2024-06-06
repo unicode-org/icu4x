@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dinar jordano"
-  },
-  "other_placeholder": "dinares jordanos",
-  "display_name": "dinar jordano"
+    "One": "dinar jordano",
+    "Other": "dinares jordanos",
+    "DisplayName": "dinar jordano"
+  }
 }

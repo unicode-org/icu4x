@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "fidžijski dolar",
-    "Few": "fidžijska dolara"
-  },
-  "other_placeholder": "fidžijskih dolara",
-  "display_name": "fidžijski dolar"
+    "Few": "fidžijska dolara",
+    "Other": "fidžijskih dolara",
+    "DisplayName": "fidžijski dolar"
+  }
 }

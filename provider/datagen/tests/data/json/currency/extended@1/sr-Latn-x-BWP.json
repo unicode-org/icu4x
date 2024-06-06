@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "bocvanska pula",
-    "Few": "bocvanske pule"
-  },
-  "other_placeholder": "bocvanskih pula",
-  "display_name": "bocvanska pula"
+    "Few": "bocvanske pule",
+    "Other": "bocvanskih pula",
+    "DisplayName": "bocvanska pula"
+  }
 }

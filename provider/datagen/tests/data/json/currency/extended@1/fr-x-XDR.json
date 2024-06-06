@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "droit de tirage spécial"
-  },
-  "other_placeholder": "droits de tirage spéciaux",
-  "display_name": "droit de tirage spécial"
+    "One": "droit de tirage spécial",
+    "Other": "droits de tirage spéciaux",
+    "DisplayName": "droit de tirage spécial"
+  }
 }

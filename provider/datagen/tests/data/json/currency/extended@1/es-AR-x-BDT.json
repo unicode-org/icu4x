@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "taka"
-  },
-  "other_placeholder": "takas",
-  "display_name": "taka"
+    "One": "taka",
+    "Other": "takas",
+    "DisplayName": "taka"
+  }
 }

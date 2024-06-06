@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Mauritanian ouguiya"
-  },
-  "other_placeholder": "Mauritanian ouguiyas",
-  "display_name": "Ouguiya ng Mauritania"
+    "One": "Mauritanian ouguiya",
+    "Other": "Mauritanian ouguiyas",
+    "DisplayName": "Ouguiya ng Mauritania"
+  }
 }

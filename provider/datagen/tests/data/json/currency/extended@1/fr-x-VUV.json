@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "vatu vanuatuan"
-  },
-  "other_placeholder": "vatus vanuatuans",
-  "display_name": "vatu vanuatuan"
+    "One": "vatu vanuatuan",
+    "Other": "vatus vanuatuans",
+    "DisplayName": "vatu vanuatuan"
+  }
 }

@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "Австрийский шиллинг"
+  "placeholders": {
+    "DisplayName": "Австрийский шиллинг"
+  }
 }

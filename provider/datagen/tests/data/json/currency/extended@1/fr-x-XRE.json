@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "unité de fonds RINET"
-  },
-  "other_placeholder": "unités de fonds RINET",
-  "display_name": "type de fonds RINET"
+    "One": "unité de fonds RINET",
+    "Other": "unités de fonds RINET",
+    "DisplayName": "type de fonds RINET"
+  }
 }

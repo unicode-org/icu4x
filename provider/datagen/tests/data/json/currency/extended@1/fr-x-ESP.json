@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "peseta espagnole"
-  },
-  "other_placeholder": "pesetas espagnoles",
-  "display_name": "peseta espagnole"
+    "One": "peseta espagnole",
+    "Other": "pesetas espagnoles",
+    "DisplayName": "peseta espagnole"
+  }
 }

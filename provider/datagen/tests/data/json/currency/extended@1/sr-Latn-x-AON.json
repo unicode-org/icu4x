@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "angolijska nova kvanza",
-    "Few": "angolijske nove kvanze"
-  },
-  "other_placeholder": "angolijskih novih kvanzi",
-  "display_name": "Angolijska nova kvanza (1990–2000)"
+    "Few": "angolijske nove kvanze",
+    "Other": "angolijskih novih kvanzi",
+    "DisplayName": "Angolijska nova kvanza (1990–2000)"
+  }
 }

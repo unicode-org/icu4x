@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Monegasque franc"
-  },
-  "other_placeholder": "Monegasque francs",
-  "display_name": "Monegasque Franc"
+    "One": "Monegasque franc",
+    "Other": "Monegasque francs",
+    "DisplayName": "Monegasque Franc"
+  }
 }

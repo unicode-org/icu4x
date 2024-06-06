@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "আলবেনিয়ান লেক"
+  "placeholders": {
+    "DisplayName": "আলবেনিয়ান লেক"
+  }
 }

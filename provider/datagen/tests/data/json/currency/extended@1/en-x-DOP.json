@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Dominican peso"
-  },
-  "other_placeholder": "Dominican pesos",
-  "display_name": "Dominican Peso"
+    "One": "Dominican peso",
+    "Other": "Dominican pesos",
+    "DisplayName": "Dominican Peso"
+  }
 }

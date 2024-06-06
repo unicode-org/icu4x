@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "دينار البوسنة والهرسك"
+  "placeholders": {
+    "DisplayName": "دينار البوسنة والهرسك"
+  }
 }

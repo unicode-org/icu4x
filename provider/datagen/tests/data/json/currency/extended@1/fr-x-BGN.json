@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "lev bulgare"
-  },
-  "other_placeholder": "levs bulgares",
-  "display_name": "lev bulgare"
+    "One": "lev bulgare",
+    "Other": "levs bulgares",
+    "DisplayName": "lev bulgare"
+  }
 }

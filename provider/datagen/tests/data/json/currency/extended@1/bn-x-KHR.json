@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "কম্বোডিয়ান রিয়েল"
+  "placeholders": {
+    "DisplayName": "কম্বোডিয়ান রিয়েল"
+  }
 }

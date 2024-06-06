@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "kubanski pezos",
-    "Few": "kubanska pezosa"
-  },
-  "other_placeholder": "kubanskih pezosa",
-  "display_name": "kubanski pezos"
+    "Few": "kubanska pezosa",
+    "Other": "kubanskih pezosa",
+    "DisplayName": "kubanski pezos"
+  }
 }

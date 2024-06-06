@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "won ng Hilagang Korea"
-  },
-  "other_placeholder": "won ng Hilagang Korea",
-  "display_name": "Won ng Hilagang Korea"
+    "One": "won ng Hilagang Korea",
+    "Other": "won ng Hilagang Korea",
+    "DisplayName": "Won ng Hilagang Korea"
+  }
 }

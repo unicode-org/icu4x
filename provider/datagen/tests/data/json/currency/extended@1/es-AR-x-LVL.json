@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "lats letón"
-  },
-  "other_placeholder": "lats letónes",
-  "display_name": "lats letón"
+    "One": "lats letón",
+    "Other": "lats letónes",
+    "DisplayName": "lats letón"
+  }
 }

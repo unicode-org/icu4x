@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "আরুবা ফ্লোরিন"
+  "placeholders": {
+    "DisplayName": "আরুবা ফ্লোরিন"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Indian rupee"
-  },
-  "other_placeholder": "Indian rupees",
-  "display_name": "Indian Rupee"
+    "One": "Indian rupee",
+    "Other": "Indian rupees",
+    "DisplayName": "Indian Rupee"
+  }
 }

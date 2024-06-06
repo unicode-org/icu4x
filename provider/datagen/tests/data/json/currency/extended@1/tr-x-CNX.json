@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Çin Halk Cumhuriyeti Merkez Bankası doları"
-  },
-  "other_placeholder": "Çin Halk Cumhuriyeti Merkez Bankası doları",
-  "display_name": "Çin Halk Cumhuriyeti Merkez Bankası Doları"
+    "One": "Çin Halk Cumhuriyeti Merkez Bankası doları",
+    "Other": "Çin Halk Cumhuriyeti Merkez Bankası doları",
+    "DisplayName": "Çin Halk Cumhuriyeti Merkez Bankası Doları"
+  }
 }

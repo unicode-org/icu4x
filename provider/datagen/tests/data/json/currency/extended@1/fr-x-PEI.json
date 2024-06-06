@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "inti péruvien"
-  },
-  "other_placeholder": "intis péruviens",
-  "display_name": "inti péruvien"
+    "One": "inti péruvien",
+    "Other": "intis péruviens",
+    "DisplayName": "inti péruvien"
+  }
 }

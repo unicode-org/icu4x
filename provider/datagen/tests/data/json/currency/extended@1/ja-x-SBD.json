@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "ソロモン諸島 ドル"
+  "placeholders": {
+    "DisplayName": "ソロモン諸島 ドル"
+  }
 }

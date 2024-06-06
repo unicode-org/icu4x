@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Moritanya ugiyası (1973–2017)"
-  },
-  "other_placeholder": "Moritanya ugiyası (1973–2017)",
-  "display_name": "Moritanya Ugiyası (1973–2017)"
+    "One": "Moritanya ugiyası (1973–2017)",
+    "Other": "Moritanya ugiyası (1973–2017)",
+    "DisplayName": "Moritanya Ugiyası (1973–2017)"
+  }
 }

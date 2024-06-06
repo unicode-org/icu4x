@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Bosnia-Herzegovina convertible mark"
-  },
-  "other_placeholder": "Bosnia-Herzegovina convertible marks",
-  "display_name": "Bosnia-Herzegovina Convertible Mark"
+    "One": "Bosnia-Herzegovina convertible mark",
+    "Other": "Bosnia-Herzegovina convertible marks",
+    "DisplayName": "Bosnia-Herzegovina Convertible Mark"
+  }
 }

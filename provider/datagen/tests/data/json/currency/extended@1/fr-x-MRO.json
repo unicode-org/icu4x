@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "ouguiya mauritanien (1973–2017)"
-  },
-  "other_placeholder": "ouguiyas mauritaniens (1973–2017)",
-  "display_name": "ouguiya mauritanien (1973–2017)"
+    "One": "ouguiya mauritanien (1973–2017)",
+    "Other": "ouguiyas mauritaniens (1973–2017)",
+    "DisplayName": "ouguiya mauritanien (1973–2017)"
+  }
 }

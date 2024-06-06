@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "(moneda desconocida)"
-  },
-  "other_placeholder": "(moneda desconocida)",
-  "display_name": "moneda desconocida"
+    "One": "(moneda desconocida)",
+    "Other": "(moneda desconocida)",
+    "DisplayName": "moneda desconocida"
+  }
 }

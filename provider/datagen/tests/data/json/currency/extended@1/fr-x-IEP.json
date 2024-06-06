@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "livre irlandaise"
-  },
-  "other_placeholder": "livres irlandaises",
-  "display_name": "livre irlandaise"
+    "One": "livre irlandaise",
+    "Other": "livres irlandaises",
+    "DisplayName": "livre irlandaise"
+  }
 }

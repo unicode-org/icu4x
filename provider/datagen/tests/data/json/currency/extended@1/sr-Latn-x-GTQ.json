@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "gvatemalski kecal",
-    "Few": "gvatemalska kecala"
-  },
-  "other_placeholder": "gvatemalskih kecala",
-  "display_name": "gvatemalski kecal"
+    "Few": "gvatemalska kecala",
+    "Other": "gvatemalskih kecala",
+    "DisplayName": "gvatemalski kecal"
+  }
 }

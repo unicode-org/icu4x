@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dollar zimbabwéen"
-  },
-  "other_placeholder": "dollars zimbabwéens",
-  "display_name": "dollar zimbabwéen"
+    "One": "dollar zimbabwéen",
+    "Other": "dollars zimbabwéens",
+    "DisplayName": "dollar zimbabwéen"
+  }
 }

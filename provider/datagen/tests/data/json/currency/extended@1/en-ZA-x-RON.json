@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Romanian leu"
-  },
-  "other_placeholder": "Romanian lei",
-  "display_name": "Romanian Leu"
+    "One": "Romanian leu",
+    "Other": "Romanian lei",
+    "DisplayName": "Romanian Leu"
+  }
 }

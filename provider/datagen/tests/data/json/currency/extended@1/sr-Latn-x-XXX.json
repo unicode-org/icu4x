@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "nepoznata jedinica valute",
-    "Few": "nepoznate valute"
-  },
-  "other_placeholder": "nepoznatih valuta",
-  "display_name": "Nepoznata valuta"
+    "Few": "nepoznate valute",
+    "Other": "nepoznatih valuta",
+    "DisplayName": "Nepoznata valuta"
+  }
 }

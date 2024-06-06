@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "franco ruandés"
-  },
-  "other_placeholder": "francos ruandeses",
-  "display_name": "franco ruandés"
+    "One": "franco ruandés",
+    "Other": "francos ruandeses",
+    "DisplayName": "franco ruandés"
+  }
 }

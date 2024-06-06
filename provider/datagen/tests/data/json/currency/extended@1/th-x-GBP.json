@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "ปอนด์สเตอร์ลิง (สหราชอาณาจักร)"
+  "placeholders": {
+    "DisplayName": "ปอนด์สเตอร์ลิง (สหราชอาณาจักร)"
+  }
 }

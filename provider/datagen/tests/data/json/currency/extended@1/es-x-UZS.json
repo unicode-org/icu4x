@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "sum"
-  },
-  "other_placeholder": "sums",
-  "display_name": "sum"
+    "One": "sum",
+    "Other": "sums",
+    "DisplayName": "sum"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "zloty polonais"
-  },
-  "other_placeholder": "zlotys polonais",
-  "display_name": "zloty polonais"
+    "One": "zloty polonais",
+    "Other": "zlotys polonais",
+    "DisplayName": "zloty polonais"
+  }
 }

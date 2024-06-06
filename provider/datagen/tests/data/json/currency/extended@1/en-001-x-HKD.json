@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Hong Kong dollar"
-  },
-  "other_placeholder": "Hong Kong dollars",
-  "display_name": "Hong Kong Dollar"
+    "One": "Hong Kong dollar",
+    "Other": "Hong Kong dollars",
+    "DisplayName": "Hong Kong Dollar"
+  }
 }

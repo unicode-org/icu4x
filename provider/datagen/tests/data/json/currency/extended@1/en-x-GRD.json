@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "Greek drachma"
-  },
-  "other_placeholder": "Greek drachmas",
-  "display_name": "Greek Drachma"
+    "One": "Greek drachma",
+    "Other": "Greek drachmas",
+    "DisplayName": "Greek Drachma"
+  }
 }

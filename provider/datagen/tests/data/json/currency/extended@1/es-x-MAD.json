@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "dírham marroquí"
-  },
-  "other_placeholder": "dírhams marroquíes",
-  "display_name": "dírham marroquí"
+    "One": "dírham marroquí",
+    "Other": "dírhams marroquíes",
+    "DisplayName": "dírham marroquí"
+  }
 }

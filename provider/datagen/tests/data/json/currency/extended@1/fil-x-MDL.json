@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "leu ng Moldova"
-  },
-  "other_placeholder": "lei ng Moldova",
-  "display_name": "Leu ng Moldova"
+    "One": "leu ng Moldova",
+    "Other": "lei ng Moldova",
+    "DisplayName": "Leu ng Moldova"
+  }
 }

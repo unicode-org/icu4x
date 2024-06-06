@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "šrilančanska rupija",
-    "Few": "šrilančanske rupije"
-  },
-  "other_placeholder": "šrilančanskih rupija",
-  "display_name": "šrilančanska rupija"
+    "Few": "šrilančanske rupije",
+    "Other": "šrilančanskih rupija",
+    "DisplayName": "šrilančanska rupija"
+  }
 }

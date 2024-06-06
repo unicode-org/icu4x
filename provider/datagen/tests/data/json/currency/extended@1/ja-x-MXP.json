@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "メキシコ ペソ (1861–1992)"
+  "placeholders": {
+    "DisplayName": "メキシコ ペソ (1861–1992)"
+  }
 }

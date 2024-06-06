@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "brazilski kruzeiro",
-    "Few": "brazilska kruzeira"
-  },
-  "other_placeholder": "brazilskih kruzeira",
-  "display_name": "Brazilski kruzeiro"
+    "Few": "brazilska kruzeira",
+    "Other": "brazilskih kruzeira",
+    "DisplayName": "Brazilski kruzeiro"
+  }
 }

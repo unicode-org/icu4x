@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "Güney Afrika Randı (finansal)"
+  "placeholders": {
+    "DisplayName": "Güney Afrika Randı (finansal)"
+  }
 }

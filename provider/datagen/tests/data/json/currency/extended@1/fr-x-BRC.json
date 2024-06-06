@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "cruzado brésilien (1986–1989)"
-  },
-  "other_placeholder": "cruzados brésiliens (1986–1989)",
-  "display_name": "cruzado brésilien (1986–1989)"
+    "One": "cruzado brésilien (1986–1989)",
+    "Other": "cruzados brésiliens (1986–1989)",
+    "DisplayName": "cruzado brésilien (1986–1989)"
+  }
 }

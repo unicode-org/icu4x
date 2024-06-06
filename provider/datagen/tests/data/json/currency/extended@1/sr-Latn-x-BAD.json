@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "bosansko-hercegovački dinar",
-    "Few": "bosansko-hercegovačka dinara"
-  },
-  "other_placeholder": "bosansko-hercegovačkih dinara",
-  "display_name": "Bosansko-Hercegovački dinar"
+    "Few": "bosansko-hercegovačka dinara",
+    "Other": "bosansko-hercegovačkih dinara",
+    "DisplayName": "Bosansko-Hercegovački dinar"
+  }
 }

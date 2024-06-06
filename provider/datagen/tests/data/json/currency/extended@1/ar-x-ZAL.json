@@ -1,5 +1,5 @@
 {
-  "placeholders": {},
-  "other_placeholder": null,
-  "display_name": "راند جنوب أفريقيا -مالي"
+  "placeholders": {
+    "DisplayName": "راند جنوب أفريقيا -مالي"
+  }
 }

@@ -1,8 +1,8 @@
 {
   "placeholders": {
     "One": "etiopski bir",
-    "Few": "etiopska bira"
-  },
-  "other_placeholder": "etiopskih bira",
-  "display_name": "etiopijski bir"
+    "Few": "etiopska bira",
+    "Other": "etiopskih bira",
+    "DisplayName": "etiopijski bir"
+  }
 }

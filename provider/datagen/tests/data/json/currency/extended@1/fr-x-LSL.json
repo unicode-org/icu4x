@@ -1,7 +1,7 @@
 {
   "placeholders": {
-    "One": "loti lesothan"
-  },
-  "other_placeholder": "maloti lesothans",
-  "display_name": "loti lesothan"
+    "One": "loti lesothan",
+    "Other": "maloti lesothans",
+    "DisplayName": "loti lesothan"
+  }
 }
