@@ -288,7 +288,7 @@ macro_rules! registry(
             icu::experimental::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker = "compactdecimal/short@1",
             icu::experimental::dimension::provider::currency::CurrencyEssentialsV1Marker = "currency/essentials@1",
             icu::experimental::dimension::provider::percent::PercentEssentialsV1Marker = "percent/essentials@1",
-            icu::experimental::dimension::provider::units::UnitsDisplayNameV1Marker = "units/displayname@1",
+            icu::experimental::dimension::provider::units::UnitsDisplayNameV1Marker = "units/displaynames@1",
             icu::experimental::displaynames::provider::RegionDisplayNamesV1Marker = "displaynames/regions@1",
             icu::experimental::displaynames::provider::LanguageDisplayNamesV1Marker = "displaynames/languages@1",
             icu::experimental::displaynames::provider::LocaleDisplayNamesV1Marker = "displaynames/locales@1",
