@@ -37,8 +37,7 @@ impl DataProvider<CurrencyExtendedDataV1Marker> for crate::DatagenProvider {
             .parse::<TinyAsciiStr<3>>()
             .map_err(|_| DataError::custom("failed to parse aux key into tinystr"))?;
         let currency = currencies_resource
-            .main
-            .value
+            .lang_numbers
             .numbers
             .currencies
             .get(&aux.to_unvalidated())
@@ -93,7 +92,7 @@ impl IterableDataProvider<CurrencyExtendedDataV1Marker> for DatagenProvider {
                 .numbers()
                 .read_and_parse(&langid, "currencies.json")?;
 
-            let currencies = &currencies_resource.main.value.numbers.currencies;
+            let currencies = &currencies_resource.lang_numbers.numbers.currencies;
             for key in currencies.keys() {
                 let key = key
                     .try_into_tinystr()

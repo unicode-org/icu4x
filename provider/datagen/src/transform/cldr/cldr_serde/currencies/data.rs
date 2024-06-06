@@ -51,4 +51,7 @@ pub struct LangNumbers {
     pub numbers: Numbers,
 }
 
-pub type Resource = super::super::LocaleResource<LangNumbers>;
+#[derive(PartialEq, Debug, Deserialize)]
+pub(in crate::provider) struct Resource {
+    pub(in crate::provider) lang_numbers: LangNumbers,
+}
