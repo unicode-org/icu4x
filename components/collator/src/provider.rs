@@ -51,10 +51,10 @@ pub struct Baked;
 
 #[cfg(feature = "compiled_data")]
 const _: () = {
+    #[allow(unused_imports)] // baked data may or may not need this
     pub mod icu {
         pub use crate as collator;
         pub use icu_collections as collections;
-        #[allow(unused_imports)] // baked data may or may not need this
         pub use icu_locale as locale;
     }
     icu_collator_data::make_provider!(Baked);
