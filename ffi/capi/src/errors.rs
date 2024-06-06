@@ -35,7 +35,7 @@ pub mod ffi {
 
     #[derive(Debug, PartialEq, Eq)]
     #[repr(C)]
-    #[diplomat::rust_link(icu::locid::ParseError, Enum, compact)]
+    #[diplomat::rust_link(icu::locale::ParseError, Enum, compact)]
     pub enum ICU4XLocaleParseError {
         Unknown = 0x00,
         Language = 0x01,
@@ -45,7 +45,7 @@ pub mod ffi {
 
     #[derive(Debug, PartialEq, Eq)]
     #[repr(C)]
-    #[diplomat::rust_link(fixed_decimal::LimitError, Struct, compact)]
+    #[diplomat::rust_link(fixed_decimal::ParseError, Struct, compact)]
     pub enum ICU4XFixedDecimalParseError {
         Unknown = 0x00,
         Limit = 0x01,
