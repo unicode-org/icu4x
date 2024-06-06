@@ -11,7 +11,7 @@ use crate::format::datetime::DateTimeWriteError;
 use crate::format::neo::*;
 use crate::input::ExtractedDateTimeInput;
 use crate::neo_marker::{
-    ConvertCalendar, DateMarkers, DateTimeMarkers, HasRuntimeComponents, IsAnyCalendarKind,
+    ConvertCalendar, DateMarkers, DateTimeMarkers, IsAnyCalendarKind, IsRuntimeComponents,
     NeoFormatterMarker, NeoGetField, TimeMarkers, TypedDateMarkers, TypedDateTimeMarkers,
     TypedNeoFormatterMarker,
 };
@@ -271,7 +271,7 @@ impl<C: CldrCalendar, R: TypedNeoFormatterMarker<C>> TypedNeoFormatter<C, R> {
     }
 }
 
-impl<C: CldrCalendar, R: TypedDateTimeMarkers<C> + HasRuntimeComponents> TypedNeoFormatter<C, R> {
+impl<C: CldrCalendar, R: TypedDateTimeMarkers<C> + IsRuntimeComponents> TypedNeoFormatter<C, R> {
     /// Creates a new [`TypedNeoFormatter`] from compiled data with
     /// datetime components specified at runtime.
     ///
@@ -290,13 +290,12 @@ impl<C: CldrCalendar, R: TypedDateTimeMarkers<C> + HasRuntimeComponents> TypedNe
     /// use icu::calendar::Date;
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::neo::TypedNeoFormatter;
-    /// use icu::datetime::neo_marker::NeoAnyDateMarker;
     /// use icu::datetime::neo_skeleton::NeoDateComponents;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let fmt = TypedNeoFormatter::<Gregorian, NeoAnyDateMarker>::try_new_with_components(
+    /// let fmt = TypedNeoFormatter::<Gregorian, _>::try_new_with_components(
     ///     &locale!("es-MX").into(),
     ///     NeoDateComponents::EraYearMonth,
     ///     NeoSkeletonLength::Medium,
@@ -304,25 +303,21 @@ impl<C: CldrCalendar, R: TypedDateTimeMarkers<C> + HasRuntimeComponents> TypedNe
     /// .unwrap();
     /// let dt = Date::try_new_gregorian_date(2024, 1, 10).unwrap();
     ///
-    /// assert_try_writeable_eq!(
-    ///     fmt.format(&dt),
-    ///     "ene 2024 d.C."
-    /// );
+    /// assert_try_writeable_eq!(fmt.format(&dt), "ene 2024 d.C.");
     /// ```
     ///
     /// Time components:
     ///
     /// ```
-    /// use icu::calendar::Time;
     /// use icu::calendar::Gregorian;
+    /// use icu::calendar::Time;
     /// use icu::datetime::neo::TypedNeoFormatter;
-    /// use icu::datetime::neo_marker::NeoAnyTimeMarker;
-    /// use icu::datetime::neo_skeleton::NeoTimeComponents;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
+    /// use icu::datetime::neo_skeleton::NeoTimeComponents;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let fmt = TypedNeoFormatter::<Gregorian, NeoAnyTimeMarker>::try_new_with_components(
+    /// let fmt = TypedNeoFormatter::<Gregorian, _>::try_new_with_components(
     ///     &locale!("es-MX").into(),
     ///     NeoTimeComponents::Hour,
     ///     NeoSkeletonLength::Medium,
@@ -330,10 +325,7 @@ impl<C: CldrCalendar, R: TypedDateTimeMarkers<C> + HasRuntimeComponents> TypedNe
     /// .unwrap();
     /// let dt = Time::try_new(16, 20, 0, 0).unwrap();
     ///
-    /// assert_try_writeable_eq!(
-    ///     fmt.format(&dt),
-    ///     "04 p.m."
-    /// );
+    /// assert_try_writeable_eq!(fmt.format(&dt), "04 p.m.");
     /// ```
     ///
     /// Date and time components:
@@ -342,15 +334,14 @@ impl<C: CldrCalendar, R: TypedDateTimeMarkers<C> + HasRuntimeComponents> TypedNe
     /// use icu::calendar::DateTime;
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::neo::TypedNeoFormatter;
-    /// use icu::datetime::neo_marker::NeoAnyDateTimeMarker;
-    /// use icu::datetime::neo_skeleton::NeoDayComponents;
-    /// use icu::datetime::neo_skeleton::NeoTimeComponents;
     /// use icu::datetime::neo_skeleton::NeoComponents;
+    /// use icu::datetime::neo_skeleton::NeoDayComponents;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
+    /// use icu::datetime::neo_skeleton::NeoTimeComponents;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let fmt = TypedNeoFormatter::<Gregorian, NeoAnyDateTimeMarker>::try_new_with_components(
+    /// let fmt = TypedNeoFormatter::<Gregorian, _>::try_new_with_components(
     ///     &locale!("es-MX").into(),
     ///     NeoComponents::DateTime(
     ///         NeoDayComponents::Weekday,
@@ -359,17 +350,15 @@ impl<C: CldrCalendar, R: TypedDateTimeMarkers<C> + HasRuntimeComponents> TypedNe
     ///     NeoSkeletonLength::Long,
     /// )
     /// .unwrap();
-    /// let dt = DateTime::try_new_gregorian_datetime(2024, 1, 10, 16, 20, 0).unwrap();
+    /// let dt =
+    ///     DateTime::try_new_gregorian_datetime(2024, 1, 10, 16, 20, 0).unwrap();
     ///
-    /// assert_try_writeable_eq!(
-    ///     fmt.format(&dt),
-    ///     "miércoles, 04:20 p.m."
-    /// );
+    /// assert_try_writeable_eq!(fmt.format(&dt), "miércoles, 04:20 p.m.");
     /// ```
     #[cfg(feature = "compiled_data")]
     pub fn try_new_with_components(
         locale: &DataLocale,
-        components: R::ComponentsStruct,
+        components: R,
         length: NeoSkeletonLength,
     ) -> Result<Self, LoadError>
     where
@@ -397,7 +386,7 @@ impl<C: CldrCalendar, R: TypedDateTimeMarkers<C> + HasRuntimeComponents> TypedNe
         try_new_with_components_with_any_provider,
         try_new_with_components_with_buffer_provider,
         try_new_internal,
-        date_components: R::ComponentsStruct,
+        components: R,
         length: NeoSkeletonLength
     );
 
@@ -405,7 +394,7 @@ impl<C: CldrCalendar, R: TypedDateTimeMarkers<C> + HasRuntimeComponents> TypedNe
     pub fn try_new_with_components_unstable<P>(
         provider: &P,
         locale: &DataLocale,
-        date_components: R::ComponentsStruct,
+        components: R,
         length: NeoSkeletonLength,
     ) -> Result<Self, LoadError>
     where
@@ -427,7 +416,7 @@ impl<C: CldrCalendar, R: TypedDateTimeMarkers<C> + HasRuntimeComponents> TypedNe
             provider,
             &ExternalLoaderUnstable(provider),
             locale,
-            date_components,
+            components,
             length,
         )
     }
@@ -787,7 +776,7 @@ impl<R: NeoFormatterMarker> NeoFormatter<R> {
     }
 }
 
-impl<R: DateTimeMarkers + HasRuntimeComponents> NeoFormatter<R> {
+impl<R: DateTimeMarkers + IsRuntimeComponents> NeoFormatter<R> {
     /// Creates a new [`NeoFormatter`] from compiled data with
     /// datetime components specified at runtime.
     ///
@@ -805,13 +794,12 @@ impl<R: DateTimeMarkers + HasRuntimeComponents> NeoFormatter<R> {
     /// ```
     /// use icu::calendar::Date;
     /// use icu::datetime::neo::NeoFormatter;
-    /// use icu::datetime::neo_marker::NeoAnyDateMarker;
     /// use icu::datetime::neo_skeleton::NeoDateComponents;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let fmt = NeoFormatter::<NeoAnyDateMarker>::try_new_with_components(
+    /// let fmt = NeoFormatter::try_new_with_components(
     ///     &locale!("es-MX").into(),
     ///     NeoDateComponents::EraYearMonth,
     ///     NeoSkeletonLength::Medium,
@@ -827,13 +815,12 @@ impl<R: DateTimeMarkers + HasRuntimeComponents> NeoFormatter<R> {
     /// ```
     /// use icu::calendar::Time;
     /// use icu::datetime::neo::NeoFormatter;
-    /// use icu::datetime::neo_marker::NeoAnyTimeMarker;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::datetime::neo_skeleton::NeoTimeComponents;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let fmt = NeoFormatter::<NeoAnyTimeMarker>::try_new_with_components(
+    /// let fmt = NeoFormatter::try_new_with_components(
     ///     &locale!("es-MX").into(),
     ///     NeoTimeComponents::Hour,
     ///     NeoSkeletonLength::Medium,
@@ -849,7 +836,6 @@ impl<R: DateTimeMarkers + HasRuntimeComponents> NeoFormatter<R> {
     /// ```
     /// use icu::calendar::DateTime;
     /// use icu::datetime::neo::NeoFormatter;
-    /// use icu::datetime::neo_marker::NeoAnyDateTimeMarker;
     /// use icu::datetime::neo_skeleton::NeoComponents;
     /// use icu::datetime::neo_skeleton::NeoDayComponents;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
@@ -857,7 +843,7 @@ impl<R: DateTimeMarkers + HasRuntimeComponents> NeoFormatter<R> {
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let fmt = NeoFormatter::<NeoAnyDateTimeMarker>::try_new_with_components(
+    /// let fmt = NeoFormatter::try_new_with_components(
     ///     &locale!("es-MX").into(),
     ///     NeoComponents::DateTime(
     ///         NeoDayComponents::Weekday,
@@ -874,7 +860,7 @@ impl<R: DateTimeMarkers + HasRuntimeComponents> NeoFormatter<R> {
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
-    pub fn try_new_with_components(locale: &DataLocale, date_components: R::ComponentsStruct, length: NeoSkeletonLength) -> Result<Self, LoadError>
+    pub fn try_new_with_components(locale: &DataLocale, components: R, length: NeoSkeletonLength) -> Result<Self, LoadError>
     where
     crate::provider::Baked: Sized
     // Date formatting keys
@@ -938,7 +924,7 @@ impl<R: DateTimeMarkers + HasRuntimeComponents> NeoFormatter<R> {
             &crate::provider::Baked,
             &ExternalLoaderCompiledData,
             locale,
-            date_components,
+            components,
             length,
         )
     }
@@ -948,7 +934,7 @@ impl<R: DateTimeMarkers + HasRuntimeComponents> NeoFormatter<R> {
         try_new_with_components_with_any_provider,
         try_new_with_components_with_buffer_provider,
         try_new_internal,
-        components: R::ComponentsStruct,
+        components: R,
         length: NeoSkeletonLength
     );
 
@@ -956,7 +942,7 @@ impl<R: DateTimeMarkers + HasRuntimeComponents> NeoFormatter<R> {
     pub fn try_new_with_components_unstable<P>(
         provider: &P,
         locale: &DataLocale,
-        components: R::ComponentsStruct,
+        components: R,
         length: NeoSkeletonLength,
     ) -> Result<Self, LoadError>
     where
