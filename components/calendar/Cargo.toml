@@ -5,6 +5,7 @@
 [package]
 name = "icu_calendar"
 description = "API for supporting various types of calendars"
+version = "1.5.1"
 
 authors.workspace = true
 categories.workspace = true
@@ -14,7 +15,6 @@ include.workspace = true
 license.workspace = true
 repository.workspace = true
 rust-version.workspace = true
-version.workspace = true
 
 [package.metadata.docs.rs]
 all-features = true
