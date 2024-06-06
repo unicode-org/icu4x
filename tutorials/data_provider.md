@@ -9,7 +9,7 @@ The following example loads additional locales bucketed by language. This means 
 ```rust
 use icu_provider_adapters::either::EitherProvider;
 use icu_provider_adapters::fallback::LocaleFallbackProvider;
-use icu_provider_adapters::fork::ForkByKeyProvider;
+use icu_provider_adapters::fork::ForkByMarkerProvider;
 use icu_provider_adapters::fork::MultiForkByErrorProvider;
 use icu_provider_adapters::fork::predicates::MissingLocalePredicate;
 use icu_provider_blob::BlobDataProvider;
@@ -87,10 +87,10 @@ pub struct LruDataCache<P> {
     provider: P,
 }
 
-/// Key for the cache: DataKey and DataLocale. The DataLocale is in a Cow
+/// Key for the cache: DataMarkerInfo and DataLocale. The DataLocale is in a Cow
 /// so that it can be borrowed during lookup.
 #[derive(Debug, PartialEq, Eq, Hash)]
-struct CacheKey<'a>(DataKey, Cow<'a, DataLocale>);
+struct CacheKey<'a>(DataMarkerInfo, Cow<'a, DataLocale>);
 
 /// Wrapper over a fully owned CacheKey, required for key borrowing.
 #[derive(Debug, PartialEq, Eq, Hash)]
@@ -115,7 +115,7 @@ where
         {
             // First lock: cache retrieval
             let mut cache = self.cache.lock().unwrap();
-            let borrowed_cache_key = CacheKey(M::KEY, Cow::Borrowed(req.locale));
+            let borrowed_cache_key = CacheKey(M::INFO, Cow::Borrowed(req.locale));
             if let Some(any_res) = cache.get(&borrowed_cache_key) {
                 // Note: Cloning a DataPayload is usually cheap, and it is necessary in order to
                 // convert the short-lived cache object into one we can return.
@@ -124,7 +124,7 @@ where
         }
         // Release the lock to invoke the inner provider
         let response = self.provider.load(req)?;
-        let owned_cache_key = CacheKeyWrap(CacheKey(M::KEY, Cow::Owned(req.locale.clone())));
+        let owned_cache_key = CacheKeyWrap(CacheKey(M::INFO, Cow::Owned(req.locale.clone())));
         // Second lock: cache storage
         self.cache.lock()
             .unwrap()
@@ -280,10 +280,10 @@ where
 {
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         let mut res = self.inner.load(req)?;
-        // Whichever locale gets loaded for `HelloWorldV1Marker::KEY` will be the one
+        // Whichever locale gets loaded for `HelloWorldV1Marker::INFO` will be the one
         // we consider the "resolved locale". Although `HelloWorldFormatter` only loads
         // one key, this is a useful distinction for most other formatters.
-        if M::KEY == HelloWorldV1Marker::KEY {
+        if M::INFO == HelloWorldV1Marker::INFO {
             let mut w = self.resolved_locale.write().expect("poison");
             *w = res.metadata.locale.take();
         }

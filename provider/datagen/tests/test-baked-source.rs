@@ -31,7 +31,7 @@ make_exportable_provider!(Baked, [GregorianDateNeoSkeletonPatternsV1Marker,]);
 fn test() {
     let mut exporter = testutil::TestingExporter::default();
     DatagenDriver::new()
-        .with_keys([GregorianDateNeoSkeletonPatternsV1Marker::KEY])
+        .with_markers([GregorianDateNeoSkeletonPatternsV1Marker::INFO])
         .with_locales_and_fallback([LocaleFamily::FULL], Default::default())
         .export(&Baked, &mut exporter)
         .unwrap();

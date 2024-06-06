@@ -17,10 +17,10 @@ fn main() {
             options.runtime_fallback_location = Some(RuntimeFallbackLocation::External);
             options
         })
-        // These are the keys required by `PluralRules::try_new_cardinal_unstable`. Compilation will
-        // discard unused keys and fail if required keys are not generated, but explicitly listing the
-        // keys will speed up the datagen.
-        .with_keys([icu::plurals::provider::CardinalV1Marker::KEY])
+        // These are the markers required by `PluralRules::try_new_cardinal_unstable`. Compilation will
+        // discard unused markers and fail if required markers are not generated, but explicitly listing the
+        // markers will speed up the datagen.
+        .with_markers([icu::plurals::provider::CardinalV1Marker::INFO])
         .export(
             &DatagenProvider::new_latest_tested(),
             BakedExporter::new(mod_directory, {

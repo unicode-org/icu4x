@@ -4,7 +4,7 @@
 
 use crate::_internal::log;
 use crate::buf::BufferFormat;
-use crate::prelude::*;
+use crate::{prelude::*, DataMarkerPath};
 use core::fmt;
 use displaydoc::Display;
 
@@ -15,11 +15,11 @@ use displaydoc::Display;
 #[derive(Clone, Copy, Eq, PartialEq, Display, Debug)]
 #[non_exhaustive]
 pub enum DataErrorKind {
-    /// No data for the provided resource key.
-    #[displaydoc("Missing data for key")]
-    MissingDataKey,
+    /// No data for the provided data marker.
+    #[displaydoc("Missing data for data marker")]
+    MissingDataMarker,
 
-    /// There is data for the key, but not for this particular locale.
+    /// There is data for the data marker, but not for this particular locale.
     #[displaydoc("Missing data for locale")]
     MissingLocale,
 
@@ -48,7 +48,7 @@ pub enum DataErrorKind {
     #[displaydoc("Invalid state")]
     InvalidState,
 
-    /// The syntax of the [`DataKey`] or [`DataLocale`] was invalid.
+    /// The syntax of the [`DataMarkerInfo`] or [`DataLocale`] was invalid.
     #[displaydoc("Parse error for data key or data locale")]
     KeyLocaleSyntax,
 
@@ -84,9 +84,9 @@ pub enum DataErrorKind {
 ///
 /// ```no_run
 /// # use icu_provider::prelude::*;
-/// let key: DataKey = unimplemented!();
+/// let marker: DataMarkerInfo = unimplemented!();
 /// let req: DataRequest = unimplemented!();
-/// DataErrorKind::NeedsLocale.with_req(key, req);
+/// DataErrorKind::NeedsLocale.with_req(marker, req);
 /// ```
 ///
 /// Create a named custom error:
@@ -101,8 +101,8 @@ pub struct DataError {
     /// Broad category of the error.
     pub kind: DataErrorKind,
 
-    /// The data key of the request, if available.
-    pub key: Option<DataKey>,
+    /// The data marker of the request, if available.
+    pub marker: Option<DataMarkerPath>,
 
     /// Additional context, if available.
     pub str_context: Option<&'static str>,
@@ -117,8 +117,8 @@ impl fmt::Display for DataError {
         if self.kind != DataErrorKind::Custom {
             write!(f, ": {}", self.kind)?;
         }
-        if let Some(key) = self.key {
-            write!(f, " (key: {key})")?;
+        if let Some(marker) = self.marker {
+            write!(f, " (marker: {})", &marker as &str)?;
         }
         if let Some(str_context) = self.str_context {
             write!(f, ": {str_context}")?;
@@ -135,16 +135,16 @@ impl DataErrorKind {
     pub const fn into_error(self) -> DataError {
         DataError {
             kind: self,
-            key: None,
+            marker: None,
             str_context: None,
             silent: false,
         }
     }
 
-    /// Creates a DataError with a resource key context.
+    /// Creates a DataError with a data marker context.
     #[inline]
-    pub const fn with_key(self, key: DataKey) -> DataError {
-        self.into_error().with_key(key)
+    pub const fn with_marker(self, marker: DataMarkerInfo) -> DataError {
+        self.into_error().with_marker(marker)
     }
 
     /// Creates a DataError with a string context.
@@ -161,8 +161,8 @@ impl DataErrorKind {
 
     /// Creates a DataError with a request context.
     #[inline]
-    pub fn with_req(self, key: DataKey, req: DataRequest) -> DataError {
-        self.into_error().with_req(key, req)
+    pub fn with_req(self, marker: DataMarkerInfo, req: DataRequest) -> DataError {
+        self.into_error().with_req(marker, req)
     }
 }
 
@@ -172,18 +172,18 @@ impl DataError {
     pub const fn custom(str_context: &'static str) -> Self {
         Self {
             kind: DataErrorKind::Custom,
-            key: None,
+            marker: None,
             str_context: Some(str_context),
             silent: false,
         }
     }
 
-    /// Sets the resource key of a DataError, returning a modified error.
+    /// Sets the data marker of a DataError, returning a modified error.
     #[inline]
-    pub const fn with_key(self, key: DataKey) -> Self {
+    pub const fn with_marker(self, marker: DataMarkerInfo) -> Self {
         Self {
             kind: self.kind,
-            key: Some(key),
+            marker: Some(marker.path),
             str_context: self.str_context,
             silent: self.silent,
         }
@@ -194,7 +194,7 @@ impl DataError {
     pub const fn with_str_context(self, context: &'static str) -> Self {
         Self {
             kind: self.kind,
-            key: self.key,
+            marker: self.marker,
             str_context: Some(context),
             silent: self.silent,
         }
@@ -209,19 +209,19 @@ impl DataError {
         self.with_str_context(core::any::type_name::<T>())
     }
 
-    /// Logs the data error with the given request, returning an error containing the resource key.
+    /// Logs the data error with the given request, returning an error containing the data marker.
     ///
     /// If the "logging" Cargo feature is enabled, this logs the whole request. Either way,
-    /// it returns an error with the resource key portion of the request as context.
-    pub fn with_req(mut self, key: DataKey, req: DataRequest) -> Self {
+    /// it returns an error with the data marker portion of the request as context.
+    pub fn with_req(mut self, marker: DataMarkerInfo, req: DataRequest) -> Self {
         if req.metadata.silent {
             self.silent = true;
         }
-        // Don't write out a log for MissingDataKey since there is no context to add
-        if !self.silent && self.kind != DataErrorKind::MissingDataKey {
-            log::warn!("{} (key: {}, request: {})", self, key, req);
+        // Don't write out a log for MissingDataMarker since there is no context to add
+        if !self.silent && self.kind != DataErrorKind::MissingDataMarker {
+            log::warn!("{} (marker: {}, request: {})", self, marker, req);
         }
-        self.with_key(key)
+        self.with_marker(marker)
     }
 
     /// Logs the data error with the given context, then return self.
@@ -266,7 +266,7 @@ impl DataError {
     pub(crate) fn for_type<T>() -> DataError {
         DataError {
             kind: DataErrorKind::MismatchedType(core::any::type_name::<T>()),
-            key: None,
+            marker: None,
             str_context: None,
             silent: false,
         }

@@ -539,7 +539,7 @@ macro_rules! __impl_displaynames_variants_v1 {
                 let payload = if let Ok(payload) = KEYS.binary_search_by(|k| req.legacy_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
                     payload
                 } else {
-                    const FALLBACKER: icu::locale::fallback::LocaleFallbackerWithConfig<'static> = icu::locale::fallback::LocaleFallbacker::new().for_config(<icu::experimental::displaynames::provider::VariantDisplayNamesV1Marker as icu_provider::DataMarker>::KEY.fallback_config());
+                    const FALLBACKER: icu::locale::fallback::LocaleFallbackerWithConfig<'static> = icu::locale::fallback::LocaleFallbacker::new().for_config(<icu::experimental::displaynames::provider::VariantDisplayNamesV1Marker as icu_provider::DataMarker>::INFO.fallback_config);
                     let mut fallback_iterator = FALLBACKER.fallback_for(req.locale.clone());
                     loop {
                         if let Ok(payload) = KEYS.binary_search_by(|k| icu_provider::DataRequest { locale: fallback_iterator.get(), ..req }.legacy_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
@@ -547,7 +547,7 @@ macro_rules! __impl_displaynames_variants_v1 {
                             break payload;
                         }
                         if fallback_iterator.get().is_und() {
-                            return Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::experimental::displaynames::provider::VariantDisplayNamesV1Marker as icu_provider::DataMarker>::KEY, req));
+                            return Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::experimental::displaynames::provider::VariantDisplayNamesV1Marker as icu_provider::DataMarker>::INFO, req));
                         }
                         fallback_iterator.step();
                     }
@@ -559,14 +559,14 @@ macro_rules! __impl_displaynames_variants_v1 {
 }
 /// Implement `IterableDataProvider<VariantDisplayNamesV1Marker>` on the given struct using the data
 /// hardcoded in this file. This allows the struct to be used with
-/// `DatagenDriver` for this key.
+/// `DatagenDriver` for this marker.
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __impliterable_displaynames_variants_v1 {
     ($ provider : ty) => {
         #[clippy::msrv = "1.70"]
         impl icu_provider::datagen::IterableDataProvider<icu::experimental::displaynames::provider::VariantDisplayNamesV1Marker> for $provider {
-            fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataKeyAttributes)>, icu_provider::DataError> {
+            fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataMarkerAttributes)>, icu_provider::DataError> {
                 Ok(["ar", "ast", "bg", "br", "brx", "bs", "bs-Cyrl", "ca", "cs", "cy", "da", "de", "el", "en", "es", "et", "eu", "fa", "ff-Adlm", "fi", "fil", "fo", "fr", "fy", "ga", "gd", "gu", "he", "hi", "hr", "hu", "hy", "id", "it", "ja", "kgp", "kk", "kn", "ko", "ks", "ku", "lb", "lo", "lt", "lv", "mk", "ml", "mr", "ms", "mt", "my", "ne", "nl", "nn", "no", "or", "pl", "pt", "pt-PT", "rm", "ro", "ru", "sc", "sd", "sk", "sl", "so", "sr", "sr-Latn", "sv", "ta", "te", "th", "ti", "tr", "ug", "uk", "vec", "vi", "yrl", "yrl-CO", "yrl-VE", "yue", "yue-Hans", "zh", "zh-HK", "zh-Hant", "zh-MO", "zu"].into_iter().filter_map(icu_provider::DataRequest::legacy_decode).collect())
             }
         }

@@ -56,18 +56,18 @@ const _: () = {
 };
 
 #[cfg(feature = "datagen")]
-/// The latest minimum set of keys required by this component.
-pub const KEYS: &[DataKey] = &[
-    ChineseCacheV1Marker::KEY,
-    DangiCacheV1Marker::KEY,
-    IslamicObservationalCacheV1Marker::KEY,
-    IslamicUmmAlQuraCacheV1Marker::KEY,
-    JapaneseErasV1Marker::KEY,
-    JapaneseExtendedErasV1Marker::KEY,
-    WeekDataV2Marker::KEY,
+/// The latest minimum set of markers required by this component.
+pub const MARKERS: &[DataMarkerInfo] = &[
+    ChineseCacheV1Marker::INFO,
+    DangiCacheV1Marker::INFO,
+    IslamicObservationalCacheV1Marker::INFO,
+    IslamicUmmAlQuraCacheV1Marker::INFO,
+    JapaneseErasV1Marker::INFO,
+    JapaneseExtendedErasV1Marker::INFO,
+    WeekDataV2Marker::INFO,
     // We include the duplicate data for now, as icu_datetime loads it directly
     // https://github.com/unicode-org/icu4x/pull/4364#discussion_r1419877997
-    WeekDataV1Marker::KEY,
+    WeekDataV1Marker::INFO,
 ];
 
 /// The date at which an era started

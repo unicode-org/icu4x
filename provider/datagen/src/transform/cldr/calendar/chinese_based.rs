@@ -42,13 +42,13 @@ impl DataProvider<DangiCacheV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProvider<ChineseCacheV1Marker> for DatagenProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
 
 impl IterableDataProvider<DangiCacheV1Marker> for DatagenProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }

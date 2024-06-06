@@ -212,156 +212,156 @@ const _: () = {
 use icu_provider::prelude::*;
 
 #[cfg(feature = "datagen")]
-/// The latest minimum set of keys required by this component.
-pub const KEYS: &[DataKey] = &[
-    calendar::BuddhistDateLengthsV1Marker::KEY,
-    calendar::BuddhistDateSymbolsV1Marker::KEY,
-    calendar::ChineseDateLengthsV1Marker::KEY,
-    calendar::ChineseDateSymbolsV1Marker::KEY,
-    calendar::CopticDateLengthsV1Marker::KEY,
-    calendar::CopticDateSymbolsV1Marker::KEY,
-    calendar::DangiDateLengthsV1Marker::KEY,
-    calendar::DangiDateSymbolsV1Marker::KEY,
-    calendar::EthiopianDateLengthsV1Marker::KEY,
-    calendar::EthiopianDateSymbolsV1Marker::KEY,
-    calendar::GregorianDateLengthsV1Marker::KEY,
-    calendar::GregorianDateSymbolsV1Marker::KEY,
-    calendar::HebrewDateLengthsV1Marker::KEY,
-    calendar::HebrewDateSymbolsV1Marker::KEY,
-    calendar::IndianDateLengthsV1Marker::KEY,
-    calendar::IndianDateSymbolsV1Marker::KEY,
-    calendar::IslamicDateLengthsV1Marker::KEY,
-    calendar::IslamicDateSymbolsV1Marker::KEY,
-    calendar::JapaneseDateLengthsV1Marker::KEY,
-    calendar::JapaneseDateSymbolsV1Marker::KEY,
-    calendar::JapaneseExtendedDateLengthsV1Marker::KEY,
-    calendar::JapaneseExtendedDateSymbolsV1Marker::KEY,
-    calendar::PersianDateLengthsV1Marker::KEY,
-    calendar::PersianDateSymbolsV1Marker::KEY,
-    calendar::RocDateLengthsV1Marker::KEY,
-    calendar::RocDateSymbolsV1Marker::KEY,
-    calendar::TimeLengthsV1Marker::KEY,
-    calendar::TimeSymbolsV1Marker::KEY,
-    time_zones::ExemplarCitiesV1Marker::KEY,
-    time_zones::MetazoneGenericNamesLongV1Marker::KEY,
-    time_zones::MetazoneGenericNamesShortV1Marker::KEY,
-    time_zones::MetazoneSpecificNamesLongV1Marker::KEY,
-    time_zones::MetazoneSpecificNamesShortV1Marker::KEY,
-    time_zones::TimeZoneFormatsV1Marker::KEY,
+/// The latest minimum set of markers required by this component.
+pub const MARKERS: &[DataMarkerInfo] = &[
+    calendar::BuddhistDateLengthsV1Marker::INFO,
+    calendar::BuddhistDateSymbolsV1Marker::INFO,
+    calendar::ChineseDateLengthsV1Marker::INFO,
+    calendar::ChineseDateSymbolsV1Marker::INFO,
+    calendar::CopticDateLengthsV1Marker::INFO,
+    calendar::CopticDateSymbolsV1Marker::INFO,
+    calendar::DangiDateLengthsV1Marker::INFO,
+    calendar::DangiDateSymbolsV1Marker::INFO,
+    calendar::EthiopianDateLengthsV1Marker::INFO,
+    calendar::EthiopianDateSymbolsV1Marker::INFO,
+    calendar::GregorianDateLengthsV1Marker::INFO,
+    calendar::GregorianDateSymbolsV1Marker::INFO,
+    calendar::HebrewDateLengthsV1Marker::INFO,
+    calendar::HebrewDateSymbolsV1Marker::INFO,
+    calendar::IndianDateLengthsV1Marker::INFO,
+    calendar::IndianDateSymbolsV1Marker::INFO,
+    calendar::IslamicDateLengthsV1Marker::INFO,
+    calendar::IslamicDateSymbolsV1Marker::INFO,
+    calendar::JapaneseDateLengthsV1Marker::INFO,
+    calendar::JapaneseDateSymbolsV1Marker::INFO,
+    calendar::JapaneseExtendedDateLengthsV1Marker::INFO,
+    calendar::JapaneseExtendedDateSymbolsV1Marker::INFO,
+    calendar::PersianDateLengthsV1Marker::INFO,
+    calendar::PersianDateSymbolsV1Marker::INFO,
+    calendar::RocDateLengthsV1Marker::INFO,
+    calendar::RocDateSymbolsV1Marker::INFO,
+    calendar::TimeLengthsV1Marker::INFO,
+    calendar::TimeSymbolsV1Marker::INFO,
+    time_zones::ExemplarCitiesV1Marker::INFO,
+    time_zones::MetazoneGenericNamesLongV1Marker::INFO,
+    time_zones::MetazoneGenericNamesShortV1Marker::INFO,
+    time_zones::MetazoneSpecificNamesLongV1Marker::INFO,
+    time_zones::MetazoneSpecificNamesShortV1Marker::INFO,
+    time_zones::TimeZoneFormatsV1Marker::INFO,
     #[cfg(feature = "experimental")]
-    calendar::DateSkeletonPatternsV1Marker::KEY,
+    calendar::DateSkeletonPatternsV1Marker::INFO,
     #[cfg(feature = "experimental")]
-    neo::WeekdayNamesV1Marker::KEY,
+    neo::WeekdayNamesV1Marker::INFO,
     #[cfg(feature = "experimental")]
-    neo::DayPeriodNamesV1Marker::KEY,
+    neo::DayPeriodNamesV1Marker::INFO,
     #[cfg(feature = "experimental")]
-    neo::DateTimePatternV1Marker::KEY,
+    neo::DateTimePatternV1Marker::INFO,
     #[cfg(feature = "experimental")]
-    neo::TimePatternV1Marker::KEY,
+    neo::TimePatternV1Marker::INFO,
     #[cfg(feature = "experimental")]
-    neo::TimeNeoSkeletonPatternsV1Marker::KEY,
+    neo::TimeNeoSkeletonPatternsV1Marker::INFO,
     #[cfg(feature = "experimental")]
-    neo::BuddhistYearNamesV1Marker::KEY,
+    neo::BuddhistYearNamesV1Marker::INFO,
     #[cfg(feature = "experimental")]
-    neo::ChineseYearNamesV1Marker::KEY,
+    neo::ChineseYearNamesV1Marker::INFO,
     #[cfg(feature = "experimental")]
-    neo::CopticYearNamesV1Marker::KEY,
+    neo::CopticYearNamesV1Marker::INFO,
     #[cfg(feature = "experimental")]
-    neo::DangiYearNamesV1Marker::KEY,
+    neo::DangiYearNamesV1Marker::INFO,
     #[cfg(feature = "experimental")]
-    neo::EthiopianYearNamesV1Marker::KEY,
+    neo::EthiopianYearNamesV1Marker::INFO,
     #[cfg(feature = "experimental")]
-    neo::GregorianYearNamesV1Marker::KEY,
+    neo::GregorianYearNamesV1Marker::INFO,
     #[cfg(feature = "experimental")]
-    neo::HebrewYearNamesV1Marker::KEY,
+    neo::HebrewYearNamesV1Marker::INFO,
     #[cfg(feature = "experimental")]
-    neo::IndianYearNamesV1Marker::KEY,
+    neo::IndianYearNamesV1Marker::INFO,
     #[cfg(feature = "experimental")]
-    neo::IslamicYearNamesV1Marker::KEY,
+    neo::IslamicYearNamesV1Marker::INFO,
     #[cfg(feature = "experimental")]
-    neo::JapaneseYearNamesV1Marker::KEY,
+    neo::JapaneseYearNamesV1Marker::INFO,
     #[cfg(feature = "experimental")]
-    neo::JapaneseExtendedYearNamesV1Marker::KEY,
+    neo::JapaneseExtendedYearNamesV1Marker::INFO,
     #[cfg(feature = "experimental")]
-    neo::PersianYearNamesV1Marker::KEY,
+    neo::PersianYearNamesV1Marker::INFO,
     #[cfg(feature = "experimental")]
-    neo::RocYearNamesV1Marker::KEY,
+    neo::RocYearNamesV1Marker::INFO,
     #[cfg(feature = "experimental")]
-    neo::BuddhistMonthNamesV1Marker::KEY,
+    neo::BuddhistMonthNamesV1Marker::INFO,
     #[cfg(feature = "experimental")]
-    neo::ChineseMonthNamesV1Marker::KEY,
+    neo::ChineseMonthNamesV1Marker::INFO,
     #[cfg(feature = "experimental")]
-    neo::CopticMonthNamesV1Marker::KEY,
+    neo::CopticMonthNamesV1Marker::INFO,
     #[cfg(feature = "experimental")]
-    neo::DangiMonthNamesV1Marker::KEY,
+    neo::DangiMonthNamesV1Marker::INFO,
     #[cfg(feature = "experimental")]
-    neo::EthiopianMonthNamesV1Marker::KEY,
+    neo::EthiopianMonthNamesV1Marker::INFO,
     #[cfg(feature = "experimental")]
-    neo::GregorianMonthNamesV1Marker::KEY,
+    neo::GregorianMonthNamesV1Marker::INFO,
     #[cfg(feature = "experimental")]
-    neo::HebrewMonthNamesV1Marker::KEY,
+    neo::HebrewMonthNamesV1Marker::INFO,
     #[cfg(feature = "experimental")]
-    neo::IndianMonthNamesV1Marker::KEY,
+    neo::IndianMonthNamesV1Marker::INFO,
     #[cfg(feature = "experimental")]
-    neo::IslamicMonthNamesV1Marker::KEY,
+    neo::IslamicMonthNamesV1Marker::INFO,
     #[cfg(feature = "experimental")]
-    neo::JapaneseMonthNamesV1Marker::KEY,
+    neo::JapaneseMonthNamesV1Marker::INFO,
     #[cfg(feature = "experimental")]
-    neo::JapaneseExtendedMonthNamesV1Marker::KEY,
+    neo::JapaneseExtendedMonthNamesV1Marker::INFO,
     #[cfg(feature = "experimental")]
-    neo::PersianMonthNamesV1Marker::KEY,
+    neo::PersianMonthNamesV1Marker::INFO,
     #[cfg(feature = "experimental")]
-    neo::RocMonthNamesV1Marker::KEY,
+    neo::RocMonthNamesV1Marker::INFO,
     #[cfg(feature = "experimental")]
-    neo::BuddhistDatePatternV1Marker::KEY,
+    neo::BuddhistDatePatternV1Marker::INFO,
     #[cfg(feature = "experimental")]
-    neo::ChineseDatePatternV1Marker::KEY,
+    neo::ChineseDatePatternV1Marker::INFO,
     #[cfg(feature = "experimental")]
-    neo::CopticDatePatternV1Marker::KEY,
+    neo::CopticDatePatternV1Marker::INFO,
     #[cfg(feature = "experimental")]
-    neo::DangiDatePatternV1Marker::KEY,
+    neo::DangiDatePatternV1Marker::INFO,
     #[cfg(feature = "experimental")]
-    neo::EthiopianDatePatternV1Marker::KEY,
+    neo::EthiopianDatePatternV1Marker::INFO,
     #[cfg(feature = "experimental")]
-    neo::GregorianDatePatternV1Marker::KEY,
+    neo::GregorianDatePatternV1Marker::INFO,
     #[cfg(feature = "experimental")]
-    neo::HebrewDatePatternV1Marker::KEY,
+    neo::HebrewDatePatternV1Marker::INFO,
     #[cfg(feature = "experimental")]
-    neo::IndianDatePatternV1Marker::KEY,
+    neo::IndianDatePatternV1Marker::INFO,
     #[cfg(feature = "experimental")]
-    neo::IslamicDatePatternV1Marker::KEY,
+    neo::IslamicDatePatternV1Marker::INFO,
     #[cfg(feature = "experimental")]
-    neo::JapaneseDatePatternV1Marker::KEY,
+    neo::JapaneseDatePatternV1Marker::INFO,
     #[cfg(feature = "experimental")]
-    neo::JapaneseExtendedDatePatternV1Marker::KEY,
+    neo::JapaneseExtendedDatePatternV1Marker::INFO,
     #[cfg(feature = "experimental")]
-    neo::PersianDatePatternV1Marker::KEY,
+    neo::PersianDatePatternV1Marker::INFO,
     #[cfg(feature = "experimental")]
-    neo::RocDatePatternV1Marker::KEY,
+    neo::RocDatePatternV1Marker::INFO,
     #[cfg(feature = "experimental")]
-    neo::BuddhistDateNeoSkeletonPatternsV1Marker::KEY,
+    neo::BuddhistDateNeoSkeletonPatternsV1Marker::INFO,
     #[cfg(feature = "experimental")]
-    neo::ChineseDateNeoSkeletonPatternsV1Marker::KEY,
+    neo::ChineseDateNeoSkeletonPatternsV1Marker::INFO,
     #[cfg(feature = "experimental")]
-    neo::CopticDateNeoSkeletonPatternsV1Marker::KEY,
+    neo::CopticDateNeoSkeletonPatternsV1Marker::INFO,
     #[cfg(feature = "experimental")]
-    neo::DangiDateNeoSkeletonPatternsV1Marker::KEY,
+    neo::DangiDateNeoSkeletonPatternsV1Marker::INFO,
     #[cfg(feature = "experimental")]
-    neo::EthiopianDateNeoSkeletonPatternsV1Marker::KEY,
+    neo::EthiopianDateNeoSkeletonPatternsV1Marker::INFO,
     #[cfg(feature = "experimental")]
-    neo::GregorianDateNeoSkeletonPatternsV1Marker::KEY,
+    neo::GregorianDateNeoSkeletonPatternsV1Marker::INFO,
     #[cfg(feature = "experimental")]
-    neo::HebrewDateNeoSkeletonPatternsV1Marker::KEY,
+    neo::HebrewDateNeoSkeletonPatternsV1Marker::INFO,
     #[cfg(feature = "experimental")]
-    neo::IndianDateNeoSkeletonPatternsV1Marker::KEY,
+    neo::IndianDateNeoSkeletonPatternsV1Marker::INFO,
     #[cfg(feature = "experimental")]
-    neo::IslamicDateNeoSkeletonPatternsV1Marker::KEY,
+    neo::IslamicDateNeoSkeletonPatternsV1Marker::INFO,
     #[cfg(feature = "experimental")]
-    neo::JapaneseDateNeoSkeletonPatternsV1Marker::KEY,
+    neo::JapaneseDateNeoSkeletonPatternsV1Marker::INFO,
     #[cfg(feature = "experimental")]
-    neo::JapaneseExtendedDateNeoSkeletonPatternsV1Marker::KEY,
+    neo::JapaneseExtendedDateNeoSkeletonPatternsV1Marker::INFO,
     #[cfg(feature = "experimental")]
-    neo::PersianDateNeoSkeletonPatternsV1Marker::KEY,
+    neo::PersianDateNeoSkeletonPatternsV1Marker::INFO,
     #[cfg(feature = "experimental")]
-    neo::RocDateNeoSkeletonPatternsV1Marker::KEY,
+    neo::RocDateNeoSkeletonPatternsV1Marker::INFO,
 ];

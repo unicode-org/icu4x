@@ -52,15 +52,15 @@ const _: () = {
 };
 
 #[cfg(feature = "datagen")]
-/// The latest minimum set of keys required by this component.
-pub const KEYS: &[DataKey] = &[
-    DictionaryForWordLineExtendedV1Marker::KEY,
-    DictionaryForWordOnlyAutoV1Marker::KEY,
-    GraphemeClusterBreakDataV1Marker::KEY,
-    LineBreakDataV1Marker::KEY,
-    LstmForWordLineAutoV1Marker::KEY,
-    SentenceBreakDataV1Marker::KEY,
-    WordBreakDataV1Marker::KEY,
+/// The latest minimum set of markers required by this component.
+pub const MARKERS: &[DataMarkerInfo] = &[
+    DictionaryForWordLineExtendedV1Marker::INFO,
+    DictionaryForWordOnlyAutoV1Marker::INFO,
+    GraphemeClusterBreakDataV1Marker::INFO,
+    LineBreakDataV1Marker::INFO,
+    LstmForWordLineAutoV1Marker::INFO,
+    SentenceBreakDataV1Marker::INFO,
+    WordBreakDataV1Marker::INFO,
 ];
 
 /// Pre-processed Unicode data in the form of tables to be used for rule-based breaking.

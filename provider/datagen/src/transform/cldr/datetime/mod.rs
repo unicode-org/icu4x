@@ -206,7 +206,7 @@ macro_rules! impl_data_provider {
 
                 let langid = req.locale.get_langid();
 
-                let calendar = if DateSkeletonPatternsV1Marker::KEY == $marker::KEY {
+                let calendar = if DateSkeletonPatternsV1Marker::INFO == $marker::INFO {
                     req.locale
                         .get_unicode_ext(&key!("ca"))
                         .ok_or_else(|| DataErrorKind::NeedsLocale.into_error())?
@@ -230,9 +230,9 @@ macro_rules! impl_data_provider {
         impl IterableDataProviderCached<$marker> for DatagenProvider {
             fn supported_requests_cached(
                 &self,
-            ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+            ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
                 let mut r = HashSet::new();
-                if DateSkeletonPatternsV1Marker::KEY == $marker::KEY {
+                if DateSkeletonPatternsV1Marker::INFO == $marker::INFO {
                     for (cal_value, cldr_cal) in supported_cals() {
                         r.extend(self.cldr()?.dates(cldr_cal).list_langs()?.map(|lid| {
                             let mut locale = DataLocale::from(lid);
@@ -253,7 +253,7 @@ macro_rules! impl_data_provider {
                 }
 
                 // TODO(#3212): Remove
-                if $marker::KEY == TimeLengthsV1Marker::KEY {
+                if $marker::INFO == TimeLengthsV1Marker::INFO {
                     r.retain(|(l, _)| {
                         l.get_langid() != icu_locale_core::langid!("byn")
                             && l.get_langid() != icu_locale_core::langid!("ssy")

@@ -366,7 +366,7 @@ fn try_load<M: DataMarker, P: DataProvider<M> + ?Sized>(
     model: &'static str,
 ) -> Result<Option<DataPayload<M>>, DataError> {
     match provider.load(DataRequest {
-        key_attributes: &model.parse().unwrap(),
+        marker_attributes: &model.parse().unwrap(),
         metadata: {
             let mut m = DataRequestMetadata::default();
             m.silent = true;
