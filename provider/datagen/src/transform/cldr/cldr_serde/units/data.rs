@@ -8,7 +8,6 @@
 //! <https://github.com/unicode-org/cldr-json/blob/master/cldr-json/cldr-units-full/main/en/units.json>
 
 use serde::Deserialize;
-use serde_json::Value;
 use std::collections::BTreeMap;
 
 // TODO(youneis): Check if there are more cases.
@@ -41,9 +40,6 @@ pub struct UnitsData {
     pub short: BTreeMap<String, Patterns>,
 
     pub narrow: BTreeMap<String, Patterns>,
-
-    #[serde(flatten)]
-    extra: Value,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]

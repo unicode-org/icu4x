@@ -46,29 +46,39 @@ impl DataProvider<UnitsDisplayNameV1Marker> for DatagenProvider {
             length: &BTreeMap<String, Patterns>,
             unit: &str,
             map: &mut ZeroMap<'_, Count, str>,
-        ) {
-            let mut prefixed_unit = String::from("-");
-            prefixed_unit.push_str(unit);
+        ) -> Result<(), DataError> {
+            let mut added = false;
             for (key, value) in length.iter() {
-                if let Some(prefix) = key.strip_suffix(&prefixed_unit) {
-                    if !prefix.contains('-') {
-                        add_unit_to_map(map, &Count::One, value.one.as_deref());
-                        add_unit_to_map(map, &Count::Two, value.two.as_deref());
-                        add_unit_to_map(map, &Count::Few, value.few.as_deref());
-                        add_unit_to_map(map, &Count::Many, value.many.as_deref());
-                        add_unit_to_map(map, &Count::Other, value.other.as_deref());
+                if let Some(key_prefix) = key.strip_suffix(unit) {
+                    if let Some(key_prefix) = key_prefix.strip_prefix('-') {
+                        if !key_prefix.contains('-') {
+                            add_unit_to_map(map, &Count::One, value.one.as_deref());
+                            add_unit_to_map(map, &Count::Two, value.two.as_deref());
+                            add_unit_to_map(map, &Count::Few, value.few.as_deref());
+                            add_unit_to_map(map, &Count::Many, value.many.as_deref());
+                            add_unit_to_map(map, &Count::Other, value.other.as_deref());
+
+                            added = match added {
+                                true => return Err(DataError::custom("More than one unit found for the given unit")
+                                    .with_debug_context(unit)
+                                    .with_debug_context(key)),
+                                false =>  true,
+                            }
+                        }
                     }
                 }
             }
+
+            Ok(())
         }
 
         let mut long = ZeroMap::new();
         let mut short = ZeroMap::new();
         let mut narrow = ZeroMap::new();
 
-        add_correct_map(&units_format_data.long, unit.as_str(), &mut long);
-        add_correct_map(&units_format_data.short, unit.as_str(), &mut short);
-        add_correct_map(&units_format_data.narrow, unit.as_str(), &mut narrow);
+        add_correct_map(&units_format_data.long, unit.as_str(), &mut long)?;
+        add_correct_map(&units_format_data.short, unit.as_str(), &mut short)?;
+        add_correct_map(&units_format_data.narrow, unit.as_str(), &mut narrow)?;
 
         let result = UnitsDisplayNameV1 {
             long,
