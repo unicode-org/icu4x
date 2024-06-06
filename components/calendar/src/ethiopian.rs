@@ -35,7 +35,7 @@
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::error::DateError;
 use crate::iso::Iso;
-use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, Time};
+use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, RangeError, Time};
 use calendrical_calculations::helpers::I32CastError;
 use calendrical_calculations::rata_die::RataDie;
 use tinystr::tinystr;
@@ -346,7 +346,7 @@ impl Date<Ethiopian> {
         mut year: i32,
         month: u8,
         day: u8,
-    ) -> Result<Date<Ethiopian>, DateError> {
+    ) -> Result<Date<Ethiopian>, RangeError> {
         if era_style == EthiopianEraStyle::AmeteAlem {
             year -= AMETE_ALEM_OFFSET;
         }

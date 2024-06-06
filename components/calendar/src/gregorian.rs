@@ -34,7 +34,7 @@
 use crate::calendar_arithmetic::ArithmeticDate;
 use crate::error::DateError;
 use crate::iso::{Iso, IsoDateInner};
-use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, Time};
+use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, RangeError, Time};
 use tinystr::tinystr;
 
 /// The Gregorian Calendar
@@ -192,7 +192,7 @@ impl Date<Gregorian> {
         year: i32,
         month: u8,
         day: u8,
-    ) -> Result<Date<Gregorian>, DateError> {
+    ) -> Result<Date<Gregorian>, RangeError> {
         Date::try_new_iso_date(year, month, day).map(|d| Date::new_from_iso(d, Gregorian))
     }
 }

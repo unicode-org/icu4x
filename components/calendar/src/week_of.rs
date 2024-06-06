@@ -607,7 +607,7 @@ mod tests {
         let month = ((yyyymmdd / 100) % 100) as u8;
         let day = (yyyymmdd % 100) as u8;
 
-        let date = Date::try_new_iso_date(year, month, day).unwrap();
+        let date = Date::try_new_iso_date(year, month, day)?;
         let previous_month = date.added(DateDuration::new(0, -1, 0, 0));
 
         week_of(

@@ -36,7 +36,7 @@ use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::error::DateError;
 use crate::gregorian::year_as_gregorian;
 use crate::iso::Iso;
-use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, Time};
+use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, RangeError, Time};
 use calendrical_calculations::helpers::I32CastError;
 use calendrical_calculations::rata_die::RataDie;
 use tinystr::tinystr;
@@ -263,7 +263,7 @@ impl Date<Julian> {
     /// assert_eq!(date_julian.month().ordinal, 12);
     /// assert_eq!(date_julian.day_of_month().0, 20);
     /// ```
-    pub fn try_new_julian_date(year: i32, month: u8, day: u8) -> Result<Date<Julian>, DateError> {
+    pub fn try_new_julian_date(year: i32, month: u8, day: u8) -> Result<Date<Julian>, RangeError> {
         ArithmeticDate::new_from_ordinals(year, month, day)
             .map(JulianDateInner)
             .map(|inner| Date::from_raw(inner, Julian))

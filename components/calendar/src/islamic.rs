@@ -43,9 +43,9 @@ use crate::provider::islamic::{
     IslamicCacheV1, IslamicObservationalCacheV1Marker, IslamicUmmAlQuraCacheV1Marker,
     PackedIslamicYearInfo,
 };
-use crate::AsCalendar;
 use crate::Iso;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, Time};
+use crate::{AsCalendar, RangeError};
 use calendrical_calculations::islamic::{
     IslamicBasedMarker, ObservationalIslamicMarker, SaudiIslamicMarker,
 };
@@ -444,13 +444,14 @@ impl Calendar for IslamicObservational {
         } else {
             return Err(DateError::UnknownMonthCode(month_code));
         };
-        ArithmeticDate::new_from_ordinals_with_info(
-            year,
-            month,
-            day,
-            self.precomputed_data().load_or_compute_info(year),
-        )
-        .map(IslamicDateInner)
+        Ok(IslamicDateInner(
+            ArithmeticDate::new_from_ordinals_with_info(
+                year,
+                month,
+                day,
+                self.precomputed_data().load_or_compute_info(year),
+            )?,
+        ))
     }
 
     fn date_from_iso(&self, iso: Date<crate::Iso>) -> Self::DateInner {
@@ -579,7 +580,7 @@ impl<A: AsCalendar<Calendar = IslamicObservational>> Date<A> {
         month: u8,
         day: u8,
         calendar: A,
-    ) -> Result<Date<A>, DateError> {
+    ) -> Result<Date<A>, RangeError> {
         let year_info = calendar
             .as_calendar()
             .precomputed_data()
@@ -681,13 +682,14 @@ impl Calendar for IslamicUmmAlQura {
         } else {
             return Err(DateError::UnknownMonthCode(month_code));
         };
-        ArithmeticDate::new_from_ordinals_with_info(
-            year,
-            month,
-            day,
-            self.precomputed_data().load_or_compute_info(year),
-        )
-        .map(IslamicUmmAlQuraDateInner)
+        Ok(IslamicUmmAlQuraDateInner(
+            ArithmeticDate::new_from_ordinals_with_info(
+                year,
+                month,
+                day,
+                self.precomputed_data().load_or_compute_info(year),
+            )?,
+        ))
     }
 
     fn date_from_iso(&self, iso: Date<Iso>) -> Self::DateInner {
@@ -810,14 +812,17 @@ impl<A: AsCalendar<Calendar = IslamicUmmAlQura>> Date<A> {
         month: u8,
         day: u8,
         calendar: A,
-    ) -> Result<Date<A>, DateError> {
+    ) -> Result<Date<A>, RangeError> {
         let year_info = calendar
             .as_calendar()
             .precomputed_data()
             .load_or_compute_info(year);
-        ArithmeticDate::new_from_ordinals_with_info(year, month, day, year_info)
-            .map(IslamicUmmAlQuraDateInner)
-            .map(|inner| Date::from_raw(inner, calendar))
+        Ok(Date::from_raw(
+            IslamicUmmAlQuraDateInner(ArithmeticDate::new_from_ordinals_with_info(
+                year, month, day, year_info,
+            )?),
+            calendar,
+        ))
     }
 }
 
@@ -1057,7 +1062,7 @@ impl<A: AsCalendar<Calendar = IslamicCivil>> Date<A> {
         month: u8,
         day: u8,
         calendar: A,
-    ) -> Result<Date<A>, DateError> {
+    ) -> Result<Date<A>, RangeError> {
         ArithmeticDate::new_from_ordinals(year, month, day)
             .map(IslamicCivilDateInner)
             .map(|inner| Date::from_raw(inner, calendar))
@@ -1300,7 +1305,7 @@ impl<A: AsCalendar<Calendar = IslamicTabular>> Date<A> {
         month: u8,
         day: u8,
         calendar: A,
-    ) -> Result<Date<A>, DateError> {
+    ) -> Result<Date<A>, RangeError> {
         ArithmeticDate::new_from_ordinals(year, month, day)
             .map(IslamicTabularDateInner)
             .map(|inner| Date::from_raw(inner, calendar))

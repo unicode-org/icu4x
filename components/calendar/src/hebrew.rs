@@ -34,8 +34,8 @@ use crate::calendar_arithmetic::PrecomputedDataSource;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::error::DateError;
 use crate::types::FormattableMonth;
-use crate::Iso;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, Time};
+use crate::{Iso, RangeError};
 use ::tinystr::tinystr;
 use calendrical_calculations::hebrew_keviyah::{Keviyah, YearInfo};
 
@@ -199,8 +199,9 @@ impl Calendar for Hebrew {
             }
         };
 
-        ArithmeticDate::new_from_ordinals_with_info(year, month_ordinal, day, year_info)
-            .map(HebrewDateInner)
+        Ok(HebrewDateInner(
+            ArithmeticDate::new_from_ordinals_with_info(year, month_ordinal, day, year_info)?,
+        ))
     }
 
     fn date_from_iso(&self, iso: Date<Iso>) -> Self::DateInner {
@@ -359,7 +360,7 @@ impl Date<Hebrew> {
     /// assert_eq!(date_hebrew.month().ordinal, 4);
     /// assert_eq!(date_hebrew.day_of_month().0, 25);
     /// ```
-    pub fn try_new_hebrew_date(year: i32, month: u8, day: u8) -> Result<Date<Hebrew>, DateError> {
+    pub fn try_new_hebrew_date(year: i32, month: u8, day: u8) -> Result<Date<Hebrew>, RangeError> {
         let year_info = HebrewYearInfo::compute(year);
 
         ArithmeticDate::new_from_ordinals_with_info(year, month, day, year_info)

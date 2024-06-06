@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::error::DateError;
-use crate::{types, Calendar, DateDuration, DateDurationUnit};
+use crate::{types, Calendar, DateDuration, DateDurationUnit, RangeError};
 use core::cmp::Ordering;
 use core::convert::TryInto;
 use core::fmt::Debug;
@@ -375,7 +375,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
     /// Construct a new arithmetic date from a year, month ordinal, and day, bounds checking
     /// the month and day
     /// Originally (new_from_solar_ordinals) but renamed because it works for some lunar calendars
-    pub fn new_from_ordinals(year: i32, month: u8, day: u8) -> Result<Self, DateError>
+    pub fn new_from_ordinals(year: i32, month: u8, day: u8) -> Result<Self, RangeError>
     where
         C: CalendarArithmetic<YearInfo = ()>,
     {
@@ -389,10 +389,10 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
         month: u8,
         day: u8,
         info: C::YearInfo,
-    ) -> Result<Self, DateError> {
+    ) -> Result<Self, RangeError> {
         let max_month = C::months_for_every_year(year, info);
         if month > max_month {
-            return Err(DateError::Range {
+            return Err(RangeError {
                 field: "month",
                 value: month as i32,
                 min: 1,
@@ -401,7 +401,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
         }
         let max_day = C::month_days(year, month, info);
         if day > max_day {
-            return Err(DateError::Range {
+            return Err(RangeError {
                 field: "day",
                 value: day as i32,
                 min: 1,

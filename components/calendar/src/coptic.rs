@@ -34,7 +34,7 @@
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::error::DateError;
 use crate::iso::Iso;
-use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, Time};
+use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, RangeError, Time};
 use calendrical_calculations::helpers::I32CastError;
 use calendrical_calculations::rata_die::RataDie;
 use tinystr::tinystr;
@@ -260,7 +260,7 @@ impl Date<Coptic> {
     /// assert_eq!(date_coptic.month().ordinal, 5);
     /// assert_eq!(date_coptic.day_of_month().0, 6);
     /// ```
-    pub fn try_new_coptic_date(year: i32, month: u8, day: u8) -> Result<Date<Coptic>, DateError> {
+    pub fn try_new_coptic_date(year: i32, month: u8, day: u8) -> Result<Date<Coptic>, RangeError> {
         ArithmeticDate::new_from_ordinals(year, month, day)
             .map(CopticDateInner)
             .map(|inner| Date::from_raw(inner, Coptic))

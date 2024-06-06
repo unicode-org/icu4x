@@ -35,7 +35,7 @@ use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::ArithmeticDate;
 use crate::error::DateError;
 use crate::iso::{Iso, IsoDateInner};
-use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, Time};
+use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, RangeError, Time};
 use tinystr::tinystr;
 
 /// The number of years the Buddhist Era is ahead of C.E. by
@@ -178,7 +178,7 @@ impl Date<Buddhist> {
         year: i32,
         month: u8,
         day: u8,
-    ) -> Result<Date<Buddhist>, DateError> {
+    ) -> Result<Date<Buddhist>, RangeError> {
         Date::try_new_iso_date(year - BUDDHIST_ERA_OFFSET, month, day)
             .map(|d| Date::new_from_iso(d, Buddhist))
     }

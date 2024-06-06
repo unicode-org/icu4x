@@ -31,7 +31,7 @@
 
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::error::DateError;
-use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, Time};
+use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, RangeError, Time};
 use calendrical_calculations::helpers::{i64_to_saturated_i32, I32CastError};
 use calendrical_calculations::rata_die::RataDie;
 use tinystr::tinystr;
@@ -246,7 +246,7 @@ impl Date<Iso> {
     /// assert_eq!(date_iso.month().ordinal, 1);
     /// assert_eq!(date_iso.day_of_month().0, 2);
     /// ```
-    pub fn try_new_iso_date(year: i32, month: u8, day: u8) -> Result<Date<Iso>, DateError> {
+    pub fn try_new_iso_date(year: i32, month: u8, day: u8) -> Result<Date<Iso>, RangeError> {
         ArithmeticDate::new_from_ordinals(year, month, day)
             .map(IsoDateInner)
             .map(|inner| Date::from_raw(inner, Iso))

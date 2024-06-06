@@ -33,7 +33,7 @@
 
 use crate::{
     calendar_arithmetic::ArithmeticDate, error::DateError, iso::IsoDateInner, types, Calendar,
-    Date, DateTime, Iso, Time,
+    Date, DateTime, Iso, RangeError, Time,
 };
 use calendrical_calculations::helpers::i64_to_saturated_i32;
 use tinystr::tinystr;
@@ -212,7 +212,7 @@ impl Date<Roc> {
     /// assert_eq!(date_gregorian.year().number, 1912, "Gregorian from ROC year check failed!");
     /// assert_eq!(date_gregorian.month().ordinal, 2, "Gregorian from ROC month check failed!");
     /// assert_eq!(date_gregorian.day_of_month().0, 3, "Gregorian from ROC day of month check failed!");
-    pub fn try_new_roc_date(year: i32, month: u8, day: u8) -> Result<Date<Roc>, DateError> {
+    pub fn try_new_roc_date(year: i32, month: u8, day: u8) -> Result<Date<Roc>, RangeError> {
         let iso_year = year.saturating_add(ROC_ERA_OFFSET);
         Date::try_new_iso_date(iso_year, month, day).map(|d| Date::new_from_iso(d, Roc))
     }
