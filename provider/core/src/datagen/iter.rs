@@ -12,7 +12,7 @@ use crate::prelude::*;
 ///
 /// Implementing this trait means that a data provider knows all of the data it can successfully
 /// return from a load request.
-pub trait IterableDynamicDataProvider<M: DataMarker>: DynamicDataProvider<M> {
+pub trait IterableDynamicDataProvider<M: DynamicDataMarker>: DynamicDataProvider<M> {
     /// Given a [`DataKey`], returns a list of [`DataLocale`].
     fn supported_requests_for_key(
         &self,
@@ -24,7 +24,7 @@ pub trait IterableDynamicDataProvider<M: DataMarker>: DynamicDataProvider<M> {
 ///
 /// Implementing this trait means that a data provider knows all of the data it can successfully
 /// return from a load request.
-pub trait IterableDataProvider<M: KeyedDataMarker>: DataProvider<M> {
+pub trait IterableDataProvider<M: DataMarker>: DataProvider<M> {
     /// Returns a list of [`DataLocale`].
     fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError>;
     /// Returns whether a [`DataLocale`] is in the supported locales list.
@@ -40,7 +40,7 @@ pub trait IterableDataProvider<M: KeyedDataMarker>: DataProvider<M> {
 
 impl<M, P> IterableDynamicDataProvider<M> for Box<P>
 where
-    M: DataMarker,
+    M: DynamicDataMarker,
     P: IterableDynamicDataProvider<M> + ?Sized,
 {
     fn supported_requests_for_key(

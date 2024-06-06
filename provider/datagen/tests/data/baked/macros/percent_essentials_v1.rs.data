@@ -11,13 +11,13 @@ macro_rules! __impl_percent_essentials_v1 {
         #[clippy::msrv = "1.70"]
         impl icu_provider::DataProvider<icu::experimental::dimension::provider::percent::PercentEssentialsV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::experimental::dimension::provider::percent::PercentEssentialsV1Marker>, icu_provider::DataError> {
-                static UND: <icu::experimental::dimension::provider::percent::PercentEssentialsV1Marker as icu_provider::DataMarker>::Yokeable = icu::experimental::dimension::provider::percent::PercentEssentialsV1 { number_index: 0u8, percent_sign_affixes: icu::experimental::dimension::provider::percent::PercentAffixesV1 { prefix: alloc::borrow::Cow::Borrowed(""), suffix: alloc::borrow::Cow::Borrowed("") }, percent_sign_symbol: alloc::borrow::Cow::Borrowed("%"), percent_symbol_index: 5u8, standard: alloc::borrow::Cow::Borrowed("#,##0%") };
-                static VALUES: [&<icu::experimental::dimension::provider::percent::PercentEssentialsV1Marker as icu_provider::DataMarker>::Yokeable; 1usize] = [&UND];
+                static UND: <icu::experimental::dimension::provider::percent::PercentEssentialsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::experimental::dimension::provider::percent::PercentEssentialsV1 { number_index: 0u8, percent_sign_affixes: icu::experimental::dimension::provider::percent::PercentAffixesV1 { prefix: alloc::borrow::Cow::Borrowed(""), suffix: alloc::borrow::Cow::Borrowed("") }, percent_sign_symbol: alloc::borrow::Cow::Borrowed("%"), percent_symbol_index: 5u8, standard: alloc::borrow::Cow::Borrowed("#,##0%") };
+                static VALUES: [&<icu::experimental::dimension::provider::percent::PercentEssentialsV1Marker as icu_provider::DynamicDataMarker>::Yokeable; 1usize] = [&UND];
                 static KEYS: [&str; 1usize] = ["und"];
                 if let Ok(payload) = KEYS.binary_search_by(|k| req.legacy_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
                     Ok(icu_provider::DataResponse { payload: Some(icu_provider::DataPayload::from_static_ref(payload)), metadata: Default::default() })
                 } else {
-                    Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::experimental::dimension::provider::percent::PercentEssentialsV1Marker as icu_provider::KeyedDataMarker>::KEY, req))
+                    Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::experimental::dimension::provider::percent::PercentEssentialsV1Marker as icu_provider::DataMarker>::KEY, req))
                 }
             }
         }

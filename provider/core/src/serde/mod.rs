@@ -62,7 +62,7 @@ fn deserialize_impl<'data, M>(
     buffer_format: BufferFormat,
 ) -> Result<<M::Yokeable as Yokeable<'data>>::Output, DataError>
 where
-    M: DataMarker,
+    M: DynamicDataMarker,
     // Actual bound:
     //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: Deserialize<'de>,
     // Necessary workaround bound (see `yoke::trait_hack` docs):
@@ -137,7 +137,7 @@ impl DataPayload<BufferMarker> {
         buffer_format: BufferFormat,
     ) -> Result<DataPayload<M>, DataError>
     where
-        M: DataMarker,
+        M: DynamicDataMarker,
         // Actual bound:
         //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: Deserialize<'de>,
         // Necessary workaround bound (see `yoke::trait_hack` docs):
@@ -149,7 +149,7 @@ impl DataPayload<BufferMarker> {
 
 impl<P, M> DynamicDataProvider<M> for DeserializingBufferProvider<'_, P>
 where
-    M: DataMarker,
+    M: DynamicDataMarker,
     P: BufferProvider + ?Sized,
     // Actual bound:
     //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: serde::de::Deserialize<'de>,
@@ -182,7 +182,7 @@ where
 
 impl<P, M> DataProvider<M> for DeserializingBufferProvider<'_, P>
 where
-    M: KeyedDataMarker,
+    M: DataMarker,
     P: BufferProvider + ?Sized,
     // Actual bound:
     //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: Deserialize<'de>,

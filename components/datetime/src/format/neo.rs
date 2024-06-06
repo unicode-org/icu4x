@@ -29,7 +29,7 @@ use icu_decimal::options::FixedDecimalFormatterOptions;
 use icu_decimal::options::GroupingStrategy;
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_decimal::FixedDecimalFormatter;
-use icu_provider::{prelude::*, NeverMarker};
+use icu_provider::prelude::*;
 use writeable::TryWriteable;
 use yoke::Yokeable;
 
@@ -105,32 +105,6 @@ where
                 None => OptionalNames::None,
             },
         }
-    }
-}
-
-/// Helper for type resolution with optional DataProvider arguments
-pub(crate) struct PhantomProvider;
-
-impl<M: KeyedDataMarker> DataProvider<M> for PhantomProvider {
-    #[inline]
-    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
-        debug_assert!(false);
-        Err(DataErrorKind::MissingDataKey.with_req(M::KEY, req))
-    }
-}
-
-impl<M: DataMarker> BoundDataProvider<M> for PhantomProvider {
-    #[inline]
-    fn load_bound(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
-        debug_assert!(false);
-        let key = BoundDataProvider::<M>::bound_key(self);
-        Err(DataErrorKind::MissingDataKey
-            .into_error()
-            .with_req(key, req))
-    }
-    #[inline]
-    fn bound_key(&self) -> DataKey {
-        NeverMarker::<M::Yokeable>::KEY
     }
 }
 
@@ -229,11 +203,11 @@ pub trait DateTimeNamesMarker {
 pub trait MaybePayload<Y: for<'a> Yokeable<'a>> {
     fn maybe_from_payload<M>(payload: DataPayload<M>) -> Option<Self>
     where
-        M: DataMarker<Yokeable = Y>,
+        M: DynamicDataMarker<Yokeable = Y>,
         Self: Sized;
     fn load_from<P, M>(provider: &P, req: DataRequest) -> Option<Result<Self, DataError>>
     where
-        M: DataMarker<Yokeable = Y>,
+        M: DynamicDataMarker<Yokeable = Y>,
         P: BoundDataProvider<M> + ?Sized,
         Self: Sized;
     #[allow(clippy::needless_lifetimes)] // Yokeable is involved
@@ -242,19 +216,19 @@ pub trait MaybePayload<Y: for<'a> Yokeable<'a>> {
 
 impl<M0, Y: for<'a> Yokeable<'a>> MaybePayload<Y> for DataPayload<M0>
 where
-    M0: DataMarker<Yokeable = Y>,
+    M0: DynamicDataMarker<Yokeable = Y>,
 {
     #[inline]
     fn maybe_from_payload<M>(payload: DataPayload<M>) -> Option<Self>
     where
-        M: DataMarker<Yokeable = Y>,
+        M: DynamicDataMarker<Yokeable = Y>,
     {
         Some(payload.cast())
     }
     #[inline]
     fn load_from<P, M>(provider: &P, req: DataRequest) -> Option<Result<Self, DataError>>
     where
-        M: DataMarker<Yokeable = Y>,
+        M: DynamicDataMarker<Yokeable = Y>,
         P: BoundDataProvider<M> + ?Sized,
         Self: Sized,
     {
@@ -276,14 +250,14 @@ impl<Y: for<'a> Yokeable<'a>> MaybePayload<Y> for () {
     #[inline]
     fn maybe_from_payload<M>(_payload: DataPayload<M>) -> Option<Self>
     where
-        M: DataMarker<Yokeable = Y>,
+        M: DynamicDataMarker<Yokeable = Y>,
     {
         None
     }
     #[inline]
     fn load_from<P, M>(_provider: &P, _req: DataRequest) -> Option<Result<Self, DataError>>
     where
-        M: DataMarker<Yokeable = Y>,
+        M: DynamicDataMarker<Yokeable = Y>,
         P: BoundDataProvider<M> + ?Sized,
         Self: Sized,
     {

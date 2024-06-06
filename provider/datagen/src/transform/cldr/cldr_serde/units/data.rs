@@ -8,25 +8,43 @@
 //! <https://github.com/unicode-org/cldr-json/blob/master/cldr-json/cldr-units-full/main/en/units.json>
 
 use serde::Deserialize;
-use serde_json::Value;
 use std::collections::BTreeMap;
+
+// TODO(youneis): Check if there are more cases.
+#[derive(PartialEq, Debug, Deserialize)]
+pub(in crate::provider) struct Patterns {
+    #[serde(rename = "unitPattern-count-zero")]
+    pub(in crate::provider) zero: Option<String>,
+
+    #[serde(rename = "unitPattern-count-one")]
+    pub(in crate::provider) one: Option<String>,
+
+    #[serde(rename = "unitPattern-count-two")]
+    pub(in crate::provider) two: Option<String>,
+
+    #[serde(rename = "unitPattern-count-few")]
+    pub(in crate::provider) few: Option<String>,
+
+    #[serde(rename = "unitPattern-count-many")]
+    pub(in crate::provider) many: Option<String>,
+
+    #[serde(rename = "unitPattern-count-other")]
+    pub(in crate::provider) other: Option<String>,
+}
 
 // TODO: replace Value with specific structs
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct UnitsData {
-    pub long: BTreeMap<String, Value>,
+pub(in crate::provider) struct UnitsData {
+    pub(in crate::provider) long: BTreeMap<String, Patterns>,
 
-    pub short: BTreeMap<String, Value>,
+    pub(in crate::provider) short: BTreeMap<String, Patterns>,
 
-    pub narrow: BTreeMap<String, Value>,
-
-    #[serde(flatten)]
-    extra: Value,
+    pub(in crate::provider) narrow: BTreeMap<String, Patterns>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct LangUnits {
-    pub units: UnitsData,
+pub(in crate::provider) struct LangUnits {
+    pub(in crate::provider) units: UnitsData,
 }
 
-pub type Resource = super::super::LocaleResource<LangUnits>;
+pub(in crate::provider) type Resource = super::super::LocaleResource<LangUnits>;

@@ -6,31 +6,493 @@
 #[macro_export]
 macro_rules! __impl_units_displaynames_v1 {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.67"]
+        #[clippy::msrv = "1.70"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
-        #[clippy::msrv = "1.67"]
+        #[clippy::msrv = "1.70"]
         impl icu_provider::DataProvider<icu::experimental::dimension::provider::units::UnitsDisplayNameV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::experimental::dimension::provider::units::UnitsDisplayNameV1Marker>, icu_provider::DataError> {
-                static UND_X_ACCELERA: <icu::experimental::dimension::provider::units::UnitsDisplayNameV1Marker as icu_provider::DataMarker>::Yokeable = icu::experimental::dimension::provider::units::UnitsDisplayNameV1 {
-                    long_width: unsafe {
+                static UND_X_EARTH_RADIUS: <icu::experimental::dimension::provider::units::UnitsDisplayNameV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::experimental::dimension::provider::units::UnitsDisplayNameV1 {
+                    long: unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap2d::from_parts_unchecked(zerovec::VarZeroVec::new(), zerovec::ZeroVec::new(), zerovec::ZeroVec::new(), zerovec::VarZeroVec::new())
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} R\xE2\x8A\x95") })
                     },
-                    short_width: unsafe {
+                    short: unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap2d::from_parts_unchecked(zerovec::VarZeroVec::new(), zerovec::ZeroVec::new(), zerovec::ZeroVec::new(), zerovec::VarZeroVec::new())
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} R\xE2\x8A\x95") })
                     },
-                    narrow_width: unsafe {
+                    narrow: unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap2d::from_parts_unchecked(zerovec::VarZeroVec::new(), zerovec::ZeroVec::new(), zerovec::ZeroVec::new(), zerovec::VarZeroVec::new())
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} R\xE2\x8A\x95") })
                     },
                 };
-                static VALUES: [&<icu::experimental::dimension::provider::units::UnitsDisplayNameV1Marker as icu_provider::DataMarker>::Yokeable; 21usize] = [&UND_X_ACCELERA, &UND_X_ACCELERA, &UND_X_ACCELERA, &UND_X_ACCELERA, &UND_X_ACCELERA, &UND_X_ACCELERA, &UND_X_ACCELERA, &UND_X_ACCELERA, &UND_X_ACCELERA, &UND_X_ACCELERA, &UND_X_ACCELERA, &UND_X_ACCELERA, &UND_X_ACCELERA, &UND_X_ACCELERA, &UND_X_ACCELERA, &UND_X_ACCELERA, &UND_X_ACCELERA, &UND_X_ACCELERA, &UND_X_ACCELERA, &UND_X_ACCELERA, &UND_X_ACCELERA];
-                static KEYS: [&str; 21usize] = ["und-x-accelera", "und-x-angle", "und-x-area", "und-x-concentr", "und-x-consumpt", "und-x-coordina", "und-x-digital", "und-x-duration", "und-x-electric", "und-x-energy", "und-x-force", "und-x-frequenc", "und-x-graphics", "und-x-length", "und-x-light", "und-x-mass", "und-x-pressure", "und-x-speed", "und-x-temperat", "und-x-torque", "und-x-volume"];
-                if let Ok(payload) = KEYS.binary_search_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
+                static UND_X_SOLAR_RADIUS: <icu::experimental::dimension::provider::units::UnitsDisplayNameV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::experimental::dimension::provider::units::UnitsDisplayNameV1 {
+                    long: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} R\xE2\x98\x89") })
+                    },
+                    short: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} R\xE2\x98\x89") })
+                    },
+                    narrow: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} R\xE2\x98\x89") })
+                    },
+                };
+                static UND_X_MICROMETER: <icu::experimental::dimension::provider::units::UnitsDisplayNameV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::experimental::dimension::provider::units::UnitsDisplayNameV1 {
+                    long: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} \xCE\xBCm") })
+                    },
+                    short: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} \xCE\xBCm") })
+                    },
+                    narrow: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} \xCE\xBCm") })
+                    },
+                };
+                static UND_X_MICROSECOND: <icu::experimental::dimension::provider::units::UnitsDisplayNameV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::experimental::dimension::provider::units::UnitsDisplayNameV1 {
+                    long: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} \xCE\xBCs") })
+                    },
+                    short: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} \xCE\xBCs") })
+                    },
+                    narrow: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} \xCE\xBCs") })
+                    },
+                };
+                static UND_X_ASTRONOMICAL_UNIT: <icu::experimental::dimension::provider::units::UnitsDisplayNameV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::experimental::dimension::provider::units::UnitsDisplayNameV1 {
+                    long: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} au") })
+                    },
+                    short: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} au") })
+                    },
+                    narrow: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} au") })
+                    },
+                };
+                static UND_X_CENTURY: <icu::experimental::dimension::provider::units::UnitsDisplayNameV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::experimental::dimension::provider::units::UnitsDisplayNameV1 {
+                    long: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} c") })
+                    },
+                    short: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} c") })
+                    },
+                    narrow: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} c") })
+                    },
+                };
+                static UND_X_CENTIMETER: <icu::experimental::dimension::provider::units::UnitsDisplayNameV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::experimental::dimension::provider::units::UnitsDisplayNameV1 {
+                    long: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} cm") })
+                    },
+                    short: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} cm") })
+                    },
+                    narrow: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} cm") })
+                    },
+                };
+                static UND_X_DAY: <icu::experimental::dimension::provider::units::UnitsDisplayNameV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::experimental::dimension::provider::units::UnitsDisplayNameV1 {
+                    long: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} d") })
+                    },
+                    short: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} d") })
+                    },
+                    narrow: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} d") })
+                    },
+                };
+                static UND_X_DECADE: <icu::experimental::dimension::provider::units::UnitsDisplayNameV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::experimental::dimension::provider::units::UnitsDisplayNameV1 {
+                    long: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} dec") })
+                    },
+                    short: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} dec") })
+                    },
+                    narrow: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} dec") })
+                    },
+                };
+                static UND_X_DECIMETER: <icu::experimental::dimension::provider::units::UnitsDisplayNameV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::experimental::dimension::provider::units::UnitsDisplayNameV1 {
+                    long: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} dm") })
+                    },
+                    short: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} dm") })
+                    },
+                    narrow: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} dm") })
+                    },
+                };
+                static UND_X_FOOT: <icu::experimental::dimension::provider::units::UnitsDisplayNameV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::experimental::dimension::provider::units::UnitsDisplayNameV1 {
+                    long: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} ft") })
+                    },
+                    short: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} ft") })
+                    },
+                    narrow: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} ft") })
+                    },
+                };
+                static UND_X_FATHOM: <icu::experimental::dimension::provider::units::UnitsDisplayNameV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::experimental::dimension::provider::units::UnitsDisplayNameV1 {
+                    long: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} fth") })
+                    },
+                    short: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} fth") })
+                    },
+                    narrow: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} fth") })
+                    },
+                };
+                static UND_X_FURLONG: <icu::experimental::dimension::provider::units::UnitsDisplayNameV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::experimental::dimension::provider::units::UnitsDisplayNameV1 {
+                    long: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} fur") })
+                    },
+                    short: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} fur") })
+                    },
+                    narrow: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} fur") })
+                    },
+                };
+                static UND_X_HOUR: <icu::experimental::dimension::provider::units::UnitsDisplayNameV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::experimental::dimension::provider::units::UnitsDisplayNameV1 {
+                    long: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} h") })
+                    },
+                    short: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} h") })
+                    },
+                    narrow: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} h") })
+                    },
+                };
+                static UND_X_INCH: <icu::experimental::dimension::provider::units::UnitsDisplayNameV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::experimental::dimension::provider::units::UnitsDisplayNameV1 {
+                    long: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} in") })
+                    },
+                    short: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} in") })
+                    },
+                    narrow: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} in") })
+                    },
+                };
+                static UND_X_KILOMETER: <icu::experimental::dimension::provider::units::UnitsDisplayNameV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::experimental::dimension::provider::units::UnitsDisplayNameV1 {
+                    long: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} km") })
+                    },
+                    short: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} km") })
+                    },
+                    narrow: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} km") })
+                    },
+                };
+                static UND_X_LIGHT_YEAR: <icu::experimental::dimension::provider::units::UnitsDisplayNameV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::experimental::dimension::provider::units::UnitsDisplayNameV1 {
+                    long: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} ly") })
+                    },
+                    short: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} ly") })
+                    },
+                    narrow: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} ly") })
+                    },
+                };
+                static UND_X_METER: <icu::experimental::dimension::provider::units::UnitsDisplayNameV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::experimental::dimension::provider::units::UnitsDisplayNameV1 {
+                    long: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} m") })
+                    },
+                    short: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} m") })
+                    },
+                    narrow: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} m") })
+                    },
+                };
+                static UND_X_MILE: <icu::experimental::dimension::provider::units::UnitsDisplayNameV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::experimental::dimension::provider::units::UnitsDisplayNameV1 {
+                    long: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} mi") })
+                    },
+                    short: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} mi") })
+                    },
+                    narrow: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} mi") })
+                    },
+                };
+                static UND_X_MINUTE: <icu::experimental::dimension::provider::units::UnitsDisplayNameV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::experimental::dimension::provider::units::UnitsDisplayNameV1 {
+                    long: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} min") })
+                    },
+                    short: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} min") })
+                    },
+                    narrow: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} min") })
+                    },
+                };
+                static UND_X_MILLIMETER: <icu::experimental::dimension::provider::units::UnitsDisplayNameV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::experimental::dimension::provider::units::UnitsDisplayNameV1 {
+                    long: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} mm") })
+                    },
+                    short: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} mm") })
+                    },
+                    narrow: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} mm") })
+                    },
+                };
+                static UND_X_MILLISECOND: <icu::experimental::dimension::provider::units::UnitsDisplayNameV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::experimental::dimension::provider::units::UnitsDisplayNameV1 {
+                    long: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} ms") })
+                    },
+                    short: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} ms") })
+                    },
+                    narrow: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} ms") })
+                    },
+                };
+                static UND_X_NANOMETER: <icu::experimental::dimension::provider::units::UnitsDisplayNameV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::experimental::dimension::provider::units::UnitsDisplayNameV1 {
+                    long: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} nm") })
+                    },
+                    short: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} nm") })
+                    },
+                    narrow: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} nm") })
+                    },
+                };
+                static UND_X_NAUTICAL_MILE: <icu::experimental::dimension::provider::units::UnitsDisplayNameV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::experimental::dimension::provider::units::UnitsDisplayNameV1 {
+                    long: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} nmi") })
+                    },
+                    short: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} nmi") })
+                    },
+                    narrow: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} nmi") })
+                    },
+                };
+                static UND_X_NANOSECOND: <icu::experimental::dimension::provider::units::UnitsDisplayNameV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::experimental::dimension::provider::units::UnitsDisplayNameV1 {
+                    long: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} ns") })
+                    },
+                    short: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} ns") })
+                    },
+                    narrow: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} ns") })
+                    },
+                };
+                static UND_X_PARSEC: <icu::experimental::dimension::provider::units::UnitsDisplayNameV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::experimental::dimension::provider::units::UnitsDisplayNameV1 {
+                    long: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} pc") })
+                    },
+                    short: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} pc") })
+                    },
+                    narrow: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} pc") })
+                    },
+                };
+                static UND_X_PICOMETER: <icu::experimental::dimension::provider::units::UnitsDisplayNameV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::experimental::dimension::provider::units::UnitsDisplayNameV1 {
+                    long: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} pm") })
+                    },
+                    short: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} pm") })
+                    },
+                    narrow: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} pm") })
+                    },
+                };
+                static UND_X_POINT: <icu::experimental::dimension::provider::units::UnitsDisplayNameV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::experimental::dimension::provider::units::UnitsDisplayNameV1 {
+                    long: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} pt") })
+                    },
+                    short: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} pt") })
+                    },
+                    narrow: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} pt") })
+                    },
+                };
+                static UND_X_QUARTER: <icu::experimental::dimension::provider::units::UnitsDisplayNameV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::experimental::dimension::provider::units::UnitsDisplayNameV1 {
+                    long: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} q") })
+                    },
+                    short: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} q") })
+                    },
+                    narrow: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} q") })
+                    },
+                };
+                static UND_X_SECOND: <icu::experimental::dimension::provider::units::UnitsDisplayNameV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::experimental::dimension::provider::units::UnitsDisplayNameV1 {
+                    long: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} s") })
+                    },
+                    short: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} s") })
+                    },
+                    narrow: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} s") })
+                    },
+                };
+                static UND_X_MILE_SCANDINAVIAN: <icu::experimental::dimension::provider::units::UnitsDisplayNameV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::experimental::dimension::provider::units::UnitsDisplayNameV1 {
+                    long: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} smi") })
+                    },
+                    short: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} smi") })
+                    },
+                    narrow: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} smi") })
+                    },
+                };
+                static UND_X_WEEK: <icu::experimental::dimension::provider::units::UnitsDisplayNameV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::experimental::dimension::provider::units::UnitsDisplayNameV1 {
+                    long: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} w") })
+                    },
+                    short: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} w") })
+                    },
+                    narrow: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} w") })
+                    },
+                };
+                static UND_X_YEAR: <icu::experimental::dimension::provider::units::UnitsDisplayNameV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::experimental::dimension::provider::units::UnitsDisplayNameV1 {
+                    long: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} y") })
+                    },
+                    short: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} y") })
+                    },
+                    narrow: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} y") })
+                    },
+                };
+                static UND_X_YARD: <icu::experimental::dimension::provider::units::UnitsDisplayNameV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::experimental::dimension::provider::units::UnitsDisplayNameV1 {
+                    long: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} yd") })
+                    },
+                    short: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} yd") })
+                    },
+                    narrow: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} yd") })
+                    },
+                };
+                static VALUES: [&<icu::experimental::dimension::provider::units::UnitsDisplayNameV1Marker as icu_provider::DynamicDataMarker>::Yokeable; 35usize] = [&UND_X_ASTRONOMICAL_UNIT, &UND_X_CENTIMETER, &UND_X_CENTURY, &UND_X_DAY, &UND_X_DECADE, &UND_X_DECIMETER, &UND_X_EARTH_RADIUS, &UND_X_FATHOM, &UND_X_FOOT, &UND_X_FURLONG, &UND_X_HOUR, &UND_X_INCH, &UND_X_KILOMETER, &UND_X_LIGHT_YEAR, &UND_X_METER, &UND_X_MICROMETER, &UND_X_MICROSECOND, &UND_X_MILE, &UND_X_MILE_SCANDINAVIAN, &UND_X_MILLIMETER, &UND_X_MILLISECOND, &UND_X_MINUTE, &UND_X_METER, &UND_X_NANOMETER, &UND_X_NANOSECOND, &UND_X_NAUTICAL_MILE, &UND_X_PARSEC, &UND_X_PICOMETER, &UND_X_POINT, &UND_X_QUARTER, &UND_X_SECOND, &UND_X_SOLAR_RADIUS, &UND_X_WEEK, &UND_X_YARD, &UND_X_YEAR];
+                static KEYS: [&str; 35usize] = ["und-x-astronomical-unit", "und-x-centimeter", "und-x-century", "und-x-day", "und-x-decade", "und-x-decimeter", "und-x-earth-radius", "und-x-fathom", "und-x-foot", "und-x-furlong", "und-x-hour", "und-x-inch", "und-x-kilometer", "und-x-light-year", "und-x-meter", "und-x-micrometer", "und-x-microsecond", "und-x-mile", "und-x-mile-scandinavian", "und-x-millimeter", "und-x-millisecond", "und-x-minute", "und-x-month", "und-x-nanometer", "und-x-nanosecond", "und-x-nautical-mile", "und-x-parsec", "und-x-picometer", "und-x-point", "und-x-quarter", "und-x-second", "und-x-solar-radius", "und-x-week", "und-x-yard", "und-x-year"];
+                if let Ok(payload) = KEYS.binary_search_by(|k| req.legacy_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
                     Ok(icu_provider::DataResponse { payload: Some(icu_provider::DataPayload::from_static_ref(payload)), metadata: Default::default() })
                 } else {
-                    Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::experimental::dimension::provider::units::UnitsDisplayNameV1Marker as icu_provider::KeyedDataMarker>::KEY, req))
+                    Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::experimental::dimension::provider::units::UnitsDisplayNameV1Marker as icu_provider::DataMarker>::KEY, req))
                 }
             }
         }
@@ -43,10 +505,10 @@ macro_rules! __impl_units_displaynames_v1 {
 #[macro_export]
 macro_rules! __impliterable_units_displaynames_v1 {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.67"]
+        #[clippy::msrv = "1.70"]
         impl icu_provider::datagen::IterableDataProvider<icu::experimental::dimension::provider::units::UnitsDisplayNameV1Marker> for $provider {
-            fn supported_locales(&self) -> Result<alloc::vec::Vec<icu_provider::DataLocale>, icu_provider::DataError> {
-                Ok(["und-x-accelera", "und-x-angle", "und-x-area", "und-x-concentr", "und-x-consumpt", "und-x-coordina", "und-x-digital", "und-x-duration", "und-x-electric", "und-x-energy", "und-x-force", "und-x-frequenc", "und-x-graphics", "und-x-length", "und-x-light", "und-x-mass", "und-x-pressure", "und-x-speed", "und-x-temperat", "und-x-torque", "und-x-volume"].into_iter().map(|s| <icu_provider::DataLocale as core::str::FromStr>::from_str(s).unwrap()).collect())
+            fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataKeyAttributes)>, icu_provider::DataError> {
+                Ok(["und-x-astronomical-unit", "und-x-centimeter", "und-x-century", "und-x-day", "und-x-decade", "und-x-decimeter", "und-x-earth-radius", "und-x-fathom", "und-x-foot", "und-x-furlong", "und-x-hour", "und-x-inch", "und-x-kilometer", "und-x-light-year", "und-x-meter", "und-x-micrometer", "und-x-microsecond", "und-x-mile", "und-x-mile-scandinavian", "und-x-millimeter", "und-x-millisecond", "und-x-minute", "und-x-month", "und-x-nanometer", "und-x-nanosecond", "und-x-nautical-mile", "und-x-parsec", "und-x-picometer", "und-x-point", "und-x-quarter", "und-x-second", "und-x-solar-radius", "und-x-week", "und-x-yard", "und-x-year"].into_iter().filter_map(icu_provider::DataRequest::legacy_decode).collect())
             }
         }
     };

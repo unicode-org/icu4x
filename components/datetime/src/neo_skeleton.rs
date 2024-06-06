@@ -22,16 +22,16 @@ use tinystr::TinyAsciiStr;
 pub trait NeoSkeletonCommonData {
     /// Marker for loading weekday names.
     /// Can be [`NeverMarker`] if not needed for this skeleton.
-    type WeekdayNamesV1Marker: KeyedDataMarker<Yokeable = LinearNamesV1<'static>>;
+    type WeekdayNamesV1Marker: DataMarker<Yokeable = LinearNamesV1<'static>>;
     /// Marker for loading day period names.
     /// Can be [`NeverMarker`] if not needed for this skeleton.
-    type DayPeriodNamesV1Marker: KeyedDataMarker<Yokeable = LinearNamesV1<'static>>;
+    type DayPeriodNamesV1Marker: DataMarker<Yokeable = LinearNamesV1<'static>>;
     /// Marker for loading time skeleton patterns.
     /// Can be [`NeverMarker`] if not needed for this skeleton.
-    type TimeSkeletonPatternsV1Marker: KeyedDataMarker<Yokeable = PackedSkeletonDataV1<'static>>;
+    type TimeSkeletonPatternsV1Marker: DataMarker<Yokeable = PackedSkeletonDataV1<'static>>;
     /// Marker for loading the date/time glue pattern.
     /// Can be [`NeverMarker`] if not needed for this skeleton.
-    type DateTimePatternV1Marker: KeyedDataMarker<Yokeable = DateTimePatternV1<'static>>;
+    type DateTimePatternV1Marker: DataMarker<Yokeable = DateTimePatternV1<'static>>;
 }
 
 /// Sealed trait implemented by neo skeleton marker types.
@@ -41,13 +41,13 @@ where
 {
     /// Marker for loading year names.
     /// Can be [`NeverMarker`] if not needed for this skeleton.
-    type YearNamesV1Marker: KeyedDataMarker<Yokeable = YearNamesV1<'static>>;
+    type YearNamesV1Marker: DataMarker<Yokeable = YearNamesV1<'static>>;
     /// Marker for loading month names.
     /// Can be [`NeverMarker`] if not needed for this skeleton.
-    type MonthNamesV1Marker: KeyedDataMarker<Yokeable = MonthNamesV1<'static>>;
+    type MonthNamesV1Marker: DataMarker<Yokeable = MonthNamesV1<'static>>;
     /// Marker for loading date skeleton patterns.
     /// Can be [`NeverMarker`] if not needed for this skeleton.
-    type DateSkeletonPatternsV1Marker: KeyedDataMarker<Yokeable = PackedSkeletonDataV1<'static>>;
+    type DateSkeletonPatternsV1Marker: DataMarker<Yokeable = PackedSkeletonDataV1<'static>>;
 }
 
 /// Sealed trait implemented by neo skeleton marker types.
@@ -743,6 +743,17 @@ impl NeoTimeComponents {
         }
     }
 
+    /// Converts a [`length::Time`] to its nearest [`NeoTimeComponents`].
+    #[doc(hidden)] // the types involved in this mapping may change
+    pub fn from_time_length(time_length: length::Time) -> Self {
+        match time_length {
+            length::Time::Full => todo!(),
+            length::Time::Long => todo!(),
+            length::Time::Medium => NeoTimeComponents::HourMinuteSecond,
+            length::Time::Short => NeoTimeComponents::HourMinute,
+        }
+    }
+
     fn to_components_bag_with_length(self, length: NeoSkeletonLength) -> DateTimeFormatterOptions {
         match self {
             Self::Hour => DateTimeFormatterOptions::Components(components::Bag {
@@ -799,6 +810,18 @@ pub enum NeoComponents {
     Time(NeoTimeComponents),
     /// Components for parts of a date and time together.
     DateTime(NeoDayComponents, NeoTimeComponents),
+}
+
+impl From<NeoDateComponents> for NeoComponents {
+    fn from(value: NeoDateComponents) -> Self {
+        Self::Date(value)
+    }
+}
+
+impl From<NeoTimeComponents> for NeoComponents {
+    fn from(value: NeoTimeComponents) -> Self {
+        Self::Time(value)
+    }
 }
 
 /// Specification of the time zone display style
@@ -858,6 +881,29 @@ impl NeoDateSkeleton {
         components: NeoDateComponents,
     ) -> Self {
         Self { length, components }
+    }
+
+    /// Converts a [`length::Date`] to a [`NeoDayComponents`] and [`NeoSkeletonLength`].
+    #[doc(hidden)] // the types involved in this mapping may change
+    pub fn day_from_date_length(
+        date_length: length::Date,
+    ) -> (NeoDayComponents, NeoSkeletonLength) {
+        match date_length {
+            length::Date::Full => (NeoDayComponents::AutoWeekday, NeoSkeletonLength::Long),
+            length::Date::Long => (NeoDayComponents::Auto, NeoSkeletonLength::Long),
+            length::Date::Medium => (NeoDayComponents::Auto, NeoSkeletonLength::Medium),
+            length::Date::Short => (NeoDayComponents::Auto, NeoSkeletonLength::Short),
+        }
+    }
+
+    /// Converts a [`length::Date`] to a [`NeoDateSkeleton`].
+    #[doc(hidden)] // the types involved in this mapping may change
+    pub fn from_date_length(date_length: length::Date) -> Self {
+        let (day_components, length) = Self::day_from_date_length(date_length);
+        NeoDateSkeleton {
+            length,
+            components: NeoDateComponents::Day(day_components),
+        }
     }
 
     /// Converts this [`NeoDateSkeleton`] to a [`components::Bag`].
@@ -951,6 +997,22 @@ impl From<NeoDateTimeSkeleton> for NeoSkeleton {
         NeoSkeleton {
             length: value.length,
             components: NeoComponents::DateTime(value.date, value.time),
+            time_zone: None,
+        }
+    }
+}
+
+impl NeoSkeleton {
+    #[doc(hidden)] // mostly internal; maps from old API to new API
+    pub fn from_date_time_length(
+        date_length: crate::options::length::Date,
+        time_length: crate::options::length::Time,
+    ) -> Self {
+        let (day_components, length) = NeoDateSkeleton::day_from_date_length(date_length);
+        let time_components = NeoTimeComponents::from_time_length(time_length);
+        NeoSkeleton {
+            length,
+            components: NeoComponents::DateTime(day_components, time_components),
             time_zone: None,
         }
     }

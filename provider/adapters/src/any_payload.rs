@@ -57,7 +57,7 @@ pub struct AnyPayloadProvider {
 
 impl AnyPayloadProvider {
     /// Creates an `AnyPayloadProvider` with an owned (allocated) payload of the given data.
-    pub fn from_owned<M: KeyedDataMarker>(data: M::Yokeable) -> Self
+    pub fn from_owned<M: DataMarker>(data: M::Yokeable) -> Self
     where
         M::Yokeable: icu_provider::MaybeSendSync,
     {
@@ -65,7 +65,7 @@ impl AnyPayloadProvider {
     }
 
     /// Creates an `AnyPayloadProvider` with a statically borrowed payload of the given data.
-    pub fn from_static<M: KeyedDataMarker>(data: &'static M::Yokeable) -> Self {
+    pub fn from_static<M: DataMarker>(data: &'static M::Yokeable) -> Self {
         AnyPayloadProvider {
             key: M::KEY,
             data: AnyPayload::from_static_ref(data),
@@ -73,7 +73,7 @@ impl AnyPayloadProvider {
     }
 
     /// Creates an `AnyPayloadProvider` from an existing [`DataPayload`].
-    pub fn from_payload<M: KeyedDataMarker>(payload: DataPayload<M>) -> Self
+    pub fn from_payload<M: DataMarker>(payload: DataPayload<M>) -> Self
     where
         M::Yokeable: icu_provider::MaybeSendSync,
     {
@@ -84,7 +84,7 @@ impl AnyPayloadProvider {
     }
 
     /// Creates an `AnyPayloadProvider` from an existing [`AnyPayload`].
-    pub fn from_any_payload<M: KeyedDataMarker>(payload: AnyPayload) -> Self {
+    pub fn from_any_payload<M: DataMarker>(payload: AnyPayload) -> Self {
         AnyPayloadProvider {
             key: M::KEY,
             data: payload,
@@ -92,7 +92,7 @@ impl AnyPayloadProvider {
     }
 
     /// Creates an `AnyPayloadProvider` with the default (allocated) version of the data struct.
-    pub fn new_default<M: KeyedDataMarker>() -> Self
+    pub fn new_default<M: DataMarker>() -> Self
     where
         M::Yokeable: Default,
         M::Yokeable: icu_provider::MaybeSendSync,
@@ -113,7 +113,7 @@ impl AnyProvider for AnyPayloadProvider {
 
 impl<M> DataProvider<M> for AnyPayloadProvider
 where
-    M: KeyedDataMarker,
+    M: DataMarker,
     for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
     M::Yokeable: ZeroFrom<'static, M::Yokeable>,
     M::Yokeable: icu_provider::MaybeSendSync,

@@ -9,10 +9,8 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use alloc::borrow::Cow;
 use icu_provider::prelude::*;
-use tinystr::UnvalidatedTinyAsciiStr;
-use zerovec::{VarZeroVec, ZeroMap2d};
+use zerovec::ZeroMap;
 
 // TODO: implement the units provider
 // thoughts:
@@ -37,19 +35,19 @@ pub struct UnitsDisplayNameV1<'data> {
     // TODO: use `MeasureUnit` for the units key instead of strings.
     /// Contains the long width patterns for the units.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub long_width: ZeroMap2d<'data, str, Count, str>,
+    pub long: ZeroMap<'data, Count, str>,
 
     // TODO: store the pattern in a SinglePattern.
     // TODO: use `MeasureUnit` for the units key instead of strings.
     /// Contains the short width patterns for the units.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub short_width: ZeroMap2d<'data, str, Count, str>,
+    pub short: ZeroMap<'data, Count, str>,
 
     // TODO: store the pattern in a SinglePattern.
     // TODO: use `MeasureUnit` for the units key instead of strings.
     /// Contains the narrow width patterns for the units.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub narrow_width: ZeroMap2d<'data, str, Count, str>,
+    pub narrow: ZeroMap<'data, Count, str>,
 }
 
 // TODO: revise this.

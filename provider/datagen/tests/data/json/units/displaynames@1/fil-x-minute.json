@@ -1,0 +1,14 @@
+{
+  "long": {
+    "One": "{0} minuto",
+    "Other": "{0} na minuto"
+  },
+  "short": {
+    "One": "{0} min.",
+    "Other": "{0} min."
+  },
+  "narrow": {
+    "One": "{0}m",
+    "Other": "{0}m"
+  }
+}

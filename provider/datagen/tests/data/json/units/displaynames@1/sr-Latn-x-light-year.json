@@ -1,0 +1,17 @@
+{
+  "long": {
+    "One": "{0} svetlosna godina",
+    "Few": "{0} svetlosne godine",
+    "Other": "{0} svetlosnih godina"
+  },
+  "short": {
+    "One": "{0} sg",
+    "Few": "{0} sg",
+    "Other": "{0} sg"
+  },
+  "narrow": {
+    "One": "{0} ly",
+    "Few": "{0} ly",
+    "Other": "{0} ly"
+  }
+}

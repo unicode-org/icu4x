@@ -61,12 +61,12 @@ This will replace the data that's bundled in `ICU4X` by your own. It should resu
 Replacing `ICU4X`'s bundled data by your own can be useful if you don't require the full set of locales that would otherwise be bundled, but still requires including data at compile time, which is limiting. For more flexible data management, `ICU4X` provides a trait called `DataProvider` which can be used to provide data to `ICU4X` APIs. It also provides several implementations of `DataProvider`s, which all have their own use cases. Users are also free to design their own providers that best fit into their ecosystem requirements.
 
 ```rust,ignore
-trait DataProvider<M: KeyedDataMarker> {
+trait DataProvider<M: DataMarker> {
     fn load(&self, req: DataRequest) -> Result<DataResponse, DataError>;
 }
 ```
 
-As you can see, the `DataProvider` trait is fairly simple. It's generic in a `KeyedDataMarker`, which (statically) marks the type of data that an implementation returns, and there's a single method that loads the data for a given `DataRequest` (which contains the locale).
+As you can see, the `DataProvider` trait is fairly simple. It's generic in a `DataMarker`, which (statically) marks the type of data that an implementation returns, and there's a single method that loads the data for a given `DataRequest` (which contains the locale).
 
 ## `BufferProvider` and `AnyProvider`
 
