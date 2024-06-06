@@ -2,14 +2,15 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! 🚧 \[Experimental\] This module is experimental and currently crate-private. Let us know if you
-//! have a use case for this!
-//!
 //! This module contains utilities for working with properties where the specific property in use
 //! is not known at compile time.
 //!
-//! For regex engines, [`crate::sets::load_for_ecma262_unstable()`] is a convenient API for working
+//! For regex engines, [`UnicodeProperty::load()`] is a convenient API for working
 //! with properties at runtime tailored for the use case of ECMA262-compatible regex engines.
+
+use crate::provider::*;
+use crate::sets::{CodePointSetData, CodePointSetDataBorrowed};
+use icu_provider::prelude::*;
 
 #[cfg(doc)]
 use super::{maps, script, GeneralCategory, GeneralCategoryGroup, Script};
@@ -356,5 +357,230 @@ impl UnicodeProperty {
         };
 
         Some(prop)
+    }
+
+    /// Returns a type capable of looking up values for a property specified as a string, as long as it is a
+    /// [binary property listed in ECMA-262][ecma], using strict matching on the names in the spec.
+    ///
+    /// This handles every property required by ECMA-262 `/u` regular expressions, except for:
+    ///
+    /// - `Script` and `General_Category`: handle these directly with [`maps::load_general_category()`] and
+    ///    [`maps::load_script()`].
+    ///    using property values parsed via [`GeneralCategory::get_name_to_enum_mapper()`] and [`Script::get_name_to_enum_mapper()`]
+    ///    if necessary.
+    /// - `Script_Extensions`: handle this directly using APIs from [`crate::script`], like [`script::load_script_with_extensions_unstable()`]
+    /// - `General_Category` mask values: Handle this alongside `General_Category` using [`GeneralCategoryGroup`],
+    ///    using property values parsed via [`GeneralCategoryGroup::get_name_to_enum_mapper()`] if necessary
+    /// - `Assigned`, `All`, and `ASCII` pseudoproperties: Handle these using their equivalent sets:
+    ///    - `Any` can be expressed as the range `[\u{0}-\u{10FFFF}]`
+    ///    - `Assigned` can be expressed as the inverse of the set `gc=Cn` (i.e., `\P{gc=Cn}`).
+    ///    - `ASCII` can be expressed as the range `[\u{0}-\u{7F}]`
+    /// - `General_Category` property values can themselves be treated like properties using a shorthand in ECMA262,
+    ///    simply create the corresponding `GeneralCategory` set.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    ///
+    /// ```
+    /// use icu::properties::runtime::UnicodeProperty;
+    ///
+    /// let emoji = UnicodeProperty::parse_ecma262_name("Emoji").unwrap().load().expect("loading data failed");
+    ///
+    /// assert!(emoji.contains('🔥')); // U+1F525 FIRE
+    /// assert!(!emoji.contains('V'));
+    /// ```
+    ///
+    /// [ecma]: https://tc39.es/ecma262/#table-binary-unicode-properties
+    #[cfg(feature = "compiled_data")]
+    pub fn load(&self) -> Result<CodePointSetDataBorrowed<'static>, DataError> {
+        use crate::sets::*;
+        Ok(match *self {
+            UnicodeProperty::AsciiHexDigit => ascii_hex_digit(),
+            UnicodeProperty::Alphabetic => alphabetic(),
+            UnicodeProperty::BidiControl => bidi_control(),
+            UnicodeProperty::BidiMirrored => bidi_mirrored(),
+            UnicodeProperty::CaseIgnorable => case_ignorable(),
+            UnicodeProperty::Cased => cased(),
+            UnicodeProperty::ChangesWhenCasefolded => changes_when_casefolded(),
+            UnicodeProperty::ChangesWhenCasemapped => changes_when_casemapped(),
+            UnicodeProperty::ChangesWhenLowercased => changes_when_lowercased(),
+            UnicodeProperty::ChangesWhenNfkcCasefolded => changes_when_nfkc_casefolded(),
+            UnicodeProperty::ChangesWhenTitlecased => changes_when_titlecased(),
+            UnicodeProperty::ChangesWhenUppercased => changes_when_uppercased(),
+            UnicodeProperty::Dash => dash(),
+            UnicodeProperty::DefaultIgnorableCodePoint => default_ignorable_code_point(),
+            UnicodeProperty::Deprecated => deprecated(),
+            UnicodeProperty::Diacritic => diacritic(),
+            UnicodeProperty::Emoji => emoji(),
+            UnicodeProperty::EmojiComponent => emoji_component(),
+            UnicodeProperty::EmojiModifier => emoji_modifier(),
+            UnicodeProperty::EmojiModifierBase => emoji_modifier_base(),
+            UnicodeProperty::EmojiPresentation => emoji_presentation(),
+            UnicodeProperty::ExtendedPictographic => extended_pictographic(),
+            UnicodeProperty::Extender => extender(),
+            UnicodeProperty::GraphemeBase => grapheme_base(),
+            UnicodeProperty::GraphemeExtend => grapheme_extend(),
+            UnicodeProperty::HexDigit => hex_digit(),
+            UnicodeProperty::IdsBinaryOperator => ids_binary_operator(),
+            UnicodeProperty::IdsTrinaryOperator => ids_trinary_operator(),
+            UnicodeProperty::IdContinue => id_continue(),
+            UnicodeProperty::IdStart => id_start(),
+            UnicodeProperty::Ideographic => ideographic(),
+            UnicodeProperty::JoinControl => join_control(),
+            UnicodeProperty::LogicalOrderException => logical_order_exception(),
+            UnicodeProperty::Lowercase => lowercase(),
+            UnicodeProperty::Math => math(),
+            UnicodeProperty::NoncharacterCodePoint => noncharacter_code_point(),
+            UnicodeProperty::PatternSyntax => pattern_syntax(),
+            UnicodeProperty::PatternWhiteSpace => pattern_white_space(),
+            UnicodeProperty::QuotationMark => quotation_mark(),
+            UnicodeProperty::Radical => radical(),
+            UnicodeProperty::RegionalIndicator => regional_indicator(),
+            UnicodeProperty::SentenceTerminal => sentence_terminal(),
+            UnicodeProperty::SoftDotted => soft_dotted(),
+            UnicodeProperty::TerminalPunctuation => terminal_punctuation(),
+            UnicodeProperty::UnifiedIdeograph => unified_ideograph(),
+            UnicodeProperty::Uppercase => uppercase(),
+            UnicodeProperty::VariationSelector => variation_selector(),
+            UnicodeProperty::WhiteSpace => white_space(),
+            UnicodeProperty::XidContinue => xid_continue(),
+            UnicodeProperty::XidStart => xid_start(),
+            _ => return Err(DataError::custom("unsupported property")),
+        })
+    }
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY,load)]
+    pub fn load_with_any_provider(
+        &self,
+        provider: &(impl icu_provider::AnyProvider + ?Sized),
+    ) -> Result<CodePointSetData, DataError> {
+        use icu_provider::AsDowncastingAnyProvider;
+        self.load_unstable(&provider.as_downcasting())
+    }
+
+    #[cfg(feature = "serde")]
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER,load)]
+    pub fn load_with_buffer_provider(
+        &self,
+        provider: &(impl icu_provider::BufferProvider + ?Sized),
+    ) -> Result<CodePointSetData, DataError> {
+        use icu_provider::AsDeserializingBufferProvider;
+        self.load_unstable(&provider.as_deserializing())
+    }
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, load)]
+    pub fn load_unstable<P>(&self, provider: &P) -> Result<CodePointSetData, DataError>
+    where
+        P: ?Sized
+            + DataProvider<AsciiHexDigitV1Marker>
+            + DataProvider<AlphabeticV1Marker>
+            + DataProvider<BidiControlV1Marker>
+            + DataProvider<BidiMirroredV1Marker>
+            + DataProvider<CaseIgnorableV1Marker>
+            + DataProvider<CasedV1Marker>
+            + DataProvider<ChangesWhenCasefoldedV1Marker>
+            + DataProvider<ChangesWhenCasemappedV1Marker>
+            + DataProvider<ChangesWhenLowercasedV1Marker>
+            + DataProvider<ChangesWhenNfkcCasefoldedV1Marker>
+            + DataProvider<ChangesWhenTitlecasedV1Marker>
+            + DataProvider<ChangesWhenUppercasedV1Marker>
+            + DataProvider<DashV1Marker>
+            + DataProvider<DefaultIgnorableCodePointV1Marker>
+            + DataProvider<DeprecatedV1Marker>
+            + DataProvider<DiacriticV1Marker>
+            + DataProvider<EmojiV1Marker>
+            + DataProvider<EmojiComponentV1Marker>
+            + DataProvider<EmojiModifierV1Marker>
+            + DataProvider<EmojiModifierBaseV1Marker>
+            + DataProvider<EmojiPresentationV1Marker>
+            + DataProvider<ExtendedPictographicV1Marker>
+            + DataProvider<ExtenderV1Marker>
+            + DataProvider<GraphemeBaseV1Marker>
+            + DataProvider<GraphemeExtendV1Marker>
+            + DataProvider<HexDigitV1Marker>
+            + DataProvider<IdsBinaryOperatorV1Marker>
+            + DataProvider<IdsTrinaryOperatorV1Marker>
+            + DataProvider<IdContinueV1Marker>
+            + DataProvider<IdStartV1Marker>
+            + DataProvider<IdeographicV1Marker>
+            + DataProvider<JoinControlV1Marker>
+            + DataProvider<LogicalOrderExceptionV1Marker>
+            + DataProvider<LowercaseV1Marker>
+            + DataProvider<MathV1Marker>
+            + DataProvider<NoncharacterCodePointV1Marker>
+            + DataProvider<PatternSyntaxV1Marker>
+            + DataProvider<PatternWhiteSpaceV1Marker>
+            + DataProvider<QuotationMarkV1Marker>
+            + DataProvider<RadicalV1Marker>
+            + DataProvider<RegionalIndicatorV1Marker>
+            + DataProvider<SentenceTerminalV1Marker>
+            + DataProvider<SoftDottedV1Marker>
+            + DataProvider<TerminalPunctuationV1Marker>
+            + DataProvider<UnifiedIdeographV1Marker>
+            + DataProvider<UppercaseV1Marker>
+            + DataProvider<VariationSelectorV1Marker>
+            + DataProvider<WhiteSpaceV1Marker>
+            + DataProvider<XidContinueV1Marker>
+            + DataProvider<XidStartV1Marker>,
+    {
+        use crate::sets::*;
+        match *self {
+            UnicodeProperty::AsciiHexDigit => load_ascii_hex_digit(provider),
+            UnicodeProperty::Alphabetic => load_alphabetic(provider),
+            UnicodeProperty::BidiControl => load_bidi_control(provider),
+            UnicodeProperty::BidiMirrored => load_bidi_mirrored(provider),
+            UnicodeProperty::CaseIgnorable => load_case_ignorable(provider),
+            UnicodeProperty::Cased => load_cased(provider),
+            UnicodeProperty::ChangesWhenCasefolded => load_changes_when_casefolded(provider),
+            UnicodeProperty::ChangesWhenCasemapped => load_changes_when_casemapped(provider),
+            UnicodeProperty::ChangesWhenLowercased => load_changes_when_lowercased(provider),
+            UnicodeProperty::ChangesWhenNfkcCasefolded => {
+                load_changes_when_nfkc_casefolded(provider)
+            }
+            UnicodeProperty::ChangesWhenTitlecased => load_changes_when_titlecased(provider),
+            UnicodeProperty::ChangesWhenUppercased => load_changes_when_uppercased(provider),
+            UnicodeProperty::Dash => load_dash(provider),
+            UnicodeProperty::DefaultIgnorableCodePoint => {
+                load_default_ignorable_code_point(provider)
+            }
+            UnicodeProperty::Deprecated => load_deprecated(provider),
+            UnicodeProperty::Diacritic => load_diacritic(provider),
+            UnicodeProperty::Emoji => load_emoji(provider),
+            UnicodeProperty::EmojiComponent => load_emoji_component(provider),
+            UnicodeProperty::EmojiModifier => load_emoji_modifier(provider),
+            UnicodeProperty::EmojiModifierBase => load_emoji_modifier_base(provider),
+            UnicodeProperty::EmojiPresentation => load_emoji_presentation(provider),
+            UnicodeProperty::ExtendedPictographic => load_extended_pictographic(provider),
+            UnicodeProperty::Extender => load_extender(provider),
+            UnicodeProperty::GraphemeBase => load_grapheme_base(provider),
+            UnicodeProperty::GraphemeExtend => load_grapheme_extend(provider),
+            UnicodeProperty::HexDigit => load_hex_digit(provider),
+            UnicodeProperty::IdsBinaryOperator => load_ids_binary_operator(provider),
+            UnicodeProperty::IdsTrinaryOperator => load_ids_trinary_operator(provider),
+            UnicodeProperty::IdContinue => load_id_continue(provider),
+            UnicodeProperty::IdStart => load_id_start(provider),
+            UnicodeProperty::Ideographic => load_ideographic(provider),
+            UnicodeProperty::JoinControl => load_join_control(provider),
+            UnicodeProperty::LogicalOrderException => load_logical_order_exception(provider),
+            UnicodeProperty::Lowercase => load_lowercase(provider),
+            UnicodeProperty::Math => load_math(provider),
+            UnicodeProperty::NoncharacterCodePoint => load_noncharacter_code_point(provider),
+            UnicodeProperty::PatternSyntax => load_pattern_syntax(provider),
+            UnicodeProperty::PatternWhiteSpace => load_pattern_white_space(provider),
+            UnicodeProperty::QuotationMark => load_quotation_mark(provider),
+            UnicodeProperty::Radical => load_radical(provider),
+            UnicodeProperty::RegionalIndicator => load_regional_indicator(provider),
+            UnicodeProperty::SentenceTerminal => load_sentence_terminal(provider),
+            UnicodeProperty::SoftDotted => load_soft_dotted(provider),
+            UnicodeProperty::TerminalPunctuation => load_terminal_punctuation(provider),
+            UnicodeProperty::UnifiedIdeograph => load_unified_ideograph(provider),
+            UnicodeProperty::Uppercase => load_uppercase(provider),
+            UnicodeProperty::VariationSelector => load_variation_selector(provider),
+            UnicodeProperty::WhiteSpace => load_white_space(provider),
+            UnicodeProperty::XidContinue => load_xid_continue(provider),
+            UnicodeProperty::XidStart => load_xid_start(provider),
+            _ => Err(DataError::custom("Unknown property")),
+        }
     }
 }

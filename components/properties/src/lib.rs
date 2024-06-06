@@ -72,7 +72,6 @@ extern crate alloc;
 #[cfg(feature = "bidi")]
 pub mod bidi;
 
-mod error;
 pub mod maps;
 
 // NOTE: The Pernosco debugger has special knowledge
@@ -84,7 +83,7 @@ mod props;
 pub mod bidi_data;
 pub mod exemplar_chars;
 pub mod provider;
-pub(crate) mod runtime;
+pub mod runtime;
 #[allow(clippy::exhaustive_structs)] // TODO
 pub mod script;
 pub mod sets;
@@ -109,5 +108,3 @@ pub mod names {
     };
     pub use crate::props::{PropertyValueNameToEnumMapper, PropertyValueNameToEnumMapperBorrowed};
 }
-
-pub use error::*;

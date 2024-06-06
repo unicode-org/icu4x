@@ -17,10 +17,10 @@ use icu_collections::{
 use icu_properties::maps::{
     load_grapheme_cluster_break, load_script, load_sentence_break, load_word_break,
 };
+use icu_properties::runtime::UnicodeProperty;
 use icu_properties::script::load_script_with_extensions_unstable;
 use icu_properties::sets::{
-    load_for_ecma262_unstable, load_for_general_category_group, load_pattern_white_space,
-    load_xid_continue, load_xid_start,
+    load_for_general_category_group, load_pattern_white_space, load_xid_continue, load_xid_start,
 };
 use icu_properties::{provider::*, GeneralCategoryGroup};
 use icu_properties::{GraphemeClusterBreak, Script, SentenceBreak, WordBreak};
@@ -1365,9 +1365,12 @@ where
     }
 
     fn try_load_ecma262_binary_set(&mut self, name: &str) -> Result<()> {
-        let set = load_for_ecma262_unstable(self.property_provider, name)
-            .map_err(|_| PEK::UnknownProperty)?;
-        self.single_set.add_set(&set.to_code_point_inversion_list());
+        self.single_set.add_set(
+            UnicodeProperty::parse_ecma262_name(name)
+                .map_err(|_| PEK::UnknownProperty)?
+                .load(self.property_provider)
+                .map_err(|_| PEK::UnknownProperty)?,
+        );
         Ok(())
     }
 
