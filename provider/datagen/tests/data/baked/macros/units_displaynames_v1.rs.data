@@ -492,7 +492,7 @@ macro_rules! __impl_units_displaynames_v1 {
                 if let Ok(payload) = KEYS.binary_search_by(|k| req.legacy_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
                     Ok(icu_provider::DataResponse { payload: Some(icu_provider::DataPayload::from_static_ref(payload)), metadata: Default::default() })
                 } else {
-                    Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::experimental::dimension::provider::units::UnitsDisplayNameV1Marker as icu_provider::DataMarker>::KEY, req))
+                    Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::experimental::dimension::provider::units::UnitsDisplayNameV1Marker as icu_provider::DataMarker>::INFO, req))
                 }
             }
         }
@@ -500,14 +500,14 @@ macro_rules! __impl_units_displaynames_v1 {
 }
 /// Implement `IterableDataProvider<UnitsDisplayNameV1Marker>` on the given struct using the data
 /// hardcoded in this file. This allows the struct to be used with
-/// `DatagenDriver` for this key.
+/// `DatagenDriver` for this marker.
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __impliterable_units_displaynames_v1 {
     ($ provider : ty) => {
         #[clippy::msrv = "1.70"]
         impl icu_provider::datagen::IterableDataProvider<icu::experimental::dimension::provider::units::UnitsDisplayNameV1Marker> for $provider {
-            fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataKeyAttributes)>, icu_provider::DataError> {
+            fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataMarkerAttributes)>, icu_provider::DataError> {
                 Ok(["und-x-astronomical-unit", "und-x-centimeter", "und-x-century", "und-x-day", "und-x-decade", "und-x-decimeter", "und-x-earth-radius", "und-x-fathom", "und-x-foot", "und-x-furlong", "und-x-hour", "und-x-inch", "und-x-kilometer", "und-x-light-year", "und-x-meter", "und-x-micrometer", "und-x-microsecond", "und-x-mile", "und-x-mile-scandinavian", "und-x-millimeter", "und-x-millisecond", "und-x-minute", "und-x-month", "und-x-nanometer", "und-x-nanosecond", "und-x-nautical-mile", "und-x-parsec", "und-x-picometer", "und-x-point", "und-x-quarter", "und-x-second", "und-x-solar-radius", "und-x-week", "und-x-yard", "und-x-year"].into_iter().filter_map(icu_provider::DataRequest::legacy_decode).collect())
             }
         }

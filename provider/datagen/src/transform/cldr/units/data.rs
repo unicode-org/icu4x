@@ -13,7 +13,7 @@ use icu_experimental::dimension::provider::units::{
 };
 
 use icu_locale::LanguageIdentifier;
-use icu_provider::DataKeyAttributes;
+use icu_provider::DataMarkerAttributes;
 use icu_provider::{
     datagen::IterableDataProvider, DataError, DataLocale, DataPayload, DataProvider, DataRequest,
     DataResponse,
@@ -26,7 +26,7 @@ impl DataProvider<UnitsDisplayNameV1Marker> for DatagenProvider {
 
         // Get langid and the unit.
         let langid = req.locale.get_langid();
-        let unit = match req.key_attributes.parse::<String>() {
+        let unit = match req.marker_attributes.parse::<String>() {
             Ok(aux_keys) => aux_keys,
             Err(_) => return Err(DataError::custom("Failed to get aux keys")),
         };
@@ -95,11 +95,11 @@ impl DataProvider<UnitsDisplayNameV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProvider<UnitsDisplayNameV1Marker> for DatagenProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         fn make_request_element(
             langid: &LanguageIdentifier,
             unit: &str,
-        ) -> Result<(DataLocale, DataKeyAttributes), DataError> {
+        ) -> Result<(DataLocale, DataMarkerAttributes), DataError> {
             let data_locale = DataLocale::from(langid);
             let attribute = unit.parse().map_err(|_| {
                 DataError::custom("Failed to parse the attribute").with_debug_context(unit)
@@ -151,7 +151,7 @@ fn test_basic() {
     let us_locale: DataPayload<UnitsDisplayNameV1Marker> = provider
         .load(DataRequest {
             locale: &langid!("en").into(),
-            key_attributes: &"meter".parse().unwrap(),
+            marker_attributes: &"meter".parse().unwrap(),
             ..Default::default()
         })
         .unwrap()
@@ -169,7 +169,7 @@ fn test_basic() {
     let ar_eg_locale: DataPayload<UnitsDisplayNameV1Marker> = provider
         .load(DataRequest {
             locale: &langid!("ar-EG").into(),
-            key_attributes: &"meter".parse().unwrap(),
+            marker_attributes: &"meter".parse().unwrap(),
             ..Default::default()
         })
         .unwrap()
@@ -187,7 +187,7 @@ fn test_basic() {
     let fr_locale: DataPayload<UnitsDisplayNameV1Marker> = provider
         .load(DataRequest {
             locale: &langid!("fr").into(),
-            key_attributes: &"meter".parse().unwrap(),
+            marker_attributes: &"meter".parse().unwrap(),
             ..Default::default()
         })
         .unwrap()
