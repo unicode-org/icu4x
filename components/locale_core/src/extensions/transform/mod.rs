@@ -44,7 +44,7 @@ pub use value::Value;
 
 use super::ExtensionType;
 use crate::parser::SubtagIterator;
-use crate::parser::{parse_language_identifier_from_iter, ParserError, ParserMode};
+use crate::parser::{parse_language_identifier_from_iter, ParseError, ParserMode};
 use crate::shortvec::ShortBoxSlice;
 use crate::subtags::{self, Language};
 use crate::LanguageIdentifier;
@@ -122,15 +122,15 @@ impl Transform {
         self.lang.is_none() && self.fields.is_empty()
     }
 
-    pub(crate) fn try_from_bytes(t: &[u8]) -> Result<Self, ParserError> {
+    pub(crate) fn try_from_bytes(t: &[u8]) -> Result<Self, ParseError> {
         let mut iter = SubtagIterator::new(t);
 
-        let ext = iter.next().ok_or(ParserError::InvalidExtension)?;
+        let ext = iter.next().ok_or(ParseError::InvalidExtension)?;
         if let ExtensionType::Transform = ExtensionType::try_from_byte_slice(ext)? {
             return Self::try_from_iter(&mut iter);
         }
 
-        Err(ParserError::InvalidExtension)
+        Err(ParseError::InvalidExtension)
     }
 
     /// Clears the transform extension, effectively removing it from the locale.
@@ -174,7 +174,7 @@ impl Transform {
         self.as_tuple().cmp(&other.as_tuple())
     }
 
-    pub(crate) fn try_from_iter(iter: &mut SubtagIterator) -> Result<Self, ParserError> {
+    pub(crate) fn try_from_iter(iter: &mut SubtagIterator) -> Result<Self, ParseError> {
         let mut tlang = None;
         let mut tfields = LiteMap::new();
 
@@ -200,7 +200,7 @@ impl Transform {
                     }
                 } else {
                     if !has_current_tvalue {
-                        return Err(ParserError::InvalidExtension);
+                        return Err(ParseError::InvalidExtension);
                     }
                     tfields.try_insert(tkey, Value::from_short_slice_unchecked(current_tvalue));
                     current_tkey = None;
@@ -219,7 +219,7 @@ impl Transform {
 
         if let Some(tkey) = current_tkey {
             if !has_current_tvalue {
-                return Err(ParserError::InvalidExtension);
+                return Err(ParseError::InvalidExtension);
             }
             tfields.try_insert(tkey, Value::from_short_slice_unchecked(current_tvalue));
         }
@@ -248,7 +248,7 @@ impl Transform {
 }
 
 impl FromStr for Transform {
-    type Err = ParserError;
+    type Err = ParseError;
 
     fn from_str(source: &str) -> Result<Self, Self::Err> {
         Self::try_from_bytes(source.as_bytes())

@@ -4,7 +4,6 @@
 
 use crate::provider::{MetazoneId, TimeZoneBcp47Id};
 
-use crate::error::TimeZoneError;
 use crate::provider::MetazonePeriodV1Marker;
 use icu_calendar::DateTime;
 use icu_calendar::Iso;
@@ -42,7 +41,7 @@ impl MetazoneCalculator {
         }
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: TimeZoneError,
+    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: DataError,
         #[cfg(skip)]
         functions: [
             new,
@@ -56,7 +55,7 @@ impl MetazoneCalculator {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable(
         provider: &(impl DataProvider<MetazonePeriodV1Marker> + ?Sized),
-    ) -> Result<Self, TimeZoneError> {
+    ) -> Result<Self, DataError> {
         let metazone_period = provider.load(Default::default())?.take_payload()?;
         Ok(Self { metazone_period })
     }

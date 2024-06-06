@@ -102,7 +102,7 @@ pub mod ffi {
         pub fn create_from_string(s: &DiplomatStr) -> Result<Box<ICU4XPluralOperands>, ICU4XError> {
             Ok(Box::new(ICU4XPluralOperands(PluralOperands::from(
                 // XXX should this have its own errors?
-                &FixedDecimal::try_from(s).map_err(|_| ICU4XError::PluralsParserError)?,
+                &FixedDecimal::try_from(s).map_err(|_| ICU4XError::PluralsParseError)?,
             ))))
         }
 

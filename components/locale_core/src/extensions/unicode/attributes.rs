@@ -6,7 +6,7 @@ use super::Attribute;
 
 use crate::parser::SubtagIterator;
 use crate::shortvec::ShortBoxSlice;
-use crate::ParserError;
+use crate::ParseError;
 use alloc::vec::Vec;
 use core::ops::Deref;
 use core::str::FromStr;
@@ -75,7 +75,7 @@ impl Attributes {
         Self(input.into())
     }
 
-    pub(crate) fn try_from_bytes(t: &[u8]) -> Result<Self, ParserError> {
+    pub(crate) fn try_from_bytes(t: &[u8]) -> Result<Self, ParseError> {
         let mut iter = SubtagIterator::new(t);
         Self::try_from_iter(&mut iter)
     }
@@ -105,7 +105,7 @@ impl Attributes {
         core::mem::take(self)
     }
 
-    pub(crate) fn try_from_iter(iter: &mut SubtagIterator) -> Result<Self, ParserError> {
+    pub(crate) fn try_from_iter(iter: &mut SubtagIterator) -> Result<Self, ParseError> {
         let mut attributes = ShortBoxSlice::new();
 
         while let Some(subtag) = iter.peek() {
@@ -130,7 +130,7 @@ impl Attributes {
 }
 
 impl FromStr for Attributes {
-    type Err = ParserError;
+    type Err = ParseError;
 
     fn from_str(source: &str) -> Result<Self, Self::Err> {
         Self::try_from_bytes(source.as_bytes())
