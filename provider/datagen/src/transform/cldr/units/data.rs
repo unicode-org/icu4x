@@ -140,3 +140,65 @@ impl IterableDataProvider<UnitsDisplayNameV1Marker> for DatagenProvider {
         Ok(data_locales)
     }
 }
+
+#[test]
+fn test_basic() {
+    use icu_locale_core::langid;
+    use icu_provider::prelude::*;
+
+    let provider = DatagenProvider::new_testing();
+
+    let us_locale: DataPayload<UnitsDisplayNameV1Marker> = provider
+        .load(DataRequest {
+            locale: &langid!("en").into(),
+            key_attributes: &"meter".parse().unwrap(),
+            ..Default::default()
+        })
+        .unwrap()
+        .take_payload()
+        .unwrap();
+
+    let units_us = us_locale.get().to_owned();
+    let long = units_us.long.get(&Count::One).unwrap();
+    assert_eq!(long, "{0} meter");
+    let short = units_us.short.get(&Count::One).unwrap();
+    assert_eq!(short, "{0} m");
+    let narrow = units_us.narrow.get(&Count::One).unwrap();
+    assert_eq!(narrow, "{0}m");
+
+    let ar_eg_locale: DataPayload<UnitsDisplayNameV1Marker> = provider
+        .load(DataRequest {
+            locale: &langid!("ar-EG").into(),
+            key_attributes: &"meter".parse().unwrap(),
+            ..Default::default()
+        })
+        .unwrap()
+        .take_payload()
+        .unwrap();
+
+    let ar_eg_units = ar_eg_locale.get().to_owned();
+    let long = ar_eg_units.long.get(&Count::One).unwrap();
+    assert_eq!(long, "متر");
+    let short = ar_eg_units.short.get(&Count::One).unwrap();
+    assert_eq!(short, "متر");
+    let narrow = ar_eg_units.narrow.get(&Count::One).unwrap();
+    assert_eq!(narrow, "{0} م");
+
+    let fr_locale: DataPayload<UnitsDisplayNameV1Marker> = provider
+        .load(DataRequest {
+            locale: &langid!("fr").into(),
+            key_attributes: &"meter".parse().unwrap(),
+            ..Default::default()
+        })
+        .unwrap()
+        .take_payload()
+        .unwrap();
+
+    let fr_units = fr_locale.get().to_owned();
+    let long = fr_units.long.get(&Count::One).unwrap();
+    assert_eq!(long, "{0} mètre");
+    let short = fr_units.short.get(&Count::One).unwrap();
+    assert_eq!(short, "{0} m");
+    let narrow = fr_units.narrow.get(&Count::One).unwrap();
+    assert_eq!(narrow, "{0}m");
+}
