@@ -74,7 +74,7 @@ pub enum DataErrorKind {
     UnavailableBufferFormat(BufferFormat),
 
     /// The values for two [`DataKey`]s are not consistent.
-    InconsistentData(DataKey),
+    InconsistentData(DataMarkerInfo),
 }
 
 /// The error type for ICU4X data provider operations.

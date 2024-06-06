@@ -551,8 +551,10 @@ where
 
     fn validated(self) -> Result<Self, DataError> {
         if self.inner.as_ref().data.get().bcp47_ids_checksum != self.data.get().bcp47_ids_checksum {
-            return Err(DataErrorKind::InconsistentData(IanaToBcp47MapV2Marker::KEY)
-                .with_key(Bcp47ToIanaMapV1Marker::KEY));
+            return Err(
+                DataErrorKind::InconsistentData(IanaToBcp47MapV2Marker::INFO)
+                    .with_marker(Bcp47ToIanaMapV1Marker::INFO),
+            );
         }
         Ok(self)
     }
