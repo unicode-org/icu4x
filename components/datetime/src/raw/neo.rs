@@ -8,8 +8,7 @@ use crate::neo_skeleton::{
     NeoComponents, NeoDateComponents, NeoDateSkeleton, NeoDayComponents, NeoSkeletonLength,
     NeoTimeComponents, NeoTimeSkeleton,
 };
-use crate::options::length;
-use crate::pattern::runtime::{PatternBorrowed, PatternMetadata};
+use crate::pattern::runtime::PatternMetadata;
 use crate::pattern::{runtime, PatternItem};
 use crate::provider::neo::*;
 use icu_provider::prelude::*;
@@ -18,7 +17,6 @@ use zerovec::ZeroSlice;
 
 #[derive(Debug)]
 pub(crate) enum DatePatternSelectionData {
-    SingleDate(DataPayload<DatePatternV1Marker>),
     SkeletonDate {
         skeleton: NeoDateSkeleton,
         payload: DataPayload<SkeletaV1Marker>,
@@ -37,8 +35,6 @@ pub(crate) enum DatePatternDataBorrowed<'a> {
 
 #[derive(Debug)]
 pub(crate) enum TimePatternSelectionData {
-    SingleTime(DataPayload<TimePatternV1Marker>),
-    #[allow(dead_code)] // TODO
     SkeletonTime {
         skeleton: NeoTimeSkeleton,
         payload: DataPayload<SkeletaV1Marker>,
@@ -76,32 +72,6 @@ pub(crate) enum DateTimePatternDataBorrowed<'a> {
 }
 
 impl DatePatternSelectionData {
-    pub(crate) fn try_new_with_length(
-        provider: &(impl BoundDataProvider<DatePatternV1Marker> + ?Sized),
-        locale: &DataLocale,
-        length: length::Date,
-    ) -> Result<Self, DataError> {
-        let payload = provider
-            .load_bound(DataRequest {
-                locale,
-                marker_attributes: &DataMarkerAttributes::from_tinystr(
-                    marker_attrs::pattern_marker_attr_for(
-                        match length {
-                            length::Date::Full => marker_attrs::PatternLength::Full,
-                            length::Date::Long => marker_attrs::PatternLength::Long,
-                            length::Date::Medium => marker_attrs::PatternLength::Medium,
-                            length::Date::Short => marker_attrs::PatternLength::Short,
-                        },
-                        None, // no hour cycle for date patterns
-                    ),
-                ),
-                ..Default::default()
-            })?
-            .take_payload()?
-            .cast();
-        Ok(Self::SingleDate(payload))
-    }
-
     pub(crate) fn try_new_with_skeleton(
         provider: &(impl BoundDataProvider<SkeletaV1Marker> + ?Sized),
         locale: &DataLocale,
@@ -126,7 +96,6 @@ impl DatePatternSelectionData {
     #[inline]
     pub(crate) fn pattern_items_for_data_loading(&self) -> impl Iterator<Item = PatternItem> + '_ {
         let items: &ZeroSlice<PatternItem> = match self {
-            DatePatternSelectionData::SingleDate(payload) => &payload.get().pattern.items,
             DatePatternSelectionData::SkeletonDate { skeleton, payload } => {
                 payload.get().get_pattern(skeleton.length).items
             }
@@ -139,9 +108,6 @@ impl DatePatternSelectionData {
     /// Borrows a resolved pattern based on the given datetime
     pub(crate) fn select(&self, _datetime: &ExtractedDateTimeInput) -> DatePatternDataBorrowed {
         match self {
-            DatePatternSelectionData::SingleDate(payload) => {
-                DatePatternDataBorrowed::Resolved(payload.get().pattern.as_borrowed())
-            }
             DatePatternSelectionData::SkeletonDate { skeleton, payload } => {
                 DatePatternDataBorrowed::Resolved(payload.get().get_pattern(skeleton.length))
             }
@@ -150,50 +116,7 @@ impl DatePatternSelectionData {
     }
 }
 
-impl<'a> DatePatternDataBorrowed<'a> {
-    #[inline]
-    pub(crate) fn as_borrowed(self) -> PatternBorrowed<'a> {
-        match self {
-            Self::Resolved(pb) => pb,
-        }
-    }
-
-    #[inline]
-    pub(crate) fn to_pattern(self) -> DateTimePattern {
-        DateTimePattern::from_runtime_pattern(self.as_borrowed().as_pattern().into_owned())
-    }
-}
-
 impl TimePatternSelectionData {
-    pub(crate) fn try_new_with_length<P>(
-        provider: &P,
-        locale: &DataLocale,
-        length: length::Time,
-    ) -> Result<Self, DataError>
-    where
-        P: DataProvider<TimePatternV1Marker> + ?Sized,
-    {
-        let payload = provider
-            .load(DataRequest {
-                locale,
-                marker_attributes: &DataMarkerAttributes::from_tinystr(
-                    marker_attrs::pattern_marker_attr_for(
-                        match length {
-                            length::Time::Full => marker_attrs::PatternLength::Full,
-                            length::Time::Long => marker_attrs::PatternLength::Long,
-                            length::Time::Medium => marker_attrs::PatternLength::Medium,
-                            length::Time::Short => marker_attrs::PatternLength::Short,
-                        },
-                        None, // no hour cycle for date patterns
-                    ),
-                ),
-                ..Default::default()
-            })?
-            .take_payload()?
-            .cast();
-        Ok(Self::SingleTime(payload))
-    }
-
     pub(crate) fn try_new_with_skeleton(
         provider: &(impl BoundDataProvider<SkeletaV1Marker> + ?Sized),
         locale: &DataLocale,
@@ -218,7 +141,6 @@ impl TimePatternSelectionData {
     #[inline]
     pub(crate) fn pattern_items_for_data_loading(&self) -> impl Iterator<Item = PatternItem> + '_ {
         let items: &ZeroSlice<PatternItem> = match self {
-            TimePatternSelectionData::SingleTime(payload) => &payload.get().pattern.items,
             TimePatternSelectionData::SkeletonTime { skeleton, payload } => {
                 payload.get().get_pattern(skeleton.length).items
             }
@@ -229,9 +151,6 @@ impl TimePatternSelectionData {
     /// Borrows a resolved pattern based on the given datetime
     pub(crate) fn select(&self, _datetime: &ExtractedDateTimeInput) -> TimePatternDataBorrowed {
         match self {
-            TimePatternSelectionData::SingleTime(payload) => {
-                TimePatternDataBorrowed::Resolved(payload.get().pattern.as_borrowed())
-            }
             TimePatternSelectionData::SkeletonTime { skeleton, payload } => {
                 TimePatternDataBorrowed::Resolved(payload.get().get_pattern(skeleton.length))
             }
@@ -239,59 +158,7 @@ impl TimePatternSelectionData {
     }
 }
 
-impl<'a> TimePatternDataBorrowed<'a> {
-    #[inline]
-    pub(crate) fn as_borrowed(self) -> PatternBorrowed<'a> {
-        match self {
-            Self::Resolved(pb) => pb,
-        }
-    }
-
-    #[inline]
-    pub(crate) fn to_pattern(self) -> DateTimePattern {
-        DateTimePattern::from_runtime_pattern(self.as_borrowed().as_pattern().into_owned())
-    }
-}
-
 impl DateTimeGluePatternSelectionData {
-    pub(crate) fn try_new_with_lengths<P>(
-        date_pattern_provider: &(impl BoundDataProvider<DatePatternV1Marker> + ?Sized),
-        provider: &P,
-        locale: &DataLocale,
-        date_length: length::Date,
-        time_length: length::Time,
-    ) -> Result<Self, DataError>
-    where
-        P: DataProvider<TimePatternV1Marker> + DataProvider<DateTimePatternV1Marker> + ?Sized,
-    {
-        let date = DatePatternSelectionData::try_new_with_length(
-            date_pattern_provider,
-            locale,
-            date_length,
-        )?;
-        let time = TimePatternSelectionData::try_new_with_length(provider, locale, time_length)?;
-        let glue = provider
-            .load(DataRequest {
-                locale,
-                marker_attributes: &DataMarkerAttributes::from_tinystr(
-                    marker_attrs::pattern_marker_attr_for(
-                        // According to UTS 35, use the date length here: use the glue
-                        // pattern "whose type matches the type of the date pattern"
-                        match date_length {
-                            length::Date::Full => marker_attrs::PatternLength::Full,
-                            length::Date::Long => marker_attrs::PatternLength::Long,
-                            length::Date::Medium => marker_attrs::PatternLength::Medium,
-                            length::Date::Short => marker_attrs::PatternLength::Short,
-                        },
-                        None, // no hour cycle for date patterns
-                    ),
-                ),
-                ..Default::default()
-            })?
-            .take_payload()?;
-        Ok(Self { date, time, glue })
-    }
-
     pub(crate) fn try_new_with_skeleton(
         date_provider: &(impl BoundDataProvider<SkeletaV1Marker> + ?Sized),
         time_provider: &(impl BoundDataProvider<SkeletaV1Marker> + ?Sized),
@@ -332,14 +199,6 @@ impl DateTimeGluePatternSelectionData {
             })?
             .take_payload()?;
         Ok(Self { date, time, glue })
-    }
-
-    /// Returns an iterator over the pattern items that may need to be loaded.
-    #[inline]
-    pub(crate) fn pattern_items_for_data_loading(&self) -> impl Iterator<Item = PatternItem> + '_ {
-        let date_items = self.date.pattern_items_for_data_loading();
-        let time_items = self.time.pattern_items_for_data_loading();
-        date_items.chain(time_items)
     }
 }
 

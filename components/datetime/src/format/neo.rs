@@ -29,7 +29,7 @@ use icu_decimal::options::FixedDecimalFormatterOptions;
 use icu_decimal::options::GroupingStrategy;
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_decimal::FixedDecimalFormatter;
-use icu_provider::{prelude::*, NeverMarker};
+use icu_provider::prelude::*;
 use writeable::TryWriteable;
 use yoke::Yokeable;
 
@@ -105,32 +105,6 @@ where
                 None => OptionalNames::None,
             },
         }
-    }
-}
-
-/// Helper for type resolution with optional DataProvider arguments
-pub(crate) struct PhantomProvider;
-
-impl<M: DataMarker> DataProvider<M> for PhantomProvider {
-    #[inline]
-    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
-        debug_assert!(false);
-        Err(DataErrorKind::MissingDataMarker.with_req(M::INFO, req))
-    }
-}
-
-impl<M: DynamicDataMarker> BoundDataProvider<M> for PhantomProvider {
-    #[inline]
-    fn load_bound(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
-        debug_assert!(false);
-        let marker = BoundDataProvider::<M>::bound_marker(self);
-        Err(DataErrorKind::MissingDataMarker
-            .into_error()
-            .with_req(marker, req))
-    }
-    #[inline]
-    fn bound_marker(&self) -> DataMarkerInfo {
-        NeverMarker::<M::Yokeable>::INFO
     }
 }
 
