@@ -169,7 +169,9 @@ impl Collator {
 
         if let Some(reordering) = &reordering {
             if reordering.get().reorder_table.len() != 256 {
-                return Err(DataError::custom("invalid").with_key(CollationReorderingV1Marker::KEY));
+                return Err(
+                    DataError::custom("invalid").with_marker(CollationReorderingV1Marker::INFO)
+                );
             }
         }
 
@@ -192,15 +194,17 @@ impl Collator {
             // Vietnamese and Ewe load a full-length alternative table and the rest use
             // the default one.
             if diacritics.get().secondaries.len() > OPTIMIZED_DIACRITICS_MAX_COUNT {
-                return Err(DataError::custom("invalid").with_key(CollationDiacriticsV1Marker::KEY));
+                return Err(
+                    DataError::custom("invalid").with_marker(CollationDiacriticsV1Marker::INFO)
+                );
             }
         } else if diacritics.get().secondaries.len() != OPTIMIZED_DIACRITICS_MAX_COUNT {
-            return Err(DataError::custom("invalid").with_key(CollationDiacriticsV1Marker::KEY));
+            return Err(DataError::custom("invalid").with_marker(CollationDiacriticsV1Marker::INFO));
         }
 
         // TODO: redesign Korean search collation handling
         if jamo.get().ce32s.len() != JAMO_COUNT {
-            return Err(DataError::custom("invalid").with_key(CollationJamoV1Marker::KEY));
+            return Err(DataError::custom("invalid").with_marker(CollationJamoV1Marker::INFO));
         }
 
         let mut altered_defaults = CollatorOptionsBitField::new();
@@ -225,9 +229,8 @@ impl Collator {
             // `variant_count` isn't stable yet:
             // https://github.com/rust-lang/rust/issues/73662
             if special_primaries.get().last_primaries.len() <= (MaxVariable::Currency as usize) {
-                return Err(
-                    DataError::custom("invalid").with_key(CollationSpecialPrimariesV1Marker::KEY)
-                );
+                return Err(DataError::custom("invalid")
+                    .with_marker(CollationSpecialPrimariesV1Marker::INFO));
             }
             Some(special_primaries)
         } else {

@@ -1636,7 +1636,7 @@ impl DecomposingNormalizer {
             // of 0xFFF and the all-non-starters mask becomes 0 instead of 0x1000. However,
             // since for now the masks are hard-coded, error out.
             return Err(DataError::custom("future extension")
-                .with_key(CanonicalDecompositionTablesV1Marker::KEY));
+                .with_marker(CanonicalDecompositionTablesV1Marker::INFO));
         }
 
         Ok(DecomposingNormalizer {
@@ -1755,13 +1755,13 @@ impl DecomposingNormalizer {
             // of 0xFFF and the all-non-starters mask becomes 0 instead of 0x1000. However,
             // since for now the masks are hard-coded, error out.
             return Err(DataError::custom("future extension")
-                .with_key(CanonicalDecompositionTablesV1Marker::KEY));
+                .with_marker(CanonicalDecompositionTablesV1Marker::INFO));
         }
 
         let cap = supplementary_decompositions.get().passthrough_cap;
         if cap > 0x0300 {
             return Err(DataError::custom("invalid")
-                .with_key(CompatibilityDecompositionSupplementV1Marker::KEY));
+                .with_marker(CompatibilityDecompositionSupplementV1Marker::INFO));
         }
         let decomposition_capped = cap.min(0xC0);
         let composition_capped = cap.min(0x0300);
@@ -1883,14 +1883,13 @@ impl DecomposingNormalizer {
             // of 0xFFF and the all-non-starters mask becomes 0 instead of 0x1000. However,
             // since for now the masks are hard-coded, error out.
             return Err(DataError::custom("future extension")
-                .with_key(CanonicalDecompositionTablesV1Marker::KEY));
+                .with_marker(CanonicalDecompositionTablesV1Marker::INFO));
         }
 
         let cap = supplementary_decompositions.get().passthrough_cap;
         if cap > 0x0300 {
-            return Err(
-                DataError::custom("invalid").with_key(Uts46DecompositionSupplementV1Marker::KEY)
-            );
+            return Err(DataError::custom("invalid")
+                .with_marker(Uts46DecompositionSupplementV1Marker::INFO));
         }
         let decomposition_capped = cap.min(0xC0);
         let composition_capped = cap.min(0x0300);
