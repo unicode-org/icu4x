@@ -73,7 +73,7 @@ pub enum DataErrorKind {
     #[displaydoc("Unavailable buffer format: {0:?} (does icu_provider need to be compiled with an additional Cargo feature?)")]
     UnavailableBufferFormat(BufferFormat),
 
-    /// The values for two [`DataKey`]s are not consistent.
+    /// The values for two [`DataMarker`]s are not consistent.
     InconsistentData(DataMarkerInfo),
 }
 
