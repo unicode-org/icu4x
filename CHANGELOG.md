@@ -1,5 +1,10 @@
 # Changelog
 
+## icu4x 1.5.x
+
+- `icu_datetime`
+  - Fix incorrect assertion in week-of-year formatting (https://github.com/unicode-org/icu4x/issues/4977)
+
 ## icu4x 1.5 (May 28, 2024)
 
 - Components

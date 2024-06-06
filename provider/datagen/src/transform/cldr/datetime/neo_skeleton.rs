@@ -30,7 +30,7 @@ impl DatagenProvider {
         to_components_bag: impl Fn(NeoSkeletonLength, &C) -> DateTimeFormatterOptions,
     ) -> Result<DataResponse<M>, DataError>
     where
-        M: KeyedDataMarker<Yokeable = PackedSkeletonDataV1<'static>>,
+        M: DataMarker<Yokeable = PackedSkeletonDataV1<'static>>,
         Self: icu_provider::datagen::IterableDataProvider<M>,
     {
         self.check_req::<M>(req)?;

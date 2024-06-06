@@ -61,8 +61,8 @@ lazy_static::lazy_static! {
         "IsCovariant",
 
         // provider stuff not relevant to FFI
+        "DynamicDataMarker",
         "DataMarker",
-        "KeyedDataMarker",
         "AsDowncastingAnyProvider",
         "AsDeserializingBufferProvider",
         "AsDynamicDataProviderAnyMarkerWrap",

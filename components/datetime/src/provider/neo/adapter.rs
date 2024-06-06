@@ -25,8 +25,8 @@ fn month_symbols_map_project_cloned<M, P>(
     req: DataRequest,
 ) -> Result<DataResponse<P>, DataError>
 where
-    M: KeyedDataMarker<Yokeable = DateSymbolsV1<'static>>,
-    P: KeyedDataMarker<Yokeable = MonthNamesV1<'static>>,
+    M: DataMarker<Yokeable = DateSymbolsV1<'static>>,
+    P: DataMarker<Yokeable = MonthNamesV1<'static>>,
 {
     let attribute = req
         .key_attributes
@@ -66,8 +66,8 @@ fn weekday_symbols_map_project_cloned<M, P>(
     req: DataRequest,
 ) -> Result<DataResponse<P>, DataError>
 where
-    M: KeyedDataMarker<Yokeable = DateSymbolsV1<'static>>,
-    P: KeyedDataMarker<Yokeable = LinearNamesV1<'static>>,
+    M: DataMarker<Yokeable = DateSymbolsV1<'static>>,
+    P: DataMarker<Yokeable = LinearNamesV1<'static>>,
 {
     let attribute = req
         .key_attributes
@@ -117,8 +117,8 @@ fn era_symbols_map_project_cloned<M, P>(
     req: DataRequest,
 ) -> Result<DataResponse<P>, DataError>
 where
-    M: KeyedDataMarker<Yokeable = DateSymbolsV1<'static>>,
-    P: KeyedDataMarker<Yokeable = YearNamesV1<'static>>,
+    M: DataMarker<Yokeable = DateSymbolsV1<'static>>,
+    P: DataMarker<Yokeable = YearNamesV1<'static>>,
 {
     let attribute = req
         .key_attributes
@@ -149,8 +149,8 @@ fn dayperiod_symbols_map_project_cloned<M, P>(
     req: DataRequest,
 ) -> Result<DataResponse<P>, DataError>
 where
-    M: KeyedDataMarker<Yokeable = TimeSymbolsV1<'static>>,
-    P: KeyedDataMarker<Yokeable = LinearNamesV1<'static>>,
+    M: DataMarker<Yokeable = TimeSymbolsV1<'static>>,
+    P: DataMarker<Yokeable = LinearNamesV1<'static>>,
 {
     let attribute = req
         .key_attributes

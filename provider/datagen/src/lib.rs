@@ -130,7 +130,7 @@ pub mod prelude {
     #[doc(no_inline)]
     pub use icu_locale_core::{langid, LanguageIdentifier};
     #[doc(no_inline)]
-    pub use icu_provider::{datagen::DataExporter, DataKey, KeyedDataMarker};
+    pub use icu_provider::{datagen::DataExporter, DataKey, DataMarker};
 }
 
 use icu_provider::prelude::*;
@@ -194,7 +194,7 @@ macro_rules! cb {
         //  Supports the hello world key
         /// # Example
         /// ```
-        /// # use icu_provider::KeyedDataMarker;
+        /// # use icu_provider::DataMarker;
         /// assert_eq!(
         ///     icu_datagen::key("list/and@1"),
         ///     Some(icu_list::provider::AndListV1Marker::KEY),
@@ -274,7 +274,7 @@ crate::registry!(cb);
 //  Supports the hello world key
 /// # Example
 /// ```
-/// # use icu_provider::KeyedDataMarker;
+/// # use icu_provider::DataMarker;
 /// assert_eq!(
 ///     icu_datagen::keys(&["list/and@1", "list/or@1"]),
 ///     vec![
@@ -298,7 +298,7 @@ pub fn keys<S: AsRef<str>>(strings: &[S]) -> Vec<DataKey> {
 ///
 /// #### build.rs
 /// ```no_run
-/// # use icu_provider::KeyedDataMarker;
+/// # use icu_provider::DataMarker;
 /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
 /// assert_eq!(
 ///     icu_datagen::keys_from_bin("target/release/my-app")?,

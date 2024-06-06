@@ -68,7 +68,7 @@ where
 impl<D, F, M> DynamicDataProvider<M> for RequestFilterDataProvider<D, F>
 where
     F: Fn(DataRequest) -> bool,
-    M: DataMarker,
+    M: DynamicDataMarker,
     D: DynamicDataProvider<M>,
 {
     fn load_data(&self, key: DataKey, req: DataRequest) -> Result<DataResponse<M>, DataError> {
@@ -85,7 +85,7 @@ where
 impl<D, F, M> DataProvider<M> for RequestFilterDataProvider<D, F>
 where
     F: Fn(DataRequest) -> bool,
-    M: KeyedDataMarker,
+    M: DataMarker,
     D: DataProvider<M>,
 {
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
@@ -118,7 +118,7 @@ where
 #[cfg(feature = "datagen")]
 impl<M, D, F> datagen::IterableDynamicDataProvider<M> for RequestFilterDataProvider<D, F>
 where
-    M: DataMarker,
+    M: DynamicDataMarker,
     F: Fn(DataRequest) -> bool,
     D: datagen::IterableDynamicDataProvider<M>,
 {
@@ -144,7 +144,7 @@ where
 #[cfg(feature = "datagen")]
 impl<M, D, F> datagen::IterableDataProvider<M> for RequestFilterDataProvider<D, F>
 where
-    M: KeyedDataMarker,
+    M: DataMarker,
     F: Fn(DataRequest) -> bool,
     D: datagen::IterableDataProvider<M>,
 {
@@ -170,8 +170,8 @@ where
 impl<D, F, MFrom, MTo> datagen::DataConverter<MFrom, MTo> for RequestFilterDataProvider<D, F>
 where
     D: datagen::DataConverter<MFrom, MTo>,
-    MFrom: DataMarker,
-    MTo: DataMarker,
+    MFrom: DynamicDataMarker,
+    MTo: DynamicDataMarker,
     F: Fn(DataRequest) -> bool,
 {
     fn convert(
