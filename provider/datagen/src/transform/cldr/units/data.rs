@@ -36,33 +36,41 @@ impl DataProvider<UnitsDisplayNameV1Marker> for DatagenProvider {
             self.cldr()?.units().read_and_parse(&langid, "units.json")?;
         let units_format_data = &units_format_data.main.value.units;
 
-        fn add_unit_to_map(map: &mut ZeroMap<'_, Count, str>, count: &Count, unit: Option<&str>) {
+        fn add_unit_to_map_with_name(
+            map: &mut BTreeMap<Count, String>,
+            count: Count,
+            unit: Option<&str>,
+        ) {
             if let Some(unit) = unit {
-                map.insert(count, unit);
+                map.insert(count, unit.to_string());
             }
         }
 
-        fn add_correct_map(
-            length: &BTreeMap<String, Patterns>,
+        fn populate_unit_map(
+            unit_length_map: &BTreeMap<String, Patterns>,
             unit: &str,
-            map: &mut ZeroMap<'_, Count, str>,
+            map: &mut BTreeMap<Count, String>,
         ) -> Result<(), DataError> {
             let mut added = false;
-            for (key, value) in length.iter() {
+            for (key, value) in unit_length_map.iter() {
                 if let Some(key_prefix) = key.strip_suffix(unit) {
                     if let Some(key_prefix) = key_prefix.strip_prefix('-') {
                         if !key_prefix.contains('-') {
-                            add_unit_to_map(map, &Count::One, value.one.as_deref());
-                            add_unit_to_map(map, &Count::Two, value.two.as_deref());
-                            add_unit_to_map(map, &Count::Few, value.few.as_deref());
-                            add_unit_to_map(map, &Count::Many, value.many.as_deref());
-                            add_unit_to_map(map, &Count::Other, value.other.as_deref());
+                            add_unit_to_map_with_name(map, Count::One, value.one.as_deref());
+                            add_unit_to_map_with_name(map, Count::Two, value.two.as_deref());
+                            add_unit_to_map_with_name(map, Count::Few, value.few.as_deref());
+                            add_unit_to_map_with_name(map, Count::Many, value.many.as_deref());
+                            add_unit_to_map_with_name(map, Count::Other, value.other.as_deref());
 
                             added = match added {
-                                true => return Err(DataError::custom("More than one unit found for the given unit")
+                                true => {
+                                    return Err(DataError::custom(
+                                        "More than one unit found for the given unit",
+                                    )
                                     .with_debug_context(unit)
-                                    .with_debug_context(key)),
-                                false =>  true,
+                                    .with_debug_context(key))
+                                }
+                                false => true,
                             }
                         }
                     }
@@ -72,18 +80,18 @@ impl DataProvider<UnitsDisplayNameV1Marker> for DatagenProvider {
             Ok(())
         }
 
-        let mut long = ZeroMap::new();
-        let mut short = ZeroMap::new();
-        let mut narrow = ZeroMap::new();
+        let mut long = BTreeMap::new();
+        let mut short = BTreeMap::new();
+        let mut narrow = BTreeMap::new();
 
-        add_correct_map(&units_format_data.long, unit.as_str(), &mut long)?;
-        add_correct_map(&units_format_data.short, unit.as_str(), &mut short)?;
-        add_correct_map(&units_format_data.narrow, unit.as_str(), &mut narrow)?;
+        populate_unit_map(&units_format_data.long, unit.as_str(), &mut long)?;
+        populate_unit_map(&units_format_data.short, unit.as_str(), &mut short)?;
+        populate_unit_map(&units_format_data.narrow, unit.as_str(), &mut narrow)?;
 
         let result = UnitsDisplayNameV1 {
-            long,
-            short,
-            narrow,
+            long: ZeroMap::from_iter(long.iter().map(|(k, v)| (k, v.as_str()))),
+            short: ZeroMap::from_iter(short.iter().map(|(k, v)| (k, v.as_str()))),
+            narrow: ZeroMap::from_iter(narrow.iter().map(|(k, v)| (k, v.as_str()))),
         };
 
         Ok(DataResponse {
