@@ -5,7 +5,7 @@
 //! Options to define fallback behaviour.
 //!
 //! These options are consumed by the `LocaleFallbacker` in the `icu_locales` crate
-//! (or the `icu::locales` module), but are defined here because they are used by `DataKey`.
+//! (or the `icu::locales` module), but are defined here because they are used by `DataMarkerInfo`.
 
 use icu_locale_core::extensions::unicode::Key;
 

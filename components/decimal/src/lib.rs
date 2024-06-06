@@ -90,17 +90,12 @@
 
 extern crate alloc;
 
-mod error;
 mod format;
 mod grouper;
 pub mod options;
 pub mod provider;
 
-pub use error::DecimalError;
 pub use format::FormattedFixedDecimal;
-
-#[doc(no_inline)]
-pub use DecimalError as Error;
 
 use alloc::string::String;
 use fixed_decimal::FixedDecimal;
@@ -128,7 +123,7 @@ impl FixedDecimalFormatter {
     icu_provider::gen_any_buffer_data_constructors!(
         locale: include,
         options: options::FixedDecimalFormatterOptions,
-        error: DecimalError,
+        error: DataError,
         /// Creates a new [`FixedDecimalFormatter`] from compiled data and an options bag.
         ///
         /// ✨ *Enabled with the `compiled_data` Cargo feature.*
@@ -141,7 +136,7 @@ impl FixedDecimalFormatter {
         provider: &D,
         locale: &DataLocale,
         options: options::FixedDecimalFormatterOptions,
-    ) -> Result<Self, DecimalError> {
+    ) -> Result<Self, DataError> {
         let symbols = provider
             .load(DataRequest {
                 locale,

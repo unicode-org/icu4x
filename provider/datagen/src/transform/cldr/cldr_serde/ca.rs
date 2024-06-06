@@ -9,7 +9,7 @@
 //! Sample file:
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-dates-full/main/en/ca-gregorian.json>
 
-use icu_datetime::provider::neo::key_attrs::{Context, Length, PatternLength};
+use icu_datetime::provider::neo::marker_attrs::{Context, Length, PatternLength};
 use serde::Deserialize;
 use std::borrow::Cow;
 use std::collections::BTreeMap;

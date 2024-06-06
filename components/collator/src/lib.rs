@@ -277,14 +277,12 @@ pub mod docs;
 // name of that struct without coordination.
 mod elements;
 
-mod error;
 mod options;
 pub mod provider;
 
 extern crate alloc;
 
 pub use comparison::Collator;
-pub use error::CollatorError;
 pub use options::AlternateHandling;
 pub use options::BackwardSecondLevel;
 pub use options::CaseFirst;
@@ -294,6 +292,3 @@ pub use options::MaxVariable;
 pub use options::Numeric;
 pub use options::ResolvedCollatorOptions;
 pub use options::Strength;
-
-#[doc(no_inline)]
-pub use CollatorError as Error;

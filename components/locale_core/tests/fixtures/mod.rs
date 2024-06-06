@@ -9,7 +9,7 @@ use icu_locale_core::extensions::private;
 use icu_locale_core::extensions::transform;
 use icu_locale_core::extensions::unicode;
 use icu_locale_core::extensions::Extensions;
-use icu_locale_core::{subtags, LanguageIdentifier, Locale, ParserError};
+use icu_locale_core::{subtags, LanguageIdentifier, Locale, ParseError};
 use serde::Deserialize;
 
 #[derive(Debug, Deserialize, Clone)]
@@ -44,7 +44,7 @@ pub struct LocaleExtensions {
 }
 
 impl TryFrom<LocaleExtensions> for Extensions {
-    type Error = ParserError;
+    type Error = ParseError;
 
     fn try_from(input: LocaleExtensions) -> Result<Self, Self::Error> {
         let mut ext = Extensions::default();
@@ -135,7 +135,7 @@ pub enum LocaleInfo {
 }
 
 impl TryFrom<LocaleInfo> for LanguageIdentifier {
-    type Error = ParserError;
+    type Error = ParseError;
 
     fn try_from(input: LocaleInfo) -> Result<Self, Self::Error> {
         match input {
@@ -148,7 +148,7 @@ impl TryFrom<LocaleInfo> for LanguageIdentifier {
 }
 
 impl TryFrom<LocaleInfo> for Locale {
-    type Error = ParserError;
+    type Error = ParseError;
 
     fn try_from(input: LocaleInfo) -> Result<Self, Self::Error> {
         match input {
@@ -161,7 +161,7 @@ impl TryFrom<LocaleInfo> for Locale {
 }
 
 impl TryFrom<LocaleIdentifier> for LanguageIdentifier {
-    type Error = ParserError;
+    type Error = ParseError;
 
     fn try_from(input: LocaleIdentifier) -> Result<Self, Self::Error> {
         LanguageIdentifier::try_from_locale_bytes(input.identifier.as_bytes())
@@ -169,7 +169,7 @@ impl TryFrom<LocaleIdentifier> for LanguageIdentifier {
 }
 
 impl TryFrom<LocaleIdentifier> for Locale {
-    type Error = ParserError;
+    type Error = ParseError;
 
     fn try_from(input: LocaleIdentifier) -> Result<Self, Self::Error> {
         Locale::try_from_bytes(input.identifier.as_bytes())
@@ -177,7 +177,7 @@ impl TryFrom<LocaleIdentifier> for Locale {
 }
 
 impl TryFrom<LocaleSubtags> for LanguageIdentifier {
-    type Error = ParserError;
+    type Error = ParseError;
 
     fn try_from(subtags: LocaleSubtags) -> Result<Self, Self::Error> {
         let language = if let Some(lang) = subtags.language {
@@ -206,7 +206,7 @@ impl TryFrom<LocaleSubtags> for LanguageIdentifier {
 }
 
 impl TryFrom<LocaleSubtags> for Locale {
-    type Error = ParserError;
+    type Error = ParseError;
 
     fn try_from(subtags: LocaleSubtags) -> Result<Self, Self::Error> {
         let language = if let Some(lang) = subtags.language {
@@ -242,13 +242,13 @@ impl TryFrom<LocaleSubtags> for Locale {
     }
 }
 
-impl From<LocaleError> for ParserError {
+impl From<LocaleError> for ParseError {
     fn from(e: LocaleError) -> Self {
         match e.error.as_str() {
-            "InvalidLanguage" => ParserError::InvalidLanguage,
-            "InvalidSubtag" => ParserError::InvalidSubtag,
-            "InvalidExtension" => ParserError::InvalidExtension,
-            "DuplicatedExtension" => ParserError::DuplicatedExtension,
+            "InvalidLanguage" => ParseError::InvalidLanguage,
+            "InvalidSubtag" => ParseError::InvalidSubtag,
+            "InvalidExtension" => ParseError::InvalidExtension,
+            "DuplicatedExtension" => ParseError::DuplicatedExtension,
             _ => unreachable!("Unknown error name"),
         }
     }

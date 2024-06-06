@@ -27,7 +27,7 @@ macro_rules! __impl_datetime_patterns_datetime_v1 {
                 let payload = if let Ok(payload) = KEYS.binary_search_by(|k| req.legacy_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
                     payload
                 } else {
-                    const FALLBACKER: icu::locale::fallback::LocaleFallbackerWithConfig<'static> = icu::locale::fallback::LocaleFallbacker::new().for_config(<icu::datetime::provider::neo::DateTimePatternV1Marker as icu_provider::DataMarker>::KEY.fallback_config());
+                    const FALLBACKER: icu::locale::fallback::LocaleFallbackerWithConfig<'static> = icu::locale::fallback::LocaleFallbacker::new().for_config(<icu::datetime::provider::neo::DateTimePatternV1Marker as icu_provider::DataMarker>::INFO.fallback_config);
                     let mut fallback_iterator = FALLBACKER.fallback_for(req.locale.clone());
                     loop {
                         if let Ok(payload) = KEYS.binary_search_by(|k| icu_provider::DataRequest { locale: fallback_iterator.get(), ..req }.legacy_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
@@ -35,7 +35,7 @@ macro_rules! __impl_datetime_patterns_datetime_v1 {
                             break payload;
                         }
                         if fallback_iterator.get().is_und() {
-                            return Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::datetime::provider::neo::DateTimePatternV1Marker as icu_provider::DataMarker>::KEY, req));
+                            return Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::datetime::provider::neo::DateTimePatternV1Marker as icu_provider::DataMarker>::INFO, req));
                         }
                         fallback_iterator.step();
                     }
@@ -47,14 +47,14 @@ macro_rules! __impl_datetime_patterns_datetime_v1 {
 }
 /// Implement `IterableDataProvider<DateTimePatternV1Marker>` on the given struct using the data
 /// hardcoded in this file. This allows the struct to be used with
-/// `DatagenDriver` for this key.
+/// `DatagenDriver` for this marker.
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __impliterable_datetime_patterns_datetime_v1 {
     ($ provider : ty) => {
         #[clippy::msrv = "1.70"]
         impl icu_provider::datagen::IterableDataProvider<icu::datetime::provider::neo::DateTimePatternV1Marker> for $provider {
-            fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataKeyAttributes)>, icu_provider::DataError> {
+            fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataMarkerAttributes)>, icu_provider::DataError> {
                 Ok(["ar-x-f", "ar-x-l", "ar-x-m", "ar-x-s", "ast-x-f", "ast-x-l", "ast-x-m", "be-x-f", "be-x-l", "be-x-m", "be-x-s", "bg-x-f", "bg-x-l", "bg-x-m", "bg-x-s", "blo-x-f", "blo-x-l", "blo-x-m", "blo-x-s", "br-x-f", "br-x-l", "br-x-m", "brx-x-f", "brx-x-l", "brx-x-m", "brx-x-s", "bs-x-f", "bs-x-l", "ca-x-f", "ca-x-l", "ca-x-m", "ceb-x-f", "ceb-x-l", "ceb-x-m", "ceb-x-s", "chr-x-f", "chr-x-l", "chr-x-m", "chr-x-s", "cv-x-f", "cv-x-l", "cv-x-m", "cv-x-s", "cy-x-f", "cy-x-l", "de-x-f", "de-x-l", "de-x-m", "de-x-s", "doi-x-f", "doi-x-l", "doi-x-m", "doi-x-s", "el-x-f", "el-x-l", "el-x-m", "el-x-s", "en-MV-x-f", "en-MV-x-l", "en-MV-x-m", "en-MV-x-s", "en-x-f", "en-x-l", "en-x-m", "en-x-s", "es-x-f", "es-x-l", "es-x-m", "es-x-s", "eu-x-f", "eu-x-l", "eu-x-m", "eu-x-s", "fa-x-f", "fa-x-l", "fa-x-m", "fa-x-s", "fil-x-f", "fil-x-l", "fil-x-m", "fil-x-s", "fo-x-f", "fo-x-l", "fo-x-m", "fo-x-s", "fr-ML-x-s", "fr-x-f", "fr-x-l", "fr-x-m", "gl-x-f", "gl-x-l", "gl-x-m", "gl-x-s", "ha-x-l", "ha-x-m", "ha-x-s", "he-x-f", "he-x-l", "he-x-m", "he-x-s", "hi-Latn-x-m", "hi-Latn-x-s", "hi-x-f", "hi-x-l", "hi-x-m", "hi-x-s", "hy-x-f", "hy-x-l", "hy-x-m", "hy-x-s", "ig-x-f", "ig-x-l", "ig-x-m", "ig-x-s", "is-x-f", "is-x-l", "is-x-m", "is-x-s", "it-x-m", "it-x-s", "jv-x-m", "jv-x-s", "ka-x-f", "ka-x-l", "ka-x-m", "ka-x-s", "kea-x-f", "kea-x-l", "kea-x-m", "kea-x-s", "kk-x-f", "kk-x-l", "kk-x-m", "kk-x-s", "km-x-f", "km-x-l", "km-x-m", "km-x-s", "ks-Deva-x-f", "ks-Deva-x-l", "ks-Deva-x-m", "ks-Deva-x-s", "ks-x-f", "ks-x-l", "ks-x-m", "ks-x-s", "kxv-x-f", "kxv-x-l", "kxv-x-m", "kxv-x-s", "lo-x-f", "lo-x-l", "lo-x-m", "lo-x-s", "mai-x-f", "mai-x-l", "mai-x-m", "mai-x-s", "mk-x-f", "mk-x-l", "mk-x-m", "mk-x-s", "mni-x-f", "mni-x-l", "mni-x-m", "mni-x-s", "mr-x-f", "mr-x-l", "mr-x-m", "mr-x-s", "ms-x-m", "ms-x-s", "ne-x-m", "ne-x-s", "nl-x-f", "nl-x-l", "nl-x-m", "nl-x-s", "nn-x-f", "nn-x-l", "no-x-f", "no-x-l", "no-x-m", "no-x-s", "or-x-f", "or-x-l", "or-x-m", "or-x-s", "pa-x-m", "pa-x-s", "pcm-x-f", "pcm-x-l", "pl-x-m", "pl-x-s", "pt-PT-x-f", "pt-PT-x-l", "pt-PT-x-m", "pt-PT-x-s", "qu-x-l", "ro-x-f", "ro-x-l", "ro-x-m", "ro-x-s", "ru-x-f", "ru-x-l", "ru-x-m", "ru-x-s", "sa-x-f", "sa-x-l", "sa-x-m", "sa-x-s", "sc-x-f", "sc-x-l", "sc-x-m", "sc-x-s", "sd-Deva-x-f", "sd-Deva-x-l", "sd-Deva-x-m", "sd-Deva-x-s", "sk-x-f", "sk-x-l", "sk-x-m", "sl-x-m", "sl-x-s", "sq-x-f", "sq-x-l", "sq-x-m", "sq-x-s", "su-x-f", "su-x-l", "su-x-m", "su-x-s", "syr-x-f", "syr-x-l", "syr-x-m", "syr-x-s", "ta-x-f", "ta-x-l", "ta-x-m", "ta-x-s", "to-x-f", "to-x-l", "to-x-m", "tt-x-f", "tt-x-l", "tt-x-m", "tt-x-s", "ug-x-m", "ug-x-s", "uk-x-f", "uk-x-l", "uk-x-m", "uk-x-s", "und-x-f", "und-x-l", "und-x-m", "und-x-s", "uz-x-f", "uz-x-l", "uz-x-m", "uz-x-s", "vec-x-f", "vec-x-l", "vec-x-m", "vec-x-s", "vi-x-f", "vi-x-l", "vi-x-m", "vi-x-s", "wo-x-f", "wo-x-l", "wo-x-m", "wo-x-s", "xnr-x-f", "xnr-x-l", "xnr-x-m", "xnr-x-s"].into_iter().filter_map(icu_provider::DataRequest::legacy_decode).collect())
             }
         }

@@ -25,14 +25,16 @@ fn load<M: DataMarker<Yokeable = ListFormatterPatternsV1<'static>>>(
 
     let data = &resource.main.value.list_patterns;
 
-    let (wide, short, narrow) = if M::KEY == AndListV1Marker::KEY {
+    let (wide, short, narrow) = if M::INFO == AndListV1Marker::INFO {
         (&data.standard, &data.standard_short, &data.standard_narrow)
-    } else if M::KEY == OrListV1Marker::KEY {
+    } else if M::INFO == OrListV1Marker::INFO {
         (&data.or, &data.or_short, &data.or_narrow)
-    } else if M::KEY == UnitListV1Marker::KEY {
+    } else if M::INFO == UnitListV1Marker::INFO {
         (&data.unit, &data.unit_short, &data.unit_narrow)
     } else {
-        return Err(DataError::custom("Unknown key for ListFormatterPatternsV1"));
+        return Err(DataError::custom(
+            "Unknown marker for ListFormatterPatternsV1",
+        ));
     };
 
     let mut patterns = ListFormatterPatternsV1::try_new([
@@ -51,7 +53,7 @@ fn load<M: DataMarker<Yokeable = ListFormatterPatternsV1<'static>>>(
     ])?;
 
     if langid.language == language!("es") {
-        if M::KEY == AndListV1Marker::KEY || M::KEY == UnitListV1Marker::KEY {
+        if M::INFO == AndListV1Marker::INFO || M::INFO == UnitListV1Marker::INFO {
             static I_SOUND: OnceLock<SerdeDFA<'static>> = OnceLock::new();
 
             // Starts with i or (hi but not hia/hie)
@@ -64,7 +66,7 @@ fn load<M: DataMarker<Yokeable = ListFormatterPatternsV1<'static>>>(
             patterns
                 .make_conditional("{0} y {1}", i_sound, "{0} e {1}")
                 .expect("valid pattern");
-        } else if M::KEY == OrListV1Marker::KEY {
+        } else if M::INFO == OrListV1Marker::INFO {
             static O_SOUND: OnceLock<SerdeDFA<'static>> = OnceLock::new();
             // Starts with o, ho, 8 (including 80, 800, ...), or 11 either alone or followed
             // by thousand groups and/or decimals (excluding e.g. 110, 1100, ...)
@@ -130,7 +132,7 @@ macro_rules! implement {
         impl IterableDataProviderCached<$marker> for DatagenProvider {
             fn supported_requests_cached(
                 &self,
-            ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+            ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
                 Ok(self
                     .cldr()?
                     .misc()

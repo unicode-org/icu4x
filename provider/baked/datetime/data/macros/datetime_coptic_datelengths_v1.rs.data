@@ -161,7 +161,7 @@ macro_rules! __impl_datetime_coptic_datelengths_v1 {
                 let payload = if let Ok(payload) = KEYS.binary_search_by(|k| req.legacy_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
                     payload
                 } else {
-                    const FALLBACKER: icu::locale::fallback::LocaleFallbackerWithConfig<'static> = icu::locale::fallback::LocaleFallbacker::new().for_config(<icu::datetime::provider::calendar::CopticDateLengthsV1Marker as icu_provider::DataMarker>::KEY.fallback_config());
+                    const FALLBACKER: icu::locale::fallback::LocaleFallbackerWithConfig<'static> = icu::locale::fallback::LocaleFallbacker::new().for_config(<icu::datetime::provider::calendar::CopticDateLengthsV1Marker as icu_provider::DataMarker>::INFO.fallback_config);
                     let mut fallback_iterator = FALLBACKER.fallback_for(req.locale.clone());
                     loop {
                         if let Ok(payload) = KEYS.binary_search_by(|k| icu_provider::DataRequest { locale: fallback_iterator.get(), ..req }.legacy_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
@@ -169,7 +169,7 @@ macro_rules! __impl_datetime_coptic_datelengths_v1 {
                             break payload;
                         }
                         if fallback_iterator.get().is_und() {
-                            return Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::datetime::provider::calendar::CopticDateLengthsV1Marker as icu_provider::DataMarker>::KEY, req));
+                            return Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::datetime::provider::calendar::CopticDateLengthsV1Marker as icu_provider::DataMarker>::INFO, req));
                         }
                         fallback_iterator.step();
                     }
@@ -181,14 +181,14 @@ macro_rules! __impl_datetime_coptic_datelengths_v1 {
 }
 /// Implement `IterableDataProvider<CopticDateLengthsV1Marker>` on the given struct using the data
 /// hardcoded in this file. This allows the struct to be used with
-/// `DatagenDriver` for this key.
+/// `DatagenDriver` for this marker.
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __impliterable_datetime_coptic_datelengths_v1 {
     ($ provider : ty) => {
         #[clippy::msrv = "1.70"]
         impl icu_provider::datagen::IterableDataProvider<icu::datetime::provider::calendar::CopticDateLengthsV1Marker> for $provider {
-            fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataKeyAttributes)>, icu_provider::DataError> {
+            fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataMarkerAttributes)>, icu_provider::DataError> {
                 Ok(["af", "am", "ar", "as", "ast", "az", "be", "bg", "blo", "bn", "br", "brx", "bs", "bs-Cyrl", "ca", "ceb", "chr", "cs", "cv", "cy", "da", "de", "doi", "dsb", "el", "en", "en-001", "en-AE", "en-AU", "en-BE", "en-BW", "en-BZ", "en-CH", "en-GB", "en-HK", "en-IE", "en-IN", "en-MT", "en-NZ", "en-PK", "en-SE", "en-SG", "en-ZA", "en-ZW", "eo", "es", "es-CL", "es-CO", "es-DO", "es-GT", "es-HN", "es-PA", "es-PE", "es-PR", "et", "eu", "fa", "ff-Adlm", "fi", "fil", "fo", "fr", "fr-BE", "fr-CA", "fr-CH", "fy", "ga", "gd", "gl", "gu", "ha", "he", "hi", "hi-Latn", "hr", "hsb", "hu", "hy", "ia", "id", "ig", "is", "it", "it-CH", "ja", "jv", "ka", "kea", "kgp", "kk", "km", "ko", "kok", "ks", "ku", "kxv", "ky", "lb", "lo", "lt", "lv", "mai", "mi", "mk", "ml", "mn", "mni", "mr", "ms", "ms-BN", "ms-ID", "mt", "my", "ne", "nl", "no", "or", "pa", "pcm", "pl", "ps", "pt", "pt-PT", "qu", "rm", "ro", "ru", "sa", "sah", "sc", "sd-Deva", "sk", "sl", "so", "sq", "sr", "sr-Latn", "su", "sv", "sw", "sw-KE", "syr", "ta", "te", "tg", "th", "ti", "ti-ER", "tk", "to", "tr", "tt", "ug", "uk", "und", "ur", "uz", "uz-Cyrl", "vec", "vi", "wo", "xh", "xnr", "yo", "yrl", "yue", "yue-Hans", "zh", "zh-HK", "zh-Hant", "zh-MO", "zh-SG", "zu"].into_iter().filter_map(icu_provider::DataRequest::legacy_decode).collect())
             }
         }

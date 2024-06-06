@@ -17,7 +17,7 @@ use crate::pattern::runtime::PatternBorrowed;
 #[cfg(feature = "experimental")]
 use core::ops::Range;
 
-/// Helpers involving the data key attributes used for date symbols.
+/// Helpers involving the data marker attributes used for date symbols.
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -25,7 +25,7 @@ use core::ops::Range;
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[allow(missing_docs)]
-pub mod key_attrs {
+pub mod marker_attrs {
     use crate::pattern::CoarseHourCycle;
     use tinystr::{tinystr, TinyAsciiStr};
 
@@ -54,7 +54,7 @@ pub mod key_attrs {
     pub const PATTERN_MEDIUM24: TinyAsciiStr<8> = tinystr!(8, "m24");
     pub const PATTERN_SHORT24: TinyAsciiStr<8> = tinystr!(8, "s24");
 
-    /// Field lengths supported in data key attribute.
+    /// Field lengths supported in data marker attribute.
     ///
     /// For a stable version of this enum, use [`FieldLength`].
     ///
@@ -75,7 +75,7 @@ pub mod key_attrs {
         Numeric,
     }
 
-    /// Pattern lengths supported in data key attributes.
+    /// Pattern lengths supported in data marker attributes.
     ///
     /// For a stable version of this enum, use [`length::Date`] or [`length::Time`].
     ///
@@ -95,7 +95,7 @@ pub mod key_attrs {
         Short,
     }
 
-    /// Field contexts supported in data key attributes.
+    /// Field contexts supported in data marker attributes.
     ///
     /// For a stable version of this enum, use one of the specific field symbol enums in [`fields`].
     ///
@@ -113,16 +113,16 @@ pub mod key_attrs {
         Standalone,
     }
 
-    /// Parses a symbol data key attribute to enum values.
+    /// Parses a symbol data marker attribute to enum values.
     ///
     /// <div class="stab unstable">
     /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
     /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
     /// to be stable, their Rust representation might not be. Use with caution.
     /// </div>
-    pub fn symbol_key_attr_info(key_attr: TinyAsciiStr<8>) -> Option<(Context, Length)> {
+    pub fn symbol_marker_attr_info(marker_attr: TinyAsciiStr<8>) -> Option<(Context, Length)> {
         use {Context::*, Length::*};
-        match key_attr {
+        match marker_attr {
             NUMERIC => Some((Format, Numeric)),
             ABBR => Some((Format, Abbr)),
             NARROW => Some((Format, Narrow)),
@@ -136,18 +136,18 @@ pub mod key_attrs {
         }
     }
 
-    /// Parses a pattern data key attribute to enum values.
+    /// Parses a pattern data marker attribute to enum values.
     ///
     /// <div class="stab unstable">
     /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
     /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
     /// to be stable, their Rust representation might not be. Use with caution.
     /// </div>
-    pub fn pattern_key_attr_info(
-        key_attr: TinyAsciiStr<8>,
+    pub fn pattern_marker_attr_info(
+        marker_attr: TinyAsciiStr<8>,
     ) -> Option<(PatternLength, Option<CoarseHourCycle>)> {
         use {CoarseHourCycle::*, PatternLength::*};
-        match key_attr {
+        match marker_attr {
             PATTERN_FULL => Some((Full, None)),
             PATTERN_LONG => Some((Long, None)),
             PATTERN_MEDIUM => Some((Medium, None)),
@@ -166,7 +166,7 @@ pub mod key_attrs {
         }
     }
 
-    /// Creates a symbol data key attribute from the enum values.
+    /// Creates a symbol data marker attribute from the enum values.
     ///
     /// <div class="stab unstable">
     /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -189,14 +189,14 @@ pub mod key_attrs {
         }
     }
 
-    /// Creates a pattern data key attribute from the enum values.
+    /// Creates a pattern data marker attribute from the enum values.
     ///
     /// <div class="stab unstable">
     /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
     /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
     /// to be stable, their Rust representation might not be. Use with caution.
     /// </div>
-    pub fn pattern_key_attr_for(
+    pub fn pattern_marker_attr_for(
         length: PatternLength,
         hour_cycle: Option<CoarseHourCycle>,
     ) -> TinyAsciiStr<8> {
@@ -224,7 +224,7 @@ size_test!(YearNamesV1, year_names_v1_size, 48);
 
 /// Symbols used for representing the year name
 ///
-/// This uses a data key attribute for length. The value is simply the number of
+/// This uses a data marker attribute for length. The value is simply the number of
 /// characters in the equivalent CLDR field syntax name, plus "s" for standalone contexts. For example,
 /// "abbreviated" (e.g. `MMM`) is `3` or `3s` depending on whether it is format or standalone
 /// respectively.
@@ -276,7 +276,7 @@ size_test!(MonthNamesV1, month_names_v1_size, 32);
 
 /// Symbols used for representing the month name
 ///
-/// This uses a data key attribute for length. See [`YearNamesV1`] for more information on the scheme. This
+/// This uses a data marker attribute for length. See [`YearNamesV1`] for more information on the scheme. This
 /// has an additional `1` value used for numeric symbols, only found for calendars with leap months.
 #[doc = month_names_v1_size!()]
 ///
@@ -378,7 +378,7 @@ size_test!(LinearNamesV1, linear_names_v1_size, 24);
 ///   In the case noon is missing but midnight is present, the noon value can be the empty string. This is unlikely.
 /// - For day names element 0 is the first day of the month
 ///
-/// This uses a data key attribute for length. See [`YearNamesV1`] for more information on the scheme.
+/// This uses a data marker attribute for length. See [`YearNamesV1`] for more information on the scheme.
 #[doc = linear_names_v1_size!()]
 ///
 /// <div class="stab unstable">
@@ -440,7 +440,7 @@ size_test!(DatePatternV1, date_pattern_v1_size, 32);
 
 /// The default per-length patterns associated with dates
 ///
-/// This uses a data key attribute for length. The value can be "f", "l", "m", "s" for
+/// This uses a data marker attribute for length. The value can be "f", "l", "m", "s" for
 /// "full", "long", "medium", or "short".
 #[doc = date_pattern_v1_size!()]
 ///
@@ -489,7 +489,7 @@ size_test!(TimePatternV1, time_pattern_v1_size, 32);
 
 /// The default per-length patterns associated with times
 ///
-/// This uses an data key attribute for length. See [`DatePatternV1`] for more information on the scheme.
+/// This uses an data marker attribute for length. See [`DatePatternV1`] for more information on the scheme.
 ///
 /// It also uses the attribute to track hour cycles; the data for the default hour cycle will
 /// use a regular length attribute (e.g. `f` for full), and the non-default
@@ -521,7 +521,7 @@ size_test!(DateTimePatternV1, date_time_pattern_v1_size, 24);
 
 /// The default per-length patterns used for combining dates and times into datetimes
 ///
-/// This uses a data key attribute for length. See [`DatePatternV1`] for more information on the scheme.
+/// This uses a data marker attribute for length. See [`DatePatternV1`] for more information on the scheme.
 #[doc = date_time_pattern_v1_size!()]
 ///
 /// <div class="stab unstable">

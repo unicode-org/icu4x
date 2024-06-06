@@ -43,7 +43,7 @@ use icu_locale_core::{
 };
 use icu_provider::prelude::*;
 use icu_provider_adapters::any_payload::AnyPayloadProvider;
-use icu_provider_adapters::fork::MultiForkByKeyProvider;
+use icu_provider_adapters::fork::MultiForkByMarkerProvider;
 use icu_timezone::{CustomTimeZone, ZoneVariant};
 use patterns::{
     dayperiods::{DayPeriodExpectation, DayPeriodTests},
@@ -69,7 +69,7 @@ fn test_fixture(fixture_name: &str, file: &str) {
             #[cfg(not(feature = "experimental"))]
             None => continue,
         };
-        let input_value = mock::parse_gregorian_from_str(&fx.input.value).unwrap();
+        let input_value = mock::parse_gregorian_from_str(&fx.input.value);
         let input_buddhist = input_value.to_calendar(Buddhist);
         let input_chinese = input_value.to_calendar(Chinese::new());
         let input_coptic = input_value.to_calendar(Coptic);
@@ -339,8 +339,7 @@ fn test_fixture_with_time_zones(fixture_name: &str, file: &str, config: TimeZone
             None => continue,
         };
 
-        let (input_date, mut time_zone) =
-            mock::parse_zoned_gregorian_from_str(&fx.input.value).unwrap();
+        let (input_date, mut time_zone) = mock::parse_zoned_gregorian_from_str(&fx.input.value);
         time_zone.time_zone_id = config.time_zone_id.map(TimeZoneBcp47Id);
         time_zone.metazone_id = config.metazone_id.map(MetazoneId);
         time_zone.zone_variant = config.zone_variant.map(ZoneVariant);
@@ -451,7 +450,7 @@ fn test_dayperiod_patterns() {
             .unwrap();
         for test_case in &test.test_cases {
             for dt_input in &test_case.datetimes {
-                let datetime = mock::parse_gregorian_from_str(dt_input).unwrap();
+                let datetime = mock::parse_gregorian_from_str(dt_input);
                 for DayPeriodExpectation { patterns, expected } in &test_case.expectations {
                     for pattern_input in patterns {
                         let new_pattern1: runtime::Pattern = pattern_input.parse().unwrap();
@@ -460,7 +459,7 @@ fn test_dayperiod_patterns() {
                             data.time_h11_h12.medium = new_pattern1;
                             data.time_h23_h24.medium = new_pattern2;
                         });
-                        let local_provider = MultiForkByKeyProvider::new(vec![
+                        let local_provider = MultiForkByMarkerProvider::new(vec![
                             AnyPayloadProvider::from_payload::<GregorianDateSymbolsV1Marker>(
                                 date_symbols_data.clone(), //
                             ),
@@ -517,7 +516,7 @@ fn test_time_zone_format_configs() {
     {
         let data_locale: DataLocale = test.locale.parse::<LanguageIdentifier>().unwrap().into();
         let mut config = test.config;
-        let (_, mut time_zone) = mock::parse_zoned_gregorian_from_str(&test.datetime).unwrap();
+        let (_, mut time_zone) = mock::parse_zoned_gregorian_from_str(&test.datetime);
         time_zone.time_zone_id = config.time_zone_id.take().map(TimeZoneBcp47Id);
         time_zone.metazone_id = config.metazone_id.take().map(MetazoneId);
         time_zone.zone_variant = config.zone_variant.take().map(ZoneVariant);
@@ -599,8 +598,7 @@ fn test_time_zone_patterns() {
             ..Default::default()
         };
         let mut config = test.config;
-        let (datetime, mut time_zone) =
-            mock::parse_zoned_gregorian_from_str(&test.datetime).unwrap();
+        let (datetime, mut time_zone) = mock::parse_zoned_gregorian_from_str(&test.datetime);
         time_zone.time_zone_id = config.time_zone_id.take().map(TimeZoneBcp47Id);
         time_zone.metazone_id = config.metazone_id.take().map(MetazoneId);
         time_zone.zone_variant = config.zone_variant.take().map(ZoneVariant);
@@ -694,7 +692,7 @@ fn test_time_zone_patterns() {
                     data.time_h11_h12.medium = new_pattern1;
                     data.time_h23_h24.medium = new_pattern2;
                 });
-                let local_provider = MultiForkByKeyProvider::new(vec![
+                let local_provider = MultiForkByMarkerProvider::new(vec![
                     AnyPayloadProvider::from_payload::<GregorianDateSymbolsV1Marker>(
                         symbols_data.clone(), //
                     ),

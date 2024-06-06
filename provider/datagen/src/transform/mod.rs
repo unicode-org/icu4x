@@ -21,7 +21,7 @@ impl DataProvider<HelloWorldV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProvider<HelloWorldV1Marker> for DatagenProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         HelloWorldProvider.supported_requests()
     }
 }
@@ -31,14 +31,14 @@ impl DatagenProvider {
     where
         DatagenProvider: IterableDataProvider<M>,
     {
-        if <M as DataMarker>::KEY.metadata().singleton && !req.locale.is_empty() {
+        if <M as DataMarker>::INFO.is_singleton && !req.locale.is_empty() {
             Err(DataErrorKind::ExtraneousLocale)
-        } else if !self.supports_request(req.locale, req.key_attributes)? {
+        } else if !self.supports_request(req.locale, req.marker_attributes)? {
             Err(DataErrorKind::MissingLocale)
         } else {
             Ok(())
         }
-        .map_err(|e| e.with_req(<M as DataMarker>::KEY, req))
+        .map_err(|e| e.with_req(<M as DataMarker>::INFO, req))
     }
 }
 

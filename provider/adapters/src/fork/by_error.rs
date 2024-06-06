@@ -51,14 +51,14 @@ where
     P1: AnyProvider,
     F: ForkByErrorPredicate,
 {
-    fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
-        let result = self.0.load_any(key, req);
+    fn load_any(&self, marker: DataMarkerInfo, req: DataRequest) -> Result<AnyResponse, DataError> {
+        let result = self.0.load_any(marker, req);
         match result {
             Ok(ok) => return Ok(ok),
-            Err(err) if !self.2.test(key, Some(req), err) => return Err(err),
+            Err(err) if !self.2.test(marker, Some(req), err) => return Err(err),
             _ => (),
         };
-        self.1.load_any(key, req)
+        self.1.load_any(marker, req)
     }
 }
 
@@ -69,14 +69,18 @@ where
     P1: DynamicDataProvider<M>,
     F: ForkByErrorPredicate,
 {
-    fn load_data(&self, key: DataKey, req: DataRequest) -> Result<DataResponse<M>, DataError> {
-        let result = self.0.load_data(key, req);
+    fn load_data(
+        &self,
+        marker: DataMarkerInfo,
+        req: DataRequest,
+    ) -> Result<DataResponse<M>, DataError> {
+        let result = self.0.load_data(marker, req);
         match result {
             Ok(ok) => return Ok(ok),
-            Err(err) if !self.2.test(key, Some(req), err) => return Err(err),
+            Err(err) if !self.2.test(marker, Some(req), err) => return Err(err),
             _ => (),
         };
-        self.1.load_data(key, req)
+        self.1.load_data(marker, req)
     }
 }
 
@@ -88,17 +92,17 @@ where
     P1: datagen::IterableDynamicDataProvider<M>,
     F: ForkByErrorPredicate,
 {
-    fn supported_requests_for_key(
+    fn supported_requests_for_marker(
         &self,
-        key: DataKey,
-    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
-        let result = self.0.supported_requests_for_key(key);
+        marker: DataMarkerInfo,
+    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+        let result = self.0.supported_requests_for_marker(marker);
         match result {
             Ok(ok) => return Ok(ok),
-            Err(err) if !self.2.test(key, None, err) => return Err(err),
+            Err(err) if !self.2.test(marker, None, err) => return Err(err),
             _ => (),
         };
-        self.1.supported_requests_for_key(key)
+        self.1.supported_requests_for_marker(marker)
     }
 }
 
@@ -153,13 +157,13 @@ where
     P: AnyProvider,
     F: ForkByErrorPredicate,
 {
-    fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
-        let mut last_error = F::UNIT_ERROR.with_key(key);
+    fn load_any(&self, marker: DataMarkerInfo, req: DataRequest) -> Result<AnyResponse, DataError> {
+        let mut last_error = F::UNIT_ERROR.with_marker(marker);
         for provider in self.providers.iter() {
-            let result = provider.load_any(key, req);
+            let result = provider.load_any(marker, req);
             match result {
                 Ok(ok) => return Ok(ok),
-                Err(err) if !self.predicate.test(key, Some(req), err) => return Err(err),
+                Err(err) if !self.predicate.test(marker, Some(req), err) => return Err(err),
                 Err(err) => last_error = err,
             };
         }
@@ -173,13 +177,17 @@ where
     P: DynamicDataProvider<M>,
     F: ForkByErrorPredicate,
 {
-    fn load_data(&self, key: DataKey, req: DataRequest) -> Result<DataResponse<M>, DataError> {
-        let mut last_error = F::UNIT_ERROR.with_key(key);
+    fn load_data(
+        &self,
+        marker: DataMarkerInfo,
+        req: DataRequest,
+    ) -> Result<DataResponse<M>, DataError> {
+        let mut last_error = F::UNIT_ERROR.with_marker(marker);
         for provider in self.providers.iter() {
-            let result = provider.load_data(key, req);
+            let result = provider.load_data(marker, req);
             match result {
                 Ok(ok) => return Ok(ok),
-                Err(err) if !self.predicate.test(key, Some(req), err) => return Err(err),
+                Err(err) if !self.predicate.test(marker, Some(req), err) => return Err(err),
                 Err(err) => last_error = err,
             };
         }
@@ -194,16 +202,16 @@ where
     P: datagen::IterableDynamicDataProvider<M>,
     F: ForkByErrorPredicate,
 {
-    fn supported_requests_for_key(
+    fn supported_requests_for_marker(
         &self,
-        key: DataKey,
-    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
-        let mut last_error = F::UNIT_ERROR.with_key(key);
+        marker: DataMarkerInfo,
+    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+        let mut last_error = F::UNIT_ERROR.with_marker(marker);
         for provider in self.providers.iter() {
-            let result = provider.supported_requests_for_key(key);
+            let result = provider.supported_requests_for_marker(marker);
             match result {
                 Ok(ok) => return Ok(ok),
-                Err(err) if !self.predicate.test(key, None, err) => return Err(err),
+                Err(err) if !self.predicate.test(marker, None, err) => return Err(err),
                 Err(err) => last_error = err,
             };
         }
@@ -221,17 +229,17 @@ where
 {
     fn convert(
         &self,
-        key: DataKey,
+        marker: DataMarkerInfo,
         mut from: DataPayload<MFrom>,
     ) -> Result<DataPayload<MTo>, (DataPayload<MFrom>, DataError)> {
-        let mut last_error = F::UNIT_ERROR.with_key(key);
+        let mut last_error = F::UNIT_ERROR.with_marker(marker);
         for provider in self.providers.iter() {
-            let result = provider.convert(key, from);
+            let result = provider.convert(marker, from);
             match result {
                 Ok(ok) => return Ok(ok),
                 Err(e) => {
                     let (returned, err) = e;
-                    if !self.predicate.test(key, None, err) {
+                    if !self.predicate.test(marker, None, err) {
                         return Err((returned, err));
                     }
                     from = returned;
@@ -254,20 +262,20 @@ where
 {
     fn convert(
         &self,
-        key: DataKey,
+        marker: DataMarkerInfo,
         mut from: DataPayload<MFrom>,
     ) -> Result<DataPayload<MTo>, (DataPayload<MFrom>, DataError)> {
-        let result = self.0.convert(key, from);
+        let result = self.0.convert(marker, from);
         match result {
             Ok(ok) => return Ok(ok),
             Err(e) => {
                 let (returned, err) = e;
-                if !self.2.test(key, None, err) {
+                if !self.2.test(marker, None, err) {
                     return Err((returned, err));
                 }
                 from = returned;
             }
         };
-        self.1.convert(key, from)
+        self.1.convert(marker, from)
     }
 }

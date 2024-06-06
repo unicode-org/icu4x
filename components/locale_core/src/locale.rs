@@ -4,7 +4,7 @@
 
 use crate::parser::{
     parse_locale, parse_locale_with_single_variant_single_keyword_unicode_keyword_extension,
-    ParserError, ParserMode, SubtagIterator,
+    ParseError, ParserMode, SubtagIterator,
 };
 use crate::subtags::Subtag;
 use crate::{extensions, subtags, LanguageIdentifier};
@@ -119,7 +119,7 @@ impl Locale {
     ///
     /// Locale::try_from_bytes(b"en-US-u-hc-h12").unwrap();
     /// ```
-    pub fn try_from_bytes(v: &[u8]) -> Result<Self, ParserError> {
+    pub fn try_from_bytes(v: &[u8]) -> Result<Self, ParseError> {
         parse_locale(v)
     }
 
@@ -152,7 +152,7 @@ impl Locale {
     ///     Ok("pl-Latn-PL-u-hc-h12")
     /// );
     /// ```
-    pub fn canonicalize<S: AsRef<[u8]>>(input: S) -> Result<String, ParserError> {
+    pub fn canonicalize<S: AsRef<[u8]>>(input: S) -> Result<String, ParseError> {
         let locale = Self::try_from_bytes(input.as_ref())?;
         Ok(locale.write_to_string().into_owned())
     }
@@ -314,7 +314,7 @@ impl Locale {
             Option<subtags::Variant>,
             Option<(extensions::unicode::Key, Option<Subtag>)>,
         ),
-        ParserError,
+        ParseError,
     > {
         parse_locale_with_single_variant_single_keyword_unicode_keyword_extension(
             v,
@@ -333,7 +333,7 @@ impl Locale {
 }
 
 impl FromStr for Locale {
-    type Err = ParserError;
+    type Err = ParseError;
 
     fn from_str(source: &str) -> Result<Self, Self::Err> {
         Self::try_from_bytes(source.as_bytes())

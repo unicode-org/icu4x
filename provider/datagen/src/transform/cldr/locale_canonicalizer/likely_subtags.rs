@@ -25,7 +25,7 @@ impl DataProvider<LikelySubtagsV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProvider<LikelySubtagsV1Marker> for DatagenProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
@@ -48,7 +48,7 @@ impl DataProvider<LikelySubtagsExtendedV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProvider<LikelySubtagsExtendedV1Marker> for DatagenProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
@@ -68,7 +68,7 @@ impl DataProvider<LikelySubtagsForLanguageV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProvider<LikelySubtagsForLanguageV1Marker> for DatagenProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
@@ -88,7 +88,7 @@ impl DataProvider<LikelySubtagsForScriptRegionV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProvider<LikelySubtagsForScriptRegionV1Marker> for DatagenProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }

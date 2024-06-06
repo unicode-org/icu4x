@@ -100,7 +100,6 @@ eyre = { workspace = true, optional = true }
 simple_logger = { workspace = true, optional = true }
 
 [dev-dependencies]
-crlify = { path = "../../utils/crlify" }
 elsa = { workspace = true }
 icu = { path = "../../components/icu" }
 postcard = { workspace = true }

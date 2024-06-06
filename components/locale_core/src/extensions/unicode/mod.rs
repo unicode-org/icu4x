@@ -45,7 +45,7 @@ pub use keywords::Keywords;
 pub use value::{value, Value};
 
 use super::ExtensionType;
-use crate::parser::ParserError;
+use crate::parser::ParseError;
 use crate::parser::SubtagIterator;
 
 pub(crate) const UNICODE_EXT_CHAR: char = 'u';
@@ -121,15 +121,15 @@ impl Unicode {
         self.keywords.is_empty() && self.attributes.is_empty()
     }
 
-    pub(crate) fn try_from_bytes(t: &[u8]) -> Result<Self, ParserError> {
+    pub(crate) fn try_from_bytes(t: &[u8]) -> Result<Self, ParseError> {
         let mut iter = SubtagIterator::new(t);
 
-        let ext = iter.next().ok_or(ParserError::InvalidExtension)?;
+        let ext = iter.next().ok_or(ParseError::InvalidExtension)?;
         if let ExtensionType::Unicode = ExtensionType::try_from_byte_slice(ext)? {
             return Self::try_from_iter(&mut iter);
         }
 
-        Err(ParserError::InvalidExtension)
+        Err(ParseError::InvalidExtension)
     }
 
     /// Clears all Unicode extension keywords and attributes, effectively removing
@@ -164,13 +164,13 @@ impl Unicode {
         self.as_tuple().cmp(&other.as_tuple())
     }
 
-    pub(crate) fn try_from_iter(iter: &mut SubtagIterator) -> Result<Self, ParserError> {
+    pub(crate) fn try_from_iter(iter: &mut SubtagIterator) -> Result<Self, ParseError> {
         let attributes = Attributes::try_from_iter(iter)?;
         let keywords = Keywords::try_from_iter(iter)?;
 
         // Ensure we've defined at least one attribute or keyword
         if attributes.is_empty() && keywords.is_empty() {
-            return Err(ParserError::InvalidExtension);
+            return Err(ParseError::InvalidExtension);
         }
 
         Ok(Self {
@@ -195,7 +195,7 @@ impl Unicode {
 }
 
 impl FromStr for Unicode {
-    type Err = ParserError;
+    type Err = ParseError;
 
     fn from_str(source: &str) -> Result<Self, Self::Err> {
         Self::try_from_bytes(source.as_bytes())

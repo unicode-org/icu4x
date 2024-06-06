@@ -121,7 +121,7 @@ impl BlobDataProvider {
 impl DynamicDataProvider<BufferMarker> for BlobDataProvider {
     fn load_data(
         &self,
-        key: DataKey,
+        marker: DataMarkerInfo,
         req: DataRequest,
     ) -> Result<DataResponse<BufferMarker>, DataError> {
         let mut metadata = DataResponseMetadata::default();
@@ -130,7 +130,7 @@ impl DynamicDataProvider<BufferMarker> for BlobDataProvider {
             metadata,
             payload: Some(DataPayload::from_yoked_buffer(
                 self.data
-                    .try_map_project_cloned(|blob, _| blob.load(key, req))?,
+                    .try_map_project_cloned(|blob, _| blob.load(marker, req))?,
             )),
         })
     }
@@ -159,7 +159,7 @@ mod test {
                     BlobExporter::new_v2_with_sink(Box::new(&mut blob))
                 };
 
-                exporter.flush(HelloWorldV1Marker::KEY).unwrap();
+                exporter.flush(HelloWorldV1Marker::INFO).unwrap();
 
                 exporter.close().unwrap();
             }
@@ -168,7 +168,7 @@ mod test {
 
             assert!(
                 matches!(
-                    provider.load_data(HelloWorldV1Marker::KEY, Default::default()),
+                    provider.load_data(HelloWorldV1Marker::INFO, Default::default()),
                     Err(DataError {
                         kind: DataErrorKind::MissingLocale,
                         ..
@@ -191,7 +191,7 @@ mod test {
                     BlobExporter::new_v2_with_sink(Box::new(&mut blob))
                 };
 
-                exporter.flush(HelloSingletonV1Marker::KEY).unwrap();
+                exporter.flush(HelloSingletonV1Marker::INFO).unwrap();
 
                 exporter.close().unwrap();
             }
@@ -201,7 +201,7 @@ mod test {
             assert!(
                 matches!(
                     provider.load_data(
-                        HelloSingletonV1Marker::KEY,
+                        HelloSingletonV1Marker::INFO,
                         DataRequest {
                             locale: &icu_locale_core::langid!("de").into(),
                             ..Default::default()
@@ -217,7 +217,7 @@ mod test {
 
             assert!(
                 matches!(
-                    provider.load_data(HelloSingletonV1Marker::KEY, Default::default()),
+                    provider.load_data(HelloSingletonV1Marker::INFO, Default::default()),
                     Err(DataError {
                         kind: DataErrorKind::MissingLocale,
                         ..

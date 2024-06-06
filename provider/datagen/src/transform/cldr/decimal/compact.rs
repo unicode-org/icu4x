@@ -110,7 +110,7 @@ impl DataProvider<LongCompactDecimalFormatDataV1Marker> for DatagenProvider {
 impl IterableDataProviderCached<ShortCompactDecimalFormatDataV1Marker> for DatagenProvider {
     fn supported_requests_cached(
         &self,
-    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         self.supported_requests_for_numbers()
     }
 }
@@ -118,7 +118,7 @@ impl IterableDataProviderCached<ShortCompactDecimalFormatDataV1Marker> for Datag
 impl IterableDataProviderCached<LongCompactDecimalFormatDataV1Marker> for DatagenProvider {
     fn supported_requests_cached(
         &self,
-    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         self.supported_requests_for_numbers()
     }
 }

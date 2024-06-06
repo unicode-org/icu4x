@@ -4,21 +4,16 @@
 
 use crate::fields::Field;
 use crate::fields::FieldSymbol;
-use crate::input::CalendarError;
 use crate::pattern::PatternError;
 use displaydoc::Display;
 use icu_calendar::any_calendar::AnyCalendarKind;
 use icu_calendar::types::MonthCode;
-use icu_decimal::DecimalError;
-use icu_plurals::PluralsError;
 use icu_provider::DataError;
 
 #[cfg(feature = "std")]
 impl std::error::Error for DateTimeError {}
 
 /// A list of error outcomes for various operations in this module.
-///
-/// Re-exported as [`Error`](crate::Error).
 #[derive(Display, Debug, Copy, Clone, PartialEq)]
 #[non_exhaustive]
 pub enum DateTimeError {
@@ -50,12 +45,6 @@ pub enum DateTimeError {
     /// An error due to there being no patterns for the given options.
     #[displaydoc("Unsupported options")]
     UnsupportedOptions,
-    /// An error originating from [`PluralRules`][icu_plurals::PluralRules].
-    #[displaydoc("{0}")]
-    PluralRules(PluralsError),
-    /// An error originating from [`DateTimeInput`][crate::input::DateTimeInput].
-    #[displaydoc("{0}")]
-    DateTimeInput(CalendarError),
     /// An error originating from a missing weekday symbol in the data.
     #[displaydoc("Data file missing weekday symbol for weekday {0}")]
     MissingWeekdaySymbol(usize),
@@ -65,9 +54,6 @@ pub enum DateTimeError {
     /// The FixedDecimalFormatter is not loaded
     #[displaydoc("Missing FixedDecimalFormatter")]
     FixedDecimal,
-    /// An error originating from FixedDecimalFormatter
-    #[displaydoc("{0}")]
-    FixedDecimalFormatter(DecimalError),
     /// An error from mixing calendar types in [`DateTimeFormatter`](crate::DateTimeFormatter)
     #[displaydoc("DateTimeFormatter for {0} calendar was given a {1:?} calendar")]
     MismatchedAnyCalendar(AnyCalendarKind, Option<AnyCalendarKind>),
@@ -115,24 +101,6 @@ impl From<DataError> for DateTimeError {
 impl From<core::fmt::Error> for DateTimeError {
     fn from(e: core::fmt::Error) -> Self {
         DateTimeError::Format(e)
-    }
-}
-
-impl From<PluralsError> for DateTimeError {
-    fn from(e: PluralsError) -> Self {
-        DateTimeError::PluralRules(e)
-    }
-}
-
-impl From<CalendarError> for DateTimeError {
-    fn from(e: CalendarError) -> Self {
-        DateTimeError::DateTimeInput(e)
-    }
-}
-
-impl From<DecimalError> for DateTimeError {
-    fn from(e: DecimalError) -> Self {
-        DateTimeError::FixedDecimalFormatter(e)
     }
 }
 

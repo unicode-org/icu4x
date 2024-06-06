@@ -197,7 +197,7 @@ mod tests {
     fn cj_dictionary_test() {
         let dict_payload: DataPayload<DictionaryForWordOnlyAutoV1Marker> = crate::provider::Baked
             .load(DataRequest {
-                key_attributes: &"cjdict".parse().unwrap(),
+                marker_attributes: &"cjdict".parse().unwrap(),
                 ..Default::default()
             })
             .unwrap()

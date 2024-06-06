@@ -51,10 +51,10 @@ pub struct Baked;
 
 #[cfg(feature = "compiled_data")]
 const _: () = {
+    #[allow(unused_imports)] // baked data may or may not need this
     pub mod icu {
         pub use crate as collator;
         pub use icu_collections as collections;
-        #[allow(unused_imports)] // baked data may or may not need this
         pub use icu_locale as locale;
     }
     icu_collator_data::make_provider!(Baked);
@@ -67,14 +67,14 @@ const _: () = {
 };
 
 #[cfg(feature = "datagen")]
-/// The latest minimum set of keys required by this component.
-pub const KEYS: &[DataKey] = &[
-    CollationDataV1Marker::KEY,
-    CollationDiacriticsV1Marker::KEY,
-    CollationJamoV1Marker::KEY,
-    CollationMetadataV1Marker::KEY,
-    CollationReorderingV1Marker::KEY,
-    CollationSpecialPrimariesV1Marker::KEY,
+/// The latest minimum set of markers required by this component.
+pub const MARKERS: &[DataMarkerInfo] = &[
+    CollationDataV1Marker::INFO,
+    CollationDiacriticsV1Marker::INFO,
+    CollationJamoV1Marker::INFO,
+    CollationMetadataV1Marker::INFO,
+    CollationReorderingV1Marker::INFO,
+    CollationSpecialPrimariesV1Marker::INFO,
 ];
 
 const SINGLE_U32: &ZeroSlice<u32> =

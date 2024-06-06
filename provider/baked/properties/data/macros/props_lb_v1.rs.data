@@ -19,7 +19,7 @@ macro_rules! __impl_props_lb_v1 {
                 if req.locale.is_empty() {
                     Ok(icu_provider::DataResponse { payload: Some(icu_provider::DataPayload::from_static_ref(Self::SINGLETON_PROPS_LB_V1)), metadata: Default::default() })
                 } else {
-                    Err(icu_provider::DataErrorKind::ExtraneousLocale.with_req(<icu::properties::provider::LineBreakV1Marker as icu_provider::DataMarker>::KEY, req))
+                    Err(icu_provider::DataErrorKind::ExtraneousLocale.with_req(<icu::properties::provider::LineBreakV1Marker as icu_provider::DataMarker>::INFO, req))
                 }
             }
         }
@@ -27,14 +27,14 @@ macro_rules! __impl_props_lb_v1 {
 }
 /// Implement `IterableDataProvider<LineBreakV1Marker>` on the given struct using the data
 /// hardcoded in this file. This allows the struct to be used with
-/// `DatagenDriver` for this key.
+/// `DatagenDriver` for this marker.
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __impliterable_props_lb_v1 {
     ($ provider : ty) => {
         #[clippy::msrv = "1.70"]
         impl icu_provider::datagen::IterableDataProvider<icu::properties::provider::LineBreakV1Marker> for $provider {
-            fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataKeyAttributes)>, icu_provider::DataError> {
+            fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataMarkerAttributes)>, icu_provider::DataError> {
                 Ok(HashSet::from_iter([Default::default()]))
             }
         }

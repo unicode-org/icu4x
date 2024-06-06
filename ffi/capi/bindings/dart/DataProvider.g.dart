@@ -68,7 +68,7 @@ final class DataProvider implements ffi.Finalizable {
   /// both providers originate from the same constructor, such as `create_from_byte_slice`
   /// or `create_fs`. If the condition is not upheld, a runtime error occurs.
   ///
-  /// See the [Rust documentation for `ForkByKeyProvider`](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fork/type.ForkByKeyProvider.html) for more information.
+  /// See the [Rust documentation for `ForkByMarkerProvider`](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fork/type.ForkByMarkerProvider.html) for more information.
   ///
   /// Throws [Error] on failure.
   void forkByKey(DataProvider other) {

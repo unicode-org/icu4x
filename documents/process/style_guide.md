@@ -748,7 +748,7 @@ While it's still an open question in the Rust community as to what the best way 
 ```rust
 // Nesting semantically interesting error information inside the generic error type.
 enum IcuError {
-    Parser(parser::ParserError),
+    Parser(parser::ParseError),
     Runtime(...)
 }
 ```

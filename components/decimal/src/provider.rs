@@ -42,8 +42,8 @@ const _: () = {
 };
 
 #[cfg(feature = "datagen")]
-/// The latest minimum set of keys required by this component.
-pub const KEYS: &[DataKey] = &[DecimalSymbolsV1Marker::KEY];
+/// The latest minimum set of markers required by this component.
+pub const MARKERS: &[DataMarkerInfo] = &[DecimalSymbolsV1Marker::INFO];
 
 /// A collection of strings to affix to a decimal number.
 ///

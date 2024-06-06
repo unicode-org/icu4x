@@ -21,7 +21,7 @@ LLVM_COMPATIBLE_NIGHTLY = "nightly-2023-08-08"
 
 baked_data/macros.rs:
 	cargo build -p icu_datagen --features icu_datagen
-	target/debug/icu4x-datagen --locales en bn --keys all --without-fallback --format mod --out baked_data --overwrite
+	target/debug/icu4x-datagen --locales en bn --markers all --without-fallback --format mod --out baked_data --overwrite
 
 target/debug/libicu_capi.a: FORCE
 	cargo rustc -p icu_capi --crate-type staticlib --no-default-features --features icu_capi/compiled_data,icu_capi/icu_decimal,icu_capi/std
