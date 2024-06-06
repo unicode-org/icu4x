@@ -12,46 +12,43 @@ use std::collections::BTreeMap;
 use tinystr::UnvalidatedTinyAsciiStr;
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct CurrencyPatterns {
+pub(in crate::provider) struct CurrencyPatterns {
     #[serde(rename = "symbol")]
-    pub short: Option<String>,
+    pub(in crate::provider) short: Option<String>,
 
     #[serde(rename = "symbol-alt-narrow")]
-    pub narrow: Option<String>,
+    pub(in crate::provider) narrow: Option<String>,
 
     #[serde(rename = "displayName")]
-    pub display_name: Option<String>,
+    pub(in crate::provider) display_name: Option<String>,
 
     #[serde(rename = "displayName-count-zero")]
-    pub zero: Option<String>,
+    pub(in crate::provider) zero: Option<String>,
 
     #[serde(rename = "displayName-count-one")]
-    pub one: Option<String>,
+    pub(in crate::provider) one: Option<String>,
 
     #[serde(rename = "displayName-count-two")]
-    pub two: Option<String>,
+    pub(in crate::provider) two: Option<String>,
 
     #[serde(rename = "displayName-count-few")]
-    pub few: Option<String>,
+    pub(in crate::provider) few: Option<String>,
 
     #[serde(rename = "displayName-count-many")]
-    pub many: Option<String>,
+    pub(in crate::provider) many: Option<String>,
 
     #[serde(rename = "displayName-count-other")]
-    pub other: Option<String>,
+    pub(in crate::provider) other: Option<String>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct Numbers {
-    pub currencies: BTreeMap<UnvalidatedTinyAsciiStr<3>, CurrencyPatterns>,
+pub(in crate::provider) struct Numbers {
+    pub(in crate::provider) currencies: BTreeMap<UnvalidatedTinyAsciiStr<3>, CurrencyPatterns>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct LangNumbers {
-    pub numbers: Numbers,
+pub(in crate::provider) struct LangNumbers {
+    pub(in crate::provider) numbers: Numbers,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
-pub(in crate::provider) struct Resource {
-    pub(in crate::provider) lang_numbers: LangNumbers,
-}
+pub(in crate::provider) type Resource = super::super::LocaleResource<LangNumbers>;
