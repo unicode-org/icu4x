@@ -51,31 +51,24 @@ impl DataProvider<UnitsDisplayNameV1Marker> for DatagenProvider {
             unit: &str,
             map: &mut BTreeMap<Count, String>,
         ) -> Result<(), DataError> {
-            let mut added = false;
-            for (key, value) in unit_length_map.iter() {
-                if let Some(key_prefix) = key.strip_suffix(unit) {
-                    if let Some(key_prefix) = key_prefix.strip_prefix('-') {
-                        if !key_prefix.contains('-') {
-                            add_unit_to_map_with_name(map, Count::One, value.one.as_deref());
-                            add_unit_to_map_with_name(map, Count::Two, value.two.as_deref());
-                            add_unit_to_map_with_name(map, Count::Few, value.few.as_deref());
-                            add_unit_to_map_with_name(map, Count::Many, value.many.as_deref());
-                            add_unit_to_map_with_name(map, Count::Other, value.other.as_deref());
+            // TODO(younies): this should be coming from the aux key or from the main key.
+            let legth_key = "length-".to_string() + unit;
+            let duration_key = "duration-".to_string() + unit;
 
-                            added = match added {
-                                true => {
-                                    return Err(DataError::custom(
-                                        "More than one unit found for the given unit",
-                                    )
-                                    .with_debug_context(unit)
-                                    .with_debug_context(key))
-                                }
-                                false => true,
-                            }
-                        }
-                    }
-                }
-            }
+            let unit_length_map = match (
+                unit_length_map.get(&legth_key),
+                unit_length_map.get(&duration_key),
+            ) {
+                (Some(length), None) => length,
+                (None, Some(length)) => length,
+                _ => return Ok(()),
+            };
+
+            add_unit_to_map_with_name(map, Count::One, unit_length_map.one.as_deref());
+            add_unit_to_map_with_name(map, Count::Two, unit_length_map.two.as_deref());
+            add_unit_to_map_with_name(map, Count::Few, unit_length_map.few.as_deref());
+            add_unit_to_map_with_name(map, Count::Many, unit_length_map.many.as_deref());
+            add_unit_to_map_with_name(map, Count::Other, unit_length_map.other.as_deref());
 
             Ok(())
         }
