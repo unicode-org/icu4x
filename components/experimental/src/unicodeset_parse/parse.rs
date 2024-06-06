@@ -1366,10 +1366,11 @@ where
 
     fn try_load_ecma262_binary_set(&mut self, name: &str) -> Result<()> {
         self.single_set.add_set(
-            UnicodeProperty::parse_ecma262_name(name)
+            &UnicodeProperty::parse_ecma262_name(name)
+                .ok_or(PEK::UnknownProperty)?
+                .load_unstable(self.property_provider)
                 .map_err(|_| PEK::UnknownProperty)?
-                .load(self.property_provider)
-                .map_err(|_| PEK::UnknownProperty)?,
+                .to_code_point_inversion_list(),
         );
         Ok(())
     }

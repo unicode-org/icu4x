@@ -9,7 +9,6 @@
 //! with properties at runtime tailored for the use case of ECMA262-compatible regex engines.
 
 use crate::provider::*;
-use crate::sets::{CodePointSetData, CodePointSetDataBorrowed};
 use icu_provider::prelude::*;
 
 #[cfg(doc)]
@@ -393,7 +392,7 @@ impl UnicodeProperty {
     ///
     /// [ecma]: https://tc39.es/ecma262/#table-binary-unicode-properties
     #[cfg(feature = "compiled_data")]
-    pub fn load(&self) -> Result<CodePointSetDataBorrowed<'static>, DataError> {
+    pub fn load(&self) -> Result<crate::sets::CodePointSetDataBorrowed<'static>, DataError> {
         use crate::sets::*;
         Ok(match *self {
             UnicodeProperty::AsciiHexDigit => ascii_hex_digit(),
@@ -454,7 +453,7 @@ impl UnicodeProperty {
     pub fn load_with_any_provider(
         &self,
         provider: &(impl icu_provider::AnyProvider + ?Sized),
-    ) -> Result<CodePointSetData, DataError> {
+    ) -> Result<crate::sets::CodePointSetData, DataError> {
         use icu_provider::AsDowncastingAnyProvider;
         self.load_unstable(&provider.as_downcasting())
     }
@@ -464,13 +463,13 @@ impl UnicodeProperty {
     pub fn load_with_buffer_provider(
         &self,
         provider: &(impl icu_provider::BufferProvider + ?Sized),
-    ) -> Result<CodePointSetData, DataError> {
+    ) -> Result<crate::sets::CodePointSetData, DataError> {
         use icu_provider::AsDeserializingBufferProvider;
         self.load_unstable(&provider.as_deserializing())
     }
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, load)]
-    pub fn load_unstable<P>(&self, provider: &P) -> Result<CodePointSetData, DataError>
+    pub fn load_unstable<P>(&self, provider: &P) -> Result<crate::sets::CodePointSetData, DataError>
     where
         P: ?Sized
             + DataProvider<AsciiHexDigitV1Marker>
