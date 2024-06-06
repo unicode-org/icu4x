@@ -27,14 +27,14 @@
 //! ## Dynamic Data Providers
 //!
 //! If the type system cannot be leveraged to load data (such as when dynamically loading from I/O),
-//! there's another form of the [`DataProvider`]: [`DynamicDataProvider`]. While [`DataProvider`] is parametrized 
-//! on the type-system level by a [`DataMarker`] (which are distinct types implementing this trait), 
+//! there's another form of the [`DataProvider`]: [`DynamicDataProvider`]. While [`DataProvider`] is parametrized
+//! on the type-system level by a [`DataMarker`] (which are distinct types implementing this trait),
 //! [`DynamicDataProvider`]s are parametrized at runtime by a [`DataMarkerInfo`] struct, which essentially is the runtime
 //! representation of the [`DataMarker`] type.
 //!
 //! The [`DynamicDataProvider`] is still type-level parametrized by the type that it loads, and there are two
 //! implementations that should be called out
-//! 
+//!
 //! - [`DynamicDataProvider<AnyMarker>`], and [`AnyProvider`] (a slightly optimized alternative) return data as `dyn Any` trait objects.
 //! - [`DynamicDataProvider<BufferMarker>`], a.k.a. [`BufferProvider`] returns data as `[u8]` buffers.
 //!
