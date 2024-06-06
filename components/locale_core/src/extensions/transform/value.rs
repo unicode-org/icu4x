@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::parser::{ParserError, SubtagIterator};
+use crate::parser::{ParseError, SubtagIterator};
 use crate::shortvec::ShortBoxSlice;
 use crate::subtags::{subtag, Subtag};
 use core::ops::RangeInclusive;
@@ -43,23 +43,23 @@ impl Value {
     ///
     /// let value = Value::try_from_bytes(b"hybrid").expect("Parsing failed.");
     /// ```
-    pub fn try_from_bytes(input: &[u8]) -> Result<Self, ParserError> {
+    pub fn try_from_bytes(input: &[u8]) -> Result<Self, ParseError> {
         let mut v = ShortBoxSlice::default();
         let mut has_value = false;
 
         for subtag in SubtagIterator::new(input) {
             if !Self::is_type_subtag(subtag) {
-                return Err(ParserError::InvalidExtension);
+                return Err(ParseError::InvalidExtension);
             }
             has_value = true;
-            let val = Subtag::try_from_bytes(subtag).map_err(|_| ParserError::InvalidExtension)?;
+            let val = Subtag::try_from_bytes(subtag).map_err(|_| ParseError::InvalidExtension)?;
             if val != TRUE_TVALUE {
                 v.push(val);
             }
         }
 
         if !has_value {
-            return Err(ParserError::InvalidExtension);
+            return Err(ParseError::InvalidExtension);
         }
         Ok(Self(v))
     }
@@ -72,11 +72,11 @@ impl Value {
         TYPE_LENGTH.contains(&t.len()) && t.iter().all(u8::is_ascii_alphanumeric)
     }
 
-    pub(crate) fn parse_subtag(t: &[u8]) -> Result<Option<Subtag>, ParserError> {
+    pub(crate) fn parse_subtag(t: &[u8]) -> Result<Option<Subtag>, ParseError> {
         if !TYPE_LENGTH.contains(&t.len()) {
-            return Err(ParserError::InvalidExtension);
+            return Err(ParseError::InvalidExtension);
         }
-        let s = Subtag::try_from_bytes(t).map_err(|_| ParserError::InvalidSubtag)?;
+        let s = Subtag::try_from_bytes(t).map_err(|_| ParseError::InvalidSubtag)?;
 
         let s = s.to_ascii_lowercase();
 
@@ -101,7 +101,7 @@ impl Value {
 }
 
 impl FromStr for Value {
-    type Err = ParserError;
+    type Err = ParseError;
 
     fn from_str(source: &str) -> Result<Self, Self::Err> {
         Self::try_from_bytes(source.as_bytes())

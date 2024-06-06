@@ -88,7 +88,6 @@ extern crate alloc;
 
 mod canonicalizer;
 mod directionality;
-mod error;
 mod expander;
 pub mod fallback;
 pub mod provider;
@@ -97,7 +96,6 @@ pub use icu_locale_core::*;
 
 pub use canonicalizer::LocaleCanonicalizer;
 pub use directionality::{Direction, LocaleDirectionality};
-pub use error::LocaleTransformError;
 pub use expander::LocaleExpander;
 #[doc(inline)]
 pub use fallback::LocaleFallbacker;
@@ -111,6 +109,3 @@ pub enum TransformResult {
     /// The canonicalization operation did not modify the locale.
     Unmodified,
 }
-
-#[doc(no_inline)]
-pub use LocaleTransformError as Error;

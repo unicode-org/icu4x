@@ -3,9 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::fields::{self, Field, FieldLength, FieldSymbol, Second, Week, Year};
-use crate::input::{
-    DateInput, ExtractedDateTimeInput, ExtractedDateTimeInputWeekCalculatorError, IsoTimeInput,
-};
+use crate::input::{DateInput, ExtractedDateTimeInput, IsoTimeInput};
 use crate::pattern::runtime::{PatternBorrowed, PatternMetadata};
 use crate::pattern::{
     runtime::{Pattern, PatternPlurals},
@@ -83,11 +81,9 @@ impl<'l> FormattedDateTime<'l> {
                         .week_data
                         .ok_or(DateTimeWriteError::MissingWeekCalculator)
                         .and_then(|w| {
-                            self.datetime.week_of_month(w).map_err(|e| match e {
-                                ExtractedDateTimeInputWeekCalculatorError::Missing(s) => {
-                                    DateTimeWriteError::MissingInputField(s)
-                                }
-                            })
+                            self.datetime
+                                .week_of_month(w)
+                                .map_err(DateTimeWriteError::MissingInputField)
                         })
                         .map(|w| w.0)
                         .unwrap_or_else(|e| {
@@ -98,11 +94,9 @@ impl<'l> FormattedDateTime<'l> {
                         .week_data
                         .ok_or(DateTimeWriteError::MissingWeekCalculator)
                         .and_then(|w| {
-                            self.datetime.week_of_year(w).map_err(|e| match e {
-                                ExtractedDateTimeInputWeekCalculatorError::Missing(s) => {
-                                    DateTimeWriteError::MissingInputField(s)
-                                }
-                            })
+                            self.datetime
+                                .week_of_year(w)
+                                .map_err(DateTimeWriteError::MissingInputField)
                         })
                         .map(|w| w.1 .0)
                         .unwrap_or_else(|e| {
@@ -384,11 +378,9 @@ where
         (FieldSymbol::Year(Year::WeekOf), l) => match week_data
             .ok_or(DateTimeWriteError::MissingWeekCalculator)
             .and_then(|w| {
-                datetime.week_of_year(w).map_err(|e| match e {
-                    ExtractedDateTimeInputWeekCalculatorError::Missing(s) => {
-                        DateTimeWriteError::MissingInputField(s)
-                    }
-                })
+                datetime
+                    .week_of_year(w)
+                    .map_err(DateTimeWriteError::MissingInputField)
             }) {
             Err(e) => {
                 write_value_missing(w, field)?;
@@ -528,11 +520,9 @@ where
             Week::WeekOfYear => match week_data
                 .ok_or(DateTimeWriteError::MissingWeekCalculator)
                 .and_then(|w| {
-                    datetime.week_of_year(w).map_err(|e| match e {
-                        ExtractedDateTimeInputWeekCalculatorError::Missing(s) => {
-                            DateTimeWriteError::MissingInputField(s)
-                        }
-                    })
+                    datetime
+                        .week_of_year(w)
+                        .map_err(DateTimeWriteError::MissingInputField)
                 }) {
                 Err(e) => {
                     write_value_missing(w, field)?;
@@ -543,11 +533,9 @@ where
             Week::WeekOfMonth => match week_data
                 .ok_or(DateTimeWriteError::MissingWeekCalculator)
                 .and_then(|w| {
-                    datetime.week_of_month(w).map_err(|e| match e {
-                        ExtractedDateTimeInputWeekCalculatorError::Missing(s) => {
-                            DateTimeWriteError::MissingInputField(s)
-                        }
-                    })
+                    datetime
+                        .week_of_month(w)
+                        .map_err(DateTimeWriteError::MissingInputField)
                 }) {
                 Err(e) => {
                     write_value_missing(w, field)?;

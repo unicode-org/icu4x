@@ -86,18 +86,11 @@ export class ICU4XDate {
 
   week_of_year(arg_calculator) {
     return (() => {
-      const diplomat_receive_buffer = wasm.diplomat_alloc(9, 4);
+      const diplomat_receive_buffer = wasm.diplomat_alloc(8, 4);
       wasm.ICU4XDate_week_of_year(diplomat_receive_buffer, this.underlying, arg_calculator.underlying);
-      const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 8);
-      if (is_ok) {
-        const ok_value = new ICU4XWeekOf(diplomat_receive_buffer);
-        wasm.diplomat_free(diplomat_receive_buffer, 9, 4);
-        return ok_value;
-      } else {
-        const throw_value = ICU4XError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
-        wasm.diplomat_free(diplomat_receive_buffer, 9, 4);
-        throw new diplomatRuntime.FFIError(throw_value);
-      }
+      const out = new ICU4XWeekOf(diplomat_receive_buffer);
+      wasm.diplomat_free(diplomat_receive_buffer, 8, 4);
+      return out;
     })();
   }
 

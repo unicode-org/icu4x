@@ -7,7 +7,7 @@ use crate::provider::DatagenProvider;
 use crate::provider::IterableDataProviderCached;
 use core::convert::TryFrom;
 use icu_experimental::displaynames::provider::*;
-use icu_locale_core::{subtags::Variant, ParserError};
+use icu_locale_core::{subtags::Variant, ParseError};
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
 use std::str::FromStr;
@@ -61,7 +61,7 @@ impl IterableDataProviderCached<VariantDisplayNamesV1Marker> for DatagenProvider
 const ALT_SUBSTRING: &str = "-alt-";
 
 impl TryFrom<&cldr_serde::displaynames::variant::Resource> for VariantDisplayNamesV1<'static> {
-    type Error = ParserError;
+    type Error = ParseError;
 
     fn try_from(other: &cldr_serde::displaynames::variant::Resource) -> Result<Self, Self::Error> {
         let mut names = BTreeMap::new();

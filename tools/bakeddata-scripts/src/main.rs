@@ -190,12 +190,16 @@ impl<F: Write + Send + Sync> DataExporter for PostcardFingerprintExporter<F> {
         self.size_hash.lock().expect("poison").insert(
             (
                 marker,
-                DataRequest {
-                    locale,
-                    marker_attributes,
-                    ..Default::default()
-                }
-                .legacy_encode(),
+                if marker.is_singleton && locale.is_und() {
+                    "<singleton>".to_string()
+                } else if !marker_attributes.is_empty() {
+                    format!(
+                        "{locale}/{marker_attributes}",
+                        marker_attributes = marker_attributes as &str
+                    )
+                } else {
+                    locale.to_string()
+                },
             ),
             (size, hash),
         );
@@ -216,8 +220,17 @@ impl<F: Write + Send + Sync> DataExporter for PostcardFingerprintExporter<F> {
     }
 
     fn close(&mut self) -> Result<(), DataError> {
-        for ((marker, req), (size, hash)) in self.size_hash.get_mut().expect("poison") {
-            writeln!(&mut self.fingerprints, "{marker}, {req}, {size}B, {hash:x}")?;
+        let mut seen = std::collections::HashMap::new();
+        for ((marker, req), (size, hash)) in self.size_hash.get_mut().expect("poison").iter() {
+            if let Some(deduped_req) = seen.get(hash) {
+                writeln!(
+                    &mut self.fingerprints,
+                    "{marker}, {req}, {size}B, -> {deduped_req}",
+                )?;
+            } else {
+                writeln!(&mut self.fingerprints, "{marker}, {req}, {size}B, {hash:x}",)?;
+                seen.insert(hash, req);
+            }
         }
         Ok(())
     }

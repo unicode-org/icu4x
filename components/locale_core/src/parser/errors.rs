@@ -7,20 +7,18 @@ use displaydoc::Display;
 /// List of parser errors that can be generated
 /// while parsing [`LanguageIdentifier`](crate::LanguageIdentifier), [`Locale`](crate::Locale),
 /// [`subtags`](crate::subtags) or [`extensions`](crate::extensions).
-///
-/// Re-exported as [`Error`](crate::Error).
 #[derive(Display, Debug, PartialEq, Copy, Clone)]
 #[non_exhaustive]
-pub enum ParserError {
+pub enum ParseError {
     /// Invalid language subtag.
     ///
     /// # Examples
     ///
     /// ```
     /// use icu::locale::subtags::Language;
-    /// use icu::locale::ParserError;
+    /// use icu::locale::ParseError;
     ///
-    /// assert_eq!("x2".parse::<Language>(), Err(ParserError::InvalidLanguage));
+    /// assert_eq!("x2".parse::<Language>(), Err(ParseError::InvalidLanguage));
     /// ```
     #[displaydoc("The given language subtag is invalid")]
     InvalidLanguage,
@@ -31,9 +29,9 @@ pub enum ParserError {
     ///
     /// ```
     /// use icu::locale::subtags::Region;
-    /// use icu::locale::ParserError;
+    /// use icu::locale::ParseError;
     ///
-    /// assert_eq!("#@2X".parse::<Region>(), Err(ParserError::InvalidSubtag));
+    /// assert_eq!("#@2X".parse::<Region>(), Err(ParseError::InvalidSubtag));
     /// ```
     #[displaydoc("Invalid subtag")]
     InvalidSubtag,
@@ -44,9 +42,9 @@ pub enum ParserError {
     ///
     /// ```
     /// use icu::locale::extensions::unicode::Key;
-    /// use icu::locale::ParserError;
+    /// use icu::locale::ParseError;
     ///
-    /// assert_eq!("#@2X".parse::<Key>(), Err(ParserError::InvalidExtension));
+    /// assert_eq!("#@2X".parse::<Key>(), Err(ParseError::InvalidExtension));
     /// ```
     #[displaydoc("Invalid extension")]
     InvalidExtension,
@@ -57,11 +55,11 @@ pub enum ParserError {
     ///
     /// ```
     /// use icu::locale::Locale;
-    /// use icu::locale::ParserError;
+    /// use icu::locale::ParseError;
     ///
     /// assert_eq!(
     ///     "und-u-hc-h12-u-ca-calendar".parse::<Locale>(),
-    ///     Err(ParserError::DuplicatedExtension)
+    ///     Err(ParseError::DuplicatedExtension)
     /// );
     /// ```
     #[displaydoc("Duplicated extension")]
@@ -69,4 +67,4 @@ pub enum ParserError {
 }
 
 #[cfg(feature = "std")]
-impl std::error::Error for ParserError {}
+impl std::error::Error for ParseError {}

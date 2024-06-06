@@ -6,7 +6,7 @@ use core::cmp::Ordering;
 use core::str::FromStr;
 
 use crate::parser::{
-    parse_language_identifier, parse_language_identifier_with_single_variant, ParserError,
+    parse_language_identifier, parse_language_identifier_with_single_variant, ParseError,
     ParserMode, SubtagIterator,
 };
 use crate::subtags;
@@ -86,13 +86,13 @@ impl LanguageIdentifier {
     ///
     /// LanguageIdentifier::try_from_bytes(b"en-US").expect("Parsing failed");
     /// ```
-    pub fn try_from_bytes(v: &[u8]) -> Result<Self, ParserError> {
+    pub fn try_from_bytes(v: &[u8]) -> Result<Self, ParseError> {
         parse_language_identifier(v, ParserMode::LanguageIdentifier)
     }
 
     #[doc(hidden)] // macro use
     #[allow(clippy::type_complexity)]
-    // The return type should be `Result<Self, ParserError>` once the `const_precise_live_drops`
+    // The return type should be `Result<Self, ParseError>` once the `const_precise_live_drops`
     // is stabilized ([rust-lang#73255](https://github.com/rust-lang/rust/issues/73255)).
     pub const fn try_from_bytes_with_single_variant(
         v: &[u8],
@@ -103,7 +103,7 @@ impl LanguageIdentifier {
             Option<subtags::Region>,
             Option<subtags::Variant>,
         ),
-        ParserError,
+        ParseError,
     > {
         parse_language_identifier_with_single_variant(v, ParserMode::LanguageIdentifier)
     }
@@ -124,7 +124,7 @@ impl LanguageIdentifier {
     ///
     /// This method should be used for input that may be a locale identifier.
     /// All extensions will be lost.
-    pub fn try_from_locale_bytes(v: &[u8]) -> Result<Self, ParserError> {
+    pub fn try_from_locale_bytes(v: &[u8]) -> Result<Self, ParseError> {
         parse_language_identifier(v, ParserMode::Locale)
     }
 
@@ -159,7 +159,7 @@ impl LanguageIdentifier {
     ///     Ok("pl-Latn-PL")
     /// );
     /// ```
-    pub fn canonicalize<S: AsRef<[u8]>>(input: S) -> Result<String, ParserError> {
+    pub fn canonicalize<S: AsRef<[u8]>>(input: S) -> Result<String, ParseError> {
         let lang_id = Self::try_from_bytes(input.as_ref())?;
         Ok(lang_id.write_to_string().into_owned())
     }
@@ -383,7 +383,7 @@ impl core::fmt::Debug for LanguageIdentifier {
 }
 
 impl FromStr for LanguageIdentifier {
-    type Err = ParserError;
+    type Err = ParseError;
 
     fn from_str(source: &str) -> Result<Self, Self::Err> {
         Self::try_from_bytes(source.as_bytes())

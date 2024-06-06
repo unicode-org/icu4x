@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::parser::{ParserError, SubtagIterator};
+use crate::parser::{ParseError, SubtagIterator};
 use crate::shortvec::ShortBoxSlice;
 use crate::subtags::{subtag, Subtag};
 use alloc::vec::Vec;
@@ -47,7 +47,7 @@ impl Value {
     ///
     /// Value::try_from_bytes(b"buddhist").expect("Parsing failed.");
     /// ```
-    pub fn try_from_bytes(input: &[u8]) -> Result<Self, ParserError> {
+    pub fn try_from_bytes(input: &[u8]) -> Result<Self, ParseError> {
         let mut v = ShortBoxSlice::new();
 
         if !input.is_empty() {
@@ -108,7 +108,7 @@ impl Value {
         Self(input)
     }
 
-    pub(crate) fn parse_subtag(t: &[u8]) -> Result<Option<Subtag>, ParserError> {
+    pub(crate) fn parse_subtag(t: &[u8]) -> Result<Option<Subtag>, ParseError> {
         Self::parse_subtag_from_bytes_manual_slice(t, 0, t.len())
     }
 
@@ -116,11 +116,11 @@ impl Value {
         bytes: &[u8],
         start: usize,
         end: usize,
-    ) -> Result<Option<Subtag>, ParserError> {
+    ) -> Result<Option<Subtag>, ParseError> {
         match Subtag::try_from_bytes_manual_slice(bytes, start, end) {
             Ok(TRUE_VALUE) => Ok(None),
             Ok(s) => Ok(Some(s)),
-            Err(_) => Err(ParserError::InvalidSubtag),
+            Err(_) => Err(ParseError::InvalidSubtag),
         }
     }
 
@@ -133,7 +133,7 @@ impl Value {
 }
 
 impl FromStr for Value {
-    type Err = ParserError;
+    type Err = ParseError;
 
     fn from_str(source: &str) -> Result<Self, Self::Err> {
         Self::try_from_bytes(source.as_bytes())

@@ -134,7 +134,7 @@ pub mod provider;
 mod time_zone;
 mod types;
 
-pub use error::TimeZoneError;
+pub use error::InvalidOffsetError;
 pub use ids::{
     TimeZoneIdMapper, TimeZoneIdMapperBorrowed, TimeZoneIdMapperWithFastCanonicalization,
     TimeZoneIdMapperWithFastCanonicalizationBorrowed,
@@ -143,6 +143,3 @@ pub use metazone::MetazoneCalculator;
 pub use provider::{MetazoneId, TimeZoneBcp47Id};
 pub use time_zone::CustomTimeZone;
 pub use types::{GmtOffset, ZoneVariant};
-
-#[doc(no_inline)]
-pub use TimeZoneError as Error;

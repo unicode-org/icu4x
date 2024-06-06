@@ -11,7 +11,6 @@ use crate::transliterate::provider::{
     RuleBasedTransliterator, Segment, TransliteratorRulesV1Marker,
 };
 use crate::transliterate::transliterator::hardcoded::Case;
-use crate::transliterate::TransliteratorError;
 use alloc::boxed::Box;
 use alloc::string::{String, ToString};
 use alloc::vec::Vec;
@@ -50,7 +49,7 @@ pub trait CustomTransliterator: Debug {
 struct ComposingTransliterator(ComposingNormalizer);
 
 impl ComposingTransliterator {
-    fn try_nfc<P>(provider: &P) -> Result<Self, TransliteratorError>
+    fn try_nfc<P>(provider: &P) -> Result<Self, DataError>
     where
         P: DataProvider<CanonicalDecompositionDataV1Marker>
             + DataProvider<CanonicalDecompositionTablesV1Marker>
@@ -62,7 +61,7 @@ impl ComposingTransliterator {
         Ok(Self(inner))
     }
 
-    fn try_nfkc<P>(provider: &P) -> Result<Self, TransliteratorError>
+    fn try_nfkc<P>(provider: &P) -> Result<Self, DataError>
     where
         P: DataProvider<CanonicalDecompositionDataV1Marker>
             + DataProvider<CompatibilityDecompositionSupplementV1Marker>
@@ -89,7 +88,7 @@ impl ComposingTransliterator {
 struct DecomposingTransliterator(DecomposingNormalizer);
 
 impl DecomposingTransliterator {
-    fn try_nfd<P>(provider: &P) -> Result<Self, TransliteratorError>
+    fn try_nfd<P>(provider: &P) -> Result<Self, DataError>
     where
         P: DataProvider<CanonicalDecompositionDataV1Marker>
             + DataProvider<CanonicalDecompositionTablesV1Marker>
@@ -100,7 +99,7 @@ impl DecomposingTransliterator {
         Ok(Self(inner))
     }
 
-    fn try_nfkd<P>(provider: &P) -> Result<Self, TransliteratorError>
+    fn try_nfkd<P>(provider: &P) -> Result<Self, DataError>
     where
         P: DataProvider<CanonicalDecompositionDataV1Marker>
             + DataProvider<CompatibilityDecompositionSupplementV1Marker>
@@ -174,10 +173,7 @@ impl Transliterator {
     ///
     /// assert_eq!(output, "اكاريتانايا");
     /// ```
-    pub fn try_new_unstable<P>(
-        locale: Locale,
-        provider: &P,
-    ) -> Result<Transliterator, TransliteratorError>
+    pub fn try_new_unstable<P>(locale: Locale, provider: &P) -> Result<Transliterator, DataError>
     where
         P: DataProvider<TransliteratorRulesV1Marker>
             + DataProvider<CanonicalDecompositionDataV1Marker>
@@ -233,7 +229,7 @@ impl Transliterator {
         locale: Locale,
         lookup: F,
         provider: &P,
-    ) -> Result<Transliterator, TransliteratorError>
+    ) -> Result<Transliterator, DataError>
     where
         P: DataProvider<TransliteratorRulesV1Marker>
             + DataProvider<CanonicalDecompositionDataV1Marker>
@@ -252,7 +248,7 @@ impl Transliterator {
         lookup: Option<&F>,
         transliterator_provider: &PT,
         normalizer_provider: &PN,
-    ) -> Result<Transliterator, TransliteratorError>
+    ) -> Result<Transliterator, DataError>
     where
         PT: DataProvider<TransliteratorRulesV1Marker> + ?Sized,
         PN: DataProvider<CanonicalDecompositionDataV1Marker>
@@ -271,7 +267,7 @@ impl Transliterator {
         let rbt = payload.get();
         if !rbt.visibility {
             // transliterator is internal
-            return Err(TransliteratorError::InternalOnly);
+            return Err(DataError::custom("internal only transliterator"));
         }
         let mut env = LiteMap::new();
         // Avoid recursive load
@@ -295,7 +291,7 @@ impl Transliterator {
         lookup: Option<&F>,
         transliterator_provider: &PT,
         normalizer_provider: &PN,
-    ) -> Result<(), TransliteratorError>
+    ) -> Result<(), DataError>
     where
         PT: DataProvider<TransliteratorRulesV1Marker> + ?Sized,
         PN: DataProvider<CanonicalDecompositionDataV1Marker>
@@ -346,7 +342,7 @@ impl Transliterator {
     fn load_special<P>(
         special: &str,
         normalizer_provider: &P,
-    ) -> Result<InternalTransliterator, TransliteratorError>
+    ) -> Result<InternalTransliterator, DataError>
     where
         P: DataProvider<CanonicalDecompositionDataV1Marker>
             + DataProvider<CompatibilityDecompositionSupplementV1Marker>
@@ -386,16 +382,14 @@ impl Transliterator {
             "any-hex/plain" => Ok(InternalTransliterator::Hex(
                 hardcoded::HexTransliterator::new("", "", 4, Case::Upper),
             )),
-            s => Err(DataError::custom("unavailable transliterator")
-                .with_debug_context(s)
-                .into()),
+            s => Err(DataError::custom("unavailable transliterator").with_debug_context(s)),
         }
     }
 
     fn load_with_override<F>(
         id: &str,
         lookup: &F,
-    ) -> Result<Option<InternalTransliterator>, TransliteratorError>
+    ) -> Result<Option<InternalTransliterator>, DataError>
     where
         F: Fn(&Locale) -> Option<Box<dyn CustomTransliterator>>,
     {

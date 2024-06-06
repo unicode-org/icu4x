@@ -22,7 +22,7 @@
 use core::str::FromStr;
 
 use super::ExtensionType;
-use crate::parser::ParserError;
+use crate::parser::ParseError;
 use crate::parser::SubtagIterator;
 use crate::shortvec::ShortBoxSlice;
 use crate::subtags::Subtag;
@@ -83,18 +83,18 @@ impl Other {
         Self { ext, keys }
     }
 
-    pub(crate) fn try_from_bytes(t: &[u8]) -> Result<Self, ParserError> {
+    pub(crate) fn try_from_bytes(t: &[u8]) -> Result<Self, ParseError> {
         let mut iter = SubtagIterator::new(t);
 
-        let ext = iter.next().ok_or(ParserError::InvalidExtension)?;
+        let ext = iter.next().ok_or(ParseError::InvalidExtension)?;
         if let ExtensionType::Other(b) = ExtensionType::try_from_byte_slice(ext)? {
             return Self::try_from_iter(b, &mut iter);
         }
 
-        Err(ParserError::InvalidExtension)
+        Err(ParseError::InvalidExtension)
     }
 
-    pub(crate) fn try_from_iter(ext: u8, iter: &mut SubtagIterator) -> Result<Self, ParserError> {
+    pub(crate) fn try_from_iter(ext: u8, iter: &mut SubtagIterator) -> Result<Self, ParseError> {
         debug_assert!(matches!(
             ExtensionType::try_from_byte(ext),
             Ok(ExtensionType::Other(_)),
@@ -176,7 +176,7 @@ impl Other {
 }
 
 impl FromStr for Other {
-    type Err = ParserError;
+    type Err = ParseError;
 
     fn from_str(source: &str) -> Result<Self, Self::Err> {
         Self::try_from_bytes(source.as_bytes())

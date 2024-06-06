@@ -10,7 +10,7 @@ use crate::units::{
     power::get_power,
     provider::{Base, MeasureUnitItem, SiPrefix},
     si_prefix::get_si_prefix,
-    ConversionError,
+    InvalidUnitError,
 };
 
 // TODO: add test cases for this parser after adding UnitsTest.txt to the test data.
@@ -33,9 +33,9 @@ impl<'data> MeasureUnitParser<'data> {
     /// NOTE:
     ///    if the unit id is found, the function will return (unit id, part without the unit id and without `-` at the beginning of the remaining part if it exists).
     ///    if the unit id is not found, the function will return an error.
-    fn get_unit_id<'a>(&'a self, part: &'a [u8]) -> Result<(u16, &[u8]), ConversionError> {
+    fn get_unit_id<'a>(&'a self, part: &'a [u8]) -> Result<(u16, &[u8]), InvalidUnitError> {
         let mut cursor = self.units_trie.cursor();
-        let mut longest_match = Err(ConversionError::InvalidUnit);
+        let mut longest_match = Err(InvalidUnitError);
 
         for (i, byte) in part.iter().enumerate() {
             cursor.step(*byte);
@@ -49,7 +49,7 @@ impl<'data> MeasureUnitParser<'data> {
         longest_match
     }
 
-    fn get_power<'a>(&'a self, part: &'a [u8]) -> Result<(u8, &[u8]), ConversionError> {
+    fn get_power<'a>(&'a self, part: &'a [u8]) -> Result<(u8, &[u8]), InvalidUnitError> {
         let (power, part_without_power) = get_power(part);
 
         // If the power is not found, return the part as it is.
@@ -60,7 +60,7 @@ impl<'data> MeasureUnitParser<'data> {
         // If the power is found, this means that the part must start with the `-` sign.
         match part_without_power.strip_prefix(b"-") {
             Some(part_without_power) => Ok((power, part_without_power)),
-            None => Err(ConversionError::InvalidUnit),
+            None => Err(InvalidUnitError),
         }
     }
 
@@ -84,10 +84,10 @@ impl<'data> MeasureUnitParser<'data> {
     /// Examples include: `meter`, `foot`, `meter-per-second`, `meter-per-square-second`, `meter-per-square-second-per-second`, etc.
     /// Returns:
     ///    - Ok(MeasureUnit) if the identifier is valid.
-    ///    - Err(ConversionError::InvalidUnit) if the identifier is invalid.
-    pub fn try_from_bytes(&self, identifier: &'data [u8]) -> Result<MeasureUnit, ConversionError> {
+    ///    - Err(InvalidUnitError) if the identifier is invalid.
+    pub fn try_from_bytes(&self, identifier: &'data [u8]) -> Result<MeasureUnit, InvalidUnitError> {
         if identifier.starts_with(b"-") || identifier.ends_with(b"-") {
-            return Err(ConversionError::InvalidUnit);
+            return Err(InvalidUnitError);
         }
 
         let mut measure_unit_items = Vec::<MeasureUnitItem>::new();
@@ -124,7 +124,7 @@ impl<'data> MeasureUnitParser<'data> {
                                         continue;
                                     }
 
-                                    return Err(ConversionError::InvalidUnit);
+                                    return Err(InvalidUnitError);
                                 }
                                 Err(e) => return Err(e),
                             };
@@ -143,7 +143,7 @@ impl<'data> MeasureUnitParser<'data> {
                 None if identifier_part_without_unit_id.is_empty() => {
                     identifier_part_without_unit_id
                 }
-                None => return Err(ConversionError::InvalidUnit),
+                None => return Err(InvalidUnitError),
             };
         }
 

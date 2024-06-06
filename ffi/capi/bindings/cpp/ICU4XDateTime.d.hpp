@@ -56,7 +56,7 @@ public:
 
   inline uint32_t week_of_month(ICU4XIsoWeekday first_weekday) const;
 
-  inline diplomat::result<ICU4XWeekOf, ICU4XError> week_of_year(const ICU4XWeekCalculator& calculator) const;
+  inline ICU4XWeekOf week_of_year(const ICU4XWeekCalculator& calculator) const;
 
   inline uint32_t ordinal_month() const;
 

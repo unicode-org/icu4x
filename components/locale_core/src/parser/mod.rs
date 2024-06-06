@@ -6,7 +6,7 @@ pub mod errors;
 mod langid;
 mod locale;
 
-pub use errors::ParserError;
+pub use errors::ParseError;
 pub use langid::{
     parse_language_identifier, parse_language_identifier_from_iter,
     parse_language_identifier_with_single_variant,

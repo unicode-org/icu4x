@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-pub use super::errors::ParserError;
+pub use super::errors::ParseError;
 use crate::extensions::unicode::{Attribute, Key, Value};
 use crate::extensions::ExtensionType;
 use crate::parser::SubtagIterator;
@@ -28,7 +28,7 @@ enum ParserPosition {
 pub fn parse_language_identifier_from_iter(
     iter: &mut SubtagIterator,
     mode: ParserMode,
-) -> Result<LanguageIdentifier, ParserError> {
+) -> Result<LanguageIdentifier, ParseError> {
     let mut script = None;
     let mut region = None;
     let mut variants = ShortBoxSlice::new();
@@ -36,7 +36,7 @@ pub fn parse_language_identifier_from_iter(
     let language = if let Some(subtag) = iter.next() {
         subtags::Language::try_from_bytes(subtag)?
     } else {
-        return Err(ParserError::InvalidLanguage);
+        return Err(ParseError::InvalidLanguage);
     };
 
     let mut position = ParserPosition::Script;
@@ -61,7 +61,7 @@ pub fn parse_language_identifier_from_iter(
             } else if mode == ParserMode::Partial {
                 break;
             } else {
-                return Err(ParserError::InvalidSubtag);
+                return Err(ParseError::InvalidSubtag);
             }
         } else if position == ParserPosition::Region {
             if let Ok(s) = subtags::Region::try_from_bytes(subtag) {
@@ -75,18 +75,18 @@ pub fn parse_language_identifier_from_iter(
             } else if mode == ParserMode::Partial {
                 break;
             } else {
-                return Err(ParserError::InvalidSubtag);
+                return Err(ParseError::InvalidSubtag);
             }
         } else if let Ok(v) = subtags::Variant::try_from_bytes(subtag) {
             if let Err(idx) = variants.binary_search(&v) {
                 variants.insert(idx, v);
             } else {
-                return Err(ParserError::InvalidSubtag);
+                return Err(ParseError::InvalidSubtag);
             }
         } else if mode == ParserMode::Partial {
             break;
         } else {
-            return Err(ParserError::InvalidSubtag);
+            return Err(ParseError::InvalidSubtag);
         }
         iter.next();
     }
@@ -102,7 +102,7 @@ pub fn parse_language_identifier_from_iter(
 pub fn parse_language_identifier(
     t: &[u8],
     mode: ParserMode,
-) -> Result<LanguageIdentifier, ParserError> {
+) -> Result<LanguageIdentifier, ParseError> {
     let mut iter = SubtagIterator::new(t);
     parse_language_identifier_from_iter(&mut iter, mode)
 }
@@ -119,7 +119,7 @@ pub const fn parse_locale_with_single_variant_single_keyword_unicode_extension_f
         Option<subtags::Variant>,
         Option<(extensions::unicode::Key, Option<Subtag>)>,
     ),
-    ParserError,
+    ParseError,
 > {
     let language;
     let mut script = None;
@@ -134,7 +134,7 @@ pub const fn parse_locale_with_single_variant_single_keyword_unicode_extension_f
             Err(e) => return Err(e),
         }
     } else {
-        return Err(ParserError::InvalidLanguage);
+        return Err(ParseError::InvalidLanguage);
     }
 
     let mut position = ParserPosition::Script;
@@ -163,7 +163,7 @@ pub const fn parse_locale_with_single_variant_single_keyword_unicode_extension_f
             } else if matches!(mode, ParserMode::Partial) {
                 break;
             } else {
-                return Err(ParserError::InvalidSubtag);
+                return Err(ParseError::InvalidSubtag);
             }
         } else if matches!(position, ParserPosition::Region) {
             if let Ok(s) = subtags::Region::try_from_bytes_manual_slice(iter.slice, start, end) {
@@ -179,20 +179,20 @@ pub const fn parse_locale_with_single_variant_single_keyword_unicode_extension_f
             } else if matches!(mode, ParserMode::Partial) {
                 break;
             } else {
-                return Err(ParserError::InvalidSubtag);
+                return Err(ParseError::InvalidSubtag);
             }
         } else if let Ok(v) = subtags::Variant::try_from_bytes_manual_slice(iter.slice, start, end)
         {
             debug_assert!(matches!(position, ParserPosition::Variant));
             if variant.is_some() {
                 // We cannot handle multiple variants in a const context
-                return Err(ParserError::InvalidSubtag);
+                return Err(ParseError::InvalidSubtag);
             }
             variant = Some(v);
         } else if matches!(mode, ParserMode::Partial) {
             break;
         } else {
-            return Err(ParserError::InvalidSubtag);
+            return Err(ParseError::InvalidSubtag);
         }
 
         iter = iter.next_manual().0;
@@ -206,7 +206,7 @@ pub const fn parse_locale_with_single_variant_single_keyword_unicode_extension_f
                     if let Some((start, end)) = iter.peek_manual() {
                         if Attribute::try_from_bytes_manual_slice(iter.slice, start, end).is_ok() {
                             // We cannot handle Attributes in a const context
-                            return Err(ParserError::InvalidSubtag);
+                            return Err(ParseError::InvalidSubtag);
                         }
                     }
 
@@ -218,7 +218,7 @@ pub const fn parse_locale_with_single_variant_single_keyword_unicode_extension_f
                         if slen == 2 {
                             if key.is_some() {
                                 // We cannot handle more than one Key in a const context
-                                return Err(ParserError::InvalidSubtag);
+                                return Err(ParseError::InvalidSubtag);
                             }
                             match Key::try_from_bytes_manual_slice(iter.slice, start, end) {
                                 Ok(k) => key = Some(k),
@@ -231,7 +231,7 @@ pub const fn parse_locale_with_single_variant_single_keyword_unicode_extension_f
                                 Ok(Some(t)) => {
                                     if current_type.is_some() {
                                         // We cannot handle more than one type in a const context
-                                        return Err(ParserError::InvalidSubtag);
+                                        return Err(ParseError::InvalidSubtag);
                                     }
                                     current_type = Some(t);
                                 }
@@ -248,7 +248,7 @@ pub const fn parse_locale_with_single_variant_single_keyword_unicode_extension_f
                     }
                 }
                 // We cannot handle Transform, Private, Other extensions in a const context
-                Ok(_) => return Err(ParserError::InvalidSubtag),
+                Ok(_) => return Err(ParseError::InvalidSubtag),
                 Err(e) => return Err(e),
             }
         }
@@ -268,7 +268,7 @@ pub const fn parse_language_identifier_with_single_variant(
         Option<subtags::Region>,
         Option<subtags::Variant>,
     ),
-    ParserError,
+    ParseError,
 > {
     let iter = SubtagIterator::new(t);
     match parse_locale_with_single_variant_single_keyword_unicode_extension_from_iter(iter, mode) {

@@ -14,7 +14,6 @@
 //! [`TR44`]: https://www.unicode.org/reports/tr44
 //! [`TR18`]: https://www.unicode.org/reports/tr18
 
-use crate::error::PropertiesError;
 use crate::provider::*;
 use crate::*;
 use core::iter::FromIterator;
@@ -318,15 +317,15 @@ impl UnicodeSetDataBorrowed<'static> {
     }
 }
 
-pub(crate) fn load_set_data<M, P>(provider: &P) -> Result<CodePointSetData, PropertiesError>
+pub(crate) fn load_set_data<M, P>(provider: &P) -> Result<CodePointSetData, DataError>
 where
     M: DataMarker<Yokeable = PropertyCodePointSetV1<'static>>,
     P: DataProvider<M> + ?Sized,
 {
-    Ok(provider
+    provider
         .load(Default::default())
         .and_then(DataResponse::take_payload)
-        .map(CodePointSetData::from_data)?)
+        .map(CodePointSetData::from_data)
 }
 
 //
@@ -352,7 +351,7 @@ macro_rules! make_code_point_set_property {
         /// the borrowed version, accessible through [`CodePointSetData::as_borrowed`].
         $vis fn $funcname(
             provider: &(impl DataProvider<$data_marker> + ?Sized)
-        ) -> Result<CodePointSetData, PropertiesError> {
+        ) -> Result<CodePointSetData, DataError> {
             load_set_data(provider)
         }
 
@@ -1931,8 +1930,8 @@ macro_rules! make_unicode_set_property {
         #[doc = concat!("A version of [`", stringify!($constname), "()`] that uses custom data provided by a [`DataProvider`].")]
         $vis fn $funcname(
             provider: &(impl DataProvider<$data_marker> + ?Sized)
-        ) -> Result<UnicodeSetData, PropertiesError> {
-            Ok(provider.load(Default::default()).and_then(DataResponse::take_payload).map(UnicodeSetData::from_data)?)
+        ) -> Result<UnicodeSetData, DataError> {
+            provider.load(Default::default()).and_then(DataResponse::take_payload).map(UnicodeSetData::from_data)
         }
         $(#[$doc])*
         #[cfg(feature = "compiled_data")]
@@ -1985,7 +1984,7 @@ make_unicode_set_property! {
 pub fn load_for_general_category_group(
     provider: &(impl DataProvider<GeneralCategoryV1Marker> + ?Sized),
     enum_val: GeneralCategoryGroup,
-) -> Result<CodePointSetData, PropertiesError> {
+) -> Result<CodePointSetData, DataError> {
     let gc_map_payload = maps::load_general_category(provider)?;
     let gc_map = gc_map_payload.as_borrowed();
     let matching_gc_ranges = gc_map
@@ -2045,13 +2044,15 @@ pub fn for_general_category_group(enum_val: GeneralCategoryGroup) -> CodePointSe
 ///
 /// [ecma]: https://tc39.es/ecma262/#table-binary-unicode-properties
 #[cfg(feature = "compiled_data")]
-pub fn load_for_ecma262(name: &str) -> Result<CodePointSetDataBorrowed<'static>, PropertiesError> {
+pub fn load_for_ecma262(
+    name: &str,
+) -> Result<CodePointSetDataBorrowed<'static>, UnexpectedPropertyNameError> {
     use crate::runtime::UnicodeProperty;
 
     let prop = if let Some(prop) = UnicodeProperty::parse_ecma262_name(name) {
         prop
     } else {
-        return Err(PropertiesError::UnexpectedPropertyName);
+        return Err(UnexpectedPropertyNameError);
     };
     Ok(match prop {
         UnicodeProperty::AsciiHexDigit => ascii_hex_digit(),
@@ -2104,14 +2105,14 @@ pub fn load_for_ecma262(name: &str) -> Result<CodePointSetDataBorrowed<'static>,
         UnicodeProperty::WhiteSpace => white_space(),
         UnicodeProperty::XidContinue => xid_continue(),
         UnicodeProperty::XidStart => xid_start(),
-        _ => return Err(PropertiesError::UnexpectedPropertyName),
+        _ => return Err(UnexpectedPropertyNameError),
     })
 }
 
 icu_provider::gen_any_buffer_data_constructors!(
     locale: skip,
     name: &str,
-    result: Result<CodePointSetData, PropertiesError>,
+    result: Result<CodePointSetData, UnexpectedPropertyNameOrDataError>,
     #[cfg(skip)]
     functions: [
         load_for_ecma262,
@@ -2125,7 +2126,7 @@ icu_provider::gen_any_buffer_data_constructors!(
 pub fn load_for_ecma262_unstable<P>(
     provider: &P,
     name: &str,
-) -> Result<CodePointSetData, PropertiesError>
+) -> Result<CodePointSetData, UnexpectedPropertyNameOrDataError>
 where
     P: ?Sized
         + DataProvider<AsciiHexDigitV1Marker>
@@ -2184,9 +2185,9 @@ where
     let prop = if let Some(prop) = UnicodeProperty::parse_ecma262_name(name) {
         prop
     } else {
-        return Err(PropertiesError::UnexpectedPropertyName);
+        return Err(UnexpectedPropertyNameOrDataError::UnexpectedPropertyName);
     };
-    match prop {
+    Ok(match prop {
         UnicodeProperty::AsciiHexDigit => load_ascii_hex_digit(provider),
         UnicodeProperty::Alphabetic => load_alphabetic(provider),
         UnicodeProperty::BidiControl => load_bidi_control(provider),
@@ -2237,8 +2238,8 @@ where
         UnicodeProperty::WhiteSpace => load_white_space(provider),
         UnicodeProperty::XidContinue => load_xid_continue(provider),
         UnicodeProperty::XidStart => load_xid_start(provider),
-        _ => Err(PropertiesError::UnexpectedPropertyName),
-    }
+        _ => Err(DataError::custom("Unknown property")),
+    }?)
 }
 
 #[cfg(test)]

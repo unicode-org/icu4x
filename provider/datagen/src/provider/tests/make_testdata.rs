@@ -3,15 +3,12 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::prelude::*;
-use crlify::BufWriterWithLineEndingFix;
 use icu_provider::datagen::*;
 use icu_provider::dynutil::UpcastDataPayload;
 use icu_provider::prelude::*;
 use std::alloc::{GlobalAlloc, Layout, System};
 use std::cell::Cell;
-use std::collections::{BTreeMap, BTreeSet};
-use std::fs::File;
-use std::io::Write;
+use std::collections::BTreeSet;
 use std::sync::Mutex;
 
 include!("../../../tests/locales.rs.data");
@@ -21,12 +18,10 @@ include!("../../../tests/locales.rs.data");
 fn make_testdata() {
     // Only produce output if the variable is set. Test is hermetic otherwise.
     let exporter: Box<dyn DataExporter> = if std::option_env!("ICU4X_WRITE_TESTDATA").is_none() {
-        Box::new(PostcardTestingExporter {
-            size_hash: Default::default(),
+        Box::new(ZeroCopyCheckExporter {
             zero_copy_violations: Default::default(),
             zero_copy_transient_violations: Default::default(),
             rountrip_errors: Default::default(),
-            fingerprints: std::io::sink(),
         })
     } else {
         simple_logger::SimpleLogger::new()
@@ -63,14 +58,10 @@ fn make_testdata() {
                 )
                 .unwrap(),
             )),
-            Box::new(PostcardTestingExporter {
-                size_hash: Default::default(),
+            Box::new(ZeroCopyCheckExporter {
                 zero_copy_violations: Default::default(),
                 zero_copy_transient_violations: Default::default(),
                 rountrip_errors: Default::default(),
-                fingerprints: BufWriterWithLineEndingFix::new(
-                    File::create("tests/data/postcard/fingerprints.csv").unwrap(),
-                ),
             }),
         ]))
     };
@@ -94,18 +85,12 @@ struct StubExporter<E>(E);
 impl<E: DataExporter> DataExporter for StubExporter<E> {
     fn put_payload(
         &self,
-        marker: DataMarkerInfo,
-        locale: &DataLocale,
-        marker_attributes: &DataMarkerAttributes,
-        payload: &DataPayload<ExportMarker>,
+        _marker: DataMarkerInfo,
+        _locale: &DataLocale,
+        _marker_attributes: &DataMarkerAttributes,
+        _payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
-        // put `und-*` but not any other locales
-        if locale.is_langid_und() {
-            self.0
-                .put_payload(marker, locale, marker_attributes, payload)
-        } else {
-            Ok(())
-        }
+        Ok(())
     }
 
     fn flush_singleton(
@@ -137,12 +122,10 @@ impl<E: DataExporter> DataExporter for StubExporter<E> {
     }
 }
 
-struct PostcardTestingExporter<F> {
-    size_hash: Mutex<BTreeMap<(DataMarkerInfo, String), (usize, u64)>>,
+struct ZeroCopyCheckExporter {
     zero_copy_violations: Mutex<BTreeSet<DataMarkerInfo>>,
     zero_copy_transient_violations: Mutex<BTreeSet<DataMarkerInfo>>,
     rountrip_errors: Mutex<BTreeSet<(DataMarkerInfo, String)>>,
-    fingerprints: F,
 }
 
 // Types in this list cannot be zero-copy deserialized.
@@ -169,7 +152,7 @@ const EXPECTED_TRANSIENT_VIOLATIONS: &[DataMarkerInfo] = &[
     icu_list::provider::UnitListV1Marker::INFO,
 ];
 
-impl<F: Write + Send + Sync> DataExporter for PostcardTestingExporter<F> {
+impl DataExporter for ZeroCopyCheckExporter {
     fn put_payload(
         &self,
         marker: DataMarkerInfo,
@@ -186,17 +169,6 @@ impl<F: Write + Send + Sync> DataExporter for PostcardTestingExporter<F> {
         };
         payload_before.serialize(&mut serializer).unwrap();
         let serialized = serializer.output.finalize().unwrap();
-
-        let size = serialized.len();
-
-        // We're using SipHash, which is deprecated, but we want a stable hasher
-        // (we're fine with it not being cryptographically secure since we're just using it to track diffs)
-        #[allow(deprecated)]
-        use std::hash::{Hash, Hasher, SipHasher};
-        #[allow(deprecated)]
-        let mut hasher = SipHasher::new();
-        serialized.iter().for_each(|b| b.hash(&mut hasher));
-        let hash = hasher.finish();
 
         let buffer_payload = DataPayload::from_owned_buffer(serialized.into_boxed_slice());
 
@@ -262,27 +234,10 @@ impl<F: Write + Send + Sync> DataExporter for PostcardTestingExporter<F> {
                 .insert(marker);
         }
 
-        self.size_hash.lock().expect("poison").insert(
-            (
-                marker,
-                DataRequest {
-                    locale,
-                    marker_attributes,
-                    ..Default::default()
-                }
-                .legacy_encode(),
-            ),
-            (size, hash),
-        );
-
         Ok(())
     }
 
     fn close(&mut self) -> Result<(), DataError> {
-        for ((marker, req), (size, hash)) in self.size_hash.get_mut().expect("poison") {
-            writeln!(&mut self.fingerprints, "{marker}, {req}, {size}B, {hash:x}")?;
-        }
-
         assert_eq!(
             self.rountrip_errors.get_mut().expect("poison"),
             &mut BTreeSet::default()

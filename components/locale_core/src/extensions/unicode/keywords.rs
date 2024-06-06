@@ -11,7 +11,7 @@ use writeable::Writeable;
 
 use super::Key;
 use super::Value;
-use crate::parser::ParserError;
+use crate::parser::ParseError;
 use crate::parser::SubtagIterator;
 use crate::shortvec::ShortBoxSlice;
 
@@ -91,7 +91,7 @@ impl Keywords {
         ))
     }
 
-    pub(crate) fn try_from_bytes(t: &[u8]) -> Result<Self, ParserError> {
+    pub(crate) fn try_from_bytes(t: &[u8]) -> Result<Self, ParseError> {
         let mut iter = SubtagIterator::new(t);
         Self::try_from_iter(&mut iter)
     }
@@ -307,7 +307,7 @@ impl Keywords {
         self.writeable_cmp_bytes(other)
     }
 
-    pub(crate) fn try_from_iter(iter: &mut SubtagIterator) -> Result<Self, ParserError> {
+    pub(crate) fn try_from_iter(iter: &mut SubtagIterator) -> Result<Self, ParseError> {
         let mut keywords = LiteMap::new();
 
         let mut current_keyword = None;
@@ -376,7 +376,7 @@ impl FromIterator<(Key, Value)> for Keywords {
 }
 
 impl FromStr for Keywords {
-    type Err = ParserError;
+    type Err = ParseError;
 
     fn from_str(source: &str) -> Result<Self, Self::Err> {
         Self::try_from_bytes(source.as_bytes())
