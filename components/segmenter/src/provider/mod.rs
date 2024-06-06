@@ -208,20 +208,20 @@ impl zerovec::ule::AsULE for BreakState {
 
     fn to_unaligned(self) -> Self::ULE {
         match self {
-            BreakState::Break => 128,
+            BreakState::Break => 253,
             BreakState::Keep => 255,
             BreakState::NoMatch => 254,
-            BreakState::Intermediate(i) => i | 64,
+            BreakState::Intermediate(i) => i + 120,
             BreakState::Index(i) => i,
         }
     }
 
     fn from_unaligned(unaligned: Self::ULE) -> Self {
         match unaligned {
-            128 => BreakState::Break,
+            253 => BreakState::Break,
             255 => BreakState::Keep,
             254 => BreakState::NoMatch,
-            i if i & 64 != 0 => BreakState::Intermediate(i & !64),
+            i if (120..253).contains(&i) => BreakState::Intermediate(i - 120),
             i => BreakState::Index(i),
         }
     }
