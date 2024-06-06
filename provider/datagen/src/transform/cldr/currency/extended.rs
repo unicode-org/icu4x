@@ -33,7 +33,7 @@ impl DataProvider<CurrencyExtendedDataV1Marker> for crate::DatagenProvider {
                 .read_and_parse(&langid, "currencies.json")?;
 
         let aux = req
-            .key_attributes
+            .marker_attributes
             .parse::<TinyAsciiStr<3>>()
             .map_err(|_| DataError::custom("failed to parse aux key into tinystr"))?;
         let currency = currencies_resource
@@ -83,7 +83,7 @@ impl DataProvider<CurrencyExtendedDataV1Marker> for crate::DatagenProvider {
 }
 
 impl IterableDataProvider<CurrencyExtendedDataV1Marker> for DatagenProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         let mut result = HashSet::new();
         let numbers = self.cldr()?.numbers();
         let langids = numbers.list_langs()?;
@@ -99,7 +99,7 @@ impl IterableDataProvider<CurrencyExtendedDataV1Marker> for DatagenProvider {
                     .try_into_tinystr()
                     .map_err(|_| DataError::custom("failed to parse currency code into tinystr"))?;
 
-                let attributes = DataKeyAttributes::from_tinystr(key.resize());
+                let attributes = DataMarkerAttributes::from_tinystr(key.resize());
                 result.insert((DataLocale::from(&langid), attributes));
             }
         }
