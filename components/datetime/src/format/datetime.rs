@@ -779,6 +779,7 @@ where
                 Err(DateTimeWriteError::MissingInputField("time_zone"))
             }
             Some(CustomTimeZone {
+                #[cfg(feature = "experimental")]
                 gmt_offset,
                 metazone_id: Some(metazone_id),
                 time_zone_id,
@@ -792,6 +793,7 @@ where
                         write_time_zone_missing(w)?;
                         Err(DateTimeWriteError::MissingNames(field))
                     }
+                    #[cfg(feature = "experimental")]
                     GetSymbolForTimeZoneError::Missing => {
                         try_write_time_zone_gmt(w, gmt_offset, zone_symbols, true)?
                             .map_err(|_| DateTimeWriteError::MissingNames(field))
