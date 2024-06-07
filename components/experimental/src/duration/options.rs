@@ -4,7 +4,7 @@
 
 //! Options for configuring `DurationFormatter`.
 
-/// A bag of options for defining how to format duration using [`DurationFormatter`](crate::duration::DurationFormatter).
+/// A bag of options for defining how to format duration using `DurationFormatter`.
 #[non_exhaustive]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
 pub struct DurationFormatterOptions {
