@@ -76,13 +76,11 @@
 
 extern crate alloc;
 
-mod error;
 mod operands;
 pub mod provider;
 pub mod rules;
 
 use core::cmp::{Ord, PartialOrd};
-pub use error::PluralsError;
 use icu_provider::prelude::*;
 pub use operands::PluralOperands;
 use provider::CardinalV1Marker;
@@ -94,9 +92,6 @@ use rules::runtime::test_rule;
 use provider::PluralRangesV1Marker;
 #[cfg(feature = "experimental")]
 use provider::UnvalidatedPluralRange;
-
-#[doc(no_inline)]
-pub use PluralsError as Error;
 
 /// A type of a plural rule which can be associated with the [`PluralRules`] struct.
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
@@ -296,7 +291,7 @@ impl PluralRules {
     icu_provider::gen_any_buffer_data_constructors!(
         locale: include,
         rule_type: PluralRuleType,
-        error: PluralsError,
+        error: DataError,
         /// Constructs a new `PluralRules` for a given locale and type using compiled data.
         ///
         /// ✨ *Enabled with the `compiled_data` Cargo feature.*
@@ -324,7 +319,7 @@ impl PluralRules {
         provider: &(impl DataProvider<CardinalV1Marker> + DataProvider<OrdinalV1Marker> + ?Sized),
         locale: &DataLocale,
         rule_type: PluralRuleType,
-    ) -> Result<Self, PluralsError> {
+    ) -> Result<Self, DataError> {
         match rule_type {
             PluralRuleType::Cardinal => Self::try_new_cardinal_unstable(provider, locale),
             PluralRuleType::Ordinal => Self::try_new_ordinal_unstable(provider, locale),
@@ -334,7 +329,7 @@ impl PluralRules {
     icu_provider::gen_any_buffer_data_constructors!(
         locale: include,
         options: skip,
-        error: PluralsError,
+        error: DataError,
         /// Constructs a new `PluralRules` for a given locale for cardinal numbers using compiled data.
         ///
         /// Cardinal plural forms express quantities of units such as time, currency or distance,
@@ -375,12 +370,12 @@ impl PluralRules {
     pub fn try_new_cardinal_unstable(
         provider: &(impl DataProvider<CardinalV1Marker> + ?Sized),
         locale: &DataLocale,
-    ) -> Result<Self, PluralsError> {
+    ) -> Result<Self, DataError> {
         Ok(Self(
             provider
                 .load(DataRequest {
                     locale,
-                    metadata: Default::default(),
+                    ..Default::default()
                 })?
                 .take_payload()?
                 .cast(),
@@ -390,7 +385,7 @@ impl PluralRules {
     icu_provider::gen_any_buffer_data_constructors!(
         locale: include,
         options: skip,
-        error: PluralsError,
+        error: DataError,
         /// Constructs a new `PluralRules` for a given locale for ordinal numbers using compiled data.
         ///
         /// Ordinal plural forms denote the order of items in a set and are always integers.
@@ -437,12 +432,12 @@ impl PluralRules {
     pub fn try_new_ordinal_unstable(
         provider: &(impl DataProvider<OrdinalV1Marker> + ?Sized),
         locale: &DataLocale,
-    ) -> Result<Self, PluralsError> {
+    ) -> Result<Self, DataError> {
         Ok(Self(
             provider
                 .load(DataRequest {
                     locale,
-                    metadata: Default::default(),
+                    ..Default::default()
                 })?
                 .take_payload()?
                 .cast(),
@@ -610,7 +605,7 @@ impl PluralRulesWithRanges<PluralRules> {
     icu_provider::gen_any_buffer_data_constructors!(
         locale: include,
         rule_type: PluralRuleType,
-        error: PluralsError,
+        error: DataError,
         /// Constructs a new `PluralRulesWithRanges` for a given locale using compiled data.
         ///
         /// ✨ *Enabled with the `compiled_data` Cargo feature.*
@@ -638,7 +633,7 @@ impl PluralRulesWithRanges<PluralRules> {
               + ?Sized),
         locale: &DataLocale,
         rule_type: PluralRuleType,
-    ) -> Result<Self, PluralsError> {
+    ) -> Result<Self, DataError> {
         match rule_type {
             PluralRuleType::Cardinal => Self::try_new_cardinal_unstable(provider, locale),
             PluralRuleType::Ordinal => Self::try_new_ordinal_unstable(provider, locale),
@@ -648,7 +643,7 @@ impl PluralRulesWithRanges<PluralRules> {
     icu_provider::gen_any_buffer_data_constructors!(
         locale: include,
         options: skip,
-        error: PluralsError,
+        error: DataError,
         /// Constructs a new `PluralRulesWithRanges` for a given locale for cardinal numbers using
         /// compiled data.
         ///
@@ -682,7 +677,7 @@ impl PluralRulesWithRanges<PluralRules> {
     pub fn try_new_cardinal_unstable(
         provider: &(impl DataProvider<CardinalV1Marker> + DataProvider<PluralRangesV1Marker> + ?Sized),
         locale: &DataLocale,
-    ) -> Result<Self, PluralsError> {
+    ) -> Result<Self, DataError> {
         let rules = PluralRules::try_new_cardinal_unstable(provider, locale)?;
 
         PluralRulesWithRanges::try_new_with_rules_unstable(provider, locale, rules)
@@ -691,7 +686,7 @@ impl PluralRulesWithRanges<PluralRules> {
     icu_provider::gen_any_buffer_data_constructors!(
         locale: include,
         options: skip,
-        error: PluralsError,
+        error: DataError,
         /// Constructs a new `PluralRulesWithRanges` for a given locale for ordinal numbers using
         /// compiled data.
         ///
@@ -727,7 +722,7 @@ impl PluralRulesWithRanges<PluralRules> {
     pub fn try_new_ordinal_unstable(
         provider: &(impl DataProvider<OrdinalV1Marker> + DataProvider<PluralRangesV1Marker> + ?Sized),
         locale: &DataLocale,
-    ) -> Result<Self, PluralsError> {
+    ) -> Result<Self, DataError> {
         let rules = PluralRules::try_new_ordinal_unstable(provider, locale)?;
 
         PluralRulesWithRanges::try_new_with_rules_unstable(provider, locale, rules)
@@ -742,7 +737,7 @@ where
     icu_provider::gen_any_buffer_data_constructors!(
         locale: include,
         rules: R,
-        error: PluralsError,
+        error: DataError,
         /// Constructs a new `PluralRulesWithRanges` for a given locale from an existing
         /// `PluralRules` (either owned or as a reference) and compiled data.
         ///
@@ -782,11 +777,11 @@ where
         provider: &(impl DataProvider<PluralRangesV1Marker> + ?Sized),
         locale: &DataLocale,
         rules: R,
-    ) -> Result<Self, PluralsError> {
+    ) -> Result<Self, DataError> {
         let ranges = provider
             .load(DataRequest {
                 locale,
-                metadata: Default::default(),
+                ..Default::default()
             })?
             .take_payload()?;
 

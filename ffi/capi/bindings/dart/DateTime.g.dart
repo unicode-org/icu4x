@@ -165,14 +165,9 @@ final class DateTime implements ffi.Finalizable {
   /// Returns the week number in this year, using week data
   ///
   /// See the [Rust documentation for `week_of_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.week_of_year) for more information.
-  ///
-  /// Throws [Error] on failure.
   WeekOf weekOfYear(WeekCalculator calculator) {
     final result = _ICU4XDateTime_week_of_year(_ffi, calculator._ffi);
-    if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
-    }
-    return WeekOf._fromFfi(result.union.ok);
+    return WeekOf._fromFfi(result);
   }
 
   /// Returns 1-indexed number of the month of this date in its year
@@ -328,9 +323,9 @@ external int _ICU4XDateTime_day_of_week(ffi.Pointer<ffi.Opaque> self);
 external int _ICU4XDateTime_week_of_month(ffi.Pointer<ffi.Opaque> self, int firstWeekday);
 
 @meta.ResourceIdentifier('ICU4XDateTime_week_of_year')
-@ffi.Native<_ResultWeekOfFfiInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDateTime_week_of_year')
+@ffi.Native<_WeekOfFfi Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDateTime_week_of_year')
 // ignore: non_constant_identifier_names
-external _ResultWeekOfFfiInt32 _ICU4XDateTime_week_of_year(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> calculator);
+external _WeekOfFfi _ICU4XDateTime_week_of_year(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> calculator);
 
 @meta.ResourceIdentifier('ICU4XDateTime_ordinal_month')
 @ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDateTime_ordinal_month')

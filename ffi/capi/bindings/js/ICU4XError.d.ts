@@ -5,7 +5,7 @@
 
  * The error names are stable and can be checked against as strings in the JS API
 
- * Additional information: {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.FixedDecimalError.html 1}, {@link https://docs.rs/icu/latest/icu/calendar/enum.CalendarError.html 2}, {@link https://docs.rs/icu/latest/icu/collator/enum.CollatorError.html 3}, {@link https://docs.rs/icu/latest/icu/datetime/enum.DateTimeError.html 4}, {@link https://docs.rs/icu/latest/icu/decimal/enum.DecimalError.html 5}, {@link https://docs.rs/icu/latest/icu/list/enum.ListError.html 6}, {@link https://docs.rs/icu/latest/icu/locale/enum.ParserError.html 7}, {@link https://docs.rs/icu/latest/icu/locale/enum.LocaleTransformError.html 8}, {@link https://docs.rs/icu/latest/icu/normalizer/enum.NormalizerError.html 9}, {@link https://docs.rs/icu/latest/icu/plurals/enum.PluralsError.html 10}, {@link https://docs.rs/icu/latest/icu/properties/enum.PropertiesError.html 11}, {@link https://docs.rs/icu/latest/icu/provider/struct.DataError.html 12}, {@link https://docs.rs/icu/latest/icu/provider/enum.DataErrorKind.html 13}, {@link https://docs.rs/icu/latest/icu/segmenter/enum.SegmenterError.html 14}, {@link https://docs.rs/icu/latest/icu/timezone/enum.TimeZoneError.html 15}, {@link https://docs.rs/icu_experimental/latest/icu_experimental/units/enum.ConversionError.html 16}
+ * Additional information: {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.ParseError.html 1}, {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.LimitError.html 2}, {@link https://docs.rs/icu/latest/icu/calendar/struct.RangeError.html 3}, {@link https://docs.rs/icu/latest/icu/calendar/enum.DateError.html 4}, {@link https://docs.rs/icu/latest/icu/datetime/enum.DateTimeError.html 5}, {@link https://docs.rs/icu/latest/icu/locale/enum.ParseError.html 6}, {@link https://docs.rs/icu/latest/icu/provider/struct.DataError.html 7}, {@link https://docs.rs/icu/latest/icu/provider/enum.DataErrorKind.html 8}, {@link https://docs.rs/icu/latest/icu/timezone/struct.InvalidOffsetError.html 9}, {@link https://docs.rs/icu_experimental/latest/icu_experimental/units/struct.InvalidUnitError.html 10}
  */
 export enum ICU4XError {
   /**
@@ -14,13 +14,8 @@ export enum ICU4XError {
    */
   UnknownError = 'UnknownError',
   /**
-
-   * Some input was out of bounds
    */
-  OutOfBoundsError = 'OutOfBoundsError',
-  /**
-   */
-  DataMissingDataKeyError = 'DataMissingDataKeyError',
+  DataMissingDataMarkerError = 'DataMissingDataMarkerError',
   /**
    */
   DataMissingVariantError = 'DataMissingVariantError',
@@ -62,11 +57,6 @@ export enum ICU4XError {
   DataMismatchedAnyBufferError = 'DataMismatchedAnyBufferError',
   /**
 
-   * The subtag being requested was not set
-   */
-  LocaleUndefinedSubtagError = 'LocaleUndefinedSubtagError',
-  /**
-
    * The locale or subtag string failed to parse
    */
   LocaleParserLanguageError = 'LocaleParserLanguageError',
@@ -83,12 +73,6 @@ export enum ICU4XError {
   DataStructValidityError = 'DataStructValidityError',
   /**
    */
-  PropertyUnknownScriptIdError = 'PropertyUnknownScriptIdError',
-  /**
-   */
-  PropertyUnknownGeneralCategoryGroupError = 'PropertyUnknownGeneralCategoryGroupError',
-  /**
-   */
   PropertyUnexpectedPropertyNameError = 'PropertyUnexpectedPropertyNameError',
   /**
    */
@@ -98,16 +82,7 @@ export enum ICU4XError {
   FixedDecimalSyntaxError = 'FixedDecimalSyntaxError',
   /**
    */
-  PluralsParserError = 'PluralsParserError',
-  /**
-   */
-  CalendarParseError = 'CalendarParseError',
-  /**
-   */
-  CalendarOverflowError = 'CalendarOverflowError',
-  /**
-   */
-  CalendarUnderflowError = 'CalendarUnderflowError',
+  PluralsParseError = 'PluralsParseError',
   /**
    */
   CalendarOutOfRangeError = 'CalendarOutOfRangeError',
@@ -117,15 +92,6 @@ export enum ICU4XError {
   /**
    */
   CalendarUnknownMonthCodeError = 'CalendarUnknownMonthCodeError',
-  /**
-   */
-  CalendarMissingInputError = 'CalendarMissingInputError',
-  /**
-   */
-  CalendarUnknownKindError = 'CalendarUnknownKindError',
-  /**
-   */
-  CalendarMissingError = 'CalendarMissingError',
   /**
    */
   DateTimePatternError = 'DateTimePatternError',
@@ -155,32 +121,8 @@ export enum ICU4XError {
   DateTimeMismatchedCalendarError = 'DateTimeMismatchedCalendarError',
   /**
    */
-  TinyStrTooLargeError = 'TinyStrTooLargeError',
-  /**
-   */
-  TinyStrContainsNullError = 'TinyStrContainsNullError',
-  /**
-   */
-  TinyStrNonAsciiError = 'TinyStrNonAsciiError',
-  /**
-   */
-  TimeZoneOffsetOutOfBoundsError = 'TimeZoneOffsetOutOfBoundsError',
-  /**
-   */
   TimeZoneInvalidOffsetError = 'TimeZoneInvalidOffsetError',
   /**
    */
-  TimeZoneMissingInputError = 'TimeZoneMissingInputError',
-  /**
-   */
   TimeZoneInvalidIdError = 'TimeZoneInvalidIdError',
-  /**
-   */
-  NormalizerFutureExtensionError = 'NormalizerFutureExtensionError',
-  /**
-   */
-  NormalizerValidationError = 'NormalizerValidationError',
-  /**
-   */
-  InvalidCldrUnitIdentifierError = 'InvalidCldrUnitIdentifierError',
 }

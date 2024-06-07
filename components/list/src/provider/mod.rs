@@ -18,7 +18,7 @@
 use crate::ListLength;
 use alloc::borrow::Cow;
 use icu_provider::prelude::*;
-use icu_provider::DataMarker;
+use icu_provider::DynamicDataMarker;
 
 mod serde_dfa;
 pub use serde_dfa::SerdeDFA;
@@ -48,11 +48,11 @@ const _: () = {
 };
 
 #[cfg(feature = "datagen")]
-/// The latest minimum set of keys required by this component.
-pub const KEYS: &[DataKey] = &[
-    AndListV1Marker::KEY,
-    OrListV1Marker::KEY,
-    UnitListV1Marker::KEY,
+/// The latest minimum set of markers required by this component.
+pub const MARKERS: &[DataMarkerInfo] = &[
+    AndListV1Marker::INFO,
+    OrListV1Marker::INFO,
+    UnitListV1Marker::INFO,
 ];
 
 /// Symbols and metadata required for [`ListFormatter`](crate::ListFormatter).
@@ -102,7 +102,7 @@ impl<'de> serde::Deserialize<'de> for ListFormatterPatternsV1<'de> {
 
 pub(crate) struct ErasedListV1Marker;
 
-impl DataMarker for ErasedListV1Marker {
+impl DynamicDataMarker for ErasedListV1Marker {
     type Yokeable = ListFormatterPatternsV1<'static>;
 }
 

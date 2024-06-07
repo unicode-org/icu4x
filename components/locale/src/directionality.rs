@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::provider::*;
-use crate::{LocaleExpander, LocaleTransformError};
+use crate::LocaleExpander;
 use icu_locale_core::subtags::Script;
 use icu_locale_core::LanguageIdentifier;
 use icu_provider::prelude::*;
@@ -57,7 +57,7 @@ impl LocaleDirectionality {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::new)]
     pub fn try_new_with_any_provider(
         provider: &(impl AnyProvider + ?Sized),
-    ) -> Result<LocaleDirectionality, LocaleTransformError> {
+    ) -> Result<LocaleDirectionality, DataError> {
         let expander = LocaleExpander::try_new_with_any_provider(provider)?;
         Self::try_new_with_expander_unstable(&provider.as_downcasting(), expander)
     }
@@ -67,13 +67,13 @@ impl LocaleDirectionality {
     #[cfg(feature = "serde")]
     pub fn try_new_with_buffer_provider(
         provider: &(impl BufferProvider + ?Sized),
-    ) -> Result<LocaleDirectionality, LocaleTransformError> {
+    ) -> Result<LocaleDirectionality, DataError> {
         let expander = LocaleExpander::try_new_with_buffer_provider(provider)?;
         Self::try_new_with_expander_unstable(&provider.as_deserializing(), expander)
     }
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    pub fn try_new_unstable<P>(provider: &P) -> Result<LocaleDirectionality, LocaleTransformError>
+    pub fn try_new_unstable<P>(provider: &P) -> Result<LocaleDirectionality, DataError>
     where
         P: DataProvider<ScriptDirectionV1Marker>
             + DataProvider<LikelySubtagsForLanguageV1Marker>
@@ -121,7 +121,7 @@ impl LocaleDirectionality {
     pub fn try_new_with_expander_unstable<P>(
         provider: &P,
         expander: LocaleExpander,
-    ) -> Result<LocaleDirectionality, LocaleTransformError>
+    ) -> Result<LocaleDirectionality, DataError>
     where
         P: DataProvider<ScriptDirectionV1Marker> + ?Sized,
     {

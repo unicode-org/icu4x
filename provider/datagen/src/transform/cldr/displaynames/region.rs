@@ -4,7 +4,7 @@
 
 use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
-use crate::provider::IterableDataProviderInternal;
+use crate::provider::IterableDataProviderCached;
 use core::convert::TryFrom;
 use icu_experimental::displaynames::provider::*;
 use icu_locale_core::subtags::Region;
@@ -36,8 +36,10 @@ impl DataProvider<RegionDisplayNamesV1Marker> for DatagenProvider {
     }
 }
 
-impl IterableDataProviderInternal<RegionDisplayNamesV1Marker> for DatagenProvider {
-    fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
+impl IterableDataProviderCached<RegionDisplayNamesV1Marker> for DatagenProvider {
+    fn supported_requests_cached(
+        &self,
+    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         Ok(self
             .cldr()?
             .displaynames()
@@ -50,7 +52,7 @@ impl IterableDataProviderInternal<RegionDisplayNamesV1Marker> for DatagenProvide
                     .file_exists(langid, "territories.json")
                     .unwrap_or_default()
             })
-            .map(DataLocale::from)
+            .map(|l| (DataLocale::from(l), Default::default()))
             .collect())
     }
 }
@@ -61,7 +63,7 @@ const ALT_SUBSTRING: &str = "-alt-";
 const SHORT_SUBSTRING: &str = "-alt-short";
 
 impl TryFrom<&cldr_serde::displaynames::region::Resource> for RegionDisplayNamesV1<'static> {
-    type Error = icu_locale_core::ParserError;
+    type Error = icu_locale_core::ParseError;
     fn try_from(other: &cldr_serde::displaynames::region::Resource) -> Result<Self, Self::Error> {
         let mut names = BTreeMap::new();
         let mut short_names = BTreeMap::new();
@@ -100,7 +102,7 @@ mod tests {
         let data: DataPayload<RegionDisplayNamesV1Marker> = provider
             .load(DataRequest {
                 locale: &langid!("en-001").into(),
-                metadata: Default::default(),
+                ..Default::default()
             })
             .unwrap()
             .take_payload()
@@ -122,7 +124,7 @@ mod tests {
         let data: DataPayload<RegionDisplayNamesV1Marker> = provider
             .load(DataRequest {
                 locale: &langid!("en-001").into(),
-                metadata: Default::default(),
+                ..Default::default()
             })
             .unwrap()
             .take_payload()

@@ -1192,7 +1192,7 @@ fn test_nb_nn_no() {
             &icu_collator::provider::Baked,
             DataRequest {
                 locale: &locale,
-                metadata: Default::default()
+                ..Default::default()
             }
         )
         .unwrap()
@@ -1212,7 +1212,7 @@ fn test_nb_nn_no() {
             &icu_collator::provider::Baked,
             DataRequest {
                 locale: &locale,
-                metadata: Default::default()
+                ..Default::default()
             }
         )
         .unwrap()
@@ -1232,7 +1232,7 @@ fn test_nb_nn_no() {
             &icu_collator::provider::Baked,
             DataRequest {
                 locale: &locale,
-                metadata: Default::default()
+                ..Default::default()
             }
         )
         .unwrap()

@@ -195,38 +195,28 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                 if let Some(item) = &krate.index.get(import.id.as_ref().unwrap()) {
                     recurse(item, krate, types, path, true, None);
                 } else if let Some(item) = &krate.paths.get(import.id.as_ref().unwrap()) {
-                    // This is a reexport of a hidden module, which works fine in HTML doc but
-                    // doesn't seem to be reachable anywhere in JSON.
-                    if matches!(import.source.as_str(), "icu_provider::fallback") {
+                    // This is a reexport of hidden items, which work fine in HTML doc but
+                    // don't seem to be reachable anywhere in JSON.
+                    if let Some(item) = import
+                        .source
+                        .as_str()
+                        .strip_prefix("icu_provider::_internal::")
+                    {
                         insert_ty(
                             types,
                             vec![
                                 "icu".to_string(),
                                 "locale".to_string(),
                                 "fallback".to_string(),
-                                "LocaleFallbackConfig".to_string(),
+                                item.to_string(),
                             ],
-                            ast::DocType::Struct,
-                        );
-                        insert_ty(
-                            types,
-                            vec![
-                                "icu".to_string(),
-                                "locale".to_string(),
-                                "fallback".to_string(),
-                                "LocaleFallbackPriority".to_string(),
-                            ],
-                            ast::DocType::Enum,
-                        );
-                        insert_ty(
-                            types,
-                            vec![
-                                "icu".to_string(),
-                                "locale".to_string(),
-                                "fallback".to_string(),
-                                "LocaleFallbackSupplement".to_string(),
-                            ],
-                            ast::DocType::Enum,
+                            match item {
+                                "LocaleFallbackPriority" | "LocaleFallbackSupplement" => {
+                                    ast::DocType::Enum
+                                }
+                                "LocaleFallbackConfig" => ast::DocType::Struct,
+                                e => unreachable!("{e:?}"),
+                            },
                         );
                         return;
                     }

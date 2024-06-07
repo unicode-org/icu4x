@@ -9,6 +9,7 @@ use icu_provider::hello_world::*;
 use icu_provider::prelude::*;
 use icu_provider_blob::export::*;
 use icu_provider_blob::BlobDataProvider;
+use std::collections::HashSet;
 use std::hash::Hasher;
 
 const BLOB_V1: &[u8] = include_bytes!("data/v1.postcard");
@@ -16,18 +17,19 @@ const BLOB_V2: &[u8] = include_bytes!("data/v2.postcard");
 
 fn run_driver(exporter: BlobExporter) -> Result<(), DataError> {
     DatagenDriver::new()
-        .with_keys([icu_provider::hello_world::HelloWorldV1Marker::KEY])
+        .with_markers([icu_provider::hello_world::HelloWorldV1Marker::INFO])
         .with_locales_and_fallback([LocaleFamily::FULL], Default::default())
         .export(&icu_provider::hello_world::HelloWorldProvider, exporter)
 }
 
 fn check_hello_world(blob_provider: impl DataProvider<HelloWorldV1Marker>) {
     let hello_world_provider = HelloWorldProvider;
-    for locale in hello_world_provider.supported_locales().unwrap() {
+    for (locale, marker_attributes) in hello_world_provider.supported_requests().unwrap() {
         let blob_result = blob_provider
             .load(DataRequest {
                 locale: &locale,
-                metadata: Default::default(),
+                marker_attributes: &marker_attributes,
+                ..Default::default()
             })
             .unwrap()
             .take_payload()
@@ -35,7 +37,8 @@ fn check_hello_world(blob_provider: impl DataProvider<HelloWorldV1Marker>) {
         let expected_result = hello_world_provider
             .load(DataRequest {
                 locale: &locale,
-                metadata: Default::default(),
+                marker_attributes: &marker_attributes,
+                ..Default::default()
             })
             .unwrap()
             .take_payload()
@@ -78,7 +81,7 @@ fn test_v2_bigger() {
     let mut blob: Vec<u8> = Vec::new();
     let exporter = BlobExporter::new_v2_with_sink(Box::new(&mut blob));
     DatagenDriver::new()
-        .with_keys([icu_provider::hello_world::HelloWorldV1Marker::KEY])
+        .with_markers([icu_provider::hello_world::HelloWorldV1Marker::INFO])
         .with_locales_and_fallback([LocaleFamily::FULL], Default::default())
         .export(&ManyLocalesProvider, exporter)
         .unwrap();
@@ -115,7 +118,7 @@ fn test_v2_bigger() {
             &blob_provider,
             DataRequest {
                 locale: &loc.parse().expect("locale must parse"),
-                metadata: Default::default(),
+                ..Default::default()
             },
         )
         .unwrap()
@@ -141,8 +144,8 @@ impl DataProvider<HelloWorldV1Marker> for ManyLocalesProvider {
 const LOWERCASE: core::ops::RangeInclusive<u8> = b'a'..=b'z';
 
 impl IterableDataProvider<HelloWorldV1Marker> for ManyLocalesProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        let mut vec = Vec::new();
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+        let mut r = HashSet::new();
         let mut bytes = [
             b'a', b'a', b'a', b'-', b'L', b'a', b't', b'n', b'-', b'0', b'0', b'1',
         ];
@@ -154,11 +157,11 @@ impl IterableDataProvider<HelloWorldV1Marker> for ManyLocalesProvider {
                     bytes[2] = i2;
                     let locale =
                         LanguageIdentifier::try_from_bytes(&bytes).expect("locale must parse");
-                    vec.push(locale.into())
+                    r.insert((locale.into(), Default::default()));
                 }
             }
         }
-        Ok(vec)
+        Ok(r)
     }
 }
 

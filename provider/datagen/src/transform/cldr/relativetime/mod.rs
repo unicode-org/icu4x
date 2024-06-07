@@ -6,64 +6,76 @@ use std::borrow::Borrow;
 
 use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
-use crate::provider::IterableDataProviderInternal;
+use crate::provider::IterableDataProviderCached;
 use icu_experimental::relativetime::provider::*;
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashMap, HashSet};
 use std::str::FromStr;
 use std::sync::OnceLock;
 
-pub(in crate::provider) static DATAKEY_FILTERS: OnceLock<HashMap<DataKey, &'static str>> =
+pub(in crate::provider) static MARKER_FILTERS: OnceLock<HashMap<DataMarkerInfo, &'static str>> =
     OnceLock::new();
 
-fn datakey_filters() -> &'static HashMap<DataKey, &'static str> {
-    DATAKEY_FILTERS.get_or_init(|| {
+fn marker_filters() -> &'static HashMap<DataMarkerInfo, &'static str> {
+    MARKER_FILTERS.get_or_init(|| {
         [
-            (LongSecondRelativeTimeFormatDataV1Marker::KEY, "second"),
+            (LongSecondRelativeTimeFormatDataV1Marker::INFO, "second"),
             (
-                ShortSecondRelativeTimeFormatDataV1Marker::KEY,
+                ShortSecondRelativeTimeFormatDataV1Marker::INFO,
                 "second-short",
             ),
             (
-                NarrowSecondRelativeTimeFormatDataV1Marker::KEY,
+                NarrowSecondRelativeTimeFormatDataV1Marker::INFO,
                 "second-narrow",
             ),
-            (LongMinuteRelativeTimeFormatDataV1Marker::KEY, "minute"),
+            (LongMinuteRelativeTimeFormatDataV1Marker::INFO, "minute"),
             (
-                ShortMinuteRelativeTimeFormatDataV1Marker::KEY,
+                ShortMinuteRelativeTimeFormatDataV1Marker::INFO,
                 "minute-short",
             ),
             (
-                NarrowMinuteRelativeTimeFormatDataV1Marker::KEY,
+                NarrowMinuteRelativeTimeFormatDataV1Marker::INFO,
                 "minute-narrow",
             ),
-            (LongHourRelativeTimeFormatDataV1Marker::KEY, "hour"),
-            (ShortHourRelativeTimeFormatDataV1Marker::KEY, "hour-short"),
-            (NarrowHourRelativeTimeFormatDataV1Marker::KEY, "hour-narrow"),
-            (LongDayRelativeTimeFormatDataV1Marker::KEY, "day"),
-            (ShortDayRelativeTimeFormatDataV1Marker::KEY, "day-short"),
-            (NarrowDayRelativeTimeFormatDataV1Marker::KEY, "day-narrow"),
-            (LongWeekRelativeTimeFormatDataV1Marker::KEY, "week"),
-            (ShortWeekRelativeTimeFormatDataV1Marker::KEY, "week-short"),
-            (NarrowWeekRelativeTimeFormatDataV1Marker::KEY, "week-narrow"),
-            (LongMonthRelativeTimeFormatDataV1Marker::KEY, "month"),
-            (ShortMonthRelativeTimeFormatDataV1Marker::KEY, "month-short"),
+            (LongHourRelativeTimeFormatDataV1Marker::INFO, "hour"),
+            (ShortHourRelativeTimeFormatDataV1Marker::INFO, "hour-short"),
             (
-                NarrowMonthRelativeTimeFormatDataV1Marker::KEY,
+                NarrowHourRelativeTimeFormatDataV1Marker::INFO,
+                "hour-narrow",
+            ),
+            (LongDayRelativeTimeFormatDataV1Marker::INFO, "day"),
+            (ShortDayRelativeTimeFormatDataV1Marker::INFO, "day-short"),
+            (NarrowDayRelativeTimeFormatDataV1Marker::INFO, "day-narrow"),
+            (LongWeekRelativeTimeFormatDataV1Marker::INFO, "week"),
+            (ShortWeekRelativeTimeFormatDataV1Marker::INFO, "week-short"),
+            (
+                NarrowWeekRelativeTimeFormatDataV1Marker::INFO,
+                "week-narrow",
+            ),
+            (LongMonthRelativeTimeFormatDataV1Marker::INFO, "month"),
+            (
+                ShortMonthRelativeTimeFormatDataV1Marker::INFO,
+                "month-short",
+            ),
+            (
+                NarrowMonthRelativeTimeFormatDataV1Marker::INFO,
                 "month-narrow",
             ),
-            (LongQuarterRelativeTimeFormatDataV1Marker::KEY, "quarter"),
+            (LongQuarterRelativeTimeFormatDataV1Marker::INFO, "quarter"),
             (
-                ShortQuarterRelativeTimeFormatDataV1Marker::KEY,
+                ShortQuarterRelativeTimeFormatDataV1Marker::INFO,
                 "quarter-short",
             ),
             (
-                NarrowQuarterRelativeTimeFormatDataV1Marker::KEY,
+                NarrowQuarterRelativeTimeFormatDataV1Marker::INFO,
                 "quarter-narrow",
             ),
-            (LongYearRelativeTimeFormatDataV1Marker::KEY, "year"),
-            (ShortYearRelativeTimeFormatDataV1Marker::KEY, "year-short"),
-            (NarrowYearRelativeTimeFormatDataV1Marker::KEY, "year-narrow"),
+            (LongYearRelativeTimeFormatDataV1Marker::INFO, "year"),
+            (ShortYearRelativeTimeFormatDataV1Marker::INFO, "year-short"),
+            (
+                NarrowYearRelativeTimeFormatDataV1Marker::INFO,
+                "year-narrow",
+            ),
         ]
         .into_iter()
         .collect()
@@ -82,28 +94,28 @@ macro_rules! make_data_provider {
                         .read_and_parse(&langid, "dateFields.json")?;
                     let fields = &resource.main.value.dates.fields;
 
-                    let field = datakey_filters()
-                        .get(&$marker::KEY)
-                        .ok_or(DataErrorKind::MissingDataKey.into_error())?;
+                    let field = marker_filters()
+                        .get(&$marker::INFO)
+                        .ok_or(DataErrorKind::MissingDataMarker.into_error())?;
 
                     let data = fields.0.get(*field).ok_or(DataError::custom(
                         "Field not found in relative time format data.",
                     ))?;
 
                     Ok(DataResponse {
-                        metadata: Default::default(),
+            metadata: Default::default(),
                         payload: Some(DataPayload::from_owned(data.try_into()?)),
                     })
                 }
             }
 
-            impl IterableDataProviderInternal<$marker> for DatagenProvider {
-                fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
+            impl IterableDataProviderCached<$marker> for DatagenProvider {
+                fn supported_requests_cached(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
                     Ok(self
                         .cldr()?
                         .dates("gregorian")
                         .list_langs()?
-                        .map(DataLocale::from)
+                        .map(|l| (DataLocale::from(l), Default::default()))
                         .collect())
                 }
             }
@@ -194,7 +206,7 @@ mod tests {
         let data: DataPayload<ShortQuarterRelativeTimeFormatDataV1Marker> = provider
             .load(DataRequest {
                 locale: &langid!("en").into(),
-                metadata: Default::default(),
+                ..Default::default()
             })
             .unwrap()
             .take_payload()
@@ -214,7 +226,7 @@ mod tests {
         let data: DataPayload<LongYearRelativeTimeFormatDataV1Marker> = provider
             .load(DataRequest {
                 locale: &langid!("ar").into(),
-                metadata: Default::default(),
+                ..Default::default()
             })
             .unwrap()
             .take_payload()

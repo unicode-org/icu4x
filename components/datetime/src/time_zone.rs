@@ -31,7 +31,7 @@ fn load<D, P>(
     provider: &P,
 ) -> Result<(), DateTimeError>
 where
-    D: KeyedDataMarker,
+    D: DataMarker,
     P: DataProvider<D> + ?Sized,
 {
     if destination.is_none() {
@@ -39,7 +39,7 @@ where
             provider
                 .load(DataRequest {
                     locale,
-                    metadata: Default::default(),
+                    ..Default::default()
                 })?
                 .take_payload()?,
         );
@@ -191,7 +191,7 @@ impl TimeZoneFormatter {
             zone_formats: zone_provider
                 .load(DataRequest {
                     locale,
-                    metadata: Default::default(),
+                    ..Default::default()
                 })?
                 .take_payload()?,
             exemplar_cities: None,
@@ -449,7 +449,7 @@ impl TimeZoneFormatter {
             zone_formats: provider
                 .load(DataRequest {
                     locale,
-                    metadata: Default::default(),
+                    ..Default::default()
                 })?
                 .take_payload()?,
             exemplar_cities: None,
@@ -661,23 +661,6 @@ impl TimeZoneFormatter {
         self.format_units
             .push(TimeZoneFormatterUnit::ExemplarCity(ExemplarCityFormat {}));
         Ok(self)
-    }
-
-    /// Alias to [`TimeZoneFormatter::include_localized_gmt_format`].
-    #[deprecated(since = "1.3.0", note = "renamed to `include_localized_gmt_format`")]
-    pub fn load_localized_gmt_format(&mut self) -> Result<&mut TimeZoneFormatter, DateTimeError> {
-        self.include_localized_gmt_format()
-    }
-
-    /// Alias to [`TimeZoneFormatter::include_iso_8601_format`].
-    #[deprecated(since = "1.3.0", note = "renamed to `include_iso_8601_format`")]
-    pub fn load_iso_8601_format(
-        &mut self,
-        format: IsoFormat,
-        minutes: IsoMinutes,
-        seconds: IsoSeconds,
-    ) -> Result<&mut TimeZoneFormatter, DateTimeError> {
-        self.include_iso_8601_format(format, minutes, seconds)
     }
 
     /// Takes a [`TimeZoneInput`] implementer and returns an instance of a [`FormattedTimeZone`]

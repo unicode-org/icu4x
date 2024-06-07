@@ -49,7 +49,7 @@ impl ZonedDateTimeFormatter {
 
         let req = DataRequest {
             locale,
-            metadata: Default::default(),
+            ..Default::default()
         };
 
         let week_data = if required.week_data {
@@ -134,7 +134,7 @@ impl ZonedDateTimeFormatter {
 
         let req = DataRequest {
             locale,
-            metadata: Default::default(),
+            ..Default::default()
         };
 
         let week_data = if required.week_data {
@@ -143,7 +143,7 @@ impl ZonedDateTimeFormatter {
                     provider,
                     DataRequest {
                         locale,
-                        metadata: Default::default(),
+                        ..Default::default()
                     },
                 )?
                 .take_payload()?

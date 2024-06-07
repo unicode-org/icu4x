@@ -6,14 +6,8 @@
 
 use crate::helpers::result_is_err_missing_locale;
 use icu_locale::provider::*;
+use icu_locale::LocaleFallbacker;
 use icu_provider::prelude::*;
-
-#[doc(hidden)] // moved
-pub use icu_locale::fallback::{
-    LocaleFallbackIterator, LocaleFallbacker, LocaleFallbackerWithConfig,
-};
-#[doc(hidden)] // moved
-pub use icu_provider::fallback::LocaleFallbackConfig;
 
 /// A data provider wrapper that performs locale fallback. This enables arbitrary locales to be
 /// handled at runtime.
@@ -31,7 +25,7 @@ pub use icu_provider::fallback::LocaleFallbackConfig;
 ///
 /// let req = DataRequest {
 ///     locale: &langid!("ja-JP").into(),
-///     metadata: Default::default(),
+///     ..Default::default()
 /// };
 ///
 /// // The provider does not have data for "ja-JP":
@@ -135,7 +129,7 @@ impl<P> LocaleFallbackProvider<P> {
     ///
     /// let req = DataRequest {
     ///     locale: &langid!("de-CH").into(),
-    ///     metadata: Default::default(),
+    ///     ..Default::default()
     /// };
     ///
     /// // There is no "de-CH" data in the `HelloWorldProvider`
@@ -190,7 +184,7 @@ impl<P> LocaleFallbackProvider<P> {
     /// - F2 should map from the provider-specific response type to DataResponseMetadata
     fn run_fallback<F1, F2, R>(
         &self,
-        key: DataKey,
+        marker: DataMarkerInfo,
         mut base_req: DataRequest,
         mut f1: F1,
         mut f2: F2,
@@ -199,18 +193,18 @@ impl<P> LocaleFallbackProvider<P> {
         F1: FnMut(DataRequest) -> Result<R, DataError>,
         F2: FnMut(&mut R) -> &mut DataResponseMetadata,
     {
-        if key.metadata().singleton {
+        if marker.is_singleton {
             return f1(base_req);
         }
         let mut fallback_iterator = self
             .fallbacker
-            .for_config(key.fallback_config())
+            .for_config(marker.fallback_config)
             .fallback_for(base_req.locale.clone());
         let base_silent = core::mem::replace(&mut base_req.metadata.silent, true);
         loop {
             let result = f1(DataRequest {
                 locale: fallback_iterator.get(),
-                metadata: base_req.metadata,
+                ..base_req
             });
             if !result_is_err_missing_locale(&result) {
                 return result
@@ -221,7 +215,7 @@ impl<P> LocaleFallbackProvider<P> {
                     // Log the original request rather than the fallback request
                     .map_err(|e| {
                         base_req.metadata.silent = base_silent;
-                        e.with_req(key, base_req)
+                        e.with_req(marker, base_req)
                     });
             }
             // If we just checked und, break out of the loop.
@@ -231,7 +225,7 @@ impl<P> LocaleFallbackProvider<P> {
             fallback_iterator.step();
         }
         base_req.metadata.silent = base_silent;
-        Err(DataErrorKind::MissingLocale.with_req(key, base_req))
+        Err(DataErrorKind::MissingLocale.with_req(marker, base_req))
     }
 }
 
@@ -239,29 +233,15 @@ impl<P> AnyProvider for LocaleFallbackProvider<P>
 where
     P: AnyProvider,
 {
-    fn load_any(&self, key: DataKey, base_req: DataRequest) -> Result<AnyResponse, DataError> {
-        self.run_fallback(
-            key,
-            base_req,
-            |req| self.inner.load_any(key, req),
-            |res| &mut res.metadata,
-        )
-    }
-}
-
-impl<P> BufferProvider for LocaleFallbackProvider<P>
-where
-    P: BufferProvider,
-{
-    fn load_buffer(
+    fn load_any(
         &self,
-        key: DataKey,
+        marker: DataMarkerInfo,
         base_req: DataRequest,
-    ) -> Result<DataResponse<BufferMarker>, DataError> {
+    ) -> Result<AnyResponse, DataError> {
         self.run_fallback(
-            key,
+            marker,
             base_req,
-            |req| self.inner.load_buffer(key, req),
+            |req| self.inner.load_any(marker, req),
             |res| &mut res.metadata,
         )
     }
@@ -270,13 +250,17 @@ where
 impl<P, M> DynamicDataProvider<M> for LocaleFallbackProvider<P>
 where
     P: DynamicDataProvider<M>,
-    M: DataMarker,
+    M: DynamicDataMarker,
 {
-    fn load_data(&self, key: DataKey, base_req: DataRequest) -> Result<DataResponse<M>, DataError> {
+    fn load_data(
+        &self,
+        marker: DataMarkerInfo,
+        base_req: DataRequest,
+    ) -> Result<DataResponse<M>, DataError> {
         self.run_fallback(
-            key,
+            marker,
             base_req,
-            |req| self.inner.load_data(key, req),
+            |req| self.inner.load_data(marker, req),
             |res| &mut res.metadata,
         )
     }
@@ -285,11 +269,11 @@ where
 impl<P, M> DataProvider<M> for LocaleFallbackProvider<P>
 where
     P: DataProvider<M>,
-    M: KeyedDataMarker,
+    M: DataMarker,
 {
     fn load(&self, base_req: DataRequest) -> Result<DataResponse<M>, DataError> {
         self.run_fallback(
-            M::KEY,
+            M::INFO,
             base_req,
             |req| self.inner.load(req),
             |res| &mut res.metadata,

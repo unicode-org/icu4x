@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use std::collections::HashSet;
+
 use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
 use icu_locale::provider::*;
@@ -22,8 +24,8 @@ impl DataProvider<ScriptDirectionV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProvider<ScriptDirectionV1Marker> for DatagenProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        Ok(vec![Default::default()])
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+        Ok(HashSet::from_iter([Default::default()]))
     }
 }
 
@@ -35,7 +37,7 @@ impl From<&cldr_serde::directionality::Resource> for ScriptDirectionV1<'_> {
             match metadata.rtl {
                 cldr_serde::directionality::Rtl::Yes => rtl.push(script.to_unvalidated()),
                 cldr_serde::directionality::Rtl::No => ltr.push(script.to_unvalidated()),
-                // not storing, because it is the default return value for unknown keys downstream
+                // not storing, because it is the default return value for unknown markers downstream
                 cldr_serde::directionality::Rtl::Unknown => (),
             }
         }

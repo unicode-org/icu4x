@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::provider::DatagenProvider;
-use crate::provider::IterableDataProviderInternal;
+use crate::provider::IterableDataProviderCached;
 use icu_locale_core::langid;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
@@ -22,10 +22,10 @@ impl DatagenProvider {
         &self,
         req: DataRequest,
     ) -> Result<UCharDictionaryBreakDataV1<'static>, DataError> {
-        let model = crate::dictionary_data_locale_to_model_name(req.locale)
-            .ok_or(DataErrorKind::MissingLocale.into_error())?;
-
-        let filename = format!("segmenter/dictionary/{model}.toml");
+        let filename = format!(
+            "segmenter/dictionary/{}.toml",
+            req.marker_attributes as &str
+        );
 
         let toml_data = self
             .icuexport()
@@ -50,11 +50,13 @@ macro_rules! implement {
             }
         }
 
-        impl IterableDataProviderInternal<$marker> for DatagenProvider {
-            fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
+        impl IterableDataProviderCached<$marker> for DatagenProvider {
+            fn supported_requests_cached(
+                &self,
+            ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
                 Ok($supported
                     .into_iter()
-                    .filter_map(crate::dictionary_model_name_to_data_locale)
+                    .map(|m| (Default::default(), m.parse().unwrap()))
                     .collect())
             }
         }

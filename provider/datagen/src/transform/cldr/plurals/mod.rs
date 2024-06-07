@@ -7,22 +7,25 @@ use std::collections::HashSet;
 
 use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
-use crate::provider::IterableDataProviderInternal;
+use crate::provider::IterableDataProviderCached;
 use icu_plurals::rules::runtime::ast::Rule;
 use icu_plurals::{provider::*, PluralCategory};
 use icu_provider::prelude::*;
 use zerovec::ZeroMap;
 
 impl DatagenProvider {
-    fn get_rules_for(&self, key: DataKey) -> Result<&cldr_serde::plurals::Rules, DataError> {
-        if key == CardinalV1Marker::KEY {
+    fn get_rules_for(
+        &self,
+        marker: DataMarkerInfo,
+    ) -> Result<&cldr_serde::plurals::Rules, DataError> {
+        if marker == CardinalV1Marker::INFO {
             self.cldr()?
                 .core()
                 .read_and_parse::<cldr_serde::plurals::Resource>("supplemental/plurals.json")?
                 .supplemental
                 .plurals_type_cardinal
                 .as_ref()
-        } else if key == OrdinalV1Marker::KEY {
+        } else if marker == OrdinalV1Marker::INFO {
             self.cldr()?
                 .core()
                 .read_and_parse::<cldr_serde::plurals::Resource>("supplemental/ordinals.json")?
@@ -32,7 +35,7 @@ impl DatagenProvider {
         } else {
             None
         }
-        .ok_or(DataError::custom("Unknown key for PluralRulesV1"))
+        .ok_or(DataError::custom("Unknown marker for PluralRulesV1"))
     }
 
     fn get_plural_ranges(&self) -> Result<&cldr_serde::plural_ranges::PluralRanges, DataError> {
@@ -55,7 +58,7 @@ macro_rules! implement {
                 Ok(DataResponse {
                     metadata: Default::default(),
                     payload: Some(DataPayload::from_owned(PluralRulesV1::from(
-                        self.get_rules_for(<$marker>::KEY)?
+                        self.get_rules_for(<$marker>::INFO)?
                             .0
                             .get(&req.locale.get_langid())
                             .ok_or(DataErrorKind::MissingLocale.into_error())?,
@@ -64,13 +67,15 @@ macro_rules! implement {
             }
         }
 
-        impl IterableDataProviderInternal<$marker> for DatagenProvider {
-            fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
+        impl IterableDataProviderCached<$marker> for DatagenProvider {
+            fn supported_requests_cached(
+                &self,
+            ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
                 Ok(self
-                    .get_rules_for(<$marker>::KEY)?
+                    .get_rules_for(<$marker>::INFO)?
                     .0
                     .keys()
-                    .map(DataLocale::from)
+                    .map(|l| (DataLocale::from(l), Default::default()))
                     .collect())
             }
         }
@@ -121,14 +126,16 @@ impl DataProvider<PluralRangesV1Marker> for DatagenProvider {
     }
 }
 
-impl IterableDataProviderInternal<PluralRangesV1Marker> for DatagenProvider {
-    fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
+impl IterableDataProviderCached<PluralRangesV1Marker> for DatagenProvider {
+    fn supported_requests_cached(
+        &self,
+    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         Ok(self
             .get_plural_ranges()?
             .0
             .keys()
-            .map(DataLocale::from)
-            .chain([DataLocale::default()]) // `und` is not included in the locales of plural ranges.
+            .map(|l| (DataLocale::from(l), Default::default()))
+            .chain([Default::default()]) // `und` is not included in the locales of plural ranges.
             .collect())
     }
 }
@@ -178,7 +185,7 @@ fn test_basic() {
     let cs_rules: DataPayload<CardinalV1Marker> = provider
         .load(DataRequest {
             locale: &langid!("cs").into(),
-            metadata: Default::default(),
+            ..Default::default()
         })
         .unwrap()
         .take_payload()
@@ -210,7 +217,7 @@ fn test_ranges() {
     let plural_ranges: DataPayload<PluralRangesV1Marker> = provider
         .load(DataRequest {
             locale: &langid!("sl").into(),
-            metadata: Default::default(),
+            ..Default::default()
         })
         .unwrap()
         .take_payload()

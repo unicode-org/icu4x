@@ -2,12 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::error::InvalidOffsetError;
 use crate::provider::{MetazoneId, TimeZoneBcp47Id};
 
 use crate::metazone::MetazoneCalculator;
-use crate::{GmtOffset, TimeZoneError, ZoneVariant};
+use crate::{GmtOffset, ZoneVariant};
 use core::str::FromStr;
 use icu_calendar::{DateTime, Iso};
+use tinystr::tinystr;
 
 /// A utility type that can hold time zone information.
 ///
@@ -32,7 +34,7 @@ use icu_calendar::{DateTime, Iso};
 /// let tz2: CustomTimeZone =
 ///     "+05:00".parse().expect("Failed to parse a time zone.");
 /// ```
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 #[allow(clippy::exhaustive_structs)] // these four fields fully cover the needs of UTS 35
 pub struct CustomTimeZone {
     /// The GMT offset in seconds.
@@ -80,6 +82,28 @@ impl CustomTimeZone {
         }
     }
 
+    /// Creates a new [`CustomTimeZone`] representing Greenwich Mean Time
+    /// (London Time as observed in the winter).
+    pub const fn gmt() -> Self {
+        Self {
+            gmt_offset: Some(GmtOffset::utc()),
+            time_zone_id: Some(TimeZoneBcp47Id(tinystr!(8, "gblon"))),
+            metazone_id: Some(MetazoneId(tinystr!(4, "mgmt"))),
+            zone_variant: Some(ZoneVariant::standard()),
+        }
+    }
+
+    /// Creates a new [`CustomTimeZone`] representing British Summer Time
+    /// (London Time as observed in the summer).
+    pub const fn bst() -> Self {
+        Self {
+            gmt_offset: Some(GmtOffset::utc_plus_1()),
+            time_zone_id: Some(TimeZoneBcp47Id(tinystr!(8, "gblon"))),
+            metazone_id: Some(MetazoneId(tinystr!(4, "mgmt"))),
+            zone_variant: Some(ZoneVariant::daylight()),
+        }
+    }
+
     /// Parse a [`CustomTimeZone`] from a UTF-8 string representing a GMT Offset. See also [`GmtOffset`].
     ///
     ///
@@ -103,7 +127,7 @@ impl CustomTimeZone {
     /// assert_eq!(tz2.gmt_offset.map(GmtOffset::offset_seconds), Some(-9000));
     /// assert_eq!(tz3.gmt_offset.map(GmtOffset::offset_seconds), Some(9000));
     /// ```
-    pub fn try_from_bytes(bytes: &[u8]) -> Result<Self, TimeZoneError> {
+    pub fn try_from_bytes(bytes: &[u8]) -> Result<Self, InvalidOffsetError> {
         let gmt_offset = GmtOffset::try_from_bytes(bytes)?;
         Ok(Self {
             gmt_offset: Some(gmt_offset),
@@ -151,7 +175,7 @@ impl CustomTimeZone {
 }
 
 impl FromStr for CustomTimeZone {
-    type Err = TimeZoneError;
+    type Err = InvalidOffsetError;
 
     /// Parse a [`CustomTimeZone`] from a string.
     ///

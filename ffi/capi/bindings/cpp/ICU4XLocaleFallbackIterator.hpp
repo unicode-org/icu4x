@@ -1,64 +1,43 @@
 #ifndef ICU4XLocaleFallbackIterator_HPP
 #define ICU4XLocaleFallbackIterator_HPP
+
+#include "ICU4XLocaleFallbackIterator.d.hpp"
+
+#include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
-#include <algorithm>
 #include <memory>
-#include <variant>
 #include <optional>
 #include "diplomat_runtime.hpp"
-
+#include "ICU4XLocale.hpp"
 #include "ICU4XLocaleFallbackIterator.h"
 
-class ICU4XLocale;
 
-/**
- * A destruction policy for using ICU4XLocaleFallbackIterator with std::unique_ptr.
- */
-struct ICU4XLocaleFallbackIteratorDeleter {
-  void operator()(capi::ICU4XLocaleFallbackIterator* l) const noexcept {
-    capi::ICU4XLocaleFallbackIterator_destroy(l);
-  }
-};
-
-/**
- * An iterator over the locale under fallback.
- * 
- * See the [Rust documentation for `LocaleFallbackIterator`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbackIterator.html) for more information.
- */
-class ICU4XLocaleFallbackIterator {
- public:
-
-  /**
-   * Gets a snapshot of the current state of the locale.
-   * 
-   * See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbackIterator.html#method.get) for more information.
-   */
-  ICU4XLocale get() const;
-
-  /**
-   * Performs one step of the fallback algorithm, mutating the locale.
-   * 
-   * See the [Rust documentation for `step`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbackIterator.html#method.step) for more information.
-   */
-  void step();
-  inline const capi::ICU4XLocaleFallbackIterator* AsFFI() const { return this->inner.get(); }
-  inline capi::ICU4XLocaleFallbackIterator* AsFFIMut() { return this->inner.get(); }
-  inline explicit ICU4XLocaleFallbackIterator(capi::ICU4XLocaleFallbackIterator* i) : inner(i) {}
-  ICU4XLocaleFallbackIterator() = default;
-  ICU4XLocaleFallbackIterator(ICU4XLocaleFallbackIterator&&) noexcept = default;
-  ICU4XLocaleFallbackIterator& operator=(ICU4XLocaleFallbackIterator&& other) noexcept = default;
- private:
-  std::unique_ptr<capi::ICU4XLocaleFallbackIterator, ICU4XLocaleFallbackIteratorDeleter> inner;
-};
-
-#include "ICU4XLocale.hpp"
-
-inline ICU4XLocale ICU4XLocaleFallbackIterator::get() const {
-  return ICU4XLocale(capi::ICU4XLocaleFallbackIterator_get(this->inner.get()));
+inline std::unique_ptr<ICU4XLocale> ICU4XLocaleFallbackIterator::next() {
+  auto result = capi::ICU4XLocaleFallbackIterator_next(this->AsFFI());
+  return std::unique_ptr<ICU4XLocale>(ICU4XLocale::FromFFI(result));
 }
-inline void ICU4XLocaleFallbackIterator::step() {
-  capi::ICU4XLocaleFallbackIterator_step(this->inner.get());
+
+inline const capi::ICU4XLocaleFallbackIterator* ICU4XLocaleFallbackIterator::AsFFI() const {
+  return reinterpret_cast<const capi::ICU4XLocaleFallbackIterator*>(this);
 }
-#endif
+
+inline capi::ICU4XLocaleFallbackIterator* ICU4XLocaleFallbackIterator::AsFFI() {
+  return reinterpret_cast<capi::ICU4XLocaleFallbackIterator*>(this);
+}
+
+inline const ICU4XLocaleFallbackIterator* ICU4XLocaleFallbackIterator::FromFFI(const capi::ICU4XLocaleFallbackIterator* ptr) {
+  return reinterpret_cast<const ICU4XLocaleFallbackIterator*>(ptr);
+}
+
+inline ICU4XLocaleFallbackIterator* ICU4XLocaleFallbackIterator::FromFFI(capi::ICU4XLocaleFallbackIterator* ptr) {
+  return reinterpret_cast<ICU4XLocaleFallbackIterator*>(ptr);
+}
+
+inline void ICU4XLocaleFallbackIterator::operator delete(void* ptr) {
+  capi::ICU4XLocaleFallbackIterator_destroy(reinterpret_cast<capi::ICU4XLocaleFallbackIterator*>(ptr));
+}
+
+
+#endif // ICU4XLocaleFallbackIterator_HPP

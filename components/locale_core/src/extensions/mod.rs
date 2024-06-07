@@ -52,13 +52,13 @@ pub mod unicode;
 use core::cmp::Ordering;
 
 use other::Other;
-use private::Private;
-use transform::Transform;
-use unicode::Unicode;
+use private::{Private, PRIVATE_EXT_CHAR};
+use transform::{Transform, TRANSFORM_EXT_CHAR};
+use unicode::{Unicode, UNICODE_EXT_CHAR};
 
 use alloc::vec::Vec;
 
-use crate::parser::ParserError;
+use crate::parser::ParseError;
 use crate::parser::SubtagIterator;
 use crate::subtags;
 
@@ -77,14 +77,22 @@ pub enum ExtensionType {
 }
 
 impl ExtensionType {
-    pub(crate) const fn try_from_byte(key: u8) -> Result<Self, ParserError> {
+    pub(crate) const fn try_from_byte_slice(key: &[u8]) -> Result<Self, ParseError> {
+        if let [b] = key {
+            Self::try_from_byte(*b)
+        } else {
+            Err(ParseError::InvalidExtension)
+        }
+    }
+
+    pub(crate) const fn try_from_byte(key: u8) -> Result<Self, ParseError> {
         let key = key.to_ascii_lowercase();
-        match key {
-            b'u' => Ok(Self::Unicode),
-            b't' => Ok(Self::Transform),
-            b'x' => Ok(Self::Private),
-            b'a'..=b'z' => Ok(Self::Other(key)),
-            _ => Err(ParserError::InvalidExtension),
+        match key as char {
+            UNICODE_EXT_CHAR => Ok(Self::Unicode),
+            TRANSFORM_EXT_CHAR => Ok(Self::Transform),
+            PRIVATE_EXT_CHAR => Ok(Self::Private),
+            'a'..='z' => Ok(Self::Other(key)),
+            _ => Err(ParseError::InvalidExtension),
         }
     }
 
@@ -92,9 +100,9 @@ impl ExtensionType {
         bytes: &[u8],
         start: usize,
         end: usize,
-    ) -> Result<Self, ParserError> {
+    ) -> Result<Self, ParseError> {
         if end - start != 1 {
-            return Err(ParserError::InvalidExtension);
+            return Err(ParseError::InvalidExtension);
         }
         #[allow(clippy::indexing_slicing)]
         Self::try_from_byte(bytes[start])
@@ -242,7 +250,7 @@ impl Extensions {
             .retain(|o| predicate(ExtensionType::Other(o.get_ext_byte())));
     }
 
-    pub(crate) fn try_from_iter(iter: &mut SubtagIterator) -> Result<Self, ParserError> {
+    pub(crate) fn try_from_iter(iter: &mut SubtagIterator) -> Result<Self, ParseError> {
         let mut unicode = None;
         let mut transform = None;
         let mut private = None;
@@ -250,39 +258,39 @@ impl Extensions {
 
         while let Some(subtag) = iter.next() {
             if subtag.is_empty() {
-                return Err(ParserError::InvalidExtension);
+                return Err(ParseError::InvalidExtension);
             }
             match subtag.first().map(|b| ExtensionType::try_from_byte(*b)) {
                 Some(Ok(ExtensionType::Unicode)) => {
                     if unicode.is_some() {
-                        return Err(ParserError::DuplicatedExtension);
+                        return Err(ParseError::DuplicatedExtension);
                     }
                     unicode = Some(Unicode::try_from_iter(iter)?);
                 }
                 Some(Ok(ExtensionType::Transform)) => {
                     if transform.is_some() {
-                        return Err(ParserError::DuplicatedExtension);
+                        return Err(ParseError::DuplicatedExtension);
                     }
                     transform = Some(Transform::try_from_iter(iter)?);
                 }
                 Some(Ok(ExtensionType::Private)) => {
                     if private.is_some() {
-                        return Err(ParserError::DuplicatedExtension);
+                        return Err(ParseError::DuplicatedExtension);
                     }
                     private = Some(Private::try_from_iter(iter)?);
                 }
                 Some(Ok(ExtensionType::Other(ext))) => {
                     if other.iter().any(|o: &Other| o.get_ext_byte() == ext) {
-                        return Err(ParserError::DuplicatedExtension);
+                        return Err(ParseError::DuplicatedExtension);
                     }
                     let parsed = Other::try_from_iter(ext, iter)?;
                     if let Err(idx) = other.binary_search(&parsed) {
                         other.insert(idx, parsed);
                     } else {
-                        return Err(ParserError::InvalidExtension);
+                        return Err(ParseError::InvalidExtension);
                     }
                 }
-                _ => return Err(ParserError::InvalidExtension),
+                _ => return Err(ParseError::InvalidExtension),
             }
         }
 
@@ -301,27 +309,27 @@ impl Extensions {
         let mut wrote_tu = false;
         // Alphabetic by singleton
         self.other.iter().try_for_each(|other| {
-            if other.get_ext() > 't' && !wrote_tu {
+            if other.get_ext() > TRANSFORM_EXT_CHAR && !wrote_tu {
                 // Since 't' and 'u' are next to each other in alphabetical
                 // order, write both now.
-                self.transform.for_each_subtag_str(f)?;
-                self.unicode.for_each_subtag_str(f)?;
+                self.transform.for_each_subtag_str(f, true)?;
+                self.unicode.for_each_subtag_str(f, true)?;
                 wrote_tu = true;
             }
-            other.for_each_subtag_str(f)?;
+            other.for_each_subtag_str(f, true)?;
             Ok(())
         })?;
 
         if !wrote_tu {
-            self.transform.for_each_subtag_str(f)?;
-            self.unicode.for_each_subtag_str(f)?;
+            self.transform.for_each_subtag_str(f, true)?;
+            self.unicode.for_each_subtag_str(f, true)?;
         }
 
         // Private must be written last, since it allows single character
         // keys. Extensions must also be written in alphabetical order,
         // which would seem to imply that other extensions `y` and `z` are
         // invalid, but this is not specified.
-        self.private.for_each_subtag_str(f)?;
+        self.private.for_each_subtag_str(f, true)?;
         Ok(())
     }
 }

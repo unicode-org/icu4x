@@ -6,6 +6,8 @@ pub(in crate::provider) mod cldr;
 pub(in crate::provider) mod icuexport;
 pub(in crate::provider) mod segmenter;
 
+use std::collections::HashSet;
+
 use crate::provider::DatagenProvider;
 use icu_provider::datagen::*;
 use icu_provider::hello_world::*;
@@ -19,24 +21,24 @@ impl DataProvider<HelloWorldV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProvider<HelloWorldV1Marker> for DatagenProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        HelloWorldProvider.supported_locales()
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+        HelloWorldProvider.supported_requests()
     }
 }
 
 impl DatagenProvider {
-    fn check_req<M: KeyedDataMarker>(&self, req: DataRequest) -> Result<(), DataError>
+    fn check_req<M: DataMarker>(&self, req: DataRequest) -> Result<(), DataError>
     where
         DatagenProvider: IterableDataProvider<M>,
     {
-        if <M as KeyedDataMarker>::KEY.metadata().singleton && !req.locale.is_empty() {
+        if <M as DataMarker>::INFO.is_singleton && !req.locale.is_empty() {
             Err(DataErrorKind::ExtraneousLocale)
-        } else if !self.supports_locale(req.locale)? {
+        } else if !self.supports_request(req.locale, req.marker_attributes)? {
             Err(DataErrorKind::MissingLocale)
         } else {
             Ok(())
         }
-        .map_err(|e| e.with_req(<M as KeyedDataMarker>::KEY, req))
+        .map_err(|e| e.with_req(<M as DataMarker>::INFO, req))
     }
 }
 
@@ -48,7 +50,7 @@ fn test_missing_locale() {
         &provider,
         DataRequest {
             locale: &langid!("fi").into(),
-            metadata: Default::default()
+            ..Default::default()
         }
     )
     .is_ok());
@@ -56,7 +58,7 @@ fn test_missing_locale() {
         &provider,
         DataRequest {
             locale: &langid!("arc").into(),
-            metadata: Default::default()
+            ..Default::default()
         }
     )
     .is_err());

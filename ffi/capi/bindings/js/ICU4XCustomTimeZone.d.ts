@@ -1,7 +1,6 @@
 import { i32 } from "./diplomat-runtime"
 import { FFIError } from "./diplomat-runtime"
 import { ICU4XError } from "./ICU4XError";
-import { ICU4XIanaToBcp47Mapper } from "./ICU4XIanaToBcp47Mapper";
 import { ICU4XIsoDateTime } from "./ICU4XIsoDateTime";
 import { ICU4XMetazoneCalculator } from "./ICU4XMetazoneCalculator";
 import { ICU4XTimeZoneIdMapper } from "./ICU4XTimeZoneIdMapper";
@@ -39,6 +38,22 @@ export class ICU4XCustomTimeZone {
 
   /**
 
+   * Creates a time zone for GMT (London winter time).
+
+   * See the {@link https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#method.gmt Rust documentation for `gmt`} for more information.
+   */
+  static create_gmt(): ICU4XCustomTimeZone;
+
+  /**
+
+   * Creates a time zone for BST (London summer time).
+
+   * See the {@link https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#method.bst Rust documentation for `bst`} for more information.
+   */
+  static create_bst(): ICU4XCustomTimeZone;
+
+  /**
+
    * Sets the `gmt_offset` field from offset seconds.
 
    * Errors if the offset seconds are out of range.
@@ -64,58 +79,53 @@ export class ICU4XCustomTimeZone {
 
    * Returns the value of the `gmt_offset` field as offset seconds.
 
-   * Errors if the `gmt_offset` field is empty.
+   * Returns null if the `gmt_offset` field is empty.
 
    * See the {@link https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html#method.offset_seconds Rust documentation for `offset_seconds`} for more information.
 
    * Additional information: {@link https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html 1}
-   * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  gmt_offset_seconds(): i32 | never;
+  gmt_offset_seconds(): i32 | undefined;
 
   /**
 
    * Returns whether the `gmt_offset` field is positive.
 
-   * Errors if the `gmt_offset` field is empty.
+   * Returns null if the `gmt_offset` field is empty.
 
    * See the {@link https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html#method.is_positive Rust documentation for `is_positive`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  is_gmt_offset_positive(): boolean | never;
+  is_gmt_offset_positive(): boolean | undefined;
 
   /**
 
    * Returns whether the `gmt_offset` field is zero.
 
-   * Errors if the `gmt_offset` field is empty (which is not the same as zero).
+   * Returns null if the `gmt_offset` field is empty (which is not the same as zero).
 
    * See the {@link https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html#method.is_zero Rust documentation for `is_zero`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  is_gmt_offset_zero(): boolean | never;
+  is_gmt_offset_zero(): boolean | undefined;
 
   /**
 
    * Returns whether the `gmt_offset` field has nonzero minutes.
 
-   * Errors if the `gmt_offset` field is empty.
+   * Returns null if the `gmt_offset` field is empty.
 
    * See the {@link https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html#method.has_minutes Rust documentation for `has_minutes`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  gmt_offset_has_minutes(): boolean | never;
+  gmt_offset_has_minutes(): boolean | undefined;
 
   /**
 
    * Returns whether the `gmt_offset` field has nonzero seconds.
 
-   * Errors if the `gmt_offset` field is empty.
+   * Returns null if the `gmt_offset` field is empty.
 
    * See the {@link https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html#method.has_seconds Rust documentation for `has_seconds`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  gmt_offset_has_seconds(): boolean | never;
+  gmt_offset_has_seconds(): boolean | undefined;
 
   /**
 
@@ -135,20 +145,9 @@ export class ICU4XCustomTimeZone {
    * Sets the `time_zone_id` field from an IANA string by looking up the corresponding BCP-47 string.
 
    * Errors if the string is not a valid BCP-47 time zone ID.
-
-   * See the {@link https://docs.rs/icu/latest/icu/timezone/struct.IanaToBcp47MapperBorrowed.html#method.get Rust documentation for `get`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  try_set_iana_time_zone_id(mapper: ICU4XIanaToBcp47Mapper, id: string): void | never;
-
-  /**
-
-   * Sets the `time_zone_id` field from an IANA string by looking up the corresponding BCP-47 string.
-
-   * Errors if the string is not a valid BCP-47 time zone ID.
-   * @throws {@link FFIError}<{@link ICU4XError}>
-   */
-  try_set_iana_time_zone_id_2(mapper: ICU4XTimeZoneIdMapper, id: string): void | never;
+  try_set_iana_time_zone_id(mapper: ICU4XTimeZoneIdMapper, id: string): void | never;
 
   /**
 
@@ -164,20 +163,19 @@ export class ICU4XCustomTimeZone {
 
    * Writes the value of the `time_zone_id` field as a string.
 
-   * Errors if the `time_zone_id` field is empty.
+   * Returns null if the `time_zone_id` field is empty.
 
    * See the {@link https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.time_zone_id Rust documentation for `time_zone_id`} for more information.
 
    * Additional information: {@link https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneBcp47Id.html 1}
-   * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  time_zone_id(): string | never;
+  time_zone_id(): string | undefined;
 
   /**
 
    * Sets the `metazone_id` field from a string.
 
-   * Errors if the string is not a valid BCP-47 metazone ID.
+   * Returns null if the string is not a valid BCP-47 metazone ID.
 
    * See the {@link https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.metazone_id Rust documentation for `metazone_id`} for more information.
 
@@ -200,27 +198,25 @@ export class ICU4XCustomTimeZone {
 
    * Writes the value of the `metazone_id` field as a string.
 
-   * Errors if the `metazone_id` field is empty.
+   * Returns null if the `metazone_id` field is empty.
 
    * See the {@link https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.metazone_id Rust documentation for `metazone_id`} for more information.
 
    * Additional information: {@link https://docs.rs/icu/latest/icu/timezone/struct.MetazoneId.html 1}
-   * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  metazone_id(): string | never;
+  metazone_id(): string | undefined;
 
   /**
 
    * Sets the `zone_variant` field from a string.
 
-   * Errors if the string is not a valid zone variant.
+   * Returns null if the string is not a valid zone variant.
 
    * See the {@link https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant Rust documentation for `zone_variant`} for more information.
 
    * Additional information: {@link https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html 1}
-   * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  try_set_zone_variant(id: string): void | never;
+  try_set_zone_variant(id: string): void | undefined;
 
   /**
 
@@ -236,14 +232,13 @@ export class ICU4XCustomTimeZone {
 
    * Writes the value of the `zone_variant` field as a string.
 
-   * Errors if the `zone_variant` field is empty.
+   * Returns null if the `zone_variant` field is empty.
 
    * See the {@link https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant Rust documentation for `zone_variant`} for more information.
 
    * Additional information: {@link https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html 1}
-   * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  zone_variant(): string | never;
+  zone_variant(): string | undefined;
 
   /**
 
@@ -269,27 +264,25 @@ export class ICU4XCustomTimeZone {
 
    * Returns whether the `zone_variant` field is standard time.
 
-   * Errors if the `zone_variant` field is empty.
+   * Returns null if the `zone_variant` field is empty.
 
    * See the {@link https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html#method.standard Rust documentation for `standard`} for more information.
 
    * Additional information: {@link https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant 1}
-   * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  is_standard_time(): boolean | never;
+  is_standard_time(): boolean | undefined;
 
   /**
 
    * Returns whether the `zone_variant` field is daylight time.
 
-   * Errors if the `zone_variant` field is empty.
+   * Returns null if the `zone_variant` field is empty.
 
    * See the {@link https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html#method.daylight Rust documentation for `daylight`} for more information.
 
    * Additional information: {@link https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant 1}
-   * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  is_daylight_time(): boolean | never;
+  is_daylight_time(): boolean | undefined;
 
   /**
 

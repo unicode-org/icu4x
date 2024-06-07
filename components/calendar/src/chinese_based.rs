@@ -20,9 +20,10 @@
 
 use crate::{
     calendar_arithmetic::{ArithmeticDate, CalendarArithmetic, PrecomputedDataSource},
+    error::DateError,
     provider::chinese_based::{ChineseBasedCacheV1, PackedChineseBasedYearInfo},
     types::{FormattableMonth, MonthCode},
-    Calendar, CalendarError, Iso,
+    Calendar, Iso,
 };
 
 use calendrical_calculations::chinese_based::{self, ChineseBased, YearBounds};
@@ -342,20 +343,32 @@ impl<C: ChineseBasedWithDataLoading + CalendarArithmetic<YearInfo = ChineseBased
         month: u8,
         day: u8,
         year_info: ChineseBasedYearInfo,
-    ) -> Result<ArithmeticDate<C>, CalendarError> {
+    ) -> Result<ArithmeticDate<C>, DateError> {
         let max_month = Self::months_in_year_with_info(year_info);
         if !(1..=max_month).contains(&month) {
-            return Err(CalendarError::Overflow {
+            return Err(DateError::Range {
                 field: "month",
-                max: max_month as usize,
+                value: month as i32,
+                min: 1,
+                max: max_month as i32,
+            });
+        }
+        if month == 0 {
+            return Err(DateError::Range {
+                field: "month",
+                value: 0,
+                min: 1,
+                max: 12,
             });
         }
 
         let max_day = year_info.days_in_month(month);
         if day > max_day {
-            return Err(CalendarError::Overflow {
+            return Err(DateError::Range {
                 field: "day",
-                max: max_day as usize,
+                value: day as i32,
+                min: 1,
+                max: max_day as i32,
             });
         }
 

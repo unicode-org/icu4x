@@ -5,7 +5,7 @@
 use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::transform::cldr::decimal::decimal_pattern::DecimalPattern;
 use crate::provider::DatagenProvider;
-use crate::provider::IterableDataProviderInternal;
+use crate::provider::IterableDataProviderCached;
 
 use std::borrow::Cow;
 
@@ -54,11 +54,7 @@ fn currency_pattern_selection(
     let first_num_index = pattern.find(['0', '#']).unwrap();
     let last_num_index = pattern.rfind(['0', '#']).unwrap();
 
-    let letters_set = load_for_general_category_group(provider, GeneralCategoryGroup::Letter)
-        .map_err(|e| match e {
-            icu_properties::PropertiesError::PropDataLoad(e) => e,
-            _ => unreachable!("load_for_general_category_group should only return PropDataLoad"),
-        })?;
+    let letters_set = load_for_general_category_group(provider, GeneralCategoryGroup::Letter)?;
 
     let char_closer_to_number = if currency_sign_index < first_num_index {
         placeholder_value.chars().next_back().unwrap()
@@ -106,13 +102,15 @@ impl DataProvider<CurrencyEssentialsV1Marker> for DatagenProvider {
     }
 }
 
-impl IterableDataProviderInternal<CurrencyEssentialsV1Marker> for DatagenProvider {
-    fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
+impl IterableDataProviderCached<CurrencyEssentialsV1Marker> for DatagenProvider {
+    fn supported_requests_cached(
+        &self,
+    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         Ok(self
             .cldr()?
             .numbers()
             .list_langs()?
-            .map(DataLocale::from)
+            .map(|l| (DataLocale::from(l), Default::default()))
             .collect())
     }
 }
@@ -357,7 +355,7 @@ fn test_basic() {
     let en: DataPayload<CurrencyEssentialsV1Marker> = provider
         .load(DataRequest {
             locale: &langid!("en").into(),
-            metadata: Default::default(),
+            ..Default::default()
         })
         .unwrap()
         .take_payload()
@@ -396,7 +394,7 @@ fn test_basic() {
     let ar_eg: DataPayload<CurrencyEssentialsV1Marker> = provider
         .load(DataRequest {
             locale: &langid!("ar-EG").into(),
-            metadata: Default::default(),
+            ..Default::default()
         })
         .unwrap()
         .take_payload()

@@ -18,6 +18,7 @@ use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use icu_segmenter::provider::*;
 use icu_segmenter::WordType;
+use std::collections::HashSet;
 use std::fmt::Debug;
 use std::sync::OnceLock;
 use zerovec::ZeroVec;
@@ -584,7 +585,7 @@ macro_rules! implement {
                 return Err(DataError::custom(
                     "icu_datagen must be built with use_icu4c or use_wasm to build segmentation rules",
                 )
-                .with_req($marker::KEY, req));
+                .with_req($marker::INFO, req));
                 #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
                 return {
                     self.check_req::<$marker>(req)?;
@@ -603,8 +604,8 @@ macro_rules! implement {
         }
 
         impl IterableDataProvider<$marker> for DatagenProvider {
-            fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-                Ok(vec![Default::default()])
+            fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+                Ok(HashSet::from_iter([Default::default()]))
             }
         }
     }

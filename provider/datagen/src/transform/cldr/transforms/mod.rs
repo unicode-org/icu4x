@@ -10,6 +10,7 @@ use icu_experimental::transliterate::RuleCollection;
 use icu_locale_core::Locale;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
+use std::collections::HashSet;
 use std::sync::Mutex;
 
 impl CldrCache {
@@ -130,13 +131,13 @@ impl DataProvider<TransliteratorRulesV1Marker> for DatagenProvider {
 
 impl IterableDataProvider<TransliteratorRulesV1Marker> for DatagenProvider {
     // Don't do caching for this one. It uses its own mutex
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         self.cldr()?
             .transforms()?
             .lock()
             .expect("poison")
             .as_provider_unstable(self, self)?
-            .supported_locales()
+            .supported_requests()
     }
 }
 
@@ -150,8 +151,8 @@ mod tests {
 
         let _data: DataPayload<TransliteratorRulesV1Marker> = provider
             .load(DataRequest {
-                locale: &"und-x-de-t-de-d0-ascii".parse().unwrap(),
-                metadata: Default::default(),
+                marker_attributes: &"de-t-de-d0-ascii".parse().unwrap(),
+                ..Default::default()
             })
             .unwrap()
             .take_payload()
@@ -164,8 +165,8 @@ mod tests {
 
         let _data: DataPayload<TransliteratorRulesV1Marker> = provider
             .load(DataRequest {
-                locale: &"und-x-und-Latn-t-s0-ascii".parse().unwrap(),
-                metadata: Default::default(),
+                marker_attributes: &"und-latn-t-s0-ascii".parse().unwrap(),
+                ..Default::default()
             })
             .unwrap()
             .take_payload()

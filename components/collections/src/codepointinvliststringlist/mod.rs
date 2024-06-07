@@ -10,8 +10,7 @@
 //! It is an implementation of the existing [ICU4C UnicodeSet API](https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/classicu_1_1UnicodeSet.html).
 
 use crate::codepointinvlist::{
-    CodePointInversionList, CodePointInversionListBuilder, CodePointInversionListError,
-    CodePointInversionListULE,
+    CodePointInversionList, CodePointInversionListBuilder, CodePointInversionListULE,
 };
 use alloc::string::{String, ToString};
 use alloc::vec::Vec;
@@ -61,7 +60,7 @@ impl<'data> CodePointInversionListAndStringList<'data> {
     pub fn try_from(
         cp_inv_list: CodePointInversionList<'data>,
         str_list: VarZeroVec<'data, str>,
-    ) -> Result<Self, CodePointInversionListAndStringListError> {
+    ) -> Result<Self, InvalidStringList> {
         // Verify invariants:
         // Do so by using the equivalent of str_list.iter().windows(2) to get
         // overlapping windows of size 2. The above putative code is not possible
@@ -72,32 +71,18 @@ impl<'data> CodePointInversionListAndStringList<'data> {
             let mut it = str_list.iter();
             if let Some(mut x) = it.next() {
                 if x.len() == 1 {
-                    return Err(
-                        CodePointInversionListAndStringListError::InvalidStringLength(
-                            x.to_string(),
-                        ),
-                    );
+                    return Err(InvalidStringList::InvalidStringLength(x.to_string()));
                 }
                 for y in it {
                     if x.len() == 1 {
-                        return Err(
-                            CodePointInversionListAndStringListError::InvalidStringLength(
-                                x.to_string(),
-                            ),
-                        );
+                        return Err(InvalidStringList::InvalidStringLength(x.to_string()));
                     } else if x == y {
-                        return Err(
-                            CodePointInversionListAndStringListError::StringListNotUnique(
-                                x.to_string(),
-                            ),
-                        );
+                        return Err(InvalidStringList::StringListNotUnique(x.to_string()));
                     } else if x > y {
-                        return Err(
-                            CodePointInversionListAndStringListError::StringListNotSorted(
-                                x.to_string(),
-                                y.to_string(),
-                            ),
-                        );
+                        return Err(InvalidStringList::StringListNotSorted(
+                            x.to_string(),
+                            y.to_string(),
+                        ));
                     }
 
                     // Next window begins. Update `x` here, `y` will be updated in next loop iteration.
@@ -112,7 +97,7 @@ impl<'data> CodePointInversionListAndStringList<'data> {
         })
     }
 
-    #[doc(hidden)]
+    #[doc(hidden)] // databake internal
     pub const fn from_parts_unchecked(
         cp_inv_list: CodePointInversionList<'data>,
         str_list: VarZeroVec<'data, str>,
@@ -257,13 +242,8 @@ impl<'a> FromIterator<&'a str> for CodePointInversionListAndStringList<'_> {
 }
 
 /// Custom Errors for [`CodePointInversionListAndStringList`].
-///
-/// Re-exported as [`Error`].
 #[derive(Display, Debug)]
-pub enum CodePointInversionListAndStringListError {
-    /// An invalid CodePointInversionList was constructed
-    #[displaydoc("Invalid code point inversion list: {0:?}")]
-    InvalidCodePointInversionList(CodePointInversionListError),
+pub enum InvalidStringList {
     /// A string in the string list had an invalid length
     #[displaydoc("Invalid string length for string: {0}")]
     InvalidStringLength(String),
@@ -274,9 +254,6 @@ pub enum CodePointInversionListAndStringListError {
     #[displaydoc("Strings in string list not in sorted order: ({0}, {1})")]
     StringListNotSorted(String, String),
 }
-
-#[doc(no_inline)]
-pub use CodePointInversionListAndStringListError as Error;
 
 #[cfg(test)]
 mod tests {
@@ -322,7 +299,7 @@ mod tests {
 
         assert!(matches!(
             cpilsl,
-            Err(CodePointInversionListAndStringListError::InvalidStringLength(_))
+            Err(InvalidStringList::InvalidStringLength(_))
         ));
     }
 
@@ -338,7 +315,7 @@ mod tests {
 
         assert!(matches!(
             cpilsl,
-            Err(CodePointInversionListAndStringListError::StringListNotUnique(_))
+            Err(InvalidStringList::StringListNotUnique(_))
         ));
     }
 
@@ -354,7 +331,7 @@ mod tests {
 
         assert!(matches!(
             cpilsl,
-            Err(CodePointInversionListAndStringListError::StringListNotSorted(_, _))
+            Err(InvalidStringList::StringListNotSorted(_, _))
         ));
     }
 

@@ -59,14 +59,13 @@ pub mod ffi {
             &self,
             bytes: &DiplomatStr,
             write: &mut diplomat_runtime::DiplomatWrite,
-        ) -> Result<(), ICU4XError> {
+        ) -> Option<()> {
             Key::try_from_bytes(bytes)
                 .ok()
                 .and_then(|k| self.0.extensions.unicode.keywords.get(&k))
                 .map(|v| {
                     let _infallible = v.write_to(write);
                 })
-                .ok_or(ICU4XError::LocaleUndefinedSubtagError)
         }
 
         /// Returns a string representation of [`ICU4XLocale`] language.
@@ -91,22 +90,15 @@ pub mod ffi {
         /// Returns a string representation of [`ICU4XLocale`] region.
         #[diplomat::rust_link(icu::locale::Locale::id, StructField)]
         #[diplomat::attr(supports = accessors, getter)]
-        pub fn region(
-            &self,
-            write: &mut diplomat_runtime::DiplomatWrite,
-        ) -> Result<(), ICU4XError> {
-            self.0
-                .id
-                .region
-                .map(|region| {
-                    let _infallible = region.write_to(write);
-                })
-                .ok_or(ICU4XError::LocaleUndefinedSubtagError)
+        pub fn region(&self, write: &mut diplomat_runtime::DiplomatWrite) -> Option<()> {
+            self.0.id.region.map(|region| {
+                let _infallible = region.write_to(write);
+            })
         }
 
         /// Set the region part of the [`ICU4XLocale`].
         #[diplomat::rust_link(icu::locale::Locale::try_from_bytes, FnInStruct)]
-        #[diplomat::attr(supports = accessors, setter = "region")]
+        #[diplomat::attr(all(supports = accessors, not(dart)), setter = "region")]
         pub fn set_region(&mut self, bytes: &DiplomatStr) -> Result<(), ICU4XError> {
             self.0.id.region = if bytes.is_empty() {
                 None
@@ -119,22 +111,15 @@ pub mod ffi {
         /// Returns a string representation of [`ICU4XLocale`] script.
         #[diplomat::rust_link(icu::locale::Locale::id, StructField)]
         #[diplomat::attr(supports = accessors, getter)]
-        pub fn script(
-            &self,
-            write: &mut diplomat_runtime::DiplomatWrite,
-        ) -> Result<(), ICU4XError> {
-            self.0
-                .id
-                .script
-                .map(|script| {
-                    let _infallible = script.write_to(write);
-                })
-                .ok_or(ICU4XError::LocaleUndefinedSubtagError)
+        pub fn script(&self, write: &mut diplomat_runtime::DiplomatWrite) -> Option<()> {
+            self.0.id.script.map(|script| {
+                let _infallible = script.write_to(write);
+            })
         }
 
         /// Set the script part of the [`ICU4XLocale`]. Pass an empty string to remove the script.
         #[diplomat::rust_link(icu::locale::Locale::try_from_bytes, FnInStruct)]
-        #[diplomat::attr(supports = accessors, setter = "script")]
+        #[diplomat::attr(all(supports = accessors, not(dart)), setter = "script")]
         pub fn set_script(&mut self, bytes: &DiplomatStr) -> Result<(), ICU4XError> {
             self.0.id.script = if bytes.is_empty() {
                 None
@@ -196,24 +181,6 @@ pub mod ffi {
         #[diplomat::attr(supports = comparators, comparison)]
         pub fn total_cmp_(&self, other: &Self) -> core::cmp::Ordering {
             self.0.total_cmp(&other.0)
-        }
-
-        /// Deprecated
-        ///
-        /// Use `create_from_string("en").
-        #[cfg(feature = "provider_test")]
-        #[diplomat::attr(supports = constructors, disable)]
-        pub fn create_en() -> Box<ICU4XLocale> {
-            Box::new(ICU4XLocale(icu_locale_core::locale!("en")))
-        }
-
-        /// Deprecated
-        ///
-        /// Use `create_from_string("bn").
-        #[cfg(feature = "provider_test")]
-        #[diplomat::attr(supports = constructors, disable)]
-        pub fn create_bn() -> Box<ICU4XLocale> {
-            Box::new(ICU4XLocale(icu_locale_core::locale!("bn")))
         }
     }
 }

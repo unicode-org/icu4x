@@ -9,8 +9,7 @@
 //! String properties are represented as newtypes if their
 //! values represent code points.
 
-use crate::provider::{names::*, *};
-use crate::PropertiesError;
+use crate::provider::names::*;
 use core::marker::PhantomData;
 use icu_collections::codepointtrie::TrieValue;
 use icu_provider::prelude::*;
@@ -23,7 +22,7 @@ use serde::{Deserialize, Serialize};
 /// to work for all properties at once
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
 pub(crate) struct ErasedNameToEnumMapV1Marker;
-impl DataMarker for ErasedNameToEnumMapV1Marker {
+impl DynamicDataMarker for ErasedNameToEnumMapV1Marker {
     type Yokeable = PropertyValueNameToEnumMapV1<'static>;
 }
 
@@ -101,7 +100,7 @@ impl<T: TrieValue> PropertyValueNameToEnumMapper<T> {
 
     pub(crate) fn from_data<M>(data: DataPayload<M>) -> Self
     where
-        M: DataMarker<Yokeable = PropertyValueNameToEnumMapV1<'static>>,
+        M: DynamicDataMarker<Yokeable = PropertyValueNameToEnumMapV1<'static>>,
     {
         Self {
             map: data.cast(),
@@ -261,7 +260,7 @@ fn get_loose_u16(payload: &PropertyValueNameToEnumMapV1<'_>, name: &str) -> Opti
 /// to work for all properties at once
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
 pub(crate) struct ErasedEnumToValueNameSparseMapV1Marker;
-impl DataMarker for ErasedEnumToValueNameSparseMapV1Marker {
+impl DynamicDataMarker for ErasedEnumToValueNameSparseMapV1Marker {
     type Yokeable = PropertyEnumToValueNameSparseMapV1<'static>;
 }
 
@@ -323,7 +322,7 @@ impl<T: TrieValue> PropertyEnumToValueNameSparseMapper<T> {
     /// (like [`Script::TBD()`]) instead.
     pub(crate) fn from_data<M>(data: DataPayload<M>) -> Self
     where
-        M: DataMarker<Yokeable = PropertyEnumToValueNameSparseMapV1<'static>>,
+        M: DynamicDataMarker<Yokeable = PropertyEnumToValueNameSparseMapV1<'static>>,
     {
         Self {
             map: data.cast(),
@@ -374,7 +373,7 @@ impl<T: TrieValue> PropertyEnumToValueNameSparseMapperBorrowed<'static, T> {
 /// to work for all properties at once
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
 pub(crate) struct ErasedEnumToValueNameLinearMapV1Marker;
-impl DataMarker for ErasedEnumToValueNameLinearMapV1Marker {
+impl DynamicDataMarker for ErasedEnumToValueNameLinearMapV1Marker {
     type Yokeable = PropertyEnumToValueNameLinearMapV1<'static>;
 }
 
@@ -436,7 +435,7 @@ impl<T: TrieValue> PropertyEnumToValueNameLinearMapper<T> {
     /// (like [`Script::TBD()`]) instead.
     pub(crate) fn from_data<M>(data: DataPayload<M>) -> Self
     where
-        M: DataMarker<Yokeable = PropertyEnumToValueNameLinearMapV1<'static>>,
+        M: DynamicDataMarker<Yokeable = PropertyEnumToValueNameLinearMapV1<'static>>,
     {
         Self {
             map: data.cast(),
@@ -481,7 +480,7 @@ impl<T: TrieValue> PropertyEnumToValueNameLinearMapperBorrowed<'static, T> {
 /// to work for all properties at once
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
 pub(crate) struct ErasedEnumToValueNameLinearTiny4MapV1Marker;
-impl DataMarker for ErasedEnumToValueNameLinearTiny4MapV1Marker {
+impl DynamicDataMarker for ErasedEnumToValueNameLinearTiny4MapV1Marker {
     type Yokeable = PropertyEnumToValueNameLinearTiny4MapV1<'static>;
 }
 
@@ -536,7 +535,7 @@ impl<T: TrieValue> PropertyEnumToValueNameLinearTiny4Mapper<T> {
     /// (like [`Script::TBD()`]) instead.
     pub(crate) fn from_data<M>(data: DataPayload<M>) -> Self
     where
-        M: DataMarker<Yokeable = PropertyEnumToValueNameLinearTiny4MapV1<'static>>,
+        M: DynamicDataMarker<Yokeable = PropertyEnumToValueNameLinearTiny4MapV1<'static>>,
     {
         Self {
             map: data.cast(),
@@ -609,8 +608,8 @@ macro_rules! impl_value_getter {
             /// [📚 Help choosing a constructor](icu_provider::constructors)
             $vis_n2e fn $name_n2e(
                 provider: &(impl DataProvider<$marker_n2e> + ?Sized)
-            ) -> Result<PropertyValueNameToEnumMapper<$ty>, PropertiesError> {
-                Ok(provider.load(Default::default()).and_then(DataResponse::take_payload).map(PropertyValueNameToEnumMapper::from_data)?)
+            ) -> Result<PropertyValueNameToEnumMapper<$ty>, DataError> {
+                provider.load(Default::default()).and_then(DataResponse::take_payload).map(PropertyValueNameToEnumMapper::from_data)
             }
 
             $(
@@ -628,8 +627,8 @@ macro_rules! impl_value_getter {
                 /// [📚 Help choosing a constructor](icu_provider::constructors)
                 $vis_e2sn fn $name_e2sn(
                     provider: &(impl DataProvider<$marker_e2sn> + ?Sized)
-                ) -> Result<$mapper_e2sn<$ty>, PropertiesError> {
-                    Ok(provider.load(Default::default()).and_then(DataResponse::take_payload).map($mapper_e2sn::from_data)?)
+                ) -> Result<$mapper_e2sn<$ty>, DataError> {
+                    provider.load(Default::default()).and_then(DataResponse::take_payload).map($mapper_e2sn::from_data)
                 }
 
                 $(#[$attr_e2ln])*
@@ -646,8 +645,8 @@ macro_rules! impl_value_getter {
                 /// [📚 Help choosing a constructor](icu_provider::constructors)
                 $vis_e2ln fn $name_e2ln(
                     provider: &(impl DataProvider<$marker_e2ln> + ?Sized)
-                ) -> Result<$mapper_e2ln<$ty>, PropertiesError> {
-                    Ok(provider.load(Default::default()).and_then(DataResponse::take_payload).map($mapper_e2ln::from_data)?)
+                ) -> Result<$mapper_e2ln<$ty>, DataError> {
+                    provider.load(Default::default()).and_then(DataResponse::take_payload).map($mapper_e2ln::from_data)
                 }
             )?
         }

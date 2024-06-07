@@ -14,9 +14,9 @@ mod payload;
 pub use data_conversion::DataConverter;
 pub use iter::IterableDataProvider;
 
-#[doc(hidden)] // exposed for make_exportable_provider
+#[doc(hidden)] // macro use
 pub use iter::IterableDynamicDataProvider;
-#[doc(hidden)] // exposed for make_exportable_provider
+#[doc(hidden)] // macro use
 pub use payload::{ExportBox, ExportMarker};
 
 use crate::prelude::*;
@@ -31,33 +31,34 @@ pub enum BuiltInFallbackMode {
 
 /// An object capable of exporting data payloads in some form.
 pub trait DataExporter: Sync {
-    /// Save a `payload` corresponding to the given key and locale.
+    /// Save a `payload` corresponding to the given marker and locale.
     /// Takes non-mut self as it can be called concurrently.
     fn put_payload(
         &self,
-        key: DataKey,
+        marker: DataMarkerInfo,
         locale: &DataLocale,
+        marker_attributes: &DataMarkerAttributes,
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError>;
 
-    /// Function called for singleton keys.
+    /// Function called for singleton markers.
     /// Takes non-mut self as it can be called concurrently.
     fn flush_singleton(
         &self,
-        key: DataKey,
+        marker: DataMarkerInfo,
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
-        self.put_payload(key, &Default::default(), payload)?;
-        self.flush(key)
+        self.put_payload(marker, Default::default(), Default::default(), payload)?;
+        self.flush(marker)
     }
 
-    /// Function called after a non-singleton key has been fully enumerated,
-    /// flushing that key with built-in fallback.
+    /// Function called after a non-singleton marker has been fully enumerated,
+    /// flushing that marker with built-in fallback.
     ///
     /// Takes non-mut self as it can be called concurrently.
     fn flush_with_built_in_fallback(
         &self,
-        _key: DataKey,
+        _marker: DataMarkerInfo,
         _fallback_mode: BuiltInFallbackMode,
     ) -> Result<(), DataError> {
         Err(DataError::custom(
@@ -65,16 +66,16 @@ pub trait DataExporter: Sync {
         ))
     }
 
-    /// Function called after a non-singleton key has been fully enumerated.
+    /// Function called after a non-singleton marker has been fully enumerated.
     /// Does not include built-in fallback.
     ///
     /// Takes non-mut self as it can be called concurrently.
-    fn flush(&self, _key: DataKey) -> Result<(), DataError> {
+    fn flush(&self, _marker: DataMarkerInfo) -> Result<(), DataError> {
         Ok(())
     }
 
     /// This function has to be called before the object is dropped (after all
-    /// keys have been fully dumped). This conceptually takes ownership, so
+    /// markers have been fully dumped). This conceptually takes ownership, so
     /// clients *may not* interact with this object after close has been called.
     fn close(&mut self) -> Result<(), DataError> {
         Ok(())
@@ -90,31 +91,32 @@ pub trait DataExporter: Sync {
 impl DataExporter for Box<dyn DataExporter> {
     fn put_payload(
         &self,
-        key: DataKey,
+        marker: DataMarkerInfo,
         locale: &DataLocale,
+        marker_attributes: &DataMarkerAttributes,
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
-        (**self).put_payload(key, locale, payload)
+        (**self).put_payload(marker, locale, marker_attributes, payload)
     }
 
     fn flush_singleton(
         &self,
-        key: DataKey,
+        marker: DataMarkerInfo,
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
-        (**self).flush_singleton(key, payload)
+        (**self).flush_singleton(marker, payload)
     }
 
     fn flush_with_built_in_fallback(
         &self,
-        key: DataKey,
+        marker: DataMarkerInfo,
         fallback_mode: BuiltInFallbackMode,
     ) -> Result<(), DataError> {
-        (**self).flush_with_built_in_fallback(key, fallback_mode)
+        (**self).flush_with_built_in_fallback(marker, fallback_mode)
     }
 
-    fn flush(&self, key: DataKey) -> Result<(), DataError> {
-        (**self).flush(key)
+    fn flush(&self, marker: DataMarkerInfo) -> Result<(), DataError> {
+        (**self).flush(marker)
     }
 
     fn close(&mut self) -> Result<(), DataError> {
@@ -146,7 +148,7 @@ impl<T> ExportableProvider for T where
 /// them to an efficient format like [`BlobDataProvider`] or [`BakedDataProvider`]. The requirements
 /// for `make_exportable_provider` are:
 /// * The data struct has to implement [`serde::Serialize`](::serde::Serialize) and [`databake::Bake`]
-/// * The provider needs to implement [`IterableDataProvider`] for all specified [`KeyedDataMarker`]s.
+/// * The provider needs to implement [`IterableDataProvider`] for all specified [`DataMarker`]s.
 ///   This allows the generating code to know which [`DataLocale`] to collect.
 ///
 /// [`BlobDataProvider`]: ../../icu_provider_blob/struct.BlobDataProvider.html
@@ -166,15 +168,15 @@ macro_rules! make_exportable_provider {
         );
 
         impl $crate::datagen::IterableDynamicDataProvider<$crate::datagen::ExportMarker> for $provider {
-            fn supported_locales_for_key(&self, key: $crate::DataKey) -> Result<Vec<$crate::DataLocale>, $crate::DataError> {
-                match key.hashed() {
+            fn supported_requests_for_marker(&self, marker: $crate::DataMarkerInfo) -> Result<std::collections::HashSet<($crate::DataLocale, $crate::DataMarkerAttributes)>, $crate::DataError> {
+                match marker.path.hashed() {
                     $(
                         $(#[$cfg])?
-                        h if h == <$struct_m as $crate::KeyedDataMarker>::KEY.hashed() => {
-                            $crate::datagen::IterableDataProvider::<$struct_m>::supported_locales(self)
+                        h if h == <$struct_m as $crate::DataMarker>::INFO.path.hashed() => {
+                            $crate::datagen::IterableDataProvider::<$struct_m>::supported_requests(self)
                         }
                     )+,
-                    _ => Err($crate::DataErrorKind::MissingDataKey.with_key(key))
+                    _ => Err($crate::DataErrorKind::MissingDataMarker.with_marker(marker))
                 }
             }
         }
@@ -203,40 +205,45 @@ impl core::fmt::Debug for MultiExporter {
 impl DataExporter for MultiExporter {
     fn put_payload(
         &self,
-        key: DataKey,
+        marker: DataMarkerInfo,
         locale: &DataLocale,
+        marker_attributes: &DataMarkerAttributes,
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
         self.0
             .iter()
-            .try_for_each(|e| e.put_payload(key, locale, payload))
+            .try_for_each(|e| e.put_payload(marker, locale, marker_attributes, payload))
     }
 
     fn flush_singleton(
         &self,
-        key: DataKey,
+        marker: DataMarkerInfo,
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
         self.0
             .iter()
-            .try_for_each(|e| e.flush_singleton(key, payload))
+            .try_for_each(|e| e.flush_singleton(marker, payload))
     }
 
-    fn flush(&self, key: DataKey) -> Result<(), DataError> {
-        self.0.iter().try_for_each(|e| e.flush(key))
+    fn flush(&self, marker: DataMarkerInfo) -> Result<(), DataError> {
+        self.0.iter().try_for_each(|e| e.flush(marker))
     }
 
     fn flush_with_built_in_fallback(
         &self,
-        key: DataKey,
+        marker: DataMarkerInfo,
         fallback_mode: BuiltInFallbackMode,
     ) -> Result<(), DataError> {
         self.0
             .iter()
-            .try_for_each(|e| e.flush_with_built_in_fallback(key, fallback_mode))
+            .try_for_each(|e| e.flush_with_built_in_fallback(marker, fallback_mode))
     }
 
     fn close(&mut self) -> Result<(), DataError> {
         self.0.iter_mut().try_for_each(|e| e.close())
+    }
+
+    fn supports_built_in_fallback(&self) -> bool {
+        self.0.iter().all(|e| e.supports_built_in_fallback())
     }
 }

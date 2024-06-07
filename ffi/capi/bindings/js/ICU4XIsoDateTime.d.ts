@@ -161,9 +161,8 @@ export class ICU4XIsoDateTime {
    * Returns the week number in this year, using week data
 
    * See the {@link https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.week_of_year Rust documentation for `week_of_year`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  week_of_year(calculator: ICU4XWeekCalculator): ICU4XWeekOf | never;
+  week_of_year(calculator: ICU4XWeekCalculator): ICU4XWeekOf;
 
   /**
 

@@ -1,43 +1,36 @@
 #ifndef ICU4XLocaleFallbackConfig_HPP
 #define ICU4XLocaleFallbackConfig_HPP
+
+#include "ICU4XLocaleFallbackConfig.d.hpp"
+
+#include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
-#include <algorithm>
 #include <memory>
-#include <variant>
 #include <optional>
 #include "diplomat_runtime.hpp"
-
 #include "ICU4XLocaleFallbackConfig.h"
-
 #include "ICU4XLocaleFallbackPriority.hpp"
 #include "ICU4XLocaleFallbackSupplement.hpp"
 
 
-/**
- * Collection of configurations for the ICU4X fallback algorithm.
- * 
- * See the [Rust documentation for `LocaleFallbackConfig`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbackConfig.html) for more information.
- */
-struct ICU4XLocaleFallbackConfig {
- public:
 
-  /**
-   * Choice of priority mode.
-   */
-  ICU4XLocaleFallbackPriority priority;
+inline capi::ICU4XLocaleFallbackConfig ICU4XLocaleFallbackConfig::AsFFI() const {
+  return capi::ICU4XLocaleFallbackConfig {
+    .priority = priority.AsFFI(),
+    .extension_key = { .data = extension_key.data(), .len = extension_key.size() },
+    .fallback_supplement = fallback_supplement.AsFFI(),
+  };
+}
 
-  /**
-   * An empty string is considered `None`.
-   */
-  std::string_view extension_key;
-
-  /**
-   * Fallback supplement data key to customize fallback rules.
-   */
-  ICU4XLocaleFallbackSupplement fallback_supplement;
-};
+inline ICU4XLocaleFallbackConfig ICU4XLocaleFallbackConfig::FromFFI(capi::ICU4XLocaleFallbackConfig c_struct) {
+  return ICU4XLocaleFallbackConfig {
+    .priority = ICU4XLocaleFallbackPriority::FromFFI(c_struct.priority),
+    .extension_key = std::string_view(c_struct.extension_key.data, c_struct.extension_key.len),
+    .fallback_supplement = ICU4XLocaleFallbackSupplement::FromFFI(c_struct.fallback_supplement),
+  };
+}
 
 
-#endif
+#endif // ICU4XLocaleFallbackConfig_HPP

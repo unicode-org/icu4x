@@ -185,8 +185,10 @@ dependencies = [
 name = "bakeddata-scripts"
 version = "1.5.0"
 dependencies = [
+ "crlify",
  "icu",
  "icu_datagen",
+ "icu_provider",
  "log",
  "simple_logger",
 ]
@@ -598,7 +600,7 @@ dependencies = [
 [[package]]
 name = "diplomat"
 version = "0.8.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=950786dfea5cc5eb2c65eedee0bb013e8ee7a64e#950786dfea5cc5eb2c65eedee0bb013e8ee7a64e"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=dbb32938c2d0176474f44907df057afd1df2dea7#dbb32938c2d0176474f44907df057afd1df2dea7"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -616,7 +618,7 @@ dependencies = [
 [[package]]
 name = "diplomat-runtime"
 version = "0.8.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=950786dfea5cc5eb2c65eedee0bb013e8ee7a64e#950786dfea5cc5eb2c65eedee0bb013e8ee7a64e"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=dbb32938c2d0176474f44907df057afd1df2dea7#dbb32938c2d0176474f44907df057afd1df2dea7"
 dependencies = [
  "log",
 ]
@@ -624,7 +626,7 @@ dependencies = [
 [[package]]
 name = "diplomat-tool"
 version = "0.8.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=950786dfea5cc5eb2c65eedee0bb013e8ee7a64e#950786dfea5cc5eb2c65eedee0bb013e8ee7a64e"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=dbb32938c2d0176474f44907df057afd1df2dea7#dbb32938c2d0176474f44907df057afd1df2dea7"
 dependencies = [
  "askama",
  "clap",
@@ -644,7 +646,7 @@ dependencies = [
 [[package]]
 name = "diplomat_core"
 version = "0.8.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=950786dfea5cc5eb2c65eedee0bb013e8ee7a64e#950786dfea5cc5eb2c65eedee0bb013e8ee7a64e"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=dbb32938c2d0176474f44907df057afd1df2dea7#dbb32938c2d0176474f44907df057afd1df2dea7"
 dependencies = [
  "displaydoc",
  "either",
@@ -1102,6 +1104,7 @@ dependencies = [
  "icu_provider_adapters",
  "icu_provider_blob",
  "icu_provider_fs",
+ "icu_registry",
  "icu_segmenter",
  "icu_timezone",
  "itertools",
@@ -1516,6 +1519,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_registry"
+version = "1.5.0"
+dependencies = [
+ "icu",
+ "icu_provider",
+]
+
+[[package]]
 name = "icu_segmenter"
 version = "1.5.0"
 dependencies = [
@@ -1652,6 +1663,7 @@ dependencies = [
  "criterion",
  "displaydoc",
  "serde-json-core",
+ "utf8_iter",
 ]
 
 [[package]]
@@ -2695,7 +2707,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "97fee6b57c6a41524a810daee9286c02d7752c4253064d0b05472833a438f675"
 dependencies = [
  "cfg-if",
- "rand",
  "static_assertions",
 ]
 

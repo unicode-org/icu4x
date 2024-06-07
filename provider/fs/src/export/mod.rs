@@ -19,7 +19,7 @@
 //! # let _ = std::fs::remove_dir_all(&demo_path);
 //!
 //! // Set up the exporter
-//! let mut options = ExporterOptions::default();
+//! let mut options = Options::default();
 //! options.root = demo_path.clone();
 //! let serializer = Box::new(serializers::Json::default());
 //! let mut exporter = FilesystemExporter::try_new(serializer, options)
@@ -27,7 +27,7 @@
 //!
 //! // Export something
 //! DatagenDriver::new()
-//!     .with_keys([HelloWorldV1Marker::KEY])
+//!     .with_markers([HelloWorldV1Marker::INFO])
 //!     .with_locales_and_fallback([LocaleFamily::FULL], Default::default())
 //!     .export(&HelloWorldProvider, exporter)
 //!     .unwrap();

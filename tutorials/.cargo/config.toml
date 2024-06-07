@@ -41,6 +41,7 @@ icu_provider_macros = { path = "../provider/core/macros" }
 icu_provider_adapters = { path = "../provider/adapters" }
 icu_provider_blob = { path = "../provider/blob" }
 icu_provider_fs = { path = "../provider/fs/" }
+icu_registry = { path = "../provider/registry/" }
 
 # Baked data
 icu_calendar_data = { path = "../provider/baked/calendar" }

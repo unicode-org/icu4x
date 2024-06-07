@@ -2,11 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::parser::{ParserError, SubtagIterator};
+use crate::parser::{ParseError, SubtagIterator};
 use crate::shortvec::ShortBoxSlice;
-use core::ops::RangeInclusive;
+use crate::subtags::{subtag, Subtag};
+use alloc::vec::Vec;
 use core::str::FromStr;
-use tinystr::TinyAsciiStr;
 
 /// A value used in a list of [`Keywords`](super::Keywords).
 ///
@@ -32,10 +32,9 @@ use tinystr::TinyAsciiStr;
 /// assert_eq!(value!("true").to_string(), "");
 /// ```
 #[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord, Default)]
-pub struct Value(ShortBoxSlice<TinyAsciiStr<{ *VALUE_LENGTH.end() }>>);
+pub struct Value(ShortBoxSlice<Subtag>);
 
-const VALUE_LENGTH: RangeInclusive<usize> = 3..=8;
-const TRUE_VALUE: TinyAsciiStr<8> = tinystr::tinystr!(8, "true");
+const TRUE_VALUE: Subtag = subtag!("true");
 
 impl Value {
     /// A constructor which takes a utf8 slice, parses it and
@@ -48,70 +47,68 @@ impl Value {
     ///
     /// Value::try_from_bytes(b"buddhist").expect("Parsing failed.");
     /// ```
-    pub fn try_from_bytes(input: &[u8]) -> Result<Self, ParserError> {
+    pub fn try_from_bytes(input: &[u8]) -> Result<Self, ParseError> {
         let mut v = ShortBoxSlice::new();
 
         if !input.is_empty() {
-            for subtag in SubtagIterator::new(input) {
-                let val = Self::subtag_from_bytes(subtag)?;
-                if let Some(val) = val {
-                    v.push(val);
+            for chunk in SubtagIterator::new(input) {
+                let subtag = Subtag::try_from_bytes(chunk)?;
+                if subtag != TRUE_VALUE {
+                    v.push(subtag);
                 }
             }
         }
         Ok(Self(v))
     }
 
-    /// Const constructor for when the value contains only a single subtag.
+    #[doc(hidden)]
+    pub const fn as_single_subtag(&self) -> Option<&Subtag> {
+        self.0.single()
+    }
+
+    #[doc(hidden)]
+    pub fn as_subtags_slice(&self) -> &[Subtag] {
+        &self.0
+    }
+
+    #[doc(hidden)]
+    pub const fn from_subtag(subtag: Option<Subtag>) -> Self {
+        match subtag {
+            None | Some(TRUE_VALUE) => Self(ShortBoxSlice::new()),
+            Some(val) => Self(ShortBoxSlice::new_single(val)),
+        }
+    }
+
+    /// A constructor which takes a pre-sorted list of [`Value`] elements.
+    ///
     ///
     /// # Examples
     ///
     /// ```
     /// use icu::locale::extensions::unicode::Value;
+    /// use icu::locale::subtags::subtag;
     ///
-    /// Value::try_from_single_subtag(b"buddhist").expect("valid subtag");
-    /// Value::try_from_single_subtag(b"#####").expect_err("invalid subtag");
-    /// Value::try_from_single_subtag(b"foo-bar").expect_err("not a single subtag");
+    /// let subtag1 = subtag!("foobar");
+    /// let subtag2 = subtag!("testing");
+    /// let mut v = vec![subtag1, subtag2];
+    /// v.sort();
+    /// v.dedup();
+    ///
+    /// let value = Value::from_vec_unchecked(v);
     /// ```
-    pub const fn try_from_single_subtag(subtag: &[u8]) -> Result<Self, ParserError> {
-        match Self::subtag_from_bytes(subtag) {
-            Err(_) => Err(ParserError::InvalidExtension),
-            Ok(option) => Ok(Self::from_tinystr(option)),
-        }
+    ///
+    /// Notice: For performance- and memory-constrained environments, it is recommended
+    /// for the caller to use [`binary_search`](slice::binary_search) instead of [`sort`](slice::sort)
+    /// and [`dedup`](Vec::dedup()).
+    pub fn from_vec_unchecked(input: Vec<Subtag>) -> Self {
+        Self(input.into())
     }
 
-    #[doc(hidden)]
-    pub fn as_tinystr_slice(&self) -> &[TinyAsciiStr<8>] {
-        &self.0
-    }
-
-    #[doc(hidden)]
-    pub const fn as_single_subtag(&self) -> Option<&TinyAsciiStr<8>> {
-        self.0.single()
-    }
-
-    #[doc(hidden)]
-    pub const fn from_tinystr(subtag: Option<TinyAsciiStr<8>>) -> Self {
-        match subtag {
-            None => Self(ShortBoxSlice::new()),
-            Some(val) => {
-                debug_assert!(val.is_ascii_alphanumeric());
-                debug_assert!(!matches!(val, TRUE_VALUE));
-                Self(ShortBoxSlice::new_single(val))
-            }
-        }
-    }
-
-    pub(crate) fn from_short_slice_unchecked(input: ShortBoxSlice<TinyAsciiStr<8>>) -> Self {
+    pub(crate) fn from_short_slice_unchecked(input: ShortBoxSlice<Subtag>) -> Self {
         Self(input)
     }
 
-    #[doc(hidden)]
-    pub const fn subtag_from_bytes(bytes: &[u8]) -> Result<Option<TinyAsciiStr<8>>, ParserError> {
-        Self::parse_subtag_from_bytes_manual_slice(bytes, 0, bytes.len())
-    }
-
-    pub(crate) fn parse_subtag(t: &[u8]) -> Result<Option<TinyAsciiStr<8>>, ParserError> {
+    pub(crate) fn parse_subtag(t: &[u8]) -> Result<Option<Subtag>, ParseError> {
         Self::parse_subtag_from_bytes_manual_slice(t, 0, t.len())
     }
 
@@ -119,17 +116,11 @@ impl Value {
         bytes: &[u8],
         start: usize,
         end: usize,
-    ) -> Result<Option<TinyAsciiStr<8>>, ParserError> {
-        let slice_len = end - start;
-        if slice_len > *VALUE_LENGTH.end() || slice_len < *VALUE_LENGTH.start() {
-            return Err(ParserError::InvalidExtension);
-        }
-
-        match TinyAsciiStr::from_bytes_manual_slice(bytes, start, end) {
+    ) -> Result<Option<Subtag>, ParseError> {
+        match Subtag::try_from_bytes_manual_slice(bytes, start, end) {
             Ok(TRUE_VALUE) => Ok(None),
-            Ok(s) if s.is_ascii_alphanumeric() => Ok(Some(s.to_ascii_lowercase())),
-            Ok(_) => Err(ParserError::InvalidExtension),
-            Err(_) => Err(ParserError::InvalidSubtag),
+            Ok(s) => Ok(Some(s)),
+            Err(_) => Err(ParseError::InvalidSubtag),
         }
     }
 
@@ -137,12 +128,12 @@ impl Value {
     where
         F: FnMut(&str) -> Result<(), E>,
     {
-        self.0.iter().map(TinyAsciiStr::as_str).try_for_each(f)
+        self.0.iter().map(Subtag::as_str).try_for_each(f)
     }
 }
 
 impl FromStr for Value {
-    type Err = ParserError;
+    type Err = ParseError;
 
     fn from_str(source: &str) -> Result<Self, Self::Err> {
         Self::try_from_bytes(source.as_bytes())
@@ -171,7 +162,7 @@ impl_writeable_for_subtag_list!(Value, "islamic", "civil");
 ///
 /// [`Value`]: crate::extensions::unicode::Value
 #[macro_export]
-#[doc(hidden)]
+#[doc(hidden)] // macro
 macro_rules! extensions_unicode_value {
     ($value:literal) => {{
         // What we want:
@@ -183,9 +174,9 @@ macro_rules! extensions_unicode_value {
         //     };
         // Workaround until https://github.com/rust-lang/rust/issues/73255 lands:
         const R: $crate::extensions::unicode::Value =
-            $crate::extensions::unicode::Value::from_tinystr(
-                match $crate::extensions::unicode::Value::subtag_from_bytes($value.as_bytes()) {
-                    Ok(r) => r,
+            $crate::extensions::unicode::Value::from_subtag(
+                match $crate::subtags::Subtag::try_from_bytes($value.as_bytes()) {
+                    Ok(r) => Some(r),
                     _ => panic!(concat!("Invalid Unicode extension value: ", $value)),
                 },
             );

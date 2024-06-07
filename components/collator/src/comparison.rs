@@ -13,7 +13,6 @@ use crate::elements::{
     CollationElement, CollationElements, NonPrimary, JAMO_COUNT, NO_CE, NO_CE_PRIMARY,
     NO_CE_SECONDARY, NO_CE_TERTIARY, OPTIMIZED_DIACRITICS_MAX_COUNT, QUATERNARY_MASK,
 };
-use crate::error::CollatorError;
 use crate::options::CollatorOptionsBitField;
 use crate::provider::CollationDataV1Marker;
 use crate::provider::CollationDiacriticsV1Marker;
@@ -70,7 +69,7 @@ pub struct Collator {
 impl Collator {
     /// Creates a collator for the given locale and options from compiled data.
     #[cfg(feature = "compiled_data")]
-    pub fn try_new(locale: &DataLocale, options: CollatorOptions) -> Result<Self, CollatorError> {
+    pub fn try_new(locale: &DataLocale, options: CollatorOptions) -> Result<Self, DataError> {
         Self::try_new_unstable_internal(
             &crate::provider::Baked,
             DataPayload::from_static_ref(
@@ -93,7 +92,7 @@ impl Collator {
     icu_provider::gen_any_buffer_data_constructors!(
         locale: include,
         options: CollatorOptions,
-        error: CollatorError,
+        error: DataError,
         #[cfg(skip)]
     );
 
@@ -102,7 +101,7 @@ impl Collator {
         provider: &D,
         locale: &DataLocale,
         options: CollatorOptions,
-    ) -> Result<Self, CollatorError>
+    ) -> Result<Self, DataError>
     where
         D: DataProvider<CollationSpecialPrimariesV1Marker>
             + DataProvider<CollationDataV1Marker>
@@ -136,7 +135,7 @@ impl Collator {
         >,
         locale: &DataLocale,
         options: CollatorOptions,
-    ) -> Result<Self, CollatorError>
+    ) -> Result<Self, DataError>
     where
         D: DataProvider<CollationDataV1Marker>
             + DataProvider<CollationDiacriticsV1Marker>
@@ -146,7 +145,7 @@ impl Collator {
     {
         let req = DataRequest {
             locale,
-            metadata: Default::default(),
+            ..Default::default()
         };
 
         let metadata_payload: DataPayload<crate::provider::CollationMetadataV1Marker> =
@@ -170,7 +169,9 @@ impl Collator {
 
         if let Some(reordering) = &reordering {
             if reordering.get().reorder_table.len() != 256 {
-                return Err(CollatorError::MalformedData);
+                return Err(
+                    DataError::custom("invalid").with_marker(CollationReorderingV1Marker::INFO)
+                );
             }
         }
 
@@ -193,15 +194,17 @@ impl Collator {
             // Vietnamese and Ewe load a full-length alternative table and the rest use
             // the default one.
             if diacritics.get().secondaries.len() > OPTIMIZED_DIACRITICS_MAX_COUNT {
-                return Err(CollatorError::MalformedData);
+                return Err(
+                    DataError::custom("invalid").with_marker(CollationDiacriticsV1Marker::INFO)
+                );
             }
         } else if diacritics.get().secondaries.len() != OPTIMIZED_DIACRITICS_MAX_COUNT {
-            return Err(CollatorError::MalformedData);
+            return Err(DataError::custom("invalid").with_marker(CollationDiacriticsV1Marker::INFO));
         }
 
         // TODO: redesign Korean search collation handling
         if jamo.get().ce32s.len() != JAMO_COUNT {
-            return Err(CollatorError::MalformedData);
+            return Err(DataError::custom("invalid").with_marker(CollationJamoV1Marker::INFO));
         }
 
         let mut altered_defaults = CollatorOptionsBitField::new();
@@ -226,7 +229,8 @@ impl Collator {
             // `variant_count` isn't stable yet:
             // https://github.com/rust-lang/rust/issues/73662
             if special_primaries.get().last_primaries.len() <= (MaxVariable::Currency as usize) {
-                return Err(CollatorError::MalformedData);
+                return Err(DataError::custom("invalid")
+                    .with_marker(CollationSpecialPrimariesV1Marker::INFO));
             }
             Some(special_primaries)
         } else {

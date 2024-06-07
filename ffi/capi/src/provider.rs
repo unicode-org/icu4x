@@ -77,18 +77,6 @@ pub mod ffi {
             )))
         }
 
-        /// Deprecated
-        ///
-        /// Use `create_compiled()`.
-        #[cfg(all(
-            feature = "provider_test",
-            any(feature = "any_provider", feature = "buffer_provider")
-        ))]
-        #[diplomat::attr(supports = constructors, disable)]
-        pub fn create_test() -> Box<ICU4XDataProvider> {
-            Self::create_compiled()
-        }
-
         /// Constructs a `BlobDataProvider` and returns it as an [`ICU4XDataProvider`].
         #[diplomat::rust_link(icu_provider_blob::BlobDataProvider, Struct)]
         #[cfg(feature = "buffer_provider")]
@@ -121,9 +109,9 @@ pub mod ffi {
         /// The providers must be the same type (Any or Buffer). This condition is satisfied if
         /// both providers originate from the same constructor, such as `create_from_byte_slice`
         /// or `create_fs`. If the condition is not upheld, a runtime error occurs.
-        #[diplomat::rust_link(icu_provider_adapters::fork::ForkByKeyProvider, Typedef)]
+        #[diplomat::rust_link(icu_provider_adapters::fork::ForkByMarkerProvider, Typedef)]
         #[diplomat::rust_link(
-            icu_provider_adapters::fork::predicates::MissingDataKeyPredicate,
+            icu_provider_adapters::fork::predicates::MissingDataMarkerPredicate,
             Struct,
             hidden
         )]
@@ -146,7 +134,7 @@ pub mod ffi {
                 (Empty, b) | (b, Empty) => ICU4XDataProvider(b),
                 #[cfg(feature = "buffer_provider")]
                 (Buffer(a), Buffer(b)) => convert_buffer_provider(
-                    icu_provider_adapters::fork::ForkByKeyProvider::new(a, b),
+                    icu_provider_adapters::fork::ForkByMarkerProvider::new(a, b),
                 ),
             };
             Ok(())
@@ -208,7 +196,7 @@ pub mod ffi {
                 Compiled => Err(icu_provider::DataError::custom(
                     "The compiled provider cannot be modified",
                 ))?,
-                Empty => Err(icu_provider::DataErrorKind::MissingDataKey.into_error())?,
+                Empty => Err(icu_provider::DataErrorKind::MissingDataMarker.into_error())?,
                 #[cfg(feature = "buffer_provider")]
                 Buffer(inner) => convert_buffer_provider(
                     LocaleFallbackProvider::try_new_with_buffer_provider(inner)?,
@@ -241,7 +229,7 @@ pub mod ffi {
                 Compiled => Err(icu_provider::DataError::custom(
                     "The compiled provider cannot be modified",
                 ))?,
-                Empty => Err(icu_provider::DataErrorKind::MissingDataKey.into_error())?,
+                Empty => Err(icu_provider::DataErrorKind::MissingDataMarker.into_error())?,
                 #[cfg(feature = "buffer_provider")]
                 Buffer(inner) => convert_buffer_provider(
                     LocaleFallbackProvider::new_with_fallbacker(inner, fallbacker.0.clone()),
@@ -329,7 +317,7 @@ macro_rules! call_constructor_unstable {
 #[cfg(not(feature = "buffer_provider"))]
 impl<M> DataProvider<M> for ICU4XDataProviderInner
 where
-    M: KeyedDataMarker,
+    M: DataMarker,
 {
     load!();
 }
@@ -337,7 +325,7 @@ where
 #[cfg(feature = "buffer_provider")]
 impl<M> DataProvider<M> for ICU4XDataProviderInner
 where
-    M: KeyedDataMarker,
+    M: DataMarker,
     // Actual bound:
     //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: Deserialize<'de>,
     // Necessary workaround bound (see `yoke::trait_hack` docs):

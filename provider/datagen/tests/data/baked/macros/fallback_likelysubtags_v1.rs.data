@@ -11,7 +11,7 @@ macro_rules! __impl_fallback_likelysubtags_v1 {
         #[clippy::msrv = "1.70"]
         impl $provider {
             #[doc(hidden)]
-            pub const SINGLETON_FALLBACK_LIKELYSUBTAGS_V1: &'static <icu::locale::provider::LocaleFallbackLikelySubtagsV1Marker as icu_provider::DataMarker>::Yokeable = &icu::locale::provider::LocaleFallbackLikelySubtagsV1 {
+            pub const SINGLETON_FALLBACK_LIKELYSUBTAGS_V1: &'static <icu::locale::provider::LocaleFallbackLikelySubtagsV1Marker as icu_provider::DynamicDataMarker>::Yokeable = &icu::locale::provider::LocaleFallbackLikelySubtagsV1 {
                 l2s: unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"am\0ar\0as\0be\0bg\0bgcbhobn\0brxchrcswcv\0doiel\0fa\0gu\0he\0hi\0hy\0ja\0ka\0kk\0km\0kn\0ko\0kokks\0ky\0lo\0maimk\0ml\0mn\0mnimr\0my\0ne\0nqoor\0pa\0ps\0rajru\0sa\0sahsatsd\0si\0sr\0syrta\0te\0tg\0th\0ti\0tt\0ug\0uk\0ur\0xnryuezh\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"EthiArabBengCyrlCyrlDevaDevaBengDevaCherCansCyrlDevaGrekArabGujrHebrDevaArmnJpanGeorCyrlKhmrKndaKoreDevaArabCyrlLaooDevaCyrlMlymCyrlBengDevaMymrDevaNkooOryaGuruArabDevaCyrlDevaCyrlOlckArabSinhCyrlSyrcTamlTeluCyrlThaiEthiCyrlArabCyrlArabDevaHantHans") })
@@ -36,7 +36,7 @@ macro_rules! __impl_fallback_likelysubtags_v1 {
                 if req.locale.is_empty() {
                     Ok(icu_provider::DataResponse { payload: Some(icu_provider::DataPayload::from_static_ref(Self::SINGLETON_FALLBACK_LIKELYSUBTAGS_V1)), metadata: Default::default() })
                 } else {
-                    Err(icu_provider::DataErrorKind::ExtraneousLocale.with_req(<icu::locale::provider::LocaleFallbackLikelySubtagsV1Marker as icu_provider::KeyedDataMarker>::KEY, req))
+                    Err(icu_provider::DataErrorKind::ExtraneousLocale.with_req(<icu::locale::provider::LocaleFallbackLikelySubtagsV1Marker as icu_provider::DataMarker>::INFO, req))
                 }
             }
         }
@@ -44,15 +44,15 @@ macro_rules! __impl_fallback_likelysubtags_v1 {
 }
 /// Implement `IterableDataProvider<LocaleFallbackLikelySubtagsV1Marker>` on the given struct using the data
 /// hardcoded in this file. This allows the struct to be used with
-/// `DatagenDriver` for this key.
+/// `DatagenDriver` for this marker.
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __impliterable_fallback_likelysubtags_v1 {
     ($ provider : ty) => {
         #[clippy::msrv = "1.70"]
         impl icu_provider::datagen::IterableDataProvider<icu::locale::provider::LocaleFallbackLikelySubtagsV1Marker> for $provider {
-            fn supported_locales(&self) -> Result<alloc::vec::Vec<icu_provider::DataLocale>, icu_provider::DataError> {
-                Ok([icu_provider::DataLocale::default()].into())
+            fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataMarkerAttributes)>, icu_provider::DataError> {
+                Ok(HashSet::from_iter([Default::default()]))
             }
         }
     };

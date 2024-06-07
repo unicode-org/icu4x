@@ -31,14 +31,6 @@ export class ICU4XDataProvider {
 
   /**
 
-   * Deprecated
-
-   * Use `create_compiled()`.
-   */
-  static create_test(): ICU4XDataProvider;
-
-  /**
-
    * Constructs a `BlobDataProvider` and returns it as an {@link ICU4XDataProvider `ICU4XDataProvider`}.
 
    * See the {@link https://docs.rs/icu_provider_blob/latest/icu_provider_blob/struct.BlobDataProvider.html Rust documentation for `BlobDataProvider`} for more information.
@@ -62,7 +54,7 @@ export class ICU4XDataProvider {
 
    * The providers must be the same type (Any or Buffer). This condition is satisfied if both providers originate from the same constructor, such as `create_from_byte_slice` or `create_fs`. If the condition is not upheld, a runtime error occurs.
 
-   * See the {@link https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fork/type.ForkByKeyProvider.html Rust documentation for `ForkByKeyProvider`} for more information.
+   * See the {@link https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fork/type.ForkByMarkerProvider.html Rust documentation for `ForkByMarkerProvider`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   fork_by_key(other: ICU4XDataProvider): void | never;

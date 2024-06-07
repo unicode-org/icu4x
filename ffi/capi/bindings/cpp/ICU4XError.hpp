@@ -1,102 +1,64 @@
 #ifndef ICU4XError_HPP
 #define ICU4XError_HPP
+
+#include "ICU4XError.d.hpp"
+
+#include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
-#include <algorithm>
 #include <memory>
-#include <variant>
 #include <optional>
 #include "diplomat_runtime.hpp"
-
 #include "ICU4XError.h"
 
 
+inline capi::ICU4XError ICU4XError::AsFFI() const {
+  return static_cast<capi::ICU4XError>(value);
+}
 
-/**
- * A common enum for errors that ICU4X may return, organized by API
- * 
- * The error names are stable and can be checked against as strings in the JS API
- * 
- * Additional information: [1](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.FixedDecimalError.html), [2](https://docs.rs/icu/latest/icu/calendar/enum.CalendarError.html), [3](https://docs.rs/icu/latest/icu/collator/enum.CollatorError.html), [4](https://docs.rs/icu/latest/icu/datetime/enum.DateTimeError.html), [5](https://docs.rs/icu/latest/icu/decimal/enum.DecimalError.html), [6](https://docs.rs/icu/latest/icu/list/enum.ListError.html), [7](https://docs.rs/icu/latest/icu/locale/enum.ParserError.html), [8](https://docs.rs/icu/latest/icu/locale/enum.LocaleTransformError.html), [9](https://docs.rs/icu/latest/icu/normalizer/enum.NormalizerError.html), [10](https://docs.rs/icu/latest/icu/plurals/enum.PluralsError.html), [11](https://docs.rs/icu/latest/icu/properties/enum.PropertiesError.html), [12](https://docs.rs/icu/latest/icu/provider/struct.DataError.html), [13](https://docs.rs/icu/latest/icu/provider/enum.DataErrorKind.html), [14](https://docs.rs/icu/latest/icu/segmenter/enum.SegmenterError.html), [15](https://docs.rs/icu/latest/icu/timezone/enum.TimeZoneError.html), [16](https://docs.rs/icu_experimental/latest/icu_experimental/units/enum.ConversionError.html)
- */
-enum struct ICU4XError {
-
-  /**
-   * The error is not currently categorized as ICU4XError.
-   * Please file a bug
-   */
-  UnknownError = 0,
-
-  /**
-   * Some input was out of bounds
-   */
-  OutOfBoundsError = 2,
-  DataMissingDataKeyError = 256,
-  DataMissingVariantError = 257,
-  DataMissingLocaleError = 258,
-  DataNeedsVariantError = 259,
-  DataNeedsLocaleError = 260,
-  DataExtraneousLocaleError = 261,
-  DataFilteredResourceError = 262,
-  DataMismatchedTypeError = 263,
-  DataMissingPayloadError = 264,
-  DataInvalidStateError = 265,
-  DataCustomError = 266,
-  DataIoError = 267,
-  DataUnavailableBufferFormatError = 268,
-  DataMismatchedAnyBufferError = 269,
-
-  /**
-   * The subtag being requested was not set
-   */
-  LocaleUndefinedSubtagError = 512,
-
-  /**
-   * The locale or subtag string failed to parse
-   */
-  LocaleParserLanguageError = 513,
-  LocaleParserSubtagError = 514,
-  LocaleParserExtensionError = 515,
-
-  /**
-   * Attempted to construct an invalid data struct
-   */
-  DataStructValidityError = 768,
-  PropertyUnknownScriptIdError = 1024,
-  PropertyUnknownGeneralCategoryGroupError = 1025,
-  PropertyUnexpectedPropertyNameError = 1026,
-  FixedDecimalLimitError = 1280,
-  FixedDecimalSyntaxError = 1281,
-  PluralsParserError = 1536,
-  CalendarParseError = 1792,
-  CalendarOverflowError = 1793,
-  CalendarUnderflowError = 1794,
-  CalendarOutOfRangeError = 1795,
-  CalendarUnknownEraError = 1796,
-  CalendarUnknownMonthCodeError = 1797,
-  CalendarMissingInputError = 1798,
-  CalendarUnknownKindError = 1799,
-  CalendarMissingError = 1800,
-  DateTimePatternError = 2048,
-  DateTimeMissingInputFieldError = 2049,
-  DateTimeSkeletonError = 2050,
-  DateTimeUnsupportedFieldError = 2051,
-  DateTimeUnsupportedOptionsError = 2052,
-  DateTimeMissingWeekdaySymbolError = 2053,
-  DateTimeMissingMonthSymbolError = 2054,
-  DateTimeFixedDecimalError = 2055,
-  DateTimeMismatchedCalendarError = 2056,
-  TinyStrTooLargeError = 2304,
-  TinyStrContainsNullError = 2305,
-  TinyStrNonAsciiError = 2306,
-  TimeZoneOffsetOutOfBoundsError = 2560,
-  TimeZoneInvalidOffsetError = 2561,
-  TimeZoneMissingInputError = 2562,
-  TimeZoneInvalidIdError = 2563,
-  NormalizerFutureExtensionError = 2816,
-  NormalizerValidationError = 2817,
-  InvalidCldrUnitIdentifierError = 3072,
-};
-
-#endif
+inline ICU4XError ICU4XError::FromFFI(capi::ICU4XError c_enum) {
+  switch (c_enum) {
+    case capi::ICU4XError_UnknownError:
+    case capi::ICU4XError_DataMissingDataMarkerError:
+    case capi::ICU4XError_DataMissingVariantError:
+    case capi::ICU4XError_DataMissingLocaleError:
+    case capi::ICU4XError_DataNeedsVariantError:
+    case capi::ICU4XError_DataNeedsLocaleError:
+    case capi::ICU4XError_DataExtraneousLocaleError:
+    case capi::ICU4XError_DataFilteredResourceError:
+    case capi::ICU4XError_DataMismatchedTypeError:
+    case capi::ICU4XError_DataMissingPayloadError:
+    case capi::ICU4XError_DataInvalidStateError:
+    case capi::ICU4XError_DataCustomError:
+    case capi::ICU4XError_DataIoError:
+    case capi::ICU4XError_DataUnavailableBufferFormatError:
+    case capi::ICU4XError_DataMismatchedAnyBufferError:
+    case capi::ICU4XError_LocaleParserLanguageError:
+    case capi::ICU4XError_LocaleParserSubtagError:
+    case capi::ICU4XError_LocaleParserExtensionError:
+    case capi::ICU4XError_DataStructValidityError:
+    case capi::ICU4XError_PropertyUnexpectedPropertyNameError:
+    case capi::ICU4XError_FixedDecimalLimitError:
+    case capi::ICU4XError_FixedDecimalSyntaxError:
+    case capi::ICU4XError_PluralsParseError:
+    case capi::ICU4XError_CalendarOutOfRangeError:
+    case capi::ICU4XError_CalendarUnknownEraError:
+    case capi::ICU4XError_CalendarUnknownMonthCodeError:
+    case capi::ICU4XError_DateTimePatternError:
+    case capi::ICU4XError_DateTimeMissingInputFieldError:
+    case capi::ICU4XError_DateTimeSkeletonError:
+    case capi::ICU4XError_DateTimeUnsupportedFieldError:
+    case capi::ICU4XError_DateTimeUnsupportedOptionsError:
+    case capi::ICU4XError_DateTimeMissingWeekdaySymbolError:
+    case capi::ICU4XError_DateTimeMissingMonthSymbolError:
+    case capi::ICU4XError_DateTimeFixedDecimalError:
+    case capi::ICU4XError_DateTimeMismatchedCalendarError:
+    case capi::ICU4XError_TimeZoneInvalidOffsetError:
+    case capi::ICU4XError_TimeZoneInvalidIdError:
+      return static_cast<ICU4XError::Value>(c_enum);
+    default:
+      abort();
+  }
+}
+#endif // ICU4XError_HPP

@@ -5,14 +5,13 @@
 use super::supported_cals;
 use crate::provider::transform::cldr::cldr_serde::ca;
 use crate::provider::DatagenProvider;
-use crate::provider::IterableDataProviderInternal;
+use crate::provider::IterableDataProviderCached;
 use icu_datetime::pattern::{self, CoarseHourCycle};
 
 use icu_datetime::provider::calendar::{patterns::GenericLengthPatternsV1, DateSkeletonPatternsV1};
-use icu_datetime::provider::neo::aux::{self, Context, Length, PatternLength};
+use icu_datetime::provider::neo::marker_attrs::{self, Context, Length, PatternLength};
 use icu_datetime::provider::neo::*;
 use icu_locale_core::{
-    extensions::private::Subtag,
     extensions::unicode::{value, Value},
     LanguageIdentifier,
 };
@@ -26,47 +25,48 @@ use zerovec::ule::UnvalidatedStr;
 /// Most keys don't have short symbols (except weekdays)
 ///
 /// We may further investigate and kick out standalone for some keys
-const NORMAL_KEY_LENGTHS: &[Subtag] = &[
-    aux::ABBR,
-    aux::NARROW,
-    aux::WIDE,
-    aux::ABBR_STANDALONE,
-    aux::NARROW_STANDALONE,
-    aux::WIDE_STANDALONE,
+const NORMAL_KEY_LENGTHS: &[TinyAsciiStr<8>] = &[
+    marker_attrs::ABBR,
+    marker_attrs::NARROW,
+    marker_attrs::WIDE,
+    marker_attrs::ABBR_STANDALONE,
+    marker_attrs::NARROW_STANDALONE,
+    marker_attrs::WIDE_STANDALONE,
 ];
 
 /// Lengths for month data (NORMAL_KEY_LENGTHS + numeric)
-const NUMERIC_MONTHS_KEY_LENGTHS: &[Subtag] = &[
-    aux::ABBR,
-    aux::NARROW,
-    aux::WIDE,
-    aux::ABBR_STANDALONE,
-    aux::NARROW_STANDALONE,
-    aux::WIDE_STANDALONE,
-    aux::NUMERIC,
+const NUMERIC_MONTHS_KEY_LENGTHS: &[TinyAsciiStr<8>] = &[
+    marker_attrs::ABBR,
+    marker_attrs::NARROW,
+    marker_attrs::WIDE,
+    marker_attrs::ABBR_STANDALONE,
+    marker_attrs::NARROW_STANDALONE,
+    marker_attrs::WIDE_STANDALONE,
+    marker_attrs::NUMERIC,
 ];
 
 /// Lengths for year data (does not do standalone formatting)
-const YEARS_KEY_LENGTHS: &[Subtag] = &[aux::ABBR, aux::NARROW, aux::WIDE];
+const YEARS_KEY_LENGTHS: &[TinyAsciiStr<8>] =
+    &[marker_attrs::ABBR, marker_attrs::NARROW, marker_attrs::WIDE];
 
 /// All possible non-numeric lengths
-const FULL_KEY_LENGTHS: &[Subtag] = &[
-    aux::ABBR,
-    aux::NARROW,
-    aux::WIDE,
-    aux::SHORT,
-    aux::ABBR_STANDALONE,
-    aux::NARROW_STANDALONE,
-    aux::WIDE_STANDALONE,
-    aux::SHORT_STANDALONE,
+const FULL_KEY_LENGTHS: &[TinyAsciiStr<8>] = &[
+    marker_attrs::ABBR,
+    marker_attrs::NARROW,
+    marker_attrs::WIDE,
+    marker_attrs::SHORT,
+    marker_attrs::ABBR_STANDALONE,
+    marker_attrs::NARROW_STANDALONE,
+    marker_attrs::WIDE_STANDALONE,
+    marker_attrs::SHORT_STANDALONE,
 ];
 
 /// Lengths for normal patterns (not counting hour cycle stuff)
-const NORMAL_PATTERN_KEY_LENGTHS: &[Subtag] = &[
-    aux::PATTERN_FULL,
-    aux::PATTERN_LONG,
-    aux::PATTERN_MEDIUM,
-    aux::PATTERN_SHORT,
+const NORMAL_PATTERN_KEY_LENGTHS: &[TinyAsciiStr<8>] = &[
+    marker_attrs::PATTERN_FULL,
+    marker_attrs::PATTERN_LONG,
+    marker_attrs::PATTERN_MEDIUM,
+    marker_attrs::PATTERN_SHORT,
 ];
 
 impl DatagenProvider {
@@ -94,14 +94,14 @@ impl DatagenProvider {
         Ok(data)
     }
 
-    fn load_neo_key<M: KeyedDataMarker>(
+    fn load_neo_key<M: DataMarker>(
         &self,
         req: DataRequest,
         calendar: &Value,
         conversion: impl FnOnce(
             &LanguageIdentifier,
             &ca::Dates,
-            Subtag,
+            TinyAsciiStr<8>,
         ) -> Result<M::Yokeable, DataError>,
     ) -> Result<DataResponse<M>, DataError>
     where
@@ -109,22 +109,12 @@ impl DatagenProvider {
     {
         self.check_req::<M>(req)?;
         let langid = req.locale.get_langid();
-        let private = &req
-            .locale
-            .get_aux()
-            .expect("Symbols data provider called without aux subtag");
         let data = self.load_calendar_dates(&langid, calendar)?;
+        let attr = req.marker_attributes.single().ok_or_else(|| {
+            DataError::custom("Key attributes for datetime names must be single subtag")
+        })?;
 
-        let mut aux_iter = private.iter();
-        let aux = aux_iter
-            .next()
-            .expect("Symbols data provider called with empty aux subtag");
-        assert!(
-            aux_iter.next().is_none(),
-            "Symbols data provider called with too many aux subtags"
-        );
-
-        let data = conversion(&langid, data, aux)?;
+        let data = conversion(&langid, data, attr)?;
 
         #[allow(clippy::redundant_closure_call)]
         Ok(DataResponse {
@@ -133,7 +123,7 @@ impl DatagenProvider {
         })
     }
 
-    fn load_neo_symbols_key<M: KeyedDataMarker>(
+    fn load_neo_symbols_marker<M: DataMarker>(
         &self,
         req: DataRequest,
         calendar: Value,
@@ -150,14 +140,14 @@ impl DatagenProvider {
         Self: IterableDataProvider<M>,
     {
         self.load_neo_key(req, &calendar, |langid, data, aux| {
-            let Some((context, length)) = aux::symbol_subtag_info(aux) else {
+            let Some((context, length)) = marker_attrs::symbol_marker_attr_info(aux) else {
                 panic!("Found unexpected auxiliary subtag {}", aux)
             };
             conversion(self, langid, data, &calendar, context, length)
         })
     }
 
-    fn load_neo_patterns_key<M: KeyedDataMarker>(
+    fn load_neo_patterns_marker<M: DataMarker>(
         &self,
         req: DataRequest,
         calendar: Value,
@@ -171,33 +161,34 @@ impl DatagenProvider {
         Self: IterableDataProvider<M>,
     {
         self.load_neo_key(req, &calendar, |_langid, data, aux| {
-            let Some((length, hc)) = aux::pattern_subtag_info(aux) else {
+            let Some((length, hc)) = marker_attrs::pattern_marker_attr_info(aux) else {
                 panic!("Found unexpected auxiliary subtag {}", aux)
             };
             conversion(data, length, hc)
         })
     }
 
-    fn supported_locales_neo(
+    fn supported_requests_neo(
         &self,
         calendar: Value,
-        keylengths: &'static [Subtag],
-    ) -> Result<HashSet<DataLocale>, DataError> {
-        let mut r = HashSet::new();
-
+        keylengths: &'static [TinyAsciiStr<8>],
+    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         let cldr_cal = supported_cals()
             .get(&calendar)
             .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?;
-        r.extend(self.cldr()?.dates(cldr_cal).list_langs()?.flat_map(|lid| {
-            keylengths.iter().map(move |length| {
-                let mut locale = DataLocale::from(lid.clone());
-
-                locale.set_aux((*length).into());
-                locale
+        Ok(self
+            .cldr()?
+            .dates(cldr_cal)
+            .list_langs()?
+            .flat_map(|lid| {
+                keylengths.iter().map(move |&length| {
+                    (
+                        DataLocale::from(lid.clone()),
+                        DataMarkerAttributes::from_tinystr(length),
+                    )
+                })
             })
-        }));
-
-        Ok(r)
+            .collect())
     }
 }
 
@@ -646,9 +637,9 @@ fn timepattern_convert(
 /// non-default one
 fn nondefault_subtag(
     time_pattern: &ca::LengthPattern,
-    subtag12: Subtag,
-    subtag24: Subtag,
-) -> Subtag {
+    subtag12: TinyAsciiStr<8>,
+    subtag24: TinyAsciiStr<8>,
+) -> TinyAsciiStr<8> {
     let pattern = time_pattern.get_pattern();
 
     let pattern = pattern
@@ -667,7 +658,7 @@ fn nondefault_subtag(
 // Time patterns have a manual implementation since they have custom supported_locales logic below
 impl DataProvider<TimePatternV1Marker> for DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<TimePatternV1Marker>, DataError> {
-        self.load_neo_patterns_key::<TimePatternV1Marker>(
+        self.load_neo_patterns_marker::<TimePatternV1Marker>(
             req,
             value!("gregory"),
             timepattern_convert,
@@ -680,39 +671,60 @@ impl DataProvider<TimePatternV1Marker> for DatagenProvider {
 // subtag actually should be produced (by returning a special error), then this code is no longer necessary
 // and we can use a union of the H12/H24 key lengths arrays, instead checking for preferred hc
 // in timepattern_convert
-impl IterableDataProviderInternal<TimePatternV1Marker> for DatagenProvider {
-    fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
+impl IterableDataProviderCached<TimePatternV1Marker> for DatagenProvider {
+    fn supported_requests_cached(
+        &self,
+    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         let calendar = value!("gregory");
-        let mut r = HashSet::new();
 
         let cldr_cal = supported_cals()
             .get(&calendar)
             .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?;
-        r.extend(self.cldr()?.dates(cldr_cal).list_langs()?.flat_map(|lid| {
-            let data = self
-                .load_calendar_dates(&lid, &calendar)
-                .expect("list_langs returned a language that couldn't be loaded");
-            let tp = &data.time_formats;
 
-            let keylengths = [
-                aux::PATTERN_FULL,
-                aux::PATTERN_LONG,
-                aux::PATTERN_MEDIUM,
-                aux::PATTERN_SHORT,
-                nondefault_subtag(&tp.full, aux::PATTERN_FULL12, aux::PATTERN_FULL24),
-                nondefault_subtag(&tp.long, aux::PATTERN_LONG12, aux::PATTERN_LONG24),
-                nondefault_subtag(&tp.medium, aux::PATTERN_MEDIUM12, aux::PATTERN_MEDIUM24),
-                nondefault_subtag(&tp.short, aux::PATTERN_SHORT12, aux::PATTERN_SHORT24),
-            ];
-            keylengths.into_iter().map(move |length| {
-                let mut locale = DataLocale::from(lid.clone());
+        Ok(self
+            .cldr()?
+            .dates(cldr_cal)
+            .list_langs()?
+            .flat_map(|lid| {
+                let data = self
+                    .load_calendar_dates(&lid, &calendar)
+                    .expect("list_langs returned a language that couldn't be loaded");
+                let tp = &data.time_formats;
 
-                locale.set_aux(length.into());
-                locale
+                let keylengths = [
+                    marker_attrs::PATTERN_FULL,
+                    marker_attrs::PATTERN_LONG,
+                    marker_attrs::PATTERN_MEDIUM,
+                    marker_attrs::PATTERN_SHORT,
+                    nondefault_subtag(
+                        &tp.full,
+                        marker_attrs::PATTERN_FULL12,
+                        marker_attrs::PATTERN_FULL24,
+                    ),
+                    nondefault_subtag(
+                        &tp.long,
+                        marker_attrs::PATTERN_LONG12,
+                        marker_attrs::PATTERN_LONG24,
+                    ),
+                    nondefault_subtag(
+                        &tp.medium,
+                        marker_attrs::PATTERN_MEDIUM12,
+                        marker_attrs::PATTERN_MEDIUM24,
+                    ),
+                    nondefault_subtag(
+                        &tp.short,
+                        marker_attrs::PATTERN_SHORT12,
+                        marker_attrs::PATTERN_SHORT24,
+                    ),
+                ];
+                keylengths.into_iter().map(move |length| {
+                    (
+                        DataLocale::from(lid.clone()),
+                        DataMarkerAttributes::from_tinystr(length),
+                    )
+                })
             })
-        }));
-
-        Ok(r)
+            .collect())
     }
 }
 
@@ -720,13 +732,15 @@ macro_rules! impl_symbols_datagen {
     ($marker:ident, $calendar:expr, $lengths:ident, $convert:expr) => {
         impl DataProvider<$marker> for DatagenProvider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
-                self.load_neo_symbols_key::<$marker>(req, value!($calendar), $convert)
+                self.load_neo_symbols_marker::<$marker>(req, value!($calendar), $convert)
             }
         }
 
-        impl IterableDataProviderInternal<$marker> for DatagenProvider {
-            fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
-                self.supported_locales_neo(value!($calendar), $lengths)
+        impl IterableDataProviderCached<$marker> for DatagenProvider {
+            fn supported_requests_cached(
+                &self,
+            ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+                self.supported_requests_neo(value!($calendar), $lengths)
             }
         }
     };
@@ -736,13 +750,15 @@ macro_rules! impl_pattern_datagen {
     ($marker:ident, $calendar:expr, $lengths:ident, $convert:expr) => {
         impl DataProvider<$marker> for DatagenProvider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
-                self.load_neo_patterns_key::<$marker>(req, value!($calendar), $convert)
+                self.load_neo_patterns_marker::<$marker>(req, value!($calendar), $convert)
             }
         }
 
-        impl IterableDataProviderInternal<$marker> for DatagenProvider {
-            fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
-                self.supported_locales_neo(value!($calendar), $lengths)
+        impl IterableDataProviderCached<$marker> for DatagenProvider {
+            fn supported_requests_cached(
+                &self,
+            ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+                self.supported_requests_neo(value!($calendar), $lengths)
             }
         }
     };

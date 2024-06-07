@@ -9,7 +9,6 @@ import 'dart:typed_data';
 import 'package:ffi/ffi.dart' as ffi2 show Arena, calloc;
 import 'package:meta/meta.dart' as meta;
 part 'AnyCalendarKind.g.dart';
-part 'Bcp47ToIanaMapper.g.dart';
 part 'Bidi.g.dart';
 part 'BidiDirection.g.dart';
 part 'BidiInfo.g.dart';
@@ -52,6 +51,7 @@ part 'Error.g.dart';
 part 'FixedDecimal.g.dart';
 part 'FixedDecimalFormatter.g.dart';
 part 'FixedDecimalGroupingStrategy.g.dart';
+part 'FixedDecimalRoundingIncrement.g.dart';
 part 'FixedDecimalSign.g.dart';
 part 'FixedDecimalSignDisplay.g.dart';
 part 'GeneralCategoryNameToMaskMapper.g.dart';
@@ -62,7 +62,6 @@ part 'GraphemeClusterSegmenter.g.dart';
 part 'GregorianDateFormatter.g.dart';
 part 'GregorianDateTimeFormatter.g.dart';
 part 'GregorianZonedDateTimeFormatter.g.dart';
-part 'IanaToBcp47Mapper.g.dart';
 part 'IsoDate.g.dart';
 part 'IsoDateTime.g.dart';
 part 'IsoTimeZoneFormat.g.dart';
@@ -105,7 +104,6 @@ part 'PropertyValueNameToEnumMapper.g.dart';
 part 'RegionDisplayNames.g.dart';
 part 'ReorderedIndexMap.g.dart';
 part 'ResolvedCollatorOptions.g.dart';
-part 'RoundingIncrement.g.dart';
 part 'ScriptExtensionsSet.g.dart';
 part 'ScriptWithExtensions.g.dart';
 part 'ScriptWithExtensionsBorrowed.g.dart';
@@ -530,31 +528,13 @@ class _Float64ListView {
   int get length => _values.length;
 }
 
-final class _ResultBoolInt32Union extends ffi.Union {
+final class _ResultBoolVoidUnion extends ffi.Union {
   @ffi.Bool()
   external bool ok;
-
-  @ffi.Int32()
-  external int err;
 }
 
-final class _ResultBoolInt32 extends ffi.Struct {
-  external _ResultBoolInt32Union union;
-
-  @ffi.Bool()
-  external bool isOk;
-}
-
-final class _ResultInt32Int32Union extends ffi.Union {
-  @ffi.Int32()
-  external int ok;
-
-  @ffi.Int32()
-  external int err;
-}
-
-final class _ResultInt32Int32 extends ffi.Struct {
-  external _ResultInt32Int32Union union;
+final class _ResultBoolVoid extends ffi.Struct {
+  external _ResultBoolVoidUnion union;
 
   @ffi.Bool()
   external bool isOk;
@@ -612,20 +592,6 @@ final class _ResultVoidInt32 extends ffi.Struct {
 
 final class _ResultVoidVoid extends ffi.Struct {
   
-
-  @ffi.Bool()
-  external bool isOk;
-}
-
-final class _ResultWeekOfFfiInt32Union extends ffi.Union {
-  external _WeekOfFfi ok;
-
-  @ffi.Int32()
-  external int err;
-}
-
-final class _ResultWeekOfFfiInt32 extends ffi.Struct {
-  external _ResultWeekOfFfiInt32Union union;
 
   @ffi.Bool()
   external bool isOk;

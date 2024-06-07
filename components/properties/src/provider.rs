@@ -16,6 +16,7 @@
 //! Read more about data providers: [`icu_provider`]
 
 pub mod names;
+pub use names::*;
 
 use crate::script::ScriptWithExt;
 use crate::Script;
@@ -26,7 +27,6 @@ use icu_collections::codepointinvlist::CodePointInversionList;
 use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
 use icu_collections::codepointtrie::{CodePointMapRange, CodePointTrie, TrieValue};
 use icu_provider::prelude::*;
-use icu_provider::{DataKeyMetadata, FallbackPriority};
 use zerofrom::ZeroFrom;
 
 use zerovec::{VarZeroVec, ZeroSlice, ZeroVecError};
@@ -175,6 +175,133 @@ const _: () = {
     icu_properties_data::impl_props_xids_v1!(Baked);
 };
 
+/// All data keys in this module.
+pub const MARKERS: &[DataMarkerInfo] = &[
+    AlnumV1Marker::INFO,
+    AlphabeticV1Marker::INFO,
+    AsciiHexDigitV1Marker::INFO,
+    BasicEmojiV1Marker::INFO,
+    bidi_data::BidiAuxiliaryPropertiesV1Marker::INFO,
+    BidiControlV1Marker::INFO,
+    BidiMirroredV1Marker::INFO,
+    BlankV1Marker::INFO,
+    CasedV1Marker::INFO,
+    CaseIgnorableV1Marker::INFO,
+    CaseSensitiveV1Marker::INFO,
+    ChangesWhenCasefoldedV1Marker::INFO,
+    ChangesWhenCasemappedV1Marker::INFO,
+    ChangesWhenLowercasedV1Marker::INFO,
+    ChangesWhenNfkcCasefoldedV1Marker::INFO,
+    ChangesWhenTitlecasedV1Marker::INFO,
+    ChangesWhenUppercasedV1Marker::INFO,
+    DashV1Marker::INFO,
+    DefaultIgnorableCodePointV1Marker::INFO,
+    DeprecatedV1Marker::INFO,
+    DiacriticV1Marker::INFO,
+    EmojiComponentV1Marker::INFO,
+    EmojiModifierBaseV1Marker::INFO,
+    EmojiModifierV1Marker::INFO,
+    EmojiPresentationV1Marker::INFO,
+    EmojiV1Marker::INFO,
+    ExemplarCharactersAuxiliaryV1Marker::INFO,
+    ExemplarCharactersIndexV1Marker::INFO,
+    ExemplarCharactersMainV1Marker::INFO,
+    ExemplarCharactersNumbersV1Marker::INFO,
+    ExemplarCharactersPunctuationV1Marker::INFO,
+    ExtendedPictographicV1Marker::INFO,
+    ExtenderV1Marker::INFO,
+    FullCompositionExclusionV1Marker::INFO,
+    GraphemeBaseV1Marker::INFO,
+    GraphemeExtendV1Marker::INFO,
+    GraphemeLinkV1Marker::INFO,
+    GraphV1Marker::INFO,
+    HexDigitV1Marker::INFO,
+    HyphenV1Marker::INFO,
+    IdContinueV1Marker::INFO,
+    IdeographicV1Marker::INFO,
+    IdsBinaryOperatorV1Marker::INFO,
+    IdStartV1Marker::INFO,
+    IdsTrinaryOperatorV1Marker::INFO,
+    JoinControlV1Marker::INFO,
+    LogicalOrderExceptionV1Marker::INFO,
+    LowercaseV1Marker::INFO,
+    MathV1Marker::INFO,
+    NfcInertV1Marker::INFO,
+    NfdInertV1Marker::INFO,
+    NfkcInertV1Marker::INFO,
+    NfkdInertV1Marker::INFO,
+    NoncharacterCodePointV1Marker::INFO,
+    PatternSyntaxV1Marker::INFO,
+    PatternWhiteSpaceV1Marker::INFO,
+    PrependedConcatenationMarkV1Marker::INFO,
+    PrintV1Marker::INFO,
+    QuotationMarkV1Marker::INFO,
+    RadicalV1Marker::INFO,
+    RegionalIndicatorV1Marker::INFO,
+    ScriptWithExtensionsPropertyV1Marker::INFO,
+    ScriptWithExtensionsPropertyV1Marker::INFO,
+    SegmentStarterV1Marker::INFO,
+    SentenceTerminalV1Marker::INFO,
+    SoftDottedV1Marker::INFO,
+    TerminalPunctuationV1Marker::INFO,
+    UnifiedIdeographV1Marker::INFO,
+    UppercaseV1Marker::INFO,
+    VariationSelectorV1Marker::INFO,
+    WhiteSpaceV1Marker::INFO,
+    XdigitV1Marker::INFO,
+    XidContinueV1Marker::INFO,
+    XidStartV1Marker::INFO,
+    names::BidiClassNameToValueV1Marker::INFO,
+    BidiClassV1Marker::INFO,
+    names::BidiClassValueToLongNameV1Marker::INFO,
+    names::BidiClassValueToShortNameV1Marker::INFO,
+    names::CanonicalCombiningClassNameToValueV1Marker::INFO,
+    CanonicalCombiningClassV1Marker::INFO,
+    names::CanonicalCombiningClassValueToLongNameV1Marker::INFO,
+    names::CanonicalCombiningClassValueToShortNameV1Marker::INFO,
+    names::EastAsianWidthNameToValueV1Marker::INFO,
+    EastAsianWidthV1Marker::INFO,
+    names::EastAsianWidthValueToLongNameV1Marker::INFO,
+    names::EastAsianWidthValueToShortNameV1Marker::INFO,
+    names::GeneralCategoryMaskNameToValueV1Marker::INFO,
+    names::GeneralCategoryNameToValueV1Marker::INFO,
+    GeneralCategoryV1Marker::INFO,
+    names::GeneralCategoryValueToLongNameV1Marker::INFO,
+    names::GeneralCategoryValueToShortNameV1Marker::INFO,
+    names::GraphemeClusterBreakNameToValueV1Marker::INFO,
+    GraphemeClusterBreakV1Marker::INFO,
+    names::GraphemeClusterBreakValueToLongNameV1Marker::INFO,
+    names::GraphemeClusterBreakValueToShortNameV1Marker::INFO,
+    names::HangulSyllableTypeNameToValueV1Marker::INFO,
+    HangulSyllableTypeV1Marker::INFO,
+    names::HangulSyllableTypeValueToLongNameV1Marker::INFO,
+    names::HangulSyllableTypeValueToShortNameV1Marker::INFO,
+    names::IndicSyllabicCategoryNameToValueV1Marker::INFO,
+    IndicSyllabicCategoryV1Marker::INFO,
+    names::IndicSyllabicCategoryValueToLongNameV1Marker::INFO,
+    names::IndicSyllabicCategoryValueToShortNameV1Marker::INFO,
+    names::JoiningTypeNameToValueV1Marker::INFO,
+    JoiningTypeV1Marker::INFO,
+    names::JoiningTypeValueToLongNameV1Marker::INFO,
+    names::JoiningTypeValueToShortNameV1Marker::INFO,
+    names::LineBreakNameToValueV1Marker::INFO,
+    LineBreakV1Marker::INFO,
+    names::LineBreakValueToLongNameV1Marker::INFO,
+    names::LineBreakValueToShortNameV1Marker::INFO,
+    names::ScriptNameToValueV1Marker::INFO,
+    ScriptV1Marker::INFO,
+    names::ScriptValueToLongNameV1Marker::INFO,
+    names::ScriptValueToShortNameV1Marker::INFO,
+    names::SentenceBreakNameToValueV1Marker::INFO,
+    SentenceBreakV1Marker::INFO,
+    names::SentenceBreakValueToLongNameV1Marker::INFO,
+    names::SentenceBreakValueToShortNameV1Marker::INFO,
+    names::WordBreakNameToValueV1Marker::INFO,
+    WordBreakV1Marker::INFO,
+    names::WordBreakValueToLongNameV1Marker::INFO,
+    names::WordBreakValueToShortNameV1Marker::INFO,
+];
+
 // include the specialized structs for the compact representation of Bidi property data
 pub mod bidi_data;
 
@@ -188,7 +315,74 @@ pub mod bidi_data;
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[derive(Debug, Eq, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[icu_provider::data_struct(
+    marker(AlnumV1Marker, "props/alnum@1", singleton),
+    marker(AlphabeticV1Marker, "props/Alpha@1", singleton),
+    marker(AsciiHexDigitV1Marker, "props/AHex@1", singleton),
+    marker(BidiControlV1Marker, "props/Bidi_C@1", singleton),
+    marker(BidiMirroredV1Marker, "props/Bidi_M@1", singleton),
+    marker(BlankV1Marker, "props/blank@1", singleton),
+    marker(CasedV1Marker, "props/Cased@1", singleton),
+    marker(CaseIgnorableV1Marker, "props/CI@1", singleton),
+    marker(CaseSensitiveV1Marker, "props/Sensitive@1", singleton),
+    marker(ChangesWhenCasefoldedV1Marker, "props/CWCF@1", singleton),
+    marker(ChangesWhenCasemappedV1Marker, "props/CWCM@1", singleton),
+    marker(ChangesWhenLowercasedV1Marker, "props/CWL@1", singleton),
+    marker(ChangesWhenNfkcCasefoldedV1Marker, "props/CWKCF@1", singleton),
+    marker(ChangesWhenTitlecasedV1Marker, "props/CWT@1", singleton),
+    marker(ChangesWhenUppercasedV1Marker, "props/CWU@1", singleton),
+    marker(DashV1Marker, "props/Dash@1", singleton),
+    marker(DefaultIgnorableCodePointV1Marker, "props/DI@1", singleton),
+    marker(DeprecatedV1Marker, "props/Dep@1", singleton),
+    marker(DiacriticV1Marker, "props/Dia@1", singleton),
+    marker(EmojiComponentV1Marker, "props/EComp@1", singleton),
+    marker(EmojiModifierBaseV1Marker, "props/EBase@1", singleton),
+    marker(EmojiModifierV1Marker, "props/EMod@1", singleton),
+    marker(EmojiPresentationV1Marker, "props/EPres@1", singleton),
+    marker(EmojiV1Marker, "props/Emoji@1", singleton),
+    marker(ExtendedPictographicV1Marker, "props/ExtPict@1", singleton),
+    marker(ExtenderV1Marker, "props/Ext@1", singleton),
+    marker(FullCompositionExclusionV1Marker, "props/Comp_Ex@1", singleton),
+    marker(GraphemeBaseV1Marker, "props/Gr_Base@1", singleton),
+    marker(GraphemeExtendV1Marker, "props/Gr_Ext@1", singleton),
+    marker(GraphemeLinkV1Marker, "props/Gr_Link@1", singleton),
+    marker(GraphV1Marker, "props/graph@1", singleton),
+    marker(HexDigitV1Marker, "props/Hex@1", singleton),
+    marker(HyphenV1Marker, "props/Hyphen@1", singleton),
+    marker(IdContinueV1Marker, "props/IDC@1", singleton),
+    marker(IdeographicV1Marker, "props/Ideo@1", singleton),
+    marker(IdsBinaryOperatorV1Marker, "props/IDSB@1", singleton),
+    marker(IdStartV1Marker, "props/IDS@1", singleton),
+    marker(IdsTrinaryOperatorV1Marker, "props/IDST@1", singleton),
+    marker(JoinControlV1Marker, "props/Join_C@1", singleton),
+    marker(LogicalOrderExceptionV1Marker, "props/LOE@1", singleton),
+    marker(LowercaseV1Marker, "props/Lower@1", singleton),
+    marker(MathV1Marker, "props/Math@1", singleton),
+    marker(NfcInertV1Marker, "props/nfcinert@1", singleton),
+    marker(NfdInertV1Marker, "props/nfdinert@1", singleton),
+    marker(NfkcInertV1Marker, "props/nfkcinert@1", singleton),
+    marker(NfkdInertV1Marker, "props/nfkdinert@1", singleton),
+    marker(NoncharacterCodePointV1Marker, "props/NChar@1", singleton),
+    marker(PatternSyntaxV1Marker, "props/Pat_Syn@1", singleton),
+    marker(PatternWhiteSpaceV1Marker, "props/Pat_WS@1", singleton),
+    marker(PrependedConcatenationMarkV1Marker, "props/PCM@1", singleton),
+    marker(PrintV1Marker, "props/print@1", singleton),
+    marker(QuotationMarkV1Marker, "props/QMark@1", singleton),
+    marker(RadicalV1Marker, "props/Radical@1", singleton),
+    marker(RegionalIndicatorV1Marker, "props/RI@1", singleton),
+    marker(SegmentStarterV1Marker, "props/segstart@1", singleton),
+    marker(SentenceTerminalV1Marker, "props/STerm@1", singleton),
+    marker(SoftDottedV1Marker, "props/SD@1", singleton),
+    marker(TerminalPunctuationV1Marker, "props/Term@1", singleton),
+    marker(UnifiedIdeographV1Marker, "props/UIdeo@1", singleton),
+    marker(UppercaseV1Marker, "props/Upper@1", singleton),
+    marker(VariationSelectorV1Marker, "props/VS@1", singleton),
+    marker(WhiteSpaceV1Marker, "props/WSpace@1", singleton),
+    marker(XdigitV1Marker, "props/xdigit@1", singleton),
+    marker(XidContinueV1Marker, "props/XIDC@1", singleton),
+    marker(XidStartV1Marker, "props/XIDS@1", singleton)
+)]
+#[derive(Debug, Eq, PartialEq, Clone)]
 #[cfg_attr(
     feature = "datagen", 
     derive(serde::Serialize, databake::Bake),
@@ -229,6 +423,60 @@ pub enum PropertyCodePointMapV1<'data, T: TrieValue> {
     // Serde serializes based on variant name and index in the enum
     // https://docs.rs/serde/latest/serde/trait.Serializer.html#tymethod.serialize_unit_variant
 }
+macro_rules! data_struct_generic {
+    ($(marker($marker:ident, $ty:ident, $path:literal),)+) => {
+        $(
+            #[doc = core::concat!("Data marker for the '", stringify!($ty), "' Unicode property")]
+            #[derive(Debug, Default)]
+            #[cfg_attr(
+                feature = "datagen",
+                derive(databake::Bake),
+                databake(path = icu_properties::provider),
+            )]
+            pub struct $marker;
+            impl icu_provider::DynamicDataMarker for $marker {
+                type Yokeable = PropertyCodePointMapV1<'static, crate::$ty>;
+            }
+            impl icu_provider::DataMarker for $marker {
+                const INFO: icu_provider::DataMarkerInfo = {
+                    let mut info = DataMarkerInfo::from_path(icu_provider::data_marker_path!($path));
+                    info.is_singleton = true;
+                    info
+                };
+            }
+        )+
+    }
+}
+data_struct_generic!(
+    marker(BidiClassV1Marker, BidiClass, "props/bc@1"),
+    marker(
+        CanonicalCombiningClassV1Marker,
+        CanonicalCombiningClass,
+        "props/ccc@1"
+    ),
+    marker(EastAsianWidthV1Marker, EastAsianWidth, "props/ea@1"),
+    marker(GeneralCategoryV1Marker, GeneralCategory, "props/gc@1"),
+    marker(
+        GraphemeClusterBreakV1Marker,
+        GraphemeClusterBreak,
+        "props/GCB@1"
+    ),
+    marker(
+        HangulSyllableTypeV1Marker,
+        HangulSyllableType,
+        "props/hst@1"
+    ),
+    marker(
+        IndicSyllabicCategoryV1Marker,
+        IndicSyllabicCategory,
+        "props/InSC@1"
+    ),
+    marker(JoiningTypeV1Marker, JoiningType, "props/jt@1"),
+    marker(LineBreakV1Marker, LineBreak, "props/lb@1"),
+    marker(ScriptV1Marker, Script, "props/sc@1"),
+    marker(SentenceBreakV1Marker, SentenceBreak, "props/SB@1"),
+    marker(WordBreakV1Marker, WordBreak, "props/WB@1"),
+);
 
 /// A set of characters and strings which share a particular property value.
 ///
@@ -237,7 +485,18 @@ pub enum PropertyCodePointMapV1<'data, T: TrieValue> {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[derive(Debug, Eq, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[icu_provider::data_struct(
+    marker(BasicEmojiV1Marker, "props/Basic_Emoji@1", singleton),
+    marker(ExemplarCharactersAuxiliaryV1Marker, "props/exemplarchars/auxiliary@1"),
+    marker(ExemplarCharactersIndexV1Marker, "props/exemplarchars/index@1"),
+    marker(ExemplarCharactersMainV1Marker, "props/exemplarchars/main@1"),
+    marker(ExemplarCharactersNumbersV1Marker, "props/exemplarchars/numbers@1"),
+    marker(
+        ExemplarCharactersPunctuationV1Marker,
+        "props/exemplarchars/punctuation@1"
+    )
+)]
+#[derive(Debug, Eq, PartialEq, Clone)]
 #[cfg_attr(
     feature = "datagen", 
     derive(serde::Serialize, databake::Bake),
@@ -348,18 +607,6 @@ pub struct ScriptWithExtensionsPropertyV1<'data> {
     /// and may also indicate Script value, as described for the `trie` field.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub extensions: VarZeroVec<'data, ZeroSlice<Script>>,
-}
-
-impl<'data> ScriptWithExtensionsPropertyV1<'data> {
-    // This method is intended to be used by constructors of deserialized data
-    // in a data provider.
-    #[doc(hidden)]
-    pub fn new(
-        trie: CodePointTrie<'data, ScriptWithExt>,
-        extensions: VarZeroVec<'data, ZeroSlice<Script>>,
-    ) -> ScriptWithExtensionsPropertyV1<'data> {
-        ScriptWithExtensionsPropertyV1 { trie, extensions }
-    }
 }
 
 // See CodePointSetData for documentation of these functions
@@ -483,447 +730,3 @@ impl<'data, T: TrieValue> PropertyCodePointMapV1<'data, T> {
         }
     }
 }
-
-macro_rules! expand {
-    (
-        ($(($code_point_set_marker:ident, $bin_cp_s:literal),)+),
-        ($(($unicode_set_marker:ident, $bin_us_s:literal, $us_singleton:literal),)+),
-        ($(($code_point_map_marker:ident,
-            $name_value_marker:ident,
-
-            $((sparse: $value_short_name_marker_sparse:ident, $value_long_name_marker_sparse:ident),)?
-            $((linear: $value_short_name_marker_linear:ident, $value_long_name_marker_linear:ident ),)?
-            $((linear4: $value_short_name_marker_linear4:ident, $value_long_name_marker_linear4:ident ),)?
-            $enum_s:literal, $value_ty:ident),)+)
-    ) => {
-
-            // Data keys that return code point sets (represented as CodePointSetData).
-            // For now, synonymous with binary properties of code points only.
-            $(
-                #[doc = core::concat!("Data marker for the '", $bin_cp_s, "' Unicode property")]
-                #[derive(Debug, Default)]
-                #[cfg_attr(
-                    feature = "datagen",
-                    derive(databake::Bake),
-                    databake(path = icu_properties::provider),
-                )]
-                pub struct $code_point_set_marker;
-
-                impl DataMarker for $code_point_set_marker {
-                    type Yokeable = PropertyCodePointSetV1<'static>;
-                }
-                impl KeyedDataMarker for $code_point_set_marker {
-                    const KEY: DataKey = data_key!(concat!("props/", $bin_cp_s, "@1"), DataKeyMetadata::construct_internal(FallbackPriority::Language, None, None, true));
-                }
-
-            )+
-
-            // Data keys that return sets of strings + code points (represented as UnicodeSetData).
-            // Includes:
-            //   - binary properties of strings + code points
-            //   - exemplar characters
-            $(
-                #[doc = core::concat!("Data marker for the '", $bin_us_s, "' Unicode property")]
-                #[derive(Debug, Default)]
-                #[cfg_attr(
-                    feature = "datagen",
-                    derive(databake::Bake),
-                    databake(path = icu_properties::provider),
-                )]
-                pub struct $unicode_set_marker;
-
-                impl DataMarker for $unicode_set_marker {
-                    type Yokeable = PropertyUnicodeSetV1<'static>;
-                }
-                impl KeyedDataMarker for $unicode_set_marker {
-                    const KEY: DataKey = data_key!(concat!("props/", $bin_us_s, "@1"), DataKeyMetadata::construct_internal(FallbackPriority::Language, None, None, $us_singleton));
-                }
-            )+
-
-            // Data keys that return code point map (represented as CodePointMapData).
-            // For now, synonymous with enumerated properties [of code points only].
-            $(
-                #[doc = core::concat!("Data marker for the '", $enum_s, "' Unicode property")]
-                #[derive(Debug, Default)]
-                #[cfg_attr(
-                    feature = "datagen",
-                    derive(databake::Bake),
-                    databake(path = icu_properties::provider),
-                )]
-                pub struct $code_point_map_marker;
-
-                impl DataMarker for $code_point_map_marker {
-                    type Yokeable = PropertyCodePointMapV1<'static, crate::$value_ty>;
-                }
-
-                impl KeyedDataMarker for $code_point_map_marker {
-                    const KEY: DataKey = data_key!(concat!("props/", $enum_s, "@1"), DataKeyMetadata::construct_internal(FallbackPriority::Language, None, None, true));
-                }
-
-
-                #[doc = core::concat!("Data marker for parsing the names of the values of the '", $enum_s, "' Unicode property")]
-                #[derive(Debug, Default)]
-                #[cfg_attr(
-                    feature = "datagen",
-                    derive(databake::Bake),
-                    databake(path = icu_properties::provider),
-                )]
-                pub struct $name_value_marker;
-
-                impl DataMarker for $name_value_marker {
-                    type Yokeable = names::PropertyValueNameToEnumMapV1<'static>;
-                }
-
-                impl KeyedDataMarker for $name_value_marker {
-                    const KEY: DataKey = data_key!(concat!("propnames/from/", $enum_s, "@1"), DataKeyMetadata::construct_internal(FallbackPriority::Language, None, None, true));
-                }
-
-                $(
-                    #[doc = core::concat!("Data marker for producing short names of the values of the '", $enum_s, "' Unicode property")]
-                    #[derive(Debug, Default)]
-                    #[cfg_attr(
-                        feature = "datagen",
-                        derive(databake::Bake),
-                        databake(path = icu_properties::provider),
-                    )]
-                    pub struct $value_short_name_marker_sparse;
-
-                    impl DataMarker for $value_short_name_marker_sparse {
-                        type Yokeable = names::PropertyEnumToValueNameSparseMapV1<'static>;
-                    }
-
-                    impl KeyedDataMarker for $value_short_name_marker_sparse {
-                        const KEY: DataKey = data_key!(concat!("propnames/to/short/sparse/", $enum_s, "@1"), DataKeyMetadata::construct_internal(FallbackPriority::Language, None, None, true));
-                    }
-
-                    #[doc = core::concat!("Data marker for producing long names of the values of the '", $enum_s, "' Unicode property")]
-                    #[derive(Debug, Default)]
-                    #[cfg_attr(
-                        feature = "datagen",
-                        derive(databake::Bake),
-                        databake(path = icu_properties::provider),
-                    )]
-                    pub struct $value_long_name_marker_sparse;
-
-                    impl DataMarker for $value_long_name_marker_sparse {
-                        type Yokeable = names::PropertyEnumToValueNameSparseMapV1<'static>;
-                    }
-
-                    impl KeyedDataMarker for $value_long_name_marker_sparse {
-                        const KEY: DataKey = data_key!(concat!("propnames/to/long/sparse/", $enum_s, "@1"), DataKeyMetadata::construct_internal(FallbackPriority::Language, None, None, true));
-                    }
-                )?
-
-                $(
-                    #[doc = core::concat!("Data marker for producing short names of the values of the '", $enum_s, "' Unicode property")]
-                    #[derive(Debug, Default)]
-                    #[cfg_attr(
-                        feature = "datagen",
-                        derive(databake::Bake),
-                        databake(path = icu_properties::provider),
-                    )]
-                    pub struct $value_short_name_marker_linear;
-
-                    impl DataMarker for $value_short_name_marker_linear {
-                        type Yokeable = names::PropertyEnumToValueNameLinearMapV1<'static>;
-                    }
-
-                    impl KeyedDataMarker for $value_short_name_marker_linear {
-                        const KEY: DataKey = data_key!(concat!("propnames/to/short/linear/", $enum_s, "@1"), DataKeyMetadata::construct_internal(FallbackPriority::Language, None, None, true));
-                    }
-
-                    #[doc = core::concat!("Data marker for producing long names of the values of the '", $enum_s, "' Unicode property")]
-                    #[derive(Debug, Default)]
-                    #[cfg_attr(
-                        feature = "datagen",
-                        derive(databake::Bake),
-                        databake(path = icu_properties::provider),
-                    )]
-                    pub struct $value_long_name_marker_linear;
-
-                    impl DataMarker for $value_long_name_marker_linear {
-                        type Yokeable = names::PropertyEnumToValueNameLinearMapV1<'static>;
-                    }
-
-                    impl KeyedDataMarker for $value_long_name_marker_linear {
-                        const KEY: DataKey = data_key!(concat!("propnames/to/long/linear/", $enum_s, "@1"), DataKeyMetadata::construct_internal(FallbackPriority::Language, None, None, true));
-                    }
-                )?
-
-                $(
-                    #[doc = core::concat!("Data marker for producing short names of the values of the '", $enum_s, "' Unicode property")]
-                    #[derive(Debug, Default)]
-                    #[cfg_attr(
-                        feature = "datagen",
-                        derive(databake::Bake),
-                        databake(path = icu_properties::provider),
-                    )]
-                    pub struct $value_short_name_marker_linear4;
-
-                    impl DataMarker for $value_short_name_marker_linear4 {
-                        type Yokeable = names::PropertyEnumToValueNameLinearTiny4MapV1<'static>;
-                    }
-
-                    impl KeyedDataMarker for $value_short_name_marker_linear4 {
-                        const KEY: DataKey = data_key!(concat!("propnames/to/short/linear4/", $enum_s, "@1"), DataKeyMetadata::construct_internal(FallbackPriority::Language, None, None, true));
-                    }
-
-                    #[doc = core::concat!("Data marker for producing long names of the values of the '", $enum_s, "' Unicode property")]
-                    #[derive(Debug, Default)]
-                    #[cfg_attr(
-                        feature = "datagen",
-                        derive(databake::Bake),
-                        databake(path = icu_properties::provider),
-                    )]
-                    pub struct $value_long_name_marker_linear4;
-
-                    impl DataMarker for $value_long_name_marker_linear4 {
-                        // Tiny4 is only for short names
-                        type Yokeable = names::PropertyEnumToValueNameLinearMapV1<'static>;
-                    }
-
-                    impl KeyedDataMarker for $value_long_name_marker_linear4 {
-                        const KEY: DataKey = data_key!(concat!("propnames/to/long/linear/", $enum_s, "@1"), DataKeyMetadata::construct_internal(FallbackPriority::Language, None, None, true));
-                    }
-                )?
-            )+
-
-        /// All data keys in this module.
-        pub const KEYS: &[DataKey] = &[
-            $($code_point_set_marker::KEY,)+
-            $($unicode_set_marker::KEY,)+
-            $(
-                $code_point_map_marker::KEY,
-                $name_value_marker::KEY,
-                $($value_short_name_marker_sparse::KEY, $value_long_name_marker_sparse::KEY,)?
-                $($value_short_name_marker_linear::KEY, $value_long_name_marker_linear::KEY,)?
-                $($value_short_name_marker_linear4::KEY, $value_long_name_marker_linear4::KEY,)?
-            )+
-            bidi_data::BidiAuxiliaryPropertiesV1Marker::KEY,
-            GeneralCategoryMaskNameToValueV1Marker::KEY,
-            ScriptWithExtensionsPropertyV1Marker::KEY,
-        ];
-    };
-}
-
-pub use self::names::GeneralCategoryMaskNameToValueV1Marker;
-
-expand!(
-    (
-        // code point sets
-        (AsciiHexDigitV1Marker, "AHex"),
-        (AlnumV1Marker, "alnum"),
-        (AlphabeticV1Marker, "Alpha"),
-        (BidiControlV1Marker, "Bidi_C"),
-        (BidiMirroredV1Marker, "Bidi_M"),
-        (BlankV1Marker, "blank"),
-        (CasedV1Marker, "Cased"),
-        (CaseIgnorableV1Marker, "CI"),
-        (FullCompositionExclusionV1Marker, "Comp_Ex"),
-        (ChangesWhenCasefoldedV1Marker, "CWCF"),
-        (ChangesWhenCasemappedV1Marker, "CWCM"),
-        (ChangesWhenNfkcCasefoldedV1Marker, "CWKCF"),
-        (ChangesWhenLowercasedV1Marker, "CWL"),
-        (ChangesWhenTitlecasedV1Marker, "CWT"),
-        (ChangesWhenUppercasedV1Marker, "CWU"),
-        (DashV1Marker, "Dash"),
-        (DeprecatedV1Marker, "Dep"),
-        (DefaultIgnorableCodePointV1Marker, "DI"),
-        (DiacriticV1Marker, "Dia"),
-        (EmojiModifierBaseV1Marker, "EBase"),
-        (EmojiComponentV1Marker, "EComp"),
-        (EmojiModifierV1Marker, "EMod"),
-        (EmojiV1Marker, "Emoji"),
-        (EmojiPresentationV1Marker, "EPres"),
-        (ExtenderV1Marker, "Ext"),
-        (ExtendedPictographicV1Marker, "ExtPict"),
-        (GraphV1Marker, "graph"),
-        (GraphemeBaseV1Marker, "Gr_Base"),
-        (GraphemeExtendV1Marker, "Gr_Ext"),
-        (GraphemeLinkV1Marker, "Gr_Link"),
-        (HexDigitV1Marker, "Hex"),
-        (HyphenV1Marker, "Hyphen"),
-        (IdContinueV1Marker, "IDC"),
-        (IdeographicV1Marker, "Ideo"),
-        (IdStartV1Marker, "IDS"),
-        (IdsBinaryOperatorV1Marker, "IDSB"),
-        (IdsTrinaryOperatorV1Marker, "IDST"),
-        (JoinControlV1Marker, "Join_C"),
-        (LogicalOrderExceptionV1Marker, "LOE"),
-        (LowercaseV1Marker, "Lower"),
-        (MathV1Marker, "Math"),
-        (NoncharacterCodePointV1Marker, "NChar"),
-        (NfcInertV1Marker, "nfcinert"),
-        (NfdInertV1Marker, "nfdinert"),
-        (NfkcInertV1Marker, "nfkcinert"),
-        (NfkdInertV1Marker, "nfkdinert"),
-        (PatternSyntaxV1Marker, "Pat_Syn"),
-        (PatternWhiteSpaceV1Marker, "Pat_WS"),
-        (PrependedConcatenationMarkV1Marker, "PCM"),
-        (PrintV1Marker, "print"),
-        (QuotationMarkV1Marker, "QMark"),
-        (RadicalV1Marker, "Radical"),
-        (RegionalIndicatorV1Marker, "RI"),
-        (SoftDottedV1Marker, "SD"),
-        (SegmentStarterV1Marker, "segstart"),
-        (CaseSensitiveV1Marker, "Sensitive"),
-        (SentenceTerminalV1Marker, "STerm"),
-        (TerminalPunctuationV1Marker, "Term"),
-        (UnifiedIdeographV1Marker, "UIdeo"),
-        (UppercaseV1Marker, "Upper"),
-        (VariationSelectorV1Marker, "VS"),
-        (WhiteSpaceV1Marker, "WSpace"),
-        (XdigitV1Marker, "xdigit"),
-        (XidContinueV1Marker, "XIDC"),
-        (XidStartV1Marker, "XIDS"),
-    ),
-    (
-        // UnicodeSets (code points + strings)
-        (BasicEmojiV1Marker, "Basic_Emoji", true),
-        (ExemplarCharactersMainV1Marker, "exemplarchars/main", false),
-        (
-            ExemplarCharactersAuxiliaryV1Marker,
-            "exemplarchars/auxiliary",
-            false
-        ),
-        (
-            ExemplarCharactersPunctuationV1Marker,
-            "exemplarchars/punctuation",
-            false
-        ),
-        (
-            ExemplarCharactersNumbersV1Marker,
-            "exemplarchars/numbers",
-            false
-        ),
-        (
-            ExemplarCharactersIndexV1Marker,
-            "exemplarchars/index",
-            false
-        ),
-    ),
-    (
-        // code point maps
-        (
-            CanonicalCombiningClassV1Marker,
-            CanonicalCombiningClassNameToValueV1Marker,
-            (
-                sparse: CanonicalCombiningClassValueToShortNameV1Marker,
-                CanonicalCombiningClassValueToLongNameV1Marker
-            ),
-            "ccc",
-            CanonicalCombiningClass
-        ),
-        (
-            GeneralCategoryV1Marker,
-            GeneralCategoryNameToValueV1Marker,
-            (
-                linear: GeneralCategoryValueToShortNameV1Marker,
-                GeneralCategoryValueToLongNameV1Marker
-            ),
-            "gc",
-            GeneralCategory
-        ),
-        (
-            BidiClassV1Marker,
-            BidiClassNameToValueV1Marker,
-            (
-                linear: BidiClassValueToShortNameV1Marker,
-                BidiClassValueToLongNameV1Marker
-            ),
-            "bc",
-            BidiClass
-        ),
-        (
-            ScriptV1Marker,
-            ScriptNameToValueV1Marker,
-            (
-                linear4: ScriptValueToShortNameV1Marker,
-                ScriptValueToLongNameV1Marker
-            ),
-            "sc",
-            Script
-        ),
-        (
-            HangulSyllableTypeV1Marker,
-            HangulSyllableTypeNameToValueV1Marker,
-            (
-                linear: HangulSyllableTypeValueToShortNameV1Marker,
-                HangulSyllableTypeValueToLongNameV1Marker
-            ),
-            "hst",
-            HangulSyllableType
-        ),
-        (
-            EastAsianWidthV1Marker,
-            EastAsianWidthNameToValueV1Marker,
-            (
-                linear: EastAsianWidthValueToShortNameV1Marker,
-                EastAsianWidthValueToLongNameV1Marker
-            ),
-            "ea",
-            EastAsianWidth
-        ),
-        (
-            LineBreakV1Marker,
-            LineBreakNameToValueV1Marker,
-            (
-                linear: LineBreakValueToShortNameV1Marker,
-                LineBreakValueToLongNameV1Marker
-            ),
-            "lb",
-            LineBreak
-        ),
-        (
-            GraphemeClusterBreakV1Marker,
-            GraphemeClusterBreakNameToValueV1Marker,
-            (
-                linear: GraphemeClusterBreakValueToShortNameV1Marker,
-                GraphemeClusterBreakValueToLongNameV1Marker
-            ),
-            "GCB",
-            GraphemeClusterBreak
-        ),
-        (
-            WordBreakV1Marker,
-            WordBreakNameToValueV1Marker,
-            (
-                linear: WordBreakValueToShortNameV1Marker,
-                WordBreakValueToLongNameV1Marker
-            ),
-            "WB",
-            WordBreak
-        ),
-        (
-            SentenceBreakV1Marker,
-            SentenceBreakNameToValueV1Marker,
-            (
-                linear: SentenceBreakValueToShortNameV1Marker,
-                SentenceBreakValueToLongNameV1Marker
-            ),
-            "SB",
-            SentenceBreak
-        ),
-        (
-            IndicSyllabicCategoryV1Marker,
-            IndicSyllabicCategoryNameToValueV1Marker,
-            (
-                linear: IndicSyllabicCategoryValueToShortNameV1Marker,
-                IndicSyllabicCategoryValueToLongNameV1Marker
-            ),
-            "InSC",
-            IndicSyllabicCategory
-        ),
-        (
-            JoiningTypeV1Marker,
-            JoiningTypeNameToValueV1Marker,
-            (
-                linear: JoiningTypeValueToShortNameV1Marker,
-                JoiningTypeValueToLongNameV1Marker
-            ),
-            "jt",
-            JoiningType
-        ),
-        // note: the names key for the GCM mask is handled above
-    )
-);

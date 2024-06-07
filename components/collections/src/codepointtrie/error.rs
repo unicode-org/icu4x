@@ -7,8 +7,6 @@
 use displaydoc::Display;
 
 /// A custom error type for [`CodePointTrie`](super::CodePointTrie).
-///
-/// Re-exported as [Error][super::Error].
 #[derive(Copy, Clone, Display, Debug, PartialEq)]
 #[non_exhaustive]
 pub enum Error {

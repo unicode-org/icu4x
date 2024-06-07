@@ -23,7 +23,7 @@ pub struct GenericPattern<'data> {
     pub items: ZeroVec<'data, GenericPatternItem>,
 }
 
-/// A ZeroSlice containing a 0 and a 1 placeholder
+/// A ZeroSlice containing a 0, 1, and 2 placeholder
 #[cfg(feature = "experimental")]
 pub(crate) const ZERO_ONE_SLICE: &zerovec::ZeroSlice<GenericPatternItem> = zerovec::zeroslice!(
     GenericPatternItem;
@@ -31,6 +31,7 @@ pub(crate) const ZERO_ONE_SLICE: &zerovec::ZeroSlice<GenericPatternItem> = zerov
     [
         GenericPatternItem::Placeholder(0),
         GenericPatternItem::Placeholder(1),
+        GenericPatternItem::Placeholder(2),
     ]
 );
 

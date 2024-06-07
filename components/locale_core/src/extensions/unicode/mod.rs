@@ -33,6 +33,7 @@ mod keywords;
 mod value;
 
 use core::cmp::Ordering;
+use core::str::FromStr;
 
 #[doc(inline)]
 pub use attribute::{attribute, Attribute};
@@ -43,10 +44,12 @@ pub use keywords::Keywords;
 #[doc(inline)]
 pub use value::{value, Value};
 
-use crate::parser::ParserError;
+use super::ExtensionType;
+use crate::parser::ParseError;
 use crate::parser::SubtagIterator;
-use crate::shortvec::ShortBoxSlice;
-use litemap::LiteMap;
+
+pub(crate) const UNICODE_EXT_CHAR: char = 'u';
+pub(crate) const UNICODE_EXT_STR: &str = "u";
 
 /// Unicode Extensions provide information about user preferences in a given locale.
 ///
@@ -118,6 +121,17 @@ impl Unicode {
         self.keywords.is_empty() && self.attributes.is_empty()
     }
 
+    pub(crate) fn try_from_bytes(t: &[u8]) -> Result<Self, ParseError> {
+        let mut iter = SubtagIterator::new(t);
+
+        let ext = iter.next().ok_or(ParseError::InvalidExtension)?;
+        if let ExtensionType::Unicode = ExtensionType::try_from_byte_slice(ext)? {
+            return Self::try_from_iter(&mut iter);
+        }
+
+        Err(ParseError::InvalidExtension)
+    }
+
     /// Clears all Unicode extension keywords and attributes, effectively removing
     /// the Unicode extension.
     ///
@@ -150,71 +164,41 @@ impl Unicode {
         self.as_tuple().cmp(&other.as_tuple())
     }
 
-    pub(crate) fn try_from_iter(iter: &mut SubtagIterator) -> Result<Self, ParserError> {
-        let mut attributes = ShortBoxSlice::new();
-
-        while let Some(subtag) = iter.peek() {
-            if let Ok(attr) = Attribute::try_from_bytes(subtag) {
-                if let Err(idx) = attributes.binary_search(&attr) {
-                    attributes.insert(idx, attr);
-                }
-            } else {
-                break;
-            }
-            iter.next();
-        }
-
-        let mut keywords = LiteMap::new();
-
-        let mut current_keyword = None;
-        let mut current_value = ShortBoxSlice::new();
-
-        while let Some(subtag) = iter.peek() {
-            let slen = subtag.len();
-            if slen == 2 {
-                if let Some(kw) = current_keyword.take() {
-                    keywords.try_insert(kw, Value::from_short_slice_unchecked(current_value));
-                    current_value = ShortBoxSlice::new();
-                }
-                current_keyword = Some(Key::try_from_bytes(subtag)?);
-            } else if current_keyword.is_some() {
-                match Value::parse_subtag(subtag) {
-                    Ok(Some(t)) => current_value.push(t),
-                    Ok(None) => {}
-                    Err(_) => break,
-                }
-            } else {
-                break;
-            }
-            iter.next();
-        }
-
-        if let Some(kw) = current_keyword.take() {
-            keywords.try_insert(kw, Value::from_short_slice_unchecked(current_value));
-        }
+    pub(crate) fn try_from_iter(iter: &mut SubtagIterator) -> Result<Self, ParseError> {
+        let attributes = Attributes::try_from_iter(iter)?;
+        let keywords = Keywords::try_from_iter(iter)?;
 
         // Ensure we've defined at least one attribute or keyword
         if attributes.is_empty() && keywords.is_empty() {
-            return Err(ParserError::InvalidExtension);
+            return Err(ParseError::InvalidExtension);
         }
 
         Ok(Self {
-            keywords: keywords.into(),
-            attributes: Attributes::from_short_slice_unchecked(attributes),
+            keywords,
+            attributes,
         })
     }
 
-    pub(crate) fn for_each_subtag_str<E, F>(&self, f: &mut F) -> Result<(), E>
+    pub(crate) fn for_each_subtag_str<E, F>(&self, f: &mut F, with_ext: bool) -> Result<(), E>
     where
         F: FnMut(&str) -> Result<(), E>,
     {
-        if self.is_empty() {
-            return Ok(());
+        if !self.is_empty() {
+            if with_ext {
+                f(UNICODE_EXT_STR)?;
+            }
+            self.attributes.for_each_subtag_str(f)?;
+            self.keywords.for_each_subtag_str(f)?;
         }
-        f("u")?;
-        self.attributes.for_each_subtag_str(f)?;
-        self.keywords.for_each_subtag_str(f)?;
         Ok(())
+    }
+}
+
+impl FromStr for Unicode {
+    type Err = ParseError;
+
+    fn from_str(source: &str) -> Result<Self, Self::Err> {
+        Self::try_from_bytes(source.as_bytes())
     }
 }
 
@@ -222,10 +206,8 @@ writeable::impl_display_with_writeable!(Unicode);
 
 impl writeable::Writeable for Unicode {
     fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
-        if self.is_empty() {
-            return Ok(());
-        }
-        sink.write_str("u")?;
+        sink.write_char(UNICODE_EXT_CHAR)?;
+
         if !self.attributes.is_empty() {
             sink.write_char('-')?;
             writeable::Writeable::write_to(&self.attributes, sink)?;
@@ -249,5 +231,16 @@ impl writeable::Writeable for Unicode {
             result += writeable::Writeable::writeable_length_hint(&self.keywords) + 1;
         }
         result
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_unicode_extension_fromstr() {
+        let ue: Unicode = "u-foo-hc-h12".parse().expect("Failed to parse Unicode");
+        assert_eq!(ue.to_string(), "u-foo-hc-h12");
     }
 }

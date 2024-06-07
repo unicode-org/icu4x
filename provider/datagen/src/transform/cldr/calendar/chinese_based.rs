@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use std::collections::HashSet;
+
 use crate::provider::DatagenProvider;
 use calendrical_calculations::chinese_based::{Chinese, ChineseBased, Dangi};
 use icu_calendar::provider::chinese_based::*;
@@ -40,13 +42,13 @@ impl DataProvider<DangiCacheV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProvider<ChineseCacheV1Marker> for DatagenProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        Ok(vec![Default::default()])
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+        Ok(HashSet::from_iter([Default::default()]))
     }
 }
 
 impl IterableDataProvider<DangiCacheV1Marker> for DatagenProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        Ok(vec![Default::default()])
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+        Ok(HashSet::from_iter([Default::default()]))
     }
 }

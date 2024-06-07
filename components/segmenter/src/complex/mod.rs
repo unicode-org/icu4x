@@ -4,7 +4,6 @@
 
 use crate::provider::*;
 use alloc::vec::Vec;
-use icu_locale_core::{langid, LanguageIdentifier};
 use icu_provider::prelude::*;
 
 mod dictionary;
@@ -78,22 +77,34 @@ impl ComplexPayloads {
             grapheme: DataPayload::from_static_ref(
                 crate::provider::Baked::SINGLETON_SEGMENTER_GRAPHEME_V1,
             ),
-            my: try_load::<LstmForWordLineAutoV1Marker, _>(&crate::provider::Baked, langid!("my"))
-                .unwrap()
-                .map(DataPayload::cast)
-                .map(Err),
-            km: try_load::<LstmForWordLineAutoV1Marker, _>(&crate::provider::Baked, langid!("km"))
-                .unwrap()
-                .map(DataPayload::cast)
-                .map(Err),
-            lo: try_load::<LstmForWordLineAutoV1Marker, _>(&crate::provider::Baked, langid!("lo"))
-                .unwrap()
-                .map(DataPayload::cast)
-                .map(Err),
-            th: try_load::<LstmForWordLineAutoV1Marker, _>(&crate::provider::Baked, langid!("th"))
-                .unwrap()
-                .map(DataPayload::cast)
-                .map(Err),
+            my: try_load::<LstmForWordLineAutoV1Marker, _>(
+                &crate::provider::Baked,
+                "Burmese_codepoints_exclusive_model4_heavy",
+            )
+            .unwrap()
+            .map(DataPayload::cast)
+            .map(Err),
+            km: try_load::<LstmForWordLineAutoV1Marker, _>(
+                &crate::provider::Baked,
+                "Khmer_codepoints_exclusive_model4_heavy",
+            )
+            .unwrap()
+            .map(DataPayload::cast)
+            .map(Err),
+            lo: try_load::<LstmForWordLineAutoV1Marker, _>(
+                &crate::provider::Baked,
+                "Lao_codepoints_exclusive_model4_heavy",
+            )
+            .unwrap()
+            .map(DataPayload::cast)
+            .map(Err),
+            th: try_load::<LstmForWordLineAutoV1Marker, _>(
+                &crate::provider::Baked,
+                "Thai_codepoints_exclusive_model4_heavy",
+            )
+            .unwrap()
+            .map(DataPayload::cast)
+            .map(Err),
             ja: None,
         }
     }
@@ -107,18 +118,30 @@ impl ComplexPayloads {
     {
         Ok(Self {
             grapheme: provider.load(Default::default())?.take_payload()?,
-            my: try_load::<LstmForWordLineAutoV1Marker, D>(provider, langid!("my"))?
-                .map(DataPayload::cast)
-                .map(Err),
-            km: try_load::<LstmForWordLineAutoV1Marker, D>(provider, langid!("km"))?
-                .map(DataPayload::cast)
-                .map(Err),
-            lo: try_load::<LstmForWordLineAutoV1Marker, D>(provider, langid!("lo"))?
-                .map(DataPayload::cast)
-                .map(Err),
-            th: try_load::<LstmForWordLineAutoV1Marker, D>(provider, langid!("th"))?
-                .map(DataPayload::cast)
-                .map(Err),
+            my: try_load::<LstmForWordLineAutoV1Marker, D>(
+                provider,
+                "Burmese_codepoints_exclusive_model4_heavy",
+            )?
+            .map(DataPayload::cast)
+            .map(Err),
+            km: try_load::<LstmForWordLineAutoV1Marker, D>(
+                provider,
+                "Khmer_codepoints_exclusive_model4_heavy",
+            )?
+            .map(DataPayload::cast)
+            .map(Err),
+            lo: try_load::<LstmForWordLineAutoV1Marker, D>(
+                provider,
+                "Lao_codepoints_exclusive_model4_heavy",
+            )?
+            .map(DataPayload::cast)
+            .map(Err),
+            th: try_load::<LstmForWordLineAutoV1Marker, D>(
+                provider,
+                "Thai_codepoints_exclusive_model4_heavy",
+            )?
+            .map(DataPayload::cast)
+            .map(Err),
             ja: None,
         })
     }
@@ -133,38 +156,35 @@ impl ComplexPayloads {
             ),
             my: try_load::<DictionaryForWordLineExtendedV1Marker, _>(
                 &crate::provider::Baked,
-                langid!("my"),
+                "burmesedict",
             )
             .unwrap()
             .map(DataPayload::cast)
             .map(Ok),
             km: try_load::<DictionaryForWordLineExtendedV1Marker, _>(
                 &crate::provider::Baked,
-                langid!("km"),
+                "khmerdict",
             )
             .unwrap()
             .map(DataPayload::cast)
             .map(Ok),
             lo: try_load::<DictionaryForWordLineExtendedV1Marker, _>(
                 &crate::provider::Baked,
-                langid!("lo"),
+                "laodict",
             )
             .unwrap()
             .map(DataPayload::cast)
             .map(Ok),
             th: try_load::<DictionaryForWordLineExtendedV1Marker, _>(
                 &crate::provider::Baked,
-                langid!("th"),
+                "thaidict",
             )
             .unwrap()
             .map(DataPayload::cast)
             .map(Ok),
-            ja: try_load::<DictionaryForWordOnlyAutoV1Marker, _>(
-                &crate::provider::Baked,
-                langid!("ja"),
-            )
-            .unwrap()
-            .map(DataPayload::cast),
+            ja: try_load::<DictionaryForWordOnlyAutoV1Marker, _>(&crate::provider::Baked, "cjdict")
+                .unwrap()
+                .map(DataPayload::cast),
         }
     }
 
@@ -177,19 +197,19 @@ impl ComplexPayloads {
     {
         Ok(Self {
             grapheme: provider.load(Default::default())?.take_payload()?,
-            my: try_load::<DictionaryForWordLineExtendedV1Marker, D>(provider, langid!("my"))?
+            my: try_load::<DictionaryForWordLineExtendedV1Marker, D>(provider, "burmesedict")?
                 .map(DataPayload::cast)
                 .map(Ok),
-            km: try_load::<DictionaryForWordLineExtendedV1Marker, D>(provider, langid!("km"))?
+            km: try_load::<DictionaryForWordLineExtendedV1Marker, D>(provider, "khmerdict")?
                 .map(DataPayload::cast)
                 .map(Ok),
-            lo: try_load::<DictionaryForWordLineExtendedV1Marker, D>(provider, langid!("lo"))?
+            lo: try_load::<DictionaryForWordLineExtendedV1Marker, D>(provider, "laodict")?
                 .map(DataPayload::cast)
                 .map(Ok),
-            th: try_load::<DictionaryForWordLineExtendedV1Marker, D>(provider, langid!("th"))?
+            th: try_load::<DictionaryForWordLineExtendedV1Marker, D>(provider, "thaidict")?
                 .map(DataPayload::cast)
                 .map(Ok),
-            ja: try_load::<DictionaryForWordOnlyAutoV1Marker, D>(provider, langid!("ja"))?
+            ja: try_load::<DictionaryForWordOnlyAutoV1Marker, D>(provider, "cjdict")?
                 .map(DataPayload::cast),
         })
     }
@@ -203,28 +223,37 @@ impl ComplexPayloads {
             grapheme: DataPayload::from_static_ref(
                 crate::provider::Baked::SINGLETON_SEGMENTER_GRAPHEME_V1,
             ),
-            my: try_load::<LstmForWordLineAutoV1Marker, _>(&crate::provider::Baked, langid!("my"))
-                .unwrap()
-                .map(DataPayload::cast)
-                .map(Err),
-            km: try_load::<LstmForWordLineAutoV1Marker, _>(&crate::provider::Baked, langid!("km"))
-                .unwrap()
-                .map(DataPayload::cast)
-                .map(Err),
-            lo: try_load::<LstmForWordLineAutoV1Marker, _>(&crate::provider::Baked, langid!("lo"))
-                .unwrap()
-                .map(DataPayload::cast)
-                .map(Err),
-            th: try_load::<LstmForWordLineAutoV1Marker, _>(&crate::provider::Baked, langid!("th"))
-                .unwrap()
-                .map(DataPayload::cast)
-                .map(Err),
-            ja: try_load::<DictionaryForWordOnlyAutoV1Marker, _>(
+            my: try_load::<LstmForWordLineAutoV1Marker, _>(
                 &crate::provider::Baked,
-                langid!("ja"),
+                "Burmese_codepoints_exclusive_model4_heavy",
             )
             .unwrap()
-            .map(DataPayload::cast),
+            .map(DataPayload::cast)
+            .map(Err),
+            km: try_load::<LstmForWordLineAutoV1Marker, _>(
+                &crate::provider::Baked,
+                "Khmer_codepoints_exclusive_model4_heavy",
+            )
+            .unwrap()
+            .map(DataPayload::cast)
+            .map(Err),
+            lo: try_load::<LstmForWordLineAutoV1Marker, _>(
+                &crate::provider::Baked,
+                "Lao_codepoints_exclusive_model4_heavy",
+            )
+            .unwrap()
+            .map(DataPayload::cast)
+            .map(Err),
+            th: try_load::<LstmForWordLineAutoV1Marker, _>(
+                &crate::provider::Baked,
+                "Thai_codepoints_exclusive_model4_heavy",
+            )
+            .unwrap()
+            .map(DataPayload::cast)
+            .map(Err),
+            ja: try_load::<DictionaryForWordOnlyAutoV1Marker, _>(&crate::provider::Baked, "cjdict")
+                .unwrap()
+                .map(DataPayload::cast),
         }
     }
 
@@ -238,19 +267,31 @@ impl ComplexPayloads {
     {
         Ok(Self {
             grapheme: provider.load(Default::default())?.take_payload()?,
-            my: try_load::<LstmForWordLineAutoV1Marker, D>(provider, langid!("my"))?
-                .map(DataPayload::cast)
-                .map(Err),
-            km: try_load::<LstmForWordLineAutoV1Marker, D>(provider, langid!("km"))?
-                .map(DataPayload::cast)
-                .map(Err),
-            lo: try_load::<LstmForWordLineAutoV1Marker, D>(provider, langid!("lo"))?
-                .map(DataPayload::cast)
-                .map(Err),
-            th: try_load::<LstmForWordLineAutoV1Marker, D>(provider, langid!("th"))?
-                .map(DataPayload::cast)
-                .map(Err),
-            ja: try_load::<DictionaryForWordOnlyAutoV1Marker, D>(provider, langid!("ja"))?
+            my: try_load::<LstmForWordLineAutoV1Marker, D>(
+                provider,
+                "Burmese_codepoints_exclusive_model4_heavy",
+            )?
+            .map(DataPayload::cast)
+            .map(Err),
+            km: try_load::<LstmForWordLineAutoV1Marker, D>(
+                provider,
+                "Khmer_codepoints_exclusive_model4_heavy",
+            )?
+            .map(DataPayload::cast)
+            .map(Err),
+            lo: try_load::<LstmForWordLineAutoV1Marker, D>(
+                provider,
+                "Lao_codepoints_exclusive_model4_heavy",
+            )?
+            .map(DataPayload::cast)
+            .map(Err),
+            th: try_load::<LstmForWordLineAutoV1Marker, D>(
+                provider,
+                "Thai_codepoints_exclusive_model4_heavy",
+            )?
+            .map(DataPayload::cast)
+            .map(Err),
+            ja: try_load::<DictionaryForWordOnlyAutoV1Marker, D>(provider, "cjdict")?
                 .map(DataPayload::cast),
         })
     }
@@ -265,28 +306,28 @@ impl ComplexPayloads {
             ),
             my: try_load::<DictionaryForWordLineExtendedV1Marker, _>(
                 &crate::provider::Baked,
-                langid!("my"),
+                "burmesedict",
             )
             .unwrap()
             .map(DataPayload::cast)
             .map(Ok),
             km: try_load::<DictionaryForWordLineExtendedV1Marker, _>(
                 &crate::provider::Baked,
-                langid!("km"),
+                "khmerdict",
             )
             .unwrap()
             .map(DataPayload::cast)
             .map(Ok),
             lo: try_load::<DictionaryForWordLineExtendedV1Marker, _>(
                 &crate::provider::Baked,
-                langid!("lo"),
+                "laodict",
             )
             .unwrap()
             .map(DataPayload::cast)
             .map(Ok),
             th: try_load::<DictionaryForWordLineExtendedV1Marker, _>(
                 &crate::provider::Baked,
-                langid!("th"),
+                "thaidict",
             )
             .unwrap()
             .map(DataPayload::cast)
@@ -303,16 +344,16 @@ impl ComplexPayloads {
     {
         Ok(Self {
             grapheme: provider.load(Default::default())?.take_payload()?,
-            my: try_load::<DictionaryForWordLineExtendedV1Marker, _>(provider, langid!("my"))?
+            my: try_load::<DictionaryForWordLineExtendedV1Marker, _>(provider, "burmesedict")?
                 .map(DataPayload::cast)
                 .map(Ok),
-            km: try_load::<DictionaryForWordLineExtendedV1Marker, _>(provider, langid!("km"))?
+            km: try_load::<DictionaryForWordLineExtendedV1Marker, _>(provider, "khmerdict")?
                 .map(DataPayload::cast)
                 .map(Ok),
-            lo: try_load::<DictionaryForWordLineExtendedV1Marker, _>(provider, langid!("lo"))?
+            lo: try_load::<DictionaryForWordLineExtendedV1Marker, _>(provider, "laodict")?
                 .map(DataPayload::cast)
                 .map(Ok),
-            th: try_load::<DictionaryForWordLineExtendedV1Marker, _>(provider, langid!("th"))?
+            th: try_load::<DictionaryForWordLineExtendedV1Marker, _>(provider, "thaidict")?
                 .map(DataPayload::cast)
                 .map(Ok),
             ja: None,
@@ -320,17 +361,18 @@ impl ComplexPayloads {
     }
 }
 
-fn try_load<M: KeyedDataMarker, P: DataProvider<M> + ?Sized>(
+fn try_load<M: DataMarker, P: DataProvider<M> + ?Sized>(
     provider: &P,
-    locale: LanguageIdentifier,
+    model: &'static str,
 ) -> Result<Option<DataPayload<M>>, DataError> {
     match provider.load(DataRequest {
-        locale: &locale.into(),
+        marker_attributes: &model.parse().unwrap(),
         metadata: {
             let mut m = DataRequestMetadata::default();
             m.silent = true;
             m
         },
+        ..Default::default()
     }) {
         Ok(response) => Ok(Some(response.take_payload()?)),
         Err(DataError {

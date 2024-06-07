@@ -10,7 +10,7 @@ pub mod ffi {
     use icu_properties::sets;
 
     use crate::errors::ffi::ICU4XError;
-    use crate::properties_iter::ffi::CodePointRangeIterator;
+    use crate::properties_iter::ffi::ICU4XCodePointRangeIterator;
 
     #[diplomat::opaque]
     /// An ICU4X Unicode Set Property object, capable of querying whether a code point is contained in a set based on a Unicode property.
@@ -45,8 +45,8 @@ pub mod ffi {
             icu::properties::sets::CodePointSetDataBorrowed::iter_ranges,
             FnInStruct
         )]
-        pub fn iter_ranges<'a>(&'a self) -> Box<CodePointRangeIterator<'a>> {
-            Box::new(CodePointRangeIterator(Box::new(
+        pub fn iter_ranges<'a>(&'a self) -> Box<ICU4XCodePointRangeIterator<'a>> {
+            Box::new(ICU4XCodePointRangeIterator(Box::new(
                 self.0.as_borrowed().iter_ranges(),
             )))
         }
@@ -56,8 +56,8 @@ pub mod ffi {
             icu::properties::sets::CodePointSetDataBorrowed::iter_ranges_complemented,
             FnInStruct
         )]
-        pub fn iter_ranges_complemented<'a>(&'a self) -> Box<CodePointRangeIterator<'a>> {
-            Box::new(CodePointRangeIterator(Box::new(
+        pub fn iter_ranges_complemented<'a>(&'a self) -> Box<ICU4XCodePointRangeIterator<'a>> {
+            Box::new(ICU4XCodePointRangeIterator(Box::new(
                 self.0.as_borrowed().iter_ranges_complemented(),
             )))
         }
@@ -932,13 +932,15 @@ pub mod ffi {
         /// [ecma]: https://tc39.es/ecma262/#table-binary-unicode-properties
         #[diplomat::rust_link(icu::properties::sets::for_ecma262, Fn)]
         #[diplomat::rust_link(icu::properties::sets::load_for_ecma262, Fn, hidden)]
+        #[diplomat::rust_link(icu::properties::UnexpectedPropertyNameError, Struct, hidden)]
+        #[diplomat::rust_link(icu::properties::UnexpectedPropertyNameOrDataError, Enum, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "for_ecma262")]
         pub fn load_for_ecma262(
             provider: &ICU4XDataProvider,
             property_name: &str,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::load_for_ecma262 [r => r.map(|r| r.static_to_owned())],
+                sets::load_for_ecma262 [r => r.map(|r| r.static_to_owned()).map_err(|icu_properties::UnexpectedPropertyNameError| icu_properties::UnexpectedPropertyNameOrDataError::UnexpectedPropertyName)],
                 sets::load_for_ecma262_unstable,
                 provider,
                 property_name

@@ -1,38 +1,49 @@
 #ifndef ICU4XCollatorOptionsV1_HPP
 #define ICU4XCollatorOptionsV1_HPP
+
+#include "ICU4XCollatorOptionsV1.d.hpp"
+
+#include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
-#include <algorithm>
 #include <memory>
-#include <variant>
 #include <optional>
 #include "diplomat_runtime.hpp"
-
-#include "ICU4XCollatorOptionsV1.h"
-
-#include "ICU4XCollatorStrength.hpp"
 #include "ICU4XCollatorAlternateHandling.hpp"
-#include "ICU4XCollatorCaseFirst.hpp"
-#include "ICU4XCollatorMaxVariable.hpp"
-#include "ICU4XCollatorCaseLevel.hpp"
-#include "ICU4XCollatorNumeric.hpp"
 #include "ICU4XCollatorBackwardSecondLevel.hpp"
+#include "ICU4XCollatorCaseFirst.hpp"
+#include "ICU4XCollatorCaseLevel.hpp"
+#include "ICU4XCollatorMaxVariable.hpp"
+#include "ICU4XCollatorNumeric.hpp"
+#include "ICU4XCollatorOptionsV1.h"
+#include "ICU4XCollatorStrength.hpp"
 
 
-/**
- * See the [Rust documentation for `CollatorOptions`](https://docs.rs/icu/latest/icu/collator/struct.CollatorOptions.html) for more information.
- */
-struct ICU4XCollatorOptionsV1 {
- public:
-  ICU4XCollatorStrength strength;
-  ICU4XCollatorAlternateHandling alternate_handling;
-  ICU4XCollatorCaseFirst case_first;
-  ICU4XCollatorMaxVariable max_variable;
-  ICU4XCollatorCaseLevel case_level;
-  ICU4XCollatorNumeric numeric;
-  ICU4XCollatorBackwardSecondLevel backward_second_level;
-};
+
+inline capi::ICU4XCollatorOptionsV1 ICU4XCollatorOptionsV1::AsFFI() const {
+  return capi::ICU4XCollatorOptionsV1 {
+    .strength = strength.AsFFI(),
+    .alternate_handling = alternate_handling.AsFFI(),
+    .case_first = case_first.AsFFI(),
+    .max_variable = max_variable.AsFFI(),
+    .case_level = case_level.AsFFI(),
+    .numeric = numeric.AsFFI(),
+    .backward_second_level = backward_second_level.AsFFI(),
+  };
+}
+
+inline ICU4XCollatorOptionsV1 ICU4XCollatorOptionsV1::FromFFI(capi::ICU4XCollatorOptionsV1 c_struct) {
+  return ICU4XCollatorOptionsV1 {
+    .strength = ICU4XCollatorStrength::FromFFI(c_struct.strength),
+    .alternate_handling = ICU4XCollatorAlternateHandling::FromFFI(c_struct.alternate_handling),
+    .case_first = ICU4XCollatorCaseFirst::FromFFI(c_struct.case_first),
+    .max_variable = ICU4XCollatorMaxVariable::FromFFI(c_struct.max_variable),
+    .case_level = ICU4XCollatorCaseLevel::FromFFI(c_struct.case_level),
+    .numeric = ICU4XCollatorNumeric::FromFFI(c_struct.numeric),
+    .backward_second_level = ICU4XCollatorBackwardSecondLevel::FromFFI(c_struct.backward_second_level),
+  };
+}
 
 
-#endif
+#endif // ICU4XCollatorOptionsV1_HPP

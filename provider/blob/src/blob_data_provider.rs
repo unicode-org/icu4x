@@ -112,17 +112,16 @@ impl BlobDataProvider {
         })
     }
 
-    /// For testing purposes only: checks if it is using the V2Bigger format
-    #[doc(hidden)]
+    #[doc(hidden)] // for testing purposes only: checks if it is using the V2Bigger format
     pub fn internal_is_using_v2_bigger_format(&self) -> bool {
         matches!(self.data.get(), BlobSchema::V002Bigger(..))
     }
 }
 
-impl BufferProvider for BlobDataProvider {
-    fn load_buffer(
+impl DynamicDataProvider<BufferMarker> for BlobDataProvider {
+    fn load_data(
         &self,
-        key: DataKey,
+        marker: DataMarkerInfo,
         req: DataRequest,
     ) -> Result<DataResponse<BufferMarker>, DataError> {
         let mut metadata = DataResponseMetadata::default();
@@ -131,7 +130,7 @@ impl BufferProvider for BlobDataProvider {
             metadata,
             payload: Some(DataPayload::from_yoked_buffer(
                 self.data
-                    .try_map_project_cloned(|blob, _| blob.load(key, req))?,
+                    .try_map_project_cloned(|blob, _| blob.load(marker, req))?,
             )),
         })
     }
@@ -160,7 +159,7 @@ mod test {
                     BlobExporter::new_v2_with_sink(Box::new(&mut blob))
                 };
 
-                exporter.flush(HelloWorldV1Marker::KEY).unwrap();
+                exporter.flush(HelloWorldV1Marker::INFO).unwrap();
 
                 exporter.close().unwrap();
             }
@@ -169,7 +168,7 @@ mod test {
 
             assert!(
                 matches!(
-                    provider.load_buffer(HelloWorldV1Marker::KEY, Default::default()),
+                    provider.load_data(HelloWorldV1Marker::INFO, Default::default()),
                     Err(DataError {
                         kind: DataErrorKind::MissingLocale,
                         ..
@@ -192,7 +191,7 @@ mod test {
                     BlobExporter::new_v2_with_sink(Box::new(&mut blob))
                 };
 
-                exporter.flush(HelloSingletonV1Marker::KEY).unwrap();
+                exporter.flush(HelloSingletonV1Marker::INFO).unwrap();
 
                 exporter.close().unwrap();
             }
@@ -201,11 +200,11 @@ mod test {
 
             assert!(
                 matches!(
-                    provider.load_buffer(
-                        HelloSingletonV1Marker::KEY,
+                    provider.load_data(
+                        HelloSingletonV1Marker::INFO,
                         DataRequest {
                             locale: &icu_locale_core::langid!("de").into(),
-                            metadata: Default::default()
+                            ..Default::default()
                         }
                     ),
                     Err(DataError {
@@ -218,7 +217,7 @@ mod test {
 
             assert!(
                 matches!(
-                    provider.load_buffer(HelloSingletonV1Marker::KEY, Default::default()),
+                    provider.load_data(HelloSingletonV1Marker::INFO, Default::default()),
                     Err(DataError {
                         kind: DataErrorKind::MissingLocale,
                         ..

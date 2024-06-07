@@ -8,6 +8,7 @@ use icu_properties::provider::{names::*, *};
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;
+use std::collections::HashSet;
 use std::convert::TryFrom;
 use tinystr::TinyStr4;
 
@@ -24,7 +25,7 @@ impl DatagenProvider {
             ))?
             .enum_property
             .first()
-            .ok_or_else(|| DataErrorKind::MissingDataKey.into_error())
+            .ok_or_else(|| DataErrorKind::MissingDataMarker.into_error())
     }
     fn get_mask_prop<'a>(
         &'a self,
@@ -152,7 +153,7 @@ fn load_values_to_names_sparse<M>(
     is_short: bool,
 ) -> Result<DataResponse<M>, DataError>
 where
-    M: DataMarker<Yokeable = PropertyEnumToValueNameSparseMapV1<'static>>,
+    M: DynamicDataMarker<Yokeable = PropertyEnumToValueNameSparseMapV1<'static>>,
 {
     let data = p.get_enumerated_prop(prop_name)
         .map_err(|_| DataError::custom("Loading icuexport property data failed: \
@@ -173,7 +174,7 @@ fn load_values_to_names_linear<M>(
     is_short: bool,
 ) -> Result<DataResponse<M>, DataError>
 where
-    M: DataMarker<Yokeable = PropertyEnumToValueNameLinearMapV1<'static>>,
+    M: DynamicDataMarker<Yokeable = PropertyEnumToValueNameLinearMapV1<'static>>,
 {
     let data = p.get_enumerated_prop(prop_name)
         .map_err(|_| DataError::custom("Loading icuexport property data failed: \
@@ -195,7 +196,7 @@ fn load_values_to_names_linear4<M>(
     is_short: bool,
 ) -> Result<DataResponse<M>, DataError>
 where
-    M: DataMarker<Yokeable = PropertyEnumToValueNameLinearTiny4MapV1<'static>>,
+    M: DynamicDataMarker<Yokeable = PropertyEnumToValueNameLinearTiny4MapV1<'static>>,
 {
     let data = p.get_enumerated_prop(prop_name)
         .map_err(|_| DataError::custom("Loading icuexport property data failed: \
@@ -244,11 +245,9 @@ macro_rules! expand {
             }
 
             impl IterableDataProvider<$marker> for DatagenProvider {
-                fn supported_locales(
-                    &self,
-                ) -> Result<Vec<DataLocale>, DataError> {
+                fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError>  {
                     self.get_enumerated_prop($prop_name)?;
-                    Ok(vec![Default::default()])
+                    Ok(HashSet::from_iter([Default::default()]))
                 }
             }
 
@@ -269,11 +268,9 @@ macro_rules! expand {
             }
 
             impl IterableDataProvider<$marker_n2e> for DatagenProvider {
-                fn supported_locales(
-                    &self,
-                ) -> Result<Vec<DataLocale>, DataError> {
+                                fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError>  {
                     self.get_enumerated_prop($prop_name)?;
-                    Ok(vec![Default::default()])
+                    Ok(HashSet::from_iter([Default::default()]))
                 }
             }
 
@@ -287,11 +284,9 @@ macro_rules! expand {
                 }
 
                 impl IterableDataProvider<$marker_e2sns> for DatagenProvider {
-                    fn supported_locales(
-                        &self,
-                    ) -> Result<Vec<DataLocale>, DataError> {
+                    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError>  {
                         self.get_enumerated_prop($prop_name)?;
-                        Ok(vec![Default::default()])
+                        Ok(HashSet::from_iter([Default::default()]))
                     }
                 }
 
@@ -304,11 +299,9 @@ macro_rules! expand {
                 }
 
                 impl IterableDataProvider<$marker_e2lns> for DatagenProvider {
-                    fn supported_locales(
-                        &self,
-                    ) -> Result<Vec<DataLocale>, DataError> {
+                    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError>  {
                         self.get_enumerated_prop($prop_name)?;
-                        Ok(vec![Default::default()])
+                        Ok(HashSet::from_iter([Default::default()]))
                     }
                 }
             )?
@@ -323,11 +316,9 @@ macro_rules! expand {
                 }
 
                 impl IterableDataProvider<$marker_e2snl> for DatagenProvider {
-                    fn supported_locales(
-                        &self,
-                    ) -> Result<Vec<DataLocale>, DataError> {
+                    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError>  {
                         self.get_enumerated_prop($prop_name)?;
-                        Ok(vec![Default::default()])
+                        Ok(HashSet::from_iter([Default::default()]))
                     }
                 }
 
@@ -340,11 +331,9 @@ macro_rules! expand {
                 }
 
                 impl IterableDataProvider<$marker_e2lnl> for DatagenProvider {
-                    fn supported_locales(
-                        &self,
-                    ) -> Result<Vec<DataLocale>, DataError> {
+                    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError>  {
                         self.get_enumerated_prop($prop_name)?;
-                        Ok(vec![Default::default()])
+                        Ok(HashSet::from_iter([Default::default()]))
                     }
                 }
             )?
@@ -359,11 +348,9 @@ macro_rules! expand {
                 }
 
                 impl IterableDataProvider<$marker_e2snl4> for DatagenProvider {
-                    fn supported_locales(
-                        &self,
-                    ) -> Result<Vec<DataLocale>, DataError> {
+                    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError>  {
                         self.get_enumerated_prop($prop_name)?;
-                        Ok(vec![Default::default()])
+                        Ok(HashSet::from_iter([Default::default()]))
                     }
                 }
 
@@ -377,11 +364,9 @@ macro_rules! expand {
                 }
 
                 impl IterableDataProvider<$marker_e2lnl4> for DatagenProvider {
-                    fn supported_locales(
-                        &self,
-                    ) -> Result<Vec<DataLocale>, DataError> {
+                    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError>  {
                         self.get_enumerated_prop($prop_name)?;
-                        Ok(vec![Default::default()])
+                        Ok(HashSet::from_iter([Default::default()]))
                     }
                 }
             )?
@@ -420,9 +405,9 @@ impl DataProvider<GeneralCategoryMaskNameToValueV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProvider<GeneralCategoryMaskNameToValueV1Marker> for DatagenProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         self.get_mask_prop("gcm")?;
-        Ok(vec![Default::default()])
+        Ok(HashSet::from_iter([Default::default()]))
     }
 }
 

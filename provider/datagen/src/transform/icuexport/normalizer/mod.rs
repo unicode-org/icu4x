@@ -11,6 +11,7 @@ use icu_collections::codepointtrie::CodePointTrie;
 use icu_normalizer::provider::*;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
+use std::collections::HashSet;
 use std::convert::TryFrom;
 use zerovec::ZeroVec;
 
@@ -35,8 +36,10 @@ macro_rules! normalization_provider {
         }
 
         impl IterableDataProvider<$marker> for DatagenProvider {
-            fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-                Ok(vec![DataLocale::default()])
+            fn supported_requests(
+                &self,
+            ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+                Ok(HashSet::from_iter([Default::default()]))
             }
         }
     };

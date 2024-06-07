@@ -18,10 +18,11 @@ const PATHS: &[&str] = &[
 fn test_provider() {
     for path in PATHS {
         let provider = FsDataProvider::try_new(path).unwrap();
-        for locale in HelloWorldProvider.supported_locales().unwrap() {
+        for (locale, marker_attributes) in HelloWorldProvider.supported_requests().unwrap() {
             let req = DataRequest {
                 locale: &locale,
-                metadata: Default::default(),
+                marker_attributes: &marker_attributes,
+                ..Default::default()
             };
 
             let expected = HelloWorldProvider
@@ -57,7 +58,7 @@ fn test_errors() {
         let err: Result<DataResponse<HelloWorldV1Marker>, DataError> =
             provider.as_deserializing().load(DataRequest {
                 locale: &langid!("zh-DE").into(),
-                metadata: Default::default(),
+                ..Default::default()
             });
 
         assert!(
@@ -72,11 +73,12 @@ fn test_errors() {
         );
 
         struct WrongV1Marker;
-        impl DataMarker for WrongV1Marker {
+        impl DynamicDataMarker for WrongV1Marker {
             type Yokeable = HelloWorldV1<'static>;
         }
-        impl KeyedDataMarker for WrongV1Marker {
-            const KEY: DataKey = data_key!("nope@1");
+        impl DataMarker for WrongV1Marker {
+            const INFO: DataMarkerInfo =
+                DataMarkerInfo::from_path(icu_provider::data_marker_path!("nope@1"));
         }
 
         let err: Result<DataResponse<WrongV1Marker>, DataError> =
@@ -86,7 +88,7 @@ fn test_errors() {
             matches!(
                 err,
                 Err(DataError {
-                    kind: DataErrorKind::MissingDataKey,
+                    kind: DataErrorKind::MissingDataMarker,
                     ..
                 })
             ),

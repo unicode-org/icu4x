@@ -13,9 +13,11 @@ use icu_calendar::{
     islamic::IslamicUmmAlQura, japanese::Japanese, japanese::JapaneseExtended, persian::Persian,
     Gregorian,
 };
-use icu_locale_core::extensions::unicode::{value, Value};
+use icu_locale_core::{
+    extensions::unicode::{value, Value},
+    subtags::{subtag, Subtag},
+};
 use icu_provider::prelude::*;
-use tinystr::{tinystr, TinyAsciiStr};
 
 #[cfg(any(feature = "datagen", feature = "experimental"))]
 use crate::provider::neo::*;
@@ -54,26 +56,26 @@ pub trait CldrCalendar: InternalCldrCalendar {
     const DEFAULT_BCP_47_IDENTIFIER: Value;
 
     /// The data marker for loading symbols for this calendar.
-    type DateSymbolsV1Marker: KeyedDataMarker<Yokeable = DateSymbolsV1<'static>>;
+    type DateSymbolsV1Marker: DataMarker<Yokeable = DateSymbolsV1<'static>>;
 
     /// The data marker for loading length-patterns for this calendar.
-    type DateLengthsV1Marker: KeyedDataMarker<Yokeable = DateLengthsV1<'static>>;
+    type DateLengthsV1Marker: DataMarker<Yokeable = DateLengthsV1<'static>>;
 
     #[cfg(any(feature = "datagen", feature = "experimental"))]
     /// The data marker for loading year symbols for this calendar.
-    type YearNamesV1Marker: KeyedDataMarker<Yokeable = YearNamesV1<'static>>;
+    type YearNamesV1Marker: DataMarker<Yokeable = YearNamesV1<'static>>;
 
     #[cfg(any(feature = "datagen", feature = "experimental"))]
     /// The data marker for loading month symbols for this calendar.
-    type MonthNamesV1Marker: KeyedDataMarker<Yokeable = MonthNamesV1<'static>>;
+    type MonthNamesV1Marker: DataMarker<Yokeable = MonthNamesV1<'static>>;
 
     #[cfg(any(feature = "datagen", feature = "experimental"))]
     /// The data marker for loading a single date pattern for this calendar.
-    type DatePatternV1Marker: KeyedDataMarker<Yokeable = DatePatternV1<'static>>;
+    type DatePatternV1Marker: DataMarker<Yokeable = DatePatternV1<'static>>;
 
     #[cfg(any(feature = "datagen", feature = "experimental"))]
     /// The data marker for loading skeleton patterns for this calendar.
-    type SkeletaV1Marker: KeyedDataMarker<Yokeable = PackedSkeletonDataV1<'static>>;
+    type SkeletaV1Marker: DataMarker<Yokeable = PackedSkeletonDataV1<'static>>;
 
     /// Checks if a given BCP 47 identifier is allowed to be used with this calendar
     ///
@@ -84,9 +86,9 @@ pub trait CldrCalendar: InternalCldrCalendar {
 }
 
 /// Check if the provided value is of the form `islamic-{subcal}`
-fn is_islamic_subcal(value: &Value, subcal: TinyAsciiStr<8>) -> bool {
-    if let &[first, second] = value.as_tinystr_slice() {
-        first == "islamic" && second == subcal
+fn is_islamic_subcal(value: &Value, subcal: Subtag) -> bool {
+    if let &[first, second] = value.as_subtags_slice() {
+        first == *"islamic" && second == subcal
     } else {
         false
     }
@@ -243,7 +245,7 @@ impl CldrCalendar for IslamicCivil {
     #[cfg(any(feature = "datagen", feature = "experimental"))]
     type SkeletaV1Marker = IslamicDateNeoSkeletonPatternsV1Marker;
     fn is_identifier_allowed_for_calendar(value: &Value) -> bool {
-        *value == value!("islamicc") || is_islamic_subcal(value, tinystr!(8, "civil"))
+        *value == value!("islamicc") || is_islamic_subcal(value, subtag!("civil"))
     }
 }
 
@@ -277,7 +279,7 @@ impl CldrCalendar for IslamicTabular {
     #[cfg(any(feature = "datagen", feature = "experimental"))]
     type SkeletaV1Marker = IslamicDateNeoSkeletonPatternsV1Marker;
     fn is_identifier_allowed_for_calendar(value: &Value) -> bool {
-        is_islamic_subcal(value, tinystr!(8, "tbla"))
+        is_islamic_subcal(value, subtag!("tbla"))
     }
 }
 
@@ -297,7 +299,7 @@ impl CldrCalendar for IslamicUmmAlQura {
     #[cfg(any(feature = "datagen", feature = "experimental"))]
     type SkeletaV1Marker = IslamicDateNeoSkeletonPatternsV1Marker;
     fn is_identifier_allowed_for_calendar(value: &Value) -> bool {
-        is_islamic_subcal(value, tinystr!(8, "umalqura"))
+        is_islamic_subcal(value, subtag!("umalqura"))
     }
 }
 
@@ -387,7 +389,7 @@ where
     let payload = provider
         .load(DataRequest {
             locale,
-            metadata: Default::default(),
+            ..Default::default()
         })?
         .take_payload()?;
     Ok(payload.cast())
@@ -404,7 +406,7 @@ where
     let payload = provider
         .load(DataRequest {
             locale,
-            metadata: Default::default(),
+            ..Default::default()
         })?
         .take_payload()?;
     Ok(payload.cast())
@@ -433,7 +435,7 @@ where
 {
     let req = DataRequest {
         locale,
-        metadata: Default::default(),
+        ..Default::default()
     };
     let payload = match kind {
         AnyCalendarKind::Buddhist => {
@@ -554,7 +556,7 @@ where
 {
     let req = DataRequest {
         locale,
-        metadata: Default::default(),
+        ..Default::default()
     };
     let payload = match kind {
         AnyCalendarKind::Buddhist => {
@@ -660,48 +662,48 @@ mod private {
 /// A collection of marker types associated with all calendars.
 ///
 /// This is used to group together the calendar-specific marker types that produce a common
-/// [`DataMarker`]. For example, this trait can be implemented for [`YearNamesV1Marker`].
+/// [`DynamicDataMarker`]. For example, this trait can be implemented for [`YearNamesV1Marker`].
 ///
 /// This trait serves as a building block for a cross-calendar [`BoundDataProvider`].
 #[cfg(any(feature = "datagen", feature = "experimental"))]
 pub trait CalMarkers<M>: private::Sealed
 where
-    M: DataMarker,
+    M: DynamicDataMarker,
 {
     /// The type for a [`Buddhist`] calendar
-    type Buddhist: KeyedDataMarker<Yokeable = M::Yokeable>;
+    type Buddhist: DataMarker<Yokeable = M::Yokeable>;
     /// The type for a [`Chinese`] calendar
-    type Chinese: KeyedDataMarker<Yokeable = M::Yokeable>;
+    type Chinese: DataMarker<Yokeable = M::Yokeable>;
     /// The type for a [`Coptic`] calendar
-    type Coptic: KeyedDataMarker<Yokeable = M::Yokeable>;
+    type Coptic: DataMarker<Yokeable = M::Yokeable>;
     /// The type for a [`Dangi`] calendar
-    type Dangi: KeyedDataMarker<Yokeable = M::Yokeable>;
+    type Dangi: DataMarker<Yokeable = M::Yokeable>;
     /// The type for an [`Ethiopian`] calendar, with Amete Mihret era
-    type Ethiopian: KeyedDataMarker<Yokeable = M::Yokeable>;
+    type Ethiopian: DataMarker<Yokeable = M::Yokeable>;
     /// The type for an [`Ethiopian`] calendar, with Amete Alem era
-    type EthiopianAmeteAlem: KeyedDataMarker<Yokeable = M::Yokeable>;
+    type EthiopianAmeteAlem: DataMarker<Yokeable = M::Yokeable>;
     /// The type for a [`Gregorian`] calendar
-    type Gregorian: KeyedDataMarker<Yokeable = M::Yokeable>;
+    type Gregorian: DataMarker<Yokeable = M::Yokeable>;
     /// The type for a [`Hebrew`] calendar
-    type Hebrew: KeyedDataMarker<Yokeable = M::Yokeable>;
+    type Hebrew: DataMarker<Yokeable = M::Yokeable>;
     /// The type for a [`Indian`] calendar
-    type Indian: KeyedDataMarker<Yokeable = M::Yokeable>;
+    type Indian: DataMarker<Yokeable = M::Yokeable>;
     /// The type for an [`IslamicCivil`] calendar
-    type IslamicCivil: KeyedDataMarker<Yokeable = M::Yokeable>;
+    type IslamicCivil: DataMarker<Yokeable = M::Yokeable>;
     /// The type for an [`IslamicObservational`] calendar
-    type IslamicObservational: KeyedDataMarker<Yokeable = M::Yokeable>;
+    type IslamicObservational: DataMarker<Yokeable = M::Yokeable>;
     /// The type for an [`IslamicTabular`] calendar
-    type IslamicTabular: KeyedDataMarker<Yokeable = M::Yokeable>;
+    type IslamicTabular: DataMarker<Yokeable = M::Yokeable>;
     /// The type for an [`IslamicUmmAlQura`] calendar
-    type IslamicUmmAlQura: KeyedDataMarker<Yokeable = M::Yokeable>;
+    type IslamicUmmAlQura: DataMarker<Yokeable = M::Yokeable>;
     /// The type for a [`Japanese`] calendar
-    type Japanese: KeyedDataMarker<Yokeable = M::Yokeable>;
+    type Japanese: DataMarker<Yokeable = M::Yokeable>;
     /// The type for a [`JapaneseExtended`] calendar
-    type JapaneseExtended: KeyedDataMarker<Yokeable = M::Yokeable>;
+    type JapaneseExtended: DataMarker<Yokeable = M::Yokeable>;
     /// The type for a [`Persian`] calendar
-    type Persian: KeyedDataMarker<Yokeable = M::Yokeable>;
+    type Persian: DataMarker<Yokeable = M::Yokeable>;
     /// The type for a [`Roc`] calendar
-    type Roc: KeyedDataMarker<Yokeable = M::Yokeable>;
+    type Roc: DataMarker<Yokeable = M::Yokeable>;
 }
 
 /// Implementation of [`CalMarkers`] that includes data for all calendars.
@@ -725,7 +727,7 @@ impl private::Sealed for NoDataCalMarkers {}
 #[cfg(any(feature = "datagen", feature = "experimental"))]
 impl<M> CalMarkers<M> for NoDataCalMarkers
 where
-    M: DataMarker,
+    M: DynamicDataMarker,
 {
     type Buddhist = NeverMarker<M::Yokeable>;
     type Chinese = NeverMarker<M::Yokeable>;
@@ -767,7 +769,7 @@ impl<H, P> AnyCalendarProvider<H, P> {
 #[cfg(feature = "experimental")]
 impl<M, H, P> BoundDataProvider<M> for AnyCalendarProvider<H, P>
 where
-    M: DataMarker,
+    M: DynamicDataMarker,
     H: CalMarkers<M>,
     P: Sized
         + DataProvider<H::Buddhist>
@@ -815,27 +817,27 @@ where
             ),
         }
     }
-    fn bound_key(&self) -> DataKey {
+    fn bound_marker(&self) -> DataMarkerInfo {
         use AnyCalendarKind::*;
         match self.kind {
-            Buddhist => H::Buddhist::KEY,
-            Chinese => H::Chinese::KEY,
-            Coptic => H::Coptic::KEY,
-            Dangi => H::Dangi::KEY,
-            Ethiopian => H::Ethiopian::KEY,
-            EthiopianAmeteAlem => H::EthiopianAmeteAlem::KEY,
-            Gregorian => H::Gregorian::KEY,
-            Hebrew => H::Hebrew::KEY,
-            Indian => H::Indian::KEY,
-            IslamicCivil => H::IslamicCivil::KEY,
-            IslamicObservational => H::IslamicObservational::KEY,
-            IslamicTabular => H::IslamicTabular::KEY,
-            IslamicUmmAlQura => H::IslamicUmmAlQura::KEY,
-            Japanese => H::Japanese::KEY,
-            JapaneseExtended => H::JapaneseExtended::KEY,
-            Persian => H::Persian::KEY,
-            Roc => H::Roc::KEY,
-            _ => NeverMarker::<M::Yokeable>::KEY,
+            Buddhist => H::Buddhist::INFO,
+            Chinese => H::Chinese::INFO,
+            Coptic => H::Coptic::INFO,
+            Dangi => H::Dangi::INFO,
+            Ethiopian => H::Ethiopian::INFO,
+            EthiopianAmeteAlem => H::EthiopianAmeteAlem::INFO,
+            Gregorian => H::Gregorian::INFO,
+            Hebrew => H::Hebrew::INFO,
+            Indian => H::Indian::INFO,
+            IslamicCivil => H::IslamicCivil::INFO,
+            IslamicObservational => H::IslamicObservational::INFO,
+            IslamicTabular => H::IslamicTabular::INFO,
+            IslamicUmmAlQura => H::IslamicUmmAlQura::INFO,
+            Japanese => H::Japanese::INFO,
+            JapaneseExtended => H::JapaneseExtended::INFO,
+            Persian => H::Persian::INFO,
+            Roc => H::Roc::INFO,
+            _ => NeverMarker::<M::Yokeable>::INFO,
         }
     }
 }

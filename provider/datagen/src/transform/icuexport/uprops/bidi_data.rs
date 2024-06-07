@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use std::collections::HashSet;
+
 use crate::provider::DatagenProvider;
 use icu_properties::provider::bidi_data::BidiAuxiliaryPropertiesV1Marker;
 use icu_provider::datagen::*;
@@ -21,7 +23,7 @@ impl DatagenProvider {
             ))?
             .enum_property
             .first()
-            .ok_or_else(|| DataErrorKind::MissingDataKey.into_error())
+            .ok_or_else(|| DataErrorKind::MissingDataMarker.into_error())
     }
 }
 
@@ -90,7 +92,7 @@ impl DataProvider<BidiAuxiliaryPropertiesV1Marker> for DatagenProvider {
             .try_alloc_map_value(MirroredPairedBracketData::try_from)
             .map_err(|_| DataError::custom("Cannot parse MirroredPairedBracketData from u32"))?;
 
-        let data_struct = BidiAuxiliaryPropertiesV1::new(trie_mpbd);
+        let data_struct = BidiAuxiliaryPropertiesV1 { trie: trie_mpbd };
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
             payload: Some(DataPayload::from_owned(data_struct)),
@@ -110,8 +112,8 @@ impl DataProvider<BidiAuxiliaryPropertiesV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProvider<BidiAuxiliaryPropertiesV1Marker> for DatagenProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        Ok(vec![Default::default()])
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+        Ok(HashSet::from_iter([Default::default()]))
     }
 }
 

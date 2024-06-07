@@ -28,9 +28,7 @@
 //! If you wish to load data dynamically, you can individually load [`GeneralCategoryData`], [`CombiningClassData`],
 //! [`MirroringData`], [`ScriptData`], [`ComposeData`], [`DecomposeData`] and set them as the relevant funcs.
 extern crate alloc;
-mod error;
 
-use crate::error::HarfBuzzError;
 use icu_normalizer::properties::CanonicalCombiningClassMap;
 use icu_normalizer::properties::CanonicalComposition;
 use icu_normalizer::properties::CanonicalDecomposition;
@@ -141,7 +139,7 @@ pub struct GeneralCategoryData {
 
 impl GeneralCategoryData {
     /// Construct a new [`GeneralCategoryData`] from a data provider.
-    pub fn try_new_unstable<D>(provider: &D) -> Result<Self, HarfBuzzError>
+    pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<GeneralCategoryV1Marker> + ?Sized,
     {
@@ -153,14 +151,14 @@ impl GeneralCategoryData {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::try_new_unstable)]
     pub fn try_new_with_any_provider(
         provider: &(impl icu_provider::AnyProvider + ?Sized),
-    ) -> Result<Self, HarfBuzzError> {
+    ) -> Result<Self, DataError> {
         Self::try_new_unstable(&provider.as_downcasting())
     }
     #[cfg(feature = "serde")]
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER,Self::try_new_unstable)]
     pub fn try_new_with_buffer_provider(
         provider: &(impl icu_provider::BufferProvider + ?Sized),
-    ) -> Result<Self, HarfBuzzError> {
+    ) -> Result<Self, DataError> {
         Self::try_new_unstable(&provider.as_deserializing())
     }
 }
@@ -219,7 +217,7 @@ pub struct CombiningClassData {
 
 impl CombiningClassData {
     /// Construct a new [`CombiningClassData`] from a data provider.
-    pub fn try_new_unstable<D>(provider: &D) -> Result<Self, HarfBuzzError>
+    pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<CanonicalDecompositionDataV1Marker> + ?Sized,
     {
@@ -231,14 +229,14 @@ impl CombiningClassData {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::try_new_unstable)]
     pub fn try_new_with_any_provider(
         provider: &(impl icu_provider::AnyProvider + ?Sized),
-    ) -> Result<Self, HarfBuzzError> {
+    ) -> Result<Self, DataError> {
         Self::try_new_unstable(&provider.as_downcasting())
     }
     #[cfg(feature = "serde")]
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER,Self::try_new_unstable)]
     pub fn try_new_with_buffer_provider(
         provider: &(impl icu_provider::BufferProvider + ?Sized),
-    ) -> Result<Self, HarfBuzzError> {
+    ) -> Result<Self, DataError> {
         Self::try_new_unstable(&provider.as_deserializing())
     }
 }
@@ -260,7 +258,7 @@ pub struct MirroringData {
 
 impl MirroringData {
     /// Construct a new [`MirroringData`] from a data provider.
-    pub fn try_new_unstable<D>(provider: &D) -> Result<Self, HarfBuzzError>
+    pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<BidiAuxiliaryPropertiesV1Marker> + ?Sized,
     {
@@ -272,14 +270,14 @@ impl MirroringData {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::try_new_unstable)]
     pub fn try_new_with_any_provider(
         provider: &(impl icu_provider::AnyProvider + ?Sized),
-    ) -> Result<Self, HarfBuzzError> {
+    ) -> Result<Self, DataError> {
         Self::try_new_unstable(&provider.as_downcasting())
     }
     #[cfg(feature = "serde")]
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER,Self::try_new_unstable)]
     pub fn try_new_with_buffer_provider(
         provider: &(impl icu_provider::BufferProvider + ?Sized),
-    ) -> Result<Self, HarfBuzzError> {
+    ) -> Result<Self, DataError> {
         Self::try_new_unstable(&provider.as_deserializing())
     }
 }
@@ -306,7 +304,7 @@ pub struct ScriptData {
 
 impl ScriptData {
     /// Construct a new [`ScriptData`] from a data provider.
-    pub fn try_new_unstable<D>(provider: &D) -> Result<Self, HarfBuzzError>
+    pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<ScriptValueToShortNameV1Marker> + DataProvider<ScriptV1Marker> + ?Sized,
     {
@@ -321,14 +319,14 @@ impl ScriptData {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::try_new_unstable)]
     pub fn try_new_with_any_provider(
         provider: &(impl icu_provider::AnyProvider + ?Sized),
-    ) -> Result<Self, HarfBuzzError> {
+    ) -> Result<Self, DataError> {
         Self::try_new_unstable(&provider.as_downcasting())
     }
     #[cfg(feature = "serde")]
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER,Self::try_new_unstable)]
     pub fn try_new_with_buffer_provider(
         provider: &(impl icu_provider::BufferProvider + ?Sized),
-    ) -> Result<Self, HarfBuzzError> {
+    ) -> Result<Self, DataError> {
         Self::try_new_unstable(&provider.as_deserializing())
     }
 }
@@ -356,7 +354,7 @@ pub struct ComposeData {
 
 impl ComposeData {
     /// Construct a new [`ComposeData`] from a data provider.
-    pub fn try_new_unstable<D>(provider: &D) -> Result<Self, HarfBuzzError>
+    pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<CanonicalCompositionsV1Marker> + ?Sized,
     {
@@ -368,14 +366,14 @@ impl ComposeData {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::try_new_unstable)]
     pub fn try_new_with_any_provider(
         provider: &(impl icu_provider::AnyProvider + ?Sized),
-    ) -> Result<Self, HarfBuzzError> {
+    ) -> Result<Self, DataError> {
         Self::try_new_unstable(&provider.as_downcasting())
     }
     #[cfg(feature = "serde")]
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER,Self::try_new_unstable)]
     pub fn try_new_with_buffer_provider(
         provider: &(impl icu_provider::BufferProvider + ?Sized),
-    ) -> Result<Self, HarfBuzzError> {
+    ) -> Result<Self, DataError> {
         Self::try_new_unstable(&provider.as_deserializing())
     }
 }
@@ -397,7 +395,7 @@ pub struct DecomposeData {
 
 impl DecomposeData {
     /// Construct a new [`DecomposeData`] from a data provider.
-    pub fn try_new_unstable<D>(provider: &D) -> Result<Self, HarfBuzzError>
+    pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<CanonicalDecompositionDataV1Marker>
             + DataProvider<NonRecursiveDecompositionSupplementV1Marker>
@@ -412,14 +410,14 @@ impl DecomposeData {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::try_new_unstable)]
     pub fn try_new_with_any_provider(
         provider: &(impl icu_provider::AnyProvider + ?Sized),
-    ) -> Result<Self, HarfBuzzError> {
+    ) -> Result<Self, DataError> {
         Self::try_new_unstable(&provider.as_downcasting())
     }
     #[cfg(feature = "serde")]
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER,Self::try_new_unstable)]
     pub fn try_new_with_buffer_provider(
         provider: &(impl icu_provider::BufferProvider + ?Sized),
-    ) -> Result<Self, HarfBuzzError> {
+    ) -> Result<Self, DataError> {
         Self::try_new_unstable(&provider.as_deserializing())
     }
 }
