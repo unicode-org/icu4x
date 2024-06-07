@@ -288,7 +288,6 @@ pub enum DateTimeWriteError {
     MissingWeekCalculator,
     /// TODO
     #[displaydoc("Names for {0:?} not loaded")]
-    #[cfg(feature = "experimental")]
     MissingNames(Field),
 
     // Something not found in data
@@ -797,7 +796,6 @@ where
                             try_write_time_zone_gmt(w, gmt_offset, zone_symbols, true)?
                                 .map_err(|_| DateTimeWriteError::MissingNames(field))
                         }
-                        #[cfg(feature = "experimental")]
                         GetSymbolForTimeZoneError::MissingNames(f) => {
                             write_time_zone_missing(w)?;
                             Err(DateTimeWriteError::MissingNames(field))
