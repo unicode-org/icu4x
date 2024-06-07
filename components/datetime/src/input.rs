@@ -96,60 +96,6 @@ pub trait TimeZoneInput {
 }
 
 /// A combination of a formattable calendar date and ISO time.
-///
-/// # Examples
-///
-/// If the trait does not return all required fields, an error output will occur:
-///
-/// TODO: Not sure how to reproduce this behavior with the new trait scheme.
-///
-/// ```ignore
-/// use icu::calendar::*;
-/// use icu::calendar::types::*;
-/// use icu::datetime::input::*;
-/// use icu::datetime::{DateTimeWriteError, TypedDateTimeNames};
-/// use icu::datetime::fields::{Field, FieldLength, FieldSymbol, Weekday};
-/// use icu::datetime::neo_pattern::DateTimePattern;
-/// use icu::locale::locale;
-/// use writeable::assert_try_writeable_eq;
-///
-/// struct Empty;
-///
-/// impl DateInput for Empty {
-///     type Calendar = Gregorian;
-///     fn year(&self) -> Option<FormattableYear> { None }
-///     fn month(&self) -> Option<FormattableMonth> { None }
-///     fn day_of_month(&self) -> Option<DayOfMonth> { None }
-///     fn iso_weekday(&self) -> Option<IsoWeekday> { None }
-///     fn day_of_year_info(&self) -> Option<DayOfYearInfo> { None }
-///     fn any_calendar_kind(&self) -> Option<AnyCalendarKind> { None }
-///     fn to_iso(&self) -> icu::calendar::Date<Iso> { todo!() }
-/// }
-///
-/// impl IsoTimeInput for Empty {
-///     fn hour(&self) -> Option<IsoHour> { None }
-///     fn minute(&self) -> Option<IsoMinute> { None }
-///     fn second(&self) -> Option<IsoSecond> { None }
-///     fn nanosecond(&self) -> Option<NanoSecond> { None }
-/// }
-///
-/// // Create an instance that can format abbreviated month, weekday, and day period names:
-/// let mut names: TypedDateTimeNames<Gregorian> =
-///     TypedDateTimeNames::try_new(&locale!("en").into()).unwrap();
-///
-/// // Create a pattern from a pattern string:
-/// let pattern_str = "'It is:' E MMM d y G 'at' h:mm:ssSSS a";
-/// let pattern: DateTimePattern = pattern_str.parse().unwrap();
-///
-/// // The pattern string contains lots of symbols, but our DateTimeInput is empty!
-/// let mut buffer = String::new();
-/// // Missing data is filled in on a best-effort basis, and an error is signaled.
-/// assert_try_writeable_eq!(
-///     names.with_pattern(&pattern).format(&Empty),
-///     "It is: {E} {M} {d} {y} {G} at {h}:{m}:{s}{S} {a}",
-///     Err(DateTimeWriteError::MissingInputField("iso_weekday"))
-/// );
-/// ```
 pub trait DateTimeInput: DateInput + IsoTimeInput {}
 
 impl<T> DateTimeInput for T where T: DateInput + IsoTimeInput {}

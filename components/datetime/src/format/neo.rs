@@ -188,14 +188,45 @@ size_test!(
 /// let pattern_str = "'It is:' E MMM d y G 'at' h:mm:ssSSS a";
 /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
 ///
-/// // The pattern string contains lots of symbols including "E", "MMM", and "a", but we did not load any data!
+/// // The pattern string contains lots of symbols including "E", "MMM", and "a",
+/// // but we did not load any data!
 /// let datetime = DateTime::try_new_gregorian_datetime(2023, 11, 20, 11, 35, 3).unwrap();
-/// let mut buffer = String::new();
 /// // Missing data is filled in on a best-effort basis, and an error is signaled.
 /// assert_try_writeable_eq!(
 ///     names.with_pattern(&pattern).format(&datetime),
 ///     "It is: mon M11 20 2023 ce at 11:35:03.000 AM",
 ///     Err(DateTimeWriteError::MissingNames(Field { symbol: FieldSymbol::Weekday(Weekday::Format), length: FieldLength::One }))
+/// );
+/// ```
+///
+/// If the pattern contains fields inconsistent with the receiver, an error will occur:
+///
+/// ```
+/// use icu::calendar::Gregorian;
+/// use icu::calendar::DateTime;
+/// use icu::datetime::{DateTimeWriteError, TypedDateTimeNames};
+/// use icu::datetime::fields::{Field, FieldLength, FieldSymbol, Weekday};
+/// use icu::datetime::neo_pattern::DateTimePattern;
+/// use icu::datetime::neo_skeleton::NeoZoneComponents;
+/// use icu::locale::locale;
+/// use icu::timezone::CustomTimeZone;
+/// use writeable::assert_try_writeable_eq;
+///
+/// // Create an instance that can format abbreviated month, weekday, and day period names:
+/// let mut names: TypedDateTimeNames<Gregorian, NeoZoneComponents> =
+///     TypedDateTimeNames::try_new(&locale!("en").into()).unwrap();
+///
+/// // Create a pattern from a pattern string:
+/// let pattern_str = "'It is:' E MMM d y G 'at' h:mm:ssSSS a";
+/// let pattern: DateTimePattern = pattern_str.parse().unwrap();
+///
+/// // The pattern string contains lots of symbols including "E", "MMM", and "a",
+/// // but the `TypedDateTimeNames` is configured to format only time zones!
+/// // Missing data is filled in on a best-effort basis, and an error is signaled.
+/// assert_try_writeable_eq!(
+///     names.with_pattern(&pattern).format(&CustomTimeZone::utc()),
+///     "It is: {E} {M} {d} {y} {G} at {h}:{m}:{s}{S} {a}",
+///     Err(DateTimeWriteError::MissingInputField("iso_weekday"))
 /// );
 /// ```
 #[derive(Debug)]
