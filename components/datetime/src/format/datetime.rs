@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::fields::{self, Field, FieldLength, FieldSymbol, Second, Week, Year};
+use crate::fields::{self, Field, FieldLength, FieldSymbol, Second, TimeZone, Week, Year};
 use crate::input::{DateInput, ExtractedDateTimeInput, IsoTimeInput};
 use crate::pattern::runtime::{PatternBorrowed, PatternMetadata};
 use crate::pattern::{
@@ -14,8 +14,7 @@ use crate::provider::calendar::patterns::PatternPluralsFromPatternsV1Marker;
 #[cfg(feature = "experimental")]
 use crate::provider::date_time::GetSymbolForDayPeriodError;
 use crate::provider::date_time::{
-    DateSymbols, GetSymbolForEraError, GetSymbolForMonthError, GetSymbolForWeekdayError,
-    MonthPlaceholderValue, TimeSymbols,
+    DateSymbols, GetSymbolForEraError, GetSymbolForMonthError, GetSymbolForTimeZoneError, GetSymbolForWeekdayError, MonthPlaceholderValue, TimeSymbols, ZoneSymbols
 };
 
 use core::fmt::{self, Write};
@@ -29,6 +28,7 @@ use icu_calendar::AnyCalendarKind;
 use icu_decimal::FixedDecimalFormatter;
 use icu_plurals::PluralRules;
 use icu_provider::DataPayload;
+use icu_timezone::{CustomTimeZone, GmtOffset};
 use writeable::{Part, Writeable};
 
 /// [`FormattedDateTime`] is a intermediate structure which can be retrieved as
@@ -127,6 +127,7 @@ impl<'l> Writeable for FormattedDateTime<'l> {
             &self.datetime,
             self.date_symbols,
             self.time_symbols,
+            None::<()>.as_ref(),
             self.week_data,
             Some(self.fixed_decimal_format),
             &mut writeable::adapters::CoreWriteAsPartsWrite(sink),
@@ -189,11 +190,12 @@ where
 }
 
 #[allow(clippy::too_many_arguments)]
-pub(crate) fn try_write_pattern<'data, W, DS, TS>(
+pub(crate) fn try_write_pattern<'data, W, DS, TS, ZS>(
     pattern: PatternBorrowed<'data>,
     datetime: &ExtractedDateTimeInput,
     date_symbols: Option<&DS>,
     time_symbols: Option<&TS>,
+    zone_symbols: Option<&ZS>,
     week_data: Option<&'data WeekCalculator>,
     fixed_decimal_format: Option<&FixedDecimalFormatter>,
     w: &mut W,
@@ -202,6 +204,7 @@ where
     W: writeable::PartsWrite + ?Sized,
     DS: DateSymbols<'data>,
     TS: TimeSymbols,
+    ZS: ZoneSymbols,
 {
     try_write_pattern_items(
         pattern.metadata,
@@ -209,6 +212,7 @@ where
         datetime,
         date_symbols,
         time_symbols,
+        zone_symbols,
         week_data,
         fixed_decimal_format,
         w,
@@ -216,12 +220,13 @@ where
 }
 
 #[allow(clippy::too_many_arguments)]
-pub(crate) fn try_write_pattern_items<'data, W, DS, TS>(
+pub(crate) fn try_write_pattern_items<'data, W, DS, TS, ZS>(
     pattern_metadata: PatternMetadata,
     pattern_items: impl Iterator<Item = PatternItem>,
     datetime: &ExtractedDateTimeInput,
     date_symbols: Option<&DS>,
     time_symbols: Option<&TS>,
+    zone_symbols: Option<&ZS>,
     week_data: Option<&'data WeekCalculator>,
     fixed_decimal_format: Option<&FixedDecimalFormatter>,
     w: &mut W,
@@ -230,6 +235,7 @@ where
     W: writeable::PartsWrite + ?Sized,
     DS: DateSymbols<'data>,
     TS: TimeSymbols,
+    ZS: ZoneSymbols,
 {
     let mut r = Ok(());
     let mut iter = pattern_items.peekable();
@@ -244,6 +250,7 @@ where
                     datetime,
                     date_symbols,
                     time_symbols,
+                    zone_symbols,
                     week_data,
                     fixed_decimal_format,
                     w,
@@ -265,6 +272,9 @@ pub enum DateTimeWriteError {
     /// Missing DateSymbols
     #[displaydoc("DateSymbols not loaded")]
     MissingDateSymbols,
+    /// Missing ZoneSymbols
+    #[displaydoc("ZoneSymbols not loaded")]
+    MissingZoneSymbols,
     /// Missing TimeSymbols
     #[displaydoc("TimeSymbols not loaded")]
     MissingTimeSymbols,
@@ -314,13 +324,14 @@ pub enum DateTimeWriteError {
 // When modifying the list of fields using symbols,
 // update the matching query in `analyze_pattern` function.
 #[allow(clippy::too_many_arguments)]
-pub(crate) fn try_write_field<'data, W, DS, TS>(
+pub(crate) fn try_write_field<'data, W, DS, TS, ZS>(
     field: fields::Field,
     iter: &mut Peekable<impl Iterator<Item = PatternItem>>,
     pattern_metadata: PatternMetadata,
     datetime: &ExtractedDateTimeInput,
     date_symbols: Option<&DS>,
     time_symbols: Option<&TS>,
+    zone_symbols: Option<&ZS>,
     week_data: Option<&WeekCalculator>,
     fdf: Option<&FixedDecimalFormatter>,
     w: &mut W,
@@ -329,6 +340,7 @@ where
     W: writeable::PartsWrite + ?Sized,
     DS: DateSymbols<'data>,
     TS: TimeSymbols,
+    ZS: ZoneSymbols,
 {
     // Writes an error string for the given symbol
     fn write_value_missing(
@@ -340,6 +352,13 @@ where
             char::from(field.symbol).write_to(w)?;
             "}".write_to(w)
         })
+    }
+
+    fn write_time_zone_missing(
+        w: &mut (impl writeable::PartsWrite + ?Sized),
+        gmt_offset: Option<GmtOffset>
+    ) -> Result<(), fmt::Error> {
+        todo!()
     }
 
     Ok(match (field.symbol, field.length) {
@@ -734,6 +753,45 @@ where
                 }
             }
         },
+        (FieldSymbol::TimeZone(TimeZone::LowerV), l) => match datetime.time_zone() {
+            None => {
+                write_value_missing(w, field)?;
+                Err(DateTimeWriteError::MissingInputField("time_zone"))
+            }
+            Some(CustomTimeZone {
+                gmt_offset,
+                metazone_id: Some(metazone_id),
+                time_zone_id,
+                ..
+            }) => match zone_symbols
+                .ok_or(DateTimeWriteError::MissingZoneSymbols)
+                .and_then(|zs| {
+                    zs.get_generic_short_for_zone(metazone_id, time_zone_id)
+                        .map_err(|e| match e {
+                            GetSymbolForTimeZoneError::TypeTooNarrow => {
+                                DateTimeWriteError::MissingNames(field)
+                            }
+                            #[cfg(feature = "experimental")]
+                            GetSymbolForTimeZoneError::MissingNames(f) => {
+                                DateTimeWriteError::MissingNames(f)
+                            }
+                        })
+                }) {
+                Err(e) => {
+                    write_time_zone_missing(w, gmt_offset)?;
+                    Err(e)
+                }
+                Ok(s) => Ok(w.write_str(s)?),
+            },
+            Some(CustomTimeZone {
+                gmt_offset,
+                ..
+            }) => {
+                // Required time zone fields not present in input
+                write_time_zone_missing(w, gmt_offset)?;
+                Err(DateTimeWriteError::MissingInputField("metazone_id"))
+            }
+        },
         (
             FieldSymbol::TimeZone(_)
             | FieldSymbol::Day(_)
@@ -900,6 +958,7 @@ mod tests {
             &ExtractedDateTimeInput::extract_from(&datetime),
             Some(date_data.get()),
             Some(time_data.get()),
+            None::<()>.as_ref(),
             None,
             Some(&fixed_decimal_format),
             &mut writeable::adapters::CoreWriteAsPartsWrite(&mut sink),

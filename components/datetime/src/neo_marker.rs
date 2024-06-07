@@ -6,7 +6,7 @@
 
 use core::marker::PhantomData;
 
-use crate::{format::neo::*, neo::_internal::*, neo_skeleton::*, provider::neo::*, provider::time_zones::{TimeZoneFormatsV1Marker, MetazoneGenericNamesShortV1Marker}, CldrCalendar};
+use crate::{format::neo::*, neo::_internal::*, neo_skeleton::*, provider::{neo::*, time_zones::{MetazoneGenericNamesShortV1, MetazoneGenericNamesShortV1Marker, TimeZoneFormatsV1, TimeZoneFormatsV1Marker}}, CldrCalendar};
 use icu_calendar::{
     any_calendar::IntoAnyCalendar,
     types::{
@@ -137,6 +137,13 @@ impl<C> NeoGetField<NeoTypedInput<C>> for CustomTimeZone {
 pub trait NeoGetField<T> {
     /// Returns the value of this trait's field `T`.
     fn get_field(&self) -> T;
+}
+
+impl<T> NeoGetField<T> for T where T: Copy {
+    #[inline]
+    fn get_field(&self) -> T {
+        *self
+    }
 }
 
 impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<FormattableYear> for Date<A> {
@@ -389,6 +396,13 @@ impl From<NeverField> for Option<NanoSecond> {
     }
 }
 
+impl From<NeverField> for Option<CustomTimeZone> {
+    #[inline]
+    fn from(_: NeverField) -> Self {
+        None
+    }
+}
+
 /// A trait associating [`NeoDateComponents`].
 pub trait HasDateComponents {
     /// The associated components.
@@ -487,6 +501,12 @@ pub trait TimeMarkers: private::Sealed {
 /// A trait associating types implementing various other traits
 /// required for time zone formatting.
 pub trait ZoneMarkers: private::Sealed {
+    /// Marker for resolving the time zone input field.
+    type TimeZoneInput: Into<Option<CustomTimeZone>>;
+    /// Marker for loading core time zone data.
+    type ZoneEssentialsV1Marker: DataMarker<Yokeable = TimeZoneFormatsV1<'static>>;
+    /// Marker for loading generic short time zone names.
+    type ZoneGenericShortNamesV1Marker: DataMarker<Yokeable = MetazoneGenericNamesShortV1<'static>>;
 }
 
 /// A trait associating constants and types implementing various other traits
@@ -558,7 +578,11 @@ impl TimeMarkers for NeoNeverMarker {
     type DayPeriodNamesV1Marker = NeverMarker<LinearNamesV1<'static>>;
 }
 
-impl ZoneMarkers for NeoNeverMarker {}
+impl ZoneMarkers for NeoNeverMarker {
+    type TimeZoneInput = NeverField;
+    type ZoneEssentialsV1Marker = NeverMarker<TimeZoneFormatsV1<'static>>;
+    type ZoneGenericShortNamesV1Marker = NeverMarker<MetazoneGenericNamesShortV1<'static>>;
+}
 
 /// A trait associating constants and types implementing various other traits
 /// required for datetime formatting in a specific calendar with
@@ -814,8 +838,17 @@ macro_rules! datetime_marker_helper {
     (@input/nanosecond, yes) => {
         NanoSecond
     };
+    (@input/timezone, yes) => {
+        CustomTimeZone
+    };
     (@input/$any:ident, no) => {
         NeverField
+    };
+    (@data/zone/essentials, yes) => {
+        TimeZoneFormatsV1Marker
+    };
+    (@data/zone/genericshort, yes) => {
+        MetazoneGenericNamesShortV1Marker
     };
     (@names/year, yes) => {
         DataPayload<YearNamesV1Marker>
@@ -1191,7 +1224,11 @@ macro_rules! impl_zone_marker {
         impl HasZoneComponents for $type {
             const COMPONENTS: NeoZoneComponents = $components;
         }
-        impl ZoneMarkers for $type {}
+        impl ZoneMarkers for $type {
+            type TimeZoneInput = datetime_marker_helper!(@input/timezone, yes);
+            type ZoneEssentialsV1Marker = datetime_marker_helper!(@data/zone/essentials, $zone_essentials_yesno);
+            type ZoneGenericShortNamesV1Marker = datetime_marker_helper!(@data/zone/genericshort, $zone_genericshort_yesno);
+        }
         impl<C> TypedDateTimeMarkers<C> for $type {
             type D = NeoNeverMarker;
             type T = NeoNeverMarker;
@@ -1564,6 +1601,9 @@ impl DateTimeNamesMarker for NeoZoneComponents {
 }
 
 impl ZoneMarkers for NeoZoneComponents {
+    type TimeZoneInput = datetime_marker_helper!(@input/timezone, yes);
+    type ZoneEssentialsV1Marker = datetime_marker_helper!(@data/zone/essentials, yes);
+    type ZoneGenericShortNamesV1Marker = datetime_marker_helper!(@data/zone/genericshort, yes);
 }
 
 impl<C: CldrCalendar> TypedDateTimeMarkers<C> for NeoZoneComponents {

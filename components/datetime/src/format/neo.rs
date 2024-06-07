@@ -15,10 +15,9 @@ use crate::input::IsoTimeInput;
 use crate::neo_pattern::{DateTimePattern, DateTimePatternBorrowed};
 use crate::pattern::PatternItem;
 use crate::provider::date_time::{
-    DateSymbols, GetSymbolForDayPeriodError, GetSymbolForEraError, GetSymbolForMonthError,
-    GetSymbolForWeekdayError, MonthPlaceholderValue, TimeSymbols,
+    DateSymbols, GetSymbolForDayPeriodError, GetSymbolForEraError, GetSymbolForMonthError, GetSymbolForTimeZoneError, GetSymbolForWeekdayError, MonthPlaceholderValue, TimeSymbols, ZoneSymbols
 };
-use crate::provider::time_zones::{TimeZoneFormatsV1, MetazoneGenericNamesShortV1};
+use crate::provider::time_zones::{MetazoneGenericNamesShortV1, MetazoneGenericNamesShortV1Marker, TimeZoneFormatsV1, TimeZoneFormatsV1Marker};
 use crate::provider::neo::*;
 use core::fmt;
 use core::marker::PhantomData;
@@ -31,6 +30,7 @@ use icu_decimal::options::GroupingStrategy;
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_decimal::FixedDecimalFormatter;
 use icu_provider::prelude::*;
+use icu_timezone::{TimeZoneBcp47Id, MetazoneId};
 use writeable::TryWriteable;
 use yoke::Yokeable;
 
@@ -319,6 +319,8 @@ impl From<RawDateTimeNames<DateMarker>> for RawDateTimeNames<DateTimeMarker> {
             month_symbols: other.month_symbols,
             weekday_symbols: other.weekday_symbols,
             dayperiod_symbols: OptionalNames::None,
+            zone_essentials: OptionalNames::None,
+            zone_generic_short_names: OptionalNames::None,
             fixed_decimal_formatter: other.fixed_decimal_formatter,
             week_calculator: other.week_calculator,
             _marker: PhantomData,
@@ -333,6 +335,8 @@ impl From<RawDateTimeNames<TimeMarker>> for RawDateTimeNames<DateTimeMarker> {
             month_symbols: OptionalNames::None,
             weekday_symbols: OptionalNames::None,
             dayperiod_symbols: other.dayperiod_symbols,
+            zone_essentials: OptionalNames::None,
+            zone_generic_short_names: OptionalNames::None,
             fixed_decimal_formatter: other.fixed_decimal_formatter,
             week_calculator: other.week_calculator,
             _marker: PhantomData,
@@ -346,6 +350,8 @@ pub(crate) struct RawDateTimeNames<R: DateTimeNamesMarker> {
     month_symbols: OptionalNames<fields::Month, R::MonthNames>,
     weekday_symbols: OptionalNames<fields::Weekday, R::WeekdayNames>,
     dayperiod_symbols: OptionalNames<(), R::DayPeriodNames>,
+    zone_essentials: OptionalNames<(), R::ZoneEssentials>,
+    zone_generic_short_names: OptionalNames<(), R::ZoneGenericShortNames>,
     // TODO(#4340): Make the FixedDecimalFormatter optional
     fixed_decimal_formatter: Option<FixedDecimalFormatter>,
     week_calculator: Option<WeekCalculator>,
@@ -655,6 +661,60 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
         self.load_weekday_names(&crate::provider::Baked, field_symbol, field_length)
     }
 
+    /// Loads generic short time zone names.
+    pub fn load_generic_short_time_zone_names<P>(
+        &mut self,
+        provider: &P,
+    ) -> Result<&mut Self, SingleLoadError>
+    where
+        P: DataProvider<MetazoneGenericNamesShortV1Marker> + ?Sized,
+    {
+        self.inner.load_generic_short_time_zone_names(
+            &MetazoneGenericNamesShortV1Marker::bind(provider),
+            &self.locale,
+        )?;
+        Ok(self)
+    }
+
+    /// Includes generic short time zone names.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::Gregorian;
+    /// use icu::datetime::TypedDateTimeNames;
+    /// use icu::datetime::neo_pattern::DateTimePattern;
+    /// use icu::locale::locale;
+    /// use icu::timezone::CustomTimeZone;
+    /// use writeable::assert_try_writeable_eq;
+    ///
+    /// let mut names =
+    ///     TypedDateTimeNames::<Gregorian>::try_new(&locale!("th-TH").into())
+    ///         .unwrap();
+    ///
+    /// names
+    ///     .include_generic_short_time_zone_names()
+    ///     .unwrap();
+    /// 
+    /// // Create a pattern with symbol `v`:
+    /// let pattern_str = "'Your time zone is:' v";
+    /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
+    ///
+    /// assert_try_writeable_eq!(
+    ///     names.with_pattern(&pattern).format(&CustomTimeZone::bst()),
+    ///     "Your time zone is: XYZ",
+    /// );
+    /// ```
+    #[cfg(feature = "compiled_data")]
+    pub fn include_generic_short_time_zone_names(
+        &mut self,
+    ) -> Result<&mut Self, SingleLoadError>
+    where
+        crate::provider::Baked: icu_provider::DataProvider<MetazoneGenericNamesShortV1Marker>,
+    {
+        self.load_generic_short_time_zone_names(&crate::provider::Baked)
+    }
+
     /// Sets the week calculator to use with patterns requiring week numbering.
     ///
     /// # Examples
@@ -725,7 +785,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
         }
     }
 
-    /// Associates this [`TypedDateTimeNames`] with a pattern
+    /// Associates this [`TypedDateTimeNames`] with a datetime pattern
     /// and loads all data required for that pattern.
     ///
     /// Does not duplicate textual field symbols. See #4337
@@ -739,6 +799,8 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
             + DataProvider<C::MonthNamesV1Marker>
             + DataProvider<WeekdayNamesV1Marker>
             + DataProvider<DayPeriodNamesV1Marker>
+            + DataProvider<TimeZoneFormatsV1Marker>
+            + DataProvider<MetazoneGenericNamesShortV1Marker>
             + DataProvider<DecimalSymbolsV1Marker>
             + DataProvider<WeekDataV2Marker>
             + ?Sized,
@@ -749,6 +811,9 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
             &C::MonthNamesV1Marker::bind(provider),
             &WeekdayNamesV1Marker::bind(provider),
             &DayPeriodNamesV1Marker::bind(provider),
+            // TODO: Consider making time zone name loading optional here (lots of data)
+            &TimeZoneFormatsV1Marker::bind(provider),
+            &MetazoneGenericNamesShortV1Marker::bind(provider),
             Some(&ExternalLoaderUnstable(provider)),
             Some(&ExternalLoaderUnstable(provider)),
             locale,
@@ -803,7 +868,9 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
         crate::provider::Baked: DataProvider<C::YearNamesV1Marker>
             + DataProvider<C::MonthNamesV1Marker>
             + DataProvider<WeekdayNamesV1Marker>
-            + DataProvider<DayPeriodNamesV1Marker>,
+            + DataProvider<DayPeriodNamesV1Marker>
+            + DataProvider<TimeZoneFormatsV1Marker>
+            + DataProvider<MetazoneGenericNamesShortV1Marker>,
     {
         let locale = &self.locale;
         self.inner.load_for_pattern(
@@ -811,6 +878,8 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
             &C::MonthNamesV1Marker::bind(&crate::provider::Baked),
             &WeekdayNamesV1Marker::bind(&crate::provider::Baked),
             &DayPeriodNamesV1Marker::bind(&crate::provider::Baked),
+            &TimeZoneFormatsV1Marker::bind(&crate::provider::Baked),
+            &MetazoneGenericNamesShortV1Marker::bind(&crate::provider::Baked),
             Some(&ExternalLoaderCompiledData),
             Some(&ExternalLoaderCompiledData),
             locale,
@@ -871,6 +940,8 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
             month_symbols: OptionalNames::None,
             weekday_symbols: OptionalNames::None,
             dayperiod_symbols: OptionalNames::None,
+            zone_essentials: OptionalNames::None,
+            zone_generic_short_names: OptionalNames::None,
             fixed_decimal_formatter: None,
             week_calculator: None,
             _marker: PhantomData,
@@ -1096,6 +1167,40 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         Ok(())
     }
 
+    pub(crate) fn load_generic_short_time_zone_names<P>(
+        &mut self,
+        provider: &P,
+        locale: &DataLocale,
+    ) -> Result<(), SingleLoadError>
+    where
+        P: BoundDataProvider<MetazoneGenericNamesShortV1Marker> + ?Sized,
+    {
+        const IGNORED_FIELD_LENGTH: FieldLength = FieldLength::One;
+        let field = fields::Field {
+            symbol: FieldSymbol::TimeZone(fields::TimeZone::LowerV),
+            length: IGNORED_FIELD_LENGTH,
+        };
+        match self
+            .zone_generic_short_names
+            .check_with_length((), IGNORED_FIELD_LENGTH)
+        {
+            NamePresence::Loaded => return Ok(()),
+            NamePresence::NotLoaded => (),
+            NamePresence::Mismatched => return Err(SingleLoadError::DuplicateField(field)),
+        };
+        let payload = R::ZoneGenericShortNames::load_from(
+            provider,
+            DataRequest {
+                locale,
+                ..Default::default()
+            },
+        )
+        .ok_or(SingleLoadError::TypeTooNarrow(field))?
+        .map_err(SingleLoadError::Data)?;
+        self.zone_generic_short_names = OptionalNames::SingleLength((), IGNORED_FIELD_LENGTH, payload);
+        Ok(())
+    }
+
     #[inline]
     pub(crate) fn set_week_calculator(&mut self, week_calculator: WeekCalculator) {
         self.week_calculator = Some(week_calculator);
@@ -1137,6 +1242,8 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         month_provider: &(impl BoundDataProvider<MonthNamesV1Marker> + ?Sized),
         weekday_provider: &(impl BoundDataProvider<WeekdayNamesV1Marker> + ?Sized),
         dayperiod_provider: &(impl BoundDataProvider<DayPeriodNamesV1Marker> + ?Sized),
+        zone_essentials_provider: &(impl BoundDataProvider<TimeZoneFormatsV1Marker> + ?Sized),
+        zone_genericshort_provider: &(impl BoundDataProvider<MetazoneGenericNamesShortV1Marker> + ?Sized),
         fixed_decimal_formatter_loader: Option<&impl FixedDecimalFormatterLoader>,
         week_calculator_loader: Option<&impl WeekCalculatorLoader>,
         locale: &DataLocale,
@@ -1177,6 +1284,17 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                 FieldSymbol::DayPeriod(_) => {
                     self.load_day_period_names(dayperiod_provider, locale, field.length)?;
                 }
+                FieldSymbol::TimeZone(fields::TimeZone::LowerV) => match field.length {
+                    FieldLength::One => {
+                        self.load_generic_short_time_zone_names(zone_genericshort_provider, locale)?;
+                    }
+                    _ => {
+                        return Err(LoadError::UnsupportedField(field));
+                    }
+                }
+                FieldSymbol::TimeZone(_) => {
+                    return Err(LoadError::UnsupportedField(field));
+                }
 
                 ///// Numeric symbols /////
                 FieldSymbol::Year(fields::Year::WeekOf) => week_field = Some(field),
@@ -1186,10 +1304,6 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                 FieldSymbol::Hour(_) => numeric_field = Some(field),
                 FieldSymbol::Minute => numeric_field = Some(field),
                 FieldSymbol::Second(_) => numeric_field = Some(field),
-                FieldSymbol::TimeZone(_) => {
-                    // TODO: Consider whether time zones are supported here.
-                    return Err(LoadError::UnsupportedField(field));
-                }
             };
         }
 
@@ -1377,6 +1491,7 @@ impl<'a> TryWriteable for FormattedDateTimePattern<'a> {
             &self.datetime,
             Some(&self.names),
             Some(&self.names),
+            Some(&self.names),
             self.names.week_calculator,
             self.names.fixed_decimal_formatter,
             sink,
@@ -1522,6 +1637,12 @@ impl<'data> TimeSymbols for RawDateTimeNamesBorrowed<'data> {
             _ => dayperiod_symbols.pm(),
         };
         option_value.ok_or(GetSymbolForDayPeriodError::MissingNames(field))
+    }
+}
+
+impl<'data> ZoneSymbols for RawDateTimeNamesBorrowed<'data> {
+    fn get_generic_short_for_zone(&self, metazone_id: MetazoneId, time_zone_id: Option<TimeZoneBcp47Id>) -> Result<&str, GetSymbolForTimeZoneError> {
+        todo!()
     }
 }
 
