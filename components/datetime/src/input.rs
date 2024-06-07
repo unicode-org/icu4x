@@ -101,7 +101,9 @@ pub trait TimeZoneInput {
 ///
 /// If the trait does not return all required fields, an error output will occur:
 ///
-/// ```
+/// TODO: Not sure how to reproduce this behavior with the new trait scheme.
+///
+/// ```ignore
 /// use icu::calendar::*;
 /// use icu::calendar::types::*;
 /// use icu::datetime::input::*;

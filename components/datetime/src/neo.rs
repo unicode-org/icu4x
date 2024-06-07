@@ -338,7 +338,7 @@ impl<C: CldrCalendar, R: TypedDateTimeMarkers<C> + IsRuntimeComponents> TypedNeo
     /// use icu::calendar::DateTime;
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::neo::TypedNeoFormatter;
-    /// use icu::datetime::neo_skeleton::NeoComponents;
+    /// use icu::datetime::neo_skeleton::NeoDateTimeComponents;
     /// use icu::datetime::neo_skeleton::NeoDayComponents;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::datetime::neo_skeleton::NeoTimeComponents;
@@ -347,7 +347,7 @@ impl<C: CldrCalendar, R: TypedDateTimeMarkers<C> + IsRuntimeComponents> TypedNeo
     ///
     /// let fmt = TypedNeoFormatter::<Gregorian, _>::try_new_with_components(
     ///     &locale!("es-MX").into(),
-    ///     NeoComponents::DateTime(
+    ///     NeoDateTimeComponents::DateTime(
     ///         NeoDayComponents::Weekday,
     ///         NeoTimeComponents::HourMinute,
     ///     ),
@@ -854,7 +854,7 @@ impl<R: DateTimeMarkers + IsRuntimeComponents> NeoFormatter<R> {
     /// ```
     /// use icu::calendar::DateTime;
     /// use icu::datetime::neo::NeoFormatter;
-    /// use icu::datetime::neo_skeleton::NeoComponents;
+    /// use icu::datetime::neo_skeleton::NeoDateTimeComponents;
     /// use icu::datetime::neo_skeleton::NeoDayComponents;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::datetime::neo_skeleton::NeoTimeComponents;
@@ -863,7 +863,7 @@ impl<R: DateTimeMarkers + IsRuntimeComponents> NeoFormatter<R> {
     ///
     /// let fmt = NeoFormatter::try_new_with_components(
     ///     &locale!("es-MX").into(),
-    ///     NeoComponents::DateTime(
+    ///     NeoDateTimeComponents::DateTime(
     ///         NeoDayComponents::Weekday,
     ///         NeoTimeComponents::HourMinute,
     ///     ),

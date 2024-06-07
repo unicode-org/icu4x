@@ -1327,6 +1327,7 @@ macro_rules! impl_datetime_marker {
     }
 }
 
+/*
 macro_rules! impl_zoneddatetime_marker {
     (
         $type:ident,
@@ -1399,6 +1400,7 @@ macro_rules! impl_zoneddatetime_marker {
         pub type $type = DateTimeCombo<$date, $time, $zone>;
     }
 }
+*/
 
 impl_day_marker!(
     NeoYearMonthDayMarker,
@@ -1499,7 +1501,7 @@ impl_zone_marker!(
 );
 
 // TODO: Make this use NeoAutoZoneMarker, derived from time length patterns
-
+/*
 impl_zoneddatetime_marker!(
     NeoAutoDateTimeZoneMarker,
     description = "locale-dependent date and time fields with a time zone",
@@ -1508,6 +1510,7 @@ impl_zoneddatetime_marker!(
     time = NeoAutoTimeMarker,
     zone = NeoTimeZoneGenericShortMarker,
 );
+*/
 
 /// Trait for components that can be formatted at runtime.
 pub trait IsRuntimeComponents: private::Sealed + Into<NeoComponents> {}
