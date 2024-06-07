@@ -9,10 +9,11 @@ use crate::fields::{self, Field, FieldLength, FieldSymbol};
 use crate::helpers::size_test;
 use crate::input;
 use crate::input::DateInput;
-use crate::input::DateTimeInput;
 use crate::input::ExtractedDateTimeInput;
 use crate::input::IsoTimeInput;
+use crate::neo_marker::{NeoGetField, TimeMarkers, TypedDateMarkers, TypedDateTimeMarkers, ZoneMarkers};
 use crate::neo_pattern::{DateTimePattern, DateTimePatternBorrowed};
+use crate::neo_skeleton::{NeoDateTimeComponents};
 use crate::pattern::PatternItem;
 use crate::provider::date_time::{
     DateSymbols, GetSymbolForDayPeriodError, GetSymbolForEraError, GetSymbolForMonthError, GetSymbolForTimeZoneError, GetSymbolForWeekdayError, MonthPlaceholderValue, TimeSymbols, ZoneSymbols
@@ -191,7 +192,7 @@ size_test!(
 /// );
 /// ```
 #[derive(Debug)]
-pub struct TypedDateTimeNames<C: CldrCalendar, R: DateTimeNamesMarker = DateTimeMarker> {
+pub struct TypedDateTimeNames<C: CldrCalendar, R: DateTimeNamesMarker = NeoDateTimeComponents> {
     locale: DataLocale,
     inner: RawDateTimeNames<R>,
     _calendar: PhantomData<C>,
@@ -688,13 +689,14 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::TypedDateTimeNames;
+    /// use icu::datetime::neo_skeleton::NeoZoneComponents;
     /// use icu::datetime::neo_pattern::DateTimePattern;
     /// use icu::locale::locale;
     /// use icu::timezone::CustomTimeZone;
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let mut names =
-    ///     TypedDateTimeNames::<Gregorian>::try_new(&locale!("th-TH").into())
+    ///     TypedDateTimeNames::<Gregorian, NeoZoneComponents>::try_new(&locale!("th-TH").into())
     ///         .unwrap();
     ///
     /// names
@@ -707,7 +709,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     ///
     /// assert_try_writeable_eq!(
     ///     names.with_pattern(&pattern).format(&CustomTimeZone::bst()),
-    ///     "Your time zone is: XYZ",
+    ///     "Your time zone is: {todo}",
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
@@ -783,10 +785,11 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     pub fn with_pattern<'l>(
         &'l self,
         pattern: &'l DateTimePattern,
-    ) -> DateTimePatternFormatter<'l, C> {
+    ) -> DateTimePatternFormatter<'l, C, R> {
         DateTimePatternFormatter {
             inner: self.inner.with_pattern(pattern.as_borrowed()),
             _calendar: PhantomData,
+            _marker: PhantomData,
         }
     }
 
@@ -798,7 +801,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
         &'l mut self,
         provider: &P,
         pattern: &'l DateTimePattern,
-    ) -> Result<DateTimePatternFormatter<'l, C>, LoadError>
+    ) -> Result<DateTimePatternFormatter<'l, C, R>, LoadError>
     where
         P: DataProvider<C::YearNamesV1Marker>
             + DataProvider<C::MonthNamesV1Marker>
@@ -827,6 +830,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
         Ok(DateTimePatternFormatter {
             inner: self.inner.with_pattern(pattern.as_borrowed()),
             _calendar: PhantomData,
+            _marker: PhantomData,
         })
     }
 
@@ -868,7 +872,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     pub fn include_for_pattern<'l>(
         &'l mut self,
         pattern: &'l DateTimePattern,
-    ) -> Result<DateTimePatternFormatter<'l, C>, LoadError>
+    ) -> Result<DateTimePatternFormatter<'l, C, R>, LoadError>
     where
         crate::provider::Baked: DataProvider<C::YearNamesV1Marker>
             + DataProvider<C::MonthNamesV1Marker>
@@ -893,6 +897,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
         Ok(DateTimePatternFormatter {
             inner: self.inner.with_pattern(pattern.as_borrowed()),
             _calendar: PhantomData,
+            _marker: PhantomData,
         })
     }
 }
@@ -1336,9 +1341,10 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
 }
 
 #[derive(Debug, Copy, Clone)]
-pub struct DateTimePatternFormatter<'a, C: CldrCalendar> {
+pub struct DateTimePatternFormatter<'a, C: CldrCalendar, R> {
     inner: RawDateTimePatternFormatter<'a>,
     _calendar: PhantomData<C>,
+    _marker: PhantomData<R>,
 }
 
 #[derive(Debug, Copy, Clone)]
@@ -1347,17 +1353,31 @@ pub(crate) struct RawDateTimePatternFormatter<'a> {
     names: RawDateTimeNamesBorrowed<'a>,
 }
 
-impl<'a, C: CldrCalendar> DateTimePatternFormatter<'a, C> {
+impl<'a, C: CldrCalendar, R: TypedDateTimeMarkers<C>> DateTimePatternFormatter<'a, C, R> {
     /// Formats a date and time of day.
     ///
     /// For an example, see [`TypedDateTimeNames`].
-    pub fn format<T>(&self, datetime: &'a T) -> FormattedDateTimePattern<'a>
+    pub fn format<I>(&self, datetime: &I) -> FormattedDateTimePattern<'a>
     where
-        T: DateTimeInput<Calendar = C>,
+        I: ?Sized
+            + NeoGetField<<R::D as TypedDateMarkers<C>>::TypedInputMarker>
+            + NeoGetField<<R::D as TypedDateMarkers<C>>::YearInput>
+            + NeoGetField<<R::D as TypedDateMarkers<C>>::MonthInput>
+            + NeoGetField<<R::D as TypedDateMarkers<C>>::DayOfMonthInput>
+            + NeoGetField<<R::D as TypedDateMarkers<C>>::DayOfWeekInput>
+            + NeoGetField<<R::D as TypedDateMarkers<C>>::DayOfYearInput>
+            + NeoGetField<<R::D as TypedDateMarkers<C>>::AnyCalendarKindInput>
+            + NeoGetField<<R::T as TimeMarkers>::HourInput>
+            + NeoGetField<<R::T as TimeMarkers>::MinuteInput>
+            + NeoGetField<<R::T as TimeMarkers>::SecondInput>
+            + NeoGetField<<R::T as TimeMarkers>::NanoSecondInput>
+            + NeoGetField<<R::Z as ZoneMarkers>::TimeZoneInput>,
     {
+        let datetime =
+            ExtractedDateTimeInput::extract_from_typed_neo_input::<C, R::D, R::T, R::Z, I>(datetime);
         FormattedDateTimePattern {
             pattern: self.inner.pattern,
-            datetime: ExtractedDateTimeInput::extract_from(datetime),
+            datetime,
             names: self.inner.names,
         }
     }

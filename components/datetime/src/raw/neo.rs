@@ -284,7 +284,7 @@ impl DateTimePatternSelectionData {
                 )?;
                 Ok(Self::DateTimeGlue(selection))
             }
-            NeoComponents::DateTimeZone(day_components, time_components, zone_components) => {
+            NeoComponents::DateTimeZone(datetime_components, zone_components) => {
                 todo!()
             }
         }
