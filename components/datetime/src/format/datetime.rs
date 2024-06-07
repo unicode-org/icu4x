@@ -771,6 +771,10 @@ where
                             GetSymbolForTimeZoneError::TypeTooNarrow => {
                                 DateTimeWriteError::MissingNames(field)
                             }
+                            GetSymbolForTimeZoneError::Missing => {
+                                // TODO: This should have graceful fallback
+                                DateTimeWriteError::MissingNames(field)
+                            }
                             #[cfg(feature = "experimental")]
                             GetSymbolForTimeZoneError::MissingNames(f) => {
                                 DateTimeWriteError::MissingNames(f)

@@ -52,6 +52,7 @@ pub(crate) enum GetSymbolForDayPeriodError {
 
 pub(crate) enum GetSymbolForTimeZoneError {
     TypeTooNarrow,
+    Missing,
     #[cfg(feature = "experimental")]
     MissingNames(Field),
 }

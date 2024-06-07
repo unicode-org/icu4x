@@ -49,12 +49,12 @@ pub(crate) enum TimePatternDataBorrowed<'a> {
 
 #[derive(Debug)]
 pub(crate) enum ZonePatternSelectionData {
-    SinglePatternItem(PatternItem),
+    SinglePatternItem(<PatternItem as AsULE>::ULE),
 }
 
 #[derive(Debug, Copy, Clone)]
 pub(crate) enum ZonePatternDataBorrowed<'a> {
-    SinglePatternItem(&'a PatternItem),
+    SinglePatternItem(&'a <PatternItem as AsULE>::ULE),
 }
 
 #[derive(Debug)]
@@ -179,14 +179,14 @@ impl ZonePatternSelectionData {
                 length: FieldLength::One,
             })
         };
-        Self::SinglePatternItem(pattern_item)
+        Self::SinglePatternItem(pattern_item.to_unaligned())
     }
 
     /// Borrows a pattern containing all of the fields that need to be loaded.
     #[inline]
     pub(crate) fn pattern_items_for_data_loading(&self) -> impl Iterator<Item = PatternItem> + '_ {
         let Self::SinglePatternItem(ref pattern_item) = self;
-        [*pattern_item].into_iter()
+        [PatternItem::from_unaligned(*pattern_item)].into_iter()
     }
 
     /// Borrows a resolved pattern based on the given datetime
@@ -415,6 +415,12 @@ impl<'a> DateTimePatternDataBorrowed<'a> {
                         .time_pattern()
                         .map(|data| match data {
                             TimePatternDataBorrowed::Resolved(pb) => pb.items.as_ule_slice(),
+                        })
+                        .unwrap_or(&[]),
+                    Err(2) => self
+                        .zone_pattern()
+                        .map(|data| match data {
+                            ZonePatternDataBorrowed::SinglePatternItem(item) => core::slice::from_ref(item),
                         })
                         .unwrap_or(&[]),
                     _ => &[],

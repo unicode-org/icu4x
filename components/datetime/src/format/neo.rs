@@ -94,6 +94,7 @@ impl<S, T> OptionalNames<S, T>
 where
     S: Copy,
 {
+    #[inline]
     pub(crate) fn as_borrowed<'a, Y>(&'a self) -> OptionalNames<S, &'a <Y as Yokeable<'a>>::Output>
     where
         T: MaybePayload<Y>,
@@ -108,6 +109,8 @@ where
         }
     }
 }
+
+const IGNORED_FIELD_LENGTH: FieldLength = FieldLength::One;
 
 size_test!(
     TypedDateTimeNames<icu_calendar::Gregorian, DateTimeMarker>,
@@ -364,6 +367,8 @@ pub(crate) struct RawDateTimeNamesBorrowed<'l> {
     month_names: OptionalNames<fields::Month, &'l MonthNamesV1<'l>>,
     weekday_names: OptionalNames<fields::Weekday, &'l LinearNamesV1<'l>>,
     dayperiod_names: OptionalNames<(), &'l LinearNamesV1<'l>>,
+    zone_essentials: OptionalNames<(), &'l TimeZoneFormatsV1<'l>>,
+    zone_generic_short_names: OptionalNames<(), &'l MetazoneGenericNamesShortV1<'l>>,
     pub(crate) fixed_decimal_formatter: Option<&'l FixedDecimalFormatter>,
     pub(crate) week_calculator: Option<&'l WeekCalculator>,
 }
@@ -954,6 +959,8 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
             month_names: self.month_symbols.as_borrowed(),
             weekday_names: self.weekday_symbols.as_borrowed(),
             dayperiod_names: self.dayperiod_symbols.as_borrowed(),
+            zone_essentials: self.zone_essentials.as_borrowed(),
+            zone_generic_short_names: self.zone_generic_short_names.as_borrowed(),
             fixed_decimal_formatter: self.fixed_decimal_formatter.as_ref(),
             week_calculator: self.week_calculator.as_ref(),
         }
@@ -1175,7 +1182,6 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
     where
         P: BoundDataProvider<MetazoneGenericNamesShortV1Marker> + ?Sized,
     {
-        const IGNORED_FIELD_LENGTH: FieldLength = FieldLength::One;
         let field = fields::Field {
             symbol: FieldSymbol::TimeZone(fields::TimeZone::LowerV),
             length: IGNORED_FIELD_LENGTH,
@@ -1642,7 +1648,13 @@ impl<'data> TimeSymbols for RawDateTimeNamesBorrowed<'data> {
 
 impl<'data> ZoneSymbols for RawDateTimeNamesBorrowed<'data> {
     fn get_generic_short_for_zone(&self, metazone_id: MetazoneId, time_zone_id: Option<TimeZoneBcp47Id>) -> Result<&str, GetSymbolForTimeZoneError> {
-        todo!()
+        let field = fields::Field {
+            symbol: FieldSymbol::TimeZone(fields::TimeZone::LowerV),
+            length: IGNORED_FIELD_LENGTH,
+        };
+        let data = self.zone_generic_short_names.get_with_length((), IGNORED_FIELD_LENGTH)
+        .ok_or(GetSymbolForTimeZoneError::MissingNames(field))?;
+        time_zone_id.and_then(|time_zone_id| data.overrides.get(&time_zone_id)).or_else(|| data.defaults.get(&metazone_id)).ok_or(GetSymbolForTimeZoneError::Missing)
     }
 }
 
