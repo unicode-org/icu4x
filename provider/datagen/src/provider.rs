@@ -70,7 +70,7 @@ macro_rules! cb {
         );
     }
 }
-crate::registry!(cb);
+icu_registry::registry!(cb);
 
 icu_provider::impl_data_provider_never_marker!(DatagenProvider);
 

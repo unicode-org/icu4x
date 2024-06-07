@@ -94,7 +94,6 @@
 mod driver;
 #[cfg(feature = "provider")]
 mod provider;
-mod registry;
 
 pub use driver::DatagenDriver;
 pub use driver::DeduplicationStrategy;
@@ -170,26 +169,6 @@ macro_rules! cb {
             ]
         }
 
-        #[test]
-        fn no_marker_collisions() {
-            let mut map = std::collections::BTreeMap::new();
-            let mut failed = false;
-            for marker in all_markers() {
-                if let Some(colliding_marker) = map.insert(marker.path.hashed(), marker) {
-                    println!(
-                        "{:?} and {:?} collide at {:?}",
-                        marker.path,
-                        colliding_marker.path,
-                        marker.path.hashed(),
-                    );
-                    failed = true;
-                }
-            }
-            if failed {
-                panic!();
-            }
-        }
-
         /// Parses a human-readable marker identifier into a [`DataMarkerInfo`].
         //  Supports the hello world marker
         /// # Example
@@ -234,16 +213,6 @@ macro_rules! cb {
             }
         }
 
-        #[test]
-        fn test_paths_correct() {
-            $(
-                assert_eq!(<$marker>::INFO.path.get(), $path);
-            )+
-            $(
-                assert_eq!(<$emarker>::INFO.path.get(), $epath);
-            )+
-        }
-
         #[macro_export]
         #[doc(hidden)] // macro
         macro_rules! make_exportable_provider {
@@ -265,7 +234,7 @@ macro_rules! cb {
         }
     }
 }
-crate::registry!(cb);
+icu_registry::registry!(cb);
 
 /// Parses a list of human-readable marker identifiers and returns a
 /// list of [`DataMarkerInfo`]s.
