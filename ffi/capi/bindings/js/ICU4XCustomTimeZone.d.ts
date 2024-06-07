@@ -38,6 +38,22 @@ export class ICU4XCustomTimeZone {
 
   /**
 
+   * Creates a time zone for GMT (London winter time).
+
+   * See the {@link https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#method.gmt Rust documentation for `gmt`} for more information.
+   */
+  static create_gmt(): ICU4XCustomTimeZone;
+
+  /**
+
+   * Creates a time zone for BST (London summer time).
+
+   * See the {@link https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#method.bst Rust documentation for `bst`} for more information.
+   */
+  static create_bst(): ICU4XCustomTimeZone;
+
+  /**
+
    * Sets the `gmt_offset` field from offset seconds.
 
    * Errors if the offset seconds are out of range.
