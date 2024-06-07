@@ -1,7 +1,7 @@
 
 /**
 
- * Additional information: {@link https://docs.rs/icu/latest/icu/locid/enum.ParseError.html 1}
+ * Additional information: {@link https://docs.rs/icu/latest/icu/locale/enum.ParseError.html 1}
  */
 export enum ICU4XLocaleParseError {
   /**
