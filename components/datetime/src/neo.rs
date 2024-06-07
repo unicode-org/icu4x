@@ -12,8 +12,8 @@ use crate::format::neo::*;
 use crate::input::ExtractedDateTimeInput;
 use crate::neo_marker::{
     ConvertCalendar, DateMarkers, DateTimeMarkers, IsAnyCalendarKind, IsRuntimeComponents,
-    NeoFormatterMarker, NeoGetField, TimeMarkers, ZoneMarkers, TypedDateMarkers, TypedDateTimeMarkers,
-    TypedNeoFormatterMarker,
+    NeoFormatterMarker, NeoGetField, TimeMarkers, TypedDateMarkers, TypedDateTimeMarkers,
+    TypedNeoFormatterMarker, ZoneMarkers,
 };
 use crate::neo_pattern::DateTimePattern;
 use crate::neo_skeleton::{NeoComponents, NeoSkeletonLength};
@@ -543,8 +543,9 @@ impl<C: CldrCalendar, R: TypedDateTimeMarkers<C>> TypedNeoFormatter<C, R> {
             + NeoGetField<<R::T as TimeMarkers>::NanoSecondInput>
             + NeoGetField<<R::Z as ZoneMarkers>::TimeZoneInput>,
     {
-        let datetime =
-            ExtractedDateTimeInput::extract_from_typed_neo_input::<C, R::D, R::T, R::Z, I>(datetime);
+        let datetime = ExtractedDateTimeInput::extract_from_typed_neo_input::<C, R::D, R::T, R::Z, I>(
+            datetime,
+        );
         FormattedNeoDateTime {
             pattern: self.selection.select(&datetime),
             datetime,
@@ -1299,10 +1300,12 @@ impl<R: DateTimeMarkers> NeoFormatter<R> {
             + NeoGetField<<R::Z as ZoneMarkers>::TimeZoneInput>,
     {
         let datetime = datetime.to_calendar(&self.calendar);
-        let datetime =
-            ExtractedDateTimeInput::extract_from_any_neo_input::<R::D, R::T, R::Z, I::Converted<'a>>(
-                &datetime,
-            );
+        let datetime = ExtractedDateTimeInput::extract_from_any_neo_input::<
+            R::D,
+            R::T,
+            R::Z,
+            I::Converted<'a>,
+        >(&datetime);
         FormattedNeoDateTime {
             pattern: self.selection.select(&datetime),
             datetime,

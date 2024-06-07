@@ -6,7 +6,19 @@
 
 use core::marker::PhantomData;
 
-use crate::{format::neo::*, neo::_internal::*, neo_skeleton::*, provider::{neo::*, time_zones::{MetazoneGenericNamesShortV1, MetazoneGenericNamesShortV1Marker, TimeZoneFormatsV1, TimeZoneFormatsV1Marker}}, CldrCalendar};
+use crate::{
+    format::neo::*,
+    neo::_internal::*,
+    neo_skeleton::*,
+    provider::{
+        neo::*,
+        time_zones::{
+            MetazoneGenericNamesShortV1, MetazoneGenericNamesShortV1Marker, TimeZoneFormatsV1,
+            TimeZoneFormatsV1Marker,
+        },
+    },
+    CldrCalendar,
+};
 use icu_calendar::{
     any_calendar::IntoAnyCalendar,
     types::{
@@ -139,7 +151,10 @@ pub trait NeoGetField<T> {
     fn get_field(&self) -> T;
 }
 
-impl<T> NeoGetField<T> for T where T: Copy {
+impl<T> NeoGetField<T> for T
+where
+    T: Copy,
+{
     #[inline]
     fn get_field(&self) -> T {
         *self

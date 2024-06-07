@@ -687,9 +687,17 @@ impl NeoTimeComponents {
     }
 }
 
+/// A specification for the desired display of a time zone.
+///
+/// Unlike date and time, we support only a single time zone component, but the
+/// specific component can change.
+///
+/// Since the length of a time zone can vary independent of the date and time,
+/// the time zone lengths are directly encoded into this enum.
 #[derive(Debug, Copy, Clone)]
 #[non_exhaustive]
 pub enum NeoZoneComponents {
+    /// The generic short non-location format. For example: "PT"
     GenericShort,
 }
 
@@ -880,10 +888,8 @@ impl NeoTimeSkeleton {
 pub struct NeoDateTimeSkeleton {
     /// Desired formatting length.
     pub length: NeoSkeletonLength,
-    /// Date components of the skeleton.
-    pub date: NeoDayComponents,
-    /// Time components of the skeleton.
-    pub time: NeoTimeComponents,
+    /// Date and time components of the skeleton.
+    pub components: NeoDateTimeComponents,
 }
 
 impl NeoDateTimeSkeleton {
@@ -893,7 +899,10 @@ impl NeoDateTimeSkeleton {
         date: NeoDayComponents,
         time: NeoTimeComponents,
     ) -> Self {
-        Self { length, date, time }
+        Self {
+            length,
+            components: NeoDateTimeComponents::DateTime(date, time),
+        }
     }
 }
 
@@ -929,12 +938,12 @@ impl From<NeoDateTimeSkeleton> for NeoSkeleton {
     fn from(value: NeoDateTimeSkeleton) -> Self {
         NeoSkeleton {
             length: value.length,
-            components: NeoComponents::DateTime(value.date, value.time),
+            components: value.components.into(),
         }
     }
 }
 
-impl NeoSkeleton {
+impl NeoDateTimeSkeleton {
     #[doc(hidden)] // mostly internal; maps from old API to new API
     pub fn from_date_time_length(
         date_length: crate::options::length::Date,
@@ -942,9 +951,9 @@ impl NeoSkeleton {
     ) -> Self {
         let (day_components, length) = NeoDateSkeleton::day_from_date_length(date_length);
         let time_components = NeoTimeComponents::from_time_length(time_length);
-        NeoSkeleton {
+        NeoDateTimeSkeleton {
             length,
-            components: NeoComponents::DateTime(day_components, time_components),
+            components: NeoDateTimeComponents::DateTime(day_components, time_components),
         }
     }
 }

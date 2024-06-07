@@ -177,7 +177,7 @@ impl ZonePatternSelectionData {
             NeoZoneComponents::GenericShort => PatternItem::Field(Field {
                 symbol: FieldSymbol::TimeZone(TimeZone::LowerV),
                 length: FieldLength::One,
-            })
+            }),
         };
         Self::SinglePatternItem(pattern_item.to_unaligned())
     }
@@ -284,7 +284,7 @@ impl DateTimePatternSelectionData {
                 )?;
                 Ok(Self::DateTimeGlue(selection))
             }
-            NeoComponents::DateTimeZone(datetime_components, zone_components) => {
+            NeoComponents::DateTimeZone(_datetime_components, _zone_components) => {
                 todo!()
             }
         }
@@ -420,7 +420,9 @@ impl<'a> DateTimePatternDataBorrowed<'a> {
                     Err(2) => self
                         .zone_pattern()
                         .map(|data| match data {
-                            ZonePatternDataBorrowed::SinglePatternItem(item) => core::slice::from_ref(item),
+                            ZonePatternDataBorrowed::SinglePatternItem(item) => {
+                                core::slice::from_ref(item)
+                            }
                         })
                         .unwrap_or(&[]),
                     _ => &[],

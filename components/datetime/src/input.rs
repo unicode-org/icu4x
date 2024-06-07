@@ -6,7 +6,7 @@
 //! formatting operations.
 
 #[cfg(feature = "experimental")]
-use crate::neo_marker::{DateMarkers, NeoGetField, TimeMarkers, ZoneMarkers, TypedDateMarkers};
+use crate::neo_marker::{DateMarkers, NeoGetField, TimeMarkers, TypedDateMarkers, ZoneMarkers};
 use crate::provider::time_zones::{MetazoneId, TimeZoneBcp47Id};
 use icu_calendar::any_calendar::AnyCalendarKind;
 use icu_calendar::week::{RelativeUnit, WeekCalculator};

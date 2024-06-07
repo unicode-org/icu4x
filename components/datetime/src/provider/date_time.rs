@@ -578,11 +578,19 @@ impl<'data> TimeSymbols for provider::calendar::TimeSymbolsV1<'data> {
 }
 
 pub(crate) trait ZoneSymbols {
-    fn get_generic_short_for_zone(&self, metazone_id: MetazoneId, time_zone_id: Option<TimeZoneBcp47Id>) -> Result<&str, GetSymbolForTimeZoneError>;
+    fn get_generic_short_for_zone(
+        &self,
+        metazone_id: MetazoneId,
+        time_zone_id: Option<TimeZoneBcp47Id>,
+    ) -> Result<&str, GetSymbolForTimeZoneError>;
 }
 
 impl ZoneSymbols for () {
-    fn get_generic_short_for_zone(&self, _: MetazoneId, _: Option<TimeZoneBcp47Id>) -> Result<&str, GetSymbolForTimeZoneError> {
+    fn get_generic_short_for_zone(
+        &self,
+        _: MetazoneId,
+        _: Option<TimeZoneBcp47Id>,
+    ) -> Result<&str, GetSymbolForTimeZoneError> {
         Err(GetSymbolForTimeZoneError::TypeTooNarrow)
     }
 }

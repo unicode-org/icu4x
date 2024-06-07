@@ -14,9 +14,9 @@ use crate::provider::calendar::patterns::PatternPluralsFromPatternsV1Marker;
 #[cfg(feature = "experimental")]
 use crate::provider::date_time::GetSymbolForDayPeriodError;
 use crate::provider::date_time::{
-    DateSymbols, GetSymbolForEraError, GetSymbolForMonthError, GetSymbolForTimeZoneError, GetSymbolForWeekdayError, MonthPlaceholderValue, TimeSymbols, ZoneSymbols
+    DateSymbols, GetSymbolForEraError, GetSymbolForMonthError, GetSymbolForTimeZoneError,
+    GetSymbolForWeekdayError, MonthPlaceholderValue, TimeSymbols, ZoneSymbols,
 };
-use crate::provider::time_zones::TimeZoneFormatsV1;
 
 use core::fmt::{self, Write};
 use core::iter::Peekable;
@@ -357,26 +357,27 @@ where
 
     fn try_write_time_zone_gmt(
         w: &mut (impl writeable::PartsWrite + ?Sized),
-        gmt_offset: Option<GmtOffset>,
+        _gmt_offset: Option<GmtOffset>,
         zone_symbols: Option<&impl ZoneSymbols>,
-        graceful: bool
+        _graceful: bool,
     ) -> Result<Result<(), DateTimeWriteError>, fmt::Error> {
-        Ok(match zone_symbols.ok_or(DateTimeWriteError::MissingZoneSymbols).and_then(|zs| {
-            // TODO: Use proper formatting logic here
-            Ok("{todo}")
-        }) {
-            Err(e) => Err(e),
-            Ok(s) =>
-                Ok(s.write_to(w)?)
-        })
+        Ok(
+            match zone_symbols
+                .ok_or(DateTimeWriteError::MissingZoneSymbols)
+                .and_then(|_zs| {
+                    // TODO: Use proper formatting logic here
+                    Ok("{todo}")
+                }) {
+                Err(e) => Err(e),
+                Ok(s) => Ok(s.write_to(w)?),
+            },
+        )
     }
 
     fn write_time_zone_missing(
         w: &mut (impl writeable::PartsWrite + ?Sized),
     ) -> Result<(), fmt::Error> {
-        w.with_part(Part::ERROR, |w| {
-            "GMT+?".write_to(w)
-        })
+        w.with_part(Part::ERROR, |w| "GMT+?".write_to(w))
     }
 
     Ok(match (field.symbol, field.length) {
@@ -771,7 +772,7 @@ where
                 }
             }
         },
-        (FieldSymbol::TimeZone(TimeZone::LowerV), l) => match datetime.time_zone() {
+        (FieldSymbol::TimeZone(TimeZone::LowerV), _l) => match datetime.time_zone() {
             None => {
                 write_value_missing(w, field)?;
                 Err(DateTimeWriteError::MissingInputField("time_zone"))
@@ -783,31 +784,25 @@ where
                 ..
             }) => match zone_symbols
                 .ok_or(GetSymbolForTimeZoneError::MissingNames(field))
-                .and_then(|zs| {
-                    zs.get_generic_short_for_zone(metazone_id, time_zone_id)
-                }) {
-                Err(e) => {
-                    match e {
-                        GetSymbolForTimeZoneError::TypeTooNarrow => {
-                            write_time_zone_missing(w)?;
-                            Err(DateTimeWriteError::MissingNames(field))
-                        }
-                        GetSymbolForTimeZoneError::Missing => {
-                            try_write_time_zone_gmt(w, gmt_offset, zone_symbols, true)?
-                                .map_err(|_| DateTimeWriteError::MissingNames(field))
-                        }
-                        GetSymbolForTimeZoneError::MissingNames(f) => {
-                            write_time_zone_missing(w)?;
-                            Err(DateTimeWriteError::MissingNames(field))
-                        }
+                .and_then(|zs| zs.get_generic_short_for_zone(metazone_id, time_zone_id))
+            {
+                Err(e) => match e {
+                    GetSymbolForTimeZoneError::TypeTooNarrow => {
+                        write_time_zone_missing(w)?;
+                        Err(DateTimeWriteError::MissingNames(field))
                     }
-                }
+                    GetSymbolForTimeZoneError::Missing => {
+                        try_write_time_zone_gmt(w, gmt_offset, zone_symbols, true)?
+                            .map_err(|_| DateTimeWriteError::MissingNames(field))
+                    }
+                    GetSymbolForTimeZoneError::MissingNames(f) => {
+                        write_time_zone_missing(w)?;
+                        Err(DateTimeWriteError::MissingNames(f))
+                    }
+                },
                 Ok(s) => Ok(w.write_str(s)?),
             },
-            Some(CustomTimeZone {
-                gmt_offset,
-                ..
-            }) => {
+            Some(CustomTimeZone { gmt_offset, .. }) => {
                 // Required time zone fields not present in input
                 try_write_time_zone_gmt(w, gmt_offset, zone_symbols, false)?
                     .map_err(|_| DateTimeWriteError::MissingInputField("metazone_id"))
