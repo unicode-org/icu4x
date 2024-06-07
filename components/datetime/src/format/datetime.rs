@@ -361,6 +361,7 @@ where
         zone_symbols: Option<&impl ZoneSymbols>,
         _graceful: bool,
     ) -> Result<Result<(), DateTimeWriteError>, fmt::Error> {
+        #[allow(clippy::bind_instead_of_map)] // TODO: Use proper formatting logic here
         Ok(
             match zone_symbols
                 .ok_or(DateTimeWriteError::MissingZoneSymbols)
