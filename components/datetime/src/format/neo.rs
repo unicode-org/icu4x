@@ -18,6 +18,7 @@ use crate::provider::date_time::{
     DateSymbols, GetSymbolForDayPeriodError, GetSymbolForEraError, GetSymbolForMonthError,
     GetSymbolForWeekdayError, MonthPlaceholderValue, TimeSymbols,
 };
+use crate::provider::time_zones::{TimeZoneFormatsV1, MetazoneGenericNamesShortV1};
 use crate::provider::neo::*;
 use core::fmt;
 use core::marker::PhantomData;
@@ -198,6 +199,8 @@ pub trait DateTimeNamesMarker {
     type MonthNames: MaybePayload<MonthNamesV1<'static>> + fmt::Debug;
     type WeekdayNames: MaybePayload<LinearNamesV1<'static>> + fmt::Debug;
     type DayPeriodNames: MaybePayload<LinearNamesV1<'static>> + fmt::Debug;
+    type ZoneEssentials: MaybePayload<TimeZoneFormatsV1<'static>> + fmt::Debug;
+    type ZoneGenericShortNames: MaybePayload<MetazoneGenericNamesShortV1<'static>> + fmt::Debug;
 }
 
 pub trait MaybePayload<Y: for<'a> Yokeable<'a>> {
@@ -281,6 +284,8 @@ impl DateTimeNamesMarker for DateMarker {
     type MonthNames = DataPayload<MonthNamesV1Marker>;
     type WeekdayNames = DataPayload<WeekdayNamesV1Marker>;
     type DayPeriodNames = ();
+    type ZoneEssentials = ();
+    type ZoneGenericShortNames = ();
 }
 
 #[derive(Debug)]
@@ -291,6 +296,8 @@ impl DateTimeNamesMarker for TimeMarker {
     type MonthNames = ();
     type WeekdayNames = ();
     type DayPeriodNames = DataPayload<DayPeriodNamesV1Marker>;
+    type ZoneEssentials = ();
+    type ZoneGenericShortNames = ();
 }
 
 #[derive(Debug)]
@@ -301,6 +308,8 @@ impl DateTimeNamesMarker for DateTimeMarker {
     type MonthNames = DataPayload<MonthNamesV1Marker>;
     type WeekdayNames = DataPayload<WeekdayNamesV1Marker>;
     type DayPeriodNames = DataPayload<DayPeriodNamesV1Marker>;
+    type ZoneEssentials = ();
+    type ZoneGenericShortNames = ();
 }
 
 impl From<RawDateTimeNames<DateMarker>> for RawDateTimeNames<DateTimeMarker> {

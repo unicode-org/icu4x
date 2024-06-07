@@ -800,16 +800,26 @@ impl NeoTimeComponents {
     }
 }
 
+#[derive(Debug, Copy, Clone)]
+#[non_exhaustive]
+pub enum NeoZoneComponents {
+    GenericShort,
+}
+
 /// A specification of components for parts of a datetime.
 #[derive(Debug, Copy, Clone)]
-#[allow(clippy::exhaustive_enums)] // well-defined type
+#[non_exhaustive]
 pub enum NeoComponents {
     /// Components for parts of a date.
     Date(NeoDateComponents),
     /// Components for parts of a time.
     Time(NeoTimeComponents),
+    /// Components for a time zone.
+    Zone(NeoZoneComponents),
     /// Components for parts of a date and time together.
     DateTime(NeoDayComponents, NeoTimeComponents),
+    /// Components for a date, time, and time zone together.
+    DateTimeZone(NeoDayComponents, NeoTimeComponents, NeoZoneComponents),
 }
 
 impl From<NeoDateComponents> for NeoComponents {
@@ -821,6 +831,12 @@ impl From<NeoDateComponents> for NeoComponents {
 impl From<NeoTimeComponents> for NeoComponents {
     fn from(value: NeoTimeComponents) -> Self {
         Self::Time(value)
+    }
+}
+
+impl From<NeoZoneComponents> for NeoComponents {
+    fn from(value: NeoZoneComponents) -> Self {
+        Self::Zone(value)
     }
 }
 
