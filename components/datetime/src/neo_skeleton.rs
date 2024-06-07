@@ -4,63 +4,11 @@
 
 //! Temporary module for neo datetime skeletons (Semantic Skeleta)
 
-use crate::calendar::CalMarkers;
 use crate::options::components;
 use crate::options::length;
-use crate::provider::neo::*;
-use crate::CldrCalendar;
 use crate::DateTimeFormatterOptions;
-use icu_provider::prelude::*;
 use tinystr::tinystr;
 use tinystr::TinyAsciiStr;
-
-/// Sealed trait implemented by neo skeleton marker types.
-pub trait NeoSkeletonCommonData {
-    /// Marker for loading weekday names.
-    /// Can be [`NeverMarker`] if not needed for this skeleton.
-    type WeekdayNamesV1Marker: DataMarker<Yokeable = LinearNamesV1<'static>>;
-    /// Marker for loading day period names.
-    /// Can be [`NeverMarker`] if not needed for this skeleton.
-    type DayPeriodNamesV1Marker: DataMarker<Yokeable = LinearNamesV1<'static>>;
-    /// Marker for loading time skeleton patterns.
-    /// Can be [`NeverMarker`] if not needed for this skeleton.
-    type TimeSkeletonPatternsV1Marker: DataMarker<Yokeable = PackedSkeletonDataV1<'static>>;
-    /// Marker for loading the date/time glue pattern.
-    /// Can be [`NeverMarker`] if not needed for this skeleton.
-    type DateTimePatternV1Marker: DataMarker<Yokeable = DateTimePatternV1<'static>>;
-}
-
-/// Sealed trait implemented by neo skeleton marker types.
-pub trait TypedNeoSkeletonData<C>: NeoSkeletonCommonData
-where
-    C: CldrCalendar + ?Sized,
-{
-    /// Marker for loading year names.
-    /// Can be [`NeverMarker`] if not needed for this skeleton.
-    type YearNamesV1Marker: DataMarker<Yokeable = YearNamesV1<'static>>;
-    /// Marker for loading month names.
-    /// Can be [`NeverMarker`] if not needed for this skeleton.
-    type MonthNamesV1Marker: DataMarker<Yokeable = MonthNamesV1<'static>>;
-    /// Marker for loading date skeleton patterns.
-    /// Can be [`NeverMarker`] if not needed for this skeleton.
-    type DateSkeletonPatternsV1Marker: DataMarker<Yokeable = PackedSkeletonDataV1<'static>>;
-}
-
-/// Sealed trait implemented by neo skeleton marker types.
-pub trait NeoSkeletonData: NeoSkeletonCommonData {
-    /// Cross-calendar data markers for year names.
-    type Year: CalMarkers<YearNamesV1Marker>;
-    /// Cross-calendar data markers for month names.
-    type Month: CalMarkers<MonthNamesV1Marker>;
-    /// Cross-calendar data markers for date skeleta.
-    type Skel: CalMarkers<SkeletaV1Marker>;
-}
-
-/// Sealed trait implemented by neo skeleton marker types.
-pub trait NeoSkeletonComponents {
-    /// Components in the neo skeleton.
-    const COMPONENTS: NeoComponents;
-}
 
 /// A specification for the length of a date or component of a date.
 ///
