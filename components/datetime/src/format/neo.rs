@@ -16,6 +16,7 @@ use crate::neo_marker::{
 };
 use crate::neo_pattern::{DateTimePattern, DateTimePatternBorrowed};
 use crate::neo_skeleton::NeoDateTimeComponents;
+use crate::neo_zone::{NeoZoneComponents, NeoZoneStyle};
 use crate::pattern::PatternItem;
 use crate::provider::date_time::{
     DateSymbols, GetSymbolForDayPeriodError, GetSymbolForEraError, GetSymbolForMonthError,
@@ -207,7 +208,7 @@ size_test!(
 /// use icu::datetime::{DateTimeWriteError, TypedDateTimeNames};
 /// use icu::datetime::fields::{Field, FieldLength, FieldSymbol, Weekday};
 /// use icu::datetime::neo_pattern::DateTimePattern;
-/// use icu::datetime::neo_skeleton::NeoZoneComponents;
+/// use icu::datetime::neo_zone::NeoZoneComponents;
 /// use icu::locale::locale;
 /// use icu::timezone::CustomTimeZone;
 /// use writeable::assert_try_writeable_eq;
@@ -723,7 +724,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::TypedDateTimeNames;
-    /// use icu::datetime::neo_skeleton::NeoZoneComponents;
+    /// use icu::datetime::neo_zone::NeoZoneComponents;
     /// use icu::datetime::neo_pattern::DateTimePattern;
     /// use icu::locale::locale;
     /// use icu::timezone::CustomTimeZone;
@@ -829,6 +830,9 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// and loads all data required for that pattern.
     ///
     /// Does not duplicate textual field symbols. See #4337
+    ///
+    /// Does not currently support loading time zone data,
+    /// but it could in the future.
     pub fn load_for_pattern<'l, P>(
         &'l mut self,
         provider: &P,
@@ -839,8 +843,6 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
             + DataProvider<C::MonthNamesV1Marker>
             + DataProvider<WeekdayNamesV1Marker>
             + DataProvider<DayPeriodNamesV1Marker>
-            + DataProvider<TimeZoneFormatsV1Marker>
-            + DataProvider<MetazoneGenericNamesShortV1Marker>
             + DataProvider<DecimalSymbolsV1Marker>
             + DataProvider<WeekDataV2Marker>
             + ?Sized,
@@ -851,9 +853,6 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
             &C::MonthNamesV1Marker::bind(provider),
             &WeekdayNamesV1Marker::bind(provider),
             &DayPeriodNamesV1Marker::bind(provider),
-            // TODO: Consider making time zone name loading optional here (lots of data)
-            &TimeZoneFormatsV1Marker::bind(provider),
-            &MetazoneGenericNamesShortV1Marker::bind(provider),
             Some(&ExternalLoaderUnstable(provider)),
             Some(&ExternalLoaderUnstable(provider)),
             locale,
@@ -870,6 +869,9 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// and includes all data required for that pattern.
     ///
     /// Does not support duplicate textual field symbols. See #4337
+    ///
+    /// Does not currently support loading time zone data,
+    /// but it could in the future.
     ///
     /// # Examples
     ///
@@ -909,9 +911,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
         crate::provider::Baked: DataProvider<C::YearNamesV1Marker>
             + DataProvider<C::MonthNamesV1Marker>
             + DataProvider<WeekdayNamesV1Marker>
-            + DataProvider<DayPeriodNamesV1Marker>
-            + DataProvider<TimeZoneFormatsV1Marker>
-            + DataProvider<MetazoneGenericNamesShortV1Marker>,
+            + DataProvider<DayPeriodNamesV1Marker>,
     {
         let locale = &self.locale;
         self.inner.load_for_pattern(
@@ -919,8 +919,6 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
             &C::MonthNamesV1Marker::bind(&crate::provider::Baked),
             &WeekdayNamesV1Marker::bind(&crate::provider::Baked),
             &DayPeriodNamesV1Marker::bind(&crate::provider::Baked),
-            &TimeZoneFormatsV1Marker::bind(&crate::provider::Baked),
-            &MetazoneGenericNamesShortV1Marker::bind(&crate::provider::Baked),
             Some(&ExternalLoaderCompiledData),
             Some(&ExternalLoaderCompiledData),
             locale,
@@ -1286,9 +1284,6 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         month_provider: &(impl BoundDataProvider<MonthNamesV1Marker> + ?Sized),
         weekday_provider: &(impl BoundDataProvider<WeekdayNamesV1Marker> + ?Sized),
         dayperiod_provider: &(impl BoundDataProvider<DayPeriodNamesV1Marker> + ?Sized),
-        _zone_essentials_provider: &(impl BoundDataProvider<TimeZoneFormatsV1Marker> + ?Sized),
-        zone_genericshort_provider: &(impl BoundDataProvider<MetazoneGenericNamesShortV1Marker>
-              + ?Sized),
         fixed_decimal_formatter_loader: Option<&impl FixedDecimalFormatterLoader>,
         week_calculator_loader: Option<&impl WeekCalculatorLoader>,
         locale: &DataLocale,
@@ -1329,17 +1324,6 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                 FieldSymbol::DayPeriod(_) => {
                     self.load_day_period_names(dayperiod_provider, locale, field.length)?;
                 }
-                FieldSymbol::TimeZone(fields::TimeZone::LowerV) => match field.length {
-                    FieldLength::One => {
-                        self.load_generic_short_time_zone_names(
-                            zone_genericshort_provider,
-                            locale,
-                        )?;
-                    }
-                    _ => {
-                        return Err(LoadError::UnsupportedField(field));
-                    }
-                },
                 FieldSymbol::TimeZone(_) => {
                     return Err(LoadError::UnsupportedField(field));
                 }
@@ -1373,6 +1357,21 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
             .map_err(LoadError::Data)?;
         }
 
+        Ok(())
+    }
+
+    pub(crate) fn load_for_zone(
+        &mut self,
+        _zone_essentials_provider: &(impl BoundDataProvider<TimeZoneFormatsV1Marker> + ?Sized),
+        zone_genericshort_provider: &(impl BoundDataProvider<MetazoneGenericNamesShortV1Marker>
+              + ?Sized),
+        locale: &DataLocale,
+        zone_components: NeoZoneComponents,
+    ) -> Result<(), LoadError> {
+        // TODO: Run full loading here
+        if matches!(zone_components.first, Some(NeoZoneStyle::GenericShort)) {
+            self.load_generic_short_time_zone_names(zone_genericshort_provider, locale)?;
+        }
         Ok(())
     }
 }
@@ -1552,6 +1551,7 @@ impl<'a> TryWriteable for FormattedDateTimePattern<'a> {
     ) -> Result<Result<(), Self::Error>, fmt::Error> {
         try_write_pattern(
             self.pattern.0.as_borrowed(),
+            None, // custom zone components not allowed in DateTimePatternFormatter
             &self.datetime,
             Some(&self.names),
             Some(&self.names),

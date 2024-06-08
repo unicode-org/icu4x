@@ -10,6 +10,7 @@ use crate::{
     format::neo::*,
     neo::_internal::*,
     neo_skeleton::*,
+    neo_zone::{HasZoneComponents, NeoZoneComponents},
     provider::{
         neo::*,
         time_zones::{
@@ -30,7 +31,7 @@ use icu_calendar::{
 use icu_provider::{prelude::*, NeverMarker};
 use icu_timezone::CustomTimeZone;
 
-mod private {
+pub(crate) mod private {
     pub trait Sealed {}
 }
 
@@ -434,12 +435,6 @@ pub trait HasDayComponents {
 pub trait HasTimeComponents {
     /// The associated components.
     const COMPONENTS: NeoTimeComponents;
-}
-
-/// A trait associating [`NeoZoneComponents`].
-pub trait HasZoneComponents {
-    /// The associated components.
-    const COMPONENTS: NeoZoneComponents;
 }
 
 // TODO: Add WeekCalculator and FixedDecimalFormatter optional bindings here
@@ -1237,7 +1232,7 @@ macro_rules! impl_zone_marker {
             type ZoneGenericShortNames = datetime_marker_helper!(@names/zone/genericshort, $zone_genericshort_yesno);
         }
         impl HasZoneComponents for $type {
-            const COMPONENTS: NeoZoneComponents = $components;
+            const ZONE_CONFIG: NeoZoneComponents = $components;
         }
         impl ZoneMarkers for $type {
             type TimeZoneInput = datetime_marker_helper!(@input/timezone, yes);
@@ -1493,7 +1488,7 @@ impl_date_marker!(
 
 impl_zone_marker!(
     NeoTimeZoneGenericShortMarker,
-    NeoZoneComponents::GenericShort,
+    crate::neo_zone::GenericShortOrGmt::ZONE_CONFIG,
     description = "a generic short time zone format",
     expectation = "GMT",
     zone_essentials = yes,

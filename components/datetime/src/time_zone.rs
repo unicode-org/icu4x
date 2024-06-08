@@ -551,7 +551,7 @@ impl TimeZoneFormatter {
         seconds: IsoSeconds,
     ) -> Result<&mut TimeZoneFormatter, DateTimeError> {
         self.format_units.push(TimeZoneFormatterUnit::WithFallback(
-            FallbackTimeZoneFormatterUnit::Iso8601(Iso8601Format {
+            FallbackTimeZoneFormatterUnit::Iso8601(Iso8601TimeZoneStyle {
                 format,
                 minutes,
                 seconds,
@@ -846,12 +846,22 @@ pub(super) struct GenericLocationFormat {}
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub(super) struct LocalizedGmtFormat {}
 
-// -07:00
+/// -07:00
 #[derive(Debug, Clone, Copy, PartialEq)]
-pub(super) struct Iso8601Format {
+pub struct Iso8601TimeZoneStyle {
     format: IsoFormat,
     minutes: IsoMinutes,
     seconds: IsoSeconds,
+}
+
+impl Iso8601TimeZoneStyle {
+    pub(crate) fn default_for_fallback() -> Self {
+        Self {
+            format: IsoFormat::Basic,
+            minutes: IsoMinutes::Required,
+            seconds: IsoSeconds::Optional,
+        }
+    }
 }
 
 // It is only used for pattern in special case and not public to users.
@@ -881,7 +891,7 @@ impl Default for TimeZoneFormatterUnit {
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub(super) enum FallbackTimeZoneFormatterUnit {
     LocalizedGmt(LocalizedGmtFormat),
-    Iso8601(Iso8601Format),
+    Iso8601(Iso8601TimeZoneStyle),
 }
 
 /// Load a fallback format for timezone. The fallback format will be executed if there are no
@@ -890,11 +900,13 @@ impl From<FallbackFormat> for FallbackTimeZoneFormatterUnit {
     fn from(value: FallbackFormat) -> Self {
         match value {
             FallbackFormat::LocalizedGmt => Self::LocalizedGmt(LocalizedGmtFormat {}),
-            FallbackFormat::Iso8601(format, minutes, seconds) => Self::Iso8601(Iso8601Format {
-                format,
-                minutes,
-                seconds,
-            }),
+            FallbackFormat::Iso8601(format, minutes, seconds) => {
+                Self::Iso8601(Iso8601TimeZoneStyle {
+                    format,
+                    minutes,
+                    seconds,
+                })
+            }
         }
     }
 }
@@ -1255,7 +1267,7 @@ impl FormatTimeZone for GenericLocationFormat {
     }
 }
 
-impl FormatTimeZoneWithFallback for Iso8601Format {
+impl FormatTimeZoneWithFallback for Iso8601TimeZoneStyle {
     /// Writes a [`GmtOffset`](crate::input::GmtOffset) in ISO-8601 format according to the
     /// given formatting options.
     ///
@@ -1305,7 +1317,7 @@ impl FormatTimeZoneWithFallback for Iso8601Format {
     }
 }
 
-impl FormatTimeZone for Iso8601Format {
+impl FormatTimeZone for Iso8601TimeZoneStyle {
     fn format<W: writeable::PartsWrite + ?Sized>(
         &self,
         sink: &mut W,
