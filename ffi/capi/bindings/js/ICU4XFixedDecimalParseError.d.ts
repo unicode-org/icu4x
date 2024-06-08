@@ -1,7 +1,7 @@
 
 /**
 
- * Additional information: {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.ParseError.html 1}
+ * Additional information: {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.ParseError.html 1}
  */
 export enum ICU4XFixedDecimalParseError {
   /**
