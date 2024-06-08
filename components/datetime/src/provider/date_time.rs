@@ -5,7 +5,6 @@
 //! Traits for managing data needed by [`TypedDateTimeFormatter`](crate::TypedDateTimeFormatter).
 
 use crate::fields;
-#[cfg(feature = "experimental")]
 use crate::fields::Field;
 use crate::input;
 use crate::options::{length, preferences, DateTimeFormatterOptions};
@@ -26,6 +25,7 @@ use icu_calendar::types::Era;
 use icu_calendar::types::MonthCode;
 use icu_locale_core::extensions::unicode::Value;
 use icu_provider::prelude::*;
+use icu_timezone::{MetazoneId, TimeZoneBcp47Id};
 
 pub(crate) enum GetSymbolForMonthError {
     Missing,
@@ -46,6 +46,13 @@ pub(crate) enum GetSymbolForEraError {
 
 pub(crate) enum GetSymbolForDayPeriodError {
     #[cfg(feature = "experimental")]
+    MissingNames(Field),
+}
+
+pub(crate) enum GetSymbolForTimeZoneError {
+    TypeTooNarrow,
+    #[cfg(feature = "experimental")]
+    Missing,
     MissingNames(Field),
 }
 
@@ -568,5 +575,23 @@ impl<'data> TimeSymbols for provider::calendar::TimeSymbolsV1<'data> {
             (_, hour, _) if hour < 12 => &symbols.am,
             _ => &symbols.pm,
         })
+    }
+}
+
+pub(crate) trait ZoneSymbols {
+    fn get_generic_short_for_zone(
+        &self,
+        metazone_id: MetazoneId,
+        time_zone_id: Option<TimeZoneBcp47Id>,
+    ) -> Result<&str, GetSymbolForTimeZoneError>;
+}
+
+impl ZoneSymbols for () {
+    fn get_generic_short_for_zone(
+        &self,
+        _: MetazoneId,
+        _: Option<TimeZoneBcp47Id>,
+    ) -> Result<&str, GetSymbolForTimeZoneError> {
+        Err(GetSymbolForTimeZoneError::TypeTooNarrow)
     }
 }

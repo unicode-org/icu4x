@@ -574,7 +574,7 @@ jobs:
 
   gh-pages:
     name: "Deploy to GitHub Pages"
-    needs: [rust-docs, cpp-docs, ts-docs, dart-docs, wasm-demo, bench-perf, bench-memory, bench-datasize] # bench-binsize
+    needs: [rust-docs, cpp-docs, ts-docs, dart-docs, wasm-demo, bench-perf, bench-memory] # bench-binsize
     # Run this even when one of the above jobs failed. This is so we can at least push the other artifacts.
     if: (success() || failure()) && (github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x')
     runs-on: 'ubuntu-latest'

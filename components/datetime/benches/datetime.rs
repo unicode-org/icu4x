@@ -8,9 +8,8 @@ use criterion::{criterion_group, criterion_main, Criterion};
 #[cfg(feature = "experimental")]
 use icu_datetime::neo::TypedNeoFormatter;
 #[cfg(feature = "experimental")]
-use icu_datetime::neo_skeleton::{
-    NeoComponents, NeoDateSkeleton, NeoSkeleton, NeoSkeletonLength, NeoTimeComponents,
-};
+use icu_datetime::neo_skeleton::{NeoDateSkeleton, NeoSkeletonLength, NeoTimeComponents};
+use icu_datetime::neo_skeleton::{NeoDateTimeComponents, NeoDateTimeSkeleton};
 use icu_datetime::options::length;
 use std::fmt::Write;
 
@@ -93,7 +92,8 @@ fn datetime_benches(c: &mut Criterion) {
                                 time: Some(time),
                                 ..
                             }) => {
-                                let neo_skeleton = NeoSkeleton::from_date_time_length(date, time);
+                                let neo_skeleton =
+                                    NeoDateTimeSkeleton::from_date_time_length(date, time);
                                 (neo_skeleton.components, neo_skeleton.length)
                             }
                             DateTimeFormatterOptions::Length(length::Bag {
@@ -103,7 +103,7 @@ fn datetime_benches(c: &mut Criterion) {
                             }) => {
                                 let neo_skeleton = NeoDateSkeleton::from_date_length(date);
                                 (
-                                    NeoComponents::Date(neo_skeleton.components),
+                                    NeoDateTimeComponents::Date(neo_skeleton.components),
                                     NeoSkeletonLength::Short,
                                 )
                             }
@@ -114,7 +114,7 @@ fn datetime_benches(c: &mut Criterion) {
                             }) => {
                                 let neo_time_components = NeoTimeComponents::from_time_length(time);
                                 (
-                                    NeoComponents::Time(neo_time_components),
+                                    NeoDateTimeComponents::Time(neo_time_components),
                                     NeoSkeletonLength::Short,
                                 )
                             }

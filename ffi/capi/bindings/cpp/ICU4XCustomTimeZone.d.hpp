@@ -28,6 +28,10 @@ public:
 
   inline static std::unique_ptr<ICU4XCustomTimeZone> create_utc();
 
+  inline static std::unique_ptr<ICU4XCustomTimeZone> create_gmt();
+
+  inline static std::unique_ptr<ICU4XCustomTimeZone> create_bst();
+
   inline diplomat::result<std::monostate, ICU4XTimeZoneInvalidOffsetError> try_set_gmt_offset_seconds(int32_t offset_seconds);
 
   inline void clear_gmt_offset();

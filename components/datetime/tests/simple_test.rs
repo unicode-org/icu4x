@@ -5,7 +5,7 @@
 use icu_calendar::DateTime;
 use icu_datetime::neo::TypedNeoFormatter;
 use icu_datetime::neo_skeleton::{
-    NeoComponents, NeoDateComponents, NeoDateSkeleton, NeoTimeComponents,
+    NeoDateComponents, NeoDateSkeleton, NeoDateTimeComponents, NeoTimeComponents,
 };
 use icu_datetime::options::length;
 use icu_datetime::{DateTimeFormatterOptions, TypedDateTimeFormatter};
@@ -87,7 +87,7 @@ fn neo_datetime_lengths() {
             ] {
                 let formatter = TypedNeoFormatter::try_new_with_components(
                     &locale,
-                    NeoComponents::DateTime(day_components, time_components),
+                    NeoDateTimeComponents::DateTime(day_components, time_components),
                     length,
                 )
                 .unwrap();

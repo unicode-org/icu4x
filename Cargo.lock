@@ -1104,6 +1104,7 @@ dependencies = [
  "icu_provider_adapters",
  "icu_provider_blob",
  "icu_provider_fs",
+ "icu_registry",
  "icu_segmenter",
  "icu_timezone",
  "itertools",
@@ -1515,6 +1516,14 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 2.0.66",
+]
+
+[[package]]
+name = "icu_registry"
+version = "1.5.0"
+dependencies = [
+ "icu",
+ "icu_provider",
 ]
 
 [[package]]
