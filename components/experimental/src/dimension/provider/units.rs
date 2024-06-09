@@ -12,15 +12,6 @@
 use icu_provider::prelude::*;
 use zerovec::ZeroMap;
 
-// TODO: implement the units provider
-// thoughts:
-//   use the category (e.g. length, temperature, etc.) as secondary key
-//   have four maps:
-//     - one for the long width patterns (e.g. "{0} meter")
-//     - one for the short width (e.g. "{0} m"?)
-//     - one for the narrow width (e.g. "{0} m")
-//     - one for the DisplayNames (e.g. "meter")
-
 #[icu_provider::data_struct(UnitsDisplayNameV1Marker = "units/displaynames@1")]
 #[derive(Clone, PartialEq, Debug)]
 #[cfg_attr(
