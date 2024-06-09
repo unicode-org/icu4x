@@ -9,6 +9,7 @@ use crate::metazone::MetazoneCalculator;
 use crate::{GmtOffset, ZoneVariant};
 use core::str::FromStr;
 use icu_calendar::{DateTime, Iso};
+use tinystr::tinystr;
 
 /// A utility type that can hold time zone information.
 ///
@@ -33,7 +34,7 @@ use icu_calendar::{DateTime, Iso};
 /// let tz2: CustomTimeZone =
 ///     "+05:00".parse().expect("Failed to parse a time zone.");
 /// ```
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 #[allow(clippy::exhaustive_structs)] // these four fields fully cover the needs of UTS 35
 pub struct CustomTimeZone {
     /// The GMT offset in seconds.
@@ -78,6 +79,28 @@ impl CustomTimeZone {
             time_zone_id: None,
             metazone_id: None,
             zone_variant: None,
+        }
+    }
+
+    /// Creates a new [`CustomTimeZone`] representing Greenwich Mean Time
+    /// (London Time as observed in the winter).
+    pub const fn gmt() -> Self {
+        Self {
+            gmt_offset: Some(GmtOffset::utc()),
+            time_zone_id: Some(TimeZoneBcp47Id(tinystr!(8, "gblon"))),
+            metazone_id: Some(MetazoneId(tinystr!(4, "mgmt"))),
+            zone_variant: Some(ZoneVariant::standard()),
+        }
+    }
+
+    /// Creates a new [`CustomTimeZone`] representing British Summer Time
+    /// (London Time as observed in the summer).
+    pub const fn bst() -> Self {
+        Self {
+            gmt_offset: Some(GmtOffset::utc_plus_1()),
+            time_zone_id: Some(TimeZoneBcp47Id(tinystr!(8, "gblon"))),
+            metazone_id: Some(MetazoneId(tinystr!(4, "mgmt"))),
+            zone_variant: Some(ZoneVariant::daylight()),
         }
     }
 

@@ -84,6 +84,7 @@ lazy_static::lazy_static! {
         // Rust-specific conversion trait
         "AsCalendar",
         "IntoAnyCalendar",
+        "NeoGetField",
     ].into_iter().collect();
 
     pub static ref IGNORED_ASSOCIATED_ITEMS: HashMap<&'static str, &'static [&'static str]> = [

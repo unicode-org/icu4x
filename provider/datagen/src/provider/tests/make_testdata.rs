@@ -201,7 +201,7 @@ impl DataExporter for ZeroCopyCheckExporter {
                 };
             }
         }
-        crate::registry!(cb);
+        icu_registry::registry!(cb);
 
         if payload_before != &payload_after {
             self.rountrip_errors.lock().expect("poison").insert((

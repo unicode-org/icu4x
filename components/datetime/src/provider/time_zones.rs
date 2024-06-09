@@ -29,6 +29,7 @@ use icu_timezone::ZoneVariant;
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
+// TODO: Consider renaming to "TimeZoneEssentialsV1"
 pub struct TimeZoneFormatsV1<'data> {
     /// The hour format for displaying GMT offsets.
     #[cfg_attr(feature = "serde", serde(borrow))]

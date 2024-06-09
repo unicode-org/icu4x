@@ -13,7 +13,7 @@ use crate::input::ExtractedDateTimeInput;
 use crate::neo_marker::{
     ConvertCalendar, DateMarkers, DateTimeMarkers, IsAnyCalendarKind, IsRuntimeComponents,
     NeoFormatterMarker, NeoGetField, TimeMarkers, TypedDateMarkers, TypedDateTimeMarkers,
-    TypedNeoFormatterMarker,
+    TypedNeoFormatterMarker, ZoneMarkers,
 };
 use crate::neo_pattern::DateTimePattern;
 use crate::neo_skeleton::{NeoComponents, NeoSkeletonLength};
@@ -154,7 +154,7 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
     };
 }
 
-size_test!(TypedNeoFormatter<icu_calendar::Gregorian, crate::neo_marker::NeoYearMonthDayMarker>, typed_neo_year_month_day_formatter_size, 536);
+size_test!(TypedNeoFormatter<icu_calendar::Gregorian, crate::neo_marker::NeoYearMonthDayMarker>, typed_neo_year_month_day_formatter_size, 544);
 
 /// [`TypedNeoFormatter`] is a formatter capable of formatting dates and/or times from
 /// a calendar selected at compile time.
@@ -220,6 +220,8 @@ impl<C: CldrCalendar, R: TypedNeoFormatterMarker<C>> TypedNeoFormatter<C, R> {
             + DataProvider<<R::D as TypedDateMarkers<C>>::WeekdayNamesV1Marker>
             + DataProvider<<R::T as TimeMarkers>::DayPeriodNamesV1Marker>
             + DataProvider<<R::T as TimeMarkers>::TimeSkeletonPatternsV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::ZoneEssentialsV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::ZoneGenericShortNamesV1Marker>
             + DataProvider<R::DateTimePatternV1Marker>,
     {
         Self::try_new_internal(
@@ -255,6 +257,8 @@ impl<C: CldrCalendar, R: TypedNeoFormatterMarker<C>> TypedNeoFormatter<C, R> {
             + DataProvider<<R::D as TypedDateMarkers<C>>::WeekdayNamesV1Marker>
             + DataProvider<<R::T as TimeMarkers>::DayPeriodNamesV1Marker>
             + DataProvider<<R::T as TimeMarkers>::TimeSkeletonPatternsV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::ZoneEssentialsV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::ZoneGenericShortNamesV1Marker>
             + DataProvider<R::DateTimePatternV1Marker>
             // FixedDecimalFormatter markers
             + DataProvider<DecimalSymbolsV1Marker>
@@ -334,7 +338,7 @@ impl<C: CldrCalendar, R: TypedDateTimeMarkers<C> + IsRuntimeComponents> TypedNeo
     /// use icu::calendar::DateTime;
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::neo::TypedNeoFormatter;
-    /// use icu::datetime::neo_skeleton::NeoComponents;
+    /// use icu::datetime::neo_skeleton::NeoDateTimeComponents;
     /// use icu::datetime::neo_skeleton::NeoDayComponents;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::datetime::neo_skeleton::NeoTimeComponents;
@@ -343,7 +347,7 @@ impl<C: CldrCalendar, R: TypedDateTimeMarkers<C> + IsRuntimeComponents> TypedNeo
     ///
     /// let fmt = TypedNeoFormatter::<Gregorian, _>::try_new_with_components(
     ///     &locale!("es-MX").into(),
-    ///     NeoComponents::DateTime(
+    ///     NeoDateTimeComponents::DateTime(
     ///         NeoDayComponents::Weekday,
     ///         NeoTimeComponents::HourMinute,
     ///     ),
@@ -370,6 +374,8 @@ impl<C: CldrCalendar, R: TypedDateTimeMarkers<C> + IsRuntimeComponents> TypedNeo
             + DataProvider<<R::D as TypedDateMarkers<C>>::WeekdayNamesV1Marker>
             + DataProvider<<R::T as TimeMarkers>::DayPeriodNamesV1Marker>
             + DataProvider<<R::T as TimeMarkers>::TimeSkeletonPatternsV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::ZoneEssentialsV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::ZoneGenericShortNamesV1Marker>
             + DataProvider<R::DateTimePatternV1Marker>,
     {
         Self::try_new_internal(
@@ -406,6 +412,8 @@ impl<C: CldrCalendar, R: TypedDateTimeMarkers<C> + IsRuntimeComponents> TypedNeo
             + DataProvider<<R::D as TypedDateMarkers<C>>::WeekdayNamesV1Marker>
             + DataProvider<<R::T as TimeMarkers>::DayPeriodNamesV1Marker>
             + DataProvider<<R::T as TimeMarkers>::TimeSkeletonPatternsV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::ZoneEssentialsV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::ZoneGenericShortNamesV1Marker>
             + DataProvider<R::DateTimePatternV1Marker>
             // FixedDecimalFormatter markers
             + DataProvider<DecimalSymbolsV1Marker>
@@ -439,6 +447,8 @@ impl<C: CldrCalendar, R: TypedDateTimeMarkers<C>> TypedNeoFormatter<C, R> {
             + DataProvider<<R::D as TypedDateMarkers<C>>::WeekdayNamesV1Marker>
             + DataProvider<<R::T as TimeMarkers>::DayPeriodNamesV1Marker>
             + DataProvider<<R::T as TimeMarkers>::TimeSkeletonPatternsV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::ZoneEssentialsV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::ZoneGenericShortNamesV1Marker>
             + DataProvider<R::DateTimePatternV1Marker>,
         L: FixedDecimalFormatterLoader + WeekCalculatorLoader,
     {
@@ -453,10 +463,12 @@ impl<C: CldrCalendar, R: TypedDateTimeMarkers<C>> TypedNeoFormatter<C, R> {
         .map_err(LoadError::Data)?;
         let mut names = RawDateTimeNames::new_without_fixed_decimal_formatter();
         names.load_for_pattern(
-            &<R::D as TypedDateMarkers<C>>::YearNamesV1Marker::bind(provider), // year
-            &<R::D as TypedDateMarkers<C>>::MonthNamesV1Marker::bind(provider), // month
-            &<R::D as TypedDateMarkers<C>>::WeekdayNamesV1Marker::bind(provider), // weekday
-            &<R::T as TimeMarkers>::DayPeriodNamesV1Marker::bind(provider),    // day period
+            &<R::D as TypedDateMarkers<C>>::YearNamesV1Marker::bind(provider),
+            &<R::D as TypedDateMarkers<C>>::MonthNamesV1Marker::bind(provider),
+            &<R::D as TypedDateMarkers<C>>::WeekdayNamesV1Marker::bind(provider),
+            &<R::T as TimeMarkers>::DayPeriodNamesV1Marker::bind(provider),
+            &<R::Z as ZoneMarkers>::ZoneEssentialsV1Marker::bind(provider),
+            &<R::Z as ZoneMarkers>::ZoneGenericShortNamesV1Marker::bind(provider),
             Some(loader), // fixed decimal formatter
             Some(loader), // week calculator
             locale,
@@ -528,10 +540,12 @@ impl<C: CldrCalendar, R: TypedDateTimeMarkers<C>> TypedNeoFormatter<C, R> {
             + NeoGetField<<R::T as TimeMarkers>::HourInput>
             + NeoGetField<<R::T as TimeMarkers>::MinuteInput>
             + NeoGetField<<R::T as TimeMarkers>::SecondInput>
-            + NeoGetField<<R::T as TimeMarkers>::NanoSecondInput>,
+            + NeoGetField<<R::T as TimeMarkers>::NanoSecondInput>
+            + NeoGetField<<R::Z as ZoneMarkers>::TimeZoneInput>,
     {
-        let datetime =
-            ExtractedDateTimeInput::extract_from_typed_neo_input::<C, R::D, R::T, I>(datetime);
+        let datetime = ExtractedDateTimeInput::extract_from_typed_neo_input::<C, R::D, R::T, R::Z, I>(
+            datetime,
+        );
         FormattedNeoDateTime {
             pattern: self.selection.select(&datetime),
             datetime,
@@ -543,7 +557,7 @@ impl<C: CldrCalendar, R: TypedDateTimeMarkers<C>> TypedNeoFormatter<C, R> {
 size_test!(
     NeoFormatter<crate::neo_marker::NeoYearMonthDayMarker>,
     neo_year_month_day_formatter_size,
-    592
+    600
 );
 
 /// [`NeoFormatter`] is a formatter capable of formatting dates and/or times from
@@ -670,6 +684,8 @@ impl<R: NeoFormatterMarker> NeoFormatter<R> {
             + DataProvider<<R::D as DateMarkers>::WeekdayNamesV1Marker>
             + DataProvider<<R::T as TimeMarkers>::DayPeriodNamesV1Marker>
             + DataProvider<<R::T as TimeMarkers>::TimeSkeletonPatternsV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::ZoneEssentialsV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::ZoneGenericShortNamesV1Marker>
             + DataProvider<R::DateTimePatternV1Marker>,
     {
         Self::try_new_internal(
@@ -753,6 +769,8 @@ impl<R: NeoFormatterMarker> NeoFormatter<R> {
             + DataProvider<<R::D as DateMarkers>::WeekdayNamesV1Marker>
             + DataProvider<<R::T as TimeMarkers>::DayPeriodNamesV1Marker>
             + DataProvider<<R::T as TimeMarkers>::TimeSkeletonPatternsV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::ZoneEssentialsV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::ZoneGenericShortNamesV1Marker>
             + DataProvider<R::DateTimePatternV1Marker>
     // AnyCalendar constructor markers
             + DataProvider<ChineseCacheV1Marker>
@@ -836,7 +854,7 @@ impl<R: DateTimeMarkers + IsRuntimeComponents> NeoFormatter<R> {
     /// ```
     /// use icu::calendar::DateTime;
     /// use icu::datetime::neo::NeoFormatter;
-    /// use icu::datetime::neo_skeleton::NeoComponents;
+    /// use icu::datetime::neo_skeleton::NeoDateTimeComponents;
     /// use icu::datetime::neo_skeleton::NeoDayComponents;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::datetime::neo_skeleton::NeoTimeComponents;
@@ -845,7 +863,7 @@ impl<R: DateTimeMarkers + IsRuntimeComponents> NeoFormatter<R> {
     ///
     /// let fmt = NeoFormatter::try_new_with_components(
     ///     &locale!("es-MX").into(),
-    ///     NeoComponents::DateTime(
+    ///     NeoDateTimeComponents::DateTime(
     ///         NeoDayComponents::Weekday,
     ///         NeoTimeComponents::HourMinute,
     ///     ),
@@ -918,6 +936,8 @@ impl<R: DateTimeMarkers + IsRuntimeComponents> NeoFormatter<R> {
             + DataProvider<<R::D as DateMarkers>::WeekdayNamesV1Marker>
             + DataProvider<<R::T as TimeMarkers>::DayPeriodNamesV1Marker>
             + DataProvider<<R::T as TimeMarkers>::TimeSkeletonPatternsV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::ZoneEssentialsV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::ZoneGenericShortNamesV1Marker>
             + DataProvider<R::DateTimePatternV1Marker>
     {
         Self::try_new_internal(
@@ -1002,6 +1022,8 @@ impl<R: DateTimeMarkers + IsRuntimeComponents> NeoFormatter<R> {
             + DataProvider<<R::D as DateMarkers>::WeekdayNamesV1Marker>
             + DataProvider<<R::T as TimeMarkers>::DayPeriodNamesV1Marker>
             + DataProvider<<R::T as TimeMarkers>::TimeSkeletonPatternsV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::ZoneEssentialsV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::ZoneGenericShortNamesV1Marker>
             + DataProvider<R::DateTimePatternV1Marker>
     // AnyCalendar constructor markers
             + DataProvider<ChineseCacheV1Marker>
@@ -1090,6 +1112,8 @@ impl<R: DateTimeMarkers> NeoFormatter<R> {
             + DataProvider<<R::D as DateMarkers>::WeekdayNamesV1Marker>
             + DataProvider<<R::T as TimeMarkers>::DayPeriodNamesV1Marker>
             + DataProvider<<R::T as TimeMarkers>::TimeSkeletonPatternsV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::ZoneEssentialsV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::ZoneGenericShortNamesV1Marker>
             + DataProvider<R::DateTimePatternV1Marker>,
         L: FixedDecimalFormatterLoader + WeekCalculatorLoader + AnyCalendarLoader,
     {
@@ -1106,10 +1130,12 @@ impl<R: DateTimeMarkers> NeoFormatter<R> {
         .map_err(LoadError::Data)?;
         let mut names = RawDateTimeNames::new_without_fixed_decimal_formatter();
         names.load_for_pattern(
-            &AnyCalendarProvider::<<R::D as DateMarkers>::Year, _>::new(provider, kind), // year
-            &AnyCalendarProvider::<<R::D as DateMarkers>::Month, _>::new(provider, kind), // month
-            &<R::D as DateMarkers>::WeekdayNamesV1Marker::bind(provider),                // weekday
-            &<R::T as TimeMarkers>::DayPeriodNamesV1Marker::bind(provider), // day period
+            &AnyCalendarProvider::<<R::D as DateMarkers>::Year, _>::new(provider, kind),
+            &AnyCalendarProvider::<<R::D as DateMarkers>::Month, _>::new(provider, kind),
+            &<R::D as DateMarkers>::WeekdayNamesV1Marker::bind(provider),
+            &<R::T as TimeMarkers>::DayPeriodNamesV1Marker::bind(provider),
+            &<R::Z as ZoneMarkers>::ZoneEssentialsV1Marker::bind(provider),
+            &<R::Z as ZoneMarkers>::ZoneGenericShortNamesV1Marker::bind(provider),
             Some(loader), // fixed decimal formatter
             Some(loader), // week calculator
             locale,
@@ -1188,7 +1214,8 @@ impl<R: DateTimeMarkers> NeoFormatter<R> {
             + NeoGetField<<R::T as TimeMarkers>::HourInput>
             + NeoGetField<<R::T as TimeMarkers>::MinuteInput>
             + NeoGetField<<R::T as TimeMarkers>::SecondInput>
-            + NeoGetField<<R::T as TimeMarkers>::NanoSecondInput>,
+            + NeoGetField<<R::T as TimeMarkers>::NanoSecondInput>
+            + NeoGetField<<R::Z as ZoneMarkers>::TimeZoneInput>,
     {
         if !datetime.is_any_calendar_kind(self.calendar.kind()) {
             return Err(crate::MismatchedCalendarError {
@@ -1200,7 +1227,7 @@ impl<R: DateTimeMarkers> NeoFormatter<R> {
             });
         }
         let datetime =
-            ExtractedDateTimeInput::extract_from_any_neo_input::<R::D, R::T, I>(datetime);
+            ExtractedDateTimeInput::extract_from_any_neo_input::<R::D, R::T, R::Z, I>(datetime);
         Ok(FormattedNeoDateTime {
             pattern: self.selection.select(&datetime),
             datetime,
@@ -1269,13 +1296,16 @@ impl<R: DateTimeMarkers> NeoFormatter<R> {
             + NeoGetField<<R::T as TimeMarkers>::HourInput>
             + NeoGetField<<R::T as TimeMarkers>::MinuteInput>
             + NeoGetField<<R::T as TimeMarkers>::SecondInput>
-            + NeoGetField<<R::T as TimeMarkers>::NanoSecondInput>,
+            + NeoGetField<<R::T as TimeMarkers>::NanoSecondInput>
+            + NeoGetField<<R::Z as ZoneMarkers>::TimeZoneInput>,
     {
         let datetime = datetime.to_calendar(&self.calendar);
-        let datetime =
-            ExtractedDateTimeInput::extract_from_any_neo_input::<R::D, R::T, I::Converted<'a>>(
-                &datetime,
-            );
+        let datetime = ExtractedDateTimeInput::extract_from_any_neo_input::<
+            R::D,
+            R::T,
+            R::Z,
+            I::Converted<'a>,
+        >(&datetime);
         FormattedNeoDateTime {
             pattern: self.selection.select(&datetime),
             datetime,
@@ -1308,6 +1338,7 @@ impl<'a> TryWriteable for FormattedNeoDateTime<'a> {
             self.pattern.metadata(),
             self.pattern.iter_items(),
             &self.datetime,
+            Some(&self.names),
             Some(&self.names),
             Some(&self.names),
             self.names.week_calculator,
