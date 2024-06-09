@@ -32,6 +32,10 @@ ICU4XCustomTimeZone* ICU4XCustomTimeZone_create_empty();
 
 ICU4XCustomTimeZone* ICU4XCustomTimeZone_create_utc();
 
+ICU4XCustomTimeZone* ICU4XCustomTimeZone_create_gmt();
+
+ICU4XCustomTimeZone* ICU4XCustomTimeZone_create_bst();
+
 diplomat_result_void_ICU4XError ICU4XCustomTimeZone_try_set_gmt_offset_seconds(ICU4XCustomTimeZone* self, int32_t offset_seconds);
 
 void ICU4XCustomTimeZone_clear_gmt_offset(ICU4XCustomTimeZone* self);

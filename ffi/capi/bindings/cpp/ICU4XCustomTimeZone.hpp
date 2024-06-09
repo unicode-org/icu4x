@@ -33,6 +33,16 @@ inline std::unique_ptr<ICU4XCustomTimeZone> ICU4XCustomTimeZone::create_utc() {
   return std::unique_ptr<ICU4XCustomTimeZone>(ICU4XCustomTimeZone::FromFFI(result));
 }
 
+inline std::unique_ptr<ICU4XCustomTimeZone> ICU4XCustomTimeZone::create_gmt() {
+  auto result = capi::ICU4XCustomTimeZone_create_gmt();
+  return std::unique_ptr<ICU4XCustomTimeZone>(ICU4XCustomTimeZone::FromFFI(result));
+}
+
+inline std::unique_ptr<ICU4XCustomTimeZone> ICU4XCustomTimeZone::create_bst() {
+  auto result = capi::ICU4XCustomTimeZone_create_bst();
+  return std::unique_ptr<ICU4XCustomTimeZone>(ICU4XCustomTimeZone::FromFFI(result));
+}
+
 inline diplomat::result<std::monostate, ICU4XError> ICU4XCustomTimeZone::try_set_gmt_offset_seconds(int32_t offset_seconds) {
   auto result = capi::ICU4XCustomTimeZone_try_set_gmt_offset_seconds(this->AsFFI(),
     offset_seconds);

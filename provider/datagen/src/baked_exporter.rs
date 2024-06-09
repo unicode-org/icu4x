@@ -802,4 +802,4 @@ macro_rules! cb {
         }
     }
 }
-crate::registry!(cb);
+icu_registry::registry!(cb);
