@@ -34,7 +34,7 @@ impl<'l> Writeable for FormattedTimeZone<'l> {
                 .format_with_last_resort_fallback(
                     &mut sink,
                     self.time_zone,
-                    &self.time_zone_format.data_payloads,
+                    self.time_zone_format.data_payloads.as_borrowed(),
                 )?,
         };
 
@@ -108,10 +108,13 @@ impl<'l> FormattedTimeZone<'l> {
             match unit.format(
                 &mut writeable::adapters::CoreWriteAsPartsWrite(&mut w),
                 &self.time_zone,
-                &self.time_zone_format.data_payloads,
+                self.time_zone_format.data_payloads.as_borrowed(),
             )? {
                 Ok(()) => return Ok(Ok(())),
                 Err(FormatTimeZoneError::NameNotFound) => continue,
+                Err(FormatTimeZoneError::MissingZoneSymbols) => {
+                    return Ok(Err(DateTimeWriteError::MissingZoneSymbols))
+                }
                 Err(FormatTimeZoneError::MissingInputField(s)) => {
                     return Ok(Err(DateTimeWriteError::MissingInputField(s)))
                 }
