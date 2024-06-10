@@ -14,7 +14,9 @@ use core::str::FromStr;
 
 use crate::uint_iterator::IntIterator;
 
-use crate::Error;
+#[cfg(feature = "ryu")]
+use crate::LimitError;
+use crate::ParseError;
 
 // FixedDecimal assumes usize (digits.len()) is at least as big as a u16
 #[cfg(not(any(
@@ -274,7 +276,7 @@ impl FixedDecimal {
     /// order of magnitude, starting with the digit at magnitude 0.
     ///
     /// This method is not public; use `TryFrom::<isize>` instead.
-    fn from_ascending<T>(digits_iter: T) -> Result<Self, Error>
+    fn from_ascending<T>(digits_iter: T) -> Result<Self, ParseError>
     where
         T: Iterator<Item = u8>,
     {
@@ -291,7 +293,7 @@ impl FixedDecimal {
         for (x, d) in digits_iter.enumerate() {
             // Take only up to i16::MAX values so that we have enough capacity
             if x > i16::MAX as usize {
-                return Err(Error::Limit);
+                return Err(ParseError::Limit);
             }
             // TODO: Should we check here that `d` is between 0 and 9?
             // That should always be the case if IntIterator is used.
@@ -301,7 +303,7 @@ impl FixedDecimal {
                     #[allow(clippy::indexing_slicing)] // X - i < X
                     Some(v) => mem[v] = d,
                     // This error should be obsolete after X is made generic
-                    None => return Err(Error::Limit),
+                    None => return Err(ParseError::Limit),
                 }
             } else {
                 trailing_zeros += 1;
@@ -2975,19 +2977,19 @@ impl writeable::Writeable for FixedDecimal {
 writeable::impl_display_with_writeable!(FixedDecimal);
 
 impl FromStr for FixedDecimal {
-    type Err = Error;
+    type Err = ParseError;
     fn from_str(input_str: &str) -> Result<Self, Self::Err> {
         Self::try_from(input_str.as_bytes())
     }
 }
 
 impl TryFrom<&[u8]> for FixedDecimal {
-    type Error = Error;
+    type Error = ParseError;
     fn try_from(input_str: &[u8]) -> Result<Self, Self::Error> {
         // input_str: the input string
         // no_sign_str: the input string when the sign is removed from it
         if input_str.is_empty() {
-            return Err(Error::Syntax);
+            return Err(ParseError::Syntax);
         }
         #[allow(clippy::indexing_slicing)] // The string is not empty.
         let sign = match input_str[0] {
@@ -3002,7 +3004,7 @@ impl TryFrom<&[u8]> for FixedDecimal {
             &input_str[1..]
         };
         if no_sign_str.is_empty() {
-            return Err(Error::Syntax);
+            return Err(ParseError::Syntax);
         }
         // Compute length of each string once and store it, so if you use that multiple times,
         // you don't compute it multiple times
@@ -3024,34 +3026,34 @@ impl TryFrom<&[u8]> for FixedDecimal {
             if *c == b'.' {
                 if has_dot || has_exponent {
                     // multiple dots or dots after the exponent
-                    return Err(Error::Syntax);
+                    return Err(ParseError::Syntax);
                 }
                 dot_index = i;
                 has_dot = true;
                 // We do support omitting the leading zero,
                 // but not trailing decimal points
                 if i == no_sign_str.len() - 1 {
-                    return Err(Error::Syntax);
+                    return Err(ParseError::Syntax);
                 }
             } else if *c == b'e' || *c == b'E' {
                 if has_exponent {
                     // multiple exponents
-                    return Err(Error::Syntax);
+                    return Err(ParseError::Syntax);
                 }
                 exponent_index = i;
                 has_exponent = true;
                 if i == 0 || i == no_sign_str.len() - 1 {
-                    return Err(Error::Syntax);
+                    return Err(ParseError::Syntax);
                 }
             } else if *c == b'-' {
                 // Allow a single minus sign after the exponent
                 if has_exponent && exponent_index == i - 1 {
                     continue;
                 } else {
-                    return Err(Error::Syntax);
+                    return Err(ParseError::Syntax);
                 }
             } else if *c < b'0' || *c > b'9' {
-                return Err(Error::Syntax);
+                return Err(ParseError::Syntax);
             }
         }
 
@@ -3085,14 +3087,14 @@ impl TryFrom<&[u8]> for FixedDecimal {
         // magnitude to 0 in that case.
         let temp_upper_magnitude = dot_index.saturating_sub(1);
         if temp_upper_magnitude > i16::MAX as usize {
-            return Err(Error::Limit);
+            return Err(ParseError::Limit);
         }
         dec.upper_magnitude = temp_upper_magnitude as i16;
 
         // Computing DecimalFixed.lower_magnitude
         let temp_lower_magnitude = no_dot_str_len - dot_index;
         if temp_lower_magnitude > (i16::MIN as u16) as usize {
-            return Err(Error::Limit);
+            return Err(ParseError::Limit);
         }
         dec.lower_magnitude = (temp_lower_magnitude as i16).wrapping_neg();
 
@@ -3261,7 +3263,7 @@ impl FixedDecimal {
     ///         .expect("Negative zero");
     /// assert_writeable_eq!(negative_zero, "-0");
     /// ```
-    pub fn try_from_f64(float: f64, precision: FloatPrecision) -> Result<Self, Error> {
+    pub fn try_from_f64(float: f64, precision: FloatPrecision) -> Result<Self, LimitError> {
         let mut decimal = Self::new_from_f64_raw(float)?;
         let n_digits = decimal.digits.len();
         // magnitude of the lowest digit in self.digits
@@ -3275,7 +3277,7 @@ impl FixedDecimal {
             FloatPrecision::Floating => (),
             FloatPrecision::Integer => {
                 if lowest_magnitude < 0 {
-                    return Err(Error::Limit);
+                    return Err(LimitError);
                 }
             }
             FloatPrecision::Magnitude(mag) => {
@@ -3283,7 +3285,7 @@ impl FixedDecimal {
             }
             FloatPrecision::SignificantDigits(sig) => {
                 if sig == 0 {
-                    return Err(Error::Limit);
+                    return Err(LimitError);
                 }
 
                 let position = decimal.magnitude - (sig as i16) + 1;
@@ -3302,14 +3304,17 @@ impl FixedDecimal {
     }
 
     /// Internal function for parsing directly from floats using ryū
-    fn new_from_f64_raw(float: f64) -> Result<Self, Error> {
+    fn new_from_f64_raw(float: f64) -> Result<Self, LimitError> {
         if !float.is_finite() {
-            return Err(Error::Limit);
+            return Err(LimitError);
         }
         // note: this does not heap allocate
         let mut buf = ryu::Buffer::new();
         let formatted = buf.format_finite(float);
-        Self::from_str(formatted)
+        Self::from_str(formatted).map_err(|e| match e {
+            ParseError::Limit => LimitError,
+            ParseError::Syntax => unreachable!("ryu produces correct syntax"),
+        })
     }
 }
 
@@ -3851,7 +3856,7 @@ fn test_zero_str_bounds() {
     struct TestCase {
         pub zeros_before_dot: usize,
         pub zeros_after_dot: usize,
-        pub expected_err: Option<Error>,
+        pub expected_err: Option<ParseError>,
     }
     let cases = [
         TestCase {
@@ -3867,12 +3872,12 @@ fn test_zero_str_bounds() {
         TestCase {
             zeros_before_dot: i16::MAX as usize + 2,
             zeros_after_dot: 0,
-            expected_err: Some(Error::Limit),
+            expected_err: Some(ParseError::Limit),
         },
         TestCase {
             zeros_before_dot: 0,
             zeros_after_dot: i16::MAX as usize + 2,
-            expected_err: Some(Error::Limit),
+            expected_err: Some(ParseError::Limit),
         },
         TestCase {
             zeros_before_dot: i16::MAX as usize + 1,
@@ -3882,17 +3887,17 @@ fn test_zero_str_bounds() {
         TestCase {
             zeros_before_dot: i16::MAX as usize + 2,
             zeros_after_dot: i16::MAX as usize + 1,
-            expected_err: Some(Error::Limit),
+            expected_err: Some(ParseError::Limit),
         },
         TestCase {
             zeros_before_dot: i16::MAX as usize + 1,
             zeros_after_dot: i16::MAX as usize + 2,
-            expected_err: Some(Error::Limit),
+            expected_err: Some(ParseError::Limit),
         },
         TestCase {
             zeros_before_dot: i16::MAX as usize,
             zeros_after_dot: i16::MAX as usize + 2,
-            expected_err: Some(Error::Limit),
+            expected_err: Some(ParseError::Limit),
         },
         TestCase {
             zeros_before_dot: i16::MAX as usize,
@@ -3928,28 +3933,28 @@ fn test_syntax_error() {
     #[derive(Debug)]
     struct TestCase {
         pub input_str: &'static str,
-        pub expected_err: Option<Error>,
+        pub expected_err: Option<ParseError>,
     }
     let cases = [
         TestCase {
             input_str: "-12a34",
-            expected_err: Some(Error::Syntax),
+            expected_err: Some(ParseError::Syntax),
         },
         TestCase {
             input_str: "0.0123√400",
-            expected_err: Some(Error::Syntax),
+            expected_err: Some(ParseError::Syntax),
         },
         TestCase {
             input_str: "0.012.3400",
-            expected_err: Some(Error::Syntax),
+            expected_err: Some(ParseError::Syntax),
         },
         TestCase {
             input_str: "-0-0123400",
-            expected_err: Some(Error::Syntax),
+            expected_err: Some(ParseError::Syntax),
         },
         TestCase {
             input_str: "0-0123400",
-            expected_err: Some(Error::Syntax),
+            expected_err: Some(ParseError::Syntax),
         },
         TestCase {
             input_str: "-0.00123400",
@@ -3957,7 +3962,7 @@ fn test_syntax_error() {
         },
         TestCase {
             input_str: "00123400.",
-            expected_err: Some(Error::Syntax),
+            expected_err: Some(ParseError::Syntax),
         },
         TestCase {
             input_str: "00123400.0",
@@ -3965,19 +3970,19 @@ fn test_syntax_error() {
         },
         TestCase {
             input_str: "123_456",
-            expected_err: Some(Error::Syntax),
+            expected_err: Some(ParseError::Syntax),
         },
         TestCase {
             input_str: "",
-            expected_err: Some(Error::Syntax),
+            expected_err: Some(ParseError::Syntax),
         },
         TestCase {
             input_str: "-",
-            expected_err: Some(Error::Syntax),
+            expected_err: Some(ParseError::Syntax),
         },
         TestCase {
             input_str: "+",
-            expected_err: Some(Error::Syntax),
+            expected_err: Some(ParseError::Syntax),
         },
         TestCase {
             input_str: "-1",

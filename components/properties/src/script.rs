@@ -5,7 +5,6 @@
 //! Data and APIs for supporting both Script and Script_Extensions property
 //! values in an efficient structure.
 
-use crate::error::PropertiesError;
 use crate::props::Script;
 use crate::props::ScriptULE;
 use crate::provider::*;
@@ -627,7 +626,7 @@ pub const fn script_with_extensions() -> ScriptWithExtensionsBorrowed<'static> {
 icu_provider::gen_any_buffer_data_constructors!(
     locale: skip,
     options: skip,
-    result: Result<ScriptWithExtensions, PropertiesError>,
+    result: Result<ScriptWithExtensions, DataError>,
     #[cfg(skip)]
     functions: [
         script_with_extensions,
@@ -640,10 +639,9 @@ icu_provider::gen_any_buffer_data_constructors!(
 #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, script_with_extensions)]
 pub fn load_script_with_extensions_unstable(
     provider: &(impl DataProvider<ScriptWithExtensionsPropertyV1Marker> + ?Sized),
-) -> Result<ScriptWithExtensions, PropertiesError> {
-    Ok(ScriptWithExtensions::from_data(
-        provider
-            .load(Default::default())
-            .and_then(DataResponse::take_payload)?,
-    ))
+) -> Result<ScriptWithExtensions, DataError> {
+    provider
+        .load(Default::default())
+        .and_then(DataResponse::take_payload)
+        .map(ScriptWithExtensions::from_data)
 }

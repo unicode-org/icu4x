@@ -63,10 +63,10 @@ inline uint32_t ICU4XIsoDate::week_of_month(ICU4XIsoWeekday first_weekday) const
   return result;
 }
 
-inline diplomat::result<ICU4XWeekOf, ICU4XError> ICU4XIsoDate::week_of_year(const ICU4XWeekCalculator& calculator) const {
+inline ICU4XWeekOf ICU4XIsoDate::week_of_year(const ICU4XWeekCalculator& calculator) const {
   auto result = capi::ICU4XIsoDate_week_of_year(this->AsFFI(),
     calculator.AsFFI());
-  return result.is_ok ? diplomat::result<ICU4XWeekOf, ICU4XError>(diplomat::Ok<ICU4XWeekOf>(ICU4XWeekOf::FromFFI(result.ok))) : diplomat::result<ICU4XWeekOf, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return ICU4XWeekOf::FromFFI(result);
 }
 
 inline uint32_t ICU4XIsoDate::month() const {

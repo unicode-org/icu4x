@@ -108,8 +108,8 @@ pub mod ffi {
         pub fn week_of_year(
             &self,
             calculator: &ICU4XWeekCalculator,
-        ) -> Result<crate::week::ffi::ICU4XWeekOf, ICU4XError> {
-            Ok(self.0.week_of_year(&calculator.0)?.into())
+        ) -> crate::week::ffi::ICU4XWeekOf {
+            self.0.week_of_year(&calculator.0).into()
         }
 
         /// Returns 1-indexed number of the month of this date in its year
@@ -258,8 +258,8 @@ pub mod ffi {
         pub fn week_of_year(
             &self,
             calculator: &ICU4XWeekCalculator,
-        ) -> Result<crate::week::ffi::ICU4XWeekOf, ICU4XError> {
-            Ok(self.0.week_of_year(&calculator.0)?.into())
+        ) -> crate::week::ffi::ICU4XWeekOf {
+            self.0.week_of_year(&calculator.0).into()
         }
 
         /// Returns 1-indexed number of the month of this date in its year

@@ -14,7 +14,8 @@
 #include "ICU4XIsoWeekday.h"
 #include "ICU4XWeekCalculator.d.h"
 #include "ICU4XWeekCalculator.h"
-#include "diplomat_result_ICU4XWeekOf_ICU4XError.d.h"
+#include "ICU4XWeekOf.d.h"
+#include "ICU4XWeekOf.h"
 #include "diplomat_result_box_ICU4XDate_ICU4XError.d.h"
 
 #include "ICU4XDate.d.h"
@@ -41,7 +42,7 @@ ICU4XIsoWeekday ICU4XDate_day_of_week(const ICU4XDate* self);
 
 uint32_t ICU4XDate_week_of_month(const ICU4XDate* self, ICU4XIsoWeekday first_weekday);
 
-diplomat_result_ICU4XWeekOf_ICU4XError ICU4XDate_week_of_year(const ICU4XDate* self, const ICU4XWeekCalculator* calculator);
+ICU4XWeekOf ICU4XDate_week_of_year(const ICU4XDate* self, const ICU4XWeekCalculator* calculator);
 
 uint32_t ICU4XDate_ordinal_month(const ICU4XDate* self);
 

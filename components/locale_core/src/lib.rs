@@ -75,10 +75,7 @@ mod shortvec;
 
 pub use langid::LanguageIdentifier;
 pub use locale::Locale;
-pub use parser::errors::ParserError;
-
-#[doc(no_inline)]
-pub use ParserError as Error;
+pub use parser::errors::ParseError;
 
 pub mod extensions;
 #[macro_use]

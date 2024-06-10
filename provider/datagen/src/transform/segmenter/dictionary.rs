@@ -22,7 +22,10 @@ impl DatagenProvider {
         &self,
         req: DataRequest,
     ) -> Result<UCharDictionaryBreakDataV1<'static>, DataError> {
-        let filename = format!("segmenter/dictionary/{}.toml", req.key_attributes as &str);
+        let filename = format!(
+            "segmenter/dictionary/{}.toml",
+            req.marker_attributes as &str
+        );
 
         let toml_data = self
             .icuexport()
@@ -50,7 +53,7 @@ macro_rules! implement {
         impl IterableDataProviderCached<$marker> for DatagenProvider {
             fn supported_requests_cached(
                 &self,
-            ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+            ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
                 Ok($supported
                     .into_iter()
                     .map(|m| (Default::default(), m.parse().unwrap()))

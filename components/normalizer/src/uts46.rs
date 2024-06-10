@@ -13,8 +13,8 @@ use crate::CanonicalDecompositionDataV1Marker;
 use crate::CanonicalDecompositionTablesV1Marker;
 use crate::CompatibilityDecompositionTablesV1Marker;
 use crate::ComposingNormalizer;
-use crate::NormalizerError;
 use crate::Uts46DecompositionSupplementV1Marker;
+use icu_provider::DataError;
 use icu_provider::DataProvider;
 
 // Implementation note: Despite merely wrapping a `ComposingNormalizer`,
@@ -52,7 +52,7 @@ impl Uts46Mapper {
 
     /// Construct with provider.
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    pub fn try_new<D>(provider: &D) -> Result<Self, NormalizerError>
+    pub fn try_new<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<CanonicalDecompositionDataV1Marker>
             + DataProvider<Uts46DecompositionSupplementV1Marker>

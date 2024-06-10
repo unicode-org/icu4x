@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::{provider::*, LocaleTransformError};
+use crate::provider::*;
 
 use icu_locale_core::subtags::{Language, Region, Script};
 use icu_locale_core::LanguageIdentifier;
@@ -266,9 +266,7 @@ impl LocaleExpander {
     }
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_extended)]
-    pub fn try_new_extended_unstable<P>(
-        provider: &P,
-    ) -> Result<LocaleExpander, LocaleTransformError>
+    pub fn try_new_extended_unstable<P>(provider: &P) -> Result<LocaleExpander, DataError>
     where
         P: DataProvider<LikelySubtagsForLanguageV1Marker>
             + DataProvider<LikelySubtagsForScriptRegionV1Marker>
@@ -286,7 +284,7 @@ impl LocaleExpander {
         })
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: LocaleTransformError,
+    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: DataError,
         #[cfg(skip)]
         functions: [
         new_extended,
@@ -299,7 +297,7 @@ impl LocaleExpander {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::new)]
     pub fn try_new_with_any_provider(
         provider: &(impl AnyProvider + ?Sized),
-    ) -> Result<LocaleExpander, LocaleTransformError> {
+    ) -> Result<LocaleExpander, DataError> {
         Self::try_new_compat(&provider.as_downcasting())
     }
 
@@ -307,12 +305,12 @@ impl LocaleExpander {
     #[cfg(feature = "serde")]
     pub fn try_new_with_buffer_provider(
         provider: &(impl BufferProvider + ?Sized),
-    ) -> Result<LocaleExpander, LocaleTransformError> {
+    ) -> Result<LocaleExpander, DataError> {
         Self::try_new_compat(&provider.as_deserializing())
     }
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    pub fn try_new_unstable<P>(provider: &P) -> Result<LocaleExpander, LocaleTransformError>
+    pub fn try_new_unstable<P>(provider: &P) -> Result<LocaleExpander, DataError>
     where
         P: DataProvider<LikelySubtagsForLanguageV1Marker>
             + DataProvider<LikelySubtagsForScriptRegionV1Marker>
@@ -328,7 +326,7 @@ impl LocaleExpander {
         })
     }
 
-    fn try_new_compat<P>(provider: &P) -> Result<LocaleExpander, LocaleTransformError>
+    fn try_new_compat<P>(provider: &P) -> Result<LocaleExpander, DataError>
     where
         P: DataProvider<LikelySubtagsForLanguageV1Marker>
             + DataProvider<LikelySubtagsForScriptRegionV1Marker>
@@ -650,20 +648,24 @@ mod tests {
     use icu_locale_core::locale;
 
     struct RejectByKeyProvider {
-        keys: Vec<DataKey>,
+        markers: Vec<DataMarkerInfo>,
     }
 
     impl AnyProvider for RejectByKeyProvider {
-        fn load_any(&self, key: DataKey, _: DataRequest) -> Result<AnyResponse, DataError> {
-            if self.keys.contains(&key) {
-                return Err(DataErrorKind::MissingDataKey.with_str_context("rejected"));
+        fn load_any(
+            &self,
+            marker: DataMarkerInfo,
+            _: DataRequest,
+        ) -> Result<AnyResponse, DataError> {
+            if self.markers.contains(&marker) {
+                return Err(DataErrorKind::MissingDataMarker.with_str_context("rejected"));
             }
 
             let l = crate::provider::Baked::SINGLETON_LOCID_TRANSFORM_LIKELYSUBTAGS_L_V1;
             let ext = crate::provider::Baked::SINGLETON_LOCID_TRANSFORM_LIKELYSUBTAGS_EXT_V1;
             let sr = crate::provider::Baked::SINGLETON_LOCID_TRANSFORM_LIKELYSUBTAGS_SR_V1;
 
-            let payload = if key.hashed() == LikelySubtagsV1Marker::KEY.hashed() {
+            let payload = if marker.path.hashed() == LikelySubtagsV1Marker::INFO.path.hashed() {
                 DataPayload::<LikelySubtagsV1Marker>::from_owned(LikelySubtagsV1 {
                     language_script: l
                         .language_script
@@ -686,17 +688,19 @@ mod tests {
                     und: l.und,
                 })
                 .wrap_into_any_payload()
-            } else if key.hashed() == LikelySubtagsForLanguageV1Marker::KEY.hashed() {
+            } else if marker.path.hashed() == LikelySubtagsForLanguageV1Marker::INFO.path.hashed() {
                 DataPayload::<LikelySubtagsForLanguageV1Marker>::from_static_ref(l)
                     .wrap_into_any_payload()
-            } else if key.hashed() == LikelySubtagsExtendedV1Marker::KEY.hashed() {
+            } else if marker.path.hashed() == LikelySubtagsExtendedV1Marker::INFO.path.hashed() {
                 DataPayload::<LikelySubtagsExtendedV1Marker>::from_static_ref(ext)
                     .wrap_into_any_payload()
-            } else if key.hashed() == LikelySubtagsForScriptRegionV1Marker::KEY.hashed() {
+            } else if marker.path.hashed()
+                == LikelySubtagsForScriptRegionV1Marker::INFO.path.hashed()
+            {
                 DataPayload::<LikelySubtagsForScriptRegionV1Marker>::from_static_ref(sr)
                     .wrap_into_any_payload()
             } else {
-                return Err(DataErrorKind::MissingDataKey.into_error());
+                return Err(DataErrorKind::MissingDataMarker.into_error());
             };
 
             Ok(AnyResponse {
@@ -709,10 +713,10 @@ mod tests {
     #[test]
     fn test_old_keys() {
         let provider = RejectByKeyProvider {
-            keys: vec![
-                LikelySubtagsForLanguageV1Marker::KEY,
-                LikelySubtagsForScriptRegionV1Marker::KEY,
-                LikelySubtagsExtendedV1Marker::KEY,
+            markers: vec![
+                LikelySubtagsForLanguageV1Marker::INFO,
+                LikelySubtagsForScriptRegionV1Marker::INFO,
+                LikelySubtagsExtendedV1Marker::INFO,
             ],
         };
         let lc = LocaleExpander::try_new_with_any_provider(&provider)
@@ -725,7 +729,7 @@ mod tests {
     #[test]
     fn test_new_keys() {
         let provider = RejectByKeyProvider {
-            keys: vec![LikelySubtagsV1Marker::KEY],
+            markers: vec![LikelySubtagsV1Marker::INFO],
         };
         let lc = LocaleExpander::try_new_with_any_provider(&provider)
             .expect("should create with new keys");
@@ -739,7 +743,7 @@ mod tests {
         // Include the old key and one of the new keys but not both new keys.
         // Not sure if this is a useful test.
         let provider = RejectByKeyProvider {
-            keys: vec![LikelySubtagsForScriptRegionV1Marker::KEY],
+            markers: vec![LikelySubtagsForScriptRegionV1Marker::INFO],
         };
         let lc = LocaleExpander::try_new_with_any_provider(&provider)
             .expect("should create with mixed keys");
@@ -751,10 +755,10 @@ mod tests {
     #[test]
     fn test_no_keys() {
         let provider = RejectByKeyProvider {
-            keys: vec![
-                LikelySubtagsForLanguageV1Marker::KEY,
-                LikelySubtagsForScriptRegionV1Marker::KEY,
-                LikelySubtagsV1Marker::KEY,
+            markers: vec![
+                LikelySubtagsForLanguageV1Marker::INFO,
+                LikelySubtagsForScriptRegionV1Marker::INFO,
+                LikelySubtagsV1Marker::INFO,
             ],
         };
         if LocaleExpander::try_new_with_any_provider(&provider).is_ok() {
@@ -766,9 +770,9 @@ mod tests {
     fn test_new_small_keys() {
         // Include the new small keys but not the extended key
         let provider = RejectByKeyProvider {
-            keys: vec![
-                LikelySubtagsExtendedV1Marker::KEY,
-                LikelySubtagsV1Marker::KEY,
+            markers: vec![
+                LikelySubtagsExtendedV1Marker::INFO,
+                LikelySubtagsV1Marker::INFO,
             ],
         };
         let lc = LocaleExpander::try_new_with_any_provider(&provider)

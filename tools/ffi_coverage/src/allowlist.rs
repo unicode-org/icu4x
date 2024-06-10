@@ -84,6 +84,7 @@ lazy_static::lazy_static! {
         // Rust-specific conversion trait
         "AsCalendar",
         "IntoAnyCalendar",
+        "NeoGetField",
     ].into_iter().collect();
 
     pub static ref IGNORED_ASSOCIATED_ITEMS: HashMap<&'static str, &'static [&'static str]> = [
@@ -283,10 +284,6 @@ lazy_static::lazy_static! {
         "icu_provider_adapters::any_payload::AnyPayloadProvider",
 
         // Not planned for 2.0
-        // We don't expose data keys directly over FFI, but when we do, we should add this
-        "icu::locale::fallback::LocaleFallbackConfig::from_key",
-
-        // Not planned for 2.0
         // On RequestFilterDataProvider, filter_by_langid needs callbacks, and
         // filter_by_langid_allowlist_strict needs input iterators.
         // require_langid is not very useful by itself.
@@ -448,7 +445,7 @@ lazy_static::lazy_static! {
 
         // The polymorphic ICU4XDataProvider type makes the MultiFork providers less relevant.
         "icu_provider_adapters::fork::MultiForkByErrorProvider",
-        "icu_provider_adapters::fork::MultiForkByKeyProvider",
+        "icu_provider_adapters::fork::MultiForkByMarkerProvider",
 
         // Specialized constructor for separately constructed instances
         "icu::timezone::TimeZoneIdMapperWithFastCanonicalization::try_new_with_mapper",

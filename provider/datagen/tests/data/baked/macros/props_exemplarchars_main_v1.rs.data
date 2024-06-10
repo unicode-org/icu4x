@@ -11,35 +11,22 @@ macro_rules! __impl_props_exemplarchars_main_v1 {
         #[clippy::msrv = "1.70"]
         impl icu_provider::DataProvider<icu::properties::provider::ExemplarCharactersMainV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::properties::provider::ExemplarCharactersMainV1Marker>, icu_provider::DataError> {
-                static UND: <icu::properties::provider::ExemplarCharactersMainV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
-                    unsafe {
-                        #[allow(unused_unsafe)]
-                        icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(zerovec::ZeroVec::new(), 0u32)
-                    },
-                    zerovec::VarZeroVec::new(),
-                ));
-                static VALUES: [&<icu::properties::provider::ExemplarCharactersMainV1Marker as icu_provider::DynamicDataMarker>::Yokeable; 1usize] = [&UND];
-                static KEYS: [&str; 1usize] = ["und"];
-                if let Ok(payload) = KEYS.binary_search_by(|k| req.legacy_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
-                    Ok(icu_provider::DataResponse { payload: Some(icu_provider::DataPayload::from_static_ref(payload)), metadata: Default::default() })
-                } else {
-                    Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::properties::provider::ExemplarCharactersMainV1Marker as icu_provider::DataMarker>::KEY, req))
-                }
+                Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::properties::provider::ExemplarCharactersMainV1Marker as icu_provider::DataMarker>::INFO, req))
             }
         }
     };
 }
 /// Implement `IterableDataProvider<ExemplarCharactersMainV1Marker>` on the given struct using the data
 /// hardcoded in this file. This allows the struct to be used with
-/// `DatagenDriver` for this key.
+/// `DatagenDriver` for this marker.
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __impliterable_props_exemplarchars_main_v1 {
     ($ provider : ty) => {
         #[clippy::msrv = "1.70"]
         impl icu_provider::datagen::IterableDataProvider<icu::properties::provider::ExemplarCharactersMainV1Marker> for $provider {
-            fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataKeyAttributes)>, icu_provider::DataError> {
-                Ok(["und"].into_iter().filter_map(icu_provider::DataRequest::legacy_decode).collect())
+            fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataMarkerAttributes)>, icu_provider::DataError> {
+                Ok(Default::default())
             }
         }
     };

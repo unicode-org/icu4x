@@ -37,7 +37,7 @@ impl DataProvider<PersonNamesFormatV1Marker> for crate::DatagenProvider {
 impl IterableDataProviderCached<PersonNamesFormatV1Marker> for crate::DatagenProvider {
     fn supported_requests_cached(
         &self,
-    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         Ok(self
             .cldr()?
             .personnames()

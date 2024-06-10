@@ -48,11 +48,11 @@ const _: () = {
 };
 
 #[cfg(feature = "datagen")]
-/// The latest minimum set of keys required by this component.
-pub const KEYS: &[DataKey] = &[
-    AndListV1Marker::KEY,
-    OrListV1Marker::KEY,
-    UnitListV1Marker::KEY,
+/// The latest minimum set of markers required by this component.
+pub const MARKERS: &[DataMarkerInfo] = &[
+    AndListV1Marker::INFO,
+    OrListV1Marker::INFO,
+    UnitListV1Marker::INFO,
 ];
 
 /// Symbols and metadata required for [`ListFormatter`](crate::ListFormatter).

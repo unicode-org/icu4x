@@ -7,7 +7,7 @@ use crate::provider::DatagenProvider;
 use crate::provider::IterableDataProviderCached;
 use core::convert::TryFrom;
 use icu_experimental::displaynames::provider::*;
-use icu_locale_core::{subtags::Script, ParserError};
+use icu_locale_core::{subtags::Script, ParseError};
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
 use std::str::FromStr;
@@ -39,7 +39,7 @@ impl DataProvider<ScriptDisplayNamesV1Marker> for DatagenProvider {
 impl IterableDataProviderCached<ScriptDisplayNamesV1Marker> for DatagenProvider {
     fn supported_requests_cached(
         &self,
-    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         Ok(self
             .cldr()?
             .displaynames()
@@ -64,7 +64,7 @@ const ALT_SUBSTRING: &str = "-alt-";
 const ALT_SHORT_SUBSTRING: &str = "-alt-short";
 
 impl TryFrom<&cldr_serde::displaynames::script::Resource> for ScriptDisplayNamesV1<'static> {
-    type Error = ParserError;
+    type Error = ParseError;
 
     fn try_from(other: &cldr_serde::displaynames::script::Resource) -> Result<Self, Self::Error> {
         let mut names = BTreeMap::new();

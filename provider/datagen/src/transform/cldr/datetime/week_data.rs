@@ -18,7 +18,7 @@ use std::collections::HashSet;
 impl IterableDataProviderCached<WeekDataV1Marker> for DatagenProvider {
     fn supported_requests_cached(
         &self,
-    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         let week_data: &cldr_serde::week_data::Resource = self
             .cldr()?
             .core()
@@ -202,7 +202,7 @@ impl DataProvider<WeekDataV2Marker> for DatagenProvider {
 impl IterableDataProviderCached<WeekDataV2Marker> for DatagenProvider {
     fn supported_requests_cached(
         &self,
-    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         IterableDataProviderCached::<WeekDataV1Marker>::supported_requests_cached(self)
     }
 }

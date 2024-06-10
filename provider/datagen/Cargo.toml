@@ -41,6 +41,7 @@ log = { workspace = true }
 memchr = { workspace = true }
 rayon = { workspace = true, optional = true }
 writeable = { workspace = true }
+icu_registry = { workspace = true }
 
 # Exporters
 icu_provider_blob = { workspace = true, features = ["export"], optional = true }
@@ -100,7 +101,6 @@ eyre = { workspace = true, optional = true }
 simple_logger = { workspace = true, optional = true }
 
 [dev-dependencies]
-crlify = { path = "../../utils/crlify" }
 elsa = { workspace = true }
 icu = { path = "../../components/icu" }
 postcard = { workspace = true }

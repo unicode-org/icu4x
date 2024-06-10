@@ -3,15 +3,12 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::prelude::*;
-use crlify::BufWriterWithLineEndingFix;
 use icu_provider::datagen::*;
 use icu_provider::dynutil::UpcastDataPayload;
 use icu_provider::prelude::*;
 use std::alloc::{GlobalAlloc, Layout, System};
 use std::cell::Cell;
-use std::collections::{BTreeMap, BTreeSet};
-use std::fs::File;
-use std::io::Write;
+use std::collections::BTreeSet;
 use std::sync::Mutex;
 
 include!("../../../tests/locales.rs.data");
@@ -21,12 +18,10 @@ include!("../../../tests/locales.rs.data");
 fn make_testdata() {
     // Only produce output if the variable is set. Test is hermetic otherwise.
     let exporter: Box<dyn DataExporter> = if std::option_env!("ICU4X_WRITE_TESTDATA").is_none() {
-        Box::new(PostcardTestingExporter {
-            size_hash: Default::default(),
+        Box::new(ZeroCopyCheckExporter {
             zero_copy_violations: Default::default(),
             zero_copy_transient_violations: Default::default(),
             rountrip_errors: Default::default(),
-            fingerprints: std::io::sink(),
         })
     } else {
         simple_logger::SimpleLogger::new()
@@ -63,20 +58,16 @@ fn make_testdata() {
                 )
                 .unwrap(),
             )),
-            Box::new(PostcardTestingExporter {
-                size_hash: Default::default(),
+            Box::new(ZeroCopyCheckExporter {
                 zero_copy_violations: Default::default(),
                 zero_copy_transient_violations: Default::default(),
                 rountrip_errors: Default::default(),
-                fingerprints: BufWriterWithLineEndingFix::new(
-                    File::create("tests/data/postcard/fingerprints.csv").unwrap(),
-                ),
             }),
         ]))
     };
 
     DatagenDriver::new()
-        .with_keys(crate::all_keys())
+        .with_markers(crate::all_markers())
         .with_locales_and_fallback(
             LOCALES.iter().cloned().map(LocaleFamily::with_descendants),
             Default::default(),
@@ -94,37 +85,32 @@ struct StubExporter<E>(E);
 impl<E: DataExporter> DataExporter for StubExporter<E> {
     fn put_payload(
         &self,
-        key: DataKey,
-        locale: &DataLocale,
-        key_attributes: &DataKeyAttributes,
-        payload: &DataPayload<ExportMarker>,
+        _marker: DataMarkerInfo,
+        _locale: &DataLocale,
+        _marker_attributes: &DataMarkerAttributes,
+        _payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
-        // put `und-*` but not any other locales
-        if locale.is_langid_und() {
-            self.0.put_payload(key, locale, key_attributes, payload)
-        } else {
-            Ok(())
-        }
+        Ok(())
     }
 
     fn flush_singleton(
         &self,
-        key: DataKey,
+        marker: DataMarkerInfo,
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
-        self.0.flush_singleton(key, payload)
+        self.0.flush_singleton(marker, payload)
     }
 
-    fn flush(&self, key: DataKey) -> Result<(), DataError> {
-        self.0.flush(key)
+    fn flush(&self, marker: DataMarkerInfo) -> Result<(), DataError> {
+        self.0.flush(marker)
     }
 
     fn flush_with_built_in_fallback(
         &self,
-        key: DataKey,
+        marker: DataMarkerInfo,
         fallback_mode: BuiltInFallbackMode,
     ) -> Result<(), DataError> {
-        self.0.flush_with_built_in_fallback(key, fallback_mode)
+        self.0.flush_with_built_in_fallback(marker, fallback_mode)
     }
 
     fn close(&mut self) -> Result<(), DataError> {
@@ -136,12 +122,10 @@ impl<E: DataExporter> DataExporter for StubExporter<E> {
     }
 }
 
-struct PostcardTestingExporter<F> {
-    size_hash: Mutex<BTreeMap<(DataKey, String), (usize, u64)>>,
-    zero_copy_violations: Mutex<BTreeSet<DataKey>>,
-    zero_copy_transient_violations: Mutex<BTreeSet<DataKey>>,
-    rountrip_errors: Mutex<BTreeSet<(DataKey, String)>>,
-    fingerprints: F,
+struct ZeroCopyCheckExporter {
+    zero_copy_violations: Mutex<BTreeSet<DataMarkerInfo>>,
+    zero_copy_transient_violations: Mutex<BTreeSet<DataMarkerInfo>>,
+    rountrip_errors: Mutex<BTreeSet<(DataMarkerInfo, String)>>,
 }
 
 // Types in this list cannot be zero-copy deserialized.
@@ -149,9 +133,9 @@ struct PostcardTestingExporter<F> {
 // Such types contain some data that was allocated during deserializations
 //
 // Every entry in this list is a bug that needs to be addressed before stabilization.
-const EXPECTED_VIOLATIONS: &[DataKey] = &[
+const EXPECTED_VIOLATIONS: &[DataMarkerInfo] = &[
     // https://github.com/unicode-org/icu4x/issues/1678
-    icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY,
+    icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::INFO,
 ];
 
 // Types in this list can be zero-copy deserialized (and do not contain allocated data),
@@ -159,21 +143,21 @@ const EXPECTED_VIOLATIONS: &[DataKey] = &[
 //
 // Entries in this list represent a less-than-ideal state of things, however ICU4X is shippable with violations
 // in this list since it does not affect databake.
-const EXPECTED_TRANSIENT_VIOLATIONS: &[DataKey] = &[
+const EXPECTED_TRANSIENT_VIOLATIONS: &[DataMarkerInfo] = &[
     // Regex DFAs need to be validated, which involved creating a BTreeMap.
     // If required we could avoid this using one of the approaches in
     // https://github.com/unicode-org/icu4x/pulls/3697.
-    icu_list::provider::AndListV1Marker::KEY,
-    icu_list::provider::OrListV1Marker::KEY,
-    icu_list::provider::UnitListV1Marker::KEY,
+    icu_list::provider::AndListV1Marker::INFO,
+    icu_list::provider::OrListV1Marker::INFO,
+    icu_list::provider::UnitListV1Marker::INFO,
 ];
 
-impl<F: Write + Send + Sync> DataExporter for PostcardTestingExporter<F> {
+impl DataExporter for ZeroCopyCheckExporter {
     fn put_payload(
         &self,
-        key: DataKey,
+        marker: DataMarkerInfo,
         locale: &DataLocale,
-        key_attributes: &DataKeyAttributes,
+        marker_attributes: &DataMarkerAttributes,
         payload_before: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
         use postcard::{
@@ -186,17 +170,6 @@ impl<F: Write + Send + Sync> DataExporter for PostcardTestingExporter<F> {
         payload_before.serialize(&mut serializer).unwrap();
         let serialized = serializer.output.finalize().unwrap();
 
-        let size = serialized.len();
-
-        // We're using SipHash, which is deprecated, but we want a stable hasher
-        // (we're fine with it not being cryptographically secure since we're just using it to track diffs)
-        #[allow(deprecated)]
-        use std::hash::{Hash, Hasher, SipHasher};
-        #[allow(deprecated)]
-        let mut hasher = SipHasher::new();
-        serialized.iter().for_each(|b| b.hash(&mut hasher));
-        let hash = hasher.finish();
-
         let buffer_payload = DataPayload::from_owned_buffer(serialized.into_boxed_slice());
 
         MeasuringAllocator::start_measure();
@@ -207,77 +180,64 @@ impl<F: Write + Send + Sync> DataExporter for PostcardTestingExporter<F> {
 
         macro_rules! cb {
             ($($marker:path = $path:literal,)+ #[experimental] $($emarker:path = $epath:literal,)+) => {
-                ((allocated, deallocated), payload_after) = match key {
-                    k if k == icu_provider::hello_world::HelloWorldV1Marker::KEY => {
+                ((allocated, deallocated), payload_after) = match marker {
+                    k if k == icu_provider::hello_world::HelloWorldV1Marker::INFO => {
                         let deserialized: DataPayload<icu_provider::hello_world::HelloWorldV1Marker> = buffer_payload.into_deserialized(icu_provider::buf::BufferFormat::Postcard1).unwrap();
                         (MeasuringAllocator::end_measure(), UpcastDataPayload::upcast(deserialized))
                     }
                     $(
-                        k if k == <$marker>::KEY => {
+                        k if k == <$marker>::INFO => {
                             let deserialized: DataPayload<$marker> = buffer_payload.into_deserialized(icu_provider::buf::BufferFormat::Postcard1).unwrap();
                             (MeasuringAllocator::end_measure(), UpcastDataPayload::upcast(deserialized))
                         }
                     )+
                     $(
-                        k if k == <$emarker>::KEY => {
+                        k if k == <$emarker>::INFO => {
                             let deserialized: DataPayload<$emarker> = buffer_payload.into_deserialized(icu_provider::buf::BufferFormat::Postcard1).unwrap();
                             (MeasuringAllocator::end_measure(), UpcastDataPayload::upcast(deserialized))
                         }
                     )+
-                    _ => unreachable!("unregistered key {key:?}")
+                    _ => unreachable!("unregistered marker {marker:?}")
                 };
             }
         }
-        crate::registry!(cb);
+        icu_registry::registry!(cb);
 
         if payload_before != &payload_after {
             self.rountrip_errors.lock().expect("poison").insert((
-                key,
+                marker,
                 locale.to_string()
-                    + if key_attributes.is_empty() { "" } else { "-x" }
-                    + key_attributes,
+                    + if marker_attributes.is_empty() {
+                        ""
+                    } else {
+                        "-x"
+                    }
+                    + marker_attributes,
             ));
         }
 
         if deallocated != allocated {
-            if !EXPECTED_VIOLATIONS.contains(&key) {
-                eprintln!("Zerocopy violation {key} {locale}: {allocated}B allocated, {deallocated}B deallocated");
+            if !EXPECTED_VIOLATIONS.contains(&marker) {
+                eprintln!("Zerocopy violation {marker} {locale}: {allocated}B allocated, {deallocated}B deallocated");
             }
             self.zero_copy_violations
                 .lock()
                 .expect("poison")
-                .insert(key);
+                .insert(marker);
         } else if allocated > 0 {
-            if !EXPECTED_TRANSIENT_VIOLATIONS.contains(&key) {
-                eprintln!("Transient zerocopy violation {key} {locale}: {allocated}B allocated/deallocated");
+            if !EXPECTED_TRANSIENT_VIOLATIONS.contains(&marker) {
+                eprintln!("Transient zerocopy violation {marker} {locale}: {allocated}B allocated/deallocated");
             }
             self.zero_copy_transient_violations
                 .lock()
                 .expect("poison")
-                .insert(key);
+                .insert(marker);
         }
-
-        self.size_hash.lock().expect("poison").insert(
-            (
-                key,
-                DataRequest {
-                    locale,
-                    key_attributes,
-                    ..Default::default()
-                }
-                .legacy_encode(),
-            ),
-            (size, hash),
-        );
 
         Ok(())
     }
 
     fn close(&mut self) -> Result<(), DataError> {
-        for ((key, req), (size, hash)) in self.size_hash.get_mut().expect("poison") {
-            writeln!(&mut self.fingerprints, "{key}, {req}, {size}B, {hash:x}")?;
-        }
-
         assert_eq!(
             self.rountrip_errors.get_mut().expect("poison"),
             &mut BTreeSet::default()
@@ -302,8 +262,9 @@ impl<F: Write + Send + Sync> DataExporter for PostcardTestingExporter<F> {
         assert!(transient_violations == EXPECTED_TRANSIENT_VIOLATIONS && violations == EXPECTED_VIOLATIONS,
             "Expected violations list does not match found violations!\n\
             If the new list is smaller, please update EXPECTED_VIOLATIONS in make-testdata.rs\n\
-            If it is bigger and that was unexpected, please make sure the key remains zero-copy, or ask ICU4X team members if it is okay\
-            to temporarily allow for this key to be allowlisted.\n\
+            If it is bigger and that was unexpected, please make sure the marker remains zero-copy, or ask ICU4X team members if it is okay \
+            to temporarily allow for this marker to be allowlisted.\n\
+            Common cause: did you forget to add `serde(borrow)` to all of the fields in your data struct?\n\
             Expected:\n{EXPECTED_VIOLATIONS:?}\nFound:\n{violations:?}\nExpected (transient):\n{EXPECTED_TRANSIENT_VIOLATIONS:?}\nFound (transient):\n{transient_violations:?}"
         );
 

@@ -2,21 +2,22 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! Exposes the list of all known `DataMarker`s.
+//!
+//! This is modeled as a macro that accepts a callback macro of the shape:
+//!
+//! ```
+//! macro_rules! cb {
+//!     ($($marker:path = $path:literal,)+ #[experimental] $($emarker:path = $epath:literal,)+) => {
+//!         // Do something for each marker, or each experimental marker
+//!     };
+//! }
+//! ```
+//!
+//! Calling this as `registry!(cb);` evaluates `cb` with the list of markers.
+
 #[macro_export]
-#[doc(hidden)] // macro
-/// The list of all known [`DataMarker`](icu_provider::DataMarker)s.
-///
-/// This is modeled as a macro that accepts a callback macro of the shape:
-///
-/// ```
-/// macro_rules! cb {
-///     ($($marker:path = $path:literal,)+ #[experimental] $($emarker:path = $epath:literal,)+) => {
-///         // Do something for each key, or each experimental key
-///     };
-/// }
-/// ```
-///
-/// Calling this as `registry!(cb);` evaluates `cb` with the list of markers.
+/// See the crate docs.
 macro_rules! registry(
     ($cb:ident) => {
         cb!(
@@ -324,3 +325,50 @@ macro_rules! registry(
         );
     }
 );
+
+macro_rules! cb {
+    ($($marker:path = $path:literal,)+ #[experimental] $($emarker:path = $epath:literal,)+) => {
+        #[test]
+        fn no_marker_collisions() {
+            use icu_provider::prelude::*;
+
+            let mut map = std::collections::BTreeMap::new();
+            let mut failed = false;
+            for marker in [
+                $(
+                    <$marker>::INFO,
+                )+
+                $(
+                    <$emarker>::INFO,
+                )+
+            ] {
+                if let Some(colliding_marker) = map.insert(marker.path.hashed(), marker) {
+                    println!(
+                        "{:?} and {:?} collide at {:?}",
+                        marker.path,
+                        colliding_marker.path,
+                        marker.path.hashed(),
+                    );
+                    failed = true;
+                }
+            }
+            if failed {
+                panic!();
+            }
+        }
+
+        #[test]
+        fn test_paths_correct() {
+            use icu_provider::prelude::*;
+
+            $(
+                assert_eq!(<$marker>::INFO.path.get(), $path);
+            )+
+            $(
+                assert_eq!(<$emarker>::INFO.path.get(), $epath);
+            )+
+        }
+    }
+}
+
+registry!(cb);
