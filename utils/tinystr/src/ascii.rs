@@ -128,6 +128,16 @@ impl<const N: usize> TinyAsciiStr<N> {
         Self::try_from_utf8_inner(bytes, start, end, false)
     }
 
+    /// Equivalent to [`try_from_utf16(bytes[start..end])`](Self::try_from_utf16),
+    /// but callable in a `const` context (which range indexing is not).
+    pub const fn try_from_utf16_manual_slice(
+        bytes: &[u16],
+        start: usize,
+        end: usize,
+    ) -> Result<Self, TinyStrError> {
+        Self::try_from_utf16_inner(bytes, start, end, false)
+    }
+
     #[inline]
     pub(crate) const fn try_from_utf8_inner(
         bytes: &[u8],
@@ -216,7 +226,6 @@ impl<const N: usize> TinyAsciiStr<N> {
         })
     }
 
-    // TODO: This function shadows the FromStr trait. Rename?
     #[inline]
     pub const fn try_from_str(s: &str) -> Result<Self, TinyStrError> {
         Self::try_from_utf8_inner(s.as_bytes(), 0, s.len(), false)

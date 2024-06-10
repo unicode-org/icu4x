@@ -91,7 +91,7 @@ impl CalendarError {
         let tiny = description
             .write_to_string()
             .get(0..16)
-            .and_then(|x| TinyStr16::from_str(x).ok())
+            .and_then(|x| TinyStr16::try_from_str(x).ok())
             .unwrap_or(tinystr!(16, "invalid"));
         Self::UnknownAnyCalendarKind(tiny)
     }
