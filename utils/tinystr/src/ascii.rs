@@ -22,16 +22,17 @@ impl<const N: usize> TinyAsciiStr<N> {
         Self::try_from_utf8_inner(bytes, 0, bytes.len(), false)
     }
 
-    /// Creates a `TinyAsciiStr<N>` from the given utf16 byte slice.
-    /// `bytes` may contain at most `N` non-null ASCII bytes.
-    pub const fn try_from_utf16(bytes: &[u16]) -> Result<Self, TinyStrError> {
-        Self::try_from_utf16_inner(bytes, 0, bytes.len(), false)
+    /// Creates a `TinyAsciiStr<N>` from the given UTF-16 slice.
+    /// `bytes` may contain at most `N` non-null ASCII code points.
+    pub const fn try_from_utf16(code_points: &[u16]) -> Result<Self, TinyStrError> {
+        Self::try_from_utf16_inner(code_points, 0, code_points.len(), false)
     }
 
-    /// Creates a `TinyAsciiStr<N>` from a utf8 byte slice, replacing invalid bytes.
+    /// Creates a `TinyAsciiStr<N>` from a UTF-8 slice, replacing invalid code units.
     ///
-    /// Null and non-ASCII bytes (i.e. those outside the range `0x01..=0x7F`)
-    /// will be replaced with the '?' character.
+    /// Invalid code units, as well as null or non-ASCII code points
+    /// (i.e. those outside the range U+0001..=U+007F`)
+    /// will be replaced with the replacement byte.
     ///
     /// The input slice will be truncated if its length exceeds `N`.
     pub const fn try_from_utf8_lossy(bytes: &[u8], replacement: u8) -> Self {
@@ -58,22 +59,27 @@ impl<const N: usize> TinyAsciiStr<N> {
         }
     }
 
-    /// Creates a `TinyAsciiStr<N>` from a utf16 byte slice, replacing invalid bytes.
+    /// Creates a `TinyAsciiStr<N>` from a UTF-16 slice, replacing invalid code units.
     ///
-    /// Null and non-ASCII bytes (i.e. those outside the range `0x01..=0x7F`)
-    /// will be replaced with the '?' character.
+    /// Invalid code units, as well as null or non-ASCII code points
+    /// (i.e. those outside the range U+0001..=U+007F`)
+    /// will be replaced with the replacement byte.
     ///
     /// The input slice will be truncated if its length exceeds `N`.
-    pub const fn try_from_utf16_lossy(bytes: &[u16], replacement: u8) -> Self {
+    pub const fn try_from_utf16_lossy(code_points: &[u16], replacement: u8) -> Self {
         let mut out = [0; N];
         let mut i = 0;
         // Ord is not available in const, so no `.min(N)`
-        let len = if bytes.len() > N { N } else { bytes.len() };
+        let len = if code_points.len() > N {
+            N
+        } else {
+            code_points.len()
+        };
 
         // Indexing is protected by the len check above
         #[allow(clippy::indexing_slicing)]
         while i < len {
-            let b = bytes[i];
+            let b = code_points[i];
             if b > 0 && b < 0x80 {
                 out[i] = b as u8;
             } else {
@@ -168,7 +174,7 @@ impl<const N: usize> TinyAsciiStr<N> {
 
     #[inline]
     pub(crate) const fn try_from_utf16_inner(
-        bytes: &[u16],
+        code_points: &[u16],
         start: usize,
         end: usize,
         allow_trailing_null: bool,
@@ -184,7 +190,7 @@ impl<const N: usize> TinyAsciiStr<N> {
         // Indexing is protected by TinyStrError::TooLarge
         #[allow(clippy::indexing_slicing)]
         while i < len {
-            let b = bytes[start + i];
+            let b = code_points[start + i];
 
             if b == 0 {
                 found_null = true;
