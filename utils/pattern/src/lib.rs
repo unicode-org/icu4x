@@ -55,6 +55,7 @@ mod common;
 mod double;
 mod error;
 mod frontend;
+mod implementations;
 mod multi_named;
 #[cfg(feature = "alloc")]
 mod parser;
