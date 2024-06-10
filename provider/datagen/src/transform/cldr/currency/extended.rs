@@ -7,17 +7,15 @@ use crate::DatagenProvider;
 
 use std::borrow::Cow;
 use std::collections::BTreeMap;
+use std::collections::HashSet;
 
 use icu_experimental::dimension::provider::extended_currency::Count;
 use icu_provider::datagen::IterableDataProvider;
 use tinystr::TinyAsciiStr;
 
-use std::collections::HashSet;
-
-use icu_provider::DataProvider;
-
 use icu_experimental::dimension::provider::extended_currency::*;
 use icu_provider::prelude::*;
+use icu_provider::DataProvider;
 
 impl DataProvider<CurrencyExtendedDataV1Marker> for crate::DatagenProvider {
     fn load(
@@ -84,6 +82,10 @@ impl DataProvider<CurrencyExtendedDataV1Marker> for crate::DatagenProvider {
 
 impl IterableDataProvider<CurrencyExtendedDataV1Marker> for DatagenProvider {
     fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+        // TODO: This is a temporary implementation until we have a better way to handle large number of json files.
+        let currencies_to_support: HashSet<_> =
+            ["USD", "CAD", "EUR", "GBP", "EGP"].into_iter().collect();
+
         let mut result = HashSet::new();
         let numbers = self.cldr()?.numbers();
         let langids = numbers.list_langs()?;
@@ -95,6 +97,15 @@ impl IterableDataProvider<CurrencyExtendedDataV1Marker> for DatagenProvider {
 
             let currencies = &currencies_resource.main.value.numbers.currencies;
             for key in currencies.keys() {
+                let key_string = key
+                    .try_into_tinystr()
+                    .map_err(|_| DataError::custom("failed to parse currency code into tinystr"))?
+                    .parse::<String>()
+                    .map_err(|_| DataError::custom("failed to parse currency code into string"))?;
+                if !currencies_to_support.contains(key_string.as_str()) {
+                    continue;
+                }
+
                 let key = key
                     .try_into_tinystr()
                     .map_err(|_| DataError::custom("failed to parse currency code into tinystr"))?;
