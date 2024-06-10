@@ -107,3 +107,55 @@ impl IterableDataProvider<CurrencyExtendedDataV1Marker> for DatagenProvider {
         Ok(result)
     }
 }
+
+#[test]
+fn test_basic() {
+    use icu_locale_core::langid;
+
+    let provider = DatagenProvider::new_testing();
+    let en: DataPayload<CurrencyExtendedDataV1Marker> = provider
+        .load(DataRequest {
+            locale: &langid!("en").into(),
+            marker_attributes: &"USD".parse().unwrap(),
+            ..Default::default()
+        })
+        .unwrap()
+        .take_payload()
+        .unwrap();
+    let display_names = en.get().to_owned().display_names;
+    assert_eq!(display_names.get(&Count::Zero), None);
+    assert_eq!(display_names.get(&Count::One).unwrap(), "US dollar");
+    assert_eq!(display_names.get(&Count::Two), None);
+    assert_eq!(display_names.get(&Count::Few), None);
+    assert_eq!(display_names.get(&Count::Many), None);
+    assert_eq!(display_names.get(&Count::Other).unwrap(), "US dollars");
+    assert_eq!(display_names.get(&Count::DisplayName).unwrap(), "US Dollar");
+
+    let fr: DataPayload<CurrencyExtendedDataV1Marker> = provider
+        .load(DataRequest {
+            locale: &langid!("fr").into(),
+            marker_attributes: &"USD".parse().unwrap(),
+            ..Default::default()
+        })
+        .unwrap()
+        .take_payload()
+        .unwrap();
+
+    let display_names = fr.get().to_owned().display_names;
+    assert_eq!(display_names.get(&Count::Zero), None);
+    assert_eq!(
+        display_names.get(&Count::One).unwrap(),
+        "dollar des États-Unis"
+    );
+    assert_eq!(display_names.get(&Count::Two), None);
+    assert_eq!(display_names.get(&Count::Few), None);
+    assert_eq!(display_names.get(&Count::Many), None);
+    assert_eq!(
+        display_names.get(&Count::Other).unwrap(),
+        "dollars des États-Unis"
+    );
+    assert_eq!(
+        display_names.get(&Count::DisplayName).unwrap(),
+        "dollar des États-Unis"
+    );
+}
