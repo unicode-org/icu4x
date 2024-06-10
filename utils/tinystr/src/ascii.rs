@@ -7,7 +7,7 @@ use crate::int_ops::{Aligned4, Aligned8};
 use crate::TinyStrError;
 use core::fmt;
 use core::ops::Deref;
-use core::str::{self, EncodeUtf16, FromStr};
+use core::str::{self, FromStr};
 
 #[repr(transparent)]
 #[derive(PartialEq, Eq, Ord, PartialOrd, Copy, Clone, Hash)]
