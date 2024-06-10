@@ -496,11 +496,11 @@ impl CompactDecimalFormatter {
         // If we have just one digit before the decimal point…
         if significand.nonzero_magnitude_start() == 0 {
             // …round to one fractional digit…
-            significand.half_even(-1);
+            significand.round(-1);
         } else {
             // …otherwise, we have at least 2 digits before the decimal point,
             // so round to eliminate the fractional part.
-            significand.half_even(0);
+            significand.round(0);
         }
         let rounded_magnitude = significand.nonzero_magnitude_start() + i16::from(exponent);
         if rounded_magnitude > log10_type {

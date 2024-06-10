@@ -17,9 +17,9 @@ use crate::ParseError;
 ///
 /// ```
 /// # use std::str::FromStr;
-/// use fixed_decimal::ParseError;
 /// use fixed_decimal::FixedDecimal;
 /// use fixed_decimal::FixedInteger;
+/// use fixed_decimal::ParseError;
 ///
 /// assert_eq!(
 ///     FixedDecimal::from(FixedInteger::from(5)),
