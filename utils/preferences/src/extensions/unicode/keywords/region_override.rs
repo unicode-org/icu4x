@@ -11,7 +11,7 @@ use icu_locale_core::{
 
 struct_keyword!(
     RegionOverride,
-    "ro",
+    "rg",
     SubdivisionId,
     |input: Value| {
         input

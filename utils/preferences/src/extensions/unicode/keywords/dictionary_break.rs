@@ -9,7 +9,7 @@ use icu_locale_core::subtags::Script;
 use std::str::FromStr;
 
 struct_keyword!(
-    DictionaryBreak,
+    DictionaryBreakScriptExclusions,
     "dx",
     Vec<Script>,
     |input: Value| {
@@ -21,7 +21,7 @@ struct_keyword!(
             .collect::<Result<_, _>>()
             .map(Self)
     },
-    |input: DictionaryBreak| {
+    |input: DictionaryBreakScriptExclusions| {
         icu_locale_core::extensions::unicode::Value::from_iter(input.0.into_iter().map(Into::into))
     }
 );

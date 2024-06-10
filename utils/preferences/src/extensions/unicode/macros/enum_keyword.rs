@@ -8,7 +8,7 @@ macro_rules! enum_keyword_inner {
         $name::$variant
     };
     ($name:ident, $variant:ident, $s:ident, $v2:ident) => {{
-        if $s.len() < 1 {
+        if $s.subtag_count() < 1 {
             $name::$variant(None)
         } else {
             $name::$variant($v2::try_from($s).ok())

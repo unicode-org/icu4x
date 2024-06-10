@@ -3,9 +3,23 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 crate::enum_keyword!(Collation {
-    "standard" => Standard,
-    "search" => Search,
+    "big5han" => Big5han,
+    "compat" => Compat,
+    "dict" => Dict,
+    "direct" => Direct,
+    "ducet" => Ducet,
+    "emoji" => Emoji,
+    "eor" => Eor,
+    "gb2312" => Gb2312,
+    "phonebk" => Phonebk,
     "phonetic" => Phonetic,
     "pinyin" => Pinyin,
-    "searchjl" => Searchjl
+    "reformed" => Reformed,
+    "search" => Search,
+    "searchjl" => Searchjl,
+    "standard" => Standard,
+    "stroke" => Stroke,
+    "trad" => Trad,
+    "unihan" => Unihan,
+    "zhuyin" => Zhuyin,
 }, "co");

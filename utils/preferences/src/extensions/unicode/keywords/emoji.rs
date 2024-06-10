@@ -4,7 +4,7 @@
 
 use crate::enum_keyword;
 
-enum_keyword!(Emoji {
+enum_keyword!(EmojiPresentationStyle {
     "emoji" => Emoji,
     "text" => Text,
     "default" => Default

@@ -4,7 +4,7 @@
 
 use crate::enum_keyword;
 
-enum_keyword!(SentenceSupression {
+enum_keyword!(SentenceBreakSupression {
     "none" => None,
     "standard" => Standard,
 }, "ss");

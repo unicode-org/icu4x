@@ -139,11 +139,11 @@ impl Value {
     /// };
     ///
     /// let mut v = Value::default();
-    /// assert_eq!(v.len(), 0);
+    /// assert_eq!(v.subtag_count(), 0);
     /// v.push_subtag(subtag!("foo"));
-    /// assert_eq!(v.len(), 1);
+    /// assert_eq!(v.subtag_count(), 1);
     /// ```
-    pub fn len(&self) -> usize {
+    pub fn subtag_count(&self) -> usize {
         self.0.len()
     }
 
