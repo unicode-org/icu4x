@@ -7,7 +7,7 @@ use crate::int_ops::{Aligned4, Aligned8};
 use crate::TinyStrError;
 use core::fmt;
 use core::ops::Deref;
-use core::str::{self, FromStr};
+use core::str::{self, EncodeUtf16, FromStr};
 
 #[repr(transparent)]
 #[derive(PartialEq, Eq, Ord, PartialOrd, Copy, Clone, Hash)]
@@ -23,7 +23,7 @@ impl<const N: usize> TinyAsciiStr<N> {
     }
 
     /// Creates a `TinyAsciiStr<N>` from the given UTF-16 slice.
-    /// `bytes` may contain at most `N` non-null ASCII code points.
+    /// `code_points` may contain at most `N` non-null ASCII code points.
     pub const fn try_from_utf16(code_points: &[u16]) -> Result<Self, TinyStrError> {
         Self::try_from_utf16_inner(code_points, 0, code_points.len(), false)
     }
@@ -35,7 +35,7 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// will be replaced with the replacement byte.
     ///
     /// The input slice will be truncated if its length exceeds `N`.
-    pub const fn try_from_utf8_lossy(bytes: &[u8], replacement: u8) -> Self {
+    pub const fn from_utf8_lossy(bytes: &[u8], replacement: u8) -> Self {
         let mut out = [0; N];
         let mut i = 0;
         // Ord is not available in const, so no `.min(N)`
@@ -66,7 +66,7 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// will be replaced with the replacement byte.
     ///
     /// The input slice will be truncated if its length exceeds `N`.
-    pub const fn try_from_utf16_lossy(code_points: &[u16], replacement: u8) -> Self {
+    pub const fn from_utf16_lossy(code_points: &[u16], replacement: u8) -> Self {
         let mut out = [0; N];
         let mut i = 0;
         // Ord is not available in const, so no `.min(N)`
@@ -1119,24 +1119,21 @@ mod test {
 
     #[test]
     fn lossy_constructor() {
+        assert_eq!(TinyAsciiStr::<4>::from_utf8_lossy(b"", b'?').as_str(), "");
         assert_eq!(
-            TinyAsciiStr::<4>::try_from_utf8_lossy(b"", b'?').as_str(),
-            ""
-        );
-        assert_eq!(
-            TinyAsciiStr::<4>::try_from_utf8_lossy(b"oh\0o", b'?').as_str(),
+            TinyAsciiStr::<4>::from_utf8_lossy(b"oh\0o", b'?').as_str(),
             "oh?o"
         );
         assert_eq!(
-            TinyAsciiStr::<4>::try_from_utf8_lossy(b"\0", b'?').as_str(),
+            TinyAsciiStr::<4>::from_utf8_lossy(b"\0", b'?').as_str(),
             "?"
         );
         assert_eq!(
-            TinyAsciiStr::<4>::try_from_utf8_lossy(b"toolong", b'?').as_str(),
+            TinyAsciiStr::<4>::from_utf8_lossy(b"toolong", b'?').as_str(),
             "tool"
         );
         assert_eq!(
-            TinyAsciiStr::<4>::try_from_utf8_lossy(&[b'a', 0x80, 0xFF, b'1'], b'?').as_str(),
+            TinyAsciiStr::<4>::from_utf8_lossy(&[b'a', 0x80, 0xFF, b'1'], b'?').as_str(),
             "a??1"
         );
     }
