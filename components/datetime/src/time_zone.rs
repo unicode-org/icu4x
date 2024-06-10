@@ -4,11 +4,6 @@
 
 //! A formatter specifically for the time zone.
 
-use alloc::string::String;
-use core::fmt;
-use icu_timezone::GmtOffset;
-use smallvec::SmallVec;
-
 use crate::{
     error::DateTimeError,
     fields::{FieldSymbol, TimeZone},
@@ -17,8 +12,15 @@ use crate::{
     pattern::{PatternError, PatternItem},
     provider::{self, calendar::patterns::PatternPluralsFromPatternsV1Marker},
 };
+use alloc::borrow::Cow;
+use alloc::string::String;
+use core::fmt;
 use core::fmt::Write;
 use icu_provider::prelude::*;
+use icu_timezone::GmtOffset;
+use icu_timezone::TimeZoneBcp47Id;
+use smallvec::SmallVec;
+use tinystr::tinystr;
 use writeable::{adapters::CoreWriteAsPartsWrite, Part, Writeable};
 
 /// Loads a resource into its destination if the destination has not already been filled.
@@ -1317,7 +1319,22 @@ impl FormatTimeZone for ExemplarCityFormat {
 
         Ok(match formatted_exemplar_city {
             Some(ftz) => Ok(sink.write_str(ftz)?),
-            None => Err(FormatTimeZoneError::NameNotFound),
+            None => {
+                // Writes the unknown city "Etc/Unknown" for the current locale.
+                //
+                // If there is no localized form of "Etc/Unknown" for the current locale,
+                // returns the "Etc/Unknown" value of the `und` locale as a hard-coded string.
+                //
+                // This can be used as a fallback if [`exemplar_city()`](TimeZoneFormatter::exemplar_city())
+                // is unable to produce a localized form of the time zone's exemplar city in the current locale.
+                let formatted_unknown_city = data_payloads
+                    .exemplar_cities
+                    .as_ref()
+                    .map(|p| p.get())
+                    .and_then(|cities| cities.0.get(&TimeZoneBcp47Id(tinystr!(8, "unk"))))
+                    .unwrap_or(&Cow::Borrowed("Unknown"));
+                Ok(sink.write_str(formatted_unknown_city)?)
+            }
         })
     }
 }
