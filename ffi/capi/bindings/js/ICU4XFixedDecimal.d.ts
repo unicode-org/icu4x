@@ -2,6 +2,7 @@ import { u8, i16, i32, u32, i64, u64, f64 } from "./diplomat-runtime"
 import { FFIError } from "./diplomat-runtime"
 import { ICU4XError } from "./ICU4XError";
 import { ICU4XFixedDecimalRoundingIncrement } from "./ICU4XFixedDecimalRoundingIncrement";
+import { ICU4XFixedDecimalRoundingMode } from "./ICU4XFixedDecimalRoundingMode";
 import { ICU4XFixedDecimalSign } from "./ICU4XFixedDecimalSign";
 import { ICU4XFixedDecimalSignDisplay } from "./ICU4XFixedDecimalSignDisplay";
 
@@ -198,51 +199,9 @@ export class ICU4XFixedDecimal {
 
   /**
 
-   * See the {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.trunc Rust documentation for `trunc`} for more information.
+   * See the {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.round Rust documentation for `round`} for more information.
    */
-  trunc(position: i16): void;
-
-  /**
-
-   * See the {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.trunc_to_increment Rust documentation for `trunc_to_increment`} for more information.
-   */
-  trunc_to_increment(position: i16, increment: ICU4XFixedDecimalRoundingIncrement): void;
-
-  /**
-
-   * See the {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_trunc Rust documentation for `half_trunc`} for more information.
-   */
-  half_trunc(position: i16): void;
-
-  /**
-
-   * See the {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_trunc_to_increment Rust documentation for `half_trunc_to_increment`} for more information.
-   */
-  half_trunc_to_increment(position: i16, increment: ICU4XFixedDecimalRoundingIncrement): void;
-
-  /**
-
-   * See the {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.expand Rust documentation for `expand`} for more information.
-   */
-  expand(position: i16): void;
-
-  /**
-
-   * See the {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.expand_to_increment Rust documentation for `expand_to_increment`} for more information.
-   */
-  expand_to_increment(position: i16, increment: ICU4XFixedDecimalRoundingIncrement): void;
-
-  /**
-
-   * See the {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_expand Rust documentation for `half_expand`} for more information.
-   */
-  half_expand(position: i16): void;
-
-  /**
-
-   * See the {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_expand_to_increment Rust documentation for `half_expand_to_increment`} for more information.
-   */
-  half_expand_to_increment(position: i16, increment: ICU4XFixedDecimalRoundingIncrement): void;
+  round(position: i16): void;
 
   /**
 
@@ -252,21 +211,9 @@ export class ICU4XFixedDecimal {
 
   /**
 
-   * See the {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.ceil_to_increment Rust documentation for `ceil_to_increment`} for more information.
+   * See the {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.expand Rust documentation for `expand`} for more information.
    */
-  ceil_to_increment(position: i16, increment: ICU4XFixedDecimalRoundingIncrement): void;
-
-  /**
-
-   * See the {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_ceil Rust documentation for `half_ceil`} for more information.
-   */
-  half_ceil(position: i16): void;
-
-  /**
-
-   * See the {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_ceil_to_increment Rust documentation for `half_ceil_to_increment`} for more information.
-   */
-  half_ceil_to_increment(position: i16, increment: ICU4XFixedDecimalRoundingIncrement): void;
+  expand(position: i16): void;
 
   /**
 
@@ -276,33 +223,21 @@ export class ICU4XFixedDecimal {
 
   /**
 
-   * See the {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.floor_to_increment Rust documentation for `floor_to_increment`} for more information.
+   * See the {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.trunc Rust documentation for `trunc`} for more information.
    */
-  floor_to_increment(position: i16, increment: ICU4XFixedDecimalRoundingIncrement): void;
+  trunc(position: i16): void;
 
   /**
 
-   * See the {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_floor Rust documentation for `half_floor`} for more information.
+   * See the {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.round_with_mode Rust documentation for `round_with_mode`} for more information.
    */
-  half_floor(position: i16): void;
+  round_with_mode(position: i16, mode: ICU4XFixedDecimalRoundingMode): void;
 
   /**
 
-   * See the {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_floor_to_increment Rust documentation for `half_floor_to_increment`} for more information.
+   * See the {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.round_with_mode_and_increment Rust documentation for `round_with_mode_and_increment`} for more information.
    */
-  half_floor_to_increment(position: i16, increment: ICU4XFixedDecimalRoundingIncrement): void;
-
-  /**
-
-   * See the {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_even Rust documentation for `half_even`} for more information.
-   */
-  half_even(position: i16): void;
-
-  /**
-
-   * See the {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_even_to_increment Rust documentation for `half_even_to_increment`} for more information.
-   */
-  half_even_to_increment(position: i16, increment: ICU4XFixedDecimalRoundingIncrement): void;
+  round_with_mode_and_increment(position: i16, mode: ICU4XFixedDecimalRoundingMode, increment: ICU4XFixedDecimalRoundingIncrement): void;
 
   /**
 

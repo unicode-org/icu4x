@@ -45,6 +45,7 @@ export { ICU4XFixedDecimal } from './ICU4XFixedDecimal.mjs';
 export { ICU4XFixedDecimalFormatter } from './ICU4XFixedDecimalFormatter.mjs';
 export { ICU4XFixedDecimalGroupingStrategy } from './ICU4XFixedDecimalGroupingStrategy.mjs';
 export { ICU4XFixedDecimalRoundingIncrement } from './ICU4XFixedDecimalRoundingIncrement.mjs';
+export { ICU4XFixedDecimalRoundingMode } from './ICU4XFixedDecimalRoundingMode.mjs';
 export { ICU4XFixedDecimalSign } from './ICU4XFixedDecimalSign.mjs';
 export { ICU4XFixedDecimalSignDisplay } from './ICU4XFixedDecimalSignDisplay.mjs';
 export { ICU4XGeneralCategoryNameToMaskMapper } from './ICU4XGeneralCategoryNameToMaskMapper.mjs';
