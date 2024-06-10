@@ -20,7 +20,7 @@ int main(int argc, char *argv[]) {
 
     ICU4XDataProvider* provider = ICU4XDataProvider_create_compiled();
     ICU4XFixedDecimal* decimal = ICU4XFixedDecimal_create_from_u64(1000007);
-    ICU4XFixedDecimal_half_even(decimal, 0);
+    ICU4XFixedDecimal_round(decimal, 0);
 
     diplomat_result_box_ICU4XFixedDecimalFormatter_ICU4XError fdf_result =
         ICU4XFixedDecimalFormatter_create_with_grouping_strategy(provider, locale, ICU4XFixedDecimalGroupingStrategy_Auto);
