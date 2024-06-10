@@ -253,7 +253,7 @@ impl ExtractedTimeZoneInput {
         }
     }
 
-    pub(crate) fn to_custom_time_zone(&self) -> CustomTimeZone {
+    pub(crate) fn to_custom_time_zone(self) -> CustomTimeZone {
         CustomTimeZone {
             gmt_offset: self.gmt_offset,
             time_zone_id: self.time_zone_id,
