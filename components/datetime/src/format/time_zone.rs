@@ -4,24 +4,24 @@
 
 use core::fmt;
 
+use crate::format::datetime::DateTimeWriteError;
 use crate::{
     input::ExtractedTimeZoneInput,
-    time_zone::{FormatTimeZone, FormatTimeZoneWithFallback, TimeZoneFormatter, FormatTimeZoneError},
+    time_zone::{
+        FormatTimeZone, FormatTimeZoneError, FormatTimeZoneWithFallback, TimeZoneFormatter,
+    },
 };
-use crate::format::datetime::DateTimeWriteError;
 use writeable::Writeable;
 
 /// [`FormattedTimeZone`] is a intermediate structure which can be retrieved as an output from [`TimeZoneFormatter`].
 #[derive(Debug, Copy, Clone)]
-pub struct FormattedTimeZone<'l>
-{
+pub struct FormattedTimeZone<'l> {
     pub(crate) time_zone_format: &'l TimeZoneFormatter,
     // Note: CustomTimeZone is being used as an ExtractedTimeZoneInput
     pub(crate) time_zone: ExtractedTimeZoneInput,
 }
 
-impl<'l> Writeable for FormattedTimeZone<'l>
-{
+impl<'l> Writeable for FormattedTimeZone<'l> {
     /// Format time zone with fallbacks.
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
         let mut sink = writeable::adapters::CoreWriteAsPartsWrite(sink);
@@ -45,15 +45,13 @@ impl<'l> Writeable for FormattedTimeZone<'l>
     // TODO(#489): Implement writeable_length_hint
 }
 
-impl<'l> fmt::Display for FormattedTimeZone<'l>
-{
+impl<'l> fmt::Display for FormattedTimeZone<'l> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         self.write_to(f)
     }
 }
 
-impl<'l> FormattedTimeZone<'l>
-{
+impl<'l> FormattedTimeZone<'l> {
     /// Write time zone with no fallback.
     ///
     /// # Examples
@@ -99,7 +97,10 @@ impl<'l> FormattedTimeZone<'l>
     /// // Use the `Writable` trait instead to enable infallible formatting:
     /// writeable::assert_writeable_eq!(tzf.format(&time_zone), "GMT");
     /// ```
-    pub fn write_no_fallback<W>(&self, mut w: &mut W) -> Result<Result<(), DateTimeWriteError>, fmt::Error>
+    pub fn write_no_fallback<W>(
+        &self,
+        mut w: &mut W,
+    ) -> Result<Result<(), DateTimeWriteError>, fmt::Error>
     where
         W: core::fmt::Write + ?Sized,
     {
@@ -111,9 +112,13 @@ impl<'l> FormattedTimeZone<'l>
             )? {
                 Ok(()) => return Ok(Ok(())),
                 Err(FormatTimeZoneError::NameNotFound) => continue,
-                Err(FormatTimeZoneError::MissingInputField(s)) => return Ok(Err(DateTimeWriteError::MissingInputField(s))),
+                Err(FormatTimeZoneError::MissingInputField(s)) => {
+                    return Ok(Err(DateTimeWriteError::MissingInputField(s)))
+                }
             }
         }
-        Ok(Err(DateTimeWriteError::MissingTimeZoneSymbol(self.time_zone.to_custom_time_zone())))
+        Ok(Err(DateTimeWriteError::MissingTimeZoneSymbol(
+            self.time_zone.to_custom_time_zone(),
+        )))
     }
 }

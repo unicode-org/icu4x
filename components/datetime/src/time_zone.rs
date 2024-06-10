@@ -13,7 +13,7 @@ use crate::{
     error::DateTimeError,
     fields::{FieldSymbol, TimeZone},
     format::time_zone::FormattedTimeZone,
-    input::{TimeZoneInput, ExtractedTimeZoneInput},
+    input::{ExtractedTimeZoneInput, TimeZoneInput},
     pattern::{PatternError, PatternItem},
     provider::{self, calendar::patterns::PatternPluralsFromPatternsV1Marker},
 };
@@ -695,7 +695,10 @@ impl TimeZoneFormatter {
     }
 
     /// Takes a [`TimeZoneInput`] implementer and returns a string with the formatted value.
-    pub fn format_to_string<T>(&self, value: &T) -> String where T: TimeZoneInput {
+    pub fn format_to_string<T>(&self, value: &T) -> String
+    where
+        T: TimeZoneInput,
+    {
         let time_zone = ExtractedTimeZoneInput::extract_from(value);
         self.format(&time_zone).write_to_string().into_owned()
     }
