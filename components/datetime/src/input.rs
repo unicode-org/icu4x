@@ -252,6 +252,15 @@ impl ExtractedTimeZoneInput {
             zone_variant: input.zone_variant(),
         }
     }
+
+    pub(crate) fn to_custom_time_zone(&self) -> CustomTimeZone {
+        CustomTimeZone {
+            gmt_offset: self.gmt_offset,
+            time_zone_id: self.time_zone_id,
+            metazone_id: self.metazone_id,
+            zone_variant: self.zone_variant,
+        }
+    }
 }
 
 impl DateInput for ExtractedDateTimeInput {
