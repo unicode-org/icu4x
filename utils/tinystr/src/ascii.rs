@@ -131,11 +131,11 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// Equivalent to [`try_from_utf16(bytes[start..end])`](Self::try_from_utf16),
     /// but callable in a `const` context (which range indexing is not).
     pub const fn try_from_utf16_manual_slice(
-        bytes: &[u16],
+        code_points: &[u16],
         start: usize,
         end: usize,
     ) -> Result<Self, TinyStrError> {
-        Self::try_from_utf16_inner(bytes, start, end, false)
+        Self::try_from_utf16_inner(code_points, start, end, false)
     }
 
     #[inline]
