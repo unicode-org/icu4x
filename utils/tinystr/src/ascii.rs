@@ -16,8 +16,8 @@ pub struct TinyAsciiStr<const N: usize> {
 }
 
 impl<const N: usize> TinyAsciiStr<N> {
-    /// Creates a `TinyAsciiStr<N>` from the given utf8 byte slice.
-    /// `bytes` may contain at most `N` non-null ASCII bytes.
+    /// Creates a `TinyAsciiStr<N>` from the given UTF-8 slice.
+    /// `bytes` may contain at most `N` non-null ASCII code points.
     pub const fn try_from_utf8(bytes: &[u8]) -> Result<Self, TinyStrError> {
         Self::try_from_utf8_inner(bytes, 0, bytes.len(), false)
     }
