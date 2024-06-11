@@ -519,7 +519,7 @@ impl BakedExporter {
                 let mut idents = reqs
                     .iter()
                     .map(|(locale, marker_attributes)| {
-                        format!("_{}_{}", marker_attributes as &str, locale.to_string())
+                        format!("_{}_{}", marker_attributes as &str, locale)
                             .chars()
                             .map(|ch| {
                                 if ch == '-' {

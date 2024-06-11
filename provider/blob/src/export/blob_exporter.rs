@@ -111,8 +111,8 @@ impl DataExporter for BlobExporter<'_> {
             .entry({
                 let mut key = locale.to_string();
                 if !marker_attributes.is_empty() {
-                    key.push_str("\x1E");
-                    key.push_str(&marker_attributes);
+                    key.push('\x1E');
+                    key.push_str(marker_attributes);
                 }
                 key.into_bytes()
             })

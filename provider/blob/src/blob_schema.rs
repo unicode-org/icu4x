@@ -140,7 +140,7 @@ impl<'data> BlobSchemaV1<'data> {
             .iter1_copied()
             .filter_map(|(s, _)| std::str::from_utf8(&s.0).ok())
             .filter_map(|s| {
-                if let Some((locale, attrs)) = s.split_once("\x1E") {
+                if let Some((locale, attrs)) = s.split_once('\x1E') {
                     Some((locale.parse().ok()?, attrs.parse().ok()?))
                 } else {
                     Some((s.parse().ok()?, Default::default()))
@@ -261,7 +261,7 @@ impl<'data, LocaleVecFormat: VarZeroVecFormat> BlobSchemaV2<'data, LocaleVecForm
         Ok(ZeroTrieSimpleAscii::from_store(zerotrie)
             .iter()
             .filter_map(|(s, _)| {
-                if let Some((locale, attrs)) = s.split_once("\x1E") {
+                if let Some((locale, attrs)) = s.split_once('\x1E') {
                     Some((locale.parse().ok()?, attrs.parse().ok()?))
                 } else {
                     Some((s.parse().ok()?, Default::default()))
