@@ -92,7 +92,11 @@ fn make_blob_v1() -> Vec<u8> {
     let exporter = BlobExporter::new_with_sink(Box::new(&mut blob));
     DatagenDriver::new()
         .with_markers(skeleton_markers!(marker_array_cb))
-        .with_locales_and_fallback([LocaleFamily::FULL], Default::default())
+        .with_locales_and_fallback([LocaleFamily::FULL], {
+            let mut options = FallbackOptions::default();
+            options.deduplication_strategy = DeduplicationStrategy::None;
+            options
+        })
         .export(&Baked, exporter)
         .unwrap();
     assert_eq!(blob.len(), 450725);
@@ -105,7 +109,11 @@ fn make_blob_v2() -> Vec<u8> {
     let exporter = BlobExporter::new_v2_with_sink(Box::new(&mut blob));
     DatagenDriver::new()
         .with_markers(skeleton_markers!(marker_array_cb))
-        .with_locales_and_fallback([LocaleFamily::FULL], Default::default())
+        .with_locales_and_fallback([LocaleFamily::FULL], {
+            let mut options = FallbackOptions::default();
+            options.deduplication_strategy = DeduplicationStrategy::None;
+            options
+        })
         .export(&Baked, exporter)
         .unwrap();
     assert_eq!(blob.len(), 241278);

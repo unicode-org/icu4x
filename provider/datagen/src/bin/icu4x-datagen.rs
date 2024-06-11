@@ -162,9 +162,9 @@ struct Cli {
     )]
     use_separate_crates: bool,
 
-    #[arg(long, default_value = "true")]
-    #[arg(help = "--format=mod only: include fallback code inside the baked provider")]
-    with_internal_fallback: bool,
+    #[arg(long)]
+    #[arg(help = "--format=mod only: don't include fallback code inside the baked provider")]
+    no_internal_fallback: bool,
 
     #[arg(long)]
     #[arg(
@@ -545,7 +545,7 @@ fn main() -> eyre::Result<()> {
                 {
                     let mut options = icu_datagen::baked_exporter::Options::default();
                     options.pretty = cli.pretty;
-                    options.with_fallback = cli.with_internal_fallback;
+                    options.with_fallback = !cli.no_internal_fallback;
                     options.use_separate_crates = cli.use_separate_crates;
                     options.overwrite = cli.overwrite;
                     options
