@@ -12,7 +12,6 @@ pub(in crate::provider) mod ca;
 pub(in crate::provider) mod coverage_levels;
 #[cfg(feature = "experimental_components")]
 pub(in crate::provider) mod currencies;
-pub(in crate::provider) mod currency_data;
 #[cfg(feature = "experimental_components")]
 pub(in crate::provider) mod date_fields;
 pub(in crate::provider) mod directionality;
