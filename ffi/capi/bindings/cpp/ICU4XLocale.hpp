@@ -10,14 +10,14 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XError.hpp"
 #include "ICU4XLocale.h"
+#include "ICU4XLocaleParseError.hpp"
 
 
-inline diplomat::result<std::unique_ptr<ICU4XLocale>, ICU4XError> ICU4XLocale::create_from_string(std::string_view name) {
+inline diplomat::result<std::unique_ptr<ICU4XLocale>, ICU4XLocaleParseError> ICU4XLocale::create_from_string(std::string_view name) {
   auto result = capi::ICU4XLocale_create_from_string(name.data(),
     name.size());
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XLocale>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XLocale>>(std::unique_ptr<ICU4XLocale>(ICU4XLocale::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XLocale>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XLocale>, ICU4XLocaleParseError>(diplomat::Ok<std::unique_ptr<ICU4XLocale>>(std::unique_ptr<ICU4XLocale>(ICU4XLocale::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XLocale>, ICU4XLocaleParseError>(diplomat::Err<ICU4XLocaleParseError>(ICU4XLocaleParseError::FromFFI(result.err)));
 }
 
 inline std::unique_ptr<ICU4XLocale> ICU4XLocale::create_und() {
@@ -56,11 +56,11 @@ inline std::string ICU4XLocale::language() const {
   return output;
 }
 
-inline diplomat::result<std::monostate, ICU4XError> ICU4XLocale::set_language(std::string_view bytes) {
+inline diplomat::result<std::monostate, ICU4XLocaleParseError> ICU4XLocale::set_language(std::string_view bytes) {
   auto result = capi::ICU4XLocale_set_language(this->AsFFI(),
     bytes.data(),
     bytes.size());
-  return result.is_ok ? diplomat::result<std::monostate, ICU4XError>(diplomat::Ok<std::monostate>()) : diplomat::result<std::monostate, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::monostate, ICU4XLocaleParseError>(diplomat::Ok<std::monostate>()) : diplomat::result<std::monostate, ICU4XLocaleParseError>(diplomat::Err<ICU4XLocaleParseError>(ICU4XLocaleParseError::FromFFI(result.err)));
 }
 
 inline std::optional<std::string> ICU4XLocale::region() const {
@@ -71,11 +71,11 @@ inline std::optional<std::string> ICU4XLocale::region() const {
   return result.is_ok ? std::optional<std::string>(std::move(output)) : std::nullopt;
 }
 
-inline diplomat::result<std::monostate, ICU4XError> ICU4XLocale::set_region(std::string_view bytes) {
+inline diplomat::result<std::monostate, ICU4XLocaleParseError> ICU4XLocale::set_region(std::string_view bytes) {
   auto result = capi::ICU4XLocale_set_region(this->AsFFI(),
     bytes.data(),
     bytes.size());
-  return result.is_ok ? diplomat::result<std::monostate, ICU4XError>(diplomat::Ok<std::monostate>()) : diplomat::result<std::monostate, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::monostate, ICU4XLocaleParseError>(diplomat::Ok<std::monostate>()) : diplomat::result<std::monostate, ICU4XLocaleParseError>(diplomat::Err<ICU4XLocaleParseError>(ICU4XLocaleParseError::FromFFI(result.err)));
 }
 
 inline std::optional<std::string> ICU4XLocale::script() const {
@@ -86,20 +86,20 @@ inline std::optional<std::string> ICU4XLocale::script() const {
   return result.is_ok ? std::optional<std::string>(std::move(output)) : std::nullopt;
 }
 
-inline diplomat::result<std::monostate, ICU4XError> ICU4XLocale::set_script(std::string_view bytes) {
+inline diplomat::result<std::monostate, ICU4XLocaleParseError> ICU4XLocale::set_script(std::string_view bytes) {
   auto result = capi::ICU4XLocale_set_script(this->AsFFI(),
     bytes.data(),
     bytes.size());
-  return result.is_ok ? diplomat::result<std::monostate, ICU4XError>(diplomat::Ok<std::monostate>()) : diplomat::result<std::monostate, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::monostate, ICU4XLocaleParseError>(diplomat::Ok<std::monostate>()) : diplomat::result<std::monostate, ICU4XLocaleParseError>(diplomat::Err<ICU4XLocaleParseError>(ICU4XLocaleParseError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::string, ICU4XError> ICU4XLocale::canonicalize(std::string_view bytes) {
+inline diplomat::result<std::string, ICU4XLocaleParseError> ICU4XLocale::canonicalize(std::string_view bytes) {
   std::string output;
   capi::DiplomatWrite write = diplomat::WriteFromString(output);
   auto result = capi::ICU4XLocale_canonicalize(bytes.data(),
     bytes.size(),
     &write);
-  return result.is_ok ? diplomat::result<std::string, ICU4XError>(diplomat::Ok<std::string>(std::move(output))) : diplomat::result<std::string, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::string, ICU4XLocaleParseError>(diplomat::Ok<std::string>(std::move(output))) : diplomat::result<std::string, ICU4XLocaleParseError>(diplomat::Err<ICU4XLocaleParseError>(ICU4XLocaleParseError::FromFFI(result.err)));
 }
 
 inline std::string ICU4XLocale::to_string() const {

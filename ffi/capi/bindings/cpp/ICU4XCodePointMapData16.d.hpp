@@ -9,12 +9,12 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 #include "ICU4XCodePointMapData16.d.h"
-#include "ICU4XError.d.hpp"
+#include "ICU4XDataError.d.hpp"
 
 class ICU4XCodePointRangeIterator;
 class ICU4XCodePointSetData;
 class ICU4XDataProvider;
-class ICU4XError;
+class ICU4XDataError;
 
 
 class ICU4XCodePointMapData16 {
@@ -30,7 +30,7 @@ public:
 
   inline std::unique_ptr<ICU4XCodePointSetData> get_set_for_value(uint16_t value) const;
 
-  inline static diplomat::result<std::unique_ptr<ICU4XCodePointMapData16>, ICU4XError> load_script(const ICU4XDataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<ICU4XCodePointMapData16>, ICU4XDataError> load_script(const ICU4XDataProvider& provider);
 
   inline const capi::ICU4XCodePointMapData16* AsFFI() const;
   inline capi::ICU4XCodePointMapData16* AsFFI();

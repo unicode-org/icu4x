@@ -1,0 +1,17 @@
+{
+  "long": {
+    "One": "{0} sat",
+    "Few": "{0} sata",
+    "Other": "{0} sati"
+  },
+  "short": {
+    "One": "{0} sat",
+    "Few": "{0} sata",
+    "Other": "{0} sati"
+  },
+  "narrow": {
+    "One": "{0} č",
+    "Few": "{0} č",
+    "Other": "{0} č"
+  }
+}

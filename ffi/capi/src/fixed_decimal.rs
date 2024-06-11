@@ -12,7 +12,7 @@ pub mod ffi {
     use fixed_decimal::{DoublePrecision, FixedDecimal};
     use writeable::Writeable;
 
-    use crate::errors::ffi::ICU4XError;
+    use crate::errors::ffi::{ICU4XFixedDecimalLimitError, ICU4XFixedDecimalParseError};
 
     #[diplomat::opaque]
     #[diplomat::rust_link(fixed_decimal::FixedDecimal, Struct)]
@@ -90,7 +90,7 @@ pub mod ffi {
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "from_f64_with_integer_precision")]
         pub fn create_from_f64_with_integer_precision(
             f: f64,
-        ) -> Result<Box<ICU4XFixedDecimal>, ICU4XError> {
+        ) -> Result<Box<ICU4XFixedDecimal>, ICU4XFixedDecimalLimitError> {
             let precision = DoublePrecision::Integer;
             Ok(Box::new(ICU4XFixedDecimal(FixedDecimal::try_from_f64(
                 f, precision,
@@ -106,7 +106,7 @@ pub mod ffi {
         pub fn create_from_f64_with_lower_magnitude(
             f: f64,
             magnitude: i16,
-        ) -> Result<Box<ICU4XFixedDecimal>, ICU4XError> {
+        ) -> Result<Box<ICU4XFixedDecimal>, ICU4XFixedDecimalLimitError> {
             let precision = DoublePrecision::Magnitude(magnitude);
             Ok(Box::new(ICU4XFixedDecimal(FixedDecimal::try_from_f64(
                 f, precision,
@@ -122,7 +122,7 @@ pub mod ffi {
         pub fn create_from_f64_with_significant_digits(
             f: f64,
             digits: u8,
-        ) -> Result<Box<ICU4XFixedDecimal>, ICU4XError> {
+        ) -> Result<Box<ICU4XFixedDecimal>, ICU4XFixedDecimalLimitError> {
             let precision = DoublePrecision::SignificantDigits(digits);
             Ok(Box::new(ICU4XFixedDecimal(FixedDecimal::try_from_f64(
                 f, precision,
@@ -138,7 +138,7 @@ pub mod ffi {
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "from_f64_with_floating_precision")]
         pub fn create_from_f64_with_floating_precision(
             f: f64,
-        ) -> Result<Box<ICU4XFixedDecimal>, ICU4XError> {
+        ) -> Result<Box<ICU4XFixedDecimal>, ICU4XFixedDecimalLimitError> {
             let precision = DoublePrecision::Floating;
             Ok(Box::new(ICU4XFixedDecimal(FixedDecimal::try_from_f64(
                 f, precision,
@@ -148,7 +148,9 @@ pub mod ffi {
         /// Construct an [`ICU4XFixedDecimal`] from a string.
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::from_str, FnInStruct)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "from_string")]
-        pub fn create_from_string(v: &DiplomatStr) -> Result<Box<ICU4XFixedDecimal>, ICU4XError> {
+        pub fn create_from_string(
+            v: &DiplomatStr,
+        ) -> Result<Box<ICU4XFixedDecimal>, ICU4XFixedDecimalParseError> {
             Ok(Box::new(ICU4XFixedDecimal(FixedDecimal::try_from(v)?)))
         }
 

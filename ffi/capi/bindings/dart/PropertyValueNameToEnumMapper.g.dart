@@ -54,110 +54,110 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
 
   /// See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.GeneralCategory.html#method.name_to_enum_mapper) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   factory PropertyValueNameToEnumMapper.generalCategory(DataProvider provider) {
     final result = _ICU4XPropertyValueNameToEnumMapper_load_general_category(provider._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     return PropertyValueNameToEnumMapper._fromFfi(result.union.ok, []);
   }
 
   /// See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.HangulSyllableType.html#method.name_to_enum_mapper) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   factory PropertyValueNameToEnumMapper.hangulSyllableType(DataProvider provider) {
     final result = _ICU4XPropertyValueNameToEnumMapper_load_hangul_syllable_type(provider._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     return PropertyValueNameToEnumMapper._fromFfi(result.union.ok, []);
   }
 
   /// See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.EastAsianWidth.html#method.name_to_enum_mapper) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   factory PropertyValueNameToEnumMapper.eastAsianWidth(DataProvider provider) {
     final result = _ICU4XPropertyValueNameToEnumMapper_load_east_asian_width(provider._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     return PropertyValueNameToEnumMapper._fromFfi(result.union.ok, []);
   }
 
   /// See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.BidiClass.html#method.name_to_enum_mapper) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   factory PropertyValueNameToEnumMapper.bidiClass(DataProvider provider) {
     final result = _ICU4XPropertyValueNameToEnumMapper_load_bidi_class(provider._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     return PropertyValueNameToEnumMapper._fromFfi(result.union.ok, []);
   }
 
   /// See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.IndicSyllabicCategory.html#method.name_to_enum_mapper) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   factory PropertyValueNameToEnumMapper.indicSyllabicCategory(DataProvider provider) {
     final result = _ICU4XPropertyValueNameToEnumMapper_load_indic_syllabic_category(provider._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     return PropertyValueNameToEnumMapper._fromFfi(result.union.ok, []);
   }
 
   /// See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.LineBreak.html#method.name_to_enum_mapper) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   factory PropertyValueNameToEnumMapper.lineBreak(DataProvider provider) {
     final result = _ICU4XPropertyValueNameToEnumMapper_load_line_break(provider._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     return PropertyValueNameToEnumMapper._fromFfi(result.union.ok, []);
   }
 
   /// See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.GraphemeClusterBreak.html#method.name_to_enum_mapper) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   factory PropertyValueNameToEnumMapper.graphemeClusterBreak(DataProvider provider) {
     final result = _ICU4XPropertyValueNameToEnumMapper_load_grapheme_cluster_break(provider._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     return PropertyValueNameToEnumMapper._fromFfi(result.union.ok, []);
   }
 
   /// See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.WordBreak.html#method.name_to_enum_mapper) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   factory PropertyValueNameToEnumMapper.wordBreak(DataProvider provider) {
     final result = _ICU4XPropertyValueNameToEnumMapper_load_word_break(provider._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     return PropertyValueNameToEnumMapper._fromFfi(result.union.ok, []);
   }
 
   /// See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.SentenceBreak.html#method.name_to_enum_mapper) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   factory PropertyValueNameToEnumMapper.sentenceBreak(DataProvider provider) {
     final result = _ICU4XPropertyValueNameToEnumMapper_load_sentence_break(provider._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     return PropertyValueNameToEnumMapper._fromFfi(result.union.ok, []);
   }
 
   /// See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.Script.html#method.name_to_enum_mapper) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   factory PropertyValueNameToEnumMapper.script(DataProvider provider) {
     final result = _ICU4XPropertyValueNameToEnumMapper_load_script(provider._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     return PropertyValueNameToEnumMapper._fromFfi(result.union.ok, []);
   }

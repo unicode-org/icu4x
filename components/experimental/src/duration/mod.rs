@@ -7,5 +7,6 @@
 #![warn(missing_docs)]
 
 mod duration;
+pub mod options;
 
 pub use duration::{Duration, DurationSign};

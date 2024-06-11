@@ -252,7 +252,7 @@ macro_rules! impl_dynamic_data_provider {
                 match marker.path.hashed() {
                     $(
                         $(#[$cfg])?
-                        h if h == <$struct_m>::INFO.path.hashed() => {
+                        h if h == <$struct_m as $crate::DataMarker>::INFO.path.hashed() => {
                             let result: $crate::DataResponse<$struct_m> =
                                 $crate::DataProvider::load(self, req)?;
                             Ok($crate::DataResponse {

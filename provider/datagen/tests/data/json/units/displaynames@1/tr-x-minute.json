@@ -1,0 +1,14 @@
+{
+  "long": {
+    "One": "{0} dakika",
+    "Other": "{0} dakika"
+  },
+  "short": {
+    "One": "{0} dk.",
+    "Other": "{0} dk."
+  },
+  "narrow": {
+    "One": "{0}d",
+    "Other": "{0}d"
+  }
+}

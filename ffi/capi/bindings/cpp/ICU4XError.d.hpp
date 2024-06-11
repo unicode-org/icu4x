@@ -29,17 +29,7 @@ public:
     DataIoError = 267,
     DataUnavailableBufferFormatError = 268,
     DataMismatchedAnyBufferError = 269,
-    LocaleParserLanguageError = 513,
-    LocaleParserSubtagError = 514,
-    LocaleParserExtensionError = 515,
-    DataStructValidityError = 768,
     PropertyUnexpectedPropertyNameError = 1026,
-    FixedDecimalLimitError = 1280,
-    FixedDecimalSyntaxError = 1281,
-    PluralsParseError = 1536,
-    CalendarOutOfRangeError = 1795,
-    CalendarUnknownEraError = 1796,
-    CalendarUnknownMonthCodeError = 1797,
     DateTimePatternError = 2048,
     DateTimeMissingInputFieldError = 2049,
     DateTimeSkeletonError = 2050,
@@ -49,8 +39,6 @@ public:
     DateTimeMissingMonthSymbolError = 2054,
     DateTimeFixedDecimalError = 2055,
     DateTimeMismatchedCalendarError = 2056,
-    TimeZoneInvalidOffsetError = 2561,
-    TimeZoneInvalidIdError = 2563,
   };
 
   ICU4XError() = default;

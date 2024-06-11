@@ -36,11 +36,11 @@ final class FixedDecimal implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `FloatPrecision`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.FloatPrecision.html) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [FixedDecimalLimitError] on failure.
   factory FixedDecimal.fromDoubleWithLowerMagnitude(double f, int magnitude) {
     final result = _ICU4XFixedDecimal_create_from_f64_with_lower_magnitude(f, magnitude);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw FixedDecimalLimitError.values[result.union.err];
     }
     return FixedDecimal._fromFfi(result.union.ok, []);
   }
@@ -51,11 +51,11 @@ final class FixedDecimal implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `FloatPrecision`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.FloatPrecision.html) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [FixedDecimalLimitError] on failure.
   factory FixedDecimal.fromDoubleWithSignificantDigits(double f, int digits) {
     final result = _ICU4XFixedDecimal_create_from_f64_with_significant_digits(f, digits);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw FixedDecimalLimitError.values[result.union.err];
     }
     return FixedDecimal._fromFfi(result.union.ok, []);
   }
@@ -67,11 +67,11 @@ final class FixedDecimal implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `FloatPrecision`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.FloatPrecision.html) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [FixedDecimalLimitError] on failure.
   factory FixedDecimal.fromDoubleWithDoublePrecision(double f) {
     final result = _ICU4XFixedDecimal_create_from_f64_with_floating_precision(f);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw FixedDecimalLimitError.values[result.union.err];
     }
     return FixedDecimal._fromFfi(result.union.ok, []);
   }
@@ -80,14 +80,14 @@ final class FixedDecimal implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `from_str`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.from_str) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [FixedDecimalParseError] on failure.
   factory FixedDecimal.fromString(String v) {
     final temp = ffi2.Arena();
     final vView = v.utf8View;
     final result = _ICU4XFixedDecimal_create_from_string(vView.allocIn(temp), vView.length);
     temp.releaseAll();
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw FixedDecimalParseError.values[result.union.err];
     }
     return FixedDecimal._fromFfi(result.union.ok, []);
   }

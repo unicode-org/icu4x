@@ -1,0 +1,14 @@
+{
+  "long": {
+    "One": "{0} microseconde",
+    "Other": "{0} microsecondes"
+  },
+  "short": {
+    "One": "{0} μs",
+    "Other": "{0} μs"
+  },
+  "narrow": {
+    "One": "{0}μs",
+    "Other": "{0}μs"
+  }
+}

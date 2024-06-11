@@ -5,7 +5,7 @@
 #[diplomat::bridge]
 pub mod ffi {
     use crate::{
-        errors::ffi::ICU4XError,
+        errors::ffi::ICU4XDataError,
         locale::ffi::ICU4XLocaleExpander,
         locale_core::ffi::ICU4XLocale,
         provider::{ffi::ICU4XDataProvider, ICU4XDataProviderInner},
@@ -30,7 +30,7 @@ pub mod ffi {
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
         pub fn create(
             provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XLocaleDirectionality>, ICU4XError> {
+        ) -> Result<Box<ICU4XLocaleDirectionality>, ICU4XDataError> {
             Ok(Box::new(ICU4XLocaleDirectionality(call_constructor!(
                 LocaleDirectionality::new [r => Ok(r)],
                 LocaleDirectionality::try_new_with_any_provider,
@@ -45,7 +45,7 @@ pub mod ffi {
         pub fn create_with_expander(
             provider: &ICU4XDataProvider,
             expander: &ICU4XLocaleExpander,
-        ) -> Result<Box<ICU4XLocaleDirectionality>, ICU4XError> {
+        ) -> Result<Box<ICU4XLocaleDirectionality>, ICU4XDataError> {
             #[allow(unused_imports)]
             use icu_provider::prelude::*;
             Ok(Box::new(ICU4XLocaleDirectionality(match &provider.0 {

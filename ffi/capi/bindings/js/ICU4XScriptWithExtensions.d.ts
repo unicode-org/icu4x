@@ -1,8 +1,8 @@
 import { u16, u32 } from "./diplomat-runtime"
 import { FFIError } from "./diplomat-runtime"
 import { ICU4XCodePointRangeIterator } from "./ICU4XCodePointRangeIterator";
+import { ICU4XDataError } from "./ICU4XDataError";
 import { ICU4XDataProvider } from "./ICU4XDataProvider";
-import { ICU4XError } from "./ICU4XError";
 import { ICU4XScriptWithExtensionsBorrowed } from "./ICU4XScriptWithExtensionsBorrowed";
 
 /**
@@ -16,7 +16,7 @@ export class ICU4XScriptWithExtensions {
   /**
 
    * See the {@link https://docs.rs/icu/latest/icu/properties/script/fn.script_with_extensions.html Rust documentation for `script_with_extensions`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
+   * @throws {@link FFIError}<{@link ICU4XDataError}>
    */
   static create(provider: ICU4XDataProvider): ICU4XScriptWithExtensions | never;
 

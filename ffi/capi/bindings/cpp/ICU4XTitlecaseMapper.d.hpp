@@ -8,20 +8,20 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XError.d.hpp"
+#include "ICU4XDataError.d.hpp"
 #include "ICU4XTitlecaseMapper.d.h"
 #include "ICU4XTitlecaseOptionsV1.d.hpp"
 
 class ICU4XDataProvider;
 class ICU4XLocale;
 struct ICU4XTitlecaseOptionsV1;
-class ICU4XError;
+class ICU4XDataError;
 
 
 class ICU4XTitlecaseMapper {
 public:
 
-  inline static diplomat::result<std::unique_ptr<ICU4XTitlecaseMapper>, ICU4XError> create(const ICU4XDataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<ICU4XTitlecaseMapper>, ICU4XDataError> create(const ICU4XDataProvider& provider);
 
   inline diplomat::result<std::string, diplomat::Utf8Error> titlecase_segment_v1(std::string_view s, const ICU4XLocale& locale, ICU4XTitlecaseOptionsV1 options) const;
 

@@ -130,6 +130,13 @@ pub use __impl_currency_essentials_v1 as impl_currency_essentials_v1;
 #[doc(inline)]
 pub use __impliterable_currency_essentials_v1 as impliterable_currency_essentials_v1;
 #[macro_use]
+#[path = "macros/currency_extended_v1.rs.data"]
+mod currency_extended_v1;
+#[doc(inline)]
+pub use __impl_currency_extended_v1 as impl_currency_extended_v1;
+#[doc(inline)]
+pub use __impliterable_currency_extended_v1 as impliterable_currency_extended_v1;
+#[macro_use]
 #[path = "macros/datetime_buddhist_datelengths_v1.rs.data"]
 mod datetime_buddhist_datelengths_v1;
 #[doc(inline)]
@@ -2117,6 +2124,13 @@ mod transliterator_rules_v1;
 pub use __impl_transliterator_rules_v1 as impl_transliterator_rules_v1;
 #[doc(inline)]
 pub use __impliterable_transliterator_rules_v1 as impliterable_transliterator_rules_v1;
+#[macro_use]
+#[path = "macros/units_displaynames_v1.rs.data"]
+mod units_displaynames_v1;
+#[doc(inline)]
+pub use __impl_units_displaynames_v1 as impl_units_displaynames_v1;
+#[doc(inline)]
+pub use __impliterable_units_displaynames_v1 as impliterable_units_displaynames_v1;
 #[macro_use]
 #[path = "macros/units_info_v1.rs.data"]
 mod units_info_v1;

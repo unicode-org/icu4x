@@ -1,0 +1,65 @@
+// @generated
+/// Implement `DataProvider<WeekDataV2Marker>` on the given struct using the data
+/// hardcoded in this file. This allows the struct to be used with
+/// `icu`'s `_unstable` constructors.
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __impl_datetime_week_data_v2 {
+    ($ provider : ty) => {
+        #[clippy::msrv = "1.70"]
+        const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
+        #[clippy::msrv = "1.70"]
+        impl icu_provider::DataProvider<icu::calendar::provider::WeekDataV2Marker> for $provider {
+            fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::calendar::provider::WeekDataV2Marker>, icu_provider::DataError> {
+                static UND_MV: <icu::calendar::provider::WeekDataV2Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::calendar::provider::WeekDataV2 { first_weekday: icu::calendar::types::IsoWeekday::Friday, min_week_days: 1u8, weekend: icu::calendar::provider::WeekdaySet::new(&[icu::calendar::types::IsoWeekday::Saturday, icu::calendar::types::IsoWeekday::Sunday]) };
+                static UND: <icu::calendar::provider::WeekDataV2Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::calendar::provider::WeekDataV2 { first_weekday: icu::calendar::types::IsoWeekday::Monday, min_week_days: 1u8, weekend: icu::calendar::provider::WeekdaySet::new(&[icu::calendar::types::IsoWeekday::Saturday, icu::calendar::types::IsoWeekday::Sunday]) };
+                static UND_AD: <icu::calendar::provider::WeekDataV2Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::calendar::provider::WeekDataV2 { first_weekday: icu::calendar::types::IsoWeekday::Monday, min_week_days: 4u8, weekend: icu::calendar::provider::WeekdaySet::new(&[icu::calendar::types::IsoWeekday::Saturday, icu::calendar::types::IsoWeekday::Sunday]) };
+                static UND_BH: <icu::calendar::provider::WeekDataV2Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::calendar::provider::WeekDataV2 { first_weekday: icu::calendar::types::IsoWeekday::Saturday, min_week_days: 1u8, weekend: icu::calendar::provider::WeekdaySet::new(&[icu::calendar::types::IsoWeekday::Friday, icu::calendar::types::IsoWeekday::Saturday]) };
+                static UND_IR: <icu::calendar::provider::WeekDataV2Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::calendar::provider::WeekDataV2 { first_weekday: icu::calendar::types::IsoWeekday::Saturday, min_week_days: 1u8, weekend: icu::calendar::provider::WeekdaySet::new(&[icu::calendar::types::IsoWeekday::Friday]) };
+                static UND_AE: <icu::calendar::provider::WeekDataV2Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::calendar::provider::WeekDataV2 { first_weekday: icu::calendar::types::IsoWeekday::Saturday, min_week_days: 1u8, weekend: icu::calendar::provider::WeekdaySet::new(&[icu::calendar::types::IsoWeekday::Saturday, icu::calendar::types::IsoWeekday::Sunday]) };
+                static UND_AF: <icu::calendar::provider::WeekDataV2Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::calendar::provider::WeekDataV2 { first_weekday: icu::calendar::types::IsoWeekday::Saturday, min_week_days: 1u8, weekend: icu::calendar::provider::WeekdaySet::new(&[icu::calendar::types::IsoWeekday::Thursday, icu::calendar::types::IsoWeekday::Friday]) };
+                static UND_IL: <icu::calendar::provider::WeekDataV2Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::calendar::provider::WeekDataV2 { first_weekday: icu::calendar::types::IsoWeekday::Sunday, min_week_days: 1u8, weekend: icu::calendar::provider::WeekdaySet::new(&[icu::calendar::types::IsoWeekday::Friday, icu::calendar::types::IsoWeekday::Saturday]) };
+                static UND_AG: <icu::calendar::provider::WeekDataV2Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::calendar::provider::WeekDataV2 { first_weekday: icu::calendar::types::IsoWeekday::Sunday, min_week_days: 1u8, weekend: icu::calendar::provider::WeekdaySet::new(&[icu::calendar::types::IsoWeekday::Saturday, icu::calendar::types::IsoWeekday::Sunday]) };
+                static UND_IN: <icu::calendar::provider::WeekDataV2Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::calendar::provider::WeekDataV2 { first_weekday: icu::calendar::types::IsoWeekday::Sunday, min_week_days: 1u8, weekend: icu::calendar::provider::WeekdaySet::new(&[icu::calendar::types::IsoWeekday::Sunday]) };
+                static UND_PT: <icu::calendar::provider::WeekDataV2Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::calendar::provider::WeekDataV2 { first_weekday: icu::calendar::types::IsoWeekday::Sunday, min_week_days: 4u8, weekend: icu::calendar::provider::WeekdaySet::new(&[icu::calendar::types::IsoWeekday::Saturday, icu::calendar::types::IsoWeekday::Sunday]) };
+                static DATA: [(&str, &<icu::calendar::provider::WeekDataV2Marker as icu_provider::DynamicDataMarker>::Yokeable); 115usize] = [("und", &UND), ("und-AD", &UND_AD), ("und-AE", &UND_AE), ("und-AF", &UND_AF), ("und-AG", &UND_AG), ("und-AN", &UND_AD), ("und-AS", &UND_AG), ("und-AT", &UND_AD), ("und-AX", &UND_AD), ("und-BD", &UND_AG), ("und-BE", &UND_AD), ("und-BG", &UND_AD), ("und-BH", &UND_BH), ("und-BR", &UND_AG), ("und-BS", &UND_AG), ("und-BT", &UND_AG), ("und-BW", &UND_AG), ("und-BZ", &UND_AG), ("und-CA", &UND_AG), ("und-CH", &UND_AD), ("und-CO", &UND_AG), ("und-CZ", &UND_AD), ("und-DE", &UND_AD), ("und-DJ", &UND_AE), ("und-DK", &UND_AD), ("und-DM", &UND_AG), ("und-DO", &UND_AG), ("und-DZ", &UND_BH), ("und-EE", &UND_AD), ("und-EG", &UND_BH), ("und-ES", &UND_AD), ("und-ET", &UND_AG), ("und-FI", &UND_AD), ("und-FJ", &UND_AD), ("und-FO", &UND_AD), ("und-FR", &UND_AD), ("und-GB", &UND_AD), ("und-GF", &UND_AD), ("und-GG", &UND_AD), ("und-GI", &UND_AD), ("und-GP", &UND_AD), ("und-GR", &UND_AD), ("und-GT", &UND_AG), ("und-GU", &UND_AG), ("und-HK", &UND_AG), ("und-HN", &UND_AG), ("und-HU", &UND_AD), ("und-ID", &UND_AG), ("und-IE", &UND_AD), ("und-IL", &UND_IL), ("und-IM", &UND_AD), ("und-IN", &UND_IN), ("und-IQ", &UND_BH), ("und-IR", &UND_IR), ("und-IS", &UND_AD), ("und-IT", &UND_AD), ("und-JE", &UND_AD), ("und-JM", &UND_AG), ("und-JO", &UND_BH), ("und-JP", &UND_AG), ("und-KE", &UND_AG), ("und-KH", &UND_AG), ("und-KR", &UND_AG), ("und-KW", &UND_BH), ("und-LA", &UND_AG), ("und-LI", &UND_AD), ("und-LT", &UND_AD), ("und-LU", &UND_AD), ("und-LY", &UND_BH), ("und-MC", &UND_AD), ("und-MH", &UND_AG), ("und-MM", &UND_AG), ("und-MO", &UND_AG), ("und-MQ", &UND_AD), ("und-MT", &UND_AG), ("und-MV", &UND_MV), ("und-MX", &UND_AG), ("und-MZ", &UND_AG), ("und-NI", &UND_AG), ("und-NL", &UND_AD), ("und-NO", &UND_AD), ("und-NP", &UND_AG), ("und-OM", &UND_BH), ("und-PA", &UND_AG), ("und-PE", &UND_AG), ("und-PH", &UND_AG), ("und-PK", &UND_AG), ("und-PL", &UND_AD), ("und-PR", &UND_AG), ("und-PT", &UND_PT), ("und-PY", &UND_AG), ("und-QA", &UND_BH), ("und-RE", &UND_AD), ("und-RU", &UND_AD), ("und-SA", &UND_IL), ("und-SD", &UND_BH), ("und-SE", &UND_AD), ("und-SG", &UND_AG), ("und-SJ", &UND_AD), ("und-SK", &UND_AD), ("und-SM", &UND_AD), ("und-SV", &UND_AG), ("und-SY", &UND_BH), ("und-TH", &UND_AG), ("und-TT", &UND_AG), ("und-TW", &UND_AG), ("und-UM", &UND_AG), ("und-US", &UND_AG), ("und-VA", &UND_AD), ("und-VE", &UND_AG), ("und-VI", &UND_AG), ("und-WS", &UND_AG), ("und-YE", &UND_IL), ("und-ZA", &UND_AG), ("und-ZW", &UND_AG)];
+                fn lookup(req: icu_provider::DataRequest) -> Option<&'static <icu::calendar::provider::WeekDataV2Marker as icu_provider::DynamicDataMarker>::Yokeable> {
+                    DATA.binary_search_by(|(k, _)| req.legacy_cmp(k.as_bytes()).reverse()).map(|i| (*unsafe { DATA.get_unchecked(i) }).1).ok()
+                }
+                let mut metadata = icu_provider::DataResponseMetadata::default();
+                let payload = if let Some(payload) = lookup(req) {
+                    payload
+                } else {
+                    const FALLBACKER: icu::locale::fallback::LocaleFallbackerWithConfig<'static> = icu::locale::fallback::LocaleFallbacker::new().for_config(<icu::calendar::provider::WeekDataV2Marker as icu_provider::DataMarker>::INFO.fallback_config);
+                    let mut fallback_iterator = FALLBACKER.fallback_for(req.locale.clone());
+                    loop {
+                        if let Some(payload) = lookup(icu_provider::DataRequest { locale: fallback_iterator.get(), ..req }) {
+                            metadata.locale = Some(fallback_iterator.take());
+                            break payload;
+                        }
+                        if fallback_iterator.get().is_und() {
+                            return Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::calendar::provider::WeekDataV2Marker as icu_provider::DataMarker>::INFO, req));
+                        }
+                        fallback_iterator.step();
+                    }
+                };
+                Ok(icu_provider::DataResponse { payload: Some(icu_provider::DataPayload::from_static_ref(payload)), metadata })
+            }
+        }
+    };
+}
+/// Implement `IterableDataProvider<WeekDataV2Marker>` on the given struct using the data
+/// hardcoded in this file. This allows the struct to be used with
+/// `DatagenDriver` for this marker.
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __impliterable_datetime_week_data_v2 {
+    ($ provider : ty) => {
+        #[clippy::msrv = "1.70"]
+        impl icu_provider::datagen::IterableDataProvider<icu::calendar::provider::WeekDataV2Marker> for $provider {
+            fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataMarkerAttributes)>, icu_provider::DataError> {
+                Ok(["und", "und-AD", "und-AE", "und-AF", "und-AG", "und-AN", "und-AS", "und-AT", "und-AX", "und-BD", "und-BE", "und-BG", "und-BH", "und-BR", "und-BS", "und-BT", "und-BW", "und-BZ", "und-CA", "und-CH", "und-CO", "und-CZ", "und-DE", "und-DJ", "und-DK", "und-DM", "und-DO", "und-DZ", "und-EE", "und-EG", "und-ES", "und-ET", "und-FI", "und-FJ", "und-FO", "und-FR", "und-GB", "und-GF", "und-GG", "und-GI", "und-GP", "und-GR", "und-GT", "und-GU", "und-HK", "und-HN", "und-HU", "und-ID", "und-IE", "und-IL", "und-IM", "und-IN", "und-IQ", "und-IR", "und-IS", "und-IT", "und-JE", "und-JM", "und-JO", "und-JP", "und-KE", "und-KH", "und-KR", "und-KW", "und-LA", "und-LI", "und-LT", "und-LU", "und-LY", "und-MC", "und-MH", "und-MM", "und-MO", "und-MQ", "und-MT", "und-MV", "und-MX", "und-MZ", "und-NI", "und-NL", "und-NO", "und-NP", "und-OM", "und-PA", "und-PE", "und-PH", "und-PK", "und-PL", "und-PR", "und-PT", "und-PY", "und-QA", "und-RE", "und-RU", "und-SA", "und-SD", "und-SE", "und-SG", "und-SJ", "und-SK", "und-SM", "und-SV", "und-SY", "und-TH", "und-TT", "und-TW", "und-UM", "und-US", "und-VA", "und-VE", "und-VI", "und-WS", "und-YE", "und-ZA", "und-ZW"].into_iter().filter_map(icu_provider::DataRequest::legacy_decode).collect())
+            }
+        }
+    };
+}

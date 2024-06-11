@@ -14,7 +14,7 @@
 #include "ICU4XLocaleDirection.h"
 #include "ICU4XLocaleExpander.d.h"
 #include "ICU4XLocaleExpander.h"
-#include "diplomat_result_box_ICU4XLocaleDirectionality_ICU4XError.d.h"
+#include "diplomat_result_box_ICU4XLocaleDirectionality_ICU4XDataError.d.h"
 
 #include "ICU4XLocaleDirectionality.d.h"
 
@@ -24,9 +24,9 @@ extern "C" {
 #endif // __cplusplus
 
 
-diplomat_result_box_ICU4XLocaleDirectionality_ICU4XError ICU4XLocaleDirectionality_create(const ICU4XDataProvider* provider);
+diplomat_result_box_ICU4XLocaleDirectionality_ICU4XDataError ICU4XLocaleDirectionality_create(const ICU4XDataProvider* provider);
 
-diplomat_result_box_ICU4XLocaleDirectionality_ICU4XError ICU4XLocaleDirectionality_create_with_expander(const ICU4XDataProvider* provider, const ICU4XLocaleExpander* expander);
+diplomat_result_box_ICU4XLocaleDirectionality_ICU4XDataError ICU4XLocaleDirectionality_create_with_expander(const ICU4XDataProvider* provider, const ICU4XLocaleExpander* expander);
 
 ICU4XLocaleDirection ICU4XLocaleDirectionality_get(const ICU4XLocaleDirectionality* self, const ICU4XLocale* locale);
 

@@ -1,0 +1,14 @@
+{
+  "long": {
+    "One": "{0} trimestre",
+    "Other": "{0} trimestres"
+  },
+  "short": {
+    "One": "{0} trim.",
+    "Other": "{0} trim."
+  },
+  "narrow": {
+    "One": "{0}trim",
+    "Other": "{0}trim"
+  }
+}

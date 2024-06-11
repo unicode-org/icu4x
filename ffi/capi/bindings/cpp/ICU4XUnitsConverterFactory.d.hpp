@@ -8,20 +8,20 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XError.d.hpp"
+#include "ICU4XDataError.d.hpp"
 #include "ICU4XUnitsConverterFactory.d.h"
 
 class ICU4XDataProvider;
 class ICU4XMeasureUnit;
 class ICU4XMeasureUnitParser;
 class ICU4XUnitsConverter;
-class ICU4XError;
+class ICU4XDataError;
 
 
 class ICU4XUnitsConverterFactory {
 public:
 
-  inline static diplomat::result<std::unique_ptr<ICU4XUnitsConverterFactory>, ICU4XError> create(const ICU4XDataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<ICU4XUnitsConverterFactory>, ICU4XDataError> create(const ICU4XDataProvider& provider);
 
   inline std::unique_ptr<ICU4XUnitsConverter> converter(const ICU4XMeasureUnit& from, const ICU4XMeasureUnit& to) const;
 

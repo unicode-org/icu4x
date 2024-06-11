@@ -1,0 +1,11 @@
+{
+  "long": {
+    "Other": "{0} ms"
+  },
+  "short": {
+    "Other": "{0} ms"
+  },
+  "narrow": {
+    "Other": "{0} ms"
+  }
+}

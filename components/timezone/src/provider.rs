@@ -36,14 +36,16 @@ pub mod names;
 pub struct Baked;
 
 #[cfg(feature = "compiled_data")]
+#[allow(unused_imports)]
 const _: () = {
+    use icu_timezone_data::*;
     pub mod icu {
         pub use crate as timezone;
     }
-    icu_timezone_data::make_provider!(Baked);
-    icu_timezone_data::impl_time_zone_bcp47_to_iana_v1!(Baked);
-    icu_timezone_data::impl_time_zone_iana_to_bcp47_v2!(Baked);
-    icu_timezone_data::impl_time_zone_metazone_period_v1!(Baked);
+    make_provider!(Baked);
+    impl_time_zone_bcp47_to_iana_v1!(Baked);
+    impl_time_zone_iana_to_bcp47_v2!(Baked);
+    impl_time_zone_metazone_period_v1!(Baked);
 };
 
 #[cfg(feature = "datagen")]

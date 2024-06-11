@@ -13,8 +13,8 @@
 #include "ICU4XCodePointMapData8.h"
 #include "ICU4XCodePointRangeIterator.hpp"
 #include "ICU4XCodePointSetData.hpp"
+#include "ICU4XDataError.hpp"
 #include "ICU4XDataProvider.hpp"
-#include "ICU4XError.hpp"
 
 
 inline uint8_t ICU4XCodePointMapData8::get(char32_t cp) const {
@@ -58,54 +58,54 @@ inline std::unique_ptr<ICU4XCodePointSetData> ICU4XCodePointMapData8::get_set_fo
   return std::unique_ptr<ICU4XCodePointSetData>(ICU4XCodePointSetData::FromFFI(result));
 }
 
-inline diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XError> ICU4XCodePointMapData8::load_general_category(const ICU4XDataProvider& provider) {
+inline diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XDataError> ICU4XCodePointMapData8::load_general_category(const ICU4XDataProvider& provider) {
   auto result = capi::ICU4XCodePointMapData8_load_general_category(provider.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XCodePointMapData8>>(std::unique_ptr<ICU4XCodePointMapData8>(ICU4XCodePointMapData8::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XDataError>(diplomat::Ok<std::unique_ptr<ICU4XCodePointMapData8>>(std::unique_ptr<ICU4XCodePointMapData8>(ICU4XCodePointMapData8::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XError> ICU4XCodePointMapData8::load_bidi_class(const ICU4XDataProvider& provider) {
+inline diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XDataError> ICU4XCodePointMapData8::load_bidi_class(const ICU4XDataProvider& provider) {
   auto result = capi::ICU4XCodePointMapData8_load_bidi_class(provider.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XCodePointMapData8>>(std::unique_ptr<ICU4XCodePointMapData8>(ICU4XCodePointMapData8::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XDataError>(diplomat::Ok<std::unique_ptr<ICU4XCodePointMapData8>>(std::unique_ptr<ICU4XCodePointMapData8>(ICU4XCodePointMapData8::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XError> ICU4XCodePointMapData8::load_east_asian_width(const ICU4XDataProvider& provider) {
+inline diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XDataError> ICU4XCodePointMapData8::load_east_asian_width(const ICU4XDataProvider& provider) {
   auto result = capi::ICU4XCodePointMapData8_load_east_asian_width(provider.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XCodePointMapData8>>(std::unique_ptr<ICU4XCodePointMapData8>(ICU4XCodePointMapData8::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XDataError>(diplomat::Ok<std::unique_ptr<ICU4XCodePointMapData8>>(std::unique_ptr<ICU4XCodePointMapData8>(ICU4XCodePointMapData8::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XError> ICU4XCodePointMapData8::load_hangul_syllable_type(const ICU4XDataProvider& provider) {
+inline diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XDataError> ICU4XCodePointMapData8::load_hangul_syllable_type(const ICU4XDataProvider& provider) {
   auto result = capi::ICU4XCodePointMapData8_load_hangul_syllable_type(provider.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XCodePointMapData8>>(std::unique_ptr<ICU4XCodePointMapData8>(ICU4XCodePointMapData8::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XDataError>(diplomat::Ok<std::unique_ptr<ICU4XCodePointMapData8>>(std::unique_ptr<ICU4XCodePointMapData8>(ICU4XCodePointMapData8::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XError> ICU4XCodePointMapData8::load_indic_syllabic_category(const ICU4XDataProvider& provider) {
+inline diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XDataError> ICU4XCodePointMapData8::load_indic_syllabic_category(const ICU4XDataProvider& provider) {
   auto result = capi::ICU4XCodePointMapData8_load_indic_syllabic_category(provider.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XCodePointMapData8>>(std::unique_ptr<ICU4XCodePointMapData8>(ICU4XCodePointMapData8::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XDataError>(diplomat::Ok<std::unique_ptr<ICU4XCodePointMapData8>>(std::unique_ptr<ICU4XCodePointMapData8>(ICU4XCodePointMapData8::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XError> ICU4XCodePointMapData8::load_line_break(const ICU4XDataProvider& provider) {
+inline diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XDataError> ICU4XCodePointMapData8::load_line_break(const ICU4XDataProvider& provider) {
   auto result = capi::ICU4XCodePointMapData8_load_line_break(provider.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XCodePointMapData8>>(std::unique_ptr<ICU4XCodePointMapData8>(ICU4XCodePointMapData8::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XDataError>(diplomat::Ok<std::unique_ptr<ICU4XCodePointMapData8>>(std::unique_ptr<ICU4XCodePointMapData8>(ICU4XCodePointMapData8::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XError> ICU4XCodePointMapData8::try_grapheme_cluster_break(const ICU4XDataProvider& provider) {
+inline diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XDataError> ICU4XCodePointMapData8::try_grapheme_cluster_break(const ICU4XDataProvider& provider) {
   auto result = capi::ICU4XCodePointMapData8_try_grapheme_cluster_break(provider.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XCodePointMapData8>>(std::unique_ptr<ICU4XCodePointMapData8>(ICU4XCodePointMapData8::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XDataError>(diplomat::Ok<std::unique_ptr<ICU4XCodePointMapData8>>(std::unique_ptr<ICU4XCodePointMapData8>(ICU4XCodePointMapData8::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XError> ICU4XCodePointMapData8::load_word_break(const ICU4XDataProvider& provider) {
+inline diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XDataError> ICU4XCodePointMapData8::load_word_break(const ICU4XDataProvider& provider) {
   auto result = capi::ICU4XCodePointMapData8_load_word_break(provider.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XCodePointMapData8>>(std::unique_ptr<ICU4XCodePointMapData8>(ICU4XCodePointMapData8::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XDataError>(diplomat::Ok<std::unique_ptr<ICU4XCodePointMapData8>>(std::unique_ptr<ICU4XCodePointMapData8>(ICU4XCodePointMapData8::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XError> ICU4XCodePointMapData8::load_sentence_break(const ICU4XDataProvider& provider) {
+inline diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XDataError> ICU4XCodePointMapData8::load_sentence_break(const ICU4XDataProvider& provider) {
   auto result = capi::ICU4XCodePointMapData8_load_sentence_break(provider.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XCodePointMapData8>>(std::unique_ptr<ICU4XCodePointMapData8>(ICU4XCodePointMapData8::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XDataError>(diplomat::Ok<std::unique_ptr<ICU4XCodePointMapData8>>(std::unique_ptr<ICU4XCodePointMapData8>(ICU4XCodePointMapData8::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XError> ICU4XCodePointMapData8::load_joining_type(const ICU4XDataProvider& provider) {
+inline diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XDataError> ICU4XCodePointMapData8::load_joining_type(const ICU4XDataProvider& provider) {
   auto result = capi::ICU4XCodePointMapData8_load_joining_type(provider.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XCodePointMapData8>>(std::unique_ptr<ICU4XCodePointMapData8>(ICU4XCodePointMapData8::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XDataError>(diplomat::Ok<std::unique_ptr<ICU4XCodePointMapData8>>(std::unique_ptr<ICU4XCodePointMapData8>(ICU4XCodePointMapData8::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
 
 inline const capi::ICU4XCodePointMapData8* ICU4XCodePointMapData8::AsFFI() const {

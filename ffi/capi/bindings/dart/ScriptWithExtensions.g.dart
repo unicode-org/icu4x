@@ -26,11 +26,11 @@ final class ScriptWithExtensions implements ffi.Finalizable {
 
   /// See the [Rust documentation for `script_with_extensions`](https://docs.rs/icu/latest/icu/properties/script/fn.script_with_extensions.html) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   factory ScriptWithExtensions(DataProvider provider) {
     final result = _ICU4XScriptWithExtensions_create(provider._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     return ScriptWithExtensions._fromFfi(result.union.ok, []);
   }

@@ -29,11 +29,11 @@ final class Date implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `new_from_iso`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.new_from_iso) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [CalendarError] on failure.
   factory Date.fromIsoInCalendar(int year, int month, int day, Calendar calendar) {
     final result = _ICU4XDate_create_from_iso_in_calendar(year, month, day, calendar._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw CalendarError.values[result.union.err];
     }
     return Date._fromFfi(result.union.ok, []);
   }
@@ -42,7 +42,7 @@ final class Date implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `try_new_from_codes`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.try_new_from_codes) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [CalendarError] on failure.
   factory Date.fromCodesInCalendar(String eraCode, int year, String monthCode, int day, Calendar calendar) {
     final temp = ffi2.Arena();
     final eraCodeView = eraCode.utf8View;
@@ -50,7 +50,7 @@ final class Date implements ffi.Finalizable {
     final result = _ICU4XDate_create_from_codes_in_calendar(eraCodeView.allocIn(temp), eraCodeView.length, year, monthCodeView.allocIn(temp), monthCodeView.length, day, calendar._ffi);
     temp.releaseAll();
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw CalendarError.values[result.union.err];
     }
     return Date._fromFfi(result.union.ok, []);
   }

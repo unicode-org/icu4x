@@ -6,8 +6,8 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include "diplomat_runtime.h"
-#include "diplomat_result_box_ICU4XLocale_ICU4XError.d.h"
-#include "diplomat_result_void_ICU4XError.d.h"
+#include "diplomat_result_box_ICU4XLocale_ICU4XLocaleParseError.d.h"
+#include "diplomat_result_void_ICU4XLocaleParseError.d.h"
 #include "diplomat_result_void_void.d.h"
 
 #include "ICU4XLocale.d.h"
@@ -18,7 +18,7 @@ extern "C" {
 #endif // __cplusplus
 
 
-diplomat_result_box_ICU4XLocale_ICU4XError ICU4XLocale_create_from_string(const char* name_data, size_t name_len);
+diplomat_result_box_ICU4XLocale_ICU4XLocaleParseError ICU4XLocale_create_from_string(const char* name_data, size_t name_len);
 
 ICU4XLocale* ICU4XLocale_create_und();
 
@@ -30,17 +30,17 @@ diplomat_result_void_void ICU4XLocale_get_unicode_extension(const ICU4XLocale* s
 
 void ICU4XLocale_language(const ICU4XLocale* self, DiplomatWrite* write);
 
-diplomat_result_void_ICU4XError ICU4XLocale_set_language(ICU4XLocale* self, const char* bytes_data, size_t bytes_len);
+diplomat_result_void_ICU4XLocaleParseError ICU4XLocale_set_language(ICU4XLocale* self, const char* bytes_data, size_t bytes_len);
 
 diplomat_result_void_void ICU4XLocale_region(const ICU4XLocale* self, DiplomatWrite* write);
 
-diplomat_result_void_ICU4XError ICU4XLocale_set_region(ICU4XLocale* self, const char* bytes_data, size_t bytes_len);
+diplomat_result_void_ICU4XLocaleParseError ICU4XLocale_set_region(ICU4XLocale* self, const char* bytes_data, size_t bytes_len);
 
 diplomat_result_void_void ICU4XLocale_script(const ICU4XLocale* self, DiplomatWrite* write);
 
-diplomat_result_void_ICU4XError ICU4XLocale_set_script(ICU4XLocale* self, const char* bytes_data, size_t bytes_len);
+diplomat_result_void_ICU4XLocaleParseError ICU4XLocale_set_script(ICU4XLocale* self, const char* bytes_data, size_t bytes_len);
 
-diplomat_result_void_ICU4XError ICU4XLocale_canonicalize(const char* bytes_data, size_t bytes_len, DiplomatWrite* write);
+diplomat_result_void_ICU4XLocaleParseError ICU4XLocale_canonicalize(const char* bytes_data, size_t bytes_len, DiplomatWrite* write);
 
 void ICU4XLocale_to_string(const ICU4XLocale* self, DiplomatWrite* write);
 

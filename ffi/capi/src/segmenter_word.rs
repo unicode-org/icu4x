@@ -4,7 +4,7 @@
 
 #[diplomat::bridge]
 pub mod ffi {
-    use crate::errors::ffi::ICU4XError;
+    use crate::errors::ffi::ICU4XDataError;
     use crate::provider::ffi::ICU4XDataProvider;
     use alloc::boxed::Box;
     use core::convert::TryFrom;
@@ -64,7 +64,7 @@ pub mod ffi {
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "auto")]
         pub fn create_auto(
             provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XWordSegmenter>, ICU4XError> {
+        ) -> Result<Box<ICU4XWordSegmenter>, ICU4XDataError> {
             Ok(Box::new(ICU4XWordSegmenter(call_constructor!(
                 WordSegmenter::new_auto [r => Ok(r)],
                 WordSegmenter::try_new_auto_with_any_provider,
@@ -82,7 +82,7 @@ pub mod ffi {
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "lstm")]
         pub fn create_lstm(
             provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XWordSegmenter>, ICU4XError> {
+        ) -> Result<Box<ICU4XWordSegmenter>, ICU4XDataError> {
             Ok(Box::new(ICU4XWordSegmenter(call_constructor!(
                 WordSegmenter::new_lstm [r => Ok(r)],
                 WordSegmenter::try_new_lstm_with_any_provider,
@@ -97,7 +97,7 @@ pub mod ffi {
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "dictionary")]
         pub fn create_dictionary(
             provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XWordSegmenter>, ICU4XError> {
+        ) -> Result<Box<ICU4XWordSegmenter>, ICU4XDataError> {
             Ok(Box::new(ICU4XWordSegmenter(call_constructor!(
                 WordSegmenter::new_dictionary [r => Ok(r)],
                 WordSegmenter::try_new_dictionary_with_any_provider,

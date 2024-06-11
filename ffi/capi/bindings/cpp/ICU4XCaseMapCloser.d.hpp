@@ -9,17 +9,17 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 #include "ICU4XCaseMapCloser.d.h"
-#include "ICU4XError.d.hpp"
+#include "ICU4XDataError.d.hpp"
 
 class ICU4XCodePointSetBuilder;
 class ICU4XDataProvider;
-class ICU4XError;
+class ICU4XDataError;
 
 
 class ICU4XCaseMapCloser {
 public:
 
-  inline static diplomat::result<std::unique_ptr<ICU4XCaseMapCloser>, ICU4XError> create(const ICU4XDataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<ICU4XCaseMapCloser>, ICU4XDataError> create(const ICU4XDataProvider& provider);
 
   inline void add_case_closure_to(char32_t c, ICU4XCodePointSetBuilder& builder) const;
 
