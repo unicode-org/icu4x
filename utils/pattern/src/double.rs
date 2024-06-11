@@ -374,6 +374,13 @@ impl PatternBackend for DoublePlaceholder {
 
         Ok(result)
     }
+
+    fn try_from_utf8(bytes: &[u8]) -> Result<<Self::Store as ToOwned>::Owned, Error>
+    where
+        Self::Store: ToOwned,
+    {
+        todo!()
+    }
 }
 
 #[doc(hidden)] // TODO(#4467): Should be internal

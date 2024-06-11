@@ -101,6 +101,15 @@ pub trait PatternBackend: crate::private::Sealed + 'static {
     where
         Self::Store: ToOwned;
 
+    /// Constructs a store from utf8 bytes.
+    #[doc(hidden)]
+    // TODO(#4467): Should be internal
+    // Note: it is not good practice to feature-gate trait methods, but this trait is sealed
+    #[cfg(feature = "alloc")]
+    fn try_from_utf8(bytes: &[u8]) -> Result<<Self::Store as ToOwned>::Owned, Error>
+    where
+        Self::Store: ToOwned;
+
     /// Iterates over the pattern items in a store.
     #[doc(hidden)] // TODO(#4467): Should be internal
     fn iter_items(store: &Self::Store) -> Self::Iter<'_>;

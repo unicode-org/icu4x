@@ -212,6 +212,21 @@ where
             store,
         })
     }
+
+    pub fn try_from_utf8(bytes: &[u8]) -> Result<Self, Error> {
+        let store = B::try_from_utf8(bytes)?;
+        #[cfg(debug_assertions)]
+        match B::validate_store(core::borrow::Borrow::borrow(&store)) {
+            Ok(()) => (),
+            Err(e) => {
+                debug_assert!(false, "{:?}", e);
+            }
+        };
+        Ok(Self {
+            _backend: PhantomData,
+            store,
+        })
+    }
 }
 
 #[cfg(feature = "alloc")]

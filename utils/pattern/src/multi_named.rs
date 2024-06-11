@@ -368,6 +368,13 @@ impl PatternBackend for MultiNamedPlaceholder {
         }
         Ok(string)
     }
+
+    fn try_from_utf8(bytes: &[u8]) -> Result<<Self::Store as ToOwned>::Owned, Error>
+    where
+        Self::Store: ToOwned,
+    {
+        todo!()
+    }
 }
 
 #[derive(Debug)]
