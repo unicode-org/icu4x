@@ -525,7 +525,11 @@ impl DataExporter for BakedExporter {
 
             let lookup = crate::binary_search::bake(&struct_type, values);
 
-            let load_body = if !self.with_fallback {
+            let load_body = if !self.with_fallback
+                || deduplicated_values
+                    .iter()
+                    .all(|(_, reqs)| reqs.iter().all(|(l, _)| l.is_und()))
+            {
                 quote! {
                         #(#structs)*
                         #lookup
