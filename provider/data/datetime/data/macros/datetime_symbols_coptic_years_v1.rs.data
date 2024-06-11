@@ -11,133 +11,133 @@ macro_rules! __impl_datetime_symbols_coptic_years_v1 {
         #[clippy::msrv = "1.70"]
         impl icu_provider::DataProvider<icu::datetime::provider::neo::CopticYearNamesV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::datetime::provider::neo::CopticYearNamesV1Marker>, icu_provider::DataError> {
-                static FF_ADLM_X_5: <icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                static _5_FF_ADLM: <icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x02\0adbd") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0I\0\xF0\x9E\xA4\xA9\xF0\x9E\xA4\xA2\xF0\x9E\xA5\x84\xF0\x9E\xA4\xB1\xF0\x9E\xA4\xAE \xF0\x9E\xA4\x81\xF0\x9E\xA4\xA2\xF0\x9E\xA4\xB4\xF0\x9E\xA4\xA2\xF0\x9E\xA4\xB3\xF0\x9E\xA4\xAD\xF0\x9E\xA4\xA4\xF0\x9E\xA4\xBC\xF0\x9E\xA4\xAD\xF0\x9E\xA4\xB4\xF0\x9E\xA4\xA2\xF0\x9E\xA5\x84\xF0\x9E\xA4\xB2\xF0\x9E\xA4\xA2\xF0\x9E\xA4\xA3\xF0\x9E\xA4\xAE \xF0\x9E\xA4\x81\xF0\x9E\xA4\xA2\xF0\x9E\xA4\xB4\xF0\x9E\xA4\xA2\xF0\x9E\xA4\xB3\xF0\x9E\xA4\xAD\xF0\x9E\xA4\xA4\xF0\x9E\xA4\xBC\xF0\x9E\xA4\xAD\xF0\x9E\xA4\xB4\xF0\x9E\xA4\xA2\xF0\x9E\xA5\x84\xF0\x9E\xA4\xB2") })
                 });
-                static HE_X_5: <icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                static _5_HE: <icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x02\0adbd") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\n\0\xD7\xA2\xD7\x99\xD7\x93\xD7\x9F 1\xD7\xA2\xD7\x99\xD7\x93\xD7\x9F 0") })
                 });
-                static MR_X_3: <icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                static _3_MR: <icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x02\0adbd") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\n\0\xE0\xA4\xAF\xE0\xA5\x81\xE0\xA4\x971\xE0\xA4\xAF\xE0\xA5\x81\xE0\xA4\x970") })
                 });
-                static PA_X_3: <icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                static _3_PA: <icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x02\0adbd") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\n\0\xE0\xA8\x95\xE0\xA8\xBE\xE0\xA8\xB21\xE0\xA8\x95\xE0\xA8\xBE\xE0\xA8\xB20") })
                 });
-                static GU_X_3: <icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                static _3_GU: <icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x02\0adbd") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\n\0\xE0\xAA\x8F\xE0\xAA\xB0\xE0\xAA\xBE1\xE0\xAA\x8F\xE0\xAA\xB0\xE0\xAA\xBE0") })
                 });
-                static BN_X_3: <icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                static _3_BN: <icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x02\0adbd") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\r\0\xE0\xA6\xAF\xE0\xA7\x81\xE0\xA6\x97 \xE0\xA7\xA7\xE0\xA6\xAF\xE0\xA7\x81\xE0\xA6\x97 \xE0\xA7\xA6") })
                 });
-                static DA_X_3: <icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                static _3_DA: <icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x02\0adbd") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\t\x001. tidsr.0. tidsr.") })
                 });
-                static NO_X_4: <icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                static _4_NO: <icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x02\0adbd") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x03\0TA1TA0") })
                 });
-                static RO_X_3: <icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                static _3_RO: <icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x02\0adbd") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x04\0A.M.\xC3\xAE.A.M.") })
                 });
-                static UND_X_3: <icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                static _3_UND: <icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x02\0adbd") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x04\0ERA1ERA0") })
                 });
-                static SC_X_3: <icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                static _3_SC: <icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x02\0adbd") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x04\0a.M.a.D.") })
                 });
-                static DA_X_4: <icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                static _4_DA: <icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x02\0adbd") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x05\x001. t.0. t.") })
                 });
-                static FA_X_4: <icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                static _4_FA: <icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x02\0adbd") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x06\0\xD8\xA8.\xD9\x85.\xD9\x82.\xD9\x85.") })
                 });
-                static FR_X_3: <icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                static _3_FR: <icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x02\0adbd") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x06\0ap. D.av. D.") })
                 });
-                static MK_X_3: <icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                static _3_MK: <icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x02\0adbd") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x07\0\xD0\x95\xD0\xA0\xD0\x901\xD0\x95\xD0\xA0\xD0\x900") })
                 });
-                static UR_X_3: <icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                static _3_UR: <icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x02\0adbd") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x07\0\xD8\xAF\xD9\x88\xD8\xB11\xD8\xAF\xD9\x88\xD8\xB10") })
                 });
-                static NO_X_3: <icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                static _3_NO: <icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x02\0adbd") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x07\x001. t.a.0. t.a.") })
                 });
-                static FF_ADLM_X_3: <icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                static _3_FF_ADLM: <icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x02\0adbd") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x08\0\xF0\x9E\xA4\x87\xF0\x9E\xA4\x81\xF0\x9E\xA4\x80\xF0\x9E\xA4\x81") })
                 });
-                static LV_X_3: <icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                static _3_LV: <icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x02\0adbd") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x0B\0p\xC4\x93c Diokl.pirms Diokl.") })
                 });
-                static ZH_X_3: <icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                static _3_ZH: <icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x02\0adbd") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x0C\0\xE7\xA7\x91\xE6\x99\xAE\xE7\x89\xB9\xE5\x8E\x86\xE7\xA7\x91\xE6\x99\xAE\xE7\x89\xB9\xE5\x8E\x86\xE5\x89\x8D") })
                 });
-                static NO_X_5: <icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                static _5_NO: <icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x02\0adbd") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x0C\x001. tidsalder0. tidsalder") })
                 });
-                static DA_X_5: <icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                static _5_DA: <icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x02\0adbd") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x0E\x001. tidsregning0. tidsregning") })
                 });
-                static RU_X_3: <icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                static _3_RU: <icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x02\0adbd") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x10\0\xD0\xBE\xD1\x82 \xD0\x94\xD0\xB8\xD0\xBE\xD0\xBA\xD0\xBB.\xD0\xB4\xD0\xBE \xD0\x94\xD0\xB8\xD0\xBE\xD0\xBA\xD0\xBB.") })
                 });
-                static LV_X_5: <icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                static _5_LV: <icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x02\0adbd") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x11\0p\xC4\x93c Diokleti\xC4\x81napirms Diokleti\xC4\x81na") })
                 });
-                static FA_X_3: <icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                static _3_FA: <icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x02\0adbd") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x12\0\xD9\xBE\xD8\xB3 \xD8\xA7\xD8\xB2 \xD9\x85\xD8\xB3\xDB\x8C\xD8\xAD\xD9\x82\xD8\xA8\xD9\x84 \xD8\xA7\xD8\xB2 \xD9\x85\xD8\xB3\xDB\x8C\xD8\xAD") })
                 });
-                static FR_X_5: <icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                static _5_FR: <icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x02\0adbd") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x12\0apr\xC3\xA8s Diocl\xC3\xA9tienavant Diocl\xC3\xA9tien") })
                 });
-                static RO_X_5: <icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                static _5_RO: <icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x02\0adbd") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x13\0dup\xC4\x83 Anno Martyrum\xC3\xAEnainte de Anno Martyrum") })
                 });
-                static SC_X_5: <icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                static _5_SC: <icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x02\0adbd") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x15\0annu de sos m\xC3\xA0rtiresin antis de Diocletzianu") })
                 });
-                static ML_X_3: <icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                static _3_ML: <icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x02\0adbd") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x19\0\xE0\xB4\x95\xE0\xB4\xBE\xE0\xB4\xB2\xE0\xB4\x98\xE0\xB4\x9F\xE0\xB5\x8D\xE0\xB4\x9F\xE0\xB4\x821\xE0\xB4\x95\xE0\xB4\xBE\xE0\xB4\xB2\xE0\xB4\x98\xE0\xB4\x9F\xE0\xB5\x8D\xE0\xB4\x9F\xE0\xB4\x820") })
                 });
-                static RU_X_5: <icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                static _5_RU: <icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x02\0adbd") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x1B\0\xD0\xBE\xD1\x82 \xD0\x94\xD0\xB8\xD0\xBE\xD0\xBA\xD0\xBB\xD0\xB5\xD1\x82\xD0\xB8\xD0\xB0\xD0\xBD\xD0\xB0\xD0\xB4\xD0\xBE \xD0\x94\xD0\xB8\xD0\xBE\xD0\xBA\xD0\xBB\xD0\xB5\xD1\x82\xD0\xB8\xD0\xB0\xD0\xBD\xD0\xB0") })
                 });
-                static FA_X_5: <icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                static _5_FA: <icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x02\0adbd") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x1D\0\xD8\xA8\xD8\xB9\xD8\xAF \xD8\xA7\xD8\xB2 \xD8\xAD\xD9\x84\xD9\x88\xD9\x84 \xD9\x85\xD8\xB3\xDB\x8C\xD8\xAD\xD9\x82\xD8\xA8\xD9\x84 \xD8\xA7\xD8\xB2 \xD8\xAD\xD9\x84\xD9\x88\xD9\x84 \xD9\x85\xD8\xB3\xDB\x8C\xD8\xAD") })
                 });
-                static DATA: [(&str, &<icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable); 55usize] = [("bn-x-3", &BN_X_3), ("bn-x-4", &BN_X_3), ("bn-x-5", &BN_X_3), ("da-x-3", &DA_X_3), ("da-x-4", &DA_X_4), ("da-x-5", &DA_X_5), ("fa-x-3", &FA_X_3), ("fa-x-4", &FA_X_4), ("fa-x-5", &FA_X_5), ("ff-Adlm-x-3", &FF_ADLM_X_3), ("ff-Adlm-x-4", &FF_ADLM_X_3), ("ff-Adlm-x-5", &FF_ADLM_X_5), ("fr-x-3", &FR_X_3), ("fr-x-4", &FR_X_3), ("fr-x-5", &FR_X_5), ("gu-x-3", &GU_X_3), ("gu-x-4", &GU_X_3), ("gu-x-5", &GU_X_3), ("he-x-5", &HE_X_5), ("lv-x-3", &LV_X_3), ("lv-x-4", &LV_X_3), ("lv-x-5", &LV_X_5), ("mk-x-3", &MK_X_3), ("mk-x-4", &MK_X_3), ("mk-x-5", &MK_X_3), ("ml-x-3", &ML_X_3), ("ml-x-4", &ML_X_3), ("ml-x-5", &ML_X_3), ("mr-x-3", &MR_X_3), ("mr-x-4", &MR_X_3), ("mr-x-5", &MR_X_3), ("no-x-3", &NO_X_3), ("no-x-4", &NO_X_4), ("no-x-5", &NO_X_5), ("pa-x-3", &PA_X_3), ("pa-x-4", &PA_X_3), ("pa-x-5", &PA_X_3), ("ro-x-3", &RO_X_3), ("ro-x-4", &RO_X_3), ("ro-x-5", &RO_X_5), ("ru-x-3", &RU_X_3), ("ru-x-4", &RU_X_3), ("ru-x-5", &RU_X_5), ("sc-x-3", &SC_X_3), ("sc-x-4", &SC_X_3), ("sc-x-5", &SC_X_5), ("und-x-3", &UND_X_3), ("und-x-4", &UND_X_3), ("und-x-5", &UND_X_3), ("ur-x-3", &UR_X_3), ("ur-x-4", &UR_X_3), ("ur-x-5", &UR_X_3), ("zh-x-3", &ZH_X_3), ("zh-x-4", &ZH_X_3), ("zh-x-5", &ZH_X_3)];
+                static DATA: [((&str, &str), &<icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable); 55usize] = [(("3", "bn"), &_3_BN), (("3", "da"), &_3_DA), (("3", "fa"), &_3_FA), (("3", "ff-Adlm"), &_3_FF_ADLM), (("3", "fr"), &_3_FR), (("3", "gu"), &_3_GU), (("3", "lv"), &_3_LV), (("3", "mk"), &_3_MK), (("3", "ml"), &_3_ML), (("3", "mr"), &_3_MR), (("3", "no"), &_3_NO), (("3", "pa"), &_3_PA), (("3", "ro"), &_3_RO), (("3", "ru"), &_3_RU), (("3", "sc"), &_3_SC), (("3", "und"), &_3_UND), (("3", "ur"), &_3_UR), (("3", "zh"), &_3_ZH), (("4", "bn"), &_3_BN), (("4", "da"), &_4_DA), (("4", "fa"), &_4_FA), (("4", "ff-Adlm"), &_3_FF_ADLM), (("4", "fr"), &_3_FR), (("4", "gu"), &_3_GU), (("4", "lv"), &_3_LV), (("4", "mk"), &_3_MK), (("4", "ml"), &_3_ML), (("4", "mr"), &_3_MR), (("4", "no"), &_4_NO), (("4", "pa"), &_3_PA), (("4", "ro"), &_3_RO), (("4", "ru"), &_3_RU), (("4", "sc"), &_3_SC), (("4", "und"), &_3_UND), (("4", "ur"), &_3_UR), (("4", "zh"), &_3_ZH), (("5", "bn"), &_3_BN), (("5", "da"), &_5_DA), (("5", "fa"), &_5_FA), (("5", "ff-Adlm"), &_5_FF_ADLM), (("5", "fr"), &_5_FR), (("5", "gu"), &_3_GU), (("5", "he"), &_5_HE), (("5", "lv"), &_5_LV), (("5", "mk"), &_3_MK), (("5", "ml"), &_3_ML), (("5", "mr"), &_3_MR), (("5", "no"), &_5_NO), (("5", "pa"), &_3_PA), (("5", "ro"), &_5_RO), (("5", "ru"), &_5_RU), (("5", "sc"), &_5_SC), (("5", "und"), &_3_UND), (("5", "ur"), &_3_UR), (("5", "zh"), &_3_ZH)];
                 fn lookup(req: icu_provider::DataRequest) -> Option<&'static <icu::datetime::provider::neo::CopticYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable> {
-                    DATA.binary_search_by(|(k, _)| req.legacy_cmp(k.as_bytes()).reverse()).map(|i| (*unsafe { DATA.get_unchecked(i) }).1).ok()
+                    DATA.binary_search_by(|((a, l), _)| a.cmp(&&**req.marker_attributes).then_with(|| req.locale.strict_cmp(l.as_bytes()).reverse())).map(|i| (*unsafe { DATA.get_unchecked(i) }).1).ok()
                 }
                 let mut metadata = icu_provider::DataResponseMetadata::default();
                 let payload = if let Some(payload) = lookup(req) {
@@ -171,7 +171,7 @@ macro_rules! __impliterable_datetime_symbols_coptic_years_v1 {
         #[clippy::msrv = "1.70"]
         impl icu_provider::datagen::IterableDataProvider<icu::datetime::provider::neo::CopticYearNamesV1Marker> for $provider {
             fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataMarkerAttributes)>, icu_provider::DataError> {
-                Ok(["bn-x-3", "bn-x-4", "bn-x-5", "da-x-3", "da-x-4", "da-x-5", "fa-x-3", "fa-x-4", "fa-x-5", "ff-Adlm-x-3", "ff-Adlm-x-4", "ff-Adlm-x-5", "fr-x-3", "fr-x-4", "fr-x-5", "gu-x-3", "gu-x-4", "gu-x-5", "he-x-5", "lv-x-3", "lv-x-4", "lv-x-5", "mk-x-3", "mk-x-4", "mk-x-5", "ml-x-3", "ml-x-4", "ml-x-5", "mr-x-3", "mr-x-4", "mr-x-5", "no-x-3", "no-x-4", "no-x-5", "pa-x-3", "pa-x-4", "pa-x-5", "ro-x-3", "ro-x-4", "ro-x-5", "ru-x-3", "ru-x-4", "ru-x-5", "sc-x-3", "sc-x-4", "sc-x-5", "und-x-3", "und-x-4", "und-x-5", "ur-x-3", "ur-x-4", "ur-x-5", "zh-x-3", "zh-x-4", "zh-x-5"].into_iter().filter_map(icu_provider::DataRequest::legacy_decode).collect())
+                Ok([("3", icu_provider::_internal::locale_core::locale!("bn")), ("3", icu_provider::_internal::locale_core::locale!("da")), ("3", icu_provider::_internal::locale_core::locale!("fa")), ("3", icu_provider::_internal::locale_core::locale!("ff-Adlm")), ("3", icu_provider::_internal::locale_core::locale!("fr")), ("3", icu_provider::_internal::locale_core::locale!("gu")), ("3", icu_provider::_internal::locale_core::locale!("lv")), ("3", icu_provider::_internal::locale_core::locale!("mk")), ("3", icu_provider::_internal::locale_core::locale!("ml")), ("3", icu_provider::_internal::locale_core::locale!("mr")), ("3", icu_provider::_internal::locale_core::locale!("no")), ("3", icu_provider::_internal::locale_core::locale!("pa")), ("3", icu_provider::_internal::locale_core::locale!("ro")), ("3", icu_provider::_internal::locale_core::locale!("ru")), ("3", icu_provider::_internal::locale_core::locale!("sc")), ("3", icu_provider::_internal::locale_core::locale!("und")), ("3", icu_provider::_internal::locale_core::locale!("ur")), ("3", icu_provider::_internal::locale_core::locale!("zh")), ("4", icu_provider::_internal::locale_core::locale!("bn")), ("4", icu_provider::_internal::locale_core::locale!("da")), ("4", icu_provider::_internal::locale_core::locale!("fa")), ("4", icu_provider::_internal::locale_core::locale!("ff-Adlm")), ("4", icu_provider::_internal::locale_core::locale!("fr")), ("4", icu_provider::_internal::locale_core::locale!("gu")), ("4", icu_provider::_internal::locale_core::locale!("lv")), ("4", icu_provider::_internal::locale_core::locale!("mk")), ("4", icu_provider::_internal::locale_core::locale!("ml")), ("4", icu_provider::_internal::locale_core::locale!("mr")), ("4", icu_provider::_internal::locale_core::locale!("no")), ("4", icu_provider::_internal::locale_core::locale!("pa")), ("4", icu_provider::_internal::locale_core::locale!("ro")), ("4", icu_provider::_internal::locale_core::locale!("ru")), ("4", icu_provider::_internal::locale_core::locale!("sc")), ("4", icu_provider::_internal::locale_core::locale!("und")), ("4", icu_provider::_internal::locale_core::locale!("ur")), ("4", icu_provider::_internal::locale_core::locale!("zh")), ("5", icu_provider::_internal::locale_core::locale!("bn")), ("5", icu_provider::_internal::locale_core::locale!("da")), ("5", icu_provider::_internal::locale_core::locale!("fa")), ("5", icu_provider::_internal::locale_core::locale!("ff-Adlm")), ("5", icu_provider::_internal::locale_core::locale!("fr")), ("5", icu_provider::_internal::locale_core::locale!("gu")), ("5", icu_provider::_internal::locale_core::locale!("he")), ("5", icu_provider::_internal::locale_core::locale!("lv")), ("5", icu_provider::_internal::locale_core::locale!("mk")), ("5", icu_provider::_internal::locale_core::locale!("ml")), ("5", icu_provider::_internal::locale_core::locale!("mr")), ("5", icu_provider::_internal::locale_core::locale!("no")), ("5", icu_provider::_internal::locale_core::locale!("pa")), ("5", icu_provider::_internal::locale_core::locale!("ro")), ("5", icu_provider::_internal::locale_core::locale!("ru")), ("5", icu_provider::_internal::locale_core::locale!("sc")), ("5", icu_provider::_internal::locale_core::locale!("und")), ("5", icu_provider::_internal::locale_core::locale!("ur")), ("5", icu_provider::_internal::locale_core::locale!("zh"))].into_iter().map(|(a, l)| (l.into(), a.parse().unwrap())).collect())
             }
         }
     };

@@ -76,10 +76,10 @@ impl DynamicDataProvider<BufferMarker> for FsDataProvider {
         if !Path::new(&path).exists() {
             return Err(DataErrorKind::MissingDataMarker.with_req(marker, req));
         }
-        write!(&mut path, "/{}", req.locale).expect("infallible");
         if !req.marker_attributes.is_empty() {
-            write!(&mut path, "-x-{}", req.marker_attributes as &str).expect("infallible");
+            write!(&mut path, "/{}", req.marker_attributes as &str).expect("infallible");
         }
+        write!(&mut path, "/{}", req.locale).expect("infallible");
         write!(&mut path, ".{}", self.manifest.file_extension).expect("infallible");
         if !Path::new(&path).exists() {
             return Err(DataErrorKind::MissingLocale.with_req(marker, req));

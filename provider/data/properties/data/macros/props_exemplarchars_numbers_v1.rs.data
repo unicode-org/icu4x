@@ -11,240 +11,240 @@ macro_rules! __impl_props_exemplarchars_numbers_v1 {
         #[clippy::msrv = "1.70"]
         impl icu_provider::DataProvider<icu::properties::provider::ExemplarCharactersNumbersV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::properties::provider::ExemplarCharactersNumbersV1Marker>, icu_provider::DataError> {
-                static IE: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
+                static __IE: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
                     unsafe {
                         #[allow(unused_unsafe)]
                         icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"%\0\0\0&\0\0\0'\0\0\0(\0\0\0+\0\0\0.\0\0\x000\0\0\0:\0\0\0\x11 \0\0\x12 \0\x000 \0\x001 \0\0") }, 17u32)
                     },
                     zerovec::VarZeroVec::new(),
                 ));
-                static LIJ: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
+                static __LIJ: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
                     unsafe {
                         #[allow(unused_unsafe)]
                         icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"%\0\0\0&\0\0\0'\0\0\0(\0\0\0+\0\0\0/\0\0\x000\0\0\0:\0\0\0\xAA\0\0\0\xAB\0\0\0\xBA\0\0\0\xBB\0\0\0\x11 \0\0\x12 \0\x000 \0\x001 \0\0\x12\"\0\0\x13\"\0\0") }, 21u32)
                     },
                     zerovec::VarZeroVec::new(),
                 ));
-                static NQO: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
+                static __NQO: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
                     unsafe {
                         #[allow(unused_unsafe)]
                         icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"%\0\0\0&\0\0\0+\0\0\0,\0\0\0-\0\0\0/\0\0\0\x0C\x06\0\0\r\x06\0\0\xC0\x07\0\0\xCA\x07\0\0\x11 \0\0\x12 \0\x000 \0\x001 \0\0") }, 17u32)
                     },
                     zerovec::VarZeroVec::new(),
                 ));
-                static DE_CH: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
+                static __DE_CH: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
                     unsafe {
                         #[allow(unused_unsafe)]
                         icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"%\0\0\0&\0\0\0+\0\0\0,\0\0\0-\0\0\0/\0\0\x000\0\0\0:\0\0\0\x11 \0\0\x12 \0\0\x19 \0\0\x1A \0\x000 \0\x001 \0\0") }, 17u32)
                     },
                     zerovec::VarZeroVec::new(),
                 ));
-                static RM: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
+                static __RM: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
                     unsafe {
                         #[allow(unused_unsafe)]
                         icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"%\0\0\0&\0\0\0+\0\0\0,\0\0\0.\0\0\0/\0\0\x000\0\0\0:\0\0\0\x19 \0\0\x1A \0\x000 \0\x001 \0\0\x12\"\0\0\x13\"\0\0") }, 16u32)
                     },
                     zerovec::VarZeroVec::new(),
                 ));
-                static FA: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
+                static __FA: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
                     unsafe {
                         #[allow(unused_unsafe)]
                         icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"%\0\0\0&\0\0\0+\0\0\0-\0\0\0.\0\0\0/\0\0\x000\0\0\0:\0\0\0\t\x06\0\0\n\x06\0\0j\x06\0\0m\x06\0\0\xF0\x06\0\0\xFA\x06\0\0\x0E \0\0\x0F \0\x000 \0\x001 \0\0\x12\"\0\0\x13\"\0\0") }, 31u32)
                     },
                     zerovec::VarZeroVec::new(),
                 ));
-                static EU: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
+                static __EU: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
                     unsafe {
                         #[allow(unused_unsafe)]
                         icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"%\0\0\0&\0\0\0+\0\0\0-\0\0\0.\0\0\0/\0\0\x000\0\0\0:\0\0\x000 \0\x001 \0\0\x12\"\0\0\x13\"\0\0") }, 16u32)
                     },
                     zerovec::VarZeroVec::new(),
                 ));
-                static EO: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
+                static __EO: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
                     unsafe {
                         #[allow(unused_unsafe)]
                         icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"%\0\0\0&\0\0\0+\0\0\0-\0\0\x000\0\0\0:\0\0\x000 \0\x001 \0\0\x12\"\0\0\x13\"\0\0") }, 15u32)
                     },
                     zerovec::VarZeroVec::new(),
                 ));
-                static AF: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
+                static __AF: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
                     unsafe {
                         #[allow(unused_unsafe)]
                         icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"%\0\0\0&\0\0\0+\0\0\0.\0\0\x000\0\0\0:\0\0\0\x11 \0\0\x12 \0\x000 \0\x001 \0\0") }, 16u32)
                     },
                     zerovec::VarZeroVec::new(),
                 ));
-                static MY: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
+                static __MY: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
                     unsafe {
                         #[allow(unused_unsafe)]
                         icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"%\0\0\0&\0\0\0+\0\0\0/\0\0\x000\0\0\0:\0\0\0@\x10\0\0J\x10\0\0\x11 \0\0\x12 \0\x000 \0\x001 \0\0") }, 27u32)
                     },
                     zerovec::VarZeroVec::new(),
                 ));
-                static SAT: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
+                static __SAT: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
                     unsafe {
                         #[allow(unused_unsafe)]
                         icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"%\0\0\0&\0\0\0+\0\0\0/\0\0\x000\0\0\0:\0\0\0P\x1C\0\0Z\x1C\0\0\x11 \0\0\x12 \0\0") }, 26u32)
                     },
                     zerovec::VarZeroVec::new(),
                 ));
-                static AR: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
+                static __AR: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
                     unsafe {
                         #[allow(unused_unsafe)]
                         icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"%\0\0\0&\0\0\0+\0\0\0/\0\0\x000\0\0\0:\0\0\0\t\x06\0\0\n\x06\0\0\x1C\x06\0\0\x1D\x06\0\0`\x06\0\0m\x06\0\0\x0E \0\0\x0F \0\0\x11 \0\0\x12 \0\x000 \0\x001 \0\0") }, 33u32)
                     },
                     zerovec::VarZeroVec::new(),
                 ));
-                static PS: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
+                static __PS: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
                     unsafe {
                         #[allow(unused_unsafe)]
                         icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"%\0\0\0&\0\0\0+\0\0\0/\0\0\x000\0\0\0:\0\0\0\t\x06\0\0\n\x06\0\0j\x06\0\0m\x06\0\0\xF0\x06\0\0\xFA\x06\0\0\x0E \0\0\x0F \0\0\x11 \0\0\x12 \0\x000 \0\x001 \0\0\x12\"\0\0\x13\"\0\0") }, 33u32)
                     },
                     zerovec::VarZeroVec::new(),
                 ));
-                static AR_DZ: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
+                static __AR_DZ: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
                     unsafe {
                         #[allow(unused_unsafe)]
                         icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"%\0\0\0&\0\0\0+\0\0\0/\0\0\x000\0\0\0:\0\0\0\x0E \0\0\x0F \0\0\x11 \0\0\x12 \0\x000 \0\x001 \0\0") }, 18u32)
                     },
                     zerovec::VarZeroVec::new(),
                 ));
-                static FR_LU: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
+                static __FR_LU: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
                     unsafe {
                         #[allow(unused_unsafe)]
                         icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"%\0\0\0&\0\0\0+\0\0\0/\0\0\x000\0\0\0:\0\0\0\x11 \0\0\x12 \0\x000 \0\x001 \0\0") }, 17u32)
                     },
                     zerovec::VarZeroVec::new(),
                 ));
-                static YUE: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
+                static __YUE: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
                     unsafe {
                         #[allow(unused_unsafe)]
                         icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"%\0\0\0&\0\0\0+\0\0\0/\0\0\x000\0\0\0:\0\0\0\x11 \0\0\x12 \0\x000 \0\x001 \0\0\x070\0\0\x080\0\0\0N\0\0\x01N\0\0\x03N\0\0\x04N\0\0\tN\0\0\nN\0\0]N\0\0^N\0\0\x8CN\0\0\x8DN\0\0\x94N\0\0\x95N\0\0kQ\0\0lQ\0\0mQ\0\0nQ\0\0\xDBV\0\0\xDCV\0\0") }, 27u32)
                     },
                     zerovec::VarZeroVec::new(),
                 ));
-                static BLO: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
+                static __BLO: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
                     unsafe {
                         #[allow(unused_unsafe)]
                         icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"%\0\0\0&\0\0\0+\0\0\0/\0\0\x000\0\0\0:\0\0\0\xB2\0\0\0\xB4\0\0\0\x11 \0\0\x12 \0\x000 \0\x002 \0\0") }, 20u32)
                     },
                     unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x05\0\xCA\xB2\xE1\xB5\x83\xE1\xB5\x8F\xE1\xB5\x83") },
                 ));
-                static FR: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
+                static __FR: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
                     unsafe {
                         #[allow(unused_unsafe)]
                         icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"%\0\0\0&\0\0\0+\0\0\0/\0\0\x000\0\0\0:\0\0\0\xB2\0\0\0\xB4\0\0\0\xB3\x02\0\0\xB4\x02\0\0\xE2\x02\0\0\xE3\x02\0\0H\x1D\0\0J\x1D\0\0\x11 \0\0\x12 \0\x000 \0\x001 \0\0\x12\"\0\0\x13\"\0\0") }, 24u32)
                     },
                     zerovec::VarZeroVec::new(),
                 ));
-                static GU: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
+                static __GU: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
                     unsafe {
                         #[allow(unused_unsafe)]
                         icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"%\0\0\0&\0\0\0+\0\0\0/\0\0\x000\0\0\0:\0\0\0\xE6\n\0\0\xF0\n\0\0\x11 \0\0\x12 \0\x000 \0\x001 \0\0") }, 27u32)
                     },
                     zerovec::VarZeroVec::new(),
                 ));
-                static AS: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
+                static __AS: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
                     unsafe {
                         #[allow(unused_unsafe)]
                         icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"%\0\0\0&\0\0\0+\0\0\0/\0\0\x000\0\0\0:\0\0\0\xE6\t\0\0\xF0\t\0\0\x11 \0\0\x12 \0\x000 \0\x001 \0\0") }, 27u32)
                     },
                     zerovec::VarZeroVec::new(),
                 ));
-                static TA: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
+                static __TA: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
                     unsafe {
                         #[allow(unused_unsafe)]
                         icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"%\0\0\0&\0\0\0+\0\0\0/\0\0\x000\0\0\0:\0\0\0\xE6\x0B\0\0\xF0\x0B\0\0\x11 \0\0\x12 \0\x000 \0\x001 \0\0") }, 27u32)
                     },
                     zerovec::VarZeroVec::new(),
                 ));
-                static KN: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
+                static __KN: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
                     unsafe {
                         #[allow(unused_unsafe)]
                         icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"%\0\0\0&\0\0\0+\0\0\0/\0\0\x000\0\0\0:\0\0\0\xE6\x0C\0\0\xF0\x0C\0\0\x11 \0\0\x12 \0\x000 \0\x001 \0\0") }, 27u32)
                     },
                     zerovec::VarZeroVec::new(),
                 ));
-                static PA: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
+                static __PA: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
                     unsafe {
                         #[allow(unused_unsafe)]
                         icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"%\0\0\0&\0\0\0+\0\0\0/\0\0\x000\0\0\0:\0\0\0f\n\0\0p\n\0\0\x11 \0\0\x12 \0\x000 \0\x001 \0\0") }, 27u32)
                     },
                     zerovec::VarZeroVec::new(),
                 ));
-                static ML: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
+                static __ML: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
                     unsafe {
                         #[allow(unused_unsafe)]
                         icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"%\0\0\0&\0\0\0+\0\0\0/\0\0\x000\0\0\0:\0\0\0f\r\0\0p\r\0\0\x11 \0\0\x12 \0\x000 \0\x001 \0\0") }, 27u32)
                     },
                     zerovec::VarZeroVec::new(),
                 ));
-                static BGC: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
+                static __BGC: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
                     unsafe {
                         #[allow(unused_unsafe)]
                         icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"%\0\0\0&\0\0\0+\0\0\0/\0\0\x000\0\0\0:\0\0\0f\t\0\0p\t\0\0\x11 \0\0\x12 \0\x000 \0\x001 \0\0") }, 27u32)
                     },
                     zerovec::VarZeroVec::new(),
                 ));
-                static OR: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
+                static __OR: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
                     unsafe {
                         #[allow(unused_unsafe)]
                         icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"%\0\0\0&\0\0\0+\0\0\0/\0\0\x000\0\0\0:\0\0\0f\x0B\0\0p\x0B\0\0\x11 \0\0\x12 \0\x000 \0\x001 \0\0") }, 27u32)
                     },
                     zerovec::VarZeroVec::new(),
                 ));
-                static TE: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
+                static __TE: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
                     unsafe {
                         #[allow(unused_unsafe)]
                         icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"%\0\0\0&\0\0\0+\0\0\0/\0\0\x000\0\0\0:\0\0\0f\x0C\0\0p\x0C\0\0\x11 \0\0\x12 \0\x000 \0\x001 \0\0") }, 27u32)
                     },
                     zerovec::VarZeroVec::new(),
                 ));
-                static KS: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
+                static __KS: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
                     unsafe {
                         #[allow(unused_unsafe)]
                         icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"%\0\0\0&\0\0\0+\0\0\0/\0\0\x000\0\0\0:\0\0\0k\x06\0\0m\x06\0\0\xF0\x06\0\0\xFA\x06\0\0\x0E \0\0\x0F \0\0\x11 \0\0\x12 \0\x000 \0\x001 \0\0") }, 30u32)
                     },
                     zerovec::VarZeroVec::new(),
                 ));
-                static KXV_DEVA: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
+                static __KXV_DEVA: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
                     unsafe {
                         #[allow(unused_unsafe)]
                         icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"%\0\0\0&\0\0\0+\0\0\0/\0\0\x000\0\0\x001\0\0\0g\t\0\0p\t\0\0\x11 \0\0\x12 \0\x000 \0\x001 \0\0") }, 17u32)
                     },
                     zerovec::VarZeroVec::new(),
                 ));
-                static KXV_ORYA: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
+                static __KXV_ORYA: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
                     unsafe {
                         #[allow(unused_unsafe)]
                         icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"%\0\0\0&\0\0\0+\0\0\0/\0\0\x000\0\0\x001\0\0\0g\x0B\0\0p\x0B\0\0\x11 \0\0\x12 \0\x000 \0\x001 \0\0") }, 17u32)
                     },
                     zerovec::VarZeroVec::new(),
                 ));
-                static KXV_TELU: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
+                static __KXV_TELU: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
                     unsafe {
                         #[allow(unused_unsafe)]
                         icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"%\0\0\0&\0\0\0+\0\0\0/\0\0\x000\0\0\x001\0\0\0g\x0C\0\0p\x0C\0\0\x11 \0\0\x12 \0\x000 \0\x001 \0\0") }, 17u32)
                     },
                     zerovec::VarZeroVec::new(),
                 ));
-                static AR_SA: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
+                static __AR_SA: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
                     unsafe {
                         #[allow(unused_unsafe)]
                         icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"+\0\0\0/\0\0\x000\0\0\0:\0\0\0j\x06\0\0k\x06\0\0\x0E \0\0\x0F \0\0\x11 \0\0\x12 \0\x000 \0\x001 \0\0") }, 18u32)
                     },
                     zerovec::VarZeroVec::new(),
                 ));
-                static FF_ADLM: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
+                static __FF_ADLM: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
                     unsafe {
                         #[allow(unused_unsafe)]
                         icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"P\xE9\x01\0Z\xE9\x01\0") }, 10u32)
                     },
                     zerovec::VarZeroVec::new(),
                 ));
-                static DATA: [(&str, &<icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable); 95usize] = [("af", &AF), ("ar", &AR), ("ar-DZ", &AR_DZ), ("ar-LB", &AR_DZ), ("ar-LY", &AR_DZ), ("ar-MA", &AR_DZ), ("ar-MR", &AR_DZ), ("ar-SA", &AR_SA), ("ar-SO", &AR_SA), ("ar-TN", &AR_DZ), ("as", &AS), ("be", &AF), ("bg", &AF), ("bgc", &BGC), ("bho", &BGC), ("blo", &BLO), ("bn", &AS), ("br", &AF), ("cs", &AF), ("cv", &AF), ("de-AT", &AF), ("de-CH", &DE_CH), ("de-LI", &DE_CH), ("en-FI", &AF), ("en-SE", &AF), ("en-ZA", &AF), ("eo", &EO), ("es-CR", &AF), ("et", &EO), ("eu", &EU), ("fa", &FA), ("ff-Adlm", &FF_ADLM), ("fi", &EO), ("fo", &EU), ("fr", &FR), ("fr-LU", &FR_LU), ("fr-MA", &FR_LU), ("gu", &GU), ("he", &AR_DZ), ("hi", &BGC), ("hu", &AF), ("hy", &AF), ("ie", &IE), ("it-CH", &DE_CH), ("ka", &AF), ("kea", &AF), ("kk", &AF), ("kn", &KN), ("kok", &BGC), ("ks", &KS), ("kxv-Deva", &KXV_DEVA), ("kxv-Orya", &KXV_ORYA), ("kxv-Telu", &KXV_TELU), ("ky", &AF), ("lij", &LIJ), ("lt", &EO), ("lv", &AF), ("ml", &ML), ("mni", &AS), ("mr", &BGC), ("my", &MY), ("ne", &BGC), ("no", &EO), ("nqo", &NQO), ("or", &OR), ("pa", &PA), ("pl", &AF), ("prg", &AF), ("ps", &PS), ("pt-PT", &AF), ("raj", &BGC), ("rm", &RM), ("ru", &AF), ("sa", &BGC), ("sah", &AF), ("sat", &SAT), ("sk", &AF), ("sl", &EU), ("sq", &AF), ("sv", &EO), ("syr", &AR), ("szl", &AF), ("ta", &TA), ("te", &TE), ("tk", &AF), ("uk", &AF), ("und", &FR_LU), ("ur", &KS), ("uz", &AF), ("uz-Cyrl", &AF), ("xnr", &BGC), ("yue", &YUE), ("yue-Hans", &YUE), ("zh", &YUE), ("zh-Hant", &YUE)];
+                static DATA: [(&str, &<icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable); 95usize] = [("af", &__AF), ("ar", &__AR), ("ar-DZ", &__AR_DZ), ("ar-LB", &__AR_DZ), ("ar-LY", &__AR_DZ), ("ar-MA", &__AR_DZ), ("ar-MR", &__AR_DZ), ("ar-SA", &__AR_SA), ("ar-SO", &__AR_SA), ("ar-TN", &__AR_DZ), ("as", &__AS), ("be", &__AF), ("bg", &__AF), ("bgc", &__BGC), ("bho", &__BGC), ("blo", &__BLO), ("bn", &__AS), ("br", &__AF), ("cs", &__AF), ("cv", &__AF), ("de-AT", &__AF), ("de-CH", &__DE_CH), ("de-LI", &__DE_CH), ("en-FI", &__AF), ("en-SE", &__AF), ("en-ZA", &__AF), ("eo", &__EO), ("es-CR", &__AF), ("et", &__EO), ("eu", &__EU), ("fa", &__FA), ("ff-Adlm", &__FF_ADLM), ("fi", &__EO), ("fo", &__EU), ("fr", &__FR), ("fr-LU", &__FR_LU), ("fr-MA", &__FR_LU), ("gu", &__GU), ("he", &__AR_DZ), ("hi", &__BGC), ("hu", &__AF), ("hy", &__AF), ("ie", &__IE), ("it-CH", &__DE_CH), ("ka", &__AF), ("kea", &__AF), ("kk", &__AF), ("kn", &__KN), ("kok", &__BGC), ("ks", &__KS), ("kxv-Deva", &__KXV_DEVA), ("kxv-Orya", &__KXV_ORYA), ("kxv-Telu", &__KXV_TELU), ("ky", &__AF), ("lij", &__LIJ), ("lt", &__EO), ("lv", &__AF), ("ml", &__ML), ("mni", &__AS), ("mr", &__BGC), ("my", &__MY), ("ne", &__BGC), ("no", &__EO), ("nqo", &__NQO), ("or", &__OR), ("pa", &__PA), ("pl", &__AF), ("prg", &__AF), ("ps", &__PS), ("pt-PT", &__AF), ("raj", &__BGC), ("rm", &__RM), ("ru", &__AF), ("sa", &__BGC), ("sah", &__AF), ("sat", &__SAT), ("sk", &__AF), ("sl", &__EU), ("sq", &__AF), ("sv", &__EO), ("syr", &__AR), ("szl", &__AF), ("ta", &__TA), ("te", &__TE), ("tk", &__AF), ("uk", &__AF), ("und", &__FR_LU), ("ur", &__KS), ("uz", &__AF), ("uz-Cyrl", &__AF), ("xnr", &__BGC), ("yue", &__YUE), ("yue-Hans", &__YUE), ("zh", &__YUE), ("zh-Hant", &__YUE)];
                 fn lookup(req: icu_provider::DataRequest) -> Option<&'static <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DynamicDataMarker>::Yokeable> {
-                    DATA.binary_search_by(|(k, _)| req.legacy_cmp(k.as_bytes()).reverse()).map(|i| (*unsafe { DATA.get_unchecked(i) }).1).ok()
+                    DATA.binary_search_by(|(l, _)| req.locale.strict_cmp(l.as_bytes()).reverse()).map(|i| (*unsafe { DATA.get_unchecked(i) }).1).ok()
                 }
                 let mut metadata = icu_provider::DataResponseMetadata::default();
                 let payload = if let Some(payload) = lookup(req) {
@@ -278,7 +278,7 @@ macro_rules! __impliterable_props_exemplarchars_numbers_v1 {
         #[clippy::msrv = "1.70"]
         impl icu_provider::datagen::IterableDataProvider<icu::properties::provider::ExemplarCharactersNumbersV1Marker> for $provider {
             fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataMarkerAttributes)>, icu_provider::DataError> {
-                Ok(["af", "ar", "ar-DZ", "ar-LB", "ar-LY", "ar-MA", "ar-MR", "ar-SA", "ar-SO", "ar-TN", "as", "be", "bg", "bgc", "bho", "blo", "bn", "br", "cs", "cv", "de-AT", "de-CH", "de-LI", "en-FI", "en-SE", "en-ZA", "eo", "es-CR", "et", "eu", "fa", "ff-Adlm", "fi", "fo", "fr", "fr-LU", "fr-MA", "gu", "he", "hi", "hu", "hy", "ie", "it-CH", "ka", "kea", "kk", "kn", "kok", "ks", "kxv-Deva", "kxv-Orya", "kxv-Telu", "ky", "lij", "lt", "lv", "ml", "mni", "mr", "my", "ne", "no", "nqo", "or", "pa", "pl", "prg", "ps", "pt-PT", "raj", "rm", "ru", "sa", "sah", "sat", "sk", "sl", "sq", "sv", "syr", "szl", "ta", "te", "tk", "uk", "und", "ur", "uz", "uz-Cyrl", "xnr", "yue", "yue-Hans", "zh", "zh-Hant"].into_iter().filter_map(icu_provider::DataRequest::legacy_decode).collect())
+                Ok([icu_provider::_internal::locale_core::locale!("af"), icu_provider::_internal::locale_core::locale!("ar"), icu_provider::_internal::locale_core::locale!("ar-DZ"), icu_provider::_internal::locale_core::locale!("ar-LB"), icu_provider::_internal::locale_core::locale!("ar-LY"), icu_provider::_internal::locale_core::locale!("ar-MA"), icu_provider::_internal::locale_core::locale!("ar-MR"), icu_provider::_internal::locale_core::locale!("ar-SA"), icu_provider::_internal::locale_core::locale!("ar-SO"), icu_provider::_internal::locale_core::locale!("ar-TN"), icu_provider::_internal::locale_core::locale!("as"), icu_provider::_internal::locale_core::locale!("be"), icu_provider::_internal::locale_core::locale!("bg"), icu_provider::_internal::locale_core::locale!("bgc"), icu_provider::_internal::locale_core::locale!("bho"), icu_provider::_internal::locale_core::locale!("blo"), icu_provider::_internal::locale_core::locale!("bn"), icu_provider::_internal::locale_core::locale!("br"), icu_provider::_internal::locale_core::locale!("cs"), icu_provider::_internal::locale_core::locale!("cv"), icu_provider::_internal::locale_core::locale!("de-AT"), icu_provider::_internal::locale_core::locale!("de-CH"), icu_provider::_internal::locale_core::locale!("de-LI"), icu_provider::_internal::locale_core::locale!("en-FI"), icu_provider::_internal::locale_core::locale!("en-SE"), icu_provider::_internal::locale_core::locale!("en-ZA"), icu_provider::_internal::locale_core::locale!("eo"), icu_provider::_internal::locale_core::locale!("es-CR"), icu_provider::_internal::locale_core::locale!("et"), icu_provider::_internal::locale_core::locale!("eu"), icu_provider::_internal::locale_core::locale!("fa"), icu_provider::_internal::locale_core::locale!("ff-Adlm"), icu_provider::_internal::locale_core::locale!("fi"), icu_provider::_internal::locale_core::locale!("fo"), icu_provider::_internal::locale_core::locale!("fr"), icu_provider::_internal::locale_core::locale!("fr-LU"), icu_provider::_internal::locale_core::locale!("fr-MA"), icu_provider::_internal::locale_core::locale!("gu"), icu_provider::_internal::locale_core::locale!("he"), icu_provider::_internal::locale_core::locale!("hi"), icu_provider::_internal::locale_core::locale!("hu"), icu_provider::_internal::locale_core::locale!("hy"), icu_provider::_internal::locale_core::locale!("ie"), icu_provider::_internal::locale_core::locale!("it-CH"), icu_provider::_internal::locale_core::locale!("ka"), icu_provider::_internal::locale_core::locale!("kea"), icu_provider::_internal::locale_core::locale!("kk"), icu_provider::_internal::locale_core::locale!("kn"), icu_provider::_internal::locale_core::locale!("kok"), icu_provider::_internal::locale_core::locale!("ks"), icu_provider::_internal::locale_core::locale!("kxv-Deva"), icu_provider::_internal::locale_core::locale!("kxv-Orya"), icu_provider::_internal::locale_core::locale!("kxv-Telu"), icu_provider::_internal::locale_core::locale!("ky"), icu_provider::_internal::locale_core::locale!("lij"), icu_provider::_internal::locale_core::locale!("lt"), icu_provider::_internal::locale_core::locale!("lv"), icu_provider::_internal::locale_core::locale!("ml"), icu_provider::_internal::locale_core::locale!("mni"), icu_provider::_internal::locale_core::locale!("mr"), icu_provider::_internal::locale_core::locale!("my"), icu_provider::_internal::locale_core::locale!("ne"), icu_provider::_internal::locale_core::locale!("no"), icu_provider::_internal::locale_core::locale!("nqo"), icu_provider::_internal::locale_core::locale!("or"), icu_provider::_internal::locale_core::locale!("pa"), icu_provider::_internal::locale_core::locale!("pl"), icu_provider::_internal::locale_core::locale!("prg"), icu_provider::_internal::locale_core::locale!("ps"), icu_provider::_internal::locale_core::locale!("pt-PT"), icu_provider::_internal::locale_core::locale!("raj"), icu_provider::_internal::locale_core::locale!("rm"), icu_provider::_internal::locale_core::locale!("ru"), icu_provider::_internal::locale_core::locale!("sa"), icu_provider::_internal::locale_core::locale!("sah"), icu_provider::_internal::locale_core::locale!("sat"), icu_provider::_internal::locale_core::locale!("sk"), icu_provider::_internal::locale_core::locale!("sl"), icu_provider::_internal::locale_core::locale!("sq"), icu_provider::_internal::locale_core::locale!("sv"), icu_provider::_internal::locale_core::locale!("syr"), icu_provider::_internal::locale_core::locale!("szl"), icu_provider::_internal::locale_core::locale!("ta"), icu_provider::_internal::locale_core::locale!("te"), icu_provider::_internal::locale_core::locale!("tk"), icu_provider::_internal::locale_core::locale!("uk"), icu_provider::_internal::locale_core::locale!("und"), icu_provider::_internal::locale_core::locale!("ur"), icu_provider::_internal::locale_core::locale!("uz"), icu_provider::_internal::locale_core::locale!("uz-Cyrl"), icu_provider::_internal::locale_core::locale!("xnr"), icu_provider::_internal::locale_core::locale!("yue"), icu_provider::_internal::locale_core::locale!("yue-Hans"), icu_provider::_internal::locale_core::locale!("zh"), icu_provider::_internal::locale_core::locale!("zh-Hant")].into_iter().map(|l| (l.into(), Default::default())).collect())
             }
         }
     };
