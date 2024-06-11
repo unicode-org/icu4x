@@ -199,6 +199,10 @@ export class ICU4XFixedDecimal {
 
   /**
 
+   * Round the number at a particular digit position.
+
+   * This uses half to even rounding, which resolves ties by selecting the nearest even integer to the original value.
+
    * See the {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.round Rust documentation for `round`} for more information.
    */
   round(position: i16): void;

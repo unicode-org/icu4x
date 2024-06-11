@@ -185,6 +185,11 @@ final class FixedDecimal implements ffi.Finalizable {
     _ICU4XFixedDecimal_set_max_position(_ffi, position);
   }
 
+  /// Round the number at a particular digit position.
+  ///
+  /// This uses half to even rounding, which resolves ties by selecting the nearest
+  /// even integer to the original value.
+  ///
   /// See the [Rust documentation for `round`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.round) for more information.
   void round(int position) {
     _ICU4XFixedDecimal_round(_ffi, position);
