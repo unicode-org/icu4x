@@ -375,20 +375,8 @@ impl PatternBackend for DoublePlaceholder {
         Ok(result)
     }
 
-    fn try_from_utf8(bytes: &[u8]) -> Result<<Self::Store as ToOwned>::Owned, Error>
-    where
-        Self::Store: ToOwned,
-    {
-        let store_str = core::str::from_utf8(bytes).map_err(|_| Error::InvalidPattern)?;
-        let mut chars = store_str.chars();
-        let first_ph_char = chars.next().ok_or(Error::InvalidPattern)?;
-        let second_ph_char = chars.next().ok_or(Error::InvalidPattern)?;
-        let first_ph = DoublePlaceholderInfo::from_char(first_ph_char);
-        let second_ph = DoublePlaceholderInfo::from_char(second_ph_char);
-        if first_ph.key == second_ph.key {
-            return Err(Error::InvalidPattern);
-        }
-        Ok(store_str.to_owned())
+    fn try_store_from_utf8(utf8: &[u8]) -> Result<&Self::Store, Error> {
+        todo!()
     }
 }
 

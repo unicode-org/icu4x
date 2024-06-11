@@ -236,7 +236,7 @@ where
     /// .expect("valid pattern items");
     /// ```
     pub fn try_from_utf8(bytes: &[u8]) -> Result<Self, Error> {
-        let store = B::try_from_utf8(bytes)?;
+        let store = B::try_store_from_utf8(bytes).map_err(|e| Error::from(e))?;
         #[cfg(debug_assertions)]
         match B::validate_store(core::borrow::Borrow::borrow(&store)) {
             Ok(()) => (),
@@ -246,7 +246,7 @@ where
         };
         Ok(Self {
             _backend: PhantomData,
-            store,
+            store: store.to_owned(),
         })
     }
 }
