@@ -29,7 +29,7 @@ bool test_locale(ICU4XLocale* locale, const char* message, const char* expected)
 }
 
 ICU4XLocale* get_locale(const char* localeText) {
-    diplomat_result_box_ICU4XLocale_ICU4XError locale_result = ICU4XLocale_create_from_string(localeText, strlen(localeText));
+    diplomat_result_box_ICU4XLocale_ICU4XLocaleParseError locale_result = ICU4XLocale_create_from_string(localeText, strlen(localeText));
     if (!locale_result.is_ok) {
         printf("Could not create locale from: %s", localeText);
     }
@@ -42,8 +42,8 @@ int main() {
     char output[40];
 
     diplomat_result_void_void void_option;
-    diplomat_result_box_ICU4XLocale_ICU4XError locale_result;
-    diplomat_result_void_ICU4XError void_result;
+    diplomat_result_box_ICU4XLocale_ICU4XLocaleParseError locale_result;
+    diplomat_result_void_ICU4XLocaleParseError void_result;
 
     // Test creating a locale.
     DiplomatWrite write = diplomat_simple_write(output, 40);

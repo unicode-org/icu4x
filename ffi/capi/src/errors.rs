@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use self::ffi::ICU4XError;
+use ffi::*;
 use icu_provider::{DataError, DataErrorKind};
 
 #[diplomat::bridge]
@@ -11,20 +12,94 @@ pub mod ffi {
 
     #[derive(Debug, PartialEq, Eq)]
     #[repr(C)]
-    /// A common enum for errors that ICU4X may return, organized by API
-    ///
-    /// The error names are stable and can be checked against as strings in the JS API
-    #[diplomat::rust_link(fixed_decimal::ParseError, Enum, compact)]
-    #[diplomat::rust_link(fixed_decimal::LimitError, Struct, compact)]
-    #[diplomat::rust_link(icu::calendar::RangeError, Struct, compact)]
-    #[diplomat::rust_link(icu::calendar::DateError, Enum, compact)]
-    #[diplomat::rust_link(icu::datetime::DateTimeError, Enum, compact)]
-    #[diplomat::rust_link(icu::datetime::MismatchedCalendarError, Struct, hidden)]
-    #[diplomat::rust_link(icu::locale::ParseError, Enum, compact)]
     #[diplomat::rust_link(icu::provider::DataError, Struct, compact)]
     #[diplomat::rust_link(icu::provider::DataErrorKind, Enum, compact)]
+    pub enum ICU4XDataError {
+        Unknown = 0x00,
+        MissingDataMarker = 0x01,
+        MissingVariant = 0x02,
+        MissingLocale = 0x03,
+        NeedsVariant = 0x04,
+        NeedsLocale = 0x05,
+        ExtraneousLocale = 0x06,
+        FilteredResource = 0x07,
+        MismatchedType = 0x08,
+        MissingPayload = 0x09,
+        InvalidState = 0x0A,
+        Custom = 0x0B,
+        Io = 0x0C,
+        UnavailableBufferFormat = 0x0D,
+        MismatchedAnyBuffer = 0x0E,
+        DataStructValidityError = 0x0F,
+    }
+
+    #[derive(Debug, PartialEq, Eq)]
+    #[repr(C)]
+    #[diplomat::rust_link(icu::locale::ParseError, Enum, compact)]
+    pub enum ICU4XLocaleParseError {
+        Unknown = 0x00,
+        Language = 0x01,
+        Subtag = 0x02,
+        Extension = 0x03,
+    }
+
+    #[derive(Debug, PartialEq, Eq)]
+    #[repr(C)]
+    #[diplomat::rust_link(fixed_decimal::ParseError, Enum, compact)]
+    #[cfg(any(feature = "icu_decimal", feature = "icu_plurals"))]
+    pub enum ICU4XFixedDecimalParseError {
+        Unknown = 0x00,
+        Limit = 0x01,
+        Syntax = 0x02,
+    }
+
+    #[derive(Debug, PartialEq, Eq)]
+    #[repr(C)]
+    #[diplomat::rust_link(fixed_decimal::LimitError, Struct, compact)]
+    #[cfg(feature = "icu_decimal")]
+    pub enum ICU4XFixedDecimalLimitError {
+        TodoZst,
+    }
+
+    #[derive(Debug, PartialEq, Eq)]
+    #[repr(C)]
+    #[diplomat::rust_link(icu::calendar::RangeError, Struct, compact)]
+    #[diplomat::rust_link(icu::calendar::DateError, Enum, compact)]
+    #[cfg(any(
+        feature = "icu_datetime",
+        feature = "icu_timezone",
+        feature = "icu_calendar"
+    ))]
+    pub enum ICU4XCalendarError {
+        Unknown = 0x00,
+        OutOfRange = 0x01,
+        UnknownEra = 0x02,
+        UnknownMonthCode = 0x03,
+    }
+
+    #[derive(Debug, PartialEq, Eq)]
+    #[repr(C)]
     #[diplomat::rust_link(icu::timezone::InvalidOffsetError, Struct, compact)]
-    #[diplomat::rust_link(icu_experimental::units::InvalidUnitError, Struct, compact)]
+    #[cfg(any(feature = "icu_datetime", feature = "icu_timezone"))]
+    pub enum ICU4XTimeZoneInvalidOffsetError {
+        TodoZst,
+    }
+
+    #[derive(Debug, PartialEq, Eq)]
+    #[repr(C)]
+    #[cfg(any(feature = "icu_datetime", feature = "icu_timezone"))]
+    pub enum ICU4XTimeZoneInvalidIdError {
+        TodoZst,
+    }
+
+    #[derive(Debug, PartialEq, Eq)]
+    #[repr(C)]
+    /// Legacy error
+    // TODO(2.0): remove
+    #[diplomat::rust_link(icu::datetime::DateTimeError, Enum, compact)]
+    #[diplomat::rust_link(icu::datetime::MismatchedCalendarError, Struct, hidden)]
+    #[diplomat::rust_link(icu::provider::DataError, Struct, compact)]
+    #[diplomat::rust_link(icu::provider::DataErrorKind, Enum, compact)]
     pub enum ICU4XError {
         /// The error is not currently categorized as ICU4XError.
         /// Please file a bug
@@ -47,30 +122,8 @@ pub mod ffi {
         DataUnavailableBufferFormatError = 0x1_0C,
         DataMismatchedAnyBufferError = 0x1_0D,
 
-        // locale errors
-        /// The locale or subtag string failed to parse
-        LocaleParserLanguageError = 0x2_01,
-        LocaleParserSubtagError = 0x2_02,
-        LocaleParserExtensionError = 0x2_03,
-
-        // data struct errors
-        /// Attempted to construct an invalid data struct
-        DataStructValidityError = 0x3_00,
-
         // property errors
         PropertyUnexpectedPropertyNameError = 0x4_02,
-
-        // fixed_decimal errors
-        FixedDecimalLimitError = 0x5_00,
-        FixedDecimalSyntaxError = 0x5_01,
-
-        // plural errors
-        PluralsParseError = 0x6_00,
-
-        // datetime errors
-        CalendarOutOfRangeError = 0x7_03,
-        CalendarUnknownEraError = 0x7_04,
-        CalendarUnknownMonthCodeError = 0x7_05,
 
         // datetime format errors
         DateTimePatternError = 0x8_00,
@@ -82,31 +135,6 @@ pub mod ffi {
         DateTimeMissingMonthSymbolError = 0x8_06,
         DateTimeFixedDecimalError = 0x8_07,
         DateTimeMismatchedCalendarError = 0x8_08,
-
-        // timezone errors
-        TimeZoneInvalidOffsetError = 0xA_01,
-        TimeZoneInvalidIdError = 0xA_03,
-    }
-}
-
-impl ICU4XError {
-    #[cfg(feature = "logging")]
-    #[inline]
-    pub(crate) fn log_original<T: core::fmt::Display + ?Sized>(self, e: &T) -> Self {
-        use core::any;
-        log::warn!(
-            "Returning ICU4XError::{:?} based on original {}: {}",
-            self,
-            any::type_name::<T>(),
-            e
-        );
-        self
-    }
-
-    #[cfg(not(feature = "logging"))]
-    #[inline]
-    pub(crate) fn log_original<T: core::fmt::Display + ?Sized>(self, _e: &T) -> Self {
-        self
     }
 }
 
@@ -134,7 +162,31 @@ impl From<DataError> for ICU4XError {
             }
             _ => ICU4XError::UnknownError,
         }
-        .log_original(&e)
+    }
+}
+
+impl From<DataError> for ICU4XDataError {
+    fn from(e: DataError) -> Self {
+        match e.kind {
+            DataErrorKind::MissingDataMarker => Self::MissingDataMarker,
+            DataErrorKind::MissingLocale => Self::MissingLocale,
+            DataErrorKind::NeedsLocale => Self::NeedsLocale,
+            DataErrorKind::ExtraneousLocale => Self::ExtraneousLocale,
+            DataErrorKind::FilteredResource => Self::FilteredResource,
+            DataErrorKind::MismatchedType(..) => Self::MismatchedType,
+            DataErrorKind::MissingPayload => Self::MissingPayload,
+            DataErrorKind::InvalidState => Self::InvalidState,
+            DataErrorKind::Custom => Self::Custom,
+            #[cfg(all(
+                feature = "provider_fs",
+                not(any(target_arch = "wasm32", target_os = "none"))
+            ))]
+            DataErrorKind::Io(..) => Self::Io,
+            // datagen only
+            // DataErrorKind::MissingSourceData(..) => ..,
+            DataErrorKind::UnavailableBufferFormat(..) => Self::UnavailableBufferFormat,
+            _ => Self::Unknown,
+        }
     }
 }
 
@@ -147,7 +199,6 @@ impl From<icu_properties::UnexpectedPropertyNameOrDataError> for ICU4XError {
                 ICU4XError::PropertyUnexpectedPropertyNameError
             }
         }
-        .log_original(&e)
     }
 }
 
@@ -156,9 +207,9 @@ impl From<icu_properties::UnexpectedPropertyNameOrDataError> for ICU4XError {
     feature = "icu_timezone",
     feature = "icu_calendar"
 ))]
-impl From<icu_calendar::RangeError> for ICU4XError {
-    fn from(e: icu_calendar::RangeError) -> Self {
-        ICU4XError::CalendarOutOfRangeError.log_original(&e)
+impl From<icu_calendar::RangeError> for ICU4XCalendarError {
+    fn from(_: icu_calendar::RangeError) -> Self {
+        Self::OutOfRange
     }
 }
 
@@ -167,17 +218,14 @@ impl From<icu_calendar::RangeError> for ICU4XError {
     feature = "icu_timezone",
     feature = "icu_calendar"
 ))]
-impl From<icu_calendar::DateError> for ICU4XError {
+impl From<icu_calendar::DateError> for ICU4XCalendarError {
     fn from(e: icu_calendar::DateError) -> Self {
         match e {
-            icu_calendar::DateError::Range { .. } => ICU4XError::CalendarOutOfRangeError,
-            icu_calendar::DateError::UnknownEra(..) => ICU4XError::CalendarUnknownEraError,
-            icu_calendar::DateError::UnknownMonthCode(..) => {
-                ICU4XError::CalendarUnknownMonthCodeError
-            }
-            _ => ICU4XError::UnknownError,
+            icu_calendar::DateError::Range { .. } => Self::OutOfRange,
+            icu_calendar::DateError::UnknownEra(..) => Self::UnknownEra,
+            icu_calendar::DateError::UnknownMonthCode(..) => Self::UnknownMonthCode,
+            _ => Self::Unknown,
         }
-        .log_original(&e)
     }
 }
 
@@ -210,47 +258,42 @@ impl From<icu_datetime::DateTimeError> for ICU4XError {
             }
             _ => ICU4XError::UnknownError,
         }
-        .log_original(&e)
     }
 }
 
-#[cfg(feature = "icu_decimal")]
-impl From<fixed_decimal::ParseError> for ICU4XError {
+#[cfg(any(feature = "icu_decimal", feature = "icu_plurals"))]
+impl From<fixed_decimal::ParseError> for ICU4XFixedDecimalParseError {
     fn from(e: fixed_decimal::ParseError) -> Self {
         match e {
-            fixed_decimal::ParseError::Limit => ICU4XError::FixedDecimalLimitError,
-            fixed_decimal::ParseError::Syntax => ICU4XError::FixedDecimalSyntaxError,
-            _ => ICU4XError::UnknownError,
+            fixed_decimal::ParseError::Limit => Self::Limit,
+            fixed_decimal::ParseError::Syntax => Self::Syntax,
+            _ => Self::Unknown,
         }
-        .log_original(&e)
     }
 }
 
 #[cfg(feature = "icu_decimal")]
-impl From<fixed_decimal::LimitError> for ICU4XError {
-    fn from(e: fixed_decimal::LimitError) -> Self {
-        ICU4XError::FixedDecimalLimitError.log_original(&e)
+impl From<fixed_decimal::LimitError> for ICU4XFixedDecimalLimitError {
+    fn from(_: fixed_decimal::LimitError) -> Self {
+        Self::TodoZst
     }
 }
 
-impl From<icu_locale_core::ParseError> for ICU4XError {
+impl From<icu_locale_core::ParseError> for ICU4XLocaleParseError {
     fn from(e: icu_locale_core::ParseError) -> Self {
         match e {
-            icu_locale_core::ParseError::InvalidLanguage => ICU4XError::LocaleParserLanguageError,
-            icu_locale_core::ParseError::InvalidSubtag => ICU4XError::LocaleParserSubtagError,
-            icu_locale_core::ParseError::InvalidExtension => ICU4XError::LocaleParserExtensionError,
-            icu_locale_core::ParseError::DuplicatedExtension => {
-                ICU4XError::LocaleParserExtensionError
-            }
-            _ => ICU4XError::UnknownError,
+            icu_locale_core::ParseError::InvalidLanguage => Self::Language,
+            icu_locale_core::ParseError::InvalidSubtag => Self::Subtag,
+            icu_locale_core::ParseError::InvalidExtension => Self::Extension,
+            icu_locale_core::ParseError::DuplicatedExtension => Self::Extension,
+            _ => Self::Unknown,
         }
-        .log_original(&e)
     }
 }
 
 #[cfg(any(feature = "icu_timezone", feature = "icu_datetime"))]
-impl From<icu_timezone::InvalidOffsetError> for ICU4XError {
-    fn from(e: icu_timezone::InvalidOffsetError) -> Self {
-        ICU4XError::TimeZoneInvalidOffsetError.log_original(&e)
+impl From<icu_timezone::InvalidOffsetError> for ICU4XTimeZoneInvalidOffsetError {
+    fn from(_: icu_timezone::InvalidOffsetError) -> Self {
+        Self::TodoZst
     }
 }

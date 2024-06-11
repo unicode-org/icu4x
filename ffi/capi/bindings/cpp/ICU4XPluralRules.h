@@ -16,7 +16,7 @@
 #include "ICU4XPluralCategory.h"
 #include "ICU4XPluralOperands.d.h"
 #include "ICU4XPluralOperands.h"
-#include "diplomat_result_box_ICU4XPluralRules_ICU4XError.d.h"
+#include "diplomat_result_box_ICU4XPluralRules_ICU4XDataError.d.h"
 
 #include "ICU4XPluralRules.d.h"
 
@@ -26,9 +26,9 @@ extern "C" {
 #endif // __cplusplus
 
 
-diplomat_result_box_ICU4XPluralRules_ICU4XError ICU4XPluralRules_create_cardinal(const ICU4XDataProvider* provider, const ICU4XLocale* locale);
+diplomat_result_box_ICU4XPluralRules_ICU4XDataError ICU4XPluralRules_create_cardinal(const ICU4XDataProvider* provider, const ICU4XLocale* locale);
 
-diplomat_result_box_ICU4XPluralRules_ICU4XError ICU4XPluralRules_create_ordinal(const ICU4XDataProvider* provider, const ICU4XLocale* locale);
+diplomat_result_box_ICU4XPluralRules_ICU4XDataError ICU4XPluralRules_create_ordinal(const ICU4XDataProvider* provider, const ICU4XLocale* locale);
 
 ICU4XPluralCategory ICU4XPluralRules_category_for(const ICU4XPluralRules* self, const ICU4XPluralOperands* op);
 

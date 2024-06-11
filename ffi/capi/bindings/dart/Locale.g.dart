@@ -32,14 +32,14 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
   ///
   /// See the [Rust documentation for `try_from_bytes`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.try_from_bytes) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [LocaleParseError] on failure.
   factory Locale.fromString(String name) {
     final temp = ffi2.Arena();
     final nameView = name.utf8View;
     final result = _ICU4XLocale_create_from_string(nameView.allocIn(temp), nameView.length);
     temp.releaseAll();
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw LocaleParseError.values[result.union.err];
     }
     return Locale._fromFfi(result.union.ok, []);
   }
@@ -98,14 +98,14 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
   ///
   /// See the [Rust documentation for `try_from_bytes`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.try_from_bytes) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [LocaleParseError] on failure.
   set language(String bytes) {
     final temp = ffi2.Arena();
     final bytesView = bytes.utf8View;
     final result = _ICU4XLocale_set_language(_ffi, bytesView.allocIn(temp), bytesView.length);
     temp.releaseAll();
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw LocaleParseError.values[result.union.err];
     }
     
   }
@@ -126,14 +126,14 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
   ///
   /// See the [Rust documentation for `try_from_bytes`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.try_from_bytes) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [LocaleParseError] on failure.
   void setRegion(String bytes) {
     final temp = ffi2.Arena();
     final bytesView = bytes.utf8View;
     final result = _ICU4XLocale_set_region(_ffi, bytesView.allocIn(temp), bytesView.length);
     temp.releaseAll();
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw LocaleParseError.values[result.union.err];
     }
     
   }
@@ -154,14 +154,14 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
   ///
   /// See the [Rust documentation for `try_from_bytes`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.try_from_bytes) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [LocaleParseError] on failure.
   void setScript(String bytes) {
     final temp = ffi2.Arena();
     final bytesView = bytes.utf8View;
     final result = _ICU4XLocale_set_script(_ffi, bytesView.allocIn(temp), bytesView.length);
     temp.releaseAll();
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw LocaleParseError.values[result.union.err];
     }
     
   }
@@ -172,7 +172,7 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
   ///
   /// See the [Rust documentation for `canonicalize`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.canonicalize) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [LocaleParseError] on failure.
   static String canonicalize(String bytes) {
     final temp = ffi2.Arena();
     final bytesView = bytes.utf8View;
@@ -180,7 +180,7 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
     final result = _ICU4XLocale_canonicalize(bytesView.allocIn(temp), bytesView.length, write._ffi);
     temp.releaseAll();
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw LocaleParseError.values[result.union.err];
     }
     return write.finalize();
   }

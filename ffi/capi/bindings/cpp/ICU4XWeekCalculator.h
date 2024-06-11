@@ -14,7 +14,7 @@
 #include "ICU4XLocale.h"
 #include "ICU4XWeekendContainsDay.d.h"
 #include "ICU4XWeekendContainsDay.h"
-#include "diplomat_result_box_ICU4XWeekCalculator_ICU4XError.d.h"
+#include "diplomat_result_box_ICU4XWeekCalculator_ICU4XDataError.d.h"
 
 #include "ICU4XWeekCalculator.d.h"
 
@@ -24,7 +24,7 @@ extern "C" {
 #endif // __cplusplus
 
 
-diplomat_result_box_ICU4XWeekCalculator_ICU4XError ICU4XWeekCalculator_create(const ICU4XDataProvider* provider, const ICU4XLocale* locale);
+diplomat_result_box_ICU4XWeekCalculator_ICU4XDataError ICU4XWeekCalculator_create(const ICU4XDataProvider* provider, const ICU4XLocale* locale);
 
 ICU4XWeekCalculator* ICU4XWeekCalculator_create_from_first_day_of_week_and_min_week_days(ICU4XIsoWeekday first_weekday, uint8_t min_week_days);
 

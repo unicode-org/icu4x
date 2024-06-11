@@ -8,7 +8,7 @@
 #include "diplomat_runtime.h"
 #include "ICU4XDataProvider.d.h"
 #include "ICU4XDataProvider.h"
-#include "diplomat_result_box_ICU4XGeneralCategoryNameToMaskMapper_ICU4XError.d.h"
+#include "diplomat_result_box_ICU4XGeneralCategoryNameToMaskMapper_ICU4XDataError.d.h"
 
 #include "ICU4XGeneralCategoryNameToMaskMapper.d.h"
 
@@ -22,7 +22,7 @@ uint32_t ICU4XGeneralCategoryNameToMaskMapper_get_strict(const ICU4XGeneralCateg
 
 uint32_t ICU4XGeneralCategoryNameToMaskMapper_get_loose(const ICU4XGeneralCategoryNameToMaskMapper* self, const char* name_data, size_t name_len);
 
-diplomat_result_box_ICU4XGeneralCategoryNameToMaskMapper_ICU4XError ICU4XGeneralCategoryNameToMaskMapper_load(const ICU4XDataProvider* provider);
+diplomat_result_box_ICU4XGeneralCategoryNameToMaskMapper_ICU4XDataError ICU4XGeneralCategoryNameToMaskMapper_load(const ICU4XDataProvider* provider);
 
 void ICU4XGeneralCategoryNameToMaskMapper_destroy(ICU4XGeneralCategoryNameToMaskMapper* self);
 

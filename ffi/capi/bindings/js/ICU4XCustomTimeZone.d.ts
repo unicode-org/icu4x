@@ -1,9 +1,10 @@
 import { i32 } from "./diplomat-runtime"
 import { FFIError } from "./diplomat-runtime"
-import { ICU4XError } from "./ICU4XError";
 import { ICU4XIsoDateTime } from "./ICU4XIsoDateTime";
 import { ICU4XMetazoneCalculator } from "./ICU4XMetazoneCalculator";
 import { ICU4XTimeZoneIdMapper } from "./ICU4XTimeZoneIdMapper";
+import { ICU4XTimeZoneInvalidIdError } from "./ICU4XTimeZoneInvalidIdError";
+import { ICU4XTimeZoneInvalidOffsetError } from "./ICU4XTimeZoneInvalidOffsetError";
 
 /**
 
@@ -16,7 +17,7 @@ export class ICU4XCustomTimeZone {
    * Creates a time zone from an offset string.
 
    * See the {@link https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#method.from_str Rust documentation for `from_str`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
+   * @throws {@link FFIError}<{@link ICU4XTimeZoneInvalidOffsetError}>
    */
   static create_from_string(s: string): ICU4XCustomTimeZone | never;
 
@@ -61,7 +62,7 @@ export class ICU4XCustomTimeZone {
    * See the {@link https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html#method.try_from_offset_seconds Rust documentation for `try_from_offset_seconds`} for more information.
 
    * Additional information: {@link https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html 1}
-   * @throws {@link FFIError}<{@link ICU4XError}>
+   * @throws {@link FFIError}<{@link ICU4XTimeZoneInvalidOffsetError}>
    */
   try_set_gmt_offset_seconds(offset_seconds: i32): void | never;
 
@@ -136,7 +137,7 @@ export class ICU4XCustomTimeZone {
    * See the {@link https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.time_zone_id Rust documentation for `time_zone_id`} for more information.
 
    * Additional information: {@link https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneBcp47Id.html 1}
-   * @throws {@link FFIError}<{@link ICU4XError}>
+   * @throws {@link FFIError}<{@link ICU4XTimeZoneInvalidIdError}>
    */
   try_set_time_zone_id(id: string): void | never;
 
@@ -145,7 +146,7 @@ export class ICU4XCustomTimeZone {
    * Sets the `time_zone_id` field from an IANA string by looking up the corresponding BCP-47 string.
 
    * Errors if the string is not a valid BCP-47 time zone ID.
-   * @throws {@link FFIError}<{@link ICU4XError}>
+   * @throws {@link FFIError}<{@link ICU4XTimeZoneInvalidIdError}>
    */
   try_set_iana_time_zone_id(mapper: ICU4XTimeZoneIdMapper, id: string): void | never;
 
@@ -180,7 +181,7 @@ export class ICU4XCustomTimeZone {
    * See the {@link https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.metazone_id Rust documentation for `metazone_id`} for more information.
 
    * Additional information: {@link https://docs.rs/icu/latest/icu/timezone/struct.MetazoneId.html 1}
-   * @throws {@link FFIError}<{@link ICU4XError}>
+   * @throws {@link FFIError}<{@link ICU4XTimeZoneInvalidIdError}>
    */
   try_set_metazone_id(id: string): void | never;
 

@@ -1,6 +1,6 @@
 import { FFIError } from "./diplomat-runtime"
+import { ICU4XDataError } from "./ICU4XDataError";
 import { ICU4XDataProvider } from "./ICU4XDataProvider";
-import { ICU4XError } from "./ICU4XError";
 import { ICU4XGraphemeClusterBreakIteratorLatin1 } from "./ICU4XGraphemeClusterBreakIteratorLatin1";
 import { ICU4XGraphemeClusterBreakIteratorUtf16 } from "./ICU4XGraphemeClusterBreakIteratorUtf16";
 import { ICU4XGraphemeClusterBreakIteratorUtf8 } from "./ICU4XGraphemeClusterBreakIteratorUtf8";
@@ -18,7 +18,7 @@ export class ICU4XGraphemeClusterSegmenter {
    * Construct an {@link ICU4XGraphemeClusterSegmenter `ICU4XGraphemeClusterSegmenter`}.
 
    * See the {@link https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterSegmenter.html#method.new Rust documentation for `new`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
+   * @throws {@link FFIError}<{@link ICU4XDataError}>
    */
   static create(provider: ICU4XDataProvider): ICU4XGraphemeClusterSegmenter | never;
 

@@ -8,7 +8,7 @@ pub mod ffi {
     use alloc::boxed::Box;
     use icu_properties::{script, sets::CodePointSetData, Script};
 
-    use crate::errors::ffi::ICU4XError;
+    use crate::errors::ffi::ICU4XDataError;
     use crate::properties_iter::ffi::ICU4XCodePointRangeIterator;
     use crate::properties_sets::ffi::ICU4XCodePointSetData;
 
@@ -36,7 +36,7 @@ pub mod ffi {
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
         pub fn create(
             provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XScriptWithExtensions>, ICU4XError> {
+        ) -> Result<Box<ICU4XScriptWithExtensions>, ICU4XDataError> {
             Ok(Box::new(ICU4XScriptWithExtensions(call_constructor!(
                 script::script_with_extensions [r => Ok(r.static_to_owned())],
                 script::load_script_with_extensions_with_any_provider,

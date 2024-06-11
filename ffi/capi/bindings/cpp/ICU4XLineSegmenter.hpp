@@ -10,8 +10,8 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
+#include "ICU4XDataError.hpp"
 #include "ICU4XDataProvider.hpp"
-#include "ICU4XError.hpp"
 #include "ICU4XLineBreakIteratorLatin1.hpp"
 #include "ICU4XLineBreakIteratorUtf16.hpp"
 #include "ICU4XLineBreakIteratorUtf8.hpp"
@@ -19,37 +19,37 @@
 #include "ICU4XLineSegmenter.h"
 
 
-inline diplomat::result<std::unique_ptr<ICU4XLineSegmenter>, ICU4XError> ICU4XLineSegmenter::create_auto(const ICU4XDataProvider& provider) {
+inline diplomat::result<std::unique_ptr<ICU4XLineSegmenter>, ICU4XDataError> ICU4XLineSegmenter::create_auto(const ICU4XDataProvider& provider) {
   auto result = capi::ICU4XLineSegmenter_create_auto(provider.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XLineSegmenter>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XLineSegmenter>>(std::unique_ptr<ICU4XLineSegmenter>(ICU4XLineSegmenter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XLineSegmenter>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XLineSegmenter>, ICU4XDataError>(diplomat::Ok<std::unique_ptr<ICU4XLineSegmenter>>(std::unique_ptr<ICU4XLineSegmenter>(ICU4XLineSegmenter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XLineSegmenter>, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::unique_ptr<ICU4XLineSegmenter>, ICU4XError> ICU4XLineSegmenter::create_lstm(const ICU4XDataProvider& provider) {
+inline diplomat::result<std::unique_ptr<ICU4XLineSegmenter>, ICU4XDataError> ICU4XLineSegmenter::create_lstm(const ICU4XDataProvider& provider) {
   auto result = capi::ICU4XLineSegmenter_create_lstm(provider.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XLineSegmenter>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XLineSegmenter>>(std::unique_ptr<ICU4XLineSegmenter>(ICU4XLineSegmenter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XLineSegmenter>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XLineSegmenter>, ICU4XDataError>(diplomat::Ok<std::unique_ptr<ICU4XLineSegmenter>>(std::unique_ptr<ICU4XLineSegmenter>(ICU4XLineSegmenter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XLineSegmenter>, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::unique_ptr<ICU4XLineSegmenter>, ICU4XError> ICU4XLineSegmenter::create_dictionary(const ICU4XDataProvider& provider) {
+inline diplomat::result<std::unique_ptr<ICU4XLineSegmenter>, ICU4XDataError> ICU4XLineSegmenter::create_dictionary(const ICU4XDataProvider& provider) {
   auto result = capi::ICU4XLineSegmenter_create_dictionary(provider.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XLineSegmenter>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XLineSegmenter>>(std::unique_ptr<ICU4XLineSegmenter>(ICU4XLineSegmenter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XLineSegmenter>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XLineSegmenter>, ICU4XDataError>(diplomat::Ok<std::unique_ptr<ICU4XLineSegmenter>>(std::unique_ptr<ICU4XLineSegmenter>(ICU4XLineSegmenter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XLineSegmenter>, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::unique_ptr<ICU4XLineSegmenter>, ICU4XError> ICU4XLineSegmenter::create_auto_with_options_v1(const ICU4XDataProvider& provider, ICU4XLineBreakOptionsV1 options) {
+inline diplomat::result<std::unique_ptr<ICU4XLineSegmenter>, ICU4XDataError> ICU4XLineSegmenter::create_auto_with_options_v1(const ICU4XDataProvider& provider, ICU4XLineBreakOptionsV1 options) {
   auto result = capi::ICU4XLineSegmenter_create_auto_with_options_v1(provider.AsFFI(),
     options.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XLineSegmenter>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XLineSegmenter>>(std::unique_ptr<ICU4XLineSegmenter>(ICU4XLineSegmenter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XLineSegmenter>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XLineSegmenter>, ICU4XDataError>(diplomat::Ok<std::unique_ptr<ICU4XLineSegmenter>>(std::unique_ptr<ICU4XLineSegmenter>(ICU4XLineSegmenter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XLineSegmenter>, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::unique_ptr<ICU4XLineSegmenter>, ICU4XError> ICU4XLineSegmenter::create_lstm_with_options_v1(const ICU4XDataProvider& provider, ICU4XLineBreakOptionsV1 options) {
+inline diplomat::result<std::unique_ptr<ICU4XLineSegmenter>, ICU4XDataError> ICU4XLineSegmenter::create_lstm_with_options_v1(const ICU4XDataProvider& provider, ICU4XLineBreakOptionsV1 options) {
   auto result = capi::ICU4XLineSegmenter_create_lstm_with_options_v1(provider.AsFFI(),
     options.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XLineSegmenter>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XLineSegmenter>>(std::unique_ptr<ICU4XLineSegmenter>(ICU4XLineSegmenter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XLineSegmenter>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XLineSegmenter>, ICU4XDataError>(diplomat::Ok<std::unique_ptr<ICU4XLineSegmenter>>(std::unique_ptr<ICU4XLineSegmenter>(ICU4XLineSegmenter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XLineSegmenter>, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::unique_ptr<ICU4XLineSegmenter>, ICU4XError> ICU4XLineSegmenter::create_dictionary_with_options_v1(const ICU4XDataProvider& provider, ICU4XLineBreakOptionsV1 options) {
+inline diplomat::result<std::unique_ptr<ICU4XLineSegmenter>, ICU4XDataError> ICU4XLineSegmenter::create_dictionary_with_options_v1(const ICU4XDataProvider& provider, ICU4XLineBreakOptionsV1 options) {
   auto result = capi::ICU4XLineSegmenter_create_dictionary_with_options_v1(provider.AsFFI(),
     options.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XLineSegmenter>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XLineSegmenter>>(std::unique_ptr<ICU4XLineSegmenter>(ICU4XLineSegmenter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XLineSegmenter>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XLineSegmenter>, ICU4XDataError>(diplomat::Ok<std::unique_ptr<ICU4XLineSegmenter>>(std::unique_ptr<ICU4XLineSegmenter>(ICU4XLineSegmenter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XLineSegmenter>, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
 
 inline std::unique_ptr<ICU4XLineBreakIteratorUtf8> ICU4XLineSegmenter::segment_utf8(std::string_view input) const {

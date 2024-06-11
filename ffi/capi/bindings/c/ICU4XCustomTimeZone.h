@@ -13,9 +13,10 @@
 #include "ICU4XTimeZoneIdMapper.d.h"
 #include "ICU4XTimeZoneIdMapper.h"
 #include "diplomat_result_bool_void.d.h"
-#include "diplomat_result_box_ICU4XCustomTimeZone_ICU4XError.d.h"
+#include "diplomat_result_box_ICU4XCustomTimeZone_ICU4XTimeZoneInvalidOffsetError.d.h"
 #include "diplomat_result_int32_t_void.d.h"
-#include "diplomat_result_void_ICU4XError.d.h"
+#include "diplomat_result_void_ICU4XTimeZoneInvalidIdError.d.h"
+#include "diplomat_result_void_ICU4XTimeZoneInvalidOffsetError.d.h"
 #include "diplomat_result_void_void.d.h"
 
 #include "ICU4XCustomTimeZone.d.h"
@@ -26,7 +27,7 @@ extern "C" {
 #endif // __cplusplus
 
 
-diplomat_result_box_ICU4XCustomTimeZone_ICU4XError ICU4XCustomTimeZone_create_from_string(const char* s_data, size_t s_len);
+diplomat_result_box_ICU4XCustomTimeZone_ICU4XTimeZoneInvalidOffsetError ICU4XCustomTimeZone_create_from_string(const char* s_data, size_t s_len);
 
 ICU4XCustomTimeZone* ICU4XCustomTimeZone_create_empty();
 
@@ -36,7 +37,7 @@ ICU4XCustomTimeZone* ICU4XCustomTimeZone_create_gmt();
 
 ICU4XCustomTimeZone* ICU4XCustomTimeZone_create_bst();
 
-diplomat_result_void_ICU4XError ICU4XCustomTimeZone_try_set_gmt_offset_seconds(ICU4XCustomTimeZone* self, int32_t offset_seconds);
+diplomat_result_void_ICU4XTimeZoneInvalidOffsetError ICU4XCustomTimeZone_try_set_gmt_offset_seconds(ICU4XCustomTimeZone* self, int32_t offset_seconds);
 
 void ICU4XCustomTimeZone_clear_gmt_offset(ICU4XCustomTimeZone* self);
 
@@ -50,15 +51,15 @@ diplomat_result_bool_void ICU4XCustomTimeZone_gmt_offset_has_minutes(const ICU4X
 
 diplomat_result_bool_void ICU4XCustomTimeZone_gmt_offset_has_seconds(const ICU4XCustomTimeZone* self);
 
-diplomat_result_void_ICU4XError ICU4XCustomTimeZone_try_set_time_zone_id(ICU4XCustomTimeZone* self, const char* id_data, size_t id_len);
+diplomat_result_void_ICU4XTimeZoneInvalidIdError ICU4XCustomTimeZone_try_set_time_zone_id(ICU4XCustomTimeZone* self, const char* id_data, size_t id_len);
 
-diplomat_result_void_ICU4XError ICU4XCustomTimeZone_try_set_iana_time_zone_id(ICU4XCustomTimeZone* self, const ICU4XTimeZoneIdMapper* mapper, const char* id_data, size_t id_len);
+diplomat_result_void_ICU4XTimeZoneInvalidIdError ICU4XCustomTimeZone_try_set_iana_time_zone_id(ICU4XCustomTimeZone* self, const ICU4XTimeZoneIdMapper* mapper, const char* id_data, size_t id_len);
 
 void ICU4XCustomTimeZone_clear_time_zone_id(ICU4XCustomTimeZone* self);
 
 diplomat_result_void_void ICU4XCustomTimeZone_time_zone_id(const ICU4XCustomTimeZone* self, DiplomatWrite* write);
 
-diplomat_result_void_ICU4XError ICU4XCustomTimeZone_try_set_metazone_id(ICU4XCustomTimeZone* self, const char* id_data, size_t id_len);
+diplomat_result_void_ICU4XTimeZoneInvalidIdError ICU4XCustomTimeZone_try_set_metazone_id(ICU4XCustomTimeZone* self, const char* id_data, size_t id_len);
 
 void ICU4XCustomTimeZone_clear_metazone_id(ICU4XCustomTimeZone* self);
 

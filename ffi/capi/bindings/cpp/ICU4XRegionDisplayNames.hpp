@@ -10,26 +10,27 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
+#include "ICU4XDataError.hpp"
 #include "ICU4XDataProvider.hpp"
-#include "ICU4XError.hpp"
 #include "ICU4XLocale.hpp"
+#include "ICU4XLocaleParseError.hpp"
 #include "ICU4XRegionDisplayNames.h"
 
 
-inline diplomat::result<std::unique_ptr<ICU4XRegionDisplayNames>, ICU4XError> ICU4XRegionDisplayNames::create(const ICU4XDataProvider& provider, const ICU4XLocale& locale) {
+inline diplomat::result<std::unique_ptr<ICU4XRegionDisplayNames>, ICU4XDataError> ICU4XRegionDisplayNames::create(const ICU4XDataProvider& provider, const ICU4XLocale& locale) {
   auto result = capi::ICU4XRegionDisplayNames_create(provider.AsFFI(),
     locale.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XRegionDisplayNames>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XRegionDisplayNames>>(std::unique_ptr<ICU4XRegionDisplayNames>(ICU4XRegionDisplayNames::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XRegionDisplayNames>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XRegionDisplayNames>, ICU4XDataError>(diplomat::Ok<std::unique_ptr<ICU4XRegionDisplayNames>>(std::unique_ptr<ICU4XRegionDisplayNames>(ICU4XRegionDisplayNames::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XRegionDisplayNames>, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::string, ICU4XError> ICU4XRegionDisplayNames::of(std::string_view region) const {
+inline diplomat::result<std::string, ICU4XLocaleParseError> ICU4XRegionDisplayNames::of(std::string_view region) const {
   std::string output;
   capi::DiplomatWrite write = diplomat::WriteFromString(output);
   auto result = capi::ICU4XRegionDisplayNames_of(this->AsFFI(),
     region.data(),
     region.size(),
     &write);
-  return result.is_ok ? diplomat::result<std::string, ICU4XError>(diplomat::Ok<std::string>(std::move(output))) : diplomat::result<std::string, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::string, ICU4XLocaleParseError>(diplomat::Ok<std::string>(std::move(output))) : diplomat::result<std::string, ICU4XLocaleParseError>(diplomat::Err<ICU4XLocaleParseError>(ICU4XLocaleParseError::FromFFI(result.err)));
 }
 
 inline const capi::ICU4XRegionDisplayNames* ICU4XRegionDisplayNames::AsFFI() const {

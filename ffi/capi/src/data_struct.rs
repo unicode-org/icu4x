@@ -10,7 +10,7 @@ use alloc::borrow::Cow;
 pub mod ffi {
 
     #[cfg(feature = "icu_decimal")]
-    use crate::errors::ffi::ICU4XError;
+    use crate::errors::ffi::ICU4XDataError;
     use alloc::boxed::Box;
     use icu_provider::AnyPayload;
     #[cfg(feature = "icu_decimal")]
@@ -41,7 +41,7 @@ pub mod ffi {
             secondary_group_size: u8,
             min_group_size: u8,
             digits: &[DiplomatChar],
-        ) -> Result<Box<ICU4XDataStruct>, ICU4XError> {
+        ) -> Result<Box<ICU4XDataStruct>, ICU4XDataError> {
             use super::str_to_cow;
             use icu_decimal::provider::{
                 AffixesV1, DecimalSymbolsV1, DecimalSymbolsV1Marker, GroupingSizesV1,
@@ -49,11 +49,11 @@ pub mod ffi {
             let digits = if digits.len() == 10 {
                 let mut new_digits = ['\0'; 10];
                 for (old, new) in digits.iter().zip(new_digits.iter_mut()) {
-                    *new = char::from_u32(*old).ok_or(ICU4XError::DataStructValidityError)?;
+                    *new = char::from_u32(*old).ok_or(ICU4XDataError::DataStructValidityError)?;
                 }
                 new_digits
             } else {
-                return Err(ICU4XError::DataStructValidityError);
+                return Err(ICU4XDataError::DataStructValidityError);
             };
             let plus_sign_affixes = AffixesV1 {
                 prefix: str_to_cow(plus_sign_prefix),

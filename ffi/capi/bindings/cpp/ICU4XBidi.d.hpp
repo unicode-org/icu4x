@@ -9,18 +9,18 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 #include "ICU4XBidi.d.h"
-#include "ICU4XError.d.hpp"
+#include "ICU4XDataError.d.hpp"
 
 class ICU4XBidiInfo;
 class ICU4XDataProvider;
 class ICU4XReorderedIndexMap;
-class ICU4XError;
+class ICU4XDataError;
 
 
 class ICU4XBidi {
 public:
 
-  inline static diplomat::result<std::unique_ptr<ICU4XBidi>, ICU4XError> create(const ICU4XDataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<ICU4XBidi>, ICU4XDataError> create(const ICU4XDataProvider& provider);
 
   inline std::unique_ptr<ICU4XBidiInfo> for_text(std::string_view text, uint8_t default_level) const;
 

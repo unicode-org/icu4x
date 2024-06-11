@@ -10,16 +10,17 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
+#include "ICU4XDataError.hpp"
 #include "ICU4XDataProvider.hpp"
-#include "ICU4XError.hpp"
 #include "ICU4XLocaleFallbackConfig.hpp"
 #include "ICU4XLocaleFallbacker.h"
 #include "ICU4XLocaleFallbackerWithConfig.hpp"
+#include "ICU4XLocaleParseError.hpp"
 
 
-inline diplomat::result<std::unique_ptr<ICU4XLocaleFallbacker>, ICU4XError> ICU4XLocaleFallbacker::create(const ICU4XDataProvider& provider) {
+inline diplomat::result<std::unique_ptr<ICU4XLocaleFallbacker>, ICU4XDataError> ICU4XLocaleFallbacker::create(const ICU4XDataProvider& provider) {
   auto result = capi::ICU4XLocaleFallbacker_create(provider.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XLocaleFallbacker>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XLocaleFallbacker>>(std::unique_ptr<ICU4XLocaleFallbacker>(ICU4XLocaleFallbacker::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XLocaleFallbacker>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XLocaleFallbacker>, ICU4XDataError>(diplomat::Ok<std::unique_ptr<ICU4XLocaleFallbacker>>(std::unique_ptr<ICU4XLocaleFallbacker>(ICU4XLocaleFallbacker::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XLocaleFallbacker>, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
 
 inline std::unique_ptr<ICU4XLocaleFallbacker> ICU4XLocaleFallbacker::create_without_data() {
@@ -27,10 +28,10 @@ inline std::unique_ptr<ICU4XLocaleFallbacker> ICU4XLocaleFallbacker::create_with
   return std::unique_ptr<ICU4XLocaleFallbacker>(ICU4XLocaleFallbacker::FromFFI(result));
 }
 
-inline diplomat::result<std::unique_ptr<ICU4XLocaleFallbackerWithConfig>, ICU4XError> ICU4XLocaleFallbacker::for_config(ICU4XLocaleFallbackConfig config) const {
+inline diplomat::result<std::unique_ptr<ICU4XLocaleFallbackerWithConfig>, ICU4XLocaleParseError> ICU4XLocaleFallbacker::for_config(ICU4XLocaleFallbackConfig config) const {
   auto result = capi::ICU4XLocaleFallbacker_for_config(this->AsFFI(),
     config.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XLocaleFallbackerWithConfig>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XLocaleFallbackerWithConfig>>(std::unique_ptr<ICU4XLocaleFallbackerWithConfig>(ICU4XLocaleFallbackerWithConfig::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XLocaleFallbackerWithConfig>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XLocaleFallbackerWithConfig>, ICU4XLocaleParseError>(diplomat::Ok<std::unique_ptr<ICU4XLocaleFallbackerWithConfig>>(std::unique_ptr<ICU4XLocaleFallbackerWithConfig>(ICU4XLocaleFallbackerWithConfig::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XLocaleFallbackerWithConfig>, ICU4XLocaleParseError>(diplomat::Err<ICU4XLocaleParseError>(ICU4XLocaleParseError::FromFFI(result.err)));
 }
 
 inline const capi::ICU4XLocaleFallbacker* ICU4XLocaleFallbacker::AsFFI() const {

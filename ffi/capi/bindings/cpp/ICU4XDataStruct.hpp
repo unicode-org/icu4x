@@ -10,11 +10,11 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
+#include "ICU4XDataError.hpp"
 #include "ICU4XDataStruct.h"
-#include "ICU4XError.hpp"
 
 
-inline diplomat::result<std::unique_ptr<ICU4XDataStruct>, ICU4XError> ICU4XDataStruct::create_decimal_symbols_v1(std::string_view plus_sign_prefix, std::string_view plus_sign_suffix, std::string_view minus_sign_prefix, std::string_view minus_sign_suffix, std::string_view decimal_separator, std::string_view grouping_separator, uint8_t primary_group_size, uint8_t secondary_group_size, uint8_t min_group_size, diplomat::span<const char32_t> digits) {
+inline diplomat::result<std::unique_ptr<ICU4XDataStruct>, ICU4XDataError> ICU4XDataStruct::create_decimal_symbols_v1(std::string_view plus_sign_prefix, std::string_view plus_sign_suffix, std::string_view minus_sign_prefix, std::string_view minus_sign_suffix, std::string_view decimal_separator, std::string_view grouping_separator, uint8_t primary_group_size, uint8_t secondary_group_size, uint8_t min_group_size, diplomat::span<const char32_t> digits) {
   auto result = capi::ICU4XDataStruct_create_decimal_symbols_v1(plus_sign_prefix.data(),
     plus_sign_prefix.size(),
     plus_sign_suffix.data(),
@@ -32,7 +32,7 @@ inline diplomat::result<std::unique_ptr<ICU4XDataStruct>, ICU4XError> ICU4XDataS
     min_group_size,
     digits.data(),
     digits.size());
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XDataStruct>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XDataStruct>>(std::unique_ptr<ICU4XDataStruct>(ICU4XDataStruct::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XDataStruct>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XDataStruct>, ICU4XDataError>(diplomat::Ok<std::unique_ptr<ICU4XDataStruct>>(std::unique_ptr<ICU4XDataStruct>(ICU4XDataStruct::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XDataStruct>, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
 
 inline const capi::ICU4XDataStruct* ICU4XDataStruct::AsFFI() const {

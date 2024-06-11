@@ -8,24 +8,26 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XError.d.hpp"
+#include "ICU4XDataError.d.hpp"
 #include "ICU4XLocaleFallbackConfig.d.hpp"
 #include "ICU4XLocaleFallbacker.d.h"
+#include "ICU4XLocaleParseError.d.hpp"
 
 class ICU4XDataProvider;
 class ICU4XLocaleFallbackerWithConfig;
 struct ICU4XLocaleFallbackConfig;
-class ICU4XError;
+class ICU4XDataError;
+class ICU4XLocaleParseError;
 
 
 class ICU4XLocaleFallbacker {
 public:
 
-  inline static diplomat::result<std::unique_ptr<ICU4XLocaleFallbacker>, ICU4XError> create(const ICU4XDataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<ICU4XLocaleFallbacker>, ICU4XDataError> create(const ICU4XDataProvider& provider);
 
   inline static std::unique_ptr<ICU4XLocaleFallbacker> create_without_data();
 
-  inline diplomat::result<std::unique_ptr<ICU4XLocaleFallbackerWithConfig>, ICU4XError> for_config(ICU4XLocaleFallbackConfig config) const;
+  inline diplomat::result<std::unique_ptr<ICU4XLocaleFallbackerWithConfig>, ICU4XLocaleParseError> for_config(ICU4XLocaleFallbackConfig config) const;
 
   inline const capi::ICU4XLocaleFallbacker* AsFFI() const;
   inline capi::ICU4XLocaleFallbacker* AsFFI();

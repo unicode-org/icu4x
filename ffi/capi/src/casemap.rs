@@ -7,7 +7,8 @@ use icu_casemap::titlecase::TitlecaseOptions;
 #[diplomat::bridge]
 pub mod ffi {
     use crate::{
-        errors::ffi::ICU4XError, locale_core::ffi::ICU4XLocale, provider::ffi::ICU4XDataProvider,
+        errors::ffi::ICU4XDataError, locale_core::ffi::ICU4XLocale,
+        provider::ffi::ICU4XDataProvider,
     };
     use alloc::boxed::Box;
     use icu_casemap::titlecase::{LeadingAdjustment, TrailingCase};
@@ -56,7 +57,9 @@ pub mod ffi {
         /// Construct a new ICU4XCaseMapper instance
         #[diplomat::rust_link(icu::casemap::CaseMapper::new, FnInStruct)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
-        pub fn create(provider: &ICU4XDataProvider) -> Result<Box<ICU4XCaseMapper>, ICU4XError> {
+        pub fn create(
+            provider: &ICU4XDataProvider,
+        ) -> Result<Box<ICU4XCaseMapper>, ICU4XDataError> {
             Ok(Box::new(ICU4XCaseMapper(call_constructor!(
                 CaseMapper::new [r => Ok(r)],
                 CaseMapper::try_new_with_any_provider,
@@ -214,7 +217,9 @@ pub mod ffi {
         #[diplomat::rust_link(icu::casemap::CaseMapCloser::new, FnInStruct)]
         #[diplomat::rust_link(icu::casemap::CaseMapCloser::new_with_mapper, FnInStruct, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
-        pub fn create(provider: &ICU4XDataProvider) -> Result<Box<ICU4XCaseMapCloser>, ICU4XError> {
+        pub fn create(
+            provider: &ICU4XDataProvider,
+        ) -> Result<Box<ICU4XCaseMapCloser>, ICU4XDataError> {
             Ok(Box::new(ICU4XCaseMapCloser(call_constructor!(
                 CaseMapCloser::new [r => Ok(r)],
                 CaseMapCloser::try_new_with_any_provider,
@@ -264,7 +269,7 @@ pub mod ffi {
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
         pub fn create(
             provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XTitlecaseMapper>, ICU4XError> {
+        ) -> Result<Box<ICU4XTitlecaseMapper>, ICU4XDataError> {
             Ok(Box::new(ICU4XTitlecaseMapper(call_constructor!(
                 TitlecaseMapper::new [r => Ok(r)],
                 TitlecaseMapper::try_new_with_any_provider,

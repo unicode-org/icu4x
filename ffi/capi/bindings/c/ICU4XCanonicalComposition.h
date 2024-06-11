@@ -8,7 +8,7 @@
 #include "diplomat_runtime.h"
 #include "ICU4XDataProvider.d.h"
 #include "ICU4XDataProvider.h"
-#include "diplomat_result_box_ICU4XCanonicalComposition_ICU4XError.d.h"
+#include "diplomat_result_box_ICU4XCanonicalComposition_ICU4XDataError.d.h"
 
 #include "ICU4XCanonicalComposition.d.h"
 
@@ -18,7 +18,7 @@ extern "C" {
 #endif // __cplusplus
 
 
-diplomat_result_box_ICU4XCanonicalComposition_ICU4XError ICU4XCanonicalComposition_create(const ICU4XDataProvider* provider);
+diplomat_result_box_ICU4XCanonicalComposition_ICU4XDataError ICU4XCanonicalComposition_create(const ICU4XDataProvider* provider);
 
 char32_t ICU4XCanonicalComposition_compose(const ICU4XCanonicalComposition* self, char32_t starter, char32_t second);
 
