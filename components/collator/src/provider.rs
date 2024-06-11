@@ -50,20 +50,21 @@ use super::MaxVariable;
 pub struct Baked;
 
 #[cfg(feature = "compiled_data")]
+#[allow(unused_imports)]
 const _: () = {
-    #[allow(unused_imports)] // baked data may or may not need this
+    use icu_collator_data::*;
     pub mod icu {
         pub use crate as collator;
+        pub use icu_collator_data::icu_locale as locale;
         pub use icu_collections as collections;
-        pub use icu_locale as locale;
     }
-    icu_collator_data::make_provider!(Baked);
-    icu_collator_data::impl_collator_data_v1!(Baked);
-    icu_collator_data::impl_collator_dia_v1!(Baked);
-    icu_collator_data::impl_collator_jamo_v1!(Baked);
-    icu_collator_data::impl_collator_meta_v1!(Baked);
-    icu_collator_data::impl_collator_prim_v1!(Baked);
-    icu_collator_data::impl_collator_reord_v1!(Baked);
+    make_provider!(Baked);
+    impl_collator_data_v1!(Baked);
+    impl_collator_dia_v1!(Baked);
+    impl_collator_jamo_v1!(Baked);
+    impl_collator_meta_v1!(Baked);
+    impl_collator_prim_v1!(Baked);
+    impl_collator_reord_v1!(Baked);
 };
 
 #[cfg(feature = "datagen")]

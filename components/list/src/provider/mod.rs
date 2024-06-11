@@ -35,16 +35,17 @@ pub use serde_dfa::SerdeDFA;
 pub struct Baked;
 
 #[cfg(feature = "compiled_data")]
+#[allow(unused_imports)]
 const _: () = {
+    use icu_list_data::*;
     pub mod icu {
         pub use crate as list;
-        #[allow(unused_imports)] // baked data may or may not need this
-        pub use icu_locale as locale;
+        pub use icu_list_data::icu_locale as locale;
     }
-    icu_list_data::make_provider!(Baked);
-    icu_list_data::impl_list_and_v1!(Baked);
-    icu_list_data::impl_list_or_v1!(Baked);
-    icu_list_data::impl_list_unit_v1!(Baked);
+    make_provider!(Baked);
+    impl_list_and_v1!(Baked);
+    impl_list_or_v1!(Baked);
+    impl_list_unit_v1!(Baked);
 };
 
 #[cfg(feature = "datagen")]
