@@ -46,6 +46,7 @@ pub mod ffi {
     #[derive(Debug, PartialEq, Eq)]
     #[repr(C)]
     #[diplomat::rust_link(fixed_decimal::ParseError, Enum, compact)]
+    #[cfg(any(feature = "icu_decimal", feature = "icu_plurals"))]
     pub enum ICU4XFixedDecimalParseError {
         Unknown = 0x00,
         Limit = 0x01,
@@ -55,6 +56,7 @@ pub mod ffi {
     #[derive(Debug, PartialEq, Eq)]
     #[repr(C)]
     #[diplomat::rust_link(fixed_decimal::LimitError, Struct, compact)]
+    #[cfg(feature = "icu_decimal")]
     pub enum ICU4XFixedDecimalLimitError {
         TodoZst,
     }
@@ -63,6 +65,11 @@ pub mod ffi {
     #[repr(C)]
     #[diplomat::rust_link(icu::calendar::RangeError, Struct, compact)]
     #[diplomat::rust_link(icu::calendar::DateError, Enum, compact)]
+    #[cfg(any(
+        feature = "icu_datetime",
+        feature = "icu_timezone",
+        feature = "icu_calendar"
+    ))]
     pub enum ICU4XCalendarError {
         Unknown = 0x00,
         OutOfRange = 0x01,
@@ -73,12 +80,14 @@ pub mod ffi {
     #[derive(Debug, PartialEq, Eq)]
     #[repr(C)]
     #[diplomat::rust_link(icu::timezone::InvalidOffsetError, Struct, compact)]
+    #[cfg(any(feature = "icu_datetime", feature = "icu_timezone"))]
     pub enum ICU4XTimeZoneInvalidOffsetError {
         TodoZst,
     }
 
     #[derive(Debug, PartialEq, Eq)]
     #[repr(C)]
+    #[cfg(any(feature = "icu_datetime", feature = "icu_timezone"))]
     pub enum ICU4XTimeZoneInvalidIdError {
         TodoZst,
     }
@@ -252,7 +261,7 @@ impl From<icu_datetime::DateTimeError> for ICU4XError {
     }
 }
 
-#[cfg(feature = "icu_decimal")]
+#[cfg(any(feature = "icu_decimal", feature = "icu_plurals"))]
 impl From<fixed_decimal::ParseError> for ICU4XFixedDecimalParseError {
     fn from(e: fixed_decimal::ParseError) -> Self {
         match e {
