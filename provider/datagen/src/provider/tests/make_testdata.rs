@@ -68,6 +68,7 @@ fn make_testdata() {
         .with_markers(crate::all_markers())
         .with_locales_and_fallback(
             LOCALES.iter().cloned().map(LocaleFamily::with_descendants),
+            #[allow(clippy::field_reassign_with_default)]
             {
                 let mut options = FallbackOptions::default();
                 options.deduplication_strategy = DeduplicationStrategy::None;
