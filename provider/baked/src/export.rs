@@ -27,7 +27,7 @@
 //!     .with_locales_and_fallback([LocaleFamily::FULL], {
 //!         let mut options = FallbackOptions::default();
 //!         // HelloWorldProvider cannot provide fallback data, so we cannot deduplicate
-//!         options.deduplication_strategy = Some(DeduplicationStrategy::None);
+//!         options.deduplication_strategy = DeduplicationStrategy::None;
 //!         options
 //!     })
 //!     .export(&icu_provider::hello_world::HelloWorldProvider, exporter)
