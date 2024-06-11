@@ -95,7 +95,7 @@ fn make_blob_v1() -> Vec<u8> {
         .with_locales_and_fallback([LocaleFamily::FULL], Default::default())
         .export(&Baked, exporter)
         .unwrap();
-    assert_eq!(blob.len(), 450725);
+    assert_eq!(blob.len(), 410395);
     assert!(blob.len() > 100);
     blob
 }
