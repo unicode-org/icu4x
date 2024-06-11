@@ -263,6 +263,10 @@ pub mod ffi {
             self.0.set_max_position(position)
         }
 
+        /// Rounds the number at a particular digit position.
+        ///
+        /// This uses half to even rounding, which resolves ties by selecting the nearest
+        /// even integer to the original value.
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::round, FnInStruct)]
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::rounded, FnInStruct, hidden)]
         pub fn round(&mut self, position: i16) {
