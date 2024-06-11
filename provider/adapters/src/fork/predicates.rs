@@ -106,7 +106,7 @@ impl ForkByErrorPredicate for MissingDataMarkerPredicate {
 ///     })
 ///     .expect("Loading should succeed");
 ///
-/// assert_eq!("Salut, lume", romanian_hello_world.payload..get().message);
+/// assert_eq!("Salut, lume", romanian_hello_world.payload.get().message);
 ///
 /// // We should not be able to load "en" data because it is not in the provider:
 ///

@@ -44,7 +44,7 @@ use icu_provider::prelude::*;
 ///     langid!("ja").into(),
 /// );
 /// assert_eq!(
-///     response.payload.unwrap().get().message,
+///     response.payload.get().message,
 ///     "こんにちは世界",
 /// );
 /// ```
