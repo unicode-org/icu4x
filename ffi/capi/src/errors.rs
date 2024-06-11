@@ -61,12 +61,6 @@ pub mod ffi {
 
     #[derive(Debug, PartialEq, Eq)]
     #[repr(C)]
-    pub enum ICU4XPluralsParseError {
-        TodoZst,
-    }
-
-    #[derive(Debug, PartialEq, Eq)]
-    #[repr(C)]
     #[diplomat::rust_link(icu::calendar::RangeError, Struct, compact)]
     #[diplomat::rust_link(icu::calendar::DateError, Enum, compact)]
     pub enum ICU4XCalendarError {

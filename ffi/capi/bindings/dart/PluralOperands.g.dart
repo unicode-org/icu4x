@@ -26,14 +26,14 @@ final class PluralOperands implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `from_str`](https://docs.rs/icu/latest/icu/plurals/struct.PluralOperands.html#method.from_str) for more information.
   ///
-  /// Throws [PluralsParseError] on failure.
+  /// Throws [FixedDecimalParseError] on failure.
   factory PluralOperands.fromString(String s) {
     final temp = ffi2.Arena();
     final sView = s.utf8View;
     final result = _ICU4XPluralOperands_create_from_string(sView.allocIn(temp), sView.length);
     temp.releaseAll();
     if (!result.isOk) {
-      throw PluralsParseError.values[result.union.err];
+      throw FixedDecimalParseError.values[result.union.err];
     }
     return PluralOperands._fromFfi(result.union.ok, []);
   }

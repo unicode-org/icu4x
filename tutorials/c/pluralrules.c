@@ -30,7 +30,7 @@ int main() {
     printf("Plural Category many  (should be true): %s\n", categories.many  ? "true" : "false");
     printf("Plural Category other (should be true): %s\n", categories.other ? "true" : "false");
 
-    diplomat_result_box_ICU4XPluralOperands_ICU4XPluralsParseError op1_result = ICU4XPluralOperands_create_from_string("3", 1);
+    diplomat_result_box_ICU4XPluralOperands_ICU4XFixedDecimalParseError op1_result = ICU4XPluralOperands_create_from_string("3", 1);
 
     if (!op1_result.is_ok) {
         printf("Failed to create PluralOperands from string\n");
@@ -41,7 +41,7 @@ int main() {
 
     printf("Plural Category %d (should be %d)\n", (int)cat1, (int)ICU4XPluralCategory_Few);
 
-    diplomat_result_box_ICU4XPluralOperands_ICU4XPluralsParseError op2_result = ICU4XPluralOperands_create_from_string("1011.0", 6);
+    diplomat_result_box_ICU4XPluralOperands_ICU4XFixedDecimalParseError op2_result = ICU4XPluralOperands_create_from_string("1011.0", 6);
 
     if (!op2_result.is_ok) {
         printf("Failed to create PluralOperands from string\n");

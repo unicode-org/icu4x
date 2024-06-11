@@ -100,7 +100,6 @@ export { ICU4XPluralCategories } from './ICU4XPluralCategories';
 export { ICU4XPluralCategory } from './ICU4XPluralCategory';
 export { ICU4XPluralOperands } from './ICU4XPluralOperands';
 export { ICU4XPluralRules } from './ICU4XPluralRules';
-export { ICU4XPluralsParseError } from './ICU4XPluralsParseError';
 export { ICU4XPropertyValueNameToEnumMapper } from './ICU4XPropertyValueNameToEnumMapper';
 export { ICU4XRegionDisplayNames } from './ICU4XRegionDisplayNames';
 export { ICU4XReorderedIndexMap } from './ICU4XReorderedIndexMap';

@@ -8,17 +8,17 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
+#include "ICU4XFixedDecimalParseError.d.hpp"
 #include "ICU4XPluralOperands.d.h"
-#include "ICU4XPluralsParseError.d.hpp"
 
 class ICU4XFixedDecimal;
-class ICU4XPluralsParseError;
+class ICU4XFixedDecimalParseError;
 
 
 class ICU4XPluralOperands {
 public:
 
-  inline static diplomat::result<std::unique_ptr<ICU4XPluralOperands>, ICU4XPluralsParseError> create_from_string(std::string_view s);
+  inline static diplomat::result<std::unique_ptr<ICU4XPluralOperands>, ICU4XFixedDecimalParseError> create_from_string(std::string_view s);
 
   inline static std::unique_ptr<ICU4XPluralOperands> create_from_fixed_decimal(const ICU4XFixedDecimal& x);
 

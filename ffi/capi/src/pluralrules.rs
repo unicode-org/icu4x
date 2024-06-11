@@ -11,7 +11,7 @@ pub mod ffi {
 
     use crate::{locale_core::ffi::ICU4XLocale, provider::ffi::ICU4XDataProvider};
 
-    use crate::errors::ffi::{ICU4XDataError, ICU4XPluralsParseError};
+    use crate::errors::ffi::{ICU4XDataError, ICU4XFixedDecimalParseError};
 
     #[diplomat::rust_link(icu::plurals::PluralCategory, Enum)]
     #[diplomat::enum_convert(PluralCategory)]
@@ -101,10 +101,9 @@ pub mod ffi {
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "from_string")]
         pub fn create_from_string(
             s: &DiplomatStr,
-        ) -> Result<Box<ICU4XPluralOperands>, ICU4XPluralsParseError> {
+        ) -> Result<Box<ICU4XPluralOperands>, ICU4XFixedDecimalParseError> {
             Ok(Box::new(ICU4XPluralOperands(PluralOperands::from(
-                // XXX should this have its own errors?
-                &FixedDecimal::try_from(s).map_err(|_| ICU4XPluralsParseError::TodoZst)?,
+                &FixedDecimal::try_from(s)?,
             ))))
         }
 
