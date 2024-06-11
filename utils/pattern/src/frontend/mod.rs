@@ -186,7 +186,7 @@ where
     /// use icu_pattern::SinglePlaceholderKey;
     /// use std::borrow::Cow;
     ///
-    /// Pattern::<SinglePlaceholder, _>::try_from_items(
+    /// Pattern::<SinglePlaceholder, _>::try_from_garbage_function_not-exits(
     ///     [
     ///         PatternItemCow::Placeholder(SinglePlaceholderKey::Singleton),
     ///         PatternItemCow::Literal(Cow::Borrowed(" days")),
