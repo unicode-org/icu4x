@@ -18,7 +18,7 @@ impl DataProvider<ScriptDirectionV1Marker> for DatagenProvider {
             self.cldr()?.core().read_and_parse("scriptMetadata.json")?;
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(ScriptDirectionV1::from(data))),
+            payload: DataPayload::from_owned(ScriptDirectionV1::from(data)),
         })
     }
 }
@@ -55,40 +55,42 @@ fn test_basic() {
     use icu_locale_core::subtags::script;
 
     let provider = DatagenProvider::new_testing();
-    let data: DataPayload<ScriptDirectionV1Marker> = provider
-        .load(Default::default())
-        .unwrap()
-        .take_payload()
-        .unwrap();
+    let data: DataResponse<ScriptDirectionV1Marker> = provider.load(Default::default()).unwrap();
 
     assert!(data
+        .payload
         .get()
         .rtl
         .binary_search(&script!("Avst").into_tinystr().to_unvalidated())
         .is_ok());
     assert!(data
+        .payload
         .get()
         .ltr
         .binary_search(&script!("Avst").into_tinystr().to_unvalidated())
         .is_err());
 
     assert!(data
+        .payload
         .get()
         .ltr
         .binary_search(&script!("Latn").into_tinystr().to_unvalidated())
         .is_ok());
     assert!(data
+        .payload
         .get()
         .rtl
         .binary_search(&script!("Latn").into_tinystr().to_unvalidated())
         .is_err());
 
     assert!(data
+        .payload
         .get()
         .ltr
         .binary_search(&script!("Zzzz").into_tinystr().to_unvalidated())
         .is_err());
     assert!(data
+        .payload
         .get()
         .rtl
         .binary_search(&script!("Zzzz").into_tinystr().to_unvalidated())

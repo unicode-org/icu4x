@@ -58,7 +58,7 @@ impl DataProvider<HelloWorldV1Marker> for TestingProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(HelloWorldV1 {
+            payload: DataPayload::from_owned(HelloWorldV1 {
                 message: (*self
                     .0
                     .get(&(
@@ -67,7 +67,7 @@ impl DataProvider<HelloWorldV1Marker> for TestingProvider {
                     ))
                     .ok_or(DataErrorKind::MissingLocale.into_error())?)
                 .into(),
-            })),
+            }),
         })
     }
 }

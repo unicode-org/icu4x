@@ -42,8 +42,8 @@ impl DataProvider<CaseMapV1Marker> for DatagenProvider {
 
         let case_mapping = CaseMapV1::try_from_icu(trie_header, trie_index, trie_data, exceptions)?;
         Ok(DataResponse {
-            metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload::from_owned(case_mapping)),
+            metadata: Default::default(),
+            payload: DataPayload::from_owned(case_mapping),
         })
     }
 }
@@ -69,8 +69,8 @@ impl DataProvider<CaseMapUnfoldV1Marker> for DatagenProvider {
 
         let unfold = CaseMapUnfoldV1::try_from_icu(unfold)?;
         Ok(DataResponse {
-            metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload::from_owned(unfold)),
+            metadata: Default::default(),
+            payload: DataPayload::from_owned(unfold),
         })
     }
 }

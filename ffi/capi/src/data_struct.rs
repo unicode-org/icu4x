@@ -78,8 +78,9 @@ pub mod ffi {
                 digits,
             };
 
-            let payload: DataPayload<DecimalSymbolsV1Marker> = DataPayload::from_owned(symbols);
-            Ok(Box::new(ICU4XDataStruct(payload.wrap_into_any_payload())))
+            Ok(Box::new(ICU4XDataStruct(
+                DataPayload::<DecimalSymbolsV1Marker>::from_owned(symbols).wrap_into_any_payload(),
+            )))
         }
     }
 }

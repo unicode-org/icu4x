@@ -23,13 +23,12 @@ public:
     ExtraneousLocale = 6,
     FilteredResource = 7,
     MismatchedType = 8,
-    MissingPayload = 9,
-    InvalidState = 10,
-    Custom = 11,
-    Io = 12,
-    UnavailableBufferFormat = 13,
-    MismatchedAnyBuffer = 14,
-    DataStructValidityError = 15,
+    InvalidState = 9,
+    Custom = 10,
+    Io = 11,
+    UnavailableBufferFormat = 12,
+    MismatchedAnyBuffer = 13,
+    DataStructValidityError = 14,
   };
 
   ICU4XDataError() = default;

@@ -119,7 +119,7 @@ impl DatagenProvider {
         #[allow(clippy::redundant_closure_call)]
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(data)),
+            payload: DataPayload::from_owned(data),
         })
     }
 

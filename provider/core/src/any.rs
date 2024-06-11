@@ -222,8 +222,8 @@ pub struct AnyResponse {
     /// Metadata about the returned object.
     pub metadata: DataResponseMetadata,
 
-    /// The object itself; `None` if it was not loaded.
-    pub payload: Option<AnyPayload>,
+    /// The object itself
+    pub payload: AnyPayload,
 }
 
 impl TryFrom<DataResponse<AnyMarker>> for AnyResponse {
@@ -232,7 +232,7 @@ impl TryFrom<DataResponse<AnyMarker>> for AnyResponse {
     fn try_from(other: DataResponse<AnyMarker>) -> Result<Self, Self::Error> {
         Ok(Self {
             metadata: other.metadata,
-            payload: other.payload.map(|p| p.try_unwrap_owned()).transpose()?,
+            payload: other.payload.try_unwrap_owned()?,
         })
     }
 }
@@ -242,7 +242,7 @@ impl From<AnyResponse> for DataResponse<AnyMarker> {
     fn from(other: AnyResponse) -> Self {
         Self {
             metadata: other.metadata,
-            payload: other.payload.map(DataPayload::from_owned),
+            payload: DataPayload::from_owned(other.payload),
         }
     }
 }
@@ -259,7 +259,7 @@ impl AnyResponse {
     {
         Ok(DataResponse {
             metadata: self.metadata,
-            payload: self.payload.map(|p| p.downcast()).transpose()?,
+            payload: self.payload.downcast()?,
         })
     }
 
@@ -273,11 +273,7 @@ impl AnyResponse {
     {
         Ok(DataResponse {
             metadata: self.metadata.clone(),
-            payload: self
-                .payload
-                .as_ref()
-                .map(|p| p.downcast_cloned())
-                .transpose()?,
+            payload: self.payload.downcast_cloned()?,
         })
     }
 }
@@ -292,7 +288,7 @@ where
     pub fn wrap_into_any_response(self) -> AnyResponse {
         AnyResponse {
             metadata: self.metadata,
-            payload: self.payload.map(|p| p.wrap_into_any_payload()),
+            payload: self.payload.wrap_into_any_payload(),
         }
     }
 }
@@ -320,8 +316,7 @@ where
 ///         .expect("load should succeed")
 ///         .downcast::<HelloWorldV1Marker>()
 ///         .expect("types should match")
-///         .take_payload()
-///         .unwrap()
+///         .payload
 ///         .get(),
 ///     &HelloWorldV1 {
 ///         message: Cow::Borrowed("Hallo Welt"),
@@ -336,8 +331,7 @@ where
 ///     downcasting_provider
 ///         .load(req)
 ///         .expect("load should succeed")
-///         .take_payload()
-///         .unwrap()
+///         .payload
 ///         .get(),
 ///     &HelloWorldV1 {
 ///         message: Cow::Borrowed("Hallo Welt"),

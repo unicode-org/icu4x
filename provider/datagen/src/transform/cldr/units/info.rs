@@ -92,7 +92,7 @@ impl DataProvider<UnitsInfoV1Marker> for DatagenProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(result)),
+            payload: DataPayload::from_owned(result),
         })
     }
 }
@@ -116,16 +116,14 @@ fn test_basic() {
 
     let provider = DatagenProvider::new_testing();
 
-    let und: DataPayload<UnitsInfoV1Marker> = provider
+    let und: DataResponse<UnitsInfoV1Marker> = provider
         .load(DataRequest {
             locale: &langid!("und").into(),
             ..Default::default()
         })
-        .unwrap()
-        .take_payload()
         .unwrap();
 
-    let units_info = und.get().to_owned();
+    let units_info = und.payload.get().to_owned();
     let units_info_map = &units_info.units_conversion_trie;
     let convert_units = &units_info.convert_infos;
 

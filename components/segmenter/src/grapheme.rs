@@ -168,7 +168,7 @@ impl GraphemeClusterSegmenter {
     where
         D: DataProvider<GraphemeClusterBreakDataV1Marker> + ?Sized,
     {
-        let payload = provider.load(Default::default())?.take_payload()?;
+        let payload = provider.load(Default::default())?.payload;
         Ok(Self { payload })
     }
 

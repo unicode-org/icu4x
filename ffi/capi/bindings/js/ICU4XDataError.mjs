@@ -11,13 +11,12 @@ export const ICU4XDataError_js_to_rust = {
   "ExtraneousLocale": 6,
   "FilteredResource": 7,
   "MismatchedType": 8,
-  "MissingPayload": 9,
-  "InvalidState": 10,
-  "Custom": 11,
-  "Io": 12,
-  "UnavailableBufferFormat": 13,
-  "MismatchedAnyBuffer": 14,
-  "DataStructValidityError": 15,
+  "InvalidState": 9,
+  "Custom": 10,
+  "Io": 11,
+  "UnavailableBufferFormat": 12,
+  "MismatchedAnyBuffer": 13,
+  "DataStructValidityError": 14,
 };
 
 export const ICU4XDataError_rust_to_js = {
@@ -30,13 +29,12 @@ export const ICU4XDataError_rust_to_js = {
   [6]: "ExtraneousLocale",
   [7]: "FilteredResource",
   [8]: "MismatchedType",
-  [9]: "MissingPayload",
-  [10]: "InvalidState",
-  [11]: "Custom",
-  [12]: "Io",
-  [13]: "UnavailableBufferFormat",
-  [14]: "MismatchedAnyBuffer",
-  [15]: "DataStructValidityError",
+  [9]: "InvalidState",
+  [10]: "Custom",
+  [11]: "Io",
+  [12]: "UnavailableBufferFormat",
+  [13]: "MismatchedAnyBuffer",
+  [14]: "DataStructValidityError",
 };
 
 export const ICU4XDataError = {
@@ -49,7 +47,6 @@ export const ICU4XDataError = {
   "ExtraneousLocale": "ExtraneousLocale",
   "FilteredResource": "FilteredResource",
   "MismatchedType": "MismatchedType",
-  "MissingPayload": "MissingPayload",
   "InvalidState": "InvalidState",
   "Custom": "Custom",
   "Io": "Io",

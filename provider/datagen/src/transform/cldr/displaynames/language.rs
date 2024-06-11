@@ -27,7 +27,7 @@ impl DataProvider<LanguageDisplayNamesV1Marker> for DatagenProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(LanguageDisplayNamesV1::from(data))),
+            payload: DataPayload::from_owned(LanguageDisplayNamesV1::from(data)),
         })
     }
 }
@@ -46,7 +46,7 @@ impl DataProvider<LocaleDisplayNamesV1Marker> for DatagenProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(LocaleDisplayNamesV1::from(data))),
+            payload: DataPayload::from_owned(LocaleDisplayNamesV1::from(data)),
         })
     }
 }
@@ -217,8 +217,7 @@ mod tests {
                 ..Default::default()
             })
             .unwrap()
-            .take_payload()
-            .unwrap();
+            .payload;
 
         assert_eq!(
             data.get()
@@ -239,8 +238,7 @@ mod tests {
                 ..Default::default()
             })
             .unwrap()
-            .take_payload()
-            .unwrap();
+            .payload;
 
         assert_eq!(
             data.get()
@@ -261,8 +259,7 @@ mod tests {
                 ..Default::default()
             })
             .unwrap()
-            .take_payload()
-            .unwrap();
+            .payload;
 
         assert_eq!(
             data.get()
@@ -283,8 +280,7 @@ mod tests {
                 ..Default::default()
             })
             .unwrap()
-            .take_payload()
-            .unwrap();
+            .payload;
 
         assert_eq!(
             data.get()
@@ -305,8 +301,7 @@ mod tests {
                 ..Default::default()
             })
             .unwrap()
-            .take_payload()
-            .unwrap();
+            .payload;
 
         assert_eq!(
             data.get()

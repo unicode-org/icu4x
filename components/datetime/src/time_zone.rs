@@ -41,7 +41,7 @@ where
                     locale,
                     ..Default::default()
                 })?
-                .take_payload()?,
+                .payload,
         );
     }
     Ok(())
@@ -193,7 +193,7 @@ impl TimeZoneFormatter {
                     locale,
                     ..Default::default()
                 })?
-                .take_payload()?,
+                .payload,
             exemplar_cities: None,
             mz_generic_long: None,
             mz_generic_short: None,
@@ -451,7 +451,7 @@ impl TimeZoneFormatter {
                     locale,
                     ..Default::default()
                 })?
-                .take_payload()?,
+                .payload,
             exemplar_cities: None,
             mz_generic_long: None,
             mz_generic_short: None,

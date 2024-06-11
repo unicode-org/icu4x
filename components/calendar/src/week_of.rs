@@ -69,8 +69,7 @@ impl WeekCalculator {
                     ..Default::default()
                 },
             )
-            .and_then(DataResponse::take_payload)
-            .map(|payload| payload.get().into())
+            .map(|response| response.payload.get().into())
             .map_err(|_| e)
         })
     }
@@ -89,8 +88,7 @@ impl WeekCalculator {
                     ..Default::default()
                 },
             )
-            .and_then(DataResponse::take_payload)
-            .map(|payload| payload.get().into())
+            .map(|response| response.payload.get().into())
             .map_err(|_| e)
         })
     }
@@ -105,11 +103,10 @@ impl WeekCalculator {
                 locale,
                 ..Default::default()
             })
-            .and_then(DataResponse::take_payload)
-            .map(|payload| WeekCalculator {
-                first_weekday: payload.get().first_weekday,
-                min_week_days: payload.get().min_week_days,
-                weekend: Some(payload.get().weekend),
+            .map(|response| WeekCalculator {
+                first_weekday: response.payload.get().first_weekday,
+                min_week_days: response.payload.get().min_week_days,
+                weekend: Some(response.payload.get().weekend),
             })
             .map_err(Into::into)
     }

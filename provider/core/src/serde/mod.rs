@@ -177,8 +177,7 @@ where
             metadata: buffer_response.metadata,
             payload: buffer_response
                 .payload
-                .map(|p| p.into_deserialized(buffer_format))
-                .transpose()
+                .into_deserialized(buffer_format)
                 .map_err(|e| e.with_req(marker, req))?,
         })
     }

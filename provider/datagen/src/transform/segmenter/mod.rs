@@ -596,8 +596,8 @@ macro_rules! implement {
                     );
 
                     Ok(DataResponse {
-                        metadata: DataResponseMetadata::default(),
-                        payload: Some(DataPayload::from_owned(data)),
+                        metadata: Default::default(),
+                        payload: DataPayload::from_owned(data),
                     })
                 };
             }
@@ -711,14 +711,12 @@ mod tests {
     #[test]
     fn load_grapheme_cluster_data() {
         let provider = DatagenProvider::new_testing();
-        let payload: DataPayload<GraphemeClusterBreakDataV1Marker> = provider
+        let response: DataResponse<GraphemeClusterBreakDataV1Marker> = provider
             .load(Default::default())
-            .expect("Loading should succeed!")
-            .take_payload()
-            .expect("Data should be present!");
-        let data = payload.get();
+            .expect("Loading should succeed!");
         assert_eq!(
-            data.complex_property, 127,
+            response.payload.get().complex_property,
+            127,
             "Grapheme cluster data doesn't handle SA"
         );
     }
@@ -726,12 +724,10 @@ mod tests {
     #[test]
     fn load_line_data() {
         let provider = DatagenProvider::new_testing();
-        let payload: DataPayload<LineBreakDataV1Marker> = provider
+        let response: DataResponse<LineBreakDataV1Marker> = provider
             .load(Default::default())
-            .expect("Loading should succeed!")
-            .take_payload()
-            .expect("Data should be present!");
-        let data = payload.get();
+            .expect("Loading should succeed!");
+        let data = response.payload.get();
         // Note: The following match statement had been used in line.rs:
         //
         // match codepoint {

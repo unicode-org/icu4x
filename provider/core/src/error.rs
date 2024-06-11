@@ -40,10 +40,6 @@ pub enum DataErrorKind {
     #[displaydoc("Mismatched types: tried to downcast with {0}, but actual type is different")]
     MismatchedType(&'static str),
 
-    /// The payload is missing. This is usually caused by a previous error.
-    #[displaydoc("Missing payload")]
-    MissingPayload,
-
     /// A data provider object was given to an operation in an invalid state.
     #[displaydoc("Invalid state")]
     InvalidState,
