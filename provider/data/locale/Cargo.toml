@@ -22,4 +22,3 @@ icuexport = { tagged = "icu4x/2024-05-16/75.x" }
 segmenter_lstm = { tagged = "v0.1.0" }
 
 [dependencies]
-icu_provider_baked = { workspace = true }

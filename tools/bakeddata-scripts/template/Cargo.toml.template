@@ -22,4 +22,3 @@ icuexport = { tagged = "_icuexport_tag_" }
 segmenter_lstm = { tagged = "_segmenter_lstm_tag_" }
 
 [dependencies]
-icu_provider_baked = { workspace = true }

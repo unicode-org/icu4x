@@ -139,7 +139,6 @@ fn main() {
             writeln!(
                 &mut crlify::BufWriterWithLineEndingFix::new(
                     std::fs::OpenOptions::new()
-                        .write(true)
                         .append(true)
                         .open(path.join("Cargo.toml"))
                         .unwrap()
@@ -150,7 +149,6 @@ fn main() {
             writeln!(
                 &mut crlify::BufWriterWithLineEndingFix::new(
                     std::fs::OpenOptions::new()
-                        .write(true)
                         .append(true)
                         .open(path.join("src/lib.rs"))
                         .unwrap()

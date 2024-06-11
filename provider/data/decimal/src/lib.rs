@@ -15,6 +15,4 @@
 include!(concat!(core::env!("ICU4X_DATA_DIR"), "/macros.rs"));
 #[cfg(not(icu4x_custom_data))]
 include!("../data/macros.rs");
-
 pub use icu_locale;
-pub use icu_provider_baked;
