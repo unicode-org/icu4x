@@ -29,11 +29,10 @@ litemap = { workspace = true, default-features = false, optional = true }
 serde = { workspace = true, features = ["derive", "alloc"], optional = true }
 yoke = { workspace = true, features = ["derive"], optional = true }
 zerofrom = { workspace = true, features = ["derive"], optional = true }
-zerovec = { workspace = true, features = ["databake", "serde"], optional = true }
+zerovec = { workspace = true, features = ["databake", "serde", "yoke"], optional = true }
 
 [dev-dependencies]
 zerofrom = { workspace = true, features = ["alloc"] }
-zerovec = { workspace = true, features = ["databake", "serde"] }
 rmp-serde = { workspace = true }
 serde_json = { workspace = true }
 postcard = { workspace = true, features = ["use-std"] }
