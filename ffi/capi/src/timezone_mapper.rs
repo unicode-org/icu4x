@@ -98,7 +98,7 @@ pub mod ffi {
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), ICU4XError> {
             let handle = self.0.as_borrowed();
-            let iana = TinyAsciiStr::from_bytes(value)
+            let iana = TinyAsciiStr::try_from_utf8(value)
                 .ok()
                 .and_then(|s| handle.find_canonical_iana_from_bcp47(TimeZoneBcp47Id(s)))
                 .ok_or(ICU4XError::TimeZoneInvalidIdError)?;
@@ -183,7 +183,7 @@ pub mod ffi {
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), ICU4XError> {
             let handle = self.0.as_borrowed();
-            let iana = TinyAsciiStr::from_bytes(value)
+            let iana = TinyAsciiStr::try_from_utf8(value)
                 .ok()
                 .map(TimeZoneBcp47Id)
                 .and_then(|t| handle.canonical_iana_from_bcp47(t))

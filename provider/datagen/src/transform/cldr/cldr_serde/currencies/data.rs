@@ -18,6 +18,27 @@ pub(in crate::provider) struct CurrencyPatterns {
 
     #[serde(rename = "symbol-alt-narrow")]
     pub(in crate::provider) narrow: Option<String>,
+
+    #[serde(rename = "displayName")]
+    pub(in crate::provider) display_name: Option<String>,
+
+    #[serde(rename = "displayName-count-zero")]
+    pub(in crate::provider) zero: Option<String>,
+
+    #[serde(rename = "displayName-count-one")]
+    pub(in crate::provider) one: Option<String>,
+
+    #[serde(rename = "displayName-count-two")]
+    pub(in crate::provider) two: Option<String>,
+
+    #[serde(rename = "displayName-count-few")]
+    pub(in crate::provider) few: Option<String>,
+
+    #[serde(rename = "displayName-count-many")]
+    pub(in crate::provider) many: Option<String>,
+
+    #[serde(rename = "displayName-count-other")]
+    pub(in crate::provider) other: Option<String>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
@@ -30,4 +51,4 @@ pub(in crate::provider) struct LangNumbers {
     pub(in crate::provider) numbers: Numbers,
 }
 
-pub(in crate::provider) type Resource = super::LocaleResource<LangNumbers>;
+pub(in crate::provider) type Resource = super::super::LocaleResource<LangNumbers>;

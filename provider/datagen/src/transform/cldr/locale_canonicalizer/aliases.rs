@@ -205,9 +205,9 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV2<'_> {
                     // Following http://unicode.org/reports/tr35/#Canonical_Unicode_Locale_Identifiers,
                     // append "zzzz" to make this syntactically correct.
                     let replacement = r.to_string().to_ascii_lowercase() + "zzzz";
-                    TinyAsciiStr::<7>::from_str(&replacement).ok()
+                    TinyAsciiStr::<7>::try_from_str(&replacement).ok()
                 } else {
-                    TinyAsciiStr::<7>::from_str(r).ok()
+                    TinyAsciiStr::<7>::try_from_str(r).ok()
                 }
             }) {
                 subdivision.insert(from, replacement);

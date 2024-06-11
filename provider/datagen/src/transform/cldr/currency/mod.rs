@@ -3,3 +3,4 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 pub(in crate::provider) mod essentials;
+pub(in crate::provider) mod extended;

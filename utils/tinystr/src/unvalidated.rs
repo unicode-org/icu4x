@@ -35,7 +35,7 @@ impl<const N: usize> UnvalidatedTinyAsciiStr<N> {
 
     #[inline]
     /// Unsafely converts into a [`TinyAsciiStr`].
-    pub const fn from_bytes_unchecked(bytes: [u8; N]) -> Self {
+    pub const fn from_utf8_unchecked(bytes: [u8; N]) -> Self {
         Self(bytes)
     }
 }

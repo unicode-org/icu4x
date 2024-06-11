@@ -54,7 +54,7 @@ macro_rules! impl_tinystr_subtag {
                     return Err(crate::parser::errors::ParseError::$error);
                 }
 
-                match tinystr::TinyAsciiStr::from_bytes_manual_slice(v, start, end) {
+                match tinystr::TinyAsciiStr::try_from_utf8_manual_slice(v, start, end) {
                     Ok($tinystr_ident) if $validate => Ok(Self($normalize)),
                     _ => Err(crate::parser::errors::ParseError::$error),
                 }
@@ -86,7 +86,7 @@ macro_rules! impl_tinystr_subtag {
             /// This function is safe iff [`Self::try_from_raw`] returns an `Ok`. This is the case
             /// for inputs that are correctly normalized.
             pub const unsafe fn from_raw_unchecked(v: [u8; $len_end]) -> Self {
-                Self(tinystr::TinyAsciiStr::from_bytes_unchecked(v))
+                Self(tinystr::TinyAsciiStr::from_utf8_unchecked(v))
             }
 
             /// Deconstructs into a raw format to be consumed by
