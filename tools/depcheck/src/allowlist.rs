@@ -162,6 +162,7 @@ pub const EXTRA_DATAGEN_DEPS: &[&str] = &[
     "icu_codepointtrie_builder",
     "icu_pattern",
     "icu_provider_adapters",
+    "icu_provider_baked",
     "icu_registry",
     "itertools",
     "itoa",

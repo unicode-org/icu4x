@@ -32,7 +32,7 @@ log = { workspace = true, optional = true }
 [dev-dependencies]
 icu_locale_core = { path = "../../components/locale_core", default-features = false, features = ["serde"] }
 icu_datetime = { path = "../../components/datetime", default-features = false, features = ["datagen", "experimental"] }
-icu_datetime_data = { path = "../../provider/baked/datetime" }
+icu_datetime_data = { path = "../../provider/data/datetime" }
 icu_locale = { path = "../../components/locale", default-features = false, features = ["compiled_data"] }
 icu_datagen = { path = "../../provider/datagen", default-features = false }
 icu_provider_adapters = { path = "../../provider/adapters", default-features = false }

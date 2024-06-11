@@ -42,7 +42,7 @@ To build all code paths, improve build times in VSCode, and prevent locking the 
 }
 ```
 
-Note: the path in `ICU4X_DATA_DIR` is relative to `provider/baked/*/src/lib.rs` and it causes VSCode to build ICU4X with only the `und` locale. This reduces build times but also makes some tests fail; to run them normally, run `cargo test --all-features` on the command line.
+Note: the path in `ICU4X_DATA_DIR` is relative to `provider/data/*/src/lib.rs` and it causes VSCode to build ICU4X with only the `und` locale. This reduces build times but also makes some tests fail; to run them normally, run `cargo test --all-features` on the command line.
 
 ## Contributing a Pull Request
 

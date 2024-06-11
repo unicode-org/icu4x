@@ -97,7 +97,7 @@ fn main() {
     options.pretty = true;
 
     for (component, markers, version) in &components {
-        let path = Path::new("provider/baked").join(component);
+        let path = Path::new("provider/data").join(component);
 
         let _ = std::fs::remove_dir_all(&path);
         for dir in ["", "src", "data"] {

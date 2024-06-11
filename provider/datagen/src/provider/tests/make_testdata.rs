@@ -48,14 +48,12 @@ fn make_testdata() {
             // Generates a stub data directory that can be used with `ICU4X_DATA_DIR`
             // for faster development and debugging. See CONTRIBUTING.md
             Box::new(StubExporter(
-                crate::baked_exporter::BakedExporter::new(
-                    "tests/data/baked".into(),
-                    crate::baked_exporter::Options {
-                        overwrite: true,
-                        pretty: true,
-                        ..Default::default()
-                    },
-                )
+                crate::baked_exporter::BakedExporter::new("tests/data/baked".into(), {
+                    let mut options = crate::baked_exporter::Options::default();
+                    options.overwrite = true;
+                    options.pretty = true;
+                    options
+                })
                 .unwrap(),
             )),
             Box::new(ZeroCopyCheckExporter {
