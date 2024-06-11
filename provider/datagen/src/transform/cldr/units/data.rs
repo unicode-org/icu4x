@@ -3,11 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use std::collections::{BTreeMap, HashSet};
-use std::str::FromStr;
 
 use crate::provider::transform::cldr::cldr_serde::units::data::Patterns;
 use crate::provider::transform::cldr::cldr_serde::{self};
-use crate::provider::transform::cldr::decimal::decimal_pattern::{self, DecimalPattern};
 use crate::provider::DatagenProvider;
 
 use icu_experimental::dimension::provider::units::{
@@ -15,7 +13,6 @@ use icu_experimental::dimension::provider::units::{
 };
 
 use icu_locale::LanguageIdentifier;
-use icu_pattern::SinglePlaceholderPattern;
 use icu_provider::DataMarkerAttributes;
 use icu_provider::{
     datagen::IterableDataProvider, DataError, DataLocale, DataPayload, DataProvider, DataRequest,
@@ -40,24 +37,19 @@ impl DataProvider<UnitsDisplayNameV1Marker> for DatagenProvider {
         let units_format_data = &units_format_data.main.value.units;
 
         fn add_unit_to_map_with_name(
-            map: &mut BTreeMap<Count, SinglePlaceholderPattern<Cow<str>>>,
+            map: &mut BTreeMap<Count, String>,
             count: Count,
             unit: Option<&str>,
-        ) -> Result<(), DataError> {
+        ) {
             if let Some(unit) = unit {
-                let pattern = unit.parse::<SinglePlaceholderPattern>().map_err(|e| {
-                    DataError::custom("Failed to parse the pattern").with_debug_context(&e)
-                })?;
-                map.insert(count, pattern);
+                map.insert(count, unit.to_string());
             }
-
-            Ok(())
         }
 
         fn populate_unit_map(
             unit_length_map: &BTreeMap<String, Patterns>,
             unit: &str,
-            map: &mut BTreeMap<Count, SinglePlaceholder>,
+            map: &mut BTreeMap<Count, String>,
         ) -> Result<(), DataError> {
             // TODO(younies): this should be coming from the aux key or from the main key.
             let legth_key = "length-".to_string() + unit;
