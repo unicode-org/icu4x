@@ -120,8 +120,7 @@ fn test_v2_bigger() {
             },
         )
         .unwrap()
-        .take_payload()
-        .unwrap();
+        .payload;
         assert_eq!(blob_result.get().message, format!("Hello {loc}!"))
     }
 }

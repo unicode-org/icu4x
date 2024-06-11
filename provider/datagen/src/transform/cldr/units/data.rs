@@ -155,8 +155,7 @@ fn test_basic() {
             ..Default::default()
         })
         .unwrap()
-        .take_payload()
-        .unwrap();
+        .payload;
 
     let units_us = us_locale.get().to_owned();
     let long = units_us.long.get(&Count::One).unwrap();
@@ -173,8 +172,7 @@ fn test_basic() {
             ..Default::default()
         })
         .unwrap()
-        .take_payload()
-        .unwrap();
+        .payload;
 
     let ar_eg_units = ar_eg_locale.get().to_owned();
     let long = ar_eg_units.long.get(&Count::One).unwrap();
@@ -191,8 +189,7 @@ fn test_basic() {
             ..Default::default()
         })
         .unwrap()
-        .take_payload()
-        .unwrap();
+        .payload;
 
     let fr_units = fr_locale.get().to_owned();
     let long = fr_units.long.get(&Count::One).unwrap();
