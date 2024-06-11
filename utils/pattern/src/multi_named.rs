@@ -373,7 +373,19 @@ impl PatternBackend for MultiNamedPlaceholder {
     where
         Self::Store: ToOwned,
     {
-        todo!()
+        let store_str = core::str::from_utf8(bytes).map_err(|_| Error::InvalidPattern)?;
+        let mut chars = store_str.chars();
+        let lead = chars.next().ok_or(Error::InvalidPattern)?;
+        let trail = chars.next().ok_or(Error::InvalidPattern)?;
+        let name_length = ((lead as usize) << 3) | (trail as usize);
+        if name_length >= 64 {
+            return Err(Error::InvalidPlaceholder);
+        }
+        let placeholder_name = chars.as_str();
+        if placeholder_name.len() != name_length {
+            return Err(Error::InvalidPattern);
+        }
+        Ok(store_str.to_owned())
     }
 }
 

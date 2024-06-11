@@ -379,7 +379,16 @@ impl PatternBackend for DoublePlaceholder {
     where
         Self::Store: ToOwned,
     {
-        todo!()
+        let store_str = core::str::from_utf8(bytes).map_err(|_| Error::InvalidPattern)?;
+        let mut chars = store_str.chars();
+        let first_ph_char = chars.next().ok_or(Error::InvalidPattern)?;
+        let second_ph_char = chars.next().ok_or(Error::InvalidPattern)?;
+        let first_ph = DoublePlaceholderInfo::from_char(first_ph_char);
+        let second_ph = DoublePlaceholderInfo::from_char(second_ph_char);
+        if first_ph.key == second_ph.key {
+            return Err(Error::InvalidPattern);
+        }
+        Ok(store_str.to_owned())
     }
 }
 

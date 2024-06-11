@@ -213,6 +213,28 @@ where
         })
     }
 
+    /// Creates a pattern from a UTF-8 encoded string.
+    ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_pattern::Pattern;
+    /// use icu_pattern::PatternItemCow;
+    /// use icu_pattern::SinglePlaceholder;
+    /// use icu_pattern::SinglePlaceholderKey;
+    /// use std::borrow::Cow;
+    ///
+    /// Pattern::<SinglePlaceholder, _>::try_from_utf8(
+    ///     [
+    ///         PatternItemCow::Placeholder(SinglePlaceholderKey::Singleton),
+    ///         PatternItemCow::Literal(Cow::Borrowed(" days")),
+    ///     ]
+    ///     .into_bytes(),
+    /// )
+    /// .expect("valid pattern items");
+    /// ```
     pub fn try_from_utf8(bytes: &[u8]) -> Result<Self, Error> {
         let store = B::try_from_utf8(bytes)?;
         #[cfg(debug_assertions)]

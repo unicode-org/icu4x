@@ -242,7 +242,10 @@ impl PatternBackend for SinglePlaceholder {
     where
         Self::Store: ToOwned,
     {
-        todo!()
+        match std::str::from_utf8(bytes) {
+            Ok(valid_str) => Ok(valid_str.to_owned()),
+            Err(_) => Err(Error::InvalidPattern),
+        }
     }
 }
 
