@@ -1,0 +1,12 @@
+{
+  "long": {
+    "One": "{0} rayon terrestre",
+    "Other": "{0} rayons terrestres"
+  },
+  "short": {
+    "Other": "{0} R⊕"
+  },
+  "narrow": {
+    "Other": "{0} R⊕"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "long": {
+    "One": "{0} unidad astronómica",
+    "Other": "{0} unidades astronómicas"
+  },
+  "short": {
+    "Other": "{0} au"
+  },
+  "narrow": {
+    "One": "{0}au",
+    "Other": "{0}au"
+  }
+}
