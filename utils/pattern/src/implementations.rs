@@ -13,14 +13,12 @@ impl<'a> ZeroMapKV<'a> for Pattern<SinglePlaceholder, str> {
     type OwnedType = Box<Pattern<SinglePlaceholder, str>>;
 }
 
-
-
 unsafe impl VarULE for Pattern<SinglePlaceholder, str> {
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), zerovec::ZeroVecError> {
+    fn validate_byte_slice(_bytes: &[u8]) -> Result<(), zerovec::ZeroVecError> {
         todo!()
     }
-    
-    unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
+
+    unsafe fn from_byte_slice_unchecked(_bytes: &[u8]) -> &Self {
         todo!()
     }
 }
