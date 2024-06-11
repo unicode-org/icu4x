@@ -100,7 +100,6 @@ pub use driver::DeduplicationStrategy;
 pub use driver::FallbackOptions;
 pub use driver::LocaleFamily;
 pub use driver::NoFallbackOptions;
-pub use driver::RuntimeFallbackLocation;
 
 #[cfg(feature = "provider")]
 pub use provider::CollationHanDatabase;
@@ -124,7 +123,6 @@ pub mod prelude {
     #[doc(no_inline)]
     pub use crate::{
         DatagenDriver, DeduplicationStrategy, FallbackOptions, LocaleFamily, NoFallbackOptions,
-        RuntimeFallbackLocation,
     };
     #[doc(no_inline)]
     pub use icu_locale_core::{langid, LanguageIdentifier};

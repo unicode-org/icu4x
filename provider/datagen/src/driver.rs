@@ -26,25 +26,6 @@ use writeable::Writeable;
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Default)]
 pub struct NoFallbackOptions {}
 
-/// Choices for the code location of runtime fallback.
-///
-/// Some data providers support "internal" fallback in which all data requests automatically run
-/// the locale fallback algorithm. If internal fallback is requested for an exporter that does
-/// not support it, an error will occur.
-#[non_exhaustive]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum RuntimeFallbackLocation {
-    /// Include fallbacking code in the exported data provider.
-    Internal,
-    /// Do not include fallbacking code in the exported data provider.
-    ///
-    /// The client is responsible for manually configuring [`LocaleFallbackProvider`] in their
-    /// runtime data pipeline.
-    ///
-    /// [`LocaleFallbackProvider`]: icu_provider_adapters::fallback::LocaleFallbackProvider
-    External,
-}
-
 /// Choices for determining the deduplication of locales for exported data payloads.
 ///
 /// Deduplication affects the lookup table from locales to data payloads. If a child locale
@@ -64,12 +45,13 @@ pub enum RuntimeFallbackLocation {
 /// [`Maximal`]: DeduplicationStrategy::Maximal
 /// [`None`]: DeduplicationStrategy::None
 #[non_exhaustive]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, Default)]
 pub enum DeduplicationStrategy {
     /// Removes from the lookup table any locale whose parent maps to the same data.
     Maximal,
     /// Removes from the lookup table any locale whose parent maps to the same data, except if
     /// the parent is `und`.
+    #[default]
     RetainBaseLanguages,
     /// Keeps all selected locales in the lookup table.
     None,
@@ -354,16 +336,11 @@ fn test_locale_family_parsing() {
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Default)]
 #[non_exhaustive]
 pub struct FallbackOptions {
-    /// The location in code where fallback will be performed at runtime.
-    ///
-    /// If not set, determined by the exporter: internal fallback is used if the exporter
-    /// supports internal fallback.
-    pub runtime_fallback_location: Option<RuntimeFallbackLocation>,
     /// The aggressiveness of deduplication of data payloads.
     ///
     /// If not set, determined by `runtime_fallback_location`. If internal fallback is enabled,
     /// a more aggressive deduplication strategy is used.
-    pub deduplication_strategy: Option<DeduplicationStrategy>,
+    pub deduplication_strategy: DeduplicationStrategy,
 }
 
 #[derive(Debug, Clone)]
@@ -587,7 +564,7 @@ impl DatagenDriver {
             log::warn!("No markers selected");
         }
 
-        let (uses_internal_fallback, deduplication_strategy) = match &locales_fallback {
+        let deduplication_strategy = match &locales_fallback {
             LocalesWithOrWithoutFallback::WithoutFallback { langids } => {
                 let mut sorted_locale_strs = langids
                     .iter()
@@ -598,25 +575,9 @@ impl DatagenDriver {
                     "Datagen configured without fallback with these locales: {:?}",
                     sorted_locale_strs
                 );
-                (false, DeduplicationStrategy::None)
+                DeduplicationStrategy::None
             }
             LocalesWithOrWithoutFallback::WithFallback { options, families } => {
-                let uses_internal_fallback = match options.runtime_fallback_location {
-                    None => sink.supports_built_in_fallback(),
-                    Some(RuntimeFallbackLocation::Internal) => true,
-                    Some(RuntimeFallbackLocation::External) => false,
-                };
-                let deduplication_strategy = match options.deduplication_strategy {
-                    // TODO(2.0): Default to RetainBaseLanguages here
-                    None => {
-                        if sink.supports_built_in_fallback() {
-                            DeduplicationStrategy::Maximal
-                        } else {
-                            DeduplicationStrategy::None
-                        }
-                    }
-                    Some(x) => x,
-                };
                 let mut sorted_locale_strs = families
                     .iter()
                     .map(LocaleFamilyBorrowed::from_parts)
@@ -624,13 +585,8 @@ impl DatagenDriver {
                     .collect::<Vec<_>>();
                 sorted_locale_strs.sort_unstable();
                 log::info!(
-                    "Datagen configured with {}, {}, and these locales: {:?}",
-                    if uses_internal_fallback {
-                        "internal fallback"
-                    } else {
-                        "external fallback"
-                    },
-                    match deduplication_strategy {
+                    "Datagen configured with {}, and these locales: {:?}",
+                    match options.deduplication_strategy {
                         DeduplicationStrategy::Maximal => "maximal deduplication",
                         DeduplicationStrategy::RetainBaseLanguages =>
                             "deduplication retaining base languages",
@@ -638,7 +594,7 @@ impl DatagenDriver {
                     },
                     sorted_locale_strs
                 );
-                (uses_internal_fallback, deduplication_strategy)
+                options.deduplication_strategy
             }
         };
 
@@ -815,14 +771,7 @@ impl DatagenDriver {
 
             let transform_duration = instant1.elapsed();
 
-            // segmenter uses hardcoded locales internally, so fallback is not necessary.
-            // TODO(#4511): Use auxiliary keys for segmenter
-            if uses_internal_fallback && !marker.path.get().starts_with("segmenter") {
-                sink.flush_with_built_in_fallback(marker, BuiltInFallbackMode::Standard)
-            } else {
-                sink.flush(marker)
-            }
-            .map_err(|e| e.with_marker(marker))?;
+            sink.flush(marker).map_err(|e| e.with_marker(marker))?;
 
             let final_duration = instant1.elapsed();
             let flush_duration = final_duration - transform_duration;

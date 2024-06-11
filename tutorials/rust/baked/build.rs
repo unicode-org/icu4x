@@ -12,11 +12,7 @@ fn main() {
     let mod_directory = PathBuf::from(std::env::var_os("OUT_DIR").unwrap()).join("baked_data");
 
     DatagenDriver::new()
-        .with_locales_and_fallback([LocaleFamily::single(langid!("ru"))], {
-            let mut options = FallbackOptions::default();
-            options.runtime_fallback_location = Some(RuntimeFallbackLocation::External);
-            options
-        })
+        .with_locales_and_fallback([LocaleFamily::single(langid!("ru"))], Default::default())
         // These are the markers required by `PluralRules::try_new_cardinal_unstable`. Compilation will
         // discard unused markers and fail if required markers are not generated, but explicitly listing the
         // markers will speed up the datagen.
@@ -26,6 +22,7 @@ fn main() {
             BakedExporter::new(mod_directory, {
                 let mut options = Options::default();
                 options.overwrite = true;
+                options.with_fallback = false;
                 options
             })
             .unwrap(),

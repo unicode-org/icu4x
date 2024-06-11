@@ -52,12 +52,6 @@ struct Cli {
     #[arg(help = "--format=mod, --format=dir only: pretty-print the Rust or JSON output files.")]
     pretty: bool,
 
-    #[arg(long, hide = true)]
-    #[arg(
-        help = "--format=dir only: whether to add a fingerprints file to the output. This feature will be removed in a future version."
-    )]
-    fingerprint: bool,
-
     #[arg(short = 't', long, value_name = "TAG", default_value = "latest")]
     #[arg(
         help = "Download CLDR JSON data from this GitHub tag (https://github.com/unicode-org/cldr-json/tags)\n\
@@ -168,6 +162,10 @@ struct Cli {
     )]
     use_separate_crates: bool,
 
+    #[arg(long, default_value = "true")]
+    #[arg(help = "--format=mod only: include fallback code inside the baked provider")]
+    with_internal_fallback: bool,
+
     #[arg(long)]
     #[arg(
         help = "disables locale fallback, instead exporting exactly the locales specified in --locales. \
@@ -175,21 +173,14 @@ struct Cli {
     )]
     without_fallback: bool,
 
-    #[arg(long, value_enum)]
-    #[arg(help = "configures where runtime fallback should take place in code. \
-                If not set, determined by the exporter: \
-                internal fallback is used if the exporter supports it. \
-                Cannot be used with --without-fallback")]
-    runtime_fallback_location: Option<RuntimeFallbackLocation>,
-
-    #[arg(long, value_enum)]
+    #[arg(long, value_enum, default_value = "retain-base-languages")]
     #[arg(
         help = "configures the deduplication of locales for exported data payloads. \
                 If not set, determined by `runtime_fallback_location`: \
                 if internal fallback is enabled, a more aggressive deduplication strategy is used. \
                 Cannot be used with --without-fallback"
     )]
-    deduplication: Option<Deduplication>,
+    deduplication: Deduplication,
 
     #[arg(long, num_args = 0.., default_value = "recommended")]
     #[arg(
@@ -270,13 +261,6 @@ enum Deduplication {
     Maximal,
     RetainBaseLanguages,
     None,
-}
-
-// Mirrors crate::RuntimeFallbackLocation
-#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
-enum RuntimeFallbackLocation {
-    Internal,
-    External,
 }
 
 fn main() -> eyre::Result<()> {
@@ -470,20 +454,11 @@ fn main() -> eyre::Result<()> {
         };
         let mut options = FallbackOptions::default();
         options.deduplication_strategy = match cli.deduplication {
-            Some(Deduplication::Maximal) => Some(icu_datagen::DeduplicationStrategy::Maximal),
-            Some(Deduplication::RetainBaseLanguages) => {
-                Some(icu_datagen::DeduplicationStrategy::RetainBaseLanguages)
+            Deduplication::Maximal => icu_datagen::DeduplicationStrategy::Maximal,
+            Deduplication::RetainBaseLanguages => {
+                icu_datagen::DeduplicationStrategy::RetainBaseLanguages
             }
-            Some(Deduplication::None) | None => Some(icu_datagen::DeduplicationStrategy::None),
-        };
-        options.runtime_fallback_location = match cli.runtime_fallback_location {
-            Some(RuntimeFallbackLocation::Internal) => {
-                Some(icu_datagen::RuntimeFallbackLocation::Internal)
-            }
-            Some(RuntimeFallbackLocation::External) => {
-                Some(icu_datagen::RuntimeFallbackLocation::External)
-            }
-            None => Some(icu_datagen::RuntimeFallbackLocation::External),
+            Deduplication::None => icu_datagen::DeduplicationStrategy::None,
         };
         driver = driver.with_locales_and_fallback(locale_families, options);
     }
@@ -570,6 +545,7 @@ fn main() -> eyre::Result<()> {
                 {
                     let mut options = icu_datagen::baked_exporter::Options::default();
                     options.pretty = cli.pretty;
+                    options.with_fallback = cli.with_internal_fallback;
                     options.use_separate_crates = cli.use_separate_crates;
                     options.overwrite = cli.overwrite;
                     options
