@@ -241,7 +241,10 @@ fn all_runtime() {
     let exported = export_to_map(
         DatagenDriver::new()
             .with_markers([HelloWorldV1Marker::INFO])
-            .with_locales_and_fallback([LocaleFamily::FULL], FallbackOptions::maximal_deduplication()),
+            .with_locales_and_fallback(
+                [LocaleFamily::FULL],
+                FallbackOptions::maximal_deduplication(),
+            ),
         &TestingProvider::with_decimal_symbol_like_data(),
     );
 
@@ -281,7 +284,10 @@ fn all_runtime_retain_base() {
     let exported = export_to_map(
         DatagenDriver::new()
             .with_markers([HelloWorldV1Marker::INFO])
-            .with_locales_and_fallback([LocaleFamily::FULL], FallbackOptions::retain_base_languages_deduplication()),
+            .with_locales_and_fallback(
+                [LocaleFamily::FULL],
+                FallbackOptions::retain_base_languages_deduplication(),
+            ),
         &TestingProvider::with_decimal_symbol_like_data(),
     );
 
@@ -330,7 +336,10 @@ fn explicit_preferred() {
     let exported = export_to_map(
         DatagenDriver::new()
             .with_markers([HelloWorldV1Marker::INFO])
-            .with_locales_and_fallback(families(SELECTED_LOCALES), FallbackOptions::no_deduplication()),
+            .with_locales_and_fallback(
+                families(SELECTED_LOCALES),
+                FallbackOptions::no_deduplication(),
+            ),
         &TestingProvider::with_decimal_symbol_like_data(),
     );
 
@@ -375,7 +384,10 @@ fn explicit_hybrid() {
     let exported = export_to_map(
         DatagenDriver::new()
             .with_markers([HelloWorldV1Marker::INFO])
-            .with_locales_and_fallback(families(SELECTED_LOCALES), FallbackOptions::no_deduplication()),
+            .with_locales_and_fallback(
+                families(SELECTED_LOCALES),
+                FallbackOptions::no_deduplication(),
+            ),
         &TestingProvider::with_decimal_symbol_like_data(),
     );
 
@@ -420,7 +432,10 @@ fn explicit_runtime() {
     let exported = export_to_map(
         DatagenDriver::new()
             .with_markers([HelloWorldV1Marker::INFO])
-            .with_locales_and_fallback(families(SELECTED_LOCALES), FallbackOptions::maximal_deduplication()),
+            .with_locales_and_fallback(
+                families(SELECTED_LOCALES),
+                FallbackOptions::maximal_deduplication(),
+            ),
         &TestingProvider::with_decimal_symbol_like_data(),
     );
 
@@ -464,7 +479,10 @@ fn explicit_runtime_retain_base() {
     let exported = export_to_map(
         DatagenDriver::new()
             .with_markers([HelloWorldV1Marker::INFO])
-            .with_locales_and_fallback(families(SELECTED_LOCALES), FallbackOptions::retain_base_languages_deduplication()),
+            .with_locales_and_fallback(
+                families(SELECTED_LOCALES),
+                FallbackOptions::retain_base_languages_deduplication(),
+            ),
         &TestingProvider::with_decimal_symbol_like_data(),
     );
 
@@ -669,7 +687,10 @@ fn explicit_runtime_und() {
     let exported = export_to_map(
         DatagenDriver::new()
             .with_markers([HelloWorldV1Marker::INFO])
-            .with_locales_and_fallback([LocaleFamily::with_descendants(langid!("und"))], FallbackOptions::maximal_deduplication()),
+            .with_locales_and_fallback(
+                [LocaleFamily::with_descendants(langid!("und"))],
+                FallbackOptions::maximal_deduplication(),
+            ),
         &TestingProvider::with_decimal_symbol_like_data(),
     );
 
@@ -704,7 +725,10 @@ fn explicit_hybrid_und() {
     let exported = export_to_map(
         DatagenDriver::new()
             .with_markers([HelloWorldV1Marker::INFO])
-            .with_locales_and_fallback([LocaleFamily::with_descendants(langid!("und"))], FallbackOptions::no_deduplication()),
+            .with_locales_and_fallback(
+                [LocaleFamily::with_descendants(langid!("und"))],
+                FallbackOptions::no_deduplication(),
+            ),
         &TestingProvider::with_decimal_symbol_like_data(),
     );
 

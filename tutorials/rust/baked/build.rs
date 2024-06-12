@@ -12,7 +12,7 @@ fn main() {
     let mod_directory = PathBuf::from(std::env::var_os("OUT_DIR").unwrap()).join("baked_data");
 
     DatagenDriver::new()
-        .with_locales_and_fallback([LocaleFamily::single(langid!("ru"))], Default::default())
+        .with_locales_and_fallback([LocaleFamily::single(langid!("ru"))], FallbackOptions::no_deduplication())
         // These are the markers required by `PluralRules::try_new_cardinal_unstable`. Compilation will
         // discard unused markers and fail if required markers are not generated, but explicitly listing the
         // markers will speed up the datagen.

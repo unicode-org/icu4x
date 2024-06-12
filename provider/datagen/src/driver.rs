@@ -343,21 +343,21 @@ impl FallbackOptions {
     /// Creates a [`FallbackOptions`] with [`DeduplicationStrategy::None`]
     pub fn no_deduplication() -> Self {
         Self {
-            deduplication_strategy: DeduplicationStrategy::None
+            deduplication_strategy: DeduplicationStrategy::None,
         }
     }
-    
+
     /// Creates a [`FallbackOptions`] with [`DeduplicationStrategy::Maximal`]
     pub fn maximal_deduplication() -> Self {
         Self {
-            deduplication_strategy: DeduplicationStrategy::Maximal
+            deduplication_strategy: DeduplicationStrategy::Maximal,
         }
     }
-    
+
     /// Creates a [`FallbackOptions`] with [`DeduplicationStrategy::RetainBaseLanguages`]
     pub fn retain_base_languages_deduplication() -> Self {
         Self {
-            deduplication_strategy: DeduplicationStrategy::RetainBaseLanguages
+            deduplication_strategy: DeduplicationStrategy::RetainBaseLanguages,
         }
     }
 }
