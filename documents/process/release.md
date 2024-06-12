@@ -53,7 +53,7 @@ Once the release checklist is complete, the assigned release driver will perform
 * Announce the release to public
   * (All releases) Send an email to [icu4x-announce](https://groups.google.com/u/0/a/unicode.org/g/icu4x-announce)
   * (All releases) Blog post on Unicode blog
-  * (Optional / milestone releases only) Submit to This Week In Rust
+  * (Major releases only) Submit to This Week In Rust
 * Keep the main branch relatively stable for 7-14 days following the release to make things easier in case a patch release is needed.
   * It's okay to land smaller or incremental changes, but avoid breaking changes during this period.
 
