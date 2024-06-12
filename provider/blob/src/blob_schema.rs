@@ -229,8 +229,7 @@ impl<'data, LocaleVecFormat: VarZeroVecFormat> BlobSchemaV2<'data, LocaleVecForm
             .get(marker_index)
             .ok_or_else(|| DataError::custom("Invalid blob bytes").with_req(marker, req))?;
         let mut cursor = ZeroTrieSimpleAscii::from_store(zerotrie).into_cursor();
-        #[allow(clippy::unwrap_used)] // DataLocale::write_to produces ASCII only
-        req.locale.write_to(&mut cursor).unwrap();
+        let _infallible_ascii = req.locale.write_to(&mut cursor);
         if !req.marker_attributes.is_empty() {
             let _infallible_ascii = cursor.write_char(REQUEST_SEPARATOR);
             req.marker_attributes
