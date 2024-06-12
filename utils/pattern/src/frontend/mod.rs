@@ -213,7 +213,7 @@ where
         })
     }
 
-    /// Creates a pattern from a UTF-8 encoded string.
+    /// Creates a pattern from a UTF-8 encoded byte slice.
     ///
     /// ✨ *Enabled with the `alloc` Cargo feature.*
     ///
@@ -221,14 +221,10 @@ where
     ///
     /// ```
     /// use icu_pattern::Pattern;
-    /// use icu_pattern::PatternItemCow;
     /// use icu_pattern::SinglePlaceholder;
-    /// use icu_pattern::SinglePlaceholderKey;
-    /// use std::borrow::Cow;
     ///
-    /// Pattern::<SinglePlaceholder, _>::
-    ///                 try_from_utf8(b"\x01 days")
-    ///                             .expect("single placeholder pattern");
+    /// Pattern::<SinglePlaceholder, _>::try_from_utf8(b"\x01 days")
+    ///     .expect("single placeholder pattern");
     /// ```
     pub fn try_from_utf8(bytes: &[u8]) -> Result<Self, Error> {
         let store = B::try_store_from_utf8(bytes).map_err(|_| Error::InvalidPattern)?;
