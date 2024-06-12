@@ -26,6 +26,9 @@ pub(crate) enum BlobSchema<'data> {
     V002Bigger(BlobSchemaV2<'data, Index32>),
 }
 
+// This is a valid separator as `DataLocale` will never produce it.
+pub(crate) const REQUEST_SEPARATOR: char = '\x1E';
+
 impl<'data> BlobSchema<'data> {
     pub fn deserialize_and_check<D: serde::Deserializer<'data>>(
         de: D,
@@ -110,8 +113,8 @@ impl<'data> BlobSchemaV1<'data> {
                             ) -> core::fmt::Result {
                                 self.0.write_to(sink)?;
                                 if !self.1.is_empty() {
-                                    "\x1E".write_to(sink)?;
-                                    self.1.write_to(sink)?;
+                                    sink.write_char(REQUEST_SEPARATOR)?;
+                                    sink.write_str(self.1)?;
                                 }
                                 Ok(())
                             }
@@ -140,7 +143,7 @@ impl<'data> BlobSchemaV1<'data> {
             .iter1_copied()
             .filter_map(|(s, _)| std::str::from_utf8(&s.0).ok())
             .filter_map(|s| {
-                if let Some((locale, attrs)) = s.split_once('\x1E') {
+                if let Some((locale, attrs)) = s.split_once(REQUEST_SEPARATOR) {
                     Some((locale.parse().ok()?, attrs.parse().ok()?))
                 } else {
                     Some((s.parse().ok()?, Default::default()))
@@ -229,7 +232,7 @@ impl<'data, LocaleVecFormat: VarZeroVecFormat> BlobSchemaV2<'data, LocaleVecForm
         #[allow(clippy::unwrap_used)] // DataLocale::write_to produces ASCII only
         req.locale.write_to(&mut cursor).unwrap();
         if !req.marker_attributes.is_empty() {
-            let _infallible_ascii = cursor.write_str("\x1E");
+            let _infallible_ascii = cursor.write_char(REQUEST_SEPARATOR);
             req.marker_attributes
                 .write_to(&mut cursor)
                 .map_err(|_| DataErrorKind::MissingLocale.with_req(marker, req))?;
@@ -261,7 +264,7 @@ impl<'data, LocaleVecFormat: VarZeroVecFormat> BlobSchemaV2<'data, LocaleVecForm
         Ok(ZeroTrieSimpleAscii::from_store(zerotrie)
             .iter()
             .filter_map(|(s, _)| {
-                if let Some((locale, attrs)) = s.split_once('\x1E') {
+                if let Some((locale, attrs)) = s.split_once(REQUEST_SEPARATOR) {
                     Some((locale.parse().ok()?, attrs.parse().ok()?))
                 } else {
                     Some((s.parse().ok()?, Default::default()))

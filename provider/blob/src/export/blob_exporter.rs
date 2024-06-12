@@ -111,7 +111,7 @@ impl DataExporter for BlobExporter<'_> {
             .entry({
                 let mut key = locale.to_string();
                 if !marker_attributes.is_empty() {
-                    key.push('\x1E');
+                    key.push(crate::blob_schema::REQUEST_SEPARATOR);
                     key.push_str(marker_attributes);
                 }
                 key.into_bytes()
