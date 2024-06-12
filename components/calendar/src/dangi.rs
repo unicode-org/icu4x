@@ -167,7 +167,7 @@ impl Dangi {
         provider: &D,
     ) -> Result<Self, DataError> {
         Ok(Self {
-            data: Some(provider.load(Default::default())?.take_payload()?),
+            data: Some(provider.load(Default::default())?.payload),
         })
     }
 

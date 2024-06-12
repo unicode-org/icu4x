@@ -55,8 +55,7 @@ impl DynamicDataMarker for BufferMarker {
 ///         buffer_provider
 ///             .load_data(HelloWorldV1Marker::INFO, req)
 ///             .expect("load should succeed")
-///             .take_payload()
-///             .unwrap()
+///             .payload
 ///             .get()
 ///     )
 ///     .expect("should deserialize"),
@@ -73,8 +72,7 @@ impl DynamicDataMarker for BufferMarker {
 ///     deserializing_provider
 ///         .load(req)
 ///         .expect("load should succeed")
-///         .take_payload()
-///         .unwrap()
+///         .payload
 ///         .get(),
 ///     &HelloWorldV1 {
 ///         message: Cow::Borrowed("Hallo Welt"),

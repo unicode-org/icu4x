@@ -1,0 +1,17 @@
+{
+  "long": {
+    "One": "{0} sekunda",
+    "Few": "{0} sekunde",
+    "Other": "{0} sekundi"
+  },
+  "short": {
+    "One": "{0} sek",
+    "Few": "{0} sek",
+    "Other": "{0} sek"
+  },
+  "narrow": {
+    "One": "{0} s",
+    "Few": "{0} s",
+    "Other": "{0} s"
+  }
+}

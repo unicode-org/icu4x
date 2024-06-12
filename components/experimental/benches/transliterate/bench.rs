@@ -8,7 +8,9 @@ use icu_locale_core::Locale;
 
 use icu_experimental::transliterate::Transliterator;
 
-include!("../../tests/transliterate/data/baked/mod.rs");
+#[allow(clippy::single_component_path_imports)]
+use icu_experimental;
+include!("../../tests/transliterate/data/provider.rs");
 
 struct BenchDataContent {
     pub num: usize,
@@ -34,7 +36,7 @@ fn bench_data_from_sources(locale_str: &str, source: &str) -> Vec<BenchDataConte
         .map(|(idx, input)| BenchDataContent {
             num: idx + 1,
             name: locale_str.to_string(),
-            translit: Transliterator::try_new_unstable(locale.clone(), &BakedDataProvider).unwrap(),
+            translit: Transliterator::try_new_unstable(locale.clone(), &TestingProvider).unwrap(),
             input,
         })
         .collect()

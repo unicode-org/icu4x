@@ -129,7 +129,7 @@ where
             locale,
             ..Default::default()
         })?
-        .take_payload()?
+        .payload
         .map_project(|data, _| pattern_for_time_length_inner(data, length, &preferences).into()))
 }
 
@@ -239,8 +239,8 @@ where
                 locale: self.locale,
                 ..Default::default()
             })
-            .and_then(DataResponse::take_payload)
-            .map_err(PatternForLengthError::Data)?;
+            .map_err(PatternForLengthError::Data)?
+            .payload;
 
         self.date_patterns_data.try_map_project(|data, _| {
             // TODO (#1131) - We may be able to remove the clone here.
@@ -378,7 +378,7 @@ where
                 locale: &locale,
                 ..Default::default()
             })
-            .and_then(DataResponse::take_payload)
+            .map(|r| r.payload)
     }
 }
 

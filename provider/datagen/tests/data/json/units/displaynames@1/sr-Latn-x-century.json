@@ -1,0 +1,17 @@
+{
+  "long": {
+    "One": "{0} vek",
+    "Few": "{0} veka",
+    "Other": "{0} vekova"
+  },
+  "short": {
+    "One": "{0} v",
+    "Few": "{0} v",
+    "Other": "{0} v"
+  },
+  "narrow": {
+    "One": "{0} v",
+    "Few": "{0} v",
+    "Other": "{0} v"
+  }
+}

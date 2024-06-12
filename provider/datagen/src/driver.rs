@@ -627,11 +627,7 @@ impl DatagenDriver {
                                 log::debug!("Falling back to und: {marker}/{locale}");
                             }
                         }
-                        return Some(
-                            data_response
-                                .take_payload()
-                                .map_err(|e| e.with_req(marker, req)),
-                        );
+                        return Some(Ok(data_response.payload));
                     }
                     Err(DataError {
                         kind: DataErrorKind::MissingLocale,
@@ -677,8 +673,8 @@ impl DatagenDriver {
 
                 let payload = provider
                     .load_data(marker, Default::default())
-                    .and_then(DataResponse::take_payload)
-                    .map_err(|e| e.with_req(marker, Default::default()))?;
+                    .map_err(|e| e.with_req(marker, Default::default()))?
+                    .payload;
 
                 let transform_duration = instant1.elapsed();
 

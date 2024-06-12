@@ -1,0 +1,12 @@
+{
+  "long": {
+    "One": "{0} nanometre",
+    "Other": "{0} nanometre"
+  },
+  "short": {
+    "Other": "{0} nm"
+  },
+  "narrow": {
+    "Other": "{0} nm"
+  }
+}

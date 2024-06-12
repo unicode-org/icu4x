@@ -391,7 +391,7 @@ where
             locale,
             ..Default::default()
         })?
-        .take_payload()?;
+        .payload;
     Ok(payload.cast())
 }
 
@@ -408,7 +408,7 @@ where
             locale,
             ..Default::default()
         })?
-        .take_payload()?;
+        .payload;
     Ok(payload.cast())
 }
 
@@ -440,87 +440,87 @@ where
     let payload = match kind {
         AnyCalendarKind::Buddhist => {
             DataProvider::<<Buddhist as CldrCalendar>::DateLengthsV1Marker>::load(provider, req)?
-                .take_payload()?
+                .payload
                 .cast()
         }
         AnyCalendarKind::Chinese => {
             DataProvider::<<Chinese as CldrCalendar>::DateLengthsV1Marker>::load(provider, req)?
-                .take_payload()?
+                .payload
                 .cast()
         }
         AnyCalendarKind::Coptic => {
             DataProvider::<<Coptic as CldrCalendar>::DateLengthsV1Marker>::load(provider, req)?
-                .take_payload()?
+                .payload
                 .cast()
         }
         AnyCalendarKind::Dangi => {
             DataProvider::<<Dangi as CldrCalendar>::DateLengthsV1Marker>::load(provider, req)?
-                .take_payload()?
+                .payload
                 .cast()
         }
         AnyCalendarKind::Ethiopian => {
             DataProvider::<<Ethiopian as CldrCalendar>::DateLengthsV1Marker>::load(provider, req)?
-                .take_payload()?
+                .payload
                 .cast()
         }
         AnyCalendarKind::EthiopianAmeteAlem => {
             DataProvider::<<Ethiopian as CldrCalendar>::DateLengthsV1Marker>::load(provider, req)?
-                .take_payload()?
+                .payload
                 .cast()
         }
         AnyCalendarKind::Gregorian => {
             DataProvider::<<Gregorian as CldrCalendar>::DateLengthsV1Marker>::load(provider, req)?
-                .take_payload()?
+                .payload
                 .cast()
         }
         AnyCalendarKind::Hebrew => {
             DataProvider::<<Hebrew as CldrCalendar>::DateLengthsV1Marker>::load(provider, req)?
-                .take_payload()?
+                .payload
                 .cast()
         }
         AnyCalendarKind::Indian => {
             DataProvider::<<Indian as CldrCalendar>::DateLengthsV1Marker>::load(provider, req)?
-                .take_payload()?
+                .payload
                 .cast()
         }
         AnyCalendarKind::IslamicCivil => DataProvider::<
             <IslamicCivil as CldrCalendar>::DateLengthsV1Marker,
         >::load(provider, req)?
-        .take_payload()?
+        .payload
         .cast(),
         AnyCalendarKind::IslamicObservational => DataProvider::<
             <IslamicObservational as CldrCalendar>::DateLengthsV1Marker,
         >::load(provider, req)?
-        .take_payload()?
+        .payload
         .cast(),
         AnyCalendarKind::IslamicTabular => DataProvider::<
             <IslamicTabular as CldrCalendar>::DateLengthsV1Marker,
         >::load(provider, req)?
-        .take_payload()?
+        .payload
         .cast(),
         AnyCalendarKind::IslamicUmmAlQura => DataProvider::<
             <IslamicUmmAlQura as CldrCalendar>::DateLengthsV1Marker,
         >::load(provider, req)?
-        .take_payload()?
+        .payload
         .cast(),
         AnyCalendarKind::Japanese => {
             DataProvider::<<Japanese as CldrCalendar>::DateLengthsV1Marker>::load(provider, req)?
-                .take_payload()?
+                .payload
                 .cast()
         }
         AnyCalendarKind::JapaneseExtended => DataProvider::<
             <JapaneseExtended as CldrCalendar>::DateLengthsV1Marker,
         >::load(provider, req)?
-        .take_payload()?
+        .payload
         .cast(),
         AnyCalendarKind::Persian => {
             DataProvider::<<Persian as CldrCalendar>::DateLengthsV1Marker>::load(provider, req)?
-                .take_payload()?
+                .payload
                 .cast()
         }
         AnyCalendarKind::Roc => {
             DataProvider::<<Roc as CldrCalendar>::DateLengthsV1Marker>::load(provider, req)?
-                .take_payload()?
+                .payload
                 .cast()
         }
         _ => {
@@ -561,87 +561,87 @@ where
     let payload = match kind {
         AnyCalendarKind::Buddhist => {
             DataProvider::<<Buddhist as CldrCalendar>::DateSymbolsV1Marker>::load(provider, req)?
-                .take_payload()?
+                .payload
                 .cast()
         }
         AnyCalendarKind::Chinese => {
             DataProvider::<<Chinese as CldrCalendar>::DateSymbolsV1Marker>::load(provider, req)?
-                .take_payload()?
+                .payload
                 .cast()
         }
         AnyCalendarKind::Coptic => {
             DataProvider::<<Coptic as CldrCalendar>::DateSymbolsV1Marker>::load(provider, req)?
-                .take_payload()?
+                .payload
                 .cast()
         }
         AnyCalendarKind::Dangi => {
             DataProvider::<<Dangi as CldrCalendar>::DateSymbolsV1Marker>::load(provider, req)?
-                .take_payload()?
+                .payload
                 .cast()
         }
         AnyCalendarKind::Ethiopian => {
             DataProvider::<<Ethiopian as CldrCalendar>::DateSymbolsV1Marker>::load(provider, req)?
-                .take_payload()?
+                .payload
                 .cast()
         }
         AnyCalendarKind::EthiopianAmeteAlem => {
             DataProvider::<<Ethiopian as CldrCalendar>::DateSymbolsV1Marker>::load(provider, req)?
-                .take_payload()?
+                .payload
                 .cast()
         }
         AnyCalendarKind::Gregorian => {
             DataProvider::<<Gregorian as CldrCalendar>::DateSymbolsV1Marker>::load(provider, req)?
-                .take_payload()?
+                .payload
                 .cast()
         }
         AnyCalendarKind::Hebrew => {
             DataProvider::<<Hebrew as CldrCalendar>::DateSymbolsV1Marker>::load(provider, req)?
-                .take_payload()?
+                .payload
                 .cast()
         }
         AnyCalendarKind::Indian => {
             DataProvider::<<Indian as CldrCalendar>::DateSymbolsV1Marker>::load(provider, req)?
-                .take_payload()?
+                .payload
                 .cast()
         }
         AnyCalendarKind::IslamicCivil => DataProvider::<
             <IslamicCivil as CldrCalendar>::DateSymbolsV1Marker,
         >::load(provider, req)?
-        .take_payload()?
+        .payload
         .cast(),
         AnyCalendarKind::IslamicObservational => DataProvider::<
             <IslamicObservational as CldrCalendar>::DateSymbolsV1Marker,
         >::load(provider, req)?
-        .take_payload()?
+        .payload
         .cast(),
         AnyCalendarKind::IslamicTabular => DataProvider::<
             <IslamicTabular as CldrCalendar>::DateSymbolsV1Marker,
         >::load(provider, req)?
-        .take_payload()?
+        .payload
         .cast(),
         AnyCalendarKind::IslamicUmmAlQura => DataProvider::<
             <IslamicUmmAlQura as CldrCalendar>::DateSymbolsV1Marker,
         >::load(provider, req)?
-        .take_payload()?
+        .payload
         .cast(),
         AnyCalendarKind::Japanese => {
             DataProvider::<<Japanese as CldrCalendar>::DateSymbolsV1Marker>::load(provider, req)?
-                .take_payload()?
+                .payload
                 .cast()
         }
         AnyCalendarKind::JapaneseExtended => DataProvider::<
             <JapaneseExtended as CldrCalendar>::DateSymbolsV1Marker,
         >::load(provider, req)?
-        .take_payload()?
+        .payload
         .cast(),
         AnyCalendarKind::Persian => {
             DataProvider::<<Persian as CldrCalendar>::DateSymbolsV1Marker>::load(provider, req)?
-                .take_payload()?
+                .payload
                 .cast()
         }
         AnyCalendarKind::Roc => {
             DataProvider::<<Roc as CldrCalendar>::DateSymbolsV1Marker>::load(provider, req)?
-                .take_payload()?
+                .payload
                 .cast()
         }
         _ => {

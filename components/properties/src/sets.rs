@@ -322,10 +322,9 @@ where
     M: DataMarker<Yokeable = PropertyCodePointSetV1<'static>>,
     P: DataProvider<M> + ?Sized,
 {
-    provider
-        .load(Default::default())
-        .and_then(DataResponse::take_payload)
-        .map(CodePointSetData::from_data)
+    Ok(CodePointSetData::from_data(
+        provider.load(Default::default())?.payload,
+    ))
 }
 
 //
@@ -1931,7 +1930,7 @@ macro_rules! make_unicode_set_property {
         $vis fn $funcname(
             provider: &(impl DataProvider<$data_marker> + ?Sized)
         ) -> Result<UnicodeSetData, DataError> {
-            provider.load(Default::default()).and_then(DataResponse::take_payload).map(UnicodeSetData::from_data)
+            Ok(UnicodeSetData::from_data(provider.load(Default::default())?.payload))
         }
         $(#[$doc])*
         #[cfg(feature = "compiled_data")]

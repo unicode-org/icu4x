@@ -41,6 +41,7 @@ members = [
     "provider/datagen",
     "provider/fs",
     "provider/registry",
+    "provider/icu4x-datagen",
 
     # Baked data
     "provider/data/calendar",
@@ -89,13 +90,14 @@ members = [
     "tools/ffi_coverage",
     "tools/testdata-scripts",
     "tools/md-tests",
-    "tools/graveyard",
 ]
 # Note: Workspaces in subdirectories, such as tutorials/crates, are
 # implicitly excluded from the main workspace.
 exclude = [
     # Tutorials are tested outside the workspace to simulate external users
     "tutorials",
+    # Don't publish the graveyard
+    "tools/graveyard"
 ]
 
 [workspace.package]

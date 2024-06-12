@@ -1,0 +1,11 @@
+{
+  "long": {
+    "Other": "{0} センチメートル"
+  },
+  "short": {
+    "Other": "{0} cm"
+  },
+  "narrow": {
+    "Other": "{0}cm"
+  }
+}

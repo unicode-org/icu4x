@@ -52,10 +52,10 @@ macro_rules! expand {
                         .map_err(|_| DataError::custom("Error in constructing CodePointInversionListAndStringList from deserialized BinaryProperty data"))?;
 
                     Ok(DataResponse {
-                        metadata: DataResponseMetadata::default(),
-                        payload: Some(DataPayload::from_owned(
+                        metadata: Default::default(),
+                        payload: DataPayload::from_owned(
                             PropertyUnicodeSetV1::CPInversionListStrList(uniset),
-                        )),
+                        ),
                     })
                 }
             }
@@ -83,8 +83,8 @@ fn test_basic() {
 
     let payload: DataPayload<BasicEmojiV1Marker> = provider
         .load(Default::default())
-        .and_then(DataResponse::take_payload)
-        .expect("Loading was successful");
+        .expect("Loading was successful")
+        .payload;
 
     let basic_emoji: &CodePointInversionListAndStringList = match payload.get() {
         PropertyUnicodeSetV1::CPInversionListStrList(ref l) => l,

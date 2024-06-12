@@ -17,20 +17,15 @@ pub mod ffi {
     pub enum ICU4XDataError {
         Unknown = 0x00,
         MissingDataMarker = 0x01,
-        MissingVariant = 0x02,
-        MissingLocale = 0x03,
-        NeedsVariant = 0x04,
-        NeedsLocale = 0x05,
-        ExtraneousLocale = 0x06,
-        FilteredResource = 0x07,
-        MismatchedType = 0x08,
-        MissingPayload = 0x09,
-        InvalidState = 0x0A,
-        Custom = 0x0B,
-        Io = 0x0C,
-        UnavailableBufferFormat = 0x0D,
-        MismatchedAnyBuffer = 0x0E,
-        DataStructValidityError = 0x0F,
+        MissingLocale = 0x02,
+        NeedsLocale = 0x03,
+        ExtraneousLocale = 0x04,
+        FilteredResource = 0x05,
+        MismatchedType = 0x06,
+        Custom = 0x07,
+        Io = 0x08,
+        UnavailableBufferFormat = 0x09,
+        InconsistentData = 0x0A,
     }
 
     #[derive(Debug, PartialEq, Eq)]
@@ -108,19 +103,14 @@ pub mod ffi {
         // general data errors
         // See DataError
         DataMissingDataMarkerError = 0x1_00,
-        DataMissingVariantError = 0x1_01,
         DataMissingLocaleError = 0x1_02,
-        DataNeedsVariantError = 0x1_03,
         DataNeedsLocaleError = 0x1_04,
         DataExtraneousLocaleError = 0x1_05,
         DataFilteredResourceError = 0x1_06,
         DataMismatchedTypeError = 0x1_07,
-        DataMissingPayloadError = 0x1_08,
-        DataInvalidStateError = 0x1_09,
         DataCustomError = 0x1_0A,
         DataIoError = 0x1_0B,
         DataUnavailableBufferFormatError = 0x1_0C,
-        DataMismatchedAnyBufferError = 0x1_0D,
 
         // property errors
         PropertyUnexpectedPropertyNameError = 0x4_02,
@@ -147,8 +137,6 @@ impl From<DataError> for ICU4XError {
             DataErrorKind::ExtraneousLocale => ICU4XError::DataExtraneousLocaleError,
             DataErrorKind::FilteredResource => ICU4XError::DataFilteredResourceError,
             DataErrorKind::MismatchedType(..) => ICU4XError::DataMismatchedTypeError,
-            DataErrorKind::MissingPayload => ICU4XError::DataMissingPayloadError,
-            DataErrorKind::InvalidState => ICU4XError::DataInvalidStateError,
             DataErrorKind::Custom => ICU4XError::DataCustomError,
             #[cfg(all(
                 feature = "provider_fs",
@@ -174,8 +162,6 @@ impl From<DataError> for ICU4XDataError {
             DataErrorKind::ExtraneousLocale => Self::ExtraneousLocale,
             DataErrorKind::FilteredResource => Self::FilteredResource,
             DataErrorKind::MismatchedType(..) => Self::MismatchedType,
-            DataErrorKind::MissingPayload => Self::MissingPayload,
-            DataErrorKind::InvalidState => Self::InvalidState,
             DataErrorKind::Custom => Self::Custom,
             #[cfg(all(
                 feature = "provider_fs",
@@ -185,6 +171,7 @@ impl From<DataError> for ICU4XDataError {
             // datagen only
             // DataErrorKind::MissingSourceData(..) => ..,
             DataErrorKind::UnavailableBufferFormat(..) => Self::UnavailableBufferFormat,
+            DataErrorKind::InconsistentData(..) => Self::InconsistentData,
             _ => Self::Unknown,
         }
     }

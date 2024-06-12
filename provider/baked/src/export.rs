@@ -423,7 +423,7 @@ impl DataExporter for BakedExporter {
                 ) -> Result<icu_provider::DataResponse<#marker_bake>, icu_provider::DataError> {
                     if req.locale.is_empty() {
                         Ok(icu_provider::DataResponse {
-                            payload: Some(icu_provider::DataPayload::from_static_ref(Self::#singleton_ident)),
+                            payload: icu_provider::DataPayload::from_static_ref(Self::#singleton_ident),
                             metadata: Default::default(),
                         })
                     } else {
@@ -536,7 +536,7 @@ impl DataExporter for BakedExporter {
 
                         if let Some(payload) = lookup(req) {
                             Ok(icu_provider::DataResponse {
-                                payload: Some(#into_data_payload),
+                                payload: #into_data_payload,
                                 metadata: Default::default(),
                             })
                         } else {
@@ -571,7 +571,7 @@ impl DataExporter for BakedExporter {
                     };
 
                     Ok(icu_provider::DataResponse {
-                        payload: Some(#into_data_payload),
+                        payload: #into_data_payload,
                         metadata
                     })
                 }

@@ -54,7 +54,7 @@ impl DataProvider<ShortCompactDecimalFormatDataV1Marker> for DatagenProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(result)),
+            payload: DataPayload::from_owned(result),
         })
     }
 }
@@ -102,7 +102,7 @@ impl DataProvider<LongCompactDecimalFormatDataV1Marker> for DatagenProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(result)),
+            payload: DataPayload::from_owned(result),
         })
     }
 }
@@ -143,8 +143,7 @@ mod tests {
                 ..Default::default()
             })
             .unwrap()
-            .take_payload()
-            .unwrap();
+            .payload;
 
         let nonzero_copy: Box<[(i8, Count, Pattern)]> = fr_compact_long
             .get()
@@ -203,16 +202,15 @@ mod tests {
     fn test_compact_short() {
         let provider = DatagenProvider::new_testing();
 
-        let ja_compact_short: DataPayload<ShortCompactDecimalFormatDataV1Marker> = provider
+        let ja_compact_short: DataResponse<ShortCompactDecimalFormatDataV1Marker> = provider
             .load(DataRequest {
                 locale: &langid!("ja").into(),
                 ..Default::default()
             })
-            .unwrap()
-            .take_payload()
             .unwrap();
 
         let nonzero_copy: Box<[(i8, Count, Pattern)]> = ja_compact_short
+            .payload
             .get()
             .patterns
             .iter0()

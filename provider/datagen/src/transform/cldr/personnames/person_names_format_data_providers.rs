@@ -24,12 +24,10 @@ impl DataProvider<PersonNamesFormatV1Marker> for crate::DatagenProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(
-                PersonNamesFormatV1::try_from(data).map_err(|e| {
-                    DataError::custom("data for PersonNamesFormattingDefinition")
-                        .with_display_context(&e)
-                })?,
-            )),
+            payload: DataPayload::from_owned(PersonNamesFormatV1::try_from(data).map_err(|e| {
+                DataError::custom("data for PersonNamesFormattingDefinition")
+                    .with_display_context(&e)
+            })?),
         })
     }
 }
@@ -169,7 +167,7 @@ mod tests {
                 locale: &langid!("en-001").into(),
                 ..Default::default()
             })?
-            .take_payload()?;
+            .payload;
 
         let real_data: &PersonNamesFormatV1 = data_payload.get();
 
@@ -192,7 +190,7 @@ mod tests {
                 locale: &langid!("en-001").into(),
                 ..Default::default()
             })?
-            .take_payload()?;
+            .payload;
 
         let real_data: &PersonNamesFormatV1 = data_payload.get();
         let test_mask: PersonNamesFormattingAttributesMask =
@@ -240,7 +238,7 @@ mod tests {
                 locale: &langid!("es").into(),
                 ..Default::default()
             })?
-            .take_payload()?;
+            .payload;
 
         let real_data: &PersonNamesFormatV1 = data_payload.get();
         let test_mask: PersonNamesFormattingAttributesMask =

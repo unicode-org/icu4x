@@ -377,7 +377,7 @@ impl PluralRules {
                     locale,
                     ..Default::default()
                 })?
-                .take_payload()?
+                .payload
                 .cast(),
         ))
     }
@@ -439,7 +439,7 @@ impl PluralRules {
                     locale,
                     ..Default::default()
                 })?
-                .take_payload()?
+                .payload
                 .cast(),
         ))
     }
@@ -783,7 +783,7 @@ where
                 locale,
                 ..Default::default()
             })?
-            .take_payload()?;
+            .payload;
 
         Ok(Self { rules, ranges })
     }

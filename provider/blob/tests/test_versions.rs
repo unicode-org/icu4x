@@ -36,8 +36,7 @@ fn check_hello_world(blob_provider: impl DataProvider<HelloWorldV1Marker>) {
                 ..Default::default()
             })
             .unwrap()
-            .take_payload()
-            .unwrap();
+            .payload;
         let expected_result = hello_world_provider
             .load(DataRequest {
                 locale: &locale,
@@ -45,8 +44,7 @@ fn check_hello_world(blob_provider: impl DataProvider<HelloWorldV1Marker>) {
                 ..Default::default()
             })
             .unwrap()
-            .take_payload()
-            .unwrap();
+            .payload;
         assert_eq!(blob_result, expected_result, "{locale:?}");
     }
 }
@@ -130,8 +128,7 @@ fn test_v2_bigger() {
             },
         )
         .unwrap()
-        .take_payload()
-        .unwrap();
+        .payload;
         assert_eq!(blob_result.get().message, format!("Hello {loc}!"))
     }
 }
@@ -142,9 +139,9 @@ impl DataProvider<HelloWorldV1Marker> for ManyLocalesProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(HelloWorldV1 {
+            payload: DataPayload::from_owned(HelloWorldV1 {
                 message: format!("Hello {}!", req.locale).into(),
-            })),
+            }),
         })
     }
 }

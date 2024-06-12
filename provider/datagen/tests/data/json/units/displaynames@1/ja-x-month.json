@@ -1,0 +1,11 @@
+{
+  "long": {
+    "Other": "{0} か月"
+  },
+  "short": {
+    "Other": "{0} か月"
+  },
+  "narrow": {
+    "Other": "{0}m"
+  }
+}

@@ -27,11 +27,9 @@ impl DataProvider<VariantDisplayNamesV1Marker> for DatagenProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(
-                VariantDisplayNamesV1::try_from(data).map_err(|e| {
-                    DataError::custom("data for VariantDisplayNames").with_display_context(&e)
-                })?,
-            )),
+            payload: DataPayload::from_owned(VariantDisplayNamesV1::try_from(data).map_err(
+                |e| DataError::custom("data for VariantDisplayNames").with_display_context(&e),
+            )?),
         })
     }
 }
@@ -97,8 +95,7 @@ mod tests {
                 ..Default::default()
             })
             .unwrap()
-            .take_payload()
-            .unwrap();
+            .payload;
 
         assert_eq!(
             data.get()
