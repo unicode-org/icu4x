@@ -5,6 +5,7 @@
 //! Code for the [`SinglePlaceholder`] pattern backend.
 
 use core::convert::Infallible;
+use core::str::Utf8Error;
 use core::{cmp::Ordering, str::FromStr};
 use writeable::adapters::WriteableAsTryWriteableInfallible;
 use writeable::Writeable;
@@ -238,9 +239,8 @@ impl PatternBackend for SinglePlaceholder {
         Ok(result)
     }
 
-    fn try_store_from_utf8(utf8: &[u8]) -> Result<&Self::Store, Error> {
-        let store = core::str::from_utf8(utf8).map_err(|_| Error::InvalidPattern)?;
-        Self::validate_store(store)?;
+    fn try_store_from_utf8(utf8: &[u8]) -> Result<&Self::Store, Utf8Error> {
+        let store = core::str::from_utf8(utf8)?;
         Ok(store)
     }
 }

@@ -228,15 +228,15 @@ where
     ///
     /// Pattern::<SinglePlaceholder, _>::
     ///                 try_from_utf8("{0} days".as_bytes())
-    ///                             .expect("valid pattern items");
+    ///                             .expect("single placeholder pattern");
     /// ```
     pub fn try_from_utf8(bytes: &[u8]) -> Result<Self, Error> {
-        let store = B::try_store_from_utf8(bytes).map_err(|e| Error::from(e))?;
+        let store = B::try_store_from_utf8(bytes).map_err(|_| Error::InvalidPattern)?;
         #[cfg(debug_assertions)]
         match B::validate_store(core::borrow::Borrow::borrow(&store)) {
             Ok(()) => (),
             Err(e) => {
-                debug_assert!(false, "{:?}", e);
+                debug_assert!(false, "Pattern validation failed: {:?}", e);
             }
         };
 
@@ -454,7 +454,7 @@ fn test_try_from_utf8() {
     match x {
         Ok(p) => {
             let y = p.interpolate([1]);
-            println!("{y}");
+            println!("Correct: {y}");
         }
         Err(e) => {
             println!("Error: {e}");

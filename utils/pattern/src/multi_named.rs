@@ -7,6 +7,7 @@
 #[cfg(feature = "alloc")]
 use alloc::{borrow::Cow, collections::BTreeMap, str::FromStr, string::String};
 use core::fmt;
+use core::str::Utf8Error;
 #[cfg(feature = "litemap")]
 use litemap::LiteMap;
 use writeable::Writeable;
@@ -370,8 +371,8 @@ impl PatternBackend for MultiNamedPlaceholder {
     }
 
     #[inline]
-    fn try_store_from_utf8(utf8: &[u8]) -> Result<&Self::Store, Self::StoreFromUtf8Error> {
-        core::str::from_utf8(utf8)
+    fn try_store_from_utf8(utf8: &[u8]) -> Result<&Self::Store, Utf8Error> {
+         core::str::from_utf8(utf8)
     }
 }
 

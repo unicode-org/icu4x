@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use core::str::Utf8Error;
+
 use crate::Error;
 use writeable::{Part, TryWriteable};
 
@@ -103,7 +105,7 @@ pub trait PatternBackend: crate::private::Sealed + 'static {
 
     /// Converts a byte slice store to this pattern backend's store.
     #[doc(hidden)] // TODO(#4467): Should be internal
-    fn try_store_from_utf8(utf8: &[u8]) -> Result<&Self::Store, Self::StoreFromUtf8Error>;
+    fn try_store_from_utf8(utf8: &[u8]) -> Result<&Self::Store, Utf8Error>;
 
     /// Iterates over the pattern items in a store.
     #[doc(hidden)] // TODO(#4467): Should be internal
