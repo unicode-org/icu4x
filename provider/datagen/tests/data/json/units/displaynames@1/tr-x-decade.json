@@ -1,0 +1,14 @@
+{
+  "long": {
+    "One": "{0} on yıl",
+    "Other": "{0} on yıl"
+  },
+  "short": {
+    "One": "{0} on yıl",
+    "Other": "{0} on yıl"
+  },
+  "narrow": {
+    "One": "{0} on yıl",
+    "Other": "{0} on yıl"
+  }
+}

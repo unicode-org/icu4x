@@ -99,7 +99,7 @@ impl DataProvider<CollationFallbackSupplementV1Marker> for DatagenProvider {
         };
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(data)),
+            payload: DataPayload::from_owned(data),
         })
     }
 }
@@ -192,12 +192,12 @@ macro_rules! collation_provider {
                         })?;
 
                     Ok(DataResponse {
-                        metadata: DataResponseMetadata::default(),
+                        metadata: Default::default(),
                         // The struct conversion is macro-based instead of
                         // using a method on the Serde struct, because the
                         // method approach caused lifetime issues that I
                         // didn't know how to solve.
-                        payload: Some(DataPayload::from_owned($conversion)),
+                        payload: DataPayload::from_owned($conversion),
                     })
                 }
             }

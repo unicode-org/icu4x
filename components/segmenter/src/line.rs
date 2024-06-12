@@ -570,7 +570,7 @@ impl LineSegmenter {
     {
         Ok(Self {
             options,
-            payload: provider.load(Default::default())?.take_payload()?,
+            payload: provider.load(Default::default())?.payload,
             complex: ComplexPayloads::try_new_lstm(provider)?,
         })
     }
@@ -630,7 +630,7 @@ impl LineSegmenter {
     {
         Ok(Self {
             options,
-            payload: provider.load(Default::default())?.take_payload()?,
+            payload: provider.load(Default::default())?.payload,
             // Line segmenter doesn't need to load CJ dictionary because UAX 14 rules handles CJK
             // characters [1]. Southeast Asian languages however require complex context analysis
             // [2].
@@ -1376,8 +1376,7 @@ mod tests {
             Default::default(),
         )
         .expect("Loading should succeed!")
-        .take_payload()
-        .expect("Data should be present!");
+        .payload;
 
         let get_linebreak_property = |codepoint| {
             payload.get().get_linebreak_property_utf32_with_rule(
@@ -1411,8 +1410,7 @@ mod tests {
             Default::default(),
         )
         .expect("Loading should succeed!")
-        .take_payload()
-        .expect("Data should be present!");
+        .payload;
         let lb_data: &RuleBreakDataV1 = payload.get();
 
         let is_break = |left, right| {

@@ -56,7 +56,7 @@ where
         Ok(result.into())
     })?;
     Ok(DataResponse {
-        payload: Some(new_payload),
+        payload: new_payload,
         metadata: Default::default(),
     })
 }
@@ -107,7 +107,7 @@ where
         Ok(result.into())
     })?;
     Ok(DataResponse {
-        payload: Some(new_payload),
+        payload: new_payload,
         metadata: Default::default(),
     })
 }
@@ -139,7 +139,7 @@ where
         Ok(YearNamesV1::Eras(result.clone()))
     })?;
     Ok(DataResponse {
-        payload: Some(new_payload),
+        payload: new_payload,
         metadata: Default::default(),
     })
 }
@@ -180,7 +180,7 @@ where
         Ok(result.into())
     })?;
     Ok(DataResponse {
-        payload: Some(new_payload),
+        payload: new_payload,
         metadata: Default::default(),
     })
 }
@@ -470,8 +470,7 @@ mod tests {
                 ..Default::default()
             })
             .unwrap()
-            .take_payload()
-            .unwrap();
+            .payload;
         let neo_month_abbreviated: DataPayload<GregorianMonthNamesV1Marker> = symbols
             .load(DataRequest {
                 locale: &"en".parse().unwrap(),
@@ -479,8 +478,7 @@ mod tests {
                 ..Default::default()
             })
             .unwrap()
-            .take_payload()
-            .unwrap();
+            .payload;
 
         assert_eq!(
             format!("{neo_month_abbreviated:?}"),
@@ -496,8 +494,7 @@ mod tests {
                 ..Default::default()
             })
             .unwrap()
-            .take_payload()
-            .unwrap();
+            .payload;
         let neo_month_abbreviated: DataPayload<HebrewMonthNamesV1Marker> = symbols
             .load(DataRequest {
                 locale: &"en".parse().unwrap(),
@@ -505,8 +502,7 @@ mod tests {
                 ..Default::default()
             })
             .unwrap()
-            .take_payload()
-            .unwrap();
+            .payload;
 
         assert_eq!(
             format!("{neo_month_abbreviated:?}"),
@@ -522,8 +518,7 @@ mod tests {
                 ..Default::default()
             })
             .unwrap()
-            .take_payload()
-            .unwrap();
+            .payload;
         let neo_weekdays_abbreviated: DataPayload<WeekdayNamesV1Marker> = symbols
             .load(DataRequest {
                 locale: &"en".parse().unwrap(),
@@ -531,8 +526,7 @@ mod tests {
                 ..Default::default()
             })
             .unwrap()
-            .take_payload()
-            .unwrap();
+            .payload;
 
         assert_eq!(
             format!("{neo_weekdays_abbreviated:?}"),
@@ -548,8 +542,7 @@ mod tests {
                 ..Default::default()
             })
             .unwrap()
-            .take_payload()
-            .unwrap();
+            .payload;
         let neo_weekdays_short: DataPayload<WeekdayNamesV1Marker> = symbols
             .load(DataRequest {
                 locale: &"en".parse().unwrap(),
@@ -557,8 +550,7 @@ mod tests {
                 ..Default::default()
             })
             .unwrap()
-            .take_payload()
-            .unwrap();
+            .payload;
 
         assert_eq!(
             format!("{neo_weekdays_short:?}"),
@@ -574,8 +566,7 @@ mod tests {
                 ..Default::default()
             })
             .unwrap()
-            .take_payload()
-            .unwrap();
+            .payload;
         let neo_eras_wide: DataPayload<GregorianYearNamesV1Marker> = symbols
             .load(DataRequest {
                 locale: &"en".parse().unwrap(),
@@ -583,8 +574,7 @@ mod tests {
                 ..Default::default()
             })
             .unwrap()
-            .take_payload()
-            .unwrap();
+            .payload;
 
         assert_eq!(
             format!("{neo_eras_wide:?}"),
@@ -600,8 +590,7 @@ mod tests {
                 ..Default::default()
             })
             .unwrap()
-            .take_payload()
-            .unwrap();
+            .payload;
         let neo_dayperiods_abbreviated: DataPayload<DayPeriodNamesV1Marker> = symbols
             .load(DataRequest {
                 locale: &"en".parse().unwrap(),
@@ -609,8 +598,7 @@ mod tests {
                 ..Default::default()
             })
             .unwrap()
-            .take_payload()
-            .unwrap();
+            .payload;
 
         assert_eq!(
             format!("{neo_dayperiods_abbreviated:?}"),

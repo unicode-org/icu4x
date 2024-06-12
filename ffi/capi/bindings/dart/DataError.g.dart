@@ -8,11 +8,7 @@ enum DataError {
 
   missingDataMarker,
 
-  missingVariant,
-
   missingLocale,
-
-  needsVariant,
 
   needsLocale,
 
@@ -22,17 +18,11 @@ enum DataError {
 
   mismatchedType,
 
-  missingPayload,
-
-  invalidState,
-
   custom,
 
   io,
 
   unavailableBufferFormat,
 
-  mismatchedAnyBuffer,
-
-  dataStructValidityError;
+  inconsistentData;
 }

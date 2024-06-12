@@ -324,7 +324,7 @@ macro_rules! make_map_property {
         $vis fn $name(
             provider: &(impl DataProvider<$data_marker> + ?Sized)
         ) -> Result<CodePointMapData<$value_ty>, DataError> {
-            provider.load(Default::default()).and_then(DataResponse::take_payload).map(CodePointMapData::from_data)
+            Ok(CodePointMapData::from_data(provider.load(Default::default())?.payload))
         }
         $(#[$doc])*
         #[cfg(feature = "compiled_data")]

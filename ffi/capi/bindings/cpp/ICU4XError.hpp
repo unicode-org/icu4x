@@ -21,19 +21,14 @@ inline ICU4XError ICU4XError::FromFFI(capi::ICU4XError c_enum) {
   switch (c_enum) {
     case capi::ICU4XError_UnknownError:
     case capi::ICU4XError_DataMissingDataMarkerError:
-    case capi::ICU4XError_DataMissingVariantError:
     case capi::ICU4XError_DataMissingLocaleError:
-    case capi::ICU4XError_DataNeedsVariantError:
     case capi::ICU4XError_DataNeedsLocaleError:
     case capi::ICU4XError_DataExtraneousLocaleError:
     case capi::ICU4XError_DataFilteredResourceError:
     case capi::ICU4XError_DataMismatchedTypeError:
-    case capi::ICU4XError_DataMissingPayloadError:
-    case capi::ICU4XError_DataInvalidStateError:
     case capi::ICU4XError_DataCustomError:
     case capi::ICU4XError_DataIoError:
     case capi::ICU4XError_DataUnavailableBufferFormatError:
-    case capi::ICU4XError_DataMismatchedAnyBufferError:
     case capi::ICU4XError_PropertyUnexpectedPropertyNameError:
     case capi::ICU4XError_DateTimePatternError:
     case capi::ICU4XError_DateTimeMissingInputFieldError:

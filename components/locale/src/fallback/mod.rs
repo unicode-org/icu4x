@@ -145,13 +145,13 @@ impl LocaleFallbacker {
             + DataProvider<CollationFallbackSupplementV1Marker>
             + ?Sized,
     {
-        let likely_subtags = provider.load(Default::default())?.take_payload()?;
-        let parents = provider.load(Default::default())?.take_payload()?;
+        let likely_subtags = provider.load(Default::default())?.payload;
+        let parents = provider.load(Default::default())?.payload;
         let collation_supplement = match DataProvider::<CollationFallbackSupplementV1Marker>::load(
             provider,
             Default::default(),
         ) {
-            Ok(response) => Some(response.take_payload()?),
+            Ok(response) => Some(response.payload),
             // It is expected that not all keys are present
             Err(DataError {
                 kind: DataErrorKind::MissingDataMarker,

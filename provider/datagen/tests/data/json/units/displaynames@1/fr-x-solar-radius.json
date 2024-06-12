@@ -1,0 +1,14 @@
+{
+  "long": {
+    "One": "{0} rayon solaire",
+    "Other": "{0} rayons solaires"
+  },
+  "short": {
+    "One": "{0} R☉",
+    "Other": "{0} R☉"
+  },
+  "narrow": {
+    "One": "{0}R☉",
+    "Other": "{0}R☉"
+  }
+}

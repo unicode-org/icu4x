@@ -1,0 +1,14 @@
+{
+  "long": {
+    "One": "{0} nanosaniye",
+    "Other": "{0} nanosaniye"
+  },
+  "short": {
+    "One": "{0} nsn",
+    "Other": "{0} nsn"
+  },
+  "narrow": {
+    "One": "{0} nsn",
+    "Other": "{0} nsn"
+  }
+}

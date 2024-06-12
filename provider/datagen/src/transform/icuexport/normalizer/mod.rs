@@ -56,8 +56,8 @@ macro_rules! normalization_data_provider {
                     .map_err(|e| DataError::custom("trie conversion").with_display_context(&e))?;
 
                 Ok(DataResponse {
-                    metadata: DataResponseMetadata::default(),
-                    payload: Some(DataPayload::from_owned(DecompositionDataV1 { trie })),
+                    metadata: Default::default(),
+                    payload: DataPayload::from_owned(DecompositionDataV1 { trie }),
                 })
             },
             toml_data // simply matches the identifier in the above block
@@ -76,12 +76,12 @@ macro_rules! normalization_supplement_provider {
                     .map_err(|e| DataError::custom("trie conversion").with_display_context(&e))?;
 
                 Ok(DataResponse {
-                    metadata: DataResponseMetadata::default(),
-                    payload: Some(DataPayload::from_owned(DecompositionSupplementV1 {
+                    metadata: Default::default(),
+                    payload: DataPayload::from_owned(DecompositionSupplementV1 {
                         trie,
                         flags: toml_data.flags,
                         passthrough_cap: toml_data.cap,
-                    })),
+                    }),
                 })
             },
             toml_data // simply matches the identifier in the above block
@@ -105,11 +105,11 @@ macro_rules! normalization_tables_provider {
                     })
                     .collect::<Result<Vec<char>, DataError>>()?;
                 Ok(DataResponse {
-                    metadata: DataResponseMetadata::default(),
-                    payload: Some(DataPayload::from_owned(DecompositionTablesV1 {
+                    metadata: Default::default(),
+                    payload: DataPayload::from_owned(DecompositionTablesV1 {
                         scalars16: ZeroVec::alloc_from_slice(&toml_data.scalars16),
                         scalars24: ZeroVec::alloc_from_slice(&scalars24),
-                    })),
+                    }),
                 })
             },
             toml_data // simply matches the identifier in the above block
@@ -125,12 +125,12 @@ macro_rules! normalization_canonical_compositions_provider {
             $file_name,
             {
                 Ok(DataResponse {
-                    metadata: DataResponseMetadata::default(),
-                    payload: Some(DataPayload::from_owned(CanonicalCompositionsV1 {
+                    metadata: Default::default(),
+                    payload: DataPayload::from_owned(CanonicalCompositionsV1 {
                         canonical_compositions: Char16Trie::new(ZeroVec::alloc_from_slice(
                             &toml_data.compositions,
                         )),
-                    })),
+                    }),
                 })
             },
             toml_data // simply matches the identifier in the above block
@@ -157,13 +157,11 @@ macro_rules! normalization_non_recursive_decomposition_supplement_provider {
                     .collect::<Result<Vec<char>, DataError>>()?;
 
                 Ok(DataResponse {
-                    metadata: DataResponseMetadata::default(),
-                    payload: Some(DataPayload::from_owned(
-                        NonRecursiveDecompositionSupplementV1 {
-                            trie,
-                            scalars24: ZeroVec::alloc_from_slice(&scalars24),
-                        },
-                    )),
+                    metadata: Default::default(),
+                    payload: DataPayload::from_owned(NonRecursiveDecompositionSupplementV1 {
+                        trie,
+                        scalars24: ZeroVec::alloc_from_slice(&scalars24),
+                    }),
                 })
             },
             toml_data // simply matches the identifier in the above block

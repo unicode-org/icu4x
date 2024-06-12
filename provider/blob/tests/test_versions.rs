@@ -18,7 +18,7 @@ const BLOB_V2: &[u8] = include_bytes!("data/v2.postcard");
 fn run_driver(exporter: BlobExporter) -> Result<(), DataError> {
     DatagenDriver::new()
         .with_markers([icu_provider::hello_world::HelloWorldV1Marker::INFO])
-        .with_locales_and_fallback([LocaleFamily::FULL], Default::default())
+        .with_locales_and_fallback([LocaleFamily::FULL], FallbackOptions::no_deduplication())
         .export(&icu_provider::hello_world::HelloWorldProvider, exporter)
 }
 
@@ -32,8 +32,7 @@ fn check_hello_world(blob_provider: impl DataProvider<HelloWorldV1Marker>) {
                 ..Default::default()
             })
             .unwrap()
-            .take_payload()
-            .unwrap();
+            .payload;
         let expected_result = hello_world_provider
             .load(DataRequest {
                 locale: &locale,
@@ -41,8 +40,7 @@ fn check_hello_world(blob_provider: impl DataProvider<HelloWorldV1Marker>) {
                 ..Default::default()
             })
             .unwrap()
-            .take_payload()
-            .unwrap();
+            .payload;
         assert_eq!(blob_result, expected_result, "{locale:?}");
     }
 }
@@ -82,7 +80,7 @@ fn test_v2_bigger() {
     let exporter = BlobExporter::new_v2_with_sink(Box::new(&mut blob));
     DatagenDriver::new()
         .with_markers([icu_provider::hello_world::HelloWorldV1Marker::INFO])
-        .with_locales_and_fallback([LocaleFamily::FULL], Default::default())
+        .with_locales_and_fallback([LocaleFamily::FULL], FallbackOptions::no_deduplication())
         .export(&ManyLocalesProvider, exporter)
         .unwrap();
 
@@ -122,8 +120,7 @@ fn test_v2_bigger() {
             },
         )
         .unwrap()
-        .take_payload()
-        .unwrap();
+        .payload;
         assert_eq!(blob_result.get().message, format!("Hello {loc}!"))
     }
 }
@@ -134,9 +131,9 @@ impl DataProvider<HelloWorldV1Marker> for ManyLocalesProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(HelloWorldV1 {
+            payload: DataPayload::from_owned(HelloWorldV1 {
                 message: format!("Hello {}!", req.locale).into(),
-            })),
+            }),
         })
     }
 }

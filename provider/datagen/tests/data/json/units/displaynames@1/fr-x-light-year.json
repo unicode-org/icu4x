@@ -1,0 +1,14 @@
+{
+  "long": {
+    "One": "{0} année-lumière",
+    "Other": "{0} années-lumière"
+  },
+  "short": {
+    "One": "{0} al",
+    "Other": "{0} al"
+  },
+  "narrow": {
+    "One": "{0} al",
+    "Other": "{0} al"
+  }
+}

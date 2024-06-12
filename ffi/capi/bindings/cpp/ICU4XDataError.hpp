@@ -21,20 +21,15 @@ inline ICU4XDataError ICU4XDataError::FromFFI(capi::ICU4XDataError c_enum) {
   switch (c_enum) {
     case capi::ICU4XDataError_Unknown:
     case capi::ICU4XDataError_MissingDataMarker:
-    case capi::ICU4XDataError_MissingVariant:
     case capi::ICU4XDataError_MissingLocale:
-    case capi::ICU4XDataError_NeedsVariant:
     case capi::ICU4XDataError_NeedsLocale:
     case capi::ICU4XDataError_ExtraneousLocale:
     case capi::ICU4XDataError_FilteredResource:
     case capi::ICU4XDataError_MismatchedType:
-    case capi::ICU4XDataError_MissingPayload:
-    case capi::ICU4XDataError_InvalidState:
     case capi::ICU4XDataError_Custom:
     case capi::ICU4XDataError_Io:
     case capi::ICU4XDataError_UnavailableBufferFormat:
-    case capi::ICU4XDataError_MismatchedAnyBuffer:
-    case capi::ICU4XDataError_DataStructValidityError:
+    case capi::ICU4XDataError_InconsistentData:
       return static_cast<ICU4XDataError::Value>(c_enum);
     default:
       abort();

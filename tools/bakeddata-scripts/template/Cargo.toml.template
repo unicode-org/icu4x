@@ -20,3 +20,5 @@ rust-version.workspace = true
 cldr = { tagged = "_cldr_tag_" }
 icuexport = { tagged = "_icuexport_tag_" }
 segmenter_lstm = { tagged = "_segmenter_lstm_tag_" }
+
+[dependencies]

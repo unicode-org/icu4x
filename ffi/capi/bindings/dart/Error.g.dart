@@ -12,11 +12,7 @@ enum Error {
 
   dataMissingDataMarkerError,
 
-  dataMissingVariantError,
-
   dataMissingLocaleError,
-
-  dataNeedsVariantError,
 
   dataNeedsLocaleError,
 
@@ -26,17 +22,11 @@ enum Error {
 
   dataMismatchedTypeError,
 
-  dataMissingPayloadError,
-
-  dataInvalidStateError,
-
   dataCustomError,
 
   dataIoError,
 
   dataUnavailableBufferFormatError,
-
-  dataMismatchedAnyBufferError,
 
   propertyUnexpectedPropertyNameError,
 
@@ -64,12 +54,8 @@ enum Error {
         return 0;
       case dataMissingDataMarkerError:
         return 256;
-      case dataMissingVariantError:
-        return 257;
       case dataMissingLocaleError:
         return 258;
-      case dataNeedsVariantError:
-        return 259;
       case dataNeedsLocaleError:
         return 260;
       case dataExtraneousLocaleError:
@@ -78,18 +64,12 @@ enum Error {
         return 262;
       case dataMismatchedTypeError:
         return 263;
-      case dataMissingPayloadError:
-        return 264;
-      case dataInvalidStateError:
-        return 265;
       case dataCustomError:
         return 266;
       case dataIoError:
         return 267;
       case dataUnavailableBufferFormatError:
         return 268;
-      case dataMismatchedAnyBufferError:
-        return 269;
       case propertyUnexpectedPropertyNameError:
         return 1026;
       case dateTimePatternError:

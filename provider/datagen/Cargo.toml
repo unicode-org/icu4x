@@ -18,7 +18,6 @@ include = [
     "LICENSE",
     "README.md",
 ]
-default-run = "icu4x-datagen"
 
 authors.workspace = true
 categories.workspace = true
@@ -93,11 +92,6 @@ twox-hash = { workspace = true, optional = true }
 ureq = { workspace = true, optional = true }
 zip = { workspace = true, features = ["deflate"], optional = true }
 
-# "bin" feature
-clap = { workspace = true, optional = true, features = ["derive"] }
-eyre = { workspace = true, optional = true }
-simple_logger = { workspace = true, optional = true }
-
 [dev-dependencies]
 elsa = { workspace = true }
 icu = { path = "../../components/icu" }
@@ -105,7 +99,7 @@ postcard = { workspace = true }
 simple_logger = { workspace = true }
 
 [features]
-default = ["bin", "use_wasm", "networking", "rayon", "fs_exporter", "blob_exporter", "baked_exporter", "provider"]
+default = ["use_wasm", "networking", "rayon", "fs_exporter", "blob_exporter", "baked_exporter", "provider"]
 provider = [
     "icu_calendar/datagen",
     "icu_casemap/datagen",
@@ -144,24 +138,7 @@ provider = [
 ]
 baked_exporter = ["dep:icu_provider_baked"]
 blob_exporter = ["dep:icu_provider_blob"]
-blob_input = [
-    "dep:icu_provider_blob",
-    "icu_calendar/datagen",
-    "icu_casemap/datagen",
-    "icu_collator/datagen",
-    "icu_datetime/datagen",
-    "icu_decimal/datagen",
-    "icu_list/datagen",
-    "icu_locale/datagen",
-    "icu_normalizer/datagen",
-    "icu_plurals/datagen",
-    "icu_properties/datagen",
-    "icu_segmenter/datagen",
-    "icu_timezone/datagen",
-    "icu_experimental?/datagen",
-]
 fs_exporter = ["dep:icu_provider_fs"]
-bin = ["dep:clap", "dep:eyre", "dep:simple_logger"]
 rayon = ["dep:rayon"]
 # Use wasm for building codepointtries
 use_wasm = ["icu_codepointtrie_builder?/wasm"]
@@ -184,21 +161,9 @@ experimental_components = [
     "icu/experimental",
 ]
 
-[[bin]]
-name = "icu4x-datagen"
-path = "src/bin/icu4x-datagen.rs"
-required-features = ["bin"]
-
 [package.metadata.cargo-all-features]
 # We don't need working CPT builders for check
 skip_feature_sets = [["use_icu4c"], ["use_wasm"]]
 skip_optional_dependencies = true
-always_include_features = [
-    # Always the experimental deps because we want to all-or-nothing them
-    # and the nothing case is already tested in regular check CI
-    "experimental_components", 
-    # The binary requires either provider or blob_input to build, and blob_input is cheaper
-    "blob_input"
-    ]
 # We have a *lot* of features here
 max_combination_size = 2

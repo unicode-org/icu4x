@@ -71,7 +71,7 @@ impl CurrencyFormatter {
                 locale,
                 ..Default::default()
             })?
-            .take_payload()?;
+            .payload;
 
         Ok(Self {
             options,
@@ -105,7 +105,7 @@ impl CurrencyFormatter {
                 locale,
                 ..Default::default()
             })?
-            .take_payload()?;
+            .payload;
 
         Ok(Self {
             options,

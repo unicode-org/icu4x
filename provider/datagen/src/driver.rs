@@ -26,25 +26,6 @@ use writeable::Writeable;
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Default)]
 pub struct NoFallbackOptions {}
 
-/// Choices for the code location of runtime fallback.
-///
-/// Some data providers support "internal" fallback in which all data requests automatically run
-/// the locale fallback algorithm. If internal fallback is requested for an exporter that does
-/// not support it, an error will occur.
-#[non_exhaustive]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum RuntimeFallbackLocation {
-    /// Include fallbacking code in the exported data provider.
-    Internal,
-    /// Do not include fallbacking code in the exported data provider.
-    ///
-    /// The client is responsible for manually configuring [`LocaleFallbackProvider`] in their
-    /// runtime data pipeline.
-    ///
-    /// [`LocaleFallbackProvider`]: icu_provider_adapters::fallback::LocaleFallbackProvider
-    External,
-}
-
 /// Choices for determining the deduplication of locales for exported data payloads.
 ///
 /// Deduplication affects the lookup table from locales to data payloads. If a child locale
@@ -351,19 +332,34 @@ fn test_locale_family_parsing() {
 }
 
 /// Options bag configuring locale inclusion and behavior when runtime fallback is enabled.
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Default)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub struct FallbackOptions {
-    /// The location in code where fallback will be performed at runtime.
-    ///
-    /// If not set, determined by the exporter: internal fallback is used if the exporter
-    /// supports internal fallback.
-    pub runtime_fallback_location: Option<RuntimeFallbackLocation>,
     /// The aggressiveness of deduplication of data payloads.
-    ///
-    /// If not set, determined by `runtime_fallback_location`. If internal fallback is enabled,
-    /// a more aggressive deduplication strategy is used.
-    pub deduplication_strategy: Option<DeduplicationStrategy>,
+    pub deduplication_strategy: DeduplicationStrategy,
+}
+
+impl FallbackOptions {
+    /// Creates a [`FallbackOptions`] with [`DeduplicationStrategy::None`]
+    pub fn no_deduplication() -> Self {
+        Self {
+            deduplication_strategy: DeduplicationStrategy::None,
+        }
+    }
+
+    /// Creates a [`FallbackOptions`] with [`DeduplicationStrategy::Maximal`]
+    pub fn maximal_deduplication() -> Self {
+        Self {
+            deduplication_strategy: DeduplicationStrategy::Maximal,
+        }
+    }
+
+    /// Creates a [`FallbackOptions`] with [`DeduplicationStrategy::RetainBaseLanguages`]
+    pub fn retain_base_languages_deduplication() -> Self {
+        Self {
+            deduplication_strategy: DeduplicationStrategy::RetainBaseLanguages,
+        }
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -390,7 +386,7 @@ enum LocalesWithOrWithoutFallback {
 ///
 /// DatagenDriver::new()
 ///     .with_markers([icu::list::provider::AndListV1Marker::INFO])
-///     .with_locales_and_fallback([LocaleFamily::FULL], Default::default())
+///     .with_locales_and_fallback([LocaleFamily::FULL], FallbackOptions::no_deduplication())
 ///     .export(
 ///         &DatagenProvider::new_latest_tested(),
 ///         BlobExporter::new_with_sink(Box::new(&mut Vec::new())),
@@ -587,7 +583,7 @@ impl DatagenDriver {
             log::warn!("No markers selected");
         }
 
-        let (uses_internal_fallback, deduplication_strategy) = match &locales_fallback {
+        let deduplication_strategy = match &locales_fallback {
             LocalesWithOrWithoutFallback::WithoutFallback { langids } => {
                 let mut sorted_locale_strs = langids
                     .iter()
@@ -598,25 +594,9 @@ impl DatagenDriver {
                     "Datagen configured without fallback with these locales: {:?}",
                     sorted_locale_strs
                 );
-                (false, DeduplicationStrategy::None)
+                DeduplicationStrategy::None
             }
             LocalesWithOrWithoutFallback::WithFallback { options, families } => {
-                let uses_internal_fallback = match options.runtime_fallback_location {
-                    None => sink.supports_built_in_fallback(),
-                    Some(RuntimeFallbackLocation::Internal) => true,
-                    Some(RuntimeFallbackLocation::External) => false,
-                };
-                let deduplication_strategy = match options.deduplication_strategy {
-                    // TODO(2.0): Default to RetainBaseLanguages here
-                    None => {
-                        if sink.supports_built_in_fallback() {
-                            DeduplicationStrategy::Maximal
-                        } else {
-                            DeduplicationStrategy::None
-                        }
-                    }
-                    Some(x) => x,
-                };
                 let mut sorted_locale_strs = families
                     .iter()
                     .map(LocaleFamilyBorrowed::from_parts)
@@ -624,13 +604,8 @@ impl DatagenDriver {
                     .collect::<Vec<_>>();
                 sorted_locale_strs.sort_unstable();
                 log::info!(
-                    "Datagen configured with {}, {}, and these locales: {:?}",
-                    if uses_internal_fallback {
-                        "internal fallback"
-                    } else {
-                        "external fallback"
-                    },
-                    match deduplication_strategy {
+                    "Datagen configured with {}, and these locales: {:?}",
+                    match options.deduplication_strategy {
                         DeduplicationStrategy::Maximal => "maximal deduplication",
                         DeduplicationStrategy::RetainBaseLanguages =>
                             "deduplication retaining base languages",
@@ -638,7 +613,7 @@ impl DatagenDriver {
                     },
                     sorted_locale_strs
                 );
-                (uses_internal_fallback, deduplication_strategy)
+                options.deduplication_strategy
             }
         };
 
@@ -671,11 +646,7 @@ impl DatagenDriver {
                                 log::debug!("Falling back to und: {marker}/{locale}");
                             }
                         }
-                        return Some(
-                            data_response
-                                .take_payload()
-                                .map_err(|e| e.with_req(marker, req)),
-                        );
+                        return Some(Ok(data_response.payload));
                     }
                     Err(DataError {
                         kind: DataErrorKind::MissingLocale,
@@ -721,8 +692,8 @@ impl DatagenDriver {
 
                 let payload = provider
                     .load_data(marker, Default::default())
-                    .and_then(DataResponse::take_payload)
-                    .map_err(|e| e.with_req(marker, Default::default()))?;
+                    .map_err(|e| e.with_req(marker, Default::default()))?
+                    .payload;
 
                 let transform_duration = instant1.elapsed();
 
@@ -815,14 +786,7 @@ impl DatagenDriver {
 
             let transform_duration = instant1.elapsed();
 
-            // segmenter uses hardcoded locales internally, so fallback is not necessary.
-            // TODO(#4511): Use auxiliary keys for segmenter
-            if uses_internal_fallback && !marker.path.get().starts_with("segmenter") {
-                sink.flush_with_built_in_fallback(marker, BuiltInFallbackMode::Standard)
-            } else {
-                sink.flush(marker)
-            }
-            .map_err(|e| e.with_marker(marker))?;
+            sink.flush(marker).map_err(|e| e.with_marker(marker))?;
 
             let final_duration = instant1.elapsed();
             let flush_duration = final_duration - transform_duration;
@@ -1246,7 +1210,7 @@ fn test_family_precedence() {
             "%zh-TW".parse().unwrap(),
             "^zh-TW".parse().unwrap(),
         ],
-        Default::default(),
+        FallbackOptions::no_deduplication(),
     );
 
     let Some(LocalesWithOrWithoutFallback::WithFallback { families, .. }) = driver.locales_fallback

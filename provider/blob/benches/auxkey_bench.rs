@@ -15,41 +15,42 @@ use icu_provider_blob::BlobDataProvider;
 
 struct Baked;
 
+#[allow(unused_imports)]
 const _: () = {
+    use icu_datetime_data::*;
     pub mod icu {
         pub use icu_datetime as datetime;
-        #[allow(unused_imports)] // baked data may or may not need this
-        pub use icu_locale as locale;
+        pub use icu_datetime_data::icu_locale as locale;
     }
-    icu_datetime_data::make_provider!(Baked);
+    make_provider!(Baked);
 
-    icu_datetime_data::impl_datetime_patterns_buddhist_skeleton_v1!(Baked);
-    icu_datetime_data::impl_datetime_patterns_chinese_skeleton_v1!(Baked);
-    icu_datetime_data::impl_datetime_patterns_coptic_skeleton_v1!(Baked);
-    icu_datetime_data::impl_datetime_patterns_dangi_skeleton_v1!(Baked);
-    icu_datetime_data::impl_datetime_patterns_ethiopic_skeleton_v1!(Baked);
-    icu_datetime_data::impl_datetime_patterns_gregory_skeleton_v1!(Baked);
-    icu_datetime_data::impl_datetime_patterns_hebrew_skeleton_v1!(Baked);
-    icu_datetime_data::impl_datetime_patterns_indian_skeleton_v1!(Baked);
-    icu_datetime_data::impl_datetime_patterns_islamic_skeleton_v1!(Baked);
-    icu_datetime_data::impl_datetime_patterns_japanese_skeleton_v1!(Baked);
-    icu_datetime_data::impl_datetime_patterns_japanext_skeleton_v1!(Baked);
-    icu_datetime_data::impl_datetime_patterns_persian_skeleton_v1!(Baked);
-    icu_datetime_data::impl_datetime_patterns_roc_skeleton_v1!(Baked);
+    impl_datetime_patterns_buddhist_skeleton_v1!(Baked);
+    impl_datetime_patterns_chinese_skeleton_v1!(Baked);
+    impl_datetime_patterns_coptic_skeleton_v1!(Baked);
+    impl_datetime_patterns_dangi_skeleton_v1!(Baked);
+    impl_datetime_patterns_ethiopic_skeleton_v1!(Baked);
+    impl_datetime_patterns_gregory_skeleton_v1!(Baked);
+    impl_datetime_patterns_hebrew_skeleton_v1!(Baked);
+    impl_datetime_patterns_indian_skeleton_v1!(Baked);
+    impl_datetime_patterns_islamic_skeleton_v1!(Baked);
+    impl_datetime_patterns_japanese_skeleton_v1!(Baked);
+    impl_datetime_patterns_japanext_skeleton_v1!(Baked);
+    impl_datetime_patterns_persian_skeleton_v1!(Baked);
+    impl_datetime_patterns_roc_skeleton_v1!(Baked);
 
-    icu_datetime_data::impliterable_datetime_patterns_buddhist_skeleton_v1!(Baked);
-    icu_datetime_data::impliterable_datetime_patterns_chinese_skeleton_v1!(Baked);
-    icu_datetime_data::impliterable_datetime_patterns_coptic_skeleton_v1!(Baked);
-    icu_datetime_data::impliterable_datetime_patterns_dangi_skeleton_v1!(Baked);
-    icu_datetime_data::impliterable_datetime_patterns_ethiopic_skeleton_v1!(Baked);
-    icu_datetime_data::impliterable_datetime_patterns_gregory_skeleton_v1!(Baked);
-    icu_datetime_data::impliterable_datetime_patterns_hebrew_skeleton_v1!(Baked);
-    icu_datetime_data::impliterable_datetime_patterns_indian_skeleton_v1!(Baked);
-    icu_datetime_data::impliterable_datetime_patterns_islamic_skeleton_v1!(Baked);
-    icu_datetime_data::impliterable_datetime_patterns_japanese_skeleton_v1!(Baked);
-    icu_datetime_data::impliterable_datetime_patterns_japanext_skeleton_v1!(Baked);
-    icu_datetime_data::impliterable_datetime_patterns_persian_skeleton_v1!(Baked);
-    icu_datetime_data::impliterable_datetime_patterns_roc_skeleton_v1!(Baked);
+    impliterable_datetime_patterns_buddhist_skeleton_v1!(Baked);
+    impliterable_datetime_patterns_chinese_skeleton_v1!(Baked);
+    impliterable_datetime_patterns_coptic_skeleton_v1!(Baked);
+    impliterable_datetime_patterns_dangi_skeleton_v1!(Baked);
+    impliterable_datetime_patterns_ethiopic_skeleton_v1!(Baked);
+    impliterable_datetime_patterns_gregory_skeleton_v1!(Baked);
+    impliterable_datetime_patterns_hebrew_skeleton_v1!(Baked);
+    impliterable_datetime_patterns_indian_skeleton_v1!(Baked);
+    impliterable_datetime_patterns_islamic_skeleton_v1!(Baked);
+    impliterable_datetime_patterns_japanese_skeleton_v1!(Baked);
+    impliterable_datetime_patterns_japanext_skeleton_v1!(Baked);
+    impliterable_datetime_patterns_persian_skeleton_v1!(Baked);
+    impliterable_datetime_patterns_roc_skeleton_v1!(Baked);
 };
 
 macro_rules! skeleton_markers {
@@ -91,7 +92,7 @@ fn make_blob_v1() -> Vec<u8> {
     let exporter = BlobExporter::new_with_sink(Box::new(&mut blob));
     DatagenDriver::new()
         .with_markers(skeleton_markers!(marker_array_cb))
-        .with_locales_and_fallback([LocaleFamily::FULL], Default::default())
+        .with_locales_and_fallback([LocaleFamily::FULL], FallbackOptions::no_deduplication())
         .export(&Baked, exporter)
         .unwrap();
     assert_eq!(blob.len(), 450725);
@@ -104,7 +105,7 @@ fn make_blob_v2() -> Vec<u8> {
     let exporter = BlobExporter::new_v2_with_sink(Box::new(&mut blob));
     DatagenDriver::new()
         .with_markers(skeleton_markers!(marker_array_cb))
-        .with_locales_and_fallback([LocaleFamily::FULL], Default::default())
+        .with_locales_and_fallback([LocaleFamily::FULL], FallbackOptions::no_deduplication())
         .export(&Baked, exporter)
         .unwrap();
     assert_eq!(blob.len(), 241278);

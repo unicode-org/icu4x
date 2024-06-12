@@ -69,7 +69,7 @@ impl ConverterFactory {
     where
         D: ?Sized + DataProvider<provider::UnitsInfoV1Marker>,
     {
-        let payload = provider.load(DataRequest::default())?.take_payload()?;
+        let payload = provider.load(DataRequest::default())?.payload;
 
         Ok(Self { payload })
     }

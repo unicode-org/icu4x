@@ -103,7 +103,7 @@ impl CaseMapCloser<CaseMapper> {
         P: DataProvider<CaseMapV1Marker> + DataProvider<CaseMapUnfoldV1Marker> + ?Sized,
     {
         let cm = CaseMapper::try_new_unstable(provider)?;
-        let unfold = provider.load(Default::default())?.take_payload()?;
+        let unfold = provider.load(Default::default())?.payload;
         Ok(Self { cm, unfold })
     }
 }
@@ -142,7 +142,7 @@ impl<CM: AsRef<CaseMapper>> CaseMapCloser<CM> {
     where
         P: DataProvider<CaseMapV1Marker> + DataProvider<CaseMapUnfoldV1Marker> + ?Sized,
     {
-        let unfold = provider.load(Default::default())?.take_payload()?;
+        let unfold = provider.load(Default::default())?.payload;
         Ok(Self {
             cm: casemapper,
             unfold,
