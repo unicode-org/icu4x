@@ -299,7 +299,7 @@ fn main() {
     // only uses proc_macro. It's okay to relax this requirement if we end up really really needing `syn`
     // here.
     let dep_list = get_dep_list(
-        "icu_baked_provider",
+        "icu_provider_baked",
         "normal,no-proc-macro",
         "--features export",
     );
