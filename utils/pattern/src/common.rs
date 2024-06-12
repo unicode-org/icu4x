@@ -101,11 +101,9 @@ pub trait PatternBackend: crate::private::Sealed + 'static {
     where
         Self::Store: ToOwned;
 
-    // TODO(#4467): Should be internal
-    // Note: it is not good practice to feature-gate trait methods, but this trait is sealed
-    /// Checks a byte slice store for validity, returning an error if invalid.
+    /// Converts a byte slice store to this pattern backend's store.
     #[doc(hidden)] // TODO(#4467): Should be internal
-    fn try_store_from_utf8(utf8: &[u8]) -> Result<&Self::Store, Error>;
+    fn try_store_from_utf8(utf8: &[u8]) -> Result<&Self::Store, Self::StoreFromUtf8Error>;
 
     /// Iterates over the pattern items in a store.
     #[doc(hidden)] // TODO(#4467): Should be internal
