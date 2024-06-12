@@ -226,14 +226,9 @@ where
     /// use icu_pattern::SinglePlaceholderKey;
     /// use std::borrow::Cow;
     ///
-    /// Pattern::<SinglePlaceholder, _>::try_from_utf8(
-    ///     [
-    ///         PatternItemCow::Placeholder(SinglePlaceholderKey::Singleton),
-    ///         PatternItemCow::Literal(Cow::Borrowed(" days")),
-    ///     ]
-    ///     .into_bytes(),
-    /// )
-    /// .expect("valid pattern items");
+    /// Pattern::<SinglePlaceholder, _>::
+    ///                 try_from_utf8("{0} days".as_bytes())
+    ///                             .expect("valid pattern items");
     /// ```
     pub fn try_from_utf8(bytes: &[u8]) -> Result<Self, Error> {
         let store = B::try_store_from_utf8(bytes).map_err(|e| Error::from(e))?;
@@ -244,10 +239,8 @@ where
                 debug_assert!(false, "{:?}", e);
             }
         };
-        Ok(Self {
-            _backend: PhantomData,
-            store: store.to_owned(),
-        })
+
+        Ok(Self::from_store_unchecked(store.to_owned()))
     }
 }
 

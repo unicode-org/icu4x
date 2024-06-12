@@ -239,7 +239,9 @@ impl PatternBackend for SinglePlaceholder {
     }
 
     fn try_store_from_utf8(utf8: &[u8]) -> Result<&Self::Store, Error> {
-        todo!()
+        let store = core::str::from_utf8(utf8).map_err(|_| Error::InvalidPattern)?;
+        Self::validate_store(store)?;
+        Ok(store)
     }
 }
 
