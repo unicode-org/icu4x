@@ -37,9 +37,6 @@ export enum ICU4XError {
   DataMismatchedTypeError = 'DataMismatchedTypeError',
   /**
    */
-  DataMissingPayloadError = 'DataMissingPayloadError',
-  /**
-   */
   DataInvalidStateError = 'DataInvalidStateError',
   /**
    */

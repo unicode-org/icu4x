@@ -53,7 +53,8 @@ macro_rules! constructor {
                     locale,
                     ..Default::default()
                 })?
-                .take_payload()?.cast();
+                .payload
+                .cast();
             Ok(Self { data, length })
         }
     };

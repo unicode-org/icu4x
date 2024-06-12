@@ -22,8 +22,6 @@ enum DataError {
 
   mismatchedType,
 
-  missingPayload,
-
   invalidState,
 
   custom,

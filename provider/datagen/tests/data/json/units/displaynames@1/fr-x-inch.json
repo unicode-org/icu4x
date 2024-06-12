@@ -1,0 +1,14 @@
+{
+  "long": {
+    "One": "{0} pouce",
+    "Other": "{0} pouces"
+  },
+  "short": {
+    "One": "{0} po",
+    "Other": "{0} po"
+  },
+  "narrow": {
+    "One": "{0}″",
+    "Other": "{0}″"
+  }
+}

@@ -37,19 +37,21 @@ pub use fallback::*;
 pub struct Baked;
 
 #[cfg(feature = "compiled_data")]
+#[allow(unused_imports)]
 const _: () = {
+    use icu_locale_data::*;
     pub mod icu {
         pub use crate as locale;
     }
-    icu_locale_data::make_provider!(Baked);
-    icu_locale_data::impl_fallback_likelysubtags_v1!(Baked);
-    icu_locale_data::impl_fallback_parents_v1!(Baked);
-    icu_locale_data::impl_fallback_supplement_co_v1!(Baked);
-    icu_locale_data::impl_locid_transform_aliases_v2!(Baked);
-    icu_locale_data::impl_locid_transform_likelysubtags_ext_v1!(Baked);
-    icu_locale_data::impl_locid_transform_likelysubtags_l_v1!(Baked);
-    icu_locale_data::impl_locid_transform_likelysubtags_sr_v1!(Baked);
-    icu_locale_data::impl_locid_transform_script_dir_v1!(Baked);
+    make_provider!(Baked);
+    impl_fallback_likelysubtags_v1!(Baked);
+    impl_fallback_parents_v1!(Baked);
+    impl_fallback_supplement_co_v1!(Baked);
+    impl_locid_transform_aliases_v2!(Baked);
+    impl_locid_transform_likelysubtags_ext_v1!(Baked);
+    impl_locid_transform_likelysubtags_l_v1!(Baked);
+    impl_locid_transform_likelysubtags_sr_v1!(Baked);
+    impl_locid_transform_script_dir_v1!(Baked);
 };
 
 #[cfg(feature = "datagen")]

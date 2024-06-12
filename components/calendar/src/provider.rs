@@ -38,21 +38,22 @@ use zerovec::ZeroVec;
 pub struct Baked;
 
 #[cfg(feature = "compiled_data")]
+#[allow(unused_imports)]
 const _: () = {
+    use icu_calendar_data::*;
     pub mod icu {
         pub use crate as calendar;
-        #[allow(unused_imports)] // baked data may or may not need this
-        pub use icu_locale as locale;
+        pub use icu_calendar_data::icu_locale as locale;
     }
-    icu_calendar_data::make_provider!(Baked);
-    icu_calendar_data::impl_calendar_chinesecache_v1!(Baked);
-    icu_calendar_data::impl_calendar_dangicache_v1!(Baked);
-    icu_calendar_data::impl_calendar_islamicobservationalcache_v1!(Baked);
-    icu_calendar_data::impl_calendar_islamicummalquracache_v1!(Baked);
-    icu_calendar_data::impl_calendar_japanese_v1!(Baked);
-    icu_calendar_data::impl_calendar_japanext_v1!(Baked);
-    icu_calendar_data::impl_datetime_week_data_v1!(Baked);
-    icu_calendar_data::impl_datetime_week_data_v2!(Baked);
+    make_provider!(Baked);
+    impl_calendar_chinesecache_v1!(Baked);
+    impl_calendar_dangicache_v1!(Baked);
+    impl_calendar_islamicobservationalcache_v1!(Baked);
+    impl_calendar_islamicummalquracache_v1!(Baked);
+    impl_calendar_japanese_v1!(Baked);
+    impl_calendar_japanext_v1!(Baked);
+    impl_datetime_week_data_v1!(Baked);
+    impl_datetime_week_data_v2!(Baked);
 };
 
 #[cfg(feature = "datagen")]

@@ -31,7 +31,6 @@ tinystr = { workspace = true, features = ["alloc", "zerovec"] }
 unicode-bidi = { workspace = true, optional = true }
 
 icu_properties_data = { workspace = true, optional = true }
-icu_locale = { workspace = true, optional = true, features = ["compiled_data"] }
 
 [dev-dependencies]
 icu = { path = "../../components/icu", default-features = false }
@@ -42,4 +41,4 @@ std = ["icu_collections/std", "icu_provider/std"]
 serde = ["dep:serde", "tinystr/serde", "zerovec/serde", "icu_collections/serde", "icu_provider/serde"]
 datagen = ["serde", "dep:databake", "zerovec/databake", "icu_collections/databake", "tinystr/databake"]
 bidi = [ "dep:unicode-bidi" ]
-compiled_data = ["dep:icu_properties_data", "dep:icu_locale"]
+compiled_data = ["dep:icu_properties_data"]

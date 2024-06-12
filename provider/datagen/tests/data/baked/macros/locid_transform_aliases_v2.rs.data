@@ -56,7 +56,7 @@ macro_rules! __impl_locid_transform_aliases_v2 {
         impl icu_provider::DataProvider<icu::locale::provider::AliasesV2Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::locale::provider::AliasesV2Marker>, icu_provider::DataError> {
                 if req.locale.is_empty() {
-                    Ok(icu_provider::DataResponse { payload: Some(icu_provider::DataPayload::from_static_ref(Self::SINGLETON_LOCID_TRANSFORM_ALIASES_V2)), metadata: Default::default() })
+                    Ok(icu_provider::DataResponse { payload: icu_provider::DataPayload::from_static_ref(Self::SINGLETON_LOCID_TRANSFORM_ALIASES_V2), metadata: Default::default() })
                 } else {
                     Err(icu_provider::DataErrorKind::ExtraneousLocale.with_req(<icu::locale::provider::AliasesV2Marker as icu_provider::DataMarker>::INFO, req))
                 }

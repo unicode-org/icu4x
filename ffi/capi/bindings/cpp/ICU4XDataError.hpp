@@ -28,7 +28,6 @@ inline ICU4XDataError ICU4XDataError::FromFFI(capi::ICU4XDataError c_enum) {
     case capi::ICU4XDataError_ExtraneousLocale:
     case capi::ICU4XDataError_FilteredResource:
     case capi::ICU4XDataError_MismatchedType:
-    case capi::ICU4XDataError_MissingPayload:
     case capi::ICU4XDataError_InvalidState:
     case capi::ICU4XDataError_Custom:
     case capi::ICU4XDataError_Io:

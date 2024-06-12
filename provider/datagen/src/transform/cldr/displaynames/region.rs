@@ -27,11 +27,9 @@ impl DataProvider<RegionDisplayNamesV1Marker> for DatagenProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(
-                RegionDisplayNamesV1::try_from(data).map_err(|e| {
-                    DataError::custom("data for RegionDisplayNames").with_display_context(&e)
-                })?,
-            )),
+            payload: DataPayload::from_owned(RegionDisplayNamesV1::try_from(data).map_err(
+                |e| DataError::custom("data for RegionDisplayNames").with_display_context(&e),
+            )?),
         })
     }
 }
@@ -105,8 +103,7 @@ mod tests {
                 ..Default::default()
             })
             .unwrap()
-            .take_payload()
-            .unwrap();
+            .payload;
 
         assert_eq!(
             data.get()
@@ -127,8 +124,7 @@ mod tests {
                 ..Default::default()
             })
             .unwrap()
-            .take_payload()
-            .unwrap();
+            .payload;
 
         assert_eq!(
             data.get()

@@ -8,7 +8,9 @@
 
 use icu_experimental::transliterate::Transliterator;
 
-include!("data/baked/mod.rs");
+#[allow(clippy::single_component_path_imports)]
+use icu_experimental;
+include!("data/provider.rs");
 
 #[test]
 fn test_all_cldr() {
@@ -39,7 +41,7 @@ fn test_all_cldr() {
         ),
     ] {
         let t =
-            Transliterator::try_new_unstable(locale.parse().unwrap(), &BakedDataProvider).unwrap();
+            Transliterator::try_new_unstable(locale.parse().unwrap(), &TestingProvider).unwrap();
         let test_cases = data
             .lines()
             .filter(|x| !x.starts_with('#'))

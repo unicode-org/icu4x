@@ -23,13 +23,12 @@ typedef enum ICU4XDataError {
   ICU4XDataError_ExtraneousLocale = 6,
   ICU4XDataError_FilteredResource = 7,
   ICU4XDataError_MismatchedType = 8,
-  ICU4XDataError_MissingPayload = 9,
-  ICU4XDataError_InvalidState = 10,
-  ICU4XDataError_Custom = 11,
-  ICU4XDataError_Io = 12,
-  ICU4XDataError_UnavailableBufferFormat = 13,
-  ICU4XDataError_MismatchedAnyBuffer = 14,
-  ICU4XDataError_DataStructValidityError = 15,
+  ICU4XDataError_InvalidState = 9,
+  ICU4XDataError_Custom = 10,
+  ICU4XDataError_Io = 11,
+  ICU4XDataError_UnavailableBufferFormat = 12,
+  ICU4XDataError_MismatchedAnyBuffer = 13,
+  ICU4XDataError_DataStructValidityError = 14,
 } ICU4XDataError;
 
 

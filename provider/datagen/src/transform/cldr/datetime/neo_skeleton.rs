@@ -48,7 +48,7 @@ impl DatagenProvider {
         )?;
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(packed_skeleton_data)),
+            payload: DataPayload::from_owned(packed_skeleton_data),
         })
     }
 

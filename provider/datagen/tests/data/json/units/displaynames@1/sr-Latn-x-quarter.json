@@ -1,0 +1,17 @@
+{
+  "long": {
+    "One": "{0} kvartal",
+    "Few": "{0} kvartala",
+    "Other": "{0} kvartala"
+  },
+  "short": {
+    "One": "{0} kv",
+    "Few": "{0} kv",
+    "Other": "{0} kv"
+  },
+  "narrow": {
+    "One": "{0} k",
+    "Few": "{0} k",
+    "Other": "{0} k"
+  }
+}

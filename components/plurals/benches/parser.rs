@@ -18,16 +18,14 @@ fn parser(c: &mut Criterion) {
     let mut rules = vec![];
 
     for langid in fixture_data.langs {
-        let data_payload: DataPayload<icu_plurals::provider::CardinalV1Marker> =
+        let response: DataResponse<icu_plurals::provider::CardinalV1Marker> =
             icu_plurals::provider::Baked
                 .load(DataRequest {
                     locale: &langid.into(),
                     ..Default::default()
                 })
-                .unwrap()
-                .take_payload()
                 .unwrap();
-        let data = data_payload.get();
+        let data = response.payload.get();
 
         let r = [
             data.zero.as_ref(),

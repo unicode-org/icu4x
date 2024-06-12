@@ -142,7 +142,7 @@ impl FixedDecimalFormatter {
                 locale,
                 ..Default::default()
             })?
-            .take_payload()?;
+            .payload;
         Ok(Self { options, symbols })
     }
 

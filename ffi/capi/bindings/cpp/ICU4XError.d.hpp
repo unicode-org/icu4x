@@ -23,7 +23,6 @@ public:
     DataExtraneousLocaleError = 261,
     DataFilteredResourceError = 262,
     DataMismatchedTypeError = 263,
-    DataMissingPayloadError = 264,
     DataInvalidStateError = 265,
     DataCustomError = 266,
     DataIoError = 267,

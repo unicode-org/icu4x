@@ -94,8 +94,8 @@ impl DataProvider<BidiAuxiliaryPropertiesV1Marker> for DatagenProvider {
 
         let data_struct = BidiAuxiliaryPropertiesV1 { trie: trie_mpbd };
         Ok(DataResponse {
-            metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload::from_owned(data_struct)),
+            metadata: Default::default(),
+            payload: DataPayload::from_owned(data_struct),
         })
     }
 
@@ -129,8 +129,8 @@ mod tests {
 
         let payload: DataPayload<BidiAuxiliaryPropertiesV1Marker> = provider
             .load(Default::default())
-            .and_then(DataResponse::take_payload)
-            .expect("Loading was successful");
+            .expect("Loading was successful")
+            .payload;
 
         let bidi_data_api_struct = BidiAuxiliaryProperties::from_data(payload);
         let bidi_data = bidi_data_api_struct.as_borrowed();

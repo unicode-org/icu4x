@@ -88,29 +88,25 @@ impl ForkByErrorPredicate for MissingDataMarkerPredicate {
 ///
 /// // Test that we can load both "de" and "ro" data:
 ///
-/// let german_hello_world: DataPayload<HelloWorldV1Marker> = provider
+/// let german_hello_world: DataResponse<HelloWorldV1Marker> = provider
 ///     .as_deserializing()
 ///     .load(DataRequest {
 ///         locale: &langid!("de").into(),
 ///         ..Default::default()
 ///     })
-///     .expect("Loading should succeed")
-///     .take_payload()
-///     .expect("Data should be present");
+///     .expect("Loading should succeed");
 ///
-/// assert_eq!("Hallo Welt", german_hello_world.get().message);
+/// assert_eq!("Hallo Welt", german_hello_world.payload.get().message);
 ///
-/// let romanian_hello_world: DataPayload<HelloWorldV1Marker> = provider
+/// let romanian_hello_world: DataResponse<HelloWorldV1Marker> = provider
 ///     .as_deserializing()
 ///     .load(DataRequest {
 ///         locale: &langid!("ro").into(),
 ///         ..Default::default()
 ///     })
-///     .expect("Loading should succeed")
-///     .take_payload()
-///     .expect("Data should be present");
+///     .expect("Loading should succeed");
 ///
-/// assert_eq!("Salut, lume", romanian_hello_world.get().message);
+/// assert_eq!("Salut, lume", romanian_hello_world.payload.get().message);
 ///
 /// // We should not be able to load "en" data because it is not in the provider:
 ///

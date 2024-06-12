@@ -366,7 +366,7 @@ where
 
             Ok(DataResponse {
                 metadata: Default::default(),
-                payload: Some(DataPayload::from_owned(transliterator)),
+                payload: DataPayload::from_owned(transliterator),
             })
         }();
 
@@ -637,24 +637,20 @@ mod tests {
             true,
         );
 
-        let forward: DataPayload<TransliteratorRulesV1Marker> = collection
+        let forward: DataResponse<TransliteratorRulesV1Marker> = collection
             .as_provider()
             .load(DataRequest {
                 marker_attributes: &"fwd".parse().unwrap(),
                 ..Default::default()
             })
-            .unwrap()
-            .take_payload()
             .unwrap();
 
-        let reverse: DataPayload<TransliteratorRulesV1Marker> = collection
+        let reverse: DataResponse<TransliteratorRulesV1Marker> = collection
             .as_provider()
             .load(DataRequest {
                 marker_attributes: &"rev".parse().unwrap(),
                 ..Default::default()
             })
-            .unwrap()
-            .take_payload()
             .unwrap();
         {
             let expected_filter = parse_set_cp("[1]");
@@ -747,10 +743,10 @@ mod tests {
                 variable_table: expected_var_table,
                 visibility: true,
             };
-            assert_eq!(*forward.get(), expected_rbt);
+            assert_eq!(*forward.payload.get(), expected_rbt);
 
             assert_eq!(
-                forward.get().deps().collect::<HashSet<_>>(),
+                forward.payload.get().deps().collect::<HashSet<_>>(),
                 HashSet::from_iter([
                     Cow::Borrowed("x-any-nfc"),
                     Cow::Borrowed("x-any-remove"),
@@ -852,10 +848,10 @@ mod tests {
                 variable_table: expected_var_table,
                 visibility: true,
             };
-            assert_eq!(*reverse.get(), expected_rbt);
+            assert_eq!(*reverse.payload.get(), expected_rbt);
 
             assert_eq!(
-                reverse.get().deps().collect::<HashSet<_>>(),
+                reverse.payload.get().deps().collect::<HashSet<_>>(),
                 HashSet::from_iter([
                     Cow::Borrowed("und-t-d0-addrndsp-m0-fifty-s0-anyrev"),
                     Cow::Borrowed("x-any-nfd"),

@@ -114,7 +114,7 @@ impl CanonicalComposition {
         D: DataProvider<CanonicalCompositionsV1Marker> + ?Sized,
     {
         let canonical_compositions: DataPayload<CanonicalCompositionsV1Marker> =
-            provider.load(Default::default())?.take_payload()?;
+            provider.load(Default::default())?.payload;
         Ok(CanonicalComposition {
             canonical_compositions,
         })
@@ -409,9 +409,9 @@ impl CanonicalDecomposition {
             + ?Sized,
     {
         let decompositions: DataPayload<CanonicalDecompositionDataV1Marker> =
-            provider.load(Default::default())?.take_payload()?;
+            provider.load(Default::default())?.payload;
         let tables: DataPayload<CanonicalDecompositionTablesV1Marker> =
-            provider.load(Default::default())?.take_payload()?;
+            provider.load(Default::default())?.payload;
 
         if tables.get().scalars16.len() + tables.get().scalars24.len() > 0xFFF {
             // The data is from a future where there exists a normalization flavor whose
@@ -424,7 +424,7 @@ impl CanonicalDecomposition {
         }
 
         let non_recursive: DataPayload<NonRecursiveDecompositionSupplementV1Marker> =
-            provider.load(Default::default())?.take_payload()?;
+            provider.load(Default::default())?.payload;
 
         Ok(CanonicalDecomposition {
             decompositions,
@@ -513,7 +513,7 @@ impl CanonicalCombiningClassMap {
         D: DataProvider<CanonicalDecompositionDataV1Marker> + ?Sized,
     {
         let decompositions: DataPayload<CanonicalDecompositionDataV1Marker> =
-            provider.load(Default::default())?.take_payload()?;
+            provider.load(Default::default())?.payload;
         Ok(CanonicalCombiningClassMap { decompositions })
     }
 }

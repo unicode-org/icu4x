@@ -200,8 +200,8 @@ impl DataProvider<LstmForWordLineAutoV1Marker> for DatagenProvider {
         let data = lstm_data.try_convert()?;
 
         Ok(DataResponse {
-            metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload::from_owned(data)),
+            metadata: Default::default(),
+            payload: DataPayload::from_owned(data),
         })
     }
 }

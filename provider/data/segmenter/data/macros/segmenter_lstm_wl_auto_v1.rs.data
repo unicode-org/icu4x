@@ -80,7 +80,7 @@ macro_rules! __impl_segmenter_lstm_wl_auto_v1 {
                     DATA.binary_search_by(|(k, _)| req.legacy_cmp(k.as_bytes()).reverse()).map(|i| (*unsafe { DATA.get_unchecked(i) }).1).ok()
                 }
                 if let Some(payload) = lookup(req) {
-                    Ok(icu_provider::DataResponse { payload: Some(icu_provider::DataPayload::from_static_ref(payload)), metadata: Default::default() })
+                    Ok(icu_provider::DataResponse { payload: icu_provider::DataPayload::from_static_ref(payload), metadata: Default::default() })
                 } else {
                     Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::segmenter::provider::LstmForWordLineAutoV1Marker as icu_provider::DataMarker>::INFO, req))
                 }

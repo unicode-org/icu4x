@@ -24,13 +24,12 @@ pub mod ffi {
         ExtraneousLocale = 0x06,
         FilteredResource = 0x07,
         MismatchedType = 0x08,
-        MissingPayload = 0x09,
-        InvalidState = 0x0A,
-        Custom = 0x0B,
-        Io = 0x0C,
-        UnavailableBufferFormat = 0x0D,
-        MismatchedAnyBuffer = 0x0E,
-        DataStructValidityError = 0x0F,
+        InvalidState = 0x09,
+        Custom = 0x0A,
+        Io = 0x0B,
+        UnavailableBufferFormat = 0x0C,
+        MismatchedAnyBuffer = 0x0D,
+        DataStructValidityError = 0x0E,
     }
 
     #[derive(Debug, PartialEq, Eq)]
@@ -115,7 +114,6 @@ pub mod ffi {
         DataExtraneousLocaleError = 0x1_05,
         DataFilteredResourceError = 0x1_06,
         DataMismatchedTypeError = 0x1_07,
-        DataMissingPayloadError = 0x1_08,
         DataInvalidStateError = 0x1_09,
         DataCustomError = 0x1_0A,
         DataIoError = 0x1_0B,
@@ -147,7 +145,6 @@ impl From<DataError> for ICU4XError {
             DataErrorKind::ExtraneousLocale => ICU4XError::DataExtraneousLocaleError,
             DataErrorKind::FilteredResource => ICU4XError::DataFilteredResourceError,
             DataErrorKind::MismatchedType(..) => ICU4XError::DataMismatchedTypeError,
-            DataErrorKind::MissingPayload => ICU4XError::DataMissingPayloadError,
             DataErrorKind::InvalidState => ICU4XError::DataInvalidStateError,
             DataErrorKind::Custom => ICU4XError::DataCustomError,
             #[cfg(all(
@@ -174,7 +171,6 @@ impl From<DataError> for ICU4XDataError {
             DataErrorKind::ExtraneousLocale => Self::ExtraneousLocale,
             DataErrorKind::FilteredResource => Self::FilteredResource,
             DataErrorKind::MismatchedType(..) => Self::MismatchedType,
-            DataErrorKind::MissingPayload => Self::MissingPayload,
             DataErrorKind::InvalidState => Self::InvalidState,
             DataErrorKind::Custom => Self::Custom,
             #[cfg(all(
