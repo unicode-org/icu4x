@@ -181,14 +181,14 @@ struct Cli {
     )]
     without_fallback: bool,
 
-    #[arg(long, value_enum, default_value = "retain-base-languages")]
+    #[arg(long, value_enum)]
     #[arg(
         help = "configures the deduplication of locales for exported data payloads. \
-                If not set, determined by `runtime_fallback_location`: \
-                if internal fallback is enabled, a more aggressive deduplication strategy is used. \
+                If not set, determined by the export format: \
+                if --format=mod, a more aggressive deduplication strategy is used. \
                 Cannot be used with --without-fallback"
     )]
-    deduplication: Deduplication,
+    deduplication: Option<Deduplication>,
 
     #[arg(long, num_args = 0.., default_value = "recommended")]
     #[arg(
@@ -460,14 +460,19 @@ fn main() -> eyre::Result<()> {
                 .map(|family_str| family_str.parse().wrap_err(family_str))
                 .collect::<eyre::Result<Vec<_>>>()?,
         };
-        let mut options = FallbackOptions::default();
-        options.deduplication_strategy = match cli.deduplication {
-            Deduplication::Maximal => icu_datagen::DeduplicationStrategy::Maximal,
-            Deduplication::RetainBaseLanguages => {
-                icu_datagen::DeduplicationStrategy::RetainBaseLanguages
-            }
-            Deduplication::None => icu_datagen::DeduplicationStrategy::None,
+        let mut options = match cli.format {
+            Format::Dir | Format::Blob | Format::Blob2 => FallbackOptions::no_deduplication(),
+            Format::Mod => FallbackOptions::maximal_deduplication(),
         };
+        if let Some(deduplication) = cli.deduplication {
+            options.deduplication_strategy = match deduplication {
+                Deduplication::Maximal => icu_datagen::DeduplicationStrategy::Maximal,
+                Deduplication::RetainBaseLanguages => {
+                    icu_datagen::DeduplicationStrategy::RetainBaseLanguages
+                }
+                Deduplication::None => icu_datagen::DeduplicationStrategy::None,
+            };
+        }
         driver = driver.with_locales_and_fallback(locale_families, options);
     }
     driver = driver.with_additional_collations(

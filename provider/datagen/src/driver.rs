@@ -45,13 +45,12 @@ pub struct NoFallbackOptions {}
 /// [`Maximal`]: DeduplicationStrategy::Maximal
 /// [`None`]: DeduplicationStrategy::None
 #[non_exhaustive]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, Default)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 pub enum DeduplicationStrategy {
     /// Removes from the lookup table any locale whose parent maps to the same data.
     Maximal,
     /// Removes from the lookup table any locale whose parent maps to the same data, except if
     /// the parent is `und`.
-    #[default]
     RetainBaseLanguages,
     /// Keeps all selected locales in the lookup table.
     None,
@@ -333,14 +332,34 @@ fn test_locale_family_parsing() {
 }
 
 /// Options bag configuring locale inclusion and behavior when runtime fallback is enabled.
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Default)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub struct FallbackOptions {
     /// The aggressiveness of deduplication of data payloads.
-    ///
-    /// If not set, determined by `runtime_fallback_location`. If internal fallback is enabled,
-    /// a more aggressive deduplication strategy is used.
     pub deduplication_strategy: DeduplicationStrategy,
+}
+
+impl FallbackOptions {
+    /// Creates a [`FallbackOptions`] with [`DeduplicationStrategy::None`]
+    pub fn no_deduplication() -> Self {
+        Self {
+            deduplication_strategy: DeduplicationStrategy::None
+        }
+    }
+    
+    /// Creates a [`FallbackOptions`] with [`DeduplicationStrategy::Maximal`]
+    pub fn maximal_deduplication() -> Self {
+        Self {
+            deduplication_strategy: DeduplicationStrategy::Maximal
+        }
+    }
+    
+    /// Creates a [`FallbackOptions`] with [`DeduplicationStrategy::RetainBaseLanguages`]
+    pub fn retain_base_languages_deduplication() -> Self {
+        Self {
+            deduplication_strategy: DeduplicationStrategy::RetainBaseLanguages
+        }
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -367,7 +386,7 @@ enum LocalesWithOrWithoutFallback {
 ///
 /// DatagenDriver::new()
 ///     .with_markers([icu::list::provider::AndListV1Marker::INFO])
-///     .with_locales_and_fallback([LocaleFamily::FULL], Default::default())
+///     .with_locales_and_fallback([LocaleFamily::FULL], FallbackOptions::no_deduplication())
 ///     .export(
 ///         &DatagenProvider::new_latest_tested(),
 ///         BlobExporter::new_with_sink(Box::new(&mut Vec::new())),
@@ -1191,7 +1210,7 @@ fn test_family_precedence() {
             "%zh-TW".parse().unwrap(),
             "^zh-TW".parse().unwrap(),
         ],
-        Default::default(),
+        FallbackOptions::no_deduplication(),
     );
 
     let Some(LocalesWithOrWithoutFallback::WithFallback { families, .. }) = driver.locales_fallback

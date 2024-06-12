@@ -18,7 +18,7 @@
 //!
 //! DatagenDriver::new()
 //!     .with_markers([icu::list::provider::AndListV1Marker::INFO])
-//!     .with_locales_and_fallback([LocaleFamily::FULL], Default::default())
+//!     .with_locales_and_fallback([LocaleFamily::FULL], FallbackOptions::no_deduplication())
 //!     .export(
 //!         &DatagenProvider::new_latest_tested(),
 //!         BlobExporter::new_v2_with_sink(Box::new(

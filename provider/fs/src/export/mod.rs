@@ -28,12 +28,8 @@
 //! // Export something
 //! DatagenDriver::new()
 //!     .with_markers([HelloWorldV1Marker::INFO])
-//!     .with_locales_and_fallback([LocaleFamily::FULL], {
-//!         let mut options = FallbackOptions::default();
-//!         // HelloWorldProvider cannot provide fallback data, so we cannot deduplicate
-//!         options.deduplication_strategy = DeduplicationStrategy::None;
-//!         options
-//!     })
+//!     // HelloWorldProvider cannot provide fallback data, so we cannot deduplicate
+//!     .with_locales_and_fallback([LocaleFamily::FULL], FallbackOptions::no_deduplication())
 //!     .export(&HelloWorldProvider, exporter)
 //!     .unwrap();
 //! #

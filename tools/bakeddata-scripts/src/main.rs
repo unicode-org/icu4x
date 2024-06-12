@@ -88,11 +88,7 @@ fn main() {
                 .unwrap()
                 .into_iter()
                 .map(LocaleFamily::with_descendants),
-            {
-                let mut options = FallbackOptions::default();
-                options.deduplication_strategy = DeduplicationStrategy::Maximal;
-                options
-            },
+            FallbackOptions::maximal_deduplication(),
         )
         .with_recommended_segmenter_models();
 
