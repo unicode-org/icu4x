@@ -15,8 +15,8 @@ use core::{
 
 use writeable::{adapters::TryWriteableInfallibleAsWriteable, PartsWrite, TryWriteable, Writeable};
 
-use crate::common::*;
 use crate::Error;
+use crate::{common::*, SinglePlaceholder};
 
 #[cfg(feature = "alloc")]
 use crate::{Parser, ParserOptions};
@@ -445,4 +445,19 @@ fn test_try_from_str_inference() {
     use crate::SinglePlaceholder;
     let _: Pattern<SinglePlaceholder, String> = Pattern::from_str("{0} days").unwrap();
     let _ = Pattern::<SinglePlaceholder, String>::from_str("{0} days").unwrap();
+}
+
+#[test]
+fn test_try_from_utf8() {
+    let x = Pattern::<SinglePlaceholder, _>::try_from_utf8("{0} days".as_bytes());
+
+    match x {
+        Ok(p) => {
+            let y = p.interpolate([1]);
+            println!("{y}");
+        }
+        Err(e) => {
+            println!("Error: {e}");
+        }
+    }
 }
