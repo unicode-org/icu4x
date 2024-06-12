@@ -82,7 +82,7 @@ exit_on_error true
 project_dir = pwd
 set_env CARGO_TARGET_DIR ${project_dir}/target
 
-exec --fail-on-error cargo build -p icu_datagen
+exec --fail-on-error cargo build -p icu4x-datagen
 
 cd tutorials/rust
 

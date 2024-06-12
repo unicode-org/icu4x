@@ -276,7 +276,7 @@ fn main() {
     );
 
     test_dep_list(
-        "icu4x-datagen",
+        "icu_datagen",
         "normal",
         "--features use_icu4c",
         &[
