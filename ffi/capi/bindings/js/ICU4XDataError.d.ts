@@ -12,13 +12,7 @@ export enum ICU4XDataError {
   MissingDataMarker = 'MissingDataMarker',
   /**
    */
-  MissingVariant = 'MissingVariant',
-  /**
-   */
   MissingLocale = 'MissingLocale',
-  /**
-   */
-  NeedsVariant = 'NeedsVariant',
   /**
    */
   NeedsLocale = 'NeedsLocale',
@@ -33,9 +27,6 @@ export enum ICU4XDataError {
   MismatchedType = 'MismatchedType',
   /**
    */
-  InvalidState = 'InvalidState',
-  /**
-   */
   Custom = 'Custom',
   /**
    */
@@ -45,8 +36,5 @@ export enum ICU4XDataError {
   UnavailableBufferFormat = 'UnavailableBufferFormat',
   /**
    */
-  MismatchedAnyBuffer = 'MismatchedAnyBuffer',
-  /**
-   */
-  DataStructValidityError = 'DataStructValidityError',
+  InconsistentData = 'InconsistentData',
 }

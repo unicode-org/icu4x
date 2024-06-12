@@ -16,13 +16,7 @@ export enum ICU4XError {
   DataMissingDataMarkerError = 'DataMissingDataMarkerError',
   /**
    */
-  DataMissingVariantError = 'DataMissingVariantError',
-  /**
-   */
   DataMissingLocaleError = 'DataMissingLocaleError',
-  /**
-   */
-  DataNeedsVariantError = 'DataNeedsVariantError',
   /**
    */
   DataNeedsLocaleError = 'DataNeedsLocaleError',
@@ -37,9 +31,6 @@ export enum ICU4XError {
   DataMismatchedTypeError = 'DataMismatchedTypeError',
   /**
    */
-  DataInvalidStateError = 'DataInvalidStateError',
-  /**
-   */
   DataCustomError = 'DataCustomError',
   /**
    */
@@ -47,9 +38,6 @@ export enum ICU4XError {
   /**
    */
   DataUnavailableBufferFormatError = 'DataUnavailableBufferFormatError',
-  /**
-   */
-  DataMismatchedAnyBufferError = 'DataMismatchedAnyBufferError',
   /**
    */
   PropertyUnexpectedPropertyNameError = 'PropertyUnexpectedPropertyNameError',

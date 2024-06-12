@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::buf::BufferMarker;
-use crate::error::{DataError, DataErrorKind};
+use crate::error::DataError;
 use crate::marker::DynamicDataMarker;
 use crate::request::DataLocale;
 use alloc::boxed::Box;
@@ -377,16 +377,6 @@ where
     #[inline]
     pub const fn from_static_ref(data: &'static M::Yokeable) -> Self {
         Self(DataPayloadInner::StaticRef(data))
-    }
-
-    /// Convert a DataPayload that was created via [`DataPayload::from_owned()`] back into the
-    /// concrete type used to construct it.
-    pub fn try_unwrap_owned(self) -> Result<M::Yokeable, DataError> {
-        match self.0 {
-            DataPayloadInner::Yoke(yoke) => yoke.try_into_yokeable().ok(),
-            DataPayloadInner::StaticRef(_) => None,
-        }
-        .ok_or(DataErrorKind::InvalidState.with_str_context("try_unwrap_owned"))
     }
 
     /// Mutate the data contained in this DataPayload.
