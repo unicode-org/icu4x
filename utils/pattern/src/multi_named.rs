@@ -369,10 +369,9 @@ impl PatternBackend for MultiNamedPlaceholder {
         Ok(string)
     }
 
-    fn try_store_from_utf8(utf8: &[u8]) -> Result<&Self::Store, Error> {
-        let store = core::str::from_utf8(utf8).map_err(|_| Error::InvalidPattern)?;
-        Self::validate_store(store)?;
-        Ok(store)
+    #[inline]
+    fn try_store_from_utf8(utf8: &[u8]) -> Result<&Self::Store, Self::StoreFromUtf8Error> {
+        core::str::from_utf8(utf8)
     }
 }
 
