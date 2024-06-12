@@ -228,14 +228,7 @@ where
     /// ```
     pub fn try_from_utf8(bytes: &[u8]) -> Result<Self, Error> {
         let store = B::try_store_from_utf8(bytes).map_err(|_| Error::InvalidPattern)?;
-        #[cfg(debug_assertions)]
-        match B::validate_store(core::borrow::Borrow::borrow(&store)) {
-            Ok(()) => (),
-            Err(e) => {
-                debug_assert!(false, "Pattern validation failed: {:?}", e);
-            }
-        };
-
+        B::validate_store(store).map_err(|_| Error::InvalidPattern)?;
         Ok(Self::from_store_unchecked(store.to_owned()))
     }
 }
