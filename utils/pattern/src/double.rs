@@ -270,7 +270,7 @@ impl PatternBackend for DoublePlaceholder {
     #[cfg(feature = "alloc")]
     type PlaceholderKeyCow<'a> = DoublePlaceholderKey;
     type Error<'a> = Infallible;
-    type SoreUtf8Error = StoreUtf8Error;
+    type StoreUtf8Error = StoreUtf8Error;
     type Store = str;
     type Iter<'a> = DoublePlaceholderPatternIterator<'a>;
 
@@ -376,7 +376,7 @@ impl PatternBackend for DoublePlaceholder {
         Ok(result)
     }
 
-    fn try_store_from_utf8(utf8: &[u8]) -> Result<&Self::Store, Self::SoreUtf8Error> {
+    fn try_store_from_utf8(utf8: &[u8]) -> Result<&Self::Store, Self::StoreUtf8Error> {
         let store = core::str::from_utf8(utf8).map_err(StoreUtf8Error::Utf8Error)?;
         Self::validate_store(store).map_err(StoreUtf8Error::PatternError)?;
         Ok(store)
