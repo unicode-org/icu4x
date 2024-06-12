@@ -130,7 +130,7 @@ fn maybe_msrv() -> TokenStream {
 pub struct Options {
     /// By default, baked providers perform fallback internally. This field can be used to
     /// disable this behavior.
-    pub with_fallback: bool,
+    pub use_internal_fallback: bool,
     /// Whether to run `rustfmt` on the generated files.
     pub pretty: bool,
     /// Whether to use separate crates to name types instead of the `icu` metacrate.
@@ -147,7 +147,7 @@ pub struct Options {
 impl Default for Options {
     fn default() -> Self {
         Self {
-            with_fallback: true,
+            use_internal_fallback: true,
             pretty: false,
             use_separate_crates: false,
             overwrite: false,
@@ -162,7 +162,7 @@ pub struct BakedExporter {
     mod_directory: PathBuf,
     pretty: bool,
     use_separate_crates: bool,
-    with_fallback: bool,
+    use_internal_fallback: bool,
     // Temporary storage for put_payload: marker -> (bake -> {(locale, marker_attributes)})
     data: Mutex<
         HashMap<
@@ -191,7 +191,7 @@ impl BakedExporter {
     /// Constructs a new [`BakedExporter`] with the given output directory and options.
     pub fn new(mod_directory: PathBuf, options: Options) -> Result<Self, DataError> {
         let Options {
-            with_fallback,
+            use_internal_fallback,
             pretty,
             use_separate_crates,
             overwrite,
@@ -209,7 +209,7 @@ impl BakedExporter {
         Ok(Self {
             mod_directory,
             pretty,
-            with_fallback,
+            use_internal_fallback,
             use_separate_crates,
             data: Default::default(),
             impl_data: Default::default(),
@@ -521,7 +521,7 @@ impl DataExporter for BakedExporter {
 
             let lookup = crate::binary_search::bake(&struct_type, values);
 
-            let load_body = if !self.with_fallback
+            let load_body = if !self.use_internal_fallback
                 || deduplicated_values
                     .iter()
                     .all(|(_, reqs)| reqs.iter().all(|(l, _)| l.is_und()))

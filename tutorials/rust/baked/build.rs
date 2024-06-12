@@ -22,7 +22,7 @@ fn main() {
             BakedExporter::new(mod_directory, {
                 let mut options = Options::default();
                 options.overwrite = true;
-                options.with_fallback = false;
+                options.use_internal_fallback = false;
                 options
             })
             .unwrap(),

@@ -462,6 +462,9 @@ fn main() -> eyre::Result<()> {
         };
         let mut options = match cli.format {
             Format::Dir | Format::Blob | Format::Blob2 => FallbackOptions::no_deduplication(),
+            Format::Mod if cli.no_internal_fallback && cli.deduplication.is_none() =>
+                eyre::bail!("--no-internal-fallback requires an explicit --deduplication value. Baked exporter would default to maximal deduplication, which might not be intended"),
+            // TODO(2.0): Default to RetainBaseLanguages here
             Format::Mod => FallbackOptions::maximal_deduplication(),
         };
         if let Some(deduplication) = cli.deduplication {
@@ -560,7 +563,7 @@ fn main() -> eyre::Result<()> {
                 {
                     let mut options = icu_datagen::baked_exporter::Options::default();
                     options.pretty = cli.pretty;
-                    options.with_fallback = !cli.no_internal_fallback;
+                    options.use_internal_fallback = !cli.no_internal_fallback;
                     options.use_separate_crates = cli.use_separate_crates;
                     options.overwrite = cli.overwrite;
                     options
