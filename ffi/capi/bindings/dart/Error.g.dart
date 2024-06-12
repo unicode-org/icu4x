@@ -26,8 +26,6 @@ enum Error {
 
   dataMismatchedTypeError,
 
-  dataMissingPayloadError,
-
   dataInvalidStateError,
 
   dataCustomError,
@@ -78,8 +76,6 @@ enum Error {
         return 262;
       case dataMismatchedTypeError:
         return 263;
-      case dataMissingPayloadError:
-        return 264;
       case dataInvalidStateError:
         return 265;
       case dataCustomError:

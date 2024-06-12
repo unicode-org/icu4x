@@ -53,7 +53,7 @@ impl DataProvider<IanaToBcp47MapV1Marker> for DatagenProvider {
         };
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(data_struct)),
+            payload: DataPayload::from_owned(data_struct),
         })
     }
 }
@@ -107,7 +107,7 @@ impl DataProvider<IanaToBcp47MapV2Marker> for DatagenProvider {
         };
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(data_struct)),
+            payload: DataPayload::from_owned(data_struct),
         })
     }
 }
@@ -139,7 +139,7 @@ impl DataProvider<Bcp47ToIanaMapV1Marker> for DatagenProvider {
         };
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(data_struct)),
+            payload: DataPayload::from_owned(data_struct),
         })
     }
 }

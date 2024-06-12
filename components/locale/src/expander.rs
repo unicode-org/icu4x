@@ -273,9 +273,9 @@ impl LocaleExpander {
             + DataProvider<LikelySubtagsExtendedV1Marker>
             + ?Sized,
     {
-        let likely_subtags_l = provider.load(Default::default())?.take_payload()?;
-        let likely_subtags_sr = provider.load(Default::default())?.take_payload()?;
-        let likely_subtags_ext = Some(provider.load(Default::default())?.take_payload()?);
+        let likely_subtags_l = provider.load(Default::default())?.payload;
+        let likely_subtags_sr = provider.load(Default::default())?.payload;
+        let likely_subtags_ext = Some(provider.load(Default::default())?.payload);
 
         Ok(LocaleExpander {
             likely_subtags_l,
@@ -316,8 +316,8 @@ impl LocaleExpander {
             + DataProvider<LikelySubtagsForScriptRegionV1Marker>
             + ?Sized,
     {
-        let likely_subtags_l = provider.load(Default::default())?.take_payload()?;
-        let likely_subtags_sr = provider.load(Default::default())?.take_payload()?;
+        let likely_subtags_l = provider.load(Default::default())?.payload;
+        let likely_subtags_sr = provider.load(Default::default())?.payload;
 
         Ok(LocaleExpander {
             likely_subtags_l,
@@ -334,28 +334,22 @@ impl LocaleExpander {
             + DataProvider<LikelySubtagsV1Marker>
             + ?Sized,
     {
-        let payload_l = provider
-            .load(Default::default())
-            .and_then(DataResponse::take_payload);
-        let payload_sr = provider
-            .load(Default::default())
-            .and_then(DataResponse::take_payload);
-        let payload_ext = provider
-            .load(Default::default())
-            .and_then(DataResponse::take_payload);
+        let payload_l = provider.load(Default::default()).map(|r| r.payload);
+        let payload_sr = provider.load(Default::default()).map(|r| r.payload);
+        let payload_ext = provider.load(Default::default()).map(|r| r.payload);
 
         let (likely_subtags_l, likely_subtags_sr, likely_subtags_ext) =
             match (payload_l, payload_sr, payload_ext) {
                 (Ok(l), Ok(sr), Err(_)) => (l, sr, None),
                 (Ok(l), Ok(sr), Ok(ext)) => (l, sr, Some(ext)),
                 _ => {
-                    let result: DataPayload<LikelySubtagsV1Marker> =
-                        provider.load(Default::default())?.take_payload()?;
+                    let response: DataResponse<LikelySubtagsV1Marker> =
+                        provider.load(Default::default())?;
                     (
-                        result.map_project_cloned(|st, _| {
+                        response.payload.map_project_cloned(|st, _| {
                             LikelySubtagsForLanguageV1::clone_from_borrowed(st)
                         }),
-                        result.map_project(|st, _| st.into()),
+                        response.payload.map_project(|st, _| st.into()),
                         None,
                     )
                 }
@@ -704,7 +698,7 @@ mod tests {
             };
 
             Ok(AnyResponse {
-                payload: Some(payload),
+                payload,
                 metadata: Default::default(),
             })
         }

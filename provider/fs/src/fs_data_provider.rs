@@ -89,7 +89,7 @@ impl DynamicDataProvider<BufferMarker> for FsDataProvider {
         metadata.buffer_format = Some(self.manifest.buffer_format);
         Ok(DataResponse {
             metadata,
-            payload: Some(DataPayload::from_owned_buffer(buffer.into_boxed_slice())),
+            payload: DataPayload::from_owned_buffer(buffer.into_boxed_slice()),
         })
     }
 }

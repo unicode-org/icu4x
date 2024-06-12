@@ -75,7 +75,7 @@ impl DataProvider<CurrencyExtendedDataV1Marker> for crate::DatagenProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(data)),
+            payload: DataPayload::from_owned(data),
         })
     }
 }
@@ -131,8 +131,7 @@ fn test_basic() {
             ..Default::default()
         })
         .unwrap()
-        .take_payload()
-        .unwrap();
+        .payload;
     let display_names = en.get().to_owned().display_names;
     assert_eq!(display_names.get(&Count::Zero), None);
     assert_eq!(display_names.get(&Count::One).unwrap(), "US dollar");
@@ -149,8 +148,7 @@ fn test_basic() {
             ..Default::default()
         })
         .unwrap()
-        .take_payload()
-        .unwrap();
+        .payload;
 
     let display_names = fr.get().to_owned().display_names;
     assert_eq!(display_names.get(&Count::Zero), None);

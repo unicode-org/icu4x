@@ -162,8 +162,8 @@ where
     let map = map.into_iter().collect();
     let data_struct = PropertyEnumToValueNameSparseMapV1 { map };
     Ok(DataResponse {
-        metadata: DataResponseMetadata::default(),
-        payload: Some(DataPayload::from_owned(data_struct)),
+        metadata: Default::default(),
+        payload: DataPayload::from_owned(data_struct),
     })
 }
 
@@ -184,8 +184,8 @@ where
     let varzerovec = (&vec).into();
     let data_struct = PropertyEnumToValueNameLinearMapV1 { map: varzerovec };
     Ok(DataResponse {
-        metadata: DataResponseMetadata::default(),
-        payload: Some(DataPayload::from_owned(data_struct)),
+        metadata: Default::default(),
+        payload: DataPayload::from_owned(data_struct),
     })
 }
 
@@ -211,8 +211,8 @@ where
     let zerovec = vec.into_iter().collect();
     let data_struct = PropertyEnumToValueNameLinearTiny4MapV1 { map: zerovec };
     Ok(DataResponse {
-        metadata: DataResponseMetadata::default(),
-        payload: Some(DataPayload::from_owned(data_struct)),
+        metadata: Default::default(),
+        payload: DataPayload::from_owned(data_struct),
     })
 }
 macro_rules! expand {
@@ -238,8 +238,8 @@ macro_rules! expand {
                     })?;
                     let data_struct = PropertyCodePointMapV1::CodePointTrie(code_point_trie);
                     Ok(DataResponse {
-                        metadata: DataResponseMetadata::default(),
-                        payload: Some(DataPayload::from_owned(data_struct)),
+                        metadata: Default::default(),
+                        payload: DataPayload::from_owned(data_struct),
                     })
                 }
             }
@@ -261,8 +261,8 @@ macro_rules! expand {
 
                     let data_struct = get_prop_values_map(&data.values, |v| u16::try_from(v).map_err(|_| DataError::custom(concat!("Found value larger than u16 for property ", $prop_name))))?;
                     Ok(DataResponse {
-                        metadata: DataResponseMetadata::default(),
-                        payload: Some(DataPayload::from_owned(data_struct)),
+                        metadata: Default::default(),
+                        payload: DataPayload::from_owned(data_struct),
                     })
                 }
             }
@@ -398,8 +398,8 @@ impl DataProvider<GeneralCategoryMaskNameToValueV1Marker> for DatagenProvider {
             Ok(packed)
         })?;
         Ok(DataResponse {
-            metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload::from_owned(data_struct)),
+            metadata: Default::default(),
+            payload: DataPayload::from_owned(data_struct),
         })
     }
 }
@@ -541,8 +541,8 @@ mod tests {
 
         let payload: DataPayload<GeneralCategoryV1Marker> = provider
             .load(Default::default())
-            .and_then(DataResponse::take_payload)
-            .expect("Loading was successful");
+            .expect("Loading was successful")
+            .payload;
 
         let trie: &CodePointTrie<GeneralCategory> = match payload.get() {
             PropertyCodePointMapV1::CodePointTrie(ref t) => t,
@@ -559,8 +559,8 @@ mod tests {
 
         let payload: DataPayload<ScriptV1Marker> = provider
             .load(Default::default())
-            .and_then(DataResponse::take_payload)
-            .expect("Loading was successful");
+            .expect("Loading was successful")
+            .payload;
 
         let trie: &CodePointTrie<Script> = match payload.get() {
             PropertyCodePointMapV1::CodePointTrie(ref t) => t,

@@ -33,9 +33,6 @@ export enum ICU4XDataError {
   MismatchedType = 'MismatchedType',
   /**
    */
-  MissingPayload = 'MissingPayload',
-  /**
-   */
   InvalidState = 'InvalidState',
   /**
    */

@@ -56,7 +56,7 @@ impl MetazoneCalculator {
     pub fn try_new_unstable(
         provider: &(impl DataProvider<MetazonePeriodV1Marker> + ?Sized),
     ) -> Result<Self, DataError> {
-        let metazone_period = provider.load(Default::default())?.take_payload()?;
+        let metazone_period = provider.load(Default::default())?.payload;
         Ok(Self { metazone_period })
     }
 

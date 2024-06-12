@@ -93,7 +93,7 @@ impl CaseMapper {
     where
         P: DataProvider<CaseMapV1Marker> + ?Sized,
     {
-        let data = provider.load(Default::default())?.take_payload()?;
+        let data = provider.load(Default::default())?.payload;
         Ok(Self { data })
     }
 

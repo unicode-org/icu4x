@@ -45,10 +45,10 @@ macro_rules! expand {
                     let inv_list = builder.build();
 
                     Ok(DataResponse {
-                        metadata: DataResponseMetadata::default(),
-                        payload: Some(DataPayload::from_owned(
+                        metadata: Default::default(),
+                        payload: DataPayload::from_owned(
                             PropertyCodePointSetV1::InversionList(inv_list),
-                        )),
+                        ),
                     })
                 }
             }
@@ -142,8 +142,8 @@ fn test_basic() {
 
     let payload: DataPayload<WhiteSpaceV1Marker> = provider
         .load(Default::default())
-        .and_then(DataResponse::take_payload)
-        .expect("Loading was successful");
+        .expect("Loading was successful")
+        .payload;
 
     let whitespace: &CodePointInversionList = match payload.get() {
         PropertyCodePointSetV1::InversionList(ref l) => l,

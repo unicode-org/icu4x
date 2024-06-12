@@ -60,9 +60,9 @@ criterion = { workspace = true }
 [dev-dependencies]
 icu = { path = "../../components/icu", features = ["experimental"]}
 
-icu_experimental_data = { workspace = true }
 icu_locale_data = { workspace = true }
 icu_properties_data = { workspace = true }
+icu_normalizer_data = { workspace = true }
 
 [features]
 default = ["compiled_data"]

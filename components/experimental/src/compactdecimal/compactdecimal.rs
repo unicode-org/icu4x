@@ -136,7 +136,7 @@ impl CompactDecimalFormatter {
                     ..Default::default()
                 },
             )?
-            .take_payload()?
+            .payload
             .cast(),
         })
     }
@@ -181,7 +181,7 @@ impl CompactDecimalFormatter {
                     ..Default::default()
                 },
             )?
-            .take_payload()?
+            .payload
             .cast(),
         })
     }
@@ -223,7 +223,7 @@ impl CompactDecimalFormatter {
                     ..Default::default()
                 },
             )?
-            .take_payload()?
+            .payload
             .cast(),
         })
     }
@@ -268,7 +268,7 @@ impl CompactDecimalFormatter {
                     ..Default::default()
                 },
             )?
-            .take_payload()?
+            .payload
             .cast(),
         })
     }

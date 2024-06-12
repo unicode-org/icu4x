@@ -214,9 +214,7 @@ macro_rules! impl_dynamic_data_provider {
                                 $crate::DynamicDataProvider::<$struct_m>::load_data(self, marker, req)?;
                             Ok($crate::DataResponse {
                                 metadata: result.metadata,
-                                payload: result.payload.map(|p| {
-                                    $crate::dynutil::UpcastDataPayload::<$struct_m>::upcast(p)
-                                }),
+                                payload: $crate::dynutil::UpcastDataPayload::<$struct_m>::upcast(result.payload),
                             })
                         }
                     )+,
@@ -226,9 +224,7 @@ macro_rules! impl_dynamic_data_provider {
                                 $crate::DynamicDataProvider::<$struct_d>::load_data(self, marker, req)?;
                             Ok($crate::DataResponse {
                                 metadata: result.metadata,
-                                payload: result.payload.map(|p| {
-                                    $crate::dynutil::UpcastDataPayload::<$struct_d>::upcast(p)
-                                }),
+                                payload: $crate::dynutil::UpcastDataPayload::<$struct_d>::upcast(result.payload),
                             })
                         }
                     )?
@@ -257,9 +253,7 @@ macro_rules! impl_dynamic_data_provider {
                                 $crate::DataProvider::load(self, req)?;
                             Ok($crate::DataResponse {
                                 metadata: result.metadata,
-                                payload: result.payload.map(|p| {
-                                    $crate::dynutil::UpcastDataPayload::<$struct_m>::upcast(p)
-                                }),
+                                payload: $crate::dynutil::UpcastDataPayload::<$struct_m>::upcast(result.payload),
                             })
                         }
                     )+,

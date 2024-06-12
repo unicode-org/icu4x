@@ -346,16 +346,14 @@ mod tests {
 
     #[test]
     fn segment_file_by_lstm() {
-        let lstm: DataPayload<LstmForWordLineAutoV1Marker> = crate::provider::Baked
+        let lstm: DataResponse<LstmForWordLineAutoV1Marker> = crate::provider::Baked
             .load(DataRequest {
                 marker_attributes: &"Thai_codepoints_exclusive_model4_heavy".parse().unwrap(),
                 ..Default::default()
             })
-            .unwrap()
-            .take_payload()
             .unwrap();
         let lstm = LstmSegmenter::new(
-            lstm.get(),
+            lstm.payload.get(),
             crate::provider::Baked::SINGLETON_SEGMENTER_GRAPHEME_V1,
         );
 

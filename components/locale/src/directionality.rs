@@ -125,7 +125,7 @@ impl LocaleDirectionality {
     where
         P: DataProvider<ScriptDirectionV1Marker> + ?Sized,
     {
-        let script_direction = provider.load(Default::default())?.take_payload()?;
+        let script_direction = provider.load(Default::default())?.payload;
 
         Ok(LocaleDirectionality {
             script_direction,

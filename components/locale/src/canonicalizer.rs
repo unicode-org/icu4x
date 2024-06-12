@@ -266,16 +266,14 @@ impl LocaleCanonicalizer {
     where
         P: DataProvider<AliasesV2Marker> + DataProvider<AliasesV1Marker> + ?Sized,
     {
-        let payload_v2: Result<DataPayload<AliasesV2Marker>, _> = provider
-            .load(Default::default())
-            .and_then(DataResponse::take_payload);
-        let aliases = if let Ok(payload) = payload_v2 {
-            payload
+        let aliases = if let Ok(response) =
+            DataProvider::<AliasesV2Marker>::load(provider, Default::default())
+        {
+            response.payload
         } else {
-            let payload_v1: DataPayload<AliasesV1Marker> = provider
-                .load(Default::default())
-                .and_then(DataResponse::take_payload)?;
-            payload_v1.try_map_project(|st, _| st.try_into())?
+            DataProvider::<AliasesV1Marker>::load(provider, Default::default())?
+                .payload
+                .try_map_project(|st, _| st.try_into())?
         };
 
         Ok(Self { aliases, expander })
@@ -289,8 +287,7 @@ impl LocaleCanonicalizer {
     where
         P: DataProvider<AliasesV2Marker> + ?Sized,
     {
-        let aliases: DataPayload<AliasesV2Marker> =
-            provider.load(Default::default())?.take_payload()?;
+        let aliases: DataPayload<AliasesV2Marker> = provider.load(Default::default())?.payload;
 
         Ok(Self { aliases, expander })
     }
@@ -682,7 +679,7 @@ mod tests {
             };
 
             Ok(AnyResponse {
-                payload: Some(payload),
+                payload,
                 metadata: Default::default(),
             })
         }

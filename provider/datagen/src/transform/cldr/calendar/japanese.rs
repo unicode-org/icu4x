@@ -108,8 +108,8 @@ impl DatagenProvider {
         }
 
         Ok(DataResponse {
-            metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload::from_owned(ret)),
+            metadata: Default::default(),
+            payload: DataPayload::from_owned(ret),
         })
     }
 }
@@ -130,7 +130,7 @@ impl DataProvider<JapaneseExtendedErasV1Marker> for DatagenProvider {
         let DataResponse { metadata, payload } = self.load_japanese_eras(true)?;
         Ok(DataResponse {
             metadata,
-            payload: payload.map(|p| p.cast()),
+            payload: payload.cast(),
         })
     }
 }

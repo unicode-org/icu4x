@@ -3470,7 +3470,7 @@ macro_rules! __impl_datetime_gregory_datesymbols_v1 {
                         fallback_iterator.step();
                     }
                 };
-                Ok(icu_provider::DataResponse { payload: Some(icu_provider::DataPayload::from_static_ref(payload)), metadata })
+                Ok(icu_provider::DataResponse { payload: icu_provider::DataPayload::from_static_ref(payload), metadata })
             }
         }
     };

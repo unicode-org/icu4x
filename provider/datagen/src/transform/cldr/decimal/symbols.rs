@@ -43,7 +43,7 @@ impl DataProvider<DecimalSymbolsV1Marker> for DatagenProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(result)),
+            payload: DataPayload::from_owned(result),
         })
     }
 }
@@ -103,15 +103,13 @@ fn test_basic() {
 
     let provider = DatagenProvider::new_testing();
 
-    let ar_decimal: DataPayload<DecimalSymbolsV1Marker> = provider
+    let ar_decimal: DataResponse<DecimalSymbolsV1Marker> = provider
         .load(DataRequest {
             locale: &langid!("ar-EG").into(),
             ..Default::default()
         })
-        .unwrap()
-        .take_payload()
         .unwrap();
 
-    assert_eq!(ar_decimal.get().decimal_separator, "٫");
-    assert_eq!(ar_decimal.get().digits[0], '٠');
+    assert_eq!(ar_decimal.payload.get().decimal_separator, "٫");
+    assert_eq!(ar_decimal.payload.get().digits[0], '٠');
 }
