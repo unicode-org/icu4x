@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::DataError;
 use core::cmp::Ordering;
 use core::default::Default;
 use core::fmt;
@@ -717,25 +716,16 @@ impl DataMarkerAttributes {
     /// use icu_provider::prelude::*;
     ///
     /// // Single auxiliary key:
-    /// let a = DataMarkerAttributes::try_from_iter([subtag!("abc")]).unwrap();
+    /// let a = DataMarkerAttributes::try_from_iter([subtag!("abc")]);
     /// let b = "abc".parse::<DataMarkerAttributes>().unwrap();
     /// assert_eq!(a, b);
     ///
     /// // Multiple auxiliary keys:
-    /// let a = DataMarkerAttributes::try_from_iter([subtag!("abc"), subtag!("defg")])
-    ///     .unwrap();
+    /// let a = DataMarkerAttributes::try_from_iter([subtag!("abc"), subtag!("defg")]);
     /// let b = "abc-defg".parse::<DataMarkerAttributes>().unwrap();
     /// assert_eq!(a, b);
     /// ```
-    ///
-    /// The iterator can't be empty:
-    ///
-    /// ```
-    /// use icu_provider::prelude::*;
-    ///
-    /// assert!(DataMarkerAttributes::try_from_iter([]).is_err());
-    /// ```
-    pub fn try_from_iter(iter: impl IntoIterator<Item = Subtag>) -> Result<Self, DataError> {
+    pub fn try_from_iter(iter: impl IntoIterator<Item = Subtag>) -> Self {
         // TODO: Avoid the allocation when possible
         let mut builder = String::new();
         for item in iter {
@@ -744,7 +734,7 @@ impl DataMarkerAttributes {
             }
             builder.push_str(item.as_str())
         }
-        Ok(Self {
+        Self {
             value: if builder.is_empty() {
                 DataMarkerAttributesInner::Empty
             } else if builder.len() <= 23 {
@@ -753,7 +743,7 @@ impl DataMarkerAttributes {
             } else {
                 DataMarkerAttributesInner::Boxed(builder.into())
             },
-        })
+        }
     }
 
     /// Creates a [`DataMarkerAttributes`] from a single subtag.
