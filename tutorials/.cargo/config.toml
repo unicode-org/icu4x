@@ -43,6 +43,7 @@ icu_provider_baked = { path = "../provider/baked" }
 icu_provider_blob = { path = "../provider/blob" }
 icu_provider_fs = { path = "../provider/fs/" }
 icu_registry = { path = "../provider/registry/" }
+icu4x-datagen = { path = "../provider/icu4x-datagen/" }
 
 # Baked data
 icu_calendar_data = { path = "../provider/data/calendar" }

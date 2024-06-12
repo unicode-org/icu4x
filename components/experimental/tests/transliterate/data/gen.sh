@@ -1,5 +1,5 @@
 #!/bin/sh
-cargo run -p icu_datagen --features experimental_components -- \
+cargo run -p icu4x-datagen --features experimental_components -- \
 --markers "transliterator/rules@1" \
 --locales full \
 --runtime-fallback-location external \

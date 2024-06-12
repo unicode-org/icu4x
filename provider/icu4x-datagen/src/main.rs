@@ -2,6 +2,15 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! The command line interface for ICU4X datagen.
+//!
+//! ```bash
+//! $ cargo install icu4x-datagen
+//! $ icu4x-datagen --markers all --locales de en-AU --format blob --out data.postcard
+//! ```
+//!
+//! More details can be found by running `--help`, or by consulting the [`icu_datagen`] documentation.
+
 // If no exporter feature is enabled this all doesn't make sense
 #![cfg_attr(
     not(any(
@@ -22,7 +31,6 @@ use eyre::WrapErr;
 use icu_datagen::prelude::*;
 use icu_provider::datagen::ExportableProvider;
 use simple_logger::SimpleLogger;
-use std::collections::HashSet;
 use std::path::PathBuf;
 
 #[derive(Parser)]
@@ -418,7 +426,7 @@ fn main() -> eyre::Result<()> {
         }
 
         #[cfg(all(not(feature = "blob_input"), not(feature = "provider")))]
-        () => compile_error!("Feature `bin` requires either `blob_input` or `provider`"),
+        () => compile_error!("Crate requires either `blob_input` or `provider`"),
     };
 
     let mut driver = DatagenDriver::new();
@@ -517,7 +525,7 @@ fn main() -> eyre::Result<()> {
         }
         #[cfg(feature = "fs_exporter")]
         Format::Dir => driver.export(&provider, {
-            use icu_provider_fs::export::*;
+            use icu_datagen::fs_exporter::*;
 
             FilesystemExporter::try_new(
                 match cli.syntax {
@@ -542,6 +550,8 @@ fn main() -> eyre::Result<()> {
         }
         #[cfg(feature = "blob_exporter")]
         Format::Blob | Format::Blob2 => driver.export(&provider, {
+            use icu_datagen::blob_exporter::*;
+
             let sink: Box<dyn std::io::Write + Sync> = if let Some(path) = cli.output {
                 if !cli.overwrite && path.exists() {
                     eyre::bail!("Output path is present: {:?}", path);
@@ -554,9 +564,9 @@ fn main() -> eyre::Result<()> {
                 Box::new(std::io::stdout())
             };
             if cli.format == Format::Blob {
-                icu_provider_blob::export::BlobExporter::new_with_sink(sink)
+                BlobExporter::new_with_sink(sink)
             } else {
-                icu_provider_blob::export::BlobExporter::new_v2_with_sink(sink)
+                BlobExporter::new_v2_with_sink(sink)
             }
         })?,
         #[cfg(not(feature = "baked_exporter"))]
@@ -610,10 +620,30 @@ where
     BlobDataProvider: AsDeserializingBufferProvider,
     for<'a> DeserializingBufferProvider<'a, BlobDataProvider>: DataProvider<M>,
 {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+    fn supported_requests(
+        &self,
+    ) -> Result<std::collections::HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         self.0.supported_requests_for_marker(M::INFO)
     }
 }
 
 #[cfg(feature = "blob_input")]
-icu_datagen::make_exportable_provider!(ReexportableBlobDataProvider);
+macro_rules! cb {
+    ($($marker:path = $path:literal,)+ #[experimental] $($emarker:path = $epath:literal,)+) => {
+        icu_provider::make_exportable_provider!(
+            ReexportableBlobDataProvider,
+            [
+                icu_provider::hello_world::HelloWorldV1Marker,
+                $(
+                    $marker,
+                )+
+                $(
+                    #[cfg(feature = "experimental")]
+                    $emarker,
+                )+
+            ]
+        );
+    }
+}
+#[cfg(feature = "blob_input")]
+icu_registry::registry!(cb);

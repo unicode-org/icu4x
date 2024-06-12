@@ -18,7 +18,7 @@ cargo 1.71.1 (7f1d04c00 2023-07-29)
 Now you can run
 
 ```console
-cargo install icu_datagen
+cargo install icu4x-datagen
 ```
 
 ## 2. Generating the data pack

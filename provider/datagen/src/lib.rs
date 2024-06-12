@@ -5,15 +5,11 @@
 #![allow(clippy::needless_doctest_main)]
 //! `icu_datagen` is a library to generate data files that can be used in ICU4X data providers.
 //!
-//! Data files can be generated either programmatically (i.e. in `build.rs`), or through a
-//! command-line utility.
-//!
+//! For command-line usage, see the [`icu4x-datagen` binary](https://crates.io/crate/icu4x-datagen).
 //!
 //! Also see our [datagen tutorial](https://github.com/unicode-org/icu4x/blob/main/tutorials/data_management.md).
 //!
 //! # Examples
-//!
-//! ## Rust API
 //!
 //! ```no_run
 //! use icu_datagen::blob_exporter::*;
@@ -31,22 +27,6 @@
 //!     )
 //!     .unwrap();
 //! ```
-//!
-//! ## Command line
-//!
-//! The command line interface can be installed through Cargo.
-//!
-//! ```bash
-//! $ cargo install icu_datagen
-//! ```
-//!
-//! Once the tool is installed, you can invoke it like this:
-//!
-//! ```bash
-//! $ icu4x-datagen --markers all --locales de en-AU --format blob --out data.postcard
-//! ```
-//!
-//! More details can be found by running `--help`.
 //!
 //! # Cargo features
 //!
@@ -68,13 +48,9 @@
 //!   * enables parallelism during export
 //! * `use_wasm` / `use_icu4c`
 //!   * see the documentation on [`icu_codepointtrie_builder`](icu_codepointtrie_builder#build-configuration)
-//! * `bin`
-//!   * required by the CLI and enabled by default to make `cargo install` work
-//! * `icu_experimental`
+//! * `experimental_components`
 //!   * enables data generation for markers defined in the unstable `icu_experimental` crate
 //!   * note that this features affects the behaviour of `all_markers`
-//!
-//! The meta-feature `experimental_components` is available to activate all experimental components.
 
 #![cfg_attr(
     not(test),
@@ -210,26 +186,6 @@ macro_rules! cb {
                     None
                 },
                 Some(Ok(marker)) => Some(marker)
-            }
-        }
-
-        #[macro_export]
-        #[doc(hidden)] // macro
-        macro_rules! make_exportable_provider {
-            ($ty:ty) => {
-                icu_provider::make_exportable_provider!(
-                    $ty,
-                    [
-                        icu_provider::hello_world::HelloWorldV1Marker,
-                        $(
-                            $marker,
-                        )+
-                        $(
-                            #[cfg(feature = "experimental_components")]
-                            $emarker,
-                        )+
-                    ]
-                );
             }
         }
     }
