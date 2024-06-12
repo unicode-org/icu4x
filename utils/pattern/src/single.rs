@@ -180,9 +180,11 @@ impl PatternBackend for SinglePlaceholder {
         let initial_offset = placeholder_offset_char.len_utf8();
         let placeholder_offset = placeholder_offset_char as usize;
         if placeholder_offset > store.len() - initial_offset + 1 {
+            println!("placeholder_offset > store.len() - initial_offset + 1");
             return Err(Error::InvalidPattern);
         }
         if placeholder_offset >= 0xD800 {
+            println!("placeholder_offset >= 0xD800");
             return Err(Error::InvalidPattern);
         }
         Ok(())
@@ -240,7 +242,14 @@ impl PatternBackend for SinglePlaceholder {
     }
 
     fn try_store_from_utf8(utf8: &[u8]) -> Result<&Self::Store, Utf8Error> {
+        println!("try_store_from_utf8: {:?}", utf8);
         let store = core::str::from_utf8(utf8)?;
+        println!("store: {:?}", store);
+        match Self::validate_store(store) {
+            Ok(_) => println!("OK validate_store"),
+            Err(e) => println!("Erroooor validate_store: {:?}", e),
+        }
+
         Ok(store)
     }
 }

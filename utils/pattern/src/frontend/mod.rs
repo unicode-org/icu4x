@@ -227,7 +227,7 @@ where
     /// use std::borrow::Cow;
     ///
     /// Pattern::<SinglePlaceholder, _>::
-    ///                 try_from_utf8("{0} days".as_bytes())
+    ///                 try_from_utf8(b"\x01 days")
     ///                             .expect("single placeholder pattern");
     /// ```
     pub fn try_from_utf8(bytes: &[u8]) -> Result<Self, Error> {
@@ -449,7 +449,7 @@ fn test_try_from_str_inference() {
 
 #[test]
 fn test_try_from_utf8() {
-    let x = Pattern::<SinglePlaceholder, _>::try_from_utf8("{0} days".as_bytes());
+    let x = Pattern::<SinglePlaceholder, _>::try_from_utf8(b"\x01 days");
 
     match x {
         Ok(p) => {
