@@ -5,7 +5,6 @@
 //! Code for the [`DoublePlaceholder`] pattern backend.
 
 use core::convert::Infallible;
-use core::str::Utf8Error;
 use core::{cmp::Ordering, str::FromStr};
 use either::Either;
 use writeable::adapters::WriteableAsTryWriteableInfallible;
@@ -378,8 +377,8 @@ impl PatternBackend for DoublePlaceholder {
     }
 
     fn try_store_from_utf8(utf8: &[u8]) -> Result<&Self::Store, Self::SoreUtf8Error> {
-        let store = core::str::from_utf8(utf8).map_err(|e| StoreUtf8Error::Utf8Error(e))?;
-        Self::validate_store(store).map_err(|e| StoreUtf8Error::PatternError(e))?;
+        let store = core::str::from_utf8(utf8).map_err(StoreUtf8Error::Utf8Error)?;
+        Self::validate_store(store).map_err(StoreUtf8Error::PatternError)?;
         Ok(store)
     }
 }

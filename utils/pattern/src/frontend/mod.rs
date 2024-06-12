@@ -16,7 +16,7 @@ use core::{
 use writeable::{adapters::TryWriteableInfallibleAsWriteable, PartsWrite, TryWriteable, Writeable};
 
 use crate::Error;
-use crate::{common::*, SinglePlaceholder};
+use crate::{common::*};
 
 #[cfg(feature = "alloc")]
 use crate::{Parser, ParserOptions};

@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use core::str::Utf8Error;
 
 use crate::Error;
 use writeable::{Part, TryWriteable};
