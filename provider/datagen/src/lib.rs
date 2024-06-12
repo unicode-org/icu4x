@@ -18,7 +18,7 @@
 //!
 //! DatagenDriver::new()
 //!     .with_markers([icu::list::provider::AndListV1Marker::INFO])
-//!     .with_locales_and_fallback([LocaleFamily::FULL], Default::default())
+//!     .with_locales_and_fallback([LocaleFamily::FULL], FallbackOptions::no_deduplication())
 //!     .export(
 //!         &DatagenProvider::new_latest_tested(),
 //!         BlobExporter::new_v2_with_sink(Box::new(
@@ -76,7 +76,6 @@ pub use driver::DeduplicationStrategy;
 pub use driver::FallbackOptions;
 pub use driver::LocaleFamily;
 pub use driver::NoFallbackOptions;
-pub use driver::RuntimeFallbackLocation;
 
 #[cfg(feature = "provider")]
 pub use provider::CollationHanDatabase;
@@ -100,7 +99,6 @@ pub mod prelude {
     #[doc(no_inline)]
     pub use crate::{
         DatagenDriver, DeduplicationStrategy, FallbackOptions, LocaleFamily, NoFallbackOptions,
-        RuntimeFallbackLocation,
     };
     #[doc(no_inline)]
     pub use icu_locale_core::{langid, LanguageIdentifier};

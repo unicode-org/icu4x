@@ -68,7 +68,7 @@ fn make_testdata() {
         .with_markers(crate::all_markers())
         .with_locales_and_fallback(
             LOCALES.iter().cloned().map(LocaleFamily::with_descendants),
-            Default::default(),
+            FallbackOptions::no_deduplication(),
         )
         .with_segmenter_models([
             "thaidict".into(),
@@ -103,20 +103,8 @@ impl<E: DataExporter> DataExporter for StubExporter<E> {
         self.0.flush(marker)
     }
 
-    fn flush_with_built_in_fallback(
-        &self,
-        marker: DataMarkerInfo,
-        fallback_mode: BuiltInFallbackMode,
-    ) -> Result<(), DataError> {
-        self.0.flush_with_built_in_fallback(marker, fallback_mode)
-    }
-
     fn close(&mut self) -> Result<(), DataError> {
         self.0.close()
-    }
-
-    fn supports_built_in_fallback(&self) -> bool {
-        self.0.supports_built_in_fallback()
     }
 }
 

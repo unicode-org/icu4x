@@ -46,7 +46,7 @@ exec --fail-on-error target/debug/icu4x-datagen --markers "core/helloworld@1" --
 exec --fail-on-error target/debug/icu4x-datagen --markers "core/helloworld@1" --locales full --format blob --overwrite --out provider/blob/tests/data/v1.postcard
 exec --fail-on-error target/debug/icu4x-datagen --markers "core/helloworld@1" --locales full --format blob2 --overwrite --out provider/blob/tests/data/v2.postcard
 
-exec --fail-on-error target/debug/icu4x-datagen --markers "core/helloworld@1" --locales full --format mod --pretty --overwrite --out provider/baked/tests/data
+exec --fail-on-error target/debug/icu4x-datagen --markers "core/helloworld@1" --locales full --format mod --pretty --overwrite --no-internal-fallback --deduplication none --out provider/baked/tests/data
 
 exec --fail-on-error target/debug/icu4x-datagen --markers "core/helloworld@1" "fallback/likelysubtags@1" "fallback/parents@1" "fallback/supplement/co@1" --locales full --format blob --out provider/adapters/tests/data/blob.postcard --overwrite
 exec --fail-on-error target/debug/icu4x-datagen --markers "core/helloworld@1" --without-fallback --locales de --format dir --syntax json --out provider/adapters/tests/data/langtest/de --overwrite
@@ -65,7 +65,7 @@ script_runner = "@duckscript"
 script = '''
 exit_on_error true
 
-output = exec git status --porcelain=v1 provider/datagen/tests/data provider/fs/tests/data provider/blob/tests/data provider/adapters/tests/data provider/datagen/src/tests
+output = exec git status --porcelain=v1 provider/datagen/tests/data provider/fs/tests/data provider/blob/tests/data provider/baked/tests/data provider/adapters/tests/data provider/datagen/src/tests
 output_length = length ${output.stdout}
 if greater_than ${output_length} 0
     msg = array "" ""
