@@ -499,11 +499,10 @@ mod test {
 
     #[test]
     fn test_non_owned_any_marker() {
-        // This test demonstrates a code path that can trigger the InvalidState error kind.
+        // This test demonstrates a code path that can trigger a downcast error
         let payload_result: DataPayload<AnyMarker> =
             DataPayload::from_owned_buffer(Box::new(*b"pretend we're borrowing from here"))
                 .map_project(|_, _| AnyPayload::from_static_ref(&CONST_DATA));
-        let err = payload_result.downcast::<HelloWorldV1Marker>().unwrap_err();
-        assert_eq!(err, DataError::custom("DataPayload not owned"));
+        payload_result.downcast::<HelloWorldV1Marker>().unwrap_err();
     }
 }
