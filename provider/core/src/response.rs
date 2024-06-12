@@ -379,16 +379,6 @@ where
         Self(DataPayloadInner::StaticRef(data))
     }
 
-    /// Convert a DataPayload that was created via [`DataPayload::from_owned()`] back into the
-    /// concrete type used to construct it.
-    pub fn try_unwrap_owned(self) -> Result<M::Yokeable, DataError> {
-        match self.0 {
-            DataPayloadInner::Yoke(yoke) => yoke.try_into_yokeable().ok(),
-            DataPayloadInner::StaticRef(_) => None,
-        }
-        .ok_or(DataError::custom("DataPayload not owned"))
-    }
-
     /// Mutate the data contained in this DataPayload.
     ///
     /// For safety, all mutation operations must take place within a helper function that cannot
