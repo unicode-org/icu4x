@@ -13,5 +13,13 @@ pub enum PatternError {
     InvalidPlaceholder,
 }
 
+/// Error type for `try_store_from_utf8`.
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[non_exhaustive]
+pub enum StoreUtf8Error {
+    PatternError(PatternError),
+    Utf8Error(core::str::Utf8Error),
+}
+
 #[cfg(feature = "std")]
 impl std::error::Error for PatternError {}

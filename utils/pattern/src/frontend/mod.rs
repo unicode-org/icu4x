@@ -442,18 +442,3 @@ fn test_try_from_str_inference() {
     let _: Pattern<SinglePlaceholder, String> = Pattern::from_str("{0} days").unwrap();
     let _ = Pattern::<SinglePlaceholder, String>::from_str("{0} days").unwrap();
 }
-
-#[test]
-fn test_try_from_utf8() {
-    let x = Pattern::<SinglePlaceholder, _>::try_from_utf8(b"\x01 days");
-
-    match x {
-        Ok(p) => {
-            let y = p.interpolate([1]);
-            println!("Correct: {y}");
-        }
-        Err(e) => {
-            println!("Error: {e}");
-        }
-    }
-}

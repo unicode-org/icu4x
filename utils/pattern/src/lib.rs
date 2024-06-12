@@ -70,6 +70,8 @@ pub use common::PATTERN_PLACEHOLDER_PART;
 pub use double::DoublePlaceholder;
 pub use double::DoublePlaceholderKey;
 pub use error::PatternError;
+#[doc(no_inline)]
+pub use error::StoreUtf8Error;
 pub use frontend::Pattern;
 pub use multi_named::MissingNamedPlaceholderError;
 pub use multi_named::MultiNamedPlaceholder;

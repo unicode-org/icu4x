@@ -10,8 +10,8 @@ use core::{cmp::Ordering, str::FromStr};
 use writeable::adapters::WriteableAsTryWriteableInfallible;
 use writeable::Writeable;
 
-use crate::common::*;
 use crate::Error;
+use crate::{common::*, StoreUtf8Error};
 
 #[cfg(feature = "alloc")]
 use alloc::string::String;
@@ -172,6 +172,7 @@ impl PatternBackend for SinglePlaceholder {
     #[cfg(feature = "alloc")]
     type PlaceholderKeyCow<'a> = SinglePlaceholderKey;
     type Error<'a> = Infallible;
+    type SoreUtf8Error = StoreUtf8Error;
     type Store = str;
     type Iter<'a> = SinglePlaceholderPatternIterator<'a>;
 
@@ -239,11 +240,9 @@ impl PatternBackend for SinglePlaceholder {
         Ok(result)
     }
 
-    fn try_store_from_utf8(utf8: &[u8]) -> Result<&Self::Store, Utf8Error> {
-        println!("try_store_from_utf8: {:?}", utf8);
-        let store = core::str::from_utf8(utf8)?;
-        println!("store: {:?}", store);
-        //Self::validate_store(store).map_err(|_| Utf8Error::InvalidInput)?;
+    fn try_store_from_utf8(utf8: &[u8]) -> Result<&Self::Store, Self::SoreUtf8Error> {
+        let store = core::str::from_utf8(utf8).map_err(|e| Self::SoreUtf8Error::Utf8Error(e))?;
+        Self::validate_store(store).map_err(|e| Self::SoreUtf8Error::PatternError(e))?;
 
         Ok(store)
     }

@@ -11,8 +11,8 @@ use either::Either;
 use writeable::adapters::WriteableAsTryWriteableInfallible;
 use writeable::Writeable;
 
-use crate::common::*;
 use crate::Error;
+use crate::{common::*, StoreUtf8Error};
 
 #[cfg(feature = "alloc")]
 use alloc::string::String;
@@ -271,6 +271,7 @@ impl PatternBackend for DoublePlaceholder {
     #[cfg(feature = "alloc")]
     type PlaceholderKeyCow<'a> = DoublePlaceholderKey;
     type Error<'a> = Infallible;
+    type SoreUtf8Error = StoreUtf8Error;
     type Store = str;
     type Iter<'a> = DoublePlaceholderPatternIterator<'a>;
 
@@ -376,11 +377,9 @@ impl PatternBackend for DoublePlaceholder {
         Ok(result)
     }
 
-    fn try_store_from_utf8(utf8: &[u8]) -> Result<&Self::Store, Utf8Error> {
-        let store = core::str::from_utf8(utf8)?;
-        // TODO: we do not need to validate the store here? since if the store is not valid, the
-        // from_utf8 will return an error, right ?
-        // Self::validate_store(store)?;
+    fn try_store_from_utf8(utf8: &[u8]) -> Result<&Self::Store, Self::SoreUtf8Error> {
+        let store = core::str::from_utf8(utf8).map_err(|e| StoreUtf8Error::Utf8Error(e))?;
+        Self::validate_store(store).map_err(|e| StoreUtf8Error::PatternError(e))?;
         Ok(store)
     }
 }
