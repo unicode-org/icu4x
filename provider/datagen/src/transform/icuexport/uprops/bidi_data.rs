@@ -5,7 +5,7 @@
 use std::collections::HashSet;
 
 use crate::provider::DatagenProvider;
-use icu_properties::provider::bidi_data::BidiAuxiliaryPropertiesV1Marker;
+use icu::properties::provider::bidi_data::BidiAuxiliaryPropertiesV1Marker;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 
@@ -35,13 +35,13 @@ impl DataProvider<BidiAuxiliaryPropertiesV1Marker> for DatagenProvider {
         &self,
         req: DataRequest,
     ) -> Result<DataResponse<BidiAuxiliaryPropertiesV1Marker>, DataError> {
-        use icu_codepointtrie_builder::{CodePointTrieBuilder, CodePointTrieBuilderData};
-        use icu_collections::codepointinvlist::CodePointInversionListBuilder;
-        use icu_collections::codepointtrie::CodePointTrie;
-        use icu_collections::codepointtrie::TrieType;
-        use icu_properties::provider::bidi_data::{
+        use icu::collections::codepointinvlist::CodePointInversionListBuilder;
+        use icu::collections::codepointtrie::CodePointTrie;
+        use icu::collections::codepointtrie::TrieType;
+        use icu::properties::provider::bidi_data::{
             BidiAuxiliaryPropertiesV1, MirroredPairedBracketData,
         };
+        use icu_codepointtrie_builder::{CodePointTrieBuilder, CodePointTrieBuilderData};
 
         self.check_req::<BidiAuxiliaryPropertiesV1Marker>(req)?;
 
@@ -120,8 +120,8 @@ impl IterableDataProvider<BidiAuxiliaryPropertiesV1Marker> for DatagenProvider {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_properties::bidi_data::{BidiAuxiliaryProperties, BidiPairingProperties};
-    use icu_properties::provider::bidi_data::BidiAuxiliaryPropertiesV1Marker;
+    use icu::properties::bidi_data::{BidiAuxiliaryProperties, BidiPairingProperties};
+    use icu::properties::provider::bidi_data::BidiAuxiliaryPropertiesV1Marker;
 
     #[test]
     fn test_bidi_data_provider() {

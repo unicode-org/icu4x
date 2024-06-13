@@ -4,8 +4,8 @@
 
 use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
-use icu_calendar::provider::*;
-use icu_locale_core::langid;
+use icu::calendar::provider::*;
+use icu::locale::langid;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;
@@ -99,7 +99,7 @@ impl DatagenProvider {
                 return Err(DataError::custom(
                     "Era data has changed! This can be for two reasons: Either the CLDR locale data for Japanese eras has \
                     changed in an incompatible way, or there is a new Japanese era. Run \
-                    `ICU4X_SKIP_JAPANESE_INTEGRITY_CHECK=1 cargo run -p icu_datagen -- --markers calendar/japanext@1 --format dir --syntax json \
+                    `ICU4X_SKIP_JAPANESE_INTEGRITY_CHECK=1 cargo run -p icu4x-datagen -- --markers calendar/japanext@1 --format dir --syntax json \
                     --out provider/datagen/data/japanese-golden --pretty --overwrite` in the icu4x repo and inspect the diff to \
                     check which situation it is. If a new era has been introduced, commit the diff, if not, it's likely that japanese.rs \
                     in icu_datagen will need to be updated to handle the data changes."

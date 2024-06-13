@@ -88,7 +88,7 @@ fn main() {
                 .unwrap()
                 .into_iter()
                 .map(LocaleFamily::with_descendants),
-            Default::default(),
+            FallbackOptions::maximal_deduplication(),
         )
         .with_recommended_segmenter_models();
 
@@ -235,14 +235,6 @@ impl<F: Write + Send + Sync> DataExporter for PostcardFingerprintExporter<F> {
         Ok(())
     }
 
-    fn flush_with_built_in_fallback(
-        &self,
-        _marker: DataMarkerInfo,
-        _fallback_mode: BuiltInFallbackMode,
-    ) -> Result<(), DataError> {
-        Ok(())
-    }
-
     fn close(&mut self) -> Result<(), DataError> {
         let mut seen = std::collections::HashMap::new();
         for ((marker, req), (size, hash)) in self.size_hash.get_mut().expect("poison").iter() {
@@ -257,8 +249,5 @@ impl<F: Write + Send + Sync> DataExporter for PostcardFingerprintExporter<F> {
             }
         }
         Ok(())
-    }
-    fn supports_built_in_fallback(&self) -> bool {
-        true
     }
 }

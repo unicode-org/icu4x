@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::{DataError, DataErrorKind};
 use core::cmp::Ordering;
 use core::default::Default;
 use core::fmt;
@@ -11,7 +10,7 @@ use core::hash::Hash;
 use core::str::FromStr;
 use icu_locale_core::extensions::unicode as unicode_ext;
 use icu_locale_core::subtags::{Language, Region, Script, Variants};
-use icu_locale_core::{LanguageIdentifier, Locale};
+use icu_locale_core::{LanguageIdentifier, Locale, ParseError};
 use writeable::{LengthHint, Writeable};
 
 use alloc::string::String;
@@ -205,15 +204,9 @@ impl From<&Locale> for DataLocale {
 }
 
 impl FromStr for DataLocale {
-    type Err = DataError;
+    type Err = ParseError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let locale = Locale::from_str(s).map_err(|e| {
-            DataErrorKind::KeyLocaleSyntax
-                .into_error()
-                .with_display_context(s)
-                .with_display_context(&e)
-        })?;
-        Ok(DataLocale::from(locale))
+        Locale::from_str(s).map(DataLocale::from)
     }
 }
 
@@ -687,25 +680,16 @@ impl DataMarkerAttributes {
     /// use icu_provider::prelude::*;
     ///
     /// // Single auxiliary key:
-    /// let a = DataMarkerAttributes::try_from_iter([subtag!("abc")]).unwrap();
+    /// let a = DataMarkerAttributes::try_from_iter([subtag!("abc")]);
     /// let b = "abc".parse::<DataMarkerAttributes>().unwrap();
     /// assert_eq!(a, b);
     ///
     /// // Multiple auxiliary keys:
-    /// let a = DataMarkerAttributes::try_from_iter([subtag!("abc"), subtag!("defg")])
-    ///     .unwrap();
+    /// let a = DataMarkerAttributes::try_from_iter([subtag!("abc"), subtag!("defg")]);
     /// let b = "abc-defg".parse::<DataMarkerAttributes>().unwrap();
     /// assert_eq!(a, b);
     /// ```
-    ///
-    /// The iterator can't be empty:
-    ///
-    /// ```
-    /// use icu_provider::prelude::*;
-    ///
-    /// assert!(DataMarkerAttributes::try_from_iter([]).is_err());
-    /// ```
-    pub fn try_from_iter(iter: impl IntoIterator<Item = Subtag>) -> Result<Self, DataError> {
+    pub fn try_from_iter(iter: impl IntoIterator<Item = Subtag>) -> Self {
         // TODO: Avoid the allocation when possible
         let mut builder = String::new();
         for item in iter {
@@ -714,18 +698,15 @@ impl DataMarkerAttributes {
             }
             builder.push_str(item.as_str())
         }
-        if builder.is_empty() {
-            return Err(DataErrorKind::KeyLocaleSyntax.with_str_context("empty aux iterator"));
-        }
-        if builder.len() <= 23 {
-            #[allow(clippy::unwrap_used)] // we just checked that the string is ascii
-            Ok(Self {
-                value: DataMarkerAttributesInner::Stack(builder.parse().unwrap()),
-            })
-        } else {
-            Ok(Self {
-                value: DataMarkerAttributesInner::Boxed(builder.into()),
-            })
+        Self {
+            value: if builder.is_empty() {
+                DataMarkerAttributesInner::Empty
+            } else if builder.len() <= 23 {
+                #[allow(clippy::unwrap_used)] // we just checked that the string is ascii
+                DataMarkerAttributesInner::Stack(builder.parse().unwrap())
+            } else {
+                DataMarkerAttributesInner::Boxed(builder.into())
+            },
         }
     }
 

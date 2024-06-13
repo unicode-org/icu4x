@@ -5,10 +5,10 @@
 //! This module contains provider implementations backed by LSTM segmentation data.
 
 use crate::provider::{DatagenProvider, IterableDataProviderCached};
-use icu_locale_core::langid;
+use icu::locale::langid;
+use icu::segmenter::provider::*;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
-use icu_segmenter::provider::*;
 use ndarray::{Array, Array1, Array2, ArrayBase, Dim, Dimension, OwnedRepr};
 use std::collections::{HashMap, HashSet};
 use std::fmt::Debug;
@@ -225,9 +225,9 @@ impl IterableDataProviderCached<LstmForWordLineAutoV1Marker> for DatagenProvider
 #[cfg(test)]
 mod tests {
     use super::*;
+    use icu::segmenter::LineSegmenter;
     use icu_provider_adapters::any_payload::AnyPayloadProvider;
     use icu_provider_adapters::fork::ForkByMarkerProvider;
-    use icu_segmenter::LineSegmenter;
 
     #[test]
     fn thai_word_break_with_grapheme_model() {

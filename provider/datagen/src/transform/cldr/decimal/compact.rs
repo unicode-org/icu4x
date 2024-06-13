@@ -5,8 +5,8 @@
 use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
 use crate::provider::IterableDataProviderCached;
-use icu_experimental::compactdecimal::provider::*;
-use icu_locale_core::{extensions::unicode::key, subtags::Subtag};
+use icu::experimental::compactdecimal::provider::*;
+use icu::locale::{extensions::unicode::key, subtags::Subtag};
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 use std::convert::TryFrom;
@@ -127,7 +127,7 @@ impl IterableDataProviderCached<LongCompactDecimalFormatDataV1Marker> for Datage
 
 mod tests {
     use super::*;
-    use icu_locale_core::langid;
+    use icu::locale::langid;
     use std::borrow::Cow;
     use zerofrom::ZeroFrom;
     use zerovec::ule::AsULE;

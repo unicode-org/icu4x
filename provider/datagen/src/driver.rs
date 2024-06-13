@@ -4,11 +4,11 @@
 
 use crate::rayon_prelude::*;
 use displaydoc::Display;
-use icu_locale::fallback::LocaleFallbackIterator;
-use icu_locale::LocaleFallbacker;
-use icu_locale_core::extensions::unicode::key;
-use icu_locale_core::LanguageIdentifier;
-use icu_locale_core::ParseError;
+use icu::locale::extensions::unicode::key;
+use icu::locale::fallback::LocaleFallbackIterator;
+use icu::locale::LanguageIdentifier;
+use icu::locale::LocaleFallbacker;
+use icu::locale::ParseError;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use std::collections::HashMap;
@@ -25,25 +25,6 @@ use writeable::Writeable;
 #[non_exhaustive]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Default)]
 pub struct NoFallbackOptions {}
-
-/// Choices for the code location of runtime fallback.
-///
-/// Some data providers support "internal" fallback in which all data requests automatically run
-/// the locale fallback algorithm. If internal fallback is requested for an exporter that does
-/// not support it, an error will occur.
-#[non_exhaustive]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum RuntimeFallbackLocation {
-    /// Include fallbacking code in the exported data provider.
-    Internal,
-    /// Do not include fallbacking code in the exported data provider.
-    ///
-    /// The client is responsible for manually configuring [`LocaleFallbackProvider`] in their
-    /// runtime data pipeline.
-    ///
-    /// [`LocaleFallbackProvider`]: icu_provider_adapters::fallback::LocaleFallbackProvider
-    External,
-}
 
 /// Choices for determining the deduplication of locales for exported data payloads.
 ///
@@ -116,6 +97,24 @@ impl LocaleFamilyAnnotations {
     }
 }
 
+impl Writeable for LocaleFamilyAnnotations {
+    fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
+        match (self.include_ancestors, self.include_descendants) {
+            (true, true) => Ok(()),
+            (true, false) => sink.write_char('^'),
+            (false, true) => sink.write_char('%'),
+            (false, false) => sink.write_char('@'),
+        }
+    }
+
+    fn writeable_length_hint(&self) -> writeable::LengthHint {
+        writeable::LengthHint::exact(match (self.include_ancestors, self.include_descendants) {
+            (true, true) => 0,
+            _ => 1,
+        })
+    }
+}
+
 /// A family of locales to export.
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct LocaleFamily {
@@ -135,10 +134,18 @@ impl LocaleFamily {
     /// - Descendants: "en-GB", "en-ZA", ...
     ///
     /// Stylized on the CLI as: "en-US"
+    ///
+    /// The `und` locale is treated specially and behaves like `::single("und")`.
     pub const fn with_descendants(langid: LanguageIdentifier) -> Self {
+        let annotations = if langid.is_empty() {
+            LocaleFamilyAnnotations::single()
+        } else {
+            LocaleFamilyAnnotations::with_descendants()
+        };
+
         Self {
             langid: Some(langid),
-            annotations: LocaleFamilyAnnotations::with_descendants(),
+            annotations,
         }
     }
 
@@ -153,10 +160,17 @@ impl LocaleFamily {
     /// - Ancestors: "und", "en"
     ///
     /// Stylized on the CLI as: "^en-US"
+    ///
+    /// The `und` locale is treated specially and behaves like `::single("und")`.
     pub const fn without_descendants(langid: LanguageIdentifier) -> Self {
+        let annotations = if langid.is_empty() {
+            LocaleFamilyAnnotations::single()
+        } else {
+            LocaleFamilyAnnotations::without_descendants()
+        };
         Self {
             langid: Some(langid),
-            annotations: LocaleFamilyAnnotations::without_descendants(),
+            annotations,
         }
     }
 
@@ -172,10 +186,17 @@ impl LocaleFamily {
     /// but it does _not_ contain the ancestors "en" and "und".
     ///
     /// Stylized on the CLI as: "%en-US"
+    ///
+    /// The `und` locale is treated specially and behaves like `::single("und")`.
     pub const fn without_ancestors(langid: LanguageIdentifier) -> Self {
+        let annotations = if langid.is_empty() {
+            LocaleFamilyAnnotations::single()
+        } else {
+            LocaleFamilyAnnotations::without_ancestors()
+        };
         Self {
             langid: Some(langid),
-            annotations: LocaleFamilyAnnotations::without_ancestors(),
+            annotations,
         }
     }
 
@@ -201,88 +222,28 @@ impl LocaleFamily {
             include_descendants: true,
         },
     };
-
-    pub(crate) fn into_parts(self) -> (Option<LanguageIdentifier>, LocaleFamilyAnnotations) {
-        (self.langid, self.annotations)
-    }
-
-    pub(crate) fn as_borrowed(&self) -> LocaleFamilyBorrowed {
-        LocaleFamilyBorrowed {
-            langid: self.langid.as_ref(),
-            annotations: self.annotations,
-        }
-    }
 }
 
 impl Writeable for LocaleFamily {
-    #[inline]
     fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
-        self.as_borrowed().write_to(sink)
+        if let Some(langid) = self.langid.as_ref() {
+            self.annotations.write_to(sink)?;
+            langid.write_to(sink)
+        } else {
+            sink.write_str("full")
+        }
     }
 
-    #[inline]
     fn writeable_length_hint(&self) -> writeable::LengthHint {
-        self.as_borrowed().writeable_length_hint()
+        if let Some(langid) = self.langid.as_ref() {
+            self.annotations.writeable_length_hint() + langid.writeable_length_hint()
+        } else {
+            writeable::LengthHint::exact(4)
+        }
     }
 }
 
 writeable::impl_display_with_writeable!(LocaleFamily);
-
-/// A [`LocaleFamily`] that does not own its [`LanguageIdentifier`].
-pub(crate) struct LocaleFamilyBorrowed<'a> {
-    langid: Option<&'a LanguageIdentifier>,
-    annotations: LocaleFamilyAnnotations,
-}
-
-impl<'a> LocaleFamilyBorrowed<'a> {
-    pub(crate) fn from_parts(
-        inner: (&'a Option<LanguageIdentifier>, &LocaleFamilyAnnotations),
-    ) -> Self {
-        Self {
-            langid: inner.0.as_ref(),
-            annotations: *inner.1,
-        }
-    }
-}
-
-impl Writeable for LocaleFamilyBorrowed<'_> {
-    fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
-        match (
-            &self.langid,
-            self.annotations.include_ancestors,
-            self.annotations.include_descendants,
-        ) {
-            (Some(langid), true, true) => langid.write_to(sink),
-            (Some(langid), true, false) => {
-                sink.write_char('^')?;
-                langid.write_to(sink)
-            }
-            (Some(langid), false, true) => {
-                sink.write_char('%')?;
-                langid.write_to(sink)
-            }
-            (Some(langid), false, false) => {
-                sink.write_char('@')?;
-                langid.write_to(sink)
-            }
-            (None, _, _) => sink.write_str("full"),
-        }
-    }
-
-    fn writeable_length_hint(&self) -> writeable::LengthHint {
-        match (
-            &self.langid,
-            self.annotations.include_ancestors,
-            self.annotations.include_descendants,
-        ) {
-            (Some(langid), true, true) => langid.writeable_length_hint(),
-            (Some(langid), true, false) => langid.writeable_length_hint() + 1,
-            (Some(langid), false, true) => langid.writeable_length_hint() + 1,
-            (Some(langid), false, false) => langid.writeable_length_hint() + 1,
-            (None, _, _) => writeable::LengthHint::exact(4),
-        }
-    }
-}
 
 /// An error while parsing a [`LocaleFamily`].
 #[derive(Debug, Copy, Clone, PartialEq, Display)]
@@ -351,30 +312,34 @@ fn test_locale_family_parsing() {
 }
 
 /// Options bag configuring locale inclusion and behavior when runtime fallback is enabled.
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Default)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub struct FallbackOptions {
-    /// The location in code where fallback will be performed at runtime.
-    ///
-    /// If not set, determined by the exporter: internal fallback is used if the exporter
-    /// supports internal fallback.
-    pub runtime_fallback_location: Option<RuntimeFallbackLocation>,
     /// The aggressiveness of deduplication of data payloads.
-    ///
-    /// If not set, determined by `runtime_fallback_location`. If internal fallback is enabled,
-    /// a more aggressive deduplication strategy is used.
-    pub deduplication_strategy: Option<DeduplicationStrategy>,
+    pub deduplication_strategy: DeduplicationStrategy,
 }
 
-#[derive(Debug, Clone)]
-enum LocalesWithOrWithoutFallback {
-    WithFallback {
-        families: HashMap<Option<LanguageIdentifier>, LocaleFamilyAnnotations>,
-        options: FallbackOptions,
-    },
-    WithoutFallback {
-        langids: HashSet<LanguageIdentifier>,
-    },
+impl FallbackOptions {
+    /// Creates a [`FallbackOptions`] with [`DeduplicationStrategy::None`]
+    pub fn no_deduplication() -> Self {
+        Self {
+            deduplication_strategy: DeduplicationStrategy::None,
+        }
+    }
+
+    /// Creates a [`FallbackOptions`] with [`DeduplicationStrategy::Maximal`]
+    pub fn maximal_deduplication() -> Self {
+        Self {
+            deduplication_strategy: DeduplicationStrategy::Maximal,
+        }
+    }
+
+    /// Creates a [`FallbackOptions`] with [`DeduplicationStrategy::RetainBaseLanguages`]
+    pub fn retain_base_languages_deduplication() -> Self {
+        Self {
+            deduplication_strategy: DeduplicationStrategy::RetainBaseLanguages,
+        }
+    }
 }
 
 /// Configuration for a data export operation.
@@ -390,7 +355,7 @@ enum LocalesWithOrWithoutFallback {
 ///
 /// DatagenDriver::new()
 ///     .with_markers([icu::list::provider::AndListV1Marker::INFO])
-///     .with_locales_and_fallback([LocaleFamily::FULL], Default::default())
+///     .with_locales_and_fallback([LocaleFamily::FULL], FallbackOptions::no_deduplication())
 ///     .export(
 ///         &DatagenProvider::new_latest_tested(),
 ///         BlobExporter::new_with_sink(Box::new(&mut Vec::new())),
@@ -400,7 +365,9 @@ enum LocalesWithOrWithoutFallback {
 #[derive(Debug, Clone)]
 pub struct DatagenDriver {
     markers: Option<HashSet<DataMarkerInfo>>,
-    locales_fallback: Option<LocalesWithOrWithoutFallback>,
+    requested_families: Option<HashMap<LanguageIdentifier, LocaleFamilyAnnotations>>,
+    include_full: bool,
+    deduplication_strategy: DeduplicationStrategy,
     additional_collations: HashSet<String>,
     segmenter_models: Vec<String>,
 }
@@ -412,10 +379,12 @@ impl DatagenDriver {
     #[allow(clippy::new_without_default)] // this is not directly usable
     pub fn new() -> Self {
         Self {
-            markers: None,
-            locales_fallback: None,
-            additional_collations: HashSet::new(),
-            segmenter_models: Vec::new(),
+            markers: Default::default(),
+            requested_families: Default::default(),
+            include_full: Default::default(),
+            deduplication_strategy: DeduplicationStrategy::None,
+            additional_collations: Default::default(),
+            segmenter_models: Default::default(),
         }
         .with_recommended_segmenter_models()
     }
@@ -443,16 +412,19 @@ impl DatagenDriver {
     /// [`langid!`]: crate::prelude::langid
     /// [`DatagenProvider::locales_for_coverage_levels`]: crate::DatagenProvider::locales_for_coverage_levels
     pub fn with_locales_no_fallback(
-        self,
+        mut self,
         locales: impl IntoIterator<Item = LanguageIdentifier>,
         _options: NoFallbackOptions,
     ) -> Self {
-        Self {
-            locales_fallback: Some(LocalesWithOrWithoutFallback::WithoutFallback {
-                langids: locales.into_iter().collect(),
-            }),
-            ..self
-        }
+        self.requested_families = Some(
+            locales
+                .into_iter()
+                // Map langids without fallback to the `single` family
+                .map(|langid| (langid, LocaleFamilyAnnotations::single()))
+                .collect(),
+        );
+        self.deduplication_strategy = DeduplicationStrategy::None;
+        self
     }
 
     /// Sets this driver to generate the given locales assuming runtime fallback.
@@ -466,17 +438,34 @@ impl DatagenDriver {
     /// [`langid!`]: crate::prelude::langid
     /// [`DatagenProvider::locales_for_coverage_levels`]: crate::DatagenProvider::locales_for_coverage_levels
     pub fn with_locales_and_fallback(
-        self,
+        mut self,
         locales: impl IntoIterator<Item = LocaleFamily>,
         options: FallbackOptions,
     ) -> Self {
-        Self {
-            locales_fallback: Some(LocalesWithOrWithoutFallback::WithFallback {
-                families: locales.into_iter().map(LocaleFamily::into_parts).collect(),
-                options,
-            }),
-            ..self
+        let mut families = locales.into_iter().collect::<Vec<_>>();
+        if families.is_empty() {
+            families.push(LocaleFamily::single(LanguageIdentifier::UND));
         }
+
+        self.requested_families = Some(
+            families
+                .into_iter()
+                .filter_map(|family| {
+                    Some((
+                        family.langid.or_else(|| {
+                            // Full locale family: set the bit instead of adding to the set
+                            debug_assert_eq!(family.annotations, LocaleFamily::FULL.annotations);
+                            self.include_full = true;
+                            None
+                        })?,
+                        family.annotations,
+                    ))
+                })
+                .collect(),
+        );
+
+        self.deduplication_strategy = options.deduplication_strategy;
+        self
     }
 
     /// This option is only relevant if using `icu::collator`.
@@ -568,7 +557,9 @@ impl DatagenDriver {
     ) -> Result<(), DataError> {
         let Self {
             markers,
-            locales_fallback,
+            requested_families,
+            include_full,
+            deduplication_strategy,
             additional_collations,
             segmenter_models,
         } = self;
@@ -579,7 +570,7 @@ impl DatagenDriver {
             ));
         };
 
-        let locales_fallback = locales_fallback.ok_or_else(|| DataError::custom(
+        let requested_families = requested_families.ok_or_else(|| DataError::custom(
             "`DatagenDriver::with_locales_and_fallback` or `with_locales_no_fallback` needs to be called",
         ))?;
 
@@ -587,60 +578,30 @@ impl DatagenDriver {
             log::warn!("No markers selected");
         }
 
-        let (uses_internal_fallback, deduplication_strategy) = match &locales_fallback {
-            LocalesWithOrWithoutFallback::WithoutFallback { langids } => {
-                let mut sorted_locale_strs = langids
+        log::info!(
+            "Datagen configured with {}, and these locales: {:?}",
+            match deduplication_strategy {
+                DeduplicationStrategy::Maximal => "maximal deduplication",
+                DeduplicationStrategy::RetainBaseLanguages =>
+                    "deduplication retaining base languages",
+                DeduplicationStrategy::None => "no deduplication",
+            },
+            if include_full {
+                vec!["<all>".to_string()]
+            } else {
+                let mut sorted_locale_strs = requested_families
                     .iter()
-                    .map(|x| x.write_to_string())
+                    .map(|(l, a)| {
+                        let mut s = String::new();
+                        let _infallible = a.write_to(&mut s);
+                        let _infallible = l.write_to(&mut s);
+                        s
+                    })
                     .collect::<Vec<_>>();
                 sorted_locale_strs.sort_unstable();
-                log::info!(
-                    "Datagen configured without fallback with these locales: {:?}",
-                    sorted_locale_strs
-                );
-                (false, DeduplicationStrategy::None)
+                sorted_locale_strs
             }
-            LocalesWithOrWithoutFallback::WithFallback { options, families } => {
-                let uses_internal_fallback = match options.runtime_fallback_location {
-                    None => sink.supports_built_in_fallback(),
-                    Some(RuntimeFallbackLocation::Internal) => true,
-                    Some(RuntimeFallbackLocation::External) => false,
-                };
-                let deduplication_strategy = match options.deduplication_strategy {
-                    // TODO(2.0): Default to RetainBaseLanguages here
-                    None => {
-                        if sink.supports_built_in_fallback() {
-                            DeduplicationStrategy::Maximal
-                        } else {
-                            DeduplicationStrategy::None
-                        }
-                    }
-                    Some(x) => x,
-                };
-                let mut sorted_locale_strs = families
-                    .iter()
-                    .map(LocaleFamilyBorrowed::from_parts)
-                    .map(|family| family.write_to_string().into_owned())
-                    .collect::<Vec<_>>();
-                sorted_locale_strs.sort_unstable();
-                log::info!(
-                    "Datagen configured with {}, {}, and these locales: {:?}",
-                    if uses_internal_fallback {
-                        "internal fallback"
-                    } else {
-                        "external fallback"
-                    },
-                    match deduplication_strategy {
-                        DeduplicationStrategy::Maximal => "maximal deduplication",
-                        DeduplicationStrategy::RetainBaseLanguages =>
-                            "deduplication retaining base languages",
-                        DeduplicationStrategy::None => "no deduplication",
-                    },
-                    sorted_locale_strs
-                );
-                (uses_internal_fallback, deduplication_strategy)
-            }
-        };
+        );
 
         let fallbacker = OnceLock::new();
         let fallbacker = || {
@@ -744,7 +705,8 @@ impl DatagenDriver {
             let locales_to_export = select_locales_for_marker(
                 provider,
                 marker,
-                &locales_fallback,
+                &requested_families,
+                include_full,
                 &additional_collations,
                 &segmenter_models,
                 fallbacker,
@@ -811,14 +773,7 @@ impl DatagenDriver {
 
             let transform_duration = instant1.elapsed();
 
-            // segmenter uses hardcoded locales internally, so fallback is not necessary.
-            // TODO(#4511): Use auxiliary keys for segmenter
-            if uses_internal_fallback && !marker.path.get().starts_with("segmenter") {
-                sink.flush_with_built_in_fallback(marker, BuiltInFallbackMode::Standard)
-            } else {
-                sink.flush(marker)
-            }
-            .map_err(|e| e.with_marker(marker))?;
+            sink.flush(marker).map_err(|e| e.with_marker(marker))?;
 
             let final_duration = instant1.elapsed();
             let flush_duration = final_duration - transform_duration;
@@ -846,7 +801,8 @@ impl DatagenDriver {
 fn select_locales_for_marker<'a>(
     provider: &dyn ExportableProvider,
     marker: DataMarkerInfo,
-    locales_fallback: &LocalesWithOrWithoutFallback,
+    requested_families: &HashMap<LanguageIdentifier, LocaleFamilyAnnotations>,
+    include_full: bool,
     additional_collations: &HashSet<String>,
     segmenter_models: &[String],
     fallbacker: impl Fn() -> Result<&'a LocaleFallbacker, DataError>,
@@ -898,42 +854,6 @@ fn select_locales_for_marker<'a>(
             !locales.is_empty()
         });
     }
-
-    // The explicitly requested families, except for the `full` family.
-    let mut include_full = false;
-    let requested_families: HashMap<LanguageIdentifier, LocaleFamilyAnnotations> =
-        match locales_fallback {
-            LocalesWithOrWithoutFallback::WithFallback { families, .. } if families.is_empty() => {
-                // If no locales are selected but fallback is enabled, select the root locale
-                [(LanguageIdentifier::UND, LocaleFamilyAnnotations::single())]
-                    .into_iter()
-                    .collect()
-            }
-            LocalesWithOrWithoutFallback::WithFallback { families, .. } => families
-                .iter()
-                .filter_map(|(langid, annotations)| {
-                    if let Some(langid) = langid.as_ref() {
-                        if *langid == LanguageIdentifier::UND {
-                            // Root locale: do not include descendants (use `full` for that)
-                            Some((LanguageIdentifier::UND, LocaleFamilyAnnotations::single()))
-                        } else {
-                            // All other locales: copy the requested annotations
-                            Some((langid.clone(), *annotations))
-                        }
-                    } else {
-                        // Full locale family: set the bit instead of adding to the set
-                        debug_assert_eq!(annotations, &LocaleFamily::FULL.annotations);
-                        include_full = true;
-                        None
-                    }
-                })
-                .collect(),
-            LocalesWithOrWithoutFallback::WithoutFallback { langids } => langids
-                .iter()
-                // Map langids without fallback to the `single` family
-                .map(|langid| (langid.clone(), LocaleFamilyAnnotations::single()))
-                .collect(),
-        };
 
     if include_full && requested_families.is_empty() {
         // Special case: return now so we don't need the fallbacker (and its requisite CLDR data)
@@ -1126,7 +1046,7 @@ impl fmt::Display for DisplayDuration {
 
 #[test]
 fn test_collation_filtering() {
-    use icu_locale_core::langid;
+    use icu::locale::langid;
     use std::collections::BTreeSet;
 
     #[derive(Debug)]
@@ -1209,10 +1129,11 @@ fn test_collation_filtering() {
     for cas in cases {
         let resolved_locales = select_locales_for_marker(
             &crate::provider::DatagenProvider::new_testing(),
-            icu_collator::provider::CollationDataV1Marker::INFO,
-            &LocalesWithOrWithoutFallback::WithoutFallback {
-                langids: [cas.language.clone()].into_iter().collect(),
-            },
+            icu::collator::provider::CollationDataV1Marker::INFO,
+            &[(cas.language.clone(), LocaleFamilyAnnotations::single())]
+                .into_iter()
+                .collect(),
+            false,
             &HashSet::from_iter(cas.include_collations.iter().copied().map(String::from)),
             &[],
             || Ok(&fallbacker),
@@ -1242,19 +1163,20 @@ fn test_family_precedence() {
             "%zh-TW".parse().unwrap(),
             "^zh-TW".parse().unwrap(),
         ],
-        Default::default(),
+        FallbackOptions::no_deduplication(),
     );
 
-    let Some(LocalesWithOrWithoutFallback::WithFallback { families, .. }) = driver.locales_fallback
-    else {
-        panic!("expected locales with fallback")
-    };
-
     assert_eq!(
-        families,
+        driver.requested_families.unwrap(),
         [
-            "@en".parse::<LocaleFamily>().unwrap().into_parts(),
-            "^zh-TW".parse::<LocaleFamily>().unwrap().into_parts()
+            (
+                icu::locale::langid!("en"),
+                LocaleFamilyAnnotations::single()
+            ),
+            (
+                icu::locale::langid!("zh-TW"),
+                LocaleFamilyAnnotations::without_descendants()
+            ),
         ]
         .into_iter()
         .collect::<HashMap<_, _>>()

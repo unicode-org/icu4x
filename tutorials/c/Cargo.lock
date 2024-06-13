@@ -910,6 +910,10 @@ name = "icu"
 version = "1.5.0"
 
 [[patch.unused]]
+name = "icu4x-datagen"
+version = "1.5.0"
+
+[[patch.unused]]
 name = "icu4x_ecma402"
 version = "0.8.2"
 
@@ -932,6 +936,10 @@ version = "1.5.0"
 [[patch.unused]]
 name = "icu_harfbuzz"
 version = "0.2.0"
+
+[[patch.unused]]
+name = "icu_provider_baked"
+version = "1.5.0"
 
 [[patch.unused]]
 name = "icu_provider_blob"

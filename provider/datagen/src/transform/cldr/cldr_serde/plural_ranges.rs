@@ -7,7 +7,7 @@
 //! Sample file:
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/supplemental/pluralRanges.json>
 
-use icu_locale_core::LanguageIdentifier;
+use icu::locale::LanguageIdentifier;
 use serde::{de::Visitor, Deserialize};
 use std::collections::HashMap;
 

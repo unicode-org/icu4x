@@ -3,12 +3,12 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::provider::DatagenProvider;
-use icu_collections::codepointtrie::CodePointTrie;
-use icu_properties::provider::{
+use icu::collections::codepointtrie::CodePointTrie;
+use icu::properties::provider::{
     ScriptWithExtensionsPropertyV1, ScriptWithExtensionsPropertyV1Marker,
 };
-use icu_properties::script::ScriptWithExt;
-use icu_properties::Script;
+use icu::properties::script::ScriptWithExt;
+use icu::properties::Script;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
@@ -73,7 +73,7 @@ impl IterableDataProvider<ScriptWithExtensionsPropertyV1Marker> for DatagenProvi
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_properties::script::ScriptWithExtensions;
+    use icu::properties::script::ScriptWithExtensions;
 
     #[test]
     fn test_script_val_from_script_extensions() {

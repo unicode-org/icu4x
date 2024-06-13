@@ -24,12 +24,8 @@
 //! // Export something
 //! DatagenDriver::new()
 //!     .with_markers([icu_provider::hello_world::HelloWorldV1Marker::INFO])
-//!     .with_locales_and_fallback([LocaleFamily::FULL], {
-//!         let mut options = FallbackOptions::default();
-//!         // HelloWorldProvider cannot provide fallback data, so we cannot deduplicate
-//!         options.deduplication_strategy = Some(DeduplicationStrategy::None);
-//!         options
-//!     })
+//!     // HelloWorldProvider cannot provide fallback data, so we cannot deduplicate
+//!     .with_locales_and_fallback([LocaleFamily::FULL], FallbackOptions::no_deduplication())
 //!     .export(&icu_provider::hello_world::HelloWorldProvider, exporter)
 //!     .unwrap();
 //! #
@@ -132,6 +128,9 @@ fn maybe_msrv() -> TokenStream {
 #[non_exhaustive]
 #[derive(Debug, Clone, Copy)]
 pub struct Options {
+    /// By default, baked providers perform fallback internally. This field can be used to
+    /// disable this behavior.
+    pub use_internal_fallback: bool,
     /// Whether to run `rustfmt` on the generated files.
     pub pretty: bool,
     /// Whether to use separate crates to name types instead of the `icu` metacrate.
@@ -145,10 +144,10 @@ pub struct Options {
     pub overwrite: bool,
 }
 
-#[allow(clippy::derivable_impls)] // want to be explicit about bool defaults
 impl Default for Options {
     fn default() -> Self {
         Self {
+            use_internal_fallback: true,
             pretty: false,
             use_separate_crates: false,
             overwrite: false,
@@ -163,6 +162,7 @@ pub struct BakedExporter {
     mod_directory: PathBuf,
     pretty: bool,
     use_separate_crates: bool,
+    use_internal_fallback: bool,
     // Temporary storage for put_payload: marker -> (bake -> {(locale, marker_attributes)})
     data: Mutex<
         HashMap<
@@ -191,6 +191,7 @@ impl BakedExporter {
     /// Constructs a new [`BakedExporter`] with the given output directory and options.
     pub fn new(mod_directory: PathBuf, options: Options) -> Result<Self, DataError> {
         let Options {
+            use_internal_fallback,
             pretty,
             use_separate_crates,
             overwrite,
@@ -208,6 +209,7 @@ impl BakedExporter {
         Ok(Self {
             mod_directory,
             pretty,
+            use_internal_fallback,
             use_separate_crates,
             data: Default::default(),
             impl_data: Default::default(),
@@ -436,32 +438,6 @@ impl DataExporter for BakedExporter {
     }
 
     fn flush(&self, marker: DataMarkerInfo) -> Result<(), DataError> {
-        self.flush_internal(marker, None)
-    }
-
-    fn flush_with_built_in_fallback(
-        &self,
-        marker: DataMarkerInfo,
-        fallback_mode: BuiltInFallbackMode,
-    ) -> Result<(), DataError> {
-        self.flush_internal(marker, Some(fallback_mode))
-    }
-
-    fn close(&mut self) -> Result<(), DataError> {
-        self.close_internal()
-    }
-
-    fn supports_built_in_fallback(&self) -> bool {
-        true
-    }
-}
-
-impl BakedExporter {
-    fn flush_internal(
-        &self,
-        marker: DataMarkerInfo,
-        fallback_mode: Option<BuiltInFallbackMode>,
-    ) -> Result<(), DataError> {
         let marker_bake = bake_marker(marker, &self.dependencies);
 
         let (struct_type, into_data_payload) = if marker_bake
@@ -540,9 +516,12 @@ impl BakedExporter {
 
             let lookup = crate::binary_search::bake(&struct_type, values);
 
-            let load_body = match fallback_mode {
-                None => {
-                    quote! {
+            let load_body = if !self.use_internal_fallback
+                || deduplicated_values
+                    .iter()
+                    .all(|(_, reqs)| reqs.iter().all(|(l, _)| l.is_und()))
+            {
+                quote! {
                         #(#structs)*
                         #lookup
 
@@ -554,44 +533,38 @@ impl BakedExporter {
                         } else {
                             Err(icu_provider::DataErrorKind::MissingLocale.with_req(<#marker_bake as icu_provider::DataMarker>::INFO, req))
                         }
-                    }
                 }
-                Some(BuiltInFallbackMode::Standard) => {
-                    self.dependencies.insert("icu_locale/compiled_data");
-                    quote! {
-                        #(#structs)*
-                        #lookup
+            } else {
+                self.dependencies.insert("icu_locale/compiled_data");
+                quote! {
+                    #(#structs)*
+                    #lookup
 
-                        let mut metadata = icu_provider::DataResponseMetadata::default();
+                    let mut metadata = icu_provider::DataResponseMetadata::default();
 
-                        let payload =  if let Some(payload) = lookup(req) {
-                            payload
-                        } else {
-                            const FALLBACKER: icu_locale::fallback::LocaleFallbackerWithConfig<'static> =
-                                icu_locale::fallback::LocaleFallbacker::new()
-                                    .for_config(<#marker_bake as icu_provider::DataMarker>::INFO.fallback_config);
-                            let mut fallback_iterator = FALLBACKER.fallback_for(req.locale.clone());
-                            loop {
-                                if let Some(payload) = lookup(icu_provider::DataRequest { locale: fallback_iterator.get(), ..req }) {
-                                    metadata.locale = Some(fallback_iterator.take());
-                                    break payload;
-                                }
-                                if fallback_iterator.get().is_und() {
-                                    return Err(icu_provider::DataErrorKind::MissingLocale.with_req(<#marker_bake as icu_provider::DataMarker>::INFO, req));
-                                }
-                                fallback_iterator.step();
+                    let payload =  if let Some(payload) = lookup(req) {
+                        payload
+                    } else {
+                        const FALLBACKER: icu_locale::fallback::LocaleFallbackerWithConfig<'static> =
+                            icu_locale::fallback::LocaleFallbacker::new()
+                                .for_config(<#marker_bake as icu_provider::DataMarker>::INFO.fallback_config);
+                        let mut fallback_iterator = FALLBACKER.fallback_for(req.locale.clone());
+                        loop {
+                            if let Some(payload) = lookup(icu_provider::DataRequest { locale: fallback_iterator.get(), ..req }) {
+                                metadata.locale = Some(fallback_iterator.take());
+                                break payload;
                             }
-                        };
+                            if fallback_iterator.get().is_und() {
+                                return Err(icu_provider::DataErrorKind::MissingLocale.with_req(<#marker_bake as icu_provider::DataMarker>::INFO, req));
+                            }
+                            fallback_iterator.step();
+                        }
+                    };
 
-                        Ok(icu_provider::DataResponse {
-                            payload: #into_data_payload,
-                            metadata
-                        })
-                    }
-                }
-                f => {
-                    return Err(DataError::custom("Unknown fallback mode")
-                        .with_display_context(&format!("{f:?}")))
+                    Ok(icu_provider::DataResponse {
+                        payload: #into_data_payload,
+                        metadata
+                    })
                 }
             };
 
@@ -659,7 +632,7 @@ impl BakedExporter {
         )
     }
 
-    fn close_internal(&mut self) -> Result<(), DataError> {
+    fn close(&mut self) -> Result<(), DataError> {
         log::info!("Writing macros module...");
 
         let data = move_out!(self.impl_data).into_inner().expect("poison");

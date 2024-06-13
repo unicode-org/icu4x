@@ -4,15 +4,11 @@
 
 `icu_datagen` is a library to generate data files that can be used in ICU4X data providers.
 
-Data files can be generated either programmatically (i.e. in `build.rs`), or through a
-command-line utility.
-
+For command-line usage, see the [`icu4x-datagen` binary](https://crates.io/crate/icu4x-datagen).
 
 Also see our [datagen tutorial](https://github.com/unicode-org/icu4x/blob/main/tutorials/data_management.md).
 
 ## Examples
-
-### Rust API
 
 ```rust
 use icu_datagen::blob_exporter::*;
@@ -21,7 +17,7 @@ use std::fs::File;
 
 DatagenDriver::new()
     .with_markers([icu::list::provider::AndListV1Marker::INFO])
-    .with_locales_and_fallback([LocaleFamily::FULL], Default::default())
+    .with_locales_and_fallback([LocaleFamily::FULL], FallbackOptions::no_deduplication())
     .export(
         &DatagenProvider::new_latest_tested(),
         BlobExporter::new_v2_with_sink(Box::new(
@@ -30,22 +26,6 @@ DatagenDriver::new()
     )
     .unwrap();
 ```
-
-### Command line
-
-The command line interface can be installed through Cargo.
-
-```bash
-$ cargo install icu_datagen
-```
-
-Once the tool is installed, you can invoke it like this:
-
-```bash
-$ icu4x-datagen --markers all --locales de en-AU --format blob --out data.postcard
-```
-
-More details can be found by running `--help`.
 
 ## Cargo features
 
@@ -67,13 +47,9 @@ can be disabled to reduce dependencies:
   * enables parallelism during export
 * `use_wasm` / `use_icu4c`
   * see the documentation on [`icu_codepointtrie_builder`](icu_codepointtrie_builder#build-configuration)
-* `bin`
-  * required by the CLI and enabled by default to make `cargo install` work
-* `icu_experimental`
+* `experimental_components`
   * enables data generation for markers defined in the unstable `icu_experimental` crate
   * note that this features affects the behaviour of `all_markers`
-
-The meta-feature `experimental_components` is available to activate all experimental components.
 
 <!-- cargo-rdme end -->
 
