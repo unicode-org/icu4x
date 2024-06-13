@@ -6,23 +6,20 @@
 mod databake;
 #[cfg(feature = "serde")]
 mod serde;
-
-use core::{
-    convert::Infallible,
-    fmt::{self, Write},
-    marker::PhantomData,
-    str::Utf8Error,
-};
-
-use writeable::{adapters::TryWriteableInfallibleAsWriteable, PartsWrite, TryWriteable, Writeable};
-
+use crate::common::*;
 use crate::Error;
-use crate::{common::*, PatternOrUtf8Error};
-
+#[cfg(feature = "alloc")]
+use crate::PatternOrUtf8Error;
 #[cfg(feature = "alloc")]
 use crate::{Parser, ParserOptions};
 #[cfg(feature = "alloc")]
 use alloc::{borrow::ToOwned, str::FromStr, string::String};
+use core::{
+    convert::Infallible,
+    fmt::{self, Write},
+    marker::PhantomData,
+};
+use writeable::{adapters::TryWriteableInfallibleAsWriteable, PartsWrite, TryWriteable, Writeable};
 
 /// A string pattern with placeholders.
 ///
@@ -169,9 +166,9 @@ where
 }
 
 #[cfg(feature = "alloc")]
-impl<B> Pattern<B, <B::Store as ToOwned>::Owned>
+impl<B, E> Pattern<B, <B::Store as ToOwned>::Owned>
 where
-    B: PatternBackend<StoreUtf8Error = Utf8Error>,
+    B: PatternBackend<StoreUtf8Error = E>,
     B::Store: ToOwned,
 {
     /// Creates a pattern from an iterator of pattern items.
