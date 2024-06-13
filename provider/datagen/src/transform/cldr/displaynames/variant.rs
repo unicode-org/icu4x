@@ -6,8 +6,8 @@ use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
 use crate::provider::IterableDataProviderCached;
 use core::convert::TryFrom;
-use icu_experimental::displaynames::provider::*;
-use icu_locale_core::{subtags::Variant, ParseError};
+use icu::experimental::displaynames::provider::*;
+use icu::locale::{subtags::Variant, ParseError};
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
 use std::str::FromStr;
@@ -83,7 +83,7 @@ impl TryFrom<&cldr_serde::displaynames::variant::Resource> for VariantDisplayNam
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_locale_core::{langid, subtags::variant};
+    use icu::locale::{langid, subtags::variant};
 
     #[test]
     fn test_basic_variant_display_names() {

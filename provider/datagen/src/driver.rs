@@ -4,11 +4,11 @@
 
 use crate::rayon_prelude::*;
 use displaydoc::Display;
-use icu_locale::fallback::LocaleFallbackIterator;
-use icu_locale::LocaleFallbacker;
-use icu_locale_core::extensions::unicode::key;
-use icu_locale_core::LanguageIdentifier;
-use icu_locale_core::ParseError;
+use icu::locale::extensions::unicode::key;
+use icu::locale::fallback::LocaleFallbackIterator;
+use icu::locale::LanguageIdentifier;
+use icu::locale::LocaleFallbacker;
+use icu::locale::ParseError;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use std::collections::HashMap;
@@ -1046,7 +1046,7 @@ impl fmt::Display for DisplayDuration {
 
 #[test]
 fn test_collation_filtering() {
-    use icu_locale_core::langid;
+    use icu::locale::langid;
     use std::collections::BTreeSet;
 
     #[derive(Debug)]
@@ -1129,7 +1129,7 @@ fn test_collation_filtering() {
     for cas in cases {
         let resolved_locales = select_locales_for_marker(
             &crate::provider::DatagenProvider::new_testing(),
-            icu_collator::provider::CollationDataV1Marker::INFO,
+            icu::collator::provider::CollationDataV1Marker::INFO,
             &[(cas.language.clone(), LocaleFamilyAnnotations::single())]
                 .into_iter()
                 .collect(),

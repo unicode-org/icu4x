@@ -8,8 +8,8 @@ use std::collections::HashSet;
 use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
 use crate::provider::IterableDataProviderCached;
-use icu_plurals::rules::runtime::ast::Rule;
-use icu_plurals::{provider::*, PluralCategory};
+use icu::plurals::rules::runtime::ast::Rule;
+use icu::plurals::{provider::*, PluralCategory};
 use icu_provider::prelude::*;
 use zerovec::ZeroMap;
 
@@ -177,7 +177,7 @@ impl From<&cldr_serde::plural_ranges::LocalePluralRanges> for PluralRangesV1<'st
 
 #[test]
 fn test_basic() {
-    use icu_locale_core::langid;
+    use icu::locale::langid;
 
     let provider = DatagenProvider::new_testing();
 
@@ -207,7 +207,7 @@ fn test_basic() {
 
 #[test]
 fn test_ranges() {
-    use icu_locale_core::langid;
+    use icu::locale::langid;
 
     let provider = DatagenProvider::new_testing();
 

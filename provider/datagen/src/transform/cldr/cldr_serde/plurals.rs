@@ -7,7 +7,7 @@
 //! Sample file:
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/supplemental/plurals.json>
 
-use icu_locale_core::LanguageIdentifier;
+use icu::locale::LanguageIdentifier;
 use serde::Deserialize;
 use std::collections::HashMap;
 

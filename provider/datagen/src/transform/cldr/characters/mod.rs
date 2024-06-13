@@ -8,8 +8,8 @@ use std::marker::PhantomData;
 use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
 use crate::provider::IterableDataProviderCached;
-use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
-use icu_properties::provider::*;
+use icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList;
+use icu::properties::provider::*;
 use icu_provider::prelude::*;
 use itertools::Itertools;
 
@@ -322,8 +322,8 @@ fn string_to_prop_unicodeset(s: &str) -> PropertyUnicodeSetV1<'static> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_locale_core::langid;
-    use icu_properties::sets::UnicodeSetData;
+    use icu::locale::langid;
+    use icu::properties::sets::UnicodeSetData;
 
     #[test]
     fn test_parse_exemplar_chars() {

@@ -7,7 +7,6 @@ use crate::error::DataError;
 use crate::marker::DynamicDataMarker;
 use crate::request::DataLocale;
 use alloc::boxed::Box;
-use core::convert::TryFrom;
 use core::fmt::Debug;
 use core::marker::PhantomData;
 use core::ops::Deref;
@@ -903,17 +902,6 @@ where
             metadata: self.metadata,
             payload: self.payload.cast(),
         }
-    }
-}
-
-impl<M> TryFrom<DataResponse<M>> for DataPayload<M>
-where
-    M: DynamicDataMarker,
-{
-    type Error = core::convert::Infallible;
-
-    fn try_from(response: DataResponse<M>) -> Result<Self, Self::Error> {
-        Ok(response.payload)
     }
 }
 

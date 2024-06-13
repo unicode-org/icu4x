@@ -6,8 +6,8 @@ use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
 
 use super::locale_canonicalizer::likely_subtags::LikelySubtagsResources;
-use icu_locale::provider::*;
-use icu_locale_core::{
+use icu::locale::provider::*;
+use icu::locale::{
     subtags::{Language, Region, Script},
     LanguageIdentifier,
 };
@@ -163,7 +163,7 @@ impl From<&cldr_serde::parent_locales::Resource> for LocaleFallbackParentsV1<'st
 
 #[test]
 fn test_basic() {
-    use icu_locale_core::{
+    use icu::locale::{
         langid,
         subtags::{language, region, script},
     };

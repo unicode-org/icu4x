@@ -3,11 +3,11 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::provider::transform::cldr::cldr_serde;
-use icu_datetime::pattern::runtime::{PatternPlurals, PluralPattern};
-use icu_datetime::provider::calendar::*;
-use icu_datetime::skeleton::reference::Skeleton;
-use icu_datetime::skeleton::SkeletonError;
-use icu_plurals::PluralCategory;
+use icu::datetime::pattern::runtime::{PatternPlurals, PluralPattern};
+use icu::datetime::provider::calendar::*;
+use icu::datetime::skeleton::reference::Skeleton;
+use icu::datetime::skeleton::SkeletonError;
+use icu::plurals::PluralCategory;
 use std::collections::HashMap;
 use std::convert::TryFrom;
 

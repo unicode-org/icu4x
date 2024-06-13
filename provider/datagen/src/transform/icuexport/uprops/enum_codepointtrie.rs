@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::provider::DatagenProvider;
-use icu_collections::codepointtrie::CodePointTrie;
-use icu_properties::provider::{names::*, *};
+use icu::collections::codepointtrie::CodePointTrie;
+use icu::properties::provider::{names::*, *};
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;
@@ -380,7 +380,7 @@ impl DataProvider<GeneralCategoryMaskNameToValueV1Marker> for DatagenProvider {
         &self,
         req: DataRequest,
     ) -> Result<DataResponse<GeneralCategoryMaskNameToValueV1Marker>, DataError> {
-        use icu_properties::GeneralCategoryGroup;
+        use icu::properties::GeneralCategoryGroup;
         use zerovec::ule::AsULE;
 
         self.check_req::<GeneralCategoryMaskNameToValueV1Marker>(req)?;
@@ -525,11 +525,11 @@ expand!(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_collections::codepointtrie::CodePointTrie;
-    use icu_properties::provider::{
+    use icu::collections::codepointtrie::CodePointTrie;
+    use icu::properties::provider::{
         GeneralCategoryV1Marker, PropertyCodePointMapV1, ScriptV1Marker,
     };
-    use icu_properties::{GeneralCategory, Script};
+    use icu::properties::{GeneralCategory, Script};
 
     // A test of the UnicodeProperty General_Category is truly a test of the
     // `GeneralCategory` Rust enum, not the `GeneralCategoryGroup` Rust enum,

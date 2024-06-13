@@ -5,8 +5,8 @@
 use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
 use crate::provider::IterableDataProviderCached;
-use icu_list::provider::*;
-use icu_locale_core::subtags::language;
+use icu::list::provider::*;
+use icu::locale::subtags::language;
 use icu_provider::prelude::*;
 use std::borrow::Cow;
 use std::collections::HashSet;
@@ -89,11 +89,11 @@ fn load<M: DataMarker<Yokeable = ListFormatterPatternsV1<'static>>>(
         // Cannot cache this because it depends on `selff`. However we don't expect many Hebrew locales.
         let non_hebrew = SerdeDFA::new(Cow::Owned(format!(
             "[^{}]",
-            icu_properties::maps::load_script(selff)
+            icu::properties::maps::load_script(selff)
                 .map_err(|e| DataError::custom("data for CodePointTrie of Script")
                     .with_display_context(&e))?
                 .as_borrowed()
-                .get_set_for_value(icu_properties::Script::Hebrew)
+                .get_set_for_value(icu::properties::Script::Hebrew)
                 .as_borrowed()
                 .iter_ranges()
                 .map(|range| format!(r#"\u{:04x}-\u{:04x}"#, range.start(), range.end()))

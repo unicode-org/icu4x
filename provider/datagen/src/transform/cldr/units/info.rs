@@ -9,7 +9,7 @@ use crate::provider::transform::cldr::{
     units::helpers::ScientificNumber,
 };
 use crate::provider::DatagenProvider;
-use icu_experimental::units::{
+use icu::experimental::units::{
     measureunit::MeasureUnitParser,
     provider::{ConversionInfo, UnitsInfoV1, UnitsInfoV1Marker},
 };
@@ -105,8 +105,8 @@ impl IterableDataProvider<UnitsInfoV1Marker> for DatagenProvider {
 
 #[test]
 fn test_basic() {
-    use icu_experimental::units::provider::*;
-    use icu_locale_core::langid;
+    use icu::experimental::units::provider::*;
+    use icu::locale::langid;
     use icu_provider::prelude::*;
     use num_bigint::BigUint;
     use num_rational::Ratio;
