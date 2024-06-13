@@ -232,7 +232,7 @@ where
     /// Pattern::<SinglePlaceholder, _>::try_from_utf8(b"\x01 days")
     ///     .expect("single placeholder pattern");
     /// ```
-    pub fn try_from_utf8(bytes: &[u8]) -> Result<Self, PatternOrUtf8Error<Utf8Error>> {
+    pub fn try_from_utf8(bytes: &[u8]) -> Result<Self, PatternOrUtf8Error<E>> {
         let store = B::try_store_from_utf8(bytes).map_err(PatternOrUtf8Error::Utf8)?;
         B::validate_store(store).map_err(PatternOrUtf8Error::Pattern)?;
         Ok(Self::from_store_unchecked(store.to_owned()))
