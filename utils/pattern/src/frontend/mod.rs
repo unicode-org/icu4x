@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use alloc::borrow::ToOwned;
 #[cfg(feature = "databake")]
 mod databake;
 #[cfg(feature = "serde")]
@@ -165,10 +166,10 @@ where
 }
 
 #[cfg(feature = "alloc")]
-impl<B> Pattern<B, <B::Store as alloc::borrow::ToOwned>::Owned>
+impl<B> Pattern<B, <B::Store as ToOwned>::Owned>
 where
     B: PatternBackend,
-    B::Store: alloc::borrow::ToOwned,
+    B::Store: ToOwned,
 {
     /// Creates a pattern from an iterator of pattern items.
     ///
@@ -211,10 +212,10 @@ where
     }
 }
 
-impl<B, E> Pattern<B, <B::Store as alloc::borrow::ToOwned>::Owned>
+impl<B, E> Pattern<B, <B::Store as ToOwned>::Owned>
 where
     B: PatternBackend<StoreUtf8Error = E>,
-    B::Store: alloc::borrow::ToOwned,
+    B::Store: ToOwned,
 {
     /// Creates a pattern from a UTF-8 encoded byte slice.
     ///
