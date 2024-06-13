@@ -627,7 +627,7 @@ icu_provider::gen_any_buffer_data_constructors!(
     locale: skip,
     options: skip,
     result: Result<ScriptWithExtensions, DataError>,
-    #[cfg(skip)]
+    #[cfg(not(all()))]
     functions: [
         script_with_extensions,
         load_script_with_extensions_with_any_provider,

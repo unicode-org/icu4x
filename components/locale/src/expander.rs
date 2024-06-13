@@ -285,7 +285,7 @@ impl LocaleExpander {
     }
 
     icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: DataError,
-        #[cfg(skip)]
+        #[cfg(not(all()))]
         functions: [
         new_extended,
         try_new_extended_with_any_provider,

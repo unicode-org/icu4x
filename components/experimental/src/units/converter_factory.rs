@@ -42,7 +42,7 @@ impl ConverterFactory {
         locale: skip,
         options: skip,
         error: DataError,
-        #[cfg(skip)]
+        #[cfg(not(all()))]
         functions: [
             new,
             try_new_with_any_provider,

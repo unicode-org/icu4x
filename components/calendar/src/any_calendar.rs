@@ -758,7 +758,7 @@ impl AnyCalendar {
         locale: include,
         options: skip,
         error: DataError,
-        #[cfg(skip)]
+        #[cfg(not(all()))]
         functions: [
             new_for_locale,
             try_new_for_locale_with_any_provider,

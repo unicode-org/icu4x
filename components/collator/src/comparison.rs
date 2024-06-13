@@ -93,7 +93,7 @@ impl Collator {
         locale: include,
         options: CollatorOptions,
         error: DataError,
-        #[cfg(skip)]
+        #[cfg(not(all()))]
     );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]

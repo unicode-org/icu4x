@@ -146,7 +146,7 @@ macro_rules! constructor {
             locale: include,
             options: RelativeTimeFormatterOptions,
             error: DataError,
-            #[cfg(skip)]
+            #[cfg(not(all()))]
             functions: [
                 $baked,
                 $any,

@@ -215,7 +215,7 @@ impl WordSegmenter {
         locale: skip,
         options: skip,
         error: DataError,
-        #[cfg(skip)]
+        #[cfg(not(all()))]
         functions: [
             try_new_auto,
             try_new_auto_with_any_provider,
@@ -290,7 +290,7 @@ impl WordSegmenter {
         locale: skip,
         options: skip,
         error: DataError,
-        #[cfg(skip)]
+        #[cfg(not(all()))]
         functions: [
             new_lstm,
             try_new_lstm_with_any_provider,
@@ -357,7 +357,7 @@ impl WordSegmenter {
         locale: skip,
         options: skip,
         error: DataError,
-        #[cfg(skip)]
+        #[cfg(not(all()))]
         functions: [
             new_dictionary,
             try_new_dictionary_with_any_provider,

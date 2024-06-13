@@ -145,7 +145,7 @@ impl CompactDecimalFormatter {
         locale: include,
         options: CompactDecimalFormatterOptions,
         error: DataError,
-        #[cfg(skip)]
+        #[cfg(not(all()))]
         functions: [
             try_new_short,
             try_new_short_with_any_provider,
@@ -232,7 +232,7 @@ impl CompactDecimalFormatter {
         locale: include,
         options: CompactDecimalFormatterOptions,
         error: DataError,
-        #[cfg(skip)]
+        #[cfg(not(all()))]
         functions: [
             try_new_long,
             try_new_long_with_any_provider,

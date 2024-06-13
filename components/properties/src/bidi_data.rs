@@ -198,7 +198,7 @@ icu_provider::gen_any_buffer_data_constructors!(
     locale: skip,
     options: skip,
     result: Result<BidiAuxiliaryProperties, DataError>,
-    #[cfg(skip)]
+    #[cfg(not(all()))]
     functions: [
         bidi_auxiliary_properties,
         load_bidi_auxiliary_properties_with_any_provider,

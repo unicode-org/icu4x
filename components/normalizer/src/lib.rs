@@ -1606,7 +1606,7 @@ impl DecomposingNormalizer {
         locale: skip,
         options: skip,
         error: DataError,
-        #[cfg(skip)]
+        #[cfg(not(all()))]
         functions: [
             new_nfd,
             try_new_nfd_with_any_provider,
@@ -1713,7 +1713,7 @@ impl DecomposingNormalizer {
         locale: skip,
         options: skip,
         error: DataError,
-        #[cfg(skip)]
+        #[cfg(not(all()))]
         functions: [
             new_nfkd,
             try_new_nfkd_with_any_provider,
@@ -2207,7 +2207,7 @@ impl ComposingNormalizer {
         locale: skip,
         options: skip,
         error: DataError,
-        #[cfg(skip)]
+        #[cfg(not(all()))]
         functions: [
             new_nfc,
             try_new_nfc_with_any_provider,
@@ -2255,7 +2255,7 @@ impl ComposingNormalizer {
         locale: skip,
         options: skip,
         error: DataError,
-        #[cfg(skip)]
+        #[cfg(not(all()))]
         functions: [
             new_nfkc,
             try_new_nfkc_with_any_provider,

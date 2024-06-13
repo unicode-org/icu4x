@@ -102,7 +102,7 @@ impl TimeFormatter {
         locale: include,
         length: length::Time,
         error: DateTimeError,
-        #[cfg(skip)]
+        #[cfg(not(all()))]
         functions: [
             try_new_with_length,
             try_new_with_length_with_any_provider,
@@ -314,7 +314,7 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
         locale: include,
         length: length::Date,
         error: DateTimeError,
-        #[cfg(skip)]
+        #[cfg(not(all()))]
         functions: [
             try_new_with_length,
             try_new_with_length_with_any_provider,
@@ -568,7 +568,7 @@ where {
         locale: include,
         options: DateTimeFormatterOptions,
         error: DateTimeError,
-        #[cfg(skip)]
+        #[cfg(not(all()))]
         functions: [
             try_new,
             try_new_with_any_provider,

@@ -130,7 +130,7 @@ impl Japanese {
     }
 
     icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: DataError,
-        #[cfg(skip)]
+        #[cfg(not(all()))]
         functions: [
             new,
             try_new_with_any_provider,
@@ -188,7 +188,7 @@ impl JapaneseExtended {
     }
 
     icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: DataError,
-        #[cfg(skip)]
+        #[cfg(not(all()))]
         functions: [
             new,
             try_new_with_any_provider,

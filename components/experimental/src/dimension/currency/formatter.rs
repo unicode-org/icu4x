@@ -45,7 +45,7 @@ impl CurrencyFormatter {
         locale: include,
         options: super::options::CurrencyFormatterOptions,
         error: DataError,
-        #[cfg(skip)]
+        #[cfg(not(all()))]
     );
 
     /// Creates a new [`CurrencyFormatter`] from compiled locale data and an options bag.
