@@ -1155,7 +1155,9 @@ fn test_collation_filtering() {
         let resolved_locales = select_locales_for_marker(
             &crate::provider::DatagenProvider::new_testing(),
             icu_collator::provider::CollationDataV1Marker::INFO,
-            &[(cas.language.clone(), LocaleFamilyAnnotations::single())].into_iter().collect(),
+            &[(cas.language.clone(), LocaleFamilyAnnotations::single())]
+                .into_iter()
+                .collect(),
             false,
             &HashSet::from_iter(cas.include_collations.iter().copied().map(String::from)),
             &[],
@@ -1193,7 +1195,10 @@ fn test_family_precedence() {
         driver.requested_families.unwrap(),
         [
             (icu_locale::langid!("en"), LocaleFamilyAnnotations::single()),
-            (icu_locale::langid!("zh-TW"), LocaleFamilyAnnotations::without_descendants()),
+            (
+                icu_locale::langid!("zh-TW"),
+                LocaleFamilyAnnotations::without_descendants()
+            ),
         ]
         .into_iter()
         .collect::<HashMap<_, _>>()
