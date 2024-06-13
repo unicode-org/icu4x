@@ -1115,7 +1115,6 @@ dependencies = [
  "icu",
  "icu_codepointtrie_builder",
  "icu_collections",
- "icu_locale",
  "icu_pattern",
  "icu_provider",
  "icu_provider_adapters",

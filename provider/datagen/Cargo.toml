@@ -34,7 +34,7 @@ all-features = true
 
 # DatagenDriver
 displaydoc = { workspace = true }
-icu_locale = { workspace = true, features = ["std"] }
+icu = { workspace = true }
 icu_provider = { workspace = true, features = ["std", "logging", "datagen"]}
 log = { workspace = true }
 memchr = { workspace = true }
@@ -47,10 +47,7 @@ icu_provider_blob = { workspace = true, features = ["export"], optional = true }
 icu_provider_fs = { workspace = true, features = ["export"], optional = true }
 icu_provider_baked = { workspace = true, features = ["export"], optional = true }
 
-
 # DatagenProvider
-
-icu = { workspace = true, features = ["datagen"], optional = true }
 
 ## ICU infrastructure
 calendrical_calculations = { workspace = true, optional = true }
@@ -88,7 +85,7 @@ simple_logger = { workspace = true }
 [features]
 default = ["use_wasm", "networking", "rayon", "fs_exporter", "blob_exporter", "baked_exporter", "provider"]
 provider = [
-    "dep:icu",
+    "icu/datagen",
     "dep:calendrical_calculations",
     "dep:icu_codepointtrie_builder",
     "dep:icu_collections",
@@ -126,7 +123,7 @@ experimental_components = [
     "dep:num-bigint",
     "dep:num-rational",
     "dep:num-traits",
-    "icu?/experimental",
+    "icu/experimental",
 ]
 
 [package.metadata.cargo-all-features]
