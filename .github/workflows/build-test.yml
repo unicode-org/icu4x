@@ -27,7 +27,7 @@ on:
         - nightly
   schedule:
     # Run nightly cronjob CI every day at 14 UTC / 6AM PST / 3PM CET
-    - cron:  '15 * * * *'
+    - cron:  '33 * * * *'
     # Run beta slightly later
     - cron:  '1 * * * *'
 

@@ -294,9 +294,9 @@ ci_toolchain = set "pinned-stable"
 echo "set-ci-toolchain: GITHUB_EVENT_NAME is ${event_name}"
 
 # We need to parse the channel information for dispatch/schedule events
-is_workflow = set eq "${event_name}" "workflow_dispatch"
-is_schedule = set eq "${event_name}" "schedule"
-if  is_workflow or is_schedule
+is_workflow = eq "${event_name}" "workflow_dispatch"
+is_schedule = eq "${event_name}" "schedule"
+if  ${is_workflow} or $is_schedule}
     event_path = get_env GITHUB_EVENT_PATH
     event_file = readfile ${event_path}
     event_json = json_parse ${event_file}
