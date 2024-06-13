@@ -11,13 +11,18 @@ use core::{
     convert::Infallible,
     fmt::{self, Write},
     marker::PhantomData,
-    str::Utf8Error,
 };
+
+#[cfg(feature = "alloc")]
+use core::str::Utf8Error;
 
 use writeable::{adapters::TryWriteableInfallibleAsWriteable, PartsWrite, TryWriteable, Writeable};
 
+use crate::common::*;
 use crate::Error;
-use crate::{common::*, PatternOrUtf8Error};
+
+#[cfg(feature = "alloc")]
+use crate::PatternOrUtf8Error;
 
 #[cfg(feature = "alloc")]
 use crate::{Parser, ParserOptions};
