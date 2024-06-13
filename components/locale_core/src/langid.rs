@@ -149,7 +149,7 @@ impl LanguageIdentifier {
         self.language.is_empty()
             && self.script.is_none()
             && self.region.is_none()
-            && self.variants.0.is_empty()
+            && self.variants.is_empty()
     }
 
     /// This is a best-effort operation that performs all available levels of canonicalization.

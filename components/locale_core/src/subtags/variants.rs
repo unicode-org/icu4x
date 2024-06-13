@@ -26,7 +26,7 @@ use core::ops::Deref;
 /// assert_eq!(variants.to_string(), "macos-posix");
 /// ```
 #[derive(Default, Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord)]
-pub struct Variants(pub(crate) ShortBoxSlice<Variant>);
+pub struct Variants(ShortBoxSlice<Variant>);
 
 impl Variants {
     /// Returns a new empty list of variants. Same as [`default()`](Default::default()), but is `const`.
@@ -107,6 +107,11 @@ impl Variants {
     /// ```
     pub fn clear(&mut self) -> Self {
         core::mem::take(self)
+    }
+
+    /// Whether the list of variants is empty.
+    pub const fn is_empty(&self) -> bool {
+        self.0.is_empty()
     }
 
     pub(crate) fn for_each_subtag_str<E, F>(&self, f: &mut F) -> Result<(), E>
