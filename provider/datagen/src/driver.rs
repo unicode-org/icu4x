@@ -97,6 +97,24 @@ impl LocaleFamilyAnnotations {
     }
 }
 
+impl Writeable for LocaleFamilyAnnotations {
+    fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
+        match (self.include_ancestors, self.include_descendants) {
+            (true, true) => Ok(()),
+            (true, false) => sink.write_char('^'),
+            (false, true) => sink.write_char('%'),
+            (false, false) => sink.write_char('@'),
+        }
+    }
+
+    fn writeable_length_hint(&self) -> writeable::LengthHint {
+        writeable::LengthHint::exact(match (self.include_ancestors, self.include_descendants) {
+            (true, true) => 0,
+            _ => 1,
+        })
+    }
+}
+
 /// A family of locales to export.
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct LocaleFamily {
@@ -182,88 +200,28 @@ impl LocaleFamily {
             include_descendants: true,
         },
     };
-
-    pub(crate) fn into_parts(self) -> (Option<LanguageIdentifier>, LocaleFamilyAnnotations) {
-        (self.langid, self.annotations)
-    }
-
-    pub(crate) fn as_borrowed(&self) -> LocaleFamilyBorrowed {
-        LocaleFamilyBorrowed {
-            langid: self.langid.as_ref(),
-            annotations: self.annotations,
-        }
-    }
 }
 
 impl Writeable for LocaleFamily {
-    #[inline]
     fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
-        self.as_borrowed().write_to(sink)
+        if let Some(langid) = self.langid.as_ref() {
+            self.annotations.write_to(sink)?;
+            langid.write_to(sink)
+        } else {
+            sink.write_str("full")
+        }
     }
 
-    #[inline]
     fn writeable_length_hint(&self) -> writeable::LengthHint {
-        self.as_borrowed().writeable_length_hint()
+        if let Some(langid) = self.langid.as_ref() {
+            self.annotations.writeable_length_hint() + langid.writeable_length_hint()
+        } else {
+            writeable::LengthHint::exact(4)
+        }
     }
 }
 
 writeable::impl_display_with_writeable!(LocaleFamily);
-
-/// A [`LocaleFamily`] that does not own its [`LanguageIdentifier`].
-pub(crate) struct LocaleFamilyBorrowed<'a> {
-    langid: Option<&'a LanguageIdentifier>,
-    annotations: LocaleFamilyAnnotations,
-}
-
-impl<'a> LocaleFamilyBorrowed<'a> {
-    pub(crate) fn from_parts(
-        inner: (Option<&'a LanguageIdentifier>, &LocaleFamilyAnnotations),
-    ) -> Self {
-        Self {
-            langid: inner.0,
-            annotations: *inner.1,
-        }
-    }
-}
-
-impl Writeable for LocaleFamilyBorrowed<'_> {
-    fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
-        match (
-            &self.langid,
-            self.annotations.include_ancestors,
-            self.annotations.include_descendants,
-        ) {
-            (Some(langid), true, true) => langid.write_to(sink),
-            (Some(langid), true, false) => {
-                sink.write_char('^')?;
-                langid.write_to(sink)
-            }
-            (Some(langid), false, true) => {
-                sink.write_char('%')?;
-                langid.write_to(sink)
-            }
-            (Some(langid), false, false) => {
-                sink.write_char('@')?;
-                langid.write_to(sink)
-            }
-            (None, _, _) => sink.write_str("full"),
-        }
-    }
-
-    fn writeable_length_hint(&self) -> writeable::LengthHint {
-        match (
-            &self.langid,
-            self.annotations.include_ancestors,
-            self.annotations.include_descendants,
-        ) {
-            (Some(langid), true, true) => langid.writeable_length_hint(),
-            (Some(langid), true, false) => langid.writeable_length_hint() + 1,
-            (Some(langid), false, true) => langid.writeable_length_hint() + 1,
-            (Some(langid), false, false) => langid.writeable_length_hint() + 1,
-            (None, _, _) => writeable::LengthHint::exact(4),
-        }
-    }
-}
 
 /// An error while parsing a [`LocaleFamily`].
 #[derive(Debug, Copy, Clone, PartialEq, Display)]
@@ -464,7 +422,6 @@ impl DatagenDriver {
     ) -> Self {
         let families = locales
             .into_iter()
-            .map(LocaleFamily::into_parts)
             .collect::<Vec<_>>();
         self.requested_families = Some(if families.is_empty() {
             // If no locales are selected but fallback is enabled, select the root locale
@@ -473,19 +430,19 @@ impl DatagenDriver {
                 .collect()
         } else {
             families
-                .iter()
-                .filter_map(|(langid, annotations)| {
-                    if let Some(langid) = langid.as_ref() {
-                        if *langid == LanguageIdentifier::UND {
+                .into_iter()
+                .filter_map(|family| {
+                    if let Some(langid) = family.langid {
+                        if langid == LanguageIdentifier::UND {
                             // Root locale: do not include descendants (use `full` for that)
                             Some((LanguageIdentifier::UND, LocaleFamilyAnnotations::single()))
                         } else {
                             // All other locales: copy the requested annotations
-                            Some((langid.clone(), *annotations))
+                            Some((langid, family.annotations))
                         }
                     } else {
                         // Full locale family: set the bit instead of adding to the set
-                        debug_assert_eq!(annotations, &LocaleFamily::FULL.annotations);
+                        debug_assert_eq!(family.annotations, LocaleFamily::FULL.annotations);
                         self.include_full = true;
                         None
                     }
@@ -620,8 +577,12 @@ impl DatagenDriver {
             } else {
                 let mut sorted_locale_strs = requested_families
                     .iter()
-                    .map(|(l, a)| LocaleFamilyBorrowed::from_parts((Some(l), a)))
-                    .map(|family| family.write_to_string().into_owned())
+                    .map(|(l, a)| {
+                        let mut s = String::new();
+                        let _infallible = a.write_to(&mut s);
+                        let _infallible = l.write_to(&mut s);
+                        s
+                    })
                     .collect::<Vec<_>>();
                 sorted_locale_strs.sort_unstable();
                 sorted_locale_strs
