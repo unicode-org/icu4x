@@ -16,9 +16,9 @@ pub enum PatternError {
 /// Error type for `try_store_from_utf8`.
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
-pub enum StoreUtf8Error {
-    PatternError(PatternError),
-    Utf8Error(core::str::Utf8Error),
+pub enum PatternOrUtf8Error<E> {
+    Pattern(PatternError),
+    Utf8(E),
 }
 
 #[cfg(feature = "std")]
