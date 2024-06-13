@@ -11,8 +11,9 @@ use crate::Error;
 use crate::PatternOrUtf8Error;
 #[cfg(feature = "alloc")]
 use crate::{Parser, ParserOptions};
+use alloc::borrow::ToOwned;
 #[cfg(feature = "alloc")]
-use alloc::{borrow::ToOwned, str::FromStr, string::String};
+use alloc::{str::FromStr, string::String};
 use core::{
     convert::Infallible,
     fmt::{self, Write},
