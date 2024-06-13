@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_datagen::prelude::*;
 use icu_locale_core::LanguageIdentifier;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::hello_world::*;
@@ -11,15 +10,31 @@ use icu_provider_blob::export::*;
 use icu_provider_blob::BlobDataProvider;
 use std::collections::HashSet;
 use std::hash::Hasher;
+use icu_provider::datagen::*;
+use icu_provider::dynutil::UpcastDataPayload;
 
 const BLOB_V1: &[u8] = include_bytes!("data/v1.postcard");
 const BLOB_V2: &[u8] = include_bytes!("data/v2.postcard");
 
-fn run_driver(exporter: BlobExporter) -> Result<(), DataError> {
-    DatagenDriver::new()
-        .with_markers([icu_provider::hello_world::HelloWorldV1Marker::INFO])
-        .with_locales_and_fallback([LocaleFamily::FULL], FallbackOptions::no_deduplication())
-        .export(&icu_provider::hello_world::HelloWorldProvider, exporter)
+fn run_driver(mut exporter: BlobExporter, provider: &impl IterableDataProvider<HelloWorldV1Marker>) {
+    for (locale, marker_attributes) in &provider.supported_requests().unwrap() {
+        let req = DataRequest {
+            locale,
+            marker_attributes,
+            ..Default::default()
+        };
+        let res = DataProvider::<HelloWorldV1Marker>::load(provider, req).unwrap();
+        exporter
+            .put_payload(
+                HelloWorldV1Marker::INFO,
+                locale,
+                marker_attributes,
+                &ExportMarker::upcast(res.payload),
+            )
+            .unwrap();
+    }
+    exporter.flush(HelloWorldV1Marker::INFO).unwrap();
+    exporter.close().unwrap();
 }
 
 fn check_hello_world(blob_provider: impl DataProvider<HelloWorldV1Marker>) {
@@ -49,7 +64,7 @@ fn check_hello_world(blob_provider: impl DataProvider<HelloWorldV1Marker>) {
 fn test_v1() {
     let mut blob: Vec<u8> = Vec::new();
     let exporter = BlobExporter::new_with_sink(Box::new(&mut blob));
-    run_driver(exporter).unwrap();
+    run_driver(exporter, &HelloWorldProvider);
     assert_eq!(BLOB_V1, blob.as_slice());
 
     let blob_provider = BlobDataProvider::try_new_from_blob(blob.into_boxed_slice()).unwrap();
@@ -60,7 +75,7 @@ fn test_v1() {
 fn test_v2() {
     let mut blob: Vec<u8> = Vec::new();
     let exporter = BlobExporter::new_v2_with_sink(Box::new(&mut blob));
-    run_driver(exporter).unwrap();
+    run_driver(exporter, &HelloWorldProvider);
     assert_eq!(BLOB_V2, blob.as_slice());
 
     let blob_provider = BlobDataProvider::try_new_from_blob(blob.into_boxed_slice()).unwrap();
@@ -78,12 +93,7 @@ fn test_v2_bigger() {
     println!("Exporting blob ....");
     let mut blob: Vec<u8> = Vec::new();
     let exporter = BlobExporter::new_v2_with_sink(Box::new(&mut blob));
-    DatagenDriver::new()
-        .with_markers([icu_provider::hello_world::HelloWorldV1Marker::INFO])
-        .with_locales_and_fallback([LocaleFamily::FULL], FallbackOptions::no_deduplication())
-        .export(&ManyLocalesProvider, exporter)
-        .unwrap();
-
+    run_driver(exporter, &ManyLocalesProvider);
     // Rather than check in a 10MB file, we just compute hashes
     println!("Computing hash ....");
     // Construct a hasher with a random, stable seed

@@ -1529,6 +1529,7 @@ version = "1.5.0"
 dependencies = [
  "criterion",
  "databake",
+ "icu_datagen",
  "icu_locale",
  "icu_locale_core",
  "icu_provider",
