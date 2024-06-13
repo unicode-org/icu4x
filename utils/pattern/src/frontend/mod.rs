@@ -219,8 +219,6 @@ where
 {
     /// Creates a pattern from a UTF-8 encoded byte slice.
     ///
-    /// ✨ *Enabled with the `alloc` Cargo feature.*
-    ///
     /// # Examples
     ///
     /// ```
