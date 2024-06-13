@@ -1169,7 +1169,10 @@ fn test_family_precedence() {
     assert_eq!(
         driver.requested_families.unwrap(),
         [
-            (icu::locale::langid!("en"), LocaleFamilyAnnotations::single()),
+            (
+                icu::locale::langid!("en"),
+                LocaleFamilyAnnotations::single()
+            ),
             (
                 icu::locale::langid!("zh-TW"),
                 LocaleFamilyAnnotations::without_descendants()
