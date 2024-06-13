@@ -171,7 +171,7 @@ where
 #[cfg(feature = "alloc")]
 impl<B> Pattern<B, <B::Store as ToOwned>::Owned>
 where
-    B: PatternBackend<StoreUtf8Error = PatternOrUtf8Error<Utf8Error>>,
+    B: PatternBackend<StoreUtf8Error = Utf8Error>,
     B::Store: ToOwned,
 {
     /// Creates a pattern from an iterator of pattern items.
@@ -228,7 +228,7 @@ where
     ///     .expect("single placeholder pattern");
     /// ```
     pub fn try_from_utf8(bytes: &[u8]) -> Result<Self, PatternOrUtf8Error<Utf8Error>> {
-        let store = B::try_store_from_utf8(bytes)?;
+        let store = B::try_store_from_utf8(bytes).map_err(PatternOrUtf8Error::Utf8)?;
         B::validate_store(store).map_err(PatternOrUtf8Error::Pattern)?;
         Ok(Self::from_store_unchecked(store.to_owned()))
     }

@@ -10,8 +10,8 @@ use core::{cmp::Ordering, str::FromStr};
 use writeable::adapters::WriteableAsTryWriteableInfallible;
 use writeable::Writeable;
 
+use crate::common::*;
 use crate::Error;
-use crate::{common::*, PatternOrUtf8Error};
 
 #[cfg(feature = "alloc")]
 use alloc::string::String;
