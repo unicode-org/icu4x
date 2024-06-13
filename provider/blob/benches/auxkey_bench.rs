@@ -322,7 +322,11 @@ fn auxkey_bench_for_version(c: &mut Criterion, blob: &[u8], version_id: &str) {
         c.bench_function(
             &format!("provider/auxkey/fallback/{locale_str}/{version_id}"),
             |b| {
-                b.iter(|| provider.load_data(MarkerA::INFO, req).unwrap());
+                b.iter(|| {
+                    provider
+                        .load_data(black_box(MarkerA::INFO), black_box(req))
+                        .unwrap()
+                });
             },
         );
     }
