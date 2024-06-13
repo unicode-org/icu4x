@@ -84,22 +84,9 @@ fn make_blob_v1() -> Vec<u8> {
     let mut blob: Vec<u8> = Vec::new();
     let mut exporter = BlobExporter::new_with_sink(Box::new(&mut blob));
     put_payloads::<GregorianDateNeoSkeletonPatternsV1Marker>(&mut exporter);
-    put_payloads::<BuddhistDateNeoSkeletonPatternsV1Marker>(&mut exporter);
-    put_payloads::<ChineseDateNeoSkeletonPatternsV1Marker>(&mut exporter);
-    put_payloads::<CopticDateNeoSkeletonPatternsV1Marker>(&mut exporter);
-    put_payloads::<DangiDateNeoSkeletonPatternsV1Marker>(&mut exporter);
-    put_payloads::<EthiopianDateNeoSkeletonPatternsV1Marker>(&mut exporter);
-    put_payloads::<GregorianDateNeoSkeletonPatternsV1Marker>(&mut exporter);
-    put_payloads::<HebrewDateNeoSkeletonPatternsV1Marker>(&mut exporter);
-    put_payloads::<IndianDateNeoSkeletonPatternsV1Marker>(&mut exporter);
-    put_payloads::<IslamicDateNeoSkeletonPatternsV1Marker>(&mut exporter);
-    put_payloads::<JapaneseDateNeoSkeletonPatternsV1Marker>(&mut exporter);
-    put_payloads::<JapaneseExtendedDateNeoSkeletonPatternsV1Marker>(&mut exporter);
-    put_payloads::<PersianDateNeoSkeletonPatternsV1Marker>(&mut exporter);
-    put_payloads::<RocDateNeoSkeletonPatternsV1Marker>(&mut exporter);
     exporter.close().unwrap();
     drop(exporter);
-    assert_eq!(blob.len(), 450725);
+    assert_eq!(blob.len(), 94810);
     assert!(blob.len() > 100);
     blob
 }
@@ -108,22 +95,9 @@ fn make_blob_v2() -> Vec<u8> {
     let mut blob: Vec<u8> = Vec::new();
     let mut exporter = BlobExporter::new_v2_with_sink(Box::new(&mut blob));
     put_payloads::<GregorianDateNeoSkeletonPatternsV1Marker>(&mut exporter);
-    put_payloads::<BuddhistDateNeoSkeletonPatternsV1Marker>(&mut exporter);
-    put_payloads::<ChineseDateNeoSkeletonPatternsV1Marker>(&mut exporter);
-    put_payloads::<CopticDateNeoSkeletonPatternsV1Marker>(&mut exporter);
-    put_payloads::<DangiDateNeoSkeletonPatternsV1Marker>(&mut exporter);
-    put_payloads::<EthiopianDateNeoSkeletonPatternsV1Marker>(&mut exporter);
-    put_payloads::<GregorianDateNeoSkeletonPatternsV1Marker>(&mut exporter);
-    put_payloads::<HebrewDateNeoSkeletonPatternsV1Marker>(&mut exporter);
-    put_payloads::<IndianDateNeoSkeletonPatternsV1Marker>(&mut exporter);
-    put_payloads::<IslamicDateNeoSkeletonPatternsV1Marker>(&mut exporter);
-    put_payloads::<JapaneseDateNeoSkeletonPatternsV1Marker>(&mut exporter);
-    put_payloads::<JapaneseExtendedDateNeoSkeletonPatternsV1Marker>(&mut exporter);
-    put_payloads::<PersianDateNeoSkeletonPatternsV1Marker>(&mut exporter);
-    put_payloads::<RocDateNeoSkeletonPatternsV1Marker>(&mut exporter);
     exporter.close().unwrap();
     drop(exporter);
-    assert_eq!(blob.len(), 241278);
+    assert_eq!(blob.len(), 74567);
     assert!(blob.len() > 100);
     blob
 }
