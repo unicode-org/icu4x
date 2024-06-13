@@ -4,19 +4,22 @@
 
 use icu_locale_core::LanguageIdentifier;
 use icu_provider::datagen::IterableDataProvider;
+use icu_provider::datagen::*;
+use icu_provider::dynutil::UpcastDataPayload;
 use icu_provider::hello_world::*;
 use icu_provider::prelude::*;
 use icu_provider_blob::export::*;
 use icu_provider_blob::BlobDataProvider;
 use std::collections::HashSet;
 use std::hash::Hasher;
-use icu_provider::datagen::*;
-use icu_provider::dynutil::UpcastDataPayload;
 
 const BLOB_V1: &[u8] = include_bytes!("data/v1.postcard");
 const BLOB_V2: &[u8] = include_bytes!("data/v2.postcard");
 
-fn run_driver(mut exporter: BlobExporter, provider: &impl IterableDataProvider<HelloWorldV1Marker>) {
+fn run_driver(
+    mut exporter: BlobExporter,
+    provider: &impl IterableDataProvider<HelloWorldV1Marker>,
+) {
     for (locale, marker_attributes) in &provider.supported_requests().unwrap() {
         let req = DataRequest {
             locale,

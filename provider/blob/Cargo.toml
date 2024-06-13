@@ -34,7 +34,7 @@ databake = { path = "../../utils/databake" }
 icu_datagen = { path = "../../provider/datagen" }
 icu_locale = { path = "../../components/locale", default-features = false, features = ["compiled_data"] }
 icu_locale_core = { path = "../../components/locale_core", default-features = false, features = ["serde"] }
-icu_provider = { path = "../../provider/core", features = ["macros", "datagen"] }
+icu_provider = { path = "../../provider/core", features = ["macros", "datagen", "serde"] }
 icu_provider_adapters = { path = "../../provider/adapters", default-features = false }
 twox-hash = { workspace = true }
 
