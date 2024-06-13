@@ -13,10 +13,10 @@ use icu_provider_blob::export::BlobExporter;
 use icu_provider_blob::BlobDataProvider;
 
 #[icu_provider::data_struct(
-    marker(MarkerA, "a@1"), 
+    marker(MarkerA, "a@1"),
     marker(MarkerB, "b@1"),
     marker(MarkerC, "c@1"),
-    marker(MarkerD, "d@1"),
+    marker(MarkerD, "d@1")
 )]
 #[derive(serde::Serialize, serde::Deserialize, Clone, Copy, databake::Bake, PartialEq)]
 #[databake(path = crate)]
@@ -37,7 +37,8 @@ macro_rules! implement {
         impl IterableDataProvider<$marker> for Baked {
             fn supported_requests(
                 &self,
-            ) -> Result<std::collections::HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+            ) -> Result<std::collections::HashSet<(DataLocale, DataMarkerAttributes)>, DataError>
+            {
                 const LOCALES: &[LanguageIdentifier] = &[
                     langid!("af"),
                     langid!("am"),
@@ -217,8 +218,8 @@ macro_rules! implement {
                     langid!("zu"),
                 ];
                 const ATTRS: &[&str] = &[
-                    "a1", "a1e", "de", "gy", "gym0", "gym0d", "gym0de", "m0d", "m0de", "y0w", "ym0",
-                    "ym0d", "ym0de",
+                    "a1", "a1e", "de", "gy", "gym0", "gym0d", "gym0de", "m0d", "m0de", "y0w",
+                    "ym0", "ym0d", "ym0de",
                 ];
                 Ok(LOCALES
                     .iter()
