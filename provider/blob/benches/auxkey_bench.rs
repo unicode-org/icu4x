@@ -5,9 +5,10 @@
 extern crate alloc;
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
-use icu_datagen::prelude::*;
 use icu_datetime::provider::neo::*;
 use icu_locale::LocaleFallbacker;
+use icu_provider::datagen::*;
+use icu_provider::dynutil::UpcastDataPayload;
 use icu_provider::prelude::*;
 use icu_provider_adapters::fallback::LocaleFallbackProvider;
 use icu_provider_blob::export::BlobExporter;
@@ -53,48 +54,51 @@ const _: () = {
     impliterable_datetime_patterns_roc_skeleton_v1!(Baked);
 };
 
-macro_rules! skeleton_markers {
-    ($cb:ident) => {
-        $cb! {[
-            BuddhistDateNeoSkeletonPatternsV1Marker,
-            ChineseDateNeoSkeletonPatternsV1Marker,
-            CopticDateNeoSkeletonPatternsV1Marker,
-            DangiDateNeoSkeletonPatternsV1Marker,
-            EthiopianDateNeoSkeletonPatternsV1Marker,
-            GregorianDateNeoSkeletonPatternsV1Marker,
-            HebrewDateNeoSkeletonPatternsV1Marker,
-            IndianDateNeoSkeletonPatternsV1Marker,
-            IslamicDateNeoSkeletonPatternsV1Marker,
-            JapaneseDateNeoSkeletonPatternsV1Marker,
-            JapaneseExtendedDateNeoSkeletonPatternsV1Marker,
-            PersianDateNeoSkeletonPatternsV1Marker,
-            RocDateNeoSkeletonPatternsV1Marker,
-        ]}
-    };
+fn put_payloads<M: DataMarker>(exporter: &mut BlobExporter)
+where
+    Baked: IterableDataProvider<M>,
+    ExportMarker: UpcastDataPayload<M>,
+{
+    for (locale, marker_attributes) in
+        &IterableDataProvider::<M>::supported_requests(&Baked).unwrap()
+    {
+        let req = DataRequest {
+            locale,
+            marker_attributes,
+            ..Default::default()
+        };
+        let res = DataProvider::<M>::load(&Baked, req).unwrap();
+        exporter
+            .put_payload(
+                M::INFO,
+                locale,
+                marker_attributes,
+                &ExportMarker::upcast(res.payload),
+            )
+            .unwrap();
+    }
+    exporter.flush(M::INFO).unwrap();
 }
-
-macro_rules! make_exportable_provider_cb {
-    ([$($marker:path,)+]) => {
-        icu_provider::make_exportable_provider!(Baked, [$($marker,)+]);
-    };
-}
-
-macro_rules! marker_array_cb {
-    ([$($marker:path,)+]) => {
-        [$(<$marker>::INFO,)+]
-    };
-}
-
-skeleton_markers!(make_exportable_provider_cb);
 
 fn make_blob_v1() -> Vec<u8> {
     let mut blob: Vec<u8> = Vec::new();
-    let exporter = BlobExporter::new_with_sink(Box::new(&mut blob));
-    DatagenDriver::new()
-        .with_markers(skeleton_markers!(marker_array_cb))
-        .with_locales_and_fallback([LocaleFamily::FULL], FallbackOptions::no_deduplication())
-        .export(&Baked, exporter)
-        .unwrap();
+    let mut exporter = BlobExporter::new_with_sink(Box::new(&mut blob));
+    put_payloads::<GregorianDateNeoSkeletonPatternsV1Marker>(&mut exporter);
+    put_payloads::<BuddhistDateNeoSkeletonPatternsV1Marker>(&mut exporter);
+    put_payloads::<ChineseDateNeoSkeletonPatternsV1Marker>(&mut exporter);
+    put_payloads::<CopticDateNeoSkeletonPatternsV1Marker>(&mut exporter);
+    put_payloads::<DangiDateNeoSkeletonPatternsV1Marker>(&mut exporter);
+    put_payloads::<EthiopianDateNeoSkeletonPatternsV1Marker>(&mut exporter);
+    put_payloads::<GregorianDateNeoSkeletonPatternsV1Marker>(&mut exporter);
+    put_payloads::<HebrewDateNeoSkeletonPatternsV1Marker>(&mut exporter);
+    put_payloads::<IndianDateNeoSkeletonPatternsV1Marker>(&mut exporter);
+    put_payloads::<IslamicDateNeoSkeletonPatternsV1Marker>(&mut exporter);
+    put_payloads::<JapaneseDateNeoSkeletonPatternsV1Marker>(&mut exporter);
+    put_payloads::<JapaneseExtendedDateNeoSkeletonPatternsV1Marker>(&mut exporter);
+    put_payloads::<PersianDateNeoSkeletonPatternsV1Marker>(&mut exporter);
+    put_payloads::<RocDateNeoSkeletonPatternsV1Marker>(&mut exporter);
+    exporter.close().unwrap();
+    drop(exporter);
     assert_eq!(blob.len(), 450725);
     assert!(blob.len() > 100);
     blob
@@ -102,12 +106,23 @@ fn make_blob_v1() -> Vec<u8> {
 
 fn make_blob_v2() -> Vec<u8> {
     let mut blob: Vec<u8> = Vec::new();
-    let exporter = BlobExporter::new_v2_with_sink(Box::new(&mut blob));
-    DatagenDriver::new()
-        .with_markers(skeleton_markers!(marker_array_cb))
-        .with_locales_and_fallback([LocaleFamily::FULL], FallbackOptions::no_deduplication())
-        .export(&Baked, exporter)
-        .unwrap();
+    let mut exporter = BlobExporter::new_v2_with_sink(Box::new(&mut blob));
+    put_payloads::<GregorianDateNeoSkeletonPatternsV1Marker>(&mut exporter);
+    put_payloads::<BuddhistDateNeoSkeletonPatternsV1Marker>(&mut exporter);
+    put_payloads::<ChineseDateNeoSkeletonPatternsV1Marker>(&mut exporter);
+    put_payloads::<CopticDateNeoSkeletonPatternsV1Marker>(&mut exporter);
+    put_payloads::<DangiDateNeoSkeletonPatternsV1Marker>(&mut exporter);
+    put_payloads::<EthiopianDateNeoSkeletonPatternsV1Marker>(&mut exporter);
+    put_payloads::<GregorianDateNeoSkeletonPatternsV1Marker>(&mut exporter);
+    put_payloads::<HebrewDateNeoSkeletonPatternsV1Marker>(&mut exporter);
+    put_payloads::<IndianDateNeoSkeletonPatternsV1Marker>(&mut exporter);
+    put_payloads::<IslamicDateNeoSkeletonPatternsV1Marker>(&mut exporter);
+    put_payloads::<JapaneseDateNeoSkeletonPatternsV1Marker>(&mut exporter);
+    put_payloads::<JapaneseExtendedDateNeoSkeletonPatternsV1Marker>(&mut exporter);
+    put_payloads::<PersianDateNeoSkeletonPatternsV1Marker>(&mut exporter);
+    put_payloads::<RocDateNeoSkeletonPatternsV1Marker>(&mut exporter);
+    exporter.close().unwrap();
+    drop(exporter);
     assert_eq!(blob.len(), 241278);
     assert!(blob.len() > 100);
     blob
