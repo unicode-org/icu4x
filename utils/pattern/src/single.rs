@@ -172,7 +172,7 @@ impl PatternBackend for SinglePlaceholder {
     #[cfg(feature = "alloc")]
     type PlaceholderKeyCow<'a> = SinglePlaceholderKey;
     type Error<'a> = Infallible;
-    type StoreUtf8Error = PatternOrUtf8Error<Utf8Error>;
+    type StoreUtf8Error = Utf8Error;
     type Store = str;
     type Iter<'a> = SinglePlaceholderPatternIterator<'a>;
 
