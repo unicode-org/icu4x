@@ -8,7 +8,6 @@ mod databake;
 mod serde;
 use crate::common::*;
 use crate::Error;
-#[cfg(feature = "alloc")]
 use crate::PatternOrUtf8Error;
 #[cfg(feature = "alloc")]
 use crate::{Parser, ParserOptions};
@@ -166,9 +165,9 @@ where
 }
 
 #[cfg(feature = "alloc")]
-impl<B, E> Pattern<B, <B::Store as ToOwned>::Owned>
+impl<B> Pattern<B, <B::Store as ToOwned>::Owned>
 where
-    B: PatternBackend<StoreUtf8Error = E>,
+    B: PatternBackend,
     B::Store: ToOwned,
 {
     /// Creates a pattern from an iterator of pattern items.
@@ -210,7 +209,13 @@ where
             store,
         })
     }
+}
 
+impl<B, E> Pattern<B, <B::Store as ToOwned>::Owned>
+where
+    B: PatternBackend<StoreUtf8Error = E>,
+    B::Store: ToOwned,
+{
     /// Creates a pattern from a UTF-8 encoded byte slice.
     ///
     /// ✨ *Enabled with the `alloc` Cargo feature.*
