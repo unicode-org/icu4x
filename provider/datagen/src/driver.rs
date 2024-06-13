@@ -134,10 +134,18 @@ impl LocaleFamily {
     /// - Descendants: "en-GB", "en-ZA", ...
     ///
     /// Stylized on the CLI as: "en-US"
+    ///
+    /// The `und` locale is treated specially and behaves like `::single("und")`.
     pub const fn with_descendants(langid: LanguageIdentifier) -> Self {
+        let annotations = if matches!(langid, LanguageIdentifier::UND) {
+            LocaleFamilyAnnotations::single()
+        } else {
+            LocaleFamilyAnnotations::with_descendants()
+        };
+
         Self {
             langid: Some(langid),
-            annotations: LocaleFamilyAnnotations::with_descendants(),
+            annotations,
         }
     }
 
@@ -152,10 +160,17 @@ impl LocaleFamily {
     /// - Ancestors: "und", "en"
     ///
     /// Stylized on the CLI as: "^en-US"
+    ///
+    /// The `und` locale is treated specially and behaves like `::single("und")`.
     pub const fn without_descendants(langid: LanguageIdentifier) -> Self {
+        let annotations = if matches!(langid, LanguageIdentifier::UND) {
+            LocaleFamilyAnnotations::single()
+        } else {
+            LocaleFamilyAnnotations::without_descendants()
+        };
         Self {
             langid: Some(langid),
-            annotations: LocaleFamilyAnnotations::without_descendants(),
+            annotations,
         }
     }
 
@@ -171,10 +186,17 @@ impl LocaleFamily {
     /// but it does _not_ contain the ancestors "en" and "und".
     ///
     /// Stylized on the CLI as: "%en-US"
+    ///
+    /// The `und` locale is treated specially and behaves like `::single("und")`.
     pub const fn without_ancestors(langid: LanguageIdentifier) -> Self {
+        let annotations = if matches!(langid, LanguageIdentifier::UND) {
+            LocaleFamilyAnnotations::single()
+        } else {
+            LocaleFamilyAnnotations::without_ancestors()
+        };
         Self {
             langid: Some(langid),
-            annotations: LocaleFamilyAnnotations::without_ancestors(),
+            annotations,
         }
     }
 
@@ -420,35 +442,27 @@ impl DatagenDriver {
         locales: impl IntoIterator<Item = LocaleFamily>,
         options: FallbackOptions,
     ) -> Self {
-        let families = locales
-            .into_iter()
-            .collect::<Vec<_>>();
-        self.requested_families = Some(if families.is_empty() {
-            // If no locales are selected but fallback is enabled, select the root locale
-            [(LanguageIdentifier::UND, LocaleFamilyAnnotations::single())]
-                .into_iter()
-                .collect()
-        } else {
+        let mut families = locales.into_iter().collect::<Vec<_>>();
+        if families.is_empty() {
+            families.push(LocaleFamily::single(LanguageIdentifier::UND));
+        }
+
+        self.requested_families = Some(
             families
                 .into_iter()
                 .filter_map(|family| {
-                    if let Some(langid) = family.langid {
-                        if langid == LanguageIdentifier::UND {
-                            // Root locale: do not include descendants (use `full` for that)
-                            Some((LanguageIdentifier::UND, LocaleFamilyAnnotations::single()))
-                        } else {
-                            // All other locales: copy the requested annotations
-                            Some((langid, family.annotations))
-                        }
-                    } else {
-                        // Full locale family: set the bit instead of adding to the set
-                        debug_assert_eq!(family.annotations, LocaleFamily::FULL.annotations);
-                        self.include_full = true;
-                        None
-                    }
+                    Some((
+                        family.langid.or_else(|| {
+                            // Full locale family: set the bit instead of adding to the set
+                            debug_assert_eq!(family.annotations, LocaleFamily::FULL.annotations);
+                            self.include_full = true;
+                            None
+                        })?,
+                        family.annotations,
+                    ))
                 })
-                .collect()
-        });
+                .collect(),
+        );
 
         self.deduplication_strategy = options.deduplication_strategy;
         self
