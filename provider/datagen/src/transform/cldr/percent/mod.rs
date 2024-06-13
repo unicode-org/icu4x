@@ -8,7 +8,7 @@ use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
 use crate::provider::IterableDataProviderCached;
 
-use icu_experimental::dimension::provider::percent::*;
+use icu::experimental::dimension::provider::percent::*;
 use icu_provider::prelude::*;
 use icu_provider::DataProvider;
 use tinystr::tinystr;
@@ -109,8 +109,8 @@ fn extract_percent_essentials<'data>(
 
 #[test]
 fn test_basic() {
-    use icu_experimental::dimension::provider::percent::*;
-    use icu_locale_core::langid;
+    use icu::experimental::dimension::provider::percent::*;
+    use icu::locale::langid;
 
     let provider = DatagenProvider::new_testing();
 

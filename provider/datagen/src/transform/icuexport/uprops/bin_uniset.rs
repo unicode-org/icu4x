@@ -3,9 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::provider::DatagenProvider;
-use icu_collections::codepointinvlist::CodePointInversionListBuilder;
-use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
-use icu_properties::provider::*;
+use icu::collections::codepointinvlist::CodePointInversionListBuilder;
+use icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList;
+use icu::properties::provider::*;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
@@ -75,9 +75,9 @@ expand!((BasicEmojiV1Marker, "Basic_Emoji"));
 
 #[test]
 fn test_basic() {
-    use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
-    use icu_properties::provider::BasicEmojiV1Marker;
-    use icu_properties::provider::PropertyUnicodeSetV1;
+    use icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList;
+    use icu::properties::provider::BasicEmojiV1Marker;
+    use icu::properties::provider::PropertyUnicodeSetV1;
 
     let provider = DatagenProvider::new_testing();
 

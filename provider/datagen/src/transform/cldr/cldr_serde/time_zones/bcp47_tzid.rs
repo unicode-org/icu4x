@@ -7,7 +7,7 @@
 //! Sample file:
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-bcp47/bcp47/timezone.json>
 
-use icu_datetime::provider::time_zones::TimeZoneBcp47Id;
+use icu::datetime::provider::time_zones::TimeZoneBcp47Id;
 use serde::Deserialize;
 use std::collections::BTreeMap;
 

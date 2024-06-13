@@ -6,7 +6,7 @@ use std::collections::HashSet;
 
 use crate::provider::DatagenProvider;
 use calendrical_calculations::chinese_based::{Chinese, ChineseBased, Dangi};
-use icu_calendar::provider::chinese_based::*;
+use icu::calendar::provider::chinese_based::*;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 

@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::provider::transform::cldr::cldr_serde::{self, ca};
-use icu_calendar::types::MonthCode;
-use icu_datetime::provider::calendar::*;
+use icu::calendar::types::MonthCode;
+use icu::datetime::provider::calendar::*;
 use std::borrow::Cow;
 use std::collections::BTreeMap;
 use tinystr::{tinystr, TinyStr16, TinyStr4};

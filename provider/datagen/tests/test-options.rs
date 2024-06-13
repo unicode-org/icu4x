@@ -8,9 +8,9 @@ mod testutil;
 use std::collections::BTreeMap;
 use std::collections::HashSet;
 
+use icu::locale::provider::*;
 use icu_datagen::prelude::*;
 use icu_datagen::FallbackOptions;
-use icu_locale::provider::*;
 use icu_provider::datagen::*;
 use icu_provider::hello_world::*;
 use icu_provider::make_exportable_provider;
@@ -76,7 +76,7 @@ impl DataProvider<LocaleFallbackLikelySubtagsV1Marker> for TestingProvider {
         &self,
         req: DataRequest,
     ) -> Result<DataResponse<LocaleFallbackLikelySubtagsV1Marker>, DataError> {
-        icu_locale::provider::Baked.load(req)
+        icu::locale::provider::Baked.load(req)
     }
 }
 
@@ -85,7 +85,7 @@ impl DataProvider<LocaleFallbackParentsV1Marker> for TestingProvider {
         &self,
         req: DataRequest,
     ) -> Result<DataResponse<LocaleFallbackParentsV1Marker>, DataError> {
-        icu_locale::provider::Baked.load(req)
+        icu::locale::provider::Baked.load(req)
     }
 }
 
@@ -94,7 +94,7 @@ impl DataProvider<CollationFallbackSupplementV1Marker> for TestingProvider {
         &self,
         req: DataRequest,
     ) -> Result<DataResponse<CollationFallbackSupplementV1Marker>, DataError> {
-        icu_locale::provider::Baked.load(req)
+        icu::locale::provider::Baked.load(req)
     }
 }
 

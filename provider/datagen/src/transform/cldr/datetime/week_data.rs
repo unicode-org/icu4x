@@ -8,10 +8,10 @@ use crate::provider::transform::cldr::cldr_serde::{
 };
 use crate::provider::DatagenProvider;
 use crate::provider::IterableDataProviderCached;
-use icu_calendar::provider::{
+use icu::calendar::provider::{
     WeekDataV1, WeekDataV1Marker, WeekDataV2, WeekDataV2Marker, WeekdaySet,
 };
-use icu_locale_core::LanguageIdentifier;
+use icu::locale::LanguageIdentifier;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 
@@ -81,8 +81,8 @@ impl DataProvider<WeekDataV1Marker> for DatagenProvider {
 
 #[test]
 fn basic_cldr_week_data() {
-    use icu_calendar::types::IsoWeekday;
-    use icu_locale_core::langid;
+    use icu::calendar::types::IsoWeekday;
+    use icu::locale::langid;
 
     let provider = DatagenProvider::new_testing();
 
@@ -148,7 +148,7 @@ impl DataProvider<WeekDataV2Marker> for DatagenProvider {
             .read_and_parse("supplemental/weekData.json")?;
         let week_data = &week_data.supplemental.week_data;
 
-        let first_weekday: icu_calendar::types::IsoWeekday = week_data
+        let first_weekday: icu::calendar::types::IsoWeekday = week_data
             .first_day
             .get(&territory)
             .or_else(|| week_data.first_day.get(&DEFAULT_TERRITORY))
@@ -206,9 +206,9 @@ impl IterableDataProviderCached<WeekDataV2Marker> for DatagenProvider {
 
 #[test]
 fn test_basic_cldr_week_data_v2() {
-    use icu_calendar::provider::WeekdaySet;
-    use icu_calendar::types::IsoWeekday::*;
-    use icu_locale_core::langid;
+    use icu::calendar::provider::WeekdaySet;
+    use icu::calendar::types::IsoWeekday::*;
+    use icu::locale::langid;
 
     let provider = DatagenProvider::new_testing();
 

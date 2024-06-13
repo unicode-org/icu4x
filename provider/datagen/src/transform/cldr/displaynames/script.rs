@@ -6,8 +6,8 @@ use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
 use crate::provider::IterableDataProviderCached;
 use core::convert::TryFrom;
-use icu_experimental::displaynames::provider::*;
-use icu_locale_core::{subtags::Script, ParseError};
+use icu::experimental::displaynames::provider::*;
+use icu::locale::{subtags::Script, ParseError};
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
 use std::str::FromStr;
@@ -93,7 +93,7 @@ impl TryFrom<&cldr_serde::displaynames::script::Resource> for ScriptDisplayNames
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_locale_core::{langid, subtags::script};
+    use icu::locale::{langid, subtags::script};
 
     #[test]
     fn test_basic_script_display_names() {

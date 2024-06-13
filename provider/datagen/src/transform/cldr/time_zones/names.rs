@@ -5,10 +5,10 @@
 use super::convert::{compute_bcp47_tzids_btreemap, compute_canonical_tzids_btreemap};
 use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
+use icu::timezone::provider::names::*;
+use icu::timezone::TimeZoneBcp47Id;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
-use icu_timezone::provider::names::*;
-use icu_timezone::TimeZoneBcp47Id;
 use std::collections::BTreeMap;
 use std::collections::BTreeSet;
 use std::collections::HashSet;
@@ -259,7 +259,7 @@ fn test_normalize_canonicalize_iana_coverage() {
         .unwrap();
     let iana2bcp = &compute_bcp47_tzids_btreemap(&resource.keyword.u.time_zones.values);
 
-    let mapper = icu_timezone::TimeZoneIdMapper::try_new_unstable(&provider).unwrap();
+    let mapper = icu::timezone::TimeZoneIdMapper::try_new_unstable(&provider).unwrap();
     let mapper = mapper.as_borrowed();
 
     for iana_id in iana2bcp.keys() {

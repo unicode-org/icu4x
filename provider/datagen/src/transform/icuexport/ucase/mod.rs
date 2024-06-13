@@ -6,9 +6,9 @@
 //! exported from ICU.
 
 use crate::provider::DatagenProvider;
-use icu_casemap::provider::{CaseMapUnfoldV1, CaseMapUnfoldV1Marker, CaseMapV1, CaseMapV1Marker};
-use icu_collections::codepointtrie::toml::CodePointDataSlice;
-use icu_collections::codepointtrie::CodePointTrieHeader;
+use icu::casemap::provider::{CaseMapUnfoldV1, CaseMapUnfoldV1Marker, CaseMapV1, CaseMapV1Marker};
+use icu::collections::codepointtrie::toml::CodePointDataSlice;
+use icu::collections::codepointtrie::CodePointTrieHeader;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 use std::convert::TryFrom;
