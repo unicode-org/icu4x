@@ -1528,8 +1528,7 @@ name = "icu_provider_blob"
 version = "1.5.0"
 dependencies = [
  "criterion",
- "icu_datetime",
- "icu_datetime_data",
+ "databake",
  "icu_locale",
  "icu_locale_core",
  "icu_provider",
