@@ -4,10 +4,10 @@
 
 use crate::provider::DatagenProvider;
 use crate::provider::IterableDataProviderCached;
-use icu_locale_core::langid;
+use icu::locale::langid;
+use icu::segmenter::provider::*;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
-use icu_segmenter::provider::*;
 use std::collections::HashSet;
 use std::fmt::Debug;
 use zerovec::ZeroVec;

@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::provider::DatagenProvider;
-use icu_collections::codepointinvlist::CodePointInversionListBuilder;
-use icu_properties::provider::*;
+use icu::collections::codepointinvlist::CodePointInversionListBuilder;
+use icu::properties::provider::*;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
@@ -134,9 +134,9 @@ expand!(
 
 #[test]
 fn test_basic() {
-    use icu_collections::codepointinvlist::CodePointInversionList;
-    use icu_properties::provider::PropertyCodePointSetV1;
-    use icu_properties::provider::WhiteSpaceV1Marker;
+    use icu::collections::codepointinvlist::CodePointInversionList;
+    use icu::properties::provider::PropertyCodePointSetV1;
+    use icu::properties::provider::WhiteSpaceV1Marker;
 
     let provider = DatagenProvider::new_testing();
 

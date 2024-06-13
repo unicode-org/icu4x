@@ -121,7 +121,7 @@ struct ZeroCopyCheckExporter {
 // Every entry in this list is a bug that needs to be addressed before stabilization.
 const EXPECTED_VIOLATIONS: &[DataMarkerInfo] = &[
     // https://github.com/unicode-org/icu4x/issues/1678
-    icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::INFO,
+    icu::datetime::provider::calendar::DateSkeletonPatternsV1Marker::INFO,
 ];
 
 // Types in this list can be zero-copy deserialized (and do not contain allocated data),
@@ -133,9 +133,9 @@ const EXPECTED_TRANSIENT_VIOLATIONS: &[DataMarkerInfo] = &[
     // Regex DFAs need to be validated, which involved creating a BTreeMap.
     // If required we could avoid this using one of the approaches in
     // https://github.com/unicode-org/icu4x/pulls/3697.
-    icu_list::provider::AndListV1Marker::INFO,
-    icu_list::provider::OrListV1Marker::INFO,
-    icu_list::provider::UnitListV1Marker::INFO,
+    icu::list::provider::AndListV1Marker::INFO,
+    icu::list::provider::OrListV1Marker::INFO,
+    icu::list::provider::UnitListV1Marker::INFO,
 ];
 
 impl DataExporter for ZeroCopyCheckExporter {

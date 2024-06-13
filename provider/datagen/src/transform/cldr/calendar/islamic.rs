@@ -9,7 +9,7 @@ use calendrical_calculations::islamic::{
     IslamicBasedMarker, ObservationalIslamicMarker, SaudiIslamicMarker,
 };
 use calendrical_calculations::iso;
-use icu_calendar::provider::islamic::*;
+use icu::calendar::provider::islamic::*;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 

@@ -6,7 +6,7 @@ use core::convert::TryFrom;
 use std::borrow::Cow;
 use std::collections::HashSet;
 
-use icu_experimental::personnames::provider::*;
+use icu::experimental::personnames::provider::*;
 use icu_provider::prelude::*;
 use zerovec::VarZeroVec;
 
@@ -153,7 +153,7 @@ impl TryFrom<&'_ Resource> for PersonNamesFormatV1<'_> {
 
 #[cfg(test)]
 mod tests {
-    use icu_locale_core::langid;
+    use icu::locale::langid;
     use zerofrom::ZeroFrom;
 
     use super::*;

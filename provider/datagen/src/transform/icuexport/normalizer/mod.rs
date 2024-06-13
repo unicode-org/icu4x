@@ -6,9 +6,9 @@
 //! exported from ICU.
 
 use crate::provider::DatagenProvider;
-use icu_collections::char16trie::Char16Trie;
-use icu_collections::codepointtrie::CodePointTrie;
-use icu_normalizer::provider::*;
+use icu::collections::char16trie::Char16Trie;
+use icu::collections::codepointtrie::CodePointTrie;
+use icu::normalizer::provider::*;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
@@ -19,7 +19,7 @@ mod normalizer_serde;
 
 macro_rules! normalization_provider {
     ($marker:ident, $serde_struct:ident, $file_name:literal, $conversion:expr, $toml_data:ident) => {
-        use icu_normalizer::provider::$marker;
+        use icu::normalizer::provider::$marker;
 
         impl DataProvider<$marker> for DatagenProvider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {

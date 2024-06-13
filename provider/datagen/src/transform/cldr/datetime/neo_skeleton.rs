@@ -6,16 +6,16 @@ use std::collections::HashSet;
 
 use crate::provider::{DatagenProvider, IterableDataProviderCached};
 use either::Either;
-use icu_datetime::neo_skeleton::{
+use icu::datetime::neo_skeleton::{
     NeoDateComponents, NeoDateSkeleton, NeoSkeletonLength, NeoTimeComponents, NeoTimeSkeleton,
 };
-use icu_datetime::pattern::runtime::PatternPlurals;
-use icu_datetime::provider::calendar::{DateLengthsV1, DateSkeletonPatternsV1, TimeLengthsV1};
-use icu_datetime::provider::neo::TimeNeoSkeletonPatternsV1Marker;
-use icu_datetime::provider::neo::*;
-use icu_datetime::DateTimeFormatterOptions;
-use icu_locale_core::extensions::unicode::{value, Value};
-use icu_locale_core::LanguageIdentifier;
+use icu::datetime::pattern::runtime::PatternPlurals;
+use icu::datetime::provider::calendar::{DateLengthsV1, DateSkeletonPatternsV1, TimeLengthsV1};
+use icu::datetime::provider::neo::TimeNeoSkeletonPatternsV1Marker;
+use icu::datetime::provider::neo::*;
+use icu::datetime::DateTimeFormatterOptions;
+use icu::locale::extensions::unicode::{value, Value};
+use icu::locale::LanguageIdentifier;
 use icu_provider::prelude::*;
 use tinystr::TinyAsciiStr;
 

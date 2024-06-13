@@ -8,11 +8,11 @@ use crate::provider::transform::cldr::cldr_serde::units::data::Patterns;
 use crate::provider::transform::cldr::cldr_serde::{self};
 use crate::provider::DatagenProvider;
 
-use icu_experimental::dimension::provider::units::{
+use icu::experimental::dimension::provider::units::{
     Count, UnitsDisplayNameV1, UnitsDisplayNameV1Marker,
 };
 
-use icu_locale::LanguageIdentifier;
+use icu::locale::LanguageIdentifier;
 use icu_provider::DataMarkerAttributes;
 use icu_provider::{
     datagen::IterableDataProvider, DataError, DataLocale, DataPayload, DataProvider, DataRequest,
@@ -143,7 +143,7 @@ impl IterableDataProvider<UnitsDisplayNameV1Marker> for DatagenProvider {
 
 #[test]
 fn test_basic() {
-    use icu_locale_core::langid;
+    use icu::locale::langid;
     use icu_provider::prelude::*;
 
     let provider = DatagenProvider::new_testing();

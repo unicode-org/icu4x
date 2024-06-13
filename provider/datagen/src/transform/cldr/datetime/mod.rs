@@ -6,10 +6,10 @@ use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
 use crate::provider::IterableDataProviderCached;
 use either::Either;
-use icu_datetime::provider::calendar::*;
-use icu_locale_core::extensions::unicode::Value;
-use icu_locale_core::extensions::unicode::{key, value};
-use icu_locale_core::LanguageIdentifier;
+use icu::datetime::provider::calendar::*;
+use icu::locale::extensions::unicode::Value;
+use icu::locale::extensions::unicode::{key, value};
+use icu::locale::LanguageIdentifier;
 use icu_provider::prelude::*;
 use std::collections::HashMap;
 use std::collections::HashSet;
@@ -23,10 +23,10 @@ mod symbols;
 pub(in crate::provider) mod week_data;
 
 pub(in crate::provider) static SUPPORTED_CALS: OnceLock<
-    HashMap<icu_locale_core::extensions::unicode::Value, &'static str>,
+    HashMap<icu::locale::extensions::unicode::Value, &'static str>,
 > = OnceLock::new();
 
-fn supported_cals() -> &'static HashMap<icu_locale_core::extensions::unicode::Value, &'static str> {
+fn supported_cals() -> &'static HashMap<icu::locale::extensions::unicode::Value, &'static str> {
     SUPPORTED_CALS.get_or_init(|| {
         [
             (value!("buddhist"), "buddhist"),
@@ -252,8 +252,8 @@ macro_rules! impl_data_provider {
                 // TODO(#3212): Remove
                 if $marker::INFO == TimeLengthsV1Marker::INFO {
                     r.retain(|(l, _)| {
-                        l.get_langid() != icu_locale_core::langid!("byn")
-                            && l.get_langid() != icu_locale_core::langid!("ssy")
+                        l.get_langid() != icu::locale::langid!("byn")
+                            && l.get_langid() != icu::locale::langid!("ssy")
                     });
                 }
 
@@ -394,7 +394,7 @@ impl_data_provider!(
 #[cfg(test)]
 mod test {
     use super::*;
-    use icu_locale_core::langid;
+    use icu::locale::langid;
 
     #[test]
     fn test_basic_patterns() {
@@ -428,8 +428,8 @@ mod test {
 
     #[test]
     fn test_datetime_skeletons() {
-        use icu_datetime::pattern::runtime::{Pattern, PluralPattern};
-        use icu_plurals::PluralCategory;
+        use icu::datetime::pattern::runtime::{Pattern, PluralPattern};
+        use icu::plurals::PluralCategory;
         use std::convert::TryFrom;
 
         let provider = DatagenProvider::new_testing();
@@ -471,7 +471,7 @@ mod test {
 
     #[test]
     fn test_basic_symbols() {
-        use icu_calendar::types::MonthCode;
+        use icu::calendar::types::MonthCode;
         use tinystr::tinystr;
         let provider = DatagenProvider::new_testing();
 

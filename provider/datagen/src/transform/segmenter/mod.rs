@@ -8,16 +8,16 @@
 #![allow(unused_imports)]
 
 use crate::provider::DatagenProvider;
-use icu_codepointtrie_builder::{CodePointTrieBuilder, CodePointTrieBuilderData};
-use icu_collections::codepointtrie;
-use icu_properties::{
+use icu::collections::codepointtrie;
+use icu::properties::{
     maps, sets, CanonicalCombiningClass, EastAsianWidth, GeneralCategory, GraphemeClusterBreak,
     IndicSyllabicCategory, LineBreak, Script, SentenceBreak, WordBreak,
 };
+use icu::segmenter::provider::*;
+use icu::segmenter::WordType;
+use icu_codepointtrie_builder::{CodePointTrieBuilder, CodePointTrieBuilderData};
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
-use icu_segmenter::provider::*;
-use icu_segmenter::WordType;
 use std::collections::HashSet;
 use std::fmt::Debug;
 use std::sync::OnceLock;

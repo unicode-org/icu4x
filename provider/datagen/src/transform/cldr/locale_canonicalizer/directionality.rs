@@ -6,7 +6,7 @@ use std::collections::HashSet;
 
 use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
-use icu_locale::provider::*;
+use icu::locale::provider::*;
 
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
@@ -52,7 +52,7 @@ impl From<&cldr_serde::directionality::Resource> for ScriptDirectionV1<'_> {
 
 #[test]
 fn test_basic() {
-    use icu_locale_core::subtags::script;
+    use icu::locale::subtags::script;
 
     let provider = DatagenProvider::new_testing();
     let data: DataResponse<ScriptDirectionV1Marker> = provider.load(Default::default()).unwrap();
