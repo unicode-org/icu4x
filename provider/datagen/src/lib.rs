@@ -278,9 +278,9 @@ fn test_markers() {
             "trash",
         ]),
         vec![
-            icu_list::provider::AndListV1Marker::INFO,
-            icu_datetime::provider::calendar::GregorianDateLengthsV1Marker::INFO,
-            icu_decimal::provider::DecimalSymbolsV1Marker::INFO,
+            icu::list::provider::AndListV1Marker::INFO,
+            icu::datetime::provider::calendar::GregorianDateLengthsV1Marker::INFO,
+            icu::decimal::provider::DecimalSymbolsV1Marker::INFO,
         ]
     );
 }
@@ -290,13 +290,13 @@ fn test_markers_from_bin() {
     assert_eq!(
         markers_from_bin_inner(include_bytes!("../tests/data/tutorial_buffer.wasm")),
         vec![
-            icu_datetime::provider::calendar::GregorianDateLengthsV1Marker::INFO,
-            icu_datetime::provider::calendar::GregorianDateSymbolsV1Marker::INFO,
-            icu_datetime::provider::calendar::TimeLengthsV1Marker::INFO,
-            icu_datetime::provider::calendar::TimeSymbolsV1Marker::INFO,
-            icu_calendar::provider::WeekDataV1Marker::INFO,
-            icu_decimal::provider::DecimalSymbolsV1Marker::INFO,
-            icu_plurals::provider::OrdinalV1Marker::INFO,
+            icu::datetime::provider::calendar::GregorianDateLengthsV1Marker::INFO,
+            icu::datetime::provider::calendar::GregorianDateSymbolsV1Marker::INFO,
+            icu::datetime::provider::calendar::TimeLengthsV1Marker::INFO,
+            icu::datetime::provider::calendar::TimeSymbolsV1Marker::INFO,
+            icu::calendar::provider::WeekDataV1Marker::INFO,
+            icu::decimal::provider::DecimalSymbolsV1Marker::INFO,
+            icu::plurals::provider::OrdinalV1Marker::INFO,
         ]
     );
 }

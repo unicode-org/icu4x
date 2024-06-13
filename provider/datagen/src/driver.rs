@@ -1177,7 +1177,7 @@ fn test_collation_filtering() {
     for cas in cases {
         let resolved_locales = select_locales_for_marker(
             &crate::provider::DatagenProvider::new_testing(),
-            icu_collator::provider::CollationDataV1Marker::INFO,
+            icu::collator::provider::CollationDataV1Marker::INFO,
             &LocalesWithOrWithoutFallback::WithoutFallback {
                 langids: [cas.language.clone()].into_iter().collect(),
             },
