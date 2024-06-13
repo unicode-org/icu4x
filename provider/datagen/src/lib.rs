@@ -101,7 +101,7 @@ pub mod prelude {
         DatagenDriver, DeduplicationStrategy, FallbackOptions, LocaleFamily, NoFallbackOptions,
     };
     #[doc(no_inline)]
-    pub use icu_locale_core::{langid, LanguageIdentifier};
+    pub use icu_locale::{langid, LanguageIdentifier};
     #[doc(no_inline)]
     pub use icu_provider::{datagen::DataExporter, DataMarker, DataMarkerInfo};
 }

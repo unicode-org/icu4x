@@ -4,11 +4,11 @@
 
 use crate::rayon_prelude::*;
 use displaydoc::Display;
+use icu_locale::extensions::unicode::key;
 use icu_locale::fallback::LocaleFallbackIterator;
+use icu_locale::LanguageIdentifier;
 use icu_locale::LocaleFallbacker;
-use icu_locale_core::extensions::unicode::key;
-use icu_locale_core::LanguageIdentifier;
-use icu_locale_core::ParseError;
+use icu_locale::ParseError;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use std::collections::HashMap;
@@ -1094,7 +1094,7 @@ impl fmt::Display for DisplayDuration {
 
 #[test]
 fn test_collation_filtering() {
-    use icu_locale_core::langid;
+    use icu_locale::langid;
     use std::collections::BTreeSet;
 
     #[derive(Debug)]

@@ -7,7 +7,7 @@ use std::borrow::Borrow;
 use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
 use crate::provider::IterableDataProviderCached;
-use icu_experimental::relativetime::provider::*;
+use icu::experimental::relativetime::provider::*;
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashMap, HashSet};
 use std::str::FromStr;
@@ -198,7 +198,7 @@ make_data_provider!(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_locale_core::langid;
+    use icu::locale::langid;
 
     #[test]
     fn test_basic() {

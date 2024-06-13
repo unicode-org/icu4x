@@ -7,7 +7,7 @@
 //! Sample file:
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/supplemental/metaZones.json>
 
-use icu_datetime::provider::time_zones::MetazoneId;
+use icu::datetime::provider::time_zones::MetazoneId;
 use serde::Deserialize;
 use std::collections::BTreeMap;
 

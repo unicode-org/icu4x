@@ -9,10 +9,10 @@ use cldr_serde::time_zones::bcp47_tzid::Bcp47TzidAliasData;
 use cldr_serde::time_zones::meta_zones::MetazoneAliasData;
 use cldr_serde::time_zones::meta_zones::ZonePeriod;
 use cldr_serde::time_zones::time_zone_names::TimeZoneNames;
-use icu_datetime::provider::time_zones::*;
-use icu_datetime::provider::time_zones::{MetazoneId, TimeZoneBcp47Id};
+use icu::datetime::provider::time_zones::*;
+use icu::datetime::provider::time_zones::{MetazoneId, TimeZoneBcp47Id};
+use icu::timezone::provider::*;
 use icu_provider::prelude::*;
-use icu_timezone::provider::*;
 use std::collections::BTreeMap;
 use std::collections::HashSet;
 
@@ -102,14 +102,14 @@ impl_data_provider!(
 
 #[cfg(test)]
 mod tests {
-    use icu_timezone::ZoneVariant;
+    use icu::timezone::ZoneVariant;
     use tinystr::tinystr;
 
     use super::*;
 
     #[test]
     fn basic_cldr_time_zones() {
-        use icu_locale_core::langid;
+        use icu::locale::langid;
 
         let provider = DatagenProvider::new_testing();
 

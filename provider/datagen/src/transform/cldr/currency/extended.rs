@@ -9,11 +9,11 @@ use std::borrow::Cow;
 use std::collections::BTreeMap;
 use std::collections::HashSet;
 
-use icu_experimental::dimension::provider::extended_currency::Count;
+use icu::experimental::dimension::provider::extended_currency::Count;
 use icu_provider::datagen::IterableDataProvider;
 use tinystr::TinyAsciiStr;
 
-use icu_experimental::dimension::provider::extended_currency::*;
+use icu::experimental::dimension::provider::extended_currency::*;
 use icu_provider::prelude::*;
 use icu_provider::DataProvider;
 
@@ -121,7 +121,7 @@ impl IterableDataProvider<CurrencyExtendedDataV1Marker> for DatagenProvider {
 
 #[test]
 fn test_basic() {
-    use icu_locale_core::langid;
+    use icu::locale::langid;
 
     let provider = DatagenProvider::new_testing();
     let en: DataPayload<CurrencyExtendedDataV1Marker> = provider
