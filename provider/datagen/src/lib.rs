@@ -150,7 +150,7 @@ macro_rules! cb {
         /// # use icu_provider::DataMarker;
         /// assert_eq!(
         ///     icu_datagen::marker("list/and@1"),
-        ///     Some(icu_list::provider::AndListV1Marker::INFO),
+        ///     Some(icu::list::provider::AndListV1Marker::INFO),
         /// );
         /// ```
         pub fn marker<S: AsRef<str>>(string: S) -> Option<DataMarkerInfo> {
