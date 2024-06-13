@@ -2,8 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-extern crate alloc;
-
+#[cfg(feature = "alloc")]
 use alloc::borrow::ToOwned;
 #[cfg(feature = "databake")]
 mod databake;
@@ -214,10 +213,10 @@ where
     }
 }
 
-impl<B, E> Pattern<B, <B::Store as ToOwned>::Owned>
+impl<B, E, Store> Pattern<B, Store>
 where
     B: PatternBackend<StoreUtf8Error = E>,
-    B::Store: ToOwned,
+    Store: AsRef<B::Store>,
 {
     /// Creates a pattern from a UTF-8 encoded byte slice.
     ///
@@ -233,7 +232,10 @@ where
     pub fn try_from_utf8(bytes: &[u8]) -> Result<Self, PatternOrUtf8Error<E>> {
         let store = B::try_store_from_utf8(bytes).map_err(PatternOrUtf8Error::Utf8)?;
         B::validate_store(store).map_err(PatternOrUtf8Error::Pattern)?;
-        Ok(Self::from_store_unchecked(store.to_owned()))
+        Ok(Self {
+            _backend: PhantomData,
+            store,
+        })
     }
 }
 
