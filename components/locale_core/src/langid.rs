@@ -144,6 +144,14 @@ impl LanguageIdentifier {
         variants: subtags::Variants::new(),
     };
 
+    /// Whether this language identifier equals [`Self::UND`].
+    pub const fn is_empty(&self) -> bool {
+        self.language.is_empty()
+            && self.script.is_none()
+            && self.region.is_none()
+            && self.variants.0.is_empty()
+    }
+
     /// This is a best-effort operation that performs all available levels of canonicalization.
     ///
     /// At the moment the operation will normalize casing and the separator, but in the future

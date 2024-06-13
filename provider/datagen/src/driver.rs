@@ -137,7 +137,7 @@ impl LocaleFamily {
     ///
     /// The `und` locale is treated specially and behaves like `::single("und")`.
     pub const fn with_descendants(langid: LanguageIdentifier) -> Self {
-        let annotations = if matches!(langid, LanguageIdentifier::UND) {
+        let annotations = if langid.is_empty() {
             LocaleFamilyAnnotations::single()
         } else {
             LocaleFamilyAnnotations::with_descendants()
@@ -163,7 +163,7 @@ impl LocaleFamily {
     ///
     /// The `und` locale is treated specially and behaves like `::single("und")`.
     pub const fn without_descendants(langid: LanguageIdentifier) -> Self {
-        let annotations = if matches!(langid, LanguageIdentifier::UND) {
+        let annotations = if langid.is_empty() {
             LocaleFamilyAnnotations::single()
         } else {
             LocaleFamilyAnnotations::without_descendants()
@@ -189,7 +189,7 @@ impl LocaleFamily {
     ///
     /// The `und` locale is treated specially and behaves like `::single("und")`.
     pub const fn without_ancestors(langid: LanguageIdentifier) -> Self {
-        let annotations = if matches!(langid, LanguageIdentifier::UND) {
+        let annotations = if langid.is_empty() {
             LocaleFamilyAnnotations::single()
         } else {
             LocaleFamilyAnnotations::without_ancestors()

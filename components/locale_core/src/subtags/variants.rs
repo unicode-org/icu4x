@@ -26,7 +26,7 @@ use core::ops::Deref;
 /// assert_eq!(variants.to_string(), "macos-posix");
 /// ```
 #[derive(Default, Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord)]
-pub struct Variants(ShortBoxSlice<Variant>);
+pub struct Variants(pub(crate) ShortBoxSlice<Variant>);
 
 impl Variants {
     /// Returns a new empty list of variants. Same as [`default()`](Default::default()), but is `const`.
