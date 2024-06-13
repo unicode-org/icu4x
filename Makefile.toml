@@ -291,6 +291,8 @@ end
 
 ci_toolchain = set "pinned-stable"
 
+echo "set-ci-toolchain: GITHUB_EVENT_NAME is ${event_name}"
+
 # We need to parse the channel information for dispatch/schedule events
 if eq "${event_name}" "workflow_dispatch" or eq "${event_name}" "schedule"
     event_path = get_env GITHUB_EVENT_PATH
@@ -298,15 +300,18 @@ if eq "${event_name}" "workflow_dispatch" or eq "${event_name}" "schedule"
     event_json = json_parse ${event_file}
     # For dispatch events
     if eq "${event_name}" "workflow_dispatch"
+        echo "set-ci-toolchain: manually selected channel is ${event_json.inputs.channel}"
         if not eq "${event_json.inputs.channel}" "pinned-stable"
             needs_override = set true
             ci_toolchain = set "${event_json.inputs.channel}"
         end
     else
+        echo "set-ci-toolchain: cronjob is scheduled at ${event_json.schedule}"
+
         # Schedule events always override
         needs_override = set true
         # For schedule events, the cronjob on minute 1 is the beta job
-        if eq "${event_json.schedule}" "1 14 * * *"
+        if eq "${event_json.schedule}" "1 * * * *"
             ci_toolchain = set "beta"
         else 
             ci_toolchain = set "nightly"
