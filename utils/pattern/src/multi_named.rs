@@ -7,13 +7,14 @@
 #[cfg(feature = "alloc")]
 use alloc::{borrow::Cow, collections::BTreeMap, str::FromStr, string::String};
 use core::fmt;
+use core::str::Utf8Error;
 #[cfg(feature = "litemap")]
 use litemap::LiteMap;
 use writeable::Writeable;
 
 use crate::common::*;
 use crate::Error;
-use crate::StoreUtf8Error;
+use crate::PatternOrUtf8Error;
 
 /// A string wrapper for the [`MultiNamedPlaceholder`] pattern backend.
 ///
@@ -315,7 +316,7 @@ impl PatternBackend for MultiNamedPlaceholder {
     #[cfg(feature = "alloc")]
     type PlaceholderKeyCow<'a> = MultiNamedPlaceholderKeyCow<'a>;
     type Error<'a> = MissingNamedPlaceholderError<'a>;
-    type StoreUtf8Error = StoreUtf8Error;
+    type StoreUtf8Error = PatternOrUtf8Error<Utf8Error>;
     type Store = str;
     type Iter<'a> = MultiNamedPlaceholderPatternIterator<'a>;
 
@@ -373,7 +374,7 @@ impl PatternBackend for MultiNamedPlaceholder {
 
     #[inline]
     fn try_store_from_utf8(utf8: &[u8]) -> Result<&Self::Store, Self::StoreUtf8Error> {
-        core::str::from_utf8(utf8)
+        core::str::from_utf8(utf8).map_err(Self::StoreUtf8Error::Utf8)
     }
 }
 

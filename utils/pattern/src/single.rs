@@ -5,12 +5,13 @@
 //! Code for the [`SinglePlaceholder`] pattern backend.
 
 use core::convert::Infallible;
+use core::str::Utf8Error;
 use core::{cmp::Ordering, str::FromStr};
 use writeable::adapters::WriteableAsTryWriteableInfallible;
 use writeable::Writeable;
 
 use crate::Error;
-use crate::{common::*, StoreUtf8Error};
+use crate::{common::*, PatternOrUtf8Error};
 
 #[cfg(feature = "alloc")]
 use alloc::string::String;
@@ -171,7 +172,7 @@ impl PatternBackend for SinglePlaceholder {
     #[cfg(feature = "alloc")]
     type PlaceholderKeyCow<'a> = SinglePlaceholderKey;
     type Error<'a> = Infallible;
-    type StoreUtf8Error = StoreUtf8Error;
+    type StoreUtf8Error = PatternOrUtf8Error<Utf8Error>;
     type Store = str;
     type Iter<'a> = SinglePlaceholderPatternIterator<'a>;
 
@@ -241,7 +242,7 @@ impl PatternBackend for SinglePlaceholder {
 
     #[inline]
     fn try_store_from_utf8(utf8: &[u8]) -> Result<&Self::Store, Self::StoreUtf8Error> {
-        core::str::from_utf8(utf8)
+        core::str::from_utf8(utf8).map_err(Self::StoreUtf8Error::Utf8)
     }
 }
 

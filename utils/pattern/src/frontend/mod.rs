@@ -11,12 +11,13 @@ use core::{
     convert::Infallible,
     fmt::{self, Write},
     marker::PhantomData,
+    str::Utf8Error,
 };
 
 use writeable::{adapters::TryWriteableInfallibleAsWriteable, PartsWrite, TryWriteable, Writeable};
 
-use crate::common::*;
 use crate::Error;
+use crate::{common::*, PatternOrUtf8Error};
 
 #[cfg(feature = "alloc")]
 use crate::{Parser, ParserOptions};
@@ -170,7 +171,7 @@ where
 #[cfg(feature = "alloc")]
 impl<B> Pattern<B, <B::Store as ToOwned>::Owned>
 where
-    B: PatternBackend,
+    B: PatternBackend<StoreUtf8Error = PatternOrUtf8Error<Utf8Error>>,
     B::Store: ToOwned,
 {
     /// Creates a pattern from an iterator of pattern items.
@@ -226,8 +227,8 @@ where
     /// Pattern::<SinglePlaceholder, _>::try_from_utf8(b"\x01 days")
     ///     .expect("single placeholder pattern");
     /// ```
-    pub fn try_from_utf8(bytes: &[u8]) -> Result<Self, PatternOrUtf8Error> {
-        let store = B::try_store_from_utf8(bytes).map_err(PatternOrUtf8Error::Utf8)?;
+    pub fn try_from_utf8(bytes: &[u8]) -> Result<Self, PatternOrUtf8Error<Utf8Error>> {
+        let store = B::try_store_from_utf8(bytes)?;
         B::validate_store(store).map_err(PatternOrUtf8Error::Pattern)?;
         Ok(Self::from_store_unchecked(store.to_owned()))
     }
