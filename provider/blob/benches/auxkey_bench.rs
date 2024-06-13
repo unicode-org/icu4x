@@ -148,22 +148,19 @@ fn auxkey_bench_for_version(c: &mut Criterion, blob: &[u8], version_id: &str) {
     for (locale_str, attr_str) in [("sr-Latn", "ym0d"), ("sr-ME", "ym0d")] {
         let locale = locale_str.parse::<DataLocale>().unwrap();
         let attrs = attr_str.parse::<DataMarkerAttributes>().unwrap();
+        let req = DataRequest {
+            locale: &locale,
+            marker_attributes: &attrs,
+            metadata: Default::default(),
+        };
 
         c.bench_function(
             &format!("provider/auxkey/fallback/{locale_str}/{version_id}"),
             |b| {
                 b.iter(|| {
-                    assert!(
-                        DataProvider::<GregorianDateNeoSkeletonPatternsV1Marker>::load(
-                            &provider.as_deserializing(),
-                            DataRequest {
-                                locale: black_box(&locale),
-                                marker_attributes: black_box(&attrs),
-                                metadata: Default::default()
-                            }
-                        )
-                        .is_ok()
-                    )
+                    provider
+                        .load_data(GregorianDateNeoSkeletonPatternsV1Marker::INFO, req)
+                        .unwrap()
                 });
             },
         );
