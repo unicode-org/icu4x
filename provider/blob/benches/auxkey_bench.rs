@@ -121,6 +121,7 @@ fn auxkey_bench(c: &mut Criterion) {
 }
 
 fn auxkey_bench_for_version(c: &mut Criterion, blob: &[u8], version_id: &str) {
+    println!("benching {version_id}");
     c.bench_function(&format!("provider/auxkey/construct/{version_id}"), |b| {
         b.iter(|| BlobDataProvider::try_new_from_blob(black_box(blob).into()).unwrap());
     });
