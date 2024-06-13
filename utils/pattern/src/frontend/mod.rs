@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+extern crate alloc;
+
 use alloc::borrow::ToOwned;
 #[cfg(feature = "databake")]
 mod databake;
@@ -218,8 +220,6 @@ where
     B::Store: ToOwned,
 {
     /// Creates a pattern from a UTF-8 encoded byte slice.
-    ///
-    /// ✨ *Enabled with the `alloc` Cargo feature.*
     ///
     /// # Examples
     ///
