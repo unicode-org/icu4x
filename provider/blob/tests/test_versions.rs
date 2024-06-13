@@ -16,10 +16,10 @@ use std::hash::Hasher;
 const BLOB_V1: &[u8] = include_bytes!("data/v1.postcard");
 const BLOB_V2: &[u8] = include_bytes!("data/v2.postcard");
 
-fn run_driver(
-    mut exporter: BlobExporter,
-    provider: &impl IterableDataProvider<HelloWorldV1Marker>,
-) {
+fn run_driver(mut exporter: BlobExporter, provider: &impl IterableDataProvider<HelloWorldV1Marker>)
+where
+    ExportMarker: UpcastDataPayload<HelloWorldV1Marker>,
+{
     for (locale, marker_attributes) in &provider.supported_requests().unwrap() {
         let req = DataRequest {
             locale,
