@@ -27,9 +27,9 @@ on:
         - nightly
   schedule:
     # Run nightly cronjob CI every day at 14 UTC / 6AM PST / 3PM CET
-    - cron:  '0 14 * * *'
+    - cron:  '0 * * * *'
     # Run beta slightly later
-    - cron:  '1 14 * * *'
+    - cron:  '1 * * * *'
 
 concurrency:
   # Allow one run at a time for PRs, but multiple for other invocations

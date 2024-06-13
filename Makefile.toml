@@ -311,7 +311,7 @@ if eq "${event_name}" "workflow_dispatch" or eq "${event_name}" "schedule"
         # Schedule events always override
         needs_override = set true
         # For schedule events, the cronjob on minute 1 is the beta job
-        if eq "${event_json.schedule}" "1 14 * * *"
+        if eq "${event_json.schedule}" "1 * * * *"
             ci_toolchain = set "beta"
         else 
             ci_toolchain = set "nightly"
