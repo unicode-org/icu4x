@@ -266,22 +266,9 @@ fn assert_fixture_element<A>(
     );
     let any_input = input_value.to_any();
     let iso_any_input = input_iso.to_any();
-    #[cfg(feature = "experimental")]
-    let (dtf, any_dtf) = {
-        (
-            TypedDateTimeFormatter::<A::Calendar>::try_new_experimental(&locale.into(), options)
-                .expect(description),
-            DateTimeFormatter::try_new_experimental(&locale.into(), options).expect(description),
-        )
-    };
-    #[cfg(not(feature = "experimental"))]
-    let (dtf, any_dtf) = {
-        (
-            TypedDateTimeFormatter::<A::Calendar>::try_new(&locale.into(), options.clone())
-                .expect(description),
-            DateTimeFormatter::try_new(&locale.into(), options.clone()).expect(description),
-        )
-    };
+    let dtf =
+        TypedDateTimeFormatter::<A::Calendar>::try_new(&locale.into(), options).expect(description);
+    let any_dtf = DateTimeFormatter::try_new(&locale.into(), options).expect(description);
 
     assert_writeable_eq!(dtf.format(input_value), output_value, "{}", description);
 
@@ -352,20 +339,10 @@ fn test_fixture_with_time_zones(fixture_name: &str, file: &str, config: TimeZone
         };
         for (locale, output_value) in fx.output.values {
             let locale: Locale = locale.parse().unwrap();
-            #[cfg(feature = "experimental")]
-            let dtf = {
-                TypedZonedDateTimeFormatter::<Gregorian>::try_new_experimental(
-                    &locale.into(),
-                    options,
-                    TimeZoneFormatterOptions::default(),
-                )
-                .unwrap()
-            };
-            #[cfg(not(feature = "experimental"))]
             let dtf = {
                 TypedZonedDateTimeFormatter::<Gregorian>::try_new(
                     &locale.into(),
-                    options.clone(),
+                    options,
                     TimeZoneFormatterOptions::default(),
                 )
                 .unwrap()
@@ -412,9 +389,6 @@ fn test_dayperiod_patterns() {
             icu_datetime::provider::Baked.load(req).unwrap();
         let time_symbols_data: DataResponse<TimeSymbolsV1Marker> =
             icu_datetime::provider::Baked.load(req).unwrap();
-        #[cfg(feature = "experimental")]
-        let skeleton_data: DataResponse<DateSkeletonPatternsV1Marker> =
-            icu_datetime::provider::Baked.load(req).unwrap();
         let week_data: DataResponse<WeekDataV1Marker> =
             icu_calendar::provider::Baked.load(req).unwrap();
         data_locale.retain_unicode_ext(|_| false);
@@ -441,10 +415,6 @@ fn test_dayperiod_patterns() {
                             ),
                             AnyPayloadProvider::from_payload::<TimeSymbolsV1Marker>(
                                 time_symbols_data.payload.clone(), //
-                            ),
-                            #[cfg(feature = "experimental")]
-                            AnyPayloadProvider::from_payload::<DateSkeletonPatternsV1Marker>(
-                                skeleton_data.payload.clone(), //
                             ),
                             AnyPayloadProvider::from_payload::<GregorianDateLengthsV1Marker>(
                                 date_patterns_data.payload.clone(), //
@@ -583,9 +553,6 @@ fn test_time_zone_patterns() {
             icu_datetime::provider::Baked.load(req).unwrap();
         let mut time_patterns_data: DataResponse<TimeLengthsV1Marker> =
             icu_datetime::provider::Baked.load(req).unwrap();
-        #[cfg(feature = "experimental")]
-        let skeleton_data: DataResponse<DateSkeletonPatternsV1Marker> =
-            icu_datetime::provider::Baked.load(req).unwrap();
         let symbols_data: DataResponse<GregorianDateSymbolsV1Marker> =
             icu_datetime::provider::Baked.load(req).unwrap();
         let week_data: DataResponse<WeekDataV1Marker> =
@@ -626,10 +593,6 @@ fn test_time_zone_patterns() {
                 let local_provider = MultiForkByMarkerProvider::new(vec![
                     AnyPayloadProvider::from_payload::<GregorianDateSymbolsV1Marker>(
                         symbols_data.payload.clone(), //
-                    ),
-                    #[cfg(feature = "experimental")]
-                    AnyPayloadProvider::from_payload::<DateSkeletonPatternsV1Marker>(
-                        skeleton_data.payload.clone(), //
                     ),
                     AnyPayloadProvider::from_payload::<GregorianDateLengthsV1Marker>(
                         date_patterns_data.payload.clone(), //

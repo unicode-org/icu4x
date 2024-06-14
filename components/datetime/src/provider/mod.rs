@@ -79,8 +79,6 @@ const _: () = {
     impl_datetime_persian_datesymbols_v1!(Baked);
     impl_datetime_roc_datelengths_v1!(Baked);
     impl_datetime_roc_datesymbols_v1!(Baked);
-    #[cfg(feature = "experimental")]
-    impl_datetime_skeletons_v1!(Baked);
     impl_datetime_timelengths_v1!(Baked);
     impl_datetime_timesymbols_v1!(Baked);
     impl_time_zone_exemplar_cities_v1!(Baked);
@@ -249,8 +247,6 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     time_zones::MetazoneSpecificNamesLongV1Marker::INFO,
     time_zones::MetazoneSpecificNamesShortV1Marker::INFO,
     time_zones::TimeZoneFormatsV1Marker::INFO,
-    #[cfg(feature = "experimental")]
-    calendar::DateSkeletonPatternsV1Marker::INFO,
     #[cfg(feature = "experimental")]
     neo::WeekdayNamesV1Marker::INFO,
     #[cfg(feature = "experimental")]

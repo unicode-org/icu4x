@@ -410,13 +410,6 @@ pub use __impl_datetime_roc_datesymbols_v1 as impl_datetime_roc_datesymbols_v1;
 #[doc(inline)]
 pub use __impliterable_datetime_roc_datesymbols_v1 as impliterable_datetime_roc_datesymbols_v1;
 #[macro_use]
-#[path = "macros/datetime_skeletons_v1.rs.data"]
-mod datetime_skeletons_v1;
-#[doc(inline)]
-pub use __impl_datetime_skeletons_v1 as impl_datetime_skeletons_v1;
-#[doc(inline)]
-pub use __impliterable_datetime_skeletons_v1 as impliterable_datetime_skeletons_v1;
-#[macro_use]
 #[path = "macros/datetime_symbols_buddhist_months_v1.rs.data"]
 mod datetime_symbols_buddhist_months_v1;
 #[doc(inline)]

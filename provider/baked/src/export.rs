@@ -440,37 +440,7 @@ impl DataExporter for BakedExporter {
     fn flush(&self, marker: DataMarkerInfo) -> Result<(), DataError> {
         let marker_bake = bake_marker(marker, &self.dependencies);
 
-        let (struct_type, into_data_payload) = if marker_bake
-            .to_string()
-            .trim()
-            .ends_with("DateSkeletonPatternsV1Marker")
-        {
-            (
-                quote! {
-                    &'static [(
-                        &'static [icu_datetime::fields::Field],
-                        icu_datetime::pattern::runtime::PatternPlurals<'static>
-                    )]
-                },
-                quote! {
-                    icu_provider::DataPayload::from_owned(icu_datetime::provider::calendar::DateSkeletonPatternsV1(
-                        payload
-                            .iter()
-                            .map(|(fields, pattern)| (
-                                icu_datetime::provider::calendar::SkeletonV1((*fields).into()),
-                                icu_provider::prelude::zerofrom::ZeroFrom::zero_from(pattern)
-                            ))
-                            .collect(),
-                    ))
-
-                },
-            )
-        } else {
-            (
-                quote!(<#marker_bake as icu_provider::DynamicDataMarker>::Yokeable),
-                quote!(icu_provider::DataPayload::from_static_ref(payload)),
-            )
-        };
+        let struct_type = quote!(<#marker_bake as icu_provider::DynamicDataMarker>::Yokeable);
 
         let deduplicated_values = self
             .data
@@ -527,7 +497,7 @@ impl DataExporter for BakedExporter {
 
                         if let Some(payload) = lookup(req) {
                             Ok(icu_provider::DataResponse {
-                                payload: #into_data_payload,
+                                payload: icu_provider::DataPayload::from_static_ref(payload),
                                 metadata: Default::default(),
                             })
                         } else {
@@ -562,7 +532,7 @@ impl DataExporter for BakedExporter {
                     };
 
                     Ok(icu_provider::DataResponse {
-                        payload: #into_data_payload,
+                        payload: icu_provider::DataPayload::from_static_ref(payload),
                         metadata
                     })
                 }
