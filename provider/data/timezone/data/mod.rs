@@ -1,7 +1,7 @@
 // @generated
-include!("time_zone_bcp47_to_iana_v1.rs.data");
-include!("time_zone_iana_to_bcp47_v2.rs.data");
-include!("time_zone_metazone_period_v1.rs.data");
+include!("bcp47_to_iana_map_v1_marker.rs.data");
+include!("iana_to_bcp47_map_v2_marker.rs.data");
+include!("metazone_period_v1_marker.rs.data");
 /// Marks a type as a data provider. You can then use macros like
 /// `impl_core_helloworld_v1` to add implementations.
 ///
@@ -31,9 +31,9 @@ pub use __make_provider as make_provider;
 macro_rules! impl_data_provider {
     ($ provider : ty) => {
         make_provider!($provider);
-        impl_time_zone_bcp47_to_iana_v1!($provider);
-        impl_time_zone_iana_to_bcp47_v2!($provider);
-        impl_time_zone_metazone_period_v1!($provider);
+        impl_bcp47_to_iana_map_v1_marker!($provider);
+        impl_iana_to_bcp47_map_v2_marker!($provider);
+        impl_metazone_period_v1_marker!($provider);
     };
 }
 #[allow(unused_macros)]

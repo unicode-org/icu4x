@@ -1,12 +1,12 @@
 // @generated
-include!("fallback_likelysubtags_v1.rs.data");
-include!("fallback_parents_v1.rs.data");
-include!("fallback_supplement_co_v1.rs.data");
-include!("locid_transform_aliases_v2.rs.data");
-include!("locid_transform_likelysubtags_ext_v1.rs.data");
-include!("locid_transform_likelysubtags_l_v1.rs.data");
-include!("locid_transform_likelysubtags_sr_v1.rs.data");
-include!("locid_transform_script_dir_v1.rs.data");
+include!("locale_fallback_likely_subtags_v1_marker.rs.data");
+include!("locale_fallback_parents_v1_marker.rs.data");
+include!("collation_fallback_supplement_v1_marker.rs.data");
+include!("aliases_v2_marker.rs.data");
+include!("likely_subtags_extended_v1_marker.rs.data");
+include!("likely_subtags_for_language_v1_marker.rs.data");
+include!("likely_subtags_for_script_region_v1_marker.rs.data");
+include!("script_direction_v1_marker.rs.data");
 /// Marks a type as a data provider. You can then use macros like
 /// `impl_core_helloworld_v1` to add implementations.
 ///
@@ -36,14 +36,14 @@ pub use __make_provider as make_provider;
 macro_rules! impl_data_provider {
     ($ provider : ty) => {
         make_provider!($provider);
-        impl_fallback_likelysubtags_v1!($provider);
-        impl_fallback_parents_v1!($provider);
-        impl_fallback_supplement_co_v1!($provider);
-        impl_locid_transform_aliases_v2!($provider);
-        impl_locid_transform_likelysubtags_ext_v1!($provider);
-        impl_locid_transform_likelysubtags_l_v1!($provider);
-        impl_locid_transform_likelysubtags_sr_v1!($provider);
-        impl_locid_transform_script_dir_v1!($provider);
+        impl_locale_fallback_likely_subtags_v1_marker!($provider);
+        impl_locale_fallback_parents_v1_marker!($provider);
+        impl_collation_fallback_supplement_v1_marker!($provider);
+        impl_aliases_v2_marker!($provider);
+        impl_likely_subtags_extended_v1_marker!($provider);
+        impl_likely_subtags_for_language_v1_marker!($provider);
+        impl_likely_subtags_for_script_region_v1_marker!($provider);
+        impl_script_direction_v1_marker!($provider);
     };
 }
 #[allow(unused_macros)]

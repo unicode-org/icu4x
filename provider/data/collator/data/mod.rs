@@ -1,10 +1,10 @@
 // @generated
-include!("collator_data_v1.rs.data");
-include!("collator_dia_v1.rs.data");
-include!("collator_jamo_v1.rs.data");
-include!("collator_meta_v1.rs.data");
-include!("collator_prim_v1.rs.data");
-include!("collator_reord_v1.rs.data");
+include!("collation_data_v1_marker.rs.data");
+include!("collation_diacritics_v1_marker.rs.data");
+include!("collation_jamo_v1_marker.rs.data");
+include!("collation_metadata_v1_marker.rs.data");
+include!("collation_special_primaries_v1_marker.rs.data");
+include!("collation_reordering_v1_marker.rs.data");
 /// Marks a type as a data provider. You can then use macros like
 /// `impl_core_helloworld_v1` to add implementations.
 ///
@@ -34,12 +34,12 @@ pub use __make_provider as make_provider;
 macro_rules! impl_data_provider {
     ($ provider : ty) => {
         make_provider!($provider);
-        impl_collator_data_v1!($provider);
-        impl_collator_dia_v1!($provider);
-        impl_collator_jamo_v1!($provider);
-        impl_collator_meta_v1!($provider);
-        impl_collator_prim_v1!($provider);
-        impl_collator_reord_v1!($provider);
+        impl_collation_data_v1_marker!($provider);
+        impl_collation_diacritics_v1_marker!($provider);
+        impl_collation_jamo_v1_marker!($provider);
+        impl_collation_metadata_v1_marker!($provider);
+        impl_collation_special_primaries_v1_marker!($provider);
+        impl_collation_reordering_v1_marker!($provider);
     };
 }
 #[allow(unused_macros)]
