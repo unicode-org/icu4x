@@ -12,6 +12,6 @@
 #![doc(html_no_source)]
 
 #[cfg(icu4x_custom_data)]
-include!(concat!(core::env!("ICU4X_DATA_DIR"), "/macros.rs"));
+include!(concat!(core::env!("ICU4X_DATA_DIR"), "/mod.rs"));
 #[cfg(not(icu4x_custom_data))]
-include!("../data/macros.rs");
+include!("../data/mod.rs");
