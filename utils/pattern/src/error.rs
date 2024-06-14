@@ -13,7 +13,7 @@ pub enum PatternError {
     InvalidPlaceholder,
 }
 
-/// Error type for [`crate::Pattern::try_from_utf8`].
+/// Error type for [`crate::Pattern::try_from_bytes_store`].
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum PatternOrUtf8Error<E> {
