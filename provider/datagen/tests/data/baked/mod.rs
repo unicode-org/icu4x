@@ -70,7 +70,6 @@ include!("datetime_persian_datelengths_v1.rs.data");
 include!("datetime_persian_datesymbols_v1.rs.data");
 include!("datetime_roc_datelengths_v1.rs.data");
 include!("datetime_roc_datesymbols_v1.rs.data");
-include!("datetime_skeletons_v1.rs.data");
 include!("datetime_symbols_buddhist_months_v1.rs.data");
 include!("datetime_symbols_buddhist_years_v1.rs.data");
 include!("datetime_symbols_chinese_months_v1.rs.data");
