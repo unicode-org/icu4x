@@ -1,7 +1,7 @@
 // @generated
-include!("list_and_v1.rs.data");
-include!("list_or_v1.rs.data");
-include!("list_unit_v1.rs.data");
+include!("and_list_v1_marker.rs.data");
+include!("or_list_v1_marker.rs.data");
+include!("unit_list_v1_marker.rs.data");
 /// Marks a type as a data provider. You can then use macros like
 /// `impl_core_helloworld_v1` to add implementations.
 ///
@@ -31,9 +31,9 @@ pub use __make_provider as make_provider;
 macro_rules! impl_data_provider {
     ($ provider : ty) => {
         make_provider!($provider);
-        impl_list_and_v1!($provider);
-        impl_list_or_v1!($provider);
-        impl_list_unit_v1!($provider);
+        impl_and_list_v1_marker!($provider);
+        impl_or_list_v1_marker!($provider);
+        impl_unit_list_v1_marker!($provider);
     };
 }
 #[allow(unused_macros)]

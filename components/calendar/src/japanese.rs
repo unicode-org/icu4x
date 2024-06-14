@@ -124,7 +124,7 @@ impl Japanese {
     pub const fn new() -> Self {
         Self {
             eras: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_CALENDAR_JAPANESE_V1,
+                crate::provider::Baked::SINGLETON_JAPANESE_ERAS_V1_MARKER,
             ),
         }
     }
@@ -182,7 +182,7 @@ impl JapaneseExtended {
     pub const fn new() -> Self {
         Self(Japanese {
             eras: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_CALENDAR_JAPANEXT_V1,
+                crate::provider::Baked::SINGLETON_JAPANESE_EXTENDED_ERAS_V1_MARKER,
             ),
         })
     }

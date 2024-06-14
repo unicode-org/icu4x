@@ -82,7 +82,7 @@ impl CaseMapCloser<CaseMapper> {
         Self {
             cm: CaseMapper::new(),
             unfold: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_PROPS_CASEMAP_UNFOLD_V1,
+                crate::provider::Baked::SINGLETON_CASE_MAP_UNFOLD_V1_MARKER,
             ),
         }
     }
@@ -131,7 +131,7 @@ impl<CM: AsRef<CaseMapper>> CaseMapCloser<CM> {
         Self {
             cm: casemapper,
             unfold: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_PROPS_CASEMAP_UNFOLD_V1,
+                crate::provider::Baked::SINGLETON_CASE_MAP_UNFOLD_V1_MARKER,
             ),
         }
     }

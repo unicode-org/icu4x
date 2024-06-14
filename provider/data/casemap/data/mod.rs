@@ -1,6 +1,6 @@
 // @generated
-include!("props_casemap_v1.rs.data");
-include!("props_casemap_unfold_v1.rs.data");
+include!("case_map_v1_marker.rs.data");
+include!("case_map_unfold_v1_marker.rs.data");
 /// Marks a type as a data provider. You can then use macros like
 /// `impl_core_helloworld_v1` to add implementations.
 ///
@@ -30,8 +30,8 @@ pub use __make_provider as make_provider;
 macro_rules! impl_data_provider {
     ($ provider : ty) => {
         make_provider!($provider);
-        impl_props_casemap_v1!($provider);
-        impl_props_casemap_unfold_v1!($provider);
+        impl_case_map_v1_marker!($provider);
+        impl_case_map_unfold_v1_marker!($provider);
     };
 }
 #[allow(unused_macros)]

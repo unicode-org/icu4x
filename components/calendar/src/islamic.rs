@@ -122,7 +122,7 @@ impl IslamicObservational {
     pub const fn new() -> Self {
         Self {
             data: Some(DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_CALENDAR_ISLAMICOBSERVATIONALCACHE_V1,
+                crate::provider::Baked::SINGLETON_ISLAMIC_OBSERVATIONAL_CACHE_V1_MARKER,
             )),
         }
     }
@@ -169,7 +169,7 @@ impl IslamicUmmAlQura {
     pub const fn new() -> Self {
         Self {
             data: Some(DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_CALENDAR_ISLAMICUMMALQURACACHE_V1,
+                crate::provider::Baked::SINGLETON_ISLAMIC_UMM_AL_QURA_CACHE_V1_MARKER,
             )),
         }
     }

@@ -43,9 +43,9 @@ const _: () = {
         pub use icu_list_data::icu_locale as locale;
     }
     make_provider!(Baked);
-    impl_list_and_v1!(Baked);
-    impl_list_or_v1!(Baked);
-    impl_list_unit_v1!(Baked);
+    impl_and_list_v1_marker!(Baked);
+    impl_or_list_v1_marker!(Baked);
+    impl_unit_list_v1_marker!(Baked);
 };
 
 #[cfg(feature = "datagen")]

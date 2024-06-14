@@ -92,7 +92,7 @@ impl CanonicalComposition {
     pub const fn new() -> Self {
         Self {
             canonical_compositions: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_NORMALIZER_COMP_V1,
+                crate::provider::Baked::SINGLETON_CANONICAL_COMPOSITIONS_V1_MARKER,
             ),
         }
     }
@@ -366,10 +366,10 @@ impl CanonicalDecomposition {
     #[cfg(feature = "compiled_data")]
     pub const fn new() -> Self {
         const _: () = assert!(
-            crate::provider::Baked::SINGLETON_NORMALIZER_NFDEX_V1
+            crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1_MARKER
                 .scalars16
                 .const_len()
-                + crate::provider::Baked::SINGLETON_NORMALIZER_NFDEX_V1
+                + crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1_MARKER
                     .scalars24
                     .const_len()
                 <= 0xFFF,
@@ -378,13 +378,13 @@ impl CanonicalDecomposition {
 
         Self {
             decompositions: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_NORMALIZER_NFD_V1,
+                crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_DATA_V1_MARKER,
             ),
             tables: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_NORMALIZER_NFDEX_V1,
+                crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1_MARKER,
             ),
             non_recursive: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_NORMALIZER_DECOMP_V1,
+                crate::provider::Baked::SINGLETON_NON_RECURSIVE_DECOMPOSITION_SUPPLEMENT_V1_MARKER,
             ),
         }
     }
@@ -492,7 +492,7 @@ impl CanonicalCombiningClassMap {
     pub const fn new() -> Self {
         CanonicalCombiningClassMap {
             decompositions: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_NORMALIZER_NFD_V1,
+                crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_DATA_V1_MARKER,
             ),
         }
     }

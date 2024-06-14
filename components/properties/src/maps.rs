@@ -356,7 +356,7 @@ make_map_property! {
     /// assert_eq!(maps::general_category().get('木'), GeneralCategory::OtherLetter);  // U+6728
     /// assert_eq!(maps::general_category().get('🎃'), GeneralCategory::OtherSymbol);  // U+1F383 JACK-O-LANTERN
     /// ```
-    pub const general_category => SINGLETON_PROPS_GC_V1;
+    pub const general_category => SINGLETON_GENERAL_CATEGORY_V1_MARKER;
     pub fn load_general_category();
 }
 
@@ -380,7 +380,7 @@ make_map_property! {
     /// assert_eq!(maps::bidi_class().get('y'), BidiClass::LeftToRight);  // U+0079
     /// assert_eq!(maps::bidi_class().get('ع'), BidiClass::ArabicLetter);  // U+0639
     /// ```
-    pub const bidi_class => SINGLETON_PROPS_BC_V1;
+    pub const bidi_class => SINGLETON_BIDI_CLASS_V1_MARKER;
     pub fn load_bidi_class();
 }
 
@@ -411,7 +411,7 @@ make_map_property! {
     /// ```
     /// [`load_script_with_extensions_unstable`]: crate::script::load_script_with_extensions_unstable
     /// [`ScriptWithExtensionsBorrowed::has_script`]: crate::script::ScriptWithExtensionsBorrowed::has_script
-    pub const script => SINGLETON_PROPS_SC_V1;
+    pub const script => SINGLETON_SCRIPT_V1_MARKER;
     pub fn load_script();
 }
 
@@ -437,7 +437,7 @@ make_map_property! {
     /// assert_eq!(maps::hangul_syllable_type().get('가'), HangulSyllableType::LeadingVowelSyllable);  // U+AC00
     /// ```
 
-    pub const hangul_syllable_type => SINGLETON_PROPS_HST_V1;
+    pub const hangul_syllable_type => SINGLETON_HANGUL_SYLLABLE_TYPE_V1_MARKER;
     pub fn load_hangul_syllable_type();
 }
 
@@ -462,7 +462,7 @@ make_map_property! {
     /// assert_eq!(maps::east_asian_width().get('ｱ'), EastAsianWidth::Halfwidth); // U+FF71: Halfwidth Katakana Letter A
     /// assert_eq!(maps::east_asian_width().get('ア'), EastAsianWidth::Wide); //U+30A2: Katakana Letter A
     /// ```
-    pub const east_asian_width => SINGLETON_PROPS_EA_V1;
+    pub const east_asian_width => SINGLETON_EAST_ASIAN_WIDTH_V1_MARKER;
     pub fn load_east_asian_width();
 }
 
@@ -489,7 +489,7 @@ make_map_property! {
     /// assert_eq!(maps::line_break().get(')'), LineBreak::CloseParenthesis); // U+0029: Right Parenthesis
     /// assert_eq!(maps::line_break().get('ぁ'), LineBreak::ConditionalJapaneseStarter); //U+3041: Hiragana Letter Small A
     /// ```
-    pub const line_break => SINGLETON_PROPS_LB_V1;
+    pub const line_break => SINGLETON_LINE_BREAK_V1_MARKER;
     pub fn load_line_break();
 }
 
@@ -516,7 +516,7 @@ make_map_property! {
     /// assert_eq!(maps::grapheme_cluster_break().get('🇦'), GraphemeClusterBreak::RegionalIndicator); // U+1F1E6: Regional Indicator Symbol Letter A
     /// assert_eq!(maps::grapheme_cluster_break().get('ำ'), GraphemeClusterBreak::SpacingMark); //U+0E33: Thai Character Sara Am
     /// ```
-    pub const grapheme_cluster_break => SINGLETON_PROPS_GCB_V1;
+    pub const grapheme_cluster_break => SINGLETON_GRAPHEME_CLUSTER_BREAK_V1_MARKER;
     pub fn load_grapheme_cluster_break();
 }
 
@@ -543,7 +543,7 @@ make_map_property! {
     /// assert_eq!(maps::word_break().get('.'), WordBreak::MidNumLet); // U+002E: Full Stop
     /// assert_eq!(maps::word_break().get('，'), WordBreak::MidNum); // U+FF0C: Fullwidth Comma
     /// ```
-    pub const word_break => SINGLETON_PROPS_WB_V1;
+    pub const word_break => SINGLETON_WORD_BREAK_V1_MARKER;
     pub fn load_word_break();
 }
 
@@ -570,7 +570,7 @@ make_map_property! {
     /// assert_eq!(maps::sentence_break().get('９'), SentenceBreak::Numeric); // U+FF19: Fullwidth Digit Nine
     /// assert_eq!(maps::sentence_break().get(','), SentenceBreak::SContinue); // U+002C: Comma
     /// ```
-    pub const sentence_break => SINGLETON_PROPS_SB_V1;
+    pub const sentence_break => SINGLETON_SENTENCE_BREAK_V1_MARKER;
     pub fn load_sentence_break();
 }
 
@@ -598,7 +598,7 @@ make_map_property! {
     /// assert_eq!(maps::canonical_combining_class().get('a'), CanonicalCombiningClass::NotReordered); // U+0061: LATIN SMALL LETTER A
     /// assert_eq!(maps::canonical_combining_class().get32(0x0301), CanonicalCombiningClass::Above); // U+0301: COMBINING ACUTE ACCENT
     /// ```
-    pub const canonical_combining_class => SINGLETON_PROPS_CCC_V1;
+    pub const canonical_combining_class => SINGLETON_CANONICAL_COMBINING_CLASS_V1_MARKER;
     pub fn load_canonical_combining_class();
 }
 
@@ -623,7 +623,7 @@ make_map_property! {
     /// assert_eq!(maps::indic_syllabic_category().get('a'), IndicSyllabicCategory::Other);
     /// assert_eq!(maps::indic_syllabic_category().get32(0x0900), IndicSyllabicCategory::Bindu); // U+0900: DEVANAGARI SIGN INVERTED CANDRABINDU
     /// ```
-    pub const indic_syllabic_category => SINGLETON_PROPS_INSC_V1;
+    pub const indic_syllabic_category => SINGLETON_INDIC_SYLLABIC_CATEGORY_V1_MARKER;
     pub fn load_indic_syllabic_category();
 }
 
@@ -648,6 +648,6 @@ make_map_property! {
     /// assert_eq!(maps::joining_type().get('ؠ'), JoiningType::DualJoining); // U+0620: Arabic Letter Kashmiri Yeh
     /// assert_eq!(maps::joining_type().get('𐫍'), JoiningType::LeftJoining); // U+10ACD: Manichaean Letter Heth
     /// ```
-    pub const joining_type => SINGLETON_PROPS_JT_V1;
+    pub const joining_type => SINGLETON_JOINING_TYPE_V1_MARKER;
     pub fn load_joining_type();
 }

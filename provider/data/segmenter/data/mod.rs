@@ -1,11 +1,11 @@
 // @generated
-include!("segmenter_dictionary_w_auto_v1.rs.data");
-include!("segmenter_dictionary_wl_ext_v1.rs.data");
-include!("segmenter_grapheme_v1.rs.data");
-include!("segmenter_line_v1.rs.data");
-include!("segmenter_lstm_wl_auto_v1.rs.data");
-include!("segmenter_sentence_v1.rs.data");
-include!("segmenter_word_v1.rs.data");
+include!("dictionary_for_word_only_auto_v1_marker.rs.data");
+include!("dictionary_for_word_line_extended_v1_marker.rs.data");
+include!("grapheme_cluster_break_data_v1_marker.rs.data");
+include!("line_break_data_v1_marker.rs.data");
+include!("lstm_for_word_line_auto_v1_marker.rs.data");
+include!("sentence_break_data_v1_marker.rs.data");
+include!("word_break_data_v1_marker.rs.data");
 /// Marks a type as a data provider. You can then use macros like
 /// `impl_core_helloworld_v1` to add implementations.
 ///
@@ -35,13 +35,13 @@ pub use __make_provider as make_provider;
 macro_rules! impl_data_provider {
     ($ provider : ty) => {
         make_provider!($provider);
-        impl_segmenter_dictionary_w_auto_v1!($provider);
-        impl_segmenter_dictionary_wl_ext_v1!($provider);
-        impl_segmenter_grapheme_v1!($provider);
-        impl_segmenter_line_v1!($provider);
-        impl_segmenter_lstm_wl_auto_v1!($provider);
-        impl_segmenter_sentence_v1!($provider);
-        impl_segmenter_word_v1!($provider);
+        impl_dictionary_for_word_only_auto_v1_marker!($provider);
+        impl_dictionary_for_word_line_extended_v1_marker!($provider);
+        impl_grapheme_cluster_break_data_v1_marker!($provider);
+        impl_line_break_data_v1_marker!($provider);
+        impl_lstm_for_word_line_auto_v1_marker!($provider);
+        impl_sentence_break_data_v1_marker!($provider);
+        impl_word_break_data_v1_marker!($provider);
     };
 }
 #[allow(unused_macros)]

@@ -43,9 +43,9 @@ const _: () = {
         pub use crate as timezone;
     }
     make_provider!(Baked);
-    impl_time_zone_bcp47_to_iana_v1!(Baked);
-    impl_time_zone_iana_to_bcp47_v2!(Baked);
-    impl_time_zone_metazone_period_v1!(Baked);
+    impl_bcp47_to_iana_map_v1_marker!(Baked);
+    impl_iana_to_bcp47_map_v2_marker!(Baked);
+    impl_metazone_period_v1_marker!(Baked);
 };
 
 #[cfg(feature = "datagen")]

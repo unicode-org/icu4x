@@ -75,7 +75,7 @@ impl ComplexPayloads {
         // try_load is infallible if the provider only returns `MissingLocale`.
         Self {
             grapheme: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_SEGMENTER_GRAPHEME_V1,
+                crate::provider::Baked::SINGLETON_GRAPHEME_CLUSTER_BREAK_DATA_V1_MARKER,
             ),
             my: try_load::<LstmForWordLineAutoV1Marker, _>(
                 &crate::provider::Baked,
@@ -152,7 +152,7 @@ impl ComplexPayloads {
         // try_load is infallible if the provider only returns `MissingLocale`.
         Self {
             grapheme: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_SEGMENTER_GRAPHEME_V1,
+                crate::provider::Baked::SINGLETON_GRAPHEME_CLUSTER_BREAK_DATA_V1_MARKER,
             ),
             my: try_load::<DictionaryForWordLineExtendedV1Marker, _>(
                 &crate::provider::Baked,
@@ -221,7 +221,7 @@ impl ComplexPayloads {
         // try_load is infallible if the provider only returns `MissingLocale`.
         Self {
             grapheme: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_SEGMENTER_GRAPHEME_V1,
+                crate::provider::Baked::SINGLETON_GRAPHEME_CLUSTER_BREAK_DATA_V1_MARKER,
             ),
             my: try_load::<LstmForWordLineAutoV1Marker, _>(
                 &crate::provider::Baked,
@@ -302,7 +302,7 @@ impl ComplexPayloads {
         // try_load is infallible if the provider only returns `MissingLocale`.
         Self {
             grapheme: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_SEGMENTER_GRAPHEME_V1,
+                crate::provider::Baked::SINGLETON_GRAPHEME_CLUSTER_BREAK_DATA_V1_MARKER,
             ),
             my: try_load::<DictionaryForWordLineExtendedV1Marker, _>(
                 &crate::provider::Baked,

@@ -535,7 +535,7 @@ impl LineSegmenter {
         Self {
             options,
             payload: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_SEGMENTER_LINE_V1,
+                crate::provider::Baked::SINGLETON_LINE_BREAK_DATA_V1_MARKER,
             ),
             complex: ComplexPayloads::new_lstm(),
         }
@@ -591,7 +591,7 @@ impl LineSegmenter {
         Self {
             options,
             payload: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_SEGMENTER_LINE_V1,
+                crate::provider::Baked::SINGLETON_LINE_BREAK_DATA_V1_MARKER,
             ),
             // Line segmenter doesn't need to load CJ dictionary because UAX 14 rules handles CJK
             // characters [1]. Southeast Asian languages however require complex context analysis

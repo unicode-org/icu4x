@@ -50,8 +50,8 @@ const _: () = {
         pub use icu_collections as collections;
     }
     make_provider!(Baked);
-    impl_props_casemap_v1!(Baked);
-    impl_props_casemap_unfold_v1!(Baked);
+    impl_case_map_v1_marker!(Baked);
+    impl_case_map_unfold_v1_marker!(Baked);
 };
 
 #[cfg(feature = "datagen")]

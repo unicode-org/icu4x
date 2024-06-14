@@ -619,7 +619,7 @@ impl ScriptWithExtensionsBorrowed<'static> {
 #[cfg(feature = "compiled_data")]
 pub const fn script_with_extensions() -> ScriptWithExtensionsBorrowed<'static> {
     ScriptWithExtensionsBorrowed {
-        data: crate::provider::Baked::SINGLETON_PROPS_SCX_V1,
+        data: crate::provider::Baked::SINGLETON_SCRIPT_WITH_EXTENSIONS_PROPERTY_V1_MARKER,
     }
 }
 

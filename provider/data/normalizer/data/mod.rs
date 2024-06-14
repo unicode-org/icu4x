@@ -1,11 +1,11 @@
 // @generated
-include!("normalizer_comp_v1.rs.data");
-include!("normalizer_decomp_v1.rs.data");
-include!("normalizer_nfd_v1.rs.data");
-include!("normalizer_nfdex_v1.rs.data");
-include!("normalizer_nfkd_v1.rs.data");
-include!("normalizer_nfkdex_v1.rs.data");
-include!("normalizer_uts46d_v1.rs.data");
+include!("canonical_compositions_v1_marker.rs.data");
+include!("non_recursive_decomposition_supplement_v1_marker.rs.data");
+include!("canonical_decomposition_data_v1_marker.rs.data");
+include!("canonical_decomposition_tables_v1_marker.rs.data");
+include!("compatibility_decomposition_supplement_v1_marker.rs.data");
+include!("compatibility_decomposition_tables_v1_marker.rs.data");
+include!("uts46_decomposition_supplement_v1_marker.rs.data");
 /// Marks a type as a data provider. You can then use macros like
 /// `impl_core_helloworld_v1` to add implementations.
 ///
@@ -35,13 +35,13 @@ pub use __make_provider as make_provider;
 macro_rules! impl_data_provider {
     ($ provider : ty) => {
         make_provider!($provider);
-        impl_normalizer_comp_v1!($provider);
-        impl_normalizer_decomp_v1!($provider);
-        impl_normalizer_nfd_v1!($provider);
-        impl_normalizer_nfdex_v1!($provider);
-        impl_normalizer_nfkd_v1!($provider);
-        impl_normalizer_nfkdex_v1!($provider);
-        impl_normalizer_uts46d_v1!($provider);
+        impl_canonical_compositions_v1_marker!($provider);
+        impl_non_recursive_decomposition_supplement_v1_marker!($provider);
+        impl_canonical_decomposition_data_v1_marker!($provider);
+        impl_canonical_decomposition_tables_v1_marker!($provider);
+        impl_compatibility_decomposition_supplement_v1_marker!($provider);
+        impl_compatibility_decomposition_tables_v1_marker!($provider);
+        impl_uts46_decomposition_supplement_v1_marker!($provider);
     };
 }
 #[allow(unused_macros)]
