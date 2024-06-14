@@ -12,3 +12,10 @@ pub mod export;
 pub use icu_provider::prelude::*;
 
 pub mod binary_search;
+
+pub trait DataStore<M: DataMarker> {
+    fn get(&self, req: DataRequest) -> Option<&'static M::Yokeable>;
+
+    type IterReturn: Iterator<Item = (DataLocale, DataMarkerAttributes)>;
+    fn iter(&self) -> Self::IterReturn;
+}
