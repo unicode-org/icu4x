@@ -70,7 +70,6 @@ include!("persian_date_lengths_v1_marker.rs.data");
 include!("persian_date_symbols_v1_marker.rs.data");
 include!("roc_date_lengths_v1_marker.rs.data");
 include!("roc_date_symbols_v1_marker.rs.data");
-include!("date_skeleton_patterns_v1_marker.rs.data");
 include!("buddhist_month_names_v1_marker.rs.data");
 include!("buddhist_year_names_v1_marker.rs.data");
 include!("chinese_month_names_v1_marker.rs.data");
@@ -401,7 +400,6 @@ macro_rules! impl_data_provider {
         impl_persian_date_symbols_v1_marker!($provider);
         impl_roc_date_lengths_v1_marker!($provider);
         impl_roc_date_symbols_v1_marker!($provider);
-        impl_date_skeleton_patterns_v1_marker!($provider);
         impl_buddhist_month_names_v1_marker!($provider);
         impl_buddhist_year_names_v1_marker!($provider);
         impl_chinese_month_names_v1_marker!($provider);
@@ -712,7 +710,6 @@ macro_rules! impl_any_provider {
                     h if h == <icu::datetime::provider::calendar::PersianDateSymbolsV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::calendar::PersianDateSymbolsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::calendar::RocDateLengthsV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::calendar::RocDateLengthsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::calendar::RocDateSymbolsV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::calendar::RocDateSymbolsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::datetime::provider::calendar::DateSkeletonPatternsV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::calendar::DateSkeletonPatternsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::neo::BuddhistMonthNamesV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::BuddhistMonthNamesV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::neo::BuddhistYearNamesV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::BuddhistYearNamesV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::neo::ChineseMonthNamesV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::ChineseMonthNamesV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),

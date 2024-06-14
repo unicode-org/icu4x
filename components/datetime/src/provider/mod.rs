@@ -44,6 +44,9 @@ pub mod neo;
 /// </div>
 pub struct Baked;
 
+#[cfg(feature = "experimental")]
+include!("../../tests/data/date_skeleton_patterns_v1_marker.rs.data");
+
 #[cfg(feature = "compiled_data")]
 #[allow(unused_imports)]
 const _: () = {
@@ -79,8 +82,6 @@ const _: () = {
     impl_persian_date_symbols_v1_marker!(Baked);
     impl_roc_date_lengths_v1_marker!(Baked);
     impl_roc_date_symbols_v1_marker!(Baked);
-    #[cfg(feature = "experimental")]
-    impl_date_skeleton_patterns_v1_marker!(Baked);
     impl_time_lengths_v1_marker!(Baked);
     impl_time_symbols_v1_marker!(Baked);
     impl_exemplar_cities_v1_marker!(Baked);
@@ -89,6 +90,9 @@ const _: () = {
     impl_metazone_specific_names_long_v1_marker!(Baked);
     impl_metazone_specific_names_short_v1_marker!(Baked);
     impl_time_zone_formats_v1_marker!(Baked);
+
+    #[cfg(feature = "experimental")]
+    impl_date_skeleton_patterns_v1_marker!(Baked);
 
     #[cfg(feature = "experimental")]
     impl_weekday_names_v1_marker!(Baked);
@@ -249,8 +253,6 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     time_zones::MetazoneSpecificNamesLongV1Marker::INFO,
     time_zones::MetazoneSpecificNamesShortV1Marker::INFO,
     time_zones::TimeZoneFormatsV1Marker::INFO,
-    #[cfg(feature = "experimental")]
-    calendar::DateSkeletonPatternsV1Marker::INFO,
     #[cfg(feature = "experimental")]
     neo::WeekdayNamesV1Marker::INFO,
     #[cfg(feature = "experimental")]
