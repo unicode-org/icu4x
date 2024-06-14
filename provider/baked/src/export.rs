@@ -547,7 +547,7 @@ impl DataExporter for BakedExporter {
             .unwrap();
 
             let (data, lookup_struct_size) =
-                crate::binary_search::bake(&marker_bake, ids_to_idents, idents_to_bakes);
+                crate::zerotrie::bake(&marker_bake, ids_to_idents, idents_to_bakes);
 
             let stats = Statistics {
                 structs_total_size: deduplicated_values

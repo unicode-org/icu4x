@@ -4,7 +4,7 @@
 /// `icu`'s `_unstable` constructors.
 ///
 /// Using this implementation will embed the following data in the binary's data segment:
-/// * 853B for the lookup data structure (27 data identifiers)
+/// * 360B for the lookup data structure (27 data identifiers)
 /// * 479B for the actual data (27 unique structs)
 #[doc(hidden)]
 #[macro_export]
@@ -14,37 +14,39 @@ macro_rules! __impl_hello_world_v1_marker {
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
         #[clippy::msrv = "1.70"]
         impl $provider {
-            const DATA_HELLO_WORLD_V1_MARKER: icu_provider_baked::binary_search::Data<icu_provider_baked::binary_search::AttributesAndLocale<7usize, 16usize>, icu_provider::hello_world::HelloWorldV1Marker> = {
-                type S = <icu_provider::hello_world::HelloWorldV1Marker as icu_provider::DynamicDataMarker>::Yokeable;
-                const _REVERSE_EN: &S = &icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Olleh Dlrow") };
-                const _REVERSE_JA: &S = &icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("界世はちにんこ") };
-                const __BN: &S = &icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("ওহে বিশ\u{9cd}ব") };
-                const __CS: &S = &icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Ahoj světe") };
-                const __DE: &S = &icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Hallo Welt") };
-                const __DE_AT: &S = &icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Servus Welt") };
-                const __EL: &S = &icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Καλημέρα κόσμε") };
-                const __EN: &S = &icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Hello World") };
-                const __EN_001: &S = &icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Hello from 🗺\u{fe0f}") };
-                const __EN_002: &S = &icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Hello from 🌍") };
-                const __EN_019: &S = &icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Hello from 🌎") };
-                const __EN_142: &S = &icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Hello from 🌏") };
-                const __EN_GB: &S = &icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Hello from 🇬🇧") };
-                const __EN_GB_U_SD_GBENG: &S = &icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Hello from 🏴\u{e0067}\u{e0062}\u{e0065}\u{e006e}\u{e0067}\u{e007f}") };
-                const __EO: &S = &icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Saluton, Mondo") };
-                const __FA: &S = &icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("سلام دنیا\u{200e}") };
-                const __FI: &S = &icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("hei maailma") };
-                const __IS: &S = &icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Halló, heimur") };
-                const __JA: &S = &icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("こんにちは世界") };
-                const __LA: &S = &icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Ave, munde") };
-                const __PT: &S = &icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Olá, mundo") };
-                const __RO: &S = &icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Salut, lume") };
-                const __RU: &S = &icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Привет, мир") };
-                const __SR: &S = &icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Поздрав свете") };
-                const __SR_LATN: &S = &icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Pozdrav svete") };
-                const __VI: &S = &icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Xin chào thế giới") };
-                const __ZH: &S = &icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("你好世界") };
-                use icu_provider_baked::binary_search::tinystr::tinystr;
-                icu_provider_baked::binary_search::Data(&[((tinystr!(7usize, ""), tinystr!(16usize, "bn")), __BN), ((tinystr!(7usize, ""), tinystr!(16usize, "cs")), __CS), ((tinystr!(7usize, ""), tinystr!(16usize, "de")), __DE), ((tinystr!(7usize, ""), tinystr!(16usize, "de-AT")), __DE_AT), ((tinystr!(7usize, ""), tinystr!(16usize, "el")), __EL), ((tinystr!(7usize, ""), tinystr!(16usize, "en")), __EN), ((tinystr!(7usize, ""), tinystr!(16usize, "en-001")), __EN_001), ((tinystr!(7usize, ""), tinystr!(16usize, "en-002")), __EN_002), ((tinystr!(7usize, ""), tinystr!(16usize, "en-019")), __EN_019), ((tinystr!(7usize, ""), tinystr!(16usize, "en-142")), __EN_142), ((tinystr!(7usize, ""), tinystr!(16usize, "en-GB")), __EN_GB), ((tinystr!(7usize, ""), tinystr!(16usize, "en-GB-u-sd-gbeng")), __EN_GB_U_SD_GBENG), ((tinystr!(7usize, ""), tinystr!(16usize, "eo")), __EO), ((tinystr!(7usize, ""), tinystr!(16usize, "fa")), __FA), ((tinystr!(7usize, ""), tinystr!(16usize, "fi")), __FI), ((tinystr!(7usize, ""), tinystr!(16usize, "is")), __IS), ((tinystr!(7usize, ""), tinystr!(16usize, "ja")), __JA), ((tinystr!(7usize, ""), tinystr!(16usize, "la")), __LA), ((tinystr!(7usize, ""), tinystr!(16usize, "pt")), __PT), ((tinystr!(7usize, ""), tinystr!(16usize, "ro")), __RO), ((tinystr!(7usize, ""), tinystr!(16usize, "ru")), __RU), ((tinystr!(7usize, ""), tinystr!(16usize, "sr")), __SR), ((tinystr!(7usize, ""), tinystr!(16usize, "sr-Latn")), __SR_LATN), ((tinystr!(7usize, ""), tinystr!(16usize, "vi")), __VI), ((tinystr!(7usize, ""), tinystr!(16usize, "zh")), __ZH), ((tinystr!(7usize, "reverse"), tinystr!(16usize, "en")), _REVERSE_EN), ((tinystr!(7usize, "reverse"), tinystr!(16usize, "ja")), _REVERSE_JA)])
+            const DATA_HELLO_WORLD_V1_MARKER: icu_provider_baked::zerotrie::Data<icu_provider::hello_world::HelloWorldV1Marker> = icu_provider_baked::zerotrie::Data {
+                trie: icu_provider_baked::zerotrie::ZeroTrieSimpleAscii::from_store(&[205u8, 98u8, 99u8, 100u8, 101u8, 102u8, 105u8, 106u8, 108u8, 112u8, 114u8, 115u8, 118u8, 122u8, 2u8, 4u8, 10u8, 66u8, 73u8, 76u8, 88u8, 91u8, 94u8, 102u8, 112u8, 115u8, 110u8, 130u8, 115u8, 131u8, 101u8, 132u8, 45u8, 65u8, 84u8, 133u8, 195u8, 108u8, 110u8, 111u8, 1u8, 49u8, 134u8, 135u8, 194u8, 30u8, 45u8, 8u8, 114u8, 101u8, 118u8, 101u8, 114u8, 115u8, 101u8, 128u8, 195u8, 48u8, 49u8, 71u8, 12u8, 15u8, 194u8, 48u8, 49u8, 6u8, 194u8, 49u8, 50u8, 1u8, 136u8, 137u8, 57u8, 138u8, 52u8, 50u8, 139u8, 66u8, 140u8, 45u8, 117u8, 45u8, 115u8, 100u8, 45u8, 103u8, 98u8, 101u8, 110u8, 103u8, 141u8, 142u8, 194u8, 97u8, 105u8, 1u8, 143u8, 144u8, 0u8, 115u8, 144u8, 1u8, 97u8, 144u8, 2u8, 30u8, 114u8, 101u8, 118u8, 101u8, 114u8, 115u8, 101u8, 129u8, 97u8, 144u8, 3u8, 116u8, 144u8, 4u8, 194u8, 111u8, 117u8, 2u8, 144u8, 5u8, 144u8, 6u8, 114u8, 144u8, 7u8, 45u8, 76u8, 97u8, 116u8, 110u8, 144u8, 8u8, 105u8, 144u8, 9u8, 104u8, 144u8, 10u8]),
+                values: &{
+                    type S = <icu_provider::hello_world::HelloWorldV1Marker as icu_provider::DynamicDataMarker>::Yokeable;
+                    const _REVERSE_EN: &S = &icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Olleh Dlrow") };
+                    const _REVERSE_JA: &S = &icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("界世はちにんこ") };
+                    const __BN: &S = &icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("ওহে বিশ\u{9cd}ব") };
+                    const __CS: &S = &icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Ahoj světe") };
+                    const __DE: &S = &icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Hallo Welt") };
+                    const __DE_AT: &S = &icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Servus Welt") };
+                    const __EL: &S = &icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Καλημέρα κόσμε") };
+                    const __EN: &S = &icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Hello World") };
+                    const __EN_001: &S = &icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Hello from 🗺\u{fe0f}") };
+                    const __EN_002: &S = &icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Hello from 🌍") };
+                    const __EN_019: &S = &icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Hello from 🌎") };
+                    const __EN_142: &S = &icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Hello from 🌏") };
+                    const __EN_GB: &S = &icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Hello from 🇬🇧") };
+                    const __EN_GB_U_SD_GBENG: &S = &icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Hello from 🏴\u{e0067}\u{e0062}\u{e0065}\u{e006e}\u{e0067}\u{e007f}") };
+                    const __EO: &S = &icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Saluton, Mondo") };
+                    const __FA: &S = &icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("سلام دنیا\u{200e}") };
+                    const __FI: &S = &icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("hei maailma") };
+                    const __IS: &S = &icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Halló, heimur") };
+                    const __JA: &S = &icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("こんにちは世界") };
+                    const __LA: &S = &icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Ave, munde") };
+                    const __PT: &S = &icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Olá, mundo") };
+                    const __RO: &S = &icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Salut, lume") };
+                    const __RU: &S = &icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Привет, мир") };
+                    const __SR: &S = &icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Поздрав свете") };
+                    const __SR_LATN: &S = &icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Pozdrav svete") };
+                    const __VI: &S = &icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Xin chào thế giới") };
+                    const __ZH: &S = &icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("你好世界") };
+                    [&_REVERSE_EN, &_REVERSE_JA, &__BN, &__CS, &__DE, &__DE_AT, &__EL, &__EN, &__EN_001, &__EN_002, &__EN_019, &__EN_142, &__EN_GB, &__EN_GB_U_SD_GBENG, &__EO, &__FA, &__FI, &__IS, &__JA, &__LA, &__PT, &__RO, &__RU, &__SR, &__SR_LATN, &__VI, &__ZH]
+                },
             };
         }
         #[clippy::msrv = "1.70"]
