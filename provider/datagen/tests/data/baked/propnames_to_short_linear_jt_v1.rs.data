@@ -11,13 +11,13 @@ macro_rules! __impl_propnames_to_short_linear_jt_v1 {
         #[clippy::msrv = "1.70"]
         impl $provider {
             #[doc(hidden)]
-            pub const SINGLETON_JOININGTYPEVALUETOSHORTNAMEV1MARKER: &'static <icu::properties::provider::names::JoiningTypeValueToShortNameV1Marker as icu_provider::DynamicDataMarker>::Yokeable = &icu::properties::provider::names::PropertyEnumToValueNameLinearMapV1 { map: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x06\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0UCDLRT") } };
+            pub const SINGLETON_PROPNAMES_TO_SHORT_LINEAR_JT_V1: &'static <icu::properties::provider::names::JoiningTypeValueToShortNameV1Marker as icu_provider::DynamicDataMarker>::Yokeable = &icu::properties::provider::names::PropertyEnumToValueNameLinearMapV1 { map: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x06\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0UCDLRT") } };
         }
         #[clippy::msrv = "1.70"]
         impl icu_provider::DataProvider<icu::properties::provider::names::JoiningTypeValueToShortNameV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::properties::provider::names::JoiningTypeValueToShortNameV1Marker>, icu_provider::DataError> {
                 if req.locale.is_empty() {
-                    Ok(icu_provider::DataResponse { payload: icu_provider::DataPayload::from_static_ref(Self::SINGLETON_JOININGTYPEVALUETOSHORTNAMEV1MARKER), metadata: Default::default() })
+                    Ok(icu_provider::DataResponse { payload: icu_provider::DataPayload::from_static_ref(Self::SINGLETON_PROPNAMES_TO_SHORT_LINEAR_JT_V1), metadata: Default::default() })
                 } else {
                     Err(icu_provider::DataErrorKind::ExtraneousLocale.with_req(<icu::properties::provider::names::JoiningTypeValueToShortNameV1Marker as icu_provider::DataMarker>::INFO, req))
                 }

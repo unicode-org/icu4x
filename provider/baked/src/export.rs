@@ -305,7 +305,11 @@ impl BakedExporter {
             marker_unqualified
         );
 
-        let ident = marker.path.replace('/', "_").replace('@', "_v").to_ascii_lowercase();
+        let ident = marker
+            .path
+            .replace('/', "_")
+            .replace('@', "_v")
+            .to_ascii_lowercase();
 
         let macro_ident = format!("impl_{ident}",).parse::<TokenStream>().unwrap();
         let macro_ident_iterable = format!("impliterable_{ident}")
