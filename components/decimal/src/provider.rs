@@ -39,7 +39,7 @@ const _: () = {
         pub use icu_decimal_data::icu_locale as locale;
     }
     make_provider!(Baked);
-    impl_decimal_symbols_v1!(Baked);
+    impl_decimal_symbols_v1_marker!(Baked);
 };
 
 #[cfg(feature = "datagen")]

@@ -43,14 +43,14 @@ const _: () = {
         pub use icu_collections as collections;
     }
     make_provider!(Baked);
-    impl_segmenter_dictionary_w_auto_v1!(Baked);
-    impl_segmenter_dictionary_wl_ext_v1!(Baked);
-    impl_segmenter_grapheme_v1!(Baked);
-    impl_segmenter_line_v1!(Baked);
+    impl_dictionary_for_word_only_auto_v1_marker!(Baked);
+    impl_dictionary_for_word_line_extended_v1_marker!(Baked);
+    impl_grapheme_cluster_break_data_v1_marker!(Baked);
+    impl_line_break_data_v1_marker!(Baked);
     #[cfg(feature = "lstm")]
-    impl_segmenter_lstm_wl_auto_v1!(Baked);
-    impl_segmenter_sentence_v1!(Baked);
-    impl_segmenter_word_v1!(Baked);
+    impl_lstm_for_word_line_auto_v1_marker!(Baked);
+    impl_sentence_break_data_v1_marker!(Baked);
+    impl_word_break_data_v1_marker!(Baked);
 };
 
 #[cfg(feature = "datagen")]

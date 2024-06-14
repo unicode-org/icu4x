@@ -190,7 +190,7 @@ impl BidiAuxiliaryPropertiesBorrowed<'static> {
 #[cfg(feature = "compiled_data")]
 pub const fn bidi_auxiliary_properties() -> BidiAuxiliaryPropertiesBorrowed<'static> {
     BidiAuxiliaryPropertiesBorrowed {
-        data: crate::provider::Baked::SINGLETON_PROPS_BIDIAUXILIARYPROPS_V1,
+        data: crate::provider::Baked::SINGLETON_BIDI_AUXILIARY_PROPERTIES_V1_MARKER,
     }
 }
 

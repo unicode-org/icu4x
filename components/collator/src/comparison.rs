@@ -73,15 +73,17 @@ impl Collator {
         Self::try_new_unstable_internal(
             &crate::provider::Baked,
             DataPayload::from_static_ref(
-                icu_normalizer::provider::Baked::SINGLETON_NORMALIZER_NFD_V1,
+                icu_normalizer::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_DATA_V1_MARKER,
             ),
             DataPayload::from_static_ref(
-                icu_normalizer::provider::Baked::SINGLETON_NORMALIZER_NFDEX_V1,
+                icu_normalizer::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1_MARKER,
             ),
-            DataPayload::from_static_ref(crate::provider::Baked::SINGLETON_COLLATOR_JAMO_V1),
+            DataPayload::from_static_ref(
+                crate::provider::Baked::SINGLETON_COLLATION_JAMO_V1_MARKER,
+            ),
             || {
                 Ok(DataPayload::from_static_ref(
-                    crate::provider::Baked::SINGLETON_COLLATOR_PRIM_V1,
+                    crate::provider::Baked::SINGLETON_COLLATION_SPECIAL_PRIMARIES_V1_MARKER,
                 ))
             },
             locale,

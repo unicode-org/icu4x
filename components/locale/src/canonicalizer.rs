@@ -253,7 +253,7 @@ impl LocaleCanonicalizer {
     pub const fn new_with_expander(expander: LocaleExpander) -> Self {
         Self {
             aliases: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_LOCID_TRANSFORM_ALIASES_V2,
+                crate::provider::Baked::SINGLETON_ALIASES_V2_MARKER,
             ),
             expander,
         }
@@ -647,10 +647,10 @@ mod tests {
                 return Err(DataErrorKind::MissingDataMarker.with_str_context("rejected"));
             }
 
-            let aliases_v2 = crate::provider::Baked::SINGLETON_LOCID_TRANSFORM_ALIASES_V2;
-            let l = crate::provider::Baked::SINGLETON_LOCID_TRANSFORM_LIKELYSUBTAGS_L_V1;
-            let ext = crate::provider::Baked::SINGLETON_LOCID_TRANSFORM_LIKELYSUBTAGS_EXT_V1;
-            let sr = crate::provider::Baked::SINGLETON_LOCID_TRANSFORM_LIKELYSUBTAGS_SR_V1;
+            let aliases_v2 = crate::provider::Baked::SINGLETON_ALIASES_V2_MARKER;
+            let l = crate::provider::Baked::SINGLETON_LIKELY_SUBTAGS_FOR_LANGUAGE_V1_MARKER;
+            let ext = crate::provider::Baked::SINGLETON_LIKELY_SUBTAGS_EXTENDED_V1_MARKER;
+            let sr = crate::provider::Baked::SINGLETON_LIKELY_SUBTAGS_FOR_SCRIPT_REGION_V1_MARKER;
 
             let payload = if marker.path.hashed() == AliasesV1Marker::INFO.path.hashed() {
                 let aliases_v1 = AliasesV1 {

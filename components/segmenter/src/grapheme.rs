@@ -148,7 +148,7 @@ impl GraphemeClusterSegmenter {
     pub fn new() -> Self {
         Self {
             payload: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_SEGMENTER_GRAPHEME_V1,
+                crate::provider::Baked::SINGLETON_GRAPHEME_CLUSTER_BREAK_DATA_V1_MARKER,
             ),
         }
     }

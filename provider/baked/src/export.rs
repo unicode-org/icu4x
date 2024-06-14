@@ -93,6 +93,8 @@
 //! ```
 
 use databake::*;
+use heck::ToShoutySnakeCase;
+use heck::ToSnakeCase;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
@@ -294,7 +296,7 @@ impl BakedExporter {
         body: TokenStream,
         iterable_body: TokenStream,
     ) -> Result<(), DataError> {
-        let marker_unqualified = bake_marker(marker).into_iter().last().unwrap();
+        let marker_unqualified = bake_marker(marker).into_iter().last().unwrap().to_string();
 
         let doc = format!(
             " Implement `DataProvider<{}>` on the given struct using the data",
@@ -305,11 +307,7 @@ impl BakedExporter {
             marker_unqualified
         );
 
-        let ident = marker
-            .path
-            .replace('/', "_")
-            .replace('@', "_v")
-            .to_ascii_lowercase();
+        let ident = marker_unqualified.to_snake_case();
 
         let macro_ident = format!("impl_{ident}",).parse::<TokenStream>().unwrap();
         let macro_ident_iterable = format!("impliterable_{ident}")
@@ -394,12 +392,13 @@ impl DataExporter for BakedExporter {
 
         let singleton_ident = format!(
             "SINGLETON_{}",
-            marker
-                .path
-                .get()
-                .replace('/', "_")
-                .replace('@', "_v")
-                .to_ascii_uppercase()
+            marker_bake
+                .clone()
+                .into_iter()
+                .last()
+                .unwrap()
+                .to_string()
+                .to_shouty_snake_case()
         )
         .parse::<TokenStream>()
         .unwrap();

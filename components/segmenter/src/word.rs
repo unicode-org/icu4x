@@ -204,7 +204,7 @@ impl WordSegmenter {
     pub fn new_auto() -> Self {
         Self {
             payload: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_SEGMENTER_WORD_V1,
+                crate::provider::Baked::SINGLETON_WORD_BREAK_DATA_V1_MARKER,
             ),
             complex: ComplexPayloads::new_auto(),
         }
@@ -279,7 +279,7 @@ impl WordSegmenter {
     pub fn new_lstm() -> Self {
         Self {
             payload: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_SEGMENTER_WORD_V1,
+                crate::provider::Baked::SINGLETON_WORD_BREAK_DATA_V1_MARKER,
             ),
             complex: ComplexPayloads::new_lstm(),
         }
@@ -347,7 +347,7 @@ impl WordSegmenter {
     pub fn new_dictionary() -> Self {
         Self {
             payload: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_SEGMENTER_WORD_V1,
+                crate::provider::Baked::SINGLETON_WORD_BREAK_DATA_V1_MARKER,
             ),
             complex: ComplexPayloads::new_dict(),
         }

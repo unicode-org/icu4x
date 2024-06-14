@@ -59,12 +59,12 @@ const _: () = {
         pub use icu_collections as collections;
     }
     make_provider!(Baked);
-    impl_collator_data_v1!(Baked);
-    impl_collator_dia_v1!(Baked);
-    impl_collator_jamo_v1!(Baked);
-    impl_collator_meta_v1!(Baked);
-    impl_collator_prim_v1!(Baked);
-    impl_collator_reord_v1!(Baked);
+    impl_collation_data_v1_marker!(Baked);
+    impl_collation_diacritics_v1_marker!(Baked);
+    impl_collation_jamo_v1_marker!(Baked);
+    impl_collation_metadata_v1_marker!(Baked);
+    impl_collation_special_primaries_v1_marker!(Baked);
+    impl_collation_reordering_v1_marker!(Baked);
 };
 
 #[cfg(feature = "datagen")]

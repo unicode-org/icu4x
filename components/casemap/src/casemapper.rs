@@ -74,7 +74,9 @@ impl CaseMapper {
     #[cfg(feature = "compiled_data")]
     pub const fn new() -> Self {
         Self {
-            data: DataPayload::from_static_ref(crate::provider::Baked::SINGLETON_PROPS_CASEMAP_V1),
+            data: DataPayload::from_static_ref(
+                crate::provider::Baked::SINGLETON_CASE_MAP_V1_MARKER,
+            ),
         }
     }
 
