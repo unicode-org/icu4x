@@ -181,8 +181,8 @@ where
     /// ```
     pub fn try_from_bytes_store(
         bytes: &'a [u8],
-    ) -> Result<Self, PatternOrUtf8Error<B::StoreUtf8Error>> {
-        let store = B::try_store_from_utf8(bytes).map_err(PatternOrUtf8Error::Utf8)?;
+    ) -> Result<Self, PatternOrUtf8Error<B::StoreFromBytesError>> {
+        let store = B::try_store_from_bytes(bytes).map_err(PatternOrUtf8Error::Utf8)?;
         B::validate_store(store).map_err(PatternOrUtf8Error::Pattern)?;
         Ok(Self {
             _backend: PhantomData,

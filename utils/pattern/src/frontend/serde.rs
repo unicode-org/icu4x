@@ -15,7 +15,7 @@ type HumanReadablePattern<'a, B> =
 impl<'de, 'data, B, Store, E> Deserialize<'de> for Pattern<B, Store>
 where
     'de: 'data,
-    B: PatternBackend<StoreUtf8Error = E>,
+    B: PatternBackend<StoreFromBytesError = E>,
     B::Store: ToOwned + 'de,
     &'de B::Store: Deserialize<'de>,
     B::PlaceholderKeyCow<'data>: Deserialize<'de>,

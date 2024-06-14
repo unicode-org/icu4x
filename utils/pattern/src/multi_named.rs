@@ -315,9 +315,14 @@ impl PatternBackend for MultiNamedPlaceholder {
     #[cfg(feature = "alloc")]
     type PlaceholderKeyCow<'a> = MultiNamedPlaceholderKeyCow<'a>;
     type Error<'a> = MissingNamedPlaceholderError<'a>;
-    type StoreUtf8Error = Utf8Error;
+    type StoreFromBytesError = Utf8Error;
     type Store = str;
     type Iter<'a> = MultiNamedPlaceholderPatternIterator<'a>;
+
+    #[inline]
+    fn try_store_from_bytes(bytes: &[u8]) -> Result<&Self::Store, Self::StoreFromBytesError> {
+        core::str::from_utf8(bytes)
+    }
 
     fn validate_store(store: &Self::Store) -> Result<(), Error> {
         let mut iter = MultiNamedPlaceholderPatternIterator::new(store);
@@ -369,11 +374,6 @@ impl PatternBackend for MultiNamedPlaceholder {
             }
         }
         Ok(string)
-    }
-
-    #[inline]
-    fn try_store_from_utf8(utf8: &[u8]) -> Result<&Self::Store, Self::StoreUtf8Error> {
-        core::str::from_utf8(utf8)
     }
 }
 

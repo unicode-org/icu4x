@@ -271,9 +271,14 @@ impl PatternBackend for DoublePlaceholder {
     #[cfg(feature = "alloc")]
     type PlaceholderKeyCow<'a> = DoublePlaceholderKey;
     type Error<'a> = Infallible;
-    type StoreUtf8Error = Utf8Error;
+    type StoreFromBytesError = Utf8Error;
     type Store = str;
     type Iter<'a> = DoublePlaceholderPatternIterator<'a>;
+
+    #[inline]
+    fn try_store_from_bytes(bytes: &[u8]) -> Result<&Self::Store, Self::StoreFromBytesError> {
+        core::str::from_utf8(bytes)
+    }
 
     fn validate_store(store: &Self::Store) -> Result<(), Error> {
         let mut chars = store.chars();
@@ -375,11 +380,6 @@ impl PatternBackend for DoublePlaceholder {
         result.insert(0, first_ph.try_to_char()?);
 
         Ok(result)
-    }
-
-    #[inline]
-    fn try_store_from_utf8(utf8: &[u8]) -> Result<&Self::Store, Self::StoreUtf8Error> {
-        core::str::from_utf8(utf8)
     }
 }
 

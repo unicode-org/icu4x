@@ -172,9 +172,14 @@ impl PatternBackend for SinglePlaceholder {
     #[cfg(feature = "alloc")]
     type PlaceholderKeyCow<'a> = SinglePlaceholderKey;
     type Error<'a> = Infallible;
-    type StoreUtf8Error = Utf8Error;
+    type StoreFromBytesError = Utf8Error;
     type Store = str;
     type Iter<'a> = SinglePlaceholderPatternIterator<'a>;
+
+    #[inline]
+    fn try_store_from_bytes(utf8: &[u8]) -> Result<&Self::Store, Self::StoreFromBytesError> {
+        core::str::from_utf8(utf8)
+    }
 
     fn validate_store(store: &Self::Store) -> Result<(), Error> {
         let placeholder_offset_char = store.chars().next().ok_or(Error::InvalidPattern)?;
@@ -238,11 +243,6 @@ impl PatternBackend for SinglePlaceholder {
             result.insert(0, '\0');
         }
         Ok(result)
-    }
-
-    #[inline]
-    fn try_store_from_utf8(utf8: &[u8]) -> Result<&Self::Store, Self::StoreUtf8Error> {
-        core::str::from_utf8(utf8)
     }
 }
 
