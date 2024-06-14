@@ -175,10 +175,6 @@ fn main() {
                 MultiExporter::new(vec![Box::new(baked_exporter), Box::new(fingerprinter)]),
             )
             .unwrap();
-
-        for file in ["data/any.rs", "data/mod.rs"] {
-            std::fs::remove_file(path.join(file)).unwrap();
-        }
     }
 }
 

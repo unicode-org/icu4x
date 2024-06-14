@@ -51,6 +51,8 @@ macro_rules! __impl_core_helloworld_v1 {
         }
     };
 }
+#[doc(inline)]
+pub use __impl_core_helloworld_v1 as impl_core_helloworld_v1;
 /// Implement `IterableDataProvider<HelloWorldV1Marker>` on the given struct using the data
 /// hardcoded in this file. This allows the struct to be used with
 /// `DatagenDriver` for this marker.
@@ -66,3 +68,5 @@ macro_rules! __impliterable_core_helloworld_v1 {
         }
     };
 }
+#[doc(inline)]
+pub use __impliterable_core_helloworld_v1 as impliterable_core_helloworld_v1;
