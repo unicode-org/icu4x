@@ -390,7 +390,7 @@ impl DataExporter for BakedExporter {
         marker: DataMarkerInfo,
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
-        let qualified_marker = bake_marker(marker);
+        let marker_bake = bake_marker(marker);
 
         let singleton_ident = format!(
             "SINGLETON_{}",
@@ -413,28 +413,28 @@ impl DataExporter for BakedExporter {
             impl $provider {
                 // Exposing singleton structs as consts allows us to get rid of fallibility
                 #[doc(hidden)] // singletons might be used cross-crate
-                pub const #singleton_ident: &'static <#qualified_marker as icu_provider::DynamicDataMarker>::Yokeable = &#bake;
+                pub const #singleton_ident: &'static <#marker_bake as icu_provider::DynamicDataMarker>::Yokeable = &#bake;
             }
 
             #maybe_msrv
-            impl icu_provider::DataProvider<#qualified_marker> for $provider {
+            impl icu_provider::DataProvider<#marker_bake> for $provider {
                 fn load(
                     &self,
                     req: icu_provider::DataRequest,
-                ) -> Result<icu_provider::DataResponse<#qualified_marker>, icu_provider::DataError> {
+                ) -> Result<icu_provider::DataResponse<#marker_bake>, icu_provider::DataError> {
                     if req.locale.is_empty() {
                         Ok(icu_provider::DataResponse {
                             payload: icu_provider::DataPayload::from_static_ref(Self::#singleton_ident),
                             metadata: Default::default(),
                         })
                     } else {
-                        Err(icu_provider::DataErrorKind::ExtraneousLocale.with_req(<#qualified_marker as icu_provider::DataMarker>::INFO, req))
+                        Err(icu_provider::DataErrorKind::ExtraneousLocale.with_req(<#marker_bake as icu_provider::DataMarker>::INFO, req))
                     }
                 }
             }
         }, quote! {
             #maybe_msrv
-            impl icu_provider::datagen::IterableDataProvider<#qualified_marker> for $provider {
+            impl icu_provider::datagen::IterableDataProvider<#marker_bake> for $provider {
                 fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataMarkerAttributes)>, icu_provider::DataError> {
                     Ok(HashSet::from_iter([Default::default()]))
                 }
