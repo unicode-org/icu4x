@@ -70,7 +70,7 @@ mod linux_locale {
                 }
             }
         }
-        Vec::new() // Return an empty vector if there is an error
+        Vec::new()
     }
 }
 
