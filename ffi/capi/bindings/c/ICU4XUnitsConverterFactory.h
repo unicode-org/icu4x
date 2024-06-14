@@ -14,7 +14,7 @@
 #include "ICU4XMeasureUnitParser.h"
 #include "ICU4XUnitsConverter.d.h"
 #include "ICU4XUnitsConverter.h"
-#include "diplomat_result_box_ICU4XUnitsConverterFactory_ICU4XError.d.h"
+#include "diplomat_result_box_ICU4XUnitsConverterFactory_ICU4XDataError.d.h"
 
 #include "ICU4XUnitsConverterFactory.d.h"
 
@@ -24,7 +24,7 @@ extern "C" {
 #endif // __cplusplus
 
 
-diplomat_result_box_ICU4XUnitsConverterFactory_ICU4XError ICU4XUnitsConverterFactory_create(const ICU4XDataProvider* provider);
+diplomat_result_box_ICU4XUnitsConverterFactory_ICU4XDataError ICU4XUnitsConverterFactory_create(const ICU4XDataProvider* provider);
 
 ICU4XUnitsConverter* ICU4XUnitsConverterFactory_converter(const ICU4XUnitsConverterFactory* self, const ICU4XMeasureUnit* from, const ICU4XMeasureUnit* to);
 

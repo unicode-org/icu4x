@@ -6,7 +6,7 @@ use core::convert::TryFrom;
 use std::borrow::Cow;
 use std::collections::HashSet;
 
-use icu_experimental::personnames::provider::*;
+use icu::experimental::personnames::provider::*;
 use icu_provider::prelude::*;
 use zerovec::VarZeroVec;
 
@@ -24,12 +24,10 @@ impl DataProvider<PersonNamesFormatV1Marker> for crate::DatagenProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(
-                PersonNamesFormatV1::try_from(data).map_err(|e| {
-                    DataError::custom("data for PersonNamesFormattingDefinition")
-                        .with_display_context(&e)
-                })?,
-            )),
+            payload: DataPayload::from_owned(PersonNamesFormatV1::try_from(data).map_err(|e| {
+                DataError::custom("data for PersonNamesFormattingDefinition")
+                    .with_display_context(&e)
+            })?),
         })
     }
 }
@@ -155,7 +153,7 @@ impl TryFrom<&'_ Resource> for PersonNamesFormatV1<'_> {
 
 #[cfg(test)]
 mod tests {
-    use icu_locale_core::langid;
+    use icu::locale::langid;
     use zerofrom::ZeroFrom;
 
     use super::*;
@@ -169,7 +167,7 @@ mod tests {
                 locale: &langid!("en-001").into(),
                 ..Default::default()
             })?
-            .take_payload()?;
+            .payload;
 
         let real_data: &PersonNamesFormatV1 = data_payload.get();
 
@@ -192,7 +190,7 @@ mod tests {
                 locale: &langid!("en-001").into(),
                 ..Default::default()
             })?
-            .take_payload()?;
+            .payload;
 
         let real_data: &PersonNamesFormatV1 = data_payload.get();
         let test_mask: PersonNamesFormattingAttributesMask =
@@ -240,7 +238,7 @@ mod tests {
                 locale: &langid!("es").into(),
                 ..Default::default()
             })?
-            .take_payload()?;
+            .payload;
 
         let real_data: &PersonNamesFormatV1 = data_payload.get();
         let test_mask: PersonNamesFormattingAttributesMask =

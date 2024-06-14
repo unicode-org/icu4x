@@ -5,8 +5,8 @@
 use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
 use crate::provider::IterableDataProviderCached;
-use icu_experimental::compactdecimal::provider::*;
-use icu_locale_core::{extensions::unicode::key, subtags::Subtag};
+use icu::experimental::compactdecimal::provider::*;
+use icu::locale::{extensions::unicode::key, subtags::Subtag};
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 use std::convert::TryFrom;
@@ -54,7 +54,7 @@ impl DataProvider<ShortCompactDecimalFormatDataV1Marker> for DatagenProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(result)),
+            payload: DataPayload::from_owned(result),
         })
     }
 }
@@ -102,7 +102,7 @@ impl DataProvider<LongCompactDecimalFormatDataV1Marker> for DatagenProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(result)),
+            payload: DataPayload::from_owned(result),
         })
     }
 }
@@ -127,7 +127,7 @@ impl IterableDataProviderCached<LongCompactDecimalFormatDataV1Marker> for Datage
 
 mod tests {
     use super::*;
-    use icu_locale_core::langid;
+    use icu::locale::langid;
     use std::borrow::Cow;
     use zerofrom::ZeroFrom;
     use zerovec::ule::AsULE;
@@ -143,8 +143,7 @@ mod tests {
                 ..Default::default()
             })
             .unwrap()
-            .take_payload()
-            .unwrap();
+            .payload;
 
         let nonzero_copy: Box<[(i8, Count, Pattern)]> = fr_compact_long
             .get()
@@ -203,16 +202,15 @@ mod tests {
     fn test_compact_short() {
         let provider = DatagenProvider::new_testing();
 
-        let ja_compact_short: DataPayload<ShortCompactDecimalFormatDataV1Marker> = provider
+        let ja_compact_short: DataResponse<ShortCompactDecimalFormatDataV1Marker> = provider
             .load(DataRequest {
                 locale: &langid!("ja").into(),
                 ..Default::default()
             })
-            .unwrap()
-            .take_payload()
             .unwrap();
 
         let nonzero_copy: Box<[(i8, Count, Pattern)]> = ja_compact_short
+            .payload
             .get()
             .patterns
             .iter0()

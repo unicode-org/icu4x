@@ -10,15 +10,15 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XError.hpp"
 #include "ICU4XFixedDecimal.hpp"
+#include "ICU4XFixedDecimalParseError.hpp"
 #include "ICU4XPluralOperands.h"
 
 
-inline diplomat::result<std::unique_ptr<ICU4XPluralOperands>, ICU4XError> ICU4XPluralOperands::create_from_string(std::string_view s) {
+inline diplomat::result<std::unique_ptr<ICU4XPluralOperands>, ICU4XFixedDecimalParseError> ICU4XPluralOperands::create_from_string(std::string_view s) {
   auto result = capi::ICU4XPluralOperands_create_from_string(s.data(),
     s.size());
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XPluralOperands>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XPluralOperands>>(std::unique_ptr<ICU4XPluralOperands>(ICU4XPluralOperands::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XPluralOperands>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XPluralOperands>, ICU4XFixedDecimalParseError>(diplomat::Ok<std::unique_ptr<ICU4XPluralOperands>>(std::unique_ptr<ICU4XPluralOperands>(ICU4XPluralOperands::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XPluralOperands>, ICU4XFixedDecimalParseError>(diplomat::Err<ICU4XFixedDecimalParseError>(ICU4XFixedDecimalParseError::FromFFI(result.err)));
 }
 
 inline std::unique_ptr<ICU4XPluralOperands> ICU4XPluralOperands::create_from_fixed_decimal(const ICU4XFixedDecimal& x) {

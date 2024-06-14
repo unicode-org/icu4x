@@ -88,7 +88,7 @@ fn main() {
                 .unwrap()
                 .into_iter()
                 .map(LocaleFamily::with_descendants),
-            Default::default(),
+            FallbackOptions::maximal_deduplication(),
         )
         .with_recommended_segmenter_models();
 
@@ -97,7 +97,7 @@ fn main() {
     options.pretty = true;
 
     for (component, markers, version) in &components {
-        let path = Path::new("provider/baked").join(component);
+        let path = Path::new("provider/data").join(component);
 
         let _ = std::fs::remove_dir_all(&path);
         for dir in ["", "src", "data"] {
@@ -130,6 +130,30 @@ fn main() {
                         "_segmenter_lstm_tag_",
                         DatagenProvider::LATEST_TESTED_SEGMENTER_LSTM_TAG,
                     ),
+            )
+            .unwrap();
+        }
+
+        // Crates with non-singleton markers need fallback
+        if markers.iter().any(|m| !m.is_singleton) {
+            writeln!(
+                &mut crlify::BufWriterWithLineEndingFix::new(
+                    std::fs::OpenOptions::new()
+                        .append(true)
+                        .open(path.join("Cargo.toml"))
+                        .unwrap()
+                ),
+                r#"icu_locale = {{ workspace = true, features = ["compiled_data"] }}"#
+            )
+            .unwrap();
+            writeln!(
+                &mut crlify::BufWriterWithLineEndingFix::new(
+                    std::fs::OpenOptions::new()
+                        .append(true)
+                        .open(path.join("src/lib.rs"))
+                        .unwrap()
+                ),
+                "pub use icu_locale;"
             )
             .unwrap();
         }
@@ -211,14 +235,6 @@ impl<F: Write + Send + Sync> DataExporter for PostcardFingerprintExporter<F> {
         Ok(())
     }
 
-    fn flush_with_built_in_fallback(
-        &self,
-        _marker: DataMarkerInfo,
-        _fallback_mode: BuiltInFallbackMode,
-    ) -> Result<(), DataError> {
-        Ok(())
-    }
-
     fn close(&mut self) -> Result<(), DataError> {
         let mut seen = std::collections::HashMap::new();
         for ((marker, req), (size, hash)) in self.size_hash.get_mut().expect("poison").iter() {
@@ -233,8 +249,5 @@ impl<F: Write + Send + Sync> DataExporter for PostcardFingerprintExporter<F> {
             }
         }
         Ok(())
-    }
-    fn supports_built_in_fallback(&self) -> bool {
-        true
     }
 }

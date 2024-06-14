@@ -8,7 +8,7 @@ use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
 use crate::provider::IterableDataProviderCached;
 
-use icu_experimental::dimension::provider::percent::*;
+use icu::experimental::dimension::provider::percent::*;
 use icu_provider::prelude::*;
 use icu_provider::DataProvider;
 use tinystr::tinystr;
@@ -27,7 +27,7 @@ impl DataProvider<PercentEssentialsV1Marker> for DatagenProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(result?)),
+            payload: DataPayload::from_owned(result?),
         })
     }
 }
@@ -109,22 +109,20 @@ fn extract_percent_essentials<'data>(
 
 #[test]
 fn test_basic() {
-    use icu_experimental::dimension::provider::percent::*;
-    use icu_locale_core::langid;
+    use icu::experimental::dimension::provider::percent::*;
+    use icu::locale::langid;
 
     let provider = DatagenProvider::new_testing();
 
-    let en: DataPayload<PercentEssentialsV1Marker> = provider
+    let en: DataResponse<PercentEssentialsV1Marker> = provider
         .load(DataRequest {
             locale: &langid!("en").into(),
             ..Default::default()
         })
-        .unwrap()
-        .take_payload()
         .unwrap();
 
     assert_eq!(
-        en.clone().get().to_owned(),
+        en.payload.get().to_owned(),
         PercentEssentialsV1 {
             standard: "#,##0%".into(),
             percent_sign_symbol: "%".into(),
@@ -137,17 +135,15 @@ fn test_basic() {
         }
     );
 
-    let fr: DataPayload<PercentEssentialsV1Marker> = provider
+    let fr: DataResponse<PercentEssentialsV1Marker> = provider
         .load(DataRequest {
             locale: &langid!("fr").into(),
             ..Default::default()
         })
-        .unwrap()
-        .take_payload()
         .unwrap();
 
     assert_eq!(
-        fr.clone().get().to_owned(),
+        fr.payload.get().to_owned(),
         PercentEssentialsV1 {
             standard: "#,##0\u{a0}%".into(),
             percent_sign_symbol: "%".into(),
@@ -160,17 +156,15 @@ fn test_basic() {
         }
     );
 
-    let tr: DataPayload<PercentEssentialsV1Marker> = provider
+    let tr: DataResponse<PercentEssentialsV1Marker> = provider
         .load(DataRequest {
             locale: &langid!("tr").into(),
             ..Default::default()
         })
-        .unwrap()
-        .take_payload()
         .unwrap();
 
     assert_eq!(
-        tr.clone().get().to_owned(),
+        tr.payload.get().to_owned(),
         PercentEssentialsV1 {
             standard: "%#,##0".into(),
             percent_sign_symbol: "%".into(),
@@ -183,17 +177,15 @@ fn test_basic() {
         }
     );
 
-    let ar_eg: DataPayload<PercentEssentialsV1Marker> = provider
+    let ar_eg: DataResponse<PercentEssentialsV1Marker> = provider
         .load(DataRequest {
             locale: &langid!("ar-EG").into(),
             ..Default::default()
         })
-        .unwrap()
-        .take_payload()
         .unwrap();
 
     assert_eq!(
-        ar_eg.clone().get().to_owned().percent_sign_symbol,
+        ar_eg.payload.get().to_owned().percent_sign_symbol,
         "\u{200e}%\u{200e}" // "٪؜"
     );
 }

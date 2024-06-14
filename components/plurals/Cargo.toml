@@ -29,7 +29,6 @@ databake = { workspace = true, features = ["derive"], optional = true}
 serde = { workspace = true, features = ["derive", "alloc"], optional = true }
 
 icu_plurals_data = { workspace = true, optional = true }
-icu_locale = { workspace = true, optional = true, features = ["compiled_data"] }
 
 [dev-dependencies]
 icu = { path = "../../components/icu", default-features = false }
@@ -48,7 +47,7 @@ serde = ["dep:serde", "zerovec/serde", "icu_locale_core/serde", "icu_provider/se
 datagen = ["serde", "zerovec/databake", "dep:databake"]
 experimental = []
 bench = ["serde"]
-compiled_data = ["dep:icu_plurals_data", "dep:icu_locale"]
+compiled_data = ["dep:icu_plurals_data"]
 
 [lib]
 bench = false  # This option is required for Benchmark CI

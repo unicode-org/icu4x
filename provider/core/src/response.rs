@@ -3,11 +3,10 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::buf::BufferMarker;
-use crate::error::{DataError, DataErrorKind};
+use crate::error::DataError;
 use crate::marker::DynamicDataMarker;
 use crate::request::DataLocale;
 use alloc::boxed::Box;
-use core::convert::TryFrom;
 use core::fmt::Debug;
 use core::marker::PhantomData;
 use core::ops::Deref;
@@ -89,17 +88,15 @@ pub struct DataPayload<M: DynamicDataMarker>(pub(crate) DataPayloadInner<M>);
 /// use icu_provider::prelude::*;
 /// use icu_provider::DataPayloadOr;
 ///
-/// let payload: DataPayload<HelloWorldV1Marker> = HelloWorldProvider
+/// let response: DataResponse<HelloWorldV1Marker> = HelloWorldProvider
 ///     .load(DataRequest {
 ///         locale: &"de".parse().unwrap(),
 ///         ..Default::default()
 ///     })
-///     .expect("Loading should succeed")
-///     .take_payload()
-///     .expect("Data should be present");
+///     .expect("Loading should succeed");
 ///
 /// let payload_some =
-///     DataPayloadOr::<HelloWorldV1Marker, ()>::from_payload(payload);
+///     DataPayloadOr::<HelloWorldV1Marker, ()>::from_payload(response.payload);
 /// let payload_none = DataPayloadOr::<HelloWorldV1Marker, ()>::from_other(());
 ///
 /// assert_eq!(
@@ -379,16 +376,6 @@ where
     #[inline]
     pub const fn from_static_ref(data: &'static M::Yokeable) -> Self {
         Self(DataPayloadInner::StaticRef(data))
-    }
-
-    /// Convert a DataPayload that was created via [`DataPayload::from_owned()`] back into the
-    /// concrete type used to construct it.
-    pub fn try_unwrap_owned(self) -> Result<M::Yokeable, DataError> {
-        match self.0 {
-            DataPayloadInner::Yoke(yoke) => yoke.try_into_yokeable().ok(),
-            DataPayloadInner::StaticRef(_) => None,
-        }
-        .ok_or(DataErrorKind::InvalidState.with_str_context("try_unwrap_owned"))
     }
 
     /// Mutate the data contained in this DataPayload.
@@ -761,15 +748,12 @@ where
     ///     #[inline]
     ///     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
     ///         let mut res = self.inner.load(req)?;
-    ///         if let Some(ref mut generic_payload) = res.payload {
-    ///             let mut cast_result =
-    ///                 generic_payload.dynamic_cast_mut::<HelloWorldV1Marker>();
-    ///             if let Ok(ref mut concrete_payload) = cast_result {
-    ///                 // Add an emoji to the hello world message
-    ///                 concrete_payload.with_mut(|data| {
-    ///                     data.message.to_mut().insert_str(0, "✨ ");
-    ///                 });
-    ///             }
+    ///         let mut cast_result = res.payload.dynamic_cast_mut::<HelloWorldV1Marker>();
+    ///         if let Ok(ref mut concrete_payload) = cast_result {
+    ///             // Add an emoji to the hello world message
+    ///             concrete_payload.with_mut(|data| {
+    ///                 data.message.to_mut().insert_str(0, "✨ ");
+    ///             });
     ///         }
     ///         Ok(res)
     ///     }
@@ -892,34 +876,14 @@ where
     /// Metadata about the returned object.
     pub metadata: DataResponseMetadata,
 
-    /// The object itself; `None` if it was not loaded.
-    pub payload: Option<DataPayload<M>>,
+    /// The object itself
+    pub payload: DataPayload<M>,
 }
 
 impl<M> DataResponse<M>
 where
     M: DynamicDataMarker,
 {
-    /// Takes ownership of the underlying payload. Error if not present.
-    ///
-    /// To take the metadata, too, use [`Self::take_metadata_and_payload()`].
-    #[inline]
-    pub fn take_payload(self) -> Result<DataPayload<M>, DataError> {
-        Ok(self.take_metadata_and_payload()?.1)
-    }
-
-    /// Takes ownership of the underlying metadata and payload. Error if payload is not present.
-    #[inline]
-    pub fn take_metadata_and_payload(
-        self,
-    ) -> Result<(DataResponseMetadata, DataPayload<M>), DataError> {
-        Ok((
-            self.metadata,
-            self.payload
-                .ok_or_else(|| DataErrorKind::MissingPayload.with_type_context::<M>())?,
-        ))
-    }
-
     /// Convert between two [`DynamicDataMarker`] types that are compatible with each other
     /// with compile-time type checking.
     ///
@@ -934,27 +898,10 @@ where
     where
         M2: DynamicDataMarker<Yokeable = M::Yokeable>,
     {
-        match self.payload {
-            Some(payload) => DataResponse {
-                metadata: self.metadata,
-                payload: Some(payload.cast()),
-            },
-            None => DataResponse {
-                metadata: self.metadata,
-                payload: None,
-            },
+        DataResponse {
+            metadata: self.metadata,
+            payload: self.payload.cast(),
         }
-    }
-}
-
-impl<M> TryFrom<DataResponse<M>> for DataPayload<M>
-where
-    M: DynamicDataMarker,
-{
-    type Error = DataError;
-
-    fn try_from(response: DataResponse<M>) -> Result<Self, Self::Error> {
-        response.take_payload()
     }
 }
 
@@ -1003,9 +950,9 @@ fn test_debug() {
     use alloc::borrow::Cow;
     let resp = DataResponse::<HelloWorldV1Marker> {
         metadata: Default::default(),
-        payload: Some(DataPayload::from_owned(HelloWorldV1 {
+        payload: DataPayload::from_owned(HelloWorldV1 {
             message: Cow::Borrowed("foo"),
-        })),
+        }),
     };
-    assert_eq!("DataResponse { metadata: DataResponseMetadata { locale: None, buffer_format: None }, payload: Some(HelloWorldV1 { message: \"foo\" }) }", format!("{resp:?}"));
+    assert_eq!("DataResponse { metadata: DataResponseMetadata { locale: None, buffer_format: None }, payload: HelloWorldV1 { message: \"foo\" } }", format!("{resp:?}"));
 }

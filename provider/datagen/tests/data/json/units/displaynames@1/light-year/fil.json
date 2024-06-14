@@ -1,0 +1,14 @@
+{
+  "long": {
+    "One": "{0} light year",
+    "Other": "{0} na light year"
+  },
+  "short": {
+    "One": "{0} ly",
+    "Other": "{0} na ly"
+  },
+  "narrow": {
+    "One": "{0}ly",
+    "Other": "{0}ly"
+  }
+}

@@ -95,8 +95,8 @@ impl Language {
     /// assert!(lang.is_empty());
     /// ```
     #[inline]
-    pub fn is_empty(self) -> bool {
-        self == Self::UND
+    pub const fn is_empty(self) -> bool {
+        matches!(self, Self::UND)
     }
 }
 

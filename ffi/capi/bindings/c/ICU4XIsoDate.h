@@ -16,7 +16,7 @@
 #include "ICU4XWeekCalculator.h"
 #include "ICU4XWeekOf.d.h"
 #include "ICU4XWeekOf.h"
-#include "diplomat_result_box_ICU4XIsoDate_ICU4XError.d.h"
+#include "diplomat_result_box_ICU4XIsoDate_ICU4XCalendarError.d.h"
 
 #include "ICU4XIsoDate.d.h"
 
@@ -26,7 +26,7 @@ extern "C" {
 #endif // __cplusplus
 
 
-diplomat_result_box_ICU4XIsoDate_ICU4XError ICU4XIsoDate_create(int32_t year, uint8_t month, uint8_t day);
+diplomat_result_box_ICU4XIsoDate_ICU4XCalendarError ICU4XIsoDate_create(int32_t year, uint8_t month, uint8_t day);
 
 ICU4XIsoDate* ICU4XIsoDate_create_for_unix_epoch();
 

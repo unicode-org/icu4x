@@ -4,7 +4,7 @@
 
 use std::fmt::Display;
 
-use icu_locale_core::Locale;
+use icu::locale::Locale;
 use serde::{Deserialize, Deserializer};
 
 #[derive(PartialEq, Debug, Deserialize)]

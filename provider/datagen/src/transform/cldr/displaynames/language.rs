@@ -6,8 +6,8 @@ use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
 use crate::provider::IterableDataProviderCached;
 
-use icu_experimental::displaynames::provider::*;
-use icu_locale_core::subtags::Language;
+use icu::experimental::displaynames::provider::*;
+use icu::locale::subtags::Language;
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
 use zerovec::ule::UnvalidatedStr;
@@ -27,7 +27,7 @@ impl DataProvider<LanguageDisplayNamesV1Marker> for DatagenProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(LanguageDisplayNamesV1::from(data))),
+            payload: DataPayload::from_owned(LanguageDisplayNamesV1::from(data)),
         })
     }
 }
@@ -46,7 +46,7 @@ impl DataProvider<LocaleDisplayNamesV1Marker> for DatagenProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(LocaleDisplayNamesV1::from(data))),
+            payload: DataPayload::from_owned(LocaleDisplayNamesV1::from(data)),
         })
     }
 }
@@ -205,7 +205,7 @@ impl From<&cldr_serde::displaynames::language::Resource> for LocaleDisplayNamesV
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_locale_core::{langid, subtags::language};
+    use icu::locale::{langid, subtags::language};
 
     #[test]
     fn test_basic_lang_display_names() {
@@ -217,8 +217,7 @@ mod tests {
                 ..Default::default()
             })
             .unwrap()
-            .take_payload()
-            .unwrap();
+            .payload;
 
         assert_eq!(
             data.get()
@@ -239,8 +238,7 @@ mod tests {
                 ..Default::default()
             })
             .unwrap()
-            .take_payload()
-            .unwrap();
+            .payload;
 
         assert_eq!(
             data.get()
@@ -261,8 +259,7 @@ mod tests {
                 ..Default::default()
             })
             .unwrap()
-            .take_payload()
-            .unwrap();
+            .payload;
 
         assert_eq!(
             data.get()
@@ -283,8 +280,7 @@ mod tests {
                 ..Default::default()
             })
             .unwrap()
-            .take_payload()
-            .unwrap();
+            .payload;
 
         assert_eq!(
             data.get()
@@ -305,8 +301,7 @@ mod tests {
                 ..Default::default()
             })
             .unwrap()
-            .take_payload()
-            .unwrap();
+            .payload;
 
         assert_eq!(
             data.get()

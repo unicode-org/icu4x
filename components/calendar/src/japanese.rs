@@ -144,7 +144,7 @@ impl Japanese {
         provider: &D,
     ) -> Result<Self, DataError> {
         Ok(Self {
-            eras: provider.load(Default::default())?.take_payload()?,
+            eras: provider.load(Default::default())?.payload,
         })
     }
 
@@ -202,7 +202,7 @@ impl JapaneseExtended {
         provider: &D,
     ) -> Result<Self, DataError> {
         Ok(Self(Japanese {
-            eras: provider.load(Default::default())?.take_payload()?.cast(),
+            eras: provider.load(Default::default())?.payload.cast(),
         }))
     }
 

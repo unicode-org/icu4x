@@ -1,6 +1,6 @@
 import { FFIError } from "./diplomat-runtime"
+import { ICU4XDataError } from "./ICU4XDataError";
 import { ICU4XDataProvider } from "./ICU4XDataProvider";
-import { ICU4XError } from "./ICU4XError";
 import { ICU4XLocale } from "./ICU4XLocale";
 import { ICU4XTitlecaseOptionsV1 } from "./ICU4XTitlecaseOptionsV1";
 
@@ -15,7 +15,7 @@ export class ICU4XTitlecaseMapper {
    * Construct a new `ICU4XTitlecaseMapper` instance
 
    * See the {@link https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html#method.new Rust documentation for `new`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
+   * @throws {@link FFIError}<{@link ICU4XDataError}>
    */
   static create(provider: ICU4XDataProvider): ICU4XTitlecaseMapper | never;
 

@@ -5,9 +5,9 @@
 use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::CoverageLevel;
 use crate::provider::DatagenProvider;
-use icu_locale::provider::*;
-use icu_locale_core::subtags::Language;
-use icu_locale_core::LanguageIdentifier;
+use icu::locale::provider::*;
+use icu::locale::subtags::Language;
+use icu::locale::LanguageIdentifier;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
@@ -19,7 +19,7 @@ impl DataProvider<LikelySubtagsV1Marker> for DatagenProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(transform(resources.get_common()))),
+            payload: DataPayload::from_owned(transform(resources.get_common())),
         })
     }
 }
@@ -40,9 +40,7 @@ impl DataProvider<LikelySubtagsExtendedV1Marker> for DatagenProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(
-                transform(resources.get_extended()).into(),
-            )),
+            payload: DataPayload::from_owned(transform(resources.get_extended()).into()),
         })
     }
 }
@@ -62,7 +60,7 @@ impl DataProvider<LikelySubtagsForLanguageV1Marker> for DatagenProvider {
         let response = DataProvider::<LikelySubtagsV1Marker>::load(self, req)?;
         Ok(DataResponse {
             metadata: response.metadata,
-            payload: response.payload.map(|p| p.map_project(|st, _| st.into())),
+            payload: response.payload.map_project(|st, _| st.into()),
         })
     }
 }
@@ -82,7 +80,7 @@ impl DataProvider<LikelySubtagsForScriptRegionV1Marker> for DatagenProvider {
         let response = DataProvider::<LikelySubtagsV1Marker>::load(self, req)?;
         Ok(DataResponse {
             metadata: response.metadata,
-            payload: response.payload.map(|p| p.map_project(|st, _| st.into())),
+            payload: response.payload.map_project(|st, _| st.into()),
         })
     }
 }
@@ -258,30 +256,25 @@ pub(in crate::provider) fn transform<'x>(
             .map(|(k, v)| (k.to_unvalidated(), v))
             .collect(),
         und: und.unwrap_or((
-            icu_locale_core::subtags::language!("und"),
-            icu_locale_core::subtags::script!("Zzzz"),
-            icu_locale_core::subtags::region!("ZZ"),
+            icu::locale::subtags::language!("und"),
+            icu::locale::subtags::script!("Zzzz"),
+            icu::locale::subtags::region!("ZZ"),
         )),
     }
 }
 
 #[test]
 fn test_basic() {
-    use icu_locale_core::subtags::{language, region, script};
+    use icu::locale::subtags::{language, region, script};
 
     let provider = DatagenProvider::new_testing();
-    let result_common: DataPayload<LikelySubtagsV1Marker> = provider
-        .load(Default::default())
-        .unwrap()
-        .take_payload()
-        .unwrap();
-    let result_extended: DataPayload<LikelySubtagsExtendedV1Marker> = provider
-        .load(Default::default())
-        .unwrap()
-        .take_payload()
-        .unwrap();
+    let result_common: DataResponse<LikelySubtagsV1Marker> =
+        provider.load(Default::default()).unwrap();
+    let result_extended: DataResponse<LikelySubtagsExtendedV1Marker> =
+        provider.load(Default::default()).unwrap();
 
     let entry = result_common
+        .payload
         .get()
         .script
         .get_copied(&script!("Hant").into_tinystr().to_unvalidated())
@@ -290,6 +283,7 @@ fn test_basic() {
     assert_eq!(entry.1, region!("TW"));
 
     let entry = result_extended
+        .payload
         .get()
         .script
         .get_copied(&script!("Glag").into_tinystr().to_unvalidated())

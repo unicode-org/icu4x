@@ -5,6 +5,7 @@
 //! Code for the [`SinglePlaceholder`] pattern backend.
 
 use core::convert::Infallible;
+use core::str::Utf8Error;
 use core::{cmp::Ordering, str::FromStr};
 use writeable::adapters::WriteableAsTryWriteableInfallible;
 use writeable::Writeable;
@@ -171,8 +172,14 @@ impl PatternBackend for SinglePlaceholder {
     #[cfg(feature = "alloc")]
     type PlaceholderKeyCow<'a> = SinglePlaceholderKey;
     type Error<'a> = Infallible;
+    type StoreFromBytesError = Utf8Error;
     type Store = str;
     type Iter<'a> = SinglePlaceholderPatternIterator<'a>;
+
+    #[inline]
+    fn try_store_from_bytes(utf8: &[u8]) -> Result<&Self::Store, Self::StoreFromBytesError> {
+        core::str::from_utf8(utf8)
+    }
 
     fn validate_store(store: &Self::Store) -> Result<(), Error> {
         let placeholder_offset_char = store.chars().next().ok_or(Error::InvalidPattern)?;

@@ -8,7 +8,7 @@ all: buffer_data.postcard
 
 ../bin/icu4x-datagen:
 	echo "Target dir: $(CARGO_TARGET_DIR)"
-	cargo install icu_datagen --root ..
+	cargo install --path ../../provider/icu4x-datagen --root ..
 
 bin/tutorial_buffer:
 	echo "Target dir: $(CARGO_TARGET_DIR)"

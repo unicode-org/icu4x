@@ -14,7 +14,7 @@
 #include "ICU4XSentenceBreakIteratorUtf16.h"
 #include "ICU4XSentenceBreakIteratorUtf8.d.h"
 #include "ICU4XSentenceBreakIteratorUtf8.h"
-#include "diplomat_result_box_ICU4XSentenceSegmenter_ICU4XError.d.h"
+#include "diplomat_result_box_ICU4XSentenceSegmenter_ICU4XDataError.d.h"
 
 #include "ICU4XSentenceSegmenter.d.h"
 
@@ -24,7 +24,7 @@ extern "C" {
 #endif // __cplusplus
 
 
-diplomat_result_box_ICU4XSentenceSegmenter_ICU4XError ICU4XSentenceSegmenter_create(const ICU4XDataProvider* provider);
+diplomat_result_box_ICU4XSentenceSegmenter_ICU4XDataError ICU4XSentenceSegmenter_create(const ICU4XDataProvider* provider);
 
 ICU4XSentenceBreakIteratorUtf8* ICU4XSentenceSegmenter_segment_utf8(const ICU4XSentenceSegmenter* self, const char* input_data, size_t input_len);
 

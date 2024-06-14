@@ -1,0 +1,14 @@
+{
+  "long": {
+    "One": "{0} brasse",
+    "Other": "{0} brasses"
+  },
+  "short": {
+    "One": "{0} fm",
+    "Other": "{0} fm"
+  },
+  "narrow": {
+    "One": "{0} fm",
+    "Other": "{0} fm"
+  }
+}

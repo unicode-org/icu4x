@@ -6,8 +6,8 @@ use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
 
 use super::locale_canonicalizer::likely_subtags::LikelySubtagsResources;
-use icu_locale::provider::*;
-use icu_locale_core::{
+use icu::locale::provider::*;
+use icu::locale::{
     subtags::{Language, Region, Script},
     LanguageIdentifier,
 };
@@ -28,7 +28,7 @@ impl DataProvider<LocaleFallbackLikelySubtagsV1Marker> for DatagenProvider {
         let metadata = DataResponseMetadata::default();
         Ok(DataResponse {
             metadata,
-            payload: Some(DataPayload::from_owned(transform(resources.get_common()))),
+            payload: DataPayload::from_owned(transform(resources.get_common())),
         })
     }
 }
@@ -47,7 +47,7 @@ impl DataProvider<LocaleFallbackParentsV1Marker> for DatagenProvider {
         let metadata = DataResponseMetadata::default();
         Ok(DataResponse {
             metadata,
-            payload: Some(DataPayload::from_owned(parents_data.into())),
+            payload: DataPayload::from_owned(parents_data.into()),
         })
     }
 }
@@ -163,27 +163,25 @@ impl From<&cldr_serde::parent_locales::Resource> for LocaleFallbackParentsV1<'st
 
 #[test]
 fn test_basic() {
-    use icu_locale_core::{
+    use icu::locale::{
         langid,
         subtags::{language, region, script},
     };
 
     let provider = DatagenProvider::new_testing();
-    let likely_subtags: DataPayload<LocaleFallbackLikelySubtagsV1Marker> = provider
-        .load(Default::default())
-        .unwrap()
-        .take_payload()
-        .unwrap();
+    let likely_subtags: DataResponse<LocaleFallbackLikelySubtagsV1Marker> =
+        provider.load(Default::default()).unwrap();
 
     assert_eq!(
         likely_subtags
+            .payload
             .get()
             .l2s
             .get_copied(&language!("zh").into_tinystr().to_unvalidated()),
         Some(script!("Hans"))
     );
     assert_eq!(
-        likely_subtags.get().lr2s.get_copied_2d(
+        likely_subtags.payload.get().lr2s.get_copied_2d(
             &language!("zh").into_tinystr().to_unvalidated(),
             &region!("TW").into_tinystr().to_unvalidated()
         ),
@@ -191,27 +189,26 @@ fn test_basic() {
     );
     assert_eq!(
         likely_subtags
+            .payload
             .get()
             .l2r
             .get_copied(&language!("zh").into_tinystr().to_unvalidated()),
         Some(region!("CN"))
     );
     assert_eq!(
-        likely_subtags.get().ls2r.get_copied_2d(
+        likely_subtags.payload.get().ls2r.get_copied_2d(
             &language!("zh").into_tinystr().to_unvalidated(),
             &script!("Hant").into_tinystr().to_unvalidated()
         ),
         Some(region!("TW"))
     );
 
-    let parents: DataPayload<LocaleFallbackParentsV1Marker> = provider
-        .load(Default::default())
-        .unwrap()
-        .take_payload()
-        .unwrap();
+    let parents: DataResponse<LocaleFallbackParentsV1Marker> =
+        provider.load(Default::default()).unwrap();
 
     assert_eq!(
         parents
+            .payload
             .get()
             .parents
             .get_copied("zh-Hant-MO".into())

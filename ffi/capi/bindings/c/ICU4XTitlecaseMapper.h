@@ -12,7 +12,7 @@
 #include "ICU4XLocale.h"
 #include "ICU4XTitlecaseOptionsV1.d.h"
 #include "ICU4XTitlecaseOptionsV1.h"
-#include "diplomat_result_box_ICU4XTitlecaseMapper_ICU4XError.d.h"
+#include "diplomat_result_box_ICU4XTitlecaseMapper_ICU4XDataError.d.h"
 
 #include "ICU4XTitlecaseMapper.d.h"
 
@@ -22,7 +22,7 @@ extern "C" {
 #endif // __cplusplus
 
 
-diplomat_result_box_ICU4XTitlecaseMapper_ICU4XError ICU4XTitlecaseMapper_create(const ICU4XDataProvider* provider);
+diplomat_result_box_ICU4XTitlecaseMapper_ICU4XDataError ICU4XTitlecaseMapper_create(const ICU4XDataProvider* provider);
 
 void ICU4XTitlecaseMapper_titlecase_segment_v1(const ICU4XTitlecaseMapper* self, const char* s_data, size_t s_len, const ICU4XLocale* locale, ICU4XTitlecaseOptionsV1 options, DiplomatWrite* write);
 

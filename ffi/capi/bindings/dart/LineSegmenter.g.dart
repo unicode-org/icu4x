@@ -29,11 +29,11 @@ final class LineSegmenter implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `new_auto`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_auto) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   factory LineSegmenter.auto(DataProvider provider) {
     final result = _ICU4XLineSegmenter_create_auto(provider._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     return LineSegmenter._fromFfi(result.union.ok, []);
   }
@@ -43,11 +43,11 @@ final class LineSegmenter implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `new_lstm`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_lstm) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   factory LineSegmenter.lstm(DataProvider provider) {
     final result = _ICU4XLineSegmenter_create_lstm(provider._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     return LineSegmenter._fromFfi(result.union.ok, []);
   }
@@ -57,11 +57,11 @@ final class LineSegmenter implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `new_dictionary`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_dictionary) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   factory LineSegmenter.dictionary(DataProvider provider) {
     final result = _ICU4XLineSegmenter_create_dictionary(provider._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     return LineSegmenter._fromFfi(result.union.ok, []);
   }
@@ -71,13 +71,13 @@ final class LineSegmenter implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `new_auto_with_options`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_auto_with_options) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   factory LineSegmenter.autoWithOptions(DataProvider provider, LineBreakOptions options) {
     final temp = ffi2.Arena();
     final result = _ICU4XLineSegmenter_create_auto_with_options_v1(provider._ffi, options._toFfi(temp));
     temp.releaseAll();
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     return LineSegmenter._fromFfi(result.union.ok, []);
   }
@@ -87,13 +87,13 @@ final class LineSegmenter implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `new_lstm_with_options`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_lstm_with_options) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   factory LineSegmenter.lstmWithOptions(DataProvider provider, LineBreakOptions options) {
     final temp = ffi2.Arena();
     final result = _ICU4XLineSegmenter_create_lstm_with_options_v1(provider._ffi, options._toFfi(temp));
     temp.releaseAll();
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     return LineSegmenter._fromFfi(result.union.ok, []);
   }
@@ -103,13 +103,13 @@ final class LineSegmenter implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `new_dictionary_with_options`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_dictionary_with_options) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   factory LineSegmenter.dictionaryWithOptions(DataProvider provider, LineBreakOptions options) {
     final temp = ffi2.Arena();
     final result = _ICU4XLineSegmenter_create_dictionary_with_options_v1(provider._ffi, options._toFfi(temp));
     temp.releaseAll();
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     return LineSegmenter._fromFfi(result.union.ok, []);
   }

@@ -9,11 +9,11 @@ use std::borrow::Cow;
 use std::collections::BTreeMap;
 use std::collections::HashSet;
 
-use icu_experimental::dimension::provider::extended_currency::Count;
+use icu::experimental::dimension::provider::extended_currency::Count;
 use icu_provider::datagen::IterableDataProvider;
 use tinystr::TinyAsciiStr;
 
-use icu_experimental::dimension::provider::extended_currency::*;
+use icu::experimental::dimension::provider::extended_currency::*;
 use icu_provider::prelude::*;
 use icu_provider::DataProvider;
 
@@ -75,7 +75,7 @@ impl DataProvider<CurrencyExtendedDataV1Marker> for crate::DatagenProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(data)),
+            payload: DataPayload::from_owned(data),
         })
     }
 }
@@ -121,7 +121,7 @@ impl IterableDataProvider<CurrencyExtendedDataV1Marker> for DatagenProvider {
 
 #[test]
 fn test_basic() {
-    use icu_locale_core::langid;
+    use icu::locale::langid;
 
     let provider = DatagenProvider::new_testing();
     let en: DataPayload<CurrencyExtendedDataV1Marker> = provider
@@ -131,8 +131,7 @@ fn test_basic() {
             ..Default::default()
         })
         .unwrap()
-        .take_payload()
-        .unwrap();
+        .payload;
     let display_names = en.get().to_owned().display_names;
     assert_eq!(display_names.get(&Count::Zero), None);
     assert_eq!(display_names.get(&Count::One).unwrap(), "US dollar");
@@ -149,8 +148,7 @@ fn test_basic() {
             ..Default::default()
         })
         .unwrap()
-        .take_payload()
-        .unwrap();
+        .payload;
 
     let display_names = fr.get().to_owned().display_names;
     assert_eq!(display_names.get(&Count::Zero), None);

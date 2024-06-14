@@ -7,7 +7,7 @@
 //! Spec reference: <https://unicode.org/reports/tr35/tr35-numbers.html#Number_Format_Patterns>
 
 use displaydoc::Display;
-use icu_decimal::provider::AffixesV1;
+use icu::decimal::provider::AffixesV1;
 #[cfg(feature = "experimental_components")]
 use icu_pattern::{DoublePlaceholderKey, PatternItemCow};
 use itertools::Itertools;

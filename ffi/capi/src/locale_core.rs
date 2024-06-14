@@ -4,7 +4,7 @@
 
 #[diplomat::bridge]
 pub mod ffi {
-    use crate::errors::ffi::ICU4XError;
+    use crate::errors::ffi::ICU4XLocaleParseError;
     use alloc::boxed::Box;
     use core::str;
     use icu_locale_core::extensions::unicode::Key;
@@ -28,7 +28,9 @@ pub mod ffi {
         #[diplomat::rust_link(icu::locale::Locale::try_from_bytes, FnInStruct)]
         #[diplomat::rust_link(icu::locale::Locale::from_str, FnInStruct, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "from_string")]
-        pub fn create_from_string(name: &DiplomatStr) -> Result<Box<ICU4XLocale>, ICU4XError> {
+        pub fn create_from_string(
+            name: &DiplomatStr,
+        ) -> Result<Box<ICU4XLocale>, ICU4XLocaleParseError> {
             Ok(Box::new(ICU4XLocale(Locale::try_from_bytes(name)?)))
         }
 
@@ -78,7 +80,7 @@ pub mod ffi {
         /// Set the language part of the [`ICU4XLocale`].
         #[diplomat::rust_link(icu::locale::Locale::try_from_bytes, FnInStruct)]
         #[diplomat::attr(supports = accessors, setter = "language")]
-        pub fn set_language(&mut self, bytes: &DiplomatStr) -> Result<(), ICU4XError> {
+        pub fn set_language(&mut self, bytes: &DiplomatStr) -> Result<(), ICU4XLocaleParseError> {
             self.0.id.language = if bytes.is_empty() {
                 Language::UND
             } else {
@@ -99,7 +101,7 @@ pub mod ffi {
         /// Set the region part of the [`ICU4XLocale`].
         #[diplomat::rust_link(icu::locale::Locale::try_from_bytes, FnInStruct)]
         #[diplomat::attr(all(supports = accessors, not(dart)), setter = "region")]
-        pub fn set_region(&mut self, bytes: &DiplomatStr) -> Result<(), ICU4XError> {
+        pub fn set_region(&mut self, bytes: &DiplomatStr) -> Result<(), ICU4XLocaleParseError> {
             self.0.id.region = if bytes.is_empty() {
                 None
             } else {
@@ -120,7 +122,7 @@ pub mod ffi {
         /// Set the script part of the [`ICU4XLocale`]. Pass an empty string to remove the script.
         #[diplomat::rust_link(icu::locale::Locale::try_from_bytes, FnInStruct)]
         #[diplomat::attr(all(supports = accessors, not(dart)), setter = "script")]
-        pub fn set_script(&mut self, bytes: &DiplomatStr) -> Result<(), ICU4XError> {
+        pub fn set_script(&mut self, bytes: &DiplomatStr) -> Result<(), ICU4XLocaleParseError> {
             self.0.id.script = if bytes.is_empty() {
                 None
             } else {
@@ -136,7 +138,7 @@ pub mod ffi {
         pub fn canonicalize(
             bytes: &DiplomatStr,
             write: &mut DiplomatWrite,
-        ) -> Result<(), ICU4XError> {
+        ) -> Result<(), ICU4XLocaleParseError> {
             let _infallible = Locale::canonicalize(bytes)?.write_to(write);
             Ok(())
         }

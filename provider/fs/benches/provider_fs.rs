@@ -15,13 +15,12 @@ fn overview_bench(c: &mut Criterion) {
         b.iter(|| {
             let provider = FsDataProvider::try_new("./tests/data/json")
                 .expect("Loading file from testdata directory");
-            let _: DataPayload<HelloWorldV1Marker> = black_box(&provider)
+            let _: DataResponse<HelloWorldV1Marker> = black_box(&provider)
                 .as_deserializing()
                 .load(DataRequest {
                     locale: &langid!("ru").into(),
                     ..Default::default()
                 })
-                .and_then(DataResponse::take_payload)
                 .expect("Loading was successful");
         });
     });
@@ -41,26 +40,24 @@ fn json_bench(c: &mut Criterion) {
 
     c.bench_function("json/generic", |b| {
         b.iter(|| {
-            let _: DataPayload<HelloWorldV1Marker> = black_box(&provider)
+            let _: DataResponse<HelloWorldV1Marker> = black_box(&provider)
                 .as_deserializing()
                 .load(DataRequest {
                     locale: &langid!("ru").into(),
                     ..Default::default()
                 })
-                .and_then(DataResponse::take_payload)
                 .expect("Loading was successful");
         });
     });
 
     c.bench_function("json/erased_serde", |b| {
         b.iter(|| {
-            let _: DataPayload<HelloWorldV1Marker> = black_box(&provider as &dyn BufferProvider)
+            let _: DataResponse<HelloWorldV1Marker> = black_box(&provider as &dyn BufferProvider)
                 .as_deserializing()
                 .load(DataRequest {
                     locale: &langid!("ru").into(),
                     ..Default::default()
                 })
-                .and_then(DataResponse::take_payload)
                 .expect("Loading was successful");
         });
     });
@@ -73,27 +70,24 @@ fn bincode_bench(c: &mut Criterion) {
 
     c.bench_function("bincode/generic", |b| {
         b.iter(|| {
-            let _: DataPayload<HelloWorldV1Marker> = black_box(&provider)
+            let _: DataResponse<HelloWorldV1Marker> = black_box(&provider)
                 .as_deserializing()
                 .load(DataRequest {
                     locale: &langid!("ru").into(),
                     ..Default::default()
                 })
-                .and_then(DataResponse::take_payload)
                 .expect("Loading was successful");
         });
     });
 
     c.bench_function("bincode/erased_serde", |b| {
         b.iter(|| {
-            let _: DataPayload<HelloWorldV1Marker> = black_box(&provider as &dyn BufferProvider)
+            let _: DataResponse<HelloWorldV1Marker> = black_box(&provider as &dyn BufferProvider)
                 .as_deserializing()
                 .load(DataRequest {
                     locale: &langid!("ru").into(),
                     ..Default::default()
                 })
-                .expect("The data should be valid")
-                .take_payload()
                 .expect("Loading was successful");
         });
     });
@@ -106,27 +100,24 @@ fn postcard_bench(c: &mut Criterion) {
 
     c.bench_function("postcard/generic", |b| {
         b.iter(|| {
-            let _: DataPayload<HelloWorldV1Marker> = black_box(&provider)
+            let _: DataResponse<HelloWorldV1Marker> = black_box(&provider)
                 .as_deserializing()
                 .load(DataRequest {
                     locale: &langid!("ru").into(),
                     ..Default::default()
                 })
-                .expect("The data should be valid")
-                .take_payload()
                 .expect("Loading was successful");
         });
     });
 
     c.bench_function("postcard/erased_serde", |b| {
         b.iter(|| {
-            let _: DataPayload<HelloWorldV1Marker> = black_box(&provider as &dyn BufferProvider)
+            let _: DataResponse<HelloWorldV1Marker> = black_box(&provider as &dyn BufferProvider)
                 .as_deserializing()
                 .load(DataRequest {
                     locale: &langid!("ru").into(),
                     ..Default::default()
                 })
-                .and_then(DataResponse::take_payload)
                 .expect("Loading was successful");
         });
     });

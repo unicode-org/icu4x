@@ -44,7 +44,7 @@ impl DatagenProvider {
 
 #[test]
 fn test_missing_locale() {
-    use icu_locale_core::langid;
+    use icu::locale::langid;
     let provider = DatagenProvider::new_testing();
     assert!(DataProvider::<HelloWorldV1Marker>::load(
         &provider,

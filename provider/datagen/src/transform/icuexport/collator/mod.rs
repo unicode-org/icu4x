@@ -7,16 +7,16 @@
 
 use crate::provider::DatagenProvider;
 use crate::provider::IterableDataProviderCached;
-use icu_collator::provider::*;
-use icu_collections::codepointtrie::CodePointTrie;
-use icu_locale::provider::CollationFallbackSupplementV1Marker;
-use icu_locale::provider::LocaleFallbackSupplementV1;
-use icu_locale_core::extensions::unicode::{key, value};
-use icu_locale_core::subtags::language;
-use icu_locale_core::subtags::Language;
-use icu_locale_core::subtags::Region;
-use icu_locale_core::subtags::Script;
-use icu_locale_core::LanguageIdentifier;
+use icu::collator::provider::*;
+use icu::collections::codepointtrie::CodePointTrie;
+use icu::locale::extensions::unicode::{key, value};
+use icu::locale::provider::CollationFallbackSupplementV1Marker;
+use icu::locale::provider::LocaleFallbackSupplementV1;
+use icu::locale::subtags::language;
+use icu::locale::subtags::Language;
+use icu::locale::subtags::Region;
+use icu::locale::subtags::Script;
+use icu::locale::LanguageIdentifier;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
@@ -99,7 +99,7 @@ impl DataProvider<CollationFallbackSupplementV1Marker> for DatagenProvider {
         };
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(data)),
+            payload: DataPayload::from_owned(data),
         })
     }
 }
@@ -192,12 +192,12 @@ macro_rules! collation_provider {
                         })?;
 
                     Ok(DataResponse {
-                        metadata: DataResponseMetadata::default(),
+                        metadata: Default::default(),
                         // The struct conversion is macro-based instead of
                         // using a method on the Serde struct, because the
                         // method approach caused lifetime issues that I
                         // didn't know how to solve.
-                        payload: Some(DataPayload::from_owned($conversion)),
+                        payload: DataPayload::from_owned($conversion),
                     })
                 }
             }
@@ -231,7 +231,7 @@ collation_provider!(
         CollationDataV1Marker,
         CollationData,
         "_data",
-        icu_collator::provider::CollationDataV1 {
+        icu::collator::provider::CollationDataV1 {
             trie: CodePointTrie::<u32>::try_from(&toml_data.trie)
                 .map_err(|e| DataError::custom("trie conversion").with_display_context(&e))?,
             contexts: ZeroVec::alloc_from_slice(&toml_data.contexts),
@@ -243,7 +243,7 @@ collation_provider!(
         CollationDiacriticsV1Marker,
         CollationDiacritics,
         "_dia",
-        icu_collator::provider::CollationDiacriticsV1 {
+        icu::collator::provider::CollationDiacriticsV1 {
             secondaries: ZeroVec::alloc_from_slice(&toml_data.secondaries),
         }
     ),
@@ -251,7 +251,7 @@ collation_provider!(
         CollationJamoV1Marker,
         CollationJamo,
         "_jamo",
-        icu_collator::provider::CollationJamoV1 {
+        icu::collator::provider::CollationJamoV1 {
             ce32s: ZeroVec::alloc_from_slice(&toml_data.ce32s),
         }
     ),
@@ -259,7 +259,7 @@ collation_provider!(
         CollationMetadataV1Marker,
         CollationMetadata,
         "_meta",
-        icu_collator::provider::CollationMetadataV1 {
+        icu::collator::provider::CollationMetadataV1 {
             bits: toml_data.bits,
         }
     ),
@@ -267,7 +267,7 @@ collation_provider!(
         CollationReorderingV1Marker,
         CollationReordering,
         "_reord",
-        icu_collator::provider::CollationReorderingV1 {
+        icu::collator::provider::CollationReorderingV1 {
             min_high_no_reorder: toml_data.min_high_no_reorder,
             reorder_table: ZeroVec::alloc_from_slice(&toml_data.reorder_table),
             reorder_ranges: ZeroVec::alloc_from_slice(&toml_data.reorder_ranges),
@@ -277,7 +277,7 @@ collation_provider!(
         CollationSpecialPrimariesV1Marker,
         CollationSpecialPrimaries,
         "_prim",
-        icu_collator::provider::CollationSpecialPrimariesV1 {
+        icu::collator::provider::CollationSpecialPrimariesV1 {
             last_primaries: ZeroVec::alloc_from_slice(&toml_data.last_primaries),
             numeric_primary: toml_data.numeric_primary,
         }

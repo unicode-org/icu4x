@@ -11,8 +11,10 @@ pub mod ffi {
     use icu_locale::fallback::LocaleFallbackerWithConfig;
     use icu_locale::LocaleFallbacker;
 
+    use crate::errors::ffi::ICU4XLocaleParseError;
     use crate::{
-        errors::ffi::ICU4XError, locale_core::ffi::ICU4XLocale, provider::ffi::ICU4XDataProvider,
+        errors::ffi::ICU4XDataError, locale_core::ffi::ICU4XLocale,
+        provider::ffi::ICU4XDataProvider,
     };
 
     /// An object that runs the ICU4X locale fallback algorithm.
@@ -80,7 +82,7 @@ pub mod ffi {
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
         pub fn create(
             provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XLocaleFallbacker>, ICU4XError> {
+        ) -> Result<Box<ICU4XLocaleFallbacker>, ICU4XDataError> {
             Ok(Box::new(ICU4XLocaleFallbacker(call_constructor!(
                 LocaleFallbacker::new [r => Ok(r.static_to_owned())],
                 LocaleFallbacker::try_new_with_any_provider,
@@ -109,7 +111,7 @@ pub mod ffi {
         pub fn for_config<'a, 'temp>(
             &'a self,
             config: ICU4XLocaleFallbackConfig<'temp>,
-        ) -> Result<Box<ICU4XLocaleFallbackerWithConfig<'a>>, ICU4XError> {
+        ) -> Result<Box<ICU4XLocaleFallbackerWithConfig<'a>>, ICU4XLocaleParseError> {
             Ok(Box::new(ICU4XLocaleFallbackerWithConfig(
                 self.0.for_config(LocaleFallbackConfig::try_from(config)?),
             )))
@@ -176,7 +178,7 @@ pub mod ffi {
 }
 
 impl TryFrom<ffi::ICU4XLocaleFallbackConfig<'_>> for icu_locale::fallback::LocaleFallbackConfig {
-    type Error = crate::errors::ffi::ICU4XError;
+    type Error = crate::errors::ffi::ICU4XLocaleParseError;
     fn try_from(other: ffi::ICU4XLocaleFallbackConfig) -> Result<Self, Self::Error> {
         let mut result = Self::default();
         result.priority = other.priority.into();

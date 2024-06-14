@@ -7,8 +7,6 @@
 use crate::prelude::*;
 use crate::response::DataPayloadInner;
 use core::any::Any;
-use core::convert::TryFrom;
-use core::convert::TryInto;
 use yoke::trait_hack::YokeTraitHack;
 use yoke::Yokeable;
 use zerofrom::ZeroFrom;
@@ -209,7 +207,12 @@ impl DataPayload<AnyMarker> {
         M::Yokeable: ZeroFrom<'static, M::Yokeable>,
         M::Yokeable: MaybeSendSync,
     {
-        self.try_unwrap_owned()?.downcast()
+        match self.0 {
+            DataPayloadInner::Yoke(yoke) => yoke.try_into_yokeable().ok(),
+            DataPayloadInner::StaticRef(_) => None,
+        }
+        .ok_or_else(|| DataError::for_type::<M>().with_str_context("Payload not owned"))?
+        .downcast()
     }
 }
 
@@ -222,19 +225,8 @@ pub struct AnyResponse {
     /// Metadata about the returned object.
     pub metadata: DataResponseMetadata,
 
-    /// The object itself; `None` if it was not loaded.
-    pub payload: Option<AnyPayload>,
-}
-
-impl TryFrom<DataResponse<AnyMarker>> for AnyResponse {
-    type Error = DataError;
-    #[inline]
-    fn try_from(other: DataResponse<AnyMarker>) -> Result<Self, Self::Error> {
-        Ok(Self {
-            metadata: other.metadata,
-            payload: other.payload.map(|p| p.try_unwrap_owned()).transpose()?,
-        })
-    }
+    /// The object itself
+    pub payload: AnyPayload,
 }
 
 impl From<AnyResponse> for DataResponse<AnyMarker> {
@@ -242,7 +234,7 @@ impl From<AnyResponse> for DataResponse<AnyMarker> {
     fn from(other: AnyResponse) -> Self {
         Self {
             metadata: other.metadata,
-            payload: other.payload.map(DataPayload::from_owned),
+            payload: DataPayload::from_owned(other.payload),
         }
     }
 }
@@ -259,7 +251,7 @@ impl AnyResponse {
     {
         Ok(DataResponse {
             metadata: self.metadata,
-            payload: self.payload.map(|p| p.downcast()).transpose()?,
+            payload: self.payload.downcast()?,
         })
     }
 
@@ -273,11 +265,7 @@ impl AnyResponse {
     {
         Ok(DataResponse {
             metadata: self.metadata.clone(),
-            payload: self
-                .payload
-                .as_ref()
-                .map(|p| p.downcast_cloned())
-                .transpose()?,
+            payload: self.payload.downcast_cloned()?,
         })
     }
 }
@@ -292,7 +280,7 @@ where
     pub fn wrap_into_any_response(self) -> AnyResponse {
         AnyResponse {
             metadata: self.metadata,
-            payload: self.payload.map(|p| p.wrap_into_any_payload()),
+            payload: self.payload.wrap_into_any_payload(),
         }
     }
 }
@@ -320,8 +308,7 @@ where
 ///         .expect("load should succeed")
 ///         .downcast::<HelloWorldV1Marker>()
 ///         .expect("types should match")
-///         .take_payload()
-///         .unwrap()
+///         .payload
 ///         .get(),
 ///     &HelloWorldV1 {
 ///         message: Cow::Borrowed("Hallo Welt"),
@@ -336,8 +323,7 @@ where
 ///     downcasting_provider
 ///         .load(req)
 ///         .expect("load should succeed")
-///         .take_payload()
-///         .unwrap()
+///         .payload
 ///         .get(),
 ///     &HelloWorldV1 {
 ///         message: Cow::Borrowed("Hallo Welt"),
@@ -405,7 +391,15 @@ where
 {
     #[inline]
     fn load_any(&self, marker: DataMarkerInfo, req: DataRequest) -> Result<AnyResponse, DataError> {
-        self.0.load_data(marker, req)?.try_into()
+        let DataResponse { metadata, payload } = self.0.load_data(marker, req)?;
+        Ok(AnyResponse {
+            metadata,
+            payload: match payload.0 {
+                DataPayloadInner::Yoke(yoke) => yoke.try_into_yokeable().ok(),
+                DataPayloadInner::StaticRef(_) => None,
+            }
+            .ok_or_else(|| DataError::custom("Payload not owned"))?,
+        })
     }
 }
 
@@ -505,17 +499,10 @@ mod test {
 
     #[test]
     fn test_non_owned_any_marker() {
-        // This test demonstrates a code path that can trigger the InvalidState error kind.
+        // This test demonstrates a code path that can trigger a downcast error
         let payload_result: DataPayload<AnyMarker> =
             DataPayload::from_owned_buffer(Box::new(*b"pretend we're borrowing from here"))
                 .map_project(|_, _| AnyPayload::from_static_ref(&CONST_DATA));
-        let err = payload_result.downcast::<HelloWorldV1Marker>().unwrap_err();
-        assert!(matches!(
-            err,
-            DataError {
-                kind: DataErrorKind::InvalidState,
-                ..
-            }
-        ));
+        payload_result.downcast::<HelloWorldV1Marker>().unwrap_err();
     }
 }

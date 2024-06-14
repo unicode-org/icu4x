@@ -68,7 +68,7 @@ impl RegionDisplayNames {
                 locale,
                 ..Default::default()
             })?
-            .take_payload()?;
+            .payload;
 
         Ok(Self {
             options,
@@ -143,7 +143,7 @@ impl ScriptDisplayNames {
                 locale,
                 ..Default::default()
             })?
-            .take_payload()?;
+            .payload;
 
         Ok(Self {
             options,
@@ -219,7 +219,7 @@ impl VariantDisplayNames {
                 locale,
                 ..Default::default()
             })?
-            .take_payload()?;
+            .payload;
 
         Ok(Self {
             options,
@@ -288,7 +288,7 @@ impl LanguageDisplayNames {
                 locale,
                 ..Default::default()
             })?
-            .take_payload()?;
+            .payload;
 
         Ok(Self {
             options,
@@ -392,11 +392,11 @@ impl LocaleDisplayNamesFormatter {
 
         Ok(Self {
             options,
-            language_data: provider.load(req)?.take_payload()?,
-            locale_data: provider.load(req)?.take_payload()?,
-            script_data: provider.load(req)?.take_payload()?,
-            region_data: provider.load(req)?.take_payload()?,
-            variant_data: provider.load(req)?.take_payload()?,
+            language_data: provider.load(req)?.payload,
+            locale_data: provider.load(req)?.payload,
+            script_data: provider.load(req)?.payload,
+            region_data: provider.load(req)?.payload,
+            variant_data: provider.load(req)?.payload,
         })
     }
 

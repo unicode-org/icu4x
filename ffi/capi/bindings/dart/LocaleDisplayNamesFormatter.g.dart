@@ -26,13 +26,13 @@ final class LocaleDisplayNamesFormatter implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/displaynames/struct.LocaleDisplayNamesFormatter.html#method.try_new) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   factory LocaleDisplayNamesFormatter(DataProvider provider, Locale locale, DisplayNamesOptions options) {
     final temp = ffi2.Arena();
     final result = _ICU4XLocaleDisplayNamesFormatter_create(provider._ffi, locale._ffi, options._toFfi(temp));
     temp.releaseAll();
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     return LocaleDisplayNamesFormatter._fromFfi(result.union.ok, []);
   }

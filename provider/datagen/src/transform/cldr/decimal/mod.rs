@@ -6,10 +6,10 @@ use std::collections::HashSet;
 
 use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
-use icu_locale::subtags::Subtag;
-use icu_locale_core::extensions::unicode::key;
-use icu_locale_core::extensions::unicode::Value;
-use icu_locale_core::LanguageIdentifier;
+use icu::locale::extensions::unicode::key;
+use icu::locale::extensions::unicode::Value;
+use icu::locale::subtags::Subtag;
+use icu::locale::LanguageIdentifier;
 use icu_provider::prelude::*;
 use tinystr::TinyAsciiStr;
 

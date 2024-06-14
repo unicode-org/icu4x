@@ -4,7 +4,7 @@
 
 #[diplomat::bridge]
 pub mod ffi {
-    use crate::{errors::ffi::ICU4XError, provider::ffi::ICU4XDataProvider};
+    use crate::{errors::ffi::ICU4XDataError, provider::ffi::ICU4XDataProvider};
     use alloc::boxed::Box;
     use diplomat_runtime::DiplomatStr;
     use icu_experimental::units::converter::UnitsConverter;
@@ -28,7 +28,7 @@ pub mod ffi {
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
         pub fn create(
             provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XUnitsConverterFactory>, ICU4XError> {
+        ) -> Result<Box<ICU4XUnitsConverterFactory>, ICU4XDataError> {
             Ok(Box::new(ICU4XUnitsConverterFactory(call_constructor!(
                 ConverterFactory::new [r => Ok(r)],
                 ConverterFactory::try_new_with_any_provider,

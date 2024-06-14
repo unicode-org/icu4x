@@ -13,5 +13,13 @@ pub enum PatternError {
     InvalidPlaceholder,
 }
 
+/// Error type for [`crate::Pattern::try_from_bytes_store`].
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[non_exhaustive]
+pub enum PatternOrUtf8Error<E> {
+    Pattern(PatternError),
+    Utf8(E),
+}
+
 #[cfg(feature = "std")]
 impl std::error::Error for PatternError {}

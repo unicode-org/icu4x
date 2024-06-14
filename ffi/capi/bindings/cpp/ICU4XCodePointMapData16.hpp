@@ -13,8 +13,8 @@
 #include "ICU4XCodePointMapData16.h"
 #include "ICU4XCodePointRangeIterator.hpp"
 #include "ICU4XCodePointSetData.hpp"
+#include "ICU4XDataError.hpp"
 #include "ICU4XDataProvider.hpp"
-#include "ICU4XError.hpp"
 
 
 inline uint16_t ICU4XCodePointMapData16::get(char32_t cp) const {
@@ -47,9 +47,9 @@ inline std::unique_ptr<ICU4XCodePointSetData> ICU4XCodePointMapData16::get_set_f
   return std::unique_ptr<ICU4XCodePointSetData>(ICU4XCodePointSetData::FromFFI(result));
 }
 
-inline diplomat::result<std::unique_ptr<ICU4XCodePointMapData16>, ICU4XError> ICU4XCodePointMapData16::load_script(const ICU4XDataProvider& provider) {
+inline diplomat::result<std::unique_ptr<ICU4XCodePointMapData16>, ICU4XDataError> ICU4XCodePointMapData16::load_script(const ICU4XDataProvider& provider) {
   auto result = capi::ICU4XCodePointMapData16_load_script(provider.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XCodePointMapData16>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XCodePointMapData16>>(std::unique_ptr<ICU4XCodePointMapData16>(ICU4XCodePointMapData16::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XCodePointMapData16>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XCodePointMapData16>, ICU4XDataError>(diplomat::Ok<std::unique_ptr<ICU4XCodePointMapData16>>(std::unique_ptr<ICU4XCodePointMapData16>(ICU4XCodePointMapData16::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XCodePointMapData16>, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
 
 inline const capi::ICU4XCodePointMapData16* ICU4XCodePointMapData16::AsFFI() const {

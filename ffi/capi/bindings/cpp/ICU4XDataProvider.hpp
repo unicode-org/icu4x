@@ -10,8 +10,8 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
+#include "ICU4XDataError.hpp"
 #include "ICU4XDataProvider.h"
-#include "ICU4XError.hpp"
 #include "ICU4XLocaleFallbacker.hpp"
 
 
@@ -20,16 +20,16 @@ inline std::unique_ptr<ICU4XDataProvider> ICU4XDataProvider::create_compiled() {
   return std::unique_ptr<ICU4XDataProvider>(ICU4XDataProvider::FromFFI(result));
 }
 
-inline diplomat::result<std::unique_ptr<ICU4XDataProvider>, ICU4XError> ICU4XDataProvider::create_fs(std::string_view path) {
+inline diplomat::result<std::unique_ptr<ICU4XDataProvider>, ICU4XDataError> ICU4XDataProvider::create_fs(std::string_view path) {
   auto result = capi::ICU4XDataProvider_create_fs(path.data(),
     path.size());
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XDataProvider>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XDataProvider>>(std::unique_ptr<ICU4XDataProvider>(ICU4XDataProvider::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XDataProvider>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XDataProvider>, ICU4XDataError>(diplomat::Ok<std::unique_ptr<ICU4XDataProvider>>(std::unique_ptr<ICU4XDataProvider>(ICU4XDataProvider::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XDataProvider>, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::unique_ptr<ICU4XDataProvider>, ICU4XError> ICU4XDataProvider::create_from_byte_slice(diplomat::span<const uint8_t> blob) {
+inline diplomat::result<std::unique_ptr<ICU4XDataProvider>, ICU4XDataError> ICU4XDataProvider::create_from_byte_slice(diplomat::span<const uint8_t> blob) {
   auto result = capi::ICU4XDataProvider_create_from_byte_slice(blob.data(),
     blob.size());
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XDataProvider>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XDataProvider>>(std::unique_ptr<ICU4XDataProvider>(ICU4XDataProvider::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XDataProvider>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XDataProvider>, ICU4XDataError>(diplomat::Ok<std::unique_ptr<ICU4XDataProvider>>(std::unique_ptr<ICU4XDataProvider>(ICU4XDataProvider::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XDataProvider>, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
 
 inline std::unique_ptr<ICU4XDataProvider> ICU4XDataProvider::create_empty() {
@@ -37,27 +37,27 @@ inline std::unique_ptr<ICU4XDataProvider> ICU4XDataProvider::create_empty() {
   return std::unique_ptr<ICU4XDataProvider>(ICU4XDataProvider::FromFFI(result));
 }
 
-inline diplomat::result<std::monostate, ICU4XError> ICU4XDataProvider::fork_by_key(ICU4XDataProvider& other) {
+inline diplomat::result<std::monostate, ICU4XDataError> ICU4XDataProvider::fork_by_key(ICU4XDataProvider& other) {
   auto result = capi::ICU4XDataProvider_fork_by_key(this->AsFFI(),
     other.AsFFI());
-  return result.is_ok ? diplomat::result<std::monostate, ICU4XError>(diplomat::Ok<std::monostate>()) : diplomat::result<std::monostate, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::monostate, ICU4XDataError>(diplomat::Ok<std::monostate>()) : diplomat::result<std::monostate, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::monostate, ICU4XError> ICU4XDataProvider::fork_by_locale(ICU4XDataProvider& other) {
+inline diplomat::result<std::monostate, ICU4XDataError> ICU4XDataProvider::fork_by_locale(ICU4XDataProvider& other) {
   auto result = capi::ICU4XDataProvider_fork_by_locale(this->AsFFI(),
     other.AsFFI());
-  return result.is_ok ? diplomat::result<std::monostate, ICU4XError>(diplomat::Ok<std::monostate>()) : diplomat::result<std::monostate, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::monostate, ICU4XDataError>(diplomat::Ok<std::monostate>()) : diplomat::result<std::monostate, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::monostate, ICU4XError> ICU4XDataProvider::enable_locale_fallback() {
+inline diplomat::result<std::monostate, ICU4XDataError> ICU4XDataProvider::enable_locale_fallback() {
   auto result = capi::ICU4XDataProvider_enable_locale_fallback(this->AsFFI());
-  return result.is_ok ? diplomat::result<std::monostate, ICU4XError>(diplomat::Ok<std::monostate>()) : diplomat::result<std::monostate, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::monostate, ICU4XDataError>(diplomat::Ok<std::monostate>()) : diplomat::result<std::monostate, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::monostate, ICU4XError> ICU4XDataProvider::enable_locale_fallback_with(const ICU4XLocaleFallbacker& fallbacker) {
+inline diplomat::result<std::monostate, ICU4XDataError> ICU4XDataProvider::enable_locale_fallback_with(const ICU4XLocaleFallbacker& fallbacker) {
   auto result = capi::ICU4XDataProvider_enable_locale_fallback_with(this->AsFFI(),
     fallbacker.AsFFI());
-  return result.is_ok ? diplomat::result<std::monostate, ICU4XError>(diplomat::Ok<std::monostate>()) : diplomat::result<std::monostate, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::monostate, ICU4XDataError>(diplomat::Ok<std::monostate>()) : diplomat::result<std::monostate, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
 
 inline const capi::ICU4XDataProvider* ICU4XDataProvider::AsFFI() const {

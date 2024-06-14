@@ -4,7 +4,7 @@
 
 #[diplomat::bridge]
 pub mod ffi {
-    use crate::errors::ffi::ICU4XError;
+    use crate::errors::ffi::ICU4XDataError;
     use crate::provider::ffi::ICU4XDataProvider;
     use alloc::boxed::Box;
     use core::convert::TryFrom;
@@ -51,7 +51,7 @@ pub mod ffi {
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
         pub fn create(
             provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XGraphemeClusterSegmenter>, ICU4XError> {
+        ) -> Result<Box<ICU4XGraphemeClusterSegmenter>, ICU4XDataError> {
             Ok(Box::new(ICU4XGraphemeClusterSegmenter(call_constructor!(
                 GraphemeClusterSegmenter::new [r => Ok(r)],
                 GraphemeClusterSegmenter::try_new_with_any_provider,

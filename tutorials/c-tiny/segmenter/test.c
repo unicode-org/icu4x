@@ -9,7 +9,7 @@
 int main(int argc, char *argv[]) {
     ICU4XDataProvider* provider = ICU4XDataProvider_create_compiled();
 
-    diplomat_result_box_ICU4XLineSegmenter_ICU4XError segmenter_result = ICU4XLineSegmenter_create_auto(provider);
+    diplomat_result_box_ICU4XLineSegmenter_ICU4XDataError segmenter_result = ICU4XLineSegmenter_create_auto(provider);
     if (!segmenter_result.is_ok)  {
         printf("Failed to create ICU4XLineSegmenter\n");
         return 1;

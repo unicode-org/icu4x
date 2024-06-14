@@ -48,14 +48,12 @@ fn make_testdata() {
             // Generates a stub data directory that can be used with `ICU4X_DATA_DIR`
             // for faster development and debugging. See CONTRIBUTING.md
             Box::new(StubExporter(
-                crate::baked_exporter::BakedExporter::new(
-                    "tests/data/baked".into(),
-                    crate::baked_exporter::Options {
-                        overwrite: true,
-                        pretty: true,
-                        ..Default::default()
-                    },
-                )
+                crate::baked_exporter::BakedExporter::new("tests/data/baked".into(), {
+                    let mut options = crate::baked_exporter::Options::default();
+                    options.overwrite = true;
+                    options.pretty = true;
+                    options
+                })
                 .unwrap(),
             )),
             Box::new(ZeroCopyCheckExporter {
@@ -70,7 +68,7 @@ fn make_testdata() {
         .with_markers(crate::all_markers())
         .with_locales_and_fallback(
             LOCALES.iter().cloned().map(LocaleFamily::with_descendants),
-            Default::default(),
+            FallbackOptions::no_deduplication(),
         )
         .with_segmenter_models([
             "thaidict".into(),
@@ -105,20 +103,8 @@ impl<E: DataExporter> DataExporter for StubExporter<E> {
         self.0.flush(marker)
     }
 
-    fn flush_with_built_in_fallback(
-        &self,
-        marker: DataMarkerInfo,
-        fallback_mode: BuiltInFallbackMode,
-    ) -> Result<(), DataError> {
-        self.0.flush_with_built_in_fallback(marker, fallback_mode)
-    }
-
     fn close(&mut self) -> Result<(), DataError> {
         self.0.close()
-    }
-
-    fn supports_built_in_fallback(&self) -> bool {
-        self.0.supports_built_in_fallback()
     }
 }
 
@@ -135,7 +121,7 @@ struct ZeroCopyCheckExporter {
 // Every entry in this list is a bug that needs to be addressed before stabilization.
 const EXPECTED_VIOLATIONS: &[DataMarkerInfo] = &[
     // https://github.com/unicode-org/icu4x/issues/1678
-    icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::INFO,
+    icu::datetime::provider::calendar::DateSkeletonPatternsV1Marker::INFO,
 ];
 
 // Types in this list can be zero-copy deserialized (and do not contain allocated data),
@@ -147,9 +133,9 @@ const EXPECTED_TRANSIENT_VIOLATIONS: &[DataMarkerInfo] = &[
     // Regex DFAs need to be validated, which involved creating a BTreeMap.
     // If required we could avoid this using one of the approaches in
     // https://github.com/unicode-org/icu4x/pulls/3697.
-    icu_list::provider::AndListV1Marker::INFO,
-    icu_list::provider::OrListV1Marker::INFO,
-    icu_list::provider::UnitListV1Marker::INFO,
+    icu::list::provider::AndListV1Marker::INFO,
+    icu::list::provider::OrListV1Marker::INFO,
+    icu::list::provider::UnitListV1Marker::INFO,
 ];
 
 impl DataExporter for ZeroCopyCheckExporter {

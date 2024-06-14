@@ -236,7 +236,7 @@ impl WordSegmenter {
             + ?Sized,
     {
         Ok(Self {
-            payload: provider.load(Default::default())?.take_payload()?,
+            payload: provider.load(Default::default())?.payload,
             complex: ComplexPayloads::try_new_auto(provider)?,
         })
     }
@@ -310,7 +310,7 @@ impl WordSegmenter {
             + ?Sized,
     {
         Ok(Self {
-            payload: provider.load(Default::default())?.take_payload()?,
+            payload: provider.load(Default::default())?.payload,
             complex: ComplexPayloads::try_new_lstm(provider)?,
         })
     }
@@ -377,7 +377,7 @@ impl WordSegmenter {
             + ?Sized,
     {
         Ok(Self {
-            payload: provider.load(Default::default())?.take_payload()?,
+            payload: provider.load(Default::default())?.payload,
             complex: ComplexPayloads::try_new_dict(provider)?,
         })
     }

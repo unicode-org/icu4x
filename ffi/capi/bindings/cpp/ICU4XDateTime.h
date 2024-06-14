@@ -20,7 +20,7 @@
 #include "ICU4XWeekCalculator.h"
 #include "ICU4XWeekOf.d.h"
 #include "ICU4XWeekOf.h"
-#include "diplomat_result_box_ICU4XDateTime_ICU4XError.d.h"
+#include "diplomat_result_box_ICU4XDateTime_ICU4XCalendarError.d.h"
 
 #include "ICU4XDateTime.d.h"
 
@@ -30,9 +30,9 @@ extern "C" {
 #endif // __cplusplus
 
 
-diplomat_result_box_ICU4XDateTime_ICU4XError ICU4XDateTime_create_from_iso_in_calendar(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond, const ICU4XCalendar* calendar);
+diplomat_result_box_ICU4XDateTime_ICU4XCalendarError ICU4XDateTime_create_from_iso_in_calendar(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond, const ICU4XCalendar* calendar);
 
-diplomat_result_box_ICU4XDateTime_ICU4XError ICU4XDateTime_create_from_codes_in_calendar(const char* era_code_data, size_t era_code_len, int32_t year, const char* month_code_data, size_t month_code_len, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond, const ICU4XCalendar* calendar);
+diplomat_result_box_ICU4XDateTime_ICU4XCalendarError ICU4XDateTime_create_from_codes_in_calendar(const char* era_code_data, size_t era_code_len, int32_t year, const char* month_code_data, size_t month_code_len, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond, const ICU4XCalendar* calendar);
 
 ICU4XDateTime* ICU4XDateTime_create_from_date_and_time(const ICU4XDate* date, const ICU4XTime* time);
 

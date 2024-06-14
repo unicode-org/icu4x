@@ -8,8 +8,8 @@ use std::marker::PhantomData;
 use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
 use crate::provider::IterableDataProviderCached;
-use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
-use icu_properties::provider::*;
+use icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList;
+use icu::properties::provider::*;
 use icu_provider::prelude::*;
 use itertools::Itertools;
 
@@ -33,7 +33,7 @@ macro_rules! exemplar_chars_impls {
 
                 Ok(DataResponse {
                     metadata: Default::default(),
-                    payload: Some(DataPayload::from_owned(
+                    payload: DataPayload::from_owned(
                         PropertyUnicodeSetV1::try_from(AnnotatedResource::<$data_marker_name>(
                             &data,
                             PhantomData,
@@ -42,7 +42,7 @@ macro_rules! exemplar_chars_impls {
                             DataError::custom("data for exemplar characters")
                                 .with_display_context(&e)
                         })?,
-                    )),
+                    ),
                 })
             }
         }
@@ -322,8 +322,8 @@ fn string_to_prop_unicodeset(s: &str) -> PropertyUnicodeSetV1<'static> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_locale_core::langid;
-    use icu_properties::sets::UnicodeSetData;
+    use icu::locale::langid;
+    use icu::properties::sets::UnicodeSetData;
 
     #[test]
     fn test_parse_exemplar_chars() {
@@ -511,13 +511,11 @@ mod tests {
     fn test_basic() {
         let provider = DatagenProvider::new_testing();
 
-        let data: DataPayload<ExemplarCharactersMainV1Marker> = provider
+        let data: DataResponse<ExemplarCharactersMainV1Marker> = provider
             .load(DataRequest {
                 locale: &langid!("en-001").into(),
                 ..Default::default()
             })
-            .unwrap()
-            .take_payload()
             .unwrap();
 
         let exp_chars = [
@@ -526,7 +524,7 @@ mod tests {
         ];
         let exp_chars_cpilsl = CodePointInversionListAndStringList::from_iter(exp_chars);
 
-        let actual = UnicodeSetData::from_data(data);
+        let actual = UnicodeSetData::from_data(data.payload);
         let act_chars_cpilsl = actual.to_code_point_inversion_list_string_list();
 
         assert_eq!(exp_chars_cpilsl, act_chars_cpilsl,);
