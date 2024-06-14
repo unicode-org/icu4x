@@ -495,21 +495,16 @@ impl DataExporter for BakedExporter {
                 let mut idents = reqs
                     .iter()
                     .map(|(locale, marker_attributes)| {
-                        DataRequest {
-                            locale,
-                            marker_attributes,
-                            ..Default::default()
-                        }
-                        .legacy_encode()
-                        .chars()
-                        .map(|ch| {
-                            if ch == '-' {
-                                '_'
-                            } else {
-                                ch.to_ascii_uppercase()
-                            }
-                        })
-                        .collect::<String>()
+                        format!("_{}_{}", marker_attributes as &str, locale)
+                            .chars()
+                            .map(|ch| {
+                                if ch == '-' {
+                                    '_'
+                                } else {
+                                    ch.to_ascii_uppercase()
+                                }
+                            })
+                            .collect::<String>()
                     })
                     .collect::<Vec<_>>();
                 idents.sort();
@@ -573,27 +568,41 @@ impl DataExporter for BakedExporter {
                 }
             };
 
-            let mut legacy_encoded = deduplicated_values
+            let reqs = deduplicated_values
                 .values()
                 .flat_map(|s| {
                     s.iter().map(|(locale, marker_attributes)| {
-                        DataRequest {
-                            locale,
-                            marker_attributes,
-                            ..Default::default()
-                        }
-                        .legacy_encode()
+                        (marker_attributes.to_string(), locale.to_string())
                     })
                 })
-                .collect::<Vec<_>>();
-            legacy_encoded.sort();
+                .collect::<BTreeSet<_>>();
+            let locales = reqs.iter().map(|(_, l)| l);
+            let attrs = reqs.iter().map(|(a, _)| a);
 
-            let iterable_body = quote!(Ok(
-                [#(#legacy_encoded),*]
-                .into_iter()
-                .filter_map(icu_provider::DataRequest::legacy_decode)
-                .collect()
-            ));
+            let iterable_body = if attrs.clone().all(|a| a.is_empty()) {
+                // Only DataLocales
+                quote!(Ok(
+                    [#(icu_provider::_internal::locale_core::locale!(#locales)),*]
+                    .into_iter()
+                    .map(|l| (l.into(), Default::default()))
+                    .collect()
+                ))
+            } else if locales.clone().all(|l| l == "und") {
+                // Only attributes
+                quote!(Ok(
+                    [#(#attrs),*]
+                    .into_iter()
+                    .map(|a| (Default::default(), a.parse().unwrap()))
+                    .collect()
+                ))
+            } else {
+                quote!(Ok(
+                    [#((#attrs, icu_provider::_internal::locale_core::locale!(#locales))),*]
+                    .into_iter()
+                    .map(|(a, l)| (l.into(), a.parse().unwrap()))
+                    .collect()
+                ))
+            };
 
             (load_body, iterable_body)
         };

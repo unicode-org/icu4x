@@ -11,7 +11,7 @@ macro_rules! __impl_time_zone_generic_short_v1 {
         #[clippy::msrv = "1.70"]
         impl icu_provider::DataProvider<icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker>, icu_provider::DataError> {
-                static KGP: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
+                static __KGP: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
                     defaults: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"acreamazbras") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x03\0\x06\0ACTAMTBRT") })
@@ -21,7 +21,7 @@ macro_rules! __impl_time_zone_generic_short_v1 {
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0UTC") })
                     },
                 };
-                static AF: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
+                static __AF: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
                     defaults: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"afceafeaafsoafwe") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x03\0\x06\0\n\0CATEATSASTWAT") })
@@ -31,7 +31,7 @@ macro_rules! __impl_time_zone_generic_short_v1 {
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0UTC") })
                     },
                 };
-                static EN_BW: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
+                static __EN_BW: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
                     defaults: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"afceafeaafsoafwemgmt") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x05\0\0\0\0\0\x03\0\x06\0\n\0\r\0CATEATSASTWATGMT") })
@@ -41,7 +41,7 @@ macro_rules! __impl_time_zone_generic_short_v1 {
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0UTC") })
                     },
                 };
-                static EN_CA: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
+                static __EN_CA: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
                     defaults: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"afghalasamceameaammoampaargeatlaaucwaueaauwebangbhutbrasbrunchatchricocoeasteatiecuafalkgalagreaguyahaalinceindiindoineainweiranmalamaldmgmtnepanewfnoropakiparaperupimiurugvene") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b",\0\0\0\0\0\x03\0\x06\0\x08\0\n\0\x0C\0\x0E\0\x11\0\x13\0\x17\0\x1A\0\x1E\0!\0$\0'\0*\0/\x002\x005\09\0<\0?\0B\0F\0I\0L\0O\0S\0V\0Y\0\\\0_\0c\0f\0i\0l\0o\0q\0t\0w\0z\0}\0\x80\0\x83\0AFTAKTCTETMTPTARTATACWTAETAWSTBSTBTTBRTBNTCHASTCXTCCTEASTTLTECTFKTGALTEGTGYTHATWITAISTICTWITWIBIRSTMYTMVTGMTNPTNTFNTPKTPYTPETPMTUYTVET") })
@@ -51,7 +51,7 @@ macro_rules! __impl_time_zone_generic_short_v1 {
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"ushnl\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x03\0HSTUTC") })
                     },
                 };
-                static EN_GU: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
+                static __EN_GU: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
                     defaults: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"alasamceameaammoampaatlachamhaalmgmt") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\t\0\0\0\0\0\x03\0\x05\0\x07\0\t\0\x0B\0\r\0\x11\0\x14\0AKTCTETMTPTATChSTHATGMT") })
@@ -61,7 +61,7 @@ macro_rules! __impl_time_zone_generic_short_v1 {
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"ushnl\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x03\0HSTUTC") })
                     },
                 };
-                static KU: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
+                static __KU: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
                     defaults: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"alasamceameaammoampaatlacubagreagrwehaalnewfyuko") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0C\0\0\0\0\0\x03\0\x05\0\x07\0\n\0\x0C\0\x0E\0\x10\0\x13\0\x17\0\x1B\0\x1E\0SAKSNSRS\xC3\x87SPSASKSGRSGROSHALSNFSY") })
@@ -71,7 +71,7 @@ macro_rules! __impl_time_zone_generic_short_v1 {
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0SGH") })
                     },
                 };
-                static ID: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
+                static __ID: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
                     defaults: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"alasamceameaammoampaatlacubagreahaalinceineainwenewfpimi") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x03\0\x05\0\x07\0\t\0\x0B\0\r\0\x16\0\x19\0\x1C\0 \0#\0&\0(\0AKTCTETMTPTATCT (Kuba)EGTHATWITAWITWIBNTPMT") })
@@ -81,7 +81,7 @@ macro_rules! __impl_time_zone_generic_short_v1 {
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0UTC") })
                     },
                 };
-                static CS: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
+                static __CS: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
                     defaults: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"alasamceameaammoampaatlaeuce") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x07\0\0\0\0\0\x03\0\x05\0\x07\0\t\0\x0B\0\r\0AKTCTETMTPTATSE\xC4\x8C") })
@@ -91,7 +91,7 @@ macro_rules! __impl_time_zone_generic_short_v1 {
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"ushnl\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x03\0HSTUTC") })
                     },
                 };
-                static EU: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
+                static __EU: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
                     defaults: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"alasamceameaammoampaatlaeuceeueaeuwehaalmgmt") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0B\0\0\0\0\0\x03\0\x05\0\x07\0\t\0\x0B\0\r\0\x10\0\x13\0\x16\0\x19\0AKTCTETMTPTATCETEETWETHATGMT") })
@@ -101,7 +101,7 @@ macro_rules! __impl_time_zone_generic_short_v1 {
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"ushnl\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x03\0HSTUTC") })
                     },
                 };
-                static NL_SR: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
+                static __NL_SR: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
                     defaults: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"alasamceameaammoampaatlaeuceeueaeuwehaalmgmtsuri") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0C\0\0\0\0\0\x03\0\x05\0\x07\0\t\0\x0B\0\r\0\x10\0\x13\0\x16\0\x19\0\x1C\0AKTCTETMTPTATCETEETWETHATGMTSRT") })
@@ -111,7 +111,7 @@ macro_rules! __impl_time_zone_generic_short_v1 {
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"ushnl\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x03\0HSTUTC") })
                     },
                 };
-                static VI: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
+                static __VI: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
                     defaults: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"alasamceameaammoampaatlahaal") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x07\0\0\0\0\0\x03\0\x05\0\x07\0\t\0\x0B\0\r\0AKTCTETMTPTATHAT") })
@@ -121,7 +121,7 @@ macro_rules! __impl_time_zone_generic_short_v1 {
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"ushnl\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\t\0Gi\xE1\xBB\x9D HSTUTC") })
                     },
                 };
-                static CHR: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
+                static __CHR: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
                     defaults: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"alasamceameaammoampaatlahaal") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x07\0\0\0\0\0\x03\0\x05\0\x07\0\t\0\x0B\0\r\0AKTCTETMTPTATHAT") })
@@ -131,7 +131,7 @@ macro_rules! __impl_time_zone_generic_short_v1 {
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"ushnl\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x03\0HSTUTC") })
                     },
                 };
-                static AST: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
+                static __AST: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
                     defaults: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"alasamceameaammoampaatlahaalmgmt") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x08\0\0\0\0\0\x03\0\x05\0\x07\0\t\0\x0B\0\r\0\x10\0AKTCTETMTPTATHATGMT") })
@@ -141,7 +141,7 @@ macro_rules! __impl_time_zone_generic_short_v1 {
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"ushnl\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x03\0HSTUTC") })
                     },
                 };
-                static ZH_HANT: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
+                static __ZH_HANT: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
                     defaults: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"alasamceameaammoampaatlahaalmgmt") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x08\0\0\0\0\0\x03\0\x05\0\x07\0\t\0\x0B\0\r\0\x10\0AKTCTETMTPTATHATGMT") })
@@ -151,7 +151,7 @@ macro_rules! __impl_time_zone_generic_short_v1 {
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0UTC") })
                     },
                 };
-                static SC: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
+                static __SC: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
                     defaults: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"alasamceameaammoampaatlamgmt") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x07\0\0\0\0\0\x03\0\x05\0\x07\0\n\0\x0C\0\x0E\0OAKOTOOOMPOPOAOMG") })
@@ -161,7 +161,7 @@ macro_rules! __impl_time_zone_generic_short_v1 {
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"ushnl\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x03\0OIHTCU") })
                     },
                 };
-                static FR_CA: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
+                static __FR_CA: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
                     defaults: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"amceameaammoampanewf") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x05\0\0\0\0\0\x02\0\x04\0\x06\0\x08\0HCHEHRHPHT") })
@@ -171,7 +171,7 @@ macro_rules! __impl_time_zone_generic_short_v1 {
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0UTC") })
                     },
                 };
-                static GA: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
+                static __GA: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
                     defaults: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"ampaeuceeueaeuwemgmt") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x05\0\0\0\0\0\x03\0\x06\0\t\0\x0C\0AACCETEETWETMAG") })
@@ -181,7 +181,7 @@ macro_rules! __impl_time_zone_generic_short_v1 {
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0UTC") })
                     },
                 };
-                static ES_AR: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
+                static __ES_AR: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
                     defaults: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"argearwe") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x03\0ARTWART") })
@@ -191,7 +191,7 @@ macro_rules! __impl_time_zone_generic_short_v1 {
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0UTC") })
                     },
                 };
-                static EN_NZ: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
+                static __EN_NZ: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
                     defaults: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"auceaucwaueaauwechatlohomgmtneze") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x08\0\0\0\0\0\x03\0\x07\0\n\0\r\0\x11\0\x14\0\x17\0ACTACWTAETAWTCHATLHTGMTNZT") })
@@ -201,7 +201,7 @@ macro_rules! __impl_time_zone_generic_short_v1 {
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0UTC") })
                     },
                 };
-                static EN_AU: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
+                static __EN_AU: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
                     defaults: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"auceaucwaueaauwegulflohomgmtneze") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x08\0\0\0\0\0\x03\0\x07\0\n\0\r\0\x14\0\x17\0\x1A\0ACTACWTAETAWTGulf STLHTGMTNZT") })
@@ -211,7 +211,7 @@ macro_rules! __impl_time_zone_generic_short_v1 {
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0UTC") })
                     },
                 };
-                static PT_CV: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
+                static __PT_CV: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
                     defaults: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"azor") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0AZOT") })
@@ -221,7 +221,7 @@ macro_rules! __impl_time_zone_generic_short_v1 {
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0UTC") })
                     },
                 };
-                static PT_PT: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
+                static __PT_PT: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
                     defaults: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"azoreuceeueaeuwe") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x04\0\x07\0\n\0AZOTCETEETWET") })
@@ -231,7 +231,7 @@ macro_rules! __impl_time_zone_generic_short_v1 {
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0UTC") })
                     },
                 };
-                static ES_BO: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
+                static __ES_BO: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
                     defaults: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"boli") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0BOT") })
@@ -241,7 +241,7 @@ macro_rules! __impl_time_zone_generic_short_v1 {
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0UTC") })
                     },
                 };
-                static ES_CL: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
+                static __ES_CL: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
                     defaults: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"chil") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0CLT") })
@@ -251,7 +251,7 @@ macro_rules! __impl_time_zone_generic_short_v1 {
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0UTC") })
                     },
                 };
-                static ES_CO: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
+                static __ES_CO: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
                     defaults: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"colo") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0COT") })
@@ -261,7 +261,7 @@ macro_rules! __impl_time_zone_generic_short_v1 {
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0UTC") })
                     },
                 };
-                static ES_EC: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
+                static __ES_EC: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
                     defaults: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"ecua") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0ECT") })
@@ -271,7 +271,7 @@ macro_rules! __impl_time_zone_generic_short_v1 {
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0UTC") })
                     },
                 };
-                static SK: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
+                static __SK: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
                     defaults: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"euce") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0SE\xC4\x8C") })
@@ -281,7 +281,7 @@ macro_rules! __impl_time_zone_generic_short_v1 {
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"ushnl\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x03\0HSTUTC") })
                     },
                 };
-                static DA: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
+                static __DA: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
                     defaults: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"euceeueaeuwe") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x03\0\x06\0CETEETWET") })
@@ -291,7 +291,7 @@ macro_rules! __impl_time_zone_generic_short_v1 {
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0UTC") })
                     },
                 };
-                static DE: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
+                static __DE: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
                     defaults: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"euceeueaeuwe") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x03\0\x06\0MEZOEZWEZ") })
@@ -301,7 +301,7 @@ macro_rules! __impl_time_zone_generic_short_v1 {
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0UTC") })
                     },
                 };
-                static SV: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
+                static __SV: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
                     defaults: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"euceeueaeuwemgmt") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x03\0\x06\0\t\0CETEETWETGMT") })
@@ -311,7 +311,7 @@ macro_rules! __impl_time_zone_generic_short_v1 {
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"ushnl\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x0B\0HonolulutidUTC") })
                     },
                 };
-                static BS: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
+                static __BS: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
                     defaults: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"euceeueaeuwemgmt") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x03\0\x06\0\t\0CETEETWETGMT") })
@@ -321,7 +321,7 @@ macro_rules! __impl_time_zone_generic_short_v1 {
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0UTC") })
                     },
                 };
-                static KK: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
+                static __KK: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
                     defaults: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"euea") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0EET") })
@@ -331,7 +331,7 @@ macro_rules! __impl_time_zone_generic_short_v1 {
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0UTC") })
                     },
                 };
-                static FR_GF: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
+                static __FR_GF: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
                     defaults: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"frgu") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0GFT") })
@@ -341,7 +341,7 @@ macro_rules! __impl_time_zone_generic_short_v1 {
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0UTC") })
                     },
                 };
-                static AR: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
+                static __AR: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
                     defaults: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"gulf") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0GST") })
@@ -351,7 +351,7 @@ macro_rules! __impl_time_zone_generic_short_v1 {
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0UTC") })
                     },
                 };
-                static HI_LATN: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
+                static __HI_LATN: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
                     defaults: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"gulfindimgmt") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x03\0\x06\0GSTISTGMT") })
@@ -361,7 +361,7 @@ macro_rules! __impl_time_zone_generic_short_v1 {
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"ushnl\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x03\0HSTUTC") })
                     },
                 };
-                static EN_IN: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
+                static __EN_IN: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
                     defaults: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"gulfindimgmt") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x03\0\x06\0GSTISTGMT") })
@@ -371,7 +371,7 @@ macro_rules! __impl_time_zone_generic_short_v1 {
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0UTC") })
                     },
                 };
-                static EN_AE: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
+                static __EN_AE: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
                     defaults: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"gulfmgmt") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x03\0GSTGMT") })
@@ -381,7 +381,7 @@ macro_rules! __impl_time_zone_generic_short_v1 {
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0UTC") })
                     },
                 };
-                static EN_GY: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
+                static __EN_GY: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
                     defaults: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"guyamgmt") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x03\0GYTGMT") })
@@ -391,7 +391,7 @@ macro_rules! __impl_time_zone_generic_short_v1 {
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0UTC") })
                     },
                 };
-                static SO: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
+                static __SO: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
                     defaults: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"haal") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0HAT") })
@@ -401,7 +401,7 @@ macro_rules! __impl_time_zone_generic_short_v1 {
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0Waqtiga UTC") })
                     },
                 };
-                static EN_MO: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
+                static __EN_MO: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
                     defaults: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"hokomacamgmt") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x03\0\x06\0HKTMSTGMT") })
@@ -411,7 +411,7 @@ macro_rules! __impl_time_zone_generic_short_v1 {
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0UTC") })
                     },
                 };
-                static EN_HK: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
+                static __EN_HK: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
                     defaults: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"hokomgmt") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x03\0HKTGMT") })
@@ -421,7 +421,7 @@ macro_rules! __impl_time_zone_generic_short_v1 {
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0UTC") })
                     },
                 };
-                static EN_ID: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
+                static __EN_ID: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
                     defaults: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"inceineainwemgmt") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x04\0\x07\0\n\0WITAWITWIBGMT") })
@@ -431,7 +431,7 @@ macro_rules! __impl_time_zone_generic_short_v1 {
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0UTC") })
                     },
                 };
-                static HI: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
+                static __HI: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
                     defaults: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"indi") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0IST") })
@@ -441,7 +441,7 @@ macro_rules! __impl_time_zone_generic_short_v1 {
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"ushnl\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x12\0\xE0\xA4\x8F\xE0\xA4\x9A\xE0\xA4\x8F\xE0\xA4\xB8\xE0\xA4\x9F\xE0\xA5\x80UTC") })
                     },
                 };
-                static BN: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
+                static __BN: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
                     defaults: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"indi") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0IST") })
@@ -451,7 +451,7 @@ macro_rules! __impl_time_zone_generic_short_v1 {
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0UTC") })
                     },
                 };
-                static AS: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
+                static __AS: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
                     defaults: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"indi") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xA6\xAD\xE0\xA6\xBE. \xE0\xA6\xB8.") })
@@ -461,7 +461,7 @@ macro_rules! __impl_time_zone_generic_short_v1 {
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0UTC") })
                     },
                 };
-                static OR: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
+                static __OR: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
                     defaults: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"indimgmt") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x03\0ISTGMT") })
@@ -471,7 +471,7 @@ macro_rules! __impl_time_zone_generic_short_v1 {
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0UTC") })
                     },
                 };
-                static JA: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
+                static __JA: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
                     defaults: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"japa") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0JST") })
@@ -481,7 +481,7 @@ macro_rules! __impl_time_zone_generic_short_v1 {
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0UTC") })
                     },
                 };
-                static EN_MY: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
+                static __EN_MY: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
                     defaults: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"malamgmt") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x03\0MYTGMT") })
@@ -491,7 +491,7 @@ macro_rules! __impl_time_zone_generic_short_v1 {
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0UTC") })
                     },
                 };
-                static EN_SG: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
+                static __EN_SG: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
                     defaults: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"malamgmtsing") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x03\0\x06\0MYTGMTSGT") })
@@ -501,7 +501,7 @@ macro_rules! __impl_time_zone_generic_short_v1 {
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0UTC") })
                     },
                 };
-                static TA_MY: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
+                static __TA_MY: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
                     defaults: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"malasing") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x03\0MYTSGT") })
@@ -511,7 +511,7 @@ macro_rules! __impl_time_zone_generic_short_v1 {
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0UTC") })
                     },
                 };
-                static EN_001: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
+                static __EN_001: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
                     defaults: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"mgmt") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0GMT") })
@@ -521,7 +521,7 @@ macro_rules! __impl_time_zone_generic_short_v1 {
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0UTC") })
                     },
                 };
-                static BLO: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
+                static __BLO: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
                     defaults: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"mgmt") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0Gk") })
@@ -531,7 +531,7 @@ macro_rules! __impl_time_zone_generic_short_v1 {
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xC6\x89AK") })
                     },
                 };
-                static ES_PE: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
+                static __ES_PE: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
                     defaults: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"peru") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0PET") })
@@ -541,7 +541,7 @@ macro_rules! __impl_time_zone_generic_short_v1 {
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0UTC") })
                     },
                 };
-                static ES_UY: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
+                static __ES_UY: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
                     defaults: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"urug") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0UYT") })
@@ -551,7 +551,7 @@ macro_rules! __impl_time_zone_generic_short_v1 {
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0UTC") })
                     },
                 };
-                static ES_VE: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
+                static __ES_VE: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
                     defaults: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"vene") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0VET") })
@@ -561,7 +561,7 @@ macro_rules! __impl_time_zone_generic_short_v1 {
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0UTC") })
                     },
                 };
-                static FF_ADLM: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
+                static __FF_ADLM: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
                     defaults: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::VarZeroVec::new())
@@ -571,7 +571,7 @@ macro_rules! __impl_time_zone_generic_short_v1 {
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"ushnl\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x0C\0\xF0\x9E\xA4\x91\xF0\x9E\xA4\x96\xF0\x9E\xA4\x96\xF0\x9E\xA4\x91\xF0\x9E\xA4\x96\xF0\x9E\xA4\x8A") })
                     },
                 };
-                static ES_419: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
+                static __ES_419: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
                     defaults: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::VarZeroVec::new())
@@ -581,7 +581,7 @@ macro_rules! __impl_time_zone_generic_short_v1 {
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0UTC") })
                     },
                 };
-                static SD: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
+                static __SD: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
                     defaults: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::VarZeroVec::new())
@@ -591,9 +591,9 @@ macro_rules! __impl_time_zone_generic_short_v1 {
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xD9\x85 \xD8\xB9 \xD9\x88") })
                     },
                 };
-                static DATA: [(&str, &<icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable); 132usize] = [("af", &AF), ("ar", &AR), ("as", &AS), ("ast", &AST), ("blo", &BLO), ("bn", &BN), ("brx", &BN), ("bs", &BS), ("ca", &BS), ("chr", &CHR), ("cs", &CS), ("cy", &BS), ("da", &DA), ("de", &DE), ("dsb", &DE), ("el", &DA), ("en", &AST), ("en-001", &EN_001), ("en-150", &BS), ("en-AE", &EN_AE), ("en-AU", &EN_AU), ("en-BW", &EN_BW), ("en-CA", &EN_CA), ("en-CM", &EN_BW), ("en-ER", &EN_BW), ("en-GB", &BS), ("en-GH", &EN_BW), ("en-GM", &EN_BW), ("en-GU", &EN_GU), ("en-GY", &EN_GY), ("en-HK", &EN_HK), ("en-ID", &EN_ID), ("en-IN", &EN_IN), ("en-KE", &EN_BW), ("en-LR", &EN_BW), ("en-LS", &EN_BW), ("en-MG", &EN_BW), ("en-MH", &EN_001), ("en-MO", &EN_MO), ("en-MP", &EN_001), ("en-MU", &EN_BW), ("en-MW", &EN_BW), ("en-MY", &EN_MY), ("en-NA", &EN_BW), ("en-NG", &EN_BW), ("en-NZ", &EN_NZ), ("en-RW", &EN_BW), ("en-SD", &EN_BW), ("en-SG", &EN_SG), ("en-SL", &EN_BW), ("en-SS", &EN_BW), ("en-SZ", &EN_BW), ("en-TZ", &EN_BW), ("en-UG", &EN_BW), ("en-ZA", &EN_BW), ("en-ZM", &EN_BW), ("en-ZW", &EN_BW), ("es", &BS), ("es-419", &ES_419), ("es-AR", &ES_AR), ("es-BO", &ES_BO), ("es-CL", &ES_CL), ("es-CO", &ES_CO), ("es-EC", &ES_EC), ("es-PE", &ES_PE), ("es-US", &CHR), ("es-UY", &ES_UY), ("es-VE", &ES_VE), ("eu", &EU), ("ff-Adlm", &FF_ADLM), ("fr-CA", &FR_CA), ("fr-GF", &FR_GF), ("fy", &DA), ("ga", &GA), ("gd", &EU), ("gl", &BS), ("gu", &BN), ("hi", &HI), ("hi-Latn", &HI_LATN), ("hr", &BS), ("hsb", &DE), ("hu", &BS), ("id", &ID), ("it", &DA), ("ja", &JA), ("kgp", &KGP), ("kk", &KK), ("kn", &BN), ("kok", &BN), ("ku", &KU), ("lv", &DA), ("mk", &DA), ("ml", &BN), ("mr", &BN), ("ms", &EN_SG), ("mt", &BS), ("ne-IN", &BN), ("nl", &EU), ("nl-SR", &NL_SR), ("no", &EU), ("or", &OR), ("pa", &BN), ("pl", &DA), ("pt", &KGP), ("pt-AO", &ES_419), ("pt-CV", &PT_CV), ("pt-GW", &ES_419), ("pt-MO", &ES_419), ("pt-MZ", &ES_419), ("pt-PT", &PT_PT), ("pt-ST", &ES_419), ("pt-TL", &ES_419), ("qu", &ES_PE), ("qu-BO", &ES_BO), ("qu-EC", &ES_EC), ("ro", &BS), ("sc", &SC), ("sd", &SD), ("sk", &SK), ("so", &SO), ("sr", &BS), ("sr-Latn", &BS), ("sv", &SV), ("ta", &BN), ("ta-MY", &TA_MY), ("ta-SG", &TA_MY), ("te", &BN), ("und", &ES_419), ("vi", &VI), ("yrl", &KGP), ("zh-Hant", &ZH_HANT), ("zh-SG", &TA_MY)];
+                static DATA: [(&str, &<icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable); 132usize] = [("af", &__AF), ("ar", &__AR), ("as", &__AS), ("ast", &__AST), ("blo", &__BLO), ("bn", &__BN), ("brx", &__BN), ("bs", &__BS), ("ca", &__BS), ("chr", &__CHR), ("cs", &__CS), ("cy", &__BS), ("da", &__DA), ("de", &__DE), ("dsb", &__DE), ("el", &__DA), ("en", &__AST), ("en-001", &__EN_001), ("en-150", &__BS), ("en-AE", &__EN_AE), ("en-AU", &__EN_AU), ("en-BW", &__EN_BW), ("en-CA", &__EN_CA), ("en-CM", &__EN_BW), ("en-ER", &__EN_BW), ("en-GB", &__BS), ("en-GH", &__EN_BW), ("en-GM", &__EN_BW), ("en-GU", &__EN_GU), ("en-GY", &__EN_GY), ("en-HK", &__EN_HK), ("en-ID", &__EN_ID), ("en-IN", &__EN_IN), ("en-KE", &__EN_BW), ("en-LR", &__EN_BW), ("en-LS", &__EN_BW), ("en-MG", &__EN_BW), ("en-MH", &__EN_001), ("en-MO", &__EN_MO), ("en-MP", &__EN_001), ("en-MU", &__EN_BW), ("en-MW", &__EN_BW), ("en-MY", &__EN_MY), ("en-NA", &__EN_BW), ("en-NG", &__EN_BW), ("en-NZ", &__EN_NZ), ("en-RW", &__EN_BW), ("en-SD", &__EN_BW), ("en-SG", &__EN_SG), ("en-SL", &__EN_BW), ("en-SS", &__EN_BW), ("en-SZ", &__EN_BW), ("en-TZ", &__EN_BW), ("en-UG", &__EN_BW), ("en-ZA", &__EN_BW), ("en-ZM", &__EN_BW), ("en-ZW", &__EN_BW), ("es", &__BS), ("es-419", &__ES_419), ("es-AR", &__ES_AR), ("es-BO", &__ES_BO), ("es-CL", &__ES_CL), ("es-CO", &__ES_CO), ("es-EC", &__ES_EC), ("es-PE", &__ES_PE), ("es-US", &__CHR), ("es-UY", &__ES_UY), ("es-VE", &__ES_VE), ("eu", &__EU), ("ff-Adlm", &__FF_ADLM), ("fr-CA", &__FR_CA), ("fr-GF", &__FR_GF), ("fy", &__DA), ("ga", &__GA), ("gd", &__EU), ("gl", &__BS), ("gu", &__BN), ("hi", &__HI), ("hi-Latn", &__HI_LATN), ("hr", &__BS), ("hsb", &__DE), ("hu", &__BS), ("id", &__ID), ("it", &__DA), ("ja", &__JA), ("kgp", &__KGP), ("kk", &__KK), ("kn", &__BN), ("kok", &__BN), ("ku", &__KU), ("lv", &__DA), ("mk", &__DA), ("ml", &__BN), ("mr", &__BN), ("ms", &__EN_SG), ("mt", &__BS), ("ne-IN", &__BN), ("nl", &__EU), ("nl-SR", &__NL_SR), ("no", &__EU), ("or", &__OR), ("pa", &__BN), ("pl", &__DA), ("pt", &__KGP), ("pt-AO", &__ES_419), ("pt-CV", &__PT_CV), ("pt-GW", &__ES_419), ("pt-MO", &__ES_419), ("pt-MZ", &__ES_419), ("pt-PT", &__PT_PT), ("pt-ST", &__ES_419), ("pt-TL", &__ES_419), ("qu", &__ES_PE), ("qu-BO", &__ES_BO), ("qu-EC", &__ES_EC), ("ro", &__BS), ("sc", &__SC), ("sd", &__SD), ("sk", &__SK), ("so", &__SO), ("sr", &__BS), ("sr-Latn", &__BS), ("sv", &__SV), ("ta", &__BN), ("ta-MY", &__TA_MY), ("ta-SG", &__TA_MY), ("te", &__BN), ("und", &__ES_419), ("vi", &__VI), ("yrl", &__KGP), ("zh-Hant", &__ZH_HANT), ("zh-SG", &__TA_MY)];
                 fn lookup(req: icu_provider::DataRequest) -> Option<&'static <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DynamicDataMarker>::Yokeable> {
-                    DATA.binary_search_by(|(k, _)| req.legacy_cmp(k.as_bytes()).reverse()).map(|i| (*unsafe { DATA.get_unchecked(i) }).1).ok()
+                    DATA.binary_search_by(|(l, _)| req.locale.strict_cmp(l.as_bytes()).reverse()).map(|i| (*unsafe { DATA.get_unchecked(i) }).1).ok()
                 }
                 let mut metadata = icu_provider::DataResponseMetadata::default();
                 let payload = if let Some(payload) = lookup(req) {
@@ -627,7 +627,7 @@ macro_rules! __impliterable_time_zone_generic_short_v1 {
         #[clippy::msrv = "1.70"]
         impl icu_provider::datagen::IterableDataProvider<icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker> for $provider {
             fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataMarkerAttributes)>, icu_provider::DataError> {
-                Ok(["af", "ar", "as", "ast", "blo", "bn", "brx", "bs", "ca", "chr", "cs", "cy", "da", "de", "dsb", "el", "en", "en-001", "en-150", "en-AE", "en-AU", "en-BW", "en-CA", "en-CM", "en-ER", "en-GB", "en-GH", "en-GM", "en-GU", "en-GY", "en-HK", "en-ID", "en-IN", "en-KE", "en-LR", "en-LS", "en-MG", "en-MH", "en-MO", "en-MP", "en-MU", "en-MW", "en-MY", "en-NA", "en-NG", "en-NZ", "en-RW", "en-SD", "en-SG", "en-SL", "en-SS", "en-SZ", "en-TZ", "en-UG", "en-ZA", "en-ZM", "en-ZW", "es", "es-419", "es-AR", "es-BO", "es-CL", "es-CO", "es-EC", "es-PE", "es-US", "es-UY", "es-VE", "eu", "ff-Adlm", "fr-CA", "fr-GF", "fy", "ga", "gd", "gl", "gu", "hi", "hi-Latn", "hr", "hsb", "hu", "id", "it", "ja", "kgp", "kk", "kn", "kok", "ku", "lv", "mk", "ml", "mr", "ms", "mt", "ne-IN", "nl", "nl-SR", "no", "or", "pa", "pl", "pt", "pt-AO", "pt-CV", "pt-GW", "pt-MO", "pt-MZ", "pt-PT", "pt-ST", "pt-TL", "qu", "qu-BO", "qu-EC", "ro", "sc", "sd", "sk", "so", "sr", "sr-Latn", "sv", "ta", "ta-MY", "ta-SG", "te", "und", "vi", "yrl", "zh-Hant", "zh-SG"].into_iter().filter_map(icu_provider::DataRequest::legacy_decode).collect())
+                Ok([icu_provider::_internal::locale_core::locale!("af"), icu_provider::_internal::locale_core::locale!("ar"), icu_provider::_internal::locale_core::locale!("as"), icu_provider::_internal::locale_core::locale!("ast"), icu_provider::_internal::locale_core::locale!("blo"), icu_provider::_internal::locale_core::locale!("bn"), icu_provider::_internal::locale_core::locale!("brx"), icu_provider::_internal::locale_core::locale!("bs"), icu_provider::_internal::locale_core::locale!("ca"), icu_provider::_internal::locale_core::locale!("chr"), icu_provider::_internal::locale_core::locale!("cs"), icu_provider::_internal::locale_core::locale!("cy"), icu_provider::_internal::locale_core::locale!("da"), icu_provider::_internal::locale_core::locale!("de"), icu_provider::_internal::locale_core::locale!("dsb"), icu_provider::_internal::locale_core::locale!("el"), icu_provider::_internal::locale_core::locale!("en"), icu_provider::_internal::locale_core::locale!("en-001"), icu_provider::_internal::locale_core::locale!("en-150"), icu_provider::_internal::locale_core::locale!("en-AE"), icu_provider::_internal::locale_core::locale!("en-AU"), icu_provider::_internal::locale_core::locale!("en-BW"), icu_provider::_internal::locale_core::locale!("en-CA"), icu_provider::_internal::locale_core::locale!("en-CM"), icu_provider::_internal::locale_core::locale!("en-ER"), icu_provider::_internal::locale_core::locale!("en-GB"), icu_provider::_internal::locale_core::locale!("en-GH"), icu_provider::_internal::locale_core::locale!("en-GM"), icu_provider::_internal::locale_core::locale!("en-GU"), icu_provider::_internal::locale_core::locale!("en-GY"), icu_provider::_internal::locale_core::locale!("en-HK"), icu_provider::_internal::locale_core::locale!("en-ID"), icu_provider::_internal::locale_core::locale!("en-IN"), icu_provider::_internal::locale_core::locale!("en-KE"), icu_provider::_internal::locale_core::locale!("en-LR"), icu_provider::_internal::locale_core::locale!("en-LS"), icu_provider::_internal::locale_core::locale!("en-MG"), icu_provider::_internal::locale_core::locale!("en-MH"), icu_provider::_internal::locale_core::locale!("en-MO"), icu_provider::_internal::locale_core::locale!("en-MP"), icu_provider::_internal::locale_core::locale!("en-MU"), icu_provider::_internal::locale_core::locale!("en-MW"), icu_provider::_internal::locale_core::locale!("en-MY"), icu_provider::_internal::locale_core::locale!("en-NA"), icu_provider::_internal::locale_core::locale!("en-NG"), icu_provider::_internal::locale_core::locale!("en-NZ"), icu_provider::_internal::locale_core::locale!("en-RW"), icu_provider::_internal::locale_core::locale!("en-SD"), icu_provider::_internal::locale_core::locale!("en-SG"), icu_provider::_internal::locale_core::locale!("en-SL"), icu_provider::_internal::locale_core::locale!("en-SS"), icu_provider::_internal::locale_core::locale!("en-SZ"), icu_provider::_internal::locale_core::locale!("en-TZ"), icu_provider::_internal::locale_core::locale!("en-UG"), icu_provider::_internal::locale_core::locale!("en-ZA"), icu_provider::_internal::locale_core::locale!("en-ZM"), icu_provider::_internal::locale_core::locale!("en-ZW"), icu_provider::_internal::locale_core::locale!("es"), icu_provider::_internal::locale_core::locale!("es-419"), icu_provider::_internal::locale_core::locale!("es-AR"), icu_provider::_internal::locale_core::locale!("es-BO"), icu_provider::_internal::locale_core::locale!("es-CL"), icu_provider::_internal::locale_core::locale!("es-CO"), icu_provider::_internal::locale_core::locale!("es-EC"), icu_provider::_internal::locale_core::locale!("es-PE"), icu_provider::_internal::locale_core::locale!("es-US"), icu_provider::_internal::locale_core::locale!("es-UY"), icu_provider::_internal::locale_core::locale!("es-VE"), icu_provider::_internal::locale_core::locale!("eu"), icu_provider::_internal::locale_core::locale!("ff-Adlm"), icu_provider::_internal::locale_core::locale!("fr-CA"), icu_provider::_internal::locale_core::locale!("fr-GF"), icu_provider::_internal::locale_core::locale!("fy"), icu_provider::_internal::locale_core::locale!("ga"), icu_provider::_internal::locale_core::locale!("gd"), icu_provider::_internal::locale_core::locale!("gl"), icu_provider::_internal::locale_core::locale!("gu"), icu_provider::_internal::locale_core::locale!("hi"), icu_provider::_internal::locale_core::locale!("hi-Latn"), icu_provider::_internal::locale_core::locale!("hr"), icu_provider::_internal::locale_core::locale!("hsb"), icu_provider::_internal::locale_core::locale!("hu"), icu_provider::_internal::locale_core::locale!("id"), icu_provider::_internal::locale_core::locale!("it"), icu_provider::_internal::locale_core::locale!("ja"), icu_provider::_internal::locale_core::locale!("kgp"), icu_provider::_internal::locale_core::locale!("kk"), icu_provider::_internal::locale_core::locale!("kn"), icu_provider::_internal::locale_core::locale!("kok"), icu_provider::_internal::locale_core::locale!("ku"), icu_provider::_internal::locale_core::locale!("lv"), icu_provider::_internal::locale_core::locale!("mk"), icu_provider::_internal::locale_core::locale!("ml"), icu_provider::_internal::locale_core::locale!("mr"), icu_provider::_internal::locale_core::locale!("ms"), icu_provider::_internal::locale_core::locale!("mt"), icu_provider::_internal::locale_core::locale!("ne-IN"), icu_provider::_internal::locale_core::locale!("nl"), icu_provider::_internal::locale_core::locale!("nl-SR"), icu_provider::_internal::locale_core::locale!("no"), icu_provider::_internal::locale_core::locale!("or"), icu_provider::_internal::locale_core::locale!("pa"), icu_provider::_internal::locale_core::locale!("pl"), icu_provider::_internal::locale_core::locale!("pt"), icu_provider::_internal::locale_core::locale!("pt-AO"), icu_provider::_internal::locale_core::locale!("pt-CV"), icu_provider::_internal::locale_core::locale!("pt-GW"), icu_provider::_internal::locale_core::locale!("pt-MO"), icu_provider::_internal::locale_core::locale!("pt-MZ"), icu_provider::_internal::locale_core::locale!("pt-PT"), icu_provider::_internal::locale_core::locale!("pt-ST"), icu_provider::_internal::locale_core::locale!("pt-TL"), icu_provider::_internal::locale_core::locale!("qu"), icu_provider::_internal::locale_core::locale!("qu-BO"), icu_provider::_internal::locale_core::locale!("qu-EC"), icu_provider::_internal::locale_core::locale!("ro"), icu_provider::_internal::locale_core::locale!("sc"), icu_provider::_internal::locale_core::locale!("sd"), icu_provider::_internal::locale_core::locale!("sk"), icu_provider::_internal::locale_core::locale!("so"), icu_provider::_internal::locale_core::locale!("sr"), icu_provider::_internal::locale_core::locale!("sr-Latn"), icu_provider::_internal::locale_core::locale!("sv"), icu_provider::_internal::locale_core::locale!("ta"), icu_provider::_internal::locale_core::locale!("ta-MY"), icu_provider::_internal::locale_core::locale!("ta-SG"), icu_provider::_internal::locale_core::locale!("te"), icu_provider::_internal::locale_core::locale!("und"), icu_provider::_internal::locale_core::locale!("vi"), icu_provider::_internal::locale_core::locale!("yrl"), icu_provider::_internal::locale_core::locale!("zh-Hant"), icu_provider::_internal::locale_core::locale!("zh-SG")].into_iter().map(|l| (l.into(), Default::default())).collect())
             }
         }
     };

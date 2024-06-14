@@ -16,30 +16,47 @@ pub fn bake(
 ) -> TokenStream {
     let mut data = data
         .into_iter()
-        .map(|((l, a), i)| {
-            (
-                DataRequest {
-                    locale: &l,
-                    marker_attributes: &a,
-                    ..Default::default()
-                }
-                .legacy_encode(),
-                quote!(#i),
-            )
-        })
+        .map(|((l, a), i)| ((a.to_string(), l.to_string()), quote!(#i)))
         .collect::<Vec<_>>();
 
     data.sort_by(|(a, _), (b, _)| a.cmp(b));
 
     let n = data.len();
-    let data = data.iter().map(|(r, i)| quote!((#r, &#i)));
 
-    quote! {
-        static DATA: [(&str, & #struct_type); #n] = [#(#data,)*];
-        fn lookup(req: icu_provider::DataRequest) -> Option<&'static #struct_type> {
-            DATA.binary_search_by(|(k, _)| req.legacy_cmp(k.as_bytes()).reverse())
-                .map(|i| (*unsafe { DATA.get_unchecked(i) }).1)
-                .ok()
+    if data.iter().all(|((a, _), _)| a.is_empty()) {
+        // Only DataLocales
+        let data = data.iter().map(|((_, l), i)| quote!((#l, &#i)));
+
+        quote! {
+            static DATA: [(&str, & #struct_type); #n] = [#(#data,)*];
+            fn lookup(req: icu_provider::DataRequest) -> Option<&'static #struct_type> {
+                DATA.binary_search_by(|(l, _)| req.locale.strict_cmp(l.as_bytes()).reverse())
+                    .map(|i| (*unsafe { DATA.get_unchecked(i) }).1)
+                    .ok()
+            }
+        }
+    } else if data.iter().all(|((_, l), _)| *l == "und") {
+        // Only marker attributes
+        let data = data.iter().map(|((a, _), i)| quote!((#a, &#i)));
+
+        quote! {
+            static DATA: [(&str, & #struct_type); #n] = [#(#data,)*];
+            fn lookup(req: icu_provider::DataRequest) -> Option<&'static #struct_type> {
+                DATA.binary_search_by(|(a, _)| a.cmp(&&**req.marker_attributes))
+                    .map(|i| (*unsafe { DATA.get_unchecked(i) }).1)
+                    .ok()
+            }
+        }
+    } else {
+        let data = data.iter().map(|((a, l), i)| quote!(((#a, #l), &#i)));
+
+        quote! {
+            static DATA: [((&str, &str), & #struct_type); #n] = [#(#data,)*];
+            fn lookup(req: icu_provider::DataRequest) -> Option<&'static #struct_type> {
+                DATA.binary_search_by(|((a, l), _)| a.cmp(&&**req.marker_attributes).then_with(|| req.locale.strict_cmp(l.as_bytes()).reverse()))
+                    .map(|i| (*unsafe { DATA.get_unchecked(i) }).1)
+                    .ok()
+            }
         }
     }
 }

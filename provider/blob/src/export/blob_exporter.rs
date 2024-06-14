@@ -108,15 +108,14 @@ impl DataExporter for BlobExporter<'_> {
             .expect("poison")
             .entry(marker.path.hashed())
             .or_default()
-            .entry(
-                DataRequest {
-                    locale,
-                    marker_attributes,
-                    ..Default::default()
+            .entry({
+                let mut key = locale.to_string();
+                if !marker_attributes.is_empty() {
+                    key.push(crate::blob_schema::REQUEST_SEPARATOR);
+                    key.push_str(marker_attributes);
                 }
-                .legacy_encode()
-                .into_bytes(),
-            )
+                key.into_bytes()
+            })
             .or_insert(idx);
         Ok(())
     }
