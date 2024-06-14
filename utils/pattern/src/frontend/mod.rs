@@ -164,6 +164,31 @@ where
     }
 }
 
+impl<'a, B> Pattern<B, &'a B::Store>
+where
+    B: PatternBackend,
+{
+    /// Creates a pattern from its store encoded as bytes.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_pattern::Pattern;
+    /// use icu_pattern::SinglePlaceholder;
+    ///
+    /// Pattern::<SinglePlaceholder, _>::try_from_bytes_store(b"\x01 days")
+    ///     .expect("single placeholder pattern");
+    /// ```
+    pub fn try_from_bytes_store(bytes: &'a [u8]) -> Result<Self, PatternOrUtf8Error<B::StoreUtf8Error>> {
+        let store = B::try_store_from_utf8(bytes).map_err(PatternOrUtf8Error::Utf8)?;
+        B::validate_store(store).map_err(PatternOrUtf8Error::Pattern)?;
+        Ok(Self {
+            _backend: PhantomData,
+            store,
+        })
+    }
+}
+
 #[cfg(feature = "alloc")]
 impl<B> Pattern<B, <B::Store as ToOwned>::Owned>
 where
@@ -204,31 +229,6 @@ where
                 debug_assert!(false, "{:?}", e);
             }
         };
-        Ok(Self {
-            _backend: PhantomData,
-            store,
-        })
-    }
-}
-
-impl<'a, B> Pattern<B, &'a B::Store>
-where
-    B: PatternBackend,
-{
-    /// Creates a pattern from its store encoded as bytes.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu_pattern::Pattern;
-    /// use icu_pattern::SinglePlaceholder;
-    ///
-    /// Pattern::<SinglePlaceholder, _>::try_from_bytes_store(b"\x01 days")
-    ///     .expect("single placeholder pattern");
-    /// ```
-    pub fn try_from_bytes_store(bytes: &'a [u8]) -> Result<Self, PatternOrUtf8Error<B::StoreUtf8Error>> {
-        let store = B::try_store_from_utf8(bytes).map_err(PatternOrUtf8Error::Utf8)?;
-        B::validate_store(store).map_err(PatternOrUtf8Error::Pattern)?;
         Ok(Self {
             _backend: PhantomData,
             store,
