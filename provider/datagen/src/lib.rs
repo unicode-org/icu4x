@@ -159,14 +159,20 @@ macro_rules! cb {
             let lookup = LOOKUP.get_or_init(|| {
                 [
                     ("core/helloworld@1", Ok(icu_provider::hello_world::HelloWorldV1Marker::INFO)),
+                    (stringify!(icu_provider::hello_world::HelloWorldV1Marker).split("::").last().unwrap().trim(), Ok(icu_provider::hello_world::HelloWorldV1Marker::INFO)),
                     $(
                         ($path, Ok(<$marker>::INFO)),
+                        (stringify!($marker).split("::").last().unwrap().trim(), Ok(<$marker>::INFO)),
                     )+
                     $(
                         #[cfg(feature = "experimental_components")]
                         ($epath, Ok(<$emarker>::INFO)),
+                        #[cfg(feature = "experimental_components")]
+                        (stringify!($emarker).split("::").last().unwrap().trim(), Ok(<$emarker>::INFO)),
                         #[cfg(not(feature = "experimental_components"))]
                         ($epath, Err(stringify!(feature = "experimental_components"))),
+                        #[cfg(not(feature = "experimental_components"))]
+                        (stringify!($emarker).split("::").last().unwrap().trim(), Err(stringify!(feature = "experimental_components"))),
                     )+
 
                 ]
