@@ -5,6 +5,8 @@
 //! The collection of code that is needed for handling formatting operations for DateTimes.
 //! Central to this is the [`TypedDateTimeFormatter`].
 
+#[cfg(feature = "experimental")]
+use crate::provider::date_time::UnsupportedOptionsOrDataOrPatternError;
 use crate::{
     helpers::size_test,
     options::{length, preferences, DateTimeFormatterOptions},
@@ -603,6 +605,129 @@ where {
             PatternForLengthError::Data(e) => DateTimeError::Data(e),
             PatternForLengthError::Pattern(e) => DateTimeError::Pattern(e),
         })?;
+        Ok(Self(
+            raw::DateTimeFormatter::try_new_unstable(
+                provider,
+                patterns,
+                || calendar::load_symbols_for_cldr_calendar::<C, _>(provider, locale),
+                locale,
+            )?,
+            PhantomData,
+        ))
+    }
+
+    /// Constructor that supports experimental options using compiled data.
+    ///
+    /// ✨ *Enabled with the `compiled_data` and `experimental` Cargo features.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
+    /// of the icu meta-crate. Use with caution.
+    /// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
+    /// </div>
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::{DateTime, Gregorian};
+    /// use icu::datetime::{options::components, TypedDateTimeFormatter};
+    /// use icu::locale::locale;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// let mut options = components::Bag::default();
+    /// options.year = Some(components::Year::Numeric);
+    /// options.month = Some(components::Month::Long);
+    ///
+    /// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_experimental(
+    ///     &locale!("en").into(),
+    ///     options.into(),
+    /// )
+    /// .unwrap();
+    ///
+    /// let datetime =
+    ///     DateTime::try_new_gregorian_datetime(2022, 8, 31, 1, 2, 3).unwrap();
+    ///
+    /// assert_writeable_eq!(dtf.format(&datetime), "August 2022");
+    /// ```
+    ///
+    /// [data provider]: icu_provider
+    #[cfg(feature = "experimental")]
+    #[inline]
+    #[cfg(feature = "compiled_data")]
+    pub fn try_new_experimental(
+        locale: &DataLocale,
+        options: DateTimeFormatterOptions,
+    ) -> Result<Self, DateTimeError>
+    where
+        crate::provider::Baked: DataProvider<<C as CldrCalendar>::DateLengthsV1Marker>,
+        crate::provider::Baked: DataProvider<<C as CldrCalendar>::DateSymbolsV1Marker>,
+    {
+        let patterns = PatternSelector::for_options_experimental(
+            &crate::provider::Baked,
+            calendar::load_lengths_for_cldr_calendar::<C, _>(&crate::provider::Baked, locale)?,
+            locale,
+            &C::DEFAULT_BCP_47_IDENTIFIER,
+            &options,
+        )
+        .map_err(|e| match e {
+            UnsupportedOptionsOrDataOrPatternError::UnsupportedOptions => {
+                DateTimeError::UnsupportedOptions
+            }
+            UnsupportedOptionsOrDataOrPatternError::Data(e) => DateTimeError::Data(e),
+            UnsupportedOptionsOrDataOrPatternError::Pattern(e) => DateTimeError::Pattern(e),
+        })?;
+        Ok(Self(
+            raw::DateTimeFormatter::try_new(
+                patterns,
+                || {
+                    calendar::load_symbols_for_cldr_calendar::<C, _>(
+                        &crate::provider::Baked,
+                        locale,
+                    )
+                },
+                locale,
+            )?,
+            PhantomData,
+        ))
+    }
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_experimental)]
+    #[cfg(feature = "experimental")]
+    #[inline]
+    pub fn try_new_experimental_unstable<D>(
+        provider: &D,
+        locale: &DataLocale,
+        options: DateTimeFormatterOptions,
+    ) -> Result<Self, DateTimeError>
+    where
+        D: DataProvider<<C as CldrCalendar>::DateSymbolsV1Marker>
+            + DataProvider<<C as CldrCalendar>::DateLengthsV1Marker>
+            + DataProvider<TimeSymbolsV1Marker>
+            + DataProvider<TimeLengthsV1Marker>
+            + DataProvider<crate::provider::calendar::DateSkeletonPatternsV1Marker>
+            + DataProvider<DecimalSymbolsV1Marker>
+            + DataProvider<OrdinalV1Marker>
+            + DataProvider<WeekDataV1Marker>
+            + ?Sized,
+    {
+        let patterns = PatternSelector::for_options_experimental(
+            provider,
+            calendar::load_lengths_for_cldr_calendar::<C, _>(provider, locale)?,
+            locale,
+            &C::DEFAULT_BCP_47_IDENTIFIER,
+            &options,
+        )
+        .map_err(|e| match e {
+            UnsupportedOptionsOrDataOrPatternError::UnsupportedOptions => {
+                DateTimeError::UnsupportedOptions
+            }
+            UnsupportedOptionsOrDataOrPatternError::Data(e) => DateTimeError::Data(e),
+            UnsupportedOptionsOrDataOrPatternError::Pattern(e) => DateTimeError::Pattern(e),
+        })?;
+
         Ok(Self(
             raw::DateTimeFormatter::try_new_unstable(
                 provider,

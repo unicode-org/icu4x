@@ -19,6 +19,8 @@ use crate::provider::calendar::{
 };
 #[cfg(feature = "experimental")]
 use crate::provider::neo::SimpleSubstitutionPattern;
+#[cfg(feature = "experimental")]
+use crate::{options::components, provider::calendar::DateSkeletonPatternsV1Marker};
 use icu_calendar::types::Era;
 use icu_calendar::types::MonthCode;
 use icu_locale_core::extensions::unicode::Value;
@@ -52,6 +54,19 @@ pub(crate) enum GetSymbolForTimeZoneError {
     #[cfg(feature = "experimental")]
     Missing,
     MissingNames(Field),
+}
+
+#[cfg(feature = "experimental")]
+pub(crate) enum UnsupportedOptionsOrDataError {
+    UnsupportedOptions,
+    Data(DataError),
+}
+
+#[cfg(feature = "experimental")]
+pub(crate) enum UnsupportedOptionsOrDataOrPatternError {
+    UnsupportedOptions,
+    Data(DataError),
+    Pattern(PatternError),
 }
 
 fn pattern_for_time_length_inner<'data>(
@@ -253,6 +268,117 @@ where
             )
             .into())
         })
+    }
+}
+
+#[cfg(feature = "experimental")]
+impl<D> PatternSelector<'_, D>
+where
+    D: DataProvider<TimeLengthsV1Marker> + DataProvider<DateSkeletonPatternsV1Marker> + ?Sized,
+{
+    pub(crate) fn for_options_experimental<'a>(
+        data_provider: &'a D,
+        date_patterns_data: DataPayload<ErasedDateLengthsV1Marker>,
+        locale: &'a DataLocale,
+        cal_val: &'a Value,
+        options: &DateTimeFormatterOptions,
+    ) -> Result<
+        DataPayload<PatternPluralsFromPatternsV1Marker>,
+        UnsupportedOptionsOrDataOrPatternError,
+    > {
+        let selector = PatternSelector {
+            data_provider,
+            date_patterns_data,
+            locale,
+            cal_val: Some(cal_val),
+        };
+        match options {
+            DateTimeFormatterOptions::Length(bag) => selector
+                .pattern_for_length_bag(bag, Some(preferences::Bag::from_data_locale(locale)))
+                .map_err(|e| match e {
+                    PatternForLengthError::Data(e) => {
+                        UnsupportedOptionsOrDataOrPatternError::Data(e)
+                    }
+                    PatternForLengthError::Pattern(e) => {
+                        UnsupportedOptionsOrDataOrPatternError::Pattern(e)
+                    }
+                }),
+            DateTimeFormatterOptions::Components(bag) => selector
+                .patterns_for_components_bag(bag)
+                .map_err(|e| match e {
+                    UnsupportedOptionsOrDataError::Data(e) => {
+                        UnsupportedOptionsOrDataOrPatternError::Data(e)
+                    }
+                    UnsupportedOptionsOrDataError::UnsupportedOptions => {
+                        UnsupportedOptionsOrDataOrPatternError::UnsupportedOptions
+                    }
+                }),
+        }
+    }
+
+    /// Determine the appropriate `PatternPlurals` for a given `options::components::Bag`.
+    fn patterns_for_components_bag(
+        self,
+        components: &components::Bag,
+    ) -> Result<DataPayload<PatternPluralsFromPatternsV1Marker>, UnsupportedOptionsOrDataError>
+    {
+        use crate::skeleton;
+        let skeletons_data = self
+            .skeleton_data_payload()
+            .map_err(UnsupportedOptionsOrDataError::Data)?;
+        // Not all skeletons are currently supported.
+        // TODO(#594) - This should default should be the locale default, which is
+        // region-based (h12 for US, h23 for GB, etc). This is in CLDR, but we need
+        // to load it as well as think about the best architecture for where that
+        // data loading code should reside.
+        let requested_fields = components.to_vec_fields(preferences::HourCycle::H23);
+        let patterns = match skeleton::create_best_pattern_for_fields(
+            skeletons_data.get(),
+            &self.date_patterns_data.get().length_combinations,
+            &requested_fields,
+            components,
+            false, // Prefer the requested fields over the matched pattern.
+        ) {
+            skeleton::BestSkeleton::AllFieldsMatch(pattern)
+            | skeleton::BestSkeleton::MissingOrExtraFields(pattern) => Ok(pattern),
+            skeleton::BestSkeleton::NoMatch => {
+                Err(UnsupportedOptionsOrDataError::UnsupportedOptions)
+            }
+        }?;
+        Ok(DataPayload::from_owned(PatternPluralsV1(
+            patterns.into_owned(),
+        )))
+    }
+
+    fn skeleton_data_payload(
+        &self,
+    ) -> Result<DataPayload<DateSkeletonPatternsV1Marker>, DataError> {
+        use icu_locale_core::{
+            extensions::unicode::{key, value},
+            subtags::subtag,
+        };
+        let mut locale = self.locale.clone();
+        #[allow(clippy::expect_used)] // experimental
+        let cal_val = self.cal_val.expect("should be present for components bag");
+        // Skeleton data for ethioaa is stored under ethiopic
+        if cal_val == &value!("ethioaa") {
+            locale.set_unicode_ext(key!("ca"), value!("ethiopic"));
+        } else if cal_val == &value!("islamic")
+            || cal_val == &value!("islamicc")
+            || cal_val.as_subtags_slice().first() == Some(&subtag!("islamic"))
+        {
+            // All islamic calendars store skeleton data under islamic, not their individual extension keys
+            locale.set_unicode_ext(key!("ca"), value!("islamic"));
+        } else {
+            locale.set_unicode_ext(key!("ca"), cal_val.clone());
+        };
+
+        self.data_provider
+            .load(DataRequest {
+                locale: &locale,
+                ..Default::default()
+            })
+            .map(|r| r.payload)
     }
 }
 

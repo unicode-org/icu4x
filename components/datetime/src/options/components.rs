@@ -167,7 +167,7 @@ impl Bag {
     ///
     /// - `default_hour_cycle` specifies the hour cycle to use for the hour field if not in the Bag.
     ///   `preferences::Bag::hour_cycle` takes precedence over this argument.
-    #[cfg(any(test, feature = "datagen"))]
+    #[cfg(any(test, feature = "datagen", feature = "experimental"))]
     pub(crate) fn to_vec_fields(
         &self,
         default_hour_cycle: preferences::HourCycle,

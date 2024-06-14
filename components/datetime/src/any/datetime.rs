@@ -3,6 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::helpers::size_test;
+#[cfg(feature = "experimental")]
+use crate::provider::date_time::UnsupportedOptionsOrDataOrPatternError;
 use crate::provider::{
     calendar::*,
     date_time::{PatternForLengthError, PatternSelector},
@@ -211,6 +213,165 @@ impl DateTimeFormatter {
     ) -> Result<Self, DateTimeError> {
         let deserializing = provider.as_deserializing();
         Self::try_new_unstable(&deserializing, locale, options)
+    }
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_experimental)]
+    #[cfg(feature = "experimental")]
+    #[inline(never)]
+    pub fn try_new_experimental_unstable<P>(
+        provider: &P,
+        locale: &DataLocale,
+        options: DateTimeFormatterOptions,
+    ) -> Result<Self, DateTimeError>
+    where
+        P: DataProvider<TimeSymbolsV1Marker>
+            + DataProvider<TimeLengthsV1Marker>
+            + DataProvider<crate::provider::calendar::DateSkeletonPatternsV1Marker>
+            + DataProvider<OrdinalV1Marker>
+            + DataProvider<WeekDataV1Marker>
+            + DataProvider<DecimalSymbolsV1Marker>
+            + DataProvider<BuddhistDateLengthsV1Marker>
+            + DataProvider<BuddhistDateSymbolsV1Marker>
+            + DataProvider<ChineseCacheV1Marker>
+            + DataProvider<ChineseDateLengthsV1Marker>
+            + DataProvider<ChineseDateSymbolsV1Marker>
+            + DataProvider<CopticDateLengthsV1Marker>
+            + DataProvider<CopticDateSymbolsV1Marker>
+            + DataProvider<DangiCacheV1Marker>
+            + DataProvider<DangiDateLengthsV1Marker>
+            + DataProvider<DangiDateSymbolsV1Marker>
+            + DataProvider<EthiopianDateLengthsV1Marker>
+            + DataProvider<EthiopianDateSymbolsV1Marker>
+            + DataProvider<GregorianDateLengthsV1Marker>
+            + DataProvider<GregorianDateSymbolsV1Marker>
+            + DataProvider<HebrewDateLengthsV1Marker>
+            + DataProvider<HebrewDateSymbolsV1Marker>
+            + DataProvider<IndianDateLengthsV1Marker>
+            + DataProvider<IndianDateSymbolsV1Marker>
+            + DataProvider<IslamicDateLengthsV1Marker>
+            + DataProvider<IslamicDateSymbolsV1Marker>
+            + DataProvider<IslamicObservationalCacheV1Marker>
+            + DataProvider<IslamicUmmAlQuraCacheV1Marker>
+            + DataProvider<JapaneseDateLengthsV1Marker>
+            + DataProvider<JapaneseDateSymbolsV1Marker>
+            + DataProvider<JapaneseErasV1Marker>
+            + DataProvider<JapaneseExtendedDateLengthsV1Marker>
+            + DataProvider<JapaneseExtendedDateSymbolsV1Marker>
+            + DataProvider<JapaneseExtendedErasV1Marker>
+            + DataProvider<PersianDateLengthsV1Marker>
+            + DataProvider<PersianDateSymbolsV1Marker>
+            + DataProvider<RocDateLengthsV1Marker>
+            + DataProvider<RocDateSymbolsV1Marker>
+            + ?Sized,
+    {
+        let calendar = AnyCalendar::try_new_for_locale_unstable(provider, locale)?;
+        let kind = calendar.kind();
+
+        let patterns = PatternSelector::for_options_experimental(
+            provider,
+            calendar::load_lengths_for_any_calendar_kind(provider, locale, kind)?,
+            locale,
+            &kind.as_bcp47_value(),
+            &options,
+        )
+        .map_err(|e| match e {
+            UnsupportedOptionsOrDataOrPatternError::UnsupportedOptions => {
+                DateTimeError::UnsupportedOptions
+            }
+            UnsupportedOptionsOrDataOrPatternError::Data(e) => DateTimeError::Data(e),
+            UnsupportedOptionsOrDataOrPatternError::Pattern(e) => DateTimeError::Pattern(e),
+        })?;
+
+        Ok(Self(
+            raw::DateTimeFormatter::try_new_unstable(
+                provider,
+                patterns,
+                || calendar::load_symbols_for_any_calendar_kind(provider, locale, kind),
+                locale,
+            )?,
+            calendar,
+        ))
+    }
+
+    /// Constructor that supports experimental options with compiled data.
+    ///
+    /// ✨ *Enabled with the `compiled_data` and `experimental` Cargo features.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
+    /// of the icu meta-crate. Use with caution.
+    /// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
+    /// </div>
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::DateTime;
+    /// use icu::datetime::{options::components, DateTimeFormatter};
+    /// use icu::locale::locale;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// let mut options = components::Bag::default();
+    /// options.year = Some(components::Year::Numeric);
+    /// options.month = Some(components::Month::Long);
+    ///
+    /// let dtf = DateTimeFormatter::try_new_experimental(
+    ///     &locale!("en-u-ca-gregory").into(),
+    ///     options.into(),
+    /// )
+    /// .expect("Failed to create TypedDateTimeFormatter instance.");
+    ///
+    /// let datetime = DateTime::try_new_iso_datetime(2020, 9, 1, 12, 34, 28)
+    ///     .expect("Failed to construct DateTime.");
+    /// let any_datetime = datetime.to_any();
+    ///
+    /// assert_writeable_eq!(
+    ///     dtf.format(&any_datetime).expect("Calendars should match"),
+    ///     "September 2020"
+    /// );
+    /// ```
+    #[cfg(feature = "experimental")]
+    #[cfg(feature = "compiled_data")]
+    #[inline(never)]
+    pub fn try_new_experimental(
+        locale: &DataLocale,
+        options: DateTimeFormatterOptions,
+    ) -> Result<Self, DateTimeError> {
+        let calendar = AnyCalendar::new_for_locale(locale);
+        let kind = calendar.kind();
+
+        let patterns = PatternSelector::for_options_experimental(
+            &crate::provider::Baked,
+            calendar::load_lengths_for_any_calendar_kind(&crate::provider::Baked, locale, kind)?,
+            locale,
+            &kind.as_bcp47_value(),
+            &options,
+        )
+        .map_err(|e| match e {
+            UnsupportedOptionsOrDataOrPatternError::UnsupportedOptions => {
+                DateTimeError::UnsupportedOptions
+            }
+            UnsupportedOptionsOrDataOrPatternError::Data(e) => DateTimeError::Data(e),
+            UnsupportedOptionsOrDataOrPatternError::Pattern(e) => DateTimeError::Pattern(e),
+        })?;
+
+        Ok(Self(
+            raw::DateTimeFormatter::try_new(
+                patterns,
+                || {
+                    calendar::load_symbols_for_any_calendar_kind(
+                        &crate::provider::Baked,
+                        locale,
+                        kind,
+                    )
+                },
+                locale,
+            )?,
+            calendar,
+        ))
     }
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
