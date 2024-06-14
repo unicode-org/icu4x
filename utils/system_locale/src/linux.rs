@@ -59,7 +59,21 @@ mod linux_locale {
         }
         unique_locales.into_iter().collect()
     }
+
+    pub fn get_system_calendar() -> Vec<(String, String)> {
+        unsafe {
+            let locale_ptr = locale::linux::ffi::setlocale(LC_TIME, null());
+            if !locale_ptr.is_null() {
+                let c_str = CStr::from_ptr(locale_ptr);
+                if let Ok(str_slice) = c_str.to_str() {
+                    return vec![(str_slice.to_string(), String::from("Gregorian"))];
+                }
+            }
+        }
+        Vec::new() // Return an empty vector if there is an error
+    }
 }
 
 #[cfg(target_os = "linux")]
 pub use linux_locale::get_loclae;
+pub use linux_locale::get_system_calendar;
