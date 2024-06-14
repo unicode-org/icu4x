@@ -2,8 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#[cfg(feature = "alloc")]
-use alloc::borrow::ToOwned;
 #[cfg(feature = "databake")]
 mod databake;
 #[cfg(feature = "serde")]
@@ -14,7 +12,7 @@ use crate::PatternOrUtf8Error;
 #[cfg(feature = "alloc")]
 use crate::{Parser, ParserOptions};
 #[cfg(feature = "alloc")]
-use alloc::{str::FromStr, string::String};
+use alloc::{borrow::ToOwned, str::FromStr, string::String};
 use core::{
     convert::Infallible,
     fmt::{self, Write},
@@ -213,10 +211,9 @@ where
     }
 }
 
-impl<B, E, Store> Pattern<B, Store>
+impl<'a, B> Pattern<B, &'a B::Store>
 where
-    B: PatternBackend<StoreUtf8Error = E>,
-    Store: AsRef<B::Store>,
+    B: PatternBackend,
 {
     /// Creates a pattern from a UTF-8 encoded byte slice.
     ///
@@ -229,7 +226,7 @@ where
     /// Pattern::<SinglePlaceholder, _>::try_from_utf8(b"\x01 days")
     ///     .expect("single placeholder pattern");
     /// ```
-    pub fn try_from_utf8(bytes: &[u8]) -> Result<Self, PatternOrUtf8Error<E>> {
+    pub fn try_from_utf8(bytes: &'a [u8]) -> Result<Self, PatternOrUtf8Error<B::StoreUtf8Error>> {
         let store = B::try_store_from_utf8(bytes).map_err(PatternOrUtf8Error::Utf8)?;
         B::validate_store(store).map_err(PatternOrUtf8Error::Pattern)?;
         Ok(Self {
