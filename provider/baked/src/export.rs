@@ -336,7 +336,7 @@ impl BakedExporter {
                     "* {structs_total_size}B[^1] for the singleton data struct\n "
                 );
             } else {
-                let _infallible = write!(&mut doc, "* {lookup_struct_size}B[^1] for the lookup data structure ({identifiers_count} data identifiers)\n ");
+                let _infallible = write!(&mut doc, "* {lookup_struct_size}B for the lookup data structure ({identifiers_count} data identifiers)\n ");
                 let _infallible = write!(&mut doc, "* {structs_total_size}B[^1] for the actual data ({structs_count} unique structs)\n ");
             };
             let _infallible = write!(
@@ -556,7 +556,7 @@ impl DataExporter for BakedExporter {
             .unwrap();
 
             let (data, lookup_struct_size) =
-                crate::binary_search::bake(&marker_bake, ids_to_idents, idents_to_bakes);
+                crate::zerotrie::bake(&marker_bake, ids_to_idents, idents_to_bakes);
 
             stats.lookup_struct_size = lookup_struct_size;
 

@@ -9,6 +9,7 @@ use databake::*;
 use icu_provider::prelude::*;
 
 #[cfg(feature = "export")]
+#[allow(dead_code)]
 pub(crate) fn bake(
     marker_bake: &TokenStream,
     mut ids_to_idents: Vec<(DataIdentifierCow, proc_macro2::Ident)>,
