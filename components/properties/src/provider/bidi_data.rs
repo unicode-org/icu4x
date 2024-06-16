@@ -156,7 +156,7 @@ pub enum CheckedBidiPairedBracketType {
 #[doc(hidden)]
 /// needed for datagen but not intended for users
 #[derive(Copy, Clone, Hash, PartialEq, Eq, Debug)]
-#[repr(packed)]
+#[repr(C, packed)]
 pub struct MirroredPairedBracketDataULE([u8; 3]);
 
 // Safety (based on the safety checklist on the ULE trait):
