@@ -14,7 +14,7 @@ include.workspace = true
 license.workspace = true
 repository.workspace = true
 rust-version.workspace = true
-version.workspace = true
+version = "1.5.1"
 
 [package.metadata.docs.rs]
 all-features = true
