@@ -2,9 +2,12 @@
 
 ## icu4x 1.5.x
 
+- `icu_calendar`
+  - (1.5.1) Fix Japanese calendar Gregorian era year 0 (https://github.com/unicode-org/icu4x/issues/4968)
 - `icu_datetime`
-  - Fix incorrect assertion in week-of-year formatting (https://github.com/unicode-org/icu4x/issues/4977)
-  - Fix Japanese calendar Gregorian era year 0 (https://github.com/unicode-org/icu4x/issues/4968)
+  - (1.5.1) Fix incorrect assertion in week-of-year formatting (https://github.com/unicode-org/icu4x/issues/4977)
+- `zerovec`
+  - (0.10.3) Fix size regression by making `twox-hash` dep `no_std` (https://github.com/unicode-org/icu4x/pull/5007)
 
 ## icu4x 1.5 (May 28, 2024)
 
