@@ -362,9 +362,7 @@ impl LineSegmenter {
 
     #[cfg(feature = "auto")]
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: skip,
-        options: skip,
-        error: DataError,
+        () -> error: DataError,
         #[cfg(skip)]
         functions: [
             new_auto,
@@ -406,9 +404,7 @@ impl LineSegmenter {
 
     #[cfg(feature = "lstm")]
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: skip,
-        options: skip,
-        error: DataError,
+        () -> error: DataError,
         #[cfg(skip)]
         functions: [
             new_lstm,
@@ -448,9 +444,7 @@ impl LineSegmenter {
     }
 
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: skip,
-        options: skip,
-        error: DataError,
+        () -> error: DataError,
         #[cfg(skip)]
         functions: [
             new_dictionary,
@@ -490,9 +484,7 @@ impl LineSegmenter {
 
     #[cfg(feature = "auto")]
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: skip,
-        options: LineBreakOptions,
-        error: DataError,
+        (options: LineBreakOptions) -> error: DataError,
         #[cfg(skip)]
         functions: [
             new_auto_with_options,
@@ -543,9 +535,7 @@ impl LineSegmenter {
 
     #[cfg(feature = "lstm")]
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: skip,
-        options: LineBreakOptions,
-        error: DataError,
+        (options: LineBreakOptions) -> error: DataError,
         #[cfg(skip)]
         functions: [
             try_new_lstm_with_options,
@@ -604,9 +594,7 @@ impl LineSegmenter {
     }
 
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: skip,
-        options: LineBreakOptions,
-        error: DataError,
+        (options: LineBreakOptions) -> error: DataError,
         #[cfg(skip)]
         functions: [
             new_dictionary_with_options,

@@ -41,7 +41,7 @@ impl MetazoneCalculator {
         }
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: DataError,
+    icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,
         #[cfg(skip)]
         functions: [
             new,

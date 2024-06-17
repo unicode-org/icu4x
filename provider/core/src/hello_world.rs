@@ -269,7 +269,7 @@ impl HelloWorldFormatter {
         Self::try_new_unstable(&HelloWorldProvider, locale)
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(locale: include, options: skip, error: DataError,
+    icu_provider::gen_any_buffer_data_constructors!((locale) -> error: DataError,
         #[cfg(skip)]
         functions: [
             try_new,

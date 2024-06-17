@@ -92,9 +92,7 @@ impl Collator {
     }
 
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: include,
-        options: CollatorOptions,
-        error: DataError,
+        (locale, options: CollatorOptions) -> error: DataError,
         #[cfg(skip)]
     );
 

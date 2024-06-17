@@ -399,9 +399,7 @@ impl TimeZoneFormatter {
     }
 
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: include,
-        options: TimeZoneFormatterOptions,
-        error: DateTimeError,
+        (locale, options: TimeZoneFormatterOptions) -> error: DateTimeError,
         /// Creates a new [`TimeZoneFormatter`] with a GMT or ISO format using compiled data.
         ///
         /// To enable other time zone styles, use one of the `with` (compiled data) or `load` (runtime

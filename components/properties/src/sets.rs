@@ -2109,9 +2109,7 @@ pub fn load_for_ecma262(
 }
 
 icu_provider::gen_any_buffer_data_constructors!(
-    locale: skip,
-    name: &str,
-    result: Result<CodePointSetData, UnexpectedPropertyNameOrDataError>,
+    (name: &str) -> result: Result<CodePointSetData, UnexpectedPropertyNameOrDataError>,
     #[cfg(skip)]
     functions: [
         load_for_ecma262,
