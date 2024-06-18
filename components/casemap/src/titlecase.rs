@@ -225,7 +225,7 @@ impl TitlecaseMapper<CaseMapper> {
         }
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: DataError,
+    icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,
     #[cfg(skip)]
     functions: [
         new,
@@ -248,7 +248,7 @@ impl TitlecaseMapper<CaseMapper> {
 
 // We use Borrow, not AsRef, since we want the blanket impl on T
 impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
-    icu_provider::gen_any_buffer_data_constructors!(locale: skip, casemapper: CM, error: DataError,
+    icu_provider::gen_any_buffer_data_constructors!((casemapper: CM) -> error: DataError,
     #[cfg(skip)]
     functions: [
         new_with_mapper,

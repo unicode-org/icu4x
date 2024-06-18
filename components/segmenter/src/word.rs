@@ -212,9 +212,7 @@ impl WordSegmenter {
 
     #[cfg(feature = "auto")]
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: skip,
-        options: skip,
-        error: DataError,
+        () -> error: DataError,
         #[cfg(skip)]
         functions: [
             try_new_auto,
@@ -287,9 +285,7 @@ impl WordSegmenter {
 
     #[cfg(feature = "lstm")]
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: skip,
-        options: skip,
-        error: DataError,
+        () -> error: DataError,
         #[cfg(skip)]
         functions: [
             new_lstm,
@@ -354,9 +350,7 @@ impl WordSegmenter {
     }
 
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: skip,
-        options: skip,
-        error: DataError,
+        () -> error: DataError,
         #[cfg(skip)]
         functions: [
             new_dictionary,
