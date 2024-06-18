@@ -218,6 +218,7 @@ where
     /// // we call `.take_store()` and `.from_store_unchecked()` on patterns
     /// // with the same backend (`SinglePlaceholder`).
     /// let store = allocated_pattern.take_store();
+    ///
     /// // SAFETY: store comes from a valid pattern
     /// let borrowed_pattern: &Pattern<SinglePlaceholder, _> =
     ///     unsafe { Pattern::from_borrowed_store_unchecked(store.as_str()) };
