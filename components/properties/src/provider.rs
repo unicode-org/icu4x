@@ -22,7 +22,6 @@ use crate::script::ScriptWithExt;
 use crate::Script;
 
 use core::ops::RangeInclusive;
-use core::str;
 use icu_collections::codepointinvlist::CodePointInversionList;
 use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
 use icu_collections::codepointtrie::{CodePointMapRange, CodePointTrie, TrieValue};
