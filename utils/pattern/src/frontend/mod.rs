@@ -199,11 +199,7 @@ where
     ///
     /// # Safety
     ///
-    /// This is a low-level method that bypasses the store validation and assumes the store
-    /// is valid. It is primarily used by the backend implementations.
-    ///
-    /// NOTE:
-    ///    Pattern::validate_store() method must be called on the store before using it.
+    /// `Pattern::validate_store(store)` must return `Ok`.
     ///
     /// # Examples
     ///
