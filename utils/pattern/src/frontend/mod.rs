@@ -13,7 +13,6 @@ use crate::PatternOrUtf8Error;
 use crate::{Parser, ParserOptions};
 #[cfg(feature = "alloc")]
 use alloc::{borrow::ToOwned, str::FromStr, string::String};
-use core::ops::Deref;
 use core::{
     convert::Infallible,
     fmt::{self, Write},
