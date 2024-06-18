@@ -142,9 +142,7 @@ impl CompactDecimalFormatter {
     }
 
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: include,
-        options: CompactDecimalFormatterOptions,
-        error: DataError,
+        (locale, options: CompactDecimalFormatterOptions) -> error: DataError,
         #[cfg(skip)]
         functions: [
             try_new_short,
@@ -229,9 +227,7 @@ impl CompactDecimalFormatter {
     }
 
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: include,
-        options: CompactDecimalFormatterOptions,
-        error: DataError,
+        (locale, options: CompactDecimalFormatterOptions) -> error: DataError,
         #[cfg(skip)]
         functions: [
             try_new_long,

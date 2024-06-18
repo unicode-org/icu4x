@@ -9,29 +9,32 @@ macro_rules! __impl_collation_metadata_v1_marker {
         #[clippy::msrv = "1.70"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
         #[clippy::msrv = "1.70"]
+        impl $provider {
+            const DATA_COLLATION_METADATA_V1_MARKER: icu_provider_baked::binary_search::Data<icu_provider_baked::binary_search::Locale, icu::collator::provider::CollationMetadataV1Marker> = {
+                type S = <icu::collator::provider::CollationMetadataV1Marker as icu_provider::DynamicDataMarker>::Yokeable;
+                const __AF: &S = &icu::collator::provider::CollationMetadataV1 { bits: 9u32 };
+                const __AM: &S = &icu::collator::provider::CollationMetadataV1 { bits: 33u32 };
+                const __AR: &S = &icu::collator::provider::CollationMetadataV1 { bits: 41u32 };
+                const __DA: &S = &icu::collator::provider::CollationMetadataV1 { bits: 1545u32 };
+                const __FR_CA: &S = &icu::collator::provider::CollationMetadataV1 { bits: 129u32 };
+                const __LT: &S = &icu::collator::provider::CollationMetadataV1 { bits: 73u32 };
+                const __TH: &S = &icu::collator::provider::CollationMetadataV1 { bits: 297u32 };
+                const __UND: &S = &icu::collator::provider::CollationMetadataV1 { bits: 1u32 };
+                const __VI: &S = &icu::collator::provider::CollationMetadataV1 { bits: 25u32 };
+                icu_provider_baked::binary_search::Data(&[("af", __AF), ("am", __AM), ("ar", __AR), ("as", __AR), ("az", __AR), ("be", __AR), ("bg", __AM), ("bn", __AR), ("br", __AF), ("bs", __AR), ("ceb", __AF), ("chr", __AM), ("cs", __AF), ("cy", __AF), ("da", __DA), ("de-AT-u-co-phonebk", __AF), ("de-u-co-phonebk", __AF), ("dsb", __AF), ("el", __AM), ("en-US-posix", __AF), ("eo", __AF), ("es", __AF), ("et", __AF), ("fa", __AR), ("ff-Adlm", __AF), ("fi", __AF), ("fil", __AF), ("fo", __AF), ("fr-CA", __FR_CA), ("fy", __AF), ("gl", __AF), ("gu", __AR), ("ha", __AF), ("he", __AM), ("hi", __AR), ("hr", __AR), ("hsb", __AF), ("hu", __AF), ("hy", __AR), ("ig", __AF), ("is", __AF), ("ja", __AR), ("ka", __AM), ("kk", __AR), ("km", __AR), ("kn", __AR), ("ko", __AR), ("kok", __AR), ("ku", __AR), ("ky", __AR), ("lo", __AM), ("lt", __LT), ("lv", __AF), ("mk", __AR), ("ml", __AR), ("mn", __AM), ("mr", __AR), ("mt", __DA), ("my", __AR), ("ne", __AM), ("no", __AF), ("or", __AR), ("pa", __AR), ("pl", __AF), ("ps", __AR), ("ro", __AF), ("ru", __AM), ("si", __AR), ("sk", __AF), ("sl", __AF), ("sq", __AF), ("sr", __AR), ("sv", __AF), ("ta", __AR), ("te", __AR), ("th", __TH), ("tk", __AF), ("to", __AF), ("tr", __AF), ("ug", __AR), ("uk", __AR), ("und", __UND), ("ur", __AR), ("uz", __AF), ("vi", __VI), ("wo", __AF), ("yo", __AF), ("zh", __AR)])
+            };
+        }
+        #[clippy::msrv = "1.70"]
         impl icu_provider::DataProvider<icu::collator::provider::CollationMetadataV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::collator::provider::CollationMetadataV1Marker>, icu_provider::DataError> {
-                static __FR_CA: <icu::collator::provider::CollationMetadataV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::collator::provider::CollationMetadataV1 { bits: 129u32 };
-                static __DA: <icu::collator::provider::CollationMetadataV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::collator::provider::CollationMetadataV1 { bits: 1545u32 };
-                static __UND: <icu::collator::provider::CollationMetadataV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::collator::provider::CollationMetadataV1 { bits: 1u32 };
-                static __VI: <icu::collator::provider::CollationMetadataV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::collator::provider::CollationMetadataV1 { bits: 25u32 };
-                static __TH: <icu::collator::provider::CollationMetadataV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::collator::provider::CollationMetadataV1 { bits: 297u32 };
-                static __AM: <icu::collator::provider::CollationMetadataV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::collator::provider::CollationMetadataV1 { bits: 33u32 };
-                static __AR: <icu::collator::provider::CollationMetadataV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::collator::provider::CollationMetadataV1 { bits: 41u32 };
-                static __LT: <icu::collator::provider::CollationMetadataV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::collator::provider::CollationMetadataV1 { bits: 73u32 };
-                static __AF: <icu::collator::provider::CollationMetadataV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::collator::provider::CollationMetadataV1 { bits: 9u32 };
-                static DATA: [(&str, &<icu::collator::provider::CollationMetadataV1Marker as icu_provider::DynamicDataMarker>::Yokeable); 88usize] = [("af", &__AF), ("am", &__AM), ("ar", &__AR), ("as", &__AR), ("az", &__AR), ("be", &__AR), ("bg", &__AM), ("bn", &__AR), ("br", &__AF), ("bs", &__AR), ("ceb", &__AF), ("chr", &__AM), ("cs", &__AF), ("cy", &__AF), ("da", &__DA), ("de-AT-u-co-phonebk", &__AF), ("de-u-co-phonebk", &__AF), ("dsb", &__AF), ("el", &__AM), ("en-US-posix", &__AF), ("eo", &__AF), ("es", &__AF), ("et", &__AF), ("fa", &__AR), ("ff-Adlm", &__AF), ("fi", &__AF), ("fil", &__AF), ("fo", &__AF), ("fr-CA", &__FR_CA), ("fy", &__AF), ("gl", &__AF), ("gu", &__AR), ("ha", &__AF), ("he", &__AM), ("hi", &__AR), ("hr", &__AR), ("hsb", &__AF), ("hu", &__AF), ("hy", &__AR), ("ig", &__AF), ("is", &__AF), ("ja", &__AR), ("ka", &__AM), ("kk", &__AR), ("km", &__AR), ("kn", &__AR), ("ko", &__AR), ("kok", &__AR), ("ku", &__AR), ("ky", &__AR), ("lo", &__AM), ("lt", &__LT), ("lv", &__AF), ("mk", &__AR), ("ml", &__AR), ("mn", &__AM), ("mr", &__AR), ("mt", &__DA), ("my", &__AR), ("ne", &__AM), ("no", &__AF), ("or", &__AR), ("pa", &__AR), ("pl", &__AF), ("ps", &__AR), ("ro", &__AF), ("ru", &__AM), ("si", &__AR), ("sk", &__AF), ("sl", &__AF), ("sq", &__AF), ("sr", &__AR), ("sv", &__AF), ("ta", &__AR), ("te", &__AR), ("th", &__TH), ("tk", &__AF), ("to", &__AF), ("tr", &__AF), ("ug", &__AR), ("uk", &__AR), ("und", &__UND), ("ur", &__AR), ("uz", &__AF), ("vi", &__VI), ("wo", &__AF), ("yo", &__AF), ("zh", &__AR)];
-                fn lookup(req: icu_provider::DataRequest) -> Option<&'static <icu::collator::provider::CollationMetadataV1Marker as icu_provider::DynamicDataMarker>::Yokeable> {
-                    DATA.binary_search_by(|(l, _)| req.locale.strict_cmp(l.as_bytes()).reverse()).map(|i| (*unsafe { DATA.get_unchecked(i) }).1).ok()
-                }
                 let mut metadata = icu_provider::DataResponseMetadata::default();
-                let payload = if let Some(payload) = lookup(req) {
+                let payload = if let Some(payload) = icu_provider_baked::DataStore::get(&Self::DATA_COLLATION_METADATA_V1_MARKER, req) {
                     payload
                 } else {
                     const FALLBACKER: icu::locale::fallback::LocaleFallbackerWithConfig<'static> = icu::locale::fallback::LocaleFallbacker::new().for_config(<icu::collator::provider::CollationMetadataV1Marker as icu_provider::DataMarker>::INFO.fallback_config);
                     let mut fallback_iterator = FALLBACKER.fallback_for(req.locale.clone());
                     loop {
-                        if let Some(payload) = lookup(icu_provider::DataRequest { locale: fallback_iterator.get(), ..req }) {
+                        if let Some(payload) = icu_provider_baked::DataStore::get(&Self::DATA_COLLATION_METADATA_V1_MARKER, icu_provider::DataRequest { locale: fallback_iterator.get(), ..req }) {
                             metadata.locale = Some(fallback_iterator.take());
                             break payload;
                         }
@@ -45,23 +48,15 @@ macro_rules! __impl_collation_metadata_v1_marker {
             }
         }
     };
-}
-#[doc(inline)]
-pub use __impl_collation_metadata_v1_marker as impl_collation_metadata_v1_marker;
-/// Implement `IterableDataProvider<CollationMetadataV1Marker>` on the given struct using the data
-/// hardcoded in this file. This allows the struct to be used with
-/// `DatagenDriver` for this marker.
-#[doc(hidden)]
-#[macro_export]
-macro_rules! __impliterable_collation_metadata_v1_marker {
-    ($ provider : ty) => {
+    ($ provider : ty , ITER) => {
+        __impl_collation_metadata_v1_marker!($provider);
         #[clippy::msrv = "1.70"]
         impl icu_provider::datagen::IterableDataProvider<icu::collator::provider::CollationMetadataV1Marker> for $provider {
             fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataMarkerAttributes)>, icu_provider::DataError> {
-                Ok([icu_provider::_internal::locale_core::locale!("af"), icu_provider::_internal::locale_core::locale!("am"), icu_provider::_internal::locale_core::locale!("ar"), icu_provider::_internal::locale_core::locale!("as"), icu_provider::_internal::locale_core::locale!("az"), icu_provider::_internal::locale_core::locale!("be"), icu_provider::_internal::locale_core::locale!("bg"), icu_provider::_internal::locale_core::locale!("bn"), icu_provider::_internal::locale_core::locale!("br"), icu_provider::_internal::locale_core::locale!("bs"), icu_provider::_internal::locale_core::locale!("ceb"), icu_provider::_internal::locale_core::locale!("chr"), icu_provider::_internal::locale_core::locale!("cs"), icu_provider::_internal::locale_core::locale!("cy"), icu_provider::_internal::locale_core::locale!("da"), icu_provider::_internal::locale_core::locale!("de-AT-u-co-phonebk"), icu_provider::_internal::locale_core::locale!("de-u-co-phonebk"), icu_provider::_internal::locale_core::locale!("dsb"), icu_provider::_internal::locale_core::locale!("el"), icu_provider::_internal::locale_core::locale!("en-US-posix"), icu_provider::_internal::locale_core::locale!("eo"), icu_provider::_internal::locale_core::locale!("es"), icu_provider::_internal::locale_core::locale!("et"), icu_provider::_internal::locale_core::locale!("fa"), icu_provider::_internal::locale_core::locale!("ff-Adlm"), icu_provider::_internal::locale_core::locale!("fi"), icu_provider::_internal::locale_core::locale!("fil"), icu_provider::_internal::locale_core::locale!("fo"), icu_provider::_internal::locale_core::locale!("fr-CA"), icu_provider::_internal::locale_core::locale!("fy"), icu_provider::_internal::locale_core::locale!("gl"), icu_provider::_internal::locale_core::locale!("gu"), icu_provider::_internal::locale_core::locale!("ha"), icu_provider::_internal::locale_core::locale!("he"), icu_provider::_internal::locale_core::locale!("hi"), icu_provider::_internal::locale_core::locale!("hr"), icu_provider::_internal::locale_core::locale!("hsb"), icu_provider::_internal::locale_core::locale!("hu"), icu_provider::_internal::locale_core::locale!("hy"), icu_provider::_internal::locale_core::locale!("ig"), icu_provider::_internal::locale_core::locale!("is"), icu_provider::_internal::locale_core::locale!("ja"), icu_provider::_internal::locale_core::locale!("ka"), icu_provider::_internal::locale_core::locale!("kk"), icu_provider::_internal::locale_core::locale!("km"), icu_provider::_internal::locale_core::locale!("kn"), icu_provider::_internal::locale_core::locale!("ko"), icu_provider::_internal::locale_core::locale!("kok"), icu_provider::_internal::locale_core::locale!("ku"), icu_provider::_internal::locale_core::locale!("ky"), icu_provider::_internal::locale_core::locale!("lo"), icu_provider::_internal::locale_core::locale!("lt"), icu_provider::_internal::locale_core::locale!("lv"), icu_provider::_internal::locale_core::locale!("mk"), icu_provider::_internal::locale_core::locale!("ml"), icu_provider::_internal::locale_core::locale!("mn"), icu_provider::_internal::locale_core::locale!("mr"), icu_provider::_internal::locale_core::locale!("mt"), icu_provider::_internal::locale_core::locale!("my"), icu_provider::_internal::locale_core::locale!("ne"), icu_provider::_internal::locale_core::locale!("no"), icu_provider::_internal::locale_core::locale!("or"), icu_provider::_internal::locale_core::locale!("pa"), icu_provider::_internal::locale_core::locale!("pl"), icu_provider::_internal::locale_core::locale!("ps"), icu_provider::_internal::locale_core::locale!("ro"), icu_provider::_internal::locale_core::locale!("ru"), icu_provider::_internal::locale_core::locale!("si"), icu_provider::_internal::locale_core::locale!("sk"), icu_provider::_internal::locale_core::locale!("sl"), icu_provider::_internal::locale_core::locale!("sq"), icu_provider::_internal::locale_core::locale!("sr"), icu_provider::_internal::locale_core::locale!("sv"), icu_provider::_internal::locale_core::locale!("ta"), icu_provider::_internal::locale_core::locale!("te"), icu_provider::_internal::locale_core::locale!("th"), icu_provider::_internal::locale_core::locale!("tk"), icu_provider::_internal::locale_core::locale!("to"), icu_provider::_internal::locale_core::locale!("tr"), icu_provider::_internal::locale_core::locale!("ug"), icu_provider::_internal::locale_core::locale!("uk"), icu_provider::_internal::locale_core::locale!("und"), icu_provider::_internal::locale_core::locale!("ur"), icu_provider::_internal::locale_core::locale!("uz"), icu_provider::_internal::locale_core::locale!("vi"), icu_provider::_internal::locale_core::locale!("wo"), icu_provider::_internal::locale_core::locale!("yo"), icu_provider::_internal::locale_core::locale!("zh")].into_iter().map(|l| (l.into(), Default::default())).collect())
+                Ok(icu_provider_baked::DataStore::iter(&Self::DATA_COLLATION_METADATA_V1_MARKER).collect())
             }
         }
     };
 }
 #[doc(inline)]
-pub use __impliterable_collation_metadata_v1_marker as impliterable_collation_metadata_v1_marker;
+pub use __impl_collation_metadata_v1_marker as impl_collation_metadata_v1_marker;

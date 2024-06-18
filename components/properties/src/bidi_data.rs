@@ -195,9 +195,7 @@ pub const fn bidi_auxiliary_properties() -> BidiAuxiliaryPropertiesBorrowed<'sta
 }
 
 icu_provider::gen_any_buffer_data_constructors!(
-    locale: skip,
-    options: skip,
-    result: Result<BidiAuxiliaryProperties, DataError>,
+    () -> result: Result<BidiAuxiliaryProperties, DataError>,
     #[cfg(skip)]
     functions: [
         bidi_auxiliary_properties,

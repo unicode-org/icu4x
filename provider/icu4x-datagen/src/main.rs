@@ -622,7 +622,7 @@ macro_rules! cb {
                     $marker,
                 )+
                 $(
-                    #[cfg(feature = "experimental")]
+                    #[cfg(feature = "experimental_components")]
                     $emarker,
                 )+
             ]

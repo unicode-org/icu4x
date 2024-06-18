@@ -988,6 +988,7 @@ name = "icu_calendar_data"
 version = "1.5.0"
 dependencies = [
  "icu_locale",
+ "icu_provider_baked",
 ]
 
 [[package]]
@@ -1048,6 +1049,9 @@ dependencies = [
 [[package]]
 name = "icu_casemap_data"
 version = "1.5.0"
+dependencies = [
+ "icu_provider_baked",
+]
 
 [[package]]
 name = "icu_codepointtrie_builder"
@@ -1088,6 +1092,7 @@ name = "icu_collator_data"
 version = "1.5.0"
 dependencies = [
  "icu_locale",
+ "icu_provider_baked",
 ]
 
 [[package]]
@@ -1187,6 +1192,7 @@ name = "icu_datetime_data"
 version = "1.5.0"
 dependencies = [
  "icu_locale",
+ "icu_provider_baked",
 ]
 
 [[package]]
@@ -1216,6 +1222,7 @@ name = "icu_decimal_data"
 version = "1.5.0"
 dependencies = [
  "icu_locale",
+ "icu_provider_baked",
 ]
 
 [[package]]
@@ -1263,6 +1270,7 @@ name = "icu_experimental_data"
 version = "0.1.0"
 dependencies = [
  "icu_locale",
+ "icu_provider_baked",
 ]
 
 [[package]]
@@ -1323,6 +1331,7 @@ name = "icu_list_data"
 version = "1.5.0"
 dependencies = [
  "icu_locale",
+ "icu_provider_baked",
 ]
 
 [[package]]
@@ -1365,6 +1374,9 @@ dependencies = [
 [[package]]
 name = "icu_locale_data"
 version = "1.5.0"
+dependencies = [
+ "icu_provider_baked",
+]
 
 [[package]]
 name = "icu_normalizer"
@@ -1393,6 +1405,9 @@ dependencies = [
 [[package]]
 name = "icu_normalizer_data"
 version = "1.5.0"
+dependencies = [
+ "icu_provider_baked",
+]
 
 [[package]]
 name = "icu_pattern"
@@ -1435,6 +1450,7 @@ name = "icu_plurals_data"
 version = "1.5.0"
 dependencies = [
  "icu_locale",
+ "icu_provider_baked",
 ]
 
 [[package]]
@@ -1458,6 +1474,7 @@ name = "icu_properties_data"
 version = "1.5.0"
 dependencies = [
  "icu_locale",
+ "icu_provider_baked",
 ]
 
 [[package]]
@@ -1600,6 +1617,7 @@ name = "icu_segmenter_data"
 version = "1.5.0"
 dependencies = [
  "icu_locale",
+ "icu_provider_baked",
 ]
 
 [[package]]
@@ -1637,6 +1655,9 @@ dependencies = [
 [[package]]
 name = "icu_timezone_data"
 version = "1.5.0"
+dependencies = [
+ "icu_provider_baked",
+]
 
 [[package]]
 name = "idna"

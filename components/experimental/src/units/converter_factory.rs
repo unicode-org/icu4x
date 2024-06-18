@@ -39,9 +39,7 @@ impl From<Sign> for num_bigint::Sign {
 
 impl ConverterFactory {
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: skip,
-        options: skip,
-        error: DataError,
+        () -> error: DataError,
         #[cfg(skip)]
         functions: [
             new,

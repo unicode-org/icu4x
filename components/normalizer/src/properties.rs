@@ -97,7 +97,7 @@ impl CanonicalComposition {
         }
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: DataError,
+    icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,
         #[cfg(skip)]
         functions: [
             new,
@@ -389,7 +389,7 @@ impl CanonicalDecomposition {
         }
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: DataError,
+    icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,
         #[cfg(skip)]
         functions: [
             new,
@@ -497,7 +497,7 @@ impl CanonicalCombiningClassMap {
         }
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: DataError,
+    icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,
         #[cfg(skip)]
         functions: [
             new,
