@@ -15,6 +15,7 @@ fn main() {
         if env::var("ICU4C_RENAME_VERSION").is_ok() {
             println!("cargo:rustc-cfg=icu4c_enable_renaming");
         }
+        println!("cargo:rustc-check-cfg=icu4c_enable_renaming");
 
         println!("cargo:rustc-link-search={lib_path}");
         println!("cargo:rustc-link-lib={kind}=icuuc");
