@@ -8,8 +8,8 @@ use std::collections::HashSet;
 use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
 use crate::provider::IterableDataProviderCached;
-use icu_plurals::rules::runtime::ast::Rule;
-use icu_plurals::{provider::*, PluralCategory};
+use icu::plurals::rules::runtime::ast::Rule;
+use icu::plurals::{provider::*, PluralCategory};
 use icu_provider::prelude::*;
 use zerovec::ZeroMap;
 
@@ -57,12 +57,12 @@ macro_rules! implement {
                 self.check_req::<$marker>(req)?;
                 Ok(DataResponse {
                     metadata: Default::default(),
-                    payload: Some(DataPayload::from_owned(PluralRulesV1::from(
+                    payload: DataPayload::from_owned(PluralRulesV1::from(
                         self.get_rules_for(<$marker>::INFO)?
                             .0
                             .get(&req.locale.get_langid())
                             .ok_or(DataErrorKind::MissingLocale.into_error())?,
-                    ))),
+                    )),
                 })
             }
         }
@@ -108,19 +108,19 @@ impl DataProvider<PluralRangesV1Marker> for DatagenProvider {
         if req.locale.is_und() {
             Ok(DataResponse {
                 metadata: Default::default(),
-                payload: Some(DataPayload::from_owned(PluralRangesV1 {
+                payload: DataPayload::from_owned(PluralRangesV1 {
                     ranges: ZeroMap::default(),
-                })),
+                }),
             })
         } else {
             Ok(DataResponse {
                 metadata: Default::default(),
-                payload: Some(DataPayload::from_owned(PluralRangesV1::from(
+                payload: DataPayload::from_owned(PluralRangesV1::from(
                     self.get_plural_ranges()?
                         .0
                         .get(&req.locale.get_langid())
                         .ok_or(DataErrorKind::MissingLocale.into_error())?,
-                ))),
+                )),
             })
         }
     }
@@ -177,54 +177,51 @@ impl From<&cldr_serde::plural_ranges::LocalePluralRanges> for PluralRangesV1<'st
 
 #[test]
 fn test_basic() {
-    use icu_locale_core::langid;
+    use icu::locale::langid;
 
     let provider = DatagenProvider::new_testing();
 
     // Spot-check locale 'cs' since it has some interesting entries
-    let cs_rules: DataPayload<CardinalV1Marker> = provider
+    let cs_rules: DataResponse<CardinalV1Marker> = provider
         .load(DataRequest {
             locale: &langid!("cs").into(),
             ..Default::default()
         })
-        .unwrap()
-        .take_payload()
         .unwrap();
 
-    assert_eq!(None, cs_rules.get().zero);
+    assert_eq!(None, cs_rules.payload.get().zero);
     assert_eq!(
         Some("i = 1 and v = 0".parse().expect("Failed to parse rule")),
-        cs_rules.get().one
+        cs_rules.payload.get().one
     );
-    assert_eq!(None, cs_rules.get().two);
+    assert_eq!(None, cs_rules.payload.get().two);
     assert_eq!(
         Some("i = 2..4 and v = 0".parse().expect("Failed to parse rule")),
-        cs_rules.get().few
+        cs_rules.payload.get().few
     );
     assert_eq!(
         Some("v != 0".parse().expect("Failed to parse rule")),
-        cs_rules.get().many
+        cs_rules.payload.get().many
     );
 }
 
 #[test]
 fn test_ranges() {
-    use icu_locale_core::langid;
+    use icu::locale::langid;
 
     let provider = DatagenProvider::new_testing();
 
     // locale 'sl' seems to have a lot of interesting cases.
-    let plural_ranges: DataPayload<PluralRangesV1Marker> = provider
+    let plural_ranges: DataResponse<PluralRangesV1Marker> = provider
         .load(DataRequest {
             locale: &langid!("sl").into(),
             ..Default::default()
         })
-        .unwrap()
-        .take_payload()
         .unwrap();
 
     assert_eq!(
         plural_ranges
+            .payload
             .get()
             .ranges
             .get_copied(&UnvalidatedPluralRange::from_range(
@@ -235,6 +232,7 @@ fn test_ranges() {
     );
     assert_eq!(
         plural_ranges
+            .payload
             .get()
             .ranges
             .get_copied(&UnvalidatedPluralRange::from_range(
@@ -244,6 +242,7 @@ fn test_ranges() {
         Some(RawPluralCategory::Few)
     );
     assert!(plural_ranges
+        .payload
         .get()
         .ranges
         .get_copied(&UnvalidatedPluralRange::from_range(
@@ -252,6 +251,7 @@ fn test_ranges() {
         ))
         .is_none());
     assert!(plural_ranges
+        .payload
         .get()
         .ranges
         .get_copied(&UnvalidatedPluralRange::from_range(
@@ -262,6 +262,7 @@ fn test_ranges() {
 
     // tests that the space optimization succeeds
     assert!(plural_ranges
+        .payload
         .get()
         .ranges
         .get_copied(&UnvalidatedPluralRange::from_range(
@@ -270,6 +271,7 @@ fn test_ranges() {
         ))
         .is_none());
     assert!(plural_ranges
+        .payload
         .get()
         .ranges
         .get_copied(&UnvalidatedPluralRange::from_range(

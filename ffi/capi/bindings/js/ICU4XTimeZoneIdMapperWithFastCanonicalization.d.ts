@@ -1,6 +1,7 @@
 import { FFIError } from "./diplomat-runtime"
+import { ICU4XDataError } from "./ICU4XDataError";
 import { ICU4XDataProvider } from "./ICU4XDataProvider";
-import { ICU4XError } from "./ICU4XError";
+import { ICU4XTimeZoneInvalidIdError } from "./ICU4XTimeZoneInvalidIdError";
 
 /**
 
@@ -15,21 +16,21 @@ export class ICU4XTimeZoneIdMapperWithFastCanonicalization {
   /**
 
    * See the {@link https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneIdMapperWithFastCanonicalization.html#method.new Rust documentation for `new`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
+   * @throws {@link FFIError}<{@link ICU4XDataError}>
    */
   static create(provider: ICU4XDataProvider): ICU4XTimeZoneIdMapperWithFastCanonicalization | never;
 
   /**
 
    * See the {@link https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneIdMapperWithFastCanonicalizationBorrowed.html#method.canonicalize_iana Rust documentation for `canonicalize_iana`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
+   * @throws {@link FFIError}<{@link ICU4XTimeZoneInvalidIdError}>
    */
   canonicalize_iana(value: string): string | never;
 
   /**
 
    * See the {@link https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneIdMapperWithFastCanonicalizationBorrowed.html#method.canonical_iana_from_bcp47 Rust documentation for `canonical_iana_from_bcp47`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
+   * @throws {@link FFIError}<{@link ICU4XTimeZoneInvalidIdError}>
    */
   canonical_iana_from_bcp47(value: string): string | never;
 }

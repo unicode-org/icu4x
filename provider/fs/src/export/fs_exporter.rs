@@ -108,10 +108,10 @@ impl DataExporter for FilesystemExporter {
     ) -> Result<(), DataError> {
         let mut path_buf = self.root.clone().into_os_string();
         write!(&mut path_buf, "/{marker}").expect("infallible");
-        write!(&mut path_buf, "/{locale}").expect("infallible");
         if !marker_attributes.is_empty() {
-            write!(&mut path_buf, "-x-{}", marker_attributes as &str).expect("infallible");
+            write!(&mut path_buf, "/{}", marker_attributes as &str).expect("infallible");
         }
+        write!(&mut path_buf, "/{locale}").expect("infallible");
         write!(&mut path_buf, ".{}", self.manifest.file_extension).expect("infallible");
 
         #[allow(clippy::unwrap_used)] // has parent by construction

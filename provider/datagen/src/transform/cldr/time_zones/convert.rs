@@ -10,13 +10,13 @@ use cldr_serde::time_zones::meta_zones::MetazoneAliasData;
 use cldr_serde::time_zones::meta_zones::MetazoneForPeriod;
 use cldr_serde::time_zones::meta_zones::ZonePeriod;
 use cldr_serde::time_zones::time_zone_names::*;
-use icu_calendar::DateTime;
-use icu_datetime::provider::time_zones::{
+use icu::calendar::DateTime;
+use icu::datetime::provider::time_zones::{
     ExemplarCitiesV1, MetazoneGenericNamesLongV1, MetazoneGenericNamesShortV1, MetazoneId,
     MetazoneSpecificNamesLongV1, MetazoneSpecificNamesShortV1, TimeZoneBcp47Id, TimeZoneFormatsV1,
 };
-use icu_timezone::provider::MetazonePeriodV1;
-use icu_timezone::ZoneVariant;
+use icu::timezone::provider::MetazonePeriodV1;
+use icu::timezone::ZoneVariant;
 use std::borrow::Cow;
 use std::collections::BTreeMap;
 use tinystr::TinyStr8;

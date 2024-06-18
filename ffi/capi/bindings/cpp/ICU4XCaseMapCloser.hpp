@@ -12,13 +12,13 @@
 #include "diplomat_runtime.hpp"
 #include "ICU4XCaseMapCloser.h"
 #include "ICU4XCodePointSetBuilder.hpp"
+#include "ICU4XDataError.hpp"
 #include "ICU4XDataProvider.hpp"
-#include "ICU4XError.hpp"
 
 
-inline diplomat::result<std::unique_ptr<ICU4XCaseMapCloser>, ICU4XError> ICU4XCaseMapCloser::create(const ICU4XDataProvider& provider) {
+inline diplomat::result<std::unique_ptr<ICU4XCaseMapCloser>, ICU4XDataError> ICU4XCaseMapCloser::create(const ICU4XDataProvider& provider) {
   auto result = capi::ICU4XCaseMapCloser_create(provider.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XCaseMapCloser>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XCaseMapCloser>>(std::unique_ptr<ICU4XCaseMapCloser>(ICU4XCaseMapCloser::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XCaseMapCloser>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XCaseMapCloser>, ICU4XDataError>(diplomat::Ok<std::unique_ptr<ICU4XCaseMapCloser>>(std::unique_ptr<ICU4XCaseMapCloser>(ICU4XCaseMapCloser::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XCaseMapCloser>, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
 
 inline void ICU4XCaseMapCloser::add_case_closure_to(char32_t c, ICU4XCodePointSetBuilder& builder) const {

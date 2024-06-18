@@ -12,7 +12,7 @@
 #include "ICU4XDataProvider.h"
 #include "ICU4XReorderedIndexMap.d.h"
 #include "ICU4XReorderedIndexMap.h"
-#include "diplomat_result_box_ICU4XBidi_ICU4XError.d.h"
+#include "diplomat_result_box_ICU4XBidi_ICU4XDataError.d.h"
 
 #include "ICU4XBidi.d.h"
 
@@ -22,7 +22,7 @@ extern "C" {
 #endif // __cplusplus
 
 
-diplomat_result_box_ICU4XBidi_ICU4XError ICU4XBidi_create(const ICU4XDataProvider* provider);
+diplomat_result_box_ICU4XBidi_ICU4XDataError ICU4XBidi_create(const ICU4XDataProvider* provider);
 
 ICU4XBidiInfo* ICU4XBidi_for_text(const ICU4XBidi* self, const char* text_data, size_t text_len, uint8_t default_level);
 

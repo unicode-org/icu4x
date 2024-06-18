@@ -1,6 +1,6 @@
 import { FFIError } from "./diplomat-runtime"
+import { ICU4XDataError } from "./ICU4XDataError";
 import { ICU4XDataProvider } from "./ICU4XDataProvider";
-import { ICU4XError } from "./ICU4XError";
 
 /**
 
@@ -13,7 +13,7 @@ export class ICU4XDecomposingNormalizer {
    * Construct a new ICU4XDecomposingNormalizer instance for NFC
 
    * See the {@link https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.new_nfd Rust documentation for `new_nfd`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
+   * @throws {@link FFIError}<{@link ICU4XDataError}>
    */
   static create_nfd(provider: ICU4XDataProvider): ICU4XDecomposingNormalizer | never;
 
@@ -22,7 +22,7 @@ export class ICU4XDecomposingNormalizer {
    * Construct a new ICU4XDecomposingNormalizer instance for NFKC
 
    * See the {@link https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.new_nfkd Rust documentation for `new_nfkd`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
+   * @throws {@link FFIError}<{@link ICU4XDataError}>
    */
   static create_nfkd(provider: ICU4XDataProvider): ICU4XDecomposingNormalizer | never;
 

@@ -8,7 +8,7 @@
 #include "diplomat_runtime.h"
 #include "ICU4XDataProvider.d.h"
 #include "ICU4XDataProvider.h"
-#include "diplomat_result_box_ICU4XCanonicalCombiningClassMap_ICU4XError.d.h"
+#include "diplomat_result_box_ICU4XCanonicalCombiningClassMap_ICU4XDataError.d.h"
 
 #include "ICU4XCanonicalCombiningClassMap.d.h"
 
@@ -18,7 +18,7 @@ extern "C" {
 #endif // __cplusplus
 
 
-diplomat_result_box_ICU4XCanonicalCombiningClassMap_ICU4XError ICU4XCanonicalCombiningClassMap_create(const ICU4XDataProvider* provider);
+diplomat_result_box_ICU4XCanonicalCombiningClassMap_ICU4XDataError ICU4XCanonicalCombiningClassMap_create(const ICU4XDataProvider* provider);
 
 uint8_t ICU4XCanonicalCombiningClassMap_get(const ICU4XCanonicalCombiningClassMap* self, char32_t ch);
 

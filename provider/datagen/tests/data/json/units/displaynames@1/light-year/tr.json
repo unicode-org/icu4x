@@ -1,0 +1,14 @@
+{
+  "long": {
+    "One": "{0} ışık yılı",
+    "Other": "{0} ışık yılı"
+  },
+  "short": {
+    "One": "{0} IY",
+    "Other": "{0} IY"
+  },
+  "narrow": {
+    "One": "{0} IY",
+    "Other": "{0} IY"
+  }
+}

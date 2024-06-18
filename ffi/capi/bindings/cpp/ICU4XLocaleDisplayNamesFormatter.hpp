@@ -10,18 +10,18 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
+#include "ICU4XDataError.hpp"
 #include "ICU4XDataProvider.hpp"
 #include "ICU4XDisplayNamesOptionsV1.hpp"
-#include "ICU4XError.hpp"
 #include "ICU4XLocale.hpp"
 #include "ICU4XLocaleDisplayNamesFormatter.h"
 
 
-inline diplomat::result<std::unique_ptr<ICU4XLocaleDisplayNamesFormatter>, ICU4XError> ICU4XLocaleDisplayNamesFormatter::create(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDisplayNamesOptionsV1 options) {
+inline diplomat::result<std::unique_ptr<ICU4XLocaleDisplayNamesFormatter>, ICU4XDataError> ICU4XLocaleDisplayNamesFormatter::create(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDisplayNamesOptionsV1 options) {
   auto result = capi::ICU4XLocaleDisplayNamesFormatter_create(provider.AsFFI(),
     locale.AsFFI(),
     options.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XLocaleDisplayNamesFormatter>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XLocaleDisplayNamesFormatter>>(std::unique_ptr<ICU4XLocaleDisplayNamesFormatter>(ICU4XLocaleDisplayNamesFormatter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XLocaleDisplayNamesFormatter>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XLocaleDisplayNamesFormatter>, ICU4XDataError>(diplomat::Ok<std::unique_ptr<ICU4XLocaleDisplayNamesFormatter>>(std::unique_ptr<ICU4XLocaleDisplayNamesFormatter>(ICU4XLocaleDisplayNamesFormatter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XLocaleDisplayNamesFormatter>, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
 
 inline std::string ICU4XLocaleDisplayNamesFormatter::of(const ICU4XLocale& locale) const {

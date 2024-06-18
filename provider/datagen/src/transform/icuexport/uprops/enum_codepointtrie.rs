@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::provider::DatagenProvider;
-use icu_collections::codepointtrie::CodePointTrie;
-use icu_properties::provider::{names::*, *};
+use icu::collections::codepointtrie::CodePointTrie;
+use icu::properties::provider::{names::*, *};
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;
@@ -162,8 +162,8 @@ where
     let map = map.into_iter().collect();
     let data_struct = PropertyEnumToValueNameSparseMapV1 { map };
     Ok(DataResponse {
-        metadata: DataResponseMetadata::default(),
-        payload: Some(DataPayload::from_owned(data_struct)),
+        metadata: Default::default(),
+        payload: DataPayload::from_owned(data_struct),
     })
 }
 
@@ -184,8 +184,8 @@ where
     let varzerovec = (&vec).into();
     let data_struct = PropertyEnumToValueNameLinearMapV1 { map: varzerovec };
     Ok(DataResponse {
-        metadata: DataResponseMetadata::default(),
-        payload: Some(DataPayload::from_owned(data_struct)),
+        metadata: Default::default(),
+        payload: DataPayload::from_owned(data_struct),
     })
 }
 
@@ -211,8 +211,8 @@ where
     let zerovec = vec.into_iter().collect();
     let data_struct = PropertyEnumToValueNameLinearTiny4MapV1 { map: zerovec };
     Ok(DataResponse {
-        metadata: DataResponseMetadata::default(),
-        payload: Some(DataPayload::from_owned(data_struct)),
+        metadata: Default::default(),
+        payload: DataPayload::from_owned(data_struct),
     })
 }
 macro_rules! expand {
@@ -238,8 +238,8 @@ macro_rules! expand {
                     })?;
                     let data_struct = PropertyCodePointMapV1::CodePointTrie(code_point_trie);
                     Ok(DataResponse {
-                        metadata: DataResponseMetadata::default(),
-                        payload: Some(DataPayload::from_owned(data_struct)),
+                        metadata: Default::default(),
+                        payload: DataPayload::from_owned(data_struct),
                     })
                 }
             }
@@ -261,8 +261,8 @@ macro_rules! expand {
 
                     let data_struct = get_prop_values_map(&data.values, |v| u16::try_from(v).map_err(|_| DataError::custom(concat!("Found value larger than u16 for property ", $prop_name))))?;
                     Ok(DataResponse {
-                        metadata: DataResponseMetadata::default(),
-                        payload: Some(DataPayload::from_owned(data_struct)),
+                        metadata: Default::default(),
+                        payload: DataPayload::from_owned(data_struct),
                     })
                 }
             }
@@ -380,7 +380,7 @@ impl DataProvider<GeneralCategoryMaskNameToValueV1Marker> for DatagenProvider {
         &self,
         req: DataRequest,
     ) -> Result<DataResponse<GeneralCategoryMaskNameToValueV1Marker>, DataError> {
-        use icu_properties::GeneralCategoryGroup;
+        use icu::properties::GeneralCategoryGroup;
         use zerovec::ule::AsULE;
 
         self.check_req::<GeneralCategoryMaskNameToValueV1Marker>(req)?;
@@ -398,8 +398,8 @@ impl DataProvider<GeneralCategoryMaskNameToValueV1Marker> for DatagenProvider {
             Ok(packed)
         })?;
         Ok(DataResponse {
-            metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload::from_owned(data_struct)),
+            metadata: Default::default(),
+            payload: DataPayload::from_owned(data_struct),
         })
     }
 }
@@ -525,11 +525,11 @@ expand!(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_collections::codepointtrie::CodePointTrie;
-    use icu_properties::provider::{
+    use icu::collections::codepointtrie::CodePointTrie;
+    use icu::properties::provider::{
         GeneralCategoryV1Marker, PropertyCodePointMapV1, ScriptV1Marker,
     };
-    use icu_properties::{GeneralCategory, Script};
+    use icu::properties::{GeneralCategory, Script};
 
     // A test of the UnicodeProperty General_Category is truly a test of the
     // `GeneralCategory` Rust enum, not the `GeneralCategoryGroup` Rust enum,
@@ -541,8 +541,8 @@ mod tests {
 
         let payload: DataPayload<GeneralCategoryV1Marker> = provider
             .load(Default::default())
-            .and_then(DataResponse::take_payload)
-            .expect("Loading was successful");
+            .expect("Loading was successful")
+            .payload;
 
         let trie: &CodePointTrie<GeneralCategory> = match payload.get() {
             PropertyCodePointMapV1::CodePointTrie(ref t) => t,
@@ -559,8 +559,8 @@ mod tests {
 
         let payload: DataPayload<ScriptV1Marker> = provider
             .load(Default::default())
-            .and_then(DataResponse::take_payload)
-            .expect("Loading was successful");
+            .expect("Loading was successful")
+            .payload;
 
         let trie: &CodePointTrie<Script> = match payload.get() {
             PropertyCodePointMapV1::CodePointTrie(ref t) => t,

@@ -9,18 +9,18 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 #include "ICU4XCanonicalDecomposition.d.h"
+#include "ICU4XDataError.d.hpp"
 #include "ICU4XDecomposed.d.hpp"
-#include "ICU4XError.d.hpp"
 
 class ICU4XDataProvider;
 struct ICU4XDecomposed;
-class ICU4XError;
+class ICU4XDataError;
 
 
 class ICU4XCanonicalDecomposition {
 public:
 
-  inline static diplomat::result<std::unique_ptr<ICU4XCanonicalDecomposition>, ICU4XError> create(const ICU4XDataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<ICU4XCanonicalDecomposition>, ICU4XDataError> create(const ICU4XDataProvider& provider);
 
   inline ICU4XDecomposed decompose(char32_t c) const;
 

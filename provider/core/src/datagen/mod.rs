@@ -21,14 +21,6 @@ pub use payload::{ExportBox, ExportMarker};
 
 use crate::prelude::*;
 
-/// The type of built-in fallback that the data was generated for, if applicable.
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
-#[non_exhaustive]
-pub enum BuiltInFallbackMode {
-    /// Data uses full UTS 35 fallbacking.
-    Standard,
-}
-
 /// An object capable of exporting data payloads in some form.
 pub trait DataExporter: Sync {
     /// Save a `payload` corresponding to the given marker and locale.
@@ -52,20 +44,6 @@ pub trait DataExporter: Sync {
         self.flush(marker)
     }
 
-    /// Function called after a non-singleton marker has been fully enumerated,
-    /// flushing that marker with built-in fallback.
-    ///
-    /// Takes non-mut self as it can be called concurrently.
-    fn flush_with_built_in_fallback(
-        &self,
-        _marker: DataMarkerInfo,
-        _fallback_mode: BuiltInFallbackMode,
-    ) -> Result<(), DataError> {
-        Err(DataError::custom(
-            "Exporter does not implement built-in fallback",
-        ))
-    }
-
     /// Function called after a non-singleton marker has been fully enumerated.
     /// Does not include built-in fallback.
     ///
@@ -79,12 +57,6 @@ pub trait DataExporter: Sync {
     /// clients *may not* interact with this object after close has been called.
     fn close(&mut self) -> Result<(), DataError> {
         Ok(())
-    }
-
-    /// Returns whether the provider supports built-in fallback. If `true`, the provider must
-    /// implement [`Self::flush_with_built_in_fallback()`].
-    fn supports_built_in_fallback(&self) -> bool {
-        false
     }
 }
 
@@ -107,24 +79,12 @@ impl DataExporter for Box<dyn DataExporter> {
         (**self).flush_singleton(marker, payload)
     }
 
-    fn flush_with_built_in_fallback(
-        &self,
-        marker: DataMarkerInfo,
-        fallback_mode: BuiltInFallbackMode,
-    ) -> Result<(), DataError> {
-        (**self).flush_with_built_in_fallback(marker, fallback_mode)
-    }
-
     fn flush(&self, marker: DataMarkerInfo) -> Result<(), DataError> {
         (**self).flush(marker)
     }
 
     fn close(&mut self) -> Result<(), DataError> {
         (**self).close()
-    }
-
-    fn supports_built_in_fallback(&self) -> bool {
-        (**self).supports_built_in_fallback()
     }
 }
 
@@ -229,21 +189,7 @@ impl DataExporter for MultiExporter {
         self.0.iter().try_for_each(|e| e.flush(marker))
     }
 
-    fn flush_with_built_in_fallback(
-        &self,
-        marker: DataMarkerInfo,
-        fallback_mode: BuiltInFallbackMode,
-    ) -> Result<(), DataError> {
-        self.0
-            .iter()
-            .try_for_each(|e| e.flush_with_built_in_fallback(marker, fallback_mode))
-    }
-
     fn close(&mut self) -> Result<(), DataError> {
         self.0.iter_mut().try_for_each(|e| e.close())
-    }
-
-    fn supports_built_in_fallback(&self) -> bool {
-        self.0.iter().all(|e| e.supports_built_in_fallback())
     }
 }

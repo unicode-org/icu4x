@@ -12,7 +12,7 @@
 #include "ICU4XDataProvider.h"
 #include "ICU4XLocale.d.h"
 #include "ICU4XLocale.h"
-#include "diplomat_result_box_ICU4XCalendar_ICU4XError.d.h"
+#include "diplomat_result_box_ICU4XCalendar_ICU4XDataError.d.h"
 
 #include "ICU4XCalendar.d.h"
 
@@ -22,9 +22,9 @@ extern "C" {
 #endif // __cplusplus
 
 
-diplomat_result_box_ICU4XCalendar_ICU4XError ICU4XCalendar_create_for_locale(const ICU4XDataProvider* provider, const ICU4XLocale* locale);
+diplomat_result_box_ICU4XCalendar_ICU4XDataError ICU4XCalendar_create_for_locale(const ICU4XDataProvider* provider, const ICU4XLocale* locale);
 
-diplomat_result_box_ICU4XCalendar_ICU4XError ICU4XCalendar_create_for_kind(const ICU4XDataProvider* provider, ICU4XAnyCalendarKind kind);
+diplomat_result_box_ICU4XCalendar_ICU4XDataError ICU4XCalendar_create_for_kind(const ICU4XDataProvider* provider, ICU4XAnyCalendarKind kind);
 
 ICU4XAnyCalendarKind ICU4XCalendar_kind(const ICU4XCalendar* self);
 

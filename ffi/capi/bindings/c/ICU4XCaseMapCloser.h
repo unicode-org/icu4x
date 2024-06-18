@@ -10,7 +10,7 @@
 #include "ICU4XCodePointSetBuilder.h"
 #include "ICU4XDataProvider.d.h"
 #include "ICU4XDataProvider.h"
-#include "diplomat_result_box_ICU4XCaseMapCloser_ICU4XError.d.h"
+#include "diplomat_result_box_ICU4XCaseMapCloser_ICU4XDataError.d.h"
 
 #include "ICU4XCaseMapCloser.d.h"
 
@@ -20,7 +20,7 @@ extern "C" {
 #endif // __cplusplus
 
 
-diplomat_result_box_ICU4XCaseMapCloser_ICU4XError ICU4XCaseMapCloser_create(const ICU4XDataProvider* provider);
+diplomat_result_box_ICU4XCaseMapCloser_ICU4XDataError ICU4XCaseMapCloser_create(const ICU4XDataProvider* provider);
 
 void ICU4XCaseMapCloser_add_case_closure_to(const ICU4XCaseMapCloser* self, char32_t c, ICU4XCodePointSetBuilder* builder);
 

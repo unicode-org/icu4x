@@ -10,8 +10,8 @@
 #include "ICU4XDataProvider.h"
 #include "ICU4XLocaleFallbackConfig.d.h"
 #include "ICU4XLocaleFallbackConfig.h"
-#include "diplomat_result_box_ICU4XLocaleFallbackerWithConfig_ICU4XError.d.h"
-#include "diplomat_result_box_ICU4XLocaleFallbacker_ICU4XError.d.h"
+#include "diplomat_result_box_ICU4XLocaleFallbackerWithConfig_ICU4XLocaleParseError.d.h"
+#include "diplomat_result_box_ICU4XLocaleFallbacker_ICU4XDataError.d.h"
 
 #include "ICU4XLocaleFallbacker.d.h"
 
@@ -21,11 +21,11 @@ extern "C" {
 #endif // __cplusplus
 
 
-diplomat_result_box_ICU4XLocaleFallbacker_ICU4XError ICU4XLocaleFallbacker_create(const ICU4XDataProvider* provider);
+diplomat_result_box_ICU4XLocaleFallbacker_ICU4XDataError ICU4XLocaleFallbacker_create(const ICU4XDataProvider* provider);
 
 ICU4XLocaleFallbacker* ICU4XLocaleFallbacker_create_without_data();
 
-diplomat_result_box_ICU4XLocaleFallbackerWithConfig_ICU4XError ICU4XLocaleFallbacker_for_config(const ICU4XLocaleFallbacker* self, ICU4XLocaleFallbackConfig config);
+diplomat_result_box_ICU4XLocaleFallbackerWithConfig_ICU4XLocaleParseError ICU4XLocaleFallbacker_for_config(const ICU4XLocaleFallbacker* self, ICU4XLocaleFallbackConfig config);
 
 void ICU4XLocaleFallbacker_destroy(ICU4XLocaleFallbacker* self);
 

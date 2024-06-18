@@ -154,7 +154,7 @@ impl Chinese {
     pub const fn new() -> Self {
         Self {
             data: Some(DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_CALENDAR_CHINESECACHE_V1,
+                crate::provider::Baked::SINGLETON_CHINESE_CACHE_V1_MARKER,
             )),
         }
     }
@@ -174,7 +174,7 @@ impl Chinese {
         provider: &D,
     ) -> Result<Self, DataError> {
         Ok(Self {
-            data: Some(provider.load(Default::default())?.take_payload()?),
+            data: Some(provider.load(Default::default())?.payload),
         })
     }
 

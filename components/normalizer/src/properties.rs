@@ -92,7 +92,7 @@ impl CanonicalComposition {
     pub const fn new() -> Self {
         Self {
             canonical_compositions: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_NORMALIZER_COMP_V1,
+                crate::provider::Baked::SINGLETON_CANONICAL_COMPOSITIONS_V1_MARKER,
             ),
         }
     }
@@ -114,7 +114,7 @@ impl CanonicalComposition {
         D: DataProvider<CanonicalCompositionsV1Marker> + ?Sized,
     {
         let canonical_compositions: DataPayload<CanonicalCompositionsV1Marker> =
-            provider.load(Default::default())?.take_payload()?;
+            provider.load(Default::default())?.payload;
         Ok(CanonicalComposition {
             canonical_compositions,
         })
@@ -366,10 +366,10 @@ impl CanonicalDecomposition {
     #[cfg(feature = "compiled_data")]
     pub const fn new() -> Self {
         const _: () = assert!(
-            crate::provider::Baked::SINGLETON_NORMALIZER_NFDEX_V1
+            crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1_MARKER
                 .scalars16
                 .const_len()
-                + crate::provider::Baked::SINGLETON_NORMALIZER_NFDEX_V1
+                + crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1_MARKER
                     .scalars24
                     .const_len()
                 <= 0xFFF,
@@ -378,13 +378,13 @@ impl CanonicalDecomposition {
 
         Self {
             decompositions: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_NORMALIZER_NFD_V1,
+                crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_DATA_V1_MARKER,
             ),
             tables: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_NORMALIZER_NFDEX_V1,
+                crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1_MARKER,
             ),
             non_recursive: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_NORMALIZER_DECOMP_V1,
+                crate::provider::Baked::SINGLETON_NON_RECURSIVE_DECOMPOSITION_SUPPLEMENT_V1_MARKER,
             ),
         }
     }
@@ -409,9 +409,9 @@ impl CanonicalDecomposition {
             + ?Sized,
     {
         let decompositions: DataPayload<CanonicalDecompositionDataV1Marker> =
-            provider.load(Default::default())?.take_payload()?;
+            provider.load(Default::default())?.payload;
         let tables: DataPayload<CanonicalDecompositionTablesV1Marker> =
-            provider.load(Default::default())?.take_payload()?;
+            provider.load(Default::default())?.payload;
 
         if tables.get().scalars16.len() + tables.get().scalars24.len() > 0xFFF {
             // The data is from a future where there exists a normalization flavor whose
@@ -424,7 +424,7 @@ impl CanonicalDecomposition {
         }
 
         let non_recursive: DataPayload<NonRecursiveDecompositionSupplementV1Marker> =
-            provider.load(Default::default())?.take_payload()?;
+            provider.load(Default::default())?.payload;
 
         Ok(CanonicalDecomposition {
             decompositions,
@@ -492,7 +492,7 @@ impl CanonicalCombiningClassMap {
     pub const fn new() -> Self {
         CanonicalCombiningClassMap {
             decompositions: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_NORMALIZER_NFD_V1,
+                crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_DATA_V1_MARKER,
             ),
         }
     }
@@ -513,7 +513,7 @@ impl CanonicalCombiningClassMap {
         D: DataProvider<CanonicalDecompositionDataV1Marker> + ?Sized,
     {
         let decompositions: DataPayload<CanonicalDecompositionDataV1Marker> =
-            provider.load(Default::default())?.take_payload()?;
+            provider.load(Default::default())?.payload;
         Ok(CanonicalCombiningClassMap { decompositions })
     }
 }

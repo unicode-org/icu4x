@@ -1,8 +1,8 @@
 import { u8, u16, i32, u32 } from "./diplomat-runtime"
 import { FFIError } from "./diplomat-runtime"
 import { ICU4XCalendar } from "./ICU4XCalendar";
+import { ICU4XCalendarError } from "./ICU4XCalendarError";
 import { ICU4XDate } from "./ICU4XDate";
-import { ICU4XError } from "./ICU4XError";
 import { ICU4XIsoWeekday } from "./ICU4XIsoWeekday";
 import { ICU4XWeekCalculator } from "./ICU4XWeekCalculator";
 import { ICU4XWeekOf } from "./ICU4XWeekOf";
@@ -20,7 +20,7 @@ export class ICU4XIsoDate {
    * Creates a new {@link ICU4XIsoDate `ICU4XIsoDate`} from the specified date and time.
 
    * See the {@link https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.try_new_iso_date Rust documentation for `try_new_iso_date`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
+   * @throws {@link FFIError}<{@link ICU4XCalendarError}>
    */
   static create(year: i32, month: u8, day: u8): ICU4XIsoDate | never;
 

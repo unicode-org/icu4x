@@ -956,16 +956,11 @@ mod tests {
             locale: &locale,
             ..Default::default()
         };
-        let date_data: DataPayload<GregorianDateSymbolsV1Marker> = crate::provider::Baked
-            .load(req)
-            .unwrap()
-            .take_payload()
-            .unwrap();
-        let time_data: DataPayload<TimeSymbolsV1Marker> = crate::provider::Baked
-            .load(req)
-            .unwrap()
-            .take_payload()
-            .unwrap();
+        let date_data =
+            DataProvider::<GregorianDateSymbolsV1Marker>::load(&crate::provider::Baked, req)
+                .unwrap();
+        let time_data =
+            DataProvider::<TimeSymbolsV1Marker>::load(&crate::provider::Baked, req).unwrap();
         let pattern: runtime::Pattern = "MMM".parse().unwrap();
         let datetime = DateTime::try_new_gregorian_datetime(2020, 8, 1, 12, 34, 28).unwrap();
         let fixed_decimal_format =
@@ -975,8 +970,8 @@ mod tests {
         try_write_pattern(
             pattern.as_borrowed(),
             &ExtractedDateTimeInput::extract_from(&datetime),
-            Some(date_data.get()),
-            Some(time_data.get()),
+            Some(date_data.payload.get()),
+            Some(time_data.payload.get()),
             None::<()>.as_ref(),
             None,
             Some(&fixed_decimal_format),

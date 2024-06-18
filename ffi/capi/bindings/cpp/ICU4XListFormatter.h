@@ -12,7 +12,7 @@
 #include "ICU4XListLength.h"
 #include "ICU4XLocale.d.h"
 #include "ICU4XLocale.h"
-#include "diplomat_result_box_ICU4XListFormatter_ICU4XError.d.h"
+#include "diplomat_result_box_ICU4XListFormatter_ICU4XDataError.d.h"
 
 #include "ICU4XListFormatter.d.h"
 
@@ -22,11 +22,11 @@ extern "C" {
 #endif // __cplusplus
 
 
-diplomat_result_box_ICU4XListFormatter_ICU4XError ICU4XListFormatter_create_and_with_length(const ICU4XDataProvider* provider, const ICU4XLocale* locale, ICU4XListLength length);
+diplomat_result_box_ICU4XListFormatter_ICU4XDataError ICU4XListFormatter_create_and_with_length(const ICU4XDataProvider* provider, const ICU4XLocale* locale, ICU4XListLength length);
 
-diplomat_result_box_ICU4XListFormatter_ICU4XError ICU4XListFormatter_create_or_with_length(const ICU4XDataProvider* provider, const ICU4XLocale* locale, ICU4XListLength length);
+diplomat_result_box_ICU4XListFormatter_ICU4XDataError ICU4XListFormatter_create_or_with_length(const ICU4XDataProvider* provider, const ICU4XLocale* locale, ICU4XListLength length);
 
-diplomat_result_box_ICU4XListFormatter_ICU4XError ICU4XListFormatter_create_unit_with_length(const ICU4XDataProvider* provider, const ICU4XLocale* locale, ICU4XListLength length);
+diplomat_result_box_ICU4XListFormatter_ICU4XDataError ICU4XListFormatter_create_unit_with_length(const ICU4XDataProvider* provider, const ICU4XLocale* locale, ICU4XListLength length);
 
 void ICU4XListFormatter_format_valid_utf8(const ICU4XListFormatter* self, DiplomatStringsView* list_data, size_t list_len, DiplomatWrite* write);
 

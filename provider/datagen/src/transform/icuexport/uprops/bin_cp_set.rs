@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::provider::DatagenProvider;
-use icu_collections::codepointinvlist::CodePointInversionListBuilder;
-use icu_properties::provider::*;
+use icu::collections::codepointinvlist::CodePointInversionListBuilder;
+use icu::properties::provider::*;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
@@ -45,10 +45,10 @@ macro_rules! expand {
                     let inv_list = builder.build();
 
                     Ok(DataResponse {
-                        metadata: DataResponseMetadata::default(),
-                        payload: Some(DataPayload::from_owned(
+                        metadata: Default::default(),
+                        payload: DataPayload::from_owned(
                             PropertyCodePointSetV1::InversionList(inv_list),
-                        )),
+                        ),
                     })
                 }
             }
@@ -134,16 +134,16 @@ expand!(
 
 #[test]
 fn test_basic() {
-    use icu_collections::codepointinvlist::CodePointInversionList;
-    use icu_properties::provider::PropertyCodePointSetV1;
-    use icu_properties::provider::WhiteSpaceV1Marker;
+    use icu::collections::codepointinvlist::CodePointInversionList;
+    use icu::properties::provider::PropertyCodePointSetV1;
+    use icu::properties::provider::WhiteSpaceV1Marker;
 
     let provider = DatagenProvider::new_testing();
 
     let payload: DataPayload<WhiteSpaceV1Marker> = provider
         .load(Default::default())
-        .and_then(DataResponse::take_payload)
-        .expect("Loading was successful");
+        .expect("Loading was successful")
+        .payload;
 
     let whitespace: &CodePointInversionList = match payload.get() {
         PropertyCodePointSetV1::InversionList(ref l) => l,

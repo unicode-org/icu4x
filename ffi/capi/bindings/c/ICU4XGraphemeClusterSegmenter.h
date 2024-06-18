@@ -14,7 +14,7 @@
 #include "ICU4XGraphemeClusterBreakIteratorUtf16.h"
 #include "ICU4XGraphemeClusterBreakIteratorUtf8.d.h"
 #include "ICU4XGraphemeClusterBreakIteratorUtf8.h"
-#include "diplomat_result_box_ICU4XGraphemeClusterSegmenter_ICU4XError.d.h"
+#include "diplomat_result_box_ICU4XGraphemeClusterSegmenter_ICU4XDataError.d.h"
 
 #include "ICU4XGraphemeClusterSegmenter.d.h"
 
@@ -24,7 +24,7 @@ extern "C" {
 #endif // __cplusplus
 
 
-diplomat_result_box_ICU4XGraphemeClusterSegmenter_ICU4XError ICU4XGraphemeClusterSegmenter_create(const ICU4XDataProvider* provider);
+diplomat_result_box_ICU4XGraphemeClusterSegmenter_ICU4XDataError ICU4XGraphemeClusterSegmenter_create(const ICU4XDataProvider* provider);
 
 ICU4XGraphemeClusterBreakIteratorUtf8* ICU4XGraphemeClusterSegmenter_segment_utf8(const ICU4XGraphemeClusterSegmenter* self, const char* input_data, size_t input_len);
 

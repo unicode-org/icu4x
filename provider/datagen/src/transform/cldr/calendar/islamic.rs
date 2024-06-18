@@ -9,7 +9,7 @@ use calendrical_calculations::islamic::{
     IslamicBasedMarker, ObservationalIslamicMarker, SaudiIslamicMarker,
 };
 use calendrical_calculations::iso;
-use icu_calendar::provider::islamic::*;
+use icu::calendar::provider::islamic::*;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 
@@ -30,8 +30,8 @@ impl DataProvider<IslamicObservationalCacheV1Marker> for DatagenProvider {
         self.check_req::<IslamicObservationalCacheV1Marker>(req)?;
         let cache = load::<ObservationalIslamicMarker>();
         Ok(DataResponse {
-            metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload::from_owned(cache)),
+            metadata: Default::default(),
+            payload: DataPayload::from_owned(cache),
         })
     }
 }
@@ -50,8 +50,8 @@ impl DataProvider<IslamicUmmAlQuraCacheV1Marker> for crate::DatagenProvider {
         self.check_req::<IslamicUmmAlQuraCacheV1Marker>(req)?;
         let cache = load::<SaudiIslamicMarker>();
         Ok(DataResponse {
-            metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload::from_owned(cache)),
+            metadata: Default::default(),
+            payload: DataPayload::from_owned(cache),
         })
     }
 }

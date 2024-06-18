@@ -28,11 +28,11 @@ final class WeekCalculator implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#method.try_new) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   factory WeekCalculator(DataProvider provider, Locale locale) {
     final result = _ICU4XWeekCalculator_create(provider._ffi, locale._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     return WeekCalculator._fromFfi(result.union.ok, []);
   }

@@ -5,9 +5,9 @@
 use super::cldr_serde::transforms;
 use super::source::CldrCache;
 use crate::provider::DatagenProvider;
-use icu_experimental::transliterate::provider::*;
-use icu_experimental::transliterate::RuleCollection;
-use icu_locale_core::Locale;
+use icu::experimental::transliterate::provider::*;
+use icu::experimental::transliterate::RuleCollection;
+use icu::locale::Locale;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
@@ -155,8 +155,7 @@ mod tests {
                 ..Default::default()
             })
             .unwrap()
-            .take_payload()
-            .unwrap();
+            .payload;
     }
 
     #[test]
@@ -169,7 +168,6 @@ mod tests {
                 ..Default::default()
             })
             .unwrap()
-            .take_payload()
-            .unwrap();
+            .payload;
     }
 }

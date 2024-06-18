@@ -71,7 +71,7 @@ impl ZonedDateTimeFormatter {
         };
 
         let time_symbols_data = if required.time_symbols_data {
-            Some(crate::provider::Baked.load(req)?.take_payload()?)
+            Some(crate::provider::Baked.load(req)?.payload)
         } else {
             None
         };
@@ -146,7 +146,7 @@ impl ZonedDateTimeFormatter {
                         ..Default::default()
                     },
                 )?
-                .take_payload()?
+                .payload
                 .get())
                 .into(),
             )
@@ -167,7 +167,7 @@ impl ZonedDateTimeFormatter {
         };
 
         let time_symbols_data = if required.time_symbols_data {
-            Some(provider.load(req)?.take_payload()?)
+            Some(provider.load(req)?.payload)
         } else {
             None
         };

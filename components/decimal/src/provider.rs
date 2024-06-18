@@ -31,14 +31,15 @@ use icu_provider::prelude::*;
 pub struct Baked;
 
 #[cfg(feature = "compiled_data")]
+#[allow(unused_imports)]
 const _: () = {
+    use icu_decimal_data::*;
     pub mod icu {
         pub use crate as decimal;
-        #[allow(unused_imports)] // baked data may or may not need this
-        pub use icu_locale as locale;
+        pub use icu_decimal_data::icu_locale as locale;
     }
-    icu_decimal_data::make_provider!(Baked);
-    icu_decimal_data::impl_decimal_symbols_v1!(Baked);
+    make_provider!(Baked);
+    impl_decimal_symbols_v1_marker!(Baked);
 };
 
 #[cfg(feature = "datagen")]

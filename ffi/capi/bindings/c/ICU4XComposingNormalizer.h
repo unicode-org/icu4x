@@ -8,7 +8,7 @@
 #include "diplomat_runtime.h"
 #include "ICU4XDataProvider.d.h"
 #include "ICU4XDataProvider.h"
-#include "diplomat_result_box_ICU4XComposingNormalizer_ICU4XError.d.h"
+#include "diplomat_result_box_ICU4XComposingNormalizer_ICU4XDataError.d.h"
 
 #include "ICU4XComposingNormalizer.d.h"
 
@@ -18,9 +18,9 @@ extern "C" {
 #endif // __cplusplus
 
 
-diplomat_result_box_ICU4XComposingNormalizer_ICU4XError ICU4XComposingNormalizer_create_nfc(const ICU4XDataProvider* provider);
+diplomat_result_box_ICU4XComposingNormalizer_ICU4XDataError ICU4XComposingNormalizer_create_nfc(const ICU4XDataProvider* provider);
 
-diplomat_result_box_ICU4XComposingNormalizer_ICU4XError ICU4XComposingNormalizer_create_nfkc(const ICU4XDataProvider* provider);
+diplomat_result_box_ICU4XComposingNormalizer_ICU4XDataError ICU4XComposingNormalizer_create_nfkc(const ICU4XDataProvider* provider);
 
 void ICU4XComposingNormalizer_normalize(const ICU4XComposingNormalizer* self, const char* s_data, size_t s_len, DiplomatWrite* write);
 

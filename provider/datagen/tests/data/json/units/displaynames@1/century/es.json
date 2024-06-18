@@ -1,0 +1,14 @@
+{
+  "long": {
+    "One": "{0} siglo",
+    "Other": "{0} siglos"
+  },
+  "short": {
+    "One": "{0} s.",
+    "Other": "{0} s."
+  },
+  "narrow": {
+    "One": "{0}s",
+    "Other": "{0}s"
+  }
+}

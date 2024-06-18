@@ -6,9 +6,9 @@
 //! exported from ICU.
 
 use crate::provider::DatagenProvider;
-use icu_collections::char16trie::Char16Trie;
-use icu_collections::codepointtrie::CodePointTrie;
-use icu_normalizer::provider::*;
+use icu::collections::char16trie::Char16Trie;
+use icu::collections::codepointtrie::CodePointTrie;
+use icu::normalizer::provider::*;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
@@ -19,7 +19,7 @@ mod normalizer_serde;
 
 macro_rules! normalization_provider {
     ($marker:ident, $serde_struct:ident, $file_name:literal, $conversion:expr, $toml_data:ident) => {
-        use icu_normalizer::provider::$marker;
+        use icu::normalizer::provider::$marker;
 
         impl DataProvider<$marker> for DatagenProvider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
@@ -56,8 +56,8 @@ macro_rules! normalization_data_provider {
                     .map_err(|e| DataError::custom("trie conversion").with_display_context(&e))?;
 
                 Ok(DataResponse {
-                    metadata: DataResponseMetadata::default(),
-                    payload: Some(DataPayload::from_owned(DecompositionDataV1 { trie })),
+                    metadata: Default::default(),
+                    payload: DataPayload::from_owned(DecompositionDataV1 { trie }),
                 })
             },
             toml_data // simply matches the identifier in the above block
@@ -76,12 +76,12 @@ macro_rules! normalization_supplement_provider {
                     .map_err(|e| DataError::custom("trie conversion").with_display_context(&e))?;
 
                 Ok(DataResponse {
-                    metadata: DataResponseMetadata::default(),
-                    payload: Some(DataPayload::from_owned(DecompositionSupplementV1 {
+                    metadata: Default::default(),
+                    payload: DataPayload::from_owned(DecompositionSupplementV1 {
                         trie,
                         flags: toml_data.flags,
                         passthrough_cap: toml_data.cap,
-                    })),
+                    }),
                 })
             },
             toml_data // simply matches the identifier in the above block
@@ -105,11 +105,11 @@ macro_rules! normalization_tables_provider {
                     })
                     .collect::<Result<Vec<char>, DataError>>()?;
                 Ok(DataResponse {
-                    metadata: DataResponseMetadata::default(),
-                    payload: Some(DataPayload::from_owned(DecompositionTablesV1 {
+                    metadata: Default::default(),
+                    payload: DataPayload::from_owned(DecompositionTablesV1 {
                         scalars16: ZeroVec::alloc_from_slice(&toml_data.scalars16),
                         scalars24: ZeroVec::alloc_from_slice(&scalars24),
-                    })),
+                    }),
                 })
             },
             toml_data // simply matches the identifier in the above block
@@ -125,12 +125,12 @@ macro_rules! normalization_canonical_compositions_provider {
             $file_name,
             {
                 Ok(DataResponse {
-                    metadata: DataResponseMetadata::default(),
-                    payload: Some(DataPayload::from_owned(CanonicalCompositionsV1 {
+                    metadata: Default::default(),
+                    payload: DataPayload::from_owned(CanonicalCompositionsV1 {
                         canonical_compositions: Char16Trie::new(ZeroVec::alloc_from_slice(
                             &toml_data.compositions,
                         )),
-                    })),
+                    }),
                 })
             },
             toml_data // simply matches the identifier in the above block
@@ -157,13 +157,11 @@ macro_rules! normalization_non_recursive_decomposition_supplement_provider {
                     .collect::<Result<Vec<char>, DataError>>()?;
 
                 Ok(DataResponse {
-                    metadata: DataResponseMetadata::default(),
-                    payload: Some(DataPayload::from_owned(
-                        NonRecursiveDecompositionSupplementV1 {
-                            trie,
-                            scalars24: ZeroVec::alloc_from_slice(&scalars24),
-                        },
-                    )),
+                    metadata: Default::default(),
+                    payload: DataPayload::from_owned(NonRecursiveDecompositionSupplementV1 {
+                        trie,
+                        scalars24: ZeroVec::alloc_from_slice(&scalars24),
+                    }),
                 })
             },
             toml_data // simply matches the identifier in the above block

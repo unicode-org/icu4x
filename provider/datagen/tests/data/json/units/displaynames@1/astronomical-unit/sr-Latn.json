@@ -1,0 +1,17 @@
+{
+  "long": {
+    "One": "{0} astronomska jedinica",
+    "Few": "{0} astronomske jedinice",
+    "Other": "{0} astronomskih jedinica"
+  },
+  "short": {
+    "One": "{0} aj",
+    "Few": "{0} aj",
+    "Other": "{0} aj"
+  },
+  "narrow": {
+    "One": "{0} aj",
+    "Few": "{0} aj",
+    "Other": "{0} aj"
+  }
+}

@@ -26,11 +26,11 @@ final class PluralRules implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `try_new_cardinal`](https://docs.rs/icu/latest/icu/plurals/struct.PluralRules.html#method.try_new_cardinal) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   factory PluralRules.cardinal(DataProvider provider, Locale locale) {
     final result = _ICU4XPluralRules_create_cardinal(provider._ffi, locale._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     return PluralRules._fromFfi(result.union.ok, []);
   }
@@ -39,11 +39,11 @@ final class PluralRules implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `try_new_ordinal`](https://docs.rs/icu/latest/icu/plurals/struct.PluralRules.html#method.try_new_ordinal) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   factory PluralRules.ordinal(DataProvider provider, Locale locale) {
     final result = _ICU4XPluralRules_create_ordinal(provider._ffi, locale._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     return PluralRules._fromFfi(result.union.ok, []);
   }

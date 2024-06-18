@@ -111,7 +111,7 @@ impl LocaleDirectionality {
     pub const fn new_with_expander(expander: LocaleExpander) -> Self {
         LocaleDirectionality {
             script_direction: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_LOCID_TRANSFORM_SCRIPT_DIR_V1,
+                crate::provider::Baked::SINGLETON_SCRIPT_DIRECTION_V1_MARKER,
             ),
             expander,
         }
@@ -125,7 +125,7 @@ impl LocaleDirectionality {
     where
         P: DataProvider<ScriptDirectionV1Marker> + ?Sized,
     {
-        let script_direction = provider.load(Default::default())?.take_payload()?;
+        let script_direction = provider.load(Default::default())?.payload;
 
         Ok(LocaleDirectionality {
             script_direction,

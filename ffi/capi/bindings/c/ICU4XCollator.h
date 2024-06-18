@@ -14,7 +14,7 @@
 #include "ICU4XDataProvider.h"
 #include "ICU4XLocale.d.h"
 #include "ICU4XLocale.h"
-#include "diplomat_result_box_ICU4XCollator_ICU4XError.d.h"
+#include "diplomat_result_box_ICU4XCollator_ICU4XDataError.d.h"
 
 #include "ICU4XCollator.d.h"
 
@@ -24,7 +24,7 @@ extern "C" {
 #endif // __cplusplus
 
 
-diplomat_result_box_ICU4XCollator_ICU4XError ICU4XCollator_create_v1(const ICU4XDataProvider* provider, const ICU4XLocale* locale, ICU4XCollatorOptionsV1 options);
+diplomat_result_box_ICU4XCollator_ICU4XDataError ICU4XCollator_create_v1(const ICU4XDataProvider* provider, const ICU4XLocale* locale, ICU4XCollatorOptionsV1 options);
 
 int8_t ICU4XCollator_compare_utf16_(const ICU4XCollator* self, const char16_t* left_data, size_t left_len, const char16_t* right_data, size_t right_len);
 

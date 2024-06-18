@@ -1,0 +1,14 @@
+{
+  "long": {
+    "One": "{0} araw",
+    "Other": "{0} na araw"
+  },
+  "short": {
+    "One": "{0} araw",
+    "Other": "{0} araw"
+  },
+  "narrow": {
+    "One": "{0} araw",
+    "Other": "{0} na araw"
+  }
+}

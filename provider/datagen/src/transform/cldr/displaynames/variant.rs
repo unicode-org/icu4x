@@ -6,8 +6,8 @@ use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
 use crate::provider::IterableDataProviderCached;
 use core::convert::TryFrom;
-use icu_experimental::displaynames::provider::*;
-use icu_locale_core::{subtags::Variant, ParseError};
+use icu::experimental::displaynames::provider::*;
+use icu::locale::{subtags::Variant, ParseError};
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
 use std::str::FromStr;
@@ -27,11 +27,9 @@ impl DataProvider<VariantDisplayNamesV1Marker> for DatagenProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(
-                VariantDisplayNamesV1::try_from(data).map_err(|e| {
-                    DataError::custom("data for VariantDisplayNames").with_display_context(&e)
-                })?,
-            )),
+            payload: DataPayload::from_owned(VariantDisplayNamesV1::try_from(data).map_err(
+                |e| DataError::custom("data for VariantDisplayNames").with_display_context(&e),
+            )?),
         })
     }
 }
@@ -85,7 +83,7 @@ impl TryFrom<&cldr_serde::displaynames::variant::Resource> for VariantDisplayNam
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_locale_core::{langid, subtags::variant};
+    use icu::locale::{langid, subtags::variant};
 
     #[test]
     fn test_basic_variant_display_names() {
@@ -97,8 +95,7 @@ mod tests {
                 ..Default::default()
             })
             .unwrap()
-            .take_payload()
-            .unwrap();
+            .payload;
 
         assert_eq!(
             data.get()

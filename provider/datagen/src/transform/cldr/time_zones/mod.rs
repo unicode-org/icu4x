@@ -9,10 +9,10 @@ use cldr_serde::time_zones::bcp47_tzid::Bcp47TzidAliasData;
 use cldr_serde::time_zones::meta_zones::MetazoneAliasData;
 use cldr_serde::time_zones::meta_zones::ZonePeriod;
 use cldr_serde::time_zones::time_zone_names::TimeZoneNames;
-use icu_datetime::provider::time_zones::*;
-use icu_datetime::provider::time_zones::{MetazoneId, TimeZoneBcp47Id};
+use icu::datetime::provider::time_zones::*;
+use icu::datetime::provider::time_zones::{MetazoneId, TimeZoneBcp47Id};
+use icu::timezone::provider::*;
 use icu_provider::prelude::*;
-use icu_timezone::provider::*;
 use std::collections::BTreeMap;
 use std::collections::HashSet;
 
@@ -59,14 +59,14 @@ macro_rules! impl_data_provider {
 
                     Ok(DataResponse {
             metadata: Default::default(),
-                        payload: Some(DataPayload::from_owned(
+                        payload: DataPayload::from_owned(
                             <$marker as DynamicDataMarker>::Yokeable::from(CldrTimeZonesData {
                                 time_zone_names_resource,
                                 bcp47_tzids_resource,
                                 meta_zone_ids_resource,
                                 meta_zone_periods_resource,
                             }),
-                        )),
+                        ),
                     })
                 }
             }
@@ -102,55 +102,51 @@ impl_data_provider!(
 
 #[cfg(test)]
 mod tests {
-    use icu_timezone::ZoneVariant;
+    use icu::timezone::ZoneVariant;
     use tinystr::tinystr;
 
     use super::*;
 
     #[test]
     fn basic_cldr_time_zones() {
-        use icu_locale_core::langid;
+        use icu::locale::langid;
 
         let provider = DatagenProvider::new_testing();
 
-        let time_zone_formats: DataPayload<TimeZoneFormatsV1Marker> = provider
+        let time_zone_formats: DataResponse<TimeZoneFormatsV1Marker> = provider
             .load(DataRequest {
                 locale: &langid!("en").into(),
                 ..Default::default()
             })
-            .unwrap()
-            .take_payload()
             .unwrap();
-        assert_eq!("GMT", time_zone_formats.get().gmt_zero_format);
+        assert_eq!("GMT", time_zone_formats.payload.get().gmt_zero_format);
 
-        let exemplar_cities: DataPayload<ExemplarCitiesV1Marker> = provider
+        let exemplar_cities: DataResponse<ExemplarCitiesV1Marker> = provider
             .load(DataRequest {
                 locale: &langid!("en").into(),
                 ..Default::default()
             })
-            .unwrap()
-            .take_payload()
             .unwrap();
         assert_eq!(
             "Pohnpei",
             exemplar_cities
+                .payload
                 .get()
                 .0
                 .get(&TimeZoneBcp47Id(tinystr!(8, "fmpni")))
                 .unwrap()
         );
 
-        let generic_names_long: DataPayload<MetazoneGenericNamesLongV1Marker> = provider
+        let generic_names_long: DataResponse<MetazoneGenericNamesLongV1Marker> = provider
             .load(DataRequest {
                 locale: &langid!("en").into(),
                 ..Default::default()
             })
-            .unwrap()
-            .take_payload()
             .unwrap();
         assert_eq!(
             "Australian Central Western Time",
             generic_names_long
+                .payload
                 .get()
                 .defaults
                 .get(&MetazoneId(tinystr!(4, "aucw")))
@@ -159,23 +155,23 @@ mod tests {
         assert_eq!(
             "Coordinated Universal Time",
             generic_names_long
+                .payload
                 .get()
                 .overrides
                 .get(&TimeZoneBcp47Id(tinystr!(8, "utc")))
                 .unwrap()
         );
 
-        let specific_names_long: DataPayload<MetazoneSpecificNamesLongV1Marker> = provider
+        let specific_names_long: DataResponse<MetazoneSpecificNamesLongV1Marker> = provider
             .load(DataRequest {
                 locale: &langid!("en").into(),
                 ..Default::default()
             })
-            .unwrap()
-            .take_payload()
             .unwrap();
         assert_eq!(
             "Australian Central Western Standard Time",
             specific_names_long
+                .payload
                 .get()
                 .defaults
                 .get_2d(&MetazoneId(tinystr!(4, "aucw")), &ZoneVariant::standard())
@@ -184,6 +180,7 @@ mod tests {
         assert_eq!(
             "Coordinated Universal Time",
             specific_names_long
+                .payload
                 .get()
                 .overrides
                 .get_2d(
@@ -193,17 +190,16 @@ mod tests {
                 .unwrap()
         );
 
-        let generic_names_short: DataPayload<MetazoneGenericNamesShortV1Marker> = provider
+        let generic_names_short: DataResponse<MetazoneGenericNamesShortV1Marker> = provider
             .load(DataRequest {
                 locale: &langid!("en").into(),
                 ..Default::default()
             })
-            .unwrap()
-            .take_payload()
             .unwrap();
         assert_eq!(
             "PT",
             generic_names_short
+                .payload
                 .get()
                 .defaults
                 .get(&MetazoneId(tinystr!(4, "ampa")))
@@ -212,23 +208,23 @@ mod tests {
         assert_eq!(
             "UTC",
             generic_names_short
+                .payload
                 .get()
                 .overrides
                 .get(&TimeZoneBcp47Id(tinystr!(8, "utc")))
                 .unwrap()
         );
 
-        let specific_names_short: DataPayload<MetazoneSpecificNamesShortV1Marker> = provider
+        let specific_names_short: DataResponse<MetazoneSpecificNamesShortV1Marker> = provider
             .load(DataRequest {
                 locale: &langid!("en").into(),
                 ..Default::default()
             })
-            .unwrap()
-            .take_payload()
             .unwrap();
         assert_eq!(
             "PDT",
             specific_names_short
+                .payload
                 .get()
                 .defaults
                 .get_2d(&MetazoneId(tinystr!(4, "ampa")), &ZoneVariant::daylight())
@@ -237,6 +233,7 @@ mod tests {
         assert_eq!(
             "UTC",
             specific_names_short
+                .payload
                 .get()
                 .overrides
                 .get_2d(
@@ -246,14 +243,12 @@ mod tests {
                 .unwrap()
         );
 
-        let metazone_period: DataPayload<MetazonePeriodV1Marker> = provider
-            .load(Default::default())
-            .unwrap()
-            .take_payload()
-            .unwrap();
+        let metazone_period: DataResponse<MetazonePeriodV1Marker> =
+            provider.load(Default::default()).unwrap();
         assert_eq!(
             Some(MetazoneId(tinystr!(4, "mgmt"))),
             metazone_period
+                .payload
                 .get()
                 .0
                 .get_copied_2d(&TimeZoneBcp47Id(tinystr!(8, "gblon")), &962040)

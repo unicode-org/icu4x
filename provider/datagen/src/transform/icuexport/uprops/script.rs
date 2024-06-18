@@ -3,12 +3,12 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::provider::DatagenProvider;
-use icu_collections::codepointtrie::CodePointTrie;
-use icu_properties::provider::{
+use icu::collections::codepointtrie::CodePointTrie;
+use icu::properties::provider::{
     ScriptWithExtensionsPropertyV1, ScriptWithExtensionsPropertyV1Marker,
 };
-use icu_properties::script::ScriptWithExt;
-use icu_properties::Script;
+use icu::properties::script::ScriptWithExt;
+use icu::properties::Script;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
@@ -58,8 +58,8 @@ impl DataProvider<ScriptWithExtensionsPropertyV1Marker> for DatagenProvider {
         };
 
         Ok(DataResponse {
-            metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload::from_owned(data_struct)),
+            metadata: Default::default(),
+            payload: DataPayload::from_owned(data_struct),
         })
     }
 }
@@ -73,7 +73,7 @@ impl IterableDataProvider<ScriptWithExtensionsPropertyV1Marker> for DatagenProvi
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_properties::script::ScriptWithExtensions;
+    use icu::properties::script::ScriptWithExtensions;
 
     #[test]
     fn test_script_val_from_script_extensions() {
@@ -81,8 +81,8 @@ mod tests {
 
         let payload: DataPayload<ScriptWithExtensionsPropertyV1Marker> = provider
             .load(Default::default())
-            .and_then(DataResponse::take_payload)
-            .expect("Loading was successful");
+            .expect("Loading was successful")
+            .payload;
 
         let swe = ScriptWithExtensions::from_data(payload);
         let swe = swe.as_borrowed();
@@ -99,13 +99,11 @@ mod tests {
     fn test_scx_array_from_script_extensions() {
         let provider = DatagenProvider::new_testing();
 
-        let payload: DataPayload<ScriptWithExtensionsPropertyV1Marker> = provider
+        let response: DataResponse<ScriptWithExtensionsPropertyV1Marker> = provider
             .load(Default::default())
-            .expect("The data should be valid")
-            .take_payload()
             .expect("Loading was successful");
 
-        let swe = ScriptWithExtensions::from_data(payload);
+        let swe = ScriptWithExtensions::from_data(response.payload);
         let swe = swe.as_borrowed();
 
         assert_eq!(
@@ -173,13 +171,11 @@ mod tests {
     fn test_has_script() {
         let provider = DatagenProvider::new_testing();
 
-        let payload: DataPayload<ScriptWithExtensionsPropertyV1Marker> = provider
+        let response: DataResponse<ScriptWithExtensionsPropertyV1Marker> = provider
             .load(Default::default())
-            .expect("The data should be valid")
-            .take_payload()
             .expect("Loading was successful");
 
-        let swe = ScriptWithExtensions::from_data(payload);
+        let swe = ScriptWithExtensions::from_data(response.payload);
         let swe = swe.as_borrowed();
 
         assert!(swe.has_script('𐓐' as u32, Script::Osage));
@@ -253,13 +249,11 @@ mod tests {
     fn test_get_script_extensions_set() {
         let provider = DatagenProvider::new_testing();
 
-        let payload: DataPayload<ScriptWithExtensionsPropertyV1Marker> = provider
+        let response: DataResponse<ScriptWithExtensionsPropertyV1Marker> = provider
             .load(Default::default())
-            .expect("The data should be valid")
-            .take_payload()
             .expect("Loading was successful");
 
-        let swe = ScriptWithExtensions::from_data(payload);
+        let swe = ScriptWithExtensions::from_data(response.payload);
         let swe = swe.as_borrowed();
 
         let grantha = swe.get_script_extensions_set(Script::Grantha);

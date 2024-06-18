@@ -32,19 +32,21 @@ use zerovec::ZeroVec;
 pub struct Baked;
 
 #[cfg(feature = "compiled_data")]
+#[allow(unused_imports)]
 const _: () = {
+    use icu_normalizer_data::*;
     pub mod icu {
         pub use crate as normalizer;
         pub use icu_collections as collections;
     }
-    icu_normalizer_data::make_provider!(Baked);
-    icu_normalizer_data::impl_normalizer_comp_v1!(Baked);
-    icu_normalizer_data::impl_normalizer_decomp_v1!(Baked);
-    icu_normalizer_data::impl_normalizer_nfd_v1!(Baked);
-    icu_normalizer_data::impl_normalizer_nfdex_v1!(Baked);
-    icu_normalizer_data::impl_normalizer_nfkd_v1!(Baked);
-    icu_normalizer_data::impl_normalizer_nfkdex_v1!(Baked);
-    icu_normalizer_data::impl_normalizer_uts46d_v1!(Baked);
+    make_provider!(Baked);
+    impl_canonical_compositions_v1_marker!(Baked);
+    impl_non_recursive_decomposition_supplement_v1_marker!(Baked);
+    impl_canonical_decomposition_data_v1_marker!(Baked);
+    impl_canonical_decomposition_tables_v1_marker!(Baked);
+    impl_compatibility_decomposition_supplement_v1_marker!(Baked);
+    impl_compatibility_decomposition_tables_v1_marker!(Baked);
+    impl_uts46_decomposition_supplement_v1_marker!(Baked);
 };
 
 #[cfg(feature = "datagen")]

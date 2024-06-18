@@ -8,7 +8,7 @@
 //! `<https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/supplemental/weekData.json>`
 
 use core::convert::TryFrom;
-use icu_locale_core::{subtags::region, subtags::Region};
+use icu::locale::{subtags::region, subtags::Region};
 use serde::{Deserialize, Deserializer};
 use std::collections::BTreeMap;
 use std::num::ParseIntError;
@@ -26,9 +26,9 @@ pub(in crate::provider) enum Weekday {
     Sun,
 }
 
-impl From<&Weekday> for icu_calendar::types::IsoWeekday {
+impl From<&Weekday> for icu::calendar::types::IsoWeekday {
     fn from(day: &Weekday) -> Self {
-        use icu_calendar::types::IsoWeekday;
+        use icu::calendar::types::IsoWeekday;
         match day {
             Weekday::Mon => IsoWeekday::Monday,
             Weekday::Tue => IsoWeekday::Tuesday,
@@ -41,7 +41,7 @@ impl From<&Weekday> for icu_calendar::types::IsoWeekday {
     }
 }
 
-impl From<Weekday> for icu_calendar::types::IsoWeekday {
+impl From<Weekday> for icu::calendar::types::IsoWeekday {
     fn from(day: Weekday) -> Self {
         (&day).into()
     }
@@ -51,7 +51,7 @@ impl From<Weekday> for icu_calendar::types::IsoWeekday {
 ///
 /// For example the "AD" in "weekData": { "minDays": { "AD": 4, } }
 ///
-/// The contained types are strings rather than [`icu_locale_core::subtags::Region`]
+/// The contained types are strings rather than [`icu::locale::subtags::Region`]
 /// to avoid an extra parsing step of the variant in data providers.
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub(in crate::provider) enum Territory {

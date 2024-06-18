@@ -13,7 +13,7 @@ pub mod ffi {
     use tinystr::TinyAsciiStr;
 
     use crate::calendar::ffi::ICU4XCalendar;
-    use crate::errors::ffi::ICU4XError;
+    use crate::errors::ffi::ICU4XCalendarError;
 
     #[cfg(feature = "icu_calendar")]
     use crate::week::ffi::ICU4XWeekCalculator;
@@ -38,7 +38,11 @@ pub mod ffi {
         /// Creates a new [`ICU4XIsoDate`] from the specified date and time.
         #[diplomat::rust_link(icu::calendar::Date::try_new_iso_date, FnInStruct)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
-        pub fn create(year: i32, month: u8, day: u8) -> Result<Box<ICU4XIsoDate>, ICU4XError> {
+        pub fn create(
+            year: i32,
+            month: u8,
+            day: u8,
+        ) -> Result<Box<ICU4XIsoDate>, ICU4XCalendarError> {
             Ok(Box::new(ICU4XIsoDate(Date::try_new_iso_date(
                 year, month, day,
             )?)))
@@ -171,7 +175,7 @@ pub mod ffi {
             month: u8,
             day: u8,
             calendar: &ICU4XCalendar,
-        ) -> Result<Box<ICU4XDate>, ICU4XError> {
+        ) -> Result<Box<ICU4XDate>, ICU4XCalendarError> {
             let cal = calendar.0.clone();
             Ok(Box::new(ICU4XDate(
                 Date::try_new_iso_date(year, month, day)?.to_calendar(cal),
@@ -187,12 +191,12 @@ pub mod ffi {
             month_code: &DiplomatStr,
             day: u8,
             calendar: &ICU4XCalendar,
-        ) -> Result<Box<ICU4XDate>, ICU4XError> {
+        ) -> Result<Box<ICU4XDate>, ICU4XCalendarError> {
             let era = TinyAsciiStr::try_from_utf8(era_code)
-                .map_err(|_| ICU4XError::CalendarUnknownEraError)?
+                .map_err(|_| ICU4XCalendarError::UnknownEra)?
                 .into();
             let month = TinyAsciiStr::try_from_utf8(month_code)
-                .map_err(|_| ICU4XError::CalendarUnknownMonthCodeError)?
+                .map_err(|_| ICU4XCalendarError::UnknownMonthCode)?
                 .into();
             let cal = calendar.0.clone();
             Ok(Box::new(ICU4XDate(Date::try_new_from_codes(

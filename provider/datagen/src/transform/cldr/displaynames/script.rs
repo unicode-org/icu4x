@@ -6,8 +6,8 @@ use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
 use crate::provider::IterableDataProviderCached;
 use core::convert::TryFrom;
-use icu_experimental::displaynames::provider::*;
-use icu_locale_core::{subtags::Script, ParseError};
+use icu::experimental::displaynames::provider::*;
+use icu::locale::{subtags::Script, ParseError};
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
 use std::str::FromStr;
@@ -27,11 +27,9 @@ impl DataProvider<ScriptDisplayNamesV1Marker> for DatagenProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(
-                ScriptDisplayNamesV1::try_from(data).map_err(|e| {
-                    DataError::custom("data for ScriptDisplayNames").with_display_context(&e)
-                })?,
-            )),
+            payload: DataPayload::from_owned(ScriptDisplayNamesV1::try_from(data).map_err(
+                |e| DataError::custom("data for ScriptDisplayNames").with_display_context(&e),
+            )?),
         })
     }
 }
@@ -95,7 +93,7 @@ impl TryFrom<&cldr_serde::displaynames::script::Resource> for ScriptDisplayNames
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_locale_core::{langid, subtags::script};
+    use icu::locale::{langid, subtags::script};
 
     #[test]
     fn test_basic_script_display_names() {
@@ -107,8 +105,7 @@ mod tests {
                 ..Default::default()
             })
             .unwrap()
-            .take_payload()
-            .unwrap();
+            .payload;
 
         assert_eq!(
             data.get()
@@ -129,8 +126,7 @@ mod tests {
                 ..Default::default()
             })
             .unwrap()
-            .take_payload()
-            .unwrap();
+            .payload;
 
         assert_eq!(
             data.get()

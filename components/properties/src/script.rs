@@ -619,7 +619,7 @@ impl ScriptWithExtensionsBorrowed<'static> {
 #[cfg(feature = "compiled_data")]
 pub const fn script_with_extensions() -> ScriptWithExtensionsBorrowed<'static> {
     ScriptWithExtensionsBorrowed {
-        data: crate::provider::Baked::SINGLETON_PROPS_SCX_V1,
+        data: crate::provider::Baked::SINGLETON_SCRIPT_WITH_EXTENSIONS_PROPERTY_V1_MARKER,
     }
 }
 
@@ -640,8 +640,7 @@ icu_provider::gen_any_buffer_data_constructors!(
 pub fn load_script_with_extensions_unstable(
     provider: &(impl DataProvider<ScriptWithExtensionsPropertyV1Marker> + ?Sized),
 ) -> Result<ScriptWithExtensions, DataError> {
-    provider
-        .load(Default::default())
-        .and_then(DataResponse::take_payload)
-        .map(ScriptWithExtensions::from_data)
+    Ok(ScriptWithExtensions::from_data(
+        provider.load(Default::default())?.payload,
+    ))
 }

@@ -28,11 +28,11 @@ final class LocaleFallbacker implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbacker.html#method.new) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   factory LocaleFallbacker(DataProvider provider) {
     final result = _ICU4XLocaleFallbacker_create(provider._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     return LocaleFallbacker._fromFfi(result.union.ok, []);
   }
@@ -49,7 +49,7 @@ final class LocaleFallbacker implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `for_config`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbacker.html#method.for_config) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [LocaleParseError] on failure.
   LocaleFallbackerWithConfig forConfig(LocaleFallbackConfig config) {
     final temp = ffi2.Arena();
     // This lifetime edge depends on lifetimes: 'a
@@ -57,7 +57,7 @@ final class LocaleFallbacker implements ffi.Finalizable {
     final result = _ICU4XLocaleFallbacker_for_config(_ffi, config._toFfi(temp));
     temp.releaseAll();
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw LocaleParseError.values[result.union.err];
     }
     return LocaleFallbackerWithConfig._fromFfi(result.union.ok, [], aEdges);
   }

@@ -39,24 +39,26 @@ icu_datagen = { path = "../provider/datagen" }
 icu_provider = { path = "../provider/core" }
 icu_provider_macros = { path = "../provider/core/macros" }
 icu_provider_adapters = { path = "../provider/adapters" }
+icu_provider_baked = { path = "../provider/baked" }
 icu_provider_blob = { path = "../provider/blob" }
 icu_provider_fs = { path = "../provider/fs/" }
 icu_registry = { path = "../provider/registry/" }
+icu4x-datagen = { path = "../provider/icu4x-datagen/" }
 
 # Baked data
-icu_calendar_data = { path = "../provider/baked/calendar" }
-icu_casemap_data = { path = "../provider/baked/casemap" }
-icu_collator_data = { path = "../provider/baked/collator" }
-icu_datetime_data = { path = "../provider/baked/datetime" }
-icu_decimal_data = { path = "../provider/baked/decimal" }
-icu_experimental_data = { path = "../provider/baked/experimental" }
-icu_list_data = { path = "../provider/baked/list" }
-icu_locale_data = { path = "../provider/baked/locale" }
-icu_normalizer_data = { path = "../provider/baked/normalizer" }
-icu_plurals_data = { path = "../provider/baked/plurals" }
-icu_properties_data = { path = "../provider/baked/properties"}
-icu_segmenter_data = { path = "../provider/baked/segmenter" }
-icu_timezone_data = { path = "../provider/baked/timezone" }
+icu_calendar_data = { path = "../provider/data/calendar" }
+icu_casemap_data = { path = "../provider/data/casemap" }
+icu_collator_data = { path = "../provider/data/collator" }
+icu_datetime_data = { path = "../provider/data/datetime" }
+icu_decimal_data = { path = "../provider/data/decimal" }
+icu_experimental_data = { path = "../provider/data/experimental" }
+icu_list_data = { path = "../provider/data/list" }
+icu_locale_data = { path = "../provider/data/locale" }
+icu_normalizer_data = { path = "../provider/data/normalizer" }
+icu_plurals_data = { path = "../provider/data/plurals" }
+icu_properties_data = { path = "../provider/data/properties"}
+icu_segmenter_data = { path = "../provider/data/segmenter" }
+icu_timezone_data = { path = "../provider/data/timezone" }
 
 bies = { path = "../utils/bies" }
 crlify = { path = "../utils/crlify" }

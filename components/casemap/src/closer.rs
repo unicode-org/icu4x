@@ -82,7 +82,7 @@ impl CaseMapCloser<CaseMapper> {
         Self {
             cm: CaseMapper::new(),
             unfold: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_PROPS_CASEMAP_UNFOLD_V1,
+                crate::provider::Baked::SINGLETON_CASE_MAP_UNFOLD_V1_MARKER,
             ),
         }
     }
@@ -103,7 +103,7 @@ impl CaseMapCloser<CaseMapper> {
         P: DataProvider<CaseMapV1Marker> + DataProvider<CaseMapUnfoldV1Marker> + ?Sized,
     {
         let cm = CaseMapper::try_new_unstable(provider)?;
-        let unfold = provider.load(Default::default())?.take_payload()?;
+        let unfold = provider.load(Default::default())?.payload;
         Ok(Self { cm, unfold })
     }
 }
@@ -131,7 +131,7 @@ impl<CM: AsRef<CaseMapper>> CaseMapCloser<CM> {
         Self {
             cm: casemapper,
             unfold: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_PROPS_CASEMAP_UNFOLD_V1,
+                crate::provider::Baked::SINGLETON_CASE_MAP_UNFOLD_V1_MARKER,
             ),
         }
     }
@@ -142,7 +142,7 @@ impl<CM: AsRef<CaseMapper>> CaseMapCloser<CM> {
     where
         P: DataProvider<CaseMapV1Marker> + DataProvider<CaseMapUnfoldV1Marker> + ?Sized,
     {
-        let unfold = provider.load(Default::default())?.take_payload()?;
+        let unfold = provider.load(Default::default())?.payload;
         Ok(Self {
             cm: casemapper,
             unfold,

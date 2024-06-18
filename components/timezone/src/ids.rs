@@ -109,7 +109,7 @@ impl TimeZoneIdMapper {
     pub fn new() -> Self {
         Self {
             data: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_TIME_ZONE_IANA_TO_BCP47_V2,
+                crate::provider::Baked::SINGLETON_IANA_TO_BCP47_MAP_V2_MARKER,
             ),
         }
     }
@@ -130,7 +130,7 @@ impl TimeZoneIdMapper {
     where
         P: DataProvider<IanaToBcp47MapV2Marker> + ?Sized,
     {
-        let data = provider.load(Default::default())?.take_payload()?;
+        let data = provider.load(Default::default())?.payload;
         Ok(Self { data })
     }
 
@@ -466,17 +466,17 @@ impl TimeZoneIdMapperWithFastCanonicalization<TimeZoneIdMapper> {
     #[cfg(feature = "compiled_data")]
     pub fn new() -> Self {
         const _: () = assert!(
-            crate::provider::Baked::SINGLETON_TIME_ZONE_IANA_TO_BCP47_V2.bcp47_ids_checksum
-                == crate::provider::Baked::SINGLETON_TIME_ZONE_BCP47_TO_IANA_V1.bcp47_ids_checksum,
+            crate::provider::Baked::SINGLETON_IANA_TO_BCP47_MAP_V2_MARKER.bcp47_ids_checksum
+                == crate::provider::Baked::SINGLETON_BCP47_TO_IANA_MAP_V1_MARKER.bcp47_ids_checksum,
         );
         Self {
             inner: TimeZoneIdMapper {
                 data: DataPayload::from_static_ref(
-                    crate::provider::Baked::SINGLETON_TIME_ZONE_IANA_TO_BCP47_V2,
+                    crate::provider::Baked::SINGLETON_IANA_TO_BCP47_MAP_V2_MARKER,
                 ),
             },
             data: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_TIME_ZONE_BCP47_TO_IANA_V1,
+                crate::provider::Baked::SINGLETON_BCP47_TO_IANA_MAP_V1_MARKER,
             ),
         }
     }
@@ -519,7 +519,7 @@ where
         Self {
             inner: mapper,
             data: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_TIME_ZONE_BCP47_TO_IANA_V1,
+                crate::provider::Baked::SINGLETON_BCP47_TO_IANA_MAP_V1_MARKER,
             ),
         }
         .validated()
@@ -541,7 +541,7 @@ where
     where
         P: DataProvider<IanaToBcp47MapV2Marker> + DataProvider<Bcp47ToIanaMapV1Marker> + ?Sized,
     {
-        let data = provider.load(Default::default())?.take_payload()?;
+        let data = provider.load(Default::default())?.payload;
         Self {
             inner: mapper,
             data,
