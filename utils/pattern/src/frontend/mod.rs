@@ -13,6 +13,7 @@ use crate::PatternOrUtf8Error;
 use crate::{Parser, ParserOptions};
 #[cfg(feature = "alloc")]
 use alloc::{borrow::ToOwned, str::FromStr, string::String};
+use core::ops::Deref;
 use core::{
     convert::Infallible,
     fmt::{self, Write},
@@ -188,6 +189,18 @@ where
             _backend: PhantomData,
             store,
         })
+    }
+}
+
+impl<B> Pattern<B, B::Store>
+where
+    B: PatternBackend,
+{
+    pub fn from_borrowed_store_unchecked(store: &B::Store) -> Self {
+        Self {
+            _backend: PhantomData,
+            store: store.deref(),
+        }
     }
 }
 
