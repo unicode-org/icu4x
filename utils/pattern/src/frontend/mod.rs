@@ -196,11 +196,24 @@ impl<B> Pattern<B, B::Store>
 where
     B: PatternBackend,
 {
-    pub fn from_borrowed_store_unchecked(store: &B::Store) -> Self {
-        Self {
-            _backend: PhantomData,
-            store: store.deref(),
-        }
+    /// Creates a pattern from a borrowed store.
+    ///
+    /// # Safety
+    ///
+    /// This is a low-level method that bypasses the store validation and assumes the store
+    /// is valid. It is primarily used by the backend implementations.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_pattern::Pattern;
+    /// use icu_pattern::SinglePlaceholder;
+    ///
+    /// Pattern::<SinglePlaceholder, _>::from_borrowed_store_unchecked("\x01 days")
+    ///     .expect("valid pattern");
+    /// ```
+    pub unsafe fn from_borrowed_store_unchecked(store: &B::Store) -> &Self {
+        &*(store as *const B::Store as *const Self)
     }
 }
 
