@@ -202,16 +202,34 @@ where
     /// This is a low-level method that bypasses the store validation and assumes the store
     /// is valid. It is primarily used by the backend implementations.
     ///
+    /// NOTE:
+    ///    Pattern::validate_store() method must be called on the store before using it.
+    ///
     /// # Examples
     ///
     /// ```
+    /// use core::str::FromStr;
     /// use icu_pattern::Pattern;
     /// use icu_pattern::SinglePlaceholder;
+    /// use writeable::assert_writeable_eq;
     ///
-    /// Pattern::<SinglePlaceholder, _>::from_borrowed_store_unchecked("\x01 days")
-    ///     .expect("valid pattern");
+    /// // Create a pattern from a valid string:
+    /// let allocated_pattern =
+    ///     Pattern::<SinglePlaceholder, String>::from_str("{0} days")
+    ///         .expect("valid pattern");
+    ///
+    /// // Transform the store and create a new Pattern. This is valid because
+    /// // we call `.take_store()` and `.from_store_unchecked()` on patterns
+    /// // with the same backend (`SinglePlaceholder`).
+    /// let store = allocated_pattern.take_store();
+    /// let borrowed_pattern: Pattern<SinglePlaceholder, &str> =
+    ///     Pattern::from_borrowed_store_unchecked(&store);
+    ///
+    /// assert_writeable_eq!(borrowed_pattern.interpolate([5]), "5 days");
     /// ```
     pub unsafe fn from_borrowed_store_unchecked(store: &B::Store) -> &Self {
+        // SAFETY: The layout of `Pattern` is the same as `Store`
+        // because `_backend` is zero-sized and `store` is the only other field.
         &*(store as *const B::Store as *const Self)
     }
 }
