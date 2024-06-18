@@ -40,9 +40,7 @@ pub struct RegionDisplayNames {
 
 impl RegionDisplayNames {
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: include,
-        options: DisplayNamesOptions,
-        error: DataError,
+        (locale, options: DisplayNamesOptions) -> error: DataError,
         /// Creates a new [`RegionDisplayNames`] from locale data and an options bag using compiled data.
         ///
         /// ✨ *Enabled with the `compiled_data` Cargo feature.*
@@ -115,9 +113,7 @@ pub struct ScriptDisplayNames {
 
 impl ScriptDisplayNames {
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: include,
-        options: DisplayNamesOptions,
-        error: DataError,
+        (locale, options: DisplayNamesOptions) -> error: DataError,
         /// Creates a new [`ScriptDisplayNames`] from locale data and an options bag using compiled data.
         ///
         /// ✨ *Enabled with the `compiled_data` Cargo feature.*
@@ -191,9 +187,7 @@ pub struct VariantDisplayNames {
 
 impl VariantDisplayNames {
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: include,
-        options: DisplayNamesOptions,
-        error: DataError,
+        (locale, options: DisplayNamesOptions) -> error: DataError,
         /// Creates a new [`VariantDisplayNames`] from locale data and an options bag using compiled data.
         ///
         /// ✨ *Enabled with the `compiled_data` Cargo feature.*
@@ -260,9 +254,7 @@ pub struct LanguageDisplayNames {
 
 impl LanguageDisplayNames {
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: include,
-        options: DisplayNamesOptions,
-        error: DataError,
+        (locale, options: DisplayNamesOptions) -> error: DataError,
         /// Creates a new [`LanguageDisplayNames`] from locale data and an options bag using compiled data.
         ///
         /// ✨ *Enabled with the `compiled_data` Cargo feature.*
@@ -354,9 +346,7 @@ pub struct LocaleDisplayNamesFormatter {
 
 impl LocaleDisplayNamesFormatter {
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: include,
-        options: DisplayNamesOptions,
-        error: DataError,
+        (locale, options: DisplayNamesOptions) -> error: DataError,
         /// Creates a new [`LocaleDisplayNamesFormatter`] from locale data and an options bag using compiled data.
         ///
         /// ✨ *Enabled with the `compiled_data` Cargo feature.*

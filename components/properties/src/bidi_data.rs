@@ -190,15 +190,13 @@ impl BidiAuxiliaryPropertiesBorrowed<'static> {
 #[cfg(feature = "compiled_data")]
 pub const fn bidi_auxiliary_properties() -> BidiAuxiliaryPropertiesBorrowed<'static> {
     BidiAuxiliaryPropertiesBorrowed {
-        data: crate::provider::Baked::SINGLETON_PROPS_BIDIAUXILIARYPROPS_V1,
+        data: crate::provider::Baked::SINGLETON_BIDI_AUXILIARY_PROPERTIES_V1_MARKER,
     }
 }
 
 icu_provider::gen_any_buffer_data_constructors!(
-    locale: skip,
-    options: skip,
-    result: Result<BidiAuxiliaryProperties, DataError>,
-    #[cfg(not(all()))]
+    () -> result: Result<BidiAuxiliaryProperties, DataError>,
+    #[cfg(skip)]
     functions: [
         bidi_auxiliary_properties,
         load_bidi_auxiliary_properties_with_any_provider,

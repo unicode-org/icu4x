@@ -13,7 +13,6 @@
 //! Read more about data providers: [`icu_provider`]
 
 use crate::TimeZoneBcp47Id;
-use core::str;
 use icu_provider::prelude::*;
 use zerotrie::{ZeroAsciiIgnoreCaseTrie, ZeroTrie};
 use zerovec::{VarZeroVec, ZeroVec};

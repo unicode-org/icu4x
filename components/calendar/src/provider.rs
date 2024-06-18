@@ -46,14 +46,14 @@ const _: () = {
         pub use icu_calendar_data::icu_locale as locale;
     }
     make_provider!(Baked);
-    impl_calendar_chinesecache_v1!(Baked);
-    impl_calendar_dangicache_v1!(Baked);
-    impl_calendar_islamicobservationalcache_v1!(Baked);
-    impl_calendar_islamicummalquracache_v1!(Baked);
-    impl_calendar_japanese_v1!(Baked);
-    impl_calendar_japanext_v1!(Baked);
-    impl_datetime_week_data_v1!(Baked);
-    impl_datetime_week_data_v2!(Baked);
+    impl_chinese_cache_v1_marker!(Baked);
+    impl_dangi_cache_v1_marker!(Baked);
+    impl_islamic_observational_cache_v1_marker!(Baked);
+    impl_islamic_umm_al_qura_cache_v1_marker!(Baked);
+    impl_japanese_eras_v1_marker!(Baked);
+    impl_japanese_extended_eras_v1_marker!(Baked);
+    impl_week_data_v1_marker!(Baked);
+    impl_week_data_v2_marker!(Baked);
 };
 
 #[cfg(feature = "datagen")]

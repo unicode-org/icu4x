@@ -82,13 +82,13 @@ impl CaseMapCloser<CaseMapper> {
         Self {
             cm: CaseMapper::new(),
             unfold: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_PROPS_CASEMAP_UNFOLD_V1,
+                crate::provider::Baked::SINGLETON_CASE_MAP_UNFOLD_V1_MARKER,
             ),
         }
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: DataError,
-    #[cfg(not(all()))]
+    icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,
+    #[cfg(skip)]
     functions: [
         new,
         try_new_with_any_provider,
@@ -110,8 +110,8 @@ impl CaseMapCloser<CaseMapper> {
 
 // We use Borrow, not AsRef, since we want the blanket impl on T
 impl<CM: AsRef<CaseMapper>> CaseMapCloser<CM> {
-    icu_provider::gen_any_buffer_data_constructors!(locale: skip, casemapper: CM, error: DataError,
-    #[cfg(not(all()))]
+    icu_provider::gen_any_buffer_data_constructors!((casemapper: CM) -> error: DataError,
+    #[cfg(skip)]
     functions: [
         new_with_mapper,
         try_new_with_mapper_with_any_provider,
@@ -131,7 +131,7 @@ impl<CM: AsRef<CaseMapper>> CaseMapCloser<CM> {
         Self {
             cm: casemapper,
             unfold: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_PROPS_CASEMAP_UNFOLD_V1,
+                crate::provider::Baked::SINGLETON_CASE_MAP_UNFOLD_V1_MARKER,
             ),
         }
     }

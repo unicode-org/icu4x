@@ -51,42 +51,6 @@ pub struct DataRequestMetadata {
     pub silent: bool,
 }
 
-#[doc(hidden)] // TODO: replace the `-x-` encoding by something more flexible
-impl DataRequest<'_> {
-    pub fn legacy_cmp(&self, bytes: &[u8]) -> Ordering {
-        struct LegacyComparator<'a>(&'a DataLocale, &'a DataMarkerAttributes);
-        impl writeable::Writeable for LegacyComparator<'_> {
-            fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
-                self.0.write_to(sink)?;
-                if !self.1.is_empty() {
-                    "-x-".write_to(sink)?;
-                    self.1.write_to(sink)?;
-                }
-                Ok(())
-            }
-        }
-        LegacyComparator(self.locale, self.marker_attributes).writeable_cmp_bytes(bytes)
-    }
-
-    pub fn legacy_encode(&self) -> String {
-        self.locale.write_to_string().into_owned()
-            + if self.marker_attributes.is_empty() {
-                ""
-            } else {
-                "-x-"
-            }
-            + self.marker_attributes
-    }
-
-    pub fn legacy_decode(encoded: &str) -> Option<(DataLocale, DataMarkerAttributes)> {
-        let mut iter = encoded.splitn(2, "-x-");
-        #[allow(clippy::unwrap_used)] // at least one element
-        let l = iter.next().unwrap().parse().ok()?;
-        let a = iter.next().unwrap_or("").parse().ok()?;
-        Some((l, a))
-    }
-}
-
 /// A locale type optimized for use in fallbacking and the ICU4X data pipeline.
 ///
 /// [`DataLocale`] contains less functionality than [`Locale`] but more than

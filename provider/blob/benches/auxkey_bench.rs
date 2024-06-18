@@ -274,7 +274,7 @@ fn make_blob_v1() -> Vec<u8> {
     put_payloads::<MarkerD>(&mut exporter);
     exporter.close().unwrap();
     drop(exporter);
-    assert_eq!(blob.len(), 133578);
+    assert_eq!(blob.len(), 115274);
     assert!(blob.len() > 100);
     blob
 }
@@ -288,7 +288,7 @@ fn make_blob_v2() -> Vec<u8> {
     put_payloads::<MarkerD>(&mut exporter);
     exporter.close().unwrap();
     drop(exporter);
-    assert_eq!(blob.len(), 34306);
+    assert_eq!(blob.len(), 32982);
     assert!(blob.len() > 100);
     blob
 }
@@ -301,6 +301,7 @@ fn auxkey_bench(c: &mut Criterion) {
 }
 
 fn auxkey_bench_for_version(c: &mut Criterion, blob: &[u8], version_id: &str) {
+    println!("benching {version_id}");
     c.bench_function(&format!("provider/auxkey/construct/{version_id}"), |b| {
         b.iter(|| BlobDataProvider::try_new_from_blob(black_box(blob).into()).unwrap());
     });
@@ -320,7 +321,7 @@ fn auxkey_bench_for_version(c: &mut Criterion, blob: &[u8], version_id: &str) {
         };
 
         c.bench_function(
-            &format!("provider/auxkey/fallback/{locale_str}/{version_id}"),
+            &format!("provider/auxkey/fallback/{attr_str}/{locale_str}/{version_id}"),
             |b| {
                 b.iter(|| {
                     provider

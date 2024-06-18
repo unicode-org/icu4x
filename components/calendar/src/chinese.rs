@@ -154,13 +154,13 @@ impl Chinese {
     pub const fn new() -> Self {
         Self {
             data: Some(DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_CALENDAR_CHINESECACHE_V1,
+                crate::provider::Baked::SINGLETON_CHINESE_CACHE_V1_MARKER,
             )),
         }
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: DataError,
-        #[cfg(not(all()))]
+    icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,
+        #[cfg(skip)]
         functions: [
             new,
             try_new_with_any_provider,

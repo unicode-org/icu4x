@@ -42,10 +42,8 @@ pub struct CurrencyCode(pub TinyAsciiStr<3>);
 
 impl CurrencyFormatter {
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: include,
-        options: super::options::CurrencyFormatterOptions,
-        error: DataError,
-        #[cfg(not(all()))]
+        (locale, options: super::options::CurrencyFormatterOptions) -> error: DataError,
+        #[cfg(skip)]
     );
 
     /// Creates a new [`CurrencyFormatter`] from compiled locale data and an options bag.

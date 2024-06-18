@@ -25,4 +25,5 @@ segmenter_lstm = { tagged = "v0.1.0" }
 unexpected_cfgs = { level = "warn", check-cfg = ['cfg(icu4x_custom_data)'] }
 
 [dependencies]
+icu_provider_baked = { workspace = true }
 icu_locale = { workspace = true, features = ["compiled_data"] }

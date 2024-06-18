@@ -44,14 +44,14 @@ const _: () = {
         pub use crate as locale;
     }
     make_provider!(Baked);
-    impl_fallback_likelysubtags_v1!(Baked);
-    impl_fallback_parents_v1!(Baked);
-    impl_fallback_supplement_co_v1!(Baked);
-    impl_locid_transform_aliases_v2!(Baked);
-    impl_locid_transform_likelysubtags_ext_v1!(Baked);
-    impl_locid_transform_likelysubtags_l_v1!(Baked);
-    impl_locid_transform_likelysubtags_sr_v1!(Baked);
-    impl_locid_transform_script_dir_v1!(Baked);
+    impl_locale_fallback_likely_subtags_v1_marker!(Baked);
+    impl_locale_fallback_parents_v1_marker!(Baked);
+    impl_collation_fallback_supplement_v1_marker!(Baked);
+    impl_aliases_v2_marker!(Baked);
+    impl_likely_subtags_extended_v1_marker!(Baked);
+    impl_likely_subtags_for_language_v1_marker!(Baked);
+    impl_likely_subtags_for_script_region_v1_marker!(Baked);
+    impl_script_direction_v1_marker!(Baked);
 };
 
 #[cfg(feature = "datagen")]

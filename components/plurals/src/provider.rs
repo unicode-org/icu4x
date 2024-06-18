@@ -40,10 +40,10 @@ const _: () = {
     }
 
     make_provider!(Baked);
-    impl_plurals_ordinal_v1!(Baked);
-    impl_plurals_cardinal_v1!(Baked);
+    impl_cardinal_v1_marker!(Baked);
+    impl_ordinal_v1_marker!(Baked);
     #[cfg(feature = "experimental")]
-    impl_plurals_ranges_v1!(Baked);
+    impl_plural_ranges_v1_marker!(Baked);
 };
 
 #[cfg(feature = "datagen")]

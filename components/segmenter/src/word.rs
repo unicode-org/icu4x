@@ -204,7 +204,7 @@ impl WordSegmenter {
     pub fn new_auto() -> Self {
         Self {
             payload: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_SEGMENTER_WORD_V1,
+                crate::provider::Baked::SINGLETON_WORD_BREAK_DATA_V1_MARKER,
             ),
             complex: ComplexPayloads::new_auto(),
         }
@@ -212,10 +212,8 @@ impl WordSegmenter {
 
     #[cfg(feature = "auto")]
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: skip,
-        options: skip,
-        error: DataError,
-        #[cfg(not(all()))]
+        () -> error: DataError,
+        #[cfg(skip)]
         functions: [
             try_new_auto,
             try_new_auto_with_any_provider,
@@ -279,7 +277,7 @@ impl WordSegmenter {
     pub fn new_lstm() -> Self {
         Self {
             payload: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_SEGMENTER_WORD_V1,
+                crate::provider::Baked::SINGLETON_WORD_BREAK_DATA_V1_MARKER,
             ),
             complex: ComplexPayloads::new_lstm(),
         }
@@ -287,10 +285,8 @@ impl WordSegmenter {
 
     #[cfg(feature = "lstm")]
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: skip,
-        options: skip,
-        error: DataError,
-        #[cfg(not(all()))]
+        () -> error: DataError,
+        #[cfg(skip)]
         functions: [
             new_lstm,
             try_new_lstm_with_any_provider,
@@ -347,17 +343,15 @@ impl WordSegmenter {
     pub fn new_dictionary() -> Self {
         Self {
             payload: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_SEGMENTER_WORD_V1,
+                crate::provider::Baked::SINGLETON_WORD_BREAK_DATA_V1_MARKER,
             ),
             complex: ComplexPayloads::new_dict(),
         }
     }
 
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: skip,
-        options: skip,
-        error: DataError,
-        #[cfg(not(all()))]
+        () -> error: DataError,
+        #[cfg(skip)]
         functions: [
             new_dictionary,
             try_new_dictionary_with_any_provider,

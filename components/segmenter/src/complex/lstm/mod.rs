@@ -354,7 +354,7 @@ mod tests {
             .unwrap();
         let lstm = LstmSegmenter::new(
             lstm.payload.get(),
-            crate::provider::Baked::SINGLETON_SEGMENTER_GRAPHEME_V1,
+            crate::provider::Baked::SINGLETON_GRAPHEME_CLUSTER_BREAK_DATA_V1_MARKER,
         );
 
         // Importing the test data

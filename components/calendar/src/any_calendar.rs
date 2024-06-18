@@ -755,10 +755,8 @@ impl AnyCalendar {
     }
 
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: include,
-        options: skip,
-        error: DataError,
-        #[cfg(not(all()))]
+        (locale) -> error: DataError,
+        #[cfg(skip)]
         functions: [
             new_for_locale,
             try_new_for_locale_with_any_provider,

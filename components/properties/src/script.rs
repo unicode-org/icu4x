@@ -619,15 +619,13 @@ impl ScriptWithExtensionsBorrowed<'static> {
 #[cfg(feature = "compiled_data")]
 pub const fn script_with_extensions() -> ScriptWithExtensionsBorrowed<'static> {
     ScriptWithExtensionsBorrowed {
-        data: crate::provider::Baked::SINGLETON_PROPS_SCX_V1,
+        data: crate::provider::Baked::SINGLETON_SCRIPT_WITH_EXTENSIONS_PROPERTY_V1_MARKER,
     }
 }
 
 icu_provider::gen_any_buffer_data_constructors!(
-    locale: skip,
-    options: skip,
-    result: Result<ScriptWithExtensions, DataError>,
-    #[cfg(not(all()))]
+    () -> result: Result<ScriptWithExtensions, DataError>,
+    #[cfg(skip)]
     functions: [
         script_with_extensions,
         load_script_with_extensions_with_any_provider,

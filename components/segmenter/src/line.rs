@@ -362,10 +362,8 @@ impl LineSegmenter {
 
     #[cfg(feature = "auto")]
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: skip,
-        options: skip,
-        error: DataError,
-        #[cfg(not(all()))]
+        () -> error: DataError,
+        #[cfg(skip)]
         functions: [
             new_auto,
             try_new_auto_with_any_provider,
@@ -406,10 +404,8 @@ impl LineSegmenter {
 
     #[cfg(feature = "lstm")]
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: skip,
-        options: skip,
-        error: DataError,
-        #[cfg(not(all()))]
+        () -> error: DataError,
+        #[cfg(skip)]
         functions: [
             new_lstm,
             try_new_lstm_with_any_provider,
@@ -448,10 +444,8 @@ impl LineSegmenter {
     }
 
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: skip,
-        options: skip,
-        error: DataError,
-        #[cfg(not(all()))]
+        () -> error: DataError,
+        #[cfg(skip)]
         functions: [
             new_dictionary,
             try_new_dictionary_with_any_provider,
@@ -490,10 +484,8 @@ impl LineSegmenter {
 
     #[cfg(feature = "auto")]
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: skip,
-        options: LineBreakOptions,
-        error: DataError,
-        #[cfg(not(all()))]
+        (options: LineBreakOptions) -> error: DataError,
+        #[cfg(skip)]
         functions: [
             new_auto_with_options,
             try_new_auto_with_options_with_any_provider,
@@ -535,7 +527,7 @@ impl LineSegmenter {
         Self {
             options,
             payload: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_SEGMENTER_LINE_V1,
+                crate::provider::Baked::SINGLETON_LINE_BREAK_DATA_V1_MARKER,
             ),
             complex: ComplexPayloads::new_lstm(),
         }
@@ -543,10 +535,8 @@ impl LineSegmenter {
 
     #[cfg(feature = "lstm")]
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: skip,
-        options: LineBreakOptions,
-        error: DataError,
-        #[cfg(not(all()))]
+        (options: LineBreakOptions) -> error: DataError,
+        #[cfg(skip)]
         functions: [
             try_new_lstm_with_options,
             try_new_lstm_with_options_with_any_provider,
@@ -591,7 +581,7 @@ impl LineSegmenter {
         Self {
             options,
             payload: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_SEGMENTER_LINE_V1,
+                crate::provider::Baked::SINGLETON_LINE_BREAK_DATA_V1_MARKER,
             ),
             // Line segmenter doesn't need to load CJ dictionary because UAX 14 rules handles CJK
             // characters [1]. Southeast Asian languages however require complex context analysis
@@ -604,10 +594,8 @@ impl LineSegmenter {
     }
 
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: skip,
-        options: LineBreakOptions,
-        error: DataError,
-        #[cfg(not(all()))]
+        (options: LineBreakOptions) -> error: DataError,
+        #[cfg(skip)]
         functions: [
             new_dictionary_with_options,
             try_new_dictionary_with_options_with_any_provider,

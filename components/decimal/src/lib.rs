@@ -121,9 +121,8 @@ pub struct FixedDecimalFormatter {
 
 impl FixedDecimalFormatter {
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: include,
-        options: options::FixedDecimalFormatterOptions,
-        error: DataError,
+
+        (locale, options: options::FixedDecimalFormatterOptions) -> error: DataError,
         /// Creates a new [`FixedDecimalFormatter`] from compiled data and an options bag.
         ///
         /// ✨ *Enabled with the `compiled_data` Cargo feature.*

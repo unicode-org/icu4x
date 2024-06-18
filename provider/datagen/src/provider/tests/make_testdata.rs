@@ -119,10 +119,7 @@ struct ZeroCopyCheckExporter {
 // Such types contain some data that was allocated during deserializations
 //
 // Every entry in this list is a bug that needs to be addressed before stabilization.
-const EXPECTED_VIOLATIONS: &[DataMarkerInfo] = &[
-    // https://github.com/unicode-org/icu4x/issues/1678
-    icu::datetime::provider::calendar::DateSkeletonPatternsV1Marker::INFO,
-];
+const EXPECTED_VIOLATIONS: &[DataMarkerInfo] = &[];
 
 // Types in this list can be zero-copy deserialized (and do not contain allocated data),
 // however there is some allocation that occurs during deserialization for validation.

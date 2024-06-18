@@ -39,10 +39,8 @@ impl From<Sign> for num_bigint::Sign {
 
 impl ConverterFactory {
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: skip,
-        options: skip,
-        error: DataError,
-        #[cfg(not(all()))]
+        () -> error: DataError,
+        #[cfg(skip)]
         functions: [
             new,
             try_new_with_any_provider,
@@ -60,7 +58,9 @@ impl ConverterFactory {
     #[cfg(feature = "compiled_data")]
     pub const fn new() -> Self {
         Self {
-            payload: DataPayload::from_static_ref(crate::provider::Baked::SINGLETON_UNITS_INFO_V1),
+            payload: DataPayload::from_static_ref(
+                crate::provider::Baked::SINGLETON_UNITS_INFO_V1_MARKER,
+            ),
         }
     }
 
