@@ -209,21 +209,20 @@ where
     /// use icu_pattern::SinglePlaceholder;
     /// use writeable::assert_writeable_eq;
     ///
-    /// unsafe {
-    ///     // Create a pattern from a valid string:
-    ///     let allocated_pattern =
-    ///         Pattern::<SinglePlaceholder, String>::from_str("{0} days")
-    ///             .expect("valid pattern");
+    /// // Create a pattern from a valid string:
+    /// let allocated_pattern =
+    ///     Pattern::<SinglePlaceholder, String>::from_str("{0} days")
+    ///         .expect("valid pattern");
     ///
-    ///     // Transform the store and create a new Pattern. This is valid because
-    ///     // we call `.take_store()` and `.from_store_unchecked()` on patterns
-    ///     // with the same backend (`SinglePlaceholder`).
-    ///     let store = allocated_pattern.take_store();
-    ///     let borrowed_pattern: &Pattern<SinglePlaceholder, _> =
-    ///         Pattern::from_borrowed_store_unchecked(store.as_str());
+    /// // Transform the store and create a new Pattern. This is valid because
+    /// // we call `.take_store()` and `.from_store_unchecked()` on patterns
+    /// // with the same backend (`SinglePlaceholder`).
+    /// let store = allocated_pattern.take_store();
+    /// // SAFETY: store comes from a valid pattern
+    /// let borrowed_pattern: &Pattern<SinglePlaceholder, _> =
+    ///     unsafe { Pattern::from_borrowed_store_unchecked(store.as_str()) };
     ///
-    ///     assert_writeable_eq!(borrowed_pattern.interpolate([5]), "5 days");
-    /// }
+    /// assert_writeable_eq!(borrowed_pattern.interpolate([5]), "5 days");
     /// ```
     pub unsafe fn from_borrowed_store_unchecked(store: &B::Store) -> &Self {
         // SAFETY: The layout of `Pattern` is the same as `Store`
