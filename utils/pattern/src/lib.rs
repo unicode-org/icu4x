@@ -55,6 +55,7 @@ mod common;
 mod double;
 mod error;
 mod frontend;
+#[cfg(feature = "zerovec")]
 mod implementations;
 mod multi_named;
 #[cfg(feature = "alloc")]
