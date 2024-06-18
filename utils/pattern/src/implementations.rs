@@ -21,6 +21,7 @@ unsafe impl VarULE for Pattern<SinglePlaceholder, str> {
     }
 
     unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
-        &SinglePlaceholderPattern::try_from_bytes_store(bytes).unwrap()
+        let store = core::str::from_utf8_unchecked(bytes);
+        SinglePlaceholderPattern::from_borrowed_store_unchecked(store)
     }
 }
