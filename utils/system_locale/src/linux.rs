@@ -49,7 +49,7 @@ mod linux_locale {
         locale_map
     }
 
-    pub fn get_loclae() -> Vec<String> {
+    pub fn get_locale() -> Vec<String> {
         let mut unique_locales = HashSet::new();
         unsafe {
             let locale_map = fetch_locale_settings();
@@ -75,5 +75,5 @@ mod linux_locale {
 }
 
 #[cfg(target_os = "linux")]
-pub use linux_locale::get_loclae;
+pub use linux_locale::get_locale;
 pub use linux_locale::get_system_calendar;
