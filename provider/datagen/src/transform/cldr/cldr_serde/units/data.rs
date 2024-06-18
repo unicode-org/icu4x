@@ -10,7 +10,10 @@
 use serde::Deserialize;
 use std::collections::BTreeMap;
 
-// TODO(youneis): Check if there are more cases.
+/// Represents various patterns for a unit according to plural rules.
+/// The plural rule categories are: zero, one, two, few, many and other.
+/// For more details, refer to the technical report:
+///     https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules
 #[derive(PartialEq, Debug, Deserialize)]
 pub(in crate::provider) struct Patterns {
     #[serde(rename = "unitPattern-count-zero")]
