@@ -36,7 +36,7 @@ impl MetazoneCalculator {
     pub const fn new() -> Self {
         MetazoneCalculator {
             metazone_period: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_TIME_ZONE_METAZONE_PERIOD_V1,
+                crate::provider::Baked::SINGLETON_METAZONE_PERIOD_V1_MARKER,
             ),
         }
     }
@@ -56,7 +56,7 @@ impl MetazoneCalculator {
     pub fn try_new_unstable(
         provider: &(impl DataProvider<MetazonePeriodV1Marker> + ?Sized),
     ) -> Result<Self, DataError> {
-        let metazone_period = provider.load(Default::default())?.take_payload()?;
+        let metazone_period = provider.load(Default::default())?.payload;
         Ok(Self { metazone_period })
     }
 

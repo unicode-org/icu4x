@@ -8,20 +8,20 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
+#include "ICU4XDataError.d.hpp"
 #include "ICU4XDisplayNamesOptionsV1.d.hpp"
-#include "ICU4XError.d.hpp"
 #include "ICU4XLocaleDisplayNamesFormatter.d.h"
 
 class ICU4XDataProvider;
 class ICU4XLocale;
 struct ICU4XDisplayNamesOptionsV1;
-class ICU4XError;
+class ICU4XDataError;
 
 
 class ICU4XLocaleDisplayNamesFormatter {
 public:
 
-  inline static diplomat::result<std::unique_ptr<ICU4XLocaleDisplayNamesFormatter>, ICU4XError> create(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDisplayNamesOptionsV1 options);
+  inline static diplomat::result<std::unique_ptr<ICU4XLocaleDisplayNamesFormatter>, ICU4XDataError> create(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDisplayNamesOptionsV1 options);
 
   inline std::string of(const ICU4XLocale& locale) const;
 

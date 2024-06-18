@@ -60,7 +60,9 @@ impl ConverterFactory {
     #[cfg(feature = "compiled_data")]
     pub const fn new() -> Self {
         Self {
-            payload: DataPayload::from_static_ref(crate::provider::Baked::SINGLETON_UNITS_INFO_V1),
+            payload: DataPayload::from_static_ref(
+                crate::provider::Baked::SINGLETON_UNITS_INFO_V1_MARKER,
+            ),
         }
     }
 
@@ -69,7 +71,7 @@ impl ConverterFactory {
     where
         D: ?Sized + DataProvider<provider::UnitsInfoV1Marker>,
     {
-        let payload = provider.load(DataRequest::default())?.take_payload()?;
+        let payload = provider.load(DataRequest::default())?.payload;
 
         Ok(Self { payload })
     }

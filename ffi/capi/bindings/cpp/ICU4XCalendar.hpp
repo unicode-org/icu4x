@@ -12,21 +12,21 @@
 #include "diplomat_runtime.hpp"
 #include "ICU4XAnyCalendarKind.hpp"
 #include "ICU4XCalendar.h"
+#include "ICU4XDataError.hpp"
 #include "ICU4XDataProvider.hpp"
-#include "ICU4XError.hpp"
 #include "ICU4XLocale.hpp"
 
 
-inline diplomat::result<std::unique_ptr<ICU4XCalendar>, ICU4XError> ICU4XCalendar::create_for_locale(const ICU4XDataProvider& provider, const ICU4XLocale& locale) {
+inline diplomat::result<std::unique_ptr<ICU4XCalendar>, ICU4XDataError> ICU4XCalendar::create_for_locale(const ICU4XDataProvider& provider, const ICU4XLocale& locale) {
   auto result = capi::ICU4XCalendar_create_for_locale(provider.AsFFI(),
     locale.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XCalendar>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XCalendar>>(std::unique_ptr<ICU4XCalendar>(ICU4XCalendar::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XCalendar>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XCalendar>, ICU4XDataError>(diplomat::Ok<std::unique_ptr<ICU4XCalendar>>(std::unique_ptr<ICU4XCalendar>(ICU4XCalendar::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XCalendar>, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::unique_ptr<ICU4XCalendar>, ICU4XError> ICU4XCalendar::create_for_kind(const ICU4XDataProvider& provider, ICU4XAnyCalendarKind kind) {
+inline diplomat::result<std::unique_ptr<ICU4XCalendar>, ICU4XDataError> ICU4XCalendar::create_for_kind(const ICU4XDataProvider& provider, ICU4XAnyCalendarKind kind) {
   auto result = capi::ICU4XCalendar_create_for_kind(provider.AsFFI(),
     kind.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XCalendar>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XCalendar>>(std::unique_ptr<ICU4XCalendar>(ICU4XCalendar::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XCalendar>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XCalendar>, ICU4XDataError>(diplomat::Ok<std::unique_ptr<ICU4XCalendar>>(std::unique_ptr<ICU4XCalendar>(ICU4XCalendar::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XCalendar>, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
 
 inline ICU4XAnyCalendarKind ICU4XCalendar::kind() const {

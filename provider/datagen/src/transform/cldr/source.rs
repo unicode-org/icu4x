@@ -6,13 +6,13 @@
 
 use crate::provider::source::SerdeCache;
 use crate::provider::CoverageLevel;
-use icu_calendar::provider::EraStartDate;
-use icu_locale::provider::{
+use icu::calendar::provider::EraStartDate;
+use icu::locale::provider::{
     LikelySubtagsExtendedV1Marker, LikelySubtagsForLanguageV1Marker,
     LikelySubtagsForScriptRegionV1Marker,
 };
-use icu_locale::LocaleExpander;
-use icu_locale_core::LanguageIdentifier;
+use icu::locale::LanguageIdentifier;
+use icu::locale::LocaleExpander;
 use icu_provider::prelude::*;
 use icu_provider::DataError;
 use icu_provider_adapters::any_payload::AnyPayloadProvider;
@@ -33,7 +33,7 @@ pub(in crate::provider) struct CldrCache {
     #[cfg(feature = "experimental_components")]
     // used by transforms/mod.rs
     pub(in crate::provider) transforms: OnceLock<
-        Result<std::sync::Mutex<icu_experimental::transliterate::RuleCollection>, DataError>,
+        Result<std::sync::Mutex<icu::experimental::transliterate::RuleCollection>, DataError>,
     >,
 }
 
@@ -73,6 +73,10 @@ impl CldrCache {
         CldrDirLang(self, "cldr-localenames".to_owned())
     }
 
+    pub(in crate::provider) fn units(&self) -> CldrDirLang<'_> {
+        CldrDirLang(self, "cldr-units".to_owned())
+    }
+
     pub(in crate::provider) fn dates(&self, cal: &str) -> CldrDirLang<'_> {
         CldrDirLang(
             self,
@@ -87,7 +91,7 @@ impl CldrCache {
     pub(in crate::provider) fn locales(
         &self,
         levels: impl IntoIterator<Item = CoverageLevel>,
-    ) -> Result<Vec<icu_locale_core::LanguageIdentifier>, DataError> {
+    ) -> Result<Vec<icu::locale::LanguageIdentifier>, DataError> {
         let levels = levels.into_iter().collect::<HashSet<_>>();
         Ok(self
             .serde_cache

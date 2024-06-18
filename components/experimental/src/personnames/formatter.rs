@@ -18,7 +18,7 @@ use super::provider::{
 };
 use super::specifications;
 use icu_locale_core::Locale;
-use icu_provider::{DataLocale, DataPayload, DataProvider, DataRequest};
+use icu_provider::prelude::*;
 use zerofrom::ZeroFrom;
 
 pub struct PersonNamesFormatter {
@@ -85,15 +85,13 @@ impl PersonNamesFormatter {
             person_name_locale,
         )?;
 
-        let data_payload: DataPayload<PersonNamesFormatV1Marker> = provider
+        let data: DataResponse<PersonNamesFormatV1Marker> = provider
             .load(DataRequest {
                 locale: &DataLocale::from(effective_locale),
                 ..Default::default()
             })
-            .map_err(PersonNamesFormatterError::Data)?
-            .take_payload()
             .map_err(PersonNamesFormatterError::Data)?;
-        let formatting_definition: &PersonNamesFormatV1 = data_payload.get();
+        let formatting_definition: &PersonNamesFormatV1 = data.payload.get();
         let option_with_proper_name_order = self.final_person_names_formatter_options(
             effective_locale,
             person_name,

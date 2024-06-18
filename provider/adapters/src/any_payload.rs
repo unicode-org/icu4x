@@ -113,7 +113,7 @@ impl AnyProvider for AnyPayloadProvider {
         marker.match_marker(self.marker)?;
         Ok(AnyResponse {
             metadata: DataResponseMetadata::default(),
-            payload: Some(self.data.clone()),
+            payload: self.data.clone(),
         })
     }
 }

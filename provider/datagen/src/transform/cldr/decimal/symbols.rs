@@ -5,8 +5,8 @@
 use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
 use crate::provider::IterableDataProviderCached;
-use icu_decimal::provider::*;
-use icu_locale_core::{extensions::unicode::key, subtags::Subtag};
+use icu::decimal::provider::*;
+use icu::locale::{extensions::unicode::key, subtags::Subtag};
 use icu_provider::prelude::*;
 use std::borrow::Cow;
 use std::collections::HashSet;
@@ -43,7 +43,7 @@ impl DataProvider<DecimalSymbolsV1Marker> for DatagenProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(result)),
+            payload: DataPayload::from_owned(result),
         })
     }
 }
@@ -99,19 +99,17 @@ impl TryFrom<NumbersWithNumsys<'_>> for DecimalSymbolsV1<'static> {
 
 #[test]
 fn test_basic() {
-    use icu_locale_core::langid;
+    use icu::locale::langid;
 
     let provider = DatagenProvider::new_testing();
 
-    let ar_decimal: DataPayload<DecimalSymbolsV1Marker> = provider
+    let ar_decimal: DataResponse<DecimalSymbolsV1Marker> = provider
         .load(DataRequest {
             locale: &langid!("ar-EG").into(),
             ..Default::default()
         })
-        .unwrap()
-        .take_payload()
         .unwrap();
 
-    assert_eq!(ar_decimal.get().decimal_separator, "٫");
-    assert_eq!(ar_decimal.get().digits[0], '٠');
+    assert_eq!(ar_decimal.payload.get().decimal_separator, "٫");
+    assert_eq!(ar_decimal.payload.get().digits[0], '٠');
 }

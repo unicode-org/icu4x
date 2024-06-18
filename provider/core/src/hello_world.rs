@@ -42,8 +42,6 @@ impl Default for HelloWorldV1<'_> {
 }
 
 /// Marker type for [`HelloWorldV1`].
-#[cfg_attr(feature = "datagen", derive(Default, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_provider::hello_world))]
 #[derive(Debug)]
 pub struct HelloWorldV1Marker;
 
@@ -67,17 +65,15 @@ impl DataMarker for HelloWorldV1Marker {
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
 ///
-/// let german_hello_world: DataPayload<HelloWorldV1Marker> =
+/// let german_hello_world: DataResponse<HelloWorldV1Marker> =
 ///     HelloWorldProvider
 ///         .load(DataRequest {
 ///             locale: &langid!("de").into(),
 ///             ..Default::default()
 ///         })
-///         .expect("Loading should succeed")
-///         .take_payload()
-///         .expect("Data should be present");
+///         .expect("Loading should succeed");
 ///
-/// assert_eq!("Hallo Welt", german_hello_world.get().message);
+/// assert_eq!("Hallo Welt", german_hello_world.payload.get().message);
 /// ```
 ///
 /// Load the reverse string using an auxiliary key:
@@ -86,18 +82,16 @@ impl DataMarker for HelloWorldV1Marker {
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
 ///
-/// let reverse_hello_world: DataPayload<HelloWorldV1Marker> =
+/// let reverse_hello_world: DataResponse<HelloWorldV1Marker> =
 ///     HelloWorldProvider
 ///         .load(DataRequest {
 ///             locale: &"en".parse().unwrap(),
 ///             marker_attributes: &"reverse".parse().unwrap(),
 ///             ..Default::default()
 ///         })
-///         .expect("Loading should succeed")
-///         .take_payload()
-///         .expect("Data should be present");
+///         .expect("Loading should succeed");
 ///
-/// assert_eq!("Olleh Dlrow", reverse_hello_world.get().message);
+/// assert_eq!("Olleh Dlrow", reverse_hello_world.payload.get().message);
 /// ```
 #[derive(Debug, PartialEq, Default)]
 pub struct HelloWorldProvider;
@@ -154,7 +148,7 @@ impl DataProvider<HelloWorldV1Marker> for HelloWorldProvider {
             .ok_or_else(|| DataErrorKind::MissingLocale.with_req(HelloWorldV1Marker::INFO, req))?;
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: Some(DataPayload::from_static_str(data)),
+            payload: DataPayload::from_static_str(data),
         })
     }
 }
@@ -190,11 +184,9 @@ icu_provider::impl_dynamic_data_provider!(HelloWorldProvider, [HelloWorldV1Marke
 ///         locale: &langid!("de").into(),
 ///         ..Default::default()
 ///     })
-///     .expect("Loading should succeed")
-///     .take_payload()
-///     .expect("Data should be present");
+///     .expect("Loading should succeed");
 ///
-/// assert_eq!(german_hello_world.get(), br#"{"message":"Hallo Welt"}"#);
+/// assert_eq!(german_hello_world.payload.get(), br#"{"message":"Hallo Welt"}"#);
 #[derive(Debug)]
 pub struct HelloWorldJsonProvider;
 
@@ -207,18 +199,18 @@ impl DynamicDataProvider<BufferMarker> for HelloWorldJsonProvider {
     ) -> Result<DataResponse<BufferMarker>, DataError> {
         marker.match_marker(HelloWorldV1Marker::INFO)?;
         let result = HelloWorldProvider.load(req)?;
-        let (mut metadata, old_payload) =
-            DataResponse::<HelloWorldV1Marker>::take_metadata_and_payload(result)?;
-        metadata.buffer_format = Some(icu_provider::buf::BufferFormat::Json);
-        #[allow(clippy::unwrap_used)] // HelloWorldV1::serialize is infallible
         Ok(DataResponse {
-            metadata,
-            payload: Some(DataPayload::from_owned_buffer(
-                serde_json::to_string(old_payload.get())
+            metadata: DataResponseMetadata {
+                buffer_format: Some(icu_provider::buf::BufferFormat::Json),
+                ..result.metadata
+            },
+            #[allow(clippy::unwrap_used)] // HelloWorldV1::serialize is infallible
+            payload: DataPayload::from_owned_buffer(
+                serde_json::to_string(result.payload.get())
                     .unwrap()
                     .into_bytes()
                     .into_boxed_slice(),
-            )),
+            ),
         })
     }
 }
@@ -297,7 +289,7 @@ impl HelloWorldFormatter {
                 locale,
                 ..Default::default()
             })?
-            .take_payload()?;
+            .payload;
         Ok(Self { data })
     }
 

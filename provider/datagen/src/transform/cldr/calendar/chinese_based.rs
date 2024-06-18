@@ -6,7 +6,7 @@ use std::collections::HashSet;
 
 use crate::provider::DatagenProvider;
 use calendrical_calculations::chinese_based::{Chinese, ChineseBased, Dangi};
-use icu_calendar::provider::chinese_based::*;
+use icu::calendar::provider::chinese_based::*;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 
@@ -24,8 +24,8 @@ impl DataProvider<ChineseCacheV1Marker> for DatagenProvider {
         self.check_req::<ChineseCacheV1Marker>(req)?;
         let cache = load::<Chinese>();
         Ok(DataResponse {
-            metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload::from_owned(cache)),
+            metadata: Default::default(),
+            payload: DataPayload::from_owned(cache),
         })
     }
 }
@@ -35,8 +35,8 @@ impl DataProvider<DangiCacheV1Marker> for DatagenProvider {
         self.check_req::<DangiCacheV1Marker>(req)?;
         let cache = load::<Dangi>();
         Ok(DataResponse {
-            metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload::from_owned(cache)),
+            metadata: Default::default(),
+            payload: DataPayload::from_owned(cache),
         })
     }
 }

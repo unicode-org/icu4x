@@ -1,0 +1,14 @@
+{
+  "long": {
+    "One": "{0} earth radius",
+    "Other": "{0} na earth radius"
+  },
+  "short": {
+    "One": "{0} na R⊕",
+    "Other": "{0} na R⊕"
+  },
+  "narrow": {
+    "One": "{0} na R⊕",
+    "Other": "{0} na R⊕"
+  }
+}

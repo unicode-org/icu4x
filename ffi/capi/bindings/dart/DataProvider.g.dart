@@ -39,14 +39,14 @@ final class DataProvider implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `BlobDataProvider`](https://docs.rs/icu_provider_blob/latest/icu_provider_blob/struct.BlobDataProvider.html) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   factory DataProvider.fromByteSlice(ByteBuffer blob) {
     final temp = ffi2.Arena();
     final blobView = blob;
     final result = _ICU4XDataProvider_create_from_byte_slice(blobView.allocIn(temp), blobView.length);
     temp.releaseAll();
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     return DataProvider._fromFfi(result.union.ok, []);
   }
@@ -70,11 +70,11 @@ final class DataProvider implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `ForkByMarkerProvider`](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fork/type.ForkByMarkerProvider.html) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   void forkByKey(DataProvider other) {
     final result = _ICU4XDataProvider_fork_by_key(_ffi, other._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     
   }
@@ -83,11 +83,11 @@ final class DataProvider implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `MissingLocalePredicate`](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fork/predicates/struct.MissingLocalePredicate.html) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   void forkByLocale(DataProvider other) {
     final result = _ICU4XDataProvider_fork_by_locale(_ffi, other._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     
   }
@@ -100,11 +100,11 @@ final class DataProvider implements ffi.Finalizable {
   ///
   /// Additional information: [1](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html)
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   void enableLocaleFallback() {
     final result = _ICU4XDataProvider_enable_locale_fallback(_ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     
   }
@@ -113,11 +113,11 @@ final class DataProvider implements ffi.Finalizable {
   ///
   /// Additional information: [1](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html)
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   void enableLocaleFallbackWith(LocaleFallbacker fallbacker) {
     final result = _ICU4XDataProvider_enable_locale_fallback_with(_ffi, fallbacker._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     
   }

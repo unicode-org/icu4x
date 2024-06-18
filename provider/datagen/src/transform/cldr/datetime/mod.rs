@@ -6,10 +6,10 @@ use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
 use crate::provider::IterableDataProviderCached;
 use either::Either;
-use icu_datetime::provider::calendar::*;
-use icu_locale_core::extensions::unicode::Value;
-use icu_locale_core::extensions::unicode::{key, value};
-use icu_locale_core::LanguageIdentifier;
+use icu::datetime::provider::calendar::*;
+use icu::locale::extensions::unicode::Value;
+use icu::locale::extensions::unicode::{key, value};
+use icu::locale::LanguageIdentifier;
 use icu_provider::prelude::*;
 use std::collections::HashMap;
 use std::collections::HashSet;
@@ -23,10 +23,10 @@ mod symbols;
 pub(in crate::provider) mod week_data;
 
 pub(in crate::provider) static SUPPORTED_CALS: OnceLock<
-    HashMap<icu_locale_core::extensions::unicode::Value, &'static str>,
+    HashMap<icu::locale::extensions::unicode::Value, &'static str>,
 > = OnceLock::new();
 
-fn supported_cals() -> &'static HashMap<icu_locale_core::extensions::unicode::Value, &'static str> {
+fn supported_cals() -> &'static HashMap<icu::locale::extensions::unicode::Value, &'static str> {
     SUPPORTED_CALS.get_or_init(|| {
         [
             (value!("buddhist"), "buddhist"),
@@ -219,10 +219,7 @@ macro_rules! impl_data_provider {
                 #[allow(clippy::redundant_closure_call)]
                 Ok(DataResponse {
                     metadata: Default::default(),
-                    payload: Some(DataPayload::from_owned(($expr)(
-                        &data,
-                        &calendar.to_string(),
-                    ))),
+                    payload: DataPayload::from_owned(($expr)(&data, &calendar.to_string())),
                 })
             }
         }
@@ -255,8 +252,8 @@ macro_rules! impl_data_provider {
                 // TODO(#3212): Remove
                 if $marker::INFO == TimeLengthsV1Marker::INFO {
                     r.retain(|(l, _)| {
-                        l.get_langid() != icu_locale_core::langid!("byn")
-                            && l.get_langid() != icu_locale_core::langid!("ssy")
+                        l.get_langid() != icu::locale::langid!("byn")
+                            && l.get_langid() != icu::locale::langid!("ssy")
                     });
                 }
 
@@ -397,59 +394,53 @@ impl_data_provider!(
 #[cfg(test)]
 mod test {
     use super::*;
-    use icu_locale_core::langid;
+    use icu::locale::langid;
 
     #[test]
     fn test_basic_patterns() {
         let provider = DatagenProvider::new_testing();
 
-        let cs_dates: DataPayload<GregorianDateLengthsV1Marker> = provider
+        let cs_dates: DataResponse<GregorianDateLengthsV1Marker> = provider
             .load(DataRequest {
                 locale: &langid!("cs").into(),
                 ..Default::default()
             })
-            .expect("Failed to load payload")
-            .take_payload()
-            .expect("Failed to retrieve payload");
+            .expect("Failed to load payload");
 
-        assert_eq!("d. M. y", cs_dates.get().date.medium.to_string());
+        assert_eq!("d. M. y", cs_dates.payload.get().date.medium.to_string());
     }
 
     #[test]
     fn test_with_numbering_system() {
         let provider = DatagenProvider::new_testing();
 
-        let cs_dates: DataPayload<GregorianDateLengthsV1Marker> = provider
+        let cs_dates: DataResponse<GregorianDateLengthsV1Marker> = provider
             .load(DataRequest {
                 locale: &langid!("haw").into(),
                 ..Default::default()
             })
-            .expect("Failed to load payload")
-            .take_payload()
-            .expect("Failed to retrieve payload");
+            .expect("Failed to load payload");
 
-        assert_eq!("d MMM y", cs_dates.get().date.medium.to_string());
+        assert_eq!("d MMM y", cs_dates.payload.get().date.medium.to_string());
         // TODO(#308): Support numbering system variations. We currently throw them away.
-        assert_eq!("d/M/yy", cs_dates.get().date.short.to_string());
+        assert_eq!("d/M/yy", cs_dates.payload.get().date.short.to_string());
     }
 
     #[test]
     fn test_datetime_skeletons() {
-        use icu_datetime::pattern::runtime::{Pattern, PluralPattern};
-        use icu_plurals::PluralCategory;
+        use icu::datetime::pattern::runtime::{Pattern, PluralPattern};
+        use icu::plurals::PluralCategory;
         use std::convert::TryFrom;
 
         let provider = DatagenProvider::new_testing();
 
-        let skeletons: DataPayload<DateSkeletonPatternsV1Marker> = provider
+        let skeletons: DataResponse<DateSkeletonPatternsV1Marker> = provider
             .load(DataRequest {
                 locale: &"fil-u-ca-gregory".parse().unwrap(),
                 ..Default::default()
             })
-            .expect("Failed to load payload")
-            .take_payload()
-            .expect("Failed to retrieve payload");
-        let skeletons = &skeletons.get().0;
+            .expect("Failed to load payload");
+        let skeletons = &skeletons.payload.get().0;
 
         assert_eq!(
             Some(
@@ -480,22 +471,21 @@ mod test {
 
     #[test]
     fn test_basic_symbols() {
-        use icu_calendar::types::MonthCode;
+        use icu::calendar::types::MonthCode;
         use tinystr::tinystr;
         let provider = DatagenProvider::new_testing();
 
-        let cs_dates: DataPayload<GregorianDateSymbolsV1Marker> = provider
+        let cs_dates: DataResponse<GregorianDateSymbolsV1Marker> = provider
             .load(DataRequest {
                 locale: &langid!("cs").into(),
                 ..Default::default()
             })
-            .unwrap()
-            .take_payload()
             .unwrap();
 
         assert_eq!(
             "srpna",
             cs_dates
+                .payload
                 .get()
                 .months
                 .format
@@ -506,7 +496,15 @@ mod test {
 
         assert_eq!(
             "po",
-            cs_dates.get().weekdays.format.short.as_ref().unwrap().0[1]
+            cs_dates
+                .payload
+                .get()
+                .weekdays
+                .format
+                .short
+                .as_ref()
+                .unwrap()
+                .0[1]
         );
     }
 
@@ -514,20 +512,19 @@ mod test {
     fn unalias_contexts() {
         let provider = DatagenProvider::new_testing();
 
-        let cs_dates: DataPayload<GregorianDateSymbolsV1Marker> = provider
+        let cs_dates: DataResponse<GregorianDateSymbolsV1Marker> = provider
             .load(DataRequest {
                 locale: &langid!("cs").into(),
                 ..Default::default()
             })
-            .unwrap()
-            .take_payload()
             .unwrap();
 
         // Czech months are not unaliased because `wide` differs.
-        assert!(cs_dates.get().months.stand_alone.is_some());
+        assert!(cs_dates.payload.get().months.stand_alone.is_some());
 
         // Czech months are not unaliased because `wide` differs.
         assert!(cs_dates
+            .payload
             .get()
             .months
             .stand_alone
@@ -536,6 +533,7 @@ mod test {
             .abbreviated
             .is_none());
         assert!(cs_dates
+            .payload
             .get()
             .months
             .stand_alone
@@ -544,6 +542,7 @@ mod test {
             .short
             .is_none());
         assert!(cs_dates
+            .payload
             .get()
             .months
             .stand_alone
@@ -552,6 +551,7 @@ mod test {
             .narrow
             .is_none());
         assert!(cs_dates
+            .payload
             .get()
             .months
             .stand_alone
@@ -561,6 +561,6 @@ mod test {
             .is_some());
 
         // Czech weekdays are unaliased because they completely overlap.
-        assert!(cs_dates.get().weekdays.stand_alone.is_none());
+        assert!(cs_dates.payload.get().weekdays.stand_alone.is_none());
     }
 }

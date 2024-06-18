@@ -4,8 +4,8 @@
 
 use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
-use icu_locale::provider::*;
-use icu_locale_core::{
+use icu::locale::provider::*;
+use icu::locale::{
     subtags::{self, language},
     LanguageIdentifier,
 };
@@ -24,7 +24,7 @@ impl DataProvider<AliasesV1Marker> for DatagenProvider {
             .read_and_parse("supplemental/aliases.json")?;
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(AliasesV2::from(data).into())),
+            payload: DataPayload::from_owned(AliasesV2::from(data).into()),
         })
     }
 }
@@ -44,7 +44,7 @@ impl DataProvider<AliasesV2Marker> for DatagenProvider {
             .read_and_parse("supplemental/aliases.json")?;
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(AliasesV2::from(data))),
+            payload: DataPayload::from_owned(AliasesV2::from(data)),
         })
     }
 }
@@ -205,9 +205,9 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV2<'_> {
                     // Following http://unicode.org/reports/tr35/#Canonical_Unicode_Locale_Identifiers,
                     // append "zzzz" to make this syntactically correct.
                     let replacement = r.to_string().to_ascii_lowercase() + "zzzz";
-                    TinyAsciiStr::<7>::from_str(&replacement).ok()
+                    TinyAsciiStr::<7>::try_from_str(&replacement).ok()
                 } else {
-                    TinyAsciiStr::<7>::from_str(r).ok()
+                    TinyAsciiStr::<7>::try_from_str(r).ok()
                 }
             }) {
                 subdivision.insert(from, replacement);
@@ -282,10 +282,10 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV2<'_> {
 
 #[test]
 fn test_appendix_c_cmp() {
-    let en = icu_locale_core::langid!("en-GB");
-    let ca = icu_locale_core::langid!("ca");
+    let en = icu::locale::langid!("en-GB");
+    let ca = icu::locale::langid!("ca");
     let und = "und-hepburn-heploc".parse::<LanguageIdentifier>().unwrap();
-    let fr = icu_locale_core::langid!("fr-CA");
+    let fr = icu::locale::langid!("fr-CA");
 
     let mut rules = vec![&en, &ca, &und, &fr];
     rules.sort_unstable_by_key(|&l| appendix_c_cmp(l));
@@ -295,34 +295,31 @@ fn test_appendix_c_cmp() {
 
 #[test]
 fn test_basic() {
-    use icu_locale_core::subtags::{language, region, script};
+    use icu::locale::subtags::{language, region, script};
 
     let provider = DatagenProvider::new_testing();
-    let data: DataPayload<AliasesV2Marker> = provider
-        .load(Default::default())
-        .unwrap()
-        .take_payload()
-        .unwrap();
+    let data: DataResponse<AliasesV2Marker> = provider.load(Default::default()).unwrap();
 
     // We should handle all language rules as special cases, leaving the generic category empty.
-    assert!(data.get().language.is_empty());
+    assert!(data.payload.get().language.is_empty());
 
     // We should have data in all other categories
-    assert!(!data.get().language_variants.is_empty());
-    assert!(!data.get().sgn_region.is_empty());
-    assert!(!data.get().language_len2.is_empty());
-    assert!(!data.get().language_len3.is_empty());
-    assert!(!data.get().script.is_empty());
-    assert!(!data.get().region_alpha.is_empty());
-    assert!(!data.get().region_num.is_empty());
-    assert!(!data.get().complex_region.is_empty());
-    assert!(!data.get().variant.is_empty());
-    assert!(!data.get().subdivision.is_empty());
+    assert!(!data.payload.get().language_variants.is_empty());
+    assert!(!data.payload.get().sgn_region.is_empty());
+    assert!(!data.payload.get().language_len2.is_empty());
+    assert!(!data.payload.get().language_len3.is_empty());
+    assert!(!data.payload.get().script.is_empty());
+    assert!(!data.payload.get().region_alpha.is_empty());
+    assert!(!data.payload.get().region_num.is_empty());
+    assert!(!data.payload.get().complex_region.is_empty());
+    assert!(!data.payload.get().variant.is_empty());
+    assert!(!data.payload.get().subdivision.is_empty());
 
     // Spot check a few expected results. There are more extensive tests in the
     // locale canonicalizer itself.
     assert_eq!(
-        data.get()
+        data.payload
+            .get()
             .language_len2
             .get(&language!("iw").into_tinystr().resize().to_unvalidated())
             .unwrap(),
@@ -330,13 +327,14 @@ fn test_basic() {
     );
 
     assert!(data
+        .payload
         .get()
         .language_len3
         .get(&language!("iw").into_tinystr().to_unvalidated())
         .is_none());
 
     assert_eq!(
-        data.get().script.iter().next().unwrap(),
+        data.payload.get().script.iter().next().unwrap(),
         (
             &script!("Qaai").into_tinystr().to_unvalidated(),
             &script!("Zinh")
@@ -344,7 +342,8 @@ fn test_basic() {
     );
 
     assert_eq!(
-        data.get()
+        data.payload
+            .get()
             .region_num
             .get(&region!("768").into_tinystr().to_unvalidated())
             .unwrap(),

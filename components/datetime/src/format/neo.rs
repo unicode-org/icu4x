@@ -277,12 +277,7 @@ where
         P: BoundDataProvider<M> + ?Sized,
         Self: Sized,
     {
-        Some(
-            provider
-                .load_bound(req)
-                .and_then(DataResponse::take_payload)
-                .map(DataPayload::cast),
-        )
+        Some(provider.load_bound(req).map(|r| r.payload.cast()))
     }
     #[allow(clippy::needless_lifetimes)] // Yokeable is involved
     #[inline]
@@ -1044,8 +1039,8 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                 ),
                 ..Default::default()
             })
-            .and_then(DataResponse::take_payload)
-            .map_err(SingleLoadError::Data)?;
+            .map_err(SingleLoadError::Data)?
+            .payload;
         self.year_symbols = OptionalNames::SingleLength(
             (),
             field_length,
@@ -1097,8 +1092,8 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                 ),
                 ..Default::default()
             })
-            .and_then(DataResponse::take_payload)
-            .map_err(SingleLoadError::Data)?;
+            .map_err(SingleLoadError::Data)?
+            .payload;
         self.month_symbols = OptionalNames::SingleLength(
             field_symbol,
             field_length,
@@ -1205,8 +1200,8 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                 ),
                 ..Default::default()
             })
-            .and_then(DataResponse::take_payload)
-            .map_err(SingleLoadError::Data)?;
+            .map_err(SingleLoadError::Data)?
+            .payload;
         self.weekday_symbols = OptionalNames::SingleLength(
             field_symbol,
             field_length,

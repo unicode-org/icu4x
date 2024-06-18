@@ -28,11 +28,11 @@ final class IsoDate implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `try_new_iso_date`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.try_new_iso_date) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [CalendarError] on failure.
   factory IsoDate(int year, int month, int day) {
     final result = _ICU4XIsoDate_create(year, month, day);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw CalendarError.values[result.union.err];
     }
     return IsoDate._fromFfi(result.union.ok, []);
   }

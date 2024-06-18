@@ -535,7 +535,7 @@ impl LineSegmenter {
         Self {
             options,
             payload: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_SEGMENTER_LINE_V1,
+                crate::provider::Baked::SINGLETON_LINE_BREAK_DATA_V1_MARKER,
             ),
             complex: ComplexPayloads::new_lstm(),
         }
@@ -570,7 +570,7 @@ impl LineSegmenter {
     {
         Ok(Self {
             options,
-            payload: provider.load(Default::default())?.take_payload()?,
+            payload: provider.load(Default::default())?.payload,
             complex: ComplexPayloads::try_new_lstm(provider)?,
         })
     }
@@ -591,7 +591,7 @@ impl LineSegmenter {
         Self {
             options,
             payload: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_SEGMENTER_LINE_V1,
+                crate::provider::Baked::SINGLETON_LINE_BREAK_DATA_V1_MARKER,
             ),
             // Line segmenter doesn't need to load CJ dictionary because UAX 14 rules handles CJK
             // characters [1]. Southeast Asian languages however require complex context analysis
@@ -630,7 +630,7 @@ impl LineSegmenter {
     {
         Ok(Self {
             options,
-            payload: provider.load(Default::default())?.take_payload()?,
+            payload: provider.load(Default::default())?.payload,
             // Line segmenter doesn't need to load CJ dictionary because UAX 14 rules handles CJK
             // characters [1]. Southeast Asian languages however require complex context analysis
             // [2].
@@ -1376,8 +1376,7 @@ mod tests {
             Default::default(),
         )
         .expect("Loading should succeed!")
-        .take_payload()
-        .expect("Data should be present!");
+        .payload;
 
         let get_linebreak_property = |codepoint| {
             payload.get().get_linebreak_property_utf32_with_rule(
@@ -1411,8 +1410,7 @@ mod tests {
             Default::default(),
         )
         .expect("Loading should succeed!")
-        .take_payload()
-        .expect("Data should be present!");
+        .payload;
         let lb_data: &RuleBreakDataV1 = payload.get();
 
         let is_break = |left, right| {

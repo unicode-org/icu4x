@@ -1,0 +1,14 @@
+{
+  "long": {
+    "One": "{0} micrometre",
+    "Other": "{0} micrometres"
+  },
+  "short": {
+    "One": "{0} μm",
+    "Other": "{0} μm"
+  },
+  "narrow": {
+    "One": "{0}μm",
+    "Other": "{0}μm"
+  }
+}

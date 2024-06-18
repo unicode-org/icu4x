@@ -214,16 +214,14 @@ where
     #[inline]
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         let mut res = self.0.load(req)?;
-        if let Some(mut generic_payload) = res.payload.as_mut() {
-            // Cast from `DataPayload<M>` to `DataPayload<DecimalSymbolsV1Marker>`
-            let mut any_payload = generic_payload as &mut dyn Any;
-            if let Some(mut decimal_payload) = any_payload.downcast_mut::<DataPayload<DecimalSymbolsV1Marker>>() {
-                if req.locale.region() == Some(region!("CH")) {
-                    decimal_payload.with_mut(|data| {
-                        // Change the grouping separator for all Swiss locales to '🐮'
-                        data.grouping_separator = Cow::Borrowed("🐮");
-                    });
-                }
+        // Cast from `DataPayload<M>` to `DataPayload<DecimalSymbolsV1Marker>`
+        let mut any_payload = (&mut res.payload) as &mut dyn Any;
+        if let Some(mut decimal_payload) = any_payload.downcast_mut::<DataPayload<DecimalSymbolsV1Marker>>() {
+            if req.locale.region() == Some(region!("CH")) {
+                decimal_payload.with_mut(|data| {
+                    // Change the grouping separator for all Swiss locales to '🐮'
+                    data.grouping_separator = Cow::Borrowed("🐮");
+                });
             }
         }
         Ok(res)

@@ -1,0 +1,13 @@
+{
+  "long": {
+    "One": "{0} pie",
+    "Other": "{0} pies"
+  },
+  "short": {
+    "Other": "{0} ft"
+  },
+  "narrow": {
+    "One": "{0}ft",
+    "Other": "{0}ft"
+  }
+}

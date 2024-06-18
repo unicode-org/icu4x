@@ -190,7 +190,7 @@ impl BidiAuxiliaryPropertiesBorrowed<'static> {
 #[cfg(feature = "compiled_data")]
 pub const fn bidi_auxiliary_properties() -> BidiAuxiliaryPropertiesBorrowed<'static> {
     BidiAuxiliaryPropertiesBorrowed {
-        data: crate::provider::Baked::SINGLETON_PROPS_BIDIAUXILIARYPROPS_V1,
+        data: crate::provider::Baked::SINGLETON_BIDI_AUXILIARY_PROPERTIES_V1_MARKER,
     }
 }
 
@@ -211,8 +211,7 @@ icu_provider::gen_any_buffer_data_constructors!(
 pub fn load_bidi_auxiliary_properties_unstable(
     provider: &(impl DataProvider<BidiAuxiliaryPropertiesV1Marker> + ?Sized),
 ) -> Result<BidiAuxiliaryProperties, DataError> {
-    provider
-        .load(Default::default())
-        .and_then(DataResponse::take_payload)
-        .map(BidiAuxiliaryProperties::from_data)
+    Ok(BidiAuxiliaryProperties::from_data(
+        provider.load(Default::default())?.payload,
+    ))
 }

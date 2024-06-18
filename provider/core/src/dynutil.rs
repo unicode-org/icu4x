@@ -214,9 +214,7 @@ macro_rules! impl_dynamic_data_provider {
                                 $crate::DynamicDataProvider::<$struct_m>::load_data(self, marker, req)?;
                             Ok($crate::DataResponse {
                                 metadata: result.metadata,
-                                payload: result.payload.map(|p| {
-                                    $crate::dynutil::UpcastDataPayload::<$struct_m>::upcast(p)
-                                }),
+                                payload: $crate::dynutil::UpcastDataPayload::<$struct_m>::upcast(result.payload),
                             })
                         }
                     )+,
@@ -226,9 +224,7 @@ macro_rules! impl_dynamic_data_provider {
                                 $crate::DynamicDataProvider::<$struct_d>::load_data(self, marker, req)?;
                             Ok($crate::DataResponse {
                                 metadata: result.metadata,
-                                payload: result.payload.map(|p| {
-                                    $crate::dynutil::UpcastDataPayload::<$struct_d>::upcast(p)
-                                }),
+                                payload: $crate::dynutil::UpcastDataPayload::<$struct_d>::upcast(result.payload),
                             })
                         }
                     )?
@@ -252,14 +248,12 @@ macro_rules! impl_dynamic_data_provider {
                 match marker.path.hashed() {
                     $(
                         $(#[$cfg])?
-                        h if h == <$struct_m>::INFO.path.hashed() => {
+                        h if h == <$struct_m as $crate::DataMarker>::INFO.path.hashed() => {
                             let result: $crate::DataResponse<$struct_m> =
                                 $crate::DataProvider::load(self, req)?;
                             Ok($crate::DataResponse {
                                 metadata: result.metadata,
-                                payload: result.payload.map(|p| {
-                                    $crate::dynutil::UpcastDataPayload::<$struct_m>::upcast(p)
-                                }),
+                                payload: $crate::dynutil::UpcastDataPayload::<$struct_m>::upcast(result.payload),
                             })
                         }
                     )+,

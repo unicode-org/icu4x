@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use core::fmt::Write;
+
 use alloc::boxed::Box;
 use icu_provider::{prelude::*, DataMarkerPathHash};
 use serde::Deserialize;
@@ -23,6 +25,9 @@ pub(crate) enum BlobSchema<'data> {
     #[serde(borrow)]
     V002Bigger(BlobSchemaV2<'data, Index32>),
 }
+
+// This is a valid separator as `DataLocale` will never produce it.
+pub(crate) const REQUEST_SEPARATOR: char = '\x1E';
 
 impl<'data> BlobSchema<'data> {
     pub fn deserialize_and_check<D: serde::Deserializer<'data>>(
@@ -99,7 +104,25 @@ impl<'data> BlobSchemaV1<'data> {
                     return Err(DataErrorKind::ExtraneousLocale);
                 }
                 cursor
-                    .get1_copied_by(|k| req.legacy_cmp(&k.0).reverse())
+                    .get1_copied_by(|k| {
+                        struct Comparator<'a>(&'a DataLocale, &'a DataMarkerAttributes);
+                        impl writeable::Writeable for Comparator<'_> {
+                            fn write_to<W: core::fmt::Write + ?Sized>(
+                                &self,
+                                sink: &mut W,
+                            ) -> core::fmt::Result {
+                                self.0.write_to(sink)?;
+                                if !self.1.is_empty() {
+                                    sink.write_char(REQUEST_SEPARATOR)?;
+                                    sink.write_str(self.1)?;
+                                }
+                                Ok(())
+                            }
+                        }
+                        Comparator(req.locale, req.marker_attributes)
+                            .writeable_cmp_bytes(&k.0)
+                            .reverse()
+                    })
                     .ok_or(DataErrorKind::MissingLocale)
             })
             .map_err(|kind| kind.with_req(marker, req))?;
@@ -119,7 +142,13 @@ impl<'data> BlobSchemaV1<'data> {
             .ok_or_else(|| DataErrorKind::MissingDataMarker.with_marker(marker))?
             .iter1_copied()
             .filter_map(|(s, _)| std::str::from_utf8(&s.0).ok())
-            .filter_map(DataRequest::legacy_decode)
+            .filter_map(|s| {
+                if let Some((locale, attrs)) = s.split_once(REQUEST_SEPARATOR) {
+                    Some((locale.parse().ok()?, attrs.parse().ok()?))
+                } else {
+                    Some((s.parse().ok()?, Default::default()))
+                }
+            })
             .collect())
     }
 
@@ -200,11 +229,9 @@ impl<'data, LocaleVecFormat: VarZeroVecFormat> BlobSchemaV2<'data, LocaleVecForm
             .get(marker_index)
             .ok_or_else(|| DataError::custom("Invalid blob bytes").with_req(marker, req))?;
         let mut cursor = ZeroTrieSimpleAscii::from_store(zerotrie).into_cursor();
-        #[allow(clippy::unwrap_used)] // DataLocale::write_to produces ASCII only
-        req.locale.write_to(&mut cursor).unwrap();
+        let _infallible_ascii = req.locale.write_to(&mut cursor);
         if !req.marker_attributes.is_empty() {
-            #[allow(clippy::unwrap_used)] // ASCII
-            "-x-".write_to(&mut cursor).unwrap();
+            let _infallible_ascii = cursor.write_char(REQUEST_SEPARATOR);
             req.marker_attributes
                 .write_to(&mut cursor)
                 .map_err(|_| DataErrorKind::MissingLocale.with_req(marker, req))?;
@@ -235,7 +262,13 @@ impl<'data, LocaleVecFormat: VarZeroVecFormat> BlobSchemaV2<'data, LocaleVecForm
             .ok_or_else(|| DataError::custom("Invalid blob bytes").with_marker(marker))?;
         Ok(ZeroTrieSimpleAscii::from_store(zerotrie)
             .iter()
-            .filter_map(|(s, _)| DataRequest::legacy_decode(&s))
+            .filter_map(|(s, _)| {
+                if let Some((locale, attrs)) = s.split_once(REQUEST_SEPARATOR) {
+                    Some((locale.parse().ok()?, attrs.parse().ok()?))
+                } else {
+                    Some((s.parse().ok()?, Default::default()))
+                }
+            })
             .collect())
     }
 

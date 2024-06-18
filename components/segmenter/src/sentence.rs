@@ -119,7 +119,7 @@ impl SentenceSegmenter {
     pub fn new() -> Self {
         Self {
             payload: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_SEGMENTER_SENTENCE_V1,
+                crate::provider::Baked::SINGLETON_SENTENCE_BREAK_DATA_V1_MARKER,
             ),
         }
     }
@@ -140,7 +140,7 @@ impl SentenceSegmenter {
     where
         D: DataProvider<SentenceBreakDataV1Marker> + ?Sized,
     {
-        let payload = provider.load(Default::default())?.take_payload()?;
+        let payload = provider.load(Default::default())?.payload;
         Ok(Self { payload })
     }
 

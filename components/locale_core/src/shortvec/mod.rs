@@ -130,7 +130,7 @@ impl<T> ShortBoxSlice<T> {
 
     /// Returns whether the collection is empty.
     #[inline]
-    pub fn is_empty(&self) -> bool {
+    pub const fn is_empty(&self) -> bool {
         use ShortBoxSliceInner::*;
         matches!(self.0, ZeroOne(None))
     }

@@ -1,0 +1,14 @@
+{
+  "long": {
+    "One": "{0} milla náutica",
+    "Other": "{0} millas náuticas"
+  },
+  "short": {
+    "One": "{0} nmi",
+    "Other": "{0} nmi"
+  },
+  "narrow": {
+    "One": "{0}nmi",
+    "Other": "{0}nmi"
+  }
+}

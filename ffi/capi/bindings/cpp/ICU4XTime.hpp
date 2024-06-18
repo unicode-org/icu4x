@@ -10,21 +10,21 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XError.hpp"
+#include "ICU4XCalendarError.hpp"
 #include "ICU4XTime.h"
 
 
-inline diplomat::result<std::unique_ptr<ICU4XTime>, ICU4XError> ICU4XTime::create(uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond) {
+inline diplomat::result<std::unique_ptr<ICU4XTime>, ICU4XCalendarError> ICU4XTime::create(uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond) {
   auto result = capi::ICU4XTime_create(hour,
     minute,
     second,
     nanosecond);
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XTime>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XTime>>(std::unique_ptr<ICU4XTime>(ICU4XTime::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XTime>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XTime>, ICU4XCalendarError>(diplomat::Ok<std::unique_ptr<ICU4XTime>>(std::unique_ptr<ICU4XTime>(ICU4XTime::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XTime>, ICU4XCalendarError>(diplomat::Err<ICU4XCalendarError>(ICU4XCalendarError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::unique_ptr<ICU4XTime>, ICU4XError> ICU4XTime::create_midnight() {
+inline diplomat::result<std::unique_ptr<ICU4XTime>, ICU4XCalendarError> ICU4XTime::create_midnight() {
   auto result = capi::ICU4XTime_create_midnight();
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XTime>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XTime>>(std::unique_ptr<ICU4XTime>(ICU4XTime::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XTime>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XTime>, ICU4XCalendarError>(diplomat::Ok<std::unique_ptr<ICU4XTime>>(std::unique_ptr<ICU4XTime>(ICU4XTime::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XTime>, ICU4XCalendarError>(diplomat::Err<ICU4XCalendarError>(ICU4XCalendarError::FromFFI(result.err)));
 }
 
 inline uint8_t ICU4XTime::hour() const {

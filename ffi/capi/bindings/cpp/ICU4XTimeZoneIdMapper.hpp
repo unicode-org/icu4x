@@ -10,27 +10,28 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
+#include "ICU4XDataError.hpp"
 #include "ICU4XDataProvider.hpp"
-#include "ICU4XError.hpp"
 #include "ICU4XTimeZoneIdMapper.h"
+#include "ICU4XTimeZoneInvalidIdError.hpp"
 
 
-inline diplomat::result<std::unique_ptr<ICU4XTimeZoneIdMapper>, ICU4XError> ICU4XTimeZoneIdMapper::create(const ICU4XDataProvider& provider) {
+inline diplomat::result<std::unique_ptr<ICU4XTimeZoneIdMapper>, ICU4XDataError> ICU4XTimeZoneIdMapper::create(const ICU4XDataProvider& provider) {
   auto result = capi::ICU4XTimeZoneIdMapper_create(provider.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XTimeZoneIdMapper>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XTimeZoneIdMapper>>(std::unique_ptr<ICU4XTimeZoneIdMapper>(ICU4XTimeZoneIdMapper::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XTimeZoneIdMapper>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XTimeZoneIdMapper>, ICU4XDataError>(diplomat::Ok<std::unique_ptr<ICU4XTimeZoneIdMapper>>(std::unique_ptr<ICU4XTimeZoneIdMapper>(ICU4XTimeZoneIdMapper::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XTimeZoneIdMapper>, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::string, ICU4XError> ICU4XTimeZoneIdMapper::iana_to_bcp47(std::string_view value) const {
+inline diplomat::result<std::string, ICU4XTimeZoneInvalidIdError> ICU4XTimeZoneIdMapper::iana_to_bcp47(std::string_view value) const {
   std::string output;
   capi::DiplomatWrite write = diplomat::WriteFromString(output);
   auto result = capi::ICU4XTimeZoneIdMapper_iana_to_bcp47(this->AsFFI(),
     value.data(),
     value.size(),
     &write);
-  return result.is_ok ? diplomat::result<std::string, ICU4XError>(diplomat::Ok<std::string>(std::move(output))) : diplomat::result<std::string, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::string, ICU4XTimeZoneInvalidIdError>(diplomat::Ok<std::string>(std::move(output))) : diplomat::result<std::string, ICU4XTimeZoneInvalidIdError>(diplomat::Err<ICU4XTimeZoneInvalidIdError>(ICU4XTimeZoneInvalidIdError::FromFFI(result.err)));
 }
 
-inline diplomat::result<diplomat::result<std::string, ICU4XError>, diplomat::Utf8Error> ICU4XTimeZoneIdMapper::normalize_iana(std::string_view value) const {
+inline diplomat::result<diplomat::result<std::string, ICU4XTimeZoneInvalidIdError>, diplomat::Utf8Error> ICU4XTimeZoneIdMapper::normalize_iana(std::string_view value) const {
   if (!capi::diplomat_is_str(value.data(), value.size())) {
     return diplomat::Err<diplomat::Utf8Error>(diplomat::Utf8Error());
   }
@@ -40,10 +41,10 @@ inline diplomat::result<diplomat::result<std::string, ICU4XError>, diplomat::Utf
     value.data(),
     value.size(),
     &write);
-  return diplomat::Ok<diplomat::result<std::string, ICU4XError>>(std::move(result.is_ok ? diplomat::result<std::string, ICU4XError>(diplomat::Ok<std::string>(std::move(output))) : diplomat::result<std::string, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)))));
+  return diplomat::Ok<diplomat::result<std::string, ICU4XTimeZoneInvalidIdError>>(std::move(result.is_ok ? diplomat::result<std::string, ICU4XTimeZoneInvalidIdError>(diplomat::Ok<std::string>(std::move(output))) : diplomat::result<std::string, ICU4XTimeZoneInvalidIdError>(diplomat::Err<ICU4XTimeZoneInvalidIdError>(ICU4XTimeZoneInvalidIdError::FromFFI(result.err)))));
 }
 
-inline diplomat::result<diplomat::result<std::string, ICU4XError>, diplomat::Utf8Error> ICU4XTimeZoneIdMapper::canonicalize_iana(std::string_view value) const {
+inline diplomat::result<diplomat::result<std::string, ICU4XTimeZoneInvalidIdError>, diplomat::Utf8Error> ICU4XTimeZoneIdMapper::canonicalize_iana(std::string_view value) const {
   if (!capi::diplomat_is_str(value.data(), value.size())) {
     return diplomat::Err<diplomat::Utf8Error>(diplomat::Utf8Error());
   }
@@ -53,17 +54,17 @@ inline diplomat::result<diplomat::result<std::string, ICU4XError>, diplomat::Utf
     value.data(),
     value.size(),
     &write);
-  return diplomat::Ok<diplomat::result<std::string, ICU4XError>>(std::move(result.is_ok ? diplomat::result<std::string, ICU4XError>(diplomat::Ok<std::string>(std::move(output))) : diplomat::result<std::string, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)))));
+  return diplomat::Ok<diplomat::result<std::string, ICU4XTimeZoneInvalidIdError>>(std::move(result.is_ok ? diplomat::result<std::string, ICU4XTimeZoneInvalidIdError>(diplomat::Ok<std::string>(std::move(output))) : diplomat::result<std::string, ICU4XTimeZoneInvalidIdError>(diplomat::Err<ICU4XTimeZoneInvalidIdError>(ICU4XTimeZoneInvalidIdError::FromFFI(result.err)))));
 }
 
-inline diplomat::result<std::string, ICU4XError> ICU4XTimeZoneIdMapper::find_canonical_iana_from_bcp47(std::string_view value) const {
+inline diplomat::result<std::string, ICU4XTimeZoneInvalidIdError> ICU4XTimeZoneIdMapper::find_canonical_iana_from_bcp47(std::string_view value) const {
   std::string output;
   capi::DiplomatWrite write = diplomat::WriteFromString(output);
   auto result = capi::ICU4XTimeZoneIdMapper_find_canonical_iana_from_bcp47(this->AsFFI(),
     value.data(),
     value.size(),
     &write);
-  return result.is_ok ? diplomat::result<std::string, ICU4XError>(diplomat::Ok<std::string>(std::move(output))) : diplomat::result<std::string, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::string, ICU4XTimeZoneInvalidIdError>(diplomat::Ok<std::string>(std::move(output))) : diplomat::result<std::string, ICU4XTimeZoneInvalidIdError>(diplomat::Err<ICU4XTimeZoneInvalidIdError>(ICU4XTimeZoneInvalidIdError::FromFFI(result.err)));
 }
 
 inline const capi::ICU4XTimeZoneIdMapper* ICU4XTimeZoneIdMapper::AsFFI() const {

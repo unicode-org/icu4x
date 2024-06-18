@@ -8,18 +8,18 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XError.d.hpp"
+#include "ICU4XCalendarError.d.hpp"
 #include "ICU4XTime.d.h"
 
-class ICU4XError;
+class ICU4XCalendarError;
 
 
 class ICU4XTime {
 public:
 
-  inline static diplomat::result<std::unique_ptr<ICU4XTime>, ICU4XError> create(uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond);
+  inline static diplomat::result<std::unique_ptr<ICU4XTime>, ICU4XCalendarError> create(uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond);
 
-  inline static diplomat::result<std::unique_ptr<ICU4XTime>, ICU4XError> create_midnight();
+  inline static diplomat::result<std::unique_ptr<ICU4XTime>, ICU4XCalendarError> create_midnight();
 
   inline uint8_t hour() const;
 

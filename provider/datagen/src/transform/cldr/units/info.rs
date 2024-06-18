@@ -9,7 +9,7 @@ use crate::provider::transform::cldr::{
     units::helpers::ScientificNumber,
 };
 use crate::provider::DatagenProvider;
-use icu_experimental::units::{
+use icu::experimental::units::{
     measureunit::MeasureUnitParser,
     provider::{ConversionInfo, UnitsInfoV1, UnitsInfoV1Marker},
 };
@@ -92,7 +92,7 @@ impl DataProvider<UnitsInfoV1Marker> for DatagenProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(result)),
+            payload: DataPayload::from_owned(result),
         })
     }
 }
@@ -105,8 +105,8 @@ impl IterableDataProvider<UnitsInfoV1Marker> for DatagenProvider {
 
 #[test]
 fn test_basic() {
-    use icu_experimental::units::provider::*;
-    use icu_locale_core::langid;
+    use icu::experimental::units::provider::*;
+    use icu::locale::langid;
     use icu_provider::prelude::*;
     use num_bigint::BigUint;
     use num_rational::Ratio;
@@ -116,16 +116,14 @@ fn test_basic() {
 
     let provider = DatagenProvider::new_testing();
 
-    let und: DataPayload<UnitsInfoV1Marker> = provider
+    let und: DataResponse<UnitsInfoV1Marker> = provider
         .load(DataRequest {
             locale: &langid!("und").into(),
             ..Default::default()
         })
-        .unwrap()
-        .take_payload()
         .unwrap();
 
-    let units_info = und.get().to_owned();
+    let units_info = und.payload.get().to_owned();
     let units_info_map = &units_info.units_conversion_trie;
     let convert_units = &units_info.convert_infos;
 

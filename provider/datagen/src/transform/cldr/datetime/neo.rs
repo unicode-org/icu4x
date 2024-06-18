@@ -6,12 +6,14 @@ use super::supported_cals;
 use crate::provider::transform::cldr::cldr_serde::ca;
 use crate::provider::DatagenProvider;
 use crate::provider::IterableDataProviderCached;
-use icu_datetime::pattern::{self, CoarseHourCycle};
+use icu::datetime::pattern::{self, CoarseHourCycle};
 
-use icu_datetime::provider::calendar::{patterns::GenericLengthPatternsV1, DateSkeletonPatternsV1};
-use icu_datetime::provider::neo::marker_attrs::{self, Context, Length, PatternLength};
-use icu_datetime::provider::neo::*;
-use icu_locale_core::{
+use icu::datetime::provider::calendar::{
+    patterns::GenericLengthPatternsV1, DateSkeletonPatternsV1,
+};
+use icu::datetime::provider::neo::marker_attrs::{self, Context, Length, PatternLength};
+use icu::datetime::provider::neo::*;
+use icu::locale::{
     extensions::unicode::{value, Value},
     LanguageIdentifier,
 };
@@ -119,7 +121,7 @@ impl DatagenProvider {
         #[allow(clippy::redundant_closure_call)]
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(data)),
+            payload: DataPayload::from_owned(data),
         })
     }
 
@@ -534,7 +536,7 @@ fn months_convert(
 
 /// Given a lengthpattern, apply any numeric overrides it may have to `pattern`
 fn apply_numeric_overrides(lp: &ca::LengthPattern, pattern: &mut pattern::runtime::Pattern) {
-    use icu_datetime::fields::{self, FieldLength, FieldNumericOverrides::*, FieldSymbol};
+    use icu::datetime::fields::{self, FieldLength, FieldNumericOverrides::*, FieldSymbol};
     let ca::LengthPattern::WithNumberingSystems {
         ref numbering_systems,
         ..

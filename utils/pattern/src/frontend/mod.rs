@@ -6,22 +6,19 @@
 mod databake;
 #[cfg(feature = "serde")]
 mod serde;
-
+use crate::common::*;
+use crate::Error;
+use crate::PatternOrUtf8Error;
+#[cfg(feature = "alloc")]
+use crate::{Parser, ParserOptions};
+#[cfg(feature = "alloc")]
+use alloc::{borrow::ToOwned, str::FromStr, string::String};
 use core::{
     convert::Infallible,
     fmt::{self, Write},
     marker::PhantomData,
 };
-
 use writeable::{adapters::TryWriteableInfallibleAsWriteable, PartsWrite, TryWriteable, Writeable};
-
-use crate::common::*;
-use crate::Error;
-
-#[cfg(feature = "alloc")]
-use crate::{Parser, ParserOptions};
-#[cfg(feature = "alloc")]
-use alloc::{borrow::ToOwned, str::FromStr, string::String};
 
 /// A string pattern with placeholders.
 ///
@@ -160,6 +157,33 @@ where
     /// ```
     pub fn try_from_store(store: Store) -> Result<Self, Error> {
         B::validate_store(store.as_ref())?;
+        Ok(Self {
+            _backend: PhantomData,
+            store,
+        })
+    }
+}
+
+impl<'a, B> Pattern<B, &'a B::Store>
+where
+    B: PatternBackend,
+{
+    /// Creates a pattern from its store encoded as bytes.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_pattern::Pattern;
+    /// use icu_pattern::SinglePlaceholder;
+    ///
+    /// Pattern::<SinglePlaceholder, _>::try_from_bytes_store(b"\x01 days")
+    ///     .expect("single placeholder pattern");
+    /// ```
+    pub fn try_from_bytes_store(
+        bytes: &'a [u8],
+    ) -> Result<Self, PatternOrUtf8Error<B::StoreFromBytesError>> {
+        let store = B::try_store_from_bytes(bytes).map_err(PatternOrUtf8Error::Utf8)?;
+        B::validate_store(store).map_err(PatternOrUtf8Error::Pattern)?;
         Ok(Self {
             _backend: PhantomData,
             store,

@@ -331,7 +331,7 @@ mod test {
         fn load(&self, _: DataRequest) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
             Ok(DataResponse {
                 metadata: DataResponseMetadata::default(),
-                payload: Some(DataPayload::from_owned(self.hello_v1.clone())),
+                payload: DataPayload::from_owned(self.hello_v1.clone()),
             })
         }
     }
@@ -354,7 +354,7 @@ mod test {
         fn load(&self, _: DataRequest) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
             Ok(DataResponse {
                 metadata: DataResponseMetadata::default(),
-                payload: Some(DataPayload::from_owned(self.data.hello_v1.clone())),
+                payload: DataPayload::from_owned(self.data.hello_v1.clone()),
             })
         }
     }
@@ -363,7 +363,7 @@ mod test {
         fn load(&self, _: DataRequest) -> Result<DataResponse<HelloAltMarker>, DataError> {
             Ok(DataResponse {
                 metadata: DataResponseMetadata::default(),
-                payload: Some(DataPayload::from_owned(self.data.hello_alt.clone())),
+                payload: DataPayload::from_owned(self.data.hello_alt.clone()),
             })
         }
     }
@@ -394,13 +394,13 @@ mod test {
     fn get_payload_v1<P: DataProvider<HelloWorldV1Marker> + ?Sized>(
         provider: &P,
     ) -> Result<DataPayload<HelloWorldV1Marker>, DataError> {
-        provider.load(Default::default())?.take_payload()
+        provider.load(Default::default()).map(|r| r.payload)
     }
 
     fn get_payload_alt<P: DataProvider<HelloAltMarker> + ?Sized>(
         provider: &P,
     ) -> Result<DataPayload<HelloAltMarker>, DataError> {
-        provider.load(Default::default())?.take_payload()
+        provider.load(Default::default()).map(|r| r.payload)
     }
 
     #[test]
@@ -534,10 +534,8 @@ mod test {
     where
         P: DataProvider<HelloWorldV1Marker> + DataProvider<HelloAltMarker> + ?Sized,
     {
-        let v1: DataPayload<HelloWorldV1Marker> =
-            d.load(Default::default()).unwrap().take_payload().unwrap();
-        let v2: DataPayload<HelloAltMarker> =
-            d.load(Default::default()).unwrap().take_payload().unwrap();
+        let v1: DataPayload<HelloWorldV1Marker> = d.load(Default::default()).unwrap().payload;
+        let v2: DataPayload<HelloAltMarker> = d.load(Default::default()).unwrap().payload;
         if v1.get().message == v2.get().message {
             panic!()
         }

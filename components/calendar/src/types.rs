@@ -113,7 +113,7 @@ impl MonthCode {
     pub fn get_normal_if_leap(self) -> Option<MonthCode> {
         let bytes = self.0.all_bytes();
         if bytes[3] == b'L' {
-            Some(MonthCode(TinyAsciiStr::from_bytes(&bytes[0..3]).ok()?))
+            Some(MonthCode(TinyAsciiStr::try_from_utf8(&bytes[0..3]).ok()?))
         } else {
             None
         }

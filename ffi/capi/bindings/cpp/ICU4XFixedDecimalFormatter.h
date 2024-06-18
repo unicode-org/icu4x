@@ -16,7 +16,7 @@
 #include "ICU4XFixedDecimalGroupingStrategy.h"
 #include "ICU4XLocale.d.h"
 #include "ICU4XLocale.h"
-#include "diplomat_result_box_ICU4XFixedDecimalFormatter_ICU4XError.d.h"
+#include "diplomat_result_box_ICU4XFixedDecimalFormatter_ICU4XDataError.d.h"
 
 #include "ICU4XFixedDecimalFormatter.d.h"
 
@@ -26,9 +26,9 @@ extern "C" {
 #endif // __cplusplus
 
 
-diplomat_result_box_ICU4XFixedDecimalFormatter_ICU4XError ICU4XFixedDecimalFormatter_create_with_grouping_strategy(const ICU4XDataProvider* provider, const ICU4XLocale* locale, ICU4XFixedDecimalGroupingStrategy grouping_strategy);
+diplomat_result_box_ICU4XFixedDecimalFormatter_ICU4XDataError ICU4XFixedDecimalFormatter_create_with_grouping_strategy(const ICU4XDataProvider* provider, const ICU4XLocale* locale, ICU4XFixedDecimalGroupingStrategy grouping_strategy);
 
-diplomat_result_box_ICU4XFixedDecimalFormatter_ICU4XError ICU4XFixedDecimalFormatter_create_with_decimal_symbols_v1(const ICU4XDataStruct* data_struct, ICU4XFixedDecimalGroupingStrategy grouping_strategy);
+diplomat_result_box_ICU4XFixedDecimalFormatter_ICU4XDataError ICU4XFixedDecimalFormatter_create_with_decimal_symbols_v1(const ICU4XDataStruct* data_struct, ICU4XFixedDecimalGroupingStrategy grouping_strategy);
 
 void ICU4XFixedDecimalFormatter_format(const ICU4XFixedDecimalFormatter* self, const ICU4XFixedDecimal* value, DiplomatWrite* write);
 

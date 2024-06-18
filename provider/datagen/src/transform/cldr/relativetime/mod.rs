@@ -7,7 +7,7 @@ use std::borrow::Borrow;
 use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
 use crate::provider::IterableDataProviderCached;
-use icu_experimental::relativetime::provider::*;
+use icu::experimental::relativetime::provider::*;
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashMap, HashSet};
 use std::str::FromStr;
@@ -104,7 +104,7 @@ macro_rules! make_data_provider {
 
                     Ok(DataResponse {
             metadata: Default::default(),
-                        payload: Some(DataPayload::from_owned(data.try_into()?)),
+                        payload: DataPayload::from_owned(data.try_into()?),
                     })
                 }
             }
@@ -198,7 +198,7 @@ make_data_provider!(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_locale_core::langid;
+    use icu::locale::langid;
 
     #[test]
     fn test_basic() {
@@ -209,8 +209,7 @@ mod tests {
                 ..Default::default()
             })
             .unwrap()
-            .take_payload()
-            .unwrap();
+            .payload;
         assert_eq!(data.get().relatives.get(&0).unwrap(), "this qtr.");
         assert_eq!(data.get().past.one.as_ref().unwrap().pattern, " qtr. ago");
         assert_eq!(data.get().past.one.as_ref().unwrap().index, 0u8);
@@ -229,8 +228,7 @@ mod tests {
                 ..Default::default()
             })
             .unwrap()
-            .take_payload()
-            .unwrap();
+            .payload;
         assert_eq!(data.get().relatives.get(&-1).unwrap(), "السنة الماضية");
 
         // past.one, future.two are without a placeholder.

@@ -75,7 +75,7 @@ impl ComplexPayloads {
         // try_load is infallible if the provider only returns `MissingLocale`.
         Self {
             grapheme: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_SEGMENTER_GRAPHEME_V1,
+                crate::provider::Baked::SINGLETON_GRAPHEME_CLUSTER_BREAK_DATA_V1_MARKER,
             ),
             my: try_load::<LstmForWordLineAutoV1Marker, _>(
                 &crate::provider::Baked,
@@ -117,7 +117,7 @@ impl ComplexPayloads {
             + ?Sized,
     {
         Ok(Self {
-            grapheme: provider.load(Default::default())?.take_payload()?,
+            grapheme: provider.load(Default::default())?.payload,
             my: try_load::<LstmForWordLineAutoV1Marker, D>(
                 provider,
                 "Burmese_codepoints_exclusive_model4_heavy",
@@ -152,7 +152,7 @@ impl ComplexPayloads {
         // try_load is infallible if the provider only returns `MissingLocale`.
         Self {
             grapheme: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_SEGMENTER_GRAPHEME_V1,
+                crate::provider::Baked::SINGLETON_GRAPHEME_CLUSTER_BREAK_DATA_V1_MARKER,
             ),
             my: try_load::<DictionaryForWordLineExtendedV1Marker, _>(
                 &crate::provider::Baked,
@@ -196,7 +196,7 @@ impl ComplexPayloads {
             + ?Sized,
     {
         Ok(Self {
-            grapheme: provider.load(Default::default())?.take_payload()?,
+            grapheme: provider.load(Default::default())?.payload,
             my: try_load::<DictionaryForWordLineExtendedV1Marker, D>(provider, "burmesedict")?
                 .map(DataPayload::cast)
                 .map(Ok),
@@ -221,7 +221,7 @@ impl ComplexPayloads {
         // try_load is infallible if the provider only returns `MissingLocale`.
         Self {
             grapheme: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_SEGMENTER_GRAPHEME_V1,
+                crate::provider::Baked::SINGLETON_GRAPHEME_CLUSTER_BREAK_DATA_V1_MARKER,
             ),
             my: try_load::<LstmForWordLineAutoV1Marker, _>(
                 &crate::provider::Baked,
@@ -266,7 +266,7 @@ impl ComplexPayloads {
             + ?Sized,
     {
         Ok(Self {
-            grapheme: provider.load(Default::default())?.take_payload()?,
+            grapheme: provider.load(Default::default())?.payload,
             my: try_load::<LstmForWordLineAutoV1Marker, D>(
                 provider,
                 "Burmese_codepoints_exclusive_model4_heavy",
@@ -302,7 +302,7 @@ impl ComplexPayloads {
         // try_load is infallible if the provider only returns `MissingLocale`.
         Self {
             grapheme: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_SEGMENTER_GRAPHEME_V1,
+                crate::provider::Baked::SINGLETON_GRAPHEME_CLUSTER_BREAK_DATA_V1_MARKER,
             ),
             my: try_load::<DictionaryForWordLineExtendedV1Marker, _>(
                 &crate::provider::Baked,
@@ -343,7 +343,7 @@ impl ComplexPayloads {
             + ?Sized,
     {
         Ok(Self {
-            grapheme: provider.load(Default::default())?.take_payload()?,
+            grapheme: provider.load(Default::default())?.payload,
             my: try_load::<DictionaryForWordLineExtendedV1Marker, _>(provider, "burmesedict")?
                 .map(DataPayload::cast)
                 .map(Ok),
@@ -374,7 +374,7 @@ fn try_load<M: DataMarker, P: DataProvider<M> + ?Sized>(
         },
         ..Default::default()
     }) {
-        Ok(response) => Ok(Some(response.take_payload()?)),
+        Ok(response) => Ok(Some(response.payload)),
         Err(DataError {
             kind: DataErrorKind::MissingLocale,
             ..

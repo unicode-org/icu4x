@@ -8,7 +8,7 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XError.d.hpp"
+#include "ICU4XCalendarError.d.hpp"
 #include "ICU4XIsoDateTime.d.h"
 #include "ICU4XIsoWeekday.d.hpp"
 #include "ICU4XWeekOf.d.hpp"
@@ -19,14 +19,14 @@ class ICU4XIsoDate;
 class ICU4XTime;
 class ICU4XWeekCalculator;
 struct ICU4XWeekOf;
-class ICU4XError;
+class ICU4XCalendarError;
 class ICU4XIsoWeekday;
 
 
 class ICU4XIsoDateTime {
 public:
 
-  inline static diplomat::result<std::unique_ptr<ICU4XIsoDateTime>, ICU4XError> create(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond);
+  inline static diplomat::result<std::unique_ptr<ICU4XIsoDateTime>, ICU4XCalendarError> create(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond);
 
   inline static std::unique_ptr<ICU4XIsoDateTime> crate_from_date_and_time(const ICU4XIsoDate& date, const ICU4XTime& time);
 

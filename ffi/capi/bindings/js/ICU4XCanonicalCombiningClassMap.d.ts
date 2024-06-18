@@ -1,7 +1,7 @@
 import { u8, u32, char } from "./diplomat-runtime"
 import { FFIError } from "./diplomat-runtime"
+import { ICU4XDataError } from "./ICU4XDataError";
 import { ICU4XDataProvider } from "./ICU4XDataProvider";
-import { ICU4XError } from "./ICU4XError";
 
 /**
 
@@ -16,7 +16,7 @@ export class ICU4XCanonicalCombiningClassMap {
    * Construct a new ICU4XCanonicalCombiningClassMap instance for NFC
 
    * See the {@link https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html#method.new Rust documentation for `new`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
+   * @throws {@link FFIError}<{@link ICU4XDataError}>
    */
   static create(provider: ICU4XDataProvider): ICU4XCanonicalCombiningClassMap | never;
 

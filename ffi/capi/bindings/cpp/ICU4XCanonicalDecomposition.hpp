@@ -11,14 +11,14 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 #include "ICU4XCanonicalDecomposition.h"
+#include "ICU4XDataError.hpp"
 #include "ICU4XDataProvider.hpp"
 #include "ICU4XDecomposed.hpp"
-#include "ICU4XError.hpp"
 
 
-inline diplomat::result<std::unique_ptr<ICU4XCanonicalDecomposition>, ICU4XError> ICU4XCanonicalDecomposition::create(const ICU4XDataProvider& provider) {
+inline diplomat::result<std::unique_ptr<ICU4XCanonicalDecomposition>, ICU4XDataError> ICU4XCanonicalDecomposition::create(const ICU4XDataProvider& provider) {
   auto result = capi::ICU4XCanonicalDecomposition_create(provider.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XCanonicalDecomposition>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XCanonicalDecomposition>>(std::unique_ptr<ICU4XCanonicalDecomposition>(ICU4XCanonicalDecomposition::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XCanonicalDecomposition>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XCanonicalDecomposition>, ICU4XDataError>(diplomat::Ok<std::unique_ptr<ICU4XCanonicalDecomposition>>(std::unique_ptr<ICU4XCanonicalDecomposition>(ICU4XCanonicalDecomposition::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XCanonicalDecomposition>, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
 
 inline ICU4XDecomposed ICU4XCanonicalDecomposition::decompose(char32_t c) const {

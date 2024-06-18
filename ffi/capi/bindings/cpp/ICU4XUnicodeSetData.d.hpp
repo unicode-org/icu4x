@@ -8,12 +8,12 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XError.d.hpp"
+#include "ICU4XDataError.d.hpp"
 #include "ICU4XUnicodeSetData.d.h"
 
 class ICU4XDataProvider;
 class ICU4XLocale;
-class ICU4XError;
+class ICU4XDataError;
 
 
 class ICU4XUnicodeSetData {
@@ -25,17 +25,17 @@ public:
 
   inline bool contains32(uint32_t cp) const;
 
-  inline static diplomat::result<std::unique_ptr<ICU4XUnicodeSetData>, ICU4XError> load_basic_emoji(const ICU4XDataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<ICU4XUnicodeSetData>, ICU4XDataError> load_basic_emoji(const ICU4XDataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<ICU4XUnicodeSetData>, ICU4XError> load_exemplars_main(const ICU4XDataProvider& provider, const ICU4XLocale& locale);
+  inline static diplomat::result<std::unique_ptr<ICU4XUnicodeSetData>, ICU4XDataError> load_exemplars_main(const ICU4XDataProvider& provider, const ICU4XLocale& locale);
 
-  inline static diplomat::result<std::unique_ptr<ICU4XUnicodeSetData>, ICU4XError> load_exemplars_auxiliary(const ICU4XDataProvider& provider, const ICU4XLocale& locale);
+  inline static diplomat::result<std::unique_ptr<ICU4XUnicodeSetData>, ICU4XDataError> load_exemplars_auxiliary(const ICU4XDataProvider& provider, const ICU4XLocale& locale);
 
-  inline static diplomat::result<std::unique_ptr<ICU4XUnicodeSetData>, ICU4XError> load_exemplars_punctuation(const ICU4XDataProvider& provider, const ICU4XLocale& locale);
+  inline static diplomat::result<std::unique_ptr<ICU4XUnicodeSetData>, ICU4XDataError> load_exemplars_punctuation(const ICU4XDataProvider& provider, const ICU4XLocale& locale);
 
-  inline static diplomat::result<std::unique_ptr<ICU4XUnicodeSetData>, ICU4XError> load_exemplars_numbers(const ICU4XDataProvider& provider, const ICU4XLocale& locale);
+  inline static diplomat::result<std::unique_ptr<ICU4XUnicodeSetData>, ICU4XDataError> load_exemplars_numbers(const ICU4XDataProvider& provider, const ICU4XLocale& locale);
 
-  inline static diplomat::result<std::unique_ptr<ICU4XUnicodeSetData>, ICU4XError> load_exemplars_index(const ICU4XDataProvider& provider, const ICU4XLocale& locale);
+  inline static diplomat::result<std::unique_ptr<ICU4XUnicodeSetData>, ICU4XDataError> load_exemplars_index(const ICU4XDataProvider& provider, const ICU4XLocale& locale);
 
   inline const capi::ICU4XUnicodeSetData* AsFFI() const;
   inline capi::ICU4XUnicodeSetData* AsFFI();

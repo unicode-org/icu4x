@@ -30,11 +30,11 @@ final class CanonicalDecomposition implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalDecomposition.html#method.new) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   factory CanonicalDecomposition(DataProvider provider) {
     final result = _ICU4XCanonicalDecomposition_create(provider._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     return CanonicalDecomposition._fromFfi(result.union.ok, []);
   }

@@ -25,7 +25,7 @@ pub enum ICU4XDataProviderInner {
 #[diplomat::bridge]
 pub mod ffi {
     use super::ICU4XDataProviderInner;
-    use crate::errors::ffi::ICU4XError;
+    use crate::errors::ffi::ICU4XDataError;
     use alloc::boxed::Box;
     #[allow(unused_imports)] // feature-gated
     use icu_provider_adapters::fallback::LocaleFallbackProvider;
@@ -67,12 +67,11 @@ pub mod ffi {
         ))]
         #[diplomat::attr(dart, disable)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "fs")]
-        pub fn create_fs(path: &DiplomatStr) -> Result<Box<ICU4XDataProvider>, ICU4XError> {
+        pub fn create_fs(path: &DiplomatStr) -> Result<Box<ICU4XDataProvider>, ICU4XDataError> {
             Ok(Box::new(convert_buffer_provider(
                 icu_provider_fs::FsDataProvider::try_new(
                     // In the future we can start using OsString APIs to support non-utf8 paths
-                    core::str::from_utf8(path)
-                        .map_err(|e| ICU4XError::DataIoError.log_original(&e))?,
+                    core::str::from_utf8(path).map_err(|_| ICU4XDataError::Io)?,
                 )?,
             )))
         }
@@ -83,7 +82,7 @@ pub mod ffi {
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "from_byte_slice")]
         pub fn create_from_byte_slice(
             blob: &'static [DiplomatByte],
-        ) -> Result<Box<ICU4XDataProvider>, ICU4XError> {
+        ) -> Result<Box<ICU4XDataProvider>, ICU4XDataError> {
             Ok(Box::new(convert_buffer_provider(
                 icu_provider_blob::BlobDataProvider::try_new_from_static_blob(blob)?,
             )))
@@ -115,7 +114,7 @@ pub mod ffi {
             Struct,
             hidden
         )]
-        pub fn fork_by_key(&mut self, other: &mut ICU4XDataProvider) -> Result<(), ICU4XError> {
+        pub fn fork_by_key(&mut self, other: &mut ICU4XDataProvider) -> Result<(), ICU4XDataError> {
             #[allow(unused_imports)]
             use ICU4XDataProviderInner::*;
             *self = match (
@@ -145,7 +144,10 @@ pub mod ffi {
             icu_provider_adapters::fork::predicates::MissingLocalePredicate,
             Struct
         )]
-        pub fn fork_by_locale(&mut self, other: &mut ICU4XDataProvider) -> Result<(), ICU4XError> {
+        pub fn fork_by_locale(
+            &mut self,
+            other: &mut ICU4XDataProvider,
+        ) -> Result<(), ICU4XDataError> {
             #[allow(unused_imports)]
             use ICU4XDataProviderInner::*;
             *self = match (
@@ -186,7 +188,7 @@ pub mod ffi {
             Struct,
             compact
         )]
-        pub fn enable_locale_fallback(&mut self) -> Result<(), ICU4XError> {
+        pub fn enable_locale_fallback(&mut self) -> Result<(), ICU4XDataError> {
             use ICU4XDataProviderInner::*;
             *self = match core::mem::replace(&mut self.0, Destroyed) {
                 Destroyed => Err(icu_provider::DataError::custom(
@@ -219,7 +221,7 @@ pub mod ffi {
         pub fn enable_locale_fallback_with(
             &mut self,
             fallbacker: &crate::fallbacker::ffi::ICU4XLocaleFallbacker,
-        ) -> Result<(), ICU4XError> {
+        ) -> Result<(), ICU4XDataError> {
             use ICU4XDataProviderInner::*;
             *self = match core::mem::replace(&mut self.0, Destroyed) {
                 Destroyed => Err(icu_provider::DataError::custom(

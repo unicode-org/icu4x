@@ -41,17 +41,7 @@ impl TestingExporter {
         self.0
             .into_tuple_vec()
             .into_iter()
-            .map(|((locale, marker_attributes), buffer)| {
-                (
-                    DataRequest {
-                        locale: &locale,
-                        marker_attributes: &marker_attributes,
-                        ..Default::default()
-                    }
-                    .legacy_encode(),
-                    buffer,
-                )
-            })
+            .map(|((locale, _marker_attributes), buffer)| (locale.to_string(), buffer))
             .collect()
     }
 }

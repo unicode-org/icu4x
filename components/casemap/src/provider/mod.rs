@@ -42,14 +42,16 @@ mod unfold;
 pub struct Baked;
 
 #[cfg(feature = "compiled_data")]
+#[allow(unused_imports)]
 const _: () = {
+    use icu_casemap_data::*;
     pub mod icu {
         pub use crate as casemap;
         pub use icu_collections as collections;
     }
-    icu_casemap_data::make_provider!(Baked);
-    icu_casemap_data::impl_props_casemap_v1!(Baked);
-    icu_casemap_data::impl_props_casemap_unfold_v1!(Baked);
+    make_provider!(Baked);
+    impl_case_map_v1_marker!(Baked);
+    impl_case_map_unfold_v1_marker!(Baked);
 };
 
 #[cfg(feature = "datagen")]
