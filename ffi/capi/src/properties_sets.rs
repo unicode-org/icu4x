@@ -6,7 +6,6 @@
 pub mod ffi {
     use crate::provider::ffi::ICU4XDataProvider;
     use alloc::boxed::Box;
-    use core::str;
     use icu_properties::sets;
 
     use crate::errors::ffi::{ICU4XDataError, ICU4XError};

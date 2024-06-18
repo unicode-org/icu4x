@@ -38,7 +38,6 @@ use core::fmt::{Debug, Formatter};
 use core::mem::ManuallyDrop;
 use core::ops::Range;
 use core::ops::{Deref, DerefMut};
-use core::str;
 
 /// The backing buffer for the API provided by this module.
 ///
@@ -52,7 +51,7 @@ impl TransliteratorBuffer {
     }
 
     pub(crate) fn into_string(self) -> String {
-        debug_assert!(str::from_utf8(&self.0).is_ok());
+        debug_assert!(core::str::from_utf8(&self.0).is_ok());
         // SAFETY: We have exclusive access, so the vec must contain valid UTF-8
         unsafe { String::from_utf8_unchecked(self.0) }
     }
