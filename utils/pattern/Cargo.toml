@@ -32,8 +32,8 @@ zerofrom = { workspace = true, features = ["derive"], optional = true }
 zerovec = { workspace = true, default-features = false, optional = true }
 
 [dev-dependencies]
-zerovec = { workspace = true, features = ["databake", "serde"] }
 zerofrom = { workspace = true, features = ["alloc"] }
+zerovec = { workspace = true, features = ["databake", "serde"] }
 rmp-serde = { workspace = true }
 serde_json = { workspace = true }
 postcard = { workspace = true, features = ["use-std"] }
