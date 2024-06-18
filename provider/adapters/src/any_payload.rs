@@ -66,7 +66,7 @@ impl AnyPayloadProvider {
     /// Creates an `AnyPayloadProvider` with an owned (allocated) payload of the given data.
     pub fn from_owned<M: DataMarker>(data: M::Yokeable) -> Self
     where
-        M::Yokeable: icu_provider::MaybeSendSync,
+        M::Yokeable: icu_provider::any::MaybeSendSync,
     {
         Self::from_payload::<M>(DataPayload::from_owned(data))
     }
@@ -82,7 +82,7 @@ impl AnyPayloadProvider {
     /// Creates an `AnyPayloadProvider` from an existing [`DataPayload`].
     pub fn from_payload<M: DataMarker>(payload: DataPayload<M>) -> Self
     where
-        M::Yokeable: icu_provider::MaybeSendSync,
+        M::Yokeable: icu_provider::any::MaybeSendSync,
     {
         AnyPayloadProvider {
             marker: M::INFO,
@@ -102,7 +102,7 @@ impl AnyPayloadProvider {
     pub fn new_default<M: DataMarker>() -> Self
     where
         M::Yokeable: Default,
-        M::Yokeable: icu_provider::MaybeSendSync,
+        M::Yokeable: icu_provider::any::MaybeSendSync,
     {
         Self::from_owned::<M>(M::Yokeable::default())
     }
@@ -123,7 +123,7 @@ where
     M: DataMarker,
     for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
     M::Yokeable: ZeroFrom<'static, M::Yokeable>,
-    M::Yokeable: icu_provider::MaybeSendSync,
+    M::Yokeable: icu_provider::any::MaybeSendSync,
 {
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         self.as_downcasting().load(req)

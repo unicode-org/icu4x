@@ -627,7 +627,7 @@ where
 #[cfg(feature = "blob_input")]
 macro_rules! cb {
     ($($marker:path = $path:literal,)+ #[experimental] $($emarker:path = $epath:literal,)+) => {
-        icu_provider::make_exportable_provider!(
+        icu_provider::datagen::make_exportable_provider!(
             ReexportableBlobDataProvider,
             [
                 icu_provider::hello_world::HelloWorldV1Marker,

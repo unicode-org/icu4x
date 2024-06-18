@@ -6,7 +6,7 @@
 
 /// Trait to allow conversion from `DataPayload<T>` to `DataPayload<S>`.
 ///
-/// This trait can be manually implemented in order to enable [`impl_dynamic_data_provider`](crate::impl_dynamic_data_provider).
+/// This trait can be manually implemented in order to enable [`impl_dynamic_data_provider`](crate::dynutil::impl_dynamic_data_provider).
 ///
 /// [`DataPayload::downcast`]: crate::DataPayload::downcast
 pub trait UpcastDataPayload<M>
@@ -55,7 +55,7 @@ where
 ///     message: Cow<'data, str>,
 /// };
 ///
-/// icu_provider::impl_casting_upcast!(
+/// icu_provider::dynutil::impl_casting_upcast!(
 ///     FooV1Marker,
 ///     [BarV1Marker, BazV1Marker,]
 /// );
@@ -63,7 +63,8 @@ where
 ///
 /// [`DynamicDataMarker::Yokeable`]: crate::DynamicDataMarker::Yokeable
 #[macro_export]
-macro_rules! impl_casting_upcast {
+#[doc(hidden)] // macro
+macro_rules! __impl_casting_upcast {
     ($dyn_m:path, [ $($struct_m:ident),+, ]) => {
         $(
             impl $crate::dynutil::UpcastDataPayload<$struct_m> for $dyn_m {
@@ -74,6 +75,8 @@ macro_rules! impl_casting_upcast {
         )+
     }
 }
+#[doc(inline)]
+pub use __impl_casting_upcast as impl_casting_upcast;
 
 /// Implements [`DynamicDataProvider`] for a marker type `S` on a type that already implements
 /// [`DynamicDataProvider`] or [`DataProvider`] for one or more `M`, where `M` is a concrete type
@@ -92,7 +95,7 @@ macro_rules! impl_casting_upcast {
 /// ```
 /// use icu_provider::prelude::*;
 /// use icu_provider::hello_world::*;
-/// use icu_provider::NeverMarker;
+/// use icu_provider::marker::NeverMarker;
 /// #
 /// # // Duplicating HelloWorldProvider because the real one already implements DynamicDataProvider<AnyMarker>
 /// # struct HelloWorldProvider;
@@ -106,7 +109,7 @@ macro_rules! impl_casting_upcast {
 /// # }
 ///
 /// // Implement DynamicDataProvider<AnyMarker> on HelloWorldProvider: DataProvider<HelloWorldV1Marker>
-/// icu_provider::impl_dynamic_data_provider!(HelloWorldProvider, [HelloWorldV1Marker,], AnyMarker);
+/// icu_provider::dynutil::impl_dynamic_data_provider!(HelloWorldProvider, [HelloWorldV1Marker,], AnyMarker);
 ///
 /// let req = DataRequest {
 ///     locale: &icu_locale_core::langid!("de").into(),
@@ -121,7 +124,7 @@ macro_rules! impl_casting_upcast {
 /// #     type Yokeable = <HelloWorldV1Marker as DynamicDataMarker>::Yokeable;
 /// # }
 /// # impl DataMarker for DummyMarker {
-/// #     const INFO: DataMarkerInfo = DataMarkerInfo::from_path(icu_provider::data_marker_path!("dummy@1"));
+/// #     const INFO: DataMarkerInfo = DataMarkerInfo::from_path(icu_provider::marker::data_marker_path!("dummy@1"));
 /// # }
 /// // MissingDataMarker error as the marker does not match:
 /// assert_eq!(
@@ -138,6 +141,7 @@ macro_rules! impl_casting_upcast {
 /// ```
 /// use icu_provider::prelude::*;
 /// use icu_provider::hello_world::*;
+/// use icu_provider::any::*;
 /// #
 /// # struct HelloWorldProvider;
 /// # impl DynamicDataProvider<HelloWorldV1Marker> for HelloWorldProvider {
@@ -148,7 +152,7 @@ macro_rules! impl_casting_upcast {
 /// # }
 ///
 /// // Implement DataProvider<AnyMarker> on HelloWorldProvider: DynamicDataProvider<HelloWorldV1Marker>
-/// icu_provider::impl_dynamic_data_provider!(HelloWorldProvider, {
+/// icu_provider::dynutil::impl_dynamic_data_provider!(HelloWorldProvider, {
 ///     // Match HelloWorldV1Marker::INFO and delegate to DynamicDataProvider<HelloWorldV1Marker>.
 ///     HW = HelloWorldV1Marker::INFO => HelloWorldV1Marker,
 ///     // Send the wildcard match also to DynamicDataProvider<HelloWorldV1Marker>.
@@ -169,7 +173,7 @@ macro_rules! impl_casting_upcast {
 ///     type Yokeable = <HelloWorldV1Marker as DynamicDataMarker>::Yokeable;
 /// }
 /// impl DataMarker for DummyMarker {
-///     const INFO: DataMarkerInfo = DataMarkerInfo::from_path(icu_provider::data_marker_path!("dummy@1"));
+///     const INFO: DataMarkerInfo = DataMarkerInfo::from_path(icu_provider::marker::data_marker_path!("dummy@1"));
 /// }
 /// HelloWorldProvider.as_any_provider().load_any(DummyMarker::INFO, req).unwrap();
 /// ```
@@ -179,17 +183,18 @@ macro_rules! impl_casting_upcast {
 /// [`AnyPayload`]: (crate::any::AnyPayload)
 /// [`DataErrorKind::MissingDataMarker`]: (crate::DataErrorKind::MissingDataMarker)
 /// [`SerializeMarker`]: (crate::serde::SerializeMarker)
+#[doc(hidden)] // macro
 #[macro_export]
-macro_rules! impl_dynamic_data_provider {
+macro_rules! __impl_dynamic_data_provider {
     // allow passing in multiple things to do and get dispatched
     ($provider:ty, $arms:tt, $one:path, $($rest:path),+) => {
-        $crate::impl_dynamic_data_provider!(
+        $crate::dynutil::impl_dynamic_data_provider!(
             $provider,
             $arms,
             $one
         );
 
-        $crate::impl_dynamic_data_provider!(
+        $crate::dynutil::impl_dynamic_data_provider!(
             $provider,
             $arms,
             $($rest),+
@@ -263,3 +268,5 @@ macro_rules! impl_dynamic_data_provider {
         }
     };
 }
+#[doc(inline)]
+pub use __impl_dynamic_data_provider as impl_dynamic_data_provider;

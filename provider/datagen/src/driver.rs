@@ -1084,7 +1084,7 @@ fn test_collation_filtering() {
         }
     }
 
-    icu_provider::make_exportable_provider!(
+    icu_provider::datagen::make_exportable_provider!(
         Provider,
         [icu::collator::provider::CollationDataV1Marker,]
     );

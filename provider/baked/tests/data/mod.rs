@@ -20,7 +20,7 @@ macro_rules! __make_provider {
             #[allow(dead_code)]
             pub(crate) const MUST_USE_MAKE_PROVIDER_MACRO: () = ();
         }
-        icu_provider::impl_data_provider_never_marker!($name);
+        icu_provider::marker::impl_data_provider_never_marker!($name);
     };
 }
 #[doc(inline)]

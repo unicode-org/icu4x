@@ -175,4 +175,4 @@ impl IterableDataProvider<HelloWorldV1Marker> for ManyLocalesProvider {
     }
 }
 
-icu_provider::make_exportable_provider!(ManyLocalesProvider, [HelloWorldV1Marker,]);
+icu_provider::datagen::make_exportable_provider!(ManyLocalesProvider, [HelloWorldV1Marker,]);

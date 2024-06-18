@@ -51,7 +51,7 @@ impl DynamicDataMarker for HelloWorldV1Marker {
 
 impl DataMarker for HelloWorldV1Marker {
     const INFO: icu_provider::DataMarkerInfo =
-        DataMarkerInfo::from_path(icu_provider::data_marker_path!("core/helloworld@1"));
+        DataMarkerInfo::from_path(icu_provider::marker::data_marker_path!("core/helloworld@1"));
 }
 
 /// A data provider returning Hello World strings in different languages.
@@ -227,7 +227,7 @@ impl icu_provider::datagen::IterableDataProvider<HelloWorldV1Marker> for HelloWo
 }
 
 #[cfg(feature = "datagen")]
-icu_provider::make_exportable_provider!(HelloWorldProvider, [HelloWorldV1Marker,]);
+icu_provider::datagen::make_exportable_provider!(HelloWorldProvider, [HelloWorldV1Marker,]);
 
 /// A type that formats localized "hello world" strings.
 ///
