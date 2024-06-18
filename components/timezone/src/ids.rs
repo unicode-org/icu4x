@@ -115,9 +115,8 @@ impl TimeZoneIdMapper {
     }
 
     icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,
-        #[cfg(skip)]
         functions: [
-            new,
+            new: skip,
             try_new_with_any_provider,
             try_new_with_buffer_provider,
             try_new_unstable,
@@ -482,9 +481,8 @@ impl TimeZoneIdMapperWithFastCanonicalization<TimeZoneIdMapper> {
     }
 
     icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,
-        #[cfg(skip)]
         functions: [
-            new,
+            new: skip,
             try_new_with_any_provider,
             try_new_with_buffer_provider,
             try_new_unstable,
@@ -526,9 +524,8 @@ where
     }
 
     icu_provider::gen_any_buffer_data_constructors!((mapper: I) -> error: DataError,
-        #[cfg(skip)]
         functions: [
-            try_new_with_mapper,
+            try_new_with_mapper: skip,
             try_new_with_mapper_with_any_provider,
             try_new_with_mapper_with_buffer_provider,
             try_new_with_mapper_unstable,

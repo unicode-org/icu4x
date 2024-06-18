@@ -1604,9 +1604,8 @@ impl DecomposingNormalizer {
 
     icu_provider::gen_any_buffer_data_constructors!(
         () -> error: DataError,
-        #[cfg(skip)]
         functions: [
-            new_nfd,
+            new_nfd: skip,
             try_new_nfd_with_any_provider,
             try_new_nfd_with_buffer_provider,
             try_new_nfd_unstable,
@@ -1719,9 +1718,8 @@ impl DecomposingNormalizer {
 
     icu_provider::gen_any_buffer_data_constructors!(
         () -> error: DataError,
-        #[cfg(skip)]
         functions: [
-            new_nfkd,
+            new_nfkd: skip,
             try_new_nfkd_with_any_provider,
             try_new_nfkd_with_buffer_provider,
             try_new_nfkd_unstable,
@@ -2221,9 +2219,8 @@ impl ComposingNormalizer {
 
     icu_provider::gen_any_buffer_data_constructors!(
         () -> error: DataError,
-        #[cfg(skip)]
         functions: [
-            new_nfc,
+            new_nfc: skip,
             try_new_nfc_with_any_provider,
             try_new_nfc_with_buffer_provider,
             try_new_nfc_unstable,
@@ -2267,9 +2264,8 @@ impl ComposingNormalizer {
 
     icu_provider::gen_any_buffer_data_constructors!(
         () -> error: DataError,
-        #[cfg(skip)]
         functions: [
-            new_nfkc,
+            new_nfkc: skip,
             try_new_nfkc_with_any_provider,
             try_new_nfkc_with_buffer_provider,
             try_new_nfkc_unstable,

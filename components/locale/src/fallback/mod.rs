@@ -131,9 +131,8 @@ impl LocaleFallbacker {
     }
 
     icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,
-        #[cfg(skip)]
         functions: [
-            new,
+            new: skip,
             try_new_with_any_provider,
             try_new_with_buffer_provider,
             try_new_unstable,

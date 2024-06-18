@@ -144,9 +144,8 @@ macro_rules! constructor {
 
         icu_provider::gen_any_buffer_data_constructors!(
             (locale, options: RelativeTimeFormatterOptions) -> error: DataError,
-            #[cfg(skip)]
             functions: [
-                $baked,
+                $baked: skip,
                 $any,
                 $buffer,
                 $unstable,
