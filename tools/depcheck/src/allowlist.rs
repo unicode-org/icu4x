@@ -75,6 +75,7 @@ pub const EXTRA_SERDE_DEPS: &[&str] = &["deduplicating_array", "serde", "serde_d
 
 /// Dependencies allowed when opting in to compiled data
 pub const EXTRA_DATA_DEPS: &[&str] = &[
+    "icu_provider_baked",
     "icu_calendar_data",
     "icu_casemap_data",
     "icu_collator_data",
@@ -159,6 +160,7 @@ pub const EXTRA_DATAGEN_DEPS: &[&str] = &[
     "databake-derive",
     "elsa",
     "erased-serde",
+    "heck",
     "icu_codepointtrie_builder",
     "icu_pattern",
     "icu_provider_adapters",
