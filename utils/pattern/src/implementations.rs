@@ -4,7 +4,7 @@
 
 use crate::{Pattern, SinglePlaceholder, SinglePlaceholderPattern};
 
-use zerovec::__zerovec_internal_reexport::boxed::Box;
+use alloc::boxed::Box;
 use zerovec::{maps::ZeroMapKV, ule::VarULE, VarZeroSlice, VarZeroVec, ZeroVecError};
 
 impl<'a> ZeroMapKV<'a> for Pattern<SinglePlaceholder, str> {
