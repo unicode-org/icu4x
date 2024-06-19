@@ -1,6 +1,6 @@
 #[cfg(target_os = "windows")]
 mod windows_locale {
-    use windows::System::UserProfile::GlobalizationPreferences;
+    use windows::{Globalization, System::UserProfile::GlobalizationPreferences};
     pub fn get_locale() -> Vec<String> {
         let mut locale_vec_str: Vec<String> = Vec::new();
         let locale = GlobalizationPreferences::Languages();
@@ -19,7 +19,17 @@ mod windows_locale {
     }
 
     pub fn get_system_calendar() -> Vec<(String, String)> {
-        Vec::new()
+        let calendar = Globalization::Calendar::new().unwrap();
+        let system_calendar = Globalization::Calendar::GetCalendarSystem(&calendar).unwrap();
+        let calendar_type: String = system_calendar.to_string();
+        let locale_list: Vec<String> = get_locale();
+
+        let result: Vec<(String, String)> = locale_list
+            .into_iter()
+            .map(|locale| (locale, calendar_type.clone()))
+            .collect();
+
+        result
     }
 }
 
