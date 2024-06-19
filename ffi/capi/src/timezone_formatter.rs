@@ -294,8 +294,15 @@ pub mod ffi {
             value: &ICU4XCustomTimeZone,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), ICU4XError> {
-            let _infallible = self.0.format(&value.0).write_no_fallback(write)?;
-            Ok(())
+            match self.0.format(&value.0).write_no_fallback(write) {
+                Ok(Ok(())) => Ok(()),
+                // TODO: Use narrow error type here
+                Ok(Err(_e)) => Err(ICU4XError::UnknownError),
+                Err(core::fmt::Error) => {
+                    debug_assert!(false, "unreachable");
+                    Ok(())
+                }
+            }
         }
     }
 }
