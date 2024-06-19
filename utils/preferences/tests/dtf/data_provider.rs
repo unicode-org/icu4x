@@ -16,14 +16,14 @@ const DEFAULT_PREFS: DefaultPrefs = DefaultPrefs {
     und: DateTimeFormatResolvedPreferences {
         lid: LanguageIdentifier::UND,
         hour_cycle: keywords::HourCycle::H23,
-        calendar: keywords::Calendar::Gregory,
+        calendar: keywords::CalendarAlgorithm::Gregory,
         numbering_system: keywords::NumberingSystem(subtag!("latn")),
         date_pattern: DatePattern(tinystr!(8, "Y-m-d")),
     },
     list: &[DateTimeFormatResolvedPreferences {
         lid: langid!("en-US"),
         hour_cycle: keywords::HourCycle::H12,
-        calendar: keywords::Calendar::Gregory,
+        calendar: keywords::CalendarAlgorithm::Gregory,
         numbering_system: keywords::NumberingSystem(subtag!("latn")),
         date_pattern: DatePattern(tinystr!(8, "m/d/Y")),
     }],

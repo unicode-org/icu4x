@@ -4,7 +4,7 @@
 
 use core::str::FromStr;
 
-use crate::parser::ParserError;
+use crate::parser::ParseError;
 use crate::subtags::Region;
 
 impl_tinystr_subtag!(
@@ -104,7 +104,7 @@ impl SubdivisionId {
         Self { region, suffix }
     }
 
-    pub(crate) fn try_from_bytes(input: &[u8]) -> Result<Self, ParserError> {
+    pub(crate) fn try_from_bytes(input: &[u8]) -> Result<Self, ParseError> {
         let is_alpha = input
             .first()
             .and_then(|b| {
@@ -112,14 +112,14 @@ impl SubdivisionId {
                     .then_some(true)
                     .or_else(|| b.is_ascii_digit().then_some(false))
             })
-            .ok_or(ParserError::InvalidExtension)?;
+            .ok_or(ParseError::InvalidExtension)?;
         let region_len = if is_alpha { 2 } else { 3 };
         if input.len() < region_len + 1 {
-            return Err(ParserError::InvalidExtension);
+            return Err(ParseError::InvalidExtension);
         }
         let (region_bytes, suffix_bytes) = input.split_at(region_len);
         let region =
-            Region::try_from_bytes(region_bytes).map_err(|_| ParserError::InvalidExtension)?;
+            Region::try_from_bytes(region_bytes).map_err(|_| ParseError::InvalidExtension)?;
         let suffix = SubdivisionSuffix::try_from_bytes(suffix_bytes)?;
         Ok(Self { region, suffix })
     }
@@ -141,7 +141,7 @@ impl writeable::Writeable for SubdivisionId {
 writeable::impl_display_with_writeable!(SubdivisionId);
 
 impl FromStr for SubdivisionId {
-    type Err = ParserError;
+    type Err = ParseError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         Self::try_from_bytes(s.as_bytes())

@@ -34,7 +34,7 @@ preferences!(
     DateTimeFormatResolvedPreferences,
     {
         hour_cycle => keywords::HourCycle,
-        calendar => keywords::Calendar,
+        calendar => keywords::CalendarAlgorithm,
         numbering_system => keywords::NumberingSystem,
         date_pattern => DatePattern
     }

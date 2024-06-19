@@ -7,14 +7,14 @@
 use crate::enum_keyword;
 
 // https://github.com/unicode-org/cldr/blob/main/common/bcp47/calendar.xml
-enum_keyword!(IslamicCalendar {
+enum_keyword!(IslamicCalendarAlgorithm {
     "umalqura" => Umalqura,
     "tbla" => Tbla,
     "civil" => Civil,
     "rgsa" => Rgsa
 });
 
-enum_keyword!(Calendar {
+enum_keyword!(CalendarAlgorithm {
     "buddhist" => Buddhist,
     "chinese" => Chinese,
     "coptic" => Coptic,
@@ -24,7 +24,7 @@ enum_keyword!(Calendar {
     "gregory" => Gregory,
     "hebrew" => Hebrew,
     "indian" => Indian,
-    "islamic" => Islamic(IslamicCalendar) {
+    "islamic" => Islamic(IslamicCalendarAlgorithm) {
         "umalqura" => Umalqura,
         "tbla" => Tbla,
         "civil" => Civil,

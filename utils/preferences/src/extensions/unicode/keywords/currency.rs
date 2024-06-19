@@ -8,7 +8,7 @@ use icu_locale_core::{extensions::unicode::Value, subtags::Subtag};
 use tinystr::TinyAsciiStr;
 
 struct_keyword!(
-    Currency,
+    CurrencyType,
     "cu",
     TinyAsciiStr<3>,
     |input: Value| {
@@ -20,7 +20,7 @@ struct_keyword!(
         }
         Err(PreferencesParseError::InvalidKeywordValue)
     },
-    |input: Currency| {
+    |input: CurrencyType| {
         icu_locale_core::extensions::unicode::Value::from_subtag(Some(
             Subtag::from_tinystr_unvalidated(input.0.resize()),
         ))

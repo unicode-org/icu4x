@@ -7,7 +7,7 @@ use crate::struct_keyword;
 use icu_locale_core::{extensions::unicode::Value, subtags::Subtag};
 
 struct_keyword!(
-    Timezone,
+    TimeZoneShortId,
     "tz",
     Subtag,
     |input: Value| {
@@ -16,5 +16,7 @@ struct_keyword!(
             .map(Self)
             .ok_or(PreferencesParseError::InvalidKeywordValue)
     },
-    |input: Timezone| { icu_locale_core::extensions::unicode::Value::from_subtag(Some(input.0)) }
+    |input: TimeZoneShortId| {
+        icu_locale_core::extensions::unicode::Value::from_subtag(Some(input.0))
+    }
 );

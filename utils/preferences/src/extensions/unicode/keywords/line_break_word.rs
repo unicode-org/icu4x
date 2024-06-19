@@ -4,7 +4,7 @@
 
 use crate::enum_keyword;
 
-enum_keyword!(LineBreakWord {
+enum_keyword!(LineBreakWordHandling {
     "normal" => Normal,
     "breakall" => BreakAll,
     "keepall" => KeepAll,

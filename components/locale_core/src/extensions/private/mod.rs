@@ -153,7 +153,7 @@ impl Private {
             .collect::<Result<ShortBoxSlice<_>, _>>()?;
 
         if keys.is_empty() {
-            Err(ParserError::InvalidExtension)
+            Err(ParseError::InvalidExtension)
         } else {
             Ok(Self(keys))
         }

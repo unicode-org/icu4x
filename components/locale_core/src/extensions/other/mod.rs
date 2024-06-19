@@ -112,7 +112,7 @@ impl Other {
         }
 
         if keys.is_empty() {
-            Err(ParserError::InvalidExtension)
+            Err(ParseError::InvalidExtension)
         } else {
             Ok(Self::from_short_slice_unchecked(ext, keys))
         }

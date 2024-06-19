@@ -64,7 +64,7 @@ fn dtf_prefs() {
     );
     assert_eq!(
         dtf.resolved_preferences().calendar,
-        keywords::Calendar::Gregory,
+        keywords::CalendarAlgorithm::Gregory,
     );
 }
 
@@ -88,7 +88,7 @@ fn dtf_prefs_with_ca() {
     );
     assert_eq!(
         dtf.resolved_preferences().calendar,
-        keywords::Calendar::Buddhist,
+        keywords::CalendarAlgorithm::Buddhist,
     );
 }
 
@@ -191,7 +191,10 @@ fn dtf_prefs_ca_islamic() {
 
     let loc: Locale = "en-u-ca-islamic".parse().unwrap();
     let prefs: DateTimeFormatPreferences = loc.into();
-    assert_eq!(prefs.calendar, Some(keywords::Calendar::Islamic(None)));
+    assert_eq!(
+        prefs.calendar,
+        Some(keywords::CalendarAlgorithm::Islamic(None))
+    );
     let loc2: Locale = prefs.into();
     assert_eq!(loc2.to_string(), "en-u-ca-islamic");
 
@@ -199,8 +202,8 @@ fn dtf_prefs_ca_islamic() {
     let prefs: DateTimeFormatPreferences = loc.into();
     assert_eq!(
         prefs.calendar,
-        Some(keywords::Calendar::Islamic(Some(
-            keywords::IslamicCalendar::Civil
+        Some(keywords::CalendarAlgorithm::Islamic(Some(
+            keywords::IslamicCalendarAlgorithm::Civil
         )))
     );
     let loc2: Locale = prefs.into();
@@ -208,7 +211,10 @@ fn dtf_prefs_ca_islamic() {
 
     let loc: Locale = "en-u-ca-islamic-foo".parse().unwrap();
     let prefs: DateTimeFormatPreferences = loc.into();
-    assert_eq!(prefs.calendar, Some(keywords::Calendar::Islamic(None)));
+    assert_eq!(
+        prefs.calendar,
+        Some(keywords::CalendarAlgorithm::Islamic(None))
+    );
     let loc2: Locale = prefs.into();
     assert_eq!(loc2.to_string(), "en-u-ca-islamic");
 }

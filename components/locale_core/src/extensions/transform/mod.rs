@@ -225,7 +225,7 @@ impl Transform {
         }
 
         if tlang.is_none() && tfields.is_empty() {
-            Err(ParserError::InvalidExtension)
+            Err(ParseError::InvalidExtension)
         } else {
             Ok(Self {
                 lang: tlang,

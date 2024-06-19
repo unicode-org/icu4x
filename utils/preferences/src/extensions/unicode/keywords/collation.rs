@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-crate::enum_keyword!(Collation {
+crate::enum_keyword!(CollationType {
     "big5han" => Big5han,
     "compat" => Compat,
     "dict" => Dict,
