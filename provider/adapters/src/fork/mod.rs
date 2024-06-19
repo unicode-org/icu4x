@@ -59,7 +59,7 @@ use predicates::MissingDataMarkerPredicate;
 /// Normal usage:
 ///
 /// ```
-/// use icu_locale_core::langid;
+/// use icu_locale::langid;
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
 /// use icu_provider_adapters::fork::ForkByMarkerProvider;
@@ -95,7 +95,7 @@ use predicates::MissingDataMarkerPredicate;
 /// Stops at the first provider supporting a marker, even if the locale is not supported:
 ///
 /// ```
-/// use icu_locale_core::{subtags::language, langid};
+/// use icu_locale::{subtags::language, langid};
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
 /// use icu_provider_adapters::filter::Filterable;
@@ -162,7 +162,7 @@ impl<P0, P1> ForkByMarkerProvider<P0, P1> {
 /// # Examples
 ///
 /// ```
-/// use icu_locale_core::{subtags::language, langid};
+/// use icu_locale::{subtags::language, langid};
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
 /// use icu_provider_adapters::filter::Filterable;
