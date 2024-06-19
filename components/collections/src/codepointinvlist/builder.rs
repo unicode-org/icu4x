@@ -49,7 +49,7 @@ impl CodePointInversionListBuilder {
         #[allow(clippy::indexing_slicing)] // all indices are binary search results
         if start_eq_end && start_pos_check && end_res.is_err() {
             self.intervals
-                .splice(start_ind..end_ind, [start, end].into_iter());
+                .splice(start_ind..end_ind, [start, end]);
         } else {
             if start_pos_check {
                 self.intervals[start_ind] = start;
