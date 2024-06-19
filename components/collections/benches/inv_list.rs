@@ -25,12 +25,12 @@ fn uniset_bench(c: &mut Criterion) {
                 .count();
             best_sample
                 .iter_chars()
-                .map(|ch| best_sample.contains_range(&('A'..ch)))
+                .map(|ch| best_sample.contains_range('A'..ch))
                 .count();
             worst_sample
                 .iter_chars()
                 .take(100)
-                .map(|ch| worst_sample.contains_range(&(char::from_u32(0x0).unwrap()..ch)))
+                .map(|ch| worst_sample.contains_range(char::from_u32(0x0).unwrap()..ch))
                 .count();
         })
     });
@@ -48,18 +48,14 @@ fn uniset_bench(c: &mut Criterion) {
 
         let mut group = c.benchmark_group("uniset/contains_range");
         group.bench_with_input("best", &best_sample, |b, sample| {
-            b.iter(|| {
-                sample
-                    .iter_chars()
-                    .map(|ch| sample.contains_range(&('A'..ch)))
-            })
+            b.iter(|| sample.iter_chars().map(|ch| sample.contains_range('A'..ch)))
         });
         group.bench_with_input("worst", &worst_sample, |b, sample| {
             b.iter(|| {
                 sample
                     .iter_chars()
                     .take(100)
-                    .map(|ch| sample.contains_range(&(char::from_u32(0x0).unwrap()..ch)))
+                    .map(|ch| sample.contains_range(char::from_u32(0x0).unwrap()..ch))
             })
         });
         group.finish();

@@ -2285,11 +2285,11 @@ mod tests {
                 .expect("The data should be valid");
 
             let mut builder = CodePointInversionListBuilder::new();
-            for subcategory in subcategories {
-                let gc_set_data = &maps::general_category().get_set_for_value(*subcategory);
+            for &subcategory in subcategories {
+                let gc_set_data = &maps::general_category().get_set_for_value(subcategory);
                 let gc_set = gc_set_data.as_borrowed();
                 for range in gc_set.iter_ranges() {
-                    builder.add_range32(&range);
+                    builder.add_range32(range);
                 }
             }
             let combined_set = builder.build();

@@ -688,7 +688,7 @@ where
                         return Err(PEK::UnexpectedChar(end).with_offset(tok_offset));
                     }
 
-                    self.single_set.add_range(&(start..=end));
+                    self.single_set.add_range(start..=end);
                     prev_char = None;
                     state = Begin;
                 }

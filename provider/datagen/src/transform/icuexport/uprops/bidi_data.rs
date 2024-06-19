@@ -49,7 +49,7 @@ impl DataProvider<BidiAuxiliaryPropertiesV1Marker> for DatagenProvider {
         let bidi_m_data = self.get_binary_prop_for_code_point_set("Bidi_M")?;
         let mut bidi_m_builder = CodePointInversionListBuilder::new();
         for (start, end) in &bidi_m_data.ranges {
-            bidi_m_builder.add_range32(&(start..=end));
+            bidi_m_builder.add_range32(start..=end);
         }
         let bidi_m_cpinvlist = bidi_m_builder.build();
 
