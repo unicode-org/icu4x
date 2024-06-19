@@ -58,7 +58,7 @@ impl CodePointSetData {
     /// Construct a new one from loaded data
     ///
     /// Typically it is preferable to use getters like [`load_ascii_hex_digit()`] instead
-    pub fn from_data<M>(data: DataPayload<M>) -> Self
+    pub(crate) fn from_data<M>(data: DataPayload<M>) -> Self
     where
         M: DynamicDataMarker<Yokeable = PropertyCodePointSetV1<'static>>,
     {
@@ -229,7 +229,7 @@ impl UnicodeSetData {
     /// Construct a new one from loaded data
     ///
     /// Typically it is preferable to use getters instead
-    pub fn from_data<M>(data: DataPayload<M>) -> Self
+    pub(crate) fn from_data<M>(data: DataPayload<M>) -> Self
     where
         M: DynamicDataMarker<Yokeable = PropertyUnicodeSetV1<'static>>,
     {

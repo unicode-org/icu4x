@@ -120,20 +120,15 @@ impl IterableDataProvider<BidiAuxiliaryPropertiesV1Marker> for DatagenProvider {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu::properties::bidi_data::{BidiAuxiliaryProperties, BidiPairingProperties};
-    use icu::properties::provider::bidi_data::BidiAuxiliaryPropertiesV1Marker;
+    use icu::properties::bidi_data::BidiPairingProperties;
 
     #[test]
     fn test_bidi_data_provider() {
         let provider = DatagenProvider::new_testing();
 
-        let payload: DataPayload<BidiAuxiliaryPropertiesV1Marker> = provider
-            .load(Default::default())
-            .expect("Loading was successful")
-            .payload;
-
-        let bidi_data_api_struct = BidiAuxiliaryProperties::from_data(payload);
-        let bidi_data = bidi_data_api_struct.as_borrowed();
+        let bidi_data =
+            icu::properties::bidi_data::load_bidi_auxiliary_properties_unstable(&provider).unwrap();
+        let bidi_data = bidi_data.as_borrowed();
 
         let close_paren = bidi_data.get32_mirroring_props(')' as u32);
         assert_eq!(close_paren.mirroring_glyph, Some('('));

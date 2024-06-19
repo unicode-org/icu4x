@@ -71,14 +71,7 @@ pub trait TrieValue: Copy + Eq + PartialEq + zerovec::ule::AsULE + 'static {
     ///
     /// This method is allowed to have GIGO behavior when fed a value that has
     /// no corresponding `u32` (since such values cannot be stored in the trie)
-    fn to_u32(self) -> u32 {
-        debug_assert!(
-            false,
-            "TrieValue::to_u32() not implemented for {}",
-            ::core::any::type_name::<Self>()
-        );
-        0
-    }
+    fn to_u32(self) -> u32;
 }
 
 macro_rules! impl_primitive_trie_value {
@@ -901,7 +894,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// let trie = planes::get_planes_trie();
     ///
     /// let plane_val = 2;
-    /// let mut sip_range_iter = trie.get_ranges_for_value(plane_val as u8);
+    /// let mut sip_range_iter = trie.iter_ranges_for_value(plane_val as u8);
     ///
     /// let start = plane_val * 0x1_0000;
     /// let end = start + 0xffff;
@@ -911,7 +904,10 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// assert_eq!(start..=end, sip_range);
     ///
     /// assert!(sip_range_iter.next().is_none());
-    pub fn get_ranges_for_value(&self, value: T) -> impl Iterator<Item = RangeInclusive<u32>> + '_ {
+    pub fn iter_ranges_for_value(
+        &self,
+        value: T,
+    ) -> impl Iterator<Item = RangeInclusive<u32>> + '_ {
         self.iter_ranges()
             .filter(move |cpm_range| cpm_range.value == value)
             .map(|cpm_range| cpm_range.range)
@@ -972,7 +968,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// assert!(!sip.contains32(end + 1));
     /// ```
     pub fn get_set_for_value(&self, value: T) -> CodePointInversionList<'static> {
-        let value_ranges = self.get_ranges_for_value(value);
+        let value_ranges = self.iter_ranges_for_value(value);
         CodePointInversionList::from_iter(value_ranges)
     }
 
