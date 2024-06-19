@@ -625,9 +625,8 @@ pub const fn script_with_extensions() -> ScriptWithExtensionsBorrowed<'static> {
 
 icu_provider::gen_any_buffer_data_constructors!(
     () -> result: Result<ScriptWithExtensions, DataError>,
-    #[cfg(skip)]
     functions: [
-        script_with_extensions,
+        script_with_extensions: skip,
         load_script_with_extensions_with_any_provider,
         load_script_with_extensions_with_buffer_provider,
         load_script_with_extensions_unstable,
