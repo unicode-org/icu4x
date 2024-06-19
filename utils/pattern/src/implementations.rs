@@ -2,9 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use zerovec::{maps::ZeroMapKV, ule::VarULE, VarZeroSlice, VarZeroVec, ZeroVecError};
-
 use crate::{Pattern, SinglePlaceholder, SinglePlaceholderPattern};
+
+use zerovec::__zerovec_internal_reexport::boxed::Box;
+use zerovec::{maps::ZeroMapKV, ule::VarULE, VarZeroSlice, VarZeroVec, ZeroVecError};
 
 impl<'a> ZeroMapKV<'a> for Pattern<SinglePlaceholder, str> {
     type Container = VarZeroVec<'a, Pattern<SinglePlaceholder, str>>;
