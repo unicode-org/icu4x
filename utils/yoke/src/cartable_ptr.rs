@@ -33,6 +33,8 @@ use stable_deref_trait::StableDeref;
 #[inline]
 fn sentinel_for<T>() -> NonNull<T> {
     static SENTINEL: &u8 = &0x1a; // SUB
+
+    // Safety: SENTINEL is indeed not a null pointer, even after the casts.
     unsafe { NonNull::new_unchecked(SENTINEL as *const u8 as *mut T) }
 }
 
@@ -56,7 +58,9 @@ use private::Sealed;
 /// 1. `into_raw` transfers ownership of the values referenced by StableDeref to the caller,
 ///    if there is ownership to transfer
 /// 2. `drop_raw` returns ownership back to the impl, if there is ownership to transfer
-/// 3. `into_raw` must not return the sentinel pointer
+///
+/// Note: if `into_raw` returns the sentinel pointer, memory leaks may occur, but this will not
+/// lead to undefined behaviour.
 ///
 /// Note: the pointer `NonNull<Self::Raw>` may or may not be aligned and it should never
 /// be dereferenced. Rust allows unaligned pointers; see [`std::ptr::read_unaligned`].
@@ -91,7 +95,7 @@ pub unsafe trait CartablePointerLike: StableDeref + Sealed {
 /// 1. `addref_raw` must create a new owner such that an additional call to
 ///    `drop_raw` does not create a dangling pointer
 /// 2. `addref_raw` must not change the address of any referenced data.
-pub unsafe trait CloneableCartablePointerLike: CartablePointerLike {
+unsafe trait CloneableCartablePointerLike: CartablePointerLike {
     /// Clones this pointer-like.
     ///
     /// # Safety
@@ -109,7 +113,6 @@ impl<'a, T> Sealed for &'a T {}
 // Safety:
 // 1. There is no ownership to transfer
 // 2. There is no ownership to transfer
-// 3. External clients do not have the sentinel address so it won't be used in this reference.
 unsafe impl<'a, T> CartablePointerLike for &'a T {
     type Raw = T;
 
@@ -136,13 +139,12 @@ unsafe impl<'a, T> CloneableCartablePointerLike for &'a T {
 #[cfg(feature = "alloc")]
 impl<T> Sealed for Box<T> {}
 
+#[cfg(feature = "alloc")]
 // Safety:
 // 1. `Box::into_raw` says: "After calling this function, the caller is responsible for the
 //    memory previously managed by the Box."
 // 2. `Box::from_raw` says: "After calling this function, the raw pointer is owned by the
 //    resulting Box."
-// 3. The pointer comes from the Box so it won't be the sentinel pointer.
-#[cfg(feature = "alloc")]
 unsafe impl<T> CartablePointerLike for Box<T> {
     type Raw = T;
 
@@ -153,7 +155,10 @@ unsafe impl<T> CartablePointerLike for Box<T> {
     }
     #[inline]
     unsafe fn drop_raw(pointer: NonNull<T>) {
-        let _box = Box::from_raw(pointer.as_ptr());
+        // Safety: per the method's precondition, `pointer` is dereferenceable and was returned by
+        // `Self::into_raw`, i.e. by `Box::into_raw`. In this circumstances, calling
+        // `Box::from_raw` is safe.
+        let _box = unsafe { Box::from_raw(pointer.as_ptr()) };
 
         // Boxes are always dropped
         #[cfg(test)]
@@ -164,12 +169,11 @@ unsafe impl<T> CartablePointerLike for Box<T> {
 #[cfg(feature = "alloc")]
 impl<T> Sealed for Rc<T> {}
 
+#[cfg(feature = "alloc")]
 // Safety:
 // 1. `Rc::into_raw` says: "Consumes the Rc, returning the wrapped pointer. To avoid a memory
 //    leak the pointer must be converted back to an Rc using Rc::from_raw."
 // 2. See 1.
-// 3. The pointer comes from the Rc so it won't be the sentinel pointer.
-#[cfg(feature = "alloc")]
 unsafe impl<T> CartablePointerLike for Rc<T> {
     type Raw = T;
 
@@ -178,9 +182,13 @@ unsafe impl<T> CartablePointerLike for Rc<T> {
         // Safety: Rcs must contain data (and not be null)
         unsafe { NonNull::new_unchecked(Rc::into_raw(self) as *mut T) }
     }
+
     #[inline]
     unsafe fn drop_raw(pointer: NonNull<T>) {
-        let _rc = Rc::from_raw(pointer.as_ptr());
+        // Safety: per the method's precondition, `pointer` is dereferenceable and was returned by
+        // `Self::into_raw`, i.e. by `Rc::into_raw`. In this circumstances, calling
+        // `Rc::from_raw` is safe.
+        let _rc = unsafe { Rc::from_raw(pointer.as_ptr()) };
 
         // Rc is dropped if refcount is 1
         #[cfg(test)]
@@ -190,10 +198,10 @@ unsafe impl<T> CartablePointerLike for Rc<T> {
     }
 }
 
+#[cfg(feature = "alloc")]
 // Safety:
 // 1. The impl increases the refcount such that `Drop` will decrease it.
 // 2. The impl increases refcount without changing the address of data.
-#[cfg(feature = "alloc")]
 unsafe impl<T> CloneableCartablePointerLike for Rc<T> {
     #[inline]
     unsafe fn addref_raw(pointer: NonNull<T>) {
@@ -201,19 +209,20 @@ unsafe impl<T> CloneableCartablePointerLike for Rc<T> {
         // 1. The pointer was obtained through Rc::into_raw
         // 2. The associated Rc instance is valid
         // Further, this impl is not defined for anything but the global allocator.
-        Rc::increment_strong_count(pointer.as_ptr());
+        unsafe {
+            Rc::increment_strong_count(pointer.as_ptr());
+        }
     }
 }
 
 #[cfg(feature = "alloc")]
 impl<T> Sealed for Arc<T> {}
 
+#[cfg(feature = "alloc")]
 // Safety:
 // 1. `Rc::into_raw` says: "Consumes the Arc, returning the wrapped pointer. To avoid a memory
 //    leak the pointer must be converted back to an Arc using Arc::from_raw."
 // 2. See 1.
-// 3. The pointer comes from the Arc so it won't be the sentinel pointer.
-#[cfg(feature = "alloc")]
 unsafe impl<T> CartablePointerLike for Arc<T> {
     type Raw = T;
 
@@ -224,7 +233,10 @@ unsafe impl<T> CartablePointerLike for Arc<T> {
     }
     #[inline]
     unsafe fn drop_raw(pointer: NonNull<T>) {
-        let _arc = Arc::from_raw(pointer.as_ptr());
+        // Safety: per the method's precondition, `pointer` is dereferenceable and was returned by
+        // `Self::into_raw`, i.e. by `Rc::into_raw`. In this circumstances, calling
+        // `Rc::from_raw` is safe.
+        let _arc = unsafe { Arc::from_raw(pointer.as_ptr()) };
 
         // Arc is dropped if refcount is 1
         #[cfg(test)]
@@ -234,10 +246,10 @@ unsafe impl<T> CartablePointerLike for Arc<T> {
     }
 }
 
+#[cfg(feature = "alloc")]
 // Safety:
 // 1. The impl increases the refcount such that `Drop` will decrease it.
 // 2. The impl increases refcount without changing the address of data.
-#[cfg(feature = "alloc")]
 unsafe impl<T> CloneableCartablePointerLike for Arc<T> {
     #[inline]
     unsafe fn addref_raw(pointer: NonNull<T>) {
@@ -245,7 +257,9 @@ unsafe impl<T> CloneableCartablePointerLike for Arc<T> {
         // 1. The pointer was obtained through Arc::into_raw
         // 2. The associated Arc instance is valid
         // Further, this impl is not defined for anything but the global allocator.
-        Arc::increment_strong_count(pointer.as_ptr());
+        unsafe {
+            Arc::increment_strong_count(pointer.as_ptr());
+        }
     }
 }
 
@@ -286,8 +300,10 @@ where
     /// Creates a new instance corresponding to a `Some` value.
     #[inline]
     pub(crate) fn from_cartable(cartable: C) -> Self {
+        let inner = cartable.into_raw();
+        debug_assert_ne!(inner, sentinel_for::<C::Raw>());
         Self {
-            inner: cartable.into_raw(),
+            inner,
             _cartable: PhantomData,
         }
     }
