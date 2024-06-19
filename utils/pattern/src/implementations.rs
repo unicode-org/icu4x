@@ -4,7 +4,7 @@
 
 use crate::{Pattern, SinglePlaceholder, SinglePlaceholderPattern};
 
-use zerovec::__zerovec_internal_reexport::boxed::Box;
+use alloc::boxed::Box;
 use zerovec::{maps::ZeroMapKV, ule::VarULE, VarZeroSlice, VarZeroVec, ZeroVecError};
 
 impl<'a> ZeroMapKV<'a> for Pattern<SinglePlaceholder, str> {
@@ -22,6 +22,7 @@ unsafe impl VarULE for Pattern<SinglePlaceholder, str> {
     }
 
     unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
+        // SAFETY: The `bytes` slice must be validated by `Self::validate_byte_slice`.
         let store = core::str::from_utf8_unchecked(bytes);
         SinglePlaceholderPattern::from_borrowed_store_unchecked(store)
     }
