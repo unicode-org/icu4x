@@ -8,9 +8,10 @@ use core::marker::PhantomData;
 
 use crate::{
     format::neo::*,
+    fields::Field,
     neo::_internal::*,
     neo_skeleton::*,
-    neo_zone::{HasZoneComponents, NeoZoneComponents},
+    neo_zone::{HasZoneComponents, NeoZoneConfig},
     provider::{
         neo::*,
         time_zones::{
@@ -1163,6 +1164,8 @@ macro_rules! impl_zone_marker {
     (
         $type:ident,
         $components:expr,
+        $config:expr,
+        $field:expr,
         description = $description:literal,
         expectation = $expectation:literal,
         zone_essentials = $zone_essentials_yesno:ident,
@@ -1232,7 +1235,8 @@ macro_rules! impl_zone_marker {
             type ZoneGenericShortNames = datetime_marker_helper!(@names/zone/genericshort, $zone_genericshort_yesno);
         }
         impl HasZoneComponents for $type {
-            const ZONE_CONFIG: NeoZoneComponents = $components;
+            const ZONE_CONFIG: NeoZoneConfig = $config;
+            const ZONE_FIELD: Field = $field;
         }
         impl ZoneMarkers for $type {
             type TimeZoneInput = datetime_marker_helper!(@input/timezone, yes);
@@ -1488,7 +1492,9 @@ impl_date_marker!(
 
 impl_zone_marker!(
     NeoTimeZoneGenericShortMarker,
+    NeoZoneComponents::GenericShort,
     crate::neo_zone::GenericShortOrGmt::ZONE_CONFIG,
+    crate::neo_zone::GenericShortOrGmt::ZONE_FIELD,
     description = "a generic short time zone format",
     expectation = "GMT",
     zone_essentials = yes,

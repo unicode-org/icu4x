@@ -467,19 +467,13 @@ impl<C: CldrCalendar, R: TypedDateTimeMarkers<C>> TypedNeoFormatter<C, R> {
             &<R::D as TypedDateMarkers<C>>::MonthNamesV1Marker::bind(provider),
             &<R::D as TypedDateMarkers<C>>::WeekdayNamesV1Marker::bind(provider),
             &<R::T as TimeMarkers>::DayPeriodNamesV1Marker::bind(provider),
+            &<R::Z as ZoneMarkers>::ZoneEssentialsV1Marker::bind(provider),
+            &<R::Z as ZoneMarkers>::ZoneGenericShortNamesV1Marker::bind(provider),
             Some(loader), // fixed decimal formatter
             Some(loader), // week calculator
             locale,
             selection.pattern_items_for_data_loading(),
         )?;
-        if let Some(zone_components) = selection.zone_components() {
-            names.load_for_zone(
-                &<R::Z as ZoneMarkers>::ZoneEssentialsV1Marker::bind(provider),
-                &<R::Z as ZoneMarkers>::ZoneGenericShortNamesV1Marker::bind(provider),
-                locale,
-                zone_components,
-            )?;
-        }
         Ok(Self {
             selection,
             names,
@@ -1140,19 +1134,13 @@ impl<R: DateTimeMarkers> NeoFormatter<R> {
             &AnyCalendarProvider::<<R::D as DateMarkers>::Month, _>::new(provider, kind),
             &<R::D as DateMarkers>::WeekdayNamesV1Marker::bind(provider),
             &<R::T as TimeMarkers>::DayPeriodNamesV1Marker::bind(provider),
+            &<R::Z as ZoneMarkers>::ZoneEssentialsV1Marker::bind(provider),
+            &<R::Z as ZoneMarkers>::ZoneGenericShortNamesV1Marker::bind(provider),
             Some(loader), // fixed decimal formatter
             Some(loader), // week calculator
             locale,
             selection.pattern_items_for_data_loading(),
         )?;
-        if let Some(zone_components) = selection.zone_components() {
-            names.load_for_zone(
-                &<R::Z as ZoneMarkers>::ZoneEssentialsV1Marker::bind(provider),
-                &<R::Z as ZoneMarkers>::ZoneGenericShortNamesV1Marker::bind(provider),
-                locale,
-                zone_components,
-            )?;
-        }
         Ok(Self {
             selection,
             names,

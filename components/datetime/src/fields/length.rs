@@ -54,6 +54,8 @@ pub enum FieldLength {
     Fixed(u8),
     /// FieldLength::One (numeric), but overridden with a different numbering system
     NumericOverride(FieldNumericOverrides),
+    /// A time zone field with non-standard rules.
+    TimeZoneFallbackOverride(TimeZoneFallbackOverride),
 }
 
 /// First index used for numeric overrides in compact FieldLength representation
@@ -61,6 +63,8 @@ pub enum FieldLength {
 /// Currently 17 due to decision in <https://unicode-org.atlassian.net/browse/CLDR-17217>,
 /// may become 16 if the `> 16` is updated to a ` >= 16`
 const FIRST_NUMERIC_OVERRIDE: u8 = 17;
+/// First index used for TimeZoneFallbackOverride
+const FIRST_TIME_ZONE_FALLBACK_OVERRIDE: u8 = 32;
 /// First index used for fixed size formats in compact FieldLength representation
 const FIRST_FIXED: u8 = 128;
 
@@ -75,6 +79,9 @@ impl FieldLength {
             FieldLength::Narrow => 5,
             FieldLength::Six => 6,
             FieldLength::NumericOverride(o) => FIRST_NUMERIC_OVERRIDE
+                .saturating_add(*o as u8)
+                .min(FIRST_TIME_ZONE_FALLBACK_OVERRIDE - 1),
+            FieldLength::TimeZoneFallbackOverride(o) => FIRST_TIME_ZONE_FALLBACK_OVERRIDE
                 .saturating_add(*o as u8)
                 .min(FIRST_FIXED - 1),
             FieldLength::Fixed(p) => FIRST_FIXED.saturating_add(*p), /* truncate to at most 127 digits to avoid overflow */
@@ -94,8 +101,10 @@ impl FieldLength {
                 if idx < FIRST_NUMERIC_OVERRIDE {
                     return Err(LengthError::InvalidLength);
                 }
-                if idx < FIRST_FIXED {
+                if idx < FIRST_TIME_ZONE_FALLBACK_OVERRIDE {
                     Self::NumericOverride((idx - FIRST_NUMERIC_OVERRIDE).try_into()?)
+                } else if idx < FIRST_FIXED {
+                    Self::TimeZoneFallbackOverride((idx - FIRST_TIME_ZONE_FALLBACK_OVERRIDE).try_into()?)
                 } else {
                     Self::Fixed(idx - FIRST_FIXED)
                 }
@@ -114,6 +123,7 @@ impl FieldLength {
             FieldLength::Narrow => 5,
             FieldLength::Six => 6,
             FieldLength::NumericOverride(o) => FIRST_NUMERIC_OVERRIDE as usize + o as usize,
+            FieldLength::TimeZoneFallbackOverride(o) => FIRST_TIME_ZONE_FALLBACK_OVERRIDE as usize + o as usize,
             FieldLength::Fixed(p) => p as usize,
         }
     }
@@ -228,3 +238,44 @@ impl fmt::Display for FieldNumericOverrides {
         self.as_str().fmt(f)
     }
 }
+
+/// Time zone fallback overrides to support configurations not found
+/// in the CLDR datetime field symbol table.
+#[derive(Debug, Eq, PartialEq, Clone, Copy, Ord, PartialOrd)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_datetime::fields),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[non_exhaustive]
+pub enum TimeZoneFallbackOverride {
+    /// The short form of this time zone field,
+    /// but fall back directly to GMT.
+    ShortOrGmt = 0,
+}
+
+impl TryFrom<u8> for TimeZoneFallbackOverride {
+    type Error = LengthError;
+    fn try_from(other: u8) -> Result<Self, LengthError> {
+        Ok(match other {
+            0 => Self::ShortOrGmt,
+            _ => return Err(LengthError::InvalidLength),
+        })
+    }
+}
+
+// impl TimeZoneFallbackOverride {
+//     /// Convert this to the corresponding string code
+//     pub fn as_str(self) -> &'static str {
+//         match self {
+//             Self::ShortOrGmt => "ShortOrGmt",
+//         }
+//     }
+// }
+
+// impl fmt::Display for TimeZoneFallbackOverride {
+//     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+//         self.as_str().fmt(f)
+//     }
+// }

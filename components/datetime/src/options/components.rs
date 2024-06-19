@@ -649,6 +649,10 @@ impl<'data> From<&PatternPlurals<'data>> for Bag {
                         | FieldLength::NumericOverride(_)
                         | FieldLength::TwoDigit
                         | FieldLength::Abbreviated => Text::Short,
+                        FieldLength::TimeZoneFallbackOverride(_) => {
+                            debug_assert!(false, "unexpected length for era field");
+                            Text::Short
+                        },
                         FieldLength::Wide => Text::Long,
                         FieldLength::Narrow | FieldLength::Six | FieldLength::Fixed(_) => {
                             Text::Narrow
@@ -674,6 +678,10 @@ impl<'data> From<&PatternPlurals<'data>> for Bag {
                     bag.month = Some(match field.length {
                         FieldLength::One => Month::Numeric,
                         FieldLength::NumericOverride(_) => Month::Numeric,
+                        FieldLength::TimeZoneFallbackOverride(_) => {
+                            debug_assert!(false, "unexpected length for month field");
+                            Month::Numeric
+                        }
                         FieldLength::TwoDigit => Month::TwoDigit,
                         FieldLength::Abbreviated => Month::Short,
                         FieldLength::Wide => Month::Long,
@@ -740,6 +748,10 @@ impl<'data> From<&PatternPlurals<'data>> for Bag {
                                 //     'ccc, MMM d. y'
                                 unimplemented!("Numeric stand-alone fields are not supported.")
                             }
+                            FieldLength::TimeZoneFallbackOverride(_) => {
+                                debug_assert!(false, "unexpected length for weekday field");
+                                Text::Short
+                            },
                             FieldLength::Abbreviated => Text::Short,
                             FieldLength::Wide => Text::Long,
                             FieldLength::Narrow | FieldLength::Six | FieldLength::Fixed(_) => {

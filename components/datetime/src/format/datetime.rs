@@ -4,7 +4,7 @@
 
 use crate::fields::{self, Field, FieldLength, FieldSymbol, Second, Week, Year};
 use crate::input::{DateInput, ExtractedDateTimeInput, IsoTimeInput};
-use crate::neo_zone::NeoZoneComponents;
+use crate::neo_zone::NeoZoneConfig;
 use crate::pattern::runtime::{PatternBorrowed, PatternMetadata};
 use crate::pattern::{
     runtime::{Pattern, PatternPlurals},
@@ -126,7 +126,6 @@ impl<'l> Writeable for FormattedDateTime<'l> {
 
         r = r.and(try_write_pattern(
             pattern.as_borrowed(),
-            None,
             &self.datetime,
             self.date_symbols,
             self.time_symbols,
@@ -161,7 +160,7 @@ where
 {
     if let Some(fdf) = fixed_decimal_format {
         match length {
-            FieldLength::One | FieldLength::NumericOverride(_) => {}
+            FieldLength::One | FieldLength::NumericOverride(_) | FieldLength::TimeZoneFallbackOverride(_) => {}
             FieldLength::TwoDigit => {
                 num.pad_start(2);
                 num.set_max_position(2);
@@ -192,15 +191,9 @@ where
     }
 }
 
-pub(crate) struct AugmentedPatternMetadata {
-    pub(crate) metadata: PatternMetadata,
-    pub(crate) zone_components: Option<NeoZoneComponents>,
-}
-
 #[allow(clippy::too_many_arguments)]
 pub(crate) fn try_write_pattern<'data, W, DS, TS, ZS>(
     pattern: PatternBorrowed<'data>,
-    zone_components: Option<NeoZoneComponents>,
     datetime: &ExtractedDateTimeInput,
     date_symbols: Option<&DS>,
     time_symbols: Option<&TS>,
@@ -216,10 +209,7 @@ where
     ZS: ZoneSymbols,
 {
     try_write_pattern_items(
-        AugmentedPatternMetadata {
-            metadata: pattern.metadata,
-            zone_components,
-        },
+        pattern.metadata,
         pattern.items.iter(),
         datetime,
         date_symbols,
@@ -233,7 +223,7 @@ where
 
 #[allow(clippy::too_many_arguments)]
 pub(crate) fn try_write_pattern_items<'data, W, DS, TS, ZS>(
-    augmented_metadata: AugmentedPatternMetadata,
+    pattern_metadata: PatternMetadata,
     pattern_items: impl Iterator<Item = PatternItem>,
     datetime: &ExtractedDateTimeInput,
     date_symbols: Option<&DS>,
@@ -258,16 +248,9 @@ where
                 symbol: fields::FieldSymbol::TimeZone(time_zone_field),
                 length,
             }) => {
-                // TODO: Pull out this comparison logic
-                let zone_components = if time_zone_field == fields::TimeZone::LowerV
-                    && length == FieldLength::TwoDigit
-                {
-                    augmented_metadata.zone_components
-                } else {
-                    NeoZoneComponents::from_field(time_zone_field, length)
-                };
                 r = r.and(try_write_zone(
-                    zone_components,
+                    time_zone_field,
+                    length,
                     datetime,
                     zone_symbols,
                     fixed_decimal_format,
@@ -278,7 +261,7 @@ where
                 r = r.and(try_write_field(
                     field,
                     &mut iter,
-                    augmented_metadata.metadata,
+                    pattern_metadata,
                     datetime,
                     date_symbols,
                     time_symbols,
@@ -374,7 +357,7 @@ where
     DS: DateSymbols<'data>,
     TS: TimeSymbols,
 {
-    /// Writes an error string for the given symbol
+    // Writes an error string for the given symbol
     fn write_value_missing(
         w: &mut (impl writeable::PartsWrite + ?Sized),
         field: fields::Field,
@@ -778,9 +761,12 @@ where
                 }
             }
         },
+        (FieldSymbol::TimeZone(_), _) => {
+            debug_assert!(false, "unreachable: time zone formatted in its own fn");
+            Err(DateTimeWriteError::UnsupportedField(field))
+        },
         (
-            FieldSymbol::TimeZone(_)
-            | FieldSymbol::Day(_)
+            FieldSymbol::Day(_)
             | FieldSymbol::Second(Second::Millisecond),
             _,
         ) => {
@@ -796,7 +782,8 @@ where
 
 // #[allow(clippy::too_many_arguments)]
 pub(crate) fn try_write_zone<'data, W, ZS>(
-    zone_components: Option<NeoZoneComponents>,
+    field_symbol: fields::TimeZone,
+    field_length: FieldLength,
     datetime: &ExtractedDateTimeInput,
     zone_symbols: Option<&ZS>,
     _fdf: Option<&FixedDecimalFormatter>,
@@ -832,15 +819,10 @@ where
         )
     }
 
-    let zone_components = match zone_components {
-        Some(x) => x,
-        None => {
-            debug_assert!(false, "expected zone components");
-            NeoZoneComponents::default_for_fallback()
-        }
-    };
+    // for errors only:
+    let field = Field { symbol: FieldSymbol::TimeZone(field_symbol), length: field_length };
 
-    let field = zone_components.to_field();
+    let _zone_components = NeoZoneConfig::from_field(field_symbol, field_length);
 
     // TODO: Implement proper formatting logic here
     Ok(match datetime.time_zone() {
@@ -1025,7 +1007,6 @@ mod tests {
         let mut sink = String::new();
         try_write_pattern(
             pattern.as_borrowed(),
-            None,
             &ExtractedDateTimeInput::extract_from(&datetime),
             Some(date_data.payload.get()),
             Some(time_data.payload.get()),

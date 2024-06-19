@@ -4,12 +4,12 @@
 
 //! Temporary module for neo datetime skeletons (Semantic Skeleta)
 
-use crate::neo_zone::NeoZoneComponents;
 use crate::options::components;
 use crate::options::length;
 use crate::DateTimeFormatterOptions;
 use tinystr::tinystr;
 use tinystr::TinyAsciiStr;
+use crate::fields::{self, FieldLength};
 
 /// A specification for the length of a date or component of a date.
 ///
@@ -633,6 +633,26 @@ impl NeoTimeComponents {
                 }),
             },
         }
+    }
+}
+
+/// A specification for the desired display of a time zone.
+///
+/// Unlike date and time, we support only a single time zone component, but the
+/// specific component can change.
+///
+/// Since the length of a time zone can vary independent of the date and time,
+/// the time zone lengths are directly encoded into this enum.
+#[derive(Debug, Copy, Clone)]
+#[non_exhaustive]
+pub enum NeoZoneComponents {
+    /// The generic short non-location format. For example: "PT"
+    GenericShort,
+}
+
+impl NeoZoneComponents {
+    pub(crate) fn to_field(self) -> (fields::TimeZone, FieldLength) {
+        todo!()
     }
 }
 

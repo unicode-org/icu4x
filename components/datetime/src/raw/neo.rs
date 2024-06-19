@@ -2,14 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::format::datetime::AugmentedPatternMetadata;
+use crate::fields::{self, Field, FieldLength, FieldSymbol};
 use crate::input::ExtractedDateTimeInput;
 use crate::neo_pattern::DateTimePattern;
 use crate::neo_skeleton::{
     NeoComponents, NeoDateComponents, NeoDateSkeleton, NeoDayComponents, NeoSkeletonLength,
     NeoTimeComponents, NeoTimeSkeleton,
 };
-use crate::neo_zone::NeoZoneComponents;
 use crate::pattern::runtime::PatternMetadata;
 use crate::pattern::{runtime, PatternItem};
 use crate::provider::neo::*;
@@ -50,12 +49,12 @@ pub(crate) enum TimePatternDataBorrowed<'a> {
 
 #[derive(Debug)]
 pub(crate) enum ZonePatternSelectionData {
-    Components(NeoZoneComponents, <PatternItem as AsULE>::ULE),
+    SinglePatternItem(<PatternItem as AsULE>::ULE),
 }
 
 #[derive(Debug, Copy, Clone)]
 pub(crate) enum ZonePatternDataBorrowed<'a> {
-    Resolved(NeoZoneComponents, &'a <PatternItem as AsULE>::ULE),
+    SinglePatternItem(&'a <PatternItem as AsULE>::ULE),
 }
 
 #[derive(Debug)]
@@ -173,15 +172,25 @@ impl TimePatternSelectionData {
 }
 
 impl ZonePatternSelectionData {
-    pub(crate) fn from_components(components: NeoZoneComponents) -> Self {
-        let field = components.to_field();
-        Self::Components(components, PatternItem::Field(field).to_unaligned())
+    pub(crate) fn from_field(field_symbol: fields::TimeZone, field_length: FieldLength) -> Self {
+        let pattern_item = PatternItem::Field(Field {
+            symbol: FieldSymbol::TimeZone(field_symbol),
+            length: field_length,
+        });
+        Self::SinglePatternItem(pattern_item.to_unaligned())
+    }
+
+    /// Borrows a pattern containing all of the fields that need to be loaded.
+    #[inline]
+    pub(crate) fn pattern_items_for_data_loading(&self) -> impl Iterator<Item = PatternItem> + '_ {
+        let Self::SinglePatternItem(ref pattern_item) = self;
+        [PatternItem::from_unaligned(*pattern_item)].into_iter()
     }
 
     /// Borrows a resolved pattern based on the given datetime
     pub(crate) fn select(&self, _datetime: &ExtractedDateTimeInput) -> ZonePatternDataBorrowed {
-        let Self::Components(components, pattern_item) = self;
-        ZonePatternDataBorrowed::Resolved(*components, pattern_item)
+        let Self::SinglePatternItem(pattern_item) = self;
+        ZonePatternDataBorrowed::SinglePatternItem(pattern_item)
     }
 }
 
@@ -258,7 +267,8 @@ impl DateTimePatternSelectionData {
                 Ok(Self::Time(selection))
             }
             NeoComponents::Zone(components) => {
-                let selection = ZonePatternSelectionData::from_components(components);
+                let (field_symbol, field_length) = components.to_field();
+                let selection = ZonePatternSelectionData::from_field(field_symbol, field_length);
                 Ok(Self::Zone(selection))
             }
             NeoComponents::DateTime(day_components, time_components) => {
@@ -279,19 +289,18 @@ impl DateTimePatternSelectionData {
         }
     }
 
-    /// Returns an iterator over the date and time pattern items that may need to be loaded.
-    /// Does NOT return time zone pattern items.
+    /// Returns an iterator over the pattern items that may need to be loaded.
     #[inline]
     pub(crate) fn pattern_items_for_data_loading(&self) -> impl Iterator<Item = PatternItem> + '_ {
-        let (date, time) = match self {
-            DateTimePatternSelectionData::Date(date) => (Some(date), None),
-            DateTimePatternSelectionData::Time(time) => (None, Some(time)),
-            DateTimePatternSelectionData::Zone(_zone) => (None, None),
+        let (date, time, zone) = match self {
+            DateTimePatternSelectionData::Date(date) => (Some(date), None, None),
+            DateTimePatternSelectionData::Time(time) => (None, Some(time), None),
+            DateTimePatternSelectionData::Zone(zone) => (None, None, Some(zone)),
             DateTimePatternSelectionData::DateTimeGlue(DateTimeGluePatternSelectionData {
                 date,
                 time,
                 glue: _,
-            }) => (Some(date), Some(time)),
+            }) => (Some(date), Some(time), None),
         };
         let date_items = date
             .into_iter()
@@ -299,17 +308,10 @@ impl DateTimePatternSelectionData {
         let time_items = time
             .into_iter()
             .flat_map(|x| x.pattern_items_for_data_loading());
-        date_items.chain(time_items)
-    }
-
-    pub(crate) fn zone_components(&self) -> Option<NeoZoneComponents> {
-        match self {
-            DateTimePatternSelectionData::Zone(ZonePatternSelectionData::Components(
-                components,
-                _,
-            )) => Some(*components),
-            _ => None,
-        }
+        let zone_items = zone
+            .into_iter()
+            .flat_map(|x| x.pattern_items_for_data_loading());
+        date_items.chain(time_items).chain(zone_items)
     }
 
     /// Borrows a resolved pattern based on the given datetime
@@ -379,20 +381,16 @@ impl<'a> DateTimePatternDataBorrowed<'a> {
     }
 
     #[inline]
-    pub(crate) fn metadata(self) -> AugmentedPatternMetadata {
-        let (metadata, zone_components) = match self {
-            Self::Date(DatePatternDataBorrowed::Resolved(pb)) => (pb.metadata, None),
-            Self::Time(TimePatternDataBorrowed::Resolved(pb)) => (pb.metadata, None),
-            Self::Zone(ZonePatternDataBorrowed::Resolved(components, _)) => (Default::default(), Some(components)),
+    pub(crate) fn metadata(self) -> PatternMetadata {
+        match self {
+            Self::Date(DatePatternDataBorrowed::Resolved(pb)) => pb.metadata,
+            Self::Time(TimePatternDataBorrowed::Resolved(pb)) => pb.metadata,
+            Self::Zone(_) => Default::default(),
             Self::DateTimeGlue {
                 date: DatePatternDataBorrowed::Resolved(date),
                 time: TimePatternDataBorrowed::Resolved(time),
                 ..
-            } => (PatternMetadata::merge_date_and_time_metadata(date.metadata, time.metadata), None),
-        };
-        AugmentedPatternMetadata {
-            metadata,
-            zone_components,
+            } => PatternMetadata::merge_date_and_time_metadata(date.metadata, time.metadata),
         }
     }
 
@@ -421,7 +419,7 @@ impl<'a> DateTimePatternDataBorrowed<'a> {
                     Err(2) => self
                         .zone_pattern()
                         .map(|data| match data {
-                            ZonePatternDataBorrowed::Resolved(_, item) => {
+                            ZonePatternDataBorrowed::SinglePatternItem(item) => {
                                 core::slice::from_ref(item)
                             }
                         })
@@ -436,7 +434,7 @@ impl<'a> DateTimePatternDataBorrowed<'a> {
         let pb = match self {
             Self::Date(DatePatternDataBorrowed::Resolved(pb)) => pb,
             Self::Time(TimePatternDataBorrowed::Resolved(pb)) => pb,
-            Self::Zone(ZonePatternDataBorrowed::Resolved(_, _item)) => todo!(),
+            Self::Zone(ZonePatternDataBorrowed::SinglePatternItem(_)) => todo!(),
             Self::DateTimeGlue { .. } => todo!(),
         };
         DateTimePattern::from_runtime_pattern(pb.as_pattern().into_owned())

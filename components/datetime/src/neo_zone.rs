@@ -4,18 +4,10 @@
 
 //! Types for neo time zone formatting.
 
-use crate::fields;
+use crate::fields::{self, Field, FieldSymbol, FieldLength};
 #[cfg(feature = "experimental")]
 use crate::neo_marker::private;
 use crate::time_zone::Iso8601TimeZoneStyle;
-
-/// Field for a custom time zone.
-///
-/// `vv` is currently unassigned.
-pub(crate) const CUSTOM_TIME_ZONE_FIELD: fields::Field = fields::Field {
-    symbol: fields::FieldSymbol::TimeZone(fields::TimeZone::LowerV),
-    length: fields::FieldLength::TwoDigit,
-};
 
 /// Time zone offset formatting style.
 #[derive(Debug, Copy, Clone)]
@@ -71,7 +63,7 @@ pub enum NeoZoneStyle {
 /// the time zone lengths are directly encoded into this enum.
 #[derive(Debug, Copy, Clone)]
 #[non_exhaustive]
-pub struct NeoZoneComponents {
+pub struct NeoZoneConfig {
     /// The primary time zone style.
     pub first: Option<NeoZoneStyle>,
     /// The fallback time zone style if the primary style is unavailable.
@@ -80,7 +72,7 @@ pub struct NeoZoneComponents {
     pub offset: NeoOffsetStyle,
 }
 
-impl NeoZoneComponents {
+impl NeoZoneConfig {
     pub(crate) fn from_field(
         field: fields::TimeZone,
         length: fields::FieldLength,
@@ -90,11 +82,6 @@ impl NeoZoneComponents {
             (fields::TimeZone::LowerV, fields::FieldLength::One) => Some(GenericShortOrGmt::ZONE_CONFIG),
             _ => todo!()
         }
-    }
-
-    pub(crate) fn to_field(self) -> fields::Field {
-        // TODO: Return real fields from here, too
-        CUSTOM_TIME_ZONE_FIELD
     }
 
     pub(crate) fn default_for_fallback() -> Self {
@@ -110,7 +97,9 @@ impl NeoZoneComponents {
 // TODO: Make this require sealed
 pub trait HasZoneComponents {
     /// The configuration for formatting this time zone.
-    const ZONE_CONFIG: NeoZoneComponents;
+    const ZONE_CONFIG: NeoZoneConfig;
+    /// The corresponding field.
+    const ZONE_FIELD: Field;
 }
 
 /// "GMT-8"
@@ -121,10 +110,14 @@ pub enum GmtShort {}
 impl private::Sealed for GmtShort {}
 
 impl HasZoneComponents for GmtShort {
-    const ZONE_CONFIG: NeoZoneComponents = NeoZoneComponents {
+    const ZONE_CONFIG: NeoZoneConfig = NeoZoneConfig {
         first: None,
         second: None,
         offset: NeoOffsetStyle::GmtShort,
+    };
+    const ZONE_FIELD: Field = Field {
+        symbol: FieldSymbol::TimeZone(fields::TimeZone::UpperO),
+        length: FieldLength::One,
     };
 }
 
@@ -136,10 +129,14 @@ pub enum GenericShortOrGmt {}
 impl private::Sealed for GenericShortOrGmt {}
 
 impl HasZoneComponents for GenericShortOrGmt {
-    const ZONE_CONFIG: NeoZoneComponents = NeoZoneComponents {
+    const ZONE_CONFIG: NeoZoneConfig = NeoZoneConfig {
         first: Some(NeoZoneStyle::GenericShort),
         second: None,
         offset: NeoOffsetStyle::GmtShort,
+    };
+    const ZONE_FIELD: Field = Field {
+        symbol: FieldSymbol::TimeZone(fields::TimeZone::LowerV),
+        length: FieldLength::TimeZoneFallbackOverride(fields::TimeZoneFallbackOverride::ShortOrGmt),
     };
 }
 
@@ -151,10 +148,14 @@ pub enum GenericLocationOrGmt {}
 impl private::Sealed for GenericLocationOrGmt {}
 
 impl HasZoneComponents for GenericLocationOrGmt {
-    const ZONE_CONFIG: NeoZoneComponents = NeoZoneComponents {
+    const ZONE_CONFIG: NeoZoneConfig = NeoZoneConfig {
         first: Some(NeoZoneStyle::GenericLocation),
         second: None,
         offset: NeoOffsetStyle::GmtShort,
+    };
+    const ZONE_FIELD: Field = Field {
+        symbol: FieldSymbol::TimeZone(fields::TimeZone::UpperV),
+        length: FieldLength::Wide,
     };
 }
 
@@ -166,9 +167,13 @@ pub enum GenericShortOrLocation {}
 impl private::Sealed for GenericShortOrLocation {}
 
 impl HasZoneComponents for GenericShortOrLocation {
-    const ZONE_CONFIG: NeoZoneComponents = NeoZoneComponents {
+    const ZONE_CONFIG: NeoZoneConfig = NeoZoneConfig {
         first: Some(NeoZoneStyle::GenericShort),
         second: Some(NeoZoneStyle::GenericLocation),
         offset: NeoOffsetStyle::GmtShort,
+    };
+    const ZONE_FIELD: Field = Field {
+        symbol: FieldSymbol::TimeZone(fields::TimeZone::LowerV),
+        length: FieldLength::One,
     };
 }
