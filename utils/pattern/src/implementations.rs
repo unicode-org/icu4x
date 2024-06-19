@@ -20,10 +20,12 @@ unsafe impl VarULE for Pattern<SinglePlaceholder, str> {
             .map_err(|_| ZeroVecError::VarZeroVecFormatError)?;
         Ok(())
     }
-
+    /// SAFETY: The `bytes` slice must be validated by `Self::validate_byte_slice`.
     unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
-        // SAFETY: The `bytes` slice must be validated by `Self::validate_byte_slice`.
+        // SAFETY: This is safe because if the bytes are confirmed to be valid UTF-8, using from_utf8_unchecked is safe.
         let store = core::str::from_utf8_unchecked(bytes);
+
+        // SAFETY: This is safe if the store is confirmed to be valid Store.
         SinglePlaceholderPattern::from_borrowed_store_unchecked(store)
     }
 }
