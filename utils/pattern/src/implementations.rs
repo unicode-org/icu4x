@@ -8,6 +8,7 @@ use crate::{Pattern, SinglePlaceholder, SinglePlaceholderPattern};
 use alloc::boxed::Box;
 use zerovec::{maps::ZeroMapKV, ule::VarULE, VarZeroSlice, VarZeroVec, ZeroVecError};
 
+#[cfg(feature = "alloc")]
 impl<'a> ZeroMapKV<'a> for Pattern<SinglePlaceholder, str> {
     type Container = VarZeroVec<'a, Pattern<SinglePlaceholder, str>>;
     type Slice = VarZeroSlice<Pattern<SinglePlaceholder, str>>;
