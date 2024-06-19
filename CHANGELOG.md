@@ -2,9 +2,11 @@
 
 ## icu4x 1.5.x
 
-- `icu_datetime`
+- `icu_datetime@1.5.1`, `icu_calendar@1.5.1`
   - Fix incorrect assertion in week-of-year formatting (https://github.com/unicode-org/icu4x/issues/4977)
   - Fix Japanese calendar Gregorian era year 0 (https://github.com/unicode-org/icu4x/issues/4968)
+- `icu_calendar@1.5.2`, `icu_properties@1.5.1`, `zerovec@0.10.3`,`zerovec_derive@0.10.3`
+  - Enforce C,packed, not just packed, on ULE types, fixing for incoming changes to `repr(Rust)` (https://github.com/unicode-org/icu4x/pull/5049)
 
 ## icu4x 1.5 (May 28, 2024)
 
