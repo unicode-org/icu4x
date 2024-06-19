@@ -168,7 +168,7 @@ impl<'a, B> Pattern<B, &'a B::Store>
 where
     B: PatternBackend,
 {
-    /// Creates a pattern from its store encoded as bytes.
+    /// Creates a pattern from its store encoded as UTF-8.
     ///
     /// # Examples
     ///
@@ -176,13 +176,13 @@ where
     /// use icu_pattern::Pattern;
     /// use icu_pattern::SinglePlaceholder;
     ///
-    /// Pattern::<SinglePlaceholder, _>::try_from_bytes_store(b"\x01 days")
+    /// Pattern::<SinglePlaceholder, _>::try_from_utf8_store(b"\x01 days")
     ///     .expect("single placeholder pattern");
     /// ```
-    pub fn try_from_bytes_store(
-        bytes: &'a [u8],
+    pub fn try_from_utf8_store(
+        code_units: &'a [u8],
     ) -> Result<Self, PatternOrUtf8Error<B::StoreFromBytesError>> {
-        let store = B::try_store_from_bytes(bytes).map_err(PatternOrUtf8Error::Utf8)?;
+        let store = B::try_store_from_utf8(code_units).map_err(PatternOrUtf8Error::Utf8)?;
         B::validate_store(store).map_err(PatternOrUtf8Error::Pattern)?;
         Ok(Self {
             _backend: PhantomData,

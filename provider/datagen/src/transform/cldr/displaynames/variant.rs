@@ -10,7 +10,6 @@ use icu::experimental::displaynames::provider::*;
 use icu::locale::{subtags::Variant, ParseError};
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
-use std::str::FromStr;
 
 impl DataProvider<VariantDisplayNamesV1Marker> for DatagenProvider {
     fn load(
@@ -66,7 +65,10 @@ impl TryFrom<&cldr_serde::displaynames::variant::Resource> for VariantDisplayNam
         for entry in other.main.value.localedisplaynames.variants.iter() {
             // TODO: Support alt variants for variant display names.
             if !entry.0.contains(ALT_SUBSTRING) {
-                names.insert(Variant::from_str(entry.0)?.into_tinystr(), entry.1.as_str());
+                names.insert(
+                    Variant::try_from_str(entry.0)?.into_tinystr(),
+                    entry.1.as_str(),
+                );
             }
         }
         Ok(Self {

@@ -155,7 +155,6 @@ impl ZonedDateTimeFormatter {
     /// use icu::datetime::ZonedDateTimeFormatter;
     /// use icu::locale::locale;
     /// use icu::timezone::CustomTimeZone;
-    /// use std::str::FromStr;
     /// use writeable::assert_writeable_eq;
     ///
     /// let mut options = components::Bag::default();
@@ -174,7 +173,7 @@ impl ZonedDateTimeFormatter {
     ///
     /// let datetime =
     ///     DateTime::try_new_iso_datetime(2021, 04, 08, 16, 12, 37).unwrap();
-    /// let time_zone = CustomTimeZone::from_str("-07:00").unwrap();
+    /// let time_zone = CustomTimeZone::try_from_str("-07:00").unwrap();
     /// let any_datetime = datetime.to_any();
     ///
     /// assert_writeable_eq!(
@@ -330,7 +329,6 @@ impl ZonedDateTimeFormatter {
     /// use icu::datetime::ZonedDateTimeFormatter;
     /// use icu::locale::locale;
     /// use icu::timezone::CustomTimeZone;
-    /// use std::str::FromStr;
     /// use writeable::assert_writeable_eq;
     ///
     /// let options = length::Bag::from_date_time_style(
@@ -348,7 +346,7 @@ impl ZonedDateTimeFormatter {
     ///
     /// let datetime =
     ///     DateTime::try_new_iso_datetime(2021, 04, 08, 16, 12, 37).unwrap();
-    /// let time_zone = CustomTimeZone::from_str("-07:00").unwrap();
+    /// let time_zone = CustomTimeZone::try_from_str("-07:00").unwrap();
     /// let any_datetime = datetime.to_any();
     ///
     /// assert_writeable_eq!(
@@ -576,7 +574,6 @@ fn buffer_constructor() {
     use icu::datetime::ZonedDateTimeFormatter;
     use icu::locale::locale;
     use icu::timezone::CustomTimeZone;
-    use std::str::FromStr;
     use writeable::assert_writeable_eq;
 
     let provider = icu_provider_blob::BlobDataProvider::try_new_from_static_blob(include_bytes!(
@@ -597,7 +594,7 @@ fn buffer_constructor() {
             &DateTime::try_new_iso_datetime(2021, 04, 08, 16, 12, 37)
                 .unwrap()
                 .to_any(),
-            &CustomTimeZone::from_str("-07:00").unwrap()
+            &CustomTimeZone::try_from_str("-07:00").unwrap()
         )
         .unwrap(),
         "Apr 8, 2021, 4:12:37 PM GMT-07:00"

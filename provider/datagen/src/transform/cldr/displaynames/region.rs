@@ -10,7 +10,6 @@ use icu::experimental::displaynames::provider::*;
 use icu::locale::subtags::Region;
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
-use std::str::FromStr;
 
 impl DataProvider<RegionDisplayNamesV1Marker> for DatagenProvider {
     fn load(
@@ -67,9 +66,9 @@ impl TryFrom<&cldr_serde::displaynames::region::Resource> for RegionDisplayNames
         let mut short_names = BTreeMap::new();
         for (region, value) in other.main.value.localedisplaynames.regions.iter() {
             if let Some(region) = region.strip_suffix(SHORT_SUBSTRING) {
-                short_names.insert(Region::from_str(region)?.into_tinystr(), value.as_str());
+                short_names.insert(Region::try_from_str(region)?.into_tinystr(), value.as_str());
             } else if !region.contains(ALT_SUBSTRING) {
-                names.insert(Region::from_str(region)?.into_tinystr(), value.as_str());
+                names.insert(Region::try_from_str(region)?.into_tinystr(), value.as_str());
             }
         }
         Ok(Self {

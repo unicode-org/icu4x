@@ -25,21 +25,21 @@ public:
 
   inline std::string basename() const;
 
-  inline std::optional<std::string> get_unicode_extension(std::string_view bytes) const;
+  inline std::optional<std::string> get_unicode_extension(std::string_view s) const;
 
   inline std::string language() const;
 
-  inline diplomat::result<std::monostate, ICU4XLocaleParseError> set_language(std::string_view bytes);
+  inline diplomat::result<std::monostate, ICU4XLocaleParseError> set_language(std::string_view s);
 
   inline std::optional<std::string> region() const;
 
-  inline diplomat::result<std::monostate, ICU4XLocaleParseError> set_region(std::string_view bytes);
+  inline diplomat::result<std::monostate, ICU4XLocaleParseError> set_region(std::string_view s);
 
   inline std::optional<std::string> script() const;
 
-  inline diplomat::result<std::monostate, ICU4XLocaleParseError> set_script(std::string_view bytes);
+  inline diplomat::result<std::monostate, ICU4XLocaleParseError> set_script(std::string_view s);
 
-  inline static diplomat::result<std::string, ICU4XLocaleParseError> canonicalize(std::string_view bytes);
+  inline static diplomat::result<std::string, ICU4XLocaleParseError> canonicalize(std::string_view s);
 
   inline std::string to_string() const;
 

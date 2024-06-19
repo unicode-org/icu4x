@@ -57,7 +57,7 @@ impl Fields {
     /// use icu::locale::locale;
     /// use icu::locale::Locale;
     ///
-    /// let loc1 = Locale::try_from_bytes(b"und-t-h0-hybrid").unwrap();
+    /// let loc1 = Locale::try_from_str("und-t-h0-hybrid").unwrap();
     /// let loc2 = locale!("und-u-ca-buddhist");
     ///
     /// assert!(!loc1.extensions.transform.fields.is_empty());

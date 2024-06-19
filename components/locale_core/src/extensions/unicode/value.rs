@@ -37,7 +37,7 @@ pub struct Value(ShortBoxSlice<Subtag>);
 const TRUE_VALUE: Subtag = subtag!("true");
 
 impl Value {
-    /// A constructor which takes a utf8 slice, parses it and
+    /// A constructor which str slice, parses it and
     /// produces a well-formed [`Value`].
     ///
     /// # Examples
@@ -45,14 +45,20 @@ impl Value {
     /// ```
     /// use icu::locale::extensions::unicode::Value;
     ///
-    /// Value::try_from_bytes(b"buddhist").expect("Parsing failed.");
+    /// Value::try_from_str("buddhist").expect("Parsing failed.");
     /// ```
-    pub fn try_from_bytes(input: &[u8]) -> Result<Self, ParseError> {
+    #[inline]
+    pub fn try_from_str(s: &str) -> Result<Self, ParseError> {
+        Self::try_from_utf8(s.as_bytes())
+    }
+
+    /// See [`Self::try_from_str`]
+    pub fn try_from_utf8(code_units: &[u8]) -> Result<Self, ParseError> {
         let mut v = ShortBoxSlice::new();
 
-        if !input.is_empty() {
-            for chunk in SubtagIterator::new(input) {
-                let subtag = Subtag::try_from_bytes(chunk)?;
+        if !code_units.is_empty() {
+            for chunk in SubtagIterator::new(code_units) {
+                let subtag = Subtag::try_from_utf8(chunk)?;
                 if subtag != TRUE_VALUE {
                     v.push(subtag);
                 }
@@ -109,15 +115,15 @@ impl Value {
     }
 
     pub(crate) fn parse_subtag(t: &[u8]) -> Result<Option<Subtag>, ParseError> {
-        Self::parse_subtag_from_bytes_manual_slice(t, 0, t.len())
+        Self::parse_subtag_from_utf8_manual_slice(t, 0, t.len())
     }
 
-    pub(crate) const fn parse_subtag_from_bytes_manual_slice(
-        bytes: &[u8],
+    pub(crate) const fn parse_subtag_from_utf8_manual_slice(
+        code_units: &[u8],
         start: usize,
         end: usize,
     ) -> Result<Option<Subtag>, ParseError> {
-        match Subtag::try_from_bytes_manual_slice(bytes, start, end) {
+        match Subtag::try_from_utf8_manual_slice(code_units, start, end) {
             Ok(TRUE_VALUE) => Ok(None),
             Ok(s) => Ok(Some(s)),
             Err(_) => Err(ParseError::InvalidSubtag),
@@ -135,8 +141,9 @@ impl Value {
 impl FromStr for Value {
     type Err = ParseError;
 
-    fn from_str(source: &str) -> Result<Self, Self::Err> {
-        Self::try_from_bytes(source.as_bytes())
+    #[inline]
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Self::try_from_str(s)
     }
 }
 
@@ -175,7 +182,7 @@ macro_rules! extensions_unicode_value {
         // Workaround until https://github.com/rust-lang/rust/issues/73255 lands:
         const R: $crate::extensions::unicode::Value =
             $crate::extensions::unicode::Value::from_subtag(
-                match $crate::subtags::Subtag::try_from_bytes($value.as_bytes()) {
+                match $crate::subtags::Subtag::try_from_utf8($value.as_bytes()) {
                     Ok(r) => Some(r),
                     _ => panic!(concat!("Invalid Unicode extension value: ", $value)),
                 },

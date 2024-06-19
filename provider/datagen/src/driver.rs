@@ -277,15 +277,15 @@ impl FromStr for LocaleFamily {
             .ok_or(LocaleFamilyParseError::InvalidFamily)?;
         match first {
             b'^' => Ok(Self {
-                langid: Some(LanguageIdentifier::try_from_bytes(remainder)?),
+                langid: Some(LanguageIdentifier::try_from_utf8(remainder)?),
                 annotations: LocaleFamilyAnnotations::without_descendants(),
             }),
             b'%' => Ok(Self {
-                langid: Some(LanguageIdentifier::try_from_bytes(remainder)?),
+                langid: Some(LanguageIdentifier::try_from_utf8(remainder)?),
                 annotations: LocaleFamilyAnnotations::without_ancestors(),
             }),
             b'@' => Ok(Self {
-                langid: Some(LanguageIdentifier::try_from_bytes(remainder)?),
+                langid: Some(LanguageIdentifier::try_from_utf8(remainder)?),
                 annotations: LocaleFamilyAnnotations::single(),
             }),
             b if b.is_ascii_alphanumeric() => Ok(Self {

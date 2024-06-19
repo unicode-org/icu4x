@@ -56,6 +56,24 @@ pub struct Other {
 }
 
 impl Other {
+    /// TODO
+    #[inline]
+    pub fn try_from_str(s: &str) -> Result<Self, ParseError> {
+        Self::try_from_utf8(s.as_bytes())
+    }
+
+    /// See [`Self::try_from_str`]
+    pub fn try_from_utf8(code_units: &[u8]) -> Result<Self, ParseError> {
+        let mut iter = SubtagIterator::new(code_units);
+
+        let ext = iter.next().ok_or(ParseError::InvalidExtension)?;
+        if let ExtensionType::Other(b) = ExtensionType::try_from_byte_slice(ext)? {
+            return Self::try_from_iter(b, &mut iter);
+        }
+
+        Err(ParseError::InvalidExtension)
+    }
+
     /// A constructor which takes a pre-sorted list of [`Subtag`].
     ///
     /// # Panics
@@ -83,17 +101,6 @@ impl Other {
         Self { ext, keys }
     }
 
-    pub(crate) fn try_from_bytes(t: &[u8]) -> Result<Self, ParseError> {
-        let mut iter = SubtagIterator::new(t);
-
-        let ext = iter.next().ok_or(ParseError::InvalidExtension)?;
-        if let ExtensionType::Other(b) = ExtensionType::try_from_byte_slice(ext)? {
-            return Self::try_from_iter(b, &mut iter);
-        }
-
-        Err(ParseError::InvalidExtension)
-    }
-
     pub(crate) fn try_from_iter(ext: u8, iter: &mut SubtagIterator) -> Result<Self, ParseError> {
         debug_assert!(matches!(
             ExtensionType::try_from_byte(ext),
@@ -105,7 +112,7 @@ impl Other {
             if !Subtag::valid_key(subtag) {
                 break;
             }
-            if let Ok(key) = Subtag::try_from_bytes(subtag) {
+            if let Ok(key) = Subtag::try_from_utf8(subtag) {
                 keys.push(key);
             }
             iter.next();
@@ -178,8 +185,9 @@ impl Other {
 impl FromStr for Other {
     type Err = ParseError;
 
-    fn from_str(source: &str) -> Result<Self, Self::Err> {
-        Self::try_from_bytes(source.as_bytes())
+    #[inline]
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Self::try_from_str(s)
     }
 }
 

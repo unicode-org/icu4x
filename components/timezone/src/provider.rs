@@ -72,7 +72,7 @@ pub struct TimeZoneBcp47Id(pub TinyAsciiStr<8>);
 impl FromStr for TimeZoneBcp47Id {
     type Err = tinystr::TinyStrError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        TinyAsciiStr::from_str(s).map(Into::into)
+        TinyAsciiStr::try_from_str(s).map(Into::into)
     }
 }
 
@@ -145,7 +145,7 @@ impl From<MetazoneId> for TinyAsciiStr<4> {
 impl FromStr for MetazoneId {
     type Err = tinystr::TinyStrError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        TinyAsciiStr::from_str(s).map(Into::into)
+        TinyAsciiStr::try_from_str(s).map(Into::into)
     }
 }
 

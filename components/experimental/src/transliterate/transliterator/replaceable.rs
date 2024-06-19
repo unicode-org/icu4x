@@ -724,17 +724,17 @@ impl<'a, 'b> Insertable<'a, 'b> {
     /// Push a `&str` on the replacement.
     pub(crate) fn push_str(&mut self, s: &str) {
         // SAFETY: s is valid UTF-8 by type
-        unsafe { self.push_bytes(s.as_bytes()) };
+        unsafe { self.push_utf8(s.as_bytes()) };
         debug_assert!(self.curr <= self.end());
     }
 
     /// # Safety
-    /// The caller must ensure that `bytes` is valid UTF-8.
-    unsafe fn push_bytes(&mut self, bytes: &[u8]) {
-        if self.free_range().len() >= bytes.len() {
+    /// The caller must ensure that `code_units` is valid UTF-8.
+    unsafe fn push_utf8(&mut self, code_units: &[u8]) {
+        if self.free_range().len() >= code_units.len() {
             // SAFETY: The caller guarantees these are valid UTF-8
-            self._rep.content[self.curr..self.curr + bytes.len()].copy_from_slice(bytes);
-            self.curr += bytes.len();
+            self._rep.content[self.curr..self.curr + code_units.len()].copy_from_slice(code_units);
+            self.curr += code_units.len();
             return;
         }
         // eprintln!("WARNING: free space not sufficient for Insertable::push_bytes");
@@ -742,7 +742,7 @@ impl<'a, 'b> Insertable<'a, 'b> {
         // SAFETY: The caller guarantees these are valid UTF-8
         self._rep
             .content
-            .splice(self.free_range(), bytes.iter().copied());
+            .splice(self.free_range(), code_units.iter().copied());
         // SAFETY: The free range did not have enough space. The above splice replaces the completey
         // remaining free range with the replacement, so there are no more un-replaced bytes left
         // in the replacement range.

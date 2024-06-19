@@ -166,7 +166,7 @@ impl IterableDataProvider<HelloWorldV1Marker> for ManyLocalesProvider {
                 for i2 in LOWERCASE {
                     bytes[2] = i2;
                     let locale =
-                        LanguageIdentifier::try_from_bytes(&bytes).expect("locale must parse");
+                        LanguageIdentifier::try_from_utf8(&bytes).expect("locale must parse");
                     r.insert((locale.into(), Default::default()));
                 }
             }
