@@ -4,11 +4,9 @@
 
 use crate::{Pattern, SinglePlaceholder, SinglePlaceholderPattern};
 
-#[cfg(feature = "alloc")]
 use alloc::boxed::Box;
 use zerovec::{maps::ZeroMapKV, ule::VarULE, VarZeroSlice, VarZeroVec, ZeroVecError};
 
-#[cfg(feature = "alloc")]
 impl<'a> ZeroMapKV<'a> for Pattern<SinglePlaceholder, str> {
     type Container = VarZeroVec<'a, Pattern<SinglePlaceholder, str>>;
     type Slice = VarZeroSlice<Pattern<SinglePlaceholder, str>>;
@@ -16,7 +14,6 @@ impl<'a> ZeroMapKV<'a> for Pattern<SinglePlaceholder, str> {
     type OwnedType = Box<Pattern<SinglePlaceholder, str>>;
 }
 
-#[cfg(feature = "alloc")]
 unsafe impl VarULE for Pattern<SinglePlaceholder, str> {
     fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
         SinglePlaceholderPattern::try_from_bytes_store(bytes)
