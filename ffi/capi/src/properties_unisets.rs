@@ -16,7 +16,6 @@ pub mod ffi {
     /// An ICU4X Unicode Set Property object, capable of querying whether a code point is contained in a set based on a Unicode property.
     #[diplomat::rust_link(icu::properties, Mod)]
     #[diplomat::rust_link(icu::properties::sets::UnicodeSetData, Struct)]
-    #[diplomat::rust_link(icu::properties::sets::UnicodeSetData::from_data, FnInStruct, hidden)]
     #[diplomat::rust_link(icu::properties::sets::UnicodeSetDataBorrowed, Struct)]
     pub struct ICU4XUnicodeSetData(pub sets::UnicodeSetData);
 
