@@ -14,7 +14,7 @@ homepage.workspace = true
 include.workspace = true
 repository.workspace = true
 rust-version.workspace = true
-version.workspace = true
+version = "1.4.1"
 
 [package.metadata.docs.rs]
 all-features = true
