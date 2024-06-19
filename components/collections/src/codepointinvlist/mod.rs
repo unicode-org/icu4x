@@ -25,7 +25,7 @@
 //! };
 //!
 //! let mut builder = CodePointInversionListBuilder::new();
-//! builder.add_range(&('A'..='Z'));
+//! builder.add_range('A'..='Z');
 //! let set: CodePointInversionList = builder.build();
 //!
 //! assert!(set.contains('A'));
@@ -41,11 +41,11 @@
 //! };
 //!
 //! let mut builder = CodePointInversionListBuilder::new();
-//! builder.add_range(&('A'..='Z'));
+//! builder.add_range('A'..='Z');
 //! let set: CodePointInversionList = builder.build();
 //!
 //! assert!(set.contains('A'));
-//! assert!(set.contains_range(&('A'..='C')));
+//! assert!(set.contains_range('A'..='C'));
 //! assert_eq!(set.iter_chars().next(), Some('A'));
 //! ```
 //!
