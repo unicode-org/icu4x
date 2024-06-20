@@ -104,8 +104,16 @@ impl SubdivisionId {
         Self { region, suffix }
     }
 
-    pub(crate) fn try_from_bytes(input: &[u8]) -> Result<Self, ParseError> {
-        let is_alpha = input
+    /// A constructor which takes a str slice, parses it and
+    /// produces a well-formed [`SubdivisionId`].
+    #[inline]
+    pub fn try_from_str(s: &str) -> Result<Self, ParseError> {
+        Self::try_from_utf8(s.as_bytes())
+    }
+
+    /// See [`Self::try_from_str`]
+    pub fn try_from_utf8(code_units: &[u8]) -> Result<Self, ParseError> {
+        let is_alpha = code_units
             .first()
             .and_then(|b| {
                 b.is_ascii_alphabetic()
@@ -114,13 +122,13 @@ impl SubdivisionId {
             })
             .ok_or(ParseError::InvalidExtension)?;
         let region_len = if is_alpha { 2 } else { 3 };
-        if input.len() < region_len + 1 {
+        if code_units.len() < region_len + 1 {
             return Err(ParseError::InvalidExtension);
         }
-        let (region_bytes, suffix_bytes) = input.split_at(region_len);
+        let (region_code_units, suffix_code_units) = code_units.split_at(region_len);
         let region =
-            Region::try_from_bytes(region_bytes).map_err(|_| ParseError::InvalidExtension)?;
-        let suffix = SubdivisionSuffix::try_from_bytes(suffix_bytes)?;
+            Region::try_from_utf8(region_code_units).map_err(|_| ParseError::InvalidExtension)?;
+        let suffix = SubdivisionSuffix::try_from_utf8(suffix_code_units)?;
         Ok(Self { region, suffix })
     }
 }
@@ -143,8 +151,9 @@ writeable::impl_display_with_writeable!(SubdivisionId);
 impl FromStr for SubdivisionId {
     type Err = ParseError;
 
+    #[inline]
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        Self::try_from_bytes(s.as_bytes())
+        Self::try_from_str(s)
     }
 }
 

@@ -20,9 +20,7 @@ struct_keyword!(
             .ok_or(PreferencesParseError::InvalidKeywordValue)
     },
     |input: RegionOverride| {
-        Value::from_subtag(Some(
-            Subtag::try_from_bytes(input.0.to_string().as_bytes()).unwrap(),
-        ))
+        Value::from_subtag(Some(Subtag::try_from_str(&input.0.to_string()).unwrap()))
     }
 );
 
@@ -56,7 +54,7 @@ mod test {
         assert_eq!(rg.0.suffix, subdivision_suffix!("zzzz"));
 
         for i in &["4aabel", "a4bel", "ukabcde"] {
-            let val = unicode::Value::try_from_bytes(i.as_bytes()).unwrap();
+            let val = unicode::Value::try_from_str(i).unwrap();
             let rg: Result<RegionOverride, _> = val.try_into();
             assert!(rg.is_err());
         }
