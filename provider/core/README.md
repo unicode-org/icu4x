@@ -36,7 +36,7 @@ The [`DynamicDataProvider`] is still type-level parametrized by the type that it
 implementations that should be called out
 
 - [`DynamicDataProvider<AnyMarker>`], and [`AnyProvider`] (a slightly optimized alternative) return data as `dyn Any` trait objects.
-- [`DynamicDataProvider<BufferMarker>`], a.k.a. [`BufferProvider`] returns data as `[u8]` buffers.
+- [`DynamicDataProvider<BufferMarker>`], a.k.a. [`BufferProvider`](buf::BufferProvider) returns data as `[u8]` buffers.
 
 #### AnyProvider
 
@@ -98,8 +98,8 @@ data generation implementation.
 [`impl_dynamic_data_provider!`]: impl_dynamic_data_provider
 [`icu_provider_adapters`]: ../icu_provider_adapters/index.html
 [`DatagenProvider`]: ../icu_datagen/struct.DatagenProvider.html
-[`as_downcasting()`]: AsDowncastingAnyProvider::as_downcasting
-[`as_deserializing()`]: AsDeserializingBufferProvider::as_deserializing
+[`as_downcasting()`]: any::AsDowncastingAnyProvider::as_downcasting
+[`as_deserializing()`]: serde::AsDeserializingBufferProvider::as_deserializing
 [`CldrJsonDataProvider`]: ../icu_datagen/cldr/struct.CldrJsonDataProvider.html
 [`FsDataProvider`]: ../icu_provider_fs/struct.FsDataProvider.html
 [`BlobDataProvider`]: ../icu_provider_blob/struct.BlobDataProvider.html
