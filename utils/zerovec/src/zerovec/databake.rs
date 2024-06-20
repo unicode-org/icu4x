@@ -6,10 +6,7 @@ use super::ZeroVec;
 use crate::{ule::AsULE, ZeroSlice};
 use databake::*;
 
-impl<T> Bake for ZeroVec<'_, T>
-where
-    T: AsULE + ?Sized + Bake,
-{
+impl<T: AsULE> Bake for ZeroVec<'_, T> {
     fn bake(&self, env: &CrateEnv) -> TokenStream {
         env.insert("zerovec");
         if self.is_empty() {
@@ -21,10 +18,7 @@ where
     }
 }
 
-impl<T> Bake for &ZeroSlice<T>
-where
-    T: AsULE + ?Sized,
-{
+impl<T: AsULE> Bake for &ZeroSlice<T> {
     fn bake(&self, env: &CrateEnv) -> TokenStream {
         env.insert("zerovec");
         if self.is_empty() {

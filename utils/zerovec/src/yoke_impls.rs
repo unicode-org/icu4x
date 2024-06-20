@@ -20,7 +20,7 @@ use yoke::*;
 
 // This impl is similar to the impl on Cow and is safe for the same reasons
 /// This impl requires enabling the optional `yoke` Cargo feature of the `zerovec` crate
-unsafe impl<'a, T: 'static + AsULE + ?Sized> Yokeable<'a> for ZeroVec<'static, T> {
+unsafe impl<'a, T: 'static + AsULE> Yokeable<'a> for ZeroVec<'static, T> {
     type Output = ZeroVec<'a, T>;
     #[inline]
     fn transform(&'a self) -> &'a Self::Output {

@@ -6,7 +6,7 @@
 //! which represent different fields of the structure.
 //!
 //! * [`Language`] is the only mandatory field, which when empty,
-//! takes the value `und`.
+//!   takes the value `und`.
 //! * [`Script`] is an optional field representing the written script used by the locale.
 //! * [`Region`] is the region used by the locale.
 //! * [`Variants`] is a list of optional [`Variant`] subtags containing information about the

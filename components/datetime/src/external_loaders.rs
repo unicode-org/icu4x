@@ -36,6 +36,7 @@ pub(crate) trait AnyCalendarLoader {
 }
 
 /// Helper for type resolution with optional loader arguments
+#[allow(dead_code)]
 pub(crate) struct PhantomLoader {
     _not_constructible: core::convert::Infallible,
 }

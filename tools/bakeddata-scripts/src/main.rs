@@ -102,7 +102,7 @@ fn main() {
 
         let _ = std::fs::remove_dir_all(&path);
         for dir in ["", "src", "data"] {
-            std::fs::create_dir(&path.join(dir)).unwrap();
+            std::fs::create_dir(path.join(dir)).unwrap();
         }
         for (file, template) in [
             ("build.rs", include_str!("../template/build.rs.template")),
