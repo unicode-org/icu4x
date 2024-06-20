@@ -164,7 +164,11 @@ impl DataPayload<HelloWorldV1Marker> {
 
 // AnyProvider support.
 #[cfg(not(feature = "datagen"))]
-icu_provider::dynutil::impl_dynamic_data_provider!(HelloWorldProvider, [HelloWorldV1Marker,], AnyMarker);
+icu_provider::dynutil::impl_dynamic_data_provider!(
+    HelloWorldProvider,
+    [HelloWorldV1Marker,],
+    AnyMarker
+);
 
 #[cfg(feature = "deserialize_json")]
 /// A data provider returning Hello World strings in different languages as JSON blobs.
