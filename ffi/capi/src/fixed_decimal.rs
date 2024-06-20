@@ -2,11 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use fixed_decimal::RoundingIncrement;
-use fixed_decimal::RoundingMode;
-use fixed_decimal::Sign;
-use fixed_decimal::SignDisplay;
-
 #[diplomat::bridge]
 pub mod ffi {
     use alloc::boxed::Box;
@@ -21,6 +16,7 @@ pub mod ffi {
 
     /// The sign of a FixedDecimal, as shown in formatting.
     #[diplomat::rust_link(fixed_decimal::Sign, Enum)]
+    #[diplomat::enum_convert(fixed_decimal::Sign, needs_wildcard)]
     pub enum ICU4XFixedDecimalSign {
         /// No sign (implicitly positive, e.g., 1729).
         None,
@@ -32,6 +28,7 @@ pub mod ffi {
 
     /// ECMA-402 compatible sign display preference.
     #[diplomat::rust_link(fixed_decimal::SignDisplay, Enum)]
+    #[diplomat::enum_convert(fixed_decimal::SignDisplay, needs_wildcard)]
     pub enum ICU4XFixedDecimalSignDisplay {
         Auto,
         Never,
@@ -42,6 +39,7 @@ pub mod ffi {
 
     /// Increment used in a rounding operation.
     #[diplomat::rust_link(fixed_decimal::RoundingIncrement, Enum)]
+    #[diplomat::enum_convert(fixed_decimal::RoundingIncrement, needs_wildcard)]
     pub enum ICU4XFixedDecimalRoundingIncrement {
         MultiplesOf1,
         MultiplesOf2,
@@ -51,6 +49,7 @@ pub mod ffi {
 
     /// Mode used in a rounding operation.
     #[diplomat::rust_link(fixed_decimal::RoundingMode, Enum)]
+    #[diplomat::enum_convert(fixed_decimal::RoundingMode, needs_wildcard)]
     pub enum ICU4XFixedDecimalRoundingMode {
         Ceil,
         Expand,
@@ -343,73 +342,6 @@ pub mod ffi {
         #[diplomat::attr(supports = stringifiers, stringifier)]
         pub fn to_string(&self, to: &mut diplomat_runtime::DiplomatWrite) {
             let _ = self.0.write_to(to);
-        }
-    }
-}
-
-impl From<ffi::ICU4XFixedDecimalSign> for Sign {
-    fn from(other: ffi::ICU4XFixedDecimalSign) -> Self {
-        match other {
-            ffi::ICU4XFixedDecimalSign::None => Self::None,
-            ffi::ICU4XFixedDecimalSign::Negative => Self::Negative,
-            ffi::ICU4XFixedDecimalSign::Positive => Self::Positive,
-        }
-    }
-}
-
-impl From<Sign> for ffi::ICU4XFixedDecimalSign {
-    fn from(other: Sign) -> Self {
-        match other {
-            Sign::None => Self::None,
-            Sign::Negative => Self::Negative,
-            Sign::Positive => Self::Positive,
-        }
-    }
-}
-
-impl From<ffi::ICU4XFixedDecimalSignDisplay> for SignDisplay {
-    fn from(other: ffi::ICU4XFixedDecimalSignDisplay) -> Self {
-        match other {
-            ffi::ICU4XFixedDecimalSignDisplay::Auto => Self::Auto,
-            ffi::ICU4XFixedDecimalSignDisplay::Never => Self::Never,
-            ffi::ICU4XFixedDecimalSignDisplay::Always => Self::Always,
-            ffi::ICU4XFixedDecimalSignDisplay::ExceptZero => Self::ExceptZero,
-            ffi::ICU4XFixedDecimalSignDisplay::Negative => Self::Negative,
-        }
-    }
-}
-
-impl From<ffi::ICU4XFixedDecimalRoundingIncrement> for RoundingIncrement {
-    fn from(value: ffi::ICU4XFixedDecimalRoundingIncrement) -> Self {
-        match value {
-            ffi::ICU4XFixedDecimalRoundingIncrement::MultiplesOf1 => {
-                RoundingIncrement::MultiplesOf1
-            }
-            ffi::ICU4XFixedDecimalRoundingIncrement::MultiplesOf2 => {
-                RoundingIncrement::MultiplesOf2
-            }
-            ffi::ICU4XFixedDecimalRoundingIncrement::MultiplesOf5 => {
-                RoundingIncrement::MultiplesOf5
-            }
-            ffi::ICU4XFixedDecimalRoundingIncrement::MultiplesOf25 => {
-                RoundingIncrement::MultiplesOf25
-            }
-        }
-    }
-}
-
-impl From<ffi::ICU4XFixedDecimalRoundingMode> for RoundingMode {
-    fn from(value: ffi::ICU4XFixedDecimalRoundingMode) -> Self {
-        match value {
-            ffi::ICU4XFixedDecimalRoundingMode::Ceil => RoundingMode::Ceil,
-            ffi::ICU4XFixedDecimalRoundingMode::Expand => RoundingMode::Expand,
-            ffi::ICU4XFixedDecimalRoundingMode::Floor => RoundingMode::Floor,
-            ffi::ICU4XFixedDecimalRoundingMode::Trunc => RoundingMode::Trunc,
-            ffi::ICU4XFixedDecimalRoundingMode::HalfCeil => RoundingMode::HalfCeil,
-            ffi::ICU4XFixedDecimalRoundingMode::HalfExpand => RoundingMode::HalfExpand,
-            ffi::ICU4XFixedDecimalRoundingMode::HalfFloor => RoundingMode::HalfFloor,
-            ffi::ICU4XFixedDecimalRoundingMode::HalfTrunc => RoundingMode::HalfTrunc,
-            ffi::ICU4XFixedDecimalRoundingMode::HalfEven => RoundingMode::HalfEven,
         }
     }
 }
