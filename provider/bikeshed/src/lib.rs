@@ -39,7 +39,6 @@ mod decimal;
 #[cfg(feature = "experimental")]
 mod displaynames;
 mod fallback;
-mod hello_world;
 mod list;
 mod locale_canonicalizer;
 mod normalizer;
@@ -316,40 +315,20 @@ impl DatagenProvider {
 impl DatagenProvider {
     fn check_req<M: DataMarker>(&self, req: DataRequest) -> Result<(), DataError>
     where
-        DatagenProvider: IterableDataProvider<M>,
+        DatagenProvider: IterableDataProviderCached<M>,
     {
         if <M as DataMarker>::INFO.is_singleton && !req.locale.is_empty() {
             Err(DataErrorKind::ExtraneousLocale)
-        } else if !self.supports_request(req.locale, req.marker_attributes)? {
+        } else if !self.populate_supported_requests_cache()?.contains(&(
+            Cow::Borrowed(req.locale),
+            Cow::Borrowed(req.marker_attributes),
+        )) {
             Err(DataErrorKind::MissingLocale)
         } else {
             Ok(())
         }
         .map_err(|e| e.with_req(<M as DataMarker>::INFO, req))
     }
-}
-
-#[test]
-fn test_missing_locale() {
-    use icu::locale::langid;
-    use icu_provider::hello_world::*;
-    let provider = DatagenProvider::new_testing();
-    assert!(DataProvider::<HelloWorldV1Marker>::load(
-        &provider,
-        DataRequest {
-            locale: &langid!("fi").into(),
-            ..Default::default()
-        }
-    )
-    .is_ok());
-    assert!(DataProvider::<HelloWorldV1Marker>::load(
-        &provider,
-        DataRequest {
-            locale: &langid!("arc").into(),
-            ..Default::default()
-        }
-    )
-    .is_err());
 }
 
 trait IterableDataProviderCached<M: DataMarker>: DataProvider<M> {
@@ -389,16 +368,6 @@ where
             .iter()
             .map(|(k, v)| (k.clone().into_owned(), v.clone().into_owned()))
             .collect())
-    }
-
-    fn supports_request(
-        &self,
-        locale: &DataLocale,
-        marker_attributes: &DataMarkerAttributes,
-    ) -> Result<bool, DataError> {
-        Ok(self
-            .populate_supported_requests_cache()?
-            .contains(&(Cow::Borrowed(locale), Cow::Borrowed(marker_attributes))))
     }
 }
 

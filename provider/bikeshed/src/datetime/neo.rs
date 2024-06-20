@@ -17,7 +17,6 @@ use icu::locale::{
     extensions::unicode::{value, Value},
     LanguageIdentifier,
 };
-use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::borrow::Cow;
 use std::collections::{BTreeMap, HashSet};
@@ -107,7 +106,7 @@ impl DatagenProvider {
         ) -> Result<M::Yokeable, DataError>,
     ) -> Result<DataResponse<M>, DataError>
     where
-        Self: IterableDataProvider<M>,
+        Self: IterableDataProviderCached<M>,
     {
         self.check_req::<M>(req)?;
         let langid = req.locale.get_langid();
@@ -139,7 +138,7 @@ impl DatagenProvider {
         ) -> Result<M::Yokeable, DataError>,
     ) -> Result<DataResponse<M>, DataError>
     where
-        Self: IterableDataProvider<M>,
+        Self: IterableDataProviderCached<M>,
     {
         self.load_neo_key(req, &calendar, |langid, data, aux| {
             let Some((context, length)) = marker_attrs::symbol_marker_attr_info(aux) else {
@@ -160,7 +159,7 @@ impl DatagenProvider {
         ) -> Result<M::Yokeable, DataError>,
     ) -> Result<DataResponse<M>, DataError>
     where
-        Self: IterableDataProvider<M>,
+        Self: IterableDataProviderCached<M>,
     {
         self.load_neo_key(req, &calendar, |_langid, data, aux| {
             let Some((length, hc)) = marker_attrs::pattern_marker_attr_info(aux) else {

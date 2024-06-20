@@ -48,8 +48,10 @@ impl DataProvider<CaseMapV1Marker> for DatagenProvider {
     }
 }
 
-impl icu_provider::datagen::IterableDataProvider<CaseMapV1Marker> for DatagenProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+impl crate::IterableDataProviderCached<CaseMapV1Marker> for DatagenProvider {
+    fn supported_requests_cached(
+        &self,
+    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
@@ -75,8 +77,10 @@ impl DataProvider<CaseMapUnfoldV1Marker> for DatagenProvider {
     }
 }
 
-impl icu_provider::datagen::IterableDataProvider<CaseMapUnfoldV1Marker> for DatagenProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+impl crate::IterableDataProviderCached<CaseMapUnfoldV1Marker> for DatagenProvider {
+    fn supported_requests_cached(
+        &self,
+    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }

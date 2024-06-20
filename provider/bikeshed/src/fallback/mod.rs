@@ -11,7 +11,6 @@ use icu::locale::{
     subtags::{Language, Region, Script},
     LanguageIdentifier,
 };
-use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
 use writeable::Writeable;
@@ -52,14 +51,18 @@ impl DataProvider<LocaleFallbackParentsV1Marker> for DatagenProvider {
     }
 }
 
-impl IterableDataProvider<LocaleFallbackLikelySubtagsV1Marker> for DatagenProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+impl crate::IterableDataProviderCached<LocaleFallbackLikelySubtagsV1Marker> for DatagenProvider {
+    fn supported_requests_cached(
+        &self,
+    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
 
-impl IterableDataProvider<LocaleFallbackParentsV1Marker> for DatagenProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+impl crate::IterableDataProviderCached<LocaleFallbackParentsV1Marker> for DatagenProvider {
+    fn supported_requests_cached(
+        &self,
+    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }

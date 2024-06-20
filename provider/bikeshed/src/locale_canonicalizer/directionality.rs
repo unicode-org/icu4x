@@ -8,7 +8,6 @@ use crate::cldr_serde;
 use crate::DatagenProvider;
 use icu::locale::provider::*;
 
-use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 
 impl DataProvider<ScriptDirectionV1Marker> for DatagenProvider {
@@ -23,8 +22,10 @@ impl DataProvider<ScriptDirectionV1Marker> for DatagenProvider {
     }
 }
 
-impl IterableDataProvider<ScriptDirectionV1Marker> for DatagenProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+impl crate::IterableDataProviderCached<ScriptDirectionV1Marker> for DatagenProvider {
+    fn supported_requests_cached(
+        &self,
+    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }

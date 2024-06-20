@@ -8,7 +8,6 @@ use icu::locale::langid;
 use icu::segmenter::provider::DictionaryForWordLineExtendedV1Marker;
 use icu::segmenter::provider::DictionaryForWordOnlyAutoV1Marker;
 use icu::segmenter::provider::UCharDictionaryBreakDataV1;
-use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 use std::fmt::Debug;

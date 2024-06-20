@@ -7,7 +7,6 @@ use std::collections::HashSet;
 use crate::DatagenProvider;
 use calendrical_calculations::chinese_based::{Chinese, ChineseBased, Dangi};
 use icu::calendar::provider::chinese_based::*;
-use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 
 const YEARS: i32 = 250;
@@ -41,14 +40,18 @@ impl DataProvider<DangiCacheV1Marker> for DatagenProvider {
     }
 }
 
-impl IterableDataProvider<ChineseCacheV1Marker> for DatagenProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+impl crate::IterableDataProviderCached<ChineseCacheV1Marker> for DatagenProvider {
+    fn supported_requests_cached(
+        &self,
+    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
 
-impl IterableDataProvider<DangiCacheV1Marker> for DatagenProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+impl crate::IterableDataProviderCached<DangiCacheV1Marker> for DatagenProvider {
+    fn supported_requests_cached(
+        &self,
+    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }

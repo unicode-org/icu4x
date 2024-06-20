@@ -9,7 +9,6 @@ use icu::properties::provider::{
 };
 use icu::properties::script::ScriptWithExt;
 use icu::properties::Script;
-use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 use std::convert::TryFrom;
@@ -64,8 +63,10 @@ impl DataProvider<ScriptWithExtensionsPropertyV1Marker> for DatagenProvider {
     }
 }
 
-impl IterableDataProvider<ScriptWithExtensionsPropertyV1Marker> for DatagenProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+impl crate::IterableDataProviderCached<ScriptWithExtensionsPropertyV1Marker> for DatagenProvider {
+    fn supported_requests_cached(
+        &self,
+    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }

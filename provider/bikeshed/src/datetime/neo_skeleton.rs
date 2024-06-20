@@ -31,7 +31,7 @@ impl DatagenProvider {
     ) -> Result<DataResponse<M>, DataError>
     where
         M: DataMarker<Yokeable = PackedSkeletonDataV1<'static>>,
-        Self: icu_provider::datagen::IterableDataProvider<M>,
+        Self: crate::IterableDataProviderCached<M>,
     {
         self.check_req::<M>(req)?;
         let id_str = req
