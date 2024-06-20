@@ -56,7 +56,8 @@ pub struct Other {
 }
 
 impl Other {
-    /// TODO
+    /// A constructor which takes a str slice, parses it and
+    /// produces a well-formed [`Other`].
     #[inline]
     pub fn try_from_str(s: &str) -> Result<Self, ParseError> {
         Self::try_from_utf8(s.as_bytes())
