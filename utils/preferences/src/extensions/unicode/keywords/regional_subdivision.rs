@@ -22,9 +22,7 @@ struct_keyword!(
             .ok_or(PreferencesParseError::InvalidKeywordValue)
     },
     |input: RegionalSubdivision| {
-        Value::from_subtag(Some(
-            Subtag::try_from_bytes(input.0.to_string().as_bytes()).unwrap(),
-        ))
+        Value::from_subtag(Some(Subtag::try_from_str(&input.0.to_string()).unwrap()))
     }
 );
 
@@ -51,7 +49,7 @@ mod test {
         assert_eq!(rg.suffix, subdivision_suffix!("sct"));
 
         for i in &["4aabel", "a4bel", "ukabcde"] {
-            let val = unicode::Value::try_from_bytes(i.as_bytes()).unwrap();
+            let val = unicode::Value::try_from_str(i).unwrap();
             let rg: Result<RegionalSubdivision, _> = val.try_into();
             assert!(rg.is_err());
         }

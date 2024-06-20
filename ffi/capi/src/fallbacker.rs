@@ -184,9 +184,7 @@ impl TryFrom<ffi::ICU4XLocaleFallbackConfig<'_>> for icu_locale::fallback::Local
         result.priority = other.priority.into();
         result.extension_key = match other.extension_key {
             b"" => None,
-            s => Some(icu_locale_core::extensions::unicode::Key::try_from_bytes(
-                s,
-            )?),
+            s => Some(icu_locale_core::extensions::unicode::Key::try_from_utf8(s)?),
         };
         result.fallback_supplement = match other.fallback_supplement {
             ffi::ICU4XLocaleFallbackSupplement::None => None,

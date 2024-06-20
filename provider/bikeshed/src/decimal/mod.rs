@@ -93,7 +93,7 @@ impl DatagenProvider {
                         let mut data_locale = DataLocale::from(&langid);
                         data_locale.set_unicode_ext(
                             key!("nu"),
-                            Value::try_from_bytes(nsname.as_bytes())
+                            Value::try_from_str(&nsname)
                                 .expect("CLDR should have valid numbering system names"),
                         );
                         (data_locale, Default::default())

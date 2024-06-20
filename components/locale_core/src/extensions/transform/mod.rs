@@ -107,6 +107,25 @@ impl Transform {
         }
     }
 
+    /// A constructor which takes a str slice, parses it and
+    /// produces a well-formed [`Transform`].
+    #[inline]
+    pub fn try_from_str(s: &str) -> Result<Self, ParseError> {
+        Self::try_from_utf8(s.as_bytes())
+    }
+
+    /// See [`Self::try_from_str`]
+    pub fn try_from_utf8(code_units: &[u8]) -> Result<Self, ParseError> {
+        let mut iter = SubtagIterator::new(code_units);
+
+        let ext = iter.next().ok_or(ParseError::InvalidExtension)?;
+        if let ExtensionType::Transform = ExtensionType::try_from_byte_slice(ext)? {
+            return Self::try_from_iter(&mut iter);
+        }
+
+        Err(ParseError::InvalidExtension)
+    }
+
     /// Returns `true` if there are no tfields and no tlang in the `TransformExtensionList`.
     ///
     /// # Examples
@@ -120,17 +139,6 @@ impl Transform {
     /// ```
     pub fn is_empty(&self) -> bool {
         self.lang.is_none() && self.fields.is_empty()
-    }
-
-    pub(crate) fn try_from_bytes(t: &[u8]) -> Result<Self, ParseError> {
-        let mut iter = SubtagIterator::new(t);
-
-        let ext = iter.next().ok_or(ParseError::InvalidExtension)?;
-        if let ExtensionType::Transform = ExtensionType::try_from_byte_slice(ext)? {
-            return Self::try_from_iter(&mut iter);
-        }
-
-        Err(ParseError::InvalidExtension)
     }
 
     /// Clears the transform extension, effectively removing it from the locale.
@@ -179,7 +187,7 @@ impl Transform {
         let mut tfields = LiteMap::new();
 
         if let Some(subtag) = iter.peek() {
-            if Language::try_from_bytes(subtag).is_ok() {
+            if Language::try_from_utf8(subtag).is_ok() {
                 tlang = Some(parse_language_identifier_from_iter(
                     iter,
                     ParserMode::Partial,
@@ -208,7 +216,7 @@ impl Transform {
                     has_current_tvalue = false;
                     continue;
                 }
-            } else if let Ok(tkey) = Key::try_from_bytes(subtag) {
+            } else if let Ok(tkey) = Key::try_from_utf8(subtag) {
                 current_tkey = Some(tkey);
             } else {
                 break;
@@ -254,8 +262,9 @@ impl Transform {
 impl FromStr for Transform {
     type Err = ParseError;
 
-    fn from_str(source: &str) -> Result<Self, Self::Err> {
-        Self::try_from_bytes(source.as_bytes())
+    #[inline]
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Self::try_from_str(s)
     }
 }
 

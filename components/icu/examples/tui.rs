@@ -15,7 +15,6 @@ use icu::plurals::{PluralCategory, PluralRules};
 use icu::timezone::CustomTimeZone;
 use icu_collections::codepointinvlist::CodePointInversionListBuilder;
 use std::env;
-use std::str::FromStr;
 
 fn print<T: AsRef<str>>(_input: T) {
     #[cfg(debug_assertions)]
@@ -53,7 +52,7 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
         )
         .expect("Failed to create TypedDateTimeFormatter.");
         let today_date = DateTime::try_new_gregorian_datetime(2020, 10, 10, 18, 56, 0).unwrap();
-        let today_tz = CustomTimeZone::from_str("Z").unwrap(); // Z refers to the utc timezone
+        let today_tz = CustomTimeZone::try_from_str("Z").unwrap(); // Z refers to the utc timezone
 
         let formatted_dt = dtf.format(&today_date, &today_tz);
 

@@ -159,10 +159,9 @@ pub(crate) fn extract_conversion_info<'data>(
         Exactness::Approximate
     };
 
-    let base_unit = match parser.try_from_bytes(base_unit.as_bytes()) {
-        Ok(base_unit) => base_unit,
-        Err(_) => return Err(DataError::custom("the base unit is not valid")),
-    };
+    let base_unit = parser
+        .try_from_str(base_unit)
+        .map_err(|_| DataError::custom("the base unit is not valid"))?;
 
     Ok(ConversionInfo {
         basic_units: ZeroVec::from_iter(base_unit.contained_units),

@@ -16,7 +16,7 @@ export class ICU4XCustomTimeZone {
 
    * Creates a time zone from an offset string.
 
-   * See the {@link https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#method.from_str Rust documentation for `from_str`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#method.try_from_str Rust documentation for `try_from_str`} for more information.
    * @throws {@link FFIError}<{@link ICU4XTimeZoneInvalidOffsetError}>
    */
   static create_from_string(s: string): ICU4XCustomTimeZone | never;

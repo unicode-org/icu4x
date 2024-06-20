@@ -49,7 +49,6 @@ use patterns::{
     dayperiods::{DayPeriodExpectation, DayPeriodTests},
     time_zones::{TimeZoneConfig, TimeZoneExpectation, TimeZoneTests},
 };
-use std::str::FromStr;
 use tinystr::tinystr;
 use writeable::assert_writeable_eq;
 
@@ -98,7 +97,8 @@ fn test_fixture(fixture_name: &str, file: &str) {
             None => format!("\n  file: {fixture_name}.json\n"),
         };
         for (locale, output_value) in fx.output.values {
-            let locale = Locale::from_str(&locale).expect("Expected parseable locale in fixture");
+            let locale =
+                Locale::try_from_str(&locale).expect("Expected parseable locale in fixture");
             if let Some(kind) = AnyCalendarKind::get_for_locale(&locale) {
                 match kind {
                     AnyCalendarKind::Buddhist => assert_fixture_element(
