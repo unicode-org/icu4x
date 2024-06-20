@@ -87,8 +87,6 @@
 //!
 //! [`ICU4X`]: ../icu/index.html
 //! [`DataProvider`]: data_provider::DataProvider
-//! [`DataMarkerInfo`]: marker::DataMarkerInfo
-//! [`DataLocale`]: request::DataLocale
 //! [`IterableDynamicDataProvider`]: datagen::IterableDynamicDataProvider
 //! [`IterableDataProvider`]: datagen::IterableDataProvider
 //! [`AnyPayloadProvider`]: ../icu_provider_adapters/any_payload/struct.AnyPayloadProvider.html
@@ -100,7 +98,6 @@
 //! [`DatagenProvider`]: ../icu_datagen/struct.DatagenProvider.html
 //! [`as_downcasting()`]: any::AsDowncastingAnyProvider::as_downcasting
 //! [`as_deserializing()`]: serde::AsDeserializingBufferProvider::as_deserializing
-//! [`CldrJsonDataProvider`]: ../icu_datagen/cldr/struct.CldrJsonDataProvider.html
 //! [`FsDataProvider`]: ../icu_provider_fs/struct.FsDataProvider.html
 //! [`BlobDataProvider`]: ../icu_provider_blob/struct.BlobDataProvider.html
 //! [`icu_datagen`]: ../icu_datagen/index.html
