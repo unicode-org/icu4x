@@ -9,7 +9,7 @@ use crate::prelude::*;
 #[cfg(feature = "serde")]
 mod serde;
 #[cfg(feature = "serde")]
-pub use serde::*;
+pub use self::serde::*;
 
 /// [`DynamicDataMarker`] for raw buffers. Returned by [`BufferProvider`].
 ///
