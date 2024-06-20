@@ -58,7 +58,7 @@ impl CodePointSetData {
     /// Construct a new one from loaded data
     ///
     /// Typically it is preferable to use getters like [`load_ascii_hex_digit()`] instead
-    pub fn from_data<M>(data: DataPayload<M>) -> Self
+    pub(crate) fn from_data<M>(data: DataPayload<M>) -> Self
     where
         M: DynamicDataMarker<Yokeable = PropertyCodePointSetV1<'static>>,
     {
@@ -229,7 +229,7 @@ impl UnicodeSetData {
     /// Construct a new one from loaded data
     ///
     /// Typically it is preferable to use getters instead
-    pub fn from_data<M>(data: DataPayload<M>) -> Self
+    pub(crate) fn from_data<M>(data: DataPayload<M>) -> Self
     where
         M: DynamicDataMarker<Yokeable = PropertyUnicodeSetV1<'static>>,
     {
@@ -2284,11 +2284,11 @@ mod tests {
                 .expect("The data should be valid");
 
             let mut builder = CodePointInversionListBuilder::new();
-            for subcategory in subcategories {
-                let gc_set_data = &maps::general_category().get_set_for_value(*subcategory);
+            for &subcategory in subcategories {
+                let gc_set_data = &maps::general_category().get_set_for_value(subcategory);
                 let gc_set = gc_set_data.as_borrowed();
                 for range in gc_set.iter_ranges() {
-                    builder.add_range32(&range);
+                    builder.add_range32(range);
                 }
             }
             let combined_set = builder.build();

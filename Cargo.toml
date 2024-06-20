@@ -35,6 +35,7 @@ members = [
     # Provider
     "provider/adapters",
     "provider/baked",
+    "provider/bikeshed",
     "provider/blob",
     "provider/core",
     "provider/core/macros",
@@ -68,6 +69,7 @@ members = [
     "utils/ixdtf",
     "utils/litemap",
     "utils/pattern",
+    "utils/preferences",
     "utils/resb",
     "utils/tinystr",
     "utils/tzif",
@@ -150,6 +152,7 @@ icu_harfbuzz = { version = "~0.2.0", path = "ffi/harfbuzz", default-features = f
 
 # Provider
 icu_datagen = { version = "~1.5.0", path = "provider/datagen", default-features = false }
+icu_datagen_bikeshed = { version = "~1.5.0", path = "provider/bikeshed", default-features = false }
 icu_provider = { version = "~1.5.0", path = "provider/core", default-features = false }
 icu_provider_macros = { version = "~1.5.0", path = "provider/core/macros", default-features = false }
 icu_provider_adapters = { version = "~1.5.0", path = "provider/adapters", default-features = false }

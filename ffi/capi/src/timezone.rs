@@ -20,16 +20,18 @@ pub mod ffi {
 
     impl ICU4XCustomTimeZone {
         /// Creates a time zone from an offset string.
-        #[diplomat::rust_link(icu::timezone::CustomTimeZone::from_str, FnInStruct)]
-        #[diplomat::rust_link(icu::timezone::CustomTimeZone::try_from_bytes, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::timezone::CustomTimeZone::try_from_str, FnInStruct)]
+        #[diplomat::rust_link(icu::timezone::CustomTimeZone::try_from_utf8, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::timezone::CustomTimeZone::from_str, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::timezone::GmtOffset::try_from_str, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::timezone::GmtOffset::try_from_utf8, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::timezone::GmtOffset::from_str, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::timezone::GmtOffset::try_from_bytes, FnInStruct, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "from_string")]
         pub fn create_from_string(
             s: &DiplomatStr,
         ) -> Result<Box<ICU4XCustomTimeZone>, ICU4XTimeZoneInvalidOffsetError> {
             Ok(Box::new(ICU4XCustomTimeZone::from(
-                CustomTimeZone::try_from_bytes(s)?,
+                CustomTimeZone::try_from_utf8(s)?,
             )))
         }
 

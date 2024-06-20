@@ -14,6 +14,7 @@
 //! ```no_run
 //! use icu_datagen::blob_exporter::*;
 //! use icu_datagen::prelude::*;
+//! use icu_datagen_bikeshed::DatagenProvider;
 //! use std::fs::File;
 //!
 //! DatagenDriver::new()
@@ -41,14 +42,9 @@
 //! * `fs_exporter`
 //!   * enables the [`fs_exporter`] module, a reexport of [`icu_provider_fs::export`]
 //!   * enables the `--format dir` CLI argument
-//! * `networking`
-//!   * enables methods on [`DatagenProvider`] that fetch source data from the network
-//!   * enables the `--cldr-tag`, `--icu-export-tag`, and `--segmenter-lstm-tag` CLI arguments that download data
 //! * `rayon`
 //!   * enables parallelism during export
-//! * `use_wasm` / `use_icu4c`
-//!   * see the documentation on [`icu_codepointtrie_builder`](icu_codepointtrie_builder#build-configuration)
-//! * `experimental_components`
+//! * `experimental`
 //!   * enables data generation for markers defined in the unstable `icu_experimental` crate
 //!   * note that this features affects the behaviour of `all_markers`
 
@@ -68,21 +64,12 @@
 #![warn(missing_docs)]
 
 mod driver;
-#[cfg(feature = "provider")]
-mod provider;
 
 pub use driver::DatagenDriver;
 pub use driver::DeduplicationStrategy;
 pub use driver::FallbackOptions;
 pub use driver::LocaleFamily;
 pub use driver::NoFallbackOptions;
-
-#[cfg(feature = "provider")]
-pub use provider::CollationHanDatabase;
-#[cfg(feature = "provider")]
-pub use provider::CoverageLevel;
-#[cfg(feature = "provider")]
-pub use provider::DatagenProvider;
 
 #[cfg(feature = "baked_exporter")]
 pub use icu_provider_baked::export as baked_exporter;
@@ -93,9 +80,6 @@ pub use icu_provider_fs::export as fs_exporter;
 
 /// A prelude for using the datagen API
 pub mod prelude {
-    #[doc(no_inline)]
-    #[cfg(feature = "provider")]
-    pub use crate::provider::{CollationHanDatabase, CoverageLevel, DatagenProvider};
     #[doc(no_inline)]
     pub use crate::{
         DatagenDriver, DeduplicationStrategy, FallbackOptions, LocaleFamily, NoFallbackOptions,
@@ -130,14 +114,14 @@ macro_rules! cb {
         /// corresponding Cargo features has been enabled.
         // Excludes the hello world marker, as that generally should not be generated.
         pub fn all_markers() -> Vec<DataMarkerInfo> {
-            #[cfg(features = "experimental_components")]
-            log::warn!("The icu_datagen crates has been built with the `experimental_components` feature, so `all_markers` returns experimental markers");
+            #[cfg(feature = "experimental")]
+            log::warn!("The icu_datagen crates has been built with the `experimental` feature, so `all_markers` returns experimental markers");
             vec![
                 $(
                     <$marker>::INFO,
                 )+
                 $(
-                    #[cfg(feature = "experimental_components")]
+                    #[cfg(feature = "experimental")]
                     <$emarker>::INFO,
                 )+
             ]
@@ -165,14 +149,14 @@ macro_rules! cb {
                         (stringify!($marker).split("::").last().unwrap().trim(), Ok(<$marker>::INFO)),
                     )+
                     $(
-                        #[cfg(feature = "experimental_components")]
+                        #[cfg(feature = "experimental")]
                         ($epath, Ok(<$emarker>::INFO)),
-                        #[cfg(feature = "experimental_components")]
+                        #[cfg(feature = "experimental")]
                         (stringify!($emarker).split("::").last().unwrap().trim(), Ok(<$emarker>::INFO)),
-                        #[cfg(not(feature = "experimental_components"))]
-                        ($epath, Err(stringify!(feature = "experimental_components"))),
-                        #[cfg(not(feature = "experimental_components"))]
-                        (stringify!($emarker).split("::").last().unwrap().trim(), Err(stringify!(feature = "experimental_components"))),
+                        #[cfg(not(feature = "experimental"))]
+                        ($epath, Err(stringify!(feature = "experimental"))),
+                        #[cfg(not(feature = "experimental"))]
+                        (stringify!($emarker).split("::").last().unwrap().trim(), Err(stringify!(feature = "experimental"))),
                     )+
 
                 ]

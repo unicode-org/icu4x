@@ -277,15 +277,15 @@ impl FromStr for LocaleFamily {
             .ok_or(LocaleFamilyParseError::InvalidFamily)?;
         match first {
             b'^' => Ok(Self {
-                langid: Some(LanguageIdentifier::try_from_bytes(remainder)?),
+                langid: Some(LanguageIdentifier::try_from_utf8(remainder)?),
                 annotations: LocaleFamilyAnnotations::without_descendants(),
             }),
             b'%' => Ok(Self {
-                langid: Some(LanguageIdentifier::try_from_bytes(remainder)?),
+                langid: Some(LanguageIdentifier::try_from_utf8(remainder)?),
                 annotations: LocaleFamilyAnnotations::without_ancestors(),
             }),
             b'@' => Ok(Self {
-                langid: Some(LanguageIdentifier::try_from_bytes(remainder)?),
+                langid: Some(LanguageIdentifier::try_from_utf8(remainder)?),
                 annotations: LocaleFamilyAnnotations::single(),
             }),
             b if b.is_ascii_alphanumeric() => Ok(Self {
@@ -352,6 +352,7 @@ impl FallbackOptions {
 /// ```no_run
 /// use icu_datagen::blob_exporter::*;
 /// use icu_datagen::prelude::*;
+/// use icu_datagen_bikeshed::DatagenProvider;
 ///
 /// DatagenDriver::new()
 ///     .with_markers([icu::list::provider::AndListV1Marker::INFO])
@@ -406,11 +407,9 @@ impl DatagenDriver {
 
     /// Sets this driver to generate the given locales assuming no runtime fallback.
     ///
-    /// Use the [`langid!`] macro from the prelude to create an
-    /// explicit list, or [`DatagenProvider::locales_for_coverage_levels`] for CLDR coverage levels.
+    /// Use the [`langid!`] macro from the prelude to create [`LanguageIdentifier`]s.
     ///
     /// [`langid!`]: crate::prelude::langid
-    /// [`DatagenProvider::locales_for_coverage_levels`]: crate::DatagenProvider::locales_for_coverage_levels
     pub fn with_locales_no_fallback(
         mut self,
         locales: impl IntoIterator<Item = LanguageIdentifier>,
@@ -429,14 +428,12 @@ impl DatagenDriver {
 
     /// Sets this driver to generate the given locales assuming runtime fallback.
     ///
-    /// Use the [`langid!`] macro from the prelude to create an
-    /// explicit list, or [`DatagenProvider::locales_for_coverage_levels`] for CLDR coverage levels.
+    /// Use the [`langid!`] macro from the prelude to create [`LanguageIdentifier`]s.
     ///
     /// If there are multiple [`LocaleFamily`]s for the same [`LanguageIdentifier`], the last entry
     /// in the iterator takes precedence.
     ///
     /// [`langid!`]: crate::prelude::langid
-    /// [`DatagenProvider::locales_for_coverage_levels`]: crate::DatagenProvider::locales_for_coverage_levels
     pub fn with_locales_and_fallback(
         mut self,
         locales: impl IntoIterator<Item = LocaleFamily>,
@@ -536,11 +533,10 @@ impl DatagenDriver {
     /// Exports data from the given provider to the given exporter.
     ///
     /// See
-    /// [`DatagenProvider`](crate::DatagenProvider),
     /// [`make_exportable_provider!`](icu_provider::make_exportable_provider),
     /// [`BlobExporter`](icu_provider_blob::export),
     /// [`FileSystemExporter`](icu_provider_fs::export),
-    /// and [`BakedExporter`](crate::baked_exporter).
+    /// and [`BakedExporter`](icu_provider_baked::export).
     pub fn export(
         self,
         provider: &impl ExportableProvider,
@@ -840,7 +836,7 @@ fn select_locales_for_marker<'a>(
             locales.retain(|(locale, _)| {
                 let Some(collation) = locale
                     .get_unicode_ext(&key!("co"))
-                    .and_then(|co| co.as_single_subtag().copied())
+                    .and_then(|co| co.into_single_subtag())
                 else {
                     return true;
                 };
@@ -1046,8 +1042,52 @@ impl fmt::Display for DisplayDuration {
 
 #[test]
 fn test_collation_filtering() {
-    use icu::locale::langid;
+    use icu::locale::{langid, locale};
     use std::collections::BTreeSet;
+
+    struct Provider;
+
+    impl DataProvider<icu::collator::provider::CollationDataV1Marker> for Provider {
+        fn load(
+            &self,
+            _req: DataRequest,
+        ) -> Result<DataResponse<icu::collator::provider::CollationDataV1Marker>, DataError>
+        {
+            unreachable!()
+        }
+    }
+
+    impl IterableDataProvider<icu::collator::provider::CollationDataV1Marker> for Provider {
+        fn supported_requests(
+            &self,
+        ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+            Ok(HashSet::from_iter(
+                [
+                    locale!("ko-u-co-search"),
+                    locale!("ko-u-co-searchjl"),
+                    locale!("ko-u-co-unihan"),
+                    locale!("ko"),
+                    locale!("und-u-co-emoji"),
+                    locale!("und-u-co-eor"),
+                    locale!("und-u-co-search"),
+                    locale!("und"),
+                    locale!("zh-u-co-big5han"),
+                    locale!("zh-u-co-gb2312"),
+                    locale!("zh-u-co-stroke"),
+                    locale!("zh-u-co-unihan"),
+                    locale!("zh-u-co-zhuyin"),
+                    locale!("zh"),
+                ]
+                .into_iter()
+                .map(|l| (l.into(), Default::default())),
+            ))
+        }
+    }
+
+    icu_provider::make_exportable_provider!(
+        Provider,
+        [icu::collator::provider::CollationDataV1Marker,]
+    );
 
     #[derive(Debug)]
     struct TestCase<'a> {
@@ -1128,7 +1168,7 @@ fn test_collation_filtering() {
     let fallbacker = LocaleFallbacker::new_without_data();
     for cas in cases {
         let resolved_locales = select_locales_for_marker(
-            &crate::provider::DatagenProvider::new_testing(),
+            &Provider,
             icu::collator::provider::CollationDataV1Marker::INFO,
             &[(cas.language.clone(), LocaleFamilyAnnotations::single())]
                 .into_iter()

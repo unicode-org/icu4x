@@ -75,7 +75,7 @@ pub trait PatternBackend: crate::private::Sealed + 'static {
     /// The type of error that the [`TryWriteable`] for this backend can return.
     type Error<'a>;
 
-    /// The type of error that the [`PatternBackend::try_store_from_bytes`] can return.
+    /// The type of error that the [`PatternBackend::try_store_from_utf8`] can return.
     type StoreFromBytesError;
 
     /// The unsized type of the store required for this backend, usually `str` or `[u8]`.
@@ -88,7 +88,7 @@ pub trait PatternBackend: crate::private::Sealed + 'static {
     /// Converts a byte slice store to this pattern backend's store.
     /// Does not perform validation of the store.
     #[doc(hidden)] // TODO(#4467): Should be internal
-    fn try_store_from_bytes(bytes: &[u8]) -> Result<&Self::Store, Self::StoreFromBytesError>;
+    fn try_store_from_utf8(bytes: &[u8]) -> Result<&Self::Store, Self::StoreFromBytesError>;
 
     /// Checks a store for validity, returning an error if invalid.
     #[doc(hidden)] // TODO(#4467): Should be internal

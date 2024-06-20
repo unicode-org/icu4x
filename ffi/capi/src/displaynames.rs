@@ -118,7 +118,7 @@ pub mod ffi {
         ) -> Result<(), ICU4XLocaleParseError> {
             let _infallible = self
                 .0
-                .of(Region::try_from_bytes(region)?)
+                .of(Region::try_from_utf8(region)?)
                 .unwrap_or("")
                 .write_to(write);
             Ok(())

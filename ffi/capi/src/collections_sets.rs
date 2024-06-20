@@ -93,7 +93,7 @@ pub mod ffi {
             hidden
         )]
         pub fn add_inclusive_range(&mut self, start: DiplomatChar, end: DiplomatChar) {
-            self.0.add_range32(&(start..=end))
+            self.0.add_range32(start..=end)
         }
 
         /// Add all elements that belong to the provided set to the set
@@ -144,7 +144,7 @@ pub mod ffi {
             hidden
         )]
         pub fn remove_inclusive_range(&mut self, start: DiplomatChar, end: DiplomatChar) {
-            self.0.remove_range32(&(start..=end))
+            self.0.remove_range32(start..=end)
         }
 
         /// Remove all elements that belong to the provided set from the set
@@ -183,7 +183,7 @@ pub mod ffi {
             hidden
         )]
         pub fn retain_inclusive_range(&mut self, start: DiplomatChar, end: DiplomatChar) {
-            self.0.retain_range32(&(start..=end))
+            self.0.retain_range32(start..=end)
         }
 
         /// Removes all elements from the set except all elements in the provided set
@@ -226,7 +226,7 @@ pub mod ffi {
             hidden
         )]
         pub fn complement_inclusive_range(&mut self, start: DiplomatChar, end: DiplomatChar) {
-            self.0.complement_range32(&(start..=end))
+            self.0.complement_range32(start..=end)
         }
 
         /// Complement all elements that belong to the provided set from the set

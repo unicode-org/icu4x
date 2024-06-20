@@ -78,7 +78,7 @@ pub mod ffi {
         )]
         pub fn parse(&self, unit_id: &DiplomatStr) -> Option<Box<ICU4XMeasureUnit>> {
             self.0
-                .try_from_bytes(unit_id)
+                .try_from_utf8(unit_id)
                 .ok()
                 .map(ICU4XMeasureUnit)
                 .map(Box::new)

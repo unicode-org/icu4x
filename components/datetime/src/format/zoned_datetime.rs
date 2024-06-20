@@ -82,7 +82,7 @@ where
                 ..
             }) => FormattedTimeZone {
                 time_zone_format,
-                time_zone,
+                time_zone: *time_zone,
             }
             .write_to(w)?,
             PatternItem::Field(field) => {

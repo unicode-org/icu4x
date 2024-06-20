@@ -26,21 +26,21 @@ ICU4XLocale* ICU4XLocale_clone(const ICU4XLocale* self);
 
 void ICU4XLocale_basename(const ICU4XLocale* self, DiplomatWrite* write);
 
-diplomat_result_void_void ICU4XLocale_get_unicode_extension(const ICU4XLocale* self, const char* bytes_data, size_t bytes_len, DiplomatWrite* write);
+diplomat_result_void_void ICU4XLocale_get_unicode_extension(const ICU4XLocale* self, const char* s_data, size_t s_len, DiplomatWrite* write);
 
 void ICU4XLocale_language(const ICU4XLocale* self, DiplomatWrite* write);
 
-diplomat_result_void_ICU4XLocaleParseError ICU4XLocale_set_language(ICU4XLocale* self, const char* bytes_data, size_t bytes_len);
+diplomat_result_void_ICU4XLocaleParseError ICU4XLocale_set_language(ICU4XLocale* self, const char* s_data, size_t s_len);
 
 diplomat_result_void_void ICU4XLocale_region(const ICU4XLocale* self, DiplomatWrite* write);
 
-diplomat_result_void_ICU4XLocaleParseError ICU4XLocale_set_region(ICU4XLocale* self, const char* bytes_data, size_t bytes_len);
+diplomat_result_void_ICU4XLocaleParseError ICU4XLocale_set_region(ICU4XLocale* self, const char* s_data, size_t s_len);
 
 diplomat_result_void_void ICU4XLocale_script(const ICU4XLocale* self, DiplomatWrite* write);
 
-diplomat_result_void_ICU4XLocaleParseError ICU4XLocale_set_script(ICU4XLocale* self, const char* bytes_data, size_t bytes_len);
+diplomat_result_void_ICU4XLocaleParseError ICU4XLocale_set_script(ICU4XLocale* self, const char* s_data, size_t s_len);
 
-diplomat_result_void_ICU4XLocaleParseError ICU4XLocale_canonicalize(const char* bytes_data, size_t bytes_len, DiplomatWrite* write);
+diplomat_result_void_ICU4XLocaleParseError ICU4XLocale_canonicalize(const char* s_data, size_t s_len, DiplomatWrite* write);
 
 void ICU4XLocale_to_string(const ICU4XLocale* self, DiplomatWrite* write);
 

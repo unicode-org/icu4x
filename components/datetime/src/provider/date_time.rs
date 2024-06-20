@@ -363,9 +363,8 @@ where
         // Skeleton data for ethioaa is stored under ethiopic
         if cal_val == &value!("ethioaa") {
             locale.set_unicode_ext(key!("ca"), value!("ethiopic"));
-        } else if cal_val == &value!("islamic")
-            || cal_val == &value!("islamicc")
-            || cal_val.as_subtags_slice().first() == Some(&subtag!("islamic"))
+        } else if cal_val == &value!("islamicc")
+            || cal_val.get_subtag(0) == Some(&subtag!("islamic"))
         {
             // All islamic calendars store skeleton data under islamic, not their individual extension keys
             locale.set_unicode_ext(key!("ca"), value!("islamic"));
