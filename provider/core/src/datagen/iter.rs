@@ -10,7 +10,7 @@ use crate::prelude::*;
 
 /// A [`DynamicDataProvider`] that can iterate over all supported [`DataLocale`] for a certain marker.
 ///
-/// The provider is not allowed to return `Ok` for requests that were not returned by [`iter_requests`],
+/// The provider is not allowed to return `Ok` for requests that were not returned by `iter_requests`,
 /// and must not fail with a [`DataErrorKind::MissingLocale`] for requests that were returned.
 pub trait IterableDynamicDataProvider<M: DynamicDataMarker>: DynamicDataProvider<M> {
     /// Given a [`DataMarkerInfo`], returns a list of [`DataLocale`].
@@ -22,7 +22,7 @@ pub trait IterableDynamicDataProvider<M: DynamicDataMarker>: DynamicDataProvider
 
 /// A [`DataProvider`] that can iterate over all supported [`DataLocale`] for a certain marker.
 ///
-/// The provider is not allowed to return `Ok` for requests that were not returned by [`iter_requests`],
+/// The provider is not allowed to return `Ok` for requests that were not returned by `iter_requests`,
 /// and must not fail with a [`DataErrorKind::MissingLocale`] for requests that were returned.
 pub trait IterableDataProvider<M: DataMarker>: DataProvider<M> {
     /// Returns a list of [`DataLocale`].
