@@ -47,7 +47,7 @@ where
 fn test_baked_map() {
     test_bake!(
         ZeroMap2d<str, str, str>,
-        const, 
+        const,
         unsafe {
             #[allow(unused_unsafe)]
             crate::ZeroMap2d::from_parts_unchecked(
@@ -81,7 +81,7 @@ fn test_baked_map() {
 fn test_baked_borrowed_map() {
     test_bake!(
         ZeroMap2dBorrowed<str, str, str>,
-        const, 
+        const,
         unsafe {
             #[allow(unused_unsafe)]
             crate::maps::ZeroMap2dBorrowed::from_parts_unchecked(
