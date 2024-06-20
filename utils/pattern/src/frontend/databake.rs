@@ -37,7 +37,8 @@ fn test_baked() {
     use alloc::borrow::Cow;
     test_bake!(
         Pattern<SinglePlaceholder, Cow<str>>,
-        const: crate::Pattern::<crate::SinglePlaceholder, _>::from_store_unchecked(alloc::borrow::Cow::Borrowed("")),
+        const, 
+        crate::Pattern::<crate::SinglePlaceholder, _>::from_store_unchecked(alloc::borrow::Cow::Borrowed("")),
         icu_pattern
     );
 }

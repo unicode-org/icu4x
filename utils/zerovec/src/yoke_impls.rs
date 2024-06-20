@@ -309,7 +309,6 @@ mod test {
     }
 
     #[test]
-    #[ignore] // https://github.com/rust-lang/rust/issues/98906
     fn bake_ZeroVec() {
         test_bake!(
             DeriveTest_ZeroVec<'static>,

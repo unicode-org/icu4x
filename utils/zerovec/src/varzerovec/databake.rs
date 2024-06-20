@@ -33,19 +33,12 @@ impl<T: VarULE + ?Sized> Bake for &VarZeroSlice<T> {
 
 #[test]
 fn test_baked_vec() {
-    test_bake!(
-        VarZeroVec<str>,
-        const: crate::VarZeroVec::new(),
-        zerovec
-    );
+    test_bake!(VarZeroVec<str>, const, crate::VarZeroVec::new(), zerovec);
 
     test_bake!(
         VarZeroVec<str>,
-        const: unsafe {
-            crate::VarZeroVec::from_bytes_unchecked(
-                b"\x02\0\0\0\0\0\x05\0helloworld"
-            )
-        },
+        const,
+        unsafe { crate::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x05\0helloworld") },
         zerovec
     );
 }
@@ -54,16 +47,14 @@ fn test_baked_vec() {
 fn test_baked_slice() {
     test_bake!(
         &VarZeroSlice<str>,
-        const: crate::VarZeroSlice::new_empty(),
+        const,
+        crate::VarZeroSlice::new_empty(),
         zerovec
     );
     test_bake!(
         &VarZeroSlice<str>,
-        const: unsafe {
-            crate::VarZeroSlice::from_bytes_unchecked(
-                b"\x02\0\0\0\0\0\x05\0helloworld"
-            )
-        },
+        const,
+        unsafe { crate::VarZeroSlice::from_bytes_unchecked(b"\x02\0\0\0\0\0\x05\0helloworld") },
         zerovec
     );
 }
