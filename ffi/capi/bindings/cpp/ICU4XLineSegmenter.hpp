@@ -16,8 +16,40 @@
 #include "ICU4XLineBreakIteratorUtf16.hpp"
 #include "ICU4XLineBreakIteratorUtf8.hpp"
 #include "ICU4XLineBreakOptionsV1.hpp"
-#include "ICU4XLineSegmenter.h"
 
+
+namespace capi {
+    extern "C" {
+    
+    struct ICU4XLineSegmenter_create_auto_result {union {ICU4XLineSegmenter* ok; ICU4XDataError err;}; bool is_ok;};
+    struct ICU4XLineSegmenter_create_auto_result ICU4XLineSegmenter_create_auto(const ICU4XDataProvider* provider);
+    
+    struct ICU4XLineSegmenter_create_lstm_result {union {ICU4XLineSegmenter* ok; ICU4XDataError err;}; bool is_ok;};
+    struct ICU4XLineSegmenter_create_lstm_result ICU4XLineSegmenter_create_lstm(const ICU4XDataProvider* provider);
+    
+    struct ICU4XLineSegmenter_create_dictionary_result {union {ICU4XLineSegmenter* ok; ICU4XDataError err;}; bool is_ok;};
+    struct ICU4XLineSegmenter_create_dictionary_result ICU4XLineSegmenter_create_dictionary(const ICU4XDataProvider* provider);
+    
+    struct ICU4XLineSegmenter_create_auto_with_options_v1_result {union {ICU4XLineSegmenter* ok; ICU4XDataError err;}; bool is_ok;};
+    struct ICU4XLineSegmenter_create_auto_with_options_v1_result ICU4XLineSegmenter_create_auto_with_options_v1(const ICU4XDataProvider* provider, ICU4XLineBreakOptionsV1 options);
+    
+    struct ICU4XLineSegmenter_create_lstm_with_options_v1_result {union {ICU4XLineSegmenter* ok; ICU4XDataError err;}; bool is_ok;};
+    struct ICU4XLineSegmenter_create_lstm_with_options_v1_result ICU4XLineSegmenter_create_lstm_with_options_v1(const ICU4XDataProvider* provider, ICU4XLineBreakOptionsV1 options);
+    
+    struct ICU4XLineSegmenter_create_dictionary_with_options_v1_result {union {ICU4XLineSegmenter* ok; ICU4XDataError err;}; bool is_ok;};
+    struct ICU4XLineSegmenter_create_dictionary_with_options_v1_result ICU4XLineSegmenter_create_dictionary_with_options_v1(const ICU4XDataProvider* provider, ICU4XLineBreakOptionsV1 options);
+    
+    ICU4XLineBreakIteratorUtf8* ICU4XLineSegmenter_segment_utf8(const ICU4XLineSegmenter* self, const char* input_data, size_t input_len);
+    
+    ICU4XLineBreakIteratorUtf16* ICU4XLineSegmenter_segment_utf16(const ICU4XLineSegmenter* self, const char16_t* input_data, size_t input_len);
+    
+    ICU4XLineBreakIteratorLatin1* ICU4XLineSegmenter_segment_latin1(const ICU4XLineSegmenter* self, const uint8_t* input_data, size_t input_len);
+    
+    
+    void ICU4XLineSegmenter_destroy(ICU4XLineSegmenter* self);
+    
+    } // extern "C"
+}
 
 inline diplomat::result<std::unique_ptr<ICU4XLineSegmenter>, ICU4XDataError> ICU4XLineSegmenter::create_auto(const ICU4XDataProvider& provider) {
   auto result = capi::ICU4XLineSegmenter_create_auto(provider.AsFFI());

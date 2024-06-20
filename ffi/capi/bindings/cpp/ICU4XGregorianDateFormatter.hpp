@@ -13,11 +13,26 @@
 #include "ICU4XDataProvider.hpp"
 #include "ICU4XDateLength.hpp"
 #include "ICU4XError.hpp"
-#include "ICU4XGregorianDateFormatter.h"
 #include "ICU4XIsoDate.hpp"
 #include "ICU4XIsoDateTime.hpp"
 #include "ICU4XLocale.hpp"
 
+
+namespace capi {
+    extern "C" {
+    
+    struct ICU4XGregorianDateFormatter_create_with_length_result {union {ICU4XGregorianDateFormatter* ok; ICU4XError err;}; bool is_ok;};
+    struct ICU4XGregorianDateFormatter_create_with_length_result ICU4XGregorianDateFormatter_create_with_length(const ICU4XDataProvider* provider, const ICU4XLocale* locale, ICU4XDateLength length);
+    
+    void ICU4XGregorianDateFormatter_format_iso_date(const ICU4XGregorianDateFormatter* self, const ICU4XIsoDate* value, DiplomatWrite* write);
+    
+    void ICU4XGregorianDateFormatter_format_iso_datetime(const ICU4XGregorianDateFormatter* self, const ICU4XIsoDateTime* value, DiplomatWrite* write);
+    
+    
+    void ICU4XGregorianDateFormatter_destroy(ICU4XGregorianDateFormatter* self);
+    
+    } // extern "C"
+}
 
 inline diplomat::result<std::unique_ptr<ICU4XGregorianDateFormatter>, ICU4XError> ICU4XGregorianDateFormatter::create_with_length(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDateLength length) {
   auto result = capi::ICU4XGregorianDateFormatter_create_with_length(provider.AsFFI(),

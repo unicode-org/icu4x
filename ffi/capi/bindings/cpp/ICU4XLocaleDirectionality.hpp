@@ -14,9 +14,29 @@
 #include "ICU4XDataProvider.hpp"
 #include "ICU4XLocale.hpp"
 #include "ICU4XLocaleDirection.hpp"
-#include "ICU4XLocaleDirectionality.h"
 #include "ICU4XLocaleExpander.hpp"
 
+
+namespace capi {
+    extern "C" {
+    
+    struct ICU4XLocaleDirectionality_create_result {union {ICU4XLocaleDirectionality* ok; ICU4XDataError err;}; bool is_ok;};
+    struct ICU4XLocaleDirectionality_create_result ICU4XLocaleDirectionality_create(const ICU4XDataProvider* provider);
+    
+    struct ICU4XLocaleDirectionality_create_with_expander_result {union {ICU4XLocaleDirectionality* ok; ICU4XDataError err;}; bool is_ok;};
+    struct ICU4XLocaleDirectionality_create_with_expander_result ICU4XLocaleDirectionality_create_with_expander(const ICU4XDataProvider* provider, const ICU4XLocaleExpander* expander);
+    
+    ICU4XLocaleDirection ICU4XLocaleDirectionality_get(const ICU4XLocaleDirectionality* self, const ICU4XLocale* locale);
+    
+    bool ICU4XLocaleDirectionality_is_left_to_right(const ICU4XLocaleDirectionality* self, const ICU4XLocale* locale);
+    
+    bool ICU4XLocaleDirectionality_is_right_to_left(const ICU4XLocaleDirectionality* self, const ICU4XLocale* locale);
+    
+    
+    void ICU4XLocaleDirectionality_destroy(ICU4XLocaleDirectionality* self);
+    
+    } // extern "C"
+}
 
 inline diplomat::result<std::unique_ptr<ICU4XLocaleDirectionality>, ICU4XDataError> ICU4XLocaleDirectionality::create(const ICU4XDataProvider& provider) {
   auto result = capi::ICU4XLocaleDirectionality_create(provider.AsFFI());

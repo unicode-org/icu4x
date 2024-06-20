@@ -10,9 +10,25 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XBidiInfo.h"
 #include "ICU4XBidiParagraph.hpp"
 
+
+namespace capi {
+    extern "C" {
+    
+    size_t ICU4XBidiInfo_paragraph_count(const ICU4XBidiInfo* self);
+    
+    ICU4XBidiParagraph* ICU4XBidiInfo_paragraph_at(const ICU4XBidiInfo* self, size_t n);
+    
+    size_t ICU4XBidiInfo_size(const ICU4XBidiInfo* self);
+    
+    uint8_t ICU4XBidiInfo_level_at(const ICU4XBidiInfo* self, size_t pos);
+    
+    
+    void ICU4XBidiInfo_destroy(ICU4XBidiInfo* self);
+    
+    } // extern "C"
+}
 
 inline size_t ICU4XBidiInfo::paragraph_count() const {
   auto result = capi::ICU4XBidiInfo_paragraph_count(this->AsFFI());

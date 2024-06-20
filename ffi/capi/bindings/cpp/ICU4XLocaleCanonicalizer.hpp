@@ -13,9 +13,25 @@
 #include "ICU4XDataProvider.hpp"
 #include "ICU4XError.hpp"
 #include "ICU4XLocale.hpp"
-#include "ICU4XLocaleCanonicalizer.h"
 #include "ICU4XTransformResult.hpp"
 
+
+namespace capi {
+    extern "C" {
+    
+    struct ICU4XLocaleCanonicalizer_create_result {union {ICU4XLocaleCanonicalizer* ok; ICU4XError err;}; bool is_ok;};
+    struct ICU4XLocaleCanonicalizer_create_result ICU4XLocaleCanonicalizer_create(const ICU4XDataProvider* provider);
+    
+    struct ICU4XLocaleCanonicalizer_create_extended_result {union {ICU4XLocaleCanonicalizer* ok; ICU4XError err;}; bool is_ok;};
+    struct ICU4XLocaleCanonicalizer_create_extended_result ICU4XLocaleCanonicalizer_create_extended(const ICU4XDataProvider* provider);
+    
+    ICU4XTransformResult ICU4XLocaleCanonicalizer_canonicalize(const ICU4XLocaleCanonicalizer* self, ICU4XLocale* locale);
+    
+    
+    void ICU4XLocaleCanonicalizer_destroy(ICU4XLocaleCanonicalizer* self);
+    
+    } // extern "C"
+}
 
 inline diplomat::result<std::unique_ptr<ICU4XLocaleCanonicalizer>, ICU4XError> ICU4XLocaleCanonicalizer::create(const ICU4XDataProvider& provider) {
   auto result = capi::ICU4XLocaleCanonicalizer_create(provider.AsFFI());

@@ -8,8 +8,15 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XLeadingAdjustment.d.h"
 
+
+namespace capi {
+    typedef enum ICU4XLeadingAdjustment {
+      ICU4XLeadingAdjustment_Auto = 0,
+      ICU4XLeadingAdjustment_None = 1,
+      ICU4XLeadingAdjustment_ToCased = 2,
+    } ICU4XLeadingAdjustment;
+}
 
 class ICU4XLeadingAdjustment {
 public:

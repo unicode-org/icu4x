@@ -10,7 +10,14 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XFixedDecimalGroupingStrategy.h"
+
+
+namespace capi {
+    extern "C" {
+    
+    
+    } // extern "C"
+}
 
 
 inline capi::ICU4XFixedDecimalGroupingStrategy ICU4XFixedDecimalGroupingStrategy::AsFFI() const {

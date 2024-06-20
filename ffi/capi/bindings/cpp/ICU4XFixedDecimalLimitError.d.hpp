@@ -8,8 +8,13 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XFixedDecimalLimitError.d.h"
 
+
+namespace capi {
+    typedef enum ICU4XFixedDecimalLimitError {
+      ICU4XFixedDecimalLimitError_TodoZst = 0,
+    } ICU4XFixedDecimalLimitError;
+}
 
 class ICU4XFixedDecimalLimitError {
 public:

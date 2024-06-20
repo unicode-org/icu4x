@@ -15,8 +15,25 @@
 #include "ICU4XGraphemeClusterBreakIteratorLatin1.hpp"
 #include "ICU4XGraphemeClusterBreakIteratorUtf16.hpp"
 #include "ICU4XGraphemeClusterBreakIteratorUtf8.hpp"
-#include "ICU4XGraphemeClusterSegmenter.h"
 
+
+namespace capi {
+    extern "C" {
+    
+    struct ICU4XGraphemeClusterSegmenter_create_result {union {ICU4XGraphemeClusterSegmenter* ok; ICU4XDataError err;}; bool is_ok;};
+    struct ICU4XGraphemeClusterSegmenter_create_result ICU4XGraphemeClusterSegmenter_create(const ICU4XDataProvider* provider);
+    
+    ICU4XGraphemeClusterBreakIteratorUtf8* ICU4XGraphemeClusterSegmenter_segment_utf8(const ICU4XGraphemeClusterSegmenter* self, const char* input_data, size_t input_len);
+    
+    ICU4XGraphemeClusterBreakIteratorUtf16* ICU4XGraphemeClusterSegmenter_segment_utf16(const ICU4XGraphemeClusterSegmenter* self, const char16_t* input_data, size_t input_len);
+    
+    ICU4XGraphemeClusterBreakIteratorLatin1* ICU4XGraphemeClusterSegmenter_segment_latin1(const ICU4XGraphemeClusterSegmenter* self, const uint8_t* input_data, size_t input_len);
+    
+    
+    void ICU4XGraphemeClusterSegmenter_destroy(ICU4XGraphemeClusterSegmenter* self);
+    
+    } // extern "C"
+}
 
 inline diplomat::result<std::unique_ptr<ICU4XGraphemeClusterSegmenter>, ICU4XDataError> ICU4XGraphemeClusterSegmenter::create(const ICU4XDataProvider& provider) {
   auto result = capi::ICU4XGraphemeClusterSegmenter_create(provider.AsFFI());

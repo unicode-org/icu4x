@@ -9,11 +9,14 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 #include "ICU4XDataError.d.hpp"
-#include "ICU4XDecomposingNormalizer.d.h"
 
 class ICU4XDataProvider;
 class ICU4XDataError;
 
+
+namespace capi {
+    typedef struct ICU4XDecomposingNormalizer ICU4XDecomposingNormalizer;
+}
 
 class ICU4XDecomposingNormalizer {
 public:

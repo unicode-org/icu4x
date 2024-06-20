@@ -14,9 +14,28 @@
 #include "ICU4XDataProvider.hpp"
 #include "ICU4XIsoWeekday.hpp"
 #include "ICU4XLocale.hpp"
-#include "ICU4XWeekCalculator.h"
 #include "ICU4XWeekendContainsDay.hpp"
 
+
+namespace capi {
+    extern "C" {
+    
+    struct ICU4XWeekCalculator_create_result {union {ICU4XWeekCalculator* ok; ICU4XDataError err;}; bool is_ok;};
+    struct ICU4XWeekCalculator_create_result ICU4XWeekCalculator_create(const ICU4XDataProvider* provider, const ICU4XLocale* locale);
+    
+    ICU4XWeekCalculator* ICU4XWeekCalculator_create_from_first_day_of_week_and_min_week_days(ICU4XIsoWeekday first_weekday, uint8_t min_week_days);
+    
+    ICU4XIsoWeekday ICU4XWeekCalculator_first_weekday(const ICU4XWeekCalculator* self);
+    
+    uint8_t ICU4XWeekCalculator_min_week_days(const ICU4XWeekCalculator* self);
+    
+    ICU4XWeekendContainsDay ICU4XWeekCalculator_weekend(const ICU4XWeekCalculator* self);
+    
+    
+    void ICU4XWeekCalculator_destroy(ICU4XWeekCalculator* self);
+    
+    } // extern "C"
+}
 
 inline diplomat::result<std::unique_ptr<ICU4XWeekCalculator>, ICU4XDataError> ICU4XWeekCalculator::create(const ICU4XDataProvider& provider, const ICU4XLocale& locale) {
   auto result = capi::ICU4XWeekCalculator_create(provider.AsFFI(),

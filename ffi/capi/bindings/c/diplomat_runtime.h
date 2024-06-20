@@ -19,10 +19,8 @@ typedef uint32_t char32_t;
 #endif
 
 
-#ifdef __cplusplus
-namespace capi {
-extern "C" {
-#endif
+
+
 
 typedef struct DiplomatWrite {
     void* context;
@@ -34,6 +32,7 @@ typedef struct DiplomatWrite {
     bool (*grow)(struct DiplomatWrite*, size_t);
 } DiplomatWrite;
 
+
 DiplomatWrite diplomat_simple_write(char* buf, size_t buf_size);
 
 DiplomatWrite* diplomat_buffer_write_create(size_t cap);
@@ -42,6 +41,8 @@ size_t diplomat_buffer_write_len(DiplomatWrite* t);
 void diplomat_buffer_write_destroy(DiplomatWrite* t);
 
 bool diplomat_is_str(const char* buf, size_t len);
+
+
 
 #define MAKE_SLICES(name, c_ty) \
     typedef struct Diplomat##name##View { \
@@ -73,9 +74,5 @@ MAKE_SLICES(Strings, DiplomatStringView)
 MAKE_SLICES(Strings16, DiplomatString16View)
 
 
-#ifdef __cplusplus
-} // extern "C"
-} // namespace capi
-#endif
 
 #endif

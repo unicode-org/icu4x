@@ -9,7 +9,6 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 #include "ICU4XDataError.d.hpp"
-#include "ICU4XListFormatter.d.h"
 #include "ICU4XListLength.d.hpp"
 
 class ICU4XDataProvider;
@@ -17,6 +16,10 @@ class ICU4XLocale;
 class ICU4XDataError;
 class ICU4XListLength;
 
+
+namespace capi {
+    typedef struct ICU4XListFormatter ICU4XListFormatter;
+}
 
 class ICU4XListFormatter {
 public:

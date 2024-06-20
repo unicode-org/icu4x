@@ -13,8 +13,40 @@
 #include "ICU4XDataError.hpp"
 #include "ICU4XDataProvider.hpp"
 #include "ICU4XLocale.hpp"
-#include "ICU4XUnicodeSetData.h"
 
+
+namespace capi {
+    extern "C" {
+    
+    bool ICU4XUnicodeSetData_contains(const ICU4XUnicodeSetData* self, const char* s_data, size_t s_len);
+    
+    bool ICU4XUnicodeSetData_contains_char(const ICU4XUnicodeSetData* self, char32_t cp);
+    
+    bool ICU4XUnicodeSetData_contains32(const ICU4XUnicodeSetData* self, uint32_t cp);
+    
+    struct ICU4XUnicodeSetData_load_basic_emoji_result {union {ICU4XUnicodeSetData* ok; ICU4XDataError err;}; bool is_ok;};
+    struct ICU4XUnicodeSetData_load_basic_emoji_result ICU4XUnicodeSetData_load_basic_emoji(const ICU4XDataProvider* provider);
+    
+    struct ICU4XUnicodeSetData_load_exemplars_main_result {union {ICU4XUnicodeSetData* ok; ICU4XDataError err;}; bool is_ok;};
+    struct ICU4XUnicodeSetData_load_exemplars_main_result ICU4XUnicodeSetData_load_exemplars_main(const ICU4XDataProvider* provider, const ICU4XLocale* locale);
+    
+    struct ICU4XUnicodeSetData_load_exemplars_auxiliary_result {union {ICU4XUnicodeSetData* ok; ICU4XDataError err;}; bool is_ok;};
+    struct ICU4XUnicodeSetData_load_exemplars_auxiliary_result ICU4XUnicodeSetData_load_exemplars_auxiliary(const ICU4XDataProvider* provider, const ICU4XLocale* locale);
+    
+    struct ICU4XUnicodeSetData_load_exemplars_punctuation_result {union {ICU4XUnicodeSetData* ok; ICU4XDataError err;}; bool is_ok;};
+    struct ICU4XUnicodeSetData_load_exemplars_punctuation_result ICU4XUnicodeSetData_load_exemplars_punctuation(const ICU4XDataProvider* provider, const ICU4XLocale* locale);
+    
+    struct ICU4XUnicodeSetData_load_exemplars_numbers_result {union {ICU4XUnicodeSetData* ok; ICU4XDataError err;}; bool is_ok;};
+    struct ICU4XUnicodeSetData_load_exemplars_numbers_result ICU4XUnicodeSetData_load_exemplars_numbers(const ICU4XDataProvider* provider, const ICU4XLocale* locale);
+    
+    struct ICU4XUnicodeSetData_load_exemplars_index_result {union {ICU4XUnicodeSetData* ok; ICU4XDataError err;}; bool is_ok;};
+    struct ICU4XUnicodeSetData_load_exemplars_index_result ICU4XUnicodeSetData_load_exemplars_index(const ICU4XDataProvider* provider, const ICU4XLocale* locale);
+    
+    
+    void ICU4XUnicodeSetData_destroy(ICU4XUnicodeSetData* self);
+    
+    } // extern "C"
+}
 
 inline bool ICU4XUnicodeSetData::contains(std::string_view s) const {
   auto result = capi::ICU4XUnicodeSetData_contains(this->AsFFI(),

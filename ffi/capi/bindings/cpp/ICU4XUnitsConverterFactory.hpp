@@ -15,8 +15,23 @@
 #include "ICU4XMeasureUnit.hpp"
 #include "ICU4XMeasureUnitParser.hpp"
 #include "ICU4XUnitsConverter.hpp"
-#include "ICU4XUnitsConverterFactory.h"
 
+
+namespace capi {
+    extern "C" {
+    
+    struct ICU4XUnitsConverterFactory_create_result {union {ICU4XUnitsConverterFactory* ok; ICU4XDataError err;}; bool is_ok;};
+    struct ICU4XUnitsConverterFactory_create_result ICU4XUnitsConverterFactory_create(const ICU4XDataProvider* provider);
+    
+    ICU4XUnitsConverter* ICU4XUnitsConverterFactory_converter(const ICU4XUnitsConverterFactory* self, const ICU4XMeasureUnit* from, const ICU4XMeasureUnit* to);
+    
+    ICU4XMeasureUnitParser* ICU4XUnitsConverterFactory_parser(const ICU4XUnitsConverterFactory* self);
+    
+    
+    void ICU4XUnitsConverterFactory_destroy(ICU4XUnitsConverterFactory* self);
+    
+    } // extern "C"
+}
 
 inline diplomat::result<std::unique_ptr<ICU4XUnitsConverterFactory>, ICU4XDataError> ICU4XUnitsConverterFactory::create(const ICU4XDataProvider& provider) {
   auto result = capi::ICU4XUnitsConverterFactory_create(provider.AsFFI());

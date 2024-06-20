@@ -12,9 +12,26 @@
 #include "diplomat_runtime.hpp"
 #include "ICU4XDataError.hpp"
 #include "ICU4XDataProvider.hpp"
-#include "ICU4XTimeZoneIdMapperWithFastCanonicalization.h"
 #include "ICU4XTimeZoneInvalidIdError.hpp"
 
+
+namespace capi {
+    extern "C" {
+    
+    struct ICU4XTimeZoneIdMapperWithFastCanonicalization_create_result {union {ICU4XTimeZoneIdMapperWithFastCanonicalization* ok; ICU4XDataError err;}; bool is_ok;};
+    struct ICU4XTimeZoneIdMapperWithFastCanonicalization_create_result ICU4XTimeZoneIdMapperWithFastCanonicalization_create(const ICU4XDataProvider* provider);
+    
+    struct ICU4XTimeZoneIdMapperWithFastCanonicalization_canonicalize_iana_result {union { ICU4XTimeZoneInvalidIdError err;}; bool is_ok;};
+    struct ICU4XTimeZoneIdMapperWithFastCanonicalization_canonicalize_iana_result ICU4XTimeZoneIdMapperWithFastCanonicalization_canonicalize_iana(const ICU4XTimeZoneIdMapperWithFastCanonicalization* self, const char* value_data, size_t value_len, DiplomatWrite* write);
+    
+    struct ICU4XTimeZoneIdMapperWithFastCanonicalization_canonical_iana_from_bcp47_result {union { ICU4XTimeZoneInvalidIdError err;}; bool is_ok;};
+    struct ICU4XTimeZoneIdMapperWithFastCanonicalization_canonical_iana_from_bcp47_result ICU4XTimeZoneIdMapperWithFastCanonicalization_canonical_iana_from_bcp47(const ICU4XTimeZoneIdMapperWithFastCanonicalization* self, const char* value_data, size_t value_len, DiplomatWrite* write);
+    
+    
+    void ICU4XTimeZoneIdMapperWithFastCanonicalization_destroy(ICU4XTimeZoneIdMapperWithFastCanonicalization* self);
+    
+    } // extern "C"
+}
 
 inline diplomat::result<std::unique_ptr<ICU4XTimeZoneIdMapperWithFastCanonicalization>, ICU4XDataError> ICU4XTimeZoneIdMapperWithFastCanonicalization::create(const ICU4XDataProvider& provider) {
   auto result = capi::ICU4XTimeZoneIdMapperWithFastCanonicalization_create(provider.AsFFI());

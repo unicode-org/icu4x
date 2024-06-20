@@ -8,7 +8,6 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XCodePointMapData16.d.h"
 #include "ICU4XDataError.d.hpp"
 
 class ICU4XCodePointRangeIterator;
@@ -16,6 +15,10 @@ class ICU4XCodePointSetData;
 class ICU4XDataProvider;
 class ICU4XDataError;
 
+
+namespace capi {
+    typedef struct ICU4XCodePointMapData16 ICU4XCodePointMapData16;
+}
 
 class ICU4XCodePointMapData16 {
 public:

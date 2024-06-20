@@ -9,7 +9,6 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 #include "ICU4XDataError.d.hpp"
-#include "ICU4XUnitsConverterFactory.d.h"
 
 class ICU4XDataProvider;
 class ICU4XMeasureUnit;
@@ -17,6 +16,10 @@ class ICU4XMeasureUnitParser;
 class ICU4XUnitsConverter;
 class ICU4XDataError;
 
+
+namespace capi {
+    typedef struct ICU4XUnitsConverterFactory ICU4XUnitsConverterFactory;
+}
 
 class ICU4XUnitsConverterFactory {
 public:

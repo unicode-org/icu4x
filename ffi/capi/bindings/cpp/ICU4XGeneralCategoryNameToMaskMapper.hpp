@@ -12,8 +12,23 @@
 #include "diplomat_runtime.hpp"
 #include "ICU4XDataError.hpp"
 #include "ICU4XDataProvider.hpp"
-#include "ICU4XGeneralCategoryNameToMaskMapper.h"
 
+
+namespace capi {
+    extern "C" {
+    
+    uint32_t ICU4XGeneralCategoryNameToMaskMapper_get_strict(const ICU4XGeneralCategoryNameToMaskMapper* self, const char* name_data, size_t name_len);
+    
+    uint32_t ICU4XGeneralCategoryNameToMaskMapper_get_loose(const ICU4XGeneralCategoryNameToMaskMapper* self, const char* name_data, size_t name_len);
+    
+    struct ICU4XGeneralCategoryNameToMaskMapper_load_result {union {ICU4XGeneralCategoryNameToMaskMapper* ok; ICU4XDataError err;}; bool is_ok;};
+    struct ICU4XGeneralCategoryNameToMaskMapper_load_result ICU4XGeneralCategoryNameToMaskMapper_load(const ICU4XDataProvider* provider);
+    
+    
+    void ICU4XGeneralCategoryNameToMaskMapper_destroy(ICU4XGeneralCategoryNameToMaskMapper* self);
+    
+    } // extern "C"
+}
 
 inline uint32_t ICU4XGeneralCategoryNameToMaskMapper::get_strict(std::string_view name) const {
   auto result = capi::ICU4XGeneralCategoryNameToMaskMapper_get_strict(this->AsFFI(),

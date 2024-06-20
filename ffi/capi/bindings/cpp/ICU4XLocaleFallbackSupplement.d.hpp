@@ -8,8 +8,14 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XLocaleFallbackSupplement.d.h"
 
+
+namespace capi {
+    typedef enum ICU4XLocaleFallbackSupplement {
+      ICU4XLocaleFallbackSupplement_None = 0,
+      ICU4XLocaleFallbackSupplement_Collation = 1,
+    } ICU4XLocaleFallbackSupplement;
+}
 
 class ICU4XLocaleFallbackSupplement {
 public:

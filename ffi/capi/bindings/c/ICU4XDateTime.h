@@ -6,33 +6,28 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include "diplomat_runtime.h"
+
 #include "ICU4XCalendar.d.h"
-#include "ICU4XCalendar.h"
+#include "ICU4XCalendarError.d.h"
 #include "ICU4XDate.d.h"
-#include "ICU4XDate.h"
 #include "ICU4XIsoDateTime.d.h"
-#include "ICU4XIsoDateTime.h"
 #include "ICU4XIsoWeekday.d.h"
-#include "ICU4XIsoWeekday.h"
 #include "ICU4XTime.d.h"
-#include "ICU4XTime.h"
 #include "ICU4XWeekCalculator.d.h"
-#include "ICU4XWeekCalculator.h"
 #include "ICU4XWeekOf.d.h"
-#include "ICU4XWeekOf.h"
-#include "diplomat_result_box_ICU4XDateTime_ICU4XCalendarError.d.h"
 
 #include "ICU4XDateTime.d.h"
 
-#ifdef __cplusplus
-namespace capi {
-extern "C" {
-#endif // __cplusplus
 
 
-diplomat_result_box_ICU4XDateTime_ICU4XCalendarError ICU4XDateTime_create_from_iso_in_calendar(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond, const ICU4XCalendar* calendar);
 
-diplomat_result_box_ICU4XDateTime_ICU4XCalendarError ICU4XDateTime_create_from_codes_in_calendar(const char* era_code_data, size_t era_code_len, int32_t year, const char* month_code_data, size_t month_code_len, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond, const ICU4XCalendar* calendar);
+
+
+struct ICU4XDateTime_create_from_iso_in_calendar_result {union {ICU4XDateTime* ok; ICU4XCalendarError err;}; bool is_ok;};
+struct ICU4XDateTime_create_from_iso_in_calendar_result ICU4XDateTime_create_from_iso_in_calendar(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond, const ICU4XCalendar* calendar);
+
+struct ICU4XDateTime_create_from_codes_in_calendar_result {union {ICU4XDateTime* ok; ICU4XCalendarError err;}; bool is_ok;};
+struct ICU4XDateTime_create_from_codes_in_calendar_result ICU4XDateTime_create_from_codes_in_calendar(const char* era_code_data, size_t era_code_len, int32_t year, const char* month_code_data, size_t month_code_len, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond, const ICU4XCalendar* calendar);
 
 ICU4XDateTime* ICU4XDateTime_create_from_date_and_time(const ICU4XDate* date, const ICU4XTime* time);
 
@@ -78,12 +73,11 @@ uint16_t ICU4XDateTime_days_in_year(const ICU4XDateTime* self);
 
 ICU4XCalendar* ICU4XDateTime_calendar(const ICU4XDateTime* self);
 
+
 void ICU4XDateTime_destroy(ICU4XDateTime* self);
 
 
-#ifdef __cplusplus
-} // extern "C"
-} // namespace capi
-#endif // __cplusplus
+
+
 
 #endif // ICU4XDateTime_H

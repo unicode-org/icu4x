@@ -10,12 +10,35 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XBidi.h"
 #include "ICU4XBidiInfo.hpp"
 #include "ICU4XDataError.hpp"
 #include "ICU4XDataProvider.hpp"
 #include "ICU4XReorderedIndexMap.hpp"
 
+
+namespace capi {
+    extern "C" {
+    
+    struct ICU4XBidi_create_result {union {ICU4XBidi* ok; ICU4XDataError err;}; bool is_ok;};
+    struct ICU4XBidi_create_result ICU4XBidi_create(const ICU4XDataProvider* provider);
+    
+    ICU4XBidiInfo* ICU4XBidi_for_text(const ICU4XBidi* self, const char* text_data, size_t text_len, uint8_t default_level);
+    
+    ICU4XReorderedIndexMap* ICU4XBidi_reorder_visual(const ICU4XBidi* self, const uint8_t* levels_data, size_t levels_len);
+    
+    bool ICU4XBidi_level_is_rtl(uint8_t level);
+    
+    bool ICU4XBidi_level_is_ltr(uint8_t level);
+    
+    uint8_t ICU4XBidi_level_rtl();
+    
+    uint8_t ICU4XBidi_level_ltr();
+    
+    
+    void ICU4XBidi_destroy(ICU4XBidi* self);
+    
+    } // extern "C"
+}
 
 inline diplomat::result<std::unique_ptr<ICU4XBidi>, ICU4XDataError> ICU4XBidi::create(const ICU4XDataProvider& provider) {
   auto result = capi::ICU4XBidi_create(provider.AsFFI());

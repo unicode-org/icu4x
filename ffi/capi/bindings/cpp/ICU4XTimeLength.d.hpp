@@ -8,8 +8,16 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XTimeLength.d.h"
 
+
+namespace capi {
+    typedef enum ICU4XTimeLength {
+      ICU4XTimeLength_Full = 0,
+      ICU4XTimeLength_Long = 1,
+      ICU4XTimeLength_Medium = 2,
+      ICU4XTimeLength_Short = 3,
+    } ICU4XTimeLength;
+}
 
 class ICU4XTimeLength {
 public:

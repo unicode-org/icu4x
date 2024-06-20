@@ -11,8 +11,31 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 #include "ICU4XBidiDirection.hpp"
-#include "ICU4XBidiParagraph.h"
 
+
+namespace capi {
+    extern "C" {
+    
+    bool ICU4XBidiParagraph_set_paragraph_in_text(ICU4XBidiParagraph* self, size_t n);
+    
+    ICU4XBidiDirection ICU4XBidiParagraph_direction(const ICU4XBidiParagraph* self);
+    
+    size_t ICU4XBidiParagraph_size(const ICU4XBidiParagraph* self);
+    
+    size_t ICU4XBidiParagraph_range_start(const ICU4XBidiParagraph* self);
+    
+    size_t ICU4XBidiParagraph_range_end(const ICU4XBidiParagraph* self);
+    
+    struct ICU4XBidiParagraph_reorder_line_result { bool is_ok;};
+    struct ICU4XBidiParagraph_reorder_line_result ICU4XBidiParagraph_reorder_line(const ICU4XBidiParagraph* self, size_t range_start, size_t range_end, DiplomatWrite* write);
+    
+    uint8_t ICU4XBidiParagraph_level_at(const ICU4XBidiParagraph* self, size_t pos);
+    
+    
+    void ICU4XBidiParagraph_destroy(ICU4XBidiParagraph* self);
+    
+    } // extern "C"
+}
 
 inline bool ICU4XBidiParagraph::set_paragraph_in_text(size_t n) {
   auto result = capi::ICU4XBidiParagraph_set_paragraph_in_text(this->AsFFI(),

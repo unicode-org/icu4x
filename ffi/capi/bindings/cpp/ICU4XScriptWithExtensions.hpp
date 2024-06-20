@@ -13,9 +13,28 @@
 #include "ICU4XCodePointRangeIterator.hpp"
 #include "ICU4XDataError.hpp"
 #include "ICU4XDataProvider.hpp"
-#include "ICU4XScriptWithExtensions.h"
 #include "ICU4XScriptWithExtensionsBorrowed.hpp"
 
+
+namespace capi {
+    extern "C" {
+    
+    struct ICU4XScriptWithExtensions_create_result {union {ICU4XScriptWithExtensions* ok; ICU4XDataError err;}; bool is_ok;};
+    struct ICU4XScriptWithExtensions_create_result ICU4XScriptWithExtensions_create(const ICU4XDataProvider* provider);
+    
+    uint16_t ICU4XScriptWithExtensions_get_script_val(const ICU4XScriptWithExtensions* self, uint32_t code_point);
+    
+    bool ICU4XScriptWithExtensions_has_script(const ICU4XScriptWithExtensions* self, uint32_t code_point, uint16_t script);
+    
+    ICU4XScriptWithExtensionsBorrowed* ICU4XScriptWithExtensions_as_borrowed(const ICU4XScriptWithExtensions* self);
+    
+    ICU4XCodePointRangeIterator* ICU4XScriptWithExtensions_iter_ranges_for_script(const ICU4XScriptWithExtensions* self, uint16_t script);
+    
+    
+    void ICU4XScriptWithExtensions_destroy(ICU4XScriptWithExtensions* self);
+    
+    } // extern "C"
+}
 
 inline diplomat::result<std::unique_ptr<ICU4XScriptWithExtensions>, ICU4XDataError> ICU4XScriptWithExtensions::create(const ICU4XDataProvider& provider) {
   auto result = capi::ICU4XScriptWithExtensions_create(provider.AsFFI());

@@ -14,8 +14,22 @@
 #include "ICU4XDataProvider.hpp"
 #include "ICU4XLocale.hpp"
 #include "ICU4XLocaleParseError.hpp"
-#include "ICU4XRegionDisplayNames.h"
 
+
+namespace capi {
+    extern "C" {
+    
+    struct ICU4XRegionDisplayNames_create_result {union {ICU4XRegionDisplayNames* ok; ICU4XDataError err;}; bool is_ok;};
+    struct ICU4XRegionDisplayNames_create_result ICU4XRegionDisplayNames_create(const ICU4XDataProvider* provider, const ICU4XLocale* locale);
+    
+    struct ICU4XRegionDisplayNames_of_result {union { ICU4XLocaleParseError err;}; bool is_ok;};
+    struct ICU4XRegionDisplayNames_of_result ICU4XRegionDisplayNames_of(const ICU4XRegionDisplayNames* self, const char* region_data, size_t region_len, DiplomatWrite* write);
+    
+    
+    void ICU4XRegionDisplayNames_destroy(ICU4XRegionDisplayNames* self);
+    
+    } // extern "C"
+}
 
 inline diplomat::result<std::unique_ptr<ICU4XRegionDisplayNames>, ICU4XDataError> ICU4XRegionDisplayNames::create(const ICU4XDataProvider& provider, const ICU4XLocale& locale) {
   auto result = capi::ICU4XRegionDisplayNames_create(provider.AsFFI(),

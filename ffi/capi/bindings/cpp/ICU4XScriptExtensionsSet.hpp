@@ -10,8 +10,23 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XScriptExtensionsSet.h"
 
+
+namespace capi {
+    extern "C" {
+    
+    bool ICU4XScriptExtensionsSet_contains(const ICU4XScriptExtensionsSet* self, uint16_t script);
+    
+    size_t ICU4XScriptExtensionsSet_count(const ICU4XScriptExtensionsSet* self);
+    
+    struct ICU4XScriptExtensionsSet_script_at_result {union {uint16_t ok; }; bool is_ok;};
+    struct ICU4XScriptExtensionsSet_script_at_result ICU4XScriptExtensionsSet_script_at(const ICU4XScriptExtensionsSet* self, size_t index);
+    
+    
+    void ICU4XScriptExtensionsSet_destroy(ICU4XScriptExtensionsSet* self);
+    
+    } // extern "C"
+}
 
 inline bool ICU4XScriptExtensionsSet::contains(uint16_t script) const {
   auto result = capi::ICU4XScriptExtensionsSet_contains(this->AsFFI(),

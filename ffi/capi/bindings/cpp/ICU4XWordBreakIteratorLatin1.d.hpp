@@ -9,10 +9,13 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 #include "ICU4XSegmenterWordType.d.hpp"
-#include "ICU4XWordBreakIteratorLatin1.d.h"
 
 class ICU4XSegmenterWordType;
 
+
+namespace capi {
+    typedef struct ICU4XWordBreakIteratorLatin1 ICU4XWordBreakIteratorLatin1;
+}
 
 class ICU4XWordBreakIteratorLatin1 {
 public:

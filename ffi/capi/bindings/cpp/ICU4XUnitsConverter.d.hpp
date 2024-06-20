@@ -8,8 +8,11 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XUnitsConverter.d.h"
 
+
+namespace capi {
+    typedef struct ICU4XUnitsConverter ICU4XUnitsConverter;
+}
 
 class ICU4XUnitsConverter {
 public:

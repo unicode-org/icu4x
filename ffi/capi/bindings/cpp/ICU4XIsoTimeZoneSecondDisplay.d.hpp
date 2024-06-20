@@ -8,8 +8,14 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XIsoTimeZoneSecondDisplay.d.h"
 
+
+namespace capi {
+    typedef enum ICU4XIsoTimeZoneSecondDisplay {
+      ICU4XIsoTimeZoneSecondDisplay_Optional = 0,
+      ICU4XIsoTimeZoneSecondDisplay_Never = 1,
+    } ICU4XIsoTimeZoneSecondDisplay;
+}
 
 class ICU4XIsoTimeZoneSecondDisplay {
 public:

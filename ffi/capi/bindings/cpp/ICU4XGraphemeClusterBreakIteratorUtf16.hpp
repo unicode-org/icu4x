@@ -10,8 +10,18 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XGraphemeClusterBreakIteratorUtf16.h"
 
+
+namespace capi {
+    extern "C" {
+    
+    int32_t ICU4XGraphemeClusterBreakIteratorUtf16_next(ICU4XGraphemeClusterBreakIteratorUtf16* self);
+    
+    
+    void ICU4XGraphemeClusterBreakIteratorUtf16_destroy(ICU4XGraphemeClusterBreakIteratorUtf16* self);
+    
+    } // extern "C"
+}
 
 inline int32_t ICU4XGraphemeClusterBreakIteratorUtf16::next() {
   auto result = capi::ICU4XGraphemeClusterBreakIteratorUtf16_next(this->AsFFI());

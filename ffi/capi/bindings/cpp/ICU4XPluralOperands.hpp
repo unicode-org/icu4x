@@ -12,8 +12,21 @@
 #include "diplomat_runtime.hpp"
 #include "ICU4XFixedDecimal.hpp"
 #include "ICU4XFixedDecimalParseError.hpp"
-#include "ICU4XPluralOperands.h"
 
+
+namespace capi {
+    extern "C" {
+    
+    struct ICU4XPluralOperands_create_from_string_result {union {ICU4XPluralOperands* ok; ICU4XFixedDecimalParseError err;}; bool is_ok;};
+    struct ICU4XPluralOperands_create_from_string_result ICU4XPluralOperands_create_from_string(const char* s_data, size_t s_len);
+    
+    ICU4XPluralOperands* ICU4XPluralOperands_create_from_fixed_decimal(const ICU4XFixedDecimal* x);
+    
+    
+    void ICU4XPluralOperands_destroy(ICU4XPluralOperands* self);
+    
+    } // extern "C"
+}
 
 inline diplomat::result<std::unique_ptr<ICU4XPluralOperands>, ICU4XFixedDecimalParseError> ICU4XPluralOperands::create_from_string(std::string_view s) {
   auto result = capi::ICU4XPluralOperands_create_from_string(s.data(),

@@ -14,12 +14,28 @@
 #include "ICU4XDataProvider.hpp"
 #include "ICU4XDateLength.hpp"
 #include "ICU4XError.hpp"
-#include "ICU4XGregorianZonedDateTimeFormatter.h"
 #include "ICU4XIsoDateTime.hpp"
 #include "ICU4XIsoTimeZoneOptions.hpp"
 #include "ICU4XLocale.hpp"
 #include "ICU4XTimeLength.hpp"
 
+
+namespace capi {
+    extern "C" {
+    
+    struct ICU4XGregorianZonedDateTimeFormatter_create_with_lengths_result {union {ICU4XGregorianZonedDateTimeFormatter* ok; ICU4XError err;}; bool is_ok;};
+    struct ICU4XGregorianZonedDateTimeFormatter_create_with_lengths_result ICU4XGregorianZonedDateTimeFormatter_create_with_lengths(const ICU4XDataProvider* provider, const ICU4XLocale* locale, ICU4XDateLength date_length, ICU4XTimeLength time_length);
+    
+    struct ICU4XGregorianZonedDateTimeFormatter_create_with_lengths_and_iso_8601_time_zone_fallback_result {union {ICU4XGregorianZonedDateTimeFormatter* ok; ICU4XError err;}; bool is_ok;};
+    struct ICU4XGregorianZonedDateTimeFormatter_create_with_lengths_and_iso_8601_time_zone_fallback_result ICU4XGregorianZonedDateTimeFormatter_create_with_lengths_and_iso_8601_time_zone_fallback(const ICU4XDataProvider* provider, const ICU4XLocale* locale, ICU4XDateLength date_length, ICU4XTimeLength time_length, ICU4XIsoTimeZoneOptions zone_options);
+    
+    void ICU4XGregorianZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone(const ICU4XGregorianZonedDateTimeFormatter* self, const ICU4XIsoDateTime* datetime, const ICU4XCustomTimeZone* time_zone, DiplomatWrite* write);
+    
+    
+    void ICU4XGregorianZonedDateTimeFormatter_destroy(ICU4XGregorianZonedDateTimeFormatter* self);
+    
+    } // extern "C"
+}
 
 inline diplomat::result<std::unique_ptr<ICU4XGregorianZonedDateTimeFormatter>, ICU4XError> ICU4XGregorianZonedDateTimeFormatter::create_with_lengths(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDateLength date_length, ICU4XTimeLength time_length) {
   auto result = capi::ICU4XGregorianZonedDateTimeFormatter_create_with_lengths(provider.AsFFI(),
