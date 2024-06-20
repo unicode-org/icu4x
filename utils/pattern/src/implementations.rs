@@ -20,7 +20,7 @@ unsafe impl VarULE for Pattern<SinglePlaceholder, str> {
             .map_err(|_| ZeroVecError::VarZeroVecFormatError)?;
         Ok(())
     }
-    /// SAFETY: The `bytes` slice must be validated by `Self::validate_byte_slice`.
+
     unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
         // SAFETY: As `validate_byte_slice` succeeded, `try_from_bytes_store` succeeded, which implies valid UTF-8
         let store = core::str::from_utf8_unchecked(bytes);
