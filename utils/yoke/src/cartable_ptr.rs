@@ -30,6 +30,12 @@ use core::marker::PhantomData;
 use core::ptr::NonNull;
 use stable_deref_trait::StableDeref;
 
+// Safety note: this method MUST return the same value for the same T, even if i.e. the method gets
+// instantiated in different crates. This can be untrue in surprising ways! For example, just
+// returning a const-ref-to-const would not guarantee that.
+// The current implementation always returns the same address for any T, see
+// [the reference](https://doc.rust-lang.org/reference/items/static-items.html#statics--generics):
+// there is exactly one `SENTINEL` item for any T.
 #[inline]
 fn sentinel_for<T>() -> NonNull<T> {
     static SENTINEL: &u8 = &0x1a; // SUB
