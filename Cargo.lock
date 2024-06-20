@@ -1538,10 +1538,7 @@ version = "1.5.0"
 dependencies = [
  "databake",
  "icu_locale",
- "icu_locale_core",
  "icu_provider",
- "icu_provider_blob",
- "icu_provider_fs",
  "serde",
  "tinystr",
  "writeable",
