@@ -97,7 +97,7 @@
 //! [`icu_provider_adapters`]: ../icu_provider_adapters/index.html
 //! [`DatagenProvider`]: ../icu_datagen/struct.DatagenProvider.html
 //! [`as_downcasting()`]: any::AsDowncastingAnyProvider::as_downcasting
-//! [`as_deserializing()`]: serde::AsDeserializingBufferProvider::as_deserializing
+//! [`as_deserializing()`]: buf::AsDeserializingBufferProvider::as_deserializing
 //! [`FsDataProvider`]: ../icu_provider_fs/struct.FsDataProvider.html
 //! [`BlobDataProvider`]: ../icu_provider_blob/struct.BlobDataProvider.html
 //! [`icu_datagen`]: ../icu_datagen/index.html
