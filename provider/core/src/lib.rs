@@ -127,8 +127,11 @@ pub mod constructors;
 pub mod datagen;
 pub mod dynutil;
 pub mod hello_world;
+
+// TODO: put this in a separate crate
 #[cfg(feature = "serde")]
-pub mod serde;
+#[doc(hidden)]
+pub mod serde_borrow_de_utils;
 
 mod data_provider;
 pub use data_provider::{
@@ -170,10 +173,10 @@ pub mod prelude {
         AsDynamicDataProviderAnyMarkerWrap,
     };
     #[doc(no_inline)]
-    pub use crate::buf::{BufferMarker, BufferProvider};
-    #[doc(no_inline)]
     #[cfg(feature = "serde")]
-    pub use crate::serde::AsDeserializingBufferProvider;
+    pub use crate::buf::AsDeserializingBufferProvider;
+    #[doc(no_inline)]
+    pub use crate::buf::{BufferMarker, BufferProvider};
     #[doc(no_inline)]
     pub use crate::{
         BoundDataProvider, DataError, DataErrorKind, DataLocale, DataMarker, DataMarkerAttributes,

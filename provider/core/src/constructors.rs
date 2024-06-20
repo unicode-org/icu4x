@@ -248,7 +248,7 @@ macro_rules! gen_any_buffer_data_constructors {
         #[cfg(feature = "serde")]
         #[doc = $crate::gen_any_buffer_unstable_docs!(BUFFER, $($struct ::)? $baked)]
         pub fn $buffer(provider: &(impl $crate::buf::BufferProvider + ?Sized) $(, $options_arg: $options_ty)* ) -> $result_ty {
-            use $crate::serde::AsDeserializingBufferProvider;
+            use $crate::buf::AsDeserializingBufferProvider;
             $($struct :: )? $unstable(&provider.as_deserializing()  $(, $options_arg)* )
         }
     };

@@ -589,11 +589,11 @@ fn main() -> eyre::Result<()> {
 }
 
 #[cfg(feature = "blob_input")]
+use icu_provider::buf::DeserializingBufferProvider;
+#[cfg(feature = "blob_input")]
 use icu_provider::datagen::*;
 #[cfg(feature = "blob_input")]
 use icu_provider::prelude::*;
-#[cfg(feature = "blob_input")]
-use icu_provider::serde::DeserializingBufferProvider;
 #[cfg(feature = "blob_input")]
 use icu_provider_blob::BlobDataProvider;
 

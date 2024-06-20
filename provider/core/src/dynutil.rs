@@ -182,7 +182,7 @@ pub use __impl_casting_upcast as impl_casting_upcast;
 /// [`DataProvider`]: crate::DataProvider
 /// [`AnyPayload`]: (crate::any::AnyPayload)
 /// [`DataErrorKind::MissingDataMarker`]: (crate::DataErrorKind::MissingDataMarker)
-/// [`SerializeMarker`]: (crate::serde::SerializeMarker)
+/// [`SerializeMarker`]: (crate::buf::SerializeMarker)
 #[doc(hidden)] // macro
 #[macro_export]
 macro_rules! __impl_dynamic_data_provider {

@@ -58,7 +58,7 @@
 //!
 //! *Notice:* In order for ICU4X to be able to *deserialize* the returned data, the corresponding
 //! Cargo feature has to be activated on the [`icu_provider`] crate. See
-//! [`AsDeserializingBufferProvider::as_deserializing`](icu_provider::serde::AsDeserializingBufferProvider).
+//! [`AsDeserializingBufferProvider::as_deserializing`](icu_provider::buf::AsDeserializingBufferProvider).
 //!
 //! # Exporting data
 //!

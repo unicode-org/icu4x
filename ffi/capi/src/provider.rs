@@ -297,7 +297,7 @@ macro_rules! call_constructor_unstable {
             ))?,
             $crate::provider::ICU4XDataProviderInner::Empty => $unstable(&icu_provider_adapters::empty::EmptyDataProvider::new(), $($args,)*),
             #[cfg(feature = "buffer_provider")]
-            $crate::provider::ICU4XDataProviderInner::Buffer(buffer_provider) => $unstable(&icu_provider::serde::AsDeserializingBufferProvider::as_deserializing(buffer_provider), $($args,)*),
+            $crate::provider::ICU4XDataProviderInner::Buffer(buffer_provider) => $unstable(&icu_provider::buf::AsDeserializingBufferProvider::as_deserializing(buffer_provider), $($args,)*),
             #[cfg(feature = "compiled_data")]
             $crate::provider::ICU4XDataProviderInner::Compiled => { let $pre_transform = $compiled($($args,)*); $transform },
         }
@@ -309,7 +309,7 @@ macro_rules! call_constructor_unstable {
             ))?,
             $crate::provider::ICU4XDataProviderInner::Empty => $unstable(&icu_provider_adapters::empty::EmptyDataProvider::new(), $($args,)*),
             #[cfg(feature = "buffer_provider")]
-            $crate::provider::ICU4XDataProviderInner::Buffer(buffer_provider) => $unstable(&icu_provider::serde::AsDeserializingBufferProvider::as_deserializing(buffer_provider), $($args,)*),
+            $crate::provider::ICU4XDataProviderInner::Buffer(buffer_provider) => $unstable(&icu_provider::buf::AsDeserializingBufferProvider::as_deserializing(buffer_provider), $($args,)*),
             #[cfg(feature = "compiled_data")]
             $crate::provider::ICU4XDataProviderInner::Compiled => $compiled($($args,)*),
         }

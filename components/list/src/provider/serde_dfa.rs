@@ -80,7 +80,7 @@ impl<'data> SerdeDFA<'data> {
     where
         D: serde::de::Deserializer<'de>,
     {
-        use icu_provider::serde::borrow_de_utils::CowBytesWrap;
+        use icu_provider::serde_borrow_de_utils::CowBytesWrap;
         use serde::Deserialize;
 
         #[cfg(feature = "serde_human")]
