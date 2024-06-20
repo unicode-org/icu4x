@@ -13,6 +13,7 @@ Also see our [datagen tutorial](https://github.com/unicode-org/icu4x/blob/main/t
 ```rust
 use icu_datagen::blob_exporter::*;
 use icu_datagen::prelude::*;
+use icu_datagen_bikeshed::DatagenProvider;
 use std::fs::File;
 
 DatagenDriver::new()
@@ -40,14 +41,9 @@ can be disabled to reduce dependencies:
 * `fs_exporter`
   * enables the [`fs_exporter`] module, a reexport of [`icu_provider_fs::export`]
   * enables the `--format dir` CLI argument
-* `networking`
-  * enables methods on [`DatagenProvider`] that fetch source data from the network
-  * enables the `--cldr-tag`, `--icu-export-tag`, and `--segmenter-lstm-tag` CLI arguments that download data
 * `rayon`
   * enables parallelism during export
-* `use_wasm` / `use_icu4c`
-  * see the documentation on [`icu_codepointtrie_builder`](icu_codepointtrie_builder#build-configuration)
-* `experimental_components`
+* `experimental`
   * enables data generation for markers defined in the unstable `icu_experimental` crate
   * note that this features affects the behaviour of `all_markers`
 
