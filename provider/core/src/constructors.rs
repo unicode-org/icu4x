@@ -117,14 +117,14 @@ macro_rules! gen_any_buffer_unstable_docs {
     (ANY, $data:path) => {
         concat!(
             "A version of [`", stringify!($data), "`] that uses custom data ",
-            "provided by an [`AnyProvider`](icu_provider::AnyProvider).\n\n",
+            "provided by an [`AnyProvider`](icu_provider::any::AnyProvider).\n\n",
             "[📚 Help choosing a constructor](icu_provider::constructors)",
         )
     };
     (BUFFER, $data:path) => {
         concat!(
             "A version of [`", stringify!($data), "`] that uses custom data ",
-            "provided by a [`BufferProvider`](icu_provider::BufferProvider).\n\n",
+            "provided by a [`BufferProvider`](icu_provider::buf::BufferProvider).\n\n",
             "✨ *Enabled with the `serde` feature.*\n\n",
             "[📚 Help choosing a constructor](icu_provider::constructors)",
         )

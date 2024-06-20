@@ -14,7 +14,7 @@
 //! You can also use `--format blob` if you need to support ICU4X versions prior to 1.4.
 //!
 //! [`ICU4X`]: ../icu/index.html
-//! [`BufferProvider`]: icu_provider::BufferProvider
+//! [`BufferProvider`]: icu_provider::buf::BufferProvider
 //! [`icu_datagen`]: ../icu_datagen/index.html
 
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations

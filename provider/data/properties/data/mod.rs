@@ -278,7 +278,7 @@ macro_rules! impl_data_provider {
 macro_rules! impl_any_provider {
     ($ provider : ty) => {
         #[clippy::msrv = "1.70"]
-        impl icu_provider::AnyProvider for $provider {
+        impl icu_provider::any::AnyProvider for $provider {
             fn load_any(&self, marker: icu_provider::DataMarkerInfo, req: icu_provider::DataRequest) -> Result<icu_provider::AnyResponse, icu_provider::DataError> {
                 match marker.path.hashed() {
                     h if h == <icu::properties::provider::names::GraphemeClusterBreakNameToValueV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::properties::provider::names::GraphemeClusterBreakNameToValueV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),

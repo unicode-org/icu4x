@@ -136,8 +136,8 @@ use predicates::MissingDataMarkerPredicate;
 ///
 /// [`DataMarkerInfo`]: icu_provider::DataMarkerInfo
 /// [`DataProvider`]: icu_provider::DataProvider
-/// [`AnyProvider`]: icu_provider::AnyProvider
-/// [`BufferProvider`]: icu_provider::BufferProvider
+/// [`AnyProvider`]: icu_provider::any::AnyProvider
+/// [`BufferProvider`]: icu_provider::buf::BufferProvider
 /// [`DynamicDataProvider`]: icu_provider::DynamicDataProvider
 pub type ForkByMarkerProvider<P0, P1> = ForkByErrorProvider<P0, P1, MissingDataMarkerPredicate>;
 
@@ -205,8 +205,8 @@ impl<P0, P1> ForkByMarkerProvider<P0, P1> {
 ///
 /// [`DataMarkerInfo`]: icu_provider::DataMarkerInfo
 /// [`DataProvider`]: icu_provider::DataProvider
-/// [`AnyProvider`]: icu_provider::AnyProvider
-/// [`BufferProvider`]: icu_provider::BufferProvider
+/// [`AnyProvider`]: icu_provider::any::AnyProvider
+/// [`BufferProvider`]: icu_provider::buf::BufferProvider
 /// [`DynamicDataProvider`]: icu_provider::DynamicDataProvider
 pub type MultiForkByMarkerProvider<P> = MultiForkByErrorProvider<P, MissingDataMarkerPredicate>;
 
