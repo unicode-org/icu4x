@@ -25,7 +25,7 @@ unsafe impl VarULE for Pattern<SinglePlaceholder, str> {
         // SAFETY: As `validate_byte_slice` succeeded, `try_from_bytes_store` succeeded, which implies valid UTF-8
         let store = core::str::from_utf8_unchecked(bytes);
 
-        // SAFETY: This is safe if the store is confirmed to be valid Store.
+        // SAFETY: As `validate_byte_slice` succeeded, `try_from_bytes_store` also succeeded
         SinglePlaceholderPattern::from_borrowed_store_unchecked(store)
     }
 }
