@@ -525,10 +525,6 @@ expand!(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu::collections::codepointtrie::CodePointTrie;
-    use icu::properties::provider::{
-        GeneralCategoryV1Marker, PropertyCodePointMapV1, ScriptV1Marker,
-    };
     use icu::properties::{GeneralCategory, Script};
 
     // A test of the UnicodeProperty General_Category is truly a test of the
@@ -539,15 +535,8 @@ mod tests {
     fn test_general_category() {
         let provider = DatagenProvider::new_testing();
 
-        let payload: DataPayload<GeneralCategoryV1Marker> = provider
-            .load(Default::default())
-            .expect("Loading was successful")
-            .payload;
-
-        let trie: &CodePointTrie<GeneralCategory> = match payload.get() {
-            PropertyCodePointMapV1::CodePointTrie(ref t) => t,
-            _ => unreachable!("Should have serialized to a code point trie"),
-        };
+        let trie = icu::properties::maps::load_general_category(&provider).unwrap();
+        let trie = trie.as_code_point_trie().unwrap();
 
         assert_eq!(trie.get32('꣓' as u32), GeneralCategory::DecimalNumber);
         assert_eq!(trie.get32('≈' as u32), GeneralCategory::MathSymbol);
@@ -557,15 +546,9 @@ mod tests {
     fn test_script() {
         let provider = DatagenProvider::new_testing();
 
-        let payload: DataPayload<ScriptV1Marker> = provider
-            .load(Default::default())
-            .expect("Loading was successful")
-            .payload;
+        let trie = icu::properties::maps::load_script(&provider).unwrap();
+        let trie = trie.as_code_point_trie().unwrap();
 
-        let trie: &CodePointTrie<Script> = match payload.get() {
-            PropertyCodePointMapV1::CodePointTrie(ref t) => t,
-            _ => unreachable!("Should have serialized to a code point trie"),
-        };
         assert_eq!(trie.get32('꣓' as u32), Script::Saurashtra);
         assert_eq!(trie.get32('≈' as u32), Script::Common);
     }

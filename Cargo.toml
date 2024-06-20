@@ -69,6 +69,7 @@ members = [
     "utils/ixdtf",
     "utils/litemap",
     "utils/pattern",
+    "utils/preferences",
     "utils/resb",
     "utils/tinystr",
     "utils/tzif",

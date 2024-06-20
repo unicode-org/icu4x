@@ -25,10 +25,7 @@ impl DataProvider<DecimalSymbolsV1Marker> for DatagenProvider {
         let numbers = &resource.main.value.numbers;
 
         let nsname = match req.locale.get_unicode_ext(&key!("nu")) {
-            Some(v) => *v
-                .as_subtags_slice()
-                .first()
-                .expect("expecting subtag if key is present"),
+            Some(v) => *v.get_subtag(0).expect("expecting subtag if key is present"),
             None => Subtag::from_tinystr_unvalidated(numbers.default_numbering_system),
         };
 

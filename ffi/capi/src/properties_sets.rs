@@ -6,7 +6,6 @@
 pub mod ffi {
     use crate::provider::ffi::ICU4XDataProvider;
     use alloc::boxed::Box;
-    use core::str;
     use icu_properties::sets;
 
     use crate::errors::ffi::{ICU4XDataError, ICU4XError};
@@ -16,7 +15,6 @@ pub mod ffi {
     /// An ICU4X Unicode Set Property object, capable of querying whether a code point is contained in a set based on a Unicode property.
     #[diplomat::rust_link(icu::properties, Mod)]
     #[diplomat::rust_link(icu::properties::sets::CodePointSetData, Struct)]
-    #[diplomat::rust_link(icu::properties::sets::CodePointSetData::from_data, FnInStruct, hidden)]
     #[diplomat::rust_link(icu::properties::sets::CodePointSetDataBorrowed, Struct)]
     pub struct ICU4XCodePointSetData(pub sets::CodePointSetData);
 

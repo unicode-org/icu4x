@@ -40,7 +40,7 @@ macro_rules! expand {
 
                     let mut builder = CodePointInversionListBuilder::new();
                     for (start, end) in &data.ranges {
-                        builder.add_range32(&(start..=end));
+                        builder.add_range32(start..=end);
                     }
                     let inv_list = builder.build();
 
@@ -134,21 +134,10 @@ expand!(
 
 #[test]
 fn test_basic() {
-    use icu::collections::codepointinvlist::CodePointInversionList;
-    use icu::properties::provider::PropertyCodePointSetV1;
-    use icu::properties::provider::WhiteSpaceV1Marker;
-
     let provider = DatagenProvider::new_testing();
 
-    let payload: DataPayload<WhiteSpaceV1Marker> = provider
-        .load(Default::default())
-        .expect("Loading was successful")
-        .payload;
-
-    let whitespace: &CodePointInversionList = match payload.get() {
-        PropertyCodePointSetV1::InversionList(ref l) => l,
-        _ => unreachable!("Should have serialized to an inversion list"),
-    };
+    let whitespace = icu::properties::sets::load_white_space(&provider).unwrap();
+    let whitespace = whitespace.as_code_point_inversion_list().unwrap();
 
     assert!(whitespace.contains(' '));
     assert!(whitespace.contains('\n'));

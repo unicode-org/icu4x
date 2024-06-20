@@ -323,7 +323,6 @@ fn string_to_prop_unicodeset(s: &str) -> PropertyUnicodeSetV1<'static> {
 mod tests {
     use super::*;
     use icu::locale::langid;
-    use icu::properties::sets::UnicodeSetData;
 
     #[test]
     fn test_parse_exemplar_chars() {
@@ -511,20 +510,17 @@ mod tests {
     fn test_basic() {
         let provider = DatagenProvider::new_testing();
 
-        let data: DataResponse<ExemplarCharactersMainV1Marker> = provider
-            .load(DataRequest {
-                locale: &langid!("en-001").into(),
-                ..Default::default()
-            })
-            .unwrap();
-
         let exp_chars = [
             "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q",
             "r", "s", "t", "u", "v", "w", "x", "y", "z",
         ];
         let exp_chars_cpilsl = CodePointInversionListAndStringList::from_iter(exp_chars);
 
-        let actual = UnicodeSetData::from_data(data.payload);
+        let actual = icu::properties::exemplar_chars::load_exemplars_main(
+            &provider,
+            &langid!("en-001").into(),
+        )
+        .unwrap();
         let act_chars_cpilsl = actual.to_code_point_inversion_list_string_list();
 
         assert_eq!(exp_chars_cpilsl, act_chars_cpilsl,);

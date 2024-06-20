@@ -114,7 +114,7 @@ macro_rules! cb {
         /// corresponding Cargo features has been enabled.
         // Excludes the hello world marker, as that generally should not be generated.
         pub fn all_markers() -> Vec<DataMarkerInfo> {
-            #[cfg(features = "experimental")]
+            #[cfg(feature = "experimental")]
             log::warn!("The icu_datagen crates has been built with the `experimental` feature, so `all_markers` returns experimental markers");
             vec![
                 $(

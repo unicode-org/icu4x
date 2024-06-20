@@ -301,6 +301,9 @@ pub enum DateTimeWriteError {
     /// Missing weekday symbol
     #[displaydoc("Cannot find symbol for weekday {0:?}")]
     MissingWeekdaySymbol(IsoWeekday),
+    /// Missing time zone symbol
+    #[displaydoc("Cannot find symbol for time zone {0:?}")]
+    MissingTimeZoneSymbol(CustomTimeZone),
 
     // Invalid input
     /// Incomplete input

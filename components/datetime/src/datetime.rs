@@ -100,9 +100,8 @@ impl TimeFormatter {
 
     icu_provider::gen_any_buffer_data_constructors!(
         (locale, length: length::Time) -> error: DateTimeError,
-        #[cfg(skip)]
         functions: [
-            try_new_with_length,
+            try_new_with_length: skip,
             try_new_with_length_with_any_provider,
             try_new_with_length_with_buffer_provider,
             try_new_with_length_unstable,
@@ -310,9 +309,8 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
 
     icu_provider::gen_any_buffer_data_constructors!(
         (locale, length: length::Date) -> error: DateTimeError,
-        #[cfg(skip)]
         functions: [
-            try_new_with_length,
+            try_new_with_length: skip,
             try_new_with_length_with_any_provider,
             try_new_with_length_with_buffer_provider,
             try_new_with_length_unstable,
@@ -562,9 +560,8 @@ where {
 
     icu_provider::gen_any_buffer_data_constructors!(
         (locale, options: DateTimeFormatterOptions) -> error: DateTimeError,
-        #[cfg(skip)]
         functions: [
-            try_new,
+            try_new: skip,
             try_new_with_any_provider,
             try_new_with_buffer_provider,
             try_new_unstable,
