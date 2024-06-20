@@ -110,17 +110,17 @@ where
     P1: datagen::IterableDynamicDataProvider<M>,
     F: ForkByErrorPredicate,
 {
-    fn supported_requests_for_marker(
+    fn iter_requests_for_marker(
         &self,
         marker: DataMarkerInfo,
     ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
-        let result = self.0.supported_requests_for_marker(marker);
+        let result = self.0.iter_requests_for_marker(marker);
         match result {
             Ok(ok) => return Ok(ok),
             Err(err) if !self.2.test(marker, None, err) => return Err(err),
             _ => (),
         };
-        self.1.supported_requests_for_marker(marker)
+        self.1.iter_requests_for_marker(marker)
     }
 }
 
@@ -240,13 +240,13 @@ where
     P: datagen::IterableDynamicDataProvider<M>,
     F: ForkByErrorPredicate,
 {
-    fn supported_requests_for_marker(
+    fn iter_requests_for_marker(
         &self,
         marker: DataMarkerInfo,
     ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         let mut last_error = F::UNIT_ERROR.with_marker(marker);
         for provider in self.providers.iter() {
-            let result = provider.supported_requests_for_marker(marker);
+            let result = provider.iter_requests_for_marker(marker);
             match result {
                 Ok(ok) => return Ok(ok),
                 Err(err) if !self.predicate.test(marker, None, err) => return Err(err),

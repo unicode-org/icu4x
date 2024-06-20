@@ -35,7 +35,7 @@ macro_rules! normalization_provider {
         }
 
         impl crate::IterableDataProviderCached<$marker> for DatagenProvider {
-            fn supported_requests_cached(
+            fn iter_requests_cached(
                 &self,
             ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
                 Ok(HashSet::from_iter([Default::default()]))

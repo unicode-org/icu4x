@@ -169,7 +169,7 @@ impl DatagenProvider {
         })
     }
 
-    fn supported_requests_neo(
+    fn iter_requests_neo(
         &self,
         calendar: Value,
         keylengths: &'static [TinyAsciiStr<8>],
@@ -673,7 +673,7 @@ impl DataProvider<TimePatternV1Marker> for DatagenProvider {
 // and we can use a union of the H12/H24 key lengths arrays, instead checking for preferred hc
 // in timepattern_convert
 impl IterableDataProviderCached<TimePatternV1Marker> for DatagenProvider {
-    fn supported_requests_cached(
+    fn iter_requests_cached(
         &self,
     ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         let calendar = value!("gregory");
@@ -738,10 +738,10 @@ macro_rules! impl_symbols_datagen {
         }
 
         impl IterableDataProviderCached<$marker> for DatagenProvider {
-            fn supported_requests_cached(
+            fn iter_requests_cached(
                 &self,
             ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
-                self.supported_requests_neo(value!($calendar), $lengths)
+                self.iter_requests_neo(value!($calendar), $lengths)
             }
         }
     };
@@ -756,10 +756,10 @@ macro_rules! impl_pattern_datagen {
         }
 
         impl IterableDataProviderCached<$marker> for DatagenProvider {
-            fn supported_requests_cached(
+            fn iter_requests_cached(
                 &self,
             ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
-                self.supported_requests_neo(value!($calendar), $lengths)
+                self.iter_requests_neo(value!($calendar), $lengths)
             }
         }
     };

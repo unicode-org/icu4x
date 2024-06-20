@@ -415,7 +415,7 @@ impl DataExporter for BakedExporter {
         }, quote! {
             #maybe_msrv
             impl icu_provider::datagen::IterableDataProvider<#marker_bake> for $provider {
-                fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataMarkerAttributes)>, icu_provider::DataError> {
+                fn iter_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataMarkerAttributes)>, icu_provider::DataError> {
                     Ok(HashSet::from_iter([Default::default()]))
                 }
             }
@@ -451,7 +451,7 @@ impl DataExporter for BakedExporter {
                 quote! {
                     #maybe_msrv
                     impl icu_provider::datagen::IterableDataProvider<#marker_bake> for $provider {
-                        fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataMarkerAttributes)>, icu_provider::DataError> {
+                        fn iter_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataMarkerAttributes)>, icu_provider::DataError> {
                             Ok(Default::default())
                         }
                     }
@@ -568,7 +568,7 @@ impl DataExporter for BakedExporter {
                 quote! {
                     #maybe_msrv
                     impl icu_provider::datagen::IterableDataProvider<#marker_bake> for $provider {
-                        fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataMarkerAttributes)>, icu_provider::DataError> {
+                        fn iter_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataMarkerAttributes)>, icu_provider::DataError> {
                             Ok(icu_provider_baked::DataStore::iter(&Self::#data_ident).collect())
                         }
                     }

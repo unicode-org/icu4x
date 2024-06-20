@@ -217,7 +217,7 @@ impl DynamicDataProvider<BufferMarker> for HelloWorldJsonProvider {
 
 #[cfg(feature = "datagen")]
 impl icu_provider::datagen::IterableDataProvider<HelloWorldV1Marker> for HelloWorldProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+    fn iter_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         #[allow(clippy::unwrap_used)] // datagen
         Ok(Self::DATA
             .iter()
@@ -329,7 +329,7 @@ fn test_iter() {
     use icu_locale_core::locale;
 
     assert_eq!(
-        HelloWorldProvider.supported_requests().unwrap(),
+        HelloWorldProvider.iter_requests().unwrap(),
         HashSet::from_iter([
             (locale!("bn").into(), Default::default()),
             (locale!("cs").into(), Default::default()),

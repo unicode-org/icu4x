@@ -603,7 +603,7 @@ macro_rules! implement {
         }
 
         impl crate::IterableDataProviderCached<$marker> for DatagenProvider {
-            fn supported_requests_cached(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+            fn iter_requests_cached(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
                 Ok(HashSet::from_iter([Default::default()]))
             }
         }

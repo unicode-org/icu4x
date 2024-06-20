@@ -92,7 +92,7 @@ impl DataProvider<UnitsDisplayNameV1Marker> for DatagenProvider {
 }
 
 impl crate::IterableDataProviderCached<UnitsDisplayNameV1Marker> for DatagenProvider {
-    fn supported_requests_cached(
+    fn iter_requests_cached(
         &self,
     ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         fn make_request_element(

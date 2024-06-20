@@ -21,10 +21,7 @@ const _: () = {
 fn iter() {
     use icu_provider::datagen::IterableDataProvider;
     use icu_provider::hello_world::HelloWorldProvider;
-    assert_eq!(
-        Baked.supported_requests(),
-        HelloWorldProvider.supported_requests(),
-    )
+    assert_eq!(Baked.iter_requests(), HelloWorldProvider.iter_requests(),)
 }
 
 #[test]
@@ -33,7 +30,7 @@ fn load() {
     use icu_provider::hello_world::HelloWorldProvider;
     use icu_provider::prelude::*;
 
-    for (locale, marker_attributes) in HelloWorldProvider.supported_requests().unwrap().iter() {
+    for (locale, marker_attributes) in HelloWorldProvider.iter_requests().unwrap().iter() {
         let req = DataRequest {
             locale,
             marker_attributes,

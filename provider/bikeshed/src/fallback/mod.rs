@@ -52,7 +52,7 @@ impl DataProvider<LocaleFallbackParentsV1Marker> for DatagenProvider {
 }
 
 impl crate::IterableDataProviderCached<LocaleFallbackLikelySubtagsV1Marker> for DatagenProvider {
-    fn supported_requests_cached(
+    fn iter_requests_cached(
         &self,
     ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
@@ -60,7 +60,7 @@ impl crate::IterableDataProviderCached<LocaleFallbackLikelySubtagsV1Marker> for 
 }
 
 impl crate::IterableDataProviderCached<LocaleFallbackParentsV1Marker> for DatagenProvider {
-    fn supported_requests_cached(
+    fn iter_requests_cached(
         &self,
     ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))

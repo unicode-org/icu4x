@@ -244,7 +244,7 @@ macro_rules! expand {
             }
 
             impl crate::IterableDataProviderCached<$marker> for DatagenProvider {
-                fn supported_requests_cached(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError>  {
+                fn iter_requests_cached(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError>  {
                     self.get_enumerated_prop($prop_name)?;
                     Ok(HashSet::from_iter([Default::default()]))
                 }
@@ -267,7 +267,7 @@ macro_rules! expand {
             }
 
             impl crate::IterableDataProviderCached<$marker_n2e> for DatagenProvider {
-                                fn supported_requests_cached(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError>  {
+                                fn iter_requests_cached(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError>  {
                     self.get_enumerated_prop($prop_name)?;
                     Ok(HashSet::from_iter([Default::default()]))
                 }
@@ -283,7 +283,7 @@ macro_rules! expand {
                 }
 
                 impl crate::IterableDataProviderCached<$marker_e2sns> for DatagenProvider {
-                    fn supported_requests_cached(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError>  {
+                    fn iter_requests_cached(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError>  {
                         self.get_enumerated_prop($prop_name)?;
                         Ok(HashSet::from_iter([Default::default()]))
                     }
@@ -298,7 +298,7 @@ macro_rules! expand {
                 }
 
                 impl crate::IterableDataProviderCached<$marker_e2lns> for DatagenProvider {
-                    fn supported_requests_cached(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError>  {
+                    fn iter_requests_cached(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError>  {
                         self.get_enumerated_prop($prop_name)?;
                         Ok(HashSet::from_iter([Default::default()]))
                     }
@@ -315,7 +315,7 @@ macro_rules! expand {
                 }
 
                 impl crate::IterableDataProviderCached<$marker_e2snl> for DatagenProvider {
-                    fn supported_requests_cached(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError>  {
+                    fn iter_requests_cached(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError>  {
                         self.get_enumerated_prop($prop_name)?;
                         Ok(HashSet::from_iter([Default::default()]))
                     }
@@ -330,7 +330,7 @@ macro_rules! expand {
                 }
 
                 impl crate::IterableDataProviderCached<$marker_e2lnl> for DatagenProvider {
-                    fn supported_requests_cached(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError>  {
+                    fn iter_requests_cached(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError>  {
                         self.get_enumerated_prop($prop_name)?;
                         Ok(HashSet::from_iter([Default::default()]))
                     }
@@ -347,7 +347,7 @@ macro_rules! expand {
                 }
 
                 impl crate::IterableDataProviderCached<$marker_e2snl4> for DatagenProvider {
-                    fn supported_requests_cached(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError>  {
+                    fn iter_requests_cached(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError>  {
                         self.get_enumerated_prop($prop_name)?;
                         Ok(HashSet::from_iter([Default::default()]))
                     }
@@ -363,7 +363,7 @@ macro_rules! expand {
                 }
 
                 impl crate::IterableDataProviderCached<$marker_e2lnl4> for DatagenProvider {
-                    fn supported_requests_cached(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError>  {
+                    fn iter_requests_cached(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError>  {
                         self.get_enumerated_prop($prop_name)?;
                         Ok(HashSet::from_iter([Default::default()]))
                     }
@@ -404,7 +404,7 @@ impl DataProvider<GeneralCategoryMaskNameToValueV1Marker> for DatagenProvider {
 }
 
 impl crate::IterableDataProviderCached<GeneralCategoryMaskNameToValueV1Marker> for DatagenProvider {
-    fn supported_requests_cached(
+    fn iter_requests_cached(
         &self,
     ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         self.get_mask_prop("gcm")?;

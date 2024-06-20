@@ -83,7 +83,7 @@ pub struct DatagenProvider {
     trie_type: TrieType,
     collation_han_database: CollationHanDatabase,
     #[allow(clippy::type_complexity)] // not as complex as it appears
-    supported_requests_cache: Arc<
+    requests_cache: Arc<
         FrozenMap<
             DataMarkerInfo,
             Box<
@@ -149,7 +149,7 @@ impl DatagenProvider {
             segmenter_lstm_paths: None,
             trie_type: Default::default(),
             collation_han_database: Default::default(),
-            supported_requests_cache: Default::default(),
+            requests_cache: Default::default(),
         }
     }
 
@@ -319,7 +319,7 @@ impl DatagenProvider {
     {
         if <M as DataMarker>::INFO.is_singleton && !req.locale.is_empty() {
             Err(DataErrorKind::ExtraneousLocale)
-        } else if !self.populate_supported_requests_cache()?.contains(&(
+        } else if !self.populate_requests_cache()?.contains(&(
             Cow::Borrowed(req.locale),
             Cow::Borrowed(req.marker_attributes),
         )) {
@@ -332,22 +332,22 @@ impl DatagenProvider {
 }
 
 trait IterableDataProviderCached<M: DataMarker>: DataProvider<M> {
-    fn supported_requests_cached(
+    fn iter_requests_cached(
         &self,
     ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError>;
 }
 
 impl DatagenProvider {
     #[allow(clippy::type_complexity)] // not as complex as it appears
-    fn populate_supported_requests_cache<M: DataMarker>(
+    fn populate_requests_cache<M: DataMarker>(
         &self,
     ) -> Result<&HashSet<(Cow<'static, DataLocale>, Cow<'static, DataMarkerAttributes>)>, DataError>
     where
         DatagenProvider: IterableDataProviderCached<M>,
     {
-        self.supported_requests_cache
+        self.requests_cache
             .insert_with(M::INFO, || {
-                Box::new(self.supported_requests_cached().map(|m| {
+                Box::new(self.iter_requests_cached().map(|m| {
                     m.into_iter()
                         .map(|(k, v)| (Cow::Owned(k), Cow::Owned(v)))
                         .collect()
@@ -362,9 +362,9 @@ impl<M: DataMarker> IterableDataProvider<M> for DatagenProvider
 where
     DatagenProvider: IterableDataProviderCached<M>,
 {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+    fn iter_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         Ok(self
-            .populate_supported_requests_cache()?
+            .populate_requests_cache()?
             .iter()
             .map(|(k, v)| (k.clone().into_owned(), v.clone().into_owned()))
             .collect())

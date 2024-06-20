@@ -80,7 +80,7 @@ impl DataProvider<CurrencyExtendedDataV1Marker> for crate::DatagenProvider {
 }
 
 impl crate::IterableDataProviderCached<CurrencyExtendedDataV1Marker> for DatagenProvider {
-    fn supported_requests_cached(
+    fn iter_requests_cached(
         &self,
     ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         // TODO: This is a temporary implementation until we have a better way to handle large number of json files.

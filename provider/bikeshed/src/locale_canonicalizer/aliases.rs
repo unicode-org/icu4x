@@ -29,7 +29,7 @@ impl DataProvider<AliasesV1Marker> for DatagenProvider {
 }
 
 impl crate::IterableDataProviderCached<AliasesV1Marker> for DatagenProvider {
-    fn supported_requests_cached(
+    fn iter_requests_cached(
         &self,
     ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
@@ -51,7 +51,7 @@ impl DataProvider<AliasesV2Marker> for DatagenProvider {
 }
 
 impl crate::IterableDataProviderCached<AliasesV2Marker> for DatagenProvider {
-    fn supported_requests_cached(
+    fn iter_requests_cached(
         &self,
     ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))

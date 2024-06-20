@@ -617,10 +617,10 @@ where
     BlobDataProvider: AsDeserializingBufferProvider,
     for<'a> DeserializingBufferProvider<'a, BlobDataProvider>: DataProvider<M>,
 {
-    fn supported_requests(
+    fn iter_requests(
         &self,
     ) -> Result<std::collections::HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
-        self.0.supported_requests_for_marker(M::INFO)
+        self.0.iter_requests_for_marker(M::INFO)
     }
 }
 

@@ -36,7 +36,7 @@ impl DataProvider<IslamicObservationalCacheV1Marker> for DatagenProvider {
 }
 
 impl crate::IterableDataProviderCached<IslamicObservationalCacheV1Marker> for DatagenProvider {
-    fn supported_requests_cached(
+    fn iter_requests_cached(
         &self,
     ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
@@ -58,7 +58,7 @@ impl DataProvider<IslamicUmmAlQuraCacheV1Marker> for crate::DatagenProvider {
 }
 
 impl crate::IterableDataProviderCached<IslamicUmmAlQuraCacheV1Marker> for DatagenProvider {
-    fn supported_requests_cached(
+    fn iter_requests_cached(
         &self,
     ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))

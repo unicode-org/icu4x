@@ -18,7 +18,7 @@ const PATHS: &[&str] = &[
 fn test_provider() {
     for path in PATHS {
         let provider = FsDataProvider::try_new(path).unwrap();
-        for (locale, marker_attributes) in HelloWorldProvider.supported_requests().unwrap() {
+        for (locale, marker_attributes) in HelloWorldProvider.iter_requests().unwrap() {
             let req = DataRequest {
                 locale: &locale,
                 marker_attributes: &marker_attributes,

@@ -129,7 +129,7 @@ impl DataProvider<TransliteratorRulesV1Marker> for DatagenProvider {
 }
 
 impl crate::IterableDataProviderCached<TransliteratorRulesV1Marker> for DatagenProvider {
-    fn supported_requests_cached(
+    fn iter_requests_cached(
         &self,
     ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         use icu_provider::datagen::IterableDataProvider;
@@ -138,7 +138,7 @@ impl crate::IterableDataProviderCached<TransliteratorRulesV1Marker> for DatagenP
             .lock()
             .expect("poison")
             .as_provider_unstable(self, self)?
-            .supported_requests()
+            .iter_requests()
     }
 }
 

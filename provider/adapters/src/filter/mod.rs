@@ -44,7 +44,7 @@ use icu_provider::prelude::*;
 ///
 /// Data requests that are rejected by the filter will return a [`DataError`] with kind
 /// [`FilteredResource`](DataErrorKind::FilteredResource), and they will not be returned
-/// by [`datagen::IterableDynamicDataProvider::supported_requests_for_marker`].
+/// by [`datagen::IterableDynamicDataProvider::iter_requests_for_marker`].
 ///
 /// Although this struct can be created directly, the traits in this module provide helper
 /// functions for common filtering patterns.
@@ -126,11 +126,11 @@ where
     F: Fn(DataRequest) -> bool,
     D: datagen::IterableDynamicDataProvider<M>,
 {
-    fn supported_requests_for_marker(
+    fn iter_requests_for_marker(
         &self,
         marker: DataMarkerInfo,
     ) -> Result<std::collections::HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
-        self.inner.supported_requests_for_marker(marker).map(|set| {
+        self.inner.iter_requests_for_marker(marker).map(|set| {
             // Use filter_map instead of filter to avoid cloning the locale
             set.into_iter()
                 .filter(|(locale, marker_attributes)| {
@@ -152,10 +152,10 @@ where
     F: Fn(DataRequest) -> bool,
     D: datagen::IterableDataProvider<M>,
 {
-    fn supported_requests(
+    fn iter_requests(
         &self,
     ) -> Result<std::collections::HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
-        self.inner.supported_requests().map(|vec| {
+        self.inner.iter_requests().map(|vec| {
             // Use filter_map instead of filter to avoid cloning the locale
             vec.into_iter()
                 .filter(|(locale, marker_attributes)| {

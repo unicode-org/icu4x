@@ -170,7 +170,7 @@ macro_rules! __impl_person_names_format_v1_marker {
         __impl_person_names_format_v1_marker!($provider);
         #[clippy::msrv = "1.70"]
         impl icu_provider::datagen::IterableDataProvider<icu::experimental::personnames::provider::PersonNamesFormatV1Marker> for $provider {
-            fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataMarkerAttributes)>, icu_provider::DataError> {
+            fn iter_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataMarkerAttributes)>, icu_provider::DataError> {
                 Ok(icu_provider_baked::DataStore::iter(&Self::DATA_PERSON_NAMES_FORMAT_V1_MARKER).collect())
             }
         }
