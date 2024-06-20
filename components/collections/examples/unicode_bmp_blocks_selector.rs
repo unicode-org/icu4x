@@ -20,13 +20,13 @@ use icu_collections::codepointinvlist::{CodePointInversionList, CodePointInversi
 
 fn get_basic_latin_block() -> CodePointInversionList<'static> {
     let mut builder = CodePointInversionListBuilder::new();
-    builder.add_range(&('\u{0000}'..='\u{007F}'));
+    builder.add_range('\u{0000}'..='\u{007F}');
     builder.build()
 }
 
 fn get_latin1_supplement_block() -> CodePointInversionList<'static> {
     let mut builder = CodePointInversionListBuilder::new();
-    builder.add_range(&('\u{0080}'..='\u{00FF}'));
+    builder.add_range('\u{0080}'..='\u{00FF}');
     builder.build()
 }
 

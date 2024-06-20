@@ -568,7 +568,6 @@ icu::properties::WordBreak::get_enum_to_short_name_mapper#FnInStruct
 icu::properties::WordBreak::to_u32#FnInStruct
 icu::properties::WordBreak::try_from_u32#FnInStruct
 icu::properties::bidi_data::BidiAuxiliaryProperties#Struct
-icu::properties::bidi_data::BidiAuxiliaryProperties::from_data#FnInStruct
 icu::properties::bidi_data::BidiAuxiliaryPropertiesBorrowed#Struct
 icu::properties::bidi_data::BidiAuxiliaryPropertiesBorrowed::get32_mirroring_props#FnInStruct
 icu::properties::bidi_data::BidiAuxiliaryPropertiesBorrowed::get32_pairing_props#FnInStruct
