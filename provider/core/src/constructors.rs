@@ -103,7 +103,7 @@
 //!
 //! [`DataProvider`]: crate::DataProvider
 //! [`BufferProvider`]: crate::buf::BufferProvider
-//! [`AnyProvider`]: crate::AnyProvider
+//! [`AnyProvider`]: crate::any::AnyProvider
 //! [`AnyPayloadProvider`]: ../../icu_provider_adapters/any_payload/struct.AnyPayloadProvider.html
 //! [`ForkByMarkerProvider`]: ../../icu_provider_adapters/fork/struct.ForkByMarkerProvider.html
 //! [`BlobDataProvider`]: ../../icu_provider_blob/struct.BlobDataProvider.html

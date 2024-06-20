@@ -83,8 +83,8 @@ pub trait DynamicDataMarker: 'static {
 ///
 /// [`data_struct!`]: crate::data_struct
 /// [`DataProvider`]: crate::DataProvider
-/// [`BufferMarker`]: crate::BufferMarker
-/// [`AnyMarker`]: crate::AnyMarker
+/// [`BufferMarker`]: crate::buf::BufferMarker
+/// [`AnyMarker`]: crate::any::AnyMarker
 pub trait DataMarker: DynamicDataMarker {
     /// The single [`DataMarkerInfo`] associated with this marker.
     const INFO: DataMarkerInfo;
@@ -106,7 +106,7 @@ pub trait DataMarker: DynamicDataMarker {
 /// See [`impl_data_provider_never_marker!`].
 ///
 /// [`DataErrorKind::MissingDataMarker`]: crate::DataErrorKind::MissingDataMarker
-/// [`impl_data_provider_never_marker!`]: crate::impl_data_provider_never_marker
+/// [`impl_data_provider_never_marker!`]: crate::marker::impl_data_provider_never_marker
 ///
 /// # Examples
 ///
@@ -355,7 +355,7 @@ unsafe impl EqULE for DataMarkerPathHash {}
 /// The human-readable path string ends with `@` followed by one or more digits (the version
 /// number). Paths do not contain characters other than ASCII letters and digits, `_`, `/`.
 ///
-/// Invalid paths are compile-time errors (as [`data_marker_path!`](crate::data_marker_path) uses `const`).
+/// Invalid paths are compile-time errors (as [`data_marker_path!`](crate::marker::data_marker_path) uses `const`).
 ///
 /// ```compile_fail,E0080
 /// # use icu_provider::marker::DataMarkerPath;

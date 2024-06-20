@@ -90,7 +90,7 @@ impl DataExporter for Box<dyn DataExporter> {
 
 /// A [`DynamicDataProvider`] that can be used for exporting data.
 ///
-/// Use [`make_exportable_provider`](crate::make_exportable_provider) to implement this.
+/// Use [`make_exportable_provider`](crate::datagen::make_exportable_provider) to implement this.
 pub trait ExportableProvider:
     IterableDynamicDataProvider<ExportMarker> + DynamicDataProvider<AnyMarker> + Sync
 {

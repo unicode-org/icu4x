@@ -36,7 +36,7 @@
 //! implementations that should be called out
 //!
 //! - [`DynamicDataProvider<AnyMarker>`], and [`AnyProvider`] (a slightly optimized alternative) return data as `dyn Any` trait objects.
-//! - [`DynamicDataProvider<BufferMarker>`], a.k.a. [`BufferProvider`] returns data as `[u8]` buffers.
+//! - [`DynamicDataProvider<BufferMarker>`], a.k.a. [`BufferProvider`](buf::BufferProvider) returns data as `[u8]` buffers.
 //!
 //! ### AnyProvider
 //!
@@ -87,7 +87,7 @@
 //!
 //! [`ICU4X`]: ../icu/index.html
 //! [`DataProvider`]: data_provider::DataProvider
-//! [`DataMarkerInfo`]: key::DataMarkerInfo
+//! [`DataMarkerInfo`]: marker::DataMarkerInfo
 //! [`DataLocale`]: request::DataLocale
 //! [`IterableDynamicDataProvider`]: datagen::IterableDynamicDataProvider
 //! [`IterableDataProvider`]: datagen::IterableDataProvider
@@ -98,8 +98,8 @@
 //! [`impl_dynamic_data_provider!`]: impl_dynamic_data_provider
 //! [`icu_provider_adapters`]: ../icu_provider_adapters/index.html
 //! [`DatagenProvider`]: ../icu_datagen/struct.DatagenProvider.html
-//! [`as_downcasting()`]: AsDowncastingAnyProvider::as_downcasting
-//! [`as_deserializing()`]: AsDeserializingBufferProvider::as_deserializing
+//! [`as_downcasting()`]: any::AsDowncastingAnyProvider::as_downcasting
+//! [`as_deserializing()`]: serde::AsDeserializingBufferProvider::as_deserializing
 //! [`CldrJsonDataProvider`]: ../icu_datagen/cldr/struct.CldrJsonDataProvider.html
 //! [`FsDataProvider`]: ../icu_provider_fs/struct.FsDataProvider.html
 //! [`BlobDataProvider`]: ../icu_provider_blob/struct.BlobDataProvider.html
@@ -157,7 +157,7 @@ mod marker_full;
 
 pub use marker_full::{DataMarker, DataMarkerInfo, DynamicDataMarker};
 pub mod marker {
-    //! Additional [`DataMarker`] helpers.
+    //! Additional [`DataMarker`](super::DataMarker) helpers.
 
     pub use super::marker_full::{
         data_marker_path, impl_data_provider_never_marker, DataMarkerPath, DataMarkerPathHash,

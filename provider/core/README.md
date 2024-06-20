@@ -87,7 +87,7 @@ data generation implementation.
 
 [`ICU4X`]: ../icu/index.html
 [`DataProvider`]: data_provider::DataProvider
-[`DataMarkerInfo`]: key::DataMarkerInfo
+[`DataMarkerInfo`]: marker::DataMarkerInfo
 [`DataLocale`]: request::DataLocale
 [`IterableDynamicDataProvider`]: datagen::IterableDynamicDataProvider
 [`IterableDataProvider`]: datagen::IterableDataProvider
