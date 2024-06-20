@@ -321,8 +321,12 @@ impl DatagenProvider {
     where
         DatagenProvider: IterableDataProviderCached<M>,
     {
-        if <M as DataMarker>::INFO.is_singleton && !req.locale.is_empty() {
-            Err(DataErrorKind::ExtraneousLocale)
+        if <M as DataMarker>::INFO.is_singleton {
+            if !req.locale.is_empty() {
+                Err(DataErrorKind::ExtraneousLocale)
+            } else {
+                Ok(())
+            }
         } else if !self.populate_requests_cache()?.contains(&(
             Cow::Borrowed(req.locale),
             Cow::Borrowed(req.marker_attributes),
@@ -392,11 +396,14 @@ where
     DatagenProvider: IterableDataProviderCached<M>,
 {
     fn iter_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
-        Ok(self
-            .populate_requests_cache()?
-            .iter()
-            .map(|(k, v)| (k.clone().into_owned(), v.clone().into_owned()))
-            .collect())
+        Ok(if <M as DataMarker>::INFO.is_singleton {
+            [Default::default()].into_iter().collect()
+        } else {
+            self.populate_requests_cache()?
+                .iter()
+                .map(|(k, v)| (k.clone().into_owned(), v.clone().into_owned()))
+                .collect()
+        })
     }
 }
 
