@@ -533,7 +533,7 @@ impl DatagenDriver {
     /// Exports data from the given provider to the given exporter.
     ///
     /// See
-    /// [`make_exportable_provider!`](icu_provider::make_exportable_provider),
+    /// [`make_exportable_provider!`](icu_provider::datagen::make_exportable_provider),
     /// [`BlobExporter`](icu_provider_blob::export),
     /// [`FileSystemExporter`](icu_provider_fs::export),
     /// and [`BakedExporter`](icu_provider_baked::export).

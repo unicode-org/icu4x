@@ -4,8 +4,6 @@
 
 #[allow(unused_imports)] // feature-specific
 use alloc::boxed::Box;
-#[allow(unused_imports)] // feature-specific
-use icu_provider::any::MaybeSendSync;
 use icu_provider::prelude::*;
 use icu_provider_adapters::empty::EmptyDataProvider;
 #[allow(unused_imports)] // feature-specific
