@@ -67,7 +67,7 @@ where
     }
 }
 
-// Safe because both sub-types implement the trait.
+// Safety: Safe because both sub-types implement the trait.
 unsafe impl<C0, C1, T> StableDeref for EitherCart<C0, C1>
 where
     C0: StableDeref,
@@ -77,7 +77,7 @@ where
 {
 }
 
-// Safe because both sub-types implement the trait.
+// Safety: Safe because both sub-types implement the trait.
 unsafe impl<C0, C1> CloneableCart for EitherCart<C0, C1>
 where
     C0: CloneableCart,
