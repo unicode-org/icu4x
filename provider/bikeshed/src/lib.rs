@@ -26,7 +26,7 @@ use std::borrow::Cow;
 use std::collections::HashSet;
 use std::fmt::Debug;
 use std::path::PathBuf;
-use std::sync::Arc;
+use std::sync::{Arc, OnceLock};
 
 mod calendar;
 mod characters;
@@ -89,9 +89,11 @@ pub struct DatagenProvider {
         FrozenMap<
             DataMarkerInfo,
             Box<
-                Result<
-                    HashSet<(Cow<'static, DataLocale>, Cow<'static, DataMarkerAttributes>)>,
-                    DataError,
+                OnceLock<
+                    Result<
+                        HashSet<(Cow<'static, DataLocale>, Cow<'static, DataMarkerAttributes>)>,
+                        DataError,
+                    >,
                 >,
             >,
         >,
@@ -371,12 +373,14 @@ impl DatagenProvider {
         DatagenProvider: IterableDataProviderCached<M>,
     {
         self.requests_cache
-            .insert_with(M::INFO, || {
-                Box::new(self.iter_requests_cached().map(|m| {
+            .insert_with(M::INFO, || Box::new(OnceLock::new()))
+            // write lock gets dropped here, `iter_requests_cached` might be expensive
+            .get_or_init(|| {
+                self.iter_requests_cached().map(|m| {
                     m.into_iter()
                         .map(|(k, v)| (Cow::Owned(k), Cow::Owned(v)))
                         .collect()
-                }))
+                })
             })
             .as_ref()
             .map_err(|&e| e)
