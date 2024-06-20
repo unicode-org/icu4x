@@ -39,6 +39,8 @@ mod decimal;
 #[cfg(feature = "experimental")]
 mod displaynames;
 mod fallback;
+#[cfg(test)]
+mod hello_world;
 mod list;
 mod locale_canonicalizer;
 mod normalizer;
@@ -329,6 +331,29 @@ impl DatagenProvider {
         }
         .map_err(|e| e.with_req(<M as DataMarker>::INFO, req))
     }
+}
+
+#[test]
+fn test_missing_locale() {
+    use icu::locale::langid;
+    use icu_provider::hello_world::*;
+    let provider = DatagenProvider::new_testing();
+    assert!(DataProvider::<HelloWorldV1Marker>::load(
+        &provider,
+        DataRequest {
+            locale: &langid!("fi").into(),
+            ..Default::default()
+        }
+    )
+    .is_ok());
+    assert!(DataProvider::<HelloWorldV1Marker>::load(
+        &provider,
+        DataRequest {
+            locale: &langid!("arc").into(),
+            ..Default::default()
+        }
+    )
+    .is_err());
 }
 
 trait IterableDataProviderCached<M: DataMarker>: DataProvider<M> {
