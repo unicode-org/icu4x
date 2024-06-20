@@ -232,10 +232,14 @@ impl Transform {
             tfields.try_insert(tkey, Value::from_short_slice_unchecked(current_tvalue));
         }
 
-        Ok(Self {
-            lang: tlang,
-            fields: tfields.into(),
-        })
+        if tlang.is_none() && tfields.is_empty() {
+            Err(ParseError::InvalidExtension)
+        } else {
+            Ok(Self {
+                lang: tlang,
+                fields: tfields.into(),
+            })
+        }
     }
 
     pub(crate) fn for_each_subtag_str<E, F>(&self, f: &mut F, with_ext: bool) -> Result<(), E>
@@ -308,5 +312,8 @@ mod tests {
             .parse()
             .expect("Failed to parse Transform");
         assert_eq!(te.to_string(), "t-en-us-h0-hybrid");
+
+        let te: Result<Transform, _> = "t".parse();
+        assert!(te.is_err());
     }
 }

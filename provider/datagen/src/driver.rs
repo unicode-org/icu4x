@@ -840,7 +840,7 @@ fn select_locales_for_marker<'a>(
             locales.retain(|(locale, _)| {
                 let Some(collation) = locale
                     .get_unicode_ext(&key!("co"))
-                    .and_then(|co| co.as_single_subtag().copied())
+                    .and_then(|co| co.into_single_subtag())
                 else {
                     return true;
                 };

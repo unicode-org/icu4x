@@ -62,7 +62,7 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
     {
         let mut builder = CodePointInversionListBuilder::new();
         // See http://ftp.unicode.org/Public/MAPPINGS/ISO8859/8859-1.TXT
-        builder.add_range(&('\u{0000}'..='\u{00FF}'));
+        builder.add_range('\u{0000}'..='\u{00FF}');
         let latin1_set = builder.build();
 
         let only_latin1 = user_name.chars().all(|ch| latin1_set.contains(ch));

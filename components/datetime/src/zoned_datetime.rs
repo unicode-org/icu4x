@@ -160,7 +160,13 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     icu_provider::gen_any_buffer_data_constructors!(
 
         (locale, date_time_format_options: DateTimeFormatterOptions, time_zone_format_options: TimeZoneFormatterOptions) -> error: DateTimeError,
-        #[cfg(skip)]
+        functions: [
+            try_new: skip,
+            try_new_with_any_provider,
+            try_new_with_buffer_provider,
+            try_new_unstable,
+            Self
+        ]
     );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]

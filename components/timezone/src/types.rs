@@ -9,7 +9,7 @@ use zerovec::ule::{AsULE, ULE};
 use zerovec::{ZeroSlice, ZeroVec};
 
 /// The GMT offset in seconds for a timezone
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub struct GmtOffset(i32);
 
 impl Default for GmtOffset {

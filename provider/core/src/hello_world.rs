@@ -270,9 +270,8 @@ impl HelloWorldFormatter {
     }
 
     icu_provider::gen_any_buffer_data_constructors!((locale) -> error: DataError,
-        #[cfg(skip)]
         functions: [
-            try_new,
+            try_new: skip,
             try_new_with_any_provider,
             try_new_with_buffer_provider,
             try_new_unstable,

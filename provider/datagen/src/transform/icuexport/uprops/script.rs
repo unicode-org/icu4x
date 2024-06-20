@@ -73,18 +73,12 @@ impl IterableDataProvider<ScriptWithExtensionsPropertyV1Marker> for DatagenProvi
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu::properties::script::ScriptWithExtensions;
 
     #[test]
     fn test_script_val_from_script_extensions() {
         let provider = DatagenProvider::new_testing();
 
-        let payload: DataPayload<ScriptWithExtensionsPropertyV1Marker> = provider
-            .load(Default::default())
-            .expect("Loading was successful")
-            .payload;
-
-        let swe = ScriptWithExtensions::from_data(payload);
+        let swe = icu::properties::script::load_script_with_extensions_unstable(&provider).unwrap();
         let swe = swe.as_borrowed();
 
         assert_eq!(swe.get_script_val('𐓐' as u32), Script::Osage); // U+104D0 OSAGE CAPITAL LETTER KHA
@@ -99,48 +93,44 @@ mod tests {
     fn test_scx_array_from_script_extensions() {
         let provider = DatagenProvider::new_testing();
 
-        let response: DataResponse<ScriptWithExtensionsPropertyV1Marker> = provider
-            .load(Default::default())
-            .expect("Loading was successful");
-
-        let swe = ScriptWithExtensions::from_data(response.payload);
+        let swe = icu::properties::script::load_script_with_extensions_unstable(&provider).unwrap();
         let swe = swe.as_borrowed();
 
         assert_eq!(
             swe.get_script_extensions_val('𐓐' as u32) /* U+104D0 OSAGE CAPITAL LETTER KHA */
                 .iter()
-                .collect::<Vec<Script>>(),
-            vec![Script::Osage]
+                .collect::<Vec<_>>(),
+            [Script::Osage]
         );
         assert_eq!(
             swe.get_script_extensions_val('🥳' as u32) /* U+1F973 FACE WITH PARTY HORN AND PARTY HAT */
                 .iter()
-                .collect::<Vec<Script>>(),
-            vec![Script::Common]
+                .collect::<Vec<_>>(),
+            [Script::Common]
         );
         assert_eq!(
             swe.get_script_extensions_val(0x200D) // ZERO WIDTH JOINER
                 .iter()
-                .collect::<Vec<Script>>(),
-            vec![Script::Inherited]
+                .collect::<Vec<_>>(),
+            [Script::Inherited]
         );
         assert_eq!(
             swe.get_script_extensions_val('௫' as u32) // U+0BEB TAMIL DIGIT FIVE
                 .iter()
-                .collect::<Vec<Script>>(),
-            vec![Script::Tamil, Script::Grantha]
+                .collect::<Vec<_>>(),
+            [Script::Tamil, Script::Grantha]
         );
         assert_eq!(
             swe.get_script_extensions_val(0x11303) // GRANTHA SIGN VISARGA
                 .iter()
-                .collect::<Vec<Script>>(),
-            vec![Script::Tamil, Script::Grantha]
+                .collect::<Vec<_>>(),
+            [Script::Tamil, Script::Grantha]
         );
         assert_eq!(
             swe.get_script_extensions_val(0x30A0) // KATAKANA-HIRAGANA DOUBLE HYPHEN
                 .iter()
-                .collect::<Vec<Script>>(),
-            vec![Script::Hiragana, Script::Katakana]
+                .collect::<Vec<_>>(),
+            [Script::Hiragana, Script::Katakana]
         );
 
         assert_eq!(
@@ -162,8 +152,8 @@ mod tests {
         assert_eq!(
             swe.get_script_extensions_val(0x11_0000) // CODE_POINT_MAX + 1 is invalid
                 .iter()
-                .collect::<Vec<Script>>(),
-            vec![Script::Unknown]
+                .collect::<Vec<_>>(),
+            [Script::Unknown]
         );
     }
 
@@ -171,11 +161,7 @@ mod tests {
     fn test_has_script() {
         let provider = DatagenProvider::new_testing();
 
-        let response: DataResponse<ScriptWithExtensionsPropertyV1Marker> = provider
-            .load(Default::default())
-            .expect("Loading was successful");
-
-        let swe = ScriptWithExtensions::from_data(response.payload);
+        let swe = icu::properties::script::load_script_with_extensions_unstable(&provider).unwrap();
         let swe = swe.as_borrowed();
 
         assert!(swe.has_script('𐓐' as u32, Script::Osage));
@@ -249,11 +235,7 @@ mod tests {
     fn test_get_script_extensions_set() {
         let provider = DatagenProvider::new_testing();
 
-        let response: DataResponse<ScriptWithExtensionsPropertyV1Marker> = provider
-            .load(Default::default())
-            .expect("Loading was successful");
-
-        let swe = ScriptWithExtensions::from_data(response.payload);
+        let swe = icu::properties::script::load_script_with_extensions_unstable(&provider).unwrap();
         let swe = swe.as_borrowed();
 
         let grantha = swe.get_script_extensions_set(Script::Grantha);
