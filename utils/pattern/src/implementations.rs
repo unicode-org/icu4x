@@ -16,16 +16,16 @@ impl<'a> ZeroMapKV<'a> for Pattern<SinglePlaceholder, str> {
 
 unsafe impl VarULE for Pattern<SinglePlaceholder, str> {
     fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
-        SinglePlaceholderPattern::try_from_bytes_store(bytes)
+        SinglePlaceholderPattern::try_from_utf8_store(bytes)
             .map_err(|_| ZeroVecError::VarZeroVecFormatError)?;
         Ok(())
     }
 
     unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
-        // SAFETY: As `validate_byte_slice` succeeded, `try_from_bytes_store` succeeded, which implies valid UTF-8
+        // SAFETY: As `validate_byte_slice` succeeded, `try_from_utf8_store` succeeded, which implies valid UTF-8
         let store = core::str::from_utf8_unchecked(bytes);
 
-        // SAFETY: As `validate_byte_slice` succeeded, `try_from_bytes_store` also succeeded
+        // SAFETY: As `validate_byte_slice` succeeded, `try_from_utf8_store` also succeeded
         SinglePlaceholderPattern::from_borrowed_store_unchecked(store)
     }
 }
