@@ -66,8 +66,8 @@ where
     ///     .into_iter()
     ///     .map(|(locale, _)| locale.get_langid())
     ///     .collect::<Vec<LanguageIdentifier>>();
-    /// assert!(supported_langids.contains(&langid!("de")));
-    /// assert!(!supported_langids.contains(&langid!("en")));
+    /// assert!(available_langids.contains(&langid!("de")));
+    /// assert!(!available_langids.contains(&langid!("en")));
     /// ```
     pub fn filter_by_langid<'a>(
         self,
