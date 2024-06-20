@@ -224,8 +224,6 @@ jobs:
   # ci-job-test-c
   test-c:
     runs-on: ubuntu-latest
-    container:
-      image: rust:bookworm
 
     steps:
     - uses: actions/checkout@v4
@@ -276,8 +274,6 @@ jobs:
   # ci-job-test-js
   test-js:
     runs-on: ubuntu-latest
-    container:
-      image: rust:bookworm
 
     steps:
     - uses: actions/checkout@v4
