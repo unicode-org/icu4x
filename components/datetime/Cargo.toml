@@ -101,6 +101,9 @@ skip_optional_dependencies = true
 # Bench feature gets tested separately and is only relevant for CI
 denylist = ["bench"]
 
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(icu4x_run_size_tests)'] }
+
 [[bench]]
 name = "datetime"
 harness = false

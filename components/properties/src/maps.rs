@@ -86,7 +86,7 @@ impl<T: TrieValue> CodePointMapData<T> {
     /// Construct a new one from loaded data
     ///
     /// Typically it is preferable to use getters like [`load_general_category()`] instead
-    pub fn from_data<M>(data: DataPayload<M>) -> Self
+    pub(crate) fn from_data<M>(data: DataPayload<M>) -> Self
     where
         M: DynamicDataMarker<Yokeable = PropertyCodePointMapV1<'static, T>>,
     {

@@ -151,6 +151,7 @@ fn main() {
     let zip: BTreeSet<_> = EXTRA_ZIP_DEPS.iter().copied().collect();
     let rayon: BTreeSet<_> = EXTRA_RAYON_DEPS.iter().copied().collect();
     let datagen: BTreeSet<_> = EXTRA_DATAGEN_DEPS.iter().copied().collect();
+    let datagen_bikeshed: BTreeSet<_> = EXTRA_DATAGEN_BIKESHED_DEPS.iter().copied().collect();
 
     // These tests are in a deliberate order such that the `dep_list_name_for_error`
     // will be accurate, i.e. each test tests at most one extra array of data compared to the
@@ -276,7 +277,7 @@ fn main() {
     );
 
     test_dep_list(
-        "icu_datagen",
+        "icu_datagen_bikeshed",
         "normal",
         "--features use_icu4c",
         &[
@@ -285,13 +286,28 @@ fn main() {
             &experimental,
             &lstm,
             &blob,
-            &fs,
             &zip,
+            &datagen_bikeshed,
+            &logging,
+        ],
+        "`EXTRA_DATAGEN_BIKESHED_DEPS` or `EXTRA_ZIP_DEPS`",
+    );
+
+    test_dep_list(
+        "icu_datagen",
+        "normal",
+        "",
+        &[
+            &basic,
+            &serde,
+            &experimental,
+            &lstm,
+            &fs,
             &rayon,
             &datagen,
             &logging,
         ],
-        "`EXTRA_DATAGEN_DEPS` or `EXTRA_ZIP_DEPS` or `EXTRA_RAYON_DEPS`",
+        "`EXTRA_RAYON_DEPS`",
     );
 
     // syn is a large dep, and deps that are both "normal" and "proc macro" get built twice

@@ -34,7 +34,7 @@ use tinystr::tinystr;
 /// let tz2: CustomTimeZone =
 ///     "+05:00".parse().expect("Failed to parse a time zone.");
 /// ```
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[allow(clippy::exhaustive_structs)] // these four fields fully cover the needs of UTS 35
 pub struct CustomTimeZone {
     /// The GMT offset in seconds.

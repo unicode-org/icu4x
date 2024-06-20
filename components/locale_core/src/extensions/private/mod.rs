@@ -152,7 +152,11 @@ impl Private {
             .map(Subtag::try_from_bytes)
             .collect::<Result<ShortBoxSlice<_>, _>>()?;
 
-        Ok(Self(keys))
+        if keys.is_empty() {
+            Err(ParseError::InvalidExtension)
+        } else {
+            Ok(Self(keys))
+        }
     }
 
     pub(crate) fn for_each_subtag_str<E, F>(&self, f: &mut F, with_ext: bool) -> Result<(), E>
@@ -220,5 +224,8 @@ mod tests {
     fn test_private_extension_fromstr() {
         let pe: Private = "x-foo-bar-l-baz".parse().expect("Failed to parse Private");
         assert_eq!(pe.to_string(), "x-foo-bar-l-baz");
+
+        let pe: Result<Private, _> = "x".parse();
+        assert!(pe.is_err());
     }
 }

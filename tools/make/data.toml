@@ -22,9 +22,9 @@ command = "cargo"
 env = { ICU4X_WRITE_TESTDATA = "1" }
 args = [
     "test",
-    "-p=icu_datagen",
+    "-p=icu_datagen_bikeshed",
     "--no-default-features",
-    "--features=fs_exporter,baked_exporter,use_wasm,rayon,experimental_components,provider",
+    "--features=use_wasm,experimental",
     "--",
     "--nocapture",
     "make_testdata",

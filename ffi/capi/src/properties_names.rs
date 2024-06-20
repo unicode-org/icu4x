@@ -18,11 +18,6 @@ pub mod ffi {
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::properties::names::PropertyValueNameToEnumMapper, Struct)]
     #[diplomat::rust_link(icu::properties::names::PropertyValueNameToEnumMapperBorrowed, Struct)]
-    #[diplomat::rust_link(
-        icu::properties::names::PropertyValueNameToEnumMapper::from_data,
-        FnInStruct,
-        hidden
-    )]
     pub struct ICU4XPropertyValueNameToEnumMapper(PropertyValueNameToEnumMapper<u16>);
 
     impl ICU4XPropertyValueNameToEnumMapper {

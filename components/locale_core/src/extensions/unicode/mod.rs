@@ -30,6 +30,7 @@ mod attribute;
 mod attributes;
 mod key;
 mod keywords;
+mod subdivision;
 mod value;
 
 use core::cmp::Ordering;
@@ -41,6 +42,7 @@ pub use attributes::Attributes;
 #[doc(inline)]
 pub use key::{key, Key};
 pub use keywords::Keywords;
+pub use subdivision::{subdivision_suffix, SubdivisionId, SubdivisionSuffix};
 #[doc(inline)]
 pub use value::{value, Value};
 
@@ -242,5 +244,8 @@ mod tests {
     fn test_unicode_extension_fromstr() {
         let ue: Unicode = "u-foo-hc-h12".parse().expect("Failed to parse Unicode");
         assert_eq!(ue.to_string(), "u-foo-hc-h12");
+
+        let ue: Result<Unicode, _> = "u".parse();
+        assert!(ue.is_err());
     }
 }
