@@ -14,7 +14,8 @@
 #include "ICU4XFixedDecimalSign.h"
 #include "ICU4XFixedDecimalSignDisplay.d.h"
 #include "ICU4XFixedDecimalSignDisplay.h"
-#include "diplomat_result_box_ICU4XFixedDecimal_ICU4XError.d.h"
+#include "diplomat_result_box_ICU4XFixedDecimal_ICU4XFixedDecimalLimitError.d.h"
+#include "diplomat_result_box_ICU4XFixedDecimal_ICU4XFixedDecimalParseError.d.h"
 #include "diplomat_result_void_void.d.h"
 
 #include "ICU4XFixedDecimal.d.h"
@@ -33,15 +34,15 @@ ICU4XFixedDecimal* ICU4XFixedDecimal_create_from_i64(int64_t v);
 
 ICU4XFixedDecimal* ICU4XFixedDecimal_create_from_u64(uint64_t v);
 
-diplomat_result_box_ICU4XFixedDecimal_ICU4XError ICU4XFixedDecimal_create_from_f64_with_integer_precision(double f);
+diplomat_result_box_ICU4XFixedDecimal_ICU4XFixedDecimalLimitError ICU4XFixedDecimal_create_from_f64_with_integer_precision(double f);
 
-diplomat_result_box_ICU4XFixedDecimal_ICU4XError ICU4XFixedDecimal_create_from_f64_with_lower_magnitude(double f, int16_t magnitude);
+diplomat_result_box_ICU4XFixedDecimal_ICU4XFixedDecimalLimitError ICU4XFixedDecimal_create_from_f64_with_lower_magnitude(double f, int16_t magnitude);
 
-diplomat_result_box_ICU4XFixedDecimal_ICU4XError ICU4XFixedDecimal_create_from_f64_with_significant_digits(double f, uint8_t digits);
+diplomat_result_box_ICU4XFixedDecimal_ICU4XFixedDecimalLimitError ICU4XFixedDecimal_create_from_f64_with_significant_digits(double f, uint8_t digits);
 
-diplomat_result_box_ICU4XFixedDecimal_ICU4XError ICU4XFixedDecimal_create_from_f64_with_floating_precision(double f);
+diplomat_result_box_ICU4XFixedDecimal_ICU4XFixedDecimalLimitError ICU4XFixedDecimal_create_from_f64_with_floating_precision(double f);
 
-diplomat_result_box_ICU4XFixedDecimal_ICU4XError ICU4XFixedDecimal_create_from_string(const char* v_data, size_t v_len);
+diplomat_result_box_ICU4XFixedDecimal_ICU4XFixedDecimalParseError ICU4XFixedDecimal_create_from_string(const char* v_data, size_t v_len);
 
 uint8_t ICU4XFixedDecimal_digit_at(const ICU4XFixedDecimal* self, int16_t magnitude);
 

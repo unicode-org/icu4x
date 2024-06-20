@@ -1,6 +1,7 @@
 import { u8, i16, i32, u32, i64, u64, f64 } from "./diplomat-runtime"
 import { FFIError } from "./diplomat-runtime"
-import { ICU4XError } from "./ICU4XError";
+import { ICU4XFixedDecimalLimitError } from "./ICU4XFixedDecimalLimitError";
+import { ICU4XFixedDecimalParseError } from "./ICU4XFixedDecimalParseError";
 import { ICU4XFixedDecimalRoundingIncrement } from "./ICU4XFixedDecimalRoundingIncrement";
 import { ICU4XFixedDecimalRoundingMode } from "./ICU4XFixedDecimalRoundingMode";
 import { ICU4XFixedDecimalSign } from "./ICU4XFixedDecimalSign";
@@ -51,7 +52,7 @@ export class ICU4XFixedDecimal {
    * See the {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.try_from_f64 Rust documentation for `try_from_f64`} for more information.
 
    * See the {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.FloatPrecision.html Rust documentation for `FloatPrecision`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
+   * @throws {@link FFIError}<{@link ICU4XFixedDecimalLimitError}>
    */
   static create_from_f64_with_integer_precision(f: f64): ICU4XFixedDecimal | never;
 
@@ -62,7 +63,7 @@ export class ICU4XFixedDecimal {
    * See the {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.try_from_f64 Rust documentation for `try_from_f64`} for more information.
 
    * See the {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.FloatPrecision.html Rust documentation for `FloatPrecision`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
+   * @throws {@link FFIError}<{@link ICU4XFixedDecimalLimitError}>
    */
   static create_from_f64_with_lower_magnitude(f: f64, magnitude: i16): ICU4XFixedDecimal | never;
 
@@ -73,7 +74,7 @@ export class ICU4XFixedDecimal {
    * See the {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.try_from_f64 Rust documentation for `try_from_f64`} for more information.
 
    * See the {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.FloatPrecision.html Rust documentation for `FloatPrecision`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
+   * @throws {@link FFIError}<{@link ICU4XFixedDecimalLimitError}>
    */
   static create_from_f64_with_significant_digits(f: f64, digits: u8): ICU4XFixedDecimal | never;
 
@@ -84,7 +85,7 @@ export class ICU4XFixedDecimal {
    * See the {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.try_from_f64 Rust documentation for `try_from_f64`} for more information.
 
    * See the {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.FloatPrecision.html Rust documentation for `FloatPrecision`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
+   * @throws {@link FFIError}<{@link ICU4XFixedDecimalLimitError}>
    */
   static create_from_f64_with_floating_precision(f: f64): ICU4XFixedDecimal | never;
 
@@ -93,7 +94,7 @@ export class ICU4XFixedDecimal {
    * Construct an {@link ICU4XFixedDecimal `ICU4XFixedDecimal`} from a string.
 
    * See the {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.from_str Rust documentation for `from_str`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
+   * @throws {@link FFIError}<{@link ICU4XFixedDecimalParseError}>
    */
   static create_from_string(v: string): ICU4XFixedDecimal | never;
 

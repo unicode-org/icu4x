@@ -8,7 +8,7 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XError.d.hpp"
+#include "ICU4XDataError.d.hpp"
 #include "ICU4XPluralCategories.d.hpp"
 #include "ICU4XPluralCategory.d.hpp"
 #include "ICU4XPluralRules.d.h"
@@ -17,16 +17,16 @@ class ICU4XDataProvider;
 class ICU4XLocale;
 class ICU4XPluralOperands;
 struct ICU4XPluralCategories;
-class ICU4XError;
+class ICU4XDataError;
 class ICU4XPluralCategory;
 
 
 class ICU4XPluralRules {
 public:
 
-  inline static diplomat::result<std::unique_ptr<ICU4XPluralRules>, ICU4XError> create_cardinal(const ICU4XDataProvider& provider, const ICU4XLocale& locale);
+  inline static diplomat::result<std::unique_ptr<ICU4XPluralRules>, ICU4XDataError> create_cardinal(const ICU4XDataProvider& provider, const ICU4XLocale& locale);
 
-  inline static diplomat::result<std::unique_ptr<ICU4XPluralRules>, ICU4XError> create_ordinal(const ICU4XDataProvider& provider, const ICU4XLocale& locale);
+  inline static diplomat::result<std::unique_ptr<ICU4XPluralRules>, ICU4XDataError> create_ordinal(const ICU4XDataProvider& provider, const ICU4XLocale& locale);
 
   inline ICU4XPluralCategory category_for(const ICU4XPluralOperands& op) const;
 

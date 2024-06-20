@@ -10,7 +10,7 @@
 #include "ICU4XDataProvider.h"
 #include "ICU4XDecomposed.d.h"
 #include "ICU4XDecomposed.h"
-#include "diplomat_result_box_ICU4XCanonicalDecomposition_ICU4XError.d.h"
+#include "diplomat_result_box_ICU4XCanonicalDecomposition_ICU4XDataError.d.h"
 
 #include "ICU4XCanonicalDecomposition.d.h"
 
@@ -20,7 +20,7 @@ extern "C" {
 #endif // __cplusplus
 
 
-diplomat_result_box_ICU4XCanonicalDecomposition_ICU4XError ICU4XCanonicalDecomposition_create(const ICU4XDataProvider* provider);
+diplomat_result_box_ICU4XCanonicalDecomposition_ICU4XDataError ICU4XCanonicalDecomposition_create(const ICU4XDataProvider* provider);
 
 ICU4XDecomposed ICU4XCanonicalDecomposition_decompose(const ICU4XCanonicalDecomposition* self, char32_t c);
 

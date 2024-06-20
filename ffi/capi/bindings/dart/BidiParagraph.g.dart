@@ -25,7 +25,7 @@ final class BidiParagraph implements ffi.Finalizable {
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XBidiParagraph_destroy));
 
   /// Given a paragraph index `n` within the surrounding text, this sets this
-  /// object to the paragraph at that index. Returns `Error::OutOfBoundsError` when out of bounds.
+  /// object to the paragraph at that index. Returns nothing when out of bounds.
   ///
   /// This is equivalent to calling `paragraph_at()` on `BidiInfo` but doesn't
   /// create a new object

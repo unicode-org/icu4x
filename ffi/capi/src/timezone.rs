@@ -6,7 +6,8 @@ use icu_timezone::CustomTimeZone;
 
 #[diplomat::bridge]
 pub mod ffi {
-    use crate::errors::ffi::ICU4XError;
+    use crate::errors::ffi::ICU4XTimeZoneInvalidIdError;
+    use crate::errors::ffi::ICU4XTimeZoneInvalidOffsetError;
     use alloc::boxed::Box;
     use core::fmt::Write;
     use icu_timezone::CustomTimeZone;
@@ -19,14 +20,18 @@ pub mod ffi {
 
     impl ICU4XCustomTimeZone {
         /// Creates a time zone from an offset string.
-        #[diplomat::rust_link(icu::timezone::CustomTimeZone::from_str, FnInStruct)]
-        #[diplomat::rust_link(icu::timezone::CustomTimeZone::try_from_bytes, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::timezone::CustomTimeZone::try_from_str, FnInStruct)]
+        #[diplomat::rust_link(icu::timezone::CustomTimeZone::try_from_utf8, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::timezone::CustomTimeZone::from_str, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::timezone::GmtOffset::try_from_str, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::timezone::GmtOffset::try_from_utf8, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::timezone::GmtOffset::from_str, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::timezone::GmtOffset::try_from_bytes, FnInStruct, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "from_string")]
-        pub fn create_from_string(s: &DiplomatStr) -> Result<Box<ICU4XCustomTimeZone>, ICU4XError> {
+        pub fn create_from_string(
+            s: &DiplomatStr,
+        ) -> Result<Box<ICU4XCustomTimeZone>, ICU4XTimeZoneInvalidOffsetError> {
             Ok(Box::new(ICU4XCustomTimeZone::from(
-                CustomTimeZone::try_from_bytes(s)?,
+                CustomTimeZone::try_from_utf8(s)?,
             )))
         }
 
@@ -73,7 +78,7 @@ pub mod ffi {
         pub fn try_set_gmt_offset_seconds(
             &mut self,
             offset_seconds: i32,
-        ) -> Result<(), ICU4XError> {
+        ) -> Result<(), ICU4XTimeZoneInvalidOffsetError> {
             self.0.gmt_offset = Some(GmtOffset::try_from_offset_seconds(offset_seconds)?);
             Ok(())
         }
@@ -143,10 +148,13 @@ pub mod ffi {
             AssociatedTypeInStruct,
             hidden
         )]
-        pub fn try_set_time_zone_id(&mut self, id: &DiplomatStr) -> Result<(), ICU4XError> {
+        pub fn try_set_time_zone_id(
+            &mut self,
+            id: &DiplomatStr,
+        ) -> Result<(), ICU4XTimeZoneInvalidIdError> {
             self.0.time_zone_id = Some(icu_timezone::TimeZoneBcp47Id(
-                tinystr::TinyAsciiStr::from_bytes(id)
-                    .map_err(|_| ICU4XError::TimeZoneInvalidIdError)?,
+                tinystr::TinyAsciiStr::try_from_utf8(id)
+                    .map_err(|_| ICU4XTimeZoneInvalidIdError::TodoZst)?,
             ));
             Ok(())
         }
@@ -159,13 +167,13 @@ pub mod ffi {
             &mut self,
             mapper: &crate::timezone_mapper::ffi::ICU4XTimeZoneIdMapper,
             id: &DiplomatStr,
-        ) -> Result<(), ICU4XError> {
+        ) -> Result<(), ICU4XTimeZoneInvalidIdError> {
             self.0.time_zone_id = Some(
                 mapper
                     .0
                     .as_borrowed()
                     .iana_bytes_to_bcp47(id)
-                    .ok_or(ICU4XError::TimeZoneInvalidIdError)?,
+                    .ok_or(ICU4XTimeZoneInvalidIdError::TodoZst)?,
             );
             Ok(())
         }
@@ -194,10 +202,13 @@ pub mod ffi {
         #[diplomat::rust_link(icu::timezone::CustomTimeZone::metazone_id, StructField)]
         #[diplomat::rust_link(icu::timezone::MetazoneId, Struct, compact)]
         #[diplomat::rust_link(icu::timezone::MetazoneId::from_str, FnInStruct, hidden)]
-        pub fn try_set_metazone_id(&mut self, id: &DiplomatStr) -> Result<(), ICU4XError> {
+        pub fn try_set_metazone_id(
+            &mut self,
+            id: &DiplomatStr,
+        ) -> Result<(), ICU4XTimeZoneInvalidIdError> {
             self.0.metazone_id = Some(icu_timezone::MetazoneId(
-                tinystr::TinyAsciiStr::from_bytes(id)
-                    .map_err(|_| ICU4XError::TimeZoneInvalidIdError)?,
+                tinystr::TinyAsciiStr::try_from_utf8(id)
+                    .map_err(|_| ICU4XTimeZoneInvalidIdError::TodoZst)?,
             ));
             Ok(())
         }
@@ -228,7 +239,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::timezone::ZoneVariant::from_str, FnInStruct, hidden)]
         pub fn try_set_zone_variant(&mut self, id: &DiplomatStr) -> Option<()> {
             self.0.zone_variant = Some(icu_timezone::ZoneVariant(
-                tinystr::TinyAsciiStr::from_bytes(id).ok()?,
+                tinystr::TinyAsciiStr::try_from_utf8(id).ok()?,
             ));
             Some(())
         }

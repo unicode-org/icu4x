@@ -8,19 +8,19 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
+#include "ICU4XDataError.d.hpp"
 #include "ICU4XDecomposingNormalizer.d.h"
-#include "ICU4XError.d.hpp"
 
 class ICU4XDataProvider;
-class ICU4XError;
+class ICU4XDataError;
 
 
 class ICU4XDecomposingNormalizer {
 public:
 
-  inline static diplomat::result<std::unique_ptr<ICU4XDecomposingNormalizer>, ICU4XError> create_nfd(const ICU4XDataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<ICU4XDecomposingNormalizer>, ICU4XDataError> create_nfd(const ICU4XDataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<ICU4XDecomposingNormalizer>, ICU4XError> create_nfkd(const ICU4XDataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<ICU4XDecomposingNormalizer>, ICU4XDataError> create_nfkd(const ICU4XDataProvider& provider);
 
   inline std::string normalize(std::string_view s) const;
 

@@ -204,7 +204,7 @@ impl WordSegmenter {
     pub fn new_auto() -> Self {
         Self {
             payload: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_SEGMENTER_WORD_V1,
+                crate::provider::Baked::SINGLETON_WORD_BREAK_DATA_V1_MARKER,
             ),
             complex: ComplexPayloads::new_auto(),
         }
@@ -212,12 +212,9 @@ impl WordSegmenter {
 
     #[cfg(feature = "auto")]
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: skip,
-        options: skip,
-        error: DataError,
-        #[cfg(skip)]
+        () -> error: DataError,
         functions: [
-            try_new_auto,
+            try_new_auto: skip,
             try_new_auto_with_any_provider,
             try_new_auto_with_buffer_provider,
             try_new_auto_unstable,
@@ -236,7 +233,7 @@ impl WordSegmenter {
             + ?Sized,
     {
         Ok(Self {
-            payload: provider.load(Default::default())?.take_payload()?,
+            payload: provider.load(Default::default())?.payload,
             complex: ComplexPayloads::try_new_auto(provider)?,
         })
     }
@@ -279,7 +276,7 @@ impl WordSegmenter {
     pub fn new_lstm() -> Self {
         Self {
             payload: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_SEGMENTER_WORD_V1,
+                crate::provider::Baked::SINGLETON_WORD_BREAK_DATA_V1_MARKER,
             ),
             complex: ComplexPayloads::new_lstm(),
         }
@@ -287,12 +284,9 @@ impl WordSegmenter {
 
     #[cfg(feature = "lstm")]
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: skip,
-        options: skip,
-        error: DataError,
-        #[cfg(skip)]
+        () -> error: DataError,
         functions: [
-            new_lstm,
+            new_lstm: skip,
             try_new_lstm_with_any_provider,
             try_new_lstm_with_buffer_provider,
             try_new_lstm_unstable,
@@ -310,7 +304,7 @@ impl WordSegmenter {
             + ?Sized,
     {
         Ok(Self {
-            payload: provider.load(Default::default())?.take_payload()?,
+            payload: provider.load(Default::default())?.payload,
             complex: ComplexPayloads::try_new_lstm(provider)?,
         })
     }
@@ -347,19 +341,16 @@ impl WordSegmenter {
     pub fn new_dictionary() -> Self {
         Self {
             payload: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_SEGMENTER_WORD_V1,
+                crate::provider::Baked::SINGLETON_WORD_BREAK_DATA_V1_MARKER,
             ),
             complex: ComplexPayloads::new_dict(),
         }
     }
 
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: skip,
-        options: skip,
-        error: DataError,
-        #[cfg(skip)]
+        () -> error: DataError,
         functions: [
-            new_dictionary,
+            new_dictionary: skip,
             try_new_dictionary_with_any_provider,
             try_new_dictionary_with_buffer_provider,
             try_new_dictionary_unstable,
@@ -377,7 +368,7 @@ impl WordSegmenter {
             + ?Sized,
     {
         Ok(Self {
-            payload: provider.load(Default::default())?.take_payload()?,
+            payload: provider.load(Default::default())?.payload,
             complex: ComplexPayloads::try_new_dict(provider)?,
         })
     }

@@ -49,7 +49,6 @@ use patterns::{
     dayperiods::{DayPeriodExpectation, DayPeriodTests},
     time_zones::{TimeZoneConfig, TimeZoneExpectation, TimeZoneTests},
 };
-use std::str::FromStr;
 use tinystr::tinystr;
 use writeable::assert_writeable_eq;
 
@@ -98,7 +97,8 @@ fn test_fixture(fixture_name: &str, file: &str) {
             None => format!("\n  file: {fixture_name}.json\n"),
         };
         for (locale, output_value) in fx.output.values {
-            let locale = Locale::from_str(&locale).expect("Expected parseable locale in fixture");
+            let locale =
+                Locale::try_from_str(&locale).expect("Expected parseable locale in fixture");
             if let Some(kind) = AnyCalendarKind::get_for_locale(&locale) {
                 match kind {
                     AnyCalendarKind::Buddhist => assert_fixture_element(
@@ -398,55 +398,31 @@ fn test_dayperiod_patterns() {
             locale: &data_locale,
             ..Default::default()
         };
-        let mut date_patterns_data: DataPayload<GregorianDateLengthsV1Marker> =
-            icu_datetime::provider::Baked
-                .load(req)
-                .unwrap()
-                .take_payload()
-                .unwrap();
-        date_patterns_data.with_mut(|data| {
+        let mut date_patterns_data: DataResponse<GregorianDateLengthsV1Marker> =
+            icu_datetime::provider::Baked.load(req).unwrap();
+        date_patterns_data.payload.with_mut(|data| {
             data.length_combinations.medium = "{0}".parse().unwrap();
         });
-        let mut time_patterns_data: DataPayload<TimeLengthsV1Marker> =
-            icu_datetime::provider::Baked
-                .load(req)
-                .unwrap()
-                .take_payload()
-                .unwrap();
-        date_patterns_data.with_mut(|data| {
+        let mut time_patterns_data: DataResponse<TimeLengthsV1Marker> =
+            icu_datetime::provider::Baked.load(req).unwrap();
+        date_patterns_data.payload.with_mut(|data| {
             data.length_combinations.medium = "{0}".parse().unwrap();
         });
-        let date_symbols_data: DataPayload<GregorianDateSymbolsV1Marker> =
-            icu_datetime::provider::Baked
-                .load(req)
-                .unwrap()
-                .take_payload()
-                .unwrap();
-        let time_symbols_data: DataPayload<TimeSymbolsV1Marker> = icu_datetime::provider::Baked
-            .load(req)
-            .unwrap()
-            .take_payload()
-            .unwrap();
+        let date_symbols_data: DataResponse<GregorianDateSymbolsV1Marker> =
+            icu_datetime::provider::Baked.load(req).unwrap();
+        let time_symbols_data: DataResponse<TimeSymbolsV1Marker> =
+            icu_datetime::provider::Baked.load(req).unwrap();
         #[cfg(feature = "experimental")]
-        let skeleton_data: DataPayload<DateSkeletonPatternsV1Marker> =
-            icu_datetime::provider::Baked
-                .load(req)
-                .unwrap()
-                .take_payload()
-                .unwrap();
-        let week_data: DataPayload<WeekDataV1Marker> = icu_calendar::provider::Baked
-            .load(req)
-            .unwrap()
-            .take_payload()
-            .unwrap();
+        let skeleton_data: DataResponse<DateSkeletonPatternsV1Marker> =
+            icu_datetime::provider::Baked.load(req).unwrap();
+        let week_data: DataResponse<WeekDataV1Marker> =
+            icu_calendar::provider::Baked.load(req).unwrap();
         data_locale.retain_unicode_ext(|_| false);
-        let decimal_data: DataPayload<DecimalSymbolsV1Marker> = icu_decimal::provider::Baked
+        let decimal_data: DataResponse<DecimalSymbolsV1Marker> = icu_decimal::provider::Baked
             .load(DataRequest {
                 locale: &data_locale,
                 ..Default::default()
             })
-            .unwrap()
-            .take_payload()
             .unwrap();
         for test_case in &test.test_cases {
             for dt_input in &test_case.datetimes {
@@ -455,32 +431,32 @@ fn test_dayperiod_patterns() {
                     for pattern_input in patterns {
                         let new_pattern1: runtime::Pattern = pattern_input.parse().unwrap();
                         let new_pattern2: runtime::Pattern = pattern_input.parse().unwrap();
-                        time_patterns_data.with_mut(move |data| {
+                        time_patterns_data.payload.with_mut(move |data| {
                             data.time_h11_h12.medium = new_pattern1;
                             data.time_h23_h24.medium = new_pattern2;
                         });
                         let local_provider = MultiForkByMarkerProvider::new(vec![
                             AnyPayloadProvider::from_payload::<GregorianDateSymbolsV1Marker>(
-                                date_symbols_data.clone(), //
+                                date_symbols_data.payload.clone(), //
                             ),
                             AnyPayloadProvider::from_payload::<TimeSymbolsV1Marker>(
-                                time_symbols_data.clone(), //
+                                time_symbols_data.payload.clone(), //
                             ),
                             #[cfg(feature = "experimental")]
                             AnyPayloadProvider::from_payload::<DateSkeletonPatternsV1Marker>(
-                                skeleton_data.clone(), //
+                                skeleton_data.payload.clone(), //
                             ),
                             AnyPayloadProvider::from_payload::<GregorianDateLengthsV1Marker>(
-                                date_patterns_data.clone(), //
+                                date_patterns_data.payload.clone(), //
                             ),
                             AnyPayloadProvider::from_payload::<TimeLengthsV1Marker>(
-                                time_patterns_data.clone(), //
+                                time_patterns_data.payload.clone(), //
                             ),
                             AnyPayloadProvider::from_payload::<WeekDataV1Marker>(
-                                week_data.clone(), //
+                                week_data.payload.clone(), //
                             ),
                             AnyPayloadProvider::from_payload::<DecimalSymbolsV1Marker>(
-                                decimal_data.clone(), //
+                                decimal_data.payload.clone(), //
                             ),
                         ]);
                         let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_unstable(
@@ -554,7 +530,7 @@ fn test_time_zone_format_configs() {
 
 #[test]
 #[cfg(debug_assertions)]
-#[should_panic(expected = "MissingInputField(Some(\"gmt_offset\"))")]
+#[should_panic(expected = "Err(MissingInputField(\"gmt_offset\"))")]
 fn test_time_zone_format_gmt_offset_not_set_debug_assert_panic() {
     let time_zone = CustomTimeZone {
         gmt_offset: None,
@@ -603,78 +579,33 @@ fn test_time_zone_patterns() {
         time_zone.metazone_id = config.metazone_id.take().map(MetazoneId);
         time_zone.zone_variant = config.zone_variant.take().map(ZoneVariant);
 
-        let mut date_patterns_data: DataPayload<GregorianDateLengthsV1Marker> =
-            icu_datetime::provider::Baked
-                .load(req)
-                .unwrap()
-                .take_payload()
-                .unwrap();
-        let mut time_patterns_data: DataPayload<TimeLengthsV1Marker> =
-            icu_datetime::provider::Baked
-                .load(req)
-                .unwrap()
-                .take_payload()
-                .unwrap();
+        let mut date_patterns_data: DataResponse<GregorianDateLengthsV1Marker> =
+            icu_datetime::provider::Baked.load(req).unwrap();
+        let mut time_patterns_data: DataResponse<TimeLengthsV1Marker> =
+            icu_datetime::provider::Baked.load(req).unwrap();
         #[cfg(feature = "experimental")]
-        let skeleton_data: DataPayload<DateSkeletonPatternsV1Marker> =
-            icu_datetime::provider::Baked
-                .load(req)
-                .unwrap()
-                .take_payload()
-                .unwrap();
-        let symbols_data: DataPayload<GregorianDateSymbolsV1Marker> = icu_datetime::provider::Baked
-            .load(req)
-            .unwrap()
-            .take_payload()
-            .unwrap();
-        let week_data: DataPayload<WeekDataV1Marker> = icu_calendar::provider::Baked
-            .load(req)
-            .unwrap()
-            .take_payload()
-            .unwrap();
-        let decimal_data: DataPayload<DecimalSymbolsV1Marker> = icu_decimal::provider::Baked
-            .load(req)
-            .unwrap()
-            .take_payload()
-            .unwrap();
-        let time_zone_formats_data: DataPayload<TimeZoneFormatsV1Marker> =
-            icu_datetime::provider::Baked
-                .load(req)
-                .unwrap()
-                .take_payload()
-                .unwrap();
-        let metazone_specific_short_data: DataPayload<MetazoneSpecificNamesShortV1Marker> =
-            icu_datetime::provider::Baked
-                .load(req)
-                .unwrap()
-                .take_payload()
-                .unwrap();
-        let metazone_specific_long_data: DataPayload<MetazoneSpecificNamesLongV1Marker> =
-            icu_datetime::provider::Baked
-                .load(req)
-                .unwrap()
-                .take_payload()
-                .unwrap();
-        let metazone_generic_short_data: DataPayload<MetazoneGenericNamesShortV1Marker> =
-            icu_datetime::provider::Baked
-                .load(req)
-                .unwrap()
-                .take_payload()
-                .unwrap();
-        let metazone_generic_long_data: DataPayload<MetazoneGenericNamesLongV1Marker> =
-            icu_datetime::provider::Baked
-                .load(req)
-                .unwrap()
-                .take_payload()
-                .unwrap();
-        let exemplar_cities_data: DataPayload<ExemplarCitiesV1Marker> =
-            icu_datetime::provider::Baked
-                .load(req)
-                .unwrap()
-                .take_payload()
-                .unwrap();
+        let skeleton_data: DataResponse<DateSkeletonPatternsV1Marker> =
+            icu_datetime::provider::Baked.load(req).unwrap();
+        let symbols_data: DataResponse<GregorianDateSymbolsV1Marker> =
+            icu_datetime::provider::Baked.load(req).unwrap();
+        let week_data: DataResponse<WeekDataV1Marker> =
+            icu_calendar::provider::Baked.load(req).unwrap();
+        let decimal_data: DataResponse<DecimalSymbolsV1Marker> =
+            icu_decimal::provider::Baked.load(req).unwrap();
+        let time_zone_formats_data: DataResponse<TimeZoneFormatsV1Marker> =
+            icu_datetime::provider::Baked.load(req).unwrap();
+        let metazone_specific_short_data: DataResponse<MetazoneSpecificNamesShortV1Marker> =
+            icu_datetime::provider::Baked.load(req).unwrap();
+        let metazone_specific_long_data: DataResponse<MetazoneSpecificNamesLongV1Marker> =
+            icu_datetime::provider::Baked.load(req).unwrap();
+        let metazone_generic_short_data: DataResponse<MetazoneGenericNamesShortV1Marker> =
+            icu_datetime::provider::Baked.load(req).unwrap();
+        let metazone_generic_long_data: DataResponse<MetazoneGenericNamesLongV1Marker> =
+            icu_datetime::provider::Baked.load(req).unwrap();
+        let exemplar_cities_data: DataResponse<ExemplarCitiesV1Marker> =
+            icu_datetime::provider::Baked.load(req).unwrap();
 
-        date_patterns_data.with_mut(|data| {
+        date_patterns_data.payload.with_mut(|data| {
             data.length_combinations.medium = "{0}".parse().unwrap();
         });
 
@@ -688,47 +619,47 @@ fn test_time_zone_patterns() {
             for pattern_input in patterns {
                 let new_pattern1: runtime::Pattern = pattern_input.parse().unwrap();
                 let new_pattern2: runtime::Pattern = pattern_input.parse().unwrap();
-                time_patterns_data.with_mut(move |data| {
+                time_patterns_data.payload.with_mut(move |data| {
                     data.time_h11_h12.medium = new_pattern1;
                     data.time_h23_h24.medium = new_pattern2;
                 });
                 let local_provider = MultiForkByMarkerProvider::new(vec![
                     AnyPayloadProvider::from_payload::<GregorianDateSymbolsV1Marker>(
-                        symbols_data.clone(), //
+                        symbols_data.payload.clone(), //
                     ),
                     #[cfg(feature = "experimental")]
                     AnyPayloadProvider::from_payload::<DateSkeletonPatternsV1Marker>(
-                        skeleton_data.clone(), //
+                        skeleton_data.payload.clone(), //
                     ),
                     AnyPayloadProvider::from_payload::<GregorianDateLengthsV1Marker>(
-                        date_patterns_data.clone(), //
+                        date_patterns_data.payload.clone(), //
                     ),
                     AnyPayloadProvider::from_payload::<TimeLengthsV1Marker>(
-                        time_patterns_data.clone(), //
+                        time_patterns_data.payload.clone(), //
                     ),
                     AnyPayloadProvider::from_payload::<WeekDataV1Marker>(
-                        week_data.clone(), //
+                        week_data.payload.clone(), //
                     ),
                     AnyPayloadProvider::from_payload::<DecimalSymbolsV1Marker>(
-                        decimal_data.clone(), //
+                        decimal_data.payload.clone(), //
                     ),
                     AnyPayloadProvider::from_payload::<TimeZoneFormatsV1Marker>(
-                        time_zone_formats_data.clone(), //
+                        time_zone_formats_data.payload.clone(), //
                     ),
                     AnyPayloadProvider::from_payload::<MetazoneSpecificNamesShortV1Marker>(
-                        metazone_specific_short_data.clone(), //
+                        metazone_specific_short_data.payload.clone(), //
                     ),
                     AnyPayloadProvider::from_payload::<MetazoneSpecificNamesLongV1Marker>(
-                        metazone_specific_long_data.clone(), //
+                        metazone_specific_long_data.payload.clone(), //
                     ),
                     AnyPayloadProvider::from_payload::<MetazoneGenericNamesShortV1Marker>(
-                        metazone_generic_short_data.clone(), //
+                        metazone_generic_short_data.payload.clone(), //
                     ),
                     AnyPayloadProvider::from_payload::<MetazoneGenericNamesLongV1Marker>(
-                        metazone_generic_long_data.clone(), //
+                        metazone_generic_long_data.payload.clone(), //
                     ),
                     AnyPayloadProvider::from_payload::<ExemplarCitiesV1Marker>(
-                        exemplar_cities_data.clone(), //
+                        exemplar_cities_data.payload.clone(), //
                     ),
                 ]);
 

@@ -9,7 +9,7 @@ use zerovec::ule::{AsULE, ULE};
 use zerovec::{ZeroSlice, ZeroVec};
 
 /// The GMT offset in seconds for a timezone
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub struct GmtOffset(i32);
 
 impl Default for GmtOffset {
@@ -57,49 +57,55 @@ impl GmtOffset {
     /// use icu::timezone::GmtOffset;
     ///
     /// let offset0: GmtOffset =
-    ///     GmtOffset::try_from_bytes(b"Z").expect("Failed to parse a time zone");
+    ///     GmtOffset::try_from_str("Z").expect("Failed to parse a time zone");
     /// let offset1: GmtOffset =
-    ///     GmtOffset::try_from_bytes(b"+05").expect("Failed to parse a time zone");
-    /// let offset2: GmtOffset = GmtOffset::try_from_bytes(b"+0500")
+    ///     GmtOffset::try_from_str("+05").expect("Failed to parse a time zone");
+    /// let offset2: GmtOffset = GmtOffset::try_from_str("+0500")
     ///     .expect("Failed to parse a time zone");
-    /// let offset3: GmtOffset = GmtOffset::try_from_bytes(b"-05:00")
+    /// let offset3: GmtOffset = GmtOffset::try_from_str("-05:00")
     ///     .expect("Failed to parse a time zone");
     /// let offset_err0 =
-    ///     GmtOffset::try_from_bytes(b"0500").expect_err("Invalid input");
+    ///     GmtOffset::try_from_str("0500").expect_err("Invalid input");
     /// let offset_err1 =
-    ///     GmtOffset::try_from_bytes(b"+05000").expect_err("Invalid input");
+    ///     GmtOffset::try_from_str("+05000").expect_err("Invalid input");
     ///
     /// assert_eq!(offset0.offset_seconds(), 0);
     /// assert_eq!(offset1.offset_seconds(), 18000);
     /// assert_eq!(offset2.offset_seconds(), 18000);
     /// assert_eq!(offset3.offset_seconds(), -18000);
     /// ```
-    pub fn try_from_bytes(mut chars: &[u8]) -> Result<Self, InvalidOffsetError> {
-        let offset_sign = match chars {
+    #[inline]
+    pub fn try_from_str(s: &str) -> Result<Self, InvalidOffsetError> {
+        Self::try_from_utf8(s.as_bytes())
+    }
+
+    /// See [`Self::try_from_str`]
+    pub fn try_from_utf8(mut code_units: &[u8]) -> Result<Self, InvalidOffsetError> {
+        let offset_sign = match code_units {
             [b'+', rest @ ..] => {
-                chars = rest;
+                code_units = rest;
                 1
             }
             [b'-', rest @ ..] => {
-                chars = rest;
+                code_units = rest;
                 -1
             }
             // Unicode minus ("\u{2212}" == [226, 136, 146])
             [226, 136, 146, rest @ ..] => {
-                chars = rest;
+                code_units = rest;
                 -1
             }
             [b'Z'] => return Ok(Self(0)),
             _ => return Err(InvalidOffsetError),
         };
 
-        let hours = match chars {
+        let hours = match code_units {
             &[h1, h2, ..] => try_get_time_component([h1, h2]),
             _ => None,
         }
         .ok_or(InvalidOffsetError)?;
 
-        let minutes = match chars {
+        let minutes = match code_units {
             /* ±hh */
             &[_, _] => Some(0),
             /* ±hhmm, ±hh:mm */
@@ -152,30 +158,9 @@ impl GmtOffset {
 impl FromStr for GmtOffset {
     type Err = InvalidOffsetError;
 
-    /// Parse a [`GmtOffset`] from a string.
-    ///
-    /// The offset must range from GMT-12 to GMT+14.
-    /// The string must be an ISO 8601 time zone designator:
-    /// e.g. Z
-    /// e.g. +05
-    /// e.g. +0500
-    /// e.g. +05:00
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::timezone::GmtOffset;
-    ///
-    /// let offset0: GmtOffset = "Z".parse().expect("Failed to parse a GMT offset");
-    /// let offset1: GmtOffset =
-    ///     "-09".parse().expect("Failed to parse a GMT offset");
-    /// let offset2: GmtOffset =
-    ///     "-0930".parse().expect("Failed to parse a GMT offset");
-    /// let offset3: GmtOffset =
-    ///     "-09:30".parse().expect("Failed to parse a GMT offset");
-    /// ```
-    fn from_str(input: &str) -> Result<Self, Self::Err> {
-        GmtOffset::try_from_bytes(input.as_bytes())
+    #[inline]
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Self::try_from_str(s)
     }
 }
 

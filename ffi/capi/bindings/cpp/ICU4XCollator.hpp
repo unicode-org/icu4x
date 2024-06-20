@@ -13,16 +13,16 @@
 #include "ICU4XCollator.h"
 #include "ICU4XCollatorOptionsV1.hpp"
 #include "ICU4XCollatorResolvedOptionsV1.hpp"
+#include "ICU4XDataError.hpp"
 #include "ICU4XDataProvider.hpp"
-#include "ICU4XError.hpp"
 #include "ICU4XLocale.hpp"
 
 
-inline diplomat::result<std::unique_ptr<ICU4XCollator>, ICU4XError> ICU4XCollator::create_v1(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XCollatorOptionsV1 options) {
+inline diplomat::result<std::unique_ptr<ICU4XCollator>, ICU4XDataError> ICU4XCollator::create_v1(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XCollatorOptionsV1 options) {
   auto result = capi::ICU4XCollator_create_v1(provider.AsFFI(),
     locale.AsFFI(),
     options.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XCollator>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XCollator>>(std::unique_ptr<ICU4XCollator>(ICU4XCollator::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XCollator>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XCollator>, ICU4XDataError>(diplomat::Ok<std::unique_ptr<ICU4XCollator>>(std::unique_ptr<ICU4XCollator>(ICU4XCollator::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XCollator>, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
 
 inline int8_t ICU4XCollator::compare16(std::u16string_view left, std::u16string_view right) const {

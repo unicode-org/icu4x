@@ -1,7 +1,7 @@
 import { u32 } from "./diplomat-runtime"
 import { FFIError } from "./diplomat-runtime"
+import { ICU4XDataError } from "./ICU4XDataError";
 import { ICU4XDataProvider } from "./ICU4XDataProvider";
-import { ICU4XError } from "./ICU4XError";
 
 /**
 
@@ -32,7 +32,7 @@ export class ICU4XGeneralCategoryNameToMaskMapper {
   /**
 
    * See the {@link https://docs.rs/icu/latest/icu/properties/struct.GeneralCategoryGroup.html#method.name_to_enum_mapper Rust documentation for `name_to_enum_mapper`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
+   * @throws {@link FFIError}<{@link ICU4XDataError}>
    */
   static load(provider: ICU4XDataProvider): ICU4XGeneralCategoryNameToMaskMapper | never;
 }

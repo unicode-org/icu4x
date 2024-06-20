@@ -11,19 +11,19 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 #include "ICU4XCalendar.hpp"
+#include "ICU4XCalendarError.hpp"
 #include "ICU4XDate.hpp"
-#include "ICU4XError.hpp"
 #include "ICU4XIsoDate.h"
 #include "ICU4XIsoWeekday.hpp"
 #include "ICU4XWeekCalculator.hpp"
 #include "ICU4XWeekOf.hpp"
 
 
-inline diplomat::result<std::unique_ptr<ICU4XIsoDate>, ICU4XError> ICU4XIsoDate::create(int32_t year, uint8_t month, uint8_t day) {
+inline diplomat::result<std::unique_ptr<ICU4XIsoDate>, ICU4XCalendarError> ICU4XIsoDate::create(int32_t year, uint8_t month, uint8_t day) {
   auto result = capi::ICU4XIsoDate_create(year,
     month,
     day);
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XIsoDate>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XIsoDate>>(std::unique_ptr<ICU4XIsoDate>(ICU4XIsoDate::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XIsoDate>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XIsoDate>, ICU4XCalendarError>(diplomat::Ok<std::unique_ptr<ICU4XIsoDate>>(std::unique_ptr<ICU4XIsoDate>(ICU4XIsoDate::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XIsoDate>, ICU4XCalendarError>(diplomat::Err<ICU4XCalendarError>(ICU4XCalendarError::FromFFI(result.err)));
 }
 
 inline std::unique_ptr<ICU4XIsoDate> ICU4XIsoDate::create_for_unix_epoch() {

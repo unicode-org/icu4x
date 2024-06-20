@@ -10,17 +10,17 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
+#include "ICU4XDataError.hpp"
 #include "ICU4XDataProvider.hpp"
-#include "ICU4XError.hpp"
 #include "ICU4XSentenceBreakIteratorLatin1.hpp"
 #include "ICU4XSentenceBreakIteratorUtf16.hpp"
 #include "ICU4XSentenceBreakIteratorUtf8.hpp"
 #include "ICU4XSentenceSegmenter.h"
 
 
-inline diplomat::result<std::unique_ptr<ICU4XSentenceSegmenter>, ICU4XError> ICU4XSentenceSegmenter::create(const ICU4XDataProvider& provider) {
+inline diplomat::result<std::unique_ptr<ICU4XSentenceSegmenter>, ICU4XDataError> ICU4XSentenceSegmenter::create(const ICU4XDataProvider& provider) {
   auto result = capi::ICU4XSentenceSegmenter_create(provider.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XSentenceSegmenter>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XSentenceSegmenter>>(std::unique_ptr<ICU4XSentenceSegmenter>(ICU4XSentenceSegmenter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XSentenceSegmenter>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XSentenceSegmenter>, ICU4XDataError>(diplomat::Ok<std::unique_ptr<ICU4XSentenceSegmenter>>(std::unique_ptr<ICU4XSentenceSegmenter>(ICU4XSentenceSegmenter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XSentenceSegmenter>, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
 
 inline std::unique_ptr<ICU4XSentenceBreakIteratorUtf8> ICU4XSentenceSegmenter::segment_utf8(std::string_view input) const {

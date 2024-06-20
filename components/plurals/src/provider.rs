@@ -31,17 +31,19 @@ use icu_provider::DynamicDataMarker;
 pub struct Baked;
 
 #[cfg(feature = "compiled_data")]
+#[allow(unused_imports)]
 const _: () = {
-    pub mod icu {
+    use icu_plurals_data::*;
+    mod icu {
         pub use crate as plurals;
-        #[allow(unused_imports)] // baked data may or may not need this
-        pub use icu_locale as locale;
+        pub use icu_plurals_data::icu_locale as locale;
     }
-    icu_plurals_data::make_provider!(Baked);
-    icu_plurals_data::impl_plurals_ordinal_v1!(Baked);
-    icu_plurals_data::impl_plurals_cardinal_v1!(Baked);
+
+    make_provider!(Baked);
+    impl_cardinal_v1_marker!(Baked);
+    impl_ordinal_v1_marker!(Baked);
     #[cfg(feature = "experimental")]
-    icu_plurals_data::impl_plurals_ranges_v1!(Baked);
+    impl_plural_ranges_v1_marker!(Baked);
 };
 
 #[cfg(feature = "datagen")]

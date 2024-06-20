@@ -18,18 +18,18 @@ impl<'data> ListFormatterPatternsV1<'data> {
         [start, middle, end, pair, short_start, short_middle, short_end, short_pair, narrow_start, narrow_middle, narrow_end, narrow_pair]: [&str; 12],
     ) -> Result<Self, DataError> {
         Ok(Self([
-            ListJoinerPattern::from_str(start, true, false)?.into(),
-            ListJoinerPattern::from_str(middle, false, false)?.into(),
-            ListJoinerPattern::from_str(end, false, true)?.into(),
-            ListJoinerPattern::from_str(pair, true, true)?.into(),
-            ListJoinerPattern::from_str(short_start, true, false)?.into(),
-            ListJoinerPattern::from_str(short_middle, false, false)?.into(),
-            ListJoinerPattern::from_str(short_end, false, true)?.into(),
-            ListJoinerPattern::from_str(short_pair, true, true)?.into(),
-            ListJoinerPattern::from_str(narrow_start, true, false)?.into(),
-            ListJoinerPattern::from_str(narrow_middle, false, false)?.into(),
-            ListJoinerPattern::from_str(narrow_end, false, true)?.into(),
-            ListJoinerPattern::from_str(narrow_pair, true, true)?.into(),
+            ListJoinerPattern::try_from_str(start, true, false)?.into(),
+            ListJoinerPattern::try_from_str(middle, false, false)?.into(),
+            ListJoinerPattern::try_from_str(end, false, true)?.into(),
+            ListJoinerPattern::try_from_str(pair, true, true)?.into(),
+            ListJoinerPattern::try_from_str(short_start, true, false)?.into(),
+            ListJoinerPattern::try_from_str(short_middle, false, false)?.into(),
+            ListJoinerPattern::try_from_str(short_end, false, true)?.into(),
+            ListJoinerPattern::try_from_str(short_pair, true, true)?.into(),
+            ListJoinerPattern::try_from_str(narrow_start, true, false)?.into(),
+            ListJoinerPattern::try_from_str(narrow_middle, false, false)?.into(),
+            ListJoinerPattern::try_from_str(narrow_end, false, true)?.into(),
+            ListJoinerPattern::try_from_str(narrow_pair, true, true)?.into(),
         ]))
     }
 
@@ -45,13 +45,13 @@ impl<'data> ListFormatterPatternsV1<'data> {
         regex: &SerdeDFA<'static>,
         alternative_pattern: &str,
     ) -> Result<(), DataError> {
-        let old = ListJoinerPattern::from_str(pattern, true, true)?;
+        let old = ListJoinerPattern::try_from_str(pattern, true, true)?;
         for i in 0..12 {
             #[allow(clippy::indexing_slicing)] // self.0 is &[_; 12]
             if self.0[i].default == old {
                 self.0[i].special_case = Some(SpecialCasePattern {
                     condition: regex.clone(),
-                    pattern: ListJoinerPattern::from_str(
+                    pattern: ListJoinerPattern::try_from_str(
                         alternative_pattern,
                         i % 4 == 0 || i % 4 == 3, // allow_prefix = start or pair
                         i % 4 == 2 || i % 4 == 3, // allow_suffix = end or pair
@@ -106,7 +106,11 @@ impl<'a> ConditionalListJoinerPattern<'a> {
 
 impl<'data> ListJoinerPattern<'data> {
     #[cfg(feature = "datagen")]
-    fn from_str(pattern: &str, allow_prefix: bool, allow_suffix: bool) -> Result<Self, DataError> {
+    fn try_from_str(
+        pattern: &str,
+        allow_prefix: bool,
+        allow_suffix: bool,
+    ) -> Result<Self, DataError> {
         match (pattern.find("{0}"), pattern.find("{1}")) {
             (Some(index_0), Some(index_1))
                 if index_0 < index_1
@@ -196,17 +200,17 @@ pub mod test {
 
     #[test]
     fn rejects_bad_patterns() {
-        assert!(ListJoinerPattern::from_str("{0} and", true, true).is_err());
-        assert!(ListJoinerPattern::from_str("and {1}", true, true).is_err());
-        assert!(ListJoinerPattern::from_str("{1} and {0}", true, true).is_err());
-        assert!(ListJoinerPattern::from_str("{1{0}}", true, true).is_err());
-        assert!(ListJoinerPattern::from_str("{0\u{202e}} and {1}", true, true).is_err());
-        assert!(ListJoinerPattern::from_str("{{0}} {{1}}", true, true).is_ok());
+        assert!(ListJoinerPattern::try_from_str("{0} and", true, true).is_err());
+        assert!(ListJoinerPattern::try_from_str("and {1}", true, true).is_err());
+        assert!(ListJoinerPattern::try_from_str("{1} and {0}", true, true).is_err());
+        assert!(ListJoinerPattern::try_from_str("{1{0}}", true, true).is_err());
+        assert!(ListJoinerPattern::try_from_str("{0\u{202e}} and {1}", true, true).is_err());
+        assert!(ListJoinerPattern::try_from_str("{{0}} {{1}}", true, true).is_ok());
 
-        assert!(ListJoinerPattern::from_str("{0} and {1} ", true, true).is_ok());
-        assert!(ListJoinerPattern::from_str("{0} and {1} ", true, false).is_err());
-        assert!(ListJoinerPattern::from_str(" {0} and {1}", true, true).is_ok());
-        assert!(ListJoinerPattern::from_str(" {0} and {1}", false, true).is_err());
+        assert!(ListJoinerPattern::try_from_str("{0} and {1} ", true, true).is_ok());
+        assert!(ListJoinerPattern::try_from_str("{0} and {1} ", true, false).is_err());
+        assert!(ListJoinerPattern::try_from_str(" {0} and {1}", true, true).is_ok());
+        assert!(ListJoinerPattern::try_from_str(" {0} and {1}", false, true).is_err());
     }
 
     #[test]

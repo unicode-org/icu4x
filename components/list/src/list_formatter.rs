@@ -22,9 +22,7 @@ pub struct ListFormatter {
 macro_rules! constructor {
     ($name: ident, $name_any: ident, $name_buffer: ident, $name_unstable: ident, $marker: ty, $doc: literal) => {
         icu_provider::gen_any_buffer_data_constructors!(
-            locale: include,
-            style: ListLength,
-            error: DataError,
+            (locale, style: ListLength) ->  error: DataError,
             #[doc = concat!("Creates a new [`ListFormatter`] that produces a ", $doc, "-type list using compiled data.")]
             ///
             /// See the [CLDR spec](https://unicode.org/reports/tr35/tr35-general.html#ListPatterns) for
@@ -53,7 +51,8 @@ macro_rules! constructor {
                     locale,
                     ..Default::default()
                 })?
-                .take_payload()?.cast();
+                .payload
+                .cast();
             Ok(Self { data, length })
         }
     };

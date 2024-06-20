@@ -58,7 +58,7 @@ impl CodePointSetData {
     /// Construct a new one from loaded data
     ///
     /// Typically it is preferable to use getters like [`load_ascii_hex_digit()`] instead
-    pub fn from_data<M>(data: DataPayload<M>) -> Self
+    pub(crate) fn from_data<M>(data: DataPayload<M>) -> Self
     where
         M: DynamicDataMarker<Yokeable = PropertyCodePointSetV1<'static>>,
     {
@@ -229,7 +229,7 @@ impl UnicodeSetData {
     /// Construct a new one from loaded data
     ///
     /// Typically it is preferable to use getters instead
-    pub fn from_data<M>(data: DataPayload<M>) -> Self
+    pub(crate) fn from_data<M>(data: DataPayload<M>) -> Self
     where
         M: DynamicDataMarker<Yokeable = PropertyUnicodeSetV1<'static>>,
     {
@@ -322,10 +322,9 @@ where
     M: DataMarker<Yokeable = PropertyCodePointSetV1<'static>>,
     P: DataProvider<M> + ?Sized,
 {
-    provider
-        .load(Default::default())
-        .and_then(DataResponse::take_payload)
-        .map(CodePointSetData::from_data)
+    Ok(CodePointSetData::from_data(
+        provider.load(Default::default())?.payload,
+    ))
 }
 
 //
@@ -388,7 +387,7 @@ make_code_point_set_property! {
     /// assert!(ascii_hex_digit.contains('A'));
     /// assert!(!ascii_hex_digit.contains('Ä'));  // U+00C4 LATIN CAPITAL LETTER A WITH DIAERESIS
     /// ```
-    pub const fn ascii_hex_digit() => SINGLETON_PROPS_AHEX_V1;
+    pub const fn ascii_hex_digit() => SINGLETON_ASCII_HEX_DIGIT_V1_MARKER;
     pub fn load_ascii_hex_digit();
 }
 
@@ -400,7 +399,7 @@ make_code_point_set_property! {
     /// Characters with the Alphabetic or Decimal_Number property
     /// This is defined for POSIX compatibility.
 
-    pub const fn alnum() => SINGLETON_PROPS_ALNUM_V1;
+    pub const fn alnum() => SINGLETON_ALNUM_V1_MARKER;
     pub fn load_alnum();
 }
 
@@ -428,7 +427,7 @@ make_code_point_set_property! {
     /// assert!(alphabetic.contains('Ä'));  // U+00C4 LATIN CAPITAL LETTER A WITH DIAERESIS
     /// ```
 
-    pub const fn alphabetic() => SINGLETON_PROPS_ALPHA_V1;
+    pub const fn alphabetic() => SINGLETON_ALPHABETIC_V1_MARKER;
     pub fn load_alphabetic();
 }
 
@@ -455,7 +454,7 @@ make_code_point_set_property! {
     /// assert!(!bidi_control.contains('ش'));  // U+0634 ARABIC LETTER SHEEN
     /// ```
 
-    pub const fn bidi_control() => SINGLETON_PROPS_BIDI_C_V1;
+    pub const fn bidi_control() => SINGLETON_BIDI_CONTROL_V1_MARKER;
     pub fn load_bidi_control();
 }
 
@@ -483,7 +482,7 @@ make_code_point_set_property! {
     /// assert!(!bidi_mirrored.contains('ཉ'));  // U+0F49 TIBETAN LETTER NYA
     /// ```
 
-    pub const fn bidi_mirrored() => SINGLETON_PROPS_BIDI_M_V1;
+    pub const fn bidi_mirrored() => SINGLETON_BIDI_MIRRORED_V1_MARKER;
     pub fn load_bidi_mirrored();
 }
 
@@ -494,7 +493,7 @@ make_code_point_set_property! {
     func:
     /// Horizontal whitespace characters
 
-    pub const fn blank() => SINGLETON_PROPS_BLANK_V1;
+    pub const fn blank() => SINGLETON_BLANK_V1_MARKER;
     pub fn load_blank();
 }
 
@@ -520,7 +519,7 @@ make_code_point_set_property! {
     /// assert!(!cased.contains('ދ'));  // U+078B THAANA LETTER DHAALU
     /// ```
 
-    pub const fn cased() => SINGLETON_PROPS_CASED_V1;
+    pub const fn cased() => SINGLETON_CASED_V1_MARKER;
     pub fn load_cased();
 }
 
@@ -546,7 +545,7 @@ make_code_point_set_property! {
     /// assert!(!case_ignorable.contains('λ'));  // U+03BB GREEK SMALL LETTER LAMDA
     /// ```
 
-    pub const fn case_ignorable() => SINGLETON_PROPS_CI_V1;
+    pub const fn case_ignorable() => SINGLETON_CASE_IGNORABLE_V1_MARKER;
     pub fn load_case_ignorable();
 }
 
@@ -558,7 +557,7 @@ make_code_point_set_property! {
     /// Characters that are excluded from composition
     /// See <https://unicode.org/Public/UNIDATA/CompositionExclusions.txt>
 
-    pub const fn full_composition_exclusion() => SINGLETON_PROPS_COMP_EX_V1;
+    pub const fn full_composition_exclusion() => SINGLETON_FULL_COMPOSITION_EXCLUSION_V1_MARKER;
     pub fn load_full_composition_exclusion();
 }
 
@@ -584,7 +583,7 @@ make_code_point_set_property! {
     /// assert!(!changes_when_casefolded.contains('ᜉ'));  // U+1709 TAGALOG LETTER PA
     /// ```
 
-    pub const fn changes_when_casefolded() => SINGLETON_PROPS_CWCF_V1;
+    pub const fn changes_when_casefolded() => SINGLETON_CHANGES_WHEN_CASEFOLDED_V1_MARKER;
     pub fn load_changes_when_casefolded();
 }
 
@@ -595,7 +594,7 @@ make_code_point_set_property! {
     func:
     /// Characters which may change when they undergo case mapping
 
-    pub const fn changes_when_casemapped() => SINGLETON_PROPS_CWCM_V1;
+    pub const fn changes_when_casemapped() => SINGLETON_CHANGES_WHEN_CASEMAPPED_V1_MARKER;
     pub fn load_changes_when_casemapped();
 }
 
@@ -621,7 +620,7 @@ make_code_point_set_property! {
     /// assert!(!changes_when_nfkc_casefolded.contains('f'));
     /// ```
 
-    pub const fn changes_when_nfkc_casefolded() => SINGLETON_PROPS_CWKCF_V1;
+    pub const fn changes_when_nfkc_casefolded() => SINGLETON_CHANGES_WHEN_NFKC_CASEFOLDED_V1_MARKER;
     pub fn load_changes_when_nfkc_casefolded();
 }
 
@@ -647,7 +646,7 @@ make_code_point_set_property! {
     /// assert!(!changes_when_lowercased.contains('ფ'));  // U+10E4 GEORGIAN LETTER PHAR
     /// ```
 
-    pub const fn changes_when_lowercased() => SINGLETON_PROPS_CWL_V1;
+    pub const fn changes_when_lowercased() => SINGLETON_CHANGES_WHEN_LOWERCASED_V1_MARKER;
     pub fn load_changes_when_lowercased();
 }
 
@@ -673,7 +672,7 @@ make_code_point_set_property! {
     /// assert!(!changes_when_titlecased.contains('Æ'));  // U+00E6 LATIN CAPITAL LETTER AE
     /// ```
 
-    pub const fn changes_when_titlecased() => SINGLETON_PROPS_CWT_V1;
+    pub const fn changes_when_titlecased() => SINGLETON_CHANGES_WHEN_TITLECASED_V1_MARKER;
     pub fn load_changes_when_titlecased();
 }
 
@@ -699,7 +698,7 @@ make_code_point_set_property! {
     /// assert!(!changes_when_uppercased.contains('Ւ'));  // U+0552 ARMENIAN CAPITAL LETTER YIWN
     /// ```
 
-    pub const fn changes_when_uppercased() => SINGLETON_PROPS_CWU_V1;
+    pub const fn changes_when_uppercased() => SINGLETON_CHANGES_WHEN_UPPERCASED_V1_MARKER;
     pub fn load_changes_when_uppercased();
 }
 
@@ -727,7 +726,7 @@ make_code_point_set_property! {
     /// assert!(!dash.contains('='));  // U+003D
     /// ```
 
-    pub const fn dash() => SINGLETON_PROPS_DASH_V1;
+    pub const fn dash() => SINGLETON_DASH_V1_MARKER;
     pub fn load_dash();
 }
 
@@ -754,7 +753,7 @@ make_code_point_set_property! {
     /// assert!(!deprecated.contains('A'));
     /// ```
 
-    pub const fn deprecated() => SINGLETON_PROPS_DEP_V1;
+    pub const fn deprecated() => SINGLETON_DEPRECATED_V1_MARKER;
     pub fn load_deprecated();
 }
 
@@ -783,7 +782,7 @@ make_code_point_set_property! {
     /// assert!(!default_ignorable_code_point.contains('E'));
     /// ```
 
-    pub const fn default_ignorable_code_point() => SINGLETON_PROPS_DI_V1;
+    pub const fn default_ignorable_code_point() => SINGLETON_DEFAULT_IGNORABLE_CODE_POINT_V1_MARKER;
     pub fn load_default_ignorable_code_point();
 }
 
@@ -809,7 +808,7 @@ make_code_point_set_property! {
     /// assert!(!diacritic.contains('א'));  // U+05D0 HEBREW LETTER ALEF
     /// ```
 
-    pub const fn diacritic() => SINGLETON_PROPS_DIA_V1;
+    pub const fn diacritic() => SINGLETON_DIACRITIC_V1_MARKER;
     pub fn load_diacritic();
 }
 
@@ -835,7 +834,7 @@ make_code_point_set_property! {
     /// assert!(!emoji_modifier_base.contains('⛰'));  // U+26F0 MOUNTAIN
     /// ```
 
-    pub const fn emoji_modifier_base() => SINGLETON_PROPS_EBASE_V1;
+    pub const fn emoji_modifier_base() => SINGLETON_EMOJI_MODIFIER_BASE_V1_MARKER;
     pub fn load_emoji_modifier_base();
 }
 
@@ -864,7 +863,7 @@ make_code_point_set_property! {
     /// assert!(!emoji_component.contains('T'));
     /// ```
 
-    pub const fn emoji_component() => SINGLETON_PROPS_ECOMP_V1;
+    pub const fn emoji_component() => SINGLETON_EMOJI_COMPONENT_V1_MARKER;
     pub fn load_emoji_component();
 }
 
@@ -890,7 +889,7 @@ make_code_point_set_property! {
     /// assert!(!emoji_modifier.contains32(0x200C));  // ZERO WIDTH NON-JOINER
     /// ```
 
-    pub const fn emoji_modifier() => SINGLETON_PROPS_EMOD_V1;
+    pub const fn emoji_modifier() => SINGLETON_EMOJI_MODIFIER_V1_MARKER;
     pub fn load_emoji_modifier();
 }
 
@@ -916,7 +915,7 @@ make_code_point_set_property! {
     /// assert!(!emoji.contains('V'));
     /// ```
 
-    pub const fn emoji() => SINGLETON_PROPS_EMOJI_V1;
+    pub const fn emoji() => SINGLETON_EMOJI_V1_MARKER;
     pub fn load_emoji();
 }
 
@@ -942,7 +941,7 @@ make_code_point_set_property! {
     /// assert!(!emoji_presentation.contains('♻'));  // U+267B BLACK UNIVERSAL RECYCLING SYMBOL
     /// ```
 
-    pub const fn emoji_presentation() => SINGLETON_PROPS_EPRES_V1;
+    pub const fn emoji_presentation() => SINGLETON_EMOJI_PRESENTATION_V1_MARKER;
     pub fn load_emoji_presentation();
 }
 
@@ -970,7 +969,7 @@ make_code_point_set_property! {
     /// assert!(!extender.contains('・'));  // U+30FB KATAKANA MIDDLE DOT
     /// ```
 
-    pub const fn extender() => SINGLETON_PROPS_EXT_V1;
+    pub const fn extender() => SINGLETON_EXTENDER_V1_MARKER;
     pub fn load_extender();
 }
 
@@ -997,7 +996,7 @@ make_code_point_set_property! {
     /// assert!(!extended_pictographic.contains('🇪'));  // U+1F1EA REGIONAL INDICATOR SYMBOL LETTER E
     /// ```
 
-    pub const fn extended_pictographic() => SINGLETON_PROPS_EXTPICT_V1;
+    pub const fn extended_pictographic() => SINGLETON_EXTENDED_PICTOGRAPHIC_V1_MARKER;
     pub fn load_extended_pictographic();
 }
 
@@ -1009,7 +1008,7 @@ make_code_point_set_property! {
     /// Visible characters.
     /// This is defined for POSIX compatibility.
 
-    pub const fn graph() => SINGLETON_PROPS_GRAPH_V1;
+    pub const fn graph() => SINGLETON_GRAPH_V1_MARKER;
     pub fn load_graph();
 }
 
@@ -1037,7 +1036,7 @@ make_code_point_set_property! {
     /// assert!(!grapheme_base.contains('\u{0D3E}'));  // U+0D3E MALAYALAM VOWEL SIGN AA
     /// ```
 
-    pub const fn grapheme_base() => SINGLETON_PROPS_GR_BASE_V1;
+    pub const fn grapheme_base() => SINGLETON_GRAPHEME_BASE_V1_MARKER;
     pub fn load_grapheme_base();
 }
 
@@ -1065,7 +1064,7 @@ make_code_point_set_property! {
     /// assert!(grapheme_extend.contains('\u{0D3E}'));  // U+0D3E MALAYALAM VOWEL SIGN AA
     /// ```
 
-    pub const fn grapheme_extend() => SINGLETON_PROPS_GR_EXT_V1;
+    pub const fn grapheme_extend() => SINGLETON_GRAPHEME_EXTEND_V1_MARKER;
     pub fn load_grapheme_extend();
 }
 
@@ -1077,7 +1076,7 @@ make_code_point_set_property! {
     /// Deprecated property. Formerly proposed for programmatic determination of grapheme
     /// cluster boundaries.
 
-    pub const fn grapheme_link() => SINGLETON_PROPS_GR_LINK_V1;
+    pub const fn grapheme_link() => SINGLETON_GRAPHEME_LINK_V1_MARKER;
     pub fn load_grapheme_link();
 }
 
@@ -1108,7 +1107,7 @@ make_code_point_set_property! {
     /// assert!(!hex_digit.contains('Ä'));  // U+00C4 LATIN CAPITAL LETTER A WITH DIAERESIS
     /// ```
 
-    pub const fn hex_digit() => SINGLETON_PROPS_HEX_V1;
+    pub const fn hex_digit() => SINGLETON_HEX_DIGIT_V1_MARKER;
     pub fn load_hex_digit();
 }
 
@@ -1120,7 +1119,7 @@ make_code_point_set_property! {
     /// Deprecated property. Dashes which are used to mark connections between pieces of
     /// words, plus the Katakana middle dot.
 
-    pub const fn hyphen() => SINGLETON_PROPS_HYPHEN_V1;
+    pub const fn hyphen() => SINGLETON_HYPHEN_V1_MARKER;
     pub fn load_hyphen();
 }
 
@@ -1153,7 +1152,7 @@ make_code_point_set_property! {
     /// assert!(id_continue.contains32(0xFC5E));  // ARABIC LIGATURE SHADDA WITH DAMMATAN ISOLATED FORM
     /// ```
 
-    pub const fn id_continue() => SINGLETON_PROPS_IDC_V1;
+    pub const fn id_continue() => SINGLETON_ID_CONTINUE_V1_MARKER;
     pub fn load_id_continue();
 }
 
@@ -1180,7 +1179,7 @@ make_code_point_set_property! {
     /// assert!(!ideographic.contains('밥'));  // U+BC25 HANGUL SYLLABLE BAB
     /// ```
 
-    pub const fn ideographic() => SINGLETON_PROPS_IDEO_V1;
+    pub const fn ideographic() => SINGLETON_IDEOGRAPHIC_V1_MARKER;
     pub fn load_ideographic();
 }
 
@@ -1212,7 +1211,7 @@ make_code_point_set_property! {
     /// assert!(id_start.contains32(0xFC5E));  // ARABIC LIGATURE SHADDA WITH DAMMATAN ISOLATED FORM
     /// ```
 
-    pub const fn id_start() => SINGLETON_PROPS_IDS_V1;
+    pub const fn id_start() => SINGLETON_ID_START_V1_MARKER;
     pub fn load_id_start();
 }
 
@@ -1238,7 +1237,7 @@ make_code_point_set_property! {
     /// assert!(!ids_binary_operator.contains32(0x3006));  // IDEOGRAPHIC CLOSING MARK
     /// ```
 
-    pub const fn ids_binary_operator() => SINGLETON_PROPS_IDSB_V1;
+    pub const fn ids_binary_operator() => SINGLETON_IDS_BINARY_OPERATOR_V1_MARKER;
     pub fn load_ids_binary_operator();
 }
 
@@ -1267,7 +1266,7 @@ make_code_point_set_property! {
     /// assert!(!ids_trinary_operator.contains32(0x3006));  // IDEOGRAPHIC CLOSING MARK
     /// ```
 
-    pub const fn ids_trinary_operator() => SINGLETON_PROPS_IDST_V1;
+    pub const fn ids_trinary_operator() => SINGLETON_IDS_TRINARY_OPERATOR_V1_MARKER;
     pub fn load_ids_trinary_operator();
 }
 
@@ -1295,7 +1294,7 @@ make_code_point_set_property! {
     /// assert!(!join_control.contains32(0x200E));
     /// ```
 
-    pub const fn join_control() => SINGLETON_PROPS_JOIN_C_V1;
+    pub const fn join_control() => SINGLETON_JOIN_CONTROL_V1_MARKER;
     pub fn load_join_control();
 }
 
@@ -1321,7 +1320,7 @@ make_code_point_set_property! {
     /// assert!(!logical_order_exception.contains('ະ'));  // U+0EB0 LAO VOWEL SIGN A
     /// ```
 
-    pub const fn logical_order_exception() => SINGLETON_PROPS_LOE_V1;
+    pub const fn logical_order_exception() => SINGLETON_LOGICAL_ORDER_EXCEPTION_V1_MARKER;
     pub fn load_logical_order_exception();
 }
 
@@ -1347,7 +1346,7 @@ make_code_point_set_property! {
     /// assert!(!lowercase.contains('A'));
     /// ```
 
-    pub const fn lowercase() => SINGLETON_PROPS_LOWER_V1;
+    pub const fn lowercase() => SINGLETON_LOWERCASE_V1_MARKER;
     pub fn load_lowercase();
 }
 
@@ -1377,7 +1376,7 @@ make_code_point_set_property! {
     /// assert!(math.contains('∕'));  // U+2215 DIVISION SLASH
     /// ```
 
-    pub const fn math() => SINGLETON_PROPS_MATH_V1;
+    pub const fn math() => SINGLETON_MATH_V1_MARKER;
     pub fn load_math();
 }
 
@@ -1404,7 +1403,7 @@ make_code_point_set_property! {
     /// assert!(!noncharacter_code_point.contains32(0x10000));
     /// ```
 
-    pub const fn noncharacter_code_point() => SINGLETON_PROPS_NCHAR_V1;
+    pub const fn noncharacter_code_point() => SINGLETON_NONCHARACTER_CODE_POINT_V1_MARKER;
     pub fn load_noncharacter_code_point();
 }
 
@@ -1415,7 +1414,7 @@ make_code_point_set_property! {
     func:
     /// Characters that are inert under NFC, i.e., they do not interact with adjacent characters
 
-    pub const fn nfc_inert() => SINGLETON_PROPS_NFCINERT_V1;
+    pub const fn nfc_inert() => SINGLETON_NFC_INERT_V1_MARKER;
     pub fn load_nfc_inert();
 }
 
@@ -1426,7 +1425,7 @@ make_code_point_set_property! {
     func:
     /// Characters that are inert under NFD, i.e., they do not interact with adjacent characters
 
-    pub const fn nfd_inert() => SINGLETON_PROPS_NFDINERT_V1;
+    pub const fn nfd_inert() => SINGLETON_NFD_INERT_V1_MARKER;
     pub fn load_nfd_inert();
 }
 
@@ -1437,7 +1436,7 @@ make_code_point_set_property! {
     func:
     /// Characters that are inert under NFKC, i.e., they do not interact with adjacent characters
 
-    pub const fn nfkc_inert() => SINGLETON_PROPS_NFKCINERT_V1;
+    pub const fn nfkc_inert() => SINGLETON_NFKC_INERT_V1_MARKER;
     pub fn load_nfkc_inert();
 }
 
@@ -1448,7 +1447,7 @@ make_code_point_set_property! {
     func:
     /// Characters that are inert under NFKD, i.e., they do not interact with adjacent characters
 
-    pub const fn nfkd_inert() => SINGLETON_PROPS_NFKDINERT_V1;
+    pub const fn nfkd_inert() => SINGLETON_NFKD_INERT_V1_MARKER;
     pub fn load_nfkd_inert();
 }
 
@@ -1477,7 +1476,7 @@ make_code_point_set_property! {
     /// assert!(!pattern_syntax.contains('0'));
     /// ```
 
-    pub const fn pattern_syntax() => SINGLETON_PROPS_PAT_SYN_V1;
+    pub const fn pattern_syntax() => SINGLETON_PATTERN_SYNTAX_V1_MARKER;
     pub fn load_pattern_syntax();
 }
 
@@ -1507,7 +1506,7 @@ make_code_point_set_property! {
     /// assert!(!pattern_white_space.contains32(0x00A0));  // NO-BREAK SPACE
     /// ```
 
-    pub const fn pattern_white_space() => SINGLETON_PROPS_PAT_WS_V1;
+    pub const fn pattern_white_space() => SINGLETON_PATTERN_WHITE_SPACE_V1_MARKER;
     pub fn load_pattern_white_space();
 }
 
@@ -1519,7 +1518,7 @@ make_code_point_set_property! {
     /// A small class of visible format controls, which precede and then span a sequence of
     /// other characters, usually digits.
 
-    pub const fn prepended_concatenation_mark() => SINGLETON_PROPS_PCM_V1;
+    pub const fn prepended_concatenation_mark() => SINGLETON_PREPENDED_CONCATENATION_MARK_V1_MARKER;
     pub fn load_prepended_concatenation_mark();
 }
 
@@ -1531,7 +1530,7 @@ make_code_point_set_property! {
     /// Printable characters (visible characters and whitespace).
     /// This is defined for POSIX compatibility.
 
-    pub const fn print() => SINGLETON_PROPS_PRINT_V1;
+    pub const fn print() => SINGLETON_PRINT_V1_MARKER;
     pub fn load_print();
 }
 
@@ -1558,7 +1557,7 @@ make_code_point_set_property! {
     /// assert!(!quotation_mark.contains('<'));
     /// ```
 
-    pub const fn quotation_mark() => SINGLETON_PROPS_QMARK_V1;
+    pub const fn quotation_mark() => SINGLETON_QUOTATION_MARK_V1_MARKER;
     pub fn load_quotation_mark();
 }
 
@@ -1584,7 +1583,7 @@ make_code_point_set_property! {
     /// assert!(!radical.contains('丹'));  // U+F95E CJK COMPATIBILITY IDEOGRAPH-F95E
     /// ```
 
-    pub const fn radical() => SINGLETON_PROPS_RADICAL_V1;
+    pub const fn radical() => SINGLETON_RADICAL_V1_MARKER;
     pub fn load_radical();
 }
 
@@ -1611,7 +1610,7 @@ make_code_point_set_property! {
     /// assert!(!regional_indicator.contains('T'));
     /// ```
 
-    pub const fn regional_indicator() => SINGLETON_PROPS_RI_V1;
+    pub const fn regional_indicator() => SINGLETON_REGIONAL_INDICATOR_V1_MARKER;
     pub fn load_regional_indicator();
 }
 
@@ -1638,7 +1637,7 @@ make_code_point_set_property! {
     /// assert!(!soft_dotted.contains('ı'));  // U+0131 LATIN SMALL LETTER DOTLESS I
     /// ```
 
-    pub const fn soft_dotted() => SINGLETON_PROPS_SD_V1;
+    pub const fn soft_dotted() => SINGLETON_SOFT_DOTTED_V1_MARKER;
     pub fn load_soft_dotted();
 }
 
@@ -1650,7 +1649,7 @@ make_code_point_set_property! {
     /// Characters that are starters in terms of Unicode normalization and combining character
     /// sequences
 
-    pub const fn segment_starter() => SINGLETON_PROPS_SEGSTART_V1;
+    pub const fn segment_starter() => SINGLETON_SEGMENT_STARTER_V1_MARKER;
     pub fn load_segment_starter();
 }
 
@@ -1662,7 +1661,7 @@ make_code_point_set_property! {
     /// Characters that are either the source of a case mapping or in the target of a case
     /// mapping
 
-    pub const fn case_sensitive() => SINGLETON_PROPS_SENSITIVE_V1;
+    pub const fn case_sensitive() => SINGLETON_CASE_SENSITIVE_V1_MARKER;
     pub fn load_case_sensitive();
 }
 
@@ -1691,7 +1690,7 @@ make_code_point_set_property! {
     /// assert!(!sentence_terminal.contains('¿'));  // U+00BF INVERTED QUESTION MARK
     /// ```
 
-    pub const fn sentence_terminal() => SINGLETON_PROPS_STERM_V1;
+    pub const fn sentence_terminal() => SINGLETON_SENTENCE_TERMINAL_V1_MARKER;
     pub fn load_sentence_terminal();
 }
 
@@ -1720,7 +1719,7 @@ make_code_point_set_property! {
     /// assert!(!terminal_punctuation.contains('¿'));  // U+00BF INVERTED QUESTION MARK
     /// ```
 
-    pub const fn terminal_punctuation() => SINGLETON_PROPS_TERM_V1;
+    pub const fn terminal_punctuation() => SINGLETON_TERMINAL_PUNCTUATION_V1_MARKER;
     pub fn load_terminal_punctuation();
 }
 
@@ -1747,7 +1746,7 @@ make_code_point_set_property! {
     /// assert!(!unified_ideograph.contains('𛅸'));  // U+1B178 NUSHU CHARACTER-1B178
     /// ```
 
-    pub const fn unified_ideograph() => SINGLETON_PROPS_UIDEO_V1;
+    pub const fn unified_ideograph() => SINGLETON_UNIFIED_IDEOGRAPH_V1_MARKER;
     pub fn load_unified_ideograph();
 }
 
@@ -1773,7 +1772,7 @@ make_code_point_set_property! {
     /// assert!(!uppercase.contains('u'));
     /// ```
 
-    pub const fn uppercase() => SINGLETON_PROPS_UPPER_V1;
+    pub const fn uppercase() => SINGLETON_UPPERCASE_V1_MARKER;
     pub fn load_uppercase();
 }
 
@@ -1802,7 +1801,7 @@ make_code_point_set_property! {
     /// assert!(variation_selector.contains32(0xE01EF));  // VARIATION SELECTOR-256
     /// ```
 
-    pub const fn variation_selector() => SINGLETON_PROPS_VS_V1;
+    pub const fn variation_selector() => SINGLETON_VARIATION_SELECTOR_V1_MARKER;
     pub fn load_variation_selector();
 }
 
@@ -1831,7 +1830,7 @@ make_code_point_set_property! {
     /// assert!(!white_space.contains32(0x200B));  // ZERO WIDTH SPACE
     /// ```
 
-    pub const fn white_space() => SINGLETON_PROPS_WSPACE_V1;
+    pub const fn white_space() => SINGLETON_WHITE_SPACE_V1_MARKER;
     pub fn load_white_space();
 }
 
@@ -1843,7 +1842,7 @@ make_code_point_set_property! {
     /// Hexadecimal digits
     /// This is defined for POSIX compatibility.
 
-    pub const fn xdigit() => SINGLETON_PROPS_XDIGIT_V1;
+    pub const fn xdigit() => SINGLETON_XDIGIT_V1_MARKER;
     pub fn load_xdigit();
 }
 
@@ -1874,7 +1873,7 @@ make_code_point_set_property! {
     /// assert!(!xid_continue.contains32(0xFC5E));  // ARABIC LIGATURE SHADDA WITH DAMMATAN ISOLATED FORM
     /// ```
 
-    pub const fn xid_continue() => SINGLETON_PROPS_XIDC_V1;
+    pub const fn xid_continue() => SINGLETON_XID_CONTINUE_V1_MARKER;
     pub fn load_xid_continue();
 }
 
@@ -1906,7 +1905,7 @@ make_code_point_set_property! {
     /// assert!(!xid_start.contains32(0xFC5E));  // ARABIC LIGATURE SHADDA WITH DAMMATAN ISOLATED FORM
     /// ```
 
-    pub const fn xid_start() => SINGLETON_PROPS_XIDS_V1;
+    pub const fn xid_start() => SINGLETON_XID_START_V1_MARKER;
     pub fn load_xid_start();
 }
 
@@ -1931,7 +1930,7 @@ macro_rules! make_unicode_set_property {
         $vis fn $funcname(
             provider: &(impl DataProvider<$data_marker> + ?Sized)
         ) -> Result<UnicodeSetData, DataError> {
-            provider.load(Default::default()).and_then(DataResponse::take_payload).map(UnicodeSetData::from_data)
+            Ok(UnicodeSetData::from_data(provider.load(Default::default())?.payload))
         }
         $(#[$doc])*
         #[cfg(feature = "compiled_data")]
@@ -1970,7 +1969,7 @@ make_unicode_set_property! {
     /// assert!(basic_emoji.contains("\u{1F6E4}\u{FE0F}")); // railway track
     /// assert!(!basic_emoji.contains("\u{0033}\u{FE0F}\u{20E3}"));  // Emoji_Keycap_Sequence, keycap 3
     /// ```
-    pub const fn basic_emoji() => SINGLETON_PROPS_BASIC_EMOJI_V1;
+    pub const fn basic_emoji() => SINGLETON_BASIC_EMOJI_V1_MARKER;
     pub fn load_basic_emoji();
 }
 
@@ -2110,12 +2109,9 @@ pub fn load_for_ecma262(
 }
 
 icu_provider::gen_any_buffer_data_constructors!(
-    locale: skip,
-    name: &str,
-    result: Result<CodePointSetData, UnexpectedPropertyNameOrDataError>,
-    #[cfg(skip)]
+    (name: &str) -> result: Result<CodePointSetData, UnexpectedPropertyNameOrDataError>,
     functions: [
-        load_for_ecma262,
+        load_for_ecma262: skip,
         load_for_ecma262_with_any_provider,
         load_for_ecma262_with_buffer_provider,
         load_for_ecma262_unstable,
@@ -2288,11 +2284,11 @@ mod tests {
                 .expect("The data should be valid");
 
             let mut builder = CodePointInversionListBuilder::new();
-            for subcategory in subcategories {
-                let gc_set_data = &maps::general_category().get_set_for_value(*subcategory);
+            for &subcategory in subcategories {
+                let gc_set_data = &maps::general_category().get_set_for_value(subcategory);
                 let gc_set = gc_set_data.as_borrowed();
                 for range in gc_set.iter_ranges() {
-                    builder.add_range32(&range);
+                    builder.add_range32(range);
                 }
             }
             let combined_set = builder.build();

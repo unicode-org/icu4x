@@ -82,6 +82,25 @@ impl Private {
         Self(ShortBoxSlice::new())
     }
 
+    /// A constructor which takes a str slice, parses it and
+    /// produces a well-formed [`Private`].
+    #[inline]
+    pub fn try_from_str(s: &str) -> Result<Self, ParseError> {
+        Self::try_from_utf8(s.as_bytes())
+    }
+
+    /// See [`Self::try_from_str`]
+    pub fn try_from_utf8(code_units: &[u8]) -> Result<Self, ParseError> {
+        let mut iter = SubtagIterator::new(code_units);
+
+        let ext = iter.next().ok_or(ParseError::InvalidExtension)?;
+        if let ExtensionType::Private = ExtensionType::try_from_byte_slice(ext)? {
+            return Self::try_from_iter(&mut iter);
+        }
+
+        Err(ParseError::InvalidExtension)
+    }
+
     /// A constructor which takes a pre-sorted list of [`Subtag`].
     ///
     /// # Examples
@@ -115,17 +134,6 @@ impl Private {
         Self(ShortBoxSlice::new_single(input))
     }
 
-    pub(crate) fn try_from_bytes(t: &[u8]) -> Result<Self, ParseError> {
-        let mut iter = SubtagIterator::new(t);
-
-        let ext = iter.next().ok_or(ParseError::InvalidExtension)?;
-        if let ExtensionType::Private = ExtensionType::try_from_byte_slice(ext)? {
-            return Self::try_from_iter(&mut iter);
-        }
-
-        Err(ParseError::InvalidExtension)
-    }
-
     /// Empties the [`Private`] list.
     ///
     /// # Examples
@@ -149,10 +157,14 @@ impl Private {
 
     pub(crate) fn try_from_iter(iter: &mut SubtagIterator) -> Result<Self, ParseError> {
         let keys = iter
-            .map(Subtag::try_from_bytes)
+            .map(Subtag::try_from_utf8)
             .collect::<Result<ShortBoxSlice<_>, _>>()?;
 
-        Ok(Self(keys))
+        if keys.is_empty() {
+            Err(ParseError::InvalidExtension)
+        } else {
+            Ok(Self(keys))
+        }
     }
 
     pub(crate) fn for_each_subtag_str<E, F>(&self, f: &mut F, with_ext: bool) -> Result<(), E>
@@ -172,8 +184,9 @@ impl Private {
 impl FromStr for Private {
     type Err = ParseError;
 
-    fn from_str(source: &str) -> Result<Self, Self::Err> {
-        Self::try_from_bytes(source.as_bytes())
+    #[inline]
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Self::try_from_str(s)
     }
 }
 
@@ -220,5 +233,8 @@ mod tests {
     fn test_private_extension_fromstr() {
         let pe: Private = "x-foo-bar-l-baz".parse().expect("Failed to parse Private");
         assert_eq!(pe.to_string(), "x-foo-bar-l-baz");
+
+        let pe: Result<Private, _> = "x".parse();
+        assert!(pe.is_err());
     }
 }

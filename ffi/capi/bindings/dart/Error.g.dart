@@ -2,11 +2,9 @@
 
 part of 'lib.g.dart';
 
-/// A common enum for errors that ICU4X may return, organized by API
+/// Legacy error
 ///
-/// The error names are stable and can be checked against as strings in the JS API
-///
-/// Additional information: [1](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.ParseError.html), [2](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.LimitError.html), [3](https://docs.rs/icu/latest/icu/calendar/struct.RangeError.html), [4](https://docs.rs/icu/latest/icu/calendar/enum.DateError.html), [5](https://docs.rs/icu/latest/icu/datetime/enum.DateTimeError.html), [6](https://docs.rs/icu/latest/icu/locale/enum.ParseError.html), [7](https://docs.rs/icu/latest/icu/provider/struct.DataError.html), [8](https://docs.rs/icu/latest/icu/provider/enum.DataErrorKind.html), [9](https://docs.rs/icu/latest/icu/timezone/struct.InvalidOffsetError.html), [10](https://docs.rs/icu_experimental/latest/icu_experimental/units/struct.InvalidUnitError.html)
+/// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/enum.DateTimeError.html), [2](https://docs.rs/icu/latest/icu/provider/struct.DataError.html), [3](https://docs.rs/icu/latest/icu/provider/enum.DataErrorKind.html)
 enum Error {
   /// The error is not currently categorized as ICU4XError.
   /// Please file a bug
@@ -14,11 +12,7 @@ enum Error {
 
   dataMissingDataMarkerError,
 
-  dataMissingVariantError,
-
   dataMissingLocaleError,
-
-  dataNeedsVariantError,
 
   dataNeedsLocaleError,
 
@@ -28,41 +22,13 @@ enum Error {
 
   dataMismatchedTypeError,
 
-  dataMissingPayloadError,
-
-  dataInvalidStateError,
-
   dataCustomError,
 
   dataIoError,
 
   dataUnavailableBufferFormatError,
 
-  dataMismatchedAnyBufferError,
-
-  /// The locale or subtag string failed to parse
-  localeParserLanguageError,
-
-  localeParserSubtagError,
-
-  localeParserExtensionError,
-
-  /// Attempted to construct an invalid data struct
-  dataStructValidityError,
-
   propertyUnexpectedPropertyNameError,
-
-  fixedDecimalLimitError,
-
-  fixedDecimalSyntaxError,
-
-  pluralsParseError,
-
-  calendarOutOfRangeError,
-
-  calendarUnknownEraError,
-
-  calendarUnknownMonthCodeError,
 
   dateTimePatternError,
 
@@ -80,11 +46,7 @@ enum Error {
 
   dateTimeFixedDecimalError,
 
-  dateTimeMismatchedCalendarError,
-
-  timeZoneInvalidOffsetError,
-
-  timeZoneInvalidIdError;
+  dateTimeMismatchedCalendarError;
 
   int get _ffi {
     switch (this) {
@@ -92,12 +54,8 @@ enum Error {
         return 0;
       case dataMissingDataMarkerError:
         return 256;
-      case dataMissingVariantError:
-        return 257;
       case dataMissingLocaleError:
         return 258;
-      case dataNeedsVariantError:
-        return 259;
       case dataNeedsLocaleError:
         return 260;
       case dataExtraneousLocaleError:
@@ -106,40 +64,14 @@ enum Error {
         return 262;
       case dataMismatchedTypeError:
         return 263;
-      case dataMissingPayloadError:
-        return 264;
-      case dataInvalidStateError:
-        return 265;
       case dataCustomError:
         return 266;
       case dataIoError:
         return 267;
       case dataUnavailableBufferFormatError:
         return 268;
-      case dataMismatchedAnyBufferError:
-        return 269;
-      case localeParserLanguageError:
-        return 513;
-      case localeParserSubtagError:
-        return 514;
-      case localeParserExtensionError:
-        return 515;
-      case dataStructValidityError:
-        return 768;
       case propertyUnexpectedPropertyNameError:
         return 1026;
-      case fixedDecimalLimitError:
-        return 1280;
-      case fixedDecimalSyntaxError:
-        return 1281;
-      case pluralsParseError:
-        return 1536;
-      case calendarOutOfRangeError:
-        return 1795;
-      case calendarUnknownEraError:
-        return 1796;
-      case calendarUnknownMonthCodeError:
-        return 1797;
       case dateTimePatternError:
         return 2048;
       case dateTimeMissingInputFieldError:
@@ -158,10 +90,6 @@ enum Error {
         return 2055;
       case dateTimeMismatchedCalendarError:
         return 2056;
-      case timeZoneInvalidOffsetError:
-        return 2561;
-      case timeZoneInvalidIdError:
-        return 2563;
     }
   }
 }

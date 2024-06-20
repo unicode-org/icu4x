@@ -128,10 +128,10 @@ impl DynamicDataProvider<BufferMarker> for BlobDataProvider {
         metadata.buffer_format = Some(BufferFormat::Postcard1);
         Ok(DataResponse {
             metadata,
-            payload: Some(DataPayload::from_yoked_buffer(
+            payload: DataPayload::from_yoked_buffer(
                 self.data
                     .try_map_project_cloned(|blob, _| blob.load(marker, req))?,
-            )),
+            ),
         })
     }
 }

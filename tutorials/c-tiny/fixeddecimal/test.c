@@ -22,7 +22,7 @@ int main(int argc, char *argv[]) {
     ICU4XFixedDecimal* decimal = ICU4XFixedDecimal_create_from_u64(1000007);
     ICU4XFixedDecimal_round(decimal, 0);
 
-    diplomat_result_box_ICU4XFixedDecimalFormatter_ICU4XError fdf_result =
+    diplomat_result_box_ICU4XFixedDecimalFormatter_ICU4XDataError fdf_result =
         ICU4XFixedDecimalFormatter_create_with_grouping_strategy(provider, locale, ICU4XFixedDecimalGroupingStrategy_Auto);
     if (!fdf_result.is_ok)  {
         printf("Failed to create FixedDecimalFormatter\n");

@@ -26,11 +26,11 @@ final class ComposingNormalizer implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `new_nfc`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html#method.new_nfc) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   factory ComposingNormalizer.nfc(DataProvider provider) {
     final result = _ICU4XComposingNormalizer_create_nfc(provider._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     return ComposingNormalizer._fromFfi(result.union.ok, []);
   }
@@ -39,11 +39,11 @@ final class ComposingNormalizer implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `new_nfkc`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html#method.new_nfkc) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   factory ComposingNormalizer.nfkc(DataProvider provider) {
     final result = _ICU4XComposingNormalizer_create_nfkc(provider._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     return ComposingNormalizer._fromFfi(result.union.ok, []);
   }

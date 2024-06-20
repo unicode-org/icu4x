@@ -12,14 +12,14 @@
 #include "diplomat_runtime.hpp"
 #include "ICU4XBidi.h"
 #include "ICU4XBidiInfo.hpp"
+#include "ICU4XDataError.hpp"
 #include "ICU4XDataProvider.hpp"
-#include "ICU4XError.hpp"
 #include "ICU4XReorderedIndexMap.hpp"
 
 
-inline diplomat::result<std::unique_ptr<ICU4XBidi>, ICU4XError> ICU4XBidi::create(const ICU4XDataProvider& provider) {
+inline diplomat::result<std::unique_ptr<ICU4XBidi>, ICU4XDataError> ICU4XBidi::create(const ICU4XDataProvider& provider) {
   auto result = capi::ICU4XBidi_create(provider.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XBidi>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XBidi>>(std::unique_ptr<ICU4XBidi>(ICU4XBidi::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XBidi>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XBidi>, ICU4XDataError>(diplomat::Ok<std::unique_ptr<ICU4XBidi>>(std::unique_ptr<ICU4XBidi>(ICU4XBidi::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XBidi>, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
 
 inline std::unique_ptr<ICU4XBidiInfo> ICU4XBidi::for_text(std::string_view text, uint8_t default_level) const {

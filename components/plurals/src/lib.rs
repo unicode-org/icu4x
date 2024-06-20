@@ -289,9 +289,7 @@ impl AsRef<PluralRules> for PluralRules {
 
 impl PluralRules {
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: include,
-        rule_type: PluralRuleType,
-        error: DataError,
+        (locale, rule_type: PluralRuleType) -> error: DataError,
         /// Constructs a new `PluralRules` for a given locale and type using compiled data.
         ///
         /// ✨ *Enabled with the `compiled_data` Cargo feature.*
@@ -327,9 +325,7 @@ impl PluralRules {
     }
 
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: include,
-        options: skip,
-        error: DataError,
+        (locale) -> error: DataError,
         /// Constructs a new `PluralRules` for a given locale for cardinal numbers using compiled data.
         ///
         /// Cardinal plural forms express quantities of units such as time, currency or distance,
@@ -377,15 +373,13 @@ impl PluralRules {
                     locale,
                     ..Default::default()
                 })?
-                .take_payload()?
+                .payload
                 .cast(),
         ))
     }
 
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: include,
-        options: skip,
-        error: DataError,
+        (locale) -> error: DataError,
         /// Constructs a new `PluralRules` for a given locale for ordinal numbers using compiled data.
         ///
         /// Ordinal plural forms denote the order of items in a set and are always integers.
@@ -439,7 +433,7 @@ impl PluralRules {
                     locale,
                     ..Default::default()
                 })?
-                .take_payload()?
+                .payload
                 .cast(),
         ))
     }
@@ -603,9 +597,8 @@ pub struct PluralRulesWithRanges<R> {
 #[cfg(feature = "experimental")]
 impl PluralRulesWithRanges<PluralRules> {
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: include,
-        rule_type: PluralRuleType,
-        error: DataError,
+
+        (locale, rule_type: PluralRuleType) -> error: DataError,
         /// Constructs a new `PluralRulesWithRanges` for a given locale using compiled data.
         ///
         /// ✨ *Enabled with the `compiled_data` Cargo feature.*
@@ -641,9 +634,7 @@ impl PluralRulesWithRanges<PluralRules> {
     }
 
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: include,
-        options: skip,
-        error: DataError,
+        (locale) -> error: DataError,
         /// Constructs a new `PluralRulesWithRanges` for a given locale for cardinal numbers using
         /// compiled data.
         ///
@@ -684,9 +675,7 @@ impl PluralRulesWithRanges<PluralRules> {
     }
 
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: include,
-        options: skip,
-        error: DataError,
+        (locale) -> error: DataError,
         /// Constructs a new `PluralRulesWithRanges` for a given locale for ordinal numbers using
         /// compiled data.
         ///
@@ -735,9 +724,7 @@ where
     R: AsRef<PluralRules>,
 {
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: include,
-        rules: R,
-        error: DataError,
+        (locale, rules: R) -> error: DataError,
         /// Constructs a new `PluralRulesWithRanges` for a given locale from an existing
         /// `PluralRules` (either owned or as a reference) and compiled data.
         ///
@@ -783,7 +770,7 @@ where
                 locale,
                 ..Default::default()
             })?
-            .take_payload()?;
+            .payload;
 
         Ok(Self { rules, ranges })
     }

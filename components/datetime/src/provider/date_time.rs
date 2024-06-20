@@ -129,7 +129,7 @@ where
             locale,
             ..Default::default()
         })?
-        .take_payload()?
+        .payload
         .map_project(|data, _| pattern_for_time_length_inner(data, length, &preferences).into()))
 }
 
@@ -239,8 +239,8 @@ where
                 locale: self.locale,
                 ..Default::default()
             })
-            .and_then(DataResponse::take_payload)
-            .map_err(PatternForLengthError::Data)?;
+            .map_err(PatternForLengthError::Data)?
+            .payload;
 
         self.date_patterns_data.try_map_project(|data, _| {
             // TODO (#1131) - We may be able to remove the clone here.
@@ -363,9 +363,8 @@ where
         // Skeleton data for ethioaa is stored under ethiopic
         if cal_val == &value!("ethioaa") {
             locale.set_unicode_ext(key!("ca"), value!("ethiopic"));
-        } else if cal_val == &value!("islamic")
-            || cal_val == &value!("islamicc")
-            || cal_val.as_subtags_slice().first() == Some(&subtag!("islamic"))
+        } else if cal_val == &value!("islamicc")
+            || cal_val.get_subtag(0) == Some(&subtag!("islamic"))
         {
             // All islamic calendars store skeleton data under islamic, not their individual extension keys
             locale.set_unicode_ext(key!("ca"), value!("islamic"));
@@ -378,7 +377,7 @@ where
                 locale: &locale,
                 ..Default::default()
             })
-            .and_then(DataResponse::take_payload)
+            .map(|r| r.payload)
     }
 }
 

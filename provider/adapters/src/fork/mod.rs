@@ -59,7 +59,7 @@ use predicates::MissingDataMarkerPredicate;
 /// Normal usage:
 ///
 /// ```
-/// use icu_locale_core::langid;
+/// use icu_locale::langid;
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
 /// use icu_provider_adapters::fork::ForkByMarkerProvider;
@@ -82,22 +82,20 @@ use predicates::MissingDataMarkerPredicate;
 ///
 /// let provider = forking_provider.as_deserializing();
 ///
-/// let german_hello_world: DataPayload<HelloWorldV1Marker> = provider
+/// let german_hello_world: DataResponse<HelloWorldV1Marker> = provider
 ///     .load(DataRequest {
 ///         locale: &langid!("de").into(),
 ///         ..Default::default()
 ///     })
-///     .expect("Loading should succeed")
-///     .take_payload()
-///     .expect("Data should be present");
+///     .expect("Loading should succeed");
 ///
-/// assert_eq!("Hallo Welt", german_hello_world.get().message);
+/// assert_eq!("Hallo Welt", german_hello_world.payload.get().message);
 /// ```
 ///
 /// Stops at the first provider supporting a marker, even if the locale is not supported:
 ///
 /// ```
-/// use icu_locale_core::{subtags::language, langid};
+/// use icu_locale::{subtags::language, langid};
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
 /// use icu_provider_adapters::filter::Filterable;
@@ -123,11 +121,9 @@ use predicates::MissingDataMarkerPredicate;
 ///         locale: &langid!("zh").into(),
 ///         ..Default::default()
 ///     })
-///     .expect("Loading should succeed")
-///     .take_payload()
-///     .expect("Data should be present");
+///     .expect("Loading should succeed");
 ///
-/// assert_eq!("你好世界", chinese_hello_world.get().message);
+/// assert_eq!("你好世界", chinese_hello_world.payload.get().message);
 ///
 /// // German is shadowed by Chinese, so this fails
 /// provider
@@ -166,7 +162,7 @@ impl<P0, P1> ForkByMarkerProvider<P0, P1> {
 /// # Examples
 ///
 /// ```
-/// use icu_locale_core::{subtags::language, langid};
+/// use icu_locale::{subtags::language, langid};
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
 /// use icu_provider_adapters::filter::Filterable;
@@ -194,11 +190,9 @@ impl<P0, P1> ForkByMarkerProvider<P0, P1> {
 ///         locale: &langid!("zh").into(),
 ///         ..Default::default()
 ///     })
-///     .expect("Loading should succeed")
-///     .take_payload()
-///     .expect("Data should be present");
+///     .expect("Loading should succeed");
 ///
-/// assert_eq!("你好世界", chinese_hello_world.get().message);
+/// assert_eq!("你好世界", chinese_hello_world.payload.get().message);
 ///
 /// // German is shadowed by Chinese, so this fails
 /// provider

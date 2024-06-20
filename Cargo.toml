@@ -34,26 +34,29 @@ members = [
 
     # Provider
     "provider/adapters",
+    "provider/baked",
+    "provider/bikeshed",
     "provider/blob",
     "provider/core",
     "provider/core/macros",
     "provider/datagen",
     "provider/fs",
     "provider/registry",
+    "provider/icu4x-datagen",
 
     # Baked data
-    "provider/baked/calendar",
-    "provider/baked/casemap",
-    "provider/baked/collator",
-    "provider/baked/datetime",
-    "provider/baked/decimal",
-    "provider/baked/list",
-    "provider/baked/locale",
-    "provider/baked/normalizer",
-    "provider/baked/plurals",
-    "provider/baked/properties",
-    "provider/baked/segmenter",
-    "provider/baked/timezone",
+    "provider/data/calendar",
+    "provider/data/casemap",
+    "provider/data/collator",
+    "provider/data/datetime",
+    "provider/data/decimal",
+    "provider/data/list",
+    "provider/data/locale",
+    "provider/data/normalizer",
+    "provider/data/plurals",
+    "provider/data/properties",
+    "provider/data/segmenter",
+    "provider/data/timezone",
 
     # Utils
     "utils/bies",
@@ -66,6 +69,7 @@ members = [
     "utils/ixdtf",
     "utils/litemap",
     "utils/pattern",
+    "utils/preferences",
     "utils/resb",
     "utils/tinystr",
     "utils/tzif",
@@ -88,13 +92,14 @@ members = [
     "tools/ffi_coverage",
     "tools/testdata-scripts",
     "tools/md-tests",
-    "tools/graveyard",
 ]
 # Note: Workspaces in subdirectories, such as tutorials/crates, are
 # implicitly excluded from the main workspace.
 exclude = [
     # Tutorials are tested outside the workspace to simulate external users
     "tutorials",
+    # Don't publish the graveyard
+    "tools/graveyard"
 ]
 
 [workspace.package]
@@ -147,27 +152,29 @@ icu_harfbuzz = { version = "~0.2.0", path = "ffi/harfbuzz", default-features = f
 
 # Provider
 icu_datagen = { version = "~1.5.0", path = "provider/datagen", default-features = false }
+icu_datagen_bikeshed = { version = "~1.5.0", path = "provider/bikeshed", default-features = false }
 icu_provider = { version = "~1.5.0", path = "provider/core", default-features = false }
 icu_provider_macros = { version = "~1.5.0", path = "provider/core/macros", default-features = false }
 icu_provider_adapters = { version = "~1.5.0", path = "provider/adapters", default-features = false }
+icu_provider_baked = { version = "~1.5.0", path = "provider/baked", default-features = false }
 icu_provider_blob = { version = "~1.5.0", path = "provider/blob", default-features = false }
 icu_provider_fs = { version = "~1.5.0", path = "provider/fs/", default-features = false }
 icu_registry = { version = "~1.5.0", path = "provider/registry/", default-features = false }
 
 # Baked data
-icu_calendar_data = { version = "~1.5.0", path = "provider/baked/calendar", default-features = false }
-icu_casemap_data = { version = "~1.5.0", path = "provider/baked/casemap", default-features = false }
-icu_collator_data = { version = "~1.5.0", path = "provider/baked/collator", default-features = false }
-icu_datetime_data = { version = "~1.5.0", path = "provider/baked/datetime", default-features = false }
-icu_decimal_data = { version = "~1.5.0", path = "provider/baked/decimal", default-features = false }
-icu_list_data = { version = "~1.5.0", path = "provider/baked/list", default-features = false }
-icu_locale_data = { version = "~1.5.0", path = "provider/baked/locale", default-features = false }
-icu_normalizer_data = { version = "~1.5.0", path = "provider/baked/normalizer", default-features = false }
-icu_plurals_data = { version = "~1.5.0", path = "provider/baked/plurals", default-features = false }
-icu_properties_data = { version = "~1.5.0", path = "provider/baked/properties", default-features = false }
-icu_segmenter_data = { version = "~1.5.0", path = "provider/baked/segmenter", default-features = false }
-icu_timezone_data = { version = "~1.5.0", path = "provider/baked/timezone", default-features = false }
-icu_experimental_data = { version = "~0.1.0", path = "provider/baked/experimental", default-features = false }
+icu_calendar_data = { version = "~1.5.0", path = "provider/data/calendar", default-features = false }
+icu_casemap_data = { version = "~1.5.0", path = "provider/data/casemap", default-features = false }
+icu_collator_data = { version = "~1.5.0", path = "provider/data/collator", default-features = false }
+icu_datetime_data = { version = "~1.5.0", path = "provider/data/datetime", default-features = false }
+icu_decimal_data = { version = "~1.5.0", path = "provider/data/decimal", default-features = false }
+icu_list_data = { version = "~1.5.0", path = "provider/data/list", default-features = false }
+icu_locale_data = { version = "~1.5.0", path = "provider/data/locale", default-features = false }
+icu_normalizer_data = { version = "~1.5.0", path = "provider/data/normalizer", default-features = false }
+icu_plurals_data = { version = "~1.5.0", path = "provider/data/plurals", default-features = false }
+icu_properties_data = { version = "~1.5.0", path = "provider/data/properties", default-features = false }
+icu_segmenter_data = { version = "~1.5.0", path = "provider/data/segmenter", default-features = false }
+icu_timezone_data = { version = "~1.5.0", path = "provider/data/timezone", default-features = false }
+icu_experimental_data = { version = "~0.1.0", path = "provider/data/experimental", default-features = false }
 
 # Utils
 bies = { version = "0.2.2", path = "utils/bies", default-features = false }
@@ -266,6 +273,7 @@ elsa = "1.10.0"
 erased-serde = "0.3.11"
 eyre = "0.6.0"
 getrandom = "0.2"
+heck = "0.5"
 iai = "0.1.1"
 indexmap = "1.0.0"
 itertools = "0.10.3"

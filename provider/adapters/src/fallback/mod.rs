@@ -15,13 +15,16 @@ use icu_provider::prelude::*;
 /// # Examples
 ///
 /// ```
-/// use icu_locale_core::langid;
+/// use icu_locale::langid;
 /// use icu_provider::prelude::*;
 /// use icu_provider::hello_world::*;
-/// use icu_provider_adapters::fallback::LocaleFallbackProvider;
-///
-/// # let provider = icu_provider_blob::BlobDataProvider::try_new_from_static_blob(include_bytes!("../../tests/data/blob.postcard")).unwrap();
-/// # let provider = provider.as_deserializing();
+/// # let provider = HelloWorldProvider;
+/// # struct LocaleFallbackProvider;
+/// # impl LocaleFallbackProvider {
+/// #   fn try_new_unstable(provider: HelloWorldProvider) -> Result<icu_provider_adapters::fallback::LocaleFallbackProvider<HelloWorldProvider>, ()> {
+/// #     Ok(icu_provider_adapters::fallback::LocaleFallbackProvider::new_with_fallbacker(provider, icu_locale::LocaleFallbacker::new().static_to_owned()))
+/// #   }
+/// # }
 ///
 /// let req = DataRequest {
 ///     locale: &langid!("ja-JP").into(),
@@ -44,7 +47,7 @@ use icu_provider::prelude::*;
 ///     langid!("ja").into(),
 /// );
 /// assert_eq!(
-///     response.payload.unwrap().get().message,
+///     response.payload.get().message,
 ///     "こんにちは世界",
 /// );
 /// ```
@@ -119,7 +122,7 @@ impl<P> LocaleFallbackProvider<P> {
     /// # Examples
     ///
     /// ```
-    /// use icu_locale_core::langid;
+    /// use icu_locale::langid;
     /// use icu_locale::LocaleFallbacker;
     /// use icu_provider::hello_world::*;
     /// use icu_provider::prelude::*;
@@ -145,13 +148,11 @@ impl<P> LocaleFallbackProvider<P> {
     /// );
     ///
     /// // Now we can load the "de-CH" data via fallback to "de".
-    /// let german_hello_world: DataPayload<HelloWorldV1Marker> = provider
+    /// let german_hello_world: DataResponse<HelloWorldV1Marker> = provider
     ///     .load(req)
-    ///     .expect("Loading should succeed")
-    ///     .take_payload()
-    ///     .expect("Data should be present");
+    ///     .expect("Loading should succeed");
     ///
-    /// assert_eq!("Hallo Welt", german_hello_world.get().message);
+    /// assert_eq!("Hallo Welt", german_hello_world.payload.get().message);
     /// ```
     pub fn new_with_fallbacker(provider: P, fallbacker: LocaleFallbacker) -> Self {
         Self {

@@ -33,48 +33,50 @@ pub mod provider {
     pub struct Baked;
 
     #[cfg(feature = "compiled_data")]
+    #[allow(unused_imports)]
     const _: () = {
+        use icu_experimental_data::*;
         pub mod icu {
             pub use crate as experimental;
-            #[allow(unused_imports)] // baked data may or may not need this
-            pub use icu_locale as locale;
+            pub use icu_experimental_data::icu_locale as locale;
         }
-        icu_experimental_data::make_provider!(Baked);
-        icu_experimental_data::impl_compactdecimal_long_v1!(Baked);
-        icu_experimental_data::impl_compactdecimal_short_v1!(Baked);
-        icu_experimental_data::impl_currency_essentials_v1!(Baked);
-        icu_experimental_data::impl_displaynames_languages_v1!(Baked);
-        icu_experimental_data::impl_displaynames_locales_v1!(Baked);
-        icu_experimental_data::impl_displaynames_regions_v1!(Baked);
-        icu_experimental_data::impl_displaynames_scripts_v1!(Baked);
-        icu_experimental_data::impl_displaynames_variants_v1!(Baked);
-        icu_experimental_data::impl_percent_essentials_v1!(Baked);
-        icu_experimental_data::impl_personnames_personnames_v1!(Baked);
-        icu_experimental_data::impl_relativetime_long_day_v1!(Baked);
-        icu_experimental_data::impl_relativetime_long_hour_v1!(Baked);
-        icu_experimental_data::impl_relativetime_long_minute_v1!(Baked);
-        icu_experimental_data::impl_relativetime_long_month_v1!(Baked);
-        icu_experimental_data::impl_relativetime_long_quarter_v1!(Baked);
-        icu_experimental_data::impl_relativetime_long_second_v1!(Baked);
-        icu_experimental_data::impl_relativetime_long_week_v1!(Baked);
-        icu_experimental_data::impl_relativetime_long_year_v1!(Baked);
-        icu_experimental_data::impl_relativetime_narrow_day_v1!(Baked);
-        icu_experimental_data::impl_relativetime_narrow_hour_v1!(Baked);
-        icu_experimental_data::impl_relativetime_narrow_minute_v1!(Baked);
-        icu_experimental_data::impl_relativetime_narrow_month_v1!(Baked);
-        icu_experimental_data::impl_relativetime_narrow_quarter_v1!(Baked);
-        icu_experimental_data::impl_relativetime_narrow_second_v1!(Baked);
-        icu_experimental_data::impl_relativetime_narrow_week_v1!(Baked);
-        icu_experimental_data::impl_relativetime_narrow_year_v1!(Baked);
-        icu_experimental_data::impl_relativetime_short_day_v1!(Baked);
-        icu_experimental_data::impl_relativetime_short_hour_v1!(Baked);
-        icu_experimental_data::impl_relativetime_short_minute_v1!(Baked);
-        icu_experimental_data::impl_relativetime_short_month_v1!(Baked);
-        icu_experimental_data::impl_relativetime_short_quarter_v1!(Baked);
-        icu_experimental_data::impl_relativetime_short_second_v1!(Baked);
-        icu_experimental_data::impl_relativetime_short_week_v1!(Baked);
-        icu_experimental_data::impl_relativetime_short_year_v1!(Baked);
-        icu_experimental_data::impl_units_info_v1!(Baked);
+        make_provider!(Baked);
+
+        impl_long_compact_decimal_format_data_v1_marker!(Baked);
+        impl_short_compact_decimal_format_data_v1_marker!(Baked);
+        impl_currency_essentials_v1_marker!(Baked);
+        impl_language_display_names_v1_marker!(Baked);
+        impl_locale_display_names_v1_marker!(Baked);
+        impl_region_display_names_v1_marker!(Baked);
+        impl_script_display_names_v1_marker!(Baked);
+        impl_variant_display_names_v1_marker!(Baked);
+        impl_percent_essentials_v1_marker!(Baked);
+        impl_person_names_format_v1_marker!(Baked);
+        impl_long_day_relative_time_format_data_v1_marker!(Baked);
+        impl_long_hour_relative_time_format_data_v1_marker!(Baked);
+        impl_long_minute_relative_time_format_data_v1_marker!(Baked);
+        impl_long_month_relative_time_format_data_v1_marker!(Baked);
+        impl_long_quarter_relative_time_format_data_v1_marker!(Baked);
+        impl_long_second_relative_time_format_data_v1_marker!(Baked);
+        impl_long_week_relative_time_format_data_v1_marker!(Baked);
+        impl_long_year_relative_time_format_data_v1_marker!(Baked);
+        impl_narrow_day_relative_time_format_data_v1_marker!(Baked);
+        impl_narrow_hour_relative_time_format_data_v1_marker!(Baked);
+        impl_narrow_minute_relative_time_format_data_v1_marker!(Baked);
+        impl_narrow_month_relative_time_format_data_v1_marker!(Baked);
+        impl_narrow_quarter_relative_time_format_data_v1_marker!(Baked);
+        impl_narrow_second_relative_time_format_data_v1_marker!(Baked);
+        impl_narrow_week_relative_time_format_data_v1_marker!(Baked);
+        impl_narrow_year_relative_time_format_data_v1_marker!(Baked);
+        impl_short_day_relative_time_format_data_v1_marker!(Baked);
+        impl_short_hour_relative_time_format_data_v1_marker!(Baked);
+        impl_short_minute_relative_time_format_data_v1_marker!(Baked);
+        impl_short_month_relative_time_format_data_v1_marker!(Baked);
+        impl_short_quarter_relative_time_format_data_v1_marker!(Baked);
+        impl_short_second_relative_time_format_data_v1_marker!(Baked);
+        impl_short_week_relative_time_format_data_v1_marker!(Baked);
+        impl_short_year_relative_time_format_data_v1_marker!(Baked);
+        impl_units_info_v1_marker!(Baked);
     };
 
     #[cfg(feature = "datagen")]

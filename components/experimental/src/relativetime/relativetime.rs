@@ -128,13 +128,12 @@ macro_rules! constructor {
                 locale,
                 FixedDecimalFormatterOptions::default(),
             )?;
-            let rt: DataPayload<$marker> = crate::provider::Baked
+            let rt: DataResponse<$marker> = crate::provider::Baked
                 .load(DataRequest {
                     locale,
                     ..Default::default()
-                })?
-                .take_payload()?;
-            let rt = rt.cast();
+                })?;
+            let rt = rt.payload.cast();
             Ok(RelativeTimeFormatter {
                 plural_rules,
                 options,
@@ -144,12 +143,9 @@ macro_rules! constructor {
         }
 
         icu_provider::gen_any_buffer_data_constructors!(
-            locale: include,
-            options: RelativeTimeFormatterOptions,
-            error: DataError,
-            #[cfg(skip)]
+            (locale, options: RelativeTimeFormatterOptions) -> error: DataError,
             functions: [
-                $baked,
+                $baked: skip,
                 $any,
                 $buffer,
                 $unstable,
@@ -177,13 +173,12 @@ macro_rules! constructor {
                 locale,
                 FixedDecimalFormatterOptions::default(),
             )?;
-            let rt: DataPayload<$marker> = provider
+            let rt: DataResponse<$marker> = provider
                 .load(DataRequest {
                     locale,
                     ..Default::default()
-                })?
-                .take_payload()?;
-            let rt = rt.cast();
+                })?;
+            let rt = rt.payload.cast();
             Ok(RelativeTimeFormatter {
                 plural_rules,
                 options,

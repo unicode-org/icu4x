@@ -1,0 +1,14 @@
+{
+  "long": {
+    "One": "{0} oras",
+    "Other": "{0} na oras"
+  },
+  "short": {
+    "One": "{0} oras",
+    "Other": "{0} na oras"
+  },
+  "narrow": {
+    "One": "{0} oras",
+    "Other": "{0} oras"
+  }
+}

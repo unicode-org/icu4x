@@ -8,20 +8,20 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XError.d.hpp"
+#include "ICU4XDataError.d.hpp"
 #include "ICU4XGraphemeClusterSegmenter.d.h"
 
 class ICU4XDataProvider;
 class ICU4XGraphemeClusterBreakIteratorLatin1;
 class ICU4XGraphemeClusterBreakIteratorUtf16;
 class ICU4XGraphemeClusterBreakIteratorUtf8;
-class ICU4XError;
+class ICU4XDataError;
 
 
 class ICU4XGraphemeClusterSegmenter {
 public:
 
-  inline static diplomat::result<std::unique_ptr<ICU4XGraphemeClusterSegmenter>, ICU4XError> create(const ICU4XDataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<ICU4XGraphemeClusterSegmenter>, ICU4XDataError> create(const ICU4XDataProvider& provider);
 
   inline std::unique_ptr<ICU4XGraphemeClusterBreakIteratorUtf8> segment_utf8(std::string_view input) const;
 

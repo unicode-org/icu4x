@@ -1,6 +1,7 @@
 import { FFIError } from "./diplomat-runtime"
+import { ICU4XDataError } from "./ICU4XDataError";
 import { ICU4XDataProvider } from "./ICU4XDataProvider";
-import { ICU4XError } from "./ICU4XError";
+import { ICU4XTimeZoneInvalidIdError } from "./ICU4XTimeZoneInvalidIdError";
 
 /**
 
@@ -15,35 +16,35 @@ export class ICU4XTimeZoneIdMapper {
   /**
 
    * See the {@link https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneIdMapper.html#method.new Rust documentation for `new`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
+   * @throws {@link FFIError}<{@link ICU4XDataError}>
    */
   static create(provider: ICU4XDataProvider): ICU4XTimeZoneIdMapper | never;
 
   /**
 
    * See the {@link https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneIdMapperBorrowed.html#method.iana_to_bcp47 Rust documentation for `iana_to_bcp47`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
+   * @throws {@link FFIError}<{@link ICU4XTimeZoneInvalidIdError}>
    */
   iana_to_bcp47(value: string): string | never;
 
   /**
 
    * See the {@link https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneIdMapperBorrowed.html#method.normalize_iana Rust documentation for `normalize_iana`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
+   * @throws {@link FFIError}<{@link ICU4XTimeZoneInvalidIdError}>
    */
   normalize_iana(value: string): string | never;
 
   /**
 
    * See the {@link https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneIdMapperBorrowed.html#method.canonicalize_iana Rust documentation for `canonicalize_iana`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
+   * @throws {@link FFIError}<{@link ICU4XTimeZoneInvalidIdError}>
    */
   canonicalize_iana(value: string): string | never;
 
   /**
 
    * See the {@link https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneIdMapperBorrowed.html#method.find_canonical_iana_from_bcp47 Rust documentation for `find_canonical_iana_from_bcp47`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
+   * @throws {@link FFIError}<{@link ICU4XTimeZoneInvalidIdError}>
    */
   find_canonical_iana_from_bcp47(value: string): string | never;
 }

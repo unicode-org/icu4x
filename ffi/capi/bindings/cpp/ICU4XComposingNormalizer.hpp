@@ -11,18 +11,18 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 #include "ICU4XComposingNormalizer.h"
+#include "ICU4XDataError.hpp"
 #include "ICU4XDataProvider.hpp"
-#include "ICU4XError.hpp"
 
 
-inline diplomat::result<std::unique_ptr<ICU4XComposingNormalizer>, ICU4XError> ICU4XComposingNormalizer::create_nfc(const ICU4XDataProvider& provider) {
+inline diplomat::result<std::unique_ptr<ICU4XComposingNormalizer>, ICU4XDataError> ICU4XComposingNormalizer::create_nfc(const ICU4XDataProvider& provider) {
   auto result = capi::ICU4XComposingNormalizer_create_nfc(provider.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XComposingNormalizer>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XComposingNormalizer>>(std::unique_ptr<ICU4XComposingNormalizer>(ICU4XComposingNormalizer::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XComposingNormalizer>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XComposingNormalizer>, ICU4XDataError>(diplomat::Ok<std::unique_ptr<ICU4XComposingNormalizer>>(std::unique_ptr<ICU4XComposingNormalizer>(ICU4XComposingNormalizer::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XComposingNormalizer>, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::unique_ptr<ICU4XComposingNormalizer>, ICU4XError> ICU4XComposingNormalizer::create_nfkc(const ICU4XDataProvider& provider) {
+inline diplomat::result<std::unique_ptr<ICU4XComposingNormalizer>, ICU4XDataError> ICU4XComposingNormalizer::create_nfkc(const ICU4XDataProvider& provider) {
   auto result = capi::ICU4XComposingNormalizer_create_nfkc(provider.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XComposingNormalizer>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XComposingNormalizer>>(std::unique_ptr<ICU4XComposingNormalizer>(ICU4XComposingNormalizer::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XComposingNormalizer>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XComposingNormalizer>, ICU4XDataError>(diplomat::Ok<std::unique_ptr<ICU4XComposingNormalizer>>(std::unique_ptr<ICU4XComposingNormalizer>(ICU4XComposingNormalizer::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XComposingNormalizer>, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
 
 inline std::string ICU4XComposingNormalizer::normalize(std::string_view s) const {

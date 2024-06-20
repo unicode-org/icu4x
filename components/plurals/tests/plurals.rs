@@ -25,9 +25,7 @@ fn test_static_load_works() {
             ..Default::default()
         },
     )
-    .expect("Failed to load payload")
-    .take_payload()
-    .expect("Failed to retrieve payload");
+    .expect("Failed to load payload");
 }
 
 #[test]

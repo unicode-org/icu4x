@@ -6,22 +6,19 @@
 mod databake;
 #[cfg(feature = "serde")]
 mod serde;
-
+use crate::common::*;
+use crate::Error;
+use crate::PatternOrUtf8Error;
+#[cfg(feature = "alloc")]
+use crate::{Parser, ParserOptions};
+#[cfg(feature = "alloc")]
+use alloc::{borrow::ToOwned, str::FromStr, string::String};
 use core::{
     convert::Infallible,
     fmt::{self, Write},
     marker::PhantomData,
 };
-
 use writeable::{adapters::TryWriteableInfallibleAsWriteable, PartsWrite, TryWriteable, Writeable};
-
-use crate::common::*;
-use crate::Error;
-
-#[cfg(feature = "alloc")]
-use crate::{Parser, ParserOptions};
-#[cfg(feature = "alloc")]
-use alloc::{borrow::ToOwned, str::FromStr, string::String};
 
 /// A string pattern with placeholders.
 ///
@@ -164,6 +161,74 @@ where
             _backend: PhantomData,
             store,
         })
+    }
+}
+
+impl<'a, B> Pattern<B, &'a B::Store>
+where
+    B: PatternBackend,
+{
+    /// Creates a pattern from its store encoded as UTF-8.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_pattern::Pattern;
+    /// use icu_pattern::SinglePlaceholder;
+    ///
+    /// Pattern::<SinglePlaceholder, _>::try_from_utf8_store(b"\x01 days")
+    ///     .expect("single placeholder pattern");
+    /// ```
+    pub fn try_from_utf8_store(
+        code_units: &'a [u8],
+    ) -> Result<Self, PatternOrUtf8Error<B::StoreFromBytesError>> {
+        let store = B::try_store_from_utf8(code_units).map_err(PatternOrUtf8Error::Utf8)?;
+        B::validate_store(store).map_err(PatternOrUtf8Error::Pattern)?;
+        Ok(Self {
+            _backend: PhantomData,
+            store,
+        })
+    }
+}
+
+impl<B> Pattern<B, B::Store>
+where
+    B: PatternBackend,
+{
+    /// Creates a pattern from a borrowed store.
+    ///
+    /// # Safety
+    ///
+    /// `Pattern::validate_store(store)` must return `Ok`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use core::str::FromStr;
+    /// use icu_pattern::Pattern;
+    /// use icu_pattern::SinglePlaceholder;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// // Create a pattern from a valid string:
+    /// let allocated_pattern =
+    ///     Pattern::<SinglePlaceholder, String>::from_str("{0} days")
+    ///         .expect("valid pattern");
+    ///
+    /// // Transform the store and create a new Pattern. This is valid because
+    /// // we call `.take_store()` and `.from_store_unchecked()` on patterns
+    /// // with the same backend (`SinglePlaceholder`).
+    /// let store = allocated_pattern.take_store();
+    ///
+    /// // SAFETY: store comes from a valid pattern
+    /// let borrowed_pattern: &Pattern<SinglePlaceholder, _> =
+    ///     unsafe { Pattern::from_borrowed_store_unchecked(store.as_str()) };
+    ///
+    /// assert_writeable_eq!(borrowed_pattern.interpolate([5]), "5 days");
+    /// ```
+    pub unsafe fn from_borrowed_store_unchecked(store: &B::Store) -> &Self {
+        // SAFETY: The layout of `Pattern` is the same as `Store`
+        // because `_backend` is zero-sized and `store` is the only other field.
+        &*(store as *const B::Store as *const Self)
     }
 }
 

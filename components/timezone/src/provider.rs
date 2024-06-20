@@ -36,14 +36,16 @@ pub mod names;
 pub struct Baked;
 
 #[cfg(feature = "compiled_data")]
+#[allow(unused_imports)]
 const _: () = {
+    use icu_timezone_data::*;
     pub mod icu {
         pub use crate as timezone;
     }
-    icu_timezone_data::make_provider!(Baked);
-    icu_timezone_data::impl_time_zone_bcp47_to_iana_v1!(Baked);
-    icu_timezone_data::impl_time_zone_iana_to_bcp47_v2!(Baked);
-    icu_timezone_data::impl_time_zone_metazone_period_v1!(Baked);
+    make_provider!(Baked);
+    impl_bcp47_to_iana_map_v1_marker!(Baked);
+    impl_iana_to_bcp47_map_v2_marker!(Baked);
+    impl_metazone_period_v1_marker!(Baked);
 };
 
 #[cfg(feature = "datagen")]
@@ -70,7 +72,7 @@ pub struct TimeZoneBcp47Id(pub TinyAsciiStr<8>);
 impl FromStr for TimeZoneBcp47Id {
     type Err = tinystr::TinyStrError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        TinyAsciiStr::from_str(s).map(Into::into)
+        TinyAsciiStr::try_from_str(s).map(Into::into)
     }
 }
 
@@ -143,7 +145,7 @@ impl From<MetazoneId> for TinyAsciiStr<4> {
 impl FromStr for MetazoneId {
     type Err = tinystr::TinyStrError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        TinyAsciiStr::from_str(s).map(Into::into)
+        TinyAsciiStr::try_from_str(s).map(Into::into)
     }
 }
 

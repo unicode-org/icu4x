@@ -98,9 +98,6 @@ mod tests;
 /// );
 /// assert_eq!(BazV1Marker::INFO.fallback_config.extension_key, Some(key!("ca")));
 /// ```
-///
-/// If the `#[databake(path = ...)]` attribute is present on the data struct, this will also
-/// implement it on the markers.
 pub fn data_struct(attr: TokenStream, item: TokenStream) -> TokenStream {
     TokenStream::from(data_struct_impl(
         parse_macro_input!(attr as DataStructArgs),
@@ -304,18 +301,6 @@ fn data_struct_impl(attr: DataStructArgs, input: DeriveInput) -> TokenStream2 {
         .to_compile_error();
     }
 
-    let bake_derive = input
-        .attrs
-        .iter()
-        .find(|a| a.path().is_ident("databake"))
-        .map(|a| {
-            quote! {
-                #[derive(databake::Bake)]
-                #a
-            }
-        })
-        .unwrap_or_else(|| quote! {});
-
     let mut result = TokenStream2::new();
 
     for single_attr in attr.args {
@@ -344,7 +329,6 @@ fn data_struct_impl(attr: DataStructArgs, input: DeriveInput) -> TokenStream2 {
 
         result.extend(quote!(
             #[doc = #docs]
-            #bake_derive
             pub struct #marker_name;
             impl icu_provider::DynamicDataMarker for #marker_name {
                 type Yokeable = #name_with_lt;

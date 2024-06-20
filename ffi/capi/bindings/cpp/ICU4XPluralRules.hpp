@@ -10,8 +10,8 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
+#include "ICU4XDataError.hpp"
 #include "ICU4XDataProvider.hpp"
-#include "ICU4XError.hpp"
 #include "ICU4XLocale.hpp"
 #include "ICU4XPluralCategories.hpp"
 #include "ICU4XPluralCategory.hpp"
@@ -19,16 +19,16 @@
 #include "ICU4XPluralRules.h"
 
 
-inline diplomat::result<std::unique_ptr<ICU4XPluralRules>, ICU4XError> ICU4XPluralRules::create_cardinal(const ICU4XDataProvider& provider, const ICU4XLocale& locale) {
+inline diplomat::result<std::unique_ptr<ICU4XPluralRules>, ICU4XDataError> ICU4XPluralRules::create_cardinal(const ICU4XDataProvider& provider, const ICU4XLocale& locale) {
   auto result = capi::ICU4XPluralRules_create_cardinal(provider.AsFFI(),
     locale.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XPluralRules>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XPluralRules>>(std::unique_ptr<ICU4XPluralRules>(ICU4XPluralRules::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XPluralRules>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XPluralRules>, ICU4XDataError>(diplomat::Ok<std::unique_ptr<ICU4XPluralRules>>(std::unique_ptr<ICU4XPluralRules>(ICU4XPluralRules::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XPluralRules>, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::unique_ptr<ICU4XPluralRules>, ICU4XError> ICU4XPluralRules::create_ordinal(const ICU4XDataProvider& provider, const ICU4XLocale& locale) {
+inline diplomat::result<std::unique_ptr<ICU4XPluralRules>, ICU4XDataError> ICU4XPluralRules::create_ordinal(const ICU4XDataProvider& provider, const ICU4XLocale& locale) {
   auto result = capi::ICU4XPluralRules_create_ordinal(provider.AsFFI(),
     locale.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XPluralRules>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XPluralRules>>(std::unique_ptr<ICU4XPluralRules>(ICU4XPluralRules::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XPluralRules>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XPluralRules>, ICU4XDataError>(diplomat::Ok<std::unique_ptr<ICU4XPluralRules>>(std::unique_ptr<ICU4XPluralRules>(ICU4XPluralRules::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XPluralRules>, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
 
 inline ICU4XPluralCategory ICU4XPluralRules::category_for(const ICU4XPluralOperands& op) const {

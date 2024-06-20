@@ -1,8 +1,8 @@
 import { FFIError } from "./diplomat-runtime"
 import { ICU4XCollatorOptionsV1 } from "./ICU4XCollatorOptionsV1";
 import { ICU4XCollatorResolvedOptionsV1 } from "./ICU4XCollatorResolvedOptionsV1";
+import { ICU4XDataError } from "./ICU4XDataError";
 import { ICU4XDataProvider } from "./ICU4XDataProvider";
-import { ICU4XError } from "./ICU4XError";
 import { ICU4XLocale } from "./ICU4XLocale";
 import { ICU4XOrdering } from "./ICU4XOrdering";
 
@@ -17,7 +17,7 @@ export class ICU4XCollator {
    * Construct a new Collator instance.
 
    * See the {@link https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.try_new Rust documentation for `try_new`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
+   * @throws {@link FFIError}<{@link ICU4XDataError}>
    */
   static create_v1(provider: ICU4XDataProvider, locale: ICU4XLocale, options: ICU4XCollatorOptionsV1): ICU4XCollator | never;
 

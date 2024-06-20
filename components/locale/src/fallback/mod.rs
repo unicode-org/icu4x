@@ -115,9 +115,12 @@ impl LocaleFallbacker {
     #[allow(clippy::new_ret_no_self)] // keeping constructors together
     pub const fn new<'a>() -> LocaleFallbackerBorrowed<'a> {
         let tickstatic = LocaleFallbackerBorrowed {
-            likely_subtags: crate::provider::Baked::SINGLETON_FALLBACK_LIKELYSUBTAGS_V1,
-            parents: crate::provider::Baked::SINGLETON_FALLBACK_PARENTS_V1,
-            collation_supplement: Some(crate::provider::Baked::SINGLETON_FALLBACK_SUPPLEMENT_CO_V1),
+            likely_subtags:
+                crate::provider::Baked::SINGLETON_LOCALE_FALLBACK_LIKELY_SUBTAGS_V1_MARKER,
+            parents: crate::provider::Baked::SINGLETON_LOCALE_FALLBACK_PARENTS_V1_MARKER,
+            collation_supplement: Some(
+                crate::provider::Baked::SINGLETON_COLLATION_FALLBACK_SUPPLEMENT_V1_MARKER,
+            ),
         };
         // Safety: we're transmuting down from LocaleFallbackerBorrowed<'static> to LocaleFallbackerBorrowed<'a>
         // ZeroMaps use associated types in a way that confuse the compiler which gives up and marks them
@@ -127,10 +130,9 @@ impl LocaleFallbacker {
         unsafe { core::mem::transmute(tickstatic) }
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: DataError,
-        #[cfg(skip)]
+    icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,
         functions: [
-            new,
+            new: skip,
             try_new_with_any_provider,
             try_new_with_buffer_provider,
             try_new_unstable,
@@ -145,13 +147,13 @@ impl LocaleFallbacker {
             + DataProvider<CollationFallbackSupplementV1Marker>
             + ?Sized,
     {
-        let likely_subtags = provider.load(Default::default())?.take_payload()?;
-        let parents = provider.load(Default::default())?.take_payload()?;
+        let likely_subtags = provider.load(Default::default())?.payload;
+        let parents = provider.load(Default::default())?.payload;
         let collation_supplement = match DataProvider::<CollationFallbackSupplementV1Marker>::load(
             provider,
             Default::default(),
         ) {
-            Ok(response) => Some(response.take_payload()?),
+            Ok(response) => Some(response.payload),
             // It is expected that not all keys are present
             Err(DataError {
                 kind: DataErrorKind::MissingDataMarker,

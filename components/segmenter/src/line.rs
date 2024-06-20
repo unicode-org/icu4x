@@ -362,12 +362,9 @@ impl LineSegmenter {
 
     #[cfg(feature = "auto")]
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: skip,
-        options: skip,
-        error: DataError,
-        #[cfg(skip)]
+        () -> error: DataError,
         functions: [
-            new_auto,
+            new_auto: skip,
             try_new_auto_with_any_provider,
             try_new_auto_with_buffer_provider,
             try_new_auto_unstable,
@@ -406,12 +403,9 @@ impl LineSegmenter {
 
     #[cfg(feature = "lstm")]
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: skip,
-        options: skip,
-        error: DataError,
-        #[cfg(skip)]
+        () -> error: DataError,
         functions: [
-            new_lstm,
+            new_lstm: skip,
             try_new_lstm_with_any_provider,
             try_new_lstm_with_buffer_provider,
             try_new_lstm_unstable,
@@ -448,12 +442,9 @@ impl LineSegmenter {
     }
 
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: skip,
-        options: skip,
-        error: DataError,
-        #[cfg(skip)]
+        () -> error: DataError,
         functions: [
-            new_dictionary,
+            new_dictionary: skip,
             try_new_dictionary_with_any_provider,
             try_new_dictionary_with_buffer_provider,
             try_new_dictionary_unstable,
@@ -490,12 +481,9 @@ impl LineSegmenter {
 
     #[cfg(feature = "auto")]
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: skip,
-        options: LineBreakOptions,
-        error: DataError,
-        #[cfg(skip)]
+        (options: LineBreakOptions) -> error: DataError,
         functions: [
-            new_auto_with_options,
+            new_auto_with_options: skip,
             try_new_auto_with_options_with_any_provider,
             try_new_auto_with_options_with_buffer_provider,
             try_new_auto_with_options_unstable,
@@ -535,7 +523,7 @@ impl LineSegmenter {
         Self {
             options,
             payload: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_SEGMENTER_LINE_V1,
+                crate::provider::Baked::SINGLETON_LINE_BREAK_DATA_V1_MARKER,
             ),
             complex: ComplexPayloads::new_lstm(),
         }
@@ -543,12 +531,9 @@ impl LineSegmenter {
 
     #[cfg(feature = "lstm")]
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: skip,
-        options: LineBreakOptions,
-        error: DataError,
-        #[cfg(skip)]
+        (options: LineBreakOptions) -> error: DataError,
         functions: [
-            try_new_lstm_with_options,
+            try_new_lstm_with_options: skip,
             try_new_lstm_with_options_with_any_provider,
             try_new_lstm_with_options_with_buffer_provider,
             try_new_lstm_with_options_unstable,
@@ -570,7 +555,7 @@ impl LineSegmenter {
     {
         Ok(Self {
             options,
-            payload: provider.load(Default::default())?.take_payload()?,
+            payload: provider.load(Default::default())?.payload,
             complex: ComplexPayloads::try_new_lstm(provider)?,
         })
     }
@@ -591,7 +576,7 @@ impl LineSegmenter {
         Self {
             options,
             payload: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_SEGMENTER_LINE_V1,
+                crate::provider::Baked::SINGLETON_LINE_BREAK_DATA_V1_MARKER,
             ),
             // Line segmenter doesn't need to load CJ dictionary because UAX 14 rules handles CJK
             // characters [1]. Southeast Asian languages however require complex context analysis
@@ -604,12 +589,9 @@ impl LineSegmenter {
     }
 
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: skip,
-        options: LineBreakOptions,
-        error: DataError,
-        #[cfg(skip)]
+        (options: LineBreakOptions) -> error: DataError,
         functions: [
-            new_dictionary_with_options,
+            new_dictionary_with_options: skip,
             try_new_dictionary_with_options_with_any_provider,
             try_new_dictionary_with_options_with_buffer_provider,
             try_new_dictionary_with_options_unstable,
@@ -630,7 +612,7 @@ impl LineSegmenter {
     {
         Ok(Self {
             options,
-            payload: provider.load(Default::default())?.take_payload()?,
+            payload: provider.load(Default::default())?.payload,
             // Line segmenter doesn't need to load CJ dictionary because UAX 14 rules handles CJK
             // characters [1]. Southeast Asian languages however require complex context analysis
             // [2].
@@ -1376,8 +1358,7 @@ mod tests {
             Default::default(),
         )
         .expect("Loading should succeed!")
-        .take_payload()
-        .expect("Data should be present!");
+        .payload;
 
         let get_linebreak_property = |codepoint| {
             payload.get().get_linebreak_property_utf32_with_rule(
@@ -1411,8 +1392,7 @@ mod tests {
             Default::default(),
         )
         .expect("Loading should succeed!")
-        .take_payload()
-        .expect("Data should be present!");
+        .payload;
         let lb_data: &RuleBreakDataV1 = payload.get();
 
         let is_break = |left, right| {

@@ -33,7 +33,7 @@ impl<'data> MeasureUnitParser<'data> {
     /// NOTE:
     ///    if the unit id is found, the function will return (unit id, part without the unit id and without `-` at the beginning of the remaining part if it exists).
     ///    if the unit id is not found, the function will return an error.
-    fn get_unit_id<'a>(&'a self, part: &'a [u8]) -> Result<(u16, &[u8]), InvalidUnitError> {
+    fn get_unit_id<'a>(&self, part: &'a [u8]) -> Result<(u16, &'a [u8]), InvalidUnitError> {
         let mut cursor = self.units_trie.cursor();
         let mut longest_match = Err(InvalidUnitError);
 
@@ -49,7 +49,7 @@ impl<'data> MeasureUnitParser<'data> {
         longest_match
     }
 
-    fn get_power<'a>(&'a self, part: &'a [u8]) -> Result<(u8, &[u8]), InvalidUnitError> {
+    fn get_power<'a>(&self, part: &'a [u8]) -> Result<(u8, &'a [u8]), InvalidUnitError> {
         let (power, part_without_power) = get_power(part);
 
         // If the power is not found, return the part as it is.
@@ -67,7 +67,7 @@ impl<'data> MeasureUnitParser<'data> {
     /// Get the SI prefix.
     /// NOTE:
     ///    if the prefix is not found, the function will return (SiPrefix { power: 0, base: Base::Decimal }, part).
-    fn get_si_prefix<'a>(&'a self, part: &'a [u8]) -> (SiPrefix, &[u8]) {
+    fn get_si_prefix<'a>(&self, part: &'a [u8]) -> (SiPrefix, &'a [u8]) {
         let (si_prefix, part_without_si_prefix) = get_si_prefix(part);
         if part_without_si_prefix.len() == part.len() {
             return (si_prefix, part);
@@ -85,17 +85,22 @@ impl<'data> MeasureUnitParser<'data> {
     /// Returns:
     ///    - Ok(MeasureUnit) if the identifier is valid.
     ///    - Err(InvalidUnitError) if the identifier is invalid.
-    pub fn try_from_bytes(&self, identifier: &'data [u8]) -> Result<MeasureUnit, InvalidUnitError> {
-        if identifier.starts_with(b"-") || identifier.ends_with(b"-") {
+    #[inline]
+    pub fn try_from_str(&self, s: &str) -> Result<MeasureUnit, InvalidUnitError> {
+        self.try_from_utf8(s.as_bytes())
+    }
+
+    /// See [`Self::try_from_str`]
+    pub fn try_from_utf8(&self, mut code_units: &[u8]) -> Result<MeasureUnit, InvalidUnitError> {
+        if code_units.starts_with(b"-") || code_units.ends_with(b"-") {
             return Err(InvalidUnitError);
         }
 
         let mut measure_unit_items = Vec::<MeasureUnitItem>::new();
-        let mut identifier = identifier;
         let mut sign = 1;
-        while !identifier.is_empty() {
+        while !code_units.is_empty() {
             // First: extract the power.
-            let (power, identifier_part_without_power) = self.get_power(identifier)?;
+            let (power, identifier_part_without_power) = self.get_power(code_units)?;
 
             // Second: extract the si_prefix and the unit_id.
             let (si_prefix, unit_id, identifier_part_without_unit_id) =
@@ -118,9 +123,9 @@ impl<'data> MeasureUnitParser<'data> {
                                 }
                                 // If the sign is negative, this means that the identifier may contain more than one `per-` keyword.
                                 Err(_) if sign == 1 => {
-                                    if let Some(remainder) = identifier.strip_prefix(b"per-") {
+                                    if let Some(remainder) = code_units.strip_prefix(b"per-") {
                                         sign = -1;
-                                        identifier = remainder;
+                                        code_units = remainder;
                                         continue;
                                     }
 
@@ -138,7 +143,7 @@ impl<'data> MeasureUnitParser<'data> {
                 unit_id,
             });
 
-            identifier = match identifier_part_without_unit_id.strip_prefix(b"-") {
+            code_units = match identifier_part_without_unit_id.strip_prefix(b"-") {
                 Some(remainder) => remainder,
                 None if identifier_part_without_unit_id.is_empty() => {
                     identifier_part_without_unit_id

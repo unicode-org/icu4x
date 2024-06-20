@@ -91,9 +91,23 @@ impl_tinystr_subtag!(
     ["f", "toolooong"],
 );
 
+#[allow(clippy::len_without_is_empty)]
 impl Subtag {
     pub(crate) const fn valid_key(v: &[u8]) -> bool {
         2 <= v.len() && v.len() <= 8
+    }
+
+    /// Returns the length of `self`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locale::subtags::subtag;
+    /// let s = subtag!("foo");
+    /// assert_eq!(s.len(), 3);
+    /// ```
+    pub fn len(&self) -> usize {
+        self.0.len()
     }
 
     #[doc(hidden)]
@@ -115,7 +129,7 @@ impl<const N: usize> TryFrom<tinystr::TinyAsciiStr<N>> for Subtag {
     type Error = crate::parser::errors::ParseError;
 
     fn try_from(value: tinystr::TinyAsciiStr<N>) -> Result<Self, Self::Error> {
-        Self::try_from_bytes(value.as_bytes())
+        Self::try_from_str(&value)
     }
 }
 

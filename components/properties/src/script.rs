@@ -208,8 +208,8 @@ impl<'a> ScriptExtensionsSet<'a> {
     /// assert_eq!(
     ///     swe.get_script_extensions_val('௫' as u32) // U+0BEB TAMIL DIGIT FIVE
     ///         .iter()
-    ///         .collect::<Vec<Script>>(),
-    ///     vec![Script::Tamil, Script::Grantha]
+    ///         .collect::<Vec<_>>(),
+    ///     [Script::Tamil, Script::Grantha]
     /// );
     /// ```
     pub fn iter(&self) -> impl DoubleEndedIterator<Item = Script> + 'a {
@@ -259,7 +259,7 @@ impl ScriptWithExtensions {
     /// Construct a new one from loaded data
     ///
     /// Typically it is preferable to use getters like [`load_script_with_extensions_unstable()`] instead
-    pub fn from_data(data: DataPayload<ScriptWithExtensionsPropertyV1Marker>) -> Self {
+    pub(crate) fn from_data(data: DataPayload<ScriptWithExtensionsPropertyV1Marker>) -> Self {
         Self { data }
     }
 }
@@ -370,26 +370,26 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
     /// assert_eq!(
     ///     swe.get_script_extensions_val('𐓐' as u32) // U+104D0 OSAGE CAPITAL LETTER KHA
     ///         .iter()
-    ///         .collect::<Vec<Script>>(),
-    ///     vec![Script::Osage]
+    ///         .collect::<Vec<_>>(),
+    ///     [Script::Osage]
     /// );
     /// assert_eq!(
     ///     swe.get_script_extensions_val('🥳' as u32) // U+1F973 FACE WITH PARTY HORN AND PARTY HAT
     ///         .iter()
-    ///         .collect::<Vec<Script>>(),
-    ///     vec![Script::Common]
+    ///         .collect::<Vec<_>>(),
+    ///     [Script::Common]
     /// );
     /// assert_eq!(
     ///     swe.get_script_extensions_val(0x200D) // ZERO WIDTH JOINER
     ///         .iter()
-    ///         .collect::<Vec<Script>>(),
-    ///     vec![Script::Inherited]
+    ///         .collect::<Vec<_>>(),
+    ///     [Script::Inherited]
     /// );
     /// assert_eq!(
     ///     swe.get_script_extensions_val('௫' as u32) // U+0BEB TAMIL DIGIT FIVE
     ///         .iter()
-    ///         .collect::<Vec<Script>>(),
-    ///     vec![Script::Tamil, Script::Grantha]
+    ///         .collect::<Vec<_>>(),
+    ///     [Script::Tamil, Script::Grantha]
     /// );
     /// ```
     pub fn get_script_extensions_val(self, code_point: u32) -> ScriptExtensionsSet<'a> {
@@ -466,7 +466,7 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
     ///
     /// let syriac_script_extensions_ranges = swe.get_script_extensions_ranges(Script::Syriac);
     ///
-    /// let exp_ranges = vec![
+    /// let exp_ranges = [
     ///     0x060C..=0x060C, // ARABIC COMMA
     ///     0x061B..=0x061C, // ARABIC SEMICOLON, ARABIC LETTER MARK
     ///     0x061F..=0x061F, // ARABIC QUESTION MARK
@@ -480,19 +480,8 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
     ///     0x1DF8..=0x1DF8, // U+1DF8 COMBINING DOT ABOVE LEFT
     ///     0x1DFA..=0x1DFA, // U+1DFA COMBINING DOT BELOW LEFT
     /// ];
-    /// let mut exp_ranges_iter = exp_ranges.iter();
     ///
-    /// for act_range in syriac_script_extensions_ranges {
-    ///     let exp_range = exp_ranges_iter
-    ///         .next()
-    ///         .expect("There are too many ranges returned by get_script_extensions_ranges()");
-    ///     assert_eq!(act_range.start(), exp_range.start());
-    ///     assert_eq!(act_range.end(), exp_range.end());
-    /// }
-    /// assert!(
-    ///     exp_ranges_iter.next().is_none(),
-    ///     "There are too few ranges returned by get_script_extensions_ranges()"
-    /// );
+    /// assert_eq!(syriac_script_extensions_ranges.collect::<Vec<_>>(), exp_ranges);
     /// ```
     pub fn get_script_extensions_ranges(
         self,
@@ -580,25 +569,25 @@ impl ScriptWithExtensionsBorrowed<'static> {
 /// // get the `Script_Extensions` property value
 /// assert_eq!(
 ///     swe.get_script_extensions_val(0x0640) // U+0640 ARABIC TATWEEL
-///         .iter().collect::<Vec<Script>>(),
-///     vec![Script::Arabic, Script::Syriac, Script::Mandaic, Script::Manichaean,
+///         .iter().collect::<Vec<_>>(),
+///     [Script::Arabic, Script::Syriac, Script::Mandaic, Script::Manichaean,
 ///          Script::PsalterPahlavi, Script::Adlam, Script::HanifiRohingya, Script::Sogdian,
 ///          Script::OldUyghur]
 /// );
 /// assert_eq!(
 ///     swe.get_script_extensions_val('🥳' as u32) // U+1F973 FACE WITH PARTY HORN AND PARTY HAT
-///         .iter().collect::<Vec<Script>>(),
-///     vec![Script::Common]
+///         .iter().collect::<Vec<_>>(),
+///     [Script::Common]
 /// );
 /// assert_eq!(
 ///     swe.get_script_extensions_val(0x200D) // ZERO WIDTH JOINER
-///         .iter().collect::<Vec<Script>>(),
-///     vec![Script::Inherited]
+///         .iter().collect::<Vec<_>>(),
+///     [Script::Inherited]
 /// );
 /// assert_eq!(
 ///     swe.get_script_extensions_val('௫' as u32) // U+0BEB TAMIL DIGIT FIVE
-///         .iter().collect::<Vec<Script>>(),
-///     vec![Script::Tamil, Script::Grantha]
+///         .iter().collect::<Vec<_>>(),
+///     [Script::Tamil, Script::Grantha]
 /// );
 ///
 /// // check containment of a `Script` value in the `Script_Extensions` value
@@ -619,17 +608,14 @@ impl ScriptWithExtensionsBorrowed<'static> {
 #[cfg(feature = "compiled_data")]
 pub const fn script_with_extensions() -> ScriptWithExtensionsBorrowed<'static> {
     ScriptWithExtensionsBorrowed {
-        data: crate::provider::Baked::SINGLETON_PROPS_SCX_V1,
+        data: crate::provider::Baked::SINGLETON_SCRIPT_WITH_EXTENSIONS_PROPERTY_V1_MARKER,
     }
 }
 
 icu_provider::gen_any_buffer_data_constructors!(
-    locale: skip,
-    options: skip,
-    result: Result<ScriptWithExtensions, DataError>,
-    #[cfg(skip)]
+    () -> result: Result<ScriptWithExtensions, DataError>,
     functions: [
-        script_with_extensions,
+        script_with_extensions: skip,
         load_script_with_extensions_with_any_provider,
         load_script_with_extensions_with_buffer_provider,
         load_script_with_extensions_unstable,
@@ -640,8 +626,7 @@ icu_provider::gen_any_buffer_data_constructors!(
 pub fn load_script_with_extensions_unstable(
     provider: &(impl DataProvider<ScriptWithExtensionsPropertyV1Marker> + ?Sized),
 ) -> Result<ScriptWithExtensions, DataError> {
-    provider
-        .load(Default::default())
-        .and_then(DataResponse::take_payload)
-        .map(ScriptWithExtensions::from_data)
+    Ok(ScriptWithExtensions::from_data(
+        provider.load(Default::default())?.payload,
+    ))
 }

@@ -1,0 +1,13 @@
+{
+  "long": {
+    "One": "{0} picómetro",
+    "Other": "{0} picómetros"
+  },
+  "short": {
+    "Other": "{0} pm"
+  },
+  "narrow": {
+    "One": "{0}pm",
+    "Other": "{0}pm"
+  }
+}

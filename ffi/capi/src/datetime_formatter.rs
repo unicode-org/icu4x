@@ -13,8 +13,7 @@ pub mod ffi {
 
     use crate::{
         date::ffi::{ICU4XDate, ICU4XIsoDate},
-        datetime::ffi::ICU4XDateTime,
-        datetime::ffi::ICU4XIsoDateTime,
+        datetime::ffi::{ICU4XDateTime, ICU4XIsoDateTime},
         errors::ffi::ICU4XError,
         locale_core::ffi::ICU4XLocale,
         provider::ffi::ICU4XDataProvider,

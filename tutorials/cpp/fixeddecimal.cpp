@@ -84,7 +84,7 @@ int main() {
 
     std::array<char32_t, 10> digits = {U'a', U'b', U'c', U'd', U'e', U'f', U'g', U'h', U'i', U'j'};
 
-    auto data = ICU4XDataStruct::create_decimal_symbols_v1("+", "", "-", "", "/", "_", 4, 2, 4, digits).ok().value();
+    auto data = ICU4XDataStruct::create_decimal_symbols_v1("+", "", "-", "", "/", "_", 4, 2, 4, digits);
 
     fdf = ICU4XFixedDecimalFormatter::create_with_decimal_symbols_v1(*data.get(), ICU4XFixedDecimalGroupingStrategy::Auto).ok().value();
 

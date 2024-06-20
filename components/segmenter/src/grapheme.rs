@@ -148,15 +148,14 @@ impl GraphemeClusterSegmenter {
     pub fn new() -> Self {
         Self {
             payload: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_SEGMENTER_GRAPHEME_V1,
+                crate::provider::Baked::SINGLETON_GRAPHEME_CLUSTER_BREAK_DATA_V1_MARKER,
             ),
         }
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: DataError,
-        #[cfg(skip)]
+    icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,
         functions: [
-            new,
+            new: skip,
             try_new_with_any_provider,
             try_new_with_buffer_provider,
             try_new_unstable,
@@ -168,7 +167,7 @@ impl GraphemeClusterSegmenter {
     where
         D: DataProvider<GraphemeClusterBreakDataV1Marker> + ?Sized,
     {
-        let payload = provider.load(Default::default())?.take_payload()?;
+        let payload = provider.load(Default::default())?.payload;
         Ok(Self { payload })
     }
 

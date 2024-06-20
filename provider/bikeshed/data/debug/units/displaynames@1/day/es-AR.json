@@ -1,0 +1,14 @@
+{
+  "long": {
+    "One": "{0} día",
+    "Other": "{0} días"
+  },
+  "short": {
+    "One": "{0} d.",
+    "Other": "{0} dd."
+  },
+  "narrow": {
+    "One": "{0}d.",
+    "Other": "{0}dd."
+  }
+}

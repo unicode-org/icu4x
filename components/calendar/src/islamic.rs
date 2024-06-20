@@ -122,15 +122,14 @@ impl IslamicObservational {
     pub const fn new() -> Self {
         Self {
             data: Some(DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_CALENDAR_ISLAMICOBSERVATIONALCACHE_V1,
+                crate::provider::Baked::SINGLETON_ISLAMIC_OBSERVATIONAL_CACHE_V1_MARKER,
             )),
         }
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: DataError,
-        #[cfg(skip)]
+    icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,
         functions: [
-            new,
+            new: skip,
             try_new_with_any_provider,
             try_new_with_buffer_provider,
             try_new_unstable,
@@ -142,7 +141,7 @@ impl IslamicObservational {
         provider: &D,
     ) -> Result<Self, DataError> {
         Ok(Self {
-            data: Some(provider.load(Default::default())?.take_payload()?),
+            data: Some(provider.load(Default::default())?.payload),
         })
     }
 
@@ -169,15 +168,14 @@ impl IslamicUmmAlQura {
     pub const fn new() -> Self {
         Self {
             data: Some(DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_CALENDAR_ISLAMICUMMALQURACACHE_V1,
+                crate::provider::Baked::SINGLETON_ISLAMIC_UMM_AL_QURA_CACHE_V1_MARKER,
             )),
         }
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: DataError,
-        #[cfg(skip)]
+    icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,
         functions: [
-            new,
+            new: skip,
             try_new_with_any_provider,
             try_new_with_buffer_provider,
             try_new_unstable,
@@ -189,7 +187,7 @@ impl IslamicUmmAlQura {
         provider: &D,
     ) -> Result<Self, DataError> {
         Ok(Self {
-            data: Some(provider.load(Default::default())?.take_payload()?),
+            data: Some(provider.load(Default::default())?.payload),
         })
     }
 

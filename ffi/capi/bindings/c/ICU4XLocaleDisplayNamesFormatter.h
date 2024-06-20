@@ -12,7 +12,7 @@
 #include "ICU4XDisplayNamesOptionsV1.h"
 #include "ICU4XLocale.d.h"
 #include "ICU4XLocale.h"
-#include "diplomat_result_box_ICU4XLocaleDisplayNamesFormatter_ICU4XError.d.h"
+#include "diplomat_result_box_ICU4XLocaleDisplayNamesFormatter_ICU4XDataError.d.h"
 
 #include "ICU4XLocaleDisplayNamesFormatter.d.h"
 
@@ -22,7 +22,7 @@ extern "C" {
 #endif // __cplusplus
 
 
-diplomat_result_box_ICU4XLocaleDisplayNamesFormatter_ICU4XError ICU4XLocaleDisplayNamesFormatter_create(const ICU4XDataProvider* provider, const ICU4XLocale* locale, ICU4XDisplayNamesOptionsV1 options);
+diplomat_result_box_ICU4XLocaleDisplayNamesFormatter_ICU4XDataError ICU4XLocaleDisplayNamesFormatter_create(const ICU4XDataProvider* provider, const ICU4XLocale* locale, ICU4XDisplayNamesOptionsV1 options);
 
 void ICU4XLocaleDisplayNamesFormatter_of(const ICU4XLocaleDisplayNamesFormatter* self, const ICU4XLocale* locale, DiplomatWrite* write);
 

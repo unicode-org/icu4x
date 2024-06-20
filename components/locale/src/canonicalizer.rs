@@ -253,7 +253,7 @@ impl LocaleCanonicalizer {
     pub const fn new_with_expander(expander: LocaleExpander) -> Self {
         Self {
             aliases: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_LOCID_TRANSFORM_ALIASES_V2,
+                crate::provider::Baked::SINGLETON_ALIASES_V2_MARKER,
             ),
             expander,
         }
@@ -266,16 +266,14 @@ impl LocaleCanonicalizer {
     where
         P: DataProvider<AliasesV2Marker> + DataProvider<AliasesV1Marker> + ?Sized,
     {
-        let payload_v2: Result<DataPayload<AliasesV2Marker>, _> = provider
-            .load(Default::default())
-            .and_then(DataResponse::take_payload);
-        let aliases = if let Ok(payload) = payload_v2 {
-            payload
+        let aliases = if let Ok(response) =
+            DataProvider::<AliasesV2Marker>::load(provider, Default::default())
+        {
+            response.payload
         } else {
-            let payload_v1: DataPayload<AliasesV1Marker> = provider
-                .load(Default::default())
-                .and_then(DataResponse::take_payload)?;
-            payload_v1.try_map_project(|st, _| st.try_into())?
+            DataProvider::<AliasesV1Marker>::load(provider, Default::default())?
+                .payload
+                .try_map_project(|st, _| st.try_into())?
         };
 
         Ok(Self { aliases, expander })
@@ -289,8 +287,7 @@ impl LocaleCanonicalizer {
     where
         P: DataProvider<AliasesV2Marker> + ?Sized,
     {
-        let aliases: DataPayload<AliasesV2Marker> =
-            provider.load(Default::default())?.take_payload()?;
+        let aliases: DataPayload<AliasesV2Marker> = provider.load(Default::default())?.payload;
 
         Ok(Self { aliases, expander })
     }
@@ -650,10 +647,10 @@ mod tests {
                 return Err(DataErrorKind::MissingDataMarker.with_str_context("rejected"));
             }
 
-            let aliases_v2 = crate::provider::Baked::SINGLETON_LOCID_TRANSFORM_ALIASES_V2;
-            let l = crate::provider::Baked::SINGLETON_LOCID_TRANSFORM_LIKELYSUBTAGS_L_V1;
-            let ext = crate::provider::Baked::SINGLETON_LOCID_TRANSFORM_LIKELYSUBTAGS_EXT_V1;
-            let sr = crate::provider::Baked::SINGLETON_LOCID_TRANSFORM_LIKELYSUBTAGS_SR_V1;
+            let aliases_v2 = crate::provider::Baked::SINGLETON_ALIASES_V2_MARKER;
+            let l = crate::provider::Baked::SINGLETON_LIKELY_SUBTAGS_FOR_LANGUAGE_V1_MARKER;
+            let ext = crate::provider::Baked::SINGLETON_LIKELY_SUBTAGS_EXTENDED_V1_MARKER;
+            let sr = crate::provider::Baked::SINGLETON_LIKELY_SUBTAGS_FOR_SCRIPT_REGION_V1_MARKER;
 
             let payload = if marker.path.hashed() == AliasesV1Marker::INFO.path.hashed() {
                 let aliases_v1 = AliasesV1 {
@@ -682,7 +679,7 @@ mod tests {
             };
 
             Ok(AnyResponse {
-                payload: Some(payload),
+                payload,
                 metadata: Default::default(),
             })
         }

@@ -10,8 +10,9 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XError.hpp"
 #include "ICU4XFixedDecimal.h"
+#include "ICU4XFixedDecimalLimitError.hpp"
+#include "ICU4XFixedDecimalParseError.hpp"
 #include "ICU4XFixedDecimalRoundingIncrement.hpp"
 #include "ICU4XFixedDecimalRoundingMode.hpp"
 #include "ICU4XFixedDecimalSign.hpp"
@@ -38,32 +39,32 @@ inline std::unique_ptr<ICU4XFixedDecimal> ICU4XFixedDecimal::create_from_u64(uin
   return std::unique_ptr<ICU4XFixedDecimal>(ICU4XFixedDecimal::FromFFI(result));
 }
 
-inline diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XError> ICU4XFixedDecimal::create_from_f64_with_integer_precision(double f) {
+inline diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XFixedDecimalLimitError> ICU4XFixedDecimal::create_from_f64_with_integer_precision(double f) {
   auto result = capi::ICU4XFixedDecimal_create_from_f64_with_integer_precision(f);
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XFixedDecimal>>(std::unique_ptr<ICU4XFixedDecimal>(ICU4XFixedDecimal::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XFixedDecimalLimitError>(diplomat::Ok<std::unique_ptr<ICU4XFixedDecimal>>(std::unique_ptr<ICU4XFixedDecimal>(ICU4XFixedDecimal::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XFixedDecimalLimitError>(diplomat::Err<ICU4XFixedDecimalLimitError>(ICU4XFixedDecimalLimitError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XError> ICU4XFixedDecimal::create_from_f64_with_lower_magnitude(double f, int16_t magnitude) {
+inline diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XFixedDecimalLimitError> ICU4XFixedDecimal::create_from_f64_with_lower_magnitude(double f, int16_t magnitude) {
   auto result = capi::ICU4XFixedDecimal_create_from_f64_with_lower_magnitude(f,
     magnitude);
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XFixedDecimal>>(std::unique_ptr<ICU4XFixedDecimal>(ICU4XFixedDecimal::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XFixedDecimalLimitError>(diplomat::Ok<std::unique_ptr<ICU4XFixedDecimal>>(std::unique_ptr<ICU4XFixedDecimal>(ICU4XFixedDecimal::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XFixedDecimalLimitError>(diplomat::Err<ICU4XFixedDecimalLimitError>(ICU4XFixedDecimalLimitError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XError> ICU4XFixedDecimal::create_from_f64_with_significant_digits(double f, uint8_t digits) {
+inline diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XFixedDecimalLimitError> ICU4XFixedDecimal::create_from_f64_with_significant_digits(double f, uint8_t digits) {
   auto result = capi::ICU4XFixedDecimal_create_from_f64_with_significant_digits(f,
     digits);
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XFixedDecimal>>(std::unique_ptr<ICU4XFixedDecimal>(ICU4XFixedDecimal::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XFixedDecimalLimitError>(diplomat::Ok<std::unique_ptr<ICU4XFixedDecimal>>(std::unique_ptr<ICU4XFixedDecimal>(ICU4XFixedDecimal::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XFixedDecimalLimitError>(diplomat::Err<ICU4XFixedDecimalLimitError>(ICU4XFixedDecimalLimitError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XError> ICU4XFixedDecimal::create_from_f64_with_floating_precision(double f) {
+inline diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XFixedDecimalLimitError> ICU4XFixedDecimal::create_from_f64_with_floating_precision(double f) {
   auto result = capi::ICU4XFixedDecimal_create_from_f64_with_floating_precision(f);
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XFixedDecimal>>(std::unique_ptr<ICU4XFixedDecimal>(ICU4XFixedDecimal::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XFixedDecimalLimitError>(diplomat::Ok<std::unique_ptr<ICU4XFixedDecimal>>(std::unique_ptr<ICU4XFixedDecimal>(ICU4XFixedDecimal::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XFixedDecimalLimitError>(diplomat::Err<ICU4XFixedDecimalLimitError>(ICU4XFixedDecimalLimitError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XError> ICU4XFixedDecimal::create_from_string(std::string_view v) {
+inline diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XFixedDecimalParseError> ICU4XFixedDecimal::create_from_string(std::string_view v) {
   auto result = capi::ICU4XFixedDecimal_create_from_string(v.data(),
     v.size());
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XFixedDecimal>>(std::unique_ptr<ICU4XFixedDecimal>(ICU4XFixedDecimal::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XFixedDecimalParseError>(diplomat::Ok<std::unique_ptr<ICU4XFixedDecimal>>(std::unique_ptr<ICU4XFixedDecimal>(ICU4XFixedDecimal::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XFixedDecimalParseError>(diplomat::Err<ICU4XFixedDecimalParseError>(ICU4XFixedDecimalParseError::FromFFI(result.err)));
 }
 
 inline uint8_t ICU4XFixedDecimal::digit_at(int16_t magnitude) const {

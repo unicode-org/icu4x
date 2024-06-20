@@ -24,16 +24,16 @@ final class CustomTimeZone implements ffi.Finalizable {
 
   /// Creates a time zone from an offset string.
   ///
-  /// See the [Rust documentation for `from_str`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#method.from_str) for more information.
+  /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#method.try_from_str) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [TimeZoneInvalidOffsetError] on failure.
   factory CustomTimeZone.fromString(String s) {
     final temp = ffi2.Arena();
     final sView = s.utf8View;
     final result = _ICU4XCustomTimeZone_create_from_string(sView.allocIn(temp), sView.length);
     temp.releaseAll();
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw TimeZoneInvalidOffsetError.values[result.union.err];
     }
     return CustomTimeZone._fromFfi(result.union.ok, []);
   }
@@ -78,11 +78,11 @@ final class CustomTimeZone implements ffi.Finalizable {
   ///
   /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html)
   ///
-  /// Throws [Error] on failure.
+  /// Throws [TimeZoneInvalidOffsetError] on failure.
   void trySetGmtOffsetSeconds(int offsetSeconds) {
     final result = _ICU4XCustomTimeZone_try_set_gmt_offset_seconds(_ffi, offsetSeconds);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw TimeZoneInvalidOffsetError.values[result.union.err];
     }
     
   }
@@ -171,14 +171,14 @@ final class CustomTimeZone implements ffi.Finalizable {
   ///
   /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneBcp47Id.html)
   ///
-  /// Throws [Error] on failure.
+  /// Throws [TimeZoneInvalidIdError] on failure.
   void trySetTimeZoneId(String id) {
     final temp = ffi2.Arena();
     final idView = id.utf8View;
     final result = _ICU4XCustomTimeZone_try_set_time_zone_id(_ffi, idView.allocIn(temp), idView.length);
     temp.releaseAll();
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw TimeZoneInvalidIdError.values[result.union.err];
     }
     
   }
@@ -188,14 +188,14 @@ final class CustomTimeZone implements ffi.Finalizable {
   ///
   /// Errors if the string is not a valid BCP-47 time zone ID.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [TimeZoneInvalidIdError] on failure.
   void trySetIanaTimeZoneId(TimeZoneIdMapper mapper, String id) {
     final temp = ffi2.Arena();
     final idView = id.utf8View;
     final result = _ICU4XCustomTimeZone_try_set_iana_time_zone_id(_ffi, mapper._ffi, idView.allocIn(temp), idView.length);
     temp.releaseAll();
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw TimeZoneInvalidIdError.values[result.union.err];
     }
     
   }
@@ -233,14 +233,14 @@ final class CustomTimeZone implements ffi.Finalizable {
   ///
   /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.MetazoneId.html)
   ///
-  /// Throws [Error] on failure.
+  /// Throws [TimeZoneInvalidIdError] on failure.
   void trySetMetazoneId(String id) {
     final temp = ffi2.Arena();
     final idView = id.utf8View;
     final result = _ICU4XCustomTimeZone_try_set_metazone_id(_ffi, idView.allocIn(temp), idView.length);
     temp.releaseAll();
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw TimeZoneInvalidIdError.values[result.union.err];
     }
     
   }

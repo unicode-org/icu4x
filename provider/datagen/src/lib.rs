@@ -5,24 +5,21 @@
 #![allow(clippy::needless_doctest_main)]
 //! `icu_datagen` is a library to generate data files that can be used in ICU4X data providers.
 //!
-//! Data files can be generated either programmatically (i.e. in `build.rs`), or through a
-//! command-line utility.
-//!
+//! For command-line usage, see the [`icu4x-datagen` binary](https://crates.io/crate/icu4x-datagen).
 //!
 //! Also see our [datagen tutorial](https://github.com/unicode-org/icu4x/blob/main/tutorials/data_management.md).
 //!
 //! # Examples
 //!
-//! ## Rust API
-//!
 //! ```no_run
 //! use icu_datagen::blob_exporter::*;
 //! use icu_datagen::prelude::*;
+//! use icu_datagen_bikeshed::DatagenProvider;
 //! use std::fs::File;
 //!
 //! DatagenDriver::new()
 //!     .with_markers([icu::list::provider::AndListV1Marker::INFO])
-//!     .with_locales_and_fallback([LocaleFamily::FULL], Default::default())
+//!     .with_locales_and_fallback([LocaleFamily::FULL], FallbackOptions::no_deduplication())
 //!     .export(
 //!         &DatagenProvider::new_latest_tested(),
 //!         BlobExporter::new_v2_with_sink(Box::new(
@@ -32,28 +29,12 @@
 //!     .unwrap();
 //! ```
 //!
-//! ## Command line
-//!
-//! The command line interface can be installed through Cargo.
-//!
-//! ```bash
-//! $ cargo install icu_datagen
-//! ```
-//!
-//! Once the tool is installed, you can invoke it like this:
-//!
-//! ```bash
-//! $ icu4x-datagen --markers all --locales de en-AU --format blob --out data.postcard
-//! ```
-//!
-//! More details can be found by running `--help`.
-//!
 //! # Cargo features
 //!
 //! This crate has a lot of dependencies, some of which are not required for all operating modes. These default Cargo features
 //! can be disabled to reduce dependencies:
 //! * `baked_exporter`
-//!   * enables the [`baked_exporter`] module
+//!   * enables the [`baked_exporter`] module, a reexport of [`icu_provider_baked::export`]
 //!   * enables the `--format mod` CLI argument
 //! * `blob_exporter`
 //!   * enables the [`blob_exporter`] module, a reexport of [`icu_provider_blob::export`]
@@ -61,20 +42,11 @@
 //! * `fs_exporter`
 //!   * enables the [`fs_exporter`] module, a reexport of [`icu_provider_fs::export`]
 //!   * enables the `--format dir` CLI argument
-//! * `networking`
-//!   * enables methods on [`DatagenProvider`] that fetch source data from the network
-//!   * enables the `--cldr-tag`, `--icu-export-tag`, and `--segmenter-lstm-tag` CLI arguments that download data
 //! * `rayon`
 //!   * enables parallelism during export
-//! * `use_wasm` / `use_icu4c`
-//!   * see the documentation on [`icu_codepointtrie_builder`](icu_codepointtrie_builder#build-configuration)
-//! * `bin`
-//!   * required by the CLI and enabled by default to make `cargo install` work
-//! * `icu_experimental`
+//! * `experimental`
 //!   * enables data generation for markers defined in the unstable `icu_experimental` crate
 //!   * note that this features affects the behaviour of `all_markers`
-//!
-//! The meta-feature `experimental_components` is available to activate all experimental components.
 
 #![cfg_attr(
     not(test),
@@ -92,25 +64,15 @@
 #![warn(missing_docs)]
 
 mod driver;
-#[cfg(feature = "provider")]
-mod provider;
 
 pub use driver::DatagenDriver;
 pub use driver::DeduplicationStrategy;
 pub use driver::FallbackOptions;
 pub use driver::LocaleFamily;
 pub use driver::NoFallbackOptions;
-pub use driver::RuntimeFallbackLocation;
-
-#[cfg(feature = "provider")]
-pub use provider::CollationHanDatabase;
-#[cfg(feature = "provider")]
-pub use provider::CoverageLevel;
-#[cfg(feature = "provider")]
-pub use provider::DatagenProvider;
 
 #[cfg(feature = "baked_exporter")]
-pub mod baked_exporter;
+pub use icu_provider_baked::export as baked_exporter;
 #[cfg(feature = "blob_exporter")]
 pub use icu_provider_blob::export as blob_exporter;
 #[cfg(feature = "fs_exporter")]
@@ -119,15 +81,11 @@ pub use icu_provider_fs::export as fs_exporter;
 /// A prelude for using the datagen API
 pub mod prelude {
     #[doc(no_inline)]
-    #[cfg(feature = "provider")]
-    pub use crate::provider::{CollationHanDatabase, CoverageLevel, DatagenProvider};
-    #[doc(no_inline)]
     pub use crate::{
         DatagenDriver, DeduplicationStrategy, FallbackOptions, LocaleFamily, NoFallbackOptions,
-        RuntimeFallbackLocation,
     };
     #[doc(no_inline)]
-    pub use icu_locale_core::{langid, LanguageIdentifier};
+    pub use icu::locale::{langid, LanguageIdentifier};
     #[doc(no_inline)]
     pub use icu_provider::{datagen::DataExporter, DataMarker, DataMarkerInfo};
 }
@@ -156,14 +114,14 @@ macro_rules! cb {
         /// corresponding Cargo features has been enabled.
         // Excludes the hello world marker, as that generally should not be generated.
         pub fn all_markers() -> Vec<DataMarkerInfo> {
-            #[cfg(features = "experimental_components")]
-            log::warn!("The icu_datagen crates has been built with the `experimental_components` feature, so `all_markers` returns experimental markers");
+            #[cfg(feature = "experimental")]
+            log::warn!("The icu_datagen crates has been built with the `experimental` feature, so `all_markers` returns experimental markers");
             vec![
                 $(
                     <$marker>::INFO,
                 )+
                 $(
-                    #[cfg(feature = "experimental_components")]
+                    #[cfg(feature = "experimental")]
                     <$emarker>::INFO,
                 )+
             ]
@@ -176,7 +134,7 @@ macro_rules! cb {
         /// # use icu_provider::DataMarker;
         /// assert_eq!(
         ///     icu_datagen::marker("list/and@1"),
-        ///     Some(icu_list::provider::AndListV1Marker::INFO),
+        ///     Some(icu::list::provider::AndListV1Marker::INFO),
         /// );
         /// ```
         pub fn marker<S: AsRef<str>>(string: S) -> Option<DataMarkerInfo> {
@@ -185,14 +143,20 @@ macro_rules! cb {
             let lookup = LOOKUP.get_or_init(|| {
                 [
                     ("core/helloworld@1", Ok(icu_provider::hello_world::HelloWorldV1Marker::INFO)),
+                    (stringify!(icu_provider::hello_world::HelloWorldV1Marker).split("::").last().unwrap().trim(), Ok(icu_provider::hello_world::HelloWorldV1Marker::INFO)),
                     $(
                         ($path, Ok(<$marker>::INFO)),
+                        (stringify!($marker).split("::").last().unwrap().trim(), Ok(<$marker>::INFO)),
                     )+
                     $(
-                        #[cfg(feature = "experimental_components")]
+                        #[cfg(feature = "experimental")]
                         ($epath, Ok(<$emarker>::INFO)),
-                        #[cfg(not(feature = "experimental_components"))]
-                        ($epath, Err(stringify!(feature = "experimental_components"))),
+                        #[cfg(feature = "experimental")]
+                        (stringify!($emarker).split("::").last().unwrap().trim(), Ok(<$emarker>::INFO)),
+                        #[cfg(not(feature = "experimental"))]
+                        ($epath, Err(stringify!(feature = "experimental"))),
+                        #[cfg(not(feature = "experimental"))]
+                        (stringify!($emarker).split("::").last().unwrap().trim(), Err(stringify!(feature = "experimental"))),
                     )+
 
                 ]
@@ -210,26 +174,6 @@ macro_rules! cb {
                     None
                 },
                 Some(Ok(marker)) => Some(marker)
-            }
-        }
-
-        #[macro_export]
-        #[doc(hidden)] // macro
-        macro_rules! make_exportable_provider {
-            ($ty:ty) => {
-                icu_provider::make_exportable_provider!(
-                    $ty,
-                    [
-                        icu_provider::hello_world::HelloWorldV1Marker,
-                        $(
-                            $marker,
-                        )+
-                        $(
-                            #[cfg(feature = "experimental_components")]
-                            $emarker,
-                        )+
-                    ]
-                );
             }
         }
     }
@@ -324,9 +268,9 @@ fn test_markers() {
             "trash",
         ]),
         vec![
-            icu_list::provider::AndListV1Marker::INFO,
-            icu_datetime::provider::calendar::GregorianDateLengthsV1Marker::INFO,
-            icu_decimal::provider::DecimalSymbolsV1Marker::INFO,
+            icu::list::provider::AndListV1Marker::INFO,
+            icu::datetime::provider::calendar::GregorianDateLengthsV1Marker::INFO,
+            icu::decimal::provider::DecimalSymbolsV1Marker::INFO,
         ]
     );
 }
@@ -336,13 +280,13 @@ fn test_markers_from_bin() {
     assert_eq!(
         markers_from_bin_inner(include_bytes!("../tests/data/tutorial_buffer.wasm")),
         vec![
-            icu_datetime::provider::calendar::GregorianDateLengthsV1Marker::INFO,
-            icu_datetime::provider::calendar::GregorianDateSymbolsV1Marker::INFO,
-            icu_datetime::provider::calendar::TimeLengthsV1Marker::INFO,
-            icu_datetime::provider::calendar::TimeSymbolsV1Marker::INFO,
-            icu_calendar::provider::WeekDataV1Marker::INFO,
-            icu_decimal::provider::DecimalSymbolsV1Marker::INFO,
-            icu_plurals::provider::OrdinalV1Marker::INFO,
+            icu::datetime::provider::calendar::GregorianDateLengthsV1Marker::INFO,
+            icu::datetime::provider::calendar::GregorianDateSymbolsV1Marker::INFO,
+            icu::datetime::provider::calendar::TimeLengthsV1Marker::INFO,
+            icu::datetime::provider::calendar::TimeSymbolsV1Marker::INFO,
+            icu::calendar::provider::WeekDataV1Marker::INFO,
+            icu::decimal::provider::DecimalSymbolsV1Marker::INFO,
+            icu::plurals::provider::OrdinalV1Marker::INFO,
         ]
     );
 }

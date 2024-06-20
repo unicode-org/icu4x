@@ -73,15 +73,17 @@ impl Collator {
         Self::try_new_unstable_internal(
             &crate::provider::Baked,
             DataPayload::from_static_ref(
-                icu_normalizer::provider::Baked::SINGLETON_NORMALIZER_NFD_V1,
+                icu_normalizer::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_DATA_V1_MARKER,
             ),
             DataPayload::from_static_ref(
-                icu_normalizer::provider::Baked::SINGLETON_NORMALIZER_NFDEX_V1,
+                icu_normalizer::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1_MARKER,
             ),
-            DataPayload::from_static_ref(crate::provider::Baked::SINGLETON_COLLATOR_JAMO_V1),
+            DataPayload::from_static_ref(
+                crate::provider::Baked::SINGLETON_COLLATION_JAMO_V1_MARKER,
+            ),
             || {
                 Ok(DataPayload::from_static_ref(
-                    crate::provider::Baked::SINGLETON_COLLATOR_PRIM_V1,
+                    crate::provider::Baked::SINGLETON_COLLATION_SPECIAL_PRIMARIES_V1_MARKER,
                 ))
             },
             locale,
@@ -90,10 +92,14 @@ impl Collator {
     }
 
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: include,
-        options: CollatorOptions,
-        error: DataError,
-        #[cfg(skip)]
+        (locale, options: CollatorOptions) -> error: DataError,
+        functions: [
+            try_new: skip,
+            try_new_with_any_provider,
+            try_new_with_buffer_provider,
+            try_new_unstable,
+            Self
+        ]
     );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
@@ -115,10 +121,10 @@ impl Collator {
     {
         Self::try_new_unstable_internal(
             provider,
-            provider.load(Default::default())?.take_payload()?,
-            provider.load(Default::default())?.take_payload()?,
-            provider.load(Default::default())?.take_payload()?,
-            || provider.load(Default::default())?.take_payload(),
+            provider.load(Default::default())?.payload,
+            provider.load(Default::default())?.payload,
+            provider.load(Default::default())?.payload,
+            || provider.load(Default::default()).map(|r| r.payload),
             locale,
             options,
         )
@@ -149,20 +155,20 @@ impl Collator {
         };
 
         let metadata_payload: DataPayload<crate::provider::CollationMetadataV1Marker> =
-            provider.load(req)?.take_payload()?;
+            provider.load(req)?.payload;
 
         let metadata = metadata_payload.get();
 
         let tailoring: Option<DataPayload<crate::provider::CollationDataV1Marker>> =
             if metadata.tailored() {
-                Some(provider.load(req)?.take_payload()?)
+                Some(provider.load(req)?.payload)
             } else {
                 None
             };
 
         let reordering: Option<DataPayload<crate::provider::CollationReorderingV1Marker>> =
             if metadata.reordering() {
-                Some(provider.load(req)?.take_payload()?)
+                Some(provider.load(req)?.payload)
             } else {
                 None
             };
@@ -175,8 +181,7 @@ impl Collator {
             }
         }
 
-        let root: DataPayload<CollationDataV1Marker> =
-            provider.load(Default::default())?.take_payload()?;
+        let root: DataPayload<CollationDataV1Marker> = provider.load(Default::default())?.payload;
 
         let tailored_diacritics = metadata.tailored_diacritics();
         let diacritics: DataPayload<CollationDiacriticsV1Marker> = provider
@@ -185,7 +190,7 @@ impl Collator {
             } else {
                 Default::default()
             })?
-            .take_payload()?;
+            .payload;
 
         if tailored_diacritics {
             // In the tailored case we accept a shorter table in which case the tailoring is

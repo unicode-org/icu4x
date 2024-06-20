@@ -12,7 +12,7 @@
 #include "ICU4XCodePointSetData.h"
 #include "ICU4XDataProvider.d.h"
 #include "ICU4XDataProvider.h"
-#include "diplomat_result_box_ICU4XCodePointMapData16_ICU4XError.d.h"
+#include "diplomat_result_box_ICU4XCodePointMapData16_ICU4XDataError.d.h"
 
 #include "ICU4XCodePointMapData16.d.h"
 
@@ -32,7 +32,7 @@ ICU4XCodePointRangeIterator* ICU4XCodePointMapData16_iter_ranges_for_value_compl
 
 ICU4XCodePointSetData* ICU4XCodePointMapData16_get_set_for_value(const ICU4XCodePointMapData16* self, uint16_t value);
 
-diplomat_result_box_ICU4XCodePointMapData16_ICU4XError ICU4XCodePointMapData16_load_script(const ICU4XDataProvider* provider);
+diplomat_result_box_ICU4XCodePointMapData16_ICU4XDataError ICU4XCodePointMapData16_load_script(const ICU4XDataProvider* provider);
 
 void ICU4XCodePointMapData16_destroy(ICU4XCodePointMapData16* self);
 

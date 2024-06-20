@@ -1578,10 +1578,10 @@ impl DecomposingNormalizer {
     #[cfg(feature = "compiled_data")]
     pub const fn new_nfd() -> Self {
         const _: () = assert!(
-            crate::provider::Baked::SINGLETON_NORMALIZER_NFDEX_V1
+            crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1_MARKER
                 .scalars16
                 .const_len()
-                + crate::provider::Baked::SINGLETON_NORMALIZER_NFDEX_V1
+                + crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1_MARKER
                     .scalars24
                     .const_len()
                 <= 0xFFF,
@@ -1590,11 +1590,11 @@ impl DecomposingNormalizer {
 
         DecomposingNormalizer {
             decompositions: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_NORMALIZER_NFD_V1,
+                crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_DATA_V1_MARKER,
             ),
             supplementary_decompositions: None,
             tables: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_NORMALIZER_NFDEX_V1,
+                crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1_MARKER,
             ),
             supplementary_tables: None,
             decomposition_passthrough_bound: 0xC0,
@@ -1603,12 +1603,9 @@ impl DecomposingNormalizer {
     }
 
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: skip,
-        options: skip,
-        error: DataError,
-        #[cfg(skip)]
+        () -> error: DataError,
         functions: [
-            new_nfd,
+            new_nfd: skip,
             try_new_nfd_with_any_provider,
             try_new_nfd_with_buffer_provider,
             try_new_nfd_unstable,
@@ -1624,9 +1621,9 @@ impl DecomposingNormalizer {
             + ?Sized,
     {
         let decompositions: DataPayload<CanonicalDecompositionDataV1Marker> =
-            provider.load(Default::default())?.take_payload()?;
+            provider.load(Default::default())?.payload;
         let tables: DataPayload<CanonicalDecompositionTablesV1Marker> =
-            provider.load(Default::default())?.take_payload()?;
+            provider.load(Default::default())?.payload;
 
         if tables.get().scalars16.len() + tables.get().scalars24.len() > 0xFFF {
             // The data is from a future where there exists a normalization flavor whose
@@ -1657,16 +1654,16 @@ impl DecomposingNormalizer {
     #[cfg(feature = "compiled_data")]
     pub const fn new_nfkd() -> Self {
         const _: () = assert!(
-            crate::provider::Baked::SINGLETON_NORMALIZER_NFDEX_V1
+            crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1_MARKER
                 .scalars16
                 .const_len()
-                + crate::provider::Baked::SINGLETON_NORMALIZER_NFDEX_V1
+                + crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1_MARKER
                     .scalars24
                     .const_len()
-                + crate::provider::Baked::SINGLETON_NORMALIZER_NFKDEX_V1
+                + crate::provider::Baked::SINGLETON_COMPATIBILITY_DECOMPOSITION_TABLES_V1_MARKER
                     .scalars16
                     .const_len()
-                + crate::provider::Baked::SINGLETON_NORMALIZER_NFKDEX_V1
+                + crate::provider::Baked::SINGLETON_COMPATIBILITY_DECOMPOSITION_TABLES_V1_MARKER
                     .scalars24
                     .const_len()
                 <= 0xFFF,
@@ -1674,35 +1671,45 @@ impl DecomposingNormalizer {
         );
 
         const _: () = assert!(
-            crate::provider::Baked::SINGLETON_NORMALIZER_NFKD_V1.passthrough_cap <= 0x0300,
+            crate::provider::Baked::SINGLETON_COMPATIBILITY_DECOMPOSITION_SUPPLEMENT_V1_MARKER
+                .passthrough_cap
+                <= 0x0300,
             "invalid"
         );
 
         let decomposition_capped =
-            if crate::provider::Baked::SINGLETON_NORMALIZER_NFKD_V1.passthrough_cap < 0xC0 {
-                crate::provider::Baked::SINGLETON_NORMALIZER_NFKD_V1.passthrough_cap
+            if crate::provider::Baked::SINGLETON_COMPATIBILITY_DECOMPOSITION_SUPPLEMENT_V1_MARKER
+                .passthrough_cap
+                < 0xC0
+            {
+                crate::provider::Baked::SINGLETON_COMPATIBILITY_DECOMPOSITION_SUPPLEMENT_V1_MARKER
+                    .passthrough_cap
             } else {
                 0xC0
             };
         let composition_capped =
-            if crate::provider::Baked::SINGLETON_NORMALIZER_NFKD_V1.passthrough_cap < 0x0300 {
-                crate::provider::Baked::SINGLETON_NORMALIZER_NFKD_V1.passthrough_cap
+            if crate::provider::Baked::SINGLETON_COMPATIBILITY_DECOMPOSITION_SUPPLEMENT_V1_MARKER
+                .passthrough_cap
+                < 0x0300
+            {
+                crate::provider::Baked::SINGLETON_COMPATIBILITY_DECOMPOSITION_SUPPLEMENT_V1_MARKER
+                    .passthrough_cap
             } else {
                 0x0300
             };
 
         DecomposingNormalizer {
             decompositions: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_NORMALIZER_NFD_V1,
+                crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_DATA_V1_MARKER,
             ),
             supplementary_decompositions: Some(SupplementPayloadHolder::Compatibility(
-                DataPayload::from_static_ref(crate::provider::Baked::SINGLETON_NORMALIZER_NFKD_V1),
+                DataPayload::from_static_ref(crate::provider::Baked::SINGLETON_COMPATIBILITY_DECOMPOSITION_SUPPLEMENT_V1_MARKER),
             )),
             tables: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_NORMALIZER_NFDEX_V1,
+                crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1_MARKER,
             ),
             supplementary_tables: Some(DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_NORMALIZER_NFKDEX_V1,
+                crate::provider::Baked::SINGLETON_COMPATIBILITY_DECOMPOSITION_TABLES_V1_MARKER,
             )),
             decomposition_passthrough_bound: decomposition_capped as u8,
             composition_passthrough_bound: composition_capped,
@@ -1710,12 +1717,9 @@ impl DecomposingNormalizer {
     }
 
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: skip,
-        options: skip,
-        error: DataError,
-        #[cfg(skip)]
+        () -> error: DataError,
         functions: [
-            new_nfkd,
+            new_nfkd: skip,
             try_new_nfkd_with_any_provider,
             try_new_nfkd_with_buffer_provider,
             try_new_nfkd_unstable,
@@ -1733,14 +1737,14 @@ impl DecomposingNormalizer {
             + ?Sized,
     {
         let decompositions: DataPayload<CanonicalDecompositionDataV1Marker> =
-            provider.load(Default::default())?.take_payload()?;
+            provider.load(Default::default())?.payload;
         let supplementary_decompositions: DataPayload<
             CompatibilityDecompositionSupplementV1Marker,
-        > = provider.load(Default::default())?.take_payload()?;
+        > = provider.load(Default::default())?.payload;
         let tables: DataPayload<CanonicalDecompositionTablesV1Marker> =
-            provider.load(Default::default())?.take_payload()?;
+            provider.load(Default::default())?.payload;
         let supplementary_tables: DataPayload<CompatibilityDecompositionTablesV1Marker> =
-            provider.load(Default::default())?.take_payload()?;
+            provider.load(Default::default())?.payload;
 
         if tables.get().scalars16.len()
             + tables.get().scalars24.len()
@@ -1781,16 +1785,16 @@ impl DecomposingNormalizer {
     #[cfg(feature = "compiled_data")]
     pub(crate) const fn new_uts46_decomposed() -> Self {
         const _: () = assert!(
-            crate::provider::Baked::SINGLETON_NORMALIZER_NFDEX_V1
+            crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1_MARKER
                 .scalars16
                 .const_len()
-                + crate::provider::Baked::SINGLETON_NORMALIZER_NFDEX_V1
+                + crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1_MARKER
                     .scalars24
                     .const_len()
-                + crate::provider::Baked::SINGLETON_NORMALIZER_NFKDEX_V1
+                + crate::provider::Baked::SINGLETON_COMPATIBILITY_DECOMPOSITION_TABLES_V1_MARKER
                     .scalars16
                     .const_len()
-                + crate::provider::Baked::SINGLETON_NORMALIZER_NFKDEX_V1
+                + crate::provider::Baked::SINGLETON_COMPATIBILITY_DECOMPOSITION_TABLES_V1_MARKER
                     .scalars24
                     .const_len()
                 <= 0xFFF,
@@ -1798,37 +1802,47 @@ impl DecomposingNormalizer {
         );
 
         const _: () = assert!(
-            crate::provider::Baked::SINGLETON_NORMALIZER_UTS46D_V1.passthrough_cap <= 0x0300,
+            crate::provider::Baked::SINGLETON_UTS46_DECOMPOSITION_SUPPLEMENT_V1_MARKER
+                .passthrough_cap
+                <= 0x0300,
             "invalid"
         );
 
         let decomposition_capped =
-            if crate::provider::Baked::SINGLETON_NORMALIZER_UTS46D_V1.passthrough_cap < 0xC0 {
-                crate::provider::Baked::SINGLETON_NORMALIZER_UTS46D_V1.passthrough_cap
+            if crate::provider::Baked::SINGLETON_UTS46_DECOMPOSITION_SUPPLEMENT_V1_MARKER
+                .passthrough_cap
+                < 0xC0
+            {
+                crate::provider::Baked::SINGLETON_UTS46_DECOMPOSITION_SUPPLEMENT_V1_MARKER
+                    .passthrough_cap
             } else {
                 0xC0
             };
         let composition_capped =
-            if crate::provider::Baked::SINGLETON_NORMALIZER_UTS46D_V1.passthrough_cap < 0x0300 {
-                crate::provider::Baked::SINGLETON_NORMALIZER_UTS46D_V1.passthrough_cap
+            if crate::provider::Baked::SINGLETON_UTS46_DECOMPOSITION_SUPPLEMENT_V1_MARKER
+                .passthrough_cap
+                < 0x0300
+            {
+                crate::provider::Baked::SINGLETON_UTS46_DECOMPOSITION_SUPPLEMENT_V1_MARKER
+                    .passthrough_cap
             } else {
                 0x0300
             };
 
         DecomposingNormalizer {
             decompositions: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_NORMALIZER_NFD_V1,
+                crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_DATA_V1_MARKER,
             ),
             supplementary_decompositions: Some(SupplementPayloadHolder::Uts46(
                 DataPayload::from_static_ref(
-                    crate::provider::Baked::SINGLETON_NORMALIZER_UTS46D_V1,
+                    crate::provider::Baked::SINGLETON_UTS46_DECOMPOSITION_SUPPLEMENT_V1_MARKER,
                 ),
             )),
             tables: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_NORMALIZER_NFDEX_V1,
+                crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1_MARKER,
             ),
             supplementary_tables: Some(DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_NORMALIZER_NFKDEX_V1,
+                crate::provider::Baked::SINGLETON_COMPATIBILITY_DECOMPOSITION_TABLES_V1_MARKER,
             )),
             decomposition_passthrough_bound: decomposition_capped as u8,
             composition_passthrough_bound: composition_capped,
@@ -1862,13 +1876,13 @@ impl DecomposingNormalizer {
             + ?Sized,
     {
         let decompositions: DataPayload<CanonicalDecompositionDataV1Marker> =
-            provider.load(Default::default())?.take_payload()?;
+            provider.load(Default::default())?.payload;
         let supplementary_decompositions: DataPayload<Uts46DecompositionSupplementV1Marker> =
-            provider.load(Default::default())?.take_payload()?;
+            provider.load(Default::default())?.payload;
         let tables: DataPayload<CanonicalDecompositionTablesV1Marker> =
-            provider.load(Default::default())?.take_payload()?;
+            provider.load(Default::default())?.payload;
         let supplementary_tables: DataPayload<CompatibilityDecompositionTablesV1Marker> =
-            provider.load(Default::default())?.take_payload()?;
+            provider.load(Default::default())?.payload;
 
         if tables.get().scalars16.len()
             + tables.get().scalars24.len()
@@ -2198,18 +2212,15 @@ impl ComposingNormalizer {
         ComposingNormalizer {
             decomposing_normalizer: DecomposingNormalizer::new_nfd(),
             canonical_compositions: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_NORMALIZER_COMP_V1,
+                crate::provider::Baked::SINGLETON_CANONICAL_COMPOSITIONS_V1_MARKER,
             ),
         }
     }
 
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: skip,
-        options: skip,
-        error: DataError,
-        #[cfg(skip)]
+        () -> error: DataError,
         functions: [
-            new_nfc,
+            new_nfc: skip,
             try_new_nfc_with_any_provider,
             try_new_nfc_with_buffer_provider,
             try_new_nfc_unstable,
@@ -2228,7 +2239,7 @@ impl ComposingNormalizer {
         let decomposing_normalizer = DecomposingNormalizer::try_new_nfd_unstable(provider)?;
 
         let canonical_compositions: DataPayload<CanonicalCompositionsV1Marker> =
-            provider.load(Default::default())?.take_payload()?;
+            provider.load(Default::default())?.payload;
 
         Ok(ComposingNormalizer {
             decomposing_normalizer,
@@ -2246,18 +2257,15 @@ impl ComposingNormalizer {
         ComposingNormalizer {
             decomposing_normalizer: DecomposingNormalizer::new_nfkd(),
             canonical_compositions: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_NORMALIZER_COMP_V1,
+                crate::provider::Baked::SINGLETON_CANONICAL_COMPOSITIONS_V1_MARKER,
             ),
         }
     }
 
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: skip,
-        options: skip,
-        error: DataError,
-        #[cfg(skip)]
+        () -> error: DataError,
         functions: [
-            new_nfkc,
+            new_nfkc: skip,
             try_new_nfkc_with_any_provider,
             try_new_nfkc_with_buffer_provider,
             try_new_nfkc_unstable,
@@ -2278,7 +2286,7 @@ impl ComposingNormalizer {
         let decomposing_normalizer = DecomposingNormalizer::try_new_nfkd_unstable(provider)?;
 
         let canonical_compositions: DataPayload<CanonicalCompositionsV1Marker> =
-            provider.load(Default::default())?.take_payload()?;
+            provider.load(Default::default())?.payload;
 
         Ok(ComposingNormalizer {
             decomposing_normalizer,
@@ -2300,7 +2308,7 @@ impl ComposingNormalizer {
         ComposingNormalizer {
             decomposing_normalizer: DecomposingNormalizer::new_uts46_decomposed(),
             canonical_compositions: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_NORMALIZER_COMP_V1,
+                crate::provider::Baked::SINGLETON_CANONICAL_COMPOSITIONS_V1_MARKER,
             ),
         }
     }
@@ -2320,7 +2328,7 @@ impl ComposingNormalizer {
             DecomposingNormalizer::try_new_uts46_decomposed_unstable(provider)?;
 
         let canonical_compositions: DataPayload<CanonicalCompositionsV1Marker> =
-            provider.load(Default::default())?.take_payload()?;
+            provider.load(Default::default())?.payload;
 
         Ok(ComposingNormalizer {
             decomposing_normalizer,

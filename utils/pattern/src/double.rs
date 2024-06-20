@@ -5,6 +5,7 @@
 //! Code for the [`DoublePlaceholder`] pattern backend.
 
 use core::convert::Infallible;
+use core::str::Utf8Error;
 use core::{cmp::Ordering, str::FromStr};
 use either::Either;
 use writeable::adapters::WriteableAsTryWriteableInfallible;
@@ -270,8 +271,14 @@ impl PatternBackend for DoublePlaceholder {
     #[cfg(feature = "alloc")]
     type PlaceholderKeyCow<'a> = DoublePlaceholderKey;
     type Error<'a> = Infallible;
+    type StoreFromBytesError = Utf8Error;
     type Store = str;
     type Iter<'a> = DoublePlaceholderPatternIterator<'a>;
+
+    #[inline]
+    fn try_store_from_utf8(bytes: &[u8]) -> Result<&Self::Store, Self::StoreFromBytesError> {
+        core::str::from_utf8(bytes)
+    }
 
     fn validate_store(store: &Self::Store) -> Result<(), Error> {
         let mut chars = store.chars();

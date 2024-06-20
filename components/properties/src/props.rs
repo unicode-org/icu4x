@@ -609,7 +609,7 @@ macro_rules! impl_value_getter {
             $vis_n2e fn $name_n2e(
                 provider: &(impl DataProvider<$marker_n2e> + ?Sized)
             ) -> Result<PropertyValueNameToEnumMapper<$ty>, DataError> {
-                provider.load(Default::default()).and_then(DataResponse::take_payload).map(PropertyValueNameToEnumMapper::from_data)
+                Ok(PropertyValueNameToEnumMapper::from_data(provider.load(Default::default())?.payload))
             }
 
             $(
@@ -628,7 +628,7 @@ macro_rules! impl_value_getter {
                 $vis_e2sn fn $name_e2sn(
                     provider: &(impl DataProvider<$marker_e2sn> + ?Sized)
                 ) -> Result<$mapper_e2sn<$ty>, DataError> {
-                    provider.load(Default::default()).and_then(DataResponse::take_payload).map($mapper_e2sn::from_data)
+                    Ok($mapper_e2sn::from_data(provider.load(Default::default())?.payload))
                 }
 
                 $(#[$attr_e2ln])*
@@ -646,7 +646,7 @@ macro_rules! impl_value_getter {
                 $vis_e2ln fn $name_e2ln(
                     provider: &(impl DataProvider<$marker_e2ln> + ?Sized)
                 ) -> Result<$mapper_e2ln<$ty>, DataError> {
-                    provider.load(Default::default()).and_then(DataResponse::take_payload).map($mapper_e2ln::from_data)
+                    Ok($mapper_e2ln::from_data(provider.load(Default::default())?.payload))
                 }
             )?
         }
@@ -753,7 +753,7 @@ impl BidiClass {
 }
 
 impl_value_getter! {
-    markers: BidiClassNameToValueV1Marker / SINGLETON_PROPNAMES_FROM_BC_V1, BidiClassValueToShortNameV1Marker / SINGLETON_PROPNAMES_TO_SHORT_LINEAR_BC_V1, BidiClassValueToLongNameV1Marker / SINGLETON_PROPNAMES_TO_LONG_LINEAR_BC_V1;
+    markers: BidiClassNameToValueV1Marker / SINGLETON_BIDI_CLASS_NAME_TO_VALUE_V1_MARKER, BidiClassValueToShortNameV1Marker / SINGLETON_BIDI_CLASS_VALUE_TO_SHORT_NAME_V1_MARKER, BidiClassValueToLongNameV1Marker / SINGLETON_BIDI_CLASS_VALUE_TO_LONG_NAME_V1_MARKER;
     impl BidiClass {
         /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
         /// from strings for the `Bidi_Class` enumerated property
@@ -905,7 +905,7 @@ pub enum GeneralCategory {
 }
 
 impl_value_getter! {
-    markers: GeneralCategoryNameToValueV1Marker / SINGLETON_PROPNAMES_FROM_GC_V1, GeneralCategoryValueToShortNameV1Marker / SINGLETON_PROPNAMES_TO_SHORT_LINEAR_GC_V1, GeneralCategoryValueToLongNameV1Marker / SINGLETON_PROPNAMES_TO_LONG_LINEAR_GC_V1;
+    markers: GeneralCategoryNameToValueV1Marker / SINGLETON_GENERAL_CATEGORY_NAME_TO_VALUE_V1_MARKER, GeneralCategoryValueToShortNameV1Marker / SINGLETON_GENERAL_CATEGORY_VALUE_TO_SHORT_NAME_V1_MARKER, GeneralCategoryValueToLongNameV1Marker / SINGLETON_GENERAL_CATEGORY_VALUE_TO_LONG_NAME_V1_MARKER;
     impl GeneralCategory {
         /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
         /// from strings for the `General_Category` enumerated property.
@@ -1265,7 +1265,7 @@ impl GeneralCategoryGroup {
 }
 
 impl_value_getter! {
-    markers: GeneralCategoryMaskNameToValueV1Marker / SINGLETON_PROPNAMES_FROM_GCM_V1;
+    markers: GeneralCategoryMaskNameToValueV1Marker / SINGLETON_GENERAL_CATEGORY_MASK_NAME_TO_VALUE_V1_MARKER;
     impl GeneralCategoryGroup {
         /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
         /// from strings for the `General_Category_Mask` mask property.
@@ -1510,7 +1510,7 @@ impl Script {
 }
 
 impl_value_getter! {
-    markers: ScriptNameToValueV1Marker / SINGLETON_PROPNAMES_FROM_SC_V1, ScriptValueToShortNameV1Marker / SINGLETON_PROPNAMES_TO_SHORT_LINEAR4_SC_V1, ScriptValueToLongNameV1Marker / SINGLETON_PROPNAMES_TO_LONG_LINEAR_SC_V1;
+    markers: ScriptNameToValueV1Marker / SINGLETON_SCRIPT_NAME_TO_VALUE_V1_MARKER, ScriptValueToShortNameV1Marker / SINGLETON_SCRIPT_VALUE_TO_SHORT_NAME_V1_MARKER, ScriptValueToLongNameV1Marker / SINGLETON_SCRIPT_VALUE_TO_LONG_NAME_V1_MARKER;
     impl Script {
         /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
         /// from strings for the `Script` enumerated property.
@@ -1611,7 +1611,7 @@ impl HangulSyllableType {
 }
 
 impl_value_getter! {
-    markers: HangulSyllableTypeNameToValueV1Marker / SINGLETON_PROPNAMES_FROM_HST_V1, HangulSyllableTypeValueToShortNameV1Marker / SINGLETON_PROPNAMES_TO_SHORT_LINEAR_HST_V1, HangulSyllableTypeValueToLongNameV1Marker / SINGLETON_PROPNAMES_TO_LONG_LINEAR_HST_V1;
+    markers: HangulSyllableTypeNameToValueV1Marker / SINGLETON_HANGUL_SYLLABLE_TYPE_NAME_TO_VALUE_V1_MARKER, HangulSyllableTypeValueToShortNameV1Marker / SINGLETON_HANGUL_SYLLABLE_TYPE_VALUE_TO_SHORT_NAME_V1_MARKER, HangulSyllableTypeValueToLongNameV1Marker / SINGLETON_HANGUL_SYLLABLE_TYPE_VALUE_TO_LONG_NAME_V1_MARKER;
     impl HangulSyllableType {
         /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
         /// from strings for the `Bidi_Class` enumerated property
@@ -1706,7 +1706,7 @@ impl EastAsianWidth {
 }
 
 impl_value_getter! {
-    markers: EastAsianWidthNameToValueV1Marker / SINGLETON_PROPNAMES_FROM_EA_V1, EastAsianWidthValueToShortNameV1Marker / SINGLETON_PROPNAMES_TO_SHORT_LINEAR_EA_V1, EastAsianWidthValueToLongNameV1Marker / SINGLETON_PROPNAMES_TO_LONG_LINEAR_EA_V1;
+    markers: EastAsianWidthNameToValueV1Marker / SINGLETON_EAST_ASIAN_WIDTH_NAME_TO_VALUE_V1_MARKER, EastAsianWidthValueToShortNameV1Marker / SINGLETON_EAST_ASIAN_WIDTH_VALUE_TO_SHORT_NAME_V1_MARKER, EastAsianWidthValueToLongNameV1Marker / SINGLETON_EAST_ASIAN_WIDTH_VALUE_TO_LONG_NAME_V1_MARKER;
     impl EastAsianWidth {
         /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
         /// from strings for the `East_Asian_Width` enumerated property.
@@ -1843,7 +1843,7 @@ impl LineBreak {
 }
 
 impl_value_getter! {
-    markers: LineBreakNameToValueV1Marker / SINGLETON_PROPNAMES_FROM_LB_V1, LineBreakValueToShortNameV1Marker / SINGLETON_PROPNAMES_TO_SHORT_LINEAR_LB_V1, LineBreakValueToLongNameV1Marker / SINGLETON_PROPNAMES_TO_LONG_LINEAR_LB_V1;
+    markers: LineBreakNameToValueV1Marker / SINGLETON_LINE_BREAK_NAME_TO_VALUE_V1_MARKER, LineBreakValueToShortNameV1Marker / SINGLETON_LINE_BREAK_VALUE_TO_SHORT_NAME_V1_MARKER, LineBreakValueToLongNameV1Marker / SINGLETON_LINE_BREAK_VALUE_TO_LONG_NAME_V1_MARKER;
     impl LineBreak {
         /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
         /// from strings for the `Line_Break` enumerated property.
@@ -1953,7 +1953,7 @@ impl GraphemeClusterBreak {
 }
 
 impl_value_getter! {
-    markers: GraphemeClusterBreakNameToValueV1Marker / SINGLETON_PROPNAMES_FROM_GCB_V1, GraphemeClusterBreakValueToShortNameV1Marker / SINGLETON_PROPNAMES_TO_SHORT_LINEAR_GCB_V1, GraphemeClusterBreakValueToLongNameV1Marker / SINGLETON_PROPNAMES_TO_LONG_LINEAR_GCB_V1;
+    markers: GraphemeClusterBreakNameToValueV1Marker / SINGLETON_GRAPHEME_CLUSTER_BREAK_NAME_TO_VALUE_V1_MARKER, GraphemeClusterBreakValueToShortNameV1Marker / SINGLETON_GRAPHEME_CLUSTER_BREAK_VALUE_TO_SHORT_NAME_V1_MARKER, GraphemeClusterBreakValueToLongNameV1Marker / SINGLETON_GRAPHEME_CLUSTER_BREAK_VALUE_TO_LONG_NAME_V1_MARKER;
     impl GraphemeClusterBreak {
         /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
         /// from strings for the `Grapheme_Cluster_Break` enumerated property.
@@ -2070,7 +2070,7 @@ impl WordBreak {
 }
 
 impl_value_getter! {
-    markers: WordBreakNameToValueV1Marker / SINGLETON_PROPNAMES_FROM_WB_V1, WordBreakValueToShortNameV1Marker / SINGLETON_PROPNAMES_TO_SHORT_LINEAR_WB_V1, WordBreakValueToLongNameV1Marker / SINGLETON_PROPNAMES_TO_LONG_LINEAR_WB_V1;
+    markers: WordBreakNameToValueV1Marker / SINGLETON_WORD_BREAK_NAME_TO_VALUE_V1_MARKER, WordBreakValueToShortNameV1Marker / SINGLETON_WORD_BREAK_VALUE_TO_SHORT_NAME_V1_MARKER, WordBreakValueToLongNameV1Marker / SINGLETON_WORD_BREAK_VALUE_TO_LONG_NAME_V1_MARKER;
     impl WordBreak {
         /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
         /// from strings for the `Word_Break` enumerated property.
@@ -2177,7 +2177,7 @@ impl SentenceBreak {
 }
 
 impl_value_getter! {
-    markers: SentenceBreakNameToValueV1Marker / SINGLETON_PROPNAMES_FROM_SB_V1, SentenceBreakValueToShortNameV1Marker / SINGLETON_PROPNAMES_TO_SHORT_LINEAR_SB_V1, SentenceBreakValueToLongNameV1Marker / SINGLETON_PROPNAMES_TO_LONG_LINEAR_SB_V1;
+    markers: SentenceBreakNameToValueV1Marker / SINGLETON_SENTENCE_BREAK_NAME_TO_VALUE_V1_MARKER, SentenceBreakValueToShortNameV1Marker / SINGLETON_SENTENCE_BREAK_VALUE_TO_SHORT_NAME_V1_MARKER, SentenceBreakValueToLongNameV1Marker / SINGLETON_SENTENCE_BREAK_VALUE_TO_LONG_NAME_V1_MARKER;
     impl SentenceBreak {
         /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
         /// from strings for the `Sentence_Break` enumerated property.
@@ -2330,7 +2330,7 @@ impl CanonicalCombiningClass {
 }
 
 impl_value_getter! {
-    markers: CanonicalCombiningClassNameToValueV1Marker / SINGLETON_PROPNAMES_FROM_CCC_V1, CanonicalCombiningClassValueToShortNameV1Marker / SINGLETON_PROPNAMES_TO_SHORT_SPARSE_CCC_V1, CanonicalCombiningClassValueToLongNameV1Marker / SINGLETON_PROPNAMES_TO_LONG_SPARSE_CCC_V1;
+    markers: CanonicalCombiningClassNameToValueV1Marker / SINGLETON_CANONICAL_COMBINING_CLASS_NAME_TO_VALUE_V1_MARKER, CanonicalCombiningClassValueToShortNameV1Marker / SINGLETON_CANONICAL_COMBINING_CLASS_VALUE_TO_SHORT_NAME_V1_MARKER, CanonicalCombiningClassValueToLongNameV1Marker / SINGLETON_CANONICAL_COMBINING_CLASS_VALUE_TO_LONG_NAME_V1_MARKER;
     impl CanonicalCombiningClass {
         /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
         /// from strings for the `Canonical_Combining_Class` enumerated property.
@@ -2457,7 +2457,7 @@ impl IndicSyllabicCategory {
 }
 
 impl_value_getter! {
-    markers: IndicSyllabicCategoryNameToValueV1Marker / SINGLETON_PROPNAMES_FROM_INSC_V1, IndicSyllabicCategoryValueToShortNameV1Marker / SINGLETON_PROPNAMES_TO_SHORT_LINEAR_INSC_V1, IndicSyllabicCategoryValueToLongNameV1Marker / SINGLETON_PROPNAMES_TO_LONG_LINEAR_INSC_V1;
+    markers: IndicSyllabicCategoryNameToValueV1Marker / SINGLETON_INDIC_SYLLABIC_CATEGORY_NAME_TO_VALUE_V1_MARKER, IndicSyllabicCategoryValueToShortNameV1Marker / SINGLETON_INDIC_SYLLABIC_CATEGORY_VALUE_TO_SHORT_NAME_V1_MARKER, IndicSyllabicCategoryValueToLongNameV1Marker / SINGLETON_INDIC_SYLLABIC_CATEGORY_VALUE_TO_LONG_NAME_V1_MARKER;
     impl IndicSyllabicCategory {
         /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
         /// from strings for the `Indic_Syllabic_Category` enumerated property.
@@ -2547,7 +2547,7 @@ impl JoiningType {
 }
 
 impl_value_getter! {
-    markers: JoiningTypeNameToValueV1Marker / SINGLETON_PROPNAMES_FROM_JT_V1, JoiningTypeValueToShortNameV1Marker / SINGLETON_PROPNAMES_TO_SHORT_LINEAR_JT_V1, JoiningTypeValueToLongNameV1Marker / SINGLETON_PROPNAMES_TO_LONG_LINEAR_JT_V1;
+    markers: JoiningTypeNameToValueV1Marker / SINGLETON_JOINING_TYPE_NAME_TO_VALUE_V1_MARKER, JoiningTypeValueToShortNameV1Marker / SINGLETON_JOINING_TYPE_VALUE_TO_SHORT_NAME_V1_MARKER, JoiningTypeValueToLongNameV1Marker / SINGLETON_JOINING_TYPE_VALUE_TO_LONG_NAME_V1_MARKER;
     impl JoiningType {
         /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
         /// from strings for the `Joining_Type` enumerated property.
@@ -2663,7 +2663,7 @@ mod test_enumerated_property_completeness {
     #[test]
     fn test_ea() {
         check_enum(
-            crate::provider::Baked::SINGLETON_PROPNAMES_FROM_EA_V1,
+            crate::provider::Baked::SINGLETON_EAST_ASIAN_WIDTH_NAME_TO_VALUE_V1_MARKER,
             EastAsianWidth::ALL_CONSTS,
         );
     }
@@ -2671,7 +2671,7 @@ mod test_enumerated_property_completeness {
     #[test]
     fn test_ccc() {
         check_enum(
-            crate::provider::Baked::SINGLETON_PROPNAMES_FROM_CCC_V1,
+            crate::provider::Baked::SINGLETON_CANONICAL_COMBINING_CLASS_NAME_TO_VALUE_V1_MARKER,
             CanonicalCombiningClass::ALL_CONSTS,
         );
     }
@@ -2679,7 +2679,7 @@ mod test_enumerated_property_completeness {
     #[test]
     fn test_jt() {
         check_enum(
-            crate::provider::Baked::SINGLETON_PROPNAMES_FROM_JT_V1,
+            crate::provider::Baked::SINGLETON_JOINING_TYPE_NAME_TO_VALUE_V1_MARKER,
             JoiningType::ALL_CONSTS,
         );
     }
@@ -2687,7 +2687,7 @@ mod test_enumerated_property_completeness {
     #[test]
     fn test_insc() {
         check_enum(
-            crate::provider::Baked::SINGLETON_PROPNAMES_FROM_INSC_V1,
+            crate::provider::Baked::SINGLETON_INDIC_SYLLABIC_CATEGORY_NAME_TO_VALUE_V1_MARKER,
             IndicSyllabicCategory::ALL_CONSTS,
         );
     }
@@ -2695,7 +2695,7 @@ mod test_enumerated_property_completeness {
     #[test]
     fn test_sb() {
         check_enum(
-            crate::provider::Baked::SINGLETON_PROPNAMES_FROM_SB_V1,
+            crate::provider::Baked::SINGLETON_SENTENCE_BREAK_NAME_TO_VALUE_V1_MARKER,
             SentenceBreak::ALL_CONSTS,
         );
     }
@@ -2703,7 +2703,7 @@ mod test_enumerated_property_completeness {
     #[test]
     fn test_wb() {
         check_enum(
-            crate::provider::Baked::SINGLETON_PROPNAMES_FROM_WB_V1,
+            crate::provider::Baked::SINGLETON_WORD_BREAK_NAME_TO_VALUE_V1_MARKER,
             WordBreak::ALL_CONSTS,
         );
     }
@@ -2711,7 +2711,7 @@ mod test_enumerated_property_completeness {
     #[test]
     fn test_bc() {
         check_enum(
-            crate::provider::Baked::SINGLETON_PROPNAMES_FROM_BC_V1,
+            crate::provider::Baked::SINGLETON_BIDI_CLASS_NAME_TO_VALUE_V1_MARKER,
             BidiClass::ALL_CONSTS,
         );
     }
@@ -2719,7 +2719,7 @@ mod test_enumerated_property_completeness {
     #[test]
     fn test_hst() {
         check_enum(
-            crate::provider::Baked::SINGLETON_PROPNAMES_FROM_HST_V1,
+            crate::provider::Baked::SINGLETON_HANGUL_SYLLABLE_TYPE_NAME_TO_VALUE_V1_MARKER,
             HangulSyllableType::ALL_CONSTS,
         );
     }

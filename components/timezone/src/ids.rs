@@ -109,15 +109,14 @@ impl TimeZoneIdMapper {
     pub fn new() -> Self {
         Self {
             data: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_TIME_ZONE_IANA_TO_BCP47_V2,
+                crate::provider::Baked::SINGLETON_IANA_TO_BCP47_MAP_V2_MARKER,
             ),
         }
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: DataError,
-        #[cfg(skip)]
+    icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,
         functions: [
-            new,
+            new: skip,
             try_new_with_any_provider,
             try_new_with_buffer_provider,
             try_new_unstable,
@@ -130,7 +129,7 @@ impl TimeZoneIdMapper {
     where
         P: DataProvider<IanaToBcp47MapV2Marker> + ?Sized,
     {
-        let data = provider.load(Default::default())?.take_payload()?;
+        let data = provider.load(Default::default())?.payload;
         Ok(Self { data })
     }
 
@@ -466,25 +465,24 @@ impl TimeZoneIdMapperWithFastCanonicalization<TimeZoneIdMapper> {
     #[cfg(feature = "compiled_data")]
     pub fn new() -> Self {
         const _: () = assert!(
-            crate::provider::Baked::SINGLETON_TIME_ZONE_IANA_TO_BCP47_V2.bcp47_ids_checksum
-                == crate::provider::Baked::SINGLETON_TIME_ZONE_BCP47_TO_IANA_V1.bcp47_ids_checksum,
+            crate::provider::Baked::SINGLETON_IANA_TO_BCP47_MAP_V2_MARKER.bcp47_ids_checksum
+                == crate::provider::Baked::SINGLETON_BCP47_TO_IANA_MAP_V1_MARKER.bcp47_ids_checksum,
         );
         Self {
             inner: TimeZoneIdMapper {
                 data: DataPayload::from_static_ref(
-                    crate::provider::Baked::SINGLETON_TIME_ZONE_IANA_TO_BCP47_V2,
+                    crate::provider::Baked::SINGLETON_IANA_TO_BCP47_MAP_V2_MARKER,
                 ),
             },
             data: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_TIME_ZONE_BCP47_TO_IANA_V1,
+                crate::provider::Baked::SINGLETON_BCP47_TO_IANA_MAP_V1_MARKER,
             ),
         }
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: DataError,
-        #[cfg(skip)]
+    icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,
         functions: [
-            new,
+            new: skip,
             try_new_with_any_provider,
             try_new_with_buffer_provider,
             try_new_unstable,
@@ -519,16 +517,15 @@ where
         Self {
             inner: mapper,
             data: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_TIME_ZONE_BCP47_TO_IANA_V1,
+                crate::provider::Baked::SINGLETON_BCP47_TO_IANA_MAP_V1_MARKER,
             ),
         }
         .validated()
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(locale: skip, mapper: I, error: DataError,
-        #[cfg(skip)]
+    icu_provider::gen_any_buffer_data_constructors!((mapper: I) -> error: DataError,
         functions: [
-            try_new_with_mapper,
+            try_new_with_mapper: skip,
             try_new_with_mapper_with_any_provider,
             try_new_with_mapper_with_buffer_provider,
             try_new_with_mapper_unstable,
@@ -541,7 +538,7 @@ where
     where
         P: DataProvider<IanaToBcp47MapV2Marker> + DataProvider<Bcp47ToIanaMapV1Marker> + ?Sized,
     {
-        let data = provider.load(Default::default())?.take_payload()?;
+        let data = provider.load(Default::default())?.payload;
         Self {
             inner: mapper,
             data,

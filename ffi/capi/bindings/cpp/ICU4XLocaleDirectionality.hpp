@@ -10,23 +10,23 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
+#include "ICU4XDataError.hpp"
 #include "ICU4XDataProvider.hpp"
-#include "ICU4XError.hpp"
 #include "ICU4XLocale.hpp"
 #include "ICU4XLocaleDirection.hpp"
 #include "ICU4XLocaleDirectionality.h"
 #include "ICU4XLocaleExpander.hpp"
 
 
-inline diplomat::result<std::unique_ptr<ICU4XLocaleDirectionality>, ICU4XError> ICU4XLocaleDirectionality::create(const ICU4XDataProvider& provider) {
+inline diplomat::result<std::unique_ptr<ICU4XLocaleDirectionality>, ICU4XDataError> ICU4XLocaleDirectionality::create(const ICU4XDataProvider& provider) {
   auto result = capi::ICU4XLocaleDirectionality_create(provider.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XLocaleDirectionality>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XLocaleDirectionality>>(std::unique_ptr<ICU4XLocaleDirectionality>(ICU4XLocaleDirectionality::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XLocaleDirectionality>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XLocaleDirectionality>, ICU4XDataError>(diplomat::Ok<std::unique_ptr<ICU4XLocaleDirectionality>>(std::unique_ptr<ICU4XLocaleDirectionality>(ICU4XLocaleDirectionality::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XLocaleDirectionality>, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::unique_ptr<ICU4XLocaleDirectionality>, ICU4XError> ICU4XLocaleDirectionality::create_with_expander(const ICU4XDataProvider& provider, const ICU4XLocaleExpander& expander) {
+inline diplomat::result<std::unique_ptr<ICU4XLocaleDirectionality>, ICU4XDataError> ICU4XLocaleDirectionality::create_with_expander(const ICU4XDataProvider& provider, const ICU4XLocaleExpander& expander) {
   auto result = capi::ICU4XLocaleDirectionality_create_with_expander(provider.AsFFI(),
     expander.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XLocaleDirectionality>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XLocaleDirectionality>>(std::unique_ptr<ICU4XLocaleDirectionality>(ICU4XLocaleDirectionality::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XLocaleDirectionality>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XLocaleDirectionality>, ICU4XDataError>(diplomat::Ok<std::unique_ptr<ICU4XLocaleDirectionality>>(std::unique_ptr<ICU4XLocaleDirectionality>(ICU4XLocaleDirectionality::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XLocaleDirectionality>, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
 
 inline ICU4XLocaleDirection ICU4XLocaleDirectionality::get(const ICU4XLocale& locale) const {

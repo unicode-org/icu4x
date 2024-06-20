@@ -65,19 +65,25 @@ impl ForkByErrorPredicate for MissingDataMarkerPredicate {
 ///
 /// # Examples
 ///
-/// Configure a multi-language data provider pointing at two language packs:
-///
 /// ```
 /// use icu_provider_adapters::fork::ForkByErrorProvider;
 /// use icu_provider_adapters::fork::predicates::MissingLocalePredicate;
-/// use icu_provider_fs::FsDataProvider;
 /// use icu_provider::prelude::*;
-/// use icu_provider::hello_world::HelloWorldV1Marker;
-/// use icu_locale_core::langid;
+/// use icu_provider::hello_world::*;
+/// use icu_locale::langid;
 ///
-/// // The `tests` directory contains two separate "language packs" for Hello World data.
-/// let provider_de = FsDataProvider::try_new("tests/data/langtest/de").unwrap();
-/// let provider_ro = FsDataProvider::try_new("tests/data/langtest/ro").unwrap();
+/// struct SingleLocaleProvider(icu_locale::LanguageIdentifier);
+/// impl DataProvider<HelloWorldV1Marker> for SingleLocaleProvider {
+///     fn load(&self, req: DataRequest) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
+///         if req.locale.get_langid() != self.0 {
+///             return Err(DataErrorKind::MissingLocale.with_req(HelloWorldV1Marker::INFO, req));
+///         }
+///         HelloWorldProvider.load(req)
+///     }
+/// }
+///
+/// let provider_de = SingleLocaleProvider(langid!("de"));
+/// let provider_ro = SingleLocaleProvider(langid!("ro"));
 ///
 /// // Create the forking provider:
 /// let provider = ForkByErrorProvider::new_with_predicate(
@@ -88,34 +94,28 @@ impl ForkByErrorPredicate for MissingDataMarkerPredicate {
 ///
 /// // Test that we can load both "de" and "ro" data:
 ///
-/// let german_hello_world: DataPayload<HelloWorldV1Marker> = provider
-///     .as_deserializing()
+/// let german_hello_world: DataResponse<HelloWorldV1Marker> = provider
 ///     .load(DataRequest {
 ///         locale: &langid!("de").into(),
 ///         ..Default::default()
 ///     })
-///     .expect("Loading should succeed")
-///     .take_payload()
-///     .expect("Data should be present");
+///     .expect("Loading should succeed");
 ///
-/// assert_eq!("Hallo Welt", german_hello_world.get().message);
+/// assert_eq!("Hallo Welt", german_hello_world.payload.get().message);
 ///
-/// let romanian_hello_world: DataPayload<HelloWorldV1Marker> = provider
-///     .as_deserializing()
+/// let romanian_hello_world: DataResponse<HelloWorldV1Marker> = provider
 ///     .load(DataRequest {
 ///         locale: &langid!("ro").into(),
 ///         ..Default::default()
 ///     })
-///     .expect("Loading should succeed")
-///     .take_payload()
-///     .expect("Data should be present");
+///     .expect("Loading should succeed");
 ///
-/// assert_eq!("Salut, lume", romanian_hello_world.get().message);
+/// assert_eq!("Salut, lume", romanian_hello_world.payload.get().message);
 ///
-/// // We should not be able to load "en" data because it is not in the provider:
+/// // We should not be able to load "en" data because it is not in either provider:
 ///
 /// DataProvider::<HelloWorldV1Marker>::load(
-///     &provider.as_deserializing(),
+///     &provider,
 ///     DataRequest {
 ///         locale: &langid!("en").into(),
 ///         ..Default::default()

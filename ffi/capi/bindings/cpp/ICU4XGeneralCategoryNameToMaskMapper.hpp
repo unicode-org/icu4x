@@ -10,8 +10,8 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
+#include "ICU4XDataError.hpp"
 #include "ICU4XDataProvider.hpp"
-#include "ICU4XError.hpp"
 #include "ICU4XGeneralCategoryNameToMaskMapper.h"
 
 
@@ -29,9 +29,9 @@ inline uint32_t ICU4XGeneralCategoryNameToMaskMapper::get_loose(std::string_view
   return result;
 }
 
-inline diplomat::result<std::unique_ptr<ICU4XGeneralCategoryNameToMaskMapper>, ICU4XError> ICU4XGeneralCategoryNameToMaskMapper::load(const ICU4XDataProvider& provider) {
+inline diplomat::result<std::unique_ptr<ICU4XGeneralCategoryNameToMaskMapper>, ICU4XDataError> ICU4XGeneralCategoryNameToMaskMapper::load(const ICU4XDataProvider& provider) {
   auto result = capi::ICU4XGeneralCategoryNameToMaskMapper_load(provider.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XGeneralCategoryNameToMaskMapper>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XGeneralCategoryNameToMaskMapper>>(std::unique_ptr<ICU4XGeneralCategoryNameToMaskMapper>(ICU4XGeneralCategoryNameToMaskMapper::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XGeneralCategoryNameToMaskMapper>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XGeneralCategoryNameToMaskMapper>, ICU4XDataError>(diplomat::Ok<std::unique_ptr<ICU4XGeneralCategoryNameToMaskMapper>>(std::unique_ptr<ICU4XGeneralCategoryNameToMaskMapper>(ICU4XGeneralCategoryNameToMaskMapper::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XGeneralCategoryNameToMaskMapper>, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
 
 inline const capi::ICU4XGeneralCategoryNameToMaskMapper* ICU4XGeneralCategoryNameToMaskMapper::AsFFI() const {
