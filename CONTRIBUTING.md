@@ -37,7 +37,7 @@ To build all code paths, improve build times in VSCode, and prevent locking the 
 	"rust-analyzer.cargo.features": "all",
 	"rust-analyzer.cargo.extraEnv": {
 		"CARGO_TARGET_DIR": "${workspaceFolder}/target/vscode",
-		"ICU4X_DATA_DIR": "../../../datagen/tests/data/baked"
+		"ICU4X_DATA_DIR": "../stubdata"
 	}
 }
 ```
