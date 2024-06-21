@@ -11,10 +11,6 @@
 //!
 //! [`BufferProvider`]: crate::buf::BufferProvider
 
-// Hidden for now, but could be made public-stable in the future.
-#[doc(hidden)]
-pub mod borrow_de_utils;
-
 use crate::buf::BufferFormat;
 use crate::buf::BufferProvider;
 use crate::prelude::*;

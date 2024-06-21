@@ -107,7 +107,7 @@ impl<M, P> DataProvider<M> for LruDataCache<P>
 where
     M: DataMarker,
     M::Yokeable: ZeroFrom<'static, M::Yokeable>,
-    M::Yokeable: icu_provider::MaybeSendSync,
+    M::Yokeable: icu_provider::any::MaybeSendSync,
     for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
     P: DataProvider<M>,
 {

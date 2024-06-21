@@ -27,7 +27,7 @@ use icu_calendar::{
     },
     AnyCalendar, AnyCalendarKind, AsCalendar, Calendar, Date, DateTime, Ref, Time,
 };
-use icu_provider::{prelude::*, NeverMarker};
+use icu_provider::{marker::NeverMarker, prelude::*};
 use icu_timezone::CustomTimeZone;
 
 mod private {

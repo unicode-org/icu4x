@@ -24,7 +24,7 @@ use crate::provider::neo::*;
 #[cfg(feature = "experimental")]
 use core::marker::PhantomData;
 #[cfg(any(feature = "datagen", feature = "experimental"))]
-use icu_provider::NeverMarker;
+use icu_provider::marker::NeverMarker;
 
 /// The `CldrCalendar` trait is sealed except when the `"experimental"` Cargo
 /// feature is enabled. If implementing `CldrCalendar`, you must also

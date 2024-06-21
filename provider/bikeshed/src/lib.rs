@@ -102,13 +102,15 @@ pub struct DatagenProvider {
 
 macro_rules! cb {
     ($($marker:path = $path:literal,)+ #[experimental] $($emarker:path = $epath:literal,)+) => {
-        icu_provider::make_exportable_provider!(DatagenProvider, [
+        icu_provider::datagen::make_exportable_provider!(DatagenProvider, [
             $($marker,)+
             $(#[cfg(feature = "experimental")] $emarker,)+
         ]);
     }
 }
 icu_registry::registry!(cb);
+
+icu_provider::marker::impl_data_provider_never_marker!(DatagenProvider);
 
 impl DatagenProvider {
     /// The latest CLDR JSON tag that has been verified to work with this version of `icu_datagen_bikeshed`.

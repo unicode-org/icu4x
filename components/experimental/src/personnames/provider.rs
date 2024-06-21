@@ -13,7 +13,7 @@ use core::fmt::{Debug, Formatter};
 
 use icu_provider::prelude::*;
 #[cfg(feature = "serde")]
-use icu_provider::serde::borrow_de_utils::option_of_cow;
+use icu_provider::serde_borrow_de_utils::option_of_cow;
 use zerovec::VarZeroVec;
 
 use crate::personnames::api::FormattingFormality;

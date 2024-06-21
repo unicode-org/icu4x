@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::prelude::*;
-use crate::DataMarkerInfo;
 use alloc::boxed::Box;
 
 /// A trait that allows for converting between data payloads of different types.

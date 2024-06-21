@@ -90,7 +90,7 @@ impl DataExporter for Box<dyn DataExporter> {
 
 /// A [`DynamicDataProvider`] that can be used for exporting data.
 ///
-/// Use [`make_exportable_provider`](crate::make_exportable_provider) to implement this.
+/// Use [`make_exportable_provider`] to implement this.
 pub trait ExportableProvider:
     IterableDynamicDataProvider<ExportMarker> + DynamicDataProvider<AnyMarker> + Sync
 {
@@ -114,14 +114,15 @@ impl<T> ExportableProvider for T where
 /// [`BlobDataProvider`]: ../../icu_provider_blob/struct.BlobDataProvider.html
 /// [`BakedDataProvider`]: ../../icu_datagen/index.html
 #[macro_export]
-macro_rules! make_exportable_provider {
+#[doc(hidden)] // macro
+macro_rules! __make_exportable_provider {
     ($provider:ty, [ $($(#[$cfg:meta])? $struct_m:ty),+, ]) => {
-        $crate::impl_dynamic_data_provider!(
+        $crate::dynutil::impl_dynamic_data_provider!(
             $provider,
             [ $($(#[$cfg])? $struct_m),+, ],
             $crate::datagen::ExportMarker
         );
-        $crate::impl_dynamic_data_provider!(
+        $crate::dynutil::impl_dynamic_data_provider!(
             $provider,
             [ $($(#[$cfg])? $struct_m),+, ],
             $crate::any::AnyMarker
@@ -142,6 +143,8 @@ macro_rules! make_exportable_provider {
         }
     };
 }
+#[doc(inline)]
+pub use __make_exportable_provider as make_exportable_provider;
 
 /// A `DataExporter` that forks to multiple `DataExporter`s.
 #[derive(Default)]

@@ -3,9 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::buf::BufferMarker;
-use crate::error::DataError;
-use crate::marker::DynamicDataMarker;
-use crate::request::DataLocale;
+use crate::DataError;
+use crate::DataLocale;
+use crate::DynamicDataMarker;
 use alloc::boxed::Box;
 use core::fmt::Debug;
 use core::marker::PhantomData;
@@ -136,7 +136,6 @@ pub struct DataPayload<M: DynamicDataMarker>(pub(crate) DataPayloadInner<M>);
 /// assert_eq!(W * 4, size_of::<DataPayloadOr<SampleStructMarker, [usize; 2]>>());
 /// assert_eq!(W * 5, size_of::<DataPayloadOr<SampleStructMarker, [usize; 3]>>());
 /// ```
-#[doc(hidden)] // TODO(#4467): establish this as an internal API
 pub struct DataPayloadOr<M: DynamicDataMarker, O>(pub(crate) DataPayloadOrInner<M, O>);
 
 pub(crate) enum DataPayloadInner<M: DynamicDataMarker> {

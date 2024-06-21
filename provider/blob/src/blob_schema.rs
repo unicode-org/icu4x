@@ -5,7 +5,7 @@
 use core::fmt::Write;
 
 use alloc::boxed::Box;
-use icu_provider::{prelude::*, DataMarkerPathHash};
+use icu_provider::{marker::DataMarkerPathHash, prelude::*};
 use serde::Deserialize;
 use writeable::Writeable;
 use zerotrie::ZeroTrieSimpleAscii;

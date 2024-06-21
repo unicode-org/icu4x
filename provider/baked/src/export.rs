@@ -622,7 +622,7 @@ impl DataExporter for BakedExporter {
                             #[allow(dead_code)]
                             pub(crate) const MUST_USE_MAKE_PROVIDER_MACRO: () = ();
                         }
-                        icu_provider::impl_data_provider_never_marker!($name);
+                        icu_provider::marker::impl_data_provider_never_marker!($name);
                     };
                 }
                 #[doc(inline)]
@@ -644,7 +644,7 @@ impl DataExporter for BakedExporter {
                 macro_rules! impl_any_provider {
                     ($provider:ty) => {
                         #maybe_msrv
-                        impl icu_provider::AnyProvider for $provider {
+                        impl icu_provider::any::AnyProvider for $provider {
                             fn load_any(&self, marker: icu_provider::DataMarkerInfo, req: icu_provider::DataRequest) -> Result<icu_provider::AnyResponse, icu_provider::DataError> {
                                 match marker.path.hashed() {
                                     #(
