@@ -254,11 +254,22 @@ impl BakedExporter {
         };
 
         if !self.use_separate_crates {
-            formatted = formatted
-                .replace("icu_", "icu::")
-                .replace("icu::provider", "icu_provider")
-                .replace("icu::locale_core", "icu_locale_core")
-                .replace("icu::pattern", "icu_pattern");
+            // Don't search the whole file, there should be a macro in the first 300 bytes
+            if formatted[..300].contains("macro_rules!") || formatted[..100].contains("include!") {
+                // Formatted, otherwise it'd be `macro_rules !`
+                formatted = formatted
+                    .replace("icu_", "icu::")
+                    .replace("icu::provider", "icu_provider")
+                    .replace("icu::locale_core", "icu_locale_core")
+                    .replace("icu::pattern", "icu_pattern");
+            } else {
+                // Unformatted
+                formatted = formatted
+                    .replace("icu_", "icu :: ")
+                    .replace("icu :: provider", "icu_provider")
+                    .replace("icu :: locale_core", "icu_locale_core")
+                    .replace("icu :: pattern", "icu_pattern");
+            }
         }
 
         std::fs::create_dir_all(path.parent().unwrap())?;
