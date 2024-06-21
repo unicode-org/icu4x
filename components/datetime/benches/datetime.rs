@@ -9,15 +9,20 @@ use criterion::{criterion_group, criterion_main, Criterion};
 use icu_datetime::neo::TypedNeoFormatter;
 #[cfg(feature = "experimental")]
 use icu_datetime::neo_skeleton::{NeoDateSkeleton, NeoSkeletonLength, NeoTimeComponents};
+#[cfg(feature = "experimental")]
 use icu_datetime::neo_skeleton::{NeoDateTimeComponents, NeoDateTimeSkeleton};
+#[cfg(feature = "experimental")]
 use icu_datetime::options::length;
 use std::fmt::Write;
 
 use icu_calendar::{DateTime, Gregorian};
+#[cfg(feature = "experimental")]
+use icu_datetime::DateTimeFormatterOptions;
+use icu_datetime::TypedDateTimeFormatter;
 use icu_datetime::{time_zone::TimeZoneFormatterOptions, TypedZonedDateTimeFormatter};
-use icu_datetime::{DateTimeFormatterOptions, TypedDateTimeFormatter};
 use icu_locale_core::Locale;
 use icu_timezone::CustomTimeZone;
+#[cfg(feature = "experimental")]
 use writeable::TryWriteable;
 
 #[path = "../tests/mock.rs"]
