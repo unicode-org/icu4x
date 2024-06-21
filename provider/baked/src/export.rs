@@ -255,7 +255,7 @@ impl BakedExporter {
 
         if !self.use_separate_crates {
             if formatted[..300].contains("macro_rules!") || formatted[..100].contains("include!") {
-                // Formatted
+                // Formatted, otherwise it'd be `macro_rules !`
                 formatted = formatted
                     .replace("icu_", "icu::")
                     .replace("icu::provider", "icu_provider")
