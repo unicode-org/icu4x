@@ -663,7 +663,7 @@ impl DatagenDriver {
             let instant1 = Instant::now();
 
             if marker.is_singleton {
-                if provider.supported_requests_for_marker(marker)?
+                if provider.iter_requests_for_marker(marker)?
                     != HashSet::from_iter([Default::default()])
                 {
                     return Err(DataError::custom(
@@ -808,7 +808,7 @@ fn select_locales_for_marker<'a>(
     let mut supported_map =
         HashMap::<LanguageIdentifier, HashSet<(DataLocale, DataMarkerAttributes)>>::new();
     for (locale, marker_attributes) in provider
-        .supported_requests_for_marker(marker)
+        .iter_requests_for_marker(marker)
         .map_err(|e| e.with_marker(marker))?
     {
         supported_map
@@ -1058,9 +1058,7 @@ fn test_collation_filtering() {
     }
 
     impl IterableDataProvider<icu::collator::provider::CollationDataV1Marker> for Provider {
-        fn supported_requests(
-            &self,
-        ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+        fn iter_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
             Ok(HashSet::from_iter(
                 [
                     locale!("ko-u-co-search"),

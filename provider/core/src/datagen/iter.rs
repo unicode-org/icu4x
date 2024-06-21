@@ -10,11 +10,11 @@ use crate::prelude::*;
 
 /// A [`DynamicDataProvider`] that can iterate over all supported [`DataLocale`] for a certain marker.
 ///
-/// Implementing this trait means that a data provider knows all of the data it can successfully
-/// return from a load request.
+/// The provider is not allowed to return `Ok` for requests that were not returned by `iter_requests`,
+/// and must not fail with a [`DataErrorKind::MissingLocale`] for requests that were returned.
 pub trait IterableDynamicDataProvider<M: DynamicDataMarker>: DynamicDataProvider<M> {
     /// Given a [`DataMarkerInfo`], returns a list of [`DataLocale`].
-    fn supported_requests_for_marker(
+    fn iter_requests_for_marker(
         &self,
         marker: DataMarkerInfo,
     ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError>;
@@ -22,20 +22,11 @@ pub trait IterableDynamicDataProvider<M: DynamicDataMarker>: DynamicDataProvider
 
 /// A [`DataProvider`] that can iterate over all supported [`DataLocale`] for a certain marker.
 ///
-/// Implementing this trait means that a data provider knows all of the data it can successfully
-/// return from a load request.
+/// The provider is not allowed to return `Ok` for requests that were not returned by `iter_requests`,
+/// and must not fail with a [`DataErrorKind::MissingLocale`] for requests that were returned.
 pub trait IterableDataProvider<M: DataMarker>: DataProvider<M> {
     /// Returns a list of [`DataLocale`].
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError>;
-    /// Returns whether a [`DataLocale`] is in the supported locales list.
-    fn supports_request(
-        &self,
-        locale: &DataLocale,
-        marker_attributes: &DataMarkerAttributes,
-    ) -> Result<bool, DataError> {
-        self.supported_requests()
-            .map(|v| v.contains(&(locale.clone(), marker_attributes.clone())))
-    }
+    fn iter_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError>;
 }
 
 impl<M, P> IterableDynamicDataProvider<M> for Box<P>
@@ -43,10 +34,10 @@ where
     M: DynamicDataMarker,
     P: IterableDynamicDataProvider<M> + ?Sized,
 {
-    fn supported_requests_for_marker(
+    fn iter_requests_for_marker(
         &self,
         marker: DataMarkerInfo,
     ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
-        (**self).supported_requests_for_marker(marker)
+        (**self).iter_requests_for_marker(marker)
     }
 }

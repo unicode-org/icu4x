@@ -128,12 +128,12 @@ macro_rules! make_exportable_provider {
         );
 
         impl $crate::datagen::IterableDynamicDataProvider<$crate::datagen::ExportMarker> for $provider {
-            fn supported_requests_for_marker(&self, marker: $crate::DataMarkerInfo) -> Result<std::collections::HashSet<($crate::DataLocale, $crate::DataMarkerAttributes)>, $crate::DataError> {
+            fn iter_requests_for_marker(&self, marker: $crate::DataMarkerInfo) -> Result<std::collections::HashSet<($crate::DataLocale, $crate::DataMarkerAttributes)>, $crate::DataError> {
                 match marker.path.hashed() {
                     $(
                         $(#[$cfg])?
                         h if h == <$struct_m as $crate::DataMarker>::INFO.path.hashed() => {
-                            $crate::datagen::IterableDataProvider::<$struct_m>::supported_requests(self)
+                            $crate::datagen::IterableDataProvider::<$struct_m>::iter_requests(self)
                         }
                     )+,
                     _ => Err($crate::DataErrorKind::MissingDataMarker.with_marker(marker))

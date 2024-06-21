@@ -10,7 +10,6 @@ use calendrical_calculations::islamic::{
 };
 use calendrical_calculations::iso;
 use icu::calendar::provider::islamic::*;
-use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 
 const YEARS: i32 = 250;
@@ -36,8 +35,10 @@ impl DataProvider<IslamicObservationalCacheV1Marker> for DatagenProvider {
     }
 }
 
-impl IterableDataProvider<IslamicObservationalCacheV1Marker> for DatagenProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+impl crate::IterableDataProviderCached<IslamicObservationalCacheV1Marker> for DatagenProvider {
+    fn iter_requests_cached(
+        &self,
+    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
@@ -56,8 +57,10 @@ impl DataProvider<IslamicUmmAlQuraCacheV1Marker> for crate::DatagenProvider {
     }
 }
 
-impl IterableDataProvider<IslamicUmmAlQuraCacheV1Marker> for DatagenProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+impl crate::IterableDataProviderCached<IslamicUmmAlQuraCacheV1Marker> for DatagenProvider {
+    fn iter_requests_cached(
+        &self,
+    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }

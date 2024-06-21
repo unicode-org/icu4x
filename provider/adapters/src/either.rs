@@ -71,14 +71,14 @@ impl<
     > datagen::IterableDynamicDataProvider<M> for EitherProvider<P0, P1>
 {
     #[inline]
-    fn supported_requests_for_marker(
+    fn iter_requests_for_marker(
         &self,
         marker: DataMarkerInfo,
     ) -> Result<std::collections::HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         use EitherProvider::*;
         match self {
-            A(p) => p.supported_requests_for_marker(marker),
-            B(p) => p.supported_requests_for_marker(marker),
+            A(p) => p.iter_requests_for_marker(marker),
+            B(p) => p.iter_requests_for_marker(marker),
         }
     }
 }
@@ -88,13 +88,13 @@ impl<M: DataMarker, P0: datagen::IterableDataProvider<M>, P1: datagen::IterableD
     datagen::IterableDataProvider<M> for EitherProvider<P0, P1>
 {
     #[inline]
-    fn supported_requests(
+    fn iter_requests(
         &self,
     ) -> Result<std::collections::HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         use EitherProvider::*;
         match self {
-            A(p) => p.supported_requests(),
-            B(p) => p.supported_requests(),
+            A(p) => p.iter_requests(),
+            B(p) => p.iter_requests(),
         }
     }
 }

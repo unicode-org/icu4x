@@ -16,7 +16,6 @@ use icu::properties::{
 use icu::segmenter::provider::*;
 use icu::segmenter::WordType;
 use icu_codepointtrie_builder::{CodePointTrieBuilder, CodePointTrieBuilderData};
-use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 use std::fmt::Debug;
@@ -603,8 +602,8 @@ macro_rules! implement {
             }
         }
 
-        impl IterableDataProvider<$marker> for DatagenProvider {
-            fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+        impl crate::IterableDataProviderCached<$marker> for DatagenProvider {
+            fn iter_requests_cached(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
                 Ok(HashSet::from_iter([Default::default()]))
             }
         }

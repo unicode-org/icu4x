@@ -52,7 +52,7 @@ impl DataProvider<LocaleDisplayNamesV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProviderCached<LanguageDisplayNamesV1Marker> for DatagenProvider {
-    fn supported_requests_cached(
+    fn iter_requests_cached(
         &self,
     ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         Ok(self
@@ -73,7 +73,7 @@ impl IterableDataProviderCached<LanguageDisplayNamesV1Marker> for DatagenProvide
 }
 
 impl IterableDataProviderCached<LocaleDisplayNamesV1Marker> for DatagenProvider {
-    fn supported_requests_cached(
+    fn iter_requests_cached(
         &self,
     ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         Ok(self
