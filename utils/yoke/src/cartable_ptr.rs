@@ -101,7 +101,7 @@ pub unsafe trait CartablePointerLike: StableDeref + Sealed {
 /// 1. `addref_raw` must create a new owner such that an additional call to
 ///    `drop_raw` does not create a dangling pointer
 /// 2. `addref_raw` must not change the address of any referenced data.
-unsafe trait CloneableCartablePointerLike: CartablePointerLike {
+pub unsafe trait CloneableCartablePointerLike: CartablePointerLike {
     /// Clones this pointer-like.
     ///
     /// # Safety

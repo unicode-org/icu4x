@@ -4,7 +4,7 @@
 
 #[cfg(feature = "alloc")]
 use alloc::borrow::{Cow, ToOwned};
-use core::mem::{self, ManuallyDrop};
+use core::mem;
 
 /// The `Yokeable<'a>` trait is implemented on the `'static` version of any zero-copy type; for
 /// example, `Cow<'static, T>` implements `Yokeable<'a>` (for all `'a`). One can use
@@ -274,7 +274,7 @@ where
         // are the same
         debug_assert!(mem::size_of::<Cow<'a, T>>() == mem::size_of::<Self>());
         let ptr: *const Self = (&from as *const Self::Output).cast();
-        let _ = ManuallyDrop::new(from);
+        let _ = core::mem::ManuallyDrop::new(from);
         // Safety: `ptr` is certainly valid, aligned and points to a properly initialized value, as
         // it comes from a value that was moved into a ManuallyDrop.
         unsafe { core::ptr::read(ptr) }
