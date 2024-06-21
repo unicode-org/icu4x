@@ -8,8 +8,15 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XCollatorNumeric.d.h"
 
+
+namespace capi {
+    typedef enum ICU4XCollatorNumeric {
+      ICU4XCollatorNumeric_Auto = 0,
+      ICU4XCollatorNumeric_Off = 1,
+      ICU4XCollatorNumeric_On = 2,
+    } ICU4XCollatorNumeric;
+}
 
 class ICU4XCollatorNumeric {
 public:

@@ -8,8 +8,18 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XPluralCategories.d.h"
 
+
+namespace capi {
+    typedef struct ICU4XPluralCategories {
+      bool zero;
+      bool one;
+      bool two;
+      bool few;
+      bool many;
+      bool other;
+    } ICU4XPluralCategories;
+}
 
 struct ICU4XPluralCategories {
   bool zero;

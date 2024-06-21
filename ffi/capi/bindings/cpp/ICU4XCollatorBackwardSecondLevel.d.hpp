@@ -8,8 +8,15 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XCollatorBackwardSecondLevel.d.h"
 
+
+namespace capi {
+    typedef enum ICU4XCollatorBackwardSecondLevel {
+      ICU4XCollatorBackwardSecondLevel_Auto = 0,
+      ICU4XCollatorBackwardSecondLevel_Off = 1,
+      ICU4XCollatorBackwardSecondLevel_On = 2,
+    } ICU4XCollatorBackwardSecondLevel;
+}
 
 class ICU4XCollatorBackwardSecondLevel {
 public:

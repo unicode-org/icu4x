@@ -10,8 +10,18 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XLogger.h"
 
+
+namespace capi {
+    extern "C" {
+    
+    bool ICU4XLogger_init_simple_logger();
+    
+    
+    void ICU4XLogger_destroy(ICU4XLogger* self);
+    
+    } // extern "C"
+}
 
 inline bool ICU4XLogger::init_simple_logger() {
   auto result = capi::ICU4XLogger_init_simple_logger();

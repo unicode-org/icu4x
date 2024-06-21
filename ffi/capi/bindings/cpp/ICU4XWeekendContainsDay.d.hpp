@@ -8,8 +8,19 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XWeekendContainsDay.d.h"
 
+
+namespace capi {
+    typedef struct ICU4XWeekendContainsDay {
+      bool monday;
+      bool tuesday;
+      bool wednesday;
+      bool thursday;
+      bool friday;
+      bool saturday;
+      bool sunday;
+    } ICU4XWeekendContainsDay;
+}
 
 struct ICU4XWeekendContainsDay {
   bool monday;

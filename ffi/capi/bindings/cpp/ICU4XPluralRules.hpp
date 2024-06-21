@@ -16,8 +16,26 @@
 #include "ICU4XPluralCategories.hpp"
 #include "ICU4XPluralCategory.hpp"
 #include "ICU4XPluralOperands.hpp"
-#include "ICU4XPluralRules.h"
 
+
+namespace capi {
+    extern "C" {
+    
+    typedef struct ICU4XPluralRules_create_cardinal_result {union {ICU4XPluralRules* ok; ICU4XDataError err;}; bool is_ok;} ICU4XPluralRules_create_cardinal_result;
+    ICU4XPluralRules_create_cardinal_result ICU4XPluralRules_create_cardinal(const ICU4XDataProvider* provider, const ICU4XLocale* locale);
+    
+    typedef struct ICU4XPluralRules_create_ordinal_result {union {ICU4XPluralRules* ok; ICU4XDataError err;}; bool is_ok;} ICU4XPluralRules_create_ordinal_result;
+    ICU4XPluralRules_create_ordinal_result ICU4XPluralRules_create_ordinal(const ICU4XDataProvider* provider, const ICU4XLocale* locale);
+    
+    ICU4XPluralCategory ICU4XPluralRules_category_for(const ICU4XPluralRules* self, const ICU4XPluralOperands* op);
+    
+    ICU4XPluralCategories ICU4XPluralRules_categories(const ICU4XPluralRules* self);
+    
+    
+    void ICU4XPluralRules_destroy(ICU4XPluralRules* self);
+    
+    } // extern "C"
+}
 
 inline diplomat::result<std::unique_ptr<ICU4XPluralRules>, ICU4XDataError> ICU4XPluralRules::create_cardinal(const ICU4XDataProvider& provider, const ICU4XLocale& locale) {
   auto result = capi::ICU4XPluralRules_create_cardinal(provider.AsFFI(),

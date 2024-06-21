@@ -10,7 +10,6 @@
 #include "diplomat_runtime.hpp"
 #include "ICU4XDataError.d.hpp"
 #include "ICU4XLineBreakOptionsV1.d.hpp"
-#include "ICU4XLineSegmenter.d.h"
 
 class ICU4XDataProvider;
 class ICU4XLineBreakIteratorLatin1;
@@ -19,6 +18,10 @@ class ICU4XLineBreakIteratorUtf8;
 struct ICU4XLineBreakOptionsV1;
 class ICU4XDataError;
 
+
+namespace capi {
+    typedef struct ICU4XLineSegmenter ICU4XLineSegmenter;
+}
 
 class ICU4XLineSegmenter {
 public:

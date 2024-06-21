@@ -16,9 +16,15 @@
 #include "ICU4XCollatorCaseLevel.hpp"
 #include "ICU4XCollatorMaxVariable.hpp"
 #include "ICU4XCollatorNumeric.hpp"
-#include "ICU4XCollatorOptionsV1.h"
 #include "ICU4XCollatorStrength.hpp"
 
+
+namespace capi {
+    extern "C" {
+    
+    
+    } // extern "C"
+}
 
 
 inline capi::ICU4XCollatorOptionsV1 ICU4XCollatorOptionsV1::AsFFI() const {

@@ -10,10 +10,25 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XCanonicalCombiningClassMap.h"
 #include "ICU4XDataError.hpp"
 #include "ICU4XDataProvider.hpp"
 
+
+namespace capi {
+    extern "C" {
+    
+    typedef struct ICU4XCanonicalCombiningClassMap_create_result {union {ICU4XCanonicalCombiningClassMap* ok; ICU4XDataError err;}; bool is_ok;} ICU4XCanonicalCombiningClassMap_create_result;
+    ICU4XCanonicalCombiningClassMap_create_result ICU4XCanonicalCombiningClassMap_create(const ICU4XDataProvider* provider);
+    
+    uint8_t ICU4XCanonicalCombiningClassMap_get(const ICU4XCanonicalCombiningClassMap* self, char32_t ch);
+    
+    uint8_t ICU4XCanonicalCombiningClassMap_get32(const ICU4XCanonicalCombiningClassMap* self, uint32_t ch);
+    
+    
+    void ICU4XCanonicalCombiningClassMap_destroy(ICU4XCanonicalCombiningClassMap* self);
+    
+    } // extern "C"
+}
 
 inline diplomat::result<std::unique_ptr<ICU4XCanonicalCombiningClassMap>, ICU4XDataError> ICU4XCanonicalCombiningClassMap::create(const ICU4XDataProvider& provider) {
   auto result = capi::ICU4XCanonicalCombiningClassMap_create(provider.AsFFI());

@@ -10,7 +10,6 @@
 #include "diplomat_runtime.hpp"
 #include "ICU4XDataError.d.hpp"
 #include "ICU4XIsoWeekday.d.hpp"
-#include "ICU4XWeekCalculator.d.h"
 #include "ICU4XWeekendContainsDay.d.hpp"
 
 class ICU4XDataProvider;
@@ -19,6 +18,10 @@ struct ICU4XWeekendContainsDay;
 class ICU4XDataError;
 class ICU4XIsoWeekday;
 
+
+namespace capi {
+    typedef struct ICU4XWeekCalculator ICU4XWeekCalculator;
+}
 
 class ICU4XWeekCalculator {
 public:

@@ -13,12 +13,29 @@
 #include "ICU4XDataProvider.hpp"
 #include "ICU4XDateLength.hpp"
 #include "ICU4XDateTime.hpp"
-#include "ICU4XDateTimeFormatter.h"
 #include "ICU4XError.hpp"
 #include "ICU4XIsoDateTime.hpp"
 #include "ICU4XLocale.hpp"
 #include "ICU4XTimeLength.hpp"
 
+
+namespace capi {
+    extern "C" {
+    
+    typedef struct ICU4XDateTimeFormatter_create_with_lengths_result {union {ICU4XDateTimeFormatter* ok; ICU4XError err;}; bool is_ok;} ICU4XDateTimeFormatter_create_with_lengths_result;
+    ICU4XDateTimeFormatter_create_with_lengths_result ICU4XDateTimeFormatter_create_with_lengths(const ICU4XDataProvider* provider, const ICU4XLocale* locale, ICU4XDateLength date_length, ICU4XTimeLength time_length);
+    
+    typedef struct ICU4XDateTimeFormatter_format_datetime_result {union { ICU4XError err;}; bool is_ok;} ICU4XDateTimeFormatter_format_datetime_result;
+    ICU4XDateTimeFormatter_format_datetime_result ICU4XDateTimeFormatter_format_datetime(const ICU4XDateTimeFormatter* self, const ICU4XDateTime* value, DiplomatWrite* write);
+    
+    typedef struct ICU4XDateTimeFormatter_format_iso_datetime_result {union { ICU4XError err;}; bool is_ok;} ICU4XDateTimeFormatter_format_iso_datetime_result;
+    ICU4XDateTimeFormatter_format_iso_datetime_result ICU4XDateTimeFormatter_format_iso_datetime(const ICU4XDateTimeFormatter* self, const ICU4XIsoDateTime* value, DiplomatWrite* write);
+    
+    
+    void ICU4XDateTimeFormatter_destroy(ICU4XDateTimeFormatter* self);
+    
+    } // extern "C"
+}
 
 inline diplomat::result<std::unique_ptr<ICU4XDateTimeFormatter>, ICU4XError> ICU4XDateTimeFormatter::create_with_lengths(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDateLength date_length, ICU4XTimeLength time_length) {
   auto result = capi::ICU4XDateTimeFormatter_create_with_lengths(provider.AsFFI(),

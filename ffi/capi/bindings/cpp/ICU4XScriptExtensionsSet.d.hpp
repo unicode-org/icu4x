@@ -8,8 +8,11 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XScriptExtensionsSet.d.h"
 
+
+namespace capi {
+    typedef struct ICU4XScriptExtensionsSet ICU4XScriptExtensionsSet;
+}
 
 class ICU4XScriptExtensionsSet {
 public:

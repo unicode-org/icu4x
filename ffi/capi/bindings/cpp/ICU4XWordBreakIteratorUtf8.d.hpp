@@ -9,10 +9,13 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 #include "ICU4XSegmenterWordType.d.hpp"
-#include "ICU4XWordBreakIteratorUtf8.d.h"
 
 class ICU4XSegmenterWordType;
 
+
+namespace capi {
+    typedef struct ICU4XWordBreakIteratorUtf8 ICU4XWordBreakIteratorUtf8;
+}
 
 class ICU4XWordBreakIteratorUtf8 {
 public:

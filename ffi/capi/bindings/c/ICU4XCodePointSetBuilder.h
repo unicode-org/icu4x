@@ -6,15 +6,14 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include "diplomat_runtime.h"
+
 #include "ICU4XCodePointSetData.d.h"
-#include "ICU4XCodePointSetData.h"
 
 #include "ICU4XCodePointSetBuilder.d.h"
 
-#ifdef __cplusplus
-namespace capi {
-extern "C" {
-#endif // __cplusplus
+
+
+
 
 
 ICU4XCodePointSetBuilder* ICU4XCodePointSetBuilder_create();
@@ -49,12 +48,11 @@ void ICU4XCodePointSetBuilder_complement_inclusive_range(ICU4XCodePointSetBuilde
 
 void ICU4XCodePointSetBuilder_complement_set(ICU4XCodePointSetBuilder* self, const ICU4XCodePointSetData* data);
 
+
 void ICU4XCodePointSetBuilder_destroy(ICU4XCodePointSetBuilder* self);
 
 
-#ifdef __cplusplus
-} // extern "C"
-} // namespace capi
-#endif // __cplusplus
+
+
 
 #endif // ICU4XCodePointSetBuilder_H

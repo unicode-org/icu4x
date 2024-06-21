@@ -7,10 +7,8 @@
 #include <stdbool.h>
 #include "diplomat_runtime.h"
 
-#ifdef __cplusplus
-namespace capi {
-extern "C" {
-#endif // __cplusplus
+
+
 
 
 typedef enum ICU4XLineBreakWordOption {
@@ -20,9 +18,7 @@ typedef enum ICU4XLineBreakWordOption {
 } ICU4XLineBreakWordOption;
 
 
-#ifdef __cplusplus
-} // extern "C"
-} // namespace capi
-#endif // __cplusplus
+
+
 
 #endif // ICU4XLineBreakWordOption_D_H

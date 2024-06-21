@@ -8,7 +8,6 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XCustomTimeZone.d.h"
 #include "ICU4XTimeZoneInvalidIdError.d.hpp"
 #include "ICU4XTimeZoneInvalidOffsetError.d.hpp"
 
@@ -18,6 +17,10 @@ class ICU4XTimeZoneIdMapper;
 class ICU4XTimeZoneInvalidIdError;
 class ICU4XTimeZoneInvalidOffsetError;
 
+
+namespace capi {
+    typedef struct ICU4XCustomTimeZone ICU4XCustomTimeZone;
+}
 
 class ICU4XCustomTimeZone {
 public:

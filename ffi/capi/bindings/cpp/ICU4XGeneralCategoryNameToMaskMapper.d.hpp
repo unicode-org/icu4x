@@ -9,11 +9,14 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 #include "ICU4XDataError.d.hpp"
-#include "ICU4XGeneralCategoryNameToMaskMapper.d.h"
 
 class ICU4XDataProvider;
 class ICU4XDataError;
 
+
+namespace capi {
+    typedef struct ICU4XGeneralCategoryNameToMaskMapper ICU4XGeneralCategoryNameToMaskMapper;
+}
 
 class ICU4XGeneralCategoryNameToMaskMapper {
 public:

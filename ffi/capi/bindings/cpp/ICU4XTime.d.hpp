@@ -9,10 +9,13 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 #include "ICU4XCalendarError.d.hpp"
-#include "ICU4XTime.d.h"
 
 class ICU4XCalendarError;
 
+
+namespace capi {
+    typedef struct ICU4XTime ICU4XTime;
+}
 
 class ICU4XTime {
 public:

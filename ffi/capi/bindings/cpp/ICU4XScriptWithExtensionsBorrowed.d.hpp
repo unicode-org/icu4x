@@ -8,11 +8,14 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XScriptWithExtensionsBorrowed.d.h"
 
 class ICU4XCodePointSetData;
 class ICU4XScriptExtensionsSet;
 
+
+namespace capi {
+    typedef struct ICU4XScriptWithExtensionsBorrowed ICU4XScriptWithExtensionsBorrowed;
+}
 
 class ICU4XScriptWithExtensionsBorrowed {
 public:

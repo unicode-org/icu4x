@@ -14,8 +14,21 @@
 #include "ICU4XDataProvider.hpp"
 #include "ICU4XDisplayNamesOptionsV1.hpp"
 #include "ICU4XLocale.hpp"
-#include "ICU4XLocaleDisplayNamesFormatter.h"
 
+
+namespace capi {
+    extern "C" {
+    
+    typedef struct ICU4XLocaleDisplayNamesFormatter_create_result {union {ICU4XLocaleDisplayNamesFormatter* ok; ICU4XDataError err;}; bool is_ok;} ICU4XLocaleDisplayNamesFormatter_create_result;
+    ICU4XLocaleDisplayNamesFormatter_create_result ICU4XLocaleDisplayNamesFormatter_create(const ICU4XDataProvider* provider, const ICU4XLocale* locale, ICU4XDisplayNamesOptionsV1 options);
+    
+    void ICU4XLocaleDisplayNamesFormatter_of(const ICU4XLocaleDisplayNamesFormatter* self, const ICU4XLocale* locale, DiplomatWrite* write);
+    
+    
+    void ICU4XLocaleDisplayNamesFormatter_destroy(ICU4XLocaleDisplayNamesFormatter* self);
+    
+    } // extern "C"
+}
 
 inline diplomat::result<std::unique_ptr<ICU4XLocaleDisplayNamesFormatter>, ICU4XDataError> ICU4XLocaleDisplayNamesFormatter::create(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDisplayNamesOptionsV1 options) {
   auto result = capi::ICU4XLocaleDisplayNamesFormatter_create(provider.AsFFI(),

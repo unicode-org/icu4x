@@ -8,7 +8,6 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XCanonicalDecomposition.d.h"
 #include "ICU4XDataError.d.hpp"
 #include "ICU4XDecomposed.d.hpp"
 
@@ -16,6 +15,10 @@ class ICU4XDataProvider;
 struct ICU4XDecomposed;
 class ICU4XDataError;
 
+
+namespace capi {
+    typedef struct ICU4XCanonicalDecomposition ICU4XCanonicalDecomposition;
+}
 
 class ICU4XCanonicalDecomposition {
 public:

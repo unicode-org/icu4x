@@ -14,10 +14,26 @@
 #include "ICU4XDataProvider.hpp"
 #include "ICU4XDataStruct.hpp"
 #include "ICU4XFixedDecimal.hpp"
-#include "ICU4XFixedDecimalFormatter.h"
 #include "ICU4XFixedDecimalGroupingStrategy.hpp"
 #include "ICU4XLocale.hpp"
 
+
+namespace capi {
+    extern "C" {
+    
+    typedef struct ICU4XFixedDecimalFormatter_create_with_grouping_strategy_result {union {ICU4XFixedDecimalFormatter* ok; ICU4XDataError err;}; bool is_ok;} ICU4XFixedDecimalFormatter_create_with_grouping_strategy_result;
+    ICU4XFixedDecimalFormatter_create_with_grouping_strategy_result ICU4XFixedDecimalFormatter_create_with_grouping_strategy(const ICU4XDataProvider* provider, const ICU4XLocale* locale, ICU4XFixedDecimalGroupingStrategy grouping_strategy);
+    
+    typedef struct ICU4XFixedDecimalFormatter_create_with_decimal_symbols_v1_result {union {ICU4XFixedDecimalFormatter* ok; ICU4XDataError err;}; bool is_ok;} ICU4XFixedDecimalFormatter_create_with_decimal_symbols_v1_result;
+    ICU4XFixedDecimalFormatter_create_with_decimal_symbols_v1_result ICU4XFixedDecimalFormatter_create_with_decimal_symbols_v1(const ICU4XDataStruct* data_struct, ICU4XFixedDecimalGroupingStrategy grouping_strategy);
+    
+    void ICU4XFixedDecimalFormatter_format(const ICU4XFixedDecimalFormatter* self, const ICU4XFixedDecimal* value, DiplomatWrite* write);
+    
+    
+    void ICU4XFixedDecimalFormatter_destroy(ICU4XFixedDecimalFormatter* self);
+    
+    } // extern "C"
+}
 
 inline diplomat::result<std::unique_ptr<ICU4XFixedDecimalFormatter>, ICU4XDataError> ICU4XFixedDecimalFormatter::create_with_grouping_strategy(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XFixedDecimalGroupingStrategy grouping_strategy) {
   auto result = capi::ICU4XFixedDecimalFormatter_create_with_grouping_strategy(provider.AsFFI(),

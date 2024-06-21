@@ -11,8 +11,18 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 #include "ICU4XMeasureUnit.hpp"
-#include "ICU4XMeasureUnitParser.h"
 
+
+namespace capi {
+    extern "C" {
+    
+    ICU4XMeasureUnit* ICU4XMeasureUnitParser_parse(const ICU4XMeasureUnitParser* self, const char* unit_id_data, size_t unit_id_len);
+    
+    
+    void ICU4XMeasureUnitParser_destroy(ICU4XMeasureUnitParser* self);
+    
+    } // extern "C"
+}
 
 inline std::unique_ptr<ICU4XMeasureUnit> ICU4XMeasureUnitParser::parse(std::string_view unit_id) const {
   auto result = capi::ICU4XMeasureUnitParser_parse(this->AsFFI(),
