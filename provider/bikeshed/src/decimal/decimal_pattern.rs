@@ -44,7 +44,7 @@ impl FromStr for DecimalSubPattern {
         // TODO(#567): Handle quoted literals in prefix and suffix.
         // i = boundary between prefix and body
         // j = boundary between body and suffix
-        let i = subpattern.find(|c: char| matches!(c, '#' | '0' | ',' | '.'));
+        let i = subpattern.find(['#', '0', ',', '.']);
         let i = match i {
             Some(i) => i,
             None => return Err(Error::NoBodyInSubpattern),

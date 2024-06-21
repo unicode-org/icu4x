@@ -10,7 +10,7 @@ use zerofrom::ZeroFrom;
 
 impl<'zf, T> ZeroFrom<'zf, ZeroVec<'_, T>> for ZeroVec<'zf, T>
 where
-    T: 'static + AsULE + ?Sized,
+    T: 'static + AsULE,
 {
     #[inline]
     fn zero_from(other: &'zf ZeroVec<'_, T>) -> Self {
@@ -20,7 +20,7 @@ where
 
 impl<'zf, T> ZeroFrom<'zf, ZeroSlice<T>> for ZeroVec<'zf, T>
 where
-    T: 'static + AsULE + ?Sized,
+    T: 'static + AsULE,
 {
     #[inline]
     fn zero_from(other: &'zf ZeroSlice<T>) -> Self {
@@ -30,7 +30,7 @@ where
 
 impl<'zf, T> ZeroFrom<'zf, ZeroSlice<T>> for &'zf ZeroSlice<T>
 where
-    T: 'static + AsULE + ?Sized,
+    T: 'static + AsULE,
 {
     #[inline]
     fn zero_from(other: &'zf ZeroSlice<T>) -> Self {
