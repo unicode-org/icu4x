@@ -16,7 +16,7 @@ use alloc::boxed::Box;
 use core::cmp::Ordering;
 
 use icu_provider::prelude::*;
-
+use crate::icu4x_shared::Transparent;
 use tinystr::TinyStr4;
 use zerovec::ule::{UnvalidatedStr, VarULE};
 use zerovec::{maps::ZeroMapKV, VarZeroSlice, VarZeroVec, ZeroMap, ZeroVec};
@@ -70,6 +70,11 @@ use zerovec::{maps::ZeroMapKV, VarZeroSlice, VarZeroVec, ZeroMap, ZeroVec};
 #[cfg_attr(feature = "serde", derive(serde::Serialize))]
 #[repr(transparent)]
 pub struct NormalizedPropertyNameStr(UnvalidatedStr);
+
+// Safety: type is repr(transparent)
+unsafe impl Transparent<UnvalidatedStr> for NormalizedPropertyNameStr {}
+
+// repr_transparent_impl!(pub fn cast_ref(&UnvalidatedStr) -> &NormalizedPropertyNameStr);
 
 /// This impl requires enabling the optional `serde` Cargo feature of the `icu::properties` crate
 #[cfg(feature = "serde")]
@@ -161,14 +166,12 @@ impl NormalizedPropertyNameStr {
 
     /// Convert a [`UnvalidatedStr`] reference to a [`NormalizedPropertyNameStr`] reference.
     pub const fn cast_ref(value: &UnvalidatedStr) -> &Self {
-        // Safety: repr(transparent)
-        unsafe { core::mem::transmute(value) }
+        crate::icu4x_shared::safe_cast_ref(value)
     }
 
     /// Convert a [`UnvalidatedStr`] box to a [`NormalizedPropertyNameStr`] box.
     pub const fn cast_box(value: Box<UnvalidatedStr>) -> Box<Self> {
-        // Safety: repr(transparent)
-        unsafe { core::mem::transmute(value) }
+        crate::icu4x_shared::safe_cast_box(value)
     }
 
     /// Get a [`NormalizedPropertyNameStr`] box from a byte slice.
