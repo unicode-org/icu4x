@@ -254,11 +254,21 @@ impl BakedExporter {
         };
 
         if !self.use_separate_crates {
+            if formatted[..300].contains("macro_rules!") || formatted[..100].contains("include!") {
+            // Formatted
             formatted = formatted
-                .replace("icu_", "icu::")
-                .replace("icu::provider", "icu_provider")
-                .replace("icu::locale_core", "icu_locale_core")
-                .replace("icu::pattern", "icu_pattern");
+                    .replace("icu_", "icu::")
+                    .replace("icu::provider", "icu_provider")
+                    .replace("icu::locale_core", "icu_locale_core")
+                    .replace("icu::pattern", "icu_pattern");
+            } else {
+                // Unformatted
+                formatted = formatted
+                    .replace("icu_", "icu :: ")
+                    .replace("icu :: provider", "icu_provider")
+                    .replace("icu :: locale_core", "icu_locale_core")
+                    .replace("icu :: pattern", "icu_pattern");
+            }
         }
 
         std::fs::create_dir_all(path.parent().unwrap())?;
