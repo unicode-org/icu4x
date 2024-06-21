@@ -10,7 +10,6 @@
 #include "diplomat_runtime.hpp"
 #include "ICU4XDataError.d.hpp"
 #include "ICU4XLocaleDirection.d.hpp"
-#include "ICU4XLocaleDirectionality.d.h"
 
 class ICU4XDataProvider;
 class ICU4XLocale;
@@ -18,6 +17,10 @@ class ICU4XLocaleExpander;
 class ICU4XDataError;
 class ICU4XLocaleDirection;
 
+
+namespace capi {
+    typedef struct ICU4XLocaleDirectionality ICU4XLocaleDirectionality;
+}
 
 class ICU4XLocaleDirectionality {
 public:

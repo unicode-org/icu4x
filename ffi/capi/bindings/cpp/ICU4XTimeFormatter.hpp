@@ -16,9 +16,26 @@
 #include "ICU4XIsoDateTime.hpp"
 #include "ICU4XLocale.hpp"
 #include "ICU4XTime.hpp"
-#include "ICU4XTimeFormatter.h"
 #include "ICU4XTimeLength.hpp"
 
+
+namespace capi {
+    extern "C" {
+    
+    typedef struct ICU4XTimeFormatter_create_with_length_result {union {ICU4XTimeFormatter* ok; ICU4XError err;}; bool is_ok;} ICU4XTimeFormatter_create_with_length_result;
+    ICU4XTimeFormatter_create_with_length_result ICU4XTimeFormatter_create_with_length(const ICU4XDataProvider* provider, const ICU4XLocale* locale, ICU4XTimeLength length);
+    
+    void ICU4XTimeFormatter_format_time(const ICU4XTimeFormatter* self, const ICU4XTime* value, DiplomatWrite* write);
+    
+    void ICU4XTimeFormatter_format_datetime(const ICU4XTimeFormatter* self, const ICU4XDateTime* value, DiplomatWrite* write);
+    
+    void ICU4XTimeFormatter_format_iso_datetime(const ICU4XTimeFormatter* self, const ICU4XIsoDateTime* value, DiplomatWrite* write);
+    
+    
+    void ICU4XTimeFormatter_destroy(ICU4XTimeFormatter* self);
+    
+    } // extern "C"
+}
 
 inline diplomat::result<std::unique_ptr<ICU4XTimeFormatter>, ICU4XError> ICU4XTimeFormatter::create_with_length(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XTimeLength length) {
   auto result = capi::ICU4XTimeFormatter_create_with_length(provider.AsFFI(),

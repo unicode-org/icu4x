@@ -10,11 +10,24 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XCanonicalDecomposition.h"
 #include "ICU4XDataError.hpp"
 #include "ICU4XDataProvider.hpp"
 #include "ICU4XDecomposed.hpp"
 
+
+namespace capi {
+    extern "C" {
+    
+    typedef struct ICU4XCanonicalDecomposition_create_result {union {ICU4XCanonicalDecomposition* ok; ICU4XDataError err;}; bool is_ok;} ICU4XCanonicalDecomposition_create_result;
+    ICU4XCanonicalDecomposition_create_result ICU4XCanonicalDecomposition_create(const ICU4XDataProvider* provider);
+    
+    ICU4XDecomposed ICU4XCanonicalDecomposition_decompose(const ICU4XCanonicalDecomposition* self, char32_t c);
+    
+    
+    void ICU4XCanonicalDecomposition_destroy(ICU4XCanonicalDecomposition* self);
+    
+    } // extern "C"
+}
 
 inline diplomat::result<std::unique_ptr<ICU4XCanonicalDecomposition>, ICU4XDataError> ICU4XCanonicalDecomposition::create(const ICU4XDataProvider& provider) {
   auto result = capi::ICU4XCanonicalDecomposition_create(provider.AsFFI());

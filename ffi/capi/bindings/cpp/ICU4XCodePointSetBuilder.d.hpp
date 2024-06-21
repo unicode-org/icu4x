@@ -8,10 +8,13 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XCodePointSetBuilder.d.h"
 
 class ICU4XCodePointSetData;
 
+
+namespace capi {
+    typedef struct ICU4XCodePointSetBuilder ICU4XCodePointSetBuilder;
+}
 
 class ICU4XCodePointSetBuilder {
 public:

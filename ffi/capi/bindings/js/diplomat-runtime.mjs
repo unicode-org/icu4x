@@ -96,8 +96,8 @@ export class DiplomatBuf {
     const byteLength = string.length * 2;
     const ptr = wasm.diplomat_alloc(byteLength, 2);
 
-    const destination = new Uint16Array(wasm.memory.buffer, ptr, byteLength);
-    for (var i; i < string.length; i++) {
+    const destination = new Uint16Array(wasm.memory.buffer, ptr, string.length);
+    for (let i = 0; i < string.length; i++) {
       destination[i] = string.charCodeAt(i);
     }
 

@@ -9,13 +9,16 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 #include "ICU4XDataError.d.hpp"
-#include "ICU4XTimeZoneIdMapperWithFastCanonicalization.d.h"
 #include "ICU4XTimeZoneInvalidIdError.d.hpp"
 
 class ICU4XDataProvider;
 class ICU4XDataError;
 class ICU4XTimeZoneInvalidIdError;
 
+
+namespace capi {
+    typedef struct ICU4XTimeZoneIdMapperWithFastCanonicalization ICU4XTimeZoneIdMapperWithFastCanonicalization;
+}
 
 class ICU4XTimeZoneIdMapperWithFastCanonicalization {
 public:

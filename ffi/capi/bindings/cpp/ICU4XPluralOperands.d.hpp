@@ -9,11 +9,14 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 #include "ICU4XFixedDecimalParseError.d.hpp"
-#include "ICU4XPluralOperands.d.h"
 
 class ICU4XFixedDecimal;
 class ICU4XFixedDecimalParseError;
 
+
+namespace capi {
+    typedef struct ICU4XPluralOperands ICU4XPluralOperands;
+}
 
 class ICU4XPluralOperands {
 public:

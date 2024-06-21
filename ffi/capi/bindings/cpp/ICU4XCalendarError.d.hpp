@@ -8,8 +8,16 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XCalendarError.d.h"
 
+
+namespace capi {
+    typedef enum ICU4XCalendarError {
+      ICU4XCalendarError_Unknown = 0,
+      ICU4XCalendarError_OutOfRange = 1,
+      ICU4XCalendarError_UnknownEra = 2,
+      ICU4XCalendarError_UnknownMonthCode = 3,
+    } ICU4XCalendarError;
+}
 
 class ICU4XCalendarError {
 public:

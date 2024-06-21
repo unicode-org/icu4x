@@ -9,7 +9,6 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 #include "ICU4XDataError.d.hpp"
-#include "ICU4XGraphemeClusterSegmenter.d.h"
 
 class ICU4XDataProvider;
 class ICU4XGraphemeClusterBreakIteratorLatin1;
@@ -17,6 +16,10 @@ class ICU4XGraphemeClusterBreakIteratorUtf16;
 class ICU4XGraphemeClusterBreakIteratorUtf8;
 class ICU4XDataError;
 
+
+namespace capi {
+    typedef struct ICU4XGraphemeClusterSegmenter ICU4XGraphemeClusterSegmenter;
+}
 
 class ICU4XGraphemeClusterSegmenter {
 public:

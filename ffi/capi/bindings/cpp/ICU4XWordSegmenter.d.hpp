@@ -9,7 +9,6 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 #include "ICU4XDataError.d.hpp"
-#include "ICU4XWordSegmenter.d.h"
 
 class ICU4XDataProvider;
 class ICU4XWordBreakIteratorLatin1;
@@ -17,6 +16,10 @@ class ICU4XWordBreakIteratorUtf16;
 class ICU4XWordBreakIteratorUtf8;
 class ICU4XDataError;
 
+
+namespace capi {
+    typedef struct ICU4XWordSegmenter ICU4XWordSegmenter;
+}
 
 class ICU4XWordSegmenter {
 public:

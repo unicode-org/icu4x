@@ -12,8 +12,19 @@
 #include "diplomat_runtime.hpp"
 #include "ICU4XDataError.hpp"
 #include "ICU4XDataProvider.hpp"
-#include "ICU4XMetazoneCalculator.h"
 
+
+namespace capi {
+    extern "C" {
+    
+    typedef struct ICU4XMetazoneCalculator_create_result {union {ICU4XMetazoneCalculator* ok; ICU4XDataError err;}; bool is_ok;} ICU4XMetazoneCalculator_create_result;
+    ICU4XMetazoneCalculator_create_result ICU4XMetazoneCalculator_create(const ICU4XDataProvider* provider);
+    
+    
+    void ICU4XMetazoneCalculator_destroy(ICU4XMetazoneCalculator* self);
+    
+    } // extern "C"
+}
 
 inline diplomat::result<std::unique_ptr<ICU4XMetazoneCalculator>, ICU4XDataError> ICU4XMetazoneCalculator::create(const ICU4XDataProvider& provider) {
   auto result = capi::ICU4XMetazoneCalculator_create(provider.AsFFI());

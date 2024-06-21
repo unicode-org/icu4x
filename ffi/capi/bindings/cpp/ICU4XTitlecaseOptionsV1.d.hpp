@@ -9,12 +9,18 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 #include "ICU4XLeadingAdjustment.d.hpp"
-#include "ICU4XTitlecaseOptionsV1.d.h"
 #include "ICU4XTrailingCase.d.hpp"
 
 class ICU4XLeadingAdjustment;
 class ICU4XTrailingCase;
 
+
+namespace capi {
+    typedef struct ICU4XTitlecaseOptionsV1 {
+      ICU4XLeadingAdjustment leading_adjustment;
+      ICU4XTrailingCase trailing_case;
+    } ICU4XTitlecaseOptionsV1;
+}
 
 struct ICU4XTitlecaseOptionsV1 {
   ICU4XLeadingAdjustment leading_adjustment;

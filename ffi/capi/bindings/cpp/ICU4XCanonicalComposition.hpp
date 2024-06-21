@@ -10,10 +10,23 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XCanonicalComposition.h"
 #include "ICU4XDataError.hpp"
 #include "ICU4XDataProvider.hpp"
 
+
+namespace capi {
+    extern "C" {
+    
+    typedef struct ICU4XCanonicalComposition_create_result {union {ICU4XCanonicalComposition* ok; ICU4XDataError err;}; bool is_ok;} ICU4XCanonicalComposition_create_result;
+    ICU4XCanonicalComposition_create_result ICU4XCanonicalComposition_create(const ICU4XDataProvider* provider);
+    
+    char32_t ICU4XCanonicalComposition_compose(const ICU4XCanonicalComposition* self, char32_t starter, char32_t second);
+    
+    
+    void ICU4XCanonicalComposition_destroy(ICU4XCanonicalComposition* self);
+    
+    } // extern "C"
+}
 
 inline diplomat::result<std::unique_ptr<ICU4XCanonicalComposition>, ICU4XDataError> ICU4XCanonicalComposition::create(const ICU4XDataProvider& provider) {
   auto result = capi::ICU4XCanonicalComposition_create(provider.AsFFI());

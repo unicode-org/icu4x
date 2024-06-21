@@ -14,7 +14,6 @@
 #include "ICU4XCollatorCaseLevel.d.hpp"
 #include "ICU4XCollatorMaxVariable.d.hpp"
 #include "ICU4XCollatorNumeric.d.hpp"
-#include "ICU4XCollatorResolvedOptionsV1.d.h"
 #include "ICU4XCollatorStrength.d.hpp"
 
 class ICU4XCollatorAlternateHandling;
@@ -25,6 +24,18 @@ class ICU4XCollatorMaxVariable;
 class ICU4XCollatorNumeric;
 class ICU4XCollatorStrength;
 
+
+namespace capi {
+    typedef struct ICU4XCollatorResolvedOptionsV1 {
+      ICU4XCollatorStrength strength;
+      ICU4XCollatorAlternateHandling alternate_handling;
+      ICU4XCollatorCaseFirst case_first;
+      ICU4XCollatorMaxVariable max_variable;
+      ICU4XCollatorCaseLevel case_level;
+      ICU4XCollatorNumeric numeric;
+      ICU4XCollatorBackwardSecondLevel backward_second_level;
+    } ICU4XCollatorResolvedOptionsV1;
+}
 
 struct ICU4XCollatorResolvedOptionsV1 {
   ICU4XCollatorStrength strength;

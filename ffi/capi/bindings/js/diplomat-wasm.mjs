@@ -26,7 +26,7 @@ const imports = {
   }
 }
 
-if (typeof fetch === 'undefined') { // Node
+if (typeof process !== 'undefined') { // Node
   const fs = await import("fs");
   const wasmFile = new Uint8Array(fs.readFileSync(cfg['wasm_path']));
   const loadedWasm = await WebAssembly.instantiate(wasmFile, imports);

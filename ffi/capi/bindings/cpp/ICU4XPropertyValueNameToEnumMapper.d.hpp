@@ -9,11 +9,14 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 #include "ICU4XDataError.d.hpp"
-#include "ICU4XPropertyValueNameToEnumMapper.d.h"
 
 class ICU4XDataProvider;
 class ICU4XDataError;
 
+
+namespace capi {
+    typedef struct ICU4XPropertyValueNameToEnumMapper ICU4XPropertyValueNameToEnumMapper;
+}
 
 class ICU4XPropertyValueNameToEnumMapper {
 public:

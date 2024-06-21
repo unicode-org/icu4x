@@ -8,8 +8,13 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XTimeZoneInvalidOffsetError.d.h"
 
+
+namespace capi {
+    typedef enum ICU4XTimeZoneInvalidOffsetError {
+      ICU4XTimeZoneInvalidOffsetError_TodoZst = 0,
+    } ICU4XTimeZoneInvalidOffsetError;
+}
 
 class ICU4XTimeZoneInvalidOffsetError {
 public:

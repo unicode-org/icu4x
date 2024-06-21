@@ -10,8 +10,18 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XLineBreakIteratorLatin1.h"
 
+
+namespace capi {
+    extern "C" {
+    
+    int32_t ICU4XLineBreakIteratorLatin1_next(ICU4XLineBreakIteratorLatin1* self);
+    
+    
+    void ICU4XLineBreakIteratorLatin1_destroy(ICU4XLineBreakIteratorLatin1* self);
+    
+    } // extern "C"
+}
 
 inline int32_t ICU4XLineBreakIteratorLatin1::next() {
   auto result = capi::ICU4XLineBreakIteratorLatin1_next(this->AsFFI());

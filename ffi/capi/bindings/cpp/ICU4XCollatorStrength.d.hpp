@@ -8,8 +8,18 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XCollatorStrength.d.h"
 
+
+namespace capi {
+    typedef enum ICU4XCollatorStrength {
+      ICU4XCollatorStrength_Auto = 0,
+      ICU4XCollatorStrength_Primary = 1,
+      ICU4XCollatorStrength_Secondary = 2,
+      ICU4XCollatorStrength_Tertiary = 3,
+      ICU4XCollatorStrength_Quaternary = 4,
+      ICU4XCollatorStrength_Identical = 5,
+    } ICU4XCollatorStrength;
+}
 
 class ICU4XCollatorStrength {
 public:

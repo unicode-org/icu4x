@@ -8,8 +8,15 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XBidiDirection.d.h"
 
+
+namespace capi {
+    typedef enum ICU4XBidiDirection {
+      ICU4XBidiDirection_Ltr = 0,
+      ICU4XBidiDirection_Rtl = 1,
+      ICU4XBidiDirection_Mixed = 2,
+    } ICU4XBidiDirection;
+}
 
 class ICU4XBidiDirection {
 public:

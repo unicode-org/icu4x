@@ -8,8 +8,11 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XGraphemeClusterBreakIteratorUtf8.d.h"
 
+
+namespace capi {
+    typedef struct ICU4XGraphemeClusterBreakIteratorUtf8 ICU4XGraphemeClusterBreakIteratorUtf8;
+}
 
 class ICU4XGraphemeClusterBreakIteratorUtf8 {
 public:

@@ -8,13 +8,20 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XLineBreakOptionsV1.d.h"
 #include "ICU4XLineBreakStrictness.d.hpp"
 #include "ICU4XLineBreakWordOption.d.hpp"
 
 class ICU4XLineBreakStrictness;
 class ICU4XLineBreakWordOption;
 
+
+namespace capi {
+    typedef struct ICU4XLineBreakOptionsV1 {
+      ICU4XLineBreakStrictness strictness;
+      ICU4XLineBreakWordOption word_option;
+      bool ja_zh;
+    } ICU4XLineBreakOptionsV1;
+}
 
 struct ICU4XLineBreakOptionsV1 {
   ICU4XLineBreakStrictness strictness;

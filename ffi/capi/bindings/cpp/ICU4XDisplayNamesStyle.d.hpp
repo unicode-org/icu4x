@@ -8,8 +8,17 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XDisplayNamesStyle.d.h"
 
+
+namespace capi {
+    typedef enum ICU4XDisplayNamesStyle {
+      ICU4XDisplayNamesStyle_Auto = 0,
+      ICU4XDisplayNamesStyle_Narrow = 1,
+      ICU4XDisplayNamesStyle_Short = 2,
+      ICU4XDisplayNamesStyle_Long = 3,
+      ICU4XDisplayNamesStyle_Menu = 4,
+    } ICU4XDisplayNamesStyle;
+}
 
 class ICU4XDisplayNamesStyle {
 public:

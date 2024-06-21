@@ -9,7 +9,6 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 #include "ICU4XDataError.d.hpp"
-#include "ICU4XFixedDecimalFormatter.d.h"
 #include "ICU4XFixedDecimalGroupingStrategy.d.hpp"
 
 class ICU4XDataProvider;
@@ -19,6 +18,10 @@ class ICU4XLocale;
 class ICU4XDataError;
 class ICU4XFixedDecimalGroupingStrategy;
 
+
+namespace capi {
+    typedef struct ICU4XFixedDecimalFormatter ICU4XFixedDecimalFormatter;
+}
 
 class ICU4XFixedDecimalFormatter {
 public:
