@@ -117,6 +117,17 @@ impl<T> ShortBoxSlice<T> {
         }
     }
 
+    /// Destruct into a single element of the [`ShortBoxSlice`].
+    ///
+    /// Returns `None` if empty or more than one element.
+    pub fn into_single(self) -> Option<T> {
+        use ShortBoxSliceInner::*;
+        match self.0 {
+            ZeroOne(Some(v)) => Some(v),
+            _ => None,
+        }
+    }
+
     /// Returns the number of elements in the collection.
     #[inline]
     pub fn len(&self) -> usize {

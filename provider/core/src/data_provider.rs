@@ -6,10 +6,9 @@ use core::marker::PhantomData;
 use yoke::Yokeable;
 
 use crate::error::DataError;
-use crate::key::DataMarkerInfo;
-use crate::marker::{DataMarker, DynamicDataMarker};
 use crate::request::DataRequest;
 use crate::response::DataResponse;
+use crate::{DataMarker, DataMarkerInfo, DynamicDataMarker};
 
 /// A data provider that loads data for a specific [`DataMarkerInfo`].
 pub trait DataProvider<M>
@@ -290,7 +289,7 @@ mod test {
 
     /// Key for HelloAlt, used for testing mismatched types
     const HELLO_ALT_KEY: DataMarkerInfo =
-        DataMarkerInfo::from_path(crate::data_marker_path!("core/helloalt1@1"));
+        DataMarkerInfo::from_path(crate::marker::data_marker_path!("core/helloalt1@1"));
 
     /// A data struct serialization-compatible with HelloWorldV1 used for testing mismatched types
     #[derive(
@@ -336,7 +335,7 @@ mod test {
         }
     }
 
-    crate::impl_dynamic_data_provider!(DataWarehouse, [HelloWorldV1Marker,], AnyMarker);
+    crate::dynutil::impl_dynamic_data_provider!(DataWarehouse, [HelloWorldV1Marker,], AnyMarker);
 
     /// A DataProvider that supports both key::HELLO_WORLD_V1 and HELLO_ALT.
     #[derive(Debug)]
@@ -368,7 +367,7 @@ mod test {
         }
     }
 
-    crate::impl_dynamic_data_provider!(
+    crate::dynutil::impl_dynamic_data_provider!(
         DataProvider2,
         [HelloWorldV1Marker, HelloAltMarker,],
         AnyMarker
@@ -417,6 +416,7 @@ mod test {
 
     #[test]
     fn test_warehouse_owned_dyn_erased() {
+        use crate::any::*;
         let warehouse = get_warehouse(DATA);
         let hello_data = get_payload_v1(&warehouse.as_any_provider().as_downcasting()).unwrap();
         assert!(matches!(

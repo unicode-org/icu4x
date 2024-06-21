@@ -6,28 +6,27 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include "diplomat_runtime.h"
-#include "diplomat_result_uint16_t_void.d.h"
+
 
 #include "ICU4XScriptExtensionsSet.d.h"
 
-#ifdef __cplusplus
-namespace capi {
-extern "C" {
-#endif // __cplusplus
+
+
+
 
 
 bool ICU4XScriptExtensionsSet_contains(const ICU4XScriptExtensionsSet* self, uint16_t script);
 
 size_t ICU4XScriptExtensionsSet_count(const ICU4XScriptExtensionsSet* self);
 
-diplomat_result_uint16_t_void ICU4XScriptExtensionsSet_script_at(const ICU4XScriptExtensionsSet* self, size_t index);
+typedef struct ICU4XScriptExtensionsSet_script_at_result {union {uint16_t ok; }; bool is_ok;} ICU4XScriptExtensionsSet_script_at_result;
+ICU4XScriptExtensionsSet_script_at_result ICU4XScriptExtensionsSet_script_at(const ICU4XScriptExtensionsSet* self, size_t index);
+
 
 void ICU4XScriptExtensionsSet_destroy(ICU4XScriptExtensionsSet* self);
 
 
-#ifdef __cplusplus
-} // extern "C"
-} // namespace capi
-#endif // __cplusplus
+
+
 
 #endif // ICU4XScriptExtensionsSet_H

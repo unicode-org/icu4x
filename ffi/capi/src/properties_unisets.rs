@@ -7,7 +7,6 @@ pub mod ffi {
     use crate::locale_core::ffi::ICU4XLocale;
     use crate::provider::ffi::ICU4XDataProvider;
     use alloc::boxed::Box;
-    use core::str;
     use icu_properties::{exemplar_chars, sets};
 
     use crate::errors::ffi::ICU4XDataError;
@@ -16,7 +15,6 @@ pub mod ffi {
     /// An ICU4X Unicode Set Property object, capable of querying whether a code point is contained in a set based on a Unicode property.
     #[diplomat::rust_link(icu::properties, Mod)]
     #[diplomat::rust_link(icu::properties::sets::UnicodeSetData, Struct)]
-    #[diplomat::rust_link(icu::properties::sets::UnicodeSetData::from_data, FnInStruct, hidden)]
     #[diplomat::rust_link(icu::properties::sets::UnicodeSetDataBorrowed, Struct)]
     pub struct ICU4XUnicodeSetData(pub sets::UnicodeSetData);
 
@@ -24,7 +22,7 @@ pub mod ffi {
         /// Checks whether the string is in the set.
         #[diplomat::rust_link(icu::properties::sets::UnicodeSetDataBorrowed::contains, FnInStruct)]
         pub fn contains(&self, s: &DiplomatStr) -> bool {
-            let Ok(s) = str::from_utf8(s) else {
+            let Ok(s) = core::str::from_utf8(s) else {
                 return false;
             };
             self.0.as_borrowed().contains(s)

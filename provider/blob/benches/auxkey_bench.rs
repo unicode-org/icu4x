@@ -35,7 +35,7 @@ macro_rules! implement {
             }
         }
         impl IterableDataProvider<$marker> for Baked {
-            fn supported_requests(
+            fn iter_requests(
                 &self,
             ) -> Result<std::collections::HashSet<(DataLocale, DataMarkerAttributes)>, DataError>
             {
@@ -244,9 +244,7 @@ where
     Baked: IterableDataProvider<M>,
     ExportMarker: UpcastDataPayload<M>,
 {
-    for (locale, marker_attributes) in
-        &IterableDataProvider::<M>::supported_requests(&Baked).unwrap()
-    {
+    for (locale, marker_attributes) in &IterableDataProvider::<M>::iter_requests(&Baked).unwrap() {
         let req = DataRequest {
             locale,
             marker_attributes,

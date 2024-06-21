@@ -8,8 +8,15 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XLineBreakWordOption.d.h"
 
+
+namespace capi {
+    typedef enum ICU4XLineBreakWordOption {
+      ICU4XLineBreakWordOption_Normal = 0,
+      ICU4XLineBreakWordOption_BreakAll = 1,
+      ICU4XLineBreakWordOption_KeepAll = 2,
+    } ICU4XLineBreakWordOption;
+}
 
 class ICU4XLineBreakWordOption {
 public:

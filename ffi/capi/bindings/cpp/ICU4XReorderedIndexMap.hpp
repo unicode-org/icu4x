@@ -10,8 +10,24 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XReorderedIndexMap.h"
 
+
+namespace capi {
+    extern "C" {
+    
+    DiplomatUsizeView ICU4XReorderedIndexMap_as_slice(const ICU4XReorderedIndexMap* self);
+    
+    size_t ICU4XReorderedIndexMap_len(const ICU4XReorderedIndexMap* self);
+    
+    bool ICU4XReorderedIndexMap_is_empty(const ICU4XReorderedIndexMap* self);
+    
+    size_t ICU4XReorderedIndexMap_get(const ICU4XReorderedIndexMap* self, size_t index);
+    
+    
+    void ICU4XReorderedIndexMap_destroy(ICU4XReorderedIndexMap* self);
+    
+    } // extern "C"
+}
 
 inline diplomat::span<const size_t> ICU4XReorderedIndexMap::as_slice() const {
   auto result = capi::ICU4XReorderedIndexMap_as_slice(this->AsFFI());

@@ -5,8 +5,6 @@
 #[allow(unused_imports)] // feature-specific
 use alloc::boxed::Box;
 use icu_provider::prelude::*;
-#[allow(unused_imports)] // feature-specific
-use icu_provider::MaybeSendSync;
 use icu_provider_adapters::empty::EmptyDataProvider;
 #[allow(unused_imports)] // feature-specific
 use yoke::{trait_hack::YokeTraitHack, Yokeable};
@@ -38,7 +36,7 @@ pub mod ffi {
     pub struct ICU4XDataProvider(pub ICU4XDataProviderInner);
 
     #[cfg(feature = "buffer_provider")]
-    fn convert_buffer_provider<D: icu_provider::BufferProvider + 'static>(
+    fn convert_buffer_provider<D: icu_provider::buf::BufferProvider + 'static>(
         x: D,
     ) -> ICU4XDataProvider {
         ICU4XDataProvider(super::ICU4XDataProviderInner::Buffer(Box::new(x)))
@@ -297,7 +295,7 @@ macro_rules! call_constructor_unstable {
             ))?,
             $crate::provider::ICU4XDataProviderInner::Empty => $unstable(&icu_provider_adapters::empty::EmptyDataProvider::new(), $($args,)*),
             #[cfg(feature = "buffer_provider")]
-            $crate::provider::ICU4XDataProviderInner::Buffer(buffer_provider) => $unstable(&icu_provider::AsDeserializingBufferProvider::as_deserializing(buffer_provider), $($args,)*),
+            $crate::provider::ICU4XDataProviderInner::Buffer(buffer_provider) => $unstable(&icu_provider::buf::AsDeserializingBufferProvider::as_deserializing(buffer_provider), $($args,)*),
             #[cfg(feature = "compiled_data")]
             $crate::provider::ICU4XDataProviderInner::Compiled => { let $pre_transform = $compiled($($args,)*); $transform },
         }
@@ -309,7 +307,7 @@ macro_rules! call_constructor_unstable {
             ))?,
             $crate::provider::ICU4XDataProviderInner::Empty => $unstable(&icu_provider_adapters::empty::EmptyDataProvider::new(), $($args,)*),
             #[cfg(feature = "buffer_provider")]
-            $crate::provider::ICU4XDataProviderInner::Buffer(buffer_provider) => $unstable(&icu_provider::AsDeserializingBufferProvider::as_deserializing(buffer_provider), $($args,)*),
+            $crate::provider::ICU4XDataProviderInner::Buffer(buffer_provider) => $unstable(&icu_provider::buf::AsDeserializingBufferProvider::as_deserializing(buffer_provider), $($args,)*),
             #[cfg(feature = "compiled_data")]
             $crate::provider::ICU4XDataProviderInner::Compiled => $compiled($($args,)*),
         }

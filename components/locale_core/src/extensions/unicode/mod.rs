@@ -30,6 +30,7 @@ mod attribute;
 mod attributes;
 mod key;
 mod keywords;
+mod subdivision;
 mod value;
 
 use core::cmp::Ordering;
@@ -41,6 +42,7 @@ pub use attributes::Attributes;
 #[doc(inline)]
 pub use key::{key, Key};
 pub use keywords::Keywords;
+pub use subdivision::{subdivision_suffix, SubdivisionId, SubdivisionSuffix};
 #[doc(inline)]
 pub use value::{value, Value};
 
@@ -106,6 +108,25 @@ impl Unicode {
         }
     }
 
+    /// A constructor which takes a str slice, parses it and
+    /// produces a well-formed [`Unicode`].
+    #[inline]
+    pub fn try_from_str(s: &str) -> Result<Self, ParseError> {
+        Self::try_from_utf8(s.as_bytes())
+    }
+
+    /// See [`Self::try_from_str`]
+    pub fn try_from_utf8(code_units: &[u8]) -> Result<Self, ParseError> {
+        let mut iter = SubtagIterator::new(code_units);
+
+        let ext = iter.next().ok_or(ParseError::InvalidExtension)?;
+        if let ExtensionType::Unicode = ExtensionType::try_from_byte_slice(ext)? {
+            return Self::try_from_iter(&mut iter);
+        }
+
+        Err(ParseError::InvalidExtension)
+    }
+
     /// Returns [`true`] if there list of keywords and attributes is empty.
     ///
     /// # Examples
@@ -119,17 +140,6 @@ impl Unicode {
     /// ```
     pub fn is_empty(&self) -> bool {
         self.keywords.is_empty() && self.attributes.is_empty()
-    }
-
-    pub(crate) fn try_from_bytes(t: &[u8]) -> Result<Self, ParseError> {
-        let mut iter = SubtagIterator::new(t);
-
-        let ext = iter.next().ok_or(ParseError::InvalidExtension)?;
-        if let ExtensionType::Unicode = ExtensionType::try_from_byte_slice(ext)? {
-            return Self::try_from_iter(&mut iter);
-        }
-
-        Err(ParseError::InvalidExtension)
     }
 
     /// Clears all Unicode extension keywords and attributes, effectively removing
@@ -197,8 +207,9 @@ impl Unicode {
 impl FromStr for Unicode {
     type Err = ParseError;
 
-    fn from_str(source: &str) -> Result<Self, Self::Err> {
-        Self::try_from_bytes(source.as_bytes())
+    #[inline]
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Self::try_from_str(s)
     }
 }
 
@@ -242,5 +253,8 @@ mod tests {
     fn test_unicode_extension_fromstr() {
         let ue: Unicode = "u-foo-hc-h12".parse().expect("Failed to parse Unicode");
         assert_eq!(ue.to_string(), "u-foo-hc-h12");
+
+        let ue: Result<Unicode, _> = "u".parse();
+        assert!(ue.is_err());
     }
 }

@@ -6,6 +6,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include "diplomat_runtime.h"
+
 #include "ICU4XCollatorAlternateHandling.d.h"
 #include "ICU4XCollatorBackwardSecondLevel.d.h"
 #include "ICU4XCollatorCaseFirst.d.h"
@@ -14,10 +15,7 @@
 #include "ICU4XCollatorNumeric.d.h"
 #include "ICU4XCollatorStrength.d.h"
 
-#ifdef __cplusplus
-namespace capi {
-extern "C" {
-#endif // __cplusplus
+
 
 
 typedef struct ICU4XCollatorOptionsV1 {
@@ -31,9 +29,7 @@ typedef struct ICU4XCollatorOptionsV1 {
 } ICU4XCollatorOptionsV1;
 
 
-#ifdef __cplusplus
-} // extern "C"
-} // namespace capi
-#endif // __cplusplus
+
+
 
 #endif // ICU4XCollatorOptionsV1_D_H

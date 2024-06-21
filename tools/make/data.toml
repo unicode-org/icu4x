@@ -22,9 +22,9 @@ command = "cargo"
 env = { ICU4X_WRITE_TESTDATA = "1" }
 args = [
     "test",
-    "-p=icu_datagen",
+    "-p=icu_datagen_bikeshed",
     "--no-default-features",
-    "--features=fs_exporter,baked_exporter,use_wasm,rayon,experimental_components,provider",
+    "--features=use_wasm,experimental",
     "--",
     "--nocapture",
     "make_testdata",
@@ -39,18 +39,17 @@ exit_on_error true
 
 exec --fail-on-error cargo build -p icu4x-datagen --no-default-features --features fs_exporter,blob_exporter,baked_exporter,networking,provider
 
+# Filesystem
 exec --fail-on-error target/debug/icu4x-datagen --markers HelloWorldV1Marker --locales full --format dir --syntax json --out provider/fs/tests/data/json --overwrite
 exec --fail-on-error target/debug/icu4x-datagen --markers HelloWorldV1Marker --locales full --format dir --syntax bincode --out provider/fs/tests/data/bincode --overwrite
 exec --fail-on-error target/debug/icu4x-datagen --markers HelloWorldV1Marker --locales full --format dir --syntax postcard --out provider/fs/tests/data/postcard --overwrite
 
+# Blob
 exec --fail-on-error target/debug/icu4x-datagen --markers HelloWorldV1Marker --locales full --format blob --overwrite --out provider/blob/tests/data/v1.postcard
 exec --fail-on-error target/debug/icu4x-datagen --markers HelloWorldV1Marker --locales full --format blob2 --overwrite --out provider/blob/tests/data/v2.postcard
 
+# Baked
 exec --fail-on-error target/debug/icu4x-datagen --markers HelloWorldV1Marker --locales full --format mod --pretty --overwrite --no-internal-fallback --deduplication none --out provider/baked/tests/data
-
-exec --fail-on-error target/debug/icu4x-datagen --markers HelloWorldV1Marker "fallback/likelysubtags@1" "fallback/parents@1" "fallback/supplement/co@1" --locales full --format blob --out provider/adapters/tests/data/blob.postcard --overwrite
-exec --fail-on-error target/debug/icu4x-datagen --markers HelloWorldV1Marker --without-fallback --locales de --format dir --syntax json --out provider/adapters/tests/data/langtest/de --overwrite
-exec --fail-on-error target/debug/icu4x-datagen --markers HelloWorldV1Marker --without-fallback --locales ro --format dir --syntax json --out provider/adapters/tests/data/langtest/ro --overwrite
 '''
 
 [tasks.testdata-check]

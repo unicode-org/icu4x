@@ -8,7 +8,6 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XCodePointSetData.d.h"
 #include "ICU4XDataError.d.hpp"
 #include "ICU4XError.d.hpp"
 
@@ -17,6 +16,10 @@ class ICU4XDataProvider;
 class ICU4XDataError;
 class ICU4XError;
 
+
+namespace capi {
+    typedef struct ICU4XCodePointSetData ICU4XCodePointSetData;
+}
 
 class ICU4XCodePointSetData {
 public:

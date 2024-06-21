@@ -177,7 +177,7 @@ impl PatternBackend for SinglePlaceholder {
     type Iter<'a> = SinglePlaceholderPatternIterator<'a>;
 
     #[inline]
-    fn try_store_from_bytes(utf8: &[u8]) -> Result<&Self::Store, Self::StoreFromBytesError> {
+    fn try_store_from_utf8(utf8: &[u8]) -> Result<&Self::Store, Self::StoreFromBytesError> {
         core::str::from_utf8(utf8)
     }
 

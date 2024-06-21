@@ -16,16 +16,23 @@ pub struct TinyAsciiStr<const N: usize> {
 }
 
 impl<const N: usize> TinyAsciiStr<N> {
+    #[inline]
+    pub const fn try_from_str(s: &str) -> Result<Self, TinyStrError> {
+        Self::try_from_utf8(s.as_bytes())
+    }
+
     /// Creates a `TinyAsciiStr<N>` from the given UTF-8 slice.
-    /// `bytes` may contain at most `N` non-null ASCII code points.
-    pub const fn try_from_utf8(bytes: &[u8]) -> Result<Self, TinyStrError> {
-        Self::try_from_utf8_inner(bytes, 0, bytes.len(), false)
+    /// `code_units` may contain at most `N` non-null ASCII code points.
+    #[inline]
+    pub const fn try_from_utf8(code_units: &[u8]) -> Result<Self, TinyStrError> {
+        Self::try_from_utf8_inner(code_units, 0, code_units.len(), false)
     }
 
     /// Creates a `TinyAsciiStr<N>` from the given UTF-16 slice.
-    /// `code_points` may contain at most `N` non-null ASCII code points.
-    pub const fn try_from_utf16(code_points: &[u16]) -> Result<Self, TinyStrError> {
-        Self::try_from_utf16_inner(code_points, 0, code_points.len(), false)
+    /// `code_units` may contain at most `N` non-null ASCII code points.
+    #[inline]
+    pub const fn try_from_utf16(code_units: &[u16]) -> Result<Self, TinyStrError> {
+        Self::try_from_utf16_inner(code_units, 0, code_units.len(), false)
     }
 
     /// Creates a `TinyAsciiStr<N>` from a UTF-8 slice, replacing invalid code units.
@@ -35,16 +42,20 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// will be replaced with the replacement byte.
     ///
     /// The input slice will be truncated if its length exceeds `N`.
-    pub const fn from_utf8_lossy(bytes: &[u8], replacement: u8) -> Self {
+    pub const fn from_utf8_lossy(code_units: &[u8], replacement: u8) -> Self {
         let mut out = [0; N];
         let mut i = 0;
         // Ord is not available in const, so no `.min(N)`
-        let len = if bytes.len() > N { N } else { bytes.len() };
+        let len = if code_units.len() > N {
+            N
+        } else {
+            code_units.len()
+        };
 
         // Indexing is protected by the len check above
         #[allow(clippy::indexing_slicing)]
         while i < len {
-            let b = bytes[i];
+            let b = code_units[i];
             if b > 0 && b < 0x80 {
                 out[i] = b;
             } else {
@@ -66,20 +77,20 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// will be replaced with the replacement byte.
     ///
     /// The input slice will be truncated if its length exceeds `N`.
-    pub const fn from_utf16_lossy(code_points: &[u16], replacement: u8) -> Self {
+    pub const fn from_utf16_lossy(code_units: &[u16], replacement: u8) -> Self {
         let mut out = [0; N];
         let mut i = 0;
         // Ord is not available in const, so no `.min(N)`
-        let len = if code_points.len() > N {
+        let len = if code_units.len() > N {
             N
         } else {
-            code_points.len()
+            code_units.len()
         };
 
         // Indexing is protected by the len check above
         #[allow(clippy::indexing_slicing)]
         while i < len {
-            let b = code_points[i];
+            let b = code_units[i];
             if b > 0 && b < 0x80 {
                 out[i] = b as u8;
             } else {
@@ -120,27 +131,28 @@ impl<const N: usize> TinyAsciiStr<N> {
 
     /// Equivalent to [`try_from_utf8(bytes[start..end])`](Self::try_from_utf8),
     /// but callable in a `const` context (which range indexing is not).
+    #[inline]
     pub const fn try_from_utf8_manual_slice(
-        bytes: &[u8],
+        code_units: &[u8],
         start: usize,
         end: usize,
     ) -> Result<Self, TinyStrError> {
-        Self::try_from_utf8_inner(bytes, start, end, false)
+        Self::try_from_utf8_inner(code_units, start, end, false)
     }
 
     /// Equivalent to [`try_from_utf16(bytes[start..end])`](Self::try_from_utf16),
     /// but callable in a `const` context (which range indexing is not).
+    #[inline]
     pub const fn try_from_utf16_manual_slice(
-        code_points: &[u16],
+        code_units: &[u16],
         start: usize,
         end: usize,
     ) -> Result<Self, TinyStrError> {
-        Self::try_from_utf16_inner(code_points, start, end, false)
+        Self::try_from_utf16_inner(code_units, start, end, false)
     }
 
-    #[inline]
     pub(crate) const fn try_from_utf8_inner(
-        bytes: &[u8],
+        code_units: &[u8],
         start: usize,
         end: usize,
         allow_trailing_null: bool,
@@ -156,7 +168,7 @@ impl<const N: usize> TinyAsciiStr<N> {
         // Indexing is protected by TinyStrError::TooLarge
         #[allow(clippy::indexing_slicing)]
         while i < len {
-            let b = bytes[start + i];
+            let b = code_units[start + i];
 
             if b == 0 {
                 found_null = true;
@@ -182,7 +194,6 @@ impl<const N: usize> TinyAsciiStr<N> {
         })
     }
 
-    #[inline]
     pub(crate) const fn try_from_utf16_inner(
         code_points: &[u16],
         start: usize,
@@ -224,11 +235,6 @@ impl<const N: usize> TinyAsciiStr<N> {
             // SAFETY: `out` only contains ASCII bytes and has same size as `self.bytes`
             bytes: unsafe { AsciiByte::to_ascii_byte_array(&out) },
         })
-    }
-
-    #[inline]
-    pub const fn try_from_str(s: &str) -> Result<Self, TinyStrError> {
-        Self::try_from_utf8_inner(s.as_bytes(), 0, s.len(), false)
     }
 
     #[inline]
@@ -301,9 +307,9 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// Must be called with a bytes array made of valid ASCII bytes, with no null bytes
     /// between ASCII characters
     #[must_use]
-    pub const unsafe fn from_utf8_unchecked(bytes: [u8; N]) -> Self {
+    pub const unsafe fn from_utf8_unchecked(code_units: [u8; N]) -> Self {
         Self {
-            bytes: AsciiByte::to_ascii_byte_array(&bytes),
+            bytes: AsciiByte::to_ascii_byte_array(&code_units),
         }
     }
 }
@@ -923,7 +929,7 @@ mod test {
         fn check<const N: usize>() {
             check_operation(
                 |s| {
-                    s == TinyAsciiStr::<16>::from_str(s)
+                    s == TinyAsciiStr::<16>::try_from_str(s)
                         .unwrap()
                         .to_ascii_lowercase()
                         .as_str()
@@ -944,7 +950,7 @@ mod test {
         fn check<const N: usize>() {
             check_operation(
                 |s| {
-                    s == TinyAsciiStr::<16>::from_str(s)
+                    s == TinyAsciiStr::<16>::try_from_str(s)
                         .unwrap()
                         .to_ascii_titlecase()
                         .as_str()
@@ -965,7 +971,7 @@ mod test {
         fn check<const N: usize>() {
             check_operation(
                 |s| {
-                    s == TinyAsciiStr::<16>::from_str(s)
+                    s == TinyAsciiStr::<16>::try_from_str(s)
                         .unwrap()
                         .to_ascii_uppercase()
                         .as_str()
@@ -989,7 +995,7 @@ mod test {
                     // Check alphabetic
                     s.chars().all(|c| c.is_ascii_alphabetic()) &&
                     // Check lowercase
-                    s == TinyAsciiStr::<16>::from_str(s)
+                    s == TinyAsciiStr::<16>::try_from_str(s)
                         .unwrap()
                         .to_ascii_lowercase()
                         .as_str()
@@ -1013,7 +1019,7 @@ mod test {
                     // Check alphabetic
                     s.chars().all(|c| c.is_ascii_alphabetic()) &&
                     // Check titlecase
-                    s == TinyAsciiStr::<16>::from_str(s)
+                    s == TinyAsciiStr::<16>::try_from_str(s)
                         .unwrap()
                         .to_ascii_titlecase()
                         .as_str()
@@ -1037,7 +1043,7 @@ mod test {
                     // Check alphabetic
                     s.chars().all(|c| c.is_ascii_alphabetic()) &&
                     // Check uppercase
-                    s == TinyAsciiStr::<16>::from_str(s)
+                    s == TinyAsciiStr::<16>::try_from_str(s)
                         .unwrap()
                         .to_ascii_uppercase()
                         .as_str()

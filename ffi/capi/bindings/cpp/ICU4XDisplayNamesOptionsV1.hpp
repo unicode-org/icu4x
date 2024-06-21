@@ -11,10 +11,16 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 #include "ICU4XDisplayNamesFallback.hpp"
-#include "ICU4XDisplayNamesOptionsV1.h"
 #include "ICU4XDisplayNamesStyle.hpp"
 #include "ICU4XLanguageDisplay.hpp"
 
+
+namespace capi {
+    extern "C" {
+    
+    
+    } // extern "C"
+}
 
 
 inline capi::ICU4XDisplayNamesOptionsV1 ICU4XDisplayNamesOptionsV1::AsFFI() const {

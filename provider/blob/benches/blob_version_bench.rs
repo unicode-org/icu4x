@@ -22,7 +22,7 @@ fn blob_version_bench(c: &mut Criterion) {
     });
 
     let hello_world_provider = HelloWorldProvider;
-    let locales = hello_world_provider.supported_requests().unwrap();
+    let locales = hello_world_provider.iter_requests().unwrap();
 
     c.bench_function("provider/read/v1", |b| {
         let provider = BlobDataProvider::try_new_from_static_blob(black_box(BLOB_V1)).unwrap();

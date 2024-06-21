@@ -8,8 +8,15 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XCollatorAlternateHandling.d.h"
 
+
+namespace capi {
+    typedef enum ICU4XCollatorAlternateHandling {
+      ICU4XCollatorAlternateHandling_Auto = 0,
+      ICU4XCollatorAlternateHandling_NonIgnorable = 1,
+      ICU4XCollatorAlternateHandling_Shifted = 2,
+    } ICU4XCollatorAlternateHandling;
+}
 
 class ICU4XCollatorAlternateHandling {
 public:

@@ -59,7 +59,7 @@ use predicates::MissingDataMarkerPredicate;
 /// Normal usage:
 ///
 /// ```
-/// use icu_locale_core::langid;
+/// use icu_locale::langid;
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
 /// use icu_provider_adapters::fork::ForkByMarkerProvider;
@@ -95,7 +95,7 @@ use predicates::MissingDataMarkerPredicate;
 /// Stops at the first provider supporting a marker, even if the locale is not supported:
 ///
 /// ```
-/// use icu_locale_core::{subtags::language, langid};
+/// use icu_locale::{subtags::language, langid};
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
 /// use icu_provider_adapters::filter::Filterable;
@@ -136,8 +136,8 @@ use predicates::MissingDataMarkerPredicate;
 ///
 /// [`DataMarkerInfo`]: icu_provider::DataMarkerInfo
 /// [`DataProvider`]: icu_provider::DataProvider
-/// [`AnyProvider`]: icu_provider::AnyProvider
-/// [`BufferProvider`]: icu_provider::BufferProvider
+/// [`AnyProvider`]: icu_provider::any::AnyProvider
+/// [`BufferProvider`]: icu_provider::buf::BufferProvider
 /// [`DynamicDataProvider`]: icu_provider::DynamicDataProvider
 pub type ForkByMarkerProvider<P0, P1> = ForkByErrorProvider<P0, P1, MissingDataMarkerPredicate>;
 
@@ -162,7 +162,7 @@ impl<P0, P1> ForkByMarkerProvider<P0, P1> {
 /// # Examples
 ///
 /// ```
-/// use icu_locale_core::{subtags::language, langid};
+/// use icu_locale::{subtags::language, langid};
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
 /// use icu_provider_adapters::filter::Filterable;
@@ -205,8 +205,8 @@ impl<P0, P1> ForkByMarkerProvider<P0, P1> {
 ///
 /// [`DataMarkerInfo`]: icu_provider::DataMarkerInfo
 /// [`DataProvider`]: icu_provider::DataProvider
-/// [`AnyProvider`]: icu_provider::AnyProvider
-/// [`BufferProvider`]: icu_provider::BufferProvider
+/// [`AnyProvider`]: icu_provider::any::AnyProvider
+/// [`BufferProvider`]: icu_provider::buf::BufferProvider
 /// [`DynamicDataProvider`]: icu_provider::DynamicDataProvider
 pub type MultiForkByMarkerProvider<P> = MultiForkByErrorProvider<P, MissingDataMarkerPredicate>;
 

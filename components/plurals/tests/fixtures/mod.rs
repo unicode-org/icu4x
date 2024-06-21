@@ -10,6 +10,7 @@ use serde::Deserialize;
 
 /// Defines the data-driven test sets for the operands.
 #[derive(Deserialize)]
+#[allow(dead_code)]
 pub struct OperandsTestSet {
     pub string: Vec<OperandsTest<String>>,
     pub int: Vec<OperandsTest<isize>>,
@@ -20,6 +21,7 @@ pub struct OperandsTestSet {
 /// A single test case verifying the conversion from [FixedDecimal] into
 /// [PluralOperands].
 #[derive(Debug, Deserialize)]
+#[allow(dead_code)]
 pub struct FromTestCase {
     /// The [FixedDecimal] input
     pub input: FixedDecimalInput,
@@ -99,12 +101,14 @@ impl From<PluralOperandsInput> for PluralOperands {
 }
 
 #[derive(Debug, Clone, Deserialize)]
+#[allow(dead_code)]
 pub struct OperandsTest<T> {
     pub input: T,
     pub output: PluralOperandsInput,
 }
 
 #[derive(Deserialize)]
+#[allow(dead_code)]
 pub struct RuleTest {
     pub rule: String,
     pub input: PluralOperandsInput,
@@ -113,12 +117,14 @@ pub struct RuleTest {
 
 #[derive(Deserialize)]
 #[serde(untagged)]
+#[allow(dead_code)]
 pub enum RuleTestOutput {
     Value(bool),
     Error(String),
 }
 
 #[derive(Deserialize)]
+#[allow(dead_code)]
 pub struct RuleTestSet(pub Vec<RuleTest>);
 
 #[derive(Clone, Copy, Debug, Deserialize)]
@@ -162,6 +168,7 @@ impl PartialEq<PluralCategory> for &PluralCategoryInput {
 }
 
 #[derive(Deserialize)]
+#[allow(dead_code)]
 pub struct CategoriesTest {
     pub langid: String,
     pub plural_type: PluralRuleTypeInput,

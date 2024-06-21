@@ -348,6 +348,7 @@ impl FromStr for IcuRatio {
         /// - Simple fractions: e.g., "1/2".
         /// - Decimals: e.g., "1.5".
         /// - Mixed fractions: e.g., "1.5/6", "1.4/5.6".
+        ///
         /// Note: Scientific notation is not supported.
         fn parse_fraction(decimal: &str) -> Result<IcuRatio, RatioFromStrError> {
             let mut components = decimal.split('/');
@@ -375,10 +376,13 @@ impl FromStr for IcuRatio {
         }
 
         /// Parses a decimal number from a string input.
+        ///
         /// Accepts input in various decimal formats, including:
         /// - Whole numbers: "1"
         /// - Decimal numbers: "1.5"
+        ///
         /// An empty string input is interpreted as "0".
+        ///
         /// Note: Fractional inputs are not supported in this context.
         fn parse_decimal(decimal: &str) -> Result<IcuRatio, RatioFromStrError> {
             let is_negative = decimal.starts_with('-');

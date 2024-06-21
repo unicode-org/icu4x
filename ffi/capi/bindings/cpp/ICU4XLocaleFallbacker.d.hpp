@@ -10,7 +10,6 @@
 #include "diplomat_runtime.hpp"
 #include "ICU4XDataError.d.hpp"
 #include "ICU4XLocaleFallbackConfig.d.hpp"
-#include "ICU4XLocaleFallbacker.d.h"
 #include "ICU4XLocaleParseError.d.hpp"
 
 class ICU4XDataProvider;
@@ -19,6 +18,10 @@ struct ICU4XLocaleFallbackConfig;
 class ICU4XDataError;
 class ICU4XLocaleParseError;
 
+
+namespace capi {
+    typedef struct ICU4XLocaleFallbacker ICU4XLocaleFallbacker;
+}
 
 class ICU4XLocaleFallbacker {
 public:

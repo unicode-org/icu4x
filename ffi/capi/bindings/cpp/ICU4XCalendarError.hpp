@@ -10,7 +10,14 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XCalendarError.h"
+
+
+namespace capi {
+    extern "C" {
+    
+    
+    } // extern "C"
+}
 
 
 inline capi::ICU4XCalendarError ICU4XCalendarError::AsFFI() const {

@@ -320,7 +320,7 @@ impl PatternBackend for MultiNamedPlaceholder {
     type Iter<'a> = MultiNamedPlaceholderPatternIterator<'a>;
 
     #[inline]
-    fn try_store_from_bytes(bytes: &[u8]) -> Result<&Self::Store, Self::StoreFromBytesError> {
+    fn try_store_from_utf8(bytes: &[u8]) -> Result<&Self::Store, Self::StoreFromBytesError> {
         core::str::from_utf8(bytes)
     }
 

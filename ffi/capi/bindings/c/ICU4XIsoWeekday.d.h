@@ -7,10 +7,8 @@
 #include <stdbool.h>
 #include "diplomat_runtime.h"
 
-#ifdef __cplusplus
-namespace capi {
-extern "C" {
-#endif // __cplusplus
+
+
 
 
 typedef enum ICU4XIsoWeekday {
@@ -24,9 +22,7 @@ typedef enum ICU4XIsoWeekday {
 } ICU4XIsoWeekday;
 
 
-#ifdef __cplusplus
-} // extern "C"
-} // namespace capi
-#endif // __cplusplus
+
+
 
 #endif // ICU4XIsoWeekday_D_H

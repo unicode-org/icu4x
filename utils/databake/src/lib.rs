@@ -43,8 +43,7 @@
 //! # Testing
 //! The [`test_bake`] macro can be used to assert that a particular expression is a `Bake` fixed point.
 //!
-//! ```no_run
-//! # // https://github.com/rust-lang/rust/issues/98906
+//! ```
 //! # use databake::*;
 //! # #[derive(Bake)]
 //! # #[databake(path = my_crate)]
@@ -59,7 +58,7 @@
 //! # fn main() {
 //! test_bake!(
 //!     AnotherOne,
-//!     const: crate::AnotherOne(
+//!     const, crate::AnotherOne(
 //!         crate::MyStruct {
 //!           number: 17u32,
 //!           string: "foo",
@@ -135,7 +134,7 @@ pub trait Bake {
 ///
 /// ```
 /// # use databake::test_bake;
-/// test_bake!(usize, const: 18usize);
+/// test_bake!(usize, const, 18usize);
 /// ```
 ///
 /// ## Crates and imports
@@ -164,7 +163,7 @@ pub trait Bake {
 /// `CrateEnv`. The `crate`-replacement crate will always be checked.
 #[macro_export]
 macro_rules! test_bake {
-    ($type:ty, const: $expr:expr $(, $krate:ident)? $(, [$($env_crate:ident),+])? $(,)?) => {
+    ($type:ty, const, $expr:expr $(, $krate:ident)? $(, [$($env_crate:ident),+])? $(,)?) => {
         const _: &$type = &$expr;
         $crate::test_bake!($type, $expr $(, $krate)? $(, [$($env_crate),+])?);
     };
@@ -173,8 +172,11 @@ macro_rules! test_bake {
         let env = Default::default();
         let expr: &$type = &$expr;
         let bake = $crate::Bake::bake(expr, &env).to_string();
-        // `TokenStream::to_string` and the `stringify!` macro seem to disagree on this
+        // For some reason `TokenStream` behaves differently in this line
         let expected_bake = $crate::quote!($expr).to_string().replace("::<", ":: <").replace(">::", "> ::");
+        // Trailing commas are a mess as well
+        let bake = bake.replace(" ,)", ")").replace(" ,]", "]").replace(" , }", " }");
+        let expected_bake = expected_bake.replace(" ,)", ")").replace(" ,]", "]").replace(" , }", " }");
         $(
             let expected_bake = expected_bake.replace("crate", stringify!($krate));
         )?

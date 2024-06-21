@@ -87,10 +87,9 @@ impl CaseMapCloser<CaseMapper> {
         }
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: DataError,
-    #[cfg(skip)]
+    icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,
     functions: [
-        new,
+        new: skip,
         try_new_with_any_provider,
         try_new_with_buffer_provider,
         try_new_unstable,
@@ -110,10 +109,9 @@ impl CaseMapCloser<CaseMapper> {
 
 // We use Borrow, not AsRef, since we want the blanket impl on T
 impl<CM: AsRef<CaseMapper>> CaseMapCloser<CM> {
-    icu_provider::gen_any_buffer_data_constructors!(locale: skip, casemapper: CM, error: DataError,
-    #[cfg(skip)]
+    icu_provider::gen_any_buffer_data_constructors!((casemapper: CM) -> error: DataError,
     functions: [
-        new_with_mapper,
+        new_with_mapper: skip,
         try_new_with_mapper_with_any_provider,
         try_new_with_mapper_with_buffer_provider,
         try_new_with_mapper_unstable,

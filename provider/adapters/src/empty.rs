@@ -91,7 +91,7 @@ impl<M> icu_provider::datagen::IterableDataProvider<M> for EmptyDataProvider
 where
     M: DataMarker,
 {
-    fn supported_requests(
+    fn iter_requests(
         &self,
     ) -> Result<std::collections::HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         Ok(Default::default())
@@ -103,7 +103,7 @@ impl<M> icu_provider::datagen::IterableDynamicDataProvider<M> for EmptyDataProvi
 where
     M: DynamicDataMarker,
 {
-    fn supported_requests_for_marker(
+    fn iter_requests_for_marker(
         &self,
         _: DataMarkerInfo,
     ) -> Result<std::collections::HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {

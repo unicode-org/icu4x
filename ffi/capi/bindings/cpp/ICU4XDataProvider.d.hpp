@@ -9,11 +9,14 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 #include "ICU4XDataError.d.hpp"
-#include "ICU4XDataProvider.d.h"
 
 class ICU4XLocaleFallbacker;
 class ICU4XDataError;
 
+
+namespace capi {
+    typedef struct ICU4XDataProvider ICU4XDataProvider;
+}
 
 class ICU4XDataProvider {
 public:

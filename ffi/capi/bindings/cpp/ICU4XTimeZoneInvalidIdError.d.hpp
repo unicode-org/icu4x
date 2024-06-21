@@ -8,8 +8,13 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XTimeZoneInvalidIdError.d.h"
 
+
+namespace capi {
+    typedef enum ICU4XTimeZoneInvalidIdError {
+      ICU4XTimeZoneInvalidIdError_TodoZst = 0,
+    } ICU4XTimeZoneInvalidIdError;
+}
 
 class ICU4XTimeZoneInvalidIdError {
 public:

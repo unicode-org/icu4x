@@ -88,7 +88,7 @@ impl Bag {
         const H24: Subtag = subtag!("h24");
         let hour_cycle = match data_locale
             .get_unicode_ext(&key!("hc"))
-            .and_then(|v| v.as_single_subtag().copied())
+            .and_then(|v| v.into_single_subtag())
         {
             Some(H11) => Some(HourCycle::H11),
             Some(H12) => Some(HourCycle::H12),

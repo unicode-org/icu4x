@@ -50,11 +50,9 @@ impl Region {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale::subtags::Region;
+    /// use icu::locale::subtags::region;
     ///
-    /// let region = Region::try_from_bytes(b"us").expect("Parsing failed.");
-    ///
-    /// assert!(region.is_alphabetic());
+    /// assert!(region!("us").is_alphabetic());
     /// ```
     pub fn is_alphabetic(&self) -> bool {
         self.0.len() == 2

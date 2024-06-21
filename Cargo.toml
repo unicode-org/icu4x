@@ -35,6 +35,7 @@ members = [
     # Provider
     "provider/adapters",
     "provider/baked",
+    "provider/bikeshed",
     "provider/blob",
     "provider/core",
     "provider/core/macros",
@@ -68,6 +69,7 @@ members = [
     "utils/ixdtf",
     "utils/litemap",
     "utils/pattern",
+    "utils/preferences",
     "utils/resb",
     "utils/tinystr",
     "utils/tzif",
@@ -150,6 +152,7 @@ icu_harfbuzz = { version = "~0.2.0", path = "ffi/harfbuzz", default-features = f
 
 # Provider
 icu_datagen = { version = "~1.5.0", path = "provider/datagen", default-features = false }
+icu_datagen_bikeshed = { version = "~1.5.0", path = "provider/bikeshed", default-features = false }
 icu_provider = { version = "~1.5.0", path = "provider/core", default-features = false }
 icu_provider_macros = { version = "~1.5.0", path = "provider/core/macros", default-features = false }
 icu_provider_adapters = { version = "~1.5.0", path = "provider/adapters", default-features = false }
@@ -205,10 +208,10 @@ icu_benchmark_macros = { path = "tools/benchmark/macros" }
 
 # The version here can either be a `version = ".."` spec or `git = "https://github.com/rust-diplomat/diplomat", rev = ".."`
 # Diplomat must be published preceding a new ICU4X release but may use git versions in between
-diplomat = { git = "https://github.com/rust-diplomat/diplomat", rev = "dbb32938c2d0176474f44907df057afd1df2dea7" }
-diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat", rev = "dbb32938c2d0176474f44907df057afd1df2dea7" }
-diplomat_core = { git = "https://github.com/rust-diplomat/diplomat", rev = "dbb32938c2d0176474f44907df057afd1df2dea7" }
-diplomat-tool = { git = "https://github.com/rust-diplomat/diplomat", rev = "dbb32938c2d0176474f44907df057afd1df2dea7" }
+diplomat = { git = "https://github.com/rust-diplomat/diplomat", rev = "40dd17124eadcaa3cf91873547fa7504bc8aff80" }
+diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat", rev = "40dd17124eadcaa3cf91873547fa7504bc8aff80" }
+diplomat_core = { git = "https://github.com/rust-diplomat/diplomat", rev = "40dd17124eadcaa3cf91873547fa7504bc8aff80" }
+diplomat-tool = { git = "https://github.com/rust-diplomat/diplomat", rev = "40dd17124eadcaa3cf91873547fa7504bc8aff80" }
 
 # EXTERNAL DEPENDENCIES
 #
@@ -270,6 +273,7 @@ elsa = "1.10.0"
 erased-serde = "0.3.11"
 eyre = "0.6.0"
 getrandom = "0.2"
+heck = "0.5"
 iai = "0.1.1"
 indexmap = "1.0.0"
 itertools = "0.10.3"

@@ -755,12 +755,9 @@ impl AnyCalendar {
     }
 
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: include,
-        options: skip,
-        error: DataError,
-        #[cfg(skip)]
+        (locale) -> error: DataError,
         functions: [
-            new_for_locale,
+            new_for_locale: skip,
             try_new_for_locale_with_any_provider,
             try_new_for_locale_with_buffer_provider,
             try_new_for_locale_unstable,
@@ -1020,12 +1017,10 @@ impl AnyCalendarKind {
             AnyCalendarKind::Gregorian => value!("gregory"),
             AnyCalendarKind::Hebrew => value!("hebrew"),
             AnyCalendarKind::Indian => value!("indian"),
-            AnyCalendarKind::IslamicCivil => Value::try_from_bytes(b"islamic-civil").unwrap(),
+            AnyCalendarKind::IslamicCivil => Value::try_from_str("islamic-civil").unwrap(),
             AnyCalendarKind::IslamicObservational => value!("islamic"),
-            AnyCalendarKind::IslamicTabular => Value::try_from_bytes(b"islamic-tbla").unwrap(),
-            AnyCalendarKind::IslamicUmmAlQura => {
-                Value::try_from_bytes(b"islamic-umalqura").unwrap()
-            }
+            AnyCalendarKind::IslamicTabular => Value::try_from_str("islamic-tbla").unwrap(),
+            AnyCalendarKind::IslamicUmmAlQura => Value::try_from_str("islamic-umalqura").unwrap(),
             AnyCalendarKind::Iso => value!("iso"),
             AnyCalendarKind::Japanese => value!("japanese"),
             AnyCalendarKind::JapaneseExtended => value!("japanext"),

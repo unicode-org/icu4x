@@ -288,7 +288,8 @@ impl databake::Bake for ListJoinerPattern<'_> {
 fn databake() {
     databake::test_bake!(
         ListJoinerPattern,
-        const: crate::provider::ListJoinerPattern::from_parts(", ", 2u8),
+        const,
+        crate::provider::ListJoinerPattern::from_parts(", ", 2u8),
         icu_list
     );
 }

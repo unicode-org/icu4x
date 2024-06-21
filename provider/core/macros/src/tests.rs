@@ -63,7 +63,7 @@ fn test_data_marker() {
             }
             impl icu_provider::DataMarker for BarV1Marker {
                 const INFO: icu_provider::DataMarkerInfo = {
-                    let mut info = icu_provider::DataMarkerInfo::from_path(icu_provider::data_marker_path!("demo/bar@1"));
+                    let mut info = icu_provider::DataMarkerInfo::from_path(icu_provider::marker::data_marker_path!("demo/bar@1"));
                     info.is_singleton = false;
                     info.fallback_config.priority = icu_provider::_internal::LocaleFallbackPriority::const_default();
                     info.fallback_config.extension_key = None;
@@ -102,7 +102,7 @@ fn test_multi_named_keyed_data_marker() {
             }
             impl icu_provider::DataMarker for BarV1Marker {
                 const INFO: icu_provider::DataMarkerInfo = {
-                    let mut info = icu_provider::DataMarkerInfo::from_path(icu_provider::data_marker_path!("demo/bar@1"));
+                    let mut info = icu_provider::DataMarkerInfo::from_path(icu_provider::marker::data_marker_path!("demo/bar@1"));
                     info.is_singleton = false;
                     info.fallback_config.priority = icu_provider::_internal::LocaleFallbackPriority::const_default();
                     info.fallback_config.extension_key = None;
@@ -117,7 +117,7 @@ fn test_multi_named_keyed_data_marker() {
             }
             impl icu_provider::DataMarker for BazV1Marker {
                 const INFO: icu_provider::DataMarkerInfo =  {
-                    let mut info = icu_provider::DataMarkerInfo::from_path(icu_provider::data_marker_path!("demo/baz@1"));
+                    let mut info = icu_provider::DataMarkerInfo::from_path(icu_provider::marker::data_marker_path!("demo/baz@1"));
                     info.is_singleton = false;
                     info.fallback_config.priority = icu_provider::_internal::LocaleFallbackPriority::const_default();
                     info.fallback_config.extension_key = None;
@@ -162,7 +162,7 @@ fn test_attributes() {
             }
             impl icu_provider::DataMarker for BarV1Marker {
                 const INFO: icu_provider::DataMarkerInfo = {
-                    let mut info = icu_provider::DataMarkerInfo::from_path(icu_provider::data_marker_path!("demo/bar@1"));
+                    let mut info = icu_provider::DataMarkerInfo::from_path(icu_provider::marker::data_marker_path!("demo/bar@1"));
                     info.is_singleton = true;
                     info.fallback_config.priority = icu_provider::_internal::LocaleFallbackPriority::Region;
                     info.fallback_config.extension_key = Some(icu_provider::_internal::locale_core::extensions::unicode::key!("ca"));

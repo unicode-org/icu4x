@@ -9,7 +9,6 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 #include "ICU4XAnyCalendarKind.d.hpp"
-#include "ICU4XCalendar.d.h"
 #include "ICU4XDataError.d.hpp"
 
 class ICU4XDataProvider;
@@ -17,6 +16,10 @@ class ICU4XLocale;
 class ICU4XAnyCalendarKind;
 class ICU4XDataError;
 
+
+namespace capi {
+    typedef struct ICU4XCalendar ICU4XCalendar;
+}
 
 class ICU4XCalendar {
 public:

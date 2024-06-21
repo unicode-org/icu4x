@@ -10,8 +10,14 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XPluralCategories.h"
 
+
+namespace capi {
+    extern "C" {
+    
+    
+    } // extern "C"
+}
 
 
 inline capi::ICU4XPluralCategories ICU4XPluralCategories::AsFFI() const {

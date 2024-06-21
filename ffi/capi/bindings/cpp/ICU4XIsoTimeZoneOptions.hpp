@@ -12,9 +12,15 @@
 #include "diplomat_runtime.hpp"
 #include "ICU4XIsoTimeZoneFormat.hpp"
 #include "ICU4XIsoTimeZoneMinuteDisplay.hpp"
-#include "ICU4XIsoTimeZoneOptions.h"
 #include "ICU4XIsoTimeZoneSecondDisplay.hpp"
 
+
+namespace capi {
+    extern "C" {
+    
+    
+    } // extern "C"
+}
 
 
 inline capi::ICU4XIsoTimeZoneOptions ICU4XIsoTimeZoneOptions::AsFFI() const {

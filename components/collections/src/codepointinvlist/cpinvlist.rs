@@ -412,7 +412,7 @@ impl<'data> CodePointInversionList<'data> {
         self.inv_list.as_ule_slice().chunks(2).map(|pair| {
             let range_start: u32 = AsULE::from_unaligned(pair[0]);
             let range_limit: u32 = AsULE::from_unaligned(pair[1]);
-            RangeInclusive::new(range_start, range_limit - 1)
+            range_start..=(range_limit - 1)
         })
     }
 
@@ -462,7 +462,7 @@ impl<'data> CodePointInversionList<'data> {
         let chunks = middle.chunks(2).map(|pair| {
             let range_start: u32 = AsULE::from_unaligned(pair[0]);
             let range_limit: u32 = AsULE::from_unaligned(pair[1]);
-            RangeInclusive::new(range_start, range_limit - 1)
+            range_start..=(range_limit - 1)
         });
         beginning.into_iter().chain(chunks).chain(end)
     }
@@ -479,7 +479,7 @@ impl<'data> CodePointInversionList<'data> {
         let end_idx = start_idx + 1;
         let start = self.inv_list.get(start_idx)?;
         let end = self.inv_list.get(end_idx)?;
-        Some(RangeInclusive::new(start, end - 1))
+        Some(start..=(end - 1))
     }
 
     /// Returns the number of elements of the [`CodePointInversionList`]
@@ -577,9 +577,9 @@ impl<'data> CodePointInversionList<'data> {
     /// let example =
     ///     CodePointInversionList::try_from_inversion_list_slice(&example_list)
     ///         .unwrap();
-    /// assert!(example.contains_range(&('A'..'C')));
-    /// assert!(example.contains_range(&('A'..='B')));
-    /// assert!(!example.contains_range(&('A'..='C')));
+    /// assert!(example.contains_range('A'..'C'));
+    /// assert!(example.contains_range('A'..='B'));
+    /// assert!(!example.contains_range('A'..='C'));
     /// ```
     ///
     /// Surrogate points (`0xD800 -> 0xDFFF`) will return [`false`] if the Range contains them but the
@@ -601,9 +601,9 @@ impl<'data> CodePointInversionList<'data> {
     /// let example =
     ///     CodePointInversionList::try_from_inversion_list_slice(&example_list)
     ///         .unwrap();
-    /// assert!(!example.contains_range(&(check)));
+    /// assert!(!example.contains_range(check));
     /// ```
-    pub fn contains_range(&self, range: &impl RangeBounds<char>) -> bool {
+    pub fn contains_range(&self, range: impl RangeBounds<char>) -> bool {
         let (from, till) = deconstruct_range(range);
         if from >= till {
             return false;
@@ -782,26 +782,26 @@ mod tests {
     fn test_codepointinversionlist_contains_range() {
         let ex = vec![0x41, 0x46, 0x4B, 0x55];
         let check = CodePointInversionList::try_from_inversion_list_slice(&ex).unwrap();
-        assert!(check.contains_range(&('A'..='E'))); // 65 - 69
-        assert!(check.contains_range(&('C'..'D'))); // 67 - 67
-        assert!(check.contains_range(&('L'..'P'))); // 76 - 80
-        assert!(!check.contains_range(&('L'..='U'))); // 76 - 85
+        assert!(check.contains_range('A'..='E')); // 65 - 69
+        assert!(check.contains_range('C'..'D')); // 67 - 67
+        assert!(check.contains_range('L'..'P')); // 76 - 80
+        assert!(!check.contains_range('L'..='U')); // 76 - 85
     }
 
     #[test]
     fn test_codepointinversionlist_contains_range_false() {
         let ex = vec![0x41, 0x46, 0x4B, 0x55];
         let check = CodePointInversionList::try_from_inversion_list_slice(&ex).unwrap();
-        assert!(!check.contains_range(&('!'..'A'))); // 33 - 65
-        assert!(!check.contains_range(&('F'..'K'))); // 70 - 74
-        assert!(!check.contains_range(&('U'..))); // 85 - ..
+        assert!(!check.contains_range('!'..'A')); // 33 - 65
+        assert!(!check.contains_range('F'..'K')); // 70 - 74
+        assert!(!check.contains_range('U'..)); // 85 - ..
     }
 
     #[test]
     fn test_codepointinversionlist_contains_range_invalid() {
         let check = CodePointInversionList::all();
-        assert!(!check.contains_range(&('A'..'!'))); // 65 - 33
-        assert!(!check.contains_range(&('A'..'A'))); // 65 - 65
+        assert!(!check.contains_range('A'..'!')); // 65 - 33
+        assert!(!check.contains_range('A'..'A')); // 65 - 65
     }
 
     #[test]
@@ -1016,12 +1016,13 @@ mod tests {
     fn databake() {
         databake::test_bake!(
             CodePointInversionList<'static>,
-            const: unsafe {
+            const,
+            unsafe {
                 #[allow(unused_unsafe)]
                 crate::codepointinvlist::CodePointInversionList::from_parts_unchecked(
                     unsafe {
                         zerovec::ZeroVec::from_bytes_unchecked(
-                            b"0\0\0\0:\0\0\0A\0\0\0G\0\0\0a\0\0\0g\0\0\0"
+                            b"0\0\0\0:\0\0\0A\0\0\0G\0\0\0a\0\0\0g\0\0\0",
                         )
                     },
                     22u32,

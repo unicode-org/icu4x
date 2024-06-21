@@ -36,6 +36,7 @@ icu_harfbuzz = { path = "../ffi/harfbuzz" }
 
 # Provider
 icu_datagen = { path = "../provider/datagen" }
+icu_datagen_bikeshed = { path = "../provider/bikeshed" }
 icu_provider = { path = "../provider/core" }
 icu_provider_macros = { path = "../provider/core/macros" }
 icu_provider_adapters = { path = "../provider/adapters" }

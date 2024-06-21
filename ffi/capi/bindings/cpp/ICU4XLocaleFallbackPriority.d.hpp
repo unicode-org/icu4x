@@ -8,8 +8,15 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XLocaleFallbackPriority.d.h"
 
+
+namespace capi {
+    typedef enum ICU4XLocaleFallbackPriority {
+      ICU4XLocaleFallbackPriority_Language = 0,
+      ICU4XLocaleFallbackPriority_Region = 1,
+      ICU4XLocaleFallbackPriority_Collation = 2,
+    } ICU4XLocaleFallbackPriority;
+}
 
 class ICU4XLocaleFallbackPriority {
 public:

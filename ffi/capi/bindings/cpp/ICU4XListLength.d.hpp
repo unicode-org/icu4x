@@ -8,8 +8,15 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XListLength.d.h"
 
+
+namespace capi {
+    typedef enum ICU4XListLength {
+      ICU4XListLength_Wide = 0,
+      ICU4XListLength_Short = 1,
+      ICU4XListLength_Narrow = 2,
+    } ICU4XListLength;
+}
 
 class ICU4XListLength {
 public:

@@ -14,6 +14,7 @@ use PersonNamesFormatterError::ParseError;
 pub struct TestingProvider;
 
 const _: () = {
+    pub use icu_experimental_data::*;
     mod icu {
         pub use icu_collections as collections;
         pub use icu_experimental as experimental;
@@ -21,8 +22,8 @@ const _: () = {
         pub use icu_properties as properties;
     }
 
-    icu_experimental_data::make_provider!(TestingProvider);
-    icu_experimental_data::impl_person_names_format_v1_marker!(TestingProvider);
+    make_provider!(TestingProvider);
+    impl_person_names_format_v1_marker!(TestingProvider);
     icu_locale_data::impl_locale_fallback_likely_subtags_v1_marker!(TestingProvider);
     icu_locale_data::impl_locale_fallback_parents_v1_marker!(TestingProvider);
     icu_locale_data::impl_collation_fallback_supplement_v1_marker!(TestingProvider);

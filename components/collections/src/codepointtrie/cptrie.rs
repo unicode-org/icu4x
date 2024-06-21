@@ -71,14 +71,7 @@ pub trait TrieValue: Copy + Eq + PartialEq + zerovec::ule::AsULE + 'static {
     ///
     /// This method is allowed to have GIGO behavior when fed a value that has
     /// no corresponding `u32` (since such values cannot be stored in the trie)
-    fn to_u32(self) -> u32 {
-        debug_assert!(
-            false,
-            "TrieValue::to_u32() not implemented for {}",
-            ::core::any::type_name::<Self>()
-        );
-        0
-    }
+    fn to_u32(self) -> u32;
 }
 
 macro_rules! impl_primitive_trie_value {
@@ -559,7 +552,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
             let di: usize = self.data.len() - (HIGH_VALUE_NEG_DATA_OFFSET as usize);
             let value: T = self.data.get(di)?;
             return Some(CodePointMapRange {
-                range: RangeInclusive::new(start, CODE_POINT_MAX),
+                range: start..=CODE_POINT_MAX,
                 value,
             });
         }
@@ -643,7 +636,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
                     if have_value {
                         if null_value != value {
                             return Some(CodePointMapRange {
-                                range: RangeInclusive::new(start, c - 1),
+                                range: start..=(c - 1),
                                 value,
                             });
                         }
@@ -716,7 +709,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
                         if have_value {
                             if null_value != value {
                                 return Some(CodePointMapRange {
-                                    range: RangeInclusive::new(start, c - 1),
+                                    range: start..=(c - 1),
                                     value,
                                 });
                             }
@@ -738,7 +731,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
                                 ) != value
                                 {
                                     return Some(CodePointMapRange {
-                                        range: RangeInclusive::new(start, c - 1),
+                                        range: start..=(c - 1),
                                         value,
                                     });
                                 }
@@ -783,7 +776,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
                                 ) != value
                                 {
                                     return Some(CodePointMapRange {
-                                        range: RangeInclusive::new(start, c - 1),
+                                        range: start..=(c - 1),
                                         value,
                                     });
                                 }
@@ -842,7 +835,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
             c = CODE_POINT_MAX;
         }
         Some(CodePointMapRange {
-            range: RangeInclusive::new(start, c),
+            range: start..=c,
             value,
         })
     }
@@ -868,7 +861,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     ///     assert_eq!(
     ///         ranges.next(),
     ///         Some(CodePointMapRange {
-    ///             range: RangeInclusive::new(exp_start, exp_end),
+    ///             range: exp_start..=exp_end,
     ///             value: plane as u8
     ///         })
     ///     );
@@ -881,7 +874,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// ```
     pub fn iter_ranges(&self) -> CodePointMapRangeIterator<T> {
         let init_range = Some(CodePointMapRange {
-            range: RangeInclusive::new(u32::MAX, u32::MAX),
+            range: u32::MAX..=u32::MAX,
             value: self.error_value(),
         });
         CodePointMapRangeIterator::<T> {
@@ -901,7 +894,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// let trie = planes::get_planes_trie();
     ///
     /// let plane_val = 2;
-    /// let mut sip_range_iter = trie.get_ranges_for_value(plane_val as u8);
+    /// let mut sip_range_iter = trie.iter_ranges_for_value(plane_val as u8);
     ///
     /// let start = plane_val * 0x1_0000;
     /// let end = start + 0xffff;
@@ -911,7 +904,10 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// assert_eq!(start..=end, sip_range);
     ///
     /// assert!(sip_range_iter.next().is_none());
-    pub fn get_ranges_for_value(&self, value: T) -> impl Iterator<Item = RangeInclusive<u32>> + '_ {
+    pub fn iter_ranges_for_value(
+        &self,
+        value: T,
+    ) -> impl Iterator<Item = RangeInclusive<u32>> + '_ {
         self.iter_ranges()
             .filter(move |cpm_range| cpm_range.value == value)
             .map(|cpm_range| cpm_range.range)
@@ -972,7 +968,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// assert!(!sip.contains32(end + 1));
     /// ```
     pub fn get_set_for_value(&self, value: T) -> CodePointInversionList<'static> {
-        let value_ranges = self.get_ranges_for_value(value);
+        let value_ranges = self.iter_ranges_for_value(value);
         CodePointInversionList::from_iter(value_ranges)
     }
 
@@ -1223,7 +1219,7 @@ mod tests {
         assert_eq!(
             first_range,
             Some(CodePointMapRange {
-                range: RangeInclusive::new(0x0, 0xffff),
+                range: 0x0..=0xffff,
                 value: 0
             })
         );
@@ -1232,7 +1228,7 @@ mod tests {
         assert_eq!(
             second_range,
             Some(CodePointMapRange {
-                range: RangeInclusive::new(0x10000, 0x1ffff),
+                range: 0x10000..=0x1ffff,
                 value: 1
             })
         );
@@ -1241,7 +1237,7 @@ mod tests {
         assert_eq!(
             penultimate_range,
             Some(CodePointMapRange {
-                range: RangeInclusive::new(0xf_0000, 0xf_ffff),
+                range: 0xf_0000..=0xf_ffff,
                 value: 15
             })
         );
@@ -1250,7 +1246,7 @@ mod tests {
         assert_eq!(
             last_range,
             Some(CodePointMapRange {
-                range: RangeInclusive::new(0x10_0000, 0x10_ffff),
+                range: 0x10_0000..=0x10_ffff,
                 value: 16
             })
         );
@@ -1260,7 +1256,8 @@ mod tests {
     fn databake() {
         databake::test_bake!(
             CodePointTrie<'static, u32>,
-            const: crate::codepointtrie::CodePointTrie::from_parts(
+            const,
+            crate::codepointtrie::CodePointTrie::from_parts(
                 crate::codepointtrie::CodePointTrieHeader {
                     high_start: 1u32,
                     shifted12_high_start: 2u16,

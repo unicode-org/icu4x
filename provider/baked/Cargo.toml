@@ -24,11 +24,20 @@ icu_registry = { workspace = true, optional = true }
 itertools = { workspace = true, optional = true }
 log = { workspace = true, optional = true }
 proc-macro2 = { workspace = true, optional = true }
-heck = "0.5.0"
+heck = { workspace = true, optional = true }
 
 [dev-dependencies]
 icu_provider = { path = "../core", features = ["datagen"] }
 icu_datagen = { path = "../datagen" }
 
 [features]
-export = ["dep:icu_registry", "dep:databake", "dep:proc-macro2", "dep:itertools", "dep:crlify", "dep:log", "icu_provider/datagen"]
+export = [
+    "dep:crlify",
+    "dep:databake",
+    "dep:heck",
+    "dep:icu_registry",
+    "dep:itertools",
+    "dep:log",
+    "dep:proc-macro2",
+    "icu_provider/datagen"
+]

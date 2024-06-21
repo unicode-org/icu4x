@@ -13,10 +13,26 @@
 #include "ICU4XDataError.hpp"
 #include "ICU4XDataProvider.hpp"
 #include "ICU4XLocaleFallbackConfig.hpp"
-#include "ICU4XLocaleFallbacker.h"
 #include "ICU4XLocaleFallbackerWithConfig.hpp"
 #include "ICU4XLocaleParseError.hpp"
 
+
+namespace capi {
+    extern "C" {
+    
+    typedef struct ICU4XLocaleFallbacker_create_result {union {ICU4XLocaleFallbacker* ok; ICU4XDataError err;}; bool is_ok;} ICU4XLocaleFallbacker_create_result;
+    ICU4XLocaleFallbacker_create_result ICU4XLocaleFallbacker_create(const ICU4XDataProvider* provider);
+    
+    ICU4XLocaleFallbacker* ICU4XLocaleFallbacker_create_without_data();
+    
+    typedef struct ICU4XLocaleFallbacker_for_config_result {union {ICU4XLocaleFallbackerWithConfig* ok; ICU4XLocaleParseError err;}; bool is_ok;} ICU4XLocaleFallbacker_for_config_result;
+    ICU4XLocaleFallbacker_for_config_result ICU4XLocaleFallbacker_for_config(const ICU4XLocaleFallbacker* self, ICU4XLocaleFallbackConfig config);
+    
+    
+    void ICU4XLocaleFallbacker_destroy(ICU4XLocaleFallbacker* self);
+    
+    } // extern "C"
+}
 
 inline diplomat::result<std::unique_ptr<ICU4XLocaleFallbacker>, ICU4XDataError> ICU4XLocaleFallbacker::create(const ICU4XDataProvider& provider) {
   auto result = capi::ICU4XLocaleFallbacker_create(provider.AsFFI());

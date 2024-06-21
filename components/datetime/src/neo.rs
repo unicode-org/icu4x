@@ -1286,7 +1286,7 @@ impl<R: DateTimeMarkers> NeoFormatter<R> {
     /// ```
     pub fn convert_and_format<'a, I>(&'a self, datetime: &I) -> FormattedNeoDateTime
     where
-        I: ?Sized + ConvertCalendar,
+        I: ConvertCalendar,
         I::Converted<'a>: NeoGetField<<R::D as DateMarkers>::YearInput>
             + NeoGetField<<R::D as DateMarkers>::MonthInput>
             + NeoGetField<<R::D as DateMarkers>::DayOfMonthInput>

@@ -49,7 +49,6 @@ use patterns::{
     dayperiods::{DayPeriodExpectation, DayPeriodTests},
     time_zones::{TimeZoneConfig, TimeZoneExpectation, TimeZoneTests},
 };
-use std::str::FromStr;
 use tinystr::tinystr;
 use writeable::assert_writeable_eq;
 
@@ -98,7 +97,8 @@ fn test_fixture(fixture_name: &str, file: &str) {
             None => format!("\n  file: {fixture_name}.json\n"),
         };
         for (locale, output_value) in fx.output.values {
-            let locale = Locale::from_str(&locale).expect("Expected parseable locale in fixture");
+            let locale =
+                Locale::try_from_str(&locale).expect("Expected parseable locale in fixture");
             if let Some(kind) = AnyCalendarKind::get_for_locale(&locale) {
                 match kind {
                     AnyCalendarKind::Buddhist => assert_fixture_element(
@@ -530,7 +530,7 @@ fn test_time_zone_format_configs() {
 
 #[test]
 #[cfg(debug_assertions)]
-#[should_panic(expected = "MissingInputField(Some(\"gmt_offset\"))")]
+#[should_panic(expected = "Err(MissingInputField(\"gmt_offset\"))")]
 fn test_time_zone_format_gmt_offset_not_set_debug_assert_panic() {
     let time_zone = CustomTimeZone {
         gmt_offset: None,

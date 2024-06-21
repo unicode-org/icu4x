@@ -11,8 +11,30 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 #include "ICU4XCalendarError.hpp"
-#include "ICU4XTime.h"
 
+
+namespace capi {
+    extern "C" {
+    
+    typedef struct ICU4XTime_create_result {union {ICU4XTime* ok; ICU4XCalendarError err;}; bool is_ok;} ICU4XTime_create_result;
+    ICU4XTime_create_result ICU4XTime_create(uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond);
+    
+    typedef struct ICU4XTime_create_midnight_result {union {ICU4XTime* ok; ICU4XCalendarError err;}; bool is_ok;} ICU4XTime_create_midnight_result;
+    ICU4XTime_create_midnight_result ICU4XTime_create_midnight();
+    
+    uint8_t ICU4XTime_hour(const ICU4XTime* self);
+    
+    uint8_t ICU4XTime_minute(const ICU4XTime* self);
+    
+    uint8_t ICU4XTime_second(const ICU4XTime* self);
+    
+    uint32_t ICU4XTime_nanosecond(const ICU4XTime* self);
+    
+    
+    void ICU4XTime_destroy(ICU4XTime* self);
+    
+    } // extern "C"
+}
 
 inline diplomat::result<std::unique_ptr<ICU4XTime>, ICU4XCalendarError> ICU4XTime::create(uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond) {
   auto result = capi::ICU4XTime_create(hour,

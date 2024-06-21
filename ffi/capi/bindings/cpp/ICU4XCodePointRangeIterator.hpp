@@ -10,9 +10,19 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XCodePointRangeIterator.h"
 #include "ICU4XCodePointRangeIteratorResult.hpp"
 
+
+namespace capi {
+    extern "C" {
+    
+    ICU4XCodePointRangeIteratorResult ICU4XCodePointRangeIterator_next(ICU4XCodePointRangeIterator* self);
+    
+    
+    void ICU4XCodePointRangeIterator_destroy(ICU4XCodePointRangeIterator* self);
+    
+    } // extern "C"
+}
 
 inline ICU4XCodePointRangeIteratorResult ICU4XCodePointRangeIterator::next() {
   auto result = capi::ICU4XCodePointRangeIterator_next(this->AsFFI());

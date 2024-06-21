@@ -9,156 +9,159 @@ macro_rules! __impl_indian_year_names_v1_marker {
         #[clippy::msrv = "1.70"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
         #[clippy::msrv = "1.70"]
-        impl icu_provider::DataProvider<icu::datetime::provider::neo::IndianYearNamesV1Marker> for $provider {
-            fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::datetime::provider::neo::IndianYearNamesV1Marker>, icu_provider::DataError> {
-                static _3_FY: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
-                    #[allow(unused_unsafe)]
-                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0SAKA") })
-                });
-                static _3_ES_419: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
-                    #[allow(unused_unsafe)]
-                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0Saka") })
-                });
-                static _5_FI: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
-                    #[allow(unused_unsafe)]
-                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0Saka-ajanlaskua") })
-                });
-                static _5_SV: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
-                    #[allow(unused_unsafe)]
-                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0Saka-eran") })
-                });
-                static _5_FR: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
-                    #[allow(unused_unsafe)]
-                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xC3\xA8re Saka") })
-                });
-                static _3_CS: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
-                    #[allow(unused_unsafe)]
-                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xC5\xA0aka") })
-                });
-                static _3_EL: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
-                    #[allow(unused_unsafe)]
-                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xCE\xA3\xCE\xAC\xCE\xBA\xCE\xB1") })
-                });
-                static _3_BS_CYRL: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
-                    #[allow(unused_unsafe)]
-                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xD0\xA1\xD0\x90\xD0\x9A\xD0\x90") })
-                });
-                static _3_MK: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
-                    #[allow(unused_unsafe)]
-                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xD0\xA1\xD0\xB0\xD0\xBA\xD0\xB0") })
-                });
-                static _3_HE: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
-                    #[allow(unused_unsafe)]
-                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xD7\xA1\xD7\x90\xD7\xA7\xD7\x90") })
-                });
-                static _3_FA: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
-                    #[allow(unused_unsafe)]
-                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xD8\xAA\xD9\x82\xD9\x88\xDB\x8C\xD9\x85 \xD8\xB3\xD8\xA7\xDA\xA9\xD8\xA7") })
-                });
-                static _3_KS: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
-                    #[allow(unused_unsafe)]
-                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xD8\xB3\xD8\xA7\xDA\xA9\xD8\xA7") })
-                });
-                static _3_SD: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
-                    #[allow(unused_unsafe)]
-                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xD8\xB3\xD8\xA7\xDA\xAA\xD8\xA7") })
-                });
-                static _3_HI: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
-                    #[allow(unused_unsafe)]
-                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xA4\xB6\xE0\xA4\x95") })
-                });
-                static _3_NE: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
-                    #[allow(unused_unsafe)]
-                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xA4\xB8\xE0\xA4\xBE\xE0\xA4\x95") })
-                });
-                static _3_BRX: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
-                    #[allow(unused_unsafe)]
-                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xA4\xB8\xE0\xA4\xBE\xE0\xA4\x95\xE0\xA4\xBE") })
-                });
-                static _3_AS: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+        impl $provider {
+            const DATA_INDIAN_YEAR_NAMES_V1_MARKER: icu_provider_baked::binary_search::Data<icu_provider_baked::binary_search::AttributesAndLocale, icu::datetime::provider::neo::IndianYearNamesV1Marker> = {
+                type S = <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable;
+                const _3_AS: &S = &icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xA6\xB6\xE0\xA6\x95") })
                 });
-                static _3_BN: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                const _3_BN: &S = &icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xA6\xB8\xE0\xA6\xBE\xE0\xA6\xB2") })
                 });
-                static _3_PA: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                const _3_BRX: &S = &icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
-                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xA8\xB8\xE0\xA8\xBE\xE0\xA8\x95\xE0\xA8\xBE") })
+                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xA4\xB8\xE0\xA4\xBE\xE0\xA4\x95\xE0\xA4\xBE") })
                 });
-                static _3_GU: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                const _3_BS_CYRL: &S = &icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
-                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xAA\xB6\xE0\xAA\x95") })
+                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xD0\xA1\xD0\x90\xD0\x9A\xD0\x90") })
                 });
-                static _5_GU: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                const _3_CS: &S = &icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
-                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xAA\xB8\xE0\xAA\xBE\xE0\xAA\x95\xE0\xAA\xBE") })
+                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xC5\xA0aka") })
                 });
-                static _3_OR: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                const _3_EL: &S = &icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
-                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xAC\xB8\xE0\xAC\xBE\xE0\xAC\x95\xE0\xAC\xBE") })
+                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xCE\xA3\xCE\xAC\xCE\xBA\xCE\xB1") })
                 });
-                static _3_TA: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
-                    #[allow(unused_unsafe)]
-                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xAE\x9A\xE0\xAE\xBE\xE0\xAE\x95\xE0\xAE\xBE") })
-                });
-                static _3_TE: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
-                    #[allow(unused_unsafe)]
-                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xB0\xB6\xE0\xB0\x95") })
-                });
-                static _3_KN: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
-                    #[allow(unused_unsafe)]
-                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xB2\xB6\xE0\xB2\x95") })
-                });
-                static _3_ML: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
-                    #[allow(unused_unsafe)]
-                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xB4\xB6\xE0\xB4\x95") })
-                });
-                static _3_TH: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
-                    #[allow(unused_unsafe)]
-                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xB8\xA1.\xE0\xB8\xA8.") })
-                });
-                static _3_LO: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
-                    #[allow(unused_unsafe)]
-                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xBA\xA1.\xE0\xBA\xAA.") })
-                });
-                static _3_JA: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
-                    #[allow(unused_unsafe)]
-                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE3\x82\xB5\xE3\x82\xAB") })
-                });
-                static _3_YUE_HANS: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
-                    #[allow(unused_unsafe)]
-                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE5\x8D\xB0\xE5\xBA\xA6\xE5\x8E\x86") })
-                });
-                static _3_YUE: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
-                    #[allow(unused_unsafe)]
-                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE5\x8D\xB0\xE5\xBA\xA6\xE6\x9B\x86") })
-                });
-                static _3_FF_ADLM: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
-                    #[allow(unused_unsafe)]
-                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xF0\x9E\xA4\x85\xF0\x9E\xA4\xA2\xF0\x9E\xA4\xB3\xF0\x9E\xA4\xA2") })
-                });
-                static _5_SC: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
-                    #[allow(unused_unsafe)]
-                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0era Saka") })
-                });
-                static _3_ES: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                const _3_ES: &S = &icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") })
                 });
-                static DATA: [((&str, &str), &<icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable); 136usize] = [(("3", "as"), &_3_AS), (("3", "bn"), &_3_BN), (("3", "brx"), &_3_BRX), (("3", "bs-Cyrl"), &_3_BS_CYRL), (("3", "cs"), &_3_CS), (("3", "el"), &_3_EL), (("3", "es"), &_3_ES), (("3", "es-419"), &_3_ES_419), (("3", "fa"), &_3_FA), (("3", "ff-Adlm"), &_3_FF_ADLM), (("3", "fy"), &_3_FY), (("3", "gu"), &_3_GU), (("3", "he"), &_3_HE), (("3", "hi"), &_3_HI), (("3", "id"), &_3_FY), (("3", "ja"), &_3_JA), (("3", "kn"), &_3_KN), (("3", "kok"), &_3_HI), (("3", "ks"), &_3_KS), (("3", "lo"), &_3_LO), (("3", "mai"), &_3_HI), (("3", "mk"), &_3_MK), (("3", "ml"), &_3_ML), (("3", "mr"), &_3_HI), (("3", "ne"), &_3_NE), (("3", "no"), &_3_ES), (("3", "or"), &_3_OR), (("3", "pa"), &_3_PA), (("3", "ps"), &_3_KS), (("3", "ru"), &_3_MK), (("3", "sd"), &_3_SD), (("3", "sk"), &_3_CS), (("3", "sr"), &_3_BS_CYRL), (("3", "sr-Latn"), &_3_FY), (("3", "sv"), &_3_FY), (("3", "ta"), &_3_TA), (("3", "te"), &_3_TE), (("3", "th"), &_3_TH), (("3", "und"), &_3_ES_419), (("3", "ur"), &_3_KS), (("3", "yue"), &_3_YUE), (("3", "yue-Hans"), &_3_YUE_HANS), (("3", "zh"), &_3_YUE_HANS), (("3", "zh-Hant"), &_3_YUE), (("4", "as"), &_3_AS), (("4", "bn"), &_3_BN), (("4", "brx"), &_3_BRX), (("4", "bs-Cyrl"), &_3_BS_CYRL), (("4", "cs"), &_3_CS), (("4", "el"), &_3_EL), (("4", "es"), &_3_ES), (("4", "es-419"), &_3_ES_419), (("4", "fa"), &_3_FA), (("4", "ff-Adlm"), &_3_FF_ADLM), (("4", "fy"), &_3_FY), (("4", "gu"), &_3_GU), (("4", "he"), &_3_HE), (("4", "hi"), &_3_HI), (("4", "id"), &_3_FY), (("4", "ja"), &_3_JA), (("4", "kn"), &_3_KN), (("4", "kok"), &_3_HI), (("4", "ks"), &_3_KS), (("4", "lo"), &_3_LO), (("4", "mai"), &_3_HI), (("4", "mk"), &_3_MK), (("4", "ml"), &_3_ML), (("4", "mr"), &_3_HI), (("4", "ne"), &_3_NE), (("4", "no"), &_3_ES), (("4", "or"), &_3_OR), (("4", "pa"), &_3_PA), (("4", "ps"), &_3_KS), (("4", "ru"), &_3_MK), (("4", "sd"), &_3_SD), (("4", "sk"), &_3_CS), (("4", "sr"), &_3_BS_CYRL), (("4", "sr-Latn"), &_3_FY), (("4", "sv"), &_3_FY), (("4", "ta"), &_3_TA), (("4", "te"), &_3_TE), (("4", "th"), &_3_TH), (("4", "und"), &_3_ES_419), (("4", "ur"), &_3_KS), (("4", "yue"), &_3_YUE), (("4", "yue-Hans"), &_3_YUE_HANS), (("4", "zh"), &_3_YUE_HANS), (("4", "zh-Hant"), &_3_YUE), (("5", "as"), &_3_AS), (("5", "bn"), &_3_BN), (("5", "brx"), &_3_BRX), (("5", "bs-Cyrl"), &_3_BS_CYRL), (("5", "cs"), &_3_CS), (("5", "el"), &_3_EL), (("5", "es"), &_3_ES), (("5", "es-419"), &_3_ES_419), (("5", "fa"), &_3_FA), (("5", "ff-Adlm"), &_3_FF_ADLM), (("5", "fi"), &_5_FI), (("5", "fr"), &_5_FR), (("5", "fr-CA"), &_3_ES_419), (("5", "fy"), &_3_FY), (("5", "gu"), &_5_GU), (("5", "he"), &_3_HE), (("5", "hi"), &_3_HI), (("5", "id"), &_3_FY), (("5", "ja"), &_3_JA), (("5", "kn"), &_3_KN), (("5", "kok"), &_3_HI), (("5", "ks"), &_3_KS), (("5", "lo"), &_3_LO), (("5", "mai"), &_3_HI), (("5", "mk"), &_3_MK), (("5", "ml"), &_3_ML), (("5", "mr"), &_3_HI), (("5", "ne"), &_3_NE), (("5", "no"), &_3_ES), (("5", "or"), &_3_OR), (("5", "pa"), &_3_PA), (("5", "ps"), &_3_KS), (("5", "ru"), &_3_MK), (("5", "sc"), &_5_SC), (("5", "sd"), &_3_SD), (("5", "sk"), &_3_CS), (("5", "sr"), &_3_BS_CYRL), (("5", "sr-Latn"), &_3_FY), (("5", "sv"), &_5_SV), (("5", "ta"), &_3_TA), (("5", "te"), &_3_TE), (("5", "th"), &_3_TH), (("5", "und"), &_3_ES_419), (("5", "ur"), &_3_KS), (("5", "yue"), &_3_YUE), (("5", "yue-Hans"), &_3_YUE_HANS), (("5", "zh"), &_3_YUE_HANS), (("5", "zh-Hant"), &_3_YUE)];
-                fn lookup(req: icu_provider::DataRequest) -> Option<&'static <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DynamicDataMarker>::Yokeable> {
-                    DATA.binary_search_by(|((a, l), _)| a.cmp(&&**req.marker_attributes).then_with(|| req.locale.strict_cmp(l.as_bytes()).reverse())).map(|i| (*unsafe { DATA.get_unchecked(i) }).1).ok()
-                }
+                const _3_ES_419: &S = &icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                    #[allow(unused_unsafe)]
+                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0Saka") })
+                });
+                const _3_FA: &S = &icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                    #[allow(unused_unsafe)]
+                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xD8\xAA\xD9\x82\xD9\x88\xDB\x8C\xD9\x85 \xD8\xB3\xD8\xA7\xDA\xA9\xD8\xA7") })
+                });
+                const _3_FF_ADLM: &S = &icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                    #[allow(unused_unsafe)]
+                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xF0\x9E\xA4\x85\xF0\x9E\xA4\xA2\xF0\x9E\xA4\xB3\xF0\x9E\xA4\xA2") })
+                });
+                const _3_FY: &S = &icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                    #[allow(unused_unsafe)]
+                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0SAKA") })
+                });
+                const _3_GU: &S = &icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                    #[allow(unused_unsafe)]
+                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xAA\xB6\xE0\xAA\x95") })
+                });
+                const _3_HE: &S = &icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                    #[allow(unused_unsafe)]
+                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xD7\xA1\xD7\x90\xD7\xA7\xD7\x90") })
+                });
+                const _3_HI: &S = &icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                    #[allow(unused_unsafe)]
+                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xA4\xB6\xE0\xA4\x95") })
+                });
+                const _3_JA: &S = &icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                    #[allow(unused_unsafe)]
+                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE3\x82\xB5\xE3\x82\xAB") })
+                });
+                const _3_KN: &S = &icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                    #[allow(unused_unsafe)]
+                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xB2\xB6\xE0\xB2\x95") })
+                });
+                const _3_KS: &S = &icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                    #[allow(unused_unsafe)]
+                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xD8\xB3\xD8\xA7\xDA\xA9\xD8\xA7") })
+                });
+                const _3_LO: &S = &icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                    #[allow(unused_unsafe)]
+                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xBA\xA1.\xE0\xBA\xAA.") })
+                });
+                const _3_MK: &S = &icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                    #[allow(unused_unsafe)]
+                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xD0\xA1\xD0\xB0\xD0\xBA\xD0\xB0") })
+                });
+                const _3_ML: &S = &icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                    #[allow(unused_unsafe)]
+                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xB4\xB6\xE0\xB4\x95") })
+                });
+                const _3_NE: &S = &icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                    #[allow(unused_unsafe)]
+                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xA4\xB8\xE0\xA4\xBE\xE0\xA4\x95") })
+                });
+                const _3_OR: &S = &icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                    #[allow(unused_unsafe)]
+                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xAC\xB8\xE0\xAC\xBE\xE0\xAC\x95\xE0\xAC\xBE") })
+                });
+                const _3_PA: &S = &icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                    #[allow(unused_unsafe)]
+                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xA8\xB8\xE0\xA8\xBE\xE0\xA8\x95\xE0\xA8\xBE") })
+                });
+                const _3_SD: &S = &icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                    #[allow(unused_unsafe)]
+                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xD8\xB3\xD8\xA7\xDA\xAA\xD8\xA7") })
+                });
+                const _3_TA: &S = &icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                    #[allow(unused_unsafe)]
+                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xAE\x9A\xE0\xAE\xBE\xE0\xAE\x95\xE0\xAE\xBE") })
+                });
+                const _3_TE: &S = &icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                    #[allow(unused_unsafe)]
+                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xB0\xB6\xE0\xB0\x95") })
+                });
+                const _3_TH: &S = &icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                    #[allow(unused_unsafe)]
+                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xB8\xA1.\xE0\xB8\xA8.") })
+                });
+                const _3_YUE: &S = &icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                    #[allow(unused_unsafe)]
+                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE5\x8D\xB0\xE5\xBA\xA6\xE6\x9B\x86") })
+                });
+                const _3_YUE_HANS: &S = &icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                    #[allow(unused_unsafe)]
+                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE5\x8D\xB0\xE5\xBA\xA6\xE5\x8E\x86") })
+                });
+                const _5_FI: &S = &icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                    #[allow(unused_unsafe)]
+                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0Saka-ajanlaskua") })
+                });
+                const _5_FR: &S = &icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                    #[allow(unused_unsafe)]
+                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xC3\xA8re Saka") })
+                });
+                const _5_GU: &S = &icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                    #[allow(unused_unsafe)]
+                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xAA\xB8\xE0\xAA\xBE\xE0\xAA\x95\xE0\xAA\xBE") })
+                });
+                const _5_SC: &S = &icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                    #[allow(unused_unsafe)]
+                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0era Saka") })
+                });
+                const _5_SV: &S = &icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
+                    #[allow(unused_unsafe)]
+                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0Saka-eran") })
+                });
+                icu_provider_baked::binary_search::Data(&[(("3", "as"), _3_AS), (("3", "bn"), _3_BN), (("3", "brx"), _3_BRX), (("3", "bs-Cyrl"), _3_BS_CYRL), (("3", "cs"), _3_CS), (("3", "el"), _3_EL), (("3", "es"), _3_ES), (("3", "es-419"), _3_ES_419), (("3", "fa"), _3_FA), (("3", "ff-Adlm"), _3_FF_ADLM), (("3", "fy"), _3_FY), (("3", "gu"), _3_GU), (("3", "he"), _3_HE), (("3", "hi"), _3_HI), (("3", "id"), _3_FY), (("3", "ja"), _3_JA), (("3", "kn"), _3_KN), (("3", "kok"), _3_HI), (("3", "ks"), _3_KS), (("3", "lo"), _3_LO), (("3", "mai"), _3_HI), (("3", "mk"), _3_MK), (("3", "ml"), _3_ML), (("3", "mr"), _3_HI), (("3", "ne"), _3_NE), (("3", "no"), _3_ES), (("3", "or"), _3_OR), (("3", "pa"), _3_PA), (("3", "ps"), _3_KS), (("3", "ru"), _3_MK), (("3", "sd"), _3_SD), (("3", "sk"), _3_CS), (("3", "sr"), _3_BS_CYRL), (("3", "sr-Latn"), _3_FY), (("3", "sv"), _3_FY), (("3", "ta"), _3_TA), (("3", "te"), _3_TE), (("3", "th"), _3_TH), (("3", "und"), _3_ES_419), (("3", "ur"), _3_KS), (("3", "yue"), _3_YUE), (("3", "yue-Hans"), _3_YUE_HANS), (("3", "zh"), _3_YUE_HANS), (("3", "zh-Hant"), _3_YUE), (("4", "as"), _3_AS), (("4", "bn"), _3_BN), (("4", "brx"), _3_BRX), (("4", "bs-Cyrl"), _3_BS_CYRL), (("4", "cs"), _3_CS), (("4", "el"), _3_EL), (("4", "es"), _3_ES), (("4", "es-419"), _3_ES_419), (("4", "fa"), _3_FA), (("4", "ff-Adlm"), _3_FF_ADLM), (("4", "fy"), _3_FY), (("4", "gu"), _3_GU), (("4", "he"), _3_HE), (("4", "hi"), _3_HI), (("4", "id"), _3_FY), (("4", "ja"), _3_JA), (("4", "kn"), _3_KN), (("4", "kok"), _3_HI), (("4", "ks"), _3_KS), (("4", "lo"), _3_LO), (("4", "mai"), _3_HI), (("4", "mk"), _3_MK), (("4", "ml"), _3_ML), (("4", "mr"), _3_HI), (("4", "ne"), _3_NE), (("4", "no"), _3_ES), (("4", "or"), _3_OR), (("4", "pa"), _3_PA), (("4", "ps"), _3_KS), (("4", "ru"), _3_MK), (("4", "sd"), _3_SD), (("4", "sk"), _3_CS), (("4", "sr"), _3_BS_CYRL), (("4", "sr-Latn"), _3_FY), (("4", "sv"), _3_FY), (("4", "ta"), _3_TA), (("4", "te"), _3_TE), (("4", "th"), _3_TH), (("4", "und"), _3_ES_419), (("4", "ur"), _3_KS), (("4", "yue"), _3_YUE), (("4", "yue-Hans"), _3_YUE_HANS), (("4", "zh"), _3_YUE_HANS), (("4", "zh-Hant"), _3_YUE), (("5", "as"), _3_AS), (("5", "bn"), _3_BN), (("5", "brx"), _3_BRX), (("5", "bs-Cyrl"), _3_BS_CYRL), (("5", "cs"), _3_CS), (("5", "el"), _3_EL), (("5", "es"), _3_ES), (("5", "es-419"), _3_ES_419), (("5", "fa"), _3_FA), (("5", "ff-Adlm"), _3_FF_ADLM), (("5", "fi"), _5_FI), (("5", "fr"), _5_FR), (("5", "fr-CA"), _3_ES_419), (("5", "fy"), _3_FY), (("5", "gu"), _5_GU), (("5", "he"), _3_HE), (("5", "hi"), _3_HI), (("5", "id"), _3_FY), (("5", "ja"), _3_JA), (("5", "kn"), _3_KN), (("5", "kok"), _3_HI), (("5", "ks"), _3_KS), (("5", "lo"), _3_LO), (("5", "mai"), _3_HI), (("5", "mk"), _3_MK), (("5", "ml"), _3_ML), (("5", "mr"), _3_HI), (("5", "ne"), _3_NE), (("5", "no"), _3_ES), (("5", "or"), _3_OR), (("5", "pa"), _3_PA), (("5", "ps"), _3_KS), (("5", "ru"), _3_MK), (("5", "sc"), _5_SC), (("5", "sd"), _3_SD), (("5", "sk"), _3_CS), (("5", "sr"), _3_BS_CYRL), (("5", "sr-Latn"), _3_FY), (("5", "sv"), _5_SV), (("5", "ta"), _3_TA), (("5", "te"), _3_TE), (("5", "th"), _3_TH), (("5", "und"), _3_ES_419), (("5", "ur"), _3_KS), (("5", "yue"), _3_YUE), (("5", "yue-Hans"), _3_YUE_HANS), (("5", "zh"), _3_YUE_HANS), (("5", "zh-Hant"), _3_YUE)])
+            };
+        }
+        #[clippy::msrv = "1.70"]
+        impl icu_provider::DataProvider<icu::datetime::provider::neo::IndianYearNamesV1Marker> for $provider {
+            fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::datetime::provider::neo::IndianYearNamesV1Marker>, icu_provider::DataError> {
                 let mut metadata = icu_provider::DataResponseMetadata::default();
-                let payload = if let Some(payload) = lookup(req) {
+                let payload = if let Some(payload) = icu_provider_baked::DataStore::get(&Self::DATA_INDIAN_YEAR_NAMES_V1_MARKER, req) {
                     payload
                 } else {
                     const FALLBACKER: icu::locale::fallback::LocaleFallbackerWithConfig<'static> = icu::locale::fallback::LocaleFallbacker::new().for_config(<icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DataMarker>::INFO.fallback_config);
                     let mut fallback_iterator = FALLBACKER.fallback_for(req.locale.clone());
                     loop {
-                        if let Some(payload) = lookup(icu_provider::DataRequest { locale: fallback_iterator.get(), ..req }) {
+                        if let Some(payload) = icu_provider_baked::DataStore::get(&Self::DATA_INDIAN_YEAR_NAMES_V1_MARKER, icu_provider::DataRequest { locale: fallback_iterator.get(), ..req }) {
                             metadata.locale = Some(fallback_iterator.take());
                             break payload;
                         }
@@ -172,23 +175,15 @@ macro_rules! __impl_indian_year_names_v1_marker {
             }
         }
     };
-}
-#[doc(inline)]
-pub use __impl_indian_year_names_v1_marker as impl_indian_year_names_v1_marker;
-/// Implement `IterableDataProvider<IndianYearNamesV1Marker>` on the given struct using the data
-/// hardcoded in this file. This allows the struct to be used with
-/// `DatagenDriver` for this marker.
-#[doc(hidden)]
-#[macro_export]
-macro_rules! __impliterable_indian_year_names_v1_marker {
-    ($ provider : ty) => {
+    ($ provider : ty , ITER) => {
+        __impl_indian_year_names_v1_marker!($provider);
         #[clippy::msrv = "1.70"]
         impl icu_provider::datagen::IterableDataProvider<icu::datetime::provider::neo::IndianYearNamesV1Marker> for $provider {
-            fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataMarkerAttributes)>, icu_provider::DataError> {
-                Ok([("3", icu_provider::_internal::locale_core::locale!("as")), ("3", icu_provider::_internal::locale_core::locale!("bn")), ("3", icu_provider::_internal::locale_core::locale!("brx")), ("3", icu_provider::_internal::locale_core::locale!("bs-Cyrl")), ("3", icu_provider::_internal::locale_core::locale!("cs")), ("3", icu_provider::_internal::locale_core::locale!("el")), ("3", icu_provider::_internal::locale_core::locale!("es")), ("3", icu_provider::_internal::locale_core::locale!("es-419")), ("3", icu_provider::_internal::locale_core::locale!("fa")), ("3", icu_provider::_internal::locale_core::locale!("ff-Adlm")), ("3", icu_provider::_internal::locale_core::locale!("fy")), ("3", icu_provider::_internal::locale_core::locale!("gu")), ("3", icu_provider::_internal::locale_core::locale!("he")), ("3", icu_provider::_internal::locale_core::locale!("hi")), ("3", icu_provider::_internal::locale_core::locale!("id")), ("3", icu_provider::_internal::locale_core::locale!("ja")), ("3", icu_provider::_internal::locale_core::locale!("kn")), ("3", icu_provider::_internal::locale_core::locale!("kok")), ("3", icu_provider::_internal::locale_core::locale!("ks")), ("3", icu_provider::_internal::locale_core::locale!("lo")), ("3", icu_provider::_internal::locale_core::locale!("mai")), ("3", icu_provider::_internal::locale_core::locale!("mk")), ("3", icu_provider::_internal::locale_core::locale!("ml")), ("3", icu_provider::_internal::locale_core::locale!("mr")), ("3", icu_provider::_internal::locale_core::locale!("ne")), ("3", icu_provider::_internal::locale_core::locale!("no")), ("3", icu_provider::_internal::locale_core::locale!("or")), ("3", icu_provider::_internal::locale_core::locale!("pa")), ("3", icu_provider::_internal::locale_core::locale!("ps")), ("3", icu_provider::_internal::locale_core::locale!("ru")), ("3", icu_provider::_internal::locale_core::locale!("sd")), ("3", icu_provider::_internal::locale_core::locale!("sk")), ("3", icu_provider::_internal::locale_core::locale!("sr")), ("3", icu_provider::_internal::locale_core::locale!("sr-Latn")), ("3", icu_provider::_internal::locale_core::locale!("sv")), ("3", icu_provider::_internal::locale_core::locale!("ta")), ("3", icu_provider::_internal::locale_core::locale!("te")), ("3", icu_provider::_internal::locale_core::locale!("th")), ("3", icu_provider::_internal::locale_core::locale!("und")), ("3", icu_provider::_internal::locale_core::locale!("ur")), ("3", icu_provider::_internal::locale_core::locale!("yue")), ("3", icu_provider::_internal::locale_core::locale!("yue-Hans")), ("3", icu_provider::_internal::locale_core::locale!("zh")), ("3", icu_provider::_internal::locale_core::locale!("zh-Hant")), ("4", icu_provider::_internal::locale_core::locale!("as")), ("4", icu_provider::_internal::locale_core::locale!("bn")), ("4", icu_provider::_internal::locale_core::locale!("brx")), ("4", icu_provider::_internal::locale_core::locale!("bs-Cyrl")), ("4", icu_provider::_internal::locale_core::locale!("cs")), ("4", icu_provider::_internal::locale_core::locale!("el")), ("4", icu_provider::_internal::locale_core::locale!("es")), ("4", icu_provider::_internal::locale_core::locale!("es-419")), ("4", icu_provider::_internal::locale_core::locale!("fa")), ("4", icu_provider::_internal::locale_core::locale!("ff-Adlm")), ("4", icu_provider::_internal::locale_core::locale!("fy")), ("4", icu_provider::_internal::locale_core::locale!("gu")), ("4", icu_provider::_internal::locale_core::locale!("he")), ("4", icu_provider::_internal::locale_core::locale!("hi")), ("4", icu_provider::_internal::locale_core::locale!("id")), ("4", icu_provider::_internal::locale_core::locale!("ja")), ("4", icu_provider::_internal::locale_core::locale!("kn")), ("4", icu_provider::_internal::locale_core::locale!("kok")), ("4", icu_provider::_internal::locale_core::locale!("ks")), ("4", icu_provider::_internal::locale_core::locale!("lo")), ("4", icu_provider::_internal::locale_core::locale!("mai")), ("4", icu_provider::_internal::locale_core::locale!("mk")), ("4", icu_provider::_internal::locale_core::locale!("ml")), ("4", icu_provider::_internal::locale_core::locale!("mr")), ("4", icu_provider::_internal::locale_core::locale!("ne")), ("4", icu_provider::_internal::locale_core::locale!("no")), ("4", icu_provider::_internal::locale_core::locale!("or")), ("4", icu_provider::_internal::locale_core::locale!("pa")), ("4", icu_provider::_internal::locale_core::locale!("ps")), ("4", icu_provider::_internal::locale_core::locale!("ru")), ("4", icu_provider::_internal::locale_core::locale!("sd")), ("4", icu_provider::_internal::locale_core::locale!("sk")), ("4", icu_provider::_internal::locale_core::locale!("sr")), ("4", icu_provider::_internal::locale_core::locale!("sr-Latn")), ("4", icu_provider::_internal::locale_core::locale!("sv")), ("4", icu_provider::_internal::locale_core::locale!("ta")), ("4", icu_provider::_internal::locale_core::locale!("te")), ("4", icu_provider::_internal::locale_core::locale!("th")), ("4", icu_provider::_internal::locale_core::locale!("und")), ("4", icu_provider::_internal::locale_core::locale!("ur")), ("4", icu_provider::_internal::locale_core::locale!("yue")), ("4", icu_provider::_internal::locale_core::locale!("yue-Hans")), ("4", icu_provider::_internal::locale_core::locale!("zh")), ("4", icu_provider::_internal::locale_core::locale!("zh-Hant")), ("5", icu_provider::_internal::locale_core::locale!("as")), ("5", icu_provider::_internal::locale_core::locale!("bn")), ("5", icu_provider::_internal::locale_core::locale!("brx")), ("5", icu_provider::_internal::locale_core::locale!("bs-Cyrl")), ("5", icu_provider::_internal::locale_core::locale!("cs")), ("5", icu_provider::_internal::locale_core::locale!("el")), ("5", icu_provider::_internal::locale_core::locale!("es")), ("5", icu_provider::_internal::locale_core::locale!("es-419")), ("5", icu_provider::_internal::locale_core::locale!("fa")), ("5", icu_provider::_internal::locale_core::locale!("ff-Adlm")), ("5", icu_provider::_internal::locale_core::locale!("fi")), ("5", icu_provider::_internal::locale_core::locale!("fr")), ("5", icu_provider::_internal::locale_core::locale!("fr-CA")), ("5", icu_provider::_internal::locale_core::locale!("fy")), ("5", icu_provider::_internal::locale_core::locale!("gu")), ("5", icu_provider::_internal::locale_core::locale!("he")), ("5", icu_provider::_internal::locale_core::locale!("hi")), ("5", icu_provider::_internal::locale_core::locale!("id")), ("5", icu_provider::_internal::locale_core::locale!("ja")), ("5", icu_provider::_internal::locale_core::locale!("kn")), ("5", icu_provider::_internal::locale_core::locale!("kok")), ("5", icu_provider::_internal::locale_core::locale!("ks")), ("5", icu_provider::_internal::locale_core::locale!("lo")), ("5", icu_provider::_internal::locale_core::locale!("mai")), ("5", icu_provider::_internal::locale_core::locale!("mk")), ("5", icu_provider::_internal::locale_core::locale!("ml")), ("5", icu_provider::_internal::locale_core::locale!("mr")), ("5", icu_provider::_internal::locale_core::locale!("ne")), ("5", icu_provider::_internal::locale_core::locale!("no")), ("5", icu_provider::_internal::locale_core::locale!("or")), ("5", icu_provider::_internal::locale_core::locale!("pa")), ("5", icu_provider::_internal::locale_core::locale!("ps")), ("5", icu_provider::_internal::locale_core::locale!("ru")), ("5", icu_provider::_internal::locale_core::locale!("sc")), ("5", icu_provider::_internal::locale_core::locale!("sd")), ("5", icu_provider::_internal::locale_core::locale!("sk")), ("5", icu_provider::_internal::locale_core::locale!("sr")), ("5", icu_provider::_internal::locale_core::locale!("sr-Latn")), ("5", icu_provider::_internal::locale_core::locale!("sv")), ("5", icu_provider::_internal::locale_core::locale!("ta")), ("5", icu_provider::_internal::locale_core::locale!("te")), ("5", icu_provider::_internal::locale_core::locale!("th")), ("5", icu_provider::_internal::locale_core::locale!("und")), ("5", icu_provider::_internal::locale_core::locale!("ur")), ("5", icu_provider::_internal::locale_core::locale!("yue")), ("5", icu_provider::_internal::locale_core::locale!("yue-Hans")), ("5", icu_provider::_internal::locale_core::locale!("zh")), ("5", icu_provider::_internal::locale_core::locale!("zh-Hant"))].into_iter().map(|(a, l)| (l.into(), a.parse().unwrap())).collect())
+            fn iter_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataMarkerAttributes)>, icu_provider::DataError> {
+                Ok(icu_provider_baked::DataStore::iter(&Self::DATA_INDIAN_YEAR_NAMES_V1_MARKER).collect())
             }
         }
     };
 }
 #[doc(inline)]
-pub use __impliterable_indian_year_names_v1_marker as impliterable_indian_year_names_v1_marker;
+pub use __impl_indian_year_names_v1_marker as impl_indian_year_names_v1_marker;

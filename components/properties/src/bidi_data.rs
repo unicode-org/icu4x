@@ -40,7 +40,7 @@ impl BidiAuxiliaryProperties {
     /// Construct a new one from loaded data
     ///
     /// Typically it is preferable to use getters like [`bidi_auxiliary_properties()`] instead
-    pub fn from_data(data: DataPayload<BidiAuxiliaryPropertiesV1Marker>) -> Self {
+    pub(crate) fn from_data(data: DataPayload<BidiAuxiliaryPropertiesV1Marker>) -> Self {
         Self { data }
     }
 }
@@ -195,12 +195,9 @@ pub const fn bidi_auxiliary_properties() -> BidiAuxiliaryPropertiesBorrowed<'sta
 }
 
 icu_provider::gen_any_buffer_data_constructors!(
-    locale: skip,
-    options: skip,
-    result: Result<BidiAuxiliaryProperties, DataError>,
-    #[cfg(skip)]
+    () -> result: Result<BidiAuxiliaryProperties, DataError>,
     functions: [
-        bidi_auxiliary_properties,
+        bidi_auxiliary_properties: skip,
         load_bidi_auxiliary_properties_with_any_provider,
         load_bidi_auxiliary_properties_with_buffer_provider,
         load_bidi_auxiliary_properties_unstable,

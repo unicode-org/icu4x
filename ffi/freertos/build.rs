@@ -27,12 +27,13 @@ fn needs_alloc_error_handler() -> Option<bool> {
 }
 
 fn main() {
+    println!("cargo:rustc-check-cfg=cfg(needs_alloc_error_handler)");
+
     match env::var("CARGO_CFG_TARGET_OS") {
         Ok(v) if v == "none" => (),
         // Only on target_os = none
         _ => return,
     };
-
     if let Some(true) = needs_alloc_error_handler() {
         println!("cargo:rustc-cfg=needs_alloc_error_handler");
     }

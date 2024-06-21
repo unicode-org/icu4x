@@ -15,13 +15,16 @@ use icu_provider::prelude::*;
 /// # Examples
 ///
 /// ```
-/// use icu_locale_core::langid;
+/// use icu_locale::langid;
 /// use icu_provider::prelude::*;
 /// use icu_provider::hello_world::*;
-/// use icu_provider_adapters::fallback::LocaleFallbackProvider;
-///
-/// # let provider = icu_provider_blob::BlobDataProvider::try_new_from_static_blob(include_bytes!("../../tests/data/blob.postcard")).unwrap();
-/// # let provider = provider.as_deserializing();
+/// # let provider = HelloWorldProvider;
+/// # struct LocaleFallbackProvider;
+/// # impl LocaleFallbackProvider {
+/// #   fn try_new_unstable(provider: HelloWorldProvider) -> Result<icu_provider_adapters::fallback::LocaleFallbackProvider<HelloWorldProvider>, ()> {
+/// #     Ok(icu_provider_adapters::fallback::LocaleFallbackProvider::new_with_fallbacker(provider, icu_locale::LocaleFallbacker::new().static_to_owned()))
+/// #   }
+/// # }
 ///
 /// let req = DataRequest {
 ///     locale: &langid!("ja-JP").into(),
@@ -119,7 +122,7 @@ impl<P> LocaleFallbackProvider<P> {
     /// # Examples
     ///
     /// ```
-    /// use icu_locale_core::langid;
+    /// use icu_locale::langid;
     /// use icu_locale::LocaleFallbacker;
     /// use icu_provider::hello_world::*;
     /// use icu_provider::prelude::*;

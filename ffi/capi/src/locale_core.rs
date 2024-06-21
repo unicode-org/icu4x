@@ -6,7 +6,6 @@
 pub mod ffi {
     use crate::errors::ffi::ICU4XLocaleParseError;
     use alloc::boxed::Box;
-    use core::str;
     use icu_locale_core::extensions::unicode::Key;
     use icu_locale_core::subtags::{Language, Region, Script};
     use icu_locale_core::Locale;
@@ -25,13 +24,14 @@ pub mod ffi {
         /// This will run the complete locale parsing algorithm. If code size and
         /// performance are critical and the locale is of a known shape (such as
         /// `aa-BB`) use `create_und`, `set_language`, `set_script`, and `set_region`.
-        #[diplomat::rust_link(icu::locale::Locale::try_from_bytes, FnInStruct)]
+        #[diplomat::rust_link(icu::locale::Locale::try_from_str, FnInStruct)]
+        #[diplomat::rust_link(icu::locale::Locale::try_from_utf8, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::locale::Locale::from_str, FnInStruct, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "from_string")]
         pub fn create_from_string(
             name: &DiplomatStr,
         ) -> Result<Box<ICU4XLocale>, ICU4XLocaleParseError> {
-            Ok(Box::new(ICU4XLocale(Locale::try_from_bytes(name)?)))
+            Ok(Box::new(ICU4XLocale(Locale::try_from_utf8(name)?)))
         }
 
         /// Construct a default undefined [`ICU4XLocale`] "und".
@@ -59,10 +59,10 @@ pub mod ffi {
         #[diplomat::rust_link(icu::locale::Locale::extensions, StructField)]
         pub fn get_unicode_extension(
             &self,
-            bytes: &DiplomatStr,
+            s: &DiplomatStr,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Option<()> {
-            Key::try_from_bytes(bytes)
+            Key::try_from_utf8(s)
                 .ok()
                 .and_then(|k| self.0.extensions.unicode.keywords.get(&k))
                 .map(|v| {
@@ -78,13 +78,14 @@ pub mod ffi {
         }
 
         /// Set the language part of the [`ICU4XLocale`].
-        #[diplomat::rust_link(icu::locale::Locale::try_from_bytes, FnInStruct)]
+        #[diplomat::rust_link(icu::locale::Locale::try_from_str, FnInStruct)]
+        #[diplomat::rust_link(icu::locale::Locale::try_from_utf8, FnInStruct, hidden)]
         #[diplomat::attr(supports = accessors, setter = "language")]
-        pub fn set_language(&mut self, bytes: &DiplomatStr) -> Result<(), ICU4XLocaleParseError> {
-            self.0.id.language = if bytes.is_empty() {
+        pub fn set_language(&mut self, s: &DiplomatStr) -> Result<(), ICU4XLocaleParseError> {
+            self.0.id.language = if s.is_empty() {
                 Language::UND
             } else {
-                Language::try_from_bytes(bytes)?
+                Language::try_from_utf8(s)?
             };
             Ok(())
         }
@@ -99,13 +100,14 @@ pub mod ffi {
         }
 
         /// Set the region part of the [`ICU4XLocale`].
-        #[diplomat::rust_link(icu::locale::Locale::try_from_bytes, FnInStruct)]
+        #[diplomat::rust_link(icu::locale::Locale::try_from_str, FnInStruct)]
+        #[diplomat::rust_link(icu::locale::Locale::try_from_utf8, FnInStruct, hidden)]
         #[diplomat::attr(all(supports = accessors, not(dart)), setter = "region")]
-        pub fn set_region(&mut self, bytes: &DiplomatStr) -> Result<(), ICU4XLocaleParseError> {
-            self.0.id.region = if bytes.is_empty() {
+        pub fn set_region(&mut self, s: &DiplomatStr) -> Result<(), ICU4XLocaleParseError> {
+            self.0.id.region = if s.is_empty() {
                 None
             } else {
-                Some(Region::try_from_bytes(bytes)?)
+                Some(Region::try_from_utf8(s)?)
             };
             Ok(())
         }
@@ -120,13 +122,14 @@ pub mod ffi {
         }
 
         /// Set the script part of the [`ICU4XLocale`]. Pass an empty string to remove the script.
-        #[diplomat::rust_link(icu::locale::Locale::try_from_bytes, FnInStruct)]
+        #[diplomat::rust_link(icu::locale::Locale::try_from_str, FnInStruct)]
+        #[diplomat::rust_link(icu::locale::Locale::try_from_utf8, FnInStruct, hidden)]
         #[diplomat::attr(all(supports = accessors, not(dart)), setter = "script")]
-        pub fn set_script(&mut self, bytes: &DiplomatStr) -> Result<(), ICU4XLocaleParseError> {
-            self.0.id.script = if bytes.is_empty() {
+        pub fn set_script(&mut self, s: &DiplomatStr) -> Result<(), ICU4XLocaleParseError> {
+            self.0.id.script = if s.is_empty() {
                 None
             } else {
-                Some(Script::try_from_bytes(bytes)?)
+                Some(Script::try_from_utf8(s)?)
             };
             Ok(())
         }
@@ -136,10 +139,10 @@ pub mod ffi {
         /// Use ICU4XLocaleCanonicalizer for better control and functionality
         #[diplomat::rust_link(icu::locale::Locale::canonicalize, FnInStruct)]
         pub fn canonicalize(
-            bytes: &DiplomatStr,
+            s: &DiplomatStr,
             write: &mut DiplomatWrite,
         ) -> Result<(), ICU4XLocaleParseError> {
-            let _infallible = Locale::canonicalize(bytes)?.write_to(write);
+            let _infallible = Locale::canonicalize(s)?.write_to(write);
             Ok(())
         }
         /// Returns a string representation of [`ICU4XLocale`].
@@ -151,7 +154,7 @@ pub mod ffi {
 
         #[diplomat::rust_link(icu::locale::Locale::normalizing_eq, FnInStruct)]
         pub fn normalizing_eq(&self, other: &DiplomatStr) -> bool {
-            if let Ok(other) = str::from_utf8(other) {
+            if let Ok(other) = core::str::from_utf8(other) {
                 self.0.normalizing_eq(other)
             } else {
                 // invalid UTF8 won't be allowed in locales anyway

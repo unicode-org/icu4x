@@ -90,7 +90,7 @@ impl DataExporter for Box<dyn DataExporter> {
 
 /// A [`DynamicDataProvider`] that can be used for exporting data.
 ///
-/// Use [`make_exportable_provider`](crate::make_exportable_provider) to implement this.
+/// Use [`make_exportable_provider`] to implement this.
 pub trait ExportableProvider:
     IterableDynamicDataProvider<ExportMarker> + DynamicDataProvider<AnyMarker> + Sync
 {
@@ -114,26 +114,27 @@ impl<T> ExportableProvider for T where
 /// [`BlobDataProvider`]: ../../icu_provider_blob/struct.BlobDataProvider.html
 /// [`BakedDataProvider`]: ../../icu_datagen/index.html
 #[macro_export]
-macro_rules! make_exportable_provider {
+#[doc(hidden)] // macro
+macro_rules! __make_exportable_provider {
     ($provider:ty, [ $($(#[$cfg:meta])? $struct_m:ty),+, ]) => {
-        $crate::impl_dynamic_data_provider!(
+        $crate::dynutil::impl_dynamic_data_provider!(
             $provider,
             [ $($(#[$cfg])? $struct_m),+, ],
             $crate::datagen::ExportMarker
         );
-        $crate::impl_dynamic_data_provider!(
+        $crate::dynutil::impl_dynamic_data_provider!(
             $provider,
             [ $($(#[$cfg])? $struct_m),+, ],
             $crate::any::AnyMarker
         );
 
         impl $crate::datagen::IterableDynamicDataProvider<$crate::datagen::ExportMarker> for $provider {
-            fn supported_requests_for_marker(&self, marker: $crate::DataMarkerInfo) -> Result<std::collections::HashSet<($crate::DataLocale, $crate::DataMarkerAttributes)>, $crate::DataError> {
+            fn iter_requests_for_marker(&self, marker: $crate::DataMarkerInfo) -> Result<std::collections::HashSet<($crate::DataLocale, $crate::DataMarkerAttributes)>, $crate::DataError> {
                 match marker.path.hashed() {
                     $(
                         $(#[$cfg])?
                         h if h == <$struct_m as $crate::DataMarker>::INFO.path.hashed() => {
-                            $crate::datagen::IterableDataProvider::<$struct_m>::supported_requests(self)
+                            $crate::datagen::IterableDataProvider::<$struct_m>::iter_requests(self)
                         }
                     )+,
                     _ => Err($crate::DataErrorKind::MissingDataMarker.with_marker(marker))
@@ -142,6 +143,8 @@ macro_rules! make_exportable_provider {
         }
     };
 }
+#[doc(inline)]
+pub use __make_exportable_provider as make_exportable_provider;
 
 /// A `DataExporter` that forks to multiple `DataExporter`s.
 #[derive(Default)]

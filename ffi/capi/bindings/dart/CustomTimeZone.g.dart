@@ -24,7 +24,7 @@ final class CustomTimeZone implements ffi.Finalizable {
 
   /// Creates a time zone from an offset string.
   ///
-  /// See the [Rust documentation for `from_str`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#method.from_str) for more information.
+  /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#method.try_from_str) for more information.
   ///
   /// Throws [TimeZoneInvalidOffsetError] on failure.
   factory CustomTimeZone.fromString(String s) {

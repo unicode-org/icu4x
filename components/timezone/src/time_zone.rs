@@ -34,7 +34,7 @@ use tinystr::tinystr;
 /// let tz2: CustomTimeZone =
 ///     "+05:00".parse().expect("Failed to parse a time zone.");
 /// ```
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[allow(clippy::exhaustive_structs)] // these four fields fully cover the needs of UTS 35
 pub struct CustomTimeZone {
     /// The GMT offset in seconds.
@@ -113,13 +113,13 @@ impl CustomTimeZone {
     /// use icu::timezone::CustomTimeZone;
     /// use icu::timezone::GmtOffset;
     ///
-    /// let tz0: CustomTimeZone = CustomTimeZone::try_from_bytes(b"Z")
+    /// let tz0: CustomTimeZone = CustomTimeZone::try_from_str("Z")
     ///     .expect("Failed to parse a time zone");
-    /// let tz1: CustomTimeZone = CustomTimeZone::try_from_bytes(b"+02")
+    /// let tz1: CustomTimeZone = CustomTimeZone::try_from_str("+02")
     ///     .expect("Failed to parse a time zone");
-    /// let tz2: CustomTimeZone = CustomTimeZone::try_from_bytes(b"-0230")
+    /// let tz2: CustomTimeZone = CustomTimeZone::try_from_str("-0230")
     ///     .expect("Failed to parse a time zone");
-    /// let tz3: CustomTimeZone = CustomTimeZone::try_from_bytes(b"+02:30")
+    /// let tz3: CustomTimeZone = CustomTimeZone::try_from_str("+02:30")
     ///     .expect("Failed to parse a time zone");
     ///
     /// assert_eq!(tz0.gmt_offset.map(GmtOffset::offset_seconds), Some(0));
@@ -127,8 +127,14 @@ impl CustomTimeZone {
     /// assert_eq!(tz2.gmt_offset.map(GmtOffset::offset_seconds), Some(-9000));
     /// assert_eq!(tz3.gmt_offset.map(GmtOffset::offset_seconds), Some(9000));
     /// ```
-    pub fn try_from_bytes(bytes: &[u8]) -> Result<Self, InvalidOffsetError> {
-        let gmt_offset = GmtOffset::try_from_bytes(bytes)?;
+    #[inline]
+    pub fn try_from_str(s: &str) -> Result<Self, InvalidOffsetError> {
+        Self::try_from_utf8(s.as_bytes())
+    }
+
+    /// See [`Self::try_from_str`]
+    pub fn try_from_utf8(code_units: &[u8]) -> Result<Self, InvalidOffsetError> {
+        let gmt_offset = GmtOffset::try_from_utf8(code_units)?;
         Ok(Self {
             gmt_offset: Some(gmt_offset),
             time_zone_id: None,
@@ -177,37 +183,8 @@ impl CustomTimeZone {
 impl FromStr for CustomTimeZone {
     type Err = InvalidOffsetError;
 
-    /// Parse a [`CustomTimeZone`] from a string.
-    ///
-    /// This utility is for easily creating time zones, not a complete robust solution.
-    ///
-    /// The offset must range from GMT-12 to GMT+14.
-    /// The string must be an ISO-8601 time zone designator:
-    /// e.g. Z
-    /// e.g. +05
-    /// e.g. +0500
-    /// e.g. +05:00
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::timezone::CustomTimeZone;
-    /// use icu::timezone::GmtOffset;
-    ///
-    /// let tz0: CustomTimeZone = "Z".parse().expect("Failed to parse a time zone");
-    /// let tz1: CustomTimeZone =
-    ///     "+02".parse().expect("Failed to parse a time zone");
-    /// let tz2: CustomTimeZone =
-    ///     "-0230".parse().expect("Failed to parse a time zone");
-    /// let tz3: CustomTimeZone =
-    ///     "+02:30".parse().expect("Failed to parse a time zone");
-    ///
-    /// assert_eq!(tz0.gmt_offset.map(GmtOffset::offset_seconds), Some(0));
-    /// assert_eq!(tz1.gmt_offset.map(GmtOffset::offset_seconds), Some(7200));
-    /// assert_eq!(tz2.gmt_offset.map(GmtOffset::offset_seconds), Some(-9000));
-    /// assert_eq!(tz3.gmt_offset.map(GmtOffset::offset_seconds), Some(9000));
-    /// ```
-    fn from_str(input: &str) -> Result<Self, Self::Err> {
-        CustomTimeZone::try_from_bytes(input.as_bytes())
+    #[inline]
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Self::try_from_str(s)
     }
 }

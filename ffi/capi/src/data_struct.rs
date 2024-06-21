@@ -10,7 +10,7 @@ use alloc::borrow::Cow;
 pub mod ffi {
 
     use alloc::boxed::Box;
-    use icu_provider::AnyPayload;
+    use icu_provider::any::AnyPayload;
     use icu_provider::DataPayload;
 
     #[diplomat::opaque]
