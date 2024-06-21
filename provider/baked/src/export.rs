@@ -254,6 +254,7 @@ impl BakedExporter {
         };
 
         if !self.use_separate_crates {
+            // Don't search the whole file, there should be a macro in the first 300 bytes
             if formatted[..300].contains("macro_rules!") || formatted[..100].contains("include!") {
                 // Formatted, otherwise it'd be `macro_rules !`
                 formatted = formatted
