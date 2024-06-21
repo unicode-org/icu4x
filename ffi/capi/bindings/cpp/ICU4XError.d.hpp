@@ -8,46 +8,47 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XError.d.h"
 
+
+namespace capi {
+    typedef enum ICU4XError {
+      ICU4XError_UnknownError = 0,
+      ICU4XError_DataMissingDataMarkerError = 256,
+      ICU4XError_DataMissingLocaleError = 258,
+      ICU4XError_DataNeedsLocaleError = 260,
+      ICU4XError_DataExtraneousLocaleError = 261,
+      ICU4XError_DataFilteredResourceError = 262,
+      ICU4XError_DataMismatchedTypeError = 263,
+      ICU4XError_DataCustomError = 266,
+      ICU4XError_DataIoError = 267,
+      ICU4XError_DataUnavailableBufferFormatError = 268,
+      ICU4XError_PropertyUnexpectedPropertyNameError = 1026,
+      ICU4XError_DateTimePatternError = 2048,
+      ICU4XError_DateTimeMissingInputFieldError = 2049,
+      ICU4XError_DateTimeSkeletonError = 2050,
+      ICU4XError_DateTimeUnsupportedFieldError = 2051,
+      ICU4XError_DateTimeUnsupportedOptionsError = 2052,
+      ICU4XError_DateTimeMissingWeekdaySymbolError = 2053,
+      ICU4XError_DateTimeMissingMonthSymbolError = 2054,
+      ICU4XError_DateTimeFixedDecimalError = 2055,
+      ICU4XError_DateTimeMismatchedCalendarError = 2056,
+    } ICU4XError;
+}
 
 class ICU4XError {
 public:
   enum Value {
     UnknownError = 0,
-    DataMissingDataKeyError = 256,
-    DataMissingVariantError = 257,
+    DataMissingDataMarkerError = 256,
     DataMissingLocaleError = 258,
-    DataNeedsVariantError = 259,
     DataNeedsLocaleError = 260,
     DataExtraneousLocaleError = 261,
     DataFilteredResourceError = 262,
     DataMismatchedTypeError = 263,
-    DataMissingPayloadError = 264,
-    DataInvalidStateError = 265,
     DataCustomError = 266,
     DataIoError = 267,
     DataUnavailableBufferFormatError = 268,
-    DataMismatchedAnyBufferError = 269,
-    LocaleParserLanguageError = 513,
-    LocaleParserSubtagError = 514,
-    LocaleParserExtensionError = 515,
-    DataStructValidityError = 768,
-    PropertyUnknownScriptIdError = 1024,
-    PropertyUnknownGeneralCategoryGroupError = 1025,
     PropertyUnexpectedPropertyNameError = 1026,
-    FixedDecimalLimitError = 1280,
-    FixedDecimalSyntaxError = 1281,
-    PluralsParserError = 1536,
-    CalendarParseError = 1792,
-    CalendarOverflowError = 1793,
-    CalendarUnderflowError = 1794,
-    CalendarOutOfRangeError = 1795,
-    CalendarUnknownEraError = 1796,
-    CalendarUnknownMonthCodeError = 1797,
-    CalendarMissingInputError = 1798,
-    CalendarUnknownKindError = 1799,
-    CalendarMissingError = 1800,
     DateTimePatternError = 2048,
     DateTimeMissingInputFieldError = 2049,
     DateTimeSkeletonError = 2050,
@@ -57,14 +58,6 @@ public:
     DateTimeMissingMonthSymbolError = 2054,
     DateTimeFixedDecimalError = 2055,
     DateTimeMismatchedCalendarError = 2056,
-    TinyStrTooLargeError = 2304,
-    TinyStrContainsNullError = 2305,
-    TinyStrNonAsciiError = 2306,
-    TimeZoneOffsetOutOfBoundsError = 2560,
-    TimeZoneInvalidOffsetError = 2561,
-    TimeZoneInvalidIdError = 2563,
-    NormalizerFutureExtensionError = 2816,
-    NormalizerValidationError = 2817,
   };
 
   ICU4XError() = default;

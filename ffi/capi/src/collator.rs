@@ -8,7 +8,7 @@ pub mod ffi {
     use icu_collator::{Collator, CollatorOptions};
 
     use crate::{
-        common::ffi::ICU4XOrdering, errors::ffi::ICU4XError, locale_core::ffi::ICU4XLocale,
+        common::ffi::ICU4XOrdering, errors::ffi::ICU4XDataError, locale_core::ffi::ICU4XLocale,
         provider::ffi::ICU4XDataProvider,
     };
 
@@ -115,7 +115,7 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
             options: ICU4XCollatorOptionsV1,
-        ) -> Result<Box<ICU4XCollator>, ICU4XError> {
+        ) -> Result<Box<ICU4XCollator>, ICU4XDataError> {
             let locale = locale.to_datalocale();
             let options = CollatorOptions::from(options);
 

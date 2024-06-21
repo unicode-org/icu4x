@@ -8,7 +8,7 @@ mod helpers;
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
 use icu_locale_core::subtags::{Language, Region, Script, Variant};
-use icu_locale_core::ParserError;
+use icu_locale_core::ParseError;
 
 macro_rules! subtag_bench {
     ($c:expr, $name:expr, $subtag:ident, $data:expr) => {
@@ -18,7 +18,7 @@ macro_rules! subtag_bench {
                     let _: $subtag = black_box(s).parse().unwrap();
                 }
                 for s in &$data.invalid {
-                    let _: ParserError = black_box(s).parse::<$subtag>().unwrap_err();
+                    let _: ParseError = black_box(s).parse::<$subtag>().unwrap_err();
                 }
             })
         });

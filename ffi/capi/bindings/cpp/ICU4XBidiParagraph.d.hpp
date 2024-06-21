@@ -9,10 +9,13 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 #include "ICU4XBidiDirection.d.hpp"
-#include "ICU4XBidiParagraph.d.h"
 
 class ICU4XBidiDirection;
 
+
+namespace capi {
+    typedef struct ICU4XBidiParagraph ICU4XBidiParagraph;
+}
 
 class ICU4XBidiParagraph {
 public:

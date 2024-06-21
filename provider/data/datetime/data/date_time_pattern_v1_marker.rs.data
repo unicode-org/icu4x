@@ -1,0 +1,63 @@
+// @generated
+/// Implement `DataProvider<DateTimePatternV1Marker>` on the given struct using the data
+/// hardcoded in this file. This allows the struct to be used with
+/// `icu`'s `_unstable` constructors.
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __impl_date_time_pattern_v1_marker {
+    ($ provider : ty) => {
+        #[clippy::msrv = "1.70"]
+        const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
+        #[clippy::msrv = "1.70"]
+        impl $provider {
+            const DATA_DATE_TIME_PATTERN_V1_MARKER: icu_provider_baked::binary_search::Data<icu_provider_baked::binary_search::AttributesAndLocale, icu::datetime::provider::neo::DateTimePatternV1Marker> = {
+                type S = <icu::datetime::provider::neo::DateTimePatternV1Marker as icu_provider::DynamicDataMarker>::Yokeable;
+                const _F_AR: &S = &icu::datetime::provider::neo::DateTimePatternV1 { pattern: icu::datetime::pattern::runtime::GenericPattern { items: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x80\0\x01\0\x06\x0C\0\0 \x80\0\0") } } };
+                const _F_AST: &S = &icu::datetime::provider::neo::DateTimePatternV1 { pattern: icu::datetime::pattern::runtime::GenericPattern { items: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x80\0\x01\0\0,\0\0 \x80\0\0") } } };
+                const _F_EL: &S = &icu::datetime::provider::neo::DateTimePatternV1 { pattern: icu::datetime::pattern::runtime::GenericPattern { items: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x80\0\x01\0\0 \0\0-\0\0 \x80\0\0") } } };
+                const _F_EN_MV: &S = &icu::datetime::provider::neo::DateTimePatternV1 { pattern: icu::datetime::pattern::runtime::GenericPattern { items: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x80\0\x01\0\0 \x80\0\0") } } };
+                const _F_EU: &S = &icu::datetime::provider::neo::DateTimePatternV1 { pattern: icu::datetime::pattern::runtime::GenericPattern { items: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x80\0\x01\0\0 \0\0(\x80\0\0\0\0)") } } };
+                const _F_FA: &S = &icu::datetime::provider::neo::DateTimePatternV1 { pattern: icu::datetime::pattern::runtime::GenericPattern { items: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x80\0\x01\0\x06\x0C\0\0 \0\x063\0\x06'\0\x069\0\x06*\0\0 \x80\0\0") } } };
+                const _F_VI: &S = &icu::datetime::provider::neo::DateTimePatternV1 { pattern: icu::datetime::pattern::runtime::GenericPattern { items: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x80\0\0\0\0 \x80\0\x01") } } };
+                const _F_XNR: &S = &icu::datetime::provider::neo::DateTimePatternV1 { pattern: icu::datetime::pattern::runtime::GenericPattern { items: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x80\0\x01\0\0 \0\t\x1C\0\tK\0\0 \x80\0\0") } } };
+                const _L_NN: &S = &icu::datetime::provider::neo::DateTimePatternV1 { pattern: icu::datetime::pattern::runtime::GenericPattern { items: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x80\0\x01\0\0 \0\0k\0\0l\0\0.\0\0 \x80\0\0") } } };
+                const _M_FA: &S = &icu::datetime::provider::neo::DateTimePatternV1 { pattern: icu::datetime::pattern::runtime::GenericPattern { items: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x80\0\x01\0\x06\x0C\0 \x0F\0\0 \x80\0\0") } } };
+                icu_provider_baked::binary_search::Data(&[(("f", "ar"), _F_AR), (("f", "ast"), _F_AST), (("f", "be"), _F_AST), (("f", "bg"), _F_AST), (("f", "blo"), _F_AST), (("f", "br"), _F_AST), (("f", "brx"), _F_AST), (("f", "bs"), _F_AST), (("f", "ca"), _F_AST), (("f", "ceb"), _F_AST), (("f", "chr"), _F_AST), (("f", "cv"), _F_AST), (("f", "cy"), _F_AST), (("f", "de"), _F_AST), (("f", "doi"), _F_AST), (("f", "el"), _F_EL), (("f", "en"), _F_AST), (("f", "en-MV"), _F_EN_MV), (("f", "es"), _F_AST), (("f", "eu"), _F_EU), (("f", "fa"), _F_FA), (("f", "fil"), _F_AST), (("f", "fo"), _F_AST), (("f", "fr"), _F_AST), (("f", "gl"), _F_AST), (("f", "he"), _F_AST), (("f", "hi"), _F_AST), (("f", "hy"), _F_AST), (("f", "ig"), _F_AST), (("f", "is"), _F_AST), (("f", "ka"), _F_AST), (("f", "kea"), _F_AST), (("f", "kk"), _F_AST), (("f", "km"), _F_AST), (("f", "ks"), _F_AST), (("f", "ks-Deva"), _F_AST), (("f", "kxv"), _F_AST), (("f", "lo"), _F_AST), (("f", "mai"), _F_AST), (("f", "mk"), _F_AST), (("f", "mni"), _F_AST), (("f", "mr"), _F_AST), (("f", "nl"), _F_AST), (("f", "nn"), _F_EN_MV), (("f", "no"), _F_AST), (("f", "or"), _F_AST), (("f", "pcm"), _F_AST), (("f", "pt-PT"), _F_AST), (("f", "ro"), _F_AST), (("f", "ru"), _F_AST), (("f", "sa"), _F_AST), (("f", "sc"), _F_AST), (("f", "sd-Deva"), _F_AST), (("f", "sk"), _F_AST), (("f", "sq"), _F_AST), (("f", "su"), _F_AST), (("f", "syr"), _F_AR), (("f", "ta"), _F_AST), (("f", "to"), _F_AST), (("f", "tt"), _F_AST), (("f", "uk"), _F_AST), (("f", "und"), _F_EN_MV), (("f", "uz"), _F_AST), (("f", "vec"), _F_AST), (("f", "vi"), _F_VI), (("f", "wo"), _F_EL), (("f", "xnr"), _F_XNR), (("l", "ar"), _F_AR), (("l", "ast"), _F_AST), (("l", "be"), _F_AST), (("l", "bg"), _F_AST), (("l", "blo"), _F_AST), (("l", "br"), _F_AST), (("l", "brx"), _F_AST), (("l", "bs"), _F_AST), (("l", "ca"), _F_AST), (("l", "ceb"), _F_AST), (("l", "chr"), _F_AST), (("l", "cv"), _F_AST), (("l", "cy"), _F_AST), (("l", "de"), _F_AST), (("l", "doi"), _F_AST), (("l", "el"), _F_EL), (("l", "en"), _F_AST), (("l", "en-MV"), _F_EN_MV), (("l", "es"), _F_AST), (("l", "eu"), _F_EU), (("l", "fa"), _F_FA), (("l", "fil"), _F_AST), (("l", "fo"), _F_AST), (("l", "fr"), _F_AST), (("l", "gl"), _F_AST), (("l", "ha"), _F_AST), (("l", "he"), _F_AST), (("l", "hi"), _F_AST), (("l", "hy"), _F_AST), (("l", "ig"), _F_AST), (("l", "is"), _F_AST), (("l", "ka"), _F_AST), (("l", "kea"), _F_AST), (("l", "kk"), _F_AST), (("l", "km"), _F_AST), (("l", "ks"), _F_AST), (("l", "ks-Deva"), _F_AST), (("l", "kxv"), _F_AST), (("l", "lo"), _F_AST), (("l", "mai"), _F_AST), (("l", "mk"), _F_AST), (("l", "mni"), _F_AST), (("l", "mr"), _F_AST), (("l", "nl"), _F_AST), (("l", "nn"), _L_NN), (("l", "no"), _F_AST), (("l", "or"), _F_AST), (("l", "pcm"), _F_AST), (("l", "pt-PT"), _F_AST), (("l", "qu"), _F_VI), (("l", "ro"), _F_AST), (("l", "ru"), _F_AST), (("l", "sa"), _F_AST), (("l", "sc"), _F_AST), (("l", "sd-Deva"), _F_AST), (("l", "sk"), _F_AST), (("l", "sq"), _F_AST), (("l", "su"), _F_AST), (("l", "syr"), _F_AR), (("l", "ta"), _F_AST), (("l", "to"), _F_AST), (("l", "tt"), _F_AST), (("l", "uk"), _F_AST), (("l", "und"), _F_EN_MV), (("l", "uz"), _F_AST), (("l", "vec"), _F_AST), (("l", "vi"), _F_VI), (("l", "wo"), _F_EL), (("l", "xnr"), _F_XNR), (("m", "ar"), _F_AR), (("m", "ast"), _F_AST), (("m", "be"), _F_AST), (("m", "bg"), _F_AST), (("m", "blo"), _F_AST), (("m", "br"), _F_AST), (("m", "brx"), _F_AST), (("m", "ca"), _F_AST), (("m", "ceb"), _F_AST), (("m", "chr"), _F_AST), (("m", "cv"), _F_AST), (("m", "de"), _F_AST), (("m", "doi"), _F_AST), (("m", "el"), _F_AST), (("m", "en"), _F_AST), (("m", "en-MV"), _F_EN_MV), (("m", "es"), _F_AST), (("m", "eu"), _F_EU), (("m", "fa"), _M_FA), (("m", "fil"), _F_AST), (("m", "fo"), _F_AST), (("m", "fr"), _F_AST), (("m", "gl"), _F_AST), (("m", "ha"), _F_AST), (("m", "he"), _F_AST), (("m", "hi"), _F_AST), (("m", "hi-Latn"), _F_EN_MV), (("m", "hy"), _F_AST), (("m", "ig"), _F_AST), (("m", "is"), _F_AST), (("m", "it"), _F_AST), (("m", "jv"), _F_AST), (("m", "ka"), _F_AST), (("m", "kea"), _F_AST), (("m", "kk"), _F_AST), (("m", "km"), _F_AST), (("m", "ks"), _F_AST), (("m", "ks-Deva"), _F_AST), (("m", "kxv"), _F_AST), (("m", "lo"), _F_AST), (("m", "mai"), _F_AST), (("m", "mk"), _F_AST), (("m", "mni"), _F_AST), (("m", "mr"), _F_AST), (("m", "ms"), _F_AST), (("m", "ne"), _F_AST), (("m", "nl"), _F_AST), (("m", "no"), _F_AST), (("m", "or"), _F_AST), (("m", "pa"), _F_AST), (("m", "pl"), _F_AST), (("m", "pt-PT"), _F_AST), (("m", "ro"), _F_AST), (("m", "ru"), _F_AST), (("m", "sa"), _F_AST), (("m", "sc"), _F_AST), (("m", "sd-Deva"), _F_AST), (("m", "sk"), _F_AST), (("m", "sl"), _F_AST), (("m", "sq"), _F_AST), (("m", "su"), _F_AST), (("m", "syr"), _F_AR), (("m", "ta"), _F_AST), (("m", "to"), _F_AST), (("m", "tt"), _F_AST), (("m", "ug"), _F_AR), (("m", "uk"), _F_AST), (("m", "und"), _F_EN_MV), (("m", "uz"), _F_AST), (("m", "vec"), _F_AST), (("m", "vi"), _F_VI), (("m", "wo"), _F_EL), (("m", "xnr"), _F_AST), (("s", "ar"), _F_AR), (("s", "be"), _F_AST), (("s", "bg"), _F_AST), (("s", "blo"), _F_AST), (("s", "brx"), _F_AST), (("s", "ceb"), _F_AST), (("s", "chr"), _F_AST), (("s", "cv"), _F_AST), (("s", "de"), _F_AST), (("s", "doi"), _F_AST), (("s", "el"), _F_AST), (("s", "en"), _F_AST), (("s", "en-MV"), _F_EN_MV), (("s", "es"), _F_AST), (("s", "eu"), _F_EU), (("s", "fa"), _M_FA), (("s", "fil"), _F_AST), (("s", "fo"), _F_AST), (("s", "fr-ML"), _F_AST), (("s", "gl"), _F_AST), (("s", "ha"), _F_AST), (("s", "he"), _F_AST), (("s", "hi"), _F_AST), (("s", "hi-Latn"), _F_EN_MV), (("s", "hy"), _F_AST), (("s", "ig"), _F_AST), (("s", "is"), _F_AST), (("s", "it"), _F_AST), (("s", "jv"), _F_AST), (("s", "ka"), _F_AST), (("s", "kea"), _F_AST), (("s", "kk"), _F_AST), (("s", "km"), _F_AST), (("s", "ks"), _F_AST), (("s", "ks-Deva"), _F_AST), (("s", "kxv"), _F_AST), (("s", "lo"), _F_AST), (("s", "mai"), _F_AST), (("s", "mk"), _F_AST), (("s", "mni"), _F_AST), (("s", "mr"), _F_AST), (("s", "ms"), _F_AST), (("s", "ne"), _F_AST), (("s", "nl"), _F_AST), (("s", "no"), _F_AST), (("s", "or"), _F_AST), (("s", "pa"), _F_AST), (("s", "pl"), _F_AST), (("s", "pt-PT"), _F_AST), (("s", "ro"), _F_AST), (("s", "ru"), _F_AST), (("s", "sa"), _F_AST), (("s", "sc"), _F_AST), (("s", "sd-Deva"), _F_AST), (("s", "sl"), _F_AST), (("s", "sq"), _F_AST), (("s", "su"), _F_AST), (("s", "syr"), _F_AR), (("s", "ta"), _F_AST), (("s", "tt"), _F_AST), (("s", "ug"), _F_AR), (("s", "uk"), _F_AST), (("s", "und"), _F_EN_MV), (("s", "uz"), _F_AST), (("s", "vec"), _F_AST), (("s", "vi"), _F_VI), (("s", "wo"), _F_EL), (("s", "xnr"), _F_AST)])
+            };
+        }
+        #[clippy::msrv = "1.70"]
+        impl icu_provider::DataProvider<icu::datetime::provider::neo::DateTimePatternV1Marker> for $provider {
+            fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::datetime::provider::neo::DateTimePatternV1Marker>, icu_provider::DataError> {
+                let mut metadata = icu_provider::DataResponseMetadata::default();
+                let payload = if let Some(payload) = icu_provider_baked::DataStore::get(&Self::DATA_DATE_TIME_PATTERN_V1_MARKER, req) {
+                    payload
+                } else {
+                    const FALLBACKER: icu::locale::fallback::LocaleFallbackerWithConfig<'static> = icu::locale::fallback::LocaleFallbacker::new().for_config(<icu::datetime::provider::neo::DateTimePatternV1Marker as icu_provider::DataMarker>::INFO.fallback_config);
+                    let mut fallback_iterator = FALLBACKER.fallback_for(req.locale.clone());
+                    loop {
+                        if let Some(payload) = icu_provider_baked::DataStore::get(&Self::DATA_DATE_TIME_PATTERN_V1_MARKER, icu_provider::DataRequest { locale: fallback_iterator.get(), ..req }) {
+                            metadata.locale = Some(fallback_iterator.take());
+                            break payload;
+                        }
+                        if fallback_iterator.get().is_und() {
+                            return Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::datetime::provider::neo::DateTimePatternV1Marker as icu_provider::DataMarker>::INFO, req));
+                        }
+                        fallback_iterator.step();
+                    }
+                };
+                Ok(icu_provider::DataResponse { payload: icu_provider::DataPayload::from_static_ref(payload), metadata })
+            }
+        }
+    };
+    ($ provider : ty , ITER) => {
+        __impl_date_time_pattern_v1_marker!($provider);
+        #[clippy::msrv = "1.70"]
+        impl icu_provider::datagen::IterableDataProvider<icu::datetime::provider::neo::DateTimePatternV1Marker> for $provider {
+            fn iter_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataMarkerAttributes)>, icu_provider::DataError> {
+                Ok(icu_provider_baked::DataStore::iter(&Self::DATA_DATE_TIME_PATTERN_V1_MARKER).collect())
+            }
+        }
+    };
+}
+#[doc(inline)]
+pub use __impl_date_time_pattern_v1_marker as impl_date_time_pattern_v1_marker;

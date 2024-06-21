@@ -1,6 +1,6 @@
 import { FFIError } from "./diplomat-runtime"
+import { ICU4XDataError } from "./ICU4XDataError";
 import { ICU4XDataProvider } from "./ICU4XDataProvider";
-import { ICU4XError } from "./ICU4XError";
 import { ICU4XMeasureUnit } from "./ICU4XMeasureUnit";
 import { ICU4XMeasureUnitParser } from "./ICU4XMeasureUnitParser";
 import { ICU4XUnitsConverter } from "./ICU4XUnitsConverter";
@@ -18,7 +18,7 @@ export class ICU4XUnitsConverterFactory {
    * Construct a new {@link ICU4XUnitsConverterFactory `ICU4XUnitsConverterFactory`} instance.
 
    * See the {@link https://docs.rs/icu/latest/icu/experimental/units/converter_factory/struct.ConverterFactory.html#method.new Rust documentation for `new`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
+   * @throws {@link FFIError}<{@link ICU4XDataError}>
    */
   static create(provider: ICU4XDataProvider): ICU4XUnitsConverterFactory | never;
 

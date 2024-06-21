@@ -10,15 +10,15 @@ all: clean baked_data/mod.rs
 ../bin/icu4x-datagen:
 	echo "Target dir: $(CARGO_TARGET_DIR)"
 	ifeq ($(MODE), "release")
-		cargo install icu_datagen --root ..
+		cargo install --path ../../../provider/icu4x-datagen --root ..
 	else
-		cargo install icu_datagen --debug --root ..
+		cargo install --path ../../../provider/icu4x-datagen --debug --root ..
 	endif
 
 baked_data/mod.rs: ../bin/icu4x-datagen
 	../bin/icu4x-datagen \
 		--format mod \
-		--keys all \
+		--markers all \
 		--locales ru \
 		--overwrite \
 		--out baked_data

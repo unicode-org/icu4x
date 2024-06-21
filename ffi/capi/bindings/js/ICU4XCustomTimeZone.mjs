@@ -1,6 +1,7 @@
 import wasm from "./diplomat-wasm.mjs"
 import * as diplomatRuntime from "./diplomat-runtime.mjs"
-import { ICU4XError_js_to_rust, ICU4XError_rust_to_js } from "./ICU4XError.mjs"
+import { ICU4XTimeZoneInvalidIdError_js_to_rust, ICU4XTimeZoneInvalidIdError_rust_to_js } from "./ICU4XTimeZoneInvalidIdError.mjs"
+import { ICU4XTimeZoneInvalidOffsetError_js_to_rust, ICU4XTimeZoneInvalidOffsetError_rust_to_js } from "./ICU4XTimeZoneInvalidOffsetError.mjs"
 
 const ICU4XCustomTimeZone_box_destroy_registry = new FinalizationRegistry(underlying => {
   wasm.ICU4XCustomTimeZone_destroy(underlying);
@@ -27,7 +28,7 @@ export class ICU4XCustomTimeZone {
         wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
         return ok_value;
       } else {
-        const throw_value = ICU4XError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
+        const throw_value = ICU4XTimeZoneInvalidOffsetError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
         wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
         throw new diplomatRuntime.FFIError(throw_value);
       }
@@ -44,6 +45,14 @@ export class ICU4XCustomTimeZone {
     return new ICU4XCustomTimeZone(wasm.ICU4XCustomTimeZone_create_utc(), true, []);
   }
 
+  static create_gmt() {
+    return new ICU4XCustomTimeZone(wasm.ICU4XCustomTimeZone_create_gmt(), true, []);
+  }
+
+  static create_bst() {
+    return new ICU4XCustomTimeZone(wasm.ICU4XCustomTimeZone_create_bst(), true, []);
+  }
+
   try_set_gmt_offset_seconds(arg_offset_seconds) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
@@ -54,7 +63,7 @@ export class ICU4XCustomTimeZone {
         wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
         return ok_value;
       } else {
-        const throw_value = ICU4XError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
+        const throw_value = ICU4XTimeZoneInvalidOffsetError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
         wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
         throw new diplomatRuntime.FFIError(throw_value);
       }
@@ -151,7 +160,7 @@ export class ICU4XCustomTimeZone {
         wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
         return ok_value;
       } else {
-        const throw_value = ICU4XError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
+        const throw_value = ICU4XTimeZoneInvalidIdError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
         wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
         throw new diplomatRuntime.FFIError(throw_value);
       }
@@ -171,27 +180,7 @@ export class ICU4XCustomTimeZone {
         wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
         return ok_value;
       } else {
-        const throw_value = ICU4XError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
-        wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        throw new diplomatRuntime.FFIError(throw_value);
-      }
-    })();
-    buf_arg_id.free();
-    return diplomat_out;
-  }
-
-  try_set_iana_time_zone_id_2(arg_mapper, arg_id) {
-    const buf_arg_id = diplomatRuntime.DiplomatBuf.str8(wasm, arg_id);
-    const diplomat_out = (() => {
-      const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCustomTimeZone_try_set_iana_time_zone_id_2(diplomat_receive_buffer, this.underlying, arg_mapper.underlying, buf_arg_id.ptr, buf_arg_id.size);
-      const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
-      if (is_ok) {
-        const ok_value = {};
-        wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        return ok_value;
-      } else {
-        const throw_value = ICU4XError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
+        const throw_value = ICU4XTimeZoneInvalidIdError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
         wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
         throw new diplomatRuntime.FFIError(throw_value);
       }
@@ -224,7 +213,7 @@ export class ICU4XCustomTimeZone {
         wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
         return ok_value;
       } else {
-        const throw_value = ICU4XError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
+        const throw_value = ICU4XTimeZoneInvalidIdError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
         wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
         throw new diplomatRuntime.FFIError(throw_value);
       }

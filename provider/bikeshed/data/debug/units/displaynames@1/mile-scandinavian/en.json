@@ -1,0 +1,14 @@
+{
+  "long": {
+    "One": "{0} mile-scandinavian",
+    "Other": "{0} miles-scandinavian"
+  },
+  "short": {
+    "One": "{0} smi",
+    "Other": "{0} smi"
+  },
+  "narrow": {
+    "One": "{0}smi",
+    "Other": "{0}smi"
+  }
+}

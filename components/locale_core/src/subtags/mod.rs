@@ -6,7 +6,7 @@
 //! which represent different fields of the structure.
 //!
 //! * [`Language`] is the only mandatory field, which when empty,
-//! takes the value `und`.
+//!   takes the value `und`.
 //! * [`Script`] is an optional field representing the written script used by the locale.
 //! * [`Region`] is the region used by the locale.
 //! * [`Variants`] is a list of optional [`Variant`] subtags containing information about the
@@ -91,9 +91,23 @@ impl_tinystr_subtag!(
     ["f", "toolooong"],
 );
 
+#[allow(clippy::len_without_is_empty)]
 impl Subtag {
     pub(crate) const fn valid_key(v: &[u8]) -> bool {
         2 <= v.len() && v.len() <= 8
+    }
+
+    /// Returns the length of `self`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locale::subtags::subtag;
+    /// let s = subtag!("foo");
+    /// assert_eq!(s.len(), 3);
+    /// ```
+    pub fn len(&self) -> usize {
+        self.0.len()
     }
 
     #[doc(hidden)]
@@ -112,10 +126,10 @@ impl Subtag {
 }
 
 impl<const N: usize> TryFrom<tinystr::TinyAsciiStr<N>> for Subtag {
-    type Error = crate::parser::errors::ParserError;
+    type Error = crate::parser::errors::ParseError;
 
     fn try_from(value: tinystr::TinyAsciiStr<N>) -> Result<Self, Self::Error> {
-        Self::try_from_bytes(value.as_bytes())
+        Self::try_from_str(&value)
     }
 }
 

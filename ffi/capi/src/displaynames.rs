@@ -4,7 +4,7 @@
 
 #[diplomat::bridge]
 pub mod ffi {
-    use crate::errors::ffi::ICU4XError;
+    use crate::errors::ffi::{ICU4XDataError, ICU4XLocaleParseError};
     use crate::locale_core::ffi::ICU4XLocale;
     use crate::provider::ffi::ICU4XDataProvider;
     use alloc::boxed::Box;
@@ -65,7 +65,7 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
             options: ICU4XDisplayNamesOptionsV1,
-        ) -> Result<Box<ICU4XLocaleDisplayNamesFormatter>, ICU4XError> {
+        ) -> Result<Box<ICU4XLocaleDisplayNamesFormatter>, ICU4XDataError> {
             let locale = locale.to_datalocale();
             let options = DisplayNamesOptions::from(options);
 
@@ -95,7 +95,7 @@ pub mod ffi {
         pub fn create(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
-        ) -> Result<Box<ICU4XRegionDisplayNames>, ICU4XError> {
+        ) -> Result<Box<ICU4XRegionDisplayNames>, ICU4XDataError> {
             let locale = locale.to_datalocale();
             Ok(Box::new(ICU4XRegionDisplayNames(call_constructor!(
                 RegionDisplayNames::try_new,
@@ -115,10 +115,10 @@ pub mod ffi {
             &self,
             region: &DiplomatStr,
             write: &mut DiplomatWrite,
-        ) -> Result<(), ICU4XError> {
+        ) -> Result<(), ICU4XLocaleParseError> {
             let _infallible = self
                 .0
-                .of(Region::try_from_bytes(region)?)
+                .of(Region::try_from_utf8(region)?)
                 .unwrap_or("")
                 .write_to(write);
             Ok(())

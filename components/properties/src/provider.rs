@@ -22,7 +22,6 @@ use crate::script::ScriptWithExt;
 use crate::Script;
 
 use core::ops::RangeInclusive;
-use core::str;
 use icu_collections::codepointinvlist::CodePointInversionList;
 use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
 use icu_collections::codepointtrie::{CodePointMapRange, CodePointTrie, TrieValue};
@@ -43,263 +42,264 @@ use zerovec::{VarZeroVec, ZeroSlice, ZeroVecError};
 pub struct Baked;
 
 #[cfg(feature = "compiled_data")]
+#[allow(unused_imports)]
 const _: () = {
+    use icu_properties_data::*;
     pub mod icu {
         pub use crate as properties;
         pub use icu_collections as collections;
-        #[allow(unused_imports)] // baked data may or may not need this
-        pub use icu_locale as locale;
+        pub use icu_properties_data::icu_locale as locale;
     }
-    icu_properties_data::make_provider!(Baked);
-    icu_properties_data::impl_propnames_from_gcb_v1!(Baked);
-    icu_properties_data::impl_propnames_from_bc_v1!(Baked);
-    icu_properties_data::impl_propnames_from_ccc_v1!(Baked);
-    icu_properties_data::impl_propnames_from_ea_v1!(Baked);
-    icu_properties_data::impl_propnames_from_gc_v1!(Baked);
-    icu_properties_data::impl_propnames_from_gcm_v1!(Baked);
-    icu_properties_data::impl_propnames_from_hst_v1!(Baked);
-    icu_properties_data::impl_propnames_from_insc_v1!(Baked);
-    icu_properties_data::impl_propnames_from_jt_v1!(Baked);
-    icu_properties_data::impl_propnames_from_lb_v1!(Baked);
-    icu_properties_data::impl_propnames_from_sb_v1!(Baked);
-    icu_properties_data::impl_propnames_from_sc_v1!(Baked);
-    icu_properties_data::impl_propnames_from_wb_v1!(Baked);
-    icu_properties_data::impl_propnames_to_long_linear_bc_v1!(Baked);
-    icu_properties_data::impl_propnames_to_long_linear_ea_v1!(Baked);
-    icu_properties_data::impl_propnames_to_long_linear_gc_v1!(Baked);
-    icu_properties_data::impl_propnames_to_long_linear_gcb_v1!(Baked);
-    icu_properties_data::impl_propnames_to_long_linear_hst_v1!(Baked);
-    icu_properties_data::impl_propnames_to_long_linear_insc_v1!(Baked);
-    icu_properties_data::impl_propnames_to_long_linear_jt_v1!(Baked);
-    icu_properties_data::impl_propnames_to_long_linear_lb_v1!(Baked);
-    icu_properties_data::impl_propnames_to_long_linear_sb_v1!(Baked);
-    icu_properties_data::impl_propnames_to_long_linear_sc_v1!(Baked);
-    icu_properties_data::impl_propnames_to_long_linear_wb_v1!(Baked);
-    icu_properties_data::impl_propnames_to_long_sparse_ccc_v1!(Baked);
-    icu_properties_data::impl_propnames_to_short_linear_bc_v1!(Baked);
-    icu_properties_data::impl_propnames_to_short_linear_ea_v1!(Baked);
-    icu_properties_data::impl_propnames_to_short_linear_gc_v1!(Baked);
-    icu_properties_data::impl_propnames_to_short_linear_gcb_v1!(Baked);
-    icu_properties_data::impl_propnames_to_short_linear_hst_v1!(Baked);
-    icu_properties_data::impl_propnames_to_short_linear_insc_v1!(Baked);
-    icu_properties_data::impl_propnames_to_short_linear_jt_v1!(Baked);
-    icu_properties_data::impl_propnames_to_short_linear_lb_v1!(Baked);
-    icu_properties_data::impl_propnames_to_short_linear_sb_v1!(Baked);
-    icu_properties_data::impl_propnames_to_short_linear_wb_v1!(Baked);
-    icu_properties_data::impl_propnames_to_short_linear4_sc_v1!(Baked);
-    icu_properties_data::impl_propnames_to_short_sparse_ccc_v1!(Baked);
-    icu_properties_data::impl_props_ahex_v1!(Baked);
-    icu_properties_data::impl_props_alnum_v1!(Baked);
-    icu_properties_data::impl_props_alpha_v1!(Baked);
-    icu_properties_data::impl_props_basic_emoji_v1!(Baked);
-    icu_properties_data::impl_props_bc_v1!(Baked);
-    icu_properties_data::impl_props_bidi_c_v1!(Baked);
-    icu_properties_data::impl_props_bidi_m_v1!(Baked);
-    icu_properties_data::impl_props_bidiauxiliaryprops_v1!(Baked);
-    icu_properties_data::impl_props_blank_v1!(Baked);
-    icu_properties_data::impl_props_cased_v1!(Baked);
-    icu_properties_data::impl_props_ccc_v1!(Baked);
-    icu_properties_data::impl_props_ci_v1!(Baked);
-    icu_properties_data::impl_props_comp_ex_v1!(Baked);
-    icu_properties_data::impl_props_cwcf_v1!(Baked);
-    icu_properties_data::impl_props_cwcm_v1!(Baked);
-    icu_properties_data::impl_props_cwkcf_v1!(Baked);
-    icu_properties_data::impl_props_cwl_v1!(Baked);
-    icu_properties_data::impl_props_cwt_v1!(Baked);
-    icu_properties_data::impl_props_cwu_v1!(Baked);
-    icu_properties_data::impl_props_dash_v1!(Baked);
-    icu_properties_data::impl_props_dep_v1!(Baked);
-    icu_properties_data::impl_props_di_v1!(Baked);
-    icu_properties_data::impl_props_dia_v1!(Baked);
-    icu_properties_data::impl_props_ea_v1!(Baked);
-    icu_properties_data::impl_props_ebase_v1!(Baked);
-    icu_properties_data::impl_props_ecomp_v1!(Baked);
-    icu_properties_data::impl_props_emod_v1!(Baked);
-    icu_properties_data::impl_props_emoji_v1!(Baked);
-    icu_properties_data::impl_props_epres_v1!(Baked);
-    icu_properties_data::impl_props_exemplarchars_auxiliary_v1!(Baked);
-    icu_properties_data::impl_props_exemplarchars_index_v1!(Baked);
-    icu_properties_data::impl_props_exemplarchars_main_v1!(Baked);
-    icu_properties_data::impl_props_exemplarchars_numbers_v1!(Baked);
-    icu_properties_data::impl_props_exemplarchars_punctuation_v1!(Baked);
-    icu_properties_data::impl_props_ext_v1!(Baked);
-    icu_properties_data::impl_props_extpict_v1!(Baked);
-    icu_properties_data::impl_props_gc_v1!(Baked);
-    icu_properties_data::impl_props_gcb_v1!(Baked);
-    icu_properties_data::impl_props_gr_base_v1!(Baked);
-    icu_properties_data::impl_props_gr_ext_v1!(Baked);
-    icu_properties_data::impl_props_gr_link_v1!(Baked);
-    icu_properties_data::impl_props_graph_v1!(Baked);
-    icu_properties_data::impl_props_hex_v1!(Baked);
-    icu_properties_data::impl_props_hst_v1!(Baked);
-    icu_properties_data::impl_props_hyphen_v1!(Baked);
-    icu_properties_data::impl_props_idc_v1!(Baked);
-    icu_properties_data::impl_props_ideo_v1!(Baked);
-    icu_properties_data::impl_props_ids_v1!(Baked);
-    icu_properties_data::impl_props_idsb_v1!(Baked);
-    icu_properties_data::impl_props_idst_v1!(Baked);
-    icu_properties_data::impl_props_insc_v1!(Baked);
-    icu_properties_data::impl_props_join_c_v1!(Baked);
-    icu_properties_data::impl_props_jt_v1!(Baked);
-    icu_properties_data::impl_props_lb_v1!(Baked);
-    icu_properties_data::impl_props_loe_v1!(Baked);
-    icu_properties_data::impl_props_lower_v1!(Baked);
-    icu_properties_data::impl_props_math_v1!(Baked);
-    icu_properties_data::impl_props_nchar_v1!(Baked);
-    icu_properties_data::impl_props_nfcinert_v1!(Baked);
-    icu_properties_data::impl_props_nfdinert_v1!(Baked);
-    icu_properties_data::impl_props_nfkcinert_v1!(Baked);
-    icu_properties_data::impl_props_nfkdinert_v1!(Baked);
-    icu_properties_data::impl_props_pat_syn_v1!(Baked);
-    icu_properties_data::impl_props_pat_ws_v1!(Baked);
-    icu_properties_data::impl_props_pcm_v1!(Baked);
-    icu_properties_data::impl_props_print_v1!(Baked);
-    icu_properties_data::impl_props_qmark_v1!(Baked);
-    icu_properties_data::impl_props_radical_v1!(Baked);
-    icu_properties_data::impl_props_ri_v1!(Baked);
-    icu_properties_data::impl_props_sb_v1!(Baked);
-    icu_properties_data::impl_props_sc_v1!(Baked);
-    icu_properties_data::impl_props_scx_v1!(Baked);
-    icu_properties_data::impl_props_sd_v1!(Baked);
-    icu_properties_data::impl_props_segstart_v1!(Baked);
-    icu_properties_data::impl_props_sensitive_v1!(Baked);
-    icu_properties_data::impl_props_sterm_v1!(Baked);
-    icu_properties_data::impl_props_term_v1!(Baked);
-    icu_properties_data::impl_props_uideo_v1!(Baked);
-    icu_properties_data::impl_props_upper_v1!(Baked);
-    icu_properties_data::impl_props_vs_v1!(Baked);
-    icu_properties_data::impl_props_wb_v1!(Baked);
-    icu_properties_data::impl_props_wspace_v1!(Baked);
-    icu_properties_data::impl_props_xdigit_v1!(Baked);
-    icu_properties_data::impl_props_xidc_v1!(Baked);
-    icu_properties_data::impl_props_xids_v1!(Baked);
+    make_provider!(Baked);
+    impl_alnum_v1_marker!(Baked);
+    impl_alphabetic_v1_marker!(Baked);
+    impl_ascii_hex_digit_v1_marker!(Baked);
+    impl_basic_emoji_v1_marker!(Baked);
+    impl_bidi_auxiliary_properties_v1_marker!(Baked);
+    impl_bidi_class_name_to_value_v1_marker!(Baked);
+    impl_bidi_class_v1_marker!(Baked);
+    impl_bidi_class_value_to_long_name_v1_marker!(Baked);
+    impl_bidi_class_value_to_short_name_v1_marker!(Baked);
+    impl_bidi_control_v1_marker!(Baked);
+    impl_bidi_mirrored_v1_marker!(Baked);
+    impl_blank_v1_marker!(Baked);
+    impl_canonical_combining_class_name_to_value_v1_marker!(Baked);
+    impl_canonical_combining_class_v1_marker!(Baked);
+    impl_canonical_combining_class_value_to_long_name_v1_marker!(Baked);
+    impl_canonical_combining_class_value_to_short_name_v1_marker!(Baked);
+    impl_case_ignorable_v1_marker!(Baked);
+    impl_case_sensitive_v1_marker!(Baked);
+    impl_cased_v1_marker!(Baked);
+    impl_changes_when_casefolded_v1_marker!(Baked);
+    impl_changes_when_casemapped_v1_marker!(Baked);
+    impl_changes_when_lowercased_v1_marker!(Baked);
+    impl_changes_when_nfkc_casefolded_v1_marker!(Baked);
+    impl_changes_when_titlecased_v1_marker!(Baked);
+    impl_changes_when_uppercased_v1_marker!(Baked);
+    impl_dash_v1_marker!(Baked);
+    impl_default_ignorable_code_point_v1_marker!(Baked);
+    impl_deprecated_v1_marker!(Baked);
+    impl_diacritic_v1_marker!(Baked);
+    impl_east_asian_width_name_to_value_v1_marker!(Baked);
+    impl_east_asian_width_v1_marker!(Baked);
+    impl_east_asian_width_value_to_long_name_v1_marker!(Baked);
+    impl_east_asian_width_value_to_short_name_v1_marker!(Baked);
+    impl_emoji_component_v1_marker!(Baked);
+    impl_emoji_modifier_base_v1_marker!(Baked);
+    impl_emoji_modifier_v1_marker!(Baked);
+    impl_emoji_presentation_v1_marker!(Baked);
+    impl_emoji_v1_marker!(Baked);
+    impl_exemplar_characters_auxiliary_v1_marker!(Baked);
+    impl_exemplar_characters_index_v1_marker!(Baked);
+    impl_exemplar_characters_main_v1_marker!(Baked);
+    impl_exemplar_characters_numbers_v1_marker!(Baked);
+    impl_exemplar_characters_punctuation_v1_marker!(Baked);
+    impl_extended_pictographic_v1_marker!(Baked);
+    impl_extender_v1_marker!(Baked);
+    impl_full_composition_exclusion_v1_marker!(Baked);
+    impl_general_category_mask_name_to_value_v1_marker!(Baked);
+    impl_general_category_name_to_value_v1_marker!(Baked);
+    impl_general_category_v1_marker!(Baked);
+    impl_general_category_value_to_long_name_v1_marker!(Baked);
+    impl_general_category_value_to_short_name_v1_marker!(Baked);
+    impl_graph_v1_marker!(Baked);
+    impl_grapheme_base_v1_marker!(Baked);
+    impl_grapheme_cluster_break_name_to_value_v1_marker!(Baked);
+    impl_grapheme_cluster_break_v1_marker!(Baked);
+    impl_grapheme_cluster_break_value_to_long_name_v1_marker!(Baked);
+    impl_grapheme_cluster_break_value_to_short_name_v1_marker!(Baked);
+    impl_grapheme_extend_v1_marker!(Baked);
+    impl_grapheme_link_v1_marker!(Baked);
+    impl_hangul_syllable_type_name_to_value_v1_marker!(Baked);
+    impl_hangul_syllable_type_v1_marker!(Baked);
+    impl_hangul_syllable_type_value_to_long_name_v1_marker!(Baked);
+    impl_hangul_syllable_type_value_to_short_name_v1_marker!(Baked);
+    impl_hex_digit_v1_marker!(Baked);
+    impl_hyphen_v1_marker!(Baked);
+    impl_id_continue_v1_marker!(Baked);
+    impl_id_start_v1_marker!(Baked);
+    impl_ideographic_v1_marker!(Baked);
+    impl_ids_binary_operator_v1_marker!(Baked);
+    impl_ids_trinary_operator_v1_marker!(Baked);
+    impl_indic_syllabic_category_name_to_value_v1_marker!(Baked);
+    impl_indic_syllabic_category_v1_marker!(Baked);
+    impl_indic_syllabic_category_value_to_long_name_v1_marker!(Baked);
+    impl_indic_syllabic_category_value_to_short_name_v1_marker!(Baked);
+    impl_join_control_v1_marker!(Baked);
+    impl_joining_type_name_to_value_v1_marker!(Baked);
+    impl_joining_type_v1_marker!(Baked);
+    impl_joining_type_value_to_long_name_v1_marker!(Baked);
+    impl_joining_type_value_to_short_name_v1_marker!(Baked);
+    impl_line_break_name_to_value_v1_marker!(Baked);
+    impl_line_break_v1_marker!(Baked);
+    impl_line_break_value_to_long_name_v1_marker!(Baked);
+    impl_line_break_value_to_short_name_v1_marker!(Baked);
+    impl_logical_order_exception_v1_marker!(Baked);
+    impl_lowercase_v1_marker!(Baked);
+    impl_math_v1_marker!(Baked);
+    impl_nfc_inert_v1_marker!(Baked);
+    impl_nfd_inert_v1_marker!(Baked);
+    impl_nfkc_inert_v1_marker!(Baked);
+    impl_nfkd_inert_v1_marker!(Baked);
+    impl_noncharacter_code_point_v1_marker!(Baked);
+    impl_pattern_syntax_v1_marker!(Baked);
+    impl_pattern_white_space_v1_marker!(Baked);
+    impl_prepended_concatenation_mark_v1_marker!(Baked);
+    impl_print_v1_marker!(Baked);
+    impl_quotation_mark_v1_marker!(Baked);
+    impl_radical_v1_marker!(Baked);
+    impl_regional_indicator_v1_marker!(Baked);
+    impl_script_name_to_value_v1_marker!(Baked);
+    impl_script_v1_marker!(Baked);
+    impl_script_value_to_long_name_v1_marker!(Baked);
+    impl_script_value_to_short_name_v1_marker!(Baked);
+    impl_script_with_extensions_property_v1_marker!(Baked);
+    impl_segment_starter_v1_marker!(Baked);
+    impl_sentence_break_name_to_value_v1_marker!(Baked);
+    impl_sentence_break_v1_marker!(Baked);
+    impl_sentence_break_value_to_long_name_v1_marker!(Baked);
+    impl_sentence_break_value_to_short_name_v1_marker!(Baked);
+    impl_sentence_terminal_v1_marker!(Baked);
+    impl_soft_dotted_v1_marker!(Baked);
+    impl_terminal_punctuation_v1_marker!(Baked);
+    impl_unified_ideograph_v1_marker!(Baked);
+    impl_uppercase_v1_marker!(Baked);
+    impl_variation_selector_v1_marker!(Baked);
+    impl_white_space_v1_marker!(Baked);
+    impl_word_break_name_to_value_v1_marker!(Baked);
+    impl_word_break_v1_marker!(Baked);
+    impl_word_break_value_to_long_name_v1_marker!(Baked);
+    impl_word_break_value_to_short_name_v1_marker!(Baked);
+    impl_xdigit_v1_marker!(Baked);
+    impl_xid_continue_v1_marker!(Baked);
+    impl_xid_start_v1_marker!(Baked);
 };
 
 /// All data keys in this module.
-pub const KEYS: &[DataKey] = &[
-    AlnumV1Marker::KEY,
-    AlphabeticV1Marker::KEY,
-    AsciiHexDigitV1Marker::KEY,
-    BasicEmojiV1Marker::KEY,
-    bidi_data::BidiAuxiliaryPropertiesV1Marker::KEY,
-    BidiControlV1Marker::KEY,
-    BidiMirroredV1Marker::KEY,
-    BlankV1Marker::KEY,
-    CasedV1Marker::KEY,
-    CaseIgnorableV1Marker::KEY,
-    CaseSensitiveV1Marker::KEY,
-    ChangesWhenCasefoldedV1Marker::KEY,
-    ChangesWhenCasemappedV1Marker::KEY,
-    ChangesWhenLowercasedV1Marker::KEY,
-    ChangesWhenNfkcCasefoldedV1Marker::KEY,
-    ChangesWhenTitlecasedV1Marker::KEY,
-    ChangesWhenUppercasedV1Marker::KEY,
-    DashV1Marker::KEY,
-    DefaultIgnorableCodePointV1Marker::KEY,
-    DeprecatedV1Marker::KEY,
-    DiacriticV1Marker::KEY,
-    EmojiComponentV1Marker::KEY,
-    EmojiModifierBaseV1Marker::KEY,
-    EmojiModifierV1Marker::KEY,
-    EmojiPresentationV1Marker::KEY,
-    EmojiV1Marker::KEY,
-    ExemplarCharactersAuxiliaryV1Marker::KEY,
-    ExemplarCharactersIndexV1Marker::KEY,
-    ExemplarCharactersMainV1Marker::KEY,
-    ExemplarCharactersNumbersV1Marker::KEY,
-    ExemplarCharactersPunctuationV1Marker::KEY,
-    ExtendedPictographicV1Marker::KEY,
-    ExtenderV1Marker::KEY,
-    FullCompositionExclusionV1Marker::KEY,
-    GraphemeBaseV1Marker::KEY,
-    GraphemeExtendV1Marker::KEY,
-    GraphemeLinkV1Marker::KEY,
-    GraphV1Marker::KEY,
-    HexDigitV1Marker::KEY,
-    HyphenV1Marker::KEY,
-    IdContinueV1Marker::KEY,
-    IdeographicV1Marker::KEY,
-    IdsBinaryOperatorV1Marker::KEY,
-    IdStartV1Marker::KEY,
-    IdsTrinaryOperatorV1Marker::KEY,
-    JoinControlV1Marker::KEY,
-    LogicalOrderExceptionV1Marker::KEY,
-    LowercaseV1Marker::KEY,
-    MathV1Marker::KEY,
-    NfcInertV1Marker::KEY,
-    NfdInertV1Marker::KEY,
-    NfkcInertV1Marker::KEY,
-    NfkdInertV1Marker::KEY,
-    NoncharacterCodePointV1Marker::KEY,
-    PatternSyntaxV1Marker::KEY,
-    PatternWhiteSpaceV1Marker::KEY,
-    PrependedConcatenationMarkV1Marker::KEY,
-    PrintV1Marker::KEY,
-    QuotationMarkV1Marker::KEY,
-    RadicalV1Marker::KEY,
-    RegionalIndicatorV1Marker::KEY,
-    ScriptWithExtensionsPropertyV1Marker::KEY,
-    ScriptWithExtensionsPropertyV1Marker::KEY,
-    SegmentStarterV1Marker::KEY,
-    SentenceTerminalV1Marker::KEY,
-    SoftDottedV1Marker::KEY,
-    TerminalPunctuationV1Marker::KEY,
-    UnifiedIdeographV1Marker::KEY,
-    UppercaseV1Marker::KEY,
-    VariationSelectorV1Marker::KEY,
-    WhiteSpaceV1Marker::KEY,
-    XdigitV1Marker::KEY,
-    XidContinueV1Marker::KEY,
-    XidStartV1Marker::KEY,
-    names::BidiClassNameToValueV1Marker::KEY,
-    BidiClassV1Marker::KEY,
-    names::BidiClassValueToLongNameV1Marker::KEY,
-    names::BidiClassValueToShortNameV1Marker::KEY,
-    names::CanonicalCombiningClassNameToValueV1Marker::KEY,
-    CanonicalCombiningClassV1Marker::KEY,
-    names::CanonicalCombiningClassValueToLongNameV1Marker::KEY,
-    names::CanonicalCombiningClassValueToShortNameV1Marker::KEY,
-    names::EastAsianWidthNameToValueV1Marker::KEY,
-    EastAsianWidthV1Marker::KEY,
-    names::EastAsianWidthValueToLongNameV1Marker::KEY,
-    names::EastAsianWidthValueToShortNameV1Marker::KEY,
-    names::GeneralCategoryMaskNameToValueV1Marker::KEY,
-    names::GeneralCategoryNameToValueV1Marker::KEY,
-    GeneralCategoryV1Marker::KEY,
-    names::GeneralCategoryValueToLongNameV1Marker::KEY,
-    names::GeneralCategoryValueToShortNameV1Marker::KEY,
-    names::GraphemeClusterBreakNameToValueV1Marker::KEY,
-    GraphemeClusterBreakV1Marker::KEY,
-    names::GraphemeClusterBreakValueToLongNameV1Marker::KEY,
-    names::GraphemeClusterBreakValueToShortNameV1Marker::KEY,
-    names::HangulSyllableTypeNameToValueV1Marker::KEY,
-    HangulSyllableTypeV1Marker::KEY,
-    names::HangulSyllableTypeValueToLongNameV1Marker::KEY,
-    names::HangulSyllableTypeValueToShortNameV1Marker::KEY,
-    names::IndicSyllabicCategoryNameToValueV1Marker::KEY,
-    IndicSyllabicCategoryV1Marker::KEY,
-    names::IndicSyllabicCategoryValueToLongNameV1Marker::KEY,
-    names::IndicSyllabicCategoryValueToShortNameV1Marker::KEY,
-    names::JoiningTypeNameToValueV1Marker::KEY,
-    JoiningTypeV1Marker::KEY,
-    names::JoiningTypeValueToLongNameV1Marker::KEY,
-    names::JoiningTypeValueToShortNameV1Marker::KEY,
-    names::LineBreakNameToValueV1Marker::KEY,
-    LineBreakV1Marker::KEY,
-    names::LineBreakValueToLongNameV1Marker::KEY,
-    names::LineBreakValueToShortNameV1Marker::KEY,
-    names::ScriptNameToValueV1Marker::KEY,
-    ScriptV1Marker::KEY,
-    names::ScriptValueToLongNameV1Marker::KEY,
-    names::ScriptValueToShortNameV1Marker::KEY,
-    names::SentenceBreakNameToValueV1Marker::KEY,
-    SentenceBreakV1Marker::KEY,
-    names::SentenceBreakValueToLongNameV1Marker::KEY,
-    names::SentenceBreakValueToShortNameV1Marker::KEY,
-    names::WordBreakNameToValueV1Marker::KEY,
-    WordBreakV1Marker::KEY,
-    names::WordBreakValueToLongNameV1Marker::KEY,
-    names::WordBreakValueToShortNameV1Marker::KEY,
+pub const MARKERS: &[DataMarkerInfo] = &[
+    AlnumV1Marker::INFO,
+    AlphabeticV1Marker::INFO,
+    AsciiHexDigitV1Marker::INFO,
+    BasicEmojiV1Marker::INFO,
+    bidi_data::BidiAuxiliaryPropertiesV1Marker::INFO,
+    BidiControlV1Marker::INFO,
+    BidiMirroredV1Marker::INFO,
+    BlankV1Marker::INFO,
+    CasedV1Marker::INFO,
+    CaseIgnorableV1Marker::INFO,
+    CaseSensitiveV1Marker::INFO,
+    ChangesWhenCasefoldedV1Marker::INFO,
+    ChangesWhenCasemappedV1Marker::INFO,
+    ChangesWhenLowercasedV1Marker::INFO,
+    ChangesWhenNfkcCasefoldedV1Marker::INFO,
+    ChangesWhenTitlecasedV1Marker::INFO,
+    ChangesWhenUppercasedV1Marker::INFO,
+    DashV1Marker::INFO,
+    DefaultIgnorableCodePointV1Marker::INFO,
+    DeprecatedV1Marker::INFO,
+    DiacriticV1Marker::INFO,
+    EmojiComponentV1Marker::INFO,
+    EmojiModifierBaseV1Marker::INFO,
+    EmojiModifierV1Marker::INFO,
+    EmojiPresentationV1Marker::INFO,
+    EmojiV1Marker::INFO,
+    ExemplarCharactersAuxiliaryV1Marker::INFO,
+    ExemplarCharactersIndexV1Marker::INFO,
+    ExemplarCharactersMainV1Marker::INFO,
+    ExemplarCharactersNumbersV1Marker::INFO,
+    ExemplarCharactersPunctuationV1Marker::INFO,
+    ExtendedPictographicV1Marker::INFO,
+    ExtenderV1Marker::INFO,
+    FullCompositionExclusionV1Marker::INFO,
+    GraphemeBaseV1Marker::INFO,
+    GraphemeExtendV1Marker::INFO,
+    GraphemeLinkV1Marker::INFO,
+    GraphV1Marker::INFO,
+    HexDigitV1Marker::INFO,
+    HyphenV1Marker::INFO,
+    IdContinueV1Marker::INFO,
+    IdeographicV1Marker::INFO,
+    IdsBinaryOperatorV1Marker::INFO,
+    IdStartV1Marker::INFO,
+    IdsTrinaryOperatorV1Marker::INFO,
+    JoinControlV1Marker::INFO,
+    LogicalOrderExceptionV1Marker::INFO,
+    LowercaseV1Marker::INFO,
+    MathV1Marker::INFO,
+    NfcInertV1Marker::INFO,
+    NfdInertV1Marker::INFO,
+    NfkcInertV1Marker::INFO,
+    NfkdInertV1Marker::INFO,
+    NoncharacterCodePointV1Marker::INFO,
+    PatternSyntaxV1Marker::INFO,
+    PatternWhiteSpaceV1Marker::INFO,
+    PrependedConcatenationMarkV1Marker::INFO,
+    PrintV1Marker::INFO,
+    QuotationMarkV1Marker::INFO,
+    RadicalV1Marker::INFO,
+    RegionalIndicatorV1Marker::INFO,
+    ScriptWithExtensionsPropertyV1Marker::INFO,
+    ScriptWithExtensionsPropertyV1Marker::INFO,
+    SegmentStarterV1Marker::INFO,
+    SentenceTerminalV1Marker::INFO,
+    SoftDottedV1Marker::INFO,
+    TerminalPunctuationV1Marker::INFO,
+    UnifiedIdeographV1Marker::INFO,
+    UppercaseV1Marker::INFO,
+    VariationSelectorV1Marker::INFO,
+    WhiteSpaceV1Marker::INFO,
+    XdigitV1Marker::INFO,
+    XidContinueV1Marker::INFO,
+    XidStartV1Marker::INFO,
+    names::BidiClassNameToValueV1Marker::INFO,
+    BidiClassV1Marker::INFO,
+    names::BidiClassValueToLongNameV1Marker::INFO,
+    names::BidiClassValueToShortNameV1Marker::INFO,
+    names::CanonicalCombiningClassNameToValueV1Marker::INFO,
+    CanonicalCombiningClassV1Marker::INFO,
+    names::CanonicalCombiningClassValueToLongNameV1Marker::INFO,
+    names::CanonicalCombiningClassValueToShortNameV1Marker::INFO,
+    names::EastAsianWidthNameToValueV1Marker::INFO,
+    EastAsianWidthV1Marker::INFO,
+    names::EastAsianWidthValueToLongNameV1Marker::INFO,
+    names::EastAsianWidthValueToShortNameV1Marker::INFO,
+    names::GeneralCategoryMaskNameToValueV1Marker::INFO,
+    names::GeneralCategoryNameToValueV1Marker::INFO,
+    GeneralCategoryV1Marker::INFO,
+    names::GeneralCategoryValueToLongNameV1Marker::INFO,
+    names::GeneralCategoryValueToShortNameV1Marker::INFO,
+    names::GraphemeClusterBreakNameToValueV1Marker::INFO,
+    GraphemeClusterBreakV1Marker::INFO,
+    names::GraphemeClusterBreakValueToLongNameV1Marker::INFO,
+    names::GraphemeClusterBreakValueToShortNameV1Marker::INFO,
+    names::HangulSyllableTypeNameToValueV1Marker::INFO,
+    HangulSyllableTypeV1Marker::INFO,
+    names::HangulSyllableTypeValueToLongNameV1Marker::INFO,
+    names::HangulSyllableTypeValueToShortNameV1Marker::INFO,
+    names::IndicSyllabicCategoryNameToValueV1Marker::INFO,
+    IndicSyllabicCategoryV1Marker::INFO,
+    names::IndicSyllabicCategoryValueToLongNameV1Marker::INFO,
+    names::IndicSyllabicCategoryValueToShortNameV1Marker::INFO,
+    names::JoiningTypeNameToValueV1Marker::INFO,
+    JoiningTypeV1Marker::INFO,
+    names::JoiningTypeValueToLongNameV1Marker::INFO,
+    names::JoiningTypeValueToShortNameV1Marker::INFO,
+    names::LineBreakNameToValueV1Marker::INFO,
+    LineBreakV1Marker::INFO,
+    names::LineBreakValueToLongNameV1Marker::INFO,
+    names::LineBreakValueToShortNameV1Marker::INFO,
+    names::ScriptNameToValueV1Marker::INFO,
+    ScriptV1Marker::INFO,
+    names::ScriptValueToLongNameV1Marker::INFO,
+    names::ScriptValueToShortNameV1Marker::INFO,
+    names::SentenceBreakNameToValueV1Marker::INFO,
+    SentenceBreakV1Marker::INFO,
+    names::SentenceBreakValueToLongNameV1Marker::INFO,
+    names::SentenceBreakValueToShortNameV1Marker::INFO,
+    names::WordBreakNameToValueV1Marker::INFO,
+    WordBreakV1Marker::INFO,
+    names::WordBreakValueToLongNameV1Marker::INFO,
+    names::WordBreakValueToShortNameV1Marker::INFO,
 ];
 
 // include the specialized structs for the compact representation of Bidi property data
@@ -434,11 +434,15 @@ macro_rules! data_struct_generic {
                 databake(path = icu_properties::provider),
             )]
             pub struct $marker;
-            impl icu_provider::DataMarker for $marker {
+            impl icu_provider::DynamicDataMarker for $marker {
                 type Yokeable = PropertyCodePointMapV1<'static, crate::$ty>;
             }
-            impl icu_provider::KeyedDataMarker for $marker {
-                const KEY: icu_provider::DataKey = icu_provider::data_key!($path, icu_provider::DataKeyMetadata::construct_internal(icu_provider::fallback::LocaleFallbackPriority::Language, None, None, true));
+            impl icu_provider::DataMarker for $marker {
+                const INFO: icu_provider::DataMarkerInfo = {
+                    let mut info = DataMarkerInfo::from_path(icu_provider::marker::data_marker_path!($path));
+                    info.is_singleton = true;
+                    info
+                };
             }
         )+
     }
@@ -603,18 +607,6 @@ pub struct ScriptWithExtensionsPropertyV1<'data> {
     /// and may also indicate Script value, as described for the `trie` field.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub extensions: VarZeroVec<'data, ZeroSlice<Script>>,
-}
-
-impl<'data> ScriptWithExtensionsPropertyV1<'data> {
-    // This method is intended to be used by constructors of deserialized data
-    // in a data provider.
-    #[doc(hidden)]
-    pub fn new(
-        trie: CodePointTrie<'data, ScriptWithExt>,
-        extensions: VarZeroVec<'data, ZeroSlice<Script>>,
-    ) -> ScriptWithExtensionsPropertyV1<'data> {
-        ScriptWithExtensionsPropertyV1 { trie, extensions }
-    }
 }
 
 // See CodePointSetData for documentation of these functions

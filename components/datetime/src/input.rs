@@ -6,7 +6,7 @@
 //! formatting operations.
 
 #[cfg(feature = "experimental")]
-use crate::neo_marker::{DateMarkers, NeoGetField, TimeMarkers, TypedDateMarkers};
+use crate::neo_marker::{DateMarkers, NeoGetField, TimeMarkers, TypedDateMarkers, ZoneMarkers};
 use crate::provider::time_zones::{MetazoneId, TimeZoneBcp47Id};
 use icu_calendar::any_calendar::AnyCalendarKind;
 use icu_calendar::week::{RelativeUnit, WeekCalculator};
@@ -16,10 +16,9 @@ use icu_timezone::{CustomTimeZone, GmtOffset, ZoneVariant};
 
 // TODO(#2630) fix up imports to directly import from icu_calendar
 pub(crate) use icu_calendar::types::{
-    DayOfMonth, DayOfWeekInMonth, DayOfYearInfo, FormattableMonth, FormattableYear, IsoHour,
-    IsoMinute, IsoSecond, IsoWeekday, NanoSecond, Time, WeekOfMonth, WeekOfYear,
+    DayOfMonth, DayOfYearInfo, FormattableMonth, FormattableYear, IsoHour, IsoMinute, IsoSecond,
+    IsoWeekday, NanoSecond, Time, WeekOfMonth, WeekOfYear,
 };
-pub(crate) use icu_calendar::CalendarError;
 
 /// Representation of a formattable calendar date. Supports dates in any calendar system that uses
 /// solar days indexed by an era, year, month, and day.
@@ -97,86 +96,9 @@ pub trait TimeZoneInput {
 }
 
 /// A combination of a formattable calendar date and ISO time.
-///
-/// # Examples
-///
-/// If the trait does not return all required fields, an error output will occur:
-///
-/// ```
-/// use icu::calendar::*;
-/// use icu::calendar::types::*;
-/// use icu::datetime::input::*;
-/// use icu::datetime::{DateTimeWriteError, TypedDateTimeNames};
-/// use icu::datetime::fields::{Field, FieldLength, FieldSymbol, Weekday};
-/// use icu::datetime::neo_pattern::DateTimePattern;
-/// use icu::locale::locale;
-/// use writeable::assert_try_writeable_eq;
-///
-/// struct Empty;
-///
-/// impl DateInput for Empty {
-///     type Calendar = Gregorian;
-///     fn year(&self) -> Option<FormattableYear> { None }
-///     fn month(&self) -> Option<FormattableMonth> { None }
-///     fn day_of_month(&self) -> Option<DayOfMonth> { None }
-///     fn iso_weekday(&self) -> Option<IsoWeekday> { None }
-///     fn day_of_year_info(&self) -> Option<DayOfYearInfo> { None }
-///     fn any_calendar_kind(&self) -> Option<AnyCalendarKind> { None }
-///     fn to_iso(&self) -> icu::calendar::Date<Iso> { todo!() }
-/// }
-///
-/// impl IsoTimeInput for Empty {
-///     fn hour(&self) -> Option<IsoHour> { None }
-///     fn minute(&self) -> Option<IsoMinute> { None }
-///     fn second(&self) -> Option<IsoSecond> { None }
-///     fn nanosecond(&self) -> Option<NanoSecond> { None }
-/// }
-///
-/// // Create an instance that can format abbreviated month, weekday, and day period names:
-/// let mut names: TypedDateTimeNames<Gregorian> =
-///     TypedDateTimeNames::try_new(&locale!("en").into()).unwrap();
-///
-/// // Create a pattern from a pattern string:
-/// let pattern_str = "'It is:' E MMM d y G 'at' h:mm:ssSSS a";
-/// let pattern: DateTimePattern = pattern_str.parse().unwrap();
-///
-/// // The pattern string contains lots of symbols, but our DateTimeInput is empty!
-/// let mut buffer = String::new();
-/// // Missing data is filled in on a best-effort basis, and an error is signaled.
-/// assert_try_writeable_eq!(
-///     names.with_pattern(&pattern).format(&Empty),
-///     "It is: {E} {M} {d} {y} {G} at {h}:{m}:{s}{S} {a}",
-///     Err(DateTimeWriteError::MissingInputField("iso_weekday"))
-/// );
-/// ```
 pub trait DateTimeInput: DateInput + IsoTimeInput {}
 
 impl<T> DateTimeInput for T where T: DateInput + IsoTimeInput {}
-
-/// A formattable calendar date and ISO time that takes the locale into account.
-#[deprecated(since = "1.5.0", note = "not used in any ICU4X APIs")]
-pub trait LocalizedDateTimeInput<T: DateTimeInput> {
-    /// A reference to this instance's [`DateTimeInput`].
-    fn datetime(&self) -> &T;
-
-    /// The week of the month.
-    ///
-    /// For example, January 1, 2021 is part of the first week of January.
-    fn week_of_month(&self) -> Result<WeekOfMonth, CalendarError>;
-
-    /// The week number of the year and the corresponding year.
-    ///
-    /// For example, December 31, 2020 is part of the first week of 2021.
-    fn week_of_year(&self) -> Result<(FormattableYear, WeekOfYear), CalendarError>;
-
-    /// The day of week in this month.
-    ///
-    /// For example, July 8, 2020 is the 2nd Wednesday of July.
-    fn day_of_week_in_month(&self) -> Result<DayOfWeekInMonth, CalendarError>;
-
-    /// TODO(#487): Implement flexible day periods.
-    fn flexible_day_period(&self);
-}
 
 /// A [`DateTimeInput`] type with all of the fields pre-extracted
 ///
@@ -193,6 +115,7 @@ pub(crate) struct ExtractedDateTimeInput {
     minute: Option<IsoMinute>,
     second: Option<IsoSecond>,
     nanosecond: Option<NanoSecond>,
+    time_zone: Option<CustomTimeZone>,
 }
 
 /// A [`TimeZoneInput`] type with all of the fields pre-extracted
@@ -220,6 +143,7 @@ impl ExtractedDateTimeInput {
             minute: input.minute(),
             second: input.second(),
             nanosecond: input.nanosecond(),
+            time_zone: None,
         }
     }
     /// Construct given an instance of a [`DateTimeInput`].
@@ -246,10 +170,11 @@ impl ExtractedDateTimeInput {
     }
     /// Construct given neo date input instances.
     #[cfg(feature = "experimental")]
-    pub(crate) fn extract_from_typed_neo_input<C, D, T, I>(input: &I) -> Self
+    pub(crate) fn extract_from_typed_neo_input<C, D, T, Z, I>(input: &I) -> Self
     where
         D: TypedDateMarkers<C>,
         T: TimeMarkers,
+        Z: ZoneMarkers,
         I: ?Sized
             + NeoGetField<D::YearInput>
             + NeoGetField<D::MonthInput>
@@ -260,7 +185,8 @@ impl ExtractedDateTimeInput {
             + NeoGetField<T::HourInput>
             + NeoGetField<T::MinuteInput>
             + NeoGetField<T::SecondInput>
-            + NeoGetField<T::NanoSecondInput>,
+            + NeoGetField<T::NanoSecondInput>
+            + NeoGetField<Z::TimeZoneInput>,
     {
         Self {
             year: NeoGetField::<D::YearInput>::get_field(input).into(),
@@ -273,14 +199,16 @@ impl ExtractedDateTimeInput {
             minute: NeoGetField::<T::MinuteInput>::get_field(input).into(),
             second: NeoGetField::<T::SecondInput>::get_field(input).into(),
             nanosecond: NeoGetField::<T::NanoSecondInput>::get_field(input).into(),
+            time_zone: NeoGetField::<Z::TimeZoneInput>::get_field(input).into(),
         }
     }
     /// Construct given neo date input instances.
     #[cfg(feature = "experimental")]
-    pub(crate) fn extract_from_any_neo_input<D, T, I>(input: &I) -> Self
+    pub(crate) fn extract_from_any_neo_input<D, T, Z, I>(input: &I) -> Self
     where
         D: DateMarkers,
         T: TimeMarkers,
+        Z: ZoneMarkers,
         I: ?Sized
             + NeoGetField<D::YearInput>
             + NeoGetField<D::MonthInput>
@@ -291,7 +219,8 @@ impl ExtractedDateTimeInput {
             + NeoGetField<T::HourInput>
             + NeoGetField<T::MinuteInput>
             + NeoGetField<T::SecondInput>
-            + NeoGetField<T::NanoSecondInput>,
+            + NeoGetField<T::NanoSecondInput>
+            + NeoGetField<Z::TimeZoneInput>,
     {
         Self {
             year: NeoGetField::<D::YearInput>::get_field(input).into(),
@@ -304,7 +233,12 @@ impl ExtractedDateTimeInput {
             minute: NeoGetField::<T::MinuteInput>::get_field(input).into(),
             second: NeoGetField::<T::SecondInput>::get_field(input).into(),
             nanosecond: NeoGetField::<T::NanoSecondInput>::get_field(input).into(),
+            time_zone: NeoGetField::<Z::TimeZoneInput>::get_field(input).into(),
         }
+    }
+
+    pub(crate) fn time_zone(&self) -> Option<CustomTimeZone> {
+        self.time_zone
     }
 }
 
@@ -316,6 +250,15 @@ impl ExtractedTimeZoneInput {
             time_zone_id: input.time_zone_id(),
             metazone_id: input.metazone_id(),
             zone_variant: input.zone_variant(),
+        }
+    }
+
+    pub(crate) fn to_custom_time_zone(self) -> CustomTimeZone {
+        CustomTimeZone {
+            gmt_offset: self.gmt_offset,
+            time_zone_id: self.time_zone_id,
+            metazone_id: self.metazone_id,
+            zone_variant: self.zone_variant,
         }
     }
 }
@@ -377,54 +320,26 @@ impl TimeZoneInput for ExtractedTimeZoneInput {
     }
 }
 
-pub(crate) enum ExtractedDateTimeInputWeekCalculatorError {
-    Missing(&'static str),
-}
-
 impl ExtractedDateTimeInput {
     pub(crate) fn week_of_month(
         &self,
         calculator: &WeekCalculator,
-    ) -> Result<WeekOfMonth, ExtractedDateTimeInputWeekCalculatorError> {
-        let day_of_month =
-            self.day_of_month()
-                .ok_or(ExtractedDateTimeInputWeekCalculatorError::Missing(
-                    "day_of_month",
-                ))?;
-        let iso_weekday =
-            self.iso_weekday()
-                .ok_or(ExtractedDateTimeInputWeekCalculatorError::Missing(
-                    "iso_weekday",
-                ))?;
+    ) -> Result<WeekOfMonth, &'static str> {
+        let day_of_month = self.day_of_month().ok_or("day_of_month")?;
+        let iso_weekday = self.iso_weekday().ok_or("iso_weekday")?;
         Ok(calculator.week_of_month(day_of_month, iso_weekday))
     }
 
     pub(crate) fn week_of_year(
         &self,
         calculator: &WeekCalculator,
-    ) -> Result<(FormattableYear, WeekOfYear), ExtractedDateTimeInputWeekCalculatorError> {
-        let day_of_year_info =
-            self.day_of_year_info()
-                .ok_or(ExtractedDateTimeInputWeekCalculatorError::Missing(
-                    "day_of_year_info",
-                ))?;
-        let iso_weekday =
-            self.iso_weekday()
-                .ok_or(ExtractedDateTimeInputWeekCalculatorError::Missing(
-                    "iso_weekday",
-                ))?;
-        // We don't have any calendars with < 14 days per year, and it's unlikely we'll add one
-        debug_assert!(day_of_year_info.day_of_year >= icu_calendar::week::MIN_UNIT_DAYS);
-        debug_assert!(day_of_year_info.days_in_prev_year >= icu_calendar::week::MIN_UNIT_DAYS);
-        #[allow(clippy::unwrap_used)]
-        let week_of = calculator
-            .week_of_year(day_of_year_info, iso_weekday)
-            .unwrap();
+    ) -> Result<(FormattableYear, WeekOfYear), &'static str> {
+        let day_of_year_info = self.day_of_year_info().ok_or("day_of_year_info")?;
+        let iso_weekday = self.iso_weekday().ok_or("iso_weekday")?;
+        let week_of = calculator.week_of_year(day_of_year_info, iso_weekday);
         let year = match week_of.unit {
             RelativeUnit::Previous => day_of_year_info.prev_year,
-            RelativeUnit::Current => self
-                .year()
-                .ok_or(ExtractedDateTimeInputWeekCalculatorError::Missing("year"))?,
+            RelativeUnit::Current => self.year().ok_or("year")?,
             RelativeUnit::Next => day_of_year_info.next_year,
         };
         Ok((year, WeekOfYear(week_of.week as u32)))

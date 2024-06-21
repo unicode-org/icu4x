@@ -9,7 +9,7 @@ description = "Build all permutations of all features for the provided chunk ind
 category = "ICU4X Development"
 install_crate = { crate_name = "cargo-all-features", binary = "cargo-check-all-features", test_arg = ["--help"] }
 install_crate_args = ["--version", "^1.10"]
-env = { RUSTFLAGS = "-Dwarnings",  "ICU4X_DATA_DIR" = "${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}/provider/datagen/tests/data/baked" }
+env = { RUSTFLAGS = "-Dwarnings",  "ICU4X_DATA_DIR" = "../stubdata" }
 command = "cargo"
 args = ["check-all-features", "--n-chunks", "3", "--chunk", "${@}"]
 
@@ -18,7 +18,7 @@ description = "Build all permutations of all features"
 category = "ICU4X Development"
 install_crate = { crate_name = "cargo-all-features", binary = "cargo-check-all-features", test_arg = ["--help"] }
 install_crate_args = ["--version", "^1.10"]
-env = { RUSTFLAGS = "-Dwarnings",  "ICU4X_DATA_DIR" = "${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}/provider/datagen/tests/data/baked" }
+env = { RUSTFLAGS = "-Dwarnings",  "ICU4X_DATA_DIR" = "../stubdata" }
 command = "cargo"
 args = ["check-all-features"]
 
@@ -27,7 +27,7 @@ description = "Build all permutations of all features"
 category = "ICU4X Development"
 install_crate = { crate_name = "cargo-all-features", binary = "cargo-build-all-features", test_arg = ["--help"] }
 install_crate_args = ["--version", "^1.10"]
-env = { RUSTFLAGS = "-Dwarnings",  "ICU4X_DATA_DIR" = "${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}/provider/datagen/tests/data/baked" }
+env = { RUSTFLAGS = "-Dwarnings",  "ICU4X_DATA_DIR" = "../stubdata" }
 command = "cargo"
 args = ["build-all-features"]
 
@@ -82,7 +82,7 @@ exit_on_error true
 project_dir = pwd
 set_env CARGO_TARGET_DIR ${project_dir}/target
 
-exec --fail-on-error cargo build -p icu_datagen
+exec --fail-on-error cargo build -p icu4x-datagen
 
 cd tutorials/rust
 

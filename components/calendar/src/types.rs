@@ -4,7 +4,7 @@
 
 //! This module contains various types used by `icu_calendar` and `icu::datetime`
 
-use crate::error::CalendarError;
+use crate::error::RangeError;
 use core::convert::TryFrom;
 use core::convert::TryInto;
 use core::fmt;
@@ -113,7 +113,7 @@ impl MonthCode {
     pub fn get_normal_if_leap(self) -> Option<MonthCode> {
         let bytes = self.0.all_bytes();
         if bytes[3] == b'L' {
-            Some(MonthCode(TinyAsciiStr::from_bytes(&bytes[0..3]).ok()?))
+            Some(MonthCode(TinyAsciiStr::try_from_utf8(&bytes[0..3]).ok()?))
         } else {
             None
         }
@@ -296,30 +296,16 @@ macro_rules! dt_unit {
             }
         }
 
-        impl FromStr for $name {
-            type Err = CalendarError;
-
-            fn from_str(input: &str) -> Result<Self, Self::Err> {
-                let val: $storage = input.parse()?;
-                if val > $value {
-                    Err(CalendarError::Overflow {
-                        field: "$name",
-                        max: $value,
-                    })
-                } else {
-                    Ok(Self(val))
-                }
-            }
-        }
-
         impl TryFrom<$storage> for $name {
-            type Error = CalendarError;
+            type Error = RangeError;
 
             fn try_from(input: $storage) -> Result<Self, Self::Error> {
                 if input > $value {
-                    Err(CalendarError::Overflow {
+                    Err(RangeError {
                         field: "$name",
+                        min: 0,
                         max: $value,
+                        value: input as i32,
                     })
                 } else {
                     Ok(Self(input))
@@ -328,13 +314,15 @@ macro_rules! dt_unit {
         }
 
         impl TryFrom<usize> for $name {
-            type Error = CalendarError;
+            type Error = RangeError;
 
             fn try_from(input: usize) -> Result<Self, Self::Error> {
                 if input > $value {
-                    Err(CalendarError::Overflow {
+                    Err(RangeError {
                         field: "$name",
+                        min: 0,
                         max: $value,
+                        value: input as i32,
                     })
                 } else {
                     Ok(Self(input as $storage))
@@ -578,12 +566,7 @@ impl Time {
     }
 
     /// Construct a new [`Time`], whilst validating that all components are in range
-    pub fn try_new(
-        hour: u8,
-        minute: u8,
-        second: u8,
-        nanosecond: u32,
-    ) -> Result<Self, CalendarError> {
+    pub fn try_new(hour: u8, minute: u8, second: u8, nanosecond: u32) -> Result<Self, RangeError> {
         Ok(Self {
             hour: hour.try_into()?,
             minute: minute.try_into()?,

@@ -22,7 +22,8 @@ where
 fn cow() {
     test_bake!(
         alloc::borrow::Cow<'static, str>,
-        const: alloc::borrow::Cow::Borrowed("hi"),
+        const,
+        alloc::borrow::Cow::Borrowed("hi"),
         alloc
     );
     assert_eq!(
@@ -54,7 +55,7 @@ where
 
 #[test]
 fn vec() {
-    test_bake!(Vec<u8>, alloc::vec![1u8, 2u8,], alloc);
+    test_bake!(Vec<u8>, alloc::vec![1u8, 2u8], alloc);
 }
 
 impl<T> Bake for alloc::collections::BTreeSet<T>

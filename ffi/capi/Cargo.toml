@@ -30,7 +30,7 @@ all-features = true
 [package.metadata.cargo-all-features]
 # Bench feature gets tested separately and is only relevant for CI.
 # logging enables a feature of a dependency that has no externally visible API changes
-denylist = ["bench", "cpp_default", "wasm_default", "provider_test"]
+denylist = ["bench"]
 # This has a lot of features, run a reduced test that is likely to catch 99% of bugs
 max_combination_size = 2
 
@@ -60,11 +60,6 @@ buffer_provider = [
 provider_fs = ["dep:icu_provider_fs", "buffer_provider", "std"]
 logging = ["icu_provider/logging", "dep:log", "diplomat-runtime/log", "std"]
 simple_logger = ["dep:simple_logger", "logging"]
-
-# Legacy features
-provider_test = ["compiled_data"]
-cpp_default = ["logging"]
-wasm_default = ["logging"]
 
 # Components
 default_components = ["icu_calendar", "icu_casemap", "icu_collator", "icu_datetime", "icu_decimal",

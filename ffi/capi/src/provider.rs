@@ -5,8 +5,6 @@
 #[allow(unused_imports)] // feature-specific
 use alloc::boxed::Box;
 use icu_provider::prelude::*;
-#[allow(unused_imports)] // feature-specific
-use icu_provider::MaybeSendSync;
 use icu_provider_adapters::empty::EmptyDataProvider;
 #[allow(unused_imports)] // feature-specific
 use yoke::{trait_hack::YokeTraitHack, Yokeable};
@@ -25,7 +23,7 @@ pub enum ICU4XDataProviderInner {
 #[diplomat::bridge]
 pub mod ffi {
     use super::ICU4XDataProviderInner;
-    use crate::errors::ffi::ICU4XError;
+    use crate::errors::ffi::ICU4XDataError;
     use alloc::boxed::Box;
     #[allow(unused_imports)] // feature-gated
     use icu_provider_adapters::fallback::LocaleFallbackProvider;
@@ -38,7 +36,7 @@ pub mod ffi {
     pub struct ICU4XDataProvider(pub ICU4XDataProviderInner);
 
     #[cfg(feature = "buffer_provider")]
-    fn convert_buffer_provider<D: icu_provider::BufferProvider + 'static>(
+    fn convert_buffer_provider<D: icu_provider::buf::BufferProvider + 'static>(
         x: D,
     ) -> ICU4XDataProvider {
         ICU4XDataProvider(super::ICU4XDataProviderInner::Buffer(Box::new(x)))
@@ -67,26 +65,13 @@ pub mod ffi {
         ))]
         #[diplomat::attr(dart, disable)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "fs")]
-        pub fn create_fs(path: &DiplomatStr) -> Result<Box<ICU4XDataProvider>, ICU4XError> {
+        pub fn create_fs(path: &DiplomatStr) -> Result<Box<ICU4XDataProvider>, ICU4XDataError> {
             Ok(Box::new(convert_buffer_provider(
                 icu_provider_fs::FsDataProvider::try_new(
                     // In the future we can start using OsString APIs to support non-utf8 paths
-                    core::str::from_utf8(path)
-                        .map_err(|e| ICU4XError::DataIoError.log_original(&e))?,
+                    core::str::from_utf8(path).map_err(|_| ICU4XDataError::Io)?,
                 )?,
             )))
-        }
-
-        /// Deprecated
-        ///
-        /// Use `create_compiled()`.
-        #[cfg(all(
-            feature = "provider_test",
-            any(feature = "any_provider", feature = "buffer_provider")
-        ))]
-        #[diplomat::attr(supports = constructors, disable)]
-        pub fn create_test() -> Box<ICU4XDataProvider> {
-            Self::create_compiled()
         }
 
         /// Constructs a `BlobDataProvider` and returns it as an [`ICU4XDataProvider`].
@@ -95,7 +80,7 @@ pub mod ffi {
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "from_byte_slice")]
         pub fn create_from_byte_slice(
             blob: &'static [DiplomatByte],
-        ) -> Result<Box<ICU4XDataProvider>, ICU4XError> {
+        ) -> Result<Box<ICU4XDataProvider>, ICU4XDataError> {
             Ok(Box::new(convert_buffer_provider(
                 icu_provider_blob::BlobDataProvider::try_new_from_static_blob(blob)?,
             )))
@@ -121,13 +106,13 @@ pub mod ffi {
         /// The providers must be the same type (Any or Buffer). This condition is satisfied if
         /// both providers originate from the same constructor, such as `create_from_byte_slice`
         /// or `create_fs`. If the condition is not upheld, a runtime error occurs.
-        #[diplomat::rust_link(icu_provider_adapters::fork::ForkByKeyProvider, Typedef)]
+        #[diplomat::rust_link(icu_provider_adapters::fork::ForkByMarkerProvider, Typedef)]
         #[diplomat::rust_link(
-            icu_provider_adapters::fork::predicates::MissingDataKeyPredicate,
+            icu_provider_adapters::fork::predicates::MissingDataMarkerPredicate,
             Struct,
             hidden
         )]
-        pub fn fork_by_key(&mut self, other: &mut ICU4XDataProvider) -> Result<(), ICU4XError> {
+        pub fn fork_by_key(&mut self, other: &mut ICU4XDataProvider) -> Result<(), ICU4XDataError> {
             #[allow(unused_imports)]
             use ICU4XDataProviderInner::*;
             *self = match (
@@ -146,7 +131,7 @@ pub mod ffi {
                 (Empty, b) | (b, Empty) => ICU4XDataProvider(b),
                 #[cfg(feature = "buffer_provider")]
                 (Buffer(a), Buffer(b)) => convert_buffer_provider(
-                    icu_provider_adapters::fork::ForkByKeyProvider::new(a, b),
+                    icu_provider_adapters::fork::ForkByMarkerProvider::new(a, b),
                 ),
             };
             Ok(())
@@ -157,7 +142,10 @@ pub mod ffi {
             icu_provider_adapters::fork::predicates::MissingLocalePredicate,
             Struct
         )]
-        pub fn fork_by_locale(&mut self, other: &mut ICU4XDataProvider) -> Result<(), ICU4XError> {
+        pub fn fork_by_locale(
+            &mut self,
+            other: &mut ICU4XDataProvider,
+        ) -> Result<(), ICU4XDataError> {
             #[allow(unused_imports)]
             use ICU4XDataProviderInner::*;
             *self = match (
@@ -198,7 +186,7 @@ pub mod ffi {
             Struct,
             compact
         )]
-        pub fn enable_locale_fallback(&mut self) -> Result<(), ICU4XError> {
+        pub fn enable_locale_fallback(&mut self) -> Result<(), ICU4XDataError> {
             use ICU4XDataProviderInner::*;
             *self = match core::mem::replace(&mut self.0, Destroyed) {
                 Destroyed => Err(icu_provider::DataError::custom(
@@ -208,7 +196,7 @@ pub mod ffi {
                 Compiled => Err(icu_provider::DataError::custom(
                     "The compiled provider cannot be modified",
                 ))?,
-                Empty => Err(icu_provider::DataErrorKind::MissingDataKey.into_error())?,
+                Empty => Err(icu_provider::DataErrorKind::MissingDataMarker.into_error())?,
                 #[cfg(feature = "buffer_provider")]
                 Buffer(inner) => convert_buffer_provider(
                     LocaleFallbackProvider::try_new_with_buffer_provider(inner)?,
@@ -231,7 +219,7 @@ pub mod ffi {
         pub fn enable_locale_fallback_with(
             &mut self,
             fallbacker: &crate::fallbacker::ffi::ICU4XLocaleFallbacker,
-        ) -> Result<(), ICU4XError> {
+        ) -> Result<(), ICU4XDataError> {
             use ICU4XDataProviderInner::*;
             *self = match core::mem::replace(&mut self.0, Destroyed) {
                 Destroyed => Err(icu_provider::DataError::custom(
@@ -241,7 +229,7 @@ pub mod ffi {
                 Compiled => Err(icu_provider::DataError::custom(
                     "The compiled provider cannot be modified",
                 ))?,
-                Empty => Err(icu_provider::DataErrorKind::MissingDataKey.into_error())?,
+                Empty => Err(icu_provider::DataErrorKind::MissingDataMarker.into_error())?,
                 #[cfg(feature = "buffer_provider")]
                 Buffer(inner) => convert_buffer_provider(
                     LocaleFallbackProvider::new_with_fallbacker(inner, fallbacker.0.clone()),
@@ -307,7 +295,7 @@ macro_rules! call_constructor_unstable {
             ))?,
             $crate::provider::ICU4XDataProviderInner::Empty => $unstable(&icu_provider_adapters::empty::EmptyDataProvider::new(), $($args,)*),
             #[cfg(feature = "buffer_provider")]
-            $crate::provider::ICU4XDataProviderInner::Buffer(buffer_provider) => $unstable(&icu_provider::AsDeserializingBufferProvider::as_deserializing(buffer_provider), $($args,)*),
+            $crate::provider::ICU4XDataProviderInner::Buffer(buffer_provider) => $unstable(&icu_provider::buf::AsDeserializingBufferProvider::as_deserializing(buffer_provider), $($args,)*),
             #[cfg(feature = "compiled_data")]
             $crate::provider::ICU4XDataProviderInner::Compiled => { let $pre_transform = $compiled($($args,)*); $transform },
         }
@@ -319,7 +307,7 @@ macro_rules! call_constructor_unstable {
             ))?,
             $crate::provider::ICU4XDataProviderInner::Empty => $unstable(&icu_provider_adapters::empty::EmptyDataProvider::new(), $($args,)*),
             #[cfg(feature = "buffer_provider")]
-            $crate::provider::ICU4XDataProviderInner::Buffer(buffer_provider) => $unstable(&icu_provider::AsDeserializingBufferProvider::as_deserializing(buffer_provider), $($args,)*),
+            $crate::provider::ICU4XDataProviderInner::Buffer(buffer_provider) => $unstable(&icu_provider::buf::AsDeserializingBufferProvider::as_deserializing(buffer_provider), $($args,)*),
             #[cfg(feature = "compiled_data")]
             $crate::provider::ICU4XDataProviderInner::Compiled => $compiled($($args,)*),
         }
@@ -329,7 +317,7 @@ macro_rules! call_constructor_unstable {
 #[cfg(not(feature = "buffer_provider"))]
 impl<M> DataProvider<M> for ICU4XDataProviderInner
 where
-    M: KeyedDataMarker,
+    M: DataMarker,
 {
     load!();
 }
@@ -337,7 +325,7 @@ where
 #[cfg(feature = "buffer_provider")]
 impl<M> DataProvider<M> for ICU4XDataProviderInner
 where
-    M: KeyedDataMarker,
+    M: DataMarker,
     // Actual bound:
     //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: Deserialize<'de>,
     // Necessary workaround bound (see `yoke::trait_hack` docs):

@@ -8,18 +8,13 @@ pub mod ffi {
     use alloc::boxed::Box;
     use icu_properties::{script, sets::CodePointSetData, Script};
 
-    use crate::errors::ffi::ICU4XError;
-    use crate::properties_iter::ffi::CodePointRangeIterator;
+    use crate::errors::ffi::ICU4XDataError;
+    use crate::properties_iter::ffi::ICU4XCodePointRangeIterator;
     use crate::properties_sets::ffi::ICU4XCodePointSetData;
 
     #[diplomat::opaque]
     /// An ICU4X ScriptWithExtensions map object, capable of holding a map of codepoints to scriptextensions values
     #[diplomat::rust_link(icu::properties::script::ScriptWithExtensions, Struct)]
-    #[diplomat::rust_link(
-        icu::properties::script::ScriptWithExtensions::from_data,
-        FnInStruct,
-        hidden
-    )]
     pub struct ICU4XScriptWithExtensions(pub script::ScriptWithExtensions);
 
     #[diplomat::opaque]
@@ -36,7 +31,7 @@ pub mod ffi {
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
         pub fn create(
             provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XScriptWithExtensions>, ICU4XError> {
+        ) -> Result<Box<ICU4XScriptWithExtensions>, ICU4XDataError> {
             Ok(Box::new(ICU4XScriptWithExtensions(call_constructor!(
                 script::script_with_extensions [r => Ok(r.static_to_owned())],
                 script::load_script_with_extensions_with_any_provider,
@@ -81,8 +76,8 @@ pub mod ffi {
         pub fn iter_ranges_for_script<'a>(
             &'a self,
             script: u16,
-        ) -> Box<CodePointRangeIterator<'a>> {
-            Box::new(CodePointRangeIterator(Box::new(
+        ) -> Box<ICU4XCodePointRangeIterator<'a>> {
+            Box::new(ICU4XCodePointRangeIterator(Box::new(
                 self.0
                     .as_borrowed()
                     .get_script_extensions_ranges(Script(script)),

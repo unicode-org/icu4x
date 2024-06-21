@@ -10,16 +10,35 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "CodePointRangeIterator.hpp"
+#include "ICU4XCodePointRangeIterator.hpp"
+#include "ICU4XDataError.hpp"
 #include "ICU4XDataProvider.hpp"
-#include "ICU4XError.hpp"
-#include "ICU4XScriptWithExtensions.h"
 #include "ICU4XScriptWithExtensionsBorrowed.hpp"
 
 
-inline diplomat::result<std::unique_ptr<ICU4XScriptWithExtensions>, ICU4XError> ICU4XScriptWithExtensions::create(const ICU4XDataProvider& provider) {
+namespace capi {
+    extern "C" {
+    
+    typedef struct ICU4XScriptWithExtensions_create_result {union {ICU4XScriptWithExtensions* ok; ICU4XDataError err;}; bool is_ok;} ICU4XScriptWithExtensions_create_result;
+    ICU4XScriptWithExtensions_create_result ICU4XScriptWithExtensions_create(const ICU4XDataProvider* provider);
+    
+    uint16_t ICU4XScriptWithExtensions_get_script_val(const ICU4XScriptWithExtensions* self, uint32_t code_point);
+    
+    bool ICU4XScriptWithExtensions_has_script(const ICU4XScriptWithExtensions* self, uint32_t code_point, uint16_t script);
+    
+    ICU4XScriptWithExtensionsBorrowed* ICU4XScriptWithExtensions_as_borrowed(const ICU4XScriptWithExtensions* self);
+    
+    ICU4XCodePointRangeIterator* ICU4XScriptWithExtensions_iter_ranges_for_script(const ICU4XScriptWithExtensions* self, uint16_t script);
+    
+    
+    void ICU4XScriptWithExtensions_destroy(ICU4XScriptWithExtensions* self);
+    
+    } // extern "C"
+}
+
+inline diplomat::result<std::unique_ptr<ICU4XScriptWithExtensions>, ICU4XDataError> ICU4XScriptWithExtensions::create(const ICU4XDataProvider& provider) {
   auto result = capi::ICU4XScriptWithExtensions_create(provider.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XScriptWithExtensions>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XScriptWithExtensions>>(std::unique_ptr<ICU4XScriptWithExtensions>(ICU4XScriptWithExtensions::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XScriptWithExtensions>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XScriptWithExtensions>, ICU4XDataError>(diplomat::Ok<std::unique_ptr<ICU4XScriptWithExtensions>>(std::unique_ptr<ICU4XScriptWithExtensions>(ICU4XScriptWithExtensions::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XScriptWithExtensions>, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
 
 inline uint16_t ICU4XScriptWithExtensions::get_script_val(uint32_t code_point) const {
@@ -40,10 +59,10 @@ inline std::unique_ptr<ICU4XScriptWithExtensionsBorrowed> ICU4XScriptWithExtensi
   return std::unique_ptr<ICU4XScriptWithExtensionsBorrowed>(ICU4XScriptWithExtensionsBorrowed::FromFFI(result));
 }
 
-inline std::unique_ptr<CodePointRangeIterator> ICU4XScriptWithExtensions::iter_ranges_for_script(uint16_t script) const {
+inline std::unique_ptr<ICU4XCodePointRangeIterator> ICU4XScriptWithExtensions::iter_ranges_for_script(uint16_t script) const {
   auto result = capi::ICU4XScriptWithExtensions_iter_ranges_for_script(this->AsFFI(),
     script);
-  return std::unique_ptr<CodePointRangeIterator>(CodePointRangeIterator::FromFFI(result));
+  return std::unique_ptr<ICU4XCodePointRangeIterator>(ICU4XCodePointRangeIterator::FromFFI(result));
 }
 
 inline const capi::ICU4XScriptWithExtensions* ICU4XScriptWithExtensions::AsFFI() const {

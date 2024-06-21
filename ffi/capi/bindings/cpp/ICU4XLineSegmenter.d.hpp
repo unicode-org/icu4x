@@ -8,32 +8,35 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XError.d.hpp"
+#include "ICU4XDataError.d.hpp"
 #include "ICU4XLineBreakOptionsV1.d.hpp"
-#include "ICU4XLineSegmenter.d.h"
 
 class ICU4XDataProvider;
 class ICU4XLineBreakIteratorLatin1;
 class ICU4XLineBreakIteratorUtf16;
 class ICU4XLineBreakIteratorUtf8;
 struct ICU4XLineBreakOptionsV1;
-class ICU4XError;
+class ICU4XDataError;
 
+
+namespace capi {
+    typedef struct ICU4XLineSegmenter ICU4XLineSegmenter;
+}
 
 class ICU4XLineSegmenter {
 public:
 
-  inline static diplomat::result<std::unique_ptr<ICU4XLineSegmenter>, ICU4XError> create_auto(const ICU4XDataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<ICU4XLineSegmenter>, ICU4XDataError> create_auto(const ICU4XDataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<ICU4XLineSegmenter>, ICU4XError> create_lstm(const ICU4XDataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<ICU4XLineSegmenter>, ICU4XDataError> create_lstm(const ICU4XDataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<ICU4XLineSegmenter>, ICU4XError> create_dictionary(const ICU4XDataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<ICU4XLineSegmenter>, ICU4XDataError> create_dictionary(const ICU4XDataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<ICU4XLineSegmenter>, ICU4XError> create_auto_with_options_v1(const ICU4XDataProvider& provider, ICU4XLineBreakOptionsV1 options);
+  inline static diplomat::result<std::unique_ptr<ICU4XLineSegmenter>, ICU4XDataError> create_auto_with_options_v1(const ICU4XDataProvider& provider, ICU4XLineBreakOptionsV1 options);
 
-  inline static diplomat::result<std::unique_ptr<ICU4XLineSegmenter>, ICU4XError> create_lstm_with_options_v1(const ICU4XDataProvider& provider, ICU4XLineBreakOptionsV1 options);
+  inline static diplomat::result<std::unique_ptr<ICU4XLineSegmenter>, ICU4XDataError> create_lstm_with_options_v1(const ICU4XDataProvider& provider, ICU4XLineBreakOptionsV1 options);
 
-  inline static diplomat::result<std::unique_ptr<ICU4XLineSegmenter>, ICU4XError> create_dictionary_with_options_v1(const ICU4XDataProvider& provider, ICU4XLineBreakOptionsV1 options);
+  inline static diplomat::result<std::unique_ptr<ICU4XLineSegmenter>, ICU4XDataError> create_dictionary_with_options_v1(const ICU4XDataProvider& provider, ICU4XLineBreakOptionsV1 options);
 
   inline std::unique_ptr<ICU4XLineBreakIteratorUtf8> segment_utf8(std::string_view input) const;
 

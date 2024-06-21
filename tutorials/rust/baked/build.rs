@@ -4,6 +4,7 @@
 
 use icu_datagen::baked_exporter::*;
 use icu_datagen::prelude::*;
+use icu_datagen_bikeshed::DatagenProvider;
 use std::path::PathBuf;
 
 fn main() {
@@ -12,20 +13,17 @@ fn main() {
     let mod_directory = PathBuf::from(std::env::var_os("OUT_DIR").unwrap()).join("baked_data");
 
     DatagenDriver::new()
-        .with_locales_and_fallback([LocaleFamily::single(langid!("ru"))], {
-            let mut options = FallbackOptions::default();
-            options.runtime_fallback_location = Some(RuntimeFallbackLocation::External);
-            options
-        })
-        // These are the keys required by `PluralRules::try_new_cardinal_unstable`. Compilation will
-        // discard unused keys and fail if required keys are not generated, but explicitly listing the
-        // keys will speed up the datagen.
-        .with_keys([icu::plurals::provider::CardinalV1Marker::KEY])
+        .with_locales_and_fallback([LocaleFamily::single(langid!("ru"))], FallbackOptions::no_deduplication())
+        // These are the markers required by `PluralRules::try_new_cardinal_unstable`. Compilation will
+        // discard unused markers and fail if required markers are not generated, but explicitly listing the
+        // markers will speed up the datagen.
+        .with_markers([icu::plurals::provider::CardinalV1Marker::INFO])
         .export(
             &DatagenProvider::new_latest_tested(),
             BakedExporter::new(mod_directory, {
                 let mut options = Options::default();
                 options.overwrite = true;
+                options.use_internal_fallback = false;
                 options
             })
             .unwrap(),

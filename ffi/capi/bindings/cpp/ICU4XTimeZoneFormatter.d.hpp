@@ -10,7 +10,6 @@
 #include "diplomat_runtime.hpp"
 #include "ICU4XError.d.hpp"
 #include "ICU4XIsoTimeZoneOptions.d.hpp"
-#include "ICU4XTimeZoneFormatter.d.h"
 
 class ICU4XCustomTimeZone;
 class ICU4XDataProvider;
@@ -18,6 +17,10 @@ class ICU4XLocale;
 struct ICU4XIsoTimeZoneOptions;
 class ICU4XError;
 
+
+namespace capi {
+    typedef struct ICU4XTimeZoneFormatter ICU4XTimeZoneFormatter;
+}
 
 class ICU4XTimeZoneFormatter {
 public:

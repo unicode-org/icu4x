@@ -46,7 +46,6 @@ struct DeriveTest_ZeroTrieSimpleAscii_ZeroVec<'data> {
 }
 
 #[test]
-#[ignore] // https://github.com/rust-lang/rust/issues/98906
 #[cfg(all(feature = "databake", feature = "alloc"))]
 fn bake_ZeroTrieSimpleAscii_ZeroVec() {
     use databake::*;
@@ -95,7 +94,6 @@ struct DeriveTest_ZeroTriePerfectHash_ZeroVec<'data> {
 }
 
 #[test]
-#[ignore] // https://github.com/rust-lang/rust/issues/98906
 #[cfg(all(feature = "databake", feature = "alloc"))]
 fn bake_ZeroTriePerfectHash_ZeroVec() {
     use databake::*;

@@ -8,10 +8,13 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XBidiInfo.d.h"
 
 class ICU4XBidiParagraph;
 
+
+namespace capi {
+    typedef struct ICU4XBidiInfo ICU4XBidiInfo;
+}
 
 class ICU4XBidiInfo {
 public:

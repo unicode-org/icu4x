@@ -12,7 +12,7 @@ pub mod ffi {
     use fixed_decimal::{DoublePrecision, FixedDecimal};
     use writeable::Writeable;
 
-    use crate::errors::ffi::ICU4XError;
+    use crate::errors::ffi::{ICU4XFixedDecimalLimitError, ICU4XFixedDecimalParseError};
 
     #[diplomat::opaque]
     #[diplomat::rust_link(fixed_decimal::FixedDecimal, Struct)]
@@ -39,10 +39,9 @@ pub mod ffi {
         Negative,
     }
 
-    // TODO: Rename to `ICU4XFixedDecimalRoundingIncrement` for 2.0
     /// Increment used in a rounding operation.
     #[diplomat::rust_link(fixed_decimal::RoundingIncrement, Enum)]
-    pub enum ICU4XRoundingIncrement {
+    pub enum ICU4XFixedDecimalRoundingIncrement {
         MultiplesOf1,
         MultiplesOf2,
         MultiplesOf5,
@@ -91,7 +90,7 @@ pub mod ffi {
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "from_f64_with_integer_precision")]
         pub fn create_from_f64_with_integer_precision(
             f: f64,
-        ) -> Result<Box<ICU4XFixedDecimal>, ICU4XError> {
+        ) -> Result<Box<ICU4XFixedDecimal>, ICU4XFixedDecimalLimitError> {
             let precision = DoublePrecision::Integer;
             Ok(Box::new(ICU4XFixedDecimal(FixedDecimal::try_from_f64(
                 f, precision,
@@ -107,7 +106,7 @@ pub mod ffi {
         pub fn create_from_f64_with_lower_magnitude(
             f: f64,
             magnitude: i16,
-        ) -> Result<Box<ICU4XFixedDecimal>, ICU4XError> {
+        ) -> Result<Box<ICU4XFixedDecimal>, ICU4XFixedDecimalLimitError> {
             let precision = DoublePrecision::Magnitude(magnitude);
             Ok(Box::new(ICU4XFixedDecimal(FixedDecimal::try_from_f64(
                 f, precision,
@@ -123,7 +122,7 @@ pub mod ffi {
         pub fn create_from_f64_with_significant_digits(
             f: f64,
             digits: u8,
-        ) -> Result<Box<ICU4XFixedDecimal>, ICU4XError> {
+        ) -> Result<Box<ICU4XFixedDecimal>, ICU4XFixedDecimalLimitError> {
             let precision = DoublePrecision::SignificantDigits(digits);
             Ok(Box::new(ICU4XFixedDecimal(FixedDecimal::try_from_f64(
                 f, precision,
@@ -139,7 +138,7 @@ pub mod ffi {
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "from_f64_with_floating_precision")]
         pub fn create_from_f64_with_floating_precision(
             f: f64,
-        ) -> Result<Box<ICU4XFixedDecimal>, ICU4XError> {
+        ) -> Result<Box<ICU4XFixedDecimal>, ICU4XFixedDecimalLimitError> {
             let precision = DoublePrecision::Floating;
             Ok(Box::new(ICU4XFixedDecimal(FixedDecimal::try_from_f64(
                 f, precision,
@@ -149,7 +148,9 @@ pub mod ffi {
         /// Construct an [`ICU4XFixedDecimal`] from a string.
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::from_str, FnInStruct)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "from_string")]
-        pub fn create_from_string(v: &DiplomatStr) -> Result<Box<ICU4XFixedDecimal>, ICU4XError> {
+        pub fn create_from_string(
+            v: &DiplomatStr,
+        ) -> Result<Box<ICU4XFixedDecimal>, ICU4XFixedDecimalParseError> {
             Ok(Box::new(ICU4XFixedDecimal(FixedDecimal::try_from(v)?)))
         }
 
@@ -261,7 +262,11 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        pub fn trunc_to_increment(&mut self, position: i16, increment: ICU4XRoundingIncrement) {
+        pub fn trunc_to_increment(
+            &mut self,
+            position: i16,
+            increment: ICU4XFixedDecimalRoundingIncrement,
+        ) {
             self.0.trunc_to_increment(position, increment.into())
         }
 
@@ -280,7 +285,7 @@ pub mod ffi {
         pub fn half_trunc_to_increment(
             &mut self,
             position: i16,
-            increment: ICU4XRoundingIncrement,
+            increment: ICU4XFixedDecimalRoundingIncrement,
         ) {
             self.0.half_trunc_to_increment(position, increment.into())
         }
@@ -297,7 +302,11 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        pub fn expand_to_increment(&mut self, position: i16, increment: ICU4XRoundingIncrement) {
+        pub fn expand_to_increment(
+            &mut self,
+            position: i16,
+            increment: ICU4XFixedDecimalRoundingIncrement,
+        ) {
             self.0.expand_to_increment(position, increment.into())
         }
 
@@ -316,7 +325,7 @@ pub mod ffi {
         pub fn half_expand_to_increment(
             &mut self,
             position: i16,
-            increment: ICU4XRoundingIncrement,
+            increment: ICU4XFixedDecimalRoundingIncrement,
         ) {
             self.0.half_expand_to_increment(position, increment.into())
         }
@@ -329,7 +338,11 @@ pub mod ffi {
 
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::ceil_to_increment, FnInStruct)]
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::ceiled_to_increment, FnInStruct, hidden)]
-        pub fn ceil_to_increment(&mut self, position: i16, increment: ICU4XRoundingIncrement) {
+        pub fn ceil_to_increment(
+            &mut self,
+            position: i16,
+            increment: ICU4XFixedDecimalRoundingIncrement,
+        ) {
             self.0.ceil_to_increment(position, increment.into())
         }
 
@@ -345,7 +358,11 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        pub fn half_ceil_to_increment(&mut self, position: i16, increment: ICU4XRoundingIncrement) {
+        pub fn half_ceil_to_increment(
+            &mut self,
+            position: i16,
+            increment: ICU4XFixedDecimalRoundingIncrement,
+        ) {
             self.0.half_ceil_to_increment(position, increment.into())
         }
 
@@ -361,7 +378,11 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        pub fn floor_to_increment(&mut self, position: i16, increment: ICU4XRoundingIncrement) {
+        pub fn floor_to_increment(
+            &mut self,
+            position: i16,
+            increment: ICU4XFixedDecimalRoundingIncrement,
+        ) {
             self.0.floor_to_increment(position, increment.into())
         }
 
@@ -380,7 +401,7 @@ pub mod ffi {
         pub fn half_floor_to_increment(
             &mut self,
             position: i16,
-            increment: ICU4XRoundingIncrement,
+            increment: ICU4XFixedDecimalRoundingIncrement,
         ) {
             self.0.half_floor_to_increment(position, increment.into())
         }
@@ -397,7 +418,11 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        pub fn half_even_to_increment(&mut self, position: i16, increment: ICU4XRoundingIncrement) {
+        pub fn half_even_to_increment(
+            &mut self,
+            position: i16,
+            increment: ICU4XFixedDecimalRoundingIncrement,
+        ) {
             self.0.half_even_to_increment(position, increment.into())
         }
 
@@ -456,13 +481,21 @@ impl From<ffi::ICU4XFixedDecimalSignDisplay> for SignDisplay {
     }
 }
 
-impl From<ffi::ICU4XRoundingIncrement> for RoundingIncrement {
-    fn from(value: ffi::ICU4XRoundingIncrement) -> Self {
+impl From<ffi::ICU4XFixedDecimalRoundingIncrement> for RoundingIncrement {
+    fn from(value: ffi::ICU4XFixedDecimalRoundingIncrement) -> Self {
         match value {
-            ffi::ICU4XRoundingIncrement::MultiplesOf1 => RoundingIncrement::MultiplesOf1,
-            ffi::ICU4XRoundingIncrement::MultiplesOf2 => RoundingIncrement::MultiplesOf2,
-            ffi::ICU4XRoundingIncrement::MultiplesOf5 => RoundingIncrement::MultiplesOf5,
-            ffi::ICU4XRoundingIncrement::MultiplesOf25 => RoundingIncrement::MultiplesOf25,
+            ffi::ICU4XFixedDecimalRoundingIncrement::MultiplesOf1 => {
+                RoundingIncrement::MultiplesOf1
+            }
+            ffi::ICU4XFixedDecimalRoundingIncrement::MultiplesOf2 => {
+                RoundingIncrement::MultiplesOf2
+            }
+            ffi::ICU4XFixedDecimalRoundingIncrement::MultiplesOf5 => {
+                RoundingIncrement::MultiplesOf5
+            }
+            ffi::ICU4XFixedDecimalRoundingIncrement::MultiplesOf25 => {
+                RoundingIncrement::MultiplesOf25
+            }
         }
     }
 }

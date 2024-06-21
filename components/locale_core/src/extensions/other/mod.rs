@@ -22,7 +22,7 @@
 use core::str::FromStr;
 
 use super::ExtensionType;
-use crate::parser::ParserError;
+use crate::parser::ParseError;
 use crate::parser::SubtagIterator;
 use crate::shortvec::ShortBoxSlice;
 use crate::subtags::Subtag;
@@ -56,6 +56,25 @@ pub struct Other {
 }
 
 impl Other {
+    /// A constructor which takes a str slice, parses it and
+    /// produces a well-formed [`Other`].
+    #[inline]
+    pub fn try_from_str(s: &str) -> Result<Self, ParseError> {
+        Self::try_from_utf8(s.as_bytes())
+    }
+
+    /// See [`Self::try_from_str`]
+    pub fn try_from_utf8(code_units: &[u8]) -> Result<Self, ParseError> {
+        let mut iter = SubtagIterator::new(code_units);
+
+        let ext = iter.next().ok_or(ParseError::InvalidExtension)?;
+        if let ExtensionType::Other(b) = ExtensionType::try_from_byte_slice(ext)? {
+            return Self::try_from_iter(b, &mut iter);
+        }
+
+        Err(ParseError::InvalidExtension)
+    }
+
     /// A constructor which takes a pre-sorted list of [`Subtag`].
     ///
     /// # Panics
@@ -83,18 +102,7 @@ impl Other {
         Self { ext, keys }
     }
 
-    pub(crate) fn try_from_bytes(t: &[u8]) -> Result<Self, ParserError> {
-        let mut iter = SubtagIterator::new(t);
-
-        let ext = iter.next().ok_or(ParserError::InvalidExtension)?;
-        if let ExtensionType::Other(b) = ExtensionType::try_from_byte_slice(ext)? {
-            return Self::try_from_iter(b, &mut iter);
-        }
-
-        Err(ParserError::InvalidExtension)
-    }
-
-    pub(crate) fn try_from_iter(ext: u8, iter: &mut SubtagIterator) -> Result<Self, ParserError> {
+    pub(crate) fn try_from_iter(ext: u8, iter: &mut SubtagIterator) -> Result<Self, ParseError> {
         debug_assert!(matches!(
             ExtensionType::try_from_byte(ext),
             Ok(ExtensionType::Other(_)),
@@ -105,13 +113,17 @@ impl Other {
             if !Subtag::valid_key(subtag) {
                 break;
             }
-            if let Ok(key) = Subtag::try_from_bytes(subtag) {
+            if let Ok(key) = Subtag::try_from_utf8(subtag) {
                 keys.push(key);
             }
             iter.next();
         }
 
-        Ok(Self::from_short_slice_unchecked(ext, keys))
+        if keys.is_empty() {
+            Err(ParseError::InvalidExtension)
+        } else {
+            Ok(Self::from_short_slice_unchecked(ext, keys))
+        }
     }
 
     /// Gets the tag character for this extension as a &str.
@@ -176,10 +188,11 @@ impl Other {
 }
 
 impl FromStr for Other {
-    type Err = ParserError;
+    type Err = ParseError;
 
-    fn from_str(source: &str) -> Result<Self, Self::Err> {
-        Self::try_from_bytes(source.as_bytes())
+    #[inline]
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Self::try_from_str(s)
     }
 }
 
@@ -187,6 +200,9 @@ writeable::impl_display_with_writeable!(Other);
 
 impl writeable::Writeable for Other {
     fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
+        if self.keys.is_empty() {
+            return Ok(());
+        }
         sink.write_str(self.get_ext_str())?;
         for key in self.keys.iter() {
             sink.write_char('-')?;
@@ -197,6 +213,9 @@ impl writeable::Writeable for Other {
     }
 
     fn writeable_length_hint(&self) -> writeable::LengthHint {
+        if self.keys.is_empty() {
+            return writeable::LengthHint::exact(0);
+        };
         let mut result = writeable::LengthHint::exact(1);
         for key in self.keys.iter() {
             result += writeable::Writeable::writeable_length_hint(key) + 1;
@@ -206,7 +225,7 @@ impl writeable::Writeable for Other {
 
     fn write_to_string(&self) -> alloc::borrow::Cow<str> {
         if self.keys.is_empty() {
-            return alloc::borrow::Cow::Borrowed(self.get_ext_str());
+            return alloc::borrow::Cow::Borrowed("");
         }
         let mut string =
             alloc::string::String::with_capacity(self.writeable_length_hint().capacity());
@@ -221,7 +240,10 @@ mod tests {
 
     #[test]
     fn test_other_extension_fromstr() {
-        let pe: Other = "o-foo-bar".parse().expect("Failed to parse Other");
-        assert_eq!(pe.to_string(), "o-foo-bar");
+        let oe: Other = "o-foo-bar".parse().expect("Failed to parse Other");
+        assert_eq!(oe.to_string(), "o-foo-bar");
+
+        let oe: Result<Other, _> = "o".parse();
+        assert!(oe.is_err());
     }
 }

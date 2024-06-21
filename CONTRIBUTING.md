@@ -37,12 +37,12 @@ To build all code paths, improve build times in VSCode, and prevent locking the 
 	"rust-analyzer.cargo.features": "all",
 	"rust-analyzer.cargo.extraEnv": {
 		"CARGO_TARGET_DIR": "${workspaceFolder}/target/vscode",
-		"ICU4X_DATA_DIR": "../../../datagen/tests/data/baked"
+		"ICU4X_DATA_DIR": "../stubdata"
 	}
 }
 ```
 
-Note: the path in `ICU4X_DATA_DIR` is relative to `provider/baked/*/src/lib.rs` and it causes VSCode to build ICU4X with only the `und` locale. This reduces build times but also makes some tests fail; to run them normally, run `cargo test --all-features` on the command line.
+Note: the path in `ICU4X_DATA_DIR` is relative to `provider/data/*/src/lib.rs` and it causes VSCode to build ICU4X with only the `und` locale. This reduces build times but also makes some tests fail; to run them normally, run `cargo test --all-features` on the command line.
 
 ## Contributing a Pull Request
 
@@ -106,7 +106,6 @@ Our wider testsuite is organized as `ci-job-foo` make tasks corresponding to eac
 <br/>
  
  - `ci-job-testdata`: Runs an `icu_datagen` integration test with a subset of CLDR, ICU, and LSTM source data.
- - `ci-job-testdata-legacy`: Generates data for the deprecated `icu_testdata` crate.
  - `ci-job-full-datagen`: Generates compiled data for all crates.
 <br/>
  

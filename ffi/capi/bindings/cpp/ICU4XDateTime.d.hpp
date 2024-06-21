@@ -8,8 +8,7 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XDateTime.d.h"
-#include "ICU4XError.d.hpp"
+#include "ICU4XCalendarError.d.hpp"
 #include "ICU4XIsoWeekday.d.hpp"
 #include "ICU4XWeekOf.d.hpp"
 
@@ -19,16 +18,20 @@ class ICU4XIsoDateTime;
 class ICU4XTime;
 class ICU4XWeekCalculator;
 struct ICU4XWeekOf;
-class ICU4XError;
+class ICU4XCalendarError;
 class ICU4XIsoWeekday;
 
+
+namespace capi {
+    typedef struct ICU4XDateTime ICU4XDateTime;
+}
 
 class ICU4XDateTime {
 public:
 
-  inline static diplomat::result<std::unique_ptr<ICU4XDateTime>, ICU4XError> create_from_iso_in_calendar(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond, const ICU4XCalendar& calendar);
+  inline static diplomat::result<std::unique_ptr<ICU4XDateTime>, ICU4XCalendarError> create_from_iso_in_calendar(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond, const ICU4XCalendar& calendar);
 
-  inline static diplomat::result<std::unique_ptr<ICU4XDateTime>, ICU4XError> create_from_codes_in_calendar(std::string_view era_code, int32_t year, std::string_view month_code, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond, const ICU4XCalendar& calendar);
+  inline static diplomat::result<std::unique_ptr<ICU4XDateTime>, ICU4XCalendarError> create_from_codes_in_calendar(std::string_view era_code, int32_t year, std::string_view month_code, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond, const ICU4XCalendar& calendar);
 
   inline static std::unique_ptr<ICU4XDateTime> create_from_date_and_time(const ICU4XDate& date, const ICU4XTime& time);
 
@@ -56,7 +59,7 @@ public:
 
   inline uint32_t week_of_month(ICU4XIsoWeekday first_weekday) const;
 
-  inline diplomat::result<ICU4XWeekOf, ICU4XError> week_of_year(const ICU4XWeekCalculator& calculator) const;
+  inline ICU4XWeekOf week_of_year(const ICU4XWeekCalculator& calculator) const;
 
   inline uint32_t ordinal_month() const;
 

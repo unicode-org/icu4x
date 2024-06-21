@@ -32,10 +32,10 @@
 
 use crate::calendar_arithmetic::PrecomputedDataSource;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
+use crate::error::DateError;
 use crate::types::FormattableMonth;
-use crate::AsCalendar;
-use crate::Iso;
-use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime, Time};
+use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, Time};
+use crate::{Iso, RangeError};
 use ::tinystr::tinystr;
 use calendrical_calculations::hebrew_keviyah::{Keviyah, YearInfo};
 
@@ -71,14 +71,6 @@ pub struct HebrewDateInner(ArithmeticDate<Hebrew>);
 impl Hebrew {
     /// Construct a new [`Hebrew`]
     pub fn new() -> Self {
-        Hebrew
-    }
-
-    /// Construct a new [`Hebrew`]
-    ///
-    /// This is deprecated since the new implementation does not need precomputed data.
-    #[deprecated(since = "1.5.0", note = "Use Hebrew::new()")]
-    pub fn new_always_calculating() -> Self {
         Hebrew
     }
 }
@@ -154,11 +146,11 @@ impl Calendar for Hebrew {
         year: i32,
         month_code: types::MonthCode,
         day: u8,
-    ) -> Result<Self::DateInner, CalendarError> {
+    ) -> Result<Self::DateInner, DateError> {
         let year = if era.0 == tinystr!(16, "hebrew") || era.0 == tinystr!(16, "am") {
             year
         } else {
-            return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
+            return Err(DateError::UnknownEra(era));
         };
 
         let year_info = HebrewYearInfo::compute(year);
@@ -184,10 +176,7 @@ impl Calendar for Hebrew {
                 "M11" => 12,
                 "M12" => 13,
                 _ => {
-                    return Err(CalendarError::UnknownMonthCode(
-                        month_code.0,
-                        self.debug_name(),
-                    ))
+                    return Err(DateError::UnknownMonthCode(month_code));
                 }
             }
         } else {
@@ -205,16 +194,14 @@ impl Calendar for Hebrew {
                 "M11" => 11,
                 "M12" => 12,
                 _ => {
-                    return Err(CalendarError::UnknownMonthCode(
-                        month_code.0,
-                        self.debug_name(),
-                    ))
+                    return Err(DateError::UnknownMonthCode(month_code));
                 }
             }
         };
 
-        ArithmeticDate::new_from_ordinals_with_info(year, month_ordinal, day, year_info)
-            .map(HebrewDateInner)
+        Ok(HebrewDateInner(
+            ArithmeticDate::new_from_ordinals_with_info(year, month_ordinal, day, year_info)?,
+        ))
     }
 
     fn date_from_iso(&self, iso: Date<Iso>) -> Self::DateInner {
@@ -373,36 +360,12 @@ impl Date<Hebrew> {
     /// assert_eq!(date_hebrew.month().ordinal, 4);
     /// assert_eq!(date_hebrew.day_of_month().0, 25);
     /// ```
-    pub fn try_new_hebrew_date(
-        year: i32,
-        month: u8,
-        day: u8,
-    ) -> Result<Date<Hebrew>, CalendarError> {
+    pub fn try_new_hebrew_date(year: i32, month: u8, day: u8) -> Result<Date<Hebrew>, RangeError> {
         let year_info = HebrewYearInfo::compute(year);
 
         ArithmeticDate::new_from_ordinals_with_info(year, month, day, year_info)
             .map(HebrewDateInner)
             .map(|inner| Date::from_raw(inner, Hebrew))
-    }
-}
-
-impl<A: AsCalendar<Calendar = Hebrew>> Date<A> {
-    /// Construct new Hebrew Date given a calendar.
-    ///
-    /// This is deprecated since `Hebrew` is a zero-sized type,
-    /// but if you find yourself needing this functionality please let us know.
-    #[deprecated(since = "1.5.0", note = "Use Date::try_new_hebrew_date()")]
-    pub fn try_new_hebrew_date_with_calendar(
-        year: i32,
-        month: u8,
-        day: u8,
-        calendar: A,
-    ) -> Result<Date<A>, CalendarError> {
-        let year_info = HebrewYearInfo::compute(year);
-
-        ArithmeticDate::new_from_ordinals_with_info(year, month, day, year_info)
-            .map(HebrewDateInner)
-            .map(|inner| Date::from_raw(inner, calendar))
     }
 }
 
@@ -430,32 +393,9 @@ impl DateTime<Hebrew> {
         hour: u8,
         minute: u8,
         second: u8,
-    ) -> Result<DateTime<Hebrew>, CalendarError> {
+    ) -> Result<DateTime<Hebrew>, DateError> {
         Ok(DateTime {
             date: Date::try_new_hebrew_date(year, month, day)?,
-            time: Time::try_new(hour, minute, second, 0)?,
-        })
-    }
-}
-
-impl<A: AsCalendar<Calendar = Hebrew>> DateTime<A> {
-    /// Construct new Hebrew DateTime given a calendar.
-    ///
-    /// This is deprecated since `Hebrew` is a zero-sized type,
-    /// but if you find yourself needing this functionality please let us know.
-    #[deprecated(since = "1.5.0", note = "Use DateTime::try_new_hebrew_datetime()")]
-    pub fn try_new_hebrew_datetime_with_calendar(
-        year: i32,
-        month: u8,
-        day: u8,
-        hour: u8,
-        minute: u8,
-        second: u8,
-        calendar: A,
-    ) -> Result<DateTime<A>, CalendarError> {
-        #[allow(deprecated)]
-        Ok(DateTime {
-            date: Date::try_new_hebrew_date_with_calendar(year, month, day, calendar)?,
             time: Time::try_new(hour, minute, second, 0)?,
         })
     }

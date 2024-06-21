@@ -10,26 +10,42 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
+#include "ICU4XDataError.hpp"
 #include "ICU4XDataProvider.hpp"
 #include "ICU4XDataStruct.hpp"
-#include "ICU4XError.hpp"
 #include "ICU4XFixedDecimal.hpp"
-#include "ICU4XFixedDecimalFormatter.h"
 #include "ICU4XFixedDecimalGroupingStrategy.hpp"
 #include "ICU4XLocale.hpp"
 
 
-inline diplomat::result<std::unique_ptr<ICU4XFixedDecimalFormatter>, ICU4XError> ICU4XFixedDecimalFormatter::create_with_grouping_strategy(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XFixedDecimalGroupingStrategy grouping_strategy) {
+namespace capi {
+    extern "C" {
+    
+    typedef struct ICU4XFixedDecimalFormatter_create_with_grouping_strategy_result {union {ICU4XFixedDecimalFormatter* ok; ICU4XDataError err;}; bool is_ok;} ICU4XFixedDecimalFormatter_create_with_grouping_strategy_result;
+    ICU4XFixedDecimalFormatter_create_with_grouping_strategy_result ICU4XFixedDecimalFormatter_create_with_grouping_strategy(const ICU4XDataProvider* provider, const ICU4XLocale* locale, ICU4XFixedDecimalGroupingStrategy grouping_strategy);
+    
+    typedef struct ICU4XFixedDecimalFormatter_create_with_decimal_symbols_v1_result {union {ICU4XFixedDecimalFormatter* ok; ICU4XDataError err;}; bool is_ok;} ICU4XFixedDecimalFormatter_create_with_decimal_symbols_v1_result;
+    ICU4XFixedDecimalFormatter_create_with_decimal_symbols_v1_result ICU4XFixedDecimalFormatter_create_with_decimal_symbols_v1(const ICU4XDataStruct* data_struct, ICU4XFixedDecimalGroupingStrategy grouping_strategy);
+    
+    void ICU4XFixedDecimalFormatter_format(const ICU4XFixedDecimalFormatter* self, const ICU4XFixedDecimal* value, DiplomatWrite* write);
+    
+    
+    void ICU4XFixedDecimalFormatter_destroy(ICU4XFixedDecimalFormatter* self);
+    
+    } // extern "C"
+}
+
+inline diplomat::result<std::unique_ptr<ICU4XFixedDecimalFormatter>, ICU4XDataError> ICU4XFixedDecimalFormatter::create_with_grouping_strategy(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XFixedDecimalGroupingStrategy grouping_strategy) {
   auto result = capi::ICU4XFixedDecimalFormatter_create_with_grouping_strategy(provider.AsFFI(),
     locale.AsFFI(),
     grouping_strategy.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XFixedDecimalFormatter>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XFixedDecimalFormatter>>(std::unique_ptr<ICU4XFixedDecimalFormatter>(ICU4XFixedDecimalFormatter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XFixedDecimalFormatter>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XFixedDecimalFormatter>, ICU4XDataError>(diplomat::Ok<std::unique_ptr<ICU4XFixedDecimalFormatter>>(std::unique_ptr<ICU4XFixedDecimalFormatter>(ICU4XFixedDecimalFormatter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XFixedDecimalFormatter>, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::unique_ptr<ICU4XFixedDecimalFormatter>, ICU4XError> ICU4XFixedDecimalFormatter::create_with_decimal_symbols_v1(const ICU4XDataStruct& data_struct, ICU4XFixedDecimalGroupingStrategy grouping_strategy) {
+inline diplomat::result<std::unique_ptr<ICU4XFixedDecimalFormatter>, ICU4XDataError> ICU4XFixedDecimalFormatter::create_with_decimal_symbols_v1(const ICU4XDataStruct& data_struct, ICU4XFixedDecimalGroupingStrategy grouping_strategy) {
   auto result = capi::ICU4XFixedDecimalFormatter_create_with_decimal_symbols_v1(data_struct.AsFFI(),
     grouping_strategy.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XFixedDecimalFormatter>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XFixedDecimalFormatter>>(std::unique_ptr<ICU4XFixedDecimalFormatter>(ICU4XFixedDecimalFormatter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XFixedDecimalFormatter>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XFixedDecimalFormatter>, ICU4XDataError>(diplomat::Ok<std::unique_ptr<ICU4XFixedDecimalFormatter>>(std::unique_ptr<ICU4XFixedDecimalFormatter>(ICU4XFixedDecimalFormatter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XFixedDecimalFormatter>, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
 
 inline std::string ICU4XFixedDecimalFormatter::format(const ICU4XFixedDecimal& value) const {

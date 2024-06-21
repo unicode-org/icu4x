@@ -7,9 +7,9 @@ mod fixtures;
 use std::convert::TryInto;
 use writeable::*;
 
-use icu_locale_core::{LanguageIdentifier, Locale, ParserError};
+use icu_locale_core::{LanguageIdentifier, Locale, ParseError};
 
-type Result = std::result::Result<Locale, ParserError>;
+type Result = std::result::Result<Locale, ParseError>;
 
 fn test_langid_fixtures(tests: Vec<fixtures::LocaleTest>) {
     for test in tests {
@@ -19,7 +19,7 @@ fn test_langid_fixtures(tests: Vec<fixtures::LocaleTest>) {
                 assert_writeable_eq!(input, s);
             }
             fixtures::LocaleInfo::Error(err) => {
-                let err: ParserError = err.into();
+                let err: ParseError = err.into();
                 let input: Result = test.input.try_into();
                 assert_eq!(input, Err(err));
             }

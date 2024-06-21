@@ -10,9 +10,15 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XWeekOf.h"
 #include "ICU4XWeekRelativeUnit.hpp"
 
+
+namespace capi {
+    extern "C" {
+    
+    
+    } // extern "C"
+}
 
 
 inline capi::ICU4XWeekOf ICU4XWeekOf::AsFFI() const {

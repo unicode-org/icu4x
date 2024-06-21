@@ -2,13 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! The parser module contains the implementation details for `IXDTFParser` and `ISODurationParser`
+//! The parser module contains the implementation details for `IxdtfParser` and `IsoDurationParser`
 
 use crate::{ParserError, ParserResult};
 
 #[cfg(feature = "duration")]
 use records::DurationParseRecord;
 use records::IxdtfParseRecord;
+use utf8_iter::Utf8CharIndices;
 
 use self::records::Annotation;
 
@@ -49,7 +50,7 @@ macro_rules! assert_syntax {
 ///
 /// let ixdtf_str = "2024-03-02T08:48:00-05:00[America/New_York]";
 ///
-/// let result = IxdtfParser::new(ixdtf_str).parse().unwrap();
+/// let result = IxdtfParser::from_str(ixdtf_str).parse().unwrap();
 ///
 /// let date = result.date.unwrap();
 /// let time = result.time.unwrap();
@@ -65,7 +66,7 @@ macro_rules! assert_syntax {
 /// assert_eq!(offset.hour, 5);
 /// assert_eq!(offset.minute, 0);
 /// assert!(!tz_annotation.critical);
-/// assert_eq!(tz_annotation.tz, TimeZoneRecord::Name("America/New_York"));
+/// assert_eq!(tz_annotation.tz, TimeZoneRecord::Name("America/New_York".as_bytes()));
 /// ```
 ///
 /// [rfc9557]: https://datatracker.ietf.org/doc/rfc9557/
@@ -76,11 +77,21 @@ pub struct IxdtfParser<'a> {
 }
 
 impl<'a> IxdtfParser<'a> {
-    /// Creates a new `IXDTFParser` from a provided `&str`.
-    pub fn new(value: &'a str) -> Self {
+    /// Creates a new `IxdtfParser` from a slice of utf-8 bytes.
+    #[inline]
+    #[must_use]
+    pub fn from_utf8(source: &'a [u8]) -> Self {
         Self {
-            cursor: Cursor::new(value),
+            cursor: Cursor::new(source),
         }
+    }
+
+    /// Creates a new `IxdtfParser` from a source `&str`.
+    #[inline]
+    #[must_use]
+    #[allow(clippy::should_implement_trait)]
+    pub fn from_str(source: &'a str) -> Self {
+        Self::from_utf8(source.as_bytes())
     }
 
     /// Parses the source as an [extended Date/Time string][rfc9557].
@@ -114,7 +125,7 @@ impl<'a> IxdtfParser<'a> {
     ///
     /// let extended_year_month = "2020-11[u-ca=iso8601]";
     ///
-    /// let result = IxdtfParser::new(extended_year_month)
+    /// let result = IxdtfParser::from_str(extended_year_month)
     ///     .parse_year_month()
     ///     .unwrap();
     ///
@@ -147,7 +158,7 @@ impl<'a> IxdtfParser<'a> {
     /// # use ixdtf::parsers::IxdtfParser;
     /// let extended_month_day = "1107[+04:00]";
     ///
-    /// let result = IxdtfParser::new(extended_month_day)
+    /// let result = IxdtfParser::from_str(extended_month_day)
     ///     .parse_month_day()
     ///     .unwrap();
     ///
@@ -180,7 +191,7 @@ impl<'a> IxdtfParser<'a> {
     /// # use ixdtf::parsers::{IxdtfParser, records::{Sign, TimeZoneRecord}};
     /// let extended_time = "12:01:04-05:00[America/New_York][u-ca=iso8601]";
     ///
-    /// let result = IxdtfParser::new(extended_time).parse_time().unwrap();
+    /// let result = IxdtfParser::from_str(extended_time).parse_time().unwrap();
     ///
     /// let time = result.time.unwrap();
     /// let offset = result.offset.unwrap();
@@ -193,7 +204,7 @@ impl<'a> IxdtfParser<'a> {
     /// assert_eq!(offset.hour, 5);
     /// assert_eq!(offset.minute, 0);
     /// assert!(!tz_annotation.critical);
-    /// assert_eq!(tz_annotation.tz, TimeZoneRecord::Name("America/New_York"));
+    /// assert_eq!(tz_annotation.tz, TimeZoneRecord::Name("America/New_York".as_bytes()));
     /// ```
     ///
     /// [temporal-time]: https://tc39.es/proposal-temporal/#prod-TemporalTimeString
@@ -223,7 +234,7 @@ impl<'a> IxdtfParser<'a> {
 ///
 /// let duration_str = "P1Y2M1DT2H10M30S";
 ///
-/// let result = IsoDurationParser::new(duration_str).parse().unwrap();
+/// let result = IsoDurationParser::from_str(duration_str).parse().unwrap();
 ///
 /// let date_duration = result.date.unwrap();
 ///
@@ -256,11 +267,21 @@ pub struct IsoDurationParser<'a> {
 
 #[cfg(feature = "duration")]
 impl<'a> IsoDurationParser<'a> {
-    /// Creates a new `IsoDurationParser` from a target `&str`.
-    pub fn new(value: &'a str) -> Self {
+    /// Creates a new `IsoDurationParser` from a slice of utf-8 bytes.
+    #[inline]
+    #[must_use]
+    pub fn from_utf8(source: &'a [u8]) -> Self {
         Self {
-            cursor: Cursor::new(value),
+            cursor: Cursor::new(source),
         }
+    }
+
+    /// Creates a new `IsoDurationParser` from a source `&str`.
+    #[inline]
+    #[must_use]
+    #[allow(clippy::should_implement_trait)]
+    pub fn from_str(source: &'a str) -> Self {
+        Self::from_utf8(source.as_bytes())
     }
 
     /// Parse the contents of this `IsoDurationParser` into a `DurationParseRecord`.
@@ -273,7 +294,7 @@ impl<'a> IsoDurationParser<'a> {
     /// # use ixdtf::parsers::{IsoDurationParser, records::DurationParseRecord };
     /// let date_duration = "P1Y2M3W1D";
     ///
-    /// let result = IsoDurationParser::new(date_duration).parse().unwrap();
+    /// let result = IsoDurationParser::from_str(date_duration).parse().unwrap();
     ///
     /// let date_duration = result.date.unwrap();
     ///
@@ -290,7 +311,7 @@ impl<'a> IsoDurationParser<'a> {
     /// # use ixdtf::parsers::{IsoDurationParser, records::{DurationParseRecord, TimeDurationRecord }};
     /// let time_duration = "PT2H10M30S";
     ///
-    /// let result = IsoDurationParser::new(time_duration).parse().unwrap();
+    /// let result = IsoDurationParser::from_str(time_duration).parse().unwrap();
     ///
     /// let (hours, minutes, seconds, fraction) = match result.time {
     ///     // Hours variant is defined as { hours: u32, fraction: u64 }
@@ -318,18 +339,18 @@ impl<'a> IsoDurationParser<'a> {
 #[derive(Debug)]
 pub(crate) struct Cursor<'a> {
     pos: usize,
-    source: &'a str,
+    source: &'a [u8],
 }
 
 impl<'a> Cursor<'a> {
     /// Create a new cursor from a source `String` value.
     #[must_use]
-    pub(crate) fn new(source: &'a str) -> Self {
+    pub fn new(source: &'a [u8]) -> Self {
         Self { pos: 0, source }
     }
 
     /// Returns a string value from a slice of the cursor.
-    fn slice(&self, start: usize, end: usize) -> Option<&'a str> {
+    fn slice(&self, start: usize, end: usize) -> Option<&'a [u8]> {
         self.source.get(start..end)
     }
 
@@ -340,23 +361,31 @@ impl<'a> Cursor<'a> {
 
     /// Peek the value at next position (current + 1).
     fn peek(&self) -> Option<char> {
-        self.peek_n_char(1)
+        self.peek_n(1)
     }
 
     /// Returns current position in source as `char`.
     fn current(&self) -> Option<char> {
-        self.peek_n_char(0)
-    }
-
-    /// Peek the value at n len from current.
-    fn peek_n(&self, n: usize) -> Option<&'a str> {
-        let index = self.pos + n;
-        self.source.get(index..index + 1)
+        self.peek_n(0)
     }
 
     /// Peeks the value at `n` as a `char`.
-    fn peek_n_char(&self, n: usize) -> Option<char> {
-        self.peek_n(n).map(str::chars).and_then(|mut c| c.next())
+    fn peek_n(&self, n: usize) -> Option<char> {
+        let (_, char) = self.peek_with_info(n)?;
+        Some(char)
+    }
+
+    /// Peeks the value at `n` and returns the char with its byte length.
+    fn peek_with_info(&self, n: usize) -> Option<(usize, char)> {
+        let mut chars =
+            Utf8CharIndices::new(self.source.get(self.pos..self.source.len()).unwrap_or(&[]));
+        for _ in 0..n {
+            let _ = chars.next();
+        }
+        let (_, peek) = chars.next()?;
+        let offset = chars.offset();
+
+        Some((offset, peek))
     }
 
     /// Runs the provided check on the current position.
@@ -377,9 +406,10 @@ impl<'a> Cursor<'a> {
 
     /// Returns `Cursor`'s current char and advances to the next position.
     fn next(&mut self) -> Option<char> {
-        let result = self.current();
-        self.advance();
-        result
+        self.peek_with_info(0).map(|(offset, result)| {
+            self.advance_n(offset);
+            result
+        })
     }
 
     /// Returns the next value as a digit.
@@ -388,11 +418,11 @@ impl<'a> Cursor<'a> {
     ///   - Returns a SyntaxError if value is not an ascii digit
     ///   - Returns an AbruptEnd error if cursor ends.
     fn next_digit(&mut self) -> ParserResult<Option<u8>> {
-        let p_digit = self.next_or(ParserError::InvalidEnd)?.to_digit(10);
-        let Some(digit) = p_digit else {
-            return Ok(None);
-        };
-        Ok(Some(digit as u8))
+        // Note: Char digit with a radix of ten must be in the range of a u8
+        Ok(self
+            .next_or(ParserError::InvalidEnd)?
+            .to_digit(10)
+            .map(|d| d as u8))
     }
 
     /// A utility next method that returns an `AbruptEnd` error if invalid.
@@ -400,9 +430,14 @@ impl<'a> Cursor<'a> {
         self.next().ok_or(err)
     }
 
-    /// Advances the cursor's position by 1.
+    /// Advances the cursor's position by n bytes.
+    fn advance_n(&mut self, n: usize) {
+        self.pos += n;
+    }
+
+    // Advances the cursor by 1 byte.
     fn advance(&mut self) {
-        self.pos += 1;
+        self.advance_n(1)
     }
 
     /// Utility function to advance when a condition is true

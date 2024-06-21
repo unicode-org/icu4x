@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::{DataError, DataErrorKind};
 use core::cmp::Ordering;
 use core::default::Default;
 use core::fmt;
@@ -11,7 +10,7 @@ use core::hash::Hash;
 use core::str::FromStr;
 use icu_locale_core::extensions::unicode as unicode_ext;
 use icu_locale_core::subtags::{Language, Region, Script, Variants};
-use icu_locale_core::{LanguageIdentifier, Locale};
+use icu_locale_core::{LanguageIdentifier, Locale, ParseError};
 use writeable::{LengthHint, Writeable};
 
 use alloc::string::String;
@@ -32,7 +31,7 @@ pub struct DataRequest<'a> {
     /// than the one requested here.
     pub locale: &'a DataLocale,
     /// Key-specific request attributes
-    pub key_attributes: &'a DataKeyAttributes,
+    pub marker_attributes: &'a DataMarkerAttributes,
     /// Metadata that may affect the behavior of the data provider.
     pub metadata: DataRequestMetadata,
 }
@@ -50,43 +49,6 @@ impl fmt::Display for DataRequest<'_> {
 pub struct DataRequestMetadata {
     /// Silent requests do not log errors. This can be used for exploratory querying, such as fallbacks.
     pub silent: bool,
-}
-
-// TODO: replace the `-x-` encoding by something more flexible
-#[doc(hidden)]
-impl DataRequest<'_> {
-    pub fn legacy_cmp(&self, bytes: &[u8]) -> Ordering {
-        struct LegacyComparator<'a>(&'a DataLocale, &'a DataKeyAttributes);
-        impl writeable::Writeable for LegacyComparator<'_> {
-            fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
-                self.0.write_to(sink)?;
-                if !self.1.is_empty() {
-                    "-x-".write_to(sink)?;
-                    self.1.write_to(sink)?;
-                }
-                Ok(())
-            }
-        }
-        LegacyComparator(self.locale, self.key_attributes).writeable_cmp_bytes(bytes)
-    }
-
-    pub fn legacy_encode(&self) -> String {
-        self.locale.write_to_string().into_owned()
-            + if self.key_attributes.is_empty() {
-                ""
-            } else {
-                "-x-"
-            }
-            + self.key_attributes
-    }
-
-    pub fn legacy_decode(encoded: &str) -> Option<(DataLocale, DataKeyAttributes)> {
-        let mut iter = encoded.splitn(2, "-x-");
-        #[allow(clippy::unwrap_used)] // at least one element
-        let l = iter.next().unwrap().parse().ok()?;
-        let a = iter.next().unwrap_or("").parse().ok()?;
-        Some((l, a))
-    }
 }
 
 /// A locale type optimized for use in fallbacking and the ICU4X data pipeline.
@@ -242,15 +204,9 @@ impl From<&Locale> for DataLocale {
 }
 
 impl FromStr for DataLocale {
-    type Err = DataError;
+    type Err = ParseError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let locale = Locale::from_str(s).map_err(|e| {
-            DataErrorKind::KeyLocaleSyntax
-                .into_error()
-                .with_display_context(s)
-                .with_display_context(&e)
-        })?;
-        Ok(DataLocale::from(locale))
+        Locale::from_str(s).map(DataLocale::from)
     }
 }
 
@@ -448,8 +404,6 @@ impl DataLocale {
     /// use icu_locale_core::langid;
     /// use icu_provider::prelude::*;
     ///
-    /// const FOO_BAR: DataKey = icu_provider::data_key!("foo/bar@1");
-    ///
     /// let req_no_langid = DataRequest {
     ///     locale: &Default::default(),
     ///     ..Default::default()
@@ -626,12 +580,12 @@ impl DataLocale {
 
 /// TODO
 #[derive(Clone, Default)]
-pub struct DataKeyAttributes {
-    value: DataKeyAttributesInner,
+pub struct DataMarkerAttributes {
+    value: DataMarkerAttributesInner,
 }
 
 #[derive(Clone, Default)]
-enum DataKeyAttributesInner {
+enum DataMarkerAttributesInner {
     #[default]
     Empty,
     Boxed(alloc::boxed::Box<str>),
@@ -640,84 +594,84 @@ enum DataKeyAttributesInner {
     // Static(&'static str),
 }
 
-impl<'a> Default for &'a DataKeyAttributes {
+impl<'a> Default for &'a DataMarkerAttributes {
     fn default() -> Self {
-        static DEFAULT: DataKeyAttributes = DataKeyAttributes {
-            value: DataKeyAttributesInner::Empty,
+        static DEFAULT: DataMarkerAttributes = DataMarkerAttributes {
+            value: DataMarkerAttributesInner::Empty,
         };
         &DEFAULT
     }
 }
 
-impl Deref for DataKeyAttributes {
+impl Deref for DataMarkerAttributes {
     type Target = str;
     #[inline]
     fn deref(&self) -> &Self::Target {
         match &self.value {
-            DataKeyAttributesInner::Empty => "",
-            DataKeyAttributesInner::Boxed(s) => s.deref(),
-            DataKeyAttributesInner::Stack(s) => s.as_str(),
+            DataMarkerAttributesInner::Empty => "",
+            DataMarkerAttributesInner::Boxed(s) => s.deref(),
+            DataMarkerAttributesInner::Stack(s) => s.as_str(),
         }
     }
 }
 
-impl PartialEq for DataKeyAttributes {
+impl PartialEq for DataMarkerAttributes {
     #[inline]
     fn eq(&self, other: &Self) -> bool {
         self.deref() == other.deref()
     }
 }
 
-impl Eq for DataKeyAttributes {}
+impl Eq for DataMarkerAttributes {}
 
-impl PartialOrd for DataKeyAttributes {
+impl PartialOrd for DataMarkerAttributes {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         Some(self.cmp(other))
     }
 }
 
-impl Ord for DataKeyAttributes {
+impl Ord for DataMarkerAttributes {
     fn cmp(&self, other: &Self) -> Ordering {
         self.deref().cmp(other.deref())
     }
 }
 
-impl Debug for DataKeyAttributes {
+impl Debug for DataMarkerAttributes {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         self.deref().fmt(f)
     }
 }
 
-impl Hash for DataKeyAttributes {
+impl Hash for DataMarkerAttributes {
     #[inline]
     fn hash<H: core::hash::Hasher>(&self, state: &mut H) {
         self.deref().hash(state)
     }
 }
 
-impl FromStr for DataKeyAttributes {
+impl FromStr for DataMarkerAttributes {
     type Err = core::convert::Infallible;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         if s.is_empty() {
             Ok(Self {
-                value: DataKeyAttributesInner::Empty,
+                value: DataMarkerAttributesInner::Empty,
             })
         } else if let Ok(tiny) = s.parse() {
             Ok(Self {
-                value: DataKeyAttributesInner::Stack(tiny),
+                value: DataMarkerAttributesInner::Stack(tiny),
             })
         } else {
             Ok(Self {
-                value: DataKeyAttributesInner::Boxed(s.into()),
+                value: DataMarkerAttributesInner::Boxed(s.into()),
             })
         }
     }
 }
 
-impl DataKeyAttributes {
-    /// Creates a [`DataKeyAttributes`] from an iterator of individual keys.
+impl DataMarkerAttributes {
+    /// Creates a [`DataMarkerAttributes`] from an iterator of individual keys.
     ///
     /// # Examples
     ///
@@ -726,25 +680,16 @@ impl DataKeyAttributes {
     /// use icu_provider::prelude::*;
     ///
     /// // Single auxiliary key:
-    /// let a = DataKeyAttributes::try_from_iter([subtag!("abc")]).unwrap();
-    /// let b = "abc".parse::<DataKeyAttributes>().unwrap();
+    /// let a = DataMarkerAttributes::try_from_iter([subtag!("abc")]);
+    /// let b = "abc".parse::<DataMarkerAttributes>().unwrap();
     /// assert_eq!(a, b);
     ///
     /// // Multiple auxiliary keys:
-    /// let a = DataKeyAttributes::try_from_iter([subtag!("abc"), subtag!("defg")])
-    ///     .unwrap();
-    /// let b = "abc-defg".parse::<DataKeyAttributes>().unwrap();
+    /// let a = DataMarkerAttributes::try_from_iter([subtag!("abc"), subtag!("defg")]);
+    /// let b = "abc-defg".parse::<DataMarkerAttributes>().unwrap();
     /// assert_eq!(a, b);
     /// ```
-    ///
-    /// The iterator can't be empty:
-    ///
-    /// ```
-    /// use icu_provider::prelude::*;
-    ///
-    /// assert!(DataKeyAttributes::try_from_iter([]).is_err());
-    /// ```
-    pub fn try_from_iter(iter: impl IntoIterator<Item = Subtag>) -> Result<Self, DataError> {
+    pub fn try_from_iter(iter: impl IntoIterator<Item = Subtag>) -> Self {
         // TODO: Avoid the allocation when possible
         let mut builder = String::new();
         for item in iter {
@@ -753,22 +698,19 @@ impl DataKeyAttributes {
             }
             builder.push_str(item.as_str())
         }
-        if builder.is_empty() {
-            return Err(DataErrorKind::KeyLocaleSyntax.with_str_context("empty aux iterator"));
-        }
-        if builder.len() <= 23 {
-            #[allow(clippy::unwrap_used)] // we just checked that the string is ascii
-            Ok(Self {
-                value: DataKeyAttributesInner::Stack(builder.parse().unwrap()),
-            })
-        } else {
-            Ok(Self {
-                value: DataKeyAttributesInner::Boxed(builder.into()),
-            })
+        Self {
+            value: if builder.is_empty() {
+                DataMarkerAttributesInner::Empty
+            } else if builder.len() <= 23 {
+                #[allow(clippy::unwrap_used)] // we just checked that the string is ascii
+                DataMarkerAttributesInner::Stack(builder.parse().unwrap())
+            } else {
+                DataMarkerAttributesInner::Boxed(builder.into())
+            },
         }
     }
 
-    /// Creates a [`DataKeyAttributes`] from a single subtag.
+    /// Creates a [`DataMarkerAttributes`] from a single subtag.
     ///
     /// # Examples
     ///
@@ -777,13 +719,13 @@ impl DataKeyAttributes {
     /// use icu_provider::prelude::*;
     ///
     /// // Single auxiliary key:
-    /// let a = DataKeyAttributes::from_tinystr("abc".parse().unwrap());
-    /// let b = "abc".parse::<DataKeyAttributes>().unwrap();
+    /// let a = DataMarkerAttributes::from_tinystr("abc".parse().unwrap());
+    /// let b = "abc".parse::<DataMarkerAttributes>().unwrap();
     /// assert_eq!(a, b);
     /// ```
     pub const fn from_tinystr(input: TinyAsciiStr<8>) -> Self {
         Self {
-            value: DataKeyAttributesInner::Stack(input.resize()),
+            value: DataMarkerAttributesInner::Stack(input.resize()),
         }
     }
 

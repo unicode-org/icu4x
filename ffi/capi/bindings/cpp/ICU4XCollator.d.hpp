@@ -8,22 +8,25 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XCollator.d.h"
 #include "ICU4XCollatorOptionsV1.d.hpp"
 #include "ICU4XCollatorResolvedOptionsV1.d.hpp"
-#include "ICU4XError.d.hpp"
+#include "ICU4XDataError.d.hpp"
 
 class ICU4XDataProvider;
 class ICU4XLocale;
 struct ICU4XCollatorOptionsV1;
 struct ICU4XCollatorResolvedOptionsV1;
-class ICU4XError;
+class ICU4XDataError;
 
+
+namespace capi {
+    typedef struct ICU4XCollator ICU4XCollator;
+}
 
 class ICU4XCollator {
 public:
 
-  inline static diplomat::result<std::unique_ptr<ICU4XCollator>, ICU4XError> create_v1(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XCollatorOptionsV1 options);
+  inline static diplomat::result<std::unique_ptr<ICU4XCollator>, ICU4XDataError> create_v1(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XCollatorOptionsV1 options);
 
   inline int8_t compare16(std::u16string_view left, std::u16string_view right) const;
 

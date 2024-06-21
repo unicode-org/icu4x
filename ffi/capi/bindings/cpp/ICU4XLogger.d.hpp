@@ -8,15 +8,16 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XLogger.d.h"
 
+
+namespace capi {
+    typedef struct ICU4XLogger ICU4XLogger;
+}
 
 class ICU4XLogger {
 public:
 
   inline static bool init_simple_logger();
-
-  inline static bool init_console_logger();
 
   inline const capi::ICU4XLogger* AsFFI() const;
   inline capi::ICU4XLogger* AsFFI();

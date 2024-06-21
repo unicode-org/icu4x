@@ -82,7 +82,7 @@ where
                 ..
             }) => FormattedTimeZone {
                 time_zone_format,
-                time_zone,
+                time_zone: *time_zone,
             }
             .write_to(w)?,
             PatternItem::Field(field) => {
@@ -93,6 +93,7 @@ where
                     datetime,
                     date_symbols,
                     time_symbols,
+                    None::<()>.as_ref(),
                     week_data,
                     fixed_decimal_format,
                     w,

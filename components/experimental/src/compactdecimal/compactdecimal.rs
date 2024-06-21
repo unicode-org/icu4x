@@ -19,8 +19,9 @@ use crate::compactdecimal::{
         Count, ErasedCompactDecimalFormatDataV1Marker, LongCompactDecimalFormatDataV1Marker,
         PatternULE, ShortCompactDecimalFormatDataV1Marker,
     },
-    CompactDecimalError,
+    ExponentError,
 };
+use icu_provider::DataError;
 
 /// A bag of options defining how numbers will be formatted by
 /// [`CompactDecimalFormatter`](super::CompactDecimalFormatter).
@@ -121,7 +122,7 @@ impl CompactDecimalFormatter {
     pub fn try_new_short(
         locale: &DataLocale,
         options: CompactDecimalFormatterOptions,
-    ) -> Result<Self, CompactDecimalError> {
+    ) -> Result<Self, DataError> {
         Ok(Self {
             fixed_decimal_format: FixedDecimalFormatter::try_new(
                 locale,
@@ -135,18 +136,15 @@ impl CompactDecimalFormatter {
                     ..Default::default()
                 },
             )?
-            .take_payload()?
+            .payload
             .cast(),
         })
     }
 
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: include,
-        options: CompactDecimalFormatterOptions,
-        error: CompactDecimalError,
-        #[cfg(skip)]
+        (locale, options: CompactDecimalFormatterOptions) -> error: DataError,
         functions: [
-            try_new_short,
+            try_new_short: skip,
             try_new_short_with_any_provider,
             try_new_short_with_buffer_provider,
             try_new_short_unstable,
@@ -159,7 +157,7 @@ impl CompactDecimalFormatter {
         provider: &D,
         locale: &DataLocale,
         options: CompactDecimalFormatterOptions,
-    ) -> Result<Self, CompactDecimalError>
+    ) -> Result<Self, DataError>
     where
         D: DataProvider<ShortCompactDecimalFormatDataV1Marker>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV1Marker>
@@ -180,7 +178,7 @@ impl CompactDecimalFormatter {
                     ..Default::default()
                 },
             )?
-            .take_payload()?
+            .payload
             .cast(),
         })
     }
@@ -208,7 +206,7 @@ impl CompactDecimalFormatter {
     pub fn try_new_long(
         locale: &DataLocale,
         options: CompactDecimalFormatterOptions,
-    ) -> Result<Self, CompactDecimalError> {
+    ) -> Result<Self, DataError> {
         Ok(Self {
             fixed_decimal_format: FixedDecimalFormatter::try_new(
                 locale,
@@ -222,18 +220,15 @@ impl CompactDecimalFormatter {
                     ..Default::default()
                 },
             )?
-            .take_payload()?
+            .payload
             .cast(),
         })
     }
 
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: include,
-        options: CompactDecimalFormatterOptions,
-        error: CompactDecimalError,
-        #[cfg(skip)]
+        (locale, options: CompactDecimalFormatterOptions) -> error: DataError,
         functions: [
-            try_new_long,
+            try_new_long: skip,
             try_new_long_with_any_provider,
             try_new_long_with_buffer_provider,
             try_new_long_unstable,
@@ -246,7 +241,7 @@ impl CompactDecimalFormatter {
         provider: &D,
         locale: &DataLocale,
         options: CompactDecimalFormatterOptions,
-    ) -> Result<Self, CompactDecimalError>
+    ) -> Result<Self, DataError>
     where
         D: DataProvider<LongCompactDecimalFormatDataV1Marker>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV1Marker>
@@ -267,7 +262,7 @@ impl CompactDecimalFormatter {
                     ..Default::default()
                 },
             )?
-            .take_payload()?
+            .payload
             .cast(),
         })
     }
@@ -382,7 +377,7 @@ impl CompactDecimalFormatter {
     pub fn format_f64(
         &self,
         value: f64,
-    ) -> Result<FormattedCompactDecimal<'_>, CompactDecimalError> {
+    ) -> Result<FormattedCompactDecimal<'_>, fixed_decimal::LimitError> {
         use fixed_decimal::FloatPrecision::Floating;
         // NOTE: This first gets the shortest representation of the f64, which
         // manifests as double rounding.
@@ -628,14 +623,14 @@ impl CompactDecimalFormatter {
     pub fn format_compact_decimal<'l>(
         &'l self,
         value: &'l CompactDecimal,
-    ) -> Result<FormattedCompactDecimal<'l>, CompactDecimalError> {
+    ) -> Result<FormattedCompactDecimal<'l>, ExponentError> {
         let log10_type =
             value.significand().nonzero_magnitude_start() + i16::from(value.exponent());
 
         let (plural_map, expected_exponent) =
             self.plural_map_and_exponent_for_magnitude(log10_type);
         if value.exponent() != expected_exponent {
-            return Err(CompactDecimalError::Exponent {
+            return Err(ExponentError {
                 actual: value.exponent(),
                 expected: expected_exponent,
                 log10_type,

@@ -206,11 +206,11 @@ where
     }
 }
 
-impl<T> Eq for ZeroVec<'_, T> where T: AsULE + Eq + ?Sized {}
+impl<T> Eq for ZeroVec<'_, T> where T: AsULE + Eq {}
 
 impl<'a, 'b, T> PartialEq<ZeroVec<'b, T>> for ZeroVec<'a, T>
 where
-    T: AsULE + PartialEq + ?Sized,
+    T: AsULE + PartialEq,
 {
     #[inline]
     fn eq(&self, other: &ZeroVec<'b, T>) -> bool {
@@ -221,7 +221,7 @@ where
 
 impl<T> PartialEq<&[T]> for ZeroVec<'_, T>
 where
-    T: AsULE + PartialEq + ?Sized,
+    T: AsULE + PartialEq,
 {
     #[inline]
     fn eq(&self, other: &&[T]) -> bool {
@@ -231,7 +231,7 @@ where
 
 impl<T, const N: usize> PartialEq<[T; N]> for ZeroVec<'_, T>
 where
-    T: AsULE + PartialEq + ?Sized,
+    T: AsULE + PartialEq,
 {
     #[inline]
     fn eq(&self, other: &[T; N]) -> bool {
@@ -276,10 +276,7 @@ impl<'a, T: AsULE> From<Vec<T::ULE>> for ZeroVec<'a, T> {
     }
 }
 
-impl<'a, T> ZeroVec<'a, T>
-where
-    T: AsULE + ?Sized,
-{
+impl<'a, T: AsULE> ZeroVec<'a, T> {
     /// Creates a new, borrowed, empty `ZeroVec<T>`.
     ///
     /// # Examples

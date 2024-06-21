@@ -9,13 +9,13 @@ The following example loads additional locales bucketed by language. This means 
 ```rust
 use icu_provider_adapters::either::EitherProvider;
 use icu_provider_adapters::fallback::LocaleFallbackProvider;
-use icu_provider_adapters::fork::ForkByKeyProvider;
+use icu_provider_adapters::fork::ForkByMarkerProvider;
 use icu_provider_adapters::fork::MultiForkByErrorProvider;
 use icu_provider_adapters::fork::predicates::MissingLocalePredicate;
 use icu_provider_blob::BlobDataProvider;
 use icu_provider_fs::FsDataProvider;
-use icu_provider::DataLocale;
-use icu_provider::hello_world::HelloWorldFormatter;
+use icu_provider::prelude::*;
+use icu_provider::hello_world::*;
 use icu::locale::locale;
 use icu::locale::subtags::Language;
 use std::path::Path;
@@ -27,28 +27,28 @@ let mut provider = MultiForkByErrorProvider::new_with_predicate(
     MissingLocalePredicate
 );
 
+// Pretend we're loading these from the network or somewhere.
+struct SingleLocaleProvider(DataLocale);
+
+impl DataProvider<HelloWorldV1Marker> for SingleLocaleProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
+        if *req.locale != self.0 {
+            return Err(DataErrorKind::MissingLocale.with_req(HelloWorldV1Marker::INFO, req));
+        }
+        HelloWorldProvider.load(req)
+    }
+}
+
 // Helper function to add data into the growable provider on demand:
 let mut get_hello_world_formatter = |loc: &DataLocale| {
     // Try to create the formatter a first time with data that has already been loaded.
-    if let Ok(formatter) = HelloWorldFormatter::try_new_with_buffer_provider(&provider, loc) {
+    if let Ok(formatter) = HelloWorldFormatter::try_new_unstable(&provider, loc) {
         return formatter;
     }
 
-    // We failed to create the formatter. Load more data for the language.
-    // Note: This assumes data is split by language subtag, which may or may not be the best
-    // strategy for all use cases.
-    let path_buf = 
-        Path::new("../../provider/adapters/tests/data/langtest")
-        .join(loc.language().as_str());
-    let lang_provider = match FsDataProvider::try_new(&path_buf) {
-        Ok(p) => p,
-        Err(e) => panic!("Language not available? {:?}", e)
-    };
-    println!("Successfully loaded: {:?}", loc);
-
-    // Add the data to the growable provider and try creating the formatter a second time.
-    provider.push(lang_provider);
-    HelloWorldFormatter::try_new_with_buffer_provider(&provider, loc)
+    // We failed to create the formatter. Load more data for the language and try creating the formatter a second time.
+    provider.push(SingleLocaleProvider(loc.clone()));
+    HelloWorldFormatter::try_new_unstable(&provider, loc)
         .expect("Language data should now be available")
 };
 
@@ -87,10 +87,10 @@ pub struct LruDataCache<P> {
     provider: P,
 }
 
-/// Key for the cache: DataKey and DataLocale. The DataLocale is in a Cow
+/// Key for the cache: DataMarkerInfo and DataLocale. The DataLocale is in a Cow
 /// so that it can be borrowed during lookup.
 #[derive(Debug, PartialEq, Eq, Hash)]
-struct CacheKey<'a>(DataKey, Cow<'a, DataLocale>);
+struct CacheKey<'a>(DataMarkerInfo, Cow<'a, DataLocale>);
 
 /// Wrapper over a fully owned CacheKey, required for key borrowing.
 #[derive(Debug, PartialEq, Eq, Hash)]
@@ -105,9 +105,9 @@ impl<'a> Borrow<CacheKey<'a>> for lru::KeyRef<CacheKeyWrap> {
 
 impl<M, P> DataProvider<M> for LruDataCache<P>
 where
-    M: KeyedDataMarker,
+    M: DataMarker,
     M::Yokeable: ZeroFrom<'static, M::Yokeable>,
-    M::Yokeable: icu_provider::MaybeSendSync,
+    M::Yokeable: icu_provider::any::MaybeSendSync,
     for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
     P: DataProvider<M>,
 {
@@ -115,7 +115,7 @@ where
         {
             // First lock: cache retrieval
             let mut cache = self.cache.lock().unwrap();
-            let borrowed_cache_key = CacheKey(M::KEY, Cow::Borrowed(req.locale));
+            let borrowed_cache_key = CacheKey(M::INFO, Cow::Borrowed(req.locale));
             if let Some(any_res) = cache.get(&borrowed_cache_key) {
                 // Note: Cloning a DataPayload is usually cheap, and it is necessary in order to
                 // convert the short-lived cache object into one we can return.
@@ -124,7 +124,7 @@ where
         }
         // Release the lock to invoke the inner provider
         let response = self.provider.load(req)?;
-        let owned_cache_key = CacheKeyWrap(CacheKey(M::KEY, Cow::Owned(req.locale.clone())));
+        let owned_cache_key = CacheKeyWrap(CacheKey(M::INFO, Cow::Owned(req.locale.clone())));
         // Second lock: cache storage
         self.cache.lock()
             .unwrap()
@@ -209,21 +209,19 @@ pub struct CustomDecimalSymbolsProvider<P>(P);
 impl<P, M> DataProvider<M> for CustomDecimalSymbolsProvider<P>
 where
     P: DataProvider<M>,
-    M: KeyedDataMarker,
+    M: DataMarker,
 {
     #[inline]
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         let mut res = self.0.load(req)?;
-        if let Some(mut generic_payload) = res.payload.as_mut() {
-            // Cast from `DataPayload<M>` to `DataPayload<DecimalSymbolsV1Marker>`
-            let mut any_payload = generic_payload as &mut dyn Any;
-            if let Some(mut decimal_payload) = any_payload.downcast_mut::<DataPayload<DecimalSymbolsV1Marker>>() {
-                if req.locale.region() == Some(region!("CH")) {
-                    decimal_payload.with_mut(|data| {
-                        // Change the grouping separator for all Swiss locales to '🐮'
-                        data.grouping_separator = Cow::Borrowed("🐮");
-                    });
-                }
+        // Cast from `DataPayload<M>` to `DataPayload<DecimalSymbolsV1Marker>`
+        let mut any_payload = (&mut res.payload) as &mut dyn Any;
+        if let Some(mut decimal_payload) = any_payload.downcast_mut::<DataPayload<DecimalSymbolsV1Marker>>() {
+            if req.locale.region() == Some(region!("CH")) {
+                decimal_payload.with_mut(|data| {
+                    // Change the grouping separator for all Swiss locales to '🐮'
+                    data.grouping_separator = Cow::Borrowed("🐮");
+                });
             }
         }
         Ok(res)
@@ -263,7 +261,7 @@ However, for environments that require this behavior, such as ECMA-402, the data
 use icu_provider::prelude::*;
 use icu_provider::hello_world::*;
 use icu_provider_adapters::fallback::LocaleFallbackProvider;
-use icu_provider_adapters::fallback::LocaleFallbacker;
+use icu::locale::LocaleFallbacker;
 use icu::locale::locale;
 use std::sync::RwLock;
 
@@ -275,15 +273,15 @@ pub struct ResolvedLocaleProvider<P> {
 
 impl<M, P> DataProvider<M> for ResolvedLocaleProvider<P>
 where
-    M: KeyedDataMarker,
+    M: DataMarker,
     P: DataProvider<M>
 {
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         let mut res = self.inner.load(req)?;
-        // Whichever locale gets loaded for `HelloWorldV1Marker::KEY` will be the one
+        // Whichever locale gets loaded for `HelloWorldV1Marker::INFO` will be the one
         // we consider the "resolved locale". Although `HelloWorldFormatter` only loads
         // one key, this is a useful distinction for most other formatters.
-        if M::KEY == HelloWorldV1Marker::KEY {
+        if M::INFO == HelloWorldV1Marker::INFO {
             let mut w = self.resolved_locale.write().expect("poison");
             *w = res.metadata.locale.take();
         }

@@ -82,16 +82,6 @@ pub mod ffi {
             self.0.add32(ch)
         }
 
-        /// Deprecated, use `add_char`.
-        #[diplomat::rust_link(
-            icu::collections::codepointinvlist::CodePointInversionListBuilder::add_u32,
-            FnInStruct
-        )]
-        #[diplomat::attr(*, disable)]
-        pub fn add_u32(&mut self, ch: u32) {
-            self.add_char(ch)
-        }
-
         /// Add an inclusive range of characters to the set
         #[diplomat::rust_link(
             icu::collections::codepointinvlist::CodePointInversionListBuilder::add_range,
@@ -103,17 +93,7 @@ pub mod ffi {
             hidden
         )]
         pub fn add_inclusive_range(&mut self, start: DiplomatChar, end: DiplomatChar) {
-            self.0.add_range32(&(start..=end))
-        }
-
-        /// Deprecated, use `add_inclusive_range`.
-        #[diplomat::rust_link(
-            icu::collections::codepointinvlist::CodePointInversionListBuilder::add_range_u32,
-            FnInStruct
-        )]
-        #[diplomat::attr(*, disable)]
-        pub fn add_inclusive_range_u32(&mut self, start: u32, end: u32) {
-            self.add_inclusive_range(start, end)
+            self.0.add_range32(start..=end)
         }
 
         /// Add all elements that belong to the provided set to the set
@@ -164,7 +144,7 @@ pub mod ffi {
             hidden
         )]
         pub fn remove_inclusive_range(&mut self, start: DiplomatChar, end: DiplomatChar) {
-            self.0.remove_range32(&(start..=end))
+            self.0.remove_range32(start..=end)
         }
 
         /// Remove all elements that belong to the provided set from the set
@@ -203,7 +183,7 @@ pub mod ffi {
             hidden
         )]
         pub fn retain_inclusive_range(&mut self, start: DiplomatChar, end: DiplomatChar) {
-            self.0.retain_range32(&(start..=end))
+            self.0.retain_range32(start..=end)
         }
 
         /// Removes all elements from the set except all elements in the provided set
@@ -246,7 +226,7 @@ pub mod ffi {
             hidden
         )]
         pub fn complement_inclusive_range(&mut self, start: DiplomatChar, end: DiplomatChar) {
-            self.0.complement_range32(&(start..=end))
+            self.0.complement_range32(start..=end)
         }
 
         /// Complement all elements that belong to the provided set from the set

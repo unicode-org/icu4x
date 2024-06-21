@@ -18,8 +18,4 @@ export class ICU4XLogger {
   static init_simple_logger() {
     return wasm.ICU4XLogger_init_simple_logger();
   }
-
-  static init_console_logger() {
-    return wasm.ICU4XLogger_init_console_logger();
-  }
 }

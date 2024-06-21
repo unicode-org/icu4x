@@ -38,36 +38,37 @@ use zerovec::ZeroVec;
 pub struct Baked;
 
 #[cfg(feature = "compiled_data")]
+#[allow(unused_imports)]
 const _: () = {
+    use icu_calendar_data::*;
     pub mod icu {
         pub use crate as calendar;
-        #[allow(unused_imports)] // baked data may or may not need this
-        pub use icu_locale as locale;
+        pub use icu_calendar_data::icu_locale as locale;
     }
-    icu_calendar_data::make_provider!(Baked);
-    icu_calendar_data::impl_calendar_chinesecache_v1!(Baked);
-    icu_calendar_data::impl_calendar_dangicache_v1!(Baked);
-    icu_calendar_data::impl_calendar_islamicobservationalcache_v1!(Baked);
-    icu_calendar_data::impl_calendar_islamicummalquracache_v1!(Baked);
-    icu_calendar_data::impl_calendar_japanese_v1!(Baked);
-    icu_calendar_data::impl_calendar_japanext_v1!(Baked);
-    icu_calendar_data::impl_datetime_week_data_v1!(Baked);
-    icu_calendar_data::impl_datetime_week_data_v2!(Baked);
+    make_provider!(Baked);
+    impl_chinese_cache_v1_marker!(Baked);
+    impl_dangi_cache_v1_marker!(Baked);
+    impl_islamic_observational_cache_v1_marker!(Baked);
+    impl_islamic_umm_al_qura_cache_v1_marker!(Baked);
+    impl_japanese_eras_v1_marker!(Baked);
+    impl_japanese_extended_eras_v1_marker!(Baked);
+    impl_week_data_v1_marker!(Baked);
+    impl_week_data_v2_marker!(Baked);
 };
 
 #[cfg(feature = "datagen")]
-/// The latest minimum set of keys required by this component.
-pub const KEYS: &[DataKey] = &[
-    ChineseCacheV1Marker::KEY,
-    DangiCacheV1Marker::KEY,
-    IslamicObservationalCacheV1Marker::KEY,
-    IslamicUmmAlQuraCacheV1Marker::KEY,
-    JapaneseErasV1Marker::KEY,
-    JapaneseExtendedErasV1Marker::KEY,
-    WeekDataV2Marker::KEY,
+/// The latest minimum set of markers required by this component.
+pub const MARKERS: &[DataMarkerInfo] = &[
+    ChineseCacheV1Marker::INFO,
+    DangiCacheV1Marker::INFO,
+    IslamicObservationalCacheV1Marker::INFO,
+    IslamicUmmAlQuraCacheV1Marker::INFO,
+    JapaneseErasV1Marker::INFO,
+    JapaneseExtendedErasV1Marker::INFO,
+    WeekDataV2Marker::INFO,
     // We include the duplicate data for now, as icu_datetime loads it directly
     // https://github.com/unicode-org/icu4x/pull/4364#discussion_r1419877997
-    WeekDataV1Marker::KEY,
+    WeekDataV1Marker::INFO,
 ];
 
 /// The date at which an era started
@@ -300,8 +301,12 @@ impl<'de> serde::Deserialize<'de> for WeekdaySet {
 fn test_weekdayset_bake() {
     databake::test_bake!(
         WeekdaySet,
-        const: crate::provider::WeekdaySet::new(
-            &[crate::types::IsoWeekday::Monday, crate::types::IsoWeekday::Wednesday, crate::types::IsoWeekday::Friday]),
+        const,
+        crate::provider::WeekdaySet::new(&[
+            crate::types::IsoWeekday::Monday,
+            crate::types::IsoWeekday::Wednesday,
+            crate::types::IsoWeekday::Friday
+        ]),
         icu_calendar
     );
 }

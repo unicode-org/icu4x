@@ -8,13 +8,20 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XLocaleFallbackConfig.d.h"
 #include "ICU4XLocaleFallbackPriority.d.hpp"
 #include "ICU4XLocaleFallbackSupplement.d.hpp"
 
 class ICU4XLocaleFallbackPriority;
 class ICU4XLocaleFallbackSupplement;
 
+
+namespace capi {
+    typedef struct ICU4XLocaleFallbackConfig {
+      ICU4XLocaleFallbackPriority priority;
+      DiplomatStringView extension_key;
+      ICU4XLocaleFallbackSupplement fallback_supplement;
+    } ICU4XLocaleFallbackConfig;
+}
 
 struct ICU4XLocaleFallbackConfig {
   ICU4XLocaleFallbackPriority priority;

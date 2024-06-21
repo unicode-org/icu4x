@@ -12,7 +12,6 @@
 #include "ICU4XError.d.hpp"
 #include "ICU4XIsoTimeZoneOptions.d.hpp"
 #include "ICU4XTimeLength.d.hpp"
-#include "ICU4XZonedDateTimeFormatter.d.h"
 
 class ICU4XCustomTimeZone;
 class ICU4XDataProvider;
@@ -24,6 +23,10 @@ class ICU4XDateLength;
 class ICU4XError;
 class ICU4XTimeLength;
 
+
+namespace capi {
+    typedef struct ICU4XZonedDateTimeFormatter ICU4XZonedDateTimeFormatter;
+}
 
 class ICU4XZonedDateTimeFormatter {
 public:

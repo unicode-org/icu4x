@@ -5,10 +5,8 @@
 use core::cmp::Ordering;
 use core::str::FromStr;
 
-#[allow(deprecated)]
-use crate::ordering::SubtagOrderingResult;
 use crate::parser::{
-    parse_language_identifier, parse_language_identifier_with_single_variant, ParserError,
+    parse_language_identifier, parse_language_identifier_with_single_variant, ParseError,
     ParserMode, SubtagIterator,
 };
 use crate::subtags;
@@ -86,18 +84,24 @@ impl LanguageIdentifier {
     /// ```
     /// use icu::locale::LanguageIdentifier;
     ///
-    /// LanguageIdentifier::try_from_bytes(b"en-US").expect("Parsing failed");
+    /// LanguageIdentifier::try_from_str("en-US").expect("Parsing failed");
     /// ```
-    pub fn try_from_bytes(v: &[u8]) -> Result<Self, ParserError> {
-        parse_language_identifier(v, ParserMode::LanguageIdentifier)
+    #[inline]
+    pub fn try_from_str(s: &str) -> Result<Self, ParseError> {
+        Self::try_from_utf8(s.as_bytes())
     }
 
-    #[doc(hidden)]
+    /// See [`Self::try_from_str`]
+    pub fn try_from_utf8(code_units: &[u8]) -> Result<Self, ParseError> {
+        parse_language_identifier(code_units, ParserMode::LanguageIdentifier)
+    }
+
+    #[doc(hidden)] // macro use
     #[allow(clippy::type_complexity)]
-    // The return type should be `Result<Self, ParserError>` once the `const_precise_live_drops`
+    // The return type should be `Result<Self, ParseError>` once the `const_precise_live_drops`
     // is stabilized ([rust-lang#73255](https://github.com/rust-lang/rust/issues/73255)).
-    pub const fn try_from_bytes_with_single_variant(
-        v: &[u8],
+    pub const fn try_from_utf8_with_single_variant(
+        code_units: &[u8],
     ) -> Result<
         (
             subtags::Language,
@@ -105,9 +109,9 @@ impl LanguageIdentifier {
             Option<subtags::Region>,
             Option<subtags::Variant>,
         ),
-        ParserError,
+        ParseError,
     > {
-        parse_language_identifier_with_single_variant(v, ParserMode::LanguageIdentifier)
+        parse_language_identifier_with_single_variant(code_units, ParserMode::LanguageIdentifier)
     }
 
     /// A constructor which takes a utf8 slice which may contain extension keys,
@@ -126,7 +130,7 @@ impl LanguageIdentifier {
     ///
     /// This method should be used for input that may be a locale identifier.
     /// All extensions will be lost.
-    pub fn try_from_locale_bytes(v: &[u8]) -> Result<Self, ParserError> {
+    pub fn try_from_locale_bytes(v: &[u8]) -> Result<Self, ParseError> {
         parse_language_identifier(v, ParserMode::Locale)
     }
 
@@ -146,6 +150,14 @@ impl LanguageIdentifier {
         variants: subtags::Variants::new(),
     };
 
+    /// Whether this language identifier equals [`Self::UND`].
+    pub const fn is_empty(&self) -> bool {
+        self.language.is_empty()
+            && self.script.is_none()
+            && self.region.is_none()
+            && self.variants.is_empty()
+    }
+
     /// This is a best-effort operation that performs all available levels of canonicalization.
     ///
     /// At the moment the operation will normalize casing and the separator, but in the future
@@ -161,8 +173,8 @@ impl LanguageIdentifier {
     ///     Ok("pl-Latn-PL")
     /// );
     /// ```
-    pub fn canonicalize<S: AsRef<[u8]>>(input: S) -> Result<String, ParserError> {
-        let lang_id = Self::try_from_bytes(input.as_ref())?;
+    pub fn canonicalize<S: AsRef<[u8]>>(input: S) -> Result<String, ParseError> {
+        let lang_id = Self::try_from_utf8(input.as_ref())?;
         Ok(lang_id.write_to_string().into_owned())
     }
 
@@ -224,61 +236,6 @@ impl LanguageIdentifier {
         self.as_tuple().cmp(&other.as_tuple())
     }
 
-    /// Compare this [`LanguageIdentifier`] with an iterator of BCP-47 subtags.
-    ///
-    /// This function has the same equality semantics as [`LanguageIdentifier::strict_cmp`]. It is intended as
-    /// a more modular version that allows multiple subtag iterators to be chained together.
-    ///
-    /// For an additional example, see [`SubtagOrderingResult`].
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::locale::LanguageIdentifier;
-    /// use std::cmp::Ordering;
-    ///
-    /// let subtags: &[&[u8]] = &[b"ca", b"ES", b"valencia"];
-    ///
-    /// let loc = "ca-ES-valencia".parse::<LanguageIdentifier>().unwrap();
-    /// assert_eq!(
-    ///     Ordering::Equal,
-    ///     loc.strict_cmp_iter(subtags.iter().copied()).end()
-    /// );
-    ///
-    /// let loc = "ca-ES".parse::<LanguageIdentifier>().unwrap();
-    /// assert_eq!(
-    ///     Ordering::Less,
-    ///     loc.strict_cmp_iter(subtags.iter().copied()).end()
-    /// );
-    ///
-    /// let loc = "ca-ZA".parse::<LanguageIdentifier>().unwrap();
-    /// assert_eq!(
-    ///     Ordering::Greater,
-    ///     loc.strict_cmp_iter(subtags.iter().copied()).end()
-    /// );
-    /// ```
-    #[deprecated(since = "1.5.0", note = "if you need this, please file an issue")]
-    #[allow(deprecated)]
-    pub fn strict_cmp_iter<'l, I>(&self, mut subtags: I) -> SubtagOrderingResult<I>
-    where
-        I: Iterator<Item = &'l [u8]>,
-    {
-        let r = self.for_each_subtag_str(&mut |subtag| {
-            if let Some(other) = subtags.next() {
-                match subtag.as_bytes().cmp(other) {
-                    Ordering::Equal => Ok(()),
-                    not_equal => Err(not_equal),
-                }
-            } else {
-                Err(Ordering::Greater)
-            }
-        });
-        match r {
-            Ok(_) => SubtagOrderingResult::Subtags(subtags),
-            Err(o) => SubtagOrderingResult::Ordering(o),
-        }
-    }
-
     /// Compare this `LanguageIdentifier` with a potentially unnormalized BCP-47 string.
     ///
     /// The return value is equivalent to what would happen if you first parsed the
@@ -307,7 +264,7 @@ impl LanguageIdentifier {
             ($T:ty, $iter:ident, $expected:expr) => {
                 $iter
                     .next()
-                    .map(|b| <$T>::try_from_bytes(b) == Ok($expected))
+                    .map(|b| <$T>::try_from_utf8(b) == Ok($expected))
                     .unwrap_or(false)
             };
         }
@@ -358,7 +315,7 @@ impl LanguageIdentifier {
     /// regions. However, this differs from [RFC6497 (BCP 47 Extension T)], which specifies:
     ///
     /// > _The canonical form for all subtags in the extension is lowercase, with the fields
-    /// ordered by the separators, alphabetically._
+    /// > ordered by the separators, alphabetically._
     ///
     /// Hence, this method is used inside [`Transform Extensions`] to be able to get the correct
     /// canonicalization of the language identifier.
@@ -393,7 +350,7 @@ impl LanguageIdentifier {
     /// regions. However, this differs from [RFC6497 (BCP 47 Extension T)], which specifies:
     ///
     /// > _The canonical form for all subtags in the extension is lowercase, with the fields
-    /// ordered by the separators, alphabetically._
+    /// > ordered by the separators, alphabetically._
     ///
     /// Hence, this method is used inside [`Transform Extensions`] to be able to get the correct
     /// canonicalization of the language identifier.
@@ -440,10 +397,11 @@ impl core::fmt::Debug for LanguageIdentifier {
 }
 
 impl FromStr for LanguageIdentifier {
-    type Err = ParserError;
+    type Err = ParseError;
 
-    fn from_str(source: &str) -> Result<Self, Self::Err> {
-        Self::try_from_bytes(source.as_bytes())
+    #[inline]
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Self::try_from_str(s)
     }
 }
 

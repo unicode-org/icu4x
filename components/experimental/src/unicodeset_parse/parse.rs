@@ -688,7 +688,7 @@ where
                         return Err(PEK::UnexpectedChar(end).with_offset(tok_offset));
                     }
 
-                    self.single_set.add_range(&(start..=end));
+                    self.single_set.add_range(start..=end);
                     prev_char = None;
                     state = Begin;
                 }
@@ -1430,9 +1430,9 @@ where
 /// # Limitations
 ///
 /// * Currently, we only support the [ECMA-262 properties](https://tc39.es/ecma262/#table-nonbinary-unicode-properties).
-/// The property names must match the exact spelling listed in ECMA-262. Note that we do support UTS35 syntax for elided `General_Category`
-/// and `Script` property names, i.e., `[:Latn:]` and `[:Ll:]` are both valid, with the former implying the `Script` property, and the latter the
-/// `General_Category` property.
+///   The property names must match the exact spelling listed in ECMA-262. Note that we do support UTS35 syntax for elided `General_Category`
+///   and `Script` property names, i.e., `[:Latn:]` and `[:Ll:]` are both valid, with the former implying the `Script` property, and the latter the
+///   `General_Category` property.
 /// * We do not support `\N{Unicode code point name}` character escaping. Use any other escape method described in UTS35.
 ///
 /// ✨ *Enabled with the `compiled_data` Cargo feature.*
@@ -1449,9 +1449,9 @@ where
 /// let (set, consumed) = parse(source).unwrap();
 /// let code_points = set.code_points();
 ///
-/// assert!(code_points.contains_range(&('a'..='z')));
-/// assert!(code_points.contains_range(&('A'..='Z')));
-/// assert!(code_points.contains_range(&('0'..='9')));
+/// assert!(code_points.contains_range('a'..='z'));
+/// assert!(code_points.contains_range('A'..='Z'));
+/// assert!(code_points.contains_range('0'..='9'));
 /// assert_eq!(consumed, source.len());
 /// ```
 ///
@@ -1461,9 +1461,8 @@ where
 ///
 /// let (set, _) =
 ///     parse("[[:^ll:]-[^][:gc = Lowercase Letter:]&[^[[^]-[a-z]]]]").unwrap();
-/// let elements = 'a'..='z';
-/// assert!(set.code_points().contains_range(&elements));
-/// assert_eq!(elements.count(), set.size());
+/// assert!(set.code_points().contains_range('a'..='z'));
+/// assert_eq!(('a'..='z').count(), set.size());
 /// ```
 ///
 /// Inversions remove strings
@@ -1482,9 +1481,8 @@ where
 /// use icu::experimental::unicodeset_parse::parse;
 ///
 /// let (set, _) = parse("[[ace][bdf] - [abc][def]]").unwrap();
-/// let elements = 'd'..='f';
-/// assert!(set.code_points().contains_range(&elements));
-/// assert_eq!(set.size(), elements.count());
+/// assert!(set.code_points().contains_range('d'..='f'));
+/// assert_eq!(set.size(), ('d'..='f').count());
 /// ```
 ///
 /// Supports partial parses
@@ -1493,11 +1491,9 @@ where
 ///
 /// let (set, consumed) = parse("[a-c][x-z]").unwrap();
 /// let code_points = set.code_points();
-/// let elements = 'a'..='c';
-/// let elements_unparsed = 'x'..='z';
-/// assert!(code_points.contains_range(&elements));
-/// assert!(!code_points.contains_range(&elements_unparsed));
-/// assert_eq!(set.size(), elements.count());
+/// assert!(code_points.contains_range('a'..='c'));
+/// assert!(!code_points.contains_range('x'..='z'));
+/// assert_eq!(set.size(), ('a'..='c').count());
 /// // only the first UnicodeSet is parsed
 /// assert_eq!(consumed, "[a-c]".len());
 /// ```
@@ -1529,7 +1525,7 @@ pub fn parse(source: &str) -> Result<(CodePointInversionListAndStringList<'stati
 /// let source = "[[$start-$end]-$the_set $str]";
 /// let (set, consumed) = parse_with_variables(source, &variable_map).unwrap();
 /// assert_eq!(consumed, source.len());
-/// assert!(set.code_points().contains_range(&('d'..='z')));
+/// assert!(set.code_points().contains_range('d'..='z'));
 /// assert!(set.contains("Hello World"));
 /// assert_eq!(set.size(), 1 + ('d'..='z').count());
 #[cfg(feature = "compiled_data")]

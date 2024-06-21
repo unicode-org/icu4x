@@ -70,18 +70,12 @@ mod helpers;
 mod langid;
 mod locale;
 mod macros;
-mod ordering;
 mod parser;
 mod shortvec;
 
 pub use langid::LanguageIdentifier;
 pub use locale::Locale;
-#[allow(deprecated)]
-pub use ordering::SubtagOrderingResult;
-pub use parser::errors::ParserError;
-
-#[doc(no_inline)]
-pub use ParserError as Error;
+pub use parser::errors::ParseError;
 
 pub mod extensions;
 #[macro_use]

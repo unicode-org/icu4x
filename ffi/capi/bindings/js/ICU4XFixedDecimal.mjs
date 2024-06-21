@@ -1,9 +1,10 @@
 import wasm from "./diplomat-wasm.mjs"
 import * as diplomatRuntime from "./diplomat-runtime.mjs"
-import { ICU4XError_js_to_rust, ICU4XError_rust_to_js } from "./ICU4XError.mjs"
+import { ICU4XFixedDecimalLimitError_js_to_rust, ICU4XFixedDecimalLimitError_rust_to_js } from "./ICU4XFixedDecimalLimitError.mjs"
+import { ICU4XFixedDecimalParseError_js_to_rust, ICU4XFixedDecimalParseError_rust_to_js } from "./ICU4XFixedDecimalParseError.mjs"
+import { ICU4XFixedDecimalRoundingIncrement_js_to_rust, ICU4XFixedDecimalRoundingIncrement_rust_to_js } from "./ICU4XFixedDecimalRoundingIncrement.mjs"
 import { ICU4XFixedDecimalSign_js_to_rust, ICU4XFixedDecimalSign_rust_to_js } from "./ICU4XFixedDecimalSign.mjs"
 import { ICU4XFixedDecimalSignDisplay_js_to_rust, ICU4XFixedDecimalSignDisplay_rust_to_js } from "./ICU4XFixedDecimalSignDisplay.mjs"
-import { ICU4XRoundingIncrement_js_to_rust, ICU4XRoundingIncrement_rust_to_js } from "./ICU4XRoundingIncrement.mjs"
 
 const ICU4XFixedDecimal_box_destroy_registry = new FinalizationRegistry(underlying => {
   wasm.ICU4XFixedDecimal_destroy(underlying);
@@ -45,7 +46,7 @@ export class ICU4XFixedDecimal {
         wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
         return ok_value;
       } else {
-        const throw_value = ICU4XError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
+        const throw_value = ICU4XFixedDecimalLimitError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
         wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
         throw new diplomatRuntime.FFIError(throw_value);
       }
@@ -62,7 +63,7 @@ export class ICU4XFixedDecimal {
         wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
         return ok_value;
       } else {
-        const throw_value = ICU4XError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
+        const throw_value = ICU4XFixedDecimalLimitError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
         wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
         throw new diplomatRuntime.FFIError(throw_value);
       }
@@ -79,7 +80,7 @@ export class ICU4XFixedDecimal {
         wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
         return ok_value;
       } else {
-        const throw_value = ICU4XError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
+        const throw_value = ICU4XFixedDecimalLimitError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
         wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
         throw new diplomatRuntime.FFIError(throw_value);
       }
@@ -96,7 +97,7 @@ export class ICU4XFixedDecimal {
         wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
         return ok_value;
       } else {
-        const throw_value = ICU4XError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
+        const throw_value = ICU4XFixedDecimalLimitError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
         wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
         throw new diplomatRuntime.FFIError(throw_value);
       }
@@ -114,7 +115,7 @@ export class ICU4XFixedDecimal {
         wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
         return ok_value;
       } else {
-        const throw_value = ICU4XError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
+        const throw_value = ICU4XFixedDecimalParseError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
         wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
         throw new diplomatRuntime.FFIError(throw_value);
       }
@@ -188,7 +189,7 @@ export class ICU4XFixedDecimal {
   }
 
   trunc_to_increment(arg_position, arg_increment) {
-    wasm.ICU4XFixedDecimal_trunc_to_increment(this.underlying, arg_position, ICU4XRoundingIncrement_js_to_rust[arg_increment]);
+    wasm.ICU4XFixedDecimal_trunc_to_increment(this.underlying, arg_position, ICU4XFixedDecimalRoundingIncrement_js_to_rust[arg_increment]);
   }
 
   half_trunc(arg_position) {
@@ -196,7 +197,7 @@ export class ICU4XFixedDecimal {
   }
 
   half_trunc_to_increment(arg_position, arg_increment) {
-    wasm.ICU4XFixedDecimal_half_trunc_to_increment(this.underlying, arg_position, ICU4XRoundingIncrement_js_to_rust[arg_increment]);
+    wasm.ICU4XFixedDecimal_half_trunc_to_increment(this.underlying, arg_position, ICU4XFixedDecimalRoundingIncrement_js_to_rust[arg_increment]);
   }
 
   expand(arg_position) {
@@ -204,7 +205,7 @@ export class ICU4XFixedDecimal {
   }
 
   expand_to_increment(arg_position, arg_increment) {
-    wasm.ICU4XFixedDecimal_expand_to_increment(this.underlying, arg_position, ICU4XRoundingIncrement_js_to_rust[arg_increment]);
+    wasm.ICU4XFixedDecimal_expand_to_increment(this.underlying, arg_position, ICU4XFixedDecimalRoundingIncrement_js_to_rust[arg_increment]);
   }
 
   half_expand(arg_position) {
@@ -212,7 +213,7 @@ export class ICU4XFixedDecimal {
   }
 
   half_expand_to_increment(arg_position, arg_increment) {
-    wasm.ICU4XFixedDecimal_half_expand_to_increment(this.underlying, arg_position, ICU4XRoundingIncrement_js_to_rust[arg_increment]);
+    wasm.ICU4XFixedDecimal_half_expand_to_increment(this.underlying, arg_position, ICU4XFixedDecimalRoundingIncrement_js_to_rust[arg_increment]);
   }
 
   ceil(arg_position) {
@@ -220,7 +221,7 @@ export class ICU4XFixedDecimal {
   }
 
   ceil_to_increment(arg_position, arg_increment) {
-    wasm.ICU4XFixedDecimal_ceil_to_increment(this.underlying, arg_position, ICU4XRoundingIncrement_js_to_rust[arg_increment]);
+    wasm.ICU4XFixedDecimal_ceil_to_increment(this.underlying, arg_position, ICU4XFixedDecimalRoundingIncrement_js_to_rust[arg_increment]);
   }
 
   half_ceil(arg_position) {
@@ -228,7 +229,7 @@ export class ICU4XFixedDecimal {
   }
 
   half_ceil_to_increment(arg_position, arg_increment) {
-    wasm.ICU4XFixedDecimal_half_ceil_to_increment(this.underlying, arg_position, ICU4XRoundingIncrement_js_to_rust[arg_increment]);
+    wasm.ICU4XFixedDecimal_half_ceil_to_increment(this.underlying, arg_position, ICU4XFixedDecimalRoundingIncrement_js_to_rust[arg_increment]);
   }
 
   floor(arg_position) {
@@ -236,7 +237,7 @@ export class ICU4XFixedDecimal {
   }
 
   floor_to_increment(arg_position, arg_increment) {
-    wasm.ICU4XFixedDecimal_floor_to_increment(this.underlying, arg_position, ICU4XRoundingIncrement_js_to_rust[arg_increment]);
+    wasm.ICU4XFixedDecimal_floor_to_increment(this.underlying, arg_position, ICU4XFixedDecimalRoundingIncrement_js_to_rust[arg_increment]);
   }
 
   half_floor(arg_position) {
@@ -244,7 +245,7 @@ export class ICU4XFixedDecimal {
   }
 
   half_floor_to_increment(arg_position, arg_increment) {
-    wasm.ICU4XFixedDecimal_half_floor_to_increment(this.underlying, arg_position, ICU4XRoundingIncrement_js_to_rust[arg_increment]);
+    wasm.ICU4XFixedDecimal_half_floor_to_increment(this.underlying, arg_position, ICU4XFixedDecimalRoundingIncrement_js_to_rust[arg_increment]);
   }
 
   half_even(arg_position) {
@@ -252,7 +253,7 @@ export class ICU4XFixedDecimal {
   }
 
   half_even_to_increment(arg_position, arg_increment) {
-    wasm.ICU4XFixedDecimal_half_even_to_increment(this.underlying, arg_position, ICU4XRoundingIncrement_js_to_rust[arg_increment]);
+    wasm.ICU4XFixedDecimal_half_even_to_increment(this.underlying, arg_position, ICU4XFixedDecimalRoundingIncrement_js_to_rust[arg_increment]);
   }
 
   concatenate_end(arg_other) {

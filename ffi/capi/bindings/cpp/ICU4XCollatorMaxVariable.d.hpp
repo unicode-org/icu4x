@@ -8,8 +8,17 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XCollatorMaxVariable.d.h"
 
+
+namespace capi {
+    typedef enum ICU4XCollatorMaxVariable {
+      ICU4XCollatorMaxVariable_Auto = 0,
+      ICU4XCollatorMaxVariable_Space = 1,
+      ICU4XCollatorMaxVariable_Punctuation = 2,
+      ICU4XCollatorMaxVariable_Symbol = 3,
+      ICU4XCollatorMaxVariable_Currency = 4,
+    } ICU4XCollatorMaxVariable;
+}
 
 class ICU4XCollatorMaxVariable {
 public:

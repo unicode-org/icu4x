@@ -11,9 +11,10 @@ use icu_locale_core::locale;
 use litemap::LiteMap;
 use PersonNamesFormatterError::ParseError;
 
-mod baked {
-    pub struct Baked;
+pub struct TestingProvider;
 
+const _: () = {
+    pub use icu_experimental_data::*;
     mod icu {
         pub use icu_collections as collections;
         pub use icu_experimental as experimental;
@@ -21,16 +22,14 @@ mod baked {
         pub use icu_properties as properties;
     }
 
-    icu_experimental_data::make_provider!(Baked);
-    icu_experimental_data::impl_personnames_personnames_v1!(Baked);
-    icu_locale_data::impl_fallback_supplement_co_v1!(Baked);
-    icu_locale_data::impl_fallback_parents_v1!(Baked);
-    icu_locale_data::impl_fallback_likelysubtags_v1!(Baked);
-    icu_properties_data::impl_propnames_to_short_linear4_sc_v1!(Baked);
-    icu_properties_data::impl_props_scx_v1!(Baked);
-}
-
-use baked::Baked as PersonNamesBakedProvider;
+    make_provider!(TestingProvider);
+    impl_person_names_format_v1_marker!(TestingProvider);
+    icu_locale_data::impl_locale_fallback_likely_subtags_v1_marker!(TestingProvider);
+    icu_locale_data::impl_locale_fallback_parents_v1_marker!(TestingProvider);
+    icu_locale_data::impl_collation_fallback_supplement_v1_marker!(TestingProvider);
+    icu_properties_data::impl_script_value_to_short_name_v1_marker!(TestingProvider);
+    icu_properties_data::impl_script_with_extensions_property_v1_marker!(TestingProvider);
+};
 
 #[test]
 fn test_field_modifier_person_name_structure() -> Result<(), PersonNamesFormatterError> {
@@ -155,7 +154,7 @@ fn test_formatter() -> Result<(), PersonNamesFormatterError> {
     let person_name = DefaultPersonName::new(person_data, Some(locale!("es")), None)?;
 
     let formatter = PersonNamesFormatter::try_new_unstable(
-        &PersonNamesBakedProvider,
+        &TestingProvider,
         PersonNamesFormatterOptions::new(
             locale!("es"),
             FormattingOrder::Sorting,
@@ -165,7 +164,7 @@ fn test_formatter() -> Result<(), PersonNamesFormatterError> {
         ),
     )
     .map_err(|err| ParseError(err.to_string()))?;
-    let value = formatter.format_to_string(&PersonNamesBakedProvider, &person_name)?;
+    let value = formatter.format_to_string(&TestingProvider, &person_name)?;
     assert_eq!(&value, "Wells, H. G.");
     Ok(())
 }
@@ -198,7 +197,7 @@ fn test_formatter_switch_language_from_ja_to_es() -> Result<(), PersonNamesForma
     let person_name = DefaultPersonName::new(person_data, Some(locale!("es")), None)?;
 
     let formatter = PersonNamesFormatter::try_new_unstable(
-        &PersonNamesBakedProvider,
+        &TestingProvider,
         PersonNamesFormatterOptions::new(
             locale!("ja"),
             FormattingOrder::Sorting,
@@ -208,7 +207,7 @@ fn test_formatter_switch_language_from_ja_to_es() -> Result<(), PersonNamesForma
         ),
     )
     .map_err(|err| ParseError(err.to_string()))?;
-    let value = formatter.format_to_string(&PersonNamesBakedProvider, &person_name)?;
+    let value = formatter.format_to_string(&TestingProvider, &person_name)?;
     // Since script are different, formatting should prioritise the name locale (es) over
     // formatting locale (ja).
     assert_eq!(&value, "Wells, H. G.");
@@ -240,7 +239,7 @@ fn test_space_replacement_spec_formatting_locale_ja() -> Result<(), PersonNamesF
     )?;
 
     let formatter = PersonNamesFormatter::try_new_unstable(
-        &PersonNamesBakedProvider,
+        &TestingProvider,
         PersonNamesFormatterOptions::new(
             locale!("ja_JP"),
             FormattingOrder::GivenFirst,
@@ -250,7 +249,7 @@ fn test_space_replacement_spec_formatting_locale_ja() -> Result<(), PersonNamesF
         ),
     )
     .map_err(|err| ParseError(err.to_string()))?;
-    let value = formatter.format_to_string(&PersonNamesBakedProvider, &person_name)?;
+    let value = formatter.format_to_string(&TestingProvider, &person_name)?;
     // ja formatting for sorting-short-referring-formal is {surname} {given}
     // since there's no given, only surname is displayed. the space is then trimmed.
     assert_eq!(&value, "Albert Einstein");
@@ -283,7 +282,7 @@ fn test_space_replacement_spec_formatting_locale_ja_jpan_script(
     )?;
 
     let formatter = PersonNamesFormatter::try_new_unstable(
-        &PersonNamesBakedProvider,
+        &TestingProvider,
         PersonNamesFormatterOptions::new(
             locale!("ja_JP"),
             FormattingOrder::GivenFirst,
@@ -293,7 +292,7 @@ fn test_space_replacement_spec_formatting_locale_ja_jpan_script(
         ),
     )
     .map_err(|err| ParseError(err.to_string()))?;
-    let value = formatter.format_to_string(&PersonNamesBakedProvider, &person_name)?;
+    let value = formatter.format_to_string(&TestingProvider, &person_name)?;
     // ja formatting for sorting-short-referring-formal is {surname} {given}
     // since there's no given, only surname is displayed. the space is then trimmed.
     assert_eq!(&value, "アルベルト・アインシュタイン");
@@ -326,7 +325,7 @@ fn test_space_replacement_spec_formatting_locale_ja_compatible(
     )?;
 
     let formatter = PersonNamesFormatter::try_new_unstable(
-        &PersonNamesBakedProvider,
+        &TestingProvider,
         PersonNamesFormatterOptions::new(
             locale!("ja_JP"),
             FormattingOrder::GivenFirst,
@@ -336,7 +335,7 @@ fn test_space_replacement_spec_formatting_locale_ja_compatible(
         ),
     )
     .map_err(|err| ParseError(err.to_string()))?;
-    let value = formatter.format_to_string(&PersonNamesBakedProvider, &person_name)?;
+    let value = formatter.format_to_string(&TestingProvider, &person_name)?;
     // ja formatting for sorting-short-referring-formal is {surname} {given}
     // since there's no given, only surname is displayed. the space is then trimmed.
     assert_eq!(&value, "宮崎駿");
@@ -369,7 +368,7 @@ fn test_space_replacement_spec_formatting_locale_de_compatible(
     )?;
 
     let formatter = PersonNamesFormatter::try_new_unstable(
-        &PersonNamesBakedProvider,
+        &TestingProvider,
         PersonNamesFormatterOptions::new(
             locale!("de_CH"),
             FormattingOrder::GivenFirst,
@@ -379,7 +378,7 @@ fn test_space_replacement_spec_formatting_locale_de_compatible(
         ),
     )
     .map_err(|err| ParseError(err.to_string()))?;
-    let value = formatter.format_to_string(&PersonNamesBakedProvider, &person_name)?;
+    let value = formatter.format_to_string(&TestingProvider, &person_name)?;
     // ja formatting for sorting-short-referring-formal is {surname} {given}
     // since there's no given, only surname is displayed. the space is then trimmed.
     assert_eq!(&value, "Albert Einstein");
@@ -412,7 +411,7 @@ fn test_space_replacement_spec_formatting_locale_de_jpan_script(
     )?;
 
     let formatter = PersonNamesFormatter::try_new_unstable(
-        &PersonNamesBakedProvider,
+        &TestingProvider,
         PersonNamesFormatterOptions::new(
             locale!("de_CH"),
             FormattingOrder::GivenFirst,
@@ -422,7 +421,7 @@ fn test_space_replacement_spec_formatting_locale_de_jpan_script(
         ),
     )
     .map_err(|err| ParseError(err.to_string()))?;
-    let value = formatter.format_to_string(&PersonNamesBakedProvider, &person_name)?;
+    let value = formatter.format_to_string(&TestingProvider, &person_name)?;
     // TODO: Double check specs
     // Specs example says that it should contain the dot,
     // Following specs, the name locale should be use if provided, in this case, "de".
@@ -457,7 +456,7 @@ fn test_space_replacement_spec_formatting_locale_und_latn_jp(
     )?;
 
     let formatter = PersonNamesFormatter::try_new_unstable(
-        &PersonNamesBakedProvider,
+        &TestingProvider,
         PersonNamesFormatterOptions::new(
             locale!("de_CH"),
             FormattingOrder::GivenFirst,
@@ -467,7 +466,7 @@ fn test_space_replacement_spec_formatting_locale_und_latn_jp(
         ),
     )
     .map_err(|err| ParseError(err.to_string()))?;
-    let value = formatter.format_to_string(&PersonNamesBakedProvider, &person_name)?;
+    let value = formatter.format_to_string(&TestingProvider, &person_name)?;
     // ja formatting for sorting-short-referring-formal is {surname} {given}
     // since there's no given, only surname is displayed. the space is then trimmed.
     assert_eq!(&value, "Hayao Miyazaki");

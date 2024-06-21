@@ -10,14 +10,25 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
+#include "ICU4XDataError.hpp"
 #include "ICU4XDataProvider.hpp"
-#include "ICU4XError.hpp"
-#include "ICU4XMetazoneCalculator.h"
 
 
-inline diplomat::result<std::unique_ptr<ICU4XMetazoneCalculator>, ICU4XError> ICU4XMetazoneCalculator::create(const ICU4XDataProvider& provider) {
+namespace capi {
+    extern "C" {
+    
+    typedef struct ICU4XMetazoneCalculator_create_result {union {ICU4XMetazoneCalculator* ok; ICU4XDataError err;}; bool is_ok;} ICU4XMetazoneCalculator_create_result;
+    ICU4XMetazoneCalculator_create_result ICU4XMetazoneCalculator_create(const ICU4XDataProvider* provider);
+    
+    
+    void ICU4XMetazoneCalculator_destroy(ICU4XMetazoneCalculator* self);
+    
+    } // extern "C"
+}
+
+inline diplomat::result<std::unique_ptr<ICU4XMetazoneCalculator>, ICU4XDataError> ICU4XMetazoneCalculator::create(const ICU4XDataProvider& provider) {
   auto result = capi::ICU4XMetazoneCalculator_create(provider.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XMetazoneCalculator>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XMetazoneCalculator>>(std::unique_ptr<ICU4XMetazoneCalculator>(ICU4XMetazoneCalculator::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XMetazoneCalculator>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XMetazoneCalculator>, ICU4XDataError>(diplomat::Ok<std::unique_ptr<ICU4XMetazoneCalculator>>(std::unique_ptr<ICU4XMetazoneCalculator>(ICU4XMetazoneCalculator::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XMetazoneCalculator>, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
 
 inline const capi::ICU4XMetazoneCalculator* ICU4XMetazoneCalculator::AsFFI() const {

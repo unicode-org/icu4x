@@ -24,16 +24,16 @@ final class CustomTimeZone implements ffi.Finalizable {
 
   /// Creates a time zone from an offset string.
   ///
-  /// See the [Rust documentation for `from_str`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#method.from_str) for more information.
+  /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#method.try_from_str) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [TimeZoneInvalidOffsetError] on failure.
   factory CustomTimeZone.fromString(String s) {
     final temp = ffi2.Arena();
     final sView = s.utf8View;
     final result = _ICU4XCustomTimeZone_create_from_string(sView.allocIn(temp), sView.length);
     temp.releaseAll();
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw TimeZoneInvalidOffsetError.values[result.union.err];
     }
     return CustomTimeZone._fromFfi(result.union.ok, []);
   }
@@ -54,6 +54,22 @@ final class CustomTimeZone implements ffi.Finalizable {
     return CustomTimeZone._fromFfi(result, []);
   }
 
+  /// Creates a time zone for GMT (London winter time).
+  ///
+  /// See the [Rust documentation for `gmt`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#method.gmt) for more information.
+  factory CustomTimeZone.gmt() {
+    final result = _ICU4XCustomTimeZone_create_gmt();
+    return CustomTimeZone._fromFfi(result, []);
+  }
+
+  /// Creates a time zone for BST (London summer time).
+  ///
+  /// See the [Rust documentation for `bst`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#method.bst) for more information.
+  factory CustomTimeZone.bst() {
+    final result = _ICU4XCustomTimeZone_create_bst();
+    return CustomTimeZone._fromFfi(result, []);
+  }
+
   /// Sets the `gmt_offset` field from offset seconds.
   ///
   /// Errors if the offset seconds are out of range.
@@ -62,11 +78,11 @@ final class CustomTimeZone implements ffi.Finalizable {
   ///
   /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html)
   ///
-  /// Throws [Error] on failure.
+  /// Throws [TimeZoneInvalidOffsetError] on failure.
   void trySetGmtOffsetSeconds(int offsetSeconds) {
     final result = _ICU4XCustomTimeZone_try_set_gmt_offset_seconds(_ffi, offsetSeconds);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw TimeZoneInvalidOffsetError.values[result.union.err];
     }
     
   }
@@ -155,14 +171,14 @@ final class CustomTimeZone implements ffi.Finalizable {
   ///
   /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneBcp47Id.html)
   ///
-  /// Throws [Error] on failure.
+  /// Throws [TimeZoneInvalidIdError] on failure.
   void trySetTimeZoneId(String id) {
     final temp = ffi2.Arena();
     final idView = id.utf8View;
     final result = _ICU4XCustomTimeZone_try_set_time_zone_id(_ffi, idView.allocIn(temp), idView.length);
     temp.releaseAll();
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw TimeZoneInvalidIdError.values[result.union.err];
     }
     
   }
@@ -172,33 +188,14 @@ final class CustomTimeZone implements ffi.Finalizable {
   ///
   /// Errors if the string is not a valid BCP-47 time zone ID.
   ///
-  /// See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/timezone/struct.IanaToBcp47MapperBorrowed.html#method.get) for more information.
-  ///
-  /// Throws [Error] on failure.
-  void trySetIanaTimeZoneId(IanaToBcp47Mapper mapper, String id) {
+  /// Throws [TimeZoneInvalidIdError] on failure.
+  void trySetIanaTimeZoneId(TimeZoneIdMapper mapper, String id) {
     final temp = ffi2.Arena();
     final idView = id.utf8View;
     final result = _ICU4XCustomTimeZone_try_set_iana_time_zone_id(_ffi, mapper._ffi, idView.allocIn(temp), idView.length);
     temp.releaseAll();
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
-    }
-    
-  }
-
-  /// Sets the `time_zone_id` field from an IANA string by looking up
-  /// the corresponding BCP-47 string.
-  ///
-  /// Errors if the string is not a valid BCP-47 time zone ID.
-  ///
-  /// Throws [Error] on failure.
-  void trySetIanaTimeZoneId2(TimeZoneIdMapper mapper, String id) {
-    final temp = ffi2.Arena();
-    final idView = id.utf8View;
-    final result = _ICU4XCustomTimeZone_try_set_iana_time_zone_id_2(_ffi, mapper._ffi, idView.allocIn(temp), idView.length);
-    temp.releaseAll();
-    if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw TimeZoneInvalidIdError.values[result.union.err];
     }
     
   }
@@ -236,14 +233,14 @@ final class CustomTimeZone implements ffi.Finalizable {
   ///
   /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.MetazoneId.html)
   ///
-  /// Throws [Error] on failure.
+  /// Throws [TimeZoneInvalidIdError] on failure.
   void trySetMetazoneId(String id) {
     final temp = ffi2.Arena();
     final idView = id.utf8View;
     final result = _ICU4XCustomTimeZone_try_set_metazone_id(_ffi, idView.allocIn(temp), idView.length);
     temp.releaseAll();
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw TimeZoneInvalidIdError.values[result.union.err];
     }
     
   }
@@ -393,6 +390,16 @@ external ffi.Pointer<ffi.Opaque> _ICU4XCustomTimeZone_create_empty();
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _ICU4XCustomTimeZone_create_utc();
 
+@meta.ResourceIdentifier('ICU4XCustomTimeZone_create_gmt')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'ICU4XCustomTimeZone_create_gmt')
+// ignore: non_constant_identifier_names
+external ffi.Pointer<ffi.Opaque> _ICU4XCustomTimeZone_create_gmt();
+
+@meta.ResourceIdentifier('ICU4XCustomTimeZone_create_bst')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'ICU4XCustomTimeZone_create_bst')
+// ignore: non_constant_identifier_names
+external ffi.Pointer<ffi.Opaque> _ICU4XCustomTimeZone_create_bst();
+
 @meta.ResourceIdentifier('ICU4XCustomTimeZone_try_set_gmt_offset_seconds')
 @ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Int32)>(isLeaf: true, symbol: 'ICU4XCustomTimeZone_try_set_gmt_offset_seconds')
 // ignore: non_constant_identifier_names
@@ -437,11 +444,6 @@ external _ResultVoidInt32 _ICU4XCustomTimeZone_try_set_time_zone_id(ffi.Pointer<
 @ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XCustomTimeZone_try_set_iana_time_zone_id')
 // ignore: non_constant_identifier_names
 external _ResultVoidInt32 _ICU4XCustomTimeZone_try_set_iana_time_zone_id(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> mapper, ffi.Pointer<ffi.Uint8> idData, int idLength);
-
-@meta.ResourceIdentifier('ICU4XCustomTimeZone_try_set_iana_time_zone_id_2')
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XCustomTimeZone_try_set_iana_time_zone_id_2')
-// ignore: non_constant_identifier_names
-external _ResultVoidInt32 _ICU4XCustomTimeZone_try_set_iana_time_zone_id_2(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> mapper, ffi.Pointer<ffi.Uint8> idData, int idLength);
 
 @meta.ResourceIdentifier('ICU4XCustomTimeZone_clear_time_zone_id')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCustomTimeZone_clear_time_zone_id')

@@ -11,7 +11,9 @@ use icu_locale_core::subtags::Variants;
 use icu_provider::prelude::*;
 
 #[doc(inline)]
-pub use icu_provider::fallback::*;
+pub use icu_provider::_internal::{
+    LocaleFallbackConfig, LocaleFallbackPriority, LocaleFallbackSupplement,
+};
 
 mod algorithms;
 
@@ -55,7 +57,7 @@ mod algorithms;
 /// [UTS #35: Locale Inheritance and Matching]: https://www.unicode.org/reports/tr35/#Locale_Inheritance
 /// [the design doc]: https://docs.google.com/document/d/1Mp7EUyl-sFh_HZYgyeVwj88vJGpCBIWxzlCwGgLCDwM/edit
 /// [language identifier]: icu::locale::LanguageIdentifier
-#[doc(hidden)]
+#[doc(hidden)] // canonical location in super
 #[derive(Debug, Clone, PartialEq)]
 pub struct LocaleFallbacker {
     likely_subtags: DataPayload<LocaleFallbackLikelySubtagsV1Marker>,
@@ -113,9 +115,12 @@ impl LocaleFallbacker {
     #[allow(clippy::new_ret_no_self)] // keeping constructors together
     pub const fn new<'a>() -> LocaleFallbackerBorrowed<'a> {
         let tickstatic = LocaleFallbackerBorrowed {
-            likely_subtags: crate::provider::Baked::SINGLETON_FALLBACK_LIKELYSUBTAGS_V1,
-            parents: crate::provider::Baked::SINGLETON_FALLBACK_PARENTS_V1,
-            collation_supplement: Some(crate::provider::Baked::SINGLETON_FALLBACK_SUPPLEMENT_CO_V1),
+            likely_subtags:
+                crate::provider::Baked::SINGLETON_LOCALE_FALLBACK_LIKELY_SUBTAGS_V1_MARKER,
+            parents: crate::provider::Baked::SINGLETON_LOCALE_FALLBACK_PARENTS_V1_MARKER,
+            collation_supplement: Some(
+                crate::provider::Baked::SINGLETON_COLLATION_FALLBACK_SUPPLEMENT_V1_MARKER,
+            ),
         };
         // Safety: we're transmuting down from LocaleFallbackerBorrowed<'static> to LocaleFallbackerBorrowed<'a>
         // ZeroMaps use associated types in a way that confuse the compiler which gives up and marks them
@@ -125,10 +130,9 @@ impl LocaleFallbacker {
         unsafe { core::mem::transmute(tickstatic) }
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: DataError,
-        #[cfg(skip)]
+    icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,
         functions: [
-            new,
+            new: skip,
             try_new_with_any_provider,
             try_new_with_buffer_provider,
             try_new_unstable,
@@ -143,16 +147,16 @@ impl LocaleFallbacker {
             + DataProvider<CollationFallbackSupplementV1Marker>
             + ?Sized,
     {
-        let likely_subtags = provider.load(Default::default())?.take_payload()?;
-        let parents = provider.load(Default::default())?.take_payload()?;
+        let likely_subtags = provider.load(Default::default())?.payload;
+        let parents = provider.load(Default::default())?.payload;
         let collation_supplement = match DataProvider::<CollationFallbackSupplementV1Marker>::load(
             provider,
             Default::default(),
         ) {
-            Ok(response) => Some(response.take_payload()?),
+            Ok(response) => Some(response.payload),
             // It is expected that not all keys are present
             Err(DataError {
-                kind: DataErrorKind::MissingDataKey,
+                kind: DataErrorKind::MissingDataMarker,
                 ..
             }) => None,
             Err(e) => return Err(e),
@@ -178,14 +182,6 @@ impl LocaleFallbacker {
     #[inline]
     pub fn for_config(&self, config: LocaleFallbackConfig) -> LocaleFallbackerWithConfig {
         self.as_borrowed().for_config(config)
-    }
-
-    /// Derives a configuration from a [`DataKey`] and associates it
-    /// with this fallbacker.
-    #[inline]
-    #[doc(hidden)] // will be removed in 2.0
-    pub fn for_key(&self, data_key: DataKey) -> LocaleFallbackerWithConfig {
-        self.for_config(data_key.fallback_config())
     }
 
     /// Creates a borrowed version of this fallbacker for performance.

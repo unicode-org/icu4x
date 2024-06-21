@@ -8,8 +8,11 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XSentenceBreakIteratorUtf8.d.h"
 
+
+namespace capi {
+    typedef struct ICU4XSentenceBreakIteratorUtf8 ICU4XSentenceBreakIteratorUtf8;
+}
 
 class ICU4XSentenceBreakIteratorUtf8 {
 public:

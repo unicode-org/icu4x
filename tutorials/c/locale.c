@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#include "ICU4XDataProvider.h"
+#include "ICU4XLocale.h"
 #include "ICU4XLocaleCanonicalizer.h"
 #include "ICU4XLocaleExpander.h"
 #include "ICU4XLogger.h"
@@ -29,7 +31,7 @@ bool test_locale(ICU4XLocale* locale, const char* message, const char* expected)
 }
 
 ICU4XLocale* get_locale(const char* localeText) {
-    diplomat_result_box_ICU4XLocale_ICU4XError locale_result = ICU4XLocale_create_from_string(localeText, strlen(localeText));
+    ICU4XLocale_create_from_string_result locale_result = ICU4XLocale_create_from_string(localeText, strlen(localeText));
     if (!locale_result.is_ok) {
         printf("Could not create locale from: %s", localeText);
     }
@@ -41,9 +43,7 @@ int main() {
     ICU4XLogger_init_simple_logger();
     char output[40];
 
-    diplomat_result_void_void void_option;
-    diplomat_result_box_ICU4XLocale_ICU4XError locale_result;
-    diplomat_result_void_ICU4XError void_result;
+    ICU4XLocale_create_from_string_result locale_result;
 
     // Test creating a locale.
     DiplomatWrite write = diplomat_simple_write(output, 40);
@@ -95,8 +95,8 @@ int main() {
     }
 
     write = diplomat_simple_write(output, 40);
-    void_option = ICU4XLocale_get_unicode_extension(locale, "hc", 2, &write);
-    if (!void_option.is_ok || write.grow_failed) {
+    ICU4XLocale_get_unicode_extension_result e_result = ICU4XLocale_get_unicode_extension(locale, "hc", 2, &write);
+    if (!e_result.is_ok || write.grow_failed) {
         return 1;
     }
     printf("Output for the extension is %s\n", output);
@@ -107,8 +107,8 @@ int main() {
     }
 
     write = diplomat_simple_write(output, 40);
-    void_option = ICU4XLocale_get_unicode_extension(locale, "ca", 2, &write);
-    if (void_option.is_ok || write.grow_failed) {
+    e_result = ICU4XLocale_get_unicode_extension(locale, "ca", 2, &write);
+    if (e_result.is_ok || write.grow_failed) {
         return 1;
     }
 
@@ -122,8 +122,8 @@ int main() {
     }
     locale = locale_result.ok;
     str = "zh";
-    void_result = ICU4XLocale_set_language(locale, str, strlen(str));
-    if (!void_result.is_ok) {
+    ICU4XLocale_set_language_result l_result = ICU4XLocale_set_language(locale, str, strlen(str));
+    if (!l_result.is_ok) {
         printf("Could not set the language tag.");
         return 1;
     }
@@ -145,8 +145,8 @@ int main() {
         return 1;
     }
     str = "MX";
-    void_result = ICU4XLocale_set_region(locale, str, strlen(str));
-    if (!void_result.is_ok) {
+    ICU4XLocale_set_region_result r_result = ICU4XLocale_set_region(locale, str, strlen(str));
+    if (!r_result.is_ok) {
         printf("Could not set the region.");
         return 1;
     }
@@ -168,16 +168,16 @@ int main() {
         return 1;
     }
     str = "Latn";
-    void_result = ICU4XLocale_set_script(locale, str, strlen(str));
-    if (!void_result.is_ok) {
+    ICU4XLocale_set_script_result s_result = ICU4XLocale_set_script(locale, str, strlen(str));
+    if (!s_result.is_ok) {
         printf("Could not set the script.");
         return 1;
     }
     if (!test_locale(locale, "setting the script", "en-Latn-US")) {
         return 1;
     }
-    void_result = ICU4XLocale_set_script(locale, "", 0);
-    if (!void_result.is_ok) {
+    s_result = ICU4XLocale_set_script(locale, "", 0);
+    if (!s_result.is_ok) {
         printf("Could not set the script.");
         return 1;
     }
@@ -189,13 +189,13 @@ int main() {
 
     // Create a LocaleCanonicalizer and LocaleExpander.
     ICU4XDataProvider* provider = ICU4XDataProvider_create_compiled();
-    diplomat_result_box_ICU4XLocaleCanonicalizer_ICU4XError result2 = ICU4XLocaleCanonicalizer_create(provider);
+    ICU4XLocaleCanonicalizer_create_result result2 = ICU4XLocaleCanonicalizer_create(provider);
     if (!result2.is_ok) {
         printf("Could not construct Locale Canonicalizer");
         return 1;
     }
     ICU4XLocaleCanonicalizer* lc = result2.ok;
-    diplomat_result_box_ICU4XLocaleExpander_ICU4XError result3 = ICU4XLocaleExpander_create(provider);
+    ICU4XLocaleExpander_create_result result3 = ICU4XLocaleExpander_create(provider);
     if (!result3.is_ok) {
         printf("Could not construct Locale Canonicalizer");
         return 1;

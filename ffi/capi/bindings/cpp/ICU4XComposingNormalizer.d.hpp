@@ -8,19 +8,22 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XComposingNormalizer.d.h"
-#include "ICU4XError.d.hpp"
+#include "ICU4XDataError.d.hpp"
 
 class ICU4XDataProvider;
-class ICU4XError;
+class ICU4XDataError;
 
+
+namespace capi {
+    typedef struct ICU4XComposingNormalizer ICU4XComposingNormalizer;
+}
 
 class ICU4XComposingNormalizer {
 public:
 
-  inline static diplomat::result<std::unique_ptr<ICU4XComposingNormalizer>, ICU4XError> create_nfc(const ICU4XDataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<ICU4XComposingNormalizer>, ICU4XDataError> create_nfc(const ICU4XDataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<ICU4XComposingNormalizer>, ICU4XError> create_nfkc(const ICU4XDataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<ICU4XComposingNormalizer>, ICU4XDataError> create_nfkc(const ICU4XDataProvider& provider);
 
   inline std::string normalize(std::string_view s) const;
 

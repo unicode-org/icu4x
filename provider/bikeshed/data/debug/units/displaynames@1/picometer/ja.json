@@ -1,0 +1,11 @@
+{
+  "long": {
+    "Other": "{0} ピコメートル"
+  },
+  "short": {
+    "Other": "{0} pm"
+  },
+  "narrow": {
+    "Other": "{0}pm"
+  }
+}

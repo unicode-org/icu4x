@@ -109,6 +109,11 @@ impl Variants {
         core::mem::take(self)
     }
 
+    /// Whether the list of variants is empty.
+    pub const fn is_empty(&self) -> bool {
+        self.0.is_empty()
+    }
+
     pub(crate) fn for_each_subtag_str<E, F>(&self, f: &mut F) -> Result<(), E>
     where
         F: FnMut(&str) -> Result<(), E>,

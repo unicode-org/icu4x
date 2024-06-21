@@ -9,12 +9,12 @@ import 'dart:typed_data';
 import 'package:ffi/ffi.dart' as ffi2 show Arena, calloc;
 import 'package:meta/meta.dart' as meta;
 part 'AnyCalendarKind.g.dart';
-part 'Bcp47ToIanaMapper.g.dart';
 part 'Bidi.g.dart';
 part 'BidiDirection.g.dart';
 part 'BidiInfo.g.dart';
 part 'BidiParagraph.g.dart';
 part 'Calendar.g.dart';
+part 'CalendarError.g.dart';
 part 'CanonicalCombiningClassMap.g.dart';
 part 'CanonicalComposition.g.dart';
 part 'CanonicalDecomposition.g.dart';
@@ -37,6 +37,7 @@ part 'CollatorOptions.g.dart';
 part 'CollatorStrength.g.dart';
 part 'ComposingNormalizer.g.dart';
 part 'CustomTimeZone.g.dart';
+part 'DataError.g.dart';
 part 'DataProvider.g.dart';
 part 'Date.g.dart';
 part 'DateFormatter.g.dart';
@@ -52,6 +53,9 @@ part 'Error.g.dart';
 part 'FixedDecimal.g.dart';
 part 'FixedDecimalFormatter.g.dart';
 part 'FixedDecimalGroupingStrategy.g.dart';
+part 'FixedDecimalLimitError.g.dart';
+part 'FixedDecimalParseError.g.dart';
+part 'FixedDecimalRoundingIncrement.g.dart';
 part 'FixedDecimalSign.g.dart';
 part 'FixedDecimalSignDisplay.g.dart';
 part 'GeneralCategoryNameToMaskMapper.g.dart';
@@ -62,7 +66,6 @@ part 'GraphemeClusterSegmenter.g.dart';
 part 'GregorianDateFormatter.g.dart';
 part 'GregorianDateTimeFormatter.g.dart';
 part 'GregorianZonedDateTimeFormatter.g.dart';
-part 'IanaToBcp47Mapper.g.dart';
 part 'IsoDate.g.dart';
 part 'IsoDateTime.g.dart';
 part 'IsoTimeZoneFormat.g.dart';
@@ -93,6 +96,7 @@ part 'LocaleFallbackPriority.g.dart';
 part 'LocaleFallbackSupplement.g.dart';
 part 'LocaleFallbacker.g.dart';
 part 'LocaleFallbackerWithConfig.g.dart';
+part 'LocaleParseError.g.dart';
 part 'Logger.g.dart';
 part 'MeasureUnit.g.dart';
 part 'MeasureUnitParser.g.dart';
@@ -105,7 +109,6 @@ part 'PropertyValueNameToEnumMapper.g.dart';
 part 'RegionDisplayNames.g.dart';
 part 'ReorderedIndexMap.g.dart';
 part 'ResolvedCollatorOptions.g.dart';
-part 'RoundingIncrement.g.dart';
 part 'ScriptExtensionsSet.g.dart';
 part 'ScriptWithExtensions.g.dart';
 part 'ScriptWithExtensionsBorrowed.g.dart';
@@ -120,6 +123,8 @@ part 'TimeLength.g.dart';
 part 'TimeZoneFormatter.g.dart';
 part 'TimeZoneIdMapper.g.dart';
 part 'TimeZoneIdMapperWithFastCanonicalization.g.dart';
+part 'TimeZoneInvalidIdError.g.dart';
+part 'TimeZoneInvalidOffsetError.g.dart';
 part 'TitlecaseMapper.g.dart';
 part 'TitlecaseOptions.g.dart';
 part 'TrailingCase.g.dart';
@@ -594,20 +599,6 @@ final class _ResultVoidInt32 extends ffi.Struct {
 
 final class _ResultVoidVoid extends ffi.Struct {
   
-
-  @ffi.Bool()
-  external bool isOk;
-}
-
-final class _ResultWeekOfFfiInt32Union extends ffi.Union {
-  external _WeekOfFfi ok;
-
-  @ffi.Int32()
-  external int err;
-}
-
-final class _ResultWeekOfFfiInt32 extends ffi.Struct {
-  external _ResultWeekOfFfiInt32Union union;
 
   @ffi.Bool()
   external bool isOk;

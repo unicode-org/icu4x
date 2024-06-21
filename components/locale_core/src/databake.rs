@@ -16,7 +16,7 @@ impl Bake for LanguageIdentifier {
             }
         } else {
             quote! {
-                icu_locale_core::LanguageIdentifier::from_str(#repr).unwrap()
+                icu_locale_core::LanguageIdentifier::try_from_str(#repr).unwrap()
             }
         }
     }

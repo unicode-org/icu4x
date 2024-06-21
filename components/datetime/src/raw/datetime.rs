@@ -64,7 +64,7 @@ impl TimeFormatter {
                         locale,
                         ..Default::default()
                     })?
-                    .take_payload()?,
+                    .payload,
             )
         } else {
             None
@@ -105,7 +105,7 @@ impl TimeFormatter {
                         locale,
                         ..Default::default()
                     })?
-                    .take_payload()?,
+                    .payload,
             )
         } else {
             None
@@ -247,7 +247,7 @@ impl DateFormatter {
                         ..Default::default()
                     },
                 )?
-                .take_payload()?
+                .payload
                 .get())
                 .into(),
             )
@@ -410,7 +410,7 @@ impl DateTimeFormatter {
         };
 
         let time_symbols_data = if required.time_symbols_data {
-            Some(crate::provider::Baked.load(req)?.take_payload()?)
+            Some(crate::provider::Baked.load(req)?.payload)
         } else {
             None
         };
@@ -463,7 +463,7 @@ impl DateTimeFormatter {
                         ..Default::default()
                     },
                 )?
-                .take_payload()?
+                .payload
                 .get())
                 .into(),
             )
@@ -484,7 +484,7 @@ impl DateTimeFormatter {
         };
 
         let time_symbols_data = if required.time_symbols_data {
-            Some(provider.load(req)?.take_payload()?)
+            Some(provider.load(req)?.payload)
         } else {
             None
         };

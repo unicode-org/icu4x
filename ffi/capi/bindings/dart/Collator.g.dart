@@ -26,13 +26,13 @@ final class Collator implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.try_new) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   factory Collator(DataProvider provider, Locale locale, CollatorOptions options) {
     final temp = ffi2.Arena();
     final result = _ICU4XCollator_create_v1(provider._ffi, locale._ffi, options._toFfi(temp));
     temp.releaseAll();
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     return Collator._fromFfi(result.union.ok, []);
   }

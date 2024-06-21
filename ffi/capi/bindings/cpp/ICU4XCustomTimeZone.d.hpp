@@ -8,26 +8,34 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XCustomTimeZone.d.h"
-#include "ICU4XError.d.hpp"
+#include "ICU4XTimeZoneInvalidIdError.d.hpp"
+#include "ICU4XTimeZoneInvalidOffsetError.d.hpp"
 
-class ICU4XIanaToBcp47Mapper;
 class ICU4XIsoDateTime;
 class ICU4XMetazoneCalculator;
 class ICU4XTimeZoneIdMapper;
-class ICU4XError;
+class ICU4XTimeZoneInvalidIdError;
+class ICU4XTimeZoneInvalidOffsetError;
 
+
+namespace capi {
+    typedef struct ICU4XCustomTimeZone ICU4XCustomTimeZone;
+}
 
 class ICU4XCustomTimeZone {
 public:
 
-  inline static diplomat::result<std::unique_ptr<ICU4XCustomTimeZone>, ICU4XError> create_from_string(std::string_view s);
+  inline static diplomat::result<std::unique_ptr<ICU4XCustomTimeZone>, ICU4XTimeZoneInvalidOffsetError> create_from_string(std::string_view s);
 
   inline static std::unique_ptr<ICU4XCustomTimeZone> create_empty();
 
   inline static std::unique_ptr<ICU4XCustomTimeZone> create_utc();
 
-  inline diplomat::result<std::monostate, ICU4XError> try_set_gmt_offset_seconds(int32_t offset_seconds);
+  inline static std::unique_ptr<ICU4XCustomTimeZone> create_gmt();
+
+  inline static std::unique_ptr<ICU4XCustomTimeZone> create_bst();
+
+  inline diplomat::result<std::monostate, ICU4XTimeZoneInvalidOffsetError> try_set_gmt_offset_seconds(int32_t offset_seconds);
 
   inline void clear_gmt_offset();
 
@@ -41,17 +49,15 @@ public:
 
   inline std::optional<bool> gmt_offset_has_seconds() const;
 
-  inline diplomat::result<std::monostate, ICU4XError> try_set_time_zone_id(std::string_view id);
+  inline diplomat::result<std::monostate, ICU4XTimeZoneInvalidIdError> try_set_time_zone_id(std::string_view id);
 
-  inline diplomat::result<std::monostate, ICU4XError> try_set_iana_time_zone_id(const ICU4XIanaToBcp47Mapper& mapper, std::string_view id);
-
-  inline diplomat::result<std::monostate, ICU4XError> try_set_iana_time_zone_id_2(const ICU4XTimeZoneIdMapper& mapper, std::string_view id);
+  inline diplomat::result<std::monostate, ICU4XTimeZoneInvalidIdError> try_set_iana_time_zone_id(const ICU4XTimeZoneIdMapper& mapper, std::string_view id);
 
   inline void clear_time_zone_id();
 
   inline std::optional<std::string> time_zone_id() const;
 
-  inline diplomat::result<std::monostate, ICU4XError> try_set_metazone_id(std::string_view id);
+  inline diplomat::result<std::monostate, ICU4XTimeZoneInvalidIdError> try_set_metazone_id(std::string_view id);
 
   inline void clear_metazone_id();
 

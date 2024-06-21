@@ -2,10 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use super::LocaleFallbackPriority;
 use icu_locale_core::extensions::unicode::{key, Key};
 use icu_locale_core::subtags::Language;
 use icu_locale_core::LanguageIdentifier;
-use icu_provider::FallbackPriority;
 
 use super::*;
 
@@ -15,7 +15,7 @@ impl<'a> LocaleFallbackerWithConfig<'a> {
     pub(crate) fn normalize(&self, locale: &mut DataLocale) {
         let language = locale.language();
         // 1. Populate the region (required for region fallback only)
-        if self.config.priority == FallbackPriority::Region && locale.region().is_none() {
+        if self.config.priority == LocaleFallbackPriority::Region && locale.region().is_none() {
             // 1a. First look for region based on language+script
             if let Some(script) = locale.script() {
                 locale.set_region(
@@ -81,17 +81,17 @@ impl<'a> LocaleFallbackerWithConfig<'a> {
 impl<'a> LocaleFallbackIteratorInner<'a> {
     pub fn step(&mut self, locale: &mut DataLocale) {
         match self.config.priority {
-            FallbackPriority::Language => self.step_language(locale),
-            FallbackPriority::Region => self.step_region(locale),
+            LocaleFallbackPriority::Language => self.step_language(locale),
+            LocaleFallbackPriority::Region => self.step_region(locale),
             // TODO(#1964): Change the collation fallback rules to be different
             // from the language fallback fules.
-            FallbackPriority::Collation => self.step_language(locale),
-            // This case should not normally happen, but `FallbackPriority` is non_exhaustive.
+            LocaleFallbackPriority::Collation => self.step_language(locale),
+            // This case should not normally happen, but `LocaleFallbackPriority` is non_exhaustive.
             // Make it go directly to `und`.
             _ => {
                 debug_assert!(
                     false,
-                    "Unknown FallbackPriority: {:?}",
+                    "Unknown LocaleFallbackPriority: {:?}",
                     self.config.priority
                 );
                 *locale = Default::default()

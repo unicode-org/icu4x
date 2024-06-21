@@ -1,4 +1,4 @@
-import { u32, char } from "./diplomat-runtime"
+import { char } from "./diplomat-runtime"
 import { ICU4XCodePointSetData } from "./ICU4XCodePointSetData";
 
 /**
@@ -53,27 +53,11 @@ export class ICU4XCodePointSetBuilder {
 
   /**
 
-   * Deprecated, use `add_char`.
-
-   * See the {@link https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.add_u32 Rust documentation for `add_u32`} for more information.
-   */
-  add_u32(ch: u32): void;
-
-  /**
-
    * Add an inclusive range of characters to the set
 
    * See the {@link https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.add_range Rust documentation for `add_range`} for more information.
    */
   add_inclusive_range(start: char, end: char): void;
-
-  /**
-
-   * Deprecated, use `add_inclusive_range`.
-
-   * See the {@link https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.add_range_u32 Rust documentation for `add_range_u32`} for more information.
-   */
-  add_inclusive_range_u32(start: u32, end: u32): void;
 
   /**
 

@@ -29,7 +29,7 @@ impl<const N: usize> databake::Bake for UnvalidatedTinyAsciiStr<N> {
                 let bytes = self.0.bake(env);
                 env.insert("tinystr");
                 databake::quote! {
-                    tinystr::UnvalidatedTinyAsciiStr::from_bytes_unchecked(*#bytes)
+                    tinystr::UnvalidatedTinyAsciiStr::from_utf8_unchecked(*#bytes)
                 }
             }
         }
@@ -38,11 +38,26 @@ impl<const N: usize> databake::Bake for UnvalidatedTinyAsciiStr<N> {
 
 #[test]
 fn test() {
-    test_bake!(TinyAsciiStr<10>, const: crate::tinystr!(10usize, "foo"), tinystr);
+    test_bake!(
+        TinyAsciiStr<10>,
+        const,
+        crate::tinystr!(10usize, "foo"),
+        tinystr
+    );
 }
 
 #[test]
 fn test_unvalidated() {
-    test_bake!(UnvalidatedTinyAsciiStr<10>, const: crate::tinystr!(10usize, "foo").to_unvalidated(), tinystr);
-    test_bake!(UnvalidatedTinyAsciiStr<3>, const: crate::UnvalidatedTinyAsciiStr::from_bytes_unchecked(*b"AB\xCD"), tinystr);
+    test_bake!(
+        UnvalidatedTinyAsciiStr<10>,
+        const,
+        crate::tinystr!(10usize, "foo").to_unvalidated(),
+        tinystr
+    );
+    test_bake!(
+        UnvalidatedTinyAsciiStr<3>,
+        const,
+        crate::UnvalidatedTinyAsciiStr::from_utf8_unchecked(*b"AB\xCD"),
+        tinystr
+    );
 }

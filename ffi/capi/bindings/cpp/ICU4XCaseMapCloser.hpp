@@ -10,15 +10,30 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XCaseMapCloser.h"
 #include "ICU4XCodePointSetBuilder.hpp"
+#include "ICU4XDataError.hpp"
 #include "ICU4XDataProvider.hpp"
-#include "ICU4XError.hpp"
 
 
-inline diplomat::result<std::unique_ptr<ICU4XCaseMapCloser>, ICU4XError> ICU4XCaseMapCloser::create(const ICU4XDataProvider& provider) {
+namespace capi {
+    extern "C" {
+    
+    typedef struct ICU4XCaseMapCloser_create_result {union {ICU4XCaseMapCloser* ok; ICU4XDataError err;}; bool is_ok;} ICU4XCaseMapCloser_create_result;
+    ICU4XCaseMapCloser_create_result ICU4XCaseMapCloser_create(const ICU4XDataProvider* provider);
+    
+    void ICU4XCaseMapCloser_add_case_closure_to(const ICU4XCaseMapCloser* self, char32_t c, ICU4XCodePointSetBuilder* builder);
+    
+    bool ICU4XCaseMapCloser_add_string_case_closure_to(const ICU4XCaseMapCloser* self, const char* s_data, size_t s_len, ICU4XCodePointSetBuilder* builder);
+    
+    
+    void ICU4XCaseMapCloser_destroy(ICU4XCaseMapCloser* self);
+    
+    } // extern "C"
+}
+
+inline diplomat::result<std::unique_ptr<ICU4XCaseMapCloser>, ICU4XDataError> ICU4XCaseMapCloser::create(const ICU4XDataProvider& provider) {
   auto result = capi::ICU4XCaseMapCloser_create(provider.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XCaseMapCloser>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XCaseMapCloser>>(std::unique_ptr<ICU4XCaseMapCloser>(ICU4XCaseMapCloser::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XCaseMapCloser>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XCaseMapCloser>, ICU4XDataError>(diplomat::Ok<std::unique_ptr<ICU4XCaseMapCloser>>(std::unique_ptr<ICU4XCaseMapCloser>(ICU4XCaseMapCloser::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XCaseMapCloser>, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
 
 inline void ICU4XCaseMapCloser::add_case_closure_to(char32_t c, ICU4XCodePointSetBuilder& builder) const {

@@ -1,0 +1,13 @@
+{
+  "long": {
+    "One": "{0} metro",
+    "Other": "{0} metros"
+  },
+  "short": {
+    "Other": "{0} m"
+  },
+  "narrow": {
+    "One": "{0}m",
+    "Other": "{0}m"
+  }
+}

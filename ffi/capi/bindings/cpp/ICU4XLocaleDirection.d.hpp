@@ -8,8 +8,15 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XLocaleDirection.d.h"
 
+
+namespace capi {
+    typedef enum ICU4XLocaleDirection {
+      ICU4XLocaleDirection_LeftToRight = 0,
+      ICU4XLocaleDirection_RightToLeft = 1,
+      ICU4XLocaleDirection_Unknown = 2,
+    } ICU4XLocaleDirection;
+}
 
 class ICU4XLocaleDirection {
 public:

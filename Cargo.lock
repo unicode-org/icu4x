@@ -188,6 +188,7 @@ dependencies = [
  "crlify",
  "icu",
  "icu_datagen",
+ "icu_datagen_bikeshed",
  "icu_provider",
  "log",
  "simple_logger",
@@ -600,7 +601,7 @@ dependencies = [
 [[package]]
 name = "diplomat"
 version = "0.8.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=dbb32938c2d0176474f44907df057afd1df2dea7#dbb32938c2d0176474f44907df057afd1df2dea7"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=40dd17124eadcaa3cf91873547fa7504bc8aff80#40dd17124eadcaa3cf91873547fa7504bc8aff80"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -617,8 +618,8 @@ dependencies = [
 
 [[package]]
 name = "diplomat-runtime"
-version = "0.8.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=dbb32938c2d0176474f44907df057afd1df2dea7#dbb32938c2d0176474f44907df057afd1df2dea7"
+version = "0.8.1"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=40dd17124eadcaa3cf91873547fa7504bc8aff80#40dd17124eadcaa3cf91873547fa7504bc8aff80"
 dependencies = [
  "log",
 ]
@@ -626,7 +627,7 @@ dependencies = [
 [[package]]
 name = "diplomat-tool"
 version = "0.8.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=dbb32938c2d0176474f44907df057afd1df2dea7#dbb32938c2d0176474f44907df057afd1df2dea7"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=40dd17124eadcaa3cf91873547fa7504bc8aff80#40dd17124eadcaa3cf91873547fa7504bc8aff80"
 dependencies = [
  "askama",
  "clap",
@@ -646,7 +647,7 @@ dependencies = [
 [[package]]
 name = "diplomat_core"
 version = "0.8.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=dbb32938c2d0176474f44907df057afd1df2dea7#dbb32938c2d0176474f44907df057afd1df2dea7"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=40dd17124eadcaa3cf91873547fa7504bc8aff80#40dd17124eadcaa3cf91873547fa7504bc8aff80"
 dependencies = [
  "displaydoc",
  "either",
@@ -661,9 +662,9 @@ dependencies = [
 
 [[package]]
 name = "displaydoc"
-version = "0.2.4"
+version = "0.2.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "487585f4d0c6655fe74905e2504d8ad6908e4db67f744eb140876906c2f3175d"
+checksum = "97369cbbc041bc366949bc74d34658d6cda5621039731c6310521892a3a20ae0"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -853,6 +854,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "95505c38b4572b2d910cecb0281560f54b440a19336cbbcb27bf6ce6adc6f5a8"
 
 [[package]]
+name = "heck"
+version = "0.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2304e00983f87ffb38b55b444b5e3b60a884b5d30c0fca7d82fe33449bbe55ea"
+
+[[package]]
 name = "hermit-abi"
 version = "0.3.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -898,6 +905,35 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu4x-datagen"
+version = "1.5.0"
+dependencies = [
+ "clap",
+ "eyre",
+ "icu",
+ "icu_calendar",
+ "icu_casemap",
+ "icu_collator",
+ "icu_datagen",
+ "icu_datagen_bikeshed",
+ "icu_datetime",
+ "icu_decimal",
+ "icu_experimental",
+ "icu_list",
+ "icu_locale",
+ "icu_normalizer",
+ "icu_plurals",
+ "icu_properties",
+ "icu_provider",
+ "icu_provider_blob",
+ "icu_registry",
+ "icu_segmenter",
+ "icu_timezone",
+ "log",
+ "simple_logger",
+]
+
+[[package]]
 name = "icu4x_ecma402"
 version = "0.8.2"
 dependencies = [
@@ -939,7 +975,6 @@ dependencies = [
  "icu",
  "icu_benchmark_macros",
  "icu_calendar_data",
- "icu_locale",
  "icu_locale_core",
  "icu_provider",
  "serde",
@@ -953,6 +988,10 @@ dependencies = [
 [[package]]
 name = "icu_calendar_data"
 version = "1.5.0"
+dependencies = [
+ "icu_locale",
+ "icu_provider_baked",
+]
 
 [[package]]
 name = "icu_capi"
@@ -1012,6 +1051,9 @@ dependencies = [
 [[package]]
 name = "icu_casemap_data"
 version = "1.5.0"
+dependencies = [
+ "icu_provider_baked",
+]
 
 [[package]]
 name = "icu_codepointtrie_builder"
@@ -1036,7 +1078,6 @@ dependencies = [
  "icu",
  "icu_collator_data",
  "icu_collections",
- "icu_locale",
  "icu_locale_core",
  "icu_normalizer",
  "icu_properties",
@@ -1051,6 +1092,10 @@ dependencies = [
 [[package]]
 name = "icu_collator_data"
 version = "1.5.0"
+dependencies = [
+ "icu_locale",
+ "icu_provider_baked",
+]
 
 [[package]]
 name = "icu_collections"
@@ -1076,47 +1121,49 @@ dependencies = [
 name = "icu_datagen"
 version = "1.5.0"
 dependencies = [
+ "displaydoc",
+ "elsa",
+ "icu",
+ "icu_datagen_bikeshed",
+ "icu_provider",
+ "icu_provider_baked",
+ "icu_provider_blob",
+ "icu_provider_fs",
+ "icu_registry",
+ "log",
+ "memchr",
+ "postcard",
+ "rayon",
+ "simple_logger",
+ "writeable",
+]
+
+[[package]]
+name = "icu_datagen_bikeshed"
+version = "1.5.0"
+dependencies = [
  "calendrical_calculations",
- "clap",
- "crlify",
- "databake",
  "displaydoc",
  "either",
  "elsa",
- "eyre",
  "icu",
- "icu_calendar",
- "icu_casemap",
  "icu_codepointtrie_builder",
- "icu_collator",
  "icu_collections",
- "icu_datetime",
- "icu_decimal",
+ "icu_datagen",
  "icu_experimental",
- "icu_list",
- "icu_locale",
- "icu_locale_core",
- "icu_normalizer",
  "icu_pattern",
- "icu_plurals",
- "icu_properties",
  "icu_provider",
  "icu_provider_adapters",
- "icu_provider_blob",
- "icu_provider_fs",
+ "icu_registry",
  "icu_segmenter",
- "icu_timezone",
  "itertools",
  "litemap",
  "log",
- "memchr",
  "ndarray",
  "num-bigint",
  "num-rational",
  "num-traits",
  "postcard",
- "proc-macro2",
- "rayon",
  "serde",
  "serde-aux",
  "serde_json",
@@ -1146,7 +1193,6 @@ dependencies = [
  "icu_calendar",
  "icu_datetime_data",
  "icu_decimal",
- "icu_locale",
  "icu_locale_core",
  "icu_plurals",
  "icu_provider",
@@ -1165,6 +1211,10 @@ dependencies = [
 [[package]]
 name = "icu_datetime_data"
 version = "1.5.0"
+dependencies = [
+ "icu_locale",
+ "icu_provider_baked",
+]
 
 [[package]]
 name = "icu_decimal"
@@ -1178,7 +1228,6 @@ dependencies = [
  "icu",
  "icu_benchmark_macros",
  "icu_decimal_data",
- "icu_locale",
  "icu_locale_core",
  "icu_provider",
  "icu_provider_adapters",
@@ -1192,6 +1241,10 @@ dependencies = [
 [[package]]
 name = "icu_decimal_data"
 version = "1.5.0"
+dependencies = [
+ "icu_locale",
+ "icu_provider_baked",
+]
 
 [[package]]
 name = "icu_depcheck"
@@ -1213,6 +1266,7 @@ dependencies = [
  "icu_locale_core",
  "icu_locale_data",
  "icu_normalizer",
+ "icu_normalizer_data",
  "icu_pattern",
  "icu_plurals",
  "icu_properties",
@@ -1235,6 +1289,10 @@ dependencies = [
 [[package]]
 name = "icu_experimental_data"
 version = "0.1.0"
+dependencies = [
+ "icu_locale",
+ "icu_provider_baked",
+]
 
 [[package]]
 name = "icu_ffi_coverage"
@@ -1280,7 +1338,6 @@ dependencies = [
  "icu",
  "icu_benchmark_macros",
  "icu_list_data",
- "icu_locale",
  "icu_provider",
  "postcard",
  "regex-automata 0.2.0",
@@ -1293,6 +1350,10 @@ dependencies = [
 [[package]]
 name = "icu_list_data"
 version = "1.5.0"
+dependencies = [
+ "icu_locale",
+ "icu_provider_baked",
+]
 
 [[package]]
 name = "icu_locale"
@@ -1334,6 +1395,9 @@ dependencies = [
 [[package]]
 name = "icu_locale_data"
 version = "1.5.0"
+dependencies = [
+ "icu_provider_baked",
+]
 
 [[package]]
 name = "icu_normalizer"
@@ -1362,6 +1426,9 @@ dependencies = [
 [[package]]
 name = "icu_normalizer_data"
 version = "1.5.0"
+dependencies = [
+ "icu_provider_baked",
+]
 
 [[package]]
 name = "icu_pattern"
@@ -1391,7 +1458,6 @@ dependencies = [
  "fixed_decimal",
  "icu",
  "icu_benchmark_macros",
- "icu_locale",
  "icu_locale_core",
  "icu_plurals_data",
  "icu_provider",
@@ -1403,6 +1469,19 @@ dependencies = [
 [[package]]
 name = "icu_plurals_data"
 version = "1.5.0"
+dependencies = [
+ "icu_locale",
+ "icu_provider_baked",
+]
+
+[[package]]
+name = "icu_preferences"
+version = "0.0.0"
+dependencies = [
+ "icu_datetime",
+ "icu_locale_core",
+ "tinystr",
+]
 
 [[package]]
 name = "icu_properties"
@@ -1412,7 +1491,6 @@ dependencies = [
  "displaydoc",
  "icu",
  "icu_collections",
- "icu_locale",
  "icu_properties_data",
  "icu_provider",
  "serde",
@@ -1424,6 +1502,10 @@ dependencies = [
 [[package]]
 name = "icu_properties_data"
 version = "1.5.0"
+dependencies = [
+ "icu_locale",
+ "icu_provider_baked",
+]
 
 [[package]]
 name = "icu_provider"
@@ -1456,10 +1538,7 @@ version = "1.5.0"
 dependencies = [
  "databake",
  "icu_locale",
- "icu_locale_core",
  "icu_provider",
- "icu_provider_blob",
- "icu_provider_fs",
  "serde",
  "tinystr",
  "writeable",
@@ -1467,13 +1546,27 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_provider_baked"
+version = "1.5.0"
+dependencies = [
+ "crlify",
+ "databake",
+ "heck 0.5.0",
+ "icu_datagen",
+ "icu_provider",
+ "icu_registry",
+ "itertools",
+ "log",
+ "proc-macro2",
+]
+
+[[package]]
 name = "icu_provider_blob"
 version = "1.5.0"
 dependencies = [
  "criterion",
+ "databake",
  "icu_datagen",
- "icu_datetime",
- "icu_datetime_data",
  "icu_locale",
  "icu_locale_core",
  "icu_provider",
@@ -1518,6 +1611,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_registry"
+version = "1.5.0"
+dependencies = [
+ "icu",
+ "icu_provider",
+]
+
+[[package]]
 name = "icu_segmenter"
 version = "1.5.0"
 dependencies = [
@@ -1527,7 +1628,6 @@ dependencies = [
  "displaydoc",
  "icu",
  "icu_collections",
- "icu_locale",
  "icu_locale_core",
  "icu_properties",
  "icu_provider",
@@ -1542,10 +1642,10 @@ dependencies = [
 [[package]]
 name = "icu_segmenter_data"
 version = "1.5.0"
-
-[[package]]
-name = "icu_segmenter_lstm"
-version = "1.0.0"
+dependencies = [
+ "icu_locale",
+ "icu_provider_baked",
+]
 
 [[package]]
 name = "icu_testdata_scripts"
@@ -1554,7 +1654,7 @@ dependencies = [
  "clap",
  "crlify",
  "eyre",
- "icu_datagen",
+ "icu_datagen_bikeshed",
  "icu_locale_core",
  "icu_provider",
  "log",
@@ -1582,6 +1682,9 @@ dependencies = [
 [[package]]
 name = "icu_timezone_data"
 version = "1.5.0"
+dependencies = [
+ "icu_provider_baked",
+]
 
 [[package]]
 name = "idna"
@@ -1654,6 +1757,7 @@ dependencies = [
  "criterion",
  "displaydoc",
  "serde-json-core",
+ "utf8_iter",
 ]
 
 [[package]]
@@ -2697,7 +2801,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "97fee6b57c6a41524a810daee9286c02d7752c4253064d0b05472833a438f675"
 dependencies = [
  "cfg-if",
- "rand",
  "static_assertions",
 ]
 

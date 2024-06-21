@@ -11,9 +11,7 @@ use writeable::Writeable;
 
 use super::Key;
 use super::Value;
-#[allow(deprecated)]
-use crate::ordering::SubtagOrderingResult;
-use crate::parser::ParserError;
+use crate::parser::ParseError;
 use crate::parser::SubtagIterator;
 use crate::shortvec::ShortBoxSlice;
 
@@ -93,8 +91,16 @@ impl Keywords {
         ))
     }
 
-    pub(crate) fn try_from_bytes(t: &[u8]) -> Result<Self, ParserError> {
-        let mut iter = SubtagIterator::new(t);
+    /// A constructor which takes a str slice, parses it and
+    /// produces a well-formed [`Keywords`].
+    #[inline]
+    pub fn try_from_str(s: &str) -> Result<Self, ParseError> {
+        Self::try_from_utf8(s.as_bytes())
+    }
+
+    /// See [`Self::try_from_str`]
+    pub fn try_from_utf8(code_units: &[u8]) -> Result<Self, ParseError> {
+        let mut iter = SubtagIterator::new(code_units);
         Self::try_from_iter(&mut iter)
     }
 
@@ -106,7 +112,7 @@ impl Keywords {
     /// use icu::locale::locale;
     /// use icu::locale::Locale;
     ///
-    /// let loc1 = Locale::try_from_bytes(b"und-t-h0-hybrid").unwrap();
+    /// let loc1 = Locale::try_from_str("und-t-h0-hybrid").unwrap();
     /// let loc2 = locale!("und-u-ca-buddhist");
     ///
     /// assert!(loc1.extensions.unicode.keywords.is_empty());
@@ -309,62 +315,7 @@ impl Keywords {
         self.writeable_cmp_bytes(other)
     }
 
-    /// Compare this [`Keywords`] with an iterator of BCP-47 subtags.
-    ///
-    /// This function has the same equality semantics as [`Keywords::strict_cmp`]. It is intended as
-    /// a more modular version that allows multiple subtag iterators to be chained together.
-    ///
-    /// For an additional example, see [`SubtagOrderingResult`].
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::locale::locale;
-    /// use std::cmp::Ordering;
-    ///
-    /// let subtags: &[&[u8]] = &[b"ca", b"buddhist"];
-    ///
-    /// let kwds = locale!("und-u-ca-buddhist").extensions.unicode.keywords;
-    /// assert_eq!(
-    ///     Ordering::Equal,
-    ///     kwds.strict_cmp_iter(subtags.iter().copied()).end()
-    /// );
-    ///
-    /// let kwds = locale!("und").extensions.unicode.keywords;
-    /// assert_eq!(
-    ///     Ordering::Less,
-    ///     kwds.strict_cmp_iter(subtags.iter().copied()).end()
-    /// );
-    ///
-    /// let kwds = locale!("und-u-nu-latn").extensions.unicode.keywords;
-    /// assert_eq!(
-    ///     Ordering::Greater,
-    ///     kwds.strict_cmp_iter(subtags.iter().copied()).end()
-    /// );
-    /// ```
-    #[deprecated(since = "1.5.0", note = "if you need this, please file an issue")]
-    #[allow(deprecated)]
-    pub fn strict_cmp_iter<'l, I>(&self, mut subtags: I) -> SubtagOrderingResult<I>
-    where
-        I: Iterator<Item = &'l [u8]>,
-    {
-        let r = self.for_each_subtag_str(&mut |subtag| {
-            if let Some(other) = subtags.next() {
-                match subtag.as_bytes().cmp(other) {
-                    Ordering::Equal => Ok(()),
-                    not_equal => Err(not_equal),
-                }
-            } else {
-                Err(Ordering::Greater)
-            }
-        });
-        match r {
-            Ok(_) => SubtagOrderingResult::Subtags(subtags),
-            Err(o) => SubtagOrderingResult::Ordering(o),
-        }
-    }
-
-    pub(crate) fn try_from_iter(iter: &mut SubtagIterator) -> Result<Self, ParserError> {
+    pub(crate) fn try_from_iter(iter: &mut SubtagIterator) -> Result<Self, ParseError> {
         let mut keywords = LiteMap::new();
 
         let mut current_keyword = None;
@@ -377,7 +328,7 @@ impl Keywords {
                     keywords.try_insert(kw, Value::from_short_slice_unchecked(current_value));
                     current_value = ShortBoxSlice::new();
                 }
-                current_keyword = Some(Key::try_from_bytes(subtag)?);
+                current_keyword = Some(Key::try_from_utf8(subtag)?);
             } else if current_keyword.is_some() {
                 match Value::parse_subtag(subtag) {
                     Ok(Some(t)) => current_value.push(t),
@@ -433,10 +384,11 @@ impl FromIterator<(Key, Value)> for Keywords {
 }
 
 impl FromStr for Keywords {
-    type Err = ParserError;
+    type Err = ParseError;
 
-    fn from_str(source: &str) -> Result<Self, Self::Err> {
-        Self::try_from_bytes(source.as_bytes())
+    #[inline]
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Self::try_from_str(s)
     }
 }
 

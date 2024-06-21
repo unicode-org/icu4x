@@ -2,14 +2,16 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#include "ICU4XDataProvider.h"
 #include "ICU4XLineSegmenter.h"
+#include "ICU4XLineBreakIteratorUtf8.h"
 #include <string.h>
 #include <stdio.h>
 
 int main(int argc, char *argv[]) {
     ICU4XDataProvider* provider = ICU4XDataProvider_create_compiled();
 
-    diplomat_result_box_ICU4XLineSegmenter_ICU4XError segmenter_result = ICU4XLineSegmenter_create_auto(provider);
+    ICU4XLineSegmenter_create_auto_result segmenter_result = ICU4XLineSegmenter_create_auto(provider);
     if (!segmenter_result.is_ok)  {
         printf("Failed to create ICU4XLineSegmenter\n");
         return 1;

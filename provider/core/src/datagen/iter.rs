@@ -8,45 +8,36 @@ use std::collections::HashSet;
 
 use crate::prelude::*;
 
-/// A [`DynamicDataProvider`] that can iterate over all supported [`DataLocale`] for a certain key.
+/// A [`DynamicDataProvider`] that can iterate over all supported [`DataLocale`] for a certain marker.
 ///
-/// Implementing this trait means that a data provider knows all of the data it can successfully
-/// return from a load request.
-pub trait IterableDynamicDataProvider<M: DataMarker>: DynamicDataProvider<M> {
-    /// Given a [`DataKey`], returns a list of [`DataLocale`].
-    fn supported_requests_for_key(
+/// The provider is not allowed to return `Ok` for requests that were not returned by `iter_requests`,
+/// and must not fail with a [`DataErrorKind::MissingLocale`] for requests that were returned.
+pub trait IterableDynamicDataProvider<M: DynamicDataMarker>: DynamicDataProvider<M> {
+    /// Given a [`DataMarkerInfo`], returns a list of [`DataLocale`].
+    fn iter_requests_for_marker(
         &self,
-        key: DataKey,
-    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError>;
+        marker: DataMarkerInfo,
+    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError>;
 }
 
-/// A [`DataProvider`] that can iterate over all supported [`DataLocale`] for a certain key.
+/// A [`DataProvider`] that can iterate over all supported [`DataLocale`] for a certain marker.
 ///
-/// Implementing this trait means that a data provider knows all of the data it can successfully
-/// return from a load request.
-pub trait IterableDataProvider<M: KeyedDataMarker>: DataProvider<M> {
+/// The provider is not allowed to return `Ok` for requests that were not returned by `iter_requests`,
+/// and must not fail with a [`DataErrorKind::MissingLocale`] for requests that were returned.
+pub trait IterableDataProvider<M: DataMarker>: DataProvider<M> {
     /// Returns a list of [`DataLocale`].
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError>;
-    /// Returns whether a [`DataLocale`] is in the supported locales list.
-    fn supports_request(
-        &self,
-        locale: &DataLocale,
-        key_attributes: &DataKeyAttributes,
-    ) -> Result<bool, DataError> {
-        self.supported_requests()
-            .map(|v| v.contains(&(locale.clone(), key_attributes.clone())))
-    }
+    fn iter_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError>;
 }
 
 impl<M, P> IterableDynamicDataProvider<M> for Box<P>
 where
-    M: DataMarker,
+    M: DynamicDataMarker,
     P: IterableDynamicDataProvider<M> + ?Sized,
 {
-    fn supported_requests_for_key(
+    fn iter_requests_for_marker(
         &self,
-        key: DataKey,
-    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
-        (**self).supported_requests_for_key(key)
+        marker: DataMarkerInfo,
+    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+        (**self).iter_requests_for_marker(marker)
     }
 }

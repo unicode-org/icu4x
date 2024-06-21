@@ -8,8 +8,14 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XTrailingCase.d.h"
 
+
+namespace capi {
+    typedef enum ICU4XTrailingCase {
+      ICU4XTrailingCase_Lower = 0,
+      ICU4XTrailingCase_Unchanged = 1,
+    } ICU4XTrailingCase;
+}
 
 class ICU4XTrailingCase {
 public:
