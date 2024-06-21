@@ -14,6 +14,20 @@ impl<'a> ZeroMapKV<'a> for Pattern<SinglePlaceholder, str> {
     type OwnedType = Box<Pattern<SinglePlaceholder, str>>;
 }
 
+/// # Safety
+///
+/// Safety checklist for `ULE`:
+///
+/// 1. `str` does not include any uninitialized or padding bytes.
+/// 2. `str` is aligned to 1 byte.
+/// 3. The implementation of `validate_byte_slice()` returns an error
+///    if any byte is not valid.
+/// 4. The implementation of `validate_byte_slice()` returns an error
+///    if the slice cannot be used to build a `Pattern<SinglePlaceholder, str>`
+///    in its entirety.
+/// 5. The implementation of `from_byte_slice_unchecked()` returns a reference to the same data.
+/// 6. `parse_byte_slice()` is equivalent to `validate_byte_slice()` followed by `from_byte_slice_unchecked()`.
+/// 7. `str` byte equality is semantic equality.
 unsafe impl VarULE for Pattern<SinglePlaceholder, str> {
     fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
         SinglePlaceholderPattern::try_from_utf8_store(bytes)
