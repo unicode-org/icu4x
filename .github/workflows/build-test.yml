@@ -228,11 +228,6 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     
-    # Software setup/installation for the container
-    - name: Install Rust toolchains
-      run: |
-        rustup toolchain install stable
-
     # Cargo-make boilerplate
     - name: Install cargo-make
       uses: taiki-e/install-action@cargo-make
@@ -266,11 +261,6 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     
-    # Software setup/installation for the container
-    - name: Install Rust toolchains
-      run: |
-        rustup toolchain install stable
-
     # Cargo-make boilerplate
     - name: Install cargo-make
       uses: taiki-e/install-action@cargo-make
