@@ -238,11 +238,6 @@ jobs:
     - name: Show the selected Rust toolchain
       run: rustup show
 
-    # Job-specific dependencies
-    - name: Install LLVM 16 nightly
-      run: |
-        rustup install nightly-2023-08-08
-
     # Actual job
     - name: Run `cargo make ci-job-test-c`
       run: cargo make ci-job-test-c
