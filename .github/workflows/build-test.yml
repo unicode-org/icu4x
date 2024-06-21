@@ -223,18 +223,11 @@ jobs:
 
   # ci-job-test-c
   test-c:
-    runs-on: ubuntu-latest
-    container:
-      image: rust:bookworm
+    runs-on: ubuntu-24.04 # Includes LLVM 16,17,18
 
     steps:
     - uses: actions/checkout@v4
     
-    # Software setup/installation for the container
-    - name: Install Rust toolchains
-      run: |
-        rustup toolchain install stable
-
     # Cargo-make boilerplate
     - name: Install cargo-make
       uses: taiki-e/install-action@cargo-make
@@ -245,28 +238,11 @@ jobs:
     - name: Show the selected Rust toolchain
       run: rustup show
 
-    # Job-specific dependencies
-    - name: Run apt-get update
-      run: |
-        apt-get update
-    - name: Install LLVM 16
-      run: |
-        apt-get install -y clang-16 lld-16 llvm-16-dev libc++-16-dev
-    - name: Install LLVM 16 nightly
-      run: |
-        rustup install nightly-2023-08-08
-    - name: Install GCC 11
-      run: |
-        apt-get install -y gcc-11 g++-11
-    - name: Install jq
-      run: |
-        apt-get install -y jq
-
     # Actual job
     - name: Run `cargo make ci-job-test-c`
       run: cargo make ci-job-test-c
       env:
-        CXX: "g++-11"
+        CXX: "g++-13"
     - name: Test C++ with clang
       run: cargo make test-cpp
       env:
@@ -275,18 +251,11 @@ jobs:
 
   # ci-job-test-js
   test-js:
-    runs-on: ubuntu-latest
-    container:
-      image: rust:bookworm
+    runs-on: ubuntu-24.04 # Includes LLVM 16,17,18
 
     steps:
     - uses: actions/checkout@v4
     
-    # Software setup/installation for the container
-    - name: Install Rust toolchains
-      run: |
-        rustup toolchain install stable
-
     # Cargo-make boilerplate
     - name: Install cargo-make
       uses: taiki-e/install-action@cargo-make
@@ -298,21 +267,12 @@ jobs:
       run: rustup show
 
     # Job-specific dependencies
-    - name: Install Node.js v16.18.0
+    - name: Install Node.js v16.20.2
       uses: actions/setup-node@v3
       with:
-        node-version: 16.18.0
+        node-version: 16.20.2
         cache: 'npm'
         cache-dependency-path: '**/package-lock.json'
-    - name: Run apt-get update
-      run: |
-        apt-get update
-    - name: Install lld-16
-      run: |
-        apt-get install -y lld-16
-    - name: Install jq
-      run: |
-        apt-get install -y jq
 
     # Actual job
     - name: Run `cargo make ci-job-test-js`
