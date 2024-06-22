@@ -19,7 +19,7 @@ macro_rules! impl_transparent_helpers {
     ($outer:ident($inner:path)) => {
         impl $outer {
             /// Casts the inner type to the outer type.
-            /// 
+            ///
             /// This function is safe, but it does not validate invariants
             /// that the outer type might enforce. It is made available as
             /// a private fn which can be called by another fn.
@@ -33,12 +33,14 @@ macro_rules! impl_transparent_helpers {
                 unsafe { &*(inner as *const $inner as *const $outer) }
             }
             /// Casts the inner type to the outer type.
-            /// 
+            ///
             /// This function is safe, but it does not validate invariants
             /// that the outer type might enforce. It is made available as
             /// a private fn which can be called by another fn.
             #[allow(dead_code)]
-            const fn cast_box_unchecked(inner: alloc::boxed::Box<$inner>) -> alloc::boxed::Box<$outer>
+            const fn cast_box_unchecked(
+                inner: alloc::boxed::Box<$inner>,
+            ) -> alloc::boxed::Box<$outer>
             where
                 $outer: Transparent<$inner>,
             {
@@ -50,6 +52,7 @@ macro_rules! impl_transparent_helpers {
     };
 }
 
+/// Implements `VarULE` on a `repr(transparent)` type.
 macro_rules! impl_transparent_varule {
     ($outer:ident($inner:path)) => {
         // Safety:
@@ -80,6 +83,45 @@ macro_rules! impl_transparent_varule {
             unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
                 let inner = <$inner>::from_byte_slice_unchecked(bytes);
                 Self::cast_ref_unchecked(inner)
+            }
+        }
+    };
+}
+
+/// Implements `serde::Deserialize` on a `repr(transparent)` type.
+macro_rules! impl_transparent_serde {
+    ($outer:ident($inner:path)) => {
+        impl<'de, 'a> serde::Deserialize<'de> for &'a $outer
+        where
+            'de: 'a,
+        {
+            fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+            where
+                D: serde::Deserializer<'de>,
+            {
+                let inner = <&$inner>::deserialize(deserializer)?;
+                if !$outer::validate_inner(&inner) {
+                    return Err(<D::Error as serde::de::Error>::custom(concat!(
+                        "Failed validation: ",
+                        stringify!($outer)
+                    )));
+                }
+                Ok($outer::cast_ref_unchecked(inner))
+            }
+        }
+        impl<'de> serde::Deserialize<'de> for Box<$outer> {
+            fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+            where
+                D: serde::Deserializer<'de>,
+            {
+                let inner = <alloc::boxed::Box<$inner>>::deserialize(deserializer)?;
+                if !$outer::validate_inner(&inner) {
+                    return Err(<D::Error as serde::de::Error>::custom(concat!(
+                        "Failed validation: ",
+                        stringify!($outer)
+                    )));
+                }
+                Ok($outer::cast_box_unchecked(inner))
             }
         }
     };

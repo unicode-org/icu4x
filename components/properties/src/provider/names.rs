@@ -85,29 +85,10 @@ unsafe impl Transparent<UnvalidatedStr> for NormalizedPropertyNameStr {
 impl_transparent_helpers!(NormalizedPropertyNameStr(UnvalidatedStr));
 impl_transparent_varule!(NormalizedPropertyNameStr(UnvalidatedStr));
 
-/// This impl requires enabling the optional `serde` Cargo feature of the `icu::properties` crate
 #[cfg(feature = "serde")]
-impl<'de> serde::Deserialize<'de> for Box<NormalizedPropertyNameStr> {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        <Box<UnvalidatedStr>>::deserialize(deserializer).map(NormalizedPropertyNameStr::cast_box)
-    }
-}
-
-/// This impl requires enabling the optional `serde` Cargo feature of the `icu::properties` crate
-#[cfg(feature = "serde")]
-impl<'de, 'a> serde::Deserialize<'de> for &'a NormalizedPropertyNameStr
-where
-    'de: 'a,
-{
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        <&UnvalidatedStr>::deserialize(deserializer).map(NormalizedPropertyNameStr::cast_ref)
-    }
+mod _serde {
+    use super::*;
+    impl_transparent_serde!(NormalizedPropertyNameStr(UnvalidatedStr));
 }
 
 impl<'a> ZeroMapKV<'a> for NormalizedPropertyNameStr {
