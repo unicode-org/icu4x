@@ -2,19 +2,34 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use alloc::boxed::Box;
-
+/// Trait asserting that a type is `repr(transparent)`. Used as a bound
+/// for functions that require this invariant.
+///
 /// Safety: this type *must* be `repr(transparent)` over `Inner`.
 pub(crate) unsafe trait Transparent<Inner: ?Sized> {}
 
-pub(crate) const fn safe_cast_ref<Inner, Outer>(inner: &Inner) -> &Outer where Inner: ?Sized, Outer: Transparent<Inner> + ?Sized {
-    // Safety: Outer is repr(transparent) over Inner
-    // (enforced via trait safety invariant)
-    unsafe { &*(inner as *const Inner as *const Outer) }
-}
-
-pub(crate) const fn safe_cast_box<Inner, Outer>(inner: Box<Inner>) -> Box<Outer> where Inner: ?Sized, Outer: Transparent<Inner> + ?Sized {
-    // Safety: Outer is repr(transparent) over Inner
-    // (enforced via trait safety invariant)
-    unsafe { core::mem::transmute(inner) }
+/// Implements private helper functions for `repr(transparent)` types.
+macro_rules! impl_transparent_helpers {
+    ($outer:ident($inner:path)) => {
+        impl $outer {
+            #[allow(dead_code)]
+            const fn safe_cast_ref(inner: &$inner) -> &$outer
+            where
+                $outer: Transparent<$inner>,
+            {
+                // Safety: Outer is repr(transparent) over Inner
+                // (enforced via trait safety invariant)
+                unsafe { &*(inner as *const $inner as *const $outer) }
+            }
+            #[allow(dead_code)]
+            const fn safe_cast_box(inner: alloc::boxed::Box<$inner>) -> alloc::boxed::Box<$outer>
+            where
+                $outer: Transparent<$inner>,
+            {
+                // Safety: Outer is repr(transparent) over Inner
+                // (enforced via trait safety invariant)
+                unsafe { core::mem::transmute(inner) }
+            }
+        }
+    };
 }
