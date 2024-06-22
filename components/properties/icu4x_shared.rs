@@ -11,11 +11,14 @@
 /// 2. `validate_inner` *must* return `false` if `Inner` does not uphold
 ///    invariants enforced by this outer type.
 pub(crate) unsafe trait Transparent<Inner: ?Sized> {
+    #[allow(dead_code)]
     fn validate_inner(inner: &Inner) -> bool;
+    #[allow(dead_code)]
     fn as_inner(&self) -> &Inner;
 }
 
 /// Implements private helper functions for `repr(transparent)` types.
+#[allow(unused_macros)]
 macro_rules! impl_transparent_helpers {
     ($outer:ident($inner:path)) => {
         impl $outer {
@@ -54,6 +57,7 @@ macro_rules! impl_transparent_helpers {
 }
 
 /// Implements `VarULE` on a `repr(transparent)` type.
+#[allow(unused_macros)]
 macro_rules! impl_transparent_varule {
     ($outer:ident($inner:path)) => {
         // Safety:
@@ -90,6 +94,7 @@ macro_rules! impl_transparent_varule {
 }
 
 /// Implements `serde::Deserialize` on a `repr(transparent)` type.
+#[allow(unused_macros)]
 macro_rules! impl_transparent_serde {
     ($outer:ident($inner:path)) => {
         impl serde::Serialize for $outer {

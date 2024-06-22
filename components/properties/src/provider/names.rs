@@ -87,12 +87,8 @@ unsafe impl Transparent<UnvalidatedStr> for NormalizedPropertyNameStr {
 
 impl_transparent_helpers!(NormalizedPropertyNameStr(UnvalidatedStr));
 impl_transparent_varule!(NormalizedPropertyNameStr(UnvalidatedStr));
-
 #[cfg(feature = "serde")]
-const _: () = {
-    use super::*;
-    impl_transparent_serde!(NormalizedPropertyNameStr(UnvalidatedStr));
-};
+impl_transparent_serde!(NormalizedPropertyNameStr(UnvalidatedStr));
 
 impl<'a> ZeroMapKV<'a> for NormalizedPropertyNameStr {
     type Container = VarZeroVec<'a, NormalizedPropertyNameStr>;
