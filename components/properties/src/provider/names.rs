@@ -18,7 +18,7 @@ use core::cmp::Ordering;
 use crate::icu4x_shared::Transparent;
 use icu_provider::prelude::*;
 use tinystr::TinyStr4;
-use zerovec::ule::{UnvalidatedStr, VarULE};
+use zerovec::ule::UnvalidatedStr;
 use zerovec::{maps::ZeroMapKV, VarZeroSlice, VarZeroVec, ZeroMap, ZeroVec};
 
 /// This is a property name that can be "loose matched" as according to
@@ -66,15 +66,24 @@ use zerovec::{maps::ZeroMapKV, VarZeroSlice, VarZeroVec, ZeroMap, ZeroVec};
 /// assert_eq!(Some(11), map.get_copied_by(|u| u.cmp_loose(key_exact)));
 /// ```
 #[derive(PartialEq, Eq)] // VarULE wants these to be byte equality
-#[derive(Debug, VarULE)]
+#[derive(Debug)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize))]
 #[repr(transparent)]
 pub struct NormalizedPropertyNameStr(UnvalidatedStr);
 
-// Safety: type is repr(transparent)
-unsafe impl Transparent<UnvalidatedStr> for NormalizedPropertyNameStr {}
+// Safety:
+//
+// 1. The type is `repr(transparent)` over the inner type
+// 2. `validate_inner` is implemented (no invariants)
+unsafe impl Transparent<UnvalidatedStr> for NormalizedPropertyNameStr {
+    #[inline]
+    fn validate_inner(_inner: &UnvalidatedStr) -> bool {
+        true
+    }
+}
 
 impl_transparent_helpers!(NormalizedPropertyNameStr(UnvalidatedStr));
+impl_transparent_varule!(NormalizedPropertyNameStr(UnvalidatedStr));
 
 /// This impl requires enabling the optional `serde` Cargo feature of the `icu::properties` crate
 #[cfg(feature = "serde")]
@@ -166,12 +175,14 @@ impl NormalizedPropertyNameStr {
 
     /// Convert a [`UnvalidatedStr`] reference to a [`NormalizedPropertyNameStr`] reference.
     pub const fn cast_ref(value: &UnvalidatedStr) -> &Self {
-        Self::safe_cast_ref(value)
+        // No invariants: we can directly call cast_*_unchecked
+        Self::cast_ref_unchecked(value)
     }
 
     /// Convert a [`UnvalidatedStr`] box to a [`NormalizedPropertyNameStr`] box.
     pub const fn cast_box(value: Box<UnvalidatedStr>) -> Box<Self> {
-        Self::safe_cast_box(value)
+        // No invariants: we can directly call cast_*_unchecked
+        Self::cast_box_unchecked(value)
     }
 
     /// Get a [`NormalizedPropertyNameStr`] box from a byte slice.
