@@ -67,7 +67,6 @@ use zerovec::{maps::ZeroMapKV, VarZeroSlice, VarZeroVec, ZeroMap, ZeroVec};
 /// ```
 #[derive(PartialEq, Eq)] // VarULE wants these to be byte equality
 #[derive(Debug)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize))]
 #[repr(transparent)]
 pub struct NormalizedPropertyNameStr(UnvalidatedStr);
 
@@ -79,6 +78,10 @@ unsafe impl Transparent<UnvalidatedStr> for NormalizedPropertyNameStr {
     #[inline]
     fn validate_inner(_inner: &UnvalidatedStr) -> bool {
         true
+    }
+    #[inline]
+    fn as_inner(&self) -> &UnvalidatedStr {
+        &self.0
     }
 }
 

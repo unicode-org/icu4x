@@ -12,6 +12,7 @@
 ///    invariants enforced by this outer type.
 pub(crate) unsafe trait Transparent<Inner: ?Sized> {
     fn validate_inner(inner: &Inner) -> bool;
+    fn as_inner(&self) -> &Inner;
 }
 
 /// Implements private helper functions for `repr(transparent)` types.
@@ -91,6 +92,14 @@ macro_rules! impl_transparent_varule {
 /// Implements `serde::Deserialize` on a `repr(transparent)` type.
 macro_rules! impl_transparent_serde {
     ($outer:ident($inner:path)) => {
+        impl serde::Serialize for $outer {
+            fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+            where
+                S: serde::ser::Serializer,
+            {
+                self.as_inner().serialize(serializer)
+            }
+        }
         impl<'de, 'a> serde::Deserialize<'de> for &'a $outer
         where
             'de: 'a,
