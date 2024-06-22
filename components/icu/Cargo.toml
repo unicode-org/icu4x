@@ -35,6 +35,10 @@ icu_segmenter = { workspace = true }
 icu_timezone = { workspace = true }
 icu_experimental = { workspace = true, optional = true }
 
+# For markers_from_bin
+icu_registry = { workspace = true, optional = true }
+memchr = { workspace = true, optional = true }
+
 # For docs links and features
 icu_provider = { workspace = true }
 
@@ -108,6 +112,9 @@ compiled_data = [
     "icu_experimental?/compiled_data",
 ]
 datagen = [
+    "std",
+    "dep:icu_registry",
+    "dep:memchr",
     "icu_calendar/datagen",
     "icu_casemap/datagen",
     "icu_collator/datagen",
@@ -141,7 +148,7 @@ logging = ["icu_provider/logging", "icu_datetime/logging"]
 
 [package.metadata.cargo-all-features]
 # Components are tested individually, and there's no logic in this crate
-skip_feature_sets = [[]]
+# skip_feature_sets = [[]]
 
 [[example]]
 name = "tui"

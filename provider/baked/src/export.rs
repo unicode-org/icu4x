@@ -21,11 +21,8 @@
 //! let mut exporter =
 //!     BakedExporter::new(demo_path.clone(), Default::default()).unwrap();
 //!
-//! // Export something
-//! DatagenDriver::new()
-//!     .with_markers([icu_provider::hello_world::HelloWorldV1Marker::INFO])
-//!     // HelloWorldProvider cannot provide fallback data, so we cannot deduplicate
-//!     .with_locales_and_fallback([LocaleFamily::FULL], FallbackOptions::no_deduplication())
+//! // Export something. Make sure to use the same fallback data at runtime.
+//! DatagenDriver::new([LocaleFamily::FULL], FallbackOptions::maximal_deduplication(), LocaleFallbacker::new())
 //!     .export(&icu_provider::hello_world::HelloWorldProvider, exporter)
 //!     .unwrap();
 //! #

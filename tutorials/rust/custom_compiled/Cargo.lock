@@ -79,7 +79,6 @@ dependencies = [
  "calendrical_calculations",
  "displaydoc",
  "icu_calendar_data",
- "icu_locale",
  "icu_locale_core",
  "icu_provider",
  "tinystr",
@@ -90,6 +89,10 @@ dependencies = [
 [[package]]
 name = "icu_calendar_data"
 version = "1.5.0"
+dependencies = [
+ "icu_locale",
+ "icu_provider_baked",
+]
 
 [[package]]
 name = "icu_casemap"
@@ -108,6 +111,9 @@ dependencies = [
 [[package]]
 name = "icu_casemap_data"
 version = "1.5.0"
+dependencies = [
+ "icu_provider_baked",
+]
 
 [[package]]
 name = "icu_collator"
@@ -116,7 +122,6 @@ dependencies = [
  "displaydoc",
  "icu_collator_data",
  "icu_collections",
- "icu_locale",
  "icu_normalizer",
  "icu_properties",
  "icu_provider",
@@ -129,6 +134,10 @@ dependencies = [
 [[package]]
 name = "icu_collator_data"
 version = "1.5.0"
+dependencies = [
+ "icu_locale",
+ "icu_provider_baked",
+]
 
 [[package]]
 name = "icu_collections"
@@ -150,7 +159,6 @@ dependencies = [
  "icu_calendar",
  "icu_datetime_data",
  "icu_decimal",
- "icu_locale",
  "icu_locale_core",
  "icu_plurals",
  "icu_provider",
@@ -164,6 +172,10 @@ dependencies = [
 [[package]]
 name = "icu_datetime_data"
 version = "1.5.0"
+dependencies = [
+ "icu_locale",
+ "icu_provider_baked",
+]
 
 [[package]]
 name = "icu_decimal"
@@ -172,7 +184,6 @@ dependencies = [
  "displaydoc",
  "fixed_decimal",
  "icu_decimal_data",
- "icu_locale",
  "icu_provider",
  "writeable",
 ]
@@ -180,6 +191,10 @@ dependencies = [
 [[package]]
 name = "icu_decimal_data"
 version = "1.5.0"
+dependencies = [
+ "icu_locale",
+ "icu_provider_baked",
+]
 
 [[package]]
 name = "icu_experimental"
@@ -212,6 +227,10 @@ dependencies = [
 [[package]]
 name = "icu_experimental_data"
 version = "0.1.0"
+dependencies = [
+ "icu_locale",
+ "icu_provider_baked",
+]
 
 [[package]]
 name = "icu_list"
@@ -219,7 +238,6 @@ version = "1.5.0"
 dependencies = [
  "displaydoc",
  "icu_list_data",
- "icu_locale",
  "icu_provider",
  "regex-automata",
  "writeable",
@@ -228,6 +246,10 @@ dependencies = [
 [[package]]
 name = "icu_list_data"
 version = "1.5.0"
+dependencies = [
+ "icu_locale",
+ "icu_provider_baked",
+]
 
 [[package]]
 name = "icu_locale"
@@ -255,6 +277,9 @@ dependencies = [
 [[package]]
 name = "icu_locale_data"
 version = "1.5.0"
+dependencies = [
+ "icu_provider_baked",
+]
 
 [[package]]
 name = "icu_normalizer"
@@ -275,6 +300,9 @@ dependencies = [
 [[package]]
 name = "icu_normalizer_data"
 version = "1.5.0"
+dependencies = [
+ "icu_provider_baked",
+]
 
 [[package]]
 name = "icu_pattern"
@@ -293,7 +321,6 @@ version = "1.5.0"
 dependencies = [
  "displaydoc",
  "fixed_decimal",
- "icu_locale",
  "icu_plurals_data",
  "icu_provider",
  "zerovec",
@@ -302,6 +329,10 @@ dependencies = [
 [[package]]
 name = "icu_plurals_data"
 version = "1.5.0"
+dependencies = [
+ "icu_locale",
+ "icu_provider_baked",
+]
 
 [[package]]
 name = "icu_properties"
@@ -309,7 +340,6 @@ version = "1.5.0"
 dependencies = [
  "displaydoc",
  "icu_collections",
- "icu_locale",
  "icu_properties_data",
  "icu_provider",
  "tinystr",
@@ -319,6 +349,10 @@ dependencies = [
 [[package]]
 name = "icu_properties_data"
 version = "1.5.0"
+dependencies = [
+ "icu_locale",
+ "icu_provider_baked",
+]
 
 [[package]]
 name = "icu_provider"
@@ -333,6 +367,13 @@ dependencies = [
  "yoke",
  "zerofrom",
  "zerovec",
+]
+
+[[package]]
+name = "icu_provider_baked"
+version = "1.5.0"
+dependencies = [
+ "icu_provider",
 ]
 
 [[package]]
@@ -361,6 +402,10 @@ dependencies = [
 [[package]]
 name = "icu_segmenter_data"
 version = "1.5.0"
+dependencies = [
+ "icu_locale",
+ "icu_provider_baked",
+]
 
 [[package]]
 name = "icu_timezone"
@@ -378,6 +423,9 @@ dependencies = [
 [[package]]
 name = "icu_timezone_data"
 version = "1.5.0"
+dependencies = [
+ "icu_provider_baked",
+]
 
 [[package]]
 name = "libm"
@@ -646,6 +694,10 @@ name = "deduplicating_array"
 version = "0.1.6"
 
 [[patch.unused]]
+name = "icu4x-datagen"
+version = "1.5.0"
+
+[[patch.unused]]
 name = "icu4x_ecma402"
 version = "0.8.2"
 
@@ -666,6 +718,10 @@ name = "icu_datagen"
 version = "1.5.0"
 
 [[patch.unused]]
+name = "icu_datagen_bikeshed"
+version = "1.5.0"
+
+[[patch.unused]]
 name = "icu_freertos"
 version = "1.5.0"
 
@@ -683,6 +739,10 @@ version = "1.5.0"
 
 [[patch.unused]]
 name = "icu_provider_fs"
+version = "1.5.0"
+
+[[patch.unused]]
+name = "icu_registry"
 version = "1.5.0"
 
 [[patch.unused]]

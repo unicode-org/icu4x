@@ -8,7 +8,6 @@ mod testutil;
 use std::collections::BTreeMap;
 use std::collections::HashSet;
 
-use icu::locale::provider::*;
 use icu_datagen::prelude::*;
 use icu_datagen::FallbackOptions;
 use icu_provider::datagen::*;
@@ -70,33 +69,6 @@ impl DataProvider<HelloWorldV1Marker> for TestingProvider {
     }
 }
 
-impl DataProvider<LocaleFallbackLikelySubtagsV1Marker> for TestingProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<LocaleFallbackLikelySubtagsV1Marker>, DataError> {
-        icu::locale::provider::Baked.load(req)
-    }
-}
-
-impl DataProvider<LocaleFallbackParentsV1Marker> for TestingProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<LocaleFallbackParentsV1Marker>, DataError> {
-        icu::locale::provider::Baked.load(req)
-    }
-}
-
-impl DataProvider<CollationFallbackSupplementV1Marker> for TestingProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<CollationFallbackSupplementV1Marker>, DataError> {
-        icu::locale::provider::Baked.load(req)
-    }
-}
-
 impl IterableDataProvider<HelloWorldV1Marker> for TestingProvider {
     fn iter_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         Ok(self
@@ -107,33 +79,7 @@ impl IterableDataProvider<HelloWorldV1Marker> for TestingProvider {
     }
 }
 
-impl IterableDataProvider<LocaleFallbackLikelySubtagsV1Marker> for TestingProvider {
-    fn iter_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
-        Ok(HashSet::from_iter([Default::default()]))
-    }
-}
-
-impl IterableDataProvider<LocaleFallbackParentsV1Marker> for TestingProvider {
-    fn iter_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
-        Ok(HashSet::from_iter([Default::default()]))
-    }
-}
-
-impl IterableDataProvider<CollationFallbackSupplementV1Marker> for TestingProvider {
-    fn iter_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
-        Ok(HashSet::from_iter([Default::default()]))
-    }
-}
-
-make_exportable_provider!(
-    TestingProvider,
-    [
-        HelloWorldV1Marker,
-        LocaleFallbackLikelySubtagsV1Marker,
-        LocaleFallbackParentsV1Marker,
-        CollationFallbackSupplementV1Marker,
-    ]
-);
+make_exportable_provider!(TestingProvider, [HelloWorldV1Marker,]);
 
 fn families(
     langids: impl IntoIterator<Item = LanguageIdentifier>,
@@ -156,9 +102,11 @@ fn export_to_map(driver: DatagenDriver, provider: &TestingProvider) -> BTreeMap<
 #[test]
 fn all_preferred() {
     let exported = export_to_map(
-        DatagenDriver::new()
-            .with_markers([HelloWorldV1Marker::INFO])
-            .with_locales_and_fallback([LocaleFamily::FULL], FallbackOptions::no_deduplication()),
+        DatagenDriver::new(
+            [LocaleFamily::FULL],
+            FallbackOptions::no_deduplication(),
+            LocaleFallbacker::new().static_to_owned(),
+        ),
         &TestingProvider::with_decimal_symbol_like_data(),
     );
 
@@ -197,9 +145,11 @@ fn all_preferred() {
 #[test]
 fn all_hybrid() {
     let exported = export_to_map(
-        DatagenDriver::new()
-            .with_markers([HelloWorldV1Marker::INFO])
-            .with_locales_and_fallback([LocaleFamily::FULL], FallbackOptions::no_deduplication()),
+        DatagenDriver::new(
+            [LocaleFamily::FULL],
+            FallbackOptions::no_deduplication(),
+            LocaleFallbacker::new().static_to_owned(),
+        ),
         &TestingProvider::with_decimal_symbol_like_data(),
     );
 
@@ -238,12 +188,11 @@ fn all_hybrid() {
 #[test]
 fn all_runtime() {
     let exported = export_to_map(
-        DatagenDriver::new()
-            .with_markers([HelloWorldV1Marker::INFO])
-            .with_locales_and_fallback(
-                [LocaleFamily::FULL],
-                FallbackOptions::maximal_deduplication(),
-            ),
+        DatagenDriver::new(
+            [LocaleFamily::FULL],
+            FallbackOptions::maximal_deduplication(),
+            LocaleFallbacker::new().static_to_owned(),
+        ),
         &TestingProvider::with_decimal_symbol_like_data(),
     );
 
@@ -281,12 +230,11 @@ fn all_runtime() {
 #[test]
 fn all_runtime_retain_base() {
     let exported = export_to_map(
-        DatagenDriver::new()
-            .with_markers([HelloWorldV1Marker::INFO])
-            .with_locales_and_fallback(
-                [LocaleFamily::FULL],
-                FallbackOptions::retain_base_languages_deduplication(),
-            ),
+        DatagenDriver::new(
+            [LocaleFamily::FULL],
+            FallbackOptions::retain_base_languages_deduplication(),
+            LocaleFallbacker::new().static_to_owned(),
+        ),
         &TestingProvider::with_decimal_symbol_like_data(),
     );
 
@@ -333,12 +281,11 @@ fn explicit_preferred() {
         langid!("ru-Cyrl-RU"),
     ];
     let exported = export_to_map(
-        DatagenDriver::new()
-            .with_markers([HelloWorldV1Marker::INFO])
-            .with_locales_and_fallback(
-                families(SELECTED_LOCALES),
-                FallbackOptions::no_deduplication(),
-            ),
+        DatagenDriver::new(
+            families(SELECTED_LOCALES),
+            FallbackOptions::no_deduplication(),
+            LocaleFallbacker::new().static_to_owned(),
+        ),
         &TestingProvider::with_decimal_symbol_like_data(),
     );
 
@@ -381,12 +328,11 @@ fn explicit_hybrid() {
         langid!("ru-Cyrl-RU"),
     ];
     let exported = export_to_map(
-        DatagenDriver::new()
-            .with_markers([HelloWorldV1Marker::INFO])
-            .with_locales_and_fallback(
-                families(SELECTED_LOCALES),
-                FallbackOptions::no_deduplication(),
-            ),
+        DatagenDriver::new(
+            families(SELECTED_LOCALES),
+            FallbackOptions::no_deduplication(),
+            LocaleFallbacker::new().static_to_owned(),
+        ),
         &TestingProvider::with_decimal_symbol_like_data(),
     );
 
@@ -429,12 +375,11 @@ fn explicit_runtime() {
         langid!("ru-Cyrl-RU"),
     ];
     let exported = export_to_map(
-        DatagenDriver::new()
-            .with_markers([HelloWorldV1Marker::INFO])
-            .with_locales_and_fallback(
-                families(SELECTED_LOCALES),
-                FallbackOptions::maximal_deduplication(),
-            ),
+        DatagenDriver::new(
+            families(SELECTED_LOCALES),
+            FallbackOptions::maximal_deduplication(),
+            LocaleFallbacker::new().static_to_owned(),
+        ),
         &TestingProvider::with_decimal_symbol_like_data(),
     );
 
@@ -476,12 +421,11 @@ fn explicit_runtime_retain_base() {
         langid!("ru-Cyrl-RU"),
     ];
     let exported = export_to_map(
-        DatagenDriver::new()
-            .with_markers([HelloWorldV1Marker::INFO])
-            .with_locales_and_fallback(
-                families(SELECTED_LOCALES),
-                FallbackOptions::retain_base_languages_deduplication(),
-            ),
+        DatagenDriver::new(
+            families(SELECTED_LOCALES),
+            FallbackOptions::retain_base_languages_deduplication(),
+            LocaleFallbacker::new().static_to_owned(),
+        ),
         &TestingProvider::with_decimal_symbol_like_data(),
     );
 
@@ -523,9 +467,11 @@ fn explicit_preresolved() {
         langid!("ru-Cyrl-RU"),
     ];
     let exported = export_to_map(
-        DatagenDriver::new()
-            .with_markers([HelloWorldV1Marker::INFO])
-            .with_locales_no_fallback(SELECTED_LOCALES, Default::default()),
+        DatagenDriver::new(
+            SELECTED_LOCALES.into_iter().map(LocaleFamily::single),
+            FallbackOptions::no_deduplication(),
+            LocaleFallbacker::new().static_to_owned(),
+        ),
         &TestingProvider::with_decimal_symbol_like_data(),
     );
 
@@ -558,9 +504,11 @@ fn explicit_hybrid_without_descendants() {
         LocaleFamily::without_descendants(langid!("ru-Cyrl-RU")),
     ];
     let exported = export_to_map(
-        DatagenDriver::new()
-            .with_markers([HelloWorldV1Marker::INFO])
-            .with_locales_and_fallback(SELECTED_LOCALES, FallbackOptions::no_deduplication()),
+        DatagenDriver::new(
+            SELECTED_LOCALES,
+            FallbackOptions::no_deduplication(),
+            LocaleFallbacker::new().static_to_owned(),
+        ),
         &TestingProvider::with_decimal_symbol_like_data(),
     );
 
@@ -603,9 +551,11 @@ fn explicit_hybrid_without_ancestors() {
         LocaleFamily::without_ancestors(langid!("ru-Cyrl-RU")),
     ];
     let exported = export_to_map(
-        DatagenDriver::new()
-            .with_markers([HelloWorldV1Marker::INFO])
-            .with_locales_and_fallback(SELECTED_LOCALES, FallbackOptions::no_deduplication()),
+        DatagenDriver::new(
+            SELECTED_LOCALES,
+            FallbackOptions::no_deduplication(),
+            LocaleFallbacker::new().static_to_owned(),
+        ),
         &TestingProvider::with_decimal_symbol_like_data(),
     );
 
@@ -649,9 +599,11 @@ fn explicit_hybrid_mixed_families() {
         LocaleFamily::with_descendants(langid!("es")), // duplicate entry for es
     ];
     let exported = export_to_map(
-        DatagenDriver::new()
-            .with_markers([HelloWorldV1Marker::INFO])
-            .with_locales_and_fallback(SELECTED_LOCALES, FallbackOptions::no_deduplication()),
+        DatagenDriver::new(
+            SELECTED_LOCALES,
+            FallbackOptions::no_deduplication(),
+            LocaleFallbacker::new().static_to_owned(),
+        ),
         &TestingProvider::with_decimal_symbol_like_data(),
     );
 
@@ -684,12 +636,11 @@ fn explicit_hybrid_mixed_families() {
 #[test]
 fn explicit_runtime_und() {
     let exported = export_to_map(
-        DatagenDriver::new()
-            .with_markers([HelloWorldV1Marker::INFO])
-            .with_locales_and_fallback(
-                [LocaleFamily::with_descendants(langid!("und"))],
-                FallbackOptions::maximal_deduplication(),
-            ),
+        DatagenDriver::new(
+            [LocaleFamily::with_descendants(langid!("und"))],
+            FallbackOptions::maximal_deduplication(),
+            LocaleFallbacker::new().static_to_owned(),
+        ),
         &TestingProvider::with_decimal_symbol_like_data(),
     );
 
@@ -703,12 +654,11 @@ fn explicit_runtime_und() {
 #[test]
 fn explicit_runtime_und_retain_base() {
     let exported = export_to_map(
-        DatagenDriver::new()
-            .with_markers([HelloWorldV1Marker::INFO])
-            .with_locales_and_fallback(
-                [LocaleFamily::with_descendants(langid!("und"))],
-                FallbackOptions::retain_base_languages_deduplication(),
-            ),
+        DatagenDriver::new(
+            [LocaleFamily::with_descendants(langid!("und"))],
+            FallbackOptions::retain_base_languages_deduplication(),
+            LocaleFallbacker::new().static_to_owned(),
+        ),
         &TestingProvider::with_decimal_symbol_like_data(),
     );
 
@@ -722,12 +672,11 @@ fn explicit_runtime_und_retain_base() {
 #[test]
 fn explicit_hybrid_und() {
     let exported = export_to_map(
-        DatagenDriver::new()
-            .with_markers([HelloWorldV1Marker::INFO])
-            .with_locales_and_fallback(
-                [LocaleFamily::with_descendants(langid!("und"))],
-                FallbackOptions::no_deduplication(),
-            ),
+        DatagenDriver::new(
+            [LocaleFamily::with_descendants(langid!("und"))],
+            FallbackOptions::no_deduplication(),
+            LocaleFallbacker::new().static_to_owned(),
+        ),
         &TestingProvider::with_decimal_symbol_like_data(),
     );
 
@@ -741,9 +690,11 @@ fn explicit_hybrid_und() {
 #[test]
 fn explicit_preresolved_und() {
     let exported = export_to_map(
-        DatagenDriver::new()
-            .with_markers([HelloWorldV1Marker::INFO])
-            .with_locales_no_fallback([langid!("und")], Default::default()),
+        DatagenDriver::new(
+            [LocaleFamily::single(langid!("und"))],
+            FallbackOptions::no_deduplication(),
+            LocaleFallbacker::new().static_to_owned(),
+        ),
         &TestingProvider::with_decimal_symbol_like_data(),
     );
 
@@ -753,61 +704,59 @@ fn explicit_preresolved_und() {
     // Should return the exact explicit locales set.
     assert_eq!(exported.keys().collect::<Vec<_>>(), locales);
 }
-
 #[test]
 fn explicit_runtime_empty() {
     let exported = export_to_map(
-        DatagenDriver::new()
-            .with_markers([HelloWorldV1Marker::INFO])
-            .with_locales_and_fallback([], FallbackOptions::maximal_deduplication()),
+        DatagenDriver::new(
+            [],
+            FallbackOptions::maximal_deduplication(),
+            LocaleFallbacker::new().static_to_owned(),
+        ),
         &TestingProvider::with_decimal_symbol_like_data(),
     );
 
-    // Explicit locales are empty
-    let locales = ["und"];
-
-    // Should return the exact explicit locales set.
-    assert_eq!(exported.keys().collect::<Vec<_>>(), locales);
+    // Should return the empty explicit locales set.
+    assert!(exported.keys().collect::<Vec<_>>().is_empty());
 }
 
 #[test]
 fn explicit_runtime_empty_retain_base() {
     let exported = export_to_map(
-        DatagenDriver::new()
-            .with_markers([HelloWorldV1Marker::INFO])
-            .with_locales_and_fallback([], FallbackOptions::retain_base_languages_deduplication()),
+        DatagenDriver::new(
+            [],
+            FallbackOptions::retain_base_languages_deduplication(),
+            LocaleFallbacker::new().static_to_owned(),
+        ),
         &TestingProvider::with_decimal_symbol_like_data(),
     );
 
-    // Explicit locales are empty
-    let locales = ["und"];
-
-    // Should return the exact explicit locales set.
-    assert_eq!(exported.keys().collect::<Vec<_>>(), locales);
+    // Should return the empty explicit locales set.
+    assert!(exported.keys().collect::<Vec<_>>().is_empty());
 }
 
 #[test]
 fn explicit_hybrid_empty() {
     let exported = export_to_map(
-        DatagenDriver::new()
-            .with_markers([HelloWorldV1Marker::INFO])
-            .with_locales_and_fallback([], FallbackOptions::no_deduplication()),
+        DatagenDriver::new(
+            [],
+            FallbackOptions::no_deduplication(),
+            LocaleFallbacker::new().static_to_owned(),
+        ),
         &TestingProvider::with_decimal_symbol_like_data(),
     );
 
-    // Explicit locales are empty
-    let locales = ["und"];
-
-    // Should return the exact explicit locales set.
-    assert_eq!(exported.keys().collect::<Vec<_>>(), locales);
+    // Should return the empty explicit locales set.
+    assert!(exported.keys().collect::<Vec<_>>().is_empty());
 }
 
 #[test]
 fn explicit_preresolved_empty() {
     let exported = export_to_map(
-        DatagenDriver::new()
-            .with_markers([HelloWorldV1Marker::INFO])
-            .with_locales_no_fallback([], Default::default()),
+        DatagenDriver::new(
+            [],
+            FallbackOptions::no_deduplication(),
+            LocaleFallbacker::new().static_to_owned(),
+        ),
         &TestingProvider::with_decimal_symbol_like_data(),
     );
 

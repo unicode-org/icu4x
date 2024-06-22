@@ -4,11 +4,11 @@
 
 use crate::rayon_prelude::*;
 use displaydoc::Display;
-use icu::locale::extensions::unicode::key;
-use icu::locale::fallback::LocaleFallbackIterator;
-use icu::locale::LanguageIdentifier;
-use icu::locale::LocaleFallbacker;
-use icu::locale::ParseError;
+use icu_locale::extensions::unicode::key;
+use icu_locale::fallback::LocaleFallbackIterator;
+use icu_locale::LanguageIdentifier;
+use icu_locale::LocaleFallbacker;
+use icu_locale::ParseError;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use std::collections::HashMap;
@@ -16,7 +16,6 @@ use std::collections::HashSet;
 use std::fmt;
 use std::hash::Hash;
 use std::str::FromStr;
-use std::sync::OnceLock;
 use std::time::Duration;
 use std::time::Instant;
 use writeable::Writeable;
@@ -354,11 +353,12 @@ impl FallbackOptions {
 /// use icu_datagen::prelude::*;
 /// use icu_datagen_bikeshed::DatagenProvider;
 ///
-/// DatagenDriver::new()
+/// let provider = DatagenProvider::new_latest_tested();
+///
+/// DatagenDriver::new([LocaleFamily::FULL], FallbackOptions::no_deduplication(), LocaleFallbacker::try_new_unstable(&provider).unwrap())
 ///     .with_markers([icu::list::provider::AndListV1Marker::INFO])
-///     .with_locales_and_fallback([LocaleFamily::FULL], FallbackOptions::no_deduplication())
 ///     .export(
-///         &DatagenProvider::new_latest_tested(),
+///         &provider,
 ///         BlobExporter::new_with_sink(Box::new(&mut Vec::new())),
 ///     )
 ///     .unwrap();
@@ -366,7 +366,8 @@ impl FallbackOptions {
 #[derive(Debug, Clone)]
 pub struct DatagenDriver {
     markers: Option<HashSet<DataMarkerInfo>>,
-    requested_families: Option<HashMap<LanguageIdentifier, LocaleFamilyAnnotations>>,
+    requested_families: HashMap<LanguageIdentifier, LocaleFamilyAnnotations>,
+    fallbacker: LocaleFallbacker,
     include_full: bool,
     deduplication_strategy: DeduplicationStrategy,
     additional_collations: HashSet<String>,
@@ -374,16 +375,35 @@ pub struct DatagenDriver {
 }
 
 impl DatagenDriver {
-    /// Creates an empty [`DatagenDriver`].
+    /// Creates a [`DatagenDriver`].
     ///
-    /// Note that markers and locales need to be set before calling [`export`](Self::export).
-    #[allow(clippy::new_without_default)] // this is not directly usable
-    pub fn new() -> Self {
+    /// The fallbacker is used to resolve locale families, and to dedpulicate data if requested.
+    /// Make sure to use the same fallback data when loading from the provider at runtime.
+    pub fn new(
+        locales: impl IntoIterator<Item = LocaleFamily>,
+        options: FallbackOptions,
+        fallbacker: LocaleFallbacker,
+    ) -> Self {
+        let mut include_full = false;
         Self {
             markers: Default::default(),
-            requested_families: Default::default(),
-            include_full: Default::default(),
-            deduplication_strategy: DeduplicationStrategy::None,
+            requested_families: locales
+                .into_iter()
+                .filter_map(|family| {
+                    Some((
+                        family.langid.or_else(|| {
+                            // Full locale family: set the bit instead of adding to the set
+                            debug_assert_eq!(family.annotations, LocaleFamily::FULL.annotations);
+                            include_full = true;
+                            None
+                        })?,
+                        family.annotations,
+                    ))
+                })
+                .collect(),
+            include_full,
+            fallbacker,
+            deduplication_strategy: options.deduplication_strategy,
             additional_collations: Default::default(),
             segmenter_models: Default::default(),
         }
@@ -392,77 +412,16 @@ impl DatagenDriver {
 
     /// Sets this driver to generate the given data markers.
     ///
-    /// See [`icu_datagen::markers`], [`icu_datagen::all_markers`], [`icu_datagen::marker`] and [`icu_datagen::markers_from_bin`].
+    /// If this is not called, all markers supported by the provider will be exported.
     ///
-    /// [`icu_datagen::markers`]: crate::markers
-    /// [`icu_datagen::all_markers`]: crate::all_markers
-    /// [`icu_datagen::marker`]: crate::marker
+    /// See [`icu_datagen::markers_from_bin`].
+    ///
     /// [`icu_datagen::markers_from_bin`]: crate::markers_from_bin
     pub fn with_markers(self, markers: impl IntoIterator<Item = DataMarkerInfo>) -> Self {
         Self {
             markers: Some(markers.into_iter().collect()),
             ..self
         }
-    }
-
-    /// Sets this driver to generate the given locales assuming no runtime fallback.
-    ///
-    /// Use the [`langid!`] macro from the prelude to create [`LanguageIdentifier`]s.
-    ///
-    /// [`langid!`]: crate::prelude::langid
-    pub fn with_locales_no_fallback(
-        mut self,
-        locales: impl IntoIterator<Item = LanguageIdentifier>,
-        _options: NoFallbackOptions,
-    ) -> Self {
-        self.requested_families = Some(
-            locales
-                .into_iter()
-                // Map langids without fallback to the `single` family
-                .map(|langid| (langid, LocaleFamilyAnnotations::single()))
-                .collect(),
-        );
-        self.deduplication_strategy = DeduplicationStrategy::None;
-        self
-    }
-
-    /// Sets this driver to generate the given locales assuming runtime fallback.
-    ///
-    /// Use the [`langid!`] macro from the prelude to create [`LanguageIdentifier`]s.
-    ///
-    /// If there are multiple [`LocaleFamily`]s for the same [`LanguageIdentifier`], the last entry
-    /// in the iterator takes precedence.
-    ///
-    /// [`langid!`]: crate::prelude::langid
-    pub fn with_locales_and_fallback(
-        mut self,
-        locales: impl IntoIterator<Item = LocaleFamily>,
-        options: FallbackOptions,
-    ) -> Self {
-        let mut families = locales.into_iter().collect::<Vec<_>>();
-        if families.is_empty() {
-            families.push(LocaleFamily::single(LanguageIdentifier::UND));
-        }
-
-        self.requested_families = Some(
-            families
-                .into_iter()
-                .filter_map(|family| {
-                    Some((
-                        family.langid.or_else(|| {
-                            // Full locale family: set the bit instead of adding to the set
-                            debug_assert_eq!(family.annotations, LocaleFamily::FULL.annotations);
-                            self.include_full = true;
-                            None
-                        })?,
-                        family.annotations,
-                    ))
-                })
-                .collect(),
-        );
-
-        self.deduplication_strategy = options.deduplication_strategy;
-        self
     }
 
     /// This option is only relevant if using `icu::collator`.
@@ -555,20 +514,13 @@ impl DatagenDriver {
             markers,
             requested_families,
             include_full,
+            fallbacker,
             deduplication_strategy,
             additional_collations,
             segmenter_models,
         } = self;
 
-        let Some(markers) = markers else {
-            return Err(DataError::custom(
-                "`DatagenDriver::with_markers` needs to be called",
-            ));
-        };
-
-        let requested_families = requested_families.ok_or_else(|| DataError::custom(
-            "`DatagenDriver::with_locales_and_fallback` or `with_locales_no_fallback` needs to be called",
-        ))?;
+        let markers = markers.unwrap_or_else(|| provider.supported_markers());
 
         if markers.is_empty() {
             log::warn!("No markers selected");
@@ -598,16 +550,6 @@ impl DatagenDriver {
                 sorted_locale_strs
             }
         );
-
-        let fallbacker = OnceLock::new();
-        let fallbacker = || {
-            fallbacker
-                .get_or_init(|| {
-                    LocaleFallbacker::try_new_with_any_provider(&provider.as_any_provider())
-                })
-                .as_ref()
-                .map_err(|&e| e)
-        };
 
         let load_with_fallback = |marker, locale: &_, marker_attributes: &_| {
             log::trace!("Generating marker/locale: {marker}/{locale:}");
@@ -641,16 +583,11 @@ impl DatagenDriver {
                             }
                             iter.step();
                         } else {
-                            match fallbacker() {
-                                Ok(fallbacker) => {
-                                    locale_iter = Some(
-                                        fallbacker
-                                            .for_config(marker.fallback_config)
-                                            .fallback_for(locale.clone()),
-                                    )
-                                }
-                                Err(e) => return Some(Err(e)),
-                            }
+                            locale_iter = Some(
+                                fallbacker
+                                    .for_config(marker.fallback_config)
+                                    .fallback_for(locale.clone()),
+                            )
                         }
                     }
                     Err(e) => return Some(Err(e.with_req(marker, req))),
@@ -705,7 +642,7 @@ impl DatagenDriver {
                 include_full,
                 &additional_collations,
                 &segmenter_models,
-                fallbacker,
+                &fallbacker,
             )?;
 
             let (slowest_duration, slowest_locale) = match deduplication_strategy {
@@ -721,7 +658,7 @@ impl DatagenDriver {
                             })
                         })
                         .collect::<Result<HashMap<_, _>, _>>()?;
-                    deduplicate_payloads::<true>(marker, &payloads, fallbacker()?, sink)?
+                    deduplicate_payloads::<true>(marker, &payloads, &fallbacker, sink)?
                 }
                 DeduplicationStrategy::RetainBaseLanguages => {
                     let payloads = locales_to_export
@@ -735,7 +672,7 @@ impl DatagenDriver {
                             })
                         })
                         .collect::<Result<HashMap<_, _>, _>>()?;
-                    deduplicate_payloads::<false>(marker, &payloads, fallbacker()?, sink)?
+                    deduplicate_payloads::<false>(marker, &payloads, &fallbacker, sink)?
                 }
                 DeduplicationStrategy::None => locales_to_export
                     .into_par_iter()
@@ -794,14 +731,14 @@ impl DatagenDriver {
 
 /// Selects the maximal set of locales to export based on a [`DataMarkerInfo`] and this datagen
 /// provider's options bag. The locales may be later optionally deduplicated for fallback.
-fn select_locales_for_marker<'a>(
+fn select_locales_for_marker(
     provider: &dyn ExportableProvider,
     marker: DataMarkerInfo,
     requested_families: &HashMap<LanguageIdentifier, LocaleFamilyAnnotations>,
     include_full: bool,
     additional_collations: &HashSet<String>,
     segmenter_models: &[String],
-    fallbacker: impl Fn() -> Result<&'a LocaleFallbacker, DataError>,
+    fallbacker: &LocaleFallbacker,
 ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
     // Map from all supported LanguageIdentifiers to their
     // corresponding supported DataLocales.
@@ -857,9 +794,6 @@ fn select_locales_for_marker<'a>(
         return Ok(selected_locales);
     }
 
-    // Need the fallbacker now.
-    let fallbacker_with_config = fallbacker()?.for_config(marker.fallback_config);
-
     // The "candidate" langids that could be exported is the union of requested and supported.
     let all_candidate_langids = supported_map
         .keys()
@@ -891,7 +825,9 @@ fn select_locales_for_marker<'a>(
                     .map(|family| family.include_ancestors)
                     // default to `false` if the langid was not requested
                     .unwrap_or(false);
-                let mut iter = fallbacker_with_config.fallback_for(current_langid.into());
+                let mut iter = fallbacker
+                    .for_config(marker.fallback_config)
+                    .fallback_for(current_langid.into());
                 loop {
                     // Inherit aux keys and extension keywords from parent locales
                     let parent_langid: LanguageIdentifier = iter.get().get_langid();
@@ -1163,7 +1099,6 @@ fn test_collation_filtering() {
             expected: &["und", "und-u-co-emoji", "und-u-co-eor"],
         },
     ];
-    let fallbacker = LocaleFallbacker::new_without_data();
     for cas in cases {
         let resolved_locales = select_locales_for_marker(
             &Provider,
@@ -1174,7 +1109,7 @@ fn test_collation_filtering() {
             false,
             &HashSet::from_iter(cas.include_collations.iter().copied().map(String::from)),
             &[],
-            || Ok(&fallbacker),
+            &LocaleFallbacker::new_without_data(),
         )
         .unwrap()
         .into_iter()
@@ -1193,7 +1128,7 @@ fn test_collation_filtering() {
 /// Test that the last option with multiple conflicting families wins.
 #[test]
 fn test_family_precedence() {
-    let driver = DatagenDriver::new().with_locales_and_fallback(
+    let driver = DatagenDriver::new(
         [
             "en".parse().unwrap(),
             "%en".parse().unwrap(),
@@ -1202,10 +1137,11 @@ fn test_family_precedence() {
             "^zh-TW".parse().unwrap(),
         ],
         FallbackOptions::no_deduplication(),
+        LocaleFallbacker::new_without_data(),
     );
 
     assert_eq!(
-        driver.requested_families.unwrap(),
+        driver.requested_families,
         [
             (
                 icu::locale::langid!("en"),

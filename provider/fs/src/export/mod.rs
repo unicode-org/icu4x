@@ -25,11 +25,8 @@
 //! let mut exporter = FilesystemExporter::try_new(serializer, options)
 //!     .expect("Should successfully initialize data output directory");
 //!
-//! // Export something
-//! DatagenDriver::new()
-//!     .with_markers([HelloWorldV1Marker::INFO])
-//!     // HelloWorldProvider cannot provide fallback data, so we cannot deduplicate
-//!     .with_locales_and_fallback([LocaleFamily::FULL], FallbackOptions::no_deduplication())
+//! // Export something. Make sure to use the same fallback data at runtime.
+//! DatagenDriver::new([LocaleFamily::FULL], FallbackOptions::maximal_deduplication(), LocaleFallbacker::new())
 //!     .export(&HelloWorldProvider, exporter)
 //!     .unwrap();
 //! #

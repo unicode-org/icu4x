@@ -34,6 +34,7 @@ use icu_datagen_bikeshed::DatagenProvider;
 use icu_provider::datagen::ExportableProvider;
 use icu_provider::hello_world::HelloWorldV1Marker;
 use simple_logger::SimpleLogger;
+use std::collections::HashMap;
 use std::path::PathBuf;
 
 #[derive(Parser)]
@@ -177,19 +178,11 @@ struct Cli {
     #[arg(help = "--format=mod only: don't include fallback code inside the baked provider")]
     no_internal_fallback: bool,
 
-    #[arg(long)]
-    #[arg(
-        help = "disables locale fallback, instead exporting exactly the locales specified in --locales. \
-                Cannot be used with --deduplication, --runtime-fallback-location"
-    )]
-    without_fallback: bool,
-
     #[arg(long, value_enum)]
     #[arg(
         help = "configures the deduplication of locales for exported data payloads. \
                 If not set, determined by the export format: \
-                if --format=mod, a more aggressive deduplication strategy is used. \
-                Cannot be used with --without-fallback"
+                if --format=mod, a more aggressive deduplication strategy is used."
     )]
     deduplication: Option<Deduplication>,
 
@@ -295,16 +288,26 @@ fn main() -> eyre::Result<()> {
     let markers = if !cli.markers.is_empty() {
         match cli.markers.as_slice() {
             [x] if x == "none" => Default::default(),
-            [x] if x == "all" => icu_datagen::all_markers(),
+            [x] if x == "all" => {
+                #[cfg(feature = "experimental")]
+                log::warn!("The icu4x-datagen crate has been built with the `experimental` feature, so `--markers all` includes experimental markers");
+                #[cfg(not(feature = "experimental"))]
+                log::warn!("The icu4x-datagen crate has been built without the `experimental` feature, so `--markers all` does not include experimental markers");
+                all_markers()
+            }
             markers => markers
                 .iter()
-                .map(|k| icu_datagen::marker(k).ok_or(eyre::eyre!(k.to_string())))
+                .map(|k| match marker_lookup().get(k.as_str()) {
+                    Some(Some(marker)) => Ok(*marker),
+                    Some(None) => {
+                        eyre::bail!("Marker {k:?} requires `experimental` Cargo feature")
+                    }
+                    None => eyre::bail!("Unknown marker {k:?}"),
+                })
                 .collect::<Result<_, _>>()?,
         }
     } else if let Some(bin_path) = &cli.markers_for_bin {
-        icu_datagen::markers_from_bin(bin_path)?
-            .into_iter()
-            .collect()
+        icu::markers_for_bin(bin_path)?.into_iter().collect()
     } else {
         eyre::bail!("--markers or --markers-for-bin are required.")
     };
@@ -328,21 +331,25 @@ fn main() -> eyre::Result<()> {
         None
     };
 
-    let provider: Box<dyn ExportableProvider> = match () {
+    let (provider, fallbacker): (Box<dyn ExportableProvider>, _) = match () {
         () if markers == [HelloWorldV1Marker::INFO] => {
-            Box::new(icu_provider::hello_world::HelloWorldProvider)
+            // Just do naive fallback instead of pulling in compiled data or something. We only use this code path to debug
+            // providers, so we don't need 100% correct fallback.
+            (Box::new(icu_provider::hello_world::HelloWorldProvider), LocaleFallbacker::new_without_data())
         }
         () if markers.contains(&HelloWorldV1Marker::INFO) => {
             eyre::bail!("HelloWorldV1Marker is only allowed as the only marker")
         }
         #[cfg(feature = "blob_input")]
-        () if cli.input_blob.is_some() => Box::new(ReexportableBlobDataProvider(
-            icu_provider_blob::BlobDataProvider::try_new_from_blob(
+        () if cli.input_blob.is_some() => {
+            let provider = icu_provider_blob::BlobDataProvider::try_new_from_blob(
                 std::fs::read(cli.input_blob.unwrap())?.into(),
-            )?,
-        )),
+            )?;
+            let fallbacker = LocaleFallbacker::try_new_with_buffer_provider(&provider)?;
+            (Box::new(ReexportableBlobDataProvider(provider)), fallbacker)
+        },
 
-        #[cfg(not(feature = "provider"))]
+        #[cfg(all(not(feature = "provider"), feature = "input_blob"))]
         () => eyre::bail!("--input-blob is required without the `provider` Cargo feature"),
 
         #[cfg(feature = "provider")]
@@ -434,63 +441,48 @@ fn main() -> eyre::Result<()> {
                 ));
             }
 
-            Box::new(p)
+            let fallbacker = LocaleFallbacker::try_new_unstable(&p)?;
+            (Box::new(p), fallbacker)
         }
 
         #[cfg(all(not(feature = "blob_input"), not(feature = "provider")))]
-        () => compile_error!("Crate requires either `blob_input` or `provider`"),
+        () => eyre::bail!("Only the `HelloWorldV1 marker is supported without Cargo features `blob_input` or `provider`"),
     };
 
-    let mut driver = DatagenDriver::new();
+    let locale_families = match preprocessed_locales {
+        Some(PreprocessedLocales::Full) => vec![LocaleFamily::FULL],
+        Some(PreprocessedLocales::LanguageIdentifiers(lids)) => lids
+            .into_iter()
+            .map(LocaleFamily::with_descendants)
+            .collect(),
+        None => cli
+            .locales
+            .into_iter()
+            .map(|family_str| family_str.parse().wrap_err(family_str))
+            .collect::<eyre::Result<Vec<_>>>()?,
+    };
+
+    let mut options = match cli.format {
+        Format::Dir | Format::Blob | Format::Blob2 => FallbackOptions::no_deduplication(),
+        Format::Mod if cli.no_internal_fallback && cli.deduplication.is_none() =>
+            eyre::bail!("--no-internal-fallback requires an explicit --deduplication value. Baked exporter would default to maximal deduplication, which might not be intended"),
+        // TODO(2.0): Default to RetainBaseLanguages here
+        Format::Mod => FallbackOptions::maximal_deduplication(),
+    };
+    if let Some(deduplication) = cli.deduplication {
+        options.deduplication_strategy = match deduplication {
+            Deduplication::Maximal => icu_datagen::DeduplicationStrategy::Maximal,
+            Deduplication::RetainBaseLanguages => {
+                icu_datagen::DeduplicationStrategy::RetainBaseLanguages
+            }
+            Deduplication::None => icu_datagen::DeduplicationStrategy::None,
+        };
+    }
+
+    let mut driver = DatagenDriver::new(locale_families, options, fallbacker);
 
     driver = driver.with_markers(markers);
 
-    if cli.without_fallback {
-        driver = driver.with_locales_no_fallback(
-            match preprocessed_locales {
-                Some(PreprocessedLocales::Full) => {
-                    eyre::bail!("--without-fallback needs an explicit locale list")
-                }
-                Some(PreprocessedLocales::LanguageIdentifiers(lids)) => lids,
-                None => cli
-                    .locales
-                    .into_iter()
-                    .map(|langid_str| langid_str.parse().wrap_err(langid_str))
-                    .collect::<eyre::Result<Vec<_>>>()?,
-            },
-            Default::default(),
-        );
-    } else {
-        let locale_families = match preprocessed_locales {
-            Some(PreprocessedLocales::Full) => vec![LocaleFamily::FULL],
-            Some(PreprocessedLocales::LanguageIdentifiers(lids)) => lids
-                .into_iter()
-                .map(LocaleFamily::with_descendants)
-                .collect(),
-            None => cli
-                .locales
-                .into_iter()
-                .map(|family_str| family_str.parse().wrap_err(family_str))
-                .collect::<eyre::Result<Vec<_>>>()?,
-        };
-        let mut options = match cli.format {
-            Format::Dir | Format::Blob | Format::Blob2 => FallbackOptions::no_deduplication(),
-            Format::Mod if cli.no_internal_fallback && cli.deduplication.is_none() =>
-                eyre::bail!("--no-internal-fallback requires an explicit --deduplication value. Baked exporter would default to maximal deduplication, which might not be intended"),
-            // TODO(2.0): Default to RetainBaseLanguages here
-            Format::Mod => FallbackOptions::maximal_deduplication(),
-        };
-        if let Some(deduplication) = cli.deduplication {
-            options.deduplication_strategy = match deduplication {
-                Deduplication::Maximal => icu_datagen::DeduplicationStrategy::Maximal,
-                Deduplication::RetainBaseLanguages => {
-                    icu_datagen::DeduplicationStrategy::RetainBaseLanguages
-                }
-                Deduplication::None => icu_datagen::DeduplicationStrategy::None,
-            };
-        }
-        driver = driver.with_locales_and_fallback(locale_families, options);
-    }
     driver = driver.with_additional_collations(
         cli.include_collations
             .iter()
@@ -588,6 +580,74 @@ fn main() -> eyre::Result<()> {
     Ok(())
 }
 
+macro_rules! cb {
+    ($($marker:path = $path:literal,)+ #[experimental] $($emarker:path = $epath:literal,)+) => {
+        fn all_markers() -> Vec<DataMarkerInfo> {
+            vec![
+                $(
+                    <$marker>::INFO,
+                )+
+                $(
+                    #[cfg(feature = "experimental")]
+                    <$emarker>::INFO,
+                )+
+            ]
+        }
+
+        fn marker_lookup() -> &'static HashMap<&'static str, Option<DataMarkerInfo>> {
+            use std::sync::OnceLock;
+            static LOOKUP: OnceLock<HashMap<&'static str, Option<DataMarkerInfo>>> = OnceLock::new();
+            LOOKUP.get_or_init(|| {
+                [
+                    ("core/helloworld@1", Some(icu_provider::hello_world::HelloWorldV1Marker::INFO)),
+                    (stringify!(icu_provider::hello_world::HelloWorldV1Marker).split("::").last().unwrap().trim(), Some(icu_provider::hello_world::HelloWorldV1Marker::INFO)),
+                    $(
+                        ($path, Some(<$marker>::INFO)),
+                        (stringify!($marker).split("::").last().unwrap().trim(), Some(<$marker>::INFO)),
+                    )+
+                    $(
+                        #[cfg(feature = "experimental")]
+                        ($epath, Some(<$emarker>::INFO)),
+                        #[cfg(feature = "experimental")]
+                        (stringify!($emarker).split("::").last().unwrap().trim(), Some(<$emarker>::INFO)),
+                        #[cfg(not(feature = "experimental"))]
+                        ($epath, None),
+                        #[cfg(not(feature = "experimental"))]
+                        (stringify!($emarker).split("::").last().unwrap().trim(), None),
+                    )+
+
+                ]
+                .into_iter()
+                .collect()
+            })
+        }
+
+        #[test]
+        fn test_lookup() {
+            assert_eq!(marker_lookup().get("AndListV1Marker"), Some(&Some(icu::list::provider::AndListV1Marker::INFO)));
+            assert_eq!(marker_lookup().get("list/and@1"), Some(&Some(icu::list::provider::AndListV1Marker::INFO)));
+            assert_eq!(marker_lookup().get("foo"), None);
+        }
+
+
+        #[cfg(feature = "blob_input")]
+        icu_provider::datagen::make_exportable_provider!(
+            ReexportableBlobDataProvider,
+            [
+                icu_provider::hello_world::HelloWorldV1Marker,
+                $(
+                    $marker,
+                )+
+                $(
+                    #[cfg(feature = "experimental")]
+                    $emarker,
+                )+
+            ]
+        );
+    }
+}
+icu_registry::registry!(cb);
+
 #[cfg(feature = "blob_input")]
 use icu_provider::buf::DeserializingBufferProvider;
 #[cfg(feature = "blob_input")]
@@ -623,24 +683,3 @@ where
         self.0.iter_requests_for_marker(M::INFO)
     }
 }
-
-#[cfg(feature = "blob_input")]
-macro_rules! cb {
-    ($($marker:path = $path:literal,)+ #[experimental] $($emarker:path = $epath:literal,)+) => {
-        icu_provider::datagen::make_exportable_provider!(
-            ReexportableBlobDataProvider,
-            [
-                icu_provider::hello_world::HelloWorldV1Marker,
-                $(
-                    $marker,
-                )+
-                $(
-                    #[cfg(feature = "experimental")]
-                    $emarker,
-                )+
-            ]
-        );
-    }
-}
-#[cfg(feature = "blob_input")]
-icu_registry::registry!(cb);
