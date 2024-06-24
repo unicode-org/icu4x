@@ -4,4 +4,6 @@
 
 [toolchain]
 # Version updated on 2023-10-06
-channel = "1.73"
+# Version set to 1.74 for release/1.4 branch on 2024-06-20
+# so that cargo-rdme continues to install
+channel = "1.74"

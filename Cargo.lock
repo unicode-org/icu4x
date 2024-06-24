@@ -1431,7 +1431,7 @@ dependencies = [
 
 [[package]]
 name = "icu_casemap"
-version = "1.4.0"
+version = "1.4.1"
 dependencies = [
  "criterion",
  "databake",
@@ -1853,7 +1853,7 @@ version = "1.4.0"
 
 [[package]]
 name = "icu_properties"
-version = "1.4.2"
+version = "1.4.3"
 dependencies = [
  "databake",
  "displaydoc",

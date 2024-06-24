@@ -16,6 +16,12 @@
 
  - Fix issue in C++ bindings where `diplomat::result::Ok` and `Err` have ambiguous template deduction errors in their constructors, on Clang. (https://github.com/unicode-org/icu4x/pull/4615)
    - `icu_capi@1.4.1`
+ - Stricter version dependency on data crates
+   - `icu_properties@1.4.2`, `icu_normalizer@1.4.3`, `icu_properties_data@1.4.1`
+ - Enforce C,packed, not just packed, on ULE types, fixing for incoming changes to `repr(Rust)` (https://github.com/unicode-org/icu4x/pull/5049) 
+   - `icu_casemap@1.4.1`, `icu_properties@1.4.3`
+   - A full fix also needs `zerovec@0.10.3`,`zerovec_derive@0.10.3`
+
 
 ## icu4x 1.4 (Nov 16, 2023)
 

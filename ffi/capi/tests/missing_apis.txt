@@ -14,6 +14,27 @@
 # Please check in with @Manishearth, @robertbastian, or @sffc if you have questions
 
 
+icu::normalizer::uts46::Uts46Mapper#Struct
+icu::normalizer::uts46::Uts46Mapper::map_normalize#FnInStruct
+icu::normalizer::uts46::Uts46Mapper::new#FnInStruct
+icu::normalizer::uts46::Uts46Mapper::normalize_validate#FnInStruct
+icu::normalizer::uts46::Uts46Mapper::try_new#FnInStruct
+icu::properties::JoiningType#Struct
+icu::properties::JoiningType::DualJoining#AssociatedConstantInStruct
+icu::properties::JoiningType::JoinCausing#AssociatedConstantInStruct
+icu::properties::JoiningType::LeftJoining#AssociatedConstantInStruct
+icu::properties::JoiningType::NonJoining#AssociatedConstantInStruct
+icu::properties::JoiningType::RightJoining#AssociatedConstantInStruct
+icu::properties::JoiningType::Transparent#AssociatedConstantInStruct
+icu::properties::JoiningType::TryFromU32Error#AssociatedTypeInStruct
+icu::properties::JoiningType::enum_to_long_name_mapper#FnInStruct
+icu::properties::JoiningType::enum_to_short_name_mapper#FnInStruct
+icu::properties::JoiningType::get_enum_to_long_name_mapper#FnInStruct
+icu::properties::JoiningType::get_enum_to_short_name_mapper#FnInStruct
+icu::properties::JoiningType::get_name_to_enum_mapper#FnInStruct
+icu::properties::JoiningType::name_to_enum_mapper#FnInStruct
+icu::properties::JoiningType::to_u32#FnInStruct
+icu::properties::JoiningType::try_from_u32#FnInStruct
 icu::properties::bidi_data::BidiAuxiliaryProperties#Struct
 icu::properties::bidi_data::BidiAuxiliaryProperties::from_data#FnInStruct
 icu::properties::bidi_data::BidiAuxiliaryPropertiesBorrowed#Struct
@@ -22,6 +43,8 @@ icu::properties::bidi_data::BidiAuxiliaryPropertiesBorrowed::get32_pairing_props
 icu::properties::bidi_data::BidiMirroringProperties#Struct
 icu::properties::bidi_data::BidiPairingProperties#Enum
 icu::properties::bidi_data::bidi_auxiliary_properties#Fn
+icu::properties::maps::joining_type#Fn
+icu::properties::maps::load_joining_type#Fn
 icu::properties::names::PropertyEnumToValueNameLinearMapper#Struct
 icu::properties::names::PropertyEnumToValueNameLinearMapperBorrowed#Struct
 icu::properties::names::PropertyEnumToValueNameLinearMapperBorrowed::get#FnInStruct

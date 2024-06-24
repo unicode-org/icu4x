@@ -192,8 +192,7 @@ where
             (lower, None) => lower,
         };
 
-        let mut key_hashes = vec![];
-        key_hashes.reserve(size_hint);
+        let mut key_hashes = alloc::vec::Vec::with_capacity(size_hint);
         let mut keys = K::Container::zvl_with_capacity(size_hint);
         let mut values = V::Container::zvl_with_capacity(size_hint);
         for (k, v) in iter {

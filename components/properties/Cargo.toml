@@ -7,7 +7,7 @@ name = "icu_properties"
 description = "Definitions for Unicode properties"
 license-file = "LICENSE"
 
-version = "1.4.2"
+version = "1.4.3"
 authors.workspace = true
 categories.workspace = true
 edition.workspace = true
