@@ -10,8 +10,7 @@
 //! Read more about data providers: [`icu_provider`]
 
 use alloc::borrow::Cow;
-use zerovec::{ZeroMap, ZeroMap2d};
-
+use zerovec::ZeroMap;
 
 use icu_provider::prelude::*;
 
@@ -25,8 +24,14 @@ use icu_provider::prelude::*;
 /// </div>
 pub use crate::provider::Baked;
 
+use super::pattern_key::PatternKey;
 
+// TODO: use `Pattern`s instead of `str` for the patterns' string representations.
 /// This type contains all of the essential data for units formatting such as `per`, `power`, `times`, etc.
+///
+/// Note:
+//      TODO: Use the auxiliary key as real key in the future because the choice of the length is developer's decision.
+///     Auxiliary key represent the length: e.g. `long`, `short`, `narrow`.
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -43,16 +48,15 @@ pub use crate::provider::Baked;
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct UnitsEssentialsV1<'data> {
+    // TODO: use `SinglePlaceholderPattern` instead of `str` for the patterns' string representations.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub powers: ZeroMap2d<'data, str, CompoundCount, str>,
+    pub prefixes: ZeroMap<'data, PatternKey, str>,
 
-    // TODO: use an id instead of str as key.
+    // TODO: use `DoublePlaceholderPattern` instead of `str` for the patterns' string representations.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub prefixes: ZeroMap<'data, str, str>,
+    pub per: Cow<'data, str>,
 
-    // TODO: store the pattern in a SinglePattern.
-    // TODO: use MeasureUnit for the units key instead of strings.
-    /// Contains the narrow width patterns for the units.
+    // TODO: use `DoublePlaceholderPattern` instead of `str` for the patterns' string representations.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub times: Cow<'data, str>,
 }
@@ -60,7 +64,6 @@ pub struct UnitsEssentialsV1<'data> {
 /// A CLDR plural keyword, or the explicit value 1.
 /// See <https://www.unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules>. // TODO??
 #[zerovec::make_ule(CompoundCountULE)]
-#[zerovec::derive(Debug)]
 #[derive(Copy, Clone, PartialOrd, Ord, PartialEq, Eq, Debug)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(
@@ -82,9 +85,4 @@ pub enum CompoundCount {
     Many = 4,
     /// The CLDR keyword `other`.
     Other = 5,
-    /// The explicit 1 case, see <https://www.unicode.org/reports/tr35/tr35-numbers.html#Explicit_0_1_rules>.
-    Explicit1 = 6,
-    // TODO(younies): revise this for currency
-    // NOTE(egg): No explicit 0, because the compact decimal pattern selection
-    // algorithm does not allow such a thing to arise.
 }
