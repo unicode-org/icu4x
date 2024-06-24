@@ -933,7 +933,7 @@ dependencies = [
 
 [[package]]
 name = "icu_calendar"
-version = "1.5.1"
+version = "1.5.2"
 dependencies = [
  "calendrical_calculations",
  "criterion",
@@ -994,7 +994,7 @@ dependencies = [
 
 [[package]]
 name = "icu_casemap"
-version = "1.5.0"
+version = "1.5.1"
 dependencies = [
  "criterion",
  "databake",
@@ -1410,7 +1410,7 @@ version = "1.5.0"
 
 [[package]]
 name = "icu_properties"
-version = "1.5.0"
+version = "1.5.1"
 dependencies = [
  "databake",
  "displaydoc",
@@ -3331,7 +3331,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec"
-version = "0.10.2"
+version = "0.10.3"
 dependencies = [
  "bincode",
  "criterion",
@@ -3354,7 +3354,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec-derive"
-version = "0.10.2"
+version = "0.10.3"
 dependencies = [
  "bincode",
  "proc-macro2",

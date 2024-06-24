@@ -5,7 +5,7 @@
 [package]
 name = "icu_calendar"
 description = "API for supporting various types of calendars"
-version = "1.5.1"
+version = "1.5.2"
 
 authors.workspace = true
 categories.workspace = true

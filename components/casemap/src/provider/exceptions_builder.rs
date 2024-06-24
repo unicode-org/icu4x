@@ -71,7 +71,7 @@ impl ExceptionHeader {
 /// In this struct the RESERVED bit is still allowed to be set, and it will produce a different
 /// exception header, but it will not have any other effects.
 #[derive(Copy, Clone, PartialEq, Eq, ULE)]
-#[repr(packed)]
+#[repr(C, packed)]
 pub struct ExceptionHeaderULE {
     slot_presence: SlotPresence,
     bits: ExceptionBitsULE,
