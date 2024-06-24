@@ -10,6 +10,7 @@
 #include "ICU4XFixedDecimalLimitError.d.h"
 #include "ICU4XFixedDecimalParseError.d.h"
 #include "ICU4XFixedDecimalRoundingIncrement.d.h"
+#include "ICU4XFixedDecimalRoundingMode.d.h"
 #include "ICU4XFixedDecimalSign.d.h"
 #include "ICU4XFixedDecimalSignDisplay.d.h"
 
