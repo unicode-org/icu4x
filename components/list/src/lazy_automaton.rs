@@ -47,7 +47,7 @@ impl<T: AsRef<[u8]>> LazyAutomaton for DFA<T> {
     }
 }
 
-#[cfg(test)]
+#[cfg(all(test, feature = "datagen"))]
 #[test]
 fn test() {
     use crate::provider::SerdeDFA;

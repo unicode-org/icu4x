@@ -278,9 +278,11 @@ impl<'a, W: Writeable + 'a, I: Iterator<Item = W> + Clone + 'a> core::fmt::Displ
 }
 
 #[cfg(all(test, feature = "datagen"))]
-mod tests {
+mod tests_with_testing_data {
     use super::*;
     use writeable::{assert_writeable_eq, assert_writeable_parts_eq};
+    use alloc::string::ToString;
+    use alloc::format;
 
     fn formatter(length: ListLength) -> ListFormatter {
         ListFormatter {
@@ -326,7 +328,7 @@ mod tests {
     fn test_into_iterator() {
         let formatter = formatter(ListLength::Wide);
 
-        let mut vecdeque = std::collections::vec_deque::VecDeque::<u8>::new();
+        let mut vecdeque = alloc::collections::vec_deque::VecDeque::<u8>::new();
         vecdeque.push_back(10);
         vecdeque.push_front(48);
 
@@ -366,6 +368,14 @@ mod tests {
 
         assert_writeable_eq!(formatter.format(["Beta", "Alpha"].iter()), "Beta :o Alpha");
     }
+}
+
+#[cfg(all(test, feature = "compiled_data"))]
+mod tests_with_compiled_data {
+    use super::*;
+    use writeable::assert_writeable_eq;
+    use alloc::string::ToString;
+    use alloc::format;
 
     macro_rules! test {
         ($locale:literal, $type:ident, $(($input:expr, $output:literal),)+) => {
