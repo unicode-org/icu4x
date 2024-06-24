@@ -37,35 +37,37 @@ pub use fallback::*;
 pub struct Baked;
 
 #[cfg(feature = "compiled_data")]
+#[allow(unused_imports)]
 const _: () = {
+    use icu_locale_data::*;
     pub mod icu {
         pub use crate as locale;
     }
-    icu_locale_data::make_provider!(Baked);
-    icu_locale_data::impl_fallback_likelysubtags_v1!(Baked);
-    icu_locale_data::impl_fallback_parents_v1!(Baked);
-    icu_locale_data::impl_fallback_supplement_co_v1!(Baked);
-    icu_locale_data::impl_locid_transform_aliases_v2!(Baked);
-    icu_locale_data::impl_locid_transform_likelysubtags_ext_v1!(Baked);
-    icu_locale_data::impl_locid_transform_likelysubtags_l_v1!(Baked);
-    icu_locale_data::impl_locid_transform_likelysubtags_sr_v1!(Baked);
-    icu_locale_data::impl_locid_transform_script_dir_v1!(Baked);
+    make_provider!(Baked);
+    impl_locale_fallback_likely_subtags_v1_marker!(Baked);
+    impl_locale_fallback_parents_v1_marker!(Baked);
+    impl_collation_fallback_supplement_v1_marker!(Baked);
+    impl_aliases_v2_marker!(Baked);
+    impl_likely_subtags_extended_v1_marker!(Baked);
+    impl_likely_subtags_for_language_v1_marker!(Baked);
+    impl_likely_subtags_for_script_region_v1_marker!(Baked);
+    impl_script_direction_v1_marker!(Baked);
 };
 
 #[cfg(feature = "datagen")]
 use icu_provider::prelude::*;
 
 #[cfg(feature = "datagen")]
-/// The latest minimum set of keys required by this component.
-pub const KEYS: &[DataKey] = &[
-    AliasesV2Marker::KEY,
-    CollationFallbackSupplementV1Marker::KEY,
-    LikelySubtagsExtendedV1Marker::KEY,
-    LikelySubtagsForLanguageV1Marker::KEY,
-    LikelySubtagsForScriptRegionV1Marker::KEY,
-    LocaleFallbackLikelySubtagsV1Marker::KEY,
-    LocaleFallbackParentsV1Marker::KEY,
-    ScriptDirectionV1Marker::KEY,
+/// The latest minimum set of markers required by this component.
+pub const MARKERS: &[DataMarkerInfo] = &[
+    AliasesV2Marker::INFO,
+    CollationFallbackSupplementV1Marker::INFO,
+    LikelySubtagsExtendedV1Marker::INFO,
+    LikelySubtagsForLanguageV1Marker::INFO,
+    LikelySubtagsForScriptRegionV1Marker::INFO,
+    LocaleFallbackLikelySubtagsV1Marker::INFO,
+    LocaleFallbackParentsV1Marker::INFO,
+    ScriptDirectionV1Marker::INFO,
 ];
 
 use alloc::borrow::Cow;

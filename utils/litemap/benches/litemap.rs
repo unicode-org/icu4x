@@ -57,9 +57,6 @@ fn overview_bench(c: &mut Criterion) {
     bench_deserialize_large(c);
     bench_lookup(c);
     bench_lookup_large(c);
-
-    #[cfg(feature = "generate")]
-    generate_test_data();
 }
 
 fn build_litemap(large: bool) -> LiteMap<String, String> {

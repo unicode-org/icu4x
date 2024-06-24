@@ -5,9 +5,9 @@
 //! Internal traits and structs for loading data from other crates.
 
 use icu_calendar::week::WeekCalculator;
-use icu_calendar::{AnyCalendar, CalendarError};
+use icu_calendar::AnyCalendar;
 use icu_decimal::options::FixedDecimalFormatterOptions;
-use icu_decimal::{DecimalError, FixedDecimalFormatter};
+use icu_decimal::FixedDecimalFormatter;
 use icu_provider::prelude::*;
 
 /// Trait for loading a FixedDecimalFormatter.
@@ -35,35 +35,6 @@ pub(crate) trait AnyCalendarLoader {
     fn load(&self, locale: &DataLocale) -> Result<AnyCalendar, DataError>;
 }
 
-/// Helper for type resolution with optional loader arguments
-pub(crate) struct PhantomLoader {
-    _not_constructible: core::convert::Infallible,
-}
-
-impl FixedDecimalFormatterLoader for PhantomLoader {
-    fn load(
-        &self,
-        _locale: &DataLocale,
-        _options: FixedDecimalFormatterOptions,
-    ) -> Result<FixedDecimalFormatter, DataError> {
-        unreachable!() // not constructible
-    }
-}
-
-impl WeekCalculatorLoader for PhantomLoader {
-    #[inline]
-    fn load(&self, _locale: &DataLocale) -> Result<WeekCalculator, DataError> {
-        unreachable!() // not constructible
-    }
-}
-
-impl AnyCalendarLoader for PhantomLoader {
-    #[inline]
-    fn load(&self, _locale: &DataLocale) -> Result<AnyCalendar, DataError> {
-        unreachable!() // not constructible
-    }
-}
-
 /// Loader for types from other crates using compiled data.
 #[cfg(feature = "compiled_data")]
 pub(crate) struct ExternalLoaderCompiledData;
@@ -76,10 +47,7 @@ impl FixedDecimalFormatterLoader for ExternalLoaderCompiledData {
         locale: &DataLocale,
         options: FixedDecimalFormatterOptions,
     ) -> Result<FixedDecimalFormatter, DataError> {
-        FixedDecimalFormatter::try_new(locale, options).map_err(|e| match e {
-            DecimalError::Data(e) => e,
-            _ => unreachable!(),
-        })
+        FixedDecimalFormatter::try_new(locale, options)
     }
 }
 
@@ -87,10 +55,7 @@ impl FixedDecimalFormatterLoader for ExternalLoaderCompiledData {
 impl WeekCalculatorLoader for ExternalLoaderCompiledData {
     #[inline]
     fn load(&self, locale: &DataLocale) -> Result<WeekCalculator, DataError> {
-        WeekCalculator::try_new(locale).map_err(|e| match e {
-            CalendarError::Data(e) => e,
-            _ => unreachable!(),
-        })
+        WeekCalculator::try_new(locale)
     }
 }
 
@@ -98,10 +63,7 @@ impl WeekCalculatorLoader for ExternalLoaderCompiledData {
 impl AnyCalendarLoader for ExternalLoaderCompiledData {
     #[inline]
     fn load(&self, locale: &DataLocale) -> Result<AnyCalendar, DataError> {
-        Ok(AnyCalendar::new_for_locale(locale)).map_err(|e| match e {
-            CalendarError::Data(e) => e,
-            _ => unreachable!(),
-        })
+        Ok(AnyCalendar::new_for_locale(locale))
     }
 }
 
@@ -118,12 +80,7 @@ where
         locale: &DataLocale,
         options: FixedDecimalFormatterOptions,
     ) -> Result<FixedDecimalFormatter, DataError> {
-        FixedDecimalFormatter::try_new_with_any_provider(self.0, locale, options).map_err(|e| {
-            match e {
-                DecimalError::Data(e) => e,
-                _ => unreachable!(),
-            }
-        })
+        FixedDecimalFormatter::try_new_with_any_provider(self.0, locale, options)
     }
 }
 
@@ -133,10 +90,7 @@ where
 {
     #[inline]
     fn load(&self, locale: &DataLocale) -> Result<WeekCalculator, DataError> {
-        WeekCalculator::try_new_with_any_provider(self.0, locale).map_err(|e| match e {
-            CalendarError::Data(e) => e,
-            _ => unreachable!(),
-        })
+        WeekCalculator::try_new_with_any_provider(self.0, locale)
     }
 }
 
@@ -146,10 +100,7 @@ where
 {
     #[inline]
     fn load(&self, locale: &DataLocale) -> Result<AnyCalendar, DataError> {
-        AnyCalendar::try_new_for_locale_with_any_provider(self.0, locale).map_err(|e| match e {
-            CalendarError::Data(e) => e,
-            _ => unreachable!(),
-        })
+        AnyCalendar::try_new_for_locale_with_any_provider(self.0, locale)
     }
 }
 
@@ -168,12 +119,7 @@ where
         locale: &DataLocale,
         options: FixedDecimalFormatterOptions,
     ) -> Result<FixedDecimalFormatter, DataError> {
-        FixedDecimalFormatter::try_new_with_buffer_provider(self.0, locale, options).map_err(|e| {
-            match e {
-                DecimalError::Data(e) => e,
-                _ => unreachable!(),
-            }
-        })
+        FixedDecimalFormatter::try_new_with_buffer_provider(self.0, locale, options)
     }
 }
 
@@ -184,10 +130,7 @@ where
 {
     #[inline]
     fn load(&self, locale: &DataLocale) -> Result<WeekCalculator, DataError> {
-        WeekCalculator::try_new_with_buffer_provider(self.0, locale).map_err(|e| match e {
-            CalendarError::Data(e) => e,
-            _ => unreachable!(),
-        })
+        WeekCalculator::try_new_with_buffer_provider(self.0, locale)
     }
 }
 
@@ -198,10 +141,7 @@ where
 {
     #[inline]
     fn load(&self, locale: &DataLocale) -> Result<AnyCalendar, DataError> {
-        AnyCalendar::try_new_for_locale_with_buffer_provider(self.0, locale).map_err(|e| match e {
-            CalendarError::Data(e) => e,
-            _ => unreachable!(),
-        })
+        AnyCalendar::try_new_for_locale_with_buffer_provider(self.0, locale)
     }
 }
 
@@ -218,10 +158,7 @@ where
         locale: &DataLocale,
         options: FixedDecimalFormatterOptions,
     ) -> Result<FixedDecimalFormatter, DataError> {
-        FixedDecimalFormatter::try_new_unstable(self.0, locale, options).map_err(|e| match e {
-            DecimalError::Data(e) => e,
-            _ => unreachable!(),
-        })
+        FixedDecimalFormatter::try_new_unstable(self.0, locale, options)
     }
 }
 
@@ -231,10 +168,7 @@ where
 {
     #[inline]
     fn load(&self, locale: &DataLocale) -> Result<WeekCalculator, DataError> {
-        WeekCalculator::try_new_unstable(self.0, locale).map_err(|e| match e {
-            CalendarError::Data(e) => e,
-            _ => unreachable!(),
-        })
+        WeekCalculator::try_new_unstable(self.0, locale)
     }
 }
 
@@ -250,9 +184,6 @@ where
 {
     #[inline]
     fn load(&self, locale: &DataLocale) -> Result<AnyCalendar, DataError> {
-        AnyCalendar::try_new_for_locale_unstable(self.0, locale).map_err(|e| match e {
-            CalendarError::Data(e) => e,
-            _ => unreachable!(),
-        })
+        AnyCalendar::try_new_for_locale_unstable(self.0, locale)
     }
 }

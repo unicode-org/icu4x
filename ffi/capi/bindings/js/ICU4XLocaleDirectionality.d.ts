@@ -1,6 +1,6 @@
 import { FFIError } from "./diplomat-runtime"
+import { ICU4XDataError } from "./ICU4XDataError";
 import { ICU4XDataProvider } from "./ICU4XDataProvider";
-import { ICU4XError } from "./ICU4XError";
 import { ICU4XLocale } from "./ICU4XLocale";
 import { ICU4XLocaleDirection } from "./ICU4XLocaleDirection";
 import { ICU4XLocaleExpander } from "./ICU4XLocaleExpander";
@@ -16,7 +16,7 @@ export class ICU4XLocaleDirectionality {
    * Construct a new ICU4XLocaleDirectionality instance
 
    * See the {@link https://docs.rs/icu/latest/icu/locale/struct.LocaleDirectionality.html#method.new Rust documentation for `new`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
+   * @throws {@link FFIError}<{@link ICU4XDataError}>
    */
   static create(provider: ICU4XDataProvider): ICU4XLocaleDirectionality | never;
 
@@ -25,7 +25,7 @@ export class ICU4XLocaleDirectionality {
    * Construct a new ICU4XLocaleDirectionality instance with a custom expander
 
    * See the {@link https://docs.rs/icu/latest/icu/locale/struct.LocaleDirectionality.html#method.new_with_expander Rust documentation for `new_with_expander`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
+   * @throws {@link FFIError}<{@link ICU4XDataError}>
    */
   static create_with_expander(provider: ICU4XDataProvider, expander: ICU4XLocaleExpander): ICU4XLocaleDirectionality | never;
 

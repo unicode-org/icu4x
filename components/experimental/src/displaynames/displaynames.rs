@@ -40,9 +40,7 @@ pub struct RegionDisplayNames {
 
 impl RegionDisplayNames {
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: include,
-        options: DisplayNamesOptions,
-        error: DataError,
+        (locale, options: DisplayNamesOptions) -> error: DataError,
         /// Creates a new [`RegionDisplayNames`] from locale data and an options bag using compiled data.
         ///
         /// ✨ *Enabled with the `compiled_data` Cargo feature.*
@@ -68,7 +66,7 @@ impl RegionDisplayNames {
                 locale,
                 ..Default::default()
             })?
-            .take_payload()?;
+            .payload;
 
         Ok(Self {
             options,
@@ -115,9 +113,7 @@ pub struct ScriptDisplayNames {
 
 impl ScriptDisplayNames {
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: include,
-        options: DisplayNamesOptions,
-        error: DataError,
+        (locale, options: DisplayNamesOptions) -> error: DataError,
         /// Creates a new [`ScriptDisplayNames`] from locale data and an options bag using compiled data.
         ///
         /// ✨ *Enabled with the `compiled_data` Cargo feature.*
@@ -143,7 +139,7 @@ impl ScriptDisplayNames {
                 locale,
                 ..Default::default()
             })?
-            .take_payload()?;
+            .payload;
 
         Ok(Self {
             options,
@@ -191,9 +187,7 @@ pub struct VariantDisplayNames {
 
 impl VariantDisplayNames {
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: include,
-        options: DisplayNamesOptions,
-        error: DataError,
+        (locale, options: DisplayNamesOptions) -> error: DataError,
         /// Creates a new [`VariantDisplayNames`] from locale data and an options bag using compiled data.
         ///
         /// ✨ *Enabled with the `compiled_data` Cargo feature.*
@@ -219,7 +213,7 @@ impl VariantDisplayNames {
                 locale,
                 ..Default::default()
             })?
-            .take_payload()?;
+            .payload;
 
         Ok(Self {
             options,
@@ -260,9 +254,7 @@ pub struct LanguageDisplayNames {
 
 impl LanguageDisplayNames {
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: include,
-        options: DisplayNamesOptions,
-        error: DataError,
+        (locale, options: DisplayNamesOptions) -> error: DataError,
         /// Creates a new [`LanguageDisplayNames`] from locale data and an options bag using compiled data.
         ///
         /// ✨ *Enabled with the `compiled_data` Cargo feature.*
@@ -288,7 +280,7 @@ impl LanguageDisplayNames {
                 locale,
                 ..Default::default()
             })?
-            .take_payload()?;
+            .payload;
 
         Ok(Self {
             options,
@@ -354,9 +346,7 @@ pub struct LocaleDisplayNamesFormatter {
 
 impl LocaleDisplayNamesFormatter {
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: include,
-        options: DisplayNamesOptions,
-        error: DataError,
+        (locale, options: DisplayNamesOptions) -> error: DataError,
         /// Creates a new [`LocaleDisplayNamesFormatter`] from locale data and an options bag using compiled data.
         ///
         /// ✨ *Enabled with the `compiled_data` Cargo feature.*
@@ -392,11 +382,11 @@ impl LocaleDisplayNamesFormatter {
 
         Ok(Self {
             options,
-            language_data: provider.load(req)?.take_payload()?,
-            locale_data: provider.load(req)?.take_payload()?,
-            script_data: provider.load(req)?.take_payload()?,
-            region_data: provider.load(req)?.take_payload()?,
-            variant_data: provider.load(req)?.take_payload()?,
+            language_data: provider.load(req)?.payload,
+            locale_data: provider.load(req)?.payload,
+            script_data: provider.load(req)?.payload,
+            region_data: provider.load(req)?.payload,
+            variant_data: provider.load(req)?.payload,
         })
     }
 

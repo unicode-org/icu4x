@@ -45,7 +45,7 @@ The [`test_bake`] macro can be used to assert that a particular expression is a 
 ```rust
 test_bake!(
     AnotherOne,
-    const: crate::AnotherOne(
+    const, crate::AnotherOne(
         crate::MyStruct {
           number: 17u32,
           string: "foo",

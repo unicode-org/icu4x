@@ -1,0 +1,7 @@
+normalizer/comp@1, <singleton>, 5092B, af440f86c4dd5eda
+normalizer/decomp@1, <singleton>, 4155B, 5ddfdac7a9e061ca
+normalizer/nfd@1, <singleton>, 26794B, c40f7786ed5f8124
+normalizer/nfdex@1, <singleton>, 2055B, e46dea1008ed4c44
+normalizer/nfkd@1, <singleton>, 20317B, 8e78591f8550fe97
+normalizer/nfkdex@1, <singleton>, 5680B, e2ac6fe35e7e58a0
+normalizer/uts46d@1, <singleton>, 41268B, f926715c424ff137

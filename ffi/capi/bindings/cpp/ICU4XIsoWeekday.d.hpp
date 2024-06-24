@@ -8,8 +8,19 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XIsoWeekday.d.h"
 
+
+namespace capi {
+    typedef enum ICU4XIsoWeekday {
+      ICU4XIsoWeekday_Monday = 1,
+      ICU4XIsoWeekday_Tuesday = 2,
+      ICU4XIsoWeekday_Wednesday = 3,
+      ICU4XIsoWeekday_Thursday = 4,
+      ICU4XIsoWeekday_Friday = 5,
+      ICU4XIsoWeekday_Saturday = 6,
+      ICU4XIsoWeekday_Sunday = 7,
+    } ICU4XIsoWeekday;
+}
 
 class ICU4XIsoWeekday {
 public:

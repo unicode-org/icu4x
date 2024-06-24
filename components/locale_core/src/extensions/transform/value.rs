@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::parser::{ParserError, SubtagIterator};
+use crate::parser::{ParseError, SubtagIterator};
 use crate::shortvec::ShortBoxSlice;
 use crate::subtags::{subtag, Subtag};
 use core::ops::RangeInclusive;
@@ -33,7 +33,7 @@ const TYPE_LENGTH: RangeInclusive<usize> = 3..=8;
 const TRUE_TVALUE: Subtag = subtag!("true");
 
 impl Value {
-    /// A constructor which takes a utf8 slice, parses it and
+    /// A constructor which takes a str slice, parses it and
     /// produces a well-formed [`Value`].
     ///
     /// # Examples
@@ -41,25 +41,31 @@ impl Value {
     /// ```
     /// use icu::locale::extensions::transform::Value;
     ///
-    /// let value = Value::try_from_bytes(b"hybrid").expect("Parsing failed.");
+    /// let value = Value::try_from_str("hybrid").expect("Parsing failed.");
     /// ```
-    pub fn try_from_bytes(input: &[u8]) -> Result<Self, ParserError> {
+    #[inline]
+    pub fn try_from_str(s: &str) -> Result<Self, ParseError> {
+        Self::try_from_utf8(s.as_bytes())
+    }
+
+    /// See [`Self::try_from_str`]
+    pub fn try_from_utf8(code_units: &[u8]) -> Result<Self, ParseError> {
         let mut v = ShortBoxSlice::default();
         let mut has_value = false;
 
-        for subtag in SubtagIterator::new(input) {
+        for subtag in SubtagIterator::new(code_units) {
             if !Self::is_type_subtag(subtag) {
-                return Err(ParserError::InvalidExtension);
+                return Err(ParseError::InvalidExtension);
             }
             has_value = true;
-            let val = Subtag::try_from_bytes(subtag).map_err(|_| ParserError::InvalidExtension)?;
+            let val = Subtag::try_from_utf8(subtag).map_err(|_| ParseError::InvalidExtension)?;
             if val != TRUE_TVALUE {
                 v.push(val);
             }
         }
 
         if !has_value {
-            return Err(ParserError::InvalidExtension);
+            return Err(ParseError::InvalidExtension);
         }
         Ok(Self(v))
     }
@@ -72,11 +78,11 @@ impl Value {
         TYPE_LENGTH.contains(&t.len()) && t.iter().all(u8::is_ascii_alphanumeric)
     }
 
-    pub(crate) fn parse_subtag(t: &[u8]) -> Result<Option<Subtag>, ParserError> {
+    pub(crate) fn parse_subtag(t: &[u8]) -> Result<Option<Subtag>, ParseError> {
         if !TYPE_LENGTH.contains(&t.len()) {
-            return Err(ParserError::InvalidExtension);
+            return Err(ParseError::InvalidExtension);
         }
-        let s = Subtag::try_from_bytes(t).map_err(|_| ParserError::InvalidSubtag)?;
+        let s = Subtag::try_from_utf8(t).map_err(|_| ParseError::InvalidSubtag)?;
 
         let s = s.to_ascii_lowercase();
 
@@ -101,10 +107,11 @@ impl Value {
 }
 
 impl FromStr for Value {
-    type Err = ParserError;
+    type Err = ParseError;
 
-    fn from_str(source: &str) -> Result<Self, Self::Err> {
-        Self::try_from_bytes(source.as_bytes())
+    #[inline]
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Self::try_from_str(s)
     }
 }
 
@@ -130,7 +137,7 @@ fn test_writeable() {
 
 #[test]
 fn test_short_tvalue() {
-    let value = Value::from_str("foo-longstag");
+    let value = Value::try_from_str("foo-longstag");
     assert!(value.is_ok());
     let value = value.unwrap();
     assert_eq!(value.0.len(), 2);
@@ -138,6 +145,6 @@ fn test_short_tvalue() {
         assert_eq!(s, reference);
     }
 
-    let value = Value::from_str("foo-ba");
+    let value = Value::try_from_str("foo-ba");
     assert!(value.is_err());
 }

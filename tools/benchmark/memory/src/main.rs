@@ -83,11 +83,11 @@ fn extract_bytes_from_log_line(preamble: &str, text: &str) -> u64 {
 ///
 /// 1. Process the CLI arguments to get the os, and examples.
 /// 2. Loop through each example and:
-///   a. Create the directory for the benchmarks to go in.
-///   b. Run `cargo run --example {example}` with the appropriate settings.
-///   c. Extract the dhat stderr, and process out the interesting bytes.
-///   d. Add the output to an `ndjson` file.
-///   e. Move the dhat-heap.json file to the benchmark folder.
+///    a. Create the directory for the benchmarks to go in.
+///    b. Run `cargo run --example {example}` with the appropriate settings.
+///    c. Extract the dhat stderr, and process out the interesting bytes.
+///    d. Add the output to an `ndjson` file.
+///    e. Move the dhat-heap.json file to the benchmark folder.
 fn main() {
     let ProcessedArgs { os, examples } = process_cli_args();
 

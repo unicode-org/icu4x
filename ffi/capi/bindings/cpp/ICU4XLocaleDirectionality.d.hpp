@@ -8,23 +8,26 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XError.d.hpp"
+#include "ICU4XDataError.d.hpp"
 #include "ICU4XLocaleDirection.d.hpp"
-#include "ICU4XLocaleDirectionality.d.h"
 
 class ICU4XDataProvider;
 class ICU4XLocale;
 class ICU4XLocaleExpander;
-class ICU4XError;
+class ICU4XDataError;
 class ICU4XLocaleDirection;
 
+
+namespace capi {
+    typedef struct ICU4XLocaleDirectionality ICU4XLocaleDirectionality;
+}
 
 class ICU4XLocaleDirectionality {
 public:
 
-  inline static diplomat::result<std::unique_ptr<ICU4XLocaleDirectionality>, ICU4XError> create(const ICU4XDataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<ICU4XLocaleDirectionality>, ICU4XDataError> create(const ICU4XDataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<ICU4XLocaleDirectionality>, ICU4XError> create_with_expander(const ICU4XDataProvider& provider, const ICU4XLocaleExpander& expander);
+  inline static diplomat::result<std::unique_ptr<ICU4XLocaleDirectionality>, ICU4XDataError> create_with_expander(const ICU4XDataProvider& provider, const ICU4XLocaleExpander& expander);
 
   inline ICU4XLocaleDirection get(const ICU4XLocale& locale) const;
 

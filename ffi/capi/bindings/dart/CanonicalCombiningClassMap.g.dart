@@ -28,11 +28,11 @@ final class CanonicalCombiningClassMap implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html#method.new) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   factory CanonicalCombiningClassMap(DataProvider provider) {
     final result = _ICU4XCanonicalCombiningClassMap_create(provider._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     return CanonicalCombiningClassMap._fromFfi(result.union.ok, []);
   }

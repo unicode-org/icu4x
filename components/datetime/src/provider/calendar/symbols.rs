@@ -63,7 +63,7 @@ pub struct DateSymbolsV1<'data> {
 /// For more information on date time symbols, see [`FieldSymbol`](crate::fields::FieldSymbol).
 pub(crate) struct ErasedDateSymbolsV1Marker;
 
-impl DataMarker for ErasedDateSymbolsV1Marker {
+impl DynamicDataMarker for ErasedDateSymbolsV1Marker {
     type Yokeable = DateSymbolsV1<'static>;
 }
 
@@ -296,7 +296,7 @@ symbols!(
                 feature = "serde",
                 serde(
                     borrow,
-                    deserialize_with = "icu_provider::serde::borrow_de_utils::array_of_cow"
+                    deserialize_with = "icu_provider::serde_borrow_de_utils::array_of_cow"
                 )
             )]
             [Cow<'data, str>; 12],
@@ -363,7 +363,7 @@ symbols!(
             feature = "serde",
             serde(
                 borrow,
-                deserialize_with = "icu_provider::serde::borrow_de_utils::array_of_cow"
+                deserialize_with = "icu_provider::serde_borrow_de_utils::array_of_cow"
             )
         )]
         pub [Cow<'data, str>; 7],
@@ -385,7 +385,7 @@ symbols!(
             feature = "serde",
             serde(
                 borrow,
-                deserialize_with = "icu_provider::serde::borrow_de_utils::option_of_cow"
+                deserialize_with = "icu_provider::serde_borrow_de_utils::option_of_cow"
             )
         )]
         /// Day period for noon, in locales that support it.
@@ -394,7 +394,7 @@ symbols!(
             feature = "serde",
             serde(
                 borrow,
-                deserialize_with = "icu_provider::serde::borrow_de_utils::option_of_cow"
+                deserialize_with = "icu_provider::serde_borrow_de_utils::option_of_cow"
             )
         )]
         /// Day period for midnight, in locales that support it.

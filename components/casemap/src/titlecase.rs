@@ -9,7 +9,7 @@ use alloc::string::String;
 use icu_locale_core::LanguageIdentifier;
 use icu_properties::maps::CodePointMapData;
 use icu_properties::provider::GeneralCategoryV1Marker;
-use icu_properties::{GeneralCategory, GeneralCategoryGroup, PropertiesError};
+use icu_properties::{GeneralCategory, GeneralCategoryGroup};
 use icu_provider::prelude::*;
 use writeable::Writeable;
 
@@ -225,10 +225,9 @@ impl TitlecaseMapper<CaseMapper> {
         }
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: DataError,
-    #[cfg(skip)]
+    icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,
     functions: [
-        new,
+        new: skip,
         try_new_with_any_provider,
         try_new_with_buffer_provider,
         try_new_unstable,
@@ -241,22 +240,16 @@ impl TitlecaseMapper<CaseMapper> {
         P: DataProvider<CaseMapV1Marker> + DataProvider<GeneralCategoryV1Marker> + ?Sized,
     {
         let cm = CaseMapper::try_new_unstable(provider)?;
-        let gc = icu_properties::maps::load_general_category(provider).map_err(|e| {
-            let PropertiesError::PropDataLoad(e) = e else {
-                unreachable!()
-            };
-            e
-        })?;
+        let gc = icu_properties::maps::load_general_category(provider)?;
         Ok(Self { cm, gc })
     }
 }
 
 // We use Borrow, not AsRef, since we want the blanket impl on T
 impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
-    icu_provider::gen_any_buffer_data_constructors!(locale: skip, casemapper: CM, error: DataError,
-    #[cfg(skip)]
+    icu_provider::gen_any_buffer_data_constructors!((casemapper: CM) -> error: DataError,
     functions: [
-        new_with_mapper,
+        new_with_mapper: skip,
         try_new_with_mapper_with_any_provider,
         try_new_with_mapper_with_buffer_provider,
         try_new_with_mapper_unstable,
@@ -283,12 +276,7 @@ impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
     where
         P: DataProvider<CaseMapV1Marker> + DataProvider<GeneralCategoryV1Marker> + ?Sized,
     {
-        let gc = icu_properties::maps::load_general_category(provider).map_err(|e| {
-            let PropertiesError::PropDataLoad(e) = e else {
-                unreachable!()
-            };
-            e
-        })?;
+        let gc = icu_properties::maps::load_general_category(provider)?;
         Ok(Self { cm: casemapper, gc })
     }
 

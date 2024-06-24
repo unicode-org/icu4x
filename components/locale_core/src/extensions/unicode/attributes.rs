@@ -6,7 +6,7 @@ use super::Attribute;
 
 use crate::parser::SubtagIterator;
 use crate::shortvec::ShortBoxSlice;
-use crate::ParserError;
+use crate::ParseError;
 use alloc::vec::Vec;
 use core::ops::Deref;
 use core::str::FromStr;
@@ -51,6 +51,19 @@ impl Attributes {
         Self(ShortBoxSlice::new())
     }
 
+    /// A constructor which takes a str slice, parses it and
+    /// produces a well-formed [`Attributes`].
+    #[inline]
+    pub fn try_from_str(s: &str) -> Result<Self, ParseError> {
+        Self::try_from_utf8(s.as_bytes())
+    }
+
+    /// See [`Self::try_from_str`]
+    pub fn try_from_utf8(code_units: &[u8]) -> Result<Self, ParseError> {
+        let mut iter = SubtagIterator::new(code_units);
+        Self::try_from_iter(&mut iter)
+    }
+
     /// A constructor which takes a pre-sorted list of [`Attribute`] elements.
     ///
     ///
@@ -73,11 +86,6 @@ impl Attributes {
     /// and [`dedup`](Vec::dedup()).
     pub fn from_vec_unchecked(input: Vec<Attribute>) -> Self {
         Self(input.into())
-    }
-
-    pub(crate) fn try_from_bytes(t: &[u8]) -> Result<Self, ParserError> {
-        let mut iter = SubtagIterator::new(t);
-        Self::try_from_iter(&mut iter)
     }
 
     /// Empties the [`Attributes`] list.
@@ -105,11 +113,11 @@ impl Attributes {
         core::mem::take(self)
     }
 
-    pub(crate) fn try_from_iter(iter: &mut SubtagIterator) -> Result<Self, ParserError> {
+    pub(crate) fn try_from_iter(iter: &mut SubtagIterator) -> Result<Self, ParseError> {
         let mut attributes = ShortBoxSlice::new();
 
         while let Some(subtag) = iter.peek() {
-            if let Ok(attr) = Attribute::try_from_bytes(subtag) {
+            if let Ok(attr) = Attribute::try_from_utf8(subtag) {
                 if let Err(idx) = attributes.binary_search(&attr) {
                     attributes.insert(idx, attr);
                 }
@@ -130,10 +138,11 @@ impl Attributes {
 }
 
 impl FromStr for Attributes {
-    type Err = ParserError;
+    type Err = ParseError;
 
-    fn from_str(source: &str) -> Result<Self, Self::Err> {
-        Self::try_from_bytes(source.as_bytes())
+    #[inline]
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Self::try_from_str(s)
     }
 }
 

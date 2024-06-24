@@ -8,25 +8,30 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XError.d.hpp"
-#include "ICU4XTimeZoneIdMapper.d.h"
+#include "ICU4XDataError.d.hpp"
+#include "ICU4XTimeZoneInvalidIdError.d.hpp"
 
 class ICU4XDataProvider;
-class ICU4XError;
+class ICU4XDataError;
+class ICU4XTimeZoneInvalidIdError;
 
+
+namespace capi {
+    typedef struct ICU4XTimeZoneIdMapper ICU4XTimeZoneIdMapper;
+}
 
 class ICU4XTimeZoneIdMapper {
 public:
 
-  inline static diplomat::result<std::unique_ptr<ICU4XTimeZoneIdMapper>, ICU4XError> create(const ICU4XDataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<ICU4XTimeZoneIdMapper>, ICU4XDataError> create(const ICU4XDataProvider& provider);
 
-  inline diplomat::result<std::string, ICU4XError> iana_to_bcp47(std::string_view value) const;
+  inline diplomat::result<std::string, ICU4XTimeZoneInvalidIdError> iana_to_bcp47(std::string_view value) const;
 
-  inline diplomat::result<diplomat::result<std::string, ICU4XError>, diplomat::Utf8Error> normalize_iana(std::string_view value) const;
+  inline diplomat::result<diplomat::result<std::string, ICU4XTimeZoneInvalidIdError>, diplomat::Utf8Error> normalize_iana(std::string_view value) const;
 
-  inline diplomat::result<diplomat::result<std::string, ICU4XError>, diplomat::Utf8Error> canonicalize_iana(std::string_view value) const;
+  inline diplomat::result<diplomat::result<std::string, ICU4XTimeZoneInvalidIdError>, diplomat::Utf8Error> canonicalize_iana(std::string_view value) const;
 
-  inline diplomat::result<std::string, ICU4XError> find_canonical_iana_from_bcp47(std::string_view value) const;
+  inline diplomat::result<std::string, ICU4XTimeZoneInvalidIdError> find_canonical_iana_from_bcp47(std::string_view value) const;
 
   inline const capi::ICU4XTimeZoneIdMapper* AsFFI() const;
   inline capi::ICU4XTimeZoneIdMapper* AsFFI();

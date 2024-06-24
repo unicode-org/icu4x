@@ -58,7 +58,7 @@ use unicode::{Unicode, UNICODE_EXT_CHAR};
 
 use alloc::vec::Vec;
 
-use crate::parser::ParserError;
+use crate::parser::ParseError;
 use crate::parser::SubtagIterator;
 use crate::subtags;
 
@@ -77,35 +77,35 @@ pub enum ExtensionType {
 }
 
 impl ExtensionType {
-    pub(crate) const fn try_from_byte_slice(key: &[u8]) -> Result<Self, ParserError> {
+    pub(crate) const fn try_from_byte_slice(key: &[u8]) -> Result<Self, ParseError> {
         if let [b] = key {
             Self::try_from_byte(*b)
         } else {
-            Err(ParserError::InvalidExtension)
+            Err(ParseError::InvalidExtension)
         }
     }
 
-    pub(crate) const fn try_from_byte(key: u8) -> Result<Self, ParserError> {
+    pub(crate) const fn try_from_byte(key: u8) -> Result<Self, ParseError> {
         let key = key.to_ascii_lowercase();
         match key as char {
             UNICODE_EXT_CHAR => Ok(Self::Unicode),
             TRANSFORM_EXT_CHAR => Ok(Self::Transform),
             PRIVATE_EXT_CHAR => Ok(Self::Private),
             'a'..='z' => Ok(Self::Other(key)),
-            _ => Err(ParserError::InvalidExtension),
+            _ => Err(ParseError::InvalidExtension),
         }
     }
 
-    pub(crate) const fn try_from_bytes_manual_slice(
-        bytes: &[u8],
+    pub(crate) const fn try_from_utf8_manual_slice(
+        code_units: &[u8],
         start: usize,
         end: usize,
-    ) -> Result<Self, ParserError> {
+    ) -> Result<Self, ParseError> {
         if end - start != 1 {
-            return Err(ParserError::InvalidExtension);
+            return Err(ParseError::InvalidExtension);
         }
         #[allow(clippy::indexing_slicing)]
-        Self::try_from_byte(bytes[start])
+        Self::try_from_byte(code_units[start])
     }
 }
 
@@ -250,7 +250,7 @@ impl Extensions {
             .retain(|o| predicate(ExtensionType::Other(o.get_ext_byte())));
     }
 
-    pub(crate) fn try_from_iter(iter: &mut SubtagIterator) -> Result<Self, ParserError> {
+    pub(crate) fn try_from_iter(iter: &mut SubtagIterator) -> Result<Self, ParseError> {
         let mut unicode = None;
         let mut transform = None;
         let mut private = None;
@@ -258,39 +258,39 @@ impl Extensions {
 
         while let Some(subtag) = iter.next() {
             if subtag.is_empty() {
-                return Err(ParserError::InvalidExtension);
+                return Err(ParseError::InvalidExtension);
             }
             match subtag.first().map(|b| ExtensionType::try_from_byte(*b)) {
                 Some(Ok(ExtensionType::Unicode)) => {
                     if unicode.is_some() {
-                        return Err(ParserError::DuplicatedExtension);
+                        return Err(ParseError::DuplicatedExtension);
                     }
                     unicode = Some(Unicode::try_from_iter(iter)?);
                 }
                 Some(Ok(ExtensionType::Transform)) => {
                     if transform.is_some() {
-                        return Err(ParserError::DuplicatedExtension);
+                        return Err(ParseError::DuplicatedExtension);
                     }
                     transform = Some(Transform::try_from_iter(iter)?);
                 }
                 Some(Ok(ExtensionType::Private)) => {
                     if private.is_some() {
-                        return Err(ParserError::DuplicatedExtension);
+                        return Err(ParseError::DuplicatedExtension);
                     }
                     private = Some(Private::try_from_iter(iter)?);
                 }
                 Some(Ok(ExtensionType::Other(ext))) => {
                     if other.iter().any(|o: &Other| o.get_ext_byte() == ext) {
-                        return Err(ParserError::DuplicatedExtension);
+                        return Err(ParseError::DuplicatedExtension);
                     }
                     let parsed = Other::try_from_iter(ext, iter)?;
                     if let Err(idx) = other.binary_search(&parsed) {
                         other.insert(idx, parsed);
                     } else {
-                        return Err(ParserError::InvalidExtension);
+                        return Err(ParseError::InvalidExtension);
                     }
                 }
-                _ => return Err(ParserError::InvalidExtension),
+                _ => return Err(ParseError::InvalidExtension),
             }
         }
 

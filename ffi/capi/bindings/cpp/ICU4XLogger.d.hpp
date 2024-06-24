@@ -8,8 +8,11 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XLogger.d.h"
 
+
+namespace capi {
+    typedef struct ICU4XLogger ICU4XLogger;
+}
 
 class ICU4XLogger {
 public:

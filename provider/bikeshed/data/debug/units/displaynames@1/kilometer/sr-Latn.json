@@ -1,0 +1,13 @@
+{
+  "long": {
+    "One": "{0} kilometar",
+    "Few": "{0} kilometra",
+    "Other": "{0} kilometara"
+  },
+  "short": {
+    "Other": "{0} km"
+  },
+  "narrow": {
+    "Other": "{0} km"
+  }
+}

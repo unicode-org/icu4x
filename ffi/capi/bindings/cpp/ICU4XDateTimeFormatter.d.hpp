@@ -9,7 +9,6 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 #include "ICU4XDateLength.d.hpp"
-#include "ICU4XDateTimeFormatter.d.h"
 #include "ICU4XError.d.hpp"
 #include "ICU4XTimeLength.d.hpp"
 
@@ -21,6 +20,10 @@ class ICU4XDateLength;
 class ICU4XError;
 class ICU4XTimeLength;
 
+
+namespace capi {
+    typedef struct ICU4XDateTimeFormatter ICU4XDateTimeFormatter;
+}
 
 class ICU4XDateTimeFormatter {
 public:

@@ -8,16 +8,16 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XDataStruct.d.h"
-#include "ICU4XError.d.hpp"
 
-class ICU4XError;
 
+namespace capi {
+    typedef struct ICU4XDataStruct ICU4XDataStruct;
+}
 
 class ICU4XDataStruct {
 public:
 
-  inline static diplomat::result<std::unique_ptr<ICU4XDataStruct>, ICU4XError> create_decimal_symbols_v1(std::string_view plus_sign_prefix, std::string_view plus_sign_suffix, std::string_view minus_sign_prefix, std::string_view minus_sign_suffix, std::string_view decimal_separator, std::string_view grouping_separator, uint8_t primary_group_size, uint8_t secondary_group_size, uint8_t min_group_size, diplomat::span<const char32_t> digits);
+  inline static std::unique_ptr<ICU4XDataStruct> create_decimal_symbols_v1(std::string_view plus_sign_prefix, std::string_view plus_sign_suffix, std::string_view minus_sign_prefix, std::string_view minus_sign_suffix, std::string_view decimal_separator, std::string_view grouping_separator, uint8_t primary_group_size, uint8_t secondary_group_size, uint8_t min_group_size, diplomat::span<const char32_t> digits);
 
   inline const capi::ICU4XDataStruct* AsFFI() const;
   inline capi::ICU4XDataStruct* AsFFI();

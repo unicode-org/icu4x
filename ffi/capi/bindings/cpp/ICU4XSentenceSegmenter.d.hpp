@@ -8,20 +8,23 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XError.d.hpp"
-#include "ICU4XSentenceSegmenter.d.h"
+#include "ICU4XDataError.d.hpp"
 
 class ICU4XDataProvider;
 class ICU4XSentenceBreakIteratorLatin1;
 class ICU4XSentenceBreakIteratorUtf16;
 class ICU4XSentenceBreakIteratorUtf8;
-class ICU4XError;
+class ICU4XDataError;
 
+
+namespace capi {
+    typedef struct ICU4XSentenceSegmenter ICU4XSentenceSegmenter;
+}
 
 class ICU4XSentenceSegmenter {
 public:
 
-  inline static diplomat::result<std::unique_ptr<ICU4XSentenceSegmenter>, ICU4XError> create(const ICU4XDataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<ICU4XSentenceSegmenter>, ICU4XDataError> create(const ICU4XDataProvider& provider);
 
   inline std::unique_ptr<ICU4XSentenceBreakIteratorUtf8> segment_utf8(std::string_view input) const;
 

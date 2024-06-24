@@ -14,7 +14,7 @@ pub mod ffi {
     use writeable::Writeable;
 
     use crate::{
-        data_struct::ffi::ICU4XDataStruct, errors::ffi::ICU4XError,
+        data_struct::ffi::ICU4XDataStruct, errors::ffi::ICU4XDataError,
         fixed_decimal::ffi::ICU4XFixedDecimal, locale_core::ffi::ICU4XLocale,
         provider::ffi::ICU4XDataProvider,
     };
@@ -41,7 +41,7 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
             grouping_strategy: ICU4XFixedDecimalGroupingStrategy,
-        ) -> Result<Box<ICU4XFixedDecimalFormatter>, ICU4XError> {
+        ) -> Result<Box<ICU4XFixedDecimalFormatter>, ICU4XDataError> {
             let locale = locale.to_datalocale();
 
             let grouping_strategy = match grouping_strategy {
@@ -71,7 +71,7 @@ pub mod ffi {
         pub fn create_with_decimal_symbols_v1(
             data_struct: &ICU4XDataStruct,
             grouping_strategy: ICU4XFixedDecimalGroupingStrategy,
-        ) -> Result<Box<ICU4XFixedDecimalFormatter>, ICU4XError> {
+        ) -> Result<Box<ICU4XFixedDecimalFormatter>, ICU4XDataError> {
             let grouping_strategy = match grouping_strategy {
                 ICU4XFixedDecimalGroupingStrategy::Auto => GroupingStrategy::Auto,
                 ICU4XFixedDecimalGroupingStrategy::Never => GroupingStrategy::Never,

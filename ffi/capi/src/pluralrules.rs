@@ -11,7 +11,7 @@ pub mod ffi {
 
     use crate::{locale_core::ffi::ICU4XLocale, provider::ffi::ICU4XDataProvider};
 
-    use crate::errors::ffi::ICU4XError;
+    use crate::errors::ffi::{ICU4XDataError, ICU4XFixedDecimalParseError};
 
     #[diplomat::rust_link(icu::plurals::PluralCategory, Enum)]
     #[diplomat::enum_convert(PluralCategory)]
@@ -47,7 +47,7 @@ pub mod ffi {
         pub fn create_cardinal(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
-        ) -> Result<Box<ICU4XPluralRules>, ICU4XError> {
+        ) -> Result<Box<ICU4XPluralRules>, ICU4XDataError> {
             let locale = locale.to_datalocale();
             Ok(Box::new(ICU4XPluralRules(call_constructor!(
                 PluralRules::try_new_cardinal,
@@ -66,7 +66,7 @@ pub mod ffi {
         pub fn create_ordinal(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
-        ) -> Result<Box<ICU4XPluralRules>, ICU4XError> {
+        ) -> Result<Box<ICU4XPluralRules>, ICU4XDataError> {
             let locale = locale.to_datalocale();
             Ok(Box::new(ICU4XPluralRules(call_constructor!(
                 PluralRules::try_new_ordinal,
@@ -99,10 +99,11 @@ pub mod ffi {
         /// Construct for a given string representing a number
         #[diplomat::rust_link(icu::plurals::PluralOperands::from_str, FnInStruct)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "from_string")]
-        pub fn create_from_string(s: &DiplomatStr) -> Result<Box<ICU4XPluralOperands>, ICU4XError> {
+        pub fn create_from_string(
+            s: &DiplomatStr,
+        ) -> Result<Box<ICU4XPluralOperands>, ICU4XFixedDecimalParseError> {
             Ok(Box::new(ICU4XPluralOperands(PluralOperands::from(
-                // XXX should this have its own errors?
-                &FixedDecimal::try_from(s).map_err(|_| ICU4XError::PluralsParserError)?,
+                &FixedDecimal::try_from(s)?,
             ))))
         }
 

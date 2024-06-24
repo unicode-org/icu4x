@@ -21,7 +21,7 @@ If you wish to use custom compiled data for ICU4X, no changes to Cargo.toml are 
 datagen output during your build:
 
 ```command
-icu4x-datagen --format mod --keys all --locales ru --out baked_data
+icu4x-datagen --format mod --markers all --locales ru --out baked_data
 ICU4X_DATA_DIR=$(pwd)/baked_data cargo build --release
 ```
 
@@ -84,7 +84,7 @@ icu = "1.5"
 icu_datagen = "1.5"
 ```
 
-This example has an additional section for auto-generating the data in build.rs. In your build.rs, invoke the ICU4X Datagen API with the set of keys you require. Don't worry; if using databake, you will get a compiler error if you don't specify enough keys.
+This example has an additional section for auto-generating the data in build.rs. In your build.rs, invoke the ICU4X Datagen API with the set of markers you require. Don't worry; if using databake, you will get a compiler error if you don't specify enough markers.
 
 The build.rs approach has several downsides and should only be used if Cargo is the only build system you can use, and you cannot check in your data:
 * The build script with the whole of `icu_datagen` in it is slow to build

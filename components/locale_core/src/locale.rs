@@ -4,7 +4,7 @@
 
 use crate::parser::{
     parse_locale, parse_locale_with_single_variant_single_keyword_unicode_keyword_extension,
-    ParserError, ParserMode, SubtagIterator,
+    ParseError, ParserMode, SubtagIterator,
 };
 use crate::subtags::Subtag;
 use crate::{extensions, subtags, LanguageIdentifier};
@@ -117,10 +117,16 @@ impl Locale {
     /// ```
     /// use icu::locale::Locale;
     ///
-    /// Locale::try_from_bytes(b"en-US-u-hc-h12").unwrap();
+    /// Locale::try_from_str("en-US-u-hc-h12").unwrap();
     /// ```
-    pub fn try_from_bytes(v: &[u8]) -> Result<Self, ParserError> {
-        parse_locale(v)
+    #[inline]
+    pub fn try_from_str(s: &str) -> Result<Self, ParseError> {
+        Self::try_from_utf8(s.as_bytes())
+    }
+
+    /// See [`Self::try_from_str`]
+    pub fn try_from_utf8(code_units: &[u8]) -> Result<Self, ParseError> {
+        parse_locale(code_units)
     }
 
     /// The default undefined locale "und". Same as [`default()`](Default::default()).
@@ -152,8 +158,8 @@ impl Locale {
     ///     Ok("pl-Latn-PL-u-hc-h12")
     /// );
     /// ```
-    pub fn canonicalize<S: AsRef<[u8]>>(input: S) -> Result<String, ParserError> {
-        let locale = Self::try_from_bytes(input.as_ref())?;
+    pub fn canonicalize<S: AsRef<[u8]>>(input: S) -> Result<String, ParseError> {
+        let locale = Self::try_from_utf8(input.as_ref())?;
         Ok(locale.write_to_string().into_owned())
     }
 
@@ -263,7 +269,7 @@ impl Locale {
             ($T:ty, $iter:ident, $expected:expr) => {
                 $iter
                     .next()
-                    .map(|b| <$T>::try_from_bytes(b) == Ok($expected))
+                    .map(|b| <$T>::try_from_utf8(b) == Ok($expected))
                     .unwrap_or(false)
             };
         }
@@ -304,8 +310,8 @@ impl Locale {
 
     #[doc(hidden)] // macro use
     #[allow(clippy::type_complexity)]
-    pub const fn try_from_bytes_with_single_variant_single_keyword_unicode_extension(
-        v: &[u8],
+    pub const fn try_from_utf8_with_single_variant_single_keyword_unicode_extension(
+        code_units: &[u8],
     ) -> Result<
         (
             subtags::Language,
@@ -314,10 +320,10 @@ impl Locale {
             Option<subtags::Variant>,
             Option<(extensions::unicode::Key, Option<Subtag>)>,
         ),
-        ParserError,
+        ParseError,
     > {
         parse_locale_with_single_variant_single_keyword_unicode_keyword_extension(
-            v,
+            code_units,
             ParserMode::Locale,
         )
     }
@@ -333,10 +339,11 @@ impl Locale {
 }
 
 impl FromStr for Locale {
-    type Err = ParserError;
+    type Err = ParseError;
 
-    fn from_str(source: &str) -> Result<Self, Self::Err> {
-        Self::try_from_bytes(source.as_bytes())
+    #[inline]
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Self::try_from_str(s)
     }
 }
 

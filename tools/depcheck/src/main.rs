@@ -151,6 +151,7 @@ fn main() {
     let zip: BTreeSet<_> = EXTRA_ZIP_DEPS.iter().copied().collect();
     let rayon: BTreeSet<_> = EXTRA_RAYON_DEPS.iter().copied().collect();
     let datagen: BTreeSet<_> = EXTRA_DATAGEN_DEPS.iter().copied().collect();
+    let datagen_bikeshed: BTreeSet<_> = EXTRA_DATAGEN_BIKESHED_DEPS.iter().copied().collect();
 
     // These tests are in a deliberate order such that the `dep_list_name_for_error`
     // will be accurate, i.e. each test tests at most one extra array of data compared to the
@@ -276,7 +277,7 @@ fn main() {
     );
 
     test_dep_list(
-        "icu_datagen",
+        "icu_datagen_bikeshed",
         "normal",
         "--features use_icu4c",
         &[
@@ -285,26 +286,41 @@ fn main() {
             &experimental,
             &lstm,
             &blob,
-            &fs,
             &zip,
+            &datagen_bikeshed,
+            &logging,
+        ],
+        "`EXTRA_DATAGEN_BIKESHED_DEPS` or `EXTRA_ZIP_DEPS`",
+    );
+
+    test_dep_list(
+        "icu_datagen",
+        "normal",
+        "",
+        &[
+            &basic,
+            &serde,
+            &experimental,
+            &lstm,
+            &fs,
             &rayon,
             &datagen,
             &logging,
         ],
-        "`EXTRA_DATAGEN_DEPS` or `EXTRA_ZIP_DEPS` or `EXTRA_RAYON_DEPS`",
+        "`EXTRA_RAYON_DEPS`",
     );
 
     // syn is a large dep, and deps that are both "normal" and "proc macro" get built twice
-    // (they cannot be shared). Improve build times a little bit by making sure databake/baked_exporter
-    // only use proc_macro. It's okay to relax this requirement if we end up really really needing `syn`
+    // (they cannot be shared). Improve build times a little bit by making sure baked exporter
+    // only uses proc_macro. It's okay to relax this requirement if we end up really really needing `syn`
     // here.
     let dep_list = get_dep_list(
-        "icu_datagen",
+        "icu_provider_baked",
         "normal,no-proc-macro",
-        "--features baked_exporter,bin",
+        "--features export",
     );
     if dep_list.iter().any(|x| x.crate_name == "syn") {
-        eprintln!("datagen depends on `syn` as a regular dependency!");
+        eprintln!("icu_provider_baked/export depends on `syn` as a regular dependency!");
         process::exit(1);
     }
     // we aren't testing simple-logger, it's mostly for debugging purposes

@@ -193,7 +193,8 @@ impl databake::Bake for PatternMetadata {
 fn databake() {
     databake::test_bake!(
         PatternMetadata,
-        const: crate::pattern::runtime::PatternMetadata::from_time_granularity(
+        const,
+        crate::pattern::runtime::PatternMetadata::from_time_granularity(
             crate::pattern::TimeGranularity::Hours
         ),
         icu_datetime,

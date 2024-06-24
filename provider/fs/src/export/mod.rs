@@ -27,8 +27,9 @@
 //!
 //! // Export something
 //! DatagenDriver::new()
-//!     .with_keys([HelloWorldV1Marker::KEY])
-//!     .with_locales_and_fallback([LocaleFamily::FULL], Default::default())
+//!     .with_markers([HelloWorldV1Marker::INFO])
+//!     // HelloWorldProvider cannot provide fallback data, so we cannot deduplicate
+//!     .with_locales_and_fallback([LocaleFamily::FULL], FallbackOptions::no_deduplication())
 //!     .export(&HelloWorldProvider, exporter)
 //!     .unwrap();
 //! #

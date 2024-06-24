@@ -14,7 +14,7 @@ pub mod ffi {
 
     use crate::calendar::ffi::ICU4XCalendar;
     use crate::date::ffi::{ICU4XDate, ICU4XIsoDate, ICU4XIsoWeekday};
-    use crate::errors::ffi::ICU4XError;
+    use crate::errors::ffi::ICU4XCalendarError;
     use crate::time::ffi::ICU4XTime;
 
     #[cfg(feature = "icu_calendar")]
@@ -37,7 +37,7 @@ pub mod ffi {
             minute: u8,
             second: u8,
             nanosecond: u32,
-        ) -> Result<Box<ICU4XIsoDateTime>, ICU4XError> {
+        ) -> Result<Box<ICU4XIsoDateTime>, ICU4XCalendarError> {
             let mut dt = DateTime::try_new_iso_datetime(year, month, day, hour, minute, second)?;
             dt.time.nanosecond = nanosecond.try_into()?;
             Ok(Box::new(ICU4XIsoDateTime(dt)))
@@ -180,8 +180,8 @@ pub mod ffi {
         pub fn week_of_year(
             &self,
             calculator: &ICU4XWeekCalculator,
-        ) -> Result<crate::week::ffi::ICU4XWeekOf, ICU4XError> {
-            Ok(self.0.date.week_of_year(&calculator.0)?.into())
+        ) -> crate::week::ffi::ICU4XWeekOf {
+            self.0.date.week_of_year(&calculator.0).into()
         }
 
         /// Returns 1-indexed number of the month of this date in its year
@@ -247,7 +247,7 @@ pub mod ffi {
             second: u8,
             nanosecond: u32,
             calendar: &ICU4XCalendar,
-        ) -> Result<Box<ICU4XDateTime>, ICU4XError> {
+        ) -> Result<Box<ICU4XDateTime>, ICU4XCalendarError> {
             let cal = calendar.0.clone();
             let mut dt = DateTime::try_new_iso_datetime(year, month, day, hour, minute, second)?;
             dt.time.nanosecond = nanosecond.try_into()?;
@@ -267,12 +267,12 @@ pub mod ffi {
             second: u8,
             nanosecond: u32,
             calendar: &ICU4XCalendar,
-        ) -> Result<Box<ICU4XDateTime>, ICU4XError> {
-            let era = TinyAsciiStr::from_bytes(era_code)
-                .map_err(|_| ICU4XError::CalendarUnknownEraError)?
+        ) -> Result<Box<ICU4XDateTime>, ICU4XCalendarError> {
+            let era = TinyAsciiStr::try_from_utf8(era_code)
+                .map_err(|_| ICU4XCalendarError::UnknownEra)?
                 .into();
-            let month = TinyAsciiStr::from_bytes(month_code)
-                .map_err(|_| ICU4XError::CalendarUnknownMonthCodeError)?
+            let month = TinyAsciiStr::try_from_utf8(month_code)
+                .map_err(|_| ICU4XCalendarError::UnknownMonthCode)?
                 .into();
             let cal = calendar.0.clone();
             let hour = hour.try_into()?;
@@ -394,8 +394,8 @@ pub mod ffi {
         pub fn week_of_year(
             &self,
             calculator: &ICU4XWeekCalculator,
-        ) -> Result<crate::week::ffi::ICU4XWeekOf, ICU4XError> {
-            Ok(self.0.date.week_of_year(&calculator.0)?.into())
+        ) -> crate::week::ffi::ICU4XWeekOf {
+            self.0.date.week_of_year(&calculator.0).into()
         }
 
         /// Returns 1-indexed number of the month of this date in its year

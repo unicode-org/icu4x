@@ -8,24 +8,27 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XError.d.hpp"
-#include "ICU4XWordSegmenter.d.h"
+#include "ICU4XDataError.d.hpp"
 
 class ICU4XDataProvider;
 class ICU4XWordBreakIteratorLatin1;
 class ICU4XWordBreakIteratorUtf16;
 class ICU4XWordBreakIteratorUtf8;
-class ICU4XError;
+class ICU4XDataError;
 
+
+namespace capi {
+    typedef struct ICU4XWordSegmenter ICU4XWordSegmenter;
+}
 
 class ICU4XWordSegmenter {
 public:
 
-  inline static diplomat::result<std::unique_ptr<ICU4XWordSegmenter>, ICU4XError> create_auto(const ICU4XDataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<ICU4XWordSegmenter>, ICU4XDataError> create_auto(const ICU4XDataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<ICU4XWordSegmenter>, ICU4XError> create_lstm(const ICU4XDataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<ICU4XWordSegmenter>, ICU4XDataError> create_lstm(const ICU4XDataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<ICU4XWordSegmenter>, ICU4XError> create_dictionary(const ICU4XDataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<ICU4XWordSegmenter>, ICU4XDataError> create_dictionary(const ICU4XDataProvider& provider);
 
   inline std::unique_ptr<ICU4XWordBreakIteratorUtf8> segment_utf8(std::string_view input) const;
 

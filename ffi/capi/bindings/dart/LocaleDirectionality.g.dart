@@ -26,11 +26,11 @@ final class LocaleDirectionality implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/locale/struct.LocaleDirectionality.html#method.new) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   factory LocaleDirectionality(DataProvider provider) {
     final result = _ICU4XLocaleDirectionality_create(provider._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     return LocaleDirectionality._fromFfi(result.union.ok, []);
   }
@@ -39,11 +39,11 @@ final class LocaleDirectionality implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `new_with_expander`](https://docs.rs/icu/latest/icu/locale/struct.LocaleDirectionality.html#method.new_with_expander) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   factory LocaleDirectionality.withExpander(DataProvider provider, LocaleExpander expander) {
     final result = _ICU4XLocaleDirectionality_create_with_expander(provider._ffi, expander._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     return LocaleDirectionality._fromFfi(result.union.ok, []);
   }

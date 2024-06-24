@@ -1,7 +1,7 @@
 import { u8 } from "./diplomat-runtime"
 import { FFIError } from "./diplomat-runtime"
+import { ICU4XDataError } from "./ICU4XDataError";
 import { ICU4XDataProvider } from "./ICU4XDataProvider";
-import { ICU4XError } from "./ICU4XError";
 import { ICU4XIsoWeekday } from "./ICU4XIsoWeekday";
 import { ICU4XLocale } from "./ICU4XLocale";
 import { ICU4XWeekendContainsDay } from "./ICU4XWeekendContainsDay";
@@ -19,7 +19,7 @@ export class ICU4XWeekCalculator {
    * Creates a new {@link ICU4XWeekCalculator `ICU4XWeekCalculator`} from locale data.
 
    * See the {@link https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#method.try_new Rust documentation for `try_new`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
+   * @throws {@link FFIError}<{@link ICU4XDataError}>
    */
   static create(provider: ICU4XDataProvider, locale: ICU4XLocale): ICU4XWeekCalculator | never;
 

@@ -15,7 +15,9 @@ macro_rules! call_method {
                 .$unstable(&icu_provider_adapters::empty::EmptyDataProvider::new()),
             #[cfg(feature = "buffer_provider")]
             $crate::provider::ICU4XDataProviderInner::Buffer(buffer_provider) => $self.0.$unstable(
-                &icu_provider::AsDeserializingBufferProvider::as_deserializing(buffer_provider),
+                &icu_provider::buf::AsDeserializingBufferProvider::as_deserializing(
+                    buffer_provider,
+                ),
             ),
             #[cfg(feature = "compiled_data")]
             $crate::provider::ICU4XDataProviderInner::Compiled => $self.0.$compiled(),
@@ -294,8 +296,15 @@ pub mod ffi {
             value: &ICU4XCustomTimeZone,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), ICU4XError> {
-            let _infallible = self.0.format(&value.0).write_no_fallback(write)?;
-            Ok(())
+            match self.0.format(&value.0).write_no_fallback(write) {
+                Ok(Ok(())) => Ok(()),
+                // TODO: Use narrow error type here
+                Ok(Err(_e)) => Err(ICU4XError::UnknownError),
+                Err(core::fmt::Error) => {
+                    debug_assert!(false, "unreachable");
+                    Ok(())
+                }
+            }
         }
     }
 }

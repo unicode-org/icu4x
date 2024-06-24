@@ -15,7 +15,6 @@ use icu::plurals::{PluralCategory, PluralRules};
 use icu::timezone::CustomTimeZone;
 use icu_collections::codepointinvlist::CodePointInversionListBuilder;
 use std::env;
-use std::str::FromStr;
 
 fn print<T: AsRef<str>>(_input: T) {
     #[cfg(debug_assertions)]
@@ -53,7 +52,7 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
         )
         .expect("Failed to create TypedDateTimeFormatter.");
         let today_date = DateTime::try_new_gregorian_datetime(2020, 10, 10, 18, 56, 0).unwrap();
-        let today_tz = CustomTimeZone::from_str("Z").unwrap(); // Z refers to the utc timezone
+        let today_tz = CustomTimeZone::try_from_str("Z").unwrap(); // Z refers to the utc timezone
 
         let formatted_dt = dtf.format(&today_date, &today_tz);
 
@@ -63,7 +62,7 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
     {
         let mut builder = CodePointInversionListBuilder::new();
         // See http://ftp.unicode.org/Public/MAPPINGS/ISO8859/8859-1.TXT
-        builder.add_range(&('\u{0000}'..='\u{00FF}'));
+        builder.add_range('\u{0000}'..='\u{00FF}');
         let latin1_set = builder.build();
 
         let only_latin1 = user_name.chars().all(|ch| latin1_set.contains(ch));

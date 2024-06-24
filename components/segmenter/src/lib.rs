@@ -118,7 +118,6 @@
 extern crate alloc;
 
 mod complex;
-mod error;
 mod indices;
 mod iterator_helpers;
 mod rule_segmenter;
@@ -163,8 +162,3 @@ pub use crate::word::WordBreakIteratorLatin1;
 pub use crate::word::WordBreakIteratorPotentiallyIllFormedUtf8;
 pub use crate::word::WordBreakIteratorUtf16;
 pub use crate::word::WordBreakIteratorUtf8;
-
-pub use error::SegmenterError;
-
-#[doc(no_inline)]
-pub use SegmenterError as Error;

@@ -8,22 +8,25 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XError.d.hpp"
+#include "ICU4XDataError.d.hpp"
 #include "ICU4XIsoWeekday.d.hpp"
-#include "ICU4XWeekCalculator.d.h"
 #include "ICU4XWeekendContainsDay.d.hpp"
 
 class ICU4XDataProvider;
 class ICU4XLocale;
 struct ICU4XWeekendContainsDay;
-class ICU4XError;
+class ICU4XDataError;
 class ICU4XIsoWeekday;
 
+
+namespace capi {
+    typedef struct ICU4XWeekCalculator ICU4XWeekCalculator;
+}
 
 class ICU4XWeekCalculator {
 public:
 
-  inline static diplomat::result<std::unique_ptr<ICU4XWeekCalculator>, ICU4XError> create(const ICU4XDataProvider& provider, const ICU4XLocale& locale);
+  inline static diplomat::result<std::unique_ptr<ICU4XWeekCalculator>, ICU4XDataError> create(const ICU4XDataProvider& provider, const ICU4XLocale& locale);
 
   inline static std::unique_ptr<ICU4XWeekCalculator> create_from_first_day_of_week_and_min_week_days(ICU4XIsoWeekday first_weekday, uint8_t min_week_days);
 

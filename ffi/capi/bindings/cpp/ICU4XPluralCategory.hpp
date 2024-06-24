@@ -10,7 +10,17 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XPluralCategory.h"
+
+
+namespace capi {
+    extern "C" {
+    
+    typedef struct ICU4XPluralCategory_get_for_cldr_string_result {union {ICU4XPluralCategory ok; }; bool is_ok;} ICU4XPluralCategory_get_for_cldr_string_result;
+    ICU4XPluralCategory_get_for_cldr_string_result ICU4XPluralCategory_get_for_cldr_string(const char* s_data, size_t s_len);
+    
+    
+    } // extern "C"
+}
 
 
 inline capi::ICU4XPluralCategory ICU4XPluralCategory::AsFFI() const {

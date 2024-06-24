@@ -8,8 +8,15 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XCodePointRangeIteratorResult.d.h"
 
+
+namespace capi {
+    typedef struct ICU4XCodePointRangeIteratorResult {
+      uint32_t start;
+      uint32_t end;
+      bool done;
+    } ICU4XCodePointRangeIteratorResult;
+}
 
 struct ICU4XCodePointRangeIteratorResult {
   uint32_t start;

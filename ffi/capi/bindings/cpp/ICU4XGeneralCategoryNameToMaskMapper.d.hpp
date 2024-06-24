@@ -8,12 +8,15 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XError.d.hpp"
-#include "ICU4XGeneralCategoryNameToMaskMapper.d.h"
+#include "ICU4XDataError.d.hpp"
 
 class ICU4XDataProvider;
-class ICU4XError;
+class ICU4XDataError;
 
+
+namespace capi {
+    typedef struct ICU4XGeneralCategoryNameToMaskMapper ICU4XGeneralCategoryNameToMaskMapper;
+}
 
 class ICU4XGeneralCategoryNameToMaskMapper {
 public:
@@ -22,7 +25,7 @@ public:
 
   inline uint32_t get_loose(std::string_view name) const;
 
-  inline static diplomat::result<std::unique_ptr<ICU4XGeneralCategoryNameToMaskMapper>, ICU4XError> load(const ICU4XDataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<ICU4XGeneralCategoryNameToMaskMapper>, ICU4XDataError> load(const ICU4XDataProvider& provider);
 
   inline const capi::ICU4XGeneralCategoryNameToMaskMapper* AsFFI() const;
   inline capi::ICU4XGeneralCategoryNameToMaskMapper* AsFFI();

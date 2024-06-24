@@ -8,8 +8,14 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XDisplayNamesFallback.d.h"
 
+
+namespace capi {
+    typedef enum ICU4XDisplayNamesFallback {
+      ICU4XDisplayNamesFallback_Code = 0,
+      ICU4XDisplayNamesFallback_None = 1,
+    } ICU4XDisplayNamesFallback;
+}
 
 class ICU4XDisplayNamesFallback {
 public:

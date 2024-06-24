@@ -174,13 +174,6 @@ jobs:
     - name: "Set up Google Cloud SDK"
       uses: google-github-actions/setup-gcloud@v1
 
-    - name: Install Node.js v16.18.0
-      uses: actions/setup-node@v3
-      with:
-        node-version: 16.18.0
-        cache: 'npm'
-        cache-dependency-path: '**/package-lock.json'
-        
     - name: Build docs
       run: |
         cd ffi/npm
@@ -271,13 +264,6 @@ jobs:
         service_account: "icu4x-main@dev-infra-273822.iam.gserviceaccount.com"
     - name: "Set up Google Cloud SDK"
       uses: google-github-actions/setup-gcloud@v1
-
-    - name: Install Node.js v16.18.0
-      uses: actions/setup-node@v3
-      with:
-        node-version: 16.18.0
-        cache: 'npm'
-        cache-dependency-path: '**/package-lock.json'
 
     - name: Init packages
       run: |
@@ -495,13 +481,6 @@ jobs:
       uses: taiki-e/install-action@cargo-make
 
     # Job-specific dependencies
-    - name: Install Node.js v16.18.0
-      uses: actions/setup-node@v3
-      with:
-        node-version: 16.18.0
-        cache: 'npm'
-        cache-dependency-path: '**/package-lock.json'
-
     - name: Install npm tools
       run: |
         npm install -g wasm-opt
@@ -574,7 +553,7 @@ jobs:
 
   gh-pages:
     name: "Deploy to GitHub Pages"
-    needs: [rust-docs, cpp-docs, ts-docs, dart-docs, wasm-demo, bench-perf, bench-memory, bench-datasize] # bench-binsize
+    needs: [rust-docs, cpp-docs, ts-docs, dart-docs, wasm-demo, bench-perf, bench-memory] # bench-binsize
     # Run this even when one of the above jobs failed. This is so we can at least push the other artifacts.
     if: (success() || failure()) && (github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x')
     runs-on: 'ubuntu-latest'

@@ -4,40 +4,37 @@
 
 use core::fmt;
 
+use crate::format::datetime::DateTimeWriteError;
 use crate::{
-    input::TimeZoneInput,
-    time_zone::{FormatTimeZone, FormatTimeZoneWithFallback, TimeZoneFormatter},
-    DateTimeError,
+    input::ExtractedTimeZoneInput,
+    time_zone::{
+        FormatTimeZone, FormatTimeZoneError, FormatTimeZoneWithFallback, TimeZoneFormatter,
+    },
 };
 use writeable::Writeable;
 
 /// [`FormattedTimeZone`] is a intermediate structure which can be retrieved as an output from [`TimeZoneFormatter`].
 #[derive(Debug, Copy, Clone)]
-pub struct FormattedTimeZone<'l, T>
-where
-    T: TimeZoneInput,
-{
+pub struct FormattedTimeZone<'l> {
     pub(crate) time_zone_format: &'l TimeZoneFormatter,
-    pub(crate) time_zone: &'l T,
+    // Note: CustomTimeZone is being used as an ExtractedTimeZoneInput
+    pub(crate) time_zone: ExtractedTimeZoneInput,
 }
 
-impl<'l, T> Writeable for FormattedTimeZone<'l, T>
-where
-    T: TimeZoneInput,
-{
+impl<'l> Writeable for FormattedTimeZone<'l> {
     /// Format time zone with fallbacks.
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
         let mut sink = writeable::adapters::CoreWriteAsPartsWrite(sink);
 
-        let r = match self.write_no_fallback(&mut sink) {
-            Ok(fmt_result) => Ok(fmt_result?),
+        let r = match self.write_no_fallback(&mut sink)? {
+            Ok(()) => Ok(()),
             Err(_) => self
                 .time_zone_format
                 .fallback_unit
                 .format_with_last_resort_fallback(
                     &mut sink,
                     self.time_zone,
-                    &self.time_zone_format.data_payloads,
+                    self.time_zone_format.data_payloads.as_borrowed(),
                 )?,
         };
 
@@ -48,26 +45,20 @@ where
     // TODO(#489): Implement writeable_length_hint
 }
 
-impl<'l, T> fmt::Display for FormattedTimeZone<'l, T>
-where
-    T: TimeZoneInput,
-{
+impl<'l> fmt::Display for FormattedTimeZone<'l> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         self.write_to(f)
     }
 }
 
-impl<'l, T> FormattedTimeZone<'l, T>
-where
-    T: TimeZoneInput,
-{
+impl<'l> FormattedTimeZone<'l> {
     /// Write time zone with no fallback.
     ///
     /// # Examples
     ///
     /// ```
     /// use icu::datetime::time_zone::TimeZoneFormatter;
-    /// use icu::datetime::DateTimeError;
+    /// use icu::datetime::DateTimeWriteError;
     /// use icu::locale::locale;
     /// use icu::timezone::CustomTimeZone;
     /// use tinystr::tinystr;
@@ -83,7 +74,7 @@ where
     /// // There are no non-fallback formats enabled:
     /// assert!(matches!(
     ///     tzf.format(&time_zone).write_no_fallback(&mut buf),
-    ///     Err(DateTimeError::UnsupportedOptions)
+    ///     Ok(Err(DateTimeWriteError::MissingTimeZoneSymbol(_)))
     /// ));
     /// assert!(buf.is_empty());
     ///
@@ -91,7 +82,7 @@ where
     /// tzf.include_generic_location_format().unwrap();
     /// assert!(matches!(
     ///     tzf.format(&time_zone).write_no_fallback(&mut buf),
-    ///     Ok(Ok(_))
+    ///     Ok(Ok(()))
     /// ));
     /// assert_eq!("London Time", buf);
     ///
@@ -100,27 +91,37 @@ where
     /// time_zone.time_zone_id = Some(tinystr!(8, "zzzzz").into());
     /// assert!(matches!(
     ///     tzf.format(&time_zone).write_no_fallback(&mut buf),
-    ///     Err(DateTimeError::UnsupportedOptions)
+    ///     Ok(Err(DateTimeWriteError::MissingTimeZoneSymbol(_)))
     /// ));
     ///
     /// // Use the `Writable` trait instead to enable infallible formatting:
     /// writeable::assert_writeable_eq!(tzf.format(&time_zone), "GMT");
     /// ```
-    pub fn write_no_fallback<W>(&self, mut w: &mut W) -> Result<fmt::Result, DateTimeError>
+    pub fn write_no_fallback<W>(
+        &self,
+        mut w: &mut W,
+    ) -> Result<Result<(), DateTimeWriteError>, fmt::Error>
     where
         W: core::fmt::Write + ?Sized,
     {
         for unit in self.time_zone_format.format_units.iter() {
             match unit.format(
                 &mut writeable::adapters::CoreWriteAsPartsWrite(&mut w),
-                self.time_zone,
-                &self.time_zone_format.data_payloads,
-            ) {
-                Ok(r) => return Ok(r),
-                Err(DateTimeError::UnsupportedOptions) => continue,
-                Err(e) => return Err(e),
+                &self.time_zone,
+                self.time_zone_format.data_payloads.as_borrowed(),
+            )? {
+                Ok(()) => return Ok(Ok(())),
+                Err(FormatTimeZoneError::NameNotFound) => continue,
+                Err(FormatTimeZoneError::MissingZoneSymbols) => {
+                    return Ok(Err(DateTimeWriteError::MissingZoneSymbols))
+                }
+                Err(FormatTimeZoneError::MissingInputField(s)) => {
+                    return Ok(Err(DateTimeWriteError::MissingInputField(s)))
+                }
             }
         }
-        Err(DateTimeError::UnsupportedOptions)
+        Ok(Err(DateTimeWriteError::MissingTimeZoneSymbol(
+            self.time_zone.to_custom_time_zone(),
+        )))
     }
 }

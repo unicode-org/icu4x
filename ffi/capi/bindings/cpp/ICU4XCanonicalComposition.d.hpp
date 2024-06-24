@@ -8,17 +8,20 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XCanonicalComposition.d.h"
-#include "ICU4XError.d.hpp"
+#include "ICU4XDataError.d.hpp"
 
 class ICU4XDataProvider;
-class ICU4XError;
+class ICU4XDataError;
 
+
+namespace capi {
+    typedef struct ICU4XCanonicalComposition ICU4XCanonicalComposition;
+}
 
 class ICU4XCanonicalComposition {
 public:
 
-  inline static diplomat::result<std::unique_ptr<ICU4XCanonicalComposition>, ICU4XError> create(const ICU4XDataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<ICU4XCanonicalComposition>, ICU4XDataError> create(const ICU4XDataProvider& provider);
 
   inline char32_t compose(char32_t starter, char32_t second) const;
 

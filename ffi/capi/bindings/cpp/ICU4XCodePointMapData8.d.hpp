@@ -8,14 +8,17 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XCodePointMapData8.d.h"
-#include "ICU4XError.d.hpp"
+#include "ICU4XDataError.d.hpp"
 
 class ICU4XCodePointRangeIterator;
 class ICU4XCodePointSetData;
 class ICU4XDataProvider;
-class ICU4XError;
+class ICU4XDataError;
 
+
+namespace capi {
+    typedef struct ICU4XCodePointMapData8 ICU4XCodePointMapData8;
+}
 
 class ICU4XCodePointMapData8 {
 public:
@@ -34,25 +37,25 @@ public:
 
   inline std::unique_ptr<ICU4XCodePointSetData> get_set_for_value(uint8_t value) const;
 
-  inline static diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XError> load_general_category(const ICU4XDataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XDataError> load_general_category(const ICU4XDataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XError> load_bidi_class(const ICU4XDataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XDataError> load_bidi_class(const ICU4XDataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XError> load_east_asian_width(const ICU4XDataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XDataError> load_east_asian_width(const ICU4XDataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XError> load_hangul_syllable_type(const ICU4XDataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XDataError> load_hangul_syllable_type(const ICU4XDataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XError> load_indic_syllabic_category(const ICU4XDataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XDataError> load_indic_syllabic_category(const ICU4XDataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XError> load_line_break(const ICU4XDataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XDataError> load_line_break(const ICU4XDataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XError> try_grapheme_cluster_break(const ICU4XDataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XDataError> try_grapheme_cluster_break(const ICU4XDataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XError> load_word_break(const ICU4XDataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XDataError> load_word_break(const ICU4XDataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XError> load_sentence_break(const ICU4XDataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XDataError> load_sentence_break(const ICU4XDataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XError> load_joining_type(const ICU4XDataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<ICU4XCodePointMapData8>, ICU4XDataError> load_joining_type(const ICU4XDataProvider& provider);
 
   inline const capi::ICU4XCodePointMapData8* AsFFI() const;
   inline capi::ICU4XCodePointMapData8* AsFFI();

@@ -10,17 +10,50 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XCaseMapper.h"
 #include "ICU4XCodePointSetBuilder.hpp"
+#include "ICU4XDataError.hpp"
 #include "ICU4XDataProvider.hpp"
-#include "ICU4XError.hpp"
 #include "ICU4XLocale.hpp"
 #include "ICU4XTitlecaseOptionsV1.hpp"
 
 
-inline diplomat::result<std::unique_ptr<ICU4XCaseMapper>, ICU4XError> ICU4XCaseMapper::create(const ICU4XDataProvider& provider) {
+namespace capi {
+    extern "C" {
+    
+    typedef struct ICU4XCaseMapper_create_result {union {ICU4XCaseMapper* ok; ICU4XDataError err;}; bool is_ok;} ICU4XCaseMapper_create_result;
+    ICU4XCaseMapper_create_result ICU4XCaseMapper_create(const ICU4XDataProvider* provider);
+    
+    void ICU4XCaseMapper_lowercase(const ICU4XCaseMapper* self, const char* s_data, size_t s_len, const ICU4XLocale* locale, DiplomatWrite* write);
+    
+    void ICU4XCaseMapper_uppercase(const ICU4XCaseMapper* self, const char* s_data, size_t s_len, const ICU4XLocale* locale, DiplomatWrite* write);
+    
+    void ICU4XCaseMapper_titlecase_segment_with_only_case_data_v1(const ICU4XCaseMapper* self, const char* s_data, size_t s_len, const ICU4XLocale* locale, ICU4XTitlecaseOptionsV1 options, DiplomatWrite* write);
+    
+    void ICU4XCaseMapper_fold(const ICU4XCaseMapper* self, const char* s_data, size_t s_len, DiplomatWrite* write);
+    
+    void ICU4XCaseMapper_fold_turkic(const ICU4XCaseMapper* self, const char* s_data, size_t s_len, DiplomatWrite* write);
+    
+    void ICU4XCaseMapper_add_case_closure_to(const ICU4XCaseMapper* self, char32_t c, ICU4XCodePointSetBuilder* builder);
+    
+    char32_t ICU4XCaseMapper_simple_lowercase(const ICU4XCaseMapper* self, char32_t ch);
+    
+    char32_t ICU4XCaseMapper_simple_uppercase(const ICU4XCaseMapper* self, char32_t ch);
+    
+    char32_t ICU4XCaseMapper_simple_titlecase(const ICU4XCaseMapper* self, char32_t ch);
+    
+    char32_t ICU4XCaseMapper_simple_fold(const ICU4XCaseMapper* self, char32_t ch);
+    
+    char32_t ICU4XCaseMapper_simple_fold_turkic(const ICU4XCaseMapper* self, char32_t ch);
+    
+    
+    void ICU4XCaseMapper_destroy(ICU4XCaseMapper* self);
+    
+    } // extern "C"
+}
+
+inline diplomat::result<std::unique_ptr<ICU4XCaseMapper>, ICU4XDataError> ICU4XCaseMapper::create(const ICU4XDataProvider& provider) {
   auto result = capi::ICU4XCaseMapper_create(provider.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XCaseMapper>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XCaseMapper>>(std::unique_ptr<ICU4XCaseMapper>(ICU4XCaseMapper::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XCaseMapper>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XCaseMapper>, ICU4XDataError>(diplomat::Ok<std::unique_ptr<ICU4XCaseMapper>>(std::unique_ptr<ICU4XCaseMapper>(ICU4XCaseMapper::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XCaseMapper>, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
 
 inline diplomat::result<std::string, diplomat::Utf8Error> ICU4XCaseMapper::lowercase(std::string_view s, const ICU4XLocale& locale) const {

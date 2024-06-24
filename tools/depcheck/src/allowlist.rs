@@ -75,6 +75,7 @@ pub const EXTRA_SERDE_DEPS: &[&str] = &["deduplicating_array", "serde", "serde_d
 
 /// Dependencies allowed when opting in to compiled data
 pub const EXTRA_DATA_DEPS: &[&str] = &[
+    "icu_provider_baked",
     "icu_calendar_data",
     "icu_casemap_data",
     "icu_collator_data",
@@ -150,18 +151,21 @@ pub const EXTRA_BLOB_DEPS: &[&str] = &["cobs", "icu_provider_blob", "postcard"];
 /// Keep in sync with Cargo.toml crates.io dependencies.
 pub const EXTRA_FS_DEPS: &[&str] = &["icu_provider_fs", "serde-json-core"];
 
-/// Dependencies needed by datagen (not counting `log`, `zip`, and `rayon` deps)
+/// Dependencies needed by datagen provider (not counting `log` and `zip` deps)
 /// This might change semi frequently but we should try and keep this small.
-pub const EXTRA_DATAGEN_DEPS: &[&str] = &[
+pub const EXTRA_DATAGEN_BIKESHED_DEPS: &[&str] = &[
     "bincode",
     "crlify",
     "databake",
     "databake-derive",
     "elsa",
     "erased-serde",
+    "heck",
     "icu_codepointtrie_builder",
     "icu_pattern",
     "icu_provider_adapters",
+    "icu_provider_baked",
+    "icu_registry",
     "itertools",
     "itoa",
     "matrixmultiply",
@@ -177,6 +181,15 @@ pub const EXTRA_DATAGEN_DEPS: &[&str] = &[
     "static_assertions",
     "toml",
     "twox-hash",
+];
+
+/// Dependencies needed by datagen (not counting `log` and `rayon` deps)
+/// This might change semi frequently but we should try and keep this small.
+pub const EXTRA_DATAGEN_DEPS: &[&str] = &[
+    "databake",
+    "databake-derive",
+    "erased-serde",
+    "icu_registry",
 ];
 
 /// Dependencies needed by the `log` crate

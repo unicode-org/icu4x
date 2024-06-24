@@ -8,17 +8,22 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XError.d.hpp"
-#include "ICU4XFixedDecimal.d.h"
+#include "ICU4XFixedDecimalLimitError.d.hpp"
+#include "ICU4XFixedDecimalParseError.d.hpp"
 #include "ICU4XFixedDecimalRoundingIncrement.d.hpp"
 #include "ICU4XFixedDecimalSign.d.hpp"
 #include "ICU4XFixedDecimalSignDisplay.d.hpp"
 
-class ICU4XError;
+class ICU4XFixedDecimalLimitError;
+class ICU4XFixedDecimalParseError;
 class ICU4XFixedDecimalRoundingIncrement;
 class ICU4XFixedDecimalSign;
 class ICU4XFixedDecimalSignDisplay;
 
+
+namespace capi {
+    typedef struct ICU4XFixedDecimal ICU4XFixedDecimal;
+}
 
 class ICU4XFixedDecimal {
 public:
@@ -31,15 +36,15 @@ public:
 
   inline static std::unique_ptr<ICU4XFixedDecimal> create_from_u64(uint64_t v);
 
-  inline static diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XError> create_from_f64_with_integer_precision(double f);
+  inline static diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XFixedDecimalLimitError> create_from_f64_with_integer_precision(double f);
 
-  inline static diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XError> create_from_f64_with_lower_magnitude(double f, int16_t magnitude);
+  inline static diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XFixedDecimalLimitError> create_from_f64_with_lower_magnitude(double f, int16_t magnitude);
 
-  inline static diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XError> create_from_f64_with_significant_digits(double f, uint8_t digits);
+  inline static diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XFixedDecimalLimitError> create_from_f64_with_significant_digits(double f, uint8_t digits);
 
-  inline static diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XError> create_from_f64_with_floating_precision(double f);
+  inline static diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XFixedDecimalLimitError> create_from_f64_with_floating_precision(double f);
 
-  inline static diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XError> create_from_string(std::string_view v);
+  inline static diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XFixedDecimalParseError> create_from_string(std::string_view v);
 
   inline uint8_t digit_at(int16_t magnitude) const;
 

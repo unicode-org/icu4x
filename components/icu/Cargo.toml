@@ -107,6 +107,21 @@ compiled_data = [
     "icu_timezone/compiled_data",
     "icu_experimental?/compiled_data",
 ]
+datagen = [
+    "icu_calendar/datagen",
+    "icu_casemap/datagen",
+    "icu_collator/datagen",
+    "icu_datetime/datagen",
+    "icu_decimal/datagen",
+    "icu_list/datagen",
+    "icu_locale/datagen",
+    "icu_normalizer/datagen",
+    "icu_plurals/datagen",
+    "icu_properties/datagen",
+    "icu_segmenter/datagen",
+    "icu_timezone/datagen",
+    "icu_experimental?/datagen",
+]
 serde_human = [
     "icu_list/serde_human"
 ]

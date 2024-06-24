@@ -24,7 +24,7 @@ PINNED_CI_NIGHTLY = { value = "nightly-2023-08-08", condition = { env_not_set = 
 [tasks.quick]
 description = "Run quick version of all lints and builds (useful before pushing to GitHub)"
 category = "ICU4X Development"
-env = { "ICU4X_DATA_DIR" = "${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}/provider/datagen/tests/data/baked" }
+env = { "ICU4X_DATA_DIR" = "../stubdata" }
 run_task.name = [
     "ci-job-fmt",
     "ci-job-clippy",
@@ -291,18 +291,25 @@ end
 
 ci_toolchain = set "pinned-stable"
 
+echo "set-ci-toolchain: GITHUB_EVENT_NAME is ${event_name}"
+
 # We need to parse the channel information for dispatch/schedule events
-if eq "${event_name}" "workflow_dispatch" or eq "${event_name}" "schedule"
+is_workflow = eq "${event_name}" "workflow_dispatch"
+is_schedule = eq "${event_name}" "schedule"
+if  ${is_workflow} or ${is_schedule}
     event_path = get_env GITHUB_EVENT_PATH
     event_file = readfile ${event_path}
     event_json = json_parse ${event_file}
     # For dispatch events
-    if eq "${event_name}" "workflow_dispatch"
+    if ${is_workflow}
+        echo "set-ci-toolchain: manually selected channel is ${event_json.inputs.channel}"
         if not eq "${event_json.inputs.channel}" "pinned-stable"
             needs_override = set true
             ci_toolchain = set "${event_json.inputs.channel}"
         end
     else
+        echo "set-ci-toolchain: cronjob is scheduled at ${event_json.schedule}"
+
         # Schedule events always override
         needs_override = set true
         # For schedule events, the cronjob on minute 1 is the beta job

@@ -8,21 +8,24 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XCaseMapper.d.h"
-#include "ICU4XError.d.hpp"
+#include "ICU4XDataError.d.hpp"
 #include "ICU4XTitlecaseOptionsV1.d.hpp"
 
 class ICU4XCodePointSetBuilder;
 class ICU4XDataProvider;
 class ICU4XLocale;
 struct ICU4XTitlecaseOptionsV1;
-class ICU4XError;
+class ICU4XDataError;
 
+
+namespace capi {
+    typedef struct ICU4XCaseMapper ICU4XCaseMapper;
+}
 
 class ICU4XCaseMapper {
 public:
 
-  inline static diplomat::result<std::unique_ptr<ICU4XCaseMapper>, ICU4XError> create(const ICU4XDataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<ICU4XCaseMapper>, ICU4XDataError> create(const ICU4XDataProvider& provider);
 
   inline diplomat::result<std::string, diplomat::Utf8Error> lowercase(std::string_view s, const ICU4XLocale& locale) const;
 

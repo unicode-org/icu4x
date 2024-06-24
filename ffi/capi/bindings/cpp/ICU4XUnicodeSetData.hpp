@@ -10,11 +10,43 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
+#include "ICU4XDataError.hpp"
 #include "ICU4XDataProvider.hpp"
-#include "ICU4XError.hpp"
 #include "ICU4XLocale.hpp"
-#include "ICU4XUnicodeSetData.h"
 
+
+namespace capi {
+    extern "C" {
+    
+    bool ICU4XUnicodeSetData_contains(const ICU4XUnicodeSetData* self, const char* s_data, size_t s_len);
+    
+    bool ICU4XUnicodeSetData_contains_char(const ICU4XUnicodeSetData* self, char32_t cp);
+    
+    bool ICU4XUnicodeSetData_contains32(const ICU4XUnicodeSetData* self, uint32_t cp);
+    
+    typedef struct ICU4XUnicodeSetData_load_basic_emoji_result {union {ICU4XUnicodeSetData* ok; ICU4XDataError err;}; bool is_ok;} ICU4XUnicodeSetData_load_basic_emoji_result;
+    ICU4XUnicodeSetData_load_basic_emoji_result ICU4XUnicodeSetData_load_basic_emoji(const ICU4XDataProvider* provider);
+    
+    typedef struct ICU4XUnicodeSetData_load_exemplars_main_result {union {ICU4XUnicodeSetData* ok; ICU4XDataError err;}; bool is_ok;} ICU4XUnicodeSetData_load_exemplars_main_result;
+    ICU4XUnicodeSetData_load_exemplars_main_result ICU4XUnicodeSetData_load_exemplars_main(const ICU4XDataProvider* provider, const ICU4XLocale* locale);
+    
+    typedef struct ICU4XUnicodeSetData_load_exemplars_auxiliary_result {union {ICU4XUnicodeSetData* ok; ICU4XDataError err;}; bool is_ok;} ICU4XUnicodeSetData_load_exemplars_auxiliary_result;
+    ICU4XUnicodeSetData_load_exemplars_auxiliary_result ICU4XUnicodeSetData_load_exemplars_auxiliary(const ICU4XDataProvider* provider, const ICU4XLocale* locale);
+    
+    typedef struct ICU4XUnicodeSetData_load_exemplars_punctuation_result {union {ICU4XUnicodeSetData* ok; ICU4XDataError err;}; bool is_ok;} ICU4XUnicodeSetData_load_exemplars_punctuation_result;
+    ICU4XUnicodeSetData_load_exemplars_punctuation_result ICU4XUnicodeSetData_load_exemplars_punctuation(const ICU4XDataProvider* provider, const ICU4XLocale* locale);
+    
+    typedef struct ICU4XUnicodeSetData_load_exemplars_numbers_result {union {ICU4XUnicodeSetData* ok; ICU4XDataError err;}; bool is_ok;} ICU4XUnicodeSetData_load_exemplars_numbers_result;
+    ICU4XUnicodeSetData_load_exemplars_numbers_result ICU4XUnicodeSetData_load_exemplars_numbers(const ICU4XDataProvider* provider, const ICU4XLocale* locale);
+    
+    typedef struct ICU4XUnicodeSetData_load_exemplars_index_result {union {ICU4XUnicodeSetData* ok; ICU4XDataError err;}; bool is_ok;} ICU4XUnicodeSetData_load_exemplars_index_result;
+    ICU4XUnicodeSetData_load_exemplars_index_result ICU4XUnicodeSetData_load_exemplars_index(const ICU4XDataProvider* provider, const ICU4XLocale* locale);
+    
+    
+    void ICU4XUnicodeSetData_destroy(ICU4XUnicodeSetData* self);
+    
+    } // extern "C"
+}
 
 inline bool ICU4XUnicodeSetData::contains(std::string_view s) const {
   auto result = capi::ICU4XUnicodeSetData_contains(this->AsFFI(),
@@ -35,39 +67,39 @@ inline bool ICU4XUnicodeSetData::contains32(uint32_t cp) const {
   return result;
 }
 
-inline diplomat::result<std::unique_ptr<ICU4XUnicodeSetData>, ICU4XError> ICU4XUnicodeSetData::load_basic_emoji(const ICU4XDataProvider& provider) {
+inline diplomat::result<std::unique_ptr<ICU4XUnicodeSetData>, ICU4XDataError> ICU4XUnicodeSetData::load_basic_emoji(const ICU4XDataProvider& provider) {
   auto result = capi::ICU4XUnicodeSetData_load_basic_emoji(provider.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XUnicodeSetData>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XUnicodeSetData>>(std::unique_ptr<ICU4XUnicodeSetData>(ICU4XUnicodeSetData::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XUnicodeSetData>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XUnicodeSetData>, ICU4XDataError>(diplomat::Ok<std::unique_ptr<ICU4XUnicodeSetData>>(std::unique_ptr<ICU4XUnicodeSetData>(ICU4XUnicodeSetData::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XUnicodeSetData>, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::unique_ptr<ICU4XUnicodeSetData>, ICU4XError> ICU4XUnicodeSetData::load_exemplars_main(const ICU4XDataProvider& provider, const ICU4XLocale& locale) {
+inline diplomat::result<std::unique_ptr<ICU4XUnicodeSetData>, ICU4XDataError> ICU4XUnicodeSetData::load_exemplars_main(const ICU4XDataProvider& provider, const ICU4XLocale& locale) {
   auto result = capi::ICU4XUnicodeSetData_load_exemplars_main(provider.AsFFI(),
     locale.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XUnicodeSetData>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XUnicodeSetData>>(std::unique_ptr<ICU4XUnicodeSetData>(ICU4XUnicodeSetData::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XUnicodeSetData>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XUnicodeSetData>, ICU4XDataError>(diplomat::Ok<std::unique_ptr<ICU4XUnicodeSetData>>(std::unique_ptr<ICU4XUnicodeSetData>(ICU4XUnicodeSetData::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XUnicodeSetData>, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::unique_ptr<ICU4XUnicodeSetData>, ICU4XError> ICU4XUnicodeSetData::load_exemplars_auxiliary(const ICU4XDataProvider& provider, const ICU4XLocale& locale) {
+inline diplomat::result<std::unique_ptr<ICU4XUnicodeSetData>, ICU4XDataError> ICU4XUnicodeSetData::load_exemplars_auxiliary(const ICU4XDataProvider& provider, const ICU4XLocale& locale) {
   auto result = capi::ICU4XUnicodeSetData_load_exemplars_auxiliary(provider.AsFFI(),
     locale.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XUnicodeSetData>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XUnicodeSetData>>(std::unique_ptr<ICU4XUnicodeSetData>(ICU4XUnicodeSetData::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XUnicodeSetData>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XUnicodeSetData>, ICU4XDataError>(diplomat::Ok<std::unique_ptr<ICU4XUnicodeSetData>>(std::unique_ptr<ICU4XUnicodeSetData>(ICU4XUnicodeSetData::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XUnicodeSetData>, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::unique_ptr<ICU4XUnicodeSetData>, ICU4XError> ICU4XUnicodeSetData::load_exemplars_punctuation(const ICU4XDataProvider& provider, const ICU4XLocale& locale) {
+inline diplomat::result<std::unique_ptr<ICU4XUnicodeSetData>, ICU4XDataError> ICU4XUnicodeSetData::load_exemplars_punctuation(const ICU4XDataProvider& provider, const ICU4XLocale& locale) {
   auto result = capi::ICU4XUnicodeSetData_load_exemplars_punctuation(provider.AsFFI(),
     locale.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XUnicodeSetData>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XUnicodeSetData>>(std::unique_ptr<ICU4XUnicodeSetData>(ICU4XUnicodeSetData::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XUnicodeSetData>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XUnicodeSetData>, ICU4XDataError>(diplomat::Ok<std::unique_ptr<ICU4XUnicodeSetData>>(std::unique_ptr<ICU4XUnicodeSetData>(ICU4XUnicodeSetData::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XUnicodeSetData>, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::unique_ptr<ICU4XUnicodeSetData>, ICU4XError> ICU4XUnicodeSetData::load_exemplars_numbers(const ICU4XDataProvider& provider, const ICU4XLocale& locale) {
+inline diplomat::result<std::unique_ptr<ICU4XUnicodeSetData>, ICU4XDataError> ICU4XUnicodeSetData::load_exemplars_numbers(const ICU4XDataProvider& provider, const ICU4XLocale& locale) {
   auto result = capi::ICU4XUnicodeSetData_load_exemplars_numbers(provider.AsFFI(),
     locale.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XUnicodeSetData>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XUnicodeSetData>>(std::unique_ptr<ICU4XUnicodeSetData>(ICU4XUnicodeSetData::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XUnicodeSetData>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XUnicodeSetData>, ICU4XDataError>(diplomat::Ok<std::unique_ptr<ICU4XUnicodeSetData>>(std::unique_ptr<ICU4XUnicodeSetData>(ICU4XUnicodeSetData::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XUnicodeSetData>, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::unique_ptr<ICU4XUnicodeSetData>, ICU4XError> ICU4XUnicodeSetData::load_exemplars_index(const ICU4XDataProvider& provider, const ICU4XLocale& locale) {
+inline diplomat::result<std::unique_ptr<ICU4XUnicodeSetData>, ICU4XDataError> ICU4XUnicodeSetData::load_exemplars_index(const ICU4XDataProvider& provider, const ICU4XLocale& locale) {
   auto result = capi::ICU4XUnicodeSetData_load_exemplars_index(provider.AsFFI(),
     locale.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XUnicodeSetData>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XUnicodeSetData>>(std::unique_ptr<ICU4XUnicodeSetData>(ICU4XUnicodeSetData::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XUnicodeSetData>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XUnicodeSetData>, ICU4XDataError>(diplomat::Ok<std::unique_ptr<ICU4XUnicodeSetData>>(std::unique_ptr<ICU4XUnicodeSetData>(ICU4XUnicodeSetData::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XUnicodeSetData>, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
 
 inline const capi::ICU4XUnicodeSetData* ICU4XUnicodeSetData::AsFFI() const {

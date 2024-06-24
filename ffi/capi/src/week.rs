@@ -7,7 +7,7 @@ use icu_calendar::week::WeekOf;
 #[diplomat::bridge]
 pub mod ffi {
     use crate::date::ffi::ICU4XIsoWeekday;
-    use crate::errors::ffi::ICU4XError;
+    use crate::errors::ffi::ICU4XDataError;
     use crate::locale_core::ffi::ICU4XLocale;
     use crate::provider::ffi::ICU4XDataProvider;
     use alloc::boxed::Box;
@@ -40,7 +40,7 @@ pub mod ffi {
         pub fn create(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
-        ) -> Result<Box<ICU4XWeekCalculator>, ICU4XError> {
+        ) -> Result<Box<ICU4XWeekCalculator>, ICU4XDataError> {
             let locale = locale.to_datalocale();
 
             Ok(Box::new(ICU4XWeekCalculator(call_constructor!(

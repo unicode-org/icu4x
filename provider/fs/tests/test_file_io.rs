@@ -18,33 +18,30 @@ const PATHS: &[&str] = &[
 fn test_provider() {
     for path in PATHS {
         let provider = FsDataProvider::try_new(path).unwrap();
-        for (locale, key_attributes) in HelloWorldProvider.supported_requests().unwrap() {
+        for (locale, marker_attributes) in HelloWorldProvider.iter_requests().unwrap() {
             let req = DataRequest {
                 locale: &locale,
-                key_attributes: &key_attributes,
+                marker_attributes: &marker_attributes,
                 ..Default::default()
             };
 
             let expected = HelloWorldProvider
                 .load(req)
                 .unwrap_or_else(|e| panic!("{e}: {req} ({path})"))
-                .take_payload()
-                .unwrap();
+                .payload;
 
             let actual: DataPayload<HelloWorldV1Marker> = provider
                 .as_deserializing()
                 .load(req)
                 .unwrap_or_else(|e| panic!("{e}: {req} ({path})"))
-                .take_payload()
-                .unwrap();
+                .payload;
             assert_eq!(actual.get(), expected.get());
 
             let actual: DataPayload<HelloWorldV1Marker> = (&provider as &dyn BufferProvider)
                 .as_deserializing()
                 .load(req)
                 .unwrap_or_else(|e| panic!("{e}: {req} ({path})"))
-                .take_payload()
-                .unwrap();
+                .payload;
             assert_eq!(actual.get(), expected.get());
         }
     }
@@ -73,11 +70,12 @@ fn test_errors() {
         );
 
         struct WrongV1Marker;
-        impl DataMarker for WrongV1Marker {
+        impl DynamicDataMarker for WrongV1Marker {
             type Yokeable = HelloWorldV1<'static>;
         }
-        impl KeyedDataMarker for WrongV1Marker {
-            const KEY: DataKey = data_key!("nope@1");
+        impl DataMarker for WrongV1Marker {
+            const INFO: DataMarkerInfo =
+                DataMarkerInfo::from_path(icu_provider::marker::data_marker_path!("nope@1"));
         }
 
         let err: Result<DataResponse<WrongV1Marker>, DataError> =
@@ -87,7 +85,7 @@ fn test_errors() {
             matches!(
                 err,
                 Err(DataError {
-                    kind: DataErrorKind::MissingDataKey,
+                    kind: DataErrorKind::MissingDataMarker,
                     ..
                 })
             ),

@@ -26,10 +26,7 @@ literal!(
 
 #[test]
 fn literal() {
-    test_bake!(
-        u16,
-        const: 3849u16
-    );
+    test_bake!(u16, const, 3849u16);
 }
 
 impl<'a, T: ?Sized> Bake for &'a T
@@ -55,10 +52,7 @@ where
 
 #[test]
 fn r#ref() {
-    test_bake!(
-        &f32,
-        const: &934.34f32
-    );
+    test_bake!(&f32, const, &934.34f32);
 }
 
 impl<T> Bake for [T]
@@ -128,18 +122,9 @@ where
 
 #[test]
 fn array() {
-    test_bake!(
-        &[bool; 0],
-        const: &[]
-    );
-    test_bake!(
-        &[bool; 1],
-        const: &[true]
-    );
-    test_bake!(
-        &[bool; 2],
-        const: &[true, false]
-    );
+    test_bake!(&[bool; 0], const, &[]);
+    test_bake!(&[bool; 1], const, &[true]);
+    test_bake!(&[bool; 2], const, &[true, false]);
 }
 
 impl<T> Bake for Option<T>
@@ -161,14 +146,8 @@ where
 
 #[test]
 fn option() {
-    test_bake!(
-        Option<&'static str>,
-        const: Some("hello")
-    );
-    test_bake!(
-        Option<&'static str>,
-        const: None
-    );
+    test_bake!(Option<&'static str>, const, Some("hello"));
+    test_bake!(Option<&'static str>, const, None);
 }
 
 impl<T, E> Bake for Result<T, E>
@@ -194,14 +173,8 @@ where
 
 #[test]
 fn result() {
-    test_bake!(
-        Result<&'static str, ()>,
-        const: Ok("hello")
-    );
-    test_bake!(
-        Result<&'static str, ()>,
-        const: Err(())
-    );
+    test_bake!(Result<&'static str, ()>, const, Ok("hello"));
+    test_bake!(Result<&'static str, ()>, const, Err(()));
 }
 
 macro_rules! tuple {
@@ -244,18 +217,9 @@ tuple!(A, a, B, b, C, c, D, d, E, e, F, f, G, g, H, h, I, i, J, j);
 
 #[test]
 fn tuple() {
-    test_bake!(
-        (),
-        const: ()
-    );
-    test_bake!(
-        (u8,),
-        const: (0u8,)
-    );
-    test_bake!(
-        (u8, i8),
-        const: (0u8, 0i8)
-    );
+    test_bake!((), const, ());
+    test_bake!((u8,), const, (0u8,));
+    test_bake!((u8, i8), const, (0u8, 0i8));
 }
 
 impl<T> Bake for PhantomData<T> {
@@ -268,8 +232,5 @@ impl<T> Bake for PhantomData<T> {
 
 #[test]
 fn phantom_data() {
-    test_bake!(
-        PhantomData<usize>,
-        const: ::core::marker::PhantomData
-    );
+    test_bake!(PhantomData<usize>, const, ::core::marker::PhantomData);
 }

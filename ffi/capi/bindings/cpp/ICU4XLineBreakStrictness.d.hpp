@@ -8,8 +8,16 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XLineBreakStrictness.d.h"
 
+
+namespace capi {
+    typedef enum ICU4XLineBreakStrictness {
+      ICU4XLineBreakStrictness_Loose = 0,
+      ICU4XLineBreakStrictness_Normal = 1,
+      ICU4XLineBreakStrictness_Strict = 2,
+      ICU4XLineBreakStrictness_Anywhere = 3,
+    } ICU4XLineBreakStrictness;
+}
 
 class ICU4XLineBreakStrictness {
 public:

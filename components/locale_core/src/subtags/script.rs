@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::subtags::Subtag;
+
 impl_tinystr_subtag!(
     /// A script subtag (examples: `"Latn"`, `"Arab"`, etc.)
     ///
@@ -31,3 +33,9 @@ impl_tinystr_subtag!(
     ["Latn"],
     ["Latin"],
 );
+
+impl From<Script> for Subtag {
+    fn from(value: Script) -> Self {
+        Subtag(value.0.resize())
+    }
+}

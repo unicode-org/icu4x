@@ -12,8 +12,18 @@
 #include "diplomat_runtime.hpp"
 #include "ICU4XLocale.hpp"
 #include "ICU4XLocaleFallbackIterator.hpp"
-#include "ICU4XLocaleFallbackerWithConfig.h"
 
+
+namespace capi {
+    extern "C" {
+    
+    ICU4XLocaleFallbackIterator* ICU4XLocaleFallbackerWithConfig_fallback_for_locale(const ICU4XLocaleFallbackerWithConfig* self, const ICU4XLocale* locale);
+    
+    
+    void ICU4XLocaleFallbackerWithConfig_destroy(ICU4XLocaleFallbackerWithConfig* self);
+    
+    } // extern "C"
+}
 
 inline std::unique_ptr<ICU4XLocaleFallbackIterator> ICU4XLocaleFallbackerWithConfig::fallback_for_locale(const ICU4XLocale& locale) const {
   auto result = capi::ICU4XLocaleFallbackerWithConfig_fallback_for_locale(this->AsFFI(),

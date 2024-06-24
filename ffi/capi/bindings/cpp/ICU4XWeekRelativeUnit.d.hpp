@@ -8,8 +8,15 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XWeekRelativeUnit.d.h"
 
+
+namespace capi {
+    typedef enum ICU4XWeekRelativeUnit {
+      ICU4XWeekRelativeUnit_Previous = 0,
+      ICU4XWeekRelativeUnit_Current = 1,
+      ICU4XWeekRelativeUnit_Next = 2,
+    } ICU4XWeekRelativeUnit;
+}
 
 class ICU4XWeekRelativeUnit {
 public:

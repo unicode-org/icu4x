@@ -9,21 +9,24 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 #include "ICU4XAnyCalendarKind.d.hpp"
-#include "ICU4XCalendar.d.h"
-#include "ICU4XError.d.hpp"
+#include "ICU4XDataError.d.hpp"
 
 class ICU4XDataProvider;
 class ICU4XLocale;
 class ICU4XAnyCalendarKind;
-class ICU4XError;
+class ICU4XDataError;
 
+
+namespace capi {
+    typedef struct ICU4XCalendar ICU4XCalendar;
+}
 
 class ICU4XCalendar {
 public:
 
-  inline static diplomat::result<std::unique_ptr<ICU4XCalendar>, ICU4XError> create_for_locale(const ICU4XDataProvider& provider, const ICU4XLocale& locale);
+  inline static diplomat::result<std::unique_ptr<ICU4XCalendar>, ICU4XDataError> create_for_locale(const ICU4XDataProvider& provider, const ICU4XLocale& locale);
 
-  inline static diplomat::result<std::unique_ptr<ICU4XCalendar>, ICU4XError> create_for_kind(const ICU4XDataProvider& provider, ICU4XAnyCalendarKind kind);
+  inline static diplomat::result<std::unique_ptr<ICU4XCalendar>, ICU4XDataError> create_for_kind(const ICU4XDataProvider& provider, ICU4XAnyCalendarKind kind);
 
   inline ICU4XAnyCalendarKind kind() const;
 

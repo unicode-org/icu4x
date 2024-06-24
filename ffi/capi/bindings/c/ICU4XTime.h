@@ -6,19 +6,21 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include "diplomat_runtime.h"
-#include "diplomat_result_box_ICU4XTime_ICU4XError.d.h"
+
+#include "ICU4XCalendarError.d.h"
 
 #include "ICU4XTime.d.h"
 
-#ifdef __cplusplus
-namespace capi {
-extern "C" {
-#endif // __cplusplus
 
 
-diplomat_result_box_ICU4XTime_ICU4XError ICU4XTime_create(uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond);
 
-diplomat_result_box_ICU4XTime_ICU4XError ICU4XTime_create_midnight();
+
+
+typedef struct ICU4XTime_create_result {union {ICU4XTime* ok; ICU4XCalendarError err;}; bool is_ok;} ICU4XTime_create_result;
+ICU4XTime_create_result ICU4XTime_create(uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond);
+
+typedef struct ICU4XTime_create_midnight_result {union {ICU4XTime* ok; ICU4XCalendarError err;}; bool is_ok;} ICU4XTime_create_midnight_result;
+ICU4XTime_create_midnight_result ICU4XTime_create_midnight();
 
 uint8_t ICU4XTime_hour(const ICU4XTime* self);
 
@@ -28,12 +30,11 @@ uint8_t ICU4XTime_second(const ICU4XTime* self);
 
 uint32_t ICU4XTime_nanosecond(const ICU4XTime* self);
 
+
 void ICU4XTime_destroy(ICU4XTime* self);
 
 
-#ifdef __cplusplus
-} // extern "C"
-} // namespace capi
-#endif // __cplusplus
+
+
 
 #endif // ICU4XTime_H
