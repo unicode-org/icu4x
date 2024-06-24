@@ -68,7 +68,7 @@ macro_rules! implement {
         }
 
         impl IterableDataProviderCached<$marker> for DatagenProvider {
-            fn supported_requests_cached(
+            fn iter_requests_cached(
                 &self,
             ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
                 Ok(self
@@ -127,7 +127,7 @@ impl DataProvider<PluralRangesV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProviderCached<PluralRangesV1Marker> for DatagenProvider {
-    fn supported_requests_cached(
+    fn iter_requests_cached(
         &self,
     ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         Ok(self

@@ -8,7 +8,6 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XCollator.d.h"
 #include "ICU4XCollatorOptionsV1.d.hpp"
 #include "ICU4XCollatorResolvedOptionsV1.d.hpp"
 #include "ICU4XDataError.d.hpp"
@@ -19,6 +18,10 @@ struct ICU4XCollatorOptionsV1;
 struct ICU4XCollatorResolvedOptionsV1;
 class ICU4XDataError;
 
+
+namespace capi {
+    typedef struct ICU4XCollator ICU4XCollator;
+}
 
 class ICU4XCollator {
 public:

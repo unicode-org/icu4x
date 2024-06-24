@@ -301,8 +301,12 @@ impl<'de> serde::Deserialize<'de> for WeekdaySet {
 fn test_weekdayset_bake() {
     databake::test_bake!(
         WeekdaySet,
-        const: crate::provider::WeekdaySet::new(
-            &[crate::types::IsoWeekday::Monday, crate::types::IsoWeekday::Wednesday, crate::types::IsoWeekday::Friday]),
+        const,
+        crate::provider::WeekdaySet::new(&[
+            crate::types::IsoWeekday::Monday,
+            crate::types::IsoWeekday::Wednesday,
+            crate::types::IsoWeekday::Friday
+        ]),
         icu_calendar
     );
 }

@@ -10,10 +10,16 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XLineBreakOptionsV1.h"
 #include "ICU4XLineBreakStrictness.hpp"
 #include "ICU4XLineBreakWordOption.hpp"
 
+
+namespace capi {
+    extern "C" {
+    
+    
+    } // extern "C"
+}
 
 
 inline capi::ICU4XLineBreakOptionsV1 ICU4XLineBreakOptionsV1::AsFFI() const {

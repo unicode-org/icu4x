@@ -9,7 +9,6 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 #include "ICU4XDataError.d.hpp"
-#include "ICU4XTitlecaseMapper.d.h"
 #include "ICU4XTitlecaseOptionsV1.d.hpp"
 
 class ICU4XDataProvider;
@@ -17,6 +16,10 @@ class ICU4XLocale;
 struct ICU4XTitlecaseOptionsV1;
 class ICU4XDataError;
 
+
+namespace capi {
+    typedef struct ICU4XTitlecaseMapper ICU4XTitlecaseMapper;
+}
 
 class ICU4XTitlecaseMapper {
 public:

@@ -8,7 +8,6 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XBidi.d.h"
 #include "ICU4XDataError.d.hpp"
 
 class ICU4XBidiInfo;
@@ -16,6 +15,10 @@ class ICU4XDataProvider;
 class ICU4XReorderedIndexMap;
 class ICU4XDataError;
 
+
+namespace capi {
+    typedef struct ICU4XBidi ICU4XBidi;
+}
 
 class ICU4XBidi {
 public:

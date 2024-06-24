@@ -10,13 +10,16 @@
 #include "diplomat_runtime.hpp"
 #include "ICU4XDataError.d.hpp"
 #include "ICU4XLocaleParseError.d.hpp"
-#include "ICU4XRegionDisplayNames.d.h"
 
 class ICU4XDataProvider;
 class ICU4XLocale;
 class ICU4XDataError;
 class ICU4XLocaleParseError;
 
+
+namespace capi {
+    typedef struct ICU4XRegionDisplayNames ICU4XRegionDisplayNames;
+}
 
 class ICU4XRegionDisplayNames {
 public:

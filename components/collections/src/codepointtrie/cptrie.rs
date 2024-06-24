@@ -1256,7 +1256,8 @@ mod tests {
     fn databake() {
         databake::test_bake!(
             CodePointTrie<'static, u32>,
-            const: crate::codepointtrie::CodePointTrie::from_parts(
+            const,
+            crate::codepointtrie::CodePointTrie::from_parts(
                 crate::codepointtrie::CodePointTrieHeader {
                     high_start: 1u32,
                     shifted12_high_start: 2u16,

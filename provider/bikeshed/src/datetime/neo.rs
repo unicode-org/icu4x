@@ -17,7 +17,6 @@ use icu::locale::{
     extensions::unicode::{value, Value},
     LanguageIdentifier,
 };
-use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::borrow::Cow;
 use std::collections::{BTreeMap, HashSet};
@@ -107,7 +106,7 @@ impl DatagenProvider {
         ) -> Result<M::Yokeable, DataError>,
     ) -> Result<DataResponse<M>, DataError>
     where
-        Self: IterableDataProvider<M>,
+        Self: IterableDataProviderCached<M>,
     {
         self.check_req::<M>(req)?;
         let langid = req.locale.get_langid();
@@ -139,7 +138,7 @@ impl DatagenProvider {
         ) -> Result<M::Yokeable, DataError>,
     ) -> Result<DataResponse<M>, DataError>
     where
-        Self: IterableDataProvider<M>,
+        Self: IterableDataProviderCached<M>,
     {
         self.load_neo_key(req, &calendar, |langid, data, aux| {
             let Some((context, length)) = marker_attrs::symbol_marker_attr_info(aux) else {
@@ -160,7 +159,7 @@ impl DatagenProvider {
         ) -> Result<M::Yokeable, DataError>,
     ) -> Result<DataResponse<M>, DataError>
     where
-        Self: IterableDataProvider<M>,
+        Self: IterableDataProviderCached<M>,
     {
         self.load_neo_key(req, &calendar, |_langid, data, aux| {
             let Some((length, hc)) = marker_attrs::pattern_marker_attr_info(aux) else {
@@ -170,7 +169,7 @@ impl DatagenProvider {
         })
     }
 
-    fn supported_requests_neo(
+    fn iter_requests_neo(
         &self,
         calendar: Value,
         keylengths: &'static [TinyAsciiStr<8>],
@@ -674,7 +673,7 @@ impl DataProvider<TimePatternV1Marker> for DatagenProvider {
 // and we can use a union of the H12/H24 key lengths arrays, instead checking for preferred hc
 // in timepattern_convert
 impl IterableDataProviderCached<TimePatternV1Marker> for DatagenProvider {
-    fn supported_requests_cached(
+    fn iter_requests_cached(
         &self,
     ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         let calendar = value!("gregory");
@@ -739,10 +738,10 @@ macro_rules! impl_symbols_datagen {
         }
 
         impl IterableDataProviderCached<$marker> for DatagenProvider {
-            fn supported_requests_cached(
+            fn iter_requests_cached(
                 &self,
             ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
-                self.supported_requests_neo(value!($calendar), $lengths)
+                self.iter_requests_neo(value!($calendar), $lengths)
             }
         }
     };
@@ -757,10 +756,10 @@ macro_rules! impl_pattern_datagen {
         }
 
         impl IterableDataProviderCached<$marker> for DatagenProvider {
-            fn supported_requests_cached(
+            fn iter_requests_cached(
                 &self,
             ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
-                self.supported_requests_neo(value!($calendar), $lengths)
+                self.iter_requests_neo(value!($calendar), $lengths)
             }
         }
     };

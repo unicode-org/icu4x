@@ -15,7 +15,9 @@ macro_rules! call_method {
                 .$unstable(&icu_provider_adapters::empty::EmptyDataProvider::new()),
             #[cfg(feature = "buffer_provider")]
             $crate::provider::ICU4XDataProviderInner::Buffer(buffer_provider) => $self.0.$unstable(
-                &icu_provider::AsDeserializingBufferProvider::as_deserializing(buffer_provider),
+                &icu_provider::buf::AsDeserializingBufferProvider::as_deserializing(
+                    buffer_provider,
+                ),
             ),
             #[cfg(feature = "compiled_data")]
             $crate::provider::ICU4XDataProviderInner::Compiled => $self.0.$compiled(),

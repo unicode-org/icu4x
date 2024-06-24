@@ -8,8 +8,16 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XLocaleParseError.d.h"
 
+
+namespace capi {
+    typedef enum ICU4XLocaleParseError {
+      ICU4XLocaleParseError_Unknown = 0,
+      ICU4XLocaleParseError_Language = 1,
+      ICU4XLocaleParseError_Subtag = 2,
+      ICU4XLocaleParseError_Extension = 3,
+    } ICU4XLocaleParseError;
+}
 
 class ICU4XLocaleParseError {
 public:

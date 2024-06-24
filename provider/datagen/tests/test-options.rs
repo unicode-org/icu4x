@@ -13,7 +13,6 @@ use icu_datagen::prelude::*;
 use icu_datagen::FallbackOptions;
 use icu_provider::datagen::*;
 use icu_provider::hello_world::*;
-use icu_provider::make_exportable_provider;
 use icu_provider::prelude::*;
 use testutil::TestingExporter;
 
@@ -99,7 +98,7 @@ impl DataProvider<CollationFallbackSupplementV1Marker> for TestingProvider {
 }
 
 impl IterableDataProvider<HelloWorldV1Marker> for TestingProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+    fn iter_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         Ok(self
             .0
             .keys()
@@ -109,19 +108,19 @@ impl IterableDataProvider<HelloWorldV1Marker> for TestingProvider {
 }
 
 impl IterableDataProvider<LocaleFallbackLikelySubtagsV1Marker> for TestingProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+    fn iter_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
 
 impl IterableDataProvider<LocaleFallbackParentsV1Marker> for TestingProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+    fn iter_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
 
 impl IterableDataProvider<CollationFallbackSupplementV1Marker> for TestingProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+    fn iter_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }

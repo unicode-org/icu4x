@@ -11,7 +11,6 @@
 #include "ICU4XDataError.d.hpp"
 #include "ICU4XPluralCategories.d.hpp"
 #include "ICU4XPluralCategory.d.hpp"
-#include "ICU4XPluralRules.d.h"
 
 class ICU4XDataProvider;
 class ICU4XLocale;
@@ -20,6 +19,10 @@ struct ICU4XPluralCategories;
 class ICU4XDataError;
 class ICU4XPluralCategory;
 
+
+namespace capi {
+    typedef struct ICU4XPluralRules ICU4XPluralRules;
+}
 
 class ICU4XPluralRules {
 public:

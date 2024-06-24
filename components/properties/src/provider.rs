@@ -439,7 +439,7 @@ macro_rules! data_struct_generic {
             }
             impl icu_provider::DataMarker for $marker {
                 const INFO: icu_provider::DataMarkerInfo = {
-                    let mut info = DataMarkerInfo::from_path(icu_provider::data_marker_path!($path));
+                    let mut info = DataMarkerInfo::from_path(icu_provider::marker::data_marker_path!($path));
                     info.is_singleton = true;
                     info
                 };

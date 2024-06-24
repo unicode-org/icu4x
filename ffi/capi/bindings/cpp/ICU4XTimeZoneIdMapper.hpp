@@ -12,9 +12,32 @@
 #include "diplomat_runtime.hpp"
 #include "ICU4XDataError.hpp"
 #include "ICU4XDataProvider.hpp"
-#include "ICU4XTimeZoneIdMapper.h"
 #include "ICU4XTimeZoneInvalidIdError.hpp"
 
+
+namespace capi {
+    extern "C" {
+    
+    typedef struct ICU4XTimeZoneIdMapper_create_result {union {ICU4XTimeZoneIdMapper* ok; ICU4XDataError err;}; bool is_ok;} ICU4XTimeZoneIdMapper_create_result;
+    ICU4XTimeZoneIdMapper_create_result ICU4XTimeZoneIdMapper_create(const ICU4XDataProvider* provider);
+    
+    typedef struct ICU4XTimeZoneIdMapper_iana_to_bcp47_result {union { ICU4XTimeZoneInvalidIdError err;}; bool is_ok;} ICU4XTimeZoneIdMapper_iana_to_bcp47_result;
+    ICU4XTimeZoneIdMapper_iana_to_bcp47_result ICU4XTimeZoneIdMapper_iana_to_bcp47(const ICU4XTimeZoneIdMapper* self, const char* value_data, size_t value_len, DiplomatWrite* write);
+    
+    typedef struct ICU4XTimeZoneIdMapper_normalize_iana_result {union { ICU4XTimeZoneInvalidIdError err;}; bool is_ok;} ICU4XTimeZoneIdMapper_normalize_iana_result;
+    ICU4XTimeZoneIdMapper_normalize_iana_result ICU4XTimeZoneIdMapper_normalize_iana(const ICU4XTimeZoneIdMapper* self, const char* value_data, size_t value_len, DiplomatWrite* write);
+    
+    typedef struct ICU4XTimeZoneIdMapper_canonicalize_iana_result {union { ICU4XTimeZoneInvalidIdError err;}; bool is_ok;} ICU4XTimeZoneIdMapper_canonicalize_iana_result;
+    ICU4XTimeZoneIdMapper_canonicalize_iana_result ICU4XTimeZoneIdMapper_canonicalize_iana(const ICU4XTimeZoneIdMapper* self, const char* value_data, size_t value_len, DiplomatWrite* write);
+    
+    typedef struct ICU4XTimeZoneIdMapper_find_canonical_iana_from_bcp47_result {union { ICU4XTimeZoneInvalidIdError err;}; bool is_ok;} ICU4XTimeZoneIdMapper_find_canonical_iana_from_bcp47_result;
+    ICU4XTimeZoneIdMapper_find_canonical_iana_from_bcp47_result ICU4XTimeZoneIdMapper_find_canonical_iana_from_bcp47(const ICU4XTimeZoneIdMapper* self, const char* value_data, size_t value_len, DiplomatWrite* write);
+    
+    
+    void ICU4XTimeZoneIdMapper_destroy(ICU4XTimeZoneIdMapper* self);
+    
+    } // extern "C"
+}
 
 inline diplomat::result<std::unique_ptr<ICU4XTimeZoneIdMapper>, ICU4XDataError> ICU4XTimeZoneIdMapper::create(const ICU4XDataProvider& provider) {
   auto result = capi::ICU4XTimeZoneIdMapper_create(provider.AsFFI());

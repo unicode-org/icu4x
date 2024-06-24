@@ -13,9 +13,22 @@
 #include "ICU4XDataError.hpp"
 #include "ICU4XDataProvider.hpp"
 #include "ICU4XLocale.hpp"
-#include "ICU4XTitlecaseMapper.h"
 #include "ICU4XTitlecaseOptionsV1.hpp"
 
+
+namespace capi {
+    extern "C" {
+    
+    typedef struct ICU4XTitlecaseMapper_create_result {union {ICU4XTitlecaseMapper* ok; ICU4XDataError err;}; bool is_ok;} ICU4XTitlecaseMapper_create_result;
+    ICU4XTitlecaseMapper_create_result ICU4XTitlecaseMapper_create(const ICU4XDataProvider* provider);
+    
+    void ICU4XTitlecaseMapper_titlecase_segment_v1(const ICU4XTitlecaseMapper* self, const char* s_data, size_t s_len, const ICU4XLocale* locale, ICU4XTitlecaseOptionsV1 options, DiplomatWrite* write);
+    
+    
+    void ICU4XTitlecaseMapper_destroy(ICU4XTitlecaseMapper* self);
+    
+    } // extern "C"
+}
 
 inline diplomat::result<std::unique_ptr<ICU4XTitlecaseMapper>, ICU4XDataError> ICU4XTitlecaseMapper::create(const ICU4XDataProvider& provider) {
   auto result = capi::ICU4XTitlecaseMapper_create(provider.AsFFI());

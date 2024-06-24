@@ -13,9 +13,9 @@ const MAX_ITERS_FOR_MONTHS_OF_YEAR: u8 = 14;
 /// To do so, calendars should:
 ///
 /// - Implement `fn location` by providing a location at which observations of the moon are recorded, which
-/// may change over time (the zone is important, long, lat, and elevation are not relevant for these calculations)
+///   may change over time (the zone is important, long, lat, and elevation are not relevant for these calculations)
 /// - Define `const EPOCH` as a `RataDie` marking the start date of the era of the Calendar for internal use,
-/// which may not accurately reflect how years or eras are marked traditionally or seen by end-users
+///   which may not accurately reflect how years or eras are marked traditionally or seen by end-users
 pub trait ChineseBased {
     /// Given a fixed date, return the location used for observations of the new moon in order to
     /// calculate the beginning of months. For multiple Chinese-based lunar calendars, this has

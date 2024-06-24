@@ -10,8 +10,14 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XWeekendContainsDay.h"
 
+
+namespace capi {
+    extern "C" {
+    
+    
+    } // extern "C"
+}
 
 
 inline capi::ICU4XWeekendContainsDay ICU4XWeekendContainsDay::AsFFI() const {

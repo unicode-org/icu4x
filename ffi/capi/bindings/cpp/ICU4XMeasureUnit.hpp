@@ -10,8 +10,16 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XMeasureUnit.h"
 
+
+namespace capi {
+    extern "C" {
+    
+    
+    void ICU4XMeasureUnit_destroy(ICU4XMeasureUnit* self);
+    
+    } // extern "C"
+}
 
 inline const capi::ICU4XMeasureUnit* ICU4XMeasureUnit::AsFFI() const {
   return reinterpret_cast<const capi::ICU4XMeasureUnit*>(this);

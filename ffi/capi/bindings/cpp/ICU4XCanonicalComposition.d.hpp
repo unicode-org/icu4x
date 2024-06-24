@@ -8,12 +8,15 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XCanonicalComposition.d.h"
 #include "ICU4XDataError.d.hpp"
 
 class ICU4XDataProvider;
 class ICU4XDataError;
 
+
+namespace capi {
+    typedef struct ICU4XCanonicalComposition ICU4XCanonicalComposition;
+}
 
 class ICU4XCanonicalComposition {
 public:

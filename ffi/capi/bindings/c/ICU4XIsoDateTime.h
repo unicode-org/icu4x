@@ -6,31 +6,25 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include "diplomat_runtime.h"
+
 #include "ICU4XCalendar.d.h"
-#include "ICU4XCalendar.h"
+#include "ICU4XCalendarError.d.h"
 #include "ICU4XDateTime.d.h"
-#include "ICU4XDateTime.h"
 #include "ICU4XIsoDate.d.h"
-#include "ICU4XIsoDate.h"
 #include "ICU4XIsoWeekday.d.h"
-#include "ICU4XIsoWeekday.h"
 #include "ICU4XTime.d.h"
-#include "ICU4XTime.h"
 #include "ICU4XWeekCalculator.d.h"
-#include "ICU4XWeekCalculator.h"
 #include "ICU4XWeekOf.d.h"
-#include "ICU4XWeekOf.h"
-#include "diplomat_result_box_ICU4XIsoDateTime_ICU4XCalendarError.d.h"
 
 #include "ICU4XIsoDateTime.d.h"
 
-#ifdef __cplusplus
-namespace capi {
-extern "C" {
-#endif // __cplusplus
 
 
-diplomat_result_box_ICU4XIsoDateTime_ICU4XCalendarError ICU4XIsoDateTime_create(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond);
+
+
+
+typedef struct ICU4XIsoDateTime_create_result {union {ICU4XIsoDateTime* ok; ICU4XCalendarError err;}; bool is_ok;} ICU4XIsoDateTime_create_result;
+ICU4XIsoDateTime_create_result ICU4XIsoDateTime_create(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond);
 
 ICU4XIsoDateTime* ICU4XIsoDateTime_crate_from_date_and_time(const ICU4XIsoDate* date, const ICU4XTime* time);
 
@@ -78,12 +72,11 @@ uint8_t ICU4XIsoDateTime_days_in_month(const ICU4XIsoDateTime* self);
 
 uint16_t ICU4XIsoDateTime_days_in_year(const ICU4XIsoDateTime* self);
 
+
 void ICU4XIsoDateTime_destroy(ICU4XIsoDateTime* self);
 
 
-#ifdef __cplusplus
-} // extern "C"
-} // namespace capi
-#endif // __cplusplus
+
+
 
 #endif // ICU4XIsoDateTime_H

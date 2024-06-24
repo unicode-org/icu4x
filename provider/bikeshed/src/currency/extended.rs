@@ -10,7 +10,6 @@ use std::collections::BTreeMap;
 use std::collections::HashSet;
 
 use icu::experimental::dimension::provider::extended_currency::Count;
-use icu_provider::datagen::IterableDataProvider;
 use tinystr::TinyAsciiStr;
 
 use icu::experimental::dimension::provider::extended_currency::*;
@@ -80,8 +79,10 @@ impl DataProvider<CurrencyExtendedDataV1Marker> for crate::DatagenProvider {
     }
 }
 
-impl IterableDataProvider<CurrencyExtendedDataV1Marker> for DatagenProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+impl crate::IterableDataProviderCached<CurrencyExtendedDataV1Marker> for DatagenProvider {
+    fn iter_requests_cached(
+        &self,
+    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         // TODO: This is a temporary implementation until we have a better way to handle large number of json files.
         let currencies_to_support: HashSet<_> =
             ["USD", "CAD", "EUR", "GBP", "EGP"].into_iter().collect();

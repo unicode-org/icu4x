@@ -13,11 +13,8 @@ use icu::experimental::dimension::provider::units::{
 };
 
 use icu::locale::LanguageIdentifier;
+use icu_provider::prelude::*;
 use icu_provider::DataMarkerAttributes;
-use icu_provider::{
-    datagen::IterableDataProvider, DataError, DataLocale, DataPayload, DataProvider, DataRequest,
-    DataResponse,
-};
 use zerovec::ZeroMap;
 
 impl DataProvider<UnitsDisplayNameV1Marker> for DatagenProvider {
@@ -94,8 +91,10 @@ impl DataProvider<UnitsDisplayNameV1Marker> for DatagenProvider {
     }
 }
 
-impl IterableDataProvider<UnitsDisplayNameV1Marker> for DatagenProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+impl crate::IterableDataProviderCached<UnitsDisplayNameV1Marker> for DatagenProvider {
+    fn iter_requests_cached(
+        &self,
+    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         fn make_request_element(
             langid: &LanguageIdentifier,
             unit: &str,

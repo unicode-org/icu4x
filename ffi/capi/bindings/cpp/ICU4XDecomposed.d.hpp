@@ -8,8 +8,14 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XDecomposed.d.h"
 
+
+namespace capi {
+    typedef struct ICU4XDecomposed {
+      char32_t first;
+      char32_t second;
+    } ICU4XDecomposed;
+}
 
 struct ICU4XDecomposed {
   char32_t first;

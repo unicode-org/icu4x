@@ -8,7 +8,6 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XFixedDecimal.d.h"
 #include "ICU4XFixedDecimalLimitError.d.hpp"
 #include "ICU4XFixedDecimalParseError.d.hpp"
 #include "ICU4XFixedDecimalRoundingIncrement.d.hpp"
@@ -23,6 +22,10 @@ class ICU4XFixedDecimalRoundingMode;
 class ICU4XFixedDecimalSign;
 class ICU4XFixedDecimalSignDisplay;
 
+
+namespace capi {
+    typedef struct ICU4XFixedDecimal ICU4XFixedDecimal;
+}
 
 class ICU4XFixedDecimal {
 public:

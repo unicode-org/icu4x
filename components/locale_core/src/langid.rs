@@ -315,7 +315,7 @@ impl LanguageIdentifier {
     /// regions. However, this differs from [RFC6497 (BCP 47 Extension T)], which specifies:
     ///
     /// > _The canonical form for all subtags in the extension is lowercase, with the fields
-    /// ordered by the separators, alphabetically._
+    /// > ordered by the separators, alphabetically._
     ///
     /// Hence, this method is used inside [`Transform Extensions`] to be able to get the correct
     /// canonicalization of the language identifier.
@@ -350,7 +350,7 @@ impl LanguageIdentifier {
     /// regions. However, this differs from [RFC6497 (BCP 47 Extension T)], which specifies:
     ///
     /// > _The canonical form for all subtags in the extension is lowercase, with the fields
-    /// ordered by the separators, alphabetically._
+    /// > ordered by the separators, alphabetically._
     ///
     /// Hence, this method is used inside [`Transform Extensions`] to be able to get the correct
     /// canonicalization of the language identifier.

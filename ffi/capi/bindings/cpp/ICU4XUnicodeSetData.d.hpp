@@ -9,12 +9,15 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 #include "ICU4XDataError.d.hpp"
-#include "ICU4XUnicodeSetData.d.h"
 
 class ICU4XDataProvider;
 class ICU4XLocale;
 class ICU4XDataError;
 
+
+namespace capi {
+    typedef struct ICU4XUnicodeSetData ICU4XUnicodeSetData;
+}
 
 class ICU4XUnicodeSetData {
 public:

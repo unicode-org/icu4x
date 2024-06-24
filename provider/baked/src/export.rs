@@ -254,11 +254,22 @@ impl BakedExporter {
         };
 
         if !self.use_separate_crates {
-            formatted = formatted
-                .replace("icu_", "icu::")
-                .replace("icu::provider", "icu_provider")
-                .replace("icu::locale_core", "icu_locale_core")
-                .replace("icu::pattern", "icu_pattern");
+            // Don't search the whole file, there should be a macro in the first 300 bytes
+            if formatted[..300].contains("macro_rules!") || formatted[..100].contains("include!") {
+                // Formatted, otherwise it'd be `macro_rules !`
+                formatted = formatted
+                    .replace("icu_", "icu::")
+                    .replace("icu::provider", "icu_provider")
+                    .replace("icu::locale_core", "icu_locale_core")
+                    .replace("icu::pattern", "icu_pattern");
+            } else {
+                // Unformatted
+                formatted = formatted
+                    .replace("icu_", "icu :: ")
+                    .replace("icu :: provider", "icu_provider")
+                    .replace("icu :: locale_core", "icu_locale_core")
+                    .replace("icu :: pattern", "icu_pattern");
+            }
         }
 
         std::fs::create_dir_all(path.parent().unwrap())?;
@@ -415,7 +426,7 @@ impl DataExporter for BakedExporter {
         }, quote! {
             #maybe_msrv
             impl icu_provider::datagen::IterableDataProvider<#marker_bake> for $provider {
-                fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataMarkerAttributes)>, icu_provider::DataError> {
+                fn iter_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataMarkerAttributes)>, icu_provider::DataError> {
                     Ok(HashSet::from_iter([Default::default()]))
                 }
             }
@@ -451,7 +462,7 @@ impl DataExporter for BakedExporter {
                 quote! {
                     #maybe_msrv
                     impl icu_provider::datagen::IterableDataProvider<#marker_bake> for $provider {
-                        fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataMarkerAttributes)>, icu_provider::DataError> {
+                        fn iter_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataMarkerAttributes)>, icu_provider::DataError> {
                             Ok(Default::default())
                         }
                     }
@@ -568,7 +579,7 @@ impl DataExporter for BakedExporter {
                 quote! {
                     #maybe_msrv
                     impl icu_provider::datagen::IterableDataProvider<#marker_bake> for $provider {
-                        fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataMarkerAttributes)>, icu_provider::DataError> {
+                        fn iter_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataMarkerAttributes)>, icu_provider::DataError> {
                             Ok(icu_provider_baked::DataStore::iter(&Self::#data_ident).collect())
                         }
                     }
@@ -622,7 +633,7 @@ impl DataExporter for BakedExporter {
                             #[allow(dead_code)]
                             pub(crate) const MUST_USE_MAKE_PROVIDER_MACRO: () = ();
                         }
-                        icu_provider::impl_data_provider_never_marker!($name);
+                        icu_provider::marker::impl_data_provider_never_marker!($name);
                     };
                 }
                 #[doc(inline)]
@@ -644,7 +655,7 @@ impl DataExporter for BakedExporter {
                 macro_rules! impl_any_provider {
                     ($provider:ty) => {
                         #maybe_msrv
-                        impl icu_provider::AnyProvider for $provider {
+                        impl icu_provider::any::AnyProvider for $provider {
                             fn load_any(&self, marker: icu_provider::DataMarkerInfo, req: icu_provider::DataRequest) -> Result<icu_provider::AnyResponse, icu_provider::DataError> {
                                 match marker.path.hashed() {
                                     #(

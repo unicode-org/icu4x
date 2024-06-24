@@ -11,8 +11,18 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 #include "ICU4XLocale.hpp"
-#include "ICU4XLocaleFallbackIterator.h"
 
+
+namespace capi {
+    extern "C" {
+    
+    ICU4XLocale* ICU4XLocaleFallbackIterator_next(ICU4XLocaleFallbackIterator* self);
+    
+    
+    void ICU4XLocaleFallbackIterator_destroy(ICU4XLocaleFallbackIterator* self);
+    
+    } // extern "C"
+}
 
 inline std::unique_ptr<ICU4XLocale> ICU4XLocaleFallbackIterator::next() {
   auto result = capi::ICU4XLocaleFallbackIterator_next(this->AsFFI());

@@ -8,7 +8,6 @@ use crate::DatagenProvider;
 use icu::experimental::transliterate::provider::*;
 use icu::experimental::transliterate::RuleCollection;
 use icu::locale::Locale;
-use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 use std::sync::Mutex;
@@ -129,15 +128,17 @@ impl DataProvider<TransliteratorRulesV1Marker> for DatagenProvider {
     }
 }
 
-impl IterableDataProvider<TransliteratorRulesV1Marker> for DatagenProvider {
-    // Don't do caching for this one. It uses its own mutex
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+impl crate::IterableDataProviderCached<TransliteratorRulesV1Marker> for DatagenProvider {
+    fn iter_requests_cached(
+        &self,
+    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+        use icu_provider::datagen::IterableDataProvider;
         self.cldr()?
             .transforms()?
             .lock()
             .expect("poison")
             .as_provider_unstable(self, self)?
-            .supported_requests()
+            .iter_requests()
     }
 }
 

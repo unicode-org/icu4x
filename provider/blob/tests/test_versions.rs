@@ -20,7 +20,7 @@ fn run_driver(mut exporter: BlobExporter, provider: &impl IterableDataProvider<H
 where
     ExportMarker: UpcastDataPayload<HelloWorldV1Marker>,
 {
-    for (locale, marker_attributes) in &provider.supported_requests().unwrap() {
+    for (locale, marker_attributes) in &provider.iter_requests().unwrap() {
         let req = DataRequest {
             locale,
             marker_attributes,
@@ -42,7 +42,7 @@ where
 
 fn check_hello_world(blob_provider: impl DataProvider<HelloWorldV1Marker>) {
     let hello_world_provider = HelloWorldProvider;
-    for (locale, marker_attributes) in hello_world_provider.supported_requests().unwrap() {
+    for (locale, marker_attributes) in hello_world_provider.iter_requests().unwrap() {
         let blob_result = blob_provider
             .load(DataRequest {
                 locale: &locale,
@@ -154,7 +154,7 @@ impl DataProvider<HelloWorldV1Marker> for ManyLocalesProvider {
 const LOWERCASE: core::ops::RangeInclusive<u8> = b'a'..=b'z';
 
 impl IterableDataProvider<HelloWorldV1Marker> for ManyLocalesProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+    fn iter_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         let mut r = HashSet::new();
         let mut bytes = [
             b'a', b'a', b'a', b'-', b'L', b'a', b't', b'n', b'-', b'0', b'0', b'1',
@@ -175,4 +175,4 @@ impl IterableDataProvider<HelloWorldV1Marker> for ManyLocalesProvider {
     }
 }
 
-icu_provider::make_exportable_provider!(ManyLocalesProvider, [HelloWorldV1Marker,]);
+icu_provider::datagen::make_exportable_provider!(ManyLocalesProvider, [HelloWorldV1Marker,]);

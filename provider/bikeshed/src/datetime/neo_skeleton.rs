@@ -31,7 +31,7 @@ impl DatagenProvider {
     ) -> Result<DataResponse<M>, DataError>
     where
         M: DataMarker<Yokeable = PackedSkeletonDataV1<'static>>,
-        Self: icu_provider::datagen::IterableDataProvider<M>,
+        Self: crate::IterableDataProviderCached<M>,
     {
         self.check_req::<M>(req)?;
         let id_str = req
@@ -206,7 +206,7 @@ impl DataProvider<TimeNeoSkeletonPatternsV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProviderCached<TimeNeoSkeletonPatternsV1Marker> for DatagenProvider {
-    fn supported_requests_cached(
+    fn iter_requests_cached(
         &self,
     ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         self.neo_time_skeleton_supported_locales()
@@ -230,7 +230,7 @@ macro_rules! impl_neo_skeleton_datagen {
         }
 
         impl IterableDataProviderCached<$marker> for DatagenProvider {
-            fn supported_requests_cached(
+            fn iter_requests_cached(
                 &self,
             ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
                 self.neo_date_skeleton_supported_locales(&value!($calendar))

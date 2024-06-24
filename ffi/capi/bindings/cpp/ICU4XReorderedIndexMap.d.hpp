@@ -8,8 +8,11 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XReorderedIndexMap.d.h"
 
+
+namespace capi {
+    typedef struct ICU4XReorderedIndexMap ICU4XReorderedIndexMap;
+}
 
 class ICU4XReorderedIndexMap {
 public:

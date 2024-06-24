@@ -18,7 +18,7 @@ const PATHS: &[&str] = &[
 fn test_provider() {
     for path in PATHS {
         let provider = FsDataProvider::try_new(path).unwrap();
-        for (locale, marker_attributes) in HelloWorldProvider.supported_requests().unwrap() {
+        for (locale, marker_attributes) in HelloWorldProvider.iter_requests().unwrap() {
             let req = DataRequest {
                 locale: &locale,
                 marker_attributes: &marker_attributes,
@@ -75,7 +75,7 @@ fn test_errors() {
         }
         impl DataMarker for WrongV1Marker {
             const INFO: DataMarkerInfo =
-                DataMarkerInfo::from_path(icu_provider::data_marker_path!("nope@1"));
+                DataMarkerInfo::from_path(icu_provider::marker::data_marker_path!("nope@1"));
         }
 
         let err: Result<DataResponse<WrongV1Marker>, DataError> =

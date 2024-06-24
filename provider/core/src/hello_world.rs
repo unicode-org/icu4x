@@ -51,7 +51,7 @@ impl DynamicDataMarker for HelloWorldV1Marker {
 
 impl DataMarker for HelloWorldV1Marker {
     const INFO: icu_provider::DataMarkerInfo =
-        DataMarkerInfo::from_path(icu_provider::data_marker_path!("core/helloworld@1"));
+        DataMarkerInfo::from_path(icu_provider::marker::data_marker_path!("core/helloworld@1"));
 }
 
 /// A data provider returning Hello World strings in different languages.
@@ -106,12 +106,18 @@ impl HelloWorldProvider {
         ("de-AT", "", "Servus Welt"),
         ("el", "", "Καλημέρα κόσμε"),
         ("en", "", "Hello World"),
-        ("en-001", "", "Hello from 🗺️"),            // WORLD
-        ("en-002", "", "Hello from 🌍"),           // AFRICA
-        ("en-019", "", "Hello from 🌎"),           // AMERICAS
-        ("en-142", "", "Hello from 🌏"),           // ASIA
-        ("en-GB", "", "Hello from 🇬🇧"),            // GREAT BRITAIN
-        ("en-GB-u-sd-gbeng", "", "Hello from 🏴󠁧󠁢󠁥󠁮󠁧󠁿"), // ENGLAND
+        // WORLD
+        ("en-001", "", "Hello from 🗺️"),
+        // AFRICA
+        ("en-002", "", "Hello from 🌍"),
+        // AMERICAS
+        ("en-019", "", "Hello from 🌎"),
+        // ASIA
+        ("en-142", "", "Hello from 🌏"),
+        // GREAT BRITAIN
+        ("en-GB", "", "Hello from 🇬🇧"),
+        // ENGLAND
+        ("en-GB-u-sd-gbeng", "", "Hello from 🏴󠁧󠁢󠁥󠁮󠁧󠁿"),
         ("en", "reverse", "Olleh Dlrow"),
         ("eo", "", "Saluton, Mondo"),
         ("fa", "", "سلام دنیا‎"),
@@ -164,7 +170,11 @@ impl DataPayload<HelloWorldV1Marker> {
 
 // AnyProvider support.
 #[cfg(not(feature = "datagen"))]
-icu_provider::impl_dynamic_data_provider!(HelloWorldProvider, [HelloWorldV1Marker,], AnyMarker);
+icu_provider::dynutil::impl_dynamic_data_provider!(
+    HelloWorldProvider,
+    [HelloWorldV1Marker,],
+    AnyMarker
+);
 
 #[cfg(feature = "deserialize_json")]
 /// A data provider returning Hello World strings in different languages as JSON blobs.
@@ -217,7 +227,7 @@ impl DynamicDataProvider<BufferMarker> for HelloWorldJsonProvider {
 
 #[cfg(feature = "datagen")]
 impl icu_provider::datagen::IterableDataProvider<HelloWorldV1Marker> for HelloWorldProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+    fn iter_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         #[allow(clippy::unwrap_used)] // datagen
         Ok(Self::DATA
             .iter()
@@ -227,7 +237,7 @@ impl icu_provider::datagen::IterableDataProvider<HelloWorldV1Marker> for HelloWo
 }
 
 #[cfg(feature = "datagen")]
-icu_provider::make_exportable_provider!(HelloWorldProvider, [HelloWorldV1Marker,]);
+icu_provider::datagen::make_exportable_provider!(HelloWorldProvider, [HelloWorldV1Marker,]);
 
 /// A type that formats localized "hello world" strings.
 ///
@@ -329,7 +339,7 @@ fn test_iter() {
     use icu_locale_core::locale;
 
     assert_eq!(
-        HelloWorldProvider.supported_requests().unwrap(),
+        HelloWorldProvider.iter_requests().unwrap(),
         HashSet::from_iter([
             (locale!("bn").into(), Default::default()),
             (locale!("cs").into(), Default::default()),

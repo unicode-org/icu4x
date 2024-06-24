@@ -20,7 +20,7 @@ use yoke::*;
 
 // This impl is similar to the impl on Cow and is safe for the same reasons
 /// This impl requires enabling the optional `yoke` Cargo feature of the `zerovec` crate
-unsafe impl<'a, T: 'static + AsULE + ?Sized> Yokeable<'a> for ZeroVec<'static, T> {
+unsafe impl<'a, T: 'static + AsULE> Yokeable<'a> for ZeroVec<'static, T> {
     type Output = ZeroVec<'a, T>;
     #[inline]
     fn transform(&'a self) -> &'a Self::Output {
@@ -309,7 +309,6 @@ mod test {
     }
 
     #[test]
-    #[ignore] // https://github.com/rust-lang/rust/issues/98906
     fn bake_ZeroVec() {
         test_bake!(
             DeriveTest_ZeroVec<'static>,

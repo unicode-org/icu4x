@@ -102,8 +102,8 @@
 //!    benefit is limited.
 //!
 //! [`DataProvider`]: crate::DataProvider
-//! [`BufferProvider`]: crate::BufferProvider
-//! [`AnyProvider`]: crate::AnyProvider
+//! [`BufferProvider`]: crate::buf::BufferProvider
+//! [`AnyProvider`]: crate::any::AnyProvider
 //! [`AnyPayloadProvider`]: ../../icu_provider_adapters/any_payload/struct.AnyPayloadProvider.html
 //! [`ForkByMarkerProvider`]: ../../icu_provider_adapters/fork/struct.ForkByMarkerProvider.html
 //! [`BlobDataProvider`]: ../../icu_provider_blob/struct.BlobDataProvider.html
@@ -117,14 +117,14 @@ macro_rules! gen_any_buffer_unstable_docs {
     (ANY, $data:path) => {
         concat!(
             "A version of [`", stringify!($data), "`] that uses custom data ",
-            "provided by an [`AnyProvider`](icu_provider::AnyProvider).\n\n",
+            "provided by an [`AnyProvider`](icu_provider::any::AnyProvider).\n\n",
             "[📚 Help choosing a constructor](icu_provider::constructors)",
         )
     };
     (BUFFER, $data:path) => {
         concat!(
             "A version of [`", stringify!($data), "`] that uses custom data ",
-            "provided by a [`BufferProvider`](icu_provider::BufferProvider).\n\n",
+            "provided by a [`BufferProvider`](icu_provider::buf::BufferProvider).\n\n",
             "✨ *Enabled with the `serde` feature.*\n\n",
             "[📚 Help choosing a constructor](icu_provider::constructors)",
         )
@@ -241,14 +241,14 @@ macro_rules! gen_any_buffer_data_constructors {
     };
     (($($options_arg:ident: $options_ty:ty),*) -> result: $result_ty:ty, $(#[$doc:meta])* functions: [$baked:ident: skip, $any:ident, $buffer:ident, $unstable:ident $(, $struct:ident)? $(,)?]) => {
         #[doc = $crate::gen_any_buffer_unstable_docs!(ANY, $($struct ::)? $baked)]
-        pub fn $any(provider: &(impl $crate::AnyProvider + ?Sized) $(, $options_arg: $options_ty)* ) -> $result_ty {
-            use $crate::AsDowncastingAnyProvider;
+        pub fn $any(provider: &(impl $crate::any::AnyProvider + ?Sized) $(, $options_arg: $options_ty)* ) -> $result_ty {
+            use $crate::any::AsDowncastingAnyProvider;
             $($struct :: )? $unstable(&provider.as_downcasting()  $(, $options_arg)* )
         }
         #[cfg(feature = "serde")]
         #[doc = $crate::gen_any_buffer_unstable_docs!(BUFFER, $($struct ::)? $baked)]
-        pub fn $buffer(provider: &(impl $crate::BufferProvider + ?Sized) $(, $options_arg: $options_ty)* ) -> $result_ty {
-            use $crate::AsDeserializingBufferProvider;
+        pub fn $buffer(provider: &(impl $crate::buf::BufferProvider + ?Sized) $(, $options_arg: $options_ty)* ) -> $result_ty {
+            use $crate::buf::AsDeserializingBufferProvider;
             $($struct :: )? $unstable(&provider.as_deserializing()  $(, $options_arg)* )
         }
     };

@@ -10,7 +10,6 @@ use icu::segmenter::provider::{
     LstmDataFloat32, LstmDataV1, LstmForWordLineAutoV1Marker, LstmMatrix1, LstmMatrix2,
     LstmMatrix3, ModelType,
 };
-use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use ndarray::{Array, Array1, Array2, ArrayBase, Dim, Dimension, OwnedRepr};
 use std::collections::{HashMap, HashSet};
@@ -210,7 +209,7 @@ impl DataProvider<LstmForWordLineAutoV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProviderCached<LstmForWordLineAutoV1Marker> for DatagenProvider {
-    fn supported_requests_cached(
+    fn iter_requests_cached(
         &self,
     ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         Ok([

@@ -15,8 +15,10 @@ impl DataProvider<HelloWorldV1Marker> for DatagenProvider {
     }
 }
 
-impl IterableDataProvider<HelloWorldV1Marker> for DatagenProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
-        HelloWorldProvider.supported_requests()
+impl crate::IterableDataProviderCached<HelloWorldV1Marker> for DatagenProvider {
+    fn iter_requests_cached(
+        &self,
+    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+        HelloWorldProvider.iter_requests()
     }
 }

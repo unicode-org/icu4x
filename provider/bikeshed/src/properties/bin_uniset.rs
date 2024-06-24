@@ -6,7 +6,6 @@ use crate::DatagenProvider;
 use icu::collections::codepointinvlist::CodePointInversionListBuilder;
 use icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList;
 use icu::properties::provider::*;
-use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 use zerovec::VarZeroVec;
@@ -60,8 +59,8 @@ macro_rules! expand {
                 }
             }
 
-            impl IterableDataProvider<$marker> for DatagenProvider {
-                fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+            impl crate::IterableDataProviderCached<$marker> for DatagenProvider {
+                fn iter_requests_cached(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
                     self.get_binary_prop_for_unicodeset($prop_name)?;
 
                     Ok(HashSet::from_iter([Default::default()]))

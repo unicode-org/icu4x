@@ -10,7 +10,7 @@ use icu::experimental::units::{
     measureunit::MeasureUnitParser,
     provider::{ConversionInfo, UnitsInfoV1, UnitsInfoV1Marker},
 };
-use icu_provider::{datagen::IterableDataProvider, prelude::*};
+use icu_provider::prelude::*;
 use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::VarZeroVec;
 
@@ -94,8 +94,10 @@ impl DataProvider<UnitsInfoV1Marker> for DatagenProvider {
     }
 }
 
-impl IterableDataProvider<UnitsInfoV1Marker> for DatagenProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+impl crate::IterableDataProviderCached<UnitsInfoV1Marker> for DatagenProvider {
+    fn iter_requests_cached(
+        &self,
+    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }

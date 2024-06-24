@@ -9,7 +9,7 @@ use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 
 impl IterableDynamicDataProvider<BufferMarker> for BlobDataProvider {
-    fn supported_requests_for_marker(
+    fn iter_requests_for_marker(
         &self,
         marker: DataMarkerInfo,
     ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {

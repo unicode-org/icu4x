@@ -9,7 +9,6 @@ use crate::DatagenProvider;
 use icu::collections::char16trie::Char16Trie;
 use icu::collections::codepointtrie::CodePointTrie;
 use icu::normalizer::provider::*;
-use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 use std::convert::TryFrom;
@@ -35,8 +34,8 @@ macro_rules! normalization_provider {
             }
         }
 
-        impl IterableDataProvider<$marker> for DatagenProvider {
-            fn supported_requests(
+        impl crate::IterableDataProviderCached<$marker> for DatagenProvider {
+            fn iter_requests_cached(
                 &self,
             ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
                 Ok(HashSet::from_iter([Default::default()]))

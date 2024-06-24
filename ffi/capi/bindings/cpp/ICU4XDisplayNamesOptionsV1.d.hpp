@@ -9,7 +9,6 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 #include "ICU4XDisplayNamesFallback.d.hpp"
-#include "ICU4XDisplayNamesOptionsV1.d.h"
 #include "ICU4XDisplayNamesStyle.d.hpp"
 #include "ICU4XLanguageDisplay.d.hpp"
 
@@ -17,6 +16,14 @@ class ICU4XDisplayNamesFallback;
 class ICU4XDisplayNamesStyle;
 class ICU4XLanguageDisplay;
 
+
+namespace capi {
+    typedef struct ICU4XDisplayNamesOptionsV1 {
+      ICU4XDisplayNamesStyle style;
+      ICU4XDisplayNamesFallback fallback;
+      ICU4XLanguageDisplay language_display;
+    } ICU4XDisplayNamesOptionsV1;
+}
 
 struct ICU4XDisplayNamesOptionsV1 {
   ICU4XDisplayNamesStyle style;

@@ -5,12 +5,14 @@
 use serde::Deserialize;
 
 #[derive(Deserialize)]
+#[allow(dead_code)]
 pub struct SubtagData {
     pub valid: Vec<String>,
     pub invalid: Vec<String>,
 }
 
 #[derive(Deserialize)]
+#[allow(dead_code)]
 pub struct Subtags {
     pub language: SubtagData,
     pub script: SubtagData,
@@ -19,6 +21,7 @@ pub struct Subtags {
 }
 
 #[derive(Deserialize)]
+#[allow(dead_code)]
 pub struct LocaleList {
     pub canonicalized: Vec<String>,
     pub casing: Vec<String>,

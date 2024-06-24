@@ -9,13 +9,16 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 #include "ICU4XDataError.d.hpp"
-#include "ICU4XScriptWithExtensions.d.h"
 
 class ICU4XCodePointRangeIterator;
 class ICU4XDataProvider;
 class ICU4XScriptWithExtensionsBorrowed;
 class ICU4XDataError;
 
+
+namespace capi {
+    typedef struct ICU4XScriptWithExtensions ICU4XScriptWithExtensions;
+}
 
 class ICU4XScriptWithExtensions {
 public:

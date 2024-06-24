@@ -26,7 +26,7 @@ use std::borrow::Cow;
 use std::collections::HashSet;
 use std::fmt::Debug;
 use std::path::PathBuf;
-use std::sync::Arc;
+use std::sync::{Arc, OnceLock};
 
 mod calendar;
 mod characters;
@@ -39,6 +39,7 @@ mod decimal;
 #[cfg(feature = "experimental")]
 mod displaynames;
 mod fallback;
+#[cfg(test)]
 mod hello_world;
 mod list;
 mod locale_canonicalizer;
@@ -84,13 +85,15 @@ pub struct DatagenProvider {
     trie_type: TrieType,
     collation_han_database: CollationHanDatabase,
     #[allow(clippy::type_complexity)] // not as complex as it appears
-    supported_requests_cache: Arc<
+    requests_cache: Arc<
         FrozenMap<
             DataMarkerInfo,
             Box<
-                Result<
-                    HashSet<(Cow<'static, DataLocale>, Cow<'static, DataMarkerAttributes>)>,
-                    DataError,
+                OnceLock<
+                    Result<
+                        HashSet<(Cow<'static, DataLocale>, Cow<'static, DataMarkerAttributes>)>,
+                        DataError,
+                    >,
                 >,
             >,
         >,
@@ -99,13 +102,15 @@ pub struct DatagenProvider {
 
 macro_rules! cb {
     ($($marker:path = $path:literal,)+ #[experimental] $($emarker:path = $epath:literal,)+) => {
-        icu_provider::make_exportable_provider!(DatagenProvider, [
+        icu_provider::datagen::make_exportable_provider!(DatagenProvider, [
             $($marker,)+
             $(#[cfg(feature = "experimental")] $emarker,)+
         ]);
     }
 }
 icu_registry::registry!(cb);
+
+icu_provider::marker::impl_data_provider_never_marker!(DatagenProvider);
 
 impl DatagenProvider {
     /// The latest CLDR JSON tag that has been verified to work with this version of `icu_datagen_bikeshed`.
@@ -150,7 +155,7 @@ impl DatagenProvider {
             segmenter_lstm_paths: None,
             trie_type: Default::default(),
             collation_han_database: Default::default(),
-            supported_requests_cache: Default::default(),
+            requests_cache: Default::default(),
         }
     }
 
@@ -316,11 +321,18 @@ impl DatagenProvider {
 impl DatagenProvider {
     fn check_req<M: DataMarker>(&self, req: DataRequest) -> Result<(), DataError>
     where
-        DatagenProvider: IterableDataProvider<M>,
+        DatagenProvider: IterableDataProviderCached<M>,
     {
-        if <M as DataMarker>::INFO.is_singleton && !req.locale.is_empty() {
-            Err(DataErrorKind::ExtraneousLocale)
-        } else if !self.supports_request(req.locale, req.marker_attributes)? {
+        if <M as DataMarker>::INFO.is_singleton {
+            if !req.locale.is_empty() {
+                Err(DataErrorKind::ExtraneousLocale)
+            } else {
+                Ok(())
+            }
+        } else if !self.populate_requests_cache()?.contains(&(
+            Cow::Borrowed(req.locale),
+            Cow::Borrowed(req.marker_attributes),
+        )) {
             Err(DataErrorKind::MissingLocale)
         } else {
             Ok(())
@@ -353,26 +365,28 @@ fn test_missing_locale() {
 }
 
 trait IterableDataProviderCached<M: DataMarker>: DataProvider<M> {
-    fn supported_requests_cached(
+    fn iter_requests_cached(
         &self,
     ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError>;
 }
 
 impl DatagenProvider {
     #[allow(clippy::type_complexity)] // not as complex as it appears
-    fn populate_supported_requests_cache<M: DataMarker>(
+    fn populate_requests_cache<M: DataMarker>(
         &self,
     ) -> Result<&HashSet<(Cow<'static, DataLocale>, Cow<'static, DataMarkerAttributes>)>, DataError>
     where
         DatagenProvider: IterableDataProviderCached<M>,
     {
-        self.supported_requests_cache
-            .insert_with(M::INFO, || {
-                Box::new(self.supported_requests_cached().map(|m| {
+        self.requests_cache
+            .insert_with(M::INFO, || Box::new(OnceLock::new()))
+            // write lock gets dropped here, `iter_requests_cached` might be expensive
+            .get_or_init(|| {
+                self.iter_requests_cached().map(|m| {
                     m.into_iter()
                         .map(|(k, v)| (Cow::Owned(k), Cow::Owned(v)))
                         .collect()
-                }))
+                })
             })
             .as_ref()
             .map_err(|&e| e)
@@ -383,22 +397,15 @@ impl<M: DataMarker> IterableDataProvider<M> for DatagenProvider
 where
     DatagenProvider: IterableDataProviderCached<M>,
 {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
-        Ok(self
-            .populate_supported_requests_cache()?
-            .iter()
-            .map(|(k, v)| (k.clone().into_owned(), v.clone().into_owned()))
-            .collect())
-    }
-
-    fn supports_request(
-        &self,
-        locale: &DataLocale,
-        marker_attributes: &DataMarkerAttributes,
-    ) -> Result<bool, DataError> {
-        Ok(self
-            .populate_supported_requests_cache()?
-            .contains(&(Cow::Borrowed(locale), Cow::Borrowed(marker_attributes))))
+    fn iter_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+        Ok(if <M as DataMarker>::INFO.is_singleton {
+            [Default::default()].into_iter().collect()
+        } else {
+            self.populate_requests_cache()?
+                .iter()
+                .map(|(k, v)| (k.clone().into_owned(), v.clone().into_owned()))
+                .collect()
+        })
     }
 }
 

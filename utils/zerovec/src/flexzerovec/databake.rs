@@ -31,18 +31,14 @@ impl Bake for &FlexZeroSlice {
 
 #[test]
 fn test_baked_vec() {
+    test_bake!(FlexZeroVec, const, crate::vecs::FlexZeroVec::new(), zerovec);
     test_bake!(
         FlexZeroVec,
-        const: crate::vecs::FlexZeroVec::new(),
-        zerovec
-    );
-    test_bake!(
-        FlexZeroVec,
-        const: unsafe {
-            crate::vecs::FlexZeroSlice::from_byte_slice_unchecked(
-                b"\x02\x01\0\x16\0M\x01\x11"
-            )
-        }.as_flexzerovec(),
+        const,
+        unsafe {
+            crate::vecs::FlexZeroSlice::from_byte_slice_unchecked(b"\x02\x01\0\x16\0M\x01\x11")
+        }
+        .as_flexzerovec(),
         zerovec
     );
 }
@@ -51,15 +47,15 @@ fn test_baked_vec() {
 fn test_baked_slice() {
     test_bake!(
         &FlexZeroSlice,
-        const: crate::vecs::FlexZeroSlice::new_empty(),
+        const,
+        crate::vecs::FlexZeroSlice::new_empty(),
         zerovec
     );
     test_bake!(
         &FlexZeroSlice,
-        const: unsafe {
-            crate::vecs::FlexZeroSlice::from_byte_slice_unchecked(
-                b"\x02\x01\0\x16\0M\x01\x11"
-            )
+        const,
+        unsafe {
+            crate::vecs::FlexZeroSlice::from_byte_slice_unchecked(b"\x02\x01\0\x16\0M\x01\x11")
         },
         zerovec
     );

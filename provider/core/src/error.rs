@@ -4,7 +4,7 @@
 
 use crate::_internal::log;
 use crate::buf::BufferFormat;
-use crate::{prelude::*, DataMarkerPath};
+use crate::{marker::DataMarkerPath, prelude::*};
 use core::fmt;
 use displaydoc::Display;
 

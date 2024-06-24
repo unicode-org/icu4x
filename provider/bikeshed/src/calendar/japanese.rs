@@ -6,7 +6,6 @@ use crate::cldr_serde;
 use crate::DatagenProvider;
 use icu::calendar::provider::*;
 use icu::locale::langid;
-use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;
 use std::collections::HashSet;
@@ -179,14 +178,18 @@ fn era_to_code(original: &str, year: i32) -> Result<TinyStr16, String> {
     Ok(code)
 }
 
-impl IterableDataProvider<JapaneseErasV1Marker> for DatagenProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+impl crate::IterableDataProviderCached<JapaneseErasV1Marker> for DatagenProvider {
+    fn iter_requests_cached(
+        &self,
+    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
 
-impl IterableDataProvider<JapaneseExtendedErasV1Marker> for DatagenProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+impl crate::IterableDataProviderCached<JapaneseExtendedErasV1Marker> for DatagenProvider {
+    fn iter_requests_cached(
+        &self,
+    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }

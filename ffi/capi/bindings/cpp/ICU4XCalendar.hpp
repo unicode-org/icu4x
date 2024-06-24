@@ -11,11 +11,27 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 #include "ICU4XAnyCalendarKind.hpp"
-#include "ICU4XCalendar.h"
 #include "ICU4XDataError.hpp"
 #include "ICU4XDataProvider.hpp"
 #include "ICU4XLocale.hpp"
 
+
+namespace capi {
+    extern "C" {
+    
+    typedef struct ICU4XCalendar_create_for_locale_result {union {ICU4XCalendar* ok; ICU4XDataError err;}; bool is_ok;} ICU4XCalendar_create_for_locale_result;
+    ICU4XCalendar_create_for_locale_result ICU4XCalendar_create_for_locale(const ICU4XDataProvider* provider, const ICU4XLocale* locale);
+    
+    typedef struct ICU4XCalendar_create_for_kind_result {union {ICU4XCalendar* ok; ICU4XDataError err;}; bool is_ok;} ICU4XCalendar_create_for_kind_result;
+    ICU4XCalendar_create_for_kind_result ICU4XCalendar_create_for_kind(const ICU4XDataProvider* provider, ICU4XAnyCalendarKind kind);
+    
+    ICU4XAnyCalendarKind ICU4XCalendar_kind(const ICU4XCalendar* self);
+    
+    
+    void ICU4XCalendar_destroy(ICU4XCalendar* self);
+    
+    } // extern "C"
+}
 
 inline diplomat::result<std::unique_ptr<ICU4XCalendar>, ICU4XDataError> ICU4XCalendar::create_for_locale(const ICU4XDataProvider& provider, const ICU4XLocale& locale) {
   auto result = capi::ICU4XCalendar_create_for_locale(provider.AsFFI(),

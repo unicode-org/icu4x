@@ -35,7 +35,7 @@ pub struct TimeZoneFormatsV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     #[cfg_attr(
         feature = "serde",
-        serde(deserialize_with = "icu_provider::serde::borrow_de_utils::tuple_of_cow")
+        serde(deserialize_with = "icu_provider::serde_borrow_de_utils::tuple_of_cow")
     )]
     pub hour_format: (Cow<'data, str>, Cow<'data, str>),
     /// The localized GMT-offset format.

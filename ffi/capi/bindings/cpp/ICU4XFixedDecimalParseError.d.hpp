@@ -8,8 +8,15 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XFixedDecimalParseError.d.h"
 
+
+namespace capi {
+    typedef enum ICU4XFixedDecimalParseError {
+      ICU4XFixedDecimalParseError_Unknown = 0,
+      ICU4XFixedDecimalParseError_Limit = 1,
+      ICU4XFixedDecimalParseError_Syntax = 2,
+    } ICU4XFixedDecimalParseError;
+}
 
 class ICU4XFixedDecimalParseError {
 public:

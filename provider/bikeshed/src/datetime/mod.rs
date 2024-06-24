@@ -225,7 +225,7 @@ macro_rules! impl_data_provider {
         }
 
         impl IterableDataProviderCached<$marker> for DatagenProvider {
-            fn supported_requests_cached(
+            fn iter_requests_cached(
                 &self,
             ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
                 let mut r = HashSet::new();

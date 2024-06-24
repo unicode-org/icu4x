@@ -8,7 +8,6 @@ use icu::locale::langid;
 use icu::segmenter::provider::DictionaryForWordLineExtendedV1Marker;
 use icu::segmenter::provider::DictionaryForWordOnlyAutoV1Marker;
 use icu::segmenter::provider::UCharDictionaryBreakDataV1;
-use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 use std::fmt::Debug;
@@ -53,7 +52,7 @@ macro_rules! implement {
         }
 
         impl IterableDataProviderCached<$marker> for DatagenProvider {
-            fn supported_requests_cached(
+            fn iter_requests_cached(
                 &self,
             ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
                 Ok($supported

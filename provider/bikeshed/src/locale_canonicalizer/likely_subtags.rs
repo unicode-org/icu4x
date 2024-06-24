@@ -8,7 +8,6 @@ use crate::DatagenProvider;
 use icu::locale::provider::*;
 use icu::locale::subtags::Language;
 use icu::locale::LanguageIdentifier;
-use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
 
@@ -24,8 +23,10 @@ impl DataProvider<LikelySubtagsV1Marker> for DatagenProvider {
     }
 }
 
-impl IterableDataProvider<LikelySubtagsV1Marker> for DatagenProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+impl crate::IterableDataProviderCached<LikelySubtagsV1Marker> for DatagenProvider {
+    fn iter_requests_cached(
+        &self,
+    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
@@ -45,8 +46,10 @@ impl DataProvider<LikelySubtagsExtendedV1Marker> for DatagenProvider {
     }
 }
 
-impl IterableDataProvider<LikelySubtagsExtendedV1Marker> for DatagenProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+impl crate::IterableDataProviderCached<LikelySubtagsExtendedV1Marker> for DatagenProvider {
+    fn iter_requests_cached(
+        &self,
+    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
@@ -65,8 +68,10 @@ impl DataProvider<LikelySubtagsForLanguageV1Marker> for DatagenProvider {
     }
 }
 
-impl IterableDataProvider<LikelySubtagsForLanguageV1Marker> for DatagenProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+impl crate::IterableDataProviderCached<LikelySubtagsForLanguageV1Marker> for DatagenProvider {
+    fn iter_requests_cached(
+        &self,
+    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
@@ -85,8 +90,10 @@ impl DataProvider<LikelySubtagsForScriptRegionV1Marker> for DatagenProvider {
     }
 }
 
-impl IterableDataProvider<LikelySubtagsForScriptRegionV1Marker> for DatagenProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+impl crate::IterableDataProviderCached<LikelySubtagsForScriptRegionV1Marker> for DatagenProvider {
+    fn iter_requests_cached(
+        &self,
+    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }

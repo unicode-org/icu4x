@@ -10,9 +10,49 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XCodePointSetBuilder.h"
 #include "ICU4XCodePointSetData.hpp"
 
+
+namespace capi {
+    extern "C" {
+    
+    ICU4XCodePointSetBuilder* ICU4XCodePointSetBuilder_create();
+    
+    ICU4XCodePointSetData* ICU4XCodePointSetBuilder_build(ICU4XCodePointSetBuilder* self);
+    
+    void ICU4XCodePointSetBuilder_complement(ICU4XCodePointSetBuilder* self);
+    
+    bool ICU4XCodePointSetBuilder_is_empty(const ICU4XCodePointSetBuilder* self);
+    
+    void ICU4XCodePointSetBuilder_add_char(ICU4XCodePointSetBuilder* self, char32_t ch);
+    
+    void ICU4XCodePointSetBuilder_add_inclusive_range(ICU4XCodePointSetBuilder* self, char32_t start, char32_t end);
+    
+    void ICU4XCodePointSetBuilder_add_set(ICU4XCodePointSetBuilder* self, const ICU4XCodePointSetData* data);
+    
+    void ICU4XCodePointSetBuilder_remove_char(ICU4XCodePointSetBuilder* self, char32_t ch);
+    
+    void ICU4XCodePointSetBuilder_remove_inclusive_range(ICU4XCodePointSetBuilder* self, char32_t start, char32_t end);
+    
+    void ICU4XCodePointSetBuilder_remove_set(ICU4XCodePointSetBuilder* self, const ICU4XCodePointSetData* data);
+    
+    void ICU4XCodePointSetBuilder_retain_char(ICU4XCodePointSetBuilder* self, char32_t ch);
+    
+    void ICU4XCodePointSetBuilder_retain_inclusive_range(ICU4XCodePointSetBuilder* self, char32_t start, char32_t end);
+    
+    void ICU4XCodePointSetBuilder_retain_set(ICU4XCodePointSetBuilder* self, const ICU4XCodePointSetData* data);
+    
+    void ICU4XCodePointSetBuilder_complement_char(ICU4XCodePointSetBuilder* self, char32_t ch);
+    
+    void ICU4XCodePointSetBuilder_complement_inclusive_range(ICU4XCodePointSetBuilder* self, char32_t start, char32_t end);
+    
+    void ICU4XCodePointSetBuilder_complement_set(ICU4XCodePointSetBuilder* self, const ICU4XCodePointSetData* data);
+    
+    
+    void ICU4XCodePointSetBuilder_destroy(ICU4XCodePointSetBuilder* self);
+    
+    } // extern "C"
+}
 
 inline std::unique_ptr<ICU4XCodePointSetBuilder> ICU4XCodePointSetBuilder::create() {
   auto result = capi::ICU4XCodePointSetBuilder_create();

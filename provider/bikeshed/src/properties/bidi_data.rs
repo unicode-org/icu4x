@@ -6,7 +6,6 @@ use std::collections::HashSet;
 
 use crate::DatagenProvider;
 use icu::properties::provider::bidi_data::BidiAuxiliaryPropertiesV1Marker;
-use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 
 #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
@@ -111,8 +110,10 @@ impl DataProvider<BidiAuxiliaryPropertiesV1Marker> for DatagenProvider {
     }
 }
 
-impl IterableDataProvider<BidiAuxiliaryPropertiesV1Marker> for DatagenProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+impl crate::IterableDataProviderCached<BidiAuxiliaryPropertiesV1Marker> for DatagenProvider {
+    fn iter_requests_cached(
+        &self,
+    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }

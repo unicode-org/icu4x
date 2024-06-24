@@ -8,8 +8,14 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XLanguageDisplay.d.h"
 
+
+namespace capi {
+    typedef enum ICU4XLanguageDisplay {
+      ICU4XLanguageDisplay_Dialect = 0,
+      ICU4XLanguageDisplay_Standard = 1,
+    } ICU4XLanguageDisplay;
+}
 
 class ICU4XLanguageDisplay {
 public:

@@ -13,9 +13,29 @@
 #include "ICU4XDataProvider.hpp"
 #include "ICU4XError.hpp"
 #include "ICU4XLocale.hpp"
-#include "ICU4XLocaleExpander.h"
 #include "ICU4XTransformResult.hpp"
 
+
+namespace capi {
+    extern "C" {
+    
+    typedef struct ICU4XLocaleExpander_create_result {union {ICU4XLocaleExpander* ok; ICU4XError err;}; bool is_ok;} ICU4XLocaleExpander_create_result;
+    ICU4XLocaleExpander_create_result ICU4XLocaleExpander_create(const ICU4XDataProvider* provider);
+    
+    typedef struct ICU4XLocaleExpander_create_extended_result {union {ICU4XLocaleExpander* ok; ICU4XError err;}; bool is_ok;} ICU4XLocaleExpander_create_extended_result;
+    ICU4XLocaleExpander_create_extended_result ICU4XLocaleExpander_create_extended(const ICU4XDataProvider* provider);
+    
+    ICU4XTransformResult ICU4XLocaleExpander_maximize(const ICU4XLocaleExpander* self, ICU4XLocale* locale);
+    
+    ICU4XTransformResult ICU4XLocaleExpander_minimize(const ICU4XLocaleExpander* self, ICU4XLocale* locale);
+    
+    ICU4XTransformResult ICU4XLocaleExpander_minimize_favor_script(const ICU4XLocaleExpander* self, ICU4XLocale* locale);
+    
+    
+    void ICU4XLocaleExpander_destroy(ICU4XLocaleExpander* self);
+    
+    } // extern "C"
+}
 
 inline diplomat::result<std::unique_ptr<ICU4XLocaleExpander>, ICU4XError> ICU4XLocaleExpander::create(const ICU4XDataProvider& provider) {
   auto result = capi::ICU4XLocaleExpander_create(provider.AsFFI());

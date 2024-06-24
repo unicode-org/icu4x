@@ -589,11 +589,11 @@ fn main() -> eyre::Result<()> {
 }
 
 #[cfg(feature = "blob_input")]
+use icu_provider::buf::DeserializingBufferProvider;
+#[cfg(feature = "blob_input")]
 use icu_provider::datagen::*;
 #[cfg(feature = "blob_input")]
 use icu_provider::prelude::*;
-#[cfg(feature = "blob_input")]
-use icu_provider::serde::DeserializingBufferProvider;
 #[cfg(feature = "blob_input")]
 use icu_provider_blob::BlobDataProvider;
 
@@ -617,17 +617,17 @@ where
     BlobDataProvider: AsDeserializingBufferProvider,
     for<'a> DeserializingBufferProvider<'a, BlobDataProvider>: DataProvider<M>,
 {
-    fn supported_requests(
+    fn iter_requests(
         &self,
     ) -> Result<std::collections::HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
-        self.0.supported_requests_for_marker(M::INFO)
+        self.0.iter_requests_for_marker(M::INFO)
     }
 }
 
 #[cfg(feature = "blob_input")]
 macro_rules! cb {
     ($($marker:path = $path:literal,)+ #[experimental] $($emarker:path = $epath:literal,)+) => {
-        icu_provider::make_exportable_provider!(
+        icu_provider::datagen::make_exportable_provider!(
             ReexportableBlobDataProvider,
             [
                 icu_provider::hello_world::HelloWorldV1Marker,
@@ -635,7 +635,7 @@ macro_rules! cb {
                     $marker,
                 )+
                 $(
-                    #[cfg(feature = "experimental_components")]
+                    #[cfg(feature = "experimental")]
                     $emarker,
                 )+
             ]

@@ -60,14 +60,14 @@ where
     /// ));
     ///
     /// // English should not appear in the iterator result:
-    /// let supported_langids = provider
-    ///     .supported_requests()
+    /// let available_langids = provider
+    ///     .iter_requests()
     ///     .expect("Should successfully make an iterator of supported locales")
     ///     .into_iter()
     ///     .map(|(locale, _)| locale.get_langid())
     ///     .collect::<Vec<LanguageIdentifier>>();
-    /// assert!(supported_langids.contains(&langid!("de")));
-    /// assert!(!supported_langids.contains(&langid!("en")));
+    /// assert!(available_langids.contains(&langid!("de")));
+    /// assert!(!available_langids.contains(&langid!("en")));
     /// ```
     pub fn filter_by_langid<'a>(
         self,

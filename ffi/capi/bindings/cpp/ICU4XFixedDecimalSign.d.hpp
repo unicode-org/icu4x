@@ -8,8 +8,15 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XFixedDecimalSign.d.h"
 
+
+namespace capi {
+    typedef enum ICU4XFixedDecimalSign {
+      ICU4XFixedDecimalSign_None = 0,
+      ICU4XFixedDecimalSign_Negative = 1,
+      ICU4XFixedDecimalSign_Positive = 2,
+    } ICU4XFixedDecimalSign;
+}
 
 class ICU4XFixedDecimalSign {
 public:
