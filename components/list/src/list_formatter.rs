@@ -280,9 +280,9 @@ impl<'a, W: Writeable + 'a, I: Iterator<Item = W> + Clone + 'a> core::fmt::Displ
 #[cfg(all(test, feature = "datagen"))]
 mod tests_with_testing_data {
     use super::*;
-    use writeable::{assert_writeable_eq, assert_writeable_parts_eq};
-    use alloc::string::ToString;
     use alloc::format;
+    use alloc::string::ToString;
+    use writeable::{assert_writeable_eq, assert_writeable_parts_eq};
 
     fn formatter(length: ListLength) -> ListFormatter {
         ListFormatter {
@@ -373,15 +373,15 @@ mod tests_with_testing_data {
 #[cfg(all(test, feature = "compiled_data"))]
 mod tests_with_compiled_data {
     use super::*;
-    use writeable::assert_writeable_eq;
-    use alloc::string::ToString;
     use alloc::format;
+    use alloc::string::ToString;
+    use writeable::assert_writeable_eq;
 
     macro_rules! test {
-        ($locale:literal, $type:ident, $(($input:expr, $output:literal),)+) => {
+        ($locale:literal, $type:ident, $width:ident, $(($input:expr, $output:literal),)+) => {
             let f = ListFormatter::$type(
                 &icu::locale::locale!($locale).into(),
-                ListLength::Wide
+                ListLength::$width
             ).unwrap();
             $(
                 assert_writeable_eq!(f.format($input.iter()), $output);
@@ -391,7 +391,7 @@ mod tests_with_compiled_data {
 
     #[test]
     fn test_basic() {
-        test!("fr", try_new_or_with_length, (["A", "B"], "A ou B"),);
+        test!("fr", try_new_or_with_length, Wide, (["A", "B"], "A ou B"),);
     }
 
     #[test]
@@ -399,6 +399,7 @@ mod tests_with_compiled_data {
         test!(
             "es",
             try_new_and_with_length,
+            Wide,
             (["x", "Mallorca"], "x y Mallorca"),
             (["x", "Ibiza"], "x e Ibiza"),
             (["x", "Hidalgo"], "x e Hidalgo"),
@@ -408,6 +409,7 @@ mod tests_with_compiled_data {
         test!(
             "es",
             try_new_or_with_length,
+            Wide,
             (["x", "Ibiza"], "x o Ibiza"),
             (["x", "Okinawa"], "x u Okinawa"),
             (["x", "8 más"], "x u 8 más"),
@@ -427,6 +429,7 @@ mod tests_with_compiled_data {
         test!(
             "es-AR",
             try_new_and_with_length,
+            Wide,
             (["x", "Ibiza"], "x e Ibiza"),
         );
     }
@@ -436,8 +439,37 @@ mod tests_with_compiled_data {
         test!(
             "he",
             try_new_and_with_length,
+            Wide,
             (["x", "יפו"], "x ויפו"),
             (["x", "Ibiza"], "x ו‑Ibiza"),
+        );
+    }
+
+    #[test]
+    fn test_en() {
+        test!(
+            "en",
+            try_new_unit_with_length,
+            Narrow,
+            (["foo", "bar", "baz"], "foo bar baz"),
+        );
+        test!(
+            "en-GB",
+            try_new_unit_with_length,
+            Narrow,
+            (["foo", "bar", "baz"], "foo bar baz"),
+        );
+        test!(
+            "en",
+            try_new_unit_with_length,
+            Wide,
+            (["foo", "bar", "baz"], "foo, bar, baz"),
+        );
+        test!(
+            "en-GB",
+            try_new_unit_with_length,
+            Wide,
+            (["foo", "bar", "baz"], "foo, bar, baz"),
         );
     }
 }
