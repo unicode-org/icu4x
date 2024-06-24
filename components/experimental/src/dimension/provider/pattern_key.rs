@@ -125,7 +125,7 @@ impl AsULE for PatternKey {
             0b00 => PatternKey::Binary(value),
             0b01 => match value & 0b00100000 {
                 0b00000000 => PatternKey::Decimal(value as i8),
-                0b00100000 => PatternKey::Decimal((value & 0b00011111) as i8 * -1),
+                0b00100000 => PatternKey::Decimal(-((value & 0b00011111) as i8)),
                 _ => unreachable!(),
             },
             0b10 => {
@@ -145,9 +145,9 @@ impl<'a> ZeroMapKV<'a> for PatternKey {
     type OwnedType = PatternKey;
 }
 
-impl Into<CompoundCount> for u8 {
-    fn into(self) -> CompoundCount {
-        match self {
+impl From<u8> for CompoundCount {
+    fn from(val: u8) -> Self {
+        match val {
             0 => CompoundCount::Zero,
             1 => CompoundCount::One,
             2 => CompoundCount::Two,
