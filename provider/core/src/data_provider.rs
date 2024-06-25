@@ -53,15 +53,13 @@ where
 }
 
 #[cfg(feature = "std")]
-/// A [`DataProvider`] that can iterate over all supported [`DataLocale`] for a certain marker.
+/// A [`DataProvider`] that can iterate over all supported [`DataIdentifierCow`]s.
 ///
-/// The provider is not allowed to return `Ok` for requests that were not returned by `iter_requests`,
+/// The provider is not allowed to return `Ok` for requests that were not returned by `iter_ids`,
 /// and must not fail with a [`DataErrorKind::MissingLocale`] for requests that were returned.
 pub trait IterableDataProvider<M: DataMarker>: DataProvider<M> {
-    /// Returns a list of [`DataLocale`].
-    fn iter_requests(
-        &self,
-    ) -> Result<std::collections::HashSet<(DataLocale, DataMarkerAttributes)>, DataError>;
+    /// Returns a set of [`DataIdentifierCow`].
+    fn iter_ids(&self) -> Result<std::collections::HashSet<DataIdentifierCow>, DataError>;
 }
 
 #[cfg(target_has_atomic = "ptr")]
@@ -159,16 +157,16 @@ where
 }
 
 #[cfg(feature = "std")]
-/// A [`DynamicDataProvider`] that can iterate over all supported [`DataLocale`] for a certain marker.
+/// A [`DynamicDataProvider`] that can iterate over all supported [`DataIdentifierCow`]s for a certain marker.
 ///
-/// The provider is not allowed to return `Ok` for requests that were not returned by `iter_requests`,
+/// The provider is not allowed to return `Ok` for requests that were not returned by `iter_ids`,
 /// and must not fail with a [`DataErrorKind::MissingLocale`] for requests that were returned.
 pub trait IterableDynamicDataProvider<M: DynamicDataMarker>: DynamicDataProvider<M> {
-    /// Given a [`DataMarkerInfo`], returns a list of [`DataLocale`].
-    fn iter_requests_for_marker(
+    /// Given a [`DataMarkerInfo`], returns a set of [`DataIdentifierCow`].
+    fn iter_ids_for_marker(
         &self,
         marker: DataMarkerInfo,
-    ) -> Result<std::collections::HashSet<(DataLocale, DataMarkerAttributes)>, DataError>;
+    ) -> Result<std::collections::HashSet<DataIdentifierCow>, DataError>;
 }
 
 #[cfg(feature = "std")]
@@ -177,11 +175,11 @@ where
     M: DynamicDataMarker,
     P: IterableDynamicDataProvider<M> + ?Sized,
 {
-    fn iter_requests_for_marker(
+    fn iter_ids_for_marker(
         &self,
         marker: DataMarkerInfo,
-    ) -> Result<std::collections::HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
-        (**self).iter_requests_for_marker(marker)
+    ) -> Result<std::collections::HashSet<DataIdentifierCow>, DataError> {
+        (**self).iter_ids_for_marker(marker)
     }
 }
 

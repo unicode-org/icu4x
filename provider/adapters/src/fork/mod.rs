@@ -84,7 +84,7 @@ use predicates::MissingDataMarkerPredicate;
 ///
 /// let german_hello_world: DataResponse<HelloWorldV1Marker> = provider
 ///     .load(DataRequest {
-///         locale: &langid!("de").into(),
+///         id: DataIdentifierBorrowed::for_locale(&langid!("de").into()),
 ///         ..Default::default()
 ///     })
 ///     .expect("Loading should succeed");
@@ -118,7 +118,7 @@ use predicates::MissingDataMarkerPredicate;
 /// // Chinese is the first provider, so this succeeds
 /// let chinese_hello_world = provider
 ///     .load(DataRequest {
-///         locale: &langid!("zh").into(),
+///         id: DataIdentifierBorrowed::for_locale(&langid!("zh").into()),
 ///         ..Default::default()
 ///     })
 ///     .expect("Loading should succeed");
@@ -128,7 +128,7 @@ use predicates::MissingDataMarkerPredicate;
 /// // German is shadowed by Chinese, so this fails
 /// provider
 ///     .load(DataRequest {
-///         locale: &langid!("de").into(),
+///         id: DataIdentifierBorrowed::for_locale(&langid!("de").into()),
 ///         ..Default::default()
 ///     })
 ///     .expect_err("Should stop at the first provider, even though the second has data");
@@ -187,7 +187,7 @@ impl<P0, P1> ForkByMarkerProvider<P0, P1> {
 /// // Chinese is the first provider, so this succeeds
 /// let chinese_hello_world = provider
 ///     .load(DataRequest {
-///         locale: &langid!("zh").into(),
+///         id: DataIdentifierBorrowed::for_locale(&langid!("zh").into()),
 ///         ..Default::default()
 ///     })
 ///     .expect("Loading should succeed");
@@ -197,7 +197,7 @@ impl<P0, P1> ForkByMarkerProvider<P0, P1> {
 /// // German is shadowed by Chinese, so this fails
 /// provider
 ///     .load(DataRequest {
-///         locale: &langid!("de").into(),
+///         id: DataIdentifierBorrowed::for_locale(&langid!("de").into()),
 ///         ..Default::default()
 ///     })
 ///     .expect_err("Should stop at the first provider, even though the second has data");

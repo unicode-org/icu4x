@@ -49,9 +49,7 @@ impl DataProvider<CaseMapV1Marker> for DatagenProvider {
 }
 
 impl crate::IterableDataProviderCached<CaseMapV1Marker> for DatagenProvider {
-    fn iter_requests_cached(
-        &self,
-    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
@@ -78,9 +76,7 @@ impl DataProvider<CaseMapUnfoldV1Marker> for DatagenProvider {
 }
 
 impl crate::IterableDataProviderCached<CaseMapUnfoldV1Marker> for DatagenProvider {
-    fn iter_requests_cached(
-        &self,
-    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }

@@ -48,7 +48,7 @@ impl ZonedDateTimeFormatter {
             .map_err(|field| DateTimeError::UnsupportedField(field.symbol))?;
 
         let req = DataRequest {
-            locale,
+            id: DataIdentifierBorrowed::for_locale(locale),
             ..Default::default()
         };
 
@@ -133,7 +133,7 @@ impl ZonedDateTimeFormatter {
             .map_err(|field| DateTimeError::UnsupportedField(field.symbol))?;
 
         let req = DataRequest {
-            locale,
+            id: DataIdentifierBorrowed::for_locale(locale),
             ..Default::default()
         };
 
@@ -142,7 +142,7 @@ impl ZonedDateTimeFormatter {
                 (*DataProvider::<WeekDataV1Marker>::load(
                     provider,
                     DataRequest {
-                        locale,
+                        id: DataIdentifierBorrowed::for_locale(locale),
                         ..Default::default()
                     },
                 )?

@@ -35,6 +35,35 @@ pub(crate) trait AnyCalendarLoader {
     fn load(&self, locale: &DataLocale) -> Result<AnyCalendar, DataError>;
 }
 
+/// Helper for type resolution with optional loader arguments
+pub(crate) struct PhantomLoader {
+    _not_constructible: core::convert::Infallible,
+}
+
+impl FixedDecimalFormatterLoader for PhantomLoader {
+    fn load(
+        &self,
+        _locale: &DataLocale,
+        _options: FixedDecimalFormatterOptions,
+    ) -> Result<FixedDecimalFormatter, DataError> {
+        unreachable!() // not constructible
+    }
+}
+
+impl WeekCalculatorLoader for PhantomLoader {
+    #[inline]
+    fn load(&self, _locale: &DataLocale) -> Result<WeekCalculator, DataError> {
+        unreachable!() // not constructible
+    }
+}
+
+impl AnyCalendarLoader for PhantomLoader {
+    #[inline]
+    fn load(&self, _locale: &DataLocale) -> Result<AnyCalendar, DataError> {
+        unreachable!() // not constructible
+    }
+}
+
 /// Loader for types from other crates using compiled data.
 #[cfg(feature = "compiled_data")]
 pub(crate) struct ExternalLoaderCompiledData;

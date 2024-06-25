@@ -21,7 +21,6 @@ use cldr_cache::CldrCache;
 use elsa::sync::FrozenMap;
 use icu_provider::prelude::*;
 use source::{AbstractFs, SerdeCache};
-use std::borrow::Cow;
 use std::collections::HashSet;
 use std::fmt::Debug;
 use std::path::PathBuf;
@@ -87,14 +86,7 @@ pub struct DatagenProvider {
     requests_cache: Arc<
         FrozenMap<
             DataMarkerInfo,
-            Box<
-                OnceLock<
-                    Result<
-                        HashSet<(Cow<'static, DataLocale>, Cow<'static, DataMarkerAttributes>)>,
-                        DataError,
-                    >,
-                >,
-            >,
+            Box<OnceLock<Result<HashSet<DataIdentifierCow<'static>>, DataError>>>,
         >,
     >,
 }
@@ -329,15 +321,12 @@ impl DatagenProvider {
         DatagenProvider: IterableDataProviderCached<M>,
     {
         if <M as DataMarker>::INFO.is_singleton {
-            if !req.locale.is_empty() {
+            if !req.id.locale.is_empty() {
                 Err(DataErrorKind::ExtraneousLocale)
             } else {
                 Ok(())
             }
-        } else if !self.populate_requests_cache()?.contains(&(
-            Cow::Borrowed(req.locale),
-            Cow::Borrowed(req.marker_attributes),
-        )) {
+        } else if !self.populate_requests_cache()?.contains(&req.id.as_cow()) {
             Err(DataErrorKind::MissingLocale)
         } else {
             Ok(())
@@ -354,7 +343,7 @@ fn test_missing_locale() {
     assert!(DataProvider::<HelloWorldV1Marker>::load(
         &provider,
         DataRequest {
-            locale: &langid!("fi").into(),
+            id: DataIdentifierCow::from_locale(langid!("fi").into()).as_borrowed(),
             ..Default::default()
         }
     )
@@ -362,7 +351,7 @@ fn test_missing_locale() {
     assert!(DataProvider::<HelloWorldV1Marker>::load(
         &provider,
         DataRequest {
-            locale: &langid!("arc").into(),
+            id: DataIdentifierCow::from_locale(langid!("arc").into()).as_borrowed(),
             ..Default::default()
         }
     )
@@ -370,29 +359,21 @@ fn test_missing_locale() {
 }
 
 trait IterableDataProviderCached<M: DataMarker>: DataProvider<M> {
-    fn iter_requests_cached(
-        &self,
-    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError>;
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError>;
 }
 
 impl DatagenProvider {
     #[allow(clippy::type_complexity)] // not as complex as it appears
     fn populate_requests_cache<M: DataMarker>(
         &self,
-    ) -> Result<&HashSet<(Cow<'static, DataLocale>, Cow<'static, DataMarkerAttributes>)>, DataError>
+    ) -> Result<&HashSet<DataIdentifierCow>, DataError>
     where
         DatagenProvider: IterableDataProviderCached<M>,
     {
         self.requests_cache
             .insert_with(M::INFO, || Box::new(OnceLock::new()))
-            // write lock gets dropped here, `iter_requests_cached` might be expensive
-            .get_or_init(|| {
-                self.iter_requests_cached().map(|m| {
-                    m.into_iter()
-                        .map(|(k, v)| (Cow::Owned(k), Cow::Owned(v)))
-                        .collect()
-                })
-            })
+            // write lock gets dropped here, `iter_ids_cached` might be expensive
+            .get_or_init(|| self.iter_ids_cached())
             .as_ref()
             .map_err(|&e| e)
     }
@@ -402,14 +383,11 @@ impl<M: DataMarker> IterableDataProvider<M> for DatagenProvider
 where
     DatagenProvider: IterableDataProviderCached<M>,
 {
-    fn iter_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+    fn iter_ids(&self) -> Result<HashSet<DataIdentifierCow>, DataError> {
         Ok(if <M as DataMarker>::INFO.is_singleton {
             [Default::default()].into_iter().collect()
         } else {
-            self.populate_requests_cache()?
-                .iter()
-                .map(|(k, v)| (k.clone().into_owned(), v.clone().into_owned()))
-                .collect()
+            self.populate_requests_cache()?.clone()
         })
     }
 }

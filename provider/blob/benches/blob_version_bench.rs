@@ -21,18 +21,17 @@ fn blob_version_bench(c: &mut Criterion) {
     });
 
     let hello_world_provider = HelloWorldProvider;
-    let locales = hello_world_provider.iter_requests().unwrap();
+    let locales = hello_world_provider.iter_ids().unwrap();
 
     c.bench_function("provider/read/v1", |b| {
         let provider = BlobDataProvider::try_new_from_static_blob(black_box(BLOB_V1)).unwrap();
         b.iter(|| {
-            for (locale, marker_attributes) in black_box(&locales).iter() {
+            for id in black_box(&locales).iter() {
                 black_box(&provider)
                     .load_data(
                         HelloWorldV1Marker::INFO,
                         DataRequest {
-                            locale,
-                            marker_attributes,
+                            id: id.as_borrowed(),
                             ..Default::default()
                         },
                     )
@@ -43,13 +42,12 @@ fn blob_version_bench(c: &mut Criterion) {
     c.bench_function("provider/read/v2", |b| {
         let provider = BlobDataProvider::try_new_from_static_blob(black_box(BLOB_V2)).unwrap();
         b.iter(|| {
-            for (locale, marker_attributes) in black_box(&locales).iter() {
+            for id in black_box(&locales).iter() {
                 black_box(&provider)
                     .load_data(
                         HelloWorldV1Marker::INFO,
                         DataRequest {
-                            locale,
-                            marker_attributes,
+                            id: id.as_borrowed(),
                             ..Default::default()
                         },
                     )

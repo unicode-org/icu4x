@@ -85,8 +85,7 @@ impl DataExporter for BlobExporter<'_> {
     fn put_payload(
         &self,
         marker: DataMarkerInfo,
-        locale: &DataLocale,
-        marker_attributes: &DataMarkerAttributes,
+        id: DataIdentifierBorrowed,
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
         let mut serializer = postcard::Serializer {
@@ -109,10 +108,10 @@ impl DataExporter for BlobExporter<'_> {
             .entry(marker.path.hashed())
             .or_default()
             .entry({
-                let mut key = locale.to_string();
-                if !marker_attributes.is_empty() {
+                let mut key = id.locale.to_string();
+                if !id.marker_attributes.is_empty() {
                     key.push(crate::blob_schema::REQUEST_SEPARATOR);
-                    key.push_str(marker_attributes);
+                    key.push_str(id.marker_attributes);
                 }
                 key.into_bytes()
             })

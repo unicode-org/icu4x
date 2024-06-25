@@ -39,7 +39,7 @@ mod test {
     ) {
         let locale = "en-u-ca-gregory".parse().unwrap();
         let req = DataRequest {
-            locale: &locale,
+            id: DataIdentifierBorrowed::for_locale(&locale),
             ..Default::default()
         };
         let patterns = crate::provider::Baked

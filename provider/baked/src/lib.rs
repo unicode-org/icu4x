@@ -6,6 +6,8 @@
 
 #![cfg_attr(not(feature = "export"), no_std)]
 
+extern crate alloc;
+
 #[cfg(feature = "export")]
 pub mod export;
 
@@ -14,8 +16,8 @@ pub use icu_provider::prelude::*;
 pub mod binary_search;
 
 pub trait DataStore<M: DataMarker> {
-    fn get(&self, req: DataRequest) -> Option<&'static M::Yokeable>;
+    fn get(&self, req: DataIdentifierBorrowed) -> Option<&'static M::Yokeable>;
 
-    type IterReturn: Iterator<Item = (DataLocale, DataMarkerAttributes)>;
+    type IterReturn: Iterator<Item = DataIdentifierCow<'static>>;
     fn iter(&self) -> Self::IterReturn;
 }

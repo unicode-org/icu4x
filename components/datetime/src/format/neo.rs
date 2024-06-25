@@ -1025,8 +1025,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         };
         let payload = provider
             .load_bound(DataRequest {
-                locale,
-                marker_attributes: &DataMarkerAttributes::from_tinystr(
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     marker_attrs::symbol_attr_for(
                         marker_attrs::Context::Format,
                         match field_length {
@@ -1036,6 +1035,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                             _ => return Err(SingleLoadError::UnsupportedField(field)),
                         },
                     ),
+                    locale,
                 ),
                 ..Default::default()
             })
@@ -1075,8 +1075,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         };
         let payload = provider
             .load_bound(DataRequest {
-                locale,
-                marker_attributes: &DataMarkerAttributes::from_tinystr(
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     marker_attrs::symbol_attr_for(
                         match field_symbol {
                             fields::Month::Format => marker_attrs::Context::Format,
@@ -1089,6 +1088,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                             _ => return Err(SingleLoadError::UnsupportedField(field)),
                         },
                     ),
+                    locale,
                 ),
                 ..Default::default()
             })
@@ -1127,8 +1127,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         let payload = R::DayPeriodNames::load_from(
             provider,
             DataRequest {
-                locale,
-                marker_attributes: &DataMarkerAttributes::from_tinystr(
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     marker_attrs::symbol_attr_for(
                         marker_attrs::Context::Format,
                         match field_length {
@@ -1138,6 +1137,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                             _ => return Err(SingleLoadError::UnsupportedField(field)),
                         },
                     ),
+                    locale,
                 ),
                 ..Default::default()
             },
@@ -1179,8 +1179,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         };
         let payload = provider
             .load_bound(DataRequest {
-                locale,
-                marker_attributes: &DataMarkerAttributes::from_tinystr(
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     marker_attrs::symbol_attr_for(
                         match field_symbol {
                             // UTS 35 says that "e" and "E" have the same non-numeric names
@@ -1197,6 +1196,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                             _ => return Err(SingleLoadError::UnsupportedField(field)),
                         },
                     ),
+                    locale,
                 ),
                 ..Default::default()
             })
@@ -1234,7 +1234,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         let payload = R::ZoneGenericShortNames::load_from(
             provider,
             DataRequest {
-                locale,
+                id: DataIdentifierBorrowed::for_locale(locale),
                 ..Default::default()
             },
         )

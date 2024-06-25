@@ -293,18 +293,17 @@ where
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
 /// use std::borrow::Cow;
+/// use icu_locale_core::langid;
 ///
 /// let any_provider = HelloWorldProvider.as_any_provider();
-///
-/// let req = DataRequest {
-///     locale: &icu_locale_core::langid!("de").into(),
-///     ..Default::default()
-/// };
 ///
 /// // Downcasting manually
 /// assert_eq!(
 ///     any_provider
-///         .load_any(HelloWorldV1Marker::INFO, req)
+///         .load_any(HelloWorldV1Marker::INFO, DataRequest {
+///             id: DataIdentifierBorrowed::for_locale(&langid!("de").into()),
+///             ..Default::default()
+///         })
 ///         .expect("load should succeed")
 ///         .downcast::<HelloWorldV1Marker>()
 ///         .expect("types should match")
@@ -321,7 +320,10 @@ where
 ///
 /// assert_eq!(
 ///     downcasting_provider
-///         .load(req)
+///         .load(DataRequest {
+///             id: DataIdentifierBorrowed::for_locale(&langid!("de").into()),
+///             ..Default::default()
+///         })
 ///         .expect("load should succeed")
 ///         .payload
 ///         .get(),

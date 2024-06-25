@@ -48,7 +48,7 @@ macro_rules! constructor {
         ) -> Result<Self, DataError> {
             let data = provider
                 .load(DataRequest {
-                    locale,
+                id: DataIdentifierBorrowed::for_locale(locale),
                     ..Default::default()
                 })?
                 .payload

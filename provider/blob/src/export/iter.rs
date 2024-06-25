@@ -8,10 +8,10 @@ use crate::BlobDataProvider;
 use icu_provider::prelude::*;
 
 impl IterableDynamicDataProvider<BufferMarker> for BlobDataProvider {
-    fn iter_requests_for_marker(
+    fn iter_ids_for_marker(
         &self,
         marker: DataMarkerInfo,
-    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+    ) -> Result<HashSet<DataIdentifierCow>, DataError> {
         self.data.get().list_requests(marker)
     }
 }

@@ -16,7 +16,7 @@ fn load<M: DataMarker<Yokeable = ListFormatterPatternsV1<'static>>>(
     selff: &DatagenProvider,
     req: DataRequest,
 ) -> Result<DataResponse<M>, DataError> {
-    let langid = req.locale.get_langid();
+    let langid = req.id.locale.get_langid();
 
     let resource: &cldr_serde::list_patterns::Resource = selff
         .cldr()?
@@ -130,14 +130,12 @@ macro_rules! implement {
         }
 
         impl IterableDataProviderCached<$marker> for DatagenProvider {
-            fn iter_requests_cached(
-                &self,
-            ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+            fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
                 Ok(self
                     .cldr()?
                     .misc()
                     .list_langs()?
-                    .map(|l| (DataLocale::from(l), Default::default()))
+                    .map(|l| DataIdentifierCow::from_locale(DataLocale::from(l)))
                     .collect())
             }
         }

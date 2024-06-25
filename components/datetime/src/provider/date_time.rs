@@ -126,7 +126,7 @@ where
 {
     Ok(data_provider
         .load(DataRequest {
-            locale,
+            id: DataIdentifierBorrowed::for_locale(locale),
             ..Default::default()
         })?
         .payload
@@ -236,7 +236,7 @@ where
         let time_patterns_data = self
             .data_provider
             .load(DataRequest {
-                locale: self.locale,
+                id: DataIdentifierBorrowed::for_locale(self.locale),
                 ..Default::default()
             })
             .map_err(PatternForLengthError::Data)?
@@ -374,7 +374,7 @@ where
 
         self.data_provider
             .load(DataRequest {
-                locale: &locale,
+                id: DataIdentifierBorrowed::for_locale(&locale),
                 ..Default::default()
             })
             .map(|r| r.payload)

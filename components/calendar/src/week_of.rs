@@ -65,7 +65,7 @@ impl WeekCalculator {
             DataProvider::<WeekDataV1Marker>::load(
                 &provider.as_downcasting(),
                 DataRequest {
-                    locale,
+                    id: DataIdentifierBorrowed::for_locale(locale),
                     ..Default::default()
                 },
             )
@@ -84,7 +84,7 @@ impl WeekCalculator {
             DataProvider::<WeekDataV1Marker>::load(
                 &provider.as_deserializing(),
                 DataRequest {
-                    locale,
+                    id: DataIdentifierBorrowed::for_locale(locale),
                     ..Default::default()
                 },
             )
@@ -100,7 +100,7 @@ impl WeekCalculator {
     {
         provider
             .load(DataRequest {
-                locale,
+                id: DataIdentifierBorrowed::for_locale(locale),
                 ..Default::default()
             })
             .map(|response| WeekCalculator {

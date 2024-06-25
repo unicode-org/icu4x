@@ -91,9 +91,7 @@ impl<M> IterableDataProvider<M> for EmptyDataProvider
 where
     M: DataMarker,
 {
-    fn iter_requests(
-        &self,
-    ) -> Result<std::collections::HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+    fn iter_ids(&self) -> Result<std::collections::HashSet<DataIdentifierCow>, DataError> {
         Ok(Default::default())
     }
 }
@@ -103,10 +101,10 @@ impl<M> IterableDynamicDataProvider<M> for EmptyDataProvider
 where
     M: DynamicDataMarker,
 {
-    fn iter_requests_for_marker(
+    fn iter_ids_for_marker(
         &self,
         _: DataMarkerInfo,
-    ) -> Result<std::collections::HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+    ) -> Result<std::collections::HashSet<DataIdentifierCow>, DataError> {
         Ok(Default::default())
     }
 }

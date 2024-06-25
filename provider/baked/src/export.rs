@@ -156,10 +156,7 @@ pub struct BakedExporter {
     use_internal_fallback: bool,
     // Temporary storage for put_payload: marker -> (bake -> {(locale, marker_attributes)})
     data: Mutex<
-        HashMap<
-            DataMarkerInfo,
-            BTreeMap<SyncTokenStream, HashSet<(DataLocale, DataMarkerAttributes)>>,
-        >,
+        HashMap<DataMarkerInfo, BTreeMap<SyncTokenStream, HashSet<DataIdentifierCow<'static>>>>,
     >,
     /// (marker, file name) pairs to wire up in mod.rs. This is populated by `flush` and consumed by `close`.
     impl_data: Mutex<BTreeMap<DataMarkerInfo, SyncTokenStream>>,
@@ -355,8 +352,7 @@ impl DataExporter for BakedExporter {
     fn put_payload(
         &self,
         marker: DataMarkerInfo,
-        locale: &DataLocale,
-        marker_attributes: &DataMarkerAttributes,
+        id: DataIdentifierBorrowed,
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
         let payload = payload.tokenize(&self.dependencies);
@@ -368,7 +364,7 @@ impl DataExporter for BakedExporter {
             .or_default()
             .entry(payload)
             .or_default()
-            .insert((locale.clone(), marker_attributes.clone()));
+            .insert(id.into_owned());
         Ok(())
     }
 
@@ -410,7 +406,7 @@ impl DataExporter for BakedExporter {
                     &self,
                     req: icu_provider::DataRequest,
                 ) -> Result<icu_provider::DataResponse<#marker_bake>, icu_provider::DataError> {
-                    if req.locale.is_empty() {
+                    if req.id.locale.is_empty() {
                         Ok(icu_provider::DataResponse {
                             payload: icu_provider::DataPayload::from_static_ref(Self::#singleton_ident),
                             metadata: Default::default(),
@@ -423,7 +419,7 @@ impl DataExporter for BakedExporter {
         }, quote! {
             #maybe_msrv
             impl icu_provider::IterableDataProvider<#marker_bake> for $provider {
-                fn iter_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataMarkerAttributes)>, icu_provider::DataError> {
+                fn iter_ids(&self) -> Result<std::collections::HashSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                     Ok(HashSet::from_iter([Default::default()]))
                 }
             }
@@ -459,7 +455,7 @@ impl DataExporter for BakedExporter {
                 quote! {
                     #maybe_msrv
                     impl icu_provider::IterableDataProvider<#marker_bake> for $provider {
-                        fn iter_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataMarkerAttributes)>, icu_provider::DataError> {
+                        fn iter_ids(&self) -> Result<std::collections::HashSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                             Ok(Default::default())
                         }
                     }
@@ -468,15 +464,15 @@ impl DataExporter for BakedExporter {
         } else {
             let mut idents_to_bakes = Vec::new();
 
-            let reqs_to_idents = deduplicated_values
+            let ids_to_idents = deduplicated_values
                 .iter()
-                .flat_map(|(bake, reqs)| {
+                .flat_map(|(bake, ids)| {
                     let bake = bake.parse::<TokenStream>().unwrap();
 
-                    let mut idents = reqs
+                    let mut idents = ids
                         .iter()
-                        .map(|(locale, marker_attributes)| {
-                            format!("_{}_{}", marker_attributes as &str, locale)
+                        .map(|id| {
+                            format!("_{}_{}", id.marker_attributes.as_str(), id.locale)
                                 .chars()
                                 .map(|ch| {
                                     if ch == '-' {
@@ -492,7 +488,7 @@ impl DataExporter for BakedExporter {
                     let ident = proc_macro2::Ident::new(&idents[0], proc_macro2::Span::call_site());
 
                     idents_to_bakes.push((ident.clone(), bake));
-                    reqs.iter().map(move |la| (la.clone(), ident.clone()))
+                    ids.iter().map(move |id| (id.clone(), ident.clone()))
                 })
                 .collect();
 
@@ -511,16 +507,16 @@ impl DataExporter for BakedExporter {
             .parse::<TokenStream>()
             .unwrap();
 
-            let data = crate::binary_search::bake(&marker_bake, reqs_to_idents, idents_to_bakes);
+            let data = crate::binary_search::bake(&marker_bake, ids_to_idents, idents_to_bakes);
 
             let search = if !self.use_internal_fallback
                 || deduplicated_values
                     .iter()
-                    .all(|(_, reqs)| reqs.iter().all(|(l, _)| l.is_und()))
+                    .all(|(_, ids)| ids.iter().all(|id| id.locale.is_und()))
             {
                 quote! {
                     let metadata = Default::default();
-                    let Some(payload) = icu_provider_baked::DataStore::get(&Self::#data_ident, req) else {
+                    let Some(payload) = icu_provider_baked::DataStore::get(&Self::#data_ident, req.id) else {
                         return Err(icu_provider::DataErrorKind::MissingLocale.with_req(<#marker_bake as icu_provider::DataMarker>::INFO, req))
                     };
                 }
@@ -529,15 +525,15 @@ impl DataExporter for BakedExporter {
                 quote! {
                     let mut metadata = icu_provider::DataResponseMetadata::default();
 
-                    let payload =  if let Some(payload) = icu_provider_baked::DataStore::get(&Self::#data_ident, req) {
+                    let payload =  if let Some(payload) = icu_provider_baked::DataStore::get(&Self::#data_ident, req.id) {
                         payload
                     } else {
                         const FALLBACKER: icu_locale::fallback::LocaleFallbackerWithConfig<'static> =
                             icu_locale::fallback::LocaleFallbacker::new()
                                 .for_config(<#marker_bake as icu_provider::DataMarker>::INFO.fallback_config);
-                        let mut fallback_iterator = FALLBACKER.fallback_for(req.locale.clone());
+                        let mut fallback_iterator = FALLBACKER.fallback_for(req.id.locale.clone());
                         loop {
-                            if let Some(payload) = icu_provider_baked::DataStore::get(&Self::#data_ident, icu_provider::DataRequest { locale: fallback_iterator.get(), ..req }) {
+                            if let Some(payload) = icu_provider_baked::DataStore::get(&Self::#data_ident, icu_provider::DataIdentifierBorrowed::for_marker_attributes_and_locale(req.id.marker_attributes, fallback_iterator.get())) {
                                 metadata.locale = Some(fallback_iterator.take());
                                 break payload;
                             }
@@ -576,7 +572,7 @@ impl DataExporter for BakedExporter {
                 quote! {
                     #maybe_msrv
                     impl icu_provider::IterableDataProvider<#marker_bake> for $provider {
-                        fn iter_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataMarkerAttributes)>, icu_provider::DataError> {
+                        fn iter_ids(&self) -> Result<std::collections::HashSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                             Ok(icu_provider_baked::DataStore::iter(&Self::#data_ident).collect())
                         }
                     }

@@ -49,11 +49,11 @@
 //! ### Cursors (`|@@@ rest`, `rest @@@|`, `rest | rest`)
 //! There are three kinds of cursors.
 //! * `|@@@ rest`: The cursor is at the beginning of the replacement and has placeholders. We call
-//!   this a cursor with _right_ placeholders, because they are on the right of the cursor.
+//!  this a cursor with _right_ placeholders, because they are on the right of the cursor.
 //! * `rest @@@|`: The cursor is at the end of the replacement and has placeholders. We call this
-//!   a cursor with _left_ placeholders, because they are on the left of the cursor.
+//!  a cursor with _left_ placeholders, because they are on the left of the cursor.
 //! * `rest | rest`: The cursor is in the middle of the replacement and has no placeholders. We call
-//!   this a pure cursor.
+//!  this a pure cursor.
 //!
 //! Pure cursors get a reserved code point that is inlined into the replacement encoding where the
 //! cursor appears. Cursors with placeholders are encoded like back references, so two more

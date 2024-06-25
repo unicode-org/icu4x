@@ -93,8 +93,10 @@ impl DatePatternSelectionData {
     ) -> Result<Self, DataError> {
         let payload = provider
             .load_bound(DataRequest {
-                locale,
-                marker_attributes: &DataMarkerAttributes::from_tinystr(components.id_str()),
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    components.id_str(),
+                    locale,
+                ),
                 ..Default::default()
             })?
             .payload
@@ -138,8 +140,10 @@ impl TimePatternSelectionData {
     ) -> Result<Self, DataError> {
         let payload = provider
             .load_bound(DataRequest {
-                locale,
-                marker_attributes: &DataMarkerAttributes::from_tinystr(components.id_str()),
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    components.id_str(),
+                    locale,
+                ),
                 ..Default::default()
             })?
             .payload
@@ -220,8 +224,7 @@ impl DateTimeGluePatternSelectionData {
         )?;
         let glue = glue_provider
             .load_bound(DataRequest {
-                locale,
-                marker_attributes: &DataMarkerAttributes::from_tinystr(
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     marker_attrs::pattern_marker_attr_for(
                         // According to UTS 35, use the date length here: use the glue
                         // pattern "whose type matches the type of the date pattern"
@@ -232,6 +235,7 @@ impl DateTimeGluePatternSelectionData {
                         },
                         None, // no hour cycle for date patterns
                     ),
+                    locale,
                 ),
                 ..Default::default()
             })?

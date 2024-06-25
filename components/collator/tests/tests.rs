@@ -1191,7 +1191,7 @@ fn test_nb_nn_no() {
         DataProvider::<CollationDataV1Marker>::load(
             &icu_collator::provider::Baked,
             DataRequest {
-                locale: &locale,
+                id: DataIdentifierBorrowed::for_locale(&locale),
                 ..Default::default()
             }
         )
@@ -1211,7 +1211,7 @@ fn test_nb_nn_no() {
         DataProvider::<CollationDataV1Marker>::load(
             &icu_collator::provider::Baked,
             DataRequest {
-                locale: &locale,
+                id: DataIdentifierBorrowed::for_locale(&locale),
                 ..Default::default()
             }
         )
@@ -1231,7 +1231,7 @@ fn test_nb_nn_no() {
         DataProvider::<CollationDataV1Marker>::load(
             &icu_collator::provider::Baked,
             DataRequest {
-                locale: &locale,
+                id: DataIdentifierBorrowed::for_locale(&locale),
                 ..Default::default()
             }
         )

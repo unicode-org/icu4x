@@ -77,9 +77,7 @@ impl DatagenProvider {
             .collect())
     }
 
-    fn iter_requests_for_numbers(
-        &self,
-    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+    fn iter_ids_for_numbers(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(self
             .cldr()?
             .numbers()
@@ -96,10 +94,11 @@ impl DatagenProvider {
                             Value::try_from_str(&nsname)
                                 .expect("CLDR should have valid numbering system names"),
                         );
-                        (data_locale, Default::default())
+                        data_locale
                     })
-                    .chain([(last, Default::default())])
+                    .chain([last])
             })
+            .map(DataIdentifierCow::from_locale)
             .collect())
     }
 }

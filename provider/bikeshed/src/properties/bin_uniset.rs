@@ -60,7 +60,7 @@ macro_rules! expand {
             }
 
             impl crate::IterableDataProviderCached<$marker> for DatagenProvider {
-                fn iter_requests_cached(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+                fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
                     self.get_binary_prop_for_unicodeset($prop_name)?;
 
                     Ok(HashSet::from_iter([Default::default()]))

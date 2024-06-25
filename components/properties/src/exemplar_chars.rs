@@ -55,7 +55,7 @@ macro_rules! make_exemplar_chars_unicode_set_property {
             Ok(UnicodeSetData::from_data(
                 provider.load(
                     DataRequest {
-                        locale,
+                id: DataIdentifierBorrowed::for_locale(locale),
                         ..Default::default()
                     })?
                 .payload
@@ -70,7 +70,7 @@ macro_rules! make_exemplar_chars_unicode_set_property {
                 DataProvider::<$data_marker>::load(
                     &crate::provider::Baked,
                     DataRequest {
-                        locale,
+                id: DataIdentifierBorrowed::for_locale(locale),
                         ..Default::default()
                     })?
                 .payload

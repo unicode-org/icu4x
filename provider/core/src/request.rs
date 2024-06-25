@@ -2,44 +2,34 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use alloc::borrow::Cow;
+use alloc::borrow::ToOwned;
+use alloc::boxed::Box;
+use alloc::string::String;
 use core::cmp::Ordering;
 use core::default::Default;
 use core::fmt;
 use core::fmt::Debug;
 use core::hash::Hash;
+use core::ops::Deref;
 use core::str::FromStr;
 use icu_locale_core::extensions::unicode as unicode_ext;
 use icu_locale_core::subtags::{Language, Region, Script, Variants};
 use icu_locale_core::{LanguageIdentifier, Locale, ParseError};
 use writeable::{LengthHint, Writeable};
-
-use alloc::string::String;
-use core::ops::Deref;
-use icu_locale_core::extensions::private::Subtag;
-use tinystr::TinyAsciiStr;
-
-#[cfg(doc)]
-use icu_locale_core::subtags::Variant;
+use zerovec::ule::VarULE;
 
 /// The request type passed into all data provider implementations.
 #[derive(Default, Debug, Clone, Copy, PartialEq, Eq)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct DataRequest<'a> {
-    /// The locale for which to load data.
+    /// The data identifier for which to load data.
     ///
-    /// If locale fallback is enabled, the resulting data may be from a different locale
+    /// If locale fallback is enabled, the resulting data may be from a different identifier
     /// than the one requested here.
-    pub locale: &'a DataLocale,
-    /// Key-specific request attributes
-    pub marker_attributes: &'a DataMarkerAttributes,
+    pub id: DataIdentifierBorrowed<'a>,
     /// Metadata that may affect the behavior of the data provider.
     pub metadata: DataRequestMetadata,
-}
-
-impl fmt::Display for DataRequest<'_> {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        fmt::Display::fmt(&self.locale, f)
-    }
 }
 
 /// Metadata for data requests. This is currently empty, but it may be extended with options
@@ -49,6 +39,155 @@ impl fmt::Display for DataRequest<'_> {
 pub struct DataRequestMetadata {
     /// Silent requests do not log errors. This can be used for exploratory querying, such as fallbacks.
     pub silent: bool,
+}
+
+/// TODO
+#[derive(Default, Debug, Clone, Copy, PartialEq, Eq)]
+#[non_exhaustive]
+pub struct DataIdentifierBorrowed<'a> {
+    /// Marker-specific request attributes
+    pub marker_attributes: &'a DataMarkerAttributes,
+    /// The CLDR locale
+    pub locale: &'a DataLocale,
+}
+
+impl fmt::Display for DataIdentifierBorrowed<'_> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        fmt::Display::fmt(self.locale, f)?;
+        if !self.marker_attributes.is_empty() {
+            write!(f, "/{}", self.marker_attributes.as_str())?;
+        }
+        Ok(())
+    }
+}
+
+impl<'a> DataIdentifierBorrowed<'a> {
+    /// TODO
+    pub fn for_locale(locale: &'a DataLocale) -> Self {
+        Self {
+            locale,
+            ..Default::default()
+        }
+    }
+
+    /// TODO
+    pub fn for_marker_attributes(marker_attributes: &'a DataMarkerAttributes) -> Self {
+        Self {
+            marker_attributes,
+            ..Default::default()
+        }
+    }
+
+    /// TODO
+    pub fn for_marker_attributes_and_locale(
+        marker_attributes: &'a DataMarkerAttributes,
+        locale: &'a DataLocale,
+    ) -> Self {
+        Self {
+            marker_attributes,
+            locale,
+        }
+    }
+
+    /// TODO
+    pub fn into_owned(&self) -> DataIdentifierCow<'static> {
+        DataIdentifierCow {
+            marker_attributes: Cow::Owned(self.marker_attributes.to_owned()),
+            locale: Cow::Owned(self.locale.clone()),
+        }
+    }
+
+    /// TODO
+    pub fn as_cow(&self) -> DataIdentifierCow<'a> {
+        DataIdentifierCow {
+            marker_attributes: Cow::Borrowed(self.marker_attributes),
+            locale: Cow::Borrowed(self.locale),
+        }
+    }
+}
+
+/// TODO
+#[derive(Debug, PartialEq, Eq, Hash, Clone)]
+#[non_exhaustive]
+pub struct DataIdentifierCow<'a> {
+    /// Marker-specific request attributes
+    pub marker_attributes: Cow<'a, DataMarkerAttributes>,
+    /// The CLDR locale
+    pub locale: Cow<'a, DataLocale>,
+}
+
+impl fmt::Display for DataIdentifierCow<'_> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        fmt::Display::fmt(&*self.locale, f)?;
+        if !self.marker_attributes.is_empty() {
+            write!(f, "/{}", self.marker_attributes.as_str())?;
+        }
+        Ok(())
+    }
+}
+
+impl<'a> DataIdentifierCow<'a> {
+    /// TODO
+    pub fn as_borrowed(&'a self) -> DataIdentifierBorrowed<'a> {
+        DataIdentifierBorrowed {
+            marker_attributes: &self.marker_attributes,
+            locale: &self.locale,
+        }
+    }
+}
+
+impl DataIdentifierCow<'static> {
+    /// TODO
+    pub fn from_locale(locale: DataLocale) -> Self {
+        Self {
+            marker_attributes: Cow::Borrowed(DataMarkerAttributes::empty()),
+            locale: Cow::Owned(locale),
+        }
+    }
+
+    /// TODO
+    pub fn from_marker_attributes(marker_attributes: &'static DataMarkerAttributes) -> Self {
+        Self {
+            marker_attributes: Cow::Borrowed(marker_attributes),
+            locale: Cow::Borrowed(Default::default()),
+        }
+    }
+
+    /// TODO
+    pub fn from_marker_attributes_owned(marker_attributes: Box<DataMarkerAttributes>) -> Self {
+        Self {
+            marker_attributes: Cow::Owned(marker_attributes),
+            locale: Cow::Borrowed(Default::default()),
+        }
+    }
+
+    /// TODO
+    pub fn from_owned(marker_attributes: Box<DataMarkerAttributes>, locale: DataLocale) -> Self {
+        Self {
+            marker_attributes: Cow::Owned(marker_attributes),
+            locale: Cow::Owned(locale),
+        }
+    }
+
+    /// TODO
+    pub fn from_borrowed_and_owned(
+        marker_attributes: &'static DataMarkerAttributes,
+        locale: DataLocale,
+    ) -> Self {
+        Self {
+            marker_attributes: Cow::Borrowed(marker_attributes),
+            locale: Cow::Owned(locale),
+        }
+    }
+}
+
+impl Default for DataIdentifierCow<'_> {
+    fn default() -> Self {
+        Self {
+            marker_attributes: Cow::Borrowed(Default::default()),
+            locale: Cow::Borrowed(Default::default()),
+        }
+    }
 }
 
 /// A locale type optimized for use in fallbacking and the ICU4X data pipeline.
@@ -397,26 +536,6 @@ impl DataLocale {
     ///
     /// If you have ownership over the `DataLocale`, use [`DataLocale::into_locale()`]
     /// and then access the `id` field.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu_locale_core::langid;
-    /// use icu_provider::prelude::*;
-    ///
-    /// let req_no_langid = DataRequest {
-    ///     locale: &Default::default(),
-    ///     ..Default::default()
-    /// };
-    ///
-    /// let req_with_langid = DataRequest {
-    ///     locale: &langid!("ar-EG").into(),
-    ///     ..Default::default()
-    /// };
-    ///
-    /// assert_eq!(req_no_langid.locale.get_langid(), langid!("und"));
-    /// assert_eq!(req_with_langid.locale.get_langid(), langid!("ar-EG"));
-    /// ```
     pub fn get_langid(&self) -> LanguageIdentifier {
         self.langid.clone()
     }
@@ -495,7 +614,7 @@ impl DataLocale {
         self.langid.region = region;
     }
 
-    /// Returns whether there are any [`Variant`] subtags in this [`DataLocale`].
+    /// Returns whether there are any [`Variant`](icu_locale_core::subtags::Variant) subtags in this [`DataLocale`].
     #[inline]
     pub fn has_variants(&self) -> bool {
         !self.langid.variants.is_empty()
@@ -507,7 +626,7 @@ impl DataLocale {
         self.langid.variants = variants;
     }
 
-    /// Removes all [`Variant`] subtags in this [`DataLocale`].
+    /// Removes all [`Variant`](icu_locale_core::subtags::Variant) subtags in this [`DataLocale`].
     #[inline]
     pub fn clear_variants(&mut self) -> Variants {
         self.langid.variants.clear()
@@ -579,27 +698,16 @@ impl DataLocale {
 }
 
 /// TODO
-#[derive(Clone, Default)]
+#[derive(PartialEq, Eq, Ord, PartialOrd, Hash)]
+#[repr(transparent)]
 pub struct DataMarkerAttributes {
-    value: DataMarkerAttributesInner,
-}
-
-#[derive(Clone, Default)]
-enum DataMarkerAttributesInner {
-    #[default]
-    Empty,
-    Boxed(alloc::boxed::Box<str>),
-    Stack(TinyAsciiStr<23>),
-    // NOTE: In the future, a `Static` variant could be added to allow `data_locale!("...")`
-    // Static(&'static str),
+    // Validated to be non-empty ASCII alphanumeric + hyphen + underscore
+    value: str,
 }
 
 impl<'a> Default for &'a DataMarkerAttributes {
     fn default() -> Self {
-        static DEFAULT: DataMarkerAttributes = DataMarkerAttributes {
-            value: DataMarkerAttributesInner::Empty,
-        };
-        &DEFAULT
+        DataMarkerAttributes::empty()
     }
 }
 
@@ -607,142 +715,77 @@ impl Deref for DataMarkerAttributes {
     type Target = str;
     #[inline]
     fn deref(&self) -> &Self::Target {
-        match &self.value {
-            DataMarkerAttributesInner::Empty => "",
-            DataMarkerAttributesInner::Boxed(s) => s.deref(),
-            DataMarkerAttributesInner::Stack(s) => s.as_str(),
-        }
-    }
-}
-
-impl PartialEq for DataMarkerAttributes {
-    #[inline]
-    fn eq(&self, other: &Self) -> bool {
-        self.deref() == other.deref()
-    }
-}
-
-impl Eq for DataMarkerAttributes {}
-
-impl PartialOrd for DataMarkerAttributes {
-    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        Some(self.cmp(other))
-    }
-}
-
-impl Ord for DataMarkerAttributes {
-    fn cmp(&self, other: &Self) -> Ordering {
-        self.deref().cmp(other.deref())
+        &self.value
     }
 }
 
 impl Debug for DataMarkerAttributes {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        self.deref().fmt(f)
+        self.value.fmt(f)
     }
 }
 
-impl Hash for DataMarkerAttributes {
-    #[inline]
-    fn hash<H: core::hash::Hasher>(&self, state: &mut H) {
-        self.deref().hash(state)
-    }
-}
-
-impl FromStr for DataMarkerAttributes {
-    type Err = core::convert::Infallible;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        if s.is_empty() {
-            Ok(Self {
-                value: DataMarkerAttributesInner::Empty,
-            })
-        } else if let Ok(tiny) = s.parse() {
-            Ok(Self {
-                value: DataMarkerAttributesInner::Stack(tiny),
-            })
-        } else {
-            Ok(Self {
-                value: DataMarkerAttributesInner::Boxed(s.into()),
-            })
-        }
-    }
-}
+/// TODO
+#[derive(Debug)]
+#[non_exhaustive]
+pub struct AttributeParseError;
 
 impl DataMarkerAttributes {
-    /// Creates a [`DataMarkerAttributes`] from an iterator of individual keys.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu_locale_core::extensions::private::subtag;
-    /// use icu_provider::prelude::*;
-    ///
-    /// // Single auxiliary key:
-    /// let a = DataMarkerAttributes::try_from_iter([subtag!("abc")]);
-    /// let b = "abc".parse::<DataMarkerAttributes>().unwrap();
-    /// assert_eq!(a, b);
-    ///
-    /// // Multiple auxiliary keys:
-    /// let a = DataMarkerAttributes::try_from_iter([subtag!("abc"), subtag!("defg")]);
-    /// let b = "abc-defg".parse::<DataMarkerAttributes>().unwrap();
-    /// assert_eq!(a, b);
-    /// ```
-    pub fn try_from_iter(iter: impl IntoIterator<Item = Subtag>) -> Self {
-        // TODO: Avoid the allocation when possible
-        let mut builder = String::new();
-        for item in iter {
-            if !builder.is_empty() {
-                builder.push('-');
+    const fn validate(s: &str) -> Result<(), AttributeParseError> {
+        let mut i = 0;
+        while i < s.len() {
+            #[allow(clippy::indexing_slicing)] // duh
+            if !matches!(s.as_bytes()[i], b'a'..=b'z' | b'A'..=b'Z' | b'0'..=b'9' | b'-' | b'_') {
+                return Err(AttributeParseError);
             }
-            builder.push_str(item.as_str())
+            i += 1;
         }
-        Self {
-            value: if builder.is_empty() {
-                DataMarkerAttributesInner::Empty
-            } else if builder.len() <= 23 {
-                #[allow(clippy::unwrap_used)] // we just checked that the string is ascii
-                DataMarkerAttributesInner::Stack(builder.parse().unwrap())
-            } else {
-                DataMarkerAttributesInner::Boxed(builder.into())
-            },
-        }
-    }
-
-    /// Creates a [`DataMarkerAttributes`] from a single subtag.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu_locale_core::extensions::private::subtag;
-    /// use icu_provider::prelude::*;
-    ///
-    /// // Single auxiliary key:
-    /// let a = DataMarkerAttributes::from_tinystr("abc".parse().unwrap());
-    /// let b = "abc".parse::<DataMarkerAttributes>().unwrap();
-    /// assert_eq!(a, b);
-    /// ```
-    pub const fn from_tinystr(input: TinyAsciiStr<8>) -> Self {
-        Self {
-            value: DataMarkerAttributesInner::Stack(input.resize()),
-        }
+        Ok(())
     }
 
     /// TODO
-    pub fn single(&self) -> Option<TinyAsciiStr<8>> {
-        let mut iter = self.split('-').filter_map(|x| match x.parse() {
-            Ok(x) => Some(x),
-            Err(_) => {
-                debug_assert!(false, "failed to convert to subtag: {x}");
-                None
-            }
-        });
-        let subtag = iter.next()?;
-        if iter.next().is_some() {
-            return None;
-        }
-        Some(subtag)
+    pub const fn try_from_str(s: &str) -> Result<&Self, AttributeParseError> {
+        let Ok(()) = Self::validate(s) else {
+            return Err(AttributeParseError);
+        };
+
+        Ok(unsafe { &*(s as *const str as *const DataMarkerAttributes) })
+    }
+
+    /// TODO
+    pub fn try_from_string(s: String) -> Result<Box<Self>, AttributeParseError> {
+        let Ok(()) = Self::validate(&s) else {
+            return Err(AttributeParseError);
+        };
+
+        Ok(unsafe { core::mem::transmute(s.into_boxed_str()) })
+    }
+
+    /// TODO
+    pub const fn from_str_or_panic(s: &str) -> &Self {
+        let Ok(r) = Self::try_from_str(s) else {
+            panic!("Invalid marker attribute syntax")
+        };
+        r
+    }
+
+    /// TODO
+    pub const fn empty() -> &'static Self {
+        unsafe { &*("" as *const str as *const DataMarkerAttributes) }
+    }
+
+    /// TODO
+    pub const fn as_str(&self) -> &str {
+        &self.value
+    }
+}
+
+impl ToOwned for DataMarkerAttributes {
+    type Owned = Box<Self>;
+    fn to_owned(&self) -> Self::Owned {
+        let str = unsafe { &*(self as *const DataMarkerAttributes as *const str) };
+        unsafe { core::mem::transmute(str.to_boxed()) }
     }
 }
 
