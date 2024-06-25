@@ -207,13 +207,13 @@ size_test!(
 /// use icu::datetime::{DateTimeWriteError, TypedDateTimeNames};
 /// use icu::datetime::fields::{Field, FieldLength, FieldSymbol, Weekday};
 /// use icu::datetime::neo_pattern::DateTimePattern;
-/// use icu::datetime::neo_skeleton::NeoZoneComponents;
+/// use icu::datetime::neo_skeleton::NeoTimeZoneSkeleton;
 /// use icu::locale::locale;
 /// use icu::timezone::CustomTimeZone;
 /// use writeable::assert_try_writeable_eq;
 ///
 /// // Create an instance that can format abbreviated month, weekday, and day period names:
-/// let mut names: TypedDateTimeNames<Gregorian, NeoZoneComponents> =
+/// let mut names: TypedDateTimeNames<Gregorian, NeoTimeZoneSkeleton> =
 ///     TypedDateTimeNames::try_new(&locale!("en").into()).unwrap();
 ///
 /// // Create a pattern from a pattern string:
@@ -723,14 +723,14 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::TypedDateTimeNames;
-    /// use icu::datetime::neo_skeleton::NeoZoneComponents;
+    /// use icu::datetime::neo_skeleton::NeoTimeZoneSkeleton;
     /// use icu::datetime::neo_pattern::DateTimePattern;
     /// use icu::locale::locale;
     /// use icu::timezone::CustomTimeZone;
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let mut names =
-    ///     TypedDateTimeNames::<Gregorian, NeoZoneComponents>::try_new(&locale!("th-TH").into())
+    ///     TypedDateTimeNames::<Gregorian, NeoTimeZoneSkeleton>::try_new(&locale!("th-TH").into())
     ///         .unwrap();
     ///
     /// names

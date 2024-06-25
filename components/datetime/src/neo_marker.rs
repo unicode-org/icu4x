@@ -30,7 +30,7 @@ use icu_calendar::{
 use icu_provider::{marker::NeverMarker, prelude::*};
 use icu_timezone::CustomTimeZone;
 
-mod private {
+pub(crate) mod private {
     pub trait Sealed {}
 }
 
@@ -436,10 +436,10 @@ pub trait HasTimeComponents {
     const COMPONENTS: NeoTimeComponents;
 }
 
-/// A trait associating [`NeoZoneComponents`].
-pub trait HasZoneComponents {
-    /// The associated components.
-    const COMPONENTS: NeoZoneComponents;
+/// A trait associating [`NeoTimeZoneSkeleton`].
+pub trait HasZoneComponent {
+    /// The associated component.
+    const COMPONENT: NeoTimeZoneSkeleton;
 }
 
 // TODO: Add WeekCalculator and FixedDecimalFormatter optional bindings here
@@ -1236,8 +1236,8 @@ macro_rules! impl_zone_marker {
             type ZoneEssentials = datetime_marker_helper!(@names/zone/essentials, $zone_essentials_yesno);
             type ZoneGenericShortNames = datetime_marker_helper!(@names/zone/genericshort, $zone_genericshort_yesno);
         }
-        impl HasZoneComponents for $type {
-            const COMPONENTS: NeoZoneComponents = $components;
+        impl HasZoneComponent for $type {
+            const COMPONENT: NeoTimeZoneSkeleton = $components;
         }
         impl ZoneMarkers for $type {
             type TimeZoneInput = datetime_marker_helper!(@input/timezone, yes);
@@ -1493,7 +1493,7 @@ impl_date_marker!(
 
 impl_zone_marker!(
     NeoTimeZoneGenericShortMarker,
-    NeoZoneComponents::GenericShort,
+    NeoTimeZoneSkeleton::non_location_short(),
     description = "a generic short time zone format",
     expectation = "GMT",
     zone_essentials = yes,
@@ -1605,11 +1605,11 @@ impl DateTimeMarkers for NeoTimeComponents {
     type DateTimePatternV1Marker = datetime_marker_helper!(@datetimes, no);
 }
 
-impl private::Sealed for NeoZoneComponents {}
+impl private::Sealed for NeoTimeZoneSkeleton {}
 
-impl IsRuntimeComponents for NeoZoneComponents {}
+impl IsRuntimeComponents for NeoTimeZoneSkeleton {}
 
-impl DateTimeNamesMarker for NeoZoneComponents {
+impl DateTimeNamesMarker for NeoTimeZoneSkeleton {
     type YearNames = datetime_marker_helper!(@names/year, no);
     type MonthNames = datetime_marker_helper!(@names/month, no);
     type WeekdayNames = datetime_marker_helper!(@names/weekday, no);
@@ -1618,20 +1618,20 @@ impl DateTimeNamesMarker for NeoZoneComponents {
     type ZoneGenericShortNames = datetime_marker_helper!(@names/zone/genericshort, yes);
 }
 
-impl ZoneMarkers for NeoZoneComponents {
+impl ZoneMarkers for NeoTimeZoneSkeleton {
     type TimeZoneInput = datetime_marker_helper!(@input/timezone, yes);
     type ZoneEssentialsV1Marker = datetime_marker_helper!(@data/zone/essentials, yes);
     type ZoneGenericShortNamesV1Marker = datetime_marker_helper!(@data/zone/genericshort, yes);
 }
 
-impl<C: CldrCalendar> TypedDateTimeMarkers<C> for NeoZoneComponents {
+impl<C: CldrCalendar> TypedDateTimeMarkers<C> for NeoTimeZoneSkeleton {
     type D = NeoNeverMarker;
     type T = NeoNeverMarker;
     type Z = Self;
     type DateTimePatternV1Marker = datetime_marker_helper!(@datetimes, no);
 }
 
-impl DateTimeMarkers for NeoZoneComponents {
+impl DateTimeMarkers for NeoTimeZoneSkeleton {
     type D = NeoNeverMarker;
     type T = NeoNeverMarker;
     type Z = Self;
@@ -1681,13 +1681,13 @@ impl DateTimeNamesMarker for NeoComponents {
 impl<C: CldrCalendar> TypedDateTimeMarkers<C> for NeoComponents {
     type D = NeoDateComponents;
     type T = NeoTimeComponents;
-    type Z = NeoZoneComponents;
+    type Z = NeoTimeZoneSkeleton;
     type DateTimePatternV1Marker = datetime_marker_helper!(@datetimes, yes);
 }
 
 impl DateTimeMarkers for NeoComponents {
     type D = NeoDateComponents;
     type T = NeoTimeComponents;
-    type Z = NeoZoneComponents;
+    type Z = NeoTimeZoneSkeleton;
     type DateTimePatternV1Marker = datetime_marker_helper!(@datetimes, yes);
 }

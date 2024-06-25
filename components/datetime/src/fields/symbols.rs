@@ -509,8 +509,8 @@ impl LengthType for Month {
             FieldLength::Wide => TextOrNumeric::Text,
             FieldLength::Narrow => TextOrNumeric::Text,
             FieldLength::Six => TextOrNumeric::Text,
-            FieldLength::Fixed(_) => {
-                debug_assert!(false, "Fixed field length is only supported for seconds");
+            FieldLength::Fixed(_) | FieldLength::TimeZoneFallbackOverride(_) => {
+                debug_assert!(false, "Invalid field length for month");
                 TextOrNumeric::Text
             }
         }
