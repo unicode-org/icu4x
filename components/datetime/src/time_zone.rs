@@ -551,7 +551,7 @@ impl TimeZoneFormatter {
         seconds: IsoSeconds,
     ) -> Result<&mut TimeZoneFormatter, DateTimeError> {
         self.format_units.push(TimeZoneFormatterUnit::WithFallback(
-            FallbackTimeZoneFormatterUnit::Iso8601(Iso8601TimeZoneStyle {
+            FallbackTimeZoneFormatterUnit::Iso8601(Iso8601Format {
                 format,
                 minutes,
                 seconds,
@@ -848,7 +848,7 @@ pub(super) struct LocalizedGmtFormat {}
 
 /// -07:00
 #[derive(Debug, Clone, Copy, PartialEq)]
-pub(super) struct Iso8601TimeZoneStyle {
+pub(super) struct Iso8601Format {
     format: IsoFormat,
     minutes: IsoMinutes,
     seconds: IsoSeconds,
@@ -881,7 +881,7 @@ impl Default for TimeZoneFormatterUnit {
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub(super) enum FallbackTimeZoneFormatterUnit {
     LocalizedGmt(LocalizedGmtFormat),
-    Iso8601(Iso8601TimeZoneStyle),
+    Iso8601(Iso8601Format),
 }
 
 /// Load a fallback format for timezone. The fallback format will be executed if there are no
@@ -890,13 +890,11 @@ impl From<FallbackFormat> for FallbackTimeZoneFormatterUnit {
     fn from(value: FallbackFormat) -> Self {
         match value {
             FallbackFormat::LocalizedGmt => Self::LocalizedGmt(LocalizedGmtFormat {}),
-            FallbackFormat::Iso8601(format, minutes, seconds) => {
-                Self::Iso8601(Iso8601TimeZoneStyle {
-                    format,
-                    minutes,
-                    seconds,
-                })
-            }
+            FallbackFormat::Iso8601(format, minutes, seconds) => Self::Iso8601(Iso8601Format {
+                format,
+                minutes,
+                seconds,
+            }),
         }
     }
 }
@@ -1257,7 +1255,7 @@ impl FormatTimeZone for GenericLocationFormat {
     }
 }
 
-impl FormatTimeZoneWithFallback for Iso8601TimeZoneStyle {
+impl FormatTimeZoneWithFallback for Iso8601Format {
     /// Writes a [`GmtOffset`](crate::input::GmtOffset) in ISO-8601 format according to the
     /// given formatting options.
     ///
@@ -1307,7 +1305,7 @@ impl FormatTimeZoneWithFallback for Iso8601TimeZoneStyle {
     }
 }
 
-impl FormatTimeZone for Iso8601TimeZoneStyle {
+impl FormatTimeZone for Iso8601Format {
     fn format<W: writeable::PartsWrite + ?Sized>(
         &self,
         sink: &mut W,
