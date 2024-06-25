@@ -101,10 +101,10 @@ impl FieldLength {
             4 => Self::Wide,
             5 => Self::Narrow,
             6 => Self::Six,
-            idx if idx >= FIRST_NUMERIC_OVERRIDE && idx <= LAST_NUMERIC_OVERRIDE => {
+            idx if (FIRST_NUMERIC_OVERRIDE..=LAST_NUMERIC_OVERRIDE).contains(&idx) => {
                 Self::NumericOverride((idx - FIRST_NUMERIC_OVERRIDE).try_into()?)
             }
-            idx if idx >= FIRST_TIME_ZONE_FALLBACK_OVERRIDE && idx <= LAST_TIME_ZONE_FALLBACK_OVERRIDE => {
+            idx if (FIRST_TIME_ZONE_FALLBACK_OVERRIDE..=LAST_TIME_ZONE_FALLBACK_OVERRIDE).contains(&idx) => {
                 Self::TimeZoneFallbackOverride((idx - FIRST_TIME_ZONE_FALLBACK_OVERRIDE).try_into()?)
             }
             idx if idx >= FIRST_FIXED => {

@@ -745,6 +745,7 @@ pub struct NeoTimeZoneSkeleton {
 }
 
 impl NeoTimeZoneSkeleton {
+    #[cfg(feature = "experimental")]
     pub(crate) const fn non_location_short() -> Self {
         Self {
             length: Some(NeoSkeletonLength::Short),
@@ -752,6 +753,7 @@ impl NeoTimeZoneSkeleton {
         }
     }
 
+    #[cfg(feature = "experimental")]
     pub(crate) fn to_field(self, length: NeoSkeletonLength) -> Field {
         use NeoTimeZoneStyle::*;
         use NeoSkeletonLength::*;

@@ -780,7 +780,7 @@ where
 }
 
 // #[allow(clippy::too_many_arguments)]
-pub(crate) fn try_write_zone<'data, W, ZS>(
+pub(crate) fn try_write_zone<W, ZS>(
     field_symbol: fields::TimeZone,
     field_length: FieldLength,
     datetime: &ExtractedDateTimeInput,
