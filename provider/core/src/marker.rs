@@ -743,7 +743,7 @@ fn test_path_to_string() {
             expected: "core/cardinal@65535",
         },
     ] {
-        assert_eq!(cas.expected, &*cas.path);
+        assert_eq!(cas.expected, cas.path.as_str());
     }
 }
 
@@ -787,6 +787,6 @@ fn test_path_hash() {
             hash: DataMarkerPathHash([176, 131, 182, 223]),
         },
     ] {
-        assert_eq!(cas.hash, cas.path.hashed(), "{}", &cas.path as &str);
+        assert_eq!(cas.hash, cas.path.hashed(), "{}", cas.path.as_str());
     }
 }
