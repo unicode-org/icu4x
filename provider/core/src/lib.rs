@@ -82,7 +82,7 @@
 //!
 //! *This functionality is enabled with the "datagen" Cargo feature*
 //!
-//! The [`datagen`] module contains several APIs for data generation. See [`icu_datagen`] for the reference
+//! The [`export`] module contains several APIs for data generation. See [`icu_datagen`] for the reference
 //! data generation implementation.
 //!
 //! [`ICU4X`]: ../icu/index.html
