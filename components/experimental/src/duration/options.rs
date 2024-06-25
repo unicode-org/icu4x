@@ -2,9 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Options for configuring `DurationFormatter`.
+//! Options for configuring [`DurationFormatter`](crate::duration::DurationFormatter).
 
-/// A bag of options for defining how to format duration using `DurationFormatter`.
+/// A bag of options for defining how to format duration using [`DurationFormatter`](crate::duration::DurationFormatter).
 #[non_exhaustive]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
 pub struct DurationFormatterOptions {
@@ -15,43 +15,43 @@ pub struct DurationFormatterOptions {
     /// Style for year
     pub year: YearStyle,
     /// Visibility control for year
-    pub year_visibility: UnitVisibility,
+    pub year_visibility: FieldDisplay,
     /// Style for month
     pub month: MonthStyle,
     /// Visibility control for month
-    pub month_visibility: UnitVisibility,
+    pub month_visibility: FieldDisplay,
     /// Style for week
     pub week: WeekStyle,
     /// Visibility control for week
-    pub week_visibility: UnitVisibility,
+    pub week_visibility: FieldDisplay,
     /// Style for day
     pub day: DayStyle,
     /// Visibility control for day
-    pub day_visibility: UnitVisibility,
+    pub day_visibility: FieldDisplay,
     /// Style for hour
     pub hour: HourStyle,
     /// Visibility control for hour
-    pub hour_visibility: UnitVisibility,
+    pub hour_visibility: FieldDisplay,
     /// Style for minute
     pub minute: MinuteStyle,
     /// Visibility control for minute
-    pub minute_visibility: UnitVisibility,
+    pub minute_visibility: FieldDisplay,
     /// Style for second
     pub second: SecondStyle,
     /// Visibility control for second
-    pub second_visibility: UnitVisibility,
+    pub second_visibility: FieldDisplay,
     /// Style for millisecond
     pub millisecond: MilliSecondStyle,
     /// Visibility control for millisecond
-    pub millisecond_visibility: UnitVisibility,
+    pub millisecond_visibility: FieldDisplay,
     /// Style for microsecond
     pub microsecond: MicroSecondStyle,
     /// Visibility control for microsecond
-    pub microsecond_visibility: UnitVisibility,
+    pub microsecond_visibility: FieldDisplay,
     /// Style for nanosecond
     pub nanosecond: NanoSecondStyle,
     /// Visibility control for nanosecond
-    pub nanosecond_visibility: UnitVisibility,
+    pub nanosecond_visibility: FieldDisplay,
 
     /// Number of fractional digits to use when formatting sub-second units (milliseconds, microseconds, nanoseconds).
     /// Only takes effect when the subsecond units are styled as `Numeric`.
@@ -74,14 +74,74 @@ pub enum FractionalDigits {
 /// Configures visibility of fields in the formatted string.
 #[non_exhaustive]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
-pub enum UnitVisibility {
+pub enum FieldDisplay {
     #[default]
+    /// Default visibility.
+    Default,
     /// Only display this field if it is non-zero.
     Auto,
     /// Always display this field.
     Always,
 }
 
+#[non_exhaustive]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
+pub(crate) enum FieldStyle {
+    #[default]
+    /// The default style for this unit. Determined by base style.
+    Default,
+    /// Narrow style (most compact)
+    Narrow,
+    /// Short style (default)
+    Short,
+    /// Long style (most verbose)
+    Long,
+    /// Ensure formatted value is at least two digits long (by appending leading zeroes, if necessary)
+    TwoDigit,
+    /// Numeric style
+    Numeric,
+    /// Fractional style
+    Fractional,
+    /// Digital style
+    Digital,
+}
+
+macro_rules! derive_style {
+    (
+        $(
+            $(#[$enum_meta:meta])*
+            pub enum $enum_name: ident {
+                $(
+                    $(#[$variant_meta:meta])*
+                    $variant: ident
+                ),* $(,)?
+            }
+        )+
+    ) => {
+        $(
+            $(#[$enum_meta])*
+            pub enum $enum_name {
+                $(
+                    $(#[$variant_meta])*
+                    $variant,
+                )*
+            }
+
+            impl From<$enum_name> for FieldStyle {
+                fn from(style: $enum_name) -> Self {
+                    #[allow(unreachable_patterns)]
+                    match style {
+                        $(
+                            $enum_name::$variant => FieldStyle::$variant,
+                        )*
+                    }
+                }
+            }
+            )+
+    };
+}
+
+derive_style! {
 /// Configures the style of the duration output.
 #[non_exhaustive]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
@@ -101,9 +161,11 @@ pub enum BaseStyle {
 #[non_exhaustive]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
 pub enum YearStyle {
+    #[default]
+    /// The default style for this unit. Determined by base style.
+    Default,
     /// Narrow style (most compact)
     Narrow,
-    #[default]
     /// Short style (default)
     Short,
     /// Long style (most verbose)
@@ -114,9 +176,11 @@ pub enum YearStyle {
 #[non_exhaustive]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
 pub enum MonthStyle {
+    #[default]
+    /// The default style for this unit. Determined by base style.
+    Default,
     /// Narrow style (most compact)
     Narrow,
-    #[default]
     /// Short style (default)
     Short,
     /// Long style (most verbose)
@@ -127,9 +191,11 @@ pub enum MonthStyle {
 #[non_exhaustive]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
 pub enum WeekStyle {
+    #[default]
+    /// The default style for this unit. Determined by base style.
+    Default,
     /// Narrow style (most compact)
     Narrow,
-    #[default]
     /// Short style (default)
     Short,
     /// Long style (most verbose)
@@ -140,9 +206,11 @@ pub enum WeekStyle {
 #[non_exhaustive]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
 pub enum DayStyle {
+    #[default]
+    /// The default style for this unit. Determined by base style.
+    Default,
     /// Narrow style (most compact)
     Narrow,
-    #[default]
     /// Short style (default)
     Short,
     /// Long style (most verbose)
@@ -153,9 +221,11 @@ pub enum DayStyle {
 #[non_exhaustive]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
 pub enum HourStyle {
+    #[default]
+    /// The default style for this unit. Determined by base style.
+    Default,
     /// Narrow style (most compact)
     Narrow,
-    #[default]
     /// Short style (default)
     Short,
     /// Long style (most verbose)
@@ -170,9 +240,11 @@ pub enum HourStyle {
 #[non_exhaustive]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
 pub enum MinuteStyle {
+    #[default]
+    /// The default style for this unit. Determined by base style.
+    Default,
     /// Narrow style (most compact)
     Narrow,
-    #[default]
     /// Short style (default)
     Short,
     /// Long style (most verbose)
@@ -187,9 +259,11 @@ pub enum MinuteStyle {
 #[non_exhaustive]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
 pub enum SecondStyle {
+    #[default]
+    /// The default style for this unit. Determined by base style.
+    Default,
     /// Narrow style (most compact)
     Narrow,
-    #[default]
     /// Short style (default)
     Short,
     /// Long style (most verbose)
@@ -204,9 +278,11 @@ pub enum SecondStyle {
 #[non_exhaustive]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
 pub enum MilliSecondStyle {
+    #[default]
+    /// The default style for this unit. Determined by base style.
+    Default,
     /// Narrow style (most compact)
     Narrow,
-    #[default]
     /// Short style (default)
     Short,
     /// Long style (most verbose)
@@ -219,9 +295,11 @@ pub enum MilliSecondStyle {
 #[non_exhaustive]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
 pub enum MicroSecondStyle {
+    #[default]
+    /// The default style for this unit. Determined by base style.
+    Default,
     /// Narrow style (most compact)
     Narrow,
-    #[default]
     /// Short style (default)
     Short,
     /// Long style (most verbose)
@@ -234,13 +312,16 @@ pub enum MicroSecondStyle {
 #[non_exhaustive]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
 pub enum NanoSecondStyle {
+    #[default]
+    /// The default style for this unit. Determined by base style.
+    Default,
     /// Narrow style (most compact)
     Narrow,
-    #[default]
     /// Short style (default)
     Short,
     /// Long style (most verbose)
     Long,
     /// Numeric style
     Numeric,
+}
 }
