@@ -10,11 +10,17 @@ use core::fmt;
 #[non_exhaustive]
 pub enum ZeroVecError {
     /// Attempted to parse a buffer into a slice of the given ULE type but its
-    /// length was not compatible
+    /// length was not compatible.
+    ///
+    /// Typically created using [`ZeroVecError::length()`].
     InvalidLength { ty: &'static str, len: usize },
-    /// The byte sequence provided for `ty` failed to parse correctly
+    /// The byte sequence provided for `ty` failed to parse correctly in the
+    /// given ULE type.
+    ///
+    /// Typically created using [`ZeroVecError::parse()`].
     ParseError { ty: &'static str },
-    /// The byte buffer was not in the appropriate format for VarZeroVec
+    /// The byte buffer was not in the appropriate format for VarZeroVec.
+    /// This error comes from `zerovec` as opposed to a ULE impl.
     VarZeroVecFormatError,
 }
 
