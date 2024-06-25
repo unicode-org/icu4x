@@ -445,7 +445,7 @@ fn main() -> eyre::Result<()> {
             (Box::new(p), fallbacker)
         }
 
-        #[cfg(any(not(feature = "blob_input"), not(feature = "provider")))]
+        #[cfg(not(feature = "provider"))]
         () => eyre::bail!("Only the `HelloWorldV1 marker is supported without Cargo features `blob_input` or `provider`"),
     };
 
