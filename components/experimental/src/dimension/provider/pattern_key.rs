@@ -125,7 +125,7 @@ impl AsULE for PatternKey {
                     }
                 };
                 // Combine the bits to form the final byte
-                (0b10 << 6) + power_bits + count as u8
+                (0b10 << 6) | power_bits | count as u8
             }
         };
 
