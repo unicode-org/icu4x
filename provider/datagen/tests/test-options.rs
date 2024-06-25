@@ -704,6 +704,7 @@ fn explicit_preresolved_und() {
     // Should return the exact explicit locales set.
     assert_eq!(exported.keys().collect::<Vec<_>>(), locales);
 }
+
 #[test]
 fn explicit_runtime_empty() {
     let exported = export_to_map(

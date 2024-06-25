@@ -148,7 +148,7 @@ logging = ["icu_provider/logging", "icu_datetime/logging"]
 
 [package.metadata.cargo-all-features]
 # Components are tested individually, and there's no logic in this crate
-# skip_feature_sets = [[]]
+skip_feature_sets = [[]]
 
 [[example]]
 name = "tui"

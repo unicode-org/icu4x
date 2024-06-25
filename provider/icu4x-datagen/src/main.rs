@@ -290,9 +290,9 @@ fn main() -> eyre::Result<()> {
             [x] if x == "none" => Default::default(),
             [x] if x == "all" => {
                 #[cfg(feature = "experimental")]
-                log::warn!("The icu4x-datagen crate has been built with the `experimental` feature, so `--markers all` includes experimental markers");
+                log::info!("The icu4x-datagen crate has been built with the `experimental` feature, so `--markers all` includes experimental markers");
                 #[cfg(not(feature = "experimental"))]
-                log::warn!("The icu4x-datagen crate has been built without the `experimental` feature, so `--markers all` does not include experimental markers");
+                log::info!("The icu4x-datagen crate has been built without the `experimental` feature, so `--markers all` does not include experimental markers");
                 all_markers()
             }
             markers => markers
