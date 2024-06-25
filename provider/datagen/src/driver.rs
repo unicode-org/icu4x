@@ -413,10 +413,6 @@ impl DatagenDriver {
     /// Sets this driver to generate the given data markers.
     ///
     /// If this is not called, all markers supported by the provider will be exported.
-    ///
-    /// See [`icu_datagen::markers_from_bin`].
-    ///
-    /// [`icu_datagen::markers_from_bin`]: crate::markers_from_bin
     pub fn with_markers(self, markers: impl IntoIterator<Item = DataMarkerInfo>) -> Self {
         Self {
             markers: Some(markers.into_iter().collect()),
