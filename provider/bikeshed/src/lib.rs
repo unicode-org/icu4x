@@ -105,6 +105,12 @@ macro_rules! cb {
             $($marker,)+
             $(#[cfg(feature = "experimental")] $emarker,)+
         ]);
+
+        #[cfg(test)]
+        icu_provider::dynutil::impl_dynamic_data_provider!(DatagenProvider, [
+            $($marker,)+
+            $(#[cfg(feature = "experimental")] $emarker,)+
+        ], icu_provider::any::AnyMarker);
     }
 }
 icu_registry::registry!(cb);
