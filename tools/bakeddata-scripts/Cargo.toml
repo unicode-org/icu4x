@@ -11,9 +11,9 @@ edition = "2021"
 [dependencies]
 icu = { workspace = true, features = ["experimental"] }
 icu_provider = { workspace = true, features = ["datagen"] }
-
-icu_datagen = { workspace = true, features = ["baked_exporter", "fs_exporter", "experimental", "rayon"] }
+icu_datagen = { workspace = true, features = ["baked_exporter", "fs_exporter", "rayon"] }
 icu_datagen_bikeshed = { workspace = true, features = ["networking", "experimental", "use_wasm"] }
+
 log = { workspace = true }
 simple_logger = { workspace = true }
 crlify = { workspace = true }
