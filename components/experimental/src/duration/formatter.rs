@@ -1,5 +1,4 @@
 use super::options::*;
-use super::{Duration, DurationSign};
 
 #[derive(Clone)]
 pub struct DurationFormatter {
