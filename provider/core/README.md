@@ -86,14 +86,11 @@ The [`datagen`] module contains several APIs for data generation. See [`icu_data
 data generation implementation.
 
 [`ICU4X`]: ../icu/index.html
-[`DataProvider`]: data_provider::DataProvider
-[`IterableDynamicDataProvider`]: datagen::IterableDynamicDataProvider
-[`IterableDataProvider`]: datagen::IterableDataProvider
 [`AnyPayloadProvider`]: ../icu_provider_adapters/any_payload/struct.AnyPayloadProvider.html
 [`HelloWorldProvider`]: hello_world::HelloWorldProvider
 [`AnyProvider`]: any::AnyProvider
 [`Yokeable`]: yoke::Yokeable
-[`impl_dynamic_data_provider!`]: impl_dynamic_data_provider
+[`impl_dynamic_data_provider!`]: dynutil::impl_dynamic_data_provider
 [`icu_provider_adapters`]: ../icu_provider_adapters/index.html
 [`DatagenProvider`]: ../icu_datagen/struct.DatagenProvider.html
 [`as_downcasting()`]: any::AsDowncastingAnyProvider::as_downcasting

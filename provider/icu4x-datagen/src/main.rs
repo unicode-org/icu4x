@@ -31,7 +31,7 @@ use eyre::WrapErr;
 use icu_datagen::prelude::*;
 #[cfg(feature = "provider")]
 use icu_datagen_bikeshed::DatagenProvider;
-use icu_provider::datagen::ExportableProvider;
+use icu_provider::export::ExportableProvider;
 use icu_provider::hello_world::HelloWorldV1Marker;
 use simple_logger::SimpleLogger;
 use std::collections::HashMap;
@@ -631,7 +631,7 @@ macro_rules! cb {
 
 
         #[cfg(feature = "blob_input")]
-        icu_provider::datagen::make_exportable_provider!(
+        icu_provider::export::make_exportable_provider!(
             ReexportableBlobDataProvider,
             [
                 icu_provider::hello_world::HelloWorldV1Marker,
@@ -650,8 +650,6 @@ icu_registry::registry!(cb);
 
 #[cfg(feature = "blob_input")]
 use icu_provider::buf::DeserializingBufferProvider;
-#[cfg(feature = "blob_input")]
-use icu_provider::datagen::*;
 #[cfg(feature = "blob_input")]
 use icu_provider::prelude::*;
 #[cfg(feature = "blob_input")]

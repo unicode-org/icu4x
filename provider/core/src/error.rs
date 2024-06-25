@@ -53,7 +53,7 @@ pub enum DataErrorKind {
 
     /// An unspecified data source containing the required data is unavailable.
     #[displaydoc("Missing source data")]
-    #[cfg(feature = "datagen")]
+    #[cfg(feature = "export")]
     MissingSourceData,
 
     /// An error indicating that the desired buffer format is not available. This usually

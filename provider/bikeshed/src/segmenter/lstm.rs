@@ -243,7 +243,9 @@ mod tests {
             AnyPayloadProvider::from_owned::<LstmForWordLineAutoV1Marker>(
                 raw_data.try_convert().unwrap(),
             ),
-            provider.as_any_provider(),
+            AnyPayloadProvider::from_owned::<LstmForWordLineAutoV1Marker>(
+                raw_data.try_convert().unwrap(),
+            ),
         );
 
         let segmenter = LineSegmenter::try_new_lstm_with_any_provider(&provider).unwrap();

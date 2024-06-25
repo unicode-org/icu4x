@@ -27,7 +27,7 @@ proc-macro2 = { workspace = true, optional = true }
 heck = { workspace = true, optional = true }
 
 [dev-dependencies]
-icu_provider = { path = "../core", features = ["datagen"] }
+icu_provider = { path = "../core", features = ["export"] }
 icu_datagen = { path = "../datagen" }
 
 [features]
@@ -39,5 +39,5 @@ export = [
     "dep:itertools",
     "dep:log",
     "dep:proc-macro2",
-    "icu_provider/datagen"
+    "icu_provider/export"
 ]

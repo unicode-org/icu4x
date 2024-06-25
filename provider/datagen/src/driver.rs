@@ -9,7 +9,7 @@ use icu_locale::fallback::LocaleFallbackIterator;
 use icu_locale::LanguageIdentifier;
 use icu_locale::LocaleFallbacker;
 use icu_locale::ParseError;
-use icu_provider::datagen::*;
+use icu_provider::export::*;
 use icu_provider::prelude::*;
 use std::collections::HashMap;
 use std::collections::HashSet;
@@ -1016,7 +1016,7 @@ fn test_collation_filtering() {
         }
     }
 
-    icu_provider::datagen::make_exportable_provider!(
+    icu_provider::export::make_exportable_provider!(
         Provider,
         [icu::collator::provider::CollationDataV1Marker,]
     );

@@ -19,7 +19,6 @@
 
 use cldr_cache::CldrCache;
 use elsa::sync::FrozenMap;
-use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use source::{AbstractFs, SerdeCache};
 use std::borrow::Cow;
@@ -102,7 +101,7 @@ pub struct DatagenProvider {
 
 macro_rules! cb {
     ($($marker:path = $path:literal,)+ #[experimental] $($emarker:path = $epath:literal,)+) => {
-        icu_provider::datagen::make_exportable_provider!(DatagenProvider, [
+        icu_provider::export::make_exportable_provider!(DatagenProvider, [
             $($marker,)+
             $(#[cfg(feature = "experimental")] $emarker,)+
         ]);

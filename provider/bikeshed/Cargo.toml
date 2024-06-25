@@ -39,7 +39,7 @@ calendrical_calculations = { workspace = true }
 icu_codepointtrie_builder = { workspace = true }
 icu_collections = { workspace = true, features = ["serde"] }
 icu_pattern = { workspace = true, features = ["alloc"] }
-icu_provider = { workspace = true, features = ["std", "logging", "datagen"]}
+icu_provider = { workspace = true, features = ["std", "logging", "export"]}
 icu_provider_adapters = { workspace = true }
 icu_registry = { workspace = true }
 litemap = { workspace = true, features = ["serde"] }

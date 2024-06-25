@@ -86,14 +86,11 @@
 //! data generation implementation.
 //!
 //! [`ICU4X`]: ../icu/index.html
-//! [`DataProvider`]: data_provider::DataProvider
-//! [`IterableDynamicDataProvider`]: datagen::IterableDynamicDataProvider
-//! [`IterableDataProvider`]: datagen::IterableDataProvider
 //! [`AnyPayloadProvider`]: ../icu_provider_adapters/any_payload/struct.AnyPayloadProvider.html
 //! [`HelloWorldProvider`]: hello_world::HelloWorldProvider
 //! [`AnyProvider`]: any::AnyProvider
 //! [`Yokeable`]: yoke::Yokeable
-//! [`impl_dynamic_data_provider!`]: impl_dynamic_data_provider
+//! [`impl_dynamic_data_provider!`]: dynutil::impl_dynamic_data_provider
 //! [`icu_provider_adapters`]: ../icu_provider_adapters/index.html
 //! [`DatagenProvider`]: ../icu_datagen/struct.DatagenProvider.html
 //! [`as_downcasting()`]: any::AsDowncastingAnyProvider::as_downcasting
@@ -123,9 +120,9 @@ extern crate alloc;
 pub mod any;
 pub mod buf;
 pub mod constructors;
-#[cfg(feature = "datagen")]
-pub mod datagen;
 pub mod dynutil;
+#[cfg(feature = "export")]
+pub mod export;
 pub mod hello_world;
 
 // TODO: put this in a separate crate
@@ -137,6 +134,8 @@ mod data_provider;
 pub use data_provider::{
     BoundDataProvider, DataProvider, DataProviderWithMarker, DynamicDataProvider,
 };
+#[cfg(feature = "std")]
+pub use data_provider::{IterableDataProvider, IterableDynamicDataProvider};
 
 mod error;
 pub use error::{DataError, DataErrorKind};
@@ -183,6 +182,8 @@ pub mod prelude {
         DataMarkerInfo, DataPayload, DataProvider, DataRequest, DataRequestMetadata, DataResponse,
         DataResponseMetadata, DynamicDataMarker, DynamicDataProvider,
     };
+    #[cfg(feature = "std")]
+    pub use crate::{IterableDataProvider, IterableDynamicDataProvider};
 
     #[doc(no_inline)]
     pub use yoke;

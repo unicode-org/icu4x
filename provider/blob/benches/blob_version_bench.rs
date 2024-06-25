@@ -5,7 +5,6 @@
 extern crate alloc;
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
-use icu_provider::datagen::IterableDataProvider;
 use icu_provider::hello_world::*;
 use icu_provider::prelude::*;
 use icu_provider_blob::BlobDataProvider;

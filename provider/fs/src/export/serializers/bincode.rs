@@ -7,7 +7,7 @@
 use super::AbstractSerializer;
 use bincode::config::Options as _;
 use icu_provider::buf::BufferFormat;
-use icu_provider::datagen::*;
+use icu_provider::export::*;
 use icu_provider::prelude::*;
 use std::io;
 

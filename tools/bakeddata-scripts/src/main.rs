@@ -9,7 +9,7 @@ use icu_datagen::fs_exporter;
 use icu_datagen::fs_exporter::serializers::AbstractSerializer;
 use icu_datagen::prelude::*;
 use icu_datagen_bikeshed::{CoverageLevel, DatagenProvider};
-use icu_provider::datagen::*;
+use icu_provider::export::*;
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;
 use std::fs::File;

@@ -17,7 +17,7 @@ rust-version.workspace = true
 version.workspace = true
 
 [dependencies]
-icu_provider = { workspace = true, features = ["datagen"] }
+icu_provider = { workspace = true }
 icu = { workspace = true, features = ["datagen"] }
 icu_datagen = { workspace = true, features = ["rayon"] }
 icu_datagen_bikeshed = { workspace = true, optional = true }
@@ -35,7 +35,7 @@ default = ["use_wasm", "networking", "fs_exporter", "blob_exporter", "baked_expo
 provider = ["dep:icu_datagen_bikeshed"]
 baked_exporter = ["icu_datagen/baked_exporter"]
 blob_exporter = ["icu_datagen/blob_exporter"]
-blob_input = ["dep:icu_provider_blob", "icu/datagen"]
+blob_input = ["dep:icu_provider_blob", "icu/datagen", "icu_provider/export"]
 fs_exporter = ["icu_datagen/fs_exporter"]
 # Use wasm for building codepointtries
 use_wasm = ["icu_datagen_bikeshed?/use_wasm"]

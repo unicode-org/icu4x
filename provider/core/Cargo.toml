@@ -41,7 +41,7 @@ postcard = { workspace = true, optional = true }
 serde = { workspace = true, features = ["derive", "alloc"], optional = true }
 serde_json = { workspace = true, optional = true }
 
-# datagen
+# export
 erased-serde = { workspace = true, optional = true, features = ["alloc"] }
 databake = { workspace = true, optional = true, features = ["derive"] }
 
@@ -70,7 +70,7 @@ deserialize_bincode_1 = ["serde", "dep:bincode", "std"]
 deserialize_postcard_1 = ["serde", "dep:postcard"]
 
 # Dependencies for running data generation
-datagen = ["serde", "dep:erased-serde", "dep:databake", "std", "sync"]
+export = ["serde", "dep:erased-serde", "dep:databake", "std", "sync"]
 
 [package.metadata.cargo-all-features]
 denylist = ["macros"]

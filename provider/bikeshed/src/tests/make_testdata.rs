@@ -4,8 +4,8 @@
 
 use crate::DatagenProvider;
 use icu_datagen::prelude::*;
-use icu_provider::datagen::*;
 use icu_provider::dynutil::UpcastDataPayload;
+use icu_provider::export::*;
 use icu_provider::prelude::*;
 use std::alloc::{GlobalAlloc, Layout, System};
 use std::cell::Cell;
