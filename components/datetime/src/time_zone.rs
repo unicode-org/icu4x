@@ -848,7 +848,7 @@ pub(super) struct LocalizedGmtFormat {}
 
 /// -07:00
 #[derive(Debug, Clone, Copy, PartialEq)]
-pub struct Iso8601TimeZoneStyle {
+pub(super) struct Iso8601TimeZoneStyle {
     format: IsoFormat,
     minutes: IsoMinutes,
     seconds: IsoSeconds,

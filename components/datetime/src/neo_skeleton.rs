@@ -4,12 +4,13 @@
 
 //! Temporary module for neo datetime skeletons (Semantic Skeleta)
 
+#[cfg(feature = "experimental")]
+use crate::fields::{self, Field, FieldLength, FieldSymbol};
 use crate::options::components;
 use crate::options::length;
 use crate::DateTimeFormatterOptions;
 use tinystr::tinystr;
 use tinystr::TinyAsciiStr;
-use crate::fields::{self, Field, FieldSymbol, FieldLength};
 
 /// A specification for the length of a date or component of a date.
 ///
@@ -755,15 +756,15 @@ impl NeoTimeZoneSkeleton {
 
     #[cfg(feature = "experimental")]
     pub(crate) fn to_field(self, length: NeoSkeletonLength) -> Field {
-        use NeoTimeZoneStyle::*;
         use NeoSkeletonLength::*;
+        use NeoTimeZoneStyle::*;
         let length = self.length.unwrap_or(length);
         match (self.style, length) {
             (NonLocation, Short) => Field {
                 symbol: FieldSymbol::TimeZone(fields::TimeZone::LowerV),
                 length: FieldLength::One,
             },
-            (_, _) => todo!()
+            (_, _) => todo!(),
         }
     }
 }

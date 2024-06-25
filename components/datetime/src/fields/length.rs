@@ -104,15 +104,15 @@ impl FieldLength {
             idx if (FIRST_NUMERIC_OVERRIDE..=LAST_NUMERIC_OVERRIDE).contains(&idx) => {
                 Self::NumericOverride((idx - FIRST_NUMERIC_OVERRIDE).try_into()?)
             }
-            idx if (FIRST_TIME_ZONE_FALLBACK_OVERRIDE..=LAST_TIME_ZONE_FALLBACK_OVERRIDE).contains(&idx) => {
-                Self::TimeZoneFallbackOverride((idx - FIRST_TIME_ZONE_FALLBACK_OVERRIDE).try_into()?)
+            idx if (FIRST_TIME_ZONE_FALLBACK_OVERRIDE..=LAST_TIME_ZONE_FALLBACK_OVERRIDE)
+                .contains(&idx) =>
+            {
+                Self::TimeZoneFallbackOverride(
+                    (idx - FIRST_TIME_ZONE_FALLBACK_OVERRIDE).try_into()?,
+                )
             }
-            idx if idx >= FIRST_FIXED => {
-                Self::Fixed(idx - FIRST_FIXED)
-            }
-            _ => {
-                return Err(LengthError::InvalidLength)
-            }
+            idx if idx >= FIRST_FIXED => Self::Fixed(idx - FIRST_FIXED),
+            _ => return Err(LengthError::InvalidLength),
         })
     }
 
@@ -127,7 +127,9 @@ impl FieldLength {
             FieldLength::Narrow => 5,
             FieldLength::Six => 6,
             FieldLength::NumericOverride(o) => FIRST_NUMERIC_OVERRIDE as usize + o as usize,
-            FieldLength::TimeZoneFallbackOverride(o) => FIRST_TIME_ZONE_FALLBACK_OVERRIDE as usize + o as usize,
+            FieldLength::TimeZoneFallbackOverride(o) => {
+                FIRST_TIME_ZONE_FALLBACK_OVERRIDE as usize + o as usize
+            }
             FieldLength::Fixed(p) => p as usize,
         }
     }

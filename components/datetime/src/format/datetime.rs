@@ -159,7 +159,9 @@ where
 {
     if let Some(fdf) = fixed_decimal_format {
         match length {
-            FieldLength::One | FieldLength::NumericOverride(_) | FieldLength::TimeZoneFallbackOverride(_) => {}
+            FieldLength::One
+            | FieldLength::NumericOverride(_)
+            | FieldLength::TimeZoneFallbackOverride(_) => {}
             FieldLength::TwoDigit => {
                 num.pad_start(2);
                 num.set_max_position(2);
@@ -763,12 +765,8 @@ where
         (FieldSymbol::TimeZone(_), _) => {
             debug_assert!(false, "unreachable: time zone formatted in its own fn");
             Err(DateTimeWriteError::UnsupportedField(field))
-        },
-        (
-            FieldSymbol::Day(_)
-            | FieldSymbol::Second(Second::Millisecond),
-            _,
-        ) => {
+        }
+        (FieldSymbol::Day(_) | FieldSymbol::Second(Second::Millisecond), _) => {
             w.with_part(Part::ERROR, |w| {
                 w.write_str("{unsupported:")?;
                 w.write_char(char::from(field.symbol))?;
@@ -819,7 +817,10 @@ where
     }
 
     // for errors only:
-    let field = Field { symbol: FieldSymbol::TimeZone(field_symbol), length: field_length };
+    let field = Field {
+        symbol: FieldSymbol::TimeZone(field_symbol),
+        length: field_length,
+    };
 
     // TODO: Implement proper formatting logic here
     Ok(match datetime.time_zone() {

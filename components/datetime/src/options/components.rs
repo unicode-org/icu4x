@@ -652,7 +652,7 @@ impl<'data> From<&PatternPlurals<'data>> for Bag {
                         FieldLength::TimeZoneFallbackOverride(_) => {
                             debug_assert!(false, "unexpected length for era field");
                             Text::Short
-                        },
+                        }
                         FieldLength::Wide => Text::Long,
                         FieldLength::Narrow | FieldLength::Six | FieldLength::Fixed(_) => {
                             Text::Narrow
@@ -751,7 +751,7 @@ impl<'data> From<&PatternPlurals<'data>> for Bag {
                             FieldLength::TimeZoneFallbackOverride(_) => {
                                 debug_assert!(false, "unexpected length for weekday field");
                                 Text::Short
-                            },
+                            }
                             FieldLength::Abbreviated => Text::Short,
                             FieldLength::Wide => Text::Long,
                             FieldLength::Narrow | FieldLength::Six | FieldLength::Fixed(_) => {
