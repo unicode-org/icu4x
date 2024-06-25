@@ -113,9 +113,9 @@ impl AsULE for PatternKey {
         let byte = match self {
             PatternKey::Binary(value) => value,
             PatternKey::Decimal(value) => {
-                // TODO: shall I check the limits of the values?
                 let sign = if value < 0 { 0b0010_0000 } else { 0 };
-                (0b01 << 6) + sign + (value as u8)
+                debug_assert!(value > -32 && value < 32);
+                (0b01 << 6) | sign | (value as u8 & 0b0001_1111)
             }
             PatternKey::Power(power, count) => {
                 let power_bits = {
