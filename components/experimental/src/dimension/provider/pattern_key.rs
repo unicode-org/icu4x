@@ -81,7 +81,6 @@ unsafe impl ULE for PatternKeyULE {
             return Err(ZeroVecError::VarZeroVecFormatError);
         }
 
-        //10010010
         // For the `Power` variant:
         //      b5 & b4 must be 10 or 11. (this means that b5 must be 1)
         //      b3 must be 0.
