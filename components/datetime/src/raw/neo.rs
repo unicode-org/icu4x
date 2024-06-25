@@ -2,12 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::fields::{self, Field, FieldLength, FieldSymbol};
 use crate::input::ExtractedDateTimeInput;
 use crate::neo_pattern::DateTimePattern;
 use crate::neo_skeleton::{
     NeoComponents, NeoDateComponents, NeoDateSkeleton, NeoDayComponents, NeoSkeletonLength,
-    NeoTimeComponents, NeoTimeSkeleton,
+    NeoTimeComponents, NeoTimeSkeleton, NeoTimeZoneSkeleton,
 };
 use crate::pattern::runtime::PatternMetadata;
 use crate::pattern::{runtime, PatternItem};
@@ -172,11 +171,11 @@ impl TimePatternSelectionData {
 }
 
 impl ZonePatternSelectionData {
-    pub(crate) fn from_field(field_symbol: fields::TimeZone, field_length: FieldLength) -> Self {
-        let pattern_item = PatternItem::Field(Field {
-            symbol: FieldSymbol::TimeZone(field_symbol),
-            length: field_length,
-        });
+    pub(crate) fn new_with_skeleton(
+        length: NeoSkeletonLength,
+        components: NeoTimeZoneSkeleton,
+    ) -> Self {
+        let pattern_item = PatternItem::Field(components.to_field(length));
         Self::SinglePatternItem(pattern_item.to_unaligned())
     }
 
@@ -267,8 +266,7 @@ impl DateTimePatternSelectionData {
                 Ok(Self::Time(selection))
             }
             NeoComponents::Zone(components) => {
-                let (field_symbol, field_length) = components.to_field();
-                let selection = ZonePatternSelectionData::from_field(field_symbol, field_length);
+                let selection = ZonePatternSelectionData::new_with_skeleton(length, components);
                 Ok(Self::Zone(selection))
             }
             NeoComponents::DateTime(day_components, time_components) => {

@@ -4,7 +4,6 @@
 
 use crate::fields::{self, Field, FieldLength, FieldSymbol, Second, Week, Year};
 use crate::input::{DateInput, ExtractedDateTimeInput, IsoTimeInput};
-use crate::neo_zone::NeoZoneConfig;
 use crate::pattern::runtime::{PatternBorrowed, PatternMetadata};
 use crate::pattern::{
     runtime::{Pattern, PatternPlurals},
@@ -821,8 +820,6 @@ where
 
     // for errors only:
     let field = Field { symbol: FieldSymbol::TimeZone(field_symbol), length: field_length };
-
-    let _zone_components = NeoZoneConfig::from_field(field_symbol, field_length);
 
     // TODO: Implement proper formatting logic here
     Ok(match datetime.time_zone() {

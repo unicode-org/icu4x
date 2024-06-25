@@ -149,7 +149,6 @@ pub mod neo_marker;
 pub mod neo_pattern;
 #[cfg(any(feature = "datagen", feature = "experimental"))]
 pub mod neo_skeleton;
-pub mod neo_zone;
 pub mod options;
 #[doc(hidden)]
 pub mod pattern;

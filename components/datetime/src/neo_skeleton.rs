@@ -9,7 +9,7 @@ use crate::options::length;
 use crate::DateTimeFormatterOptions;
 use tinystr::tinystr;
 use tinystr::TinyAsciiStr;
-use crate::fields::{self, FieldLength};
+use crate::fields::{self, Field, FieldSymbol, FieldLength};
 
 /// A specification for the length of a date or component of a date.
 ///
@@ -636,26 +636,6 @@ impl NeoTimeComponents {
     }
 }
 
-/// A specification for the desired display of a time zone.
-///
-/// Unlike date and time, we support only a single time zone component, but the
-/// specific component can change.
-///
-/// Since the length of a time zone can vary independent of the date and time,
-/// the time zone lengths are directly encoded into this enum.
-#[derive(Debug, Copy, Clone)]
-#[non_exhaustive]
-pub enum NeoZoneComponents {
-    /// The generic short non-location format. For example: "PT"
-    GenericShort,
-}
-
-impl NeoZoneComponents {
-    pub(crate) fn to_field(self) -> (fields::TimeZone, FieldLength) {
-        todo!()
-    }
-}
-
 /// A specification of components for parts of a datetime.
 #[derive(Debug, Copy, Clone)]
 #[non_exhaustive]
@@ -689,11 +669,11 @@ pub enum NeoComponents {
     /// Components for parts of a time.
     Time(NeoTimeComponents),
     /// Components for a time zone by itself.
-    Zone(NeoZoneComponents),
+    Zone(NeoTimeZoneSkeleton),
     /// Components for parts of a date and time together.
     DateTime(NeoDayComponents, NeoTimeComponents),
     /// Components for a date/time with a time zone.
-    DateTimeZone(NeoDateTimeComponents, NeoZoneComponents),
+    DateTimeZone(NeoDateTimeComponents, NeoTimeZoneSkeleton),
 }
 
 impl From<NeoDateComponents> for NeoComponents {
@@ -718,8 +698,8 @@ impl From<NeoDateTimeComponents> for NeoComponents {
     }
 }
 
-impl From<NeoZoneComponents> for NeoComponents {
-    fn from(value: NeoZoneComponents) -> Self {
+impl From<NeoTimeZoneSkeleton> for NeoComponents {
+    fn from(value: NeoTimeZoneSkeleton) -> Self {
         Self::Zone(value)
     }
 }
@@ -762,6 +742,28 @@ pub struct NeoTimeZoneSkeleton {
     /// “GMT−8” ([`NeoTimeZoneStyle::Offset`]) or “PT”
     /// ([`NeoTimeZoneStyle::NonLocation`]).
     pub style: NeoTimeZoneStyle,
+}
+
+impl NeoTimeZoneSkeleton {
+    pub(crate) const fn non_location_short() -> Self {
+        Self {
+            length: Some(NeoSkeletonLength::Short),
+            style: NeoTimeZoneStyle::NonLocation,
+        }
+    }
+
+    pub(crate) fn to_field(self, length: NeoSkeletonLength) -> Field {
+        use NeoTimeZoneStyle::*;
+        use NeoSkeletonLength::*;
+        let length = self.length.unwrap_or(length);
+        match (self.style, length) {
+            (NonLocation, Short) => Field {
+                symbol: FieldSymbol::TimeZone(fields::TimeZone::LowerV),
+                length: FieldLength::One,
+            },
+            (_, _) => todo!()
+        }
+    }
 }
 
 /// A skeleton for formatting parts of a date (without time or time zone).
