@@ -88,17 +88,17 @@ unsafe impl ULE for PatternKeyULE {
         if (byte & 0b1100_0000) == 0b1000_0000 {
             // b5 must be 1
             if (byte & 0b0010_0000) == 0 {
-                return Err(ZeroVecError::VarZeroVecFormatError);
+                return Err(ZeroVecError::parse::<Self>());
             }
 
             // b3 must be 0
             if (byte & 0b0000_1000) != 0 {
-                return Err(ZeroVecError::VarZeroVecFormatError);
+                return Err(ZeroVecError::parse::<Self>());
             }
 
             // If b2 is 1, b1 must be 0
             if (byte & 0b0000_0100) != 0 && (byte & 0b0000_0010) != 0 {
-                return Err(ZeroVecError::VarZeroVecFormatError);
+                return Err(ZeroVecError::parse::<Self>());
             }
         }
 
