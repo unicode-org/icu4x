@@ -22,7 +22,7 @@ edition.workspace = true
 homepage.workspace = true
 repository.workspace = true
 rust-version.workspace = true
-version.workspace = true
+version = "1.5.1"
 
 [package.metadata.docs.rs]
 all-features = true
@@ -148,8 +148,8 @@ log = { workspace = true, optional = true }
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 # Logging uses diplomat_runtime bindings in wasm, we only need this for native
 simple_logger = { workspace = true, optional = true }
+libc_alloc = { workspace = true, features = ["global"], optional = true }
 
 [target.'cfg(not(any(target_arch = "wasm32", target_os = "none")))'.dependencies]
 icu_provider_fs = { workspace = true, optional = true }
 
-libc_alloc = { workspace = true, features = ["global"], optional = true }

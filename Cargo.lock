@@ -959,7 +959,7 @@ version = "1.5.0"
 
 [[package]]
 name = "icu_capi"
-version = "1.5.0"
+version = "1.5.1"
 dependencies = [
  "diplomat",
  "diplomat-runtime",
