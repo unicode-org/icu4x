@@ -121,7 +121,7 @@ impl AsULE for PatternKey {
                 let power_bits = {
                     match power {
                         PowerValue::Two => 0b0010_0000,
-                        PowerValue::Three => 0b0100_0000,
+                        PowerValue::Three => 0b0011_0000,
                     }
                 };
                 0b1000_0000 + power_bits + count as u8
