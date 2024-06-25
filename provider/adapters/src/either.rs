@@ -60,6 +60,7 @@ impl<M: DataMarker, P0: DataProvider<M>, P1: DataProvider<M>> DataProvider<M>
     }
 }
 
+#[cfg(feature = "std")]
 impl<
         M: DynamicDataMarker,
         P0: IterableDynamicDataProvider<M>,
