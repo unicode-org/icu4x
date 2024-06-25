@@ -81,7 +81,6 @@ unsafe impl ULE for PatternKeyULE {
             return Err(ZeroVecError::VarZeroVecFormatError);
         }
 
-        //10010010
         // For the `Power` variant:
         //      b5 & b4 must be 10 or 11. (this means that b5 must be 1)
         //      b3 must be 0.
@@ -116,16 +115,17 @@ impl AsULE for PatternKey {
             PatternKey::Decimal(value) => {
                 // TODO: shall I check the limits of the values?
                 let sign = if value < 0 { 0b0010_0000 } else { 0 };
-                0b0100_0000 + sign + (value as u8)
+                (0b01 << 6) + sign + (value as u8)
             }
             PatternKey::Power(power, count) => {
                 let power_bits = {
                     match power {
-                        PowerValue::Two => 0b0010_0000,
-                        PowerValue::Three => 0b0100_0000,
+                        PowerValue::Two => 0b10 << 4,
+                        PowerValue::Three => 0b11 << 4,
                     }
                 };
-                0b1000_0000 + power_bits + count as u8
+                // Combine the bits to form the final byte
+                (0b10 << 6) + power_bits + count as u8
             }
         };
 
@@ -135,23 +135,23 @@ impl AsULE for PatternKey {
     fn from_unaligned(unaligned: Self::ULE) -> Self {
         let byte = unaligned.0;
 
-        let variant = (byte & 0b11000000) >> 6;
-        let value = byte & 0b00111111;
+        let variant = (byte & 0b1100_0000) >> 6;
+        let value = byte & 0b0011_1111;
 
         match variant {
             0b00 => PatternKey::Binary(value),
-            0b01 => match value & 0b00100000 {
-                0b00000000 => PatternKey::Decimal(value as i8),
-                0b00100000 => PatternKey::Decimal(-((value & 0b00011111) as i8)),
+            0b01 => match value & 0b0010_0000 {
+                0b0000_0000 => PatternKey::Decimal(value as i8),
+                0b0010_0000 => PatternKey::Decimal(-((value & 0b0001_1111) as i8)),
                 _ => unreachable!(),
             },
             0b10 => {
-                let power = match value & 0b00110000 {
-                    0b00100000 => PowerValue::Two,
-                    0b00110000 => PowerValue::Three,
+                let power = match value & 0b0011_0000 {
+                    0b0010_0000 => PowerValue::Two,
+                    0b0011_0000 => PowerValue::Three,
                     _ => unreachable!(),
                 };
-                let count = value & 0b00001111;
+                let count = value & 0b0000_1111;
                 PatternKey::Power(power, count.into())
             }
             _ => unreachable!(),
@@ -166,23 +166,9 @@ impl<'a> ZeroMapKV<'a> for PatternKey {
     type OwnedType = PatternKey;
 }
 
-impl From<u8> for CompoundCount {
-    fn from(val: u8) -> Self {
-        match val {
-            0 => CompoundCount::Zero,
-            1 => CompoundCount::One,
-            2 => CompoundCount::Two,
-            3 => CompoundCount::Few,
-            4 => CompoundCount::Many,
-            5 => CompoundCount::Other,
-            _ => unreachable!(),
-        }
-    }
-}
-
 #[test]
 fn test_pattern_key_ule() {
-    use PowerValue::Two;
+    use PowerValue::{Three, Two};
 
     let binary = PatternKey::Binary(0b0000_1111);
     let binary_ule = binary.to_unaligned();
@@ -194,10 +180,15 @@ fn test_pattern_key_ule() {
     PatternKeyULE::validate_byte_slice(&[decimal_ule.0]).unwrap();
     assert_eq!(decimal_ule.0, 0b0100_1111);
 
-    let power = PatternKey::Power(Two, CompoundCount::Two);
-    let power_ule = power.to_unaligned();
-    PatternKeyULE::validate_byte_slice(&[power_ule.0]).unwrap();
-    assert_eq!(power_ule.0, 0b1010_0010);
+    let power2 = PatternKey::Power(Two, CompoundCount::Two);
+    let power2_ule = power2.to_unaligned();
+    PatternKeyULE::validate_byte_slice(&[power2_ule.0]).unwrap();
+    assert_eq!(power2_ule.0, 0b1010_0010);
+
+    let power3 = PatternKey::Power(Three, CompoundCount::Two);
+    let power3_ule = power3.to_unaligned();
+    PatternKeyULE::validate_byte_slice(&[power3_ule.0]).unwrap();
+    assert_eq!(power3_ule.0, 0b1011_0010);
 
     let binary = PatternKey::from_unaligned(binary_ule);
     assert_eq!(binary, PatternKey::Binary(0b0000_1111));
@@ -205,6 +196,9 @@ fn test_pattern_key_ule() {
     let decimal = PatternKey::from_unaligned(decimal_ule);
     assert_eq!(decimal, PatternKey::Decimal(0b0000_1111));
 
-    let power = PatternKey::from_unaligned(power_ule);
-    assert_eq!(power, PatternKey::Power(Two, CompoundCount::Two));
+    let power2 = PatternKey::from_unaligned(power2_ule);
+    assert_eq!(power2, PatternKey::Power(Two, CompoundCount::Two));
+
+    let power3 = PatternKey::from_unaligned(power3_ule);
+    assert_eq!(power3, PatternKey::Power(Three, CompoundCount::Two));
 }
