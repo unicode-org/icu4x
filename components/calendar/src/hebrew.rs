@@ -529,7 +529,7 @@ mod tests {
         // Extended year is accessible via the inner value.
         // Era year is accessible via the public getter.
         // TODO(#3962): Make extended year publicly accessible.
-        assert_eq!(greg_date.inner.0.0.year, -5000);
+        assert_eq!(greg_date.inner.0 .0.year, -5000);
         assert_eq!(greg_date.year().era.0, "bce");
         // In Gregorian, era year is 1 - extended year
         assert_eq!(greg_date.year().number, 5001);
