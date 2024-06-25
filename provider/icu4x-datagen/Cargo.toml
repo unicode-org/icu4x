@@ -18,7 +18,7 @@ version.workspace = true
 
 [dependencies]
 icu_provider = { workspace = true, features = ["datagen"] }
-icu = { workspace = true }
+icu = { workspace = true, features = ["datagen"] }
 icu_datagen = { workspace = true, features = ["rayon"] }
 icu_datagen_bikeshed = { workspace = true, optional = true }
 icu_registry = { workspace = true }
