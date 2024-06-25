@@ -379,6 +379,8 @@ impl DatagenDriver {
     ///
     /// The fallbacker is used to resolve locale families, and to dedpulicate data if requested.
     /// Make sure to use the same fallback data when loading from the provider at runtime.
+    /// Commonly, you will export the fallback markers, in which case you should construct
+    /// your fallbacker with the source provider (i.e. [`LocaleFallbacker::try_new_unstable`]).
     pub fn new(
         locales: impl IntoIterator<Item = LocaleFamily>,
         options: FallbackOptions,
