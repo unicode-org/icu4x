@@ -78,7 +78,7 @@ unsafe impl ULE for PatternKeyULE {
 
         // Ensure the first two bits (b7 & b6) are not 11.
         if (byte & 0b1100_0000) == 0b1100_0000 {
-            return Err(ZeroVecError::VarZeroVecFormatError);
+            return Err(ZeroVecError::parse::<Self>());
         }
 
         // For the `Power` variant:
