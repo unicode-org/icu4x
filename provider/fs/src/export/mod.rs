@@ -25,7 +25,7 @@
 //! let mut exporter = FilesystemExporter::try_new(serializer, options)
 //!     .expect("Should successfully initialize data output directory");
 //!
-//! // Export something. Make sure to use the same fallback data at runtime.
+//! // Export something. Make sure to use the same fallback data at runtime!
 //! DatagenDriver::new([LocaleFamily::FULL], FallbackOptions::maximal_deduplication(), LocaleFallbacker::new().static_to_owned())
 //!     .export(&HelloWorldProvider, exporter)
 //!     .unwrap();

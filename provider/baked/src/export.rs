@@ -21,7 +21,7 @@
 //! let mut exporter =
 //!     BakedExporter::new(demo_path.clone(), Default::default()).unwrap();
 //!
-//! // Export something. Make sure to use the same fallback data at runtime.
+//! // Export something. Make sure to use the same fallback data at runtime!
 //! DatagenDriver::new([LocaleFamily::FULL], FallbackOptions::maximal_deduplication(), LocaleFallbacker::new().static_to_owned())
 //!     .export(&icu_provider::hello_world::HelloWorldProvider, exporter)
 //!     .unwrap();
