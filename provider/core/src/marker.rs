@@ -4,12 +4,9 @@
 
 use crate::fallback::LocaleFallbackConfig;
 use crate::{DataError, DataErrorKind, DataProvider, DataProviderWithMarker};
-use alloc::borrow::Cow;
 use core::fmt;
-use core::fmt::Write;
 use core::marker::PhantomData;
 use core::ops::Deref;
-use writeable::{LengthHint, Writeable};
 use yoke::Yokeable;
 use zerovec::ule::*;
 
@@ -641,28 +638,9 @@ pub use __data_marker_path as data_marker_path;
 
 impl fmt::Debug for DataMarkerInfo {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        f.write_str("DataMarkerInfo{")?;
-        fmt::Display::fmt(self, f)?;
-        f.write_char('}')?;
-        Ok(())
+        f.write_str(self.path.get())
     }
 }
-
-impl Writeable for DataMarkerInfo {
-    fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
-        self.path.write_to(sink)
-    }
-
-    fn writeable_length_hint(&self) -> LengthHint {
-        self.path.writeable_length_hint()
-    }
-
-    fn write_to_string(&self) -> Cow<str> {
-        Cow::Borrowed(self.path.get())
-    }
-}
-
-writeable::impl_display_with_writeable!(DataMarkerInfo);
 
 #[test]
 fn test_path_syntax() {

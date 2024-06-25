@@ -211,7 +211,7 @@ impl DataError {
         }
         // Don't write out a log for MissingDataMarker since there is no context to add
         if !self.silent && self.kind != DataErrorKind::MissingDataMarker {
-            log::warn!("{} (marker: {}, request: {})", self, marker, req);
+            log::warn!("{self} (marker: {marker:?}, request: {req})");
         }
         self.with_marker(marker)
     }

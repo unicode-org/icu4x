@@ -275,10 +275,10 @@ impl<F: Write + Send + Sync> DataExporter for PostcardFingerprintExporter<F> {
             if let Some(deduped_req) = seen.get(hash) {
                 writeln!(
                     &mut self.fingerprints,
-                    "{marker}, {req}, {size}B, -> {deduped_req}",
+                    "{marker:?}, {req}, {size}B, -> {deduped_req}",
                 )?;
             } else {
-                writeln!(&mut self.fingerprints, "{marker}, {req}, {size}B, {hash:x}",)?;
+                writeln!(&mut self.fingerprints, "{marker:?}, {req}, {size}B, {hash:x}",)?;
                 seen.insert(hash, req);
             }
         }

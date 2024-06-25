@@ -550,7 +550,7 @@ impl DatagenDriver {
         );
 
         let load_with_fallback = |marker, locale: &_, marker_attributes: &_| {
-            log::trace!("Generating marker/locale: {marker}/{locale:}");
+            log::trace!("Generating marker/locale: {marker:?}/{locale}");
             let mut metadata = DataRequestMetadata::default();
             metadata.silent = true;
             // Lazy-compute the fallback iterator so that we don't always require CLDR data
@@ -565,7 +565,7 @@ impl DatagenDriver {
                     Ok(data_response) => {
                         if let Some(iter) = locale_iter.as_ref() {
                             if iter.get().is_und() && !locale.is_und() {
-                                log::debug!("Falling back to und: {marker}/{locale}");
+                                log::debug!("Falling back to und: {marker:?}/{locale}");
                             }
                         }
                         return Some(Ok(data_response.payload));
@@ -576,7 +576,7 @@ impl DatagenDriver {
                     }) => {
                         if let Some(iter) = locale_iter.as_mut() {
                             if iter.get().is_und() {
-                                log::debug!("Could not find data for: {marker}/{locale}");
+                                log::debug!("Could not find data for: {marker:?}/{locale}");
                                 return None;
                             }
                             iter.step();
@@ -594,7 +594,7 @@ impl DatagenDriver {
         };
 
         markers.clone().into_par_iter().try_for_each(|marker| {
-            log::trace!("Generating marker {marker}");
+            log::trace!("Generating marker {marker:?}");
             let instant1 = Instant::now();
 
             if marker.is_singleton {
@@ -623,12 +623,12 @@ impl DatagenDriver {
                 if final_duration > Duration::new(0, 500_000_000) {
                     // Print durations if the marker took longer than 500 ms
                     log::info!(
-                        "Generated marker {marker} ({}, flushed in {})",
+                        "Generated marker {marker:?} ({}, flushed in {})",
                         DisplayDuration(final_duration),
                         DisplayDuration(flush_duration)
                     );
                 } else {
-                    log::info!("Generated marker {marker}");
+                    log::info!("Generated marker {marker:?}");
                 }
                 return Ok(());
             }
@@ -712,13 +712,13 @@ impl DatagenDriver {
             if final_duration > Duration::new(0, 500_000_000) {
                 // Print durations if the marker took longer than 500 ms
                 log::info!(
-                    "Generated marker {marker} ({}, '{slowest_locale}' in {}, flushed in {})",
+                    "Generated marker {marker:?} ({}, '{slowest_locale}' in {}, flushed in {})",
                     DisplayDuration(final_duration),
                     DisplayDuration(slowest_duration),
                     DisplayDuration(flush_duration)
                 );
             } else {
-                log::info!("Generated marker {marker}");
+                log::info!("Generated marker {marker:?}");
             }
             Ok(())
         })?;
@@ -810,12 +810,12 @@ fn select_locales_for_marker(
                     .cloned()
                     .unwrap_or_default();
                 if include_full && !selected_langids.contains(current_langid) {
-                    log::trace!("Including {current_langid}: full locale family: {marker}");
+                    log::trace!("Including {current_langid}: full locale family: {marker:?}");
                     selected_langids.insert(current_langid.clone());
                 }
                 if current_langid.language.is_empty() && current_langid != &LanguageIdentifier::UND
                 {
-                    log::trace!("Including {current_langid}: und variant: {marker}");
+                    log::trace!("Including {current_langid}: und variant: {marker:?}");
                     selected_langids.insert(current_langid.clone());
                 }
                 let include_ancestors = requested_families
@@ -837,13 +837,13 @@ fn select_locales_for_marker(
                         .unwrap_or(false);
                     if include_descendants && !selected_langids.contains(current_langid) {
                         log::trace!(
-                            "Including {current_langid}: descendant of {parent_langid}: {marker}"
+                            "Including {current_langid}: descendant of {parent_langid}: {marker:?}"
                         );
                         selected_langids.insert(current_langid.clone());
                     }
                     if include_ancestors && !selected_langids.contains(&parent_langid) {
                         log::trace!(
-                            "Including {parent_langid}: ancestor of {current_langid}: {marker}"
+                            "Including {parent_langid}: ancestor of {current_langid}: {marker:?}"
                         );
                         selected_langids.insert(parent_langid);
                     }
@@ -922,7 +922,7 @@ fn deduplicate_payloads<const MAXIMAL: bool>(
                     if inherited_payload == payload {
                         // Found a match: don't need to write anything
                         log::trace!(
-                            "Deduplicating {marker}/{locale} (inherits from {})",
+                            "Deduplicating {marker:?}/{locale} (inherits from {})",
                             iter.get()
                         );
                         return Ok(());
