@@ -752,21 +752,21 @@ fn select_locales_for_marker(
             .insert((locale, marker_attributes));
     }
 
-    if marker.path.get().starts_with("segmenter/dictionary/") {
+    if marker.path.as_str().starts_with("segmenter/dictionary/") {
         supported_map.retain(|_, locales| {
             locales.retain(|(_, attrs)| segmenter_models.iter().any(|m| **m == **attrs));
             !locales.is_empty()
         });
         // Don't perform additional locale filtering
         return Ok(supported_map.into_values().flatten().collect());
-    } else if marker.path.get().starts_with("segmenter/lstm/") {
+    } else if marker.path.as_str().starts_with("segmenter/lstm/") {
         supported_map.retain(|_, locales| {
             locales.retain(|(_, attrs)| segmenter_models.iter().any(|m| **m == **attrs));
             !locales.is_empty()
         });
         // Don't perform additional locale filtering
         return Ok(supported_map.into_values().flatten().collect());
-    } else if marker.path.get().starts_with("collator/") {
+    } else if marker.path.as_str().starts_with("collator/") {
         supported_map.retain(|_, locales| {
             locales.retain(|(locale, _)| {
                 let Some(collation) = locale

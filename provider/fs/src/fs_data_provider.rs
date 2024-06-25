@@ -72,7 +72,7 @@ impl DynamicDataProvider<BufferMarker> for FsDataProvider {
             return Err(DataErrorKind::ExtraneousLocale.with_req(marker, req));
         }
         let mut path = self.root.clone().into_os_string();
-        write!(&mut path, "/{}", marker.path.get()).expect("infallible");
+        write!(&mut path, "/{}", marker.path.as_str()).expect("infallible");
         if !Path::new(&path).exists() {
             return Err(DataErrorKind::MissingDataMarker.with_req(marker, req));
         }

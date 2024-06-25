@@ -6,7 +6,6 @@ use crate::fallback::LocaleFallbackConfig;
 use crate::{DataError, DataErrorKind, DataProvider, DataProviderWithMarker};
 use core::fmt;
 use core::marker::PhantomData;
-use core::ops::Deref;
 use yoke::Yokeable;
 use zerovec::ule::*;
 
@@ -486,7 +485,7 @@ impl DataMarkerPath {
 
     /// Gets the path as a static string slice.
     #[inline]
-    pub const fn get(self) -> &'static str {
+    pub const fn as_str(self) -> &'static str {
         unsafe {
             // Safe due to invariant that self.path is tagged correctly
             core::str::from_utf8_unchecked(core::slice::from_raw_parts(
@@ -514,14 +513,6 @@ impl DataMarkerPath {
     #[inline]
     pub const fn hashed(self) -> DataMarkerPathHash {
         self.hash
-    }
-}
-
-impl Deref for DataMarkerPath {
-    type Target = str;
-    #[inline]
-    fn deref(&self) -> &Self::Target {
-        self.get()
     }
 }
 
@@ -638,7 +629,7 @@ pub use __data_marker_path as data_marker_path;
 
 impl fmt::Debug for DataMarkerInfo {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        f.write_str(self.path.get())
+        f.write_str(self.path.as_str())
     }
 }
 

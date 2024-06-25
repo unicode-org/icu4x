@@ -107,7 +107,7 @@ impl DataExporter for FilesystemExporter {
         obj: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
         let mut path_buf = self.root.clone().into_os_string();
-        write!(&mut path_buf, "/{}", marker.path.get()).expect("infallible");
+        write!(&mut path_buf, "/{}", marker.path.as_str()).expect("infallible");
         if !marker_attributes.is_empty() {
             write!(&mut path_buf, "/{}", marker_attributes as &str).expect("infallible");
         }
@@ -140,7 +140,7 @@ impl DataExporter for FilesystemExporter {
 
     fn flush(&self, marker: DataMarkerInfo) -> Result<(), DataError> {
         let mut path_buf = self.root.clone().into_os_string();
-        write!(&mut path_buf, "/{}", marker.path.get()).expect("infallible");
+        write!(&mut path_buf, "/{}", marker.path.as_str()).expect("infallible");
 
         if !Path::new(&path_buf).exists() {
             fs::create_dir_all(&path_buf)
