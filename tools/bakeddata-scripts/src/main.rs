@@ -78,20 +78,20 @@ fn main() {
 
     let source = DatagenProvider::new_latest_tested();
 
-    let driver = DatagenDriver::new()
-        .with_locales_and_fallback(
-            source
-                .locales_for_coverage_levels([
-                    CoverageLevel::Modern,
-                    CoverageLevel::Moderate,
-                    CoverageLevel::Basic,
-                ])
-                .unwrap()
-                .into_iter()
-                .map(LocaleFamily::with_descendants),
-            FallbackOptions::maximal_deduplication(),
-        )
-        .with_recommended_segmenter_models();
+    let driver = DatagenDriver::new(
+        source
+            .locales_for_coverage_levels([
+                CoverageLevel::Modern,
+                CoverageLevel::Moderate,
+                CoverageLevel::Basic,
+            ])
+            .unwrap()
+            .into_iter()
+            .map(LocaleFamily::with_descendants),
+        FallbackOptions::maximal_deduplication(),
+        LocaleFallbacker::try_new_unstable(&source).unwrap(),
+    )
+    .with_recommended_segmenter_models();
 
     let mut options = baked_exporter::Options::default();
     options.overwrite = true;

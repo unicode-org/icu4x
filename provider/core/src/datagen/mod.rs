@@ -20,6 +20,7 @@ pub use iter::IterableDynamicDataProvider;
 pub use payload::{ExportBox, ExportMarker};
 
 use crate::prelude::*;
+use std::collections::HashSet;
 
 /// An object capable of exporting data payloads in some form.
 pub trait DataExporter: Sync {
@@ -94,11 +95,14 @@ impl DataExporter for Box<dyn DataExporter> {
 pub trait ExportableProvider:
     IterableDynamicDataProvider<ExportMarker> + DynamicDataProvider<AnyMarker> + Sync
 {
+    /// Returns the set of supported markers
+    fn supported_markers(&self) -> HashSet<DataMarkerInfo>;
 }
 
-impl<T> ExportableProvider for T where
-    T: IterableDynamicDataProvider<ExportMarker> + DynamicDataProvider<AnyMarker> + Sync
-{
+impl ExportableProvider for Box<dyn ExportableProvider> {
+    fn supported_markers(&self) -> HashSet<DataMarkerInfo> {
+        (**self).supported_markers()
+    }
 }
 
 /// This macro can be used on a data provider to allow it to be used for data generation.
@@ -117,6 +121,18 @@ impl<T> ExportableProvider for T where
 #[doc(hidden)] // macro
 macro_rules! __make_exportable_provider {
     ($provider:ty, [ $($(#[$cfg:meta])? $struct_m:ty),+, ]) => {
+        impl $crate::datagen::ExportableProvider for $provider {
+            fn supported_markers(&self) -> std::collections::HashSet<$crate::DataMarkerInfo> {
+                std::collections::HashSet::from_iter([
+                    $(
+                        $(#[$cfg])?
+                        <$struct_m>::INFO,
+                    )+
+                ])
+            }
+        }
+
+
         $crate::dynutil::impl_dynamic_data_provider!(
             $provider,
             [ $($(#[$cfg])? $struct_m),+, ],

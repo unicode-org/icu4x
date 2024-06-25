@@ -37,7 +37,7 @@ script_runner = "@duckscript"
 script = '''
 exit_on_error true
 
-exec --fail-on-error cargo build -p icu4x-datagen --no-default-features --features fs_exporter,blob_exporter,baked_exporter,networking,provider
+exec --fail-on-error cargo build -p icu4x-datagen --no-default-features --features fs_exporter,blob_exporter,baked_exporter
 
 # Filesystem
 exec --fail-on-error target/debug/icu4x-datagen --markers HelloWorldV1Marker --locales full --format dir --syntax json --out provider/fs/tests/data/json --overwrite

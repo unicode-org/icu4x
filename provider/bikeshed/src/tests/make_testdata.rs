@@ -53,18 +53,19 @@ fn make_testdata() {
         ]))
     };
 
-    DatagenDriver::new()
-        .with_markers(icu_datagen::all_markers())
-        .with_locales_and_fallback(
-            LOCALES.iter().cloned().map(LocaleFamily::with_descendants),
-            FallbackOptions::no_deduplication(),
-        )
-        .with_segmenter_models([
-            "thaidict".into(),
-            "Thai_codepoints_exclusive_model4_heavy".into(),
-        ])
-        .export(&DatagenProvider::new_testing(), exporter)
-        .unwrap()
+    let provider = DatagenProvider::new_testing();
+
+    DatagenDriver::new(
+        LOCALES.iter().cloned().map(LocaleFamily::with_descendants),
+        FallbackOptions::no_deduplication(),
+        LocaleFallbacker::try_new_unstable(&provider).unwrap(),
+    )
+    .with_segmenter_models([
+        "thaidict".into(),
+        "Thai_codepoints_exclusive_model4_heavy".into(),
+    ])
+    .export(&provider, exporter)
+    .unwrap()
 }
 
 struct ZeroCopyCheckExporter {

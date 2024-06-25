@@ -16,11 +16,12 @@ use icu_datagen::prelude::*;
 use icu_datagen_bikeshed::DatagenProvider;
 use std::fs::File;
 
-DatagenDriver::new()
+let provider = DatagenProvider::new_latest_tested();
+
+DatagenDriver::new([LocaleFamily::FULL], FallbackOptions::no_deduplication(), LocaleFallbacker::try_new_unstable(&provider).unwrap())
     .with_markers([icu::list::provider::AndListV1Marker::INFO])
-    .with_locales_and_fallback([LocaleFamily::FULL], FallbackOptions::no_deduplication())
     .export(
-        &DatagenProvider::new_latest_tested(),
+        &provider,
         BlobExporter::new_v2_with_sink(Box::new(
             File::create("data.postcard").unwrap(),
         )),

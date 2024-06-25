@@ -325,6 +325,9 @@ lazy_static::lazy_static! {
         // and markers and newtypes
         // =========================
 
+        // Datagen
+        "icu::markers_for_bin",
+
         // Provider modules
         // We could potentially expose them later, but it's hard to expose them
         // uniformly especially for complex types
