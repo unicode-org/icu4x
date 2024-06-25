@@ -115,16 +115,17 @@ impl AsULE for PatternKey {
             PatternKey::Decimal(value) => {
                 // TODO: shall I check the limits of the values?
                 let sign = if value < 0 { 0b0010_0000 } else { 0 };
-                0b0100_0000 + sign + (value as u8)
+                (0b01 << 6) + sign + (value as u8)
             }
             PatternKey::Power(power, count) => {
                 let power_bits = {
                     match power {
-                        PowerValue::Two => 0b0010_0000,
-                        PowerValue::Three => 0b0011_0000,
+                        PowerValue::Two => 0b10 << 4,
+                        PowerValue::Three => 0b11 << 4,
                     }
                 };
-                0b1000_0000 + power_bits + count as u8
+                // Combine the bits to form the final byte
+                (0b10 << 6) + power_bits + count as u8
             }
         };
 
@@ -145,7 +146,7 @@ impl AsULE for PatternKey {
                 _ => unreachable!(),
             },
             0b10 => {
-                let power = match value & 0b0001_0000 {
+                let power = match value & 0b0011_0000 {
                     0b0010_0000 => PowerValue::Two,
                     0b0011_0000 => PowerValue::Three,
                     _ => unreachable!(),
@@ -163,20 +164,6 @@ impl<'a> ZeroMapKV<'a> for PatternKey {
     type Slice = zerovec::ZeroSlice<PatternKey>;
     type GetType = <PatternKey as AsULE>::ULE;
     type OwnedType = PatternKey;
-}
-
-impl From<u8> for CompoundCount {
-    fn from(val: u8) -> Self {
-        match val {
-            0 => CompoundCount::Zero,
-            1 => CompoundCount::One,
-            2 => CompoundCount::Two,
-            3 => CompoundCount::Few,
-            4 => CompoundCount::Many,
-            5 => CompoundCount::Other,
-            _ => unreachable!(),
-        }
-    }
 }
 
 #[test]
