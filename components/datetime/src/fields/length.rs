@@ -63,8 +63,12 @@ pub enum FieldLength {
 /// Currently 17 due to decision in <https://unicode-org.atlassian.net/browse/CLDR-17217>,
 /// may become 16 if the `> 16` is updated to a ` >= 16`
 const FIRST_NUMERIC_OVERRIDE: u8 = 17;
-/// First index used for TimeZoneFallbackOverride
+/// Last index used for numeric overrides
+const LAST_NUMERIC_OVERRIDE: u8 = 31;
+/// First index used for time zone fallback overrides
 const FIRST_TIME_ZONE_FALLBACK_OVERRIDE: u8 = 32;
+/// Last index used for time zone fallback overrides
+const LAST_TIME_ZONE_FALLBACK_OVERRIDE: u8 = 40;
 /// First index used for fixed size formats in compact FieldLength representation
 const FIRST_FIXED: u8 = 128;
 
@@ -80,10 +84,10 @@ impl FieldLength {
             FieldLength::Six => 6,
             FieldLength::NumericOverride(o) => FIRST_NUMERIC_OVERRIDE
                 .saturating_add(*o as u8)
-                .min(FIRST_TIME_ZONE_FALLBACK_OVERRIDE - 1),
+                .min(LAST_NUMERIC_OVERRIDE),
             FieldLength::TimeZoneFallbackOverride(o) => FIRST_TIME_ZONE_FALLBACK_OVERRIDE
                 .saturating_add(*o as u8)
-                .min(FIRST_FIXED - 1),
+                .min(LAST_TIME_ZONE_FALLBACK_OVERRIDE),
             FieldLength::Fixed(p) => FIRST_FIXED.saturating_add(*p), /* truncate to at most 127 digits to avoid overflow */
         }
     }
@@ -97,17 +101,17 @@ impl FieldLength {
             4 => Self::Wide,
             5 => Self::Narrow,
             6 => Self::Six,
-            idx => {
-                if idx < FIRST_NUMERIC_OVERRIDE {
-                    return Err(LengthError::InvalidLength);
-                }
-                if idx < FIRST_TIME_ZONE_FALLBACK_OVERRIDE {
-                    Self::NumericOverride((idx - FIRST_NUMERIC_OVERRIDE).try_into()?)
-                } else if idx < FIRST_FIXED {
-                    Self::TimeZoneFallbackOverride((idx - FIRST_TIME_ZONE_FALLBACK_OVERRIDE).try_into()?)
-                } else {
-                    Self::Fixed(idx - FIRST_FIXED)
-                }
+            idx if idx >= FIRST_NUMERIC_OVERRIDE && idx <= LAST_NUMERIC_OVERRIDE => {
+                Self::NumericOverride((idx - FIRST_NUMERIC_OVERRIDE).try_into()?)
+            }
+            idx if idx >= FIRST_TIME_ZONE_FALLBACK_OVERRIDE && idx <= LAST_TIME_ZONE_FALLBACK_OVERRIDE => {
+                Self::TimeZoneFallbackOverride((idx - FIRST_TIME_ZONE_FALLBACK_OVERRIDE).try_into()?)
+            }
+            idx if idx >= FIRST_FIXED => {
+                Self::Fixed(idx - FIRST_FIXED)
+            }
+            _ => {
+                return Err(LengthError::InvalidLength)
             }
         })
     }
