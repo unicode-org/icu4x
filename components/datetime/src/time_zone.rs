@@ -846,7 +846,7 @@ pub(super) struct GenericLocationFormat {}
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub(super) struct LocalizedGmtFormat {}
 
-/// -07:00
+// -07:00
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub(super) struct Iso8601Format {
     format: IsoFormat,
