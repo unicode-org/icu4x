@@ -8,15 +8,8 @@
 //!
 //! This module can be enabled with the `datagen` Cargo feature on `icu_provider`.
 
-mod data_conversion;
-mod iter;
 mod payload;
-pub use data_conversion::DataConverter;
-pub use iter::IterableDataProvider;
 
-#[doc(hidden)] // macro use
-pub use iter::IterableDynamicDataProvider;
-#[doc(hidden)] // macro use
 pub use payload::{ExportBox, ExportMarker};
 
 use crate::prelude::*;
@@ -93,7 +86,7 @@ impl DataExporter for Box<dyn DataExporter> {
 ///
 /// Use [`make_exportable_provider`] to implement this.
 pub trait ExportableProvider:
-    IterableDynamicDataProvider<ExportMarker> + DynamicDataProvider<AnyMarker> + Sync
+    crate::data_provider::IterableDynamicDataProvider<ExportMarker> + Sync
 {
     /// Returns the set of supported markers
     fn supported_markers(&self) -> HashSet<DataMarkerInfo>;
@@ -121,7 +114,7 @@ impl ExportableProvider for Box<dyn ExportableProvider> {
 #[doc(hidden)] // macro
 macro_rules! __make_exportable_provider {
     ($provider:ty, [ $($(#[$cfg:meta])? $struct_m:ty),+, ]) => {
-        impl $crate::datagen::ExportableProvider for $provider {
+        impl $crate::export::ExportableProvider for $provider {
             fn supported_markers(&self) -> std::collections::HashSet<$crate::DataMarkerInfo> {
                 std::collections::HashSet::from_iter([
                     $(
@@ -132,31 +125,17 @@ macro_rules! __make_exportable_provider {
             }
         }
 
-
         $crate::dynutil::impl_dynamic_data_provider!(
             $provider,
             [ $($(#[$cfg])? $struct_m),+, ],
-            $crate::datagen::ExportMarker
-        );
-        $crate::dynutil::impl_dynamic_data_provider!(
-            $provider,
-            [ $($(#[$cfg])? $struct_m),+, ],
-            $crate::any::AnyMarker
+            $crate::export::ExportMarker
         );
 
-        impl $crate::datagen::IterableDynamicDataProvider<$crate::datagen::ExportMarker> for $provider {
-            fn iter_requests_for_marker(&self, marker: $crate::DataMarkerInfo) -> Result<std::collections::HashSet<($crate::DataLocale, $crate::DataMarkerAttributes)>, $crate::DataError> {
-                match marker.path.hashed() {
-                    $(
-                        $(#[$cfg])?
-                        h if h == <$struct_m as $crate::DataMarker>::INFO.path.hashed() => {
-                            $crate::datagen::IterableDataProvider::<$struct_m>::iter_requests(self)
-                        }
-                    )+,
-                    _ => Err($crate::DataErrorKind::MissingDataMarker.with_marker(marker))
-                }
-            }
-        }
+        $crate::dynutil::impl_iterable_dynamic_data_provider!(
+            $provider,
+            [ $($(#[$cfg])? $struct_m),+, ],
+            $crate::export::ExportMarker
+        );
     };
 }
 #[doc(inline)]

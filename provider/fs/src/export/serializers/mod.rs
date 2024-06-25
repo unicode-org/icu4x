@@ -18,7 +18,7 @@ pub use self::json::Serializer as Json;
 pub use self::postcard::Serializer as Postcard;
 
 use icu_provider::buf::BufferFormat;
-use icu_provider::datagen::*;
+use icu_provider::export::*;
 use icu_provider::prelude::*;
 use std::io;
 

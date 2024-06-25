@@ -6,7 +6,7 @@
 
 use super::AbstractSerializer;
 use icu_provider::buf::BufferFormat;
-use icu_provider::datagen::*;
+use icu_provider::export::*;
 use icu_provider::prelude::*;
 use postcard::ser_flavors::{AllocVec, Flavor};
 use std::io;

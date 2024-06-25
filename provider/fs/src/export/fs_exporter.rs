@@ -4,7 +4,7 @@
 
 use super::serializers::AbstractSerializer;
 use crate::manifest::Manifest;
-use icu_provider::datagen::*;
+use icu_provider::export::*;
 use icu_provider::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::fmt::Write;

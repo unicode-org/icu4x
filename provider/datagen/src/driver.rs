@@ -9,7 +9,7 @@ use icu_locale::fallback::LocaleFallbackIterator;
 use icu_locale::LanguageIdentifier;
 use icu_locale::LocaleFallbacker;
 use icu_locale::ParseError;
-use icu_provider::datagen::*;
+use icu_provider::export::*;
 use icu_provider::prelude::*;
 use std::collections::HashMap;
 use std::collections::HashSet;
@@ -490,7 +490,7 @@ impl DatagenDriver {
     /// Exports data from the given provider to the given exporter.
     ///
     /// See
-    /// [`make_exportable_provider!`](icu_provider::datagen::make_exportable_provider),
+    /// [`make_exportable_provider!`](icu_provider::export::make_exportable_provider),
     /// [`BlobExporter`](icu_provider_blob::export),
     /// [`FileSystemExporter`](icu_provider_fs::export),
     /// and [`BakedExporter`](icu_provider_baked::export).
@@ -1016,7 +1016,7 @@ fn test_collation_filtering() {
         }
     }
 
-    icu_provider::datagen::make_exportable_provider!(
+    icu_provider::export::make_exportable_provider!(
         Provider,
         [icu::collator::provider::CollationDataV1Marker,]
     );

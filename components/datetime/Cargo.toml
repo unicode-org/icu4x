@@ -83,7 +83,6 @@ datagen = [
     "dep:databake",
     "dep:litemap",
     "icu_calendar/datagen",
-    "icu_provider/datagen",
     "icu_timezone/datagen",
     "serde",
     "std",

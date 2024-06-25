@@ -4,11 +4,7 @@
 
 use super::ForkByErrorPredicate;
 use alloc::vec::Vec;
-#[cfg(feature = "datagen")]
-use icu_provider::datagen;
 use icu_provider::prelude::*;
-#[cfg(feature = "datagen")]
-use std::collections::HashSet;
 
 /// A provider that returns data from one of two child providers based on a predicate function.
 ///
@@ -102,18 +98,18 @@ where
     }
 }
 
-#[cfg(feature = "datagen")]
-impl<M, P0, P1, F> datagen::IterableDynamicDataProvider<M> for ForkByErrorProvider<P0, P1, F>
+#[cfg(feature = "std")]
+impl<M, P0, P1, F> IterableDynamicDataProvider<M> for ForkByErrorProvider<P0, P1, F>
 where
     M: DynamicDataMarker,
-    P0: datagen::IterableDynamicDataProvider<M>,
-    P1: datagen::IterableDynamicDataProvider<M>,
+    P0: IterableDynamicDataProvider<M>,
+    P1: IterableDynamicDataProvider<M>,
     F: ForkByErrorPredicate,
 {
     fn iter_requests_for_marker(
         &self,
         marker: DataMarkerInfo,
-    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+    ) -> Result<std::collections::HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         let result = self.0.iter_requests_for_marker(marker);
         match result {
             Ok(ok) => return Ok(ok),
@@ -233,17 +229,17 @@ where
     }
 }
 
-#[cfg(feature = "datagen")]
-impl<M, P, F> datagen::IterableDynamicDataProvider<M> for MultiForkByErrorProvider<P, F>
+#[cfg(feature = "std")]
+impl<M, P, F> IterableDynamicDataProvider<M> for MultiForkByErrorProvider<P, F>
 where
     M: DynamicDataMarker,
-    P: datagen::IterableDynamicDataProvider<M>,
+    P: IterableDynamicDataProvider<M>,
     F: ForkByErrorPredicate,
 {
     fn iter_requests_for_marker(
         &self,
         marker: DataMarkerInfo,
-    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+    ) -> Result<std::collections::HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         let mut last_error = F::UNIT_ERROR.with_marker(marker);
         for provider in self.providers.iter() {
             let result = provider.iter_requests_for_marker(marker);
@@ -254,66 +250,5 @@ where
             };
         }
         Err(last_error)
-    }
-}
-
-#[cfg(feature = "datagen")]
-impl<P, MFrom, MTo, F> datagen::DataConverter<MFrom, MTo> for MultiForkByErrorProvider<P, F>
-where
-    P: datagen::DataConverter<MFrom, MTo>,
-    F: ForkByErrorPredicate,
-    MFrom: DynamicDataMarker,
-    MTo: DynamicDataMarker,
-{
-    fn convert(
-        &self,
-        marker: DataMarkerInfo,
-        mut from: DataPayload<MFrom>,
-    ) -> Result<DataPayload<MTo>, (DataPayload<MFrom>, DataError)> {
-        let mut last_error = F::UNIT_ERROR.with_marker(marker);
-        for provider in self.providers.iter() {
-            let result = provider.convert(marker, from);
-            match result {
-                Ok(ok) => return Ok(ok),
-                Err(e) => {
-                    let (returned, err) = e;
-                    if !self.predicate.test(marker, None, err) {
-                        return Err((returned, err));
-                    }
-                    from = returned;
-                    last_error = err;
-                }
-            };
-        }
-        Err((from, last_error))
-    }
-}
-
-#[cfg(feature = "datagen")]
-impl<P0, P1, F, MFrom, MTo> datagen::DataConverter<MFrom, MTo> for ForkByErrorProvider<P0, P1, F>
-where
-    P0: datagen::DataConverter<MFrom, MTo>,
-    P1: datagen::DataConverter<MFrom, MTo>,
-    F: ForkByErrorPredicate,
-    MFrom: DynamicDataMarker,
-    MTo: DynamicDataMarker,
-{
-    fn convert(
-        &self,
-        marker: DataMarkerInfo,
-        mut from: DataPayload<MFrom>,
-    ) -> Result<DataPayload<MTo>, (DataPayload<MFrom>, DataError)> {
-        let result = self.0.convert(marker, from);
-        match result {
-            Ok(ok) => return Ok(ok),
-            Err(e) => {
-                let (returned, err) = e;
-                if !self.2.test(marker, None, err) {
-                    return Err((returned, err));
-                }
-                from = returned;
-            }
-        };
-        self.1.convert(marker, from)
     }
 }

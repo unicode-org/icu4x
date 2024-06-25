@@ -270,3 +270,25 @@ macro_rules! __impl_dynamic_data_provider {
 }
 #[doc(inline)]
 pub use __impl_dynamic_data_provider as impl_dynamic_data_provider;
+
+#[doc(hidden)] // macro
+#[macro_export]
+macro_rules! __impl_iterable_dynamic_data_provider {
+    ($provider:ty, [ $($(#[$cfg:meta])? $struct_m:ty),+, ], $dyn_m:path) => {
+        impl $crate::IterableDynamicDataProvider<$dyn_m> for $provider {
+            fn iter_requests_for_marker(&self, marker: $crate::DataMarkerInfo) -> Result<std::collections::HashSet<($crate::DataLocale, $crate::DataMarkerAttributes)>, $crate::DataError> {
+                match marker.path.hashed() {
+                    $(
+                        $(#[$cfg])?
+                        h if h == <$struct_m as $crate::DataMarker>::INFO.path.hashed() => {
+                            $crate::IterableDataProvider::<$struct_m>::iter_requests(self)
+                        }
+                    )+,
+                    _ => Err($crate::DataErrorKind::MissingDataMarker.with_marker(marker))
+                }
+            }
+        }
+    }
+}
+#[doc(inline)]
+pub use __impl_iterable_dynamic_data_provider as impl_iterable_dynamic_data_provider;

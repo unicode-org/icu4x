@@ -140,7 +140,7 @@ impl DynamicDataProvider<BufferMarker> for BlobDataProvider {
 mod test {
     use super::*;
     use crate::export::*;
-    use icu_provider::datagen::*;
+    use icu_provider::export::*;
     use icu_provider::hello_world::*;
 
     #[icu_provider::data_struct(marker(HelloSingletonV1Marker, "hello/singleton@1", singleton))]

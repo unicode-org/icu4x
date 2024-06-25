@@ -12,8 +12,6 @@ use crate::prelude::*;
 use alloc::borrow::Cow;
 use alloc::string::String;
 use core::fmt::Debug;
-#[cfg(feature = "datagen")]
-use std::collections::HashSet;
 use writeable::Writeable;
 use yoke::*;
 use zerofrom::*;
@@ -22,11 +20,11 @@ use zerofrom::*;
 #[derive(Debug, PartialEq, Clone, Yokeable, ZeroFrom)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(
-    any(feature = "deserialize_json", feature = "datagen"),
+    any(feature = "deserialize_json", feature = "export"),
     derive(serde::Serialize)
 )]
-#[cfg_attr(feature = "datagen", derive(databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_provider::hello_world))]
+#[cfg_attr(feature = "export", derive(databake::Bake))]
+#[cfg_attr(feature = "export", databake(path = icu_provider::hello_world))]
 pub struct HelloWorldV1<'data> {
     /// The translation of "Hello World".
     #[cfg_attr(feature = "serde", serde(borrow))]
@@ -168,8 +166,6 @@ impl DataPayload<HelloWorldV1Marker> {
     }
 }
 
-// AnyProvider support.
-#[cfg(not(feature = "datagen"))]
 icu_provider::dynutil::impl_dynamic_data_provider!(
     HelloWorldProvider,
     [HelloWorldV1Marker,],
@@ -225,10 +221,12 @@ impl DynamicDataProvider<BufferMarker> for HelloWorldJsonProvider {
     }
 }
 
-#[cfg(feature = "datagen")]
-impl icu_provider::datagen::IterableDataProvider<HelloWorldV1Marker> for HelloWorldProvider {
-    fn iter_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
-        #[allow(clippy::unwrap_used)] // datagen
+#[cfg(feature = "std")]
+impl IterableDataProvider<HelloWorldV1Marker> for HelloWorldProvider {
+    fn iter_requests(
+        &self,
+    ) -> Result<std::collections::HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+        #[allow(clippy::unwrap_used)] // hello-world
         Ok(Self::DATA
             .iter()
             .map(|(l, a, _)| (l.parse().unwrap(), a.parse().unwrap()))
@@ -236,8 +234,8 @@ impl icu_provider::datagen::IterableDataProvider<HelloWorldV1Marker> for HelloWo
     }
 }
 
-#[cfg(feature = "datagen")]
-icu_provider::datagen::make_exportable_provider!(HelloWorldProvider, [HelloWorldV1Marker,]);
+#[cfg(feature = "export")]
+icu_provider::export::make_exportable_provider!(HelloWorldProvider, [HelloWorldV1Marker,]);
 
 /// A type that formats localized "hello world" strings.
 ///
@@ -332,11 +330,12 @@ impl<'l> Writeable for FormattedHelloWorld<'l> {
 
 writeable::impl_display_with_writeable!(FormattedHelloWorld<'_>);
 
-#[cfg(feature = "datagen")]
+#[cfg(feature = "export")]
 #[test]
 fn test_iter() {
-    use crate::datagen::IterableDataProvider;
+    use crate::IterableDataProvider;
     use icu_locale_core::locale;
+    use std::collections::HashSet;
 
     assert_eq!(
         HelloWorldProvider.iter_requests().unwrap(),

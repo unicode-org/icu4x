@@ -6,9 +6,6 @@
 
 use icu_provider::prelude::*;
 
-#[cfg(feature = "datagen")]
-use icu_provider::datagen;
-
 /// A provider that is one of two types determined at runtime.
 ///
 /// Data provider traits implemented by both `P0` and `P1` are implemented on
@@ -63,12 +60,12 @@ impl<M: DataMarker, P0: DataProvider<M>, P1: DataProvider<M>> DataProvider<M>
     }
 }
 
-#[cfg(feature = "datagen")]
+#[cfg(feature = "std")]
 impl<
         M: DynamicDataMarker,
-        P0: datagen::IterableDynamicDataProvider<M>,
-        P1: datagen::IterableDynamicDataProvider<M>,
-    > datagen::IterableDynamicDataProvider<M> for EitherProvider<P0, P1>
+        P0: IterableDynamicDataProvider<M>,
+        P1: IterableDynamicDataProvider<M>,
+    > IterableDynamicDataProvider<M> for EitherProvider<P0, P1>
 {
     #[inline]
     fn iter_requests_for_marker(
@@ -83,9 +80,9 @@ impl<
     }
 }
 
-#[cfg(feature = "datagen")]
-impl<M: DataMarker, P0: datagen::IterableDataProvider<M>, P1: datagen::IterableDataProvider<M>>
-    datagen::IterableDataProvider<M> for EitherProvider<P0, P1>
+#[cfg(feature = "std")]
+impl<M: DataMarker, P0: IterableDataProvider<M>, P1: IterableDataProvider<M>>
+    IterableDataProvider<M> for EitherProvider<P0, P1>
 {
     #[inline]
     fn iter_requests(

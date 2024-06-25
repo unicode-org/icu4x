@@ -208,7 +208,7 @@ macro_rules! __impl_time_symbols_v1_marker {
     ($ provider : ty , ITER) => {
         __impl_time_symbols_v1_marker!($provider);
         #[clippy::msrv = "1.70"]
-        impl icu_provider::datagen::IterableDataProvider<icu::datetime::provider::calendar::TimeSymbolsV1Marker> for $provider {
+        impl icu_provider::IterableDataProvider<icu::datetime::provider::calendar::TimeSymbolsV1Marker> for $provider {
             fn iter_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataMarkerAttributes)>, icu_provider::DataError> {
                 Ok(icu_provider_baked::DataStore::iter(&Self::DATA_TIME_SYMBOLS_V1_MARKER).collect())
             }

@@ -5,8 +5,8 @@
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use icu_locale::LocaleFallbacker;
 use icu_locale_core::{langid, LanguageIdentifier};
-use icu_provider::datagen::*;
 use icu_provider::dynutil::UpcastDataPayload;
+use icu_provider::export::*;
 use icu_provider::prelude::*;
 use icu_provider_adapters::fallback::LocaleFallbackProvider;
 use icu_provider_blob::export::BlobExporter;

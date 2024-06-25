@@ -88,7 +88,7 @@ pub mod prelude {
     #[doc(no_inline)]
     pub use icu_locale::{langid, LanguageIdentifier, LocaleFallbacker};
     #[doc(no_inline)]
-    pub use icu_provider::{datagen::DataExporter, DataMarker, DataMarkerInfo};
+    pub use icu_provider::{export::DataExporter, DataMarker, DataMarkerInfo};
 }
 
 #[cfg(feature = "rayon")]

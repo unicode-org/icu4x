@@ -31,20 +31,16 @@
 //!     .filterable("Demo German-only filter")
 //!     .filter_by_langid(|langid| langid.language == language!("de"));
 //! ```
-//!
-//! [`IterableDynamicDataProvider`]: icu_provider::datagen::IterableDynamicDataProvider
 
 mod impls;
 
-#[cfg(feature = "datagen")]
-use icu_provider::datagen;
 use icu_provider::prelude::*;
 
 /// A data provider that selectively filters out data requests.
 ///
 /// Data requests that are rejected by the filter will return a [`DataError`] with kind
 /// [`FilteredResource`](DataErrorKind::FilteredResource), and they will not be returned
-/// by [`datagen::IterableDynamicDataProvider::iter_requests_for_marker`].
+/// by [`IterableDynamicDataProvider::iter_requests_for_marker`].
 ///
 /// Although this struct can be created directly, the traits in this module provide helper
 /// functions for common filtering patterns.
@@ -119,12 +115,12 @@ where
     }
 }
 
-#[cfg(feature = "datagen")]
-impl<M, D, F> datagen::IterableDynamicDataProvider<M> for RequestFilterDataProvider<D, F>
+#[cfg(feature = "std")]
+impl<M, D, F> IterableDynamicDataProvider<M> for RequestFilterDataProvider<D, F>
 where
     M: DynamicDataMarker,
     F: Fn(DataRequest) -> bool,
-    D: datagen::IterableDynamicDataProvider<M>,
+    D: IterableDynamicDataProvider<M>,
 {
     fn iter_requests_for_marker(
         &self,
@@ -145,12 +141,12 @@ where
     }
 }
 
-#[cfg(feature = "datagen")]
-impl<M, D, F> datagen::IterableDataProvider<M> for RequestFilterDataProvider<D, F>
+#[cfg(feature = "std")]
+impl<M, D, F> IterableDataProvider<M> for RequestFilterDataProvider<D, F>
 where
     M: DataMarker,
     F: Fn(DataRequest) -> bool,
-    D: datagen::IterableDataProvider<M>,
+    D: IterableDataProvider<M>,
 {
     fn iter_requests(
         &self,
@@ -167,24 +163,6 @@ where
                 })
                 .collect()
         })
-    }
-}
-
-#[cfg(feature = "datagen")]
-impl<D, F, MFrom, MTo> datagen::DataConverter<MFrom, MTo> for RequestFilterDataProvider<D, F>
-where
-    D: datagen::DataConverter<MFrom, MTo>,
-    MFrom: DynamicDataMarker,
-    MTo: DynamicDataMarker,
-    F: Fn(DataRequest) -> bool,
-{
-    fn convert(
-        &self,
-        marker: DataMarkerInfo,
-        from: DataPayload<MFrom>,
-    ) -> Result<DataPayload<MTo>, (DataPayload<MFrom>, DataError)> {
-        // Conversions are type-agnostic
-        self.inner.convert(marker, from)
     }
 }
 

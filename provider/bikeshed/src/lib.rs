@@ -19,7 +19,6 @@
 
 use cldr_cache::CldrCache;
 use elsa::sync::FrozenMap;
-use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use source::{AbstractFs, SerdeCache};
 use std::borrow::Cow;
@@ -66,7 +65,7 @@ mod source;
 #[cfg(test)]
 mod tests;
 
-/// An [`ExportableProvider`](icu_provider::datagen::ExportableProvider) backed by raw CLDR and ICU data.
+/// An [`ExportableProvider`](icu_provider::export::ExportableProvider) backed by raw CLDR and ICU data.
 ///
 /// This provider covers all markers that are used by ICU4X. It is intended as the canonical
 /// provider for `DatagenDriver::export`.
@@ -102,10 +101,16 @@ pub struct DatagenProvider {
 
 macro_rules! cb {
     ($($marker:path = $path:literal,)+ #[experimental] $($emarker:path = $epath:literal,)+) => {
-        icu_provider::datagen::make_exportable_provider!(DatagenProvider, [
+        icu_provider::export::make_exportable_provider!(DatagenProvider, [
             $($marker,)+
             $(#[cfg(feature = "experimental")] $emarker,)+
         ]);
+
+        #[cfg(test)]
+        icu_provider::dynutil::impl_dynamic_data_provider!(DatagenProvider, [
+            $($marker,)+
+            $(#[cfg(feature = "experimental")] $emarker,)+
+        ], icu_provider::any::AnyMarker);
     }
 }
 icu_registry::registry!(cb);

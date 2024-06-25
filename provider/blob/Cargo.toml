@@ -45,7 +45,7 @@ criterion = { workspace = true }
 bench = []
 std = ["icu_provider/std"]
 export = [
-    "icu_provider/datagen",
+    "icu_provider/export",
     "log",
     "postcard/alloc",
     "std",

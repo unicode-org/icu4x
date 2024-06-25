@@ -6,7 +6,7 @@
 #![allow(clippy::expect_used)]
 
 use crate::blob_schema::*;
-use icu_provider::datagen::*;
+use icu_provider::export::*;
 use icu_provider::{marker::DataMarkerPathHash, prelude::*};
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::sync::Mutex;

@@ -5,10 +5,7 @@
 use core::marker::PhantomData;
 use yoke::Yokeable;
 
-use crate::error::DataError;
-use crate::request::DataRequest;
-use crate::response::DataResponse;
-use crate::{DataMarker, DataMarkerInfo, DynamicDataMarker};
+use crate::prelude::*;
 
 /// A data provider that loads data for a specific [`DataMarkerInfo`].
 pub trait DataProvider<M>
@@ -53,6 +50,18 @@ where
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         (**self).load(req)
     }
+}
+
+#[cfg(feature = "std")]
+/// A [`DataProvider`] that can iterate over all supported [`DataLocale`] for a certain marker.
+///
+/// The provider is not allowed to return `Ok` for requests that were not returned by `iter_requests`,
+/// and must not fail with a [`DataErrorKind::MissingLocale`] for requests that were returned.
+pub trait IterableDataProvider<M: DataMarker>: DataProvider<M> {
+    /// Returns a list of [`DataLocale`].
+    fn iter_requests(
+        &self,
+    ) -> Result<std::collections::HashSet<(DataLocale, DataMarkerAttributes)>, DataError>;
 }
 
 #[cfg(target_has_atomic = "ptr")]
@@ -146,6 +155,33 @@ where
         req: DataRequest,
     ) -> Result<DataResponse<M>, DataError> {
         (**self).load_data(marker, req)
+    }
+}
+
+#[cfg(feature = "std")]
+/// A [`DynamicDataProvider`] that can iterate over all supported [`DataLocale`] for a certain marker.
+///
+/// The provider is not allowed to return `Ok` for requests that were not returned by `iter_requests`,
+/// and must not fail with a [`DataErrorKind::MissingLocale`] for requests that were returned.
+pub trait IterableDynamicDataProvider<M: DynamicDataMarker>: DynamicDataProvider<M> {
+    /// Given a [`DataMarkerInfo`], returns a list of [`DataLocale`].
+    fn iter_requests_for_marker(
+        &self,
+        marker: DataMarkerInfo,
+    ) -> Result<std::collections::HashSet<(DataLocale, DataMarkerAttributes)>, DataError>;
+}
+
+#[cfg(feature = "std")]
+impl<M, P> IterableDynamicDataProvider<M> for Box<P>
+where
+    M: DynamicDataMarker,
+    P: IterableDynamicDataProvider<M> + ?Sized,
+{
+    fn iter_requests_for_marker(
+        &self,
+        marker: DataMarkerInfo,
+    ) -> Result<std::collections::HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+        (**self).iter_requests_for_marker(marker)
     }
 }
 
@@ -278,7 +314,6 @@ mod test {
 
     use super::*;
     use crate::hello_world::*;
-    use crate::prelude::*;
     use alloc::borrow::Cow;
     use alloc::string::String;
     use core::fmt::Debug;

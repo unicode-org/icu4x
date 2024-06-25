@@ -3,9 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_locale_core::LanguageIdentifier;
-use icu_provider::datagen::IterableDataProvider;
-use icu_provider::datagen::*;
 use icu_provider::dynutil::UpcastDataPayload;
+use icu_provider::export::*;
 use icu_provider::hello_world::*;
 use icu_provider::prelude::*;
 use icu_provider_blob::export::*;
@@ -175,4 +174,4 @@ impl IterableDataProvider<HelloWorldV1Marker> for ManyLocalesProvider {
     }
 }
 
-icu_provider::datagen::make_exportable_provider!(ManyLocalesProvider, [HelloWorldV1Marker,]);
+icu_provider::export::make_exportable_provider!(ManyLocalesProvider, [HelloWorldV1Marker,]);
