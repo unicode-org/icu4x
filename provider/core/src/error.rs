@@ -94,7 +94,7 @@ pub struct DataError {
     pub kind: DataErrorKind,
 
     /// The data marker of the request, if available.
-    pub marker: Option<DataMarkerPath>,
+    pub marker_path: Option<DataMarkerPath>,
 
     /// Additional context, if available.
     pub str_context: Option<&'static str>,
@@ -109,8 +109,8 @@ impl fmt::Display for DataError {
         if self.kind != DataErrorKind::Custom {
             write!(f, ": {}", self.kind)?;
         }
-        if let Some(marker) = self.marker {
-            write!(f, " (marker: {})", &marker as &str)?;
+        if let Some(marker) = self.marker_path {
+            write!(f, " (marker: {})", marker.as_str())?;
         }
         if let Some(str_context) = self.str_context {
             write!(f, ": {str_context}")?;
@@ -127,7 +127,7 @@ impl DataErrorKind {
     pub const fn into_error(self) -> DataError {
         DataError {
             kind: self,
-            marker: None,
+            marker_path: None,
             str_context: None,
             silent: false,
         }
@@ -164,7 +164,7 @@ impl DataError {
     pub const fn custom(str_context: &'static str) -> Self {
         Self {
             kind: DataErrorKind::Custom,
-            marker: None,
+            marker_path: None,
             str_context: Some(str_context),
             silent: false,
         }
@@ -175,7 +175,7 @@ impl DataError {
     pub const fn with_marker(self, marker: DataMarkerInfo) -> Self {
         Self {
             kind: self.kind,
-            marker: Some(marker.path),
+            marker_path: Some(marker.path),
             str_context: self.str_context,
             silent: self.silent,
         }
@@ -186,7 +186,7 @@ impl DataError {
     pub const fn with_str_context(self, context: &'static str) -> Self {
         Self {
             kind: self.kind,
-            marker: self.marker,
+            marker_path: self.marker_path,
             str_context: Some(context),
             silent: self.silent,
         }
@@ -211,7 +211,7 @@ impl DataError {
         }
         // Don't write out a log for MissingDataMarker since there is no context to add
         if !self.silent && self.kind != DataErrorKind::MissingDataMarker {
-            log::warn!("{} (marker: {}, request: {})", self, marker, req);
+            log::warn!("{self} (marker: {marker:?}, request: {req})");
         }
         self.with_marker(marker)
     }
@@ -258,7 +258,7 @@ impl DataError {
     pub(crate) fn for_type<T>() -> DataError {
         DataError {
             kind: DataErrorKind::MismatchedType(core::any::type_name::<T>()),
-            marker: None,
+            marker_path: None,
             str_context: None,
             silent: false,
         }

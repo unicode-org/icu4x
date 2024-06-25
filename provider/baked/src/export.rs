@@ -677,12 +677,12 @@ impl DataExporter for BakedExporter {
 macro_rules! cb {
     ($($marker:path = $path:literal,)+ #[experimental] $($emarker:path = $epath:literal,)+) => {
         fn bake_marker(marker: DataMarkerInfo) -> databake::TokenStream {
-            if *marker.path == *icu_provider::hello_world::HelloWorldV1Marker::INFO.path {
+            if marker.path.as_str() == icu_provider::hello_world::HelloWorldV1Marker::INFO.path.as_str() {
                 return databake::quote!(icu_provider::hello_world::HelloWorldV1Marker);
             }
 
             $(
-                if *marker.path == *$path {
+                if marker.path.as_str() == $path {
                     return stringify!($marker)
                         .replace("icu :: ", "icu_")
                         .parse()
@@ -691,7 +691,7 @@ macro_rules! cb {
             )+
 
             $(
-                if *marker.path == *$epath {
+                if marker.path.as_str() == $epath {
                     return stringify!($emarker)
                         .replace("icu :: ", "icu_")
                         .parse()

@@ -253,19 +253,19 @@ impl DatagenProvider {
 
     /// Identifies errors that are due to missing CLDR data.
     pub fn is_missing_cldr_error(mut e: DataError) -> bool {
-        e.marker = None;
+        e.marker_path = None;
         e == Self::MISSING_CLDR_ERROR
     }
 
     /// Identifies errors that are due to missing ICU export data.
     pub fn is_missing_icuexport_error(mut e: DataError) -> bool {
-        e.marker = None;
+        e.marker_path = None;
         e == Self::MISSING_ICUEXPORT_ERROR
     }
 
     /// Identifies errors that are due to missing segmenter LSTM data.
     pub fn is_missing_segmenter_lstm_error(mut e: DataError) -> bool {
-        e.marker = None;
+        e.marker_path = None;
         e == Self::MISSING_SEGMENTER_LSTM_ERROR
     }
 

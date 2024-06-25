@@ -29,7 +29,7 @@ impl DataExporter for &mut TestingExporter {
             .output
             .finalize()
             .expect("Failed to finalize serializer output");
-        println!("Putting: {marker}/{}/{locale}", marker_attributes as &str);
+        println!("Putting: {marker:?}/{}/{locale}", marker_attributes as &str);
         self.0
             .insert((locale.clone(), marker_attributes.clone()), output);
         Ok(())
