@@ -3,6 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 pub(crate) mod data;
+pub(crate) mod essentials;
 pub(crate) mod helpers;
 pub(crate) mod info;
-pub(crate) mod essentials;

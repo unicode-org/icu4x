@@ -69,7 +69,7 @@ pub struct UnitsEssentialsV1<'data> {
 #[cfg_attr(
     feature = "datagen", 
     derive(serde::Serialize, databake::Bake),
-    databake(path = icu_experimental::dimension::provider::extended_currency)
+    databake(path = icu_experimental::dimension::provider::units_essentials)
 )]
 #[repr(u8)]
 pub enum CompoundCount {

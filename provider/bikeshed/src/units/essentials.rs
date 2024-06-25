@@ -2,16 +2,15 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::collections::{BTreeMap, HashSet};
+use std::collections::HashSet;
 
-use crate::cldr_serde::units::data::Patterns;
 use crate::cldr_serde::{self};
 use crate::DatagenProvider;
 
 use icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1Marker;
 
+use icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1;
 use icu::locale::LanguageIdentifier;
-use icu_experimental::dimension::provider::units_essentials::UnitsEssentialsV1;
 use icu_provider::prelude::*;
 use icu_provider::DataMarkerAttributes;
 use zerovec::ZeroMap;
@@ -38,10 +37,12 @@ impl DataProvider<UnitsEssentialsV1Marker> for DatagenProvider {
             _ => return Err(DataError::custom("Failed to get length data")),
         };
 
+        let prefixes = ZeroMap::new();
+
         let result = UnitsEssentialsV1 {
             per: "per".into(),
             times: "times".into(),
-            prefixes: ZeroMap::new(),
+            prefixes,
         };
 
         Ok(DataResponse {
@@ -73,62 +74,3 @@ impl crate::IterableDataProviderCached<UnitsEssentialsV1Marker> for DatagenProvi
         Ok(data_locales)
     }
 }
-
-// #[test]
-// fn test_basic() {
-//     use icu::locale::langid;
-//     use icu_provider::prelude::*;
-
-//     let provider = DatagenProvider::new_testing();
-
-//     let us_locale: DataPayload<UnitsEssentialsV1Marker> = provider
-//         .load(DataRequest {
-//             locale: &langid!("en").into(),
-//             marker_attributes: &"meter".parse().unwrap(),
-//             ..Default::default()
-//         })
-//         .unwrap()
-//         .payload;
-
-//     let units_us = us_locale.get().to_owned();
-//     let long = units_us.long.get(&Count::One).unwrap();
-//     assert_eq!(long, "{0} meter");
-//     let short = units_us.short.get(&Count::One).unwrap();
-//     assert_eq!(short, "{0} m");
-//     let narrow = units_us.narrow.get(&Count::One).unwrap();
-//     assert_eq!(narrow, "{0}m");
-
-//     let ar_eg_locale: DataPayload<UnitsEssentialsV1Marker> = provider
-//         .load(DataRequest {
-//             locale: &langid!("ar-EG").into(),
-//             marker_attributes: &"meter".parse().unwrap(),
-//             ..Default::default()
-//         })
-//         .unwrap()
-//         .payload;
-
-//     let ar_eg_units = ar_eg_locale.get().to_owned();
-//     let long = ar_eg_units.long.get(&Count::One).unwrap();
-//     assert_eq!(long, "متر");
-//     let short = ar_eg_units.short.get(&Count::One).unwrap();
-//     assert_eq!(short, "متر");
-//     let narrow = ar_eg_units.narrow.get(&Count::One).unwrap();
-//     assert_eq!(narrow, "{0} م");
-
-//     let fr_locale: DataPayload<UnitsEssentialsV1Marker> = provider
-//         .load(DataRequest {
-//             locale: &langid!("fr").into(),
-//             marker_attributes: &"meter".parse().unwrap(),
-//             ..Default::default()
-//         })
-//         .unwrap()
-//         .payload;
-
-//     let fr_units = fr_locale.get().to_owned();
-//     let long = fr_units.long.get(&Count::One).unwrap();
-//     assert_eq!(long, "{0} mètre");
-//     let short = fr_units.short.get(&Count::One).unwrap();
-//     assert_eq!(short, "{0} m");
-//     let narrow = fr_units.narrow.get(&Count::One).unwrap();
-//     assert_eq!(narrow, "{0}m");
-// }
