@@ -11,8 +11,8 @@ use alloc::borrow::Cow;
 use icu_provider::DataError;
 use writeable::{LengthHint, Writeable};
 
-impl<'data> ListFormatterPatternsV1<'data> {
-    /// Creates a new [`ListFormatterPatternsV1`] from the given patterns. Fails if any pattern is invalid.
+impl<'data> ListFormatterPatternsV2<'data> {
+    /// Creates a new [`ListFormatterPatternsV2`] from the given patterns. Fails if any pattern is invalid.
     #[cfg(feature = "datagen")]
     pub fn try_new(
         [start, middle, end, pair, short_start, short_middle, short_end, short_pair, narrow_start, narrow_middle, narrow_end, narrow_pair]: [&str; 12],
@@ -119,7 +119,7 @@ impl<'data> ListJoinerPattern<'data> {
             {
                 if (index_0 > 0 && !cfg!(test)) || index_1 - 3 >= 256 {
                     return Err(DataError::custom(
-                        "Found valid pattern that cannot be stored in ListFormatterPatternsV1",
+                        "Found valid pattern that cannot be stored in ListFormatterPatternsV2",
                     )
                     .with_debug_context(pattern));
                 }
@@ -169,8 +169,8 @@ impl<'data> From<ListJoinerPattern<'data>> for ConditionalListJoinerPattern<'dat
 pub mod test {
     use super::*;
 
-    pub fn test_patterns() -> ListFormatterPatternsV1<'static> {
-        let mut patterns = ListFormatterPatternsV1::try_new([
+    pub fn test_patterns() -> ListFormatterPatternsV2<'static> {
+        let mut patterns = ListFormatterPatternsV2::try_new([
             // Wide: general
             "@{0}:{1}",
             "{0},{1}",

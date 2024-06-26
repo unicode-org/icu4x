@@ -21,7 +21,7 @@ all-features = true
 [dependencies]
 displaydoc = { workspace = true }
 icu_provider = { workspace = true, features = ["macros"] }
-regex-automata = { workspace = true }
+regex-automata = { workspace = true, features = ["dfa-search"] }
 writeable = { workspace = true }
 
 databake = { workspace = true, features = ["derive"], optional = true}
@@ -42,8 +42,8 @@ serde_json = { workspace = true }
 default = ["compiled_data"]
 std = ["icu_provider/std"]
 serde = ["dep:deduplicating_array", "dep:serde", "icu_provider/serde"]
-serde_human = ["serde", "regex-automata/alloc"]
-datagen = ["serde", "std", "dep:databake", "regex-automata/alloc"]
+serde_human = ["serde", "regex-automata/dfa-build"]
+datagen = ["serde", "std", "dep:databake", "regex-automata/dfa-build"]
 bench = []
 compiled_data = ["dep:icu_list_data"]
 

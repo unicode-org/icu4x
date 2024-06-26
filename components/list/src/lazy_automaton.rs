@@ -4,11 +4,11 @@
 
 use regex_automata::dfa::sparse::DFA;
 use regex_automata::dfa::Automaton;
-use regex_automata::util::id::StateID;
+use regex_automata::util::{primitives::StateID, start::Config as StartConfig};
 use writeable::Writeable;
 
 pub trait LazyAutomaton: Automaton {
-    // Like Automaton::find_earliest_fwd, but doesn't require a materialized string.
+    // Like Automaton::try_search_fwd, but doesn't require a materialized string.
     fn matches_earliest_fwd_lazy<S: Writeable + ?Sized>(&self, haystack: &S) -> bool;
 }
 
@@ -32,10 +32,15 @@ impl<T: AsRef<[u8]>> LazyAutomaton for DFA<T> {
             }
         }
 
+        let Ok(start_state) =
+            self.start_state(&StartConfig::new().anchored(regex_automata::Anchored::Yes))
+        else {
+            // This will not happen, because we're not using look-behind, and our DFA support anchored
+            return false;
+        };
+
         let mut stepper = DFAStepper {
-            // If start == 0 the start state does not depend on the actual string, so
-            // we can just pass an empty slice.
-            state: self.start_state_forward(None, &[], 0, 0),
+            state: start_state,
             dfa: &self.as_ref(),
         };
 
@@ -52,6 +57,7 @@ impl<T: AsRef<[u8]>> LazyAutomaton for DFA<T> {
 fn test() {
     use crate::provider::SerdeDFA;
     use alloc::borrow::Cow;
+    use regex_automata::Input;
 
     let matcher = SerdeDFA::new(Cow::Borrowed("11(000)*$")).unwrap();
 
@@ -59,7 +65,10 @@ fn test() {
         assert_eq!(
             matcher
                 .deref()
-                .find_earliest_fwd(writeable.write_to_string().as_bytes())
+                .try_search_fwd(
+                    &Input::new(writeable.write_to_string().as_bytes())
+                        .anchored(regex_automata::Anchored::Yes)
+                )
                 .unwrap()
                 .is_some(),
             matcher.deref().matches_earliest_fwd_lazy(&writeable)
