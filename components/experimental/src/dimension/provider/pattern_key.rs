@@ -125,12 +125,9 @@ impl AsULE for PatternKey {
                 debug_assert!(value > -32 && value < 32);
                 (0b01 << 6) | sign | (value as u8 & 0b0001_1111)
             }
-            PatternKey::Power {
-                power: value,
-                count,
-            } => {
+            PatternKey::Power { power, count } => {
                 let power_bits = {
-                    match value {
+                    match power {
                         PowerValue::Two => 0b10 << 4,
                         PowerValue::Three => 0b11 << 4,
                     }
