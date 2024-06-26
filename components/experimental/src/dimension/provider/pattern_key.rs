@@ -68,6 +68,15 @@ pub enum PatternKey {
 #[derive(Copy, Clone, PartialOrd, Ord, PartialEq, Eq, Debug)]
 pub struct PatternKeyULE(u8);
 
+// Safety (based on the safety checklist on the ULE trait):
+//  1. PatternKeyULE does not include any uninitialized or padding bytes.
+//     (achieved by `#[repr(transparent)]` on a ULE type)
+//  2. PatternKeyULE is aligned to 1 byte.
+//     (achieved by `#[repr(transparent)]` on a ULE type)
+//  3. The impl of validate_byte_slice() returns an error if any byte is not valid.
+//  4. The impl of validate_byte_slice() returns an error if there are extra bytes.
+//  5. The other ULE methods use the default impl.
+//  6. PatternKeyULE byte equality is semantic equality.
 unsafe impl ULE for PatternKeyULE {
     fn validate_byte_slice(bytes: &[u8]) -> Result<(), zerovec::ZeroVecError> {
         if bytes.len() != 1 {
@@ -201,4 +210,17 @@ fn test_pattern_key_ule() {
 
     let power3 = PatternKey::from_unaligned(power3_ule);
     assert_eq!(power3, PatternKey::Power(Three, CompoundCount::Two));
+
+    // Test unvalidated bytes
+    let unvalidated_bytes = [0b1100_0000];
+    assert_eq!(
+        PatternKeyULE::validate_byte_slice(&unvalidated_bytes),
+        Err(ZeroVecError::parse::<PatternKeyULE>())
+    );
+
+    let unvalidated_bytes = [0b1000_0000];
+    assert_eq!(
+        PatternKeyULE::validate_byte_slice(&unvalidated_bytes),
+        Err(ZeroVecError::parse::<PatternKeyULE>())
+    );
 }
