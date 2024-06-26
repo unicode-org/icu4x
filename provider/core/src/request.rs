@@ -41,7 +41,7 @@ pub struct DataRequestMetadata {
     pub silent: bool,
 }
 
-/// TODO
+/// The borrowed version of a [`DataIdentifierCow`].
 #[derive(Default, Debug, Clone, Copy, PartialEq, Eq)]
 #[non_exhaustive]
 pub struct DataIdentifierBorrowed<'a> {
@@ -62,7 +62,7 @@ impl fmt::Display for DataIdentifierBorrowed<'_> {
 }
 
 impl<'a> DataIdentifierBorrowed<'a> {
-    /// TODO
+    /// Creates a [`DataIdentifierBorrowed`] for a borrowed [`DataLocale`].
     pub fn for_locale(locale: &'a DataLocale) -> Self {
         Self {
             locale,
@@ -70,7 +70,7 @@ impl<'a> DataIdentifierBorrowed<'a> {
         }
     }
 
-    /// TODO
+    /// Creates a [`DataIdentifierBorrowed`] for a borrowed [`DataMarkerAttributes`].
     pub fn for_marker_attributes(marker_attributes: &'a DataMarkerAttributes) -> Self {
         Self {
             marker_attributes,
@@ -78,7 +78,7 @@ impl<'a> DataIdentifierBorrowed<'a> {
         }
     }
 
-    /// TODO
+    /// Creates a [`DataIdentifierBorrowed`] for a borrowed [`DataMarkerAttributes`] and [`DataLocale`].
     pub fn for_marker_attributes_and_locale(
         marker_attributes: &'a DataMarkerAttributes,
         locale: &'a DataLocale,
@@ -89,7 +89,7 @@ impl<'a> DataIdentifierBorrowed<'a> {
         }
     }
 
-    /// TODO
+    /// Converts this [`DataIdentifierBorrowed`] into a [`DataIdentifierCow<'static>`].
     pub fn into_owned(&self) -> DataIdentifierCow<'static> {
         DataIdentifierCow {
             marker_attributes: Cow::Owned(self.marker_attributes.to_owned()),
@@ -97,7 +97,7 @@ impl<'a> DataIdentifierBorrowed<'a> {
         }
     }
 
-    /// TODO
+    /// Borrows this [`DataIdentifierBorrowed`] as a [`DataIdentifierCow<'a>`].
     pub fn as_cow(&self) -> DataIdentifierCow<'a> {
         DataIdentifierCow {
             marker_attributes: Cow::Borrowed(self.marker_attributes),
@@ -106,7 +106,9 @@ impl<'a> DataIdentifierBorrowed<'a> {
     }
 }
 
-/// TODO
+/// A data identifier identifies a particular version of data, such as "English".
+///
+/// It is a wrapper around a [`DataLocale`] and a [`DataMarkerAttributes`].
 #[derive(Debug, PartialEq, Eq, Hash, Clone)]
 #[non_exhaustive]
 pub struct DataIdentifierCow<'a> {
@@ -127,17 +129,15 @@ impl fmt::Display for DataIdentifierCow<'_> {
 }
 
 impl<'a> DataIdentifierCow<'a> {
-    /// TODO
+    /// Borrows this [`DataIdentifierCow`] as a [`DataIdentifierBorrowed<'a>`].
     pub fn as_borrowed(&'a self) -> DataIdentifierBorrowed<'a> {
         DataIdentifierBorrowed {
             marker_attributes: &self.marker_attributes,
             locale: &self.locale,
         }
     }
-}
 
-impl DataIdentifierCow<'static> {
-    /// TODO
+    /// Creates a [`DataIdentifierCow`] from an owned [`DataLocale`].
     pub fn from_locale(locale: DataLocale) -> Self {
         Self {
             marker_attributes: Cow::Borrowed(DataMarkerAttributes::empty()),
@@ -145,15 +145,15 @@ impl DataIdentifierCow<'static> {
         }
     }
 
-    /// TODO
-    pub fn from_marker_attributes(marker_attributes: &'static DataMarkerAttributes) -> Self {
+    /// Creates a [`DataIdentifierCow`] from a borrowed [`DataMarkerAttributes`].
+    pub fn from_marker_attributes(marker_attributes: &'a DataMarkerAttributes) -> Self {
         Self {
             marker_attributes: Cow::Borrowed(marker_attributes),
             locale: Cow::Borrowed(Default::default()),
         }
     }
 
-    /// TODO
+    /// Creates a [`DataIdentifierCow`] from an owned [`DataMarkerAttributes`].
     pub fn from_marker_attributes_owned(marker_attributes: Box<DataMarkerAttributes>) -> Self {
         Self {
             marker_attributes: Cow::Owned(marker_attributes),
@@ -161,7 +161,7 @@ impl DataIdentifierCow<'static> {
         }
     }
 
-    /// TODO
+    /// Creates a [`DataIdentifierCow`] from an owned [`DataMarkerAttributes`] and an owned [`DataLocale`].
     pub fn from_owned(marker_attributes: Box<DataMarkerAttributes>, locale: DataLocale) -> Self {
         Self {
             marker_attributes: Cow::Owned(marker_attributes),
@@ -169,9 +169,9 @@ impl DataIdentifierCow<'static> {
         }
     }
 
-    /// TODO
+    /// Creates a [`DataIdentifierCow`] from a borrowed [`DataMarkerAttributes`] and an owned [`DataLocale`].
     pub fn from_borrowed_and_owned(
-        marker_attributes: &'static DataMarkerAttributes,
+        marker_attributes: &'a DataMarkerAttributes,
         locale: DataLocale,
     ) -> Self {
         Self {
@@ -536,6 +536,16 @@ impl DataLocale {
     ///
     /// If you have ownership over the `DataLocale`, use [`DataLocale::into_locale()`]
     /// and then access the `id` field.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_locale_core::langid;
+    /// use icu_provider::prelude::*;
+    ///
+    /// assert_eq!(DataLocale::default().get_langid(), langid!("und"));
+    /// assert_eq!(DataLocale::from(langid!("ar-EG")).get_langid(), langid!("ar-EG"));
+    /// ```
     pub fn get_langid(&self) -> LanguageIdentifier {
         self.langid.clone()
     }
@@ -697,7 +707,9 @@ impl DataLocale {
     }
 }
 
-/// TODO
+/// An additional key to identify data beyond a [`DataLocale`].
+///
+/// The is a loose wrapper around a string, with semantics defined by each [`DataMarker`](crate::DataMarker).
 #[derive(PartialEq, Eq, Ord, PartialOrd, Hash)]
 #[repr(transparent)]
 pub struct DataMarkerAttributes {
@@ -726,7 +738,7 @@ impl Debug for DataMarkerAttributes {
     }
 }
 
-/// TODO
+/// Invalid character
 #[derive(Debug)]
 #[non_exhaustive]
 pub struct AttributeParseError;
@@ -744,25 +756,33 @@ impl DataMarkerAttributes {
         Ok(())
     }
 
-    /// TODO
+    /// Creates a borrowed [`DataMarkerAttributes`] from a borrowed string.
+    ///
+    /// Returns an error if the string contains characters other than `[a-zA-Z0-9_\-]`.
     pub const fn try_from_str(s: &str) -> Result<&Self, AttributeParseError> {
         let Ok(()) = Self::validate(s) else {
             return Err(AttributeParseError);
         };
 
-        Ok(unsafe { &*(s as *const str as *const DataMarkerAttributes) })
+        // SAFETY: `Self` has the same layout as `str`
+        Ok(unsafe { &*(s as *const str as *const Self) })
     }
 
-    /// TODO
+    /// Creates an owned [`DataMarkerAttributes`] from an owned string.
+    ///
+    /// Returns an error if the string contains characters other than `[a-zA-Z0-9_\-]`.
     pub fn try_from_string(s: String) -> Result<Box<Self>, AttributeParseError> {
         let Ok(()) = Self::validate(&s) else {
             return Err(AttributeParseError);
         };
 
-        Ok(unsafe { core::mem::transmute(s.into_boxed_str()) })
+        // SAFETY: `Self` has the same layout as `str`
+        Ok(unsafe { core::mem::transmute::<Box<str>, Box<Self>>(s.into_boxed_str()) })
     }
 
-    /// TODO
+    /// Creates a borrowed [`DataMarkerAttributes`] from a borrowed string.
+    ///
+    /// Panics if the string contains characters other than `[a-zA-Z0-9_\-]`.
     pub const fn from_str_or_panic(s: &str) -> &Self {
         let Ok(r) = Self::try_from_str(s) else {
             panic!("Invalid marker attribute syntax")
@@ -770,12 +790,13 @@ impl DataMarkerAttributes {
         r
     }
 
-    /// TODO
+    /// Creates an empty [`DataMarkerAttributes`].
     pub const fn empty() -> &'static Self {
-        unsafe { &*("" as *const str as *const DataMarkerAttributes) }
+        // SAFETY: `Self` has the same layout as `str`
+        unsafe { &*("" as *const str as *const Self) }
     }
 
-    /// TODO
+    /// Returns this [`DataMarkerAttributes`] as a `&str`.
     pub const fn as_str(&self) -> &str {
         &self.value
     }
@@ -784,8 +805,8 @@ impl DataMarkerAttributes {
 impl ToOwned for DataMarkerAttributes {
     type Owned = Box<Self>;
     fn to_owned(&self) -> Self::Owned {
-        let str = unsafe { &*(self as *const DataMarkerAttributes as *const str) };
-        unsafe { core::mem::transmute(str.to_boxed()) }
+        // SAFETY: `Self` has the same layout as `str`
+        unsafe { core::mem::transmute::<Box<str>, Box<Self>>(self.as_str().to_boxed()) }
     }
 }
 

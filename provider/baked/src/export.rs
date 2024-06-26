@@ -154,7 +154,7 @@ pub struct BakedExporter {
     pretty: bool,
     use_separate_crates: bool,
     use_internal_fallback: bool,
-    // Temporary storage for put_payload: marker -> (bake -> {(locale, marker_attributes)})
+    // Temporary storage for put_payload: marker -> (bake -> {data id})
     data: Mutex<
         HashMap<DataMarkerInfo, BTreeMap<SyncTokenStream, HashSet<DataIdentifierCow<'static>>>>,
     >,
