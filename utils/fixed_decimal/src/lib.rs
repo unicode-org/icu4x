@@ -68,6 +68,7 @@ pub use FloatPrecision as DoublePrecision;
 pub use compact::CompactDecimal;
 pub use decimal::FixedDecimal;
 pub use decimal::RoundingIncrement;
+pub use decimal::RoundingMode;
 pub use decimal::Sign;
 pub use decimal::SignDisplay;
 use displaydoc::Display;
@@ -84,8 +85,8 @@ pub use scientific::ScientificDecimal;
 /// # Examples
 ///
 /// ```
-/// use fixed_decimal::LimitError;
 /// use fixed_decimal::FixedDecimal;
+/// use fixed_decimal::LimitError;
 ///
 /// let mut dec1 = FixedDecimal::from(123);
 /// dec1.multiply_pow10(i16::MAX);

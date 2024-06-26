@@ -54,7 +54,7 @@ pub struct Gregorian;
 
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 /// The inner date type used for representing [`Date`]s of [`Gregorian`]. See [`Date`] and [`Gregorian`] for more details.
-pub struct GregorianDateInner(IsoDateInner);
+pub struct GregorianDateInner(pub(crate) IsoDateInner);
 
 impl Calendar for Gregorian {
     type DateInner = GregorianDateInner;
