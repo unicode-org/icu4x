@@ -36,7 +36,10 @@ pub enum PowerValue {
 pub enum PatternKey {
     Binary(u8),
     Decimal(i8),
-    Power(PowerValue, CompoundCount),
+    Power {
+        power: PowerValue,
+        count: CompoundCount,
+    },
 }
 
 /// [`PatternKeyULE`] is a type optimized for efficient storage and
@@ -122,9 +125,12 @@ impl AsULE for PatternKey {
                 debug_assert!(value > -32 && value < 32);
                 (0b01 << 6) | sign | (value as u8 & 0b0001_1111)
             }
-            PatternKey::Power(power, count) => {
+            PatternKey::Power {
+                power: value,
+                count,
+            } => {
                 let power_bits = {
-                    match power {
+                    match value {
                         PowerValue::Two => 0b10 << 4,
                         PowerValue::Three => 0b11 << 4,
                     }
@@ -157,7 +163,10 @@ impl AsULE for PatternKey {
                     _ => unreachable!(),
                 };
                 let count = value & 0b0000_1111;
-                PatternKey::Power(power, count.into())
+                PatternKey::Power {
+                    power,
+                    count: count.into(),
+                }
             }
             _ => unreachable!(),
         }
@@ -185,12 +194,18 @@ fn test_pattern_key_ule() {
     PatternKeyULE::validate_byte_slice(&[decimal_ule.0]).unwrap();
     assert_eq!(decimal_ule.0, 0b0100_1111);
 
-    let power2 = PatternKey::Power(Two, CompoundCount::Two);
+    let power2 = PatternKey::Power {
+        power: Two,
+        count: CompoundCount::Two,
+    };
     let power2_ule = power2.to_unaligned();
     PatternKeyULE::validate_byte_slice(&[power2_ule.0]).unwrap();
     assert_eq!(power2_ule.0, 0b1010_0010);
 
-    let power3 = PatternKey::Power(Three, CompoundCount::Two);
+    let power3 = PatternKey::Power {
+        power: Three,
+        count: CompoundCount::Two,
+    };
     let power3_ule = power3.to_unaligned();
     PatternKeyULE::validate_byte_slice(&[power3_ule.0]).unwrap();
     assert_eq!(power3_ule.0, 0b1011_0010);
@@ -202,12 +217,23 @@ fn test_pattern_key_ule() {
     assert_eq!(decimal, PatternKey::Decimal(0b0000_1111));
 
     let power2 = PatternKey::from_unaligned(power2_ule);
-    assert_eq!(power2, PatternKey::Power(Two, CompoundCount::Two));
+    assert_eq!(
+        power2,
+        PatternKey::Power {
+            power: Two,
+            count: CompoundCount::Two,
+        }
+    );
 
     let power3 = PatternKey::from_unaligned(power3_ule);
-    assert_eq!(power3, PatternKey::Power(Three, CompoundCount::Two));
-
-    // Test unvalidated bytes
+    assert_eq!(
+        power3,
+        PatternKey::Power {
+            power: Three,
+            count: CompoundCount::Two,
+        }
+    );
+    // Test invalid bytes
     let unvalidated_bytes = [0b1100_0000];
     assert_eq!(
         PatternKeyULE::validate_byte_slice(&unvalidated_bytes),
