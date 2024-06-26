@@ -42,8 +42,8 @@ serde_json = { workspace = true }
 default = ["compiled_data"]
 std = ["icu_provider/std"]
 serde = ["dep:deduplicating_array", "dep:serde", "icu_provider/serde"]
-serde_human = ["serde", "regex-automata/dfa-build"]
-datagen = ["serde", "std", "dep:databake", "regex-automata/dfa-build"]
+serde_human = ["serde", "regex-automata/dfa-build", "regex-automata/syntax"]
+datagen = ["serde", "std", "dep:databake", "regex-automata/dfa-build", "regex-automata/syntax"]
 bench = []
 compiled_data = ["dep:icu_list_data"]
 
