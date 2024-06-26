@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::provider::{AndListV1Marker, ErasedListV1Marker, OrListV1Marker, UnitListV1Marker};
+use crate::provider::*;
 use crate::ListLength;
 use core::fmt::{self, Write};
 use icu_provider::prelude::*;
@@ -15,7 +15,7 @@ extern crate writeable;
 /// [crate-level documentation](crate) for more details.
 #[derive(Debug)]
 pub struct ListFormatter {
-    data: DataPayload<ErasedListV1Marker>,
+    data: DataPayload<ErasedListV2Marker>,
     length: ListLength,
 }
 
@@ -64,7 +64,7 @@ impl ListFormatter {
         try_new_and_with_length_with_any_provider,
         try_new_and_with_length_with_buffer_provider,
         try_new_and_with_length_unstable,
-        AndListV1Marker,
+        AndListV2Marker,
         "and"
     );
     constructor!(
@@ -72,7 +72,7 @@ impl ListFormatter {
         try_new_or_with_length_with_any_provider,
         try_new_or_with_length_with_buffer_provider,
         try_new_or_with_length_unstable,
-        OrListV1Marker,
+        OrListV2Marker,
         "or"
     );
     constructor!(
@@ -80,7 +80,7 @@ impl ListFormatter {
         try_new_unit_with_length_with_any_provider,
         try_new_unit_with_length_with_buffer_provider,
         try_new_unit_with_length_unstable,
-        UnitListV1Marker,
+        UnitListV2Marker,
         "unit"
     );
 
@@ -364,7 +364,7 @@ mod tests {
     fn test_conditional() {
         let formatter = formatter(ListLength::Narrow);
 
-        assert_writeable_eq!(formatter.format(["Beta", "Alpha"].iter()), "Beta :o Alpha");
+        assert_writeable_eq!(formatter.format(["beta", "alpha"].iter()), "beta :o alpha");
     }
 
     macro_rules! test {
