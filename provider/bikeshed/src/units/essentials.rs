@@ -36,12 +36,23 @@ impl DataProvider<UnitsEssentialsV1Marker> for DatagenProvider {
             "narrow" => &units_format_data.narrow,
             _ => return Err(DataError::custom("Failed to get length data")),
         };
+        let per = length_data
+            .get("per")
+            .and_then(|unit| unit.compound_unit_pattern.as_ref())
+            .ok_or_else(|| DataError::custom("Failed to get per"))?
+            .clone();
+
+        let times = length_data
+            .get("times")
+            .and_then(|unit| unit.compound_unit_pattern.as_ref())
+            .ok_or_else(|| DataError::custom("Failed to get times"))?
+            .clone();
 
         let prefixes = ZeroMap::new();
 
         let result = UnitsEssentialsV1 {
-            per: "per".into(),
-            times: "times".into(),
+            per: per.into(),
+            times: times.into(),
             prefixes,
         };
 

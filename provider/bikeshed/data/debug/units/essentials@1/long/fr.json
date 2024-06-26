@@ -1,5 +1,5 @@
 {
   "prefixes": {},
-  "per": "per",
-  "times": "times"
+  "per": "{0} par {1}",
+  "times": "{0}-{1}"
 }
