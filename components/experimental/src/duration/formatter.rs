@@ -62,8 +62,9 @@ pub struct ValidatedDurationFormatterOptions {
     nanosecond_visibility: FieldDisplay,
 
     /// Number of fractional digits to use when formatting sub-second units (milliseconds, microseconds, nanoseconds).
-    /// Only takes effect when the subsecond units are styled as `Numeric`.
-    /// Zero means no fractional digits.
+    ///  # NOTE 
+    ///       - Only takes effect when the subsecond units are styled as `Numeric`.
+    ///       - Zero means no fractional digits.
     fractional_digits: FractionalDigits,
 }
 
