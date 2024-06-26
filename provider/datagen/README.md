@@ -19,7 +19,7 @@ use std::fs::File;
 let provider = DatagenProvider::new_latest_tested();
 
 DatagenDriver::new([LocaleFamily::FULL], FallbackOptions::no_deduplication(), LocaleFallbacker::try_new_unstable(&provider).unwrap())
-    .with_markers([icu::list::provider::AndListV1Marker::INFO])
+    .with_markers([icu::list::provider::AndListV2Marker::INFO])
     .export(
         &provider,
         BlobExporter::new_v2_with_sink(Box::new(

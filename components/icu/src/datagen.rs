@@ -75,8 +75,8 @@ icu_registry::registry!(cb);
 /// assert_eq!(
 ///     icu::markers_for_bin("target/release/my-app")?,
 ///     std::collections::HashSet::from_iter([
-///         icu::list::provider::AndListV1Marker::INFO,
-///         icu::list::provider::OrListV1Marker::INFO,
+///         icu::list::provider::AndListV2Marker::INFO,
+///         icu::list::provider::OrListV2Marker::INFO,
 ///     ]),
 /// );
 /// # Ok(())
