@@ -59,7 +59,7 @@ fn test() {
     use alloc::borrow::Cow;
     use regex_automata::Input;
 
-    let matcher = SerdeDFA::new(Cow::Borrowed("11(000)*$")).unwrap();
+    let matcher = SerdeDFA::new(Cow::Borrowed("^11(000)*$")).unwrap();
 
     for writeable in [1i32, 11, 110, 11000, 211000] {
         assert_eq!(

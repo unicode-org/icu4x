@@ -58,7 +58,8 @@ fn load<M: DataMarker<Yokeable = ListFormatterPatternsV2<'static>>>(
 
             // Starts with i or (hi but not hia/hie)
             let i_sound = I_SOUND.get_or_init(|| {
-                SerdeDFA::new(Cow::Borrowed("^i|hi|I|Hi|HI|hI([^aeAE]|$)")).expect("Valid regex")
+                SerdeDFA::new(Cow::Borrowed("^[iI]|(?:[hH][iI](?:[^aeAE]|$))"))
+                    .expect("Valid regex")
             });
 
             // Replace " y " with " e " before /i/ sounds.
@@ -72,7 +73,7 @@ fn load<M: DataMarker<Yokeable = ListFormatterPatternsV2<'static>>>(
             // by thousand groups and/or decimals (excluding e.g. 110, 1100, ...)
             let o_sound = O_SOUND.get_or_init(|| {
                 SerdeDFA::new(Cow::Borrowed(
-                    r"^o|ho|O|Ho|HO|hO|8|(11([\.  ]?[0-9]{3})*(,[0-9]*)?([^\.,[0-9]]|$))",
+                    r"^[oO]|[hH][oO]|8|(?:11(?:[\.  ]?[0-9]{3})*(?:,[0-9]*)?(?:[^\.,[0-9]]|$))",
                 ))
                 .expect("Valid regex")
             });

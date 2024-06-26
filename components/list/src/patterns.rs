@@ -191,7 +191,7 @@ pub mod test {
         patterns
             .make_conditional(
                 "{0}. {1}",
-                &SerdeDFA::new(Cow::Borrowed("A")).unwrap(),
+                &SerdeDFA::new(Cow::Borrowed("^a")).unwrap(),
                 "{0} :o {1}",
             )
             .unwrap();
@@ -224,10 +224,6 @@ pub mod test {
     #[test]
     fn produces_correct_parts_conditionally() {
         assert_eq!(
-            test_patterns().end(ListLength::Narrow).parts("A"),
-            ("", " :o ", "")
-        );
-        assert_eq!(
             test_patterns().end(ListLength::Narrow).parts("a"),
             ("", " :o ", "")
         );
@@ -236,11 +232,11 @@ pub mod test {
             ("", " :o ", "")
         );
         assert_eq!(
-            test_patterns().end(ListLength::Narrow).parts("B"),
+            test_patterns().end(ListLength::Narrow).parts("b"),
             ("", ". ", "")
         );
         assert_eq!(
-            test_patterns().end(ListLength::Narrow).parts("BA"),
+            test_patterns().end(ListLength::Narrow).parts("ba"),
             ("", ". ", "")
         );
     }

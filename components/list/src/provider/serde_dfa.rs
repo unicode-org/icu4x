@@ -180,7 +180,7 @@ mod test {
     fn test_serde_dfa() {
         use regex_automata::dfa::Automaton;
 
-        let matcher = SerdeDFA::new(Cow::Borrowed("abc")).unwrap();
+        let matcher = SerdeDFA::new(Cow::Borrowed("^abc")).unwrap();
 
         assert!(matcher
             .deref()
@@ -212,7 +212,7 @@ mod test {
     #[test]
     #[cfg(target_endian = "little")]
     fn test_postcard_serialization() {
-        let matcher = SerdeDFA::new(Cow::Borrowed("abc*")).unwrap();
+        let matcher = SerdeDFA::new(Cow::Borrowed("^abc*")).unwrap();
 
         let mut bytes = postcard::to_stdvec(&matcher).unwrap();
         assert_eq!(
@@ -236,7 +236,7 @@ mod test {
 
     #[test]
     fn test_rmp_serialization() {
-        let matcher = SerdeDFA::new(Cow::Borrowed("abc*")).unwrap();
+        let matcher = SerdeDFA::new(Cow::Borrowed("^abc*")).unwrap();
 
         let bytes = rmp_serde::to_vec(&matcher).unwrap();
         assert_eq!(
@@ -248,7 +248,7 @@ mod test {
     #[test]
     #[cfg(feature = "serde_human")]
     fn test_json_serialization() {
-        let matcher = SerdeDFA::new(Cow::Borrowed("abc*")).unwrap();
+        let matcher = SerdeDFA::new(Cow::Borrowed("^abc*")).unwrap();
 
         let json = serde_json::to_string(&matcher).unwrap();
         assert_eq!(

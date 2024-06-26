@@ -364,7 +364,7 @@ mod tests {
     fn test_conditional() {
         let formatter = formatter(ListLength::Narrow);
 
-        assert_writeable_eq!(formatter.format(["Beta", "Alpha"].iter()), "Beta :o Alpha");
+        assert_writeable_eq!(formatter.format(["beta", "alpha"].iter()), "beta :o alpha");
     }
 
     macro_rules! test {

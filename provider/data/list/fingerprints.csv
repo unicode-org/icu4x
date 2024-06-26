@@ -27,7 +27,7 @@ list/and@2, en, 47B, d5c0db9263bf647e
 list/and@2, en-001, 25B, b8523b7cd574b5b
 list/and@2, en-CA, 25B, -> en-001
 list/and@2, en-IN, 34B, 61f7e3861df4623e
-list/and@2, es, 1051B, bb8c9fc67206f5fd
+list/and@2, es, 1030B, d4359196e97c8a45
 list/and@2, et, 24B, 56305a514cbe7bfd
 list/and@2, eu, 25B, acd4c590f11d8805
 list/and@2, fa, 37B, 7ce7cadd70af8d4c
@@ -274,10 +274,10 @@ list/unit@2, doi, 40B, -> doi
 list/unit@2, dsb, 23B, 99ffd40ccfab19d6
 list/unit@2, el, 21B, -> as
 list/unit@2, en, 21B, -> as
-list/unit@2, es, 1055B, ad09de32fa6613fc
-list/unit@2, es-DO, 1055B, e5ffe674d07e7d31
-list/unit@2, es-PY, 1055B, bb0e348d0ee8d123
-list/unit@2, es-US, 1055B, -> es-PY
+list/unit@2, es, 1034B, c87ae0db0636d63
+list/unit@2, es-DO, 1034B, 39788744ae60629
+list/unit@2, es-PY, 1034B, 1bf33f76dd40e0b0
+list/unit@2, es-US, 1034B, -> es-PY
 list/unit@2, et, 21B, -> as
 list/unit@2, eu, 25B, b46a29e76c01f0ac
 list/unit@2, fa, 41B, bf7a6b4acbdca1ce
