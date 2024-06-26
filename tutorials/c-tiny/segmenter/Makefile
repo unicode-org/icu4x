@@ -27,14 +27,14 @@ target/x86_64-unknown-linux-gnu/debug/libicu_capi.a: FORCE
 	rustup component add rust-src --toolchain ${LLVM_COMPATIBLE_NIGHTLY}
 	RUSTFLAGS="-Clinker-plugin-lto -Clinker=$(CLANG) -Ccodegen-units=1 -Clink-arg=-flto -Cpanic=abort" \
 	cargo +${LLVM_COMPATIBLE_NIGHTLY} rustc -p icu_capi --crate-type staticlib --no-default-features --features icu_capi/compiled_data,icu_capi/icu_segmenter,icu_capi/looping_panic_handler,icu_capi/libc_alloc \
-	-Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort --target x86_64-unknown-linux-gnu
+	-Z build-std=std -Z build-std-features=panic_immediate_abort --target x86_64-unknown-linux-gnu
 
 target/x86_64-unknown-linux-gnu/release/libicu_capi.a: FORCE
 	rustup toolchain install ${LLVM_COMPATIBLE_NIGHTLY}
 	rustup component add rust-src --toolchain ${LLVM_COMPATIBLE_NIGHTLY}
 	RUSTFLAGS="-Clto -Cembed-bitcode -Clinker-plugin-lto -Clinker=$(CLANG) -Ccodegen-units=1 -Clink-arg=-flto -Cpanic=abort -Copt-level=s" \
 	cargo +${LLVM_COMPATIBLE_NIGHTLY} rustc -p icu_capi --crate-type staticlib --no-default-features --features icu_capi/compiled_data,icu_capi/icu_segmenter,icu_capi/looping_panic_handler,icu_capi/libc_alloc \
-	-Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort --target x86_64-unknown-linux-gnu --release
+	-Z build-std=std -Z build-std-features=panic_immediate_abort --target x86_64-unknown-linux-gnu --release
 
 # Naive target: no optimizations, full std
 optim0.elf: target/debug/libicu_capi.a $(ALL_HEADERS) test.c
