@@ -8,8 +8,7 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XError.d.hpp"
-#include "ICU4XIsoDate.d.h"
+#include "ICU4XCalendarError.d.hpp"
 #include "ICU4XIsoWeekday.d.hpp"
 #include "ICU4XWeekOf.d.hpp"
 
@@ -17,14 +16,18 @@ class ICU4XCalendar;
 class ICU4XDate;
 class ICU4XWeekCalculator;
 struct ICU4XWeekOf;
-class ICU4XError;
+class ICU4XCalendarError;
 class ICU4XIsoWeekday;
 
+
+namespace capi {
+    typedef struct ICU4XIsoDate ICU4XIsoDate;
+}
 
 class ICU4XIsoDate {
 public:
 
-  inline static diplomat::result<std::unique_ptr<ICU4XIsoDate>, ICU4XError> create(int32_t year, uint8_t month, uint8_t day);
+  inline static diplomat::result<std::unique_ptr<ICU4XIsoDate>, ICU4XCalendarError> create(int32_t year, uint8_t month, uint8_t day);
 
   inline static std::unique_ptr<ICU4XIsoDate> create_for_unix_epoch();
 
@@ -40,7 +43,7 @@ public:
 
   inline uint32_t week_of_month(ICU4XIsoWeekday first_weekday) const;
 
-  inline diplomat::result<ICU4XWeekOf, ICU4XError> week_of_year(const ICU4XWeekCalculator& calculator) const;
+  inline ICU4XWeekOf week_of_year(const ICU4XWeekCalculator& calculator) const;
 
   inline uint32_t month() const;
 

@@ -8,8 +8,15 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XSegmenterWordType.d.h"
 
+
+namespace capi {
+    typedef enum ICU4XSegmenterWordType {
+      ICU4XSegmenterWordType_None = 0,
+      ICU4XSegmenterWordType_Number = 1,
+      ICU4XSegmenterWordType_Letter = 2,
+    } ICU4XSegmenterWordType;
+}
 
 class ICU4XSegmenterWordType {
 public:

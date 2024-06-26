@@ -7,10 +7,8 @@
 #include <stdbool.h>
 #include "diplomat_runtime.h"
 
-#ifdef __cplusplus
-namespace capi {
-extern "C" {
-#endif // __cplusplus
+
+
 
 
 typedef enum ICU4XDateLength {
@@ -21,9 +19,7 @@ typedef enum ICU4XDateLength {
 } ICU4XDateLength;
 
 
-#ifdef __cplusplus
-} // extern "C"
-} // namespace capi
-#endif // __cplusplus
+
+
 
 #endif // ICU4XDateLength_D_H

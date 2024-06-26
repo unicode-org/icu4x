@@ -8,7 +8,7 @@
 /// # Examples
 ///
 /// ```
-/// use icu_provider_adapters::fork::ForkByKeyProvider;
+/// use icu_provider_adapters::fork::ForkByMarkerProvider;
 ///
 /// // Some empty example providers:
 /// #[derive(PartialEq, Debug)]
@@ -20,14 +20,14 @@
 ///
 /// // Combine them into one:
 /// let forking1 = icu_provider_adapters::make_forking_provider!(
-///     ForkByKeyProvider::new,
+///     ForkByMarkerProvider::new,
 ///     [Provider1, Provider2, Provider3,]
 /// );
 ///
 /// // This is equivalent to:
-/// let forking2 = ForkByKeyProvider::new(
+/// let forking2 = ForkByMarkerProvider::new(
 ///     Provider1,
-///     ForkByKeyProvider::new(Provider2, Provider3),
+///     ForkByMarkerProvider::new(Provider2, Provider3),
 /// );
 ///
 /// assert_eq!(forking1, forking2);
@@ -53,7 +53,7 @@ mod test {
     #[test]
     fn test_make_forking_provider() {
         make_forking_provider!(
-            crate::fork::ForkByKeyProvider::new,
+            crate::fork::ForkByMarkerProvider::new,
             [Provider1, Provider2, Provider3,]
         );
     }

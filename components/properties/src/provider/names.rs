@@ -15,8 +15,6 @@
 use alloc::boxed::Box;
 use core::cmp::Ordering;
 
-use core::str;
-
 use icu_provider::prelude::*;
 
 use tinystr::TinyStr4;

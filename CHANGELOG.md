@@ -1,5 +1,25 @@
 # Changelog
 
+## icu4x 1.5.x
+
+
+- `icu_calendar`
+  - (1.5.1) Fix Japanese calendar Gregorian era year 0 (https://github.com/unicode-org/icu4x/issues/4968)
+  - (1.5.2) Enforce C,packed, not just packed, on ULE types, fixing for incoming changes to `repr(Rust)` (https://github.com/unicode-org/icu4x/pull/5049)
+- `icu_datetime`
+  - (1.5.1) Fix incorrect assertion in week-of-year formatting (https://github.com/unicode-org/icu4x/issues/4977)
+- `icu_casemap`
+  - (1.5.1) Enforce C,packed, not just packed, on ULE types, fixing for incoming changes to `repr(Rust)` (https://github.com/unicode-org/icu4x/pull/5049)
+- `icu_capi`
+  - (1.5.1) Fix situations in which `libc_alloc` is specified as a dependency (https://github.com/unicode-org/icu4x/pull/5119)
+- `icu_properties`
+  - (1.5.1) Enforce C,packed, not just packed, on ULE types, fixing for incoming changes to `repr(Rust)` (https://github.com/unicode-org/icu4x/pull/5049)
+- `zerovec`
+  - (0.10.3) Fix size regression by making `twox-hash` dep `no_std` (https://github.com/unicode-org/icu4x/pull/5007)
+  - (0.10.3) Enforce C,packed, not just packed, on ULE types, fixing for incoming changes to `repr(Rust)` (https://github.com/unicode-org/icu4x/pull/5049)
+- `zerovec_derive`
+  - (0.10.3) Enforce C,packed, not just packed, on ULE types, fixing for incoming changes to `repr(Rust)` (https://github.com/unicode-org/icu4x/pull/5049)
+
 ## icu4x 1.5 (May 28, 2024)
 
 - Components
@@ -122,6 +142,11 @@
  - Fix normalization of character whose decomposition contains more than one starter and ends with a non-starter followed by a non-starter
    with a lower Canonical Combining Class than the last character of the decomposition. (https://github.com/unicode-org/icu4x/pull/4530)
    - `icu_normalizer@1.4.1`
+ - Stricter version dependency on data crates
+   - `icu_properties@1.4.2`, `icu_normalizer@1.4.3`, `icu_properties_data@1.4.1`
+ - Enforce C,packed, not just packed, on ULE types, fixing for incoming changes to `repr(Rust)` (https://github.com/unicode-org/icu4x/pull/5049)
+   - `icu_casemap@1.4.1`, `icu_properties@1.4.3`
+   - A full fix also needs `zerovec@0.10.3`,`zerovec_derive@0.10.3`
 
 ## icu4x 1.4 (Nov 16, 2023)
 

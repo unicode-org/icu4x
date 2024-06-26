@@ -8,8 +8,14 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XTransformResult.d.h"
 
+
+namespace capi {
+    typedef enum ICU4XTransformResult {
+      ICU4XTransformResult_Modified = 0,
+      ICU4XTransformResult_Unmodified = 1,
+    } ICU4XTransformResult;
+}
 
 class ICU4XTransformResult {
 public:

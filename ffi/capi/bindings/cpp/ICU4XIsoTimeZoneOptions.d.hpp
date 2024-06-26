@@ -10,13 +10,20 @@
 #include "diplomat_runtime.hpp"
 #include "ICU4XIsoTimeZoneFormat.d.hpp"
 #include "ICU4XIsoTimeZoneMinuteDisplay.d.hpp"
-#include "ICU4XIsoTimeZoneOptions.d.h"
 #include "ICU4XIsoTimeZoneSecondDisplay.d.hpp"
 
 class ICU4XIsoTimeZoneFormat;
 class ICU4XIsoTimeZoneMinuteDisplay;
 class ICU4XIsoTimeZoneSecondDisplay;
 
+
+namespace capi {
+    typedef struct ICU4XIsoTimeZoneOptions {
+      ICU4XIsoTimeZoneFormat format;
+      ICU4XIsoTimeZoneMinuteDisplay minutes;
+      ICU4XIsoTimeZoneSecondDisplay seconds;
+    } ICU4XIsoTimeZoneOptions;
+}
 
 struct ICU4XIsoTimeZoneOptions {
   ICU4XIsoTimeZoneFormat format;

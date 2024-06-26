@@ -8,8 +8,11 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XMeasureUnit.d.h"
 
+
+namespace capi {
+    typedef struct ICU4XMeasureUnit ICU4XMeasureUnit;
+}
 
 class ICU4XMeasureUnit {
 public:

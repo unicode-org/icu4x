@@ -28,11 +28,11 @@ final class FixedDecimalFormatter implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/decimal/struct.FixedDecimalFormatter.html#method.try_new) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   factory FixedDecimalFormatter.withGroupingStrategy(DataProvider provider, Locale locale, FixedDecimalGroupingStrategy groupingStrategy) {
     final result = _ICU4XFixedDecimalFormatter_create_with_grouping_strategy(provider._ffi, locale._ffi, groupingStrategy.index);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     return FixedDecimalFormatter._fromFfi(result.union.ok, []);
   }

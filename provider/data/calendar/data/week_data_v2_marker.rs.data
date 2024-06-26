@@ -1,0 +1,64 @@
+// @generated
+/// Implement `DataProvider<WeekDataV2Marker>` on the given struct using the data
+/// hardcoded in this file. This allows the struct to be used with
+/// `icu`'s `_unstable` constructors.
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __impl_week_data_v2_marker {
+    ($ provider : ty) => {
+        #[clippy::msrv = "1.70"]
+        const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
+        #[clippy::msrv = "1.70"]
+        impl $provider {
+            const DATA_WEEK_DATA_V2_MARKER: icu_provider_baked::binary_search::Data<icu_provider_baked::binary_search::Locale, icu::calendar::provider::WeekDataV2Marker> = {
+                type S = <icu::calendar::provider::WeekDataV2Marker as icu_provider::DynamicDataMarker>::Yokeable;
+                const __UND: &S = &icu::calendar::provider::WeekDataV2 { first_weekday: icu::calendar::types::IsoWeekday::Monday, min_week_days: 1u8, weekend: icu::calendar::provider::WeekdaySet::new(&[icu::calendar::types::IsoWeekday::Saturday, icu::calendar::types::IsoWeekday::Sunday]) };
+                const __UND_AD: &S = &icu::calendar::provider::WeekDataV2 { first_weekday: icu::calendar::types::IsoWeekday::Monday, min_week_days: 4u8, weekend: icu::calendar::provider::WeekdaySet::new(&[icu::calendar::types::IsoWeekday::Saturday, icu::calendar::types::IsoWeekday::Sunday]) };
+                const __UND_AE: &S = &icu::calendar::provider::WeekDataV2 { first_weekday: icu::calendar::types::IsoWeekday::Saturday, min_week_days: 1u8, weekend: icu::calendar::provider::WeekdaySet::new(&[icu::calendar::types::IsoWeekday::Saturday, icu::calendar::types::IsoWeekday::Sunday]) };
+                const __UND_AF: &S = &icu::calendar::provider::WeekDataV2 { first_weekday: icu::calendar::types::IsoWeekday::Saturday, min_week_days: 1u8, weekend: icu::calendar::provider::WeekdaySet::new(&[icu::calendar::types::IsoWeekday::Thursday, icu::calendar::types::IsoWeekday::Friday]) };
+                const __UND_AG: &S = &icu::calendar::provider::WeekDataV2 { first_weekday: icu::calendar::types::IsoWeekday::Sunday, min_week_days: 1u8, weekend: icu::calendar::provider::WeekdaySet::new(&[icu::calendar::types::IsoWeekday::Saturday, icu::calendar::types::IsoWeekday::Sunday]) };
+                const __UND_BH: &S = &icu::calendar::provider::WeekDataV2 { first_weekday: icu::calendar::types::IsoWeekday::Saturday, min_week_days: 1u8, weekend: icu::calendar::provider::WeekdaySet::new(&[icu::calendar::types::IsoWeekday::Friday, icu::calendar::types::IsoWeekday::Saturday]) };
+                const __UND_IL: &S = &icu::calendar::provider::WeekDataV2 { first_weekday: icu::calendar::types::IsoWeekday::Sunday, min_week_days: 1u8, weekend: icu::calendar::provider::WeekdaySet::new(&[icu::calendar::types::IsoWeekday::Friday, icu::calendar::types::IsoWeekday::Saturday]) };
+                const __UND_IN: &S = &icu::calendar::provider::WeekDataV2 { first_weekday: icu::calendar::types::IsoWeekday::Sunday, min_week_days: 1u8, weekend: icu::calendar::provider::WeekdaySet::new(&[icu::calendar::types::IsoWeekday::Sunday]) };
+                const __UND_IR: &S = &icu::calendar::provider::WeekDataV2 { first_weekday: icu::calendar::types::IsoWeekday::Saturday, min_week_days: 1u8, weekend: icu::calendar::provider::WeekdaySet::new(&[icu::calendar::types::IsoWeekday::Friday]) };
+                const __UND_MV: &S = &icu::calendar::provider::WeekDataV2 { first_weekday: icu::calendar::types::IsoWeekday::Friday, min_week_days: 1u8, weekend: icu::calendar::provider::WeekdaySet::new(&[icu::calendar::types::IsoWeekday::Saturday, icu::calendar::types::IsoWeekday::Sunday]) };
+                const __UND_PT: &S = &icu::calendar::provider::WeekDataV2 { first_weekday: icu::calendar::types::IsoWeekday::Sunday, min_week_days: 4u8, weekend: icu::calendar::provider::WeekdaySet::new(&[icu::calendar::types::IsoWeekday::Saturday, icu::calendar::types::IsoWeekday::Sunday]) };
+                icu_provider_baked::binary_search::Data(&[("und", __UND), ("und-AD", __UND_AD), ("und-AE", __UND_AE), ("und-AF", __UND_AF), ("und-AG", __UND_AG), ("und-AN", __UND_AD), ("und-AS", __UND_AG), ("und-AT", __UND_AD), ("und-AX", __UND_AD), ("und-BD", __UND_AG), ("und-BE", __UND_AD), ("und-BG", __UND_AD), ("und-BH", __UND_BH), ("und-BR", __UND_AG), ("und-BS", __UND_AG), ("und-BT", __UND_AG), ("und-BW", __UND_AG), ("und-BZ", __UND_AG), ("und-CA", __UND_AG), ("und-CH", __UND_AD), ("und-CO", __UND_AG), ("und-CZ", __UND_AD), ("und-DE", __UND_AD), ("und-DJ", __UND_AE), ("und-DK", __UND_AD), ("und-DM", __UND_AG), ("und-DO", __UND_AG), ("und-DZ", __UND_BH), ("und-EE", __UND_AD), ("und-EG", __UND_BH), ("und-ES", __UND_AD), ("und-ET", __UND_AG), ("und-FI", __UND_AD), ("und-FJ", __UND_AD), ("und-FO", __UND_AD), ("und-FR", __UND_AD), ("und-GB", __UND_AD), ("und-GF", __UND_AD), ("und-GG", __UND_AD), ("und-GI", __UND_AD), ("und-GP", __UND_AD), ("und-GR", __UND_AD), ("und-GT", __UND_AG), ("und-GU", __UND_AG), ("und-HK", __UND_AG), ("und-HN", __UND_AG), ("und-HU", __UND_AD), ("und-ID", __UND_AG), ("und-IE", __UND_AD), ("und-IL", __UND_IL), ("und-IM", __UND_AD), ("und-IN", __UND_IN), ("und-IQ", __UND_BH), ("und-IR", __UND_IR), ("und-IS", __UND_AD), ("und-IT", __UND_AD), ("und-JE", __UND_AD), ("und-JM", __UND_AG), ("und-JO", __UND_BH), ("und-JP", __UND_AG), ("und-KE", __UND_AG), ("und-KH", __UND_AG), ("und-KR", __UND_AG), ("und-KW", __UND_BH), ("und-LA", __UND_AG), ("und-LI", __UND_AD), ("und-LT", __UND_AD), ("und-LU", __UND_AD), ("und-LY", __UND_BH), ("und-MC", __UND_AD), ("und-MH", __UND_AG), ("und-MM", __UND_AG), ("und-MO", __UND_AG), ("und-MQ", __UND_AD), ("und-MT", __UND_AG), ("und-MV", __UND_MV), ("und-MX", __UND_AG), ("und-MZ", __UND_AG), ("und-NI", __UND_AG), ("und-NL", __UND_AD), ("und-NO", __UND_AD), ("und-NP", __UND_AG), ("und-OM", __UND_BH), ("und-PA", __UND_AG), ("und-PE", __UND_AG), ("und-PH", __UND_AG), ("und-PK", __UND_AG), ("und-PL", __UND_AD), ("und-PR", __UND_AG), ("und-PT", __UND_PT), ("und-PY", __UND_AG), ("und-QA", __UND_BH), ("und-RE", __UND_AD), ("und-RU", __UND_AD), ("und-SA", __UND_IL), ("und-SD", __UND_BH), ("und-SE", __UND_AD), ("und-SG", __UND_AG), ("und-SJ", __UND_AD), ("und-SK", __UND_AD), ("und-SM", __UND_AD), ("und-SV", __UND_AG), ("und-SY", __UND_BH), ("und-TH", __UND_AG), ("und-TT", __UND_AG), ("und-TW", __UND_AG), ("und-UM", __UND_AG), ("und-US", __UND_AG), ("und-VA", __UND_AD), ("und-VE", __UND_AG), ("und-VI", __UND_AG), ("und-WS", __UND_AG), ("und-YE", __UND_IL), ("und-ZA", __UND_AG), ("und-ZW", __UND_AG)])
+            };
+        }
+        #[clippy::msrv = "1.70"]
+        impl icu_provider::DataProvider<icu::calendar::provider::WeekDataV2Marker> for $provider {
+            fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::calendar::provider::WeekDataV2Marker>, icu_provider::DataError> {
+                let mut metadata = icu_provider::DataResponseMetadata::default();
+                let payload = if let Some(payload) = icu_provider_baked::DataStore::get(&Self::DATA_WEEK_DATA_V2_MARKER, req) {
+                    payload
+                } else {
+                    const FALLBACKER: icu::locale::fallback::LocaleFallbackerWithConfig<'static> = icu::locale::fallback::LocaleFallbacker::new().for_config(<icu::calendar::provider::WeekDataV2Marker as icu_provider::DataMarker>::INFO.fallback_config);
+                    let mut fallback_iterator = FALLBACKER.fallback_for(req.locale.clone());
+                    loop {
+                        if let Some(payload) = icu_provider_baked::DataStore::get(&Self::DATA_WEEK_DATA_V2_MARKER, icu_provider::DataRequest { locale: fallback_iterator.get(), ..req }) {
+                            metadata.locale = Some(fallback_iterator.take());
+                            break payload;
+                        }
+                        if fallback_iterator.get().is_und() {
+                            return Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::calendar::provider::WeekDataV2Marker as icu_provider::DataMarker>::INFO, req));
+                        }
+                        fallback_iterator.step();
+                    }
+                };
+                Ok(icu_provider::DataResponse { payload: icu_provider::DataPayload::from_static_ref(payload), metadata })
+            }
+        }
+    };
+    ($ provider : ty , ITER) => {
+        __impl_week_data_v2_marker!($provider);
+        #[clippy::msrv = "1.70"]
+        impl icu_provider::IterableDataProvider<icu::calendar::provider::WeekDataV2Marker> for $provider {
+            fn iter_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataMarkerAttributes)>, icu_provider::DataError> {
+                Ok(icu_provider_baked::DataStore::iter(&Self::DATA_WEEK_DATA_V2_MARKER).collect())
+            }
+        }
+    };
+}
+#[doc(inline)]
+pub use __impl_week_data_v2_marker as impl_week_data_v2_marker;

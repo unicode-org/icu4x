@@ -1,0 +1,12 @@
+{
+  "long": {
+    "One": "{0} Güneş yarıçapı",
+    "Other": "{0} Güneş yarıçapı"
+  },
+  "short": {
+    "Other": "{0} R☉"
+  },
+  "narrow": {
+    "Other": "{0} R☉"
+  }
+}

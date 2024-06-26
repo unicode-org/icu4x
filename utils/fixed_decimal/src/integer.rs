@@ -7,8 +7,8 @@ use core::fmt;
 
 use core::str::FromStr;
 
-use crate::Error;
 use crate::FixedDecimal;
+use crate::ParseError;
 
 /// A [`FixedInteger`] is a [`FixedDecimal`] with no fractional part.
 ///
@@ -17,9 +17,9 @@ use crate::FixedDecimal;
 ///
 /// ```
 /// # use std::str::FromStr;
-/// use fixed_decimal::Error;
 /// use fixed_decimal::FixedDecimal;
 /// use fixed_decimal::FixedInteger;
+/// use fixed_decimal::ParseError;
 ///
 /// assert_eq!(
 ///     FixedDecimal::from(FixedInteger::from(5)),
@@ -35,7 +35,7 @@ use crate::FixedDecimal;
 /// );
 /// assert_eq!(
 ///     FixedInteger::try_from(FixedDecimal::from_str("5.0").unwrap()),
-///     Err(Error::Limit)
+///     Err(ParseError::Limit)
 /// );
 /// ```
 #[derive(Debug, Clone, PartialEq, Default)]
@@ -77,10 +77,10 @@ impl writeable::Writeable for FixedInteger {
 }
 
 impl TryFrom<FixedDecimal> for FixedInteger {
-    type Error = Error;
-    fn try_from(value: FixedDecimal) -> Result<Self, Error> {
+    type Error = ParseError;
+    fn try_from(value: FixedDecimal) -> Result<Self, Self::Error> {
         if value.magnitude_range().start() != &0 {
-            Err(Error::Limit)
+            Err(ParseError::Limit)
         } else {
             Ok(FixedInteger(value))
         }
@@ -88,14 +88,14 @@ impl TryFrom<FixedDecimal> for FixedInteger {
 }
 
 impl TryFrom<&[u8]> for FixedInteger {
-    type Error = Error;
-    fn try_from(value: &[u8]) -> Result<Self, Error> {
+    type Error = ParseError;
+    fn try_from(value: &[u8]) -> Result<Self, Self::Error> {
         FixedInteger::try_from(FixedDecimal::try_from(value)?)
     }
 }
 
 impl FromStr for FixedInteger {
-    type Err = Error;
+    type Err = ParseError;
     fn from_str(value: &str) -> Result<Self, Self::Err> {
         FixedInteger::try_from(FixedDecimal::from_str(value)?)
     }

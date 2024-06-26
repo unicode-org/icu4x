@@ -1,6 +1,6 @@
 import wasm from "./diplomat-wasm.mjs"
 import * as diplomatRuntime from "./diplomat-runtime.mjs"
-import { ICU4XError_js_to_rust, ICU4XError_rust_to_js } from "./ICU4XError.mjs"
+import { ICU4XLocaleParseError_js_to_rust, ICU4XLocaleParseError_rust_to_js } from "./ICU4XLocaleParseError.mjs"
 import { ICU4XOrdering_js_to_rust, ICU4XOrdering_rust_to_js } from "./ICU4XOrdering.mjs"
 
 const ICU4XLocale_box_destroy_registry = new FinalizationRegistry(underlying => {
@@ -28,7 +28,7 @@ export class ICU4XLocale {
         wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
         return ok_value;
       } else {
-        const throw_value = ICU4XError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
+        const throw_value = ICU4XLocaleParseError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
         wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
         throw new diplomatRuntime.FFIError(throw_value);
       }
@@ -51,15 +51,15 @@ export class ICU4XLocale {
     });
   }
 
-  get_unicode_extension(arg_bytes) {
-    const buf_arg_bytes = diplomatRuntime.DiplomatBuf.str8(wasm, arg_bytes);
+  get_unicode_extension(arg_s) {
+    const buf_arg_s = diplomatRuntime.DiplomatBuf.str8(wasm, arg_s);
     const diplomat_out = diplomatRuntime.withDiplomatWrite(wasm, (write) => {
       return (() => {
-        const is_ok = wasm.ICU4XLocale_get_unicode_extension(this.underlying, buf_arg_bytes.ptr, buf_arg_bytes.size, write) == 1;
+        const is_ok = wasm.ICU4XLocale_get_unicode_extension(this.underlying, buf_arg_s.ptr, buf_arg_s.size, write) == 1;
         if (!is_ok) return;
       })();
     });
-    buf_arg_bytes.free();
+    buf_arg_s.free();
     return diplomat_out;
   }
 
@@ -69,23 +69,23 @@ export class ICU4XLocale {
     });
   }
 
-  set_language(arg_bytes) {
-    const buf_arg_bytes = diplomatRuntime.DiplomatBuf.str8(wasm, arg_bytes);
+  set_language(arg_s) {
+    const buf_arg_s = diplomatRuntime.DiplomatBuf.str8(wasm, arg_s);
     const diplomat_out = (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XLocale_set_language(diplomat_receive_buffer, this.underlying, buf_arg_bytes.ptr, buf_arg_bytes.size);
+      wasm.ICU4XLocale_set_language(diplomat_receive_buffer, this.underlying, buf_arg_s.ptr, buf_arg_s.size);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = {};
         wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
         return ok_value;
       } else {
-        const throw_value = ICU4XError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
+        const throw_value = ICU4XLocaleParseError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
         wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
         throw new diplomatRuntime.FFIError(throw_value);
       }
     })();
-    buf_arg_bytes.free();
+    buf_arg_s.free();
     return diplomat_out;
   }
 
@@ -98,23 +98,23 @@ export class ICU4XLocale {
     });
   }
 
-  set_region(arg_bytes) {
-    const buf_arg_bytes = diplomatRuntime.DiplomatBuf.str8(wasm, arg_bytes);
+  set_region(arg_s) {
+    const buf_arg_s = diplomatRuntime.DiplomatBuf.str8(wasm, arg_s);
     const diplomat_out = (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XLocale_set_region(diplomat_receive_buffer, this.underlying, buf_arg_bytes.ptr, buf_arg_bytes.size);
+      wasm.ICU4XLocale_set_region(diplomat_receive_buffer, this.underlying, buf_arg_s.ptr, buf_arg_s.size);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = {};
         wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
         return ok_value;
       } else {
-        const throw_value = ICU4XError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
+        const throw_value = ICU4XLocaleParseError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
         wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
         throw new diplomatRuntime.FFIError(throw_value);
       }
     })();
-    buf_arg_bytes.free();
+    buf_arg_s.free();
     return diplomat_out;
   }
 
@@ -127,45 +127,45 @@ export class ICU4XLocale {
     });
   }
 
-  set_script(arg_bytes) {
-    const buf_arg_bytes = diplomatRuntime.DiplomatBuf.str8(wasm, arg_bytes);
+  set_script(arg_s) {
+    const buf_arg_s = diplomatRuntime.DiplomatBuf.str8(wasm, arg_s);
     const diplomat_out = (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XLocale_set_script(diplomat_receive_buffer, this.underlying, buf_arg_bytes.ptr, buf_arg_bytes.size);
+      wasm.ICU4XLocale_set_script(diplomat_receive_buffer, this.underlying, buf_arg_s.ptr, buf_arg_s.size);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = {};
         wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
         return ok_value;
       } else {
-        const throw_value = ICU4XError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
+        const throw_value = ICU4XLocaleParseError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
         wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
         throw new diplomatRuntime.FFIError(throw_value);
       }
     })();
-    buf_arg_bytes.free();
+    buf_arg_s.free();
     return diplomat_out;
   }
 
-  static canonicalize(arg_bytes) {
-    const buf_arg_bytes = diplomatRuntime.DiplomatBuf.str8(wasm, arg_bytes);
+  static canonicalize(arg_s) {
+    const buf_arg_s = diplomatRuntime.DiplomatBuf.str8(wasm, arg_s);
     const diplomat_out = diplomatRuntime.withDiplomatWrite(wasm, (write) => {
       return (() => {
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        wasm.ICU4XLocale_canonicalize(diplomat_receive_buffer, buf_arg_bytes.ptr, buf_arg_bytes.size, write);
+        wasm.ICU4XLocale_canonicalize(diplomat_receive_buffer, buf_arg_s.ptr, buf_arg_s.size, write);
         const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
         if (is_ok) {
           const ok_value = {};
           wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
           return ok_value;
         } else {
-          const throw_value = ICU4XError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
+          const throw_value = ICU4XLocaleParseError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
           wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
           throw new diplomatRuntime.FFIError(throw_value);
         }
       })();
     });
-    buf_arg_bytes.free();
+    buf_arg_s.free();
     return diplomat_out;
   }
 

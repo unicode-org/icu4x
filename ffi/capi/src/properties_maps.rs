@@ -9,7 +9,7 @@ pub mod ffi {
     use icu_collections::codepointtrie::TrieValue;
     use icu_properties::{maps, GeneralCategory, GeneralCategoryGroup};
 
-    use crate::errors::ffi::ICU4XError;
+    use crate::errors::ffi::ICU4XDataError;
     use crate::properties_iter::ffi::ICU4XCodePointRangeIterator;
     use crate::properties_sets::ffi::ICU4XCodePointSetData;
 
@@ -19,7 +19,6 @@ pub mod ffi {
     /// For properties whose values fit into 8 bits.
     #[diplomat::rust_link(icu::properties, Mod)]
     #[diplomat::rust_link(icu::properties::maps::CodePointMapData, Struct)]
-    #[diplomat::rust_link(icu::properties::maps::CodePointMapData::from_data, FnInStruct, hidden)]
     #[diplomat::rust_link(
         icu::properties::maps::CodePointMapData::try_into_converted,
         FnInStruct,
@@ -141,7 +140,7 @@ pub mod ffi {
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "general_category")]
         pub fn load_general_category(
             provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointMapData8>, ICU4XError> {
+        ) -> Result<Box<ICU4XCodePointMapData8>, ICU4XDataError> {
             Ok(convert_8(call_constructor_unstable!(
                 maps::general_category [r => Ok(r.static_to_owned())],
                 maps::load_general_category,
@@ -154,7 +153,7 @@ pub mod ffi {
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "bidi_class")]
         pub fn load_bidi_class(
             provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointMapData8>, ICU4XError> {
+        ) -> Result<Box<ICU4XCodePointMapData8>, ICU4XDataError> {
             Ok(convert_8(call_constructor_unstable!(
                 maps::bidi_class [r => Ok(r.static_to_owned())],
                 maps::load_bidi_class,
@@ -167,7 +166,7 @@ pub mod ffi {
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "east_asian_width")]
         pub fn load_east_asian_width(
             provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointMapData8>, ICU4XError> {
+        ) -> Result<Box<ICU4XCodePointMapData8>, ICU4XDataError> {
             Ok(convert_8(call_constructor_unstable!(
                 maps::east_asian_width [r => Ok(r.static_to_owned())],
                 maps::load_east_asian_width,
@@ -180,7 +179,7 @@ pub mod ffi {
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "hangul_syllable_type")]
         pub fn load_hangul_syllable_type(
             provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointMapData8>, ICU4XError> {
+        ) -> Result<Box<ICU4XCodePointMapData8>, ICU4XDataError> {
             Ok(convert_8(call_constructor_unstable!(
                 maps::hangul_syllable_type [r => Ok(r.static_to_owned())],
                 maps::load_hangul_syllable_type,
@@ -193,7 +192,7 @@ pub mod ffi {
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "indic_syllabic_category")]
         pub fn load_indic_syllabic_category(
             provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointMapData8>, ICU4XError> {
+        ) -> Result<Box<ICU4XCodePointMapData8>, ICU4XDataError> {
             Ok(convert_8(call_constructor_unstable!(
                 maps::indic_syllabic_category [r => Ok(r.static_to_owned())],
                 maps::load_indic_syllabic_category,
@@ -206,7 +205,7 @@ pub mod ffi {
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "line_break")]
         pub fn load_line_break(
             provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointMapData8>, ICU4XError> {
+        ) -> Result<Box<ICU4XCodePointMapData8>, ICU4XDataError> {
             Ok(convert_8(call_constructor_unstable!(
                 maps::line_break [r => Ok(r.static_to_owned())],
                 maps::load_line_break,
@@ -218,7 +217,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::maps::load_grapheme_cluster_break, Fn, hidden)]
         pub fn try_grapheme_cluster_break(
             provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointMapData8>, ICU4XError> {
+        ) -> Result<Box<ICU4XCodePointMapData8>, ICU4XDataError> {
             Ok(convert_8(call_constructor_unstable!(
                 maps::grapheme_cluster_break [r => Ok(r.static_to_owned())],
                 maps::load_grapheme_cluster_break,
@@ -231,7 +230,7 @@ pub mod ffi {
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "word_break")]
         pub fn load_word_break(
             provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointMapData8>, ICU4XError> {
+        ) -> Result<Box<ICU4XCodePointMapData8>, ICU4XDataError> {
             Ok(convert_8(call_constructor_unstable!(
                 maps::word_break [r => Ok(r.static_to_owned())],
                 maps::load_word_break,
@@ -244,7 +243,7 @@ pub mod ffi {
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "sentence_break")]
         pub fn load_sentence_break(
             provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointMapData8>, ICU4XError> {
+        ) -> Result<Box<ICU4XCodePointMapData8>, ICU4XDataError> {
             Ok(convert_8(call_constructor_unstable!(
                 maps::sentence_break [r => Ok(r.static_to_owned())],
                 maps::load_sentence_break,
@@ -257,7 +256,7 @@ pub mod ffi {
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "joining_type")]
         pub fn load_joining_type(
             provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointMapData8>, ICU4XError> {
+        ) -> Result<Box<ICU4XCodePointMapData8>, ICU4XDataError> {
             Ok(convert_8(call_constructor_unstable!(
                 maps::joining_type [r => Ok(r.static_to_owned())],
                 maps::load_joining_type,
@@ -340,7 +339,7 @@ pub mod ffi {
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "script")]
         pub fn load_script(
             provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointMapData16>, ICU4XError> {
+        ) -> Result<Box<ICU4XCodePointMapData16>, ICU4XDataError> {
             #[allow(clippy::unwrap_used)] // script is a 16-bit property
             Ok(Box::new(ICU4XCodePointMapData16(
                 call_constructor_unstable!(

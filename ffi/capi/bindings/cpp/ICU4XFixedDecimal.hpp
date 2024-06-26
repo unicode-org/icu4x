@@ -10,12 +10,94 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XError.hpp"
-#include "ICU4XFixedDecimal.h"
+#include "ICU4XFixedDecimalLimitError.hpp"
+#include "ICU4XFixedDecimalParseError.hpp"
 #include "ICU4XFixedDecimalRoundingIncrement.hpp"
+#include "ICU4XFixedDecimalRoundingMode.hpp"
 #include "ICU4XFixedDecimalSign.hpp"
 #include "ICU4XFixedDecimalSignDisplay.hpp"
 
+
+namespace capi {
+    extern "C" {
+    
+    ICU4XFixedDecimal* ICU4XFixedDecimal_create_from_i32(int32_t v);
+    
+    ICU4XFixedDecimal* ICU4XFixedDecimal_create_from_u32(uint32_t v);
+    
+    ICU4XFixedDecimal* ICU4XFixedDecimal_create_from_i64(int64_t v);
+    
+    ICU4XFixedDecimal* ICU4XFixedDecimal_create_from_u64(uint64_t v);
+    
+    typedef struct ICU4XFixedDecimal_create_from_f64_with_integer_precision_result {union {ICU4XFixedDecimal* ok; ICU4XFixedDecimalLimitError err;}; bool is_ok;} ICU4XFixedDecimal_create_from_f64_with_integer_precision_result;
+    ICU4XFixedDecimal_create_from_f64_with_integer_precision_result ICU4XFixedDecimal_create_from_f64_with_integer_precision(double f);
+    
+    typedef struct ICU4XFixedDecimal_create_from_f64_with_lower_magnitude_result {union {ICU4XFixedDecimal* ok; ICU4XFixedDecimalLimitError err;}; bool is_ok;} ICU4XFixedDecimal_create_from_f64_with_lower_magnitude_result;
+    ICU4XFixedDecimal_create_from_f64_with_lower_magnitude_result ICU4XFixedDecimal_create_from_f64_with_lower_magnitude(double f, int16_t magnitude);
+    
+    typedef struct ICU4XFixedDecimal_create_from_f64_with_significant_digits_result {union {ICU4XFixedDecimal* ok; ICU4XFixedDecimalLimitError err;}; bool is_ok;} ICU4XFixedDecimal_create_from_f64_with_significant_digits_result;
+    ICU4XFixedDecimal_create_from_f64_with_significant_digits_result ICU4XFixedDecimal_create_from_f64_with_significant_digits(double f, uint8_t digits);
+    
+    typedef struct ICU4XFixedDecimal_create_from_f64_with_floating_precision_result {union {ICU4XFixedDecimal* ok; ICU4XFixedDecimalLimitError err;}; bool is_ok;} ICU4XFixedDecimal_create_from_f64_with_floating_precision_result;
+    ICU4XFixedDecimal_create_from_f64_with_floating_precision_result ICU4XFixedDecimal_create_from_f64_with_floating_precision(double f);
+    
+    typedef struct ICU4XFixedDecimal_create_from_string_result {union {ICU4XFixedDecimal* ok; ICU4XFixedDecimalParseError err;}; bool is_ok;} ICU4XFixedDecimal_create_from_string_result;
+    ICU4XFixedDecimal_create_from_string_result ICU4XFixedDecimal_create_from_string(const char* v_data, size_t v_len);
+    
+    uint8_t ICU4XFixedDecimal_digit_at(const ICU4XFixedDecimal* self, int16_t magnitude);
+    
+    int16_t ICU4XFixedDecimal_magnitude_start(const ICU4XFixedDecimal* self);
+    
+    int16_t ICU4XFixedDecimal_magnitude_end(const ICU4XFixedDecimal* self);
+    
+    int16_t ICU4XFixedDecimal_nonzero_magnitude_start(const ICU4XFixedDecimal* self);
+    
+    int16_t ICU4XFixedDecimal_nonzero_magnitude_end(const ICU4XFixedDecimal* self);
+    
+    bool ICU4XFixedDecimal_is_zero(const ICU4XFixedDecimal* self);
+    
+    void ICU4XFixedDecimal_multiply_pow10(ICU4XFixedDecimal* self, int16_t power);
+    
+    ICU4XFixedDecimalSign ICU4XFixedDecimal_sign(const ICU4XFixedDecimal* self);
+    
+    void ICU4XFixedDecimal_set_sign(ICU4XFixedDecimal* self, ICU4XFixedDecimalSign sign);
+    
+    void ICU4XFixedDecimal_apply_sign_display(ICU4XFixedDecimal* self, ICU4XFixedDecimalSignDisplay sign_display);
+    
+    void ICU4XFixedDecimal_trim_start(ICU4XFixedDecimal* self);
+    
+    void ICU4XFixedDecimal_trim_end(ICU4XFixedDecimal* self);
+    
+    void ICU4XFixedDecimal_pad_start(ICU4XFixedDecimal* self, int16_t position);
+    
+    void ICU4XFixedDecimal_pad_end(ICU4XFixedDecimal* self, int16_t position);
+    
+    void ICU4XFixedDecimal_set_max_position(ICU4XFixedDecimal* self, int16_t position);
+    
+    void ICU4XFixedDecimal_round(ICU4XFixedDecimal* self, int16_t position);
+    
+    void ICU4XFixedDecimal_ceil(ICU4XFixedDecimal* self, int16_t position);
+    
+    void ICU4XFixedDecimal_expand(ICU4XFixedDecimal* self, int16_t position);
+    
+    void ICU4XFixedDecimal_floor(ICU4XFixedDecimal* self, int16_t position);
+    
+    void ICU4XFixedDecimal_trunc(ICU4XFixedDecimal* self, int16_t position);
+    
+    void ICU4XFixedDecimal_round_with_mode(ICU4XFixedDecimal* self, int16_t position, ICU4XFixedDecimalRoundingMode mode);
+    
+    void ICU4XFixedDecimal_round_with_mode_and_increment(ICU4XFixedDecimal* self, int16_t position, ICU4XFixedDecimalRoundingMode mode, ICU4XFixedDecimalRoundingIncrement increment);
+    
+    typedef struct ICU4XFixedDecimal_concatenate_end_result { bool is_ok;} ICU4XFixedDecimal_concatenate_end_result;
+    ICU4XFixedDecimal_concatenate_end_result ICU4XFixedDecimal_concatenate_end(ICU4XFixedDecimal* self, ICU4XFixedDecimal* other);
+    
+    void ICU4XFixedDecimal_to_string(const ICU4XFixedDecimal* self, DiplomatWrite* write);
+    
+    
+    void ICU4XFixedDecimal_destroy(ICU4XFixedDecimal* self);
+    
+    } // extern "C"
+}
 
 inline std::unique_ptr<ICU4XFixedDecimal> ICU4XFixedDecimal::create_from_i32(int32_t v) {
   auto result = capi::ICU4XFixedDecimal_create_from_i32(v);
@@ -37,32 +119,32 @@ inline std::unique_ptr<ICU4XFixedDecimal> ICU4XFixedDecimal::create_from_u64(uin
   return std::unique_ptr<ICU4XFixedDecimal>(ICU4XFixedDecimal::FromFFI(result));
 }
 
-inline diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XError> ICU4XFixedDecimal::create_from_f64_with_integer_precision(double f) {
+inline diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XFixedDecimalLimitError> ICU4XFixedDecimal::create_from_f64_with_integer_precision(double f) {
   auto result = capi::ICU4XFixedDecimal_create_from_f64_with_integer_precision(f);
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XFixedDecimal>>(std::unique_ptr<ICU4XFixedDecimal>(ICU4XFixedDecimal::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XFixedDecimalLimitError>(diplomat::Ok<std::unique_ptr<ICU4XFixedDecimal>>(std::unique_ptr<ICU4XFixedDecimal>(ICU4XFixedDecimal::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XFixedDecimalLimitError>(diplomat::Err<ICU4XFixedDecimalLimitError>(ICU4XFixedDecimalLimitError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XError> ICU4XFixedDecimal::create_from_f64_with_lower_magnitude(double f, int16_t magnitude) {
+inline diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XFixedDecimalLimitError> ICU4XFixedDecimal::create_from_f64_with_lower_magnitude(double f, int16_t magnitude) {
   auto result = capi::ICU4XFixedDecimal_create_from_f64_with_lower_magnitude(f,
     magnitude);
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XFixedDecimal>>(std::unique_ptr<ICU4XFixedDecimal>(ICU4XFixedDecimal::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XFixedDecimalLimitError>(diplomat::Ok<std::unique_ptr<ICU4XFixedDecimal>>(std::unique_ptr<ICU4XFixedDecimal>(ICU4XFixedDecimal::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XFixedDecimalLimitError>(diplomat::Err<ICU4XFixedDecimalLimitError>(ICU4XFixedDecimalLimitError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XError> ICU4XFixedDecimal::create_from_f64_with_significant_digits(double f, uint8_t digits) {
+inline diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XFixedDecimalLimitError> ICU4XFixedDecimal::create_from_f64_with_significant_digits(double f, uint8_t digits) {
   auto result = capi::ICU4XFixedDecimal_create_from_f64_with_significant_digits(f,
     digits);
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XFixedDecimal>>(std::unique_ptr<ICU4XFixedDecimal>(ICU4XFixedDecimal::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XFixedDecimalLimitError>(diplomat::Ok<std::unique_ptr<ICU4XFixedDecimal>>(std::unique_ptr<ICU4XFixedDecimal>(ICU4XFixedDecimal::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XFixedDecimalLimitError>(diplomat::Err<ICU4XFixedDecimalLimitError>(ICU4XFixedDecimalLimitError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XError> ICU4XFixedDecimal::create_from_f64_with_floating_precision(double f) {
+inline diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XFixedDecimalLimitError> ICU4XFixedDecimal::create_from_f64_with_floating_precision(double f) {
   auto result = capi::ICU4XFixedDecimal_create_from_f64_with_floating_precision(f);
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XFixedDecimal>>(std::unique_ptr<ICU4XFixedDecimal>(ICU4XFixedDecimal::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XFixedDecimalLimitError>(diplomat::Ok<std::unique_ptr<ICU4XFixedDecimal>>(std::unique_ptr<ICU4XFixedDecimal>(ICU4XFixedDecimal::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XFixedDecimalLimitError>(diplomat::Err<ICU4XFixedDecimalLimitError>(ICU4XFixedDecimalLimitError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XError> ICU4XFixedDecimal::create_from_string(std::string_view v) {
+inline diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XFixedDecimalParseError> ICU4XFixedDecimal::create_from_string(std::string_view v) {
   auto result = capi::ICU4XFixedDecimal_create_from_string(v.data(),
     v.size());
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XFixedDecimal>>(std::unique_ptr<ICU4XFixedDecimal>(ICU4XFixedDecimal::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XFixedDecimalParseError>(diplomat::Ok<std::unique_ptr<ICU4XFixedDecimal>>(std::unique_ptr<ICU4XFixedDecimal>(ICU4XFixedDecimal::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XFixedDecimal>, ICU4XFixedDecimalParseError>(diplomat::Err<ICU4XFixedDecimalParseError>(ICU4XFixedDecimalParseError::FromFFI(result.err)));
 }
 
 inline uint8_t ICU4XFixedDecimal::digit_at(int16_t magnitude) const {
@@ -139,48 +221,9 @@ inline void ICU4XFixedDecimal::set_max_position(int16_t position) {
     position);
 }
 
-inline void ICU4XFixedDecimal::trunc(int16_t position) {
-  capi::ICU4XFixedDecimal_trunc(this->AsFFI(),
+inline void ICU4XFixedDecimal::round(int16_t position) {
+  capi::ICU4XFixedDecimal_round(this->AsFFI(),
     position);
-}
-
-inline void ICU4XFixedDecimal::trunc_to_increment(int16_t position, ICU4XFixedDecimalRoundingIncrement increment) {
-  capi::ICU4XFixedDecimal_trunc_to_increment(this->AsFFI(),
-    position,
-    increment.AsFFI());
-}
-
-inline void ICU4XFixedDecimal::half_trunc(int16_t position) {
-  capi::ICU4XFixedDecimal_half_trunc(this->AsFFI(),
-    position);
-}
-
-inline void ICU4XFixedDecimal::half_trunc_to_increment(int16_t position, ICU4XFixedDecimalRoundingIncrement increment) {
-  capi::ICU4XFixedDecimal_half_trunc_to_increment(this->AsFFI(),
-    position,
-    increment.AsFFI());
-}
-
-inline void ICU4XFixedDecimal::expand(int16_t position) {
-  capi::ICU4XFixedDecimal_expand(this->AsFFI(),
-    position);
-}
-
-inline void ICU4XFixedDecimal::expand_to_increment(int16_t position, ICU4XFixedDecimalRoundingIncrement increment) {
-  capi::ICU4XFixedDecimal_expand_to_increment(this->AsFFI(),
-    position,
-    increment.AsFFI());
-}
-
-inline void ICU4XFixedDecimal::half_expand(int16_t position) {
-  capi::ICU4XFixedDecimal_half_expand(this->AsFFI(),
-    position);
-}
-
-inline void ICU4XFixedDecimal::half_expand_to_increment(int16_t position, ICU4XFixedDecimalRoundingIncrement increment) {
-  capi::ICU4XFixedDecimal_half_expand_to_increment(this->AsFFI(),
-    position,
-    increment.AsFFI());
 }
 
 inline void ICU4XFixedDecimal::ceil(int16_t position) {
@@ -188,21 +231,9 @@ inline void ICU4XFixedDecimal::ceil(int16_t position) {
     position);
 }
 
-inline void ICU4XFixedDecimal::ceil_to_increment(int16_t position, ICU4XFixedDecimalRoundingIncrement increment) {
-  capi::ICU4XFixedDecimal_ceil_to_increment(this->AsFFI(),
-    position,
-    increment.AsFFI());
-}
-
-inline void ICU4XFixedDecimal::half_ceil(int16_t position) {
-  capi::ICU4XFixedDecimal_half_ceil(this->AsFFI(),
+inline void ICU4XFixedDecimal::expand(int16_t position) {
+  capi::ICU4XFixedDecimal_expand(this->AsFFI(),
     position);
-}
-
-inline void ICU4XFixedDecimal::half_ceil_to_increment(int16_t position, ICU4XFixedDecimalRoundingIncrement increment) {
-  capi::ICU4XFixedDecimal_half_ceil_to_increment(this->AsFFI(),
-    position,
-    increment.AsFFI());
 }
 
 inline void ICU4XFixedDecimal::floor(int16_t position) {
@@ -210,31 +241,21 @@ inline void ICU4XFixedDecimal::floor(int16_t position) {
     position);
 }
 
-inline void ICU4XFixedDecimal::floor_to_increment(int16_t position, ICU4XFixedDecimalRoundingIncrement increment) {
-  capi::ICU4XFixedDecimal_floor_to_increment(this->AsFFI(),
-    position,
-    increment.AsFFI());
-}
-
-inline void ICU4XFixedDecimal::half_floor(int16_t position) {
-  capi::ICU4XFixedDecimal_half_floor(this->AsFFI(),
+inline void ICU4XFixedDecimal::trunc(int16_t position) {
+  capi::ICU4XFixedDecimal_trunc(this->AsFFI(),
     position);
 }
 
-inline void ICU4XFixedDecimal::half_floor_to_increment(int16_t position, ICU4XFixedDecimalRoundingIncrement increment) {
-  capi::ICU4XFixedDecimal_half_floor_to_increment(this->AsFFI(),
+inline void ICU4XFixedDecimal::round_with_mode(int16_t position, ICU4XFixedDecimalRoundingMode mode) {
+  capi::ICU4XFixedDecimal_round_with_mode(this->AsFFI(),
     position,
-    increment.AsFFI());
+    mode.AsFFI());
 }
 
-inline void ICU4XFixedDecimal::half_even(int16_t position) {
-  capi::ICU4XFixedDecimal_half_even(this->AsFFI(),
-    position);
-}
-
-inline void ICU4XFixedDecimal::half_even_to_increment(int16_t position, ICU4XFixedDecimalRoundingIncrement increment) {
-  capi::ICU4XFixedDecimal_half_even_to_increment(this->AsFFI(),
+inline void ICU4XFixedDecimal::round_with_mode_and_increment(int16_t position, ICU4XFixedDecimalRoundingMode mode, ICU4XFixedDecimalRoundingIncrement increment) {
+  capi::ICU4XFixedDecimal_round_with_mode_and_increment(this->AsFFI(),
     position,
+    mode.AsFFI(),
     increment.AsFFI());
 }
 

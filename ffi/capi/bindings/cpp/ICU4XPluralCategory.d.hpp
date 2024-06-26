@@ -8,8 +8,18 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XPluralCategory.d.h"
 
+
+namespace capi {
+    typedef enum ICU4XPluralCategory {
+      ICU4XPluralCategory_Zero = 0,
+      ICU4XPluralCategory_One = 1,
+      ICU4XPluralCategory_Two = 2,
+      ICU4XPluralCategory_Few = 3,
+      ICU4XPluralCategory_Many = 4,
+      ICU4XPluralCategory_Other = 5,
+    } ICU4XPluralCategory;
+}
 
 class ICU4XPluralCategory {
 public:

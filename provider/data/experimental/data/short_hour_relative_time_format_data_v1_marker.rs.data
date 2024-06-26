@@ -1,0 +1,1109 @@
+// @generated
+/// Implement `DataProvider<ShortHourRelativeTimeFormatDataV1Marker>` on the given struct using the data
+/// hardcoded in this file. This allows the struct to be used with
+/// `icu`'s `_unstable` constructors.
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __impl_short_hour_relative_time_format_data_v1_marker {
+    ($ provider : ty) => {
+        #[clippy::msrv = "1.70"]
+        const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
+        #[clippy::msrv = "1.70"]
+        impl $provider {
+            const DATA_SHORT_HOUR_RELATIVE_TIME_FORMAT_DATA_V1_MARKER: icu_provider_baked::binary_search::Data<icu_provider_baked::binary_search::Locale, icu::experimental::relativetime::provider::ShortHourRelativeTimeFormatDataV1Marker> = {
+                type S = <icu::experimental::relativetime::provider::ShortHourRelativeTimeFormatDataV1Marker as icu_provider::DynamicDataMarker>::Yokeable;
+                const __AF: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0hierdie uur") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" u. gelede"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" u. gelede"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("oor  u."), index: 4u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("oor  u."), index: 4u8 } },
+                };
+                const __AM: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE1\x8B\xAD\xE1\x88\x85 \xE1\x88\xB0\xE1\x8B\x93\xE1\x89\xB5") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("ከ ሰዓት በፊት"), index: 3u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("ከ ሰዓቶች በፊት"), index: 3u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("በ ሰዓት ውስጥ"), index: 3u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("በ ሰዓቶች ውስጥ"), index: 3u8 } },
+                };
+                const __AR: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xD8\xA7\xD9\x84\xD8\xB3\xD8\xA7\xD8\xB9\xD8\xA9 \xD8\xA7\xD9\x84\xD8\xAD\xD8\xA7\xD9\x84\xD9\x8A\xD8\xA9") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("قبل  ساعة"), index: 7u8 }), one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("قبل ساعة واحدة"), index: 255u8 }), two: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("قبل ساعتين"), index: 255u8 }), few: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("قبل  ساعات"), index: 7u8 }), many: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("قبل  ساعة"), index: 7u8 }), other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("قبل  ساعة"), index: 7u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("خلال  ساعة"), index: 9u8 }), one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("خلال ساعة واحدة"), index: 255u8 }), two: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("خلال ساعتين"), index: 255u8 }), few: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("خلال  ساعات"), index: 9u8 }), many: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("خلال  ساعة"), index: 9u8 }), other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("خلال  ساعة"), index: 9u8 } },
+                };
+                const __AS: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xA6\x8F\xE0\xA6\x87\xE0\xA6\x9F\xE0\xA7\x8B \xE0\xA6\x98\xE0\xA6\xA3\xE0\xA7\x8D\xE0\xA6\x9F\xE0\xA6\xBE\xE0\xA6\xA4") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" ঘণ\u{9cd}ট\u{9be} প\u{9c2}ৰ\u{9cd}বে"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" ঘণ\u{9cd}ট\u{9be} প\u{9c2}ৰ\u{9cd}বে"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" ঘণ\u{9cd}ট\u{9be}ত"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" ঘণ\u{9cd}ট\u{9be}ত"), index: 0u8 } },
+                };
+                const __AST: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0esta hora") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("hai  h."), index: 4u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("hai  h."), index: 4u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("en  h."), index: 3u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("en  h."), index: 3u8 } },
+                };
+                const __AZ: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0bu saat") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" saat öncə"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" saat öncə"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" saat ərzində"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" saat ərzində"), index: 0u8 } },
+                };
+                const __BE: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xD1\x83 \xD0\xB3\xD1\x8D\xD1\x82\xD1\x83 \xD0\xB3\xD0\xB0\xD0\xB4\xD0\xB7\xD1\x96\xD0\xBD\xD1\x83") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" гадз таму"), index: 0u8 }), two: None, few: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" гадз таму"), index: 0u8 }), many: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" гадз таму"), index: 0u8 }), other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" гадз таму"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("праз  гадз"), index: 9u8 }), two: None, few: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("праз  гадз"), index: 9u8 }), many: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("праз  гадз"), index: 9u8 }), other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("праз  гадз"), index: 9u8 } },
+                };
+                const __BE_TARASK: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xD1\x83 \xD0\xB3\xD1\x8D\xD1\x82\xD1\x83\xD1\x8E \xD0\xB3\xD0\xB0\xD0\xB4\xD0\xB7\xD1\x96\xD0\xBD\xD1\x83") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" гадз таму"), index: 0u8 }), two: None, few: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" гадз таму"), index: 0u8 }), many: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" гадз таму"), index: 0u8 }), other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" гадз таму"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("праз  гадз"), index: 9u8 }), two: None, few: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("праз  гадз"), index: 9u8 }), many: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("праз  гадз"), index: 9u8 }), other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("праз  гадз"), index: 9u8 } },
+                };
+                const __BG: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xD0\xB2 \xD1\x82\xD0\xBE\xD0\xB7\xD0\xB8 \xD1\x87\xD0\xB0\xD1\x81") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("преди  ч"), index: 11u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("преди  ч"), index: 11u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("след  ч"), index: 9u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("след  ч"), index: 9u8 } },
+                };
+                const __BLO: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0gak\xC9\x94\xC5\x8Bk\xC9\x94\xC5\x8B\xC9\x94\xCC\x80 \xC5\x8Bga\xC9\x96e") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("- h"), index: 1u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("+ h"), index: 1u8 } },
+                };
+                const __BN: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xA6\x8F\xE0\xA6\x87 \xE0\xA6\x98\xE0\xA6\xA3\xE0\xA7\x8D\xE0\xA6\x9F\xE0\xA6\xBE\xE0\xA6\xAF\xE0\xA6\xBC") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" ঘন\u{9cd}ট\u{9be} আগে"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" ঘন\u{9cd}ট\u{9be} আগে"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" ঘন\u{9cd}ট\u{9be}য\u{9bc}"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" ঘন\u{9cd}ট\u{9be}য\u{9bc}"), index: 0u8 } },
+                };
+                const __BR: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0d\xCA\xBCan eur-ma\xC3\xB1") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" e zo"), index: 0u8 }), two: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" e zo"), index: 0u8 }), few: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" e zo"), index: 0u8 }), many: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" e zo"), index: 0u8 }), other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" e zo"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("a-benn  e"), index: 7u8 }), two: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("a-benn  e"), index: 7u8 }), few: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("a-benn  e"), index: 7u8 }), many: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("a-benn  e"), index: 7u8 }), other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("a-benn  e"), index: 7u8 } },
+                };
+                const __BRX: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xA4\xAC\xE0\xA5\x87 \xE0\xA4\x98\xE0\xA4\xA8\xE0\xA5\x8D\xE0\xA4\x9F\xE0\xA4\xBE") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" घन\u{94d}टा सिगा\u{902}"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" घन\u{94d}टा सिगा\u{902}"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" घन\u{94d}टायाव"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" घन\u{94d}टायाव"), index: 0u8 } },
+                };
+                const __BS: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0ovaj sat") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("prije  sat"), index: 6u8 }), two: None, few: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("prije  sata"), index: 6u8 }), many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("prije  sati"), index: 6u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("za  sat"), index: 3u8 }), two: None, few: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("za  sata"), index: 3u8 }), many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("za  sati"), index: 3u8 } },
+                };
+                const __BS_CYRL: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xD0\xBE\xD0\xB2\xD0\xBE\xD0\xB3 \xD1\x81\xD0\xB0\xD1\x82\xD0\xB0") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("прије  сат"), index: 11u8 }), two: None, few: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("прије  сата"), index: 11u8 }), many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("прије  сати"), index: 11u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("за  сат"), index: 5u8 }), two: None, few: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("за  сата"), index: 5u8 }), many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("за  сати"), index: 5u8 } },
+                };
+                const __CA: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0aquesta hora") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("fa  h"), index: 3u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("fa  h"), index: 3u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("d’aquí a  h"), index: 12u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("d’aquí a  h"), index: 12u8 } },
+                };
+                const __CHR: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE1\x8E\xAF\xE1\x8E\xA0 \xE1\x8F\x91\xE1\x8F\x9F\xE1\x8E\xB6\xE1\x8F\x93") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" ᏑᏟ. ᏥᎨᏒ"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" ᏑᏟ. ᏥᎨᏒ"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("ᎾᎿ  ᏑᏟ."), index: 7u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("ᎾᎿ  ᏑᏟ."), index: 7u8 } },
+                };
+                const __CS: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0tuto hodinu") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("před  h"), index: 6u8 }), two: None, few: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("před  h"), index: 6u8 }), many: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("před  h"), index: 6u8 }), other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("před  h"), index: 6u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("za  h"), index: 3u8 }), two: None, few: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("za  h"), index: 3u8 }), many: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("za  h"), index: 3u8 }), other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("za  h"), index: 3u8 } },
+                };
+                const __CY: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0yr awr hon") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" awr yn ôl"), index: 0u8 }), one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("awr yn ôl"), index: 255u8 }), two: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" awr yn ôl"), index: 0u8 }), few: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" awr yn ôl"), index: 0u8 }), many: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" awr yn ôl"), index: 0u8 }), other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" awr yn ôl"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("ymhen  awr"), index: 6u8 }), one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("ymhen awr"), index: 255u8 }), two: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("ymhen  awr"), index: 6u8 }), few: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("ymhen  awr"), index: 6u8 }), many: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("ymhen  awr"), index: 6u8 }), other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("ymhen  awr"), index: 6u8 } },
+                };
+                const __DA: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0denne time") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" time siden"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" timer siden"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("om  time"), index: 3u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("om  timer"), index: 3u8 } },
+                };
+                const __DE: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0in dieser Stunde") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("vor  Std."), index: 4u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("vor  Std."), index: 4u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("in  Std."), index: 3u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("in  Std."), index: 3u8 } },
+                };
+                const __DSB: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0w to\xC5\x9B tej g\xC3\xB3\xC5\xBAinje") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("pśed  góź."), index: 6u8 }), two: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("pśed  góź."), index: 6u8 }), few: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("pśed  góź."), index: 6u8 }), many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("pśed  góź."), index: 6u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("za  góź."), index: 3u8 }), two: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("za  góź."), index: 3u8 }), few: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("za  góź."), index: 3u8 }), many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("za  góź."), index: 3u8 } },
+                };
+                const __EL: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xCF\x84\xCF\x81\xCE\xAD\xCF\x87\xCE\xBF\xCF\x85\xCF\x83\xCE\xB1 \xCF\x8E\xCF\x81\xCE\xB1") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("πριν από  ώ."), index: 16u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("πριν από  ώ."), index: 16u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("σε  ώ."), index: 5u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("σε  ώ."), index: 5u8 } },
+                };
+                const __EN: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0this hour") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" hr. ago"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" hr. ago"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("in  hr."), index: 3u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("in  hr."), index: 3u8 } },
+                };
+                const __EN_001: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0this hour") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" hr ago"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" hr ago"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("in  hr"), index: 3u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("in  hr"), index: 3u8 } },
+                };
+                const __EN_AU: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0this hour") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" hr ago"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" hrs ago"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("in  hr"), index: 3u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("in  hrs"), index: 3u8 } },
+                };
+                const __ES: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0esta hora") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("hace  h"), index: 5u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("hace  h"), index: 5u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("dentro de  h"), index: 10u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("dentro de  h"), index: 10u8 } },
+                };
+                const __ES_MX: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0esta hora") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("hace  h"), index: 5u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("hace  h"), index: 5u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("en  h"), index: 3u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("en  n"), index: 3u8 } },
+                };
+                const __ET: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0praegusel tunnil") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" t eest"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" t eest"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" t pärast"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" t pärast"), index: 0u8 } },
+                };
+                const __EU: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0ordu honetan") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("duela  ordu"), index: 6u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("duela  ordu"), index: 6u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" ordu barru"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" ordu barru"), index: 0u8 } },
+                };
+                const __FA: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xD9\x87\xD9\x85\xDB\x8C\xD9\x86 \xD8\xB3\xD8\xA7\xD8\xB9\xD8\xAA") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" ساعت پیش"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" ساعت پیش"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" ساعت بعد"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" ساعت بعد"), index: 0u8 } },
+                };
+                const __FF_ADLM: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xF0\x9E\xA4\x90\xF0\x9E\xA4\xA3\xF0\x9E\xA4\xAD\xF0\x9E\xA5\x85 \xF0\x9E\xA4\xB2\xF0\x9E\xA4\xB6\xF0\x9E\xA4\xA2\xF0\x9E\xA4\xA5\xF0\x9E\xA4\xB2\xF0\x9E\xA4\xA3\xF0\x9E\xA4\xAD") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" 𞤶𞤢. 𞤱𞤵𞤤𞤭\u{1e945}𞤲𞥋𞤣𞤭"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" 𞤶𞤢. 𞤱𞤵𞤤𞤭\u{1e945}𞤯𞤭"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("𞤲𞥋𞤣𞤫𞤪  𞤶𞤢."), index: 21u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("𞤲𞥋𞤣𞤫𞤪  𞤶𞤢."), index: 21u8 } },
+                };
+                const __FI: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0tunnin sis\xC3\xA4ll\xC3\xA4") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" t sitten"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" t sitten"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" t päästä"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" t päästä"), index: 0u8 } },
+                };
+                const __FIL: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0ngayong oras") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" oras ang nakalipas"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" oras ang nakalipas"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("sa  oras"), index: 3u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("sa  (na) oras"), index: 3u8 } },
+                };
+                const __FO: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0hendan t\xC3\xADman") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" t. síðan"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" t. síðan"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("um  t."), index: 3u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("um  t."), index: 3u8 } },
+                };
+                const __FR: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0cette heure-ci") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("il y a \u{a0}h"), index: 7u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("il y a \u{a0}h"), index: 7u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("dans \u{a0}h"), index: 5u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("dans \u{a0}h"), index: 5u8 } },
+                };
+                const __FY: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0this hour") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" oere lyn"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" oere lyn"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("Oer  oere"), index: 4u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("Oer  oere"), index: 4u8 } },
+                };
+                const __GA: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0an uair seo") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" uair ó shin"), index: 0u8 }), two: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" uair ó shin"), index: 0u8 }), few: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" huaire ó shin"), index: 0u8 }), many: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" n-uaire ó shin"), index: 0u8 }), other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" uair ó shin"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("i gceann  uair"), index: 9u8 }), two: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("i gceann  uair"), index: 9u8 }), few: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("i gceann  huaire"), index: 9u8 }), many: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("i gceann  n-uaire"), index: 9u8 }), other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("i gceann  uair"), index: 9u8 } },
+                };
+                const __GD: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0am broinn uair") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("o  uair"), index: 2u8 }), two: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("o  uair"), index: 2u8 }), few: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("o  uair."), index: 2u8 }), many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("o  uair"), index: 2u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("an  uair"), index: 3u8 }), two: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("an  uair"), index: 3u8 }), few: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("an  uair."), index: 3u8 }), many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("an  uair"), index: 3u8 } },
+                };
+                const __GL: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0esta hora") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("hai  h"), index: 4u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("hai  h"), index: 4u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("en  h"), index: 3u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("en  h"), index: 3u8 } },
+                };
+                const __GU: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xAA\x86 \xE0\xAA\x95\xE0\xAA\xB2\xE0\xAA\xBE\xE0\xAA\x95") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" કલાક પહ\u{ac7}લા\u{a82}"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" કલાક પહ\u{ac7}લા\u{a82}"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" કલાકમા\u{a82}"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" કલાકમા\u{a82}"), index: 0u8 } },
+                };
+                const __HA: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0wannan awa") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" awa da ya gabata"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" awa da ya gabata"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("cikin  awa"), index: 6u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("cikin  awa"), index: 6u8 } },
+                };
+                const __HE: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xD7\x91\xD7\xA9\xD7\xA2\xD7\x94 \xD7\x96\xD7\x95") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("לפני שעה"), index: 255u8 }), two: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("לפני שעתיים"), index: 255u8 }), few: None, many: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("לפני  שע׳"), index: 9u8 }), other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("לפני  שע׳"), index: 9u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("בעוד שעה"), index: 255u8 }), two: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("בעוד שעתיים"), index: 255u8 }), few: None, many: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("בעוד  שע׳"), index: 9u8 }), other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("בעוד  שע׳"), index: 9u8 } },
+                };
+                const __HI: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xA4\xAF\xE0\xA4\xB9 \xE0\xA4\x98\xE0\xA4\x82\xE0\xA4\x9F\xE0\xA4\xBE") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" घ\u{902}॰ पहल\u{947}"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" घ\u{902}॰ पहल\u{947}"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" घ\u{902}॰ म\u{947}\u{902}"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" घ\u{902}॰ म\u{947}\u{902}"), index: 0u8 } },
+                };
+                const __HI_LATN: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0yah ghanta") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" hr pahle"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" hr mein"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" hr mein"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" hr mein"), index: 0u8 } },
+                };
+                const __HR: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0ovaj sat") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("prije  h"), index: 6u8 }), two: None, few: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("prije  h"), index: 6u8 }), many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("prije  h"), index: 6u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("za  h"), index: 3u8 }), two: None, few: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("za  h"), index: 3u8 }), many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("za  h"), index: 3u8 } },
+                };
+                const __HSB: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0w tutej hod\xC5\xBAinje") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("před  hodź."), index: 6u8 }), two: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("před  hodź."), index: 6u8 }), few: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("před  hodź."), index: 6u8 }), many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("před  hodź."), index: 6u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("za  hodź."), index: 3u8 }), two: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("za  hodź."), index: 3u8 }), few: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("za  hodź."), index: 3u8 }), many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("za  hodź."), index: 3u8 } },
+                };
+                const __HU: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0ebben az \xC3\xB3r\xC3\xA1ban") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" órával ezelőtt"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" órával ezelőtt"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" óra múlva"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" óra múlva"), index: 0u8 } },
+                };
+                const __HY: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xD5\xA1\xD5\xB5\xD5\xBD \xD5\xAA\xD5\xA1\xD5\xB4\xD5\xAB\xD5\xB6") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" ժ առաջ"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" ժ առաջ"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" ժ-ից"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" ժ-ից"), index: 0u8 } },
+                };
+                const __IA: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0iste hora") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" hr. retro"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" hr. retro"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("in  hr."), index: 3u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("in  hr."), index: 3u8 } },
+                };
+                const __ID: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0jam ini") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" jam lalu"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("dalam  jam"), index: 6u8 } },
+                };
+                const __IG: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0elekere a") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("- h"), index: 1u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("+ h"), index: 1u8 } },
+                };
+                const __IS: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xC3\xBEessa stundina") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("fyrir  klst."), index: 6u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("fyrir  klst."), index: 6u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("eftir  klst."), index: 6u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("eftir  klst."), index: 6u8 } },
+                };
+                const __IT: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0quest\xE2\x80\x99ora") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" h fa"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" h fa"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("tra  h"), index: 4u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("tra  h"), index: 4u8 } },
+                };
+                const __JA: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\x001 \xE6\x99\x82\xE9\x96\x93\xE4\xBB\xA5\xE5\x86\x85") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" 時間前"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" 時間後"), index: 0u8 } },
+                };
+                const __JV: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0jam iki") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" jam kepungkur"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("ing  jam"), index: 4u8 } },
+                };
+                const __KA: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE1\x83\x90\xE1\x83\x9B \xE1\x83\xA1\xE1\x83\x90\xE1\x83\x90\xE1\x83\x97\xE1\x83\xA8\xE1\x83\x98") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" სთ წინ"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" სთ წინ"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" საათში"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" საათში"), index: 0u8 } },
+                };
+                const __KEA: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0es ora li") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("a ten  ora"), index: 6u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("di li  ora"), index: 6u8 } },
+                };
+                const __KGP: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xC3\xB3ra tag k\xC3\xA3") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" h si ser"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" h si ser"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" h kar kỹ"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" h kar kỹ"), index: 0u8 } },
+                };
+                const __KK: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xD0\xBE\xD1\x81\xD1\x8B \xD1\x81\xD0\xB0\xD2\x93\xD0\xB0\xD1\x82") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" сағ. бұрын"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" сағ. бұрын"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" сағ. кейін"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" сағ. кейін"), index: 0u8 } },
+                };
+                const __KM: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE1\x9E\x98\xE1\x9F\x89\xE1\x9F\x84\xE1\x9E\x84\xE1\x9E\x93\xE1\x9F\x81\xE1\x9F\x87") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" ម\u{17c9}ោង\u{200b}ម\u{17bb}ន"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" ម\u{17c9}ោងទៀត"), index: 0u8 } },
+                };
+                const __KN: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xB2\x88 \xE0\xB2\x97\xE0\xB2\x82\xE0\xB2\x9F\xE0\xB3\x86") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" ಗಂಟ\u{cc6} ಹ\u{cbf}ಂದ\u{cc6}"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" ಗಂಟ\u{cc6}ಗಳ ಹ\u{cbf}ಂದ\u{cc6}"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" ಗಂಟ\u{cc6}ಯಲ\u{ccd}ಲ\u{cbf}"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" ಗಂಟ\u{cc6}ಗಳಲ\u{ccd}ಲ\u{cbf}"), index: 0u8 } },
+                };
+                const __KO: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xED\x98\x84\xEC\x9E\xAC \xEC\x8B\x9C\xEA\xB0\x84") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("시간 전"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("시간 후"), index: 0u8 } },
+                };
+                const __KOK: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xA4\xB9\xE0\xA5\x87\xE0\xA4\x82 \xE0\xA4\xB5\xE0\xA4\xB0") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" वरा आदी\u{902}"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" वरा\u{902}नी\u{902}"), index: 0u8 } },
+                };
+                const __KY: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xD1\x83\xD1\x88\xD1\x83\xD0\xBB \xD1\x81\xD0\xB0\xD0\xB0\xD1\x82\xD1\x82\xD0\xB0") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" саат. мурун"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" саат. мурун"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" саат. кийин"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" саат. кийин"), index: 0u8 } },
+                };
+                const __LB: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0this hour") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("virun  St."), index: 6u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("viru(n)  St."), index: 8u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("an  St."), index: 3u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("a(n)  St."), index: 5u8 } },
+                };
+                const __LO: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xBA\x8A\xE0\xBA\xBB\xE0\xBB\x88\xE0\xBA\xA7\xE0\xBB\x82\xE0\xBA\xA1\xE0\xBA\x87\xE0\xBA\x99\xE0\xBA\xB5\xE0\xBB\x89") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" ຊມ. ກ\u{ec8}ອນ"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("ໃນອ\u{eb5}ກ  ຊມ."), index: 16u8 } },
+                };
+                const __LT: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xC5\xA1i\xC4\x85 valand\xC4\x85") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("prieš  val."), index: 7u8 }), two: None, few: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("prieš  val."), index: 7u8 }), many: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("prieš  val."), index: 7u8 }), other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("prieš  val."), index: 7u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("po  val."), index: 3u8 }), two: None, few: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("po  val."), index: 3u8 }), many: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("po  val."), index: 3u8 }), other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("po  val."), index: 3u8 } },
+                };
+                const __LV: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xC5\xA1aj\xC4\x81 stund\xC4\x81") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("pirms \u{a0}st."), index: 6u8 }), one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("pirms \u{a0}st."), index: 6u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("pirms \u{a0}st."), index: 6u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("pēc \u{a0}st."), index: 5u8 }), one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("pēc \u{a0}st."), index: 5u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("pēc \u{a0}st."), index: 5u8 } },
+                };
+                const __MAI: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xA4\x8F\xE0\xA4\xB9\xE0\xA4\xBF \xE0\xA4\x98\xE0\xA4\x82\xE0\xA4\x9F\xE0\xA4\xBE") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" घ\u{902}टा पहिल\u{947}"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" घ\u{902}टा म\u{947}"), index: 0u8 } },
+                };
+                const __MI: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0i t\xC4\x93nei haora") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("- h."), index: 1u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("+ h."), index: 1u8 } },
+                };
+                const __MK: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xD1\x87\xD0\xB0\xD1\x81\xD0\xBE\xD0\xB2") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("пред  час"), index: 9u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("пред  часа"), index: 9u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("за  час"), index: 5u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("за  часа"), index: 5u8 } },
+                };
+                const __ML: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xB4\x88 \xE0\xB4\xAE\xE0\xB4\xA3\xE0\xB4\xBF\xE0\xB4\x95\xE0\xB5\x8D\xE0\xB4\x95\xE0\xB5\x82\xE0\xB4\xB1\xE0\xB4\xBF\xE0\xB5\xBD") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" മണിക\u{d4d}ക\u{d42}ർ മ\u{d41}മ\u{d4d}പ\u{d4d}"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" മണിക\u{d4d}ക\u{d42}ർ മ\u{d41}മ\u{d4d}പ\u{d4d}"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" മണിക\u{d4d}ക\u{d42}റിൽ"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" മണിക\u{d4d}ക\u{d42}റിൽ"), index: 0u8 } },
+                };
+                const __MN: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xD1\x8D\xD0\xBD\xD1\x8D \xD1\x86\xD0\xB0\xD0\xB3") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" ц өмнө"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" ц өмнө"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" ц дараа"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" ц дараа"), index: 0u8 } },
+                };
+                const __MR: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xA4\xA4\xE0\xA4\xBE\xE0\xA4\xB8\xE0\xA4\xBE\xE0\xA4\xA4") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" तासाप\u{942}र\u{94d}वी"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" तासा\u{902}प\u{942}र\u{94d}वी"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" तासामध\u{94d}य\u{947}"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" तासा\u{902}मध\u{94d}य\u{947}"), index: 0u8 } },
+                };
+                const __MS: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0jam ini") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" jam lalu"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("dlm  jam"), index: 4u8 } },
+                };
+                const __MT: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0din is-sieg\xC4\xA7a") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("siegħa ilu"), index: 255u8 }), two: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("sagħtejn ilu"), index: 255u8 }), few: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" sigħat ilu"), index: 0u8 }), many: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("-il siegħa ilu"), index: 0u8 }), other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" siegħa ilu"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("fi żmien siegħa oħra"), index: 255u8 }), two: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("fi żmien sagħtejn"), index: 255u8 }), few: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("fi żmien  sigħat"), index: 10u8 }), many: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("fi żmien -il siegħa"), index: 10u8 }), other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("fi żmien  siegħa"), index: 10u8 } },
+                };
+                const __MY: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE1\x80\xA4\xE1\x80\xA1\xE1\x80\x81\xE1\x80\xBB\xE1\x80\xAD\xE1\x80\x94\xE1\x80\xBA") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("ပြ\u{102e}းခ\u{1032}\u{1037}သည\u{1037}\u{103a}  နာရ\u{102e}"), index: 34u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" နာရ\u{102e}အတ\u{103d}င\u{103a}း"), index: 0u8 } },
+                };
+                const __NE: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xA4\xAF\xE0\xA4\xB8 \xE0\xA4\x98\xE0\xA4\xA1\xE0\xA5\x80\xE0\xA4\xAE\xE0\xA4\xBE") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" घण\u{94d}टा पहिल\u{947}"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" घण\u{94d}टा पहिल\u{947}"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" घण\u{94d}टामा"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" घण\u{94d}टामा"), index: 0u8 } },
+                };
+                const __NL: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0binnen een uur") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" uur geleden"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" uur geleden"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("over  uur"), index: 5u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("over  uur"), index: 5u8 } },
+                };
+                const __NN: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0denne timen") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("for  t sidan"), index: 4u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("for  t sidan"), index: 4u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("om  t"), index: 3u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("om  t"), index: 3u8 } },
+                };
+                const __NO: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0denne timen") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("for  t siden"), index: 4u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("for  t siden"), index: 4u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("om  t"), index: 3u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("om  t"), index: 3u8 } },
+                };
+                const __OR: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xAC\x8F\xE0\xAC\xB9\xE0\xAC\xBF \xE0\xAC\x98\xE0\xAC\xA3\xE0\xAD\x8D\xE0\xAC\x9F\xE0\xAC\xBE") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" ଘ. ପ\u{b42}ର\u{b4d}ବେ"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" ଘ. ପ\u{b42}ର\u{b4d}ବେ"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" ଘ. ରେ"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" ଘ. ରେ"), index: 0u8 } },
+                };
+                const __PA: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xA8\x87\xE0\xA8\xB8 \xE0\xA8\x98\xE0\xA9\xB0\xE0\xA8\x9F\xE0\xA9\x87") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" ਘ\u{a70}ਟਾ ਪਹਿਲਾ\u{a02}"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" ਘ\u{a70}ਟ\u{a47} ਪਹਿਲਾ\u{a02}"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" ਘ\u{a70}ਟ\u{a47} ਵਿ\u{a71}ਚ"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" ਘ\u{a70}ਟਿਆ\u{a02} ਵਿ\u{a71}ਚ"), index: 0u8 } },
+                };
+                const __PCM: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0D\xC3\xADs \xC3\xA1wa") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" áwa wé dọ\u{301}n pas"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" áwa wé dọ\u{301}n pas"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("Fọ  áwa wé de kọm"), index: 5u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("Fọ  áwa wé de kọm"), index: 5u8 } },
+                };
+                const __PL: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0ta godzina") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" godz. temu"), index: 0u8 }), two: None, few: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" godz. temu"), index: 0u8 }), many: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" godz. temu"), index: 0u8 }), other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" godz. temu"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("za  godz."), index: 3u8 }), two: None, few: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("za  godz."), index: 3u8 }), many: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("za  godz."), index: 3u8 }), other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("za  godz."), index: 3u8 } },
+                };
+                const __PS: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xD8\xAF\xD8\xA7 \xD8\xB3\xD8\xA7\xD8\xB9\xD8\xAA") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" ساعت مخکې"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" ساعت مخکې"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("په  ساعت کې"), index: 5u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("په  ساعت کې"), index: 5u8 } },
+                };
+                const __PT: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0esta hora") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("há  h"), index: 4u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("há  h"), index: 4u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("em  h"), index: 3u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("em  h"), index: 3u8 } },
+                };
+                const __PT_PT: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0esta hora") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("há  h"), index: 4u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("há  h"), index: 4u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("dentro de  h"), index: 10u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("dentro de  h"), index: 10u8 } },
+                };
+                const __QU: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0kay hora") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("- h"), index: 1u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("+ h"), index: 1u8 } },
+                };
+                const __RO: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0ora aceasta") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("acum  h"), index: 5u8 }), two: None, few: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("acum  h"), index: 5u8 }), many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("acum  h"), index: 5u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("peste  h"), index: 6u8 }), two: None, few: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("peste  h"), index: 6u8 }), many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("peste  h"), index: 6u8 } },
+                };
+                const __RU: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xD0\xB2 \xD1\x8D\xD1\x82\xD0\xBE\xD1\x82 \xD1\x87\xD0\xB0\xD1\x81") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" ч назад"), index: 0u8 }), two: None, few: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" ч назад"), index: 0u8 }), many: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" ч назад"), index: 0u8 }), other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" ч назад"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("через  ч"), index: 11u8 }), two: None, few: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("через  ч"), index: 11u8 }), many: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("через  ч"), index: 11u8 }), other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("через  ч"), index: 11u8 } },
+                };
+                const __SAH: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0this hour") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" чаас ынараа өттүгэр"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" чааһынан"), index: 0u8 } },
+                };
+                const __SC: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0cust\xE2\x80\x99ora") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" ora a como"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" oras a como"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("intro de  ora"), index: 9u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("intro de  oras"), index: 9u8 } },
+                };
+                const __SD: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xD9\x87\xD9\x86 \xDA\xAA\xD9\x84\xDA\xAA") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" ڪلاڪ پهرين"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" ڪلاڪ پهرين"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" ڪلاڪ ۾"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" ڪلاڪ ۾"), index: 0u8 } },
+                };
+                const __SI: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xB6\xB8\xE0\xB7\x99\xE0\xB6\xB8 \xE0\xB6\xB4\xE0\xB7\x90\xE0\xB6\xBA") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("පැය කට පෙර"), index: 10u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("පැය කට පෙර"), index: 10u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("පැය ක\u{dd2}න\u{dca}"), index: 10u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("පැය ක\u{dd2}න\u{dca}"), index: 10u8 } },
+                };
+                const __SK: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0v tejto hodine") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("pred  h"), index: 5u8 }), two: None, few: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("pred  h"), index: 5u8 }), many: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("pred  h"), index: 5u8 }), other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("pred  h"), index: 5u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("o  h"), index: 2u8 }), two: None, few: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("o  h"), index: 2u8 }), many: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("o  h"), index: 2u8 }), other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("o  h"), index: 2u8 } },
+                };
+                const __SL: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0v tej uri") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("pred  uro"), index: 5u8 }), two: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("pred  urama"), index: 5u8 }), few: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("pred  urami"), index: 5u8 }), many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("pred  urami"), index: 5u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("čez  uro"), index: 5u8 }), two: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("čez  uri"), index: 5u8 }), few: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("čez  ure"), index: 5u8 }), many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("čez  ur"), index: 5u8 } },
+                };
+                const __SO: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0Saacadan") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" scd khr"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" scd khr"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" scd"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" scd"), index: 0u8 } },
+                };
+                const __SQ: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0k\xC3\xABt\xC3\xAB or\xC3\xAB") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" orë më parë"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" orë më parë"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("pas  ore"), index: 4u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("pas  orësh"), index: 4u8 } },
+                };
+                const __SR: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xD0\xBE\xD0\xB2\xD0\xBE\xD0\xB3 \xD1\x81\xD0\xB0\xD1\x82\xD0\xB0") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("пре  ч."), index: 7u8 }), two: None, few: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("пре  ч."), index: 7u8 }), many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("пре  ч."), index: 7u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("за  ч."), index: 5u8 }), two: None, few: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("за  ч."), index: 5u8 }), many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("за  ч."), index: 5u8 } },
+                };
+                const __SR_BA: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xD0\xBE\xD0\xB2\xD0\xBE\xD0\xB3 \xD1\x81\xD0\xB0\xD1\x82\xD0\xB0") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("прије  ч."), index: 11u8 }), two: None, few: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("прије  ч."), index: 11u8 }), many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("прије  ч."), index: 11u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("за  ч."), index: 5u8 }), two: None, few: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("за  ч."), index: 5u8 }), many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("за  ч."), index: 5u8 } },
+                };
+                const __SR_LATN: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0ovog sata") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("pre  č."), index: 4u8 }), two: None, few: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("pre  č."), index: 4u8 }), many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("pre  č."), index: 4u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("za  č."), index: 3u8 }), two: None, few: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("za  č."), index: 3u8 }), many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("za  č."), index: 3u8 } },
+                };
+                const __SR_LATN_BA: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0ovog sata") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("prije  č."), index: 6u8 }), two: None, few: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("prije  č."), index: 6u8 }), many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("prije  č."), index: 6u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("za  č."), index: 3u8 }), two: None, few: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("za  č."), index: 3u8 }), many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("za  č."), index: 3u8 } },
+                };
+                const __SV: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0denna timme") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("för  tim sedan"), index: 5u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("för  tim sedan"), index: 5u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("om  tim"), index: 3u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("om  tim"), index: 3u8 } },
+                };
+                const __SW: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saa hii") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("saa  iliyopita"), index: 4u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("saa  zilizopita"), index: 4u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("baada ya saa "), index: 13u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("baada ya saa "), index: 13u8 } },
+                };
+                const __SYR: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xDC\x97\xDC\x95\xDC\x90 \xDC\xAB\xDC\xA5\xDC\xAC\xDC\x90") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("ܡ\u{323}ܢ ܩܕܡ ܚܕܐ ܫܥܬܐ"), index: 255u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("ܡ\u{323}ܢ ܩܕܡ  ܫܥ\u{308}ܐ"), index: 14u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("ܒܚܕܐ ܫܥܬܐ"), index: 255u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("ܒ ܫܥ\u{308}ܐ"), index: 2u8 } },
+                };
+                const __TA: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xAE\x87\xE0\xAE\xA8\xE0\xAF\x8D\xE0\xAE\xA4 \xE0\xAE\x92\xE0\xAE\xB0\xE0\xAF\x81 \xE0\xAE\xAE\xE0\xAE\xA3\xE0\xAE\xBF\xE0\xAE\xA8\xE0\xAF\x87\xE0\xAE\xB0\xE0\xAE\xA4\xE0\xAF\x8D\xE0\xAE\xA4\xE0\xAE\xBF\xE0\xAE\xB2\xE0\xAF\x8D") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" மணி. முன\u{bcd}"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" மணி. முன\u{bcd}"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" மணி."), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" மணி."), index: 0u8 } },
+                };
+                const __TE: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xB0\x88 \xE0\xB0\x97\xE0\xB0\x82\xE0\xB0\x9F") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" గం. క\u{c4d}ర\u{c3f}తం"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" గం. క\u{c4d}ర\u{c3f}తం"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" గం.ల\u{c4b}"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" గం.ల\u{c4b}"), index: 0u8 } },
+                };
+                const __TG: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xD1\x81\xD0\xBE\xD0\xB0\xD1\x82\xD0\xB8 \xD2\xB7\xD0\xBE\xD1\x80\xD3\xA3") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" ст. пеш"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("пас аз  ст."), index: 12u8 } },
+                };
+                const __TH: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xB8\x8A\xE0\xB8\xB1\xE0\xB9\x88\xE0\xB8\xA7\xE0\xB9\x82\xE0\xB8\xA1\xE0\xB8\x87\xE0\xB8\x99\xE0\xB8\xB5\xE0\xB9\x89") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" ชม. ท\u{e35}\u{e48}แล\u{e49}ว"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("ใน  ชม."), index: 7u8 } },
+                };
+                const __TI: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE1\x8A\xA3\xE1\x89\xA5\xE1\x8B\x9A \xE1\x88\xB0\xE1\x8B\x93\xE1\x89\xB5") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("ቅድሚ  ሰዓት"), index: 10u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("ቅድሚ  ሰዓት"), index: 10u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("ኣብ  ሰዓት"), index: 7u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("ኣብ  ሰዓት"), index: 7u8 } },
+                };
+                const __TK: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xC5\x9Fu sagat") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" sag. öň"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" sag. öň"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" sag-dan"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" sag-dan"), index: 0u8 } },
+                };
+                const __TO: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0ko e houa \xCA\xBBeni") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("houa ʻe  kuoʻosi"), index: 9u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("ʻi he houa ʻe "), index: 16u8 } },
+                };
+                const __TR: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0bu saat") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" sa. önce"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" sa. önce"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" sa. sonra"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" sa. sonra"), index: 0u8 } },
+                };
+                const __TT: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xD0\xB1\xD1\x83 \xD1\x81\xD3\x99\xD0\xB3\xD0\xB0\xD1\x82\xD1\x8C\xD1\x82\xD3\x99") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" сәг. элек"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" сәг."), index: 0u8 } },
+                };
+                const __UG: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0this hour") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" سائەت ئىلگىرى"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" سائەت ئىلگىرى"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" سائەتتىن كېيىن"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" سائەتتىن كېيىن"), index: 0u8 } },
+                };
+                const __UK: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xD1\x86\xD1\x96\xD1\x94\xD1\x97 \xD0\xB3\xD0\xBE\xD0\xB4\xD0\xB8\xD0\xBD\xD0\xB8") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" год тому"), index: 0u8 }), two: None, few: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" год тому"), index: 0u8 }), many: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" год тому"), index: 0u8 }), other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" год тому"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("через  год"), index: 11u8 }), two: None, few: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("через  год"), index: 11u8 }), many: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("через  год"), index: 11u8 }), other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("через  год"), index: 11u8 } },
+                };
+                const __UND: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0this hour") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("- h"), index: 1u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("+ h"), index: 1u8 } },
+                };
+                const __UR: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xD8\xA7\xD8\xB3 \xDA\xAF\xDA\xBE\xD9\x86\xD9\xB9\xDB\x92") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" گھنٹے پہلے"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" گھنٹے پہلے"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" گھنٹے میں"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" گھنٹے میں"), index: 0u8 } },
+                };
+                const __UR_IN: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xD8\xA7\xD8\xB3 \xDA\xAF\xDA\xBE\xD9\x86\xD9\xB9\xDB\x92") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" گھنٹے قبل"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" گھنٹے قبل"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" گھنٹے میں"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" گھنٹے میں"), index: 0u8 } },
+                };
+                const __UZ: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0shu soatda") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" soat oldin"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" soat oldin"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" soatdan keyin"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" soatdan keyin"), index: 0u8 } },
+                };
+                const __UZ_CYRL: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0this hour") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" соат олдин"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" соат олдин"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" соатдан сўнг"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" соатдан сўнг"), index: 0u8 } },
+                };
+                const __VI: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0gi\xE1\xBB\x9D n\xC3\xA0y") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" giờ trước"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("sau  giờ nữa"), index: 4u8 } },
+                };
+                const __WO: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0ci waxtu wii") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" wax. ci ginaaw"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("fileek  wax."), index: 7u8 } },
+                };
+                const __YRL: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0ku\xC3\xA1 hura") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("aikué  h"), index: 7u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("aikué  h itá"), index: 7u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" h resê"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" h resê itá"), index: 0u8 } },
+                };
+                const __YUE: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE5\x91\xA2\xE5\x80\x8B\xE5\xB0\x8F\xE6\x99\x82") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" 小時前"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" 小時後"), index: 0u8 } },
+                };
+                const __YUE_HANS: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE5\x91\xA2\xE4\xB8\xAA\xE5\xB0\x8F\xE6\x97\xB6") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" 小时前"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" 小时后"), index: 0u8 } },
+                };
+                const __ZH: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE8\xBF\x99\xE4\xB8\x80\xE6\x97\xB6\xE9\x97\xB4 / \xE6\xAD\xA4\xE6\x97\xB6") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("小时前"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("小时后"), index: 0u8 } },
+                };
+                const __ZH_HANT: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE9\x80\x99\xE4\xB8\x80\xE5\xB0\x8F\xE6\x99\x82") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" 小時前"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" 小時後"), index: 0u8 } },
+                };
+                const __ZH_HK: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE9\x80\x99\xE5\x80\x8B\xE5\xB0\x8F\xE6\x99\x82") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" 小時前"), index: 0u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" 小時後"), index: 0u8 } },
+                };
+                const __ZU: &S = &icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                    relatives: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0leli hora") })
+                    },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" ihora eledlule"), index: 0u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("emahoreni angu- edlule"), index: 15u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("ehoreni elingu- elizayo"), index: 15u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("emahoreni angu- ezayo"), index: 15u8 } },
+                };
+                icu_provider_baked::binary_search::Data(&[("af", __AF), ("am", __AM), ("ar", __AR), ("as", __AS), ("ast", __AST), ("az", __AZ), ("be", __BE), ("be-tarask", __BE_TARASK), ("bg", __BG), ("blo", __BLO), ("bn", __BN), ("br", __BR), ("brx", __BRX), ("bs", __BS), ("bs-Cyrl", __BS_CYRL), ("ca", __CA), ("chr", __CHR), ("cs", __CS), ("cy", __CY), ("da", __DA), ("de", __DE), ("dsb", __DSB), ("el", __EL), ("en", __EN), ("en-001", __EN_001), ("en-AU", __EN_AU), ("en-CA", __EN_AU), ("es", __ES), ("es-MX", __ES_MX), ("et", __ET), ("eu", __EU), ("fa", __FA), ("ff-Adlm", __FF_ADLM), ("fi", __FI), ("fil", __FIL), ("fo", __FO), ("fr", __FR), ("fy", __FY), ("ga", __GA), ("gd", __GD), ("gl", __GL), ("gu", __GU), ("ha", __HA), ("he", __HE), ("hi", __HI), ("hi-Latn", __HI_LATN), ("hr", __HR), ("hsb", __HSB), ("hu", __HU), ("hy", __HY), ("ia", __IA), ("id", __ID), ("ig", __IG), ("is", __IS), ("it", __IT), ("ja", __JA), ("jv", __JV), ("ka", __KA), ("kea", __KEA), ("kgp", __KGP), ("kk", __KK), ("km", __KM), ("kn", __KN), ("ko", __KO), ("kok", __KOK), ("ky", __KY), ("lb", __LB), ("lo", __LO), ("lt", __LT), ("lv", __LV), ("mai", __MAI), ("mi", __MI), ("mk", __MK), ("ml", __ML), ("mn", __MN), ("mr", __MR), ("ms", __MS), ("mt", __MT), ("my", __MY), ("ne", __NE), ("nl", __NL), ("nn", __NN), ("no", __NO), ("or", __OR), ("pa", __PA), ("pcm", __PCM), ("pl", __PL), ("ps", __PS), ("pt", __PT), ("pt-PT", __PT_PT), ("qu", __QU), ("ro", __RO), ("ru", __RU), ("sah", __SAH), ("sc", __SC), ("sd", __SD), ("si", __SI), ("sk", __SK), ("sl", __SL), ("so", __SO), ("sq", __SQ), ("sr", __SR), ("sr-BA", __SR_BA), ("sr-Latn", __SR_LATN), ("sr-Latn-BA", __SR_LATN_BA), ("sv", __SV), ("sw", __SW), ("syr", __SYR), ("ta", __TA), ("te", __TE), ("tg", __TG), ("th", __TH), ("ti", __TI), ("tk", __TK), ("to", __TO), ("tr", __TR), ("tt", __TT), ("ug", __UG), ("uk", __UK), ("und", __UND), ("ur", __UR), ("ur-IN", __UR_IN), ("uz", __UZ), ("uz-Cyrl", __UZ_CYRL), ("vi", __VI), ("wo", __WO), ("yrl", __YRL), ("yue", __YUE), ("yue-Hans", __YUE_HANS), ("zh", __ZH), ("zh-HK", __ZH_HK), ("zh-Hant", __ZH_HANT), ("zh-MO", __ZH_HK), ("zu", __ZU)])
+            };
+        }
+        #[clippy::msrv = "1.70"]
+        impl icu_provider::DataProvider<icu::experimental::relativetime::provider::ShortHourRelativeTimeFormatDataV1Marker> for $provider {
+            fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::experimental::relativetime::provider::ShortHourRelativeTimeFormatDataV1Marker>, icu_provider::DataError> {
+                let mut metadata = icu_provider::DataResponseMetadata::default();
+                let payload = if let Some(payload) = icu_provider_baked::DataStore::get(&Self::DATA_SHORT_HOUR_RELATIVE_TIME_FORMAT_DATA_V1_MARKER, req) {
+                    payload
+                } else {
+                    const FALLBACKER: icu::locale::fallback::LocaleFallbackerWithConfig<'static> = icu::locale::fallback::LocaleFallbacker::new().for_config(<icu::experimental::relativetime::provider::ShortHourRelativeTimeFormatDataV1Marker as icu_provider::DataMarker>::INFO.fallback_config);
+                    let mut fallback_iterator = FALLBACKER.fallback_for(req.locale.clone());
+                    loop {
+                        if let Some(payload) = icu_provider_baked::DataStore::get(&Self::DATA_SHORT_HOUR_RELATIVE_TIME_FORMAT_DATA_V1_MARKER, icu_provider::DataRequest { locale: fallback_iterator.get(), ..req }) {
+                            metadata.locale = Some(fallback_iterator.take());
+                            break payload;
+                        }
+                        if fallback_iterator.get().is_und() {
+                            return Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::experimental::relativetime::provider::ShortHourRelativeTimeFormatDataV1Marker as icu_provider::DataMarker>::INFO, req));
+                        }
+                        fallback_iterator.step();
+                    }
+                };
+                Ok(icu_provider::DataResponse { payload: icu_provider::DataPayload::from_static_ref(payload), metadata })
+            }
+        }
+    };
+    ($ provider : ty , ITER) => {
+        __impl_short_hour_relative_time_format_data_v1_marker!($provider);
+        #[clippy::msrv = "1.70"]
+        impl icu_provider::IterableDataProvider<icu::experimental::relativetime::provider::ShortHourRelativeTimeFormatDataV1Marker> for $provider {
+            fn iter_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataMarkerAttributes)>, icu_provider::DataError> {
+                Ok(icu_provider_baked::DataStore::iter(&Self::DATA_SHORT_HOUR_RELATIVE_TIME_FORMAT_DATA_V1_MARKER).collect())
+            }
+        }
+    };
+}
+#[doc(inline)]
+pub use __impl_short_hour_relative_time_format_data_v1_marker as impl_short_hour_relative_time_format_data_v1_marker;

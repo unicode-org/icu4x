@@ -8,6 +8,7 @@ use icu_plurals::PluralCategory;
 use serde::Deserialize;
 
 #[derive(Deserialize)]
+#[allow(dead_code)]
 pub struct NumbersFixture {
     pub isize: Vec<i64>,
     pub usize: Vec<u64>,
@@ -17,6 +18,7 @@ pub struct NumbersFixture {
 }
 
 #[derive(Debug, Deserialize)]
+#[allow(dead_code)]
 pub struct PluralsFixture {
     pub langs: Vec<LanguageIdentifier>,
 }
@@ -24,6 +26,7 @@ pub struct PluralsFixture {
 /// Describes a number to construct from plural operands, as `value * 10^(exponent)`.  Construction
 /// from value and exponent is because sometimes we want to preserve trailing zeros.
 #[derive(Deserialize)]
+#[allow(dead_code)]
 pub struct FromFixedDecimals {
     pub value: i64,
     pub exponent: i16,

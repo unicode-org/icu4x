@@ -1,0 +1,62 @@
+// @generated
+/// Implement `DataProvider<PercentEssentialsV1Marker>` on the given struct using the data
+/// hardcoded in this file. This allows the struct to be used with
+/// `icu`'s `_unstable` constructors.
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __impl_percent_essentials_v1_marker {
+    ($ provider : ty) => {
+        #[clippy::msrv = "1.70"]
+        const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
+        #[clippy::msrv = "1.70"]
+        impl $provider {
+            const DATA_PERCENT_ESSENTIALS_V1_MARKER: icu_provider_baked::binary_search::Data<icu_provider_baked::binary_search::Locale, icu::experimental::dimension::provider::percent::PercentEssentialsV1Marker> = {
+                type S = <icu::experimental::dimension::provider::percent::PercentEssentialsV1Marker as icu_provider::DynamicDataMarker>::Yokeable;
+                const __AR: &S = &icu::experimental::dimension::provider::percent::PercentEssentialsV1 { number_index: 0u8, percent_sign_affixes: icu::experimental::dimension::provider::percent::PercentAffixesV1 { prefix: alloc::borrow::Cow::Borrowed(""), suffix: alloc::borrow::Cow::Borrowed("") }, percent_sign_symbol: alloc::borrow::Cow::Borrowed("\u{200e}%\u{200e}"), percent_symbol_index: 5u8, standard: alloc::borrow::Cow::Borrowed("#,##0%") };
+                const __AR_SA: &S = &icu::experimental::dimension::provider::percent::PercentEssentialsV1 { number_index: 0u8, percent_sign_affixes: icu::experimental::dimension::provider::percent::PercentAffixesV1 { prefix: alloc::borrow::Cow::Borrowed(""), suffix: alloc::borrow::Cow::Borrowed("") }, percent_sign_symbol: alloc::borrow::Cow::Borrowed("٪"), percent_symbol_index: 5u8, standard: alloc::borrow::Cow::Borrowed("#,##0%") };
+                const __AS: &S = &icu::experimental::dimension::provider::percent::PercentEssentialsV1 { number_index: 0u8, percent_sign_affixes: icu::experimental::dimension::provider::percent::PercentAffixesV1 { prefix: alloc::borrow::Cow::Borrowed(""), suffix: alloc::borrow::Cow::Borrowed("") }, percent_sign_symbol: alloc::borrow::Cow::Borrowed("%"), percent_symbol_index: 8u8, standard: alloc::borrow::Cow::Borrowed("#,##,##0%") };
+                const __BE: &S = &icu::experimental::dimension::provider::percent::PercentEssentialsV1 { number_index: 0u8, percent_sign_affixes: icu::experimental::dimension::provider::percent::PercentAffixesV1 { prefix: alloc::borrow::Cow::Borrowed("\u{a0}"), suffix: alloc::borrow::Cow::Borrowed("") }, percent_sign_symbol: alloc::borrow::Cow::Borrowed("%"), percent_symbol_index: 7u8, standard: alloc::borrow::Cow::Borrowed("#,##0\u{a0}%") };
+                const __BLO: &S = &icu::experimental::dimension::provider::percent::PercentEssentialsV1 { number_index: 3u8, percent_sign_affixes: icu::experimental::dimension::provider::percent::PercentAffixesV1 { prefix: alloc::borrow::Cow::Borrowed(""), suffix: alloc::borrow::Cow::Borrowed("\u{a0}") }, percent_sign_symbol: alloc::borrow::Cow::Borrowed("%"), percent_symbol_index: 0u8, standard: alloc::borrow::Cow::Borrowed("%\u{a0}#,#0;%\u{a0}-#,#0") };
+                const __DE_CH: &S = &icu::experimental::dimension::provider::percent::PercentEssentialsV1 { number_index: 0u8, percent_sign_affixes: icu::experimental::dimension::provider::percent::PercentAffixesV1 { prefix: alloc::borrow::Cow::Borrowed(""), suffix: alloc::borrow::Cow::Borrowed("") }, percent_sign_symbol: alloc::borrow::Cow::Borrowed("%"), percent_symbol_index: 5u8, standard: alloc::borrow::Cow::Borrowed("#,##0%") };
+                const __EU: &S = &icu::experimental::dimension::provider::percent::PercentEssentialsV1 { number_index: 3u8, percent_sign_affixes: icu::experimental::dimension::provider::percent::PercentAffixesV1 { prefix: alloc::borrow::Cow::Borrowed(""), suffix: alloc::borrow::Cow::Borrowed("\u{a0}") }, percent_sign_symbol: alloc::borrow::Cow::Borrowed("%"), percent_symbol_index: 0u8, standard: alloc::borrow::Cow::Borrowed("%\u{a0}#,##0") };
+                const __KU: &S = &icu::experimental::dimension::provider::percent::PercentEssentialsV1 { number_index: 1u8, percent_sign_affixes: icu::experimental::dimension::provider::percent::PercentAffixesV1 { prefix: alloc::borrow::Cow::Borrowed(""), suffix: alloc::borrow::Cow::Borrowed("") }, percent_sign_symbol: alloc::borrow::Cow::Borrowed("%"), percent_symbol_index: 0u8, standard: alloc::borrow::Cow::Borrowed("%#,##0") };
+                const __OC: &S = &icu::experimental::dimension::provider::percent::PercentEssentialsV1 { number_index: 0u8, percent_sign_affixes: icu::experimental::dimension::provider::percent::PercentAffixesV1 { prefix: alloc::borrow::Cow::Borrowed("\u{202f}"), suffix: alloc::borrow::Cow::Borrowed("") }, percent_sign_symbol: alloc::borrow::Cow::Borrowed("%"), percent_symbol_index: 8u8, standard: alloc::borrow::Cow::Borrowed("#,##0\u{202f}%") };
+                icu_provider_baked::binary_search::Data(&[("ar", __AR), ("ar-SA", __AR_SA), ("ar-SO", __AR_SA), ("as", __AS), ("be", __BE), ("blo", __BLO), ("bn", __AS), ("br", __BE), ("brx", __AS), ("ca", __BE), ("cs", __BE), ("cv", __BE), ("da", __BE), ("de", __BE), ("de-CH", __DE_CH), ("de-LI", __DE_CH), ("dsb", __BE), ("en-AT", __BE), ("en-DE", __BE), ("en-DK", __BE), ("en-FI", __BE), ("en-IN", __AS), ("en-SE", __BE), ("es", __BE), ("es-419", __DE_CH), ("eu", __EU), ("fi", __BE), ("fo", __BE), ("fr", __BE), ("fr-CH", __DE_CH), ("gl", __BE), ("gu", __AS), ("hi", __AS), ("hr", __BE), ("hsb", __BE), ("ku", __KU), ("lb", __BE), ("lt", __BE), ("mk", __BE), ("nds", __BE), ("no", __BE), ("oc", __OC), ("pa", __AS), ("qu", __BE), ("rm", __BE), ("ro", __BE), ("ru", __BE), ("sa", __AS), ("sk", __BE), ("sl", __BE), ("sv", __BE), ("ta", __AS), ("ta-MY", __DE_CH), ("ta-SG", __DE_CH), ("tk", __BE), ("tr", __KU), ("tt", __BE), ("und", __DE_CH), ("xnr", __AS)])
+            };
+        }
+        #[clippy::msrv = "1.70"]
+        impl icu_provider::DataProvider<icu::experimental::dimension::provider::percent::PercentEssentialsV1Marker> for $provider {
+            fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::experimental::dimension::provider::percent::PercentEssentialsV1Marker>, icu_provider::DataError> {
+                let mut metadata = icu_provider::DataResponseMetadata::default();
+                let payload = if let Some(payload) = icu_provider_baked::DataStore::get(&Self::DATA_PERCENT_ESSENTIALS_V1_MARKER, req) {
+                    payload
+                } else {
+                    const FALLBACKER: icu::locale::fallback::LocaleFallbackerWithConfig<'static> = icu::locale::fallback::LocaleFallbacker::new().for_config(<icu::experimental::dimension::provider::percent::PercentEssentialsV1Marker as icu_provider::DataMarker>::INFO.fallback_config);
+                    let mut fallback_iterator = FALLBACKER.fallback_for(req.locale.clone());
+                    loop {
+                        if let Some(payload) = icu_provider_baked::DataStore::get(&Self::DATA_PERCENT_ESSENTIALS_V1_MARKER, icu_provider::DataRequest { locale: fallback_iterator.get(), ..req }) {
+                            metadata.locale = Some(fallback_iterator.take());
+                            break payload;
+                        }
+                        if fallback_iterator.get().is_und() {
+                            return Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::experimental::dimension::provider::percent::PercentEssentialsV1Marker as icu_provider::DataMarker>::INFO, req));
+                        }
+                        fallback_iterator.step();
+                    }
+                };
+                Ok(icu_provider::DataResponse { payload: icu_provider::DataPayload::from_static_ref(payload), metadata })
+            }
+        }
+    };
+    ($ provider : ty , ITER) => {
+        __impl_percent_essentials_v1_marker!($provider);
+        #[clippy::msrv = "1.70"]
+        impl icu_provider::IterableDataProvider<icu::experimental::dimension::provider::percent::PercentEssentialsV1Marker> for $provider {
+            fn iter_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataMarkerAttributes)>, icu_provider::DataError> {
+                Ok(icu_provider_baked::DataStore::iter(&Self::DATA_PERCENT_ESSENTIALS_V1_MARKER).collect())
+            }
+        }
+    };
+}
+#[doc(inline)]
+pub use __impl_percent_essentials_v1_marker as impl_percent_essentials_v1_marker;

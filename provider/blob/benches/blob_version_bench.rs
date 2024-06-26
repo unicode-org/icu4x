@@ -5,7 +5,6 @@
 extern crate alloc;
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
-use icu_provider::datagen::IterableDataProvider;
 use icu_provider::hello_world::*;
 use icu_provider::prelude::*;
 use icu_provider_blob::BlobDataProvider;
@@ -22,18 +21,18 @@ fn blob_version_bench(c: &mut Criterion) {
     });
 
     let hello_world_provider = HelloWorldProvider;
-    let locales = hello_world_provider.supported_requests().unwrap();
+    let locales = hello_world_provider.iter_requests().unwrap();
 
     c.bench_function("provider/read/v1", |b| {
         let provider = BlobDataProvider::try_new_from_static_blob(black_box(BLOB_V1)).unwrap();
         b.iter(|| {
-            for (locale, key_attributes) in black_box(&locales).iter() {
+            for (locale, marker_attributes) in black_box(&locales).iter() {
                 black_box(&provider)
                     .load_data(
-                        HelloWorldV1Marker::KEY,
+                        HelloWorldV1Marker::INFO,
                         DataRequest {
                             locale,
-                            key_attributes,
+                            marker_attributes,
                             ..Default::default()
                         },
                     )
@@ -44,13 +43,13 @@ fn blob_version_bench(c: &mut Criterion) {
     c.bench_function("provider/read/v2", |b| {
         let provider = BlobDataProvider::try_new_from_static_blob(black_box(BLOB_V2)).unwrap();
         b.iter(|| {
-            for (locale, key_attributes) in black_box(&locales).iter() {
+            for (locale, marker_attributes) in black_box(&locales).iter() {
                 black_box(&provider)
                     .load_data(
-                        HelloWorldV1Marker::KEY,
+                        HelloWorldV1Marker::INFO,
                         DataRequest {
                             locale,
-                            key_attributes,
+                            marker_attributes,
                             ..Default::default()
                         },
                     )

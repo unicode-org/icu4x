@@ -8,12 +8,15 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XError.d.hpp"
-#include "ICU4XPropertyValueNameToEnumMapper.d.h"
+#include "ICU4XDataError.d.hpp"
 
 class ICU4XDataProvider;
-class ICU4XError;
+class ICU4XDataError;
 
+
+namespace capi {
+    typedef struct ICU4XPropertyValueNameToEnumMapper ICU4XPropertyValueNameToEnumMapper;
+}
 
 class ICU4XPropertyValueNameToEnumMapper {
 public:
@@ -22,25 +25,25 @@ public:
 
   inline int16_t get_loose(std::string_view name) const;
 
-  inline static diplomat::result<std::unique_ptr<ICU4XPropertyValueNameToEnumMapper>, ICU4XError> load_general_category(const ICU4XDataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<ICU4XPropertyValueNameToEnumMapper>, ICU4XDataError> load_general_category(const ICU4XDataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<ICU4XPropertyValueNameToEnumMapper>, ICU4XError> load_hangul_syllable_type(const ICU4XDataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<ICU4XPropertyValueNameToEnumMapper>, ICU4XDataError> load_hangul_syllable_type(const ICU4XDataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<ICU4XPropertyValueNameToEnumMapper>, ICU4XError> load_east_asian_width(const ICU4XDataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<ICU4XPropertyValueNameToEnumMapper>, ICU4XDataError> load_east_asian_width(const ICU4XDataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<ICU4XPropertyValueNameToEnumMapper>, ICU4XError> load_bidi_class(const ICU4XDataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<ICU4XPropertyValueNameToEnumMapper>, ICU4XDataError> load_bidi_class(const ICU4XDataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<ICU4XPropertyValueNameToEnumMapper>, ICU4XError> load_indic_syllabic_category(const ICU4XDataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<ICU4XPropertyValueNameToEnumMapper>, ICU4XDataError> load_indic_syllabic_category(const ICU4XDataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<ICU4XPropertyValueNameToEnumMapper>, ICU4XError> load_line_break(const ICU4XDataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<ICU4XPropertyValueNameToEnumMapper>, ICU4XDataError> load_line_break(const ICU4XDataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<ICU4XPropertyValueNameToEnumMapper>, ICU4XError> load_grapheme_cluster_break(const ICU4XDataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<ICU4XPropertyValueNameToEnumMapper>, ICU4XDataError> load_grapheme_cluster_break(const ICU4XDataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<ICU4XPropertyValueNameToEnumMapper>, ICU4XError> load_word_break(const ICU4XDataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<ICU4XPropertyValueNameToEnumMapper>, ICU4XDataError> load_word_break(const ICU4XDataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<ICU4XPropertyValueNameToEnumMapper>, ICU4XError> load_sentence_break(const ICU4XDataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<ICU4XPropertyValueNameToEnumMapper>, ICU4XDataError> load_sentence_break(const ICU4XDataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<ICU4XPropertyValueNameToEnumMapper>, ICU4XError> load_script(const ICU4XDataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<ICU4XPropertyValueNameToEnumMapper>, ICU4XDataError> load_script(const ICU4XDataProvider& provider);
 
   inline const capi::ICU4XPropertyValueNameToEnumMapper* AsFFI() const;
   inline capi::ICU4XPropertyValueNameToEnumMapper* AsFFI();

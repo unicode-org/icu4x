@@ -1,0 +1,14 @@
+{
+  "long": {
+    "One": "{0} ay",
+    "Other": "{0} ay"
+  },
+  "short": {
+    "One": "{0} ay",
+    "Other": "{0} ay"
+  },
+  "narrow": {
+    "One": "{0}a",
+    "Other": "{0}a"
+  }
+}

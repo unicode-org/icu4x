@@ -11,7 +11,7 @@ use alloc::vec::Vec;
 use core::cell::RefCell;
 use icu_locale_core::Locale;
 use icu_normalizer::provider::*;
-use icu_properties::{provider::*, sets, PropertiesError};
+use icu_properties::{provider::*, sets};
 use icu_provider::prelude::*;
 #[cfg(feature = "datagen")]
 use std::collections::HashSet;
@@ -96,7 +96,7 @@ pub struct RuleCollection {
     id_mapping: BTreeMap<String, Locale>, // alias -> bcp id
     // these two maps need to lock together
     data: RefCell<(
-        BTreeMap<String, (String, bool, bool)>, // key-attributes -> source/reverse/visible
+        BTreeMap<String, (String, bool, bool)>, // marker-attributes -> source/reverse/visible
         BTreeMap<String, Result<DataResponse<TransliteratorRulesV1Marker>, DataError>>, // cache
     )>,
 }
@@ -216,23 +216,13 @@ impl RuleCollection {
             + DataProvider<CompatibilityDecompositionTablesV1Marker>
             + DataProvider<CanonicalCompositionsV1Marker>,
     {
-        let unwrap_props_data_error = |e| {
-            let PropertiesError::PropDataLoad(e) = e else {
-                unreachable!()
-            };
-            e
-        };
-
         Ok(RuleCollectionProvider {
             collection: self,
             properties_provider,
             normalizer_provider,
-            xid_start: sets::load_xid_start(properties_provider)
-                .map_err(unwrap_props_data_error)?,
-            xid_continue: sets::load_xid_continue(properties_provider)
-                .map_err(unwrap_props_data_error)?,
-            pat_ws: sets::load_pattern_white_space(properties_provider)
-                .map_err(unwrap_props_data_error)?,
+            xid_start: sets::load_xid_start(properties_provider)?,
+            xid_continue: sets::load_xid_continue(properties_provider)?,
+            pat_ws: sets::load_pattern_white_space(properties_provider)?,
         })
     }
 }
@@ -320,16 +310,16 @@ where
     ) -> Result<DataResponse<TransliteratorRulesV1Marker>, DataError> {
         let mut exclusive_data = self.collection.data.borrow_mut();
 
-        if let Some(response) = exclusive_data.1.get(req.key_attributes as &str) {
+        if let Some(response) = exclusive_data.1.get(req.marker_attributes as &str) {
             return response.clone();
         };
 
         let result = || -> Result<DataResponse<TransliteratorRulesV1Marker>, DataError> {
             let Some((source, reverse, visible)) =
-                exclusive_data.0.remove(req.key_attributes as &str)
+                exclusive_data.0.remove(req.marker_attributes as &str)
             else {
                 return Err(
-                    DataErrorKind::MissingLocale.with_req(TransliteratorRulesV1Marker::KEY, req)
+                    DataErrorKind::MissingLocale.with_req(TransliteratorRulesV1Marker::INFO, req)
                 );
             };
 
@@ -342,7 +332,7 @@ where
             )
             .map_err(|e| {
                 e.explain(&source)
-                    .with_req(TransliteratorRulesV1Marker::KEY, req)
+                    .with_req(TransliteratorRulesV1Marker::INFO, req)
             })?;
 
             let pass1 = pass1::Pass1::run(
@@ -355,7 +345,7 @@ where
             )
             .map_err(|e| {
                 e.explain(&source)
-                    .with_req(TransliteratorRulesV1Marker::KEY, req)
+                    .with_req(TransliteratorRulesV1Marker::INFO, req)
             })?;
 
             let mut transliterator = pass2::Pass2::run(
@@ -369,20 +359,20 @@ where
             )
             .map_err(|e| {
                 e.explain(&source)
-                    .with_req(TransliteratorRulesV1Marker::KEY, req)
+                    .with_req(TransliteratorRulesV1Marker::INFO, req)
             })?;
 
             transliterator.visibility = visible;
 
             Ok(DataResponse {
                 metadata: Default::default(),
-                payload: Some(DataPayload::from_owned(transliterator)),
+                payload: DataPayload::from_owned(transliterator),
             })
         }();
 
         exclusive_data
             .1
-            .insert(req.key_attributes.to_string(), result.clone());
+            .insert(req.marker_attributes.to_string(), result.clone());
 
         result
     }
@@ -409,7 +399,7 @@ redirect!(
 );
 
 #[cfg(feature = "datagen")]
-impl<PP, NP> icu_provider::datagen::IterableDataProvider<TransliteratorRulesV1Marker>
+impl<PP, NP> IterableDataProvider<TransliteratorRulesV1Marker>
     for RuleCollectionProvider<'_, PP, NP>
 where
     PP: ?Sized
@@ -476,7 +466,7 @@ where
         + DataProvider<XidStartV1Marker>,
     NP: ?Sized,
 {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    fn iter_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
         let exclusive_data = self.collection.data.borrow();
         Ok(exclusive_data
             .0
@@ -647,24 +637,20 @@ mod tests {
             true,
         );
 
-        let forward: DataPayload<TransliteratorRulesV1Marker> = collection
+        let forward: DataResponse<TransliteratorRulesV1Marker> = collection
             .as_provider()
             .load(DataRequest {
-                key_attributes: &"fwd".parse().unwrap(),
+                marker_attributes: &"fwd".parse().unwrap(),
                 ..Default::default()
             })
-            .unwrap()
-            .take_payload()
             .unwrap();
 
-        let reverse: DataPayload<TransliteratorRulesV1Marker> = collection
+        let reverse: DataResponse<TransliteratorRulesV1Marker> = collection
             .as_provider()
             .load(DataRequest {
-                key_attributes: &"rev".parse().unwrap(),
+                marker_attributes: &"rev".parse().unwrap(),
                 ..Default::default()
             })
-            .unwrap()
-            .take_payload()
             .unwrap();
         {
             let expected_filter = parse_set_cp("[1]");
@@ -757,10 +743,10 @@ mod tests {
                 variable_table: expected_var_table,
                 visibility: true,
             };
-            assert_eq!(*forward.get(), expected_rbt);
+            assert_eq!(*forward.payload.get(), expected_rbt);
 
             assert_eq!(
-                forward.get().deps().collect::<HashSet<_>>(),
+                forward.payload.get().deps().collect::<HashSet<_>>(),
                 HashSet::from_iter([
                     Cow::Borrowed("x-any-nfc"),
                     Cow::Borrowed("x-any-remove"),
@@ -862,10 +848,10 @@ mod tests {
                 variable_table: expected_var_table,
                 visibility: true,
             };
-            assert_eq!(*reverse.get(), expected_rbt);
+            assert_eq!(*reverse.payload.get(), expected_rbt);
 
             assert_eq!(
-                reverse.get().deps().collect::<HashSet<_>>(),
+                reverse.payload.get().deps().collect::<HashSet<_>>(),
                 HashSet::from_iter([
                     Cow::Borrowed("und-t-d0-addrndsp-m0-fifty-s0-anyrev"),
                     Cow::Borrowed("x-any-nfd"),

@@ -4,6 +4,7 @@
 
 use icu_datagen::baked_exporter::*;
 use icu_datagen::prelude::*;
+use icu_datagen_bikeshed::DatagenProvider;
 use std::path::PathBuf;
 
 fn main() {
@@ -11,24 +12,27 @@ fn main() {
 
     let mod_directory = PathBuf::from(std::env::var_os("OUT_DIR").unwrap()).join("baked_data");
 
-    DatagenDriver::new()
-        .with_locales_and_fallback([LocaleFamily::single(langid!("ru"))], {
-            let mut options = FallbackOptions::default();
-            options.runtime_fallback_location = Some(RuntimeFallbackLocation::External);
+    DatagenDriver::new(
+        [LocaleFamily::single(langid!("ru"))],
+        FallbackOptions::no_deduplication(),
+        // We are not deduplicating, so this can be anything. If we were using runtime fallback,
+        // this would need to be the same fallbacker as used at runtime (in the baked data case,
+        // the compiled data one, which we could obtain here using `try_new_unstable`).
+        LocaleFallbacker::new_without_data(),
+    )
+    // These are the markers required by `PluralRules::try_new_cardinal_unstable`. Compilation will
+    // discard unused markers and fail if required markers are not generated, but explicitly listing the
+    // markers will speed up the datagen.
+    .with_markers([icu::plurals::provider::CardinalV1Marker::INFO])
+    .export(
+        &DatagenProvider::new_latest_tested(),
+        BakedExporter::new(mod_directory, {
+            let mut options = Options::default();
+            options.overwrite = true;
+            options.use_internal_fallback = false;
             options
         })
-        // These are the keys required by `PluralRules::try_new_cardinal_unstable`. Compilation will
-        // discard unused keys and fail if required keys are not generated, but explicitly listing the
-        // keys will speed up the datagen.
-        .with_keys([icu::plurals::provider::CardinalV1Marker::KEY])
-        .export(
-            &DatagenProvider::new_latest_tested(),
-            BakedExporter::new(mod_directory, {
-                let mut options = Options::default();
-                options.overwrite = true;
-                options
-            })
-            .unwrap(),
-        )
-        .expect("Datagen should be successful");
+        .unwrap(),
+    )
+    .expect("Datagen should be successful");
 }

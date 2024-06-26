@@ -6,7 +6,6 @@ mod fixtures;
 
 use icu_locale_core::LanguageIdentifier;
 use icu_plurals::{PluralCategory, PluralRules};
-use std::str::FromStr;
 
 #[test]
 fn test_categories() {
@@ -16,7 +15,9 @@ fn test_categories() {
 
     for test in test_set {
         let pr = PluralRules::try_new(
-            &LanguageIdentifier::from_str(&test.langid).unwrap().into(),
+            &LanguageIdentifier::try_from_str(&test.langid)
+                .unwrap()
+                .into(),
             test.plural_type.into(),
         )
         .unwrap();

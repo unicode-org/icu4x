@@ -8,10 +8,32 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XAnyCalendarKind.d.h"
 
 class ICU4XLocale;
 
+
+namespace capi {
+    typedef enum ICU4XAnyCalendarKind {
+      ICU4XAnyCalendarKind_Iso = 0,
+      ICU4XAnyCalendarKind_Gregorian = 1,
+      ICU4XAnyCalendarKind_Buddhist = 2,
+      ICU4XAnyCalendarKind_Japanese = 3,
+      ICU4XAnyCalendarKind_JapaneseExtended = 4,
+      ICU4XAnyCalendarKind_Ethiopian = 5,
+      ICU4XAnyCalendarKind_EthiopianAmeteAlem = 6,
+      ICU4XAnyCalendarKind_Indian = 7,
+      ICU4XAnyCalendarKind_Coptic = 8,
+      ICU4XAnyCalendarKind_Dangi = 9,
+      ICU4XAnyCalendarKind_Chinese = 10,
+      ICU4XAnyCalendarKind_Hebrew = 11,
+      ICU4XAnyCalendarKind_IslamicCivil = 12,
+      ICU4XAnyCalendarKind_IslamicObservational = 13,
+      ICU4XAnyCalendarKind_IslamicTabular = 14,
+      ICU4XAnyCalendarKind_IslamicUmmAlQura = 15,
+      ICU4XAnyCalendarKind_Persian = 16,
+      ICU4XAnyCalendarKind_Roc = 17,
+    } ICU4XAnyCalendarKind;
+}
 
 class ICU4XAnyCalendarKind {
 public:

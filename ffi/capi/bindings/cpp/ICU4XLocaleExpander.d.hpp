@@ -9,7 +9,6 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 #include "ICU4XError.d.hpp"
-#include "ICU4XLocaleExpander.d.h"
 #include "ICU4XTransformResult.d.hpp"
 
 class ICU4XDataProvider;
@@ -17,6 +16,10 @@ class ICU4XLocale;
 class ICU4XError;
 class ICU4XTransformResult;
 
+
+namespace capi {
+    typedef struct ICU4XLocaleExpander ICU4XLocaleExpander;
+}
 
 class ICU4XLocaleExpander {
 public:

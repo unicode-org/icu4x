@@ -8,7 +8,8 @@ use icu_datagen::baked_exporter;
 use icu_datagen::fs_exporter;
 use icu_datagen::fs_exporter::serializers::AbstractSerializer;
 use icu_datagen::prelude::*;
-use icu_provider::datagen::*;
+use icu_datagen_bikeshed::{CoverageLevel, DatagenProvider};
+use icu_provider::export::*;
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;
 use std::fs::File;
@@ -18,22 +19,30 @@ use std::sync::Mutex;
 
 const REPO_VERSION: &str = env!("CARGO_PKG_VERSION");
 const EXPERIMENTAL_VERSION: &str = "0.1.0";
-const COMPONENTS: &[(&str, &[DataKey], &str)] = &[
-    ("calendar", icu::calendar::provider::KEYS, REPO_VERSION),
-    ("casemap", icu::casemap::provider::KEYS, REPO_VERSION),
-    ("collator", icu::collator::provider::KEYS, REPO_VERSION),
-    ("datetime", icu::datetime::provider::KEYS, REPO_VERSION),
-    ("decimal", icu::decimal::provider::KEYS, REPO_VERSION),
-    ("list", icu::list::provider::KEYS, REPO_VERSION),
-    ("locale", icu::locale::provider::KEYS, REPO_VERSION),
-    ("normalizer", icu::normalizer::provider::KEYS, REPO_VERSION),
-    ("plurals", icu::plurals::provider::KEYS, REPO_VERSION),
-    ("properties", icu::properties::provider::KEYS, REPO_VERSION),
-    ("segmenter", icu::segmenter::provider::KEYS, REPO_VERSION),
-    ("timezone", icu::timezone::provider::KEYS, REPO_VERSION),
+const COMPONENTS: &[(&str, &[DataMarkerInfo], &str)] = &[
+    ("calendar", icu::calendar::provider::MARKERS, REPO_VERSION),
+    ("casemap", icu::casemap::provider::MARKERS, REPO_VERSION),
+    ("collator", icu::collator::provider::MARKERS, REPO_VERSION),
+    ("datetime", icu::datetime::provider::MARKERS, REPO_VERSION),
+    ("decimal", icu::decimal::provider::MARKERS, REPO_VERSION),
+    ("list", icu::list::provider::MARKERS, REPO_VERSION),
+    ("locale", icu::locale::provider::MARKERS, REPO_VERSION),
+    (
+        "normalizer",
+        icu::normalizer::provider::MARKERS,
+        REPO_VERSION,
+    ),
+    ("plurals", icu::plurals::provider::MARKERS, REPO_VERSION),
+    (
+        "properties",
+        icu::properties::provider::MARKERS,
+        REPO_VERSION,
+    ),
+    ("segmenter", icu::segmenter::provider::MARKERS, REPO_VERSION),
+    ("timezone", icu::timezone::provider::MARKERS, REPO_VERSION),
     (
         "experimental",
-        icu::experimental::provider::KEYS,
+        icu::experimental::provider::MARKERS,
         EXPERIMENTAL_VERSION,
     ),
 ];
@@ -50,49 +59,50 @@ fn main() {
     let components = if args.is_empty() {
         COMPONENTS
             .iter()
-            .map(|(krate, keys, version)| (krate.to_string(), *keys, *version))
+            .map(|(krate, markers, version)| (krate.to_string(), *markers, *version))
             .collect::<Vec<_>>()
     } else {
-        let map = std::collections::HashMap::<&str, (&'static [DataKey], &'static str)>::from_iter(
-            COMPONENTS
-                .iter()
-                .map(|(krate, keys, version)| (*krate, (*keys, *version))),
-        );
+        let map =
+            std::collections::HashMap::<&str, (&'static [DataMarkerInfo], &'static str)>::from_iter(
+                COMPONENTS
+                    .iter()
+                    .map(|(krate, markers, version)| (*krate, (*markers, *version))),
+            );
         args.into_iter()
             .filter_map(|krate| {
                 map.get(krate.as_str())
-                    .map(|(keys, version)| (krate, *keys, *version))
+                    .map(|(markers, version)| (krate, *markers, *version))
             })
             .collect()
     };
 
     let source = DatagenProvider::new_latest_tested();
 
-    let driver = DatagenDriver::new()
-        .with_locales_and_fallback(
-            source
-                .locales_for_coverage_levels([
-                    CoverageLevel::Modern,
-                    CoverageLevel::Moderate,
-                    CoverageLevel::Basic,
-                ])
-                .unwrap()
-                .into_iter()
-                .map(LocaleFamily::with_descendants),
-            Default::default(),
-        )
-        .with_recommended_segmenter_models();
+    let driver = DatagenDriver::new(
+        source
+            .locales_for_coverage_levels([
+                CoverageLevel::Modern,
+                CoverageLevel::Moderate,
+                CoverageLevel::Basic,
+            ])
+            .unwrap()
+            .into_iter()
+            .map(LocaleFamily::with_descendants),
+        FallbackOptions::maximal_deduplication(),
+        LocaleFallbacker::try_new_unstable(&source).unwrap(),
+    )
+    .with_recommended_segmenter_models();
 
     let mut options = baked_exporter::Options::default();
     options.overwrite = true;
     options.pretty = true;
 
-    for (component, keys, version) in &components {
-        let path = Path::new("provider/baked").join(component);
+    for (component, markers, version) in &components {
+        let path = Path::new("provider/data").join(component);
 
         let _ = std::fs::remove_dir_all(&path);
         for dir in ["", "src", "data"] {
-            std::fs::create_dir(&path.join(dir)).unwrap();
+            std::fs::create_dir(path.join(dir)).unwrap();
         }
         for (file, template) in [
             ("build.rs", include_str!("../template/build.rs.template")),
@@ -125,8 +135,35 @@ fn main() {
             .unwrap();
         }
 
+        // Crates with non-singleton markers need fallback
+        if markers.iter().any(|m| !m.is_singleton) {
+            writeln!(
+                &mut crlify::BufWriterWithLineEndingFix::new(
+                    std::fs::OpenOptions::new()
+                        .append(true)
+                        .open(path.join("Cargo.toml"))
+                        .unwrap()
+                ),
+                r#"icu_locale = {{ workspace = true, features = ["compiled_data"] }}"#
+            )
+            .unwrap();
+            writeln!(
+                &mut crlify::BufWriterWithLineEndingFix::new(
+                    std::fs::OpenOptions::new()
+                        .append(true)
+                        .open(path.join("src/lib.rs"))
+                        .unwrap()
+                ),
+                "pub use icu_locale;"
+            )
+            .unwrap();
+        }
+
         let baked_exporter =
             baked_exporter::BakedExporter::new(path.join("data"), options).unwrap();
+        let stub_exporter = StubExporter(
+            baked_exporter::BakedExporter::new(path.join("stubdata"), options).unwrap(),
+        );
         let fingerprinter = PostcardFingerprintExporter {
             size_hash: Default::default(),
             fingerprints: crlify::BufWriterWithLineEndingFix::new(
@@ -136,30 +173,60 @@ fn main() {
 
         driver
             .clone()
-            .with_keys(keys.iter().copied())
+            .with_markers(markers.iter().copied())
             .export(
                 &source,
-                MultiExporter::new(vec![Box::new(baked_exporter), Box::new(fingerprinter)]),
+                MultiExporter::new(vec![
+                    Box::new(baked_exporter),
+                    Box::new(stub_exporter),
+                    Box::new(fingerprinter),
+                ]),
             )
             .unwrap();
+    }
+}
 
-        for file in ["data/any.rs", "data/mod.rs"] {
-            std::fs::remove_file(path.join(file)).unwrap();
-        }
+struct StubExporter<E>(E);
+
+impl<E: DataExporter> DataExporter for StubExporter<E> {
+    fn put_payload(
+        &self,
+        _marker: DataMarkerInfo,
+        _locale: &DataLocale,
+        _marker_attributes: &DataMarkerAttributes,
+        _payload: &DataPayload<ExportMarker>,
+    ) -> Result<(), DataError> {
+        Ok(())
+    }
+
+    fn flush_singleton(
+        &self,
+        marker: DataMarkerInfo,
+        payload: &DataPayload<ExportMarker>,
+    ) -> Result<(), DataError> {
+        self.0.flush_singleton(marker, payload)
+    }
+
+    fn flush(&self, marker: DataMarkerInfo) -> Result<(), DataError> {
+        self.0.flush(marker)
+    }
+
+    fn close(&mut self) -> Result<(), DataError> {
+        self.0.close()
     }
 }
 
 struct PostcardFingerprintExporter<F> {
-    size_hash: Mutex<BTreeMap<(DataKey, String), (usize, u64)>>,
+    size_hash: Mutex<BTreeMap<(DataMarkerInfo, String), (usize, u64)>>,
     fingerprints: F,
 }
 
 impl<F: Write + Send + Sync> DataExporter for PostcardFingerprintExporter<F> {
     fn put_payload(
         &self,
-        key: DataKey,
+        marker: DataMarkerInfo,
         locale: &DataLocale,
-        key_attributes: &DataKeyAttributes,
+        marker_attributes: &DataMarkerAttributes,
         payload_before: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
         let mut serialized = vec![];
@@ -180,13 +247,17 @@ impl<F: Write + Send + Sync> DataExporter for PostcardFingerprintExporter<F> {
 
         self.size_hash.lock().expect("poison").insert(
             (
-                key,
-                DataRequest {
-                    locale,
-                    key_attributes,
-                    ..Default::default()
-                }
-                .legacy_encode(),
+                marker,
+                if marker.is_singleton && locale.is_und() {
+                    "<singleton>".to_string()
+                } else if !marker_attributes.is_empty() {
+                    format!(
+                        "{locale}/{marker_attributes}",
+                        marker_attributes = marker_attributes as &str
+                    )
+                } else {
+                    locale.to_string()
+                },
             ),
             (size, hash),
         );
@@ -194,25 +265,26 @@ impl<F: Write + Send + Sync> DataExporter for PostcardFingerprintExporter<F> {
         Ok(())
     }
 
-    fn flush(&self, _key: DataKey) -> Result<(), DataError> {
-        Ok(())
-    }
-
-    fn flush_with_built_in_fallback(
-        &self,
-        _key: DataKey,
-        _fallback_mode: BuiltInFallbackMode,
-    ) -> Result<(), DataError> {
+    fn flush(&self, _marker: DataMarkerInfo) -> Result<(), DataError> {
         Ok(())
     }
 
     fn close(&mut self) -> Result<(), DataError> {
-        for ((key, req), (size, hash)) in self.size_hash.get_mut().expect("poison") {
-            writeln!(&mut self.fingerprints, "{key}, {req}, {size}B, {hash:x}")?;
+        let mut seen = std::collections::HashMap::new();
+        for ((marker, req), (size, hash)) in self.size_hash.get_mut().expect("poison").iter() {
+            if let Some(deduped_req) = seen.get(hash) {
+                writeln!(
+                    &mut self.fingerprints,
+                    "{marker:?}, {req}, {size}B, -> {deduped_req}",
+                )?;
+            } else {
+                writeln!(
+                    &mut self.fingerprints,
+                    "{marker:?}, {req}, {size}B, {hash:x}",
+                )?;
+                seen.insert(hash, req);
+            }
         }
         Ok(())
-    }
-    fn supports_built_in_fallback(&self) -> bool {
-        true
     }
 }

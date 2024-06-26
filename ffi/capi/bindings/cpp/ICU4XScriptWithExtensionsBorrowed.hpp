@@ -12,8 +12,24 @@
 #include "diplomat_runtime.hpp"
 #include "ICU4XCodePointSetData.hpp"
 #include "ICU4XScriptExtensionsSet.hpp"
-#include "ICU4XScriptWithExtensionsBorrowed.h"
 
+
+namespace capi {
+    extern "C" {
+    
+    uint16_t ICU4XScriptWithExtensionsBorrowed_get_script_val(const ICU4XScriptWithExtensionsBorrowed* self, uint32_t code_point);
+    
+    ICU4XScriptExtensionsSet* ICU4XScriptWithExtensionsBorrowed_get_script_extensions_val(const ICU4XScriptWithExtensionsBorrowed* self, uint32_t code_point);
+    
+    bool ICU4XScriptWithExtensionsBorrowed_has_script(const ICU4XScriptWithExtensionsBorrowed* self, uint32_t code_point, uint16_t script);
+    
+    ICU4XCodePointSetData* ICU4XScriptWithExtensionsBorrowed_get_script_extensions_set(const ICU4XScriptWithExtensionsBorrowed* self, uint16_t script);
+    
+    
+    void ICU4XScriptWithExtensionsBorrowed_destroy(ICU4XScriptWithExtensionsBorrowed* self);
+    
+    } // extern "C"
+}
 
 inline uint16_t ICU4XScriptWithExtensionsBorrowed::get_script_val(uint32_t code_point) const {
   auto result = capi::ICU4XScriptWithExtensionsBorrowed_get_script_val(this->AsFFI(),

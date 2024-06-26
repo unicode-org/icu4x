@@ -1,0 +1,113 @@
+// @generated
+/// Implement `DataProvider<PluralRangesV1Marker>` on the given struct using the data
+/// hardcoded in this file. This allows the struct to be used with
+/// `icu`'s `_unstable` constructors.
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __impl_plural_ranges_v1_marker {
+    ($ provider : ty) => {
+        #[clippy::msrv = "1.70"]
+        const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
+        #[clippy::msrv = "1.70"]
+        impl $provider {
+            const DATA_PLURAL_RANGES_V1_MARKER: icu_provider_baked::binary_search::Data<icu_provider_baked::binary_search::Locale, icu::plurals::provider::PluralRangesV1Marker> = {
+                type S = <icu::plurals::provider::PluralRangesV1Marker as icu_provider::DynamicDataMarker>::Yokeable;
+                const __AF: &S = &icu::plurals::provider::PluralRangesV1 {
+                    ranges: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") })
+                    },
+                };
+                const __AR: &S = &icu::plurals::provider::PluralRangesV1 {
+                    ranges: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02\x03\x12\x13#") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0\x01\x01\0") })
+                    },
+                };
+                const __FA: &S = &icu::plurals::provider::PluralRangesV1 {
+                    ranges: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\"") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") })
+                    },
+                };
+                const __HE: &S = &icu::plurals::provider::PluralRangesV1 {
+                    ranges: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02\x03#") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0\0") })
+                    },
+                };
+                const __KA: &S = &icu::plurals::provider::PluralRangesV1 {
+                    ranges: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02 ") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\x02") })
+                    },
+                };
+                const __LV: &S = &icu::plurals::provider::PluralRangesV1 {
+                    ranges: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x11!") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0\0") })
+                    },
+                };
+                const __MK: &S = &icu::plurals::provider::PluralRangesV1 {
+                    ranges: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02\"") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0") })
+                    },
+                };
+                const __RO: &S = &icu::plurals::provider::PluralRangesV1 {
+                    ranges: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"B") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x04") })
+                    },
+                };
+                const __SL: &S = &icu::plurals::provider::PluralRangesV1 {
+                    ranges: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02\"2B") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x04\x04\x04\x04") })
+                    },
+                };
+                const __UND: &S = &icu::plurals::provider::PluralRangesV1 {
+                    ranges: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::ZeroVec::new())
+                    },
+                };
+                icu_provider_baked::binary_search::Data(&[("af", __AF), ("ar", __AR), ("bg", __AF), ("ca", __AF), ("en", __AF), ("es", __AF), ("et", __AF), ("eu", __AF), ("fa", __FA), ("fi", __AF), ("he", __HE), ("ia", __AF), ("ka", __KA), ("lv", __LV), ("mk", __MK), ("no", __AF), ("or", __FA), ("pcm", __AF), ("ro", __RO), ("sd", __FA), ("si", __AF), ("sl", __SL), ("sv", __AF), ("und", __UND), ("ur", __AF)])
+            };
+        }
+        #[clippy::msrv = "1.70"]
+        impl icu_provider::DataProvider<icu::plurals::provider::PluralRangesV1Marker> for $provider {
+            fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::plurals::provider::PluralRangesV1Marker>, icu_provider::DataError> {
+                let mut metadata = icu_provider::DataResponseMetadata::default();
+                let payload = if let Some(payload) = icu_provider_baked::DataStore::get(&Self::DATA_PLURAL_RANGES_V1_MARKER, req) {
+                    payload
+                } else {
+                    const FALLBACKER: icu::locale::fallback::LocaleFallbackerWithConfig<'static> = icu::locale::fallback::LocaleFallbacker::new().for_config(<icu::plurals::provider::PluralRangesV1Marker as icu_provider::DataMarker>::INFO.fallback_config);
+                    let mut fallback_iterator = FALLBACKER.fallback_for(req.locale.clone());
+                    loop {
+                        if let Some(payload) = icu_provider_baked::DataStore::get(&Self::DATA_PLURAL_RANGES_V1_MARKER, icu_provider::DataRequest { locale: fallback_iterator.get(), ..req }) {
+                            metadata.locale = Some(fallback_iterator.take());
+                            break payload;
+                        }
+                        if fallback_iterator.get().is_und() {
+                            return Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::plurals::provider::PluralRangesV1Marker as icu_provider::DataMarker>::INFO, req));
+                        }
+                        fallback_iterator.step();
+                    }
+                };
+                Ok(icu_provider::DataResponse { payload: icu_provider::DataPayload::from_static_ref(payload), metadata })
+            }
+        }
+    };
+    ($ provider : ty , ITER) => {
+        __impl_plural_ranges_v1_marker!($provider);
+        #[clippy::msrv = "1.70"]
+        impl icu_provider::IterableDataProvider<icu::plurals::provider::PluralRangesV1Marker> for $provider {
+            fn iter_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataMarkerAttributes)>, icu_provider::DataError> {
+                Ok(icu_provider_baked::DataStore::iter(&Self::DATA_PLURAL_RANGES_V1_MARKER).collect())
+            }
+        }
+    };
+}
+#[doc(inline)]
+pub use __impl_plural_ranges_v1_marker as impl_plural_ranges_v1_marker;

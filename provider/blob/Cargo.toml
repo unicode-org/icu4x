@@ -30,11 +30,11 @@ zerotrie = { workspace = true, features = ["serde", "zerovec"] }
 log = { workspace = true, optional = true }
 
 [dev-dependencies]
-icu_locale_core = { path = "../../components/locale_core", default-features = false, features = ["serde"] }
-icu_datetime = { path = "../../components/datetime", default-features = false, features = ["datagen", "experimental"] }
-icu_datetime_data = { path = "../../provider/baked/datetime" }
+databake = { path = "../../utils/databake" }
+icu_datagen = { path = "../../provider/datagen" }
 icu_locale = { path = "../../components/locale", default-features = false, features = ["compiled_data"] }
-icu_datagen = { path = "../../provider/datagen", default-features = false }
+icu_locale_core = { path = "../../components/locale_core", default-features = false, features = ["serde"] }
+icu_provider = { path = "../../provider/core", features = ["macros"] }
 icu_provider_adapters = { path = "../../provider/adapters", default-features = false }
 twox-hash = { workspace = true }
 
@@ -45,7 +45,7 @@ criterion = { workspace = true }
 bench = []
 std = ["icu_provider/std"]
 export = [
-    "icu_provider/datagen",
+    "icu_provider/export",
     "log",
     "postcard/alloc",
     "std",

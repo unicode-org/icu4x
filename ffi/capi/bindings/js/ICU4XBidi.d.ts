@@ -1,8 +1,8 @@
 import { u8 } from "./diplomat-runtime"
 import { FFIError } from "./diplomat-runtime"
 import { ICU4XBidiInfo } from "./ICU4XBidiInfo";
+import { ICU4XDataError } from "./ICU4XDataError";
 import { ICU4XDataProvider } from "./ICU4XDataProvider";
-import { ICU4XError } from "./ICU4XError";
 import { ICU4XReorderedIndexMap } from "./ICU4XReorderedIndexMap";
 
 /**
@@ -18,7 +18,7 @@ export class ICU4XBidi {
    * Creates a new {@link ICU4XBidi `ICU4XBidi`} from locale data.
 
    * See the {@link https://docs.rs/icu/latest/icu/properties/bidi/struct.BidiClassAdapter.html#method.new Rust documentation for `new`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
+   * @throws {@link FFIError}<{@link ICU4XDataError}>
    */
   static create(provider: ICU4XDataProvider): ICU4XBidi | never;
 

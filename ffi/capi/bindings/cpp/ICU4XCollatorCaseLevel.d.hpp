@@ -8,8 +8,15 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XCollatorCaseLevel.d.h"
 
+
+namespace capi {
+    typedef enum ICU4XCollatorCaseLevel {
+      ICU4XCollatorCaseLevel_Auto = 0,
+      ICU4XCollatorCaseLevel_Off = 1,
+      ICU4XCollatorCaseLevel_On = 2,
+    } ICU4XCollatorCaseLevel;
+}
 
 class ICU4XCollatorCaseLevel {
 public:

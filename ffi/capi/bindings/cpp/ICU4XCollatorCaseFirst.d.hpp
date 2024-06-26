@@ -8,8 +8,16 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XCollatorCaseFirst.d.h"
 
+
+namespace capi {
+    typedef enum ICU4XCollatorCaseFirst {
+      ICU4XCollatorCaseFirst_Auto = 0,
+      ICU4XCollatorCaseFirst_Off = 1,
+      ICU4XCollatorCaseFirst_LowerFirst = 2,
+      ICU4XCollatorCaseFirst_UpperFirst = 3,
+    } ICU4XCollatorCaseFirst;
+}
 
 class ICU4XCollatorCaseFirst {
 public:

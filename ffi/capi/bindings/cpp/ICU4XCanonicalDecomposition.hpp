@@ -10,15 +10,28 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XCanonicalDecomposition.h"
+#include "ICU4XDataError.hpp"
 #include "ICU4XDataProvider.hpp"
 #include "ICU4XDecomposed.hpp"
-#include "ICU4XError.hpp"
 
 
-inline diplomat::result<std::unique_ptr<ICU4XCanonicalDecomposition>, ICU4XError> ICU4XCanonicalDecomposition::create(const ICU4XDataProvider& provider) {
+namespace capi {
+    extern "C" {
+    
+    typedef struct ICU4XCanonicalDecomposition_create_result {union {ICU4XCanonicalDecomposition* ok; ICU4XDataError err;}; bool is_ok;} ICU4XCanonicalDecomposition_create_result;
+    ICU4XCanonicalDecomposition_create_result ICU4XCanonicalDecomposition_create(const ICU4XDataProvider* provider);
+    
+    ICU4XDecomposed ICU4XCanonicalDecomposition_decompose(const ICU4XCanonicalDecomposition* self, char32_t c);
+    
+    
+    void ICU4XCanonicalDecomposition_destroy(ICU4XCanonicalDecomposition* self);
+    
+    } // extern "C"
+}
+
+inline diplomat::result<std::unique_ptr<ICU4XCanonicalDecomposition>, ICU4XDataError> ICU4XCanonicalDecomposition::create(const ICU4XDataProvider& provider) {
   auto result = capi::ICU4XCanonicalDecomposition_create(provider.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XCanonicalDecomposition>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XCanonicalDecomposition>>(std::unique_ptr<ICU4XCanonicalDecomposition>(ICU4XCanonicalDecomposition::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XCanonicalDecomposition>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XCanonicalDecomposition>, ICU4XDataError>(diplomat::Ok<std::unique_ptr<ICU4XCanonicalDecomposition>>(std::unique_ptr<ICU4XCanonicalDecomposition>(ICU4XCanonicalDecomposition::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XCanonicalDecomposition>, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
 
 inline ICU4XDecomposed ICU4XCanonicalDecomposition::decompose(char32_t c) const {

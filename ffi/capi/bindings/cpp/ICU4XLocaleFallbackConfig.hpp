@@ -10,10 +10,16 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XLocaleFallbackConfig.h"
 #include "ICU4XLocaleFallbackPriority.hpp"
 #include "ICU4XLocaleFallbackSupplement.hpp"
 
+
+namespace capi {
+    extern "C" {
+    
+    
+    } // extern "C"
+}
 
 
 inline capi::ICU4XLocaleFallbackConfig ICU4XLocaleFallbackConfig::AsFFI() const {

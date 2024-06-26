@@ -6,7 +6,12 @@
 
 use crate::prelude::*;
 
-/// [`DataMarker`] for raw buffers. Returned by [`BufferProvider`].
+#[cfg(feature = "serde")]
+mod serde;
+#[cfg(feature = "serde")]
+pub use self::serde::*;
+
+/// [`DynamicDataMarker`] for raw buffers. Returned by [`BufferProvider`].
 ///
 /// The data is expected to be deserialized before it can be used; see
 /// [`DataPayload::into_deserialized`].
@@ -14,7 +19,7 @@ use crate::prelude::*;
 #[derive(Debug)]
 pub struct BufferMarker;
 
-impl DataMarker for BufferMarker {
+impl DynamicDataMarker for BufferMarker {
     type Yokeable = &'static [u8];
 }
 
@@ -53,10 +58,9 @@ impl DataMarker for BufferMarker {
 /// assert_eq!(
 ///     serde_json::from_slice::<HelloWorldV1>(
 ///         buffer_provider
-///             .load_data(HelloWorldV1Marker::KEY, req)
+///             .load_data(HelloWorldV1Marker::INFO, req)
 ///             .expect("load should succeed")
-///             .take_payload()
-///             .unwrap()
+///             .payload
 ///             .get()
 ///     )
 ///     .expect("should deserialize"),
@@ -73,8 +77,7 @@ impl DataMarker for BufferMarker {
 ///     deserializing_provider
 ///         .load(req)
 ///         .expect("load should succeed")
-///         .take_payload()
-///         .unwrap()
+///         .payload
 ///         .get(),
 ///     &HelloWorldV1 {
 ///         message: Cow::Borrowed("Hallo Welt"),
@@ -90,7 +93,7 @@ impl<P: DynamicDataProvider<BufferMarker> + ?Sized> BufferProvider for P {}
 
 /// An enum expressing all Serde formats known to ICU4X.
 #[derive(Debug, PartialEq, Eq, Hash, Copy, Clone)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "serde", derive(::serde::Serialize, ::serde::Deserialize))]
 #[non_exhaustive]
 pub enum BufferFormat {
     /// Serialize using JavaScript Object Notation (JSON).

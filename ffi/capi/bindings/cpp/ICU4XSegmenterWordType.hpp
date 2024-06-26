@@ -10,7 +10,16 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XSegmenterWordType.h"
+
+
+namespace capi {
+    extern "C" {
+    
+    bool ICU4XSegmenterWordType_is_word_like(ICU4XSegmenterWordType self);
+    
+    
+    } // extern "C"
+}
 
 
 inline capi::ICU4XSegmenterWordType ICU4XSegmenterWordType::AsFFI() const {

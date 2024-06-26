@@ -8,13 +8,13 @@ supports loading data from a single serialized blob.
 To build blob data, use the `--format blob2` option of [`icu_datagen`]:
 
 ```bash
-$ icu4x-datagen --keys all --locales full --format blob2 --out data.postcard
+$ icu4x-datagen --markers all --locales full --format blob2 --out data.postcard
 ```
 
 You can also use `--format blob` if you need to support ICU4X versions prior to 1.4.
 
 [`ICU4X`]: ../icu/index.html
-[`BufferProvider`]: icu_provider::BufferProvider
+[`BufferProvider`]: icu_provider::buf::BufferProvider
 [`icu_datagen`]: ../icu_datagen/index.html
 
 <!-- cargo-rdme end -->

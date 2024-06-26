@@ -1,0 +1,14 @@
+{
+  "long": {
+    "One": "{0} an",
+    "Other": "{0} ans"
+  },
+  "short": {
+    "One": "{0} an",
+    "Other": "{0} ans"
+  },
+  "narrow": {
+    "One": "{0}a",
+    "Other": "{0}a"
+  }
+}

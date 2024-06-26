@@ -45,13 +45,11 @@ mod test {
         let patterns = crate::provider::Baked
             .load(req)
             .expect("Failed to load payload")
-            .take_payload()
-            .expect("Failed to retrieve payload");
+            .payload;
         let skeletons = crate::provider::Baked
             .load(req)
             .expect("Failed to load payload")
-            .take_payload()
-            .expect("Failed to retrieve payload");
+            .payload;
         (patterns, skeletons)
     }
 

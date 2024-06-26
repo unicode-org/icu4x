@@ -6,7 +6,7 @@ use super::*;
 use alloc::boxed::Box;
 use icu_provider::prelude::*;
 
-use icu_locale_core::LanguageIdentifier;
+use icu_locale::LanguageIdentifier;
 
 type RequestFilterDataProviderOutput<'a, D> =
     RequestFilterDataProvider<D, Box<dyn Fn(DataRequest) -> bool + Sync + 'a>>;
@@ -24,9 +24,8 @@ where
     /// # Examples
     ///
     /// ```
-    /// use icu_locale_core::LanguageIdentifier;
-    /// use icu_locale_core::{langid, subtags::language};
-    /// use icu_provider::datagen::*;
+    /// use icu_locale::LanguageIdentifier;
+    /// use icu_locale::{langid, subtags::language};
     /// use icu_provider::hello_world::*;
     /// use icu_provider::prelude::*;
     /// use icu_provider_adapters::filter::Filterable;
@@ -60,14 +59,14 @@ where
     /// ));
     ///
     /// // English should not appear in the iterator result:
-    /// let supported_langids = provider
-    ///     .supported_requests()
+    /// let available_langids = provider
+    ///     .iter_requests()
     ///     .expect("Should successfully make an iterator of supported locales")
     ///     .into_iter()
     ///     .map(|(locale, _)| locale.get_langid())
     ///     .collect::<Vec<LanguageIdentifier>>();
-    /// assert!(supported_langids.contains(&langid!("de")));
-    /// assert!(!supported_langids.contains(&langid!("en")));
+    /// assert!(available_langids.contains(&langid!("de")));
+    /// assert!(!available_langids.contains(&langid!("en")));
     /// ```
     pub fn filter_by_langid<'a>(
         self,
@@ -101,7 +100,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use icu_locale_core::langid;
+    /// use icu_locale::langid;
     /// use icu_provider::hello_world::*;
     /// use icu_provider::prelude::*;
     /// use icu_provider_adapters::filter::Filterable;
@@ -164,7 +163,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use icu_locale_core::langid;
+    /// use icu_locale::langid;
     /// use icu_provider::hello_world::*;
     /// use icu_provider::prelude::*;
     /// use icu_provider_adapters::filter::Filterable;

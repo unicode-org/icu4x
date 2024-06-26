@@ -8,8 +8,17 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XFixedDecimalSignDisplay.d.h"
 
+
+namespace capi {
+    typedef enum ICU4XFixedDecimalSignDisplay {
+      ICU4XFixedDecimalSignDisplay_Auto = 0,
+      ICU4XFixedDecimalSignDisplay_Never = 1,
+      ICU4XFixedDecimalSignDisplay_Always = 2,
+      ICU4XFixedDecimalSignDisplay_ExceptZero = 3,
+      ICU4XFixedDecimalSignDisplay_Negative = 4,
+    } ICU4XFixedDecimalSignDisplay;
+}
 
 class ICU4XFixedDecimalSignDisplay {
 public:

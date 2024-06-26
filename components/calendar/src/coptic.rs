@@ -32,8 +32,9 @@
 //! ```
 
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
+use crate::error::DateError;
 use crate::iso::Iso;
-use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime, Time};
+use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, RangeError, Time};
 use calendrical_calculations::helpers::I32CastError;
 use calendrical_calculations::rata_die::RataDie;
 use tinystr::tinystr;
@@ -114,19 +115,29 @@ impl Calendar for Coptic {
         year: i32,
         month_code: types::MonthCode,
         day: u8,
-    ) -> Result<Self::DateInner, CalendarError> {
+    ) -> Result<Self::DateInner, DateError> {
         let year = if era.0 == tinystr!(16, "ad") {
             if year <= 0 {
-                return Err(CalendarError::OutOfRange);
+                return Err(DateError::Range {
+                    field: "year",
+                    value: year,
+                    min: 1,
+                    max: i32::MAX,
+                });
             }
             year
         } else if era.0 == tinystr!(16, "bd") {
             if year <= 0 {
-                return Err(CalendarError::OutOfRange);
+                return Err(DateError::Range {
+                    field: "year",
+                    value: year,
+                    min: 1,
+                    max: i32::MAX,
+                });
             }
             1 - year
         } else {
-            return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
+            return Err(DateError::UnknownEra(era));
         };
 
         ArithmeticDate::new_from_codes(self, year, month_code, day).map(CopticDateInner)
@@ -249,11 +260,7 @@ impl Date<Coptic> {
     /// assert_eq!(date_coptic.month().ordinal, 5);
     /// assert_eq!(date_coptic.day_of_month().0, 6);
     /// ```
-    pub fn try_new_coptic_date(
-        year: i32,
-        month: u8,
-        day: u8,
-    ) -> Result<Date<Coptic>, CalendarError> {
+    pub fn try_new_coptic_date(year: i32, month: u8, day: u8) -> Result<Date<Coptic>, RangeError> {
         ArithmeticDate::new_from_ordinals(year, month, day)
             .map(CopticDateInner)
             .map(|inner| Date::from_raw(inner, Coptic))
@@ -286,7 +293,7 @@ impl DateTime<Coptic> {
         hour: u8,
         minute: u8,
         second: u8,
-    ) -> Result<DateTime<Coptic>, CalendarError> {
+    ) -> Result<DateTime<Coptic>, DateError> {
         Ok(DateTime {
             date: Date::try_new_coptic_date(year, month, day)?,
             time: Time::try_new(hour, minute, second, 0)?,

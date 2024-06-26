@@ -5,8 +5,8 @@
 //! Documentation on zero-copy deserialization of locale types.
 //!
 //! [`Locale`] and [`LanguageIdentifier`] are highly structured types that cannot be directly
-//! stored in a zero-copy data structure, such as those provided by the [`zerovec`] crate.
-//! This page explains how to indirectly store these types in a [`zerovec`].
+//! stored in a zero-copy data structure, such as those provided by the [`zerovec`](crate::zerovec) module.
+//! This page explains how to indirectly store these types in a [`zerovec`](crate::zerovec).
 //!
 //! There are two main use cases, which have different solutions:
 //!
@@ -19,7 +19,7 @@
 //! To perform lookup, store the stringified locale in a canonical BCP-47 form as a byte array,
 //! and then use [`Locale::strict_cmp()`] to perform an efficient, zero-allocation lookup.
 //!
-//! To produce more human-readable serialized output, you can use [`UnvalidatedStr`].
+//! To produce more human-readable serialized output, you can use `UnvalidatedStr`.
 //!
 //! ```
 //! use icu::locale::Locale;
@@ -92,11 +92,11 @@
 //! store a BCP-47 string and parse it when needed.
 //!
 //! Since the string is stored in an unparsed state, it is not safe to `unwrap` the result from
-//! `Locale::try_from_bytes()`. See [icu4x#831](https://github.com/unicode-org/icu4x/issues/831)
+//! `Locale::try_from_utf8()`. See [icu4x#831](https://github.com/unicode-org/icu4x/issues/831)
 //! for a discussion on potential data models that could ensure that the locale is valid during
 //! deserialization.
 //!
-//! As above, to produce more human-readable serialized output, you can use [`UnvalidatedStr`].
+//! As above, to produce more human-readable serialized output, you can use `UnvalidatedStr`.
 //!
 //! ```
 //! use icu::locale::langid;
@@ -117,16 +117,15 @@
 //!
 //! // Construct a Locale by parsing the string.
 //! let value = zm.get(&25).expect("element is present");
-//! let loc = Locale::try_from_bytes(value);
+//! let loc = Locale::try_from_utf8(value);
 //! assert_eq!(loc, Ok(langid!("zh-TW").into()));
 //!
 //! // Invalid entries are fallible
 //! let err_value = zm.get(&30).expect("element is present");
-//! let err_loc = Locale::try_from_bytes(err_value);
+//! let err_loc = Locale::try_from_utf8(err_value);
 //! assert!(matches!(err_loc, Err(_)));
 //! ```
 //!
 //! [`Locale`]: crate::Locale
 //! [`Locale::strict_cmp()`]: crate::Locale::strict_cmp()
 //! [`LanguageIdentifier`]: crate::LanguageIdentifier
-//! [`UnvalidatedStr`]: zerovec::ule::UnvalidatedStr

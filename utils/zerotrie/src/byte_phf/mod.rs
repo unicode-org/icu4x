@@ -81,13 +81,11 @@ const Q_REAL_MAX: u8 = 127;
 /// The argument `n` is used only for taking the modulus so that the return value is
 /// in the range `[0, n)`.
 ///
-/// Invariant: n > 0
-///
 /// # Examples
 ///
 /// ```
 /// use zerotrie::_internal::f1;
-/// const N: usize = 10;
+/// const N: u8 = 10;
 ///
 /// // With p = 0:
 /// assert_eq!(0, f1(0, 0, N));
@@ -110,21 +108,17 @@ const Q_REAL_MAX: u8 = 127;
 /// assert_eq!(7, f1(19, 1, N));
 /// ```
 #[inline]
-pub fn f1(byte: u8, p: u8, n: usize) -> usize {
-    let n = if n > 0 {
-        n
-    } else {
-        debug_assert!(false, "unreachable by invariant");
-        1
-    };
-    if p == 0 {
-        byte as usize % n
+pub fn f1(byte: u8, p: u8, n: u8) -> u8 {
+    if n == 0 {
+        byte
+    } else if p == 0 {
+        byte % n
     } else {
         // `p` always uses the below constant-time operation. If needed, we
         // could add some other operation here with `p > P_FAST_MAX` to solve
         // difficult cases if the need arises.
         let result = byte ^ p ^ byte.wrapping_shr(p as u32);
-        result as usize % n
+        result % n
     }
 }
 
@@ -135,13 +129,11 @@ pub fn f1(byte: u8, p: u8, n: usize) -> usize {
 /// The argument `n` is used only for taking the modulus so that the return value is
 /// in the range `[0, n)`.
 ///
-/// Invariant: n > 0
-///
 /// # Examples
 ///
 /// ```
 /// use zerotrie::_internal::f2;
-/// const N: usize = 10;
+/// const N: u8 = 10;
 ///
 /// // With q = 0:
 /// assert_eq!(0, f2(0, 0, N));
@@ -164,13 +156,10 @@ pub fn f1(byte: u8, p: u8, n: usize) -> usize {
 /// assert_eq!(8, f2(19, 1, N));
 /// ```
 #[inline]
-pub fn f2(byte: u8, q: u8, n: usize) -> usize {
-    let n = if n > 0 {
-        n
-    } else {
-        debug_assert!(false, "unreachable by invariant");
-        1
-    };
+pub fn f2(byte: u8, q: u8, n: u8) -> u8 {
+    if n == 0 {
+        return byte;
+    }
     let mut result = byte ^ q;
     // In almost all cases, the PHF works with the above constant-time operation.
     // However, to crack a few difficult cases, we fall back to the linear-time
@@ -178,7 +167,7 @@ pub fn f2(byte: u8, q: u8, n: usize) -> usize {
     for _ in Q_FAST_MAX..q {
         result = result ^ (result << 1) ^ (result >> 1);
     }
-    result as usize % n
+    result % n
 }
 
 /// A constant-time map from bytes to unique indices.
@@ -206,14 +195,16 @@ where
     pub fn get(&self, key: u8) -> Option<usize> {
         let (p, buffer) = self.0.as_ref().split_first()?;
         // Note: there are N buckets followed by N keys
-        let n = buffer.len() / 2;
-        if n == 0 {
+        let n_usize = buffer.len() / 2;
+        if n_usize == 0 {
             return None;
         }
-        let (qq, eks) = buffer.debug_split_at(n);
+        let n = n_usize as u8;
+        let (qq, eks) = buffer.debug_split_at(n_usize);
         debug_assert_eq!(qq.len(), eks.len());
-        let q = debug_unwrap!(qq.get(f1(key, *p, n)), return None);
-        let l2 = f2(key, *q, n);
+        let l1 = f1(key, *p, n) as usize;
+        let q = debug_unwrap!(qq.get(l1), return None);
+        let l2 = f2(key, *q, n) as usize;
         let ek = debug_unwrap!(eks.get(l2), return None);
         if *ek == key {
             Some(l2)

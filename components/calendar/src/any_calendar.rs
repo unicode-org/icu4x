@@ -8,6 +8,7 @@ use crate::buddhist::Buddhist;
 use crate::chinese::Chinese;
 use crate::coptic::Coptic;
 use crate::dangi::Dangi;
+use crate::error::DateError;
 use crate::ethiopian::{Ethiopian, EthiopianEraStyle};
 use crate::gregorian::Gregorian;
 use crate::hebrew::Hebrew;
@@ -17,9 +18,7 @@ use crate::iso::Iso;
 use crate::japanese::{Japanese, JapaneseExtended};
 use crate::persian::Persian;
 use crate::roc::Roc;
-use crate::{
-    types, AsCalendar, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime, Ref,
-};
+use crate::{types, AsCalendar, Calendar, Date, DateDuration, DateDurationUnit, DateTime, Ref};
 
 use icu_locale_core::extensions::unicode::{key, value, Value};
 use icu_locale_core::subtags::language;
@@ -203,7 +202,7 @@ impl Calendar for AnyCalendar {
         year: i32,
         month_code: types::MonthCode,
         day: u8,
-    ) -> Result<Self::DateInner, CalendarError> {
+    ) -> Result<Self::DateInner, DateError> {
         let ret = match *self {
             Self::Buddhist(ref c) => {
                 AnyDateInner::Buddhist(c.date_from_codes(era, year, month_code, day)?)
@@ -607,7 +606,7 @@ impl AnyCalendar {
     pub fn try_new_with_any_provider<P>(
         provider: &P,
         kind: AnyCalendarKind,
-    ) -> Result<Self, CalendarError>
+    ) -> Result<Self, DataError>
     where
         P: AnyProvider + ?Sized,
     {
@@ -654,7 +653,7 @@ impl AnyCalendar {
     pub fn try_new_with_buffer_provider<P>(
         provider: &P,
         kind: AnyCalendarKind,
-    ) -> Result<Self, CalendarError>
+    ) -> Result<Self, DataError>
     where
         P: BufferProvider + ?Sized,
     {
@@ -697,7 +696,7 @@ impl AnyCalendar {
     }
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    pub fn try_new_unstable<P>(provider: &P, kind: AnyCalendarKind) -> Result<Self, CalendarError>
+    pub fn try_new_unstable<P>(provider: &P, kind: AnyCalendarKind) -> Result<Self, DataError>
     where
         P: DataProvider<crate::provider::JapaneseErasV1Marker>
             + DataProvider<crate::provider::JapaneseExtendedErasV1Marker>
@@ -756,12 +755,9 @@ impl AnyCalendar {
     }
 
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: include,
-        options: skip,
-        error: CalendarError,
-        #[cfg(skip)]
+        (locale) -> error: DataError,
         functions: [
-            new_for_locale,
+            new_for_locale: skip,
             try_new_for_locale_with_any_provider,
             try_new_for_locale_with_buffer_provider,
             try_new_for_locale_unstable,
@@ -773,7 +769,7 @@ impl AnyCalendar {
     pub fn try_new_for_locale_unstable<P>(
         provider: &P,
         locale: &DataLocale,
-    ) -> Result<Self, CalendarError>
+    ) -> Result<Self, DataError>
     where
         P: DataProvider<crate::provider::JapaneseErasV1Marker>
             + DataProvider<crate::provider::JapaneseExtendedErasV1Marker>
@@ -911,15 +907,13 @@ pub enum AnyCalendarKind {
 impl AnyCalendarKind {
     /// Construct from a BCP-47 string
     ///
-    /// Returns `None` if the calendar is unknown. If you prefer an error, use
-    /// [`CalendarError::unknown_any_calendar_kind`].
+    /// Returns `None` if the calendar is unknown.
     pub fn get_for_bcp47_string(x: &str) -> Option<Self> {
         Self::get_for_bcp47_bytes(x.as_bytes())
     }
     /// Construct from a BCP-47 byte string
     ///
-    /// Returns `None` if the calendar is unknown. If you prefer an error, use
-    /// [`CalendarError::unknown_any_calendar_kind`].
+    /// Returns `None` if the calendar is unknown.
     pub fn get_for_bcp47_bytes(x: &[u8]) -> Option<Self> {
         Some(match x {
             b"buddhist" => AnyCalendarKind::Buddhist,
@@ -949,8 +943,7 @@ impl AnyCalendarKind {
     }
     /// Construct from a BCP-47 [`Value`]
     ///
-    /// Returns `None` if the calendar is unknown. If you prefer an error, use
-    /// [`CalendarError::unknown_any_calendar_kind`].
+    /// Returns `None` if the calendar is unknown.
     pub fn get_for_bcp47_value(x: &Value) -> Option<Self> {
         match x.as_subtags_slice() {
             [first] if first == "buddhist" => Some(AnyCalendarKind::Buddhist),
@@ -1024,12 +1017,10 @@ impl AnyCalendarKind {
             AnyCalendarKind::Gregorian => value!("gregory"),
             AnyCalendarKind::Hebrew => value!("hebrew"),
             AnyCalendarKind::Indian => value!("indian"),
-            AnyCalendarKind::IslamicCivil => Value::try_from_bytes(b"islamic-civil").unwrap(),
+            AnyCalendarKind::IslamicCivil => Value::try_from_str("islamic-civil").unwrap(),
             AnyCalendarKind::IslamicObservational => value!("islamic"),
-            AnyCalendarKind::IslamicTabular => Value::try_from_bytes(b"islamic-tbla").unwrap(),
-            AnyCalendarKind::IslamicUmmAlQura => {
-                Value::try_from_bytes(b"islamic-umalqura").unwrap()
-            }
+            AnyCalendarKind::IslamicTabular => Value::try_from_str("islamic-tbla").unwrap(),
+            AnyCalendarKind::IslamicUmmAlQura => Value::try_from_str("islamic-umalqura").unwrap(),
             AnyCalendarKind::Iso => value!("iso"),
             AnyCalendarKind::Japanese => value!("japanese"),
             AnyCalendarKind::JapaneseExtended => value!("japanext"),
@@ -1063,8 +1054,7 @@ impl AnyCalendarKind {
 
     /// Extract the calendar component from a [`Locale`]
     ///
-    /// Returns `None` if the calendar is not specified or unknown. If you prefer an error, use
-    /// [`CalendarError::unknown_any_calendar_kind`].
+    /// Returns `None` if the calendar is not specified or unknown.
     pub fn get_for_locale(l: &Locale) -> Option<Self> {
         l.extensions
             .unicode
@@ -1075,8 +1065,7 @@ impl AnyCalendarKind {
 
     /// Extract the calendar component from a [`DataLocale`]
     ///
-    /// Returns `None` if the calendar is not specified or unknown. If you prefer an error, use
-    /// [`CalendarError::unknown_any_calendar_kind`].
+    /// Returns `None` if the calendar is not specified or unknown.
     fn get_for_data_locale(l: &DataLocale) -> Option<Self> {
         l.get_unicode_ext(&key!("ca"))
             .and_then(|v| Self::get_for_bcp47_value(&v))
@@ -1596,13 +1585,8 @@ mod tests {
 
         let date = Date::try_new_from_codes(era, year, month, day, calendar).unwrap_or_else(|e| {
             panic!(
-                "Failed to construct date for {} with {:?}, {}, {}, {}: {}",
+                "Failed to construct date for {} with {era:?}, {year}, {month}, {day}: {e:?}",
                 calendar.debug_name(),
-                era,
-                year,
-                month,
-                day,
-                e,
             )
         });
 
@@ -1638,7 +1622,7 @@ mod tests {
         year: i32,
         month_code: &str,
         day: u8,
-        error: CalendarError,
+        error: DateError,
     ) {
         let era = types::Era(era.parse().expect("era must parse"));
         let month = types::MonthCode(month_code.parse().expect("month code must parse"));
@@ -1698,10 +1682,7 @@ mod tests {
             100,
             "M13",
             1,
-            CalendarError::UnknownMonthCode(
-                "M13".parse().unwrap(),
-                AnyCalendarKind::Buddhist.debug_name(),
-            ),
+            DateError::UnknownMonthCode("M13".parse().unwrap()),
         );
 
         single_test_roundtrip(coptic, "ad", 100, "M03", 1);
@@ -1715,27 +1696,65 @@ mod tests {
             100,
             "M14",
             1,
-            CalendarError::UnknownMonthCode(
-                "M14".parse().unwrap(),
-                AnyCalendarKind::Coptic.debug_name(),
-            ),
+            DateError::UnknownMonthCode("M14".parse().unwrap()),
         );
-        single_test_error(coptic, "ad", 0, "M03", 1, CalendarError::OutOfRange);
-        single_test_error(coptic, "bd", 0, "M03", 1, CalendarError::OutOfRange);
+        single_test_error(
+            coptic,
+            "ad",
+            0,
+            "M03",
+            1,
+            DateError::Range {
+                field: "year",
+                value: 0,
+                min: 1,
+                max: i32::MAX,
+            },
+        );
+        single_test_error(
+            coptic,
+            "bd",
+            0,
+            "M03",
+            1,
+            DateError::Range {
+                field: "year",
+                value: 0,
+                min: 1,
+                max: i32::MAX,
+            },
+        );
 
         single_test_roundtrip(ethiopian, "incar", 100, "M03", 1);
         single_test_roundtrip(ethiopian, "incar", 2000, "M03", 1);
         single_test_roundtrip(ethiopian, "incar", 2000, "M13", 1);
         // Fails ISO roundtrip due to https://github.com/unicode-org/icu4x/issues/2254
         // single_test_roundtrip(ethiopian, "pre-incar", 100, "M03", 1);
-        single_test_error(ethiopian, "incar", 0, "M03", 1, CalendarError::OutOfRange);
+        single_test_error(
+            ethiopian,
+            "incar",
+            0,
+            "M03",
+            1,
+            DateError::Range {
+                field: "year",
+                value: 0,
+                min: 1,
+                max: i32::MAX,
+            },
+        );
         single_test_error(
             ethiopian,
             "pre-incar",
             0,
             "M03",
             1,
-            CalendarError::OutOfRange,
+            DateError::Range {
+                field: "year",
+                value: 0,
+                min: 1,
+                max: i32::MAX,
+            },
         );
         single_test_error(
             ethiopian,
@@ -1743,10 +1762,7 @@ mod tests {
             100,
             "M14",
             1,
-            CalendarError::UnknownMonthCode(
-                "M14".parse().unwrap(),
-                AnyCalendarKind::Ethiopian.debug_name(),
-            ),
+            DateError::UnknownMonthCode("M14".parse().unwrap()),
         );
 
         single_test_roundtrip(ethioaa, "mundi", 7000, "M13", 1);
@@ -1759,17 +1775,38 @@ mod tests {
             100,
             "M14",
             1,
-            CalendarError::UnknownMonthCode(
-                "M14".parse().unwrap(),
-                AnyCalendarKind::Ethiopian.debug_name(),
-            ),
+            DateError::UnknownMonthCode("M14".parse().unwrap()),
         );
 
         single_test_roundtrip(gregorian, "ce", 100, "M03", 1);
         single_test_roundtrip(gregorian, "ce", 2000, "M03", 1);
         single_test_roundtrip(gregorian, "bce", 100, "M03", 1);
-        single_test_error(gregorian, "ce", 0, "M03", 1, CalendarError::OutOfRange);
-        single_test_error(gregorian, "bce", 0, "M03", 1, CalendarError::OutOfRange);
+        single_test_error(
+            gregorian,
+            "ce",
+            0,
+            "M03",
+            1,
+            DateError::Range {
+                field: "year",
+                value: 0,
+                min: 1,
+                max: i32::MAX,
+            },
+        );
+        single_test_error(
+            gregorian,
+            "bce",
+            0,
+            "M03",
+            1,
+            DateError::Range {
+                field: "year",
+                value: 0,
+                min: 1,
+                max: i32::MAX,
+            },
+        );
 
         single_test_error(
             gregorian,
@@ -1777,10 +1814,7 @@ mod tests {
             100,
             "M13",
             1,
-            CalendarError::UnknownMonthCode(
-                "M13".parse().unwrap(),
-                AnyCalendarKind::Gregorian.debug_name(),
-            ),
+            DateError::UnknownMonthCode("M13".parse().unwrap()),
         );
 
         single_test_roundtrip(indian, "saka", 100, "M03", 1);
@@ -1793,10 +1827,7 @@ mod tests {
             100,
             "M13",
             1,
-            CalendarError::UnknownMonthCode(
-                "M13".parse().unwrap(),
-                AnyCalendarKind::Indian.debug_name(),
-            ),
+            DateError::UnknownMonthCode("M13".parse().unwrap()),
         );
 
         single_test_roundtrip(chinese, "chinese", 400, "M02", 5);
@@ -1808,10 +1839,7 @@ mod tests {
             4658,
             "M13",
             1,
-            CalendarError::UnknownMonthCode(
-                "M13".parse().unwrap(),
-                AnyCalendarKind::Chinese.debug_name(),
-            ),
+            DateError::UnknownMonthCode("M13".parse().unwrap()),
         );
 
         single_test_roundtrip(dangi, "dangi", 400, "M02", 5);
@@ -1823,10 +1851,7 @@ mod tests {
             10393,
             "M00L",
             1,
-            CalendarError::UnknownMonthCode(
-                "M00L".parse().unwrap(),
-                AnyCalendarKind::Dangi.debug_name(),
-            ),
+            DateError::UnknownMonthCode("M00L".parse().unwrap()),
         );
 
         single_test_roundtrip(japanese, "reiwa", 3, "M03", 1);
@@ -1834,8 +1859,32 @@ mod tests {
         single_test_roundtrip(japanese, "meiji", 10, "M03", 1);
         single_test_roundtrip(japanese, "ce", 1000, "M03", 1);
         single_test_roundtrip(japanese, "bce", 10, "M03", 1);
-        single_test_error(japanese, "ce", 0, "M03", 1, CalendarError::OutOfRange);
-        single_test_error(japanese, "bce", 0, "M03", 1, CalendarError::OutOfRange);
+        single_test_error(
+            japanese,
+            "ce",
+            0,
+            "M03",
+            1,
+            DateError::Range {
+                field: "year",
+                value: 0,
+                min: 1,
+                max: i32::MAX,
+            },
+        );
+        single_test_error(
+            japanese,
+            "bce",
+            0,
+            "M03",
+            1,
+            DateError::Range {
+                field: "year",
+                value: 0,
+                min: 1,
+                max: i32::MAX,
+            },
+        );
 
         single_test_error(
             japanese,
@@ -1843,10 +1892,7 @@ mod tests {
             2,
             "M13",
             1,
-            CalendarError::UnknownMonthCode(
-                "M13".parse().unwrap(),
-                AnyCalendarKind::Japanese.debug_name(),
-            ),
+            DateError::UnknownMonthCode("M13".parse().unwrap()),
         );
 
         single_test_roundtrip(japanext, "reiwa", 3, "M03", 1);
@@ -1855,8 +1901,32 @@ mod tests {
         single_test_roundtrip(japanext, "tenpyokampo-749", 1, "M04", 20);
         single_test_roundtrip(japanext, "ce", 100, "M03", 1);
         single_test_roundtrip(japanext, "bce", 10, "M03", 1);
-        single_test_error(japanext, "ce", 0, "M03", 1, CalendarError::OutOfRange);
-        single_test_error(japanext, "bce", 0, "M03", 1, CalendarError::OutOfRange);
+        single_test_error(
+            japanext,
+            "ce",
+            0,
+            "M03",
+            1,
+            DateError::Range {
+                field: "year",
+                value: 0,
+                min: 1,
+                max: i32::MAX,
+            },
+        );
+        single_test_error(
+            japanext,
+            "bce",
+            0,
+            "M03",
+            1,
+            DateError::Range {
+                field: "year",
+                value: 0,
+                min: 1,
+                max: i32::MAX,
+            },
+        );
 
         single_test_error(
             japanext,
@@ -1864,10 +1934,7 @@ mod tests {
             2,
             "M13",
             1,
-            CalendarError::UnknownMonthCode(
-                "M13".parse().unwrap(),
-                AnyCalendarKind::JapaneseExtended.debug_name(),
-            ),
+            DateError::UnknownMonthCode("M13".parse().unwrap()),
         );
 
         single_test_roundtrip(persian, "ah", 477, "M03", 1);
@@ -1879,10 +1946,7 @@ mod tests {
             100,
             "M9",
             1,
-            CalendarError::UnknownMonthCode(
-                "M9".parse().unwrap(),
-                AnyCalendarKind::Persian.debug_name(),
-            ),
+            DateError::UnknownMonthCode("M9".parse().unwrap()),
         );
 
         single_test_roundtrip(hebrew, "hebrew", 5773, "M03", 1);
@@ -1894,10 +1958,7 @@ mod tests {
             100,
             "M9",
             1,
-            CalendarError::UnknownMonthCode(
-                "M9".parse().unwrap(),
-                AnyCalendarKind::Hebrew.debug_name(),
-            ),
+            DateError::UnknownMonthCode("M9".parse().unwrap()),
         );
 
         single_test_roundtrip(roc, "roc", 10, "M05", 3);
@@ -1913,10 +1974,7 @@ mod tests {
             100,
             "M9",
             1,
-            CalendarError::UnknownMonthCode(
-                "M9".parse().unwrap(),
-                AnyCalendarKind::IslamicObservational.debug_name(),
-            ),
+            DateError::UnknownMonthCode("M9".parse().unwrap()),
         );
 
         single_test_roundtrip(islamic_civil, "islamic", 477, "M03", 1);
@@ -1928,10 +1986,7 @@ mod tests {
             100,
             "M9",
             1,
-            CalendarError::UnknownMonthCode(
-                "M9".parse().unwrap(),
-                AnyCalendarKind::IslamicCivil.debug_name(),
-            ),
+            DateError::UnknownMonthCode("M9".parse().unwrap()),
         );
 
         single_test_roundtrip(islamic_umm_al_qura, "islamic", 477, "M03", 1);
@@ -1943,10 +1998,7 @@ mod tests {
             100,
             "M9",
             1,
-            CalendarError::UnknownMonthCode(
-                "M9".parse().unwrap(),
-                AnyCalendarKind::IslamicUmmAlQura.debug_name(),
-            ),
+            DateError::UnknownMonthCode("M9".parse().unwrap()),
         );
 
         single_test_roundtrip(islamic_tabular, "islamic", 477, "M03", 1);
@@ -1958,10 +2010,7 @@ mod tests {
             100,
             "M9",
             1,
-            CalendarError::UnknownMonthCode(
-                "M9".parse().unwrap(),
-                AnyCalendarKind::IslamicTabular.debug_name(),
-            ),
+            DateError::UnknownMonthCode("M9".parse().unwrap()),
         );
     }
 }

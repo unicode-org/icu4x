@@ -11,7 +11,7 @@ use writeable::Writeable;
 
 use super::Key;
 use super::Value;
-use crate::parser::ParserError;
+use crate::parser::ParseError;
 use crate::parser::SubtagIterator;
 use crate::shortvec::ShortBoxSlice;
 
@@ -91,8 +91,16 @@ impl Keywords {
         ))
     }
 
-    pub(crate) fn try_from_bytes(t: &[u8]) -> Result<Self, ParserError> {
-        let mut iter = SubtagIterator::new(t);
+    /// A constructor which takes a str slice, parses it and
+    /// produces a well-formed [`Keywords`].
+    #[inline]
+    pub fn try_from_str(s: &str) -> Result<Self, ParseError> {
+        Self::try_from_utf8(s.as_bytes())
+    }
+
+    /// See [`Self::try_from_str`]
+    pub fn try_from_utf8(code_units: &[u8]) -> Result<Self, ParseError> {
+        let mut iter = SubtagIterator::new(code_units);
         Self::try_from_iter(&mut iter)
     }
 
@@ -104,7 +112,7 @@ impl Keywords {
     /// use icu::locale::locale;
     /// use icu::locale::Locale;
     ///
-    /// let loc1 = Locale::try_from_bytes(b"und-t-h0-hybrid").unwrap();
+    /// let loc1 = Locale::try_from_str("und-t-h0-hybrid").unwrap();
     /// let loc2 = locale!("und-u-ca-buddhist");
     ///
     /// assert!(loc1.extensions.unicode.keywords.is_empty());
@@ -307,7 +315,7 @@ impl Keywords {
         self.writeable_cmp_bytes(other)
     }
 
-    pub(crate) fn try_from_iter(iter: &mut SubtagIterator) -> Result<Self, ParserError> {
+    pub(crate) fn try_from_iter(iter: &mut SubtagIterator) -> Result<Self, ParseError> {
         let mut keywords = LiteMap::new();
 
         let mut current_keyword = None;
@@ -320,7 +328,7 @@ impl Keywords {
                     keywords.try_insert(kw, Value::from_short_slice_unchecked(current_value));
                     current_value = ShortBoxSlice::new();
                 }
-                current_keyword = Some(Key::try_from_bytes(subtag)?);
+                current_keyword = Some(Key::try_from_utf8(subtag)?);
             } else if current_keyword.is_some() {
                 match Value::parse_subtag(subtag) {
                     Ok(Some(t)) => current_value.push(t),
@@ -376,10 +384,11 @@ impl FromIterator<(Key, Value)> for Keywords {
 }
 
 impl FromStr for Keywords {
-    type Err = ParserError;
+    type Err = ParseError;
 
-    fn from_str(source: &str) -> Result<Self, Self::Err> {
-        Self::try_from_bytes(source.as_bytes())
+    #[inline]
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Self::try_from_str(s)
     }
 }
 

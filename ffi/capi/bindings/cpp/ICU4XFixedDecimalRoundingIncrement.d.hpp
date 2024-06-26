@@ -8,8 +8,16 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XFixedDecimalRoundingIncrement.d.h"
 
+
+namespace capi {
+    typedef enum ICU4XFixedDecimalRoundingIncrement {
+      ICU4XFixedDecimalRoundingIncrement_MultiplesOf1 = 0,
+      ICU4XFixedDecimalRoundingIncrement_MultiplesOf2 = 1,
+      ICU4XFixedDecimalRoundingIncrement_MultiplesOf5 = 2,
+      ICU4XFixedDecimalRoundingIncrement_MultiplesOf25 = 3,
+    } ICU4XFixedDecimalRoundingIncrement;
+}
 
 class ICU4XFixedDecimalRoundingIncrement {
 public:

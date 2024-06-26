@@ -8,10 +8,13 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XLocaleFallbackIterator.d.h"
 
 class ICU4XLocale;
 
+
+namespace capi {
+    typedef struct ICU4XLocaleFallbackIterator ICU4XLocaleFallbackIterator;
+}
 
 class ICU4XLocaleFallbackIterator {
 public:

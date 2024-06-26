@@ -1,6 +1,6 @@
 import wasm from "./diplomat-wasm.mjs"
 import * as diplomatRuntime from "./diplomat-runtime.mjs"
-import { ICU4XError_js_to_rust, ICU4XError_rust_to_js } from "./ICU4XError.mjs"
+import { ICU4XCalendarError_js_to_rust, ICU4XCalendarError_rust_to_js } from "./ICU4XCalendarError.mjs"
 
 const ICU4XTime_box_destroy_registry = new FinalizationRegistry(underlying => {
   wasm.ICU4XTime_destroy(underlying);
@@ -26,7 +26,7 @@ export class ICU4XTime {
         wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
         return ok_value;
       } else {
-        const throw_value = ICU4XError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
+        const throw_value = ICU4XCalendarError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
         wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
         throw new diplomatRuntime.FFIError(throw_value);
       }
@@ -43,7 +43,7 @@ export class ICU4XTime {
         wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
         return ok_value;
       } else {
-        const throw_value = ICU4XError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
+        const throw_value = ICU4XCalendarError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
         wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
         throw new diplomatRuntime.FFIError(throw_value);
       }

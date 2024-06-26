@@ -10,14 +10,29 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XCanonicalCombiningClassMap.h"
+#include "ICU4XDataError.hpp"
 #include "ICU4XDataProvider.hpp"
-#include "ICU4XError.hpp"
 
 
-inline diplomat::result<std::unique_ptr<ICU4XCanonicalCombiningClassMap>, ICU4XError> ICU4XCanonicalCombiningClassMap::create(const ICU4XDataProvider& provider) {
+namespace capi {
+    extern "C" {
+    
+    typedef struct ICU4XCanonicalCombiningClassMap_create_result {union {ICU4XCanonicalCombiningClassMap* ok; ICU4XDataError err;}; bool is_ok;} ICU4XCanonicalCombiningClassMap_create_result;
+    ICU4XCanonicalCombiningClassMap_create_result ICU4XCanonicalCombiningClassMap_create(const ICU4XDataProvider* provider);
+    
+    uint8_t ICU4XCanonicalCombiningClassMap_get(const ICU4XCanonicalCombiningClassMap* self, char32_t ch);
+    
+    uint8_t ICU4XCanonicalCombiningClassMap_get32(const ICU4XCanonicalCombiningClassMap* self, uint32_t ch);
+    
+    
+    void ICU4XCanonicalCombiningClassMap_destroy(ICU4XCanonicalCombiningClassMap* self);
+    
+    } // extern "C"
+}
+
+inline diplomat::result<std::unique_ptr<ICU4XCanonicalCombiningClassMap>, ICU4XDataError> ICU4XCanonicalCombiningClassMap::create(const ICU4XDataProvider& provider) {
   auto result = capi::ICU4XCanonicalCombiningClassMap_create(provider.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XCanonicalCombiningClassMap>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XCanonicalCombiningClassMap>>(std::unique_ptr<ICU4XCanonicalCombiningClassMap>(ICU4XCanonicalCombiningClassMap::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XCanonicalCombiningClassMap>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XCanonicalCombiningClassMap>, ICU4XDataError>(diplomat::Ok<std::unique_ptr<ICU4XCanonicalCombiningClassMap>>(std::unique_ptr<ICU4XCanonicalCombiningClassMap>(ICU4XCanonicalCombiningClassMap::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XCanonicalCombiningClassMap>, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
 
 inline uint8_t ICU4XCanonicalCombiningClassMap::get(char32_t ch) const {

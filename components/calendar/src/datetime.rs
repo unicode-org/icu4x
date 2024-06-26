@@ -3,8 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::any_calendar::{AnyCalendar, IntoAnyCalendar};
+use crate::error::DateError;
 use crate::types::{self, Time};
-use crate::{AsCalendar, Calendar, CalendarError, Date, Iso};
+use crate::{AsCalendar, Calendar, Date, Iso};
 use alloc::rc::Rc;
 use alloc::sync::Arc;
 
@@ -57,7 +58,7 @@ impl<A: AsCalendar> DateTime<A> {
         day: u8,
         time: Time,
         calendar: A,
-    ) -> Result<Self, CalendarError> {
+    ) -> Result<Self, DateError> {
         let date = Date::try_new_from_codes(era, year, month_code, day, calendar)?;
         Ok(DateTime { date, time })
     }

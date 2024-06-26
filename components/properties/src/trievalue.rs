@@ -163,6 +163,10 @@ impl TrieValue for CheckedBidiPairedBracketType {
             _ => CheckedBidiPairedBracketType::None,
         })
     }
+
+    fn to_u32(self) -> u32 {
+        self as u8 as u32
+    }
 }
 
 impl TrieValue for IndicSyllabicCategory {
@@ -257,6 +261,10 @@ impl TrieValue for MirroredPairedBracketData {
 
     fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
         Self::try_from(i)
+    }
+
+    fn to_u32(self) -> u32 {
+        u32::from(self)
     }
 }
 

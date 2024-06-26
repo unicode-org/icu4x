@@ -8,8 +8,16 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XIsoTimeZoneFormat.d.h"
 
+
+namespace capi {
+    typedef enum ICU4XIsoTimeZoneFormat {
+      ICU4XIsoTimeZoneFormat_Basic = 0,
+      ICU4XIsoTimeZoneFormat_Extended = 1,
+      ICU4XIsoTimeZoneFormat_UtcBasic = 2,
+      ICU4XIsoTimeZoneFormat_UtcExtended = 3,
+    } ICU4XIsoTimeZoneFormat;
+}
 
 class ICU4XIsoTimeZoneFormat {
 public:

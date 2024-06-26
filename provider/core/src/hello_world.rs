@@ -12,8 +12,6 @@ use crate::prelude::*;
 use alloc::borrow::Cow;
 use alloc::string::String;
 use core::fmt::Debug;
-#[cfg(feature = "datagen")]
-use std::collections::HashSet;
 use writeable::Writeable;
 use yoke::*;
 use zerofrom::*;
@@ -22,11 +20,11 @@ use zerofrom::*;
 #[derive(Debug, PartialEq, Clone, Yokeable, ZeroFrom)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(
-    any(feature = "deserialize_json", feature = "datagen"),
+    any(feature = "deserialize_json", feature = "export"),
     derive(serde::Serialize)
 )]
-#[cfg_attr(feature = "datagen", derive(databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_provider::hello_world))]
+#[cfg_attr(feature = "export", derive(databake::Bake))]
+#[cfg_attr(feature = "export", databake(path = icu_provider::hello_world))]
 pub struct HelloWorldV1<'data> {
     /// The translation of "Hello World".
     #[cfg_attr(feature = "serde", serde(borrow))]
@@ -42,17 +40,16 @@ impl Default for HelloWorldV1<'_> {
 }
 
 /// Marker type for [`HelloWorldV1`].
-#[cfg_attr(feature = "datagen", derive(Default, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_provider::hello_world))]
 #[derive(Debug)]
 pub struct HelloWorldV1Marker;
 
-impl DataMarker for HelloWorldV1Marker {
+impl DynamicDataMarker for HelloWorldV1Marker {
     type Yokeable = HelloWorldV1<'static>;
 }
 
-impl KeyedDataMarker for HelloWorldV1Marker {
-    const KEY: DataKey = icu_provider::data_key!("core/helloworld@1");
+impl DataMarker for HelloWorldV1Marker {
+    const INFO: icu_provider::DataMarkerInfo =
+        DataMarkerInfo::from_path(icu_provider::marker::data_marker_path!("core/helloworld@1"));
 }
 
 /// A data provider returning Hello World strings in different languages.
@@ -66,17 +63,15 @@ impl KeyedDataMarker for HelloWorldV1Marker {
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
 ///
-/// let german_hello_world: DataPayload<HelloWorldV1Marker> =
+/// let german_hello_world: DataResponse<HelloWorldV1Marker> =
 ///     HelloWorldProvider
 ///         .load(DataRequest {
 ///             locale: &langid!("de").into(),
 ///             ..Default::default()
 ///         })
-///         .expect("Loading should succeed")
-///         .take_payload()
-///         .expect("Data should be present");
+///         .expect("Loading should succeed");
 ///
-/// assert_eq!("Hallo Welt", german_hello_world.get().message);
+/// assert_eq!("Hallo Welt", german_hello_world.payload.get().message);
 /// ```
 ///
 /// Load the reverse string using an auxiliary key:
@@ -85,18 +80,16 @@ impl KeyedDataMarker for HelloWorldV1Marker {
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
 ///
-/// let reverse_hello_world: DataPayload<HelloWorldV1Marker> =
+/// let reverse_hello_world: DataResponse<HelloWorldV1Marker> =
 ///     HelloWorldProvider
 ///         .load(DataRequest {
 ///             locale: &"en".parse().unwrap(),
-///             key_attributes: &"reverse".parse().unwrap(),
+///             marker_attributes: &"reverse".parse().unwrap(),
 ///             ..Default::default()
 ///         })
-///         .expect("Loading should succeed")
-///         .take_payload()
-///         .expect("Data should be present");
+///         .expect("Loading should succeed");
 ///
-/// assert_eq!("Olleh Dlrow", reverse_hello_world.get().message);
+/// assert_eq!("Olleh Dlrow", reverse_hello_world.payload.get().message);
 /// ```
 #[derive(Debug, PartialEq, Default)]
 pub struct HelloWorldProvider;
@@ -111,12 +104,18 @@ impl HelloWorldProvider {
         ("de-AT", "", "Servus Welt"),
         ("el", "", "Καλημέρα κόσμε"),
         ("en", "", "Hello World"),
-        ("en-001", "", "Hello from 🗺️"),            // WORLD
-        ("en-002", "", "Hello from 🌍"),           // AFRICA
-        ("en-019", "", "Hello from 🌎"),           // AMERICAS
-        ("en-142", "", "Hello from 🌏"),           // ASIA
-        ("en-GB", "", "Hello from 🇬🇧"),            // GREAT BRITAIN
-        ("en-GB-u-sd-gbeng", "", "Hello from 🏴󠁧󠁢󠁥󠁮󠁧󠁿"), // ENGLAND
+        // WORLD
+        ("en-001", "", "Hello from 🗺️"),
+        // AFRICA
+        ("en-002", "", "Hello from 🌍"),
+        // AMERICAS
+        ("en-019", "", "Hello from 🌎"),
+        // ASIA
+        ("en-142", "", "Hello from 🌏"),
+        // GREAT BRITAIN
+        ("en-GB", "", "Hello from 🇬🇧"),
+        // ENGLAND
+        ("en-GB-u-sd-gbeng", "", "Hello from 🏴󠁧󠁢󠁥󠁮󠁧󠁿"),
         ("en", "reverse", "Olleh Dlrow"),
         ("eo", "", "Saluton, Mondo"),
         ("fa", "", "سلام دنیا‎"),
@@ -147,13 +146,13 @@ impl DataProvider<HelloWorldV1Marker> for HelloWorldProvider {
         let data = Self::DATA
             .iter()
             .find(|(l, a, _)| {
-                req.locale.strict_cmp(l.as_bytes()).is_eq() && **a == **req.key_attributes
+                req.locale.strict_cmp(l.as_bytes()).is_eq() && **a == **req.marker_attributes
             })
             .map(|(_, _, v)| v)
-            .ok_or_else(|| DataErrorKind::MissingLocale.with_req(HelloWorldV1Marker::KEY, req))?;
+            .ok_or_else(|| DataErrorKind::MissingLocale.with_req(HelloWorldV1Marker::INFO, req))?;
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: Some(DataPayload::from_static_str(data)),
+            payload: DataPayload::from_static_str(data),
         })
     }
 }
@@ -167,9 +166,11 @@ impl DataPayload<HelloWorldV1Marker> {
     }
 }
 
-// AnyProvider support.
-#[cfg(not(feature = "datagen"))]
-icu_provider::impl_dynamic_data_provider!(HelloWorldProvider, [HelloWorldV1Marker,], AnyMarker);
+icu_provider::dynutil::impl_dynamic_data_provider!(
+    HelloWorldProvider,
+    [HelloWorldV1Marker,],
+    AnyMarker
+);
 
 #[cfg(feature = "deserialize_json")]
 /// A data provider returning Hello World strings in different languages as JSON blobs.
@@ -185,15 +186,13 @@ icu_provider::impl_dynamic_data_provider!(HelloWorldProvider, [HelloWorldV1Marke
 ///
 /// let german_hello_world = HelloWorldProvider
 ///     .into_json_provider()
-///     .load_data(HelloWorldV1Marker::KEY, DataRequest {
+///     .load_data(HelloWorldV1Marker::INFO, DataRequest {
 ///         locale: &langid!("de").into(),
 ///         ..Default::default()
 ///     })
-///     .expect("Loading should succeed")
-///     .take_payload()
-///     .expect("Data should be present");
+///     .expect("Loading should succeed");
 ///
-/// assert_eq!(german_hello_world.get(), br#"{"message":"Hallo Welt"}"#);
+/// assert_eq!(german_hello_world.payload.get(), br#"{"message":"Hallo Welt"}"#);
 #[derive(Debug)]
 pub struct HelloWorldJsonProvider;
 
@@ -201,31 +200,33 @@ pub struct HelloWorldJsonProvider;
 impl DynamicDataProvider<BufferMarker> for HelloWorldJsonProvider {
     fn load_data(
         &self,
-        key: DataKey,
+        marker: DataMarkerInfo,
         req: DataRequest,
     ) -> Result<DataResponse<BufferMarker>, DataError> {
-        key.match_key(HelloWorldV1Marker::KEY)?;
+        marker.match_marker(HelloWorldV1Marker::INFO)?;
         let result = HelloWorldProvider.load(req)?;
-        let (mut metadata, old_payload) =
-            DataResponse::<HelloWorldV1Marker>::take_metadata_and_payload(result)?;
-        metadata.buffer_format = Some(icu_provider::buf::BufferFormat::Json);
-        #[allow(clippy::unwrap_used)] // HelloWorldV1::serialize is infallible
         Ok(DataResponse {
-            metadata,
-            payload: Some(DataPayload::from_owned_buffer(
-                serde_json::to_string(old_payload.get())
+            metadata: DataResponseMetadata {
+                buffer_format: Some(icu_provider::buf::BufferFormat::Json),
+                ..result.metadata
+            },
+            #[allow(clippy::unwrap_used)] // HelloWorldV1::serialize is infallible
+            payload: DataPayload::from_owned_buffer(
+                serde_json::to_string(result.payload.get())
                     .unwrap()
                     .into_bytes()
                     .into_boxed_slice(),
-            )),
+            ),
         })
     }
 }
 
-#[cfg(feature = "datagen")]
-impl icu_provider::datagen::IterableDataProvider<HelloWorldV1Marker> for HelloWorldProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
-        #[allow(clippy::unwrap_used)] // datagen
+#[cfg(feature = "std")]
+impl IterableDataProvider<HelloWorldV1Marker> for HelloWorldProvider {
+    fn iter_requests(
+        &self,
+    ) -> Result<std::collections::HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+        #[allow(clippy::unwrap_used)] // hello-world
         Ok(Self::DATA
             .iter()
             .map(|(l, a, _)| (l.parse().unwrap(), a.parse().unwrap()))
@@ -233,8 +234,8 @@ impl icu_provider::datagen::IterableDataProvider<HelloWorldV1Marker> for HelloWo
     }
 }
 
-#[cfg(feature = "datagen")]
-icu_provider::make_exportable_provider!(HelloWorldProvider, [HelloWorldV1Marker,]);
+#[cfg(feature = "export")]
+icu_provider::export::make_exportable_provider!(HelloWorldProvider, [HelloWorldV1Marker,]);
 
 /// A type that formats localized "hello world" strings.
 ///
@@ -276,10 +277,9 @@ impl HelloWorldFormatter {
         Self::try_new_unstable(&HelloWorldProvider, locale)
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(locale: include, options: skip, error: DataError,
-        #[cfg(skip)]
+    icu_provider::gen_any_buffer_data_constructors!((locale) -> error: DataError,
         functions: [
-            try_new,
+            try_new: skip,
             try_new_with_any_provider,
             try_new_with_buffer_provider,
             try_new_unstable,
@@ -296,7 +296,7 @@ impl HelloWorldFormatter {
                 locale,
                 ..Default::default()
             })?
-            .take_payload()?;
+            .payload;
         Ok(Self { data })
     }
 
@@ -330,14 +330,15 @@ impl<'l> Writeable for FormattedHelloWorld<'l> {
 
 writeable::impl_display_with_writeable!(FormattedHelloWorld<'_>);
 
-#[cfg(feature = "datagen")]
+#[cfg(feature = "export")]
 #[test]
 fn test_iter() {
-    use crate::datagen::IterableDataProvider;
+    use crate::IterableDataProvider;
     use icu_locale_core::locale;
+    use std::collections::HashSet;
 
     assert_eq!(
-        HelloWorldProvider.supported_requests().unwrap(),
+        HelloWorldProvider.iter_requests().unwrap(),
         HashSet::from_iter([
             (locale!("bn").into(), Default::default()),
             (locale!("cs").into(), Default::default()),

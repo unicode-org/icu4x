@@ -1,0 +1,595 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+# These line boundary rules are based on UAX #14, Unicode Version 15.0.0.
+# https://www.unicode.org/reports/tr14/tr14-49.html
+
+segmenter_type = "line"
+
+# Any = non combined property (AI..ZWJ)
+
+[[tables]]
+name = "AI"
+
+[[tables]]
+name = "AL"
+
+[[tables]]
+name = "B2"
+
+[[tables]]
+name = "BA"
+
+[[tables]]
+name = "BB"
+
+[[tables]]
+name = "BK"
+
+[[tables]]
+name = "CB"
+
+[[tables]]
+name = "CJ"
+
+[[tables]]
+name = "CL"
+
+[[tables]]
+name = "CM"
+
+[[tables]]
+name = "CP"
+
+[[tables]]
+name = "CR"
+
+[[tables]]
+name = "EB"
+
+[[tables]]
+name = "EM"
+
+[[tables]]
+name = "EX"
+
+[[tables]]
+name = "GL"
+
+[[tables]]
+name = "H2"
+
+[[tables]]
+name = "H3"
+
+[[tables]]
+name = "HL"
+
+[[tables]]
+name = "HY"
+
+[[tables]]
+name = "ID"
+
+[[tables]]
+# For LB30b
+# Unassigned codepoints with Line_Break=ID in some blocks
+# are also assigned the Extended_Pictographic property.
+name = "ID_CN"
+
+[[tables]]
+name = "IN"
+
+[[tables]]
+name = "IS"
+
+[[tables]]
+name = "JL"
+
+[[tables]]
+name = "JT"
+
+[[tables]]
+name = "JV"
+
+[[tables]]
+name = "LF"
+
+[[tables]]
+name = "NL"
+
+[[tables]]
+name = "NS"
+
+[[tables]]
+name = "NU"
+
+[[tables]]
+name = "OP_EA"
+
+[[tables]]
+# LB30
+name = "OP_OP30"
+
+[[tables]]
+name = "PO"
+
+[[tables]]
+name = "PO_EAW"
+
+[[tables]]
+name = "PR"
+
+[[tables]]
+name = "PR_EAW"
+
+[[tables]]
+name = "QU"
+
+[[tables]]
+name = "RI"
+
+[[tables]]
+name = "SA"
+
+[[tables]]
+name = "SG"
+
+[[tables]]
+name = "SP"
+
+[[tables]]
+name = "SY"
+
+[[tables]]
+name = "WJ"
+
+[[tables]]
+name = "XX"
+
+[[tables]]
+name = "ZW"
+
+[[tables]]
+name = "ZWJ"
+
+[[tables]]
+# LB8
+name = "ZW"
+left = "ZW"
+right = "SP"
+
+[[tables]]
+# LB14
+name = "OP_SP"
+left = "OP_OP30"
+right = "SP"
+
+[[tables]]
+# LB14
+name = "OP_SP"
+left = "OP_EA"
+right = "SP"
+
+[[tables]]
+# LB14
+name = "OP_SP"
+left = "OP_SP"
+right = "SP"
+
+[[tables]]
+# LB15
+name = "QU_SP"
+left = "QU"
+right = "SP"
+
+[[tables]]
+# LB15
+name = "QU_SP"
+left = "QU_SP"
+right = "SP"
+
+[[tables]]
+# LB16
+name = "CL_CP_SP"
+left = "CL"
+right = "SP"
+
+[[tables]]
+# LB16
+name = "CL_CP_SP"
+left = "CP"
+right = "SP"
+
+[[tables]]
+# LB16
+name = "CL_CP_SP"
+left = "CL_CP_SP"
+right = "SP"
+
+[[tables]]
+# LB17
+name = "B2_SP"
+left = "B2"
+right = "SP"
+
+[[tables]]
+# LB17
+name = "B2_SP"
+left = "B2_SP"
+right = "SP"
+
+[[tables]]
+# LB21
+name = "HL_HY"
+left = "HL"
+right = "HY"
+
+[[tables]]
+# LB21
+name = "HL_HY"
+left = "HL"
+right = "BA"
+
+[[tables]]
+# LB30a
+name = "RI_RI"
+left = "RI"
+right = "RI"
+
+[[rules]]
+# LB3
+left = [ "Any" ]
+right = [ "eot" ]
+break_state = true
+
+[[rules]]
+# LB3
+left = [ "B2_SP", "CL_CP_SP", "HL_HY", "OP_SP", "QU_SP", "RI_RI" ]
+right = [ "eot" ]
+break_state = true
+
+[[rules]]
+# LB4
+left = [ "BK" ]
+right = [ "Any" ]
+break_state = true
+
+[[rules]]
+# LB5
+left = [ "CR" ]
+right = [ "LF" ]
+break_state = false
+
+[[rules]]
+# LB5
+left = [ "CR", "LF", "NL" ]
+right = [ "Any" ]
+break_state = true
+
+[[rules]]
+# LB6
+left = [ "Any" ]
+right = [ "BK", "CR", "LF", "NL" ]
+break_state = false
+
+[[rules]]
+# LB6
+left = [ "B2_SP", "CL_CP_SP", "HL_HY", "OP_SP", "QU_SP", "RI_RI" ]
+right = [ "BK", "CR", "LF", "NL" ]
+break_state = false
+
+[[rules]]
+# LB7
+left = [ "Any" ]
+right = [ "SP", "ZW" ]
+break_state = false
+
+[[rules]]
+# LB7
+left = [ "HL_HY", "RI_RI" ]
+right = [ "SP" ]
+break_state = false
+
+[[rules]]
+# LB7
+left = [ "B2_SP", "CL_CP_SP", "HL_HY", "OP_SP", "QU_SP", "RI_RI" ]
+right = [ "ZW" ]
+break_state = false
+
+[[rules]]
+# LB8
+left = [ "ZW" ]
+right = [ "Any" ]
+break_state = true
+
+[[rules]]
+# LB11
+left = [ "WJ" ]
+right = [ "Any" ]
+break_state = false
+
+[[rules]]
+# LB11
+left = [ "Any" ]
+right = [ "WJ" ]
+break_state = false
+
+[[rules]]
+# LB11
+left = [ "B2_SP", "CL_CP_SP", "HL_HY", "OP_SP", "QU_SP", "RI_RI" ]
+right = [ "WJ" ]
+break_state = false
+
+[[rules]]
+# LB12
+left = [ "GL" ]
+right = [ "Any" ]
+break_state = false
+
+[[rules]]
+# LB12a
+left = [ "HL_HY", "OP_SP", "RI_RI" ]
+right = [ "GL" ]
+break_state = false
+
+[[rules]]
+# LB12a
+left = [ "B2_SP", "CL_CP_SP", "QU_SP", "SP", "BA", "HY" ]
+right = [ "GL" ]
+break_state = true
+
+[[rules]]
+# LB12a
+left = [ "Any" ]
+right = [ "GL" ]
+break_state = false
+
+[[rules]]
+# LB13
+left = [ "Any", "RI_RI" ]
+right = [ "CL", "CP", "EX", "IS", "SY" ]
+break_state = false
+
+[[rules]]
+# LB13
+left = [ "B2_SP", "CL_CP_SP", "QU_SP" ]
+right = [ "CL", "CP", "EX", "IS", "SY" ]
+break_state = false
+
+[[rules]]
+# LB14
+left = [ "OP_OP30", "OP_EA", "OP_SP" ]
+right = [ "Any" ]
+break_state = false
+
+[[rules]]
+# LB15
+left = [ "QU", "QU_SP" ]
+right = [ "OP_OP30", "OP_EA" ]
+break_state = false
+
+[[rules]]
+# LB16
+left = [ "CL", "CP", "CL_CP_SP" ]
+right = [ "CJ", "NS" ] # NS = CJ or NS
+break_state = false
+
+[[rules]]
+# LB17
+left = [ "B2", "B2_SP" ]
+right = [ "B2" ]
+break_state = false
+
+[[rules]]
+# LB18
+left = [ "SP" ]
+right = [ "Any"]
+break_state = true
+
+[[rules]]
+# LB18
+left = [ "QU_SP", "B2_SP", "CL_CP_SP" ] # LB15
+right = [ "Any" ]
+break_state = true
+
+[[rules]]
+# LB19
+left = [ "Any", "RI_RI" ]
+right = [ "QU" ]
+break_state = false
+
+[[rules]]
+# LB19
+left = [ "QU" ]
+right = [ "Any" ]
+break_state = false
+
+[[rules]]
+# LB20
+left = [ "CB" ]
+right = [ "Any" ]
+break_state = true
+
+[[rules]]
+# LB20
+left = [ "Any", "HL_HY" ]
+right = [ "CB" ]
+break_state = true
+
+[[rules]]
+# LB21
+left = [ "Any", "RI_RI" ]
+right = [ "BA", "HY", "CJ", "NS" ] # NS = CJ or NS
+break_state = false
+
+[[rules]]
+# LB21
+left = [ "BB" ]
+right = [ "Any" ]
+break_state = false
+
+[[rules]]
+# LB21a
+left = [ "HL_HY" ]
+right = [ "Any" ]
+break_state = false
+
+[[rules]]
+# LB21b
+left = [ "SY" ]
+right = [ "HL" ]
+break_state = false
+
+[[rules]]
+# LB22
+left = [ "Any", "RI_RI" ]
+right = [ "IN" ]
+break_state = false
+
+[[rules]]
+# LB23
+# (LB1 AL = AI, AL, SA or XX)
+# (LB10 AL = CM)
+left = [ "AI", "AL", "SA", "XX", "HL", "CM", "ZWJ" ]
+right = [ "NU" ]
+break_state = false
+
+[[rules]]
+# LB23
+# (LB1 AL = AI, AL, SA or XX)
+left = [ "NU" ]
+right = [ "AI", "AL", "SA", "XX", "HL" ]
+break_state = false
+
+[[rules]]
+# LB23a
+left = [ "PR", "PR_EAW" ]
+right = [ "ID", "ID_CN", "EB", "EM" ]
+break_state = false
+
+[[rules]]
+# LB23a
+left = [ "ID", "ID_CN", "EB", "EM" ]
+right = [ "PO", "PO_EAW" ]
+break_state = false
+
+[[rules]]
+# LB24
+# (LB1 AL = AI, AL, SA or XX)
+# (LB10 AL = CM)
+left = [ "PR", "PO", "PR_EAW", "PO_EAW" ]
+right = [ "AI", "AL", "SA", "XX", "HL" ]
+break_state = false
+
+[[rules]]
+# LB24
+# (LB1 AL = AI, AL, SA or XX)
+# (LB10 AL = CM)
+left = [ "AI", "AL", "SA", "XX", "HL", "CM", "ZWJ" ]
+right = [ "PR", "PO", "PR_EAW", "PO_EAW" ]
+break_state = false
+
+[[rules]]
+# LB25
+left = [ "CL", "CP", "NU" ]
+right = [ "PR", "PO", "PR_EAW", "PO_EAW" ]
+break_state = false
+
+[[rules]]
+# LB25
+left = [ "PO", "PR", "PR_EAW", "PO_EAW" ]
+right = [ "OP_EA", "OP_OP30", "NU" ]
+break_state = false
+
+[[rules]]
+# LB25
+left = [ "HY", "IS", "NU", "SY" ]
+right = [ "NU" ]
+break_state = false
+
+[[rules]]
+# LB26
+left = [ "JL" ]
+right = [ "JL", "JV", "H2", "H3" ]
+break_state = false
+
+[[rules]]
+# LB26
+left = [ "JV", "H2" ]
+right = [ "JV", "JT" ]
+break_state = false
+
+[[rules]]
+# LB26
+left = [ "JT", "H3" ]
+right = [ "JT" ]
+break_state = false
+
+[[rules]]
+# LB27
+left = [ "JL", "JV", "JT", "H2", "H3" ]
+right = [ "PO", "PO_EAW" ]
+break_state = false
+
+[[rules]]
+# LB27
+left = [ "PR", "PR_EAW" ]
+right = [ "JL", "JV", "JT", "H2", "H3" ]
+break_state = false
+
+[[rules]]
+# LB28
+# (LB1 AL = AI, AL, SA or XX)
+# (LB10 AL = CM)
+left = [ "AL", "HL", "AI", "XX", "SA", "CM", "ZWJ" ]
+right = [ "AL", "HL", "AI", "XX", "SA" ]
+break_state = false
+
+[[rules]]
+# LB29
+# (LB1 AL = AI, AL, SA or XX)
+left = [ "IS" ]
+right = [ "AL", "HL", "AI", "SA", "XX" ]
+break_state = false
+
+[[rules]]
+# LB30
+# (LB1 AL = AI, AL, SA or XX)
+# (LB10 AL = CM)
+left = [ "AL", "HL", "NU", "AI", "XX", "SA", "CM", "ZWJ" ]
+right = [ "OP_OP30" ]
+break_state = false
+
+[[rules]]
+# LB30
+# (LB1 AL = AI, AL, SA or XX)
+left = [ "CP" ]
+right = [ "AL", "HL", "NU", "AI", "XX", "SA" ]
+break_state = false
+
+[[rules]]
+# LB30a
+left = [ "RI_RI" ]
+right = [ "RI" ]
+break_state = true
+
+[[rules]]
+# LB30a
+left = [ "RI_RI" ]
+right = [ "Any" ]
+break_state = true
+
+[[rules]]
+# LB30b
+left = [ "EB", "ID_CN" ]
+right = [ "EM" ]
+break_state = false
+
+[[rules]]
+# LB31
+left = [ "Any" ]
+right = [ "Any" ]
+break_state = true
+

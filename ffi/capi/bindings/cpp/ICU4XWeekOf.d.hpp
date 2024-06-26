@@ -8,11 +8,17 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XWeekOf.d.h"
 #include "ICU4XWeekRelativeUnit.d.hpp"
 
 class ICU4XWeekRelativeUnit;
 
+
+namespace capi {
+    typedef struct ICU4XWeekOf {
+      uint16_t week;
+      ICU4XWeekRelativeUnit unit;
+    } ICU4XWeekOf;
+}
 
 struct ICU4XWeekOf {
   uint16_t week;

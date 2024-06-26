@@ -35,6 +35,10 @@ icu_segmenter = { workspace = true }
 icu_timezone = { workspace = true }
 icu_experimental = { workspace = true, optional = true }
 
+# For markers_from_bin
+icu_registry = { workspace = true, optional = true }
+memchr = { workspace = true, optional = true }
+
 # For docs links and features
 icu_provider = { workspace = true }
 
@@ -106,6 +110,24 @@ compiled_data = [
     "icu_segmenter/compiled_data",
     "icu_timezone/compiled_data",
     "icu_experimental?/compiled_data",
+]
+datagen = [
+    "std",
+    "dep:icu_registry",
+    "dep:memchr",
+    "icu_calendar/datagen",
+    "icu_casemap/datagen",
+    "icu_collator/datagen",
+    "icu_datetime/datagen",
+    "icu_decimal/datagen",
+    "icu_list/datagen",
+    "icu_locale/datagen",
+    "icu_normalizer/datagen",
+    "icu_plurals/datagen",
+    "icu_properties/datagen",
+    "icu_segmenter/datagen",
+    "icu_timezone/datagen",
+    "icu_experimental?/datagen",
 ]
 serde_human = [
     "icu_list/serde_human"

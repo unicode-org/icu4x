@@ -12,17 +12,12 @@ pub mod ffi {
         LineBreak, Script, SentenceBreak, WordBreak,
     };
 
-    use crate::errors::ffi::ICU4XError;
+    use crate::errors::ffi::ICU4XDataError;
 
     /// A type capable of looking up a property value from a string name.
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::properties::names::PropertyValueNameToEnumMapper, Struct)]
     #[diplomat::rust_link(icu::properties::names::PropertyValueNameToEnumMapperBorrowed, Struct)]
-    #[diplomat::rust_link(
-        icu::properties::names::PropertyValueNameToEnumMapper::from_data,
-        FnInStruct,
-        hidden
-    )]
     pub struct ICU4XPropertyValueNameToEnumMapper(PropertyValueNameToEnumMapper<u16>);
 
     impl ICU4XPropertyValueNameToEnumMapper {
@@ -79,7 +74,7 @@ pub mod ffi {
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "general_category")]
         pub fn load_general_category(
             provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XPropertyValueNameToEnumMapper>, ICU4XError> {
+        ) -> Result<Box<ICU4XPropertyValueNameToEnumMapper>, ICU4XDataError> {
             Ok(Box::new(ICU4XPropertyValueNameToEnumMapper(
                 call_constructor_unstable!(
                     GeneralCategory::name_to_enum_mapper [r => Ok(r.static_to_owned())],
@@ -99,7 +94,7 @@ pub mod ffi {
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "hangul_syllable_type")]
         pub fn load_hangul_syllable_type(
             provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XPropertyValueNameToEnumMapper>, ICU4XError> {
+        ) -> Result<Box<ICU4XPropertyValueNameToEnumMapper>, ICU4XDataError> {
             Ok(Box::new(ICU4XPropertyValueNameToEnumMapper(
                 call_constructor_unstable!(
                     HangulSyllableType::name_to_enum_mapper [r => Ok(r.static_to_owned())],
@@ -119,7 +114,7 @@ pub mod ffi {
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "east_asian_width")]
         pub fn load_east_asian_width(
             provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XPropertyValueNameToEnumMapper>, ICU4XError> {
+        ) -> Result<Box<ICU4XPropertyValueNameToEnumMapper>, ICU4XDataError> {
             Ok(Box::new(ICU4XPropertyValueNameToEnumMapper(
                 call_constructor_unstable!(
                     EastAsianWidth::name_to_enum_mapper [r => Ok(r.static_to_owned())],
@@ -139,7 +134,7 @@ pub mod ffi {
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "bidi_class")]
         pub fn load_bidi_class(
             provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XPropertyValueNameToEnumMapper>, ICU4XError> {
+        ) -> Result<Box<ICU4XPropertyValueNameToEnumMapper>, ICU4XDataError> {
             Ok(Box::new(ICU4XPropertyValueNameToEnumMapper(
                 call_constructor_unstable!(
                     BidiClass::name_to_enum_mapper [r => Ok(r.static_to_owned())],
@@ -162,7 +157,7 @@ pub mod ffi {
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "indic_syllabic_category")]
         pub fn load_indic_syllabic_category(
             provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XPropertyValueNameToEnumMapper>, ICU4XError> {
+        ) -> Result<Box<ICU4XPropertyValueNameToEnumMapper>, ICU4XDataError> {
             Ok(Box::new(ICU4XPropertyValueNameToEnumMapper(
                 call_constructor_unstable!(
                     IndicSyllabicCategory::name_to_enum_mapper [r => Ok(r.static_to_owned())],
@@ -182,7 +177,7 @@ pub mod ffi {
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "line_break")]
         pub fn load_line_break(
             provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XPropertyValueNameToEnumMapper>, ICU4XError> {
+        ) -> Result<Box<ICU4XPropertyValueNameToEnumMapper>, ICU4XDataError> {
             Ok(Box::new(ICU4XPropertyValueNameToEnumMapper(
                 call_constructor_unstable!(
                     LineBreak::name_to_enum_mapper [r => Ok(r.static_to_owned())],
@@ -205,7 +200,7 @@ pub mod ffi {
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "grapheme_cluster_break")]
         pub fn load_grapheme_cluster_break(
             provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XPropertyValueNameToEnumMapper>, ICU4XError> {
+        ) -> Result<Box<ICU4XPropertyValueNameToEnumMapper>, ICU4XDataError> {
             Ok(Box::new(ICU4XPropertyValueNameToEnumMapper(
                 call_constructor_unstable!(
                     GraphemeClusterBreak::name_to_enum_mapper [r => Ok(r.static_to_owned())],
@@ -225,7 +220,7 @@ pub mod ffi {
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "word_break")]
         pub fn load_word_break(
             provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XPropertyValueNameToEnumMapper>, ICU4XError> {
+        ) -> Result<Box<ICU4XPropertyValueNameToEnumMapper>, ICU4XDataError> {
             Ok(Box::new(ICU4XPropertyValueNameToEnumMapper(
                 call_constructor_unstable!(
                     WordBreak::name_to_enum_mapper [r => Ok(r.static_to_owned())],
@@ -245,7 +240,7 @@ pub mod ffi {
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "sentence_break")]
         pub fn load_sentence_break(
             provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XPropertyValueNameToEnumMapper>, ICU4XError> {
+        ) -> Result<Box<ICU4XPropertyValueNameToEnumMapper>, ICU4XDataError> {
             Ok(Box::new(ICU4XPropertyValueNameToEnumMapper(
                 call_constructor_unstable!(
                     SentenceBreak::name_to_enum_mapper [r => Ok(r.static_to_owned())],
@@ -261,7 +256,7 @@ pub mod ffi {
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "script")]
         pub fn load_script(
             provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XPropertyValueNameToEnumMapper>, ICU4XError> {
+        ) -> Result<Box<ICU4XPropertyValueNameToEnumMapper>, ICU4XDataError> {
             Ok(Box::new(ICU4XPropertyValueNameToEnumMapper(
                 call_constructor_unstable!(
                     Script::name_to_enum_mapper [r => Ok(r.static_to_owned())],
@@ -329,7 +324,7 @@ pub mod ffi {
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
         pub fn load(
             provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XGeneralCategoryNameToMaskMapper>, ICU4XError> {
+        ) -> Result<Box<ICU4XGeneralCategoryNameToMaskMapper>, ICU4XDataError> {
             Ok(Box::new(ICU4XGeneralCategoryNameToMaskMapper(
                 call_constructor_unstable!(
                     GeneralCategoryGroup::name_to_enum_mapper [r => Ok(r.static_to_owned())],

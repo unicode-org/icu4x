@@ -4,7 +4,7 @@
 
 #[diplomat::bridge]
 pub mod ffi {
-    use crate::errors::ffi::ICU4XError;
+    use crate::errors::ffi::ICU4XDataError;
     use crate::provider::ffi::ICU4XDataProvider;
     use alloc::boxed::Box;
     use core::convert::TryFrom;
@@ -46,7 +46,7 @@ pub mod ffi {
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
         pub fn create(
             provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XSentenceSegmenter>, ICU4XError> {
+        ) -> Result<Box<ICU4XSentenceSegmenter>, ICU4XDataError> {
             Ok(Box::new(ICU4XSentenceSegmenter(call_constructor!(
                 SentenceSegmenter::new [r => Ok(r)],
                 SentenceSegmenter::try_new_with_any_provider,

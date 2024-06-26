@@ -1,8 +1,8 @@
 import { char } from "./diplomat-runtime"
 import { FFIError } from "./diplomat-runtime"
 import { ICU4XCodePointSetBuilder } from "./ICU4XCodePointSetBuilder";
+import { ICU4XDataError } from "./ICU4XDataError";
 import { ICU4XDataProvider } from "./ICU4XDataProvider";
-import { ICU4XError } from "./ICU4XError";
 
 /**
 
@@ -15,7 +15,7 @@ export class ICU4XCaseMapCloser {
    * Construct a new ICU4XCaseMapper instance
 
    * See the {@link https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html#method.new Rust documentation for `new`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
+   * @throws {@link FFIError}<{@link ICU4XDataError}>
    */
   static create(provider: ICU4XDataProvider): ICU4XCaseMapCloser | never;
 

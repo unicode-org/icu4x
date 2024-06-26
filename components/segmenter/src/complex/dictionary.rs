@@ -195,18 +195,16 @@ mod tests {
 
     #[test]
     fn cj_dictionary_test() {
-        let dict_payload: DataPayload<DictionaryForWordOnlyAutoV1Marker> = crate::provider::Baked
+        let response: DataResponse<DictionaryForWordOnlyAutoV1Marker> = crate::provider::Baked
             .load(DataRequest {
-                key_attributes: &"cjdict".parse().unwrap(),
+                marker_attributes: &"cjdict".parse().unwrap(),
                 ..Default::default()
             })
-            .unwrap()
-            .take_payload()
             .unwrap();
         let word_segmenter = WordSegmenter::new_dictionary();
         let dict_segmenter = DictionarySegmenter::new(
-            dict_payload.get(),
-            crate::provider::Baked::SINGLETON_SEGMENTER_GRAPHEME_V1,
+            response.payload.get(),
+            crate::provider::Baked::SINGLETON_GRAPHEME_CLUSTER_BREAK_DATA_V1_MARKER,
         );
 
         // Match case

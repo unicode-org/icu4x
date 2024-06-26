@@ -8,31 +8,34 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XDataProvider.d.h"
-#include "ICU4XError.d.hpp"
+#include "ICU4XDataError.d.hpp"
 
 class ICU4XLocaleFallbacker;
-class ICU4XError;
+class ICU4XDataError;
 
+
+namespace capi {
+    typedef struct ICU4XDataProvider ICU4XDataProvider;
+}
 
 class ICU4XDataProvider {
 public:
 
   inline static std::unique_ptr<ICU4XDataProvider> create_compiled();
 
-  inline static diplomat::result<std::unique_ptr<ICU4XDataProvider>, ICU4XError> create_fs(std::string_view path);
+  inline static diplomat::result<std::unique_ptr<ICU4XDataProvider>, ICU4XDataError> create_fs(std::string_view path);
 
-  inline static diplomat::result<std::unique_ptr<ICU4XDataProvider>, ICU4XError> create_from_byte_slice(diplomat::span<const uint8_t> blob);
+  inline static diplomat::result<std::unique_ptr<ICU4XDataProvider>, ICU4XDataError> create_from_byte_slice(diplomat::span<const uint8_t> blob);
 
   inline static std::unique_ptr<ICU4XDataProvider> create_empty();
 
-  inline diplomat::result<std::monostate, ICU4XError> fork_by_key(ICU4XDataProvider& other);
+  inline diplomat::result<std::monostate, ICU4XDataError> fork_by_key(ICU4XDataProvider& other);
 
-  inline diplomat::result<std::monostate, ICU4XError> fork_by_locale(ICU4XDataProvider& other);
+  inline diplomat::result<std::monostate, ICU4XDataError> fork_by_locale(ICU4XDataProvider& other);
 
-  inline diplomat::result<std::monostate, ICU4XError> enable_locale_fallback();
+  inline diplomat::result<std::monostate, ICU4XDataError> enable_locale_fallback();
 
-  inline diplomat::result<std::monostate, ICU4XError> enable_locale_fallback_with(const ICU4XLocaleFallbacker& fallbacker);
+  inline diplomat::result<std::monostate, ICU4XDataError> enable_locale_fallback_with(const ICU4XLocaleFallbacker& fallbacker);
 
   inline const capi::ICU4XDataProvider* AsFFI() const;
   inline capi::ICU4XDataProvider* AsFFI();

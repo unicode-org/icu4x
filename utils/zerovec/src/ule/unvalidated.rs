@@ -520,8 +520,18 @@ mod test {
 
     #[test]
     fn test_char_bake() {
-        databake::test_bake!(UnvalidatedChar, const: crate::ule::UnvalidatedChar::from_char('b'), zerovec);
+        databake::test_bake!(
+            UnvalidatedChar,
+            const,
+            crate::ule::UnvalidatedChar::from_char('b'),
+            zerovec
+        );
         // surrogate code point
-        databake::test_bake!(UnvalidatedChar, const: crate::ule::UnvalidatedChar::from_u24(55296u32), zerovec);
+        databake::test_bake!(
+            UnvalidatedChar,
+            const,
+            crate::ule::UnvalidatedChar::from_u24(55296u32),
+            zerovec
+        );
     }
 }

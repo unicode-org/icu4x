@@ -7,16 +7,14 @@ pub mod ffi {
     use crate::locale_core::ffi::ICU4XLocale;
     use crate::provider::ffi::ICU4XDataProvider;
     use alloc::boxed::Box;
-    use core::str;
     use icu_properties::{exemplar_chars, sets};
 
-    use crate::errors::ffi::ICU4XError;
+    use crate::errors::ffi::ICU4XDataError;
 
     #[diplomat::opaque]
     /// An ICU4X Unicode Set Property object, capable of querying whether a code point is contained in a set based on a Unicode property.
     #[diplomat::rust_link(icu::properties, Mod)]
     #[diplomat::rust_link(icu::properties::sets::UnicodeSetData, Struct)]
-    #[diplomat::rust_link(icu::properties::sets::UnicodeSetData::from_data, FnInStruct, hidden)]
     #[diplomat::rust_link(icu::properties::sets::UnicodeSetDataBorrowed, Struct)]
     pub struct ICU4XUnicodeSetData(pub sets::UnicodeSetData);
 
@@ -24,7 +22,7 @@ pub mod ffi {
         /// Checks whether the string is in the set.
         #[diplomat::rust_link(icu::properties::sets::UnicodeSetDataBorrowed::contains, FnInStruct)]
         pub fn contains(&self, s: &DiplomatStr) -> bool {
-            let Ok(s) = str::from_utf8(s) else {
+            let Ok(s) = core::str::from_utf8(s) else {
                 return false;
             };
             self.0.as_borrowed().contains(s)
@@ -53,7 +51,7 @@ pub mod ffi {
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "basic_emoji")]
         pub fn load_basic_emoji(
             provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XUnicodeSetData>, ICU4XError> {
+        ) -> Result<Box<ICU4XUnicodeSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XUnicodeSetData(call_constructor_unstable!(
                 sets::basic_emoji [r => Ok(r.static_to_owned())],
                 sets::load_basic_emoji,
@@ -67,7 +65,7 @@ pub mod ffi {
         pub fn load_exemplars_main(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
-        ) -> Result<Box<ICU4XUnicodeSetData>, ICU4XError> {
+        ) -> Result<Box<ICU4XUnicodeSetData>, ICU4XDataError> {
             let locale = locale.to_datalocale();
             Ok(Box::new(ICU4XUnicodeSetData(call_constructor_unstable!(
                 exemplar_chars::exemplars_main,
@@ -87,7 +85,7 @@ pub mod ffi {
         pub fn load_exemplars_auxiliary(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
-        ) -> Result<Box<ICU4XUnicodeSetData>, ICU4XError> {
+        ) -> Result<Box<ICU4XUnicodeSetData>, ICU4XDataError> {
             let locale = locale.to_datalocale();
             Ok(Box::new(ICU4XUnicodeSetData(call_constructor_unstable!(
                 exemplar_chars::exemplars_auxiliary,
@@ -107,7 +105,7 @@ pub mod ffi {
         pub fn load_exemplars_punctuation(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
-        ) -> Result<Box<ICU4XUnicodeSetData>, ICU4XError> {
+        ) -> Result<Box<ICU4XUnicodeSetData>, ICU4XDataError> {
             let locale = locale.to_datalocale();
             Ok(Box::new(ICU4XUnicodeSetData(call_constructor_unstable!(
                 exemplar_chars::exemplars_punctuation,
@@ -123,7 +121,7 @@ pub mod ffi {
         pub fn load_exemplars_numbers(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
-        ) -> Result<Box<ICU4XUnicodeSetData>, ICU4XError> {
+        ) -> Result<Box<ICU4XUnicodeSetData>, ICU4XDataError> {
             let locale = locale.to_datalocale();
             Ok(Box::new(ICU4XUnicodeSetData(call_constructor_unstable!(
                 exemplar_chars::exemplars_numbers,
@@ -139,7 +137,7 @@ pub mod ffi {
         pub fn load_exemplars_index(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
-        ) -> Result<Box<ICU4XUnicodeSetData>, ICU4XError> {
+        ) -> Result<Box<ICU4XUnicodeSetData>, ICU4XDataError> {
             let locale = locale.to_datalocale();
             Ok(Box::new(ICU4XUnicodeSetData(call_constructor_unstable!(
                 exemplar_chars::exemplars_index,

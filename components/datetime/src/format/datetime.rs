@@ -3,9 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::fields::{self, Field, FieldLength, FieldSymbol, Second, Week, Year};
-use crate::input::{
-    DateInput, ExtractedDateTimeInput, ExtractedDateTimeInputWeekCalculatorError, IsoTimeInput,
-};
+use crate::input::{DateInput, ExtractedDateTimeInput, IsoTimeInput};
 use crate::pattern::runtime::{PatternBorrowed, PatternMetadata};
 use crate::pattern::{
     runtime::{Pattern, PatternPlurals},
@@ -16,8 +14,8 @@ use crate::provider::calendar::patterns::PatternPluralsFromPatternsV1Marker;
 #[cfg(feature = "experimental")]
 use crate::provider::date_time::GetSymbolForDayPeriodError;
 use crate::provider::date_time::{
-    DateSymbols, GetSymbolForEraError, GetSymbolForMonthError, GetSymbolForWeekdayError,
-    MonthPlaceholderValue, TimeSymbols,
+    DateSymbols, GetSymbolForEraError, GetSymbolForMonthError, GetSymbolForTimeZoneError,
+    GetSymbolForWeekdayError, MonthPlaceholderValue, TimeSymbols, ZoneSymbols,
 };
 
 use core::fmt::{self, Write};
@@ -31,6 +29,7 @@ use icu_calendar::AnyCalendarKind;
 use icu_decimal::FixedDecimalFormatter;
 use icu_plurals::PluralRules;
 use icu_provider::DataPayload;
+use icu_timezone::{CustomTimeZone, GmtOffset};
 use writeable::{Part, Writeable};
 
 /// [`FormattedDateTime`] is a intermediate structure which can be retrieved as
@@ -83,11 +82,9 @@ impl<'l> FormattedDateTime<'l> {
                         .week_data
                         .ok_or(DateTimeWriteError::MissingWeekCalculator)
                         .and_then(|w| {
-                            self.datetime.week_of_month(w).map_err(|e| match e {
-                                ExtractedDateTimeInputWeekCalculatorError::Missing(s) => {
-                                    DateTimeWriteError::MissingInputField(s)
-                                }
-                            })
+                            self.datetime
+                                .week_of_month(w)
+                                .map_err(DateTimeWriteError::MissingInputField)
                         })
                         .map(|w| w.0)
                         .unwrap_or_else(|e| {
@@ -98,11 +95,9 @@ impl<'l> FormattedDateTime<'l> {
                         .week_data
                         .ok_or(DateTimeWriteError::MissingWeekCalculator)
                         .and_then(|w| {
-                            self.datetime.week_of_year(w).map_err(|e| match e {
-                                ExtractedDateTimeInputWeekCalculatorError::Missing(s) => {
-                                    DateTimeWriteError::MissingInputField(s)
-                                }
-                            })
+                            self.datetime
+                                .week_of_year(w)
+                                .map_err(DateTimeWriteError::MissingInputField)
                         })
                         .map(|w| w.1 .0)
                         .unwrap_or_else(|e| {
@@ -133,6 +128,7 @@ impl<'l> Writeable for FormattedDateTime<'l> {
             &self.datetime,
             self.date_symbols,
             self.time_symbols,
+            None::<()>.as_ref(),
             self.week_data,
             Some(self.fixed_decimal_format),
             &mut writeable::adapters::CoreWriteAsPartsWrite(sink),
@@ -163,7 +159,9 @@ where
 {
     if let Some(fdf) = fixed_decimal_format {
         match length {
-            FieldLength::One | FieldLength::NumericOverride(_) => {}
+            FieldLength::One
+            | FieldLength::NumericOverride(_)
+            | FieldLength::TimeZoneFallbackOverride(_) => {}
             FieldLength::TwoDigit => {
                 num.pad_start(2);
                 num.set_max_position(2);
@@ -195,11 +193,12 @@ where
 }
 
 #[allow(clippy::too_many_arguments)]
-pub(crate) fn try_write_pattern<'data, W, DS, TS>(
+pub(crate) fn try_write_pattern<'data, W, DS, TS, ZS>(
     pattern: PatternBorrowed<'data>,
     datetime: &ExtractedDateTimeInput,
     date_symbols: Option<&DS>,
     time_symbols: Option<&TS>,
+    zone_symbols: Option<&ZS>,
     week_data: Option<&'data WeekCalculator>,
     fixed_decimal_format: Option<&FixedDecimalFormatter>,
     w: &mut W,
@@ -208,6 +207,7 @@ where
     W: writeable::PartsWrite + ?Sized,
     DS: DateSymbols<'data>,
     TS: TimeSymbols,
+    ZS: ZoneSymbols,
 {
     try_write_pattern_items(
         pattern.metadata,
@@ -215,6 +215,7 @@ where
         datetime,
         date_symbols,
         time_symbols,
+        zone_symbols,
         week_data,
         fixed_decimal_format,
         w,
@@ -222,12 +223,13 @@ where
 }
 
 #[allow(clippy::too_many_arguments)]
-pub(crate) fn try_write_pattern_items<'data, W, DS, TS>(
+pub(crate) fn try_write_pattern_items<'data, W, DS, TS, ZS>(
     pattern_metadata: PatternMetadata,
     pattern_items: impl Iterator<Item = PatternItem>,
     datetime: &ExtractedDateTimeInput,
     date_symbols: Option<&DS>,
     time_symbols: Option<&TS>,
+    zone_symbols: Option<&ZS>,
     week_data: Option<&'data WeekCalculator>,
     fixed_decimal_format: Option<&FixedDecimalFormatter>,
     w: &mut W,
@@ -236,12 +238,26 @@ where
     W: writeable::PartsWrite + ?Sized,
     DS: DateSymbols<'data>,
     TS: TimeSymbols,
+    ZS: ZoneSymbols,
 {
     let mut r = Ok(());
     let mut iter = pattern_items.peekable();
     while let Some(item) = iter.next() {
         match item {
             PatternItem::Literal(ch) => w.write_char(ch)?,
+            PatternItem::Field(Field {
+                symbol: fields::FieldSymbol::TimeZone(time_zone_field),
+                length,
+            }) => {
+                r = r.and(try_write_zone(
+                    time_zone_field,
+                    length,
+                    datetime,
+                    zone_symbols,
+                    fixed_decimal_format,
+                    w,
+                )?)
+            }
             PatternItem::Field(field) => {
                 r = r.and(try_write_field(
                     field,
@@ -268,9 +284,13 @@ pub enum DateTimeWriteError {
     /// Missing FixedDecimalFormatter
     #[displaydoc("FixedDecimalFormatter not loaded")]
     MissingFixedDecimalFormatter,
+    // TODO: Remove Missing*Symbols and use exclusively MissingNames
     /// Missing DateSymbols
     #[displaydoc("DateSymbols not loaded")]
     MissingDateSymbols,
+    /// Missing ZoneSymbols
+    #[displaydoc("ZoneSymbols not loaded")]
+    MissingZoneSymbols,
     /// Missing TimeSymbols
     #[displaydoc("TimeSymbols not loaded")]
     MissingTimeSymbols,
@@ -282,7 +302,6 @@ pub enum DateTimeWriteError {
     MissingWeekCalculator,
     /// TODO
     #[displaydoc("Names for {0:?} not loaded")]
-    #[cfg(feature = "experimental")]
     MissingNames(Field),
 
     // Something not found in data
@@ -296,6 +315,9 @@ pub enum DateTimeWriteError {
     /// Missing weekday symbol
     #[displaydoc("Cannot find symbol for weekday {0:?}")]
     MissingWeekdaySymbol(IsoWeekday),
+    /// Missing time zone symbol
+    #[displaydoc("Cannot find symbol for time zone {0:?}")]
+    MissingTimeZoneSymbol(CustomTimeZone),
 
     // Invalid input
     /// Incomplete input
@@ -384,11 +406,9 @@ where
         (FieldSymbol::Year(Year::WeekOf), l) => match week_data
             .ok_or(DateTimeWriteError::MissingWeekCalculator)
             .and_then(|w| {
-                datetime.week_of_year(w).map_err(|e| match e {
-                    ExtractedDateTimeInputWeekCalculatorError::Missing(s) => {
-                        DateTimeWriteError::MissingInputField(s)
-                    }
-                })
+                datetime
+                    .week_of_year(w)
+                    .map_err(DateTimeWriteError::MissingInputField)
             }) {
             Err(e) => {
                 write_value_missing(w, field)?;
@@ -528,11 +548,9 @@ where
             Week::WeekOfYear => match week_data
                 .ok_or(DateTimeWriteError::MissingWeekCalculator)
                 .and_then(|w| {
-                    datetime.week_of_year(w).map_err(|e| match e {
-                        ExtractedDateTimeInputWeekCalculatorError::Missing(s) => {
-                            DateTimeWriteError::MissingInputField(s)
-                        }
-                    })
+                    datetime
+                        .week_of_year(w)
+                        .map_err(DateTimeWriteError::MissingInputField)
                 }) {
                 Err(e) => {
                     write_value_missing(w, field)?;
@@ -543,11 +561,9 @@ where
             Week::WeekOfMonth => match week_data
                 .ok_or(DateTimeWriteError::MissingWeekCalculator)
                 .and_then(|w| {
-                    datetime.week_of_month(w).map_err(|e| match e {
-                        ExtractedDateTimeInputWeekCalculatorError::Missing(s) => {
-                            DateTimeWriteError::MissingInputField(s)
-                        }
-                    })
+                    datetime
+                        .week_of_month(w)
+                        .map_err(DateTimeWriteError::MissingInputField)
                 }) {
                 Err(e) => {
                     write_value_missing(w, field)?;
@@ -746,18 +762,103 @@ where
                 }
             }
         },
-        (
-            FieldSymbol::TimeZone(_)
-            | FieldSymbol::Day(_)
-            | FieldSymbol::Second(Second::Millisecond),
-            _,
-        ) => {
+        (FieldSymbol::TimeZone(_), _) => {
+            debug_assert!(false, "unreachable: time zone formatted in its own fn");
+            Err(DateTimeWriteError::UnsupportedField(field))
+        }
+        (FieldSymbol::Day(_) | FieldSymbol::Second(Second::Millisecond), _) => {
             w.with_part(Part::ERROR, |w| {
                 w.write_str("{unsupported:")?;
                 w.write_char(char::from(field.symbol))?;
                 w.write_str("}")
             })?;
             Err(DateTimeWriteError::UnsupportedField(field))
+        }
+    })
+}
+
+// #[allow(clippy::too_many_arguments)]
+pub(crate) fn try_write_zone<W, ZS>(
+    field_symbol: fields::TimeZone,
+    field_length: FieldLength,
+    datetime: &ExtractedDateTimeInput,
+    zone_symbols: Option<&ZS>,
+    _fdf: Option<&FixedDecimalFormatter>,
+    w: &mut W,
+) -> Result<Result<(), DateTimeWriteError>, fmt::Error>
+where
+    W: writeable::PartsWrite + ?Sized,
+    ZS: ZoneSymbols,
+{
+    fn write_time_zone_missing(
+        w: &mut (impl writeable::PartsWrite + ?Sized),
+    ) -> Result<(), fmt::Error> {
+        w.with_part(Part::ERROR, |w| "{GMT+?}".write_to(w))
+    }
+
+    fn try_write_time_zone_gmt(
+        w: &mut (impl writeable::PartsWrite + ?Sized),
+        _gmt_offset: Option<GmtOffset>,
+        zone_symbols: Option<&impl ZoneSymbols>,
+        _graceful: bool,
+    ) -> Result<Result<(), DateTimeWriteError>, fmt::Error> {
+        #[allow(clippy::bind_instead_of_map)] // TODO: Use proper formatting logic here
+        Ok(
+            match zone_symbols
+                .ok_or(DateTimeWriteError::MissingZoneSymbols)
+                .and_then(|_zs| {
+                    // TODO: Use proper formatting logic here
+                    Ok("{todo}")
+                }) {
+                Err(e) => Err(e),
+                Ok(s) => Ok(s.write_to(w)?),
+            },
+        )
+    }
+
+    // for errors only:
+    let field = Field {
+        symbol: FieldSymbol::TimeZone(field_symbol),
+        length: field_length,
+    };
+
+    // TODO: Implement proper formatting logic here
+    Ok(match datetime.time_zone() {
+        None => {
+            write_time_zone_missing(w)?;
+            Err(DateTimeWriteError::MissingInputField("time_zone"))
+        }
+        Some(CustomTimeZone {
+            #[cfg(feature = "experimental")]
+            gmt_offset,
+            metazone_id: Some(metazone_id),
+            time_zone_id,
+            ..
+        }) => match zone_symbols
+            .ok_or(GetSymbolForTimeZoneError::MissingNames(field))
+            .and_then(|zs| zs.get_generic_short_for_zone(metazone_id, time_zone_id))
+        {
+            Err(e) => match e {
+                GetSymbolForTimeZoneError::TypeTooNarrow => {
+                    write_time_zone_missing(w)?;
+                    Err(DateTimeWriteError::MissingNames(field))
+                }
+                #[cfg(feature = "experimental")]
+                GetSymbolForTimeZoneError::Missing => {
+                    try_write_time_zone_gmt(w, gmt_offset, zone_symbols, true)?
+                        .map_err(|_| DateTimeWriteError::MissingNames(field))
+                }
+                GetSymbolForTimeZoneError::MissingNames(f) => {
+                    write_time_zone_missing(w)?;
+                    Err(DateTimeWriteError::MissingNames(f))
+                }
+            },
+            Ok(s) => Ok(w.write_str(s)?),
+        },
+        Some(CustomTimeZone { gmt_offset, .. }) => {
+            // Required time zone fields not present in input
+            try_write_time_zone_gmt(w, gmt_offset, zone_symbols, false)?
+                .map_err(|_| DateTimeWriteError::MissingInputField("metazone_id"))
         }
     })
 }
@@ -848,19 +949,19 @@ pub fn analyze_patterns(
 #[cfg(feature = "compiled_data")]
 mod tests {
     use super::*;
-    use crate::pattern::runtime;
+    use crate::{neo_marker::NeoAutoDateMarker, neo_skeleton::NeoSkeletonLength, pattern::runtime};
     use icu_decimal::options::{FixedDecimalFormatterOptions, GroupingStrategy};
     use tinystr::tinystr;
 
     #[test]
     fn test_mixed_calendar_eras() {
-        use crate::neo::NeoDateFormatter;
+        use crate::neo::NeoFormatter;
         use crate::options::length;
         use icu_calendar::japanese::JapaneseExtended;
         use icu_calendar::Date;
 
         let locale = "en-u-ca-japanese".parse().unwrap();
-        let dtf = NeoDateFormatter::try_new_with_length(&locale, length::Date::Medium)
+        let dtf = NeoFormatter::<NeoAutoDateMarker>::try_new(&locale, NeoSkeletonLength::Medium)
             .expect("DateTimeFormat construction succeeds");
 
         let date = Date::try_new_gregorian_date(1800, 9, 1).expect("Failed to construct Date.");
@@ -870,7 +971,7 @@ mod tests {
             .to_any();
 
         writeable::assert_try_writeable_eq!(
-            dtf.format(&date).unwrap(),
+            dtf.strict_format(&date).unwrap(),
             "Sep 1, 12 kansei-1789",
             Err(DateTimeWriteError::MissingEraSymbol(Era(tinystr!(
                 16,
@@ -891,16 +992,11 @@ mod tests {
             locale: &locale,
             ..Default::default()
         };
-        let date_data: DataPayload<GregorianDateSymbolsV1Marker> = crate::provider::Baked
-            .load(req)
-            .unwrap()
-            .take_payload()
-            .unwrap();
-        let time_data: DataPayload<TimeSymbolsV1Marker> = crate::provider::Baked
-            .load(req)
-            .unwrap()
-            .take_payload()
-            .unwrap();
+        let date_data =
+            DataProvider::<GregorianDateSymbolsV1Marker>::load(&crate::provider::Baked, req)
+                .unwrap();
+        let time_data =
+            DataProvider::<TimeSymbolsV1Marker>::load(&crate::provider::Baked, req).unwrap();
         let pattern: runtime::Pattern = "MMM".parse().unwrap();
         let datetime = DateTime::try_new_gregorian_datetime(2020, 8, 1, 12, 34, 28).unwrap();
         let fixed_decimal_format =
@@ -910,8 +1006,9 @@ mod tests {
         try_write_pattern(
             pattern.as_borrowed(),
             &ExtractedDateTimeInput::extract_from(&datetime),
-            Some(date_data.get()),
-            Some(time_data.get()),
+            Some(date_data.payload.get()),
+            Some(time_data.payload.get()),
+            None::<()>.as_ref(),
             None,
             Some(&fixed_decimal_format),
             &mut writeable::adapters::CoreWriteAsPartsWrite(&mut sink),

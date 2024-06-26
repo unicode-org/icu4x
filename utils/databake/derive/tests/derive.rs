@@ -13,13 +13,8 @@ pub struct IntExample {
 }
 
 #[test]
-#[ignore] // https://github.com/rust-lang/rust/issues/98906
 fn test_int_example() {
-    test_bake!(
-        IntExample,
-        const: crate::IntExample { x: 17u8, },
-        test,
-    );
+    test_bake!(IntExample, const, crate::IntExample { x: 17u8 }, test,);
 }
 
 #[derive(Bake)]
@@ -30,11 +25,14 @@ pub struct GenericsExample<T> {
 }
 
 #[test]
-#[ignore] // https://github.com/rust-lang/rust/issues/98906
 fn test_generics_example() {
     test_bake!(
         GenericsExample<isize>,
-        const: crate::GenericsExample { x: 17u32, y: 100isize },
+        const,
+        crate::GenericsExample {
+            x: 17u32,
+            y: 100isize
+        },
         test
     );
 }
@@ -52,7 +50,8 @@ pub struct CowExample<'a> {
 fn test_cow_example() {
     test_bake!(
         CowExample<'static>,
-        const: crate::CowExample {
+        const,
+        crate::CowExample {
             x: 17u8,
             y: "foo",
             z: alloc::borrow::Cow::Borrowed("bar"),

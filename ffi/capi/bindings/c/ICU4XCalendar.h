@@ -6,34 +6,32 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include "diplomat_runtime.h"
+
 #include "ICU4XAnyCalendarKind.d.h"
-#include "ICU4XAnyCalendarKind.h"
+#include "ICU4XDataError.d.h"
 #include "ICU4XDataProvider.d.h"
-#include "ICU4XDataProvider.h"
 #include "ICU4XLocale.d.h"
-#include "ICU4XLocale.h"
-#include "diplomat_result_box_ICU4XCalendar_ICU4XError.d.h"
 
 #include "ICU4XCalendar.d.h"
 
-#ifdef __cplusplus
-namespace capi {
-extern "C" {
-#endif // __cplusplus
 
 
-diplomat_result_box_ICU4XCalendar_ICU4XError ICU4XCalendar_create_for_locale(const ICU4XDataProvider* provider, const ICU4XLocale* locale);
 
-diplomat_result_box_ICU4XCalendar_ICU4XError ICU4XCalendar_create_for_kind(const ICU4XDataProvider* provider, ICU4XAnyCalendarKind kind);
+
+
+typedef struct ICU4XCalendar_create_for_locale_result {union {ICU4XCalendar* ok; ICU4XDataError err;}; bool is_ok;} ICU4XCalendar_create_for_locale_result;
+ICU4XCalendar_create_for_locale_result ICU4XCalendar_create_for_locale(const ICU4XDataProvider* provider, const ICU4XLocale* locale);
+
+typedef struct ICU4XCalendar_create_for_kind_result {union {ICU4XCalendar* ok; ICU4XDataError err;}; bool is_ok;} ICU4XCalendar_create_for_kind_result;
+ICU4XCalendar_create_for_kind_result ICU4XCalendar_create_for_kind(const ICU4XDataProvider* provider, ICU4XAnyCalendarKind kind);
 
 ICU4XAnyCalendarKind ICU4XCalendar_kind(const ICU4XCalendar* self);
+
 
 void ICU4XCalendar_destroy(ICU4XCalendar* self);
 
 
-#ifdef __cplusplus
-} // extern "C"
-} // namespace capi
-#endif // __cplusplus
+
+
 
 #endif // ICU4XCalendar_H

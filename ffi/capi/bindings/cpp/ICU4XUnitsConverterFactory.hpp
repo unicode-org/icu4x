@@ -10,17 +10,32 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
+#include "ICU4XDataError.hpp"
 #include "ICU4XDataProvider.hpp"
-#include "ICU4XError.hpp"
 #include "ICU4XMeasureUnit.hpp"
 #include "ICU4XMeasureUnitParser.hpp"
 #include "ICU4XUnitsConverter.hpp"
-#include "ICU4XUnitsConverterFactory.h"
 
 
-inline diplomat::result<std::unique_ptr<ICU4XUnitsConverterFactory>, ICU4XError> ICU4XUnitsConverterFactory::create(const ICU4XDataProvider& provider) {
+namespace capi {
+    extern "C" {
+    
+    typedef struct ICU4XUnitsConverterFactory_create_result {union {ICU4XUnitsConverterFactory* ok; ICU4XDataError err;}; bool is_ok;} ICU4XUnitsConverterFactory_create_result;
+    ICU4XUnitsConverterFactory_create_result ICU4XUnitsConverterFactory_create(const ICU4XDataProvider* provider);
+    
+    ICU4XUnitsConverter* ICU4XUnitsConverterFactory_converter(const ICU4XUnitsConverterFactory* self, const ICU4XMeasureUnit* from, const ICU4XMeasureUnit* to);
+    
+    ICU4XMeasureUnitParser* ICU4XUnitsConverterFactory_parser(const ICU4XUnitsConverterFactory* self);
+    
+    
+    void ICU4XUnitsConverterFactory_destroy(ICU4XUnitsConverterFactory* self);
+    
+    } // extern "C"
+}
+
+inline diplomat::result<std::unique_ptr<ICU4XUnitsConverterFactory>, ICU4XDataError> ICU4XUnitsConverterFactory::create(const ICU4XDataProvider& provider) {
   auto result = capi::ICU4XUnitsConverterFactory_create(provider.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XUnitsConverterFactory>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XUnitsConverterFactory>>(std::unique_ptr<ICU4XUnitsConverterFactory>(ICU4XUnitsConverterFactory::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XUnitsConverterFactory>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XUnitsConverterFactory>, ICU4XDataError>(diplomat::Ok<std::unique_ptr<ICU4XUnitsConverterFactory>>(std::unique_ptr<ICU4XUnitsConverterFactory>(ICU4XUnitsConverterFactory::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XUnitsConverterFactory>, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
 
 inline std::unique_ptr<ICU4XUnitsConverter> ICU4XUnitsConverterFactory::converter(const ICU4XMeasureUnit& from, const ICU4XMeasureUnit& to) const {

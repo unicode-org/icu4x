@@ -11,8 +11,22 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 #include "ICU4XSegmenterWordType.hpp"
-#include "ICU4XWordBreakIteratorLatin1.h"
 
+
+namespace capi {
+    extern "C" {
+    
+    int32_t ICU4XWordBreakIteratorLatin1_next(ICU4XWordBreakIteratorLatin1* self);
+    
+    ICU4XSegmenterWordType ICU4XWordBreakIteratorLatin1_word_type(const ICU4XWordBreakIteratorLatin1* self);
+    
+    bool ICU4XWordBreakIteratorLatin1_is_word_like(const ICU4XWordBreakIteratorLatin1* self);
+    
+    
+    void ICU4XWordBreakIteratorLatin1_destroy(ICU4XWordBreakIteratorLatin1* self);
+    
+    } // extern "C"
+}
 
 inline int32_t ICU4XWordBreakIteratorLatin1::next() {
   auto result = capi::ICU4XWordBreakIteratorLatin1_next(this->AsFFI());

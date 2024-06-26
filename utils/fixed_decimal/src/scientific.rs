@@ -7,9 +7,9 @@ use core::fmt;
 
 use core::str::FromStr;
 
-use crate::Error;
 use crate::FixedDecimal;
 use crate::FixedInteger;
+use crate::ParseError;
 
 /// A struct containing a [`FixedDecimal`] significand together with an exponent, representing a
 /// number written in scientific notation, such as 1.729×10³.
@@ -72,26 +72,26 @@ impl writeable::Writeable for ScientificDecimal {
 writeable::impl_display_with_writeable!(ScientificDecimal);
 
 impl FromStr for ScientificDecimal {
-    type Err = Error;
+    type Err = ParseError;
     fn from_str(input_str: &str) -> Result<Self, Self::Err> {
         Self::try_from(input_str.as_bytes())
     }
 }
 
 impl TryFrom<&[u8]> for ScientificDecimal {
-    type Error = Error;
+    type Error = ParseError;
     fn try_from(input_str: &[u8]) -> Result<Self, Self::Error> {
         // Fixed_Decimal::try_from supports scientific notation; ensure that
         // we don’t accept something like 1e1E1.  Splitting on 'e' ensures that
         // we disallow 1e1e1.
         if input_str.contains(&b'E') {
-            return Err(Error::Syntax);
+            return Err(ParseError::Syntax);
         }
         let mut parts = input_str.split(|&c| c == b'e');
-        let significand = parts.next().ok_or(Error::Syntax)?;
-        let exponent = parts.next().ok_or(Error::Syntax)?;
+        let significand = parts.next().ok_or(ParseError::Syntax)?;
+        let exponent = parts.next().ok_or(ParseError::Syntax)?;
         if parts.next().is_some() {
-            return Err(Error::Syntax);
+            return Err(ParseError::Syntax);
         }
         Ok(ScientificDecimal::from(
             FixedDecimal::try_from(significand)?,
@@ -105,20 +105,20 @@ fn test_scientific_syntax_error() {
     #[derive(Debug)]
     struct TestCase {
         pub input_str: &'static str,
-        pub expected_err: Option<Error>,
+        pub expected_err: Option<ParseError>,
     }
     let cases = [
         TestCase {
             input_str: "5",
-            expected_err: Some(Error::Syntax),
+            expected_err: Some(ParseError::Syntax),
         },
         TestCase {
             input_str: "-123c4",
-            expected_err: Some(Error::Syntax),
+            expected_err: Some(ParseError::Syntax),
         },
         TestCase {
             input_str: "-123e",
-            expected_err: Some(Error::Syntax),
+            expected_err: Some(ParseError::Syntax),
         },
         TestCase {
             input_str: "1e10",
@@ -126,15 +126,15 @@ fn test_scientific_syntax_error() {
         },
         TestCase {
             input_str: "1e1e1",
-            expected_err: Some(Error::Syntax),
+            expected_err: Some(ParseError::Syntax),
         },
         TestCase {
             input_str: "1e1E1",
-            expected_err: Some(Error::Syntax),
+            expected_err: Some(ParseError::Syntax),
         },
         TestCase {
             input_str: "1E1e1",
-            expected_err: Some(Error::Syntax),
+            expected_err: Some(ParseError::Syntax),
         },
         TestCase {
             input_str: "-1e+01",
@@ -142,15 +142,15 @@ fn test_scientific_syntax_error() {
         },
         TestCase {
             input_str: "-1e+1.0",
-            expected_err: Some(Error::Limit),
+            expected_err: Some(ParseError::Limit),
         },
         TestCase {
             input_str: "-1e+-1",
-            expected_err: Some(Error::Syntax),
+            expected_err: Some(ParseError::Syntax),
         },
         TestCase {
             input_str: "123E4",
-            expected_err: Some(Error::Syntax),
+            expected_err: Some(ParseError::Syntax),
         },
     ];
     for cas in &cases {

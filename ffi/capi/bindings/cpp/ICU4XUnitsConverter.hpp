@@ -10,8 +10,20 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XUnitsConverter.h"
 
+
+namespace capi {
+    extern "C" {
+    
+    double ICU4XUnitsConverter_convert_f64(const ICU4XUnitsConverter* self, double value);
+    
+    ICU4XUnitsConverter* ICU4XUnitsConverter_clone(const ICU4XUnitsConverter* self);
+    
+    
+    void ICU4XUnitsConverter_destroy(ICU4XUnitsConverter* self);
+    
+    } // extern "C"
+}
 
 inline double ICU4XUnitsConverter::convert_f64(double value) const {
   auto result = capi::ICU4XUnitsConverter_convert_f64(this->AsFFI(),

@@ -22,9 +22,9 @@ command = "cargo"
 env = { ICU4X_WRITE_TESTDATA = "1" }
 args = [
     "test",
-    "-p=icu_datagen",
+    "-p=icu_datagen_bikeshed",
     "--no-default-features",
-    "--features=fs_exporter,baked_exporter,use_wasm,rayon,experimental_components,provider",
+    "--features=use_wasm,experimental",
     "--",
     "--nocapture",
     "make_testdata",
@@ -37,18 +37,19 @@ script_runner = "@duckscript"
 script = '''
 exit_on_error true
 
-exec --fail-on-error cargo build -p icu_datagen --no-default-features --features fs_exporter,blob_exporter,bin,networking,provider
+exec --fail-on-error cargo build -p icu4x-datagen --no-default-features --features fs_exporter,blob_exporter,baked_exporter
 
-exec --fail-on-error target/debug/icu4x-datagen --keys "core/helloworld@1" --locales full --format dir --syntax json --out provider/fs/tests/data/json --overwrite
-exec --fail-on-error target/debug/icu4x-datagen --keys "core/helloworld@1" --locales full --format dir --syntax bincode --out provider/fs/tests/data/bincode --overwrite
-exec --fail-on-error target/debug/icu4x-datagen --keys "core/helloworld@1" --locales full --format dir --syntax postcard --out provider/fs/tests/data/postcard --overwrite
+# Filesystem
+exec --fail-on-error target/debug/icu4x-datagen --markers HelloWorldV1Marker --locales full --format dir --syntax json --out provider/fs/tests/data/json --overwrite
+exec --fail-on-error target/debug/icu4x-datagen --markers HelloWorldV1Marker --locales full --format dir --syntax bincode --out provider/fs/tests/data/bincode --overwrite
+exec --fail-on-error target/debug/icu4x-datagen --markers HelloWorldV1Marker --locales full --format dir --syntax postcard --out provider/fs/tests/data/postcard --overwrite
 
-exec --fail-on-error target/debug/icu4x-datagen --keys "core/helloworld@1" --locales full --format blob --overwrite --out provider/blob/tests/data/v1.postcard
-exec --fail-on-error target/debug/icu4x-datagen --keys "core/helloworld@1" --locales full --format blob2 --overwrite --out provider/blob/tests/data/v2.postcard
+# Blob
+exec --fail-on-error target/debug/icu4x-datagen --markers HelloWorldV1Marker --locales full --format blob --overwrite --out provider/blob/tests/data/v1.postcard
+exec --fail-on-error target/debug/icu4x-datagen --markers HelloWorldV1Marker --locales full --format blob2 --overwrite --out provider/blob/tests/data/v2.postcard
 
-exec --fail-on-error target/debug/icu4x-datagen --keys "core/helloworld@1" "fallback/likelysubtags@1" "fallback/parents@1" "fallback/supplement/co@1" --locales full --format blob --out provider/adapters/tests/data/blob.postcard --overwrite
-exec --fail-on-error target/debug/icu4x-datagen --keys "core/helloworld@1" --without-fallback --locales de --format dir --syntax json --out provider/adapters/tests/data/langtest/de --overwrite
-exec --fail-on-error target/debug/icu4x-datagen --keys "core/helloworld@1" --without-fallback --locales ro --format dir --syntax json --out provider/adapters/tests/data/langtest/ro --overwrite
+# Baked
+exec --fail-on-error target/debug/icu4x-datagen --markers HelloWorldV1Marker --locales full --format mod --pretty --overwrite --no-internal-fallback --deduplication none --out provider/baked/tests/data
 '''
 
 [tasks.testdata-check]
@@ -63,7 +64,7 @@ script_runner = "@duckscript"
 script = '''
 exit_on_error true
 
-output = exec git status --porcelain=v1 provider/datagen/tests/data provider/fs/tests/data provider/blob/tests/data provider/adapters/tests/data provider/datagen/src/tests
+output = exec git status --porcelain=v1 provider/datagen/tests/data provider/fs/tests/data provider/blob/tests/data provider/baked/tests/data provider/adapters/tests/data provider/datagen/src/tests
 output_length = length ${output.stdout}
 if greater_than ${output_length} 0
     msg = array "" ""
