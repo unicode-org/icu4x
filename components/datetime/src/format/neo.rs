@@ -48,9 +48,12 @@ use icu_provider::DataPayloadOr;
 /// This can be extended in the future to support multiple lengths.
 /// For now, this type wraps a symbols object tagged with a single length. See #4337
 #[derive(Debug, Copy, Clone)]
-enum OptionalNames<S, T> {
+enum OptionalNames<Variables, Payload> {
     None,
-    SingleLength(S, FieldLength, T),
+    SingleLength {
+        variables: Variables,
+        payload: Payload,
+    }
 }
 
 enum NamePresence {
@@ -62,59 +65,58 @@ enum NamePresence {
     Mismatched,
 }
 
-impl<S, T> OptionalNames<S, T>
+impl<Variables, Payload> OptionalNames<Variables, Payload>
 where
-    S: Copy + PartialEq,
+    Variables: Copy + PartialEq,
 {
-    pub(crate) fn check_with_length(
+    pub(crate) fn check_with_variables(
         &self,
-        field_symbol: S,
-        field_length: FieldLength,
+        arg_variables: Variables,
     ) -> NamePresence {
         match self {
-            Self::SingleLength(actual_field_symbol, actual_length, _)
-                if field_symbol == *actual_field_symbol && field_length == *actual_length =>
+            Self::SingleLength { variables, .. }
+                if arg_variables == *variables =>
             {
                 NamePresence::Loaded
             }
-            OptionalNames::SingleLength(_, _, _) => NamePresence::Mismatched,
+            OptionalNames::SingleLength { .. } => NamePresence::Mismatched,
             OptionalNames::None => NamePresence::NotLoaded,
         }
     }
 }
 
-impl<S, T> OptionalNames<S, T>
+impl<Variables, Payload> OptionalNames<Variables, Payload>
 where
-    S: Copy + PartialEq,
-    T: Copy,
+    Variables: Copy + PartialEq,
+    Payload: Copy,
 {
-    pub(crate) fn get_with_length(&self, field_symbol: S, field_length: FieldLength) -> Option<T> {
+    pub(crate) fn get_with_variables(&self, arg_variables: Variables) -> Option<Payload> {
         match self {
             Self::None => None,
-            Self::SingleLength(actual_field_symbol, actual_length, t)
-                if field_symbol == *actual_field_symbol && field_length == *actual_length =>
+            Self::SingleLength { variables, payload }
+                if arg_variables == *variables =>
             {
-                Some(*t)
+                Some(*payload)
             }
             _ => None,
         }
     }
 }
 
-impl<S, T> OptionalNames<S, T>
+impl<Variables, Payload> OptionalNames<Variables, Payload>
 where
-    S: Copy,
+    Variables: Copy,
 {
     #[inline]
-    pub(crate) fn as_borrowed<'a, Y>(&'a self) -> OptionalNames<S, &'a <Y as Yokeable<'a>>::Output>
+    pub(crate) fn as_borrowed<'a, Y>(&'a self) -> OptionalNames<Variables, &'a <Y as Yokeable<'a>>::Output>
     where
-        T: MaybePayload<Y>,
+        Payload: MaybePayload<Y>,
         Y: for<'y> Yokeable<'y>,
     {
         match self {
             Self::None => OptionalNames::None,
-            Self::SingleLength(field_symbol, field_length, payload) => match payload.maybe_get() {
-                Some(data) => OptionalNames::SingleLength(*field_symbol, *field_length, data),
+            Self::SingleLength { variables, payload } => match payload.maybe_get() {
+                Some(data) => OptionalNames::SingleLength { variables: *variables, payload: data },
                 None => OptionalNames::None,
             },
         }
@@ -409,10 +411,10 @@ impl From<RawDateTimeNames<TimeMarker>> for RawDateTimeNames<DateTimeMarker> {
 }
 
 pub(crate) struct RawDateTimeNames<R: DateTimeNamesMarker> {
-    year_symbols: OptionalNames<(), R::YearNames>,
-    month_symbols: OptionalNames<fields::Month, R::MonthNames>,
-    weekday_symbols: OptionalNames<fields::Weekday, R::WeekdayNames>,
-    dayperiod_symbols: OptionalNames<(), R::DayPeriodNames>,
+    year_symbols: OptionalNames<FieldLength, R::YearNames>,
+    month_symbols: OptionalNames<(fields::Month, FieldLength), R::MonthNames>,
+    weekday_symbols: OptionalNames<(fields::Weekday, FieldLength), R::WeekdayNames>,
+    dayperiod_symbols: OptionalNames<FieldLength, R::DayPeriodNames>,
     // Time zone data keys are unique by field and length,
     // so we can use DataPayloadOr instead of OptionalNames
     zone_essentials: DataPayloadOr<R::ZoneEssentials, ()>,
@@ -449,10 +451,10 @@ impl<R: DateTimeNamesMarker> fmt::Debug for RawDateTimeNames<R> {
 
 #[derive(Debug, Copy, Clone)]
 pub(crate) struct RawDateTimeNamesBorrowed<'l> {
-    year_names: OptionalNames<(), &'l YearNamesV1<'l>>,
-    month_names: OptionalNames<fields::Month, &'l MonthNamesV1<'l>>,
-    weekday_names: OptionalNames<fields::Weekday, &'l LinearNamesV1<'l>>,
-    dayperiod_names: OptionalNames<(), &'l LinearNamesV1<'l>>,
+    year_names: OptionalNames<FieldLength, &'l YearNamesV1<'l>>,
+    month_names: OptionalNames<(fields::Month, FieldLength), &'l MonthNamesV1<'l>>,
+    weekday_names: OptionalNames<(fields::Weekday, FieldLength), &'l LinearNamesV1<'l>>,
+    dayperiod_names: OptionalNames<FieldLength, &'l LinearNamesV1<'l>>,
     zone_essentials: Option<&'l TimeZoneFormatsV1<'l>>,
     exemplar_cities: Option<&'l ExemplarCitiesV1<'l>>,
     mz_generic_long: Option<&'l MetazoneGenericNamesLongV1<'l>>,
@@ -1081,7 +1083,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         };
         // UTS 35 says that "G..GGG" are all Abbreviated
         let field_length = field_length.numeric_to_abbr();
-        match self.year_symbols.check_with_length((), field_length) {
+        match self.year_symbols.check_with_variables(field_length) {
             NamePresence::Loaded => return Ok(()),
             NamePresence::NotLoaded => (),
             NamePresence::Mismatched => return Err(SingleLoadError::DuplicateField(field)),
@@ -1104,12 +1106,11 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
             })
             .map_err(SingleLoadError::Data)?
             .payload;
-        self.year_symbols = OptionalNames::SingleLength(
-            (),
-            field_length,
-            R::YearNames::maybe_from_payload(payload)
+        self.year_symbols = OptionalNames::SingleLength {
+            variables: field_length,
+            payload: R::YearNames::maybe_from_payload(payload)
                 .ok_or(SingleLoadError::TypeTooNarrow(field))?,
-        );
+        };
         Ok(())
     }
 
@@ -1130,7 +1131,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         // Note: UTS 35 says that "M..MM" and "L..LL" are numeric
         match self
             .month_symbols
-            .check_with_length(field_symbol, field_length)
+            .check_with_variables((field_symbol, field_length))
         {
             NamePresence::Loaded => return Ok(()),
             NamePresence::NotLoaded => (),
@@ -1157,12 +1158,11 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
             })
             .map_err(SingleLoadError::Data)?
             .payload;
-        self.month_symbols = OptionalNames::SingleLength(
-            field_symbol,
-            field_length,
-            R::MonthNames::maybe_from_payload(payload)
+        self.month_symbols = OptionalNames::SingleLength {
+            variables: (field_symbol, field_length),
+            payload: R::MonthNames::maybe_from_payload(payload)
                 .ok_or(SingleLoadError::TypeTooNarrow(field))?,
-        );
+        };
         Ok(())
     }
 
@@ -1182,7 +1182,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         };
         // UTS 35 says that "a..aaa" are all Abbreviated
         let field_length = field_length.numeric_to_abbr();
-        match self.dayperiod_symbols.check_with_length((), field_length) {
+        match self.dayperiod_symbols.check_with_variables(field_length) {
             NamePresence::Loaded => return Ok(()),
             NamePresence::NotLoaded => (),
             NamePresence::Mismatched => return Err(SingleLoadError::DuplicateField(field)),
@@ -1207,7 +1207,10 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         )
         .ok_or(SingleLoadError::TypeTooNarrow(field))?
         .map_err(SingleLoadError::Data)?;
-        self.dayperiod_symbols = OptionalNames::SingleLength((), field_length, payload);
+        self.dayperiod_symbols = OptionalNames::SingleLength {
+            variables: field_length,
+            payload
+        };
         Ok(())
     }
 
@@ -1234,7 +1237,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         };
         match self
             .weekday_symbols
-            .check_with_length(field_symbol, field_length)
+            .check_with_variables((field_symbol, field_length))
         {
             NamePresence::Loaded => return Ok(()),
             NamePresence::NotLoaded => (),
@@ -1265,12 +1268,12 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
             })
             .map_err(SingleLoadError::Data)?
             .payload;
-        self.weekday_symbols = OptionalNames::SingleLength(
-            field_symbol,
-            field_length,
-            R::WeekdayNames::maybe_from_payload(payload)
+        self.weekday_symbols = OptionalNames::SingleLength {
+            variables: (field_symbol,
+            field_length),
+            payload: R::WeekdayNames::maybe_from_payload(payload)
                 .ok_or(SingleLoadError::TypeTooNarrow(field))?,
-        );
+        };
         Ok(())
     }
 
@@ -1625,7 +1628,7 @@ impl<'data> DateSymbols<'data> for RawDateTimeNamesBorrowed<'data> {
         };
         let month_symbols = self
             .month_names
-            .get_with_length(field_symbol, field_length)
+            .get_with_variables((field_symbol, field_length))
             .ok_or(GetSymbolForMonthError::MissingNames(field))?;
         let Some((month_number, is_leap)) = code.parsed() else {
             return Err(GetSymbolForMonthError::Missing);
@@ -1688,7 +1691,7 @@ impl<'data> DateSymbols<'data> for RawDateTimeNamesBorrowed<'data> {
         };
         let weekday_symbols = self
             .weekday_names
-            .get_with_length(field_symbol, field_length)
+            .get_with_variables((field_symbol, field_length))
             .ok_or(GetSymbolForWeekdayError::MissingNames(field))?;
         weekday_symbols
             .symbols
@@ -1709,7 +1712,7 @@ impl<'data> DateSymbols<'data> for RawDateTimeNamesBorrowed<'data> {
         let field_length = field_length.numeric_to_abbr();
         let year_symbols = self
             .year_names
-            .get_with_length((), field_length)
+            .get_with_variables(field_length)
             .ok_or(GetSymbolForEraError::MissingNames(field))?;
         let YearNamesV1::Eras(era_symbols) = year_symbols else {
             return Err(GetSymbolForEraError::MissingNames(field));
@@ -1737,7 +1740,7 @@ impl<'data> TimeSymbols for RawDateTimeNamesBorrowed<'data> {
         let field_length = field_length.numeric_to_abbr();
         let dayperiod_symbols = self
             .dayperiod_names
-            .get_with_length((), field_length)
+            .get_with_variables(field_length)
             .ok_or(GetSymbolForDayPeriodError::MissingNames(field))?;
         let option_value: Option<&str> = match (field_symbol, u8::from(hour), is_top_of_hour) {
             (NoonMidnight, 00, true) => dayperiod_symbols
