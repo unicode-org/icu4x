@@ -12,7 +12,7 @@ use std::borrow::Cow;
 use std::collections::HashSet;
 use std::sync::OnceLock;
 
-fn load<M: DataMarker<Yokeable = ListFormatterPatternsV1<'static>>>(
+fn load<M: DataMarker<Yokeable = ListFormatterPatternsV2<'static>>>(
     selff: &DatagenProvider,
     req: DataRequest,
 ) -> Result<DataResponse<M>, DataError> {
@@ -25,19 +25,19 @@ fn load<M: DataMarker<Yokeable = ListFormatterPatternsV1<'static>>>(
 
     let data = &resource.main.value.list_patterns;
 
-    let (wide, short, narrow) = if M::INFO == AndListV1Marker::INFO {
+    let (wide, short, narrow) = if M::INFO == AndListV2Marker::INFO {
         (&data.standard, &data.standard_short, &data.standard_narrow)
-    } else if M::INFO == OrListV1Marker::INFO {
+    } else if M::INFO == OrListV2Marker::INFO {
         (&data.or, &data.or_short, &data.or_narrow)
-    } else if M::INFO == UnitListV1Marker::INFO {
+    } else if M::INFO == UnitListV2Marker::INFO {
         (&data.unit, &data.unit_short, &data.unit_narrow)
     } else {
         return Err(DataError::custom(
-            "Unknown marker for ListFormatterPatternsV1",
+            "Unknown marker for ListFormatterPatternsV2",
         ));
     };
 
-    let mut patterns = ListFormatterPatternsV1::try_new([
+    let mut patterns = ListFormatterPatternsV2::try_new([
         &wide.start,
         &wide.middle,
         &wide.end,
@@ -53,12 +53,13 @@ fn load<M: DataMarker<Yokeable = ListFormatterPatternsV1<'static>>>(
     ])?;
 
     if langid.language == language!("es") {
-        if M::INFO == AndListV1Marker::INFO || M::INFO == UnitListV1Marker::INFO {
+        if M::INFO == AndListV2Marker::INFO || M::INFO == UnitListV2Marker::INFO {
             static I_SOUND: OnceLock<SerdeDFA<'static>> = OnceLock::new();
 
             // Starts with i or (hi but not hia/hie)
             let i_sound = I_SOUND.get_or_init(|| {
-                SerdeDFA::new(Cow::Borrowed("i|hi([^ae]|$)")).expect("Valid regex")
+                SerdeDFA::new(Cow::Borrowed("^[iI]|(?:[hH][iI](?:[^aeAE]|$))"))
+                    .expect("Valid regex")
             });
 
             // Replace " y " with " e " before /i/ sounds.
@@ -66,13 +67,13 @@ fn load<M: DataMarker<Yokeable = ListFormatterPatternsV1<'static>>>(
             patterns
                 .make_conditional("{0} y {1}", i_sound, "{0} e {1}")
                 .expect("valid pattern");
-        } else if M::INFO == OrListV1Marker::INFO {
+        } else if M::INFO == OrListV2Marker::INFO {
             static O_SOUND: OnceLock<SerdeDFA<'static>> = OnceLock::new();
             // Starts with o, ho, 8 (including 80, 800, ...), or 11 either alone or followed
             // by thousand groups and/or decimals (excluding e.g. 110, 1100, ...)
             let o_sound = O_SOUND.get_or_init(|| {
                 SerdeDFA::new(Cow::Borrowed(
-                    r"o|ho|8|(11([\.  ]?[0-9]{3})*(,[0-9]*)?([^\.,[0-9]]|$))",
+                    r"^[oO]|[hH][oO]|8|(?:11(?:[\.  ]?[0-9]{3})*(?:,[0-9]*)?(?:[^\.,[0-9]]|$))",
                 ))
                 .expect("Valid regex")
             });
@@ -88,7 +89,7 @@ fn load<M: DataMarker<Yokeable = ListFormatterPatternsV1<'static>>>(
     if langid.language == language!("he") {
         // Cannot cache this because it depends on `selff`. However we don't expect many Hebrew locales.
         let non_hebrew = SerdeDFA::new(Cow::Owned(format!(
-            "[^{}]",
+            "^[^{}]",
             icu::properties::maps::load_script(selff)
                 .map_err(|e| DataError::custom("data for CodePointTrie of Script")
                     .with_display_context(&e))?
@@ -144,6 +145,6 @@ macro_rules! implement {
     };
 }
 
-implement!(AndListV1Marker);
-implement!(OrListV1Marker);
-implement!(UnitListV1Marker);
+implement!(AndListV2Marker);
+implement!(OrListV2Marker);
+implement!(UnitListV2Marker);

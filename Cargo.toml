@@ -244,7 +244,7 @@ num-bigint = { version = "0.4.3", default-features = false }
 num-rational = { version = "0.4.0", default-features = false }
 num-traits = { version = "0.2.0", default-features = false }
 postcard = { version = "1.0.1", default-features = false }
-regex-automata = { version = "0.2.0", default-features = false }
+regex-automata = { version = "0.4.7", default-features = false }
 ryu = { version = "1.0.5", default-features = false }
 serde = { version = "1.0.110", default-features = false }
 serde-json-core = { version = "0.4.0", default-features = false }

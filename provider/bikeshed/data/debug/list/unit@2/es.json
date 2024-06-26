@@ -15,7 +15,7 @@
       "index_1": 3
     },
     "special_case": {
-      "condition": "i|hi([^ae]|$)",
+      "condition": "^[iI]|(?:[hH][iI](?:[^aeAE]|$))",
       "pattern": {
         "string": " e ",
         "index_1": 3
@@ -32,21 +32,25 @@
     0
   ],
   [
-    2
-  ],
-  [
-    2
-  ],
-  [
-    0
-  ],
-  [
     0
   ],
   [
     2
   ],
+  {
+    "default": {
+      "string": " ",
+      "index_1": 1
+    },
+    "special_case": null
+  },
   [
-    2
+    8
+  ],
+  [
+    8
+  ],
+  [
+    8
   ]
 ]
