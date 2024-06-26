@@ -19,6 +19,7 @@ use crate::provider::calendar::{
 };
 #[cfg(feature = "experimental")]
 use crate::provider::neo::SimpleSubstitutionPattern;
+use crate::time_zone::TimeZoneDataPayloadsBorrowed;
 #[cfg(feature = "experimental")]
 use crate::{options::components, provider::calendar::DateSkeletonPatternsV1Marker};
 use icu_calendar::types::Era;
@@ -577,20 +578,12 @@ impl<'data> TimeSymbols for provider::calendar::TimeSymbolsV1<'data> {
     }
 }
 
-pub(crate) trait ZoneSymbols {
-    fn get_generic_short_for_zone(
-        &self,
-        metazone_id: MetazoneId,
-        time_zone_id: Option<TimeZoneBcp47Id>,
-    ) -> Result<&str, GetSymbolForTimeZoneError>;
+pub(crate) trait ZoneSymbols<'data> {
+    fn get_payloads(&self) -> TimeZoneDataPayloadsBorrowed<'data>;
 }
 
-impl ZoneSymbols for () {
-    fn get_generic_short_for_zone(
-        &self,
-        _: MetazoneId,
-        _: Option<TimeZoneBcp47Id>,
-    ) -> Result<&str, GetSymbolForTimeZoneError> {
-        Err(GetSymbolForTimeZoneError::TypeTooNarrow)
+impl<'data> ZoneSymbols<'data> for () {
+    fn get_payloads(&self) -> TimeZoneDataPayloadsBorrowed<'data> {
+        TimeZoneDataPayloadsBorrowed::empty()
     }
 }

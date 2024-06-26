@@ -17,6 +17,7 @@ use crate::provider::date_time::{
     DateSymbols, GetSymbolForEraError, GetSymbolForMonthError, GetSymbolForTimeZoneError,
     GetSymbolForWeekdayError, MonthPlaceholderValue, TimeSymbols, ZoneSymbols,
 };
+use crate::time_zone::{FormatTimeZone, FormatTimeZoneError, GenericNonLocationShortFormat};
 
 use core::fmt::{self, Write};
 use core::iter::Peekable;
@@ -207,7 +208,7 @@ where
     W: writeable::PartsWrite + ?Sized,
     DS: DateSymbols<'data>,
     TS: TimeSymbols,
-    ZS: ZoneSymbols,
+    ZS: ZoneSymbols<'data>,
 {
     try_write_pattern_items(
         pattern.metadata,
@@ -238,7 +239,7 @@ where
     W: writeable::PartsWrite + ?Sized,
     DS: DateSymbols<'data>,
     TS: TimeSymbols,
-    ZS: ZoneSymbols,
+    ZS: ZoneSymbols<'data>,
 {
     let mut r = Ok(());
     let mut iter = pattern_items.peekable();
@@ -778,7 +779,7 @@ where
 }
 
 // #[allow(clippy::too_many_arguments)]
-pub(crate) fn try_write_zone<W, ZS>(
+pub(crate) fn try_write_zone<'data, W, ZS>(
     field_symbol: fields::TimeZone,
     field_length: FieldLength,
     datetime: &ExtractedDateTimeInput,
@@ -788,7 +789,7 @@ pub(crate) fn try_write_zone<W, ZS>(
 ) -> Result<Result<(), DateTimeWriteError>, fmt::Error>
 where
     W: writeable::PartsWrite + ?Sized,
-    ZS: ZoneSymbols,
+    ZS: ZoneSymbols<'data>,
 {
     fn write_time_zone_missing(
         w: &mut (impl writeable::PartsWrite + ?Sized),
@@ -796,10 +797,10 @@ where
         w.with_part(Part::ERROR, |w| "{GMT+?}".write_to(w))
     }
 
-    fn try_write_time_zone_gmt(
+    fn try_write_time_zone_gmt<'data>(
         w: &mut (impl writeable::PartsWrite + ?Sized),
         _gmt_offset: Option<GmtOffset>,
-        zone_symbols: Option<&impl ZoneSymbols>,
+        zone_symbols: Option<&impl ZoneSymbols<'data>>,
         _graceful: bool,
     ) -> Result<Result<(), DateTimeWriteError>, fmt::Error> {
         #[allow(clippy::bind_instead_of_map)] // TODO: Use proper formatting logic here
@@ -828,15 +829,8 @@ where
             write_time_zone_missing(w)?;
             Err(DateTimeWriteError::MissingInputField("time_zone"))
         }
-        Some(CustomTimeZone {
-            #[cfg(feature = "experimental")]
-            gmt_offset,
-            metazone_id: Some(metazone_id),
-            time_zone_id,
-            ..
-        }) => match zone_symbols
+        Some(custom_time_zone) => match zone_symbols
             .ok_or(GetSymbolForTimeZoneError::MissingNames(field))
-            .and_then(|zs| zs.get_generic_short_for_zone(metazone_id, time_zone_id))
         {
             Err(e) => match e {
                 GetSymbolForTimeZoneError::TypeTooNarrow => {
@@ -845,7 +839,7 @@ where
                 }
                 #[cfg(feature = "experimental")]
                 GetSymbolForTimeZoneError::Missing => {
-                    try_write_time_zone_gmt(w, gmt_offset, zone_symbols, true)?
+                    try_write_time_zone_gmt(w, custom_time_zone.gmt_offset, zone_symbols, true)?
                         .map_err(|_| DateTimeWriteError::MissingNames(field))
                 }
                 GetSymbolForTimeZoneError::MissingNames(f) => {
@@ -853,7 +847,16 @@ where
                     Err(DateTimeWriteError::MissingNames(f))
                 }
             },
-            Ok(s) => Ok(w.write_str(s)?),
+            Ok(zs) => {
+                let payloads = zs.get_payloads();
+                let tz_formatter = GenericNonLocationShortFormat {};
+                tz_formatter.format(w, &custom_time_zone.into(), payloads)?
+                .map_err(|e| match e {
+                    FormatTimeZoneError::MissingInputField(s) => DateTimeWriteError::MissingInputField(s),
+                    FormatTimeZoneError::NameNotFound => DateTimeWriteError::MissingNames(field),
+                    FormatTimeZoneError::MissingZoneSymbols => DateTimeWriteError::MissingZoneSymbols,
+                })
+            },
         },
         Some(CustomTimeZone { gmt_offset, .. }) => {
             // Required time zone fields not present in input

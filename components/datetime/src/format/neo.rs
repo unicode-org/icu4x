@@ -24,9 +24,10 @@ use crate::provider::date_time::{
 };
 use crate::provider::neo::*;
 use crate::provider::time_zones::{
-    MetazoneGenericNamesShortV1, MetazoneGenericNamesShortV1Marker, TimeZoneFormatsV1,
-    TimeZoneFormatsV1Marker,
+    ExemplarCitiesV1, MetazoneGenericNamesShortV1, MetazoneGenericNamesShortV1Marker, TimeZoneFormatsV1, TimeZoneFormatsV1Marker,
+    MetazoneSpecificNamesLongV1, MetazoneGenericNamesLongV1, MetazoneSpecificNamesShortV1
 };
+use crate::time_zone::TimeZoneDataPayloadsBorrowed;
 use core::fmt;
 use core::marker::PhantomData;
 use icu_calendar::provider::WeekDataV2Marker;
@@ -37,10 +38,12 @@ use icu_decimal::options::FixedDecimalFormatterOptions;
 use icu_decimal::options::GroupingStrategy;
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_decimal::FixedDecimalFormatter;
+use icu_provider::marker::NeverMarker;
 use icu_provider::prelude::*;
 use icu_timezone::{MetazoneId, TimeZoneBcp47Id};
 use writeable::TryWriteable;
 use yoke::Yokeable;
+use icu_provider::DataPayloadOr;
 
 /// This can be extended in the future to support multiple lengths.
 /// For now, this type wraps a symbols object tagged with a single length. See #4337
@@ -241,8 +244,12 @@ pub trait DateTimeNamesMarker {
     type MonthNames: MaybePayload<MonthNamesV1<'static>> + fmt::Debug;
     type WeekdayNames: MaybePayload<LinearNamesV1<'static>> + fmt::Debug;
     type DayPeriodNames: MaybePayload<LinearNamesV1<'static>> + fmt::Debug;
-    type ZoneEssentials: MaybePayload<TimeZoneFormatsV1<'static>> + fmt::Debug;
-    type ZoneGenericShortNames: MaybePayload<MetazoneGenericNamesShortV1<'static>> + fmt::Debug;
+    type ZoneEssentials: DynamicDataMarker<Yokeable = TimeZoneFormatsV1<'static>>;
+    type ZoneExemplarCities: DynamicDataMarker<Yokeable = ExemplarCitiesV1<'static>>;
+    type ZoneGenericLong: DynamicDataMarker<Yokeable = MetazoneGenericNamesLongV1<'static>>;
+    type ZoneGenericShort: DynamicDataMarker<Yokeable = MetazoneGenericNamesShortV1<'static>>;
+    type ZoneSpecificLong: DynamicDataMarker<Yokeable = MetazoneSpecificNamesLongV1<'static>>;
+    type ZoneSpecificShort: DynamicDataMarker<Yokeable = MetazoneSpecificNamesShortV1<'static>>;
 }
 
 pub trait MaybePayload<Y: for<'a> Yokeable<'a>> {
@@ -321,8 +328,12 @@ impl DateTimeNamesMarker for DateMarker {
     type MonthNames = DataPayload<MonthNamesV1Marker>;
     type WeekdayNames = DataPayload<WeekdayNamesV1Marker>;
     type DayPeriodNames = ();
-    type ZoneEssentials = ();
-    type ZoneGenericShortNames = ();
+    type ZoneEssentials = NeverMarker<TimeZoneFormatsV1<'static>>;
+    type ZoneExemplarCities = NeverMarker<ExemplarCitiesV1<'static>>;
+    type ZoneGenericLong = NeverMarker<MetazoneGenericNamesLongV1<'static>>;
+    type ZoneGenericShort = NeverMarker<MetazoneGenericNamesShortV1<'static>>;
+    type ZoneSpecificLong = NeverMarker<MetazoneSpecificNamesLongV1<'static>>;
+    type ZoneSpecificShort = NeverMarker<MetazoneSpecificNamesShortV1<'static>>;
 }
 
 #[derive(Debug)]
@@ -333,8 +344,12 @@ impl DateTimeNamesMarker for TimeMarker {
     type MonthNames = ();
     type WeekdayNames = ();
     type DayPeriodNames = DataPayload<DayPeriodNamesV1Marker>;
-    type ZoneEssentials = ();
-    type ZoneGenericShortNames = ();
+    type ZoneEssentials = NeverMarker<TimeZoneFormatsV1<'static>>;
+    type ZoneExemplarCities = NeverMarker<ExemplarCitiesV1<'static>>;
+    type ZoneGenericLong = NeverMarker<MetazoneGenericNamesLongV1<'static>>;
+    type ZoneGenericShort = NeverMarker<MetazoneGenericNamesShortV1<'static>>;
+    type ZoneSpecificLong = NeverMarker<MetazoneSpecificNamesLongV1<'static>>;
+    type ZoneSpecificShort = NeverMarker<MetazoneSpecificNamesShortV1<'static>>;
 }
 
 #[derive(Debug)]
@@ -345,8 +360,12 @@ impl DateTimeNamesMarker for DateTimeMarker {
     type MonthNames = DataPayload<MonthNamesV1Marker>;
     type WeekdayNames = DataPayload<WeekdayNamesV1Marker>;
     type DayPeriodNames = DataPayload<DayPeriodNamesV1Marker>;
-    type ZoneEssentials = ();
-    type ZoneGenericShortNames = ();
+    type ZoneEssentials = NeverMarker<TimeZoneFormatsV1<'static>>;
+    type ZoneExemplarCities = NeverMarker<ExemplarCitiesV1<'static>>;
+    type ZoneGenericLong = NeverMarker<MetazoneGenericNamesLongV1<'static>>;
+    type ZoneGenericShort = NeverMarker<MetazoneGenericNamesShortV1<'static>>;
+    type ZoneSpecificLong = NeverMarker<MetazoneSpecificNamesLongV1<'static>>;
+    type ZoneSpecificShort = NeverMarker<MetazoneSpecificNamesShortV1<'static>>;
 }
 
 impl From<RawDateTimeNames<DateMarker>> for RawDateTimeNames<DateTimeMarker> {
@@ -356,8 +375,12 @@ impl From<RawDateTimeNames<DateMarker>> for RawDateTimeNames<DateTimeMarker> {
             month_symbols: other.month_symbols,
             weekday_symbols: other.weekday_symbols,
             dayperiod_symbols: OptionalNames::None,
-            zone_essentials: OptionalNames::None,
-            zone_generic_short_names: OptionalNames::None,
+            zone_essentials: DataPayloadOr::none(),
+            exemplar_cities: DataPayloadOr::none(),
+            mz_generic_long: DataPayloadOr::none(),
+            mz_generic_short: DataPayloadOr::none(),
+            mz_specific_long: DataPayloadOr::none(),
+            mz_specific_short: DataPayloadOr::none(),
             fixed_decimal_formatter: other.fixed_decimal_formatter,
             week_calculator: other.week_calculator,
             _marker: PhantomData,
@@ -372,8 +395,12 @@ impl From<RawDateTimeNames<TimeMarker>> for RawDateTimeNames<DateTimeMarker> {
             month_symbols: OptionalNames::None,
             weekday_symbols: OptionalNames::None,
             dayperiod_symbols: other.dayperiod_symbols,
-            zone_essentials: OptionalNames::None,
-            zone_generic_short_names: OptionalNames::None,
+            zone_essentials: DataPayloadOr::none(),
+            exemplar_cities: DataPayloadOr::none(),
+            mz_generic_long: DataPayloadOr::none(),
+            mz_generic_short: DataPayloadOr::none(),
+            mz_specific_long: DataPayloadOr::none(),
+            mz_specific_short: DataPayloadOr::none(),
             fixed_decimal_formatter: other.fixed_decimal_formatter,
             week_calculator: other.week_calculator,
             _marker: PhantomData,
@@ -381,18 +408,43 @@ impl From<RawDateTimeNames<TimeMarker>> for RawDateTimeNames<DateTimeMarker> {
     }
 }
 
-#[derive(Debug)]
 pub(crate) struct RawDateTimeNames<R: DateTimeNamesMarker> {
     year_symbols: OptionalNames<(), R::YearNames>,
     month_symbols: OptionalNames<fields::Month, R::MonthNames>,
     weekday_symbols: OptionalNames<fields::Weekday, R::WeekdayNames>,
     dayperiod_symbols: OptionalNames<(), R::DayPeriodNames>,
-    zone_essentials: OptionalNames<(), R::ZoneEssentials>,
-    zone_generic_short_names: OptionalNames<(), R::ZoneGenericShortNames>,
+    // Time zone data keys are unique by field and length,
+    // so we can use DataPayloadOr instead of OptionalNames
+    zone_essentials: DataPayloadOr<R::ZoneEssentials, ()>,
+    exemplar_cities: DataPayloadOr<R::ZoneExemplarCities, ()>,
+    mz_generic_long: DataPayloadOr<R::ZoneGenericLong, ()>,
+    mz_generic_short: DataPayloadOr<R::ZoneGenericShort, ()>,
+    mz_specific_long: DataPayloadOr<R::ZoneSpecificLong, ()>,
+    mz_specific_short: DataPayloadOr<R::ZoneSpecificShort, ()>,
     // TODO(#4340): Make the FixedDecimalFormatter optional
     fixed_decimal_formatter: Option<FixedDecimalFormatter>,
     week_calculator: Option<WeekCalculator>,
     _marker: PhantomData<R>,
+}
+
+// Need a custom impl because not all of the associated types impl Debug
+impl<R: DateTimeNamesMarker> fmt::Debug for RawDateTimeNames<R> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("RawDateTimeNames")
+        .field("year_symbols", &self.year_symbols)
+        .field("month_symbols", &self.month_symbols)
+        .field("weekday_symbols", &self.weekday_symbols)
+        .field("dayperiod_symbols", &self.dayperiod_symbols)
+        .field("zone_essentials", &self.zone_essentials)
+        .field("exemplar_cities", &self.exemplar_cities)
+        .field("mz_generic_long", &self.mz_generic_long)
+        .field("mz_generic_short", &self.mz_generic_short)
+        .field("mz_specific_long", &self.mz_specific_long)
+        .field("mz_specific_short", &self.mz_specific_short)
+        .field("fixed_decimal_formatter", &self.fixed_decimal_formatter)
+        .field("week_calculator", &self.week_calculator)
+        .finish()
+    }
 }
 
 #[derive(Debug, Copy, Clone)]
@@ -401,9 +453,12 @@ pub(crate) struct RawDateTimeNamesBorrowed<'l> {
     month_names: OptionalNames<fields::Month, &'l MonthNamesV1<'l>>,
     weekday_names: OptionalNames<fields::Weekday, &'l LinearNamesV1<'l>>,
     dayperiod_names: OptionalNames<(), &'l LinearNamesV1<'l>>,
-    // TODO: Do something with zone_essentials
-    _zone_essentials: OptionalNames<(), &'l TimeZoneFormatsV1<'l>>,
-    zone_generic_short_names: OptionalNames<(), &'l MetazoneGenericNamesShortV1<'l>>,
+    zone_essentials: Option<&'l TimeZoneFormatsV1<'l>>,
+    exemplar_cities: Option<&'l ExemplarCitiesV1<'l>>,
+    mz_generic_long: Option<&'l MetazoneGenericNamesLongV1<'l>>,
+    mz_generic_short: Option<&'l MetazoneGenericNamesShortV1<'l>>,
+    mz_specific_long: Option<&'l MetazoneSpecificNamesLongV1<'l>>,
+    mz_specific_short: Option<&'l MetazoneSpecificNamesShortV1<'l>>,
     pub(crate) fixed_decimal_formatter: Option<&'l FixedDecimalFormatter>,
     pub(crate) week_calculator: Option<&'l WeekCalculator>,
 }
@@ -982,8 +1037,12 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
             month_symbols: OptionalNames::None,
             weekday_symbols: OptionalNames::None,
             dayperiod_symbols: OptionalNames::None,
-            zone_essentials: OptionalNames::None,
-            zone_generic_short_names: OptionalNames::None,
+            zone_essentials: DataPayloadOr::none(),
+            exemplar_cities: DataPayloadOr::none(),
+            mz_generic_long: DataPayloadOr::none(),
+            mz_generic_short: DataPayloadOr::none(),
+            mz_specific_long: DataPayloadOr::none(),
+            mz_specific_short: DataPayloadOr::none(),
             fixed_decimal_formatter: None,
             week_calculator: None,
             _marker: PhantomData,
@@ -996,8 +1055,12 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
             month_names: self.month_symbols.as_borrowed(),
             weekday_names: self.weekday_symbols.as_borrowed(),
             dayperiod_names: self.dayperiod_symbols.as_borrowed(),
-            _zone_essentials: self.zone_essentials.as_borrowed(),
-            zone_generic_short_names: self.zone_generic_short_names.as_borrowed(),
+            zone_essentials: self.zone_essentials.get_option(),
+            exemplar_cities: self.exemplar_cities.get_option(),
+            mz_generic_long: self.mz_generic_long.get_option(),
+            mz_generic_short: self.mz_generic_short.get_option(),
+            mz_specific_long: self.mz_specific_long.get_option(),
+            mz_specific_short: self.mz_specific_short.get_option(),
             fixed_decimal_formatter: self.fixed_decimal_formatter.as_ref(),
             week_calculator: self.week_calculator.as_ref(),
         }
@@ -1217,31 +1280,15 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         locale: &DataLocale,
     ) -> Result<(), SingleLoadError>
     where
-        P: BoundDataProvider<MetazoneGenericNamesShortV1Marker> + ?Sized,
+        P: BoundDataProvider<R::ZoneGenericShort> + ?Sized,
     {
-        let field = fields::Field {
-            symbol: FieldSymbol::TimeZone(fields::TimeZone::LowerV),
-            length: IGNORED_FIELD_LENGTH,
-        };
-        match self
-            .zone_generic_short_names
-            .check_with_length((), IGNORED_FIELD_LENGTH)
-        {
-            NamePresence::Loaded => return Ok(()),
-            NamePresence::NotLoaded => (),
-            NamePresence::Mismatched => return Err(SingleLoadError::DuplicateField(field)),
-        };
-        let payload = R::ZoneGenericShortNames::load_from(
-            provider,
-            DataRequest {
-                locale,
-                ..Default::default()
-            },
-        )
-        .ok_or(SingleLoadError::TypeTooNarrow(field))?
-        .map_err(SingleLoadError::Data)?;
-        self.zone_generic_short_names =
-            OptionalNames::SingleLength((), IGNORED_FIELD_LENGTH, payload);
+        if self.mz_generic_short.is_payload() {
+            return Ok(());
+        }
+        let payload = provider.load_bound(DataRequest { locale, ..Default::default() })
+        .map_err(SingleLoadError::Data)?
+        .payload;
+        self.mz_generic_short = DataPayloadOr::from_payload(payload);
         Ok(())
     }
 
@@ -1287,7 +1334,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         weekday_provider: &(impl BoundDataProvider<WeekdayNamesV1Marker> + ?Sized),
         dayperiod_provider: &(impl BoundDataProvider<DayPeriodNamesV1Marker> + ?Sized),
         _zone_essentials_provider: &(impl BoundDataProvider<TimeZoneFormatsV1Marker> + ?Sized),
-        zone_genericshort_provider: &(impl BoundDataProvider<MetazoneGenericNamesShortV1Marker>
+        zone_genericshort_provider: &(impl BoundDataProvider<R::ZoneGenericShort>
               + ?Sized),
         fixed_decimal_formatter_loader: Option<&impl FixedDecimalFormatterLoader>,
         week_calculator_loader: Option<&impl WeekCalculatorLoader>,
@@ -1704,24 +1751,16 @@ impl<'data> TimeSymbols for RawDateTimeNamesBorrowed<'data> {
     }
 }
 
-impl<'data> ZoneSymbols for RawDateTimeNamesBorrowed<'data> {
-    fn get_generic_short_for_zone(
-        &self,
-        metazone_id: MetazoneId,
-        time_zone_id: Option<TimeZoneBcp47Id>,
-    ) -> Result<&str, GetSymbolForTimeZoneError> {
-        let field = fields::Field {
-            symbol: FieldSymbol::TimeZone(fields::TimeZone::LowerV),
-            length: IGNORED_FIELD_LENGTH,
-        };
-        let data = self
-            .zone_generic_short_names
-            .get_with_length((), IGNORED_FIELD_LENGTH)
-            .ok_or(GetSymbolForTimeZoneError::MissingNames(field))?;
-        time_zone_id
-            .and_then(|time_zone_id| data.overrides.get(&time_zone_id))
-            .or_else(|| data.defaults.get(&metazone_id))
-            .ok_or(GetSymbolForTimeZoneError::Missing)
+impl<'data> ZoneSymbols<'data> for RawDateTimeNamesBorrowed<'data> {
+    fn get_payloads(&self) -> crate::time_zone::TimeZoneDataPayloadsBorrowed<'data> {
+        TimeZoneDataPayloadsBorrowed {
+            zone_formats: self.zone_essentials.as_ref().copied(),
+            exemplar_cities: self.exemplar_cities.as_ref().copied(),
+            mz_generic_long: self.mz_generic_long.as_ref().copied(),
+            mz_generic_short: self.mz_generic_short.as_ref().copied(),
+            mz_specific_long: self.mz_specific_long.as_ref().copied(),
+            mz_specific_short: self.mz_specific_short.as_ref().copied(),
+        }
     }
 }
 
