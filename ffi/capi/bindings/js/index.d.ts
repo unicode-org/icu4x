@@ -49,6 +49,7 @@ export { ICU4XFixedDecimalGroupingStrategy } from './ICU4XFixedDecimalGroupingSt
 export { ICU4XFixedDecimalLimitError } from './ICU4XFixedDecimalLimitError';
 export { ICU4XFixedDecimalParseError } from './ICU4XFixedDecimalParseError';
 export { ICU4XFixedDecimalRoundingIncrement } from './ICU4XFixedDecimalRoundingIncrement';
+export { ICU4XFixedDecimalRoundingMode } from './ICU4XFixedDecimalRoundingMode';
 export { ICU4XFixedDecimalSign } from './ICU4XFixedDecimalSign';
 export { ICU4XFixedDecimalSignDisplay } from './ICU4XFixedDecimalSignDisplay';
 export { ICU4XGeneralCategoryNameToMaskMapper } from './ICU4XGeneralCategoryNameToMaskMapper';
