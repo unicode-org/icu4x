@@ -93,7 +93,6 @@ where
                     datetime,
                     date_symbols,
                     time_symbols,
-                    None::<()>.as_ref(),
                     week_data,
                     fixed_decimal_format,
                     w,

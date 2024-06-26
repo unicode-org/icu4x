@@ -26,7 +26,6 @@ where
     /// ```
     /// use icu_locale::LanguageIdentifier;
     /// use icu_locale::{langid, subtags::language};
-    /// use icu_provider::datagen::*;
     /// use icu_provider::hello_world::*;
     /// use icu_provider::prelude::*;
     /// use icu_provider_adapters::filter::Filterable;

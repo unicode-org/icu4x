@@ -4,8 +4,8 @@
 
 use crate::DatagenProvider;
 use icu_datagen::prelude::*;
-use icu_provider::datagen::*;
 use icu_provider::dynutil::UpcastDataPayload;
+use icu_provider::export::*;
 use icu_provider::prelude::*;
 use std::alloc::{GlobalAlloc, Layout, System};
 use std::cell::Cell;
@@ -161,7 +161,7 @@ impl DataExporter for ZeroCopyCheckExporter {
 
         if deallocated != allocated {
             if !EXPECTED_VIOLATIONS.contains(&marker) {
-                eprintln!("Zerocopy violation {marker} {locale}: {allocated}B allocated, {deallocated}B deallocated");
+                eprintln!("Zerocopy violation {marker:?} {locale}: {allocated}B allocated, {deallocated}B deallocated");
             }
             self.zero_copy_violations
                 .lock()
@@ -169,7 +169,7 @@ impl DataExporter for ZeroCopyCheckExporter {
                 .insert(marker);
         } else if allocated > 0 {
             if !EXPECTED_TRANSIENT_VIOLATIONS.contains(&marker) {
-                eprintln!("Transient zerocopy violation {marker} {locale}: {allocated}B allocated/deallocated");
+                eprintln!("Transient zerocopy violation {marker:?} {locale}: {allocated}B allocated/deallocated");
             }
             self.zero_copy_transient_violations
                 .lock()

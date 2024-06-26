@@ -19,14 +19,14 @@ const _: () = {
 
 #[test]
 fn iter() {
-    use icu_provider::datagen::IterableDataProvider;
     use icu_provider::hello_world::HelloWorldProvider;
+    use icu_provider::prelude::*;
+
     assert_eq!(Baked.iter_requests(), HelloWorldProvider.iter_requests(),)
 }
 
 #[test]
 fn load() {
-    use icu_provider::datagen::IterableDataProvider;
     use icu_provider::hello_world::HelloWorldProvider;
     use icu_provider::prelude::*;
 

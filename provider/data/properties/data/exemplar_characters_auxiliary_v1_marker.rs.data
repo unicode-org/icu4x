@@ -987,7 +987,7 @@ macro_rules! __impl_exemplar_characters_auxiliary_v1_marker {
     ($ provider : ty , ITER) => {
         __impl_exemplar_characters_auxiliary_v1_marker!($provider);
         #[clippy::msrv = "1.70"]
-        impl icu_provider::datagen::IterableDataProvider<icu::properties::provider::ExemplarCharactersAuxiliaryV1Marker> for $provider {
+        impl icu_provider::IterableDataProvider<icu::properties::provider::ExemplarCharactersAuxiliaryV1Marker> for $provider {
             fn iter_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataMarkerAttributes)>, icu_provider::DataError> {
                 Ok(icu_provider_baked::DataStore::iter(&Self::DATA_EXEMPLAR_CHARACTERS_AUXILIARY_V1_MARKER).collect())
             }

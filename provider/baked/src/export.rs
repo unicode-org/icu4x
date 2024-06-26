@@ -92,7 +92,7 @@
 use databake::*;
 use heck::ToShoutySnakeCase;
 use heck::ToSnakeCase;
-use icu_provider::datagen::*;
+use icu_provider::export::*;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 use std::collections::{BTreeMap, BTreeSet, HashMap};
@@ -422,7 +422,7 @@ impl DataExporter for BakedExporter {
             }
         }, quote! {
             #maybe_msrv
-            impl icu_provider::datagen::IterableDataProvider<#marker_bake> for $provider {
+            impl icu_provider::IterableDataProvider<#marker_bake> for $provider {
                 fn iter_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataMarkerAttributes)>, icu_provider::DataError> {
                     Ok(HashSet::from_iter([Default::default()]))
                 }
@@ -458,7 +458,7 @@ impl DataExporter for BakedExporter {
                 },
                 quote! {
                     #maybe_msrv
-                    impl icu_provider::datagen::IterableDataProvider<#marker_bake> for $provider {
+                    impl icu_provider::IterableDataProvider<#marker_bake> for $provider {
                         fn iter_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataMarkerAttributes)>, icu_provider::DataError> {
                             Ok(Default::default())
                         }
@@ -575,7 +575,7 @@ impl DataExporter for BakedExporter {
                 },
                 quote! {
                     #maybe_msrv
-                    impl icu_provider::datagen::IterableDataProvider<#marker_bake> for $provider {
+                    impl icu_provider::IterableDataProvider<#marker_bake> for $provider {
                         fn iter_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataMarkerAttributes)>, icu_provider::DataError> {
                             Ok(icu_provider_baked::DataStore::iter(&Self::#data_ident).collect())
                         }
@@ -677,12 +677,12 @@ impl DataExporter for BakedExporter {
 macro_rules! cb {
     ($($marker:path = $path:literal,)+ #[experimental] $($emarker:path = $epath:literal,)+) => {
         fn bake_marker(marker: DataMarkerInfo) -> databake::TokenStream {
-            if *marker.path == *icu_provider::hello_world::HelloWorldV1Marker::INFO.path {
+            if marker.path.as_str() == icu_provider::hello_world::HelloWorldV1Marker::INFO.path.as_str() {
                 return databake::quote!(icu_provider::hello_world::HelloWorldV1Marker);
             }
 
             $(
-                if *marker.path == *$path {
+                if marker.path.as_str() == $path {
                     return stringify!($marker)
                         .replace("icu :: ", "icu_")
                         .parse()
@@ -691,7 +691,7 @@ macro_rules! cb {
             )+
 
             $(
-                if *marker.path == *$epath {
+                if marker.path.as_str() == $epath {
                     return stringify!($emarker)
                         .replace("icu :: ", "icu_")
                         .parse()

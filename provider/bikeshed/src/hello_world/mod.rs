@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::DatagenProvider;
-use icu_provider::datagen::*;
 use icu_provider::hello_world::*;
 use icu_provider::prelude::*;
 use std::collections::HashSet;

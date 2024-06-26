@@ -10,7 +10,7 @@ use std::collections::HashSet;
 
 use icu_datagen::prelude::*;
 use icu_datagen::FallbackOptions;
-use icu_provider::datagen::*;
+use icu_provider::export::*;
 use icu_provider::hello_world::*;
 use icu_provider::prelude::*;
 use testutil::TestingExporter;

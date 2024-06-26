@@ -132,7 +132,6 @@ impl crate::IterableDataProviderCached<TransliteratorRulesV1Marker> for DatagenP
     fn iter_requests_cached(
         &self,
     ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
-        use icu_provider::datagen::IterableDataProvider;
         self.cldr()?
             .transforms()?
             .lock()

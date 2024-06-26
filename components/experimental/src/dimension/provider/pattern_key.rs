@@ -68,41 +68,42 @@ pub enum PatternKey {
 #[derive(Copy, Clone, PartialOrd, Ord, PartialEq, Eq, Debug)]
 pub struct PatternKeyULE(u8);
 
+// Safety (based on the safety checklist on the ULE trait):
+//  1. PatternKeyULE does not include any uninitialized or padding bytes.
+//     (achieved by `#[repr(transparent)]` on a ULE type)
+//  2. PatternKeyULE is aligned to 1 byte.
+//     (achieved by `#[repr(transparent)]` on a ULE type)
+//  3. The impl of validate_byte_slice() returns an error if any byte is not valid.
+//  4. The impl of validate_byte_slice() returns an error if there are extra bytes.
+//  5. The other ULE methods use the default impl.
+//  6. PatternKeyULE byte equality is semantic equality.
 unsafe impl ULE for PatternKeyULE {
     fn validate_byte_slice(bytes: &[u8]) -> Result<(), zerovec::ZeroVecError> {
-        if bytes.len() == 0 {
-            return Ok(());
-        }
-        
-        if bytes.len() != 1 {
-            return Err(ZeroVecError::length::<Self>(bytes.len()));
-        }
-
-        let byte = &bytes[0];
-
-        // Ensure the first two bits (b7 & b6) are not 11.
-        if (byte & 0b1100_0000) == 0b1100_0000 {
-            return Err(ZeroVecError::VarZeroVecFormatError);
-        }
-
-        // For the `Power` variant:
-        //      b5 & b4 must be 10 or 11. (this means that b5 must be 1)
-        //      b3 must be 0.
-        //      When b2 is 1, b1 must be 0.
-        if (byte & 0b1100_0000) == 0b1000_0000 {
-            // b5 must be 1
-            if (byte & 0b0010_0000) == 0 {
-                return Err(ZeroVecError::VarZeroVecFormatError);
+        for &byte in bytes.iter() {
+            // Ensure the first two bits (b7 & b6) are not 11.
+            if (byte & 0b1100_0000) == 0b1100_0000 {
+                return Err(ZeroVecError::parse::<Self>());
             }
 
-            // b3 must be 0
-            if (byte & 0b0000_1000) != 0 {
-                return Err(ZeroVecError::VarZeroVecFormatError);
-            }
+            // For the `Power` variant:
+            //      b5 & b4 must be 10 or 11. (this means that b5 must be 1)
+            //      b3 must be 0.
+            //      When b2 is 1, b1 must be 0.
+            if (byte & 0b1100_0000) == 0b1000_0000 {
+                // b5 must be 1
+                if (byte & 0b0010_0000) == 0 {
+                    return Err(ZeroVecError::parse::<Self>());
+                }
 
-            // If b2 is 1, b1 must be 0
-            if (byte & 0b0000_0100) != 0 && (byte & 0b0000_0010) != 0 {
-                return Err(ZeroVecError::VarZeroVecFormatError);
+                // b3 must be 0
+                if (byte & 0b0000_1000) != 0 {
+                    return Err(ZeroVecError::parse::<Self>());
+                }
+
+                // If b2 is 1, b1 must be 0
+                if (byte & 0b0000_0100) != 0 && (byte & 0b0000_0010) != 0 {
+                    return Err(ZeroVecError::parse::<Self>());
+                }
             }
         }
 
@@ -117,9 +118,9 @@ impl AsULE for PatternKey {
         let byte = match self {
             PatternKey::Binary(value) => value,
             PatternKey::Decimal(value) => {
-                // TODO: shall I check the limits of the values?
                 let sign = if value < 0 { 0b0010_0000 } else { 0 };
-                (0b01 << 6) + sign + (value as u8)
+                debug_assert!(value > -32 && value < 32);
+                (0b01 << 6) | sign | (value as u8 & 0b0001_1111)
             }
             PatternKey::Power(power, count) => {
                 let power_bits = {
@@ -129,7 +130,7 @@ impl AsULE for PatternKey {
                     }
                 };
                 // Combine the bits to form the final byte
-                (0b10 << 6) + power_bits + count as u8
+                (0b10 << 6) | power_bits | count as u8
             }
         };
 
@@ -205,4 +206,17 @@ fn test_pattern_key_ule() {
 
     let power3 = PatternKey::from_unaligned(power3_ule);
     assert_eq!(power3, PatternKey::Power(Three, CompoundCount::Two));
+
+    // Test unvalidated bytes
+    let unvalidated_bytes = [0b1100_0000];
+    assert_eq!(
+        PatternKeyULE::validate_byte_slice(&unvalidated_bytes),
+        Err(ZeroVecError::parse::<PatternKeyULE>())
+    );
+
+    let unvalidated_bytes = [0b1000_0000];
+    assert_eq!(
+        PatternKeyULE::validate_byte_slice(&unvalidated_bytes),
+        Err(ZeroVecError::parse::<PatternKeyULE>())
+    );
 }

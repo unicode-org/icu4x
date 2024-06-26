@@ -364,10 +364,10 @@ macro_rules! cb {
             use icu_provider::prelude::*;
 
             $(
-                assert_eq!(<$marker>::INFO.path.get(), $path);
+                assert_eq!(<$marker>::INFO.path.as_str(), $path);
             )+
             $(
-                assert_eq!(<$emarker>::INFO.path.get(), $epath);
+                assert_eq!(<$emarker>::INFO.path.as_str(), $epath);
             )+
         }
     }

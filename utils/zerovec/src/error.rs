@@ -10,11 +10,24 @@ use core::fmt;
 #[non_exhaustive]
 pub enum ZeroVecError {
     /// Attempted to parse a buffer into a slice of the given ULE type but its
-    /// length was not compatible
+    /// length was not compatible.
+    ///
+    /// Typically created by a [`ULE`] impl via [`ZeroVecError::length()`].
+    ///
+    /// [`ULE`]: crate::ule::ULE
     InvalidLength { ty: &'static str, len: usize },
-    /// The byte sequence provided for `ty` failed to parse correctly
+    /// The byte sequence provided for `ty` failed to parse correctly in the
+    /// given ULE type.
+    ///
+    /// Typically created by a [`ULE`] impl via [`ZeroVecError::parse()`].
+    ///
+    /// [`ULE`]: crate::ule::ULE
     ParseError { ty: &'static str },
-    /// The byte buffer was not in the appropriate format for VarZeroVec
+    /// The byte buffer was not in the appropriate format for VarZeroVec.
+    ///
+    /// [`ULE`] impls should not return errors of this variant.
+    ///
+    /// [`ULE`]: crate::ule::ULE
     VarZeroVecFormatError,
 }
 
