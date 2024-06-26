@@ -20,7 +20,7 @@ lib/index.mjs:
 	rustup component add rust-src --toolchain ${PINNED_CI_NIGHTLY}
 	RUSTFLAGS="-Cpanic=abort -Copt-level=s -C link-args=-zstack-size=${WASM_STACK_SIZE} -Clto -Cembed-bitcode" \
 	cargo +${PINNED_CI_NIGHTLY} rustc \
-		-Z build-std=std -Z build-std-features=panic_immediate_abort \
+		-Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort \
 		--target wasm32-unknown-unknown \
 		--release \
 		-p icu_capi \
