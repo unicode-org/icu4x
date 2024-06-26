@@ -79,35 +79,31 @@ pub struct PatternKeyULE(u8);
 //  6. PatternKeyULE byte equality is semantic equality.
 unsafe impl ULE for PatternKeyULE {
     fn validate_byte_slice(bytes: &[u8]) -> Result<(), zerovec::ZeroVecError> {
-        if bytes.len() != 1 {
-            return Err(ZeroVecError::length::<Self>(bytes.len()));
-        }
-
-        let byte = &bytes[0];
-
-        // Ensure the first two bits (b7 & b6) are not 11.
-        if (byte & 0b1100_0000) == 0b1100_0000 {
-            return Err(ZeroVecError::parse::<Self>());
-        }
-
-        // For the `Power` variant:
-        //      b5 & b4 must be 10 or 11. (this means that b5 must be 1)
-        //      b3 must be 0.
-        //      When b2 is 1, b1 must be 0.
-        if (byte & 0b1100_0000) == 0b1000_0000 {
-            // b5 must be 1
-            if (byte & 0b0010_0000) == 0 {
+        for &byte in bytes.iter() {
+            // Ensure the first two bits (b7 & b6) are not 11.
+            if (byte & 0b1100_0000) == 0b1100_0000 {
                 return Err(ZeroVecError::parse::<Self>());
             }
 
-            // b3 must be 0
-            if (byte & 0b0000_1000) != 0 {
-                return Err(ZeroVecError::parse::<Self>());
-            }
+            // For the `Power` variant:
+            //      b5 & b4 must be 10 or 11. (this means that b5 must be 1)
+            //      b3 must be 0.
+            //      When b2 is 1, b1 must be 0.
+            if (byte & 0b1100_0000) == 0b1000_0000 {
+                // b5 must be 1
+                if (byte & 0b0010_0000) == 0 {
+                    return Err(ZeroVecError::parse::<Self>());
+                }
 
-            // If b2 is 1, b1 must be 0
-            if (byte & 0b0000_0100) != 0 && (byte & 0b0000_0010) != 0 {
-                return Err(ZeroVecError::parse::<Self>());
+                // b3 must be 0
+                if (byte & 0b0000_1000) != 0 {
+                    return Err(ZeroVecError::parse::<Self>());
+                }
+
+                // If b2 is 1, b1 must be 0
+                if (byte & 0b0000_0100) != 0 && (byte & 0b0000_0010) != 0 {
+                    return Err(ZeroVecError::parse::<Self>());
+                }
             }
         }
 
