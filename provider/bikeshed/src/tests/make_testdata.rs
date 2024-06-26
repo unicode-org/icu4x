@@ -4,8 +4,8 @@
 
 use crate::DatagenProvider;
 use icu_datagen::prelude::*;
-use icu_provider::datagen::*;
 use icu_provider::dynutil::UpcastDataPayload;
+use icu_provider::export::*;
 use icu_provider::prelude::*;
 use std::alloc::{GlobalAlloc, Layout, System};
 use std::cell::Cell;
@@ -53,18 +53,19 @@ fn make_testdata() {
         ]))
     };
 
-    DatagenDriver::new()
-        .with_markers(icu_datagen::all_markers())
-        .with_locales_and_fallback(
-            LOCALES.iter().cloned().map(LocaleFamily::with_descendants),
-            FallbackOptions::no_deduplication(),
-        )
-        .with_segmenter_models([
-            "thaidict".into(),
-            "Thai_codepoints_exclusive_model4_heavy".into(),
-        ])
-        .export(&DatagenProvider::new_testing(), exporter)
-        .unwrap()
+    let provider = DatagenProvider::new_testing();
+
+    DatagenDriver::new(
+        LOCALES.iter().cloned().map(LocaleFamily::with_descendants),
+        FallbackOptions::no_deduplication(),
+        LocaleFallbacker::try_new_unstable(&provider).unwrap(),
+    )
+    .with_segmenter_models([
+        "thaidict".into(),
+        "Thai_codepoints_exclusive_model4_heavy".into(),
+    ])
+    .export(&provider, exporter)
+    .unwrap()
 }
 
 struct ZeroCopyCheckExporter {
@@ -89,9 +90,9 @@ const EXPECTED_TRANSIENT_VIOLATIONS: &[DataMarkerInfo] = &[
     // Regex DFAs need to be validated, which involved creating a BTreeMap.
     // If required we could avoid this using one of the approaches in
     // https://github.com/unicode-org/icu4x/pulls/3697.
-    icu::list::provider::AndListV1Marker::INFO,
-    icu::list::provider::OrListV1Marker::INFO,
-    icu::list::provider::UnitListV1Marker::INFO,
+    icu::list::provider::AndListV2Marker::INFO,
+    icu::list::provider::OrListV2Marker::INFO,
+    icu::list::provider::UnitListV2Marker::INFO,
 ];
 
 impl DataExporter for ZeroCopyCheckExporter {
@@ -160,7 +161,7 @@ impl DataExporter for ZeroCopyCheckExporter {
 
         if deallocated != allocated {
             if !EXPECTED_VIOLATIONS.contains(&marker) {
-                eprintln!("Zerocopy violation {marker} {locale}: {allocated}B allocated, {deallocated}B deallocated");
+                eprintln!("Zerocopy violation {marker:?} {locale}: {allocated}B allocated, {deallocated}B deallocated");
             }
             self.zero_copy_violations
                 .lock()
@@ -168,7 +169,7 @@ impl DataExporter for ZeroCopyCheckExporter {
                 .insert(marker);
         } else if allocated > 0 {
             if !EXPECTED_TRANSIENT_VIOLATIONS.contains(&marker) {
-                eprintln!("Transient zerocopy violation {marker} {locale}: {allocated}B allocated/deallocated");
+                eprintln!("Transient zerocopy violation {marker:?} {locale}: {allocated}B allocated/deallocated");
             }
             self.zero_copy_transient_violations
                 .lock()

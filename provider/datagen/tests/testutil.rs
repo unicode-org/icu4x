@@ -6,7 +6,7 @@ use std::collections::BTreeMap;
 
 use elsa::sync::FrozenMap;
 use icu_datagen::prelude::*;
-use icu_provider::datagen::ExportMarker;
+use icu_provider::export::ExportMarker;
 use icu_provider::prelude::*;
 use postcard::ser_flavors::{AllocVec, Flavor};
 
@@ -29,7 +29,7 @@ impl DataExporter for &mut TestingExporter {
             .output
             .finalize()
             .expect("Failed to finalize serializer output");
-        println!("Putting: {marker}/{}/{locale}", marker_attributes as &str);
+        println!("Putting: {marker:?}/{}/{locale}", marker_attributes as &str);
         self.0
             .insert((locale.clone(), marker_attributes.clone()), output);
         Ok(())

@@ -72,11 +72,11 @@ where
 {
     // Check that each item is in the trie
     for (k, v) in items.iter() {
-        assert_eq!(trie.get(k), Some(*v));
+        assert_eq!(trie.get(k), Some(*v), "{k:?}");
     }
     // Check that some items are not in the trie
     for s in NON_EXISTENT_STRINGS.iter() {
-        assert_eq!(trie.get(s.as_bytes()), None);
+        assert_eq!(trie.get(s.as_bytes()), None, "{s:?}");
     }
     // Check that the iterator returns the contents of the LiteMap
     // Note: Since the items might not be in order, we collect them into a new LiteMap

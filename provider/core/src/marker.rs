@@ -4,12 +4,8 @@
 
 use crate::fallback::LocaleFallbackConfig;
 use crate::{DataError, DataErrorKind, DataProvider, DataProviderWithMarker};
-use alloc::borrow::Cow;
 use core::fmt;
-use core::fmt::Write;
 use core::marker::PhantomData;
-use core::ops::Deref;
-use writeable::{LengthHint, Writeable};
 use yoke::Yokeable;
 use zerovec::ule::*;
 
@@ -489,7 +485,7 @@ impl DataMarkerPath {
 
     /// Gets the path as a static string slice.
     #[inline]
-    pub const fn get(self) -> &'static str {
+    pub const fn as_str(self) -> &'static str {
         unsafe {
             // Safe due to invariant that self.path is tagged correctly
             core::str::from_utf8_unchecked(core::slice::from_raw_parts(
@@ -517,14 +513,6 @@ impl DataMarkerPath {
     #[inline]
     pub const fn hashed(self) -> DataMarkerPathHash {
         self.hash
-    }
-}
-
-impl Deref for DataMarkerPath {
-    type Target = str;
-    #[inline]
-    fn deref(&self) -> &Self::Target {
-        self.get()
     }
 }
 
@@ -603,7 +591,7 @@ impl DataMarkerInfo {
     /// ));
     ///
     /// // The error context contains the argument:
-    /// assert_eq!(HelloWorldV1Marker::INFO.match_marker(DummyMarker::INFO).unwrap_err().marker, Some(DummyMarker::INFO.path));
+    /// assert_eq!(HelloWorldV1Marker::INFO.match_marker(DummyMarker::INFO).unwrap_err().marker_path, Some(DummyMarker::INFO.path));
     /// ```
     pub fn match_marker(self, marker: Self) -> Result<(), DataError> {
         if self == marker {
@@ -641,28 +629,9 @@ pub use __data_marker_path as data_marker_path;
 
 impl fmt::Debug for DataMarkerInfo {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        f.write_str("DataMarkerInfo{")?;
-        fmt::Display::fmt(self, f)?;
-        f.write_char('}')?;
-        Ok(())
+        f.write_str(self.path.as_str())
     }
 }
-
-impl Writeable for DataMarkerInfo {
-    fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
-        self.path.write_to(sink)
-    }
-
-    fn writeable_length_hint(&self) -> LengthHint {
-        self.path.writeable_length_hint()
-    }
-
-    fn write_to_string(&self) -> Cow<str> {
-        Cow::Borrowed(self.path.get())
-    }
-}
-
-writeable::impl_display_with_writeable!(DataMarkerInfo);
 
 #[test]
 fn test_path_syntax() {
@@ -774,7 +743,7 @@ fn test_path_to_string() {
             expected: "core/cardinal@65535",
         },
     ] {
-        assert_eq!(cas.expected, &*cas.path);
+        assert_eq!(cas.expected, cas.path.as_str());
     }
 }
 
@@ -818,6 +787,6 @@ fn test_path_hash() {
             hash: DataMarkerPathHash([176, 131, 182, 223]),
         },
     ] {
-        assert_eq!(cas.hash, cas.path.hashed(), "{}", &cas.path as &str);
+        assert_eq!(cas.hash, cas.path.hashed(), "{}", cas.path.as_str());
     }
 }

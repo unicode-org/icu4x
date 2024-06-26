@@ -5,7 +5,6 @@
 use std::collections::HashSet;
 
 use crate::BlobDataProvider;
-use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 
 impl IterableDynamicDataProvider<BufferMarker> for BlobDataProvider {

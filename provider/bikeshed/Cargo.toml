@@ -39,7 +39,7 @@ calendrical_calculations = { workspace = true }
 icu_codepointtrie_builder = { workspace = true }
 icu_collections = { workspace = true, features = ["serde"] }
 icu_pattern = { workspace = true, features = ["alloc"] }
-icu_provider = { workspace = true, features = ["std", "logging", "datagen"]}
+icu_provider = { workspace = true, features = ["std", "logging", "export"]}
 icu_provider_adapters = { workspace = true }
 icu_registry = { workspace = true }
 litemap = { workspace = true, features = ["serde"] }
@@ -73,10 +73,11 @@ num-traits = { workspace = true, optional = true }
 
 [dev-dependencies]
 postcard = { workspace = true, features = ["alloc"] }
-icu_datagen = { workspace = true, features = ["experimental", "fs_exporter", "baked_exporter", "rayon"] }
+icu_datagen = { workspace = true, features = ["fs_exporter", "baked_exporter", "rayon"] }
 icu_provider = { workspace = true, features = ["deserialize_postcard_1"] }
 icu_segmenter = { path = "../../components/segmenter", features = ["lstm"] }
 simple_logger = { workspace = true }
+icu = { path = "../../components/icu", features = ["experimental"] }
 
 [features]
 default = ["use_wasm", "networking"]

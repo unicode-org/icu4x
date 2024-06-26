@@ -9,7 +9,7 @@ use icu_datagen::fs_exporter;
 use icu_datagen::fs_exporter::serializers::AbstractSerializer;
 use icu_datagen::prelude::*;
 use icu_datagen_bikeshed::{CoverageLevel, DatagenProvider};
-use icu_provider::datagen::*;
+use icu_provider::export::*;
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;
 use std::fs::File;
@@ -78,20 +78,20 @@ fn main() {
 
     let source = DatagenProvider::new_latest_tested();
 
-    let driver = DatagenDriver::new()
-        .with_locales_and_fallback(
-            source
-                .locales_for_coverage_levels([
-                    CoverageLevel::Modern,
-                    CoverageLevel::Moderate,
-                    CoverageLevel::Basic,
-                ])
-                .unwrap()
-                .into_iter()
-                .map(LocaleFamily::with_descendants),
-            FallbackOptions::maximal_deduplication(),
-        )
-        .with_recommended_segmenter_models();
+    let driver = DatagenDriver::new(
+        source
+            .locales_for_coverage_levels([
+                CoverageLevel::Modern,
+                CoverageLevel::Moderate,
+                CoverageLevel::Basic,
+            ])
+            .unwrap()
+            .into_iter()
+            .map(LocaleFamily::with_descendants),
+        FallbackOptions::maximal_deduplication(),
+        LocaleFallbacker::try_new_unstable(&source).unwrap(),
+    )
+    .with_recommended_segmenter_models();
 
     let mut options = baked_exporter::Options::default();
     options.overwrite = true;
@@ -275,10 +275,13 @@ impl<F: Write + Send + Sync> DataExporter for PostcardFingerprintExporter<F> {
             if let Some(deduped_req) = seen.get(hash) {
                 writeln!(
                     &mut self.fingerprints,
-                    "{marker}, {req}, {size}B, -> {deduped_req}",
+                    "{marker:?}, {req}, {size}B, -> {deduped_req}",
                 )?;
             } else {
-                writeln!(&mut self.fingerprints, "{marker}, {req}, {size}B, {hash:x}",)?;
+                writeln!(
+                    &mut self.fingerprints,
+                    "{marker:?}, {req}, {size}B, {hash:x}",
+                )?;
                 seen.insert(hash, req);
             }
         }

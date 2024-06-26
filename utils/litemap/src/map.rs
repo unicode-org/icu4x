@@ -124,7 +124,7 @@ where
     /// ```
     #[inline]
     pub fn last(&self) -> Option<(&K, &V)> {
-        self.values.lm_get(self.len() - 1)
+        self.values.lm_last()
     }
 
     /// Returns a new [`LiteMap`] with owned keys and values.

@@ -33,13 +33,11 @@ all-features = true
 
 # DatagenDriver
 displaydoc = { workspace = true }
-icu = { workspace = true, features = ["std"] }
-icu_provider = { workspace = true, features = ["std", "logging", "datagen"]}
+icu_locale = { workspace = true }
+icu_provider = { workspace = true, features = ["std", "logging", "export"]}
 log = { workspace = true }
-memchr = { workspace = true }
 rayon = { workspace = true, optional = true }
 writeable = { workspace = true }
-icu_registry = { workspace = true }
 
 # Exporters
 icu_provider_blob = { workspace = true, features = ["export"], optional = true }
@@ -59,5 +57,3 @@ baked_exporter = ["dep:icu_provider_baked"]
 blob_exporter = ["dep:icu_provider_blob"]
 fs_exporter = ["dep:icu_provider_fs"]
 rayon = ["dep:rayon"]
-# For all_markers
-experimental = ["icu/experimental"]

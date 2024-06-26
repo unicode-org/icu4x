@@ -72,9 +72,9 @@ macro_rules! registry(
             icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker = "time_zone/formats@1",
             icu::datetime::provider::time_zones::ExemplarCitiesV1Marker = "time_zone/exemplar_cities@1",
             icu::decimal::provider::DecimalSymbolsV1Marker = "decimal/symbols@1",
-            icu::list::provider::AndListV1Marker = "list/and@1",
-            icu::list::provider::OrListV1Marker = "list/or@1",
-            icu::list::provider::UnitListV1Marker = "list/unit@1",
+            icu::list::provider::AndListV2Marker = "list/and@2",
+            icu::list::provider::OrListV2Marker = "list/or@2",
+            icu::list::provider::UnitListV2Marker = "list/unit@2",
             icu::locale::provider::AliasesV1Marker = "locid_transform/aliases@1",
             icu::locale::provider::AliasesV2Marker = "locid_transform/aliases@2",
             icu::locale::provider::CollationFallbackSupplementV1Marker = "fallback/supplement/co@1",
@@ -290,6 +290,7 @@ macro_rules! registry(
             icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1Marker = "currency/extended@1",
             icu::experimental::dimension::provider::percent::PercentEssentialsV1Marker = "percent/essentials@1",
             icu::experimental::dimension::provider::units::UnitsDisplayNameV1Marker = "units/displaynames@1",
+            icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1Marker = "units/essentials@1",
             icu::experimental::displaynames::provider::RegionDisplayNamesV1Marker = "displaynames/regions@1",
             icu::experimental::displaynames::provider::LanguageDisplayNamesV1Marker = "displaynames/languages@1",
             icu::experimental::displaynames::provider::LocaleDisplayNamesV1Marker = "displaynames/locales@1",
@@ -363,10 +364,10 @@ macro_rules! cb {
             use icu_provider::prelude::*;
 
             $(
-                assert_eq!(<$marker>::INFO.path.get(), $path);
+                assert_eq!(<$marker>::INFO.path.as_str(), $path);
             )+
             $(
-                assert_eq!(<$emarker>::INFO.path.get(), $epath);
+                assert_eq!(<$emarker>::INFO.path.as_str(), $epath);
             )+
         }
     }

@@ -56,6 +56,7 @@ part 'FixedDecimalGroupingStrategy.g.dart';
 part 'FixedDecimalLimitError.g.dart';
 part 'FixedDecimalParseError.g.dart';
 part 'FixedDecimalRoundingIncrement.g.dart';
+part 'FixedDecimalRoundingMode.g.dart';
 part 'FixedDecimalSign.g.dart';
 part 'FixedDecimalSignDisplay.g.dart';
 part 'GeneralCategoryNameToMaskMapper.g.dart';

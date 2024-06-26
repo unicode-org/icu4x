@@ -86,8 +86,8 @@ where
     }
 }
 
-#[cfg(feature = "datagen")]
-impl<M> icu_provider::datagen::IterableDataProvider<M> for EmptyDataProvider
+#[cfg(feature = "std")]
+impl<M> IterableDataProvider<M> for EmptyDataProvider
 where
     M: DataMarker,
 {
@@ -98,8 +98,8 @@ where
     }
 }
 
-#[cfg(feature = "datagen")]
-impl<M> icu_provider::datagen::IterableDynamicDataProvider<M> for EmptyDataProvider
+#[cfg(feature = "std")]
+impl<M> IterableDynamicDataProvider<M> for EmptyDataProvider
 where
     M: DynamicDataMarker,
 {

@@ -899,8 +899,10 @@ dependencies = [
  "icu_provider",
  "icu_provider_adapters",
  "icu_provider_blob",
+ "icu_registry",
  "icu_segmenter",
  "icu_timezone",
+ "memchr",
  "writeable",
 ]
 
@@ -911,24 +913,11 @@ dependencies = [
  "clap",
  "eyre",
  "icu",
- "icu_calendar",
- "icu_casemap",
- "icu_collator",
  "icu_datagen",
  "icu_datagen_bikeshed",
- "icu_datetime",
- "icu_decimal",
- "icu_experimental",
- "icu_list",
- "icu_locale",
- "icu_normalizer",
- "icu_plurals",
- "icu_properties",
  "icu_provider",
  "icu_provider_blob",
  "icu_registry",
- "icu_segmenter",
- "icu_timezone",
  "log",
  "simple_logger",
 ]
@@ -1125,13 +1114,12 @@ dependencies = [
  "elsa",
  "icu",
  "icu_datagen_bikeshed",
+ "icu_locale",
  "icu_provider",
  "icu_provider_baked",
  "icu_provider_blob",
  "icu_provider_fs",
- "icu_registry",
  "log",
- "memchr",
  "postcard",
  "rayon",
  "simple_logger",
@@ -1340,7 +1328,7 @@ dependencies = [
  "icu_list_data",
  "icu_provider",
  "postcard",
- "regex-automata 0.2.0",
+ "regex-automata",
  "rmp-serde",
  "serde",
  "serde_json",
@@ -2271,36 +2259,20 @@ checksum = "c117dbdfde9c8308975b6a18d71f3f385c89461f7b3fb054288ecf2a2058ba4c"
 dependencies = [
  "aho-corasick",
  "memchr",
- "regex-automata 0.4.6",
- "regex-syntax 0.8.3",
+ "regex-automata",
+ "regex-syntax",
 ]
 
 [[package]]
 name = "regex-automata"
-version = "0.2.0"
+version = "0.4.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e9368763f5a9b804326f3af749e16f9abf378d227bcdee7634b13d8f17793782"
-dependencies = [
- "memchr",
- "regex-syntax 0.6.29",
-]
-
-[[package]]
-name = "regex-automata"
-version = "0.4.6"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "86b83b8b9847f9bf95ef68afb0b8e6cdb80f498442f5179a29fad448fcc1eaea"
+checksum = "38caf58cc5ef2fed281f89292ef23f6365465ed9a41b7a7754eb4e26496c92df"
 dependencies = [
  "aho-corasick",
  "memchr",
- "regex-syntax 0.8.3",
+ "regex-syntax",
 ]
-
-[[package]]
-name = "regex-syntax"
-version = "0.6.29"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f162c6dd7b008981e4d40210aca20b4bd0f9b60ca9271061b07f78537722f2e1"
 
 [[package]]
 name = "regex-syntax"

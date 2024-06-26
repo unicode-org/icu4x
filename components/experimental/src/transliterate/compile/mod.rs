@@ -399,7 +399,7 @@ redirect!(
 );
 
 #[cfg(feature = "datagen")]
-impl<PP, NP> icu_provider::datagen::IterableDataProvider<TransliteratorRulesV1Marker>
+impl<PP, NP> IterableDataProvider<TransliteratorRulesV1Marker>
     for RuleCollectionProvider<'_, PP, NP>
 where
     PP: ?Sized

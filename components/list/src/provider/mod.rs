@@ -43,17 +43,17 @@ const _: () = {
         pub use icu_list_data::icu_locale as locale;
     }
     make_provider!(Baked);
-    impl_and_list_v1_marker!(Baked);
-    impl_or_list_v1_marker!(Baked);
-    impl_unit_list_v1_marker!(Baked);
+    impl_and_list_v2_marker!(Baked);
+    impl_or_list_v2_marker!(Baked);
+    impl_unit_list_v2_marker!(Baked);
 };
 
 #[cfg(feature = "datagen")]
 /// The latest minimum set of markers required by this component.
 pub const MARKERS: &[DataMarkerInfo] = &[
-    AndListV1Marker::INFO,
-    OrListV1Marker::INFO,
-    UnitListV1Marker::INFO,
+    AndListV2Marker::INFO,
+    OrListV2Marker::INFO,
+    UnitListV2Marker::INFO,
 ];
 
 /// Symbols and metadata required for [`ListFormatter`](crate::ListFormatter).
@@ -64,9 +64,9 @@ pub const MARKERS: &[DataMarkerInfo] = &[
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(
-    AndListV1Marker = "list/and@1",
-    OrListV1Marker = "list/or@1",
-    UnitListV1Marker = "list/unit@1"
+    AndListV2Marker = "list/and@2",
+    OrListV2Marker = "list/or@2",
+    UnitListV2Marker = "list/unit@2"
 )]
 #[derive(Clone, Debug, PartialEq)]
 #[cfg_attr(
@@ -74,7 +74,7 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     derive(serde::Serialize, databake::Bake),
     databake(path = icu_list::provider),
 )]
-pub struct ListFormatterPatternsV1<'data>(
+pub struct ListFormatterPatternsV2<'data>(
     #[cfg_attr(feature = "datagen", serde(with = "deduplicating_array"))]
     /// The patterns in the order start, middle, end, pair, short_start, short_middle,
     /// short_end, short_pair, narrow_start, narrow_middle, narrow_end, narrow_pair,
@@ -82,7 +82,7 @@ pub struct ListFormatterPatternsV1<'data>(
 );
 
 #[cfg(feature = "serde")]
-impl<'de> serde::Deserialize<'de> for ListFormatterPatternsV1<'de> {
+impl<'de> serde::Deserialize<'de> for ListFormatterPatternsV2<'de> {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: serde::de::Deserializer<'de>,
@@ -95,19 +95,19 @@ impl<'de> serde::Deserialize<'de> for ListFormatterPatternsV1<'de> {
                 ));
         }
 
-        Ok(ListFormatterPatternsV1(deduplicating_array::deserialize(
+        Ok(ListFormatterPatternsV2(deduplicating_array::deserialize(
             deserializer,
         )?))
     }
 }
 
-pub(crate) struct ErasedListV1Marker;
+pub(crate) struct ErasedListV2Marker;
 
-impl DynamicDataMarker for ErasedListV1Marker {
-    type Yokeable = ListFormatterPatternsV1<'static>;
+impl DynamicDataMarker for ErasedListV2Marker {
+    type Yokeable = ListFormatterPatternsV2<'static>;
 }
 
-impl<'data> ListFormatterPatternsV1<'data> {
+impl<'data> ListFormatterPatternsV2<'data> {
     pub(crate) fn start(&self, style: ListLength) -> &ConditionalListJoinerPattern<'data> {
         #![allow(clippy::indexing_slicing)] // style as usize < 3
         &self.0[4 * (style as usize)]

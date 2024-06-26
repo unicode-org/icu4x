@@ -28,10 +28,6 @@ pub trait ForkByErrorPredicate {
     ///
     /// - `true` to discard the error and attempt the request with the next provider.
     /// - `false` to return the error and not perform any additional requests.
-    ///
-    /// [`DataMarkerInfo`]: icu_provider::DataMarkerInfo
-    /// [`DataRequest`]: icu_provider::DataRequest
-    /// [`IterableDynamicDataProvider`]: icu_provider::datagen::IterableDynamicDataProvider
     fn test(&self, marker: DataMarkerInfo, req: Option<DataRequest>, err: DataError) -> bool;
 }
 

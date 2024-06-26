@@ -33,4 +33,3 @@ writeable = { path = "../../utils/writeable" }
 [features]
 std = ["icu_locale/std", "icu_provider/std"]
 serde = ["dep:serde", "zerovec/serde", "icu_locale/serde", "icu_provider/serde"]
-datagen = ["std", "serde", "icu_provider/datagen"]

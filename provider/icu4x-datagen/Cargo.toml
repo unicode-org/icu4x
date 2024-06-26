@@ -17,31 +17,13 @@ rust-version.workspace = true
 version.workspace = true
 
 [dependencies]
-icu_provider = { workspace = true, features = ["datagen"] }
-icu = { workspace = true }
+icu_provider = { workspace = true }
+icu = { workspace = true, features = ["datagen"] }
 icu_datagen = { workspace = true, features = ["rayon"] }
 icu_datagen_bikeshed = { workspace = true, optional = true }
+icu_registry = { workspace = true }
 
 icu_provider_blob = { workspace = true, features = ["export"], optional = true }
-# Needed to make the exportable blob exporter
-# TODO: Expose the datagen feature through `icu` to reduce depency complexity,
-#       and be able to introduce an experimental feature. We cannot do this at the
-#       moment, beause the `icu_experimental` crate is only required with both `blob_input`
-#       and `experimental` features, which isn't expressible.
-icu_registry = { workspace = true, optional = true }
-icu_calendar = { workspace = true, features = ["datagen"], optional = true }
-icu_casemap = { workspace = true, features = ["datagen"], optional = true }
-icu_collator = { workspace = true, features = ["datagen"], optional = true }
-icu_datetime = { workspace = true, features = ["datagen"], optional = true }
-icu_decimal = { workspace = true, features = ["datagen"], optional = true }
-icu_list = { workspace = true, features = ["datagen"], optional = true }
-icu_locale = { workspace = true, features = ["datagen"], optional = true }
-icu_normalizer = { workspace = true, features = ["datagen"], optional = true }
-icu_plurals = { workspace = true, features = ["datagen"], optional = true }
-icu_properties = { workspace = true, features = ["datagen"], optional = true }
-icu_segmenter = { workspace = true, features = ["datagen"], optional = true }
-icu_timezone = { workspace = true, features = ["datagen"], optional = true }
-icu_experimental = { workspace = true, features = ["datagen"], optional = true }
 
 clap = { workspace = true, features = ["derive"] }
 eyre = { workspace = true }
@@ -53,23 +35,7 @@ default = ["use_wasm", "networking", "fs_exporter", "blob_exporter", "baked_expo
 provider = ["dep:icu_datagen_bikeshed"]
 baked_exporter = ["icu_datagen/baked_exporter"]
 blob_exporter = ["icu_datagen/blob_exporter"]
-blob_input = [
-    "dep:icu_provider_blob",
-    "dep:icu_registry",
-    "dep:icu_calendar",
-    "dep:icu_casemap",
-    "dep:icu_collator",
-    "dep:icu_datetime",
-    "dep:icu_decimal",
-    "dep:icu_experimental",
-    "dep:icu_list",
-    "dep:icu_locale",
-    "dep:icu_normalizer",
-    "dep:icu_plurals",
-    "dep:icu_properties",
-    "dep:icu_segmenter",
-    "dep:icu_timezone",
-]
+blob_input = ["dep:icu_provider_blob", "icu/datagen", "icu_provider/export"]
 fs_exporter = ["icu_datagen/fs_exporter"]
 # Use wasm for building codepointtries
 use_wasm = ["icu_datagen_bikeshed?/use_wasm"]
@@ -79,15 +45,11 @@ use_wasm = ["icu_datagen_bikeshed?/use_wasm"]
 # rule based segmenter data will not be generated.
 use_icu4c = ["icu_datagen_bikeshed?/use_icu4c"]
 networking = ["icu_datagen_bikeshed?/networking"]
-experimental = ["icu_datagen/experimental", "icu_datagen_bikeshed?/experimental", "icu/experimental"]
+experimental = ["icu_datagen_bikeshed?/experimental", "icu/experimental"]
 
 [package.metadata.cargo-all-features]
 # We don't need working CPT builders for check
 skip_feature_sets = [["use_icu4c"], ["use_wasm"]]
 skip_optional_dependencies = true
-always_include_features = [
-    # The binary requires either provider or blob_input to build, and blob_input is cheaper
-    "blob_input"
-    ]
 # We have a *lot* of features here
 max_combination_size = 2
