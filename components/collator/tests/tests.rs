@@ -622,16 +622,12 @@ fn test_ja_chooon_kigoo() {
     }
 }
 
-// TODO: This test should eventually test fallback
 // TODO: Test Swedish and Chinese also, since they have unusual
 // variant defaults. (But are currently not part of the test data.)
-#[ignore]
 #[test]
 fn test_region_fallback() {
     // There's no explicit fi-FI data.
-    let locale: Locale = "fi-u-co-standard".parse().unwrap();
-
-    // let locale = locale!("fi-FI").into();
+    let locale = locale!("fi-FI");
 
     let collator = Collator::try_new(&locale.into(), CollatorOptions::new()).unwrap();
     assert_eq!(collator.compare("ä", "z"), Ordering::Greater);
@@ -694,8 +690,8 @@ fn test_vi() {
     }
 }
 
-#[ignore]
 #[test]
+// See DatagenProvider test_zh_non_baked for gb2312 and big5han tests
 fn test_zh() {
     // Note: ㄅ is Bopomofo.
 
@@ -736,20 +732,6 @@ fn test_zh() {
         assert_eq!(collator.compare("不", "把"), Ordering::Greater);
     }
     {
-        let locale: Locale = "zh-u-co-gb2312".parse().unwrap();
-        let collator = Collator::try_new(&locale.into(), CollatorOptions::new()).unwrap();
-        assert_eq!(collator.compare("艾", "a"), Ordering::Greater);
-        assert_eq!(collator.compare("佰", "a"), Ordering::Greater);
-        assert_eq!(collator.compare("ㄅ", "a"), Ordering::Greater);
-        assert_eq!(collator.compare("ㄅ", "ж"), Ordering::Greater);
-        assert_eq!(collator.compare("艾", "佰"), Ordering::Less);
-        // In GB2312 proper, Bopomofo comes before Han, but the
-        // collation leaves Bopomofo unreordered, so it comes after.
-        assert_eq!(collator.compare("艾", "ㄅ"), Ordering::Less);
-        assert_eq!(collator.compare("佰", "ㄅ"), Ordering::Less);
-        assert_eq!(collator.compare("不", "把"), Ordering::Greater);
-    }
-    {
         let locale: Locale = "zh-u-co-stroke".parse().unwrap();
         let collator = Collator::try_new(&locale.into(), CollatorOptions::new()).unwrap();
         assert_eq!(collator.compare("艾", "a"), Ordering::Less);
@@ -781,18 +763,6 @@ fn test_zh() {
         assert_eq!(collator.compare("ㄅ", "a"), Ordering::Less);
         assert_eq!(collator.compare("ㄅ", "ж"), Ordering::Less);
         assert_eq!(collator.compare("艾", "佰"), Ordering::Greater);
-        assert_eq!(collator.compare("艾", "ㄅ"), Ordering::Less);
-        assert_eq!(collator.compare("佰", "ㄅ"), Ordering::Less);
-        assert_eq!(collator.compare("不", "把"), Ordering::Less);
-    }
-    {
-        let locale: Locale = "zh-u-co-big5han".parse().unwrap();
-        let collator = Collator::try_new(&locale.into(), CollatorOptions::new()).unwrap();
-        assert_eq!(collator.compare("艾", "a"), Ordering::Greater);
-        assert_eq!(collator.compare("佰", "a"), Ordering::Greater);
-        assert_eq!(collator.compare("ㄅ", "a"), Ordering::Greater);
-        assert_eq!(collator.compare("ㄅ", "ж"), Ordering::Less);
-        assert_eq!(collator.compare("艾", "佰"), Ordering::Less);
         assert_eq!(collator.compare("艾", "ㄅ"), Ordering::Less);
         assert_eq!(collator.compare("佰", "ㄅ"), Ordering::Less);
         assert_eq!(collator.compare("不", "把"), Ordering::Less);
@@ -1044,7 +1014,6 @@ fn test_tr_primary() {
     }
 }
 
-#[ignore]
 #[test]
 fn test_lt_tertiary() {
     let left = [
@@ -1079,7 +1048,6 @@ fn test_lt_tertiary() {
     }
 }
 
-#[ignore]
 #[test]
 fn test_lt_primary() {
     let left = ["ž"];

@@ -18,6 +18,7 @@ use icu::locale::subtags::Region;
 use icu::locale::subtags::Script;
 use icu::locale::LanguageIdentifier;
 use icu_provider::prelude::*;
+use icu_provider_adapters::fallback::LocaleFallbackProvider;
 use std::collections::HashSet;
 use std::convert::TryFrom;
 use writeable::Writeable;
@@ -287,3 +288,47 @@ collation_provider!(
     ),
     toml_data
 );
+
+#[test]
+
+fn test_zh_non_baked() {
+    use core::cmp::Ordering;
+    use icu::collator::{Collator, CollatorOptions};
+
+    let provider =
+        LocaleFallbackProvider::try_new_unstable(DatagenProvider::new_testing()).unwrap();
+
+    // Note: ㄅ is Bopomofo.
+    {
+        let locale = "zh-u-co-gb2312".parse().unwrap();
+        let collator =
+            Collator::try_new_unstable(&provider, &locale, CollatorOptions::new()).unwrap();
+        assert_eq!(collator.compare("艾", "a"), Ordering::Greater);
+        assert_eq!(collator.compare("佰", "a"), Ordering::Greater);
+        assert_eq!(collator.compare("ㄅ", "a"), Ordering::Greater);
+        assert_eq!(collator.compare("ㄅ", "ж"), Ordering::Greater);
+
+        // TODO(#5136): broken, these should be equal
+        assert_ne!(collator.compare("艾", "佰"), Ordering::Less);
+        // In GB2312 proper, Bopomofo comes before Han, but the
+        // collation leaves Bopomofo unreordered, so it comes after.
+        assert_ne!(collator.compare("艾", "ㄅ"), Ordering::Less);
+        assert_ne!(collator.compare("佰", "ㄅ"), Ordering::Less);
+        assert_ne!(collator.compare("不", "把"), Ordering::Greater);
+    }
+    {
+        let locale = "zh-u-co-big5han".parse().unwrap();
+        let collator =
+            Collator::try_new_unstable(&provider, &locale, CollatorOptions::new()).unwrap();
+        assert_eq!(collator.compare("艾", "a"), Ordering::Greater);
+        assert_eq!(collator.compare("佰", "a"), Ordering::Greater);
+        assert_eq!(collator.compare("ㄅ", "a"), Ordering::Greater);
+        assert_eq!(collator.compare("不", "把"), Ordering::Less);
+
+        // TODO(#5136): broken, these should be equal
+        assert_ne!(collator.compare("ㄅ", "ж"), Ordering::Less);
+        assert_ne!(collator.compare("艾", "佰"), Ordering::Less);
+        assert_ne!(collator.compare("艾", "ㄅ"), Ordering::Less);
+        assert_ne!(collator.compare("佰", "ㄅ"), Ordering::Less);
+    }
+}
