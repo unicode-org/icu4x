@@ -80,7 +80,7 @@ pub enum MaybePayloadError2 {
 }
 
 impl MaybePayloadError2 {
-    fn to_single_load_error(self, field: Field) -> SingleLoadError {
+    fn into_single_load_error(self, field: Field) -> SingleLoadError {
         match self {
             Self::TypeTooNarrow => SingleLoadError::TypeTooNarrow(field),
             Self::InsufficientStorage => SingleLoadError::DuplicateField(field),
@@ -174,7 +174,6 @@ where
 impl<M: DynamicDataMarker, Variables> MaybePayload2<M, Variables> for () {
     #[inline]
     fn new_empty() -> Self {
-        ()
     }
     #[inline]
     fn load_put<P>(&mut self, _: &P, _: DataRequest, _: Variables) -> Result<Result<(), DataError>, MaybePayloadError2>
@@ -234,6 +233,7 @@ impl<M: DynamicDataMarker, Variables> OptionalNames<Variables, DataPayload<M>>
 where
     Variables: Copy,
 {
+    #[allow(clippy::needless_lifetimes)] // Yokeable is involved
     #[inline]
     pub(crate) fn as_borrowed<'a>(&'a self) -> OptionalNames<Variables, &'a <M::Yokeable as Yokeable<'a>>::Output>
     {
@@ -1148,7 +1148,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                 ),
                 ..Default::default()
             };
-        self.year_symbols.load_put(provider, req, variables).map_err(|e| MaybePayloadError2::to_single_load_error(e, field))?.map_err(SingleLoadError::Data)?;
+        self.year_symbols.load_put(provider, req, variables).map_err(|e| MaybePayloadError2::into_single_load_error(e, field))?.map_err(SingleLoadError::Data)?;
         Ok(())
     }
 
@@ -1185,7 +1185,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                 ),
                 ..Default::default()
             };
-        self.month_symbols.load_put(provider, req, variables).map_err(|e| MaybePayloadError2::to_single_load_error(e, field))?.map_err(SingleLoadError::Data)?;
+        self.month_symbols.load_put(provider, req, variables).map_err(|e| MaybePayloadError2::into_single_load_error(e, field))?.map_err(SingleLoadError::Data)?;
         Ok(())
     }
 
@@ -1221,7 +1221,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                 ),
                 ..Default::default()
             };
-        self.dayperiod_symbols.load_put(provider, req, variables).map_err(|e| MaybePayloadError2::to_single_load_error(e, field))?.map_err(SingleLoadError::Data)?;
+        self.dayperiod_symbols.load_put(provider, req, variables).map_err(|e| MaybePayloadError2::into_single_load_error(e, field))?.map_err(SingleLoadError::Data)?;
         Ok(())
     }
 
@@ -1269,7 +1269,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
             ),
             ..Default::default()
         };
-        self.weekday_symbols.load_put(provider, req, variables).map_err(|e| MaybePayloadError2::to_single_load_error(e, field))?.map_err(SingleLoadError::Data)?;
+        self.weekday_symbols.load_put(provider, req, variables).map_err(|e| MaybePayloadError2::into_single_load_error(e, field))?.map_err(SingleLoadError::Data)?;
         Ok(())
     }
 
@@ -1288,7 +1288,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         };
         let variables = ();
         let req = DataRequest { locale, ..Default::default() };
-        self.mz_generic_short.load_put(provider, req, variables).map_err(|e| MaybePayloadError2::to_single_load_error(e, field))?.map_err(SingleLoadError::Data)?;
+        self.mz_generic_short.load_put(provider, req, variables).map_err(|e| MaybePayloadError2::into_single_load_error(e, field))?.map_err(SingleLoadError::Data)?;
         Ok(())
     }
 
