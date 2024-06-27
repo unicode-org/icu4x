@@ -17,7 +17,7 @@ use icu_provider::prelude::*;
 
 extern crate alloc;
 
-/// A formatter for monetary values.
+/// A formatter for measurement unit values.
 ///
 /// [`UnitsFormatter`] supports:
 ///   1. Rendering in the locale's units system.
