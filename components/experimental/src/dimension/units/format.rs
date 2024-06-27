@@ -4,14 +4,17 @@
 
 //! Experimental.
 
+use core::str::FromStr;
+
 use fixed_decimal::FixedDecimal;
 
 use icu_decimal::FixedDecimalFormatter;
-use icu_plurals::{PluralCategory, PluralRules};
+use icu_pattern::SinglePlaceholderPattern;
+use icu_plurals::PluralRules;
 use writeable::Writeable;
 
 use crate::dimension::provider::units::{Count, UnitsDisplayNameV1};
-use crate::dimension::units::options::UnitsFormatterOptions;
+use crate::dimension::units::options::{UnitsFormatterOptions, Width};
 
 pub struct FormattedUnit<'l> {
     pub(crate) value: &'l FixedDecimal,
@@ -30,7 +33,65 @@ impl<'l> Writeable for FormattedUnit<'l> {
     {
         let plural_category = self.plural_rules.category_for(self.value);
         let count = Count::from(plural_category);
+        let display_name = match self.options.width {
+            Width::Short => self.display_name.short.get(&count),
+            Width::Long => self.display_name.long.get(&count),
+            Width::Narrow => self.display_name.narrow.get(&count),
+        }
+        .unwrap_or({
+            self.unit // TODO: Add {0} to the unit.
+        });
 
-        todo!();
+        let pattern =
+            SinglePlaceholderPattern::from_str(display_name).map_err(|_| core::fmt::Error)?;
+
+        pattern
+            .interpolate((self.fixed_decimal_formatter.format(&self.value),))
+            .write_to(sink)?;
+
+        Ok(())
     }
+}
+
+#[test]
+fn test_formatted_unit() {
+    use icu_locale_core::locale;
+    use writeable::Writeable;
+
+    use crate::dimension::units::formatter::UnitsFormatter;
+
+    let locale = locale!("en-US").into();
+    let meter = "meter";
+    let fmt = UnitsFormatter::try_new(&locale, meter, Default::default()).unwrap();
+    let value = "12345.67".parse().unwrap();
+    let formatted_unit = fmt.format_fixed_decimal(&value, meter);
+    let mut sink = String::new();
+    formatted_unit.write_to(&mut sink).unwrap();
+    assert_eq!(sink.as_str(), "12,345.67 m");
+
+    let locale = locale!("de-DE").into();
+    let meter = "meter";
+    let fmt = UnitsFormatter::try_new(&locale, meter, Default::default()).unwrap();
+    let value = "12345.67".parse().unwrap();
+    let formatted_unit = fmt.format_fixed_decimal(&value, meter);
+    let mut sink = String::new();
+    formatted_unit.write_to(&mut sink).unwrap();
+    assert_eq!(sink.as_str(), "12.345,67 m");
+
+    let locale = locale!("ar-EG").into();
+    let meter = "meter";
+    let fmt = UnitsFormatter::try_new(
+        &locale,
+        meter,
+        UnitsFormatterOptions {
+            width: Width::Long,
+            ..Default::default()
+        },
+    )
+    .unwrap();
+    let value = "12345.67".parse().unwrap();
+    let formatted_unit = fmt.format_fixed_decimal(&value, meter);
+    let mut sink = String::new();
+    formatted_unit.write_to(&mut sink).unwrap();
+    assert_eq!(sink.as_str(), "١٢٬٣٤٥٫٦٧ متر");
 }
