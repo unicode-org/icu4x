@@ -39,7 +39,7 @@ impl<'l> Writeable for FormattedUnit<'l> {
             Width::Long => self.display_name.long.get(&count),
             Width::Narrow => self.display_name.narrow.get(&count),
         }
-        .unwrap_or({ unit_pattern.as_str() });
+        .unwrap_or(unit_pattern.as_str());
 
         let pattern =
             SinglePlaceholderPattern::from_str(display_name).map_err(|_| core::fmt::Error)?;
