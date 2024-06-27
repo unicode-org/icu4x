@@ -88,9 +88,9 @@ pub fn derive_impl(
 
     // Safety (based on the safety checklist on the ULE trait):
     //  1. #name does not include any uninitialized or padding bytes
-    //     (achieved by enforcing #[repr(transparent)] or #[repr(packed)] on a struct of only ULE types)
+    //     (achieved by enforcing #[repr(transparent)] or #[repr(C, packed)] on a struct of only ULE types)
     //  2. #name is aligned to 1 byte.
-    //     (achieved by enforcing #[repr(transparent)] or #[repr(packed)] on a struct of only ULE types)
+    //     (achieved by enforcing #[repr(transparent)] or #[repr(C, packed)] on a struct of only ULE types)
     //  3. The impl of `validate_byte_slice()` returns an error if any byte is not valid.
     //  4. The impl of `validate_byte_slice()` returns an error if the slice cannot be used in its entirety
     //  5. The impl of `from_byte_slice_unchecked()` returns a reference to the same data.
