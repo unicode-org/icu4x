@@ -13,6 +13,7 @@ use icu_pattern::SinglePlaceholderPattern;
 use icu_plurals::PluralRules;
 use writeable::Writeable;
 
+use crate::alloc::borrow::ToOwned;
 use crate::dimension::provider::units::{Count, UnitsDisplayNameV1};
 use crate::dimension::units::options::{UnitsFormatterOptions, Width};
 
