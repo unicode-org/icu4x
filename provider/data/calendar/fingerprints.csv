@@ -1,3 +1,6 @@
+115 identifiers, 687B
+23 structs, 7888B
+
 calendar/chinesecache@1, <singleton>, 754B, 134f5ec7c9bdc494
 calendar/dangicache@1, <singleton>, 754B, 79d5d32449956411
 calendar/islamicobservationalcache@1, <singleton>, 504B, 18af87d272c76f14

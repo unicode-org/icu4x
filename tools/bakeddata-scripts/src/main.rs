@@ -11,7 +11,7 @@ use icu_datagen::prelude::*;
 use icu_datagen_bikeshed::{CoverageLevel, DatagenProvider};
 use icu_provider::export::*;
 use icu_provider::prelude::*;
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 use std::fs::File;
 use std::io::Write;
 use std::path::Path;
@@ -164,8 +164,10 @@ fn main() {
         let stub_exporter = StubExporter(
             baked_exporter::BakedExporter::new(path.join("stubdata"), options).unwrap(),
         );
-        let fingerprinter = PostcardFingerprintExporter {
+        let fingerprinter = StatisticsExporter {
             size_hash: Default::default(),
+            struct_sizes: Default::default(),
+            identifiers: Default::default(),
             fingerprints: crlify::BufWriterWithLineEndingFix::new(
                 File::create(path.join("fingerprints.csv")).unwrap(),
             ),
@@ -215,12 +217,14 @@ impl<E: DataExporter> DataExporter for StubExporter<E> {
     }
 }
 
-struct PostcardFingerprintExporter<F> {
+struct StatisticsExporter<F> {
     size_hash: Mutex<BTreeMap<(DataMarkerInfo, String), (usize, u64)>>,
+    struct_sizes: Mutex<BTreeMap<u64, usize>>,
+    identifiers: Mutex<BTreeSet<String>>,
     fingerprints: F,
 }
 
-impl<F: Write + Send + Sync> DataExporter for PostcardFingerprintExporter<F> {
+impl<F: Write + Send + Sync> DataExporter for StatisticsExporter<F> {
     fn put_payload(
         &self,
         marker: DataMarkerInfo,
@@ -261,6 +265,12 @@ impl<F: Write + Send + Sync> DataExporter for PostcardFingerprintExporter<F> {
             (size, hash),
         );
 
+        self.struct_sizes.lock().expect("poison").insert(hash, size);
+        self.identifiers
+            .lock()
+            .expect("poison")
+            .insert(locale.to_string() + marker_attributes);
+
         Ok(())
     }
 
@@ -269,8 +279,28 @@ impl<F: Write + Send + Sync> DataExporter for PostcardFingerprintExporter<F> {
     }
 
     fn close(&mut self) -> Result<(), DataError> {
+        let identifiers = self.identifiers.lock().expect("poison");
+        let size_hash = self.size_hash.lock().expect("poison");
+        let struct_sizes = self.struct_sizes.lock().expect("poison");
+
+        let identifiers_count = identifiers.len();
+        let identifiers_size = identifiers.iter().map(String::len).sum::<usize>();
+        writeln!(
+            &mut self.fingerprints,
+            "{identifiers_count} identifiers, {identifiers_size}B",
+        )?;
+
+        let structs_count = struct_sizes.len();
+        let structs_size = struct_sizes.values().sum::<usize>();
+        writeln!(
+            &mut self.fingerprints,
+            "{structs_count} structs, {structs_size}B",
+        )?;
+
+        writeln!(&mut self.fingerprints)?;
+
         let mut seen = std::collections::HashMap::new();
-        for ((marker, req), (size, hash)) in self.size_hash.get_mut().expect("poison").iter() {
+        for ((marker, req), (size, hash)) in size_hash.iter() {
             if let Some(deduped_req) = seen.get(hash) {
                 writeln!(
                     &mut self.fingerprints,
