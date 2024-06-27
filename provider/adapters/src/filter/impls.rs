@@ -35,21 +35,26 @@ where
     ///     .filter_by_langid(|langid| langid.language != language!("en"));
     ///
     /// // German requests should succeed:
-    /// let req_de = DataRequest {
-    ///     locale: &langid!("de").into(),
-    ///     ..Default::default()
-    /// };
+    /// let de = DataIdentifierCow::from_locale(langid!("de").into());
     /// let response: Result<DataResponse<HelloWorldV1Marker>, _> =
-    ///     provider.load(req_de);
+    ///     provider.load(DataRequest {
+    ///         id: de.as_borrowed(),
+    ///         ..Default::default()
+    /// });
     /// assert!(matches!(response, Ok(_)));
     ///
     /// // English requests should fail:
-    /// let req_en = DataRequest {
-    ///     locale: &langid!("en-US").into(),
-    ///     ..Default::default()
-    /// };
+    /// let en = DataIdentifierCow::from_locale(langid!("en-US").into());
     /// let response: Result<DataResponse<HelloWorldV1Marker>, _> =
-    ///     provider.load(req_en);
+    ///     provider.load(DataRequest {
+    ///     id: en.as_borrowed(),
+    ///     ..Default::default()
+    /// });
+    /// let response: Result<DataResponse<HelloWorldV1Marker>, _> =
+    ///     provider.load(DataRequest {
+    ///     id: en.as_borrowed(),
+    ///     ..Default::default()
+    /// });
     /// assert!(matches!(
     ///     response,
     ///     Err(DataError {
@@ -59,14 +64,11 @@ where
     /// ));
     ///
     /// // English should not appear in the iterator result:
-    /// let available_langids = provider
-    ///     .iter_requests()
-    ///     .expect("Should successfully make an iterator of supported locales")
-    ///     .into_iter()
-    ///     .map(|(locale, _)| locale.get_langid())
-    ///     .collect::<Vec<LanguageIdentifier>>();
-    /// assert!(available_langids.contains(&langid!("de")));
-    /// assert!(!available_langids.contains(&langid!("en")));
+    /// let available_ids = provider
+    ///     .iter_ids()
+    ///     .expect("Should successfully make an iterator of supported locales");
+    /// assert!(available_ids.contains(&DataIdentifierCow::from_locale(langid!("de").into())));
+    /// assert!(!available_ids.contains(&DataIdentifierCow::from_locale(langid!("en").into())));
     /// ```
     pub fn filter_by_langid<'a>(
         self,
@@ -82,7 +84,7 @@ where
                 if !(old_predicate)(request) {
                     return false;
                 }
-                predicate(&request.locale.get_langid())
+                predicate(&request.id.locale.get_langid())
             }),
             filter_name: self.filter_name,
         }
@@ -111,21 +113,22 @@ where
     ///     .filter_by_langid_allowlist_strict(&allowlist);
     ///
     /// // German requests should succeed:
-    /// let req_de = DataRequest {
-    ///     locale: &langid!("de").into(),
-    ///     ..Default::default()
-    /// };
+    /// let de = DataIdentifierCow::from_locale(langid!("de").into());
     /// let response: Result<DataResponse<HelloWorldV1Marker>, _> =
-    ///     provider.load(req_de);
+    ///     provider.load(DataRequest {
+    ///         id: de.as_borrowed(),
+    ///         ..Default::default()
+    /// });
     /// assert!(matches!(response, Ok(_)));
     ///
     /// // English requests should fail:
-    /// let req_en = DataRequest {
-    ///     locale: &langid!("en-US").into(),
-    ///     ..Default::default()
-    /// };
+    /// let en = DataIdentifierCow::from_locale(langid!("en-US").into());
+
     /// let response: Result<DataResponse<HelloWorldV1Marker>, _> =
-    ///     provider.load(req_en);
+    ///     provider.load(DataRequest {
+    ///     id: en.as_borrowed(),
+    ///     ..Default::default()
+    /// });
     /// assert!(matches!(
     ///     response,
     ///     Err(DataError {
@@ -152,7 +155,8 @@ where
                 if !(old_predicate)(request) {
                     return false;
                 }
-                request.locale.is_langid_und() || allowlist.contains(&request.locale.get_langid())
+                request.id.locale.is_langid_und()
+                    || allowlist.contains(&request.id.locale.get_langid())
             }),
             filter_name: self.filter_name,
         }
@@ -172,22 +176,21 @@ where
     ///     .filterable("Demo require-langid filter")
     ///     .require_langid();
     ///
-    /// // Requests with a langid should succeed:
-    /// let req_with_langid = DataRequest {
-    ///     locale: &langid!("de").into(),
-    ///     ..Default::default()
-    /// };
+    /// // Requests with a data id should succeed:
+    /// let id = DataIdentifierCow::from_locale(langid!("de").into());
     /// let response: Result<DataResponse<HelloWorldV1Marker>, _> =
-    ///     provider.load(req_with_langid);
+    ///     provider.load(DataRequest {
+    ///     id: id.as_borrowed(),
+    ///     ..Default::default()
+    /// });
     /// assert!(matches!(response, Ok(_)));
     ///
-    /// // Requests without a langid should fail:
-    /// let req_no_langid = DataRequest {
-    ///     locale: Default::default(),
-    ///     ..Default::default()
-    /// };
+    /// // Requests without a data should fail:
     /// let response: Result<DataResponse<HelloWorldV1Marker>, _> =
-    ///     provider.load(req_no_langid);
+    ///     provider.load(DataRequest {
+    ///     id: Default::default(),
+    ///     ..Default::default()
+    /// });
     /// assert!(matches!(
     ///     response,
     ///     Err(DataError {
@@ -207,7 +210,7 @@ where
                 if !(old_predicate)(request) {
                     return false;
                 }
-                !request.locale.is_langid_und()
+                !request.id.locale.is_langid_und()
             }),
             filter_name: self.filter_name,
         }

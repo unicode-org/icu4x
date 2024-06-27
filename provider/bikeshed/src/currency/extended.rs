@@ -10,7 +10,6 @@ use std::collections::BTreeMap;
 use std::collections::HashSet;
 
 use icu::experimental::dimension::provider::extended_currency::Count;
-use tinystr::TinyAsciiStr;
 
 use icu::experimental::dimension::provider::extended_currency::*;
 use icu_provider::prelude::*;
@@ -23,22 +22,18 @@ impl DataProvider<CurrencyExtendedDataV1Marker> for crate::DatagenProvider {
     ) -> Result<DataResponse<CurrencyExtendedDataV1Marker>, DataError> {
         self.check_req::<CurrencyExtendedDataV1Marker>(req)?;
 
-        let langid = req.locale.get_langid();
+        let langid = req.id.locale.get_langid();
         let currencies_resource: &cldr_serde::currencies::data::Resource =
             self.cldr()?
                 .numbers()
                 .read_and_parse(&langid, "currencies.json")?;
 
-        let aux = req
-            .marker_attributes
-            .parse::<TinyAsciiStr<3>>()
-            .map_err(|_| DataError::custom("failed to parse aux key into tinystr"))?;
         let currency = currencies_resource
             .main
             .value
             .numbers
             .currencies
-            .get(&aux.to_unvalidated())
+            .get(req.id.marker_attributes.as_str())
             .ok_or(DataError::custom("No currency associated with the aux key"))?;
 
         let mut placeholders: BTreeMap<Count, String> = BTreeMap::new();
@@ -80,9 +75,7 @@ impl DataProvider<CurrencyExtendedDataV1Marker> for crate::DatagenProvider {
 }
 
 impl crate::IterableDataProviderCached<CurrencyExtendedDataV1Marker> for DatagenProvider {
-    fn iter_requests_cached(
-        &self,
-    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         // TODO: This is a temporary implementation until we have a better way to handle large number of json files.
         let currencies_to_support: HashSet<_> =
             ["USD", "CAD", "EUR", "GBP", "EGP"].into_iter().collect();
@@ -98,21 +91,16 @@ impl crate::IterableDataProviderCached<CurrencyExtendedDataV1Marker> for Datagen
 
             let currencies = &currencies_resource.main.value.numbers.currencies;
             for key in currencies.keys() {
-                let key_string = key
-                    .try_into_tinystr()
-                    .map_err(|_| DataError::custom("failed to parse currency code into tinystr"))?
-                    .parse::<String>()
-                    .map_err(|_| DataError::custom("failed to parse currency code into string"))?;
-                if !currencies_to_support.contains(key_string.as_str()) {
+                if !currencies_to_support.contains(key.as_str()) {
                     continue;
                 }
 
-                let key = key
-                    .try_into_tinystr()
-                    .map_err(|_| DataError::custom("failed to parse currency code into tinystr"))?;
-
-                let attributes = DataMarkerAttributes::from_tinystr(key.resize());
-                result.insert((DataLocale::from(&langid), attributes));
+                if let Ok(attributes) = DataMarkerAttributes::try_from_string(key.clone()) {
+                    result.insert(DataIdentifierCow::from_owned(
+                        attributes,
+                        DataLocale::from(langid.clone()),
+                    ));
+                }
             }
         }
 
@@ -127,8 +115,10 @@ fn test_basic() {
     let provider = DatagenProvider::new_testing();
     let en: DataPayload<CurrencyExtendedDataV1Marker> = provider
         .load(DataRequest {
-            locale: &langid!("en").into(),
-            marker_attributes: &"USD".parse().unwrap(),
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                DataMarkerAttributes::from_str_or_panic("USD"),
+                &langid!("en").into(),
+            ),
             ..Default::default()
         })
         .unwrap()
@@ -144,8 +134,10 @@ fn test_basic() {
 
     let fr: DataPayload<CurrencyExtendedDataV1Marker> = provider
         .load(DataRequest {
-            locale: &langid!("fr").into(),
-            marker_attributes: &"USD".parse().unwrap(),
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                DataMarkerAttributes::from_str_or_panic("USD"),
+                &langid!("fr").into(),
+            ),
             ..Default::default()
         })
         .unwrap()

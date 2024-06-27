@@ -71,7 +71,7 @@ impl ForkByErrorPredicate for MissingDataMarkerPredicate {
 /// struct SingleLocaleProvider(icu_locale::LanguageIdentifier);
 /// impl DataProvider<HelloWorldV1Marker> for SingleLocaleProvider {
 ///     fn load(&self, req: DataRequest) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
-///         if req.locale.get_langid() != self.0 {
+///         if req.id.locale.get_langid() != self.0 {
 ///             return Err(DataErrorKind::MissingLocale.with_req(HelloWorldV1Marker::INFO, req));
 ///         }
 ///         HelloWorldProvider.load(req)
@@ -92,7 +92,7 @@ impl ForkByErrorPredicate for MissingDataMarkerPredicate {
 ///
 /// let german_hello_world: DataResponse<HelloWorldV1Marker> = provider
 ///     .load(DataRequest {
-///         locale: &langid!("de").into(),
+///         id: DataIdentifierBorrowed::for_locale(&langid!("de").into()),
 ///         ..Default::default()
 ///     })
 ///     .expect("Loading should succeed");
@@ -101,7 +101,7 @@ impl ForkByErrorPredicate for MissingDataMarkerPredicate {
 ///
 /// let romanian_hello_world: DataResponse<HelloWorldV1Marker> = provider
 ///     .load(DataRequest {
-///         locale: &langid!("ro").into(),
+///         id: DataIdentifierBorrowed::for_locale(&langid!("ro").into()),
 ///         ..Default::default()
 ///     })
 ///     .expect("Loading should succeed");
@@ -113,7 +113,7 @@ impl ForkByErrorPredicate for MissingDataMarkerPredicate {
 /// DataProvider::<HelloWorldV1Marker>::load(
 ///     &provider,
 ///     DataRequest {
-///         locale: &langid!("en").into(),
+///         id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
 ///         ..Default::default()
 ///     }
 /// )

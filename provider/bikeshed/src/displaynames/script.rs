@@ -17,7 +17,7 @@ impl DataProvider<ScriptDisplayNamesV1Marker> for DatagenProvider {
         req: DataRequest,
     ) -> Result<DataResponse<ScriptDisplayNamesV1Marker>, DataError> {
         self.check_req::<ScriptDisplayNamesV1Marker>(req)?;
-        let langid = req.locale.get_langid();
+        let langid = req.id.locale.get_langid();
 
         let data: &cldr_serde::displaynames::script::Resource = self
             .cldr()?
@@ -34,9 +34,7 @@ impl DataProvider<ScriptDisplayNamesV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProviderCached<ScriptDisplayNamesV1Marker> for DatagenProvider {
-    fn iter_requests_cached(
-        &self,
-    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(self
             .cldr()?
             .displaynames()
@@ -49,7 +47,7 @@ impl IterableDataProviderCached<ScriptDisplayNamesV1Marker> for DatagenProvider 
                     .file_exists(langid, "scripts.json")
                     .unwrap_or_default()
             })
-            .map(|l| (DataLocale::from(l), Default::default()))
+            .map(|l| DataIdentifierCow::from_locale(DataLocale::from(l)))
             .collect())
     }
 }
@@ -106,7 +104,7 @@ mod tests {
 
         let data: DataPayload<ScriptDisplayNamesV1Marker> = provider
             .load(DataRequest {
-                locale: &langid!("en-001").into(),
+                id: DataIdentifierBorrowed::for_locale(&langid!("en-001").into()),
                 ..Default::default()
             })
             .unwrap()
@@ -127,7 +125,7 @@ mod tests {
 
         let data: DataPayload<ScriptDisplayNamesV1Marker> = provider
             .load(DataRequest {
-                locale: &langid!("en-001").into(),
+                id: DataIdentifierBorrowed::for_locale(&langid!("en-001").into()),
                 ..Default::default()
             })
             .unwrap()

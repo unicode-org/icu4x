@@ -260,7 +260,7 @@ impl Transliterator {
     {
         let payload = Transliterator::load_rbt(
             #[allow(clippy::unwrap_used)] // infallible
-            &locale.to_string().to_ascii_lowercase().parse().unwrap(),
+            DataMarkerAttributes::try_from_str(&locale.to_string().to_ascii_lowercase()).unwrap(),
             transliterator_provider,
         )?;
         let rbt = payload.get();
@@ -316,7 +316,7 @@ impl Transliterator {
                     .unwrap_or_else(|| {
                         let rbt = Transliterator::load_rbt(
                             #[allow(clippy::unwrap_used)] // infallible
-                            &dep.to_ascii_lowercase().parse().unwrap(),
+                            DataMarkerAttributes::try_from_str(&dep.to_ascii_lowercase()).unwrap(),
                             transliterator_provider,
                         )?;
                         Ok(InternalTransliterator::RuleBased(rbt))
@@ -407,7 +407,7 @@ impl Transliterator {
         P: DataProvider<TransliteratorRulesV1Marker> + ?Sized,
     {
         let req = DataRequest {
-            marker_attributes,
+            id: DataIdentifierBorrowed::for_marker_attributes(marker_attributes),
             ..Default::default()
         };
         let payload = provider.load(req)?.payload;

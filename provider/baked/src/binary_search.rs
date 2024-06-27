@@ -11,15 +11,20 @@ use icu_provider::prelude::*;
 #[cfg(feature = "export")]
 pub fn bake(
     marker_bake: &TokenStream,
-    reqs_to_idents: Vec<((DataLocale, DataMarkerAttributes), proc_macro2::Ident)>,
+    reqs_to_idents: Vec<(DataIdentifierCow, proc_macro2::Ident)>,
     idents_to_bakes: Vec<(proc_macro2::Ident, TokenStream)>,
 ) -> TokenStream {
-    let mut reqs_to_idents = reqs_to_idents
+    let mut ids_to_idents = reqs_to_idents
         .into_iter()
-        .map(|((l, a), i)| ((a.to_string(), l.to_string()), quote!(#i)))
+        .map(|(id, ident)| {
+            (
+                (id.marker_attributes.to_string(), id.locale.to_string()),
+                quote!(#ident),
+            )
+        })
         .collect::<Vec<_>>();
 
-    reqs_to_idents.sort_by(|(a, _), (b, _)| a.cmp(b));
+    ids_to_idents.sort_by(|(a, _), (b, _)| a.cmp(b));
 
     let idents_to_bakes = idents_to_bakes.into_iter().map(|(ident, bake)| {
         quote! {
@@ -27,20 +32,20 @@ pub fn bake(
         }
     });
 
-    let (ty, reqs_to_idents) = if reqs_to_idents.iter().all(|((a, _), _)| a.is_empty()) {
+    let (ty, reqs_to_idents) = if ids_to_idents.iter().all(|((a, _), _)| a.is_empty()) {
         // Only DataLocales
         (
             quote! { icu_provider_baked::binary_search::Locale },
-            reqs_to_idents
+            ids_to_idents
                 .iter()
                 .map(|((_, l), i)| quote!((#l, #i)))
                 .collect::<Vec<_>>(),
         )
-    } else if reqs_to_idents.iter().all(|((_, l), _)| *l == "und") {
+    } else if ids_to_idents.iter().all(|((_, l), _)| *l == "und") {
         // Only marker attributes
         (
             quote! { icu_provider_baked::binary_search::Attributes },
-            reqs_to_idents
+            ids_to_idents
                 .iter()
                 .map(|((a, _), i)| quote!((#a, #i)))
                 .collect(),
@@ -48,7 +53,7 @@ pub fn bake(
     } else {
         (
             quote! { icu_provider_baked::binary_search::AttributesAndLocale },
-            reqs_to_idents
+            ids_to_idents
                 .iter()
                 .map(|((a, l), i)| quote!(((#a, #l), #i)))
                 .collect(),
@@ -67,27 +72,27 @@ pub fn bake(
 pub struct Data<K: BinarySearchKey, M: DataMarker>(pub &'static [(K::Type, &'static M::Yokeable)]);
 
 impl<K: BinarySearchKey, M: DataMarker> super::DataStore<M> for Data<K, M> {
-    fn get(&self, req: DataRequest) -> Option<&'static M::Yokeable> {
+    fn get(&self, id: DataIdentifierBorrowed) -> Option<&'static M::Yokeable> {
         self.0
-            .binary_search_by(|&(k, _)| K::cmp(k, req))
+            .binary_search_by(|&(k, _)| K::cmp(k, id))
             .map(|i| unsafe { self.0.get_unchecked(i) }.1)
             .ok()
     }
 
     type IterReturn = core::iter::Map<
         core::slice::Iter<'static, (K::Type, &'static M::Yokeable)>,
-        fn(&'static (K::Type, &'static M::Yokeable)) -> (DataLocale, DataMarkerAttributes),
+        fn(&'static (K::Type, &'static M::Yokeable)) -> DataIdentifierCow<'static>,
     >;
     fn iter(&self) -> Self::IterReturn {
-        self.0.iter().map(|&(k, _)| K::to_req(k))
+        self.0.iter().map(|&(k, _)| K::to_id(k))
     }
 }
 
 pub trait BinarySearchKey: 'static {
     type Type: Ord + Copy + 'static;
 
-    fn cmp(k: Self::Type, req: DataRequest) -> core::cmp::Ordering;
-    fn to_req(k: Self::Type) -> (DataLocale, DataMarkerAttributes);
+    fn cmp(k: Self::Type, id: DataIdentifierBorrowed) -> core::cmp::Ordering;
+    fn to_id(k: Self::Type) -> DataIdentifierCow<'static>;
 }
 
 pub struct Locale;
@@ -95,12 +100,12 @@ pub struct Locale;
 impl BinarySearchKey for Locale {
     type Type = &'static str;
 
-    fn cmp(locale: Self::Type, req: DataRequest) -> core::cmp::Ordering {
-        req.locale.strict_cmp(locale.as_bytes()).reverse()
+    fn cmp(locale: Self::Type, id: DataIdentifierBorrowed) -> core::cmp::Ordering {
+        id.locale.strict_cmp(locale.as_bytes()).reverse()
     }
 
-    fn to_req(locale: Self::Type) -> (DataLocale, DataMarkerAttributes) {
-        (locale.parse().unwrap(), Default::default())
+    fn to_id(locale: Self::Type) -> DataIdentifierCow<'static> {
+        DataIdentifierCow::from_locale(locale.parse().unwrap())
     }
 }
 
@@ -109,12 +114,14 @@ pub struct Attributes;
 impl BinarySearchKey for Attributes {
     type Type = &'static str;
 
-    fn cmp(attributes: Self::Type, req: DataRequest) -> core::cmp::Ordering {
-        attributes.cmp(&**req.marker_attributes)
+    fn cmp(attributes: Self::Type, id: DataIdentifierBorrowed) -> core::cmp::Ordering {
+        attributes.cmp(id.marker_attributes)
     }
 
-    fn to_req(attributes: Self::Type) -> (DataLocale, DataMarkerAttributes) {
-        (Default::default(), attributes.parse().unwrap())
+    fn to_id(attributes: Self::Type) -> DataIdentifierCow<'static> {
+        DataIdentifierCow::from_marker_attributes(DataMarkerAttributes::from_str_or_panic(
+            attributes,
+        ))
     }
 }
 
@@ -123,13 +130,16 @@ pub struct AttributesAndLocale;
 impl BinarySearchKey for AttributesAndLocale {
     type Type = (&'static str, &'static str);
 
-    fn cmp((attributes, locale): Self::Type, req: DataRequest) -> core::cmp::Ordering {
+    fn cmp((attributes, locale): Self::Type, id: DataIdentifierBorrowed) -> core::cmp::Ordering {
         attributes
-            .cmp(&**req.marker_attributes)
-            .then_with(|| req.locale.strict_cmp(locale.as_bytes()).reverse())
+            .cmp(id.marker_attributes)
+            .then_with(|| id.locale.strict_cmp(locale.as_bytes()).reverse())
     }
 
-    fn to_req((attributes, locale): Self::Type) -> (DataLocale, DataMarkerAttributes) {
-        (locale.parse().unwrap(), attributes.parse().unwrap())
+    fn to_id((attributes, locale): Self::Type) -> DataIdentifierCow<'static> {
+        DataIdentifierCow::from_borrowed_and_owned(
+            DataMarkerAttributes::from_str_or_panic(attributes),
+            locale.parse().unwrap(),
+        )
     }
 }

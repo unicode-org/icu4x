@@ -24,7 +24,7 @@ macro_rules! exemplar_chars_impls {
         impl DataProvider<$data_marker_name> for DatagenProvider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$data_marker_name>, DataError> {
                 self.check_req::<$data_marker_name>(req)?;
-                let langid = req.locale.get_langid();
+                let langid = req.id.locale.get_langid();
 
                 let data: &cldr_serde::exemplar_chars::Resource = self
                     .cldr()?
@@ -48,14 +48,12 @@ macro_rules! exemplar_chars_impls {
         }
 
         impl IterableDataProviderCached<$data_marker_name> for DatagenProvider {
-            fn iter_requests_cached(
-                &self,
-            ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+            fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
                 Ok(self
                     .cldr()?
                     .misc()
                     .list_langs()?
-                    .map(|l| (DataLocale::from(l), Default::default()))
+                    .map(|l| DataIdentifierCow::from_locale(DataLocale::from(l)))
                     .collect())
             }
         }

@@ -35,10 +35,7 @@ macro_rules! implement {
             }
         }
         impl IterableDataProvider<$marker> for Baked {
-            fn iter_requests(
-                &self,
-            ) -> Result<std::collections::HashSet<(DataLocale, DataMarkerAttributes)>, DataError>
-            {
+            fn iter_ids(&self) -> Result<std::collections::HashSet<DataIdentifierCow>, DataError> {
                 const LOCALES: &[LanguageIdentifier] = &[
                     langid!("af"),
                     langid!("am"),
@@ -217,16 +214,27 @@ macro_rules! implement {
                     langid!("zh"),
                     langid!("zu"),
                 ];
-                const ATTRS: &[&str] = &[
-                    "a1", "a1e", "de", "gy", "gym0", "gym0d", "gym0de", "m0d", "m0de", "y0w",
-                    "ym0", "ym0d", "ym0de",
+                const ATTRS: &[&DataMarkerAttributes] = &[
+                    DataMarkerAttributes::from_str_or_panic("a1"),
+                    DataMarkerAttributes::from_str_or_panic("a1e"),
+                    DataMarkerAttributes::from_str_or_panic("de"),
+                    DataMarkerAttributes::from_str_or_panic("gy"),
+                    DataMarkerAttributes::from_str_or_panic("gym0"),
+                    DataMarkerAttributes::from_str_or_panic("gym0d"),
+                    DataMarkerAttributes::from_str_or_panic("gym0de"),
+                    DataMarkerAttributes::from_str_or_panic("m0d"),
+                    DataMarkerAttributes::from_str_or_panic("m0de"),
+                    DataMarkerAttributes::from_str_or_panic("y0w"),
+                    DataMarkerAttributes::from_str_or_panic("ym0"),
+                    DataMarkerAttributes::from_str_or_panic("ym0d"),
+                    DataMarkerAttributes::from_str_or_panic("ym0de"),
                 ];
                 Ok(LOCALES
                     .iter()
                     .flat_map(|l| {
-                        ATTRS
-                            .iter()
-                            .map(|a| (DataLocale::from(l.clone()), a.parse().unwrap()))
+                        ATTRS.iter().map(|a| {
+                            DataIdentifierCow::from_borrowed_and_owned(a, l.clone().into())
+                        })
                     })
                     .collect())
             }
@@ -244,18 +252,16 @@ where
     Baked: IterableDataProvider<M>,
     ExportMarker: UpcastDataPayload<M>,
 {
-    for (locale, marker_attributes) in &IterableDataProvider::<M>::iter_requests(&Baked).unwrap() {
+    for id in &IterableDataProvider::<M>::iter_ids(&Baked).unwrap() {
         let req = DataRequest {
-            locale,
-            marker_attributes,
+            id: id.as_borrowed(),
             ..Default::default()
         };
         let res = DataProvider::<M>::load(&Baked, req).unwrap();
         exporter
             .put_payload(
                 M::INFO,
-                locale,
-                marker_attributes,
+                id.as_borrowed(),
                 &ExportMarker::upcast(res.payload),
             )
             .unwrap();
@@ -311,10 +317,12 @@ fn auxkey_bench_for_version(c: &mut Criterion, blob: &[u8], version_id: &str) {
 
     for (locale_str, attr_str) in [("sr-Latn", "ym0d"), ("sr-ME", "ym0d")] {
         let locale = locale_str.parse::<DataLocale>().unwrap();
-        let attrs = attr_str.parse::<DataMarkerAttributes>().unwrap();
+        let marker_attributes = DataMarkerAttributes::from_str_or_panic(attr_str);
         let req = DataRequest {
-            locale: &locale,
-            marker_attributes: &attrs,
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                marker_attributes,
+                &locale,
+            ),
             metadata: Default::default(),
         };
 

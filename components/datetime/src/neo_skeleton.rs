@@ -9,8 +9,7 @@ use crate::fields::{self, Field, FieldLength, FieldSymbol};
 use crate::options::components;
 use crate::options::length;
 use crate::DateTimeFormatterOptions;
-use tinystr::tinystr;
-use tinystr::TinyAsciiStr;
+use icu_provider::DataMarkerAttributes;
 
 /// A specification for the length of a date or component of a date.
 ///
@@ -143,17 +142,37 @@ impl NeoDayComponents {
         Self::AutoWeekday,
     ];
 
-    const DAY_STR: TinyAsciiStr<8> = tinystr!(8, "d");
-    const MONTH_DAY_STR: TinyAsciiStr<8> = tinystr!(8, "m0d");
-    const YEAR_MONTH_DAY_STR: TinyAsciiStr<8> = tinystr!(8, "ym0d");
-    const ERA_YEAR_MONTH_DAY_STR: TinyAsciiStr<8> = tinystr!(8, "gym0d");
-    const DAY_WEEKDAY_STR: TinyAsciiStr<8> = tinystr!(8, "de");
-    const MONTH_DAY_WEEKDAY_STR: TinyAsciiStr<8> = tinystr!(8, "m0de");
-    const YEAR_MONTH_DAY_WEEKDAY_STR: TinyAsciiStr<8> = tinystr!(8, "ym0de");
-    const ERA_YEAR_MONTH_DAY_WEEKDAY_STR: TinyAsciiStr<8> = tinystr!(8, "gym0de");
-    const WEEKDAY_STR: TinyAsciiStr<8> = tinystr!(8, "e");
-    const AUTO_STR: TinyAsciiStr<8> = tinystr!(8, "a1");
-    const AUTO_WEEKDAY_STR: TinyAsciiStr<8> = tinystr!(8, "a1e");
+    const DAY: &'static DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("d");
+    const MONTH_DAY: &'static DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("m0d");
+    const YEAR_MONTH_DAY: &'static DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("ym0d");
+    const ERA_YEAR_MONTH_DAY: &'static DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("gym0d");
+    const DAY_WEEKDAY: &'static DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("de");
+    const MONTH_DAY_WEEKDAY: &'static DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("m0de");
+    const YEAR_MONTH_DAY_WEEKDAY: &'static DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("ym0de");
+    const ERA_YEAR_MONTH_DAY_WEEKDAY: &'static DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("gym0de");
+    const WEEKDAY: &'static DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("e");
+    const AUTO: &'static DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("a1");
+    const AUTO_WEEKDAY: &'static DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("a1e");
+
+    // For matching
+    const DAY_STR: &'static str = Self::DAY.as_str();
+    const MONTH_DAY_STR: &'static str = Self::MONTH_DAY.as_str();
+    const YEAR_MONTH_DAY_STR: &'static str = Self::YEAR_MONTH_DAY.as_str();
+    const ERA_YEAR_MONTH_DAY_STR: &'static str = Self::ERA_YEAR_MONTH_DAY.as_str();
+    const DAY_WEEKDAY_STR: &'static str = Self::DAY_WEEKDAY.as_str();
+    const MONTH_DAY_WEEKDAY_STR: &'static str = Self::MONTH_DAY_WEEKDAY.as_str();
+    const YEAR_MONTH_DAY_WEEKDAY_STR: &'static str = Self::YEAR_MONTH_DAY_WEEKDAY.as_str();
+    const ERA_YEAR_MONTH_DAY_WEEKDAY_STR: &'static str = Self::ERA_YEAR_MONTH_DAY_WEEKDAY.as_str();
+    const WEEKDAY_STR: &'static str = Self::WEEKDAY.as_str();
+    const AUTO_STR: &'static str = Self::AUTO.as_str();
+    const AUTO_WEEKDAY_STR: &'static str = Self::AUTO_WEEKDAY.as_str();
 
     /// Returns a stable string identifying this set of components.
     ///
@@ -175,22 +194,22 @@ impl NeoDayComponents {
     ///
     /// assert_eq!(
     ///     "gym0de",
-    ///     &*NeoDayComponents::EraYearMonthDayWeekday.id_str()
+    ///     NeoDayComponents::EraYearMonthDayWeekday.id_str().as_str()
     /// );
     /// ```
-    pub const fn id_str(self) -> TinyAsciiStr<8> {
+    pub const fn id_str(self) -> &'static DataMarkerAttributes {
         match self {
-            Self::Day => Self::DAY_STR,
-            Self::MonthDay => Self::MONTH_DAY_STR,
-            Self::YearMonthDay => Self::YEAR_MONTH_DAY_STR,
-            Self::EraYearMonthDay => Self::ERA_YEAR_MONTH_DAY_STR,
-            Self::DayWeekday => Self::DAY_WEEKDAY_STR,
-            Self::MonthDayWeekday => Self::MONTH_DAY_WEEKDAY_STR,
-            Self::YearMonthDayWeekday => Self::YEAR_MONTH_DAY_WEEKDAY_STR,
-            Self::EraYearMonthDayWeekday => Self::ERA_YEAR_MONTH_DAY_WEEKDAY_STR,
-            Self::Weekday => Self::WEEKDAY_STR,
-            Self::Auto => Self::AUTO_STR,
-            Self::AutoWeekday => Self::AUTO_WEEKDAY_STR,
+            Self::Day => Self::DAY,
+            Self::MonthDay => Self::MONTH_DAY,
+            Self::YearMonthDay => Self::YEAR_MONTH_DAY,
+            Self::EraYearMonthDay => Self::ERA_YEAR_MONTH_DAY,
+            Self::DayWeekday => Self::DAY_WEEKDAY,
+            Self::MonthDayWeekday => Self::MONTH_DAY_WEEKDAY,
+            Self::YearMonthDayWeekday => Self::YEAR_MONTH_DAY_WEEKDAY,
+            Self::EraYearMonthDayWeekday => Self::ERA_YEAR_MONTH_DAY_WEEKDAY,
+            Self::Weekday => Self::WEEKDAY,
+            Self::Auto => Self::AUTO,
+            Self::AutoWeekday => Self::AUTO_WEEKDAY,
         }
     }
 
@@ -200,15 +219,15 @@ impl NeoDayComponents {
     ///
     /// ```
     /// use icu::datetime::neo_skeleton::NeoDayComponents;
-    /// use tinystr::tinystr;
+    /// use icu_provider::prelude::*;
     ///
     /// assert_eq!(
-    ///     NeoDayComponents::from_id_str(tinystr!(8, "gym0de")),
+    ///     NeoDayComponents::from_id_str(DataMarkerAttributes::from_str_or_panic("gym0de")),
     ///     Some(NeoDayComponents::EraYearMonthDayWeekday)
     /// );
     /// ```
-    pub const fn from_id_str(id_str: TinyAsciiStr<8>) -> Option<Self> {
-        match id_str {
+    pub fn from_id_str(id_str: &DataMarkerAttributes) -> Option<Self> {
+        match &**id_str {
             Self::DAY_STR => Some(Self::Day),
             Self::MONTH_DAY_STR => Some(Self::MonthDay),
             Self::YEAR_MONTH_DAY_STR => Some(Self::YearMonthDay),
@@ -369,37 +388,50 @@ impl NeoDateComponents {
         Self::YearQuarter,
     ];
 
-    const MONTH_STR: TinyAsciiStr<8> = tinystr!(8, "m0");
-    const YEAR_MONTH_STR: TinyAsciiStr<8> = tinystr!(8, "ym0");
-    const ERA_YEAR_MONTH_STR: TinyAsciiStr<8> = tinystr!(8, "gym0");
-    const YEAR_STR: TinyAsciiStr<8> = tinystr!(8, "y");
-    const ERA_YEAR_STR: TinyAsciiStr<8> = tinystr!(8, "gy");
-    const YEAR_WEEK_STR: TinyAsciiStr<8> = tinystr!(8, "y0w");
-    const QUARTER_STR: TinyAsciiStr<8> = tinystr!(8, "q");
-    const YEAR_QUARTER_STR: TinyAsciiStr<8> = tinystr!(8, "yq");
+    const MONTH: &'static DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("m0");
+    const YEAR_MONTH: &'static DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("ym0");
+    const ERA_YEAR_MONTH: &'static DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("gym0");
+    const YEAR: &'static DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("y");
+    const ERA_YEAR: &'static DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("gy");
+    const YEAR_WEEK: &'static DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("y0w");
+    const QUARTER: &'static DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("q");
+    const YEAR_QUARTER: &'static DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("yq");
+
+    // For matching
+    const MONTH_STR: &'static str = Self::MONTH.as_str();
+    const YEAR_MONTH_STR: &'static str = Self::YEAR_MONTH.as_str();
+    const ERA_YEAR_MONTH_STR: &'static str = Self::ERA_YEAR_MONTH.as_str();
+    const YEAR_STR: &'static str = Self::YEAR.as_str();
+    const ERA_YEAR_STR: &'static str = Self::ERA_YEAR.as_str();
+    const YEAR_WEEK_STR: &'static str = Self::YEAR_WEEK.as_str();
+    const QUARTER_STR: &'static str = Self::QUARTER.as_str();
+    const YEAR_QUARTER_STR: &'static str = Self::YEAR_QUARTER.as_str();
 
     /// Returns a stable string identifying this set of components.
     ///
     /// For details, see [`NeoDayComponents::id_str()`].
-    pub const fn id_str(self) -> TinyAsciiStr<8> {
+    pub const fn id_str(self) -> &'static DataMarkerAttributes {
         match self {
             Self::Day(day_components) => day_components.id_str(),
-            Self::Month => Self::MONTH_STR,
-            Self::YearMonth => Self::YEAR_MONTH_STR,
-            Self::EraYearMonth => Self::ERA_YEAR_MONTH_STR,
-            Self::Year => Self::YEAR_STR,
-            Self::EraYear => Self::ERA_YEAR_STR,
-            Self::YearWeek => Self::YEAR_WEEK_STR,
-            Self::Quarter => Self::QUARTER_STR,
-            Self::YearQuarter => Self::YEAR_QUARTER_STR,
+            Self::Month => Self::MONTH,
+            Self::YearMonth => Self::YEAR_MONTH,
+            Self::EraYearMonth => Self::ERA_YEAR_MONTH,
+            Self::Year => Self::YEAR,
+            Self::EraYear => Self::ERA_YEAR,
+            Self::YearWeek => Self::YEAR_WEEK,
+            Self::Quarter => Self::QUARTER,
+            Self::YearQuarter => Self::YEAR_QUARTER,
         }
     }
 
     /// Returns the set of components for the given stable string.
     ///
     /// For details, see [`NeoDayComponents::from_id_str()`].
-    pub const fn from_id_str(id_str: TinyAsciiStr<8>) -> Option<Self> {
-        match id_str {
+    pub fn from_id_str(id_str: &DataMarkerAttributes) -> Option<Self> {
+        match &**id_str {
             Self::MONTH_STR => Some(Self::Month),
             Self::YEAR_MONTH_STR => Some(Self::YearMonth),
             Self::ERA_YEAR_MONTH_STR => Some(Self::EraYearMonth),
@@ -408,10 +440,7 @@ impl NeoDateComponents {
             Self::YEAR_WEEK_STR => Some(Self::YearWeek),
             Self::QUARTER_STR => Some(Self::Quarter),
             Self::YEAR_QUARTER_STR => Some(Self::YearQuarter),
-            other => match NeoDayComponents::from_id_str(other) {
-                Some(day_components) => Some(Self::Day(day_components)),
-                None => None,
-            },
+            _ => NeoDayComponents::from_id_str(id_str).map(Self::Day),
         }
     }
 
@@ -523,46 +552,71 @@ impl NeoTimeComponents {
         Self::Auto,
     ];
 
-    const HOUR_STR: TinyAsciiStr<8> = tinystr!(8, "j");
-    const HOUR_MINUTE_STR: TinyAsciiStr<8> = tinystr!(8, "jm");
-    const HOUR_MINUTE_SECOND_STR: TinyAsciiStr<8> = tinystr!(8, "jms");
-    const DAY_PERIOD_HOUR12_STR: TinyAsciiStr<8> = tinystr!(8, "bh");
-    const HOUR12_STR: TinyAsciiStr<8> = tinystr!(8, "h");
-    const DAY_PERIOD_HOUR12_MINUTE_STR: TinyAsciiStr<8> = tinystr!(8, "bhm");
-    const HOUR12_MINUTE_STR: TinyAsciiStr<8> = tinystr!(8, "hm");
-    const DAY_PERIOD_HOUR12_MINUTE_SECOND_STR: TinyAsciiStr<8> = tinystr!(8, "bhms");
-    const HOUR12_MINUTE_SECOND_STR: TinyAsciiStr<8> = tinystr!(8, "hms");
-    const HOUR24_STR: TinyAsciiStr<8> = tinystr!(8, "h0");
-    const HOUR24_MINUTE_STR: TinyAsciiStr<8> = tinystr!(8, "h0m");
-    const HOUR24_MINUTE_SECOND_STR: TinyAsciiStr<8> = tinystr!(8, "h0ms");
-    const AUTO_STR: TinyAsciiStr<8> = tinystr!(8, "a1");
+    const HOUR: &'static DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("j");
+    const HOUR_MINUTE: &'static DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("jm");
+    const HOUR_MINUTE_SECOND: &'static DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("jms");
+    const DAY_PERIOD_HOUR12: &'static DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("bh");
+    const HOUR12: &'static DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("h");
+    const DAY_PERIOD_HOUR12_MINUTE: &'static DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("bhm");
+    const HOUR12_MINUTE: &'static DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("hm");
+    const DAY_PERIOD_HOUR12_MINUTE_SECOND: &'static DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("bhms");
+    const HOUR12_MINUTE_SECOND: &'static DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("hms");
+    const HOUR24: &'static DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("h0");
+    const HOUR24_MINUTE: &'static DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("h0m");
+    const HOUR24_MINUTE_SECOND: &'static DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("h0ms");
+    const AUTO: &'static DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("a1");
+
+    // For matching
+    const HOUR_STR: &'static str = Self::HOUR.as_str();
+    const HOUR_MINUTE_STR: &'static str = Self::HOUR_MINUTE.as_str();
+    const HOUR_MINUTE_SECOND_STR: &'static str = Self::HOUR_MINUTE_SECOND.as_str();
+    const DAY_PERIOD_HOUR12_STR: &'static str = Self::DAY_PERIOD_HOUR12.as_str();
+    const HOUR12_STR: &'static str = Self::HOUR12.as_str();
+    const DAY_PERIOD_HOUR12_MINUTE_STR: &'static str = Self::DAY_PERIOD_HOUR12_MINUTE.as_str();
+    const HOUR12_MINUTE_STR: &'static str = Self::HOUR12_MINUTE.as_str();
+    const DAY_PERIOD_HOUR12_MINUTE_SECOND_STR: &'static str =
+        Self::DAY_PERIOD_HOUR12_MINUTE_SECOND.as_str();
+    const HOUR12_MINUTE_SECOND_STR: &'static str = Self::HOUR12_MINUTE_SECOND.as_str();
+    const HOUR24_STR: &'static str = Self::HOUR24.as_str();
+    const HOUR24_MINUTE_STR: &'static str = Self::HOUR24_MINUTE.as_str();
+    const HOUR24_MINUTE_SECOND_STR: &'static str = Self::HOUR24_MINUTE_SECOND.as_str();
+    const AUTO_STR: &'static str = Self::AUTO.as_str();
 
     /// Returns a stable string identifying this set of components.
     ///
     /// For details, see [`NeoDayComponents::id_str()`].
-    pub const fn id_str(self) -> TinyAsciiStr<8> {
+    pub const fn id_str(self) -> &'static DataMarkerAttributes {
         match self {
-            Self::Hour => Self::HOUR_STR,
-            Self::HourMinute => Self::HOUR_MINUTE_STR,
-            Self::HourMinuteSecond => Self::HOUR_MINUTE_SECOND_STR,
-            Self::DayPeriodHour12 => Self::DAY_PERIOD_HOUR12_STR,
-            Self::Hour12 => Self::HOUR12_STR,
-            Self::DayPeriodHour12Minute => Self::DAY_PERIOD_HOUR12_MINUTE_STR,
-            Self::Hour12Minute => Self::HOUR12_MINUTE_STR,
-            Self::DayPeriodHour12MinuteSecond => Self::DAY_PERIOD_HOUR12_MINUTE_SECOND_STR,
-            Self::Hour12MinuteSecond => Self::HOUR12_MINUTE_SECOND_STR,
-            Self::Hour24 => Self::HOUR24_STR,
-            Self::Hour24Minute => Self::HOUR24_MINUTE_STR,
-            Self::Hour24MinuteSecond => Self::HOUR24_MINUTE_SECOND_STR,
-            Self::Auto => Self::AUTO_STR,
+            Self::Hour => Self::HOUR,
+            Self::HourMinute => Self::HOUR_MINUTE,
+            Self::HourMinuteSecond => Self::HOUR_MINUTE_SECOND,
+            Self::DayPeriodHour12 => Self::DAY_PERIOD_HOUR12,
+            Self::Hour12 => Self::HOUR12,
+            Self::DayPeriodHour12Minute => Self::DAY_PERIOD_HOUR12_MINUTE,
+            Self::Hour12Minute => Self::HOUR12_MINUTE,
+            Self::DayPeriodHour12MinuteSecond => Self::DAY_PERIOD_HOUR12_MINUTE_SECOND,
+            Self::Hour12MinuteSecond => Self::HOUR12_MINUTE_SECOND,
+            Self::Hour24 => Self::HOUR24,
+            Self::Hour24Minute => Self::HOUR24_MINUTE,
+            Self::Hour24MinuteSecond => Self::HOUR24_MINUTE_SECOND,
+            Self::Auto => Self::AUTO,
         }
     }
 
     /// Returns the set of components for the given stable string.
     ///
     /// For details, see [`NeoDayComponents::from_id_str()`].
-    pub const fn from_id_str(id_str: TinyAsciiStr<8>) -> Option<Self> {
-        match id_str {
+    pub fn from_id_str(id_str: &DataMarkerAttributes) -> Option<Self> {
+        match &**id_str {
             Self::HOUR_STR => Some(Self::Hour),
             Self::HOUR_MINUTE_STR => Some(Self::HourMinute),
             Self::HOUR_MINUTE_SECOND_STR => Some(Self::HourMinuteSecond),

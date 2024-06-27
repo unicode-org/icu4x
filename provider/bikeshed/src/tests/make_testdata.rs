@@ -99,8 +99,7 @@ impl DataExporter for ZeroCopyCheckExporter {
     fn put_payload(
         &self,
         marker: DataMarkerInfo,
-        locale: &DataLocale,
-        marker_attributes: &DataMarkerAttributes,
+        id: DataIdentifierBorrowed,
         payload_before: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
         use postcard::{
@@ -149,19 +148,19 @@ impl DataExporter for ZeroCopyCheckExporter {
         if payload_before != &payload_after {
             self.rountrip_errors.lock().expect("poison").insert((
                 marker,
-                locale.to_string()
-                    + if marker_attributes.is_empty() {
+                id.locale.to_string()
+                    + if id.marker_attributes.is_empty() {
                         ""
                     } else {
                         "-x"
                     }
-                    + marker_attributes,
+                    + id.marker_attributes.as_str(),
             ));
         }
 
         if deallocated != allocated {
             if !EXPECTED_VIOLATIONS.contains(&marker) {
-                eprintln!("Zerocopy violation {marker:?} {locale}: {allocated}B allocated, {deallocated}B deallocated");
+                eprintln!("Zerocopy violation {marker:?} {id:?}: {allocated}B allocated, {deallocated}B deallocated");
             }
             self.zero_copy_violations
                 .lock()
@@ -169,7 +168,7 @@ impl DataExporter for ZeroCopyCheckExporter {
                 .insert(marker);
         } else if allocated > 0 {
             if !EXPECTED_TRANSIENT_VIOLATIONS.contains(&marker) {
-                eprintln!("Transient zerocopy violation {marker:?} {locale}: {allocated}B allocated/deallocated");
+                eprintln!("Transient zerocopy violation {marker:?} {id:?}: {allocated}B allocated/deallocated");
             }
             self.zero_copy_transient_violations
                 .lock()

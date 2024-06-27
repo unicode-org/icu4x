@@ -18,18 +18,13 @@ impl DataProvider<UnitsEssentialsV1Marker> for DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<UnitsEssentialsV1Marker>, DataError> {
         self.check_req::<UnitsEssentialsV1Marker>(req)?;
 
-        // Get langid and the unit.
-        let langid = req.locale.get_langid();
-        let length = match req.marker_attributes.parse::<String>() {
-            Ok(aux_keys) => aux_keys,
-            Err(_) => return Err(DataError::custom("Failed to get aux keys")),
-        };
-
         // Get units
-        let units_format_data: &cldr_serde::units::data::Resource =
-            self.cldr()?.units().read_and_parse(&langid, "units.json")?;
+        let units_format_data: &cldr_serde::units::data::Resource = self
+            .cldr()?
+            .units()
+            .read_and_parse(&req.id.locale.get_langid(), "units.json")?;
         let units_format_data = &units_format_data.main.value.units;
-        let length_data = match length.as_str() {
+        let length_data = match req.id.marker_attributes.as_str() {
             "long" => &units_format_data.long,
             "short" => &units_format_data.short,
             "narrow" => &units_format_data.narrow,
@@ -64,25 +59,26 @@ impl DataProvider<UnitsEssentialsV1Marker> for DatagenProvider {
 }
 
 impl crate::IterableDataProviderCached<UnitsEssentialsV1Marker> for DatagenProvider {
-    fn iter_requests_cached(
-        &self,
-    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         let units = self.cldr()?.units();
         let langids = units.list_langs()?;
-        let data_locales: HashSet<(DataLocale, DataMarkerAttributes)> = langids
+        Ok(langids
             .into_iter()
             .flat_map(|langid| {
-                ["long", "short", "narrow"].iter().map(move |&length| {
-                    let data_locale = DataLocale::from(langid.clone());
-                    let attribute: DataMarkerAttributes = length.parse().map_err(|_| {
-                        DataError::custom("Failed to parse the attribute")
-                            .with_debug_context(length)
-                    })?;
-                    Ok::<(DataLocale, DataMarkerAttributes), DataError>((data_locale, attribute))
+                [
+                    DataMarkerAttributes::from_str_or_panic("long"),
+                    DataMarkerAttributes::from_str_or_panic("short"),
+                    DataMarkerAttributes::from_str_or_panic("narrow"),
+                ]
+                .into_iter()
+                .map(move |length| {
+                    DataIdentifierCow::from_borrowed_and_owned(
+                        length,
+                        DataLocale::from(langid.clone()),
+                    )
                 })
             })
-            .collect::<Result<HashSet<_>, _>>()?;
-        Ok(data_locales)
+            .collect())
     }
 }
 
@@ -95,8 +91,10 @@ fn test_basic() {
 
     let us_long: DataPayload<UnitsEssentialsV1Marker> = provider
         .load(DataRequest {
-            locale: &langid!("en").into(),
-            marker_attributes: &"long".parse().unwrap(),
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                DataMarkerAttributes::from_str_or_panic("long"),
+                &langid!("en").into(),
+            ),
             ..Default::default()
         })
         .unwrap()
@@ -110,8 +108,10 @@ fn test_basic() {
 
     let fr_long: DataPayload<UnitsEssentialsV1Marker> = provider
         .load(DataRequest {
-            locale: &langid!("fr").into(),
-            marker_attributes: &"long".parse().unwrap(),
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                DataMarkerAttributes::from_str_or_panic("long"),
+                &langid!("fr").into(),
+            ),
             ..Default::default()
         })
         .unwrap()
@@ -125,8 +125,10 @@ fn test_basic() {
 
     let ar_eg_short: DataPayload<UnitsEssentialsV1Marker> = provider
         .load(DataRequest {
-            locale: &langid!("ar").into(),
-            marker_attributes: &"short".parse().unwrap(),
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                DataMarkerAttributes::from_str_or_panic("short"),
+                &langid!("ar").into(),
+            ),
             ..Default::default()
         })
         .unwrap()

@@ -310,13 +310,13 @@ where
     ) -> Result<DataResponse<TransliteratorRulesV1Marker>, DataError> {
         let mut exclusive_data = self.collection.data.borrow_mut();
 
-        if let Some(response) = exclusive_data.1.get(req.marker_attributes as &str) {
+        if let Some(response) = exclusive_data.1.get(req.id.marker_attributes.as_str()) {
             return response.clone();
         };
 
         let result = || -> Result<DataResponse<TransliteratorRulesV1Marker>, DataError> {
             let Some((source, reverse, visible)) =
-                exclusive_data.0.remove(req.marker_attributes as &str)
+                exclusive_data.0.remove(req.id.marker_attributes as &str)
             else {
                 return Err(
                     DataErrorKind::MissingLocale.with_req(TransliteratorRulesV1Marker::INFO, req)
@@ -372,7 +372,7 @@ where
 
         exclusive_data
             .1
-            .insert(req.marker_attributes.to_string(), result.clone());
+            .insert(req.id.marker_attributes.to_string(), result.clone());
 
         result
     }
@@ -466,14 +466,18 @@ where
         + DataProvider<XidStartV1Marker>,
     NP: ?Sized,
 {
-    fn iter_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+    fn iter_ids(&self) -> Result<HashSet<DataIdentifierCow>, DataError> {
         let exclusive_data = self.collection.data.borrow();
         Ok(exclusive_data
             .0
             .keys()
             .cloned()
             .chain(exclusive_data.1.keys().cloned())
-            .filter_map(|s| Some((Default::default(), s.parse().ok()?)))
+            .filter_map(|s| {
+                Some(DataIdentifierCow::from_marker_attributes_owned(
+                    DataMarkerAttributes::try_from_string(s).ok()?,
+                ))
+            })
             .collect())
     }
 }
@@ -640,7 +644,9 @@ mod tests {
         let forward: DataResponse<TransliteratorRulesV1Marker> = collection
             .as_provider()
             .load(DataRequest {
-                marker_attributes: &"fwd".parse().unwrap(),
+                id: DataIdentifierBorrowed::for_marker_attributes(
+                    DataMarkerAttributes::from_str_or_panic("fwd"),
+                ),
                 ..Default::default()
             })
             .unwrap();
@@ -648,7 +654,10 @@ mod tests {
         let reverse: DataResponse<TransliteratorRulesV1Marker> = collection
             .as_provider()
             .load(DataRequest {
-                marker_attributes: &"rev".parse().unwrap(),
+                id: DataIdentifierBorrowed::for_marker_attributes(
+                    DataMarkerAttributes::from_str_or_panic("rev"),
+                ),
+
                 ..Default::default()
             })
             .unwrap();

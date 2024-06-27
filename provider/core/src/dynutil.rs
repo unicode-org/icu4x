@@ -96,6 +96,7 @@ pub use __impl_casting_upcast as impl_casting_upcast;
 /// use icu_provider::prelude::*;
 /// use icu_provider::hello_world::*;
 /// use icu_provider::marker::NeverMarker;
+/// use icu_locale_core::langid;
 /// #
 /// # // Duplicating HelloWorldProvider because the real one already implements DynamicDataProvider<AnyMarker>
 /// # struct HelloWorldProvider;
@@ -111,13 +112,11 @@ pub use __impl_casting_upcast as impl_casting_upcast;
 /// // Implement DynamicDataProvider<AnyMarker> on HelloWorldProvider: DataProvider<HelloWorldV1Marker>
 /// icu_provider::dynutil::impl_dynamic_data_provider!(HelloWorldProvider, [HelloWorldV1Marker,], AnyMarker);
 ///
-/// let req = DataRequest {
-///     locale: &icu_locale_core::langid!("de").into(),
-///     ..Default::default()
-/// };
-///
 /// // Successful because the marker matches:
-/// HelloWorldProvider.load_data(HelloWorldV1Marker::INFO, req).unwrap();
+/// HelloWorldProvider.load_data(HelloWorldV1Marker::INFO, DataRequest {
+///     id: DataIdentifierBorrowed::for_locale(&langid!("de").into()),
+///     ..Default::default()
+/// }).unwrap();
 ///
 /// # struct DummyMarker;
 /// # impl DynamicDataMarker for DummyMarker {
@@ -128,7 +127,10 @@ pub use __impl_casting_upcast as impl_casting_upcast;
 /// # }
 /// // MissingDataMarker error as the marker does not match:
 /// assert_eq!(
-///     HelloWorldProvider.load_data(DummyMarker::INFO, req).unwrap_err().kind,
+///     HelloWorldProvider.load_data(DummyMarker::INFO, DataRequest {
+///     id: DataIdentifierBorrowed::for_locale(&langid!("de").into()),
+///     ..Default::default()
+/// }).unwrap_err().kind,
 ///     DataErrorKind::MissingDataMarker,
 /// );
 /// ```
@@ -142,6 +144,7 @@ pub use __impl_casting_upcast as impl_casting_upcast;
 /// use icu_provider::prelude::*;
 /// use icu_provider::hello_world::*;
 /// use icu_provider::any::*;
+/// use icu_locale_core::langid;
 /// #
 /// # struct HelloWorldProvider;
 /// # impl DynamicDataProvider<HelloWorldV1Marker> for HelloWorldProvider {
@@ -159,13 +162,11 @@ pub use __impl_casting_upcast as impl_casting_upcast;
 ///     _ => HelloWorldV1Marker,
 /// }, AnyMarker);
 ///
-/// let req = DataRequest {
-///     locale: &icu_locale_core::langid!("de").into(),
-///     ..Default::default()
-/// };
-///
 /// // Successful because the marker matches:
-/// HelloWorldProvider.as_any_provider().load_any(HelloWorldV1Marker::INFO, req).unwrap();
+/// HelloWorldProvider.as_any_provider().load_any(HelloWorldV1Marker::INFO, DataRequest {
+///     id: DataIdentifierBorrowed::for_locale(&langid!("de").into()),
+///     ..Default::default()
+/// }).unwrap();
 ///
 /// // Because of the wildcard, any marker actually works:
 /// struct DummyMarker;
@@ -175,7 +176,10 @@ pub use __impl_casting_upcast as impl_casting_upcast;
 /// impl DataMarker for DummyMarker {
 ///     const INFO: DataMarkerInfo = DataMarkerInfo::from_path(icu_provider::marker::data_marker_path!("dummy@1"));
 /// }
-/// HelloWorldProvider.as_any_provider().load_any(DummyMarker::INFO, req).unwrap();
+/// HelloWorldProvider.as_any_provider().load_any(DummyMarker::INFO, DataRequest {
+///     id: DataIdentifierBorrowed::for_locale(&langid!("de").into()),
+///     ..Default::default()
+/// }).unwrap();
 /// ```
 ///
 /// [`DynamicDataProvider`]: crate::DynamicDataProvider
@@ -276,12 +280,12 @@ pub use __impl_dynamic_data_provider as impl_dynamic_data_provider;
 macro_rules! __impl_iterable_dynamic_data_provider {
     ($provider:ty, [ $($(#[$cfg:meta])? $struct_m:ty),+, ], $dyn_m:path) => {
         impl $crate::IterableDynamicDataProvider<$dyn_m> for $provider {
-            fn iter_requests_for_marker(&self, marker: $crate::DataMarkerInfo) -> Result<std::collections::HashSet<($crate::DataLocale, $crate::DataMarkerAttributes)>, $crate::DataError> {
+            fn iter_ids_for_marker(&self, marker: $crate::DataMarkerInfo) -> Result<std::collections::HashSet<$crate::DataIdentifierCow>, $crate::DataError> {
                 match marker.path.hashed() {
                     $(
                         $(#[$cfg])?
                         h if h == <$struct_m as $crate::DataMarker>::INFO.path.hashed() => {
-                            $crate::IterableDataProvider::<$struct_m>::iter_requests(self)
+                            $crate::IterableDataProvider::<$struct_m>::iter_ids(self)
                         }
                     )+,
                     _ => Err($crate::DataErrorKind::MissingDataMarker.with_marker(marker))

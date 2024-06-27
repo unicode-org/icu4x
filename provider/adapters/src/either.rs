@@ -68,14 +68,14 @@ impl<
     > IterableDynamicDataProvider<M> for EitherProvider<P0, P1>
 {
     #[inline]
-    fn iter_requests_for_marker(
+    fn iter_ids_for_marker(
         &self,
         marker: DataMarkerInfo,
-    ) -> Result<std::collections::HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+    ) -> Result<std::collections::HashSet<DataIdentifierCow>, DataError> {
         use EitherProvider::*;
         match self {
-            A(p) => p.iter_requests_for_marker(marker),
-            B(p) => p.iter_requests_for_marker(marker),
+            A(p) => p.iter_ids_for_marker(marker),
+            B(p) => p.iter_ids_for_marker(marker),
         }
     }
 }
@@ -85,13 +85,11 @@ impl<M: DataMarker, P0: IterableDataProvider<M>, P1: IterableDataProvider<M>>
     IterableDataProvider<M> for EitherProvider<P0, P1>
 {
     #[inline]
-    fn iter_requests(
-        &self,
-    ) -> Result<std::collections::HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+    fn iter_ids(&self) -> Result<std::collections::HashSet<DataIdentifierCow>, DataError> {
         use EitherProvider::*;
         match self {
-            A(p) => p.iter_requests(),
-            B(p) => p.iter_requests(),
+            A(p) => p.iter_ids(),
+            B(p) => p.iter_ids(),
         }
     }
 }

@@ -203,7 +203,9 @@ mod test {
                     provider.load_data(
                         HelloSingletonV1Marker::INFO,
                         DataRequest {
-                            locale: &icu_locale_core::langid!("de").into(),
+                            id: DataIdentifierBorrowed::for_locale(
+                                &icu_locale_core::langid!("de").into()
+                            ),
                             ..Default::default()
                         }
                     ),

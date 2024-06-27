@@ -195,7 +195,7 @@ impl DataProvider<LstmForWordLineAutoV1Marker> for DatagenProvider {
             .segmenter_lstm()?
             .read_and_parse_json::<RawLstmData>(&format!(
                 "{}/weights.json",
-                req.marker_attributes as &str
+                req.id.marker_attributes as &str
             ))
             .map_err(|_| DataErrorKind::MissingLocale.into_error())?;
 
@@ -209,18 +209,17 @@ impl DataProvider<LstmForWordLineAutoV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProviderCached<LstmForWordLineAutoV1Marker> for DatagenProvider {
-    fn iter_requests_cached(
-        &self,
-    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
-        Ok([
-            "Burmese_codepoints_exclusive_model4_heavy",
-            "Khmer_codepoints_exclusive_model4_heavy",
-            "Lao_codepoints_exclusive_model4_heavy",
-            "Thai_codepoints_exclusive_model4_heavy",
-        ]
-        .into_iter()
-        .map(|m| (Default::default(), m.parse().unwrap()))
-        .collect())
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+        const SUPPORTED: [&DataMarkerAttributes; 4] = [
+            DataMarkerAttributes::from_str_or_panic("Burmese_codepoints_exclusive_model4_heavy"),
+            DataMarkerAttributes::from_str_or_panic("Khmer_codepoints_exclusive_model4_heavy"),
+            DataMarkerAttributes::from_str_or_panic("Lao_codepoints_exclusive_model4_heavy"),
+            DataMarkerAttributes::from_str_or_panic("Thai_codepoints_exclusive_model4_heavy"),
+        ];
+        Ok(SUPPORTED
+            .into_iter()
+            .map(DataIdentifierCow::from_marker_attributes)
+            .collect())
     }
 }
 

@@ -25,7 +25,7 @@ impl DatagenProvider {
     ) -> Result<UCharDictionaryBreakDataV1<'static>, DataError> {
         let filename = format!(
             "segmenter/dictionary/{}.toml",
-            req.marker_attributes as &str
+            req.id.marker_attributes as &str
         );
 
         let toml_data = self
@@ -39,7 +39,7 @@ impl DatagenProvider {
 }
 
 macro_rules! implement {
-    ($marker:ident, $supported:expr) => {
+    ($marker:ident, [$($supported:expr),*]) => {
         impl DataProvider<$marker> for DatagenProvider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
                 self.check_req::<$marker>(req)?;
@@ -52,12 +52,14 @@ macro_rules! implement {
         }
 
         impl IterableDataProviderCached<$marker> for DatagenProvider {
-            fn iter_requests_cached(
+            fn iter_ids_cached(
                 &self,
-            ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
-                Ok($supported
-                    .into_iter()
-                    .map(|m| (Default::default(), m.parse().unwrap()))
+            ) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+                const SUPPORTED: &[&DataMarkerAttributes] = &[$(DataMarkerAttributes::from_str_or_panic($supported)),*];
+                Ok(SUPPORTED
+                    .iter()
+                    .copied()
+                    .map(DataIdentifierCow::from_marker_attributes)
                     .collect())
             }
         }

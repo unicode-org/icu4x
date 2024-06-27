@@ -192,8 +192,7 @@ impl<E: DataExporter> DataExporter for StubExporter<E> {
     fn put_payload(
         &self,
         _marker: DataMarkerInfo,
-        _locale: &DataLocale,
-        _marker_attributes: &DataMarkerAttributes,
+        _id: DataIdentifierBorrowed,
         _payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
         Ok(())
@@ -225,8 +224,7 @@ impl<F: Write + Send + Sync> DataExporter for PostcardFingerprintExporter<F> {
     fn put_payload(
         &self,
         marker: DataMarkerInfo,
-        locale: &DataLocale,
-        marker_attributes: &DataMarkerAttributes,
+        id: DataIdentifierBorrowed,
         payload_before: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
         let mut serialized = vec![];
@@ -248,15 +246,16 @@ impl<F: Write + Send + Sync> DataExporter for PostcardFingerprintExporter<F> {
         self.size_hash.lock().expect("poison").insert(
             (
                 marker,
-                if marker.is_singleton && locale.is_und() {
+                if marker.is_singleton && id.locale.is_und() {
                     "<singleton>".to_string()
-                } else if !marker_attributes.is_empty() {
+                } else if !id.marker_attributes.is_empty() {
                     format!(
                         "{locale}/{marker_attributes}",
-                        marker_attributes = marker_attributes as &str
+                        locale = id.locale,
+                        marker_attributes = id.marker_attributes.as_str(),
                     )
                 } else {
-                    locale.to_string()
+                    id.locale.to_string()
                 },
             ),
             (size, hash),

@@ -66,7 +66,7 @@ impl CurrencyFormatter {
             FixedDecimalFormatter::try_new(locale, FixedDecimalFormatterOptions::default())?;
         let essential = crate::provider::Baked
             .load(DataRequest {
-                locale,
+                id: DataIdentifierBorrowed::for_locale(locale),
                 ..Default::default()
             })?
             .payload;
@@ -96,7 +96,7 @@ impl CurrencyFormatter {
         )?;
         let essential = provider
             .load(DataRequest {
-                locale,
+                id: DataIdentifierBorrowed::for_locale(locale),
                 ..Default::default()
             })?
             .payload;

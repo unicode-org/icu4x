@@ -58,9 +58,7 @@ impl DataProvider<IanaToBcp47MapV1Marker> for DatagenProvider {
 }
 
 impl crate::IterableDataProviderCached<IanaToBcp47MapV1Marker> for DatagenProvider {
-    fn iter_requests_cached(
-        &self,
-    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
@@ -114,9 +112,7 @@ impl DataProvider<IanaToBcp47MapV2Marker> for DatagenProvider {
 }
 
 impl crate::IterableDataProviderCached<IanaToBcp47MapV2Marker> for DatagenProvider {
-    fn iter_requests_cached(
-        &self,
-    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
@@ -148,9 +144,7 @@ impl DataProvider<Bcp47ToIanaMapV1Marker> for DatagenProvider {
 }
 
 impl crate::IterableDataProviderCached<Bcp47ToIanaMapV1Marker> for DatagenProvider {
-    fn iter_requests_cached(
-        &self,
-    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }

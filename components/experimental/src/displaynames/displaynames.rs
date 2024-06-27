@@ -63,7 +63,7 @@ impl RegionDisplayNames {
     ) -> Result<Self, DataError> {
         let region_data = provider
             .load(DataRequest {
-                locale,
+                id: DataIdentifierBorrowed::for_locale(locale),
                 ..Default::default()
             })?
             .payload;
@@ -136,7 +136,7 @@ impl ScriptDisplayNames {
     ) -> Result<Self, DataError> {
         let script_data = provider
             .load(DataRequest {
-                locale,
+                id: DataIdentifierBorrowed::for_locale(locale),
                 ..Default::default()
             })?
             .payload;
@@ -210,7 +210,7 @@ impl VariantDisplayNames {
     ) -> Result<Self, DataError> {
         let variant_data = provider
             .load(DataRequest {
-                locale,
+                id: DataIdentifierBorrowed::for_locale(locale),
                 ..Default::default()
             })?
             .payload;
@@ -277,7 +277,7 @@ impl LanguageDisplayNames {
     ) -> Result<Self, DataError> {
         let language_data = provider
             .load(DataRequest {
-                locale,
+                id: DataIdentifierBorrowed::for_locale(locale),
                 ..Default::default()
             })?
             .payload;
@@ -376,7 +376,7 @@ impl LocaleDisplayNamesFormatter {
             + ?Sized,
     {
         let req = DataRequest {
-            locale,
+            id: DataIdentifierBorrowed::for_locale(locale),
             ..Default::default()
         };
 

@@ -370,7 +370,7 @@ impl PluralRules {
         Ok(Self(
             provider
                 .load(DataRequest {
-                    locale,
+                    id: DataIdentifierBorrowed::for_locale(locale),
                     ..Default::default()
                 })?
                 .payload
@@ -430,7 +430,7 @@ impl PluralRules {
         Ok(Self(
             provider
                 .load(DataRequest {
-                    locale,
+                    id: DataIdentifierBorrowed::for_locale(locale),
                     ..Default::default()
                 })?
                 .payload
@@ -767,7 +767,7 @@ where
     ) -> Result<Self, DataError> {
         let ranges = provider
             .load(DataRequest {
-                locale,
+                id: DataIdentifierBorrowed::for_locale(locale),
                 ..Default::default()
             })?
             .payload;
