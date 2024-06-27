@@ -6,7 +6,6 @@
 
 //! Options for [`UnitsFormatter`](crate::dimension::units::formatter::UnitsFormatter).
 
-
 /// A collection of configuration options that determine the formatting behavior of
 /// [`UnitsFormatter`](crate::dimension::units::formatter::UnitsFormatter).
 #[derive(Copy, Debug, Eq, PartialEq, Clone, Default)]

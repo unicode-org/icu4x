@@ -33,14 +33,13 @@ impl<'l> Writeable for FormattedUnit<'l> {
     {
         let plural_category = self.plural_rules.category_for(self.value);
         let count = Count::from(plural_category);
+        let unit_pattern = "{0} ".to_owned() + self.unit;
         let display_name = match self.options.width {
             Width::Short => self.display_name.short.get(&count),
             Width::Long => self.display_name.long.get(&count),
             Width::Narrow => self.display_name.narrow.get(&count),
         }
-        .unwrap_or({
-            self.unit // TODO: Add {0} to the unit.
-        });
+        .unwrap_or({ unit_pattern.as_str() });
 
         let pattern =
             SinglePlaceholderPattern::from_str(display_name).map_err(|_| core::fmt::Error)?;
