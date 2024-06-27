@@ -41,6 +41,7 @@ impl<'l> Writeable for FormattedUnit<'l> {
         }
         .unwrap_or_else(|| unit_pattern.insert("{0} ".to_owned() + self.unit));
 
+        // TODO: once the patterns are implemented to be used in the data side, we do not need this.
         let pattern =
             SinglePlaceholderPattern::from_str(display_name).map_err(|_| core::fmt::Error)?;
 

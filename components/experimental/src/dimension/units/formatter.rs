@@ -71,14 +71,15 @@ impl UnitsFormatter {
 
         let plural_rules = PluralRules::try_new_cardinal(locale)?;
 
-        let unit_attribute: DataMarkerAttributes = unit
-            .parse()
+        let unit_attribute = DataMarkerAttributes::try_from_str(unit)
             .map_err(|_| DataError::custom("Failed to parse unit"))?;
 
         let display_name = crate::provider::Baked
             .load(DataRequest {
-                locale,
-                marker_attributes: &unit_attribute,
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    &unit_attribute,
+                    locale,
+                ),
                 ..Default::default()
             })?
             .payload;
@@ -95,7 +96,7 @@ impl UnitsFormatter {
     pub fn try_new_unstable<D>(
         provider: &D,
         locale: &DataLocale,
-        units: &str,
+        unit: &str,
         options: super::options::UnitsFormatterOptions,
     ) -> Result<Self, DataError>
     where
@@ -112,14 +113,15 @@ impl UnitsFormatter {
 
         let plural_rules = PluralRules::try_new_cardinal_unstable(provider, locale)?;
 
-        let marker_attributes = &units
-            .parse()
+        let unit_attribute = DataMarkerAttributes::try_from_str(unit)
             .map_err(|_| DataError::custom("Failed to parse unit"))?;
 
         let display_name = provider
             .load(DataRequest {
-                locale,
-                marker_attributes,
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    &unit_attribute,
+                    locale,
+                ),
                 ..Default::default()
             })?
             .payload;
