@@ -219,7 +219,7 @@ impl<E: DataExporter> DataExporter for StubExporter<E> {
 
 struct StatisticsExporter<F> {
     size_hash: Mutex<BTreeMap<(DataMarkerInfo, String), (usize, u64)>>,
-    struct_sizes: Mutex<BTreeMap<u64, usize>>,
+    struct_sizes: Mutex<BTreeMap<DataMarkerInfo, BTreeMap<u64, usize>>>,
     identifiers: Mutex<BTreeSet<String>>,
     fingerprints: F,
 }
@@ -265,12 +265,25 @@ impl<F: Write + Send + Sync> DataExporter for StatisticsExporter<F> {
             (size, hash),
         );
 
-        self.struct_sizes.lock().expect("poison").insert(hash, size);
-        self.identifiers
+        self.struct_sizes
             .lock()
             .expect("poison")
-            .insert(locale.to_string() + marker_attributes);
+            .entry(marker)
+            .or_default()
+            .insert(hash, size);
 
+        if !marker.is_singleton {
+            self.identifiers
+                .lock()
+                .expect("poison")
+                .insert(locale.to_string());
+            if !marker_attributes.is_empty() {
+                self.identifiers
+                    .lock()
+                    .expect("poison")
+                    .insert(marker_attributes.to_string());
+            }
+        }
         Ok(())
     }
 
@@ -290,28 +303,36 @@ impl<F: Write + Send + Sync> DataExporter for StatisticsExporter<F> {
             "{identifiers_count} identifiers, {identifiers_size}B",
         )?;
 
-        let structs_count = struct_sizes.len();
-        let structs_size = struct_sizes.values().sum::<usize>();
-        writeln!(
-            &mut self.fingerprints,
-            "{structs_count} structs, {structs_size}B",
-        )?;
-
         writeln!(&mut self.fingerprints)?;
 
         let mut seen = std::collections::HashMap::new();
-        for ((marker, req), (size, hash)) in size_hash.iter() {
-            if let Some(deduped_req) = seen.get(hash) {
+
+        for (marker, struct_sizes) in struct_sizes.iter() {
+            if !marker.is_singleton {
+                let structs_count = struct_sizes.len();
+                let structs_size = struct_sizes.values().sum::<usize>();
                 writeln!(
                     &mut self.fingerprints,
-                    "{marker:?}, {req}, {size}B, -> {deduped_req}",
+                    "{structs_count} structs, {structs_size}B",
                 )?;
-            } else {
-                writeln!(
-                    &mut self.fingerprints,
-                    "{marker:?}, {req}, {size}B, {hash:x}",
-                )?;
-                seen.insert(hash, req);
+            }
+
+            for ((m, req), (size, hash)) in size_hash.iter() {
+                if m != marker {
+                    continue;
+                }
+                if let Some(deduped_req) = seen.get(hash) {
+                    writeln!(
+                        &mut self.fingerprints,
+                        "{marker:?}, {req}, {size}B, -> {deduped_req}",
+                    )?;
+                } else {
+                    writeln!(
+                        &mut self.fingerprints,
+                        "{marker:?}, {req}, {size}B, {hash:x}",
+                    )?;
+                    seen.insert(hash, req);
+                }
             }
         }
         Ok(())

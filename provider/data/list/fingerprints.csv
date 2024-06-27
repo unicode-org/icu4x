@@ -1,6 +1,6 @@
 145 identifiers, 380B
-270 structs, 14837B
 
+118 structs, 5752B
 list/and@2, af, 24B, 177f30fc0537cd07
 list/and@2, am, 56B, 14751ee07af8ce24
 list/and@2, ar, 18B, 82ed6c556b40aa1e
@@ -136,6 +136,7 @@ list/and@2, zh-HK, 24B, 13320f3318004eea
 list/and@2, zh-Hant, 24B, 24c8fd6c3ed6f2cc
 list/and@2, zh-MO, 24B, -> zh-HK
 list/and@2, zu, 32B, f280d533aa349025
+95 structs, 4479B
 list/or@2, af, 24B, 8912e928094584a4
 list/or@2, am, 50B, 76f0c5245302d4b1
 list/or@2, ar, 21B, 5806d35693c39ceb
@@ -255,6 +256,7 @@ list/or@2, yue, 26B, 34a6b378f2e22e73
 list/or@2, yue-Hans, 26B, -> yue
 list/or@2, zh, 24B, 2e2b9ef825abc769
 list/or@2, zh-Hant, 24B, -> zh
+80 structs, 5320B
 list/unit@2, af, 24B, -> fy
 list/unit@2, am, 23B, 8dcf442ea8ed6356
 list/unit@2, ar, 26B, e14608e5cd3e4ce0
