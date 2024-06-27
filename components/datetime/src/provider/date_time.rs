@@ -5,7 +5,6 @@
 //! Traits for managing data needed by [`TypedDateTimeFormatter`](crate::TypedDateTimeFormatter).
 
 use crate::fields;
-use crate::fields::Field;
 use crate::input;
 use crate::options::{length, preferences, DateTimeFormatterOptions};
 use crate::pattern::PatternError;
@@ -21,7 +20,7 @@ use crate::provider::calendar::{
 use crate::provider::neo::SimpleSubstitutionPattern;
 use crate::time_zone::TimeZoneDataPayloadsBorrowed;
 #[cfg(feature = "experimental")]
-use crate::{options::components, provider::calendar::DateSkeletonPatternsV1Marker};
+use crate::{fields::Field, options::components, provider::calendar::DateSkeletonPatternsV1Marker};
 use icu_calendar::types::Era;
 use icu_calendar::types::MonthCode;
 use icu_locale_core::extensions::unicode::Value;
