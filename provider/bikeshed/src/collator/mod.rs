@@ -18,7 +18,6 @@ use icu::locale::subtags::Region;
 use icu::locale::subtags::Script;
 use icu::locale::LanguageIdentifier;
 use icu_provider::prelude::*;
-use icu_provider_adapters::fallback::LocaleFallbackProvider;
 use std::collections::HashSet;
 use std::convert::TryFrom;
 use writeable::Writeable;
@@ -294,6 +293,7 @@ collation_provider!(
 fn test_zh_non_baked() {
     use core::cmp::Ordering;
     use icu::collator::{Collator, CollatorOptions};
+    use icu_provider_adapters::fallback::LocaleFallbackProvider;
 
     let provider =
         LocaleFallbackProvider::try_new_unstable(DatagenProvider::new_testing()).unwrap();
