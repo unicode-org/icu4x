@@ -15,7 +15,7 @@ use std::convert::TryFrom;
 impl DataProvider<DecimalSymbolsV1Marker> for DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<DecimalSymbolsV1Marker>, DataError> {
         self.check_req::<DecimalSymbolsV1Marker>(req)?;
-        let langid = req.locale.get_langid();
+        let langid = req.id.locale.get_langid();
 
         let resource: &cldr_serde::numbers::Resource = self
             .cldr()?
@@ -24,7 +24,7 @@ impl DataProvider<DecimalSymbolsV1Marker> for DatagenProvider {
 
         let numbers = &resource.main.value.numbers;
 
-        let nsname = match req.locale.get_unicode_ext(&key!("nu")) {
+        let nsname = match req.id.locale.get_unicode_ext(&key!("nu")) {
             Some(v) => *v.get_subtag(0).expect("expecting subtag if key is present"),
             None => Subtag::from_tinystr_unvalidated(numbers.default_numbering_system),
         };
@@ -46,10 +46,8 @@ impl DataProvider<DecimalSymbolsV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProviderCached<DecimalSymbolsV1Marker> for DatagenProvider {
-    fn iter_requests_cached(
-        &self,
-    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
-        self.iter_requests_for_numbers()
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+        self.iter_ids_for_numbers()
     }
 }
 
@@ -102,7 +100,7 @@ fn test_basic() {
 
     let ar_decimal: DataResponse<DecimalSymbolsV1Marker> = provider
         .load(DataRequest {
-            locale: &langid!("ar-EG").into(),
+            id: DataIdentifierCow::from_locale(langid!("ar-EG").into()).as_borrowed(),
             ..Default::default()
         })
         .unwrap();

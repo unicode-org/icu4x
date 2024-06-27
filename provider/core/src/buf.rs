@@ -49,16 +49,14 @@ impl DynamicDataMarker for BufferMarker {
 ///
 /// let buffer_provider = HelloWorldProvider.into_json_provider();
 ///
-/// let req = DataRequest {
-///     locale: &langid!("de").into(),
-///     ..Default::default()
-/// };
-///
 /// // Deserializing manually
 /// assert_eq!(
 ///     serde_json::from_slice::<HelloWorldV1>(
 ///         buffer_provider
-///             .load_data(HelloWorldV1Marker::INFO, req)
+///             .load_data(HelloWorldV1Marker::INFO, DataRequest {
+///                 id: DataIdentifierBorrowed::for_locale(&langid!("de").into()),
+///                 ..Default::default()
+///             })
 ///             .expect("load should succeed")
 ///             .payload
 ///             .get()
@@ -75,7 +73,10 @@ impl DynamicDataMarker for BufferMarker {
 ///
 /// assert_eq!(
 ///     deserializing_provider
-///         .load(req)
+///         .load(DataRequest {
+///             id: DataIdentifierBorrowed::for_locale(&langid!("de").into()),
+///             ..Default::default()
+///         })
 ///         .expect("load should succeed")
 ///         .payload
 ///         .get(),

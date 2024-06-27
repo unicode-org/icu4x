@@ -965,7 +965,7 @@ mod tests {
 
         let locale = "en-u-ca-gregory".parse().unwrap();
         let req = DataRequest {
-            locale: &locale,
+            id: DataIdentifierBorrowed::for_locale(&locale),
             ..Default::default()
         };
         let date_data =

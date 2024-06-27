@@ -624,8 +624,8 @@ macro_rules! cb {
 
         #[test]
         fn test_lookup() {
-            assert_eq!(marker_lookup().get("AndListV1Marker"), Some(&Some(icu::list::provider::AndListV1Marker::INFO)));
-            assert_eq!(marker_lookup().get("list/and@1"), Some(&Some(icu::list::provider::AndListV1Marker::INFO)));
+            assert_eq!(marker_lookup().get("AndListV2Marker"), Some(&Some(icu::list::provider::AndListV2Marker::INFO)));
+            assert_eq!(marker_lookup().get("list/and@2"), Some(&Some(icu::list::provider::AndListV2Marker::INFO)));
             assert_eq!(marker_lookup().get("foo"), None);
         }
 
@@ -675,9 +675,7 @@ where
     BlobDataProvider: AsDeserializingBufferProvider,
     for<'a> DeserializingBufferProvider<'a, BlobDataProvider>: DataProvider<M>,
 {
-    fn iter_requests(
-        &self,
-    ) -> Result<std::collections::HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
-        self.0.iter_requests_for_marker(M::INFO)
+    fn iter_ids(&self) -> Result<std::collections::HashSet<DataIdentifierCow>, DataError> {
+        self.0.iter_ids_for_marker(M::INFO)
     }
 }

@@ -15,7 +15,7 @@ use crate::IterableDataProviderCached;
 
 impl DataProvider<PersonNamesFormatV1Marker> for crate::DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<PersonNamesFormatV1Marker>, DataError> {
-        let langid = req.locale.get_langid();
+        let langid = req.id.locale.get_langid();
 
         let data: &Resource = self
             .cldr()?
@@ -33,9 +33,7 @@ impl DataProvider<PersonNamesFormatV1Marker> for crate::DatagenProvider {
 }
 
 impl IterableDataProviderCached<PersonNamesFormatV1Marker> for crate::DatagenProvider {
-    fn iter_requests_cached(
-        &self,
-    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(self
             .cldr()?
             .personnames()
@@ -48,7 +46,7 @@ impl IterableDataProviderCached<PersonNamesFormatV1Marker> for crate::DatagenPro
                     .file_exists(langid, "personNames.json")
                     .unwrap_or_default()
             })
-            .map(|l| (DataLocale::from(l), Default::default()))
+            .map(|l| DataIdentifierCow::from_locale(DataLocale::from(l)))
             .collect())
     }
 }
@@ -164,7 +162,7 @@ mod tests {
 
         let data_payload: DataPayload<PersonNamesFormatV1Marker> = provider
             .load(DataRequest {
-                locale: &langid!("en-001").into(),
+                id: DataIdentifierBorrowed::for_locale(&langid!("en-001").into()),
                 ..Default::default()
             })?
             .payload;
@@ -187,7 +185,7 @@ mod tests {
 
         let data_payload: DataPayload<PersonNamesFormatV1Marker> = provider
             .load(DataRequest {
-                locale: &langid!("en-001").into(),
+                id: DataIdentifierBorrowed::for_locale(&langid!("en-001").into()),
                 ..Default::default()
             })?
             .payload;
@@ -235,7 +233,7 @@ mod tests {
 
         let data_payload: DataPayload<PersonNamesFormatV1Marker> = provider
             .load(DataRequest {
-                locale: &langid!("es").into(),
+                id: DataIdentifierBorrowed::for_locale(&langid!("es").into()),
                 ..Default::default()
             })?
             .payload;

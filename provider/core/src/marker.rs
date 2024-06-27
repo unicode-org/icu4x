@@ -117,7 +117,7 @@ pub trait DataMarker: DynamicDataMarker {
 /// let result = DataProvider::<NeverMarker<HelloWorldV1<'static>>>::load(
 ///     &buffer_provider.as_deserializing(),
 ///     DataRequest {
-///         locale: &langid!("en").into(),
+///         id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
 ///         ..Default::default()
 ///     },
 /// );
@@ -166,7 +166,7 @@ where
 /// let result = DataProvider::<NeverMarker<HelloWorldV1<'static>>>::load(
 ///     &MyProvider,
 ///     DataRequest {
-///         locale: &langid!("und").into(),
+///         id: DataIdentifierBorrowed::for_locale(&langid!("und").into()),
 ///         ..Default::default()
 ///     },
 /// );

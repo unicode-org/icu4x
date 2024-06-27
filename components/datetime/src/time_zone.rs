@@ -37,7 +37,7 @@ where
         *destination = Some(
             provider
                 .load(DataRequest {
-                    locale,
+                    id: DataIdentifierBorrowed::for_locale(locale),
                     ..Default::default()
                 })?
                 .payload,
@@ -233,7 +233,7 @@ impl TimeZoneFormatter {
         let data_payloads = TimeZoneDataPayloads {
             zone_formats: zone_provider
                 .load(DataRequest {
-                    locale,
+                    id: DataIdentifierBorrowed::for_locale(locale),
                     ..Default::default()
                 })?
                 .payload,
@@ -489,7 +489,7 @@ impl TimeZoneFormatter {
         let data_payloads = TimeZoneDataPayloads {
             zone_formats: provider
                 .load(DataRequest {
-                    locale,
+                    id: DataIdentifierBorrowed::for_locale(locale),
                     ..Default::default()
                 })?
                 .payload,

@@ -10,6 +10,7 @@ use crate::IterableDataProviderCached;
 use std::borrow::Cow;
 
 use icu_pattern::DoublePlaceholderPattern;
+use tinystr::TinyAsciiStr;
 
 use std::collections::BTreeMap;
 use std::collections::HashMap;
@@ -81,7 +82,7 @@ impl DataProvider<CurrencyEssentialsV1Marker> for DatagenProvider {
         req: DataRequest,
     ) -> Result<DataResponse<CurrencyEssentialsV1Marker>, DataError> {
         self.check_req::<CurrencyEssentialsV1Marker>(req)?;
-        let langid = req.locale.get_langid();
+        let langid = req.id.locale.get_langid();
 
         let currencies_resource: &cldr_serde::currencies::data::Resource =
             self.cldr()?
@@ -103,14 +104,12 @@ impl DataProvider<CurrencyEssentialsV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProviderCached<CurrencyEssentialsV1Marker> for DatagenProvider {
-    fn iter_requests_cached(
-        &self,
-    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(self
             .cldr()?
             .numbers()
             .list_langs()?
-            .map(|l| (DataLocale::from(l), Default::default()))
+            .map(|l| DataIdentifierCow::from_locale(DataLocale::from(l)))
             .collect())
     }
 }
@@ -152,7 +151,7 @@ fn extract_currency_essentials<'data>(
         let short_placeholder_value = currency_pattern.short.as_ref().map(|short_placeholder| {
             if let Some(&index) = placeholders_checker_map.get(short_placeholder.as_str()) {
                 PlaceholderValue::Index(index)
-            } else if short_placeholder == iso.try_into_tinystr().unwrap().as_str() {
+            } else if short_placeholder == iso {
                 PlaceholderValue::ISO
             } else {
                 let index = placeholders.len() as u16;
@@ -165,7 +164,7 @@ fn extract_currency_essentials<'data>(
         let narrow_placeholder_value = currency_pattern.narrow.as_ref().map(|narrow_placeholder| {
             if let Some(&index) = placeholders_checker_map.get(narrow_placeholder.as_str()) {
                 PlaceholderValue::Index(index)
-            } else if narrow_placeholder == iso.try_into_tinystr().unwrap().as_str() {
+            } else if narrow_placeholder == iso {
                 PlaceholderValue::ISO
             } else {
                 let index = placeholders.len() as u16;
@@ -191,7 +190,6 @@ fn extract_currency_essentials<'data>(
             }
         }
 
-        let iso_string = iso.try_into_tinystr().unwrap().to_string();
         let determine_pattern_selection =
             |placeholder_index: Option<PlaceholderValue>| -> Result<PatternSelection, DataError> {
                 if standard_alpha_next_to_number.is_empty() {
@@ -201,7 +199,7 @@ fn extract_currency_essentials<'data>(
                         Some(PlaceholderValue::Index(index)) => {
                             placeholders.get(index as usize).unwrap()
                         }
-                        Some(PlaceholderValue::ISO) | None => iso_string.as_str(),
+                        Some(PlaceholderValue::ISO) | None => iso.as_str(),
                     };
                     currency_pattern_selection(provider, standard, placeholder_value)
                 }
@@ -219,20 +217,21 @@ fn extract_currency_essentials<'data>(
             narrow_placeholder_value,
         };
 
+        let iso = TinyAsciiStr::try_from_str(iso).unwrap().to_unvalidated();
         match (short_pattern_selection, narrow_pattern_selection) {
             (PatternSelection::Standard, PatternSelection::Standard)
                 if short_placeholder_value.is_none() && narrow_placeholder_value.is_none() =>
             {
-                currency_patterns_standard_none.insert(*iso, currency_patterns);
+                currency_patterns_standard_none.insert(iso, currency_patterns);
             }
             (
                 PatternSelection::StandardAlphaNextToNumber,
                 PatternSelection::StandardAlphaNextToNumber,
             ) if short_placeholder_value.is_none() && narrow_placeholder_value.is_none() => {
-                currency_patterns_standard_next_to_num.insert(*iso, currency_patterns);
+                currency_patterns_standard_next_to_num.insert(iso, currency_patterns);
             }
             _ => {
-                currency_patterns_map.insert(*iso, currency_patterns);
+                currency_patterns_map.insert(iso, currency_patterns);
             }
         }
     }
@@ -354,7 +353,7 @@ fn test_basic() {
 
     let en: DataResponse<CurrencyEssentialsV1Marker> = provider
         .load(DataRequest {
-            locale: &langid!("en").into(),
+            id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
             ..Default::default()
         })
         .unwrap();
@@ -391,7 +390,7 @@ fn test_basic() {
 
     let ar_eg: DataResponse<CurrencyEssentialsV1Marker> = provider
         .load(DataRequest {
-            locale: &langid!("ar-EG").into(),
+            id: DataIdentifierBorrowed::for_locale(&langid!("ar-EG").into()),
             ..Default::default()
         })
         .unwrap();

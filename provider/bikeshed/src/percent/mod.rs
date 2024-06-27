@@ -16,7 +16,7 @@ use tinystr::tinystr;
 impl DataProvider<PercentEssentialsV1Marker> for DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<PercentEssentialsV1Marker>, DataError> {
         self.check_req::<PercentEssentialsV1Marker>(req)?;
-        let langid = req.locale.get_langid();
+        let langid = req.id.locale.get_langid();
 
         let numbers_resource: &cldr_serde::numbers::Resource = self
             .cldr()?
@@ -33,14 +33,12 @@ impl DataProvider<PercentEssentialsV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProviderCached<PercentEssentialsV1Marker> for DatagenProvider {
-    fn iter_requests_cached(
-        &self,
-    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(self
             .cldr()?
             .numbers()
             .list_langs()?
-            .map(|l| (DataLocale::from(l), Default::default()))
+            .map(|l| DataIdentifierCow::from_locale(DataLocale::from(l)))
             .collect())
     }
 }
@@ -116,7 +114,7 @@ fn test_basic() {
 
     let en: DataResponse<PercentEssentialsV1Marker> = provider
         .load(DataRequest {
-            locale: &langid!("en").into(),
+            id: DataIdentifierCow::from_locale(langid!("en").into()).as_borrowed(),
             ..Default::default()
         })
         .unwrap();
@@ -137,7 +135,7 @@ fn test_basic() {
 
     let fr: DataResponse<PercentEssentialsV1Marker> = provider
         .load(DataRequest {
-            locale: &langid!("fr").into(),
+            id: DataIdentifierCow::from_locale(langid!("fr").into()).as_borrowed(),
             ..Default::default()
         })
         .unwrap();
@@ -158,7 +156,7 @@ fn test_basic() {
 
     let tr: DataResponse<PercentEssentialsV1Marker> = provider
         .load(DataRequest {
-            locale: &langid!("tr").into(),
+            id: DataIdentifierCow::from_locale(langid!("tr").into()).as_borrowed(),
             ..Default::default()
         })
         .unwrap();
@@ -179,7 +177,7 @@ fn test_basic() {
 
     let ar_eg: DataResponse<PercentEssentialsV1Marker> = provider
         .load(DataRequest {
-            locale: &langid!("ar-EG").into(),
+            id: DataIdentifierCow::from_locale(langid!("ar-EG").into()).as_borrowed(),
             ..Default::default()
         })
         .unwrap();

@@ -150,7 +150,7 @@ impl Collator {
             + ?Sized,
     {
         let req = DataRequest {
-            locale,
+            id: DataIdentifierBorrowed::for_locale(locale),
             ..Default::default()
         };
 

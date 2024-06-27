@@ -395,7 +395,7 @@ fn test_dayperiod_patterns() {
             .set(key!("ca"), value!("gregory"));
         let mut data_locale = DataLocale::from(&locale);
         let req = DataRequest {
-            locale: &data_locale,
+            id: DataIdentifierBorrowed::for_locale(&data_locale),
             ..Default::default()
         };
         let mut date_patterns_data: DataResponse<GregorianDateLengthsV1Marker> =
@@ -420,7 +420,7 @@ fn test_dayperiod_patterns() {
         data_locale.retain_unicode_ext(|_| false);
         let decimal_data: DataResponse<DecimalSymbolsV1Marker> = icu_decimal::provider::Baked
             .load(DataRequest {
-                locale: &data_locale,
+                id: DataIdentifierBorrowed::for_locale(&data_locale),
                 ..Default::default()
             })
             .unwrap();
@@ -570,7 +570,7 @@ fn test_time_zone_patterns() {
             .set(key!("ca"), value!("gregory"));
         let data_locale = DataLocale::from(&locale);
         let req = DataRequest {
-            locale: &data_locale,
+            id: DataIdentifierBorrowed::for_locale(&data_locale),
             ..Default::default()
         };
         let mut config = test.config;

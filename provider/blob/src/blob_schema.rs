@@ -51,7 +51,7 @@ impl<'data> BlobSchema<'data> {
     pub fn list_requests(
         &self,
         marker: DataMarkerInfo,
-    ) -> Result<std::collections::HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+    ) -> Result<std::collections::HashSet<DataIdentifierCow>, DataError> {
         match self {
             BlobSchema::V001(s) => s.list_requests(marker),
             BlobSchema::V002(s) => s.list_requests(marker),
@@ -100,7 +100,7 @@ impl<'data> BlobSchemaV1<'data> {
             .get0(&marker.path.hashed())
             .ok_or(DataErrorKind::MissingDataMarker)
             .and_then(|cursor| {
-                if marker.is_singleton && !req.locale.is_empty() {
+                if marker.is_singleton && !req.id.locale.is_empty() {
                     return Err(DataErrorKind::ExtraneousLocale);
                 }
                 cursor
@@ -119,7 +119,7 @@ impl<'data> BlobSchemaV1<'data> {
                                 Ok(())
                             }
                         }
-                        Comparator(req.locale, req.marker_attributes)
+                        Comparator(req.id.locale, req.id.marker_attributes)
                             .writeable_cmp_bytes(&k.0)
                             .reverse()
                     })
@@ -135,7 +135,7 @@ impl<'data> BlobSchemaV1<'data> {
     pub fn list_requests(
         &self,
         marker: DataMarkerInfo,
-    ) -> Result<std::collections::HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+    ) -> Result<std::collections::HashSet<DataIdentifierCow>, DataError> {
         Ok(self
             .markers
             .get0(&marker.path.hashed())
@@ -144,9 +144,12 @@ impl<'data> BlobSchemaV1<'data> {
             .filter_map(|(s, _)| std::str::from_utf8(&s.0).ok())
             .filter_map(|s| {
                 if let Some((locale, attrs)) = s.split_once(REQUEST_SEPARATOR) {
-                    Some((locale.parse().ok()?, attrs.parse().ok()?))
+                    Some(DataIdentifierCow::from_owned(
+                        DataMarkerAttributes::try_from_str(attrs).ok()?.to_owned(),
+                        locale.parse().ok()?,
+                    ))
                 } else {
-                    Some((s.parse().ok()?, Default::default()))
+                    Some(DataIdentifierCow::from_locale(s.parse().ok()?))
                 }
             })
             .collect())
@@ -221,7 +224,7 @@ impl<'data, LocaleVecFormat: VarZeroVecFormat> BlobSchemaV2<'data, LocaleVecForm
             .binary_search(&marker.path.hashed())
             .ok()
             .ok_or_else(|| DataErrorKind::MissingDataMarker.with_req(marker, req))?;
-        if marker.is_singleton && !req.locale.is_empty() {
+        if marker.is_singleton && !req.id.locale.is_empty() {
             return Err(DataErrorKind::ExtraneousLocale.with_req(marker, req));
         }
         let zerotrie = self
@@ -229,10 +232,11 @@ impl<'data, LocaleVecFormat: VarZeroVecFormat> BlobSchemaV2<'data, LocaleVecForm
             .get(marker_index)
             .ok_or_else(|| DataError::custom("Invalid blob bytes").with_req(marker, req))?;
         let mut cursor = ZeroTrieSimpleAscii::from_store(zerotrie).into_cursor();
-        let _infallible_ascii = req.locale.write_to(&mut cursor);
-        if !req.marker_attributes.is_empty() {
+        let _infallible_ascii = req.id.locale.write_to(&mut cursor);
+        if !req.id.marker_attributes.is_empty() {
             let _infallible_ascii = cursor.write_char(REQUEST_SEPARATOR);
-            req.marker_attributes
+            req.id
+                .marker_attributes
                 .write_to(&mut cursor)
                 .map_err(|_| DataErrorKind::MissingLocale.with_req(marker, req))?;
         }
@@ -250,7 +254,7 @@ impl<'data, LocaleVecFormat: VarZeroVecFormat> BlobSchemaV2<'data, LocaleVecForm
     pub fn list_requests(
         &self,
         marker: DataMarkerInfo,
-    ) -> Result<std::collections::HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+    ) -> Result<std::collections::HashSet<DataIdentifierCow>, DataError> {
         let marker_index = self
             .markers
             .binary_search(&marker.path.hashed())
@@ -264,9 +268,12 @@ impl<'data, LocaleVecFormat: VarZeroVecFormat> BlobSchemaV2<'data, LocaleVecForm
             .iter()
             .filter_map(|(s, _)| {
                 if let Some((locale, attrs)) = s.split_once(REQUEST_SEPARATOR) {
-                    Some((locale.parse().ok()?, attrs.parse().ok()?))
+                    Some(DataIdentifierCow::from_owned(
+                        DataMarkerAttributes::try_from_str(attrs).ok()?.to_owned(),
+                        locale.parse().ok()?,
+                    ))
                 } else {
-                    Some((s.parse().ok()?, Default::default()))
+                    Some(DataIdentifierCow::from_locale(s.parse().ok()?))
                 }
             })
             .collect())

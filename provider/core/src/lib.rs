@@ -144,7 +144,7 @@ pub use error::{DataError, DataErrorKind};
 pub use icu_provider_macros::data_struct;
 
 mod request;
-pub use request::{DataLocale, DataMarkerAttributes, DataRequest, DataRequestMetadata};
+pub use request::{DataLocale, DataMarkerAttributes, DataRequest, DataRequestMetadata, *};
 
 mod response;
 #[doc(hidden)] // TODO(#4467): establish this as an internal API
@@ -176,6 +176,7 @@ pub mod prelude {
     pub use crate::buf::AsDeserializingBufferProvider;
     #[doc(no_inline)]
     pub use crate::buf::{BufferMarker, BufferProvider};
+    pub use crate::request::*;
     #[doc(no_inline)]
     pub use crate::{
         BoundDataProvider, DataError, DataErrorKind, DataLocale, DataMarker, DataMarkerAttributes,

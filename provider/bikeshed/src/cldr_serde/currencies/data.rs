@@ -9,7 +9,6 @@
 
 use serde::Deserialize;
 use std::collections::BTreeMap;
-use tinystr::UnvalidatedTinyAsciiStr;
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub(crate) struct CurrencyPatterns {
@@ -43,7 +42,7 @@ pub(crate) struct CurrencyPatterns {
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub(crate) struct Numbers {
-    pub(crate) currencies: BTreeMap<UnvalidatedTinyAsciiStr<3>, CurrencyPatterns>,
+    pub(crate) currencies: BTreeMap<String, CurrencyPatterns>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]

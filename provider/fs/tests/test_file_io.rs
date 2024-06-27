@@ -17,29 +17,28 @@ const PATHS: &[&str] = &[
 fn test_provider() {
     for path in PATHS {
         let provider = FsDataProvider::try_new(path).unwrap();
-        for (locale, marker_attributes) in HelloWorldProvider.iter_requests().unwrap() {
+        for id in HelloWorldProvider.iter_ids().unwrap() {
             let req = DataRequest {
-                locale: &locale,
-                marker_attributes: &marker_attributes,
+                id: id.as_borrowed(),
                 ..Default::default()
             };
 
             let expected = HelloWorldProvider
                 .load(req)
-                .unwrap_or_else(|e| panic!("{e}: {req} ({path})"))
+                .unwrap_or_else(|e| panic!("{e}: {req:?} ({path})"))
                 .payload;
 
             let actual: DataPayload<HelloWorldV1Marker> = provider
                 .as_deserializing()
                 .load(req)
-                .unwrap_or_else(|e| panic!("{e}: {req} ({path})"))
+                .unwrap_or_else(|e| panic!("{e}: {req:?} ({path})"))
                 .payload;
             assert_eq!(actual.get(), expected.get());
 
             let actual: DataPayload<HelloWorldV1Marker> = (&provider as &dyn BufferProvider)
                 .as_deserializing()
                 .load(req)
-                .unwrap_or_else(|e| panic!("{e}: {req} ({path})"))
+                .unwrap_or_else(|e| panic!("{e}: {req:?} ({path})"))
                 .payload;
             assert_eq!(actual.get(), expected.get());
         }
@@ -53,7 +52,7 @@ fn test_errors() {
 
         let err: Result<DataResponse<HelloWorldV1Marker>, DataError> =
             provider.as_deserializing().load(DataRequest {
-                locale: &langid!("zh-DE").into(),
+                id: DataIdentifierBorrowed::for_locale(&langid!("zh-DE").into()),
                 ..Default::default()
             });
 

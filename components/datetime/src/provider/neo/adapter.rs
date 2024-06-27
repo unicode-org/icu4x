@@ -9,15 +9,26 @@ use icu_calendar::types::MonthCode;
 use icu_provider::prelude::*;
 
 mod key_attr_consts {
-    use tinystr::{tinystr, TinyAsciiStr};
-    pub const STADLN_ABBR: TinyAsciiStr<8> = tinystr!(8, "3s");
-    pub const STADLN_WIDE: TinyAsciiStr<8> = tinystr!(8, "4s");
-    pub const STADLN_NARW: TinyAsciiStr<8> = tinystr!(8, "5s");
-    pub const STADLN_SHRT: TinyAsciiStr<8> = tinystr!(8, "6s");
-    pub const FORMAT_ABBR: TinyAsciiStr<8> = tinystr!(8, "3");
-    pub const FORMAT_WIDE: TinyAsciiStr<8> = tinystr!(8, "4");
-    pub const FORMAT_NARW: TinyAsciiStr<8> = tinystr!(8, "5");
-    pub const FORMAT_SHRT: TinyAsciiStr<8> = tinystr!(8, "6");
+    use super::*;
+
+    pub const STADLN_ABBR: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("3s");
+    pub const STADLN_WIDE: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("4s");
+    pub const STADLN_NARW: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("5s");
+    pub const STADLN_SHRT: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("6s");
+    pub const FORMAT_ABBR: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("3");
+    pub const FORMAT_WIDE: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("4");
+    pub const FORMAT_NARW: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("5");
+    pub const FORMAT_SHRT: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("6");
+
+    /// Used for matching
+    pub const STADLN_ABBR_STR: &str = STADLN_ABBR.as_str();
+    pub const STADLN_WIDE_STR: &str = STADLN_WIDE.as_str();
+    pub const STADLN_NARW_STR: &str = STADLN_NARW.as_str();
+    pub const STADLN_SHRT_STR: &str = STADLN_SHRT.as_str();
+    pub const FORMAT_ABBR_STR: &str = FORMAT_ABBR.as_str();
+    pub const FORMAT_WIDE_STR: &str = FORMAT_WIDE.as_str();
+    pub const FORMAT_NARW_STR: &str = FORMAT_NARW.as_str();
+    pub const FORMAT_SHRT_STR: &str = FORMAT_SHRT.as_str();
 }
 
 fn month_symbols_map_project_cloned<M, P>(
@@ -28,29 +39,25 @@ where
     M: DataMarker<Yokeable = DateSymbolsV1<'static>>,
     P: DataMarker<Yokeable = MonthNamesV1<'static>>,
 {
-    let attribute = req
-        .marker_attributes
-        .single()
-        .ok_or_else(|| DataError::custom("TODO"))?;
     let new_payload = payload.try_map_project_cloned(|payload, _| {
         use key_attr_consts::*;
-        let result = match attribute {
-            STADLN_ABBR => payload.months.stand_alone_abbreviated(),
-            STADLN_WIDE => payload.months.stand_alone_wide(),
-            STADLN_NARW => payload.months.stand_alone_narrow(),
+        let result = match req.id.marker_attributes.as_str() {
+            STADLN_ABBR_STR => payload.months.stand_alone_abbreviated(),
+            STADLN_WIDE_STR => payload.months.stand_alone_wide(),
+            STADLN_NARW_STR => payload.months.stand_alone_narrow(),
             _ => None,
         };
         if let Some(result) = result {
             return Ok(result.into());
         }
-        let result = match attribute {
-            STADLN_ABBR | FORMAT_ABBR => &payload.months.format.abbreviated,
-            STADLN_WIDE | FORMAT_WIDE => &payload.months.format.wide,
-            STADLN_NARW | FORMAT_NARW => &payload.months.format.narrow,
+        let result = match req.id.marker_attributes.as_str() {
+            STADLN_ABBR_STR | FORMAT_ABBR_STR => &payload.months.format.abbreviated,
+            STADLN_WIDE_STR | FORMAT_WIDE_STR => &payload.months.format.wide,
+            STADLN_NARW_STR | FORMAT_NARW_STR => &payload.months.format.narrow,
             _ => {
                 return Err(DataError::custom("Unknown marker attribute")
                     .with_marker(M::INFO)
-                    .with_display_context(&attribute))
+                    .with_display_context(req.id.marker_attributes.as_str()))
             }
         };
         Ok(result.into())
@@ -69,39 +76,35 @@ where
     M: DataMarker<Yokeable = DateSymbolsV1<'static>>,
     P: DataMarker<Yokeable = LinearNamesV1<'static>>,
 {
-    let attribute = req
-        .marker_attributes
-        .single()
-        .ok_or_else(|| DataError::custom("TODO"))?;
     let new_payload = payload.try_map_project_cloned(|payload, _| {
         use key_attr_consts::*;
-        let result = match attribute {
-            STADLN_ABBR => payload.weekdays.stand_alone_abbreviated(),
-            STADLN_WIDE => payload.weekdays.stand_alone_wide(),
-            STADLN_NARW => payload.weekdays.stand_alone_narrow(),
-            STADLN_SHRT => payload.weekdays.stand_alone_short(),
+        let result = match req.id.marker_attributes.as_str() {
+            STADLN_ABBR_STR => payload.weekdays.stand_alone_abbreviated(),
+            STADLN_WIDE_STR => payload.weekdays.stand_alone_wide(),
+            STADLN_NARW_STR => payload.weekdays.stand_alone_narrow(),
+            STADLN_SHRT_STR => payload.weekdays.stand_alone_short(),
             _ => None,
         };
         if let Some(result) = result {
             return Ok(result.into());
         }
-        let result = match attribute {
-            STADLN_SHRT | FORMAT_SHRT => payload.weekdays.format.short.as_ref(),
+        let result = match req.id.marker_attributes.as_str() {
+            STADLN_SHRT_STR | FORMAT_SHRT_STR => payload.weekdays.format.short.as_ref(),
             _ => None,
         };
         if let Some(result) = result {
             return Ok(result.into());
         }
-        let result = match attribute {
-            STADLN_ABBR | FORMAT_ABBR | STADLN_SHRT | FORMAT_SHRT => {
+        let result = match req.id.marker_attributes.as_str() {
+            STADLN_ABBR_STR | FORMAT_ABBR_STR | STADLN_SHRT_STR | FORMAT_SHRT_STR => {
                 &payload.weekdays.format.abbreviated
             }
-            STADLN_WIDE | FORMAT_WIDE => &payload.weekdays.format.wide,
-            STADLN_NARW | FORMAT_NARW => &payload.weekdays.format.narrow,
+            STADLN_WIDE_STR | FORMAT_WIDE_STR => &payload.weekdays.format.wide,
+            STADLN_NARW_STR | FORMAT_NARW_STR => &payload.weekdays.format.narrow,
             _ => {
                 return Err(DataError::custom("Unknown marker attribute")
                     .with_marker(M::INFO)
-                    .with_display_context(&attribute))
+                    .with_display_context(req.id.marker_attributes.as_str()))
             }
         };
         Ok(result.into())
@@ -120,20 +123,16 @@ where
     M: DataMarker<Yokeable = DateSymbolsV1<'static>>,
     P: DataMarker<Yokeable = YearNamesV1<'static>>,
 {
-    let attribute = req
-        .marker_attributes
-        .single()
-        .ok_or_else(|| DataError::custom("TODO"))?;
     let new_payload = payload.try_map_project_cloned(|payload, _| {
         use key_attr_consts::*;
-        let result = match attribute {
-            FORMAT_ABBR => &payload.eras.abbr,
-            FORMAT_WIDE => &payload.eras.names,
-            FORMAT_NARW => &payload.eras.narrow,
+        let result = match req.id.marker_attributes.as_str() {
+            FORMAT_ABBR_STR => &payload.eras.abbr,
+            FORMAT_WIDE_STR => &payload.eras.names,
+            FORMAT_NARW_STR => &payload.eras.narrow,
             _ => {
                 return Err(DataError::custom("Unknown marker attribute")
                     .with_marker(M::INFO)
-                    .with_display_context(&attribute))
+                    .with_display_context(req.id.marker_attributes.as_str()))
             }
         };
         Ok(YearNamesV1::Eras(result.clone()))
@@ -152,29 +151,25 @@ where
     M: DataMarker<Yokeable = TimeSymbolsV1<'static>>,
     P: DataMarker<Yokeable = LinearNamesV1<'static>>,
 {
-    let attribute = req
-        .marker_attributes
-        .single()
-        .ok_or_else(|| DataError::custom("TODO"))?;
     let new_payload = payload.try_map_project_cloned(|payload, _| {
         use key_attr_consts::*;
-        let result = match attribute {
-            STADLN_ABBR => payload.day_periods.stand_alone_abbreviated(),
-            STADLN_WIDE => payload.day_periods.stand_alone_wide(),
-            STADLN_NARW => payload.day_periods.stand_alone_narrow(),
+        let result = match req.id.marker_attributes.as_str() {
+            STADLN_ABBR_STR => payload.day_periods.stand_alone_abbreviated(),
+            STADLN_WIDE_STR => payload.day_periods.stand_alone_wide(),
+            STADLN_NARW_STR => payload.day_periods.stand_alone_narrow(),
             _ => None,
         };
         if let Some(result) = result {
             return Ok(result.into());
         }
-        let result = match attribute {
-            STADLN_ABBR | FORMAT_ABBR => &payload.day_periods.format.abbreviated,
-            STADLN_WIDE | FORMAT_WIDE => &payload.day_periods.format.wide,
-            STADLN_NARW | FORMAT_NARW => &payload.day_periods.format.narrow,
+        let result = match req.id.marker_attributes.as_str() {
+            STADLN_ABBR_STR | FORMAT_ABBR_STR => &payload.day_periods.format.abbreviated,
+            STADLN_WIDE_STR | FORMAT_WIDE_STR => &payload.day_periods.format.wide,
+            STADLN_NARW_STR | FORMAT_NARW_STR => &payload.day_periods.format.narrow,
             _ => {
                 return Err(DataError::custom("Unknown marker attribute")
                     .with_marker(M::INFO)
-                    .with_display_context(&attribute))
+                    .with_display_context(req.id.marker_attributes.as_str()))
             }
         };
         Ok(result.into())
@@ -466,15 +461,17 @@ mod tests {
     fn test_adapter_months_numeric() {
         let symbols: DataPayload<GregorianDateSymbolsV1Marker> = crate::provider::Baked
             .load(DataRequest {
-                locale: &langid!("en").into(),
+                id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
                 ..Default::default()
             })
             .unwrap()
             .payload;
         let neo_month_abbreviated: DataPayload<GregorianMonthNamesV1Marker> = symbols
             .load(DataRequest {
-                locale: &"en".parse().unwrap(),
-                marker_attributes: &"3".parse().unwrap(),
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::from_str_or_panic("3"),
+                    &"en".parse().unwrap(),
+                ),
                 ..Default::default()
             })
             .unwrap()
@@ -490,15 +487,17 @@ mod tests {
     fn test_adapter_months_map() {
         let symbols: DataPayload<HebrewDateSymbolsV1Marker> = crate::provider::Baked
             .load(DataRequest {
-                locale: &langid!("en").into(),
+                id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
                 ..Default::default()
             })
             .unwrap()
             .payload;
         let neo_month_abbreviated: DataPayload<HebrewMonthNamesV1Marker> = symbols
             .load(DataRequest {
-                locale: &"en".parse().unwrap(),
-                marker_attributes: &"3".parse().unwrap(),
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::from_str_or_panic("3"),
+                    &"en".parse().unwrap(),
+                ),
                 ..Default::default()
             })
             .unwrap()
@@ -514,15 +513,17 @@ mod tests {
     fn test_adapter_weekdays_abbreviated() {
         let symbols: DataPayload<HebrewDateSymbolsV1Marker> = crate::provider::Baked
             .load(DataRequest {
-                locale: &langid!("en").into(),
+                id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
                 ..Default::default()
             })
             .unwrap()
             .payload;
         let neo_weekdays_abbreviated: DataPayload<WeekdayNamesV1Marker> = symbols
             .load(DataRequest {
-                locale: &"en".parse().unwrap(),
-                marker_attributes: &"3".parse().unwrap(),
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::from_str_or_panic("3"),
+                    &"en".parse().unwrap(),
+                ),
                 ..Default::default()
             })
             .unwrap()
@@ -538,15 +539,17 @@ mod tests {
     fn test_adapter_weekdays_short() {
         let symbols: DataPayload<HebrewDateSymbolsV1Marker> = crate::provider::Baked
             .load(DataRequest {
-                locale: &langid!("en").into(),
+                id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
                 ..Default::default()
             })
             .unwrap()
             .payload;
         let neo_weekdays_short: DataPayload<WeekdayNamesV1Marker> = symbols
             .load(DataRequest {
-                locale: &"en".parse().unwrap(),
-                marker_attributes: &"6s".parse().unwrap(),
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::from_str_or_panic("6s"),
+                    &"en".parse().unwrap(),
+                ),
                 ..Default::default()
             })
             .unwrap()
@@ -562,15 +565,17 @@ mod tests {
     fn test_adapter_eras() {
         let symbols: DataPayload<GregorianDateSymbolsV1Marker> = crate::provider::Baked
             .load(DataRequest {
-                locale: &langid!("en").into(),
+                id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
                 ..Default::default()
             })
             .unwrap()
             .payload;
         let neo_eras_wide: DataPayload<GregorianYearNamesV1Marker> = symbols
             .load(DataRequest {
-                locale: &"en".parse().unwrap(),
-                marker_attributes: &"4".parse().unwrap(),
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::from_str_or_panic("4"),
+                    &"en".parse().unwrap(),
+                ),
                 ..Default::default()
             })
             .unwrap()
@@ -586,15 +591,17 @@ mod tests {
     fn test_adapter_dayperiods() {
         let symbols: DataPayload<TimeSymbolsV1Marker> = crate::provider::Baked
             .load(DataRequest {
-                locale: &langid!("en").into(),
+                id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
                 ..Default::default()
             })
             .unwrap()
             .payload;
         let neo_dayperiods_abbreviated: DataPayload<DayPeriodNamesV1Marker> = symbols
             .load(DataRequest {
-                locale: &"en".parse().unwrap(),
-                marker_attributes: &"3s".parse().unwrap(),
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::from_str_or_panic("3s"),
+                    &"en".parse().unwrap(),
+                ),
                 ..Default::default()
             })
             .unwrap()

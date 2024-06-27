@@ -61,7 +61,7 @@ impl TimeFormatter {
             Some(
                 crate::provider::Baked
                     .load(DataRequest {
-                        locale,
+                        id: DataIdentifierBorrowed::for_locale(locale),
                         ..Default::default()
                     })?
                     .payload,
@@ -102,7 +102,7 @@ impl TimeFormatter {
             Some(
                 provider
                     .load(DataRequest {
-                        locale,
+                        id: DataIdentifierBorrowed::for_locale(locale),
                         ..Default::default()
                     })?
                     .payload,
@@ -243,7 +243,7 @@ impl DateFormatter {
                 (*DataProvider::<WeekDataV1Marker>::load(
                     provider,
                     DataRequest {
-                        locale,
+                        id: DataIdentifierBorrowed::for_locale(locale),
                         ..Default::default()
                     },
                 )?
@@ -387,7 +387,7 @@ impl DateTimeFormatter {
             .map_err(|field| DateTimeError::UnsupportedField(field.symbol))?;
 
         let req = DataRequest {
-            locale,
+            id: DataIdentifierBorrowed::for_locale(locale),
             ..Default::default()
         };
 
@@ -450,7 +450,7 @@ impl DateTimeFormatter {
             .map_err(|field| DateTimeError::UnsupportedField(field.symbol))?;
 
         let req = DataRequest {
-            locale,
+            id: DataIdentifierBorrowed::for_locale(locale),
             ..Default::default()
         };
 
@@ -459,7 +459,7 @@ impl DateTimeFormatter {
                 (*DataProvider::<WeekDataV1Marker>::load(
                     provider,
                     DataRequest {
-                        locale,
+                        id: DataIdentifierBorrowed::for_locale(locale),
                         ..Default::default()
                     },
                 )?

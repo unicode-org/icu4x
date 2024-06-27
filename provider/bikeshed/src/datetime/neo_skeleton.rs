@@ -17,7 +17,6 @@ use icu::datetime::DateTimeFormatterOptions;
 use icu::locale::extensions::unicode::{value, Value};
 use icu::locale::LanguageIdentifier;
 use icu_provider::prelude::*;
-use tinystr::TinyAsciiStr;
 
 use super::supported_cals;
 
@@ -26,7 +25,7 @@ impl DatagenProvider {
         &self,
         req: DataRequest,
         calendar: Either<&Value, &str>,
-        from_id_str: impl Fn(TinyAsciiStr<8>) -> Option<C>,
+        from_id_str: impl Fn(&DataMarkerAttributes) -> Option<C>,
         to_components_bag: impl Fn(NeoSkeletonLength, &C) -> DateTimeFormatterOptions,
     ) -> Result<DataResponse<M>, DataError>
     where
@@ -34,14 +33,10 @@ impl DatagenProvider {
         Self: crate::IterableDataProviderCached<M>,
     {
         self.check_req::<M>(req)?;
-        let id_str = req
-            .marker_attributes
-            .single()
-            .expect("Skeleton data provider called without key attribute");
-        let neo_components =
-            from_id_str(id_str).expect("Skeleton data provider called with unknown skeleton");
+        let neo_components = from_id_str(req.id.marker_attributes)
+            .expect("Skeleton data provider called with unknown skeleton");
         let packed_skeleton_data = self.make_packed_skeleton_data(
-            &req.locale.get_langid(),
+            &req.id.locale.get_langid(),
             calendar,
             neo_components,
             to_components_bag,
@@ -130,7 +125,7 @@ impl DatagenProvider {
 
     fn neo_time_skeleton_supported_locales(
         &self,
-    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+    ) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(self
             .cldr()?
             .dates("generic")
@@ -146,10 +141,10 @@ impl DatagenProvider {
                     })
                     .copied()
                     .map(NeoTimeComponents::id_str)
-                    .map(move |id| {
-                        (
-                            DataLocale::from(&langid),
-                            DataMarkerAttributes::from_tinystr(id),
+                    .map(move |attrs| {
+                        DataIdentifierCow::from_borrowed_and_owned(
+                            attrs,
+                            DataLocale::from(langid.clone()),
                         )
                     })
             })
@@ -159,7 +154,7 @@ impl DatagenProvider {
     fn neo_date_skeleton_supported_locales(
         &self,
         calendar: &Value,
-    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+    ) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         let cldr_cal = supported_cals()
             .get(calendar)
             .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?;
@@ -177,10 +172,10 @@ impl DatagenProvider {
                     })
                     .copied()
                     .map(NeoDateComponents::id_str)
-                    .map(move |id| {
-                        (
-                            DataLocale::from(&langid),
-                            DataMarkerAttributes::from_tinystr(id),
+                    .map(move |attrs| {
+                        DataIdentifierCow::from_borrowed_and_owned(
+                            attrs,
+                            DataLocale::from(langid.clone()),
                         )
                     })
             })
@@ -206,9 +201,7 @@ impl DataProvider<TimeNeoSkeletonPatternsV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProviderCached<TimeNeoSkeletonPatternsV1Marker> for DatagenProvider {
-    fn iter_requests_cached(
-        &self,
-    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         self.neo_time_skeleton_supported_locales()
     }
 }
@@ -230,9 +223,7 @@ macro_rules! impl_neo_skeleton_datagen {
         }
 
         impl IterableDataProviderCached<$marker> for DatagenProvider {
-            fn iter_requests_cached(
-                &self,
-            ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+            fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
                 self.neo_date_skeleton_supported_locales(&value!($calendar))
             }
         }

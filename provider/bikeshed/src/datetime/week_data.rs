@@ -16,9 +16,7 @@ use icu_provider::prelude::*;
 use std::collections::HashSet;
 
 impl IterableDataProviderCached<WeekDataV1Marker> for DatagenProvider {
-    fn iter_requests_cached(
-        &self,
-    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         let week_data: &cldr_serde::week_data::Resource = self
             .cldr()?
             .core()
@@ -34,7 +32,7 @@ impl IterableDataProviderCached<WeekDataV1Marker> for DatagenProvider {
                 _ => None,
             })
             .map(LanguageIdentifier::from)
-            .map(|l| (DataLocale::from(l), Default::default()))
+            .map(|l| DataIdentifierCow::from_locale(DataLocale::from(l)))
             .collect())
     }
 }
@@ -43,6 +41,7 @@ impl DataProvider<WeekDataV1Marker> for DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<WeekDataV1Marker>, DataError> {
         self.check_req::<WeekDataV1Marker>(req)?;
         let territory = req
+            .id
             .locale
             .region()
             .map(|v| -> Result<Territory, DataError> { Ok(Territory::Region(v)) })
@@ -96,7 +95,7 @@ fn basic_cldr_week_data() {
 
     let fr_week_data: DataResponse<WeekDataV1Marker> = provider
         .load(DataRequest {
-            locale: &langid!("und-FR").into(),
+            id: DataIdentifierCow::from_locale(langid!("und-FR").into()).as_borrowed(),
             ..Default::default()
         })
         .unwrap();
@@ -105,7 +104,7 @@ fn basic_cldr_week_data() {
 
     let iq_week_data: DataResponse<WeekDataV1Marker> = provider
         .load(DataRequest {
-            locale: &langid!("und-IQ").into(),
+            id: DataIdentifierCow::from_locale(langid!("und-IQ").into()).as_borrowed(),
             ..Default::default()
         })
         .unwrap();
@@ -121,7 +120,7 @@ fn basic_cldr_week_data() {
 
     let gg_week_data: DataResponse<WeekDataV1Marker> = provider
         .load(DataRequest {
-            locale: &langid!("und-GG").into(),
+            id: DataIdentifierCow::from_locale(langid!("und-GG").into()).as_borrowed(),
             ..Default::default()
         })
         .unwrap();
@@ -137,6 +136,7 @@ impl DataProvider<WeekDataV2Marker> for DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<WeekDataV2Marker>, DataError> {
         self.check_req::<WeekDataV2Marker>(req)?;
         let territory = req
+            .id
             .locale
             .region()
             .map(Territory::Region)
@@ -197,10 +197,8 @@ impl DataProvider<WeekDataV2Marker> for DatagenProvider {
 }
 
 impl IterableDataProviderCached<WeekDataV2Marker> for DatagenProvider {
-    fn iter_requests_cached(
-        &self,
-    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
-        IterableDataProviderCached::<WeekDataV1Marker>::iter_requests_cached(self)
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+        IterableDataProviderCached::<WeekDataV1Marker>::iter_ids_cached(self)
     }
 }
 
@@ -223,7 +221,7 @@ fn test_basic_cldr_week_data_v2() {
 
     let fr_week_data: DataResponse<WeekDataV2Marker> = provider
         .load(DataRequest {
-            locale: &langid!("und-FR").into(),
+            id: DataIdentifierCow::from_locale(langid!("und-FR").into()).as_borrowed(),
             ..Default::default()
         })
         .unwrap();
@@ -236,7 +234,7 @@ fn test_basic_cldr_week_data_v2() {
 
     let iq_week_data: DataResponse<WeekDataV2Marker> = provider
         .load(DataRequest {
-            locale: &langid!("und-IQ").into(),
+            id: DataIdentifierCow::from_locale(langid!("und-IQ").into()).as_borrowed(),
             ..Default::default()
         })
         .unwrap();
@@ -253,7 +251,7 @@ fn test_basic_cldr_week_data_v2() {
 
     let gg_week_data: DataResponse<WeekDataV2Marker> = provider
         .load(DataRequest {
-            locale: &langid!("und-GG").into(),
+            id: DataIdentifierCow::from_locale(langid!("und-GG").into()).as_borrowed(),
             ..Default::default()
         })
         .unwrap();
@@ -270,7 +268,7 @@ fn test_basic_cldr_week_data_v2() {
 
     let ir_week_data: DataResponse<WeekDataV2Marker> = provider
         .load(DataRequest {
-            locale: &langid!("und-IR").into(),
+            id: DataIdentifierCow::from_locale(langid!("und-IR").into()).as_borrowed(),
             ..Default::default()
         })
         .unwrap();

@@ -95,9 +95,7 @@ impl DataProvider<UnitsInfoV1Marker> for DatagenProvider {
 }
 
 impl crate::IterableDataProviderCached<UnitsInfoV1Marker> for DatagenProvider {
-    fn iter_requests_cached(
-        &self,
-    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
@@ -117,7 +115,7 @@ fn test_basic() {
 
     let und: DataResponse<UnitsInfoV1Marker> = provider
         .load(DataRequest {
-            locale: &langid!("und").into(),
+            id: DataIdentifierCow::from_locale(langid!("und").into()).as_borrowed(),
             ..Default::default()
         })
         .unwrap();

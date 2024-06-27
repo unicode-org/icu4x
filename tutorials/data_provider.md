@@ -32,7 +32,7 @@ struct SingleLocaleProvider(DataLocale);
 
 impl DataProvider<HelloWorldV1Marker> for SingleLocaleProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
-        if *req.locale != self.0 {
+        if *req.id.locale != self.0 {
             return Err(DataErrorKind::MissingLocale.with_req(HelloWorldV1Marker::INFO, req));
         }
         HelloWorldProvider.load(req)
@@ -115,7 +115,7 @@ where
         {
             // First lock: cache retrieval
             let mut cache = self.cache.lock().unwrap();
-            let borrowed_cache_key = CacheKey(M::INFO, Cow::Borrowed(req.locale));
+            let borrowed_cache_key = CacheKey(M::INFO, Cow::Borrowed(req.id.locale));
             if let Some(any_res) = cache.get(&borrowed_cache_key) {
                 // Note: Cloning a DataPayload is usually cheap, and it is necessary in order to
                 // convert the short-lived cache object into one we can return.
@@ -124,7 +124,7 @@ where
         }
         // Release the lock to invoke the inner provider
         let response = self.provider.load(req)?;
-        let owned_cache_key = CacheKeyWrap(CacheKey(M::INFO, Cow::Owned(req.locale.clone())));
+        let owned_cache_key = CacheKeyWrap(CacheKey(M::INFO, Cow::Owned(req.id.locale.clone())));
         // Second lock: cache storage
         self.cache.lock()
             .unwrap()
@@ -217,7 +217,7 @@ where
         // Cast from `DataPayload<M>` to `DataPayload<DecimalSymbolsV1Marker>`
         let mut any_payload = (&mut res.payload) as &mut dyn Any;
         if let Some(mut decimal_payload) = any_payload.downcast_mut::<DataPayload<DecimalSymbolsV1Marker>>() {
-            if req.locale.region() == Some(region!("CH")) {
+            if req.id.locale.region() == Some(region!("CH")) {
                 decimal_payload.with_mut(|data| {
                     // Change the grouping separator for all Swiss locales to '🐮'
                     data.grouping_separator = Cow::Borrowed("🐮");
