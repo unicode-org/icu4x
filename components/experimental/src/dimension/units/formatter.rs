@@ -40,10 +40,14 @@ pub struct UnitsFormatter {
 
 impl UnitsFormatter {
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: include,
-        options: super::options::UnitsFormatterOptions,
-        error: DataError,
-        #[cfg(skip)]
+        (locale, options: super::options::UnitsFormatterOptions) -> error: DataError,
+        functions: [
+            try_new: skip,
+            try_new_with_any_provider,
+            try_new_with_buffer_provider,
+            try_new_unstable,
+            Self
+        ]
     );
 
     /// Creates a new [`UnitsFormatter`] from compiled locale data and an options bag.
@@ -64,18 +68,18 @@ impl UnitsFormatter {
                 .map_err(|_| {
                     DataError::custom("Failed to create a FixedDecimalFormatter for UnitsFormatter")
                 })?;
-        // let essential = crate::provider::Baked
-        //     .load(DataRequest {
-        //         locale,
-        //         ..Default::default()
-        //     })?
-        //     .take_payload()?;
+        let display_name = crate::provider::Baked
+            .load(DataRequest {
+                locale,
+                ..Default::default()
+            })?
+            .payload;
 
-        // Ok(Self {
-        //     options,
-        //     essential,
-        //     fixed_decimal_formatter,
-        // })
+        Ok(Self {
+            options,
+            display_name,
+            fixed_decimal_formatter,
+        })
     }
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
