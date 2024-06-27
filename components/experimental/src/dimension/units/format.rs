@@ -6,9 +6,10 @@
 
 use fixed_decimal::FixedDecimal;
 
+use icu_plurals::PluralCategory;
 use writeable::Writeable;
 
-use crate::dimension::provider::units::UnitsDisplayNameV1;
+use crate::dimension::provider::units::{Count, UnitsDisplayNameV1};
 use crate::dimension::units::options::UnitsFormatterOptions;
 
 pub struct FormattedUnit<'l> {
