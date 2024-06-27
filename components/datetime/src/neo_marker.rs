@@ -634,13 +634,13 @@ where
     type YearNames = D::YearNames;
     type MonthNames = D::MonthNames;
     type WeekdayNames = D::WeekdayNames;
-    type DayPeriodNames = ();
-    type ZoneEssentials = NeverMarker<TimeZoneFormatsV1<'static>>;
-    type ZoneExemplarCities = NeverMarker<ExemplarCitiesV1<'static>>;
-    type ZoneGenericLong = NeverMarker<MetazoneGenericNamesLongV1<'static>>;
-    type ZoneGenericShort = NeverMarker<MetazoneGenericNamesShortV1<'static>>;
-    type ZoneSpecificLong = NeverMarker<MetazoneSpecificNamesLongV1<'static>>;
-    type ZoneSpecificShort = NeverMarker<MetazoneSpecificNamesShortV1<'static>>;
+    type DayPeriodNames = NeverMarker<()>;
+    type ZoneEssentials = NeverMarker<()>;
+    type ZoneExemplarCities = NeverMarker<()>;
+    type ZoneGenericLong = NeverMarker<()>;
+    type ZoneGenericShort = NeverMarker<()>;
+    type ZoneSpecificLong = NeverMarker<()>;
+    type ZoneSpecificShort = NeverMarker<()>;
 }
 
 impl<C, D> TypedDateTimeMarkers<C> for DateTimeCombo<D, NeoNeverMarker, NeoNeverMarker>
@@ -681,16 +681,16 @@ impl<T> DateTimeNamesMarker for DateTimeCombo<NeoNeverMarker, T, NeoNeverMarker>
 where
     T: DateTimeNamesMarker,
 {
-    type YearNames = ();
-    type MonthNames = ();
-    type WeekdayNames = ();
+    type YearNames = NeverMarker<()>;
+    type MonthNames = NeverMarker<()>;
+    type WeekdayNames = NeverMarker<()>;
     type DayPeriodNames = T::DayPeriodNames;
-    type ZoneEssentials = NeverMarker<TimeZoneFormatsV1<'static>>;
-    type ZoneExemplarCities = NeverMarker<ExemplarCitiesV1<'static>>;
-    type ZoneGenericLong = NeverMarker<MetazoneGenericNamesLongV1<'static>>;
-    type ZoneGenericShort = NeverMarker<MetazoneGenericNamesShortV1<'static>>;
-    type ZoneSpecificLong = NeverMarker<MetazoneSpecificNamesLongV1<'static>>;
-    type ZoneSpecificShort = NeverMarker<MetazoneSpecificNamesShortV1<'static>>;
+    type ZoneEssentials = NeverMarker<()>;
+    type ZoneExemplarCities = NeverMarker<()>;
+    type ZoneGenericLong = NeverMarker<()>;
+    type ZoneGenericShort = NeverMarker<()>;
+    type ZoneSpecificLong = NeverMarker<()>;
+    type ZoneSpecificShort = NeverMarker<()>;
 }
 
 impl<C, T> TypedDateTimeMarkers<C> for DateTimeCombo<NeoNeverMarker, T, NeoNeverMarker>
@@ -736,12 +736,12 @@ where
     type MonthNames = D::MonthNames;
     type WeekdayNames = D::WeekdayNames;
     type DayPeriodNames = T::DayPeriodNames;
-    type ZoneEssentials = NeverMarker<TimeZoneFormatsV1<'static>>;
-    type ZoneExemplarCities = NeverMarker<ExemplarCitiesV1<'static>>;
-    type ZoneGenericLong = NeverMarker<MetazoneGenericNamesLongV1<'static>>;
-    type ZoneGenericShort = NeverMarker<MetazoneGenericNamesShortV1<'static>>;
-    type ZoneSpecificLong = NeverMarker<MetazoneSpecificNamesLongV1<'static>>;
-    type ZoneSpecificShort = NeverMarker<MetazoneSpecificNamesShortV1<'static>>;
+    type ZoneEssentials = NeverMarker<()>;
+    type ZoneExemplarCities = NeverMarker<()>;
+    type ZoneGenericLong = NeverMarker<()>;
+    type ZoneGenericShort = NeverMarker<()>;
+    type ZoneSpecificLong = NeverMarker<()>;
+    type ZoneSpecificShort = NeverMarker<()>;
 }
 
 impl<C, D, T> TypedDateTimeMarkers<C> for DateTimeCombo<D, T, NeoNeverMarker>
@@ -907,16 +907,16 @@ macro_rules! datetime_marker_helper {
         NeverMarker<MetazoneSpecificNamesShortV1<'static>>
     };
     (@names/year, yes) => {
-        DataPayload<YearNamesV1Marker>
+        YearNamesV1Marker
     };
     (@names/month, yes) => {
-        DataPayload<MonthNamesV1Marker>
+        MonthNamesV1Marker
     };
     (@names/weekday, yes) => {
-        DataPayload<WeekdayNamesV1Marker>
+        WeekdayNamesV1Marker
     };
     (@names/dayperiod, yes) => {
-        DataPayload<DayPeriodNamesV1Marker>
+        DayPeriodNamesV1Marker
     };
     (@names/zone/essentials, yes) => {
         TimeZoneFormatsV1Marker
@@ -937,25 +937,10 @@ macro_rules! datetime_marker_helper {
         MetazoneSpecificNamesShortV1Marker
     };
     (@names/$any:ident, no) => {
-        ()
+        NeverMarker<()>
     };
-    (@names/zone/essentials, no) => {
-        NeverMarker<TimeZoneFormatsV1<'static>>
-    };
-    (@names/zone/exemplar, no) => {
-        NeverMarker<ExemplarCitiesV1<'static>>
-    };
-    (@names/zone/generic_long, no) => {
-        NeverMarker<MetazoneGenericNamesLongV1<'static>>
-    };
-    (@names/zone/generic_short, no) => {
-        NeverMarker<MetazoneGenericNamesShortV1<'static>>
-    };
-    (@names/zone/specific_long, no) => {
-        NeverMarker<MetazoneSpecificNamesLongV1<'static>>
-    };
-    (@names/zone/specific_short, no) => {
-        NeverMarker<MetazoneSpecificNamesShortV1<'static>>
+    (@names/zone/$any:ident, no) => {
+        NeverMarker<()>
     };
 }
 

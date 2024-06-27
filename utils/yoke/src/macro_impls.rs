@@ -36,7 +36,7 @@ macro_rules! copy_yoke_impl {
     };
 }
 macro_rules! impl_copy_type {
-    ($ty:ident) => {
+    ($ty:ty) => {
         // Safety: all the types that this macro is used to generate impls of Yokeable for do not
         // borrow any memory.
         unsafe impl<'a> Yokeable<'a> for $ty {
@@ -46,6 +46,7 @@ macro_rules! impl_copy_type {
     };
 }
 
+impl_copy_type!(());
 impl_copy_type!(u8);
 impl_copy_type!(u16);
 impl_copy_type!(u32);
