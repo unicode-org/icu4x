@@ -26,7 +26,6 @@ use icu_calendar::types::Era;
 use icu_calendar::types::MonthCode;
 use icu_locale_core::extensions::unicode::Value;
 use icu_provider::prelude::*;
-use icu_timezone::{MetazoneId, TimeZoneBcp47Id};
 
 pub(crate) enum GetSymbolForMonthError {
     Missing,
@@ -47,13 +46,6 @@ pub(crate) enum GetSymbolForEraError {
 
 pub(crate) enum GetSymbolForDayPeriodError {
     #[cfg(feature = "experimental")]
-    MissingNames(Field),
-}
-
-pub(crate) enum GetSymbolForTimeZoneError {
-    TypeTooNarrow,
-    #[cfg(feature = "experimental")]
-    Missing,
     MissingNames(Field),
 }
 

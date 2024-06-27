@@ -80,8 +80,11 @@ pub enum MaybePayloadError2 {
 }
 
 impl MaybePayloadError2 {
-    fn to_single_load_error(self) -> SingleLoadError {
-        todo!()
+    fn to_single_load_error(self, field: Field) -> SingleLoadError {
+        match self {
+            Self::TypeTooNarrow => SingleLoadError::TypeTooNarrow(field),
+            Self::InsufficientStorage => SingleLoadError::DuplicateField(field),
+        }
     }
 }
 
@@ -1145,7 +1148,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                 ),
                 ..Default::default()
             };
-        self.year_symbols.load_put(provider, req, variables).map_err(MaybePayloadError2::to_single_load_error)?;
+        self.year_symbols.load_put(provider, req, variables).map_err(|e| MaybePayloadError2::to_single_load_error(e, field))?.map_err(SingleLoadError::Data)?;
         Ok(())
     }
 
@@ -1182,7 +1185,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                 ),
                 ..Default::default()
             };
-        self.month_symbols.load_put(provider, req, variables).map_err(MaybePayloadError2::to_single_load_error)?;
+        self.month_symbols.load_put(provider, req, variables).map_err(|e| MaybePayloadError2::to_single_load_error(e, field))?.map_err(SingleLoadError::Data)?;
         Ok(())
     }
 
@@ -1218,7 +1221,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                 ),
                 ..Default::default()
             };
-        self.dayperiod_symbols.load_put(provider, req, variables).map_err(MaybePayloadError2::to_single_load_error)?;
+        self.dayperiod_symbols.load_put(provider, req, variables).map_err(|e| MaybePayloadError2::to_single_load_error(e, field))?.map_err(SingleLoadError::Data)?;
         Ok(())
     }
 
@@ -1266,7 +1269,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
             ),
             ..Default::default()
         };
-        self.weekday_symbols.load_put(provider, req, variables).map_err(MaybePayloadError2::to_single_load_error)?;
+        self.weekday_symbols.load_put(provider, req, variables).map_err(|e| MaybePayloadError2::to_single_load_error(e, field))?.map_err(SingleLoadError::Data)?;
         Ok(())
     }
 
@@ -1278,9 +1281,14 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
     where
         P: BoundDataProvider<MetazoneGenericNamesShortV1Marker> + ?Sized,
     {
+        // TODO: Get this field from a constant somewhere
+        let field = fields::Field {
+            symbol: FieldSymbol::TimeZone(fields::TimeZone::LowerV),
+            length: FieldLength::One,
+        };
         let variables = ();
         let req = DataRequest { locale, ..Default::default() };
-        self.mz_generic_short.load_put(provider, req, variables).map_err(MaybePayloadError2::to_single_load_error)?;
+        self.mz_generic_short.load_put(provider, req, variables).map_err(|e| MaybePayloadError2::to_single_load_error(e, field))?.map_err(SingleLoadError::Data)?;
         Ok(())
     }
 
