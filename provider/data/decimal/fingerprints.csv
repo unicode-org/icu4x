@@ -1,5 +1,5 @@
-252 identifiers, 1917B
-
+*, <'static strs>, 1914B, 251 unique static strings
+decimal/symbols@1, <lookup>, 6048B, 252 identifiers
 decimal/symbols@1, <total>, 2040B, 45 unique payloads
 decimal/symbols@1, af, 34B, 8f773f51e85a65c1
 decimal/symbols@1, ar, 49B, c3f15eb63fa35608

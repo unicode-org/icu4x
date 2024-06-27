@@ -1,7 +1,8 @@
-10 identifiers, 199B
-
+*, <'static strs>, 196B, 9 unique static strings
+segmenter/dictionary/w_auto@1, <lookup>, 40B, 1 identifiers
 segmenter/dictionary/w_auto@1, <total>, 2007113B, 1 unique payloads
 segmenter/dictionary/w_auto@1, und/cjdict, 2007113B, f7552d2848b39b0d
+segmenter/dictionary/wl_ext@1, <lookup>, 112B, 4 identifiers
 segmenter/dictionary/wl_ext@1, <total>, 1773088B, 4 unique payloads
 segmenter/dictionary/wl_ext@1, und/burmesedict, 457267B, d442d2a58499319b
 segmenter/dictionary/wl_ext@1, und/khmerdict, 798377B, e1da910a05c02674
@@ -9,6 +10,7 @@ segmenter/dictionary/wl_ext@1, und/laodict, 292463B, 13c58c252d049c90
 segmenter/dictionary/wl_ext@1, und/thaidict, 224981B, f2d574736bb1a754
 segmenter/grapheme@1, <singleton>, 9730B, 922c04bad19f0d2e
 segmenter/line@1, <singleton>, 18103B, f922c8477455abdd
+segmenter/lstm/wl_auto@1, <lookup>, 112B, 4 identifiers
 segmenter/lstm/wl_auto@1, <total>, 309347B, 4 unique payloads
 segmenter/lstm/wl_auto@1, und/Burmese_codepoints_exclusive_model4_heavy, 91074B, eec2f7a1f6819f91
 segmenter/lstm/wl_auto@1, und/Khmer_codepoints_exclusive_model4_heavy, 74372B, b25f5219c4b970f2

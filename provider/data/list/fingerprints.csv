@@ -1,5 +1,5 @@
-145 identifiers, 380B
-
+*, <'static strs>, 377B, 144 unique static strings
+list/and@2, <lookup>, 3240B, 135 identifiers
 list/and@2, <total>, 5752B, 118 unique payloads
 list/and@2, af, 24B, 177f30fc0537cd07
 list/and@2, am, 56B, 14751ee07af8ce24
@@ -136,6 +136,7 @@ list/and@2, zh-HK, 24B, 13320f3318004eea
 list/and@2, zh-Hant, 24B, 24c8fd6c3ed6f2cc
 list/and@2, zh-MO, 24B, -> zh-HK
 list/and@2, zu, 32B, f280d533aa349025
+list/or@2, <lookup>, 2856B, 119 identifiers
 list/or@2, <total>, 4479B, 95 unique payloads
 list/or@2, af, 24B, 8912e928094584a4
 list/or@2, am, 50B, 76f0c5245302d4b1
@@ -256,26 +257,27 @@ list/or@2, yue, 26B, 34a6b378f2e22e73
 list/or@2, yue-Hans, 26B, -> yue
 list/or@2, zh, 24B, 2e2b9ef825abc769
 list/or@2, zh-Hant, 24B, -> zh
+list/unit@2, <lookup>, 3024B, 126 identifiers
 list/unit@2, <total>, 5320B, 80 unique payloads
-list/unit@2, af, 24B, -> fy
+list/unit@2, af, 24B, d28356d40bb45872
 list/unit@2, am, 23B, 8dcf442ea8ed6356
 list/unit@2, ar, 26B, e14608e5cd3e4ce0
 list/unit@2, as, 21B, a8ec4c1b87c10d93
-list/unit@2, ast, 23B, -> ast
+list/unit@2, ast, 23B, e99c3aea63449dd0
 list/unit@2, be, 16B, 375096409d6f0946
 list/unit@2, bg, 24B, 265af9d5161141f4
 list/unit@2, blo, 24B, 2ddaebc8fd468b9
-list/unit@2, brx, 46B, -> brx
-list/unit@2, bs, 23B, -> bs
-list/unit@2, bs-Cyrl, 24B, -> bs-Cyrl
+list/unit@2, brx, 46B, 5b409e2618450b25
+list/unit@2, bs, 23B, 58b0dcc30cdabe1d
+list/unit@2, bs-Cyrl, 24B, 3ed8301e7e2208a0
 list/unit@2, ca, 23B, -> bs
 list/unit@2, ceb, 21B, -> as
 list/unit@2, chr, 21B, -> as
 list/unit@2, cs, 28B, a606e2914b597a70
 list/unit@2, cv, 16B, -> be
-list/unit@2, da, 24B, -> da
+list/unit@2, da, 24B, 32914f71c9d587ff
 list/unit@2, de, 25B, 88ac208f771140cb
-list/unit@2, doi, 40B, -> doi
+list/unit@2, doi, 40B, 1b95db885132a257
 list/unit@2, dsb, 23B, 99ffd40ccfab19d6
 list/unit@2, el, 21B, -> as
 list/unit@2, en, 21B, -> as
@@ -301,7 +303,7 @@ list/unit@2, hi, 44B, f172cff9d7baf9c3
 list/unit@2, hi-Latn, 34B, 31e2ac91d711cc71
 list/unit@2, hr, 27B, 19a1f47c4a70645b
 list/unit@2, hsb, 23B, -> dsb
-list/unit@2, hu, 25B, -> hu
+list/unit@2, hu, 25B, 2d9cd0be1a35b1be
 list/unit@2, hy, 28B, 6c9b501fa0541401
 list/unit@2, ia, 21B, -> as
 list/unit@2, ig, 32B, 50a9adc7b4c6a28b
@@ -316,8 +318,8 @@ list/unit@2, km, 16B, -> be
 list/unit@2, kn, 21B, 2cb11ac2b35a34ad
 list/unit@2, ko, 16B, -> be
 list/unit@2, kok, 21B, -> as
-list/unit@2, ks, 42B, -> ks
-list/unit@2, ks-Deva, 40B, -> ks-Deva
+list/unit@2, ks, 42B, 65acbf4a1b18ae0d
+list/unit@2, ks-Deva, 40B, 6fa43478ae4c9ca
 list/unit@2, ku, 28B, e805f0ffad369693
 list/unit@2, kxv, 21B, -> as
 list/unit@2, ky, 21B, -> as
@@ -325,12 +327,12 @@ list/unit@2, lb, 21B, -> as
 list/unit@2, lo, 21B, -> as
 list/unit@2, lt, 23B, bd60ee39ff6c5f41
 list/unit@2, lv, 28B, fe102e31b56895bb
-list/unit@2, mai, 40B, -> mai
+list/unit@2, mai, 40B, 9d7d1b4c5f2fe05e
 list/unit@2, mi, 21B, -> as
 list/unit@2, mk, 24B, -> bs-Cyrl
 list/unit@2, ml, 21B, f986f4b361ed7d92
 list/unit@2, mn, 16B, -> be
-list/unit@2, mni, 37B, -> mni
+list/unit@2, mni, 37B, 43d80f3868995b85
 list/unit@2, mr, 21B, -> as
 list/unit@2, ms, 29B, c22e8ca50f17f821
 list/unit@2, mt, 30B, b5768c3cf6ab2be0
@@ -345,33 +347,33 @@ list/unit@2, pcm, 21B, -> as
 list/unit@2, pl, 23B, -> bs
 list/unit@2, ps, 37B, 4b3e17ded11d6483
 list/unit@2, pt, 27B, -> it
-list/unit@2, pt-PT, 23B, -> gl
+list/unit@2, pt-PT, 23B, fbc347f90f14c92e
 list/unit@2, rm, 27B, -> it
 list/unit@2, ro, 25B, a7f7ca3d0ea8b619
 list/unit@2, ru, 16B, -> be
-list/unit@2, sa, 46B, -> sa
-list/unit@2, sah, 32B, -> sah
+list/unit@2, sa, 46B, f34a7c9f4fc77f86
+list/unit@2, sah, 32B, a9c1b13116f870d5
 list/unit@2, sc, 27B, -> it
-list/unit@2, si, 40B, -> si
-list/unit@2, sl, 24B, -> sl
+list/unit@2, si, 40B, 98beb0a0883f6fdb
+list/unit@2, sl, 24B, 648a182016ff2887
 list/unit@2, so, 25B, a44cf38ba21358a0
-list/unit@2, sq, 23B, -> gl
+list/unit@2, sq, 23B, -> pt-PT
 list/unit@2, sr, 24B, -> bs-Cyrl
 list/unit@2, sr-Latn, 23B, -> bs
-list/unit@2, su, 40B, -> su
+list/unit@2, su, 40B, f71496632930aba0
 list/unit@2, sv, 21B, -> as
 list/unit@2, sw, 24B, 306477c695c8cea1
-list/unit@2, syr, 18B, -> syr
+list/unit@2, syr, 18B, cc45ef7002f5f7f2
 list/unit@2, ta, 21B, -> as
 list/unit@2, th, 30B, 3634af6f27539959
 list/unit@2, ti, 33B, 51e44db4390c0322
 list/unit@2, tk, 21B, -> as
 list/unit@2, to, 30B, 647c23b950566c92
 list/unit@2, tr, 16B, -> be
-list/unit@2, tt, 28B, -> tt
-list/unit@2, ug, 34B, -> ug
-list/unit@2, uk, 24B, -> be
-list/unit@2, und, 17B, -> und
+list/unit@2, tt, 28B, c50a7526dc58c855
+list/unit@2, ug, 34B, 35c139f801b2bcb9
+list/unit@2, uk, 24B, cb1ace7c262d0af6
+list/unit@2, und, 17B, 924e2d2be2336604
 list/unit@2, ur, 47B, b92dbfa5baac3d9c
 list/unit@2, uz, 16B, -> be
 list/unit@2, vec, 27B, -> it

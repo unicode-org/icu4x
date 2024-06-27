@@ -1,5 +1,3 @@
-0 identifiers, 0B
-
 time_zone/bcp47_to_iana@1, <singleton>, 7679B, 23e2467f999c5942
 time_zone/iana_to_bcp47@2, <singleton>, 9535B, f744f30340782c63
 time_zone/metazone_period@1, <singleton>, 11096B, ae67d0d5ca6a1bbc
