@@ -817,19 +817,23 @@ where
             Some(zs) => {
                 let payloads = zs.get_payloads();
                 let tz_formatter = GenericNonLocationShortFormat {};
-                tz_formatter
-                    .format(w, &custom_time_zone.into(), payloads)?
-                    .map_err(|e| match e {
-                        FormatTimeZoneError::MissingInputField(s) => {
-                            DateTimeWriteError::MissingInputField(s)
-                        }
-                        FormatTimeZoneError::NameNotFound => {
-                            DateTimeWriteError::MissingNames(field)
-                        }
-                        FormatTimeZoneError::MissingZoneSymbols => {
-                            DateTimeWriteError::MissingZoneSymbols
-                        }
-                    })
+                match tz_formatter.format(w, &custom_time_zone.into(), payloads)? {
+                    Ok(()) => Ok(()),
+                    Err(e) => {
+                        write_time_zone_missing(w)?;
+                        Err(match e {
+                            FormatTimeZoneError::MissingInputField(s) => {
+                                DateTimeWriteError::MissingInputField(s)
+                            }
+                            FormatTimeZoneError::NameNotFound => {
+                                DateTimeWriteError::MissingNames(field)
+                            }
+                            FormatTimeZoneError::MissingZoneSymbols => {
+                                DateTimeWriteError::MissingZoneSymbols
+                            }
+                        })
+                    }
+                }
             }
         },
     })

@@ -1697,12 +1697,12 @@ impl DateTimeNamesMarker for NeoTimeZoneSkeleton {
     type MonthNames = datetime_marker_helper!(@names/month, no);
     type WeekdayNames = datetime_marker_helper!(@names/weekday, no);
     type DayPeriodNames = datetime_marker_helper!(@names/dayperiod, no);
-    type ZoneEssentials = datetime_marker_helper!(@names/zone/essentials, no);
-    type ZoneExemplarCities = datetime_marker_helper!(@names/zone/exemplar, no);
-    type ZoneGenericLong = datetime_marker_helper!(@names/zone/generic_long, no);
-    type ZoneGenericShort = datetime_marker_helper!(@names/zone/generic_short, no);
-    type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long, no);
-    type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short, no);
+    type ZoneEssentials = datetime_marker_helper!(@names/zone/essentials, yes);
+    type ZoneExemplarCities = datetime_marker_helper!(@names/zone/exemplar, yes);
+    type ZoneGenericLong = datetime_marker_helper!(@names/zone/generic_long, yes);
+    type ZoneGenericShort = datetime_marker_helper!(@names/zone/generic_short, yes);
+    type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long, yes);
+    type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short, yes);
 }
 
 impl ZoneMarkers for NeoTimeZoneSkeleton {

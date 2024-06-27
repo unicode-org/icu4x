@@ -877,7 +877,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let mut names =
-    ///     TypedDateTimeNames::<Gregorian, NeoTimeZoneSkeleton>::try_new(&locale!("th-TH").into())
+    ///     TypedDateTimeNames::<Gregorian, NeoTimeZoneSkeleton>::try_new(&locale!("sr-ME").into())
     ///         .unwrap();
     ///
     /// names
@@ -889,8 +889,8 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
     ///
     /// assert_try_writeable_eq!(
-    ///     names.with_pattern(&pattern).format(&CustomTimeZone::bst()),
-    ///     "Your time zone is: {todo}",
+    ///     names.with_pattern(&pattern).format(&CustomTimeZone::gmt()),
+    ///     "Your time zone is: GMT",
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
