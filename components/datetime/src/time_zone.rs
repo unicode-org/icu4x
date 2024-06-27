@@ -181,7 +181,8 @@ pub(crate) struct TimeZoneDataPayloadsBorrowed<'a> {
     /// The specific long metazone names, e.g. Pacific Daylight Time
     pub(crate) mz_specific_long: Option<&'a provider::time_zones::MetazoneSpecificNamesLongV1<'a>>,
     /// The specific short metazone names, e.g. Pacific Daylight Time
-    pub(crate) mz_specific_short: Option<&'a provider::time_zones::MetazoneSpecificNamesShortV1<'a>>,
+    pub(crate) mz_specific_short:
+        Option<&'a provider::time_zones::MetazoneSpecificNamesShortV1<'a>>,
 }
 
 impl TimeZoneDataPayloads {

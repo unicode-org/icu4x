@@ -18,17 +18,16 @@ use crate::neo_pattern::{DateTimePattern, DateTimePatternBorrowed};
 use crate::neo_skeleton::NeoDateTimeComponents;
 use crate::pattern::PatternItem;
 use crate::provider::date_time::{
-    DateSymbols, GetSymbolForDayPeriodError, GetSymbolForEraError, GetSymbolForMonthError, GetSymbolForWeekdayError, MonthPlaceholderValue, TimeSymbols,
-    ZoneSymbols,
+    DateSymbols, GetSymbolForDayPeriodError, GetSymbolForEraError, GetSymbolForMonthError,
+    GetSymbolForWeekdayError, MonthPlaceholderValue, TimeSymbols, ZoneSymbols,
 };
 use crate::provider::neo::*;
 use crate::provider::time_zones::{
-    ExemplarCitiesV1, MetazoneGenericNamesShortV1, MetazoneGenericNamesShortV1Marker, TimeZoneFormatsV1, TimeZoneFormatsV1Marker,
-    MetazoneSpecificNamesLongV1, MetazoneGenericNamesLongV1, MetazoneSpecificNamesShortV1,
-    ExemplarCitiesV1Marker,
-    MetazoneGenericNamesLongV1Marker,
-    MetazoneSpecificNamesLongV1Marker,
-    MetazoneSpecificNamesShortV1Marker,
+    ExemplarCitiesV1, ExemplarCitiesV1Marker, MetazoneGenericNamesLongV1,
+    MetazoneGenericNamesLongV1Marker, MetazoneGenericNamesShortV1,
+    MetazoneGenericNamesShortV1Marker, MetazoneSpecificNamesLongV1,
+    MetazoneSpecificNamesLongV1Marker, MetazoneSpecificNamesShortV1,
+    MetazoneSpecificNamesShortV1Marker, TimeZoneFormatsV1, TimeZoneFormatsV1Marker,
 };
 use crate::time_zone::TimeZoneDataPayloadsBorrowed;
 use core::fmt;
@@ -47,7 +46,8 @@ use writeable::TryWriteable;
 use yoke::Yokeable;
 
 pub trait DateTimeNamesHolderTrait<M: DynamicDataMarker> {
-    type Container<Variables: PartialEq + Copy + fmt::Debug>: MaybePayload2<M, Variables> + fmt::Debug;
+    type Container<Variables: PartialEq + Copy + fmt::Debug>: MaybePayload2<M, Variables>
+        + fmt::Debug;
 }
 
 impl<M: DynamicDataMarker> DateTimeNamesHolderTrait<M> for NeverMarker<()> {
@@ -57,7 +57,8 @@ impl<M: DynamicDataMarker> DateTimeNamesHolderTrait<M> for NeverMarker<()> {
 macro_rules! impl_holder_trait {
     ($marker:path) => {
         impl DateTimeNamesHolderTrait<$marker> for $marker {
-            type Container<Variables: PartialEq + Copy + fmt::Debug> = DateTimeNamesData2<$marker, Variables>;
+            type Container<Variables: PartialEq + Copy + fmt::Debug> =
+                DateTimeNamesData2<$marker, Variables>;
         }
     };
 }
@@ -90,7 +91,12 @@ impl MaybePayloadError2 {
 
 pub trait MaybePayload2<M: DynamicDataMarker, Variables> {
     fn new_empty() -> Self;
-    fn load_put<P>(&mut self, provider: &P, req: DataRequest, variables: Variables) -> Result<Result<(), DataError>, MaybePayloadError2>
+    fn load_put<P>(
+        &mut self,
+        provider: &P,
+        req: DataRequest,
+        variables: Variables,
+    ) -> Result<Result<(), DataError>, MaybePayloadError2>
     where
         P: BoundDataProvider<M> + ?Sized,
         Self: Sized;
@@ -115,7 +121,7 @@ impl<M: DynamicDataMarker, Variables> DateTimeNamesData2<M, Variables> {
     #[inline]
     pub(crate) fn none() -> Self {
         Self {
-            inner: OptionalNames::None
+            inner: OptionalNames::None,
         }
     }
 }
@@ -124,69 +130,77 @@ pub struct DateTimeNamesData2Borrowed<'data, M: DynamicDataMarker, Variables> {
     inner: OptionalNames<Variables, &'data <M::Yokeable as Yokeable<'data>>::Output>,
 }
 
-impl<M: DynamicDataMarker, Variables> MaybePayload2<M, Variables> for DateTimeNamesData2<M, Variables>
+impl<M: DynamicDataMarker, Variables> MaybePayload2<M, Variables>
+    for DateTimeNamesData2<M, Variables>
 where
     Variables: PartialEq + Copy,
 {
     #[inline]
     fn new_empty() -> Self {
         Self {
-            inner: OptionalNames::None
+            inner: OptionalNames::None,
         }
     }
-    fn load_put<P>(&mut self, provider: &P, req: DataRequest, variables: Variables) -> Result<Result<(), DataError>, MaybePayloadError2>
+    fn load_put<P>(
+        &mut self,
+        provider: &P,
+        req: DataRequest,
+        variables: Variables,
+    ) -> Result<Result<(), DataError>, MaybePayloadError2>
     where
         P: BoundDataProvider<M> + ?Sized,
-        Self: Sized {
+        Self: Sized,
+    {
         let arg_variables = variables;
         match &self.inner {
-            OptionalNames::SingleLength { variables, .. }
-                if arg_variables == *variables =>
-            {
+            OptionalNames::SingleLength { variables, .. } if arg_variables == *variables => {
                 return Ok(Ok(()));
             }
             OptionalNames::SingleLength { .. } => {
                 return Err(MaybePayloadError2::InsufficientStorage);
             }
-            OptionalNames::None => ()
+            OptionalNames::None => (),
         };
         match provider.load_bound(req) {
             Ok(response) => {
                 self.inner = OptionalNames::SingleLength {
                     payload: response.payload.cast(),
-                    variables: arg_variables
+                    variables: arg_variables,
                 };
                 Ok(Ok(()))
             }
-            Err(e) => {
-                Ok(Err(e))
-            }
+            Err(e) => Ok(Err(e)),
         }
     }
     #[inline]
     fn get(&self) -> DateTimeNamesData2Borrowed<M, Variables> {
         DateTimeNamesData2Borrowed {
-            inner: self.inner.as_borrowed()
+            inner: self.inner.as_borrowed(),
         }
     }
 }
 
 impl<M: DynamicDataMarker, Variables> MaybePayload2<M, Variables> for () {
     #[inline]
-    fn new_empty() -> Self {
-    }
+    fn new_empty() -> Self {}
     #[inline]
-    fn load_put<P>(&mut self, _: &P, _: DataRequest, _: Variables) -> Result<Result<(), DataError>, MaybePayloadError2>
+    fn load_put<P>(
+        &mut self,
+        _: &P,
+        _: DataRequest,
+        _: Variables,
+    ) -> Result<Result<(), DataError>, MaybePayloadError2>
     where
         P: BoundDataProvider<M> + ?Sized,
-        Self: Sized {
+        Self: Sized,
+    {
         Err(MaybePayloadError2::TypeTooNarrow)
     }
     #[allow(clippy::needless_lifetimes)] // Yokeable is involved
     #[inline]
     fn get(&self) -> DateTimeNamesData2Borrowed<M, Variables> {
         DateTimeNamesData2Borrowed {
-            inner: OptionalNames::None
+            inner: OptionalNames::None,
         }
     }
 }
@@ -199,7 +213,7 @@ enum OptionalNames<Variables, Payload> {
     SingleLength {
         variables: Variables,
         payload: Payload,
-    }
+    },
 }
 
 impl<Variables, Payload> OptionalNames<Variables, Payload>
@@ -210,9 +224,7 @@ where
     pub(crate) fn get_with_variables(&self, arg_variables: Variables) -> Option<Payload> {
         match self {
             Self::None => None,
-            Self::SingleLength { variables, payload }
-                if arg_variables == *variables =>
-            {
+            Self::SingleLength { variables, payload } if arg_variables == *variables => {
                 Some(*payload)
             }
             _ => None,
@@ -220,10 +232,16 @@ where
     }
 }
 
-impl<Payload> OptionalNames<(), Payload> where Payload: Copy {
+impl<Payload> OptionalNames<(), Payload>
+where
+    Payload: Copy,
+{
     pub(crate) fn get_option(&self) -> Option<Payload> {
         match self {
-            Self::SingleLength { variables: (), payload } => Some(*payload),
+            Self::SingleLength {
+                variables: (),
+                payload,
+            } => Some(*payload),
             _ => None,
         }
     }
@@ -235,11 +253,15 @@ where
 {
     #[allow(clippy::needless_lifetimes)] // Yokeable is involved
     #[inline]
-    pub(crate) fn as_borrowed<'a>(&'a self) -> OptionalNames<Variables, &'a <M::Yokeable as Yokeable<'a>>::Output>
-    {
+    pub(crate) fn as_borrowed<'a>(
+        &'a self,
+    ) -> OptionalNames<Variables, &'a <M::Yokeable as Yokeable<'a>>::Output> {
         match self {
             Self::None => OptionalNames::None,
-            Self::SingleLength { variables, payload } => OptionalNames::SingleLength { variables: *variables, payload: payload.get() }
+            Self::SingleLength { variables, payload } => OptionalNames::SingleLength {
+                variables: *variables,
+                payload: payload.get(),
+            },
         }
     }
 }
@@ -462,16 +484,35 @@ impl From<RawDateTimeNames<TimeMarker>> for RawDateTimeNames<DateTimeMarker> {
 }
 
 pub(crate) struct RawDateTimeNames<R: DateTimeNamesMarker> {
-    year_symbols: <R::YearNames as DateTimeNamesHolderTrait<YearNamesV1Marker>>::Container<FieldLength>,
-    month_symbols: <R::MonthNames as DateTimeNamesHolderTrait<MonthNamesV1Marker>>::Container<(fields::Month, FieldLength)>,
-    weekday_symbols: <R::WeekdayNames as DateTimeNamesHolderTrait<WeekdayNamesV1Marker>>::Container<(fields::Weekday, FieldLength)>,
-    dayperiod_symbols: <R::DayPeriodNames as DateTimeNamesHolderTrait<DayPeriodNamesV1Marker>>::Container<FieldLength>,
-    zone_essentials: <R::ZoneEssentials as DateTimeNamesHolderTrait<TimeZoneFormatsV1Marker>>::Container<()>,
-    exemplar_cities: <R::ZoneExemplarCities as DateTimeNamesHolderTrait<ExemplarCitiesV1Marker>>::Container<()>,
-    mz_generic_long: <R::ZoneGenericLong as DateTimeNamesHolderTrait<MetazoneGenericNamesLongV1Marker>>::Container<()>,
-    mz_generic_short: <R::ZoneGenericShort as DateTimeNamesHolderTrait<MetazoneGenericNamesShortV1Marker>>::Container<()>,
-    mz_specific_long: <R::ZoneSpecificLong as DateTimeNamesHolderTrait<MetazoneSpecificNamesLongV1Marker>>::Container<()>,
-    mz_specific_short: <R::ZoneSpecificShort as DateTimeNamesHolderTrait<MetazoneSpecificNamesShortV1Marker>>::Container<()>,
+    year_symbols:
+        <R::YearNames as DateTimeNamesHolderTrait<YearNamesV1Marker>>::Container<FieldLength>,
+    month_symbols: <R::MonthNames as DateTimeNamesHolderTrait<MonthNamesV1Marker>>::Container<(
+        fields::Month,
+        FieldLength,
+    )>,
+    weekday_symbols: <R::WeekdayNames as DateTimeNamesHolderTrait<WeekdayNamesV1Marker>>::Container<
+        (fields::Weekday, FieldLength),
+    >,
+    dayperiod_symbols:
+        <R::DayPeriodNames as DateTimeNamesHolderTrait<DayPeriodNamesV1Marker>>::Container<
+            FieldLength,
+        >,
+    zone_essentials:
+        <R::ZoneEssentials as DateTimeNamesHolderTrait<TimeZoneFormatsV1Marker>>::Container<()>,
+    exemplar_cities:
+        <R::ZoneExemplarCities as DateTimeNamesHolderTrait<ExemplarCitiesV1Marker>>::Container<()>,
+    mz_generic_long: <R::ZoneGenericLong as DateTimeNamesHolderTrait<
+        MetazoneGenericNamesLongV1Marker,
+    >>::Container<()>,
+    mz_generic_short: <R::ZoneGenericShort as DateTimeNamesHolderTrait<
+        MetazoneGenericNamesShortV1Marker,
+    >>::Container<()>,
+    mz_specific_long: <R::ZoneSpecificLong as DateTimeNamesHolderTrait<
+        MetazoneSpecificNamesLongV1Marker,
+    >>::Container<()>,
+    mz_specific_short: <R::ZoneSpecificShort as DateTimeNamesHolderTrait<
+        MetazoneSpecificNamesShortV1Marker,
+    >>::Container<()>,
     // TODO(#4340): Make the FixedDecimalFormatter optional
     fixed_decimal_formatter: Option<FixedDecimalFormatter>,
     week_calculator: Option<WeekCalculator>,
@@ -482,19 +523,19 @@ pub(crate) struct RawDateTimeNames<R: DateTimeNamesMarker> {
 impl<R: DateTimeNamesMarker> fmt::Debug for RawDateTimeNames<R> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("RawDateTimeNames")
-        .field("year_symbols", &self.year_symbols)
-        .field("month_symbols", &self.month_symbols)
-        .field("weekday_symbols", &self.weekday_symbols)
-        .field("dayperiod_symbols", &self.dayperiod_symbols)
-        .field("zone_essentials", &self.zone_essentials)
-        .field("exemplar_cities", &self.exemplar_cities)
-        .field("mz_generic_long", &self.mz_generic_long)
-        .field("mz_generic_short", &self.mz_generic_short)
-        .field("mz_specific_long", &self.mz_specific_long)
-        .field("mz_specific_short", &self.mz_specific_short)
-        .field("fixed_decimal_formatter", &self.fixed_decimal_formatter)
-        .field("week_calculator", &self.week_calculator)
-        .finish()
+            .field("year_symbols", &self.year_symbols)
+            .field("month_symbols", &self.month_symbols)
+            .field("weekday_symbols", &self.weekday_symbols)
+            .field("dayperiod_symbols", &self.dayperiod_symbols)
+            .field("zone_essentials", &self.zone_essentials)
+            .field("exemplar_cities", &self.exemplar_cities)
+            .field("mz_generic_long", &self.mz_generic_long)
+            .field("mz_generic_short", &self.mz_generic_short)
+            .field("mz_specific_long", &self.mz_specific_long)
+            .field("mz_specific_short", &self.mz_specific_short)
+            .field("fixed_decimal_formatter", &self.fixed_decimal_formatter)
+            .field("week_calculator", &self.week_calculator)
+            .finish()
     }
 }
 
@@ -1134,21 +1175,22 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         let field_length = field_length.numeric_to_abbr();
         let variables = field_length;
         let req = DataRequest {
-                locale,
-                marker_attributes: &DataMarkerAttributes::from_tinystr(
-                    marker_attrs::symbol_attr_for(
-                        marker_attrs::Context::Format,
-                        match field_length {
-                            FieldLength::Abbreviated => marker_attrs::Length::Abbr,
-                            FieldLength::Narrow => marker_attrs::Length::Narrow,
-                            FieldLength::Wide => marker_attrs::Length::Wide,
-                            _ => return Err(SingleLoadError::UnsupportedField(field)),
-                        },
-                    ),
-                ),
-                ..Default::default()
-            };
-        self.year_symbols.load_put(provider, req, variables).map_err(|e| MaybePayloadError2::into_single_load_error(e, field))?.map_err(SingleLoadError::Data)?;
+            locale,
+            marker_attributes: &DataMarkerAttributes::from_tinystr(marker_attrs::symbol_attr_for(
+                marker_attrs::Context::Format,
+                match field_length {
+                    FieldLength::Abbreviated => marker_attrs::Length::Abbr,
+                    FieldLength::Narrow => marker_attrs::Length::Narrow,
+                    FieldLength::Wide => marker_attrs::Length::Wide,
+                    _ => return Err(SingleLoadError::UnsupportedField(field)),
+                },
+            )),
+            ..Default::default()
+        };
+        self.year_symbols
+            .load_put(provider, req, variables)
+            .map_err(|e| MaybePayloadError2::into_single_load_error(e, field))?
+            .map_err(SingleLoadError::Data)?;
         Ok(())
     }
 
@@ -1168,24 +1210,25 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         };
         let variables = (field_symbol, field_length);
         let req = DataRequest {
-                locale,
-                marker_attributes: &DataMarkerAttributes::from_tinystr(
-                    marker_attrs::symbol_attr_for(
-                        match field_symbol {
-                            fields::Month::Format => marker_attrs::Context::Format,
-                            fields::Month::StandAlone => marker_attrs::Context::Standalone,
-                        },
-                        match field_length {
-                            FieldLength::Abbreviated => marker_attrs::Length::Abbr,
-                            FieldLength::Narrow => marker_attrs::Length::Narrow,
-                            FieldLength::Wide => marker_attrs::Length::Wide,
-                            _ => return Err(SingleLoadError::UnsupportedField(field)),
-                        },
-                    ),
-                ),
-                ..Default::default()
-            };
-        self.month_symbols.load_put(provider, req, variables).map_err(|e| MaybePayloadError2::into_single_load_error(e, field))?.map_err(SingleLoadError::Data)?;
+            locale,
+            marker_attributes: &DataMarkerAttributes::from_tinystr(marker_attrs::symbol_attr_for(
+                match field_symbol {
+                    fields::Month::Format => marker_attrs::Context::Format,
+                    fields::Month::StandAlone => marker_attrs::Context::Standalone,
+                },
+                match field_length {
+                    FieldLength::Abbreviated => marker_attrs::Length::Abbr,
+                    FieldLength::Narrow => marker_attrs::Length::Narrow,
+                    FieldLength::Wide => marker_attrs::Length::Wide,
+                    _ => return Err(SingleLoadError::UnsupportedField(field)),
+                },
+            )),
+            ..Default::default()
+        };
+        self.month_symbols
+            .load_put(provider, req, variables)
+            .map_err(|e| MaybePayloadError2::into_single_load_error(e, field))?
+            .map_err(SingleLoadError::Data)?;
         Ok(())
     }
 
@@ -1207,21 +1250,22 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         let field_length = field_length.numeric_to_abbr();
         let variables = field_length;
         let req = DataRequest {
-                locale,
-                marker_attributes: &DataMarkerAttributes::from_tinystr(
-                    marker_attrs::symbol_attr_for(
-                        marker_attrs::Context::Format,
-                        match field_length {
-                            FieldLength::Abbreviated => marker_attrs::Length::Abbr,
-                            FieldLength::Narrow => marker_attrs::Length::Narrow,
-                            FieldLength::Wide => marker_attrs::Length::Wide,
-                            _ => return Err(SingleLoadError::UnsupportedField(field)),
-                        },
-                    ),
-                ),
-                ..Default::default()
-            };
-        self.dayperiod_symbols.load_put(provider, req, variables).map_err(|e| MaybePayloadError2::into_single_load_error(e, field))?.map_err(SingleLoadError::Data)?;
+            locale,
+            marker_attributes: &DataMarkerAttributes::from_tinystr(marker_attrs::symbol_attr_for(
+                marker_attrs::Context::Format,
+                match field_length {
+                    FieldLength::Abbreviated => marker_attrs::Length::Abbr,
+                    FieldLength::Narrow => marker_attrs::Length::Narrow,
+                    FieldLength::Wide => marker_attrs::Length::Wide,
+                    _ => return Err(SingleLoadError::UnsupportedField(field)),
+                },
+            )),
+            ..Default::default()
+        };
+        self.dayperiod_symbols
+            .load_put(provider, req, variables)
+            .map_err(|e| MaybePayloadError2::into_single_load_error(e, field))?
+            .map_err(SingleLoadError::Data)?;
         Ok(())
     }
 
@@ -1249,27 +1293,28 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         let variables = (field_symbol, field_length);
         let req = DataRequest {
             locale,
-            marker_attributes: &DataMarkerAttributes::from_tinystr(
-                marker_attrs::symbol_attr_for(
-                    match field_symbol {
-                        // UTS 35 says that "e" and "E" have the same non-numeric names
-                        fields::Weekday::Format | fields::Weekday::Local => {
-                            marker_attrs::Context::Format
-                        }
-                        fields::Weekday::StandAlone => marker_attrs::Context::Standalone,
-                    },
-                    match field_length {
-                        FieldLength::Abbreviated => marker_attrs::Length::Abbr,
-                        FieldLength::Narrow => marker_attrs::Length::Narrow,
-                        FieldLength::Wide => marker_attrs::Length::Wide,
-                        FieldLength::Six => marker_attrs::Length::Short,
-                        _ => return Err(SingleLoadError::UnsupportedField(field)),
-                    },
-                ),
-            ),
+            marker_attributes: &DataMarkerAttributes::from_tinystr(marker_attrs::symbol_attr_for(
+                match field_symbol {
+                    // UTS 35 says that "e" and "E" have the same non-numeric names
+                    fields::Weekday::Format | fields::Weekday::Local => {
+                        marker_attrs::Context::Format
+                    }
+                    fields::Weekday::StandAlone => marker_attrs::Context::Standalone,
+                },
+                match field_length {
+                    FieldLength::Abbreviated => marker_attrs::Length::Abbr,
+                    FieldLength::Narrow => marker_attrs::Length::Narrow,
+                    FieldLength::Wide => marker_attrs::Length::Wide,
+                    FieldLength::Six => marker_attrs::Length::Short,
+                    _ => return Err(SingleLoadError::UnsupportedField(field)),
+                },
+            )),
             ..Default::default()
         };
-        self.weekday_symbols.load_put(provider, req, variables).map_err(|e| MaybePayloadError2::into_single_load_error(e, field))?.map_err(SingleLoadError::Data)?;
+        self.weekday_symbols
+            .load_put(provider, req, variables)
+            .map_err(|e| MaybePayloadError2::into_single_load_error(e, field))?
+            .map_err(SingleLoadError::Data)?;
         Ok(())
     }
 
@@ -1287,8 +1332,14 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
             length: FieldLength::One,
         };
         let variables = ();
-        let req = DataRequest { locale, ..Default::default() };
-        self.mz_generic_short.load_put(provider, req, variables).map_err(|e| MaybePayloadError2::into_single_load_error(e, field))?.map_err(SingleLoadError::Data)?;
+        let req = DataRequest {
+            locale,
+            ..Default::default()
+        };
+        self.mz_generic_short
+            .load_put(provider, req, variables)
+            .map_err(|e| MaybePayloadError2::into_single_load_error(e, field))?
+            .map_err(SingleLoadError::Data)?;
         Ok(())
     }
 
@@ -1334,7 +1385,8 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         weekday_provider: &(impl BoundDataProvider<WeekdayNamesV1Marker> + ?Sized),
         dayperiod_provider: &(impl BoundDataProvider<DayPeriodNamesV1Marker> + ?Sized),
         _zone_essentials_provider: &(impl BoundDataProvider<TimeZoneFormatsV1Marker> + ?Sized),
-        zone_genericshort_provider: &(impl BoundDataProvider<MetazoneGenericNamesShortV1Marker> + ?Sized),
+        zone_genericshort_provider: &(impl BoundDataProvider<MetazoneGenericNamesShortV1Marker>
+              + ?Sized),
         fixed_decimal_formatter_loader: Option<&impl FixedDecimalFormatterLoader>,
         week_calculator_loader: Option<&impl WeekCalculatorLoader>,
         locale: &DataLocale,

@@ -14,8 +14,8 @@ use crate::provider::calendar::patterns::PatternPluralsFromPatternsV1Marker;
 #[cfg(feature = "experimental")]
 use crate::provider::date_time::GetSymbolForDayPeriodError;
 use crate::provider::date_time::{
-    DateSymbols, GetSymbolForEraError, GetSymbolForMonthError,
-    GetSymbolForWeekdayError, MonthPlaceholderValue, TimeSymbols, ZoneSymbols,
+    DateSymbols, GetSymbolForEraError, GetSymbolForMonthError, GetSymbolForWeekdayError,
+    MonthPlaceholderValue, TimeSymbols, ZoneSymbols,
 };
 use crate::time_zone::{FormatTimeZone, FormatTimeZoneError, GenericNonLocationShortFormat};
 
@@ -809,23 +809,29 @@ where
             write_time_zone_missing(w)?;
             Err(DateTimeWriteError::MissingInputField("time_zone"))
         }
-        Some(custom_time_zone) => match zone_symbols
-        {
+        Some(custom_time_zone) => match zone_symbols {
             None => {
                 write_time_zone_missing(w)?;
                 Err(DateTimeWriteError::MissingZoneSymbols)
-            },
+            }
             Some(zs) => {
                 let payloads = zs.get_payloads();
                 let tz_formatter = GenericNonLocationShortFormat {};
-                tz_formatter.format(w, &custom_time_zone.into(), payloads)?
-                .map_err(|e| match e {
-                    FormatTimeZoneError::MissingInputField(s) => DateTimeWriteError::MissingInputField(s),
-                    FormatTimeZoneError::NameNotFound => DateTimeWriteError::MissingNames(field),
-                    FormatTimeZoneError::MissingZoneSymbols => DateTimeWriteError::MissingZoneSymbols,
-                })
-            },
-        }
+                tz_formatter
+                    .format(w, &custom_time_zone.into(), payloads)?
+                    .map_err(|e| match e {
+                        FormatTimeZoneError::MissingInputField(s) => {
+                            DateTimeWriteError::MissingInputField(s)
+                        }
+                        FormatTimeZoneError::NameNotFound => {
+                            DateTimeWriteError::MissingNames(field)
+                        }
+                        FormatTimeZoneError::MissingZoneSymbols => {
+                            DateTimeWriteError::MissingZoneSymbols
+                        }
+                    })
+            }
+        },
     })
 }
 

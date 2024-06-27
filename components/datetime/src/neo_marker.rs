@@ -13,7 +13,9 @@ use crate::{
     provider::{
         neo::*,
         time_zones::{
-            ExemplarCitiesV1Marker, MetazoneGenericNamesLongV1Marker, MetazoneGenericNamesShortV1, MetazoneGenericNamesShortV1Marker, MetazoneSpecificNamesLongV1Marker, MetazoneSpecificNamesShortV1Marker, TimeZoneFormatsV1, TimeZoneFormatsV1Marker
+            ExemplarCitiesV1Marker, MetazoneGenericNamesLongV1Marker, MetazoneGenericNamesShortV1,
+            MetazoneGenericNamesShortV1Marker, MetazoneSpecificNamesLongV1Marker,
+            MetazoneSpecificNamesShortV1Marker, TimeZoneFormatsV1, TimeZoneFormatsV1Marker,
         },
     },
     CldrCalendar,
