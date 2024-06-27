@@ -33,6 +33,7 @@ include!("short_quarter_relative_time_format_data_v1_marker.rs.data");
 include!("short_second_relative_time_format_data_v1_marker.rs.data");
 include!("short_week_relative_time_format_data_v1_marker.rs.data");
 include!("short_year_relative_time_format_data_v1_marker.rs.data");
+include!("units_display_name_v1_marker.rs.data");
 include!("units_info_v1_marker.rs.data");
 /// Marks a type as a data provider. You can then use macros like
 /// `impl_core_helloworld_v1` to add implementations.
@@ -97,6 +98,7 @@ macro_rules! impl_data_provider {
         impl_short_second_relative_time_format_data_v1_marker!($provider);
         impl_short_week_relative_time_format_data_v1_marker!($provider);
         impl_short_year_relative_time_format_data_v1_marker!($provider);
+        impl_units_display_name_v1_marker!($provider);
         impl_units_info_v1_marker!($provider);
     };
 }
@@ -141,6 +143,7 @@ macro_rules! impl_any_provider {
                     h if h == <icu::experimental::relativetime::provider::ShortSecondRelativeTimeFormatDataV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::experimental::relativetime::provider::ShortSecondRelativeTimeFormatDataV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::experimental::relativetime::provider::ShortWeekRelativeTimeFormatDataV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::experimental::relativetime::provider::ShortWeekRelativeTimeFormatDataV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::experimental::relativetime::provider::ShortYearRelativeTimeFormatDataV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::experimental::relativetime::provider::ShortYearRelativeTimeFormatDataV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::experimental::dimension::provider::units::UnitsDisplayNameV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::experimental::dimension::provider::units::UnitsDisplayNameV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::experimental::units::provider::UnitsInfoV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::experimental::units::provider::UnitsInfoV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     _ => Err(icu_provider::DataErrorKind::MissingDataMarker.with_req(marker, req)),
                 }
