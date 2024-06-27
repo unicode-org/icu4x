@@ -63,13 +63,7 @@ impl CurrencyFormatter {
         options: super::options::CurrencyFormatterOptions,
     ) -> Result<Self, DataError> {
         let fixed_decimal_formatter =
-            FixedDecimalFormatter::try_new(locale, FixedDecimalFormatterOptions::default())
-                // TODO: replace this `map_err` with `?` once the `FixedDecimalFormatter::try_new` returns a `Result` with `DataError`.
-                .map_err(|_| {
-                    DataError::custom(
-                        "Failed to create a FixedDecimalFormatter for CurrencyFormatter",
-                    )
-                })?;
+            FixedDecimalFormatter::try_new(locale, FixedDecimalFormatterOptions::default())?;
         let essential = crate::provider::Baked
             .load(DataRequest {
                 locale,
@@ -99,11 +93,7 @@ impl CurrencyFormatter {
             provider,
             locale,
             FixedDecimalFormatterOptions::default(),
-        )
-        // TODO: replace this `map_err` with `?` once the `FixedDecimalFormatter::try_new` returns a `Result` with `DataError`.
-        .map_err(|_| {
-            DataError::custom("Failed to create a FixedDecimalFormatter for CurrencyFormatter")
-        })?;
+        )?;
         let essential = provider
             .load(DataRequest {
                 locale,
