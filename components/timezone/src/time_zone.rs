@@ -70,7 +70,7 @@ impl CustomTimeZone {
         }
     }
 
-    /// Creates a new [`CustomTimeZone`] with the GMT offset set to UTC.
+    /// Creates a new [`CustomTimeZone`] with the GMT offset set to 0.
     ///
     /// All other fields are left empty.
     pub const fn utc() -> Self {
@@ -84,23 +84,15 @@ impl CustomTimeZone {
 
     /// Creates a new [`CustomTimeZone`] representing Greenwich Mean Time
     /// (London Time as observed in the winter).
+    ///
+    /// This is the same local time as UTC, but there are more
+    /// localizations available.
     pub const fn gmt() -> Self {
         Self {
             gmt_offset: Some(GmtOffset::utc()),
             time_zone_id: Some(TimeZoneBcp47Id(tinystr!(8, "gblon"))),
             metazone_id: Some(MetazoneId(tinystr!(4, "mgmt"))),
             zone_variant: Some(ZoneVariant::standard()),
-        }
-    }
-
-    /// Creates a new [`CustomTimeZone`] representing British Summer Time
-    /// (London Time as observed in the summer).
-    pub const fn bst() -> Self {
-        Self {
-            gmt_offset: Some(GmtOffset::utc_plus_1()),
-            time_zone_id: Some(TimeZoneBcp47Id(tinystr!(8, "gblon"))),
-            metazone_id: Some(MetazoneId(tinystr!(4, "mgmt"))),
-            zone_variant: Some(ZoneVariant::daylight()),
         }
     }
 

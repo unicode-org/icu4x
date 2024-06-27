@@ -38,10 +38,6 @@ impl GmtOffset {
         Self(0)
     }
 
-    pub(crate) const fn utc_plus_1() -> Self {
-        Self(3600)
-    }
-
     /// Parse a [`GmtOffset`] from bytes.
     ///
     /// The offset must range from GMT-12 to GMT+14.
