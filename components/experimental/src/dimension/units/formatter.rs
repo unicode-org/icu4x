@@ -64,8 +64,6 @@ impl UnitsFormatter {
         unit: &str,
         options: super::options::UnitsFormatterOptions,
     ) -> Result<Self, DataError> {
-        use icu_decimal::options::FixedDecimalFormatterOptions;
-
         let fixed_decimal_formatter =
             FixedDecimalFormatter::try_new(locale, FixedDecimalFormatterOptions::default())?;
 
