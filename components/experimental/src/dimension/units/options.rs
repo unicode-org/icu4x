@@ -21,7 +21,7 @@ impl From<Width> for UnitsFormatterOptions {
     }
 }
 
-#[derive(Debug, Eq, PartialEq, Clone, Copy)]
+#[derive(Debug, Eq, PartialEq, Clone, Copy, Default)]
 #[non_exhaustive]
 pub enum Width {
     /// Format the units with the long units format.
@@ -32,6 +32,7 @@ pub enum Width {
     /// Format the units with the short units format.
     ///
     /// For example, 1 hour formats as "1 hr" in en-US.
+    #[default]
     Short,
 
     /// Format the units with the narrow units format.
@@ -41,12 +42,6 @@ pub enum Width {
     ///
     /// For example, 1 hour formats as "1 h" in most locales.
     Narrow,
-}
-
-impl Default for Width {
-    fn default() -> Self {
-        Self::Short
-    }
 }
 
 // TODO: is that correct?
