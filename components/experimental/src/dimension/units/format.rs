@@ -53,7 +53,7 @@ impl<'l> Writeable for FormattedUnit<'l> {
 }
 
 #[test]
-fn test_formatted_unit() {
+fn test_basic() {
     use icu_locale_core::locale;
     use writeable::Writeable;
 
