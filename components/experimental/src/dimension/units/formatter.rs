@@ -93,8 +93,8 @@ impl UnitsFormatter {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<D>(
         provider: &D,
-        units: &str,
         locale: &DataLocale,
+        units: &str,
         options: super::options::UnitsFormatterOptions,
     ) -> Result<Self, DataError>
     where
