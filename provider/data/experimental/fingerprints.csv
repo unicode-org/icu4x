@@ -1,4 +1,4 @@
-366 identifiers, 1541B
+409 identifiers, 1869B
 
 120 structs, 18089B
 compactdecimal/long@1, af, 80B, e1003b8073e481ed
@@ -5012,6 +5012,7 @@ relativetime/short/year@1, zh-HK, 61B, -> zh-HK
 relativetime/short/year@1, zh-Hant, 61B, -> zh-Hant
 relativetime/short/year@1, zh-MO, 61B, -> zh-HK
 relativetime/short/year@1, zu, 140B, -> zu
+3818 structs, 395993B
 units/displaynames@1, af/astronomical-unit, 106B, b5d87f19211787a3
 units/displaynames@1, af/centimeter, 70B, b56e972a5d2248cc
 units/displaynames@1, af/century, 73B, 8f0608f7c77a1f71
