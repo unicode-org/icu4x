@@ -276,12 +276,12 @@ impl<F: Write + Send + Sync> DataExporter for StatisticsExporter<F> {
             self.identifiers
                 .lock()
                 .expect("poison")
-                .insert(locale.to_string());
-            if !marker_attributes.is_empty() {
+                .insert(id.locale.to_string());
+            if !id.marker_attributes.is_empty() {
                 self.identifiers
                     .lock()
                     .expect("poison")
-                    .insert(marker_attributes.to_string());
+                    .insert(id.marker_attributes.to_string());
             }
         }
         Ok(())
