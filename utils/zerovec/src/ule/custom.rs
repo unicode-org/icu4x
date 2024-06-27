@@ -49,7 +49,7 @@
 //!
 //! // Must be repr(packed) for safety of VarULE!
 //! // Must also only contain ULE types
-//! #[repr(packed)]
+//! #[repr(C, packed)]
 //! struct FooULE {
 //!     field1: <char as AsULE>::ULE,   
 //!     field2: <u32 as AsULE>::ULE,

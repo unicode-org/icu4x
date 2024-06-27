@@ -195,7 +195,7 @@ struct Foo {
 }
 
 // Implements ULE
-#[repr(packed)]
+#[repr(C, packed)]
 struct FooULE {
     field1: u32::ULE,
     field2: char::ULE,

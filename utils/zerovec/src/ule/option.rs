@@ -141,7 +141,7 @@ impl<U: Copy + Eq> Eq for OptionULE<U> {}
 /// ```
 // The slice field is empty when None (bool = false),
 // and is a valid T when Some (bool = true)
-#[repr(packed)]
+#[repr(C, packed)]
 pub struct OptionVarULE<U: VarULE + ?Sized>(PhantomData<U>, bool, [u8]);
 
 impl<U: VarULE + ?Sized> OptionVarULE<U> {
