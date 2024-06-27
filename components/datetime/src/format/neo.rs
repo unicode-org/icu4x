@@ -1175,16 +1175,18 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         let field_length = field_length.numeric_to_abbr();
         let variables = field_length;
         let req = DataRequest {
-            locale,
-            marker_attributes: &DataMarkerAttributes::from_tinystr(marker_attrs::symbol_attr_for(
-                marker_attrs::Context::Format,
-                match field_length {
-                    FieldLength::Abbreviated => marker_attrs::Length::Abbr,
-                    FieldLength::Narrow => marker_attrs::Length::Narrow,
-                    FieldLength::Wide => marker_attrs::Length::Wide,
-                    _ => return Err(SingleLoadError::UnsupportedField(field)),
-                },
-            )),
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                &marker_attrs::symbol_attr_for(
+                    marker_attrs::Context::Format,
+                    match field_length {
+                        FieldLength::Abbreviated => marker_attrs::Length::Abbr,
+                        FieldLength::Narrow => marker_attrs::Length::Narrow,
+                        FieldLength::Wide => marker_attrs::Length::Wide,
+                        _ => return Err(SingleLoadError::UnsupportedField(field)),
+                    },
+                ),
+                locale,
+            ),
             ..Default::default()
         };
         self.year_symbols
@@ -1210,19 +1212,21 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         };
         let variables = (field_symbol, field_length);
         let req = DataRequest {
-            locale,
-            marker_attributes: &DataMarkerAttributes::from_tinystr(marker_attrs::symbol_attr_for(
-                match field_symbol {
-                    fields::Month::Format => marker_attrs::Context::Format,
-                    fields::Month::StandAlone => marker_attrs::Context::Standalone,
-                },
-                match field_length {
-                    FieldLength::Abbreviated => marker_attrs::Length::Abbr,
-                    FieldLength::Narrow => marker_attrs::Length::Narrow,
-                    FieldLength::Wide => marker_attrs::Length::Wide,
-                    _ => return Err(SingleLoadError::UnsupportedField(field)),
-                },
-            )),
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                &marker_attrs::symbol_attr_for(
+                    match field_symbol {
+                        fields::Month::Format => marker_attrs::Context::Format,
+                        fields::Month::StandAlone => marker_attrs::Context::Standalone,
+                    },
+                    match field_length {
+                        FieldLength::Abbreviated => marker_attrs::Length::Abbr,
+                        FieldLength::Narrow => marker_attrs::Length::Narrow,
+                        FieldLength::Wide => marker_attrs::Length::Wide,
+                        _ => return Err(SingleLoadError::UnsupportedField(field)),
+                    },
+                ),
+                locale,
+            ),
             ..Default::default()
         };
         self.month_symbols
@@ -1250,16 +1254,18 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         let field_length = field_length.numeric_to_abbr();
         let variables = field_length;
         let req = DataRequest {
-            locale,
-            marker_attributes: &DataMarkerAttributes::from_tinystr(marker_attrs::symbol_attr_for(
-                marker_attrs::Context::Format,
-                match field_length {
-                    FieldLength::Abbreviated => marker_attrs::Length::Abbr,
-                    FieldLength::Narrow => marker_attrs::Length::Narrow,
-                    FieldLength::Wide => marker_attrs::Length::Wide,
-                    _ => return Err(SingleLoadError::UnsupportedField(field)),
-                },
-            )),
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                &marker_attrs::symbol_attr_for(
+                    marker_attrs::Context::Format,
+                    match field_length {
+                        FieldLength::Abbreviated => marker_attrs::Length::Abbr,
+                        FieldLength::Narrow => marker_attrs::Length::Narrow,
+                        FieldLength::Wide => marker_attrs::Length::Wide,
+                        _ => return Err(SingleLoadError::UnsupportedField(field)),
+                    },
+                ),
+                locale,
+            ),
             ..Default::default()
         };
         self.dayperiod_symbols
@@ -1292,23 +1298,25 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         };
         let variables = (field_symbol, field_length);
         let req = DataRequest {
-            locale,
-            marker_attributes: &DataMarkerAttributes::from_tinystr(marker_attrs::symbol_attr_for(
-                match field_symbol {
-                    // UTS 35 says that "e" and "E" have the same non-numeric names
-                    fields::Weekday::Format | fields::Weekday::Local => {
-                        marker_attrs::Context::Format
-                    }
-                    fields::Weekday::StandAlone => marker_attrs::Context::Standalone,
-                },
-                match field_length {
-                    FieldLength::Abbreviated => marker_attrs::Length::Abbr,
-                    FieldLength::Narrow => marker_attrs::Length::Narrow,
-                    FieldLength::Wide => marker_attrs::Length::Wide,
-                    FieldLength::Six => marker_attrs::Length::Short,
-                    _ => return Err(SingleLoadError::UnsupportedField(field)),
-                },
-            )),
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                &marker_attrs::symbol_attr_for(
+                    match field_symbol {
+                        // UTS 35 says that "e" and "E" have the same non-numeric names
+                        fields::Weekday::Format | fields::Weekday::Local => {
+                            marker_attrs::Context::Format
+                        }
+                        fields::Weekday::StandAlone => marker_attrs::Context::Standalone,
+                    },
+                    match field_length {
+                        FieldLength::Abbreviated => marker_attrs::Length::Abbr,
+                        FieldLength::Narrow => marker_attrs::Length::Narrow,
+                        FieldLength::Wide => marker_attrs::Length::Wide,
+                        FieldLength::Six => marker_attrs::Length::Short,
+                        _ => return Err(SingleLoadError::UnsupportedField(field)),
+                    },
+                ),
+                locale,
+            ),
             ..Default::default()
         };
         self.weekday_symbols
@@ -1333,7 +1341,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         };
         let variables = ();
         let req = DataRequest {
-            locale,
+            id: DataIdentifierBorrowed::for_locale(locale),
             ..Default::default()
         };
         self.mz_generic_short
