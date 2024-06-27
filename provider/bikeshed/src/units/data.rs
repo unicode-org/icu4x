@@ -15,7 +15,6 @@ use icu::experimental::dimension::provider::units::{
 use icu::locale::LanguageIdentifier;
 use icu_provider::prelude::*;
 use icu_provider::DataMarkerAttributes;
-use icu_provider::DataProvider;
 use zerovec::ZeroMap;
 
 impl DataProvider<UnitsDisplayNameV1Marker> for DatagenProvider {
