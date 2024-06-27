@@ -313,7 +313,7 @@ impl<F: Write + Send + Sync> DataExporter for StatisticsExporter<F> {
                 let structs_size = struct_sizes.values().sum::<usize>();
                 writeln!(
                     &mut self.fingerprints,
-                    "{structs_count} structs, {structs_size}B",
+                    "{marker:?}, <total>, {structs_size}B, {structs_count} unique payloads",
                 )?;
             }
 

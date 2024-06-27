@@ -6,7 +6,7 @@ calendar/islamicobservationalcache@1, <singleton>, 504B, 18af87d272c76f14
 calendar/islamicummalquracache@1, <singleton>, 504B, ef6ac9ff14fd3f3
 calendar/japanese@1, <singleton>, 111B, b31e52deaf52706f
 calendar/japanext@1, <singleton>, 5216B, 6c20e216c8cd6e41
-6 structs, 12B
+datetime/week_data@1, <total>, 12B, 6 unique payloads
 datetime/week_data@1, und, 2B, 62c3506f27376c25
 datetime/week_data@1, und-AD, 2B, fb813f95ba4e1e31
 datetime/week_data@1, und-AE, 2B, 4b008006948c4a31
@@ -122,7 +122,7 @@ datetime/week_data@1, und-WS, 2B, -> und-AG
 datetime/week_data@1, und-YE, 2B, -> und-AG
 datetime/week_data@1, und-ZA, 2B, -> und-AG
 datetime/week_data@1, und-ZW, 2B, -> und-AG
-11 structs, 33B
+datetime/week_data@2, <total>, 33B, 11 unique payloads
 datetime/week_data@2, und, 3B, 9d9f0d8d13520828
 datetime/week_data@2, und-AD, 3B, bd6a06572fc718be
 datetime/week_data@2, und-AE, 3B, a0405d18fe0583e1
