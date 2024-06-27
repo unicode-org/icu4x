@@ -77,7 +77,7 @@ impl UnitsFormatter {
         let display_name = crate::provider::Baked
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    &unit_attribute,
+                    unit_attribute,
                     locale,
                 ),
                 ..Default::default()
@@ -119,7 +119,7 @@ impl UnitsFormatter {
         let display_name = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    &unit_attribute,
+                    unit_attribute,
                     locale,
                 ),
                 ..Default::default()
