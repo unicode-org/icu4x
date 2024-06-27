@@ -130,7 +130,7 @@ macro_rules! constructor {
             )?;
             let rt: DataResponse<$marker> = crate::provider::Baked
                 .load(DataRequest {
-                    locale,
+                    id: DataIdentifierBorrowed::for_locale(locale),
                     ..Default::default()
                 })?;
             let rt = rt.payload.cast();
@@ -175,7 +175,7 @@ macro_rules! constructor {
             )?;
             let rt: DataResponse<$marker> = provider
                 .load(DataRequest {
-                    locale,
+                id: DataIdentifierBorrowed::for_locale(locale),
                     ..Default::default()
                 })?;
             let rt = rt.payload.cast();

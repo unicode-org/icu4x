@@ -66,7 +66,7 @@ impl DataMarker for HelloWorldV1Marker {
 /// let german_hello_world: DataResponse<HelloWorldV1Marker> =
 ///     HelloWorldProvider
 ///         .load(DataRequest {
-///             locale: &langid!("de").into(),
+///             id: DataIdentifierBorrowed::for_locale(&langid!("de").into()),
 ///             ..Default::default()
 ///         })
 ///         .expect("Loading should succeed");
@@ -79,12 +79,12 @@ impl DataMarker for HelloWorldV1Marker {
 /// ```
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
+/// use icu_locale_core::langid;
 ///
 /// let reverse_hello_world: DataResponse<HelloWorldV1Marker> =
 ///     HelloWorldProvider
 ///         .load(DataRequest {
-///             locale: &"en".parse().unwrap(),
-///             marker_attributes: &"reverse".parse().unwrap(),
+///             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(DataMarkerAttributes::from_str_or_panic("reverse"), &langid!("en").into()),
 ///             ..Default::default()
 ///         })
 ///         .expect("Loading should succeed");
@@ -146,7 +146,8 @@ impl DataProvider<HelloWorldV1Marker> for HelloWorldProvider {
         let data = Self::DATA
             .iter()
             .find(|(l, a, _)| {
-                req.locale.strict_cmp(l.as_bytes()).is_eq() && **a == **req.marker_attributes
+                req.id.locale.strict_cmp(l.as_bytes()).is_eq()
+                    && *a == req.id.marker_attributes.as_str()
             })
             .map(|(_, _, v)| v)
             .ok_or_else(|| DataErrorKind::MissingLocale.with_req(HelloWorldV1Marker::INFO, req))?;
@@ -187,7 +188,7 @@ icu_provider::dynutil::impl_dynamic_data_provider!(
 /// let german_hello_world = HelloWorldProvider
 ///     .into_json_provider()
 ///     .load_data(HelloWorldV1Marker::INFO, DataRequest {
-///         locale: &langid!("de").into(),
+///         id: DataIdentifierBorrowed::for_locale(&langid!("de").into()),
 ///         ..Default::default()
 ///     })
 ///     .expect("Loading should succeed");
@@ -223,13 +224,16 @@ impl DynamicDataProvider<BufferMarker> for HelloWorldJsonProvider {
 
 #[cfg(feature = "std")]
 impl IterableDataProvider<HelloWorldV1Marker> for HelloWorldProvider {
-    fn iter_requests(
-        &self,
-    ) -> Result<std::collections::HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+    fn iter_ids(&self) -> Result<std::collections::HashSet<DataIdentifierCow>, DataError> {
         #[allow(clippy::unwrap_used)] // hello-world
         Ok(Self::DATA
             .iter()
-            .map(|(l, a, _)| (l.parse().unwrap(), a.parse().unwrap()))
+            .map(|(l, a, _)| {
+                DataIdentifierCow::from_borrowed_and_owned(
+                    DataMarkerAttributes::from_str_or_panic(a),
+                    l.parse().unwrap(),
+                )
+            })
             .collect())
     }
 }
@@ -293,7 +297,7 @@ impl HelloWorldFormatter {
     {
         let data = provider
             .load(DataRequest {
-                locale,
+                id: crate::request::DataIdentifierBorrowed::for_locale(locale),
                 ..Default::default()
             })?
             .payload;
@@ -338,35 +342,41 @@ fn test_iter() {
     use std::collections::HashSet;
 
     assert_eq!(
-        HelloWorldProvider.iter_requests().unwrap(),
+        HelloWorldProvider.iter_ids().unwrap(),
         HashSet::from_iter([
-            (locale!("bn").into(), Default::default()),
-            (locale!("cs").into(), Default::default()),
-            (locale!("de").into(), Default::default()),
-            (locale!("de-AT").into(), Default::default()),
-            (locale!("el").into(), Default::default()),
-            (locale!("en").into(), Default::default()),
-            (locale!("en-001").into(), Default::default()),
-            (locale!("en-002").into(), Default::default()),
-            (locale!("en-019").into(), Default::default()),
-            (locale!("en-142").into(), Default::default()),
-            (locale!("en-GB").into(), Default::default()),
-            (locale!("en-GB-u-sd-gbeng").into(), Default::default()),
-            (locale!("en").into(), "reverse".parse().unwrap()),
-            (locale!("eo").into(), Default::default()),
-            (locale!("fa").into(), Default::default()),
-            (locale!("fi").into(), Default::default()),
-            (locale!("is").into(), Default::default()),
-            (locale!("ja").into(), Default::default()),
-            (locale!("ja").into(), "reverse".parse().unwrap()),
-            (locale!("la").into(), Default::default()),
-            (locale!("pt").into(), Default::default()),
-            (locale!("ro").into(), Default::default()),
-            (locale!("ru").into(), Default::default()),
-            (locale!("sr").into(), Default::default()),
-            (locale!("sr-Latn").into(), Default::default()),
-            (locale!("vi").into(), Default::default()),
-            (locale!("zh").into(), Default::default()),
+            DataIdentifierCow::from_locale(locale!("bn").into()),
+            DataIdentifierCow::from_locale(locale!("cs").into()),
+            DataIdentifierCow::from_locale(locale!("de").into()),
+            DataIdentifierCow::from_locale(locale!("de-AT").into()),
+            DataIdentifierCow::from_locale(locale!("el").into()),
+            DataIdentifierCow::from_locale(locale!("en").into()),
+            DataIdentifierCow::from_locale(locale!("en-001").into()),
+            DataIdentifierCow::from_locale(locale!("en-002").into()),
+            DataIdentifierCow::from_locale(locale!("en-019").into()),
+            DataIdentifierCow::from_locale(locale!("en-142").into()),
+            DataIdentifierCow::from_locale(locale!("en-GB").into()),
+            DataIdentifierCow::from_locale(locale!("en-GB-u-sd-gbeng").into()),
+            DataIdentifierCow::from_borrowed_and_owned(
+                DataMarkerAttributes::from_str_or_panic("reverse"),
+                locale!("en").into()
+            ),
+            DataIdentifierCow::from_locale(locale!("eo").into()),
+            DataIdentifierCow::from_locale(locale!("fa").into()),
+            DataIdentifierCow::from_locale(locale!("fi").into()),
+            DataIdentifierCow::from_locale(locale!("is").into()),
+            DataIdentifierCow::from_locale(locale!("ja").into()),
+            DataIdentifierCow::from_borrowed_and_owned(
+                DataMarkerAttributes::from_str_or_panic("reverse"),
+                locale!("ja").into()
+            ),
+            DataIdentifierCow::from_locale(locale!("la").into()),
+            DataIdentifierCow::from_locale(locale!("pt").into()),
+            DataIdentifierCow::from_locale(locale!("ro").into()),
+            DataIdentifierCow::from_locale(locale!("ru").into()),
+            DataIdentifierCow::from_locale(locale!("sr").into()),
+            DataIdentifierCow::from_locale(locale!("sr-Latn").into()),
+            DataIdentifierCow::from_locale(locale!("vi").into()),
+            DataIdentifierCow::from_locale(locale!("zh").into()),
         ])
     );
 }

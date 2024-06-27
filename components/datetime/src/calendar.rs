@@ -388,7 +388,7 @@ where
 {
     let payload = provider
         .load(DataRequest {
-            locale,
+            id: DataIdentifierBorrowed::for_locale(locale),
             ..Default::default()
         })?
         .payload;
@@ -405,7 +405,7 @@ where
 {
     let payload = provider
         .load(DataRequest {
-            locale,
+            id: DataIdentifierBorrowed::for_locale(locale),
             ..Default::default()
         })?
         .payload;
@@ -434,7 +434,7 @@ where
         + ?Sized,
 {
     let req = DataRequest {
-        locale,
+        id: DataIdentifierBorrowed::for_locale(locale),
         ..Default::default()
     };
     let payload = match kind {
@@ -555,7 +555,7 @@ where
         + ?Sized,
 {
     let req = DataRequest {
-        locale,
+        id: DataIdentifierBorrowed::for_locale(locale),
         ..Default::default()
     };
     let payload = match kind {

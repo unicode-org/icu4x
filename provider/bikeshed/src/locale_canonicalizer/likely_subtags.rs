@@ -24,9 +24,7 @@ impl DataProvider<LikelySubtagsV1Marker> for DatagenProvider {
 }
 
 impl crate::IterableDataProviderCached<LikelySubtagsV1Marker> for DatagenProvider {
-    fn iter_requests_cached(
-        &self,
-    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
@@ -47,9 +45,7 @@ impl DataProvider<LikelySubtagsExtendedV1Marker> for DatagenProvider {
 }
 
 impl crate::IterableDataProviderCached<LikelySubtagsExtendedV1Marker> for DatagenProvider {
-    fn iter_requests_cached(
-        &self,
-    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
@@ -69,9 +65,7 @@ impl DataProvider<LikelySubtagsForLanguageV1Marker> for DatagenProvider {
 }
 
 impl crate::IterableDataProviderCached<LikelySubtagsForLanguageV1Marker> for DatagenProvider {
-    fn iter_requests_cached(
-        &self,
-    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
@@ -91,9 +85,7 @@ impl DataProvider<LikelySubtagsForScriptRegionV1Marker> for DatagenProvider {
 }
 
 impl crate::IterableDataProviderCached<LikelySubtagsForScriptRegionV1Marker> for DatagenProvider {
-    fn iter_requests_cached(
-        &self,
-    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }

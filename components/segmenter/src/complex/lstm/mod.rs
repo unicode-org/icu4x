@@ -348,7 +348,11 @@ mod tests {
     fn segment_file_by_lstm() {
         let lstm: DataResponse<LstmForWordLineAutoV1Marker> = crate::provider::Baked
             .load(DataRequest {
-                marker_attributes: &"Thai_codepoints_exclusive_model4_heavy".parse().unwrap(),
+                id: DataIdentifierBorrowed::for_marker_attributes(
+                    DataMarkerAttributes::from_str_or_panic(
+                        "Thai_codepoints_exclusive_model4_heavy",
+                    ),
+                ),
                 ..Default::default()
             })
             .unwrap();

@@ -17,7 +17,7 @@ impl DataProvider<VariantDisplayNamesV1Marker> for DatagenProvider {
         req: DataRequest,
     ) -> Result<DataResponse<VariantDisplayNamesV1Marker>, DataError> {
         self.check_req::<VariantDisplayNamesV1Marker>(req)?;
-        let langid = req.locale.get_langid();
+        let langid = req.id.locale.get_langid();
 
         let data: &cldr_serde::displaynames::variant::Resource = self
             .cldr()?
@@ -34,9 +34,7 @@ impl DataProvider<VariantDisplayNamesV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProviderCached<VariantDisplayNamesV1Marker> for DatagenProvider {
-    fn iter_requests_cached(
-        &self,
-    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(self
             .cldr()?
             .displaynames()
@@ -49,7 +47,7 @@ impl IterableDataProviderCached<VariantDisplayNamesV1Marker> for DatagenProvider
                     .file_exists(langid, "variants.json")
                     .unwrap_or_default()
             })
-            .map(|l| (DataLocale::from(l), Default::default()))
+            .map(|l| DataIdentifierCow::from_locale(DataLocale::from(l)))
             .collect())
     }
 }
@@ -93,7 +91,7 @@ mod tests {
 
         let data: DataPayload<VariantDisplayNamesV1Marker> = provider
             .load(DataRequest {
-                locale: &langid!("en-001").into(),
+                id: DataIdentifierBorrowed::for_locale(&langid!("en-001").into()),
                 ..Default::default()
             })
             .unwrap()

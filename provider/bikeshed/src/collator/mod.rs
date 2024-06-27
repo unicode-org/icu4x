@@ -106,9 +106,7 @@ impl DataProvider<CollationFallbackSupplementV1Marker> for DatagenProvider {
 }
 
 impl crate::IterableDataProviderCached<CollationFallbackSupplementV1Marker> for DatagenProvider {
-    fn iter_requests_cached(
-        &self,
-    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
@@ -184,7 +182,7 @@ macro_rules! collation_provider {
                         .read_and_parse_toml(&format!(
                             "collation/{}/{}{}.toml",
                             self.collation_han_database(),
-                            locale_to_file_name(&req.locale),
+                            locale_to_file_name(&req.id.locale),
                             $suffix
                         ))
                         .map_err(|e| match e.kind {
@@ -206,7 +204,7 @@ macro_rules! collation_provider {
             }
 
             impl IterableDataProviderCached<$marker> for DatagenProvider {
-                fn iter_requests_cached(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+                fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
                     Ok(self
                         .icuexport()?
                         .list(&format!(
@@ -221,7 +219,7 @@ macro_rules! collation_provider {
                             })
                         })
                         .filter_map(|s| file_name_to_locale(&s))
-                        .map(|l| (DataLocale::from(l), Default::default()))
+                        .map(|l| DataIdentifierCow::from_locale(DataLocale::from(l)))
                         .collect())
                 }
             }

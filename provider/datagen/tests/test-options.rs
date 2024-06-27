@@ -59,8 +59,8 @@ impl DataProvider<HelloWorldV1Marker> for TestingProvider {
                 message: (*self
                     .0
                     .get(&(
-                        req.locale.to_string().as_str(),
-                        req.marker_attributes as &str,
+                        req.id.locale.to_string().as_str(),
+                        req.id.marker_attributes as &str,
                     ))
                     .ok_or(DataErrorKind::MissingLocale.into_error())?)
                 .into(),
@@ -70,11 +70,16 @@ impl DataProvider<HelloWorldV1Marker> for TestingProvider {
 }
 
 impl IterableDataProvider<HelloWorldV1Marker> for TestingProvider {
-    fn iter_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+    fn iter_ids(&self) -> Result<HashSet<DataIdentifierCow>, DataError> {
         Ok(self
             .0
             .keys()
-            .map(|(l, a)| (l.parse().unwrap(), a.parse().unwrap()))
+            .map(|(l, a)| {
+                DataIdentifierCow::from_owned(
+                    DataMarkerAttributes::from_str_or_panic(a).to_owned(),
+                    l.parse().unwrap(),
+                )
+            })
             .collect())
     }
 }

@@ -102,16 +102,15 @@ impl DataExporter for FilesystemExporter {
     fn put_payload(
         &self,
         marker: DataMarkerInfo,
-        locale: &DataLocale,
-        marker_attributes: &DataMarkerAttributes,
+        id: DataIdentifierBorrowed,
         obj: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
         let mut path_buf = self.root.clone().into_os_string();
         write!(&mut path_buf, "/{}", marker.path.as_str()).expect("infallible");
-        if !marker_attributes.is_empty() {
-            write!(&mut path_buf, "/{}", marker_attributes as &str).expect("infallible");
+        if !id.marker_attributes.is_empty() {
+            write!(&mut path_buf, "/{}", id.marker_attributes.as_str()).expect("infallible");
         }
-        write!(&mut path_buf, "/{locale}").expect("infallible");
+        write!(&mut path_buf, "/{}", id.locale).expect("infallible");
         write!(&mut path_buf, ".{}", self.manifest.file_extension).expect("infallible");
 
         #[allow(clippy::unwrap_used)] // has parent by construction

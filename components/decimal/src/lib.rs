@@ -138,7 +138,7 @@ impl FixedDecimalFormatter {
     ) -> Result<Self, DataError> {
         let symbols = provider
             .load(DataRequest {
-                locale,
+                id: DataIdentifierBorrowed::for_locale(locale),
                 ..Default::default()
             })?
             .payload;

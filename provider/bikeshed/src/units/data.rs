@@ -23,8 +23,8 @@ impl DataProvider<UnitsDisplayNameV1Marker> for DatagenProvider {
         self.check_req::<UnitsDisplayNameV1Marker>(req)?;
 
         // Get langid and the unit.
-        let langid = req.locale.get_langid();
-        let unit = match req.marker_attributes.parse::<String>() {
+        let langid = req.id.locale.get_langid();
+        let unit = match req.id.marker_attributes.parse::<String>() {
             Ok(aux_keys) => aux_keys,
             Err(_) => return Err(DataError::custom("Failed to get aux keys")),
         };
@@ -93,18 +93,19 @@ impl DataProvider<UnitsDisplayNameV1Marker> for DatagenProvider {
 }
 
 impl crate::IterableDataProviderCached<UnitsDisplayNameV1Marker> for DatagenProvider {
-    fn iter_requests_cached(
-        &self,
-    ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         fn make_request_element(
             langid: &LanguageIdentifier,
             unit: &str,
-        ) -> Result<(DataLocale, DataMarkerAttributes), DataError> {
+        ) -> Result<DataIdentifierCow<'static>, DataError> {
             let data_locale = DataLocale::from(langid);
-            let attribute = unit.parse().map_err(|_| {
+            let attribute = DataMarkerAttributes::try_from_str(unit).map_err(|_| {
                 DataError::custom("Failed to parse the attribute").with_debug_context(unit)
             })?;
-            Ok((data_locale, attribute))
+            Ok(DataIdentifierCow::from_owned(
+                attribute.to_owned(),
+                data_locale,
+            ))
         }
 
         let mut data_locales = HashSet::new();
@@ -150,8 +151,10 @@ fn test_basic() {
 
     let us_locale: DataPayload<UnitsDisplayNameV1Marker> = provider
         .load(DataRequest {
-            locale: &langid!("en").into(),
-            marker_attributes: &"meter".parse().unwrap(),
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                DataMarkerAttributes::from_str_or_panic("meter"),
+                &langid!("en").into(),
+            ),
             ..Default::default()
         })
         .unwrap()
@@ -167,8 +170,10 @@ fn test_basic() {
 
     let ar_eg_locale: DataPayload<UnitsDisplayNameV1Marker> = provider
         .load(DataRequest {
-            locale: &langid!("ar-EG").into(),
-            marker_attributes: &"meter".parse().unwrap(),
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                DataMarkerAttributes::from_str_or_panic("meter"),
+                &langid!("ar-EG").into(),
+            ),
             ..Default::default()
         })
         .unwrap()
@@ -184,8 +189,10 @@ fn test_basic() {
 
     let fr_locale: DataPayload<UnitsDisplayNameV1Marker> = provider
         .load(DataRequest {
-            locale: &langid!("fr").into(),
-            marker_attributes: &"meter".parse().unwrap(),
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                DataMarkerAttributes::from_str_or_panic("meter"),
+                &langid!("fr").into(),
+            ),
             ..Default::default()
         })
         .unwrap()

@@ -26,13 +26,13 @@ use icu_provider::prelude::*;
 /// #   }
 /// # }
 ///
-/// let req = DataRequest {
-///     locale: &langid!("ja-JP").into(),
-///     ..Default::default()
-/// };
+/// let id = DataIdentifierCow::from_locale(langid!("ja-JP").into());
 ///
 /// // The provider does not have data for "ja-JP":
-/// DataProvider::<HelloWorldV1Marker>::load(&provider, req).expect_err("No fallback");
+/// DataProvider::<HelloWorldV1Marker>::load(&provider, DataRequest {
+///     id: id.as_borrowed(),
+///     ..Default::default()
+/// }).expect_err("No fallback");
 ///
 /// // But if we wrap the provider in a fallback provider...
 /// let provider = LocaleFallbackProvider::try_new_unstable(provider)
@@ -40,7 +40,10 @@ use icu_provider::prelude::*;
 ///
 /// // ...then we can load "ja-JP" based on "ja" data
 /// let response =
-///   DataProvider::<HelloWorldV1Marker>::load(&provider, req).expect("successful with vertical fallback");
+///   DataProvider::<HelloWorldV1Marker>::load(&provider, DataRequest {
+///     id: id.as_borrowed(),
+///     ..Default::default()
+/// }).expect("successful with vertical fallback");
 ///
 /// assert_eq!(
 ///     response.metadata.locale.unwrap(),
@@ -130,13 +133,13 @@ impl<P> LocaleFallbackProvider<P> {
     ///
     /// let provider = HelloWorldProvider;
     ///
-    /// let req = DataRequest {
-    ///     locale: &langid!("de-CH").into(),
-    ///     ..Default::default()
-    /// };
+    /// let id = DataIdentifierCow::from_locale(langid!("de-CH").into());
     ///
     /// // There is no "de-CH" data in the `HelloWorldProvider`
-    /// DataProvider::<HelloWorldV1Marker>::load(&provider, req)
+    /// DataProvider::<HelloWorldV1Marker>::load(&provider, DataRequest {
+    ///         id: id.as_borrowed(),
+    ///         ..Default::default()
+    ///     })
     ///     .expect_err("No data for de-CH");
     ///
     /// // `HelloWorldProvider` does not contain fallback data,
@@ -149,7 +152,10 @@ impl<P> LocaleFallbackProvider<P> {
     ///
     /// // Now we can load the "de-CH" data via fallback to "de".
     /// let german_hello_world: DataResponse<HelloWorldV1Marker> = provider
-    ///     .load(req)
+    ///     .load(DataRequest {
+    ///         id: id.as_borrowed(),
+    ///         ..Default::default()
+    ///     })
     ///     .expect("Loading should succeed");
     ///
     /// assert_eq!("Hallo Welt", german_hello_world.payload.get().message);
@@ -200,11 +206,14 @@ impl<P> LocaleFallbackProvider<P> {
         let mut fallback_iterator = self
             .fallbacker
             .for_config(marker.fallback_config)
-            .fallback_for(base_req.locale.clone());
+            .fallback_for(base_req.id.locale.clone());
         let base_silent = core::mem::replace(&mut base_req.metadata.silent, true);
         loop {
             let result = f1(DataRequest {
-                locale: fallback_iterator.get(),
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    base_req.id.marker_attributes,
+                    fallback_iterator.get(),
+                ),
                 ..base_req
             });
             if !result_is_err_missing_locale(&result) {

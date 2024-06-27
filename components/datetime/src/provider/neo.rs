@@ -27,32 +27,69 @@ use core::ops::Range;
 #[allow(missing_docs)]
 pub mod marker_attrs {
     use crate::pattern::CoarseHourCycle;
-    use tinystr::{tinystr, TinyAsciiStr};
+    use icu_provider::DataMarkerAttributes;
 
-    pub const NUMERIC: TinyAsciiStr<8> = tinystr!(8, "1");
-    pub const ABBR: TinyAsciiStr<8> = tinystr!(8, "3");
-    pub const NARROW: TinyAsciiStr<8> = tinystr!(8, "4");
-    pub const WIDE: TinyAsciiStr<8> = tinystr!(8, "5");
-    pub const SHORT: TinyAsciiStr<8> = tinystr!(8, "6");
-    pub const ABBR_STANDALONE: TinyAsciiStr<8> = tinystr!(8, "3s");
-    pub const NARROW_STANDALONE: TinyAsciiStr<8> = tinystr!(8, "4s");
-    pub const WIDE_STANDALONE: TinyAsciiStr<8> = tinystr!(8, "5s");
-    pub const SHORT_STANDALONE: TinyAsciiStr<8> = tinystr!(8, "6s");
+    pub const NUMERIC: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("1");
+    pub const ABBR: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("3");
+    pub const NARROW: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("4");
+    pub const WIDE: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("5");
+    pub const SHORT: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("6");
+    pub const ABBR_STANDALONE: &DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("3s");
+    pub const NARROW_STANDALONE: &DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("4s");
+    pub const WIDE_STANDALONE: &DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("5s");
+    pub const SHORT_STANDALONE: &DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("6s");
 
-    pub const PATTERN_FULL: TinyAsciiStr<8> = tinystr!(8, "f");
-    pub const PATTERN_LONG: TinyAsciiStr<8> = tinystr!(8, "l");
-    pub const PATTERN_MEDIUM: TinyAsciiStr<8> = tinystr!(8, "m");
-    pub const PATTERN_SHORT: TinyAsciiStr<8> = tinystr!(8, "s");
+    pub const PATTERN_FULL: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("f");
+    pub const PATTERN_LONG: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("l");
+    pub const PATTERN_MEDIUM: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("m");
+    pub const PATTERN_SHORT: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("s");
 
-    pub const PATTERN_FULL12: TinyAsciiStr<8> = tinystr!(8, "f12");
-    pub const PATTERN_LONG12: TinyAsciiStr<8> = tinystr!(8, "l12");
-    pub const PATTERN_MEDIUM12: TinyAsciiStr<8> = tinystr!(8, "m12");
-    pub const PATTERN_SHORT12: TinyAsciiStr<8> = tinystr!(8, "s12");
+    pub const PATTERN_FULL12: &DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("f12");
+    pub const PATTERN_LONG12: &DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("l12");
+    pub const PATTERN_MEDIUM12: &DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("m12");
+    pub const PATTERN_SHORT12: &DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("s12");
 
-    pub const PATTERN_FULL24: TinyAsciiStr<8> = tinystr!(8, "f24");
-    pub const PATTERN_LONG24: TinyAsciiStr<8> = tinystr!(8, "l24");
-    pub const PATTERN_MEDIUM24: TinyAsciiStr<8> = tinystr!(8, "m24");
-    pub const PATTERN_SHORT24: TinyAsciiStr<8> = tinystr!(8, "s24");
+    pub const PATTERN_FULL24: &DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("f24");
+    pub const PATTERN_LONG24: &DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("l24");
+    pub const PATTERN_MEDIUM24: &DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("m24");
+    pub const PATTERN_SHORT24: &DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("s24");
+
+    pub const NUMERIC_STR: &str = NUMERIC.as_str();
+    pub const ABBR_STR: &str = ABBR.as_str();
+    pub const NARROW_STR: &str = NARROW.as_str();
+    pub const WIDE_STR: &str = WIDE.as_str();
+    pub const SHORT_STR: &str = SHORT.as_str();
+    pub const ABBR_STANDALONE_STR: &str = ABBR_STANDALONE.as_str();
+    pub const NARROW_STANDALONE_STR: &str = NARROW_STANDALONE.as_str();
+    pub const WIDE_STANDALONE_STR: &str = WIDE_STANDALONE.as_str();
+    pub const SHORT_STANDALONE_STR: &str = SHORT_STANDALONE.as_str();
+
+    pub const PATTERN_FULL_STR: &str = PATTERN_FULL.as_str();
+    pub const PATTERN_LONG_STR: &str = PATTERN_LONG.as_str();
+    pub const PATTERN_MEDIUM_STR: &str = PATTERN_MEDIUM.as_str();
+    pub const PATTERN_SHORT_STR: &str = PATTERN_SHORT.as_str();
+
+    pub const PATTERN_FULL12_STR: &str = PATTERN_FULL12.as_str();
+    pub const PATTERN_LONG12_STR: &str = PATTERN_LONG12.as_str();
+    pub const PATTERN_MEDIUM12_STR: &str = PATTERN_MEDIUM12.as_str();
+    pub const PATTERN_SHORT12_STR: &str = PATTERN_SHORT12.as_str();
+
+    pub const PATTERN_FULL24_STR: &str = PATTERN_FULL24.as_str();
+    pub const PATTERN_LONG24_STR: &str = PATTERN_LONG24.as_str();
+    pub const PATTERN_MEDIUM24_STR: &str = PATTERN_MEDIUM24.as_str();
+    pub const PATTERN_SHORT24_STR: &str = PATTERN_SHORT24.as_str();
 
     /// Field lengths supported in data marker attribute.
     ///
@@ -120,18 +157,20 @@ pub mod marker_attrs {
     /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
     /// to be stable, their Rust representation might not be. Use with caution.
     /// </div>
-    pub fn symbol_marker_attr_info(marker_attr: TinyAsciiStr<8>) -> Option<(Context, Length)> {
+    pub fn symbol_marker_attr_info(
+        marker_attr: &DataMarkerAttributes,
+    ) -> Option<(Context, Length)> {
         use {Context::*, Length::*};
-        match marker_attr {
-            NUMERIC => Some((Format, Numeric)),
-            ABBR => Some((Format, Abbr)),
-            NARROW => Some((Format, Narrow)),
-            WIDE => Some((Format, Wide)),
-            SHORT => Some((Format, Short)),
-            ABBR_STANDALONE => Some((Standalone, Abbr)),
-            NARROW_STANDALONE => Some((Standalone, Narrow)),
-            WIDE_STANDALONE => Some((Standalone, Wide)),
-            SHORT_STANDALONE => Some((Standalone, Short)),
+        match &**marker_attr {
+            NUMERIC_STR => Some((Format, Numeric)),
+            ABBR_STR => Some((Format, Abbr)),
+            NARROW_STR => Some((Format, Narrow)),
+            WIDE_STR => Some((Format, Wide)),
+            SHORT_STR => Some((Format, Short)),
+            ABBR_STANDALONE_STR => Some((Standalone, Abbr)),
+            NARROW_STANDALONE_STR => Some((Standalone, Narrow)),
+            WIDE_STANDALONE_STR => Some((Standalone, Wide)),
+            SHORT_STANDALONE_STR => Some((Standalone, Short)),
             _ => None,
         }
     }
@@ -144,24 +183,24 @@ pub mod marker_attrs {
     /// to be stable, their Rust representation might not be. Use with caution.
     /// </div>
     pub fn pattern_marker_attr_info(
-        marker_attr: TinyAsciiStr<8>,
+        marker_attr: &DataMarkerAttributes,
     ) -> Option<(PatternLength, Option<CoarseHourCycle>)> {
         use {CoarseHourCycle::*, PatternLength::*};
-        match marker_attr {
-            PATTERN_FULL => Some((Full, None)),
-            PATTERN_LONG => Some((Long, None)),
-            PATTERN_MEDIUM => Some((Medium, None)),
-            PATTERN_SHORT => Some((Short, None)),
+        match &**marker_attr {
+            PATTERN_FULL_STR => Some((Full, None)),
+            PATTERN_LONG_STR => Some((Long, None)),
+            PATTERN_MEDIUM_STR => Some((Medium, None)),
+            PATTERN_SHORT_STR => Some((Short, None)),
 
-            PATTERN_FULL12 => Some((Full, Some(H11H12))),
-            PATTERN_LONG12 => Some((Long, Some(H11H12))),
-            PATTERN_MEDIUM12 => Some((Medium, Some(H11H12))),
-            PATTERN_SHORT12 => Some((Short, Some(H11H12))),
+            PATTERN_FULL12_STR => Some((Full, Some(H11H12))),
+            PATTERN_LONG12_STR => Some((Long, Some(H11H12))),
+            PATTERN_MEDIUM12_STR => Some((Medium, Some(H11H12))),
+            PATTERN_SHORT12_STR => Some((Short, Some(H11H12))),
 
-            PATTERN_FULL24 => Some((Full, Some(H23H24))),
-            PATTERN_LONG24 => Some((Long, Some(H23H24))),
-            PATTERN_MEDIUM24 => Some((Medium, Some(H23H24))),
-            PATTERN_SHORT24 => Some((Short, Some(H23H24))),
+            PATTERN_FULL24_STR => Some((Full, Some(H23H24))),
+            PATTERN_LONG24_STR => Some((Long, Some(H23H24))),
+            PATTERN_MEDIUM24_STR => Some((Medium, Some(H23H24))),
+            PATTERN_SHORT24_STR => Some((Short, Some(H23H24))),
             _ => None,
         }
     }
@@ -173,7 +212,7 @@ pub mod marker_attrs {
     /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
     /// to be stable, their Rust representation might not be. Use with caution.
     /// </div>
-    pub fn symbol_attr_for(context: Context, length: Length) -> TinyAsciiStr<8> {
+    pub fn symbol_attr_for(context: Context, length: Length) -> &'static DataMarkerAttributes {
         use {Context::*, Length::*};
         match (context, length) {
             (Format, Numeric) => NUMERIC,
@@ -199,7 +238,7 @@ pub mod marker_attrs {
     pub fn pattern_marker_attr_for(
         length: PatternLength,
         hour_cycle: Option<CoarseHourCycle>,
-    ) -> TinyAsciiStr<8> {
+    ) -> &'static DataMarkerAttributes {
         use {CoarseHourCycle::*, PatternLength::*};
         match (length, hour_cycle) {
             (Full, None) => PATTERN_FULL,

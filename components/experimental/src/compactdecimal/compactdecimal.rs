@@ -132,7 +132,7 @@ impl CompactDecimalFormatter {
             compact_data: DataProvider::<ShortCompactDecimalFormatDataV1Marker>::load(
                 &crate::provider::Baked,
                 DataRequest {
-                    locale,
+                    id: DataIdentifierBorrowed::for_locale(locale),
                     ..Default::default()
                 },
             )?
@@ -174,7 +174,7 @@ impl CompactDecimalFormatter {
             compact_data: DataProvider::<ShortCompactDecimalFormatDataV1Marker>::load(
                 provider,
                 DataRequest {
-                    locale,
+                    id: DataIdentifierBorrowed::for_locale(locale),
                     ..Default::default()
                 },
             )?
@@ -216,7 +216,7 @@ impl CompactDecimalFormatter {
             compact_data: DataProvider::<LongCompactDecimalFormatDataV1Marker>::load(
                 &crate::provider::Baked,
                 DataRequest {
-                    locale,
+                    id: DataIdentifierBorrowed::for_locale(locale),
                     ..Default::default()
                 },
             )?
@@ -258,7 +258,7 @@ impl CompactDecimalFormatter {
             compact_data: DataProvider::<LongCompactDecimalFormatDataV1Marker>::load(
                 provider,
                 DataRequest {
-                    locale,
+                    id: DataIdentifierBorrowed::for_locale(locale),
                     ..Default::default()
                 },
             )?

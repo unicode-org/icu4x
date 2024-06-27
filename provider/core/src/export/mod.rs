@@ -22,8 +22,7 @@ pub trait DataExporter: Sync {
     fn put_payload(
         &self,
         marker: DataMarkerInfo,
-        locale: &DataLocale,
-        marker_attributes: &DataMarkerAttributes,
+        id: DataIdentifierBorrowed,
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError>;
 
@@ -34,7 +33,7 @@ pub trait DataExporter: Sync {
         marker: DataMarkerInfo,
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
-        self.put_payload(marker, Default::default(), Default::default(), payload)?;
+        self.put_payload(marker, Default::default(), payload)?;
         self.flush(marker)
     }
 
@@ -58,11 +57,10 @@ impl DataExporter for Box<dyn DataExporter> {
     fn put_payload(
         &self,
         marker: DataMarkerInfo,
-        locale: &DataLocale,
-        marker_attributes: &DataMarkerAttributes,
+        id: DataIdentifierBorrowed,
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
-        (**self).put_payload(marker, locale, marker_attributes, payload)
+        (**self).put_payload(marker, id, payload)
     }
 
     fn flush_singleton(
@@ -164,13 +162,12 @@ impl DataExporter for MultiExporter {
     fn put_payload(
         &self,
         marker: DataMarkerInfo,
-        locale: &DataLocale,
-        marker_attributes: &DataMarkerAttributes,
+        id: DataIdentifierBorrowed,
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
         self.0
             .iter()
-            .try_for_each(|e| e.put_payload(marker, locale, marker_attributes, payload))
+            .try_for_each(|e| e.put_payload(marker, id, payload))
     }
 
     fn flush_singleton(

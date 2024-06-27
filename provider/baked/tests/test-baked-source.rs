@@ -22,7 +22,7 @@ fn iter() {
     use icu_provider::hello_world::HelloWorldProvider;
     use icu_provider::prelude::*;
 
-    assert_eq!(Baked.iter_requests(), HelloWorldProvider.iter_requests(),)
+    assert_eq!(Baked.iter_ids(), HelloWorldProvider.iter_ids(),)
 }
 
 #[test]
@@ -30,10 +30,9 @@ fn load() {
     use icu_provider::hello_world::HelloWorldProvider;
     use icu_provider::prelude::*;
 
-    for (locale, marker_attributes) in HelloWorldProvider.iter_requests().unwrap().iter() {
+    for id in HelloWorldProvider.iter_ids().unwrap().iter() {
         let req = DataRequest {
-            locale,
-            marker_attributes,
+            id: id.as_borrowed(),
             ..Default::default()
         };
         let expected = HelloWorldProvider.load(req).unwrap().payload;

@@ -204,10 +204,11 @@ macro_rules! impl_data_provider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
                 self.check_req::<$marker>(req)?;
 
-                let langid = req.locale.get_langid();
+                let langid = req.id.locale.get_langid();
 
                 let calendar = if DateSkeletonPatternsV1Marker::INFO == $marker::INFO {
-                    req.locale
+                    req.id
+                        .locale
                         .get_unicode_ext(&key!("ca"))
                         .ok_or_else(|| DataErrorKind::NeedsLocale.into_error())?
                 } else {
@@ -225,16 +226,14 @@ macro_rules! impl_data_provider {
         }
 
         impl IterableDataProviderCached<$marker> for DatagenProvider {
-            fn iter_requests_cached(
-                &self,
-            ) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+            fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
                 let mut r = HashSet::new();
                 if DateSkeletonPatternsV1Marker::INFO == $marker::INFO {
                     for (cal_value, cldr_cal) in supported_cals() {
                         r.extend(self.cldr()?.dates(cldr_cal).list_langs()?.map(|lid| {
                             let mut locale = DataLocale::from(lid);
                             locale.set_unicode_ext(key!("ca"), cal_value.clone());
-                            (locale, Default::default())
+                            DataIdentifierCow::from_locale(locale)
                         }));
                     }
                 } else {
@@ -245,15 +244,15 @@ macro_rules! impl_data_provider {
                         self.cldr()?
                             .dates(cldr_cal)
                             .list_langs()?
-                            .map(|l| (DataLocale::from(l), Default::default())),
+                            .map(|l| DataIdentifierCow::from_locale(DataLocale::from(l))),
                     );
                 }
 
                 // TODO(#3212): Remove
                 if $marker::INFO == TimeLengthsV1Marker::INFO {
-                    r.retain(|(l, _)| {
-                        l.get_langid() != icu::locale::langid!("byn")
-                            && l.get_langid() != icu::locale::langid!("ssy")
+                    r.retain(|id| {
+                        id.locale.get_langid() != icu::locale::langid!("byn")
+                            && id.locale.get_langid() != icu::locale::langid!("ssy")
                     });
                 }
 
@@ -402,7 +401,7 @@ mod test {
 
         let cs_dates: DataResponse<GregorianDateLengthsV1Marker> = provider
             .load(DataRequest {
-                locale: &langid!("cs").into(),
+                id: DataIdentifierBorrowed::for_locale(&langid!("cs").into()),
                 ..Default::default()
             })
             .expect("Failed to load payload");
@@ -416,7 +415,7 @@ mod test {
 
         let cs_dates: DataResponse<GregorianDateLengthsV1Marker> = provider
             .load(DataRequest {
-                locale: &langid!("haw").into(),
+                id: DataIdentifierBorrowed::for_locale(&langid!("haw").into()),
                 ..Default::default()
             })
             .expect("Failed to load payload");
@@ -436,7 +435,7 @@ mod test {
 
         let skeletons: DataResponse<DateSkeletonPatternsV1Marker> = provider
             .load(DataRequest {
-                locale: &"fil-u-ca-gregory".parse().unwrap(),
+                id: DataIdentifierBorrowed::for_locale(&"fil-u-ca-gregory".parse().unwrap()),
                 ..Default::default()
             })
             .expect("Failed to load payload");
@@ -477,7 +476,7 @@ mod test {
 
         let cs_dates: DataResponse<GregorianDateSymbolsV1Marker> = provider
             .load(DataRequest {
-                locale: &langid!("cs").into(),
+                id: DataIdentifierBorrowed::for_locale(&langid!("cs").into()),
                 ..Default::default()
             })
             .unwrap();
@@ -514,7 +513,7 @@ mod test {
 
         let cs_dates: DataResponse<GregorianDateSymbolsV1Marker> = provider
             .load(DataRequest {
-                locale: &langid!("cs").into(),
+                id: DataIdentifierBorrowed::for_locale(&langid!("cs").into()),
                 ..Default::default()
             })
             .unwrap();

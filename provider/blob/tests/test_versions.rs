@@ -19,18 +19,16 @@ fn run_driver(mut exporter: BlobExporter, provider: &impl IterableDataProvider<H
 where
     ExportMarker: UpcastDataPayload<HelloWorldV1Marker>,
 {
-    for (locale, marker_attributes) in &provider.iter_requests().unwrap() {
+    for id in &provider.iter_ids().unwrap() {
         let req = DataRequest {
-            locale,
-            marker_attributes,
+            id: id.as_borrowed(),
             ..Default::default()
         };
         let res = DataProvider::<HelloWorldV1Marker>::load(provider, req).unwrap();
         exporter
             .put_payload(
                 HelloWorldV1Marker::INFO,
-                locale,
-                marker_attributes,
+                id.as_borrowed(),
                 &ExportMarker::upcast(res.payload),
             )
             .unwrap();
@@ -41,24 +39,22 @@ where
 
 fn check_hello_world(blob_provider: impl DataProvider<HelloWorldV1Marker>) {
     let hello_world_provider = HelloWorldProvider;
-    for (locale, marker_attributes) in hello_world_provider.iter_requests().unwrap() {
+    for id in hello_world_provider.iter_ids().unwrap() {
         let blob_result = blob_provider
             .load(DataRequest {
-                locale: &locale,
-                marker_attributes: &marker_attributes,
+                id: id.as_borrowed(),
                 ..Default::default()
             })
             .unwrap()
             .payload;
         let expected_result = hello_world_provider
             .load(DataRequest {
-                locale: &locale,
-                marker_attributes: &marker_attributes,
+                id: id.as_borrowed(),
                 ..Default::default()
             })
             .unwrap()
             .payload;
-        assert_eq!(blob_result, expected_result, "{locale:?}");
+        assert_eq!(blob_result, expected_result, "{:?}", id);
     }
 }
 
@@ -127,7 +123,7 @@ fn test_v2_bigger() {
         let blob_result = DataProvider::<HelloWorldV1Marker>::load(
             &blob_provider,
             DataRequest {
-                locale: &loc.parse().expect("locale must parse"),
+                id: DataIdentifierBorrowed::for_locale(&loc.parse().expect("locale must parse")),
                 ..Default::default()
             },
         )
@@ -144,7 +140,7 @@ impl DataProvider<HelloWorldV1Marker> for ManyLocalesProvider {
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_owned(HelloWorldV1 {
-                message: format!("Hello {}!", req.locale).into(),
+                message: format!("Hello {}!", req.id.locale).into(),
             }),
         })
     }
@@ -153,7 +149,7 @@ impl DataProvider<HelloWorldV1Marker> for ManyLocalesProvider {
 const LOWERCASE: core::ops::RangeInclusive<u8> = b'a'..=b'z';
 
 impl IterableDataProvider<HelloWorldV1Marker> for ManyLocalesProvider {
-    fn iter_requests(&self) -> Result<HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+    fn iter_ids(&self) -> Result<HashSet<DataIdentifierCow>, DataError> {
         let mut r = HashSet::new();
         let mut bytes = [
             b'a', b'a', b'a', b'-', b'L', b'a', b't', b'n', b'-', b'0', b'0', b'1',
@@ -166,7 +162,7 @@ impl IterableDataProvider<HelloWorldV1Marker> for ManyLocalesProvider {
                     bytes[2] = i2;
                     let locale =
                         LanguageIdentifier::try_from_utf8(&bytes).expect("locale must parse");
-                    r.insert((locale.into(), Default::default()));
+                    r.insert(DataIdentifierCow::from_locale(locale.into()));
                 }
             }
         }

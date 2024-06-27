@@ -106,17 +106,17 @@ where
     P1: IterableDynamicDataProvider<M>,
     F: ForkByErrorPredicate,
 {
-    fn iter_requests_for_marker(
+    fn iter_ids_for_marker(
         &self,
         marker: DataMarkerInfo,
-    ) -> Result<std::collections::HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
-        let result = self.0.iter_requests_for_marker(marker);
+    ) -> Result<std::collections::HashSet<DataIdentifierCow>, DataError> {
+        let result = self.0.iter_ids_for_marker(marker);
         match result {
             Ok(ok) => return Ok(ok),
             Err(err) if !self.2.test(marker, None, err) => return Err(err),
             _ => (),
         };
-        self.1.iter_requests_for_marker(marker)
+        self.1.iter_ids_for_marker(marker)
     }
 }
 
@@ -236,13 +236,13 @@ where
     P: IterableDynamicDataProvider<M>,
     F: ForkByErrorPredicate,
 {
-    fn iter_requests_for_marker(
+    fn iter_ids_for_marker(
         &self,
         marker: DataMarkerInfo,
-    ) -> Result<std::collections::HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
+    ) -> Result<std::collections::HashSet<DataIdentifierCow>, DataError> {
         let mut last_error = F::UNIT_ERROR.with_marker(marker);
         for provider in self.providers.iter() {
-            let result = provider.iter_requests_for_marker(marker);
+            let result = provider.iter_ids_for_marker(marker);
             match result {
                 Ok(ok) => return Ok(ok),
                 Err(err) if !self.predicate.test(marker, None, err) => return Err(err),

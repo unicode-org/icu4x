@@ -21,7 +21,7 @@ macro_rules! __impl_canonical_combining_class_name_to_value_v1_marker {
         #[clippy::msrv = "1.70"]
         impl icu_provider::DataProvider<icu::properties::provider::names::CanonicalCombiningClassNameToValueV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::properties::provider::names::CanonicalCombiningClassNameToValueV1Marker>, icu_provider::DataError> {
-                if req.locale.is_empty() {
+                if req.id.locale.is_empty() {
                     Ok(icu_provider::DataResponse { payload: icu_provider::DataPayload::from_static_ref(Self::SINGLETON_CANONICAL_COMBINING_CLASS_NAME_TO_VALUE_V1_MARKER), metadata: Default::default() })
                 } else {
                     Err(icu_provider::DataErrorKind::ExtraneousLocale.with_req(<icu::properties::provider::names::CanonicalCombiningClassNameToValueV1Marker as icu_provider::DataMarker>::INFO, req))
@@ -33,7 +33,7 @@ macro_rules! __impl_canonical_combining_class_name_to_value_v1_marker {
         __impl_canonical_combining_class_name_to_value_v1_marker!($provider);
         #[clippy::msrv = "1.70"]
         impl icu_provider::IterableDataProvider<icu::properties::provider::names::CanonicalCombiningClassNameToValueV1Marker> for $provider {
-            fn iter_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataMarkerAttributes)>, icu_provider::DataError> {
+            fn iter_ids(&self) -> Result<std::collections::HashSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok(HashSet::from_iter([Default::default()]))
             }
         }

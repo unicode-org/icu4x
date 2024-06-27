@@ -40,7 +40,7 @@ use icu_provider::prelude::*;
 ///
 /// Data requests that are rejected by the filter will return a [`DataError`] with kind
 /// [`FilteredResource`](DataErrorKind::FilteredResource), and they will not be returned
-/// by [`IterableDynamicDataProvider::iter_requests_for_marker`].
+/// by [`IterableDynamicDataProvider::iter_ids_for_marker`].
 ///
 /// Although this struct can be created directly, the traits in this module provide helper
 /// functions for common filtering patterns.
@@ -122,17 +122,16 @@ where
     F: Fn(DataRequest) -> bool,
     D: IterableDynamicDataProvider<M>,
 {
-    fn iter_requests_for_marker(
+    fn iter_ids_for_marker(
         &self,
         marker: DataMarkerInfo,
-    ) -> Result<std::collections::HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
-        self.inner.iter_requests_for_marker(marker).map(|set| {
+    ) -> Result<std::collections::HashSet<DataIdentifierCow>, DataError> {
+        self.inner.iter_ids_for_marker(marker).map(|set| {
             // Use filter_map instead of filter to avoid cloning the locale
             set.into_iter()
-                .filter(|(locale, marker_attributes)| {
+                .filter(|id| {
                     (self.predicate)(DataRequest {
-                        locale,
-                        marker_attributes,
+                        id: id.as_borrowed(),
                         ..Default::default()
                     })
                 })
@@ -148,16 +147,13 @@ where
     F: Fn(DataRequest) -> bool,
     D: IterableDataProvider<M>,
 {
-    fn iter_requests(
-        &self,
-    ) -> Result<std::collections::HashSet<(DataLocale, DataMarkerAttributes)>, DataError> {
-        self.inner.iter_requests().map(|vec| {
+    fn iter_ids(&self) -> Result<std::collections::HashSet<DataIdentifierCow>, DataError> {
+        self.inner.iter_ids().map(|vec| {
             // Use filter_map instead of filter to avoid cloning the locale
             vec.into_iter()
-                .filter(|(locale, marker_attributes)| {
+                .filter(|id| {
                     (self.predicate)(DataRequest {
-                        locale,
-                        marker_attributes,
+                        id: id.as_borrowed(),
                         ..Default::default()
                     })
                 })
