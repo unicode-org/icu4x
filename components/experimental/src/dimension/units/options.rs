@@ -38,13 +38,12 @@ pub enum Width {
     /// Format the units with the narrow units format.
     ///
     /// The narrow symbol may be ambiguous, so it should be evident from context which
-    /// units is being represented. // TODO??
+    /// units is being represented.
     ///
     /// For example, 1 hour formats as "1 h" in most locales.
     Narrow,
 }
 
-// TODO: is that correct?
 impl From<Width> for tinystr::TinyStr8 {
     fn from(width: Width) -> Self {
         match width {
