@@ -6,7 +6,8 @@
 
 use fixed_decimal::FixedDecimal;
 
-use icu_plurals::PluralCategory;
+use icu_decimal::FixedDecimalFormatter;
+use icu_plurals::{PluralCategory, PluralRules};
 use writeable::Writeable;
 
 use crate::dimension::provider::units::{Count, UnitsDisplayNameV1};
@@ -18,6 +19,8 @@ pub struct FormattedUnit<'l> {
     pub(crate) options: &'l UnitsFormatterOptions,
     // pub(crate) essential: &'l UnitsEssentialsV1<'l>,
     pub(crate) display_name: &'l UnitsDisplayNameV1<'l>,
+    pub(crate) fixed_decimal_formatter: &'l FixedDecimalFormatter,
+    pub(crate) plural_rules: &'l PluralRules,
 }
 
 impl<'l> Writeable for FormattedUnit<'l> {
@@ -25,6 +28,9 @@ impl<'l> Writeable for FormattedUnit<'l> {
     where
         W: core::fmt::Write + ?Sized,
     {
+        let plural_category = self.plural_rules.category_for(self.value);
+        let count = Count::from(plural_category);
+
         todo!();
     }
 }

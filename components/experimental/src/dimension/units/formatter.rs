@@ -7,6 +7,7 @@
 use fixed_decimal::FixedDecimal;
 use icu_decimal::options::FixedDecimalFormatterOptions;
 use icu_decimal::FixedDecimalFormatter;
+use icu_plurals::PluralRules;
 use icu_provider::DataPayload;
 
 use super::super::provider::units::UnitsDisplayNameV1Marker;
@@ -33,10 +34,11 @@ pub struct UnitsFormatter {
     /// Display name for the units.
     display_name: DataPayload<UnitsDisplayNameV1Marker>,
 
-    // TODO: Remove this allow once the `fixed_decimal_formatter` is used.
-    #[allow(dead_code)]
     /// A [`FixedDecimalFormatter`] to format the unit value.
     fixed_decimal_formatter: FixedDecimalFormatter,
+
+    /// A [`PluralRules`] to determine the plural category of the unit.
+    plural_rules: PluralRules,
 }
 
 impl UnitsFormatter {
@@ -65,11 +67,9 @@ impl UnitsFormatter {
         use icu_decimal::options::FixedDecimalFormatterOptions;
 
         let fixed_decimal_formatter =
-            FixedDecimalFormatter::try_new(locale, FixedDecimalFormatterOptions::default())
-                // TODO: replace this `map_err` with `?` once the `FixedDecimalFormatter::try_new` returns a `Result` with `DataError`.
-                .map_err(|_| {
-                    DataError::custom("Failed to create a FixedDecimalFormatter for UnitsFormatter")
-                })?;
+            FixedDecimalFormatter::try_new(locale, FixedDecimalFormatterOptions::default())?;
+
+        let plural_rules = PluralRules::try_new_cardinal(locale)?;
 
         let unit_attribute: DataMarkerAttributes = unit
             .parse()
@@ -87,6 +87,7 @@ impl UnitsFormatter {
             options,
             display_name,
             fixed_decimal_formatter,
+            plural_rules,
         })
     }
 
@@ -100,13 +101,16 @@ impl UnitsFormatter {
     where
         D: ?Sized
             + DataProvider<super::super::provider::units::UnitsDisplayNameV1Marker>
-            + DataProvider<icu_decimal::provider::DecimalSymbolsV1Marker>,
+            + DataProvider<icu_decimal::provider::DecimalSymbolsV1Marker>
+            + DataProvider<icu_plurals::provider::CardinalV1Marker>,
     {
         let fixed_decimal_formatter = FixedDecimalFormatter::try_new_unstable(
             provider,
             locale,
             FixedDecimalFormatterOptions::default(),
         )?;
+
+        let plural_rules = PluralRules::try_new_cardinal_unstable(provider, locale)?;
 
         let marker_attributes = &units
             .parse()
@@ -124,6 +128,7 @@ impl UnitsFormatter {
             options,
             display_name,
             fixed_decimal_formatter,
+            plural_rules,
         })
     }
 
@@ -138,6 +143,8 @@ impl UnitsFormatter {
             unit,
             options: &self.options,
             display_name: self.display_name.get(),
+            fixed_decimal_formatter: &self.fixed_decimal_formatter,
+            plural_rules: &self.plural_rules,
         }
     }
 }
