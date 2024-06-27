@@ -33,6 +33,33 @@ pub(crate) struct Patterns {
 
     #[serde(rename = "unitPattern-count-other")]
     pub(crate) other: Option<String>,
+
+    #[serde(rename = "compoundUnitPattern")]
+    pub(crate) compound_unit_pattern: Option<String>,
+
+    #[serde(rename = "unitPrefixPattern")]
+    pub(crate) unit_prefix_pattern: Option<String>,
+
+    #[serde(rename = "compoundUnitPattern1")]
+    pub(crate) compound_unit_pattern1: Option<String>,
+
+    #[serde(rename = "compoundUnitPattern1-count-zero")]
+    pub(crate) zero_compound_unit_pattern1: Option<String>,
+
+    #[serde(rename = "compoundUnitPattern1-count-one")]
+    pub(crate) one_compound_unit_pattern1: Option<String>,
+
+    #[serde(rename = "compoundUnitPattern1-count-two")]
+    pub(crate) two_compound_unit_pattern1: Option<String>,
+
+    #[serde(rename = "compoundUnitPattern1-count-few")]
+    pub(crate) few_compound_unit_pattern1: Option<String>,
+
+    #[serde(rename = "compoundUnitPattern1-count-many")]
+    pub(crate) many_compound_unit_pattern1: Option<String>,
+
+    #[serde(rename = "compoundUnitPattern1-count-other")]
+    pub(crate) other_compound_unit_pattern1: Option<String>,
 }
 
 // TODO: replace Value with specific structs
