@@ -4,11 +4,10 @@
 
 //! Experimental.
 
+use fixed_decimal::FixedDecimal;
 use icu_decimal::options::FixedDecimalFormatterOptions;
 use icu_decimal::FixedDecimalFormatter;
 use icu_provider::DataPayload;
-
-use crate::units::measureunit::MeasureUnit;
 
 use super::super::provider::units::UnitsDisplayNameV1Marker;
 use super::format::FormattedUnit;
@@ -42,7 +41,7 @@ pub struct UnitsFormatter {
 
 impl UnitsFormatter {
     icu_provider::gen_any_buffer_data_constructors!(
-        (locale, options: super::options::UnitsFormatterOptions) -> error: DataError,
+        (locale, unit: &str, options: super::options::UnitsFormatterOptions) -> error: DataError,
         functions: [
             try_new: skip,
             try_new_with_any_provider,
@@ -94,34 +93,36 @@ impl UnitsFormatter {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<D>(
         provider: &D,
+        units: &str,
         locale: &DataLocale,
         options: super::options::UnitsFormatterOptions,
     ) -> Result<Self, DataError>
     where
         D: ?Sized
             + DataProvider<super::super::provider::units::UnitsDisplayNameV1Marker>
-            + DataProvider<super::super::provider::units::UnitsEssentialsV1Marker>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV1Marker>,
     {
         let fixed_decimal_formatter = FixedDecimalFormatter::try_new_unstable(
             provider,
             locale,
             FixedDecimalFormatterOptions::default(),
-        )
-        // TODO: replace this `map_err` with `?` once the `FixedDecimalFormatter::try_new` returns a `Result` with `DataError`.
-        .map_err(|_| {
-            DataError::custom("Failed to create a FixedDecimalFormatter for UnitsFormatter")
-        })?;
-        let essential = provider
+        )?;
+
+        let marker_attributes = &units
+            .parse()
+            .map_err(|_| DataError::custom("Failed to parse unit"))?;
+
+        let display_name = provider
             .load(DataRequest {
                 locale,
+                marker_attributes,
                 ..Default::default()
             })?
-            .take_payload()?;
+            .payload;
 
         Ok(Self {
             options,
-            essential,
+            display_name,
             fixed_decimal_formatter,
         })
     }
@@ -130,13 +131,13 @@ impl UnitsFormatter {
     pub fn format_fixed_decimal<'l>(
         &'l self,
         value: &'l FixedDecimal,
-        unit: MeasureUnit,
+        unit: &'l str,
     ) -> FormattedUnit<'l> {
         FormattedUnit {
             value,
             unit,
             options: &self.options,
-            essential: self.essential.get(),
+            display_name: self.display_name.get(),
         }
     }
 }

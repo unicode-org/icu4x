@@ -9,16 +9,13 @@ use fixed_decimal::FixedDecimal;
 use writeable::Writeable;
 
 use crate::dimension::provider::units::UnitsDisplayNameV1;
-use crate::dimension::provider::units_essentials::UnitsEssentialsV1;
 use crate::dimension::units::options::UnitsFormatterOptions;
-use crate::units::measureunit::MeasureUnit;
 
 pub struct FormattedUnit<'l> {
     pub(crate) value: &'l FixedDecimal,
-    pub(crate) unit: MeasureUnit,
+    pub(crate) unit: &'l str,
     pub(crate) options: &'l UnitsFormatterOptions,
-    #[allow(dead_code)]
-    pub(crate) _essential: &'l UnitsEssentialsV1<'l>,
+    // pub(crate) essential: &'l UnitsEssentialsV1<'l>,
     pub(crate) display_name: &'l UnitsDisplayNameV1<'l>,
 }
 
