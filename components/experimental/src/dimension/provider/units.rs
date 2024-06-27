@@ -9,6 +9,7 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
+use icu_plurals::PluralCategory;
 use icu_provider::prelude::*;
 use zerovec::ZeroMap;
 
@@ -83,4 +84,18 @@ pub enum Count {
     // TODO: revise this
     // NOTE(egg): No explicit 0, because the compact decimal pattern selection
     // algorithm does not allow such a thing to arise.
+}
+
+impl From<PluralCategory> for Count {
+    fn from(other: PluralCategory) -> Self {
+        use PluralCategory::*;
+        match other {
+            Zero => Count::Zero,
+            One => Count::One,
+            Two => Count::Two,
+            Few => Count::Few,
+            Many => Count::Many,
+            Other => Count::Other,
+        }
+    }
 }
