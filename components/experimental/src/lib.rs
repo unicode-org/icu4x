@@ -91,6 +91,7 @@ pub mod provider {
         super::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker::INFO,
         super::dimension::provider::currency::CurrencyEssentialsV1Marker::INFO,
         super::dimension::provider::percent::PercentEssentialsV1Marker::INFO,
+        super::dimension::provider::units::UnitsDisplayNameV1Marker::INFO,
         super::displaynames::provider::LanguageDisplayNamesV1Marker::INFO,
         super::displaynames::provider::LocaleDisplayNamesV1Marker::INFO,
         super::displaynames::provider::RegionDisplayNamesV1Marker::INFO,
