@@ -15,6 +15,8 @@ use super::format::FormattedUnit;
 use super::options::UnitsFormatterOptions;
 use icu_provider::prelude::*;
 
+extern crate alloc;
+
 /// A formatter for monetary values.
 ///
 /// [`UnitsFormatter`] supports:
@@ -58,6 +60,7 @@ impl UnitsFormatter {
     #[cfg(feature = "compiled_data")]
     pub fn try_new(
         locale: &DataLocale,
+        unit: &str,
         options: super::options::UnitsFormatterOptions,
     ) -> Result<Self, DataError> {
         use icu_decimal::options::FixedDecimalFormatterOptions;
@@ -68,9 +71,15 @@ impl UnitsFormatter {
                 .map_err(|_| {
                     DataError::custom("Failed to create a FixedDecimalFormatter for UnitsFormatter")
                 })?;
+
+        let unit_attribute: DataMarkerAttributes = unit
+            .parse()
+            .map_err(|_| DataError::custom("Failed to parse unit"))?;
+
         let display_name = crate::provider::Baked
             .load(DataRequest {
                 locale,
+                marker_attributes: &unit_attribute,
                 ..Default::default()
             })?
             .payload;

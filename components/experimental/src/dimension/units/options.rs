@@ -6,6 +6,8 @@
 
 //! Options for [`UnitsFormatter`](crate::dimension::units::formatter::UnitsFormatter).
 
+use core::str::FromStr;
+
 /// A collection of configuration options that determine the formatting behavior of
 /// [`UnitsFormatter`](crate::dimension::units::formatter::UnitsFormatter).
 #[derive(Copy, Debug, Eq, PartialEq, Clone, Default)]
@@ -46,5 +48,16 @@ pub enum Width {
 impl Default for Width {
     fn default() -> Self {
         Self::Short
+    }
+}
+
+// TODO: is that correct?
+impl From<Width> for tinystr::TinyStr8 {
+    fn from(width: Width) -> Self {
+        match width {
+            Width::Long => "long".parse().unwrap(),
+            Width::Short => "short".parse().unwrap(),
+            Width::Narrow => "narrow".parse().unwrap(),
+        }
     }
 }
