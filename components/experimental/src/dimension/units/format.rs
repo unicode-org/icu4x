@@ -46,7 +46,7 @@ impl<'l> Writeable for FormattedUnit<'l> {
             SinglePlaceholderPattern::from_str(display_name).map_err(|_| core::fmt::Error)?;
 
         pattern
-            .interpolate((self.fixed_decimal_formatter.format(&self.value),))
+            .interpolate((self.fixed_decimal_formatter.format(self.value),))
             .write_to(sink)?;
 
         Ok(())

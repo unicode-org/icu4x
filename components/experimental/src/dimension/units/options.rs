@@ -6,7 +6,6 @@
 
 //! Options for [`UnitsFormatter`](crate::dimension::units::formatter::UnitsFormatter).
 
-use core::str::FromStr;
 
 /// A collection of configuration options that determine the formatting behavior of
 /// [`UnitsFormatter`](crate::dimension::units::formatter::UnitsFormatter).
