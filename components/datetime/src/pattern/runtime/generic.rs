@@ -23,14 +23,29 @@ pub struct GenericPattern<'data> {
     pub items: ZeroVec<'data, GenericPatternItem>,
 }
 
-/// A ZeroSlice containing a 0, 1, and 2 placeholder
+/// A ZeroSlice containing a 0, 1, and 2 placeholder with no spaces
 #[cfg(feature = "experimental")]
-pub(crate) const ZERO_ONE_SLICE: &zerovec::ZeroSlice<GenericPatternItem> = zerovec::zeroslice!(
+pub(crate) const ZERO_ONE_TWO_SLICE: &zerovec::ZeroSlice<GenericPatternItem> = zerovec::zeroslice!(
     GenericPatternItem;
     GenericPatternItem::to_unaligned_const;
     [
         GenericPatternItem::Placeholder(0),
         GenericPatternItem::Placeholder(1),
+        GenericPatternItem::Placeholder(2),
+    ]
+);
+
+/// A ZeroSlice containing a 0, 1, and 2 placeholder with spaces
+/// TODO: This is temporary and should be removed once we have zone glue in the data
+#[cfg(feature = "experimental")]
+pub(crate) const ZERO_ONE_TWO_SPACED_SLICE: &zerovec::ZeroSlice<GenericPatternItem> = zerovec::zeroslice!(
+    GenericPatternItem;
+    GenericPatternItem::to_unaligned_const;
+    [
+        GenericPatternItem::Placeholder(0),
+        GenericPatternItem::Literal(' '),
+        GenericPatternItem::Placeholder(1),
+        GenericPatternItem::Literal(' '),
         GenericPatternItem::Placeholder(2),
     ]
 );

@@ -170,7 +170,7 @@ size_test!(TypedNeoFormatter<icu_calendar::Gregorian, crate::neo_marker::NeoYear
 /// </div>
 #[derive(Debug)]
 pub struct TypedNeoFormatter<C: CldrCalendar, R: DateTimeNamesMarker> {
-    selection: DateTimePatternSelectionData,
+    selection: DateTimeZonePatternSelectionData,
     names: RawDateTimeNames<R>,
     _calendar: PhantomData<C>,
 }
@@ -472,7 +472,7 @@ impl<C: CldrCalendar, R: TypedDateTimeMarkers<C>> TypedNeoFormatter<C, R> {
             + DataProvider<R::DateTimePatternV1Marker>,
         L: FixedDecimalFormatterLoader + WeekCalculatorLoader,
     {
-        let selection = DateTimePatternSelectionData::try_new_with_skeleton(
+        let selection = DateTimeZonePatternSelectionData::try_new_with_skeleton(
             &<R::D as TypedDateMarkers<C>>::DateSkeletonPatternsV1Marker::bind(provider),
             &<R::T as TimeMarkers>::TimeSkeletonPatternsV1Marker::bind(provider),
             &R::DateTimePatternV1Marker::bind(provider),
@@ -598,7 +598,7 @@ size_test!(
 /// </div>
 #[derive(Debug)]
 pub struct NeoFormatter<R: DateTimeNamesMarker> {
-    selection: DateTimePatternSelectionData,
+    selection: DateTimeZonePatternSelectionData,
     names: RawDateTimeNames<R>,
     calendar: AnyCalendar,
 }
@@ -1163,7 +1163,7 @@ impl<R: DateTimeMarkers> NeoFormatter<R> {
     {
         let calendar = AnyCalendarLoader::load(loader, locale).map_err(LoadError::Data)?;
         let kind = calendar.kind();
-        let selection = DateTimePatternSelectionData::try_new_with_skeleton(
+        let selection = DateTimeZonePatternSelectionData::try_new_with_skeleton(
             &AnyCalendarProvider::<<R::D as DateMarkers>::Skel, _>::new(provider, kind),
             &<R::T as TimeMarkers>::TimeSkeletonPatternsV1Marker::bind(provider),
             &R::DateTimePatternV1Marker::bind(provider),
@@ -1370,7 +1370,7 @@ impl<R: DateTimeMarkers> NeoFormatter<R> {
 /// </div>
 #[derive(Debug)]
 pub struct FormattedNeoDateTime<'a> {
-    pattern: DateTimePatternDataBorrowed<'a>,
+    pattern: DateTimeZonePatternDataBorrowed<'a>,
     datetime: ExtractedDateTimeInput,
     names: RawDateTimeNamesBorrowed<'a>,
 }
