@@ -5,11 +5,11 @@
 use crate::input::ExtractedDateTimeInput;
 use crate::neo_pattern::DateTimePattern;
 use crate::neo_skeleton::{
-    NeoComponents, NeoDateComponents, NeoDateSkeleton, NeoDateTimeComponents,
-    NeoSkeletonLength, NeoTimeComponents, NeoTimeSkeleton, NeoTimeZoneSkeleton,
+    NeoComponents, NeoDateComponents, NeoDateSkeleton, NeoDateTimeComponents, NeoSkeletonLength,
+    NeoTimeComponents, NeoTimeSkeleton, NeoTimeZoneSkeleton,
 };
 use crate::pattern::runtime::PatternMetadata;
-use crate::pattern::{runtime, PatternItem, GenericPatternItem};
+use crate::pattern::{runtime, GenericPatternItem, PatternItem};
 use crate::provider::neo::*;
 use icu_provider::prelude::*;
 use zerovec::ule::AsULE;
@@ -571,7 +571,7 @@ impl<'a> DateTimeZonePatternDataBorrowed<'a> {
         let pb = match self {
             Self::Date(DatePatternDataBorrowed::Resolved(pb)) => pb,
             Self::Time(TimePatternDataBorrowed::Resolved(pb)) => pb,
-            _ => todo!()
+            _ => todo!(),
         };
         DateTimePattern::from_runtime_pattern(pb.as_pattern().into_owned())
     }
