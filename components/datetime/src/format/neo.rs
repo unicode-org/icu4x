@@ -333,7 +333,7 @@ size_test!(
 /// use icu::datetime::neo_skeleton::NeoComponents;
 /// use icu::locale::locale;
 /// use icu::timezone::{CustomTimeZone, CustomZonedDateTime};
-/// use writeable::assert_try_writeable_eq;
+/// use writeable::{Part, assert_try_writeable_parts_eq};
 ///
 /// // Create an instance that can format all fields (NeoComponents):
 /// let mut names: TypedDateTimeNames<Gregorian, NeoComponents> =
@@ -351,10 +351,17 @@ size_test!(
 ///     zone: CustomTimeZone::gmt()
 /// };
 /// // Missing data is filled in on a best-effort basis, and an error is signaled.
-/// assert_try_writeable_eq!(
+/// assert_try_writeable_parts_eq!(
 ///     names.with_pattern(&pattern).format(&dtz),
 ///     "It is: mon M11 20 2023 ce at 11:35:03.000 AM +0000",
-///     Err(DateTimeWriteError::MissingNames(Field { symbol: FieldSymbol::Weekday(Weekday::Format), length: FieldLength::One }))
+///     Err(DateTimeWriteError::MissingNames(Field { symbol: FieldSymbol::Weekday(Weekday::Format), length: FieldLength::One })),
+///     [
+///         (7, 10, Part::ERROR), // mon
+///         (11, 14, Part::ERROR), // M11
+///         (23, 25, Part::ERROR), // ce
+///         (42, 44, Part::ERROR), // AM
+///         (45, 50, Part::ERROR), // +0000
+///     ]
 /// );
 /// ```
 ///
@@ -369,7 +376,7 @@ size_test!(
 /// use icu::datetime::neo_skeleton::NeoTimeZoneSkeleton;
 /// use icu::locale::locale;
 /// use icu::timezone::CustomTimeZone;
-/// use writeable::assert_try_writeable_eq;
+/// use writeable::{Part, assert_try_writeable_parts_eq};
 ///
 /// // Create an instance that can format abbreviated month, weekday, and day period names:
 /// let mut names: TypedDateTimeNames<Gregorian, NeoTimeZoneSkeleton> =
@@ -383,10 +390,23 @@ size_test!(
 /// // but the `TypedDateTimeNames` is configured to format only time zones!
 /// // Further, the time zone we provide doesn't contain any offset into!
 /// // Missing data is filled in on a best-effort basis, and an error is signaled.
-/// assert_try_writeable_eq!(
+/// assert_try_writeable_parts_eq!(
 ///     names.with_pattern(&pattern).format(&CustomTimeZone::new_empty()),
 ///     "It is: {E} {M} {d} {y} {G} at {h}:{m}:{s}{S} {a} {GMT+?}",
-///     Err(DateTimeWriteError::MissingInputField("iso_weekday"))
+///     Err(DateTimeWriteError::MissingInputField("iso_weekday")),
+///     [
+///         (7, 10, Part::ERROR), // {E}
+///         (11, 14, Part::ERROR), // {M}
+///         (15, 18, Part::ERROR), // {d}
+///         (19, 22, Part::ERROR), // {y}
+///         (23, 26, Part::ERROR), // {G}
+///         (30, 33, Part::ERROR), // {h}
+///         (34, 37, Part::ERROR), // {m}
+///         (38, 41, Part::ERROR), // {s}
+///         (41, 44, Part::ERROR), // {S}
+///         (45, 48, Part::ERROR), // {a}
+///         (49, 56, Part::ERROR), // {GMT+?}
+///     ]
 /// );
 /// ```
 #[derive(Debug)]
@@ -886,10 +906,8 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     where
         P: DataProvider<tz::EssentialsV1Marker> + ?Sized,
     {
-        self.inner.load_time_zone_essentials(
-            &tz::EssentialsV1Marker::bind(provider),
-            &self.locale,
-        )?;
+        self.inner
+            .load_time_zone_essentials(&tz::EssentialsV1Marker::bind(provider), &self.locale)?;
         Ok(self)
     }
 

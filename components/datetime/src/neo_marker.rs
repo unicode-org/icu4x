@@ -155,7 +155,9 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<NeoTypedInput<C>> for
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<NeoTypedInput<C>> for CustomZonedDateTime<A> {
+impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<NeoTypedInput<C>>
+    for CustomZonedDateTime<A>
+{
     #[inline]
     fn get_field(&self) -> NeoTypedInput<C> {
         NeoTypedInput {
@@ -329,14 +331,18 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<NanoSecond> for DateT
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<FormattableYear> for CustomZonedDateTime<A> {
+impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<FormattableYear>
+    for CustomZonedDateTime<A>
+{
     #[inline]
     fn get_field(&self) -> FormattableYear {
         self.date.year()
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<FormattableMonth> for CustomZonedDateTime<A> {
+impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<FormattableMonth>
+    for CustomZonedDateTime<A>
+{
     #[inline]
     fn get_field(&self) -> FormattableMonth {
         self.date.month()
@@ -357,14 +363,18 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<IsoWeekday> for Custo
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<DayOfYearInfo> for CustomZonedDateTime<A> {
+impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<DayOfYearInfo>
+    for CustomZonedDateTime<A>
+{
     #[inline]
     fn get_field(&self) -> DayOfYearInfo {
         self.date.day_of_year_info()
     }
 }
 
-impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> NeoGetField<AnyCalendarKind> for CustomZonedDateTime<A> {
+impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> NeoGetField<AnyCalendarKind>
+    for CustomZonedDateTime<A>
+{
     #[inline]
     fn get_field(&self) -> AnyCalendarKind {
         self.date.calendar().kind()
@@ -399,7 +409,9 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<NanoSecond> for Custo
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<CustomTimeZone> for CustomZonedDateTime<A> {
+impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<CustomTimeZone>
+    for CustomZonedDateTime<A>
+{
     #[inline]
     fn get_field(&self) -> CustomTimeZone {
         self.zone

@@ -19,9 +19,9 @@ use crate::provider::date_time::{
 };
 use crate::time_zone::{
     ExemplarCityFormat, FallbackTimeZoneFormatterUnit, FormatTimeZone, FormatTimeZoneError,
-    GenericNonLocationLongFormat, GenericNonLocationShortFormat, LocalizedGmtFormat,
-    SpecificNonLocationLongFormat, SpecificNonLocationShortFormat, TimeZoneFormatterUnit,
-    GenericLocationFormat, Iso8601Format
+    GenericLocationFormat, GenericNonLocationLongFormat, GenericNonLocationShortFormat,
+    Iso8601Format, LocalizedGmtFormat, SpecificNonLocationLongFormat,
+    SpecificNonLocationShortFormat, TimeZoneFormatterUnit,
 };
 
 use core::fmt::{self, Write};
@@ -829,9 +829,6 @@ where
                     Some(TimeZoneFormatterUnit::WithFallback(
                         FallbackTimeZoneFormatterUnit::LocalizedGmt(LocalizedGmtFormat {}),
                     )),
-                    // Last Resort ISO-8601 Format (no data required)
-                    Some(TimeZoneFormatterUnit::WithFallback(
-                        FallbackTimeZoneFormatterUnit::Iso8601(Iso8601Format::default_for_fallback()))),
                 );
                 match (field_symbol, field_length) {
                     // `z..zzz`
@@ -868,8 +865,9 @@ where
                     }
                     // 'VVVV'
                     (fields::TimeZone::UpperV, FieldLength::Wide) => {
-                        formatters.0 =
-                            Some(TimeZoneFormatterUnit::GenericLocation(GenericLocationFormat {}));
+                        formatters.0 = Some(TimeZoneFormatterUnit::GenericLocation(
+                            GenericLocationFormat {},
+                        ));
                     }
                     // `OOOO`, `ZZZZ`
                     (fields::TimeZone::UpperO | fields::TimeZone::UpperZ, FieldLength::Wide) => {
@@ -884,22 +882,40 @@ where
                     _ => {
                         // Cause these to fail by unsetting the fallback formats
                         formatters.2 = None;
-                        formatters.3 = None;
                     }
                 }
+                let zone_input = custom_time_zone.into();
                 loop {
                     let Some(formatter) = formatters
                         .0
                         .take()
                         .or_else(|| formatters.1.take())
                         .or_else(|| formatters.2.take())
-                        .or_else(|| formatters.3.take())
                     else {
-                        write_time_zone_missing(w)?;
-                        break Err(DateTimeWriteError::MissingNames(field));
+                        // Last Resort ISO-8601 Format (no data required)
+                        let mut result = None;
+                        w.with_part(Part::ERROR, |w| {
+                            result = Some(Iso8601Format::default_for_fallback().format(
+                                w,
+                                &zone_input,
+                                payloads,
+                            )?);
+                            Ok(())
+                        })?;
+                        match result {
+                            Some(Ok(())) => {
+                                // Success, but return an error since GMT data was missing
+                                break Err(DateTimeWriteError::MissingZoneSymbols);
+                            }
+                            None | Some(Err(_)) => {
+                                // Completely failed to format anything
+                                write_time_zone_missing(w)?;
+                                break Err(DateTimeWriteError::MissingNames(field));
+                            }
+                        }
                     };
                     println!("trying: {formatter:?}");
-                    match formatter.format(w, &custom_time_zone.into(), payloads)? {
+                    match formatter.format(w, &zone_input, payloads)? {
                         Ok(()) => break Ok(()),
                         Err(FormatTimeZoneError::MissingInputField(_)) => {
                             // The time zone input doesn't have the fields for this formatter.
