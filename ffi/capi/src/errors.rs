@@ -19,12 +19,11 @@ pub mod ffi {
         MarkerNotFound = 0x01,
         IdentifierNotFound = 0x02,
         InvalidRequest = 0x03,
-        FilteredResource = 0x04,
-        InconsistentData = 0x05,
-        Downcast = 0x06,
-        Deserialize = 0x07,
-        Custom = 0x08,
-        Io = 0x09,
+        InconsistentData = 0x04,
+        Downcast = 0x05,
+        Deserialize = 0x06,
+        Custom = 0x07,
+        Io = 0x08,
     }
 
     #[derive(Debug, PartialEq, Eq)]
@@ -133,7 +132,6 @@ impl From<DataError> for ICU4XError {
             DataErrorKind::MarkerNotFound => ICU4XError::DataMissingDataMarkerError,
             DataErrorKind::IdentifierNotFound => ICU4XError::DataMissingLocaleError,
             DataErrorKind::InvalidRequest => ICU4XError::DataExtraneousLocaleError,
-            DataErrorKind::Filtered => ICU4XError::DataFilteredResourceError,
             DataErrorKind::Downcast(..) => ICU4XError::DataMismatchedTypeError,
             DataErrorKind::Custom => ICU4XError::DataCustomError,
             #[cfg(all(
@@ -152,7 +150,6 @@ impl From<DataError> for ICU4XDataError {
             DataErrorKind::MarkerNotFound => Self::MarkerNotFound,
             DataErrorKind::IdentifierNotFound => Self::IdentifierNotFound,
             DataErrorKind::InvalidRequest => Self::InvalidRequest,
-            DataErrorKind::Filtered => Self::FilteredResource,
             DataErrorKind::InconsistentData(..) => Self::InconsistentData,
             DataErrorKind::Downcast(..) => Self::Downcast,
             DataErrorKind::Deserialize => Self::Deserialize,

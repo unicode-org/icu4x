@@ -30,7 +30,6 @@ inline ICU4XDataError ICU4XDataError::FromFFI(capi::ICU4XDataError c_enum) {
     case capi::ICU4XDataError_MarkerNotFound:
     case capi::ICU4XDataError_IdentifierNotFound:
     case capi::ICU4XDataError_InvalidRequest:
-    case capi::ICU4XDataError_FilteredResource:
     case capi::ICU4XDataError_InconsistentData:
     case capi::ICU4XDataError_Downcast:
     case capi::ICU4XDataError_Deserialize:

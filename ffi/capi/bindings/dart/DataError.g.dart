@@ -12,8 +12,6 @@ enum DataError {
 
   invalidRequest,
 
-  filteredResource,
-
   inconsistentData,
 
   downcast,
