@@ -13,7 +13,7 @@ fn overview_bench(c: &mut Criterion) {
     // End-to-end JSON test
     c.bench_function("json/overview", |b| {
         b.iter(|| {
-            let provider = FsDataProvider::try_new("./tests/data/json")
+            let provider = FsDataProvider::try_new("./tests/data/json".into())
                 .expect("Loading file from testdata directory");
             let _: DataResponse<HelloWorldV1Marker> = black_box(&provider)
                 .as_deserializing()
@@ -36,7 +36,7 @@ fn overview_bench(c: &mut Criterion) {
 #[cfg(feature = "bench")]
 fn json_bench(c: &mut Criterion) {
     let provider =
-        FsDataProvider::try_new("./tests/data/json").expect("Loading file from testdata directory");
+        FsDataProvider::try_new("./tests/data/json".into()).expect("Loading file from testdata directory");
 
     c.bench_function("json/generic", |b| {
         b.iter(|| {
@@ -65,7 +65,7 @@ fn json_bench(c: &mut Criterion) {
 
 #[cfg(feature = "bench")]
 fn bincode_bench(c: &mut Criterion) {
-    let provider = FsDataProvider::try_new("./tests/data/bincode")
+    let provider = FsDataProvider::try_new("./tests/data/bincode".into())
         .expect("Loading file from testdata directory");
 
     c.bench_function("bincode/generic", |b| {
@@ -95,7 +95,7 @@ fn bincode_bench(c: &mut Criterion) {
 
 #[cfg(feature = "bench")]
 fn postcard_bench(c: &mut Criterion) {
-    let provider = FsDataProvider::try_new("./tests/data/postcard")
+    let provider = FsDataProvider::try_new("./tests/data/postcard".into())
         .expect("Loading file from testdata directory");
 
     c.bench_function("postcard/generic", |b| {

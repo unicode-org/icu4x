@@ -368,7 +368,7 @@ fn main() -> eyre::Result<()> {
             }
 
             p = match (cli.cldr_root, cli.cldr_tag.as_str()) {
-                (Some(path), _) => p.with_cldr(path)?,
+                (Some(path), _) => p.with_cldr(&path)?,
                 #[cfg(feature = "networking")]
                 (_, "latest") => p.with_cldr_for_tag(DatagenProvider::LATEST_TESTED_CLDR_TAG),
                 #[cfg(feature = "networking")]
@@ -382,7 +382,7 @@ fn main() -> eyre::Result<()> {
             };
 
             p = match (cli.icuexport_root, cli.icuexport_tag.as_str()) {
-                (Some(path), _) => p.with_icuexport(path)?,
+                (Some(path), _) => p.with_icuexport(&path)?,
                 #[cfg(feature = "networking")]
                 (_, "latest") => {
                     p.with_icuexport_for_tag(DatagenProvider::LATEST_TESTED_ICUEXPORT_TAG)
@@ -398,7 +398,7 @@ fn main() -> eyre::Result<()> {
             };
 
             p = match (cli.segmenter_lstm_root, cli.segmenter_lstm_tag.as_str()) {
-                (Some(path), _) => p.with_segmenter_lstm(path)?,
+                (Some(path), _) => p.with_segmenter_lstm(&path)?,
                 #[cfg(feature = "networking")]
                 (_, "latest") => {
                     p.with_segmenter_lstm_for_tag(DatagenProvider::LATEST_TESTED_SEGMENTER_LSTM_TAG)

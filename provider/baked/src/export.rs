@@ -98,6 +98,7 @@ use std::collections::HashSet;
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::fs::File;
 use std::io::Write;
+use std::path::Path;
 use std::path::PathBuf;
 use std::sync::Mutex;
 
@@ -205,12 +206,8 @@ impl BakedExporter {
         })
     }
 
-    fn write_to_file<P: AsRef<std::path::Path>>(
-        &self,
-        relative_path: P,
-        data: TokenStream,
-    ) -> Result<(), DataError> {
-        let path = self.mod_directory.join(&relative_path);
+    fn write_to_file(&self, relative_path: &Path, data: TokenStream) -> Result<(), DataError> {
+        let path = self.mod_directory.join(relative_path);
 
         let mut formatted = if self.pretty {
             use std::process::{Command, Stdio};
@@ -320,7 +317,7 @@ impl BakedExporter {
         let maybe_msrv = maybe_msrv();
 
         self.write_to_file(
-            PathBuf::from(format!("{ident}.rs.data")),
+            Path::new(&format!("{ident}.rs.data")),
             quote! {
                 #[doc = #doc]
                 /// hardcoded in this file. This allows the struct to be used with
@@ -600,7 +597,7 @@ impl DataExporter for BakedExporter {
 
         // mod.rs is the interface for built-in data. It exposes one macro per marker.
         self.write_to_file(
-            PathBuf::from("mod.rs"),
+            Path::new("mod.rs"),
             quote! {
                 #(
                     include!(#file_paths);

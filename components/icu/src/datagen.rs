@@ -82,11 +82,8 @@ icu_registry::registry!(cb);
 /// # Ok(())
 /// # }
 /// ```
-pub fn markers_for_bin<P: AsRef<Path>>(path: P) -> Result<HashSet<DataMarkerInfo>, DataError> {
-    let file = std::fs::read(path.as_ref())?;
-    let file = file.as_slice();
-
-    markers_for_bin_inner(file)
+pub fn markers_for_bin(path: &Path) -> Result<HashSet<DataMarkerInfo>, DataError> {
+    markers_for_bin_inner(&std::fs::read(path)?)
 }
 
 #[test]

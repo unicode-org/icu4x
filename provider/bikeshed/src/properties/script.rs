@@ -31,7 +31,6 @@ impl DataProvider<ScriptWithExtensionsPropertyV1Marker> for DatagenProvider {
             .first()
             .ok_or_else(|| {
                 DataError::custom("Could not parse Script_Extensions data from TOML")
-                    .with_path_context("scx.toml")
             })?;
 
         let cpt_data = &scx_data.code_point_trie;
