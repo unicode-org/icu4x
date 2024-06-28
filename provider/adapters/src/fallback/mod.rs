@@ -9,6 +9,7 @@ use icu_locale::provider::*;
 use icu_locale::LocaleFallbacker;
 use icu_provider::prelude::*;
 use icu_provider::DryDataProvider;
+use icu_provider::DynamicDryDataProvider;
 
 /// A data provider wrapper that performs locale fallback. This enables arbitrary locales to be
 /// handled at runtime.
@@ -244,11 +245,7 @@ impl<P> AnyProvider for LocaleFallbackProvider<P>
 where
     P: AnyProvider,
 {
-    fn load_any(
-        &self,
-        marker: DataMarkerInfo,
-        req: DataRequest,
-    ) -> Result<AnyResponse, DataError> {
+    fn load_any(&self, marker: DataMarkerInfo, req: DataRequest) -> Result<AnyResponse, DataError> {
         self.run_fallback(
             marker,
             req,
@@ -277,6 +274,25 @@ where
     }
 }
 
+impl<P, M> DynamicDryDataProvider<M> for LocaleFallbackProvider<P>
+where
+    P: DynamicDryDataProvider<M>,
+    M: DynamicDataMarker,
+{
+    fn dry_load_data(
+        &self,
+        marker: DataMarkerInfo,
+        req: DataRequest,
+    ) -> Result<DataResponseMetadata, DataError> {
+        self.run_fallback(
+            marker,
+            req,
+            |req| self.inner.dry_load_data(marker, req),
+            |m| m,
+        )
+    }
+}
+
 impl<P, M> DataProvider<M> for LocaleFallbackProvider<P>
 where
     P: DataProvider<M>,
@@ -300,4 +316,54 @@ where
     fn dry_load(&self, req: DataRequest) -> Result<DataResponseMetadata, DataError> {
         self.run_fallback(M::INFO, req, |req| self.inner.dry_load(req), |m| m)
     }
+}
+
+#[test]
+fn dry_test() {
+    use icu_provider::hello_world::*;
+
+    struct TestProvider;
+    impl DataProvider<HelloWorldV1Marker> for TestProvider {
+        fn load(&self, _: DataRequest) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
+            panic!("pretend this is super expensive")
+        }
+    }
+
+    impl DryDataProvider<HelloWorldV1Marker> for TestProvider {
+        fn dry_load(&self, req: DataRequest) -> Result<DataResponseMetadata, DataError> {
+            // We support all languages but no regional variants. This is cheap to check.
+            if req.id.locale.region().is_some() || req.id.locale.language().as_str() == "en" {
+                Err(DataErrorKind::IdentifierNotFound.into_error())
+            } else {
+                Ok(Default::default())
+            }
+        }
+    }
+
+    let provider = LocaleFallbackProvider::new_with_fallbacker(
+        TestProvider,
+        LocaleFallbacker::new().static_to_owned(),
+    );
+
+    assert_eq!(
+        provider
+            .dry_load(DataRequest {
+                id: DataIdentifierBorrowed::for_locale(&"de-CH".parse().unwrap()),
+                ..Default::default()
+            })
+            .unwrap()
+            .locale,
+        "de".parse::<DataLocale>().ok()
+    );
+
+    assert_eq!(
+        provider
+            .dry_load(DataRequest {
+                id: DataIdentifierBorrowed::for_locale(&"en-GB".parse().unwrap()),
+                ..Default::default()
+            })
+            .unwrap()
+            .locale,
+        Some(DataLocale::default())
+    );
 }

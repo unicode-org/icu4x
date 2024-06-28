@@ -74,11 +74,11 @@ where
     }
 }
 
-/// A data provider that can determine whehter it can load a particular data identifier,
-/// potentially cheaper than performing the load.
+/// A data provider that can determine whether it can load a particular data identifier,
+/// potentially cheaper than actually performing the load.
 pub trait DryDataProvider<M: DataMarker>: DataProvider<M> {
     /// This method goes through the motions of [`load`], but only returns the metadata.
-    /// 
+    ///
     /// It must be equivalent to calling `load(req).map(|r| r.metadata)`, but might
     /// be implemented in a more efficient way.
     ///
@@ -109,16 +109,20 @@ where
     ) -> Result<DataResponse<M>, DataError>;
 }
 
-/// A dynanmic data provider that can determine whehter it can load a particular data identifier,
-/// potentially cheaper than performing the load.
+/// A dynanmic data provider that can determine whether it can load a particular data identifier,
+/// potentially cheaper than actually performing the load.
 pub trait DynamicDryDataProvider<M: DynamicDataMarker>: DynamicDataProvider<M> {
     /// This method goes through the motions of [`load_data`], but only returns the metadata.
-    /// 
+    ///
     /// It must be equivalent to calling `load_data(req).map(|r| r.metadata)`, but might
     /// be implemented in a more efficient way.
     ///
     /// [`load_data`]: DynamicDataProvider::load_data
-    fn dry_load_data(&self, marker: DataMarkerInfo, req: DataRequest) -> Result<DataResponseMetadata, DataError> {
+    fn dry_load_data(
+        &self,
+        marker: DataMarkerInfo,
+        req: DataRequest,
+    ) -> Result<DataResponseMetadata, DataError> {
         self.load_data(marker, req).map(|r| r.metadata)
     }
 }

@@ -72,10 +72,12 @@ lazy_static::lazy_static! {
         "Filterable",
         "ForkByErrorPredicate",
 
-        // The four main data provider traits should be covered if the enum or struct
+        // The main data provider traits should be covered if the enum or struct
         // implementing them is covered
         "DataProvider",
         "DynamicDataProvider",
+        "DryDataProvider",
+        "DynamicDryDataProvider",
         "BufferProvider",
         "AnyProvider",
 
