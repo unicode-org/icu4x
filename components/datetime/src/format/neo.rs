@@ -483,7 +483,6 @@ impl From<RawDateTimeNames<TimeMarker>> for RawDateTimeNames<DateTimeMarker> {
     }
 }
 
-#[derive(Debug)]
 pub(crate) struct RawDateTimeNames<R: DateTimeNamesMarker> {
     year_symbols:
         <R::YearNames as DateTimeNamesHolderTrait<YearNamesV1Marker>>::Container<FieldLength>,
@@ -518,6 +517,26 @@ pub(crate) struct RawDateTimeNames<R: DateTimeNamesMarker> {
     fixed_decimal_formatter: Option<FixedDecimalFormatter>,
     week_calculator: Option<WeekCalculator>,
     _marker: PhantomData<R>,
+}
+
+// Need a custom impl because not all of the associated types impl Debug
+impl<R: DateTimeNamesMarker> fmt::Debug for RawDateTimeNames<R> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("RawDateTimeNames")
+            .field("year_symbols", &self.year_symbols)
+            .field("month_symbols", &self.month_symbols)
+            .field("weekday_symbols", &self.weekday_symbols)
+            .field("dayperiod_symbols", &self.dayperiod_symbols)
+            .field("zone_essentials", &self.zone_essentials)
+            .field("exemplar_cities", &self.exemplar_cities)
+            .field("mz_generic_long", &self.mz_generic_long)
+            .field("mz_generic_short", &self.mz_generic_short)
+            .field("mz_specific_long", &self.mz_specific_long)
+            .field("mz_specific_short", &self.mz_specific_short)
+            .field("fixed_decimal_formatter", &self.fixed_decimal_formatter)
+            .field("week_calculator", &self.week_calculator)
+            .finish()
+    }
 }
 
 #[derive(Debug, Copy, Clone)]
