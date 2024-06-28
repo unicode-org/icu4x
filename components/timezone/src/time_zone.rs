@@ -70,7 +70,7 @@ impl CustomTimeZone {
         }
     }
 
-    /// Creates a new [`CustomTimeZone`] with the GMT offset set to 0.
+    /// Creates a new [`CustomTimeZone`] with the GMT offset set to UTC.
     ///
     /// All other fields are left empty.
     pub const fn utc() -> Self {
@@ -84,9 +84,6 @@ impl CustomTimeZone {
 
     /// Creates a new [`CustomTimeZone`] representing Greenwich Mean Time
     /// (London Time as observed in the winter).
-    ///
-    /// This is the same local time as UTC, but there are more
-    /// localizations available.
     pub const fn gmt() -> Self {
         Self {
             gmt_offset: Some(GmtOffset::utc()),

@@ -21,6 +21,7 @@ use crate::time_zone::{
     ExemplarCityFormat, FallbackTimeZoneFormatterUnit, FormatTimeZone, FormatTimeZoneError,
     GenericNonLocationLongFormat, GenericNonLocationShortFormat, LocalizedGmtFormat,
     SpecificNonLocationLongFormat, SpecificNonLocationShortFormat, TimeZoneFormatterUnit,
+    GenericLocationFormat,
 };
 
 use core::fmt::{self, Write};
@@ -857,9 +858,14 @@ where
                         ));
                     }
                     // 'VVV'
-                    (fields::TimeZone::UpperV, FieldLength::Abbreviated | FieldLength::Wide) => {
+                    (fields::TimeZone::UpperV, FieldLength::Abbreviated) => {
                         formatters.0 =
                             Some(TimeZoneFormatterUnit::ExemplarCity(ExemplarCityFormat {}));
+                    }
+                    // 'VVVV'
+                    (fields::TimeZone::UpperV, FieldLength::Wide) => {
+                        formatters.0 =
+                            Some(TimeZoneFormatterUnit::GenericLocation(GenericLocationFormat {}));
                     }
                     // `OOOO`, `ZZZZ`
                     (fields::TimeZone::UpperO | fields::TimeZone::UpperZ, FieldLength::Wide) => {
@@ -868,7 +874,6 @@ where
                     // TODO:
                     // `V` "uslax"
                     // `VV` "America/Los_Angeles"
-                    // `VVVV` "Los Angeles Time"
                     // Generic Partial Location: "Pacific Time (Los Angeles)"
                     // `O` "GMT-8"
                     // All `x` and `X` formats
@@ -898,6 +903,7 @@ where
                             continue;
                         }
                         Err(FormatTimeZoneError::MissingZoneSymbols) => {
+                            write_time_zone_missing(w)?;
                             break Err(DateTimeWriteError::MissingZoneSymbols);
                         }
                     }
