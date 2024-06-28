@@ -8,6 +8,7 @@ use crate::helpers::result_is_err_missing_locale;
 use icu_locale::provider::*;
 use icu_locale::LocaleFallbacker;
 use icu_provider::prelude::*;
+use icu_provider::DryDataProvider;
 
 /// A data provider wrapper that performs locale fallback. This enables arbitrary locales to be
 /// handled at runtime.
@@ -246,11 +247,11 @@ where
     fn load_any(
         &self,
         marker: DataMarkerInfo,
-        base_req: DataRequest,
+        req: DataRequest,
     ) -> Result<AnyResponse, DataError> {
         self.run_fallback(
             marker,
-            base_req,
+            req,
             |req| self.inner.load_any(marker, req),
             |res| &mut res.metadata,
         )
@@ -265,11 +266,11 @@ where
     fn load_data(
         &self,
         marker: DataMarkerInfo,
-        base_req: DataRequest,
+        req: DataRequest,
     ) -> Result<DataResponse<M>, DataError> {
         self.run_fallback(
             marker,
-            base_req,
+            req,
             |req| self.inner.load_data(marker, req),
             |res| &mut res.metadata,
         )
@@ -281,12 +282,22 @@ where
     P: DataProvider<M>,
     M: DataMarker,
 {
-    fn load(&self, base_req: DataRequest) -> Result<DataResponse<M>, DataError> {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         self.run_fallback(
             M::INFO,
-            base_req,
+            req,
             |req| self.inner.load(req),
             |res| &mut res.metadata,
         )
+    }
+}
+
+impl<P, M> DryDataProvider<M> for LocaleFallbackProvider<P>
+where
+    P: DryDataProvider<M>,
+    M: DataMarker,
+{
+    fn dry_load(&self, req: DataRequest) -> Result<DataResponseMetadata, DataError> {
+        self.run_fallback(M::INFO, req, |req| self.inner.dry_load(req), |m| m)
     }
 }

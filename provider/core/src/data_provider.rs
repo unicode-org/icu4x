@@ -76,18 +76,15 @@ where
 
 /// A data provider that can determine whehter it can load a particular data identifier,
 /// potentially cheaper than performing the load.
-pub trait CanLoad<M: DataMarker>: DataProvider<M> {
-    /// This method returns false iff [`load`] fails with a [`DataErrorKind::IdentifierNotFound`].
-    ///
-    /// Other errors are returned as [`load`] would.
+pub trait DryDataProvider<M: DataMarker>: DataProvider<M> {
+    /// This method goes through the motions of [`load`], but only returns the metadata.
+    /// 
+    /// It must be equivalent to calling `load(req).map(|r| r.metadata)`, but might
+    /// be implemented in a more efficient way.
     ///
     /// [`load`]: DataProvider::load
-    fn can_load(&self, req: DataRequest) -> Result<bool, DataError> {
-        match self.load(req) {
-            Ok(_) => Ok(true),
-            Err(e) if e.kind == DataErrorKind::IdentifierNotFound => Ok(false),
-            Err(e) => Err(e),
-        }
+    fn dry_load(&self, req: DataRequest) -> Result<DataResponseMetadata, DataError> {
+        self.load(req).map(|r| r.metadata)
     }
 }
 
@@ -114,18 +111,15 @@ where
 
 /// A dynanmic data provider that can determine whehter it can load a particular data identifier,
 /// potentially cheaper than performing the load.
-pub trait DynamicCanLoad<M: DynamicDataMarker>: DynamicDataProvider<M> {
-    /// This method returns false iff [`load_data`] fails with a [`DataErrorKind::IdentifierNotFound`].
-    ///
-    /// Other errors are returned as [`load_data`] would.
+pub trait DynamicDryDataProvider<M: DynamicDataMarker>: DynamicDataProvider<M> {
+    /// This method goes through the motions of [`load_data`], but only returns the metadata.
+    /// 
+    /// It must be equivalent to calling `load_data(req).map(|r| r.metadata)`, but might
+    /// be implemented in a more efficient way.
     ///
     /// [`load_data`]: DynamicDataProvider::load_data
-    fn can_load_data(&self, marker: DataMarkerInfo, req: DataRequest) -> Result<bool, DataError> {
-        match self.load_data(marker, req) {
-            Ok(_) => Ok(true),
-            Err(e) if e.kind == DataErrorKind::IdentifierNotFound => Ok(false),
-            Err(e) => Err(e),
-        }
+    fn dry_load_data(&self, marker: DataMarkerInfo, req: DataRequest) -> Result<DataResponseMetadata, DataError> {
+        self.load_data(marker, req).map(|r| r.metadata)
     }
 }
 

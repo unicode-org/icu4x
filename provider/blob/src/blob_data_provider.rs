@@ -7,6 +7,7 @@ use alloc::boxed::Box;
 use icu_provider::buf::BufferFormat;
 use icu_provider::prelude::*;
 use icu_provider::Cart;
+use icu_provider::DynamicDryDataProvider;
 use yoke::*;
 
 /// A data provider that reads from serialized blobs of data.
@@ -124,15 +125,26 @@ impl DynamicDataProvider<BufferMarker> for BlobDataProvider {
         marker: DataMarkerInfo,
         req: DataRequest,
     ) -> Result<DataResponse<BufferMarker>, DataError> {
+        let payload = self
+            .data
+            .try_map_project_cloned(|blob, _| blob.load(marker, req))
+            .map(DataPayload::from_yoked_buffer)?;
         let mut metadata = DataResponseMetadata::default();
         metadata.buffer_format = Some(BufferFormat::Postcard1);
-        Ok(DataResponse {
-            metadata,
-            payload: DataPayload::from_yoked_buffer(
-                self.data
-                    .try_map_project_cloned(|blob, _| blob.load(marker, req))?,
-            ),
-        })
+        Ok(DataResponse { metadata, payload })
+    }
+}
+
+impl DynamicDryDataProvider<BufferMarker> for BlobDataProvider {
+    fn dry_load_data(
+        &self,
+        marker: DataMarkerInfo,
+        req: DataRequest,
+    ) -> Result<DataResponseMetadata, DataError> {
+        self.data.get().load(marker, req)?;
+        let mut metadata = DataResponseMetadata::default();
+        metadata.buffer_format = Some(BufferFormat::Postcard1);
+        Ok(metadata)
     }
 }
 

@@ -13,9 +13,9 @@
 
 use crate::buf::BufferFormat;
 use crate::buf::BufferProvider;
-use crate::data_provider::DynamicCanLoad;
+use crate::data_provider::DynamicDryDataProvider;
 use crate::prelude::*;
-use crate::CanLoad;
+use crate::DryDataProvider;
 use serde::de::Deserialize;
 use yoke::trait_hack::YokeTraitHack;
 use yoke::Yokeable;
@@ -186,18 +186,18 @@ where
     }
 }
 
-impl<P, M> DynamicCanLoad<M> for DeserializingBufferProvider<'_, P>
+impl<P, M> DynamicDryDataProvider<M> for DeserializingBufferProvider<'_, P>
 where
     M: DynamicDataMarker,
-    P: DynamicCanLoad<BufferMarker> + ?Sized,
+    P: DynamicDryDataProvider<BufferMarker> + ?Sized,
     // Actual bound:
     //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: serde::de::Deserialize<'de>,
     // Necessary workaround bound (see `yoke::trait_hack` docs):
     for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: Deserialize<'de>,
 {
-    fn can_load_data(&self, marker: DataMarkerInfo, req: DataRequest) -> Result<bool, DataError> {
+    fn dry_load_data(&self, marker: DataMarkerInfo, req: DataRequest) -> Result<DataResponseMetadata, DataError> {
         // Avoids deserialization, deserialization cannot produce `DataErrorKind::MissingLocale`
-        self.0.can_load_data(marker, req)
+        self.0.dry_load_data(marker, req)
     }
 }
 
@@ -223,18 +223,18 @@ where
     }
 }
 
-impl<P, M> CanLoad<M> for DeserializingBufferProvider<'_, P>
+impl<P, M> DryDataProvider<M> for DeserializingBufferProvider<'_, P>
 where
     M: DataMarker,
-    P: DynamicCanLoad<BufferMarker> + ?Sized,
+    P: DynamicDryDataProvider<BufferMarker> + ?Sized,
     // Actual bound:
     //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: Deserialize<'de>,
     // Necessary workaround bound (see `yoke::trait_hack` docs):
     for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: Deserialize<'de>,
 {
-    fn can_load(&self, req: DataRequest) -> Result<bool, DataError> {
+    fn dry_load(&self, req: DataRequest) -> Result<DataResponseMetadata, DataError> {
         // Avoids deserialization, deserialization cannot produce `DataErrorKind::MissingLocale`
-        self.0.can_load_data(M::INFO, req)
+        self.0.dry_load_data(M::INFO, req)
     }
 }
 
