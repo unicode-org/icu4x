@@ -42,7 +42,7 @@ pub mod ffi {
             Box::new(CustomTimeZone::new_empty().into())
         }
 
-        /// Creates a time zone for UTC.
+        /// Creates a time zone for UTC (Coordinated Universal Time).
         #[diplomat::rust_link(icu::timezone::CustomTimeZone::utc, FnInStruct)]
         #[diplomat::rust_link(icu::timezone::GmtOffset::utc, FnInStruct, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "utc")]
@@ -50,18 +50,11 @@ pub mod ffi {
             Box::new(CustomTimeZone::utc().into())
         }
 
-        /// Creates a time zone for GMT (London winter time).
+        /// Creates a time zone for GMT (Greenwich Mean Time).
         #[diplomat::rust_link(icu::timezone::CustomTimeZone::gmt, FnInStruct)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "gmt")]
         pub fn create_gmt() -> Box<ICU4XCustomTimeZone> {
             Box::new(CustomTimeZone::gmt().into())
-        }
-
-        /// Creates a time zone for BST (London summer time).
-        #[diplomat::rust_link(icu::timezone::CustomTimeZone::bst, FnInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "bst")]
-        pub fn create_bst() -> Box<ICU4XCustomTimeZone> {
-            Box::new(CustomTimeZone::bst().into())
         }
 
         /// Sets the `gmt_offset` field from offset seconds.

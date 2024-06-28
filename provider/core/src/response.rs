@@ -840,6 +840,16 @@ where
         )))
     }
 
+    /// Returns whether this object represents a [`DataPayload`].
+    #[inline]
+    pub fn is_payload(&self) -> bool {
+        match &self.0 {
+            DataPayloadOrInner::Yoke(_) => true,
+            DataPayloadOrInner::Inner(DataPayloadOrInnerInner::StaticRef(_)) => true,
+            DataPayloadOrInner::Inner(DataPayloadOrInnerInner::Other(_)) => false,
+        }
+    }
+
     /// Gets the value from this [`DataPayload`] as `Ok` or the other type as `Err`.
     #[allow(clippy::needless_lifetimes)]
     #[inline]
@@ -864,6 +874,24 @@ where
             }
             DataPayloadOrInner::Inner(DataPayloadOrInnerInner::Other(o)) => Err(o),
         }
+    }
+}
+
+impl<M> DataPayloadOr<M, ()>
+where
+    M: DynamicDataMarker,
+{
+    /// Convenience function to return the other type with value `()`
+    #[inline]
+    pub fn none() -> Self {
+        Self::from_other(())
+    }
+
+    /// Convenience function to return `Some` or `None` for other type `()`
+    #[allow(clippy::needless_lifetimes)]
+    #[inline]
+    pub fn get_option<'a>(&'a self) -> Option<&'a <M::Yokeable as Yokeable<'a>>::Output> {
+        self.get().ok()
     }
 }
 

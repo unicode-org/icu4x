@@ -46,7 +46,7 @@ final class CustomTimeZone implements ffi.Finalizable {
     return CustomTimeZone._fromFfi(result, []);
   }
 
-  /// Creates a time zone for UTC.
+  /// Creates a time zone for UTC (Coordinated Universal Time).
   ///
   /// See the [Rust documentation for `utc`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#method.utc) for more information.
   factory CustomTimeZone.utc() {
@@ -54,19 +54,11 @@ final class CustomTimeZone implements ffi.Finalizable {
     return CustomTimeZone._fromFfi(result, []);
   }
 
-  /// Creates a time zone for GMT (London winter time).
+  /// Creates a time zone for GMT (Greenwich Mean Time).
   ///
   /// See the [Rust documentation for `gmt`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#method.gmt) for more information.
   factory CustomTimeZone.gmt() {
     final result = _ICU4XCustomTimeZone_create_gmt();
-    return CustomTimeZone._fromFfi(result, []);
-  }
-
-  /// Creates a time zone for BST (London summer time).
-  ///
-  /// See the [Rust documentation for `bst`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#method.bst) for more information.
-  factory CustomTimeZone.bst() {
-    final result = _ICU4XCustomTimeZone_create_bst();
     return CustomTimeZone._fromFfi(result, []);
   }
 
@@ -394,11 +386,6 @@ external ffi.Pointer<ffi.Opaque> _ICU4XCustomTimeZone_create_utc();
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'ICU4XCustomTimeZone_create_gmt')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _ICU4XCustomTimeZone_create_gmt();
-
-@meta.ResourceIdentifier('ICU4XCustomTimeZone_create_bst')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'ICU4XCustomTimeZone_create_bst')
-// ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _ICU4XCustomTimeZone_create_bst();
 
 @meta.ResourceIdentifier('ICU4XCustomTimeZone_try_set_gmt_offset_seconds')
 @ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Int32)>(isLeaf: true, symbol: 'ICU4XCustomTimeZone_try_set_gmt_offset_seconds')

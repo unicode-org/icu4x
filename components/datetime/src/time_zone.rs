@@ -169,19 +169,20 @@ pub(super) struct TimeZoneDataPayloads {
 
 /// A container contains all data payloads for CustomTimeZone (borrowed version).
 #[derive(Debug)]
-pub(super) struct TimeZoneDataPayloadsBorrowed<'a> {
+pub(crate) struct TimeZoneDataPayloadsBorrowed<'a> {
     /// The data that contains meta information about how to display content.
-    zone_formats: Option<&'a provider::time_zones::TimeZoneFormatsV1<'a>>,
+    pub(crate) zone_formats: Option<&'a provider::time_zones::TimeZoneFormatsV1<'a>>,
     /// The exemplar cities for time zones.
-    exemplar_cities: Option<&'a provider::time_zones::ExemplarCitiesV1<'a>>,
+    pub(crate) exemplar_cities: Option<&'a provider::time_zones::ExemplarCitiesV1<'a>>,
     /// The generic long metazone names, e.g. Pacific Time
-    mz_generic_long: Option<&'a provider::time_zones::MetazoneGenericNamesLongV1<'a>>,
+    pub(crate) mz_generic_long: Option<&'a provider::time_zones::MetazoneGenericNamesLongV1<'a>>,
     /// The generic short metazone names, e.g. PT
-    mz_generic_short: Option<&'a provider::time_zones::MetazoneGenericNamesShortV1<'a>>,
+    pub(crate) mz_generic_short: Option<&'a provider::time_zones::MetazoneGenericNamesShortV1<'a>>,
     /// The specific long metazone names, e.g. Pacific Daylight Time
-    mz_specific_long: Option<&'a provider::time_zones::MetazoneSpecificNamesLongV1<'a>>,
+    pub(crate) mz_specific_long: Option<&'a provider::time_zones::MetazoneSpecificNamesLongV1<'a>>,
     /// The specific short metazone names, e.g. Pacific Daylight Time
-    mz_specific_short: Option<&'a provider::time_zones::MetazoneSpecificNamesShortV1<'a>>,
+    pub(crate) mz_specific_short:
+        Option<&'a provider::time_zones::MetazoneSpecificNamesShortV1<'a>>,
 }
 
 impl TimeZoneDataPayloads {
@@ -193,6 +194,19 @@ impl TimeZoneDataPayloads {
             mz_generic_short: self.mz_generic_short.as_ref().map(|x| x.get()),
             mz_specific_long: self.mz_specific_long.as_ref().map(|x| x.get()),
             mz_specific_short: self.mz_specific_short.as_ref().map(|x| x.get()),
+        }
+    }
+}
+
+impl<'a> TimeZoneDataPayloadsBorrowed<'a> {
+    pub(crate) fn empty() -> Self {
+        TimeZoneDataPayloadsBorrowed {
+            zone_formats: None,
+            exemplar_cities: None,
+            mz_generic_long: None,
+            mz_generic_short: None,
+            mz_specific_long: None,
+            mz_specific_short: None,
         }
     }
 }

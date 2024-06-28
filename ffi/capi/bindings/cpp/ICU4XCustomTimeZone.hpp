@@ -29,8 +29,6 @@ namespace capi {
     
     ICU4XCustomTimeZone* ICU4XCustomTimeZone_create_gmt();
     
-    ICU4XCustomTimeZone* ICU4XCustomTimeZone_create_bst();
-    
     typedef struct ICU4XCustomTimeZone_try_set_gmt_offset_seconds_result {union { ICU4XTimeZoneInvalidOffsetError err;}; bool is_ok;} ICU4XCustomTimeZone_try_set_gmt_offset_seconds_result;
     ICU4XCustomTimeZone_try_set_gmt_offset_seconds_result ICU4XCustomTimeZone_try_set_gmt_offset_seconds(ICU4XCustomTimeZone* self, int32_t offset_seconds);
     
@@ -114,11 +112,6 @@ inline std::unique_ptr<ICU4XCustomTimeZone> ICU4XCustomTimeZone::create_utc() {
 
 inline std::unique_ptr<ICU4XCustomTimeZone> ICU4XCustomTimeZone::create_gmt() {
   auto result = capi::ICU4XCustomTimeZone_create_gmt();
-  return std::unique_ptr<ICU4XCustomTimeZone>(ICU4XCustomTimeZone::FromFFI(result));
-}
-
-inline std::unique_ptr<ICU4XCustomTimeZone> ICU4XCustomTimeZone::create_bst() {
-  auto result = capi::ICU4XCustomTimeZone_create_bst();
   return std::unique_ptr<ICU4XCustomTimeZone>(ICU4XCustomTimeZone::FromFFI(result));
 }
 

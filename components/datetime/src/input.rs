@@ -263,6 +263,17 @@ impl ExtractedTimeZoneInput {
     }
 }
 
+impl From<CustomTimeZone> for ExtractedTimeZoneInput {
+    fn from(value: CustomTimeZone) -> Self {
+        Self {
+            gmt_offset: value.gmt_offset,
+            time_zone_id: value.time_zone_id,
+            metazone_id: value.metazone_id,
+            zone_variant: value.zone_variant,
+        }
+    }
+}
+
 impl DateInput for ExtractedDateTimeInput {
     /// This actually doesn't matter, by the time we use this
     /// it's purely internal raw code where calendars are irrelevant
