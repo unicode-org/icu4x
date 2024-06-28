@@ -168,7 +168,7 @@ pub(super) struct TimeZoneDataPayloads {
 }
 
 /// A container contains all data payloads for CustomTimeZone (borrowed version).
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub(crate) struct TimeZoneDataPayloadsBorrowed<'a> {
     /// The data that contains meta information about how to display content.
     pub(crate) zone_formats: Option<&'a provider::time_zones::TimeZoneFormatsV1<'a>>,
