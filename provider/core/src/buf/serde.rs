@@ -13,7 +13,9 @@
 
 use crate::buf::BufferFormat;
 use crate::buf::BufferProvider;
+use crate::data_provider::DynamicCanLoad;
 use crate::prelude::*;
+use crate::CanLoad;
 use serde::de::Deserialize;
 use yoke::trait_hack::YokeTraitHack;
 use yoke::Yokeable;
@@ -146,7 +148,7 @@ impl DataPayload<BufferMarker> {
 impl<P, M> DynamicDataProvider<M> for DeserializingBufferProvider<'_, P>
 where
     M: DynamicDataMarker,
-    P: BufferProvider + ?Sized,
+    P: DynamicDataProvider<BufferMarker> + ?Sized,
     // Actual bound:
     //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: serde::de::Deserialize<'de>,
     // Necessary workaround bound (see `yoke::trait_hack` docs):
@@ -179,10 +181,25 @@ where
     }
 }
 
+impl<P, M> DynamicCanLoad<M> for DeserializingBufferProvider<'_, P>
+where
+    M: DynamicDataMarker,
+    P: DynamicCanLoad<BufferMarker> + ?Sized,
+    // Actual bound:
+    //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: serde::de::Deserialize<'de>,
+    // Necessary workaround bound (see `yoke::trait_hack` docs):
+    for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: Deserialize<'de>,
+{
+    fn can_load(&self, marker: DataMarkerInfo, req: DataRequest) -> Result<bool, DataError> {
+        // Avoids deserialization, deserialization cannot produce `DataErrorKind::MissingLocale`
+        self.0.can_load(marker, req)
+    }
+}
+
 impl<P, M> DataProvider<M> for DeserializingBufferProvider<'_, P>
 where
     M: DataMarker,
-    P: BufferProvider + ?Sized,
+    P: DynamicDataProvider<BufferMarker> + ?Sized,
     // Actual bound:
     //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: Deserialize<'de>,
     // Necessary workaround bound (see `yoke::trait_hack` docs):
@@ -198,6 +215,21 @@ where
     /// - `deserialize_bincode_1`
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         self.load_data(M::INFO, req)
+    }
+}
+
+impl<P, M> CanLoad<M> for DeserializingBufferProvider<'_, P>
+where
+    M: DataMarker,
+    P: DynamicCanLoad<BufferMarker> + ?Sized,
+    // Actual bound:
+    //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: Deserialize<'de>,
+    // Necessary workaround bound (see `yoke::trait_hack` docs):
+    for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: Deserialize<'de>,
+{
+    fn can_load(&self, req: DataRequest) -> Result<bool, DataError> {
+        // Avoids deserialization, deserialization cannot produce `DataErrorKind::MissingLocale`
+        self.0.can_load(M::INFO, req)
     }
 }
 
