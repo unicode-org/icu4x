@@ -74,6 +74,23 @@ where
     }
 }
 
+/// A data provider that can determine whehter it can load a particular data identifier,
+/// potentially cheaper than performing the load.
+pub trait CanLoad<M: DataMarker>: DataProvider<M> {
+    /// This method returns false iff [`load`] fails with a [`DataErrorKind::IdentifierNotFound`].
+    ///
+    /// Other errors are returned as [`load`] would.
+    ///
+    /// [`load`]: DataProvider::load
+    fn can_load(&self, req: DataRequest) -> Result<bool, DataError> {
+        match self.load(req) {
+            Ok(_) => Ok(true),
+            Err(e) if e.kind == DataErrorKind::IdentifierNotFound => Ok(false),
+            Err(e) => Err(e),
+        }
+    }
+}
+
 /// A data provider that loads data for a specific data type.
 ///
 /// Unlike [`DataProvider`], there may be multiple markers corresponding to the same data type.
@@ -93,6 +110,23 @@ where
         marker: DataMarkerInfo,
         req: DataRequest,
     ) -> Result<DataResponse<M>, DataError>;
+}
+
+/// A dynanmic data provider that can determine whehter it can load a particular data identifier,
+/// potentially cheaper than performing the load.
+pub trait DynamicCanLoad<M: DynamicDataMarker>: DynamicDataProvider<M> {
+    /// This method returns false iff [`load_data`] fails with a [`DataErrorKind::IdentifierNotFound`].
+    ///
+    /// Other errors are returned as [`load_data`] would.
+    ///
+    /// [`load_data`]: DynamicDataProvider::load_data
+    fn can_load_data(&self, marker: DataMarkerInfo, req: DataRequest) -> Result<bool, DataError> {
+        match self.load_data(marker, req) {
+            Ok(_) => Ok(true),
+            Err(e) if e.kind == DataErrorKind::IdentifierNotFound => Ok(false),
+            Err(e) => Err(e),
+        }
+    }
 }
 
 impl<'a, M, P> DynamicDataProvider<M> for &'a P

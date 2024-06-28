@@ -132,7 +132,8 @@ pub mod serde_borrow_de_utils;
 
 mod data_provider;
 pub use data_provider::{
-    BoundDataProvider, DataProvider, DataProviderWithMarker, DynamicDataProvider,
+    BoundDataProvider, CanLoad, DataProvider, DataProviderWithMarker, DynamicCanLoad,
+    DynamicDataProvider,
 };
 #[cfg(feature = "std")]
 pub use data_provider::{IterableDataProvider, IterableDynamicDataProvider};
