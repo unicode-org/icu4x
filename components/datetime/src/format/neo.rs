@@ -493,11 +493,11 @@ pub(crate) struct RawDateTimeNames<R: DateTimeNamesMarker> {
         >,
     zone_essentials:
         <R::ZoneEssentials as DateTimeNamesHolderTrait<tz::EssentialsV1Marker>>::Container<()>,
-    exemplar_cities:
-        <R::ZoneExemplarCities as DateTimeNamesHolderTrait<tz::ExemplarCitiesV1Marker>>::Container<()>,
-    mz_generic_long: <R::ZoneGenericLong as DateTimeNamesHolderTrait<
-        tz::MzGenericLongV1Marker,
+    exemplar_cities: <R::ZoneExemplarCities as DateTimeNamesHolderTrait<
+        tz::ExemplarCitiesV1Marker,
     >>::Container<()>,
+    mz_generic_long:
+        <R::ZoneGenericLong as DateTimeNamesHolderTrait<tz::MzGenericLongV1Marker>>::Container<()>,
     mz_generic_short: <R::ZoneGenericShort as DateTimeNamesHolderTrait<
         tz::MzGenericShortV1Marker,
     >>::Container<()>,
@@ -1520,7 +1520,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         weekday_provider: &(impl BoundDataProvider<WeekdayNamesV1Marker> + ?Sized),
         dayperiod_provider: &(impl BoundDataProvider<DayPeriodNamesV1Marker> + ?Sized),
         zone_essentials_provider: &(impl BoundDataProvider<tz::EssentialsV1Marker> + ?Sized),
-        exemplar_cities_provider:  &(impl BoundDataProvider<tz::ExemplarCitiesV1Marker> + ?Sized),
+        exemplar_cities_provider: &(impl BoundDataProvider<tz::ExemplarCitiesV1Marker> + ?Sized),
         mz_generic_long_provider: &(impl BoundDataProvider<tz::MzGenericLongV1Marker> + ?Sized),
         mz_generic_short_provider: &(impl BoundDataProvider<tz::MzGenericShortV1Marker> + ?Sized),
         mz_specific_long_provider: &(impl BoundDataProvider<tz::MzSpecificLongV1Marker> + ?Sized),
@@ -1566,48 +1566,51 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                     self.load_day_period_names(dayperiod_provider, locale, field.length)?;
                 }
                 FieldSymbol::TimeZone(time_zone_symbol) => {
-                    self.load_time_zone_essentials(
-                        zone_essentials_provider,
-                        locale
-                    )?;
+                    self.load_time_zone_essentials(zone_essentials_provider, locale)?;
                     // TODO: Load fallback names, too
                     match (time_zone_symbol, field.length) {
                         // `z..zzz`
-                        (fields::TimeZone::LowerZ, FieldLength::One | FieldLength::TwoDigit | FieldLength::Abbreviated) => {
+                        (
+                            fields::TimeZone::LowerZ,
+                            FieldLength::One | FieldLength::TwoDigit | FieldLength::Abbreviated,
+                        ) => {
                             // 'v'
                             self.load_time_zone_specific_short_names(
                                 mz_specific_short_provider,
                                 locale,
                             )?;
-                        },
+                        }
                         // `zzzz`
                         (fields::TimeZone::LowerZ, FieldLength::Wide) => {
                             self.load_time_zone_specific_long_names(
                                 mz_specific_long_provider,
                                 locale,
                             )?;
-                        },
+                        }
                         // 'v'
                         (fields::TimeZone::LowerV, FieldLength::One) => {
                             self.load_time_zone_generic_short_names(
                                 mz_generic_short_provider,
                                 locale,
                             )?;
-                        },
+                        }
                         // 'vvvv'
                         (fields::TimeZone::LowerV, FieldLength::Wide) => {
                             self.load_time_zone_generic_long_names(
                                 mz_generic_long_provider,
                                 locale,
                             )?;
-                        },
+                        }
                         // 'VVV..VVVV' (note: `V..VV` are for identifiers only)
-                        (fields::TimeZone::UpperV, FieldLength::Abbreviated | FieldLength::Wide) => {
+                        (
+                            fields::TimeZone::UpperV,
+                            FieldLength::Abbreviated | FieldLength::Wide,
+                        ) => {
                             self.load_time_zone_exemplar_city_names(
                                 exemplar_cities_provider,
                                 locale,
                             )?;
-                        },
+                        }
                         _ => {
                             return Err(LoadError::UnsupportedField(field));
                         }

@@ -14,8 +14,6 @@ use icu_timezone::ZoneVariant;
 
 /// Time zone type aliases for cleaner code
 pub(crate) mod tz {
-    pub(crate) use super::TimeZoneFormatsV1 as EssentialsV1;
-    pub(crate) use super::TimeZoneFormatsV1Marker as EssentialsV1Marker;
     pub(crate) use super::ExemplarCitiesV1;
     pub(crate) use super::ExemplarCitiesV1Marker;
     pub(crate) use super::MetazoneGenericNamesLongV1 as MzGenericLongV1;
@@ -26,6 +24,8 @@ pub(crate) mod tz {
     pub(crate) use super::MetazoneSpecificNamesLongV1Marker as MzSpecificLongV1Marker;
     pub(crate) use super::MetazoneSpecificNamesShortV1 as MzSpecificShortV1;
     pub(crate) use super::MetazoneSpecificNamesShortV1Marker as MzSpecificShortV1Marker;
+    pub(crate) use super::TimeZoneFormatsV1 as EssentialsV1;
+    pub(crate) use super::TimeZoneFormatsV1Marker as EssentialsV1Marker;
 }
 
 /// An ICU4X mapping to the CLDR timeZoneNames format strings.

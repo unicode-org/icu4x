@@ -10,10 +10,7 @@ use crate::{
     format::neo::*,
     neo::_internal::*,
     neo_skeleton::*,
-    provider::{
-        neo::*,
-        time_zones::tz,
-    },
+    provider::{neo::*, time_zones::tz},
     CldrCalendar,
 };
 use icu_calendar::{
