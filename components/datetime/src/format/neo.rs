@@ -1574,7 +1574,6 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                             fields::TimeZone::LowerZ,
                             FieldLength::One | FieldLength::TwoDigit | FieldLength::Abbreviated,
                         ) => {
-                            // 'v'
                             self.load_time_zone_specific_short_names(
                                 mz_specific_short_provider,
                                 locale,
@@ -1612,7 +1611,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                             )?;
                         }
                         _ => {
-                            return Err(LoadError::UnsupportedField(field));
+                            // Assume other time zone fields don't need extra data
                         }
                     };
                 }
