@@ -26,10 +26,6 @@ pub enum DataErrorKind {
     #[displaydoc("Invalid request")]
     InvalidRequest,
 
-    /// The request was blocked by a filter. The data may or may not be available.
-    #[displaydoc("Request blocked by filter")]
-    Filtered,
-
     /// The data for two [`DataMarker`]s is not consistent.
     #[displaydoc("The data for two markers is not consistent: {0:?} (were they generated in different datagen invocations?)")]
     InconsistentData(DataMarkerInfo),

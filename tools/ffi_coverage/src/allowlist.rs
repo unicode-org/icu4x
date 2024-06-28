@@ -284,11 +284,8 @@ lazy_static::lazy_static! {
         "icu_provider_adapters::any_payload::AnyPayloadProvider",
 
         // Not planned for 2.0
-        // On RequestFilterDataProvider, filter_by_langid needs callbacks, and
-        // filter_by_langid_allowlist_strict needs input iterators.
-        // require_langid is not very useful by itself.
-        "icu_provider_adapters::filter::Filterable",
-        "icu_provider_adapters::filter::RequestFilterDataProvider",
+        // FilterDataProvider::with_filter needs callbacks.
+        "icu_provider_adapters::filter::FilterDataProvider",
 
         // Not planned for 2.0
         // ForkByErrorProvider is the abstract forking provider; we expose the concrete

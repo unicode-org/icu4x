@@ -18,9 +18,6 @@ export enum ICU4XDataError {
   InvalidRequest = 'InvalidRequest',
   /**
    */
-  FilteredResource = 'FilteredResource',
-  /**
-   */
   InconsistentData = 'InconsistentData',
   /**
    */

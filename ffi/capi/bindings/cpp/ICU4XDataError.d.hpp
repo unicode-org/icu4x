@@ -16,12 +16,11 @@ namespace capi {
       ICU4XDataError_MarkerNotFound = 1,
       ICU4XDataError_IdentifierNotFound = 2,
       ICU4XDataError_InvalidRequest = 3,
-      ICU4XDataError_FilteredResource = 4,
-      ICU4XDataError_InconsistentData = 5,
-      ICU4XDataError_Downcast = 6,
-      ICU4XDataError_Deserialize = 7,
-      ICU4XDataError_Custom = 8,
-      ICU4XDataError_Io = 9,
+      ICU4XDataError_InconsistentData = 4,
+      ICU4XDataError_Downcast = 5,
+      ICU4XDataError_Deserialize = 6,
+      ICU4XDataError_Custom = 7,
+      ICU4XDataError_Io = 8,
     } ICU4XDataError;
 }
 
@@ -32,12 +31,11 @@ public:
     MarkerNotFound = 1,
     IdentifierNotFound = 2,
     InvalidRequest = 3,
-    FilteredResource = 4,
-    InconsistentData = 5,
-    Downcast = 6,
-    Deserialize = 7,
-    Custom = 8,
-    Io = 9,
+    InconsistentData = 4,
+    Downcast = 5,
+    Deserialize = 6,
+    Custom = 7,
+    Io = 8,
   };
 
   ICU4XDataError() = default;

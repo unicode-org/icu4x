@@ -98,18 +98,20 @@ use predicates::MarkerNotFoundPredicate;
 /// use icu_locale::{subtags::language, langid};
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
-/// use icu_provider_adapters::filter::Filterable;
+/// use icu_provider_adapters::filter::FilterDataProvider;
 /// use icu_provider_adapters::fork::ForkByMarkerProvider;
 ///
 /// let forking_provider = ForkByMarkerProvider::new(
-///     HelloWorldProvider
-///         .into_json_provider()
-///         .filterable("Chinese")
-///         .filter_by_langid(|langid| langid.language == language!("zh")),
-///     HelloWorldProvider
-///         .into_json_provider()
-///         .filterable("German")
-///         .filter_by_langid(|langid| langid.language == language!("de")),
+///     FilterDataProvider::new(
+///         HelloWorldProvider.into_json_provider(),
+///         "Chinese"
+///     )
+///     .with_filter(|id| id.locale.language() == language!("zh")),
+///     FilterDataProvider::new(
+///         HelloWorldProvider.into_json_provider(),
+///         "German"
+///     )
+///     .with_filter(|id| id.locale.language() == language!("de")),
 /// );
 ///
 /// let provider: &dyn DataProvider<HelloWorldV1Marker> =
@@ -165,19 +167,21 @@ impl<P0, P1> ForkByMarkerProvider<P0, P1> {
 /// use icu_locale::{subtags::language, langid};
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
-/// use icu_provider_adapters::filter::Filterable;
+/// use icu_provider_adapters::filter::FilterDataProvider;
 /// use icu_provider_adapters::fork::MultiForkByMarkerProvider;
 ///
 /// let forking_provider = MultiForkByMarkerProvider::new(
 ///     vec![
-///         HelloWorldProvider
-///             .into_json_provider()
-///             .filterable("Chinese")
-///             .filter_by_langid(|langid| langid.language == language!("zh")),
-///         HelloWorldProvider
-///             .into_json_provider()
-///             .filterable("German")
-///             .filter_by_langid(|langid| langid.language == language!("de")),
+///         FilterDataProvider::new(
+///             HelloWorldProvider.into_json_provider(),
+///             "Chinese"
+///         )
+///         .with_filter(|id| id.locale.language() == language!("zh")),
+///         FilterDataProvider::new(
+///             HelloWorldProvider.into_json_provider(),
+///             "German"
+///         )
+///         .with_filter(|id| id.locale.language() == language!("de")),
 ///     ],
 /// );
 ///
