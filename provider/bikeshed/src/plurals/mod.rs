@@ -61,7 +61,7 @@ macro_rules! implement {
                         self.get_rules_for(<$marker>::INFO)?
                             .0
                             .get(&req.id.locale.get_langid())
-                            .ok_or(DataErrorKind::MissingLocale.into_error())?,
+                            .ok_or(DataErrorKind::IdentifierNotFound.into_error())?,
                     )),
                 })
             }
@@ -117,7 +117,7 @@ impl DataProvider<PluralRangesV1Marker> for DatagenProvider {
                     self.get_plural_ranges()?
                         .0
                         .get(&req.id.locale.get_langid())
-                        .ok_or(DataErrorKind::MissingLocale.into_error())?,
+                        .ok_or(DataErrorKind::IdentifierNotFound.into_error())?,
                 )),
             })
         }

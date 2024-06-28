@@ -24,7 +24,7 @@ macro_rules! __impl_hangul_syllable_type_name_to_value_v1_marker {
                 if req.id.locale.is_empty() {
                     Ok(icu_provider::DataResponse { payload: icu_provider::DataPayload::from_static_ref(Self::SINGLETON_HANGUL_SYLLABLE_TYPE_NAME_TO_VALUE_V1_MARKER), metadata: Default::default() })
                 } else {
-                    Err(icu_provider::DataErrorKind::ExtraneousLocale.with_req(<icu::properties::provider::names::HangulSyllableTypeNameToValueV1Marker as icu_provider::DataMarker>::INFO, req))
+                    Err(icu_provider::DataErrorKind::InvalidRequest.with_req(<icu::properties::provider::names::HangulSyllableTypeNameToValueV1Marker as icu_provider::DataMarker>::INFO, req))
                 }
             }
         }

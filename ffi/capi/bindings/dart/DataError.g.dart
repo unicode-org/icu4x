@@ -6,23 +6,21 @@ part of 'lib.g.dart';
 enum DataError {
   unknown,
 
-  missingDataMarker,
+  markerNotFound,
 
-  missingLocale,
+  identifierNotFound,
 
-  needsLocale,
-
-  extraneousLocale,
+  invalidRequest,
 
   filteredResource,
 
-  mismatchedType,
+  inconsistentData,
+
+  downcast,
+
+  deserialize,
 
   custom,
 
-  io,
-
-  unavailableBufferFormat,
-
-  inconsistentData;
+  io;
 }

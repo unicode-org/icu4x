@@ -60,7 +60,7 @@ fn test_errors() {
             matches!(
                 err,
                 Err(DataError {
-                    kind: DataErrorKind::MissingLocale,
+                    kind: DataErrorKind::IdentifierNotFound,
                     ..
                 })
             ),
@@ -83,7 +83,7 @@ fn test_errors() {
             matches!(
                 err,
                 Err(DataError {
-                    kind: DataErrorKind::MissingDataMarker,
+                    kind: DataErrorKind::MarkerNotFound,
                     ..
                 })
             ),

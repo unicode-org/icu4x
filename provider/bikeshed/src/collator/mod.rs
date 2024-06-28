@@ -187,7 +187,7 @@ macro_rules! collation_provider {
                         ))
                         .map_err(|e| match e.kind {
                             DataErrorKind::Io(std::io::ErrorKind::NotFound) => {
-                                DataErrorKind::MissingLocale.with_req($marker::INFO, req)
+                                DataErrorKind::IdentifierNotFound.with_req($marker::INFO, req)
                             }
                             _ => e,
                         })?;

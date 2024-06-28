@@ -651,7 +651,7 @@ mod tests {
             _: DataRequest,
         ) -> Result<AnyResponse, DataError> {
             if self.markers.contains(&marker) {
-                return Err(DataErrorKind::MissingDataMarker.with_str_context("rejected"));
+                return Err(DataErrorKind::MarkerNotFound.with_str_context("rejected"));
             }
 
             let l = crate::provider::Baked::SINGLETON_LIKELY_SUBTAGS_FOR_LANGUAGE_V1_MARKER;
@@ -693,7 +693,7 @@ mod tests {
                 DataPayload::<LikelySubtagsForScriptRegionV1Marker>::from_static_ref(sr)
                     .wrap_into_any_payload()
             } else {
-                return Err(DataErrorKind::MissingDataMarker.into_error());
+                return Err(DataErrorKind::MarkerNotFound.into_error());
             };
 
             Ok(AnyResponse {

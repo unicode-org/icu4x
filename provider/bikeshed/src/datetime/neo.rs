@@ -78,7 +78,7 @@ impl DatagenProvider {
     ) -> Result<&ca::Dates, DataError> {
         let cldr_cal = supported_cals()
             .get(calendar)
-            .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?;
+            .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?;
 
         let resource: &ca::Resource = self
             .cldr()?
@@ -185,7 +185,7 @@ impl DatagenProvider {
     ) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         let cldr_cal = supported_cals()
             .get(&calendar)
-            .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?;
+            .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?;
         Ok(self
             .cldr()?
             .dates(cldr_cal)
@@ -687,7 +687,7 @@ impl IterableDataProviderCached<TimePatternV1Marker> for DatagenProvider {
 
         let cldr_cal = supported_cals()
             .get(&calendar)
-            .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?;
+            .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?;
 
         Ok(self
             .cldr()?

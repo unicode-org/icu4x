@@ -69,12 +69,12 @@ impl DynamicDataProvider<BufferMarker> for FsDataProvider {
         req: DataRequest,
     ) -> Result<DataResponse<BufferMarker>, DataError> {
         if marker.is_singleton && !req.id.locale.is_empty() {
-            return Err(DataErrorKind::ExtraneousLocale.with_req(marker, req));
+            return Err(DataErrorKind::InvalidRequest.with_req(marker, req));
         }
         let mut path = self.root.clone().into_os_string();
         write!(&mut path, "/{}", marker.path.as_str()).expect("infallible");
         if !Path::new(&path).exists() {
-            return Err(DataErrorKind::MissingDataMarker.with_req(marker, req));
+            return Err(DataErrorKind::MarkerNotFound.with_req(marker, req));
         }
         if !req.id.marker_attributes.is_empty() {
             write!(&mut path, "/{}", req.id.marker_attributes as &str).expect("infallible");
@@ -82,7 +82,7 @@ impl DynamicDataProvider<BufferMarker> for FsDataProvider {
         write!(&mut path, "/{}", req.id.locale).expect("infallible");
         write!(&mut path, ".{}", self.manifest.file_extension).expect("infallible");
         if !Path::new(&path).exists() {
-            return Err(DataErrorKind::MissingLocale.with_req(marker, req));
+            return Err(DataErrorKind::IdentifierNotFound.with_req(marker, req));
         }
         let buffer = fs::read(&path).map_err(|e| DataError::from(e).with_path_context(&path))?;
         let mut metadata = DataResponseMetadata::default();

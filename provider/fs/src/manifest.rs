@@ -36,8 +36,9 @@ impl Manifest {
                 // This case could be triggered if a new buffer format is added to the core library
                 // before it gets added to FsDataProvider.
                 bf => {
-                    return Err(DataErrorKind::UnavailableBufferFormat(bf)
-                        .with_str_context("Format not supported by FsDataProvider"))
+                    return Err(DataErrorKind::Deserialize
+                        .with_str_context("Format not supported by FsDataProvider")
+                        .with_debug_context(&bf))
                 }
             },
         })

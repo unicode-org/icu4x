@@ -3180,7 +3180,7 @@ macro_rules! __impl_persian_date_symbols_v1_marker {
                             break payload;
                         }
                         if fallback_iterator.get().is_und() {
-                            return Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::datetime::provider::calendar::PersianDateSymbolsV1Marker as icu_provider::DataMarker>::INFO, req));
+                            return Err(icu_provider::DataErrorKind::IdentifierNotFound.with_req(<icu::datetime::provider::calendar::PersianDateSymbolsV1Marker as icu_provider::DataMarker>::INFO, req));
                         }
                         fallback_iterator.step();
                     }

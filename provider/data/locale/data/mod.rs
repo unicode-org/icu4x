@@ -61,7 +61,7 @@ macro_rules! impl_any_provider {
                     h if h == <icu::locale::provider::LikelySubtagsForLanguageV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::locale::provider::LikelySubtagsForLanguageV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::locale::provider::LikelySubtagsForScriptRegionV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::locale::provider::LikelySubtagsForScriptRegionV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::locale::provider::ScriptDirectionV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::locale::provider::ScriptDirectionV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    _ => Err(icu_provider::DataErrorKind::MissingDataMarker.with_req(marker, req)),
+                    _ => Err(icu_provider::DataErrorKind::MarkerNotFound.with_req(marker, req)),
                 }
             }
         }

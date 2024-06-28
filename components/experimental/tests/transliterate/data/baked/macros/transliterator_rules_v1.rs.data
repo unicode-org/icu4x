@@ -178,7 +178,7 @@ macro_rules! __impl_transliterator_rules_v1 {
                 if let Some(payload) = lookup(req) {
                     Ok(icu_provider::DataResponse { payload: icu_provider::DataPayload::from_static_ref(payload), metadata: Default::default() })
                 } else {
-                    Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::experimental::transliterate::provider::TransliteratorRulesV1Marker as icu_provider::DataMarker>::INFO, req))
+                    Err(icu_provider::DataErrorKind::IdentifierNotFound.with_req(<icu::experimental::transliterate::provider::TransliteratorRulesV1Marker as icu_provider::DataMarker>::INFO, req))
                 }
             }
         }

@@ -11,7 +11,7 @@ macro_rules! __impl_exemplar_characters_main_v1_marker {
         #[clippy::msrv = "1.70"]
         impl icu_provider::DataProvider<icu::properties::provider::ExemplarCharactersMainV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::properties::provider::ExemplarCharactersMainV1Marker>, icu_provider::DataError> {
-                Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::properties::provider::ExemplarCharactersMainV1Marker as icu_provider::DataMarker>::INFO, req))
+                Err(icu_provider::DataErrorKind::IdentifierNotFound.with_req(<icu::properties::provider::ExemplarCharactersMainV1Marker as icu_provider::DataMarker>::INFO, req))
             }
         }
     };

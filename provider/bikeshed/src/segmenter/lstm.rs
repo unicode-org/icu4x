@@ -197,7 +197,7 @@ impl DataProvider<LstmForWordLineAutoV1Marker> for DatagenProvider {
                 "{}/weights.json",
                 req.id.marker_attributes as &str
             ))
-            .map_err(|_| DataErrorKind::MissingLocale.into_error())?;
+            .map_err(|_| DataErrorKind::IdentifierNotFound.into_error())?;
 
         let data = lstm_data.try_convert()?;
 

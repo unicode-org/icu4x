@@ -19,7 +19,7 @@ macro_rules! __impl_bcp47_to_iana_map_v1_marker {
                 if req.id.locale.is_empty() {
                     Ok(icu_provider::DataResponse { payload: icu_provider::DataPayload::from_static_ref(Self::SINGLETON_BCP47_TO_IANA_MAP_V1_MARKER), metadata: Default::default() })
                 } else {
-                    Err(icu_provider::DataErrorKind::ExtraneousLocale.with_req(<icu::timezone::provider::names::Bcp47ToIanaMapV1Marker as icu_provider::DataMarker>::INFO, req))
+                    Err(icu_provider::DataErrorKind::InvalidRequest.with_req(<icu::timezone::provider::names::Bcp47ToIanaMapV1Marker as icu_provider::DataMarker>::INFO, req))
                 }
             }
         }

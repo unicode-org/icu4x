@@ -4,8 +4,8 @@
 
 //! Providers that filter resource requests.
 //!
-//! Requests that fail a filter test will return [`DataError`] of kind [`FilteredResource`](
-//! DataErrorKind::FilteredResource) and will not appear in [`IterableDynamicDataProvider`] iterators.
+//! Requests that fail a filter test will return [`DataError`] of kind [`Filtered`](
+//! DataErrorKind::Filtered) and will not appear in [`IterableDynamicDataProvider`] iterators.
 //!
 //! The main struct is [`RequestFilterDataProvider`]. Although that struct can be created
 //! directly, the traits in this module provide helper functions for common filtering patterns.
@@ -39,7 +39,7 @@ use icu_provider::prelude::*;
 /// A data provider that selectively filters out data requests.
 ///
 /// Data requests that are rejected by the filter will return a [`DataError`] with kind
-/// [`FilteredResource`](DataErrorKind::FilteredResource), and they will not be returned
+/// [`Filtered`](DataErrorKind::Filtered), and they will not be returned
 /// by [`IterableDynamicDataProvider::iter_ids_for_marker`].
 ///
 /// Although this struct can be created directly, the traits in this module provide helper
@@ -75,7 +75,7 @@ where
         if (self.predicate)(req) {
             self.inner.load_data(marker, req)
         } else {
-            Err(DataErrorKind::FilteredResource
+            Err(DataErrorKind::Filtered
                 .with_str_context(self.filter_name)
                 .with_req(marker, req))
         }
@@ -92,7 +92,7 @@ where
         if (self.predicate)(req) {
             self.inner.load(req)
         } else {
-            Err(DataErrorKind::FilteredResource
+            Err(DataErrorKind::Filtered
                 .with_str_context(self.filter_name)
                 .with_req(M::INFO, req))
         }
@@ -108,7 +108,7 @@ where
         if (self.predicate)(req) {
             self.inner.load_any(marker, req)
         } else {
-            Err(DataErrorKind::FilteredResource
+            Err(DataErrorKind::Filtered
                 .with_str_context(self.filter_name)
                 .with_req(marker, req))
         }

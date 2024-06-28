@@ -19,7 +19,7 @@ macro_rules! __impl_general_category_value_to_short_name_v1_marker {
                 if req.id.locale.is_empty() {
                     Ok(icu_provider::DataResponse { payload: icu_provider::DataPayload::from_static_ref(Self::SINGLETON_GENERAL_CATEGORY_VALUE_TO_SHORT_NAME_V1_MARKER), metadata: Default::default() })
                 } else {
-                    Err(icu_provider::DataErrorKind::ExtraneousLocale.with_req(<icu::properties::provider::names::GeneralCategoryValueToShortNameV1Marker as icu_provider::DataMarker>::INFO, req))
+                    Err(icu_provider::DataErrorKind::InvalidRequest.with_req(<icu::properties::provider::names::GeneralCategoryValueToShortNameV1Marker as icu_provider::DataMarker>::INFO, req))
                 }
             }
         }

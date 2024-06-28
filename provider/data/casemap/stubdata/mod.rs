@@ -43,7 +43,7 @@ macro_rules! impl_any_provider {
                 match marker.path.hashed() {
                     h if h == <icu::casemap::provider::CaseMapV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::casemap::provider::CaseMapV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::casemap::provider::CaseMapUnfoldV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::casemap::provider::CaseMapUnfoldV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    _ => Err(icu_provider::DataErrorKind::MissingDataMarker.with_req(marker, req)),
+                    _ => Err(icu_provider::DataErrorKind::MarkerNotFound.with_req(marker, req)),
                 }
             }
         }

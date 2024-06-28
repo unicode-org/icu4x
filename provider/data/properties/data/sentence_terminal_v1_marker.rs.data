@@ -22,7 +22,7 @@ macro_rules! __impl_sentence_terminal_v1_marker {
                 if req.id.locale.is_empty() {
                     Ok(icu_provider::DataResponse { payload: icu_provider::DataPayload::from_static_ref(Self::SINGLETON_SENTENCE_TERMINAL_V1_MARKER), metadata: Default::default() })
                 } else {
-                    Err(icu_provider::DataErrorKind::ExtraneousLocale.with_req(<icu::properties::provider::SentenceTerminalV1Marker as icu_provider::DataMarker>::INFO, req))
+                    Err(icu_provider::DataErrorKind::InvalidRequest.with_req(<icu::properties::provider::SentenceTerminalV1Marker as icu_provider::DataMarker>::INFO, req))
                 }
             }
         }

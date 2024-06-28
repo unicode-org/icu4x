@@ -24,7 +24,7 @@ macro_rules! __impl_case_map_unfold_v1_marker {
                 if req.id.locale.is_empty() {
                     Ok(icu_provider::DataResponse { payload: icu_provider::DataPayload::from_static_ref(Self::SINGLETON_CASE_MAP_UNFOLD_V1_MARKER), metadata: Default::default() })
                 } else {
-                    Err(icu_provider::DataErrorKind::ExtraneousLocale.with_req(<icu::casemap::provider::CaseMapUnfoldV1Marker as icu_provider::DataMarker>::INFO, req))
+                    Err(icu_provider::DataErrorKind::InvalidRequest.with_req(<icu::casemap::provider::CaseMapUnfoldV1Marker as icu_provider::DataMarker>::INFO, req))
                 }
             }
         }

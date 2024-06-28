@@ -13,16 +13,15 @@
 namespace capi {
     typedef enum ICU4XDataError {
       ICU4XDataError_Unknown = 0,
-      ICU4XDataError_MissingDataMarker = 1,
-      ICU4XDataError_MissingLocale = 2,
-      ICU4XDataError_NeedsLocale = 3,
-      ICU4XDataError_ExtraneousLocale = 4,
-      ICU4XDataError_FilteredResource = 5,
-      ICU4XDataError_MismatchedType = 6,
-      ICU4XDataError_Custom = 7,
-      ICU4XDataError_Io = 8,
-      ICU4XDataError_UnavailableBufferFormat = 9,
-      ICU4XDataError_InconsistentData = 10,
+      ICU4XDataError_MarkerNotFound = 1,
+      ICU4XDataError_IdentifierNotFound = 2,
+      ICU4XDataError_InvalidRequest = 3,
+      ICU4XDataError_FilteredResource = 4,
+      ICU4XDataError_InconsistentData = 5,
+      ICU4XDataError_Downcast = 6,
+      ICU4XDataError_Deserialize = 7,
+      ICU4XDataError_Custom = 8,
+      ICU4XDataError_Io = 9,
     } ICU4XDataError;
 }
 
@@ -30,16 +29,15 @@ class ICU4XDataError {
 public:
   enum Value {
     Unknown = 0,
-    MissingDataMarker = 1,
-    MissingLocale = 2,
-    NeedsLocale = 3,
-    ExtraneousLocale = 4,
-    FilteredResource = 5,
-    MismatchedType = 6,
-    Custom = 7,
-    Io = 8,
-    UnavailableBufferFormat = 9,
-    InconsistentData = 10,
+    MarkerNotFound = 1,
+    IdentifierNotFound = 2,
+    InvalidRequest = 3,
+    FilteredResource = 4,
+    InconsistentData = 5,
+    Downcast = 6,
+    Deserialize = 7,
+    Custom = 8,
+    Io = 9,
   };
 
   ICU4XDataError() = default;

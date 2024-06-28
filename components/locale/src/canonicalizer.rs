@@ -644,7 +644,7 @@ mod tests {
 
             println!("{:#?}", marker);
             if self.markers.contains(&marker) {
-                return Err(DataErrorKind::MissingDataMarker.with_str_context("rejected"));
+                return Err(DataErrorKind::MarkerNotFound.with_str_context("rejected"));
             }
 
             let aliases_v2 = crate::provider::Baked::SINGLETON_ALIASES_V2_MARKER;
@@ -675,7 +675,7 @@ mod tests {
                 DataPayload::<LikelySubtagsForScriptRegionV1Marker>::from_static_ref(sr)
                     .wrap_into_any_payload()
             } else {
-                return Err(DataErrorKind::MissingDataMarker.into_error());
+                return Err(DataErrorKind::MarkerNotFound.into_error());
             };
 
             Ok(AnyResponse {

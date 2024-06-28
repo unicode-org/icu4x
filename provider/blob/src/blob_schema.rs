@@ -98,10 +98,10 @@ impl<'data> BlobSchemaV1<'data> {
         let idx = self
             .markers
             .get0(&marker.path.hashed())
-            .ok_or(DataErrorKind::MissingDataMarker)
+            .ok_or(DataErrorKind::MarkerNotFound)
             .and_then(|cursor| {
                 if marker.is_singleton && !req.id.locale.is_empty() {
-                    return Err(DataErrorKind::ExtraneousLocale);
+                    return Err(DataErrorKind::InvalidRequest);
                 }
                 cursor
                     .get1_copied_by(|k| {
@@ -123,7 +123,7 @@ impl<'data> BlobSchemaV1<'data> {
                             .writeable_cmp_bytes(&k.0)
                             .reverse()
                     })
-                    .ok_or(DataErrorKind::MissingLocale)
+                    .ok_or(DataErrorKind::IdentifierNotFound)
             })
             .map_err(|kind| kind.with_req(marker, req))?;
         self.buffers
@@ -139,7 +139,7 @@ impl<'data> BlobSchemaV1<'data> {
         Ok(self
             .markers
             .get0(&marker.path.hashed())
-            .ok_or_else(|| DataErrorKind::MissingDataMarker.with_marker(marker))?
+            .ok_or_else(|| DataErrorKind::MarkerNotFound.with_marker(marker))?
             .iter1_copied()
             .filter_map(|(s, _)| std::str::from_utf8(&s.0).ok())
             .filter_map(|s| {
@@ -223,9 +223,9 @@ impl<'data, LocaleVecFormat: VarZeroVecFormat> BlobSchemaV2<'data, LocaleVecForm
             .markers
             .binary_search(&marker.path.hashed())
             .ok()
-            .ok_or_else(|| DataErrorKind::MissingDataMarker.with_req(marker, req))?;
+            .ok_or_else(|| DataErrorKind::MarkerNotFound.with_req(marker, req))?;
         if marker.is_singleton && !req.id.locale.is_empty() {
-            return Err(DataErrorKind::ExtraneousLocale.with_req(marker, req));
+            return Err(DataErrorKind::InvalidRequest.with_req(marker, req));
         }
         let zerotrie = self
             .locales
@@ -238,11 +238,11 @@ impl<'data, LocaleVecFormat: VarZeroVecFormat> BlobSchemaV2<'data, LocaleVecForm
             req.id
                 .marker_attributes
                 .write_to(&mut cursor)
-                .map_err(|_| DataErrorKind::MissingLocale.with_req(marker, req))?;
+                .map_err(|_| DataErrorKind::IdentifierNotFound.with_req(marker, req))?;
         }
         let blob_index = cursor
             .take_value()
-            .ok_or_else(|| DataErrorKind::MissingLocale.with_req(marker, req))?;
+            .ok_or_else(|| DataErrorKind::IdentifierNotFound.with_req(marker, req))?;
         let buffer = self
             .buffers
             .get(blob_index)
@@ -259,7 +259,7 @@ impl<'data, LocaleVecFormat: VarZeroVecFormat> BlobSchemaV2<'data, LocaleVecForm
             .markers
             .binary_search(&marker.path.hashed())
             .ok()
-            .ok_or_else(|| DataErrorKind::MissingDataMarker.with_marker(marker))?;
+            .ok_or_else(|| DataErrorKind::MarkerNotFound.with_marker(marker))?;
         let zerotrie = self
             .locales
             .get(marker_index)

@@ -46,7 +46,7 @@ macro_rules! __impl_hello_world_v1_marker {
         impl icu_provider::DataProvider<icu_provider::hello_world::HelloWorldV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu_provider::hello_world::HelloWorldV1Marker>, icu_provider::DataError> {
                 let metadata = Default::default();
-                let Some(payload) = icu_provider_baked::DataStore::get(&Self::DATA_HELLO_WORLD_V1_MARKER, req.id) else { return Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu_provider::hello_world::HelloWorldV1Marker as icu_provider::DataMarker>::INFO, req)) };
+                let Some(payload) = icu_provider_baked::DataStore::get(&Self::DATA_HELLO_WORLD_V1_MARKER, req.id) else { return Err(icu_provider::DataErrorKind::IdentifierNotFound.with_req(<icu_provider::hello_world::HelloWorldV1Marker as icu_provider::DataMarker>::INFO, req)) };
                 Ok(icu_provider::DataResponse { payload: icu_provider::DataPayload::from_static_ref(payload), metadata })
             }
         }

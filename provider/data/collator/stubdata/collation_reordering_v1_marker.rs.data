@@ -11,7 +11,7 @@ macro_rules! __impl_collation_reordering_v1_marker {
         #[clippy::msrv = "1.70"]
         impl icu_provider::DataProvider<icu::collator::provider::CollationReorderingV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::collator::provider::CollationReorderingV1Marker>, icu_provider::DataError> {
-                Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::collator::provider::CollationReorderingV1Marker as icu_provider::DataMarker>::INFO, req))
+                Err(icu_provider::DataErrorKind::IdentifierNotFound.with_req(<icu::collator::provider::CollationReorderingV1Marker as icu_provider::DataMarker>::INFO, req))
             }
         }
     };
