@@ -190,9 +190,9 @@ where
     // Necessary workaround bound (see `yoke::trait_hack` docs):
     for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: Deserialize<'de>,
 {
-    fn can_load(&self, marker: DataMarkerInfo, req: DataRequest) -> Result<bool, DataError> {
+    fn can_load_data(&self, marker: DataMarkerInfo, req: DataRequest) -> Result<bool, DataError> {
         // Avoids deserialization, deserialization cannot produce `DataErrorKind::MissingLocale`
-        self.0.can_load(marker, req)
+        self.0.can_load_data(marker, req)
     }
 }
 
@@ -229,7 +229,7 @@ where
 {
     fn can_load(&self, req: DataRequest) -> Result<bool, DataError> {
         // Avoids deserialization, deserialization cannot produce `DataErrorKind::MissingLocale`
-        self.0.can_load(M::INFO, req)
+        self.0.can_load_data(M::INFO, req)
     }
 }
 

@@ -115,12 +115,12 @@ where
 /// A dynanmic data provider that can determine whehter it can load a particular data identifier,
 /// potentially cheaper than performing the load.
 pub trait DynamicCanLoad<M: DynamicDataMarker>: DynamicDataProvider<M> {
-    /// This method returns false iff [`load`] fails with a [`DataErrorKind::MissingLocale`].
+    /// This method returns false iff [`load_data`] fails with a [`DataErrorKind::MissingLocale`].
     ///
-    /// Other errors are returned as [`load`] would.
+    /// Other errors are returned as [`load_data`] would.
     ///
-    /// [`load`]: Self::load
-    fn can_load(&self, marker: DataMarkerInfo, req: DataRequest) -> Result<bool, DataError> {
+    /// [`load_data`]: Self::load_data
+    fn can_load_data(&self, marker: DataMarkerInfo, req: DataRequest) -> Result<bool, DataError> {
         match self.load_data(marker, req) {
             Ok(_) => Ok(true),
             Err(e) if e.kind == DataErrorKind::MissingLocale => Ok(false),
