@@ -87,6 +87,7 @@ pub(crate) enum DateTimeZonePatternSelectionData {
 }
 
 #[derive(Debug, Copy, Clone)]
+#[allow(dead_code)] // TODO: Add zone glue to the data and read it
 pub(crate) enum DateTimeZonePatternDataBorrowed<'a> {
     Date(DatePatternDataBorrowed<'a>),
     Time(TimePatternDataBorrowed<'a>),
