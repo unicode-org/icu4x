@@ -58,7 +58,7 @@ where
     /// assert!(matches!(
     ///     response,
     ///     Err(DataError {
-    ///         kind: DataErrorKind::FilteredResource,
+    ///         kind: DataErrorKind::Filtered,
     ///         ..
     ///     })
     /// ));
@@ -132,7 +132,7 @@ where
     /// assert!(matches!(
     ///     response,
     ///     Err(DataError {
-    ///         kind: DataErrorKind::FilteredResource,
+    ///         kind: DataErrorKind::Filtered,
     ///         ..
     ///     })
     /// ));
@@ -194,7 +194,7 @@ where
     /// assert!(matches!(
     ///     response,
     ///     Err(DataError {
-    ///         kind: DataErrorKind::FilteredResource,
+    ///         kind: DataErrorKind::Filtered,
     ///         ..
     ///     })
     /// ));

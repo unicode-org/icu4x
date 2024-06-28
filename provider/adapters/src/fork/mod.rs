@@ -17,10 +17,10 @@
 //!
 //! To fork between providers that support different locales, see:
 //!
-//! - [`ForkByErrorProvider`]`<`[`MissingLocalePredicate`]`>`
-//! - [`MultiForkByErrorProvider`]`<`[`MissingLocalePredicate`]`>`
+//! - [`ForkByErrorProvider`]`<`[`IdentiferNotFoundPredicate`]`>`
+//! - [`MultiForkByErrorProvider`]`<`[`IdentiferNotFoundPredicate`]`>`
 //!
-//! [`MissingLocalePredicate`]: predicates::IdentifierNotFoundPredicate
+//! [`IdentiferNotFoundPredicate`]: predicates::IdentifierNotFoundPredicate
 //!
 //! # Examples
 //!
@@ -28,7 +28,7 @@
 //!
 //! - [`ForkByMarkerProvider`]
 //! - [`MultiForkByMarkerProvider`]
-//! - [`MissingLocalePredicate`]
+//! - [`IdentiferNotFoundPredicate`]
 
 use alloc::vec::Vec;
 

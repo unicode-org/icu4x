@@ -24,7 +24,7 @@ use writeable::Writeable;
 // Create the empty MultiForkByErrorProvider:
 let mut provider = MultiForkByErrorProvider::new_with_predicate(
     vec![],
-    MissingLocalePredicate
+    IdentifierNotFoundPredicate
 );
 
 // Pretend we're loading these from the network or somewhere.

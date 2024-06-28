@@ -85,7 +85,7 @@ impl ForkByErrorPredicate for MarkerNotFoundPredicate {
 /// let provider = ForkByErrorProvider::new_with_predicate(
 ///     provider_de,
 ///     provider_ro,
-///     MissingLocalePredicate
+///     IdentifierNotFoundPredicate
 /// );
 ///
 /// // Test that we can load both "de" and "ro" data:
