@@ -13,6 +13,7 @@ pub use icu_timezone::provider::{MetazoneId, TimeZoneBcp47Id};
 use icu_timezone::ZoneVariant;
 
 /// Time zone type aliases for cleaner code
+#[cfg(feature = "experimental")]
 pub(crate) mod tz {
     pub(crate) use super::ExemplarCitiesV1;
     pub(crate) use super::ExemplarCitiesV1Marker;
