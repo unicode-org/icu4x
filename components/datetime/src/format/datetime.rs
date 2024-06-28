@@ -914,7 +914,6 @@ where
                             }
                         }
                     };
-                    println!("trying: {formatter:?}");
                     match formatter.format(w, &zone_input, payloads)? {
                         Ok(()) => break Ok(()),
                         Err(FormatTimeZoneError::MissingInputField(_)) => {
