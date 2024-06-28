@@ -35,7 +35,7 @@ pub enum DataErrorKind {
     InconsistentData(DataMarkerInfo),
 
     /// An error occured during [`Any`](core::any::Any) downcasting.
-    #[displaydoc("Mismatched types: expected {0}")]
+    #[displaydoc("Downcast: expected {0}, found")]
     Downcast(&'static str),
 
     /// An error occured during [`serde`] deserialization.
