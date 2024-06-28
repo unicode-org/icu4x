@@ -1176,7 +1176,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         let variables = field_length;
         let req = DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                &marker_attrs::symbol_attr_for(
+                marker_attrs::symbol_attr_for(
                     marker_attrs::Context::Format,
                     match field_length {
                         FieldLength::Abbreviated => marker_attrs::Length::Abbr,
@@ -1213,7 +1213,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         let variables = (field_symbol, field_length);
         let req = DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                &marker_attrs::symbol_attr_for(
+                marker_attrs::symbol_attr_for(
                     match field_symbol {
                         fields::Month::Format => marker_attrs::Context::Format,
                         fields::Month::StandAlone => marker_attrs::Context::Standalone,
@@ -1255,7 +1255,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         let variables = field_length;
         let req = DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                &marker_attrs::symbol_attr_for(
+                marker_attrs::symbol_attr_for(
                     marker_attrs::Context::Format,
                     match field_length {
                         FieldLength::Abbreviated => marker_attrs::Length::Abbr,
@@ -1299,7 +1299,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         let variables = (field_symbol, field_length);
         let req = DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                &marker_attrs::symbol_attr_for(
+                marker_attrs::symbol_attr_for(
                     match field_symbol {
                         // UTS 35 says that "e" and "E" have the same non-numeric names
                         fields::Weekday::Format | fields::Weekday::Local => {
