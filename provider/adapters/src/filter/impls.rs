@@ -26,9 +26,6 @@ where
     /// Filter out data requests with certain langids according to the predicate function. The
     /// predicate should return `true` to allow a langid and `false` to reject a langid.
     ///
-    /// Data requests with no langid will be allowed. To reject data requests without a langid,
-    /// chain this with [`Self::require_langid`].
-    ///
     /// # Examples
     ///
     /// ```
