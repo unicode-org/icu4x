@@ -22,7 +22,7 @@ use icu_calendar::{
     AnyCalendar, AnyCalendarKind, AsCalendar, Calendar, Date, DateTime, Ref, Time,
 };
 use icu_provider::{marker::NeverMarker, prelude::*};
-use icu_timezone::CustomTimeZone;
+use icu_timezone::{CustomTimeZone, CustomZonedDateTime};
 
 pub(crate) mod private {
     pub trait Sealed {}
@@ -60,6 +60,19 @@ impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> ConvertCalendar for DateTi
     }
 }
 
+impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> ConvertCalendar for CustomZonedDateTime<A> {
+    type Converted<'a> = CustomZonedDateTime<Ref<'a, AnyCalendar>>;
+    #[inline]
+    fn to_calendar<'a>(&self, calendar: &'a AnyCalendar) -> Self::Converted<'a> {
+        let date = self.date.to_any().to_calendar(Ref(calendar));
+        CustomZonedDateTime {
+            date,
+            time: self.time,
+            zone: self.zone,
+        }
+    }
+}
+
 impl ConvertCalendar for CustomTimeZone {
     type Converted<'a> = CustomTimeZone;
     #[inline]
@@ -84,13 +97,25 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> IsAnyCalendarKind for Date<A> {
     }
 }
 
+impl IsAnyCalendarKind for Time {
+    fn is_any_calendar_kind(&self, _: AnyCalendarKind) -> bool {
+        true
+    }
+}
+
 impl<C: Calendar, A: AsCalendar<Calendar = C>> IsAnyCalendarKind for DateTime<A> {
     fn is_any_calendar_kind(&self, any_calendar_kind: AnyCalendarKind) -> bool {
         self.date.calendar().any_calendar_kind() == Some(any_calendar_kind)
     }
 }
 
-impl IsAnyCalendarKind for Time {
+impl<C: Calendar, A: AsCalendar<Calendar = C>> IsAnyCalendarKind for CustomZonedDateTime<A> {
+    fn is_any_calendar_kind(&self, _: AnyCalendarKind) -> bool {
+        true
+    }
+}
+
+impl IsAnyCalendarKind for CustomTimeZone {
     fn is_any_calendar_kind(&self, _: AnyCalendarKind) -> bool {
         true
     }
@@ -122,6 +147,15 @@ impl<C> NeoGetField<NeoTypedInput<C>> for Time {
 }
 
 impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<NeoTypedInput<C>> for DateTime<A> {
+    #[inline]
+    fn get_field(&self) -> NeoTypedInput<C> {
+        NeoTypedInput {
+            _calendar: PhantomData,
+        }
+    }
+}
+
+impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<NeoTypedInput<C>> for CustomZonedDateTime<A> {
     #[inline]
     fn get_field(&self) -> NeoTypedInput<C> {
         NeoTypedInput {
@@ -295,6 +329,85 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<NanoSecond> for DateT
     }
 }
 
+impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<FormattableYear> for CustomZonedDateTime<A> {
+    #[inline]
+    fn get_field(&self) -> FormattableYear {
+        self.date.year()
+    }
+}
+
+impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<FormattableMonth> for CustomZonedDateTime<A> {
+    #[inline]
+    fn get_field(&self) -> FormattableMonth {
+        self.date.month()
+    }
+}
+
+impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<DayOfMonth> for CustomZonedDateTime<A> {
+    #[inline]
+    fn get_field(&self) -> DayOfMonth {
+        self.date.day_of_month()
+    }
+}
+
+impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<IsoWeekday> for CustomZonedDateTime<A> {
+    #[inline]
+    fn get_field(&self) -> IsoWeekday {
+        self.date.day_of_week()
+    }
+}
+
+impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<DayOfYearInfo> for CustomZonedDateTime<A> {
+    #[inline]
+    fn get_field(&self) -> DayOfYearInfo {
+        self.date.day_of_year_info()
+    }
+}
+
+impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> NeoGetField<AnyCalendarKind> for CustomZonedDateTime<A> {
+    #[inline]
+    fn get_field(&self) -> AnyCalendarKind {
+        self.date.calendar().kind()
+    }
+}
+
+impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<IsoHour> for CustomZonedDateTime<A> {
+    #[inline]
+    fn get_field(&self) -> IsoHour {
+        self.time.hour
+    }
+}
+
+impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<IsoMinute> for CustomZonedDateTime<A> {
+    #[inline]
+    fn get_field(&self) -> IsoMinute {
+        self.time.minute
+    }
+}
+
+impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<IsoSecond> for CustomZonedDateTime<A> {
+    #[inline]
+    fn get_field(&self) -> IsoSecond {
+        self.time.second
+    }
+}
+
+impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<NanoSecond> for CustomZonedDateTime<A> {
+    #[inline]
+    fn get_field(&self) -> NanoSecond {
+        self.time.nanosecond
+    }
+}
+
+impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<CustomTimeZone> for CustomZonedDateTime<A> {
+    #[inline]
+    fn get_field(&self) -> CustomTimeZone {
+        self.zone
+    }
+}
+
+// Note: `impl NeoGetField<CustomTimeZone> for CustomTimeZone` comes via blanket impl
+
 /// Struct representing the absence of a datetime formatting field.
 #[derive(Debug, Copy, Clone)]
 #[allow(clippy::exhaustive_structs)] // empty marker struct
@@ -315,6 +428,13 @@ impl NeoGetField<NeverField> for Time {
 }
 
 impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<NeverField> for DateTime<A> {
+    #[inline]
+    fn get_field(&self) -> NeverField {
+        NeverField
+    }
+}
+
+impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<NeverField> for CustomZonedDateTime<A> {
     #[inline]
     fn get_field(&self) -> NeverField {
         NeverField
@@ -1778,12 +1898,12 @@ impl DateTimeNamesMarker for NeoComponents {
     type MonthNames = datetime_marker_helper!(@names/month, yes);
     type WeekdayNames = datetime_marker_helper!(@names/weekday, yes);
     type DayPeriodNames = datetime_marker_helper!(@names/dayperiod, yes);
-    type ZoneEssentials = datetime_marker_helper!(@names/zone/essentials, no);
-    type ZoneExemplarCities = datetime_marker_helper!(@names/zone/exemplar_cities, no);
-    type ZoneGenericLong = datetime_marker_helper!(@names/zone/generic_long, no);
-    type ZoneGenericShort = datetime_marker_helper!(@names/zone/generic_short, no);
-    type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long, no);
-    type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short, no);
+    type ZoneEssentials = datetime_marker_helper!(@names/zone/essentials, yes);
+    type ZoneExemplarCities = datetime_marker_helper!(@names/zone/exemplar_cities, yes);
+    type ZoneGenericLong = datetime_marker_helper!(@names/zone/generic_long, yes);
+    type ZoneGenericShort = datetime_marker_helper!(@names/zone/generic_short, yes);
+    type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long, yes);
+    type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short, yes);
 }
 
 impl<C: CldrCalendar> TypedDateTimeMarkers<C> for NeoComponents {

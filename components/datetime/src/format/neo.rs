@@ -270,12 +270,25 @@ size_test!(
 /// The calendar should be chosen at compile time.
 #[doc = typed_date_time_names_size!()]
 ///
+/// Type parameters:
+///
+/// 1. The calendar chosen at compile time for additional type safety
+/// 2. A components object type containing the fields that might be formatted
+///
+/// By default, the components object is set to [`NeoDateTimeComponents`],
+/// meaning that dates and times, but not time zones, are supported. A smaller
+/// components object results in smaller stack size.
+///
+/// To support all fields including time zones, use [`NeoComponents`].
+///
 /// <div class="stab unstable">
 /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
 /// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
 /// of the icu meta-crate. Use with caution.
 /// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
 /// </div>
+///
+/// [`NeoComponents`]: crate::neo_skeleton::NeoComponents
 ///
 /// # Examples
 ///
@@ -317,12 +330,13 @@ size_test!(
 /// use icu::datetime::{DateTimeWriteError, TypedDateTimeNames};
 /// use icu::datetime::fields::{Field, FieldLength, FieldSymbol, Weekday};
 /// use icu::datetime::neo_pattern::DateTimePattern;
+/// use icu::datetime::neo_skeleton::NeoComponents;
 /// use icu::locale::locale;
-/// use icu::timezone::{CustomTimeZime, CustomZonedDateTime};
+/// use icu::timezone::{CustomTimeZone, CustomZonedDateTime};
 /// use writeable::assert_try_writeable_eq;
 ///
-/// // Create an instance that can format abbreviated month, weekday, and day period names:
-/// let mut names: TypedDateTimeNames<Gregorian> =
+/// // Create an instance that can format all fields (NeoComponents):
+/// let mut names: TypedDateTimeNames<Gregorian, NeoComponents> =
 ///     TypedDateTimeNames::try_new(&locale!("en").into()).unwrap();
 ///
 /// // Create a pattern from a pattern string:
@@ -367,9 +381,10 @@ size_test!(
 ///
 /// // The pattern string contains lots of symbols including "E", "MMM", and "a",
 /// // but the `TypedDateTimeNames` is configured to format only time zones!
+/// // Further, the time zone we provide doesn't contain any offset into!
 /// // Missing data is filled in on a best-effort basis, and an error is signaled.
 /// assert_try_writeable_eq!(
-///     names.with_pattern(&pattern).format(&CustomTimeZone::utc()),
+///     names.with_pattern(&pattern).format(&CustomTimeZone::new_empty()),
 ///     "It is: {E} {M} {d} {y} {G} at {h}:{m}:{s}{S} {a} {GMT+?}",
 ///     Err(DateTimeWriteError::MissingInputField("iso_weekday"))
 /// );
@@ -440,6 +455,22 @@ impl DateTimeNamesMarker for DateTimeMarker {
     type ZoneGenericShort = NeverMarker<()>;
     type ZoneSpecificLong = NeverMarker<()>;
     type ZoneSpecificShort = NeverMarker<()>;
+}
+
+#[derive(Debug)]
+pub struct ZonedDateTimeMarker {}
+
+impl DateTimeNamesMarker for ZonedDateTimeMarker {
+    type YearNames = YearNamesV1Marker;
+    type MonthNames = MonthNamesV1Marker;
+    type WeekdayNames = WeekdayNamesV1Marker;
+    type DayPeriodNames = DayPeriodNamesV1Marker;
+    type ZoneEssentials = tz::EssentialsV1Marker;
+    type ZoneExemplarCities = tz::ExemplarCitiesV1Marker;
+    type ZoneGenericLong = tz::MzGenericLongV1Marker;
+    type ZoneGenericShort = tz::MzGenericShortV1Marker;
+    type ZoneSpecificLong = tz::MzSpecificLongV1Marker;
+    type ZoneSpecificShort = tz::MzSpecificShortV1Marker;
 }
 
 impl From<RawDateTimeNames<DateMarker>> for RawDateTimeNames<DateTimeMarker> {

@@ -898,19 +898,25 @@ where
                         write_time_zone_missing(w)?;
                         break Err(DateTimeWriteError::MissingNames(field));
                     };
+                    println!("trying: {formatter:?}");
                     match formatter.format(w, &custom_time_zone.into(), payloads)? {
                         Ok(()) => break Ok(()),
                         Err(FormatTimeZoneError::MissingInputField(_)) => {
+                            // The time zone input doesn't have the fields for this formatter.
                             // TODO: What behavior makes the most sense here?
-                            // This is not really an error. More of a warning.
+                            // We can keep trying other formatters.
                             continue;
                         }
                         Err(FormatTimeZoneError::NameNotFound) => {
+                            // Expected common case: data is loaded, but this time zone's
+                            // name was not found in the data.
                             continue;
                         }
                         Err(FormatTimeZoneError::MissingZoneSymbols) => {
-                            write_time_zone_missing(w)?;
-                            break Err(DateTimeWriteError::MissingZoneSymbols);
+                            // We don't have the necessary data for this formatter.
+                            // TODO: What behavior makes the most sense here?
+                            // We can keep trying other formatters.
+                            continue;
                         }
                     }
                 }
