@@ -22,13 +22,7 @@ use crate::provider::date_time::{
     GetSymbolForWeekdayError, MonthPlaceholderValue, TimeSymbols, ZoneSymbols,
 };
 use crate::provider::neo::*;
-use crate::provider::time_zones::{
-    ExemplarCitiesV1, ExemplarCitiesV1Marker, MetazoneGenericNamesLongV1,
-    MetazoneGenericNamesLongV1Marker, MetazoneGenericNamesShortV1,
-    MetazoneGenericNamesShortV1Marker, MetazoneSpecificNamesLongV1,
-    MetazoneSpecificNamesLongV1Marker, MetazoneSpecificNamesShortV1,
-    MetazoneSpecificNamesShortV1Marker, TimeZoneFormatsV1, TimeZoneFormatsV1Marker,
-};
+use crate::provider::time_zones::tz;
 use crate::time_zone::TimeZoneDataPayloadsBorrowed;
 use core::fmt;
 use core::marker::PhantomData;
@@ -67,12 +61,12 @@ impl_holder_trait!(YearNamesV1Marker);
 impl_holder_trait!(MonthNamesV1Marker);
 impl_holder_trait!(WeekdayNamesV1Marker);
 impl_holder_trait!(DayPeriodNamesV1Marker);
-impl_holder_trait!(TimeZoneFormatsV1Marker);
-impl_holder_trait!(ExemplarCitiesV1Marker);
-impl_holder_trait!(MetazoneGenericNamesLongV1Marker);
-impl_holder_trait!(MetazoneGenericNamesShortV1Marker);
-impl_holder_trait!(MetazoneSpecificNamesLongV1Marker);
-impl_holder_trait!(MetazoneSpecificNamesShortV1Marker);
+impl_holder_trait!(tz::EssentialsV1Marker);
+impl_holder_trait!(tz::ExemplarCitiesV1Marker);
+impl_holder_trait!(tz::MzGenericLongV1Marker);
+impl_holder_trait!(tz::MzGenericShortV1Marker);
+impl_holder_trait!(tz::MzSpecificLongV1Marker);
+impl_holder_trait!(tz::MzSpecificShortV1Marker);
 
 #[non_exhaustive]
 pub enum MaybePayloadError2 {
@@ -387,12 +381,12 @@ pub trait DateTimeNamesMarker {
     type MonthNames: DateTimeNamesHolderTrait<MonthNamesV1Marker>;
     type WeekdayNames: DateTimeNamesHolderTrait<WeekdayNamesV1Marker>;
     type DayPeriodNames: DateTimeNamesHolderTrait<DayPeriodNamesV1Marker>;
-    type ZoneEssentials: DateTimeNamesHolderTrait<TimeZoneFormatsV1Marker>;
-    type ZoneExemplarCities: DateTimeNamesHolderTrait<ExemplarCitiesV1Marker>;
-    type ZoneGenericLong: DateTimeNamesHolderTrait<MetazoneGenericNamesLongV1Marker>;
-    type ZoneGenericShort: DateTimeNamesHolderTrait<MetazoneGenericNamesShortV1Marker>;
-    type ZoneSpecificLong: DateTimeNamesHolderTrait<MetazoneSpecificNamesLongV1Marker>;
-    type ZoneSpecificShort: DateTimeNamesHolderTrait<MetazoneSpecificNamesShortV1Marker>;
+    type ZoneEssentials: DateTimeNamesHolderTrait<tz::EssentialsV1Marker>;
+    type ZoneExemplarCities: DateTimeNamesHolderTrait<tz::ExemplarCitiesV1Marker>;
+    type ZoneGenericLong: DateTimeNamesHolderTrait<tz::MzGenericLongV1Marker>;
+    type ZoneGenericShort: DateTimeNamesHolderTrait<tz::MzGenericShortV1Marker>;
+    type ZoneSpecificLong: DateTimeNamesHolderTrait<tz::MzSpecificLongV1Marker>;
+    type ZoneSpecificShort: DateTimeNamesHolderTrait<tz::MzSpecificShortV1Marker>;
 }
 
 #[derive(Debug)]
@@ -498,20 +492,20 @@ pub(crate) struct RawDateTimeNames<R: DateTimeNamesMarker> {
             FieldLength,
         >,
     zone_essentials:
-        <R::ZoneEssentials as DateTimeNamesHolderTrait<TimeZoneFormatsV1Marker>>::Container<()>,
+        <R::ZoneEssentials as DateTimeNamesHolderTrait<tz::EssentialsV1Marker>>::Container<()>,
     exemplar_cities:
-        <R::ZoneExemplarCities as DateTimeNamesHolderTrait<ExemplarCitiesV1Marker>>::Container<()>,
+        <R::ZoneExemplarCities as DateTimeNamesHolderTrait<tz::ExemplarCitiesV1Marker>>::Container<()>,
     mz_generic_long: <R::ZoneGenericLong as DateTimeNamesHolderTrait<
-        MetazoneGenericNamesLongV1Marker,
+        tz::MzGenericLongV1Marker,
     >>::Container<()>,
     mz_generic_short: <R::ZoneGenericShort as DateTimeNamesHolderTrait<
-        MetazoneGenericNamesShortV1Marker,
+        tz::MzGenericShortV1Marker,
     >>::Container<()>,
     mz_specific_long: <R::ZoneSpecificLong as DateTimeNamesHolderTrait<
-        MetazoneSpecificNamesLongV1Marker,
+        tz::MzSpecificLongV1Marker,
     >>::Container<()>,
     mz_specific_short: <R::ZoneSpecificShort as DateTimeNamesHolderTrait<
-        MetazoneSpecificNamesShortV1Marker,
+        tz::MzSpecificShortV1Marker,
     >>::Container<()>,
     // TODO(#4340): Make the FixedDecimalFormatter optional
     fixed_decimal_formatter: Option<FixedDecimalFormatter>,
@@ -545,12 +539,12 @@ pub(crate) struct RawDateTimeNamesBorrowed<'l> {
     month_names: OptionalNames<(fields::Month, FieldLength), &'l MonthNamesV1<'l>>,
     weekday_names: OptionalNames<(fields::Weekday, FieldLength), &'l LinearNamesV1<'l>>,
     dayperiod_names: OptionalNames<FieldLength, &'l LinearNamesV1<'l>>,
-    zone_essentials: OptionalNames<(), &'l TimeZoneFormatsV1<'l>>,
-    exemplar_cities: OptionalNames<(), &'l ExemplarCitiesV1<'l>>,
-    mz_generic_long: OptionalNames<(), &'l MetazoneGenericNamesLongV1<'l>>,
-    mz_generic_short: OptionalNames<(), &'l MetazoneGenericNamesShortV1<'l>>,
-    mz_specific_long: OptionalNames<(), &'l MetazoneSpecificNamesLongV1<'l>>,
-    mz_specific_short: OptionalNames<(), &'l MetazoneSpecificNamesShortV1<'l>>,
+    zone_essentials: OptionalNames<(), &'l tz::EssentialsV1<'l>>,
+    exemplar_cities: OptionalNames<(), &'l tz::ExemplarCitiesV1<'l>>,
+    mz_generic_long: OptionalNames<(), &'l tz::MzGenericLongV1<'l>>,
+    mz_generic_short: OptionalNames<(), &'l tz::MzGenericShortV1<'l>>,
+    mz_specific_long: OptionalNames<(), &'l tz::MzSpecificLongV1<'l>>,
+    mz_specific_short: OptionalNames<(), &'l tz::MzSpecificShortV1<'l>>,
     pub(crate) fixed_decimal_formatter: Option<&'l FixedDecimalFormatter>,
     pub(crate) week_calculator: Option<&'l WeekCalculator>,
 }
@@ -854,10 +848,10 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
         provider: &P,
     ) -> Result<&mut Self, SingleLoadError>
     where
-        P: DataProvider<MetazoneGenericNamesShortV1Marker> + ?Sized,
+        P: DataProvider<tz::MzGenericShortV1Marker> + ?Sized,
     {
         self.inner.load_generic_short_time_zone_names(
-            &MetazoneGenericNamesShortV1Marker::bind(provider),
+            &tz::MzGenericShortV1Marker::bind(provider),
             &self.locale,
         )?;
         Ok(self)
@@ -896,7 +890,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     #[cfg(feature = "compiled_data")]
     pub fn include_generic_short_time_zone_names(&mut self) -> Result<&mut Self, SingleLoadError>
     where
-        crate::provider::Baked: icu_provider::DataProvider<MetazoneGenericNamesShortV1Marker>,
+        crate::provider::Baked: icu_provider::DataProvider<tz::MzGenericShortV1Marker>,
     {
         self.load_generic_short_time_zone_names(&crate::provider::Baked)
     }
@@ -986,8 +980,12 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
             + DataProvider<C::MonthNamesV1Marker>
             + DataProvider<WeekdayNamesV1Marker>
             + DataProvider<DayPeriodNamesV1Marker>
-            + DataProvider<TimeZoneFormatsV1Marker>
-            + DataProvider<MetazoneGenericNamesShortV1Marker>
+            + DataProvider<tz::EssentialsV1Marker>
+            + DataProvider<tz::ExemplarCitiesV1Marker>
+            + DataProvider<tz::MzGenericLongV1Marker>
+            + DataProvider<tz::MzGenericShortV1Marker>
+            + DataProvider<tz::MzSpecificLongV1Marker>
+            + DataProvider<tz::MzSpecificShortV1Marker>
             + DataProvider<DecimalSymbolsV1Marker>
             + DataProvider<WeekDataV2Marker>
             + ?Sized,
@@ -999,8 +997,12 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
             &WeekdayNamesV1Marker::bind(provider),
             &DayPeriodNamesV1Marker::bind(provider),
             // TODO: Consider making time zone name loading optional here (lots of data)
-            &TimeZoneFormatsV1Marker::bind(provider),
-            &MetazoneGenericNamesShortV1Marker::bind(provider),
+            &tz::EssentialsV1Marker::bind(provider),
+            &tz::ExemplarCitiesV1Marker::bind(provider),
+            &tz::MzGenericLongV1Marker::bind(provider),
+            &tz::MzGenericShortV1Marker::bind(provider),
+            &tz::MzSpecificLongV1Marker::bind(provider),
+            &tz::MzSpecificShortV1Marker::bind(provider),
             Some(&ExternalLoaderUnstable(provider)),
             Some(&ExternalLoaderUnstable(provider)),
             locale,
@@ -1057,8 +1059,8 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
             + DataProvider<C::MonthNamesV1Marker>
             + DataProvider<WeekdayNamesV1Marker>
             + DataProvider<DayPeriodNamesV1Marker>
-            + DataProvider<TimeZoneFormatsV1Marker>
-            + DataProvider<MetazoneGenericNamesShortV1Marker>,
+            + DataProvider<tz::EssentialsV1Marker>
+            + DataProvider<tz::MzGenericShortV1Marker>,
     {
         let locale = &self.locale;
         self.inner.load_for_pattern(
@@ -1066,8 +1068,12 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
             &C::MonthNamesV1Marker::bind(&crate::provider::Baked),
             &WeekdayNamesV1Marker::bind(&crate::provider::Baked),
             &DayPeriodNamesV1Marker::bind(&crate::provider::Baked),
-            &TimeZoneFormatsV1Marker::bind(&crate::provider::Baked),
-            &MetazoneGenericNamesShortV1Marker::bind(&crate::provider::Baked),
+            &tz::EssentialsV1Marker::bind(&crate::provider::Baked),
+            &tz::ExemplarCitiesV1Marker::bind(&crate::provider::Baked),
+            &tz::MzGenericLongV1Marker::bind(&crate::provider::Baked),
+            &tz::MzGenericShortV1Marker::bind(&crate::provider::Baked),
+            &tz::MzSpecificLongV1Marker::bind(&crate::provider::Baked),
+            &tz::MzSpecificShortV1Marker::bind(&crate::provider::Baked),
             Some(&ExternalLoaderCompiledData),
             Some(&ExternalLoaderCompiledData),
             locale,
@@ -1129,12 +1135,12 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
             month_symbols: <R::MonthNames as DateTimeNamesHolderTrait<MonthNamesV1Marker>>::Container::<_>::new_empty(),
             weekday_symbols: <R::WeekdayNames as DateTimeNamesHolderTrait<WeekdayNamesV1Marker>>::Container::<_>::new_empty(),
             dayperiod_symbols: <R::DayPeriodNames as DateTimeNamesHolderTrait<DayPeriodNamesV1Marker>>::Container::<_>::new_empty(),
-            zone_essentials: <R::ZoneEssentials as DateTimeNamesHolderTrait<TimeZoneFormatsV1Marker>>::Container::<_>::new_empty(),
-            exemplar_cities: <R::ZoneExemplarCities as DateTimeNamesHolderTrait<ExemplarCitiesV1Marker>>::Container::<_>::new_empty(),
-            mz_generic_long: <R::ZoneGenericLong as DateTimeNamesHolderTrait<MetazoneGenericNamesLongV1Marker>>::Container::<_>::new_empty(),
-            mz_generic_short: <R::ZoneGenericShort as DateTimeNamesHolderTrait<MetazoneGenericNamesShortV1Marker>>::Container::<_>::new_empty(),
-            mz_specific_long: <R::ZoneSpecificLong as DateTimeNamesHolderTrait<MetazoneSpecificNamesLongV1Marker>>::Container::<_>::new_empty(),
-            mz_specific_short: <R::ZoneSpecificShort as DateTimeNamesHolderTrait<MetazoneSpecificNamesShortV1Marker>>::Container::<_>::new_empty(),
+            zone_essentials: <R::ZoneEssentials as DateTimeNamesHolderTrait<tz::EssentialsV1Marker>>::Container::<_>::new_empty(),
+            exemplar_cities: <R::ZoneExemplarCities as DateTimeNamesHolderTrait<tz::ExemplarCitiesV1Marker>>::Container::<_>::new_empty(),
+            mz_generic_long: <R::ZoneGenericLong as DateTimeNamesHolderTrait<tz::MzGenericLongV1Marker>>::Container::<_>::new_empty(),
+            mz_generic_short: <R::ZoneGenericShort as DateTimeNamesHolderTrait<tz::MzGenericShortV1Marker>>::Container::<_>::new_empty(),
+            mz_specific_long: <R::ZoneSpecificLong as DateTimeNamesHolderTrait<tz::MzSpecificLongV1Marker>>::Container::<_>::new_empty(),
+            mz_specific_short: <R::ZoneSpecificShort as DateTimeNamesHolderTrait<tz::MzSpecificShortV1Marker>>::Container::<_>::new_empty(),
             fixed_decimal_formatter: None,
             week_calculator: None,
             _marker: PhantomData,
@@ -1332,9 +1338,8 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         locale: &DataLocale,
     ) -> Result<(), SingleLoadError>
     where
-        P: BoundDataProvider<MetazoneGenericNamesShortV1Marker> + ?Sized,
+        P: BoundDataProvider<tz::MzGenericShortV1Marker> + ?Sized,
     {
-        // TODO: Get this field from a constant somewhere
         let field = fields::Field {
             symbol: FieldSymbol::TimeZone(fields::TimeZone::LowerV),
             length: FieldLength::One,
@@ -1392,9 +1397,12 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         month_provider: &(impl BoundDataProvider<MonthNamesV1Marker> + ?Sized),
         weekday_provider: &(impl BoundDataProvider<WeekdayNamesV1Marker> + ?Sized),
         dayperiod_provider: &(impl BoundDataProvider<DayPeriodNamesV1Marker> + ?Sized),
-        _zone_essentials_provider: &(impl BoundDataProvider<TimeZoneFormatsV1Marker> + ?Sized),
-        zone_genericshort_provider: &(impl BoundDataProvider<MetazoneGenericNamesShortV1Marker>
-              + ?Sized),
+        zone_essentials_provider: &(impl BoundDataProvider<tz::EssentialsV1Marker> + ?Sized),
+        exemplar_cities_provider:  &(impl BoundDataProvider<tz::ExemplarCitiesV1Marker> + ?Sized),
+        mz_generic_long_provider: &(impl BoundDataProvider<tz::MzGenericLongV1Marker> + ?Sized),
+        mz_generic_short_provider: &(impl BoundDataProvider<tz::MzGenericShortV1Marker> + ?Sized),
+        mz_specific_long_provider: &(impl BoundDataProvider<tz::MzSpecificLongV1Marker> + ?Sized),
+        mz_specific_short_provider: &(impl BoundDataProvider<tz::MzSpecificShortV1Marker> + ?Sized),
         fixed_decimal_formatter_loader: Option<&impl FixedDecimalFormatterLoader>,
         week_calculator_loader: Option<&impl WeekCalculatorLoader>,
         locale: &DataLocale,
@@ -1437,11 +1445,19 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                 }
                 FieldSymbol::TimeZone(fields::TimeZone::LowerV) => match field.length {
                     FieldLength::One => {
+                        // 'v'
                         self.load_generic_short_time_zone_names(
-                            zone_genericshort_provider,
+                            mz_generic_short_provider,
                             locale,
                         )?;
-                    }
+                    },
+                    FieldLength::Wide => {
+                        // 'vvvv'
+                        self.load_generic_long_time_zone_names(
+                            mz_generic_long_provider,
+                            locale,
+                        )?;
+                    },
                     _ => {
                         return Err(LoadError::UnsupportedField(field));
                     }

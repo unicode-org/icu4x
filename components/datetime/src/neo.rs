@@ -220,8 +220,12 @@ impl<C: CldrCalendar, R: TypedNeoFormatterMarker<C>> TypedNeoFormatter<C, R> {
             + DataProvider<<R::D as TypedDateMarkers<C>>::WeekdayNamesV1Marker>
             + DataProvider<<R::T as TimeMarkers>::DayPeriodNamesV1Marker>
             + DataProvider<<R::T as TimeMarkers>::TimeSkeletonPatternsV1Marker>
-            + DataProvider<<R::Z as ZoneMarkers>::ZoneEssentialsV1Marker>
-            + DataProvider<<R::Z as ZoneMarkers>::ZoneGenericShortNamesV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::EssentialsV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::ExemplarCitiesV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::GenericLongV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::GenericShortV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::SpecificLongV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::SpecificShortV1Marker>
             + DataProvider<R::DateTimePatternV1Marker>,
     {
         Self::try_new_internal(
@@ -257,8 +261,12 @@ impl<C: CldrCalendar, R: TypedNeoFormatterMarker<C>> TypedNeoFormatter<C, R> {
             + DataProvider<<R::D as TypedDateMarkers<C>>::WeekdayNamesV1Marker>
             + DataProvider<<R::T as TimeMarkers>::DayPeriodNamesV1Marker>
             + DataProvider<<R::T as TimeMarkers>::TimeSkeletonPatternsV1Marker>
-            + DataProvider<<R::Z as ZoneMarkers>::ZoneEssentialsV1Marker>
-            + DataProvider<<R::Z as ZoneMarkers>::ZoneGenericShortNamesV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::EssentialsV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::ExemplarCitiesV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::GenericLongV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::GenericShortV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::SpecificLongV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::SpecificShortV1Marker>
             + DataProvider<R::DateTimePatternV1Marker>
             // FixedDecimalFormatter markers
             + DataProvider<DecimalSymbolsV1Marker>
@@ -374,8 +382,12 @@ impl<C: CldrCalendar, R: TypedDateTimeMarkers<C> + IsRuntimeComponents> TypedNeo
             + DataProvider<<R::D as TypedDateMarkers<C>>::WeekdayNamesV1Marker>
             + DataProvider<<R::T as TimeMarkers>::DayPeriodNamesV1Marker>
             + DataProvider<<R::T as TimeMarkers>::TimeSkeletonPatternsV1Marker>
-            + DataProvider<<R::Z as ZoneMarkers>::ZoneEssentialsV1Marker>
-            + DataProvider<<R::Z as ZoneMarkers>::ZoneGenericShortNamesV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::EssentialsV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::ExemplarCitiesV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::GenericLongV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::GenericShortV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::SpecificLongV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::SpecificShortV1Marker>
             + DataProvider<R::DateTimePatternV1Marker>,
     {
         Self::try_new_internal(
@@ -412,8 +424,12 @@ impl<C: CldrCalendar, R: TypedDateTimeMarkers<C> + IsRuntimeComponents> TypedNeo
             + DataProvider<<R::D as TypedDateMarkers<C>>::WeekdayNamesV1Marker>
             + DataProvider<<R::T as TimeMarkers>::DayPeriodNamesV1Marker>
             + DataProvider<<R::T as TimeMarkers>::TimeSkeletonPatternsV1Marker>
-            + DataProvider<<R::Z as ZoneMarkers>::ZoneEssentialsV1Marker>
-            + DataProvider<<R::Z as ZoneMarkers>::ZoneGenericShortNamesV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::EssentialsV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::ExemplarCitiesV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::GenericLongV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::GenericShortV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::SpecificLongV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::SpecificShortV1Marker>
             + DataProvider<R::DateTimePatternV1Marker>
             // FixedDecimalFormatter markers
             + DataProvider<DecimalSymbolsV1Marker>
@@ -447,8 +463,12 @@ impl<C: CldrCalendar, R: TypedDateTimeMarkers<C>> TypedNeoFormatter<C, R> {
             + DataProvider<<R::D as TypedDateMarkers<C>>::WeekdayNamesV1Marker>
             + DataProvider<<R::T as TimeMarkers>::DayPeriodNamesV1Marker>
             + DataProvider<<R::T as TimeMarkers>::TimeSkeletonPatternsV1Marker>
-            + DataProvider<<R::Z as ZoneMarkers>::ZoneEssentialsV1Marker>
-            + DataProvider<<R::Z as ZoneMarkers>::ZoneGenericShortNamesV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::EssentialsV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::ExemplarCitiesV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::GenericLongV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::GenericShortV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::SpecificLongV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::SpecificShortV1Marker>
             + DataProvider<R::DateTimePatternV1Marker>,
         L: FixedDecimalFormatterLoader + WeekCalculatorLoader,
     {
@@ -467,8 +487,12 @@ impl<C: CldrCalendar, R: TypedDateTimeMarkers<C>> TypedNeoFormatter<C, R> {
             &<R::D as TypedDateMarkers<C>>::MonthNamesV1Marker::bind(provider),
             &<R::D as TypedDateMarkers<C>>::WeekdayNamesV1Marker::bind(provider),
             &<R::T as TimeMarkers>::DayPeriodNamesV1Marker::bind(provider),
-            &<R::Z as ZoneMarkers>::ZoneEssentialsV1Marker::bind(provider),
-            &<R::Z as ZoneMarkers>::ZoneGenericShortNamesV1Marker::bind(provider),
+            &<R::Z as ZoneMarkers>::EssentialsV1Marker::bind(provider),
+            &<R::Z as ZoneMarkers>::ExemplarCitiesV1Marker::bind(provider),
+            &<R::Z as ZoneMarkers>::GenericLongV1Marker::bind(provider),
+            &<R::Z as ZoneMarkers>::GenericShortV1Marker::bind(provider),
+            &<R::Z as ZoneMarkers>::SpecificLongV1Marker::bind(provider),
+            &<R::Z as ZoneMarkers>::SpecificShortV1Marker::bind(provider),
             Some(loader), // fixed decimal formatter
             Some(loader), // week calculator
             locale,
@@ -684,8 +708,12 @@ impl<R: NeoFormatterMarker> NeoFormatter<R> {
             + DataProvider<<R::D as DateMarkers>::WeekdayNamesV1Marker>
             + DataProvider<<R::T as TimeMarkers>::DayPeriodNamesV1Marker>
             + DataProvider<<R::T as TimeMarkers>::TimeSkeletonPatternsV1Marker>
-            + DataProvider<<R::Z as ZoneMarkers>::ZoneEssentialsV1Marker>
-            + DataProvider<<R::Z as ZoneMarkers>::ZoneGenericShortNamesV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::EssentialsV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::ExemplarCitiesV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::GenericLongV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::GenericShortV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::SpecificLongV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::SpecificShortV1Marker>
             + DataProvider<R::DateTimePatternV1Marker>,
     {
         Self::try_new_internal(
@@ -769,8 +797,12 @@ impl<R: NeoFormatterMarker> NeoFormatter<R> {
             + DataProvider<<R::D as DateMarkers>::WeekdayNamesV1Marker>
             + DataProvider<<R::T as TimeMarkers>::DayPeriodNamesV1Marker>
             + DataProvider<<R::T as TimeMarkers>::TimeSkeletonPatternsV1Marker>
-            + DataProvider<<R::Z as ZoneMarkers>::ZoneEssentialsV1Marker>
-            + DataProvider<<R::Z as ZoneMarkers>::ZoneGenericShortNamesV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::EssentialsV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::ExemplarCitiesV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::GenericLongV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::GenericShortV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::SpecificLongV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::SpecificShortV1Marker>
             + DataProvider<R::DateTimePatternV1Marker>
     // AnyCalendar constructor markers
             + DataProvider<ChineseCacheV1Marker>
@@ -936,8 +968,12 @@ impl<R: DateTimeMarkers + IsRuntimeComponents> NeoFormatter<R> {
             + DataProvider<<R::D as DateMarkers>::WeekdayNamesV1Marker>
             + DataProvider<<R::T as TimeMarkers>::DayPeriodNamesV1Marker>
             + DataProvider<<R::T as TimeMarkers>::TimeSkeletonPatternsV1Marker>
-            + DataProvider<<R::Z as ZoneMarkers>::ZoneEssentialsV1Marker>
-            + DataProvider<<R::Z as ZoneMarkers>::ZoneGenericShortNamesV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::EssentialsV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::ExemplarCitiesV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::GenericLongV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::GenericShortV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::SpecificLongV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::SpecificShortV1Marker>
             + DataProvider<R::DateTimePatternV1Marker>
     {
         Self::try_new_internal(
@@ -1022,8 +1058,12 @@ impl<R: DateTimeMarkers + IsRuntimeComponents> NeoFormatter<R> {
             + DataProvider<<R::D as DateMarkers>::WeekdayNamesV1Marker>
             + DataProvider<<R::T as TimeMarkers>::DayPeriodNamesV1Marker>
             + DataProvider<<R::T as TimeMarkers>::TimeSkeletonPatternsV1Marker>
-            + DataProvider<<R::Z as ZoneMarkers>::ZoneEssentialsV1Marker>
-            + DataProvider<<R::Z as ZoneMarkers>::ZoneGenericShortNamesV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::EssentialsV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::ExemplarCitiesV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::GenericLongV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::GenericShortV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::SpecificLongV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::SpecificShortV1Marker>
             + DataProvider<R::DateTimePatternV1Marker>
     // AnyCalendar constructor markers
             + DataProvider<ChineseCacheV1Marker>
@@ -1112,8 +1152,12 @@ impl<R: DateTimeMarkers> NeoFormatter<R> {
             + DataProvider<<R::D as DateMarkers>::WeekdayNamesV1Marker>
             + DataProvider<<R::T as TimeMarkers>::DayPeriodNamesV1Marker>
             + DataProvider<<R::T as TimeMarkers>::TimeSkeletonPatternsV1Marker>
-            + DataProvider<<R::Z as ZoneMarkers>::ZoneEssentialsV1Marker>
-            + DataProvider<<R::Z as ZoneMarkers>::ZoneGenericShortNamesV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::EssentialsV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::ExemplarCitiesV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::GenericLongV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::GenericShortV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::SpecificLongV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::SpecificShortV1Marker>
             + DataProvider<R::DateTimePatternV1Marker>,
         L: FixedDecimalFormatterLoader + WeekCalculatorLoader + AnyCalendarLoader,
     {
@@ -1134,8 +1178,12 @@ impl<R: DateTimeMarkers> NeoFormatter<R> {
             &AnyCalendarProvider::<<R::D as DateMarkers>::Month, _>::new(provider, kind),
             &<R::D as DateMarkers>::WeekdayNamesV1Marker::bind(provider),
             &<R::T as TimeMarkers>::DayPeriodNamesV1Marker::bind(provider),
-            &<R::Z as ZoneMarkers>::ZoneEssentialsV1Marker::bind(provider),
-            &<R::Z as ZoneMarkers>::ZoneGenericShortNamesV1Marker::bind(provider),
+            &<R::Z as ZoneMarkers>::EssentialsV1Marker::bind(provider),
+            &<R::Z as ZoneMarkers>::ExemplarCitiesV1Marker::bind(provider),
+            &<R::Z as ZoneMarkers>::GenericLongV1Marker::bind(provider),
+            &<R::Z as ZoneMarkers>::GenericShortV1Marker::bind(provider),
+            &<R::Z as ZoneMarkers>::SpecificLongV1Marker::bind(provider),
+            &<R::Z as ZoneMarkers>::SpecificShortV1Marker::bind(provider),
             Some(loader), // fixed decimal formatter
             Some(loader), // week calculator
             locale,
