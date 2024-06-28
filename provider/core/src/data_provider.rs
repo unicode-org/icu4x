@@ -81,7 +81,7 @@ pub trait CanLoad<M: DataMarker>: DataProvider<M> {
     ///
     /// Other errors are returned as [`load`] would.
     ///
-    /// [`load`]: Self::load
+    /// [`load`]: DataProvider::load
     fn can_load(&self, req: DataRequest) -> Result<bool, DataError> {
         match self.load(req) {
             Ok(_) => Ok(true),
@@ -119,7 +119,7 @@ pub trait DynamicCanLoad<M: DynamicDataMarker>: DynamicDataProvider<M> {
     ///
     /// Other errors are returned as [`load_data`] would.
     ///
-    /// [`load_data`]: Self::load_data
+    /// [`load_data`]: DynamicDataProvider::load_data
     fn can_load_data(&self, marker: DataMarkerInfo, req: DataRequest) -> Result<bool, DataError> {
         match self.load_data(marker, req) {
             Ok(_) => Ok(true),
