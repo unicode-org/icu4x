@@ -35,8 +35,8 @@ fn overview_bench(c: &mut Criterion) {
 
 #[cfg(feature = "bench")]
 fn json_bench(c: &mut Criterion) {
-    let provider =
-        FsDataProvider::try_new("./tests/data/json".into()).expect("Loading file from testdata directory");
+    let provider = FsDataProvider::try_new("./tests/data/json".into())
+        .expect("Loading file from testdata directory");
 
     c.bench_function("json/generic", |b| {
         b.iter(|| {

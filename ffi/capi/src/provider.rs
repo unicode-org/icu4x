@@ -69,7 +69,9 @@ pub mod ffi {
             Ok(Box::new(convert_buffer_provider(
                 icu_provider_fs::FsDataProvider::try_new(
                     // In the future we can start using OsString APIs to support non-utf8 paths
-                    core::str::from_utf8(path).map_err(|_| ICU4XDataError::Io)?.into(),
+                    core::str::from_utf8(path)
+                        .map_err(|_| ICU4XDataError::Io)?
+                        .into(),
                 )?,
             )))
         }
