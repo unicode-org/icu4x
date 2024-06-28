@@ -62,7 +62,7 @@ impl DataProvider<HelloWorldV1Marker> for TestingProvider {
                         req.id.locale.to_string().as_str(),
                         req.id.marker_attributes as &str,
                     ))
-                    .ok_or(DataErrorKind::MissingLocale.into_error())?)
+                    .ok_or(DataErrorKind::IdentifierNotFound.into_error())?)
                 .into(),
             }),
         })

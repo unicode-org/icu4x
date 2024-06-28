@@ -90,7 +90,7 @@ pub use __impl_casting_upcast as impl_casting_upcast;
 ///
 /// If your type implements [`DataProvider`], pass a list of markers as the second argument.
 /// This results in a `DynamicDataProvider` that delegates to a specific marker if the marker
-/// matches or else returns [`DataErrorKind::MissingDataMarker`].
+/// matches or else returns [`DataErrorKind::MarkerNotFound`].
 ///
 /// ```
 /// use icu_provider::prelude::*;
@@ -131,7 +131,7 @@ pub use __impl_casting_upcast as impl_casting_upcast;
 ///     id: DataIdentifierBorrowed::for_locale(&langid!("de").into()),
 ///     ..Default::default()
 /// }).unwrap_err().kind,
-///     DataErrorKind::MissingDataMarker,
+///     DataErrorKind::MarkerNotFound,
 /// );
 /// ```
 ///
@@ -185,7 +185,7 @@ pub use __impl_casting_upcast as impl_casting_upcast;
 /// [`DynamicDataProvider`]: crate::DynamicDataProvider
 /// [`DataProvider`]: crate::DataProvider
 /// [`AnyPayload`]: (crate::any::AnyPayload)
-/// [`DataErrorKind::MissingDataMarker`]: (crate::DataErrorKind::MissingDataMarker)
+/// [`DataErrorKind::MarkerNotFound`]: (crate::DataErrorKind::MarkerNotFound)
 /// [`SerializeMarker`]: (crate::buf::SerializeMarker)
 #[doc(hidden)] // macro
 #[macro_export]
@@ -237,7 +237,7 @@ macro_rules! __impl_dynamic_data_provider {
                             })
                         }
                     )?
-                    _ => Err($crate::DataErrorKind::MissingDataMarker.with_req(marker, req))
+                    _ => Err($crate::DataErrorKind::MarkerNotFound.with_req(marker, req))
                 }
             }
         }
@@ -266,7 +266,7 @@ macro_rules! __impl_dynamic_data_provider {
                             })
                         }
                     )+,
-                    _ => Err($crate::DataErrorKind::MissingDataMarker.with_req(marker, req))
+                    _ => Err($crate::DataErrorKind::MarkerNotFound.with_req(marker, req))
                 }
             }
         }
@@ -288,7 +288,7 @@ macro_rules! __impl_iterable_dynamic_data_provider {
                             $crate::IterableDataProvider::<$struct_m>::iter_ids(self)
                         }
                     )+,
-                    _ => Err($crate::DataErrorKind::MissingDataMarker.with_marker(marker))
+                    _ => Err($crate::DataErrorKind::MarkerNotFound.with_marker(marker))
                 }
             }
         }

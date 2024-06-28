@@ -346,7 +346,7 @@ fn try_load<M: DataMarker, P: DataProvider<M> + ?Sized>(
     }) {
         Ok(response) => Ok(Some(response.payload)),
         Err(DataError {
-            kind: DataErrorKind::MissingLocale,
+            kind: DataErrorKind::IdentifierNotFound,
             ..
         }) => Ok(None),
         Err(e) => Err(e),

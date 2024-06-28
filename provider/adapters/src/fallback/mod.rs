@@ -235,7 +235,7 @@ impl<P> LocaleFallbackProvider<P> {
             fallback_iterator.step();
         }
         base_req.metadata.silent = base_silent;
-        Err(DataErrorKind::MissingLocale.with_req(marker, base_req))
+        Err(DataErrorKind::IdentifierNotFound.with_req(marker, base_req))
     }
 }
 

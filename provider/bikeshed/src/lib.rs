@@ -240,13 +240,15 @@ impl DatagenProvider {
         }
     }
 
-    const MISSING_CLDR_ERROR: DataError = DataErrorKind::MissingSourceData.with_str_context("cldr");
+    const MISSING_CLDR_ERROR: DataError =
+        DataError::custom("Missing CLDR data. Use `.with_cldr[_for_tag]` to set CLDR data.");
 
     const MISSING_ICUEXPORT_ERROR: DataError =
-        DataErrorKind::MissingSourceData.with_str_context("icuexport");
+        DataError::custom("Missing ICU data. Use `.with_icuexport[_for_tag]` to set ICU data.");
 
-    const MISSING_SEGMENTER_LSTM_ERROR: DataError =
-        DataErrorKind::MissingSourceData.with_str_context("segmenter");
+    const MISSING_SEGMENTER_LSTM_ERROR: DataError = DataError::custom(
+        "Missing segmenter data. Use `.with_segmenter_lstm[_for_tag]` to set segmenter data.",
+    );
 
     /// Identifies errors that are due to missing CLDR data.
     pub fn is_missing_cldr_error(mut e: DataError) -> bool {
@@ -322,12 +324,12 @@ impl DatagenProvider {
     {
         if <M as DataMarker>::INFO.is_singleton {
             if !req.id.locale.is_empty() {
-                Err(DataErrorKind::ExtraneousLocale)
+                Err(DataErrorKind::InvalidRequest)
             } else {
                 Ok(())
             }
         } else if !self.populate_requests_cache()?.contains(&req.id.as_cow()) {
-            Err(DataErrorKind::MissingLocale)
+            Err(DataErrorKind::IdentifierNotFound)
         } else {
             Ok(())
         }

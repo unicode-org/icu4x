@@ -11,7 +11,7 @@ use icu_provider::prelude::*;
 /// [`ForkByErrorProvider`]: super::ForkByErrorProvider
 pub trait ForkByErrorPredicate {
     /// The error to return if there are zero providers.
-    const UNIT_ERROR: DataErrorKind = DataErrorKind::MissingDataMarker;
+    const UNIT_ERROR: DataErrorKind = DataErrorKind::MarkerNotFound;
 
     /// This function is called when a data request fails and there are additional providers
     /// that could possibly fulfill the request.
@@ -39,17 +39,17 @@ pub trait ForkByErrorPredicate {
 /// [`ForkByMarkerProvider`]: super::ForkByMarkerProvider
 #[derive(Debug, PartialEq, Eq)]
 #[non_exhaustive] // Not intended to be constructed
-pub struct MissingDataMarkerPredicate;
+pub struct MarkerNotFoundPredicate;
 
-impl ForkByErrorPredicate for MissingDataMarkerPredicate {
-    const UNIT_ERROR: DataErrorKind = DataErrorKind::MissingDataMarker;
+impl ForkByErrorPredicate for MarkerNotFoundPredicate {
+    const UNIT_ERROR: DataErrorKind = DataErrorKind::MarkerNotFound;
 
     #[inline]
     fn test(&self, _: DataMarkerInfo, _: Option<DataRequest>, err: DataError) -> bool {
         matches!(
             err,
             DataError {
-                kind: DataErrorKind::MissingDataMarker,
+                kind: DataErrorKind::MarkerNotFound,
                 ..
             }
         )
@@ -57,13 +57,13 @@ impl ForkByErrorPredicate for MissingDataMarkerPredicate {
 }
 
 /// A predicate that allows forking providers to search for a provider that supports a
-/// particular locale, based on whether it returns [`DataErrorKind::MissingLocale`].
+/// particular locale, based on whether it returns [`DataErrorKind::IdentifierNotFound`].
 ///
 /// # Examples
 ///
 /// ```
 /// use icu_provider_adapters::fork::ForkByErrorProvider;
-/// use icu_provider_adapters::fork::predicates::MissingLocalePredicate;
+/// use icu_provider_adapters::fork::predicates::IdentifierNotFoundPredicate;
 /// use icu_provider::prelude::*;
 /// use icu_provider::hello_world::*;
 /// use icu_locale::langid;
@@ -72,7 +72,7 @@ impl ForkByErrorPredicate for MissingDataMarkerPredicate {
 /// impl DataProvider<HelloWorldV1Marker> for SingleLocaleProvider {
 ///     fn load(&self, req: DataRequest) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
 ///         if req.id.locale.get_langid() != self.0 {
-///             return Err(DataErrorKind::MissingLocale.with_req(HelloWorldV1Marker::INFO, req));
+///             return Err(DataErrorKind::IdentifierNotFound.with_req(HelloWorldV1Marker::INFO, req));
 ///         }
 ///         HelloWorldProvider.load(req)
 ///     }
@@ -85,7 +85,7 @@ impl ForkByErrorPredicate for MissingDataMarkerPredicate {
 /// let provider = ForkByErrorProvider::new_with_predicate(
 ///     provider_de,
 ///     provider_ro,
-///     MissingLocalePredicate
+///     IdentifierNotFoundPredicate
 /// );
 ///
 /// // Test that we can load both "de" and "ro" data:
@@ -121,17 +121,17 @@ impl ForkByErrorPredicate for MissingDataMarkerPredicate {
 /// ```
 #[derive(Debug, PartialEq, Eq)]
 #[allow(clippy::exhaustive_structs)] // empty type
-pub struct MissingLocalePredicate;
+pub struct IdentifierNotFoundPredicate;
 
-impl ForkByErrorPredicate for MissingLocalePredicate {
-    const UNIT_ERROR: DataErrorKind = DataErrorKind::MissingLocale;
+impl ForkByErrorPredicate for IdentifierNotFoundPredicate {
+    const UNIT_ERROR: DataErrorKind = DataErrorKind::IdentifierNotFound;
 
     #[inline]
     fn test(&self, _: DataMarkerInfo, _: Option<DataRequest>, err: DataError) -> bool {
         matches!(
             err,
             DataError {
-                kind: DataErrorKind::MissingLocale,
+                kind: DataErrorKind::IdentifierNotFound,
                 ..
             }
         )

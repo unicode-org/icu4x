@@ -83,7 +83,7 @@ macro_rules! __impl_lstm_for_word_line_auto_v1_marker {
         impl icu_provider::DataProvider<icu::segmenter::provider::LstmForWordLineAutoV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::segmenter::provider::LstmForWordLineAutoV1Marker>, icu_provider::DataError> {
                 let metadata = Default::default();
-                let Some(payload) = icu_provider_baked::DataStore::get(&Self::DATA_LSTM_FOR_WORD_LINE_AUTO_V1_MARKER, req.id) else { return Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::segmenter::provider::LstmForWordLineAutoV1Marker as icu_provider::DataMarker>::INFO, req)) };
+                let Some(payload) = icu_provider_baked::DataStore::get(&Self::DATA_LSTM_FOR_WORD_LINE_AUTO_V1_MARKER, req.id) else { return Err(icu_provider::DataErrorKind::IdentifierNotFound.with_req(<icu::segmenter::provider::LstmForWordLineAutoV1Marker as icu_provider::DataMarker>::INFO, req)) };
                 Ok(icu_provider::DataResponse { payload: icu_provider::DataPayload::from_static_ref(payload), metadata })
             }
         }

@@ -157,7 +157,7 @@ impl DatagenProvider {
     ) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         let cldr_cal = supported_cals()
             .get(calendar)
-            .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?;
+            .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?;
 
         Ok(self
             .cldr()?

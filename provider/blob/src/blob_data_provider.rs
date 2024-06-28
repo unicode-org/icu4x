@@ -170,7 +170,7 @@ mod test {
                 matches!(
                     provider.load_data(HelloWorldV1Marker::INFO, Default::default()),
                     Err(DataError {
-                        kind: DataErrorKind::MissingLocale,
+                        kind: DataErrorKind::IdentifierNotFound,
                         ..
                     })
                 ),
@@ -210,7 +210,7 @@ mod test {
                         }
                     ),
                     Err(DataError {
-                        kind: DataErrorKind::ExtraneousLocale,
+                        kind: DataErrorKind::InvalidRequest,
                         ..
                     })
                 ),
@@ -221,7 +221,7 @@ mod test {
                 matches!(
                     provider.load_data(HelloSingletonV1Marker::INFO, Default::default()),
                     Err(DataError {
-                        kind: DataErrorKind::MissingLocale,
+                        kind: DataErrorKind::IdentifierNotFound,
                         ..
                     })
                 ),

@@ -98,10 +98,10 @@ pub trait DataMarker: DynamicDataMarker {
 /// A [`DynamicDataMarker`] that never returns data.
 ///
 /// All types that have non-blanket impls of `DataProvider<M>` are expected to explicitly
-/// implement `DataProvider<NeverMarker<Y>>`, returning [`DataErrorKind::MissingDataMarker`].
+/// implement `DataProvider<NeverMarker<Y>>`, returning [`DataErrorKind::MarkerNotFound`].
 /// See [`impl_data_provider_never_marker!`].
 ///
-/// [`DataErrorKind::MissingDataMarker`]: crate::DataErrorKind::MissingDataMarker
+/// [`DataErrorKind::MarkerNotFound`]: crate::DataErrorKind::MarkerNotFound
 /// [`impl_data_provider_never_marker!`]: crate::marker::impl_data_provider_never_marker
 ///
 /// # Examples
@@ -125,7 +125,7 @@ pub trait DataMarker: DynamicDataMarker {
 /// assert!(matches!(
 ///     result,
 ///     Err(DataError {
-///         kind: DataErrorKind::MissingDataMarker,
+///         kind: DataErrorKind::MarkerNotFound,
 ///         ..
 ///     })
 /// ));
@@ -174,7 +174,7 @@ where
 /// assert!(matches!(
 ///     result,
 ///     Err(DataError {
-///         kind: DataErrorKind::MissingDataMarker,
+///         kind: DataErrorKind::MarkerNotFound,
 ///         ..
 ///     })
 /// ));
@@ -192,7 +192,7 @@ macro_rules! __impl_data_provider_never_marker {
                 req: $crate::DataRequest,
             ) -> Result<$crate::DataResponse<$crate::marker::NeverMarker<Y>>, $crate::DataError>
             {
-                Err($crate::DataErrorKind::MissingDataMarker.with_req(
+                Err($crate::DataErrorKind::MarkerNotFound.with_req(
                     <$crate::marker::NeverMarker<Y> as $crate::DataMarker>::INFO,
                     req,
                 ))
@@ -585,7 +585,7 @@ impl DataMarkerInfo {
     /// assert!(matches!(
     ///     HelloWorldV1Marker::INFO.match_marker(DummyMarker::INFO),
     ///     Err(DataError {
-    ///         kind: DataErrorKind::MissingDataMarker,
+    ///         kind: DataErrorKind::MarkerNotFound,
     ///         ..
     ///     })
     /// ));
@@ -597,7 +597,7 @@ impl DataMarkerInfo {
         if self == marker {
             Ok(())
         } else {
-            Err(DataErrorKind::MissingDataMarker.with_marker(marker))
+            Err(DataErrorKind::MarkerNotFound.with_marker(marker))
         }
     }
 }

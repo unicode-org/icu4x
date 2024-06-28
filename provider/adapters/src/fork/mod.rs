@@ -17,10 +17,10 @@
 //!
 //! To fork between providers that support different locales, see:
 //!
-//! - [`ForkByErrorProvider`]`<`[`MissingLocalePredicate`]`>`
-//! - [`MultiForkByErrorProvider`]`<`[`MissingLocalePredicate`]`>`
+//! - [`ForkByErrorProvider`]`<`[`IdentiferNotFoundPredicate`]`>`
+//! - [`MultiForkByErrorProvider`]`<`[`IdentiferNotFoundPredicate`]`>`
 //!
-//! [`MissingLocalePredicate`]: predicates::MissingLocalePredicate
+//! [`IdentiferNotFoundPredicate`]: predicates::IdentifierNotFoundPredicate
 //!
 //! # Examples
 //!
@@ -28,7 +28,7 @@
 //!
 //! - [`ForkByMarkerProvider`]
 //! - [`MultiForkByMarkerProvider`]
-//! - [`MissingLocalePredicate`]
+//! - [`IdentiferNotFoundPredicate`]
 
 use alloc::vec::Vec;
 
@@ -43,7 +43,7 @@ pub use by_error::ForkByErrorProvider;
 pub use by_error::MultiForkByErrorProvider;
 
 use predicates::ForkByErrorPredicate;
-use predicates::MissingDataMarkerPredicate;
+use predicates::MarkerNotFoundPredicate;
 
 /// Create a provider that returns data from one of two child providers based on the marker.
 ///
@@ -71,7 +71,7 @@ use predicates::MissingDataMarkerPredicate;
 ///         marker: DataMarkerInfo,
 ///         req: DataRequest,
 ///     ) -> Result<DataResponse<BufferMarker>, DataError> {
-///         Err(DataErrorKind::MissingDataMarker.with_req(marker, req))
+///         Err(DataErrorKind::MarkerNotFound.with_req(marker, req))
 ///     }
 /// }
 ///
@@ -139,14 +139,14 @@ use predicates::MissingDataMarkerPredicate;
 /// [`AnyProvider`]: icu_provider::any::AnyProvider
 /// [`BufferProvider`]: icu_provider::buf::BufferProvider
 /// [`DynamicDataProvider`]: icu_provider::DynamicDataProvider
-pub type ForkByMarkerProvider<P0, P1> = ForkByErrorProvider<P0, P1, MissingDataMarkerPredicate>;
+pub type ForkByMarkerProvider<P0, P1> = ForkByErrorProvider<P0, P1, MarkerNotFoundPredicate>;
 
 impl<P0, P1> ForkByMarkerProvider<P0, P1> {
     /// A provider that returns data from one of two child providers based on the marker.
     ///
     /// See [`ForkByMarkerProvider`].
     pub fn new(p0: P0, p1: P1) -> Self {
-        ForkByErrorProvider::new_with_predicate(p0, p1, MissingDataMarkerPredicate)
+        ForkByErrorProvider::new_with_predicate(p0, p1, MarkerNotFoundPredicate)
     }
 }
 
@@ -208,13 +208,13 @@ impl<P0, P1> ForkByMarkerProvider<P0, P1> {
 /// [`AnyProvider`]: icu_provider::any::AnyProvider
 /// [`BufferProvider`]: icu_provider::buf::BufferProvider
 /// [`DynamicDataProvider`]: icu_provider::DynamicDataProvider
-pub type MultiForkByMarkerProvider<P> = MultiForkByErrorProvider<P, MissingDataMarkerPredicate>;
+pub type MultiForkByMarkerProvider<P> = MultiForkByErrorProvider<P, MarkerNotFoundPredicate>;
 
 impl<P> MultiForkByMarkerProvider<P> {
     /// Create a provider that returns data from the first child provider supporting the marker.
     ///
     /// See [`MultiForkByMarkerProvider`].
     pub fn new(providers: Vec<P>) -> Self {
-        MultiForkByErrorProvider::new_with_predicate(providers, MissingDataMarkerPredicate)
+        MultiForkByErrorProvider::new_with_predicate(providers, MarkerNotFoundPredicate)
     }
 }

@@ -11,7 +11,7 @@ use icu_provider_adapters::either::EitherProvider;
 use icu_provider_adapters::fallback::LocaleFallbackProvider;
 use icu_provider_adapters::fork::ForkByMarkerProvider;
 use icu_provider_adapters::fork::MultiForkByErrorProvider;
-use icu_provider_adapters::fork::predicates::MissingLocalePredicate;
+use icu_provider_adapters::fork::predicates::IdentifierNotFoundPredicate;
 use icu_provider_blob::BlobDataProvider;
 use icu_provider_fs::FsDataProvider;
 use icu_provider::prelude::*;
@@ -24,7 +24,7 @@ use writeable::Writeable;
 // Create the empty MultiForkByErrorProvider:
 let mut provider = MultiForkByErrorProvider::new_with_predicate(
     vec![],
-    MissingLocalePredicate
+    IdentifierNotFoundPredicate
 );
 
 // Pretend we're loading these from the network or somewhere.
@@ -33,7 +33,7 @@ struct SingleLocaleProvider(DataLocale);
 impl DataProvider<HelloWorldV1Marker> for SingleLocaleProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
         if *req.id.locale != self.0 {
-            return Err(DataErrorKind::MissingLocale.with_req(HelloWorldV1Marker::INFO, req));
+            return Err(DataErrorKind::IdentifierNotFound.with_req(HelloWorldV1Marker::INFO, req));
         }
         HelloWorldProvider.load(req)
     }

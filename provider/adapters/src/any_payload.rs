@@ -47,7 +47,7 @@ use zerofrom::ZeroFrom;
 /// assert!(matches!(
 ///     provider.load_any(DummyMarker::INFO, Default::default()),
 ///     Err(DataError {
-///         kind: DataErrorKind::MissingDataMarker,
+///         kind: DataErrorKind::MarkerNotFound,
 ///         ..
 ///     })
 /// ))
@@ -56,7 +56,7 @@ use zerofrom::ZeroFrom;
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct AnyPayloadProvider {
     /// The [`DataMarkerInfo`] for which to provide data. All others will receive a
-    /// [`DataErrorKind::MissingDataMarker`].
+    /// [`DataErrorKind::MarkerNotFound`].
     marker: DataMarkerInfo,
     /// The [`AnyPayload`] to return on matching requests.
     data: AnyPayload,

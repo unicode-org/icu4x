@@ -81,7 +81,7 @@ final class DataProvider implements ffi.Finalizable {
 
   /// Same as `fork_by_key` but forks by locale instead of key.
   ///
-  /// See the [Rust documentation for `MissingLocalePredicate`](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fork/predicates/struct.MissingLocalePredicate.html) for more information.
+  /// See the [Rust documentation for `IdentifierNotFoundPredicate`](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fork/predicates/struct.IdentifierNotFoundPredicate.html) for more information.
   ///
   /// Throws [DataError] on failure.
   void forkByLocale(DataProvider other) {

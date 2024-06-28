@@ -13,16 +13,15 @@
 
 typedef enum ICU4XDataError {
   ICU4XDataError_Unknown = 0,
-  ICU4XDataError_MissingDataMarker = 1,
-  ICU4XDataError_MissingLocale = 2,
-  ICU4XDataError_NeedsLocale = 3,
-  ICU4XDataError_ExtraneousLocale = 4,
-  ICU4XDataError_FilteredResource = 5,
-  ICU4XDataError_MismatchedType = 6,
-  ICU4XDataError_Custom = 7,
-  ICU4XDataError_Io = 8,
-  ICU4XDataError_UnavailableBufferFormat = 9,
-  ICU4XDataError_InconsistentData = 10,
+  ICU4XDataError_MarkerNotFound = 1,
+  ICU4XDataError_IdentifierNotFound = 2,
+  ICU4XDataError_InvalidRequest = 3,
+  ICU4XDataError_FilteredResource = 4,
+  ICU4XDataError_InconsistentData = 5,
+  ICU4XDataError_Downcast = 6,
+  ICU4XDataError_Deserialize = 7,
+  ICU4XDataError_Custom = 8,
+  ICU4XDataError_Io = 9,
 } ICU4XDataError;
 
 

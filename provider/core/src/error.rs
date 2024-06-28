@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::_internal::log;
-use crate::buf::BufferFormat;
 use crate::{marker::DataMarkerPath, prelude::*};
 use core::fmt;
 use displaydoc::Display;
@@ -15,55 +14,46 @@ use displaydoc::Display;
 #[derive(Clone, Copy, Eq, PartialEq, Display, Debug)]
 #[non_exhaustive]
 pub enum DataErrorKind {
-    /// No data for the provided data marker.
-    #[displaydoc("Missing data for data marker")]
-    MissingDataMarker,
+    /// No data for the requested data marker. This is only returned by [`DynamicDataProvider`].
+    #[displaydoc("Missing data for marker")]
+    MarkerNotFound,
 
-    /// There is data for the data marker, but not for this particular locale.
-    #[displaydoc("Missing data for locale")]
-    MissingLocale,
+    /// There is data for the data marker, but not for this particular data identifier.
+    #[displaydoc("Missing data for identifier")]
+    IdentifierNotFound,
 
-    /// The request should include a locale.
-    #[displaydoc("Request needs a locale")]
-    NeedsLocale,
+    /// The request is invalid, such as a request for a singleton marker containing a data identifier.
+    #[displaydoc("Invalid request")]
+    InvalidRequest,
 
-    /// The request should not contain a locale.
-    #[displaydoc("Request has an extraneous locale")]
-    ExtraneousLocale,
+    /// The request was blocked by a filter. The data may or may not be available.
+    #[displaydoc("Request blocked by filter")]
+    Filtered,
 
-    /// The resource was blocked by a filter. The resource may or may not be available.
-    #[displaydoc("Resource blocked by filter")]
-    FilteredResource,
+    /// The data for two [`DataMarker`]s is not consistent.
+    #[displaydoc("The data for two markers is not consistent: {0:?} (were they generated in different datagen invocations?)")]
+    InconsistentData(DataMarkerInfo),
 
-    /// The generic type parameter does not match the TypeId. The expected type name is stored
-    /// as context when this error is returned.
-    #[displaydoc("Mismatched types: tried to downcast with {0}, but actual type is different")]
-    MismatchedType(&'static str),
+    /// An error occured during [`Any`](core::any::Any) downcasting.
+    #[displaydoc("Downcast: expected {0}, found")]
+    Downcast(&'static str),
 
-    /// An unspecified error occurred, such as a Serde error.
+    /// An error occured during [`serde`] deserialization.
+    ///
+    /// Check debug logs for potentially more information.
+    #[displaydoc("Deserialize")]
+    Deserialize,
+
+    /// An unspecified error occurred.
     ///
     /// Check debug logs for potentially more information.
     #[displaydoc("Custom")]
     Custom,
 
     /// An error occurred while accessing a system resource.
-    #[displaydoc("I/O error: {0:?}")]
+    #[displaydoc("I/O: {0:?}")]
     #[cfg(feature = "std")]
     Io(std::io::ErrorKind),
-
-    /// An unspecified data source containing the required data is unavailable.
-    #[displaydoc("Missing source data")]
-    #[cfg(feature = "export")]
-    MissingSourceData,
-
-    /// An error indicating that the desired buffer format is not available. This usually
-    /// means that a required Cargo feature was not enabled
-    #[displaydoc("Unavailable buffer format: {0:?} (does icu_provider need to be compiled with an additional Cargo feature?)")]
-    UnavailableBufferFormat(BufferFormat),
-
-    /// The values for two [`DataMarker`]s are not consistent.
-    #[displaydoc("The values for two markers are not consistent: {0:?} (were they generated in different datagen invocations?)")]
-    InconsistentData(DataMarkerInfo),
 }
 
 /// The error type for ICU4X data provider operations.
@@ -72,13 +62,13 @@ pub enum DataErrorKind {
 ///
 /// # Example
 ///
-/// Create a NeedsLocale error and attach a data request for context:
+/// Create a IdentifierNotFound error and attach a data request for context:
 ///
 /// ```no_run
 /// # use icu_provider::prelude::*;
 /// let marker: DataMarkerInfo = unimplemented!();
 /// let req: DataRequest = unimplemented!();
-/// DataErrorKind::NeedsLocale.with_req(marker, req);
+/// DataErrorKind::IdentifierNotFound.with_req(marker, req);
 /// ```
 ///
 /// Create a named custom error:
@@ -210,7 +200,7 @@ impl DataError {
             self.silent = true;
         }
         // Don't write out a log for MissingDataMarker since there is no context to add
-        if !self.silent && self.kind != DataErrorKind::MissingDataMarker {
+        if !self.silent && self.kind != DataErrorKind::MarkerNotFound {
             log::warn!("{self} (marker: {marker:?}, request: {})", req.id);
         }
         self.with_marker(marker)
@@ -257,7 +247,7 @@ impl DataError {
     #[inline]
     pub(crate) fn for_type<T>() -> DataError {
         DataError {
-            kind: DataErrorKind::MismatchedType(core::any::type_name::<T>()),
+            kind: DataErrorKind::Downcast(core::any::type_name::<T>()),
             marker_path: None,
             str_context: None,
             silent: false,

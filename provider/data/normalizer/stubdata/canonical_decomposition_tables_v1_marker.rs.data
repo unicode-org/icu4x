@@ -19,7 +19,7 @@ macro_rules! __impl_canonical_decomposition_tables_v1_marker {
                 if req.id.locale.is_empty() {
                     Ok(icu_provider::DataResponse { payload: icu_provider::DataPayload::from_static_ref(Self::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1_MARKER), metadata: Default::default() })
                 } else {
-                    Err(icu_provider::DataErrorKind::ExtraneousLocale.with_req(<icu::normalizer::provider::CanonicalDecompositionTablesV1Marker as icu_provider::DataMarker>::INFO, req))
+                    Err(icu_provider::DataErrorKind::InvalidRequest.with_req(<icu::normalizer::provider::CanonicalDecompositionTablesV1Marker as icu_provider::DataMarker>::INFO, req))
                 }
             }
         }

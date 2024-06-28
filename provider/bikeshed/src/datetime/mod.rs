@@ -61,7 +61,7 @@ impl DatagenProvider {
         let cldr_cal = match calendar {
             Either::Left(value) => supported_cals()
                 .get(value)
-                .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?,
+                .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?,
             Either::Right(s) => s,
         };
 
@@ -210,7 +210,7 @@ macro_rules! impl_data_provider {
                     req.id
                         .locale
                         .get_unicode_ext(&key!("ca"))
-                        .ok_or_else(|| DataErrorKind::NeedsLocale.into_error())?
+                        .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?
                 } else {
                     value!($calendar)
                 };
@@ -239,7 +239,7 @@ macro_rules! impl_data_provider {
                 } else {
                     let cldr_cal = supported_cals()
                         .get(&value!($calendar))
-                        .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?;
+                        .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?;
                     r.extend(
                         self.cldr()?
                             .dates(cldr_cal)

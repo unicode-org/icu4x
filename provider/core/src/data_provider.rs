@@ -56,7 +56,7 @@ where
 /// A [`DataProvider`] that can iterate over all supported [`DataIdentifierCow`]s.
 ///
 /// The provider is not allowed to return `Ok` for requests that were not returned by `iter_ids`,
-/// and must not fail with a [`DataErrorKind::MissingLocale`] for requests that were returned.
+/// and must not fail with a [`DataErrorKind::IdentifierNotFound`] for requests that were returned.
 pub trait IterableDataProvider<M: DataMarker>: DataProvider<M> {
     /// Returns a set of [`DataIdentifierCow`].
     fn iter_ids(&self) -> Result<std::collections::HashSet<DataIdentifierCow>, DataError>;
@@ -160,7 +160,7 @@ where
 /// A [`DynamicDataProvider`] that can iterate over all supported [`DataIdentifierCow`]s for a certain marker.
 ///
 /// The provider is not allowed to return `Ok` for requests that were not returned by `iter_ids`,
-/// and must not fail with a [`DataErrorKind::MissingLocale`] for requests that were returned.
+/// and must not fail with a [`DataErrorKind::IdentifierNotFound`] for requests that were returned.
 pub trait IterableDynamicDataProvider<M: DynamicDataMarker>: DynamicDataProvider<M> {
     /// Given a [`DataMarkerInfo`], returns a set of [`DataIdentifierCow`].
     fn iter_ids_for_marker(
@@ -480,7 +480,7 @@ mod test {
         assert!(matches!(
             response,
             Err(DataError {
-                kind: DataErrorKind::MissingDataMarker,
+                kind: DataErrorKind::MarkerNotFound,
                 ..
             })
         ));
@@ -557,7 +557,7 @@ mod test {
         assert!(matches!(
             response,
             Err(DataError {
-                kind: DataErrorKind::MismatchedType(_),
+                kind: DataErrorKind::Downcast(_),
                 ..
             })
         ));

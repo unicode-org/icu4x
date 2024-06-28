@@ -19,7 +19,7 @@ macro_rules! __impl_script_with_extensions_property_v1_marker {
                 if req.id.locale.is_empty() {
                     Ok(icu_provider::DataResponse { payload: icu_provider::DataPayload::from_static_ref(Self::SINGLETON_SCRIPT_WITH_EXTENSIONS_PROPERTY_V1_MARKER), metadata: Default::default() })
                 } else {
-                    Err(icu_provider::DataErrorKind::ExtraneousLocale.with_req(<icu::properties::provider::ScriptWithExtensionsPropertyV1Marker as icu_provider::DataMarker>::INFO, req))
+                    Err(icu_provider::DataErrorKind::InvalidRequest.with_req(<icu::properties::provider::ScriptWithExtensionsPropertyV1Marker as icu_provider::DataMarker>::INFO, req))
                 }
             }
         }

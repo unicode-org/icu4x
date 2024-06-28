@@ -573,7 +573,7 @@ impl DatagenDriver {
                         return Some(Ok(data_response.payload));
                     }
                     Err(DataError {
-                        kind: DataErrorKind::MissingLocale,
+                        kind: DataErrorKind::IdentifierNotFound,
                         ..
                     }) => {
                         if let Some(iter) = locale_iter.as_mut() {

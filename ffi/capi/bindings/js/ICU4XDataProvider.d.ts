@@ -63,7 +63,7 @@ export class ICU4XDataProvider {
 
    * Same as `fork_by_key` but forks by locale instead of key.
 
-   * See the {@link https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fork/predicates/struct.MissingLocalePredicate.html Rust documentation for `MissingLocalePredicate`} for more information.
+   * See the {@link https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fork/predicates/struct.IdentifierNotFoundPredicate.html Rust documentation for `IdentifierNotFoundPredicate`} for more information.
    * @throws {@link FFIError}<{@link ICU4XDataError}>
    */
   fork_by_locale(other: ICU4XDataProvider): void | never;

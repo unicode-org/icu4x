@@ -16,16 +16,15 @@ pub mod ffi {
     #[diplomat::rust_link(icu::provider::DataErrorKind, Enum, compact)]
     pub enum ICU4XDataError {
         Unknown = 0x00,
-        MissingDataMarker = 0x01,
-        MissingLocale = 0x02,
-        NeedsLocale = 0x03,
-        ExtraneousLocale = 0x04,
-        FilteredResource = 0x05,
-        MismatchedType = 0x06,
-        Custom = 0x07,
-        Io = 0x08,
-        UnavailableBufferFormat = 0x09,
-        InconsistentData = 0x0A,
+        MarkerNotFound = 0x01,
+        IdentifierNotFound = 0x02,
+        InvalidRequest = 0x03,
+        FilteredResource = 0x04,
+        InconsistentData = 0x05,
+        Downcast = 0x06,
+        Deserialize = 0x07,
+        Custom = 0x08,
+        Io = 0x09,
     }
 
     #[derive(Debug, PartialEq, Eq)]
@@ -131,23 +130,17 @@ pub mod ffi {
 impl From<DataError> for ICU4XError {
     fn from(e: DataError) -> Self {
         match e.kind {
-            DataErrorKind::MissingDataMarker => ICU4XError::DataMissingDataMarkerError,
-            DataErrorKind::MissingLocale => ICU4XError::DataMissingLocaleError,
-            DataErrorKind::NeedsLocale => ICU4XError::DataNeedsLocaleError,
-            DataErrorKind::ExtraneousLocale => ICU4XError::DataExtraneousLocaleError,
-            DataErrorKind::FilteredResource => ICU4XError::DataFilteredResourceError,
-            DataErrorKind::MismatchedType(..) => ICU4XError::DataMismatchedTypeError,
+            DataErrorKind::MarkerNotFound => ICU4XError::DataMissingDataMarkerError,
+            DataErrorKind::IdentifierNotFound => ICU4XError::DataMissingLocaleError,
+            DataErrorKind::InvalidRequest => ICU4XError::DataExtraneousLocaleError,
+            DataErrorKind::Filtered => ICU4XError::DataFilteredResourceError,
+            DataErrorKind::Downcast(..) => ICU4XError::DataMismatchedTypeError,
             DataErrorKind::Custom => ICU4XError::DataCustomError,
             #[cfg(all(
                 feature = "provider_fs",
                 not(any(target_arch = "wasm32", target_os = "none"))
             ))]
             DataErrorKind::Io(..) => ICU4XError::DataIoError,
-            // datagen only
-            // DataErrorKind::MissingSourceData(..) => ..,
-            DataErrorKind::UnavailableBufferFormat(..) => {
-                ICU4XError::DataUnavailableBufferFormatError
-            }
             _ => ICU4XError::UnknownError,
         }
     }
@@ -156,22 +149,19 @@ impl From<DataError> for ICU4XError {
 impl From<DataError> for ICU4XDataError {
     fn from(e: DataError) -> Self {
         match e.kind {
-            DataErrorKind::MissingDataMarker => Self::MissingDataMarker,
-            DataErrorKind::MissingLocale => Self::MissingLocale,
-            DataErrorKind::NeedsLocale => Self::NeedsLocale,
-            DataErrorKind::ExtraneousLocale => Self::ExtraneousLocale,
-            DataErrorKind::FilteredResource => Self::FilteredResource,
-            DataErrorKind::MismatchedType(..) => Self::MismatchedType,
+            DataErrorKind::MarkerNotFound => Self::MarkerNotFound,
+            DataErrorKind::IdentifierNotFound => Self::IdentifierNotFound,
+            DataErrorKind::InvalidRequest => Self::InvalidRequest,
+            DataErrorKind::Filtered => Self::FilteredResource,
+            DataErrorKind::InconsistentData(..) => Self::InconsistentData,
+            DataErrorKind::Downcast(..) => Self::Downcast,
+            DataErrorKind::Deserialize => Self::Deserialize,
             DataErrorKind::Custom => Self::Custom,
             #[cfg(all(
                 feature = "provider_fs",
                 not(any(target_arch = "wasm32", target_os = "none"))
             ))]
             DataErrorKind::Io(..) => Self::Io,
-            // datagen only
-            // DataErrorKind::MissingSourceData(..) => ..,
-            DataErrorKind::UnavailableBufferFormat(..) => Self::UnavailableBufferFormat,
-            DataErrorKind::InconsistentData(..) => Self::InconsistentData,
             _ => Self::Unknown,
         }
     }

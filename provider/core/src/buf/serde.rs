@@ -92,7 +92,10 @@ where
 
         // Allowed for cases in which all features are enabled
         #[allow(unreachable_patterns)]
-        _ => Err(DataErrorKind::UnavailableBufferFormat(buffer_format).into_error()),
+        _ => {
+            buffer_format.check_available()?;
+            unreachable!()
+        }
     }
 }
 
@@ -167,7 +170,9 @@ where
     ) -> Result<DataResponse<M>, DataError> {
         let buffer_response = self.0.load_data(marker, req)?;
         let buffer_format = buffer_response.metadata.buffer_format.ok_or_else(|| {
-            DataError::custom("BufferProvider didn't set BufferFormat").with_req(marker, req)
+            DataErrorKind::Deserialize
+                .with_str_context("BufferProvider didn't set BufferFormat")
+                .with_req(marker, req)
         })?;
         Ok(DataResponse {
             metadata: buffer_response.metadata,
@@ -204,20 +209,26 @@ where
 #[cfg(feature = "deserialize_json")]
 impl From<serde_json::error::Error> for crate::DataError {
     fn from(e: serde_json::error::Error) -> Self {
-        crate::DataError::custom("JSON deserialize").with_display_context(&e)
+        DataErrorKind::Deserialize
+            .with_str_context("serde_json")
+            .with_display_context(&e)
     }
 }
 
 #[cfg(feature = "deserialize_bincode_1")]
 impl From<bincode::Error> for crate::DataError {
     fn from(e: bincode::Error) -> Self {
-        crate::DataError::custom("Bincode deserialize").with_display_context(&e)
+        DataErrorKind::Deserialize
+            .with_str_context("bincode")
+            .with_display_context(&e)
     }
 }
 
 #[cfg(feature = "deserialize_postcard_1")]
 impl From<postcard::Error> for crate::DataError {
     fn from(e: postcard::Error) -> Self {
-        crate::DataError::custom("Postcard deserialize").with_display_context(&e)
+        DataErrorKind::Deserialize
+            .with_str_context("postcard")
+            .with_display_context(&e)
     }
 }

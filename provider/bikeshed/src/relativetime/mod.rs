@@ -95,7 +95,7 @@ macro_rules! make_data_provider {
 
                     let field = marker_filters()
                         .get(&$marker::INFO)
-                        .ok_or(DataErrorKind::MissingDataMarker.into_error())?;
+                        .ok_or(DataErrorKind::MarkerNotFound.into_error())?;
 
                     let data = fields.0.get(*field).ok_or(DataError::custom(
                         "Field not found in relative time format data.",

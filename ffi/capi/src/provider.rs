@@ -28,7 +28,7 @@ pub mod ffi {
     #[allow(unused_imports)] // feature-gated
     use icu_provider_adapters::fallback::LocaleFallbackProvider;
     #[allow(unused_imports)] // feature-gated
-    use icu_provider_adapters::fork::predicates::MissingLocalePredicate;
+    use icu_provider_adapters::fork::predicates::IdentifierNotFoundPredicate;
 
     #[diplomat::opaque]
     /// An ICU4X data provider, capable of loading ICU4X data keys from some source.
@@ -108,7 +108,7 @@ pub mod ffi {
         /// or `create_fs`. If the condition is not upheld, a runtime error occurs.
         #[diplomat::rust_link(icu_provider_adapters::fork::ForkByMarkerProvider, Typedef)]
         #[diplomat::rust_link(
-            icu_provider_adapters::fork::predicates::MissingDataMarkerPredicate,
+            icu_provider_adapters::fork::predicates::MarkerNotFoundPredicate,
             Struct,
             hidden
         )]
@@ -139,7 +139,7 @@ pub mod ffi {
 
         /// Same as `fork_by_key` but forks by locale instead of key.
         #[diplomat::rust_link(
-            icu_provider_adapters::fork::predicates::MissingLocalePredicate,
+            icu_provider_adapters::fork::predicates::IdentifierNotFoundPredicate,
             Struct
         )]
         pub fn fork_by_locale(
@@ -167,7 +167,7 @@ pub mod ffi {
                     icu_provider_adapters::fork::ForkByErrorProvider::new_with_predicate(
                         a,
                         b,
-                        MissingLocalePredicate,
+                        IdentifierNotFoundPredicate,
                     ),
                 ),
             };
@@ -196,7 +196,7 @@ pub mod ffi {
                 Compiled => Err(icu_provider::DataError::custom(
                     "The compiled provider cannot be modified",
                 ))?,
-                Empty => Err(icu_provider::DataErrorKind::MissingDataMarker.into_error())?,
+                Empty => Err(icu_provider::DataErrorKind::MarkerNotFound.into_error())?,
                 #[cfg(feature = "buffer_provider")]
                 Buffer(inner) => convert_buffer_provider(
                     LocaleFallbackProvider::try_new_with_buffer_provider(inner)?,
@@ -229,7 +229,7 @@ pub mod ffi {
                 Compiled => Err(icu_provider::DataError::custom(
                     "The compiled provider cannot be modified",
                 ))?,
-                Empty => Err(icu_provider::DataErrorKind::MissingDataMarker.into_error())?,
+                Empty => Err(icu_provider::DataErrorKind::MarkerNotFound.into_error())?,
                 #[cfg(feature = "buffer_provider")]
                 Buffer(inner) => convert_buffer_provider(
                     LocaleFallbackProvider::new_with_fallbacker(inner, fallbacker.0.clone()),

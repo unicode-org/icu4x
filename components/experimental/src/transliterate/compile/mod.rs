@@ -318,9 +318,8 @@ where
             let Some((source, reverse, visible)) =
                 exclusive_data.0.remove(req.id.marker_attributes as &str)
             else {
-                return Err(
-                    DataErrorKind::MissingLocale.with_req(TransliteratorRulesV1Marker::INFO, req)
-                );
+                return Err(DataErrorKind::IdentifierNotFound
+                    .with_req(TransliteratorRulesV1Marker::INFO, req));
             };
 
             let rules = parse::Parser::run(

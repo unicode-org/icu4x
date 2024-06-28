@@ -22,7 +22,7 @@ impl DatagenProvider {
             ))?
             .enum_property
             .first()
-            .ok_or_else(|| DataErrorKind::MissingDataMarker.into_error())
+            .ok_or_else(|| DataErrorKind::MarkerNotFound.into_error())
     }
 }
 

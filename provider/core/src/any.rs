@@ -494,7 +494,7 @@ mod test {
 
         let err = any_payload.downcast::<WrongMarker>().unwrap_err();
         assert_eq!(
-            "ICU4X data error: Mismatched types: tried to downcast with icu_provider::any::test::test_debug::WrongMarker, but actual type is different: icu_provider::hello_world::HelloWorldV1Marker",
+            "ICU4X data error: Downcast: expected icu_provider::any::test::test_debug::WrongMarker, found: icu_provider::hello_world::HelloWorldV1Marker",
             format!("{err}")
         );
     }

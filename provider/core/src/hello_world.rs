@@ -150,7 +150,9 @@ impl DataProvider<HelloWorldV1Marker> for HelloWorldProvider {
                     && *a == req.id.marker_attributes.as_str()
             })
             .map(|(_, _, v)| v)
-            .ok_or_else(|| DataErrorKind::MissingLocale.with_req(HelloWorldV1Marker::INFO, req))?;
+            .ok_or_else(|| {
+                DataErrorKind::IdentifierNotFound.with_req(HelloWorldV1Marker::INFO, req)
+            })?;
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_static_str(data),

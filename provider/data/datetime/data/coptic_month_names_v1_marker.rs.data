@@ -88,7 +88,7 @@ macro_rules! __impl_coptic_month_names_v1_marker {
                             break payload;
                         }
                         if fallback_iterator.get().is_und() {
-                            return Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::datetime::provider::neo::CopticMonthNamesV1Marker as icu_provider::DataMarker>::INFO, req));
+                            return Err(icu_provider::DataErrorKind::IdentifierNotFound.with_req(<icu::datetime::provider::neo::CopticMonthNamesV1Marker as icu_provider::DataMarker>::INFO, req));
                         }
                         fallback_iterator.step();
                     }

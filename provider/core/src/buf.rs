@@ -97,11 +97,11 @@ impl<P: DynamicDataProvider<BufferMarker> + ?Sized> BufferProvider for P {}
 #[cfg_attr(feature = "serde", derive(::serde::Serialize, ::serde::Deserialize))]
 #[non_exhaustive]
 pub enum BufferFormat {
-    /// Serialize using JavaScript Object Notation (JSON).
+    /// Serialize using JavaScript Object Notation (JSON), using the [`serde_json`] crate.
     Json,
-    /// Serialize using Bincode version 1.
+    /// Serialize using the [`bincode`] crate, version 1.
     Bincode1,
-    /// Serialize using Postcard version 1.
+    /// Serialize using the [`postcard`] crate, version 1.
     Postcard1,
 }
 
@@ -111,16 +111,18 @@ impl BufferFormat {
         match self {
             #[cfg(feature = "deserialize_json")]
             BufferFormat::Json => Ok(()),
+            #[cfg(not(feature = "deserialize_json"))]
+            BufferFormat::Json => Err(DataErrorKind::Deserialize.with_str_context("deserializing `BufferFormat::Json` requires the `deserialize_json` Cargo feature")),
 
             #[cfg(feature = "deserialize_bincode_1")]
             BufferFormat::Bincode1 => Ok(()),
+            #[cfg(not(feature = "deserialize_bincode_1"))]
+            BufferFormat::Bincode1 => Err(DataErrorKind::Deserialize.with_str_context("deserializing `BufferFormat::Bincode1` requires the `deserialize_bincode_1` Cargo feature")),
 
             #[cfg(feature = "deserialize_postcard_1")]
             BufferFormat::Postcard1 => Ok(()),
-
-            // Allowed for cases in which all features are enabled
-            #[allow(unreachable_patterns)]
-            _ => Err(DataErrorKind::UnavailableBufferFormat(*self).into_error()),
+            #[cfg(not(feature = "deserialize_postcard_1"))]
+            BufferFormat::Postcard1 => Err(DataErrorKind::Deserialize.with_str_context("deserializing `BufferFormat::Postcard1` requires the `deserialize_postcard_1` Cargo feature")),
         }
     }
 }

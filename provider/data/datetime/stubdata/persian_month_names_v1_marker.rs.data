@@ -11,7 +11,7 @@ macro_rules! __impl_persian_month_names_v1_marker {
         #[clippy::msrv = "1.70"]
         impl icu_provider::DataProvider<icu::datetime::provider::neo::PersianMonthNamesV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::datetime::provider::neo::PersianMonthNamesV1Marker>, icu_provider::DataError> {
-                Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::datetime::provider::neo::PersianMonthNamesV1Marker as icu_provider::DataMarker>::INFO, req))
+                Err(icu_provider::DataErrorKind::IdentifierNotFound.with_req(<icu::datetime::provider::neo::PersianMonthNamesV1Marker as icu_provider::DataMarker>::INFO, req))
             }
         }
     };
