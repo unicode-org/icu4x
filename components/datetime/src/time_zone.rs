@@ -868,6 +868,16 @@ pub(super) struct Iso8601Format {
     seconds: IsoSeconds,
 }
 
+impl Iso8601Format {
+    pub(crate) fn default_for_fallback() -> Self {
+        Self {
+            format: IsoFormat::Basic,
+            minutes: IsoMinutes::Required,
+            seconds: IsoSeconds::Optional,
+        }
+    }
+}
+
 // It is only used for pattern in special case and not public to users.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub(super) struct ExemplarCityFormat {}

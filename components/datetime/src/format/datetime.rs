@@ -21,7 +21,7 @@ use crate::time_zone::{
     ExemplarCityFormat, FallbackTimeZoneFormatterUnit, FormatTimeZone, FormatTimeZoneError,
     GenericNonLocationLongFormat, GenericNonLocationShortFormat, LocalizedGmtFormat,
     SpecificNonLocationLongFormat, SpecificNonLocationShortFormat, TimeZoneFormatterUnit,
-    GenericLocationFormat,
+    GenericLocationFormat, Iso8601Format
 };
 
 use core::fmt::{self, Write};
@@ -825,9 +825,13 @@ where
                 let mut formatters = (
                     None,
                     None,
+                    // Friendly Localized GMT Format (requires "essentials" data)
                     Some(TimeZoneFormatterUnit::WithFallback(
                         FallbackTimeZoneFormatterUnit::LocalizedGmt(LocalizedGmtFormat {}),
                     )),
+                    // Last Resort ISO-8601 Format (no data required)
+                    Some(TimeZoneFormatterUnit::WithFallback(
+                        FallbackTimeZoneFormatterUnit::Iso8601(Iso8601Format::default_for_fallback()))),
                 );
                 match (field_symbol, field_length) {
                     // `z..zzz`
@@ -878,8 +882,9 @@ where
                     // `O` "GMT-8"
                     // All `x` and `X` formats
                     _ => {
-                        // Cause these to fail by unsetting the fallback format
+                        // Cause these to fail by unsetting the fallback formats
                         formatters.2 = None;
+                        formatters.3 = None;
                     }
                 }
                 loop {
@@ -888,6 +893,7 @@ where
                         .take()
                         .or_else(|| formatters.1.take())
                         .or_else(|| formatters.2.take())
+                        .or_else(|| formatters.3.take())
                     else {
                         write_time_zone_missing(w)?;
                         break Err(DateTimeWriteError::MissingNames(field));
