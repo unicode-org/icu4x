@@ -102,9 +102,10 @@ props/bidiauxiliaryprops@1, <singleton>, 4672B, 82f34dee36202d63
 props/blank@1, <singleton>, 66B, 1e75f3c7a32d0e8a
 props/ccc@1, <singleton>, 5270B, 85887761e8c0b554
 props/ea@1, <singleton>, 4963B, 74b1a8cea9a0f2e1
-props/exemplarchars/auxiliary@1, <lookup>, 3696B, 154 identifiers
+props/exemplarchars/auxiliary@1, <lookup>, 4008B, 167 identifiers
 props/exemplarchars/auxiliary@1, <total>, 34415B, 135 unique payloads
 props/exemplarchars/auxiliary@1, af, 51B, f4824761d6d7b92
+props/exemplarchars/auxiliary@1, am, 3B, c76b19d07c9fe625
 props/exemplarchars/auxiliary@1, ar, 99B, 6558940e4709505f
 props/exemplarchars/auxiliary@1, ar-MA, 107B, 12009fbf9c7e8baa
 props/exemplarchars/auxiliary@1, as, 35B, 942da0c874524523
@@ -119,9 +120,12 @@ props/exemplarchars/auxiliary@1, bn, 19B, c240e2a137c88e
 props/exemplarchars/auxiliary@1, br, 164B, 62f7d3bd728b439f
 props/exemplarchars/auxiliary@1, brx, 11B, e842ac72125108d3
 props/exemplarchars/auxiliary@1, bs, 19B, f5d916d42127cde3
+props/exemplarchars/auxiliary@1, bs-Cyrl, 3B, -> am
 props/exemplarchars/auxiliary@1, ca, 180B, 70c97e3c85269030
 props/exemplarchars/auxiliary@1, ceb, 67B, 8ce32d4f550426c7
+props/exemplarchars/auxiliary@1, chr, 3B, -> am
 props/exemplarchars/auxiliary@1, cs, 196B, 12bc12b2e423fe97
+props/exemplarchars/auxiliary@1, csw, 3B, -> am
 props/exemplarchars/auxiliary@1, cv, 61B, 6a20fa4f2a8172f3
 props/exemplarchars/auxiliary@1, cy, 164B, 19f565eed9d6eb85
 props/exemplarchars/auxiliary@1, da, 91B, 5dea509818b9704f
@@ -129,7 +133,7 @@ props/exemplarchars/auxiliary@1, de, 156B, e0c3b05bc6823377
 props/exemplarchars/auxiliary@1, doi, 35B, 4e03dabb26eb3dc4
 props/exemplarchars/auxiliary@1, dsb, 276B, 777685179176ae12
 props/exemplarchars/auxiliary@1, el, 172B, a6154f7619657bea
-props/exemplarchars/auxiliary@1, el-polyton, 3B, c76b19d07c9fe625
+props/exemplarchars/auxiliary@1, el-polyton, 3B, -> am
 props/exemplarchars/auxiliary@1, en, 132B, ca4c480e9d2cd1ec
 props/exemplarchars/auxiliary@1, en-ZA, 188B, 60246eda9d6070c9
 props/exemplarchars/auxiliary@1, eo, 19B, -> bs
@@ -169,6 +173,7 @@ props/exemplarchars/auxiliary@1, jv, 43B, 43f2c90e3d1cec33
 props/exemplarchars/auxiliary@1, ka, 19B, 1cf4b41ceba4b4df
 props/exemplarchars/auxiliary@1, kea, 209B, 5591249227129ac4
 props/exemplarchars/auxiliary@1, kgp, 244B, 2fca27f581bc26b8
+props/exemplarchars/auxiliary@1, kk, 3B, -> am
 props/exemplarchars/auxiliary@1, km, 51B, 615cc8661fd46dec
 props/exemplarchars/auxiliary@1, kn, 19B, 64606985e7ab071a
 props/exemplarchars/auxiliary@1, ko, 5860B, 216f9bb3aed18907
@@ -176,6 +181,10 @@ props/exemplarchars/auxiliary@1, kok, 19B, -> hi
 props/exemplarchars/auxiliary@1, ks, 43B, 637a70646e961506
 props/exemplarchars/auxiliary@1, ks-Deva, 11B, -> brx
 props/exemplarchars/auxiliary@1, ku, 148B, 495c15c72edc081a
+props/exemplarchars/auxiliary@1, kxv, 3B, -> am
+props/exemplarchars/auxiliary@1, kxv-Deva, 3B, -> am
+props/exemplarchars/auxiliary@1, kxv-Orya, 3B, -> am
+props/exemplarchars/auxiliary@1, kxv-Telu, 3B, -> am
 props/exemplarchars/auxiliary@1, ky, 43B, b7971a2c758cbb2f
 props/exemplarchars/auxiliary@1, lb, 180B, 898af8c0b08e7eff
 props/exemplarchars/auxiliary@1, lij, 35B, e4d93b8a89f44c2b
@@ -190,6 +199,7 @@ props/exemplarchars/auxiliary@1, ml, 43B, b19c37c85805a18f
 props/exemplarchars/auxiliary@1, mn, 35B, 51635ef8cd3d0408
 props/exemplarchars/auxiliary@1, mni, 11B, -> brx
 props/exemplarchars/auxiliary@1, mr, 19B, -> hi
+props/exemplarchars/auxiliary@1, ms, 3B, -> am
 props/exemplarchars/auxiliary@1, mt, 19B, 794e233d4206939b
 props/exemplarchars/auxiliary@1, my, 107B, 4c4b93dcd4cb1d24
 props/exemplarchars/auxiliary@1, nds, 140B, 14a3eaa9b37ac086
@@ -204,6 +214,7 @@ props/exemplarchars/auxiliary@1, or, 11B, -> brx
 props/exemplarchars/auxiliary@1, pa, 31B, bb1a9d17e1da850f
 props/exemplarchars/auxiliary@1, pcm, 85B, 4ae45cb8366c33cf
 props/exemplarchars/auxiliary@1, pl, 107B, 4f7b8013023e7897
+props/exemplarchars/auxiliary@1, prg, 3B, -> am
 props/exemplarchars/auxiliary@1, ps, 19B, d55de9a282af23d2
 props/exemplarchars/auxiliary@1, ps-PK, 11B, bcf5b55ab8110a3f
 props/exemplarchars/auxiliary@1, pt, 180B, 5947043b8a77a9c4
@@ -214,6 +225,7 @@ props/exemplarchars/auxiliary@1, ro, 67B, fb06e12e47d10569
 props/exemplarchars/auxiliary@1, ru, 61B, -> cv
 props/exemplarchars/auxiliary@1, sa, 43B, e38acabb3f360792
 props/exemplarchars/auxiliary@1, sah, 67B, 26b18209b6f59aed
+props/exemplarchars/auxiliary@1, sat, 3B, -> am
 props/exemplarchars/auxiliary@1, sc, 123B, 9bc98b15004069d
 props/exemplarchars/auxiliary@1, sd, 19B, eb10a0c978a47d57
 props/exemplarchars/auxiliary@1, sd-Deva, 11B, -> brx
@@ -241,7 +253,7 @@ props/exemplarchars/auxiliary@1, tr, 148B, 51731dc6dd6ada64
 props/exemplarchars/auxiliary@1, tt, 19B, 1f820a032ba9be0c
 props/exemplarchars/auxiliary@1, ug, 19B, 1871c0d28a8fca0e
 props/exemplarchars/auxiliary@1, uk, 91B, 2a3933a3c95f4109
-props/exemplarchars/auxiliary@1, und, 3B, -> el-polyton
+props/exemplarchars/auxiliary@1, und, 3B, -> am
 props/exemplarchars/auxiliary@1, ur, 107B, 8d048c9dbaa66c3a
 props/exemplarchars/auxiliary@1, uz, 148B, b4fa2bb82bc4fe37
 props/exemplarchars/auxiliary@1, uz-Cyrl, 27B, -> tg
@@ -255,10 +267,11 @@ props/exemplarchars/auxiliary@1, yo, 43B, 42f506d8237fbb0a
 props/exemplarchars/auxiliary@1, yrl, 228B, f9984c92e953f146
 props/exemplarchars/auxiliary@1, yue, 428B, cbd13f03fff4e42
 props/exemplarchars/auxiliary@1, yue-Hans, 428B, ac0a04ee0bbd154b
+props/exemplarchars/auxiliary@1, za, 3B, -> am
 props/exemplarchars/auxiliary@1, zh, 10508B, 965423ca978fdd12
 props/exemplarchars/auxiliary@1, zh-Hant, 3828B, 401e7dca7a290c9b
 props/exemplarchars/auxiliary@1, zu, 132B, -> en
-props/exemplarchars/index@1, <lookup>, 3264B, 136 identifiers
+props/exemplarchars/index@1, <lookup>, 3816B, 159 identifiers
 props/exemplarchars/index@1, <total>, 8841B, 106 unique payloads
 props/exemplarchars/index@1, af, 11B, c5ed740dfb27db94
 props/exemplarchars/index@1, am, 308B, 304c236c1389d909
@@ -268,6 +281,9 @@ props/exemplarchars/index@1, ast, 35B, 8440e81664375940
 props/exemplarchars/index@1, az, 67B, a51a9d670cfb9a34
 props/exemplarchars/index@1, be, 43B, eb73cbfb50880284
 props/exemplarchars/index@1, bg, 19B, 1bc71b0d0308cac2
+props/exemplarchars/index@1, bgc, 3B, c76b19d07c9fe625
+props/exemplarchars/index@1, bho, 3B, -> bgc
+props/exemplarchars/index@1, blo, 3B, -> bgc
 props/exemplarchars/index@1, bn, 66B, d11f0e0b22169f5b
 props/exemplarchars/index@1, br, 19B, d502153034dd2334
 props/exemplarchars/index@1, brx, 79B, 43717bdcde31acd9
@@ -277,6 +293,7 @@ props/exemplarchars/index@1, ca, 11B, -> af
 props/exemplarchars/index@1, ceb, 11B, -> af
 props/exemplarchars/index@1, chr, 107B, 833a50eddb5cb0ce
 props/exemplarchars/index@1, cs, 51B, 79fe137e2d2a9eba
+props/exemplarchars/index@1, csw, 3B, -> bgc
 props/exemplarchars/index@1, cv, 51B, 8a8edf6f4e077031
 props/exemplarchars/index@1, cy, 47B, fe8c2f4fbac2d645
 props/exemplarchars/index@1, da, 27B, 8d67e222fc4c52e8
@@ -311,6 +328,7 @@ props/exemplarchars/index@1, hu, 124B, d4f06f853ce11cb1
 props/exemplarchars/index@1, hy, 11B, 56fbbb598caae6f6
 props/exemplarchars/index@1, ia, 11B, -> af
 props/exemplarchars/index@1, id, 11B, -> af
+props/exemplarchars/index@1, ie, 3B, -> bgc
 props/exemplarchars/index@1, ig, 11B, -> af
 props/exemplarchars/index@1, is, 83B, a376390cf9c113b2
 props/exemplarchars/index@1, it, 11B, -> af
@@ -324,10 +342,17 @@ props/exemplarchars/index@1, km, 43B, 44babc65468e4b42
 props/exemplarchars/index@1, kn, 59B, 1929738eaced6a91
 props/exemplarchars/index@1, ko, 67B, c07e446481802ee5
 props/exemplarchars/index@1, kok, 51B, c05e8eeaa4e14911
+props/exemplarchars/index@1, ks, 3B, -> bgc
+props/exemplarchars/index@1, ks-Deva, 3B, -> bgc
 props/exemplarchars/index@1, ku, 51B, af27026db3457aa
+props/exemplarchars/index@1, kxv, 3B, -> bgc
+props/exemplarchars/index@1, kxv-Deva, 3B, -> bgc
+props/exemplarchars/index@1, kxv-Orya, 3B, -> bgc
+props/exemplarchars/index@1, kxv-Telu, 3B, -> bgc
 props/exemplarchars/index@1, ky, 43B, 9624fce4c43c8909
 props/exemplarchars/index@1, lb, 11B, -> af
 props/exemplarchars/index@1, lij, 11B, -> af
+props/exemplarchars/index@1, lmo, 3B, -> bgc
 props/exemplarchars/index@1, lo, 151B, 33bd12480597650
 props/exemplarchars/index@1, lt, 99B, 7f8e9d841cedcff7
 props/exemplarchars/index@1, lv, 99B, e6b2b50bb2179ffa
@@ -336,14 +361,18 @@ props/exemplarchars/index@1, mi, 67B, 731fd550f04f863b
 props/exemplarchars/index@1, mk, 51B, c4ffe97e74019f37
 props/exemplarchars/index@1, ml, 35B, fd313d69a08dc58f
 props/exemplarchars/index@1, mn, 27B, dcae35f88250bd01
+props/exemplarchars/index@1, mni, 3B, -> bgc
 props/exemplarchars/index@1, mr, 99B, b109eaf7a7569f06
 props/exemplarchars/index@1, ms, 11B, -> af
 props/exemplarchars/index@1, mt, 57B, 24d4f09955b4605e
 props/exemplarchars/index@1, my, 11B, cec6deeba471a46
+props/exemplarchars/index@1, nds, 3B, -> bgc
 props/exemplarchars/index@1, nds-NL, 11B, -> af
 props/exemplarchars/index@1, ne, 51B, -> hi
 props/exemplarchars/index@1, nl, 11B, -> af
 props/exemplarchars/index@1, no, 27B, -> da
+props/exemplarchars/index@1, nqo, 3B, -> bgc
+props/exemplarchars/index@1, oc, 3B, -> bgc
 props/exemplarchars/index@1, or, 66B, 5fe047516e41c239
 props/exemplarchars/index@1, pa, 67B, 31168d6015a6a32f
 props/exemplarchars/index@1, pcm, 43B, c9a2f9c501550ec0
@@ -352,13 +381,16 @@ props/exemplarchars/index@1, prg, 115B, 715542bd91e29bd
 props/exemplarchars/index@1, ps, 148B, 9347f5fdb808bd81
 props/exemplarchars/index@1, pt, 11B, -> af
 props/exemplarchars/index@1, qu, 79B, 941647fbce48bab3
+props/exemplarchars/index@1, raj, 3B, -> bgc
 props/exemplarchars/index@1, rm, 51B, 7f3877145c780256
 props/exemplarchars/index@1, ro, 51B, c914c58229b3a8d8
 props/exemplarchars/index@1, ru, 35B, 638c1c9980e0bd90
 props/exemplarchars/index@1, sa, 59B, -> doi
 props/exemplarchars/index@1, sah, 115B, 20eab6fadcd1581b
+props/exemplarchars/index@1, sat, 3B, -> bgc
 props/exemplarchars/index@1, sc, 19B, 8a8ef5607a345786
 props/exemplarchars/index@1, sd, 180B, 6dd34cb966c93244
+props/exemplarchars/index@1, sd-Deva, 3B, -> bgc
 props/exemplarchars/index@1, si, 59B, 8cf9c0c5021fe28d
 props/exemplarchars/index@1, sk, 83B, 1e30189d4da98a1
 props/exemplarchars/index@1, sl, 51B, dc4c825909d11368
@@ -382,12 +414,16 @@ props/exemplarchars/index@1, tr, 51B, 121515d5ff38f62b
 props/exemplarchars/index@1, tt, 67B, 4afb266bc80836d7
 props/exemplarchars/index@1, ug, 200B, 1108013a8b2f20f5
 props/exemplarchars/index@1, uk, 43B, 6639135c975dfc17
-props/exemplarchars/index@1, und, 3B, c76b19d07c9fe625
+props/exemplarchars/index@1, und, 3B, -> bgc
 props/exemplarchars/index@1, ur, 148B, 78fbb44c35f48698
 props/exemplarchars/index@1, uz, 49B, c1b595a885dae7a8
+props/exemplarchars/index@1, uz-Cyrl, 3B, -> bgc
+props/exemplarchars/index@1, vec, 3B, -> bgc
 props/exemplarchars/index@1, vi, 67B, 87a271b25063f434
+props/exemplarchars/index@1, vmw, 3B, -> bgc
 props/exemplarchars/index@1, wo, 19B, 7ea186902c02f1e1
 props/exemplarchars/index@1, xh, 11B, -> af
+props/exemplarchars/index@1, xnr, 3B, -> bgc
 props/exemplarchars/index@1, yo, 43B, 57b1ff9f86afeece
 props/exemplarchars/index@1, yrl, 75B, 93b8b01c7fcfa323
 props/exemplarchars/index@1, yue, 196B, b7367e8871341a13
@@ -561,9 +597,10 @@ props/exemplarchars/main@1, za, 11B, -> en
 props/exemplarchars/main@1, zh, 13724B, 5b59633e302fe875
 props/exemplarchars/main@1, zh-Hant, 14412B, c495c516cf7cf931
 props/exemplarchars/main@1, zu, 162B, 158ee2fa8f3edf5f
-props/exemplarchars/numbers@1, <lookup>, 2280B, 95 identifiers
+props/exemplarchars/numbers@1, <lookup>, 4200B, 175 identifiers
 props/exemplarchars/numbers@1, <total>, 1886B, 33 unique payloads
 props/exemplarchars/numbers@1, af, 43B, bdb5a5fd3e342c04
+props/exemplarchars/numbers@1, am, 43B, 6150146944dccad
 props/exemplarchars/numbers@1, ar, 75B, 6f6ed88ed26911fe
 props/exemplarchars/numbers@1, ar-DZ, 51B, 299311da3a1f0061
 props/exemplarchars/numbers@1, ar-LB, 51B, -> ar-DZ
@@ -574,6 +611,8 @@ props/exemplarchars/numbers@1, ar-SA, 51B, dd960f98cb54e739
 props/exemplarchars/numbers@1, ar-SO, 51B, -> ar-SA
 props/exemplarchars/numbers@1, ar-TN, 51B, -> ar-DZ
 props/exemplarchars/numbers@1, as, 51B, b1a24d63a91986e5
+props/exemplarchars/numbers@1, ast, 43B, -> am
+props/exemplarchars/numbers@1, az, 43B, -> am
 props/exemplarchars/numbers@1, be, 43B, -> af
 props/exemplarchars/numbers@1, bg, 43B, -> af
 props/exemplarchars/numbers@1, bgc, 51B, 44ee2e0ae0138f92
@@ -581,84 +620,161 @@ props/exemplarchars/numbers@1, bho, 51B, -> bgc
 props/exemplarchars/numbers@1, blo, 70B, e795640c4d2ab18f
 props/exemplarchars/numbers@1, bn, 51B, -> as
 props/exemplarchars/numbers@1, br, 43B, -> af
+props/exemplarchars/numbers@1, brx, 43B, -> am
+props/exemplarchars/numbers@1, bs, 43B, -> am
+props/exemplarchars/numbers@1, bs-Cyrl, 43B, -> am
+props/exemplarchars/numbers@1, ca, 43B, -> am
+props/exemplarchars/numbers@1, ceb, 43B, -> am
+props/exemplarchars/numbers@1, chr, 43B, -> am
 props/exemplarchars/numbers@1, cs, 43B, -> af
+props/exemplarchars/numbers@1, csw, 43B, -> am
 props/exemplarchars/numbers@1, cv, 43B, -> af
+props/exemplarchars/numbers@1, cy, 43B, -> am
+props/exemplarchars/numbers@1, da, 43B, -> am
+props/exemplarchars/numbers@1, de, 43B, -> am
 props/exemplarchars/numbers@1, de-AT, 43B, -> af
 props/exemplarchars/numbers@1, de-CH, 59B, 982957104595ac80
 props/exemplarchars/numbers@1, de-LI, 59B, -> de-CH
+props/exemplarchars/numbers@1, doi, 43B, -> am
+props/exemplarchars/numbers@1, dsb, 43B, -> am
+props/exemplarchars/numbers@1, el, 43B, -> am
+props/exemplarchars/numbers@1, en, 43B, -> am
 props/exemplarchars/numbers@1, en-FI, 43B, -> af
 props/exemplarchars/numbers@1, en-SE, 43B, -> af
 props/exemplarchars/numbers@1, en-ZA, 43B, -> af
 props/exemplarchars/numbers@1, eo, 43B, af7e84a019dcf6b1
+props/exemplarchars/numbers@1, es, 43B, -> am
 props/exemplarchars/numbers@1, es-CR, 43B, -> af
 props/exemplarchars/numbers@1, et, 43B, -> eo
 props/exemplarchars/numbers@1, eu, 51B, 8a6b6345a4eb3d11
 props/exemplarchars/numbers@1, fa, 83B, 781fb7094cd1fcb5
 props/exemplarchars/numbers@1, ff-Adlm, 11B, 26c932c56653df4f
 props/exemplarchars/numbers@1, fi, 43B, -> eo
+props/exemplarchars/numbers@1, fil, 43B, -> am
 props/exemplarchars/numbers@1, fo, 51B, -> eu
 props/exemplarchars/numbers@1, fr, 83B, 46c1863087d7f583
-props/exemplarchars/numbers@1, fr-LU, 43B, 6150146944dccad
-props/exemplarchars/numbers@1, fr-MA, 43B, -> fr-LU
+props/exemplarchars/numbers@1, fr-LU, 43B, -> am
+props/exemplarchars/numbers@1, fr-MA, 43B, -> am
+props/exemplarchars/numbers@1, fy, 43B, -> am
+props/exemplarchars/numbers@1, ga, 43B, -> am
+props/exemplarchars/numbers@1, gd, 43B, -> am
+props/exemplarchars/numbers@1, gl, 43B, -> am
 props/exemplarchars/numbers@1, gu, 51B, 4fd88b22b793cd14
+props/exemplarchars/numbers@1, ha, 43B, -> am
 props/exemplarchars/numbers@1, he, 51B, -> ar-DZ
 props/exemplarchars/numbers@1, hi, 51B, -> bgc
+props/exemplarchars/numbers@1, hr, 43B, -> am
+props/exemplarchars/numbers@1, hsb, 43B, -> am
 props/exemplarchars/numbers@1, hu, 43B, -> af
 props/exemplarchars/numbers@1, hy, 43B, -> af
+props/exemplarchars/numbers@1, ia, 43B, -> am
+props/exemplarchars/numbers@1, id, 43B, -> am
 props/exemplarchars/numbers@1, ie, 51B, ed89dcaaf129f214
+props/exemplarchars/numbers@1, ig, 43B, -> am
+props/exemplarchars/numbers@1, is, 43B, -> am
+props/exemplarchars/numbers@1, it, 43B, -> am
 props/exemplarchars/numbers@1, it-CH, 59B, -> de-CH
+props/exemplarchars/numbers@1, ja, 43B, -> am
+props/exemplarchars/numbers@1, jv, 43B, -> am
 props/exemplarchars/numbers@1, ka, 43B, -> af
 props/exemplarchars/numbers@1, kea, 43B, -> af
+props/exemplarchars/numbers@1, kgp, 43B, -> am
 props/exemplarchars/numbers@1, kk, 43B, -> af
+props/exemplarchars/numbers@1, km, 43B, -> am
 props/exemplarchars/numbers@1, kn, 51B, b0805e0b75a7c0a
+props/exemplarchars/numbers@1, ko, 43B, -> am
 props/exemplarchars/numbers@1, kok, 51B, -> bgc
 props/exemplarchars/numbers@1, ks, 67B, 1f944670bf75cf45
+props/exemplarchars/numbers@1, ks-Deva, 43B, -> am
+props/exemplarchars/numbers@1, ku, 43B, -> am
+props/exemplarchars/numbers@1, kxv, 43B, -> am
 props/exemplarchars/numbers@1, kxv-Deva, 51B, 34662be4504cf378
 props/exemplarchars/numbers@1, kxv-Orya, 51B, e3f8a64da06c8158
 props/exemplarchars/numbers@1, kxv-Telu, 51B, 89bb71ed040452c4
 props/exemplarchars/numbers@1, ky, 43B, -> af
+props/exemplarchars/numbers@1, lb, 43B, -> am
 props/exemplarchars/numbers@1, lij, 75B, 1c790fb5fb3a273a
+props/exemplarchars/numbers@1, lmo, 43B, -> am
+props/exemplarchars/numbers@1, lo, 43B, -> am
 props/exemplarchars/numbers@1, lt, 43B, -> eo
 props/exemplarchars/numbers@1, lv, 43B, -> af
+props/exemplarchars/numbers@1, mai, 43B, -> am
+props/exemplarchars/numbers@1, mi, 43B, -> am
+props/exemplarchars/numbers@1, mk, 43B, -> am
 props/exemplarchars/numbers@1, ml, 51B, 61f55fc85dbb5771
+props/exemplarchars/numbers@1, mn, 43B, -> am
 props/exemplarchars/numbers@1, mni, 51B, -> as
 props/exemplarchars/numbers@1, mr, 51B, -> bgc
+props/exemplarchars/numbers@1, ms, 43B, -> am
+props/exemplarchars/numbers@1, mt, 43B, -> am
 props/exemplarchars/numbers@1, my, 51B, ff94b515c038be16
+props/exemplarchars/numbers@1, nds, 43B, -> am
 props/exemplarchars/numbers@1, ne, 51B, -> bgc
+props/exemplarchars/numbers@1, nl, 43B, -> am
 props/exemplarchars/numbers@1, no, 43B, -> eo
 props/exemplarchars/numbers@1, nqo, 59B, 65acefef36884013
+props/exemplarchars/numbers@1, oc, 43B, -> am
 props/exemplarchars/numbers@1, or, 51B, 2c45775f9e6bcc8f
 props/exemplarchars/numbers@1, pa, 51B, 76df134615e27d5c
+props/exemplarchars/numbers@1, pcm, 43B, -> am
 props/exemplarchars/numbers@1, pl, 43B, -> af
 props/exemplarchars/numbers@1, prg, 43B, -> af
 props/exemplarchars/numbers@1, ps, 83B, 71fc0a44fcdff1ea
+props/exemplarchars/numbers@1, pt, 43B, -> am
 props/exemplarchars/numbers@1, pt-PT, 43B, -> af
+props/exemplarchars/numbers@1, qu, 43B, -> am
 props/exemplarchars/numbers@1, raj, 51B, -> bgc
 props/exemplarchars/numbers@1, rm, 59B, 77aa6d6cf2d0599b
+props/exemplarchars/numbers@1, ro, 43B, -> am
 props/exemplarchars/numbers@1, ru, 43B, -> af
 props/exemplarchars/numbers@1, sa, 51B, -> bgc
 props/exemplarchars/numbers@1, sah, 43B, -> af
 props/exemplarchars/numbers@1, sat, 43B, 5eaa50ad887e82dd
+props/exemplarchars/numbers@1, sc, 43B, -> am
+props/exemplarchars/numbers@1, sd, 43B, -> am
+props/exemplarchars/numbers@1, sd-Deva, 43B, -> am
+props/exemplarchars/numbers@1, si, 43B, -> am
 props/exemplarchars/numbers@1, sk, 43B, -> af
 props/exemplarchars/numbers@1, sl, 51B, -> eu
+props/exemplarchars/numbers@1, so, 43B, -> am
 props/exemplarchars/numbers@1, sq, 43B, -> af
+props/exemplarchars/numbers@1, sr, 43B, -> am
+props/exemplarchars/numbers@1, sr-Latn, 43B, -> am
+props/exemplarchars/numbers@1, su, 43B, -> am
 props/exemplarchars/numbers@1, sv, 43B, -> eo
+props/exemplarchars/numbers@1, sw, 43B, -> am
 props/exemplarchars/numbers@1, syr, 75B, -> ar
 props/exemplarchars/numbers@1, szl, 43B, -> af
 props/exemplarchars/numbers@1, ta, 51B, 6247bc450aa1a71d
 props/exemplarchars/numbers@1, te, 51B, fb18a5d7a7179956
+props/exemplarchars/numbers@1, tg, 43B, -> am
+props/exemplarchars/numbers@1, th, 43B, -> am
+props/exemplarchars/numbers@1, ti, 43B, -> am
 props/exemplarchars/numbers@1, tk, 43B, -> af
+props/exemplarchars/numbers@1, to, 43B, -> am
+props/exemplarchars/numbers@1, tr, 43B, -> am
+props/exemplarchars/numbers@1, tt, 43B, -> am
+props/exemplarchars/numbers@1, ug, 43B, -> am
 props/exemplarchars/numbers@1, uk, 43B, -> af
-props/exemplarchars/numbers@1, und, 43B, -> fr-LU
+props/exemplarchars/numbers@1, und, 43B, -> am
 props/exemplarchars/numbers@1, ur, 67B, -> ks
 props/exemplarchars/numbers@1, uz, 43B, -> af
 props/exemplarchars/numbers@1, uz-Cyrl, 43B, -> af
+props/exemplarchars/numbers@1, vec, 43B, -> am
+props/exemplarchars/numbers@1, vi, 43B, -> am
+props/exemplarchars/numbers@1, vmw, 43B, -> am
+props/exemplarchars/numbers@1, wo, 43B, -> am
+props/exemplarchars/numbers@1, xh, 43B, -> am
 props/exemplarchars/numbers@1, xnr, 51B, -> bgc
+props/exemplarchars/numbers@1, yo, 43B, -> am
+props/exemplarchars/numbers@1, yrl, 43B, -> am
 props/exemplarchars/numbers@1, yue, 123B, 3ce6f6e25a8df94b
 props/exemplarchars/numbers@1, yue-Hans, 123B, -> yue
+props/exemplarchars/numbers@1, za, 43B, -> am
 props/exemplarchars/numbers@1, zh, 123B, -> yue
 props/exemplarchars/numbers@1, zh-Hant, 123B, -> yue
-props/exemplarchars/punctuation@1, <lookup>, 3528B, 147 identifiers
+props/exemplarchars/numbers@1, zu, 43B, -> am
+props/exemplarchars/punctuation@1, <lookup>, 3816B, 159 identifiers
 props/exemplarchars/punctuation@1, <total>, 9583B, 80 unique payloads
 props/exemplarchars/punctuation@1, af, 123B, 2e7906785ab47589
 props/exemplarchars/punctuation@1, am, 107B, 4d72f3e260c2eec8
@@ -672,12 +788,15 @@ props/exemplarchars/punctuation@1, bgc, 107B, 7a067fda33683c31
 props/exemplarchars/punctuation@1, bho, 123B, -> af
 props/exemplarchars/punctuation@1, blo, 164B, d42fe43a905bc159
 props/exemplarchars/punctuation@1, bn, 123B, -> af
+props/exemplarchars/punctuation@1, br, 59B, 42e553f11527bac0
 props/exemplarchars/punctuation@1, brx, 123B, -> af
 props/exemplarchars/punctuation@1, bs, 115B, 3f8a3964089ec040
+props/exemplarchars/punctuation@1, bs-Cyrl, 59B, -> br
 props/exemplarchars/punctuation@1, ca, 148B, -> ast
 props/exemplarchars/punctuation@1, ceb, 99B, 2132d4054c952824
 props/exemplarchars/punctuation@1, chr, 123B, -> af
 props/exemplarchars/punctuation@1, cs, 132B, 61298145f7cdf747
+props/exemplarchars/punctuation@1, csw, 59B, -> br
 props/exemplarchars/punctuation@1, cv, 132B, bbebf650bbbe15cc
 props/exemplarchars/punctuation@1, cy, 123B, -> af
 props/exemplarchars/punctuation@1, da, 123B, d2d65c99469f5e77
@@ -715,6 +834,7 @@ props/exemplarchars/punctuation@1, ig, 75B, 2bb53b2c4eb3f0ac
 props/exemplarchars/punctuation@1, is, 140B, d406d111a3852286
 props/exemplarchars/punctuation@1, it, 107B, ac9fde465b4423f
 props/exemplarchars/punctuation@1, ja, 284B, a1bf563cfbda3cc8
+props/exemplarchars/punctuation@1, jv, 59B, -> br
 props/exemplarchars/punctuation@1, ka, 172B, b4baa0a4e5cb9000
 props/exemplarchars/punctuation@1, kea, 132B, 38ecc9ab4c9b2564
 props/exemplarchars/punctuation@1, kgp, 123B, -> af
@@ -738,6 +858,7 @@ props/exemplarchars/punctuation@1, lo, 123B, -> af
 props/exemplarchars/punctuation@1, lt, 91B, 291cb02e2f167f12
 props/exemplarchars/punctuation@1, lv, 123B, c3a250c5621b18af
 props/exemplarchars/punctuation@1, mai, 123B, 10763b9b4042d382
+props/exemplarchars/punctuation@1, mi, 59B, -> br
 props/exemplarchars/punctuation@1, mk, 107B, 756d46c9c93e4814
 props/exemplarchars/punctuation@1, ml, 123B, -> af
 props/exemplarchars/punctuation@1, mn, 123B, -> af
@@ -764,10 +885,12 @@ props/exemplarchars/punctuation@1, pt, 123B, -> af
 props/exemplarchars/punctuation@1, pt-PT, 132B, 2ae15f84dc3b43e
 props/exemplarchars/punctuation@1, qu, 123B, -> af
 props/exemplarchars/punctuation@1, raj, 107B, 4ccfe7cc10f0348
+props/exemplarchars/punctuation@1, rm, 59B, -> br
 props/exemplarchars/punctuation@1, ro, 115B, 86546edcc3d57fcf
 props/exemplarchars/punctuation@1, ru, 132B, -> cv
 props/exemplarchars/punctuation@1, sa, 123B, -> mai
 props/exemplarchars/punctuation@1, sah, 11B, 20cf3e42d114a5b8
+props/exemplarchars/punctuation@1, sat, 59B, -> br
 props/exemplarchars/punctuation@1, sc, 140B, 3c2f87b385bae1cd
 props/exemplarchars/punctuation@1, sd, 75B, f5b6b9504df1f298
 props/exemplarchars/punctuation@1, sd-Deva, 123B, -> af
@@ -787,17 +910,21 @@ props/exemplarchars/punctuation@1, ta, 123B, -> af
 props/exemplarchars/punctuation@1, te, 75B, -> mt
 props/exemplarchars/punctuation@1, tg, 143B, 9dc7d08de6c385f5
 props/exemplarchars/punctuation@1, th, 107B, 365776b3531212fd
+props/exemplarchars/punctuation@1, ti, 59B, -> br
 props/exemplarchars/punctuation@1, tk, 91B, bcdf900a557d8498
 props/exemplarchars/punctuation@1, to, 123B, -> af
 props/exemplarchars/punctuation@1, tr, 123B, -> af
 props/exemplarchars/punctuation@1, tt, 115B, 4d83351298d9e6bf
+props/exemplarchars/punctuation@1, ug, 59B, -> br
 props/exemplarchars/punctuation@1, uk, 123B, 76a0379fe2749da1
-props/exemplarchars/punctuation@1, und, 59B, 42e553f11527bac0
+props/exemplarchars/punctuation@1, und, 59B, -> br
 props/exemplarchars/punctuation@1, ur, 83B, 7526083fb549b859
 props/exemplarchars/punctuation@1, uz, 123B, -> af
+props/exemplarchars/punctuation@1, uz-Cyrl, 59B, -> br
 props/exemplarchars/punctuation@1, vec, 132B, d711b0c6b46cefe4
 props/exemplarchars/punctuation@1, vi, 123B, -> af
 props/exemplarchars/punctuation@1, vmw, 107B, da8d7a81cd491c10
+props/exemplarchars/punctuation@1, wo, 59B, -> br
 props/exemplarchars/punctuation@1, xh, 123B, -> af
 props/exemplarchars/punctuation@1, xnr, 83B, d675e747a7e362bd
 props/exemplarchars/punctuation@1, yo, 99B, d6155e4c6a8f19ba
@@ -807,6 +934,7 @@ props/exemplarchars/punctuation@1, yue-Hans, 324B, c7082f1f717e4d5b
 props/exemplarchars/punctuation@1, za, 123B, -> af
 props/exemplarchars/punctuation@1, zh, 324B, -> yue-Hans
 props/exemplarchars/punctuation@1, zh-Hant, 324B, -> yue
+props/exemplarchars/punctuation@1, zu, 59B, -> br
 props/gc@1, <singleton>, 17012B, 1d6406352436488b
 props/graph@1, <singleton>, 5707B, 2fd03ad84767b721
 props/hst@1, <singleton>, 829B, 67c6d3aaab48ff19

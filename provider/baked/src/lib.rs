@@ -20,4 +20,6 @@ pub trait DataStore<M: DataMarker> {
 
     type IterReturn: Iterator<Item = DataIdentifierCow<'static>>;
     fn iter(&self) -> Self::IterReturn;
+
+    fn contains(&self, id: DataIdentifierBorrowed) -> bool;
 }

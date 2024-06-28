@@ -86,6 +86,10 @@ impl<K: BinarySearchKey, M: DataMarker> super::DataStore<M> for Data<K, M> {
     fn iter(&self) -> Self::IterReturn {
         self.0.iter().map(|&(k, _)| K::to_id(k))
     }
+
+    fn contains(&self, id: DataIdentifierBorrowed) -> bool {
+        self.0.binary_search_by(|&(k, _)| K::cmp(k, id)).is_ok()
+    }
 }
 
 pub trait BinarySearchKey: 'static {

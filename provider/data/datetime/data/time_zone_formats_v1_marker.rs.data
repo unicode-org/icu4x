@@ -648,6 +648,18 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
+                const __HY: &S = &icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
+                    hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
+                    gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                    gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                    region_format: alloc::borrow::Cow::Borrowed("{0}"),
+                    region_format_variants: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"daylightstandard") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x08\0{0} (+1){0} (+0)") })
+                    },
+                    fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
+                    gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
+                };
                 const __IA: &S = &icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
@@ -1680,18 +1692,6 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                const __UND: &S = &icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
-                    hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                    gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                    gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
-                    region_format: alloc::borrow::Cow::Borrowed("{0}"),
-                    region_format_variants: unsafe {
-                        #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"daylightstandard") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x08\0{0} (+1){0} (+0)") })
-                    },
-                    fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
-                    gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
-                };
                 const __UR: &S = &icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                     hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                     gmt_format: alloc::borrow::Cow::Borrowed("GMT {0}"),
@@ -1896,7 +1896,7 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                     gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                 };
-                icu_provider_baked::binary_search::Data(&[("af", __AF), ("am", __AM), ("ar", __AR), ("as", __AS), ("ast", __AST), ("az", __AZ), ("be", __BE), ("bg", __BG), ("bgc", __BGC), ("bho", __BHO), ("blo", __BLO), ("bn", __BN), ("br", __BR), ("brx", __BRX), ("bs", __BS), ("bs-Cyrl", __BS_CYRL), ("ca", __CA), ("ceb", __CEB), ("chr", __CHR), ("cs", __CS), ("csw", __CSW), ("cv", __CV), ("cy", __CY), ("da", __DA), ("de", __DE), ("doi", __DOI), ("dsb", __DSB), ("el", __EL), ("en", __EN), ("en-CA", __EN_CA), ("eo", __EO), ("es", __ES), ("es-419", __ES_419), ("et", __ET), ("eu", __EU), ("fa", __FA), ("ff-Adlm", __FF_ADLM), ("fi", __FI), ("fil", __FIL), ("fo", __FO), ("fr", __FR), ("fr-CA", __FR_CA), ("fy", __FY), ("ga", __GA), ("gd", __GD), ("gl", __GL), ("gu", __GU), ("ha", __HA), ("he", __HE), ("hi", __HI), ("hr", __HR), ("hsb", __HSB), ("hu", __HU), ("ia", __IA), ("id", __ID), ("ie", __IE), ("ig", __IG), ("is", __IS), ("it", __IT), ("ja", __JA), ("jv", __JV), ("ka", __KA), ("kea", __KEA), ("kgp", __KGP), ("kk", __KK), ("km", __KM), ("kn", __KN), ("ko", __KO), ("kok", __KOK), ("ks", __KS), ("ks-Deva", __KS_DEVA), ("ku", __KU), ("kxv", __KXV), ("kxv-Deva", __KXV_DEVA), ("kxv-Orya", __KXV_ORYA), ("kxv-Telu", __KXV_TELU), ("ky", __KY), ("lb", __LB), ("lij", __LIJ), ("lo", __LO), ("lt", __LT), ("lv", __LV), ("mai", __MAI), ("mi", __MI), ("mk", __MK), ("ml", __ML), ("mn", __MN), ("mni", __MNI), ("mr", __MR), ("ms", __MS), ("ms-ID", __MS_ID), ("mt", __MT), ("my", __MY), ("nds", __NDS), ("ne", __NE), ("nl", __NL), ("nn", __NN), ("no", __NO), ("nqo", __NQO), ("oc", __OC), ("or", __OR), ("pa", __PA), ("pcm", __PCM), ("pl", __PL), ("prg", __PRG), ("ps", __PS), ("pt", __PT), ("pt-PT", __PT_PT), ("rm", __RM), ("ro", __RO), ("ru", __RU), ("sa", __SA), ("sat", __SAT), ("sc", __SC), ("sd", __SD), ("sd-Deva", __SD_DEVA), ("si", __SI), ("sk", __SK), ("sl", __SL), ("so", __SO), ("sq", __SQ), ("sr", __SR), ("sr-BA", __SR_BA), ("sr-Latn", __SR_LATN), ("sr-Latn-BA", __SR_LATN_BA), ("sv", __SV), ("sw", __SW), ("syr", __SYR), ("szl", __SZL), ("ta", __TA), ("te", __KXV_TELU), ("tg", __TG), ("th", __TH), ("ti", __TI), ("tk", __TK), ("to", __TO), ("tr", __TR), ("tt", __TT), ("ug", __UG), ("uk", __UK), ("und", __UND), ("ur", __UR), ("ur-IN", __UR_IN), ("uz-Cyrl", __UZ_CYRL), ("vec", __VEC), ("vi", __VI), ("vmw", __VMW), ("xh", __EN), ("xnr", __XNR), ("yo", __YO), ("yo-BJ", __YO_BJ), ("yrl", __YRL), ("yue", __YUE), ("yue-Hans", __YUE_HANS), ("za", __ZA), ("zh", __ZH), ("zh-HK", __ZH_HK), ("zh-Hant", __ZH_HANT), ("zh-MO", __ZH_HK), ("zu", __ZU)])
+                icu_provider_baked::binary_search::Data(&[("af", __AF), ("am", __AM), ("ar", __AR), ("as", __AS), ("ast", __AST), ("az", __AZ), ("be", __BE), ("bg", __BG), ("bgc", __BGC), ("bho", __BHO), ("blo", __BLO), ("bn", __BN), ("br", __BR), ("brx", __BRX), ("bs", __BS), ("bs-Cyrl", __BS_CYRL), ("ca", __CA), ("ceb", __CEB), ("chr", __CHR), ("cs", __CS), ("csw", __CSW), ("cv", __CV), ("cy", __CY), ("da", __DA), ("de", __DE), ("doi", __DOI), ("dsb", __DSB), ("el", __EL), ("en", __EN), ("en-CA", __EN_CA), ("eo", __EO), ("es", __ES), ("es-419", __ES_419), ("et", __ET), ("eu", __EU), ("fa", __FA), ("ff-Adlm", __FF_ADLM), ("fi", __FI), ("fil", __FIL), ("fo", __FO), ("fr", __FR), ("fr-CA", __FR_CA), ("fy", __FY), ("ga", __GA), ("gd", __GD), ("gl", __GL), ("gu", __GU), ("ha", __HA), ("he", __HE), ("hi", __HI), ("hr", __HR), ("hsb", __HSB), ("hu", __HU), ("hy", __HY), ("ia", __IA), ("id", __ID), ("ie", __IE), ("ig", __IG), ("is", __IS), ("it", __IT), ("ja", __JA), ("jv", __JV), ("ka", __KA), ("kea", __KEA), ("kgp", __KGP), ("kk", __KK), ("km", __KM), ("kn", __KN), ("ko", __KO), ("kok", __KOK), ("ks", __KS), ("ks-Deva", __KS_DEVA), ("ku", __KU), ("kxv", __KXV), ("kxv-Deva", __KXV_DEVA), ("kxv-Orya", __KXV_ORYA), ("kxv-Telu", __KXV_TELU), ("ky", __KY), ("lb", __LB), ("lij", __LIJ), ("lmo", __HY), ("lo", __LO), ("lt", __LT), ("lv", __LV), ("mai", __MAI), ("mi", __MI), ("mk", __MK), ("ml", __ML), ("mn", __MN), ("mni", __MNI), ("mr", __MR), ("ms", __MS), ("ms-ID", __MS_ID), ("mt", __MT), ("my", __MY), ("nds", __NDS), ("ne", __NE), ("nl", __NL), ("nn", __NN), ("no", __NO), ("nqo", __NQO), ("oc", __OC), ("or", __OR), ("pa", __PA), ("pcm", __PCM), ("pl", __PL), ("prg", __PRG), ("ps", __PS), ("pt", __PT), ("pt-PT", __PT_PT), ("qu", __HY), ("raj", __HY), ("rm", __RM), ("ro", __RO), ("ru", __RU), ("sa", __SA), ("sah", __HY), ("sat", __SAT), ("sc", __SC), ("sd", __SD), ("sd-Deva", __SD_DEVA), ("si", __SI), ("sk", __SK), ("sl", __SL), ("so", __SO), ("sq", __SQ), ("sr", __SR), ("sr-BA", __SR_BA), ("sr-Latn", __SR_LATN), ("sr-Latn-BA", __SR_LATN_BA), ("su", __HY), ("sv", __SV), ("sw", __SW), ("syr", __SYR), ("szl", __SZL), ("ta", __TA), ("te", __KXV_TELU), ("tg", __TG), ("th", __TH), ("ti", __TI), ("tk", __TK), ("to", __TO), ("tr", __TR), ("tt", __TT), ("ug", __UG), ("uk", __UK), ("und", __HY), ("ur", __UR), ("ur-IN", __UR_IN), ("uz", __HY), ("uz-Cyrl", __UZ_CYRL), ("vec", __VEC), ("vi", __VI), ("vmw", __VMW), ("wo", __HY), ("xh", __EN), ("xnr", __XNR), ("yo", __YO), ("yo-BJ", __YO_BJ), ("yrl", __YRL), ("yue", __YUE), ("yue-Hans", __YUE_HANS), ("za", __ZA), ("zh", __ZH), ("zh-HK", __ZH_HK), ("zh-Hant", __ZH_HANT), ("zh-MO", __ZH_HK), ("zu", __ZU)])
             };
         }
         #[clippy::msrv = "1.70"]
@@ -1920,6 +1920,11 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     }
                 };
                 Ok(icu_provider::DataResponse { payload: icu_provider::DataPayload::from_static_ref(payload), metadata })
+            }
+        }
+        impl icu_provider::CanLoad<icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker> for $provider {
+            fn can_load(&self, req: icu_provider::DataRequest) -> Result<bool, icu_provider::DataError> {
+                Ok(icu_provider_baked::DataStore::contains(&Self::DATA_TIME_ZONE_FORMATS_V1_MARKER, req.id))
             }
         }
     };

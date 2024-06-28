@@ -68,6 +68,11 @@ macro_rules! __impl_collation_reordering_v1_marker {
                 Ok(icu_provider::DataResponse { payload: icu_provider::DataPayload::from_static_ref(payload), metadata })
             }
         }
+        impl icu_provider::CanLoad<icu::collator::provider::CollationReorderingV1Marker> for $provider {
+            fn can_load(&self, req: icu_provider::DataRequest) -> Result<bool, icu_provider::DataError> {
+                Ok(icu_provider_baked::DataStore::contains(&Self::DATA_COLLATION_REORDERING_V1_MARKER, req.id))
+            }
+        }
     };
     ($ provider : ty , ITER) => {
         __impl_collation_reordering_v1_marker!($provider);

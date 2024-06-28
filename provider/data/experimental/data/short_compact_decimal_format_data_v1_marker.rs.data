@@ -36,6 +36,12 @@ macro_rules! __impl_short_compact_decimal_format_data_v1_marker {
                         zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03\x05\x06\x08\t\x0B\x0C") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0\x02\0\0\0\x03\0\0\0\x04\0\0\0\x05\0\0\0\x06\0\0\0\x07\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x05\x05\x05\x05\x05\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x07\0\0\0\0\0\x13\0 \x003\0@\0U\0g\0\x03\0\xC2\xA0\xE0\xA6\xB9\xE0\xA6\xBE\xE0\xA6\x9C\xE0\xA6\xBE\xE0\xA7\xB0\x05\0\xC2\xA0\xE0\xA6\xB2\xE0\xA6\xBE\xE0\xA6\x96\x06\0\xC2\xA0\xE0\xA6\xA8\xE0\xA6\xBF\xE0\xA6\xAF\xE0\xA7\x81\xE0\xA6\xA4\x06\0\xC2\xA0\xE0\xA6\xA8\xE0\xA6\xBF\xE0\xA6\x83\t\0\xC2\xA0\xE0\xA6\xB6\xE0\xA6\x83\xC2\xA0\xE0\xA6\x95\xE0\xA7\x8B\xE0\xA6\x83\t\0\xC2\xA0\xE0\xA6\xB6\xE0\xA6\x83\xC2\xA0\xE0\xA6\x95\xE0\xA6\x83\x0C\0\xC2\xA0\xE0\xA6\xB6\xE0\xA6\x83\xC2\xA0\xE0\xA6\xAA\xE0\xA6\x83") })
                     },
                 };
+                const __AST: &S = &icu::experimental::compactdecimal::provider::CompactDecimalPatternDataV1 {
+                    patterns: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03\x06\t\x0C") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0\x02\0\0\0\x03\0\0\0\x04\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x05\x05\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x03\0\x06\0\t\0\x03\0K\x06\0M\t\0G\x0C\0T") })
+                    },
+                };
                 const __AZ: &S = &icu::experimental::compactdecimal::provider::CompactDecimalPatternDataV1 {
                     patterns: unsafe {
                         #[allow(unused_unsafe)]
@@ -570,12 +576,6 @@ macro_rules! __impl_short_compact_decimal_format_data_v1_marker {
                         zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03\x06\t\x0C") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0\x02\0\0\0\x03\0\0\0\x04\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x05\x05\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x0B\0\x15\0!\0\x03\0\xC2\xA0\xD1\x82\xD0\xB8\xD1\x81.\x06\0\xC2\xA0\xD0\xBC\xD0\xBB\xD0\xBD\t\0\xC2\xA0\xD0\xBC\xD0\xBB\xD1\x80\xD0\xB4\x0C\0\xC2\xA0\xD1\x82\xD1\x80\xD0\xBB\xD0\xBD") })
                     },
                 };
-                const __UND: &S = &icu::experimental::compactdecimal::provider::CompactDecimalPatternDataV1 {
-                    patterns: unsafe {
-                        #[allow(unused_unsafe)]
-                        zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03\x06\t\x0C") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0\x02\0\0\0\x03\0\0\0\x04\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x05\x05\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x03\0\x06\0\t\0\x03\0K\x06\0M\t\0G\x0C\0T") })
-                    },
-                };
                 const __UR: &S = &icu::experimental::compactdecimal::provider::CompactDecimalPatternDataV1 {
                     patterns: unsafe {
                         #[allow(unused_unsafe)]
@@ -630,7 +630,7 @@ macro_rules! __impl_short_compact_decimal_format_data_v1_marker {
                         zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x04\x08\x0C") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0\x02\0\0\0\x03\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x05\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0\x04\0\xE8\x90\xAC\x08\0\xE5\x84\x84\x0C\0\xE5\x85\x86") })
                     },
                 };
-                icu_provider_baked::binary_search::Data(&[("af", __AF), ("am", __AM), ("ar", __AR), ("as", __AS), ("az", __AZ), ("be", __BE), ("bg", __BG), ("bn", __BN), ("br", __BR), ("brx", __BRX), ("bs", __BS), ("bs-Cyrl", __BS_CYRL), ("ca", __CA), ("chr", __CHR), ("cs", __CS), ("cy", __CHR), ("da", __DA), ("de", __DE), ("dsb", __DSB), ("el", __EL), ("en", __EN), ("en-IN", __EN_IN), ("es", __ES), ("es-419", __ES_419), ("es-MX", __ES_MX), ("es-US", __ES_US), ("et", __ET), ("eu", __EU), ("fa", __FA), ("ff-Adlm", __FF_ADLM), ("fi", __FI), ("fil", __CHR), ("fo", __FO), ("fr", __FR), ("fr-CA", __FR_CA), ("fy", __FY), ("ga", __GA), ("gd", __CHR), ("gl", __EU), ("gu", __GU), ("ha", __HA), ("he", __HE), ("hi", __HI), ("hr", __HR), ("hsb", __DSB), ("hu", __HU), ("hy", __HY), ("ia", __IA), ("id", __ID), ("is", __IS), ("it", __IT), ("ja", __JA), ("jv", __JV), ("ka", __KA), ("kea", __KEA), ("kgp", __KGP), ("kk", __KK), ("km", __KM), ("kn", __KN), ("ko", __KO), ("kok", __EN), ("ky", __KY), ("lb", __LB), ("lo", __LO), ("lo-u-nu-laoo", __LO_U_NU_LAOO), ("lt", __LT), ("lv", __LV), ("mk", __MK), ("ml", __CHR), ("mn", __MN), ("mr", __MR), ("ms", __MS), ("my", __MY), ("ne", __NE), ("nl", __FY), ("no", __NO), ("or", __OR), ("pa", __PA), ("pcm", __CHR), ("pl", __PL), ("ps", __PS), ("pt", __KGP), ("pt-PT", __PT_PT), ("ro", __RO), ("ru", __BE), ("sah", __SAH), ("sc", __SC), ("sd", __SD), ("si", __SI), ("sk", __CS), ("sl", __SL), ("so", __CHR), ("sq", __SQ), ("sr", __SR), ("sr-Latn", __BS), ("sv", __SV), ("sw", __SW), ("sw-KE", __SW_KE), ("ta", __TA), ("te", __TE), ("tg", __TG), ("th", __EN), ("ti", __TI), ("tk", __TK), ("to", __TO), ("tr", __TR), ("ug", __UG), ("uk", __UK), ("und", __UND), ("ur", __UR), ("uz", __UZ), ("uz-Cyrl", __UZ_CYRL), ("vi", __VI), ("yrl", __YRL), ("yue", __YUE), ("yue-Hans", __YUE_HANS), ("zh", __ZH), ("zh-HK", __EN), ("zh-Hant", __ZH_HANT), ("zh-MO", __EN), ("zu", __CHR)])
+                icu_provider_baked::binary_search::Data(&[("af", __AF), ("am", __AM), ("ar", __AR), ("as", __AS), ("ast", __AST), ("az", __AZ), ("be", __BE), ("bg", __BG), ("bgc", __AST), ("bho", __AST), ("blo", __AST), ("bn", __BN), ("br", __BR), ("brx", __BRX), ("bs", __BS), ("bs-Cyrl", __BS_CYRL), ("ca", __CA), ("ceb", __AST), ("chr", __CHR), ("cs", __CS), ("csw", __AST), ("cv", __AST), ("cy", __CHR), ("da", __DA), ("de", __DE), ("doi", __AST), ("dsb", __DSB), ("el", __EL), ("en", __EN), ("en-IN", __EN_IN), ("eo", __AST), ("es", __ES), ("es-419", __ES_419), ("es-MX", __ES_MX), ("es-US", __ES_US), ("et", __ET), ("eu", __EU), ("fa", __FA), ("ff-Adlm", __FF_ADLM), ("fi", __FI), ("fil", __CHR), ("fo", __FO), ("fr", __FR), ("fr-CA", __FR_CA), ("fy", __FY), ("ga", __GA), ("gd", __CHR), ("gl", __EU), ("gu", __GU), ("ha", __HA), ("he", __HE), ("hi", __HI), ("hr", __HR), ("hsb", __DSB), ("hu", __HU), ("hy", __HY), ("ia", __IA), ("id", __ID), ("ie", __AST), ("ig", __AST), ("is", __IS), ("it", __IT), ("ja", __JA), ("jv", __JV), ("ka", __KA), ("kea", __KEA), ("kgp", __KGP), ("kk", __KK), ("km", __KM), ("kn", __KN), ("ko", __KO), ("kok", __EN), ("ks", __AST), ("ks-Deva", __AST), ("ku", __AST), ("kxv", __AST), ("kxv-Deva", __AST), ("kxv-Orya", __AST), ("kxv-Telu", __AST), ("ky", __KY), ("lb", __LB), ("lij", __AST), ("lmo", __AST), ("lo", __LO), ("lo-u-nu-laoo", __LO_U_NU_LAOO), ("lt", __LT), ("lv", __LV), ("mai", __AST), ("mi", __AST), ("mk", __MK), ("ml", __CHR), ("mn", __MN), ("mni", __AST), ("mr", __MR), ("ms", __MS), ("mt", __AST), ("my", __MY), ("nds", __AST), ("ne", __NE), ("nl", __FY), ("no", __NO), ("nqo", __AST), ("oc", __AST), ("or", __OR), ("pa", __PA), ("pcm", __CHR), ("pl", __PL), ("prg", __AST), ("ps", __PS), ("pt", __KGP), ("pt-PT", __PT_PT), ("qu", __AST), ("raj", __AST), ("rm", __AST), ("ro", __RO), ("ru", __BE), ("sa", __AST), ("sah", __SAH), ("sat", __AST), ("sc", __SC), ("sd", __SD), ("sd-Deva", __AST), ("si", __SI), ("sk", __CS), ("sl", __SL), ("so", __CHR), ("sq", __SQ), ("sr", __SR), ("sr-Latn", __BS), ("su", __AST), ("sv", __SV), ("sw", __SW), ("sw-KE", __SW_KE), ("syr", __AST), ("szl", __AST), ("ta", __TA), ("te", __TE), ("tg", __TG), ("th", __EN), ("ti", __TI), ("tk", __TK), ("to", __TO), ("tr", __TR), ("tt", __AST), ("ug", __UG), ("uk", __UK), ("und", __AST), ("ur", __UR), ("uz", __UZ), ("uz-Cyrl", __UZ_CYRL), ("vec", __AST), ("vi", __VI), ("vmw", __AST), ("wo", __AST), ("xh", __AST), ("xnr", __AST), ("yo", __AST), ("yrl", __YRL), ("yue", __YUE), ("yue-Hans", __YUE_HANS), ("za", __AST), ("zh", __ZH), ("zh-HK", __EN), ("zh-Hant", __ZH_HANT), ("zh-MO", __EN), ("zu", __CHR)])
             };
         }
         #[clippy::msrv = "1.70"]
@@ -654,6 +654,11 @@ macro_rules! __impl_short_compact_decimal_format_data_v1_marker {
                     }
                 };
                 Ok(icu_provider::DataResponse { payload: icu_provider::DataPayload::from_static_ref(payload), metadata })
+            }
+        }
+        impl icu_provider::CanLoad<icu::experimental::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker> for $provider {
+            fn can_load(&self, req: icu_provider::DataRequest) -> Result<bool, icu_provider::DataError> {
+                Ok(icu_provider_baked::DataStore::contains(&Self::DATA_SHORT_COMPACT_DECIMAL_FORMAT_DATA_V1_MARKER, req.id))
             }
         }
     };

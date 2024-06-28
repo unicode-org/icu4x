@@ -1,33 +1,60 @@
-*, <'static strs>, 684B, 114 unique static strings
+*, <'static strs>, 961B, 168 unique static strings
 calendar/chinesecache@1, <singleton>, 754B, 134f5ec7c9bdc494
 calendar/dangicache@1, <singleton>, 754B, 79d5d32449956411
 calendar/islamicobservationalcache@1, <singleton>, 504B, 18af87d272c76f14
 calendar/islamicummalquracache@1, <singleton>, 504B, ef6ac9ff14fd3f3
 calendar/japanese@1, <singleton>, 111B, b31e52deaf52706f
 calendar/japanext@1, <singleton>, 5216B, 6c20e216c8cd6e41
-datetime/week_data@1, <lookup>, 2760B, 115 identifiers
+datetime/week_data@1, <lookup>, 4056B, 169 identifiers
 datetime/week_data@1, <total>, 12B, 6 unique payloads
-datetime/week_data@1, und, 2B, 62c3506f27376c25
+datetime/week_data@1, blo, 2B, 62c3506f27376c25
+datetime/week_data@1, eo, 2B, -> blo
+datetime/week_data@1, ff-Adlm, 2B, -> blo
+datetime/week_data@1, ha, 2B, -> blo
+datetime/week_data@1, ia, 2B, -> blo
+datetime/week_data@1, ig, 2B, -> blo
+datetime/week_data@1, kea, 2B, -> blo
+datetime/week_data@1, nqo, 2B, -> blo
+datetime/week_data@1, pcm, 2B, -> blo
+datetime/week_data@1, so, 2B, -> blo
+datetime/week_data@1, sw, 2B, -> blo
+datetime/week_data@1, to, 2B, -> blo
+datetime/week_data@1, und, 2B, -> blo
 datetime/week_data@1, und-AD, 2B, fb813f95ba4e1e31
 datetime/week_data@1, und-AE, 2B, 4b008006948c4a31
 datetime/week_data@1, und-AF, 2B, -> und-AE
 datetime/week_data@1, und-AG, 2B, 636a8b37946c4ebf
+datetime/week_data@1, und-AI, 2B, -> blo
+datetime/week_data@1, und-AL, 2B, -> blo
+datetime/week_data@1, und-AM, 2B, -> blo
 datetime/week_data@1, und-AN, 2B, -> und-AD
+datetime/week_data@1, und-AR, 2B, -> blo
 datetime/week_data@1, und-AS, 2B, -> und-AG
 datetime/week_data@1, und-AT, 2B, -> und-AD
+datetime/week_data@1, und-AU, 2B, -> blo
 datetime/week_data@1, und-AX, 2B, -> und-AD
+datetime/week_data@1, und-AZ, 2B, -> blo
+datetime/week_data@1, und-BA, 2B, -> blo
 datetime/week_data@1, und-BD, 2B, -> und-AG
 datetime/week_data@1, und-BE, 2B, -> und-AD
 datetime/week_data@1, und-BG, 2B, -> und-AD
 datetime/week_data@1, und-BH, 2B, -> und-AE
+datetime/week_data@1, und-BM, 2B, -> blo
+datetime/week_data@1, und-BN, 2B, -> blo
 datetime/week_data@1, und-BR, 2B, -> und-AG
 datetime/week_data@1, und-BS, 2B, -> und-AG
 datetime/week_data@1, und-BT, 2B, -> und-AG
 datetime/week_data@1, und-BW, 2B, -> und-AG
+datetime/week_data@1, und-BY, 2B, -> blo
 datetime/week_data@1, und-BZ, 2B, -> und-AG
 datetime/week_data@1, und-CA, 2B, -> und-AG
 datetime/week_data@1, und-CH, 2B, -> und-AD
+datetime/week_data@1, und-CL, 2B, -> blo
+datetime/week_data@1, und-CM, 2B, -> blo
+datetime/week_data@1, und-CN, 2B, -> blo
 datetime/week_data@1, und-CO, 2B, -> und-AG
+datetime/week_data@1, und-CR, 2B, -> blo
+datetime/week_data@1, und-CY, 2B, -> blo
 datetime/week_data@1, und-CZ, 2B, -> und-AD
 datetime/week_data@1, und-DE, 2B, -> und-AD
 datetime/week_data@1, und-DJ, 2B, -> und-AE
@@ -35,6 +62,7 @@ datetime/week_data@1, und-DK, 2B, -> und-AD
 datetime/week_data@1, und-DM, 2B, -> und-AG
 datetime/week_data@1, und-DO, 2B, -> und-AG
 datetime/week_data@1, und-DZ, 2B, -> und-AE
+datetime/week_data@1, und-EC, 2B, -> blo
 datetime/week_data@1, und-EE, 2B, -> und-AD
 datetime/week_data@1, und-EG, 2B, -> und-AE
 datetime/week_data@1, und-ES, 2B, -> und-AD
@@ -44,6 +72,7 @@ datetime/week_data@1, und-FJ, 2B, -> und-AD
 datetime/week_data@1, und-FO, 2B, -> und-AD
 datetime/week_data@1, und-FR, 2B, -> und-AD
 datetime/week_data@1, und-GB, 2B, -> und-AD
+datetime/week_data@1, und-GE, 2B, -> blo
 datetime/week_data@1, und-GF, 2B, -> und-AD
 datetime/week_data@1, und-GG, 2B, -> und-AD
 datetime/week_data@1, und-GI, 2B, -> und-AD
@@ -53,6 +82,7 @@ datetime/week_data@1, und-GT, 2B, -> und-AG
 datetime/week_data@1, und-GU, 2B, -> und-AG
 datetime/week_data@1, und-HK, 2B, -> und-AG
 datetime/week_data@1, und-HN, 2B, -> und-AG
+datetime/week_data@1, und-HR, 2B, -> blo
 datetime/week_data@1, und-HU, 2B, -> und-AD
 datetime/week_data@1, und-ID, 2B, -> und-AG
 datetime/week_data@1, und-IE, 2B, -> und-AD
@@ -68,27 +98,38 @@ datetime/week_data@1, und-JM, 2B, -> und-AG
 datetime/week_data@1, und-JO, 2B, -> und-AE
 datetime/week_data@1, und-JP, 2B, -> und-AG
 datetime/week_data@1, und-KE, 2B, -> und-AG
+datetime/week_data@1, und-KG, 2B, -> blo
 datetime/week_data@1, und-KH, 2B, -> und-AG
 datetime/week_data@1, und-KR, 2B, -> und-AG
 datetime/week_data@1, und-KW, 2B, -> und-AE
+datetime/week_data@1, und-KZ, 2B, -> blo
 datetime/week_data@1, und-LA, 2B, -> und-AG
+datetime/week_data@1, und-LB, 2B, -> blo
 datetime/week_data@1, und-LI, 2B, -> und-AD
+datetime/week_data@1, und-LK, 2B, -> blo
 datetime/week_data@1, und-LT, 2B, -> und-AD
 datetime/week_data@1, und-LU, 2B, -> und-AD
+datetime/week_data@1, und-LV, 2B, -> blo
 datetime/week_data@1, und-LY, 2B, -> und-AE
 datetime/week_data@1, und-MC, 2B, -> und-AD
+datetime/week_data@1, und-MD, 2B, -> blo
+datetime/week_data@1, und-ME, 2B, -> blo
 datetime/week_data@1, und-MH, 2B, -> und-AG
+datetime/week_data@1, und-MK, 2B, -> blo
 datetime/week_data@1, und-MM, 2B, -> und-AG
+datetime/week_data@1, und-MN, 2B, -> blo
 datetime/week_data@1, und-MO, 2B, -> und-AG
 datetime/week_data@1, und-MQ, 2B, -> und-AD
 datetime/week_data@1, und-MT, 2B, -> und-AG
 datetime/week_data@1, und-MV, 2B, 88f92c58a02b3795
 datetime/week_data@1, und-MX, 2B, -> und-AG
+datetime/week_data@1, und-MY, 2B, -> blo
 datetime/week_data@1, und-MZ, 2B, -> und-AG
 datetime/week_data@1, und-NI, 2B, -> und-AG
 datetime/week_data@1, und-NL, 2B, -> und-AD
 datetime/week_data@1, und-NO, 2B, -> und-AD
 datetime/week_data@1, und-NP, 2B, -> und-AG
+datetime/week_data@1, und-NZ, 2B, -> blo
 datetime/week_data@1, und-OM, 2B, -> und-AE
 datetime/week_data@1, und-PA, 2B, -> und-AG
 datetime/week_data@1, und-PE, 2B, -> und-AG
@@ -100,51 +141,91 @@ datetime/week_data@1, und-PT, 2B, c0c6146f812fb959
 datetime/week_data@1, und-PY, 2B, -> und-AG
 datetime/week_data@1, und-QA, 2B, -> und-AE
 datetime/week_data@1, und-RE, 2B, -> und-AD
+datetime/week_data@1, und-RO, 2B, -> blo
+datetime/week_data@1, und-RS, 2B, -> blo
 datetime/week_data@1, und-RU, 2B, -> und-AD
 datetime/week_data@1, und-SA, 2B, -> und-AG
 datetime/week_data@1, und-SD, 2B, -> und-AE
 datetime/week_data@1, und-SE, 2B, -> und-AD
 datetime/week_data@1, und-SG, 2B, -> und-AG
+datetime/week_data@1, und-SI, 2B, -> blo
 datetime/week_data@1, und-SJ, 2B, -> und-AD
 datetime/week_data@1, und-SK, 2B, -> und-AD
 datetime/week_data@1, und-SM, 2B, -> und-AD
 datetime/week_data@1, und-SV, 2B, -> und-AG
 datetime/week_data@1, und-SY, 2B, -> und-AE
 datetime/week_data@1, und-TH, 2B, -> und-AG
+datetime/week_data@1, und-TJ, 2B, -> blo
+datetime/week_data@1, und-TM, 2B, -> blo
+datetime/week_data@1, und-TR, 2B, -> blo
 datetime/week_data@1, und-TT, 2B, -> und-AG
 datetime/week_data@1, und-TW, 2B, -> und-AG
+datetime/week_data@1, und-UA, 2B, -> blo
 datetime/week_data@1, und-UM, 2B, -> und-AG
 datetime/week_data@1, und-US, 2B, -> und-AG
+datetime/week_data@1, und-UY, 2B, -> blo
+datetime/week_data@1, und-UZ, 2B, -> blo
 datetime/week_data@1, und-VA, 2B, -> und-AD
 datetime/week_data@1, und-VE, 2B, -> und-AG
 datetime/week_data@1, und-VI, 2B, -> und-AG
+datetime/week_data@1, und-VN, 2B, -> blo
 datetime/week_data@1, und-WS, 2B, -> und-AG
+datetime/week_data@1, und-XK, 2B, -> blo
 datetime/week_data@1, und-YE, 2B, -> und-AG
 datetime/week_data@1, und-ZA, 2B, -> und-AG
 datetime/week_data@1, und-ZW, 2B, -> und-AG
-datetime/week_data@2, <lookup>, 2760B, 115 identifiers
+datetime/week_data@1, wo, 2B, -> blo
+datetime/week_data@1, yo, 2B, -> blo
+datetime/week_data@2, <lookup>, 4056B, 169 identifiers
 datetime/week_data@2, <total>, 33B, 11 unique payloads
-datetime/week_data@2, und, 3B, 9d9f0d8d13520828
+datetime/week_data@2, blo, 3B, 9d9f0d8d13520828
+datetime/week_data@2, eo, 3B, -> blo
+datetime/week_data@2, ff-Adlm, 3B, -> blo
+datetime/week_data@2, ha, 3B, -> blo
+datetime/week_data@2, ia, 3B, -> blo
+datetime/week_data@2, ig, 3B, -> blo
+datetime/week_data@2, kea, 3B, -> blo
+datetime/week_data@2, nqo, 3B, -> blo
+datetime/week_data@2, pcm, 3B, -> blo
+datetime/week_data@2, so, 3B, -> blo
+datetime/week_data@2, sw, 3B, -> blo
+datetime/week_data@2, to, 3B, -> blo
+datetime/week_data@2, und, 3B, -> blo
 datetime/week_data@2, und-AD, 3B, bd6a06572fc718be
 datetime/week_data@2, und-AE, 3B, a0405d18fe0583e1
 datetime/week_data@2, und-AF, 3B, 38f1b64f8a840a6
 datetime/week_data@2, und-AG, 3B, c7700ca0a16a1d32
+datetime/week_data@2, und-AI, 3B, -> blo
+datetime/week_data@2, und-AL, 3B, -> blo
+datetime/week_data@2, und-AM, 3B, -> blo
 datetime/week_data@2, und-AN, 3B, -> und-AD
+datetime/week_data@2, und-AR, 3B, -> blo
 datetime/week_data@2, und-AS, 3B, -> und-AG
 datetime/week_data@2, und-AT, 3B, -> und-AD
+datetime/week_data@2, und-AU, 3B, -> blo
 datetime/week_data@2, und-AX, 3B, -> und-AD
+datetime/week_data@2, und-AZ, 3B, -> blo
+datetime/week_data@2, und-BA, 3B, -> blo
 datetime/week_data@2, und-BD, 3B, -> und-AG
 datetime/week_data@2, und-BE, 3B, -> und-AD
 datetime/week_data@2, und-BG, 3B, -> und-AD
 datetime/week_data@2, und-BH, 3B, 192922f263e2955a
+datetime/week_data@2, und-BM, 3B, -> blo
+datetime/week_data@2, und-BN, 3B, -> blo
 datetime/week_data@2, und-BR, 3B, -> und-AG
 datetime/week_data@2, und-BS, 3B, -> und-AG
 datetime/week_data@2, und-BT, 3B, -> und-AG
 datetime/week_data@2, und-BW, 3B, -> und-AG
+datetime/week_data@2, und-BY, 3B, -> blo
 datetime/week_data@2, und-BZ, 3B, -> und-AG
 datetime/week_data@2, und-CA, 3B, -> und-AG
 datetime/week_data@2, und-CH, 3B, -> und-AD
+datetime/week_data@2, und-CL, 3B, -> blo
+datetime/week_data@2, und-CM, 3B, -> blo
+datetime/week_data@2, und-CN, 3B, -> blo
 datetime/week_data@2, und-CO, 3B, -> und-AG
+datetime/week_data@2, und-CR, 3B, -> blo
+datetime/week_data@2, und-CY, 3B, -> blo
 datetime/week_data@2, und-CZ, 3B, -> und-AD
 datetime/week_data@2, und-DE, 3B, -> und-AD
 datetime/week_data@2, und-DJ, 3B, -> und-AE
@@ -152,6 +233,7 @@ datetime/week_data@2, und-DK, 3B, -> und-AD
 datetime/week_data@2, und-DM, 3B, -> und-AG
 datetime/week_data@2, und-DO, 3B, -> und-AG
 datetime/week_data@2, und-DZ, 3B, -> und-BH
+datetime/week_data@2, und-EC, 3B, -> blo
 datetime/week_data@2, und-EE, 3B, -> und-AD
 datetime/week_data@2, und-EG, 3B, -> und-BH
 datetime/week_data@2, und-ES, 3B, -> und-AD
@@ -161,6 +243,7 @@ datetime/week_data@2, und-FJ, 3B, -> und-AD
 datetime/week_data@2, und-FO, 3B, -> und-AD
 datetime/week_data@2, und-FR, 3B, -> und-AD
 datetime/week_data@2, und-GB, 3B, -> und-AD
+datetime/week_data@2, und-GE, 3B, -> blo
 datetime/week_data@2, und-GF, 3B, -> und-AD
 datetime/week_data@2, und-GG, 3B, -> und-AD
 datetime/week_data@2, und-GI, 3B, -> und-AD
@@ -170,6 +253,7 @@ datetime/week_data@2, und-GT, 3B, -> und-AG
 datetime/week_data@2, und-GU, 3B, -> und-AG
 datetime/week_data@2, und-HK, 3B, -> und-AG
 datetime/week_data@2, und-HN, 3B, -> und-AG
+datetime/week_data@2, und-HR, 3B, -> blo
 datetime/week_data@2, und-HU, 3B, -> und-AD
 datetime/week_data@2, und-ID, 3B, -> und-AG
 datetime/week_data@2, und-IE, 3B, -> und-AD
@@ -185,27 +269,38 @@ datetime/week_data@2, und-JM, 3B, -> und-AG
 datetime/week_data@2, und-JO, 3B, -> und-BH
 datetime/week_data@2, und-JP, 3B, -> und-AG
 datetime/week_data@2, und-KE, 3B, -> und-AG
+datetime/week_data@2, und-KG, 3B, -> blo
 datetime/week_data@2, und-KH, 3B, -> und-AG
 datetime/week_data@2, und-KR, 3B, -> und-AG
 datetime/week_data@2, und-KW, 3B, -> und-BH
+datetime/week_data@2, und-KZ, 3B, -> blo
 datetime/week_data@2, und-LA, 3B, -> und-AG
+datetime/week_data@2, und-LB, 3B, -> blo
 datetime/week_data@2, und-LI, 3B, -> und-AD
+datetime/week_data@2, und-LK, 3B, -> blo
 datetime/week_data@2, und-LT, 3B, -> und-AD
 datetime/week_data@2, und-LU, 3B, -> und-AD
+datetime/week_data@2, und-LV, 3B, -> blo
 datetime/week_data@2, und-LY, 3B, -> und-BH
 datetime/week_data@2, und-MC, 3B, -> und-AD
+datetime/week_data@2, und-MD, 3B, -> blo
+datetime/week_data@2, und-ME, 3B, -> blo
 datetime/week_data@2, und-MH, 3B, -> und-AG
+datetime/week_data@2, und-MK, 3B, -> blo
 datetime/week_data@2, und-MM, 3B, -> und-AG
+datetime/week_data@2, und-MN, 3B, -> blo
 datetime/week_data@2, und-MO, 3B, -> und-AG
 datetime/week_data@2, und-MQ, 3B, -> und-AD
 datetime/week_data@2, und-MT, 3B, -> und-AG
 datetime/week_data@2, und-MV, 3B, 93e4d86cf627066f
 datetime/week_data@2, und-MX, 3B, -> und-AG
+datetime/week_data@2, und-MY, 3B, -> blo
 datetime/week_data@2, und-MZ, 3B, -> und-AG
 datetime/week_data@2, und-NI, 3B, -> und-AG
 datetime/week_data@2, und-NL, 3B, -> und-AD
 datetime/week_data@2, und-NO, 3B, -> und-AD
 datetime/week_data@2, und-NP, 3B, -> und-AG
+datetime/week_data@2, und-NZ, 3B, -> blo
 datetime/week_data@2, und-OM, 3B, -> und-BH
 datetime/week_data@2, und-PA, 3B, -> und-AG
 datetime/week_data@2, und-PE, 3B, -> und-AG
@@ -217,25 +312,38 @@ datetime/week_data@2, und-PT, 3B, 89113284be803545
 datetime/week_data@2, und-PY, 3B, -> und-AG
 datetime/week_data@2, und-QA, 3B, -> und-BH
 datetime/week_data@2, und-RE, 3B, -> und-AD
+datetime/week_data@2, und-RO, 3B, -> blo
+datetime/week_data@2, und-RS, 3B, -> blo
 datetime/week_data@2, und-RU, 3B, -> und-AD
 datetime/week_data@2, und-SA, 3B, -> und-IL
 datetime/week_data@2, und-SD, 3B, -> und-BH
 datetime/week_data@2, und-SE, 3B, -> und-AD
 datetime/week_data@2, und-SG, 3B, -> und-AG
+datetime/week_data@2, und-SI, 3B, -> blo
 datetime/week_data@2, und-SJ, 3B, -> und-AD
 datetime/week_data@2, und-SK, 3B, -> und-AD
 datetime/week_data@2, und-SM, 3B, -> und-AD
 datetime/week_data@2, und-SV, 3B, -> und-AG
 datetime/week_data@2, und-SY, 3B, -> und-BH
 datetime/week_data@2, und-TH, 3B, -> und-AG
+datetime/week_data@2, und-TJ, 3B, -> blo
+datetime/week_data@2, und-TM, 3B, -> blo
+datetime/week_data@2, und-TR, 3B, -> blo
 datetime/week_data@2, und-TT, 3B, -> und-AG
 datetime/week_data@2, und-TW, 3B, -> und-AG
+datetime/week_data@2, und-UA, 3B, -> blo
 datetime/week_data@2, und-UM, 3B, -> und-AG
 datetime/week_data@2, und-US, 3B, -> und-AG
+datetime/week_data@2, und-UY, 3B, -> blo
+datetime/week_data@2, und-UZ, 3B, -> blo
 datetime/week_data@2, und-VA, 3B, -> und-AD
 datetime/week_data@2, und-VE, 3B, -> und-AG
 datetime/week_data@2, und-VI, 3B, -> und-AG
+datetime/week_data@2, und-VN, 3B, -> blo
 datetime/week_data@2, und-WS, 3B, -> und-AG
+datetime/week_data@2, und-XK, 3B, -> blo
 datetime/week_data@2, und-YE, 3B, -> und-IL
 datetime/week_data@2, und-ZA, 3B, -> und-AG
 datetime/week_data@2, und-ZW, 3B, -> und-AG
+datetime/week_data@2, wo, 3B, -> blo
+datetime/week_data@2, yo, 3B, -> blo

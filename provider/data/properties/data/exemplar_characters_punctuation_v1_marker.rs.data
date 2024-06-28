@@ -75,6 +75,13 @@ macro_rules! __impl_exemplar_characters_punctuation_v1_marker {
                     },
                     zerovec::VarZeroVec::new(),
                 ));
+                const __BR: &S = &icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
+                    unsafe {
+                        #[allow(unused_unsafe)]
+                        icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"!\0\0\0\"\0\0\0(\0\0\0*\0\0\0,\0\0\0/\0\0\0:\0\0\0<\0\0\0?\0\0\0@\0\0\0[\0\0\0^\0\0\0\x11 \0\0\x12 \0\0") }, 13u32)
+                    },
+                    zerovec::VarZeroVec::new(),
+                ));
                 const __BS: &S = &icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
                     unsafe {
                         #[allow(unused_unsafe)]
@@ -516,13 +523,6 @@ macro_rules! __impl_exemplar_characters_punctuation_v1_marker {
                     },
                     zerovec::VarZeroVec::new(),
                 ));
-                const __UND: &S = &icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
-                    unsafe {
-                        #[allow(unused_unsafe)]
-                        icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"!\0\0\0\"\0\0\0(\0\0\0*\0\0\0,\0\0\0/\0\0\0:\0\0\0<\0\0\0?\0\0\0@\0\0\0[\0\0\0^\0\0\0\x11 \0\0\x12 \0\0") }, 13u32)
-                    },
-                    zerovec::VarZeroVec::new(),
-                ));
                 const __UR: &S = &icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
                     unsafe {
                         #[allow(unused_unsafe)]
@@ -572,7 +572,7 @@ macro_rules! __impl_exemplar_characters_punctuation_v1_marker {
                     },
                     zerovec::VarZeroVec::new(),
                 ));
-                icu_provider_baked::binary_search::Data(&[("af", __AF), ("am", __AM), ("ar", __AR), ("as", __AS), ("ast", __AST), ("az", __AF), ("be", __BE), ("bg", __BG), ("bgc", __BGC), ("bho", __AF), ("blo", __BLO), ("bn", __AF), ("brx", __AF), ("bs", __BS), ("ca", __AST), ("ceb", __CEB), ("chr", __AF), ("cs", __CS), ("cv", __CV), ("cy", __AF), ("da", __DA), ("de", __CV), ("doi", __DOI), ("dsb", __DSB), ("el", __EL), ("en", __AF), ("eo", __EO), ("es", __AST), ("et", __ET), ("eu", __AF), ("fa", __FA), ("ff-Adlm", __FF_ADLM), ("fi", __FI), ("fil", __FIL), ("fo", __DA), ("fr", __FR), ("fy", __AF), ("ga", __AF), ("gd", __GD), ("gl", __AST), ("gu", __AF), ("ha", __HA), ("he", __HE), ("hi", __HI), ("hr", __HR), ("hsb", __DSB), ("hu", __HU), ("hy", __HY), ("ia", __AF), ("id", __AF), ("ie", __IE), ("ig", __IG), ("is", __IS), ("it", __IT), ("ja", __JA), ("ka", __KA), ("kea", __KEA), ("kgp", __AF), ("kk", __KK), ("km", __KM), ("kn", __KN), ("ko", __KO), ("kok", __AF), ("ks", __AF), ("ks-Deva", __AF), ("ku", __AF), ("kxv", __AF), ("kxv-Deva", __AF), ("kxv-Orya", __AF), ("kxv-Telu", __AF), ("ky", __CV), ("lb", __CV), ("lij", __FR), ("lmo", __IT), ("lo", __AF), ("lt", __LT), ("lv", __LV), ("mai", __MAI), ("mk", __MK), ("ml", __AF), ("mn", __AF), ("mni", __AF), ("mr", __KN), ("ms", __AF), ("mt", __MT), ("my", __MY), ("nds", __CV), ("nds-NL", __AF), ("ne", __NE), ("nl", __AF), ("no", __NO), ("nqo", __NQO), ("oc", __OC), ("oc-ES", __OC_ES), ("or", __AF), ("pa", __PA), ("pcm", __AF), ("pl", __PL), ("prg", __LT), ("ps", __PS), ("pt", __AF), ("pt-PT", __PT_PT), ("qu", __AF), ("raj", __RAJ), ("ro", __RO), ("ru", __CV), ("sa", __MAI), ("sah", __SAH), ("sc", __SC), ("sd", __SD), ("sd-Deva", __AF), ("si", __AF), ("sk", __CS), ("sl", __SL), ("so", __AF), ("sq", __SQ), ("sr", __SR), ("sr-Latn", __SR), ("su", __AF), ("sv", __AF), ("sw", __SW), ("syr", __SYR), ("szl", __PL), ("ta", __AF), ("te", __MT), ("tg", __TG), ("th", __TH), ("tk", __TK), ("to", __AF), ("tr", __AF), ("tt", __TT), ("uk", __UK), ("und", __UND), ("ur", __UR), ("uz", __AF), ("vec", __VEC), ("vi", __AF), ("vmw", __VMW), ("xh", __AF), ("xnr", __XNR), ("yo", __YO), ("yrl", __AST), ("yue", __YUE), ("yue-Hans", __YUE_HANS), ("za", __AF), ("zh", __YUE_HANS), ("zh-Hant", __YUE)])
+                icu_provider_baked::binary_search::Data(&[("af", __AF), ("am", __AM), ("ar", __AR), ("as", __AS), ("ast", __AST), ("az", __AF), ("be", __BE), ("bg", __BG), ("bgc", __BGC), ("bho", __AF), ("blo", __BLO), ("bn", __AF), ("br", __BR), ("brx", __AF), ("bs", __BS), ("bs-Cyrl", __BR), ("ca", __AST), ("ceb", __CEB), ("chr", __AF), ("cs", __CS), ("csw", __BR), ("cv", __CV), ("cy", __AF), ("da", __DA), ("de", __CV), ("doi", __DOI), ("dsb", __DSB), ("el", __EL), ("en", __AF), ("eo", __EO), ("es", __AST), ("et", __ET), ("eu", __AF), ("fa", __FA), ("ff-Adlm", __FF_ADLM), ("fi", __FI), ("fil", __FIL), ("fo", __DA), ("fr", __FR), ("fy", __AF), ("ga", __AF), ("gd", __GD), ("gl", __AST), ("gu", __AF), ("ha", __HA), ("he", __HE), ("hi", __HI), ("hr", __HR), ("hsb", __DSB), ("hu", __HU), ("hy", __HY), ("ia", __AF), ("id", __AF), ("ie", __IE), ("ig", __IG), ("is", __IS), ("it", __IT), ("ja", __JA), ("jv", __BR), ("ka", __KA), ("kea", __KEA), ("kgp", __AF), ("kk", __KK), ("km", __KM), ("kn", __KN), ("ko", __KO), ("kok", __AF), ("ks", __AF), ("ks-Deva", __AF), ("ku", __AF), ("kxv", __AF), ("kxv-Deva", __AF), ("kxv-Orya", __AF), ("kxv-Telu", __AF), ("ky", __CV), ("lb", __CV), ("lij", __FR), ("lmo", __IT), ("lo", __AF), ("lt", __LT), ("lv", __LV), ("mai", __MAI), ("mi", __BR), ("mk", __MK), ("ml", __AF), ("mn", __AF), ("mni", __AF), ("mr", __KN), ("ms", __AF), ("mt", __MT), ("my", __MY), ("nds", __CV), ("nds-NL", __AF), ("ne", __NE), ("nl", __AF), ("no", __NO), ("nqo", __NQO), ("oc", __OC), ("oc-ES", __OC_ES), ("or", __AF), ("pa", __PA), ("pcm", __AF), ("pl", __PL), ("prg", __LT), ("ps", __PS), ("pt", __AF), ("pt-PT", __PT_PT), ("qu", __AF), ("raj", __RAJ), ("rm", __BR), ("ro", __RO), ("ru", __CV), ("sa", __MAI), ("sah", __SAH), ("sat", __BR), ("sc", __SC), ("sd", __SD), ("sd-Deva", __AF), ("si", __AF), ("sk", __CS), ("sl", __SL), ("so", __AF), ("sq", __SQ), ("sr", __SR), ("sr-Latn", __SR), ("su", __AF), ("sv", __AF), ("sw", __SW), ("syr", __SYR), ("szl", __PL), ("ta", __AF), ("te", __MT), ("tg", __TG), ("th", __TH), ("ti", __BR), ("tk", __TK), ("to", __AF), ("tr", __AF), ("tt", __TT), ("ug", __BR), ("uk", __UK), ("und", __BR), ("ur", __UR), ("uz", __AF), ("uz-Cyrl", __BR), ("vec", __VEC), ("vi", __AF), ("vmw", __VMW), ("wo", __BR), ("xh", __AF), ("xnr", __XNR), ("yo", __YO), ("yrl", __AST), ("yue", __YUE), ("yue-Hans", __YUE_HANS), ("za", __AF), ("zh", __YUE_HANS), ("zh-Hant", __YUE), ("zu", __BR)])
             };
         }
         #[clippy::msrv = "1.70"]
@@ -596,6 +596,11 @@ macro_rules! __impl_exemplar_characters_punctuation_v1_marker {
                     }
                 };
                 Ok(icu_provider::DataResponse { payload: icu_provider::DataPayload::from_static_ref(payload), metadata })
+            }
+        }
+        impl icu_provider::CanLoad<icu::properties::provider::ExemplarCharactersPunctuationV1Marker> for $provider {
+            fn can_load(&self, req: icu_provider::DataRequest) -> Result<bool, icu_provider::DataError> {
+                Ok(icu_provider_baked::DataStore::contains(&Self::DATA_EXEMPLAR_CHARACTERS_PUNCTUATION_V1_MARKER, req.id))
             }
         }
     };

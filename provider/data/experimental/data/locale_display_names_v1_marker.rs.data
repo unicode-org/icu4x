@@ -2990,6 +2990,11 @@ macro_rules! __impl_locale_display_names_v1_marker {
                 Ok(icu_provider::DataResponse { payload: icu_provider::DataPayload::from_static_ref(payload), metadata })
             }
         }
+        impl icu_provider::CanLoad<icu::experimental::displaynames::provider::LocaleDisplayNamesV1Marker> for $provider {
+            fn can_load(&self, req: icu_provider::DataRequest) -> Result<bool, icu_provider::DataError> {
+                Ok(icu_provider_baked::DataStore::contains(&Self::DATA_LOCALE_DISPLAY_NAMES_V1_MARKER, req.id))
+            }
+        }
     };
     ($ provider : ty , ITER) => {
         __impl_locale_display_names_v1_marker!($provider);

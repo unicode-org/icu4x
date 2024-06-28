@@ -18,6 +18,12 @@ macro_rules! __impl_plural_ranges_v1_marker {
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") })
                     },
                 };
+                const __AM: &S = &icu::plurals::provider::PluralRangesV1 {
+                    ranges: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::ZeroVec::new())
+                    },
+                };
                 const __AR: &S = &icu::plurals::provider::PluralRangesV1 {
                     ranges: unsafe {
                         #[allow(unused_unsafe)]
@@ -66,13 +72,7 @@ macro_rules! __impl_plural_ranges_v1_marker {
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02\"2B") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x04\x04\x04\x04") })
                     },
                 };
-                const __UND: &S = &icu::plurals::provider::PluralRangesV1 {
-                    ranges: unsafe {
-                        #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::ZeroVec::new())
-                    },
-                };
-                icu_provider_baked::binary_search::Data(&[("af", __AF), ("ar", __AR), ("bg", __AF), ("ca", __AF), ("en", __AF), ("es", __AF), ("et", __AF), ("eu", __AF), ("fa", __FA), ("fi", __AF), ("he", __HE), ("ia", __AF), ("ka", __KA), ("lv", __LV), ("mk", __MK), ("no", __AF), ("or", __FA), ("pcm", __AF), ("ro", __RO), ("sd", __FA), ("si", __AF), ("sl", __SL), ("sv", __AF), ("und", __UND), ("ur", __AF)])
+                icu_provider_baked::binary_search::Data(&[("af", __AF), ("am", __AM), ("ar", __AR), ("as", __AM), ("ast", __AM), ("az", __AM), ("be", __AM), ("bg", __AF), ("bgc", __AM), ("bho", __AM), ("blo", __AM), ("bn", __AM), ("br", __AM), ("brx", __AM), ("bs", __AM), ("bs-Cyrl", __AM), ("ca", __AF), ("ceb", __AM), ("chr", __AM), ("cs", __AM), ("csw", __AM), ("cv", __AM), ("cy", __AM), ("da", __AM), ("de", __AM), ("doi", __AM), ("dsb", __AM), ("el", __AM), ("en", __AF), ("eo", __AM), ("es", __AF), ("et", __AF), ("eu", __AF), ("fa", __FA), ("ff-Adlm", __AM), ("fi", __AF), ("fil", __AM), ("fo", __AM), ("fr", __AM), ("fy", __AM), ("ga", __AM), ("gd", __AM), ("gl", __AM), ("gu", __AM), ("ha", __AM), ("he", __HE), ("hi", __AM), ("hr", __AM), ("hsb", __AM), ("hu", __AM), ("hy", __AM), ("ia", __AF), ("id", __AM), ("ie", __AM), ("ig", __AM), ("is", __AM), ("it", __AM), ("ja", __AM), ("jv", __AM), ("ka", __KA), ("kea", __AM), ("kgp", __AM), ("kk", __AM), ("km", __AM), ("kn", __AM), ("ko", __AM), ("kok", __AM), ("ks", __AM), ("ks-Deva", __AM), ("ku", __AM), ("kxv", __AM), ("kxv-Deva", __AM), ("kxv-Orya", __AM), ("kxv-Telu", __AM), ("ky", __AM), ("lb", __AM), ("lij", __AM), ("lmo", __AM), ("lo", __AM), ("lt", __AM), ("lv", __LV), ("mai", __AM), ("mi", __AM), ("mk", __MK), ("ml", __AM), ("mn", __AM), ("mni", __AM), ("mr", __AM), ("ms", __AM), ("mt", __AM), ("my", __AM), ("nds", __AM), ("ne", __AM), ("nl", __AM), ("no", __AF), ("nqo", __AM), ("oc", __AM), ("or", __FA), ("pa", __AM), ("pcm", __AF), ("pl", __AM), ("prg", __AM), ("ps", __AM), ("pt", __AM), ("qu", __AM), ("raj", __AM), ("rm", __AM), ("ro", __RO), ("ru", __AM), ("sa", __AM), ("sah", __AM), ("sat", __AM), ("sc", __AM), ("sd", __FA), ("sd-Deva", __AM), ("si", __AF), ("sk", __AM), ("sl", __SL), ("so", __AM), ("sq", __AM), ("sr", __AM), ("sr-Latn", __AM), ("su", __AM), ("sv", __AF), ("sw", __AM), ("syr", __AM), ("szl", __AM), ("ta", __AM), ("te", __AM), ("tg", __AM), ("th", __AM), ("ti", __AM), ("tk", __AM), ("to", __AM), ("tr", __AM), ("tt", __AM), ("ug", __AM), ("uk", __AM), ("und", __AM), ("ur", __AF), ("uz", __AM), ("uz-Cyrl", __AM), ("vec", __AM), ("vi", __AM), ("vmw", __AM), ("wo", __AM), ("xh", __AM), ("xnr", __AM), ("yo", __AM), ("yrl", __AM), ("yue", __AM), ("yue-Hans", __AM), ("za", __AM), ("zh", __AM), ("zh-Hant", __AM), ("zu", __AM)])
             };
         }
         #[clippy::msrv = "1.70"]
@@ -96,6 +96,11 @@ macro_rules! __impl_plural_ranges_v1_marker {
                     }
                 };
                 Ok(icu_provider::DataResponse { payload: icu_provider::DataPayload::from_static_ref(payload), metadata })
+            }
+        }
+        impl icu_provider::CanLoad<icu::plurals::provider::PluralRangesV1Marker> for $provider {
+            fn can_load(&self, req: icu_provider::DataRequest) -> Result<bool, icu_provider::DataError> {
+                Ok(icu_provider_baked::DataStore::contains(&Self::DATA_PLURAL_RANGES_V1_MARKER, req.id))
             }
         }
     };

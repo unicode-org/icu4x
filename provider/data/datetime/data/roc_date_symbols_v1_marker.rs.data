@@ -3404,6 +3404,11 @@ macro_rules! __impl_roc_date_symbols_v1_marker {
                 Ok(icu_provider::DataResponse { payload: icu_provider::DataPayload::from_static_ref(payload), metadata })
             }
         }
+        impl icu_provider::CanLoad<icu::datetime::provider::calendar::RocDateSymbolsV1Marker> for $provider {
+            fn can_load(&self, req: icu_provider::DataRequest) -> Result<bool, icu_provider::DataError> {
+                Ok(icu_provider_baked::DataStore::contains(&Self::DATA_ROC_DATE_SYMBOLS_V1_MARKER, req.id))
+            }
+        }
     };
     ($ provider : ty , ITER) => {
         __impl_roc_date_symbols_v1_marker!($provider);

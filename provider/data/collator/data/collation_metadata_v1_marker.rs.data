@@ -15,13 +15,13 @@ macro_rules! __impl_collation_metadata_v1_marker {
                 const __AF: &S = &icu::collator::provider::CollationMetadataV1 { bits: 9u32 };
                 const __AM: &S = &icu::collator::provider::CollationMetadataV1 { bits: 33u32 };
                 const __AR: &S = &icu::collator::provider::CollationMetadataV1 { bits: 41u32 };
+                const __AST: &S = &icu::collator::provider::CollationMetadataV1 { bits: 1u32 };
                 const __DA: &S = &icu::collator::provider::CollationMetadataV1 { bits: 1545u32 };
                 const __FR_CA: &S = &icu::collator::provider::CollationMetadataV1 { bits: 129u32 };
                 const __LT: &S = &icu::collator::provider::CollationMetadataV1 { bits: 73u32 };
                 const __TH: &S = &icu::collator::provider::CollationMetadataV1 { bits: 297u32 };
-                const __UND: &S = &icu::collator::provider::CollationMetadataV1 { bits: 1u32 };
                 const __VI: &S = &icu::collator::provider::CollationMetadataV1 { bits: 25u32 };
-                icu_provider_baked::binary_search::Data(&[("af", __AF), ("am", __AM), ("ar", __AR), ("as", __AR), ("az", __AR), ("be", __AR), ("bg", __AM), ("bn", __AR), ("br", __AF), ("bs", __AR), ("ceb", __AF), ("chr", __AM), ("cs", __AF), ("cy", __AF), ("da", __DA), ("de-AT-u-co-phonebk", __AF), ("de-u-co-phonebk", __AF), ("dsb", __AF), ("el", __AM), ("en-US-posix", __AF), ("eo", __AF), ("es", __AF), ("et", __AF), ("fa", __AR), ("ff-Adlm", __AF), ("fi", __AF), ("fil", __AF), ("fo", __AF), ("fr-CA", __FR_CA), ("fy", __AF), ("gl", __AF), ("gu", __AR), ("ha", __AF), ("he", __AM), ("hi", __AR), ("hr", __AR), ("hsb", __AF), ("hu", __AF), ("hy", __AR), ("ig", __AF), ("is", __AF), ("ja", __AR), ("ka", __AM), ("kk", __AR), ("km", __AR), ("kn", __AR), ("ko", __AR), ("kok", __AR), ("ku", __AR), ("ky", __AR), ("lo", __AM), ("lt", __LT), ("lv", __AF), ("mk", __AR), ("ml", __AR), ("mn", __AM), ("mr", __AR), ("mt", __DA), ("my", __AR), ("ne", __AM), ("no", __AF), ("or", __AR), ("pa", __AR), ("pl", __AF), ("ps", __AR), ("ro", __AF), ("ru", __AM), ("si", __AR), ("sk", __AF), ("sl", __AF), ("sq", __AF), ("sr", __AR), ("sv", __AF), ("ta", __AR), ("te", __AR), ("th", __TH), ("tk", __AF), ("to", __AF), ("tr", __AF), ("ug", __AR), ("uk", __AR), ("und", __UND), ("ur", __AR), ("uz", __AF), ("vi", __VI), ("wo", __AF), ("yo", __AF), ("zh", __AR)])
+                icu_provider_baked::binary_search::Data(&[("af", __AF), ("am", __AM), ("ar", __AR), ("as", __AR), ("ast", __AST), ("az", __AR), ("be", __AR), ("bg", __AM), ("bgc", __AST), ("bho", __AST), ("blo", __AST), ("bn", __AR), ("br", __AF), ("brx", __AST), ("bs", __AR), ("ca", __AST), ("ceb", __AF), ("chr", __AM), ("cs", __AF), ("csw", __AST), ("cv", __AST), ("cy", __AF), ("da", __DA), ("de", __AST), ("de-AT-u-co-phonebk", __AF), ("de-u-co-phonebk", __AF), ("doi", __AST), ("dsb", __AF), ("el", __AM), ("en", __AST), ("en-US-posix", __AF), ("eo", __AF), ("es", __AF), ("et", __AF), ("eu", __AST), ("fa", __AR), ("ff-Adlm", __AF), ("fi", __AF), ("fil", __AF), ("fo", __AF), ("fr", __AST), ("fr-CA", __FR_CA), ("fy", __AF), ("ga", __AST), ("gd", __AST), ("gl", __AF), ("gu", __AR), ("ha", __AF), ("he", __AM), ("hi", __AR), ("hr", __AR), ("hsb", __AF), ("hu", __AF), ("hy", __AR), ("ia", __AST), ("id", __AST), ("ie", __AST), ("ig", __AF), ("is", __AF), ("it", __AST), ("ja", __AR), ("jv", __AST), ("ka", __AM), ("kea", __AST), ("kgp", __AST), ("kk", __AR), ("km", __AR), ("kn", __AR), ("ko", __AR), ("kok", __AR), ("ks", __AST), ("ks-Deva", __AST), ("ku", __AR), ("kxv", __AST), ("kxv-Deva", __AST), ("kxv-Orya", __AST), ("kxv-Telu", __AST), ("ky", __AR), ("lb", __AST), ("lij", __AST), ("lmo", __AST), ("lo", __AM), ("lt", __LT), ("lv", __AF), ("mai", __AST), ("mi", __AST), ("mk", __AR), ("ml", __AR), ("mn", __AM), ("mni", __AST), ("mr", __AR), ("ms", __AST), ("mt", __DA), ("my", __AR), ("nds", __AST), ("ne", __AM), ("nl", __AST), ("no", __AF), ("nqo", __AST), ("oc", __AST), ("or", __AR), ("pa", __AR), ("pcm", __AST), ("pl", __AF), ("prg", __AST), ("ps", __AR), ("pt", __AST), ("qu", __AST), ("raj", __AST), ("rm", __AST), ("ro", __AF), ("ru", __AM), ("sa", __AST), ("sah", __AST), ("sat", __AST), ("sc", __AST), ("sd", __AST), ("sd-Deva", __AST), ("si", __AR), ("sk", __AF), ("sl", __AF), ("so", __AST), ("sq", __AF), ("sr", __AR), ("su", __AST), ("sv", __AF), ("sw", __AST), ("syr", __AST), ("szl", __AST), ("ta", __AR), ("te", __AR), ("tg", __AST), ("th", __TH), ("ti", __AST), ("tk", __AF), ("to", __AF), ("tr", __AF), ("tt", __AST), ("ug", __AR), ("uk", __AR), ("und", __AST), ("und-u-co-emoji", __AST), ("und-u-co-eor", __AST), ("ur", __AR), ("uz", __AF), ("vec", __AST), ("vi", __VI), ("vmw", __AST), ("wo", __AF), ("xh", __AST), ("xnr", __AST), ("yo", __AF), ("yrl", __AST), ("yue-Hans", __AST), ("za", __AST), ("zh", __AR), ("zu", __AST)])
             };
         }
         #[clippy::msrv = "1.70"]
@@ -45,6 +45,11 @@ macro_rules! __impl_collation_metadata_v1_marker {
                     }
                 };
                 Ok(icu_provider::DataResponse { payload: icu_provider::DataPayload::from_static_ref(payload), metadata })
+            }
+        }
+        impl icu_provider::CanLoad<icu::collator::provider::CollationMetadataV1Marker> for $provider {
+            fn can_load(&self, req: icu_provider::DataRequest) -> Result<bool, icu_provider::DataError> {
+                Ok(icu_provider_baked::DataStore::contains(&Self::DATA_COLLATION_METADATA_V1_MARKER, req.id))
             }
         }
     };

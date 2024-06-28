@@ -50,6 +50,11 @@ macro_rules! __impl_hello_world_v1_marker {
                 Ok(icu_provider::DataResponse { payload: icu_provider::DataPayload::from_static_ref(payload), metadata })
             }
         }
+        impl icu_provider::CanLoad<icu_provider::hello_world::HelloWorldV1Marker> for $provider {
+            fn can_load(&self, req: icu_provider::DataRequest) -> Result<bool, icu_provider::DataError> {
+                Ok(icu_provider_baked::DataStore::contains(&Self::DATA_HELLO_WORLD_V1_MARKER, req.id))
+            }
+        }
     };
     ($ provider : ty , ITER) => {
         __impl_hello_world_v1_marker!($provider);

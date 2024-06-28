@@ -19,6 +19,13 @@ macro_rules! __impl_exemplar_characters_numbers_v1_marker {
                     },
                     zerovec::VarZeroVec::new(),
                 ));
+                const __AM: &S = &icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
+                    unsafe {
+                        #[allow(unused_unsafe)]
+                        icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"%\0\0\0&\0\0\0+\0\0\0/\0\0\x000\0\0\0:\0\0\0\x11 \0\0\x12 \0\x000 \0\x001 \0\0") }, 17u32)
+                    },
+                    zerovec::VarZeroVec::new(),
+                ));
                 const __AR: &S = &icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
                     unsafe {
                         #[allow(unused_unsafe)]
@@ -100,13 +107,6 @@ macro_rules! __impl_exemplar_characters_numbers_v1_marker {
                     unsafe {
                         #[allow(unused_unsafe)]
                         icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"%\0\0\0&\0\0\0+\0\0\0/\0\0\x000\0\0\0:\0\0\0\xB2\0\0\0\xB4\0\0\0\xB3\x02\0\0\xB4\x02\0\0\xE2\x02\0\0\xE3\x02\0\0H\x1D\0\0J\x1D\0\0\x11 \0\0\x12 \0\x000 \0\x001 \0\0\x12\"\0\0\x13\"\0\0") }, 24u32)
-                    },
-                    zerovec::VarZeroVec::new(),
-                ));
-                const __FR_LU: &S = &icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
-                    unsafe {
-                        #[allow(unused_unsafe)]
-                        icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"%\0\0\0&\0\0\0+\0\0\0/\0\0\x000\0\0\0:\0\0\0\x11 \0\0\x12 \0\x000 \0\x001 \0\0") }, 17u32)
                     },
                     zerovec::VarZeroVec::new(),
                 ));
@@ -243,7 +243,7 @@ macro_rules! __impl_exemplar_characters_numbers_v1_marker {
                     },
                     zerovec::VarZeroVec::new(),
                 ));
-                icu_provider_baked::binary_search::Data(&[("af", __AF), ("ar", __AR), ("ar-DZ", __AR_DZ), ("ar-LB", __AR_DZ), ("ar-LY", __AR_DZ), ("ar-MA", __AR_DZ), ("ar-MR", __AR_DZ), ("ar-SA", __AR_SA), ("ar-SO", __AR_SA), ("ar-TN", __AR_DZ), ("as", __AS), ("be", __AF), ("bg", __AF), ("bgc", __BGC), ("bho", __BGC), ("blo", __BLO), ("bn", __AS), ("br", __AF), ("cs", __AF), ("cv", __AF), ("de-AT", __AF), ("de-CH", __DE_CH), ("de-LI", __DE_CH), ("en-FI", __AF), ("en-SE", __AF), ("en-ZA", __AF), ("eo", __EO), ("es-CR", __AF), ("et", __EO), ("eu", __EU), ("fa", __FA), ("ff-Adlm", __FF_ADLM), ("fi", __EO), ("fo", __EU), ("fr", __FR), ("fr-LU", __FR_LU), ("fr-MA", __FR_LU), ("gu", __GU), ("he", __AR_DZ), ("hi", __BGC), ("hu", __AF), ("hy", __AF), ("ie", __IE), ("it-CH", __DE_CH), ("ka", __AF), ("kea", __AF), ("kk", __AF), ("kn", __KN), ("kok", __BGC), ("ks", __KS), ("kxv-Deva", __KXV_DEVA), ("kxv-Orya", __KXV_ORYA), ("kxv-Telu", __KXV_TELU), ("ky", __AF), ("lij", __LIJ), ("lt", __EO), ("lv", __AF), ("ml", __ML), ("mni", __AS), ("mr", __BGC), ("my", __MY), ("ne", __BGC), ("no", __EO), ("nqo", __NQO), ("or", __OR), ("pa", __PA), ("pl", __AF), ("prg", __AF), ("ps", __PS), ("pt-PT", __AF), ("raj", __BGC), ("rm", __RM), ("ru", __AF), ("sa", __BGC), ("sah", __AF), ("sat", __SAT), ("sk", __AF), ("sl", __EU), ("sq", __AF), ("sv", __EO), ("syr", __AR), ("szl", __AF), ("ta", __TA), ("te", __TE), ("tk", __AF), ("uk", __AF), ("und", __FR_LU), ("ur", __KS), ("uz", __AF), ("uz-Cyrl", __AF), ("xnr", __BGC), ("yue", __YUE), ("yue-Hans", __YUE), ("zh", __YUE), ("zh-Hant", __YUE)])
+                icu_provider_baked::binary_search::Data(&[("af", __AF), ("am", __AM), ("ar", __AR), ("ar-DZ", __AR_DZ), ("ar-LB", __AR_DZ), ("ar-LY", __AR_DZ), ("ar-MA", __AR_DZ), ("ar-MR", __AR_DZ), ("ar-SA", __AR_SA), ("ar-SO", __AR_SA), ("ar-TN", __AR_DZ), ("as", __AS), ("ast", __AM), ("az", __AM), ("be", __AF), ("bg", __AF), ("bgc", __BGC), ("bho", __BGC), ("blo", __BLO), ("bn", __AS), ("br", __AF), ("brx", __AM), ("bs", __AM), ("bs-Cyrl", __AM), ("ca", __AM), ("ceb", __AM), ("chr", __AM), ("cs", __AF), ("csw", __AM), ("cv", __AF), ("cy", __AM), ("da", __AM), ("de", __AM), ("de-AT", __AF), ("de-CH", __DE_CH), ("de-LI", __DE_CH), ("doi", __AM), ("dsb", __AM), ("el", __AM), ("en", __AM), ("en-FI", __AF), ("en-SE", __AF), ("en-ZA", __AF), ("eo", __EO), ("es", __AM), ("es-CR", __AF), ("et", __EO), ("eu", __EU), ("fa", __FA), ("ff-Adlm", __FF_ADLM), ("fi", __EO), ("fil", __AM), ("fo", __EU), ("fr", __FR), ("fr-LU", __AM), ("fr-MA", __AM), ("fy", __AM), ("ga", __AM), ("gd", __AM), ("gl", __AM), ("gu", __GU), ("ha", __AM), ("he", __AR_DZ), ("hi", __BGC), ("hr", __AM), ("hsb", __AM), ("hu", __AF), ("hy", __AF), ("ia", __AM), ("id", __AM), ("ie", __IE), ("ig", __AM), ("is", __AM), ("it", __AM), ("it-CH", __DE_CH), ("ja", __AM), ("jv", __AM), ("ka", __AF), ("kea", __AF), ("kgp", __AM), ("kk", __AF), ("km", __AM), ("kn", __KN), ("ko", __AM), ("kok", __BGC), ("ks", __KS), ("ks-Deva", __AM), ("ku", __AM), ("kxv", __AM), ("kxv-Deva", __KXV_DEVA), ("kxv-Orya", __KXV_ORYA), ("kxv-Telu", __KXV_TELU), ("ky", __AF), ("lb", __AM), ("lij", __LIJ), ("lmo", __AM), ("lo", __AM), ("lt", __EO), ("lv", __AF), ("mai", __AM), ("mi", __AM), ("mk", __AM), ("ml", __ML), ("mn", __AM), ("mni", __AS), ("mr", __BGC), ("ms", __AM), ("mt", __AM), ("my", __MY), ("nds", __AM), ("ne", __BGC), ("nl", __AM), ("no", __EO), ("nqo", __NQO), ("oc", __AM), ("or", __OR), ("pa", __PA), ("pcm", __AM), ("pl", __AF), ("prg", __AF), ("ps", __PS), ("pt", __AM), ("pt-PT", __AF), ("qu", __AM), ("raj", __BGC), ("rm", __RM), ("ro", __AM), ("ru", __AF), ("sa", __BGC), ("sah", __AF), ("sat", __SAT), ("sc", __AM), ("sd", __AM), ("sd-Deva", __AM), ("si", __AM), ("sk", __AF), ("sl", __EU), ("so", __AM), ("sq", __AF), ("sr", __AM), ("sr-Latn", __AM), ("su", __AM), ("sv", __EO), ("sw", __AM), ("syr", __AR), ("szl", __AF), ("ta", __TA), ("te", __TE), ("tg", __AM), ("th", __AM), ("ti", __AM), ("tk", __AF), ("to", __AM), ("tr", __AM), ("tt", __AM), ("ug", __AM), ("uk", __AF), ("und", __AM), ("ur", __KS), ("uz", __AF), ("uz-Cyrl", __AF), ("vec", __AM), ("vi", __AM), ("vmw", __AM), ("wo", __AM), ("xh", __AM), ("xnr", __BGC), ("yo", __AM), ("yrl", __AM), ("yue", __YUE), ("yue-Hans", __YUE), ("za", __AM), ("zh", __YUE), ("zh-Hant", __YUE), ("zu", __AM)])
             };
         }
         #[clippy::msrv = "1.70"]
@@ -267,6 +267,11 @@ macro_rules! __impl_exemplar_characters_numbers_v1_marker {
                     }
                 };
                 Ok(icu_provider::DataResponse { payload: icu_provider::DataPayload::from_static_ref(payload), metadata })
+            }
+        }
+        impl icu_provider::CanLoad<icu::properties::provider::ExemplarCharactersNumbersV1Marker> for $provider {
+            fn can_load(&self, req: icu_provider::DataRequest) -> Result<bool, icu_provider::DataError> {
+                Ok(icu_provider_baked::DataStore::contains(&Self::DATA_EXEMPLAR_CHARACTERS_NUMBERS_V1_MARKER, req.id))
             }
         }
     };

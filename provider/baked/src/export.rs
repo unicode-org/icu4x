@@ -568,6 +568,15 @@ impl DataExporter for BakedExporter {
                             })
                         }
                     }
+
+                    impl icu_provider::CanLoad<#marker_bake> for $provider {
+                        fn can_load(
+                            &self,
+                            req: icu_provider::DataRequest,
+                        ) -> Result<bool, icu_provider::DataError> {
+                            Ok(icu_provider_baked::DataStore::contains(&Self::#data_ident, req.id))
+                        }
+                    }
                 },
                 quote! {
                     #maybe_msrv

@@ -68,6 +68,13 @@ macro_rules! __impl_exemplar_characters_index_v1_marker {
                     },
                     zerovec::VarZeroVec::new(),
                 ));
+                const __BGC: &S = &icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
+                    unsafe {
+                        #[allow(unused_unsafe)]
+                        icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(zerovec::ZeroVec::new(), 0u32)
+                    },
+                    zerovec::VarZeroVec::new(),
+                ));
                 const __BN: &S = &icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
                     unsafe {
                         #[allow(unused_unsafe)]
@@ -691,13 +698,6 @@ macro_rules! __impl_exemplar_characters_index_v1_marker {
                     },
                     zerovec::VarZeroVec::new(),
                 ));
-                const __UND: &S = &icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
-                    unsafe {
-                        #[allow(unused_unsafe)]
-                        icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(zerovec::ZeroVec::new(), 0u32)
-                    },
-                    zerovec::VarZeroVec::new(),
-                ));
                 const __UR: &S = &icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
                     unsafe {
                         #[allow(unused_unsafe)]
@@ -754,7 +754,7 @@ macro_rules! __impl_exemplar_characters_index_v1_marker {
                     },
                     zerovec::VarZeroVec::new(),
                 ));
-                icu_provider_baked::binary_search::Data(&[("af", __AF), ("am", __AM), ("ar", __AR), ("as", __AS), ("ast", __AST), ("az", __AZ), ("be", __BE), ("bg", __BG), ("bn", __BN), ("br", __BR), ("brx", __BRX), ("bs", __BS), ("bs-Cyrl", __BS_CYRL), ("ca", __AF), ("ceb", __AF), ("chr", __CHR), ("cs", __CS), ("cv", __CV), ("cy", __CY), ("da", __DA), ("de", __AF), ("de-AT", __DE_AT), ("doi", __DOI), ("dsb", __DSB), ("el", __EL), ("en", __AF), ("eo", __EO), ("es", __ES), ("et", __ET), ("eu", __AF), ("fa", __FA), ("ff-Adlm", __FF_ADLM), ("fi", __FI), ("fil", __FIL), ("fo", __FO), ("fr", __AF), ("fy", __FY), ("ga", __AF), ("gd", __GD), ("gl", __ES), ("gu", __GU), ("ha", __HA), ("ha-NE", __HA_NE), ("he", __HE), ("hi", __HI), ("hr", __HR), ("hsb", __HSB), ("hu", __HU), ("hy", __HY), ("ia", __AF), ("id", __AF), ("ig", __AF), ("is", __IS), ("it", __AF), ("ja", __JA), ("jv", __JV), ("ka", __KA), ("kea", __KEA), ("kgp", __KGP), ("kk", __KK), ("km", __KM), ("kn", __KN), ("ko", __KO), ("kok", __KOK), ("ku", __KU), ("ky", __KY), ("lb", __AF), ("lij", __AF), ("lo", __LO), ("lt", __LT), ("lv", __LV), ("mai", __MAI), ("mi", __MI), ("mk", __MK), ("ml", __ML), ("mn", __MN), ("mr", __MR), ("ms", __AF), ("mt", __MT), ("my", __MY), ("nds-NL", __AF), ("ne", __HI), ("nl", __AF), ("no", __DA), ("or", __OR), ("pa", __PA), ("pcm", __PCM), ("pl", __PL), ("prg", __PRG), ("ps", __PS), ("pt", __AF), ("qu", __QU), ("rm", __RM), ("ro", __RO), ("ru", __RU), ("sa", __DOI), ("sah", __SAH), ("sc", __SC), ("sd", __SD), ("si", __SI), ("sk", __SK), ("sl", __SL), ("so", __SO), ("sq", __SQ), ("sr", __BS_CYRL), ("sr-Latn", __BS), ("su", __SU), ("sv", __FI), ("sw", __PCM), ("syr", __SYR), ("szl", __SZL), ("ta", __TA), ("te", __TE), ("tg", __TG), ("th", __TH), ("ti", __TI), ("tk", __TK), ("to", __TO), ("tr", __TR), ("tt", __TT), ("ug", __UG), ("uk", __UK), ("und", __UND), ("ur", __UR), ("uz", __UZ), ("vi", __VI), ("wo", __WO), ("xh", __AF), ("yo", __YO), ("yrl", __YRL), ("yue", __YUE), ("yue-Hans", __AF), ("za", __AF), ("zh", __AF), ("zh-Hant", __ZH_HANT), ("zu", __AF)])
+                icu_provider_baked::binary_search::Data(&[("af", __AF), ("am", __AM), ("ar", __AR), ("as", __AS), ("ast", __AST), ("az", __AZ), ("be", __BE), ("bg", __BG), ("bgc", __BGC), ("bho", __BGC), ("blo", __BGC), ("bn", __BN), ("br", __BR), ("brx", __BRX), ("bs", __BS), ("bs-Cyrl", __BS_CYRL), ("ca", __AF), ("ceb", __AF), ("chr", __CHR), ("cs", __CS), ("csw", __BGC), ("cv", __CV), ("cy", __CY), ("da", __DA), ("de", __AF), ("de-AT", __DE_AT), ("doi", __DOI), ("dsb", __DSB), ("el", __EL), ("en", __AF), ("eo", __EO), ("es", __ES), ("et", __ET), ("eu", __AF), ("fa", __FA), ("ff-Adlm", __FF_ADLM), ("fi", __FI), ("fil", __FIL), ("fo", __FO), ("fr", __AF), ("fy", __FY), ("ga", __AF), ("gd", __GD), ("gl", __ES), ("gu", __GU), ("ha", __HA), ("ha-NE", __HA_NE), ("he", __HE), ("hi", __HI), ("hr", __HR), ("hsb", __HSB), ("hu", __HU), ("hy", __HY), ("ia", __AF), ("id", __AF), ("ie", __BGC), ("ig", __AF), ("is", __IS), ("it", __AF), ("ja", __JA), ("jv", __JV), ("ka", __KA), ("kea", __KEA), ("kgp", __KGP), ("kk", __KK), ("km", __KM), ("kn", __KN), ("ko", __KO), ("kok", __KOK), ("ks", __BGC), ("ks-Deva", __BGC), ("ku", __KU), ("kxv", __BGC), ("kxv-Deva", __BGC), ("kxv-Orya", __BGC), ("kxv-Telu", __BGC), ("ky", __KY), ("lb", __AF), ("lij", __AF), ("lmo", __BGC), ("lo", __LO), ("lt", __LT), ("lv", __LV), ("mai", __MAI), ("mi", __MI), ("mk", __MK), ("ml", __ML), ("mn", __MN), ("mni", __BGC), ("mr", __MR), ("ms", __AF), ("mt", __MT), ("my", __MY), ("nds", __BGC), ("nds-NL", __AF), ("ne", __HI), ("nl", __AF), ("no", __DA), ("nqo", __BGC), ("oc", __BGC), ("or", __OR), ("pa", __PA), ("pcm", __PCM), ("pl", __PL), ("prg", __PRG), ("ps", __PS), ("pt", __AF), ("qu", __QU), ("raj", __BGC), ("rm", __RM), ("ro", __RO), ("ru", __RU), ("sa", __DOI), ("sah", __SAH), ("sat", __BGC), ("sc", __SC), ("sd", __SD), ("sd-Deva", __BGC), ("si", __SI), ("sk", __SK), ("sl", __SL), ("so", __SO), ("sq", __SQ), ("sr", __BS_CYRL), ("sr-Latn", __BS), ("su", __SU), ("sv", __FI), ("sw", __PCM), ("syr", __SYR), ("szl", __SZL), ("ta", __TA), ("te", __TE), ("tg", __TG), ("th", __TH), ("ti", __TI), ("tk", __TK), ("to", __TO), ("tr", __TR), ("tt", __TT), ("ug", __UG), ("uk", __UK), ("und", __BGC), ("ur", __UR), ("uz", __UZ), ("uz-Cyrl", __BGC), ("vec", __BGC), ("vi", __VI), ("vmw", __BGC), ("wo", __WO), ("xh", __AF), ("xnr", __BGC), ("yo", __YO), ("yrl", __YRL), ("yue", __YUE), ("yue-Hans", __AF), ("za", __AF), ("zh", __AF), ("zh-Hant", __ZH_HANT), ("zu", __AF)])
             };
         }
         #[clippy::msrv = "1.70"]
@@ -778,6 +778,11 @@ macro_rules! __impl_exemplar_characters_index_v1_marker {
                     }
                 };
                 Ok(icu_provider::DataResponse { payload: icu_provider::DataPayload::from_static_ref(payload), metadata })
+            }
+        }
+        impl icu_provider::CanLoad<icu::properties::provider::ExemplarCharactersIndexV1Marker> for $provider {
+            fn can_load(&self, req: icu_provider::DataRequest) -> Result<bool, icu_provider::DataError> {
+                Ok(icu_provider_baked::DataStore::contains(&Self::DATA_EXEMPLAR_CHARACTERS_INDEX_V1_MARKER, req.id))
             }
         }
     };

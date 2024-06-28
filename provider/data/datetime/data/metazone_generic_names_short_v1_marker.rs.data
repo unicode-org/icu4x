@@ -22,6 +22,16 @@ macro_rules! __impl_metazone_generic_names_short_v1_marker {
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0UTC") })
                     },
                 };
+                const __AM: &S = &icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
+                    defaults: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::VarZeroVec::new())
+                    },
+                    overrides: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0UTC") })
+                    },
+                };
                 const __AR: &S = &icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
                     defaults: unsafe {
                         #[allow(unused_unsafe)]
@@ -256,16 +266,6 @@ macro_rules! __impl_metazone_generic_names_short_v1_marker {
                     defaults: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"malamgmtsing") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x03\0\x06\0MYTGMTSGT") })
-                    },
-                    overrides: unsafe {
-                        #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0UTC") })
-                    },
-                };
-                const __ES_419: &S = &icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
-                    defaults: unsafe {
-                        #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::VarZeroVec::new())
                     },
                     overrides: unsafe {
                         #[allow(unused_unsafe)]
@@ -592,7 +592,7 @@ macro_rules! __impl_metazone_generic_names_short_v1_marker {
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0UTC") })
                     },
                 };
-                icu_provider_baked::binary_search::Data(&[("af", __AF), ("ar", __AR), ("as", __AS), ("ast", __AST), ("blo", __BLO), ("bn", __BN), ("brx", __BN), ("bs", __BS), ("ca", __BS), ("chr", __CHR), ("cs", __CS), ("cy", __BS), ("da", __DA), ("de", __DE), ("dsb", __DE), ("el", __DA), ("en", __AST), ("en-001", __EN_001), ("en-150", __BS), ("en-AE", __EN_AE), ("en-AU", __EN_AU), ("en-BW", __EN_BW), ("en-CA", __EN_CA), ("en-CM", __EN_BW), ("en-ER", __EN_BW), ("en-GB", __BS), ("en-GH", __EN_BW), ("en-GM", __EN_BW), ("en-GU", __EN_GU), ("en-GY", __EN_GY), ("en-HK", __EN_HK), ("en-ID", __EN_ID), ("en-IN", __EN_IN), ("en-KE", __EN_BW), ("en-LR", __EN_BW), ("en-LS", __EN_BW), ("en-MG", __EN_BW), ("en-MH", __EN_001), ("en-MO", __EN_MO), ("en-MP", __EN_001), ("en-MU", __EN_BW), ("en-MW", __EN_BW), ("en-MY", __EN_MY), ("en-NA", __EN_BW), ("en-NG", __EN_BW), ("en-NZ", __EN_NZ), ("en-RW", __EN_BW), ("en-SD", __EN_BW), ("en-SG", __EN_SG), ("en-SL", __EN_BW), ("en-SS", __EN_BW), ("en-SZ", __EN_BW), ("en-TZ", __EN_BW), ("en-UG", __EN_BW), ("en-ZA", __EN_BW), ("en-ZM", __EN_BW), ("en-ZW", __EN_BW), ("es", __BS), ("es-419", __ES_419), ("es-AR", __ES_AR), ("es-BO", __ES_BO), ("es-CL", __ES_CL), ("es-CO", __ES_CO), ("es-EC", __ES_EC), ("es-PE", __ES_PE), ("es-US", __CHR), ("es-UY", __ES_UY), ("es-VE", __ES_VE), ("eu", __EU), ("ff-Adlm", __FF_ADLM), ("fr-CA", __FR_CA), ("fr-GF", __FR_GF), ("fy", __DA), ("ga", __GA), ("gd", __EU), ("gl", __BS), ("gu", __BN), ("hi", __HI), ("hi-Latn", __HI_LATN), ("hr", __BS), ("hsb", __DE), ("hu", __BS), ("id", __ID), ("it", __DA), ("ja", __JA), ("kgp", __KGP), ("kk", __KK), ("kn", __BN), ("kok", __BN), ("ku", __KU), ("lv", __DA), ("mk", __DA), ("ml", __BN), ("mr", __BN), ("ms", __EN_SG), ("mt", __BS), ("ne-IN", __BN), ("nl", __EU), ("nl-SR", __NL_SR), ("no", __EU), ("or", __OR), ("pa", __BN), ("pl", __DA), ("pt", __KGP), ("pt-AO", __ES_419), ("pt-CV", __PT_CV), ("pt-GW", __ES_419), ("pt-MO", __ES_419), ("pt-MZ", __ES_419), ("pt-PT", __PT_PT), ("pt-ST", __ES_419), ("pt-TL", __ES_419), ("qu", __ES_PE), ("qu-BO", __ES_BO), ("qu-EC", __ES_EC), ("ro", __BS), ("sc", __SC), ("sd", __SD), ("sk", __SK), ("so", __SO), ("sr", __BS), ("sr-Latn", __BS), ("sv", __SV), ("ta", __BN), ("ta-MY", __TA_MY), ("ta-SG", __TA_MY), ("te", __BN), ("und", __ES_419), ("vi", __VI), ("yrl", __KGP), ("zh-Hant", __ZH_HANT), ("zh-SG", __TA_MY)])
+                icu_provider_baked::binary_search::Data(&[("af", __AF), ("am", __AM), ("ar", __AR), ("as", __AS), ("ast", __AST), ("az", __AM), ("be", __AM), ("bg", __AM), ("bgc", __AM), ("bho", __AM), ("blo", __BLO), ("bn", __BN), ("br", __AM), ("brx", __BN), ("bs", __BS), ("bs-Cyrl", __AM), ("ca", __BS), ("ceb", __AM), ("chr", __CHR), ("cs", __CS), ("csw", __AM), ("cv", __AM), ("cy", __BS), ("da", __DA), ("de", __DE), ("doi", __AM), ("dsb", __DE), ("el", __DA), ("en", __AST), ("en-001", __EN_001), ("en-150", __BS), ("en-AE", __EN_AE), ("en-AU", __EN_AU), ("en-BW", __EN_BW), ("en-CA", __EN_CA), ("en-CM", __EN_BW), ("en-ER", __EN_BW), ("en-GB", __BS), ("en-GH", __EN_BW), ("en-GM", __EN_BW), ("en-GU", __EN_GU), ("en-GY", __EN_GY), ("en-HK", __EN_HK), ("en-ID", __EN_ID), ("en-IN", __EN_IN), ("en-KE", __EN_BW), ("en-LR", __EN_BW), ("en-LS", __EN_BW), ("en-MG", __EN_BW), ("en-MH", __EN_001), ("en-MO", __EN_MO), ("en-MP", __EN_001), ("en-MU", __EN_BW), ("en-MW", __EN_BW), ("en-MY", __EN_MY), ("en-NA", __EN_BW), ("en-NG", __EN_BW), ("en-NZ", __EN_NZ), ("en-RW", __EN_BW), ("en-SD", __EN_BW), ("en-SG", __EN_SG), ("en-SL", __EN_BW), ("en-SS", __EN_BW), ("en-SZ", __EN_BW), ("en-TZ", __EN_BW), ("en-UG", __EN_BW), ("en-ZA", __EN_BW), ("en-ZM", __EN_BW), ("en-ZW", __EN_BW), ("eo", __AM), ("es", __BS), ("es-419", __AM), ("es-AR", __ES_AR), ("es-BO", __ES_BO), ("es-CL", __ES_CL), ("es-CO", __ES_CO), ("es-EC", __ES_EC), ("es-PE", __ES_PE), ("es-US", __CHR), ("es-UY", __ES_UY), ("es-VE", __ES_VE), ("et", __AM), ("eu", __EU), ("fa", __AM), ("ff-Adlm", __FF_ADLM), ("fi", __AM), ("fil", __AM), ("fo", __AM), ("fr", __AM), ("fr-CA", __FR_CA), ("fr-GF", __FR_GF), ("fy", __DA), ("ga", __GA), ("gd", __EU), ("gl", __BS), ("gu", __BN), ("ha", __AM), ("he", __AM), ("hi", __HI), ("hi-Latn", __HI_LATN), ("hr", __BS), ("hsb", __DE), ("hu", __BS), ("hy", __AM), ("ia", __AM), ("id", __ID), ("ie", __AM), ("ig", __AM), ("is", __AM), ("it", __DA), ("ja", __JA), ("jv", __AM), ("ka", __AM), ("kea", __AM), ("kgp", __KGP), ("kk", __KK), ("km", __AM), ("kn", __BN), ("ko", __AM), ("kok", __BN), ("ks", __AM), ("ks-Deva", __AM), ("ku", __KU), ("kxv", __AM), ("kxv-Deva", __AM), ("kxv-Orya", __AM), ("kxv-Telu", __AM), ("ky", __AM), ("lb", __AM), ("lij", __AM), ("lmo", __AM), ("lo", __AM), ("lt", __AM), ("lv", __DA), ("mai", __AM), ("mi", __AM), ("mk", __DA), ("ml", __BN), ("mn", __AM), ("mni", __AM), ("mr", __BN), ("ms", __EN_SG), ("mt", __BS), ("my", __AM), ("nds", __AM), ("ne", __AM), ("ne-IN", __BN), ("nl", __EU), ("nl-SR", __NL_SR), ("no", __EU), ("nqo", __AM), ("oc", __AM), ("or", __OR), ("pa", __BN), ("pcm", __AM), ("pl", __DA), ("prg", __AM), ("ps", __AM), ("pt", __KGP), ("pt-AO", __AM), ("pt-CV", __PT_CV), ("pt-GW", __AM), ("pt-MO", __AM), ("pt-MZ", __AM), ("pt-PT", __PT_PT), ("pt-ST", __AM), ("pt-TL", __AM), ("qu", __ES_PE), ("qu-BO", __ES_BO), ("qu-EC", __ES_EC), ("raj", __AM), ("rm", __AM), ("ro", __BS), ("ru", __AM), ("sa", __AM), ("sah", __AM), ("sat", __AM), ("sc", __SC), ("sd", __SD), ("sd-Deva", __AM), ("si", __AM), ("sk", __SK), ("sl", __AM), ("so", __SO), ("sq", __AM), ("sr", __BS), ("sr-Latn", __BS), ("su", __AM), ("sv", __SV), ("sw", __AM), ("syr", __AM), ("szl", __AM), ("ta", __BN), ("ta-MY", __TA_MY), ("ta-SG", __TA_MY), ("te", __BN), ("tg", __AM), ("th", __AM), ("ti", __AM), ("tk", __AM), ("to", __AM), ("tr", __AM), ("tt", __AM), ("ug", __AM), ("uk", __AM), ("und", __AM), ("ur", __AM), ("uz", __AM), ("uz-Cyrl", __AM), ("vec", __AM), ("vi", __VI), ("vmw", __AM), ("wo", __AM), ("xh", __AM), ("xnr", __AM), ("yo", __AM), ("yrl", __KGP), ("yue", __AM), ("yue-Hans", __AM), ("za", __AM), ("zh", __AM), ("zh-Hant", __ZH_HANT), ("zh-SG", __TA_MY), ("zu", __AM)])
             };
         }
         #[clippy::msrv = "1.70"]
@@ -616,6 +616,11 @@ macro_rules! __impl_metazone_generic_names_short_v1_marker {
                     }
                 };
                 Ok(icu_provider::DataResponse { payload: icu_provider::DataPayload::from_static_ref(payload), metadata })
+            }
+        }
+        impl icu_provider::CanLoad<icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker> for $provider {
+            fn can_load(&self, req: icu_provider::DataRequest) -> Result<bool, icu_provider::DataError> {
+                Ok(icu_provider_baked::DataStore::contains(&Self::DATA_METAZONE_GENERIC_NAMES_SHORT_V1_MARKER, req.id))
             }
         }
     };
