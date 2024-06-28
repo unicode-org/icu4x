@@ -1,11 +1,11 @@
-115 identifiers, 687B
-
+*, <'static strs>, 684B, 114 unique static strings
 calendar/chinesecache@1, <singleton>, 754B, 134f5ec7c9bdc494
 calendar/dangicache@1, <singleton>, 754B, 79d5d32449956411
 calendar/islamicobservationalcache@1, <singleton>, 504B, 18af87d272c76f14
 calendar/islamicummalquracache@1, <singleton>, 504B, ef6ac9ff14fd3f3
 calendar/japanese@1, <singleton>, 111B, b31e52deaf52706f
 calendar/japanext@1, <singleton>, 5216B, 6c20e216c8cd6e41
+datetime/week_data@1, <lookup>, 2760B, 115 identifiers
 datetime/week_data@1, <total>, 12B, 6 unique payloads
 datetime/week_data@1, und, 2B, 62c3506f27376c25
 datetime/week_data@1, und-AD, 2B, fb813f95ba4e1e31
@@ -122,6 +122,7 @@ datetime/week_data@1, und-WS, 2B, -> und-AG
 datetime/week_data@1, und-YE, 2B, -> und-AG
 datetime/week_data@1, und-ZA, 2B, -> und-AG
 datetime/week_data@1, und-ZW, 2B, -> und-AG
+datetime/week_data@2, <lookup>, 2760B, 115 identifiers
 datetime/week_data@2, <total>, 33B, 11 unique payloads
 datetime/week_data@2, und, 3B, 9d9f0d8d13520828
 datetime/week_data@2, und-AD, 3B, bd6a06572fc718be

@@ -1,5 +1,5 @@
-106 identifiers, 232B
-
+*, <'static strs>, 229B, 105 unique static strings
+plurals/cardinal@1, <lookup>, 2472B, 103 identifiers
 plurals/cardinal@1, <total>, 3381B, 34 unique payloads
 plurals/cardinal@1, af, 25B, 3aff8a8624dd0ca1
 plurals/cardinal@1, am, 40B, a09347c88cd1da4d
@@ -104,6 +104,7 @@ plurals/cardinal@1, uz, 25B, -> af
 plurals/cardinal@1, vec, 120B, -> ca
 plurals/cardinal@1, xh, 25B, -> af
 plurals/cardinal@1, zu, 40B, -> am
+plurals/ordinal@1, <lookup>, 840B, 35 identifiers
 plurals/ordinal@1, <total>, 1917B, 24 unique payloads
 plurals/ordinal@1, as, 133B, eacfcf038cfdfa4a
 plurals/ordinal@1, az, 269B, 9034198852cf1ba3
@@ -113,33 +114,34 @@ plurals/ordinal@1, bn, 133B, -> as
 plurals/ordinal@1, ca, 73B, bccbbe636beb4521
 plurals/ordinal@1, cy, 145B, 319bcf4f61ebe9f3
 plurals/ordinal@1, en, 110B, 927272c9973d489f
-plurals/ordinal@1, fil, 25B, -> af
-plurals/ordinal@1, fr, 25B, -> af
-plurals/ordinal@1, ga, 25B, -> af
+plurals/ordinal@1, fil, 25B, 3aff8a8624dd0ca1
+plurals/ordinal@1, fr, 25B, -> fil
+plurals/ordinal@1, ga, 25B, -> fil
 plurals/ordinal@1, gd, 89B, 585616808b78e70e
 plurals/ordinal@1, gu, 93B, f88ae008fcb8105f
 plurals/ordinal@1, hi, 93B, -> gu
 plurals/ordinal@1, hu, 33B, bac71adc64e6a6e9
-plurals/ordinal@1, hy, 25B, -> af
+plurals/ordinal@1, hy, 25B, -> fil
 plurals/ordinal@1, it, 49B, 2be6ef1169cd052f
 plurals/ordinal@1, ka, 84B, 743f8c5d5a8b20ba
 plurals/ordinal@1, kk, 70B, d8885e0ed7ec0196
 plurals/ordinal@1, lij, 49B, c12e832f9255d5dc
-plurals/ordinal@1, lo, 25B, -> af
+plurals/ordinal@1, lo, 25B, -> fil
 plurals/ordinal@1, mk, 126B, 48f551d6b0f034a8
 plurals/ordinal@1, mr, 73B, e4d782006287589d
-plurals/ordinal@1, ms, 25B, -> af
+plurals/ordinal@1, ms, 25B, -> fil
 plurals/ordinal@1, ne, 25B, 798ae74f9c536fe3
 plurals/ordinal@1, or, 109B, 1e7a88deef573de8
-plurals/ordinal@1, ro, 25B, -> af
+plurals/ordinal@1, ro, 25B, -> fil
 plurals/ordinal@1, sc, 49B, -> it
 plurals/ordinal@1, sq, 60B, 13d3840300b3d71a
 plurals/ordinal@1, sv, 56B, d54367a1d23eedc7
 plurals/ordinal@1, tk, 48B, b860a449a5bf43da
 plurals/ordinal@1, uk, 40B, 3a7c2ab56ce50c26
-plurals/ordinal@1, und, 5B, -> und
+plurals/ordinal@1, und, 5B, fd5d54cb7ad1d0d8
 plurals/ordinal@1, vec, 49B, -> it
-plurals/ordinal@1, vi, 25B, -> af
+plurals/ordinal@1, vi, 25B, -> fil
+plurals/ranges@1, <lookup>, 600B, 25 identifiers
 plurals/ranges@1, <total>, 64B, 10 unique payloads
 plurals/ranges@1, af, 4B, b13da4e5718e6e33
 plurals/ranges@1, ar, 12B, acdc60e8ef6a9005

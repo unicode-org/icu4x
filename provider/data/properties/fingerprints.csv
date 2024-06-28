@@ -1,5 +1,4 @@
-187 identifiers, 566B
-
+*, <'static strs>, 563B, 186 unique static strings
 propnames/from/GCB@1, <singleton>, 250B, f2e454713aa9d7b7
 propnames/from/InSC@1, <singleton>, 658B, 63f03c8b66edf35e
 propnames/from/SB@1, <singleton>, 219B, 4c43c3fb27c051da
@@ -26,7 +25,7 @@ propnames/to/long/linear/lb@1, <singleton>, 598B, 6ee04a546e351ffb
 propnames/to/long/linear/sc@1, <singleton>, 1964B, 9b97b7f85684632c
 propnames/to/long/sparse/ccc@1, <singleton>, 652B, 440a07537c221a20
 propnames/to/short/linear/GCB@1, <singleton>, 78B, 3f593af98eec2820
-propnames/to/short/linear/InSC@1, <singleton>, 585B, -> <singleton>
+propnames/to/short/linear/InSC@1, <singleton>, 585B, 36e854e09df6ac36
 propnames/to/short/linear/SB@1, <singleton>, 65B, ce7e882cf77b04e
 propnames/to/short/linear/WB@1, <singleton>, 111B, 625b4965d4282611
 propnames/to/short/linear/bc@1, <singleton>, 103B, 85ea5db229b1eaba
@@ -103,6 +102,7 @@ props/bidiauxiliaryprops@1, <singleton>, 4672B, 82f34dee36202d63
 props/blank@1, <singleton>, 66B, 1e75f3c7a32d0e8a
 props/ccc@1, <singleton>, 5270B, 85887761e8c0b554
 props/ea@1, <singleton>, 4963B, 74b1a8cea9a0f2e1
+props/exemplarchars/auxiliary@1, <lookup>, 3696B, 154 identifiers
 props/exemplarchars/auxiliary@1, <total>, 34415B, 135 unique payloads
 props/exemplarchars/auxiliary@1, af, 51B, f4824761d6d7b92
 props/exemplarchars/auxiliary@1, ar, 99B, 6558940e4709505f
@@ -258,6 +258,7 @@ props/exemplarchars/auxiliary@1, yue-Hans, 428B, ac0a04ee0bbd154b
 props/exemplarchars/auxiliary@1, zh, 10508B, 965423ca978fdd12
 props/exemplarchars/auxiliary@1, zh-Hant, 3828B, 401e7dca7a290c9b
 props/exemplarchars/auxiliary@1, zu, 132B, -> en
+props/exemplarchars/index@1, <lookup>, 3264B, 136 identifiers
 props/exemplarchars/index@1, <total>, 8841B, 106 unique payloads
 props/exemplarchars/index@1, af, 11B, c5ed740dfb27db94
 props/exemplarchars/index@1, am, 308B, 304c236c1389d909
@@ -381,7 +382,7 @@ props/exemplarchars/index@1, tr, 51B, 121515d5ff38f62b
 props/exemplarchars/index@1, tt, 67B, 4afb266bc80836d7
 props/exemplarchars/index@1, ug, 200B, 1108013a8b2f20f5
 props/exemplarchars/index@1, uk, 43B, 6639135c975dfc17
-props/exemplarchars/index@1, und, 3B, -> el-polyton
+props/exemplarchars/index@1, und, 3B, c76b19d07c9fe625
 props/exemplarchars/index@1, ur, 148B, 78fbb44c35f48698
 props/exemplarchars/index@1, uz, 49B, c1b595a885dae7a8
 props/exemplarchars/index@1, vi, 67B, 87a271b25063f434
@@ -395,6 +396,7 @@ props/exemplarchars/index@1, za, 11B, -> af
 props/exemplarchars/index@1, zh, 11B, -> af
 props/exemplarchars/index@1, zh-Hant, 1716B, 30de6cc007d9288
 props/exemplarchars/index@1, zu, 11B, -> af
+props/exemplarchars/main@1, <lookup>, 3912B, 163 identifiers
 props/exemplarchars/main@1, <total>, 85939B, 151 unique payloads
 props/exemplarchars/main@1, af, 59B, 22992cdbf3fd84
 props/exemplarchars/main@1, am, 164B, 9d0d82dd7ade4450
@@ -457,7 +459,7 @@ props/exemplarchars/main@1, is, 107B, 948a54fc34d1206b
 props/exemplarchars/main@1, it, 51B, c46930dc4bada972
 props/exemplarchars/main@1, ja, 13956B, 71baba690436f06b
 props/exemplarchars/main@1, jv, 91B, 21b278b4bff29a62
-props/exemplarchars/main@1, ka, 11B, -> ka
+props/exemplarchars/main@1, ka, 11B, 593386b927fe65e2
 props/exemplarchars/main@1, kea, 63B, 7f3bcbfb096affdb
 props/exemplarchars/main@1, kgp, 107B, 675e91e6ecf6f34a
 props/exemplarchars/main@1, kk, 91B, e379592735531e88
@@ -538,10 +540,10 @@ props/exemplarchars/main@1, tk, 99B, 2460f0262dbdc434
 props/exemplarchars/main@1, to, 140B, 713094c5a0e104b4
 props/exemplarchars/main@1, tr, 75B, f83818046ea9136c
 props/exemplarchars/main@1, tt, 67B, 13e2921858a4ba18
-props/exemplarchars/main@1, ug, 200B, -> ug
+props/exemplarchars/main@1, ug, 200B, 1108013a8b2f20f5
 props/exemplarchars/main@1, uk, 59B, 2adaccc078ee6ae
-props/exemplarchars/main@1, und, 3B, -> el-polyton
-props/exemplarchars/main@1, ur, 148B, -> ur
+props/exemplarchars/main@1, und, 3B, c76b19d07c9fe625
+props/exemplarchars/main@1, ur, 148B, 78fbb44c35f48698
 props/exemplarchars/main@1, uz, 57B, e570e34d82aa7c6
 props/exemplarchars/main@1, uz-Cyrl, 75B, 129e8209d8cb4863
 props/exemplarchars/main@1, vec, 83B, cd235051995adfcc
@@ -559,6 +561,7 @@ props/exemplarchars/main@1, za, 11B, -> en
 props/exemplarchars/main@1, zh, 13724B, 5b59633e302fe875
 props/exemplarchars/main@1, zh-Hant, 14412B, c495c516cf7cf931
 props/exemplarchars/main@1, zu, 162B, 158ee2fa8f3edf5f
+props/exemplarchars/numbers@1, <lookup>, 2280B, 95 identifiers
 props/exemplarchars/numbers@1, <total>, 1886B, 33 unique payloads
 props/exemplarchars/numbers@1, af, 43B, bdb5a5fd3e342c04
 props/exemplarchars/numbers@1, ar, 75B, 6f6ed88ed26911fe
@@ -655,6 +658,7 @@ props/exemplarchars/numbers@1, yue, 123B, 3ce6f6e25a8df94b
 props/exemplarchars/numbers@1, yue-Hans, 123B, -> yue
 props/exemplarchars/numbers@1, zh, 123B, -> yue
 props/exemplarchars/numbers@1, zh-Hant, 123B, -> yue
+props/exemplarchars/punctuation@1, <lookup>, 3528B, 147 identifiers
 props/exemplarchars/punctuation@1, <total>, 9583B, 80 unique payloads
 props/exemplarchars/punctuation@1, af, 123B, 2e7906785ab47589
 props/exemplarchars/punctuation@1, am, 107B, 4d72f3e260c2eec8

@@ -11,7 +11,7 @@ use icu_datagen::prelude::*;
 use icu_datagen_bikeshed::{CoverageLevel, DatagenProvider};
 use icu_provider::export::*;
 use icu_provider::prelude::*;
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::{BTreeMap, HashMap, HashSet};
 use std::fs::File;
 use std::io::Write;
 use std::path::Path;
@@ -165,9 +165,7 @@ fn main() {
             baked_exporter::BakedExporter::new(path.join("stubdata"), options).unwrap(),
         );
         let fingerprinter = StatisticsExporter {
-            size_hash: Default::default(),
-            struct_sizes: Default::default(),
-            identifiers: Default::default(),
+            data: Default::default(),
             fingerprints: crlify::BufWriterWithLineEndingFix::new(
                 File::create(path.join("fingerprints.csv")).unwrap(),
             ),
@@ -218,10 +216,15 @@ impl<E: DataExporter> DataExporter for StubExporter<E> {
 }
 
 struct StatisticsExporter<F> {
-    size_hash: Mutex<BTreeMap<(DataMarkerInfo, String), (usize, u64)>>,
-    struct_sizes: Mutex<BTreeMap<DataMarkerInfo, BTreeMap<u64, usize>>>,
-    identifiers: Mutex<BTreeSet<String>>,
+    data: Mutex<HashMap<DataMarkerInfo, Data>>,
     fingerprints: F,
+}
+
+#[derive(Default)]
+struct Data {
+    size_hash: HashMap<DataIdentifierCow<'static>, (usize, u64)>,
+    struct_sizes: HashMap<u64, usize>,
+    identifiers: HashSet<DataIdentifierCow<'static>>,
 }
 
 impl<F: Write + Send + Sync> DataExporter for StatisticsExporter<F> {
@@ -247,43 +250,12 @@ impl<F: Write + Send + Sync> DataExporter for StatisticsExporter<F> {
         serialized.iter().for_each(|b| b.hash(&mut hasher));
         let hash = hasher.finish();
 
-        self.size_hash.lock().expect("poison").insert(
-            (
-                marker,
-                if marker.is_singleton && id.locale.is_und() {
-                    "<singleton>".to_string()
-                } else if !id.marker_attributes.is_empty() {
-                    format!(
-                        "{locale}/{marker_attributes}",
-                        locale = id.locale,
-                        marker_attributes = id.marker_attributes.as_str(),
-                    )
-                } else {
-                    id.locale.to_string()
-                },
-            ),
-            (size, hash),
-        );
+        let mut data = self.data.lock().expect("poison");
+        let data = data.entry(marker).or_default();
+        data.size_hash.insert(id.into_owned(), (size, hash));
+        data.struct_sizes.insert(hash, size);
+        data.identifiers.insert(id.into_owned());
 
-        self.struct_sizes
-            .lock()
-            .expect("poison")
-            .entry(marker)
-            .or_default()
-            .insert(hash, size);
-
-        if !marker.is_singleton {
-            self.identifiers
-                .lock()
-                .expect("poison")
-                .insert(id.locale.to_string());
-            if !id.marker_attributes.is_empty() {
-                self.identifiers
-                    .lock()
-                    .expect("poison")
-                    .insert(id.marker_attributes.to_string());
-            }
-        }
         Ok(())
     }
 
@@ -292,49 +264,94 @@ impl<F: Write + Send + Sync> DataExporter for StatisticsExporter<F> {
     }
 
     fn close(&mut self) -> Result<(), DataError> {
-        let identifiers = self.identifiers.lock().expect("poison");
-        let size_hash = self.size_hash.lock().expect("poison");
-        let struct_sizes = self.struct_sizes.lock().expect("poison");
+        let data = core::mem::take(self.data.get_mut().expect("poison"));
 
-        let identifiers_count = identifiers.len();
-        let identifiers_size = identifiers.iter().map(String::len).sum::<usize>();
-        writeln!(
-            &mut self.fingerprints,
-            "{identifiers_count} identifiers, {identifiers_size}B",
-        )?;
+        let mut lines = Vec::new();
+        let mut seen_static_strs = HashSet::new();
 
-        writeln!(&mut self.fingerprints)?;
-
-        let mut seen = std::collections::HashMap::new();
-
-        for (marker, struct_sizes) in struct_sizes.iter() {
+        for (marker, data) in data.into_iter() {
             if !marker.is_singleton {
-                let structs_count = struct_sizes.len();
-                let structs_size = struct_sizes.values().sum::<usize>();
-                writeln!(
-                    &mut self.fingerprints,
-                    "{marker:?}, <total>, {structs_size}B, {structs_count} unique payloads",
-                )?;
+                let identifiers_count = data.identifiers.len();
+                let mut identifiers_size = 0;
+
+                // icu_provider_baked::binary_search::Data.0 is a fat pointer
+                identifiers_size += 2 * core::mem::size_of::<usize>();
+
+                for id in data.identifiers {
+                    if !id.locale.is_und() {
+                        // Size of &'static str
+                        identifiers_size += 2 * core::mem::size_of::<usize>();
+                        let locale_str = id.locale.to_string();
+                        seen_static_strs.insert(locale_str);
+                    }
+                    if !id.marker_attributes.is_empty() {
+                        // Size of &'static str
+                        identifiers_size += 2 * core::mem::size_of::<usize>();
+                        let attrs_str = id.marker_attributes.to_string();
+                        seen_static_strs.insert(attrs_str);
+                    }
+
+                    // Size of &'static M::Yokeable
+                    identifiers_size += core::mem::size_of::<usize>();
+                }
+                lines.push(format!(
+                    "{marker:?}, <lookup>, {identifiers_size}B, {identifiers_count} identifiers"
+                ));
             }
 
-            for ((m, req), (size, hash)) in size_hash.iter() {
-                if m != marker {
-                    continue;
-                }
-                if let Some(deduped_req) = seen.get(hash) {
-                    writeln!(
-                        &mut self.fingerprints,
-                        "{marker:?}, {req}, {size}B, -> {deduped_req}",
-                    )?;
+            if !marker.is_singleton {
+                let structs_count = data.struct_sizes.len();
+                let structs_size = data.struct_sizes.values().sum::<usize>();
+                lines.push(format!(
+                    "{marker:?}, <total>, {structs_size}B, {structs_count} unique payloads",
+                ));
+            }
+
+            let sorted = data
+                .size_hash
+                .into_iter()
+                .map(|(id, (size, hash))| {
+                    (
+                        if marker.is_singleton && id.locale.is_und() {
+                            "<singleton>".to_string()
+                        } else if !id.marker_attributes.is_empty() {
+                            format!(
+                                "{locale}/{marker_attributes}",
+                                locale = id.locale,
+                                marker_attributes = id.marker_attributes.as_str(),
+                            )
+                        } else {
+                            id.locale.to_string()
+                        },
+                        (size, hash),
+                    )
+                })
+                .collect::<BTreeMap<_, _>>();
+
+            let mut seen = HashMap::new();
+            for (id, (size, hash)) in sorted.into_iter() {
+                if let Some(deduped_req) = seen.get(&hash) {
+                    lines.push(format!("{marker:?}, {id}, {size}B, -> {deduped_req}",));
                 } else {
-                    writeln!(
-                        &mut self.fingerprints,
-                        "{marker:?}, {req}, {size}B, {hash:x}",
-                    )?;
-                    seen.insert(hash, req);
+                    lines.push(format!("{marker:?}, {id}, {size}B, {hash:x}",));
+                    seen.insert(hash, id.clone());
                 }
             }
         }
+
+        if !seen_static_strs.is_empty() {
+            let static_strs_size = seen_static_strs.iter().map(String::len).sum::<usize>();
+            let static_strs_count = seen_static_strs.len();
+            lines.push(format!(
+                "*, <'static strs>, {static_strs_size}B, {static_strs_count} unique static strings"
+            ));
+        }
+
+        lines.sort();
+        for line in lines {
+            writeln!(&mut self.fingerprints, "{}", line)?;
+        }
+
         Ok(())
     }
 }
