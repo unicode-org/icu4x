@@ -55,11 +55,11 @@ impl Iterator for LstmSegmenterIteratorUtf16<'_> {
 pub(super) struct LstmSegmenter<'l> {
     dic: ZeroMapBorrowed<'l, UnvalidatedStr, u16>,
     embedding: MatrixZero<'l, 2>,
-    fw_w: MatrixZero<'l, 3>,
-    fw_u: MatrixZero<'l, 3>,
+    fw_w: MatrixZero<'l, 2>,
+    fw_u: MatrixZero<'l, 2>,
     fw_b: MatrixZero<'l, 2>,
-    bw_w: MatrixZero<'l, 3>,
-    bw_u: MatrixZero<'l, 3>,
+    bw_w: MatrixZero<'l, 2>,
+    bw_u: MatrixZero<'l, 2>,
     bw_b: MatrixZero<'l, 2>,
     timew_fw: MatrixZero<'l, 2>,
     timew_bw: MatrixZero<'l, 2>,
@@ -71,7 +71,20 @@ impl<'l> LstmSegmenter<'l> {
     /// Returns `Err` if grapheme data is required but not present
     pub(super) fn new(lstm: &'l LstmDataV1<'l>, grapheme: &'l RuleBreakDataV1<'l>) -> Self {
         let LstmDataV1::Float32(lstm) = lstm;
+        let fw_w = MatrixZero::from(&lstm.fw_w);
+        let fw_u = MatrixZero::from(&lstm.fw_u);
+        let bw_w = MatrixZero::from(&lstm.bw_w);
+        let bw_u = MatrixZero::from(&lstm.bw_u);
         let time_w = MatrixZero::from(&lstm.time_w);
+
+        let hunits = fw_w.dim().1;
+        let embedd_dim = fw_w.dim().2;
+
+        let fw_w = fw_w.reshape([4 * hunits, embedd_dim]);
+        let fw_u = fw_u.reshape([4 * hunits, hunits]);
+        let bw_w = bw_w.reshape([4 * hunits, embedd_dim]);
+        let bw_u = bw_u.reshape([4 * hunits, hunits]);
+
         #[allow(clippy::unwrap_used)] // shape (2, 4, hunits)
         let timew_fw = time_w.submatrix(0).unwrap();
         #[allow(clippy::unwrap_used)] // shape (2, 4, hunits)
@@ -79,11 +92,11 @@ impl<'l> LstmSegmenter<'l> {
         Self {
             dic: lstm.dic.as_borrowed(),
             embedding: MatrixZero::from(&lstm.embedding),
-            fw_w: MatrixZero::from(&lstm.fw_w),
-            fw_u: MatrixZero::from(&lstm.fw_u),
+            fw_w,
+            fw_u,
             fw_b: MatrixZero::from(&lstm.fw_b),
-            bw_w: MatrixZero::from(&lstm.bw_w),
-            bw_u: MatrixZero::from(&lstm.bw_u),
+            bw_w,
+            bw_u,
             bw_b: MatrixZero::from(&lstm.bw_b),
             timew_fw,
             timew_bw,
@@ -278,24 +291,26 @@ fn compute_hc<'a>(
     x_t: MatrixZero<'a, 1>,
     mut h_tm1: MatrixBorrowedMut<'a, 1>,
     mut c_tm1: MatrixBorrowedMut<'a, 1>,
-    w: MatrixZero<'a, 3>,
-    u: MatrixZero<'a, 3>,
+    w: MatrixZero<'a, 2>,
+    u: MatrixZero<'a, 2>,
     b: MatrixZero<'a, 2>,
 ) {
+    let hunits = h_tm1.dim();
     #[cfg(debug_assertions)]
     {
-        let hunits = h_tm1.dim();
         let embedd_dim = x_t.dim();
         c_tm1.as_borrowed().debug_assert_dims([hunits]);
-        w.debug_assert_dims([4, hunits, embedd_dim]);
-        u.debug_assert_dims([4, hunits, hunits]);
+        w.debug_assert_dims([4 * hunits, embedd_dim]);
+        u.debug_assert_dims([4 * hunits, hunits]);
         b.debug_assert_dims([4, hunits]);
     }
 
     let mut s_t = b.to_owned();
 
-    s_t.as_mut().add_dot_3d_2(x_t, w);
-    s_t.as_mut().add_dot_3d_1(h_tm1.as_borrowed(), u);
+    s_t.as_mut().reshape([4 * hunits]).add_dot_2d_1(x_t, w);
+    s_t.as_mut()
+        .reshape([4 * hunits])
+        .add_dot_2d(h_tm1.as_borrowed(), u);
 
     #[allow(clippy::unwrap_used)] // first dimension is 4
     s_t.submatrix_mut::<1>(0).unwrap().sigmoid_transform();
