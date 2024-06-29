@@ -69,6 +69,10 @@
 
 extern crate alloc;
 
+#[macro_use]
+#[path = "../icu4x_shared.rs"]
+mod icu4x_shared;
+
 #[cfg(feature = "bidi")]
 pub mod bidi;
 
