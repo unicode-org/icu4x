@@ -168,7 +168,7 @@ pub(super) struct TimeZoneDataPayloads {
 }
 
 /// A container contains all data payloads for CustomTimeZone (borrowed version).
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub(crate) struct TimeZoneDataPayloadsBorrowed<'a> {
     /// The data that contains meta information about how to display content.
     pub(crate) zone_formats: Option<&'a provider::time_zones::TimeZoneFormatsV1<'a>>,
@@ -866,6 +866,16 @@ pub(super) struct Iso8601Format {
     format: IsoFormat,
     minutes: IsoMinutes,
     seconds: IsoSeconds,
+}
+
+impl Iso8601Format {
+    pub(crate) fn default_for_fallback() -> Self {
+        Self {
+            format: IsoFormat::Basic,
+            minutes: IsoMinutes::Required,
+            seconds: IsoSeconds::Optional,
+        }
+    }
 }
 
 // It is only used for pattern in special case and not public to users.

@@ -12,6 +12,23 @@ use zerovec::{ZeroMap, ZeroMap2d};
 pub use icu_timezone::provider::{MetazoneId, TimeZoneBcp47Id};
 use icu_timezone::ZoneVariant;
 
+/// Time zone type aliases for cleaner code
+#[cfg(feature = "experimental")]
+pub(crate) mod tz {
+    pub(crate) use super::ExemplarCitiesV1;
+    pub(crate) use super::ExemplarCitiesV1Marker;
+    pub(crate) use super::MetazoneGenericNamesLongV1 as MzGenericLongV1;
+    pub(crate) use super::MetazoneGenericNamesLongV1Marker as MzGenericLongV1Marker;
+    pub(crate) use super::MetazoneGenericNamesShortV1 as MzGenericShortV1;
+    pub(crate) use super::MetazoneGenericNamesShortV1Marker as MzGenericShortV1Marker;
+    pub(crate) use super::MetazoneSpecificNamesLongV1 as MzSpecificLongV1;
+    pub(crate) use super::MetazoneSpecificNamesLongV1Marker as MzSpecificLongV1Marker;
+    pub(crate) use super::MetazoneSpecificNamesShortV1 as MzSpecificShortV1;
+    pub(crate) use super::MetazoneSpecificNamesShortV1Marker as MzSpecificShortV1Marker;
+    pub(crate) use super::TimeZoneFormatsV1 as EssentialsV1;
+    pub(crate) use super::TimeZoneFormatsV1Marker as EssentialsV1Marker;
+}
+
 /// An ICU4X mapping to the CLDR timeZoneNames format strings.
 /// See CLDR-JSON timeZoneNames.json for more context.
 ///

@@ -17,7 +17,12 @@ use crate::provider::date_time::{
     DateSymbols, GetSymbolForEraError, GetSymbolForMonthError, GetSymbolForWeekdayError,
     MonthPlaceholderValue, TimeSymbols, ZoneSymbols,
 };
-use crate::time_zone::{FormatTimeZone, FormatTimeZoneError, GenericNonLocationShortFormat};
+use crate::time_zone::{
+    ExemplarCityFormat, FallbackTimeZoneFormatterUnit, FormatTimeZone, FormatTimeZoneError,
+    GenericLocationFormat, GenericNonLocationLongFormat, GenericNonLocationShortFormat,
+    Iso8601Format, LocalizedGmtFormat, SpecificNonLocationLongFormat,
+    SpecificNonLocationShortFormat, TimeZoneFormatterUnit,
+};
 
 use core::fmt::{self, Write};
 use core::iter::Peekable;
@@ -816,22 +821,118 @@ where
             }
             Some(zs) => {
                 let payloads = zs.get_payloads();
-                let tz_formatter = GenericNonLocationShortFormat {};
-                match tz_formatter.format(w, &custom_time_zone.into(), payloads)? {
-                    Ok(()) => Ok(()),
-                    Err(e) => {
-                        write_time_zone_missing(w)?;
-                        Err(match e {
-                            FormatTimeZoneError::MissingInputField(s) => {
-                                DateTimeWriteError::MissingInputField(s)
+                // Select which formatters to try based on the field.
+                let mut formatters = (
+                    None,
+                    None,
+                    // Friendly Localized GMT Format (requires "essentials" data)
+                    Some(TimeZoneFormatterUnit::WithFallback(
+                        FallbackTimeZoneFormatterUnit::LocalizedGmt(LocalizedGmtFormat {}),
+                    )),
+                );
+                match (field_symbol, field_length) {
+                    // `z..zzz`
+                    (
+                        fields::TimeZone::LowerZ,
+                        FieldLength::One | FieldLength::TwoDigit | FieldLength::Abbreviated,
+                    ) => {
+                        formatters.0 = Some(TimeZoneFormatterUnit::SpecificNonLocationShort(
+                            SpecificNonLocationShortFormat {},
+                        ));
+                    }
+                    // `zzzz`
+                    (fields::TimeZone::LowerZ, FieldLength::Wide) => {
+                        formatters.0 = Some(TimeZoneFormatterUnit::SpecificNonLocationLong(
+                            SpecificNonLocationLongFormat {},
+                        ));
+                    }
+                    // 'v'
+                    (fields::TimeZone::LowerV, FieldLength::One) => {
+                        formatters.0 = Some(TimeZoneFormatterUnit::GenericNonLocationShort(
+                            GenericNonLocationShortFormat {},
+                        ));
+                    }
+                    // 'vvvv'
+                    (fields::TimeZone::LowerV, FieldLength::Wide) => {
+                        formatters.0 = Some(TimeZoneFormatterUnit::GenericNonLocationLong(
+                            GenericNonLocationLongFormat {},
+                        ));
+                    }
+                    // 'VVV'
+                    (fields::TimeZone::UpperV, FieldLength::Abbreviated) => {
+                        formatters.0 =
+                            Some(TimeZoneFormatterUnit::ExemplarCity(ExemplarCityFormat {}));
+                    }
+                    // 'VVVV'
+                    (fields::TimeZone::UpperV, FieldLength::Wide) => {
+                        formatters.0 = Some(TimeZoneFormatterUnit::GenericLocation(
+                            GenericLocationFormat {},
+                        ));
+                    }
+                    // `OOOO`, `ZZZZ`
+                    (fields::TimeZone::UpperO | fields::TimeZone::UpperZ, FieldLength::Wide) => {
+                        // no-op
+                    }
+                    // TODO:
+                    // `V` "uslax"
+                    // `VV` "America/Los_Angeles"
+                    // Generic Partial Location: "Pacific Time (Los Angeles)"
+                    // `O` "GMT-8"
+                    // All `x` and `X` formats
+                    _ => {
+                        // Cause these to fail by unsetting the fallback formats
+                        formatters.2 = None;
+                    }
+                }
+                let zone_input = custom_time_zone.into();
+                loop {
+                    let Some(formatter) = formatters
+                        .0
+                        .take()
+                        .or_else(|| formatters.1.take())
+                        .or_else(|| formatters.2.take())
+                    else {
+                        // Last Resort ISO-8601 Format (no data required)
+                        let mut result = None;
+                        w.with_part(Part::ERROR, |w| {
+                            result = Some(Iso8601Format::default_for_fallback().format(
+                                w,
+                                &zone_input,
+                                payloads,
+                            )?);
+                            Ok(())
+                        })?;
+                        match result {
+                            Some(Ok(())) => {
+                                // Success, but return an error since GMT data was missing
+                                break Err(DateTimeWriteError::MissingZoneSymbols);
                             }
-                            FormatTimeZoneError::NameNotFound => {
-                                DateTimeWriteError::MissingNames(field)
+                            None | Some(Err(_)) => {
+                                // Completely failed to format anything
+                                write_time_zone_missing(w)?;
+                                break Err(DateTimeWriteError::MissingNames(field));
                             }
-                            FormatTimeZoneError::MissingZoneSymbols => {
-                                DateTimeWriteError::MissingZoneSymbols
-                            }
-                        })
+                        }
+                    };
+                    match formatter.format(w, &zone_input, payloads)? {
+                        Ok(()) => break Ok(()),
+                        Err(FormatTimeZoneError::MissingInputField(_)) => {
+                            // The time zone input doesn't have the fields for this formatter.
+                            // TODO: What behavior makes the most sense here?
+                            // We can keep trying other formatters.
+                            continue;
+                        }
+                        Err(FormatTimeZoneError::NameNotFound) => {
+                            // Expected common case: data is loaded, but this time zone's
+                            // name was not found in the data.
+                            continue;
+                        }
+                        Err(FormatTimeZoneError::MissingZoneSymbols) => {
+                            // We don't have the necessary data for this formatter.
+                            // TODO: What behavior makes the most sense here?
+                            // We can keep trying other formatters.
+                            continue;
+                        }
                     }
                 }
             }
