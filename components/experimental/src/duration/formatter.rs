@@ -14,6 +14,7 @@ impl DurationFormatter {
     }
 }
 
+/// Validated options for [DurationFormatter](DurationFormatter).
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
 pub struct ValidatedDurationFormatterOptions {
     /// The style that will be applied to units
@@ -62,7 +63,7 @@ pub struct ValidatedDurationFormatterOptions {
     nanosecond_visibility: FieldDisplay,
 
     /// Number of fractional digits to use when formatting sub-second units (milliseconds, microseconds, nanoseconds).
-    ///  # NOTE 
+    ///  # NOTE
     ///       - Only takes effect when the subsecond units are styled as `Numeric`.
     ///       - Zero means no fractional digits.
     fractional_digits: FractionalDigits,
@@ -210,6 +211,7 @@ impl ValidatedDurationFormatterOptions {
     }
 }
 
+/// An enum to specify the unit being used. Used with FieldStyle and FieldDisplay to indicate the field unit.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 enum Unit {
     Year,
