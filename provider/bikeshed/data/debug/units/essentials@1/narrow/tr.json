@@ -1,5 +1,24 @@
 {
-  "prefixes": {},
+  "prefixes": [
+    [
+      {
+        "Power": {
+          "power": "Two",
+          "count": "Other"
+        }
+      },
+      "{0}²"
+    ],
+    [
+      {
+        "Power": {
+          "power": "Three",
+          "count": "Other"
+        }
+      },
+      "{0}³"
+    ]
+  ],
   "per": "{0}/{1}",
   "times": "{0}⋅{1}"
 }
