@@ -19,25 +19,46 @@ use zerovec::ZeroMap;
 
 impl DataProvider<UnitsEssentialsV1Marker> for DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<UnitsEssentialsV1Marker>, DataError> {
-        fn fill_si_binary(
+        const BINARY_PREFIX: &str = "1024p";
+        const DECIMAL_PREFIX: &str = "10p";
+
+        /// Fills the prefixes map with the SI prefixes (binary and decimal)
+        ///
+        /// # Errors
+        ///
+        /// - `DataError::custom("Invalid prefix: must be Binary or Decimal")` if the prefix is not Binary or Decimal
+        /// - `DataError::custom("Failed to parse pattern key value")` if the pattern key value cannot be parsed
+        fn fill_si(
             data: &BTreeMap<String, Patterns>,
-            prefixes: &mut BTreeMap<PatternKey, String>,
+            prefixes_map: &mut BTreeMap<PatternKey, String>,
+            prefix_str: &str,
         ) -> Result<(), DataError> {
             data.iter()
-                .filter(|(key, _)| key.starts_with("1024p"))
+                .filter(|(key, _)| key.starts_with(prefix_str))
                 .map(|(key, patterns)| {
-                    let key = key.trim_start_matches("1024p");
-                    match key.parse::<u8>() {
-                        Ok(power) => Ok((PatternKey::Binary(power), patterns)),
-                        Err(_) => {
-                            Err(DataError::custom("Failed to parse power").with_debug_context(key))
+                    let trimmed_key = key.trim_start_matches(prefix_str);
+
+                    let pattern_key_result = match prefix_str {
+                        BINARY_PREFIX => trimmed_key.parse::<u8>().map(PatternKey::Binary),
+                        DECIMAL_PREFIX => trimmed_key.parse::<i8>().map(PatternKey::Decimal),
+                        _ => {
+                            return Err(DataError::custom(
+                                "Invalid prefix: must be Binary or Decimal",
+                            )
+                            .with_debug_context(key))
                         }
                     }
+                    .map_err(|e| {
+                        DataError::custom("Failed to parse pattern key value")
+                            .with_debug_context(&format!("Key: {}, Error: {}", key, e))
+                    });
+
+                    pattern_key_result.map(|pattern_key| (pattern_key, patterns))
                 })
                 .try_for_each(|elem| match elem {
                     Ok((key, patterns)) => {
                         if let Some(pattern) = patterns.unit_prefix_pattern.as_ref() {
-                            prefixes.insert(key, pattern.to_string());
+                            prefixes_map.insert(key, pattern.to_string());
                             Ok(())
                         } else {
                             Err(DataError::custom("Failed to get pattern").with_debug_context(&key))
@@ -49,6 +70,7 @@ impl DataProvider<UnitsEssentialsV1Marker> for DatagenProvider {
             Ok(())
         }
 
+        /// Fills the prefixes map with the powers (two and three)
         fn fill_power(
             prefixes: &mut BTreeMap<PatternKey, String>,
             powers: Option<&Patterns>,
@@ -122,14 +144,14 @@ impl DataProvider<UnitsEssentialsV1Marker> for DatagenProvider {
             .ok_or_else(|| DataError::custom("Failed to get times"))?
             .clone();
 
-        // TODO: Fill prefixes (si prefixes (decimal), ... etc.) in the next PR.
         let mut prefixes = BTreeMap::<PatternKey, String>::new();
         let power2 = length_data.get("power2");
         let power3 = length_data.get("power3");
         fill_power(&mut prefixes, power2, PowerValue::Two);
         fill_power(&mut prefixes, power3, PowerValue::Three);
 
-        fill_si_binary(length_data, &mut prefixes)?;
+        fill_si(length_data, &mut prefixes, BINARY_PREFIX)?;
+        fill_si(length_data, &mut prefixes, DECIMAL_PREFIX)?;
 
         let result = UnitsEssentialsV1 {
             per: per.into(),

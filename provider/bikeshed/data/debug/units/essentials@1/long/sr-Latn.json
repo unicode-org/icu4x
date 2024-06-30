@@ -50,6 +50,150 @@
     ],
     [
       {
+        "Decimal": -30
+      },
+      "kvekto{0}"
+    ],
+    [
+      {
+        "Decimal": -27
+      },
+      "ronto{0}"
+    ],
+    [
+      {
+        "Decimal": -24
+      },
+      "jokto{0}"
+    ],
+    [
+      {
+        "Decimal": -21
+      },
+      "zepto{0}"
+    ],
+    [
+      {
+        "Decimal": -18
+      },
+      "ato{0}"
+    ],
+    [
+      {
+        "Decimal": -15
+      },
+      "femto{0}"
+    ],
+    [
+      {
+        "Decimal": -12
+      },
+      "piko{0}"
+    ],
+    [
+      {
+        "Decimal": -9
+      },
+      "nano{0}"
+    ],
+    [
+      {
+        "Decimal": -6
+      },
+      "mikro{0}"
+    ],
+    [
+      {
+        "Decimal": -3
+      },
+      "mili{0}"
+    ],
+    [
+      {
+        "Decimal": -2
+      },
+      "centi{0}"
+    ],
+    [
+      {
+        "Decimal": -1
+      },
+      "deci{0}"
+    ],
+    [
+      {
+        "Decimal": 1
+      },
+      "deka{0}"
+    ],
+    [
+      {
+        "Decimal": 2
+      },
+      "hekto{0}"
+    ],
+    [
+      {
+        "Decimal": 3
+      },
+      "kilo{0}"
+    ],
+    [
+      {
+        "Decimal": 6
+      },
+      "mega{0}"
+    ],
+    [
+      {
+        "Decimal": 9
+      },
+      "giga{0}"
+    ],
+    [
+      {
+        "Decimal": 12
+      },
+      "tera{0}"
+    ],
+    [
+      {
+        "Decimal": 15
+      },
+      "peta{0}"
+    ],
+    [
+      {
+        "Decimal": 18
+      },
+      "eksa{0}"
+    ],
+    [
+      {
+        "Decimal": 21
+      },
+      "zeta{0}"
+    ],
+    [
+      {
+        "Decimal": 24
+      },
+      "jota{0}"
+    ],
+    [
+      {
+        "Decimal": 27
+      },
+      "rona{0}"
+    ],
+    [
+      {
+        "Decimal": 30
+      },
+      "kveta{0}"
+    ],
+    [
+      {
         "Power": {
           "power": "Two",
           "count": "One"
