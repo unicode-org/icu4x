@@ -13,49 +13,50 @@ pub struct DurationFormatterOptions {
     pub base: BaseStyle,
 
     /// Style for year
-    pub year: YearStyle,
+    pub year: Option<YearStyle>,
     /// Visibility control for year
-    pub year_visibility: FieldDisplay,
+    pub year_visibility: Option<FieldDisplay>,
     /// Style for month
-    pub month: MonthStyle,
+    pub month: Option<MonthStyle>,
     /// Visibility control for month
-    pub month_visibility: FieldDisplay,
+    pub month_visibility: Option<FieldDisplay>,
     /// Style for week
-    pub week: WeekStyle,
+    pub week: Option<WeekStyle>,
     /// Visibility control for week
-    pub week_visibility: FieldDisplay,
+    pub week_visibility: Option<FieldDisplay>,
     /// Style for day
-    pub day: DayStyle,
+    pub day: Option<DayStyle>,
     /// Visibility control for day
-    pub day_visibility: FieldDisplay,
+    pub day_visibility: Option<FieldDisplay>,
     /// Style for hour
-    pub hour: HourStyle,
+    pub hour: Option<HourStyle>,
     /// Visibility control for hour
-    pub hour_visibility: FieldDisplay,
+    pub hour_visibility: Option<FieldDisplay>,
     /// Style for minute
-    pub minute: MinuteStyle,
+    pub minute: Option<MinuteStyle>,
     /// Visibility control for minute
-    pub minute_visibility: FieldDisplay,
+    pub minute_visibility: Option<FieldDisplay>,
     /// Style for second
-    pub second: SecondStyle,
+    pub second: Option<SecondStyle>,
     /// Visibility control for second
-    pub second_visibility: FieldDisplay,
+    pub second_visibility: Option<FieldDisplay>,
     /// Style for millisecond
-    pub millisecond: MilliSecondStyle,
+    pub millisecond: Option<MilliSecondStyle>,
     /// Visibility control for millisecond
-    pub millisecond_visibility: FieldDisplay,
+    pub millisecond_visibility: Option<FieldDisplay>,
     /// Style for microsecond
-    pub microsecond: MicroSecondStyle,
+    pub microsecond: Option<MicroSecondStyle>,
     /// Visibility control for microsecond
-    pub microsecond_visibility: FieldDisplay,
+    pub microsecond_visibility: Option<FieldDisplay>,
     /// Style for nanosecond
-    pub nanosecond: NanoSecondStyle,
+    pub nanosecond: Option<NanoSecondStyle>,
     /// Visibility control for nanosecond
-    pub nanosecond_visibility: FieldDisplay,
+    pub nanosecond_visibility: Option<FieldDisplay>,
 
     /// Number of fractional digits to use when formatting sub-second units (milliseconds, microseconds, nanoseconds).
-    /// Only takes effect when the subsecond units are styled as `Numeric`.
-    /// Zero means no fractional digits.
+    /// ### Note:
+    /// - Only takes effect when the subsecond units are styled as [`Numeric`](FieldStyle::Numeric).
+    /// - Zero means no fractional digits.
     pub fractional_digits: FractionalDigits,
 }
 
@@ -73,11 +74,8 @@ pub enum FractionalDigits {
 
 /// Configures visibility of fields in the formatted string.
 #[non_exhaustive]
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum FieldDisplay {
-    #[default]
-    /// Default visibility.
-    Default,
     /// Only display this field if it is non-zero.
     Auto,
     /// Always display this field.
@@ -85,11 +83,8 @@ pub enum FieldDisplay {
 }
 
 #[non_exhaustive]
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) enum FieldStyle {
-    #[default]
-    /// The default style for this unit. Determined by base style.
-    Default,
     /// Narrow style (most compact)
     Narrow,
     /// Short style (default)
@@ -137,6 +132,19 @@ macro_rules! derive_style {
                     }
                 }
             }
+
+            impl TryFrom<FieldStyle> for $enum_name {
+                type Error = FieldStyle;
+
+                fn try_from(style: FieldStyle) -> Result<Self, Self::Error> {
+                    match style {
+                        $(
+                            FieldStyle::$variant => Ok($enum_name::$variant),
+                        )*
+                        rest => Err(rest),
+                    }
+                }
+            }
             )+
     };
 }
@@ -159,11 +167,8 @@ pub enum BaseStyle {
 
 /// Configures the style of the year field.
 #[non_exhaustive]
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum YearStyle {
-    #[default]
-    /// The default style for this unit. Determined by base style.
-    Default,
     /// Narrow style (most compact)
     Narrow,
     /// Short style (default)
@@ -174,11 +179,8 @@ pub enum YearStyle {
 
 /// Configures the style of the month field.
 #[non_exhaustive]
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum MonthStyle {
-    #[default]
-    /// The default style for this unit. Determined by base style.
-    Default,
     /// Narrow style (most compact)
     Narrow,
     /// Short style (default)
@@ -189,11 +191,8 @@ pub enum MonthStyle {
 
 /// Configures the style of the week field.
 #[non_exhaustive]
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum WeekStyle {
-    #[default]
-    /// The default style for this unit. Determined by base style.
-    Default,
     /// Narrow style (most compact)
     Narrow,
     /// Short style (default)
@@ -204,11 +203,8 @@ pub enum WeekStyle {
 
 /// Configures the style of the day field.
 #[non_exhaustive]
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum DayStyle {
-    #[default]
-    /// The default style for this unit. Determined by base style.
-    Default,
     /// Narrow style (most compact)
     Narrow,
     /// Short style (default)
@@ -219,11 +215,8 @@ pub enum DayStyle {
 
 /// Configures the style of the hour field.
 #[non_exhaustive]
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum HourStyle {
-    #[default]
-    /// The default style for this unit. Determined by base style.
-    Default,
     /// Narrow style (most compact)
     Narrow,
     /// Short style (default)
@@ -238,11 +231,8 @@ pub enum HourStyle {
 
 /// Configures the style of the minute field.
 #[non_exhaustive]
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum MinuteStyle {
-    #[default]
-    /// The default style for this unit. Determined by base style.
-    Default,
     /// Narrow style (most compact)
     Narrow,
     /// Short style (default)
@@ -257,11 +247,8 @@ pub enum MinuteStyle {
 
 /// Configures the style of the second field.
 #[non_exhaustive]
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum SecondStyle {
-    #[default]
-    /// The default style for this unit. Determined by base style.
-    Default,
     /// Narrow style (most compact)
     Narrow,
     /// Short style (default)
@@ -276,11 +263,8 @@ pub enum SecondStyle {
 
 /// Configures the style of the milliseconds field.
 #[non_exhaustive]
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum MilliSecondStyle {
-    #[default]
-    /// The default style for this unit. Determined by base style.
-    Default,
     /// Narrow style (most compact)
     Narrow,
     /// Short style (default)
@@ -293,11 +277,8 @@ pub enum MilliSecondStyle {
 
 /// Configures the style of the microsecond field.
 #[non_exhaustive]
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum MicroSecondStyle {
-    #[default]
-    /// The default style for this unit. Determined by base style.
-    Default,
     /// Narrow style (most compact)
     Narrow,
     /// Short style (default)
@@ -310,11 +291,8 @@ pub enum MicroSecondStyle {
 
 /// Configures the style of the nanosecond field.
 #[non_exhaustive]
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum NanoSecondStyle {
-    #[default]
-    /// The default style for this unit. Determined by base style.
-    Default,
     /// Narrow style (most compact)
     Narrow,
     /// Short style (default)
