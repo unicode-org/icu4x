@@ -2,13 +2,16 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::collections::HashSet;
+use std::collections::{BTreeMap, HashSet};
 
+use crate::cldr_serde::units::data::Patterns;
 use crate::cldr_serde::{self};
 use crate::DatagenProvider;
 
 use icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1Marker;
 
+use icu::experimental::dimension::provider::pattern_key::{PatternKey, PowerValue};
+use icu::experimental::dimension::provider::units_essentials::CompoundCount;
 use icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1;
 use icu_provider::prelude::*;
 use icu_provider::DataMarkerAttributes;
@@ -42,13 +45,64 @@ impl DataProvider<UnitsEssentialsV1Marker> for DatagenProvider {
             .ok_or_else(|| DataError::custom("Failed to get times"))?
             .clone();
 
-        // TODO: Fill prefixes (power, si prefixes, ... etc.) in the next PR.
-        let prefixes = ZeroMap::new();
+        // TODO: Fill prefixes (si prefixes, ... etc.) in the next PR.
+        let mut prefixes = BTreeMap::<PatternKey, String>::new();
+        fn fill_power(
+            prefixes: &mut BTreeMap<PatternKey, String>,
+            powers: Option<&Patterns>,
+            power_value: PowerValue,
+        ) {
+            if let Some(powers) = powers {
+                let counts = [
+                    (
+                        powers.zero_compound_unit_pattern1.as_ref(),
+                        CompoundCount::Zero,
+                    ),
+                    (
+                        powers.one_compound_unit_pattern1.as_ref(),
+                        CompoundCount::One,
+                    ),
+                    (
+                        powers.two_compound_unit_pattern1.as_ref(),
+                        CompoundCount::Two,
+                    ),
+                    (
+                        powers.few_compound_unit_pattern1.as_ref(),
+                        CompoundCount::Few,
+                    ),
+                    (
+                        powers.many_compound_unit_pattern1.as_ref(),
+                        CompoundCount::Many,
+                    ),
+                    (
+                        powers.other_compound_unit_pattern1.as_ref(),
+                        CompoundCount::Other,
+                    ),
+                ];
+
+                for (pattern, count) in counts.iter() {
+                    if let Some(pattern) = pattern {
+                        prefixes.insert(
+                            PatternKey::Power {
+                                power: power_value,
+                                count: *count,
+                            },
+                            pattern.to_string(),
+                        );
+                    }
+                }
+            }
+        }
+        let power2 = length_data.get("power2");
+        let power3 = length_data.get("power3");
+
+        fill_power(&mut prefixes, power2, PowerValue::Two);
+        fill_power(&mut prefixes, power3, PowerValue::Three);
 
         let result = UnitsEssentialsV1 {
             per: per.into(),
             times: times.into(),
-            prefixes,
+            prefixes: ZeroMap::from_iter(prefixes),
         };
 
         Ok(DataResponse {
