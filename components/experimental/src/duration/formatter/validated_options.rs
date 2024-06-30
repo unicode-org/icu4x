@@ -323,7 +323,7 @@ impl TryFrom<ValidatedDurationFormatterOptionsBuilder> for ValidatedDurationForm
 
 /// An enum to specify the unit being used. Used with FieldStyle and FieldDisplay to indicate the field unit.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Unit {
+pub(crate) enum Unit {
     Year,
     Month,
     Week,
@@ -337,7 +337,7 @@ pub enum Unit {
 }
 
 impl Unit {
-    pub fn digital_default(&self) -> FieldStyle {
+    pub(crate) fn digital_default(&self) -> FieldStyle {
         match self {
             Unit::Year => YearStyle::Short.into(),
             Unit::Month => MonthStyle::Short.into(),
