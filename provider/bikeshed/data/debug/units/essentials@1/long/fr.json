@@ -2,6 +2,54 @@
   "prefixes": [
     [
       {
+        "Binary": 1
+      },
+      "kibi{0}"
+    ],
+    [
+      {
+        "Binary": 2
+      },
+      "mébi{0}"
+    ],
+    [
+      {
+        "Binary": 3
+      },
+      "gibi{0}"
+    ],
+    [
+      {
+        "Binary": 4
+      },
+      "tébi{0}"
+    ],
+    [
+      {
+        "Binary": 5
+      },
+      "pébi{0}"
+    ],
+    [
+      {
+        "Binary": 6
+      },
+      "exbi{0}"
+    ],
+    [
+      {
+        "Binary": 7
+      },
+      "zébi{0}"
+    ],
+    [
+      {
+        "Binary": 8
+      },
+      "yobi{0}"
+    ],
+    [
+      {
         "Power": {
           "power": "Two",
           "count": "One"

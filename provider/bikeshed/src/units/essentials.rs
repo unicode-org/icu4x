@@ -19,34 +19,36 @@ use zerovec::ZeroMap;
 
 impl DataProvider<UnitsEssentialsV1Marker> for DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<UnitsEssentialsV1Marker>, DataError> {
-        self.check_req::<UnitsEssentialsV1Marker>(req)?;
+        fn fill_si_binary(
+            data: &BTreeMap<String, Patterns>,
+            prefixes: &mut BTreeMap<PatternKey, String>,
+        ) -> Result<(), DataError> {
+            data.iter()
+                .filter(|(key, _)| key.starts_with("1024p"))
+                .map(|(key, patterns)| {
+                    let key = key.trim_start_matches("1024p");
+                    match key.parse::<u8>() {
+                        Ok(power) => Ok((PatternKey::Binary(power), patterns)),
+                        Err(_) => {
+                            Err(DataError::custom("Failed to parse power").with_debug_context(key))
+                        }
+                    }
+                })
+                .try_for_each(|elem| match elem {
+                    Ok((key, patterns)) => {
+                        if let Some(pattern) = patterns.unit_prefix_pattern.as_ref() {
+                            prefixes.insert(key, pattern.to_string());
+                            Ok(())
+                        } else {
+                            Err(DataError::custom("Failed to get pattern").with_debug_context(&key))
+                        }
+                    }
+                    Err(e) => Err(e),
+                })?;
 
-        // Get units
-        let units_format_data: &cldr_serde::units::data::Resource = self
-            .cldr()?
-            .units()
-            .read_and_parse(&req.id.locale.get_langid(), "units.json")?;
-        let units_format_data = &units_format_data.main.value.units;
-        let length_data = match req.id.marker_attributes.as_str() {
-            "long" => &units_format_data.long,
-            "short" => &units_format_data.short,
-            "narrow" => &units_format_data.narrow,
-            _ => return Err(DataError::custom("Failed to get length data")),
-        };
-        let per = length_data
-            .get("per")
-            .and_then(|unit| unit.compound_unit_pattern.as_ref())
-            .ok_or_else(|| DataError::custom("Failed to get per"))?
-            .clone();
+            Ok(())
+        }
 
-        let times = length_data
-            .get("times")
-            .and_then(|unit| unit.compound_unit_pattern.as_ref())
-            .ok_or_else(|| DataError::custom("Failed to get times"))?
-            .clone();
-
-        // TODO: Fill prefixes (si prefixes, ... etc.) in the next PR.
-        let mut prefixes = BTreeMap::<PatternKey, String>::new();
         fn fill_power(
             prefixes: &mut BTreeMap<PatternKey, String>,
             powers: Option<&Patterns>,
@@ -93,11 +95,41 @@ impl DataProvider<UnitsEssentialsV1Marker> for DatagenProvider {
                 }
             }
         }
+
+        self.check_req::<UnitsEssentialsV1Marker>(req)?;
+
+        // Get units
+        let units_format_data: &cldr_serde::units::data::Resource = self
+            .cldr()?
+            .units()
+            .read_and_parse(&req.id.locale.get_langid(), "units.json")?;
+        let units_format_data = &units_format_data.main.value.units;
+        let length_data = match req.id.marker_attributes.as_str() {
+            "long" => &units_format_data.long,
+            "short" => &units_format_data.short,
+            "narrow" => &units_format_data.narrow,
+            _ => return Err(DataError::custom("Failed to get length data")),
+        };
+        let per = length_data
+            .get("per")
+            .and_then(|unit| unit.compound_unit_pattern.as_ref())
+            .ok_or_else(|| DataError::custom("Failed to get per"))?
+            .clone();
+
+        let times = length_data
+            .get("times")
+            .and_then(|unit| unit.compound_unit_pattern.as_ref())
+            .ok_or_else(|| DataError::custom("Failed to get times"))?
+            .clone();
+
+        // TODO: Fill prefixes (si prefixes (decimal), ... etc.) in the next PR.
+        let mut prefixes = BTreeMap::<PatternKey, String>::new();
         let power2 = length_data.get("power2");
         let power3 = length_data.get("power3");
-
         fill_power(&mut prefixes, power2, PowerValue::Two);
         fill_power(&mut prefixes, power3, PowerValue::Three);
+
+        fill_si_binary(length_data, &mut prefixes)?;
 
         let result = UnitsEssentialsV1 {
             per: per.into(),
