@@ -102,7 +102,7 @@ impl DataProvider<UnitsEssentialsV1Marker> for DatagenProvider {
         let result = UnitsEssentialsV1 {
             per: per.into(),
             times: times.into(),
-            prefixes: ZeroMap::from_iter(prefixes.into_iter()),
+            prefixes: ZeroMap::from_iter(prefixes),
         };
 
         Ok(DataResponse {
