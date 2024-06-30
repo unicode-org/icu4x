@@ -1,5 +1,78 @@
 {
-  "prefixes": {},
+  "prefixes": [
+    [
+      {
+        "Power": {
+          "power": "Two",
+          "count": "One"
+        }
+      },
+      "квадратный {0}"
+    ],
+    [
+      {
+        "Power": {
+          "power": "Two",
+          "count": "Few"
+        }
+      },
+      "квадратных {0}"
+    ],
+    [
+      {
+        "Power": {
+          "power": "Two",
+          "count": "Many"
+        }
+      },
+      "квадратных {0}"
+    ],
+    [
+      {
+        "Power": {
+          "power": "Two",
+          "count": "Other"
+        }
+      },
+      "квадратного {0}"
+    ],
+    [
+      {
+        "Power": {
+          "power": "Three",
+          "count": "One"
+        }
+      },
+      "кубический {0}"
+    ],
+    [
+      {
+        "Power": {
+          "power": "Three",
+          "count": "Few"
+        }
+      },
+      "кубических {0}"
+    ],
+    [
+      {
+        "Power": {
+          "power": "Three",
+          "count": "Many"
+        }
+      },
+      "кубических {0}"
+    ],
+    [
+      {
+        "Power": {
+          "power": "Three",
+          "count": "Other"
+        }
+      },
+      "кубического {0}"
+    ]
+  ],
   "per": "{0}/{1}",
   "times": "{0}⋅{1}"
 }
