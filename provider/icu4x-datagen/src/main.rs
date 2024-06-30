@@ -279,8 +279,8 @@ fn main() -> eyre::Result<()> {
             .unwrap()
     } else {
         SimpleLogger::new()
-            .env()
             .with_level(log::LevelFilter::Info)
+            .env()
             .init()
             .unwrap()
     }
