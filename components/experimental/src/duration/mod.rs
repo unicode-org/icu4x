@@ -6,8 +6,11 @@
 
 #![warn(missing_docs)]
 
+mod digital;
 mod duration;
 mod formatter;
+pub mod provider;
+
 pub mod options;
 
 pub use duration::{Duration, DurationSign};
