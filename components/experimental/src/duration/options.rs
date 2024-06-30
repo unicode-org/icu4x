@@ -55,7 +55,7 @@ pub struct DurationFormatterOptions {
 
     /// Number of fractional digits to use when formatting sub-second units (milliseconds, microseconds, nanoseconds).
     /// ### Note:
-    /// - Only takes effect when the subsecond units are styled as [`Numeric`](FieldStyle::Numeric).
+    /// - Only takes effect when the subsecond units are styled as `Numeric`.
     /// - Zero means no fractional digits.
     pub fractional_digits: FractionalDigits,
 }

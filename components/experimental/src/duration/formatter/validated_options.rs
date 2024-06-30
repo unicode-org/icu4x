@@ -1,3 +1,7 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
 use crate::duration::options::*;
 
 /// Validated options for [DurationFormatter](DurationFormatter).
@@ -50,7 +54,7 @@ pub struct ValidatedDurationFormatterOptions {
 
     /// Number of fractional digits to use when formatting sub-second units (milliseconds, microseconds, nanoseconds).
     /// ### Note:
-    /// - Only takes effect when the subsecond units are styled as [`Numeric`](FieldStyle::Numeric).
+    /// - Only takes effect when the subsecond units are styled as `Numeric`.
     /// - Zero means no fractional digits.
     fractional_digits: FractionalDigits,
 }
