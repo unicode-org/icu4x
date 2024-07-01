@@ -57,7 +57,7 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
                 &provider.as_downcasting(),
                 &ExternalLoaderAny(provider),
                 locale,
-                $($arg),+
+                $($arg.into()),+
             )
         }
         #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER, Self::$compiled_fn)]
@@ -74,7 +74,7 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
                 &provider.as_deserializing(),
                 &ExternalLoaderBuffer(provider),
                 locale,
-                $($arg),+
+                $($arg.into()),+
             )
         }
     };
@@ -394,7 +394,7 @@ impl<C: CldrCalendar, R: TypedDateTimeMarkers<C> + IsRuntimeComponents> TypedNeo
             &crate::provider::Baked,
             &ExternalLoaderCompiledData,
             locale,
-            components,
+            components.into(),
             length,
         )
     }
@@ -440,7 +440,7 @@ impl<C: CldrCalendar, R: TypedDateTimeMarkers<C> + IsRuntimeComponents> TypedNeo
             provider,
             &ExternalLoaderUnstable(provider),
             locale,
-            components,
+            components.into(),
             length,
         )
     }
@@ -451,7 +451,7 @@ impl<C: CldrCalendar, R: TypedDateTimeMarkers<C>> TypedNeoFormatter<C, R> {
         provider: &P,
         loader: &L,
         locale: &DataLocale,
-        components: impl Into<NeoComponents>,
+        components: NeoComponents,
         length: NeoSkeletonLength,
     ) -> Result<Self, LoadError>
     where
@@ -478,7 +478,7 @@ impl<C: CldrCalendar, R: TypedDateTimeMarkers<C>> TypedNeoFormatter<C, R> {
             &R::DateTimePatternV1Marker::bind(provider),
             locale,
             length,
-            components.into(),
+            components,
         )
         .map_err(LoadError::Data)?;
         let mut names = RawDateTimeNames::new_without_fixed_decimal_formatter();
@@ -980,7 +980,7 @@ impl<R: DateTimeMarkers + IsRuntimeComponents> NeoFormatter<R> {
             &crate::provider::Baked,
             &ExternalLoaderCompiledData,
             locale,
-            components,
+            components.into(),
             length,
         )
     }
@@ -1081,7 +1081,7 @@ impl<R: DateTimeMarkers + IsRuntimeComponents> NeoFormatter<R> {
             provider,
             &ExternalLoaderUnstable(provider),
             locale,
-            components,
+            components.into(),
             length,
         )
     }
@@ -1092,7 +1092,7 @@ impl<R: DateTimeMarkers> NeoFormatter<R> {
         provider: &P,
         loader: &L,
         locale: &DataLocale,
-        components: impl Into<NeoComponents>,
+        components: NeoComponents,
         length: NeoSkeletonLength,
     ) -> Result<Self, LoadError>
     where
@@ -1169,7 +1169,7 @@ impl<R: DateTimeMarkers> NeoFormatter<R> {
             &R::DateTimePatternV1Marker::bind(provider),
             locale,
             length,
-            components.into(),
+            components,
         )
         .map_err(LoadError::Data)?;
         let mut names = RawDateTimeNames::new_without_fixed_decimal_formatter();

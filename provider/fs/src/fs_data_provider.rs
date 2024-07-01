@@ -7,7 +7,6 @@ use icu_provider::prelude::*;
 use std::fmt::Debug;
 use std::fmt::Write;
 use std::fs;
-use std::path::Path;
 use std::path::PathBuf;
 
 /// A data provider that reads ICU4X data from a filesystem directory.
@@ -25,7 +24,7 @@ use std::path::PathBuf;
 ///
 /// // Create a DataProvider from data files stored in a filesystem directory:
 /// let provider =
-///     FsDataProvider::try_new("tests/data/json").expect("Directory exists");
+///     FsDataProvider::try_new("tests/data/json".into()).expect("Directory exists");
 ///
 /// // Check that it works:
 /// let formatter = HelloWorldFormatter::try_new_with_buffer_provider(
@@ -50,11 +49,10 @@ impl FsDataProvider {
     /// ```
     /// use icu_provider_fs::FsDataProvider;
     ///
-    /// let provider = FsDataProvider::try_new("/path/to/data/directory")
+    /// let provider = FsDataProvider::try_new("/path/to/data/directory".into())
     ///     .expect_err("Specify a real directory in the line above");
     /// ```
-    pub fn try_new<T: Into<PathBuf>>(root: T) -> Result<Self, DataError> {
-        let root = root.into();
+    pub fn try_new(root: PathBuf) -> Result<Self, DataError> {
         Ok(Self {
             manifest: Manifest::parse(&root)?,
             root,
@@ -71,17 +69,18 @@ impl DynamicDataProvider<BufferMarker> for FsDataProvider {
         if marker.is_singleton && !req.id.locale.is_empty() {
             return Err(DataErrorKind::InvalidRequest.with_req(marker, req));
         }
-        let mut path = self.root.clone().into_os_string();
-        write!(&mut path, "/{}", marker.path.as_str()).expect("infallible");
-        if !Path::new(&path).exists() {
+        let mut path = self.root.join(marker.path.as_str());
+        if !path.exists() {
             return Err(DataErrorKind::MarkerNotFound.with_req(marker, req));
         }
         if !req.id.marker_attributes.is_empty() {
-            write!(&mut path, "/{}", req.id.marker_attributes as &str).expect("infallible");
+            path.push(req.id.marker_attributes.as_str());
         }
+        let mut path = path.into_os_string();
         write!(&mut path, "/{}", req.id.locale).expect("infallible");
-        write!(&mut path, ".{}", self.manifest.file_extension).expect("infallible");
-        if !Path::new(&path).exists() {
+        let mut path = PathBuf::from(path);
+        path.set_extension(self.manifest.file_extension);
+        if !path.exists() {
             return Err(DataErrorKind::IdentifierNotFound.with_req(marker, req));
         }
         let buffer = fs::read(&path).map_err(|e| DataError::from(e).with_path_context(&path))?;

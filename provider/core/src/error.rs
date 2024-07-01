@@ -207,9 +207,9 @@ impl DataError {
     /// This does not modify the error, but if the "logging" Cargo feature is enabled,
     /// it will print out the context.
     #[cfg(feature = "std")]
-    pub fn with_path_context<P: AsRef<std::path::Path> + ?Sized>(self, _path: &P) -> Self {
+    pub fn with_path_context(self, _path: &std::path::Path) -> Self {
         if !self.silent {
-            log::warn!("{} (path: {:?})", self, _path.as_ref());
+            log::warn!("{self} (path: {_path:?})");
         }
         self
     }
