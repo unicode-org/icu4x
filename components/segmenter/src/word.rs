@@ -166,7 +166,7 @@ pub type WordBreakIteratorUtf16<'l, 's> = WordBreakIterator<'l, 's, WordBreakTyp
 /// ```
 #[derive(Debug)]
 pub struct WordSegmenter {
-    payload: DataPayload<WordBreakDataV1Marker>,
+    payload: DataPayload<WordBreakDataV2Marker>,
     complex: ComplexPayloads,
 }
 
@@ -204,7 +204,7 @@ impl WordSegmenter {
     pub fn new_auto() -> Self {
         Self {
             payload: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_WORD_BREAK_DATA_V1_MARKER,
+                crate::provider::Baked::SINGLETON_WORD_BREAK_DATA_V2_MARKER,
             ),
             complex: ComplexPayloads::new_auto(),
         }
@@ -226,10 +226,10 @@ impl WordSegmenter {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_auto)]
     pub fn try_new_auto_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: DataProvider<WordBreakDataV1Marker>
+        D: DataProvider<WordBreakDataV2Marker>
             + DataProvider<DictionaryForWordOnlyAutoV1Marker>
             + DataProvider<LstmForWordLineAutoV1Marker>
-            + DataProvider<GraphemeClusterBreakDataV1Marker>
+            + DataProvider<GraphemeClusterBreakDataV2Marker>
             + ?Sized,
     {
         Ok(Self {
@@ -276,7 +276,7 @@ impl WordSegmenter {
     pub fn new_lstm() -> Self {
         Self {
             payload: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_WORD_BREAK_DATA_V1_MARKER,
+                crate::provider::Baked::SINGLETON_WORD_BREAK_DATA_V2_MARKER,
             ),
             complex: ComplexPayloads::new_lstm(),
         }
@@ -298,9 +298,9 @@ impl WordSegmenter {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_lstm)]
     pub fn try_new_lstm_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: DataProvider<WordBreakDataV1Marker>
+        D: DataProvider<WordBreakDataV2Marker>
             + DataProvider<LstmForWordLineAutoV1Marker>
-            + DataProvider<GraphemeClusterBreakDataV1Marker>
+            + DataProvider<GraphemeClusterBreakDataV2Marker>
             + ?Sized,
     {
         Ok(Self {
@@ -341,7 +341,7 @@ impl WordSegmenter {
     pub fn new_dictionary() -> Self {
         Self {
             payload: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_WORD_BREAK_DATA_V1_MARKER,
+                crate::provider::Baked::SINGLETON_WORD_BREAK_DATA_V2_MARKER,
             ),
             complex: ComplexPayloads::new_dict(),
         }
@@ -361,10 +361,10 @@ impl WordSegmenter {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_dictionary)]
     pub fn try_new_dictionary_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: DataProvider<WordBreakDataV1Marker>
+        D: DataProvider<WordBreakDataV2Marker>
             + DataProvider<DictionaryForWordOnlyAutoV1Marker>
             + DataProvider<DictionaryForWordLineExtendedV1Marker>
-            + DataProvider<GraphemeClusterBreakDataV1Marker>
+            + DataProvider<GraphemeClusterBreakDataV2Marker>
             + ?Sized,
     {
         Ok(Self {

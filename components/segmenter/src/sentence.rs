@@ -99,7 +99,7 @@ pub type SentenceBreakIteratorUtf16<'l, 's> = SentenceBreakIterator<'l, 's, Rule
 /// ```
 #[derive(Debug)]
 pub struct SentenceSegmenter {
-    payload: DataPayload<SentenceBreakDataV1Marker>,
+    payload: DataPayload<SentenceBreakDataV2Marker>,
 }
 
 #[cfg(feature = "compiled_data")]
@@ -119,7 +119,7 @@ impl SentenceSegmenter {
     pub fn new() -> Self {
         Self {
             payload: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_SENTENCE_BREAK_DATA_V1_MARKER,
+                crate::provider::Baked::SINGLETON_SENTENCE_BREAK_DATA_V2_MARKER,
             ),
         }
     }
@@ -137,7 +137,7 @@ impl SentenceSegmenter {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: DataProvider<SentenceBreakDataV1Marker> + ?Sized,
+        D: DataProvider<SentenceBreakDataV2Marker> + ?Sized,
     {
         let payload = provider.load(Default::default())?.payload;
         Ok(Self { payload })

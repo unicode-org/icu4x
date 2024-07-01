@@ -339,7 +339,7 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 #[derive(Debug)]
 pub struct LineSegmenter {
     options: LineBreakOptions,
-    payload: DataPayload<LineBreakDataV1Marker>,
+    payload: DataPayload<LineBreakDataV2Marker>,
     complex: ComplexPayloads,
 }
 
@@ -376,9 +376,9 @@ impl LineSegmenter {
     #[cfg(feature = "auto")]
     pub fn try_new_auto_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: DataProvider<LineBreakDataV1Marker>
+        D: DataProvider<LineBreakDataV2Marker>
             + DataProvider<LstmForWordLineAutoV1Marker>
-            + DataProvider<GraphemeClusterBreakDataV1Marker>
+            + DataProvider<GraphemeClusterBreakDataV2Marker>
             + ?Sized,
     {
         Self::try_new_auto_with_options_unstable(provider, Default::default())
@@ -417,9 +417,9 @@ impl LineSegmenter {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_lstm)]
     pub fn try_new_lstm_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: DataProvider<LineBreakDataV1Marker>
+        D: DataProvider<LineBreakDataV2Marker>
             + DataProvider<LstmForWordLineAutoV1Marker>
-            + DataProvider<GraphemeClusterBreakDataV1Marker>
+            + DataProvider<GraphemeClusterBreakDataV2Marker>
             + ?Sized,
     {
         Self::try_new_lstm_with_options_unstable(provider, Default::default())
@@ -455,9 +455,9 @@ impl LineSegmenter {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_dictionary)]
     pub fn try_new_dictionary_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: DataProvider<LineBreakDataV1Marker>
+        D: DataProvider<LineBreakDataV2Marker>
             + DataProvider<DictionaryForWordLineExtendedV1Marker>
-            + DataProvider<GraphemeClusterBreakDataV1Marker>
+            + DataProvider<GraphemeClusterBreakDataV2Marker>
             + ?Sized,
     {
         Self::try_new_dictionary_with_options_unstable(provider, Default::default())
@@ -498,9 +498,9 @@ impl LineSegmenter {
         options: LineBreakOptions,
     ) -> Result<Self, DataError>
     where
-        D: DataProvider<LineBreakDataV1Marker>
+        D: DataProvider<LineBreakDataV2Marker>
             + DataProvider<LstmForWordLineAutoV1Marker>
-            + DataProvider<GraphemeClusterBreakDataV1Marker>
+            + DataProvider<GraphemeClusterBreakDataV2Marker>
             + ?Sized,
     {
         Self::try_new_lstm_with_options_unstable(provider, options)
@@ -523,7 +523,7 @@ impl LineSegmenter {
         Self {
             options,
             payload: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_LINE_BREAK_DATA_V1_MARKER,
+                crate::provider::Baked::SINGLETON_LINE_BREAK_DATA_V2_MARKER,
             ),
             complex: ComplexPayloads::new_lstm(),
         }
@@ -548,9 +548,9 @@ impl LineSegmenter {
         options: LineBreakOptions,
     ) -> Result<Self, DataError>
     where
-        D: DataProvider<LineBreakDataV1Marker>
+        D: DataProvider<LineBreakDataV2Marker>
             + DataProvider<LstmForWordLineAutoV1Marker>
-            + DataProvider<GraphemeClusterBreakDataV1Marker>
+            + DataProvider<GraphemeClusterBreakDataV2Marker>
             + ?Sized,
     {
         Ok(Self {
@@ -576,7 +576,7 @@ impl LineSegmenter {
         Self {
             options,
             payload: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_LINE_BREAK_DATA_V1_MARKER,
+                crate::provider::Baked::SINGLETON_LINE_BREAK_DATA_V2_MARKER,
             ),
             // Line segmenter doesn't need to load CJ dictionary because UAX 14 rules handles CJK
             // characters [1]. Southeast Asian languages however require complex context analysis
@@ -605,9 +605,9 @@ impl LineSegmenter {
         options: LineBreakOptions,
     ) -> Result<Self, DataError>
     where
-        D: DataProvider<LineBreakDataV1Marker>
+        D: DataProvider<LineBreakDataV2Marker>
             + DataProvider<DictionaryForWordLineExtendedV1Marker>
-            + DataProvider<GraphemeClusterBreakDataV1Marker>
+            + DataProvider<GraphemeClusterBreakDataV2Marker>
             + ?Sized,
     {
         Ok(Self {
@@ -687,7 +687,7 @@ impl LineSegmenter {
     }
 }
 
-impl RuleBreakDataV1<'_> {
+impl RuleBreakDataV2<'_> {
     fn get_linebreak_property_utf32_with_rule(
         &self,
         codepoint: u32,
@@ -836,7 +836,7 @@ pub struct LineBreakIterator<'l, 's, Y: LineBreakType<'l, 's> + ?Sized> {
     len: usize,
     current_pos_data: Option<(usize, Y::CharType)>,
     result_cache: Vec<usize>,
-    data: &'l RuleBreakDataV1<'l>,
+    data: &'l RuleBreakDataV2<'l>,
     options: &'l LineBreakOptions,
     complex: &'l ComplexPayloads,
 }
@@ -1355,7 +1355,7 @@ mod tests {
 
     #[test]
     fn linebreak_property() {
-        let payload = DataProvider::<LineBreakDataV1Marker>::load(
+        let payload = DataProvider::<LineBreakDataV2Marker>::load(
             &crate::provider::Baked,
             Default::default(),
         )
@@ -1389,13 +1389,13 @@ mod tests {
     #[test]
     #[allow(clippy::bool_assert_comparison)] // clearer when we're testing bools directly
     fn break_rule() {
-        let payload = DataProvider::<LineBreakDataV1Marker>::load(
+        let payload = DataProvider::<LineBreakDataV2Marker>::load(
             &crate::provider::Baked,
             Default::default(),
         )
         .expect("Loading should succeed!")
         .payload;
-        let lb_data: &RuleBreakDataV1 = payload.get();
+        let lb_data: &RuleBreakDataV2 = payload.get();
 
         let is_break = |left, right| {
             matches!(
