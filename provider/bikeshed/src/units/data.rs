@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use std::collections::{BTreeMap, HashSet};
-use std::result;
 
 use crate::cldr_serde::units::data::Patterns;
 use crate::cldr_serde::{self};
@@ -132,7 +131,7 @@ impl crate::IterableDataProviderCached<UnitsDisplayNameV1Marker> for DatagenProv
                 .collect();
 
             for &truncated_quantity in &quantities {
-                data_locales.insert(make_request_element(&langid, truncated_quantity, length)?);
+                data_locales.insert(make_request_element(langid, truncated_quantity, length)?);
             }
 
             Ok(())
