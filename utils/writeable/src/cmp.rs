@@ -6,7 +6,7 @@ use core::cmp::Ordering;
 use core::fmt;
 
 pub(crate) struct WriteComparator<'a> {
-    code_points: &'a [u8],
+    code_units: &'a [u8],
     result: Ordering,
 }
 
@@ -17,9 +17,9 @@ impl<'a> fmt::Write for WriteComparator<'a> {
         if self.result != Ordering::Equal {
             return Ok(());
         }
-        let cmp_len = core::cmp::min(other.len(), self.code_points.len());
-        let (this, remainder) = self.code_points.split_at(cmp_len);
-        self.code_points = remainder;
+        let cmp_len = core::cmp::min(other.len(), self.code_units.len());
+        let (this, remainder) = self.code_units.split_at(cmp_len);
+        self.code_units = remainder;
         self.result = this.cmp(other.as_bytes());
         Ok(())
     }
@@ -27,16 +27,16 @@ impl<'a> fmt::Write for WriteComparator<'a> {
 
 impl<'a> WriteComparator<'a> {
     #[inline]
-    pub fn new(code_points: &'a [u8]) -> Self {
+    pub fn new(code_units: &'a [u8]) -> Self {
         Self {
-            code_points,
+            code_units,
             result: Ordering::Equal,
         }
     }
 
     #[inline]
     pub fn finish(self) -> Ordering {
-        if matches!(self.result, Ordering::Equal) && !self.code_points.is_empty() {
+        if matches!(self.result, Ordering::Equal) && !self.code_units.is_empty() {
             // Self is longer than Other
             Ordering::Greater
         } else {

@@ -195,7 +195,7 @@ impl<const N: usize> TinyAsciiStr<N> {
     }
 
     pub(crate) const fn try_from_utf16_inner(
-        code_points: &[u16],
+        code_units: &[u16],
         start: usize,
         end: usize,
         allow_trailing_null: bool,
@@ -211,7 +211,7 @@ impl<const N: usize> TinyAsciiStr<N> {
         // Indexing is protected by TinyStrError::TooLarge
         #[allow(clippy::indexing_slicing)]
         while i < len {
-            let b = code_points[start + i];
+            let b = code_units[start + i];
 
             if b == 0 {
                 found_null = true;
