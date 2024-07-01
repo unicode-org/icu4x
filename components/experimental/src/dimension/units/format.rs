@@ -15,12 +15,12 @@ use writeable::Writeable;
 
 use crate::alloc::borrow::ToOwned;
 use crate::dimension::provider::units::{Count, UnitsDisplayNameV1};
-use crate::dimension::units::options::{UnitsFormatterOptions, Width};
 
 pub struct FormattedUnit<'l> {
     pub(crate) value: &'l FixedDecimal,
     pub(crate) unit: &'l str,
-    pub(crate) options: &'l UnitsFormatterOptions,
+    // TODO: review using options and essentials.
+    // pub(crate) _options: &'l UnitsFormatterOptions,
     // pub(crate) essential: &'l UnitsEssentialsV1<'l>,
     pub(crate) display_name: &'l UnitsDisplayNameV1<'l>,
     pub(crate) fixed_decimal_formatter: &'l FixedDecimalFormatter,
@@ -59,6 +59,8 @@ fn test_basic() {
     use writeable::Writeable;
 
     use crate::dimension::units::formatter::UnitsFormatter;
+    use crate::dimension::units::options::UnitsFormatterOptions;
+    use crate::dimension::units::options::Width;
 
     let locale = locale!("en-US").into();
     let meter = "meter";
