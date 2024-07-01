@@ -468,7 +468,7 @@ impl DataExporter for BakedExporter {
             let ids_to_idents = deduplicated_values
                 .iter()
                 .flat_map(|(payload, ids)| {
-                    let mut idents = ids
+                    let ident = ids
                         .iter()
                         .map(|id| {
                             format!("_{}_{}", id.marker_attributes.as_str(), id.locale)
@@ -482,11 +482,9 @@ impl DataExporter for BakedExporter {
                                 })
                                 .collect::<String>()
                         })
-                        .collect::<Vec<_>>();
-                    let ident = proc_macro2::Ident::new(
-                        idents.select_nth_unstable(0).1,
-                        proc_macro2::Span::call_site(),
-                    );
+                        .min()
+                        .unwrap();
+                    let ident = proc_macro2::Ident::new(&ident, proc_macro2::Span::call_site());
 
                     idents_to_bakes.push((ident.clone(), payload.tokenize(&self.dependencies)));
                     ids.iter().map(move |id| (id.clone(), ident.clone()))
