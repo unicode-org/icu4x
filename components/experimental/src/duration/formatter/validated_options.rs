@@ -59,6 +59,7 @@ pub struct ValidatedDurationFormatterOptions {
     fractional_digits: FractionalDigits,
 }
 
+/// Error type for [DurationFormatterOptions] validation.
 #[non_exhaustive]
 pub enum DurationFormatterOptionsError {
     InvalidFractionalDigits,
@@ -179,6 +180,8 @@ impl ValidatedDurationFormatterOptions {
         Ok(builder.try_into().unwrap())
     }
 
+    /// Iterates over all unit fields of the struct, returning a tuple of the unit,
+    /// and mutable references to its style and the visibility.
     #[allow(dead_code)]
     pub(crate) fn iter_units(&mut self) -> [(Unit, &mut FieldStyle, &mut FieldDisplay); 10] {
         [
@@ -341,6 +344,7 @@ pub(crate) enum Unit {
 }
 
 impl Unit {
+    /// Returns the default digital style for the unit.
     pub(crate) fn digital_default(&self) -> FieldStyle {
         match self {
             Unit::Year => YearStyle::Short.into(),

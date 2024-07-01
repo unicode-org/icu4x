@@ -82,6 +82,8 @@ pub enum FieldDisplay {
     Always,
 }
 
+/// Enum used to process different unit styles in a generic way. 
+/// Implements `From` and `TryFrom` for all unit enums.
 #[non_exhaustive]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) enum FieldStyle {
