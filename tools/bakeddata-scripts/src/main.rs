@@ -9,7 +9,7 @@ use icu_datagen::prelude::*;
 use icu_datagen_bikeshed::{CoverageLevel, DatagenProvider};
 use icu_provider::export::*;
 use icu_provider::prelude::*;
-use std::collections::{BTreeMap, HashMap, HashSet};
+use std::collections::{BTreeMap, HashMap};
 use std::fs::File;
 use std::io::Write;
 use std::path::Path;
@@ -214,15 +214,8 @@ impl<E: DataExporter> DataExporter for StubExporter<E> {
 }
 
 struct StatisticsExporter<F> {
-    data: Mutex<HashMap<DataMarkerInfo, Data>>,
+    data: Mutex<HashMap<DataMarkerInfo, HashMap<DataIdentifierCow<'static>, (usize, u64)>>>,
     fingerprints: F,
-}
-
-#[derive(Default)]
-struct Data {
-    size_hash: HashMap<DataIdentifierCow<'static>, (usize, u64)>,
-    struct_sizes: HashMap<u64, usize>,
-    identifiers: HashSet<DataIdentifierCow<'static>>,
 }
 
 impl<F: Write + Send + Sync> DataExporter for StatisticsExporter<F> {
@@ -243,11 +236,12 @@ impl<F: Write + Send + Sync> DataExporter for StatisticsExporter<F> {
         payload.hash(&mut hasher);
         let hash = hasher.finish();
 
-        let mut data = self.data.lock().expect("poison");
-        let data = data.entry(marker).or_default();
-        data.size_hash.insert(id.into_owned(), (size, hash));
-        data.struct_sizes.insert(hash, size);
-        data.identifiers.insert(id.into_owned());
+        self.data
+            .lock()
+            .expect("poison")
+            .entry(marker)
+            .or_default()
+            .insert(id.into_owned(), (size, hash));
 
         Ok(())
     }
@@ -261,43 +255,8 @@ impl<F: Write + Send + Sync> DataExporter for StatisticsExporter<F> {
 
         let mut lines = Vec::new();
 
-        for (marker, data) in data.into_iter() {
-            if !marker.is_singleton {
-                let identifiers_count = data.identifiers.len();
-
-                let max_locale_len = data
-                    .identifiers
-                    .iter()
-                    .map(|id| id.locale.to_string().len())
-                    .max()
-                    .unwrap();
-                let max_attributes_len = data
-                    .identifiers
-                    .iter()
-                    .map(|id| id.marker_attributes.to_string().len())
-                    .max()
-                    .unwrap();
-
-                // icu_provider_baked::binary_search::Data.0 is a fat pointer
-                let identifiers_size = 2 * core::mem::size_of::<usize>()
-                    + data.identifiers.len()
-                        * (max_locale_len + max_attributes_len + core::mem::size_of::<&()>());
-
-                lines.push(format!(
-                    "{marker:?}, <lookup>, {identifiers_size}B, {identifiers_count} identifiers"
-                ));
-            }
-
-            if !marker.is_singleton {
-                let structs_count = data.struct_sizes.len();
-                let structs_size = data.struct_sizes.values().sum::<usize>();
-                lines.push(format!(
-                    "{marker:?}, <total>, {structs_size}B, {structs_count} unique payloads",
-                ));
-            }
-
+        for (marker, data) in data {
             let sorted = data
-                .size_hash
                 .into_iter()
                 .map(|(id, (size, hash))| {
                     (

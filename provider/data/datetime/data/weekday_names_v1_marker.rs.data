@@ -2,6 +2,10 @@
 /// Implement `DataProvider<WeekdayNamesV1Marker>` on the given struct using the data
 /// hardcoded in this file. This allows the struct to be used with
 /// `icu`'s `_unstable` constructors.
+///
+/// Using this implementation will embed the following data in the binary's data segment:
+/// * 25056B for the lookup data structure (1252 data identifiers)
+/// * 32698B for the actual data (489 unique structs)
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __impl_weekday_names_v1_marker {

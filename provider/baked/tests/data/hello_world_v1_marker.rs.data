@@ -2,6 +2,10 @@
 /// Implement `DataProvider<HelloWorldV1Marker>` on the given struct using the data
 /// hardcoded in this file. This allows the struct to be used with
 /// `icu`'s `_unstable` constructors.
+///
+/// Using this implementation will embed the following data in the binary's data segment:
+/// * 853B for the lookup data structure (27 data identifiers)
+/// * 479B for the actual data (27 unique structs)
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __impl_hello_world_v1_marker {

@@ -2,6 +2,10 @@
 /// Implement `DataProvider<DecimalSymbolsV1Marker>` on the given struct using the data
 /// hardcoded in this file. This allows the struct to be used with
 /// `icu`'s `_unstable` constructors.
+///
+/// Using this implementation will embed the following data in the binary's data segment:
+/// * 7324B for the lookup data structure (252 data identifiers)
+/// * 2040B for the actual data (45 unique structs)
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __impl_decimal_symbols_v1_marker {

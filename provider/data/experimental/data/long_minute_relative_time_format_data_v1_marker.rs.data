@@ -2,6 +2,10 @@
 /// Implement `DataProvider<LongMinuteRelativeTimeFormatDataV1Marker>` on the given struct using the data
 /// hardcoded in this file. This allows the struct to be used with
 /// `icu`'s `_unstable` constructors.
+///
+/// Using this implementation will embed the following data in the binary's data segment:
+/// * 2356B for the lookup data structure (130 data identifiers)
+/// * 15561B for the actual data (128 unique structs)
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __impl_long_minute_relative_time_format_data_v1_marker {

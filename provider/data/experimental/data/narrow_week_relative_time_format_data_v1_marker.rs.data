@@ -2,6 +2,10 @@
 /// Implement `DataProvider<NarrowWeekRelativeTimeFormatDataV1Marker>` on the given struct using the data
 /// hardcoded in this file. This allows the struct to be used with
 /// `icu`'s `_unstable` constructors.
+///
+/// Using this implementation will embed the following data in the binary's data segment:
+/// * 2644B for the lookup data structure (146 data identifiers)
+/// * 20363B for the actual data (144 unique structs)
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __impl_narrow_week_relative_time_format_data_v1_marker {

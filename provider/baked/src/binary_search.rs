@@ -13,19 +13,29 @@ use icu_provider::prelude::*;
 use tinystr::TinyAsciiStr;
 
 #[cfg(feature = "export")]
-pub fn bake(
+pub(crate) fn bake(
     marker_bake: &TokenStream,
     mut ids_to_idents: Vec<(DataIdentifierCow, proc_macro2::Ident)>,
     idents_to_bakes: Vec<(proc_macro2::Ident, TokenStream)>,
-) -> TokenStream {
+) -> (TokenStream, usize) {
+    let mut size = 0;
+
+    // Data.0 is a fat pointer
+    size += 2 * core::mem::size_of::<usize>();
+
+    // The idents are references
+    size += ids_to_idents.len() * core::mem::size_of::<usize>();
+
     let max_attributes_len = ids_to_idents
         .iter()
         .map(|(id, _)| id.marker_attributes.len())
-        .max();
+        .max()
+        .unwrap();
     let max_locale_len = ids_to_idents
         .iter()
         .map(|(id, _)| id.locale.to_string().len())
-        .max();
+        .max()
+        .unwrap();
 
     ids_to_idents.sort_by_cached_key(|(id, _)| {
         (
@@ -40,11 +50,12 @@ pub fn bake(
         }
     });
 
-    let (ty, reqs_to_idents) = if ids_to_idents
+    let (ty, id_bakes_to_idents) = if ids_to_idents
         .iter()
         .all(|(id, _)| id.marker_attributes.is_empty())
     {
         // Only DataLocales
+        size += ids_to_idents.len() * max_locale_len;
         (
             quote! { icu_provider_baked::binary_search::Locale<#max_locale_len> },
             ids_to_idents
@@ -57,6 +68,7 @@ pub fn bake(
         )
     } else if ids_to_idents.iter().all(|(id, _)| id.locale.is_empty()) {
         // Only marker attributes
+        size += ids_to_idents.len() * max_attributes_len;
         (
             quote! { icu_provider_baked::binary_search::Attributes<#max_attributes_len> },
             ids_to_idents
@@ -68,6 +80,7 @@ pub fn bake(
                 .collect(),
         )
     } else {
+        size += ids_to_idents.len() * (max_attributes_len + max_locale_len);
         (
             quote! { icu_provider_baked::binary_search::AttributesAndLocale<#max_attributes_len, #max_locale_len> },
             ids_to_idents
@@ -81,14 +94,17 @@ pub fn bake(
         )
     };
 
-    quote! {
-        icu_provider_baked::binary_search::Data<#ty, #marker_bake> = {
-            type S = <#marker_bake as icu_provider::DynamicDataMarker>::Yokeable;
-            #(#idents_to_bakes)*
-            use icu_provider_baked::binary_search::tinystr::tinystr;
-            icu_provider_baked::binary_search::Data(&[#(#reqs_to_idents,)*])
-        }
-    }
+    (
+        quote! {
+            icu_provider_baked::binary_search::Data<#ty, #marker_bake> = {
+                type S = <#marker_bake as icu_provider::DynamicDataMarker>::Yokeable;
+                #(#idents_to_bakes)*
+                use icu_provider_baked::binary_search::tinystr::tinystr;
+                icu_provider_baked::binary_search::Data(&[#(#id_bakes_to_idents,)*])
+            }
+        },
+        size,
+    )
 }
 
 pub struct Data<K: BinarySearchKey, M: DataMarker>(pub &'static [(K::Type, &'static M::Yokeable)]);
