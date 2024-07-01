@@ -4,6 +4,7 @@
 
 use std::collections::{BTreeMap, HashSet};
 
+use crate::cldr_serde::units::data::Patterns;
 use crate::cldr_serde::{self};
 use crate::DatagenProvider;
 
@@ -18,6 +19,36 @@ use zerovec::ZeroMap;
 
 impl DataProvider<UnitsEssentialsV1Marker> for DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<UnitsEssentialsV1Marker>, DataError> {
+        fn fill_si_binary(
+            data: &BTreeMap<String, Patterns>,
+            prefixes: &mut BTreeMap<PatternKey, String>,
+        ) -> Result<(), DataError> {
+            data.iter()
+                .filter(|(key, _)| key.starts_with("1024p"))
+                .map(|(key, patterns)| {
+                    let key = key.trim_start_matches("1024p");
+                    match key.parse::<u8>() {
+                        Ok(power) => Ok((PatternKey::Binary(power), patterns)),
+                        Err(_) => {
+                            Err(DataError::custom("Failed to parse power").with_debug_context(key))
+                        }
+                    }
+                })
+                .try_for_each(|elem| match elem {
+                    Ok((key, patterns)) => {
+                        if let Some(pattern) = patterns.unit_prefix_pattern.as_ref() {
+                            prefixes.insert(key, pattern.to_string());
+                            Ok(())
+                        } else {
+                            Err(DataError::custom("Failed to get pattern").with_debug_context(&key))
+                        }
+                    }
+                    Err(e) => Err(e),
+                })?;
+
+            Ok(())
+        }
+
         self.check_req::<UnitsEssentialsV1Marker>(req)?;
 
         // Get units
@@ -94,6 +125,9 @@ impl DataProvider<UnitsEssentialsV1Marker> for DatagenProvider {
                 );
             });
         }
+
+        // Fill si binary
+        fill_si_binary(length_data, &mut prefixes)?;
 
         let result = UnitsEssentialsV1 {
             per: per.into(),

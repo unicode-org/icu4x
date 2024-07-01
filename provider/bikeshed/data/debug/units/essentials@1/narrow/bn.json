@@ -2,6 +2,54 @@
   "prefixes": [
     [
       {
+        "Binary": 1
+      },
+      "{0}কি"
+    ],
+    [
+      {
+        "Binary": 2
+      },
+      "Mi{0}"
+    ],
+    [
+      {
+        "Binary": 3
+      },
+      "Gi{0}"
+    ],
+    [
+      {
+        "Binary": 4
+      },
+      "Ti{0}"
+    ],
+    [
+      {
+        "Binary": 5
+      },
+      "Pi{0}"
+    ],
+    [
+      {
+        "Binary": 6
+      },
+      "Ei{0}"
+    ],
+    [
+      {
+        "Binary": 7
+      },
+      "Zi{0}"
+    ],
+    [
+      {
+        "Binary": 8
+      },
+      "Yi{0}"
+    ],
+    [
+      {
         "Power": {
           "power": "Two",
           "count": "Other"
