@@ -174,12 +174,11 @@ impl DataPayload<ExportMarker> {
         let mut serializer = postcard::Serializer {
             output: Size::default(),
         };
-        self.get()
+        let _infallible = self.get()
             .payload
-            .serialize_yoke(&mut <dyn erased_serde::Serializer>::erase(&mut serializer))
-            .unwrap();
+            .serialize_yoke(&mut <dyn erased_serde::Serializer>::erase(&mut serializer));
 
-        serializer.output.finalize().unwrap()
+        serializer.output.finalize().unwrap_or_default()
     }
 }
 

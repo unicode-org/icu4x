@@ -484,7 +484,7 @@ impl DataExporter for BakedExporter {
                         })
                         .collect::<Vec<_>>();
                     let ident = proc_macro2::Ident::new(
-                        &idents.select_nth_unstable(0).1,
+                        idents.select_nth_unstable(0).1,
                         proc_macro2::Span::call_site(),
                     );
 
