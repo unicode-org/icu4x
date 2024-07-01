@@ -6,7 +6,7 @@ use core::any::Any;
 
 use crate::dynutil::UpcastDataPayload;
 use crate::prelude::*;
-use alloc::boxed::Box;
+use alloc::sync::Arc;
 use databake::{Bake, CrateEnv, TokenStream};
 use yoke::trait_hack::YokeTraitHack;
 use yoke::*;
@@ -62,9 +62,9 @@ where
 }
 
 #[doc(hidden)] // macro
-#[derive(yoke::Yokeable)]
+#[derive(yoke::Yokeable, Clone)]
 pub struct ExportBox {
-    payload: Box<dyn ExportableDataPayload + Sync + Send>,
+    payload: Arc<dyn ExportableDataPayload + Sync + Send>,
 }
 
 impl PartialEq for ExportBox {
@@ -72,6 +72,8 @@ impl PartialEq for ExportBox {
         self.payload.eq_dyn(&*other.payload)
     }
 }
+
+impl Eq for ExportBox {}
 
 impl core::fmt::Debug for ExportBox {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
@@ -90,7 +92,7 @@ where
 {
     fn upcast(other: DataPayload<M>) -> DataPayload<ExportMarker> {
         DataPayload::from_owned(ExportBox {
-            payload: Box::new(other),
+            payload: Arc::new(other),
         })
     }
 }
@@ -164,6 +166,49 @@ impl DataPayload<ExportMarker> {
     /// ```
     pub fn tokenize(&self, env: &CrateEnv) -> TokenStream {
         self.get().payload.bake_yoke(env)
+    }
+
+    /// Returns the data size using postcard encoding
+    pub fn postcard_size(&self) -> usize {
+        use postcard::ser_flavors::{Flavor, Size};
+        let mut serializer = postcard::Serializer {
+            output: Size::default(),
+        };
+        self.get()
+            .payload
+            .serialize_yoke(&mut <dyn erased_serde::Serializer>::erase(&mut serializer))
+            .unwrap();
+
+        serializer.output.finalize().unwrap()
+    }
+}
+
+impl core::hash::Hash for DataPayload<ExportMarker> {
+    fn hash<H: core::hash::Hasher>(&self, state: &mut H) {
+        use postcard::ser_flavors::Flavor;
+
+        struct HashFlavor<'a, H>(&'a mut H);
+        impl<'a, H: core::hash::Hasher> Flavor for HashFlavor<'a, H> {
+            type Output = ();
+
+            fn try_push(&mut self, data: u8) -> postcard::Result<()> {
+                self.0.write_u8(data);
+                Ok(())
+            }
+
+            fn finalize(self) -> postcard::Result<Self::Output> {
+                Ok(())
+            }
+        }
+
+        let _infallible =
+            self.get()
+                .payload
+                .serialize_yoke(&mut <dyn erased_serde::Serializer>::erase(
+                    &mut postcard::Serializer {
+                        output: HashFlavor(state),
+                    },
+                ));
     }
 }
 
