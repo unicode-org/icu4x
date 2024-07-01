@@ -168,6 +168,14 @@ pub struct BakedExporter {
     dependencies: CrateEnv,
 }
 
+#[derive(Default)]
+pub struct Statistics {
+    pub structs_total_size: usize,
+    pub structs_count: usize,
+    pub lookup_struct_size: usize,
+    pub identifiers_count: usize,
+}
+
 impl std::fmt::Debug for BakedExporter {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("BakedExporter")
@@ -248,8 +256,9 @@ impl BakedExporter {
         };
 
         if !self.use_separate_crates {
-            // Don't search the whole file, there should be a macro in the first 300 bytes
-            if formatted[..300].contains("macro_rules!") || formatted[..100].contains("include!") {
+            // Don't search the whole file, there should be a macro in the first 1000 bytes
+            if formatted[..1000].contains("macro_rules!") || formatted[..1000].contains("include!")
+            {
                 // Formatted, otherwise it'd be `macro_rules !`
                 formatted = formatted
                     .replace("icu_", "icu::")
@@ -298,15 +307,38 @@ impl BakedExporter {
     fn write_impl_macros(
         &self,
         marker: DataMarkerInfo,
+        stats: Statistics,
         body: TokenStream,
         iterable_body: TokenStream,
     ) -> Result<(), DataError> {
         let marker_unqualified = bake_marker(marker).into_iter().last().unwrap().to_string();
 
+        let &Statistics {
+            structs_total_size,
+            structs_count,
+            lookup_struct_size,
+            identifiers_count,
+            ..
+        } = &stats;
+
         let doc = format!(
-            " Implement `DataProvider<{}>` on the given struct using the data",
-            marker_unqualified
+            " Implement `DataProvider<{marker_unqualified}>` on the given struct using the data\n \
+            hardcoded in this file. This allows the struct to be used with\n \
+            `icu`'s `_unstable` constructors."
         );
+
+        let size_doc = if marker.is_singleton {
+            format!(
+                " Using this implementation will embed the following data in the binary's data segment:\n \
+                * {structs_total_size}B for the singleton data struct"
+            )
+        } else {
+            format!(
+                " Using this implementation will embed the following data in the binary's data segment:\n \
+                * {lookup_struct_size}B for the lookup data structure ({identifiers_count} data identifiers)\n \
+                * {structs_total_size}B for the actual data ({structs_count} unique structs)"
+            )
+        };
 
         let ident = marker_unqualified.to_snake_case();
 
@@ -323,8 +355,8 @@ impl BakedExporter {
             Path::new(&format!("{ident}.rs.data")),
             quote! {
                 #[doc = #doc]
-                /// hardcoded in this file. This allows the struct to be used with
-                /// `icu`'s `_unstable` constructors.
+                ///
+                #[doc = #size_doc]
                 #[doc(hidden)] // macro
                 #[macro_export]
                 macro_rules! #prefixed_macro_ident {
@@ -390,7 +422,14 @@ impl DataExporter for BakedExporter {
 
         let bake = payload.tokenize(&self.dependencies);
 
-        self.write_impl_macros(marker, quote! {
+        let stats = Statistics {
+            structs_total_size: payload.postcard_size(),
+            structs_count: 1,
+            identifiers_count: 1,
+            lookup_struct_size: 0,
+        };
+
+        self.write_impl_macros(marker, stats, quote! {
             #maybe_msrv
             impl $provider {
                 // Exposing singleton structs as consts allows us to get rid of fallibility
@@ -439,6 +478,7 @@ impl DataExporter for BakedExporter {
         if deduplicated_values.is_empty() {
             self.write_impl_macros(
                 marker,
+                Default::default(),
                 quote! {
                     #maybe_msrv
                     impl icu_provider::DataProvider<#marker_bake> for $provider {
@@ -503,7 +543,21 @@ impl DataExporter for BakedExporter {
             .parse::<TokenStream>()
             .unwrap();
 
-            let data = crate::binary_search::bake(&marker_bake, ids_to_idents, idents_to_bakes);
+            let (data, lookup_struct_size) =
+                crate::zerotrie::bake(&marker_bake, ids_to_idents, idents_to_bakes);
+
+            let stats = Statistics {
+                structs_total_size: deduplicated_values
+                    .keys()
+                    .map(|payload| payload.postcard_size())
+                    .sum(),
+                structs_count: deduplicated_values.len(),
+                identifiers_count: deduplicated_values
+                    .values()
+                    .flat_map(|ids| ids.iter())
+                    .count(),
+                lookup_struct_size,
+            };
 
             let search = if !self.use_internal_fallback
                 || deduplicated_values
@@ -544,6 +598,7 @@ impl DataExporter for BakedExporter {
 
             self.write_impl_macros(
                 marker,
+                stats,
                 quote! {
                     #maybe_msrv
                     impl $provider {

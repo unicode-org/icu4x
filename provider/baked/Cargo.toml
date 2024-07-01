@@ -17,6 +17,8 @@ include.workspace = true
 
 [dependencies]
 icu_provider = { workspace = true }
+writeable = { workspace = true }
+zerotrie = { workspace = true, features = ["alloc"] }
 
 crlify = { workspace = true, optional = true }
 databake = { workspace = true, optional = true}
@@ -25,6 +27,7 @@ itertools = { workspace = true, optional = true }
 log = { workspace = true, optional = true }
 proc-macro2 = { workspace = true, optional = true }
 heck = { workspace = true, optional = true }
+tinystr.workspace = true
 
 [dev-dependencies]
 icu_provider = { path = "../core", features = ["export"] }

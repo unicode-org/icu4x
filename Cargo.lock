@@ -1546,6 +1546,9 @@ dependencies = [
  "itertools",
  "log",
  "proc-macro2",
+ "tinystr",
+ "writeable",
+ "zerotrie",
 ]
 
 [[package]]
