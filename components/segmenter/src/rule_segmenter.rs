@@ -42,7 +42,7 @@ pub struct RuleBreakIterator<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> {
     pub(crate) len: usize,
     pub(crate) current_pos_data: Option<(usize, Y::CharType)>,
     pub(crate) result_cache: alloc::vec::Vec<usize>,
-    pub(crate) data: &'l RuleBreakDataV1<'l>,
+    pub(crate) data: &'l RuleBreakDataV2<'l>,
     pub(crate) complex: Option<&'l ComplexPayloads>,
     pub(crate) boundary_property: u8,
 }

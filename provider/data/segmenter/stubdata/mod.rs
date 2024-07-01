@@ -1,11 +1,11 @@
 // @generated
 include!("dictionary_for_word_only_auto_v1_marker.rs.data");
 include!("dictionary_for_word_line_extended_v1_marker.rs.data");
-include!("grapheme_cluster_break_data_v1_marker.rs.data");
-include!("line_break_data_v1_marker.rs.data");
+include!("grapheme_cluster_break_data_v2_marker.rs.data");
+include!("line_break_data_v2_marker.rs.data");
 include!("lstm_for_word_line_auto_v1_marker.rs.data");
-include!("sentence_break_data_v1_marker.rs.data");
-include!("word_break_data_v1_marker.rs.data");
+include!("sentence_break_data_v2_marker.rs.data");
+include!("word_break_data_v2_marker.rs.data");
 /// Marks a type as a data provider. You can then use macros like
 /// `impl_core_helloworld_v1` to add implementations.
 ///
@@ -37,11 +37,11 @@ macro_rules! impl_data_provider {
         make_provider!($provider);
         impl_dictionary_for_word_only_auto_v1_marker!($provider);
         impl_dictionary_for_word_line_extended_v1_marker!($provider);
-        impl_grapheme_cluster_break_data_v1_marker!($provider);
-        impl_line_break_data_v1_marker!($provider);
+        impl_grapheme_cluster_break_data_v2_marker!($provider);
+        impl_line_break_data_v2_marker!($provider);
         impl_lstm_for_word_line_auto_v1_marker!($provider);
-        impl_sentence_break_data_v1_marker!($provider);
-        impl_word_break_data_v1_marker!($provider);
+        impl_sentence_break_data_v2_marker!($provider);
+        impl_word_break_data_v2_marker!($provider);
     };
 }
 #[allow(unused_macros)]
@@ -53,11 +53,11 @@ macro_rules! impl_any_provider {
                 match marker.path.hashed() {
                     h if h == <icu::segmenter::provider::DictionaryForWordOnlyAutoV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::segmenter::provider::DictionaryForWordOnlyAutoV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::segmenter::provider::DictionaryForWordLineExtendedV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::segmenter::provider::DictionaryForWordLineExtendedV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::segmenter::provider::GraphemeClusterBreakDataV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::segmenter::provider::GraphemeClusterBreakDataV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::segmenter::provider::LineBreakDataV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::segmenter::provider::LineBreakDataV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::segmenter::provider::GraphemeClusterBreakDataV2Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::segmenter::provider::GraphemeClusterBreakDataV2Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::segmenter::provider::LineBreakDataV2Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::segmenter::provider::LineBreakDataV2Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::segmenter::provider::LstmForWordLineAutoV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::segmenter::provider::LstmForWordLineAutoV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::segmenter::provider::SentenceBreakDataV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::segmenter::provider::SentenceBreakDataV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::segmenter::provider::WordBreakDataV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::segmenter::provider::WordBreakDataV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::segmenter::provider::SentenceBreakDataV2Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::segmenter::provider::SentenceBreakDataV2Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::segmenter::provider::WordBreakDataV2Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::segmenter::provider::WordBreakDataV2Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     _ => Err(icu_provider::DataErrorKind::MarkerNotFound.with_req(marker, req)),
                 }
             }
