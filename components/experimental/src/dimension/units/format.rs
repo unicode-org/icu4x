@@ -35,12 +35,11 @@ impl<'l> Writeable for FormattedUnit<'l> {
         let plural_category = self.plural_rules.category_for(self.value);
         let count = Count::from(plural_category);
         let mut unit_pattern = None;
-        let display_name = match self.options.width {
-            Width::Short => self.display_name.short.get(&count),
-            Width::Long => self.display_name.long.get(&count),
-            Width::Narrow => self.display_name.narrow.get(&count),
-        }
-        .unwrap_or_else(|| unit_pattern.insert("{0} ".to_owned() + self.unit));
+        let display_name = self
+            .display_name
+            .patterns
+            .get(&count)
+            .unwrap_or_else(|| unit_pattern.insert("{0} ".to_owned() + self.unit));
 
         // TODO: once the patterns are implemented to be used in the data side, we do not need this.
         let pattern =

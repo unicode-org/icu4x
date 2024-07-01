@@ -1,0 +1,6 @@
+{
+  "patterns": {
+    "One": "{0} kilometre",
+    "Other": "{0} kilometre"
+  }
+}
