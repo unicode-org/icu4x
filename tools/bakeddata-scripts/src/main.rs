@@ -214,6 +214,7 @@ impl<E: DataExporter> DataExporter for StubExporter<E> {
 }
 
 struct StatisticsExporter<F> {
+    #[allow(clippy::type_complexity)] // meh, two level map
     data: Mutex<HashMap<DataMarkerInfo, HashMap<DataIdentifierCow<'static>, (usize, u64)>>>,
     fingerprints: F,
 }
