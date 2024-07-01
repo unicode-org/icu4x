@@ -46,6 +46,7 @@ pub mod provider {
         impl_short_compact_decimal_format_data_v1_marker!(Baked);
         impl_currency_essentials_v1_marker!(Baked);
         impl_units_display_name_v1_marker!(Baked);
+        impl_duration_digital_data_v1_marker!(Baked);
         impl_language_display_names_v1_marker!(Baked);
         impl_locale_display_names_v1_marker!(Baked);
         impl_region_display_names_v1_marker!(Baked);
@@ -93,7 +94,7 @@ pub mod provider {
         super::dimension::provider::currency::CurrencyEssentialsV1Marker::INFO,
         super::dimension::provider::percent::PercentEssentialsV1Marker::INFO,
         super::dimension::provider::units::UnitsDisplayNameV1Marker::INFO,
-        super::duration::provider::DigitalDurationDataV1Marker::INFO,
+        super::duration::provider::digital::DigitalDurationDataV1Marker::INFO,
         super::displaynames::provider::LanguageDisplayNamesV1Marker::INFO,
         super::displaynames::provider::LocaleDisplayNamesV1Marker::INFO,
         super::displaynames::provider::RegionDisplayNamesV1Marker::INFO,

@@ -3,26 +3,16 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cldr_serde;
-use crate::provider::transform::cldr::cldr_serde;
-use crate::provider::DatagenProvider;
-use crate::provider::IterableDataProviderCached;
-
-use std::borrow::Cow;
-
-use icu_provider::datagen::IterableDataProvider;
-use std::collections::BTreeMap;
-use std::collections::HashMap;
+use crate::cldr_serde::units::data::DurationUnits;
+use crate::DatagenProvider;
+use icu_provider::prelude::*;
 use std::collections::HashSet;
 use std::str::FromStr;
-use tinystr::tinystr;
-use tinystr::UnvalidatedTinyAsciiStr;
-use zerovec::VarZeroVec;
-use zerovec::ZeroMap;
 
-use icu_provider::DataProvider;
-
-use icu_experimental::duration::provider::*;
-use icu_provider::prelude::*;
+use icu::experimental::duration::provider::digital::{
+    DigitalDurationDataV1, DigitalDurationDataV1Marker, HmVariant, HmsVariant, MsVariant,
+    UnknownPatternError,
+};
 
 impl DataProvider<DigitalDurationDataV1Marker> for DatagenProvider {
     fn load(
@@ -40,21 +30,29 @@ impl DataProvider<DigitalDurationDataV1Marker> for DatagenProvider {
         // Get units
         let units_format_data: &cldr_serde::units::data::Resource =
             self.cldr()?.units().read_and_parse(&langid, "units.json")?;
-        let duration_data = &units_format_data.main.value.units.duration;
+        let DurationUnits { hms, hm, ms } = &units_format_data.main.value.units.duration;
 
-        let mut result = DigitalDurationDataV1 {
-            ..todo!()
+        let conversion_err =
+            |msg, err: &UnknownPatternError| DataError::custom(msg).with_debug_context(err);
+
+        let result = DigitalDurationDataV1 {
+            hms: HmsVariant::from_str(&hms.pat)
+                .map_err(|e| conversion_err("Invalid hms pattern", &e))?,
+            hm: HmVariant::from_str(&hm.pat)
+                .map_err(|e| conversion_err("Invalid hm pattern", &e))?,
+            ms: MsVariant::from_str(&ms.pat)
+                .map_err(|e| conversion_err("Invalid ms pattern", &e))?,
         };
 
         Ok(DataResponse {
-            metadata: Default::default("DigitalDurationDataV1Marker"),
-            payload: Some(DataPayload::from_owned(result)),
+            metadata: Default::default(),
+            payload: DataPayload::from_owned(result),
         })
     }
 }
 
-impl IterableDataProvider<DigitalDurationDataV1Marker> for DatagenProvider {
-    fn iter_ids(&self) -> Result<std::collections::HashSet<DataIdentifierCow>, DataError> {
-        Ok(todo!("Implement iter_ids for DigitalDurationDataV1Marker"))
+impl crate::IterableDataProviderCached<DigitalDurationDataV1Marker> for DatagenProvider {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+        todo!("IterableDataProviderCached for DigitalDurationDataV1Marker")
     }
 }
