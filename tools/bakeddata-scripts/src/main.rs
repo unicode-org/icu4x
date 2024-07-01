@@ -267,33 +267,27 @@ impl<F: Write + Send + Sync> DataExporter for StatisticsExporter<F> {
         let data = core::mem::take(self.data.get_mut().expect("poison"));
 
         let mut lines = Vec::new();
-        let mut seen_static_strs = HashSet::new();
 
         for (marker, data) in data.into_iter() {
             if !marker.is_singleton {
                 let identifiers_count = data.identifiers.len();
-                let mut identifiers_size = 0;
+
+                let max_locale_len = data
+                    .identifiers
+                    .iter()
+                    .map(|id| id.locale.to_string().len())
+                    .max().unwrap();
+                let max_attributes_len = data
+                    .identifiers
+                    .iter()
+                    .map(|id| id.marker_attributes.to_string().len())
+                    .max().unwrap();
 
                 // icu_provider_baked::binary_search::Data.0 is a fat pointer
-                identifiers_size += 2 * core::mem::size_of::<usize>();
+                let identifiers_size = 2 * core::mem::size_of::<usize>()
+                    + data.identifiers.len()
+                        * (max_locale_len + max_attributes_len + core::mem::size_of::<&()>());
 
-                for id in data.identifiers {
-                    if !id.locale.is_und() {
-                        // Size of &'static str
-                        identifiers_size += 2 * core::mem::size_of::<usize>();
-                        let locale_str = id.locale.to_string();
-                        seen_static_strs.insert(locale_str);
-                    }
-                    if !id.marker_attributes.is_empty() {
-                        // Size of &'static str
-                        identifiers_size += 2 * core::mem::size_of::<usize>();
-                        let attrs_str = id.marker_attributes.to_string();
-                        seen_static_strs.insert(attrs_str);
-                    }
-
-                    // Size of &'static M::Yokeable
-                    identifiers_size += core::mem::size_of::<usize>();
-                }
                 lines.push(format!(
                     "{marker:?}, <lookup>, {identifiers_size}B, {identifiers_count} identifiers"
                 ));
@@ -337,14 +331,6 @@ impl<F: Write + Send + Sync> DataExporter for StatisticsExporter<F> {
                     seen.insert(hash, id.clone());
                 }
             }
-        }
-
-        if !seen_static_strs.is_empty() {
-            let static_strs_size = seen_static_strs.iter().map(String::len).sum::<usize>();
-            let static_strs_count = seen_static_strs.len();
-            lines.push(format!(
-                "*, <'static strs>, {static_strs_size}B, {static_strs_count} unique static strings"
-            ));
         }
 
         lines.sort();
