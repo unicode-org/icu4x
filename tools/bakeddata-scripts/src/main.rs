@@ -276,12 +276,14 @@ impl<F: Write + Send + Sync> DataExporter for StatisticsExporter<F> {
                     .identifiers
                     .iter()
                     .map(|id| id.locale.to_string().len())
-                    .max().unwrap();
+                    .max()
+                    .unwrap();
                 let max_attributes_len = data
                     .identifiers
                     .iter()
                     .map(|id| id.marker_attributes.to_string().len())
-                    .max().unwrap();
+                    .max()
+                    .unwrap();
 
                 // icu_provider_baked::binary_search::Data.0 is a fat pointer
                 let identifiers_size = 2 * core::mem::size_of::<usize>()

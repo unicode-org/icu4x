@@ -18,18 +18,20 @@ pub fn bake(
     mut ids_to_idents: Vec<(DataIdentifierCow, proc_macro2::Ident)>,
     idents_to_bakes: Vec<(proc_macro2::Ident, TokenStream)>,
 ) -> TokenStream {
-    use core::cmp;
-
-    let mut max_attributes_len = 0;
-    let mut max_locale_len = 0;
+    let max_attributes_len = ids_to_idents
+        .iter()
+        .map(|(id, _)| id.marker_attributes.len())
+        .max();
+    let max_locale_len = ids_to_idents
+        .iter()
+        .map(|(id, _)| id.locale.to_string().len())
+        .max();
 
     ids_to_idents.sort_by_cached_key(|(id, _)| {
-        let attribute_str = id.marker_attributes.to_string();
-        max_attributes_len = cmp::max(max_attributes_len, attribute_str.len());
-        let locale_str = id.locale.to_string();
-        max_locale_len = cmp::max(max_locale_len, locale_str.len());
-
-        (attribute_str, locale_str)
+        (
+            id.marker_attributes.as_str().to_owned(),
+            id.locale.to_string(),
+        )
     });
 
     let idents_to_bakes = idents_to_bakes.into_iter().map(|(ident, bake)| {
@@ -60,7 +62,7 @@ pub fn bake(
             ids_to_idents
                 .iter()
                 .map(|(id, i)| {
-                    let attribute_str = id.marker_attributes.to_string();
+                    let attribute_str = id.marker_attributes.as_str();
                     quote!((tinystr!(#max_attributes_len, #attribute_str), #i))
                 })
                 .collect(),
