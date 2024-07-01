@@ -87,7 +87,7 @@ impl UnitsFormatter {
         buffer[pos..pos + unit.len()].copy_from_slice(unit.as_bytes());
         pos += unit.len();
 
-        let attribute = std::str::from_utf8(&buffer[..pos])
+        let attribute = core::str::from_utf8(&buffer[..pos])(&buffer[..pos])
             .map_err(|_| DataError::custom("Failed to parse the attribute"))?;
 
         let unit_attribute = DataMarkerAttributes::try_from_str(attribute)
@@ -150,7 +150,7 @@ impl UnitsFormatter {
         buffer[pos..pos + unit.len()].copy_from_slice(unit.as_bytes());
         pos += unit.len();
 
-        let attribute = std::str::from_utf8(&buffer[..pos])
+        let attribute = core::str::from_utf8(&buffer[..pos])
             .map_err(|_| DataError::custom("Failed to parse the attribute"))?;
 
         let unit_attribute = DataMarkerAttributes::try_from_str(attribute)
