@@ -4,7 +4,7 @@
 /// `icu`'s `_unstable` constructors.
 ///
 /// Using this implementation will embed the following data in the binary's data segment:
-/// * 291B for the lookup data structure (25 data identifiers)
+/// * 298B for the lookup data structure (25 data identifiers)
 /// * 64B for the actual data (10 unique structs)
 #[doc(hidden)]
 #[macro_export]
@@ -14,70 +14,72 @@ macro_rules! __impl_plural_ranges_v1_marker {
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
         #[clippy::msrv = "1.70"]
         impl $provider {
-            const DATA_PLURAL_RANGES_V1_MARKER: icu_provider_baked::binary_search::Data<icu_provider_baked::binary_search::Locale<3usize>, icu::plurals::provider::PluralRangesV1Marker> = {
-                type S = <icu::plurals::provider::PluralRangesV1Marker as icu_provider::DynamicDataMarker>::Yokeable;
-                const __AF: &S = &icu::plurals::provider::PluralRangesV1 {
-                    ranges: unsafe {
-                        #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") })
-                    },
-                };
-                const __AR: &S = &icu::plurals::provider::PluralRangesV1 {
-                    ranges: unsafe {
-                        #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02\x03\x12\x13#") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0\x01\x01\0") })
-                    },
-                };
-                const __FA: &S = &icu::plurals::provider::PluralRangesV1 {
-                    ranges: unsafe {
-                        #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\"") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") })
-                    },
-                };
-                const __HE: &S = &icu::plurals::provider::PluralRangesV1 {
-                    ranges: unsafe {
-                        #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02\x03#") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0\0") })
-                    },
-                };
-                const __KA: &S = &icu::plurals::provider::PluralRangesV1 {
-                    ranges: unsafe {
-                        #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02 ") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\x02") })
-                    },
-                };
-                const __LV: &S = &icu::plurals::provider::PluralRangesV1 {
-                    ranges: unsafe {
-                        #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x11!") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0\0") })
-                    },
-                };
-                const __MK: &S = &icu::plurals::provider::PluralRangesV1 {
-                    ranges: unsafe {
-                        #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02\"") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0") })
-                    },
-                };
-                const __RO: &S = &icu::plurals::provider::PluralRangesV1 {
-                    ranges: unsafe {
-                        #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"B") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x04") })
-                    },
-                };
-                const __SL: &S = &icu::plurals::provider::PluralRangesV1 {
-                    ranges: unsafe {
-                        #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02\"2B") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x04\x04\x04\x04") })
-                    },
-                };
-                const __UND: &S = &icu::plurals::provider::PluralRangesV1 {
-                    ranges: unsafe {
-                        #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::ZeroVec::new())
-                    },
-                };
-                use icu_provider_baked::binary_search::tinystr::tinystr;
-                icu_provider_baked::binary_search::Data(&[(tinystr!(3usize, "af"), __AF), (tinystr!(3usize, "ar"), __AR), (tinystr!(3usize, "bg"), __AF), (tinystr!(3usize, "ca"), __AF), (tinystr!(3usize, "en"), __AF), (tinystr!(3usize, "es"), __AF), (tinystr!(3usize, "et"), __AF), (tinystr!(3usize, "eu"), __AF), (tinystr!(3usize, "fa"), __FA), (tinystr!(3usize, "fi"), __AF), (tinystr!(3usize, "he"), __HE), (tinystr!(3usize, "ia"), __AF), (tinystr!(3usize, "ka"), __KA), (tinystr!(3usize, "lv"), __LV), (tinystr!(3usize, "mk"), __MK), (tinystr!(3usize, "no"), __AF), (tinystr!(3usize, "or"), __FA), (tinystr!(3usize, "pcm"), __AF), (tinystr!(3usize, "ro"), __RO), (tinystr!(3usize, "sd"), __FA), (tinystr!(3usize, "si"), __AF), (tinystr!(3usize, "sl"), __SL), (tinystr!(3usize, "sv"), __AF), (tinystr!(3usize, "und"), __UND), (tinystr!(3usize, "ur"), __AF)])
+            const DATA_PLURAL_RANGES_V1_MARKER: icu_provider_baked::zerotrie::Data<icu::plurals::provider::PluralRangesV1Marker> = icu_provider_baked::zerotrie::Data {
+                trie: icu_provider_baked::zerotrie::ZeroTrieSimpleAscii::from_store(&[208u8, 97u8, 98u8, 99u8, 101u8, 102u8, 104u8, 105u8, 107u8, 108u8, 109u8, 110u8, 111u8, 112u8, 114u8, 115u8, 117u8, 6u8, 8u8, 10u8, 22u8, 28u8, 30u8, 32u8, 34u8, 36u8, 38u8, 40u8, 42u8, 45u8, 47u8, 59u8, 194u8, 102u8, 114u8, 1u8, 128u8, 129u8, 103u8, 128u8, 97u8, 128u8, 196u8, 110u8, 115u8, 116u8, 117u8, 1u8, 2u8, 3u8, 128u8, 128u8, 128u8, 128u8, 194u8, 97u8, 105u8, 1u8, 130u8, 128u8, 101u8, 131u8, 97u8, 128u8, 97u8, 132u8, 118u8, 133u8, 107u8, 134u8, 111u8, 128u8, 114u8, 130u8, 99u8, 109u8, 128u8, 111u8, 135u8, 196u8, 100u8, 105u8, 108u8, 118u8, 1u8, 2u8, 3u8, 130u8, 128u8, 136u8, 128u8, 194u8, 110u8, 114u8, 2u8, 100u8, 137u8, 128u8]),
+                values: &{
+                    type S = <icu::plurals::provider::PluralRangesV1Marker as icu_provider::DynamicDataMarker>::Yokeable;
+                    const __AF: &S = &icu::plurals::provider::PluralRangesV1 {
+                        ranges: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") })
+                        },
+                    };
+                    const __AR: &S = &icu::plurals::provider::PluralRangesV1 {
+                        ranges: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02\x03\x12\x13#") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0\x01\x01\0") })
+                        },
+                    };
+                    const __FA: &S = &icu::plurals::provider::PluralRangesV1 {
+                        ranges: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\"") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") })
+                        },
+                    };
+                    const __HE: &S = &icu::plurals::provider::PluralRangesV1 {
+                        ranges: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02\x03#") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0\0") })
+                        },
+                    };
+                    const __KA: &S = &icu::plurals::provider::PluralRangesV1 {
+                        ranges: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02 ") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\x02") })
+                        },
+                    };
+                    const __LV: &S = &icu::plurals::provider::PluralRangesV1 {
+                        ranges: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x11!") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0\0") })
+                        },
+                    };
+                    const __MK: &S = &icu::plurals::provider::PluralRangesV1 {
+                        ranges: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02\"") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0") })
+                        },
+                    };
+                    const __RO: &S = &icu::plurals::provider::PluralRangesV1 {
+                        ranges: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"B") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x04") })
+                        },
+                    };
+                    const __SL: &S = &icu::plurals::provider::PluralRangesV1 {
+                        ranges: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02\"2B") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x04\x04\x04\x04") })
+                        },
+                    };
+                    const __UND: &S = &icu::plurals::provider::PluralRangesV1 {
+                        ranges: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::ZeroVec::new())
+                        },
+                    };
+                    [&__AF, &__AR, &__FA, &__HE, &__KA, &__LV, &__MK, &__RO, &__SL, &__UND]
+                },
             };
         }
         #[clippy::msrv = "1.70"]
