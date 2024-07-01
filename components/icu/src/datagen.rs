@@ -71,9 +71,10 @@ icu_registry::registry!(cb);
 ///
 /// ```no_run
 /// # use icu_provider::DataMarker;
+/// # use std::path::Path;
 /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
 /// assert_eq!(
-///     icu::markers_for_bin("target/release/my-app")?,
+///     icu::markers_for_bin(Path::new("target/release/my-app"))?,
 ///     std::collections::HashSet::from_iter([
 ///         icu::list::provider::AndListV2Marker::INFO,
 ///         icu::list::provider::OrListV2Marker::INFO,

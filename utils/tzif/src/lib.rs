@@ -14,7 +14,8 @@
 //!
 //! ### Parse TZif Files
 //! ```no_run
-//! let data = tzif::parse_tzif_file("path_to_file").unwrap();
+//! # use std::path::Path;
+//! let data = tzif::parse_tzif_file(Path::new("path_to_file")).unwrap();
 //! ```
 //!
 //! ### Parse POSIX time-zone strings

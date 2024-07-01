@@ -24,7 +24,7 @@ use std::path::PathBuf;
 ///
 /// // Create a DataProvider from data files stored in a filesystem directory:
 /// let provider =
-///     FsDataProvider::try_new("tests/data/json").expect("Directory exists");
+///     FsDataProvider::try_new("tests/data/json".into()).expect("Directory exists");
 ///
 /// // Check that it works:
 /// let formatter = HelloWorldFormatter::try_new_with_buffer_provider(
@@ -49,7 +49,7 @@ impl FsDataProvider {
     /// ```
     /// use icu_provider_fs::FsDataProvider;
     ///
-    /// let provider = FsDataProvider::try_new("/path/to/data/directory")
+    /// let provider = FsDataProvider::try_new("/path/to/data/directory".into())
     ///     .expect_err("Specify a real directory in the line above");
     /// ```
     pub fn try_new(root: PathBuf) -> Result<Self, DataError> {
