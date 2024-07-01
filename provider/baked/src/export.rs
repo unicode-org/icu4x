@@ -154,9 +154,12 @@ pub struct BakedExporter {
     pretty: bool,
     use_separate_crates: bool,
     use_internal_fallback: bool,
-    // Temporary storage for put_payload: marker -> (bake -> {data id})
+    // Temporary storage for put_payload: marker -> (payload -> {data id})
     data: Mutex<
-        HashMap<DataMarkerInfo, BTreeMap<SyncTokenStream, HashSet<DataIdentifierCow<'static>>>>,
+        HashMap<
+            DataMarkerInfo,
+            HashMap<DataPayload<ExportMarker>, HashSet<DataIdentifierCow<'static>>>,
+        >,
     >,
     /// (marker, file name) pairs to wire up in mod.rs. This is populated by `flush` and consumed by `close`.
     impl_data: Mutex<BTreeMap<DataMarkerInfo, SyncTokenStream>>,
@@ -355,14 +358,12 @@ impl DataExporter for BakedExporter {
         id: DataIdentifierBorrowed,
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
-        let payload = payload.tokenize(&self.dependencies);
-        let payload = payload.to_string();
         self.data
             .lock()
             .expect("poison")
             .entry(marker)
             .or_default()
-            .entry(payload)
+            .entry(payload.clone())
             .or_default()
             .insert(id.into_owned());
         Ok(())
@@ -466,10 +467,8 @@ impl DataExporter for BakedExporter {
 
             let ids_to_idents = deduplicated_values
                 .iter()
-                .flat_map(|(bake, ids)| {
-                    let bake = bake.parse::<TokenStream>().unwrap();
-
-                    let mut idents = ids
+                .flat_map(|(payload, ids)| {
+                    let ident = ids
                         .iter()
                         .map(|id| {
                             format!("_{}_{}", id.marker_attributes.as_str(), id.locale)
@@ -483,11 +482,11 @@ impl DataExporter for BakedExporter {
                                 })
                                 .collect::<String>()
                         })
-                        .collect::<Vec<_>>();
-                    idents.sort();
-                    let ident = proc_macro2::Ident::new(&idents[0], proc_macro2::Span::call_site());
+                        .min()
+                        .unwrap();
+                    let ident = proc_macro2::Ident::new(&ident, proc_macro2::Span::call_site());
 
-                    idents_to_bakes.push((ident.clone(), bake));
+                    idents_to_bakes.push((ident.clone(), payload.tokenize(&self.dependencies)));
                     ids.iter().map(move |id| (id.clone(), ident.clone()))
                 })
                 .collect();

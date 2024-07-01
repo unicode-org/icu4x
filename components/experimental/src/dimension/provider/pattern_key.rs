@@ -123,7 +123,7 @@ impl AsULE for PatternKey {
             PatternKey::Decimal(value) => {
                 let sign = if value < 0 { 0b0010_0000 } else { 0 };
                 debug_assert!(value > -32 && value < 32);
-                (0b01 << 6) | sign | (value as u8 & 0b0001_1111)
+                (0b01 << 6) | sign | (value.unsigned_abs() & 0b0001_1111)
             }
             PatternKey::Power { power, count } => {
                 let power_bits = {
@@ -230,6 +230,14 @@ fn test_pattern_key_ule() {
             count: CompoundCount::Two,
         }
     );
+
+    let decimal_neg_1 = PatternKey::Decimal(-1);
+    let decimal_neg_1_ule = decimal_neg_1.to_unaligned();
+    assert_eq!(decimal_neg_1_ule.0, 0b0110_0001);
+
+    let decimal_neg_1 = PatternKey::from_unaligned(decimal_neg_1_ule);
+    assert_eq!(decimal_neg_1, PatternKey::Decimal(-1));
+
     // Test invalid bytes
     let unvalidated_bytes = [0b1100_0000];
     assert_eq!(

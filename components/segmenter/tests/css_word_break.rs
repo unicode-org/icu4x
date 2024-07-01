@@ -154,7 +154,7 @@ fn wordbreak_keepall() {
 }
 
 #[test]
-#[cfg_attr(not(feature = "lstm"), ignore)]
+#[cfg(feature = "lstm")]
 fn wordbreak_keepall_lstm() {
     // from css/css-text/word-break/word-break-keep-all-003.html
     let s = "และและ";

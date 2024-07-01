@@ -70,7 +70,7 @@ deserialize_bincode_1 = ["serde", "dep:bincode", "std"]
 deserialize_postcard_1 = ["serde", "dep:postcard"]
 
 # Dependencies for running data generation
-export = ["serde", "dep:erased-serde", "dep:databake", "std", "sync"]
+export = ["serde", "dep:erased-serde", "dep:databake", "std", "sync", "dep:postcard"]
 
 [package.metadata.cargo-all-features]
 denylist = ["macros"]

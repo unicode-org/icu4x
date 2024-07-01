@@ -186,10 +186,12 @@ pub const EXTRA_DATAGEN_BIKESHED_DEPS: &[&str] = &[
 /// Dependencies needed by datagen (not counting `log` and `rayon` deps)
 /// This might change semi frequently but we should try and keep this small.
 pub const EXTRA_DATAGEN_DEPS: &[&str] = &[
+    "cobs",
     "databake",
     "databake-derive",
     "erased-serde",
     "icu_registry",
+    "postcard",
 ];
 
 /// Dependencies needed by the `log` crate
