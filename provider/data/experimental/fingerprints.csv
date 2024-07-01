@@ -1,4 +1,4 @@
-*, <'static strs>, 1866B, 408 unique static strings
+*, <'static strs>, 1927B, 411 unique static strings
 compactdecimal/long@1, <lookup>, 2976B, 124 identifiers
 compactdecimal/long@1, <total>, 18089B, 120 unique payloads
 compactdecimal/long@1, af, 80B, e1003b8073e481ed
@@ -1467,6 +1467,56 @@ displaynames/variants@1, zh-HK, 2267B, 5a7434f5d9429164
 displaynames/variants@1, zh-Hant, 2276B, eb896ef02b8254b
 displaynames/variants@1, zh-MO, 2267B, -> zh-HK
 displaynames/variants@1, zu, 2872B, ede929b5c378882b
+duration/digital@1, <lookup>, 1888B, 48 identifiers
+duration/digital@1, <total>, 18B, 6 unique payloads
+duration/digital@1, af/durationUnit-type-hm, 3B, c76b19d07c9fe625
+duration/digital@1, af/durationUnit-type-hms, 3B, -> af/durationUnit-type-hm
+duration/digital@1, af/durationUnit-type-ms, 3B, -> af/durationUnit-type-hm
+duration/digital@1, be/durationUnit-type-hm, 3B, -> af/durationUnit-type-hm
+duration/digital@1, be/durationUnit-type-hms, 3B, -> af/durationUnit-type-hm
+duration/digital@1, be/durationUnit-type-ms, 3B, -> af/durationUnit-type-hm
+duration/digital@1, da/durationUnit-type-hm, 3B, aaa298c324f06da2
+duration/digital@1, da/durationUnit-type-hms, 3B, -> da/durationUnit-type-hm
+duration/digital@1, da/durationUnit-type-ms, 3B, -> da/durationUnit-type-hm
+duration/digital@1, es-CL/durationUnit-type-hm, 3B, 71ab197492314cc4
+duration/digital@1, es-CL/durationUnit-type-hms, 3B, -> es-CL/durationUnit-type-hm
+duration/digital@1, es-CL/durationUnit-type-ms, 3B, -> es-CL/durationUnit-type-hm
+duration/digital@1, fi/durationUnit-type-hm, 3B, -> da/durationUnit-type-hm
+duration/digital@1, fi/durationUnit-type-hms, 3B, -> da/durationUnit-type-hm
+duration/digital@1, fi/durationUnit-type-ms, 3B, -> da/durationUnit-type-hm
+duration/digital@1, ia/durationUnit-type-hm, 3B, -> af/durationUnit-type-hm
+duration/digital@1, ia/durationUnit-type-hms, 3B, -> af/durationUnit-type-hm
+duration/digital@1, ia/durationUnit-type-ms, 3B, -> af/durationUnit-type-hm
+duration/digital@1, id/durationUnit-type-hm, 3B, -> da/durationUnit-type-hm
+duration/digital@1, id/durationUnit-type-hms, 3B, -> da/durationUnit-type-hm
+duration/digital@1, id/durationUnit-type-ms, 3B, -> da/durationUnit-type-hm
+duration/digital@1, lt/durationUnit-type-hm, 3B, -> af/durationUnit-type-hm
+duration/digital@1, lt/durationUnit-type-hms, 3B, -> af/durationUnit-type-hm
+duration/digital@1, lt/durationUnit-type-ms, 3B, -> af/durationUnit-type-hm
+duration/digital@1, mn/durationUnit-type-hm, 3B, 598302e878a8467
+duration/digital@1, mn/durationUnit-type-hms, 3B, -> mn/durationUnit-type-hm
+duration/digital@1, mn/durationUnit-type-ms, 3B, -> mn/durationUnit-type-hm
+duration/digital@1, si/durationUnit-type-hm, 3B, -> da/durationUnit-type-hm
+duration/digital@1, si/durationUnit-type-hms, 3B, -> da/durationUnit-type-hm
+duration/digital@1, si/durationUnit-type-ms, 3B, -> da/durationUnit-type-hm
+duration/digital@1, sl/durationUnit-type-hm, 3B, -> da/durationUnit-type-hm
+duration/digital@1, sl/durationUnit-type-hms, 3B, -> da/durationUnit-type-hm
+duration/digital@1, sl/durationUnit-type-ms, 3B, -> da/durationUnit-type-hm
+duration/digital@1, sr-Latn/durationUnit-type-hm, 3B, -> da/durationUnit-type-hm
+duration/digital@1, sr-Latn/durationUnit-type-hms, 3B, -> da/durationUnit-type-hm
+duration/digital@1, sr-Latn/durationUnit-type-ms, 3B, -> da/durationUnit-type-hm
+duration/digital@1, sr/durationUnit-type-hm, 3B, -> da/durationUnit-type-hm
+duration/digital@1, sr/durationUnit-type-hms, 3B, -> da/durationUnit-type-hm
+duration/digital@1, sr/durationUnit-type-ms, 3B, -> da/durationUnit-type-hm
+duration/digital@1, su/durationUnit-type-hm, 3B, -> da/durationUnit-type-hm
+duration/digital@1, su/durationUnit-type-hms, 3B, -> da/durationUnit-type-hm
+duration/digital@1, su/durationUnit-type-ms, 3B, -> da/durationUnit-type-hm
+duration/digital@1, tk/durationUnit-type-hm, 3B, d9712b5ee363b311
+duration/digital@1, tk/durationUnit-type-hms, 3B, -> tk/durationUnit-type-hm
+duration/digital@1, tk/durationUnit-type-ms, 3B, -> tk/durationUnit-type-hm
+duration/digital@1, und/durationUnit-type-hm, 3B, 838a0c3db9473ba8
+duration/digital@1, und/durationUnit-type-hms, 3B, -> und/durationUnit-type-hm
+duration/digital@1, und/durationUnit-type-ms, 3B, -> und/durationUnit-type-hm
 percent/essentials@1, <lookup>, 1416B, 59 identifiers
 percent/essentials@1, <total>, 153B, 9 unique payloads
 percent/essentials@1, ar, 19B, 8ebf290af62091f

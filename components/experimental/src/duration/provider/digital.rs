@@ -21,13 +21,13 @@ use icu_provider::prelude::*;
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct DigitalDurationDataV1 {
-    // To represent the patterns from: durationUnit-type-hm
+    /// To represent the patterns from: durationUnit-type-hm
     pub hm: HmVariant,
 
-    // To represent the patterns from: durationUnit-type-hms
+    /// To represent the patterns from: durationUnit-type-hms
     pub hms: HmsVariant,
 
-    // To represent the patterns from: durationUnit-type-ms
+    /// To represent the patterns from: durationUnit-type-ms
     pub ms: MsVariant,
 }
 
@@ -41,6 +41,7 @@ pub struct DigitalDurationDataV1 {
     databake(path = icu_experimental::duration::provider::digital),
 )]
 #[repr(u8)]
+/// Represents possible variants of the hour-minute pattern.
 pub enum HmVariant {
     /// hh:mm
     DoubleHourColonSep = 0,
@@ -60,6 +61,7 @@ pub enum HmVariant {
     databake(path = icu_experimental::duration::provider::digital)
 )]
 #[repr(u8)]
+/// Represents possible variants of the hour-minute-second pattern.
 pub enum HmsVariant {
     /// hh:mm:ss
     DoubleHourColonSep = 0,
@@ -79,6 +81,7 @@ pub enum HmsVariant {
 #[derive(Copy, Clone, PartialOrd, Ord, PartialEq, Eq, Debug)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[repr(u8)]
+/// Represents possible variants of the minute-second pattern.
 pub enum MsVariant {
     /// mm:ss
     DoubleMinuteColonSep = 0,
