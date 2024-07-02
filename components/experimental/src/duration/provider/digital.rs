@@ -93,6 +93,7 @@ pub enum MsVariant {
 }
 
 use alloc::str::FromStr;
+use alloc::string::{String, ToString};
 
 /// Unknown time pattern: {0}
 #[derive(Debug, Display)]
