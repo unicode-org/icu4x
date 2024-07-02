@@ -1,0 +1,29 @@
+[package]
+name = "system_locale"
+version.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+edition.workspace = true
+repository.workspace = true
+homepage.workspace = true
+license.workspace = true
+categories.workspace = true
+include.workspace = true
+
+[dependencies]
+core-foundation-sys = "0.8.6"
+locale = "0.2.2"
+
+[dependencies.windows]
+version = "0.56.0"
+features = [
+    "System",
+    "Foundation",
+    "System_UserProfile",
+    "Foundation_Collections",
+    "Globalization",
+    "Globalization_DateTimeFormatting",
+    "Win32",
+    "Win32_Globalization"
+
+]
