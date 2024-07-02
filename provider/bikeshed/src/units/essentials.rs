@@ -70,54 +70,7 @@ impl DataProvider<UnitsEssentialsV1Marker> for DatagenProvider {
             Ok(())
         }
 
-        /// Fills the prefixes map with the powers (two and three)
-        fn fill_power(
-            prefixes: &mut BTreeMap<PatternKey, String>,
-            powers: Option<&Patterns>,
-            power_value: PowerValue,
-        ) {
-            if let Some(powers) = powers {
-                let counts = [
-                    (
-                        powers.zero_compound_unit_pattern1.as_ref(),
-                        CompoundCount::Zero,
-                    ),
-                    (
-                        powers.one_compound_unit_pattern1.as_ref(),
-                        CompoundCount::One,
-                    ),
-                    (
-                        powers.two_compound_unit_pattern1.as_ref(),
-                        CompoundCount::Two,
-                    ),
-                    (
-                        powers.few_compound_unit_pattern1.as_ref(),
-                        CompoundCount::Few,
-                    ),
-                    (
-                        powers.many_compound_unit_pattern1.as_ref(),
-                        CompoundCount::Many,
-                    ),
-                    (
-                        powers.other_compound_unit_pattern1.as_ref(),
-                        CompoundCount::Other,
-                    ),
-                ];
-
-                for (pattern, count) in counts.iter() {
-                    if let Some(pattern) = pattern {
-                        prefixes.insert(
-                            PatternKey::Power {
-                                power: power_value,
-                                count: *count,
-                            },
-                            pattern.to_string(),
-                        );
-                    }
-                }
-            }
-        }
-
+        
         self.check_req::<UnitsEssentialsV1Marker>(req)?;
 
         // Get units
@@ -194,6 +147,9 @@ impl DataProvider<UnitsEssentialsV1Marker> for DatagenProvider {
                 );
             });
         }
+
+        fill_si(length_data, &mut prefixes, BINARY_PREFIX)?;
+        fill_si(length_data, &mut prefixes, DECIMAL_PREFIX)?;
 
         let result = UnitsEssentialsV1 {
             per: per.into(),

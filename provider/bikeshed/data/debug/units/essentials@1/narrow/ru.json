@@ -2,7 +2,6 @@
   "prefixes": [
     [
       {
-<<<<<<< HEAD
         "Binary": 1
       },
       "Ки{0}"
@@ -195,8 +194,6 @@
     ],
     [
       {
-=======
->>>>>>> upstream/main
         "Power": {
           "power": "Two",
           "count": "Other"
