@@ -45,7 +45,6 @@ pub mod provider {
         impl_long_compact_decimal_format_data_v1_marker!(Baked);
         impl_short_compact_decimal_format_data_v1_marker!(Baked);
         impl_currency_essentials_v1_marker!(Baked);
-        impl_units_essentials_v1_marker!(Baked);
         impl_units_display_name_v1_marker!(Baked);
         impl_units_essentials_v1_marker!(Baked);
         impl_language_display_names_v1_marker!(Baked);
