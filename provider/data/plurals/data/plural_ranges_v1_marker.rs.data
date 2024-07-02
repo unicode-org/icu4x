@@ -2,6 +2,10 @@
 /// Implement `DataProvider<PluralRangesV1Marker>` on the given struct using the data
 /// hardcoded in this file. This allows the struct to be used with
 /// `icu`'s `_unstable` constructors.
+///
+/// Using this implementation will embed the following data in the binary's data segment:
+/// * 291B for the lookup data structure (25 data identifiers)
+/// * 64B for the actual data (10 unique structs)
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __impl_plural_ranges_v1_marker {
@@ -10,7 +14,7 @@ macro_rules! __impl_plural_ranges_v1_marker {
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
         #[clippy::msrv = "1.70"]
         impl $provider {
-            const DATA_PLURAL_RANGES_V1_MARKER: icu_provider_baked::binary_search::Data<icu_provider_baked::binary_search::Locale, icu::plurals::provider::PluralRangesV1Marker> = {
+            const DATA_PLURAL_RANGES_V1_MARKER: icu_provider_baked::binary_search::Data<icu_provider_baked::binary_search::Locale<3usize>, icu::plurals::provider::PluralRangesV1Marker> = {
                 type S = <icu::plurals::provider::PluralRangesV1Marker as icu_provider::DynamicDataMarker>::Yokeable;
                 const __AF: &S = &icu::plurals::provider::PluralRangesV1 {
                     ranges: unsafe {
@@ -72,7 +76,8 @@ macro_rules! __impl_plural_ranges_v1_marker {
                         zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::ZeroVec::new())
                     },
                 };
-                icu_provider_baked::binary_search::Data(&[("af", __AF), ("ar", __AR), ("bg", __AF), ("ca", __AF), ("en", __AF), ("es", __AF), ("et", __AF), ("eu", __AF), ("fa", __FA), ("fi", __AF), ("he", __HE), ("ia", __AF), ("ka", __KA), ("lv", __LV), ("mk", __MK), ("no", __AF), ("or", __FA), ("pcm", __AF), ("ro", __RO), ("sd", __FA), ("si", __AF), ("sl", __SL), ("sv", __AF), ("und", __UND), ("ur", __AF)])
+                use icu_provider_baked::binary_search::tinystr::tinystr;
+                icu_provider_baked::binary_search::Data(&[(tinystr!(3usize, "af"), __AF), (tinystr!(3usize, "ar"), __AR), (tinystr!(3usize, "bg"), __AF), (tinystr!(3usize, "ca"), __AF), (tinystr!(3usize, "en"), __AF), (tinystr!(3usize, "es"), __AF), (tinystr!(3usize, "et"), __AF), (tinystr!(3usize, "eu"), __AF), (tinystr!(3usize, "fa"), __FA), (tinystr!(3usize, "fi"), __AF), (tinystr!(3usize, "he"), __HE), (tinystr!(3usize, "ia"), __AF), (tinystr!(3usize, "ka"), __KA), (tinystr!(3usize, "lv"), __LV), (tinystr!(3usize, "mk"), __MK), (tinystr!(3usize, "no"), __AF), (tinystr!(3usize, "or"), __FA), (tinystr!(3usize, "pcm"), __AF), (tinystr!(3usize, "ro"), __RO), (tinystr!(3usize, "sd"), __FA), (tinystr!(3usize, "si"), __AF), (tinystr!(3usize, "sl"), __SL), (tinystr!(3usize, "sv"), __AF), (tinystr!(3usize, "und"), __UND), (tinystr!(3usize, "ur"), __AF)])
             };
         }
         #[clippy::msrv = "1.70"]

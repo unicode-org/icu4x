@@ -2,6 +2,10 @@
 /// Implement `DataProvider<HelloWorldV1Marker>` on the given struct using the data
 /// hardcoded in this file. This allows the struct to be used with
 /// `icu`'s `_unstable` constructors.
+///
+/// Using this implementation will embed the following data in the binary's data segment:
+/// * 853B for the lookup data structure (27 data identifiers)
+/// * 479B for the actual data (27 unique structs)
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __impl_hello_world_v1_marker {
@@ -10,7 +14,7 @@ macro_rules! __impl_hello_world_v1_marker {
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
         #[clippy::msrv = "1.70"]
         impl $provider {
-            const DATA_HELLO_WORLD_V1_MARKER: icu_provider_baked::binary_search::Data<icu_provider_baked::binary_search::AttributesAndLocale, icu_provider::hello_world::HelloWorldV1Marker> = {
+            const DATA_HELLO_WORLD_V1_MARKER: icu_provider_baked::binary_search::Data<icu_provider_baked::binary_search::AttributesAndLocale<7usize, 16usize>, icu_provider::hello_world::HelloWorldV1Marker> = {
                 type S = <icu_provider::hello_world::HelloWorldV1Marker as icu_provider::DynamicDataMarker>::Yokeable;
                 const _REVERSE_EN: &S = &icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Olleh Dlrow") };
                 const _REVERSE_JA: &S = &icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("界世はちにんこ") };
@@ -39,7 +43,8 @@ macro_rules! __impl_hello_world_v1_marker {
                 const __SR_LATN: &S = &icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Pozdrav svete") };
                 const __VI: &S = &icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("Xin chào thế giới") };
                 const __ZH: &S = &icu_provider::hello_world::HelloWorldV1 { message: alloc::borrow::Cow::Borrowed("你好世界") };
-                icu_provider_baked::binary_search::Data(&[(("", "bn"), __BN), (("", "cs"), __CS), (("", "de"), __DE), (("", "de-AT"), __DE_AT), (("", "el"), __EL), (("", "en"), __EN), (("", "en-001"), __EN_001), (("", "en-002"), __EN_002), (("", "en-019"), __EN_019), (("", "en-142"), __EN_142), (("", "en-GB"), __EN_GB), (("", "en-GB-u-sd-gbeng"), __EN_GB_U_SD_GBENG), (("", "eo"), __EO), (("", "fa"), __FA), (("", "fi"), __FI), (("", "is"), __IS), (("", "ja"), __JA), (("", "la"), __LA), (("", "pt"), __PT), (("", "ro"), __RO), (("", "ru"), __RU), (("", "sr"), __SR), (("", "sr-Latn"), __SR_LATN), (("", "vi"), __VI), (("", "zh"), __ZH), (("reverse", "en"), _REVERSE_EN), (("reverse", "ja"), _REVERSE_JA)])
+                use icu_provider_baked::binary_search::tinystr::tinystr;
+                icu_provider_baked::binary_search::Data(&[((tinystr!(7usize, ""), tinystr!(16usize, "bn")), __BN), ((tinystr!(7usize, ""), tinystr!(16usize, "cs")), __CS), ((tinystr!(7usize, ""), tinystr!(16usize, "de")), __DE), ((tinystr!(7usize, ""), tinystr!(16usize, "de-AT")), __DE_AT), ((tinystr!(7usize, ""), tinystr!(16usize, "el")), __EL), ((tinystr!(7usize, ""), tinystr!(16usize, "en")), __EN), ((tinystr!(7usize, ""), tinystr!(16usize, "en-001")), __EN_001), ((tinystr!(7usize, ""), tinystr!(16usize, "en-002")), __EN_002), ((tinystr!(7usize, ""), tinystr!(16usize, "en-019")), __EN_019), ((tinystr!(7usize, ""), tinystr!(16usize, "en-142")), __EN_142), ((tinystr!(7usize, ""), tinystr!(16usize, "en-GB")), __EN_GB), ((tinystr!(7usize, ""), tinystr!(16usize, "en-GB-u-sd-gbeng")), __EN_GB_U_SD_GBENG), ((tinystr!(7usize, ""), tinystr!(16usize, "eo")), __EO), ((tinystr!(7usize, ""), tinystr!(16usize, "fa")), __FA), ((tinystr!(7usize, ""), tinystr!(16usize, "fi")), __FI), ((tinystr!(7usize, ""), tinystr!(16usize, "is")), __IS), ((tinystr!(7usize, ""), tinystr!(16usize, "ja")), __JA), ((tinystr!(7usize, ""), tinystr!(16usize, "la")), __LA), ((tinystr!(7usize, ""), tinystr!(16usize, "pt")), __PT), ((tinystr!(7usize, ""), tinystr!(16usize, "ro")), __RO), ((tinystr!(7usize, ""), tinystr!(16usize, "ru")), __RU), ((tinystr!(7usize, ""), tinystr!(16usize, "sr")), __SR), ((tinystr!(7usize, ""), tinystr!(16usize, "sr-Latn")), __SR_LATN), ((tinystr!(7usize, ""), tinystr!(16usize, "vi")), __VI), ((tinystr!(7usize, ""), tinystr!(16usize, "zh")), __ZH), ((tinystr!(7usize, "reverse"), tinystr!(16usize, "en")), _REVERSE_EN), ((tinystr!(7usize, "reverse"), tinystr!(16usize, "ja")), _REVERSE_JA)])
             };
         }
         #[clippy::msrv = "1.70"]

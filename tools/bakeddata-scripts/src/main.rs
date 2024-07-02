@@ -9,7 +9,7 @@ use icu_datagen::prelude::*;
 use icu_datagen_bikeshed::{CoverageLevel, DatagenProvider};
 use icu_provider::export::*;
 use icu_provider::prelude::*;
-use std::collections::{BTreeMap, HashMap, HashSet};
+use std::collections::{BTreeMap, HashMap};
 use std::fs::File;
 use std::io::Write;
 use std::path::Path;
@@ -214,15 +214,9 @@ impl<E: DataExporter> DataExporter for StubExporter<E> {
 }
 
 struct StatisticsExporter<F> {
-    data: Mutex<HashMap<DataMarkerInfo, Data>>,
+    #[allow(clippy::type_complexity)] // meh, two level map
+    data: Mutex<HashMap<DataMarkerInfo, HashMap<DataIdentifierCow<'static>, (usize, u64)>>>,
     fingerprints: F,
-}
-
-#[derive(Default)]
-struct Data {
-    size_hash: HashMap<DataIdentifierCow<'static>, (usize, u64)>,
-    struct_sizes: HashMap<u64, usize>,
-    identifiers: HashSet<DataIdentifierCow<'static>>,
 }
 
 impl<F: Write + Send + Sync> DataExporter for StatisticsExporter<F> {
@@ -243,11 +237,12 @@ impl<F: Write + Send + Sync> DataExporter for StatisticsExporter<F> {
         payload.hash(&mut hasher);
         let hash = hasher.finish();
 
-        let mut data = self.data.lock().expect("poison");
-        let data = data.entry(marker).or_default();
-        data.size_hash.insert(id.into_owned(), (size, hash));
-        data.struct_sizes.insert(hash, size);
-        data.identifiers.insert(id.into_owned());
+        self.data
+            .lock()
+            .expect("poison")
+            .entry(marker)
+            .or_default()
+            .insert(id.into_owned(), (size, hash));
 
         Ok(())
     }
@@ -260,48 +255,9 @@ impl<F: Write + Send + Sync> DataExporter for StatisticsExporter<F> {
         let data = core::mem::take(self.data.get_mut().expect("poison"));
 
         let mut lines = Vec::new();
-        let mut seen_static_strs = HashSet::new();
 
-        for (marker, data) in data.into_iter() {
-            if !marker.is_singleton {
-                let identifiers_count = data.identifiers.len();
-                let mut identifiers_size = 0;
-
-                // icu_provider_baked::binary_search::Data.0 is a fat pointer
-                identifiers_size += 2 * core::mem::size_of::<usize>();
-
-                for id in data.identifiers {
-                    if !id.locale.is_und() {
-                        // Size of &'static str
-                        identifiers_size += 2 * core::mem::size_of::<usize>();
-                        let locale_str = id.locale.to_string();
-                        seen_static_strs.insert(locale_str);
-                    }
-                    if !id.marker_attributes.is_empty() {
-                        // Size of &'static str
-                        identifiers_size += 2 * core::mem::size_of::<usize>();
-                        let attrs_str = id.marker_attributes.to_string();
-                        seen_static_strs.insert(attrs_str);
-                    }
-
-                    // Size of &'static M::Yokeable
-                    identifiers_size += core::mem::size_of::<usize>();
-                }
-                lines.push(format!(
-                    "{marker:?}, <lookup>, {identifiers_size}B, {identifiers_count} identifiers"
-                ));
-            }
-
-            if !marker.is_singleton {
-                let structs_count = data.struct_sizes.len();
-                let structs_size = data.struct_sizes.values().sum::<usize>();
-                lines.push(format!(
-                    "{marker:?}, <total>, {structs_size}B, {structs_count} unique payloads",
-                ));
-            }
-
+        for (marker, data) in data {
             let sorted = data
-                .size_hash
                 .into_iter()
                 .map(|(id, (size, hash))| {
                     (
@@ -330,14 +286,6 @@ impl<F: Write + Send + Sync> DataExporter for StatisticsExporter<F> {
                     seen.insert(hash, id.clone());
                 }
             }
-        }
-
-        if !seen_static_strs.is_empty() {
-            let static_strs_size = seen_static_strs.iter().map(String::len).sum::<usize>();
-            let static_strs_count = seen_static_strs.len();
-            lines.push(format!(
-                "*, <'static strs>, {static_strs_size}B, {static_strs_count} unique static strings"
-            ));
         }
 
         lines.sort();

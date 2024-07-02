@@ -4,27 +4,45 @@
 
 //! Data stored as slices, looked up with binary search
 
+pub extern crate tinystr;
+
+use alloc::borrow::ToOwned;
 #[cfg(feature = "export")]
 use databake::*;
 use icu_provider::prelude::*;
+use tinystr::TinyAsciiStr;
 
 #[cfg(feature = "export")]
-pub fn bake(
+pub(crate) fn bake(
     marker_bake: &TokenStream,
-    reqs_to_idents: Vec<(DataIdentifierCow, proc_macro2::Ident)>,
+    mut ids_to_idents: Vec<(DataIdentifierCow, proc_macro2::Ident)>,
     idents_to_bakes: Vec<(proc_macro2::Ident, TokenStream)>,
-) -> TokenStream {
-    let mut ids_to_idents = reqs_to_idents
-        .into_iter()
-        .map(|(id, ident)| {
-            (
-                (id.marker_attributes.to_string(), id.locale.to_string()),
-                quote!(#ident),
-            )
-        })
-        .collect::<Vec<_>>();
+) -> (TokenStream, usize) {
+    let mut size = 0;
 
-    ids_to_idents.sort_by(|(a, _), (b, _)| a.cmp(b));
+    // Data.0 is a fat pointer
+    size += 2 * core::mem::size_of::<usize>();
+
+    // The idents are references
+    size += ids_to_idents.len() * core::mem::size_of::<usize>();
+
+    let max_attributes_len = ids_to_idents
+        .iter()
+        .map(|(id, _)| id.marker_attributes.len())
+        .max()
+        .unwrap();
+    let max_locale_len = ids_to_idents
+        .iter()
+        .map(|(id, _)| id.locale.to_string().len())
+        .max()
+        .unwrap();
+
+    ids_to_idents.sort_by_cached_key(|(id, _)| {
+        (
+            id.marker_attributes.as_str().to_owned(),
+            id.locale.to_string(),
+        )
+    });
 
     let idents_to_bakes = idents_to_bakes.into_iter().map(|(ident, bake)| {
         quote! {
@@ -32,41 +50,61 @@ pub fn bake(
         }
     });
 
-    let (ty, reqs_to_idents) = if ids_to_idents.iter().all(|((a, _), _)| a.is_empty()) {
+    let (ty, id_bakes_to_idents) = if ids_to_idents
+        .iter()
+        .all(|(id, _)| id.marker_attributes.is_empty())
+    {
         // Only DataLocales
+        size += ids_to_idents.len() * max_locale_len;
         (
-            quote! { icu_provider_baked::binary_search::Locale },
+            quote! { icu_provider_baked::binary_search::Locale<#max_locale_len> },
             ids_to_idents
                 .iter()
-                .map(|((_, l), i)| quote!((#l, #i)))
+                .map(|(id, i)| {
+                    let locale_str = id.locale.to_string();
+                    quote!((tinystr!(#max_locale_len, #locale_str), #i))
+                })
                 .collect::<Vec<_>>(),
         )
-    } else if ids_to_idents.iter().all(|((_, l), _)| *l == "und") {
+    } else if ids_to_idents.iter().all(|(id, _)| id.locale.is_empty()) {
         // Only marker attributes
+        size += ids_to_idents.len() * max_attributes_len;
         (
-            quote! { icu_provider_baked::binary_search::Attributes },
+            quote! { icu_provider_baked::binary_search::Attributes<#max_attributes_len> },
             ids_to_idents
                 .iter()
-                .map(|((a, _), i)| quote!((#a, #i)))
+                .map(|(id, i)| {
+                    let attribute_str = id.marker_attributes.as_str();
+                    quote!((tinystr!(#max_attributes_len, #attribute_str), #i))
+                })
                 .collect(),
         )
     } else {
+        size += ids_to_idents.len() * (max_attributes_len + max_locale_len);
         (
-            quote! { icu_provider_baked::binary_search::AttributesAndLocale },
+            quote! { icu_provider_baked::binary_search::AttributesAndLocale<#max_attributes_len, #max_locale_len> },
             ids_to_idents
                 .iter()
-                .map(|((a, l), i)| quote!(((#a, #l), #i)))
+                .map(|(id, i)| {
+                    let attribute_str = id.marker_attributes.to_string();
+                    let locale_str = id.locale.to_string();
+                    quote!(((tinystr!(#max_attributes_len, #attribute_str), tinystr!(#max_locale_len, #locale_str)), #i))
+                })
                 .collect(),
         )
     };
 
-    quote! {
-        icu_provider_baked::binary_search::Data<#ty, #marker_bake> = {
-            type S = <#marker_bake as icu_provider::DynamicDataMarker>::Yokeable;
-            #(#idents_to_bakes)*
-            icu_provider_baked::binary_search::Data(&[#(#reqs_to_idents,)*])
-        }
-    }
+    (
+        quote! {
+            icu_provider_baked::binary_search::Data<#ty, #marker_bake> = {
+                type S = <#marker_bake as icu_provider::DynamicDataMarker>::Yokeable;
+                #(#idents_to_bakes)*
+                use icu_provider_baked::binary_search::tinystr::tinystr;
+                icu_provider_baked::binary_search::Data(&[#(#id_bakes_to_idents,)*])
+            }
+        },
+        size,
+    )
 }
 
 pub struct Data<K: BinarySearchKey, M: DataMarker>(pub &'static [(K::Type, &'static M::Yokeable)]);
@@ -95,10 +133,10 @@ pub trait BinarySearchKey: 'static {
     fn to_id(k: Self::Type) -> DataIdentifierCow<'static>;
 }
 
-pub struct Locale;
+pub struct Locale<const N: usize>;
 
-impl BinarySearchKey for Locale {
-    type Type = &'static str;
+impl<const N: usize> BinarySearchKey for Locale<N> {
+    type Type = TinyAsciiStr<N>;
 
     fn cmp(locale: Self::Type, id: DataIdentifierBorrowed) -> core::cmp::Ordering {
         id.locale.strict_cmp(locale.as_bytes()).reverse()
@@ -109,36 +147,37 @@ impl BinarySearchKey for Locale {
     }
 }
 
-pub struct Attributes;
+pub struct Attributes<const N: usize>;
 
-impl BinarySearchKey for Attributes {
-    type Type = &'static str;
+impl<const N: usize> BinarySearchKey for Attributes<N> {
+    type Type = TinyAsciiStr<N>;
 
     fn cmp(attributes: Self::Type, id: DataIdentifierBorrowed) -> core::cmp::Ordering {
-        attributes.cmp(id.marker_attributes)
+        attributes.as_str().cmp(id.marker_attributes)
     }
 
     fn to_id(attributes: Self::Type) -> DataIdentifierCow<'static> {
-        DataIdentifierCow::from_marker_attributes(DataMarkerAttributes::from_str_or_panic(
-            attributes,
-        ))
+        DataIdentifierCow::from_marker_attributes_owned(
+            DataMarkerAttributes::from_str_or_panic(attributes.as_str()).to_owned(),
+        )
     }
 }
 
-pub struct AttributesAndLocale;
+pub struct AttributesAndLocale<const N: usize, const M: usize>;
 
-impl BinarySearchKey for AttributesAndLocale {
-    type Type = (&'static str, &'static str);
+impl<const N: usize, const M: usize> BinarySearchKey for AttributesAndLocale<N, M> {
+    type Type = (TinyAsciiStr<N>, TinyAsciiStr<M>);
 
     fn cmp((attributes, locale): Self::Type, id: DataIdentifierBorrowed) -> core::cmp::Ordering {
         attributes
+            .as_str()
             .cmp(id.marker_attributes)
             .then_with(|| id.locale.strict_cmp(locale.as_bytes()).reverse())
     }
 
     fn to_id((attributes, locale): Self::Type) -> DataIdentifierCow<'static> {
-        DataIdentifierCow::from_borrowed_and_owned(
-            DataMarkerAttributes::from_str_or_panic(attributes),
+        DataIdentifierCow::from_owned(
+            DataMarkerAttributes::from_str_or_panic(attributes.as_str()).to_owned(),
             locale.parse().unwrap(),
         )
     }
