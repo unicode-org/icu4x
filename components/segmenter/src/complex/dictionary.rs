@@ -138,13 +138,13 @@ impl<'l, 's> DictionaryType<'l, 's> for char {
 
 pub(super) struct DictionarySegmenter<'l> {
     dict: &'l UCharDictionaryBreakDataV1<'l>,
-    grapheme: &'l RuleBreakDataV1<'l>,
+    grapheme: &'l RuleBreakDataV2<'l>,
 }
 
 impl<'l> DictionarySegmenter<'l> {
     pub(super) fn new(
         dict: &'l UCharDictionaryBreakDataV1<'l>,
-        grapheme: &'l RuleBreakDataV1<'l>,
+        grapheme: &'l RuleBreakDataV2<'l>,
     ) -> Self {
         // TODO: no way to verify trie data
         Self { dict, grapheme }
@@ -206,7 +206,7 @@ mod tests {
         let word_segmenter = WordSegmenter::new_dictionary();
         let dict_segmenter = DictionarySegmenter::new(
             response.payload.get(),
-            crate::provider::Baked::SINGLETON_GRAPHEME_CLUSTER_BREAK_DATA_V1_MARKER,
+            crate::provider::Baked::SINGLETON_GRAPHEME_CLUSTER_BREAK_DATA_V2_MARKER,
         );
 
         // Match case

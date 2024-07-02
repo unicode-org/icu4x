@@ -45,12 +45,12 @@ const _: () = {
     make_provider!(Baked);
     impl_dictionary_for_word_only_auto_v1_marker!(Baked);
     impl_dictionary_for_word_line_extended_v1_marker!(Baked);
-    impl_grapheme_cluster_break_data_v1_marker!(Baked);
-    impl_line_break_data_v1_marker!(Baked);
+    impl_grapheme_cluster_break_data_v2_marker!(Baked);
+    impl_line_break_data_v2_marker!(Baked);
     #[cfg(feature = "lstm")]
     impl_lstm_for_word_line_auto_v1_marker!(Baked);
-    impl_sentence_break_data_v1_marker!(Baked);
-    impl_word_break_data_v1_marker!(Baked);
+    impl_sentence_break_data_v2_marker!(Baked);
+    impl_word_break_data_v2_marker!(Baked);
 };
 
 #[cfg(feature = "datagen")]
@@ -58,11 +58,11 @@ const _: () = {
 pub const MARKERS: &[DataMarkerInfo] = &[
     DictionaryForWordLineExtendedV1Marker::INFO,
     DictionaryForWordOnlyAutoV1Marker::INFO,
-    GraphemeClusterBreakDataV1Marker::INFO,
-    LineBreakDataV1Marker::INFO,
+    GraphemeClusterBreakDataV2Marker::INFO,
+    LineBreakDataV2Marker::INFO,
     LstmForWordLineAutoV1Marker::INFO,
-    SentenceBreakDataV1Marker::INFO,
-    WordBreakDataV1Marker::INFO,
+    SentenceBreakDataV2Marker::INFO,
+    WordBreakDataV2Marker::INFO,
 ];
 
 /// Pre-processed Unicode data in the form of tables to be used for rule-based breaking.
@@ -73,10 +73,10 @@ pub const MARKERS: &[DataMarkerInfo] = &[
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(
-    marker(LineBreakDataV1Marker, "segmenter/line@1", singleton),
-    marker(WordBreakDataV1Marker, "segmenter/word@1", singleton),
-    marker(GraphemeClusterBreakDataV1Marker, "segmenter/grapheme@1", singleton),
-    marker(SentenceBreakDataV1Marker, "segmenter/sentence@1", singleton)
+    marker(LineBreakDataV2Marker, "segmenter/line@2", singleton),
+    marker(WordBreakDataV2Marker, "segmenter/word@2", singleton),
+    marker(GraphemeClusterBreakDataV2Marker, "segmenter/grapheme@2", singleton),
+    marker(SentenceBreakDataV2Marker, "segmenter/sentence@2", singleton)
 )]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(
@@ -85,7 +85,7 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     databake(path = icu_segmenter::provider),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct RuleBreakDataV1<'data> {
+pub struct RuleBreakDataV2<'data> {
     /// Property table.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub property_table: CodePointTrie<'data, u8>,
@@ -208,20 +208,20 @@ impl zerovec::ule::AsULE for BreakState {
 
     fn to_unaligned(self) -> Self::ULE {
         match self {
-            BreakState::Break => 128,
+            BreakState::Break => 253,
             BreakState::Keep => 255,
             BreakState::NoMatch => 254,
-            BreakState::Intermediate(i) => i | 64,
+            BreakState::Intermediate(i) => i + 120,
             BreakState::Index(i) => i,
         }
     }
 
     fn from_unaligned(unaligned: Self::ULE) -> Self {
         match unaligned {
-            128 => BreakState::Break,
+            253 => BreakState::Break,
             255 => BreakState::Keep,
             254 => BreakState::NoMatch,
-            i if i & 64 != 0 => BreakState::Intermediate(i & !64),
+            i if (120..253).contains(&i) => BreakState::Intermediate(i - 120),
             i => BreakState::Index(i),
         }
     }

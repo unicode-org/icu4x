@@ -64,12 +64,12 @@ pub(super) struct LstmSegmenter<'l> {
     timew_fw: MatrixZero<'l, 2>,
     timew_bw: MatrixZero<'l, 2>,
     time_b: MatrixZero<'l, 1>,
-    grapheme: Option<&'l RuleBreakDataV1<'l>>,
+    grapheme: Option<&'l RuleBreakDataV2<'l>>,
 }
 
 impl<'l> LstmSegmenter<'l> {
     /// Returns `Err` if grapheme data is required but not present
-    pub(super) fn new(lstm: &'l LstmDataV1<'l>, grapheme: &'l RuleBreakDataV1<'l>) -> Self {
+    pub(super) fn new(lstm: &'l LstmDataV1<'l>, grapheme: &'l RuleBreakDataV2<'l>) -> Self {
         let LstmDataV1::Float32(lstm) = lstm;
         let time_w = MatrixZero::from(&lstm.time_w);
         #[allow(clippy::unwrap_used)] // shape (2, 4, hunits)
@@ -358,7 +358,7 @@ mod tests {
             .unwrap();
         let lstm = LstmSegmenter::new(
             lstm.payload.get(),
-            crate::provider::Baked::SINGLETON_GRAPHEME_CLUSTER_BREAK_DATA_V1_MARKER,
+            crate::provider::Baked::SINGLETON_GRAPHEME_CLUSTER_BREAK_DATA_V2_MARKER,
         );
 
         // Importing the test data

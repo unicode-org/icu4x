@@ -32,7 +32,7 @@ type DictOrLstmBorrowed<'a> = Result<
 
 #[derive(Debug)]
 pub(crate) struct ComplexPayloads {
-    grapheme: DataPayload<GraphemeClusterBreakDataV1Marker>,
+    grapheme: DataPayload<GraphemeClusterBreakDataV2Marker>,
     my: Option<DictOrLstm>,
     km: Option<DictOrLstm>,
     lo: Option<DictOrLstm>,
@@ -94,7 +94,7 @@ impl ComplexPayloads {
         // try_load is infallible if the provider only returns `MissingLocale`.
         Self {
             grapheme: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_GRAPHEME_CLUSTER_BREAK_DATA_V1_MARKER,
+                crate::provider::Baked::SINGLETON_GRAPHEME_CLUSTER_BREAK_DATA_V2_MARKER,
             ),
             my: try_load::<LstmForWordLineAutoV1Marker, _>(&crate::provider::Baked, MY_LSTM)
                 .unwrap()
@@ -119,7 +119,7 @@ impl ComplexPayloads {
     #[cfg(feature = "lstm")]
     pub(crate) fn try_new_lstm<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: DataProvider<GraphemeClusterBreakDataV1Marker>
+        D: DataProvider<GraphemeClusterBreakDataV2Marker>
             + DataProvider<LstmForWordLineAutoV1Marker>
             + ?Sized,
     {
@@ -147,7 +147,7 @@ impl ComplexPayloads {
         // try_load is infallible if the provider only returns `MissingLocale`.
         Self {
             grapheme: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_GRAPHEME_CLUSTER_BREAK_DATA_V1_MARKER,
+                crate::provider::Baked::SINGLETON_GRAPHEME_CLUSTER_BREAK_DATA_V2_MARKER,
             ),
             my: try_load::<DictionaryForWordLineExtendedV1Marker, _>(
                 &crate::provider::Baked,
@@ -185,7 +185,7 @@ impl ComplexPayloads {
 
     pub(crate) fn try_new_dict<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: DataProvider<GraphemeClusterBreakDataV1Marker>
+        D: DataProvider<GraphemeClusterBreakDataV2Marker>
             + DataProvider<DictionaryForWordLineExtendedV1Marker>
             + DataProvider<DictionaryForWordOnlyAutoV1Marker>
             + ?Sized,
@@ -216,7 +216,7 @@ impl ComplexPayloads {
         // try_load is infallible if the provider only returns `MissingLocale`.
         Self {
             grapheme: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_GRAPHEME_CLUSTER_BREAK_DATA_V1_MARKER,
+                crate::provider::Baked::SINGLETON_GRAPHEME_CLUSTER_BREAK_DATA_V2_MARKER,
             ),
             my: try_load::<LstmForWordLineAutoV1Marker, _>(&crate::provider::Baked, MY_LSTM)
                 .unwrap()
@@ -243,7 +243,7 @@ impl ComplexPayloads {
     #[cfg(feature = "auto")] // Use by WordSegmenter with "auto" enabled.
     pub(crate) fn try_new_auto<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: DataProvider<GraphemeClusterBreakDataV1Marker>
+        D: DataProvider<GraphemeClusterBreakDataV2Marker>
             + DataProvider<LstmForWordLineAutoV1Marker>
             + DataProvider<DictionaryForWordOnlyAutoV1Marker>
             + ?Sized,
@@ -273,7 +273,7 @@ impl ComplexPayloads {
         // try_load is infallible if the provider only returns `MissingLocale`.
         Self {
             grapheme: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_GRAPHEME_CLUSTER_BREAK_DATA_V1_MARKER,
+                crate::provider::Baked::SINGLETON_GRAPHEME_CLUSTER_BREAK_DATA_V2_MARKER,
             ),
             my: try_load::<DictionaryForWordLineExtendedV1Marker, _>(
                 &crate::provider::Baked,
@@ -310,7 +310,7 @@ impl ComplexPayloads {
     pub(crate) fn try_new_southeast_asian<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<DictionaryForWordLineExtendedV1Marker>
-            + DataProvider<GraphemeClusterBreakDataV1Marker>
+            + DataProvider<GraphemeClusterBreakDataV2Marker>
             + ?Sized,
     {
         Ok(Self {
