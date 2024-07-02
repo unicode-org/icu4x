@@ -278,13 +278,22 @@ impl<F: Write + Send + Sync> DataExporter for StatisticsExporter<F> {
                 .collect::<BTreeMap<_, _>>();
 
             let mut seen = HashMap::new();
+            let mut total_size = 0;
             for (id, (size, hash)) in sorted.into_iter() {
                 if let Some(deduped_req) = seen.get(&hash) {
                     lines.push(format!("{marker:?}, {id}, {size}B, -> {deduped_req}",));
                 } else {
                     lines.push(format!("{marker:?}, {id}, {size}B, {hash:x}",));
                     seen.insert(hash, id.clone());
+                    total_size += size;
                 }
+            }
+
+            if !marker.is_singleton {
+                let payloads_count = seen.len();
+                lines.push(format!(
+                    "{marker:?}, <total>, {total_size}B, {payloads_count} unique payloads",
+                ));
             }
         }
 
