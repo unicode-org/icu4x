@@ -283,6 +283,13 @@ impl databake::Bake for ListJoinerPattern<'_> {
     }
 }
 
+#[cfg(feature = "datagen")]
+impl databake::BakeSize for ListJoinerPattern<'_> {
+    fn borrows_size(&self) -> usize {
+        self.string.borrows_size()
+    }
+}
+
 #[cfg(all(test, feature = "datagen"))]
 #[test]
 fn databake() {

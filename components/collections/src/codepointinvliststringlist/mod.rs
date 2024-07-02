@@ -54,6 +54,13 @@ impl databake::Bake for CodePointInversionListAndStringList<'_> {
     }
 }
 
+#[cfg(feature = "databake")]
+impl databake::BakeSize for CodePointInversionListAndStringList<'_> {
+    fn borrows_size(&self) -> usize {
+        self.cp_inv_list.borrows_size() + self.str_list.borrows_size()
+    }
+}
+
 impl<'data> CodePointInversionListAndStringList<'data> {
     /// Returns a new [`CodePointInversionListAndStringList`] from both a [`CodePointInversionList`] for the
     /// code points and a [`VarZeroVec`]`<`[`str`]`>` of strings.
