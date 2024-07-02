@@ -58,7 +58,7 @@ fn dtf_locale_override_os_prefs() {
 
     let os_prefs = get_os_dtf_preferences(&loc.id);
     let prefs = if let Some(mut os_prefs) = os_prefs {
-        os_prefs.extend(loc);
+        os_prefs.extend(loc.into());
         os_prefs
     } else {
         loc.into()
@@ -102,7 +102,7 @@ fn dtf_call_override_locale_override_os_prefs() {
 
     let os_prefs = get_os_dtf_preferences(&loc.id);
     let mut prefs = if let Some(mut os_prefs) = os_prefs {
-        os_prefs.extend(loc);
+        os_prefs.extend(loc.into());
         os_prefs
     } else {
         loc.into()
@@ -156,7 +156,7 @@ fn dtf_prefs_non_ue_preference() {
 
     let os_prefs = get_os_dtf_preferences(&loc.id);
     let prefs = if let Some(mut os_prefs) = os_prefs {
-        os_prefs.extend(loc);
+        os_prefs.extend(loc.into());
         os_prefs
     } else {
         loc.into()

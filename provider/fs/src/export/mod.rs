@@ -41,9 +41,9 @@
 //! use icu_provider::prelude::*;
 //! use icu_provider_fs::FsDataProvider;
 //!
-//! # let demo_path = "tests/data/json";
+//! # let demo_path = "tests/data/json".into();
 //! // Create a filesystem provider reading from the demo directory
-//! let provider = FsDataProvider::try_new(&demo_path)
+//! let provider = FsDataProvider::try_new(demo_path)
 //!     .expect("Should successfully read from filesystem");
 //!
 //! // Use the provider as a `BufferProvider`

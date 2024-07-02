@@ -5,8 +5,6 @@
 extern crate icu_datagen;
 
 use icu_datagen::baked_exporter;
-use icu_datagen::fs_exporter;
-use icu_datagen::fs_exporter::serializers::AbstractSerializer;
 use icu_datagen::prelude::*;
 use icu_datagen_bikeshed::{CoverageLevel, DatagenProvider};
 use icu_provider::export::*;
@@ -232,14 +230,9 @@ impl<F: Write + Send + Sync> DataExporter for StatisticsExporter<F> {
         &self,
         marker: DataMarkerInfo,
         id: DataIdentifierBorrowed,
-        payload_before: &DataPayload<ExportMarker>,
+        payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
-        let mut serialized = vec![];
-
-        fs_exporter::serializers::Postcard::new(Default::default())
-            .serialize(payload_before, &mut serialized)?;
-
-        let size = serialized.len();
+        let size = payload.postcard_size();
 
         // We're using SipHash, which is deprecated, but we want a stable hasher
         // (we're fine with it not being cryptographically secure since we're just using it to track diffs)
@@ -247,7 +240,7 @@ impl<F: Write + Send + Sync> DataExporter for StatisticsExporter<F> {
         use std::hash::{Hash, Hasher, SipHasher};
         #[allow(deprecated)]
         let mut hasher = SipHasher::new();
-        serialized.iter().for_each(|b| b.hash(&mut hasher));
+        payload.hash(&mut hasher);
         let hash = hasher.finish();
 
         let mut data = self.data.lock().expect("poison");

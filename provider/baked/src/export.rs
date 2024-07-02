@@ -98,6 +98,7 @@ use std::collections::HashSet;
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::fs::File;
 use std::io::Write;
+use std::path::Path;
 use std::path::PathBuf;
 use std::sync::Mutex;
 
@@ -154,9 +155,12 @@ pub struct BakedExporter {
     pretty: bool,
     use_separate_crates: bool,
     use_internal_fallback: bool,
-    // Temporary storage for put_payload: marker -> (bake -> {data id})
+    // Temporary storage for put_payload: marker -> (payload -> {data id})
     data: Mutex<
-        HashMap<DataMarkerInfo, BTreeMap<SyncTokenStream, HashSet<DataIdentifierCow<'static>>>>,
+        HashMap<
+            DataMarkerInfo,
+            HashMap<DataPayload<ExportMarker>, HashSet<DataIdentifierCow<'static>>>,
+        >,
     >,
     /// (marker, file name) pairs to wire up in mod.rs. This is populated by `flush` and consumed by `close`.
     impl_data: Mutex<BTreeMap<DataMarkerInfo, SyncTokenStream>>,
@@ -205,12 +209,8 @@ impl BakedExporter {
         })
     }
 
-    fn write_to_file<P: AsRef<std::path::Path>>(
-        &self,
-        relative_path: P,
-        data: TokenStream,
-    ) -> Result<(), DataError> {
-        let path = self.mod_directory.join(&relative_path);
+    fn write_to_file(&self, relative_path: &Path, data: TokenStream) -> Result<(), DataError> {
+        let path = self.mod_directory.join(relative_path);
 
         let mut formatted = if self.pretty {
             use std::process::{Command, Stdio};
@@ -320,7 +320,7 @@ impl BakedExporter {
         let maybe_msrv = maybe_msrv();
 
         self.write_to_file(
-            PathBuf::from(format!("{ident}.rs.data")),
+            Path::new(&format!("{ident}.rs.data")),
             quote! {
                 #[doc = #doc]
                 /// hardcoded in this file. This allows the struct to be used with
@@ -355,14 +355,12 @@ impl DataExporter for BakedExporter {
         id: DataIdentifierBorrowed,
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
-        let payload = payload.tokenize(&self.dependencies);
-        let payload = payload.to_string();
         self.data
             .lock()
             .expect("poison")
             .entry(marker)
             .or_default()
-            .entry(payload)
+            .entry(payload.clone())
             .or_default()
             .insert(id.into_owned());
         Ok(())
@@ -466,10 +464,8 @@ impl DataExporter for BakedExporter {
 
             let ids_to_idents = deduplicated_values
                 .iter()
-                .flat_map(|(bake, ids)| {
-                    let bake = bake.parse::<TokenStream>().unwrap();
-
-                    let mut idents = ids
+                .flat_map(|(payload, ids)| {
+                    let ident = ids
                         .iter()
                         .map(|id| {
                             format!("_{}_{}", id.marker_attributes.as_str(), id.locale)
@@ -483,11 +479,11 @@ impl DataExporter for BakedExporter {
                                 })
                                 .collect::<String>()
                         })
-                        .collect::<Vec<_>>();
-                    idents.sort();
-                    let ident = proc_macro2::Ident::new(&idents[0], proc_macro2::Span::call_site());
+                        .min()
+                        .unwrap();
+                    let ident = proc_macro2::Ident::new(&ident, proc_macro2::Span::call_site());
 
-                    idents_to_bakes.push((ident.clone(), bake));
+                    idents_to_bakes.push((ident.clone(), payload.tokenize(&self.dependencies)));
                     ids.iter().map(move |id| (id.clone(), ident.clone()))
                 })
                 .collect();
@@ -600,7 +596,7 @@ impl DataExporter for BakedExporter {
 
         // mod.rs is the interface for built-in data. It exposes one macro per marker.
         self.write_to_file(
-            PathBuf::from("mod.rs"),
+            Path::new("mod.rs"),
             quote! {
                 #(
                     include!(#file_paths);

@@ -114,8 +114,7 @@ macro_rules! preferences {
         }
 
         impl $name {
-            pub fn extend<T: Into<$name>>(&mut self, other: T) {
-                let other = other.into();
+            pub fn extend(&mut self, other: $name) {
                 $(
                     if let Some(value) = other.$key {
                         self.$key = Some(value);

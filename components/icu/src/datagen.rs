@@ -71,9 +71,10 @@ icu_registry::registry!(cb);
 ///
 /// ```no_run
 /// # use icu_provider::DataMarker;
+/// # use std::path::Path;
 /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
 /// assert_eq!(
-///     icu::markers_for_bin("target/release/my-app")?,
+///     icu::markers_for_bin(Path::new("target/release/my-app"))?,
 ///     std::collections::HashSet::from_iter([
 ///         icu::list::provider::AndListV2Marker::INFO,
 ///         icu::list::provider::OrListV2Marker::INFO,
@@ -82,11 +83,8 @@ icu_registry::registry!(cb);
 /// # Ok(())
 /// # }
 /// ```
-pub fn markers_for_bin<P: AsRef<Path>>(path: P) -> Result<HashSet<DataMarkerInfo>, DataError> {
-    let file = std::fs::read(path.as_ref())?;
-    let file = file.as_slice();
-
-    markers_for_bin_inner(file)
+pub fn markers_for_bin(path: &Path) -> Result<HashSet<DataMarkerInfo>, DataError> {
+    markers_for_bin_inner(&std::fs::read(path)?)
 }
 
 #[test]

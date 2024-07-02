@@ -16,9 +16,9 @@ use icu::timezone::CustomTimeZone;
 use icu_collections::codepointinvlist::CodePointInversionListBuilder;
 use std::env;
 
-fn print<T: AsRef<str>>(_input: T) {
-    #[cfg(debug_assertions)]
-    println!("{}", _input.as_ref());
+#[cfg(not(debug_assertions))]
+macro_rules! println {
+    ($($arg:tt)*) => {};
 }
 
 #[no_mangle]
@@ -40,9 +40,9 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
         })
         .unwrap_or(5);
 
-    print(format!("\nTextual User Interface Example ({locale})"));
-    print("===================================");
-    print(format!("User: {user_name}"));
+    println!("\nTextual User Interface Example ({locale})");
+    println!("===================================");
+    println!("User: {user_name}");
 
     {
         let dtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new(
@@ -56,7 +56,7 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
 
         let formatted_dt = dtf.format(&today_date, &today_tz);
 
-        print(format!("Today is: {formatted_dt}"));
+        println!("Today is: {formatted_dt}");
     }
 
     {
@@ -68,9 +68,9 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
         let only_latin1 = user_name.chars().all(|ch| latin1_set.contains(ch));
 
         if only_latin1 {
-            print("User name latin1 only: true");
+            println!("User name latin1 only: true");
         } else {
-            print("User name latin1 only: false");
+            println!("User name latin1 only: false");
         }
     }
 
@@ -79,8 +79,8 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
             .expect("Failed to create PluralRules.");
 
         match pr.category_for(email_count) {
-            PluralCategory::One => print("Note: You have one unread email."),
-            _ => print(format!("Note: You have {email_count} unread emails.")),
+            PluralCategory::One => println!("Note: You have one unread email."),
+            _ => println!("Note: You have {email_count} unread emails."),
         }
     }
 

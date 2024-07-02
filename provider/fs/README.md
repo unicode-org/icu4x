@@ -11,7 +11,7 @@ It reads ICU4X data files from the filesystem in a given directory.
 ```rust
 use icu_provider_fs::FsDataProvider;
 
-let provider = FsDataProvider::try_new("/path/to/data/directory")
+let provider = FsDataProvider::try_new("/path/to/data/directory".into())
     .expect_err("Specify a real directory in the line above");
 ```
 
