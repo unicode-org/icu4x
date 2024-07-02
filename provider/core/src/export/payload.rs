@@ -187,7 +187,10 @@ impl DataPayload<ExportMarker> {
         serializer.output.finalize().unwrap_or_default()
     }
 
-    /// TODO
+    /// Returns an estimate of the baked size, made up of the size of the struct itself,
+    /// as well as the sizes of all its static borrows. 
+    /// 
+    /// As static borrows are deduplicated by the linker, this is often overcounting.
     pub fn baked_size(&self) -> usize {
         self.get().payload.bake_size()
     }

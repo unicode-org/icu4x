@@ -118,7 +118,9 @@ pub trait Bake {
     fn bake(&self, ctx: &CrateEnv) -> TokenStream;
 }
 
+/// Allows returning the size of data borrowed by a baked struct.
 pub trait BakeSize: Sized + Bake {
+    /// Returns the size
     fn borrows_size(&self) -> usize;
 }
 
