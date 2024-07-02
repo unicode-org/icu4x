@@ -6,7 +6,6 @@
 
 #![warn(missing_docs)]
 
-mod digital;
 mod duration;
 mod formatter;
 pub mod provider;
