@@ -209,35 +209,6 @@ impl ValidatedDurationFormatterOptions {
             ),
         ]
     }
-
-    /// Iterates over all unit fields of the struct, returning a tuple of the unit,
-    /// and references to its style and the visibility.
-    pub(crate) fn iter_units(&self) -> [(Unit, &FieldStyle, &FieldDisplay); 10] {
-        [
-            (Unit::Year, &self.year, &self.year_visibility),
-            (Unit::Month, &self.month, &self.month_visibility),
-            (Unit::Week, &self.week, &self.week_visibility),
-            (Unit::Day, &self.day, &self.day_visibility),
-            (Unit::Hour, &self.hour, &self.hour_visibility),
-            (Unit::Minute, &self.minute, &self.minute_visibility),
-            (Unit::Second, &self.second, &self.second_visibility),
-            (
-                Unit::Millisecond,
-                &self.millisecond,
-                &self.millisecond_visibility,
-            ),
-            (
-                Unit::Microsecond,
-                &self.microsecond,
-                &self.microsecond_visibility,
-            ),
-            (
-                Unit::Nanosecond,
-                &self.nanosecond,
-                &self.nanosecond_visibility,
-            ),
-        ]
-    }
 }
 
 /// Validated options builder for [DurationFormatter](DurationFormatter).

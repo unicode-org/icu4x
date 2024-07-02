@@ -56,7 +56,7 @@ impl crate::IterableDataProviderCached<DigitalDurationDataV1Marker> for DatagenP
                 self.cldr()
                     .unwrap()
                     .units()
-                    .read_and_parse::<cldr_serde::units::data::Resource>(&langid, "units.json")
+                    .read_and_parse::<cldr_serde::units::data::Resource>(langid, "units.json")
                     .is_ok()
             })
             .map(|langid| DataIdentifierCow::from_locale(DataLocale::from(&langid)))
