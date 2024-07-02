@@ -195,7 +195,6 @@ where
     // Necessary workaround bound (see `yoke::trait_hack` docs):
     for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: Deserialize<'de>,
 {
-    // TODO: this does not return deserialization errors (which load_data does), which the trait in its current form requires
     fn dry_load_data(
         &self,
         marker: DataMarkerInfo,
@@ -236,7 +235,6 @@ where
     // Necessary workaround bound (see `yoke::trait_hack` docs):
     for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: Deserialize<'de>,
 {
-    // TODO: this does not return deserialization errors (which load does), which the trait in its current form requires
     fn dry_load(&self, req: DataRequest) -> Result<DataResponseMetadata, DataError> {
         self.0.dry_load_data(M::INFO, req)
     }

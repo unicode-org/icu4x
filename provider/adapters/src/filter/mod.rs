@@ -74,6 +74,7 @@ where
         marker: DataMarkerInfo,
         req: DataRequest,
     ) -> Result<DataResponse<M>, DataError> {
+        self.check(marker, req)?;
         self.inner.load_data(marker, req)
     }
 }
