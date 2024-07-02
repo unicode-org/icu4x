@@ -17,6 +17,12 @@ impl Bake for FlexZeroVec<'_> {
     }
 }
 
+impl BakeSize for FlexZeroVec<'_> {
+    fn borrows_size(&self) -> usize {
+        self.as_ref().borrows_size()
+    }
+}
+
 impl Bake for &FlexZeroSlice {
     fn bake(&self, env: &CrateEnv) -> TokenStream {
         env.insert("zerovec");
@@ -25,6 +31,16 @@ impl Bake for &FlexZeroSlice {
         } else {
             let bytes = databake::Bake::bake(&self.as_bytes(), env);
             quote! { unsafe { zerovec::vecs::FlexZeroSlice::from_byte_slice_unchecked(#bytes) } }
+        }
+    }
+}
+
+impl BakeSize for &FlexZeroSlice {
+    fn borrows_size(&self) -> usize {
+        if self.is_empty() {
+            0
+        } else {
+            self.as_bytes().len()
         }
     }
 }

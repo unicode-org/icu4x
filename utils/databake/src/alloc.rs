@@ -5,8 +5,9 @@
 use super::*;
 extern crate alloc;
 
-impl<T: ?Sized + ToOwned> Bake for alloc::borrow::Cow<'_, T>
+impl<T> Bake for alloc::borrow::Cow<'_, T>
 where
+    T: ?Sized + ToOwned,
     for<'a> &'a T: Bake,
 {
     fn bake(&self, ctx: &CrateEnv) -> TokenStream {
@@ -15,6 +16,16 @@ where
         quote! {
             alloc::borrow::Cow::Borrowed(#t)
         }
+    }
+}
+
+impl<T> BakeSize for alloc::borrow::Cow<'_, T>
+where
+    T: ?Sized + ToOwned,
+    for<'a> &'a T: BakeSize,
+{
+    fn borrows_size(&self) -> usize {
+        (&**self).borrows_size()
     }
 }
 
@@ -27,6 +38,10 @@ fn cow() {
         alloc
     );
     assert_eq!(
+        BakeSize::borrows_size(&alloc::borrow::Cow::Borrowed("hi")),
+        2
+    );
+    assert_eq!(
         Bake::bake(
             &alloc::borrow::Cow::<'static, str>::Borrowed("hi"),
             &Default::default(),
@@ -37,6 +52,10 @@ fn cow() {
             &Default::default(),
         )
         .to_string(),
+    );
+    assert_eq!(
+        BakeSize::borrows_size(&alloc::borrow::Cow::<'static, str>::Owned("hi".to_owned())),
+        2
     );
 }
 

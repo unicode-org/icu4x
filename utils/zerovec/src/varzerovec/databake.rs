@@ -18,6 +18,12 @@ impl<T: VarULE + ?Sized> Bake for VarZeroVec<'_, T> {
     }
 }
 
+impl<T: VarULE + ?Sized> BakeSize for VarZeroVec<'_, T> {
+    fn borrows_size(&self) -> usize {
+        self.as_bytes().len()
+    }
+}
+
 impl<T: VarULE + ?Sized> Bake for &VarZeroSlice<T> {
     fn bake(&self, env: &CrateEnv) -> TokenStream {
         env.insert("zerovec");
@@ -27,6 +33,16 @@ impl<T: VarULE + ?Sized> Bake for &VarZeroSlice<T> {
             let bytes = databake::Bake::bake(&self.as_bytes(), env);
             // Safe because self.as_bytes is a safe input
             quote! { unsafe { zerovec::VarZeroSlice::from_bytes_unchecked(#bytes) } }
+        }
+    }
+}
+
+impl<T: VarULE + ?Sized> BakeSize for &VarZeroSlice<T> {
+    fn borrows_size(&self) -> usize {
+        if self.is_empty() {
+            0
+        } else {
+            self.as_bytes().len()
         }
     }
 }

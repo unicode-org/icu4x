@@ -990,6 +990,13 @@ impl<'trie, T: TrieValue + databake::Bake> databake::Bake for CodePointTrie<'tri
     }
 }
 
+#[cfg(feature = "databake")]
+impl<'trie, T: TrieValue + databake::Bake> databake::BakeSize for CodePointTrie<'trie, T> {
+    fn borrows_size(&self) -> usize {
+        self.header.borrows_size() + self.index.borrows_size() + self.data.borrows_size()
+    }
+}
+
 impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
     /// Returns the value that is associated with `code_point` for this [`CodePointTrie`]
     /// as a `u32`.

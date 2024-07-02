@@ -15,6 +15,7 @@ lazy_static::lazy_static! {
         "AsMut",
         "AsRef",
         "Bake",
+        "BakeSize",
         "Borrow",
         "BorrowMut",
         "Clone",

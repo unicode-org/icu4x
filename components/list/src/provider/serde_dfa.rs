@@ -51,6 +51,13 @@ impl databake::Bake for SerdeDFA<'_> {
 }
 
 #[cfg(feature = "datagen")]
+impl databake::BakeSize for SerdeDFA<'_> {
+    fn borrows_size(&self) -> usize {
+        self.deref().write_to_len()
+    }
+}
+
+#[cfg(feature = "datagen")]
 impl serde::Serialize for SerdeDFA<'_> {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where

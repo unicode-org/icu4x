@@ -8,6 +8,7 @@ use crate::DoublePlaceholder;
 use crate::SinglePlaceholder;
 
 use super::*;
+use ::databake::BakeSize;
 use ::databake::{quote, Bake, CrateEnv, TokenStream};
 
 impl<B, Store> Bake for Pattern<B, Store>
@@ -28,6 +29,16 @@ where
         quote! {
             icu_pattern::Pattern::<#b, _>::from_store_unchecked(#store)
         }
+    }
+}
+
+impl<B, Store> BakeSize for Pattern<B, Store>
+where
+    B: 'static,
+    Store: BakeSize,
+{
+    fn borrows_size(&self) -> usize {
+        self.store.borrows_size()
     }
 }
 
