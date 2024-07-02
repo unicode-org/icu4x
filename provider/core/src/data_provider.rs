@@ -79,12 +79,11 @@ where
 pub trait DryDataProvider<M: DataMarker>: DataProvider<M> {
     /// This method goes through the motions of [`load`], but only returns the metadata.
     ///
-    /// If [`dry_load`] returns an error, [`load`] must return the same error, but
+    /// If `dry_load` returns an error, [`load`] must return the same error, but
     /// not vice-versa. Concretely, [`load`] could return deserialization or I/O errors
-    /// that [`dry_load`] cannot predict.
+    /// that `dry_load` cannot predict.
     ///
     /// [`load`]: DataProvider::load
-    /// [`dry_load`]: Self:dry_load
     fn dry_load(&self, req: DataRequest) -> Result<DataResponseMetadata, DataError> {
         self.load(req).map(|r| r.metadata)
     }
@@ -116,12 +115,11 @@ where
 pub trait DynamicDryDataProvider<M: DynamicDataMarker>: DynamicDataProvider<M> {
     /// This method goes through the motions of [`load_data`], but only returns the metadata.
     ///
-    /// If [`dry_load_data`] returns an error, [`load_data`] must return the same error, but
+    /// If `dry_load_data` returns an error, [`load_data`] must return the same error, but
     /// not vice-versa. Concretely, [`load_data`] could return deserialization or I/O errors
-    /// that [`dry_load_data`] cannot predict.
+    /// that `dry_load_data` cannot predict.
     ///
     /// [`load_data`]: DynamicDataProvider::load_data
-    /// [`dry_load_data`]: Self:dry_load_data
     fn dry_load_data(
         &self,
         marker: DataMarkerInfo,
