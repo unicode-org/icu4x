@@ -53,18 +53,12 @@ impl DataProvider<UnitsEssentialsV1Marker> for DatagenProvider {
                                 .with_debug_context(&key)
                         })?;
 
-                    Ok((pattern_key_result, patterns))
-                })
-                .try_for_each(|elem| match elem {
-                    Ok((key, patterns)) => {
-                        if let Some(pattern) = patterns.unit_prefix_pattern.as_ref() {
-                            prefixes_map.insert(key, pattern.to_string());
-                            Ok(())
-                        } else {
-                            Err(DataError::custom("Failed to get pattern").with_debug_context(&key))
-                        }
+                    if let Some(pattern) = patterns.unit_prefix_pattern.as_ref() {
+                        prefixes_map.insert(pattern_key_result, pattern.to_string());
+                        Ok(())
+                    } else {
+                        Err(DataError::custom("Failed to get pattern").with_debug_context(&key))
                     }
-                    Err(e) => Err(e),
                 })?;
 
             Ok(())
