@@ -55,7 +55,7 @@ impl SerdeCache {
                 path.to_string(),
                 Box::new(
                     parser(&self.root.read_to_buf(path)?)
-                        .map_err(|e| e.with_path_context(&path))?,
+                        .map_err(|e| e.with_path_context(std::path::Path::new(path)))?,
                 ),
             ),
         }
@@ -110,17 +110,17 @@ impl Debug for AbstractFs {
 }
 
 impl AbstractFs {
-    pub fn new<P: AsRef<Path>>(root: P) -> Result<Self, DataError> {
-        if std::fs::metadata(root.as_ref())
-            .map_err(|e| DataError::from(e).with_path_context(root.as_ref()))?
+    pub fn new(root: &Path) -> Result<Self, DataError> {
+        if std::fs::metadata(root)
+            .map_err(|e| DataError::from(e).with_path_context(root))?
             .is_dir()
         {
-            Ok(Self::Fs(root.as_ref().to_path_buf()))
+            Ok(Self::Fs(root.to_path_buf()))
         } else {
-            let archive = ZipArchive::new(Cursor::new(std::fs::read(&root)?)).map_err(|e| {
+            let archive = ZipArchive::new(Cursor::new(std::fs::read(root)?)).map_err(|e| {
                 DataError::custom("Invalid ZIP file")
                     .with_display_context(&e)
-                    .with_path_context(&root)
+                    .with_path_context(root)
             })?;
             let file_list = archive.file_names().map(String::from).collect();
             Ok(Self::Zip(RwLock::new(Ok(ZipData { archive, file_list }))))

@@ -16,7 +16,7 @@ const PATHS: &[&str] = &[
 #[test]
 fn test_provider() {
     for path in PATHS {
-        let provider = FsDataProvider::try_new(path).unwrap();
+        let provider = FsDataProvider::try_new(path.into()).unwrap();
         for id in HelloWorldProvider.iter_ids().unwrap() {
             let req = DataRequest {
                 id: id.as_borrowed(),
@@ -48,7 +48,7 @@ fn test_provider() {
 #[test]
 fn test_errors() {
     for path in PATHS {
-        let provider = FsDataProvider::try_new(path).unwrap();
+        let provider = FsDataProvider::try_new(path.into()).unwrap();
 
         let err: Result<DataResponse<HelloWorldV1Marker>, DataError> =
             provider.as_deserializing().load(DataRequest {

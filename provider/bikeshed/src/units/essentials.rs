@@ -144,14 +144,56 @@ impl DataProvider<UnitsEssentialsV1Marker> for DatagenProvider {
             .ok_or_else(|| DataError::custom("Failed to get times"))?
             .clone();
 
+        // TODO: Fill prefixes (si prefixes, ... etc.) in the next PR.
         let mut prefixes = BTreeMap::<PatternKey, String>::new();
-        let power2 = length_data.get("power2");
-        let power3 = length_data.get("power3");
-        fill_power(&mut prefixes, power2, PowerValue::Two);
-        fill_power(&mut prefixes, power3, PowerValue::Three);
 
-        fill_si(length_data, &mut prefixes, BINARY_PREFIX)?;
-        fill_si(length_data, &mut prefixes, DECIMAL_PREFIX)?;
+        // Fill powers
+        for (powers, power_value) in [
+            (length_data.get("power2"), PowerValue::Two),
+            (length_data.get("power3"), PowerValue::Three),
+        ] {
+            let powers = powers
+                .as_ref()
+                .ok_or_else(|| DataError::custom("Failed to get powers"))?;
+            [
+                (
+                    powers.zero_compound_unit_pattern1.as_ref(),
+                    CompoundCount::Zero,
+                ),
+                (
+                    powers.one_compound_unit_pattern1.as_ref(),
+                    CompoundCount::One,
+                ),
+                (
+                    powers.two_compound_unit_pattern1.as_ref(),
+                    CompoundCount::Two,
+                ),
+                (
+                    powers.few_compound_unit_pattern1.as_ref(),
+                    CompoundCount::Few,
+                ),
+                (
+                    powers.many_compound_unit_pattern1.as_ref(),
+                    CompoundCount::Many,
+                ),
+                (
+                    powers.other_compound_unit_pattern1.as_ref(),
+                    CompoundCount::Other,
+                ),
+            ]
+            .iter()
+            .filter(|(pattern, _)| pattern.is_some())
+            .map(|(pattern, count)| (pattern.unwrap(), count))
+            .for_each(|(pattern, count)| {
+                prefixes.insert(
+                    PatternKey::Power {
+                        power: power_value,
+                        count: *count,
+                    },
+                    pattern.to_string(),
+                );
+            });
+        }
 
         let result = UnitsEssentialsV1 {
             per: per.into(),
