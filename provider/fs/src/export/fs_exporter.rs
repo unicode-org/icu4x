@@ -144,7 +144,7 @@ impl DataExporter for FilesystemExporter {
         if !path_buf.exists() {
             fs::create_dir_all(&path_buf)
                 .map_err(|e| DataError::from(e).with_path_context(&path_buf))?;
-            path_buf.push("empty");
+            path_buf.push(".empty");
             fs::File::create(&path_buf)?;
         }
 
