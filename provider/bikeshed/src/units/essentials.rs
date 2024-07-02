@@ -2,13 +2,15 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::collections::HashSet;
+use std::collections::{BTreeMap, HashSet};
 
 use crate::cldr_serde::{self};
 use crate::DatagenProvider;
 
 use icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1Marker;
 
+use icu::experimental::dimension::provider::pattern_key::{PatternKey, PowerValue};
+use icu::experimental::dimension::provider::units_essentials::CompoundCount;
 use icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1;
 use icu_provider::prelude::*;
 use icu_provider::DataMarkerAttributes;
@@ -42,13 +44,61 @@ impl DataProvider<UnitsEssentialsV1Marker> for DatagenProvider {
             .ok_or_else(|| DataError::custom("Failed to get times"))?
             .clone();
 
-        // TODO: Fill prefixes (power, si prefixes, ... etc.) in the next PR.
-        let prefixes = ZeroMap::new();
+        // TODO: Fill prefixes (si prefixes, ... etc.) in the next PR.
+        let mut prefixes = BTreeMap::<PatternKey, String>::new();
+
+        // Fill powers
+        for (powers, power_value) in [
+            (length_data.get("power2"), PowerValue::Two),
+            (length_data.get("power3"), PowerValue::Three),
+        ] {
+            let powers = powers
+                .as_ref()
+                .ok_or_else(|| DataError::custom("Failed to get powers"))?;
+            [
+                (
+                    powers.zero_compound_unit_pattern1.as_ref(),
+                    CompoundCount::Zero,
+                ),
+                (
+                    powers.one_compound_unit_pattern1.as_ref(),
+                    CompoundCount::One,
+                ),
+                (
+                    powers.two_compound_unit_pattern1.as_ref(),
+                    CompoundCount::Two,
+                ),
+                (
+                    powers.few_compound_unit_pattern1.as_ref(),
+                    CompoundCount::Few,
+                ),
+                (
+                    powers.many_compound_unit_pattern1.as_ref(),
+                    CompoundCount::Many,
+                ),
+                (
+                    powers.other_compound_unit_pattern1.as_ref(),
+                    CompoundCount::Other,
+                ),
+            ]
+            .iter()
+            .filter(|(pattern, _)| pattern.is_some())
+            .map(|(pattern, count)| (pattern.unwrap(), count))
+            .for_each(|(pattern, count)| {
+                prefixes.insert(
+                    PatternKey::Power {
+                        power: power_value,
+                        count: *count,
+                    },
+                    pattern.to_string(),
+                );
+            });
+        }
 
         let result = UnitsEssentialsV1 {
             per: per.into(),
             times: times.into(),
-            prefixes,
+            prefixes: ZeroMap::from_iter(prefixes),
         };
 
         Ok(DataResponse {

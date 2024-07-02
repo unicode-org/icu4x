@@ -1,5 +1,60 @@
 {
-  "prefixes": {},
+  "prefixes": [
+    [
+      {
+        "Power": {
+          "power": "Two",
+          "count": "One"
+        }
+      },
+      "kvadratni {0}"
+    ],
+    [
+      {
+        "Power": {
+          "power": "Two",
+          "count": "Few"
+        }
+      },
+      "kvadratna {0}"
+    ],
+    [
+      {
+        "Power": {
+          "power": "Two",
+          "count": "Other"
+        }
+      },
+      "kvadratnih {0}"
+    ],
+    [
+      {
+        "Power": {
+          "power": "Three",
+          "count": "One"
+        }
+      },
+      "kubni {0}"
+    ],
+    [
+      {
+        "Power": {
+          "power": "Three",
+          "count": "Few"
+        }
+      },
+      "kubna {0}"
+    ],
+    [
+      {
+        "Power": {
+          "power": "Three",
+          "count": "Other"
+        }
+      },
+      "kubnih {0}"
+    ]
+  ],
   "per": "{0}/{1}",
   "times": "{0}-{1}"
 }

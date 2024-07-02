@@ -1,5 +1,42 @@
 {
-  "prefixes": {},
+  "prefixes": [
+    [
+      {
+        "Power": {
+          "power": "Two",
+          "count": "One"
+        }
+      },
+      "{0} cuadrado"
+    ],
+    [
+      {
+        "Power": {
+          "power": "Two",
+          "count": "Other"
+        }
+      },
+      "{0} cuadrados"
+    ],
+    [
+      {
+        "Power": {
+          "power": "Three",
+          "count": "One"
+        }
+      },
+      "{0} cúbico"
+    ],
+    [
+      {
+        "Power": {
+          "power": "Three",
+          "count": "Other"
+        }
+      },
+      "{0} cúbicos"
+    ]
+  ],
   "per": "{0} por {1}",
   "times": "{0}-{1}"
 }
