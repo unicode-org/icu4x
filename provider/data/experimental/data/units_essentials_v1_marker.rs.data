@@ -1,0 +1,1045 @@
+// @generated
+/// Implement `DataProvider<UnitsEssentialsV1Marker>` on the given struct using the data
+/// hardcoded in this file. This allows the struct to be used with
+/// `icu`'s `_unstable` constructors.
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __impl_units_essentials_v1_marker {
+    ($ provider : ty) => {
+        #[clippy::msrv = "1.70"]
+        const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
+        #[clippy::msrv = "1.70"]
+        impl $provider {
+            const DATA_UNITS_ESSENTIALS_V1_MARKER: icu_provider_baked::binary_search::Data<icu_provider_baked::binary_search::AttributesAndLocale, icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1Marker> = {
+                type S = <icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1Marker as icu_provider::DynamicDataMarker>::Yokeable;
+                const _LONG_AF: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\r\0\x1A\0%\0vierkante {0}vierkante {0}kubieke {0}kubieke {0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0} per {1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}-{1}"),
+                };
+                const _LONG_AM: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x10\0 \x000\0\xE1\x88\xB5\xE1\x8A\xA9\xE1\x8B\xA8\xE1\x88\xAD {0}\xE1\x88\xB5\xE1\x8A\xA9\xE1\x8B\xA8\xE1\x88\xAD {0}\xE1\x8A\xAA\xE1\x8B\xA9\xE1\x89\xA2\xE1\x8A\xAD {0}\xE1\x8A\xAA\xE1\x8B\xA9\xE1\x89\xA2\xE1\x8A\xAD {0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0} በ{1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_AR: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA0\xA1\xA2\xA3\xA4\xA5\xB0\xB1\xB2\xB3\xB4\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0C\0\0\0\0\0\x0E\0\x1C\0.\0>\0P\0^\0l\0z\0\x8C\0\x9C\0\xAC\0{0} \xD9\x85\xD8\xB1\xD8\xA8\xD9\x91\xD8\xB9{0} \xD9\x85\xD8\xB1\xD8\xA8\xD9\x91\xD8\xB9{0} \xD9\x85\xD8\xB1\xD8\xA8\xD9\x91\xD8\xB9\xD8\xA7\xD9\x86{0} \xD9\x85\xD8\xB1\xD8\xA8\xD9\x91\xD8\xB9\xD8\xA9{0} \xD9\x85\xD8\xB1\xD8\xA8\xD9\x91\xD8\xB9\xD9\x8B\xD8\xA7{0} \xD9\x85\xD8\xB1\xD8\xA8\xD9\x91\xD8\xB9{0} \xD9\x85\xD9\x83\xD8\xB9\xD9\x91\xD8\xA8{0} \xD9\x85\xD9\x83\xD8\xB9\xD9\x91\xD8\xA8{0} \xD9\x85\xD9\x83\xD8\xB9\xD9\x91\xD8\xA8\xD8\xA7\xD9\x86{0} \xD9\x85\xD9\x83\xD8\xB9\xD9\x91\xD8\xA8\xD8\xA9{0} \xD9\x85\xD9\x83\xD8\xB9\xD8\xA8\xD9\x8B\xD8\xA7{0} \xD9\x85\xD9\x83\xD8\xB9\xD9\x91\xD8\xA8") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0} لكل {1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_AS: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x10\0 \0*\0\xE0\xA6\xAC\xE0\xA7\xB0\xE0\xA7\x8D\xE0\xA6\x97 {0}\xE0\xA6\xAC\xE0\xA7\xB0\xE0\xA7\x8D\xE0\xA6\x97 {0}\xE0\xA6\x98\xE0\xA6\xA8 {0}\xE0\xA6\x98\xE0\xA6\xA8 {0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("প\u{9cd}ৰতি {1}ত {0}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_AST: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA5\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x05\0{0}\xC2\xB2{0}\xC2\xB3") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0} per {1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_AZ: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x0B\0\x16\0\x1D\0kvadrat {0}kvadrat {0}kub {0}kub {0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0}/{1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_BE: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA3\xA4\xA5\xB1\xB3\xB4\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x08\0\0\0\0\0\x16\0.\0F\0O\0Z\0e\0p\0\xD0\xBA\xD0\xB2\xD0\xB0\xD0\xB4\xD1\x80\xD0\xB0\xD1\x82\xD0\xBD\xD1\x8B {0}\xD0\xBA\xD0\xB2\xD0\xB0\xD0\xB4\xD1\x80\xD0\xB0\xD1\x82\xD0\xBD\xD1\x8B\xD1\x8F {0}\xD0\xBA\xD0\xB2\xD0\xB0\xD0\xB4\xD1\x80\xD0\xB0\xD1\x82\xD0\xBD\xD1\x8B\xD1\x85 {0}\xD0\xBA\xD0\xB2. {0}\xD0\xBA\xD1\x83\xD0\xB1. {0}\xD0\xBA\xD1\x83\xD0\xB1. {0}\xD0\xBA\xD1\x83\xD0\xB1. {0}\xD0\xBA\xD1\x83\xD0\xB1. {0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0}/{1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}-{1}"),
+                };
+                const _LONG_BG: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x16\0,\0>\0\xD0\xBA\xD0\xB2\xD0\xB0\xD0\xB4\xD1\x80\xD0\xB0\xD1\x82\xD0\xB5\xD0\xBD {0}\xD0\xBA\xD0\xB2\xD0\xB0\xD0\xB4\xD1\x80\xD0\xB0\xD1\x82\xD0\xBD\xD0\xB8 {0}\xD0\xBA\xD1\x83\xD0\xB1\xD0\xB8\xD1\x87\xD0\xB5\xD0\xBD {0}\xD0\xBA\xD1\x83\xD0\xB1\xD0\xB8\xD1\x87\xD0\xBD\xD0\xB8 {0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0} на {1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_BLO: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA5\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x05\0{0}\xC2\xB2{0}\xC2\xB3") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0} {1} nɩ"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_BN: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x10\0\x1F\0)\0\xE0\xA6\xAC\xE0\xA6\xB0\xE0\xA7\x8D\xE0\xA6\x97 {0}\xE0\xA6\xAC\xE0\xA6\xB0\xE0\xA7\x8D\xE0\xA6\x97{0}\xE0\xA6\x98\xE0\xA6\xA8 {0}\xE0\xA6\x98\xE0\xA6\xA8 {0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{1} প\u{9cd}রতি {0}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_BN_IN: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x10\0\x1F\0)\0\xE0\xA6\xAC\xE0\xA6\xB0\xE0\xA7\x8D\xE0\xA6\x97 {0}\xE0\xA6\xAC\xE0\xA6\xB0\xE0\xA7\x8D\xE0\xA6\x97{0}\xE0\xA6\x98\xE0\xA6\xA8 {0}\xE0\xA6\x98\xE0\xA6\xA8 {0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{1} প\u{9cd}রতি {0}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}-{1}"),
+                };
+                const _LONG_BR: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA2\xA3\xA4\xA5\xB1\xB2\xB3\xB4\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\n\0\0\0\0\0\n\0\x14\0\x1E\0(\x002\0;\0D\0M\0V\0{0} karrez{0} karrez{0} karrez{0} karrez{0} karrez{0} di\xC3\xB1s{0} di\xC3\xB1s{0} di\xC3\xB1s{0} di\xC3\xB1s{0} di\xC3\xB1s") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0} dre {1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}-{1}"),
+                };
+                const _LONG_BS: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA3\xA5\xB1\xB3\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x06\0\0\0\0\0\r\0\x1A\0(\x001\0:\0kvadratni {0}kvadratna {0}kvadratnih {0}kubni {0}kubna {0}kubnih {0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0}/{1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_CA: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x0B\0\x17\0!\0{0} quadrat{0} quadrats{0} c\xC3\xBAbic{0} c\xC3\xBAbics") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0} per {1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_CEB: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\n\0\x14\0\x1D\0square {0}square {0}cubic {0}cubic {0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0} kada {1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_CHR: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x17\0.\0H\0\xE1\x8F\x85\xE1\x8E\xA9 \xE1\x8F\xA7\xE1\x8F\x85\xE1\x8F\x8F\xE1\x8F\xB1 {0}\xE1\x8F\x85\xE1\x8E\xA9 \xE1\x8F\xA7\xE1\x8F\x85\xE1\x8F\x8F\xE1\x8F\xB1 {0}\xE1\x8F\xA3\xE1\x8F\x81\xE1\x8E\xB3 \xE1\x8F\xA7\xE1\x8F\x85\xE1\x8F\x8F\xE1\x8F\xB1 {0}\xE1\x8F\xA3\xE1\x8F\x81\xE1\x8E\xB3 \xE1\x8F\xA7\xE1\x8F\x85\xE1\x8F\x8F\xE1\x8F\xB1 {0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0} ᎾᎿ {1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}-{1}"),
+                };
+                const _LONG_CS: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA3\xA4\xA5\xB1\xB3\xB4\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x08\0\0\0\0\0\x10\0 \x002\0D\0R\0`\0p\0{0} \xC4\x8Dtvere\xC4\x8Dn\xC3\xAD{0} \xC4\x8Dtvere\xC4\x8Dn\xC3\xAD{0} \xC4\x8Dtvere\xC4\x8Dn\xC3\xADho{0} \xC4\x8Dtvere\xC4\x8Dn\xC3\xADch{0} krychlov\xC3\xA9{0} krychlov\xC3\xA1{0} krychlov\xC3\xA9ho{0} krychlov\xC3\xBDch") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0}/{1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}{1}"),
+                };
+                const _LONG_CY: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA0\xA1\xA2\xA3\xA4\xA5\xB0\xB1\xB2\xB3\xB4\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0C\0\0\0\0\0\n\0\x14\0\x1E\0(\x002\0<\0F\0P\0Z\0d\0n\0{0} sgw\xC3\xA2r{0} sgw\xC3\xA2r{0} sgw\xC3\xA2r{0} sgw\xC3\xA2r{0} sgw\xC3\xA2r{0} sgw\xC3\xA2r{0} ciwbig{0} ciwbig{0} ciwbig{0} ciwbig{0} ciwbig{0} ciwbig") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0}/{1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_DA: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\n\0\x14\0\x1C\0kvadrat{0}kvadrat{0}kubik{0}kubik{0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0} pr. {1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0} gange {1}"),
+                };
+                const _LONG_DE: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\n\0\x14\0\x1C\0Quadrat{0}Quadrat{0}Kubik{0}Kubik{0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0} pro {1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_DSB: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA2\xA3\xA5\xB1\xB2\xB3\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x08\0\0\0\0\0\r\0\x1B\0(\x007\0B\0N\0Y\0kwadratny {0}kwadratnej {0}kwadratne {0}kwadratnych {0}kubikny {0}kubiknej {0}kubikne {0}kubiknych {0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0} na {1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}-{1}"),
+                };
+                const _LONG_EL: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x1A\x004\0D\0\xCF\x84\xCE\xB5\xCF\x84\xCF\x81\xCE\xB1\xCE\xB3\xCF\x89\xCE\xBD\xCE\xB9\xCE\xBA\xCF\x8C {0}\xCF\x84\xCE\xB5\xCF\x84\xCF\x81\xCE\xB1\xCE\xB3\xCF\x89\xCE\xBD\xCE\xB9\xCE\xBA\xCE\xAC {0}\xCE\xBA\xCF\x85\xCE\xB2\xCE\xB9\xCE\xBA\xCF\x8C {0}\xCE\xBA\xCF\x85\xCE\xB2\xCE\xB9\xCE\xBA\xCE\xAC {0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0} ανά {1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_EN: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\n\0\x14\0\x1D\0square {0}square {0}cubic {0}cubic {0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0} per {1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}-{1}"),
+                };
+                const _LONG_ES: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x0C\0\x19\0$\0{0} cuadrado{0} cuadrados{0} c\xC3\xBAbico{0} c\xC3\xBAbicos") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0} por {1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}-{1}"),
+                };
+                const _LONG_ET: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x07\0\x0E\0\x15\0ruut{0}ruut{0}kuup{0}kuup{0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0} {1} kohta"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_EU: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x0B\0\x16\0 \0{0} karratu{0} karratu{0} kubiko{0} kubiko") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0}/{1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}-{1}"),
+                };
+                const _LONG_FA: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x0B\0\x16\0\"\0{0}\xD9\x85\xD8\xB1\xD8\xA8\xD8\xB9{0}\xD9\x85\xD8\xB1\xD8\xA8\xD8\xB9{0} \xD9\x85\xDA\xA9\xD8\xB9\xD8\xA8{0} \xD9\x85\xDA\xA9\xD8\xB9\xD8\xA8") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0} در {1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}\u{200c}{1}"),
+                };
+                const _LONG_FF_ADLM: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0 \0@\0X\0\xF0\x9E\xA4\xA3\xF0\x9E\xA4\xAD\xF0\x9E\xA4\xB2\xF0\x9E\xA4\xBA\xF0\x9E\xA4\xAB\xF0\x9E\xA4\xAA\xF0\x9E\xA4\xAB {0}\xF0\x9E\xA4\xA3\xF0\x9E\xA4\xAD\xF0\x9E\xA4\xB2\xF0\x9E\xA4\xBA\xF0\x9E\xA4\xAB\xF0\x9E\xA4\xAA\xF0\x9E\xA4\xAB {0}\xF0\x9E\xA4\xA4\xF0\x9E\xA4\xA2\xF0\x9E\xA4\xA5\xF0\x9E\xA4\xA6\xF0\x9E\xA4\xB5 {0}\xF0\x9E\xA4\xA4\xF0\x9E\xA4\xA2\xF0\x9E\xA4\xA5\xF0\x9E\xA4\xA6\xF0\x9E\xA4\xB5 {0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0} 𞤲𞤣𞤫𞤪 {1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}-{1}"),
+                };
+                const _LONG_FI: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\t\0\x12\0\x1B\0neli\xC3\xB6{0}neli\xC3\xB6{0}kuutio{0}kuutio{0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0}/{1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_FIL: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\r\0\x1A\0&\0{0} kuwadrado{0} kuwadradocubic na {0}cubic {0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0} kada {1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_FO: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x06\0\x0C\0\x15\0fer{0}fer{0}kubikk{0}kubikk{0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0}/{1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_FR: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\n\0\x15\0\x1D\0{0} carr\xC3\xA9{0} carr\xC3\xA9s{0} cube{0} cubes") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0} par {1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}-{1}"),
+                };
+                const _LONG_GA: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA2\xA3\xA4\xA5\xB1\xB2\xB3\xB4\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\n\0\0\0\0\0\x0E\0\x1C\0*\08\0G\0S\0a\0o\0}\0{0} cearnaithe{0} chearnacha{0} chearnacha{0} chearnacha{0} chearnaithe{0} ci\xC3\xBAbach{0} chi\xC3\xBAbacha{0} chi\xC3\xBAbacha{0} chi\xC3\xBAbacha{0} ci\xC3\xBAbach") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0} sa {1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_GD: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA2\xA3\xA5\xB1\xB2\xB3\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x08\0\0\0\0\0\x0F\0\x1E\0-\0<\0H\0T\0`\0{0} ce\xC3\xA0rnagach{0} ce\xC3\xA0rnagach{0} ce\xC3\xA0rnagach{0} ce\xC3\xA0rnagach{0} ci\xC3\xB9bach{0} ci\xC3\xB9bach{0} ci\xC3\xB9bach{0} ci\xC3\xB9bach") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0} / {1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_GL: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x0B\0\x17\0\"\0{0} cadrado{0} cadrados{0} c\xC3\xBAbico{0} c\xC3\xBAbicos") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0} por {1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_GU: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x10\0 \0*\0\xE0\xAA\x9A\xE0\xAB\x8B\xE0\xAA\xB0\xE0\xAA\xB8 {0}\xE0\xAA\x9A\xE0\xAB\x8B\xE0\xAA\xB0\xE0\xAA\xB8 {0}\xE0\xAA\x98\xE0\xAA\xA8 {0}\xE0\xAA\x98\xE0\xAA\xA8 {0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0} પ\u{acd}રતિ {1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}-{1}"),
+                };
+                const _LONG_HA: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x0B\0\x16\0\x1F\0sikwaya {0}sikwaya {0}kubic {0}kubic {0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0} a {1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_HE: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA2\xA4\xA5\xB1\xB2\xB4\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x08\0\0\0\0\0\x10\0 \x000\0@\0N\0\\\0j\0{0} \xD7\x91\xD7\xA8\xD7\x99\xD7\x91\xD7\x95\xD7\xA2{0} \xD7\x91\xD7\xA8\xD7\x99\xD7\x91\xD7\x95\xD7\xA2{0} \xD7\x91\xD7\xA8\xD7\x99\xD7\x91\xD7\x95\xD7\xA2{0} \xD7\x91\xD7\xA8\xD7\x99\xD7\x91\xD7\x95\xD7\xA2{0} \xD7\x9E\xD7\xA2\xD7\x95\xD7\xA7\xD7\x91{0} \xD7\x9E\xD7\xA2\xD7\x95\xD7\xA7\xD7\x91{0} \xD7\x9E\xD7\xA2\xD7\x95\xD7\xA7\xD7\x91{0} \xD7\x9E\xD7\xA2\xD7\x95\xD7\xA7\xD7\x91") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0} ל{1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_HI: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x10\0 \0*\0\xE0\xA4\xB5\xE0\xA4\xB0\xE0\xA5\x8D\xE0\xA4\x97 {0}\xE0\xA4\xB5\xE0\xA4\xB0\xE0\xA5\x8D\xE0\xA4\x97 {0}\xE0\xA4\x98\xE0\xA4\xA8 {0}\xE0\xA4\x98\xE0\xA4\xA8 {0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0} प\u{94d}रति {1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_HR: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA3\xA5\xB1\xB3\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x06\0\0\0\0\0\r\0\x1A\0(\x001\0:\0\xC4\x8Detvorni {0}\xC4\x8Detvorna {0}\xC4\x8Detvornih {0}kubni {0}kubna {0}kubnih {0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0}/{1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}-{1}"),
+                };
+                const _LONG_HU: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x0B\0\x16\0\x1D\0n\xC3\xA9gyzet{0}n\xC3\xA9gyzet{0}k\xC3\xB6b{0}k\xC3\xB6b{0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0} per {1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_HY: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x16\0,\0@\0\xD6\x84\xD5\xA1\xD5\xBC\xD5\xA1\xD5\xAF\xD5\xB8\xD6\x82\xD5\xBD\xD5\xAB {0}\xD6\x84\xD5\xA1\xD5\xBC\xD5\xA1\xD5\xAF\xD5\xB8\xD6\x82\xD5\xBD\xD5\xAB {0}\xD5\xAD\xD5\xB8\xD6\x80\xD5\xA1\xD5\xB6\xD5\xA1\xD6\x80\xD5\xA4 {0}\xD5\xAD\xD5\xB8\xD6\x80\xD5\xA1\xD5\xB6\xD5\xA1\xD6\x80\xD5\xA4 {0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0}/{1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_IA: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x0C\0\x18\0!\0{0} quadrate{0} quadrate{0} cubic{0} cubic") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0} per {1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_ID: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA5\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x0B\0{0} persegi{0} kubik") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0} per {1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_IG: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA5\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\n\0{0} square{0} cubic") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0}/{1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_IS: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x06\0\x0C\0\x13\0fer{0}fer{0}r\xC3\xBAm{0}r\xC3\xBAm{0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0} á {1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_IT: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x0C\0\x18\0 \0{0} quadrato{0} quadrati{0} cubo{0} cubi") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0} al {1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0} {1}"),
+                };
+                const _LONG_JA: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA5\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\t\0\xE5\xB9\xB3\xE6\x96\xB9{0}\xE7\xAB\x8B\xE6\x96\xB9{0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0}毎{1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_JV: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA5\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\n\0pesagi {0}kubik {0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0} saben {1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}-{1}"),
+                };
+                const _LONG_KA: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\"\0D\0Z\0\xE1\x83\x99\xE1\x83\x95\xE1\x83\x90\xE1\x83\x93\xE1\x83\xA0\xE1\x83\x90\xE1\x83\xA2\xE1\x83\xA3\xE1\x83\x9A\xE1\x83\x98 {0}\xE1\x83\x99\xE1\x83\x95\xE1\x83\x90\xE1\x83\x93\xE1\x83\xA0\xE1\x83\x90\xE1\x83\xA2\xE1\x83\xA3\xE1\x83\x9A\xE1\x83\x98 {0}\xE1\x83\x99\xE1\x83\xA3\xE1\x83\x91\xE1\x83\xA3\xE1\x83\xA0\xE1\x83\x98 {0}\xE1\x83\x99\xE1\x83\xA3\xE1\x83\x91\xE1\x83\xA3\xE1\x83\xA0\xE1\x83\x98 {0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0}/{1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_KEA: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA5\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x0C\0{0} kuadradu{0} k\xC3\xBAbiku") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0} pur {1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}-{1}"),
+                };
+                const _LONG_KGP: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA5\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x05\0{0}\xC2\xB2{0}\xC2\xB3") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0} por {1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_KK: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x0E\0\x1C\0*\0\xD1\x88\xD0\xB0\xD1\x80\xD1\x88\xD1\x8B {0}\xD1\x88\xD0\xB0\xD1\x80\xD1\x88\xD1\x8B {0}\xD1\x82\xD0\xB5\xD0\xBA\xD1\x88\xD0\xB5 {0}\xD1\x82\xD0\xB5\xD0\xBA\xD1\x88\xD0\xB5 {0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0}/{1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_KM: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA5\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x13\0{0} \xE1\x9E\x80\xE1\x9E\xB6\xE1\x9E\x9A\xE1\x9F\x89\xE1\x9F\x81{0}\xE1\x9E\x82\xE1\x9E\xBC\xE1\x9E\x94") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0}\u{200b} ក\u{17d2}ន\u{17bb}ង\u{200b}ម\u{17bd}យ\u{200b} {1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_KN: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x13\0)\0E\0\xE0\xB2\x9A\xE0\xB2\xA6\xE0\xB2\xB0\xE0\xB2\xB5\xE0\xB3\x81 {0}\xE0\xB2\x9A\xE0\xB2\xA6\xE0\xB2\xB0\xE0\xB2\x97\xE0\xB2\xB3\xE0\xB3\x81 {0}\xE0\xB2\x95\xE0\xB3\x8D\xE0\xB2\xAF\xE0\xB3\x82\xE0\xB2\xAC\xE0\xB2\xBF\xE0\xB2\x95\xE0\xB3\x8D {0}\xE0\xB2\x95\xE0\xB3\x8D\xE0\xB2\xAF\xE0\xB3\x82\xE0\xB2\xAC\xE0\xB2\xBF\xE0\xB2\x95\xE0\xB3\x8D\xE2\x80\x8C\xE0\xB2\x97\xE0\xB2\xB3\xE0\xB3\x81 {0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("ಪ\u{ccd}ರತ\u{cbf} {1} ಗ\u{cc6} {0}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}-{1}"),
+                };
+                const _LONG_KO: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA5\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\t\0\xEC\xA0\x9C\xEA\xB3\xB1{0}\xEC\x84\xB8\xEC\xA0\x9C\xEA\xB3\xB1{0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{1}당 {0}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_KOK: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA5\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x10\0\xE0\xA4\x9A\xE0\xA5\x8C\xE0\xA4\xB0\xE0\xA4\xB8 {0}\xE0\xA4\x98\xE0\xA4\xA8 {0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0} दर {1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}-{1}"),
+                };
+                const _LONG_KY: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x0E\0\x1C\0*\0\xD1\x87\xD0\xB0\xD1\x80\xD1\x87\xD1\x8B {0}\xD1\x87\xD0\xB0\xD1\x80\xD1\x87\xD1\x8B {0}\xD0\xBA\xD1\x83\xD0\xB1\xD0\xB8\xD0\xBA {0}\xD0\xBA\xD1\x83\xD0\xB1\xD0\xB8\xD0\xBA {0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0}/{1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_LO: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA5\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x0C\0\xE0\xBA\x95\xE0\xBA\xB2{0}\xE2\x80\x8B{0}\xE0\xBA\x81\xE0\xBB\x89\xE0\xBA\xAD\xE0\xBA\x99") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0} ຕ\u{ecd}\u{ec8} {1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_LT: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA3\xA4\xA5\xB1\xB3\xB4\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x08\0\0\0\0\0\x0C\0\x18\0$\x000\08\0@\0H\0{0} kvadratu{0} kvadratu{0} kvadratu{0} kvadratu{0} kubu{0} kubu{0} kubu{0} kubu") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0}/{1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_LV: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA0\xA1\xA5\xB0\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x06\0\0\0\0\0\x0B\0\x16\0!\0)\x001\0kvadr\xC4\x81t{0}kvadr\xC4\x81t{0}kvadr\xC4\x81t{0}kubik{0}kubik{0}kubik{0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0}/{1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_MK: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x16\0,\0:\0{0} \xD0\xBA\xD0\xB2\xD0\xB0\xD0\xB4\xD1\x80\xD0\xB0\xD1\x82\xD0\xB5\xD0\xBD{0} \xD0\xBA\xD0\xB2\xD0\xB0\xD0\xB4\xD1\x80\xD0\xB0\xD1\x82\xD0\xBD\xD0\xB8{0} \xD0\xBA\xD1\x83\xD0\xB1\xD0\xB5\xD0\xBD{0} \xD0\xBA\xD1\x83\xD0\xB1\xD0\xBD\xD0\xB8") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0} на {1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_ML: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x16\0,\0H\0\xE0\xB4\xB5\xE0\xB5\xBC\xE0\xB4\x97\xE0\xB5\x8D\xE0\xB4\x97\xE0\xB4\x82 {0}\xE0\xB4\xB5\xE0\xB5\xBC\xE0\xB4\x97\xE0\xB5\x8D\xE0\xB4\x97\xE0\xB4\x82 {0}\xE0\xB4\x95\xE0\xB5\x8D\xE0\xB4\xAF\xE0\xB5\x81\xE0\xB4\xAC\xE0\xB4\xBF\xE0\xB4\x95\xE0\xB5\x8D {0}\xE0\xB4\x95\xE0\xB5\x8D\xE0\xB4\xAF\xE0\xB5\x81\xE0\xB4\xAC\xE0\xB4\xBF\xE0\xB4\x95\xE0\xB5\x8D {0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0}/{1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_MN: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x12\0$\0.\0\xD0\xBA\xD0\xB2\xD0\xB0\xD0\xB4\xD1\x80\xD0\xB0\xD1\x82 {0}\xD0\xBA\xD0\xB2\xD0\xB0\xD0\xB4\xD1\x80\xD0\xB0\xD1\x82 {0}\xD0\xBA\xD1\x83\xD0\xB1 {0}\xD0\xBA\xD1\x83\xD0\xB1 {0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{1} тутамд {0}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_MR: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x10\0 \0)\0\xE0\xA4\x9A\xE0\xA5\x8C\xE0\xA4\xB0\xE0\xA4\xB8 {0}\xE0\xA4\x9A\xE0\xA5\x8C\xE0\xA4\xB0\xE0\xA4\xB8 {0}\xE0\xA4\x98\xE0\xA4\xA8{0}\xE0\xA4\x98\xE0\xA4\xA8{0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0} प\u{94d}रति {1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_MS: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA5\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x0B\0{0} persegi{0} padu") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0} per {1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_MY: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA5\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x18\0\xE1\x80\x85\xE1\x80\x90\xE1\x80\xAF\xE1\x80\x9B\xE1\x80\x94\xE1\x80\xBA\xE1\x80\xB8{0}\xE1\x80\x80\xE1\x80\xAF\xE1\x80\x97{0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("တစ\u{103a}{1} လျ\u{103e}င\u{103a} {0}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_NE: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x10\0 \0*\0\xE0\xA4\xB5\xE0\xA4\xB0\xE0\xA5\x8D\xE0\xA4\x97 {0}\xE0\xA4\xB5\xE0\xA4\xB0\xE0\xA5\x8D\xE0\xA4\x97 {0}\xE0\xA4\x98\xE0\xA4\xA8 {0}\xE0\xA4\x98\xE0\xA4\xA8 {0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0}प\u{94d}रति{1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_NL: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\r\0\x1A\0%\0vierkante {0}vierkante {0}kubieke {0}kubieke {0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0} per {1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}{1}"),
+                };
+                const _LONG_NN: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\n\0\x14\0\x1D\0kvadrat{0}kvadrat{0}kubikk{0}kubikk{0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0} per {1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}{1}"),
+                };
+                const _LONG_NO: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\n\0\x14\0\x1D\0kvadrat{0}kvadrat{0}kubikk{0}kubikk{0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0} per {1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_OR: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x1B\0*\0F\0\xE0\xAC\xB8\xE0\xAD\x8D\xE0\xAC\x95\xE0\xAD\x8B\xE0\xAD\x9F\xE0\xAC\xBE\xE0\xAC\xB0\xE0\xAD\x8D{0}\xE0\xAC\xB8\xE0\xAD\x8D\xE0\xAC\x95\xE0\xAD\x8B{0}\xE0\xAC\x95\xE0\xAD\x8D\xE0\xAD\x9F\xE0\xAD\x81\xE0\xAC\xAC\xE0\xAC\xBF\xE0\xAC\x95\xE0\xAD\x8D {0}\xE0\xAC\x95\xE0\xAD\x8D\xE0\xAD\x9F\xE0\xAD\x81 {0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{1} ପ\u{b4d}ରତ\u{b3f} {0}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_PA: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x0C\0\x18\0!\0\xE0\xA8\xB5\xE0\xA8\xB0\xE0\xA8\x97{0}\xE0\xA8\xB5\xE0\xA8\xB0\xE0\xA8\x97{0}\xE0\xA8\x98\xE0\xA8\xA3{0}\xE0\xA8\x98\xE0\xA8\xA3{0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0} ਪ\u{a4d}ਰਤੀ {1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_PCM: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\n\0\x14\0\x1F\0Skwi\xC3\xA1 {0}Skwi\xC3\xA1 {0}K\xC3\xBAb\xC3\xADk {0}K\xC3\xBAb\xC3\xADk {0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0} Fọ Ẹ\u{301}vri {1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_PL: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA3\xA4\xA5\xB1\xB3\xB4\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x08\0\0\0\0\0\x0E\0\x1C\0,\0<\0K\0Z\0k\0{0} kwadratowe{0} kwadratowe{0} kwadratowych{0} kwadratowego{0} sze\xC5\x9Bcienne{0} sze\xC5\x9Bcienne{0} sze\xC5\x9Bciennych{0} sze\xC5\x9Bciennego") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0} na {1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_PS: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x0B\0\x17\0%\0{0}\xD9\x85\xD8\xB1\xD8\xA8\xD8\xB9{0} \xD9\x85\xD8\xB1\xD8\xA8\xD8\xB9\xDA\xA9\xDB\x8C\xD9\x88\xD8\xA8\xDA\xA9 {0}{0}\xD9\x85\xD8\xB9\xDA\xA9\xD8\xA8") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0}في {1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}-{1}"),
+                };
+                const _LONG_PT: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x0C\0\x19\0$\0{0} quadrado{0} quadrados{0} c\xC3\xBAbico{0} c\xC3\xBAbicos") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0} por {1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}–{1}"),
+                };
+                const _LONG_QU: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA5\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x0C\0{0} cuadrado{0} cubico") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0} sapa {1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_RO: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA3\xA5\xB1\xB3\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x06\0\0\0\0\0\x0B\0\x17\0#\0*\x004\0{0} p\xC4\x83trat{0} p\xC4\x83trate{0} p\xC4\x83trate{0} cub{0} cubice{0} cubice") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0} pe {1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}-{1}"),
+                };
+                const _LONG_RU: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA3\xA4\xA5\xB1\xB3\xB4\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x08\0\0\0\0\0\x18\x000\0H\0b\0z\0\x92\0\xAA\0\xD0\xBA\xD0\xB2\xD0\xB0\xD0\xB4\xD1\x80\xD0\xB0\xD1\x82\xD0\xBD\xD1\x8B\xD0\xB9 {0}\xD0\xBA\xD0\xB2\xD0\xB0\xD0\xB4\xD1\x80\xD0\xB0\xD1\x82\xD0\xBD\xD1\x8B\xD1\x85 {0}\xD0\xBA\xD0\xB2\xD0\xB0\xD0\xB4\xD1\x80\xD0\xB0\xD1\x82\xD0\xBD\xD1\x8B\xD1\x85 {0}\xD0\xBA\xD0\xB2\xD0\xB0\xD0\xB4\xD1\x80\xD0\xB0\xD1\x82\xD0\xBD\xD0\xBE\xD0\xB3\xD0\xBE {0}\xD0\xBA\xD1\x83\xD0\xB1\xD0\xB8\xD1\x87\xD0\xB5\xD1\x81\xD0\xBA\xD0\xB8\xD0\xB9 {0}\xD0\xBA\xD1\x83\xD0\xB1\xD0\xB8\xD1\x87\xD0\xB5\xD1\x81\xD0\xBA\xD0\xB8\xD1\x85 {0}\xD0\xBA\xD1\x83\xD0\xB1\xD0\xB8\xD1\x87\xD0\xB5\xD1\x81\xD0\xBA\xD0\xB8\xD1\x85 {0}\xD0\xBA\xD1\x83\xD0\xB1\xD0\xB8\xD1\x87\xD0\xB5\xD1\x81\xD0\xBA\xD0\xBE\xD0\xB3\xD0\xBE {0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0}/{1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_SC: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x0C\0\x19\0$\0{0} cuadradu{0} cuadrados{0} c\xC3\xB9bicu{0} c\xC3\xB9bicos") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0} a su {1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_SD: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x12\0$\0-\0\xD8\xA7\xD8\xB3\xDA\xAA\xD9\x88\xD8\xA7\xD8\xA6\xD8\xB1 {0}\xD8\xA7\xD8\xB3\xDA\xAA\xD9\x88\xD8\xA7\xD8\xA6\xD8\xB1 {0}cubic {0}\xDA\xAA\xD9\x8A\xD9\x88\xD8\xA8\xDA\xAA{0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0} في {1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_SI: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x10\0 \0*\0\xE0\xB7\x80\xE0\xB6\xBB\xE0\xB7\x8A\xE0\xB6\x9C {0}\xE0\xB7\x80\xE0\xB6\xBB\xE0\xB7\x8A\xE0\xB6\x9C {0}\xE0\xB6\x9D\xE0\xB6\xB1 {0}\xE0\xB6\x9D\xE0\xB6\xB1 {0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{1} ට {0} බැග\u{dd2}න\u{dca}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_SK: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA3\xA4\xA5\xB1\xB3\xB4\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x08\0\0\0\0\0\x0F\0\x1E\0/\0@\0L\0X\0f\0\xC5\xA1tvorcov\xC3\xBD {0}\xC5\xA1tvorcov\xC3\xA9 {0}\xC5\xA1tvorcov\xC3\xA9ho {0}\xC5\xA1tvorcov\xC3\xBDch {0}kubick\xC3\xBD {0}kubick\xC3\xA9 {0}kubick\xC3\xA9ho {0}kubick\xC3\xBDch {0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0}/{1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}{1}"),
+                };
+                const _LONG_SL: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA2\xA3\xA5\xB1\xB2\xB3\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x08\0\0\0\0\0\r\0\x1A\0'\x005\0A\0M\0Y\0kvadratno {0}kvadratni {0}kvadratna {0}kvadratnih {0}kubi\xC4\x8Dno {0}kubi\xC4\x8Dni {0}kubi\xC4\x8Dna {0}kubi\xC4\x8Dnih {0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0}/{1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_SO: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x0F\0\x1E\0/\0laba-jibaar {0}laba-jibaar {0}saddex-jibaar {0}saddex-jibaar {0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0}/{1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_SQ: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\n\0\x14\0\x1B\0{0} katror{0} katror{0} kub{0} kub") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0} në {1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_SR: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA3\xA5\xB1\xB3\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x06\0\0\0\0\0\x16\0,\0D\0R\0`\0\xD0\xBA\xD0\xB2\xD0\xB0\xD0\xB4\xD1\x80\xD0\xB0\xD1\x82\xD0\xBD\xD0\xB8 {0}\xD0\xBA\xD0\xB2\xD0\xB0\xD0\xB4\xD1\x80\xD0\xB0\xD1\x82\xD0\xBD\xD0\xB0 {0}\xD0\xBA\xD0\xB2\xD0\xB0\xD0\xB4\xD1\x80\xD0\xB0\xD1\x82\xD0\xBD\xD0\xB8\xD1\x85 {0}\xD0\xBA\xD1\x83\xD0\xB1\xD0\xBD\xD0\xB8 {0}\xD0\xBA\xD1\x83\xD0\xB1\xD0\xBD\xD0\xB0 {0}\xD0\xBA\xD1\x83\xD0\xB1\xD0\xBD\xD0\xB8\xD1\x85 {0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0}/{1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}-{1}"),
+                };
+                const _LONG_SR_LATN: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA3\xA5\xB1\xB3\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x06\0\0\0\0\0\r\0\x1A\0(\x001\0:\0kvadratni {0}kvadratna {0}kvadratnih {0}kubni {0}kubna {0}kubnih {0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0}/{1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}-{1}"),
+                };
+                const _LONG_SV: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\n\0\x14\0\x1C\0kvadrat{0}kvadrat{0}kubik{0}kubik{0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0} per {1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}–{1}"),
+                };
+                const _LONG_SW: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\t\0\x12\0\x1F\0{0} mraba{0} mraba{0} mchemraba{0} mchemraba") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0} kwa kila {1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_SYR: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x0E\0\x1C\0*\0{0} \xDC\xA1\xDC\xAA\xDC\x92\xDC\xA5\xDC\x90{0} \xDC\xA1\xDC\xAA\xDC\x92\xDC\xA5\xDC\x90{0} \xDC\xA1\xDC\xA9\xDC\xA6\xDC\xA3\xDC\x90{0} \xDC\xA1\xDC\xA9\xDC\xA6\xDC\xA3\xDC\x90") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0}/{1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_TA: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x10\0 \0*\0\xE0\xAE\x9A\xE0\xAE\xA4\xE0\xAF\x81\xE0\xAE\xB0 {0}\xE0\xAE\x9A\xE0\xAE\xA4\xE0\xAF\x81\xE0\xAE\xB0 {0}\xE0\xAE\x95\xE0\xAE\xA9 {0}\xE0\xAE\x95\xE0\xAE\xA9 {0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0}/{1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}-{1}"),
+                };
+                const _LONG_TE: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x13\0&\0B\0\xE0\xB0\x9A\xE0\xB0\xA6\xE0\xB0\xB0\xE0\xB0\xAA\xE0\xB1\x81 {0}\xE0\xB0\x9A\xE0\xB0\xA6\xE0\xB0\xB0\xE0\xB0\xAA\xE0\xB1\x81 {0}\xE0\xB0\x95\xE0\xB1\x8D\xE0\xB0\xAF\xE0\xB1\x82\xE0\xB0\xAC\xE0\xB0\xBF\xE0\xB0\x95\xE0\xB1\x8D {0}\xE0\xB0\x95\xE0\xB1\x8D\xE0\xB0\xAF\xE0\xB1\x82\xE0\xB0\xAC\xE0\xB0\xBF\xE0\xB0\x95\xE0\xB1\x8D {0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0}/{1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_TH: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA5\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x12\0\xE0\xB8\x95\xE0\xB8\xB2\xE0\xB8\xA3\xE0\xB8\xB2\xE0\xB8\x87{0}\xE0\xB8\xA5\xE0\xB8\xB9\xE0\xB8\x81\xE0\xB8\x9A\xE0\xB8\xB2\xE0\xB8\xA8\xE0\xB8\x81\xE0\xB9\x8C{0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0}ต\u{e48}อ{1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_TI: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x13\0&\x006\0\xE1\x89\xB5\xE1\x88\xAD\xE1\x89\xA5\xE1\x8B\x92\xE1\x89\xB5 {0}\xE1\x89\xB5\xE1\x88\xAD\xE1\x89\xA5\xE1\x8B\x92\xE1\x89\xB5 {0}\xE1\x8A\xAA\xE1\x8B\xA9\xE1\x89\xA2\xE1\x8A\xAD {0}\xE1\x8A\xAA\xE1\x8B\xA9\xE1\x89\xA2\xE1\x8A\xAD {0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0}/{1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_TK: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x0B\0\x16\0\x1D\0kwadrat {0}kwadrat {0}kub {0}kub {0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{1} başyna {0}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}.{1}"),
+                };
+                const _LONG_TO: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA5\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\n\0{0} sikuea{0} kiupite") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0} ʻi he {1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_TR: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x07\0\x0E\0\x15\0{0}kare{0}kare{0}k\xC3\xBCp{0}k\xC3\xBCp") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0}/{1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_UK: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA3\xA4\xA5\xB1\xB3\xB4\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x08\0\0\0\0\0\x18\0.\0F\0`\0t\0\x86\0\x9A\0\xD0\xBA\xD0\xB2\xD0\xB0\xD0\xB4\xD1\x80\xD0\xB0\xD1\x82\xD0\xBD\xD0\xB8\xD0\xB9 {0}\xD0\xBA\xD0\xB2\xD0\xB0\xD0\xB4\xD1\x80\xD0\xB0\xD1\x82\xD0\xBD\xD1\x96 {0}\xD0\xBA\xD0\xB2\xD0\xB0\xD0\xB4\xD1\x80\xD0\xB0\xD1\x82\xD0\xBD\xD0\xB8\xD1\x85 {0}\xD0\xBA\xD0\xB2\xD0\xB0\xD0\xB4\xD1\x80\xD0\xB0\xD1\x82\xD0\xBD\xD0\xBE\xD0\xB3\xD0\xBE {0}\xD0\xBA\xD1\x83\xD0\xB1\xD1\x96\xD1\x87\xD0\xBD\xD0\xB8\xD0\xB9 {0}\xD0\xBA\xD1\x83\xD0\xB1\xD1\x96\xD1\x87\xD0\xBD\xD1\x96 {0}\xD0\xBA\xD1\x83\xD0\xB1\xD1\x96\xD1\x87\xD0\xBD\xD0\xB8\xD1\x85 {0}\xD0\xBA\xD1\x83\xD0\xB1\xD1\x96\xD1\x87\xD0\xBD\xD0\xBE\xD0\xB3\xD0\xBE {0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0} на {1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_UND: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA5\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x05\0{0}\xC2\xB2{0}\xC2\xB3") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0}/{1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_UR: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x0C\0\x18\0&\0\xD9\x85\xD8\xB1\xD8\xA8\xD8\xB9 {0}\xD9\x85\xD8\xB1\xD8\xA8\xD8\xB9 {0}\xDA\xA9\xDB\x8C\xD9\x88\xD8\xA8\xDA\xA9 {0}\xDA\xA9\xDB\x8C\xD9\x88\xD8\xA8\xDA\xA9 {0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0} فی {1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_UZ: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x0B\0\x16\0\x1D\0{0} kvadrat{0} kvadrat{0} kub{0} kub") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0}/{1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_VEC: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA5\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x05\0{0}\xC2\xB2{0}\xC2\xB3") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0} par {1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_VI: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA5\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\n\0{0} vu\xC3\xB4ng{0} kh\xE1\xBB\x91i") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0}/{1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}-{1}"),
+                };
+                const _LONG_XNR: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA5\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x05\0{0}\xC2\xB2{0}\xC2\xB3") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0} हर {1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}-{1}"),
+                };
+                const _LONG_YO: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA5\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\n\0{0} sikuwekubiki {0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0}/{1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_YRL: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA5\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x05\0{0}\xC2\xB2{0}\xC2\xB3") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0} {1} rupi"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_YUE: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA5\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\t\0\xE5\xB9\xB3\xE6\x96\xB9{0}\xE7\xAB\x8B\xE6\x96\xB9{0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("每 {1} {0}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_ZH: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA5\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\t\0\xE5\xB9\xB3\xE6\x96\xB9{0}\xE7\xAB\x8B\xE6\x96\xB9{0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("每{1}{0}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_ZH_HANT: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA5\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\t\0\xE5\xB9\xB3\xE6\x96\xB9{0}\xE7\xAB\x8B\xE6\x96\xB9{0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("每{1} {0}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}-{1}"),
+                };
+                const _LONG_ZH_HK: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA5\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x0C\0{0}\xE4\xBA\x8C\xE6\xAC\xA1\xE6\x96\xB9{0}\xE4\xB8\x89\xE6\xAC\xA1\xE6\x96\xB9") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0}每{1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_ZH_SG: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA5\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\t\0\xE5\xB9\xB3\xE6\x96\xB9{0}\xE7\xAB\x8B\xE6\x96\xB9{0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0}/{1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _LONG_ZU: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\n\0\x14\0\x1D\0square {0}square {0}cubic {0}cubic {0}") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0} nge-{1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _NARROW_BE: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA5\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x05\0{0}\xC2\xB2{0}\xC2\xB3") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0}/{1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}{1}"),
+                };
+                const _NARROW_EN: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x05\0\n\0\x0F\0{0}\xC2\xB2{0}\xC2\xB2{0}\xC2\xB3{0}\xC2\xB3") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0}/{1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _NARROW_EU: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA5\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x05\0{0}\xC2\xB2{0}\xC2\xB3") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0}/{1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}-{1}"),
+                };
+                const _NARROW_FF_ADLM: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x07\0\x0E\0\x15\0{0}\xF0\x9E\xA5\x92{0}\xF0\x9E\xA5\x92{0}\xF0\x9E\xA5\x93{0}\xF0\x9E\xA5\x93") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0}/{1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}-{1}"),
+                };
+                const _NARROW_NE: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA5\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x05\0{0}\xC2\xB2{0}\xC2\xB3") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0}प\u{94d}रति {1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _NARROW_PS: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x0C\0\x11\0\xD9\x85\xD8\xB1\xD8\xA8\xD8\xB9 {0}{0}\xC2\xB2{0}\xC2\xB3") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0}/{1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                const _NARROW_RO: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA5\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x05\0{0}\xC2\xB2{0}\xC2\xB3") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0}/{1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0} {1}"),
+                };
+                const _NARROW_TK: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA5\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x05\0{0}\xC2\xB2{0}\xC2\xB3") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0}/{1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}.{1}"),
+                };
+                const _SHORT_DA: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA5\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x05\0{0}\xC2\xB2{0}\xC2\xB3") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0}/{1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0} ⋅ {1}"),
+                };
+                const _SHORT_FA: &S = &icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1 {
+                    prefixes: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xA1\xA5\xB1\xB5") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x0B\0\x16\0!\0{0}\xD9\x85\xD8\xB1\xD8\xA8\xD8\xB9{0}\xD9\x85\xD8\xB1\xD8\xA8\xD8\xB9{0}\xD9\x85\xDA\xA9\xD8\xB9\xD8\xA8{0}\xD9\x85\xDA\xA9\xD8\xB9\xD8\xA8") })
+                    },
+                    per: alloc::borrow::Cow::Borrowed("{0}/{1}"),
+                    times: alloc::borrow::Cow::Borrowed("{0}⋅{1}"),
+                };
+                icu_provider_baked::binary_search::Data(&[(("long", "af"), _LONG_AF), (("long", "am"), _LONG_AM), (("long", "ar"), _LONG_AR), (("long", "as"), _LONG_AS), (("long", "ast"), _LONG_AST), (("long", "az"), _LONG_AZ), (("long", "be"), _LONG_BE), (("long", "bg"), _LONG_BG), (("long", "blo"), _LONG_BLO), (("long", "bn"), _LONG_BN), (("long", "bn-IN"), _LONG_BN_IN), (("long", "br"), _LONG_BR), (("long", "bs"), _LONG_BS), (("long", "ca"), _LONG_CA), (("long", "ceb"), _LONG_CEB), (("long", "chr"), _LONG_CHR), (("long", "cs"), _LONG_CS), (("long", "cy"), _LONG_CY), (("long", "da"), _LONG_DA), (("long", "de"), _LONG_DE), (("long", "dsb"), _LONG_DSB), (("long", "el"), _LONG_EL), (("long", "en"), _LONG_EN), (("long", "es"), _LONG_ES), (("long", "et"), _LONG_ET), (("long", "eu"), _LONG_EU), (("long", "fa"), _LONG_FA), (("long", "ff-Adlm"), _LONG_FF_ADLM), (("long", "fi"), _LONG_FI), (("long", "fil"), _LONG_FIL), (("long", "fo"), _LONG_FO), (("long", "fr"), _LONG_FR), (("long", "fy"), _LONG_AST), (("long", "ga"), _LONG_GA), (("long", "gd"), _LONG_GD), (("long", "gl"), _LONG_GL), (("long", "gu"), _LONG_GU), (("long", "ha"), _LONG_HA), (("long", "he"), _LONG_HE), (("long", "hi"), _LONG_HI), (("long", "hr"), _LONG_HR), (("long", "hsb"), _LONG_DSB), (("long", "hu"), _LONG_HU), (("long", "hy"), _LONG_HY), (("long", "ia"), _LONG_IA), (("long", "id"), _LONG_ID), (("long", "ig"), _LONG_IG), (("long", "is"), _LONG_IS), (("long", "it"), _LONG_IT), (("long", "ja"), _LONG_JA), (("long", "jv"), _LONG_JV), (("long", "ka"), _LONG_KA), (("long", "kea"), _LONG_KEA), (("long", "kgp"), _LONG_KGP), (("long", "kk"), _LONG_KK), (("long", "km"), _LONG_KM), (("long", "kn"), _LONG_KN), (("long", "ko"), _LONG_KO), (("long", "kok"), _LONG_KOK), (("long", "ky"), _LONG_KY), (("long", "lo"), _LONG_LO), (("long", "lt"), _LONG_LT), (("long", "lv"), _LONG_LV), (("long", "mk"), _LONG_MK), (("long", "ml"), _LONG_ML), (("long", "mn"), _LONG_MN), (("long", "mr"), _LONG_MR), (("long", "ms"), _LONG_MS), (("long", "my"), _LONG_MY), (("long", "ne"), _LONG_NE), (("long", "nl"), _LONG_NL), (("long", "nn"), _LONG_NN), (("long", "no"), _LONG_NO), (("long", "or"), _LONG_OR), (("long", "pa"), _LONG_PA), (("long", "pcm"), _LONG_PCM), (("long", "pl"), _LONG_PL), (("long", "ps"), _LONG_PS), (("long", "pt"), _LONG_PT), (("long", "qu"), _LONG_QU), (("long", "rm"), _LONG_AST), (("long", "ro"), _LONG_RO), (("long", "ru"), _LONG_RU), (("long", "sc"), _LONG_SC), (("long", "sd"), _LONG_SD), (("long", "si"), _LONG_SI), (("long", "sk"), _LONG_SK), (("long", "sl"), _LONG_SL), (("long", "so"), _LONG_SO), (("long", "sq"), _LONG_SQ), (("long", "sr"), _LONG_SR), (("long", "sr-Latn"), _LONG_SR_LATN), (("long", "sv"), _LONG_SV), (("long", "sw"), _LONG_SW), (("long", "syr"), _LONG_SYR), (("long", "ta"), _LONG_TA), (("long", "te"), _LONG_TE), (("long", "th"), _LONG_TH), (("long", "ti"), _LONG_TI), (("long", "tk"), _LONG_TK), (("long", "to"), _LONG_TO), (("long", "tr"), _LONG_TR), (("long", "uk"), _LONG_UK), (("long", "und"), _LONG_UND), (("long", "ur"), _LONG_UR), (("long", "uz"), _LONG_UZ), (("long", "vec"), _LONG_VEC), (("long", "vi"), _LONG_VI), (("long", "xnr"), _LONG_XNR), (("long", "yo"), _LONG_YO), (("long", "yrl"), _LONG_YRL), (("long", "yue"), _LONG_YUE), (("long", "yue-Hans"), _LONG_YUE), (("long", "zh"), _LONG_ZH), (("long", "zh-HK"), _LONG_ZH_HK), (("long", "zh-Hant"), _LONG_ZH_HANT), (("long", "zh-MO"), _LONG_ZH_HK), (("long", "zh-SG"), _LONG_ZH_SG), (("long", "zu"), _LONG_ZU), (("narrow", "be"), _NARROW_BE), (("narrow", "cs"), _NARROW_BE), (("narrow", "en"), _NARROW_EN), (("narrow", "eu"), _NARROW_EU), (("narrow", "fa"), _NARROW_EN), (("narrow", "ff-Adlm"), _NARROW_FF_ADLM), (("narrow", "fr"), _NARROW_EU), (("narrow", "ne"), _NARROW_NE), (("narrow", "nl"), _NARROW_BE), (("narrow", "nn"), _NARROW_BE), (("narrow", "ps"), _NARROW_PS), (("narrow", "ro"), _NARROW_RO), (("narrow", "sk"), _NARROW_BE), (("narrow", "tk"), _NARROW_TK), (("narrow", "und"), _LONG_UND), (("narrow", "yue"), _LONG_ZH_SG), (("narrow", "yue-Hans"), _LONG_ZH_SG), (("short", "cs"), _NARROW_BE), (("short", "da"), _SHORT_DA), (("short", "en"), _NARROW_EN), (("short", "eu"), _NARROW_EU), (("short", "fa"), _SHORT_FA), (("short", "ff-Adlm"), _NARROW_FF_ADLM), (("short", "fr"), _NARROW_EU), (("short", "ne"), _NARROW_NE), (("short", "nl"), _NARROW_BE), (("short", "nn"), _NARROW_BE), (("short", "ps"), _NARROW_PS), (("short", "ro"), _NARROW_RO), (("short", "sk"), _NARROW_BE), (("short", "tk"), _NARROW_TK), (("short", "und"), _LONG_UND), (("short", "yue"), _LONG_ZH_SG), (("short", "yue-Hans"), _LONG_ZH_SG)])
+            };
+        }
+        #[clippy::msrv = "1.70"]
+        impl icu_provider::DataProvider<icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1Marker> for $provider {
+            fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1Marker>, icu_provider::DataError> {
+                let mut metadata = icu_provider::DataResponseMetadata::default();
+                let payload = if let Some(payload) = icu_provider_baked::DataStore::get(&Self::DATA_UNITS_ESSENTIALS_V1_MARKER, req.id) {
+                    payload
+                } else {
+                    const FALLBACKER: icu::locale::fallback::LocaleFallbackerWithConfig<'static> = icu::locale::fallback::LocaleFallbacker::new().for_config(<icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1Marker as icu_provider::DataMarker>::INFO.fallback_config);
+                    let mut fallback_iterator = FALLBACKER.fallback_for(req.id.locale.clone());
+                    loop {
+                        if let Some(payload) = icu_provider_baked::DataStore::get(&Self::DATA_UNITS_ESSENTIALS_V1_MARKER, icu_provider::DataIdentifierBorrowed::for_marker_attributes_and_locale(req.id.marker_attributes, fallback_iterator.get())) {
+                            metadata.locale = Some(fallback_iterator.take());
+                            break payload;
+                        }
+                        if fallback_iterator.get().is_und() {
+                            return Err(icu_provider::DataErrorKind::IdentifierNotFound.with_req(<icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1Marker as icu_provider::DataMarker>::INFO, req));
+                        }
+                        fallback_iterator.step();
+                    }
+                };
+                Ok(icu_provider::DataResponse { payload: icu_provider::DataPayload::from_static_ref(payload), metadata })
+            }
+        }
+    };
+    ($ provider : ty , ITER) => {
+        __impl_units_essentials_v1_marker!($provider);
+        #[clippy::msrv = "1.70"]
+        impl icu_provider::IterableDataProvider<icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1Marker> for $provider {
+            fn iter_ids(&self) -> Result<std::collections::HashSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
+                Ok(icu_provider_baked::DataStore::iter(&Self::DATA_UNITS_ESSENTIALS_V1_MARKER).collect())
+            }
+        }
+    };
+}
+#[doc(inline)]
+pub use __impl_units_essentials_v1_marker as impl_units_essentials_v1_marker;
