@@ -19,54 +19,6 @@ use zerovec::ZeroMap;
 
 impl DataProvider<UnitsEssentialsV1Marker> for DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<UnitsEssentialsV1Marker>, DataError> {
-        /// Fills the prefixes map with the SI prefixes (binary and decimal)
-        ///
-        /// # Errors
-        ///
-        /// - `DataError::custom("Invalid prefix: must be Binary or Decimal")` if the prefix is not Binary or Decimal
-        /// - `DataError::custom("Failed to parse pattern key value")` if the pattern key value cannot be parsed
-        fn fill_si(
-            data: &BTreeMap<String, Patterns>,
-            prefixes_map: &mut BTreeMap<PatternKey, String>,
-        ) -> Result<(), DataError> {
-            const BINARY_PREFIX: &str = "1024p";
-            const DECIMAL_PREFIX: &str = "10p";
-
-            for (key, patterns) in data.iter().filter(|(key, _)| {
-                key.starts_with(BINARY_PREFIX) || key.starts_with(DECIMAL_PREFIX)
-            }) {
-                let pattern_key = if let Some(trimmed_key) = key.strip_prefix(BINARY_PREFIX) {
-                    trimmed_key
-                        .parse::<u8>()
-                        .map(PatternKey::Binary)
-                        .map_err(|_| {
-                            DataError::custom("Failed to parse pattern key value")
-                                .with_debug_context(&key)
-                        })?
-                } else if let Some(trimmed_key) = key.strip_prefix(DECIMAL_PREFIX) {
-                    trimmed_key
-                        .parse::<i8>()
-                        .map(PatternKey::Decimal)
-                        .map_err(|_| {
-                            DataError::custom("Failed to parse pattern key value")
-                                .with_debug_context(&key)
-                        })?
-                } else {
-                    return Err(
-                        DataError::custom("Invalid prefix: must be Binary or Decimal")
-                            .with_debug_context(key),
-                    );
-                };
-
-                if let Some(pattern) = patterns.unit_prefix_pattern.as_ref() {
-                    prefixes_map.insert(pattern_key, pattern.to_string());
-                } else {
-                    return Err(DataError::custom("Failed to get pattern").with_debug_context(&key));
-                }
-            }
-            Ok(())
-        }
-
         self.check_req::<UnitsEssentialsV1Marker>(req)?;
 
         // Get units
@@ -144,7 +96,35 @@ impl DataProvider<UnitsEssentialsV1Marker> for DatagenProvider {
             });
         }
 
-        fill_si(length_data, &mut prefixes)?;
+        /// Fills the prefixes map with the SI prefixes (binary and decimal)
+        const BINARY_PREFIX: &str = "1024p";
+        const DECIMAL_PREFIX: &str = "10p";
+
+        for (key, patterns) in length_data
+            .iter()
+            .filter(|(key, _)| key.starts_with(BINARY_PREFIX) || key.starts_with(DECIMAL_PREFIX))
+        {
+            let pattern_key = if let Some(trimmed_key) = key.strip_prefix(BINARY_PREFIX) {
+                trimmed_key.parse::<u8>().map(PatternKey::Binary)
+            } else if let Some(trimmed_key) = key.strip_prefix(DECIMAL_PREFIX) {
+                trimmed_key.parse::<i8>().map(PatternKey::Decimal)
+            } else {
+                return Err(
+                    DataError::custom("Invalid prefix: must be Binary or Decimal")
+                        .with_debug_context(key),
+                );
+            };
+
+            let pattern_key = pattern_key.map_err(|_| {
+                DataError::custom("Failed to parse pattern key").with_debug_context(&key)
+            })?;
+
+            if let Some(pattern) = patterns.unit_prefix_pattern.as_ref() {
+                prefixes.insert(pattern_key, pattern.to_string());
+            } else {
+                return Err(DataError::custom("Failed to get pattern").with_debug_context(&key));
+            }
+        }
 
         let result = UnitsEssentialsV1 {
             per: per.into(),
