@@ -20,6 +20,7 @@ use icu_provider::prelude::*;
     databake(path = icu_experimental::duration::provider)
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+/// A struct containing digital duration data (durationUnit-type-* patterns).
 pub struct DigitalDurationDataV1 {
     /// To represent the patterns from: durationUnit-type-hm
     pub hm: HmVariant,

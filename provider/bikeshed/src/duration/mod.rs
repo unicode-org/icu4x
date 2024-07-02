@@ -9,12 +9,9 @@ use icu_provider::prelude::*;
 use std::collections::HashSet;
 use std::str::FromStr;
 
-use icu::{
-    experimental::duration::provider::digital::{
-        DigitalDurationDataV1, DigitalDurationDataV1Marker, HmVariant, HmsVariant, MsVariant,
-        UnknownPatternError,
-    },
-    locale::LanguageIdentifier,
+use icu::experimental::duration::provider::digital::{
+    DigitalDurationDataV1, DigitalDurationDataV1Marker, HmVariant, HmsVariant, MsVariant,
+    UnknownPatternError,
 };
 
 impl DataProvider<DigitalDurationDataV1Marker> for DatagenProvider {
@@ -51,37 +48,18 @@ impl DataProvider<DigitalDurationDataV1Marker> for DatagenProvider {
 
 impl crate::IterableDataProviderCached<DigitalDurationDataV1Marker> for DatagenProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-        fn make_request_element(
-            langid: &LanguageIdentifier,
-            unit: &str,
-        ) -> Result<DataIdentifierCow<'static>, DataError> {
-            let data_locale = DataLocale::from(langid);
-            let attribute = DataMarkerAttributes::try_from_str(unit).map_err(|_| {
-                DataError::custom("Failed to parse the attribute").with_debug_context(unit)
-            })?;
-            Ok(DataIdentifierCow::from_owned(
-                attribute.to_owned(),
-                data_locale,
-            ))
-        }
-
-        let mut data_locales = HashSet::new();
-
-        let numbers = self.cldr()?.numbers();
-        let langids = numbers.list_langs()?;
-        for langid in langids {
-            let units_format_data: &cldr_serde::units::data::Resource =
-                self.cldr()?.units().read_and_parse(&langid, "units.json")?;
-
-            for key in [
-                "durationUnit-type-hms",
-                "durationUnit-type-hm",
-                "durationUnit-type-ms",
-            ] {
-                data_locales.insert(make_request_element(&langid, key)?);
-            }
-        }
-
-        Ok(data_locales)
+        Ok(self
+            .cldr()?
+            .numbers()
+            .list_langs()?
+            .filter(|langid| {
+                self.cldr()
+                    .unwrap()
+                    .units()
+                    .read_and_parse::<cldr_serde::units::data::Resource>(&langid, "units.json")
+                    .is_ok()
+            })
+            .map(|langid| DataIdentifierCow::from_locale(DataLocale::from(&langid)))
+            .collect())
     }
 }
