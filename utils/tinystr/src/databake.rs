@@ -35,7 +35,7 @@ impl<const N: usize> databake::Bake for UnvalidatedTinyAsciiStr<N> {
                 let bytes = self.0.bake(env);
                 env.insert("tinystr");
                 databake::quote! {
-                    tinystr::UnvalidatedTinyAsciiStr::from_utf8_unchecked(*#bytes)
+                    tinystr::UnvalidatedTinyAsciiStr::from_utf8_unchecked(#bytes)
                 }
             }
         }
