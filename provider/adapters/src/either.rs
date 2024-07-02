@@ -47,6 +47,23 @@ impl<M: DynamicDataMarker, P0: DynamicDataProvider<M>, P1: DynamicDataProvider<M
     }
 }
 
+impl<M: DynamicDataMarker, P0: DynamicDryDataProvider<M>, P1: DynamicDryDataProvider<M>>
+    DynamicDryDataProvider<M> for EitherProvider<P0, P1>
+{
+    #[inline]
+    fn dry_load_data(
+        &self,
+        marker: DataMarkerInfo,
+        req: DataRequest,
+    ) -> Result<DataResponseMetadata, DataError> {
+        use EitherProvider::*;
+        match self {
+            A(p) => p.dry_load_data(marker, req),
+            B(p) => p.dry_load_data(marker, req),
+        }
+    }
+}
+
 impl<M: DataMarker, P0: DataProvider<M>, P1: DataProvider<M>> DataProvider<M>
     for EitherProvider<P0, P1>
 {
@@ -56,6 +73,19 @@ impl<M: DataMarker, P0: DataProvider<M>, P1: DataProvider<M>> DataProvider<M>
         match self {
             A(p) => p.load(req),
             B(p) => p.load(req),
+        }
+    }
+}
+
+impl<M: DataMarker, P0: DryDataProvider<M>, P1: DryDataProvider<M>> DryDataProvider<M>
+    for EitherProvider<P0, P1>
+{
+    #[inline]
+    fn dry_load(&self, req: DataRequest) -> Result<DataResponseMetadata, DataError> {
+        use EitherProvider::*;
+        match self {
+            A(p) => p.dry_load(req),
+            B(p) => p.dry_load(req),
         }
     }
 }

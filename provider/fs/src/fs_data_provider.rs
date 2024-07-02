@@ -4,6 +4,7 @@
 
 use crate::manifest::Manifest;
 use icu_provider::prelude::*;
+use icu_provider::DynamicDryDataProvider;
 use std::fmt::Debug;
 use std::fmt::Write;
 use std::fs;
@@ -58,14 +59,12 @@ impl FsDataProvider {
             root,
         })
     }
-}
 
-impl DynamicDataProvider<BufferMarker> for FsDataProvider {
-    fn load_data(
+    fn dry_load_internal(
         &self,
         marker: DataMarkerInfo,
         req: DataRequest,
-    ) -> Result<DataResponse<BufferMarker>, DataError> {
+    ) -> Result<(DataResponseMetadata, PathBuf), DataError> {
         if marker.is_singleton && !req.id.locale.is_empty() {
             return Err(DataErrorKind::InvalidRequest.with_req(marker, req));
         }
@@ -83,12 +82,33 @@ impl DynamicDataProvider<BufferMarker> for FsDataProvider {
         if !path.exists() {
             return Err(DataErrorKind::IdentifierNotFound.with_req(marker, req));
         }
-        let buffer = fs::read(&path).map_err(|e| DataError::from(e).with_path_context(&path))?;
         let mut metadata = DataResponseMetadata::default();
         metadata.buffer_format = Some(self.manifest.buffer_format);
+        Ok((metadata, path))
+    }
+}
+
+impl DynamicDataProvider<BufferMarker> for FsDataProvider {
+    fn load_data(
+        &self,
+        marker: DataMarkerInfo,
+        req: DataRequest,
+    ) -> Result<DataResponse<BufferMarker>, DataError> {
+        let (metadata, path) = self.dry_load_internal(marker, req)?;
+        let buffer = fs::read(&path).map_err(|e| DataError::from(e).with_path_context(&path))?;
         Ok(DataResponse {
             metadata,
             payload: DataPayload::from_owned_buffer(buffer.into_boxed_slice()),
         })
+    }
+}
+
+impl DynamicDryDataProvider<BufferMarker> for FsDataProvider {
+    fn dry_load_data(
+        &self,
+        marker: DataMarkerInfo,
+        req: DataRequest,
+    ) -> Result<DataResponseMetadata, DataError> {
+        Ok(self.dry_load_internal(marker, req)?.0)
     }
 }
