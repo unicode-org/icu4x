@@ -32,42 +32,40 @@ impl DataProvider<UnitsEssentialsV1Marker> for DatagenProvider {
             const BINARY_PREFIX: &str = "1024p";
             const DECIMAL_PREFIX: &str = "10p";
 
-            for prefix_str in [BINARY_PREFIX, DECIMAL_PREFIX].iter() {
-                data.iter()
-                    .filter(|(key, _)| key.starts_with(prefix_str))
-                    .map(|(key, patterns)| {
-                        let trimmed_key = key.trim_start_matches(prefix_str);
-
-                        let pattern_key_result = match *prefix_str {
-                            BINARY_PREFIX => trimmed_key.parse::<u8>().map(PatternKey::Binary),
-                            DECIMAL_PREFIX => trimmed_key.parse::<i8>().map(PatternKey::Decimal),
-                            _ => {
-                                return Err(DataError::custom(
-                                    "Invalid prefix: must be Binary or Decimal",
-                                )
-                                .with_debug_context(key))
-                            }
+            data.iter()
+                .filter(|(key, _)| {
+                    key.starts_with(BINARY_PREFIX) || key.starts_with(DECIMAL_PREFIX)
+                })
+                .map(|(key, patterns)| {
+                    let pattern_key_result =
+                        if let Some(trimmed_key) = key.strip_prefix(BINARY_PREFIX) {
+                            trimmed_key.parse::<u8>().map(PatternKey::Binary)
+                        } else if let Some(trimmed_key) = key.strip_prefix(DECIMAL_PREFIX) {
+                            trimmed_key.parse::<i8>().map(PatternKey::Decimal)
+                        } else {
+                            return Err(DataError::custom(
+                                "Invalid prefix: must be Binary or Decimal",
+                            )
+                            .with_debug_context(key));
                         }
-                        .map_err(|e| {
+                        .map_err(|_| {
                             DataError::custom("Failed to parse pattern key value")
-                                .with_debug_context(&format!("Key: {}, Error: {}", key, e))
-                        });
+                                .with_debug_context(&key)
+                        })?;
 
-                        pattern_key_result.map(|pattern_key| (pattern_key, patterns))
-                    })
-                    .try_for_each(|elem| match elem {
-                        Ok((key, patterns)) => {
-                            if let Some(pattern) = patterns.unit_prefix_pattern.as_ref() {
-                                prefixes_map.insert(key, pattern.to_string());
-                                Ok(())
-                            } else {
-                                Err(DataError::custom("Failed to get pattern")
-                                    .with_debug_context(&key))
-                            }
+                    Ok((pattern_key_result, patterns))
+                })
+                .try_for_each(|elem| match elem {
+                    Ok((key, patterns)) => {
+                        if let Some(pattern) = patterns.unit_prefix_pattern.as_ref() {
+                            prefixes_map.insert(key, pattern.to_string());
+                            Ok(())
+                        } else {
+                            Err(DataError::custom("Failed to get pattern").with_debug_context(&key))
                         }
-                        Err(e) => Err(e),
-                    })?;
-            }
+                    }
+                    Err(e) => Err(e),
+                })?;
 
             Ok(())
         }
