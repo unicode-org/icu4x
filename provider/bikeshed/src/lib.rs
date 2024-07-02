@@ -36,6 +36,8 @@ mod datetime;
 mod decimal;
 #[cfg(feature = "experimental")]
 mod displaynames;
+#[cfg(feature = "experimental")]
+mod duration;
 mod fallback;
 #[cfg(test)]
 mod hello_world;
