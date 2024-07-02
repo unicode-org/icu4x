@@ -1,0 +1,7 @@
+{
+  "patterns": {
+    "One": "{0} svetlosna godina",
+    "Few": "{0} svetlosne godine",
+    "Other": "{0} svetlosnih godina"
+  }
+}

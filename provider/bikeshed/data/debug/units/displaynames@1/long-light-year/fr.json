@@ -1,0 +1,6 @@
+{
+  "patterns": {
+    "One": "{0} année-lumière",
+    "Other": "{0} années-lumière"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "patterns": {
+    "One": "{0} mes",
+    "Other": "{0} meses"
+  }
+}

@@ -10,9 +10,9 @@ use icu_decimal::FixedDecimalFormatter;
 use icu_plurals::PluralRules;
 use icu_provider::DataPayload;
 
-use super::super::provider::units::UnitsDisplayNameV1Marker;
 use super::format::FormattedUnit;
-use super::options::UnitsFormatterOptions;
+use super::options::{UnitsFormatterOptions, Width};
+use crate::dimension::provider::units::UnitsDisplayNameV1Marker;
 use icu_provider::prelude::*;
 
 extern crate alloc;
@@ -27,7 +27,7 @@ extern crate alloc;
 pub struct UnitsFormatter {
     /// Options bag for the units formatter to determine the behavior of the formatter.
     /// for example: width of the units.
-    options: UnitsFormatterOptions,
+    _options: UnitsFormatterOptions,
 
     // /// Essential data for the units formatter.
     // essential: DataPayload<UnitsEssentialsV1Marker>,
@@ -69,7 +69,28 @@ impl UnitsFormatter {
 
         let plural_rules = PluralRules::try_new_cardinal(locale)?;
 
-        let unit_attribute = DataMarkerAttributes::try_from_str(unit)
+        let mut buffer = [0u8; 64];
+        let mut pos = 0;
+        let length = match options.width {
+            Width::Short => "short-",
+            Width::Narrow => "narrow-",
+            Width::Long => "long-",
+        };
+        if pos + length.len() > buffer.len() {
+            return Err(DataError::custom("Buffer overflow while copying length"));
+        }
+        buffer[pos..pos + length.len()].copy_from_slice(length.as_bytes());
+        pos += length.len();
+        if pos + unit.len() > buffer.len() {
+            return Err(DataError::custom("Buffer overflow while copying unit"));
+        }
+        buffer[pos..pos + unit.len()].copy_from_slice(unit.as_bytes());
+        pos += unit.len();
+
+        let attribute = core::str::from_utf8(&buffer[..pos])
+            .map_err(|_| DataError::custom("Failed to parse the attribute"))?;
+
+        let unit_attribute = DataMarkerAttributes::try_from_str(attribute)
             .map_err(|_| DataError::custom("Failed to parse unit"))?;
 
         let display_name = crate::provider::Baked
@@ -83,7 +104,7 @@ impl UnitsFormatter {
             .payload;
 
         Ok(Self {
-            options,
+            _options: options,
             display_name,
             fixed_decimal_formatter,
             plural_rules,
@@ -111,7 +132,28 @@ impl UnitsFormatter {
 
         let plural_rules = PluralRules::try_new_cardinal_unstable(provider, locale)?;
 
-        let unit_attribute = DataMarkerAttributes::try_from_str(unit)
+        let mut buffer = [0u8; 64];
+        let mut pos = 0;
+        let length = match options.width {
+            Width::Short => "short-",
+            Width::Narrow => "narrow-",
+            Width::Long => "long-",
+        };
+        if pos + length.len() > buffer.len() {
+            return Err(DataError::custom("Buffer overflow while copying length"));
+        }
+        buffer[pos..pos + length.len()].copy_from_slice(length.as_bytes());
+        pos += length.len();
+        if pos + unit.len() > buffer.len() {
+            return Err(DataError::custom("Buffer overflow while copying unit"));
+        }
+        buffer[pos..pos + unit.len()].copy_from_slice(unit.as_bytes());
+        pos += unit.len();
+
+        let attribute = core::str::from_utf8(&buffer[..pos])
+            .map_err(|_| DataError::custom("Failed to parse the attribute"))?;
+
+        let unit_attribute = DataMarkerAttributes::try_from_str(attribute)
             .map_err(|_| DataError::custom("Failed to parse unit"))?;
 
         let display_name = provider
@@ -125,7 +167,7 @@ impl UnitsFormatter {
             .payload;
 
         Ok(Self {
-            options,
+            _options: options,
             display_name,
             fixed_decimal_formatter,
             plural_rules,
@@ -141,7 +183,6 @@ impl UnitsFormatter {
         FormattedUnit {
             value,
             unit,
-            options: &self.options,
             display_name: self.display_name.get(),
             fixed_decimal_formatter: &self.fixed_decimal_formatter,
             plural_rules: &self.plural_rules,

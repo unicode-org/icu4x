@@ -1,0 +1,6 @@
+{
+  "patterns": {
+    "One": "{0} parsek",
+    "Other": "{0} parsek"
+  }
+}

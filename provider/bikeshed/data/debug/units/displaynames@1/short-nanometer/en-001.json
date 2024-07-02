@@ -1,0 +1,6 @@
+{
+  "patterns": {
+    "One": "{0} nm",
+    "Other": "{0} nm"
+  }
+}

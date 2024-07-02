@@ -1,0 +1,7 @@
+{
+  "patterns": {
+    "One": "{0} vek",
+    "Few": "{0} veka",
+    "Other": "{0} vekova"
+  }
+}

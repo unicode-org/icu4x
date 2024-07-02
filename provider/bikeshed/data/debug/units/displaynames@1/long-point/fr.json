@@ -1,0 +1,6 @@
+{
+  "patterns": {
+    "One": "{0} point typographique",
+    "Other": "{0} points typographiques"
+  }
+}

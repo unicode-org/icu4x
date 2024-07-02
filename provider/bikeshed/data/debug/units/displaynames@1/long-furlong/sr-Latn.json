@@ -1,0 +1,7 @@
+{
+  "patterns": {
+    "One": "{0} furlong",
+    "Few": "{0} furlonga",
+    "Other": "{0} furlonga"
+  }
+}

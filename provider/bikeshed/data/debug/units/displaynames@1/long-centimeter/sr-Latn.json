@@ -1,0 +1,7 @@
+{
+  "patterns": {
+    "One": "{0} centimetar",
+    "Few": "{0} centimetra",
+    "Other": "{0} centimetara"
+  }
+}

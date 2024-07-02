@@ -1,0 +1,6 @@
+{
+  "patterns": {
+    "One": "{0} fathom",
+    "Other": "{0} na fathom"
+  }
+}

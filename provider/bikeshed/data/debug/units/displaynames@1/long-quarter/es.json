@@ -1,0 +1,6 @@
+{
+  "patterns": {
+    "One": "{0} trimestre",
+    "Other": "{0} trimestres"
+  }
+}

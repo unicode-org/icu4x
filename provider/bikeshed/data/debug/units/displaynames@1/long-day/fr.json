@@ -1,0 +1,6 @@
+{
+  "patterns": {
+    "One": "{0} jour",
+    "Other": "{0} jours"
+  }
+}

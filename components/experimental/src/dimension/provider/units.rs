@@ -27,19 +27,7 @@ pub struct UnitsDisplayNameV1<'data> {
     // TODO: use `MeasureUnit` for the units key instead of strings.
     /// Contains the long width patterns for the units.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub long: ZeroMap<'data, Count, str>,
-
-    // TODO: store the pattern in a SinglePattern.
-    // TODO: use `MeasureUnit` for the units key instead of strings.
-    /// Contains the short width patterns for the units.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub short: ZeroMap<'data, Count, str>,
-
-    // TODO: store the pattern in a SinglePattern.
-    // TODO: use `MeasureUnit` for the units key instead of strings.
-    /// Contains the narrow width patterns for the units.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub narrow: ZeroMap<'data, Count, str>,
+    pub patterns: ZeroMap<'data, Count, str>,
 }
 
 // TODO: revise this.
