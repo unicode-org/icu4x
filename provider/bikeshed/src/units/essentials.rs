@@ -4,7 +4,6 @@
 
 use std::collections::{BTreeMap, HashSet};
 
-use crate::cldr_serde::units::data::Patterns;
 use crate::cldr_serde::{self};
 use crate::DatagenProvider;
 
