@@ -291,6 +291,7 @@ macro_rules! registry(
             icu::experimental::dimension::provider::percent::PercentEssentialsV1Marker = "percent/essentials@1",
             icu::experimental::dimension::provider::units::UnitsDisplayNameV1Marker = "units/displaynames@1",
             icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1Marker = "units/essentials@1",
+            icu::experimental::duration::provider::digital::DigitalDurationDataV1Marker = "duration/digital@1",
             icu::experimental::displaynames::provider::RegionDisplayNamesV1Marker = "displaynames/regions@1",
             icu::experimental::displaynames::provider::LanguageDisplayNamesV1Marker = "displaynames/languages@1",
             icu::experimental::displaynames::provider::LocaleDisplayNamesV1Marker = "displaynames/locales@1",
