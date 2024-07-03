@@ -112,9 +112,8 @@ impl DataProvider<UnitsEssentialsV1Marker> for DatagenProvider {
                     DataError::custom("Invalid prefix: must be Binary or Decimal")
                         .with_debug_context(key),
                 );
-            };
-
-            let pattern_key = pattern_key.map_err(|_| {
+            }
+            .map_err(|_| {
                 DataError::custom("Failed to parse pattern key").with_debug_context(&key)
             })?;
 
