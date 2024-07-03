@@ -263,6 +263,7 @@ pub struct NoFallbackOptions {}
 /// | [`None`] | Medium/Small | Yes | No |
 ///
 /// [`Maximal`]: DeduplicationStrategy::Maximal
+/// [`RetainBaseLanguages`]: DeduplicationStrategy::RetainBaseLanguages
 /// [`None`]: DeduplicationStrategy::None
 #[non_exhaustive]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
