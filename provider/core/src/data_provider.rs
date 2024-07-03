@@ -84,9 +84,7 @@ pub trait DryDataProvider<M: DataMarker>: DataProvider<M> {
     /// that `dry_load` cannot predict.
     ///
     /// [`load`]: DataProvider::load
-    fn dry_load(&self, req: DataRequest) -> Result<DataResponseMetadata, DataError> {
-        self.load(req).map(|r| r.metadata)
-    }
+    fn dry_load(&self, req: DataRequest) -> Result<DataResponseMetadata, DataError>;
 }
 
 /// A data provider that loads data for a specific data type.
@@ -124,9 +122,7 @@ pub trait DynamicDryDataProvider<M: DynamicDataMarker>: DynamicDataProvider<M> {
         &self,
         marker: DataMarkerInfo,
         req: DataRequest,
-    ) -> Result<DataResponseMetadata, DataError> {
-        self.load_data(marker, req).map(|r| r.metadata)
-    }
+    ) -> Result<DataResponseMetadata, DataError>;
 }
 
 impl<'a, M, P> DynamicDataProvider<M> for &'a P
