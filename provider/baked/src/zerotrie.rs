@@ -69,10 +69,7 @@ impl<M: DataMarker> super::DataStore<M> for Data<M> {
     }
 
     type IterReturn = core::iter::FilterMap<
-        core::iter::Map<
-            zerotrie::ZeroTrieIterator<'static>,
-            fn((alloc::vec::Vec<u8>, usize)) -> (alloc::string::String, usize),
-        >,
+        zerotrie::ZeroTrieStringIterator<'static>,
         fn((alloc::string::String, usize)) -> Option<DataIdentifierCow<'static>>,
     >;
     fn iter(&'static self) -> Self::IterReturn {

@@ -625,18 +625,21 @@ fn string_to_box_u8(input: String) -> Box<[u8]> {
     input.into_boxed_str().into_boxed_bytes()
 }
 
+#[doc(hidden)] // subject to change
+pub type ZeroTrieStringIterator<'a> = core::iter::Map<reader::ZeroTrieIterator<'a>, fn((Vec<u8>, usize)) -> (String, usize)>;
+
 impl_zerotrie_subtype!(
     ZeroTrieSimpleAscii,
     String,
     reader::get_iter_ascii_or_panic,
-    core::iter::Map<reader::ZeroTrieIterator<'_>, fn((Vec<u8>, usize)) -> (String, usize)>,
+    ZeroTrieStringIterator,
     string_to_box_u8
 );
 impl_zerotrie_subtype!(
     ZeroAsciiIgnoreCaseTrie,
     String,
     reader::get_iter_ascii_or_panic,
-    core::iter::Map<reader::ZeroTrieIterator<'_>, fn((Vec<u8>, usize)) -> (String, usize)>,
+    ZeroTrieStringIterator,
     string_to_box_u8
 );
 impl_zerotrie_subtype!(
