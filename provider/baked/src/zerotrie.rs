@@ -13,15 +13,12 @@ pub use zerotrie::ZeroTrieSimpleAscii;
 #[cfg(feature = "export")]
 pub(crate) fn bake(
     marker_bake: &databake::TokenStream,
-    mut bakes_to_ids: Vec<(
+    bakes_to_ids: Vec<(
         databake::TokenStream,
-        std::collections::HashSet<DataIdentifierCow>,
+        std::collections::BTreeSet<DataIdentifierCow>,
     )>,
 ) -> (databake::TokenStream, usize) {
     use databake::*;
-
-    // stability
-    bakes_to_ids.sort_by_cached_key(|(bake, _)| bake.to_string());
 
     let bakes = bakes_to_ids.iter().map(|(bake, _)| bake);
 

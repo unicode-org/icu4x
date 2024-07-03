@@ -94,7 +94,6 @@ use heck::ToShoutySnakeCase;
 use heck::ToSnakeCase;
 use icu_provider::export::*;
 use icu_provider::prelude::*;
-use std::collections::HashSet;
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::fmt::Write as _;
 use std::fs::File;
@@ -160,7 +159,7 @@ pub struct BakedExporter {
     data: Mutex<
         HashMap<
             DataMarkerInfo,
-            HashMap<DataPayload<ExportMarker>, HashSet<DataIdentifierCow<'static>>>,
+            HashMap<DataPayload<ExportMarker>, BTreeSet<DataIdentifierCow<'static>>>,
         >,
     >,
     /// file names and statistics to be consumed by `close`.
@@ -513,19 +512,20 @@ impl DataExporter for BakedExporter {
                     .iter()
                     .all(|(_, ids)| ids.iter().all(|id| id.locale.is_und()));
 
-            let (data, lookup_struct_size) = crate::zerotrie::bake(
-                &marker_bake,
-                deduplicated_values
-                    .into_iter()
-                    .map(|(payload, ids)| {
-                        stats.structs_count += 1;
-                        stats.identifiers_count += ids.len();
-                        stats.structs_total_size += payload.baked_size();
+            let mut baked_values = deduplicated_values
+                .into_iter()
+                .map(|(payload, ids)| {
+                    stats.structs_count += 1;
+                    stats.identifiers_count += ids.len();
+                    stats.structs_total_size += payload.baked_size();
 
-                        (payload.tokenize(&self.dependencies), ids)
-                    })
-                    .collect(),
-            );
+                    (payload.tokenize(&self.dependencies), ids)
+                })
+                .collect::<Vec<_>>();
+
+            baked_values.sort_by(|a, b| a.1.first().cmp(&b.1.first()));
+
+            let (data, lookup_struct_size) = crate::zerotrie::bake(&marker_bake, baked_values);
 
             stats.lookup_struct_size = lookup_struct_size;
 

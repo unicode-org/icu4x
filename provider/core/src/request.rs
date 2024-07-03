@@ -118,6 +118,26 @@ pub struct DataIdentifierCow<'a> {
     pub locale: Cow<'a, DataLocale>,
 }
 
+impl PartialOrd for DataIdentifierCow<'_> {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(
+            self.marker_attributes
+                .as_str()
+                .cmp(other.marker_attributes.as_str())
+                .then_with(|| self.locale.total_cmp(&other.locale)),
+        )
+    }
+}
+
+impl Ord for DataIdentifierCow<'_> {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.marker_attributes
+            .as_str()
+            .cmp(other.marker_attributes.as_str())
+            .then_with(|| self.locale.total_cmp(&other.locale))
+    }
+}
+
 impl fmt::Display for DataIdentifierCow<'_> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         fmt::Display::fmt(&*self.locale, f)?;

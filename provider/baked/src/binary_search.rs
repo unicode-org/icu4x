@@ -12,7 +12,7 @@ pub(crate) fn bake(
     marker_bake: &databake::TokenStream,
     bakes_to_ids: Vec<(
         databake::TokenStream,
-        std::collections::HashSet<DataIdentifierCow>,
+        std::collections::BTreeSet<DataIdentifierCow>,
     )>,
 ) -> (databake::TokenStream, usize) {
     use databake::*;
@@ -20,13 +20,10 @@ pub(crate) fn bake(
 
     let mut idents_to_bakes = Vec::new();
 
-    let mut ids_to_idents = bakes_to_ids
+    let ids_to_idents = bakes_to_ids
         .iter()
         .flat_map(|(bake, ids)| {
-            let min_id = ids
-                .iter()
-                .min_by_key(|id| (id.marker_attributes.as_str(), id.locale.to_string()))
-                .unwrap();
+            let min_id = ids.first().unwrap();
 
             let ident = Ident::new(
                 &format!("_{}_{}", min_id.marker_attributes.as_str(), min_id.locale)
@@ -41,12 +38,11 @@ pub(crate) fn bake(
                     .collect::<String>(),
                 Span::call_site(),
             );
+
             idents_to_bakes.push((ident.clone(), bake));
             ids.iter().map(move |id| (id.clone(), ident.clone()))
         })
         .collect::<Vec<_>>();
-
-    idents_to_bakes.sort_by_cached_key(|(i, _)| i.to_string());
 
     let mut size = 0;
 
@@ -55,13 +51,6 @@ pub(crate) fn bake(
 
     // The idents are references
     size += ids_to_idents.len() * core::mem::size_of::<&()>();
-
-    ids_to_idents.sort_by_cached_key(|(id, _)| {
-        (
-            id.marker_attributes.as_str().to_string(),
-            id.locale.to_string(),
-        )
-    });
 
     let (ty, id_bakes_to_idents) = if ids_to_idents
         .iter()
