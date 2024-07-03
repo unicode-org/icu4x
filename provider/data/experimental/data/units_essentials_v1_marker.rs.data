@@ -4,8 +4,8 @@
 /// `icu`'s `_unstable` constructors.
 ///
 /// Using this implementation will embed the following data in the binary's data segment:
-/// * 6136B[^1] for the lookup data structure (153 data identifiers)
-/// * 22973B[^1] for the actual data (124 unique structs)
+/// * 9816B[^1] for the lookup data structure (245 data identifiers)
+/// * 108561B[^1] for the actual data (201 unique structs)
 ///
 /// [^1]: these numbers can be smaller in practice due to linker deduplication
 #[doc(hidden)]
