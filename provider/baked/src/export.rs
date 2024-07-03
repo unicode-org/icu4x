@@ -508,9 +508,9 @@ impl DataExporter for BakedExporter {
             let mut stats = Statistics::default();
 
             let needs_fallback = self.use_internal_fallback
-                || deduplicated_values
+                && deduplicated_values
                     .iter()
-                    .all(|(_, ids)| ids.iter().all(|id| id.locale.is_und()));
+                    .any(|(_, ids)| ids.iter().any(|id| !id.locale.is_und()));
 
             let mut baked_values = deduplicated_values
                 .into_iter()
@@ -523,6 +523,7 @@ impl DataExporter for BakedExporter {
                 })
                 .collect::<Vec<_>>();
 
+            // Stability
             baked_values.sort_by(|a, b| a.1.first().cmp(&b.1.first()));
 
             let (data, lookup_struct_size) = crate::zerotrie::bake(&marker_bake, baked_values);

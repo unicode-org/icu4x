@@ -120,12 +120,7 @@ pub struct DataIdentifierCow<'a> {
 
 impl PartialOrd for DataIdentifierCow<'_> {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        Some(
-            self.marker_attributes
-                .as_str()
-                .cmp(other.marker_attributes.as_str())
-                .then_with(|| self.locale.total_cmp(&other.locale)),
-        )
+        Some(self.cmp(other))
     }
 }
 
