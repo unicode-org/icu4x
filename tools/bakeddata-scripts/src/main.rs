@@ -2,13 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-extern crate icu_datagen;
+extern crate icu_provider_export;
 
-use icu_datagen::baked_exporter;
-use icu_datagen::prelude::*;
 use icu_datagen_bikeshed::{CoverageLevel, DatagenProvider};
 use icu_provider::export::*;
 use icu_provider::prelude::*;
+use icu_provider_export::baked_exporter;
+use icu_provider_export::prelude::*;
 use std::collections::{BTreeMap, HashMap, HashSet};
 use std::fs::File;
 use std::io::Write;
@@ -76,7 +76,7 @@ fn main() {
 
     let source = DatagenProvider::new_latest_tested();
 
-    let driver = DatagenDriver::new(
+    let driver = ExportDriver::new(
         source
             .locales_for_coverage_levels([
                 CoverageLevel::Modern,
@@ -86,7 +86,7 @@ fn main() {
             .unwrap()
             .into_iter()
             .map(LocaleFamily::with_descendants),
-        FallbackOptions::maximal_deduplication(),
+        DeduplicationStrategy::Maximal.into(),
         LocaleFallbacker::try_new_unstable(&source).unwrap(),
     )
     .with_recommended_segmenter_models();

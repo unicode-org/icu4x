@@ -39,7 +39,7 @@ members = [
     "provider/blob",
     "provider/core",
     "provider/core/macros",
-    "provider/datagen",
+    "provider/export",
     "provider/fs",
     "provider/registry",
     "provider/icu4x-datagen",
@@ -151,7 +151,7 @@ icu_freertos = { version = "~1.5.0", path = "ffi/freertos", default-features = f
 icu_harfbuzz = { version = "~0.2.0", path = "ffi/harfbuzz", default-features = false }
 
 # Provider
-icu_datagen = { version = "~1.5.0", path = "provider/datagen", default-features = false }
+icu_provider_export = { version = "~1.5.0", path = "provider/export", default-features = false }
 icu_datagen_bikeshed = { version = "~1.5.0", path = "provider/bikeshed", default-features = false }
 icu_provider = { version = "~1.5.0", path = "provider/core", default-features = false }
 icu_provider_macros = { version = "~1.5.0", path = "provider/core/macros", default-features = false }

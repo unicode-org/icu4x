@@ -73,7 +73,7 @@ num-traits = { workspace = true, optional = true }
 
 [dev-dependencies]
 postcard = { workspace = true, features = ["alloc"] }
-icu_datagen = { workspace = true, features = ["fs_exporter", "baked_exporter", "rayon"] }
+icu_provider_export = { workspace = true, features = ["fs_exporter", "baked_exporter", "rayon"] }
 icu_provider = { workspace = true, features = ["deserialize_postcard_1"] }
 icu_segmenter = { path = "../../components/segmenter", features = ["lstm"] }
 simple_logger = { workspace = true }

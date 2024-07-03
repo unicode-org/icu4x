@@ -31,7 +31,7 @@ log = { workspace = true, optional = true }
 
 [dev-dependencies]
 databake = { path = "../../utils/databake" }
-icu_datagen = { path = "../../provider/datagen" }
+icu_provider_export = { path = "../../provider/export" }
 icu_locale = { path = "../../components/locale", default-features = false, features = ["compiled_data"] }
 icu_locale_core = { path = "../../components/locale_core", default-features = false, features = ["serde"] }
 icu_provider = { path = "../../provider/core", features = ["macros"] }

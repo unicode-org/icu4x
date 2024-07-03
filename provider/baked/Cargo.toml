@@ -30,7 +30,7 @@ heck = { workspace = true, optional = true }
 
 [dev-dependencies]
 icu_provider = { path = "../core", features = ["export"] }
-icu_datagen = { path = "../datagen" }
+icu_provider_export = { path = "../export" }
 
 [features]
 export = [

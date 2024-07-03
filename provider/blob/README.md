@@ -5,7 +5,7 @@
 `icu_provider_blob` contains [`BlobDataProvider`], a [`BufferProvider`] implementation that
 supports loading data from a single serialized blob.
 
-To build blob data, use the `--format blob2` option of [`icu_datagen`]:
+To build blob data, use the `--format blob2` option of [`icu_provider_export`]:
 
 ```bash
 $ icu4x-datagen --markers all --locales full --format blob2 --out data.postcard
@@ -15,7 +15,7 @@ You can also use `--format blob` if you need to support ICU4X versions prior to 
 
 [`ICU4X`]: ../icu/index.html
 [`BufferProvider`]: icu_provider::buf::BufferProvider
-[`icu_datagen`]: ../icu_datagen/index.html
+[`icu_provider_export`]: ../icu_provider_export/index.html
 
 <!-- cargo-rdme end -->
 

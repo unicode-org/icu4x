@@ -187,9 +187,9 @@ version = "1.5.0"
 dependencies = [
  "crlify",
  "icu",
- "icu_datagen",
  "icu_datagen_bikeshed",
  "icu_provider",
+ "icu_provider_export",
  "log",
  "simple_logger",
 ]
@@ -913,10 +913,10 @@ dependencies = [
  "clap",
  "eyre",
  "icu",
- "icu_datagen",
  "icu_datagen_bikeshed",
  "icu_provider",
  "icu_provider_blob",
+ "icu_provider_export",
  "icu_registry",
  "log",
  "simple_logger",
@@ -1107,26 +1107,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_datagen"
-version = "1.5.0"
-dependencies = [
- "displaydoc",
- "elsa",
- "icu",
- "icu_datagen_bikeshed",
- "icu_locale",
- "icu_provider",
- "icu_provider_baked",
- "icu_provider_blob",
- "icu_provider_fs",
- "log",
- "postcard",
- "rayon",
- "simple_logger",
- "writeable",
-]
-
-[[package]]
 name = "icu_datagen_bikeshed"
 version = "1.5.0"
 dependencies = [
@@ -1137,11 +1117,11 @@ dependencies = [
  "icu",
  "icu_codepointtrie_builder",
  "icu_collections",
- "icu_datagen",
  "icu_experimental",
  "icu_pattern",
  "icu_provider",
  "icu_provider_adapters",
+ "icu_provider_export",
  "icu_registry",
  "icu_segmenter",
  "itertools",
@@ -1540,8 +1520,8 @@ dependencies = [
  "crlify",
  "databake",
  "heck 0.5.0",
- "icu_datagen",
  "icu_provider",
+ "icu_provider_export",
  "icu_registry",
  "itertools",
  "log",
@@ -1556,11 +1536,11 @@ version = "1.5.0"
 dependencies = [
  "criterion",
  "databake",
- "icu_datagen",
  "icu_locale",
  "icu_locale_core",
  "icu_provider",
  "icu_provider_adapters",
+ "icu_provider_export",
  "log",
  "postcard",
  "serde",
@@ -1568,6 +1548,26 @@ dependencies = [
  "writeable",
  "zerotrie",
  "zerovec",
+]
+
+[[package]]
+name = "icu_provider_export"
+version = "1.5.0"
+dependencies = [
+ "displaydoc",
+ "elsa",
+ "icu",
+ "icu_datagen_bikeshed",
+ "icu_locale",
+ "icu_provider",
+ "icu_provider_baked",
+ "icu_provider_blob",
+ "icu_provider_fs",
+ "log",
+ "postcard",
+ "rayon",
+ "simple_logger",
+ "writeable",
 ]
 
 [[package]]
@@ -1579,9 +1579,9 @@ dependencies = [
  "crlify",
  "displaydoc",
  "icu_benchmark_macros",
- "icu_datagen",
  "icu_locale_core",
  "icu_provider",
+ "icu_provider_export",
  "log",
  "postcard",
  "serde",
@@ -1841,10 +1841,10 @@ dependencies = [
  "databake",
  "displaydoc",
  "icu",
- "icu_datagen",
  "icu_provider",
  "icu_provider_adapters",
  "icu_provider_blob",
+ "icu_provider_export",
  "icu_provider_fs",
  "itertools",
  "litemap",
