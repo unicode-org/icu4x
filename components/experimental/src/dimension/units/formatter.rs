@@ -124,30 +124,21 @@ impl UnitsFormatter {
 
         let plural_rules = PluralRules::try_new_cardinal_unstable(provider, locale)?;
 
-        let mut buffer = [0u8; 64];
-        let mut pos = 0;
+        // TODO: remove this allocation string once we have different marker for different widths
+        let mut buffer: SmallVec<[u8; 32]> = SmallVec::new();
         let length = match options.width {
             Width::Short => "short-",
             Width::Narrow => "narrow-",
             Width::Long => "long-",
         };
-        if pos + length.len() > buffer.len() {
-            return Err(DataError::custom("Buffer overflow while copying length"));
-        }
-        buffer[pos..pos + length.len()].copy_from_slice(length.as_bytes());
-        pos += length.len();
-        if pos + unit.len() > buffer.len() {
-            return Err(DataError::custom("Buffer overflow while copying unit"));
-        }
-        buffer[pos..pos + unit.len()].copy_from_slice(unit.as_bytes());
-        pos += unit.len();
-
-        let attribute = core::str::from_utf8(&buffer[..pos])
+        buffer.extend_from_slice(length.as_bytes());
+        buffer.extend_from_slice(unit.as_bytes());
+        let utf8_slice = &buffer[..buffer.len()];
+        let attribute = core::str::from_utf8(utf8_slice)
             .map_err(|_| DataError::custom("Failed to parse the attribute"))?;
 
         let unit_attribute = DataMarkerAttributes::try_from_str(attribute)
             .map_err(|_| DataError::custom("Failed to parse unit"))?;
-
         let display_name = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
