@@ -768,6 +768,16 @@ impl DataMarkerAttributes {
         Ok(unsafe { &*(s as *const str as *const Self) })
     }
 
+    /// Attempts to create a borrowed [`DataMarkerAttributes`] from a borrowed UTF-8 encoded byte slice.
+    ///
+    /// # Errors
+    ///
+    ///     Returns an error if the byte slice contains invalid UTF-8 characters or
+    ///     characters other than `[a-zA-Z0-9_\-]`.
+    pub fn try_from_utf8(s: &[u8]) -> Result<&Self, AttributeParseError> {
+        Self::try_from_str(core::str::from_utf8(s).map_err(|_| AttributeParseError)?)
+    }
+
     /// Creates an owned [`DataMarkerAttributes`] from an owned string.
     ///
     /// Returns an error if the string contains characters other than `[a-zA-Z0-9_\-]`.
@@ -879,5 +889,21 @@ fn test_data_locale_from_string() {
             }
         };
         writeable::assert_writeable_eq!(data_locale, cas.input);
+    }
+}
+
+#[test]
+fn test_data_marker_attributes_from_utf8() {
+    let bytes_vec: Vec<&[u8]> = vec![
+        b"long-meter",
+        b"long",
+        b"meter",
+        b"short-meter-second",
+        b"usd",
+    ];
+
+    for bytes in bytes_vec {
+        let marker = DataMarkerAttributes::try_from_utf8(bytes).unwrap();
+        assert_eq!(marker.to_string().as_bytes(), bytes);
     }
 }
