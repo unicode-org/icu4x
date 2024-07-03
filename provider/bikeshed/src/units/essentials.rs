@@ -99,19 +99,17 @@ impl DataProvider<UnitsEssentialsV1Marker> for DatagenProvider {
         const BINARY_PREFIX: &str = "1024p";
         const DECIMAL_PREFIX: &str = "10p";
 
-        for (key, patterns) in length_data
-            .iter()
-            .filter(|(key, _)| key.starts_with(BINARY_PREFIX) || key.starts_with(DECIMAL_PREFIX))
-        {
+        for (key, patterns) in length_data.iter() {
             let pattern_key = if let Some(trimmed_key) = key.strip_prefix(BINARY_PREFIX) {
                 trimmed_key.parse::<u8>().map(PatternKey::Binary)
             } else if let Some(trimmed_key) = key.strip_prefix(DECIMAL_PREFIX) {
                 trimmed_key.parse::<i8>().map(PatternKey::Decimal)
             } else {
-                return Err(
-                    DataError::custom("Invalid prefix: must be Binary or Decimal")
-                        .with_debug_context(key),
-                );
+                // Skip keys that don't start with the binary or decimal prefixes
+                // NOTE:
+                //      In case there are other prefixes will be added in the future,
+                //      we should update this code to handle them.
+                continue;
             }
             .map_err(|_| {
                 DataError::custom("Failed to parse pattern key").with_debug_context(&key)
