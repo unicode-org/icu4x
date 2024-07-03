@@ -1,8 +1,8 @@
-# icu_datagen [![crates.io](https://img.shields.io/crates/v/icu_datagen)](https://crates.io/crates/icu_datagen)
+# icu_provider_export [![crates.io](https://img.shields.io/crates/v/icu_provider_export)](https://crates.io/crates/icu_provider_export)
 
 <!-- cargo-rdme start -->
 
-`icu_datagen` is a library to generate data files that can be used in ICU4X data providers.
+`icu_provider_export` is a library to generate data files that can be used in ICU4X data providers.
 
 For command-line usage, see the [`icu4x-datagen` binary](https://crates.io/crate/icu4x-datagen).
 
@@ -11,14 +11,14 @@ Also see our [datagen tutorial](https://github.com/unicode-org/icu4x/blob/main/t
 ## Examples
 
 ```rust
-use icu_datagen::blob_exporter::*;
-use icu_datagen::prelude::*;
+use icu_provider_export::blob_exporter::*;
+use icu_provider_export::prelude::*;
 use icu_datagen_bikeshed::DatagenProvider;
 use std::fs::File;
 
 let provider = DatagenProvider::new_latest_tested();
 
-DatagenDriver::new([LocaleFamily::FULL], FallbackOptions::no_deduplication(), LocaleFallbacker::try_new_unstable(&provider).unwrap())
+ExportDriver::new([LocaleFamily::FULL], DeduplicationStrategy::None.into(), LocaleFallbacker::try_new_unstable(&provider).unwrap())
     .with_markers([icu::list::provider::AndListV2Marker::INFO])
     .export(
         &provider,

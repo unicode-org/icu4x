@@ -4,14 +4,14 @@
 
 //! Data exporter that creates a file system structure for use with [`FsDataProvider`](crate::FsDataProvider).
 //!
-//! This module can be used as a target for the `icu_datagen` crate.
+//! This module can be used as a target for the `icu_provider_export` crate.
 //!
 //! See our [datagen tutorial](https://github.com/unicode-org/icu4x/blob/main/tutorials/data_management.md) for more information about different data providers.
 //!
 //! # Examples
 //!
 //! ```
-//! use icu_datagen::prelude::*;
+//! use icu_provider_export::prelude::*;
 //! use icu_provider::hello_world::*;
 //! use icu_provider_fs::export::*;
 //!
@@ -26,7 +26,7 @@
 //!     .expect("Should successfully initialize data output directory");
 //!
 //! // Export something. Make sure to use the same fallback data at runtime!
-//! DatagenDriver::new([LocaleFamily::FULL], FallbackOptions::maximal_deduplication(), LocaleFallbacker::new().static_to_owned())
+//! ExportDriver::new([LocaleFamily::FULL], DeduplicationStrategy::Maximal.into(), LocaleFallbacker::new().static_to_owned())
 //!     .export(&HelloWorldProvider, exporter)
 //!     .unwrap();
 //! #

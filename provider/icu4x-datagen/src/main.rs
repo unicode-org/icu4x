@@ -9,7 +9,7 @@
 //! $ icu4x-datagen --markers all --locales de en-AU --format blob --out data.postcard
 //! ```
 //!
-//! More details can be found by running `--help`, or by consulting the [`icu_datagen`] documentation.
+//! More details can be found by running `--help`, or by consulting the [`icu_provider_export`] documentation.
 
 // If no exporter feature is enabled this all doesn't make sense
 #![cfg_attr(
@@ -28,11 +28,11 @@
 
 use clap::{Parser, ValueEnum};
 use eyre::WrapErr;
-use icu_datagen::prelude::*;
 #[cfg(feature = "provider")]
 use icu_datagen_bikeshed::DatagenProvider;
 use icu_provider::export::ExportableProvider;
 use icu_provider::hello_world::HelloWorldV1Marker;
+use icu_provider_export::prelude::*;
 use simple_logger::SimpleLogger;
 use std::collections::HashMap;
 use std::path::PathBuf;
@@ -40,7 +40,7 @@ use std::path::PathBuf;
 #[derive(Parser)]
 #[command(name = "icu4x-datagen")]
 #[command(author = "The ICU4X Project Developers", version = option_env!("CARGO_PKG_VERSION"))]
-#[command(about = format!("Learn more at: https://docs.rs/icu_datagen/{}", option_env!("CARGO_PKG_VERSION").unwrap_or("")), long_about = None)]
+#[command(about = format!("Learn more at: https://docs.rs/icu_provider_export/{}", option_env!("CARGO_PKG_VERSION").unwrap_or("")), long_about = None)]
 struct Cli {
     #[arg(short, long)]
     #[arg(help = "Requests verbose output")]
@@ -462,24 +462,22 @@ fn main() -> eyre::Result<()> {
             .collect::<eyre::Result<Vec<_>>>()?,
     };
 
-    let mut options = match cli.format {
-        Format::Dir | Format::Blob | Format::Blob2 => FallbackOptions::no_deduplication(),
-        Format::Mod if cli.no_internal_fallback && cli.deduplication.is_none() =>
-            eyre::bail!("--no-internal-fallback requires an explicit --deduplication value. Baked exporter would default to maximal deduplication, which might not be intended"),
-        // TODO(2.0): Default to RetainBaseLanguages here
-        Format::Mod => FallbackOptions::maximal_deduplication(),
+    let deduplication_strategy = match cli.deduplication {
+        Some(Deduplication::Maximal) => icu_provider_export::DeduplicationStrategy::Maximal,
+        Some(Deduplication::RetainBaseLanguages) => {
+            icu_provider_export::DeduplicationStrategy::RetainBaseLanguages
+        }
+        Some(Deduplication::None) => icu_provider_export::DeduplicationStrategy::None,
+        None => match cli.format {
+            Format::Dir | Format::Blob | Format::Blob2 => DeduplicationStrategy::None,
+            Format::Mod if cli.no_internal_fallback && cli.deduplication.is_none() =>
+                eyre::bail!("--no-internal-fallback requires an explicit --deduplication value. Baked exporter would default to maximal deduplication, which might not be intended"),
+            // TODO(2.0): Default to RetainBaseLanguages here
+            Format::Mod => DeduplicationStrategy::Maximal,
+        }
     };
-    if let Some(deduplication) = cli.deduplication {
-        options.deduplication_strategy = match deduplication {
-            Deduplication::Maximal => icu_datagen::DeduplicationStrategy::Maximal,
-            Deduplication::RetainBaseLanguages => {
-                icu_datagen::DeduplicationStrategy::RetainBaseLanguages
-            }
-            Deduplication::None => icu_datagen::DeduplicationStrategy::None,
-        };
-    }
 
-    let mut driver = DatagenDriver::new(locale_families, options, fallbacker);
+    let mut driver = ExportDriver::new(locale_families, deduplication_strategy.into(), fallbacker);
 
     driver = driver.with_markers(markers);
 
@@ -513,7 +511,7 @@ fn main() -> eyre::Result<()> {
         }
         #[cfg(feature = "fs_exporter")]
         Format::Dir => driver.export(&provider, {
-            use icu_datagen::fs_exporter::*;
+            use icu_provider_export::fs_exporter::*;
 
             FilesystemExporter::try_new(
                 match cli.syntax {
@@ -538,7 +536,7 @@ fn main() -> eyre::Result<()> {
         }
         #[cfg(feature = "blob_exporter")]
         Format::Blob | Format::Blob2 => driver.export(&provider, {
-            use icu_datagen::blob_exporter::*;
+            use icu_provider_export::blob_exporter::*;
 
             let sink: Box<dyn std::io::Write + Sync> = if let Some(path) = cli.output {
                 if !cli.overwrite && path.exists() {
@@ -563,10 +561,10 @@ fn main() -> eyre::Result<()> {
         }
         #[cfg(feature = "baked_exporter")]
         Format::Mod => driver.export(&provider, {
-            icu_datagen::baked_exporter::BakedExporter::new(
+            icu_provider_export::baked_exporter::BakedExporter::new(
                 cli.output.unwrap_or_else(|| PathBuf::from("icu4x_data")),
                 {
-                    let mut options = icu_datagen::baked_exporter::Options::default();
+                    let mut options = icu_provider_export::baked_exporter::Options::default();
                     options.pretty = cli.pretty;
                     options.use_internal_fallback = !cli.no_internal_fallback;
                     options.use_separate_crates = cli.use_separate_crates;

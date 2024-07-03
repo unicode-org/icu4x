@@ -5,9 +5,9 @@
 use std::collections::BTreeMap;
 
 use elsa::sync::FrozenMap;
-use icu_datagen::prelude::*;
 use icu_provider::export::ExportMarker;
 use icu_provider::prelude::*;
+use icu_provider_export::prelude::*;
 use postcard::ser_flavors::{AllocVec, Flavor};
 
 #[derive(Default)]

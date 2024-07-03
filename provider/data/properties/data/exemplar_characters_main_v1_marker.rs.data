@@ -2,6 +2,12 @@
 /// Implement `DataProvider<ExemplarCharactersMainV1Marker>` on the given struct using the data
 /// hardcoded in this file. This allows the struct to be used with
 /// `icu`'s `_unstable` constructors.
+///
+/// Using this implementation will embed the following data in the binary's data segment:
+/// * 3928B[^1] for the lookup data structure (163 data identifiers)
+/// * 93912B[^1] for the actual data (151 unique structs)
+///
+/// [^1]: these numbers can be smaller in practice due to linker deduplication
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __impl_exemplar_characters_main_v1_marker {

@@ -82,7 +82,7 @@
 //!
 //! *This functionality is enabled with the "datagen" Cargo feature*
 //!
-//! The [`export`] module contains several APIs for data generation. See [`icu_datagen`] for the reference
+//! The [`export`] module contains several APIs for data generation. See [`icu_provider_export`] for the reference
 //! data generation implementation.
 //!
 //! [`ICU4X`]: ../icu/index.html
@@ -92,12 +92,12 @@
 //! [`Yokeable`]: yoke::Yokeable
 //! [`impl_dynamic_data_provider!`]: dynutil::impl_dynamic_data_provider
 //! [`icu_provider_adapters`]: ../icu_provider_adapters/index.html
-//! [`DatagenProvider`]: ../icu_datagen/struct.DatagenProvider.html
+//! [`DatagenProvider`]: ../icu_provider_export/struct.DatagenProvider.html
 //! [`as_downcasting()`]: any::AsDowncastingAnyProvider::as_downcasting
 //! [`as_deserializing()`]: buf::AsDeserializingBufferProvider::as_deserializing
 //! [`FsDataProvider`]: ../icu_provider_fs/struct.FsDataProvider.html
 //! [`BlobDataProvider`]: ../icu_provider_blob/struct.BlobDataProvider.html
-//! [`icu_datagen`]: ../icu_datagen/index.html
+//! [`icu_provider_export`]: ../icu_provider_export/index.html
 
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
 #![cfg_attr(not(any(test, feature = "std")), no_std)]

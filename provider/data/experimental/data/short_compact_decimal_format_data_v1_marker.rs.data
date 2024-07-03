@@ -2,6 +2,12 @@
 /// Implement `DataProvider<ShortCompactDecimalFormatDataV1Marker>` on the given struct using the data
 /// hardcoded in this file. This allows the struct to be used with
 /// `icu`'s `_unstable` constructors.
+///
+/// Using this implementation will embed the following data in the binary's data segment:
+/// * 2920B[^1] for the lookup data structure (121 data identifiers)
+/// * 17950B[^1] for the actual data (103 unique structs)
+///
+/// [^1]: these numbers can be smaller in practice due to linker deduplication
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __impl_short_compact_decimal_format_data_v1_marker {
