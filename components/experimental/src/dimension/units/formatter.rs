@@ -70,7 +70,7 @@ impl UnitsFormatter {
 
         let plural_rules = PluralRules::try_new_cardinal(locale)?;
 
-        // TODO: remove this allocation string once we have different marker for different widths
+        // TODO: Remove this allocation once we have separate markers for different widths.
         let mut buffer: SmallVec<[u8; 32]> = SmallVec::new();
         let length = match options.width {
             Width::Short => "short-",
@@ -79,12 +79,10 @@ impl UnitsFormatter {
         };
         buffer.extend_from_slice(length.as_bytes());
         buffer.extend_from_slice(unit.as_bytes());
-        let utf8_slice = &buffer[..buffer.len()];
-        let attribute = core::str::from_utf8(utf8_slice)
-            .map_err(|_| DataError::custom("Failed to parse the attribute"))?;
+        let attribute_slice = &buffer[..buffer.len()];
+        let unit_attribute = DataMarkerAttributes::try_from_utf8(attribute_slice)
+            .map_err(|_| DataError::custom("Failed to create a data marker"))?;
 
-        let unit_attribute = DataMarkerAttributes::try_from_str(attribute)
-            .map_err(|_| DataError::custom("Failed to parse unit"))?;
         let display_name = crate::provider::Baked
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
@@ -124,7 +122,7 @@ impl UnitsFormatter {
 
         let plural_rules = PluralRules::try_new_cardinal_unstable(provider, locale)?;
 
-        // TODO: remove this allocation string once we have different marker for different widths
+        // TODO: Remove this allocation once we have separate markers for different widths.
         let mut buffer: SmallVec<[u8; 32]> = SmallVec::new();
         let length = match options.width {
             Width::Short => "short-",
@@ -133,12 +131,10 @@ impl UnitsFormatter {
         };
         buffer.extend_from_slice(length.as_bytes());
         buffer.extend_from_slice(unit.as_bytes());
-        let utf8_slice = &buffer[..buffer.len()];
-        let attribute = core::str::from_utf8(utf8_slice)
-            .map_err(|_| DataError::custom("Failed to parse the attribute"))?;
+        let attribute_slice = &buffer[..buffer.len()];
+        let unit_attribute = DataMarkerAttributes::try_from_utf8(attribute_slice)
+            .map_err(|_| DataError::custom("Failed to create a data marker"))?;
 
-        let unit_attribute = DataMarkerAttributes::try_from_str(attribute)
-            .map_err(|_| DataError::custom("Failed to parse unit"))?;
         let display_name = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
