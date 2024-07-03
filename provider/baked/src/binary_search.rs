@@ -4,17 +4,50 @@
 
 //! Data stored as slices, looked up with binary search
 
-#[cfg(feature = "export")]
-use databake::*;
 use icu_provider::prelude::*;
 
 #[cfg(feature = "export")]
 #[allow(dead_code)]
 pub(crate) fn bake(
-    marker_bake: &TokenStream,
-    mut ids_to_idents: Vec<(DataIdentifierCow, proc_macro2::Ident)>,
-    idents_to_bakes: Vec<(proc_macro2::Ident, TokenStream)>,
-) -> (TokenStream, usize) {
+    marker_bake: &databake::TokenStream,
+    bakes_to_ids: Vec<(
+        databake::TokenStream,
+        std::collections::HashSet<DataIdentifierCow>,
+    )>,
+) -> (databake::TokenStream, usize) {
+    use databake::*;
+    use proc_macro2::{Ident, Span};
+
+    let mut idents_to_bakes = Vec::new();
+
+    let mut ids_to_idents = bakes_to_ids
+        .iter()
+        .flat_map(|(bake, ids)| {
+            let min_id = ids
+                .iter()
+                .min_by_key(|id| (id.marker_attributes.as_str(), id.locale.to_string()))
+                .unwrap();
+
+            let ident = Ident::new(
+                &format!("_{}_{}", min_id.marker_attributes.as_str(), min_id.locale)
+                    .chars()
+                    .map(|ch| {
+                        if ch == '-' {
+                            '_'
+                        } else {
+                            ch.to_ascii_uppercase()
+                        }
+                    })
+                    .collect::<String>(),
+                Span::call_site(),
+            );
+            idents_to_bakes.push((ident.clone(), bake));
+            ids.iter().map(move |id| (id.clone(), ident.clone()))
+        })
+        .collect::<Vec<_>>();
+
+    idents_to_bakes.sort_by_cached_key(|(i, _)| i.to_string());
+
     let mut size = 0;
 
     // Data.0 is a fat pointer

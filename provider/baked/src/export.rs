@@ -506,41 +506,28 @@ impl DataExporter for BakedExporter {
                 },
             )
         } else {
-            let mut idents_to_bakes = Vec::new();
             let mut stats = Statistics::default();
 
-            let ids_to_idents = deduplicated_values
-                .iter()
-                .flat_map(|(payload, ids)| {
-                    let min_id = ids
-                        .iter()
-                        .min_by_key(|id| (id.marker_attributes.as_str(), id.locale.to_string()))
-                        .unwrap();
+            let needs_fallback = self.use_internal_fallback
+                || deduplicated_values
+                    .iter()
+                    .all(|(_, ids)| ids.iter().all(|id| id.locale.is_und()));
 
-                    let ident = proc_macro2::Ident::new(
-                        &format!("_{}_{}", min_id.marker_attributes.as_str(), min_id.locale)
-                            .chars()
-                            .map(|ch| {
-                                if ch == '-' {
-                                    '_'
-                                } else {
-                                    ch.to_ascii_uppercase()
-                                }
-                            })
-                            .collect::<String>(),
-                        proc_macro2::Span::call_site(),
-                    );
+            let (data, lookup_struct_size) = crate::zerotrie::bake(
+                &marker_bake,
+                deduplicated_values
+                    .into_iter()
+                    .map(|(payload, ids)| {
+                        stats.structs_count += 1;
+                        stats.identifiers_count += ids.len();
+                        stats.structs_total_size += payload.baked_size();
 
-                    stats.structs_count += 1;
-                    stats.identifiers_count += ids.len();
-                    stats.structs_total_size += payload.baked_size();
+                        (payload.tokenize(&self.dependencies), ids)
+                    })
+                    .collect(),
+            );
 
-                    idents_to_bakes.push((ident.clone(), payload.tokenize(&self.dependencies)));
-                    ids.iter().map(move |id| (id.clone(), ident.clone()))
-                })
-                .collect();
-
-            idents_to_bakes.sort_by_cached_key(|(i, _)| i.to_string());
+            stats.lookup_struct_size = lookup_struct_size;
 
             let data_ident = format!(
                 "DATA_{}",
@@ -555,16 +542,7 @@ impl DataExporter for BakedExporter {
             .parse::<TokenStream>()
             .unwrap();
 
-            let (data, lookup_struct_size) =
-                crate::zerotrie::bake(&marker_bake, ids_to_idents, idents_to_bakes);
-
-            stats.lookup_struct_size = lookup_struct_size;
-
-            let search = if !self.use_internal_fallback
-                || deduplicated_values
-                    .iter()
-                    .all(|(_, ids)| ids.iter().all(|id| id.locale.is_und()))
-            {
+            let search = if !needs_fallback {
                 quote! {
                     let metadata = Default::default();
                     let Some(payload) = icu_provider_baked::DataStore::get(&Self::#data_ident, req.id) else {

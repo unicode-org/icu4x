@@ -7,33 +7,36 @@
 // This is a valid separator as `DataLocale` will never produce it.
 const ID_SEPARATOR: u8 = 0x1E;
 
-#[cfg(feature = "export")]
-use databake::*;
 use icu_provider::prelude::*;
 pub use zerotrie::ZeroTrieSimpleAscii;
 
 #[cfg(feature = "export")]
 pub(crate) fn bake(
-    marker_bake: &TokenStream,
-    ids_to_idents: Vec<(DataIdentifierCow, proc_macro2::Ident)>,
-    idents_to_bakes: Vec<(proc_macro2::Ident, TokenStream)>,
-) -> (TokenStream, usize) {
-    let bakes = idents_to_bakes.iter().map(|(_, bake)| bake);
+    marker_bake: &databake::TokenStream,
+    mut bakes_to_ids: Vec<(
+        databake::TokenStream,
+        std::collections::HashSet<DataIdentifierCow>,
+    )>,
+) -> (databake::TokenStream, usize) {
+    use databake::*;
 
-    let bake_indices = idents_to_bakes
-        .iter()
-        .enumerate()
-        .map(|(i, (ident, _))| (ident, i))
-        .collect::<std::collections::HashMap<&proc_macro2::Ident, usize>>();
+    // stability
+    bakes_to_ids.sort_by_cached_key(|(bake, _)| bake.to_string());
 
-    let trie = ZeroTrieSimpleAscii::from_iter(ids_to_idents.iter().map(|(id, ident)| {
-        let mut encoded = id.locale.to_string().into_bytes();
-        if !id.marker_attributes.is_empty() {
-            encoded.push(ID_SEPARATOR);
-            encoded.extend_from_slice(id.marker_attributes.as_bytes());
-        }
-        (encoded, bake_indices[ident])
-    }));
+    let bakes = bakes_to_ids.iter().map(|(bake, _)| bake);
+
+    let trie = ZeroTrieSimpleAscii::from_iter(bakes_to_ids.iter().enumerate().flat_map(
+        |(bake_index, (_, ids))| {
+            ids.iter().map(move |id| {
+                let mut encoded = id.locale.to_string().into_bytes();
+                if !id.marker_attributes.is_empty() {
+                    encoded.push(ID_SEPARATOR);
+                    encoded.extend_from_slice(id.marker_attributes.as_bytes());
+                }
+                (encoded, bake_index)
+            })
+        },
+    ));
 
     let baked_trie = trie.as_borrowed_slice().bake(&Default::default());
 
