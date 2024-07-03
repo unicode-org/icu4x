@@ -60,7 +60,9 @@ impl DataProvider<ScriptWithExtensionsPropertyV1Marker> for SourceDataProvider {
     }
 }
 
-impl crate::IterableDataProviderCached<ScriptWithExtensionsPropertyV1Marker> for SourceDataProvider {
+impl crate::IterableDataProviderCached<ScriptWithExtensionsPropertyV1Marker>
+    for SourceDataProvider
+{
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }

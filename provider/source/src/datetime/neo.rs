@@ -4,8 +4,8 @@
 
 use super::supported_cals;
 use crate::cldr_serde::ca;
-use crate::SourceDataProvider;
 use crate::IterableDataProviderCached;
+use crate::SourceDataProvider;
 use icu::datetime::pattern::{self, CoarseHourCycle};
 
 use icu::datetime::provider::calendar::{

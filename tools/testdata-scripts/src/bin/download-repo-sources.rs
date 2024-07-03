@@ -4,9 +4,9 @@
 
 use clap::{ArgAction, Parser};
 use eyre::WrapErr;
-use icu_provider_source::SourceDataProvider;
 use icu_locale_core::*;
 use icu_provider::DataError;
+use icu_provider_source::SourceDataProvider;
 use simple_logger::SimpleLogger;
 use std::fs::{self, File};
 use std::io::{self, BufWriter, Cursor, Write};

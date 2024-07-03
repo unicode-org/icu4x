@@ -84,7 +84,9 @@ impl DataProvider<LikelySubtagsForScriptRegionV1Marker> for SourceDataProvider {
     }
 }
 
-impl crate::IterableDataProviderCached<LikelySubtagsForScriptRegionV1Marker> for SourceDataProvider {
+impl crate::IterableDataProviderCached<LikelySubtagsForScriptRegionV1Marker>
+    for SourceDataProvider
+{
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }

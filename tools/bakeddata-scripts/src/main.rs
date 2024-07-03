@@ -4,11 +4,11 @@
 
 extern crate icu_provider_export;
 
-use icu_provider_source::{CoverageLevel, SourceDataProvider};
 use icu_provider::export::*;
 use icu_provider::prelude::*;
 use icu_provider_export::baked_exporter;
 use icu_provider_export::prelude::*;
+use icu_provider_source::{CoverageLevel, SourceDataProvider};
 use std::collections::{BTreeMap, HashMap, HashSet};
 use std::fs::File;
 use std::io::Write;

@@ -403,7 +403,9 @@ impl DataProvider<GeneralCategoryMaskNameToValueV1Marker> for SourceDataProvider
     }
 }
 
-impl crate::IterableDataProviderCached<GeneralCategoryMaskNameToValueV1Marker> for SourceDataProvider {
+impl crate::IterableDataProviderCached<GeneralCategoryMaskNameToValueV1Marker>
+    for SourceDataProvider
+{
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         self.get_mask_prop("gcm")?;
         Ok(HashSet::from_iter([Default::default()]))

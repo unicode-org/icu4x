@@ -6,8 +6,8 @@ use crate::cldr_serde::{
     self,
     week_data::{Territory, DEFAULT_TERRITORY},
 };
-use crate::SourceDataProvider;
 use crate::IterableDataProviderCached;
+use crate::SourceDataProvider;
 use icu::calendar::provider::{
     WeekDataV1, WeekDataV1Marker, WeekDataV2, WeekDataV2Marker, WeekdaySet,
 };

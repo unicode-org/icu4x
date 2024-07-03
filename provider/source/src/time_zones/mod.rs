@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cldr_serde;
-use crate::SourceDataProvider;
 use crate::IterableDataProviderCached;
+use crate::SourceDataProvider;
 use cldr_serde::time_zones::bcp47_tzid::Bcp47TzidAliasData;
 use cldr_serde::time_zones::meta_zones::MetazoneAliasData;
 use cldr_serde::time_zones::meta_zones::ZonePeriod;

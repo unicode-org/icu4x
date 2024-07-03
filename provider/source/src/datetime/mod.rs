@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cldr_serde;
-use crate::SourceDataProvider;
 use crate::IterableDataProviderCached;
+use crate::SourceDataProvider;
 use either::Either;
 use icu::datetime::provider::calendar::*;
 use icu::locale::extensions::unicode::Value;

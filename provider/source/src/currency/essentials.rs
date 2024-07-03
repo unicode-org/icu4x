@@ -4,8 +4,8 @@
 
 use crate::cldr_serde;
 use crate::decimal::decimal_pattern::DecimalPattern;
-use crate::SourceDataProvider;
 use crate::IterableDataProviderCached;
+use crate::SourceDataProvider;
 
 use std::borrow::Cow;
 

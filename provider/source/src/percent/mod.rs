@@ -5,8 +5,8 @@
 use std::collections::HashSet;
 
 use crate::cldr_serde;
-use crate::SourceDataProvider;
 use crate::IterableDataProviderCached;
+use crate::SourceDataProvider;
 
 use icu::experimental::dimension::provider::percent::*;
 use icu_provider::prelude::*;

@@ -6,8 +6,8 @@ use std::collections::HashSet;
 use std::marker::PhantomData;
 
 use crate::cldr_serde;
-use crate::SourceDataProvider;
 use crate::IterableDataProviderCached;
+use crate::SourceDataProvider;
 use icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList;
 use icu::properties::provider::*;
 use icu_provider::prelude::*;

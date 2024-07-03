@@ -5,8 +5,8 @@
 use std::borrow::Borrow;
 
 use crate::cldr_serde;
-use crate::SourceDataProvider;
 use crate::IterableDataProviderCached;
+use crate::SourceDataProvider;
 use icu::experimental::relativetime::provider::*;
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashMap, HashSet};

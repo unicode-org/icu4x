@@ -5,8 +5,8 @@
 //! This module contains provider implementations backed by TOML files
 //! exported from ICU.
 
-use crate::SourceDataProvider;
 use crate::IterableDataProviderCached;
+use crate::SourceDataProvider;
 use icu::collator::provider::*;
 use icu::collections::codepointtrie::CodePointTrie;
 use icu::locale::extensions::unicode::{key, value};

@@ -28,11 +28,11 @@
 
 use clap::{Parser, ValueEnum};
 use eyre::WrapErr;
-#[cfg(feature = "provider")]
-use icu_provider_source::SourceDataProvider;
 use icu_provider::export::ExportableProvider;
 use icu_provider::hello_world::HelloWorldV1Marker;
 use icu_provider_export::prelude::*;
+#[cfg(feature = "provider")]
+use icu_provider_source::SourceDataProvider;
 use simple_logger::SimpleLogger;
 use std::collections::HashMap;
 use std::path::PathBuf;
