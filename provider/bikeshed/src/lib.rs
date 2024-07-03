@@ -67,7 +67,7 @@ mod tests;
 /// An [`ExportableProvider`](icu_provider::export::ExportableProvider) backed by raw CLDR and ICU data.
 ///
 /// This provider covers all markers that are used by ICU4X. It is intended as the canonical
-/// provider for `DatagenDriver::export`.
+/// provider for `ExportDriver::export`.
 ///
 /// If a required data source has not been set, `DataProvider::load` will
 /// fail with the appropriate error:

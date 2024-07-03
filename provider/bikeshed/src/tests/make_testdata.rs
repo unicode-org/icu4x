@@ -3,10 +3,10 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::DatagenProvider;
-use icu_datagen::prelude::*;
 use icu_provider::dynutil::UpcastDataPayload;
 use icu_provider::export::*;
 use icu_provider::prelude::*;
+use icu_provider_export::prelude::*;
 use std::alloc::{GlobalAlloc, Layout, System};
 use std::cell::Cell;
 use std::collections::BTreeSet;
@@ -33,13 +33,13 @@ fn make_testdata() {
 
         Box::new(MultiExporter::new(vec![
             Box::new(
-                icu_datagen::fs_exporter::FilesystemExporter::try_new(
-                    Box::new(icu_datagen::fs_exporter::serializers::Json::pretty()),
+                icu_provider_export::fs_exporter::FilesystemExporter::try_new(
+                    Box::new(icu_provider_export::fs_exporter::serializers::Json::pretty()),
                     {
-                        let mut options = icu_datagen::fs_exporter::Options::default();
+                        let mut options = icu_provider_export::fs_exporter::Options::default();
                         options.root = "data/debug".into();
                         options.overwrite =
-                            icu_datagen::fs_exporter::OverwriteOption::RemoveAndReplace;
+                            icu_provider_export::fs_exporter::OverwriteOption::RemoveAndReplace;
                         options
                     },
                 )
@@ -55,9 +55,9 @@ fn make_testdata() {
 
     let provider = DatagenProvider::new_testing();
 
-    DatagenDriver::new(
+    ExportDriver::new(
         LOCALES.iter().cloned().map(LocaleFamily::with_descendants),
-        FallbackOptions::no_deduplication(),
+        DeduplicationStrategy::None.into(),
         LocaleFallbacker::try_new_unstable(&provider).unwrap(),
     )
     .with_segmenter_models([

@@ -76,7 +76,7 @@
 //! constructed, either the current or any previous version within the same SemVer major release.
 //! For example, if a data file is built to support FooFormatter version 1.1, then FooFormatter
 //! version 1.2 will be able to read the same data file. Likewise, backwards-compatible markers can
-//! always be included by `icu_datagen` to support older library versions.
+//! always be included by `icu_provider_export` to support older library versions.
 //!
 //! The `*_unstable` functions are only guaranteed to work on data built for the exact same minor version
 //! of ICU4X. The advantage of the `*_unstable` functions is that they result in the smallest code

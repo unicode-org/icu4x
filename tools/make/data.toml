@@ -5,7 +5,7 @@
 # This is a cargo-make file included in the toplevel Makefile.toml
 
 [tasks.download-repo-sources]
-description = "Download fresh source testing data into the icu_datagen crate."
+description = "Download fresh source testing data into the icu_provider_export crate."
 category = "ICU4X Data"
 command = "cargo"
 args = [
@@ -16,7 +16,7 @@ args = [
 ]
 
 [tasks.testdata]
-description = "Run the testdata generation test in icu_datagen"
+description = "Run the testdata generation test in icu_provider_export"
 category = "ICU4X Data"
 command = "cargo"
 env = { ICU4X_WRITE_TESTDATA = "1" }
