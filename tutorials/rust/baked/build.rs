@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_datagen::baked_exporter::*;
-use icu_datagen::prelude::*;
+use icu_provider_export::baked_exporter::*;
+use icu_provider_export::prelude::*;
 use icu_datagen_bikeshed::DatagenProvider;
 use std::path::PathBuf;
 
@@ -12,9 +12,9 @@ fn main() {
 
     let mod_directory = PathBuf::from(std::env::var_os("OUT_DIR").unwrap()).join("baked_data");
 
-    DatagenDriver::new(
+    ExportDriver::new(
         [LocaleFamily::single(langid!("ru"))],
-        FallbackOptions::no_deduplication(),
+        DeduplicationStrategy::None.into(),
         // We are not deduplicating, so this can be anything. If we were using runtime fallback,
         // this would need to be the same fallbacker as used at runtime (in the baked data case,
         // the compiled data one, which we could obtain here using `try_new_unstable`).

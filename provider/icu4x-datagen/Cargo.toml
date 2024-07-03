@@ -19,7 +19,7 @@ version.workspace = true
 [dependencies]
 icu_provider = { workspace = true }
 icu = { workspace = true, features = ["datagen"] }
-icu_datagen = { workspace = true, features = ["rayon"] }
+icu_provider_export = { workspace = true, features = ["rayon"] }
 icu_datagen_bikeshed = { workspace = true, optional = true }
 icu_registry = { workspace = true }
 
@@ -33,10 +33,10 @@ simple_logger = { workspace = true }
 [features]
 default = ["use_wasm", "networking", "fs_exporter", "blob_exporter", "baked_exporter", "provider"]
 provider = ["dep:icu_datagen_bikeshed"]
-baked_exporter = ["icu_datagen/baked_exporter"]
-blob_exporter = ["icu_datagen/blob_exporter"]
+baked_exporter = ["icu_provider_export/baked_exporter"]
+blob_exporter = ["icu_provider_export/blob_exporter"]
 blob_input = ["dep:icu_provider_blob", "icu/datagen", "icu_provider/export"]
-fs_exporter = ["icu_datagen/fs_exporter"]
+fs_exporter = ["icu_provider_export/fs_exporter"]
 # Use wasm for building codepointtries
 use_wasm = ["icu_datagen_bikeshed?/use_wasm"]
 # Use local ICU4C libraries for building codepointtries

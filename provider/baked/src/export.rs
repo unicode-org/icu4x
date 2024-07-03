@@ -4,15 +4,15 @@
 
 //! A data exporter that bakes the data into Rust code.
 //!
-//! This module can be used as a target for the `icu_datagen` crate.
+//! This module can be used as a target for the `icu_provider_export` crate.
 //!
 //! See our [datagen tutorial](https://github.com/unicode-org/icu4x/blob/main/tutorials/data_management.md) for more information about different data providers.
 //!
 //! # Examples
 //!
 //! ```
-//! use icu_datagen::baked_exporter::*;
-//! use icu_datagen::prelude::*;
+//! use icu_provider_export::baked_exporter::*;
+//! use icu_provider_export::prelude::*;
 //!
 //! let demo_path = std::env::temp_dir().join("icu4x_baked_demo");
 //! # let _ = std::fs::remove_dir_all(&demo_path);
@@ -22,7 +22,7 @@
 //!     BakedExporter::new(demo_path.clone(), Default::default()).unwrap();
 //!
 //! // Export something. Make sure to use the same fallback data at runtime!
-//! DatagenDriver::new([LocaleFamily::FULL], FallbackOptions::maximal_deduplication(), LocaleFallbacker::new().static_to_owned())
+//! ExportDriver::new([LocaleFamily::FULL], DeduplicationStrategy::Maximal.into(), LocaleFallbacker::new().static_to_owned())
 //!     .export(&icu_provider::hello_world::HelloWorldProvider, exporter)
 //!     .unwrap();
 //! #

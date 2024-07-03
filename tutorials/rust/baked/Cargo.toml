@@ -19,5 +19,5 @@ zerovec = "0.10" # for databake
 
 [build-dependencies]
 icu = "1.5"
-icu_datagen = "1.5"
+icu_provider_export = "1.5"
 icu_datagen_bikeshed = "1.5"
