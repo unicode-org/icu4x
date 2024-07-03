@@ -20,6 +20,18 @@ where
     }
 }
 
+impl<'a, K, V> BakeSize for ZeroMap<'a, K, V>
+where
+    K: ZeroMapKV<'a> + ?Sized,
+    V: ZeroMapKV<'a> + ?Sized,
+    K::Container: BakeSize,
+    V::Container: BakeSize,
+{
+    fn borrows_size(&self) -> usize {
+        self.keys.borrows_size() + self.values.borrows_size()
+    }
+}
+
 impl<'a, K, V> Bake for ZeroMapBorrowed<'a, K, V>
 where
     K: ZeroMapKV<'a> + ?Sized,
@@ -32,6 +44,18 @@ where
         let keys = self.keys.bake(env);
         let values = self.values.bake(env);
         quote! { unsafe { #[allow(unused_unsafe)] zerovec::maps::ZeroMapBorrowed::from_parts_unchecked(#keys, #values) } }
+    }
+}
+
+impl<'a, K, V> BakeSize for ZeroMapBorrowed<'a, K, V>
+where
+    K: ZeroMapKV<'a> + ?Sized,
+    V: ZeroMapKV<'a> + ?Sized,
+    &'a K::Slice: BakeSize,
+    &'a V::Slice: BakeSize,
+{
+    fn borrows_size(&self) -> usize {
+        self.keys.borrows_size() + self.values.borrows_size()
     }
 }
 

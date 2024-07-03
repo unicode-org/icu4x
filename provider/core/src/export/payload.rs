@@ -7,12 +7,13 @@ use core::any::Any;
 use crate::dynutil::UpcastDataPayload;
 use crate::prelude::*;
 use alloc::sync::Arc;
-use databake::{Bake, CrateEnv, TokenStream};
+use databake::{Bake, BakeSize, CrateEnv, TokenStream};
 use yoke::trait_hack::YokeTraitHack;
 use yoke::*;
 
 trait ExportableDataPayload {
     fn bake_yoke(&self, env: &CrateEnv) -> TokenStream;
+    fn bake_size(&self) -> usize;
     fn serialize_yoke(
         &self,
         serializer: &mut dyn erased_serde::Serializer,
@@ -23,11 +24,15 @@ trait ExportableDataPayload {
 
 impl<M: DynamicDataMarker> ExportableDataPayload for DataPayload<M>
 where
-    for<'a> <M::Yokeable as Yokeable<'a>>::Output: Bake + serde::Serialize,
+    for<'a> <M::Yokeable as Yokeable<'a>>::Output: Bake + BakeSize + serde::Serialize,
     for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: PartialEq,
 {
     fn bake_yoke(&self, ctx: &CrateEnv) -> TokenStream {
         self.get().bake(ctx)
+    }
+
+    fn bake_size(&self) -> usize {
+        core::mem::size_of::<<M::Yokeable as Yokeable>::Output>() + self.get().borrows_size()
     }
 
     fn serialize_yoke(
@@ -87,7 +92,7 @@ impl<M> UpcastDataPayload<M> for ExportMarker
 where
     M: DynamicDataMarker,
     M::Yokeable: Sync + Send,
-    for<'a> <M::Yokeable as Yokeable<'a>>::Output: Bake + serde::Serialize,
+    for<'a> <M::Yokeable as Yokeable<'a>>::Output: Bake + BakeSize + serde::Serialize,
     for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: PartialEq,
 {
     fn upcast(other: DataPayload<M>) -> DataPayload<ExportMarker> {
@@ -180,6 +185,14 @@ impl DataPayload<ExportMarker> {
             .serialize_yoke(&mut <dyn erased_serde::Serializer>::erase(&mut serializer));
 
         serializer.output.finalize().unwrap_or_default()
+    }
+
+    /// Returns an estimate of the baked size, made up of the size of the struct itself,
+    /// as well as the sizes of all its static borrows.
+    ///
+    /// As static borrows are deduplicated by the linker, this is often overcounting.
+    pub fn baked_size(&self) -> usize {
+        self.get().payload.bake_size()
     }
 }
 

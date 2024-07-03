@@ -268,6 +268,13 @@ impl databake::Bake for WeekdaySet {
 }
 
 #[cfg(feature = "datagen")]
+impl databake::BakeSize for WeekdaySet {
+    fn borrows_size(&self) -> usize {
+        0
+    }
+}
+
+#[cfg(feature = "datagen")]
 impl serde::Serialize for WeekdaySet {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
