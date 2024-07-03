@@ -35,7 +35,7 @@ members = [
     # Provider
     "provider/adapters",
     "provider/baked",
-    "provider/bikeshed",
+    "provider/source",
     "provider/blob",
     "provider/core",
     "provider/core/macros",
@@ -152,7 +152,7 @@ icu_harfbuzz = { version = "~0.2.0", path = "ffi/harfbuzz", default-features = f
 
 # Provider
 icu_provider_export = { version = "~1.5.0", path = "provider/export", default-features = false }
-icu_datagen_bikeshed = { version = "~1.5.0", path = "provider/bikeshed", default-features = false }
+icu_provider_source = { version = "~1.5.0", path = "provider/source", default-features = false }
 icu_provider = { version = "~1.5.0", path = "provider/core", default-features = false }
 icu_provider_macros = { version = "~1.5.0", path = "provider/core/macros", default-features = false }
 icu_provider_adapters = { version = "~1.5.0", path = "provider/adapters", default-features = false }

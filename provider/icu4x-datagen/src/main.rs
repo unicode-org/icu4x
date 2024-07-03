@@ -29,7 +29,7 @@
 use clap::{Parser, ValueEnum};
 use eyre::WrapErr;
 #[cfg(feature = "provider")]
-use icu_datagen_bikeshed::DatagenProvider;
+use icu_provider_source::SourceDataProvider;
 use icu_provider::export::ExportableProvider;
 use icu_provider::hello_world::HelloWorldV1Marker;
 use icu_provider_export::prelude::*;
@@ -354,12 +354,12 @@ fn main() -> eyre::Result<()> {
 
         #[cfg(feature = "provider")]
         () => {
-            let mut p = DatagenProvider::new_custom();
+            let mut p = SourceDataProvider::new_custom();
 
             p = p.with_collation_han_database(match cli.collation_han_database {
-                CollationHanDatabase::Unihan => icu_datagen_bikeshed::CollationHanDatabase::Unihan,
+                CollationHanDatabase::Unihan => icu_provider_source::CollationHanDatabase::Unihan,
                 CollationHanDatabase::Implicit => {
-                    icu_datagen_bikeshed::CollationHanDatabase::Implicit
+                    icu_provider_source::CollationHanDatabase::Implicit
                 }
             });
 
@@ -370,7 +370,7 @@ fn main() -> eyre::Result<()> {
             p = match (cli.cldr_root, cli.cldr_tag.as_str()) {
                 (Some(path), _) => p.with_cldr(&path)?,
                 #[cfg(feature = "networking")]
-                (_, "latest") => p.with_cldr_for_tag(DatagenProvider::LATEST_TESTED_CLDR_TAG),
+                (_, "latest") => p.with_cldr_for_tag(SourceDataProvider::LATEST_TESTED_CLDR_TAG),
                 #[cfg(feature = "networking")]
                 (_, tag) => p.with_cldr_for_tag(tag),
                 #[cfg(not(feature = "networking"))]
@@ -385,7 +385,7 @@ fn main() -> eyre::Result<()> {
                 (Some(path), _) => p.with_icuexport(&path)?,
                 #[cfg(feature = "networking")]
                 (_, "latest") => {
-                    p.with_icuexport_for_tag(DatagenProvider::LATEST_TESTED_ICUEXPORT_TAG)
+                    p.with_icuexport_for_tag(SourceDataProvider::LATEST_TESTED_ICUEXPORT_TAG)
                 }
                 #[cfg(feature = "networking")]
                 (_, tag) => p.with_icuexport_for_tag(tag),
@@ -401,7 +401,7 @@ fn main() -> eyre::Result<()> {
                 (Some(path), _) => p.with_segmenter_lstm(&path)?,
                 #[cfg(feature = "networking")]
                 (_, "latest") => {
-                    p.with_segmenter_lstm_for_tag(DatagenProvider::LATEST_TESTED_SEGMENTER_LSTM_TAG)
+                    p.with_segmenter_lstm_for_tag(SourceDataProvider::LATEST_TESTED_SEGMENTER_LSTM_TAG)
                 }
                 #[cfg(feature = "networking")]
                 (_, tag) => p.with_segmenter_lstm_for_tag(tag),
@@ -416,9 +416,9 @@ fn main() -> eyre::Result<()> {
             if cli.locales.as_slice() == ["recommended"] {
                 preprocessed_locales = Some(PreprocessedLocales::LanguageIdentifiers(
                     p.locales_for_coverage_levels([
-                        icu_datagen_bikeshed::CoverageLevel::Modern,
-                        icu_datagen_bikeshed::CoverageLevel::Moderate,
-                        icu_datagen_bikeshed::CoverageLevel::Basic,
+                        icu_provider_source::CoverageLevel::Modern,
+                        icu_provider_source::CoverageLevel::Moderate,
+                        icu_provider_source::CoverageLevel::Basic,
                     ])?
                     .into_iter()
                     .collect(),
@@ -427,9 +427,9 @@ fn main() -> eyre::Result<()> {
                 .locales
                 .iter()
                 .map(|s| match &**s {
-                    "basic" => Some(icu_datagen_bikeshed::CoverageLevel::Basic),
-                    "moderate" => Some(icu_datagen_bikeshed::CoverageLevel::Moderate),
-                    "modern" => Some(icu_datagen_bikeshed::CoverageLevel::Modern),
+                    "basic" => Some(icu_provider_source::CoverageLevel::Basic),
+                    "moderate" => Some(icu_provider_source::CoverageLevel::Moderate),
+                    "modern" => Some(icu_provider_source::CoverageLevel::Modern),
                     _ => None,
                 })
                 .collect::<Option<Vec<_>>>()

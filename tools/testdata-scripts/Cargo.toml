@@ -10,7 +10,7 @@ edition = "2021"
 
 [dependencies]
 crlify = { workspace = true }
-icu_datagen_bikeshed = { workspace = true }
+icu_provider_source = { workspace = true }
 icu_locale_core = { workspace = true, features = ["databake"] }
 icu_provider = { workspace = true }
 

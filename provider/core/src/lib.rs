@@ -92,7 +92,7 @@
 //! [`Yokeable`]: yoke::Yokeable
 //! [`impl_dynamic_data_provider!`]: dynutil::impl_dynamic_data_provider
 //! [`icu_provider_adapters`]: ../icu_provider_adapters/index.html
-//! [`DatagenProvider`]: ../icu_provider_export/struct.DatagenProvider.html
+//! [`SourceDataProvider`]: ../icu_provider_export/struct.SourceDataProvider.html
 //! [`as_downcasting()`]: any::AsDowncastingAnyProvider::as_downcasting
 //! [`as_deserializing()`]: buf::AsDeserializingBufferProvider::as_deserializing
 //! [`FsDataProvider`]: ../icu_provider_fs/struct.FsDataProvider.html

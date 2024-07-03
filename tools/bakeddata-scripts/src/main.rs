@@ -4,7 +4,7 @@
 
 extern crate icu_provider_export;
 
-use icu_datagen_bikeshed::{CoverageLevel, DatagenProvider};
+use icu_provider_source::{CoverageLevel, SourceDataProvider};
 use icu_provider::export::*;
 use icu_provider::prelude::*;
 use icu_provider_export::baked_exporter;
@@ -74,7 +74,7 @@ fn main() {
             .collect()
     };
 
-    let source = DatagenProvider::new_latest_tested();
+    let source = SourceDataProvider::new_latest_tested();
 
     let driver = ExportDriver::new(
         source
@@ -120,14 +120,14 @@ fn main() {
                 template
                     .replace("_component_", component)
                     .replace("_version_", version)
-                    .replace("_cldr_tag_", DatagenProvider::LATEST_TESTED_CLDR_TAG)
+                    .replace("_cldr_tag_", SourceDataProvider::LATEST_TESTED_CLDR_TAG)
                     .replace(
                         "_icuexport_tag_",
-                        DatagenProvider::LATEST_TESTED_ICUEXPORT_TAG,
+                        SourceDataProvider::LATEST_TESTED_ICUEXPORT_TAG,
                     )
                     .replace(
                         "_segmenter_lstm_tag_",
-                        DatagenProvider::LATEST_TESTED_SEGMENTER_LSTM_TAG,
+                        SourceDataProvider::LATEST_TESTED_SEGMENTER_LSTM_TAG,
                     ),
             )
             .unwrap();
