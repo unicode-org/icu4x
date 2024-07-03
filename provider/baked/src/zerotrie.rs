@@ -76,8 +76,9 @@ impl<M: DataMarker> super::DataStore<M> for Data<M> {
         fn((alloc::string::String, usize)) -> Option<DataIdentifierCow<'static>>,
     >;
     fn iter(&'static self) -> Self::IterReturn {
+        #![allow(unused_imports)]
+        use alloc::borrow::ToOwned;
         self.trie.iter().filter_map(move |(s, _)| {
-            use alloc::borrow::ToOwned;
             if let Some((locale, attrs)) = s.split_once(ID_SEPARATOR as char) {
                 Some(DataIdentifierCow::from_owned(
                     DataMarkerAttributes::try_from_str(attrs).ok()?.to_owned(),
