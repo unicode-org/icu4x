@@ -259,7 +259,7 @@ pub struct NoFallbackOptions {}
 /// | Name | Data file size | Supported locale queries? | Needs runtime fallback? |
 /// |---|---|---|---|
 /// | [`Maximal`] | Smallest | No | Yes |
-/// | `RetainBaseLanguages` (TODO(#58): coming soon) | Small | Yes | Yes |
+/// | [`RetainBaseLanguages`] | Small | Yes | Yes |
 /// | [`None`] | Medium/Small | Yes | No |
 ///
 /// [`Maximal`]: DeduplicationStrategy::Maximal
