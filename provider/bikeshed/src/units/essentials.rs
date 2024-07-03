@@ -44,7 +44,6 @@ impl DataProvider<UnitsEssentialsV1Marker> for DatagenProvider {
             .ok_or_else(|| DataError::custom("Failed to get times"))?
             .clone();
 
-        // TODO: Fill prefixes (si prefixes, ... etc.) in the next PR.
         let mut prefixes = BTreeMap::<PatternKey, String>::new();
 
         // Fill powers
@@ -93,6 +92,33 @@ impl DataProvider<UnitsEssentialsV1Marker> for DatagenProvider {
                     pattern.to_string(),
                 );
             });
+        }
+
+        /// Fills the prefixes map with the SI prefixes (binary and decimal)
+        const BINARY_PREFIX: &str = "1024p";
+        const DECIMAL_PREFIX: &str = "10p";
+
+        for (key, patterns) in length_data {
+            let pattern_key = if let Some(trimmed_key) = key.strip_prefix(BINARY_PREFIX) {
+                trimmed_key.parse::<u8>().map(PatternKey::Binary)
+            } else if let Some(trimmed_key) = key.strip_prefix(DECIMAL_PREFIX) {
+                trimmed_key.parse::<i8>().map(PatternKey::Decimal)
+            } else {
+                // Skip keys that don't start with the binary or decimal prefixes
+                // NOTE:
+                //      In case there are other prefixes will be added in the future,
+                //      we should update this code to handle them.
+                continue;
+            }
+            .map_err(|_| {
+                DataError::custom("Failed to parse pattern key").with_debug_context(&key)
+            })?;
+
+            if let Some(pattern) = patterns.unit_prefix_pattern.as_ref() {
+                prefixes.insert(pattern_key, pattern.to_string());
+            } else {
+                return Err(DataError::custom("Failed to get pattern").with_debug_context(&key));
+            }
         }
 
         let result = UnitsEssentialsV1 {
