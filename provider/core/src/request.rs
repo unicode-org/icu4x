@@ -770,10 +770,20 @@ impl DataMarkerAttributes {
 
     /// Attempts to create a borrowed [`DataMarkerAttributes`] from a borrowed UTF-8 encoded byte slice.
     ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_provider::prelude::*;
+    ///
+    /// let bytes = b"long-meter";
+    /// let marker = DataMarkerAttributes::try_from_utf8(bytes).unwrap();
+    /// assert_eq!(marker.to_string(), "long-meter");
+    /// ```
+    ///
     /// # Errors
     ///
-    ///     Returns an error if the byte slice contains invalid UTF-8 characters or
-    ///     characters other than `[a-zA-Z0-9_\-]`.
+    /// Returns an error if the byte slice contains invalid UTF-8 characters or
+    /// characters other than `[a-zA-Z0-9_\-]`.
     pub fn try_from_utf8(s: &[u8]) -> Result<&Self, AttributeParseError> {
         Self::try_from_str(core::str::from_utf8(s).map_err(|_| AttributeParseError)?)
     }
