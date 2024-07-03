@@ -181,6 +181,26 @@ fn main() {
                 ]),
             )
             .unwrap();
+
+        // Stitch
+        let struct_fingerprints = std::fs::read_to_string(path.join("fingerprints.csv")).unwrap();
+        let lookup_fingerprints =
+            std::fs::read_to_string(path.join("data").join("fingerprints.csv")).unwrap();
+        std::fs::remove_file(path.join("stubdata").join("fingerprints.csv")).unwrap();
+        std::fs::remove_file(path.join("fingerprints.csv")).unwrap();
+        std::fs::remove_file(path.join("data").join("fingerprints.csv")).unwrap();
+
+        let mut lines = [&struct_fingerprints, &lookup_fingerprints]
+            .into_iter()
+            .flat_map(|f| f.lines())
+            .collect::<Vec<_>>();
+        lines.sort();
+        let mut out = crlify::BufWriterWithLineEndingFix::new(
+            File::create(path.join("fingerprints.csv")).unwrap(),
+        );
+        for line in lines {
+            writeln!(&mut out, "{line}").unwrap();
+        }
     }
 }
 
@@ -260,38 +280,8 @@ impl<F: Write + Send + Sync> DataExporter for StatisticsExporter<F> {
         let data = core::mem::take(self.data.get_mut().expect("poison"));
 
         let mut lines = Vec::new();
-        let mut seen_static_strs = HashSet::new();
 
         for (marker, data) in data.into_iter() {
-            if !marker.is_singleton {
-                let identifiers_count = data.identifiers.len();
-                let mut identifiers_size = 0;
-
-                // icu_provider_baked::binary_search::Data.0 is a fat pointer
-                identifiers_size += 2 * core::mem::size_of::<usize>();
-
-                for id in data.identifiers {
-                    if !id.locale.is_und() {
-                        // Size of &'static str
-                        identifiers_size += 2 * core::mem::size_of::<usize>();
-                        let locale_str = id.locale.to_string();
-                        seen_static_strs.insert(locale_str);
-                    }
-                    if !id.marker_attributes.is_empty() {
-                        // Size of &'static str
-                        identifiers_size += 2 * core::mem::size_of::<usize>();
-                        let attrs_str = id.marker_attributes.to_string();
-                        seen_static_strs.insert(attrs_str);
-                    }
-
-                    // Size of &'static M::Yokeable
-                    identifiers_size += core::mem::size_of::<usize>();
-                }
-                lines.push(format!(
-                    "{marker:?}, <lookup>, {identifiers_size}B, {identifiers_count} identifiers"
-                ));
-            }
-
             if !marker.is_singleton {
                 let structs_count = data.struct_sizes.len();
                 let structs_size = data.struct_sizes.values().sum::<usize>();
@@ -332,17 +322,9 @@ impl<F: Write + Send + Sync> DataExporter for StatisticsExporter<F> {
             }
         }
 
-        if !seen_static_strs.is_empty() {
-            let static_strs_size = seen_static_strs.iter().map(String::len).sum::<usize>();
-            let static_strs_count = seen_static_strs.len();
-            lines.push(format!(
-                "*, <'static strs>, {static_strs_size}B, {static_strs_count} unique static strings"
-            ));
-        }
-
         lines.sort();
         for line in lines {
-            writeln!(&mut self.fingerprints, "{}", line)?;
+            writeln!(&mut self.fingerprints, "{line}")?;
         }
 
         Ok(())

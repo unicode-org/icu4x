@@ -2,6 +2,11 @@
 /// Implement `DataProvider<EastAsianWidthNameToValueV1Marker>` on the given struct using the data
 /// hardcoded in this file. This allows the struct to be used with
 /// `icu`'s `_unstable` constructors.
+///
+/// Using this implementation will embed the following data in the binary's data segment:
+/// * 151B[^1] for the singleton data struct
+///
+/// [^1]: these numbers can be smaller in practice due to linker deduplication
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __impl_east_asian_width_name_to_value_v1_marker {
