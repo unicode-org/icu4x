@@ -801,6 +801,16 @@ where
     }
 }
 
+#[cfg(feature = "databake")]
+impl<Store> databake::BakeSize for ZeroTrie<Store>
+where
+    Store: databake::BakeSize,
+{
+    fn borrows_size(&self) -> usize {
+        impl_dispatch!(&self, borrows_size())
+    }
+}
+
 #[cfg(feature = "zerofrom")]
 impl<'zf, Store1, Store2> zerofrom::ZeroFrom<'zf, ZeroTrie<Store1>> for ZeroTrie<Store2>
 where

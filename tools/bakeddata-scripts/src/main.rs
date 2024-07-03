@@ -232,7 +232,7 @@ impl<F: Write + Send + Sync> DataExporter for StatisticsExporter<F> {
         id: DataIdentifierBorrowed,
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
-        let size = payload.postcard_size();
+        let size = payload.baked_size();
 
         // We're using SipHash, which is deprecated, but we want a stable hasher
         // (we're fine with it not being cryptographically secure since we're just using it to track diffs)
