@@ -121,15 +121,14 @@ fn byte_string(bytes: &[u8]) -> TokenStream {
     // escape slash when trying to match the first "\0" with another digit, and then seeing b"\01".
     // This workaround is conservative as it doesn't actually check for swallowing, only whether an escaped
     // slash appears before 0[0-7].
-    let suppress_octal_false_positive = if bytes
+    if bytes
         .windows(3)
         .any(|b| matches!(b, &[b'\\', b'0', b'0'..=b'7']))
     {
-        quote!(#[allow(clippy::octal_escapes)])
+        quote!({#[allow(clippy::octal_escapes)] const X: &[u8] = #byte_string; X})
     } else {
-        quote!()
-    };
-    quote!(#suppress_octal_false_positive #byte_string)
+        quote!(#byte_string)
+    }
 }
 
 #[test]
