@@ -8,11 +8,10 @@ mod testutil;
 use std::collections::BTreeMap;
 use std::collections::HashSet;
 
-use icu_datagen::prelude::*;
-use icu_datagen::FallbackOptions;
 use icu_provider::export::*;
 use icu_provider::hello_world::*;
 use icu_provider::prelude::*;
+use icu_provider_export::prelude::*;
 use testutil::TestingExporter;
 
 struct TestingProvider(BTreeMap<(&'static str, &'static str), &'static str>);
@@ -92,7 +91,7 @@ fn families(
     langids.into_iter().map(LocaleFamily::with_descendants)
 }
 
-fn export_to_map(driver: DatagenDriver, provider: &TestingProvider) -> BTreeMap<String, Vec<u8>> {
+fn export_to_map(driver: ExportDriver, provider: &TestingProvider) -> BTreeMap<String, Vec<u8>> {
     let _ = simple_logger::SimpleLogger::new()
         .env()
         .with_level(log::LevelFilter::Trace)
@@ -107,9 +106,9 @@ fn export_to_map(driver: DatagenDriver, provider: &TestingProvider) -> BTreeMap<
 #[test]
 fn all_preferred() {
     let exported = export_to_map(
-        DatagenDriver::new(
+        ExportDriver::new(
             [LocaleFamily::FULL],
-            FallbackOptions::no_deduplication(),
+            DeduplicationStrategy::None.into(),
             LocaleFallbacker::new().static_to_owned(),
         ),
         &TestingProvider::with_decimal_symbol_like_data(),
@@ -150,9 +149,9 @@ fn all_preferred() {
 #[test]
 fn all_hybrid() {
     let exported = export_to_map(
-        DatagenDriver::new(
+        ExportDriver::new(
             [LocaleFamily::FULL],
-            FallbackOptions::no_deduplication(),
+            DeduplicationStrategy::None.into(),
             LocaleFallbacker::new().static_to_owned(),
         ),
         &TestingProvider::with_decimal_symbol_like_data(),
@@ -193,9 +192,9 @@ fn all_hybrid() {
 #[test]
 fn all_runtime() {
     let exported = export_to_map(
-        DatagenDriver::new(
+        ExportDriver::new(
             [LocaleFamily::FULL],
-            FallbackOptions::maximal_deduplication(),
+            DeduplicationStrategy::Maximal.into(),
             LocaleFallbacker::new().static_to_owned(),
         ),
         &TestingProvider::with_decimal_symbol_like_data(),
@@ -235,9 +234,9 @@ fn all_runtime() {
 #[test]
 fn all_runtime_retain_base() {
     let exported = export_to_map(
-        DatagenDriver::new(
+        ExportDriver::new(
             [LocaleFamily::FULL],
-            FallbackOptions::retain_base_languages_deduplication(),
+            DeduplicationStrategy::RetainBaseLanguages.into(),
             LocaleFallbacker::new().static_to_owned(),
         ),
         &TestingProvider::with_decimal_symbol_like_data(),
@@ -286,9 +285,9 @@ fn explicit_preferred() {
         langid!("ru-Cyrl-RU"),
     ];
     let exported = export_to_map(
-        DatagenDriver::new(
+        ExportDriver::new(
             families(SELECTED_LOCALES),
-            FallbackOptions::no_deduplication(),
+            DeduplicationStrategy::None.into(),
             LocaleFallbacker::new().static_to_owned(),
         ),
         &TestingProvider::with_decimal_symbol_like_data(),
@@ -333,9 +332,9 @@ fn explicit_hybrid() {
         langid!("ru-Cyrl-RU"),
     ];
     let exported = export_to_map(
-        DatagenDriver::new(
+        ExportDriver::new(
             families(SELECTED_LOCALES),
-            FallbackOptions::no_deduplication(),
+            DeduplicationStrategy::None.into(),
             LocaleFallbacker::new().static_to_owned(),
         ),
         &TestingProvider::with_decimal_symbol_like_data(),
@@ -380,9 +379,9 @@ fn explicit_runtime() {
         langid!("ru-Cyrl-RU"),
     ];
     let exported = export_to_map(
-        DatagenDriver::new(
+        ExportDriver::new(
             families(SELECTED_LOCALES),
-            FallbackOptions::maximal_deduplication(),
+            DeduplicationStrategy::Maximal.into(),
             LocaleFallbacker::new().static_to_owned(),
         ),
         &TestingProvider::with_decimal_symbol_like_data(),
@@ -426,9 +425,9 @@ fn explicit_runtime_retain_base() {
         langid!("ru-Cyrl-RU"),
     ];
     let exported = export_to_map(
-        DatagenDriver::new(
+        ExportDriver::new(
             families(SELECTED_LOCALES),
-            FallbackOptions::retain_base_languages_deduplication(),
+            DeduplicationStrategy::RetainBaseLanguages.into(),
             LocaleFallbacker::new().static_to_owned(),
         ),
         &TestingProvider::with_decimal_symbol_like_data(),
@@ -472,9 +471,9 @@ fn explicit_preresolved() {
         langid!("ru-Cyrl-RU"),
     ];
     let exported = export_to_map(
-        DatagenDriver::new(
+        ExportDriver::new(
             SELECTED_LOCALES.into_iter().map(LocaleFamily::single),
-            FallbackOptions::no_deduplication(),
+            DeduplicationStrategy::None.into(),
             LocaleFallbacker::new().static_to_owned(),
         ),
         &TestingProvider::with_decimal_symbol_like_data(),
@@ -509,9 +508,9 @@ fn explicit_hybrid_without_descendants() {
         LocaleFamily::without_descendants(langid!("ru-Cyrl-RU")),
     ];
     let exported = export_to_map(
-        DatagenDriver::new(
+        ExportDriver::new(
             SELECTED_LOCALES,
-            FallbackOptions::no_deduplication(),
+            DeduplicationStrategy::None.into(),
             LocaleFallbacker::new().static_to_owned(),
         ),
         &TestingProvider::with_decimal_symbol_like_data(),
@@ -556,9 +555,9 @@ fn explicit_hybrid_without_ancestors() {
         LocaleFamily::without_ancestors(langid!("ru-Cyrl-RU")),
     ];
     let exported = export_to_map(
-        DatagenDriver::new(
+        ExportDriver::new(
             SELECTED_LOCALES,
-            FallbackOptions::no_deduplication(),
+            DeduplicationStrategy::None.into(),
             LocaleFallbacker::new().static_to_owned(),
         ),
         &TestingProvider::with_decimal_symbol_like_data(),
@@ -604,9 +603,9 @@ fn explicit_hybrid_mixed_families() {
         LocaleFamily::with_descendants(langid!("es")), // duplicate entry for es
     ];
     let exported = export_to_map(
-        DatagenDriver::new(
+        ExportDriver::new(
             SELECTED_LOCALES,
-            FallbackOptions::no_deduplication(),
+            DeduplicationStrategy::None.into(),
             LocaleFallbacker::new().static_to_owned(),
         ),
         &TestingProvider::with_decimal_symbol_like_data(),
@@ -641,9 +640,9 @@ fn explicit_hybrid_mixed_families() {
 #[test]
 fn explicit_runtime_und() {
     let exported = export_to_map(
-        DatagenDriver::new(
+        ExportDriver::new(
             [LocaleFamily::with_descendants(langid!("und"))],
-            FallbackOptions::maximal_deduplication(),
+            DeduplicationStrategy::Maximal.into(),
             LocaleFallbacker::new().static_to_owned(),
         ),
         &TestingProvider::with_decimal_symbol_like_data(),
@@ -659,9 +658,9 @@ fn explicit_runtime_und() {
 #[test]
 fn explicit_runtime_und_retain_base() {
     let exported = export_to_map(
-        DatagenDriver::new(
+        ExportDriver::new(
             [LocaleFamily::with_descendants(langid!("und"))],
-            FallbackOptions::retain_base_languages_deduplication(),
+            DeduplicationStrategy::RetainBaseLanguages.into(),
             LocaleFallbacker::new().static_to_owned(),
         ),
         &TestingProvider::with_decimal_symbol_like_data(),
@@ -677,9 +676,9 @@ fn explicit_runtime_und_retain_base() {
 #[test]
 fn explicit_hybrid_und() {
     let exported = export_to_map(
-        DatagenDriver::new(
+        ExportDriver::new(
             [LocaleFamily::with_descendants(langid!("und"))],
-            FallbackOptions::no_deduplication(),
+            DeduplicationStrategy::None.into(),
             LocaleFallbacker::new().static_to_owned(),
         ),
         &TestingProvider::with_decimal_symbol_like_data(),
@@ -695,9 +694,9 @@ fn explicit_hybrid_und() {
 #[test]
 fn explicit_preresolved_und() {
     let exported = export_to_map(
-        DatagenDriver::new(
+        ExportDriver::new(
             [LocaleFamily::single(langid!("und"))],
-            FallbackOptions::no_deduplication(),
+            DeduplicationStrategy::None.into(),
             LocaleFallbacker::new().static_to_owned(),
         ),
         &TestingProvider::with_decimal_symbol_like_data(),
@@ -713,9 +712,9 @@ fn explicit_preresolved_und() {
 #[test]
 fn explicit_runtime_empty() {
     let exported = export_to_map(
-        DatagenDriver::new(
+        ExportDriver::new(
             [],
-            FallbackOptions::maximal_deduplication(),
+            DeduplicationStrategy::Maximal.into(),
             LocaleFallbacker::new().static_to_owned(),
         ),
         &TestingProvider::with_decimal_symbol_like_data(),
@@ -728,9 +727,9 @@ fn explicit_runtime_empty() {
 #[test]
 fn explicit_runtime_empty_retain_base() {
     let exported = export_to_map(
-        DatagenDriver::new(
+        ExportDriver::new(
             [],
-            FallbackOptions::retain_base_languages_deduplication(),
+            DeduplicationStrategy::RetainBaseLanguages.into(),
             LocaleFallbacker::new().static_to_owned(),
         ),
         &TestingProvider::with_decimal_symbol_like_data(),
@@ -743,9 +742,9 @@ fn explicit_runtime_empty_retain_base() {
 #[test]
 fn explicit_hybrid_empty() {
     let exported = export_to_map(
-        DatagenDriver::new(
+        ExportDriver::new(
             [],
-            FallbackOptions::no_deduplication(),
+            DeduplicationStrategy::None.into(),
             LocaleFallbacker::new().static_to_owned(),
         ),
         &TestingProvider::with_decimal_symbol_like_data(),
@@ -758,9 +757,9 @@ fn explicit_hybrid_empty() {
 #[test]
 fn explicit_preresolved_empty() {
     let exported = export_to_map(
-        DatagenDriver::new(
+        ExportDriver::new(
             [],
-            FallbackOptions::no_deduplication(),
+            DeduplicationStrategy::None.into(),
             LocaleFallbacker::new().static_to_owned(),
         ),
         &TestingProvider::with_decimal_symbol_like_data(),

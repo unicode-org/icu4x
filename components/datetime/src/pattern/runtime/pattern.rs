@@ -188,6 +188,13 @@ impl databake::Bake for PatternMetadata {
     }
 }
 
+#[cfg(feature = "datagen")]
+impl databake::BakeSize for PatternMetadata {
+    fn borrows_size(&self) -> usize {
+        0
+    }
+}
+
 #[test]
 #[cfg(feature = "datagen")]
 fn databake() {

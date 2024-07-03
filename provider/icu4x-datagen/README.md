@@ -9,7 +9,7 @@ $ cargo install icu4x-datagen
 $ icu4x-datagen --markers all --locales de en-AU --format blob --out data.postcard
 ```
 
-More details can be found by running `--help`, or by consulting the [`icu_datagen`] documentation.
+More details can be found by running `--help`, or by consulting the [`icu_provider_export`] documentation.
 
 <!-- cargo-rdme end -->
 

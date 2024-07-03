@@ -23,7 +23,7 @@ use icu_provider::prelude::*;
 use source::{AbstractFs, SerdeCache};
 use std::collections::HashSet;
 use std::fmt::Debug;
-use std::path::PathBuf;
+use std::path::Path;
 use std::sync::{Arc, OnceLock};
 
 mod calendar;
@@ -67,7 +67,7 @@ mod tests;
 /// An [`ExportableProvider`](icu_provider::export::ExportableProvider) backed by raw CLDR and ICU data.
 ///
 /// This provider covers all markers that are used by ICU4X. It is intended as the canonical
-/// provider for `DatagenDriver::export`.
+/// provider for `ExportDriver::export`.
 ///
 /// If a required data source has not been set, `DataProvider::load` will
 /// fail with the appropriate error:
@@ -159,7 +159,7 @@ impl DatagenProvider {
     /// Adds CLDR source data to the provider. The root should point to a local
     /// `cldr-{tag}-json-full` directory or ZIP file (see
     /// [GitHub releases](https://github.com/unicode-org/cldr-json/releases)).
-    pub fn with_cldr(self, root: PathBuf) -> Result<Self, DataError> {
+    pub fn with_cldr(self, root: &Path) -> Result<Self, DataError> {
         Ok(Self {
             cldr_paths: Some(Arc::new(CldrCache::from_serde_cache(SerdeCache::new(
                 AbstractFs::new(root)?,
@@ -171,7 +171,7 @@ impl DatagenProvider {
     /// Adds ICU export source data to the provider. The path should point to a local
     /// `icuexportdata_{tag}` directory or ZIP file (see [GitHub releases](
     /// https://github.com/unicode-org/icu/releases)).
-    pub fn with_icuexport(self, root: PathBuf) -> Result<Self, DataError> {
+    pub fn with_icuexport(self, root: &Path) -> Result<Self, DataError> {
         Ok(Self {
             icuexport_paths: Some(Arc::new(SerdeCache::new(AbstractFs::new(root)?))),
             ..self
@@ -181,7 +181,7 @@ impl DatagenProvider {
     /// Adds segmenter LSTM source data to the provider. The path should point to a local
     /// `models` directory or ZIP file (see [GitHub releases](
     /// https://github.com/unicode-org/lstm_word_segmentation/releases)).
-    pub fn with_segmenter_lstm(self, root: PathBuf) -> Result<Self, DataError> {
+    pub fn with_segmenter_lstm(self, root: &Path) -> Result<Self, DataError> {
         Ok(Self {
             segmenter_lstm_paths: Some(Arc::new(SerdeCache::new(AbstractFs::new(root)?))),
             ..self

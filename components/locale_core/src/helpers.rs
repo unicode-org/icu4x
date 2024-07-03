@@ -220,6 +220,13 @@ macro_rules! impl_tinystr_subtag {
             }
         }
 
+        #[cfg(feature = "databake")]
+        impl databake::BakeSize for $name {
+            fn borrows_size(&self) -> usize {
+                0
+            }
+        }
+
         #[test]
         fn test_construction() {
             let maybe = $name::try_from_utf8($good_example.as_bytes());

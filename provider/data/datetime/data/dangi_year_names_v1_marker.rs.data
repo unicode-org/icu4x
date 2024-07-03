@@ -2,6 +2,12 @@
 /// Implement `DataProvider<DangiYearNamesV1Marker>` on the given struct using the data
 /// hardcoded in this file. This allows the struct to be used with
 /// `icu`'s `_unstable` constructors.
+///
+/// Using this implementation will embed the following data in the binary's data segment:
+/// * 1376B[^1] for the lookup data structure (34 data identifiers)
+/// * 9864B[^1] for the actual data (9 unique structs)
+///
+/// [^1]: these numbers can be smaller in practice due to linker deduplication
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __impl_dangi_year_names_v1_marker {

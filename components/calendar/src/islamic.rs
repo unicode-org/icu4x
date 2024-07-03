@@ -2149,7 +2149,7 @@ mod test {
         }
     }
 
-    #[ignore]
+    #[ignore] // slow
     #[test]
     fn test_days_in_provided_year_observational() {
         let calendar = IslamicObservational::new();
@@ -2179,7 +2179,7 @@ mod test {
         );
     }
 
-    #[ignore]
+    #[ignore] // slow
     #[test]
     fn test_days_in_provided_year_ummalqura() {
         let calendar = IslamicUmmAlQura::new();

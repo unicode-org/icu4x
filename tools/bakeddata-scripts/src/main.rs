@@ -2,15 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-extern crate icu_datagen;
+extern crate icu_provider_export;
 
-use icu_datagen::baked_exporter;
-use icu_datagen::fs_exporter;
-use icu_datagen::fs_exporter::serializers::AbstractSerializer;
-use icu_datagen::prelude::*;
 use icu_datagen_bikeshed::{CoverageLevel, DatagenProvider};
 use icu_provider::export::*;
 use icu_provider::prelude::*;
+use icu_provider_export::baked_exporter;
+use icu_provider_export::prelude::*;
 use std::collections::{BTreeMap, HashMap, HashSet};
 use std::fs::File;
 use std::io::Write;
@@ -78,7 +76,7 @@ fn main() {
 
     let source = DatagenProvider::new_latest_tested();
 
-    let driver = DatagenDriver::new(
+    let driver = ExportDriver::new(
         source
             .locales_for_coverage_levels([
                 CoverageLevel::Modern,
@@ -88,7 +86,7 @@ fn main() {
             .unwrap()
             .into_iter()
             .map(LocaleFamily::with_descendants),
-        FallbackOptions::maximal_deduplication(),
+        DeduplicationStrategy::Maximal.into(),
         LocaleFallbacker::try_new_unstable(&source).unwrap(),
     )
     .with_recommended_segmenter_models();
@@ -183,6 +181,26 @@ fn main() {
                 ]),
             )
             .unwrap();
+
+        // Stitch
+        let struct_fingerprints = std::fs::read_to_string(path.join("fingerprints.csv")).unwrap();
+        let lookup_fingerprints =
+            std::fs::read_to_string(path.join("data").join("fingerprints.csv")).unwrap();
+        std::fs::remove_file(path.join("stubdata").join("fingerprints.csv")).unwrap();
+        std::fs::remove_file(path.join("fingerprints.csv")).unwrap();
+        std::fs::remove_file(path.join("data").join("fingerprints.csv")).unwrap();
+
+        let mut lines = [&struct_fingerprints, &lookup_fingerprints]
+            .into_iter()
+            .flat_map(|f| f.lines())
+            .collect::<Vec<_>>();
+        lines.sort();
+        let mut out = crlify::BufWriterWithLineEndingFix::new(
+            File::create(path.join("fingerprints.csv")).unwrap(),
+        );
+        for line in lines {
+            writeln!(&mut out, "{line}").unwrap();
+        }
     }
 }
 
@@ -232,14 +250,9 @@ impl<F: Write + Send + Sync> DataExporter for StatisticsExporter<F> {
         &self,
         marker: DataMarkerInfo,
         id: DataIdentifierBorrowed,
-        payload_before: &DataPayload<ExportMarker>,
+        payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
-        let mut serialized = vec![];
-
-        fs_exporter::serializers::Postcard::new(Default::default())
-            .serialize(payload_before, &mut serialized)?;
-
-        let size = serialized.len();
+        let size = payload.baked_size();
 
         // We're using SipHash, which is deprecated, but we want a stable hasher
         // (we're fine with it not being cryptographically secure since we're just using it to track diffs)
@@ -247,7 +260,7 @@ impl<F: Write + Send + Sync> DataExporter for StatisticsExporter<F> {
         use std::hash::{Hash, Hasher, SipHasher};
         #[allow(deprecated)]
         let mut hasher = SipHasher::new();
-        serialized.iter().for_each(|b| b.hash(&mut hasher));
+        payload.hash(&mut hasher);
         let hash = hasher.finish();
 
         let mut data = self.data.lock().expect("poison");
@@ -267,38 +280,8 @@ impl<F: Write + Send + Sync> DataExporter for StatisticsExporter<F> {
         let data = core::mem::take(self.data.get_mut().expect("poison"));
 
         let mut lines = Vec::new();
-        let mut seen_static_strs = HashSet::new();
 
         for (marker, data) in data.into_iter() {
-            if !marker.is_singleton {
-                let identifiers_count = data.identifiers.len();
-                let mut identifiers_size = 0;
-
-                // icu_provider_baked::binary_search::Data.0 is a fat pointer
-                identifiers_size += 2 * core::mem::size_of::<usize>();
-
-                for id in data.identifiers {
-                    if !id.locale.is_und() {
-                        // Size of &'static str
-                        identifiers_size += 2 * core::mem::size_of::<usize>();
-                        let locale_str = id.locale.to_string();
-                        seen_static_strs.insert(locale_str);
-                    }
-                    if !id.marker_attributes.is_empty() {
-                        // Size of &'static str
-                        identifiers_size += 2 * core::mem::size_of::<usize>();
-                        let attrs_str = id.marker_attributes.to_string();
-                        seen_static_strs.insert(attrs_str);
-                    }
-
-                    // Size of &'static M::Yokeable
-                    identifiers_size += core::mem::size_of::<usize>();
-                }
-                lines.push(format!(
-                    "{marker:?}, <lookup>, {identifiers_size}B, {identifiers_count} identifiers"
-                ));
-            }
-
             if !marker.is_singleton {
                 let structs_count = data.struct_sizes.len();
                 let structs_size = data.struct_sizes.values().sum::<usize>();
@@ -339,17 +322,9 @@ impl<F: Write + Send + Sync> DataExporter for StatisticsExporter<F> {
             }
         }
 
-        if !seen_static_strs.is_empty() {
-            let static_strs_size = seen_static_strs.iter().map(String::len).sum::<usize>();
-            let static_strs_count = seen_static_strs.len();
-            lines.push(format!(
-                "*, <'static strs>, {static_strs_size}B, {static_strs_count} unique static strings"
-            ));
-        }
-
         lines.sort();
         for line in lines {
-            writeln!(&mut self.fingerprints, "{}", line)?;
+            writeln!(&mut self.fingerprints, "{line}")?;
         }
 
         Ok(())

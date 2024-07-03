@@ -4,15 +4,15 @@
 
 //! A data exporter that bakes the data into Rust code.
 //!
-//! This module can be used as a target for the `icu_datagen` crate.
+//! This module can be used as a target for the `icu_provider_export` crate.
 //!
 //! See our [datagen tutorial](https://github.com/unicode-org/icu4x/blob/main/tutorials/data_management.md) for more information about different data providers.
 //!
 //! # Examples
 //!
 //! ```
-//! use icu_datagen::baked_exporter::*;
-//! use icu_datagen::prelude::*;
+//! use icu_provider_export::baked_exporter::*;
+//! use icu_provider_export::prelude::*;
 //!
 //! let demo_path = std::env::temp_dir().join("icu4x_baked_demo");
 //! # let _ = std::fs::remove_dir_all(&demo_path);
@@ -22,7 +22,7 @@
 //!     BakedExporter::new(demo_path.clone(), Default::default()).unwrap();
 //!
 //! // Export something. Make sure to use the same fallback data at runtime!
-//! DatagenDriver::new([LocaleFamily::FULL], FallbackOptions::maximal_deduplication(), LocaleFallbacker::new().static_to_owned())
+//! ExportDriver::new([LocaleFamily::FULL], DeduplicationStrategy::Maximal.into(), LocaleFallbacker::new().static_to_owned())
 //!     .export(&icu_provider::hello_world::HelloWorldProvider, exporter)
 //!     .unwrap();
 //! #
@@ -96,8 +96,10 @@ use icu_provider::export::*;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 use std::collections::{BTreeMap, BTreeSet, HashMap};
+use std::fmt::Write as _;
 use std::fs::File;
 use std::io::Write;
+use std::path::Path;
 use std::path::PathBuf;
 use std::sync::Mutex;
 
@@ -154,14 +156,25 @@ pub struct BakedExporter {
     pretty: bool,
     use_separate_crates: bool,
     use_internal_fallback: bool,
-    // Temporary storage for put_payload: marker -> (bake -> {data id})
+    // Temporary storage for put_payload: marker -> (payload -> {data id})
     data: Mutex<
-        HashMap<DataMarkerInfo, BTreeMap<SyncTokenStream, HashSet<DataIdentifierCow<'static>>>>,
+        HashMap<
+            DataMarkerInfo,
+            HashMap<DataPayload<ExportMarker>, HashSet<DataIdentifierCow<'static>>>,
+        >,
     >,
-    /// (marker, file name) pairs to wire up in mod.rs. This is populated by `flush` and consumed by `close`.
-    impl_data: Mutex<BTreeMap<DataMarkerInfo, SyncTokenStream>>,
+    /// file names and statistics to be consumed by `close`.
+    impl_data: Mutex<BTreeMap<DataMarkerInfo, (SyncTokenStream, Statistics)>>,
     // List of dependencies used by baking.
     dependencies: CrateEnv,
+}
+
+#[derive(Default)]
+pub struct Statistics {
+    pub structs_total_size: usize,
+    pub structs_count: usize,
+    pub lookup_struct_size: usize,
+    pub identifiers_count: usize,
 }
 
 impl std::fmt::Debug for BakedExporter {
@@ -205,12 +218,8 @@ impl BakedExporter {
         })
     }
 
-    fn write_to_file<P: AsRef<std::path::Path>>(
-        &self,
-        relative_path: P,
-        data: TokenStream,
-    ) -> Result<(), DataError> {
-        let path = self.mod_directory.join(&relative_path);
+    fn write_to_file(&self, relative_path: &Path, data: TokenStream) -> Result<(), DataError> {
+        let path = self.mod_directory.join(relative_path);
 
         let mut formatted = if self.pretty {
             use std::process::{Command, Stdio};
@@ -248,8 +257,9 @@ impl BakedExporter {
         };
 
         if !self.use_separate_crates {
-            // Don't search the whole file, there should be a macro in the first 300 bytes
-            if formatted[..300].contains("macro_rules!") || formatted[..100].contains("include!") {
+            // Don't search the whole file, there should be a macro in the first 1000 bytes
+            if formatted[..1000].contains("macro_rules!") || formatted[..1000].contains("include!")
+            {
                 // Formatted, otherwise it'd be `macro_rules !`
                 formatted = formatted
                     .replace("icu_", "icu::")
@@ -298,15 +308,42 @@ impl BakedExporter {
     fn write_impl_macros(
         &self,
         marker: DataMarkerInfo,
+        stats: Statistics,
         body: TokenStream,
         iterable_body: TokenStream,
     ) -> Result<(), DataError> {
         let marker_unqualified = bake_marker(marker).into_iter().last().unwrap().to_string();
 
-        let doc = format!(
-            " Implement `DataProvider<{}>` on the given struct using the data",
-            marker_unqualified
+        let &Statistics {
+            structs_total_size,
+            structs_count,
+            lookup_struct_size,
+            identifiers_count,
+        } = &stats;
+
+        let mut doc = format!(
+            " Implement `DataProvider<{marker_unqualified}>` on the given struct using the data\n \
+            hardcoded in this file. This allows the struct to be used with\n \
+            `icu`'s `_unstable` constructors."
         );
+
+        if structs_count > 0 {
+            let _infallible = write!(&mut doc, "\n\n Using this implementation will embed the following data in the binary's data segment:\n ");
+
+            if marker.is_singleton {
+                let _infallible = write!(
+                    &mut doc,
+                    "* {structs_total_size}B[^1] for the singleton data struct\n "
+                );
+            } else {
+                let _infallible = write!(&mut doc, "* {lookup_struct_size}B[^1] for the lookup data structure ({identifiers_count} data identifiers)\n ");
+                let _infallible = write!(&mut doc, "* {structs_total_size}B[^1] for the actual data ({structs_count} unique structs)\n ");
+            };
+            let _infallible = write!(
+                &mut doc,
+                "\n [^1]: these numbers can be smaller in practice due to linker deduplication"
+            );
+        }
 
         let ident = marker_unqualified.to_snake_case();
 
@@ -320,11 +357,9 @@ impl BakedExporter {
         let maybe_msrv = maybe_msrv();
 
         self.write_to_file(
-            PathBuf::from(format!("{ident}.rs.data")),
+            Path::new(&format!("{ident}.rs.data")),
             quote! {
                 #[doc = #doc]
-                /// hardcoded in this file. This allows the struct to be used with
-                /// `icu`'s `_unstable` constructors.
                 #[doc(hidden)] // macro
                 #[macro_export]
                 macro_rules! #prefixed_macro_ident {
@@ -343,7 +378,10 @@ impl BakedExporter {
             },
         )?;
 
-        self.impl_data.lock().expect("poison").insert(marker, ident);
+        self.impl_data
+            .lock()
+            .expect("poison")
+            .insert(marker, (ident, stats));
         Ok(())
     }
 }
@@ -355,14 +393,12 @@ impl DataExporter for BakedExporter {
         id: DataIdentifierBorrowed,
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
-        let payload = payload.tokenize(&self.dependencies);
-        let payload = payload.to_string();
         self.data
             .lock()
             .expect("poison")
             .entry(marker)
             .or_default()
-            .entry(payload)
+            .entry(payload.clone())
             .or_default()
             .insert(id.into_owned());
         Ok(())
@@ -392,7 +428,14 @@ impl DataExporter for BakedExporter {
 
         let bake = payload.tokenize(&self.dependencies);
 
-        self.write_impl_macros(marker, quote! {
+        let stats = Statistics {
+            structs_total_size: payload.baked_size(),
+            structs_count: 1,
+            identifiers_count: 1,
+            lookup_struct_size: 0,
+        };
+
+        self.write_impl_macros(marker, stats, quote! {
             #maybe_msrv
             impl $provider {
                 // Exposing singleton structs as consts allows us to get rid of fallibility
@@ -441,6 +484,7 @@ impl DataExporter for BakedExporter {
         if deduplicated_values.is_empty() {
             self.write_impl_macros(
                 marker,
+                Default::default(),
                 quote! {
                     #maybe_msrv
                     impl icu_provider::DataProvider<#marker_bake> for $provider {
@@ -463,31 +507,35 @@ impl DataExporter for BakedExporter {
             )
         } else {
             let mut idents_to_bakes = Vec::new();
+            let mut stats = Statistics::default();
 
             let ids_to_idents = deduplicated_values
                 .iter()
-                .flat_map(|(bake, ids)| {
-                    let bake = bake.parse::<TokenStream>().unwrap();
-
-                    let mut idents = ids
+                .flat_map(|(payload, ids)| {
+                    let min_id = ids
                         .iter()
-                        .map(|id| {
-                            format!("_{}_{}", id.marker_attributes.as_str(), id.locale)
-                                .chars()
-                                .map(|ch| {
-                                    if ch == '-' {
-                                        '_'
-                                    } else {
-                                        ch.to_ascii_uppercase()
-                                    }
-                                })
-                                .collect::<String>()
-                        })
-                        .collect::<Vec<_>>();
-                    idents.sort();
-                    let ident = proc_macro2::Ident::new(&idents[0], proc_macro2::Span::call_site());
+                        .min_by_key(|id| (id.marker_attributes.as_str(), id.locale.to_string()))
+                        .unwrap();
 
-                    idents_to_bakes.push((ident.clone(), bake));
+                    let ident = proc_macro2::Ident::new(
+                        &format!("_{}_{}", min_id.marker_attributes.as_str(), min_id.locale)
+                            .chars()
+                            .map(|ch| {
+                                if ch == '-' {
+                                    '_'
+                                } else {
+                                    ch.to_ascii_uppercase()
+                                }
+                            })
+                            .collect::<String>(),
+                        proc_macro2::Span::call_site(),
+                    );
+
+                    stats.structs_count += 1;
+                    stats.identifiers_count += ids.len();
+                    stats.structs_total_size += payload.baked_size();
+
+                    idents_to_bakes.push((ident.clone(), payload.tokenize(&self.dependencies)));
                     ids.iter().map(move |id| (id.clone(), ident.clone()))
                 })
                 .collect();
@@ -507,7 +555,10 @@ impl DataExporter for BakedExporter {
             .parse::<TokenStream>()
             .unwrap();
 
-            let data = crate::binary_search::bake(&marker_bake, ids_to_idents, idents_to_bakes);
+            let (data, lookup_struct_size) =
+                crate::binary_search::bake(&marker_bake, ids_to_idents, idents_to_bakes);
+
+            stats.lookup_struct_size = lookup_struct_size;
 
             let search = if !self.use_internal_fallback
                 || deduplicated_values
@@ -548,6 +599,7 @@ impl DataExporter for BakedExporter {
 
             self.write_impl_macros(
                 marker,
+                stats,
                 quote! {
                     #maybe_msrv
                     impl $provider {
@@ -592,15 +644,15 @@ impl DataExporter for BakedExporter {
 
         let marker_bakes = data.keys().copied().map(bake_marker);
 
-        let file_paths = data.values().map(|i| format!("{i}.rs.data"));
+        let file_paths = data.values().map(|(i, _)| format!("{i}.rs.data"));
 
         let macro_idents = data
             .values()
-            .map(|i| format!("impl_{i}").parse::<TokenStream>().unwrap());
+            .map(|(i, _)| format!("impl_{i}").parse::<TokenStream>().unwrap());
 
         // mod.rs is the interface for built-in data. It exposes one macro per marker.
         self.write_to_file(
-            PathBuf::from("mod.rs"),
+            Path::new("mod.rs"),
             quote! {
                 #(
                     include!(#file_paths);
@@ -663,6 +715,20 @@ impl DataExporter for BakedExporter {
                 }
             },
         )?;
+
+        // TODO: Return the statistics instead of writing them out.
+        let mut file = crlify::BufWriterWithLineEndingFix::new(std::fs::File::create(
+            self.mod_directory.join("fingerprints.csv"),
+        )?);
+        for (marker, (_, stats)) in data {
+            if !marker.is_singleton {
+                writeln!(
+                    &mut file,
+                    "{marker:?}, <lookup>, {}B, {} identifiers",
+                    stats.lookup_struct_size, stats.identifiers_count
+                )?;
+            }
+        }
 
         self.print_deps();
 

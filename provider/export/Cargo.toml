@@ -3,7 +3,7 @@
 # (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 [package]
-name = "icu_datagen"
+name = "icu_provider_export"
 description = "Generate data for ICU4X DataProvider"
 license = "Unicode-3.0"
 include = [
@@ -31,7 +31,7 @@ all-features = true
 
 [dependencies]
 
-# DatagenDriver
+# ExportDriver
 displaydoc = { workspace = true }
 icu_locale = { workspace = true }
 icu_provider = { workspace = true, features = ["std", "logging", "export"]}
@@ -49,6 +49,7 @@ elsa = { workspace = true }
 postcard = { workspace = true }
 simple_logger = { workspace = true }
 icu = { path = "../../components/icu", default-features = false, features = ["datagen"] }
+icu_locale = { path = "../../components/locale" }
 icu_datagen_bikeshed = { path = "../bikeshed" }
 
 [features]

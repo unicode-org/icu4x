@@ -9,7 +9,7 @@ use icu_provider::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::fmt::Write;
 use std::fs;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 
 /// Choices of what to do if [`FilesystemExporter`] tries to write to a pre-existing directory.
 #[non_exhaustive]
@@ -105,19 +105,20 @@ impl DataExporter for FilesystemExporter {
         id: DataIdentifierBorrowed,
         obj: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
-        let mut path_buf = self.root.clone().into_os_string();
-        write!(&mut path_buf, "/{}", marker.path.as_str()).expect("infallible");
+        let mut path_buf = self.root.join(marker.path.as_str());
         if !id.marker_attributes.is_empty() {
-            write!(&mut path_buf, "/{}", id.marker_attributes.as_str()).expect("infallible");
+            path_buf.push(id.marker_attributes.as_str());
         }
+        let mut path_buf = path_buf.into_os_string();
         write!(&mut path_buf, "/{}", id.locale).expect("infallible");
-        write!(&mut path_buf, ".{}", self.manifest.file_extension).expect("infallible");
+        let mut path_buf = PathBuf::from(path_buf);
+        path_buf.set_extension(self.manifest.file_extension);
 
         #[allow(clippy::unwrap_used)] // has parent by construction
-        let parent_dir = Path::new(&path_buf).parent().unwrap();
+        let parent_dir = path_buf.parent().unwrap();
 
         fs::create_dir_all(parent_dir)
-            .map_err(|e| DataError::from(e).with_path_context(&parent_dir))?;
+            .map_err(|e| DataError::from(e).with_path_context(parent_dir))?;
 
         let mut file: Box<dyn std::io::Write> = if self.serializer.is_text_format() {
             Box::new(crlify::BufWriterWithLineEndingFix::new(
@@ -138,14 +139,13 @@ impl DataExporter for FilesystemExporter {
     }
 
     fn flush(&self, marker: DataMarkerInfo) -> Result<(), DataError> {
-        let mut path_buf = self.root.clone().into_os_string();
-        write!(&mut path_buf, "/{}", marker.path.as_str()).expect("infallible");
+        let mut path_buf = self.root.join(marker.path.as_str());
 
-        if !Path::new(&path_buf).exists() {
+        if !path_buf.exists() {
             fs::create_dir_all(&path_buf)
                 .map_err(|e| DataError::from(e).with_path_context(&path_buf))?;
-            write!(&mut path_buf, "/.empty").expect("infallible");
-            fs::File::create(Path::new(&path_buf))?;
+            path_buf.push(".empty");
+            fs::File::create(&path_buf)?;
         }
 
         Ok(())

@@ -294,7 +294,7 @@ fn main() {
     );
 
     test_dep_list(
-        "icu_datagen",
+        "icu_provider_export",
         "normal",
         "",
         &[
