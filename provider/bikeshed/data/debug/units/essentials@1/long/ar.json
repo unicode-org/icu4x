@@ -1,5 +1,114 @@
 {
-  "prefixes": {},
+  "prefixes": [
+    [
+      {
+        "Power": {
+          "power": "Two",
+          "count": "Zero"
+        }
+      },
+      "{0} مربّع"
+    ],
+    [
+      {
+        "Power": {
+          "power": "Two",
+          "count": "One"
+        }
+      },
+      "{0} مربّع"
+    ],
+    [
+      {
+        "Power": {
+          "power": "Two",
+          "count": "Two"
+        }
+      },
+      "{0} مربّعان"
+    ],
+    [
+      {
+        "Power": {
+          "power": "Two",
+          "count": "Few"
+        }
+      },
+      "{0} مربّعة"
+    ],
+    [
+      {
+        "Power": {
+          "power": "Two",
+          "count": "Many"
+        }
+      },
+      "{0} مربّعًا"
+    ],
+    [
+      {
+        "Power": {
+          "power": "Two",
+          "count": "Other"
+        }
+      },
+      "{0} مربّع"
+    ],
+    [
+      {
+        "Power": {
+          "power": "Three",
+          "count": "Zero"
+        }
+      },
+      "{0} مكعّب"
+    ],
+    [
+      {
+        "Power": {
+          "power": "Three",
+          "count": "One"
+        }
+      },
+      "{0} مكعّب"
+    ],
+    [
+      {
+        "Power": {
+          "power": "Three",
+          "count": "Two"
+        }
+      },
+      "{0} مكعّبان"
+    ],
+    [
+      {
+        "Power": {
+          "power": "Three",
+          "count": "Few"
+        }
+      },
+      "{0} مكعّبة"
+    ],
+    [
+      {
+        "Power": {
+          "power": "Three",
+          "count": "Many"
+        }
+      },
+      "{0} مكعبًا"
+    ],
+    [
+      {
+        "Power": {
+          "power": "Three",
+          "count": "Other"
+        }
+      },
+      "{0} مكعّب"
+    ]
+  ],
   "per": "{0} لكل {1}",
   "times": "{0}⋅{1}"
 }

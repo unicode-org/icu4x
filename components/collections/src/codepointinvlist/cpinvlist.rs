@@ -102,6 +102,13 @@ impl databake::Bake for CodePointInversionList<'_> {
     }
 }
 
+#[cfg(feature = "databake")]
+impl databake::BakeSize for CodePointInversionList<'_> {
+    fn borrows_size(&self) -> usize {
+        self.inv_list.borrows_size()
+    }
+}
+
 #[cfg(feature = "serde")]
 #[derive(Debug, Copy, Clone)]
 struct UnicodeCodePoint(u32);
