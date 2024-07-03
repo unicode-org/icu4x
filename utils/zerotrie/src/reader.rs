@@ -617,7 +617,7 @@ pub(crate) fn take_value(trie: &mut &[u8]) -> Option<usize> {
 #[cfg(feature = "alloc")]
 use alloc::vec::Vec;
 
-/// Internal iterator type for walking the strings contained in a ZeroTrie.
+/// Iterator type for walking the byte sequences contained in a ZeroTrie.
 #[cfg(feature = "alloc")]
 #[derive(Debug)]
 pub struct ZeroTrieIterator<'a> {
