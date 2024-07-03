@@ -1,5 +1,4 @@
-*, <'static strs>, 541B, 111 unique static strings
-collator/data@1, <lookup>, 2424B, 101 identifiers
+collator/data@1, <lookup>, 2440B, 101 identifiers
 collator/data@1, <total>, 1073428B, 89 unique payloads
 collator/data@1, af, 1416B, 6cfbf331f81f0e7c
 collator/data@1, ar, 8392B, fce742b37324adbe
@@ -102,12 +101,12 @@ collator/data@1, zh-Hant-u-co-zhuyin, 129206B, -> yue-u-co-zhuyin
 collator/data@1, zh-u-co-stroke, 174942B, -> yue-u-co-stroke
 collator/data@1, zh-u-co-unihan, 4352B, -> yue-u-co-unihan
 collator/data@1, zh-u-co-zhuyin, 129206B, -> yue-u-co-zhuyin
-collator/dia@1, <lookup>, 48B, 2 identifiers
+collator/dia@1, <lookup>, 64B, 2 identifiers
 collator/dia@1, <total>, 364B, 2 unique payloads
 collator/dia@1, und, 182B, 8ace760351a33687
 collator/dia@1, vi, 182B, 6b057eec42bee512
 collator/jamo@1, <singleton>, 1048B, 8554e65df2b9cfbb
-collator/meta@1, <lookup>, 2112B, 88 identifiers
+collator/meta@1, <lookup>, 2128B, 88 identifiers
 collator/meta@1, <total>, 36B, 9 unique payloads
 collator/meta@1, af, 4B, 9aab82d56f3b362e
 collator/meta@1, am, 4B, d1dcef7af54c8272

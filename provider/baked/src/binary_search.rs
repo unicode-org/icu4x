@@ -9,22 +9,69 @@ use databake::*;
 use icu_provider::prelude::*;
 
 #[cfg(feature = "export")]
-pub fn bake(
+pub(crate) fn bake(
     marker_bake: &TokenStream,
-    reqs_to_idents: Vec<(DataIdentifierCow, proc_macro2::Ident)>,
+    mut ids_to_idents: Vec<(DataIdentifierCow, proc_macro2::Ident)>,
     idents_to_bakes: Vec<(proc_macro2::Ident, TokenStream)>,
-) -> TokenStream {
-    let mut ids_to_idents = reqs_to_idents
-        .into_iter()
-        .map(|(id, ident)| {
-            (
-                (id.marker_attributes.to_string(), id.locale.to_string()),
-                quote!(#ident),
-            )
-        })
-        .collect::<Vec<_>>();
+) -> (TokenStream, usize) {
+    let mut size = 0;
 
-    ids_to_idents.sort_by(|(a, _), (b, _)| a.cmp(b));
+    // Data.0 is a fat pointer
+    size += core::mem::size_of::<&[()]>();
+
+    // The idents are references
+    size += ids_to_idents.len() * core::mem::size_of::<&()>();
+
+    ids_to_idents.sort_by_cached_key(|(id, _)| {
+        (
+            id.marker_attributes.as_str().to_string(),
+            id.locale.to_string(),
+        )
+    });
+
+    let (ty, id_bakes_to_idents) = if ids_to_idents
+        .iter()
+        .all(|(id, _)| id.marker_attributes.is_empty())
+    {
+        // Only DataLocales
+        size += ids_to_idents.len() * core::mem::size_of::<&str>();
+        (
+            quote! { icu_provider_baked::binary_search::Locale },
+            ids_to_idents
+                .iter()
+                .map(|(id, ident)| {
+                    let k = id.locale.to_string();
+                    quote!((#k, #ident))
+                })
+                .collect::<Vec<_>>(),
+        )
+    } else if ids_to_idents.iter().all(|(id, _)| id.locale.is_und()) {
+        // Only marker attributes
+        size += ids_to_idents.len() * core::mem::size_of::<&str>();
+        (
+            quote! { icu_provider_baked::binary_search::Attributes },
+            ids_to_idents
+                .iter()
+                .map(|(id, ident)| {
+                    let k = id.marker_attributes.as_str();
+                    quote!((#k, #ident))
+                })
+                .collect(),
+        )
+    } else {
+        size += ids_to_idents.len() * 2 * core::mem::size_of::<&str>();
+        (
+            quote! { icu_provider_baked::binary_search::AttributesAndLocale },
+            ids_to_idents
+                .iter()
+                .map(|(id, ident)| {
+                    let k0 = id.marker_attributes.as_str();
+                    let k1 = id.locale.to_string();
+                    quote!(((#k0, #k1), #ident))
+                })
+                .collect(),
+        )
+    };
 
     let idents_to_bakes = idents_to_bakes.into_iter().map(|(ident, bake)| {
         quote! {
@@ -32,41 +79,16 @@ pub fn bake(
         }
     });
 
-    let (ty, reqs_to_idents) = if ids_to_idents.iter().all(|((a, _), _)| a.is_empty()) {
-        // Only DataLocales
-        (
-            quote! { icu_provider_baked::binary_search::Locale },
-            ids_to_idents
-                .iter()
-                .map(|((_, l), i)| quote!((#l, #i)))
-                .collect::<Vec<_>>(),
-        )
-    } else if ids_to_idents.iter().all(|((_, l), _)| *l == "und") {
-        // Only marker attributes
-        (
-            quote! { icu_provider_baked::binary_search::Attributes },
-            ids_to_idents
-                .iter()
-                .map(|((a, _), i)| quote!((#a, #i)))
-                .collect(),
-        )
-    } else {
-        (
-            quote! { icu_provider_baked::binary_search::AttributesAndLocale },
-            ids_to_idents
-                .iter()
-                .map(|((a, l), i)| quote!(((#a, #l), #i)))
-                .collect(),
-        )
-    };
-
-    quote! {
-        icu_provider_baked::binary_search::Data<#ty, #marker_bake> = {
-            type S = <#marker_bake as icu_provider::DynamicDataMarker>::Yokeable;
-            #(#idents_to_bakes)*
-            icu_provider_baked::binary_search::Data(&[#(#reqs_to_idents,)*])
-        }
-    }
+    (
+        quote! {
+            icu_provider_baked::binary_search::Data<#ty, #marker_bake> = {
+                type S = <#marker_bake as icu_provider::DynamicDataMarker>::Yokeable;
+                #(#idents_to_bakes)*
+                icu_provider_baked::binary_search::Data(&[#(#id_bakes_to_idents,)*])
+            }
+        },
+        size,
+    )
 }
 
 pub struct Data<K: BinarySearchKey, M: DataMarker>(pub &'static [(K::Type, &'static M::Yokeable)]);

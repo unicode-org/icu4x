@@ -1,4 +1,3 @@
-*, <'static strs>, 196B, 9 unique static strings
 segmenter/dictionary/w_auto@1, <lookup>, 40B, 1 identifiers
 segmenter/dictionary/w_auto@1, <total>, 2007134B, 1 unique payloads
 segmenter/dictionary/w_auto@1, und/cjdict, 2007134B, f7552d2848b39b0d

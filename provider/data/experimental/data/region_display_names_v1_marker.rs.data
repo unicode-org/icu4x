@@ -2,6 +2,12 @@
 /// Implement `DataProvider<RegionDisplayNamesV1Marker>` on the given struct using the data
 /// hardcoded in this file. This allows the struct to be used with
 /// `icu`'s `_unstable` constructors.
+///
+/// Using this implementation will embed the following data in the binary's data segment:
+/// * 4960B[^1] for the lookup data structure (206 data identifiers)
+/// * 1064737B[^1] for the actual data (191 unique structs)
+///
+/// [^1]: these numbers can be smaller in practice due to linker deduplication
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __impl_region_display_names_v1_marker {
