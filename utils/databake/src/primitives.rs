@@ -142,7 +142,9 @@ where
         {
             // Safety: self.as_ptr()'s allocation is at least self.len() bytes long,
             // initialised, and well-alligned.
-            let byte_string = proc_macro2::Literal::byte_string(unsafe { core::slice::from_raw_parts(self.as_ptr() as *const u8, N) });
+            let byte_string = proc_macro2::Literal::byte_string(unsafe {
+                core::slice::from_raw_parts(self.as_ptr() as *const u8, N)
+            });
             return quote!(*#byte_string);
         }
         let data = self.iter().map(|d| d.bake(ctx));

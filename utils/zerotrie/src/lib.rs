@@ -75,9 +75,9 @@ pub use crate::zerotrie::ZeroTrieSimpleAscii;
 pub use error::Error as ZeroTrieError;
 
 #[cfg(feature = "alloc")]
-pub use reader::ZeroTrieIterator;
-#[cfg(feature = "alloc")]
 pub use crate::zerotrie::ZeroTrieStringIterator;
+#[cfg(feature = "alloc")]
+pub use reader::ZeroTrieIterator;
 
 #[doc(hidden)]
 pub mod _internal {
