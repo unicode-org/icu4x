@@ -21,15 +21,13 @@ impl DataProvider<UnitsDisplayNameV1Marker> for DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<UnitsDisplayNameV1Marker>, DataError> {
         self.check_req::<UnitsDisplayNameV1Marker>(req)?;
 
-        // Get langid and the unit.
         let langid = req.id.locale.get_langid();
         let (length, unit) = req
             .id
             .marker_attributes
             .split_once('-')
-            .ok_or_else(|| DataErrorKind::IdentifierNotFound))?;
+            .ok_or_else(|| DataError::custom("Invalid marker attributes"))?;
 
-        // Get units
         let units_format_data: &cldr_serde::units::data::Resource =
             self.cldr()?.units().read_and_parse(&langid, "units.json")?;
         let units_format_data = &units_format_data.main.value.units;
