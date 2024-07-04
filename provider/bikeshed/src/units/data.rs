@@ -26,7 +26,7 @@ impl DataProvider<UnitsDisplayNameV1Marker> for DatagenProvider {
             .id
             .marker_attributes
             .split_once('-')
-            .ok_or_else(|| DataError::custom("Invalid marker attributes"))?;
+            .ok_or_else(|| DataErrorKind::InvalidRequest.into_error())?;
 
         let units_format_data: &cldr_serde::units::data::Resource =
             self.cldr()?.units().read_and_parse(&langid, "units.json")?;
@@ -57,7 +57,11 @@ impl DataProvider<UnitsDisplayNameV1Marker> for DatagenProvider {
             ) {
                 (Some(length), None) => length,
                 (None, Some(length)) => length,
-                _ => return Err(DataError::custom("Invalid unit").with_debug_context(unit)),
+                _ => {
+                    return Err(DataErrorKind::IdentifierNotFound
+                        .into_error()
+                        .with_debug_context(unit))
+                }
             };
 
             add_unit_to_map_with_name(&mut result, Count::One, unit_length_map.one.as_deref());
@@ -77,9 +81,9 @@ impl DataProvider<UnitsDisplayNameV1Marker> for DatagenProvider {
                         "short" => &units_format_data.short,
                         "narrow" => &units_format_data.narrow,
                         _ => {
-                            return Err(
-                                DataError::custom("Invalid length").with_debug_context(length)
-                            )
+                            return Err(DataErrorKind::IdentifierNotFound
+                                .into_error()
+                                .with_debug_context(length))
                         }
                     },
                     unit,
@@ -157,9 +161,9 @@ impl crate::IterableDataProviderCached<UnitsDisplayNameV1Marker> for DatagenProv
                     "short" => &units_format_data.short,
                     "narrow" => &units_format_data.narrow,
                     _ => {
-                        return Err(
-                            DataError::custom("Unreachable length").with_debug_context(length)
-                        )
+                        return Err(DataErrorKind::IdentifierNotFound
+                            .into_error()
+                            .with_debug_context(length))
                     }
                 };
 
