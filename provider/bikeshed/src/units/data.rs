@@ -42,7 +42,7 @@ impl DataProvider<UnitsDisplayNameV1Marker> for DatagenProvider {
             }
         }
 
-        fn populate_unit_map(
+        fn populate_units_map(
             unit_length_map: &BTreeMap<String, Patterns>,
             unit: &str,
         ) -> Result<BTreeMap<Count, String>, DataError> {
@@ -69,17 +69,24 @@ impl DataProvider<UnitsDisplayNameV1Marker> for DatagenProvider {
             Ok(result)
         }
 
-        let patterns = match length {
-            "long" => &units_format_data.long,
-            "short" => &units_format_data.short,
-            "narrow" => &units_format_data.narrow,
-            _ => return Err(DataError::custom("Invalid length").with_debug_context(length)),
-        };
-
-        let patterns = populate_unit_map(patterns, unit)?;
-
         let result = UnitsDisplayNameV1 {
-            patterns: ZeroMap::from_iter(patterns.iter().map(|(k, v)| (k, v.as_str()))),
+            patterns: ZeroMap::from_iter(
+                populate_units_map(
+                    match length {
+                        "long" => &units_format_data.long,
+                        "short" => &units_format_data.short,
+                        "narrow" => &units_format_data.narrow,
+                        _ => {
+                            return Err(
+                                DataError::custom("Invalid length").with_debug_context(length)
+                            )
+                        }
+                    },
+                    unit,
+                )?
+                .iter()
+                .map(|(k, v)| (k, v.as_str())),
+            ),
         };
 
         Ok(DataResponse {
