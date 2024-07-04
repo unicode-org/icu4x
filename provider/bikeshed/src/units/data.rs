@@ -168,7 +168,7 @@ fn test_basic() {
 
     let provider = DatagenProvider::new_testing();
 
-    let us_locale: DataPayload<UnitsDisplayNameV1Marker> = provider
+    let us_locale_long_meter: DataPayload<UnitsDisplayNameV1Marker> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("long-meter"),
@@ -179,9 +179,24 @@ fn test_basic() {
         .unwrap()
         .payload;
 
-    let units_us = us_locale.get().to_owned();
+    let units_us = us_locale_long_meter.get().to_owned();
     let long = units_us.patterns.get(&Count::One).unwrap();
     assert_eq!(long, "{0} meter");
+
+    let us_locale_short_meter: DataPayload<UnitsDisplayNameV1Marker> = provider
+        .load(DataRequest {
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                DataMarkerAttributes::from_str_or_panic("short-meter"),
+                &langid!("en").into(),
+            ),
+            ..Default::default()
+        })
+        .unwrap()
+        .payload;
+
+    let units_us_short = us_locale_short_meter.get().to_owned();
+    let short = units_us_short.patterns.get(&Count::One).unwrap();
+    assert_eq!(short, "{0} m");
 
     let ar_eg_locale: DataPayload<UnitsDisplayNameV1Marker> = provider
         .load(DataRequest {
