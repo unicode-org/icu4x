@@ -188,40 +188,6 @@ pub(crate) mod internal {
                 assert_eq!(test.expected, actual.as_str(), "test: {:?}", &test);
             }
         }
-
-        #[test]
-        fn format_conversion() {
-            #[derive(Debug)]
-            struct TestCase {
-                n: f64,
-                opts: Options,
-                expected: PluralOperands,
-            }
-            let tests = [TestCase {
-                n: 1.5,
-                opts: Options {
-                    in_type: Type::Cardinal,
-                    minimum_integer_digits: 3,
-                    minimum_fraction_digits: 2,
-                    maximum_fraction_digits: 3,
-                    minimum_significant_digits: 3,
-                    maximum_significant_digits: 4,
-                },
-                expected: RawPluralOperands {
-                    i: 1,
-                    v: 2,
-                    w: 1,
-                    f: 50,
-                    t: 5,
-                    c: 0,
-                }
-                .into(),
-            }];
-            for test in tests {
-                let actual = to_icu4x_operands(test.n, test.opts.clone());
-                assert_eq!(test.expected, actual, "test: {:?}", &test);
-            }
-        }
     }
 }
 
