@@ -490,8 +490,6 @@ impl DataLocale {
     /// This ignores extension keywords and auxiliary keys.
     ///
     /// See also:
-    ///
-    /// - [`DataLocale::is_empty()`]
     /// - [`DataLocale::is_und()`]
     ///
     /// # Examples

@@ -141,6 +141,7 @@ impl<'data> BlobSchemaV1<'data> {
             .iter1_copied()
             .filter_map(|(s, _)| core::str::from_utf8(&s.0).ok())
             .filter_map(|s| {
+                #[allow(unused_imports)]
                 use alloc::borrow::ToOwned;
                 if let Some((locale, attrs)) = s.split_once(REQUEST_SEPARATOR) {
                     Some(DataIdentifierCow::from_owned(
@@ -265,6 +266,7 @@ impl<'data, LocaleVecFormat: VarZeroVecFormat> BlobSchemaV2<'data, LocaleVecForm
         Ok(ZeroTrieSimpleAscii::from_store(zerotrie)
             .iter()
             .filter_map(|(s, _)| {
+                #[allow(unused_imports)]
                 use alloc::borrow::ToOwned;
                 if let Some((locale, attrs)) = s.split_once(REQUEST_SEPARATOR) {
                     Some(DataIdentifierCow::from_owned(
