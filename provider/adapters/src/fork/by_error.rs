@@ -59,6 +59,24 @@ where
     }
 }
 
+impl<M, P0, P1, F> DryDataProvider<M> for ForkByErrorProvider<P0, P1, F>
+where
+    M: DataMarker,
+    P0: DryDataProvider<M>,
+    P1: DryDataProvider<M>,
+    F: ForkByErrorPredicate,
+{
+    fn dry_load(&self, req: DataRequest) -> Result<DataResponseMetadata, DataError> {
+        let result = self.0.dry_load(req);
+        match result {
+            Ok(ok) => return Ok(ok),
+            Err(err) if !self.2.test(M::INFO, Some(req), err) => return Err(err),
+            _ => (),
+        };
+        self.1.dry_load(req)
+    }
+}
+
 impl<P0, P1, F> AnyProvider for ForkByErrorProvider<P0, P1, F>
 where
     P0: AnyProvider,
@@ -95,6 +113,28 @@ where
             _ => (),
         };
         self.1.load_data(marker, req)
+    }
+}
+
+impl<M, P0, P1, F> DynamicDryDataProvider<M> for ForkByErrorProvider<P0, P1, F>
+where
+    M: DynamicDataMarker,
+    P0: DynamicDryDataProvider<M>,
+    P1: DynamicDryDataProvider<M>,
+    F: ForkByErrorPredicate,
+{
+    fn dry_load_data(
+        &self,
+        marker: DataMarkerInfo,
+        req: DataRequest,
+    ) -> Result<DataResponseMetadata, DataError> {
+        let result = self.0.dry_load_data(marker, req);
+        match result {
+            Ok(ok) => return Ok(ok),
+            Err(err) if !self.2.test(marker, Some(req), err) => return Err(err),
+            _ => (),
+        };
+        self.1.dry_load_data(marker, req)
     }
 }
 
@@ -186,6 +226,26 @@ where
     }
 }
 
+impl<M, P, F> DryDataProvider<M> for MultiForkByErrorProvider<P, F>
+where
+    M: DataMarker,
+    P: DryDataProvider<M>,
+    F: ForkByErrorPredicate,
+{
+    fn dry_load(&self, req: DataRequest) -> Result<DataResponseMetadata, DataError> {
+        let mut last_error = F::UNIT_ERROR.with_marker(M::INFO);
+        for provider in self.providers.iter() {
+            let result = provider.dry_load(req);
+            match result {
+                Ok(ok) => return Ok(ok),
+                Err(err) if !self.predicate.test(M::INFO, Some(req), err) => return Err(err),
+                Err(err) => last_error = err,
+            };
+        }
+        Err(last_error)
+    }
+}
+
 impl<P, F> AnyProvider for MultiForkByErrorProvider<P, F>
 where
     P: AnyProvider,
@@ -219,6 +279,30 @@ where
         let mut last_error = F::UNIT_ERROR.with_marker(marker);
         for provider in self.providers.iter() {
             let result = provider.load_data(marker, req);
+            match result {
+                Ok(ok) => return Ok(ok),
+                Err(err) if !self.predicate.test(marker, Some(req), err) => return Err(err),
+                Err(err) => last_error = err,
+            };
+        }
+        Err(last_error)
+    }
+}
+
+impl<M, P, F> DynamicDryDataProvider<M> for MultiForkByErrorProvider<P, F>
+where
+    M: DynamicDataMarker,
+    P: DynamicDryDataProvider<M>,
+    F: ForkByErrorPredicate,
+{
+    fn dry_load_data(
+        &self,
+        marker: DataMarkerInfo,
+        req: DataRequest,
+    ) -> Result<DataResponseMetadata, DataError> {
+        let mut last_error = F::UNIT_ERROR.with_marker(marker);
+        for provider in self.providers.iter() {
+            let result = provider.dry_load_data(marker, req);
             match result {
                 Ok(ok) => return Ok(ok),
                 Err(err) if !self.predicate.test(marker, Some(req), err) => return Err(err),

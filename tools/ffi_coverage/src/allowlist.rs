@@ -69,16 +69,18 @@ lazy_static::lazy_static! {
         "AsDynamicDataProviderAnyMarkerWrap",
         "IterableDynamicDataProvider",
         "IterableDataProvider",
-        "DataConverter",
-        "Filterable",
         "ForkByErrorPredicate",
 
-        // The four main data provider traits should be covered if the enum or struct
+        // The main data provider traits should be covered if the enum or struct
         // implementing them is covered
         "DataProvider",
         "DynamicDataProvider",
         "BufferProvider",
         "AnyProvider",
+
+        // We might expose these if someone asks for it
+        "DryDataProvider",
+        "DynamicDryDataProvider",
 
         // internal trait, all methods replicated on Date
         "Calendar",

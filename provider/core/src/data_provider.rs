@@ -74,6 +74,19 @@ where
     }
 }
 
+/// A data provider that can determine whether it can load a particular data identifier,
+/// potentially cheaper than actually performing the load.
+pub trait DryDataProvider<M: DataMarker>: DataProvider<M> {
+    /// This method goes through the motions of [`load`], but only returns the metadata.
+    ///
+    /// If `dry_load` returns an error, [`load`] must return the same error, but
+    /// not vice-versa. Concretely, [`load`] could return deserialization or I/O errors
+    /// that `dry_load` cannot predict.
+    ///
+    /// [`load`]: DataProvider::load
+    fn dry_load(&self, req: DataRequest) -> Result<DataResponseMetadata, DataError>;
+}
+
 /// A data provider that loads data for a specific data type.
 ///
 /// Unlike [`DataProvider`], there may be multiple markers corresponding to the same data type.
@@ -93,6 +106,23 @@ where
         marker: DataMarkerInfo,
         req: DataRequest,
     ) -> Result<DataResponse<M>, DataError>;
+}
+
+/// A dynanmic data provider that can determine whether it can load a particular data identifier,
+/// potentially cheaper than actually performing the load.
+pub trait DynamicDryDataProvider<M: DynamicDataMarker>: DynamicDataProvider<M> {
+    /// This method goes through the motions of [`load_data`], but only returns the metadata.
+    ///
+    /// If `dry_load_data` returns an error, [`load_data`] must return the same error, but
+    /// not vice-versa. Concretely, [`load_data`] could return deserialization or I/O errors
+    /// that `dry_load_data` cannot predict.
+    ///
+    /// [`load_data`]: DynamicDataProvider::load_data
+    fn dry_load_data(
+        &self,
+        marker: DataMarkerInfo,
+        req: DataRequest,
+    ) -> Result<DataResponseMetadata, DataError>;
 }
 
 impl<'a, M, P> DynamicDataProvider<M> for &'a P

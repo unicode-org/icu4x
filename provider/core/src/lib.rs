@@ -132,7 +132,8 @@ pub mod serde_borrow_de_utils;
 
 mod data_provider;
 pub use data_provider::{
-    BoundDataProvider, DataProvider, DataProviderWithMarker, DynamicDataProvider,
+    BoundDataProvider, DataProvider, DataProviderWithMarker, DryDataProvider, DynamicDataProvider,
+    DynamicDryDataProvider,
 };
 #[cfg(feature = "std")]
 pub use data_provider::{IterableDataProvider, IterableDynamicDataProvider};
@@ -181,7 +182,8 @@ pub mod prelude {
     pub use crate::{
         BoundDataProvider, DataError, DataErrorKind, DataLocale, DataMarker, DataMarkerAttributes,
         DataMarkerInfo, DataPayload, DataProvider, DataRequest, DataRequestMetadata, DataResponse,
-        DataResponseMetadata, DynamicDataMarker, DynamicDataProvider,
+        DataResponseMetadata, DryDataProvider, DynamicDataMarker, DynamicDataProvider,
+        DynamicDryDataProvider,
     };
     #[cfg(feature = "std")]
     pub use crate::{IterableDataProvider, IterableDynamicDataProvider};

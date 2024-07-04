@@ -118,6 +118,21 @@ pub struct DataIdentifierCow<'a> {
     pub locale: Cow<'a, DataLocale>,
 }
 
+impl PartialOrd for DataIdentifierCow<'_> {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl Ord for DataIdentifierCow<'_> {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.marker_attributes
+            .as_str()
+            .cmp(other.marker_attributes.as_str())
+            .then_with(|| self.locale.total_cmp(&other.locale))
+    }
+}
+
 impl fmt::Display for DataIdentifierCow<'_> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         fmt::Display::fmt(&*self.locale, f)?;
@@ -744,11 +759,11 @@ impl Debug for DataMarkerAttributes {
 pub struct AttributeParseError;
 
 impl DataMarkerAttributes {
-    const fn validate(s: &str) -> Result<(), AttributeParseError> {
+    const fn validate(s: &[u8]) -> Result<(), AttributeParseError> {
         let mut i = 0;
         while i < s.len() {
             #[allow(clippy::indexing_slicing)] // duh
-            if !matches!(s.as_bytes()[i], b'a'..=b'z' | b'A'..=b'Z' | b'0'..=b'9' | b'-' | b'_') {
+            if !matches!(s[i], b'a'..=b'z' | b'A'..=b'Z' | b'0'..=b'9' | b'-' | b'_') {
                 return Err(AttributeParseError);
             }
             i += 1;
@@ -760,9 +775,31 @@ impl DataMarkerAttributes {
     ///
     /// Returns an error if the string contains characters other than `[a-zA-Z0-9_\-]`.
     pub const fn try_from_str(s: &str) -> Result<&Self, AttributeParseError> {
-        let Ok(()) = Self::validate(s) else {
+        Self::try_from_utf8(s.as_bytes())
+    }
+
+    /// Attempts to create a borrowed [`DataMarkerAttributes`] from a borrowed UTF-8 encoded byte slice.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_provider::prelude::*;
+    ///
+    /// let bytes = b"long-meter";
+    /// let marker = DataMarkerAttributes::try_from_utf8(bytes).unwrap();
+    /// assert_eq!(marker.to_string(), "long-meter");
+    /// ```
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if the byte slice contains code units other than `[a-zA-Z0-9_\-]`.
+    pub const fn try_from_utf8(code_units: &[u8]) -> Result<&Self, AttributeParseError> {
+        let Ok(()) = Self::validate(code_units) else {
             return Err(AttributeParseError);
         };
+
+        // SAFETY: `validate` requires a UTF-8 subset
+        let s = unsafe { core::str::from_utf8_unchecked(code_units) };
 
         // SAFETY: `Self` has the same layout as `str`
         Ok(unsafe { &*(s as *const str as *const Self) })
@@ -772,7 +809,7 @@ impl DataMarkerAttributes {
     ///
     /// Returns an error if the string contains characters other than `[a-zA-Z0-9_\-]`.
     pub fn try_from_string(s: String) -> Result<Box<Self>, AttributeParseError> {
-        let Ok(()) = Self::validate(&s) else {
+        let Ok(()) = Self::validate(s.as_bytes()) else {
             return Err(AttributeParseError);
         };
 
@@ -879,5 +916,21 @@ fn test_data_locale_from_string() {
             }
         };
         writeable::assert_writeable_eq!(data_locale, cas.input);
+    }
+}
+
+#[test]
+fn test_data_marker_attributes_from_utf8() {
+    let bytes_vec: Vec<&[u8]> = vec![
+        b"long-meter",
+        b"long",
+        b"meter",
+        b"short-meter-second",
+        b"usd",
+    ];
+
+    for bytes in bytes_vec {
+        let marker = DataMarkerAttributes::try_from_utf8(bytes).unwrap();
+        assert_eq!(marker.to_string().as_bytes(), bytes);
     }
 }

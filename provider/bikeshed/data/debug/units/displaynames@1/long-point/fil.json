@@ -1,0 +1,6 @@
+{
+  "patterns": {
+    "One": "{0} puntos",
+    "Other": "{0} puntos"
+  }
+}

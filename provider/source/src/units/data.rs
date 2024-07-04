@@ -21,14 +21,13 @@ impl DataProvider<UnitsDisplayNameV1Marker> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<UnitsDisplayNameV1Marker>, DataError> {
         self.check_req::<UnitsDisplayNameV1Marker>(req)?;
 
-        // Get langid and the unit.
         let langid = req.id.locale.get_langid();
-        let unit = match req.id.marker_attributes.parse::<String>() {
-            Ok(aux_keys) => aux_keys,
-            Err(_) => return Err(DataError::custom("Failed to get aux keys")),
-        };
+        let (length, unit) = req
+            .id
+            .marker_attributes
+            .split_once('-')
+            .ok_or_else(|| DataErrorKind::InvalidRequest.into_error())?;
 
-        // Get units
         let units_format_data: &cldr_serde::units::data::Resource =
             self.cldr()?.units().read_and_parse(&langid, "units.json")?;
         let units_format_data = &units_format_data.main.value.units;
@@ -43,11 +42,11 @@ impl DataProvider<UnitsDisplayNameV1Marker> for SourceDataProvider {
             }
         }
 
-        fn populate_unit_map(
+        fn populate_units_map(
             unit_length_map: &BTreeMap<String, Patterns>,
             unit: &str,
-            map: &mut BTreeMap<Count, String>,
-        ) -> Result<(), DataError> {
+        ) -> Result<BTreeMap<Count, String>, DataError> {
+            let mut result = BTreeMap::new();
             // TODO(younies): this should be coming from the aux key or from the main key.
             let legth_key = "length-".to_string() + unit;
             let duration_key = "duration-".to_string() + unit;
@@ -58,30 +57,40 @@ impl DataProvider<UnitsDisplayNameV1Marker> for SourceDataProvider {
             ) {
                 (Some(length), None) => length,
                 (None, Some(length)) => length,
-                _ => return Ok(()),
+                _ => {
+                    return Err(DataErrorKind::IdentifierNotFound
+                        .into_error()
+                        .with_debug_context(unit))
+                }
             };
 
-            add_unit_to_map_with_name(map, Count::One, unit_length_map.one.as_deref());
-            add_unit_to_map_with_name(map, Count::Two, unit_length_map.two.as_deref());
-            add_unit_to_map_with_name(map, Count::Few, unit_length_map.few.as_deref());
-            add_unit_to_map_with_name(map, Count::Many, unit_length_map.many.as_deref());
-            add_unit_to_map_with_name(map, Count::Other, unit_length_map.other.as_deref());
+            add_unit_to_map_with_name(&mut result, Count::One, unit_length_map.one.as_deref());
+            add_unit_to_map_with_name(&mut result, Count::Two, unit_length_map.two.as_deref());
+            add_unit_to_map_with_name(&mut result, Count::Few, unit_length_map.few.as_deref());
+            add_unit_to_map_with_name(&mut result, Count::Many, unit_length_map.many.as_deref());
+            add_unit_to_map_with_name(&mut result, Count::Other, unit_length_map.other.as_deref());
 
-            Ok(())
+            Ok(result)
         }
 
-        let mut long = BTreeMap::new();
-        let mut short = BTreeMap::new();
-        let mut narrow = BTreeMap::new();
-
-        populate_unit_map(&units_format_data.long, unit.as_str(), &mut long)?;
-        populate_unit_map(&units_format_data.short, unit.as_str(), &mut short)?;
-        populate_unit_map(&units_format_data.narrow, unit.as_str(), &mut narrow)?;
-
         let result = UnitsDisplayNameV1 {
-            long: ZeroMap::from_iter(long.iter().map(|(k, v)| (k, v.as_str()))),
-            short: ZeroMap::from_iter(short.iter().map(|(k, v)| (k, v.as_str()))),
-            narrow: ZeroMap::from_iter(narrow.iter().map(|(k, v)| (k, v.as_str()))),
+            patterns: ZeroMap::from_iter(
+                populate_units_map(
+                    match length {
+                        "long" => &units_format_data.long,
+                        "short" => &units_format_data.short,
+                        "narrow" => &units_format_data.narrow,
+                        _ => {
+                            return Err(DataErrorKind::IdentifierNotFound
+                                .into_error()
+                                .with_debug_context(length))
+                        }
+                    },
+                    unit,
+                )?
+                .iter()
+                .map(|(k, v)| (k, v.as_str())),
+            ),
         };
 
         Ok(DataResponse {
@@ -96,15 +105,45 @@ impl crate::IterableDataProviderCached<UnitsDisplayNameV1Marker> for SourceDataP
         fn make_request_element(
             langid: &LanguageIdentifier,
             unit: &str,
+            length: &str,
         ) -> Result<DataIdentifierCow<'static>, DataError> {
             let data_locale = DataLocale::from(langid);
-            let attribute = DataMarkerAttributes::try_from_str(unit).map_err(|_| {
+            let key = length.to_string() + "-" + unit;
+            let attribute = DataMarkerAttributes::try_from_str(key.as_str()).map_err(|_| {
                 DataError::custom("Failed to parse the attribute").with_debug_context(unit)
             })?;
             Ok(DataIdentifierCow::from_owned(
                 attribute.to_owned(),
                 data_locale,
             ))
+        }
+
+        fn fill_data_ids(
+            data_locales: &mut HashSet<DataIdentifierCow<'_>>,
+            langid: &LanguageIdentifier,
+            length: &str,
+            length_patterns: &BTreeMap<String, Patterns>,
+        ) -> Result<(), DataError> {
+            let quantities = length_patterns
+                .keys()
+                // TODO: remove this filter once we are supporting all the units categories.
+                // NOTE:
+                //  if this filter is removed, we have to add a filter to remove all the prefixes.
+                .filter_map(|key| {
+                    if let Some(rest) = key.strip_prefix("length-") {
+                        Some(rest)
+                    } else if let Some(rest) = key.strip_prefix("duration-") {
+                        Some(rest)
+                    } else {
+                        None
+                    }
+                });
+
+            for truncated_quantity in quantities {
+                data_locales.insert(make_request_element(langid, truncated_quantity, length)?);
+            }
+
+            Ok(())
         }
 
         let mut data_locales = HashSet::new();
@@ -115,25 +154,20 @@ impl crate::IterableDataProviderCached<UnitsDisplayNameV1Marker> for SourceDataP
             let units_format_data: &cldr_serde::units::data::Resource =
                 self.cldr()?.units().read_and_parse(&langid, "units.json")?;
             let units_format_data = &units_format_data.main.value.units;
-            let quantities: HashSet<_> = units_format_data
-                // TODO(younies): shall we filter also on short and narrow, in case there are another units in these.
-                .long
-                .keys()
-                .filter(|&long_key| {
-                    !long_key.starts_with(|c: char| c.is_ascii_digit())
-                        && !["per", "times", "power"]
-                            .iter()
-                            .any(|&prefix| long_key.starts_with(prefix))
-                })
-                // TODO(younies): this filter just as a start, Add the other categories later after finalizing the design.
-                .filter(|&long_key| {
-                    long_key.starts_with("length") || long_key.starts_with("duration")
-                })
-                .filter_map(|long_key| long_key.split_once('-').map(|(_, rest)| rest))
-                .collect();
 
-            for &truncated_quantity in &quantities {
-                data_locales.insert(make_request_element(&langid, truncated_quantity)?);
+            for length in &["long", "short", "narrow"] {
+                let length_patterns = match *length {
+                    "long" => &units_format_data.long,
+                    "short" => &units_format_data.short,
+                    "narrow" => &units_format_data.narrow,
+                    _ => {
+                        return Err(DataErrorKind::IdentifierNotFound
+                            .into_error()
+                            .with_debug_context(length))
+                    }
+                };
+
+                fill_data_ids(&mut data_locales, &langid, length, length_patterns)?;
             }
         }
 
@@ -148,10 +182,10 @@ fn test_basic() {
 
     let provider = SourceDataProvider::new_testing();
 
-    let us_locale: DataPayload<UnitsDisplayNameV1Marker> = provider
+    let us_locale_long_meter: DataPayload<UnitsDisplayNameV1Marker> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                DataMarkerAttributes::from_str_or_panic("meter"),
+                DataMarkerAttributes::from_str_or_panic("long-meter"),
                 &langid!("en").into(),
             ),
             ..Default::default()
@@ -159,18 +193,29 @@ fn test_basic() {
         .unwrap()
         .payload;
 
-    let units_us = us_locale.get().to_owned();
-    let long = units_us.long.get(&Count::One).unwrap();
+    let units_us = us_locale_long_meter.get().to_owned();
+    let long = units_us.patterns.get(&Count::One).unwrap();
     assert_eq!(long, "{0} meter");
-    let short = units_us.short.get(&Count::One).unwrap();
+
+    let us_locale_short_meter: DataPayload<UnitsDisplayNameV1Marker> = provider
+        .load(DataRequest {
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                DataMarkerAttributes::from_str_or_panic("short-meter"),
+                &langid!("en").into(),
+            ),
+            ..Default::default()
+        })
+        .unwrap()
+        .payload;
+
+    let units_us_short = us_locale_short_meter.get().to_owned();
+    let short = units_us_short.patterns.get(&Count::One).unwrap();
     assert_eq!(short, "{0} m");
-    let narrow = units_us.narrow.get(&Count::One).unwrap();
-    assert_eq!(narrow, "{0}m");
 
     let ar_eg_locale: DataPayload<UnitsDisplayNameV1Marker> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                DataMarkerAttributes::from_str_or_panic("meter"),
+                DataMarkerAttributes::from_str_or_panic("long-meter"),
                 &langid!("ar-EG").into(),
             ),
             ..Default::default()
@@ -179,17 +224,13 @@ fn test_basic() {
         .payload;
 
     let ar_eg_units = ar_eg_locale.get().to_owned();
-    let long = ar_eg_units.long.get(&Count::One).unwrap();
+    let long = ar_eg_units.patterns.get(&Count::One).unwrap();
     assert_eq!(long, "متر");
-    let short = ar_eg_units.short.get(&Count::One).unwrap();
-    assert_eq!(short, "متر");
-    let narrow = ar_eg_units.narrow.get(&Count::One).unwrap();
-    assert_eq!(narrow, "{0} م");
 
     let fr_locale: DataPayload<UnitsDisplayNameV1Marker> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                DataMarkerAttributes::from_str_or_panic("meter"),
+                DataMarkerAttributes::from_str_or_panic("short-meter"),
                 &langid!("fr").into(),
             ),
             ..Default::default()
@@ -198,10 +239,6 @@ fn test_basic() {
         .payload;
 
     let fr_units = fr_locale.get().to_owned();
-    let long = fr_units.long.get(&Count::One).unwrap();
-    assert_eq!(long, "{0} mètre");
-    let short = fr_units.short.get(&Count::One).unwrap();
+    let short = fr_units.patterns.get(&Count::One).unwrap();
     assert_eq!(short, "{0} m");
-    let narrow = fr_units.narrow.get(&Count::One).unwrap();
-    assert_eq!(narrow, "{0}m");
 }

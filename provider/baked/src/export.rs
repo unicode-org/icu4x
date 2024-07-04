@@ -94,7 +94,6 @@ use heck::ToShoutySnakeCase;
 use heck::ToSnakeCase;
 use icu_provider::export::*;
 use icu_provider::prelude::*;
-use std::collections::HashSet;
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::fmt::Write as _;
 use std::fs::File;
@@ -160,7 +159,7 @@ pub struct BakedExporter {
     data: Mutex<
         HashMap<
             DataMarkerInfo,
-            HashMap<DataPayload<ExportMarker>, HashSet<DataIdentifierCow<'static>>>,
+            HashMap<DataPayload<ExportMarker>, BTreeSet<DataIdentifierCow<'static>>>,
         >,
     >,
     /// file names and statistics to be consumed by `close`.
@@ -336,7 +335,7 @@ impl BakedExporter {
                     "* {structs_total_size}B[^1] for the singleton data struct\n "
                 );
             } else {
-                let _infallible = write!(&mut doc, "* {lookup_struct_size}B[^1] for the lookup data structure ({identifiers_count} data identifiers)\n ");
+                let _infallible = write!(&mut doc, "* {lookup_struct_size}B for the lookup data structure ({identifiers_count} data identifiers)\n ");
                 let _infallible = write!(&mut doc, "* {structs_total_size}B[^1] for the actual data ({structs_count} unique structs)\n ");
             };
             let _infallible = write!(
@@ -506,41 +505,30 @@ impl DataExporter for BakedExporter {
                 },
             )
         } else {
-            let mut idents_to_bakes = Vec::new();
             let mut stats = Statistics::default();
 
-            let ids_to_idents = deduplicated_values
-                .iter()
-                .flat_map(|(payload, ids)| {
-                    let min_id = ids
-                        .iter()
-                        .min_by_key(|id| (id.marker_attributes.as_str(), id.locale.to_string()))
-                        .unwrap();
+            let needs_fallback = self.use_internal_fallback
+                && deduplicated_values
+                    .iter()
+                    .any(|(_, ids)| ids.iter().any(|id| !id.locale.is_und()));
 
-                    let ident = proc_macro2::Ident::new(
-                        &format!("_{}_{}", min_id.marker_attributes.as_str(), min_id.locale)
-                            .chars()
-                            .map(|ch| {
-                                if ch == '-' {
-                                    '_'
-                                } else {
-                                    ch.to_ascii_uppercase()
-                                }
-                            })
-                            .collect::<String>(),
-                        proc_macro2::Span::call_site(),
-                    );
-
+            let mut baked_values = deduplicated_values
+                .into_iter()
+                .map(|(payload, ids)| {
                     stats.structs_count += 1;
                     stats.identifiers_count += ids.len();
                     stats.structs_total_size += payload.baked_size();
 
-                    idents_to_bakes.push((ident.clone(), payload.tokenize(&self.dependencies)));
-                    ids.iter().map(move |id| (id.clone(), ident.clone()))
+                    (payload.tokenize(&self.dependencies), ids)
                 })
-                .collect();
+                .collect::<Vec<_>>();
 
-            idents_to_bakes.sort_by_cached_key(|(i, _)| i.to_string());
+            // Stability
+            baked_values.sort_by(|a, b| a.1.first().cmp(&b.1.first()));
+
+            let (data, lookup_struct_size) = crate::zerotrie::bake(&marker_bake, baked_values);
+
+            stats.lookup_struct_size = lookup_struct_size;
 
             let data_ident = format!(
                 "DATA_{}",
@@ -555,16 +543,7 @@ impl DataExporter for BakedExporter {
             .parse::<TokenStream>()
             .unwrap();
 
-            let (data, lookup_struct_size) =
-                crate::binary_search::bake(&marker_bake, ids_to_idents, idents_to_bakes);
-
-            stats.lookup_struct_size = lookup_struct_size;
-
-            let search = if !self.use_internal_fallback
-                || deduplicated_values
-                    .iter()
-                    .all(|(_, ids)| ids.iter().all(|id| id.locale.is_und()))
-            {
+            let search = if !needs_fallback {
                 quote! {
                     let metadata = Default::default();
                     let Some(payload) = icu_provider_baked::DataStore::get(&Self::#data_ident, req.id) else {
