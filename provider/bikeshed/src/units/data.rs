@@ -23,14 +23,11 @@ impl DataProvider<UnitsDisplayNameV1Marker> for DatagenProvider {
 
         // Get langid and the unit.
         let langid = req.id.locale.get_langid();
-        let aux_keys = req
+        let (length, unit) = req
             .id
             .marker_attributes
-            .parse::<String>()
-            .map_err(|_| DataError::custom("Failed to get aux keys"))?;
-        let (length, unit) = aux_keys
             .split_once('-')
-            .ok_or_else(|| DataError::custom("Failed to split aux keys"))?;
+            .ok_or_else(|| DataErrorKind::IdentifierNotFound))?;
 
         // Get units
         let units_format_data: &cldr_serde::units::data::Resource =
