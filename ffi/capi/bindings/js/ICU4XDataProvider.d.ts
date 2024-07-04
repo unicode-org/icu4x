@@ -70,20 +70,7 @@ export class ICU4XDataProvider {
 
   /**
 
-   * Enables locale fallbacking for data requests made to this provider.
-
-   * Note that the test provider (from `create_test`) already has fallbacking enabled.
-
-   * See the {@link https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html#method.try_new Rust documentation for `try_new`} for more information.
-
-   * Additional information: {@link https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html 1}
-   * @throws {@link FFIError}<{@link ICU4XDataError}>
-   */
-  enable_locale_fallback(): void | never;
-
-  /**
-
-   * See the {@link https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html#method.new_with_fallbacker Rust documentation for `new_with_fallbacker`} for more information.
+   * See the {@link https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html#method.new Rust documentation for `new`} for more information.
 
    * Additional information: {@link https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html 1}
    * @throws {@link FFIError}<{@link ICU4XDataError}>

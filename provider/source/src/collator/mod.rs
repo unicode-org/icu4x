@@ -291,10 +291,13 @@ collation_provider!(
 fn test_zh_non_baked() {
     use core::cmp::Ordering;
     use icu::collator::{Collator, CollatorOptions};
+    use icu::locale::fallback::LocaleFallbacker;
     use icu_provider_adapters::fallback::LocaleFallbackProvider;
 
-    let provider =
-        LocaleFallbackProvider::try_new_unstable(SourceDataProvider::new_testing()).unwrap();
+    let provider = LocaleFallbackProvider::new(
+        SourceDataProvider::new_testing(),
+        LocaleFallbacker::new_without_data(),
+    );
 
     // Note: ㄅ is Bopomofo.
     {

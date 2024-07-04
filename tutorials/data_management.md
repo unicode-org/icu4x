@@ -149,12 +149,12 @@ This will generate a `my_data_blob.postcard` file containing the serialized data
 
 Unlike `BakedDataProvider`, `BlobDataProvider` (and `FsDataProvider`) does not perform locale fallbacking. For example, if `en-US` is requested but only `en` data is available, then the data request will fail. To enable fallback, we can wrap the provider in a `LocaleFallbackProvider`.
 
-Note that fallback comes at a cost, as fallbacking code and data has to be included and executed on every request. If you don't need fallback (disclaimer: you probably do), you can use the `BlobDataProvider` directly (for `BakedDataProvider`, see [`FallbackMode::Preresolved`](https://docs.rs/icu_datagen/latest/icu_datagen/enum.FallbackMode.html)).
+Note that fallback comes at a cost, as fallbacking code and data has to be included and executed on every request. If you don't need fallback (disclaimer: you probably do), you can use the `BlobDataProvider` directly (for baked data, see [`Options::skip_internal_fallback`](https://docs.rs/icu_provider_baked/latest/icu_provider_baked/export/struct.Options.html)).
 
 We can then use the provider in our code:
 
 ```rust,no_run
-use icu::locale::{locale, Locale};
+use icu::locale::{locale, Locale, fallback::LocaleFallbacker};
 use icu::calendar::DateTime;
 use icu::datetime::{DateTimeFormatter, options::length};
 use icu_provider_adapters::fallback::LocaleFallbackProvider;
@@ -168,8 +168,10 @@ fn main() {
         BlobDataProvider::try_new_from_blob(blob.into_boxed_slice())
             .expect("blob should be valid");
 
-    let buffer_provider = LocaleFallbackProvider::try_new_with_buffer_provider(buffer_provider)
+    let fallbacker = LocaleFallbacker::try_new_with_buffer_provider(&buffer_provider)
         .expect("Provider should contain fallback rules");
+
+    let buffer_provider = LocaleFallbackProvider::new(buffer_provider, fallbacker);
 
     let options = length::Bag::from_date_time_style(length::Date::Long, length::Time::Medium);
 
@@ -203,7 +205,7 @@ But there is more to optimize. You might have noticed this in the output of the 
 We can instead use `TypedDateTimeFormatter<Gregorian>`, which only supports formatting `DateTime<Gregorian>`s:
 
 ```rust,no_run
-use icu::locale::{locale, Locale};
+use icu::locale::{locale, Locale, fallback::LocaleFallbacker};
 use icu::calendar::{DateTime, Gregorian};
 use icu::datetime::{TypedDateTimeFormatter, options::length};
 use icu_provider_adapters::fallback::LocaleFallbackProvider;
@@ -217,8 +219,10 @@ fn main() {
         BlobDataProvider::try_new_from_blob(blob.into_boxed_slice())
             .expect("blob should be valid");
 
-    let buffer_provider = LocaleFallbackProvider::try_new_with_buffer_provider(buffer_provider)
+    let fallbacker = LocaleFallbacker::try_new_with_buffer_provider(&buffer_provider)
         .expect("Provider should contain fallback rules");
+
+    let buffer_provider = LocaleFallbackProvider::new(buffer_provider, fallbacker);
 
     let options = length::Bag::from_date_time_style(length::Date::Long, length::Time::Medium);
 

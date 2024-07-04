@@ -33,8 +33,6 @@ public:
 
   inline diplomat::result<std::monostate, ICU4XDataError> fork_by_locale(ICU4XDataProvider& other);
 
-  inline diplomat::result<std::monostate, ICU4XDataError> enable_locale_fallback();
-
   inline diplomat::result<std::monostate, ICU4XDataError> enable_locale_fallback_with(const ICU4XLocaleFallbacker& fallbacker);
 
   inline const capi::ICU4XDataProvider* AsFFI() const;

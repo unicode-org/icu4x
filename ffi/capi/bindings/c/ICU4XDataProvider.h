@@ -33,9 +33,6 @@ ICU4XDataProvider_fork_by_key_result ICU4XDataProvider_fork_by_key(ICU4XDataProv
 typedef struct ICU4XDataProvider_fork_by_locale_result {union { ICU4XDataError err;}; bool is_ok;} ICU4XDataProvider_fork_by_locale_result;
 ICU4XDataProvider_fork_by_locale_result ICU4XDataProvider_fork_by_locale(ICU4XDataProvider* self, ICU4XDataProvider* other);
 
-typedef struct ICU4XDataProvider_enable_locale_fallback_result {union { ICU4XDataError err;}; bool is_ok;} ICU4XDataProvider_enable_locale_fallback_result;
-ICU4XDataProvider_enable_locale_fallback_result ICU4XDataProvider_enable_locale_fallback(ICU4XDataProvider* self);
-
 typedef struct ICU4XDataProvider_enable_locale_fallback_with_result {union { ICU4XDataError err;}; bool is_ok;} ICU4XDataProvider_enable_locale_fallback_with_result;
 ICU4XDataProvider_enable_locale_fallback_with_result ICU4XDataProvider_enable_locale_fallback_with(ICU4XDataProvider* self, const ICU4XLocaleFallbacker* fallbacker);
 

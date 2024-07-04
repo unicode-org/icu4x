@@ -291,7 +291,7 @@ where
 
 // Set up a HelloWorldProvider with fallback
 let provider = ResolvedLocaleProvider {
-    inner: LocaleFallbackProvider::new_with_fallbacker(
+    inner: LocaleFallbackProvider::new(
         HelloWorldProvider,
         LocaleFallbacker::new().static_to_owned(),
     ),
