@@ -118,16 +118,18 @@ impl crate::IterableDataProviderCached<UnitsDisplayNameV1Marker> for DatagenProv
                 // TODO: remove this filter once we are supporting all the units categories.
                 // NOTE:
                 //  if this filter is removed, we have to add a filter to remove all the prefixes.
-                .filter(|&key| key.starts_with("length") || key.starts_with("duration"))
-                .map(|long_key| {
-                    long_key.split_once('-').map(|(_, rest)| rest).ok_or(
-                        DataError::custom("Long key must have the category")
-                            .with_debug_context(long_key),
-                    )
+                .filter_map(|key| {
+                    if let Some(rest) = key.strip_prefix("length-") {
+                        Some(rest)
+                    } else if let Some(rest) = key.strip_prefix("duration-") {
+                        Some(rest)
+                    } else {
+                        None
+                    }
                 });
 
             for truncated_quantity in quantities {
-                data_locales.insert(make_request_element(langid, truncated_quantity?, length)?);
+                data_locales.insert(make_request_element(langid, truncated_quantity, length)?);
             }
 
             Ok(())
