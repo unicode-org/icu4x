@@ -72,10 +72,11 @@ size_test!(DateTimeFormatter, date_time_formatter_size, 5208);
 /// to have a date in a runtime-selected calendar:
 ///
 /// ```
-/// use icu::calendar::{AnyCalendar, DateTime, Time};
+/// use icu::calendar::{AnyCalendar, DateTime, Time, types::{Era, MonthCode}};
 /// use icu::datetime::{options::length, DateTimeFormatter};
 /// use icu::locale::locale;
 /// use writeable::assert_writeable_eq;
+/// use tinystr::tinystr;
 /// # use std::rc::Rc;
 ///
 /// let locale = locale!("en-u-ca-japanese").into(); // English with the Japanese calendar
@@ -88,7 +89,7 @@ size_test!(DateTimeFormatter, date_time_formatter_size, 5208);
 /// let manual_time = Time::try_new(12, 33, 12, 0).expect("failed to construct Time");
 /// // construct from era code, year, month code, day, time, and a calendar
 /// // This is March 28, 15 Heisei
-/// let manual_datetime = DateTime::try_new_from_codes("heisei".parse().unwrap(), 15, "M03".parse().unwrap(), 28,
+/// let manual_datetime = DateTime::try_new_from_codes(Era(tinystr!(16, "heisei")), 15, MonthCode(tinystr!(4, "M03")), 28,
 ///                                                manual_time, calendar.clone())
 ///                     .expect("Failed to construct DateTime manually");
 ///

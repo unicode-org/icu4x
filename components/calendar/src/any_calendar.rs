@@ -39,8 +39,9 @@ use core::fmt;
 ///
 /// There are many ways of constructing an AnyCalendar'd date:
 /// ```
-/// use icu::calendar::{AnyCalendar, DateTime, japanese::Japanese, Time};
+/// use icu::calendar::{AnyCalendar, DateTime, japanese::Japanese, Time, types::{Era, MonthCode}};
 /// use icu::locale::locale;
+/// use tinystr::tinystr;
 /// # use std::rc::Rc;
 ///
 /// let locale = locale!("en-u-ca-japanese"); // English with the Japanese calendar
@@ -53,7 +54,7 @@ use core::fmt;
 /// let manual_time = Time::try_new(12, 33, 12, 0).expect("failed to construct Time");
 /// // construct from era code, year, month code, day, time, and a calendar
 /// // This is March 28, 15 Heisei
-/// let manual_datetime = DateTime::try_new_from_codes("heisei".parse().unwrap(), 15, "M03".parse().unwrap(), 28,
+/// let manual_datetime = DateTime::try_new_from_codes(Era(tinystr!(16, "heisei")), 15, MonthCode(tinystr!(4, "M03")), 28,
 ///                                                manual_time, calendar.clone())
 ///                     .expect("Failed to construct DateTime manually");
 ///
@@ -65,7 +66,7 @@ use core::fmt;
 ///
 /// // Construct a datetime in the appropriate typed calendar and convert
 /// let japanese_calendar = Japanese::new();
-/// let japanese_datetime = DateTime::try_new_japanese_datetime("heisei".parse().unwrap(), 15, 3, 28,
+/// let japanese_datetime = DateTime::try_new_japanese_datetime(Era(tinystr!(16, "heisei")), 15, 3, 28,
 ///                                                         12, 33, 12, japanese_calendar).unwrap();
 /// // This is a DateTime<AnyCalendar>
 /// let any_japanese_datetime = japanese_datetime.to_any();

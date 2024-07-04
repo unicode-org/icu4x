@@ -71,7 +71,7 @@ where
 ///
 /// ```
 /// use icu::calendar::DateTime;
-/// use icu::timezone::{CustomTimeZone, MetazoneCalculator, TimeZoneIdMapper};
+/// use icu::timezone::{CustomTimeZone, MetazoneCalculator, TimeZoneIdMapper, TimeZoneBcp47Id};
 /// use icu::datetime::{DateTimeError, time_zone::TimeZoneFormatter};
 /// use icu::locale::locale;
 /// use tinystr::tinystr;
@@ -110,7 +110,7 @@ where
 ///
 /// // "ushnl" - has time zone override symbol data for generic_non_location_short
 /// let mut time_zone = "-1000".parse::<CustomTimeZone>().unwrap();
-/// time_zone.time_zone_id = Some(tinystr!(8, "ushnl").into());
+/// time_zone.time_zone_id = Some(TimeZoneBcp47Id(tinystr!(8, "ushnl")));
 /// time_zone.maybe_calculate_metazone(&mzc, &datetime);
 /// assert_writeable_eq!(
 ///     tzf.format(&time_zone),
@@ -120,7 +120,7 @@ where
 /// // "frpar" - does not have symbol data for generic_non_location_short, so falls
 /// //           back to generic_non_location_long
 /// let mut time_zone = "+0100".parse::<CustomTimeZone>().unwrap();
-/// time_zone.time_zone_id = Some(tinystr!(8, "frpar").into());
+/// time_zone.time_zone_id = Some(TimeZoneBcp47Id(tinystr!(8, "frpar")));
 /// time_zone.maybe_calculate_metazone(&mzc, &datetime);
 /// assert_writeable_eq!(
 ///     tzf.format(&time_zone),
