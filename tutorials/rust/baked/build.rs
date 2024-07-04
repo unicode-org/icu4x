@@ -4,7 +4,7 @@
 
 use icu_provider_export::baked_exporter::*;
 use icu_provider_export::prelude::*;
-use icu_datagen_bikeshed::DatagenProvider;
+use icu_provider_source::SourceDataProvider;
 use std::path::PathBuf;
 
 fn main() {
@@ -25,7 +25,7 @@ fn main() {
     // markers will speed up the datagen.
     .with_markers([icu::plurals::provider::CardinalV1Marker::INFO])
     .export(
-        &DatagenProvider::new_latest_tested(),
+        &SourceDataProvider::new_latest_tested(),
         BakedExporter::new(mod_directory, {
             let mut options = Options::default();
             options.overwrite = true;

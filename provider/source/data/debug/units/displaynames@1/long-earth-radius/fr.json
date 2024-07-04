@@ -1,0 +1,6 @@
+{
+  "patterns": {
+    "One": "{0} rayon terrestre",
+    "Other": "{0} rayons terrestres"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "patterns": {
+    "One": "{0} nanómetro",
+    "Other": "{0} nanómetros"
+  }
+}

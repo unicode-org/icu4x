@@ -691,7 +691,7 @@ fn test_vi() {
 }
 
 #[test]
-// See DatagenProvider test_zh_non_baked for gb2312 and big5han tests
+// See SourceDataProvider test_zh_non_baked for gb2312 and big5han tests
 fn test_zh() {
     // Note: ㄅ is Bopomofo.
 

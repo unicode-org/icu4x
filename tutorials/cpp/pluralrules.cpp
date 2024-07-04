@@ -7,7 +7,7 @@
 
 #include <iostream>
 
-const std::string_view path = "../../provider/bikeshed/data/debug/";
+const std::string_view path = "../../provider/source/data/debug/";
 
 int main() {
     ICU4XLogger::init_simple_logger();

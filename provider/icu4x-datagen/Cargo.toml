@@ -20,7 +20,7 @@ version.workspace = true
 icu_provider = { workspace = true }
 icu = { workspace = true, features = ["datagen"] }
 icu_provider_export = { workspace = true, features = ["rayon"] }
-icu_datagen_bikeshed = { workspace = true, optional = true }
+icu_provider_source = { workspace = true, optional = true }
 icu_registry = { workspace = true }
 
 icu_provider_blob = { workspace = true, features = ["export"], optional = true }
@@ -32,20 +32,20 @@ simple_logger = { workspace = true }
 
 [features]
 default = ["use_wasm", "networking", "fs_exporter", "blob_exporter", "baked_exporter", "provider"]
-provider = ["dep:icu_datagen_bikeshed"]
+provider = ["dep:icu_provider_source"]
 baked_exporter = ["icu_provider_export/baked_exporter"]
 blob_exporter = ["icu_provider_export/blob_exporter"]
 blob_input = ["dep:icu_provider_blob", "icu/datagen", "icu_provider/export"]
 fs_exporter = ["icu_provider_export/fs_exporter"]
 # Use wasm for building codepointtries
-use_wasm = ["icu_datagen_bikeshed?/use_wasm"]
+use_wasm = ["icu_provider_source?/use_wasm"]
 # Use local ICU4C libraries for building codepointtries
 # (will do nothing if used with `use_wasm`)
 # If neither `use_wasm` nor `use_icu4c` are enabled,
 # rule based segmenter data will not be generated.
-use_icu4c = ["icu_datagen_bikeshed?/use_icu4c"]
-networking = ["icu_datagen_bikeshed?/networking"]
-experimental = ["icu_datagen_bikeshed?/experimental", "icu/experimental"]
+use_icu4c = ["icu_provider_source?/use_icu4c"]
+networking = ["icu_provider_source?/networking"]
+experimental = ["icu_provider_source?/experimental", "icu/experimental"]
 
 [package.metadata.cargo-all-features]
 # We don't need working CPT builders for check

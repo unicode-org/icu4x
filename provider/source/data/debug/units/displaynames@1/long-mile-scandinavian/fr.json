@@ -1,0 +1,6 @@
+{
+  "patterns": {
+    "One": "{0} mille scandinave",
+    "Other": "{0} milles scandinaves"
+  }
+}

@@ -22,7 +22,7 @@ command = "cargo"
 env = { ICU4X_WRITE_TESTDATA = "1" }
 args = [
     "test",
-    "-p=icu_datagen_bikeshed",
+    "-p=icu_provider_source",
     "--no-default-features",
     "--features=use_wasm,experimental",
     "--",
@@ -64,7 +64,7 @@ script_runner = "@duckscript"
 script = '''
 exit_on_error true
 
-output = exec git status --porcelain=v1 provider/bikeshed/data/debug provider/fs/tests/data provider/blob/tests/data provider/baked/tests/data provider/adapters/tests/data provider/bikeshed/src/tests/data.rs
+output = exec git status --porcelain=v1 provider/source/data/debug provider/fs/tests/data provider/blob/tests/data provider/baked/tests/data provider/adapters/tests/data provider/source/src/tests/data.rs
 output_length = length ${output.stdout}
 if greater_than ${output_length} 0
     msg = array "" ""

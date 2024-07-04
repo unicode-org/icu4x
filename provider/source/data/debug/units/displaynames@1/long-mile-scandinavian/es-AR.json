@@ -1,0 +1,6 @@
+{
+  "patterns": {
+    "One": "{0} milla escandinava",
+    "Other": "{0} millas escandinavas"
+  }
+}
