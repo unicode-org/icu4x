@@ -18,7 +18,7 @@ use std::env;
 
 #[cfg(not(debug_assertions))]
 macro_rules! println {
-    ($($arg:tt)*) => {};
+    ($($arg:tt)*) => {{}}
 }
 
 #[no_mangle]
