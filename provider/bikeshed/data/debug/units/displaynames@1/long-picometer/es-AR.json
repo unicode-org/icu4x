@@ -1,0 +1,6 @@
+{
+  "patterns": {
+    "One": "{0} picómetro",
+    "Other": "{0} picómetros"
+  }
+}

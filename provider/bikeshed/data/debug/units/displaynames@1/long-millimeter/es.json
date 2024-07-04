@@ -1,0 +1,6 @@
+{
+  "patterns": {
+    "One": "{0} milímetro",
+    "Other": "{0} milímetros"
+  }
+}
