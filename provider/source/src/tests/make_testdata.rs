@@ -143,7 +143,7 @@ impl DataExporter for ZeroCopyCheckExporter {
                 };
             }
         }
-        icu_registry::registry!(cb);
+        icu_provider_registry::registry!(cb);
 
         if payload_before != &payload_after {
             self.rountrip_errors.lock().expect("poison").insert((

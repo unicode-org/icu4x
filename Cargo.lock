@@ -899,7 +899,7 @@ dependencies = [
  "icu_provider",
  "icu_provider_adapters",
  "icu_provider_blob",
- "icu_registry",
+ "icu_provider_registry",
  "icu_segmenter",
  "icu_timezone",
  "memchr",
@@ -916,8 +916,8 @@ dependencies = [
  "icu_provider",
  "icu_provider_blob",
  "icu_provider_export",
+ "icu_provider_registry",
  "icu_provider_source",
- "icu_registry",
  "log",
  "simple_logger",
 ]
@@ -1482,7 +1482,7 @@ dependencies = [
  "heck 0.5.0",
  "icu_provider",
  "icu_provider_export",
- "icu_registry",
+ "icu_provider_registry",
  "itertools",
  "log",
  "proc-macro2",
@@ -1561,6 +1561,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_provider_registry"
+version = "1.5.0"
+dependencies = [
+ "icu",
+ "icu_provider",
+]
+
+[[package]]
 name = "icu_provider_source"
 version = "1.5.0"
 dependencies = [
@@ -1576,7 +1584,7 @@ dependencies = [
  "icu_provider",
  "icu_provider_adapters",
  "icu_provider_export",
- "icu_registry",
+ "icu_provider_registry",
  "icu_segmenter",
  "itertools",
  "litemap",
@@ -1598,14 +1606,6 @@ dependencies = [
  "zerotrie",
  "zerovec",
  "zip",
-]
-
-[[package]]
-name = "icu_registry"
-version = "1.5.0"
-dependencies = [
- "icu",
- "icu_provider",
 ]
 
 [[package]]

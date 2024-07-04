@@ -165,7 +165,7 @@ pub const EXTRA_DATAGEN_BIKESHED_DEPS: &[&str] = &[
     "icu_pattern",
     "icu_provider_adapters",
     "icu_provider_baked",
-    "icu_registry",
+    "icu_provider_registry",
     "itertools",
     "itoa",
     "matrixmultiply",
@@ -190,7 +190,7 @@ pub const EXTRA_DATAGEN_DEPS: &[&str] = &[
     "databake",
     "databake-derive",
     "erased-serde",
-    "icu_registry",
+    "icu_provider_registry",
     "postcard",
 ];
 

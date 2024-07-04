@@ -744,4 +744,4 @@ macro_rules! cb {
         }
     }
 }
-icu_registry::registry!(cb);
+icu_provider_registry::registry!(cb);
