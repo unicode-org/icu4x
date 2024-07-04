@@ -107,13 +107,13 @@ impl crate::IterableDataProviderCached<UnitsDisplayNameV1Marker> for DatagenProv
             ))
         }
 
-        fn fill_data_locales(
+        fn fill_data_ids(
             data_locales: &mut HashSet<DataIdentifierCow<'_>>,
             langid: &LanguageIdentifier,
             length: &str,
             length_patterns: &BTreeMap<String, Patterns>,
         ) -> Result<(), DataError> {
-            let quantities: Vec<_> = length_patterns
+            let quantities = length_patterns
                 .keys()
                 .filter(|&key| {
                     !key.starts_with(|c: char| c.is_ascii_digit())
@@ -122,10 +122,9 @@ impl crate::IterableDataProviderCached<UnitsDisplayNameV1Marker> for DatagenProv
                             .any(|&prefix| key.starts_with(prefix))
                 })
                 .filter(|&key| key.starts_with("length") || key.starts_with("duration"))
-                .filter_map(|long_key| long_key.split_once('-').map(|(_, rest)| rest))
-                .collect();
+                .filter_map(|long_key| long_key.split_once('-').map(|(_, rest)| rest));
 
-            for &truncated_quantity in &quantities {
+            for truncated_quantity in quantities {
                 data_locales.insert(make_request_element(langid, truncated_quantity, length)?);
             }
 
@@ -146,10 +145,14 @@ impl crate::IterableDataProviderCached<UnitsDisplayNameV1Marker> for DatagenProv
                     "long" => &units_format_data.long,
                     "short" => &units_format_data.short,
                     "narrow" => &units_format_data.narrow,
-                    _ => unreachable!(),
+                    _ => {
+                        return Err(
+                            DataError::custom("Unreachable length").with_debug_context(length)
+                        )
+                    }
                 };
 
-                fill_data_locales(&mut data_locales, &langid, length, length_patterns)?;
+                fill_data_ids(&mut data_locales, &langid, length, length_patterns)?;
             }
         }
 
