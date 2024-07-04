@@ -1,4 +1,4 @@
-compactdecimal/long@1, <lookup>, 2992B, 124 identifiers
+compactdecimal/long@1, <lookup>, 625B, 124 identifiers
 compactdecimal/long@1, <total>, 29092B, 120 unique payloads
 compactdecimal/long@1, af, 172B, e1003b8073e481ed
 compactdecimal/long@1, am, 186B, 242602afcf658921
@@ -124,7 +124,7 @@ compactdecimal/long@1, zh-HK, 144B, f0a39a85493a674d
 compactdecimal/long@1, zh-Hant, 139B, 4cc30ef25cc242b5
 compactdecimal/long@1, zh-MO, 144B, -> zh-HK
 compactdecimal/long@1, zu, 192B, a69d7a35edc647da
-compactdecimal/short@1, <lookup>, 2920B, 121 identifiers
+compactdecimal/short@1, <lookup>, 604B, 121 identifiers
 compactdecimal/short@1, <total>, 17950B, 103 unique payloads
 compactdecimal/short@1, af, 155B, 925ee4821827d7f7
 compactdecimal/short@1, am, 160B, 729f952d5f7edd18
@@ -247,7 +247,7 @@ compactdecimal/short@1, zh-HK, 144B, -> en
 compactdecimal/short@1, zh-Hant, 139B, 4cc30ef25cc242b5
 compactdecimal/short@1, zh-MO, 144B, -> en
 compactdecimal/short@1, zu, 159B, -> chr
-currency/essentials@1, <lookup>, 8056B, 335 identifiers
+currency/essentials@1, <lookup>, 1673B, 335 identifiers
 currency/essentials@1, <total>, 340710B, 295 unique payloads
 currency/essentials@1, af, 1111B, 390ef7b1b63ea79d
 currency/essentials@1, af-NA, 1111B, d5a3b0556a143b7c
@@ -584,7 +584,7 @@ currency/essentials@1, zh-Hant, 1118B, a6694b0315508050
 currency/essentials@1, zh-MO, 1130B, 9d5927e30baf6416
 currency/essentials@1, zh-SG, 1145B, 8d7fb03c234f410b
 currency/essentials@1, zu, 1120B, d87b52cfd6be0d47
-displaynames/languages@1, <lookup>, 5032B, 209 identifiers
+displaynames/languages@1, <lookup>, 1051B, 209 identifiers
 displaynames/languages@1, <total>, 1557050B, 194 unique payloads
 displaynames/languages@1, af, 5898B, a2f3d9fa576f610
 displaynames/languages@1, am, 9721B, 5def6fc95a22b56c
@@ -795,7 +795,7 @@ displaynames/languages@1, zh-HK, 11486B, 82ac717906273278
 displaynames/languages@1, zh-Hant, 11502B, 3b8580f098ac39a1
 displaynames/languages@1, zh-MO, 11483B, fe1f366f5656c2c5
 displaynames/languages@1, zu, 7457B, 1c72fbd072a97b5d
-displaynames/locales@1, <lookup>, 4720B, 196 identifiers
+displaynames/locales@1, <lookup>, 965B, 196 identifiers
 displaynames/locales@1, <total>, 158006B, 164 unique payloads
 displaynames/locales@1, af, 471B, 71aad17752050374
 displaynames/locales@1, am, 1245B, a335e2c229bd9c98
@@ -993,7 +993,7 @@ displaynames/locales@1, zh-HK, 909B, 2610b6984c4f2eb4
 displaynames/locales@1, zh-Hant, 514B, f43ca44903ebc100
 displaynames/locales@1, zh-MO, 909B, -> zh-HK
 displaynames/locales@1, zu, 931B, f614054e1946c9c8
-displaynames/regions@1, <lookup>, 4960B, 206 identifiers
+displaynames/regions@1, <lookup>, 1038B, 206 identifiers
 displaynames/regions@1, <total>, 1064737B, 191 unique payloads
 displaynames/regions@1, af, 4739B, 5d6aec0147ed2189
 displaynames/regions@1, am, 7210B, c6fb6d06db0c6333
@@ -1201,7 +1201,7 @@ displaynames/regions@1, zh-HK, 4987B, 5af49b490b10a0af
 displaynames/regions@1, zh-Hant, 4950B, 1915062e09601175
 displaynames/regions@1, zh-MO, 4987B, -> zh-HK
 displaynames/regions@1, zu, 5259B, dd98ff102d1a0178
-displaynames/scripts@1, <lookup>, 4144B, 172 identifiers
+displaynames/scripts@1, <lookup>, 861B, 172 identifiers
 displaynames/scripts@1, <total>, 380787B, 168 unique payloads
 displaynames/scripts@1, af, 939B, 63b2cd63ce04abbf
 displaynames/scripts@1, am, 1579B, 13f6bdf4383deaba
@@ -1375,7 +1375,7 @@ displaynames/scripts@1, zh-HK, 3889B, 5d0afc8dcb611900
 displaynames/scripts@1, zh-Hant, 3879B, f9f5a99afd518d70
 displaynames/scripts@1, zh-MO, 3889B, -> zh-HK
 displaynames/scripts@1, zu, 3141B, 45e760e29da21a19
-displaynames/variants@1, <lookup>, 2152B, 89 identifiers
+displaynames/variants@1, <lookup>, 466B, 89 identifiers
 displaynames/variants@1, <total>, 127301B, 87 unique payloads
 displaynames/variants@1, ar, 835B, 4db9c8a550b84283
 displaynames/variants@1, ast, 1860B, c53e7c650f0e9b13
@@ -1466,7 +1466,7 @@ displaynames/variants@1, zh-HK, 2311B, 5a7434f5d9429164
 displaynames/variants@1, zh-Hant, 2320B, eb896ef02b8254b
 displaynames/variants@1, zh-MO, 2311B, -> zh-HK
 displaynames/variants@1, zu, 2916B, ede929b5c378882b
-percent/essentials@1, <lookup>, 1432B, 59 identifiers
+percent/essentials@1, <lookup>, 267B, 59 identifiers
 percent/essentials@1, <total>, 1035B, 9 unique payloads
 percent/essentials@1, ar, 117B, 8ebf290af62091f
 percent/essentials@1, ar-SA, 112B, ecd0b989802662bd
@@ -1527,7 +1527,7 @@ percent/essentials@1, tr, 111B, -> ku
 percent/essentials@1, tt, 115B, -> be
 percent/essentials@1, und, 111B, -> de-CH
 percent/essentials@1, xnr, 114B, -> as
-personnames/personnames@1, <lookup>, 3160B, 131 identifiers
+personnames/personnames@1, <lookup>, 652B, 131 identifiers
 personnames/personnames@1, <total>, 313398B, 127 unique payloads
 personnames/personnames@1, af, 2123B, 5acdc79f93e47b40
 personnames/personnames@1, am, 3374B, 36f43ba79b4d9a9d
@@ -1660,7 +1660,7 @@ personnames/personnames@1, zh-HK, 2291B, 75630cd62ea34e13
 personnames/personnames@1, zh-Hant, 2247B, f12e110cf84ed881
 personnames/personnames@1, zh-MO, 2291B, -> zh-HK
 personnames/personnames@1, zu, 2868B, d43caf5f36c030da
-relativetime/long/day@1, <lookup>, 3616B, 150 identifiers
+relativetime/long/day@1, <lookup>, 739B, 150 identifiers
 relativetime/long/day@1, <total>, 81411B, 148 unique payloads
 relativetime/long/day@1, af, 523B, 7b8c38f43413575d
 relativetime/long/day@1, am, 605B, 82228b3a767b6195
@@ -1812,7 +1812,7 @@ relativetime/long/day@1, zh-HK, 495B, f1a81193d6ae5cac
 relativetime/long/day@1, zh-Hant, 495B, 84a17fe2c935fbd4
 relativetime/long/day@1, zh-MO, 495B, -> zh-HK
 relativetime/long/day@1, zu, 632B, 5bb93015fdeca04a
-relativetime/long/hour@1, <lookup>, 3088B, 128 identifiers
+relativetime/long/hour@1, <lookup>, 637B, 128 identifiers
 relativetime/long/hour@1, <total>, 66396B, 126 unique payloads
 relativetime/long/hour@1, af, 488B, d0b2960914553ec9
 relativetime/long/hour@1, am, 553B, b0ff9a2a593d5e40
@@ -1942,7 +1942,7 @@ relativetime/long/hour@1, zh-HK, 471B, 635ee5ca4a03011f
 relativetime/long/hour@1, zh-Hant, 471B, 2bece86bed045311
 relativetime/long/hour@1, zh-MO, 471B, -> zh-HK
 relativetime/long/hour@1, zu, 529B, 8de549b47606235e
-relativetime/long/minute@1, <lookup>, 3136B, 130 identifiers
+relativetime/long/minute@1, <lookup>, 646B, 130 identifiers
 relativetime/long/minute@1, <total>, 68221B, 128 unique payloads
 relativetime/long/minute@1, af, 503B, b2ab288a951dbee8
 relativetime/long/minute@1, am, 559B, da1f6e0566800116
@@ -2074,7 +2074,7 @@ relativetime/long/minute@1, zh-HK, 468B, 33d88cbb079af6df
 relativetime/long/minute@1, zh-Hant, 471B, 5bb58b403b1ac1c3
 relativetime/long/minute@1, zh-MO, 468B, -> zh-HK
 relativetime/long/minute@1, zu, 535B, b4c665aa6e314a2f
-relativetime/long/month@1, <lookup>, 3352B, 139 identifiers
+relativetime/long/month@1, <lookup>, 688B, 139 identifiers
 relativetime/long/month@1, <total>, 77565B, 138 unique payloads
 relativetime/long/month@1, af, 532B, 20d08f8c63cf997d
 relativetime/long/month@1, am, 591B, 8814097064b5b4f8
@@ -2215,7 +2215,7 @@ relativetime/long/month@1, yue-Hans, 492B, 70feca8d6b5e06d3
 relativetime/long/month@1, zh, 487B, 49c21592f528e82
 relativetime/long/month@1, zh-Hant, 489B, 293f2775c45675bf
 relativetime/long/month@1, zu, 557B, a0d538821c7e7472
-relativetime/long/quarter@1, <lookup>, 3040B, 126 identifiers
+relativetime/long/quarter@1, <lookup>, 628B, 126 identifiers
 relativetime/long/quarter@1, <total>, 74480B, 124 unique payloads
 relativetime/long/quarter@1, af, 552B, 676adf7f899836ee
 relativetime/long/quarter@1, am, 558B, 563b4a094f311cde
@@ -2343,7 +2343,7 @@ relativetime/long/quarter@1, zh-HK, 483B, -> yue
 relativetime/long/quarter@1, zh-Hant, 486B, 3c7902ac02bf56c6
 relativetime/long/quarter@1, zh-MO, 483B, -> yue
 relativetime/long/quarter@1, zu, 542B, fb64f7303752f07f
-relativetime/long/second@1, <lookup>, 3088B, 128 identifiers
+relativetime/long/second@1, <lookup>, 636B, 128 identifiers
 relativetime/long/second@1, <total>, 67593B, 128 unique payloads
 relativetime/long/second@1, af, 498B, ebd649d02e570bdf
 relativetime/long/second@1, am, 558B, a7465aa8b4b7a7db
@@ -2473,7 +2473,7 @@ relativetime/long/second@1, zh, 463B, 51197a5f95c5a0f0
 relativetime/long/second@1, zh-Hant, 459B, 8bab2302903ce23f
 relativetime/long/second@1, zh-SG, 457B, 7f5f5e3f405c3b19
 relativetime/long/second@1, zu, 532B, 9a804b3f7323e4b6
-relativetime/long/week@1, <lookup>, 3400B, 141 identifiers
+relativetime/long/week@1, <lookup>, 700B, 141 identifiers
 relativetime/long/week@1, <total>, 80454B, 140 unique payloads
 relativetime/long/week@1, af, 524B, 1c8151730535b758
 relativetime/long/week@1, am, 633B, f555a2a7e552f69e
@@ -2616,7 +2616,7 @@ relativetime/long/week@1, zh-HK, 492B, 807f8753ea396873
 relativetime/long/week@1, zh-Hant, 477B, 45d52b505bec7249
 relativetime/long/week@1, zh-MO, 492B, -> zh-HK
 relativetime/long/week@1, zu, 555B, ea48c4b1a2b12ff
-relativetime/long/year@1, <lookup>, 3520B, 146 identifiers
+relativetime/long/year@1, <lookup>, 720B, 146 identifiers
 relativetime/long/year@1, <total>, 79732B, 144 unique payloads
 relativetime/long/year@1, af, 524B, a466780ef2bdeecb
 relativetime/long/year@1, am, 615B, abec645d0699f15b
@@ -2764,7 +2764,7 @@ relativetime/long/year@1, zh-HK, 477B, 6f880507d549b464
 relativetime/long/year@1, zh-Hant, 477B, 8c44eb003f3d2c56
 relativetime/long/year@1, zh-MO, 477B, -> zh-HK
 relativetime/long/year@1, zu, 554B, 7578be8256869518
-relativetime/narrow/day@1, <lookup>, 3736B, 155 identifiers
+relativetime/narrow/day@1, <lookup>, 768B, 155 identifiers
 relativetime/narrow/day@1, <total>, 83339B, 154 unique payloads
 relativetime/narrow/day@1, af, 523B, 7b8c38f43413575d
 relativetime/narrow/day@1, am, 609B, 1d4db867fc436299
@@ -2921,7 +2921,7 @@ relativetime/narrow/day@1, zh-HK, 493B, 3ed84de29c90eb29
 relativetime/narrow/day@1, zh-Hant, 495B, 84a17fe2c935fbd4
 relativetime/narrow/day@1, zh-MO, 493B, -> zh-HK
 relativetime/narrow/day@1, zu, 611B, 6a82aa9a9b21c41c
-relativetime/narrow/hour@1, <lookup>, 3232B, 134 identifiers
+relativetime/narrow/hour@1, <lookup>, 674B, 134 identifiers
 relativetime/narrow/hour@1, <total>, 66696B, 131 unique payloads
 relativetime/narrow/hour@1, af, 484B, d069e9f3b0334ca1
 relativetime/narrow/hour@1, am, 553B, b0ff9a2a593d5e40
@@ -3057,7 +3057,7 @@ relativetime/narrow/hour@1, zh-HK, 469B, 7cae145dd4e11623
 relativetime/narrow/hour@1, zh-Hant, 471B, 2bece86bed045311
 relativetime/narrow/hour@1, zh-MO, 469B, -> zh-HK
 relativetime/narrow/hour@1, zu, 522B, ffad44928df73091
-relativetime/narrow/minute@1, <lookup>, 3232B, 134 identifiers
+relativetime/narrow/minute@1, <lookup>, 673B, 134 identifiers
 relativetime/narrow/minute@1, <total>, 67902B, 132 unique payloads
 relativetime/narrow/minute@1, af, 495B, 63558766b0e55118
 relativetime/narrow/minute@1, am, 559B, da1f6e0566800116
@@ -3193,7 +3193,7 @@ relativetime/narrow/minute@1, zh-HK, 460B, 6b33f81c046ea964
 relativetime/narrow/minute@1, zh-Hant, 471B, 5bb58b403b1ac1c3
 relativetime/narrow/minute@1, zh-MO, 460B, -> zh-HK
 relativetime/narrow/minute@1, zu, 535B, b4c665aa6e314a2f
-relativetime/narrow/month@1, <lookup>, 3448B, 143 identifiers
+relativetime/narrow/month@1, <lookup>, 712B, 143 identifiers
 relativetime/narrow/month@1, <total>, 77289B, 142 unique payloads
 relativetime/narrow/month@1, af, 517B, 446121564b2fbab1
 relativetime/narrow/month@1, am, 597B, 676d91a7c62960cf
@@ -3338,7 +3338,7 @@ relativetime/narrow/month@1, zh-HK, 487B, 38c0dccfc75d08ee
 relativetime/narrow/month@1, zh-Hant, 489B, 293f2775c45675bf
 relativetime/narrow/month@1, zh-MO, 487B, -> zh-HK
 relativetime/narrow/month@1, zu, 561B, 96ae3e6cbe571f74
-relativetime/narrow/quarter@1, <lookup>, 3136B, 130 identifiers
+relativetime/narrow/quarter@1, <lookup>, 650B, 130 identifiers
 relativetime/narrow/quarter@1, <total>, 72819B, 128 unique payloads
 relativetime/narrow/quarter@1, af, 532B, 4aefaf59ca8d820b
 relativetime/narrow/quarter@1, am, 558B, 563b4a094f311cde
@@ -3470,7 +3470,7 @@ relativetime/narrow/quarter@1, zh-HK, 467B, 6230f178f0591e5c
 relativetime/narrow/quarter@1, zh-Hant, 486B, 3c7902ac02bf56c6
 relativetime/narrow/quarter@1, zh-MO, 467B, -> zh-HK
 relativetime/narrow/quarter@1, zu, 533B, 47ea958a5230f121
-relativetime/narrow/second@1, <lookup>, 3280B, 136 identifiers
+relativetime/narrow/second@1, <lookup>, 679B, 136 identifiers
 relativetime/narrow/second@1, <total>, 66886B, 133 unique payloads
 relativetime/narrow/second@1, af, 476B, fb8263b4aee69dad
 relativetime/narrow/second@1, am, 558B, a7465aa8b4b7a7db
@@ -3608,7 +3608,7 @@ relativetime/narrow/second@1, zh-HK, 457B, e1e60614aa584ed7
 relativetime/narrow/second@1, zh-Hant, 459B, 8bab2302903ce23f
 relativetime/narrow/second@1, zh-MO, 457B, -> zh-HK
 relativetime/narrow/second@1, zu, 532B, 9a804b3f7323e4b6
-relativetime/narrow/week@1, <lookup>, 3520B, 146 identifiers
+relativetime/narrow/week@1, <lookup>, 729B, 146 identifiers
 relativetime/narrow/week@1, <total>, 79645B, 144 unique payloads
 relativetime/narrow/week@1, af, 510B, 9638ebd9b996e074
 relativetime/narrow/week@1, am, 639B, ae0e803eff4c6020
@@ -3756,7 +3756,7 @@ relativetime/narrow/week@1, zh-HK, 490B, 80d0b9383eb8fe10
 relativetime/narrow/week@1, zh-Hant, 477B, 45d52b505bec7249
 relativetime/narrow/week@1, zh-MO, 490B, -> zh-HK
 relativetime/narrow/week@1, zu, 563B, 491e4cd7aef7d96b
-relativetime/narrow/year@1, <lookup>, 3592B, 149 identifiers
+relativetime/narrow/year@1, <lookup>, 738B, 149 identifiers
 relativetime/narrow/year@1, <total>, 78567B, 146 unique payloads
 relativetime/narrow/year@1, af, 510B, 7883d93223801669
 relativetime/narrow/year@1, am, 618B, bb03f9a3b9d4102f
@@ -3907,7 +3907,7 @@ relativetime/narrow/year@1, zh-HK, 475B, c7504cb28222d7db
 relativetime/narrow/year@1, zh-Hant, 477B, 8c44eb003f3d2c56
 relativetime/narrow/year@1, zh-MO, 475B, -> zh-HK
 relativetime/narrow/year@1, zu, 552B, d4d5bf008d93d958
-relativetime/short/day@1, <lookup>, 3712B, 154 identifiers
+relativetime/short/day@1, <lookup>, 762B, 154 identifiers
 relativetime/short/day@1, <total>, 83539B, 153 unique payloads
 relativetime/short/day@1, af, 523B, 7b8c38f43413575d
 relativetime/short/day@1, am, 609B, 1d4db867fc436299
@@ -4063,7 +4063,7 @@ relativetime/short/day@1, zh-HK, 495B, f1a81193d6ae5cac
 relativetime/short/day@1, zh-Hant, 495B, 84a17fe2c935fbd4
 relativetime/short/day@1, zh-MO, 495B, -> zh-HK
 relativetime/short/day@1, zu, 611B, 6a82aa9a9b21c41c
-relativetime/short/hour@1, <lookup>, 3232B, 134 identifiers
+relativetime/short/hour@1, <lookup>, 674B, 134 identifiers
 relativetime/short/hour@1, <total>, 67883B, 132 unique payloads
 relativetime/short/hour@1, af, 484B, d069e9f3b0334ca1
 relativetime/short/hour@1, am, 553B, b0ff9a2a593d5e40
@@ -4199,7 +4199,7 @@ relativetime/short/hour@1, zh-HK, 471B, 635ee5ca4a03011f
 relativetime/short/hour@1, zh-Hant, 471B, 2bece86bed045311
 relativetime/short/hour@1, zh-MO, 471B, -> zh-HK
 relativetime/short/hour@1, zu, 529B, 8de549b47606235e
-relativetime/short/minute@1, <lookup>, 3232B, 134 identifiers
+relativetime/short/minute@1, <lookup>, 673B, 134 identifiers
 relativetime/short/minute@1, <total>, 68663B, 132 unique payloads
 relativetime/short/minute@1, af, 495B, 63558766b0e55118
 relativetime/short/minute@1, am, 559B, da1f6e0566800116
@@ -4335,7 +4335,7 @@ relativetime/short/minute@1, zh-HK, 468B, 33d88cbb079af6df
 relativetime/short/minute@1, zh-Hant, 471B, 5bb58b403b1ac1c3
 relativetime/short/minute@1, zh-MO, 468B, -> zh-HK
 relativetime/short/minute@1, zu, 535B, b4c665aa6e314a2f
-relativetime/short/month@1, <lookup>, 3400B, 141 identifiers
+relativetime/short/month@1, <lookup>, 701B, 141 identifiers
 relativetime/short/month@1, <total>, 77577B, 141 unique payloads
 relativetime/short/month@1, af, 517B, 446121564b2fbab1
 relativetime/short/month@1, am, 597B, 676d91a7c62960cf
@@ -4478,7 +4478,7 @@ relativetime/short/month@1, yue-Hans, 492B, 70feca8d6b5e06d3
 relativetime/short/month@1, zh, 487B, 49c21592f528e82
 relativetime/short/month@1, zh-Hant, 489B, 293f2775c45675bf
 relativetime/short/month@1, zu, 573B, 423bc25d08652f5
-relativetime/short/quarter@1, <lookup>, 3136B, 130 identifiers
+relativetime/short/quarter@1, <lookup>, 650B, 130 identifiers
 relativetime/short/quarter@1, <total>, 73239B, 127 unique payloads
 relativetime/short/quarter@1, af, 532B, 4aefaf59ca8d820b
 relativetime/short/quarter@1, am, 558B, 563b4a094f311cde
@@ -4610,7 +4610,7 @@ relativetime/short/quarter@1, zh-HK, 477B, -> yue
 relativetime/short/quarter@1, zh-Hant, 486B, 3c7902ac02bf56c6
 relativetime/short/quarter@1, zh-MO, 477B, -> yue
 relativetime/short/quarter@1, zu, 544B, 3c22941f9fe4dc65
-relativetime/short/second@1, <lookup>, 3208B, 133 identifiers
+relativetime/short/second@1, <lookup>, 662B, 133 identifiers
 relativetime/short/second@1, <total>, 66447B, 130 unique payloads
 relativetime/short/second@1, af, 476B, fb8263b4aee69dad
 relativetime/short/second@1, am, 558B, a7465aa8b4b7a7db
@@ -4745,7 +4745,7 @@ relativetime/short/second@1, yue-Hans, 459B, 1f3e2a82230d626c
 relativetime/short/second@1, zh, 457B, 7f5f5e3f405c3b19
 relativetime/short/second@1, zh-Hant, 459B, 8bab2302903ce23f
 relativetime/short/second@1, zu, 532B, 9a804b3f7323e4b6
-relativetime/short/week@1, <lookup>, 3520B, 146 identifiers
+relativetime/short/week@1, <lookup>, 729B, 146 identifiers
 relativetime/short/week@1, <total>, 80332B, 144 unique payloads
 relativetime/short/week@1, af, 510B, 9638ebd9b996e074
 relativetime/short/week@1, am, 639B, ae0e803eff4c6020
@@ -4893,7 +4893,7 @@ relativetime/short/week@1, zh-HK, 492B, 807f8753ea396873
 relativetime/short/week@1, zh-Hant, 477B, 45d52b505bec7249
 relativetime/short/week@1, zh-MO, 492B, -> zh-HK
 relativetime/short/week@1, zu, 565B, 8b2307c1f6e30b31
-relativetime/short/year@1, <lookup>, 3592B, 149 identifiers
+relativetime/short/year@1, <lookup>, 738B, 149 identifiers
 relativetime/short/year@1, <total>, 79853B, 147 unique payloads
 relativetime/short/year@1, af, 510B, 7883d93223801669
 relativetime/short/year@1, am, 618B, bb03f9a3b9d4102f
@@ -5044,7 +5044,7 @@ relativetime/short/year@1, zh-HK, 477B, 6f880507d549b464
 relativetime/short/year@1, zh-Hant, 477B, 8c44eb003f3d2c56
 relativetime/short/year@1, zh-MO, 477B, -> zh-HK
 relativetime/short/year@1, zu, 552B, d4d5bf008d93d958
-units/displaynames@1, <lookup>, 165416B, 4135 identifiers
+units/displaynames@1, <lookup>, 45620B, 4135 identifiers
 units/displaynames@1, <total>, 922822B, 3818 unique payloads
 units/displaynames@1, af/astronomical-unit, 244B, b5d87f19211787a3
 units/displaynames@1, af/centimeter, 208B, b56e972a5d2248cc
@@ -9181,7 +9181,7 @@ units/displaynames@1, zu/second, 231B, ae5a678e8f54bb25
 units/displaynames@1, zu/week, 223B, 6996594365a18c28
 units/displaynames@1, zu/yard, 190B, 1c858f7b74440af3
 units/displaynames@1, zu/year, 206B, a09e2ce597f3464f
-units/essentials@1, <lookup>, 9816B, 245 identifiers
+units/essentials@1, <lookup>, 2362B, 245 identifiers
 units/essentials@1, <total>, 108561B, 201 unique payloads
 units/essentials@1, af/long, 499B, 76a3b1fe49f61869
 units/essentials@1, am/long, 574B, 37a2c596ef4cc11b

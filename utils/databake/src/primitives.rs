@@ -53,15 +53,6 @@ where
     T: Bake,
 {
     fn bake(&self, ctx: &CrateEnv) -> TokenStream {
-        if core::mem::size_of::<Self>() == core::mem::size_of::<&[u8]>()
-            && core::any::type_name::<Self>() == core::any::type_name::<&[u8]>()
-        {
-            // Safety: `&T` and `&[u8]` have the same size. Note that `self: &&T`, so this copies
-            // `&T`, not `T` itself.
-            // There are no types smaller than `u8`, so there won't be an alignment or allocation-length
-            // issue even if T is not actually `[u8]`.
-            return byte_string(unsafe { core::mem::transmute_copy(self) });
-        }
         let t = <T as Bake>::bake(*self, ctx);
         quote! {
             &#t
@@ -94,9 +85,10 @@ where
         {
             // Safety: self.as_ptr()'s allocation is at least self.len() bytes long,
             // initialised, and well-alligned.
-            return byte_string(unsafe {
+            let byte_string = proc_macro2::Literal::byte_string(unsafe {
                 core::slice::from_raw_parts(self.as_ptr() as *const u8, self.len())
             });
+            return quote!(#byte_string);
         }
         let data = self.iter().map(|d| d.bake(ctx));
         quote! {
@@ -112,24 +104,6 @@ where
     fn borrows_size(&self) -> usize {
         std::mem::size_of_val(*self) + self.iter().map(BakeSize::borrows_size).sum::<usize>()
     }
-}
-
-fn byte_string(bytes: &[u8]) -> TokenStream {
-    let byte_string = proc_macro2::Literal::byte_string(bytes);
-    // Before clippy 1.70 there's a bug (https://github.com/rust-lang/rust-clippy/pull/10603) where a byte
-    // string like b"\0\\01" would incorrectly trigger this lint. This was due to it swallowing the slash's
-    // escape slash when trying to match the first "\0" with another digit, and then seeing b"\01".
-    // This workaround is conservative as it doesn't actually check for swallowing, only whether an escaped
-    // slash appears before 0[0-7].
-    let suppress_octal_false_positive = if bytes
-        .windows(3)
-        .any(|b| matches!(b, &[b'\\', b'0', b'0'..=b'7']))
-    {
-        quote!(#[allow(clippy::octal_escapes)])
-    } else {
-        quote!()
-    };
-    quote!(#suppress_octal_false_positive #byte_string)
 }
 
 #[test]
@@ -168,9 +142,10 @@ where
         {
             // Safety: self.as_ptr()'s allocation is at least self.len() bytes long,
             // initialised, and well-alligned.
-            let bytestr =
-                byte_string(unsafe { core::slice::from_raw_parts(self.as_ptr() as *const u8, N) });
-            return quote!(*#bytestr);
+            let byte_string = proc_macro2::Literal::byte_string(unsafe {
+                core::slice::from_raw_parts(self.as_ptr() as *const u8, N)
+            });
+            return quote!(*#byte_string);
         }
         let data = self.iter().map(|d| d.bake(ctx));
         quote! {

@@ -14,10 +14,11 @@ pub mod export;
 pub use icu_provider::prelude::*;
 
 pub mod binary_search;
+pub mod zerotrie;
 
 pub trait DataStore<M: DataMarker> {
     fn get(&self, req: DataIdentifierBorrowed) -> Option<&'static M::Yokeable>;
 
     type IterReturn: Iterator<Item = DataIdentifierCow<'static>>;
-    fn iter(&self) -> Self::IterReturn;
+    fn iter(&'static self) -> Self::IterReturn;
 }
