@@ -2221,7 +2221,7 @@ mod test {
     fn test_regression_4914() {
         // https://github.com/unicode-org/icu4x/issues/4914
         let cal = IslamicUmmAlQura::new_always_calculating();
-        let era = Era(tinystr!(16,"ah"));
+        let era = Era(tinystr!(16, "ah"));
         let year = -6823;
         let month_code = MonthCode(tinystr!(4, "M01"));
         let dt = cal.date_from_codes(era, year, month_code, 1).unwrap();

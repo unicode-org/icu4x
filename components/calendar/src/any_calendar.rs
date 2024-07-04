@@ -1685,7 +1685,7 @@ mod tests {
             100,
             "M13",
             1,
-            DateError::UnknownMonthCode(MonthCode(tinystr!(4,"M13"))),
+            DateError::UnknownMonthCode(MonthCode(tinystr!(4, "M13"))),
         );
 
         single_test_roundtrip(coptic, "ad", 100, "M03", 1);

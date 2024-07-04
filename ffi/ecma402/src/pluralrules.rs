@@ -109,11 +109,8 @@ pub(crate) mod internal {
     /// Converts the number to format into the operands representation.
     pub fn to_icu4x_operands(n: f64, opts: Options) -> PluralOperands {
         dbg!("n={}", n);
-        let nstr = fixed_format(n, &opts);
-        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        let ret = nstr.parse().unwrap();
-        dbg!("ret={:?}\n---\n", &ret);
-        ret
+        let _nstr = fixed_format(n, &opts);
+        todo!()
     }
 
     /// Expresses the [`PluralCategory`] as a `str`.
