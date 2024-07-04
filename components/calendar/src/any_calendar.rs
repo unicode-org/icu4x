@@ -1569,6 +1569,9 @@ impl From<Roc> for AnyCalendar {
 
 #[cfg(test)]
 mod tests {
+    use tinystr::tinystr;
+    use types::MonthCode;
+
     use super::*;
     use crate::Ref;
     use core::convert::TryInto;
@@ -1682,7 +1685,7 @@ mod tests {
             100,
             "M13",
             1,
-            DateError::UnknownMonthCode("M13".parse().unwrap()),
+            DateError::UnknownMonthCode(MonthCode(tinystr!(4,"M13"))),
         );
 
         single_test_roundtrip(coptic, "ad", 100, "M03", 1);
@@ -1696,7 +1699,7 @@ mod tests {
             100,
             "M14",
             1,
-            DateError::UnknownMonthCode("M14".parse().unwrap()),
+            DateError::UnknownMonthCode(MonthCode(tinystr!(4, "M14"))),
         );
         single_test_error(
             coptic,
@@ -1762,7 +1765,7 @@ mod tests {
             100,
             "M14",
             1,
-            DateError::UnknownMonthCode("M14".parse().unwrap()),
+            DateError::UnknownMonthCode(MonthCode(tinystr!(4, "M14"))),
         );
 
         single_test_roundtrip(ethioaa, "mundi", 7000, "M13", 1);
@@ -1775,7 +1778,7 @@ mod tests {
             100,
             "M14",
             1,
-            DateError::UnknownMonthCode("M14".parse().unwrap()),
+            DateError::UnknownMonthCode(MonthCode(tinystr!(4, "M14"))),
         );
 
         single_test_roundtrip(gregorian, "ce", 100, "M03", 1);
@@ -1814,7 +1817,7 @@ mod tests {
             100,
             "M13",
             1,
-            DateError::UnknownMonthCode("M13".parse().unwrap()),
+            DateError::UnknownMonthCode(MonthCode(tinystr!(4, "M13"))),
         );
 
         single_test_roundtrip(indian, "saka", 100, "M03", 1);
@@ -1827,7 +1830,7 @@ mod tests {
             100,
             "M13",
             1,
-            DateError::UnknownMonthCode("M13".parse().unwrap()),
+            DateError::UnknownMonthCode(MonthCode(tinystr!(4, "M13"))),
         );
 
         single_test_roundtrip(chinese, "chinese", 400, "M02", 5);
@@ -1839,7 +1842,7 @@ mod tests {
             4658,
             "M13",
             1,
-            DateError::UnknownMonthCode("M13".parse().unwrap()),
+            DateError::UnknownMonthCode(MonthCode(tinystr!(4, "M13"))),
         );
 
         single_test_roundtrip(dangi, "dangi", 400, "M02", 5);
@@ -1851,7 +1854,7 @@ mod tests {
             10393,
             "M00L",
             1,
-            DateError::UnknownMonthCode("M00L".parse().unwrap()),
+            DateError::UnknownMonthCode(MonthCode(tinystr!(4, "M00L"))),
         );
 
         single_test_roundtrip(japanese, "reiwa", 3, "M03", 1);
@@ -1892,7 +1895,7 @@ mod tests {
             2,
             "M13",
             1,
-            DateError::UnknownMonthCode("M13".parse().unwrap()),
+            DateError::UnknownMonthCode(MonthCode(tinystr!(4, "M13"))),
         );
 
         single_test_roundtrip(japanext, "reiwa", 3, "M03", 1);
@@ -1934,7 +1937,7 @@ mod tests {
             2,
             "M13",
             1,
-            DateError::UnknownMonthCode("M13".parse().unwrap()),
+            DateError::UnknownMonthCode(MonthCode(tinystr!(4, "M13"))),
         );
 
         single_test_roundtrip(persian, "ah", 477, "M03", 1);
@@ -1946,7 +1949,7 @@ mod tests {
             100,
             "M9",
             1,
-            DateError::UnknownMonthCode("M9".parse().unwrap()),
+            DateError::UnknownMonthCode(MonthCode(tinystr!(4, "M9"))),
         );
 
         single_test_roundtrip(hebrew, "hebrew", 5773, "M03", 1);
@@ -1958,7 +1961,7 @@ mod tests {
             100,
             "M9",
             1,
-            DateError::UnknownMonthCode("M9".parse().unwrap()),
+            DateError::UnknownMonthCode(MonthCode(tinystr!(4, "M9"))),
         );
 
         single_test_roundtrip(roc, "roc", 10, "M05", 3);
@@ -1974,7 +1977,7 @@ mod tests {
             100,
             "M9",
             1,
-            DateError::UnknownMonthCode("M9".parse().unwrap()),
+            DateError::UnknownMonthCode(MonthCode(tinystr!(4, "M9"))),
         );
 
         single_test_roundtrip(islamic_civil, "islamic", 477, "M03", 1);
@@ -1986,7 +1989,7 @@ mod tests {
             100,
             "M9",
             1,
-            DateError::UnknownMonthCode("M9".parse().unwrap()),
+            DateError::UnknownMonthCode(MonthCode(tinystr!(4, "M9"))),
         );
 
         single_test_roundtrip(islamic_umm_al_qura, "islamic", 477, "M03", 1);
@@ -1998,7 +2001,7 @@ mod tests {
             100,
             "M9",
             1,
-            DateError::UnknownMonthCode("M9".parse().unwrap()),
+            DateError::UnknownMonthCode(MonthCode(tinystr!(4, "M9"))),
         );
 
         single_test_roundtrip(islamic_tabular, "islamic", 477, "M03", 1);
@@ -2010,7 +2013,7 @@ mod tests {
             100,
             "M9",
             1,
-            DateError::UnknownMonthCode("M9".parse().unwrap()),
+            DateError::UnknownMonthCode(MonthCode(tinystr!(4, "M9"))),
         );
     }
 }

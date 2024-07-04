@@ -8,6 +8,7 @@ pub mod ffi {
     use alloc::sync::Arc;
     use core::convert::TryInto;
     use core::fmt::Write;
+    use icu_calendar::types::{Era, MonthCode};
 
     use icu_calendar::{AnyCalendar, DateTime, Iso, Time};
     use tinystr::TinyAsciiStr;
@@ -268,12 +269,12 @@ pub mod ffi {
             nanosecond: u32,
             calendar: &ICU4XCalendar,
         ) -> Result<Box<ICU4XDateTime>, ICU4XCalendarError> {
-            let era = TinyAsciiStr::try_from_utf8(era_code)
-                .map_err(|_| ICU4XCalendarError::UnknownEra)?
-                .into();
-            let month = TinyAsciiStr::try_from_utf8(month_code)
-                .map_err(|_| ICU4XCalendarError::UnknownMonthCode)?
-                .into();
+            let era = Era(TinyAsciiStr::try_from_utf8(era_code)
+                .map_err(|_| ICU4XCalendarError::UnknownEra)?);
+            let month = MonthCode(
+                TinyAsciiStr::try_from_utf8(month_code)
+                    .map_err(|_| ICU4XCalendarError::UnknownMonthCode)?,
+            );
             let cal = calendar.0.clone();
             let hour = hour.try_into()?;
             let minute = minute.try_into()?;

@@ -7,7 +7,7 @@ pub mod ffi {
     use alloc::boxed::Box;
     use alloc::sync::Arc;
     use core::fmt::Write;
-    use icu_calendar::types::IsoWeekday;
+    use icu_calendar::types::{Era, IsoWeekday, MonthCode};
     use icu_calendar::AnyCalendar;
     use icu_calendar::{Date, Iso};
     use tinystr::TinyAsciiStr;
@@ -192,12 +192,12 @@ pub mod ffi {
             day: u8,
             calendar: &ICU4XCalendar,
         ) -> Result<Box<ICU4XDate>, ICU4XCalendarError> {
-            let era = TinyAsciiStr::try_from_utf8(era_code)
-                .map_err(|_| ICU4XCalendarError::UnknownEra)?
-                .into();
-            let month = TinyAsciiStr::try_from_utf8(month_code)
-                .map_err(|_| ICU4XCalendarError::UnknownMonthCode)?
-                .into();
+            let era = Era(TinyAsciiStr::try_from_utf8(era_code)
+                .map_err(|_| ICU4XCalendarError::UnknownEra)?);
+            let month = MonthCode(
+                TinyAsciiStr::try_from_utf8(month_code)
+                    .map_err(|_| ICU4XCalendarError::UnknownMonthCode)?,
+            );
             let cal = calendar.0.clone();
             Ok(Box::new(ICU4XDate(Date::try_new_from_codes(
                 era, year, month, day, cal,
