@@ -121,6 +121,7 @@ impl crate::IterableDataProviderCached<UnitsDisplayNameV1Marker> for DatagenProv
                             .iter()
                             .any(|&prefix| key.starts_with(prefix))
                 })
+                // TODO: remove this filter once we are supporting all the units categories.
                 .filter(|&key| key.starts_with("length") || key.starts_with("duration"))
                 .filter_map(|long_key| long_key.split_once('-').map(|(_, rest)| rest));
 
