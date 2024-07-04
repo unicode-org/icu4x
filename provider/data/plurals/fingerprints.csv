@@ -1,4 +1,4 @@
-plurals/cardinal@1, <lookup>, 2488B, 103 identifiers
+plurals/cardinal@1, <lookup>, 435B, 103 identifiers
 plurals/cardinal@1, <total>, 7214B, 34 unique payloads
 plurals/cardinal@1, af, 139B, 3aff8a8624dd0ca1
 plurals/cardinal@1, am, 154B, a09347c88cd1da4d
@@ -103,7 +103,7 @@ plurals/cardinal@1, uz, 139B, -> af
 plurals/cardinal@1, vec, 233B, -> ca
 plurals/cardinal@1, xh, 139B, -> af
 plurals/cardinal@1, zu, 154B, -> am
-plurals/ordinal@1, <lookup>, 856B, 35 identifiers
+plurals/ordinal@1, <lookup>, 180B, 35 identifiers
 plurals/ordinal@1, <total>, 4625B, 24 unique payloads
 plurals/ordinal@1, as, 244B, eacfcf038cfdfa4a
 plurals/ordinal@1, az, 381B, 9034198852cf1ba3
@@ -140,7 +140,7 @@ plurals/ordinal@1, uk, 154B, 3a7c2ab56ce50c26
 plurals/ordinal@1, und, 120B, fd5d54cb7ad1d0d8
 plurals/ordinal@1, vec, 163B, -> it
 plurals/ordinal@1, vi, 139B, -> fil
-plurals/ranges@1, <lookup>, 616B, 25 identifiers
+plurals/ranges@1, <lookup>, 130B, 25 identifiers
 plurals/ranges@1, <total>, 524B, 10 unique payloads
 plurals/ranges@1, af, 50B, b13da4e5718e6e33
 plurals/ranges@1, ar, 58B, acdc60e8ef6a9005

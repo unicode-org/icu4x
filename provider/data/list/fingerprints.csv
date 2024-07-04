@@ -1,4 +1,4 @@
-list/and@2, <lookup>, 3256B, 135 identifiers
+list/and@2, <lookup>, 663B, 135 identifiers
 list/and@2, <total>, 176692B, 118 unique payloads
 list/and@2, af, 1378B, 177f30fc0537cd07
 list/and@2, am, 1423B, 14751ee07af8ce24
@@ -135,7 +135,7 @@ list/and@2, zh-HK, 1380B, 13320f3318004eea
 list/and@2, zh-Hant, 1380B, 24c8fd6c3ed6f2cc
 list/and@2, zh-MO, 1380B, -> zh-HK
 list/and@2, zu, 1378B, f280d533aa349025
-list/or@2, <lookup>, 2872B, 119 identifiers
+list/or@2, <lookup>, 587B, 119 identifiers
 list/or@2, <total>, 141356B, 95 unique payloads
 list/or@2, af, 1380B, 8912e928094584a4
 list/or@2, am, 1443B, 76f0c5245302d4b1
@@ -256,7 +256,7 @@ list/or@2, yue, 1392B, 34a6b378f2e22e73
 list/or@2, yue-Hans, 1392B, -> yue
 list/or@2, zh, 1380B, 2e2b9ef825abc769
 list/or@2, zh-Hant, 1380B, -> zh
-list/unit@2, <lookup>, 3040B, 126 identifiers
+list/unit@2, <lookup>, 594B, 126 identifiers
 list/unit@2, <total>, 122527B, 80 unique payloads
 list/unit@2, af, 1380B, d28356d40bb45872
 list/unit@2, am, 1386B, 8dcf442ea8ed6356

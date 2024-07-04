@@ -617,9 +617,10 @@ pub(crate) fn take_value(trie: &mut &[u8]) -> Option<usize> {
 #[cfg(feature = "alloc")]
 use alloc::vec::Vec;
 
-/// Internal iterator type for walking the strings contained in a ZeroTrie.
+/// Iterator type for walking the byte sequences contained in a ZeroTrie.
 #[cfg(feature = "alloc")]
-pub(crate) struct ZeroTrieIterator<'a> {
+#[derive(Debug)]
+pub struct ZeroTrieIterator<'a> {
     /// Whether the PHF is enabled on this trie.
     use_phf: bool,
     /// Intermediate state during iteration:
@@ -631,7 +632,7 @@ pub(crate) struct ZeroTrieIterator<'a> {
 
 #[cfg(feature = "alloc")]
 impl<'a> ZeroTrieIterator<'a> {
-    pub fn new<S: AsRef<[u8]> + ?Sized>(store: &'a S, use_phf: bool) -> Self {
+    pub(crate) fn new<S: AsRef<[u8]> + ?Sized>(store: &'a S, use_phf: bool) -> Self {
         ZeroTrieIterator {
             use_phf,
             state: alloc::vec![(store.as_ref(), alloc::vec![], 0)],
@@ -707,18 +708,17 @@ impl<'a> Iterator for ZeroTrieIterator<'a> {
 }
 
 #[cfg(feature = "alloc")]
-pub(crate) fn get_iter_phf<S: AsRef<[u8]> + ?Sized>(
-    store: &S,
-) -> impl Iterator<Item = (Vec<u8>, usize)> + '_ {
+pub(crate) fn get_iter_phf<S: AsRef<[u8]> + ?Sized>(store: &S) -> ZeroTrieIterator<'_> {
     ZeroTrieIterator::new(store, true)
 }
 
 /// # Panics
 /// Panics if the trie contains non-ASCII items.
 #[cfg(feature = "alloc")]
+#[allow(clippy::type_complexity)]
 pub(crate) fn get_iter_ascii_or_panic<S: AsRef<[u8]> + ?Sized>(
     store: &S,
-) -> impl Iterator<Item = (String, usize)> + '_ {
+) -> core::iter::Map<ZeroTrieIterator<'_>, fn((Vec<u8>, usize)) -> (String, usize)> {
     ZeroTrieIterator::new(store, false).map(|(k, v)| {
         #[allow(clippy::unwrap_used)] // in signature of function
         let ascii_str = String::from_utf8(k).unwrap();

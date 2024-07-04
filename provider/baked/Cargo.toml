@@ -17,6 +17,8 @@ include.workspace = true
 
 [dependencies]
 icu_provider = { workspace = true }
+writeable = { workspace = true }
+zerotrie = { workspace = true, features = ["alloc"] }
 
 crlify = { workspace = true, optional = true }
 databake = { workspace = true, optional = true}
@@ -39,5 +41,6 @@ export = [
     "dep:itertools",
     "dep:log",
     "dep:proc-macro2",
-    "icu_provider/export"
+    "icu_provider/export",
+    "zerotrie/databake",
 ]
