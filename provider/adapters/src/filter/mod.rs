@@ -49,6 +49,20 @@ where
     pub filter_name: &'static str,
 }
 
+impl<D, F> FilterDataProvider<D, F>
+where
+    F: Fn(DataIdentifierBorrowed) -> bool,
+{
+    fn check(&self, marker: DataMarkerInfo, req: DataRequest) -> Result<(), DataError> {
+        if !(self.predicate)(req.id) {
+            return Err(DataErrorKind::IdentifierNotFound
+                .with_str_context(self.filter_name)
+                .with_req(marker, req));
+        }
+        Ok(())
+    }
+}
+
 impl<D, F, M> DynamicDataProvider<M> for FilterDataProvider<D, F>
 where
     F: Fn(DataIdentifierBorrowed) -> bool,
@@ -60,13 +74,24 @@ where
         marker: DataMarkerInfo,
         req: DataRequest,
     ) -> Result<DataResponse<M>, DataError> {
-        if (self.predicate)(req.id) {
-            self.inner.load_data(marker, req)
-        } else {
-            Err(DataErrorKind::IdentifierNotFound
-                .with_str_context(self.filter_name)
-                .with_req(marker, req))
-        }
+        self.check(marker, req)?;
+        self.inner.load_data(marker, req)
+    }
+}
+
+impl<D, F, M> DynamicDryDataProvider<M> for FilterDataProvider<D, F>
+where
+    F: Fn(DataIdentifierBorrowed) -> bool,
+    M: DynamicDataMarker,
+    D: DynamicDryDataProvider<M>,
+{
+    fn dry_load_data(
+        &self,
+        marker: DataMarkerInfo,
+        req: DataRequest,
+    ) -> Result<DataResponseMetadata, DataError> {
+        self.check(marker, req)?;
+        self.inner.dry_load_data(marker, req)
     }
 }
 
@@ -77,13 +102,20 @@ where
     D: DataProvider<M>,
 {
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
-        if (self.predicate)(req.id) {
-            self.inner.load(req)
-        } else {
-            Err(DataErrorKind::IdentifierNotFound
-                .with_str_context(self.filter_name)
-                .with_req(M::INFO, req))
-        }
+        self.check(M::INFO, req)?;
+        self.inner.load(req)
+    }
+}
+
+impl<D, F, M> DryDataProvider<M> for FilterDataProvider<D, F>
+where
+    F: Fn(DataIdentifierBorrowed) -> bool,
+    M: DataMarker,
+    D: DryDataProvider<M>,
+{
+    fn dry_load(&self, req: DataRequest) -> Result<DataResponseMetadata, DataError> {
+        self.check(M::INFO, req)?;
+        self.inner.dry_load(req)
     }
 }
 
@@ -93,13 +125,8 @@ where
     D: AnyProvider,
 {
     fn load_any(&self, marker: DataMarkerInfo, req: DataRequest) -> Result<AnyResponse, DataError> {
-        if (self.predicate)(req.id) {
-            self.inner.load_any(marker, req)
-        } else {
-            Err(DataErrorKind::IdentifierNotFound
-                .with_str_context(self.filter_name)
-                .with_req(marker, req))
-        }
+        self.check(marker, req)?;
+        self.inner.load_any(marker, req)
     }
 }
 

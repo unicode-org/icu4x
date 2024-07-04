@@ -13,7 +13,9 @@
 
 use crate::buf::BufferFormat;
 use crate::buf::BufferProvider;
+use crate::data_provider::DynamicDryDataProvider;
 use crate::prelude::*;
+use crate::DryDataProvider;
 use serde::de::Deserialize;
 use yoke::trait_hack::YokeTraitHack;
 use yoke::Yokeable;
@@ -149,7 +151,7 @@ impl DataPayload<BufferMarker> {
 impl<P, M> DynamicDataProvider<M> for DeserializingBufferProvider<'_, P>
 where
     M: DynamicDataMarker,
-    P: BufferProvider + ?Sized,
+    P: DynamicDataProvider<BufferMarker> + ?Sized,
     // Actual bound:
     //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: serde::de::Deserialize<'de>,
     // Necessary workaround bound (see `yoke::trait_hack` docs):
@@ -184,10 +186,28 @@ where
     }
 }
 
+impl<P, M> DynamicDryDataProvider<M> for DeserializingBufferProvider<'_, P>
+where
+    M: DynamicDataMarker,
+    P: DynamicDryDataProvider<BufferMarker> + ?Sized,
+    // Actual bound:
+    //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: serde::de::Deserialize<'de>,
+    // Necessary workaround bound (see `yoke::trait_hack` docs):
+    for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: Deserialize<'de>,
+{
+    fn dry_load_data(
+        &self,
+        marker: DataMarkerInfo,
+        req: DataRequest,
+    ) -> Result<DataResponseMetadata, DataError> {
+        self.0.dry_load_data(marker, req)
+    }
+}
+
 impl<P, M> DataProvider<M> for DeserializingBufferProvider<'_, P>
 where
     M: DataMarker,
-    P: BufferProvider + ?Sized,
+    P: DynamicDataProvider<BufferMarker> + ?Sized,
     // Actual bound:
     //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: Deserialize<'de>,
     // Necessary workaround bound (see `yoke::trait_hack` docs):
@@ -203,6 +223,20 @@ where
     /// - `deserialize_bincode_1`
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         self.load_data(M::INFO, req)
+    }
+}
+
+impl<P, M> DryDataProvider<M> for DeserializingBufferProvider<'_, P>
+where
+    M: DataMarker,
+    P: DynamicDryDataProvider<BufferMarker> + ?Sized,
+    // Actual bound:
+    //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: Deserialize<'de>,
+    // Necessary workaround bound (see `yoke::trait_hack` docs):
+    for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: Deserialize<'de>,
+{
+    fn dry_load(&self, req: DataRequest) -> Result<DataResponseMetadata, DataError> {
+        self.0.dry_load_data(M::INFO, req)
     }
 }
 
