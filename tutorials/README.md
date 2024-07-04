@@ -1,3 +1,7 @@
+# Warning
+
+These tutorials work with code at `HEAD`, which is not semver compatible with the current published release. Refer to the tutorials in the [`release/1.5` branch](https://github.com/unicode-org/icu4x/tree/release/1.5/tutorials) instead.
+
 # ICU4X Tutorials
 
 Welcome! We're glad you want to try out ICU4X! This page serves as a landing page for people looking to perform various tasks with ICU4X.
