@@ -55,6 +55,4 @@
 
 mod blob_exporter;
 
-mod iter;
-
 pub use blob_exporter::BlobExporter;

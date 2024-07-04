@@ -3416,7 +3416,7 @@ macro_rules! __impl_buddhist_date_symbols_v1_marker {
         __impl_buddhist_date_symbols_v1_marker!($provider);
         #[clippy::msrv = "1.70"]
         impl icu_provider::IterableDataProvider<icu::datetime::provider::calendar::BuddhistDateSymbolsV1Marker> for $provider {
-            fn iter_ids(&self) -> Result<std::collections::HashSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
+            fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok(icu_provider_baked::DataStore::iter(&Self::DATA_BUDDHIST_DATE_SYMBOLS_V1_MARKER).collect())
             }
         }

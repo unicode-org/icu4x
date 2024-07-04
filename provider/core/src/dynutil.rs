@@ -280,7 +280,7 @@ pub use __impl_dynamic_data_provider as impl_dynamic_data_provider;
 macro_rules! __impl_iterable_dynamic_data_provider {
     ($provider:ty, [ $($(#[$cfg:meta])? $struct_m:ty),+, ], $dyn_m:path) => {
         impl $crate::IterableDynamicDataProvider<$dyn_m> for $provider {
-            fn iter_ids_for_marker(&self, marker: $crate::DataMarkerInfo) -> Result<std::collections::HashSet<$crate::DataIdentifierCow>, $crate::DataError> {
+            fn iter_ids_for_marker(&self, marker: $crate::DataMarkerInfo) -> Result<std::collections::BTreeSet<$crate::DataIdentifierCow>, $crate::DataError> {
                 match marker.path.hashed() {
                     $(
                         $(#[$cfg])?
