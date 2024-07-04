@@ -54,6 +54,20 @@ impl UnitsFormatter {
         ]
     );
 
+    // TODO: Remove this function once we have separate markers for different widths.
+    #[inline]
+    fn attribute(width: Width, unit: &str) -> SmallVec<[u8; 32]> {
+        let mut buffer: SmallVec<[u8; 32]> = SmallVec::new();
+        let length = match width {
+            Width::Short => "short-",
+            Width::Narrow => "narrow-",
+            Width::Long => "long-",
+        };
+        buffer.extend_from_slice(length.as_bytes());
+        buffer.extend_from_slice(unit.as_bytes());
+        buffer
+    }
+
     /// Creates a new [`UnitsFormatter`] from compiled locale data and an options bag.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
@@ -71,16 +85,8 @@ impl UnitsFormatter {
         let plural_rules = PluralRules::try_new_cardinal(locale)?;
 
         // TODO: Remove this allocation once we have separate markers for different widths.
-        let mut buffer: SmallVec<[u8; 32]> = SmallVec::new();
-        let length = match options.width {
-            Width::Short => "short-",
-            Width::Narrow => "narrow-",
-            Width::Long => "long-",
-        };
-        buffer.extend_from_slice(length.as_bytes());
-        buffer.extend_from_slice(unit.as_bytes());
-        let attribute_slice = &buffer[..buffer.len()];
-        let unit_attribute = DataMarkerAttributes::try_from_utf8(attribute_slice)
+        let attribute = Self::attribute(options.width, unit);
+        let unit_attribute = DataMarkerAttributes::try_from_utf8(&attribute[..attribute.len()])
             .map_err(|_| DataError::custom("Failed to create a data marker"))?;
 
         let display_name = crate::provider::Baked
@@ -123,16 +129,8 @@ impl UnitsFormatter {
         let plural_rules = PluralRules::try_new_cardinal_unstable(provider, locale)?;
 
         // TODO: Remove this allocation once we have separate markers for different widths.
-        let mut buffer: SmallVec<[u8; 32]> = SmallVec::new();
-        let length = match options.width {
-            Width::Short => "short-",
-            Width::Narrow => "narrow-",
-            Width::Long => "long-",
-        };
-        buffer.extend_from_slice(length.as_bytes());
-        buffer.extend_from_slice(unit.as_bytes());
-        let attribute_slice = &buffer[..buffer.len()];
-        let unit_attribute = DataMarkerAttributes::try_from_utf8(attribute_slice)
+        let attribute = Self::attribute(options.width, unit);
+        let unit_attribute = DataMarkerAttributes::try_from_utf8(&attribute[..attribute.len()])
             .map_err(|_| DataError::custom("Failed to create a data marker"))?;
 
         let display_name = provider
