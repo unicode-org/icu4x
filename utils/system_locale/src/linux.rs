@@ -1,3 +1,7 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
 mod linux_locale {
     use std::{
         borrow::Cow,
@@ -32,7 +36,7 @@ mod linux_locale {
         locale_map
     }
 
-    pub fn get_locales() -> Vec<String> {
+    pub fn get_locales_linux() -> Vec<String> {
         let mut unique_locales = HashSet::new();
         let locale_map = fetch_locale_settings();
         for value in locale_map.values() {
@@ -42,8 +46,8 @@ mod linux_locale {
         unique_locales.into_iter().collect()
     }
 
-    pub fn get_system_calendars() -> Box<dyn Iterator<Item = (Cow<'static, str>, Cow<'static, str>)>>
-    {
+    pub fn get_system_calendars_linux(
+    ) -> Box<dyn Iterator<Item = (Cow<'static, str>, Cow<'static, str>)>> {
         unsafe {
             let locale_ptr = setlocale(LC_TIME, ptr::null());
             if !locale_ptr.is_null() {
@@ -60,7 +64,7 @@ mod linux_locale {
             }
             Box::new(
                 None.into_iter()
-                    .chain(Some((Cow::Borrowed("C"), Cow::Borrowed("Gregorian"))).into_iter()),
+                    .chain(Some((Cow::Borrowed("C"), Cow::Borrowed("Gregorian")))),
             )
         }
     }

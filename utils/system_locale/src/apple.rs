@@ -1,5 +1,8 @@
-#[cfg(target_os = "macos")]
-mod macos_locale {
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+pub mod apple {
     use core_foundation_sys::{
         array::{CFArrayGetCount, CFArrayGetValueAtIndex},
         calendar::{CFCalendarCopyCurrent, CFCalendarCopyLocale, CFCalendarGetIdentifier},
@@ -8,7 +11,7 @@ mod macos_locale {
     };
     use std::ffi::CStr;
 
-    pub fn get_locale() -> Vec<String> {
+    pub fn get_locales_mac() -> Vec<String> {
         let mut languages: Vec<String> = Vec::new();
 
         unsafe {
@@ -31,25 +34,31 @@ mod macos_locale {
                 }
             }
         }
+
+        // Defaulting to `und`
+        if languages.is_empty() {
+            languages.push(String::from("und"));
+        }
         languages
     }
 
-    pub fn get_system_calendar() -> Vec<(String, String)> {
+    pub fn get_system_calendars_macos() -> Vec<(String, String)> {
+        let mut calendars = Vec::new();
+        let mut calendar_locale_str = String::new();
+        let mut calendar_identifier_str = String::new();
+
         unsafe {
             let calendar = CFCalendarCopyCurrent();
             if !calendar.is_null() {
                 let locale = CFCalendarCopyLocale(calendar as _);
                 let identifier = CFCalendarGetIdentifier(calendar as _);
 
-                let mut locale_str = String::new();
-                let mut identifier_str = String::new();
-
                 if !locale.is_null() {
                     let locale_identifier = CFLocaleGetIdentifier(locale);
                     let locale_cstr = CFStringGetCStringPtr(locale_identifier, 0);
 
                     if !locale_cstr.is_null() {
-                        locale_str = CStr::from_ptr(locale_cstr)
+                        calendar_locale_str = CStr::from_ptr(locale_cstr)
                             .to_str()
                             .unwrap_or("")
                             .to_string();
@@ -60,23 +69,21 @@ mod macos_locale {
                     let identifier_cstr = CFStringGetCStringPtr(identifier, 0);
 
                     if !identifier_cstr.is_null() {
-                        identifier_str = CStr::from_ptr(identifier_cstr)
+                        calendar_identifier_str = CStr::from_ptr(identifier_cstr)
                             .to_str()
                             .unwrap_or("")
                             .to_string();
                     }
                 }
 
-                if !locale_str.is_empty() && !identifier_str.is_empty() {
-                    return vec![(locale_str, identifier_str)];
-                }
+                calendars.push((calendar_locale_str, calendar_identifier_str.clone()));
             }
         }
 
-        vec![]
+        if calendars.is_empty() {
+            calendars.push((String::from("und"), String::from("Gregorian")));
+        }
+
+        calendars
     }
 }
-
-#[cfg(target_os = "macos")]
-pub use macos_locale::get_locale;
-pub use macos_locale::get_system_calendar;

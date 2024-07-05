@@ -1,4 +1,7 @@
-#[cfg(target_os = "windows")]
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
 mod windows_locale {
     use windows::{Globalization, System::UserProfile::GlobalizationPreferences};
     pub fn get_locale() -> Vec<String> {
@@ -32,7 +35,3 @@ mod windows_locale {
         result
     }
 }
-
-#[cfg(target_os = "windows")]
-pub use windows_locale::get_locale;
-pub use windows_locale::get_system_calendar;
