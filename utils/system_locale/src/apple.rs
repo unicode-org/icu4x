@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-pub mod apple {
+pub mod apple_locales_prefs {
     use core_foundation_sys::{
         array::{CFArrayGetCount, CFArrayGetValueAtIndex},
         calendar::{CFCalendarCopyCurrent, CFCalendarCopyLocale, CFCalendarGetIdentifier},

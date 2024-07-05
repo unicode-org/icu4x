@@ -7,7 +7,7 @@
 #[cfg(target_os = "macos")]
 #[cfg(test)]
 mod apple_tests {
-    use system_locale::apple::apple::{get_locales_mac, get_system_calendars_macos};
+    use system_locale::apple::apple_locales_prefs::{get_locales_mac, get_system_calendars_macos};
 
     #[test]
     fn test_get_locale() {
@@ -23,7 +23,7 @@ mod apple_tests {
 #[cfg(target_os = "linux")]
 #[cfg(test)]
 mod linux_tests {
-    use system_locale::linux::linux::get_locales_linux;
+    use system_locale::linux::linux_locales_prefs::get_locales_linux;
     #[test]
     fn test_get_locale() {
         get_locales_linux();

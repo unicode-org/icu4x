@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-pub mod linux {
+pub mod linux_locales_prefs {
     use std::{
         borrow::Cow,
         collections::{HashMap, HashSet},
