@@ -87,7 +87,7 @@ fn generate_rule_break_data(
     provider: &SourceDataProvider,
     rules_file: &str,
     trie_type: crate::TrieType,
-) -> RuleBreakDataV1<'static> {
+) -> RuleBreakDataV2<'static> {
     let segmenter = provider
         .icuexport()
         .unwrap()
@@ -533,7 +533,7 @@ fn generate_rule_break_data(
         }
     }
 
-    RuleBreakDataV1 {
+    RuleBreakDataV2 {
         property_table: CodePointTrieBuilder {
             data: CodePointTrieBuilderData::ValuesByCodePoint(&properties_map),
             default_value: 0,
@@ -690,10 +690,10 @@ fn hardcoded_segmenter_provider() -> SourceDataProvider {
         .clone()
 }
 
-implement!(LineBreakDataV1Marker, "segmenter/line.toml");
-implement!(GraphemeClusterBreakDataV1Marker, "segmenter/grapheme.toml");
-implement!(WordBreakDataV1Marker, "segmenter/word.toml");
-implement!(SentenceBreakDataV1Marker, "segmenter/sentence.toml");
+implement!(LineBreakDataV2Marker, "segmenter/line.toml");
+implement!(GraphemeClusterBreakDataV2Marker, "segmenter/grapheme.toml");
+implement!(WordBreakDataV2Marker, "segmenter/word.toml");
+implement!(SentenceBreakDataV2Marker, "segmenter/sentence.toml");
 
 #[cfg(test)]
 mod tests {
@@ -702,7 +702,7 @@ mod tests {
     #[test]
     fn load_grapheme_cluster_data() {
         let provider = SourceDataProvider::new_testing();
-        let response: DataResponse<GraphemeClusterBreakDataV1Marker> = provider
+        let response: DataResponse<GraphemeClusterBreakDataV2Marker> = provider
             .load(Default::default())
             .expect("Loading should succeed!");
         assert_eq!(
@@ -715,7 +715,7 @@ mod tests {
     #[test]
     fn load_line_data() {
         let provider = SourceDataProvider::new_testing();
-        let response: DataResponse<LineBreakDataV1Marker> = provider
+        let response: DataResponse<LineBreakDataV2Marker> = provider
             .load(Default::default())
             .expect("Loading should succeed!");
         let data = response.payload.get();
