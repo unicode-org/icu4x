@@ -339,6 +339,9 @@ fn generate_rule_break_data(
                         || p.name == "ID_CN"
                         || p.name == "PO_EAW"
                         || p.name == "PR_EAW"
+                        || p.name == "AL_DOTTED_CIRCLE"
+                        || p.name == "QU_PI"
+                        || p.name == "QU_PF"
                     {
                         for i in 0..(CODEPOINT_TABLE_LEN as u32) {
                             match lb.get32(i) {
@@ -391,6 +394,26 @@ fn generate_rule_break_data(
                                     }
                                 }
 
+                                LineBreak::Alphabetic => {
+                                    if p.name == "AL_DOTTED_CIRCLE" && i == 0x25CC {
+                                        properties_map[i as usize] = property_index;
+                                    }
+                                }
+
+                                LineBreak::Quotation => {
+                                    if p.name == "QU_PI"
+                                        && gc.get32(i) == GeneralCategory::InitialPunctuation
+                                    {
+                                        properties_map[i as usize] = property_index;
+                                    }
+
+                                    if p.name == "QU_PF"
+                                        && gc.get32(i) == GeneralCategory::FinalPunctuation
+                                    {
+                                        properties_map[i as usize] = property_index;
+                                    }
+                                }
+
                                 _ => {}
                             }
                         }
@@ -403,6 +426,18 @@ fn generate_rule_break_data(
                     for c in 0..(CODEPOINT_TABLE_LEN as u32) {
                         if lb.get32(c) == prop {
                             properties_map[c as usize] = property_index;
+                        }
+                    }
+
+                    if p.name == "AL" {
+                        // LB1: SG has no special rules.
+                        let prop = lb_name_to_enum
+                            .get_loose("SG")
+                            .expect("property name should be valid!");
+                        for c in 0..(CODEPOINT_TABLE_LEN as u32) {
+                            if lb.get32(c) == prop {
+                                properties_map[c as usize] = property_index;
+                            }
                         }
                     }
                     continue;
@@ -730,9 +765,9 @@ mod tests {
         //     _ => XX,
         // }
 
-        const CM: u8 = 10;
-        const XX: u8 = 45;
-        const ID: u8 = 21;
+        const CM: u8 = 14;
+        const XX: u8 = 52;
+        const ID: u8 = 25;
 
         assert_eq!(data.property_table.get32(0x20000), ID);
         assert_eq!(data.property_table.get32(0x3fffd), ID);
