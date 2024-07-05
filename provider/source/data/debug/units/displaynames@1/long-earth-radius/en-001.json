@@ -1,0 +1,6 @@
+{
+  "patterns": {
+    "One": "{0} earth radius",
+    "Other": "{0} earth radii"
+  }
+}

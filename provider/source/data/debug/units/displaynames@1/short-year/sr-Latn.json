@@ -1,0 +1,7 @@
+{
+  "patterns": {
+    "One": "{0} god",
+    "Few": "{0} god.",
+    "Other": "{0} god."
+  }
+}

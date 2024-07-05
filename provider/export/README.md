@@ -13,10 +13,10 @@ Also see our [datagen tutorial](https://github.com/unicode-org/icu4x/blob/main/t
 ```rust
 use icu_provider_export::blob_exporter::*;
 use icu_provider_export::prelude::*;
-use icu_datagen_bikeshed::DatagenProvider;
+use icu_provider_source::SourceDataProvider;
 use std::fs::File;
 
-let provider = DatagenProvider::new_latest_tested();
+let provider = SourceDataProvider::new_latest_tested();
 
 ExportDriver::new([LocaleFamily::FULL], DeduplicationStrategy::None.into(), LocaleFallbacker::try_new_unstable(&provider).unwrap())
     .with_markers([icu::list::provider::AndListV2Marker::INFO])

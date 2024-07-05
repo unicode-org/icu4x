@@ -50,7 +50,7 @@ postcard = { workspace = true }
 simple_logger = { workspace = true }
 icu = { path = "../../components/icu", default-features = false, features = ["datagen"] }
 icu_locale = { path = "../../components/locale" }
-icu_datagen_bikeshed = { path = "../bikeshed" }
+icu_provider_source = { path = "../source" }
 
 [features]
 default = ["rayon", "fs_exporter", "blob_exporter", "baked_exporter"]

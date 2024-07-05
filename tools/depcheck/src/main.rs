@@ -277,7 +277,7 @@ fn main() {
     );
 
     test_dep_list(
-        "icu_datagen_bikeshed",
+        "icu_provider_source",
         "normal",
         "--features use_icu4c",
         &[
