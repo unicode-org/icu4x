@@ -1,79 +1,67 @@
-#[cfg(target_os = "linux")]
 mod linux_locale {
-    use locale::{
-        self,
-        linux::ffi::{
-            LC_ADDRESS, LC_ALL, LC_COLLATE, LC_CTYPE, LC_IDENTIFICATION, LC_MEASUREMENT,
-            LC_MESSAGES, LC_MONETARY, LC_NAME, LC_NUMERIC, LC_PAPER, LC_TELEPHONE, LC_TIME,
-        },
-    };
     use std::{
+        borrow::Cow,
         collections::{HashMap, HashSet},
         ffi::CStr,
-        ptr::null,
+        ptr,
     };
 
-    pub unsafe fn fetch_locale_settings() -> HashMap<i32, String> {
-        let locale_ptr = locale::linux::ffi::setlocale(LC_ALL, null());
-        let c_str: &CStr = CStr::from_ptr(locale_ptr as *const u8);
+    use libc::{setlocale, LC_ALL, LC_TIME};
+
+    fn fetch_locale_settings() -> HashMap<String, String> {
         let mut locale_map = HashMap::new();
 
-        if let Ok(str_slice) = c_str.to_str() {
-            if str_slice.contains(';') {
-                for part in str_slice.split(';') {
-                    let mut splitted = part.split('=');
-                    if let (Some(key), Some(value)) = (splitted.next(), splitted.next()) {
-                        let key_constant = match key {
-                            "LC_CTYPE" => LC_CTYPE,
-                            "LC_NUMERIC" => LC_NUMERIC,
-                            "LC_TIME" => LC_TIME,
-                            "LC_COLLATE" => LC_COLLATE,
-                            "LC_MONETARY" => LC_MONETARY,
-                            "LC_MESSAGES" => LC_MESSAGES,
-                            "LC_PAPER" => LC_PAPER,
-                            "LC_NAME" => LC_NAME,
-                            "LC_ADDRESS" => LC_ADDRESS,
-                            "LC_TELEPHONE" => LC_TELEPHONE,
-                            "LC_MEASUREMENT" => LC_MEASUREMENT,
-                            "LC_IDENTIFICATION" => LC_IDENTIFICATION,
-                            _ => LC_ALL,
-                        };
-                        locale_map.insert(key_constant, value.to_string());
+        // Thread safety is ensured by fallbacking to the default locale of `linux` which is `C`
+        unsafe {
+            let locales_ptr = setlocale(LC_ALL, ptr::null());
+            let locales = CStr::from_ptr(locales_ptr);
+
+            if let Ok(locales_str) = locales.to_str() {
+                let locales_slice = locales_str.split(';');
+                for locale in locales_slice {
+                    let mut locale_parts = locale.split('=');
+                    if let (Some(key), Some(value)) = (locale_parts.next(), locale_parts.next()) {
+                        locale_map.insert(key.to_string(), value.to_string());
                     }
                 }
             } else {
-                locale_map.insert(LC_ALL, str_slice.to_string());
+                locale_map.insert(String::from("LC_ALL"), String::from("C"));
             }
         }
 
         locale_map
     }
 
-    pub fn get_locale() -> Vec<String> {
+    pub fn get_locales() -> Vec<String> {
         let mut unique_locales = HashSet::new();
-        unsafe {
-            let locale_map = fetch_locale_settings();
-            for value in locale_map.values() {
-                unique_locales.insert(value.clone());
-            }
+        let locale_map = fetch_locale_settings();
+        for value in locale_map.values() {
+            unique_locales.insert(value.clone());
         }
+
         unique_locales.into_iter().collect()
     }
 
-    pub fn get_system_calendar() -> Vec<(String, String)> {
+    pub fn get_system_calendars() -> Box<dyn Iterator<Item = (Cow<'static, str>, Cow<'static, str>)>>
+    {
         unsafe {
-            let locale_ptr = locale::linux::ffi::setlocale(LC_TIME, null());
+            let locale_ptr = setlocale(LC_TIME, ptr::null());
             if !locale_ptr.is_null() {
                 let c_str = CStr::from_ptr(locale_ptr);
                 if let Ok(str_slice) = c_str.to_str() {
-                    return vec![(str_slice.to_string(), String::from("Gregorian"))];
+                    return Box::new(
+                        Some((
+                            Cow::Owned(str_slice.to_string()),
+                            Cow::Borrowed("Gregorian"),
+                        ))
+                        .into_iter(),
+                    );
                 }
             }
+            Box::new(
+                None.into_iter()
+                    .chain(Some((Cow::Borrowed("C"), Cow::Borrowed("Gregorian"))).into_iter()),
+            )
         }
-        Vec::new()
     }
 }
-
-#[cfg(target_os = "linux")]
-pub use linux_locale::get_locale;
-pub use linux_locale::get_system_calendar;

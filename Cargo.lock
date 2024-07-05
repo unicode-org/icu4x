@@ -1710,15 +1710,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "locale"
-version = "0.2.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5fdbe492a9c0238da900a1165c42fc5067161ce292678a6fe80921f30fe307fd"
-dependencies = [
- "libc",
-]
-
-[[package]]
 name = "lock_api"
 version = "0.4.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2614,7 +2605,7 @@ name = "system_locale"
 version = "1.5.0"
 dependencies = [
  "core-foundation-sys",
- "locale",
+ "libc",
  "windows",
 ]
 
