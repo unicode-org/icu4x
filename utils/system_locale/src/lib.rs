@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #[cfg(target_os = "linux")]
-mod linux;
+pub mod linux;
 
 #[cfg(target_os = "macos")]
 pub mod apple;

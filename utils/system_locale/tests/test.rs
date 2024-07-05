@@ -23,15 +23,10 @@ mod apple_tests {
 #[cfg(target_os = "linux")]
 #[cfg(test)]
 mod linux_tests {
-
+    use system_locale::linux::linux::get_locales_linux;
     #[test]
     fn test_get_locale() {
-        
-    }
-
-    #[test]
-    fn test_get_calendar() {
-        
+        get_locales_linux();
     }
 }
 
@@ -40,12 +35,8 @@ mod linux_tests {
 mod linux_tests {
 
     #[test]
-    fn test_get_locale() {
-        
-    }
+    fn test_get_locale() {}
 
     #[test]
-    fn test_get_calendar() {
-        
-    }
+    fn test_get_calendar() {}
 }
