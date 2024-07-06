@@ -2,8 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Retrieve locale and preferences 
-//! 
+//! Retrieval of system locales and preferences.
 
 #[cfg(target_os = "linux")]
 pub mod linux;

@@ -1,6 +1,5 @@
-
 <!-- cargo-rdme start -->
 
-Retrieve locale and preferences 
+Retrieval of system locales and preferences.
 
 <!-- cargo-rdme end -->

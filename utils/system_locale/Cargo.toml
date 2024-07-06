@@ -3,7 +3,7 @@
 # (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 [package]
-name = "system_locale"
+name = "env_preferences"
 version.workspace = true
 rust-version.workspace = true
 authors.workspace = true
