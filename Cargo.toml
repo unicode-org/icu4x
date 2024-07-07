@@ -66,7 +66,7 @@ members = [
     "utils/litemap",
     "utils/pattern",
     "utils/resb",
-    "utils/system_locale",
+    "utils/env_preferences",
     "utils/tinystr",
     "utils/tzif",
     "utils/writeable",
