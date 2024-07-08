@@ -673,7 +673,7 @@ where
     BlobDataProvider: AsDeserializingBufferProvider,
     for<'a> DeserializingBufferProvider<'a, BlobDataProvider>: DataProvider<M>,
 {
-    fn iter_ids(&self) -> Result<std::collections::HashSet<DataIdentifierCow>, DataError> {
+    fn iter_ids(&self) -> Result<std::collections::BTreeSet<DataIdentifierCow>, DataError> {
         self.0.iter_ids_for_marker(M::INFO)
     }
 }

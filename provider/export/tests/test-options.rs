@@ -6,7 +6,7 @@
 mod testutil;
 
 use std::collections::BTreeMap;
-use std::collections::HashSet;
+use std::collections::BTreeSet;
 
 use icu_provider::export::*;
 use icu_provider::hello_world::*;
@@ -69,7 +69,7 @@ impl DataProvider<HelloWorldV1Marker> for TestingProvider {
 }
 
 impl IterableDataProvider<HelloWorldV1Marker> for TestingProvider {
-    fn iter_ids(&self) -> Result<HashSet<DataIdentifierCow>, DataError> {
+    fn iter_ids(&self) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
         Ok(self
             .0
             .keys()

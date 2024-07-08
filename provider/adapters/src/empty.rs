@@ -6,6 +6,7 @@
 //!
 //! Use [`EmptyDataProvider`] as a stand-in for a provider that always fails.
 
+use alloc::collections::BTreeSet;
 use icu_provider::prelude::*;
 
 /// A data provider that always returns an error.
@@ -86,17 +87,15 @@ where
     }
 }
 
-#[cfg(feature = "std")]
 impl<M> IterableDataProvider<M> for EmptyDataProvider
 where
     M: DataMarker,
 {
-    fn iter_ids(&self) -> Result<std::collections::HashSet<DataIdentifierCow>, DataError> {
+    fn iter_ids(&self) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
         Ok(Default::default())
     }
 }
 
-#[cfg(feature = "std")]
 impl<M> IterableDynamicDataProvider<M> for EmptyDataProvider
 where
     M: DynamicDataMarker,
@@ -104,7 +103,7 @@ where
     fn iter_ids_for_marker(
         &self,
         _: DataMarkerInfo,
-    ) -> Result<std::collections::HashSet<DataIdentifierCow>, DataError> {
+    ) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
         Ok(Default::default())
     }
 }

@@ -19,7 +19,7 @@ macro_rules! __impl_ethiopian_month_names_v1_marker {
         __impl_ethiopian_month_names_v1_marker!($provider);
         #[clippy::msrv = "1.70"]
         impl icu_provider::IterableDataProvider<icu::datetime::provider::neo::EthiopianMonthNamesV1Marker> for $provider {
-            fn iter_ids(&self) -> Result<std::collections::HashSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
+            fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok(Default::default())
             }
         }

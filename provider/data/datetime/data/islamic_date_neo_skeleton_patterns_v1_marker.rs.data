@@ -46,7 +46,7 @@ macro_rules! __impl_islamic_date_neo_skeleton_patterns_v1_marker {
         __impl_islamic_date_neo_skeleton_patterns_v1_marker!($provider);
         #[clippy::msrv = "1.70"]
         impl icu_provider::IterableDataProvider<icu::datetime::provider::neo::IslamicDateNeoSkeletonPatternsV1Marker> for $provider {
-            fn iter_ids(&self) -> Result<std::collections::HashSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
+            fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok(icu_provider_baked::DataStore::iter(&Self::DATA_ISLAMIC_DATE_NEO_SKELETON_PATTERNS_V1_MARKER).collect())
             }
         }

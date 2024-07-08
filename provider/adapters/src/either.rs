@@ -4,6 +4,7 @@
 
 //! Helpers for switching between multiple providers.
 
+use alloc::collections::BTreeSet;
 use icu_provider::prelude::*;
 
 /// A provider that is one of two types determined at runtime.
@@ -90,7 +91,6 @@ impl<M: DataMarker, P0: DryDataProvider<M>, P1: DryDataProvider<M>> DryDataProvi
     }
 }
 
-#[cfg(feature = "std")]
 impl<
         M: DynamicDataMarker,
         P0: IterableDynamicDataProvider<M>,
@@ -101,7 +101,7 @@ impl<
     fn iter_ids_for_marker(
         &self,
         marker: DataMarkerInfo,
-    ) -> Result<std::collections::HashSet<DataIdentifierCow>, DataError> {
+    ) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
         use EitherProvider::*;
         match self {
             A(p) => p.iter_ids_for_marker(marker),
@@ -110,12 +110,11 @@ impl<
     }
 }
 
-#[cfg(feature = "std")]
 impl<M: DataMarker, P0: IterableDataProvider<M>, P1: IterableDataProvider<M>>
     IterableDataProvider<M> for EitherProvider<P0, P1>
 {
     #[inline]
-    fn iter_ids(&self) -> Result<std::collections::HashSet<DataIdentifierCow>, DataError> {
+    fn iter_ids(&self) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
         use EitherProvider::*;
         match self {
             A(p) => p.iter_ids(),

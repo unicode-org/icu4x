@@ -11,6 +11,7 @@ use icu_provider::prelude::*;
 use icu_provider_adapters::fallback::LocaleFallbackProvider;
 use icu_provider_blob::export::BlobExporter;
 use icu_provider_blob::BlobDataProvider;
+use std::collections::BTreeSet;
 
 #[icu_provider::data_struct(
     marker(MarkerA, "a@1"),
@@ -35,7 +36,7 @@ macro_rules! implement {
             }
         }
         impl IterableDataProvider<$marker> for Baked {
-            fn iter_ids(&self) -> Result<std::collections::HashSet<DataIdentifierCow>, DataError> {
+            fn iter_ids(&self) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
                 const LOCALES: &[LanguageIdentifier] = &[
                     langid!("af"),
                     langid!("am"),

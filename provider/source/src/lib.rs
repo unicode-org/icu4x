@@ -21,7 +21,7 @@ use cldr_cache::CldrCache;
 use elsa::sync::FrozenMap;
 use icu_provider::prelude::*;
 use source::{AbstractFs, SerdeCache};
-use std::collections::HashSet;
+use std::collections::{BTreeSet, HashSet};
 use std::fmt::Debug;
 use std::path::Path;
 use std::sync::{Arc, OnceLock};
@@ -37,8 +37,6 @@ mod decimal;
 #[cfg(feature = "experimental")]
 mod displaynames;
 mod fallback;
-#[cfg(test)]
-mod hello_world;
 mod list;
 mod locale_canonicalizer;
 mod normalizer;
@@ -323,7 +321,7 @@ impl SourceDataProvider {
         SourceDataProvider: IterableDataProviderCached<M>,
     {
         if <M as DataMarker>::INFO.is_singleton {
-            if !req.id.locale.is_empty() {
+            if !req.id.locale.is_und() {
                 Err(DataErrorKind::InvalidRequest)
             } else {
                 Ok(())
@@ -338,26 +336,35 @@ impl SourceDataProvider {
 }
 
 #[test]
-fn test_missing_locale() {
+fn test_check_req() {
     use icu::locale::langid;
     use icu_provider::hello_world::*;
+
+    impl DataProvider<HelloWorldV1Marker> for SourceDataProvider {
+        fn load(&self, req: DataRequest) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
+            HelloWorldProvider.load(req)
+        }
+    }
+
+    impl crate::IterableDataProviderCached<HelloWorldV1Marker> for SourceDataProvider {
+        fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+            Ok(HelloWorldProvider.iter_ids()?.into_iter().collect())
+        }
+    }
+
     let provider = SourceDataProvider::new_testing();
-    assert!(DataProvider::<HelloWorldV1Marker>::load(
-        &provider,
-        DataRequest {
-            id: DataIdentifierCow::from_locale(langid!("fi").into()).as_borrowed(),
+    assert!(provider
+        .check_req::<HelloWorldV1Marker>(DataRequest {
+            id: DataIdentifierBorrowed::for_locale(&langid!("fi").into()),
             ..Default::default()
-        }
-    )
-    .is_ok());
-    assert!(DataProvider::<HelloWorldV1Marker>::load(
-        &provider,
-        DataRequest {
-            id: DataIdentifierCow::from_locale(langid!("arc").into()).as_borrowed(),
+        })
+        .is_ok());
+    assert!(provider
+        .check_req::<HelloWorldV1Marker>(DataRequest {
+            id: DataIdentifierBorrowed::for_locale(&langid!("arc").into()),
             ..Default::default()
-        }
-    )
-    .is_err());
+        })
+        .is_err());
 }
 
 trait IterableDataProviderCached<M: DataMarker>: DataProvider<M> {
@@ -385,11 +392,14 @@ impl<M: DataMarker> IterableDataProvider<M> for SourceDataProvider
 where
     SourceDataProvider: IterableDataProviderCached<M>,
 {
-    fn iter_ids(&self) -> Result<HashSet<DataIdentifierCow>, DataError> {
+    fn iter_ids(&self) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
         Ok(if <M as DataMarker>::INFO.is_singleton {
             [Default::default()].into_iter().collect()
         } else {
-            self.populate_requests_cache()?.clone()
+            self.populate_requests_cache()?
+                .iter()
+                .map(|id| id.as_borrowed().as_cow())
+                .collect()
         })
     }
 }
