@@ -364,7 +364,7 @@ jobs:
 
     # Job-specific dependencies
     - name: Attempt to load cached GN Third-Party Tools
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       id: gn-third-party-tools-cache
       with:
         path: |
