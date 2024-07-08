@@ -19,6 +19,8 @@
   - (0.10.4) Enforce C,packed on OptionVarULE (https://github.com/unicode-org/icu4x/pull/5143)
 - `zerovec_derive`
   - (0.10.3) Enforce C,packed, not just packed, on ULE types, fixing for incoming changes to `repr(Rust)` (https://github.com/unicode-org/icu4x/pull/5049)
+  - (0.10.4) No-op publish to keep security-patched versions in sync
+
 ## icu4x 1.5 (May 28, 2024)
 
 - Components
