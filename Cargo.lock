@@ -222,7 +222,6 @@ dependencies = [
 name = "bies"
 version = "0.2.2"
 dependencies = [
- "criterion",
  "itertools",
  "partial-min-max",
  "rand",
@@ -1050,7 +1049,6 @@ version = "0.3.8"
 dependencies = [
  "icu",
  "icu_collections",
- "toml",
  "wasmi",
  "zerovec",
 ]
@@ -1483,7 +1481,6 @@ dependencies = [
  "icu_provider",
  "icu_provider_export",
  "icu_registry",
- "itertools",
  "log",
  "proc-macro2",
  "writeable",
