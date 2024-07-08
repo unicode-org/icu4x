@@ -31,6 +31,3 @@ writeable = { workspace = true }
 rand = { workspace = true }
 rand_distr = { workspace = true }
 rand_pcg = { workspace = true }
-
-[target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
-criterion = { workspace = true }
