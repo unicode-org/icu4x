@@ -57,13 +57,15 @@ jobs:
 
     # Cargo-make boilerplate
     - name: Install cargo-make
-      uses: taiki-e/install-action@cargo-make
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cargo-make@0.37.13
 
     # Job-specific dependencies
-    - name: Install cargo-binstall 
-      uses: taiki-e/install-action@cargo-binstall
     - name: Install cargo-all-features
-      run: cargo-binstall -y cargo-all-features
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cargo-all-features@1.10.0
 
     # No toolchain boilerplate as this runs on MSRV
 
@@ -84,7 +86,9 @@ jobs:
 
     # Cargo-make boilerplate
     - name: Install cargo-make
-      uses: taiki-e/install-action@cargo-make
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cargo-make@0.37.13
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
@@ -105,7 +109,9 @@ jobs:
 
     # Cargo-make boilerplate
     - name: Install cargo-make
-      uses: taiki-e/install-action@cargo-make
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cargo-make@0.37.13
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
@@ -126,7 +132,9 @@ jobs:
 
     # Cargo-make boilerplate
     - name: Install cargo-make
-      uses: taiki-e/install-action@cargo-make
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cargo-make@0.37.13
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
@@ -151,7 +159,9 @@ jobs:
 
     # Cargo-make boilerplate
     - name: Install cargo-make
-      uses: taiki-e/install-action@cargo-make
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cargo-make@0.37.13
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
@@ -180,7 +190,9 @@ jobs:
 
     # Cargo-make boilerplate
     - name: Install cargo-make
-      uses: taiki-e/install-action@cargo-make
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cargo-make@0.37.13
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
@@ -204,7 +216,9 @@ jobs:
 
     # Cargo-make boilerplate
     - name: Install cargo-make
-      uses: taiki-e/install-action@cargo-make
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cargo-make@0.37.13
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
@@ -230,7 +244,9 @@ jobs:
     
     # Cargo-make boilerplate
     - name: Install cargo-make
-      uses: taiki-e/install-action@cargo-make
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cargo-make@0.37.13
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
@@ -258,7 +274,9 @@ jobs:
     
     # Cargo-make boilerplate
     - name: Install cargo-make
-      uses: taiki-e/install-action@cargo-make
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cargo-make@0.37.13
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
@@ -285,7 +303,9 @@ jobs:
 
     # Cargo-make boilerplate
     - name: Install cargo-make
-      uses: taiki-e/install-action@cargo-make
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cargo-make@0.37.13
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
@@ -311,7 +331,9 @@ jobs:
 
     # Cargo-make boilerplate
     - name: Install cargo-make
-      uses: taiki-e/install-action@cargo-make
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cargo-make@0.37.13
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
@@ -332,7 +354,9 @@ jobs:
 
     # Cargo-make boilerplate
     - name: Install cargo-make
-      uses: taiki-e/install-action@cargo-make
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cargo-make@0.37.13
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
@@ -354,7 +378,9 @@ jobs:
 
     # Cargo-make boilerplate
     - name: Install cargo-make
-      uses: taiki-e/install-action@cargo-make
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cargo-make@0.37.13
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
@@ -375,7 +401,9 @@ jobs:
       run: cargo make gn-install
 
     - name: Install cargo-rdme
-      uses: taiki-e/install-action@cargo-rdme
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cargo-rdme@1.1.4
 
     # Actual job
     - name: Run `cargo make ci-job-gn`
@@ -390,7 +418,9 @@ jobs:
 
     # Cargo-make boilerplate
     - name: Install cargo-make
-      uses: taiki-e/install-action@cargo-make
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cargo-make@0.37.13
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
@@ -415,7 +445,9 @@ jobs:
 
     # Cargo-make boilerplate
     - name: Install cargo-make
-      uses: taiki-e/install-action@cargo-make
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cargo-make@0.37.13
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
@@ -425,7 +457,9 @@ jobs:
 
     # Job-specific dependencies
     - name: Install cargo-rdme
-      uses: taiki-e/install-action@cargo-rdme
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cargo-rdme@1.1.4
 
     # Actual job
     - name: Tidy
@@ -443,7 +477,9 @@ jobs:
 
     # Cargo-make boilerplate
     - name: Install cargo-make
-      uses: taiki-e/install-action@cargo-make
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cargo-make@0.37.13
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
@@ -469,7 +505,9 @@ jobs:
 
     # Cargo-make boilerplate
     - name: Install cargo-make
-      uses: taiki-e/install-action@cargo-make
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cargo-make@0.37.13
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly

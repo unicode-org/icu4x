@@ -334,7 +334,9 @@ jobs:
 
     # Cargo-make boilerplate
     - name: Install cargo-make
-      uses: taiki-e/install-action@cargo-make
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cargo-make@0.37.13
 
     # Actual job
 
@@ -416,7 +418,9 @@ jobs:
 
     # Cargo-make boilerplate
     - name: Install cargo-make
-      uses: taiki-e/install-action@cargo-make
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cargo-make@0.37.13
 
     # Actual job
 
@@ -479,7 +483,9 @@ jobs:
 
     # Cargo-make boilerplate
     - name: Install cargo-make
-      uses: taiki-e/install-action@cargo-make
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cargo-make@0.37.13
 
     # Job-specific dependencies
     - name: Install npm tools

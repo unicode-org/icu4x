@@ -20,7 +20,9 @@ jobs:
       ## Coverage steps
 
       - name: Install grcov
-        uses: taiki-e/install-action@grcov
+        uses: taiki-e/install-action@v2
+        with:
+          tool: grcov
   
       - uses:                   actions-rs/toolchain@v1
         with:
