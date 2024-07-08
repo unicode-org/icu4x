@@ -1114,7 +1114,7 @@ macro_rules! __impl_narrow_second_relative_time_format_data_v1_marker {
         __impl_narrow_second_relative_time_format_data_v1_marker!($provider);
         #[clippy::msrv = "1.70"]
         impl icu_provider::IterableDataProvider<icu::experimental::relativetime::provider::NarrowSecondRelativeTimeFormatDataV1Marker> for $provider {
-            fn iter_ids(&self) -> Result<std::collections::HashSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
+            fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok(icu_provider_baked::DataStore::iter(&Self::DATA_NARROW_SECOND_RELATIVE_TIME_FORMAT_DATA_V1_MARKER).collect())
             }
         }

@@ -448,7 +448,7 @@ impl DataExporter for BakedExporter {
                     &self,
                     req: icu_provider::DataRequest,
                 ) -> Result<icu_provider::DataResponse<#marker_bake>, icu_provider::DataError> {
-                    if req.id.locale.is_empty() {
+                    if req.id.locale.is_und() {
                         Ok(icu_provider::DataResponse {
                             payload: icu_provider::DataPayload::from_static_ref(Self::#singleton_ident),
                             metadata: Default::default(),
@@ -461,8 +461,8 @@ impl DataExporter for BakedExporter {
         }, quote! {
             #maybe_msrv
             impl icu_provider::IterableDataProvider<#marker_bake> for $provider {
-                fn iter_ids(&self) -> Result<std::collections::HashSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
-                    Ok(HashSet::from_iter([Default::default()]))
+                fn iter_ids(&self) -> Result<std::collections::BtreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
+                    Ok([Default::default()].into_iter().collect())
                 }
             }
         })
@@ -498,7 +498,7 @@ impl DataExporter for BakedExporter {
                 quote! {
                     #maybe_msrv
                     impl icu_provider::IterableDataProvider<#marker_bake> for $provider {
-                        fn iter_ids(&self) -> Result<std::collections::HashSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
+                        fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                             Ok(Default::default())
                         }
                     }
@@ -603,7 +603,7 @@ impl DataExporter for BakedExporter {
                 quote! {
                     #maybe_msrv
                     impl icu_provider::IterableDataProvider<#marker_bake> for $provider {
-                        fn iter_ids(&self) -> Result<std::collections::HashSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
+                        fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                             Ok(icu_provider_baked::DataStore::iter(&Self::#data_ident).collect())
                         }
                     }

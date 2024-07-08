@@ -222,7 +222,6 @@ dependencies = [
 name = "bies"
 version = "0.2.2"
 dependencies = [
- "criterion",
  "itertools",
  "partial-min-max",
  "rand",
@@ -1050,7 +1049,6 @@ version = "0.3.8"
 dependencies = [
  "icu",
  "icu_collections",
- "toml",
  "wasmi",
  "zerovec",
 ]
@@ -1483,7 +1481,6 @@ dependencies = [
  "icu_provider",
  "icu_provider_export",
  "icu_provider_registry",
- "itertools",
  "log",
  "proc-macro2",
  "writeable",
@@ -3298,7 +3295,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec"
-version = "0.10.2"
+version = "0.10.4"
 dependencies = [
  "bincode",
  "criterion",
@@ -3321,7 +3318,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec-derive"
-version = "0.10.2"
+version = "0.10.3"
 dependencies = [
  "bincode",
  "proc-macro2",

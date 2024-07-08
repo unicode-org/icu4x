@@ -31,5 +31,4 @@ icu_locale = { path = "../../components/locale" }
 writeable = { path = "../../utils/writeable" }
 
 [features]
-std = ["icu_locale/std", "icu_provider/std"]
 serde = ["dep:serde", "zerovec/serde", "icu_locale/serde", "icu_provider/serde"]

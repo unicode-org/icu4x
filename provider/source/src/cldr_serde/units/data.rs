@@ -62,6 +62,24 @@ pub(crate) struct Patterns {
     pub(crate) other_compound_unit_pattern1: Option<String>,
 }
 
+#[derive(PartialEq, Debug, Deserialize)]
+pub struct DurationUnit {
+    #[serde(rename = "durationUnitPattern")]
+    pub(crate) pat: String,
+    #[serde(rename = "durationUnitPattern-alt-variant")]
+    pub(crate) alt_pat: Option<String>,
+}
+
+#[derive(PartialEq, Debug, Deserialize)]
+pub struct DurationUnits {
+    #[serde(rename = "durationUnit-type-hm")]
+    pub hm: DurationUnit,
+    #[serde(rename = "durationUnit-type-hms")]
+    pub hms: DurationUnit,
+    #[serde(rename = "durationUnit-type-ms")]
+    pub ms: DurationUnit,
+}
+
 // TODO: replace Value with specific structs
 #[derive(PartialEq, Debug, Deserialize)]
 pub(crate) struct UnitsData {
@@ -70,6 +88,9 @@ pub(crate) struct UnitsData {
     pub(crate) short: BTreeMap<String, Patterns>,
 
     pub(crate) narrow: BTreeMap<String, Patterns>,
+
+    #[serde(flatten)]
+    pub(crate) duration: DurationUnits,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]

@@ -10,6 +10,7 @@ use crate as icu_provider;
 
 use crate::prelude::*;
 use alloc::borrow::Cow;
+use alloc::collections::BTreeSet;
 use alloc::string::String;
 use core::fmt::Debug;
 use writeable::Writeable;
@@ -230,9 +231,8 @@ impl DynamicDataProvider<BufferMarker> for HelloWorldJsonProvider {
     }
 }
 
-#[cfg(feature = "std")]
 impl IterableDataProvider<HelloWorldV1Marker> for HelloWorldProvider {
-    fn iter_ids(&self) -> Result<std::collections::HashSet<DataIdentifierCow>, DataError> {
+    fn iter_ids(&self) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
         #[allow(clippy::unwrap_used)] // hello-world
         Ok(Self::DATA
             .iter()
@@ -347,11 +347,10 @@ writeable::impl_display_with_writeable!(FormattedHelloWorld<'_>);
 fn test_iter() {
     use crate::IterableDataProvider;
     use icu_locale_core::locale;
-    use std::collections::HashSet;
 
     assert_eq!(
         HelloWorldProvider.iter_ids().unwrap(),
-        HashSet::from_iter([
+        BTreeSet::from_iter([
             DataIdentifierCow::from_locale(locale!("bn").into()),
             DataIdentifierCow::from_locale(locale!("cs").into()),
             DataIdentifierCow::from_locale(locale!("de").into()),

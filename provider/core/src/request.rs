@@ -129,7 +129,8 @@ impl Ord for DataIdentifierCow<'_> {
         self.marker_attributes
             .as_str()
             .cmp(other.marker_attributes.as_str())
-            .then_with(|| self.locale.total_cmp(&other.locale))
+            .then_with(|| self.locale.langid.total_cmp(&other.locale.langid))
+            .then_with(|| self.locale.keywords.cmp(&other.locale.keywords))
     }
 }
 
@@ -193,6 +194,11 @@ impl<'a> DataIdentifierCow<'a> {
             marker_attributes: Cow::Borrowed(marker_attributes),
             locale: Cow::Owned(locale),
         }
+    }
+
+    /// Returns whether this id is equal to the default.
+    pub fn is_default(&self) -> bool {
+        self.marker_attributes.is_empty() && self.locale.is_und()
     }
 }
 
@@ -458,48 +464,12 @@ impl DataLocale {
 }
 
 impl DataLocale {
-    /// Returns whether this [`DataLocale`] has all empty fields (no components).
-    ///
-    /// See also:
-    ///
-    /// - [`DataLocale::is_und()`]
-    /// - [`DataLocale::is_langid_und()`]
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu_provider::DataLocale;
-    ///
-    /// assert!("und".parse::<DataLocale>().unwrap().is_empty());
-    /// assert!(!"und-u-ca-buddhist"
-    ///     .parse::<DataLocale>()
-    ///     .unwrap()
-    ///     .is_empty());
-    /// assert!(!"ca-ES".parse::<DataLocale>().unwrap().is_empty());
-    /// ```
-    pub fn is_empty(&self) -> bool {
-        self == <&DataLocale>::default()
-    }
-
-    /// Returns an ordering suitable for use in [`BTreeSet`].
-    ///
-    /// The ordering may or may not be equivalent to string ordering, and it
-    /// may or may not be stable across ICU4X releases.
-    ///
-    /// [`BTreeSet`]: alloc::collections::BTreeSet
-    pub fn total_cmp(&self, other: &Self) -> Ordering {
-        self.langid
-            .total_cmp(&other.langid)
-            .then_with(|| self.keywords.cmp(&other.keywords))
-    }
-
     /// Returns whether this [`DataLocale`] is `und` in the locale and extensions portion.
     ///
     /// This ignores auxiliary keys.
     ///
     /// See also:
     ///
-    /// - [`DataLocale::is_empty()`]
     /// - [`DataLocale::is_langid_und()`]
     ///
     /// # Examples
@@ -520,8 +490,6 @@ impl DataLocale {
     /// This ignores extension keywords and auxiliary keys.
     ///
     /// See also:
-    ///
-    /// - [`DataLocale::is_empty()`]
     /// - [`DataLocale::is_und()`]
     ///
     /// # Examples
