@@ -3295,7 +3295,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec"
-version = "0.10.2"
+version = "0.10.4"
 dependencies = [
  "bincode",
  "criterion",
@@ -3318,7 +3318,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec-derive"
-version = "0.10.2"
+version = "0.10.3"
 dependencies = [
  "bincode",
  "proc-macro2",
