@@ -4,7 +4,7 @@
 /// `icu`'s `_unstable` constructors.
 ///
 /// Using this implementation will embed the following data in the binary's data segment:
-/// * 471B for the lookup data structure (95 data identifiers)
+/// * 732B for the lookup data structure (175 data identifiers)
 /// * 3635B[^1] for the actual data (33 unique structs)
 ///
 /// [^1]: these numbers can be smaller in practice due to linker deduplication
@@ -17,12 +17,19 @@ macro_rules! __impl_exemplar_characters_numbers_v1_marker {
         #[clippy::msrv = "1.70"]
         impl $provider {
             const DATA_EXEMPLAR_CHARACTERS_NUMBERS_V1_MARKER: icu_provider_baked::zerotrie::Data<icu::properties::provider::ExemplarCharactersNumbersV1Marker> = icu_provider_baked::zerotrie::Data {
-                trie: icu_provider_baked::zerotrie::ZeroTrieSimpleAscii { store: b"\xE1vabcdefghiklmnoprstuxyz\0\0\0\0\0\0\0\0\0\0\0\0\0\x01\x01\x01\x01\x01\x01\x01\x01*@FTr\x8F\x91\x9D\xA6\xD8\xE3\xF2\xFD\0\x15 >I]`k\xC3frs\x01#\x80\x81-\xC5DLMST\x02\x08\x0E\x14Z\x82\xC2BY\x01\x82\x82\xC2AR\x01\x82\x82\xC2AO\x01\x83\x83N\x82\x84\xC6eghlnr\x01\x04\x06\x08\t\x80\x80c\x85o\x85o\x86\x84\x80\xC2sv\x01\x80\x80e-\xC3ACL\x02\x04T\x80H\x87I\x87\xC5nostu\r\x0E\x12\x13-\xC3FSZ\x02\x04I\x80E\x80A\x80\x88-CR\x80\x88\x89\xC5afior\x01\x07\x08\t\x8A-Adlm\x8B\x88\x89\x8C-\xC2LM\x02U\x8DA\x8Du\x8E\xC4eiuy\x01\x02\x03\x82\x85\x80\x80\xC2et\x01\x8F-CH\x87\xC8aeknosxy\x01\x03\x04\x06\x08\n!\x80a\x80\x80\x90\0k\x85\x90\x01v-\xC3DOT\x05\neva\x90\x02rya\x90\x03elu\x90\x04\x80\xC3itv\x03\x04j\x90\x05\x88\x80\xC4lnry\x02\x04\x05\x90\x06i\x84\x85\x90\x07\xC3eoq\x01\x02\x85\x88o\x90\x08r\x90\t\xC5alrst\x02\x03\x05\x07\x90\n\x80g\x80\x90\x0B-PT\x80\xC3amu\x02\x04j\x85\x90\x0C\x80\xC7aklqvyz\x08\t\n\x0B\x0C\x0E\x85\xC2ht\x01\x80\x90\r\x80\x89\x80\x88r\x81l\x80\xC3aek\x02\x04\x90\x0E\x90\x0F\x80\xC4knrz\x01\x03\x05\x80d\x8D\x90\x01\x80-Cyrl\x80nr\x85ue\x90\x10-Hans\x90\x10h\x90\x10-Hant\x90\x10" },
+                trie: icu_provider_baked::zerotrie::ZeroTrieSimpleAscii { store: b"\xE1zabcdefghijklmnopqrstuvwxyz\0\0\0\0\0\0\0\0\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x02\x02\x02\x02\x02\x02\x022Si\x84\xA7\xC9\xD5\xEB\x01\x07K`\x80\x92\x99\xB3\xB5\xC3\x02\x1F6ACJ]\xC5fmrsz\x01\x02$'\x80\x81\x82-\xC5DLMST\x02\x08\x0E\x14Z\x83\xC2BY\x01\x83\x83\xC2AR\x01\x83\x83\xC2AO\x01\x84\x84N\x83\x85t\x81\x81\xC7eghlnrs\x01\x04\x06\x08\t\x0C\x80\x80c\x86o\x86o\x87\x85\x80x\x81\x81-Cyrl\x81\xC6aehsvy\x01\x03\x05\x08\t\x81b\x81r\x81\x80w\x81\x80\x81\xC4aeos\x01\x0F\x11\x81\x81-\xC3ACL\x02\x04T\x80H\x88I\x88i\x81b\x81\xC6lnostu\x01\x0F\x10\x15\x16\x81\x81-\xC3FSZ\x02\x04I\x80E\x80A\x80\x89\x81-CR\x80\x89\x8A\xC6afiory\x01\x07\n\x0B\x15\x8B-Adlm\x8C\x89l\x81\x8A\x8D-\xC2LM\x02U\x81A\x81\x81\xC4adlu\x01\x02\x03\x81\x81\x81\x8E\xC7aeirsuy\x01\x02\x03\x04\x06\x07\x81\x83\x86\x81b\x81\x80\x80\xC6adegst\x01\x02\x03\x04\x05\x81\x81\x8F\x81\x81\x81-CH\x88\xC2av\x01\x81\x81\xCBaegkmnosuxy\x01\x03\x05\x06\x07\t\x0C\x14\x15-\x80a\x80p\x81\x80\x81\x90\0\x81k\x86\x90\x01-Deva\x81\x81v\x81-\xC3DOT\x05\neva\x90\x02rya\x90\x03elu\x90\x04\x80\xC6bimotv\x01\x04\x06\x07\x08\x81j\x90\x05o\x81\x81\x89\x80\xC9aiklnrsty\x02\x03\x04\x06\t\n\x0B\x0Ci\x81\x81\x81\x90\x06\x81i\x85\x86\x81\x81\x90\x07\xC5deloq\x02\x03\x04\x05s\x81\x86\x81\x89o\x90\x08\xC2cr\x01\x81\x90\t\xC6aclrst\x02\x04\x05\x07\t\x90\nm\x81\x80g\x80\x90\x0B\x81-PT\x80u\x81\xC4amou\x02\x04\x05j\x86\x90\x0C\x81\x80\xCEacdikloqruvwyz\x08\t\x10\x11\x12\x13\x14\x15\x1C\x1D\x1E\x1F!\x86\xC2ht\x01\x80\x90\r\x81\x81-Deva\x81\x81\x80\x8A\x81\x80\x81-Latn\x81\x81\x89\x81r\x82l\x80\xC9aeghikort\x02\x04\x05\x06\x07\x08\t\n\x90\x0E\x90\x0F\x81\x81\x81\x80\x81\x81\x81\xC5gknrz\x01\x02\x04\x06\x81\x80d\x81\x90\x01\x80-Cyrl\x80\xC3eim\x02\x03c\x81\x81w\x81o\x81\xC2hn\x01\x81r\x86\xC3oru\x01\x03\x81l\x81e\x90\x10-Hans\x90\x10\xC3ahu\x01\n\x81\x90\x10-Hant\x90\x10\x81" },
                 values: &[
                     icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
                         unsafe {
                             #[allow(unused_unsafe)]
                             icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"%\0\0\0&\0\0\0+\0\0\0.\0\0\x000\0\0\0:\0\0\0\x11 \0\0\x12 \0\x000 \0\x001 \0\0") }, 16u32)
+                        },
+                        zerovec::VarZeroVec::new(),
+                    )),
+                    icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
+                        unsafe {
+                            #[allow(unused_unsafe)]
+                            icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"%\0\0\0&\0\0\0+\0\0\0/\0\0\x000\0\0\0:\0\0\0\x11 \0\0\x12 \0\x000 \0\x001 \0\0") }, 17u32)
                         },
                         zerovec::VarZeroVec::new(),
                     )),
@@ -107,13 +114,6 @@ macro_rules! __impl_exemplar_characters_numbers_v1_marker {
                         unsafe {
                             #[allow(unused_unsafe)]
                             icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"%\0\0\0&\0\0\0+\0\0\0/\0\0\x000\0\0\0:\0\0\0\xB2\0\0\0\xB4\0\0\0\xB3\x02\0\0\xB4\x02\0\0\xE2\x02\0\0\xE3\x02\0\0H\x1D\0\0J\x1D\0\0\x11 \0\0\x12 \0\x000 \0\x001 \0\0\x12\"\0\0\x13\"\0\0") }, 24u32)
-                        },
-                        zerovec::VarZeroVec::new(),
-                    )),
-                    icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
-                        unsafe {
-                            #[allow(unused_unsafe)]
-                            icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"%\0\0\0&\0\0\0+\0\0\0/\0\0\x000\0\0\0:\0\0\0\x11 \0\0\x12 \0\x000 \0\x001 \0\0") }, 17u32)
                         },
                         zerovec::VarZeroVec::new(),
                     )),

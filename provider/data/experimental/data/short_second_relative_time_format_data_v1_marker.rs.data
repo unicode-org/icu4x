@@ -4,7 +4,7 @@
 /// `icu`'s `_unstable` constructors.
 ///
 /// Using this implementation will embed the following data in the binary's data segment:
-/// * 662B for the lookup data structure (133 data identifiers)
+/// * 800B for the lookup data structure (168 data identifiers)
 /// * 66447B[^1] for the actual data (130 unique structs)
 ///
 /// [^1]: these numbers can be smaller in practice due to linker deduplication
@@ -17,7 +17,7 @@ macro_rules! __impl_short_second_relative_time_format_data_v1_marker {
         #[clippy::msrv = "1.70"]
         impl $provider {
             const DATA_SHORT_SECOND_RELATIVE_TIME_FORMAT_DATA_V1_MARKER: icu_provider_baked::zerotrie::Data<icu::experimental::relativetime::provider::ShortSecondRelativeTimeFormatDataV1Marker> = icu_provider_baked::zerotrie::Data {
-                trie: icu_provider_baked::zerotrie::ZeroTrieSimpleAscii { store: b"\xE1xabcdefghijklmnoprstuvwyz\0\0\0\0\0\0\0\0\0\0\x01\x01\x01\x01\x01\x01\x01\x01\x01\x02\x02\x02\x02\x11,;H}\x9D\xAD\xD1\xE5\xED\x16&K[^x\x80\xC3\xE7\x08\x0B\x0E\x1F\xC5fmrsz\x01\x02\x03\x06\x80\x81\x82\x83t\x84\x85\xC6eglnrs\x01\x02\x04\x05\x08\x86\x87o\x88\x89\x8Ax\x8B\x8C-Cyrl\x8D\xC4ahsy\x01\x03\x05\x8Er\x8F\x90\0\x90\x01\xC3aes\x02\x04\x90\x02\x90\x03b\x90\x04\xC5lnstu\x02\x15')\x90\x05\x90\x06-\xC30AC\x04\x0701\x90\x07U\x90\x08A\x90\x08\x90\t-\xC3AMP\x03\x06R\x90\nX\x90\x0BY\x90\n\x90\x0C\x90\r\xC6afiory\x02\t\x0E\x10\x12\x90\x0E-Adlm\x90\x0F\x90\x10l\x90\x11\x90\x12\x90\x13\x90\x14\xC4adlu\x02\x04\x06\x90\x15\x90\x16\x90\x17\x90\x18\xC7aeirsuy\x02\x04\r\x0F\x12\x14\x90\x19\x90\x1A\x90\x1B-Latn\x90\x1C\x90\x1Db\x90\x1E\x90\x1F\x90 \xC5adgst\x02\x04\x06\x08\x90!\x90\"\x90#\x90$\x90%\xC2av\x02\x90&\x90'\xC9aegkmnouy\x02\x05\x08\n\x0C\x0E\x13\x15\x90(a\x90)p\x90*\x90+\x90,\x90-\x90.k\x90/\x900\x901\xC4botv\x02\x04\x06\x902\x903\x904\x905\xC9aiklnrsty\x03\x05\x07\t\x0B\r\x0F\x11i\x906\x907\x908\x909\x90:\x90;\x90<\x90=\x90>\xC4elno\x02\x04\x06\x90?\x90@\x90A\x90Br\x90C\xC5aclst\x02\x05\x07\t\x90Dm\x90E\x90F\x90G\x90H-PT\x90I\xC2ou\x02\x90J\x90K\xCCacdikloqrvwy\x03\x05\x07\t\x0B\r\x0F\x11$&(h\x90L\x90M\x90N\x90O\x90P\x90Q\x90R\x90S\x90T-\xC2BL\x03A\x90Uatn\x90V-BA\x8C\x90W\x90Xr\x90Y\xC9aeghikort\x02\x04\x06\x08\n\x0C\x0E\x10\x90Z\x90[\x90\\\x90]\x90^\x90_\x90`\x90a\x90b\xC5gknrz\x02\x04\x07\x0E\x90c\x90dd\x90e\x90f-IN\x90g\x90h-Cyrl\x90ii\x90jo\x90k\xC2ru\x03l\x90le\x90m-Hans\x90n\xC2hu\t\x90o-Hant\x90p\x90q" },
+                trie: icu_provider_baked::zerotrie::ZeroTrieSimpleAscii { store: b"\xE1zabcdefghijklmnopqrstuvwxyz\0\0\0\0\0\0\0\0\0\x01\x01\x01\x01\x01\x01\x01\x01\x01\x02\x02\x02\x02\x02\x02\x02\x112K\\\x94\xB4\xC4\xE8\xFF\x07Ph\x8F\xA7\xAE\xCC\xCE\xDD2Vv\x82\x85\x8C\xA0\xC5fmrsz\x01\x02\x03\x06\x80\x81\x82\x83t\x84\x85\xC7eghlnrs\x01\x04\x06\x08\t\x0C\x86\x87c\x88o\x88o\x89\x8A\x8Bx\x8C\x8D-Cyrl\x8E\xC6aehsvy\x01\x03\x06\n\x0B\x8Fb\x88r\x90\0\x90\x01w\x88\x88\x90\x02\xC4aeos\x02\x04\x06\x90\x03\x90\x04i\x88b\x90\x05\xC6lnostu\x02\x15\x16(*\x90\x06\x90\x07-\xC30AC\x04\x0701\x90\x08U\x90\tA\x90\t\x88\x90\n-\xC3AMP\x03\x06R\x90\x0BX\x90\x0CY\x90\x0B\x90\r\x90\x0E\xC6afiory\x02\t\x0E\x10\x12\x90\x0F-Adlm\x90\x10\x90\x11l\x90\x12\x90\x13\x90\x14\x90\x15\xC4adlu\x02\x04\x06\x90\x16\x90\x17\x90\x18\x90\x19\xC7aeirsuy\x02\x04\r\x0F\x12\x14\x90\x1A\x90\x1B\x90\x1C-Latn\x90\x1D\x90\x1Eb\x90\x1F\x90 \x90!\xC6adegst\x02\x04\x05\x07\t\x90\"\x90#\x88\x90$\x90%\x90&\xC2av\x02\x90'\x90(\xCBaegkmnosuxy\x02\x05\x08\n\x0C\x0E\x13\x1A\x1C1\x90)a\x90*p\x90+\x90,\x90-\x90.\x90/k\x900\x88-Deva\x88\x901v\x88-\xC3DOT\x04\x08eva\x88rya\x88elu\x88\x902\xC6bimotv\x02\x04\x06\x08\n\x903j\x88o\x88\x904\x905\x906\xC9aiklnrsty\x03\x05\x07\t\r\x0F\x11\x13i\x907\x908\x909\x90:\x90;i\x88\x90<\x90=\x90>\x90?\xC6delnoq\x02\x04\x06\x08\ns\x88\x90@\x90A\x90B\x90Co\x88\xC2cr\x01\x88\x90D\xC6aclrst\x02\x05\x07\t\x0B\x90Em\x90F\x90Gg\x88\x90H\x90I-PT\x90Ju\x88\xC4amou\x02\x03\x05j\x88\x88\x90K\x90L\xCEacdikloqruvwyz\x08\n\x12\x14\x16\x18\x1A\x1C/0247\x88\xC2ht\x02\x90M\x88\x90N\x90O-Deva\x88\x90P\x90Q\x90R\x90S\x90T\x90U-\xC2BL\x03A\x90Vatn\x90W-BA\x8D\x88\x90X\x90Yr\x90Zl\x88\xC9aeghikort\x02\x04\x06\x08\n\x0C\x0E\x10\x90[\x90\\\x90]\x90^\x90_\x90`\x90a\x90b\x90c\xC5gknrz\x02\x04\x06\r\x90d\x90ed\x88\x90f-IN\x90g\x90h-Cyrl\x90i\xC3eim\x02\x04c\x88\x90jw\x88o\x90k\xC2hn\x01\x88r\x88\xC3oru\x01\x04\x88l\x90le\x90m-Hans\x90n\xC3ahu\x01\n\x88\x90o-Hant\x90p\x90q" },
                 values: &[
                     icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
                         relatives: unsafe {
@@ -82,6 +82,14 @@ macro_rules! __impl_short_second_relative_time_format_data_v1_marker {
                         },
                         past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("преди  сек"), index: 11u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("преди  сек"), index: 11u8 } },
                         future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("след  сек"), index: 9u8 }), two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("след  сек"), index: 9u8 } },
+                    },
+                    icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
+                        relatives: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0now") })
+                        },
+                        past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("- s"), index: 1u8 } },
+                        future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("+ s"), index: 1u8 } },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
                         relatives: unsafe {
@@ -954,14 +962,6 @@ macro_rules! __impl_short_second_relative_time_format_data_v1_marker {
                         },
                         past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" с тому"), index: 0u8 }), two: None, few: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" с тому"), index: 0u8 }), many: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" с тому"), index: 0u8 }), other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed(" с тому"), index: 0u8 } },
                         future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("через  с"), index: 11u8 }), two: None, few: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("через  с"), index: 11u8 }), many: Some(icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("через  с"), index: 11u8 }), other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("через  с"), index: 11u8 } },
-                    },
-                    icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
-                        relatives: unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0now") })
-                        },
-                        past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("- s"), index: 1u8 } },
-                        future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("+ s"), index: 1u8 } },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
                         relatives: unsafe {

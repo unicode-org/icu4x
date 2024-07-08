@@ -1,4 +1,4 @@
-plurals/cardinal@1, <lookup>, 435B, 103 identifiers
+plurals/cardinal@1, <lookup>, 655B, 157 identifiers
 plurals/cardinal@1, <total>, 7214B, 34 unique payloads
 plurals/cardinal@1, af, 139B, 3aff8a8624dd0ca1
 plurals/cardinal@1, am, 154B, a09347c88cd1da4d
@@ -8,16 +8,20 @@ plurals/cardinal@1, ast, 154B, d29ce75cb4218201
 plurals/cardinal@1, az, 139B, -> af
 plurals/cardinal@1, be, 237B, ac79a1ea1dff5f2e
 plurals/cardinal@1, bg, 139B, -> af
+plurals/cardinal@1, bgc, 120B, fd5d54cb7ad1d0d8
 plurals/cardinal@1, bho, 139B, 575f8a3ee47b23ad
 plurals/cardinal@1, blo, 158B, d2bc1aa0ca8a87ee
 plurals/cardinal@1, bn, 154B, -> am
 plurals/cardinal@1, br, 312B, 12b606ce7d5471ed
 plurals/cardinal@1, brx, 139B, -> af
 plurals/cardinal@1, bs, 278B, e82ee4e634c4a9cf
+plurals/cardinal@1, bs-Cyrl, 120B, -> bgc
 plurals/cardinal@1, ca, 233B, fe819803e09d0296
 plurals/cardinal@1, ceb, 262B, e89161a8c112bc17
 plurals/cardinal@1, chr, 139B, -> af
 plurals/cardinal@1, cs, 207B, 3022e355cf1a8224
+plurals/cardinal@1, csw, 120B, -> bgc
+plurals/cardinal@1, cv, 120B, -> bgc
 plurals/cardinal@1, cy, 215B, 8a360bda78b7bfe1
 plurals/cardinal@1, da, 177B, b3556776b50a807b
 plurals/cardinal@1, de, 154B, -> ast
@@ -30,6 +34,7 @@ plurals/cardinal@1, es, 218B, 93bb5733ce2a53ac
 plurals/cardinal@1, et, 154B, -> ast
 plurals/cardinal@1, eu, 139B, -> af
 plurals/cardinal@1, fa, 154B, -> am
+plurals/cardinal@1, ff-Adlm, 120B, -> bgc
 plurals/cardinal@1, fi, 154B, -> ast
 plurals/cardinal@1, fil, 262B, -> ceb
 plurals/cardinal@1, fo, 139B, -> af
@@ -47,26 +52,51 @@ plurals/cardinal@1, hsb, 267B, -> dsb
 plurals/cardinal@1, hu, 139B, -> af
 plurals/cardinal@1, hy, 147B, ab86da9a046d9f3e
 plurals/cardinal@1, ia, 154B, -> ast
+plurals/cardinal@1, id, 120B, -> bgc
+plurals/cardinal@1, ie, 120B, -> bgc
+plurals/cardinal@1, ig, 120B, -> bgc
 plurals/cardinal@1, is, 199B, 168671379ffea5ef
 plurals/cardinal@1, it, 233B, -> ca
+plurals/cardinal@1, ja, 120B, -> bgc
+plurals/cardinal@1, jv, 120B, -> bgc
 plurals/cardinal@1, ka, 139B, -> af
+plurals/cardinal@1, kea, 120B, -> bgc
+plurals/cardinal@1, kgp, 120B, -> bgc
 plurals/cardinal@1, kk, 139B, -> af
+plurals/cardinal@1, km, 120B, -> bgc
 plurals/cardinal@1, kn, 154B, -> am
+plurals/cardinal@1, ko, 120B, -> bgc
+plurals/cardinal@1, kok, 120B, -> bgc
 plurals/cardinal@1, ks, 139B, -> af
+plurals/cardinal@1, ks-Deva, 120B, -> bgc
 plurals/cardinal@1, ku, 139B, -> af
+plurals/cardinal@1, kxv, 120B, -> bgc
+plurals/cardinal@1, kxv-Deva, 120B, -> bgc
+plurals/cardinal@1, kxv-Orya, 120B, -> bgc
+plurals/cardinal@1, kxv-Telu, 120B, -> bgc
 plurals/cardinal@1, ky, 139B, -> af
 plurals/cardinal@1, lb, 139B, -> af
 plurals/cardinal@1, lij, 154B, -> ast
+plurals/cardinal@1, lmo, 120B, -> bgc
+plurals/cardinal@1, lo, 120B, -> bgc
 plurals/cardinal@1, lt, 207B, c310ec14bbeb8b92
 plurals/cardinal@1, lv, 293B, 1b52c061d5bb5df8
+plurals/cardinal@1, mai, 120B, -> bgc
+plurals/cardinal@1, mi, 120B, -> bgc
 plurals/cardinal@1, mk, 199B, 8f9a64aabc589c35
 plurals/cardinal@1, ml, 139B, -> af
 plurals/cardinal@1, mn, 139B, -> af
+plurals/cardinal@1, mni, 120B, -> bgc
 plurals/cardinal@1, mr, 139B, -> af
+plurals/cardinal@1, ms, 120B, -> bgc
 plurals/cardinal@1, mt, 211B, 2ce3642989a4dca1
+plurals/cardinal@1, my, 120B, -> bgc
+plurals/cardinal@1, nds, 120B, -> bgc
 plurals/cardinal@1, ne, 139B, -> af
 plurals/cardinal@1, nl, 154B, -> ast
 plurals/cardinal@1, no, 139B, -> af
+plurals/cardinal@1, nqo, 120B, -> bgc
+plurals/cardinal@1, oc, 120B, -> bgc
 plurals/cardinal@1, or, 139B, -> af
 plurals/cardinal@1, pa, 139B, -> bho
 plurals/cardinal@1, pcm, 154B, -> am
@@ -75,95 +105,371 @@ plurals/cardinal@1, prg, 293B, -> lv
 plurals/cardinal@1, ps, 139B, -> af
 plurals/cardinal@1, pt, 218B, a42825618828c947
 plurals/cardinal@1, pt-PT, 233B, -> ca
+plurals/cardinal@1, qu, 120B, -> bgc
+plurals/cardinal@1, raj, 120B, -> bgc
 plurals/cardinal@1, rm, 139B, -> af
 plurals/cardinal@1, ro, 218B, d4db6fe4f3a088e4
 plurals/cardinal@1, ru, 312B, 8b67b7207659c307
+plurals/cardinal@1, sa, 120B, -> bgc
+plurals/cardinal@1, sah, 120B, -> bgc
 plurals/cardinal@1, sat, 158B, 9bbf80a6e70cd1ad
 plurals/cardinal@1, sc, 154B, -> ast
 plurals/cardinal@1, sd, 139B, -> af
+plurals/cardinal@1, sd-Deva, 120B, -> bgc
 plurals/cardinal@1, si, 177B, c6675cfaef9869e8
 plurals/cardinal@1, sk, 207B, -> cs
 plurals/cardinal@1, sl, 237B, 3fd864453560f032
 plurals/cardinal@1, so, 139B, -> af
 plurals/cardinal@1, sq, 139B, -> af
 plurals/cardinal@1, sr, 278B, -> bs
+plurals/cardinal@1, sr-Latn, 120B, -> bgc
+plurals/cardinal@1, su, 120B, -> bgc
 plurals/cardinal@1, sv, 154B, -> ast
 plurals/cardinal@1, sw, 154B, -> ast
 plurals/cardinal@1, syr, 139B, -> af
+plurals/cardinal@1, szl, 120B, -> bgc
 plurals/cardinal@1, ta, 139B, -> af
 plurals/cardinal@1, te, 139B, -> af
+plurals/cardinal@1, tg, 120B, -> bgc
+plurals/cardinal@1, th, 120B, -> bgc
 plurals/cardinal@1, ti, 139B, -> bho
 plurals/cardinal@1, tk, 139B, -> af
+plurals/cardinal@1, to, 120B, -> bgc
 plurals/cardinal@1, tr, 139B, -> af
+plurals/cardinal@1, tt, 120B, -> bgc
 plurals/cardinal@1, ug, 139B, -> af
 plurals/cardinal@1, uk, 312B, -> ru
-plurals/cardinal@1, und, 120B, fd5d54cb7ad1d0d8
+plurals/cardinal@1, und, 120B, -> bgc
 plurals/cardinal@1, ur, 154B, -> ast
 plurals/cardinal@1, uz, 139B, -> af
+plurals/cardinal@1, uz-Cyrl, 120B, -> bgc
 plurals/cardinal@1, vec, 233B, -> ca
+plurals/cardinal@1, vi, 120B, -> bgc
+plurals/cardinal@1, vmw, 120B, -> bgc
+plurals/cardinal@1, wo, 120B, -> bgc
 plurals/cardinal@1, xh, 139B, -> af
+plurals/cardinal@1, xnr, 120B, -> bgc
+plurals/cardinal@1, yo, 120B, -> bgc
+plurals/cardinal@1, yrl, 120B, -> bgc
+plurals/cardinal@1, yue, 120B, -> bgc
+plurals/cardinal@1, yue-Hans, 120B, -> bgc
+plurals/cardinal@1, za, 120B, -> bgc
+plurals/cardinal@1, zh, 120B, -> bgc
+plurals/cardinal@1, zh-Hant, 120B, -> bgc
 plurals/cardinal@1, zu, 154B, -> am
-plurals/ordinal@1, <lookup>, 180B, 35 identifiers
+plurals/ordinal@1, <lookup>, 639B, 156 identifiers
 plurals/ordinal@1, <total>, 4625B, 24 unique payloads
+plurals/ordinal@1, af, 120B, fd5d54cb7ad1d0d8
+plurals/ordinal@1, am, 120B, -> af
+plurals/ordinal@1, ar, 120B, -> af
 plurals/ordinal@1, as, 244B, eacfcf038cfdfa4a
+plurals/ordinal@1, ast, 120B, -> af
 plurals/ordinal@1, az, 381B, 9034198852cf1ba3
 plurals/ordinal@1, be, 170B, 8256e0bc842e7316
+plurals/ordinal@1, bg, 120B, -> af
+plurals/ordinal@1, bgc, 120B, -> af
+plurals/ordinal@1, bho, 120B, -> af
 plurals/ordinal@1, blo, 209B, 4a66803361d377c5
 plurals/ordinal@1, bn, 244B, -> as
+plurals/ordinal@1, br, 120B, -> af
+plurals/ordinal@1, brx, 120B, -> af
+plurals/ordinal@1, bs, 120B, -> af
+plurals/ordinal@1, bs-Cyrl, 120B, -> af
 plurals/ordinal@1, ca, 185B, bccbbe636beb4521
+plurals/ordinal@1, ceb, 120B, -> af
+plurals/ordinal@1, chr, 120B, -> af
+plurals/ordinal@1, cs, 120B, -> af
+plurals/ordinal@1, csw, 120B, -> af
+plurals/ordinal@1, cv, 120B, -> af
 plurals/ordinal@1, cy, 255B, 319bcf4f61ebe9f3
+plurals/ordinal@1, da, 120B, -> af
+plurals/ordinal@1, de, 120B, -> af
+plurals/ordinal@1, doi, 120B, -> af
+plurals/ordinal@1, dsb, 120B, -> af
+plurals/ordinal@1, el, 120B, -> af
 plurals/ordinal@1, en, 222B, 927272c9973d489f
+plurals/ordinal@1, eo, 120B, -> af
+plurals/ordinal@1, es, 120B, -> af
+plurals/ordinal@1, et, 120B, -> af
+plurals/ordinal@1, eu, 120B, -> af
+plurals/ordinal@1, fa, 120B, -> af
+plurals/ordinal@1, ff-Adlm, 120B, -> af
+plurals/ordinal@1, fi, 120B, -> af
 plurals/ordinal@1, fil, 139B, 3aff8a8624dd0ca1
+plurals/ordinal@1, fo, 120B, -> af
 plurals/ordinal@1, fr, 139B, -> fil
+plurals/ordinal@1, fy, 120B, -> af
 plurals/ordinal@1, ga, 139B, -> fil
 plurals/ordinal@1, gd, 201B, 585616808b78e70e
+plurals/ordinal@1, gl, 120B, -> af
 plurals/ordinal@1, gu, 204B, f88ae008fcb8105f
+plurals/ordinal@1, ha, 120B, -> af
+plurals/ordinal@1, he, 120B, -> af
 plurals/ordinal@1, hi, 204B, -> gu
+plurals/ordinal@1, hr, 120B, -> af
+plurals/ordinal@1, hsb, 120B, -> af
 plurals/ordinal@1, hu, 147B, bac71adc64e6a6e9
 plurals/ordinal@1, hy, 139B, -> fil
+plurals/ordinal@1, ia, 120B, -> af
+plurals/ordinal@1, id, 120B, -> af
+plurals/ordinal@1, ie, 120B, -> af
+plurals/ordinal@1, ig, 120B, -> af
+plurals/ordinal@1, is, 120B, -> af
 plurals/ordinal@1, it, 163B, 2be6ef1169cd052f
+plurals/ordinal@1, ja, 120B, -> af
+plurals/ordinal@1, jv, 120B, -> af
 plurals/ordinal@1, ka, 197B, 743f8c5d5a8b20ba
+plurals/ordinal@1, kea, 120B, -> af
+plurals/ordinal@1, kgp, 120B, -> af
 plurals/ordinal@1, kk, 184B, d8885e0ed7ec0196
+plurals/ordinal@1, km, 120B, -> af
+plurals/ordinal@1, kn, 120B, -> af
+plurals/ordinal@1, ko, 120B, -> af
+plurals/ordinal@1, kok, 120B, -> af
+plurals/ordinal@1, ks, 120B, -> af
+plurals/ordinal@1, ks-Deva, 120B, -> af
+plurals/ordinal@1, ku, 120B, -> af
+plurals/ordinal@1, kxv, 120B, -> af
+plurals/ordinal@1, kxv-Deva, 120B, -> af
+plurals/ordinal@1, kxv-Orya, 120B, -> af
+plurals/ordinal@1, kxv-Telu, 120B, -> af
+plurals/ordinal@1, ky, 120B, -> af
+plurals/ordinal@1, lb, 120B, -> af
 plurals/ordinal@1, lij, 163B, c12e832f9255d5dc
+plurals/ordinal@1, lmo, 120B, -> af
 plurals/ordinal@1, lo, 139B, -> fil
+plurals/ordinal@1, lt, 120B, -> af
+plurals/ordinal@1, lv, 120B, -> af
+plurals/ordinal@1, mai, 120B, -> af
+plurals/ordinal@1, mi, 120B, -> af
 plurals/ordinal@1, mk, 238B, 48f551d6b0f034a8
+plurals/ordinal@1, ml, 120B, -> af
+plurals/ordinal@1, mn, 120B, -> af
+plurals/ordinal@1, mni, 120B, -> af
 plurals/ordinal@1, mr, 185B, e4d782006287589d
 plurals/ordinal@1, ms, 139B, -> fil
+plurals/ordinal@1, mt, 120B, -> af
+plurals/ordinal@1, my, 120B, -> af
+plurals/ordinal@1, nds, 120B, -> af
 plurals/ordinal@1, ne, 139B, 798ae74f9c536fe3
+plurals/ordinal@1, nl, 120B, -> af
+plurals/ordinal@1, no, 120B, -> af
+plurals/ordinal@1, nqo, 120B, -> af
+plurals/ordinal@1, oc, 120B, -> af
 plurals/ordinal@1, or, 220B, 1e7a88deef573de8
+plurals/ordinal@1, pa, 120B, -> af
+plurals/ordinal@1, pcm, 120B, -> af
+plurals/ordinal@1, pl, 120B, -> af
+plurals/ordinal@1, prg, 120B, -> af
+plurals/ordinal@1, ps, 120B, -> af
+plurals/ordinal@1, pt, 120B, -> af
+plurals/ordinal@1, qu, 120B, -> af
+plurals/ordinal@1, raj, 120B, -> af
+plurals/ordinal@1, rm, 120B, -> af
 plurals/ordinal@1, ro, 139B, -> fil
+plurals/ordinal@1, ru, 120B, -> af
+plurals/ordinal@1, sa, 120B, -> af
+plurals/ordinal@1, sah, 120B, -> af
+plurals/ordinal@1, sat, 120B, -> af
 plurals/ordinal@1, sc, 163B, -> it
+plurals/ordinal@1, sd, 120B, -> af
+plurals/ordinal@1, sd-Deva, 120B, -> af
+plurals/ordinal@1, si, 120B, -> af
+plurals/ordinal@1, sk, 120B, -> af
+plurals/ordinal@1, sl, 120B, -> af
+plurals/ordinal@1, so, 120B, -> af
 plurals/ordinal@1, sq, 173B, 13d3840300b3d71a
+plurals/ordinal@1, sr, 120B, -> af
+plurals/ordinal@1, sr-Latn, 120B, -> af
+plurals/ordinal@1, su, 120B, -> af
 plurals/ordinal@1, sv, 170B, d54367a1d23eedc7
+plurals/ordinal@1, sw, 120B, -> af
+plurals/ordinal@1, syr, 120B, -> af
+plurals/ordinal@1, szl, 120B, -> af
+plurals/ordinal@1, ta, 120B, -> af
+plurals/ordinal@1, te, 120B, -> af
+plurals/ordinal@1, tg, 120B, -> af
+plurals/ordinal@1, th, 120B, -> af
+plurals/ordinal@1, ti, 120B, -> af
 plurals/ordinal@1, tk, 162B, b860a449a5bf43da
+plurals/ordinal@1, to, 120B, -> af
+plurals/ordinal@1, tr, 120B, -> af
+plurals/ordinal@1, tt, 120B, -> af
+plurals/ordinal@1, ug, 120B, -> af
 plurals/ordinal@1, uk, 154B, 3a7c2ab56ce50c26
-plurals/ordinal@1, und, 120B, fd5d54cb7ad1d0d8
+plurals/ordinal@1, und, 120B, -> af
+plurals/ordinal@1, ur, 120B, -> af
+plurals/ordinal@1, uz, 120B, -> af
+plurals/ordinal@1, uz-Cyrl, 120B, -> af
 plurals/ordinal@1, vec, 163B, -> it
 plurals/ordinal@1, vi, 139B, -> fil
-plurals/ranges@1, <lookup>, 130B, 25 identifiers
+plurals/ordinal@1, vmw, 120B, -> af
+plurals/ordinal@1, wo, 120B, -> af
+plurals/ordinal@1, xh, 120B, -> af
+plurals/ordinal@1, xnr, 120B, -> af
+plurals/ordinal@1, yo, 120B, -> af
+plurals/ordinal@1, yrl, 120B, -> af
+plurals/ordinal@1, yue, 120B, -> af
+plurals/ordinal@1, yue-Hans, 120B, -> af
+plurals/ordinal@1, za, 120B, -> af
+plurals/ordinal@1, zh, 120B, -> af
+plurals/ordinal@1, zh-Hant, 120B, -> af
+plurals/ordinal@1, zu, 120B, -> af
+plurals/ranges@1, <lookup>, 631B, 156 identifiers
 plurals/ranges@1, <total>, 524B, 10 unique payloads
 plurals/ranges@1, af, 50B, b13da4e5718e6e33
+plurals/ranges@1, am, 48B, 3a6d9523170345d0
 plurals/ranges@1, ar, 58B, acdc60e8ef6a9005
+plurals/ranges@1, as, 48B, -> am
+plurals/ranges@1, ast, 48B, -> am
+plurals/ranges@1, az, 48B, -> am
+plurals/ranges@1, be, 48B, -> am
 plurals/ranges@1, bg, 50B, -> af
+plurals/ranges@1, bgc, 48B, -> am
+plurals/ranges@1, bho, 48B, -> am
+plurals/ranges@1, blo, 48B, -> am
+plurals/ranges@1, bn, 48B, -> am
+plurals/ranges@1, br, 48B, -> am
+plurals/ranges@1, brx, 48B, -> am
+plurals/ranges@1, bs, 48B, -> am
+plurals/ranges@1, bs-Cyrl, 48B, -> am
 plurals/ranges@1, ca, 50B, -> af
+plurals/ranges@1, ceb, 48B, -> am
+plurals/ranges@1, chr, 48B, -> am
+plurals/ranges@1, cs, 48B, -> am
+plurals/ranges@1, csw, 48B, -> am
+plurals/ranges@1, cv, 48B, -> am
+plurals/ranges@1, cy, 48B, -> am
+plurals/ranges@1, da, 48B, -> am
+plurals/ranges@1, de, 48B, -> am
+plurals/ranges@1, doi, 48B, -> am
+plurals/ranges@1, dsb, 48B, -> am
+plurals/ranges@1, el, 48B, -> am
 plurals/ranges@1, en, 50B, -> af
+plurals/ranges@1, eo, 48B, -> am
 plurals/ranges@1, es, 50B, -> af
 plurals/ranges@1, et, 50B, -> af
 plurals/ranges@1, eu, 50B, -> af
 plurals/ranges@1, fa, 50B, 64f93a355ae802c9
+plurals/ranges@1, ff-Adlm, 48B, -> am
 plurals/ranges@1, fi, 50B, -> af
+plurals/ranges@1, fil, 48B, -> am
+plurals/ranges@1, fo, 48B, -> am
+plurals/ranges@1, fr, 48B, -> am
+plurals/ranges@1, fy, 48B, -> am
+plurals/ranges@1, ga, 48B, -> am
+plurals/ranges@1, gd, 48B, -> am
+plurals/ranges@1, gl, 48B, -> am
+plurals/ranges@1, gu, 48B, -> am
+plurals/ranges@1, ha, 48B, -> am
 plurals/ranges@1, he, 54B, 8e788ea76832afed
+plurals/ranges@1, hi, 48B, -> am
+plurals/ranges@1, hr, 48B, -> am
+plurals/ranges@1, hsb, 48B, -> am
+plurals/ranges@1, hu, 48B, -> am
+plurals/ranges@1, hy, 48B, -> am
 plurals/ranges@1, ia, 50B, -> af
+plurals/ranges@1, id, 48B, -> am
+plurals/ranges@1, ie, 48B, -> am
+plurals/ranges@1, ig, 48B, -> am
+plurals/ranges@1, is, 48B, -> am
+plurals/ranges@1, it, 48B, -> am
+plurals/ranges@1, ja, 48B, -> am
+plurals/ranges@1, jv, 48B, -> am
 plurals/ranges@1, ka, 52B, cd5f08b151e40f4a
+plurals/ranges@1, kea, 48B, -> am
+plurals/ranges@1, kgp, 48B, -> am
+plurals/ranges@1, kk, 48B, -> am
+plurals/ranges@1, km, 48B, -> am
+plurals/ranges@1, kn, 48B, -> am
+plurals/ranges@1, ko, 48B, -> am
+plurals/ranges@1, kok, 48B, -> am
+plurals/ranges@1, ks, 48B, -> am
+plurals/ranges@1, ks-Deva, 48B, -> am
+plurals/ranges@1, ku, 48B, -> am
+plurals/ranges@1, kxv, 48B, -> am
+plurals/ranges@1, kxv-Deva, 48B, -> am
+plurals/ranges@1, kxv-Orya, 48B, -> am
+plurals/ranges@1, kxv-Telu, 48B, -> am
+plurals/ranges@1, ky, 48B, -> am
+plurals/ranges@1, lb, 48B, -> am
+plurals/ranges@1, lij, 48B, -> am
+plurals/ranges@1, lmo, 48B, -> am
+plurals/ranges@1, lo, 48B, -> am
+plurals/ranges@1, lt, 48B, -> am
 plurals/ranges@1, lv, 54B, 5052f668daf1efd6
+plurals/ranges@1, mai, 48B, -> am
+plurals/ranges@1, mi, 48B, -> am
 plurals/ranges@1, mk, 52B, 7ddbfa2ae45670db
+plurals/ranges@1, ml, 48B, -> am
+plurals/ranges@1, mn, 48B, -> am
+plurals/ranges@1, mni, 48B, -> am
+plurals/ranges@1, mr, 48B, -> am
+plurals/ranges@1, ms, 48B, -> am
+plurals/ranges@1, mt, 48B, -> am
+plurals/ranges@1, my, 48B, -> am
+plurals/ranges@1, nds, 48B, -> am
+plurals/ranges@1, ne, 48B, -> am
+plurals/ranges@1, nl, 48B, -> am
 plurals/ranges@1, no, 50B, -> af
+plurals/ranges@1, nqo, 48B, -> am
+plurals/ranges@1, oc, 48B, -> am
 plurals/ranges@1, or, 50B, -> fa
+plurals/ranges@1, pa, 48B, -> am
 plurals/ranges@1, pcm, 50B, -> af
+plurals/ranges@1, pl, 48B, -> am
+plurals/ranges@1, prg, 48B, -> am
+plurals/ranges@1, ps, 48B, -> am
+plurals/ranges@1, pt, 48B, -> am
+plurals/ranges@1, qu, 48B, -> am
+plurals/ranges@1, raj, 48B, -> am
+plurals/ranges@1, rm, 48B, -> am
 plurals/ranges@1, ro, 50B, e1c66d3ac5206700
+plurals/ranges@1, ru, 48B, -> am
+plurals/ranges@1, sa, 48B, -> am
+plurals/ranges@1, sah, 48B, -> am
+plurals/ranges@1, sat, 48B, -> am
+plurals/ranges@1, sc, 48B, -> am
 plurals/ranges@1, sd, 50B, -> fa
+plurals/ranges@1, sd-Deva, 48B, -> am
 plurals/ranges@1, si, 50B, -> af
+plurals/ranges@1, sk, 48B, -> am
 plurals/ranges@1, sl, 56B, adb2afaf65b6452d
+plurals/ranges@1, so, 48B, -> am
+plurals/ranges@1, sq, 48B, -> am
+plurals/ranges@1, sr, 48B, -> am
+plurals/ranges@1, sr-Latn, 48B, -> am
+plurals/ranges@1, su, 48B, -> am
 plurals/ranges@1, sv, 50B, -> af
-plurals/ranges@1, und, 48B, 3a6d9523170345d0
+plurals/ranges@1, sw, 48B, -> am
+plurals/ranges@1, syr, 48B, -> am
+plurals/ranges@1, szl, 48B, -> am
+plurals/ranges@1, ta, 48B, -> am
+plurals/ranges@1, te, 48B, -> am
+plurals/ranges@1, tg, 48B, -> am
+plurals/ranges@1, th, 48B, -> am
+plurals/ranges@1, ti, 48B, -> am
+plurals/ranges@1, tk, 48B, -> am
+plurals/ranges@1, to, 48B, -> am
+plurals/ranges@1, tr, 48B, -> am
+plurals/ranges@1, tt, 48B, -> am
+plurals/ranges@1, ug, 48B, -> am
+plurals/ranges@1, uk, 48B, -> am
+plurals/ranges@1, und, 48B, -> am
 plurals/ranges@1, ur, 50B, -> af
+plurals/ranges@1, uz, 48B, -> am
+plurals/ranges@1, uz-Cyrl, 48B, -> am
+plurals/ranges@1, vec, 48B, -> am
+plurals/ranges@1, vi, 48B, -> am
+plurals/ranges@1, vmw, 48B, -> am
+plurals/ranges@1, wo, 48B, -> am
+plurals/ranges@1, xh, 48B, -> am
+plurals/ranges@1, xnr, 48B, -> am
+plurals/ranges@1, yo, 48B, -> am
+plurals/ranges@1, yrl, 48B, -> am
+plurals/ranges@1, yue, 48B, -> am
+plurals/ranges@1, yue-Hans, 48B, -> am
+plurals/ranges@1, za, 48B, -> am
+plurals/ranges@1, zh, 48B, -> am
+plurals/ranges@1, zh-Hant, 48B, -> am
+plurals/ranges@1, zu, 48B, -> am

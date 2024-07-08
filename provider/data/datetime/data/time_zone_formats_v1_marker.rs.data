@@ -4,7 +4,7 @@
 /// `icu`'s `_unstable` constructors.
 ///
 /// Using this implementation will embed the following data in the binary's data segment:
-/// * 796B for the lookup data structure (160 data identifiers)
+/// * 833B for the lookup data structure (168 data identifiers)
 /// * 52918B[^1] for the actual data (157 unique structs)
 ///
 /// [^1]: these numbers can be smaller in practice due to linker deduplication
@@ -17,7 +17,7 @@ macro_rules! __impl_time_zone_formats_v1_marker {
         #[clippy::msrv = "1.70"]
         impl $provider {
             const DATA_TIME_ZONE_FORMATS_V1_MARKER: icu_provider_baked::zerotrie::Data<icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker> = icu_provider_baked::zerotrie::Data {
-                trie: icu_provider_baked::zerotrie::ZeroTrieSimpleAscii { store: b"\xE1xabcdefghijklmnoprstuvxyz\0\0\0\0\0\0\0\0\0\0\x01\x01\x01\x01\x01\x01\x01\x02\x02\x02\x02\x02\x02\x112Oa\x84\xA9\xB9\xD2\xEA\xF2AV\x83\x9D\xA5\xC4\xD0\"Fes|\x96\xC5fmrsz\x01\x02\x03\x06\x80\x81\x82\x83t\x84\x85\xC7eghlnrs\x01\x04\x06\x08\t\x0C\x86\x87c\x88o\x89o\x8A\x8B\x8Cx\x8D\x8E-Cyrl\x8F\xC6aehsvy\x02\x05\x08\r\x0F\x90\0b\x90\x01r\x90\x02\x90\x03w\x90\x04\x90\x05\x90\x06\xC4aeos\x02\x04\x07\x90\x07\x90\x08i\x90\tb\x90\n\xC6lnostu\x02\t\x0B\x13\x15\x90\x0B\x90\x0C-CA\x90\r\x90\x0E\x90\x0F-419\x90\x10\x90\x11\x90\x12\xC6afiory\x02\t\x0E\x10\x17\x90\x13-Adlm\x90\x14\x90\x15l\x90\x16\x90\x17\x90\x18-CA\x90\x19\x90\x1A\xC4adlu\x02\x04\x06\x90\x1B\x90\x1C\x90\x1D\x90\x1E\xC6aeirsu\x02\x04\x06\x08\x0B\x90\x1F\x90 \x90!\x90\"b\x90#\x90$\xC6adegst\x02\x04\x06\x08\n\x90%\x90&\x90'\x90(\x90)\x90*\xC2av\x02\x90+\x90,\xCBaegkmnosuxy\x02\x05\x08\n\x0C\x0E\x13\x1C\x1E7\x90-a\x90.p\x90/\x900\x901\x902\x903k\x904\x905-Deva\x906\x907v\x908-\xC3DOT\x05\neva\x909rya\x90:elu\x90;\x90<\xC5biotv\x02\x05\x07\t\x90=j\x90>\x90?\x90@\x90A\xC9aiklnrsty\x03\x05\x07\t\x0E\x10\x17\x19i\x90B\x90C\x90D\x90E\x90Fi\x90G\x90H\x90I-ID\x90J\x90K\x90L\xC6delnoq\x03\x05\x07\t\x0Bs\x90M\x90N\x90O\x90P\x90Qo\x90R\xC2cr\x02\x90S\x90T\xC6aclrst\x02\x05\x07\n\x0C\x90Um\x90V\x90Wg\x90X\x90Y\x90Z-PT\x90[\xC3mou\x02\x04\x90\\\x90]\x90^\xCDacdikloqrvwyz\x05\x07\x10\x12\x14\x16\x18\x1A.025\x90_t\x90`\x90a\x90b-Deva\x90c\x90d\x90e\x90f\x90g\x90h\x90i-\xC2BL\x03A\x90jatn\x90k-BA\x90l\x90m\x90nr\x90ol\x90p\xC9aeghikort\x02\x04\x06\x08\n\x0C\x0E\x10\x90q\x90;\x90r\x90s\x90t\x90u\x90v\x90w\x90x\xC5gknrz\x02\x04\x07\x0E\x90y\x90zd\x90{\x90|-IN\x90}-Cyrl\x90~\xC3eim\x03\x05c\x90\x7F\x91\0w\x91\x01\xC2hn\x02\x90\x0Cr\x91\x02\xC3oru\x07\n\x91\x03-BJ\x91\x04l\x91\x05e\x91\x06-Hans\x91\x07\xC3ahu\x02\x16\x91\x08\x91\t-\xC2HM\n\xC2Ka\x02\x91\nnt\x91\x0BO\x91\n\x91\x0C" },
+                trie: icu_provider_baked::zerotrie::ZeroTrieSimpleAscii { store: b"\xE1zabcdefghijklmnopqrstuvwxyz\0\0\0\0\0\0\0\0\0\0\x01\x01\x01\x01\x01\x01\x01\x01\x02\x02\x02\x02\x02\x02\x02\x112Oa\x84\xA9\xB9\xD6\xEE\xF6E_\x8C\xA6\xAE\xCD\xD0\xE1<`\x81\x8F\x92\x9B\xB5\xC5fmrsz\x01\x02\x03\x06\x80\x81\x82\x83t\x84\x85\xC7eghlnrs\x01\x04\x06\x08\t\x0C\x86\x87c\x88o\x89o\x8A\x8B\x8Cx\x8D\x8E-Cyrl\x8F\xC6aehsvy\x02\x05\x08\r\x0F\x90\0b\x90\x01r\x90\x02\x90\x03w\x90\x04\x90\x05\x90\x06\xC4aeos\x02\x04\x07\x90\x07\x90\x08i\x90\tb\x90\n\xC6lnostu\x02\t\x0B\x13\x15\x90\x0B\x90\x0C-CA\x90\r\x90\x0E\x90\x0F-419\x90\x10\x90\x11\x90\x12\xC6afiory\x02\t\x0E\x10\x17\x90\x13-Adlm\x90\x14\x90\x15l\x90\x16\x90\x17\x90\x18-CA\x90\x19\x90\x1A\xC4adlu\x02\x04\x06\x90\x1B\x90\x1C\x90\x1D\x90\x1E\xC7aeirsuy\x02\x04\x06\x08\x0B\r\x90\x1F\x90 \x90!\x90\"b\x90#\x90$\x90%\xC6adegst\x02\x04\x06\x08\n\x90&\x90'\x90(\x90)\x90*\x90+\xC2av\x02\x90,\x90-\xCBaegkmnosuxy\x02\x05\x08\n\x0C\x0E\x13\x1C\x1E7\x90.a\x90/p\x900\x901\x902\x903\x904k\x905\x906-Deva\x907\x908v\x909-\xC3DOT\x05\neva\x90:rya\x90;elu\x90<\x90=\xC6bimotv\x02\x05\x08\n\x0C\x90>j\x90?o\x90%\x90@\x90A\x90B\xC9aiklnrsty\x03\x05\x07\t\x0E\x10\x17\x19i\x90C\x90D\x90E\x90F\x90Gi\x90H\x90I\x90J-ID\x90K\x90L\x90M\xC6delnoq\x03\x05\x07\t\x0Bs\x90N\x90O\x90P\x90Q\x90Ro\x90S\xC2cr\x02\x90T\x90U\xC6aclrst\x02\x05\x07\n\x0C\x90Vm\x90W\x90Xg\x90Y\x90Z\x90[-PT\x90\\u\x90%\xC4amou\x03\x05\x07j\x90%\x90]\x90^\x90_\xCEacdikloqruvwyz\n\x0C\x15\x17\x19\x1B\x1D\x1F3579<\x90`\xC2ht\x02\x90%\x90a\x90b\x90c-Deva\x90d\x90e\x90f\x90g\x90h\x90i\x90j-\xC2BL\x03A\x90katn\x90l-BA\x90m\x90%\x90n\x90or\x90pl\x90q\xC9aeghikort\x02\x04\x06\x08\n\x0C\x0E\x10\x90r\x90<\x90s\x90t\x90u\x90v\x90w\x90x\x90y\xC5gknrz\x02\x04\x07\x0E\x90z\x90{d\x90%\x90|-IN\x90}\x90%-Cyrl\x90~\xC3eim\x03\x05c\x90\x7F\x91\0w\x91\x01o\x90%\xC2hn\x02\x90\x0Cr\x91\x02\xC3oru\x07\n\x91\x03-BJ\x91\x04l\x91\x05e\x91\x06-Hans\x91\x07\xC3ahu\x02\x16\x91\x08\x91\t-\xC2HM\n\xC2Ka\x02\x91\nnt\x91\x0BO\x91\n\x91\x0C" },
                 values: &[
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
@@ -651,6 +651,18 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"daylightstandard") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x0F\0{0} ny\xC3\xA1ri id\xC5\x91{0} z\xC3\xB3naid\xC5\x91") })
+                        },
+                        fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
+                        gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
+                    },
+                    icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
+                        hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
+                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        region_format: alloc::borrow::Cow::Borrowed("{0}"),
+                        region_format_variants: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"daylightstandard") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x08\0{0} (+1){0} (+0)") })
                         },
                         fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                         gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
@@ -1683,18 +1695,6 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"daylightstandard") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x19\0\xD1\x87\xD0\xB0\xD1\x81: {0}, \xD0\xBB\xD1\x96\xD1\x82\xD0\xBD\xD1\x96\xD0\xB9\xD1\x87\xD0\xB0\xD1\x81: {0}, \xD1\x81\xD1\x82\xD0\xB0\xD0\xBD\xD0\xB4\xD0\xB0\xD1\x80\xD1\x82\xD0\xBD\xD0\xB8\xD0\xB9") })
-                        },
-                        fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
-                        gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
-                    },
-                    icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
-                        hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
-                        region_format: alloc::borrow::Cow::Borrowed("{0}"),
-                        region_format_variants: unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"daylightstandard") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x08\0{0} (+1){0} (+0)") })
                         },
                         fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                         gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
