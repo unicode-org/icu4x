@@ -36,7 +36,7 @@ icu_timezone = { workspace = true }
 icu_experimental = { workspace = true, optional = true }
 
 # For markers_from_bin
-icu_registry = { workspace = true, optional = true }
+icu_provider_registry = { workspace = true, optional = true }
 memchr = { workspace = true, optional = true }
 
 # For docs links and features
@@ -113,7 +113,7 @@ compiled_data = [
 ]
 datagen = [
     "std",
-    "dep:icu_registry",
+    "dep:icu_provider_registry",
     "dep:memchr",
     "icu_calendar/datagen",
     "icu_casemap/datagen",

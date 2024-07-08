@@ -1,4 +1,4 @@
-# icu_registry [![crates.io](https://img.shields.io/crates/v/icu_registry)](https://crates.io/crates/icu_registry)
+# icu_provider_registry [![crates.io](https://img.shields.io/crates/v/icu_provider_registry)](https://crates.io/crates/icu_provider_registry)
 
 <!-- cargo-rdme start -->
 
