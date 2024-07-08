@@ -403,7 +403,7 @@ jobs:
     - name: Install cargo-rdme
       uses: taiki-e/install-action@v2
       with:
-        tool: cargo-rdme@v1.4.4
+        tool: cargo-rdme@1.4.2
 
     # Actual job
     - name: Run `cargo make ci-job-gn`
@@ -459,7 +459,7 @@ jobs:
     - name: Install cargo-rdme
       uses: taiki-e/install-action@v2
       with:
-        tool: cargo-rdme@v1.4.4
+        tool: cargo-rdme@1.4.2
 
     # Actual job
     - name: Tidy
