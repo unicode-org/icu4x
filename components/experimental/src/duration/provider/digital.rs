@@ -27,10 +27,10 @@ use icu_provider::prelude::*;
 pub struct DigitalDurationDataV1<'data> {
     /// The separator between the hour, minute, and second fields.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    separator: Cow<str, 'data>,
+    pub separator: Cow<str, 'data>,
 
     /// The number of digits to pad the hour field with.
-    hour_padding: u8,
+    pub hour_padding: u8,
 }
 
 /// Unknown time pattern: {0}
