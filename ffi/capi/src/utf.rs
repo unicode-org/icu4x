@@ -138,6 +138,7 @@ impl TryWriteable for PotentiallyInvalidUtf16<'_> {
 mod test {
     #![allow(invalid_from_utf8)] // only way to construct the error
     use super::*;
+    use alloc::format;
     use writeable::assert_try_writeable_parts_eq;
 
     #[test]

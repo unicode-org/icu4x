@@ -4,11 +4,14 @@
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use litemap::LiteMap;
+#[cfg(feature = "bench")]
 use std::collections::HashMap;
 use zerotrie::ZeroTrieExtendedCapacity;
 use zerotrie::ZeroTriePerfectHash;
 use zerotrie::ZeroTrieSimpleAscii;
+#[cfg(feature = "bench")]
 use zerovec::ZeroHashMap;
+#[cfg(feature = "bench")]
 use zerovec::ZeroMap;
 
 mod testdata {

@@ -311,6 +311,7 @@ fn bench_deserialize_zerohashmap(c: &mut Criterion) {
     });
 }
 
+#[cfg(feature = "bench")]
 fn bench_deserialize_large_zerohashmap(c: &mut Criterion) {
     let buf = large_zerohashmap_postcard_bytes();
     c.bench_function("zerohashmap/deserialize/large", |b| {
