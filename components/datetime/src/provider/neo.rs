@@ -43,13 +43,10 @@ pub mod marker_attrs {
     pub const SHORT_STANDALONE: &DataMarkerAttributes =
         DataMarkerAttributes::from_str_or_panic("6s");
 
-    pub const PATTERN_FULL: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("f");
     pub const PATTERN_LONG: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("l");
     pub const PATTERN_MEDIUM: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("m");
     pub const PATTERN_SHORT: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("s");
 
-    pub const PATTERN_FULL12: &DataMarkerAttributes =
-        DataMarkerAttributes::from_str_or_panic("f12");
     pub const PATTERN_LONG12: &DataMarkerAttributes =
         DataMarkerAttributes::from_str_or_panic("l12");
     pub const PATTERN_MEDIUM12: &DataMarkerAttributes =
@@ -57,8 +54,6 @@ pub mod marker_attrs {
     pub const PATTERN_SHORT12: &DataMarkerAttributes =
         DataMarkerAttributes::from_str_or_panic("s12");
 
-    pub const PATTERN_FULL24: &DataMarkerAttributes =
-        DataMarkerAttributes::from_str_or_panic("f24");
     pub const PATTERN_LONG24: &DataMarkerAttributes =
         DataMarkerAttributes::from_str_or_panic("l24");
     pub const PATTERN_MEDIUM24: &DataMarkerAttributes =
@@ -76,17 +71,14 @@ pub mod marker_attrs {
     pub const WIDE_STANDALONE_STR: &str = WIDE_STANDALONE.as_str();
     pub const SHORT_STANDALONE_STR: &str = SHORT_STANDALONE.as_str();
 
-    pub const PATTERN_FULL_STR: &str = PATTERN_FULL.as_str();
     pub const PATTERN_LONG_STR: &str = PATTERN_LONG.as_str();
     pub const PATTERN_MEDIUM_STR: &str = PATTERN_MEDIUM.as_str();
     pub const PATTERN_SHORT_STR: &str = PATTERN_SHORT.as_str();
 
-    pub const PATTERN_FULL12_STR: &str = PATTERN_FULL12.as_str();
     pub const PATTERN_LONG12_STR: &str = PATTERN_LONG12.as_str();
     pub const PATTERN_MEDIUM12_STR: &str = PATTERN_MEDIUM12.as_str();
     pub const PATTERN_SHORT12_STR: &str = PATTERN_SHORT12.as_str();
 
-    pub const PATTERN_FULL24_STR: &str = PATTERN_FULL24.as_str();
     pub const PATTERN_LONG24_STR: &str = PATTERN_LONG24.as_str();
     pub const PATTERN_MEDIUM24_STR: &str = PATTERN_MEDIUM24.as_str();
     pub const PATTERN_SHORT24_STR: &str = PATTERN_SHORT24.as_str();
@@ -126,7 +118,6 @@ pub mod marker_attrs {
     /// [`length::Time`]: crate::options::length::Time
     #[derive(Copy, Clone, Debug, PartialEq, Eq)]
     pub enum PatternLength {
-        Full,
         Long,
         Medium,
         Short,
@@ -187,17 +178,14 @@ pub mod marker_attrs {
     ) -> Option<(PatternLength, Option<CoarseHourCycle>)> {
         use {CoarseHourCycle::*, PatternLength::*};
         match &**marker_attr {
-            PATTERN_FULL_STR => Some((Full, None)),
             PATTERN_LONG_STR => Some((Long, None)),
             PATTERN_MEDIUM_STR => Some((Medium, None)),
             PATTERN_SHORT_STR => Some((Short, None)),
 
-            PATTERN_FULL12_STR => Some((Full, Some(H11H12))),
             PATTERN_LONG12_STR => Some((Long, Some(H11H12))),
             PATTERN_MEDIUM12_STR => Some((Medium, Some(H11H12))),
             PATTERN_SHORT12_STR => Some((Short, Some(H11H12))),
 
-            PATTERN_FULL24_STR => Some((Full, Some(H23H24))),
             PATTERN_LONG24_STR => Some((Long, Some(H23H24))),
             PATTERN_MEDIUM24_STR => Some((Medium, Some(H23H24))),
             PATTERN_SHORT24_STR => Some((Short, Some(H23H24))),
@@ -241,17 +229,14 @@ pub mod marker_attrs {
     ) -> &'static DataMarkerAttributes {
         use {CoarseHourCycle::*, PatternLength::*};
         match (length, hour_cycle) {
-            (Full, None) => PATTERN_FULL,
             (Long, None) => PATTERN_LONG,
             (Medium, None) => PATTERN_MEDIUM,
             (Short, None) => PATTERN_SHORT,
 
-            (Full, Some(H11H12)) => PATTERN_FULL12,
             (Long, Some(H11H12)) => PATTERN_LONG12,
             (Medium, Some(H11H12)) => PATTERN_MEDIUM12,
             (Short, Some(H11H12)) => PATTERN_SHORT12,
 
-            (Full, Some(H23H24)) => PATTERN_FULL24,
             (Long, Some(H23H24)) => PATTERN_LONG24,
             (Medium, Some(H23H24)) => PATTERN_MEDIUM24,
             (Short, Some(H23H24)) => PATTERN_SHORT24,

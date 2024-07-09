@@ -61,7 +61,6 @@ const FULL_KEY_LENGTHS: &[&DataMarkerAttributes] = &[
 
 /// Lengths for normal patterns (not counting hour cycle stuff)
 const NORMAL_PATTERN_KEY_LENGTHS: &[&DataMarkerAttributes] = &[
-    marker_attrs::PATTERN_FULL,
     marker_attrs::PATTERN_LONG,
     marker_attrs::PATTERN_MEDIUM,
     marker_attrs::PATTERN_SHORT,
