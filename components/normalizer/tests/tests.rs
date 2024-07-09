@@ -1656,14 +1656,14 @@ fn test_is_normalized_up_to() {
     let umlaut_utf8 = umlaut.as_bytes();
     check_utf8(umlaut_utf8);
 
-    assert!(nfd.is_normalized_up_to(umlaut) == 1);
-    assert!(nfkd.is_normalized_up_to(umlaut) == 1);
-    assert!(nfc.is_normalized_up_to(umlaut) == 4);
-    assert!(nfkc.is_normalized_up_to(umlaut) == 4);
-    assert!(nfd.is_normalized_utf8_up_to(umlaut_utf8) == 1);
-    assert!(nfkd.is_normalized_utf8_up_to(umlaut_utf8) == 1);
-    assert!(nfc.is_normalized_utf8_up_to(umlaut_utf8) == 4);
-    assert!(nfkc.is_normalized_utf8_up_to(umlaut_utf8) == 4);
+    assert_eq!(nfd.is_normalized_up_to(umlaut), 1);
+    assert_eq!(nfkd.is_normalized_up_to(umlaut), 1);
+    assert_eq!(nfc.is_normalized_up_to(umlaut), 4);
+    assert_eq!(nfkc.is_normalized_up_to(umlaut), 4);
+    assert_eq!(nfd.is_normalized_utf8_up_to(umlaut_utf8), 1);
+    assert_eq!(nfkd.is_normalized_utf8_up_to(umlaut_utf8), 1);
+    assert_eq!(nfc.is_normalized_utf8_up_to(umlaut_utf8), 4);
+    assert_eq!(nfkc.is_normalized_utf8_up_to(umlaut_utf8), 4);
 
     let fraction = "a½a";
     check_str(fraction);
@@ -1671,14 +1671,14 @@ fn test_is_normalized_up_to() {
     let fraction_utf8 = fraction.as_bytes();
     check_utf8(fraction_utf8);
 
-    assert!(nfd.is_normalized_up_to(fraction) == 4);
-    assert!(nfkd.is_normalized_up_to(fraction) == 1);
-    assert!(nfc.is_normalized_up_to(fraction) == 4);
-    assert!(nfkc.is_normalized_up_to(fraction) == 1);
-    assert!(nfd.is_normalized_utf8_up_to(fraction_utf8) == 4);
-    assert!(nfkd.is_normalized_utf8_up_to(fraction_utf8) == 1);
-    assert!(nfc.is_normalized_utf8_up_to(fraction_utf8) == 4);
-    assert!(nfkc.is_normalized_utf8_up_to(fraction_utf8) == 1);
+    assert_eq!(nfd.is_normalized_up_to(fraction), 4);
+    assert_eq!(nfkd.is_normalized_up_to(fraction), 1);
+    assert_eq!(nfc.is_normalized_up_to(fraction), 4);
+    assert_eq!(nfkc.is_normalized_up_to(fraction), 1);
+    assert_eq!(nfd.is_normalized_utf8_up_to(fraction_utf8), 4);
+    assert_eq!(nfkd.is_normalized_utf8_up_to(fraction_utf8), 1);
+    assert_eq!(nfc.is_normalized_utf8_up_to(fraction_utf8), 4);
+    assert_eq!(nfkc.is_normalized_utf8_up_to(fraction_utf8), 1);
 
     let reversed_vietnamese = "e\u{0302}\u{0323}";
     check_str(reversed_vietnamese);
@@ -1686,14 +1686,14 @@ fn test_is_normalized_up_to() {
     let reversed_vietnamese_utf8 = reversed_vietnamese.as_bytes();
     check_utf8(reversed_vietnamese_utf8);
 
-    assert!(nfd.is_normalized_up_to(reversed_vietnamese) == 1);
-    assert!(nfkd.is_normalized_up_to(reversed_vietnamese) == 1);
-    assert!(nfc.is_normalized_up_to(reversed_vietnamese) == 0);
-    assert!(nfkc.is_normalized_up_to(reversed_vietnamese) == 0);
-    assert!(nfd.is_normalized_utf8_up_to(reversed_vietnamese_utf8) == 1);
-    assert!(nfkd.is_normalized_utf8_up_to(reversed_vietnamese_utf8) == 1);
-    assert!(nfc.is_normalized_utf8_up_to(reversed_vietnamese_utf8) == 0);
-    assert!(nfkc.is_normalized_utf8_up_to(reversed_vietnamese_utf8) == 0);
+    assert_eq!(nfd.is_normalized_up_to(reversed_vietnamese), 1);
+    assert_eq!(nfkd.is_normalized_up_to(reversed_vietnamese), 1);
+    assert_eq!(nfc.is_normalized_up_to(reversed_vietnamese), 0);
+    assert_eq!(nfkc.is_normalized_up_to(reversed_vietnamese), 0);
+    assert_eq!(nfd.is_normalized_utf8_up_to(reversed_vietnamese_utf8), 1);
+    assert_eq!(nfkd.is_normalized_utf8_up_to(reversed_vietnamese_utf8), 1);
+    assert_eq!(nfc.is_normalized_utf8_up_to(reversed_vietnamese_utf8), 0);
+    assert_eq!(nfkc.is_normalized_utf8_up_to(reversed_vietnamese_utf8), 0);
 
     let truncated_vietnamese = "e\u{0302}";
     check_str(truncated_vietnamese);
@@ -1702,11 +1702,11 @@ fn test_is_normalized_up_to() {
     check_utf8(truncated_vietnamese_utf8);
 
     assert_eq!(nfd.is_normalized_up_to(truncated_vietnamese), 3);
-    assert!(nfkd.is_normalized_up_to(truncated_vietnamese) == 3);
-    assert!(nfc.is_normalized_up_to(truncated_vietnamese) == 0);
-    assert!(nfkc.is_normalized_up_to(truncated_vietnamese) == 0);
-    assert!(nfd.is_normalized_utf8_up_to(truncated_vietnamese_utf8) == 3);
-    assert!(nfkd.is_normalized_utf8_up_to(truncated_vietnamese_utf8) == 3);
-    assert!(nfc.is_normalized_utf8_up_to(truncated_vietnamese_utf8) == 0);
-    assert!(nfkc.is_normalized_utf8_up_to(truncated_vietnamese_utf8) == 0);
+    assert_eq!(nfkd.is_normalized_up_to(truncated_vietnamese), 3);
+    assert_eq!(nfc.is_normalized_up_to(truncated_vietnamese), 0);
+    assert_eq!(nfkc.is_normalized_up_to(truncated_vietnamese), 0);
+    assert_eq!(nfd.is_normalized_utf8_up_to(truncated_vietnamese_utf8), 3);
+    assert_eq!(nfkd.is_normalized_utf8_up_to(truncated_vietnamese_utf8), 3);
+    assert_eq!(nfc.is_normalized_utf8_up_to(truncated_vietnamese_utf8), 0);
+    assert_eq!(nfkc.is_normalized_utf8_up_to(truncated_vietnamese_utf8), 0);
 }
