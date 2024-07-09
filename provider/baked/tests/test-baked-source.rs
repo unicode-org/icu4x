@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use icu_provider::hello_world::HelloWorldV1Marker;
+
 extern crate alloc;
 
 // Don't import anything, to assert that compiled data compiles without imports.
@@ -30,13 +32,17 @@ fn load() {
     use icu_provider::hello_world::HelloWorldProvider;
     use icu_provider::prelude::*;
 
-    for id in HelloWorldProvider.iter_ids().unwrap().iter() {
+    for id in HelloWorldProvider.iter_ids().unwrap().into_iter().chain([DataIdentifierCow::default()]) {
         let req = DataRequest {
             id: id.as_borrowed(),
             ..Default::default()
         };
-        let expected = HelloWorldProvider.load(req).unwrap().payload;
-        let baked = Baked.load(req).unwrap().payload;
+        let expected = HelloWorldProvider.load(req);
+        let baked = DataProvider::load(&Baked, req);
+        assert_eq!(baked.map(|r| r.payload), expected.map(|r| r.payload));
+
+        let expected = HelloWorldProvider.dry_load(req);
+        let baked = DryDataProvider::<HelloWorldV1Marker>::dry_load(&Baked, req);
         assert_eq!(baked, expected);
     }
 }
