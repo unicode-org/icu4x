@@ -30,7 +30,12 @@ fn load() {
     use icu_provider::hello_world::{HelloWorldProvider, HelloWorldV1Marker};
     use icu_provider::prelude::*;
 
-    for id in HelloWorldProvider.iter_ids().unwrap().into_iter().chain([DataIdentifierCow::default()]) {
+    for id in HelloWorldProvider
+        .iter_ids()
+        .unwrap()
+        .into_iter()
+        .chain([DataIdentifierCow::default()])
+    {
         let req = DataRequest {
             id: id.as_borrowed(),
             ..Default::default()
