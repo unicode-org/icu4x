@@ -556,9 +556,9 @@ pub struct TimePatternV1<'data> {
     pub pattern: runtime::Pattern<'data>,
 }
 
-size_test!(DateTimePatternV1, date_time_pattern_v1_size, 24);
+size_test!(GluePatternV1, date_time_pattern_v1_size, 24);
 
-/// The default per-length patterns used for combining dates and times into datetimes
+/// The default per-length patterns used for combining dates, times, and timezones into formatted strings.
 ///
 /// This uses a data marker attribute for length. See [`DatePatternV1`] for more information on the scheme.
 #[doc = date_time_pattern_v1_size!()]
@@ -568,7 +568,7 @@ size_test!(DateTimePatternV1, date_time_pattern_v1_size, 24);
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(marker(DateTimePatternV1Marker, "datetime/patterns/datetime@1"))]
+#[icu_provider::data_struct(marker(GluePatternV1Marker, "datetime/patterns/glue@1"))]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(
     feature = "datagen",
@@ -577,7 +577,7 @@ size_test!(DateTimePatternV1, date_time_pattern_v1_size, 24);
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub struct DateTimePatternV1<'data> {
+pub struct GluePatternV1<'data> {
     /// The pattern
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub pattern: runtime::GenericPattern<'data>,

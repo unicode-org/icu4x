@@ -608,14 +608,14 @@ fn datetimepattern_convert(
     data: &ca::Dates,
     length: PatternLength,
     _hc: Option<CoarseHourCycle>,
-) -> Result<DateTimePatternV1<'static>, DataError> {
+) -> Result<GluePatternV1<'static>, DataError> {
     let pattern = data.datetime_formats.get_pattern(length);
 
     let pattern = pattern
         .get_pattern()
         .parse()
         .expect("failed to parse pattern");
-    Ok(DateTimePatternV1 { pattern })
+    Ok(GluePatternV1 { pattern })
 }
 
 fn timepattern_convert(
@@ -946,7 +946,7 @@ impl_symbols_datagen!(
 
 // Datetime patterns
 impl_pattern_datagen!(
-    DateTimePatternV1Marker,
+    GluePatternV1Marker,
     "gregory",
     NORMAL_PATTERN_KEY_LENGTHS,
     datetimepattern_convert

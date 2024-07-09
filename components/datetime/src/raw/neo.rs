@@ -66,23 +66,23 @@ pub(crate) enum DateTimeZonePatternSelectionData {
     DateTimeGlue {
         date: DatePatternSelectionData,
         time: TimePatternSelectionData,
-        glue: DataPayload<DateTimePatternV1Marker>,
+        glue: DataPayload<GluePatternV1Marker>,
     },
     DateZoneGlue {
         date: DatePatternSelectionData,
         zone: ZonePatternSelectionData,
-        glue: DataPayload<DateTimePatternV1Marker>,
+        glue: DataPayload<GluePatternV1Marker>,
     },
     TimeZoneGlue {
         time: TimePatternSelectionData,
         zone: ZonePatternSelectionData,
-        glue: DataPayload<DateTimePatternV1Marker>,
+        glue: DataPayload<GluePatternV1Marker>,
     },
     DateTimeZoneGlue {
         date: DatePatternSelectionData,
         time: TimePatternSelectionData,
         zone: ZonePatternSelectionData,
-        glue: DataPayload<DateTimePatternV1Marker>,
+        glue: DataPayload<GluePatternV1Marker>,
     },
 }
 
@@ -95,23 +95,23 @@ pub(crate) enum DateTimeZonePatternDataBorrowed<'a> {
     DateTimeGlue {
         date: DatePatternDataBorrowed<'a>,
         time: TimePatternDataBorrowed<'a>,
-        glue: &'a DateTimePatternV1<'a>,
+        glue: &'a GluePatternV1<'a>,
     },
     DateZoneGlue {
         date: DatePatternDataBorrowed<'a>,
         zone: ZonePatternDataBorrowed<'a>,
-        glue: &'a DateTimePatternV1<'a>,
+        glue: &'a GluePatternV1<'a>,
     },
     TimeZoneGlue {
         time: TimePatternDataBorrowed<'a>,
         zone: ZonePatternDataBorrowed<'a>,
-        glue: &'a DateTimePatternV1<'a>,
+        glue: &'a GluePatternV1<'a>,
     },
     DateTimeZoneGlue {
         date: DatePatternDataBorrowed<'a>,
         time: TimePatternDataBorrowed<'a>,
         zone: ZonePatternDataBorrowed<'a>,
-        glue: &'a DateTimePatternV1<'a>,
+        glue: &'a GluePatternV1<'a>,
     },
 }
 
@@ -233,7 +233,7 @@ impl DateTimeZonePatternSelectionData {
     pub(crate) fn try_new_with_skeleton(
         date_provider: &(impl BoundDataProvider<SkeletaV1Marker> + ?Sized),
         time_provider: &(impl BoundDataProvider<SkeletaV1Marker> + ?Sized),
-        glue_provider: &(impl BoundDataProvider<DateTimePatternV1Marker> + ?Sized),
+        glue_provider: &(impl BoundDataProvider<GluePatternV1Marker> + ?Sized),
         locale: &DataLocale,
         length: NeoSkeletonLength,
         components: NeoComponents,
@@ -334,10 +334,10 @@ impl DateTimeZonePatternSelectionData {
     }
 
     fn load_glue(
-        glue_provider: &(impl BoundDataProvider<DateTimePatternV1Marker> + ?Sized),
+        glue_provider: &(impl BoundDataProvider<GluePatternV1Marker> + ?Sized),
         locale: &DataLocale,
         length: NeoSkeletonLength,
-    ) -> Result<DataPayload<DateTimePatternV1Marker>, DataError> {
+    ) -> Result<DataPayload<GluePatternV1Marker>, DataError> {
         glue_provider
             .load_bound(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(

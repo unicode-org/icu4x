@@ -230,7 +230,7 @@ macro_rules! registry(
             icu::datetime::provider::neo::WeekdayNamesV1Marker = "datetime/symbols/weekdays@1",
             icu::datetime::provider::neo::DayPeriodNamesV1Marker = "datetime/symbols/dayperiods@1",
             icu::datetime::provider::neo::TimePatternV1Marker = "datetime/patterns/time@1",
-            icu::datetime::provider::neo::DateTimePatternV1Marker = "datetime/patterns/datetime@1",
+            icu::datetime::provider::neo::GluePatternV1Marker = "datetime/patterns/glue@1",
             icu::datetime::provider::neo::BuddhistYearNamesV1Marker = "datetime/symbols/buddhist/years@1",
             icu::datetime::provider::neo::ChineseYearNamesV1Marker = "datetime/symbols/chinese/years@1",
             icu::datetime::provider::neo::CopticYearNamesV1Marker = "datetime/symbols/coptic/years@1",

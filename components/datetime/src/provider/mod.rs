@@ -258,7 +258,7 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     #[cfg(feature = "experimental")]
     neo::DayPeriodNamesV1Marker::INFO,
     #[cfg(feature = "experimental")]
-    neo::DateTimePatternV1Marker::INFO,
+    neo::GluePatternV1Marker::INFO,
     #[cfg(feature = "experimental")]
     neo::TimePatternV1Marker::INFO,
     #[cfg(feature = "experimental")]

@@ -668,7 +668,7 @@ pub trait TypedDateTimeMarkers<C>: private::Sealed + DateTimeNamesMarker {
     /// Associated types for time zone formatting.
     type Z: ZoneMarkers;
     /// Marker for loading the date/time glue pattern.
-    type DateTimePatternV1Marker: DataMarker<Yokeable = DateTimePatternV1<'static>>;
+    type GluePatternV1Marker: DataMarker<Yokeable = GluePatternV1<'static>>;
 }
 
 /// A trait associating constants and types implementing various other traits
@@ -681,7 +681,7 @@ pub trait DateTimeMarkers: private::Sealed + DateTimeNamesMarker {
     /// Associated types for time zone formatting.
     type Z: ZoneMarkers;
     /// Marker for loading the date/time glue pattern.
-    type DateTimePatternV1Marker: DataMarker<Yokeable = DateTimePatternV1<'static>>;
+    type GluePatternV1Marker: DataMarker<Yokeable = GluePatternV1<'static>>;
 }
 
 /// A struct implementing traits for never loading data.
@@ -789,7 +789,7 @@ where
     type D = D;
     type T = NeoNeverMarker;
     type Z = NeoNeverMarker;
-    type DateTimePatternV1Marker = NeverMarker<DateTimePatternV1<'static>>;
+    type GluePatternV1Marker = NeverMarker<GluePatternV1<'static>>;
 }
 
 impl<C, D> TypedNeoFormatterMarker<C> for DateTimeCombo<D, NeoNeverMarker, NeoNeverMarker>
@@ -806,7 +806,7 @@ where
     type D = D;
     type T = NeoNeverMarker;
     type Z = NeoNeverMarker;
-    type DateTimePatternV1Marker = NeverMarker<DateTimePatternV1<'static>>;
+    type GluePatternV1Marker = NeverMarker<GluePatternV1<'static>>;
 }
 
 impl<D> NeoFormatterMarker for DateTimeCombo<D, NeoNeverMarker, NeoNeverMarker>
@@ -839,7 +839,7 @@ where
     type D = NeoNeverMarker;
     type T = T;
     type Z = NeoNeverMarker;
-    type DateTimePatternV1Marker = NeverMarker<DateTimePatternV1<'static>>;
+    type GluePatternV1Marker = NeverMarker<GluePatternV1<'static>>;
 }
 
 impl<C, T> TypedNeoFormatterMarker<C> for DateTimeCombo<NeoNeverMarker, T, NeoNeverMarker>
@@ -856,7 +856,7 @@ where
     type D = NeoNeverMarker;
     type T = T;
     type Z = NeoNeverMarker;
-    type DateTimePatternV1Marker = NeverMarker<DateTimePatternV1<'static>>;
+    type GluePatternV1Marker = NeverMarker<GluePatternV1<'static>>;
 }
 
 impl<T> NeoFormatterMarker for DateTimeCombo<NeoNeverMarker, T, NeoNeverMarker>
@@ -891,7 +891,7 @@ where
     type D = D;
     type T = T;
     type Z = NeoNeverMarker;
-    type DateTimePatternV1Marker = DateTimePatternV1Marker;
+    type GluePatternV1Marker = GluePatternV1Marker;
 }
 
 impl<C, D, T> TypedNeoFormatterMarker<C> for DateTimeCombo<D, T, NeoNeverMarker>
@@ -910,7 +910,7 @@ where
     type D = D;
     type T = T;
     type Z = NeoNeverMarker;
-    type DateTimePatternV1Marker = DateTimePatternV1Marker;
+    type GluePatternV1Marker = GluePatternV1Marker;
 }
 
 impl<D, T> NeoFormatterMarker for DateTimeCombo<D, T, NeoNeverMarker>
@@ -948,7 +948,7 @@ where
     type D = D;
     type T = T;
     type Z = Z;
-    type DateTimePatternV1Marker = DateTimePatternV1Marker;
+    type GluePatternV1Marker = GluePatternV1Marker;
 }
 
 impl<C, D, T, Z> TypedNeoFormatterMarker<C> for DateTimeCombo<D, T, Z>
@@ -972,7 +972,7 @@ where
     type D = D;
     type T = T;
     type Z = Z;
-    type DateTimePatternV1Marker = DateTimePatternV1Marker;
+    type GluePatternV1Marker = GluePatternV1Marker;
 }
 
 impl<D, T, Z> NeoFormatterMarker for DateTimeCombo<D, T, Z>
@@ -1032,11 +1032,11 @@ macro_rules! datetime_marker_helper {
     (@times, no) => {
         NeverMarker<PackedSkeletonDataV1<'static>>
     };
-    (@datetimes, yes) => {
-        DateTimePatternV1Marker
+    (@glue, yes) => {
+        GluePatternV1Marker
     };
-    (@datetimes, no) => {
-        NeverMarker<DateTimePatternV1<'static>>
+    (@glue, no) => {
+        NeverMarker<GluePatternV1<'static>>
     };
     (@input/typed, yes) => {
         NeoTypedInput<C>
@@ -1265,7 +1265,7 @@ macro_rules! impl_date_marker {
             type D = Self;
             type T = NeoNeverMarker;
             type Z = NeoNeverMarker;
-            type DateTimePatternV1Marker = datetime_marker_helper!(@datetimes, no);
+            type GluePatternV1Marker = datetime_marker_helper!(@glue, no);
         }
         impl<C: CldrCalendar> TypedNeoFormatterMarker<C> for $type {
             const COMPONENTS: NeoComponents = NeoComponents::Date($components);
@@ -1274,7 +1274,7 @@ macro_rules! impl_date_marker {
             type D = Self;
             type T = NeoNeverMarker;
             type Z = NeoNeverMarker;
-            type DateTimePatternV1Marker = datetime_marker_helper!(@datetimes, no);
+            type GluePatternV1Marker = datetime_marker_helper!(@glue, no);
         }
         impl NeoFormatterMarker for $type {
             const COMPONENTS: NeoComponents = NeoComponents::Date($components);
@@ -1415,7 +1415,7 @@ macro_rules! impl_time_marker {
             type D = NeoNeverMarker;
             type T = Self;
             type Z = NeoNeverMarker;
-            type DateTimePatternV1Marker = datetime_marker_helper!(@datetimes, no);
+            type GluePatternV1Marker = datetime_marker_helper!(@glue, no);
         }
         impl<C> TypedNeoFormatterMarker<C> for $type {
             const COMPONENTS: NeoComponents = NeoComponents::Time($components);
@@ -1424,7 +1424,7 @@ macro_rules! impl_time_marker {
             type D = NeoNeverMarker;
             type T = Self;
             type Z = NeoNeverMarker;
-            type DateTimePatternV1Marker = datetime_marker_helper!(@datetimes, no);
+            type GluePatternV1Marker = datetime_marker_helper!(@glue, no);
         }
         impl NeoFormatterMarker for $type {
             const COMPONENTS: NeoComponents = NeoComponents::Time($components);
@@ -1528,7 +1528,7 @@ macro_rules! impl_zone_marker {
             type D = NeoNeverMarker;
             type T = NeoNeverMarker;
             type Z = Self;
-            type DateTimePatternV1Marker = datetime_marker_helper!(@datetimes, no);
+            type GluePatternV1Marker = datetime_marker_helper!(@glue, no);
         }
         impl<C> TypedNeoFormatterMarker<C> for $type {
             const COMPONENTS: NeoComponents = NeoComponents::Zone($components);
@@ -1537,7 +1537,7 @@ macro_rules! impl_zone_marker {
             type D = NeoNeverMarker;
             type T = NeoNeverMarker;
             type Z = Self;
-            type DateTimePatternV1Marker = datetime_marker_helper!(@datetimes, no);
+            type GluePatternV1Marker = datetime_marker_helper!(@glue, no);
         }
         impl NeoFormatterMarker for $type {
             const COMPONENTS: NeoComponents = NeoComponents::Zone($components);
@@ -1845,14 +1845,14 @@ impl<C: CldrCalendar> TypedDateTimeMarkers<C> for NeoDateComponents {
     type D = Self;
     type T = NeoNeverMarker;
     type Z = NeoNeverMarker;
-    type DateTimePatternV1Marker = datetime_marker_helper!(@datetimes, no);
+    type GluePatternV1Marker = datetime_marker_helper!(@glue, no);
 }
 
 impl DateTimeMarkers for NeoDateComponents {
     type D = Self;
     type T = NeoNeverMarker;
     type Z = NeoNeverMarker;
-    type DateTimePatternV1Marker = datetime_marker_helper!(@datetimes, no);
+    type GluePatternV1Marker = datetime_marker_helper!(@glue, no);
 }
 
 impl private::Sealed for NeoTimeComponents {}
@@ -1885,14 +1885,14 @@ impl<C: CldrCalendar> TypedDateTimeMarkers<C> for NeoTimeComponents {
     type D = NeoNeverMarker;
     type T = Self;
     type Z = NeoNeverMarker;
-    type DateTimePatternV1Marker = datetime_marker_helper!(@datetimes, no);
+    type GluePatternV1Marker = datetime_marker_helper!(@glue, no);
 }
 
 impl DateTimeMarkers for NeoTimeComponents {
     type D = NeoNeverMarker;
     type T = Self;
     type Z = NeoNeverMarker;
-    type DateTimePatternV1Marker = datetime_marker_helper!(@datetimes, no);
+    type GluePatternV1Marker = datetime_marker_helper!(@glue, no);
 }
 
 impl private::Sealed for NeoTimeZoneSkeleton {}
@@ -1926,14 +1926,14 @@ impl<C: CldrCalendar> TypedDateTimeMarkers<C> for NeoTimeZoneSkeleton {
     type D = NeoNeverMarker;
     type T = NeoNeverMarker;
     type Z = Self;
-    type DateTimePatternV1Marker = datetime_marker_helper!(@datetimes, no);
+    type GluePatternV1Marker = datetime_marker_helper!(@glue, no);
 }
 
 impl DateTimeMarkers for NeoTimeZoneSkeleton {
     type D = NeoNeverMarker;
     type T = NeoNeverMarker;
     type Z = Self;
-    type DateTimePatternV1Marker = datetime_marker_helper!(@datetimes, no);
+    type GluePatternV1Marker = datetime_marker_helper!(@glue, no);
 }
 
 impl private::Sealed for NeoDateTimeComponents {}
@@ -1957,14 +1957,14 @@ impl<C: CldrCalendar> TypedDateTimeMarkers<C> for NeoDateTimeComponents {
     type D = NeoDateComponents;
     type T = NeoTimeComponents;
     type Z = NeoNeverMarker;
-    type DateTimePatternV1Marker = datetime_marker_helper!(@datetimes, yes);
+    type GluePatternV1Marker = datetime_marker_helper!(@glue, yes);
 }
 
 impl DateTimeMarkers for NeoDateTimeComponents {
     type D = NeoDateComponents;
     type T = NeoTimeComponents;
     type Z = NeoNeverMarker;
-    type DateTimePatternV1Marker = datetime_marker_helper!(@datetimes, yes);
+    type GluePatternV1Marker = datetime_marker_helper!(@glue, yes);
 }
 
 impl private::Sealed for NeoComponents {}
@@ -1988,12 +1988,12 @@ impl<C: CldrCalendar> TypedDateTimeMarkers<C> for NeoComponents {
     type D = NeoDateComponents;
     type T = NeoTimeComponents;
     type Z = NeoTimeZoneSkeleton;
-    type DateTimePatternV1Marker = datetime_marker_helper!(@datetimes, yes);
+    type GluePatternV1Marker = datetime_marker_helper!(@glue, yes);
 }
 
 impl DateTimeMarkers for NeoComponents {
     type D = NeoDateComponents;
     type T = NeoTimeComponents;
     type Z = NeoTimeZoneSkeleton;
-    type DateTimePatternV1Marker = datetime_marker_helper!(@datetimes, yes);
+    type GluePatternV1Marker = datetime_marker_helper!(@glue, yes);
 }
