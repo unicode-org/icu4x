@@ -1679,4 +1679,34 @@ fn test_is_normalized_up_to() {
     assert!(nfkd.is_normalized_utf8_up_to(fraction_utf8) == 1);
     assert!(nfc.is_normalized_utf8_up_to(fraction_utf8) == 4);
     assert!(nfkc.is_normalized_utf8_up_to(fraction_utf8) == 1);
+
+    let reversed_vietnamese = "e\u{0302}\u{0323}";
+    check_str(reversed_vietnamese);
+
+    let reversed_vietnamese_utf8 = reversed_vietnamese.as_bytes();
+    check_utf8(reversed_vietnamese_utf8);
+
+    assert!(nfd.is_normalized_up_to(reversed_vietnamese) == 1);
+    assert!(nfkd.is_normalized_up_to(reversed_vietnamese) == 1);
+    assert!(nfc.is_normalized_up_to(reversed_vietnamese) == 0);
+    assert!(nfkc.is_normalized_up_to(reversed_vietnamese) == 0);
+    assert!(nfd.is_normalized_utf8_up_to(reversed_vietnamese_utf8) == 1);
+    assert!(nfkd.is_normalized_utf8_up_to(reversed_vietnamese_utf8) == 1);
+    assert!(nfc.is_normalized_utf8_up_to(reversed_vietnamese_utf8) == 0);
+    assert!(nfkc.is_normalized_utf8_up_to(reversed_vietnamese_utf8) == 0);
+
+    let truncated_vietnamese = "e\u{0302}";
+    check_str(truncated_vietnamese);
+
+    let truncated_vietnamese_utf8 = truncated_vietnamese.as_bytes();
+    check_utf8(truncated_vietnamese_utf8);
+
+    assert_eq!(nfd.is_normalized_up_to(truncated_vietnamese), 3);
+    assert!(nfkd.is_normalized_up_to(truncated_vietnamese) == 3);
+    assert!(nfc.is_normalized_up_to(truncated_vietnamese) == 0);
+    assert!(nfkc.is_normalized_up_to(truncated_vietnamese) == 0);
+    assert!(nfd.is_normalized_utf8_up_to(truncated_vietnamese_utf8) == 3);
+    assert!(nfkd.is_normalized_utf8_up_to(truncated_vietnamese_utf8) == 3);
+    assert!(nfc.is_normalized_utf8_up_to(truncated_vietnamese_utf8) == 0);
+    assert!(nfkc.is_normalized_utf8_up_to(truncated_vietnamese_utf8) == 0);
 }
