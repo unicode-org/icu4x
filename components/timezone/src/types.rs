@@ -4,6 +4,7 @@
 
 use crate::error::InvalidOffsetError;
 use core::str::FromStr;
+#[cfg(feature = "ixdtf")]
 use ixdtf::parsers::records::UTCOffsetRecord;
 use tinystr::{tinystr, TinyAsciiStr};
 use zerovec::ule::{AsULE, ULE};
