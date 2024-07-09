@@ -99,7 +99,7 @@ const _: () = {
     #[cfg(feature = "experimental")]
     impl_day_period_names_v1_marker!(Baked);
     #[cfg(feature = "experimental")]
-    impl_date_time_pattern_v1_marker!(Baked);
+    impl_glue_pattern_v1_marker!(Baked);
     #[cfg(feature = "experimental")]
     impl_time_pattern_v1_marker!(Baked);
     #[cfg(feature = "experimental")]

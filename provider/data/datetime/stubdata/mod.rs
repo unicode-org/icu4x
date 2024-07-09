@@ -29,9 +29,9 @@ include!("coptic_date_pattern_v1_marker.rs.data");
 include!("coptic_date_neo_skeleton_patterns_v1_marker.rs.data");
 include!("dangi_date_pattern_v1_marker.rs.data");
 include!("dangi_date_neo_skeleton_patterns_v1_marker.rs.data");
-include!("date_time_pattern_v1_marker.rs.data");
 include!("ethiopian_date_pattern_v1_marker.rs.data");
 include!("ethiopian_date_neo_skeleton_patterns_v1_marker.rs.data");
+include!("glue_pattern_v1_marker.rs.data");
 include!("gregorian_date_pattern_v1_marker.rs.data");
 include!("gregorian_date_neo_skeleton_patterns_v1_marker.rs.data");
 include!("hebrew_date_pattern_v1_marker.rs.data");
@@ -149,9 +149,9 @@ macro_rules! impl_data_provider {
         impl_coptic_date_neo_skeleton_patterns_v1_marker!($provider);
         impl_dangi_date_pattern_v1_marker!($provider);
         impl_dangi_date_neo_skeleton_patterns_v1_marker!($provider);
-        impl_date_time_pattern_v1_marker!($provider);
         impl_ethiopian_date_pattern_v1_marker!($provider);
         impl_ethiopian_date_neo_skeleton_patterns_v1_marker!($provider);
+        impl_glue_pattern_v1_marker!($provider);
         impl_gregorian_date_pattern_v1_marker!($provider);
         impl_gregorian_date_neo_skeleton_patterns_v1_marker!($provider);
         impl_hebrew_date_pattern_v1_marker!($provider);
@@ -249,9 +249,9 @@ macro_rules! impl_any_provider {
                     h if h == <icu::datetime::provider::neo::CopticDateNeoSkeletonPatternsV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::CopticDateNeoSkeletonPatternsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::neo::DangiDatePatternV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::DangiDatePatternV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::neo::DangiDateNeoSkeletonPatternsV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::DangiDateNeoSkeletonPatternsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::datetime::provider::neo::DateTimePatternV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::DateTimePatternV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::neo::EthiopianDatePatternV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::EthiopianDatePatternV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::neo::EthiopianDateNeoSkeletonPatternsV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::EthiopianDateNeoSkeletonPatternsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::datetime::provider::neo::GluePatternV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::GluePatternV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::neo::GregorianDatePatternV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::GregorianDatePatternV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::neo::GregorianDateNeoSkeletonPatternsV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::GregorianDateNeoSkeletonPatternsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::neo::HebrewDatePatternV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::HebrewDatePatternV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
