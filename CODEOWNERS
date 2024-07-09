@@ -29,7 +29,8 @@ ffi/ecma402/                      @filmil
 ffi/harfbuzz/                     @hsivonen
 provider/blob/                    @sffc @Manishearth
 provider/core/                    @sffc @Manishearth
-provider/datagen/                 @sffc @robertbastian @Manishearth
+provider/source/                  @sffc @robertbastian @Manishearth
+provider/export/                  @sffc @robertbastian
 provider/fs/                      @sffc
 provider/macros/                  @Manishearth @sffc
 tools/benchmark/binsize/          @gnrunge
