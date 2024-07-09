@@ -2,8 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_provider::hello_world::HelloWorldV1Marker;
-
 extern crate alloc;
 
 // Don't import anything, to assert that compiled data compiles without imports.
@@ -29,7 +27,7 @@ fn iter() {
 
 #[test]
 fn load() {
-    use icu_provider::hello_world::HelloWorldProvider;
+    use icu_provider::hello_world::{HelloWorldProvider, HelloWorldV1Marker};
     use icu_provider::prelude::*;
 
     for id in HelloWorldProvider.iter_ids().unwrap().into_iter().chain([DataIdentifierCow::default()]) {
