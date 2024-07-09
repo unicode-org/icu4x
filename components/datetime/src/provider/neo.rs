@@ -531,12 +531,11 @@ impl<'data> LinearNamesV1<'data> {
 //     WeekPlurals(ZeroMap<'data, PluralCategory, runtime::PatternULE>),
 // }
 
-size_test!(GluePatternV1, date_time_pattern_v1_size, 24);
+size_test!(GluePatternV1, glue_pattern_v1_size, 24);
 
 /// The default per-length patterns used for combining dates, times, and timezones into formatted strings.
 ///
-/// This uses a data marker attribute for length. See [`DatePatternV1`] for more information on the scheme.
-#[doc = date_time_pattern_v1_size!()]
+#[doc = glue_pattern_v1_size!()]
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
