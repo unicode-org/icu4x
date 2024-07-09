@@ -12,6 +12,7 @@ use crate::pattern::runtime::PatternMetadata;
 use crate::pattern::{runtime, GenericPatternItem, PatternItem};
 use crate::provider::neo::*;
 use icu_provider::prelude::*;
+use marker_attrs::GlueType;
 use zerovec::ule::AsULE;
 use zerovec::ZeroSlice;
 
@@ -83,7 +84,6 @@ pub(crate) enum DateTimeZonePatternSelectionData {
 }
 
 #[derive(Debug, Copy, Clone)]
-#[allow(dead_code)] // TODO: Add zone glue to the data and read it
 pub(crate) enum DateTimeZonePatternDataBorrowed<'a> {
     Date(DatePatternDataBorrowed<'a>),
     Time(TimePatternDataBorrowed<'a>),
@@ -267,7 +267,7 @@ impl DateTimeZonePatternSelectionData {
                     length,
                     time_components,
                 )?;
-                let glue = Self::load_glue(glue_provider, locale, length)?;
+                let glue = Self::load_glue(glue_provider, locale, length, GlueType::DateTime)?;
                 Ok(Self::DateTimeGlue { date, time, glue })
             }
             NeoComponents::DateTimeZone(
@@ -281,7 +281,7 @@ impl DateTimeZonePatternSelectionData {
                     date_components,
                 )?;
                 let zone = ZonePatternSelectionData::new_with_skeleton(length, zone_components);
-                let glue = Self::load_glue(glue_provider, locale, length)?;
+                let glue = Self::load_glue(glue_provider, locale, length, GlueType::DateZone)?;
                 Ok(Self::DateZoneGlue { date, zone, glue })
             }
             NeoComponents::DateTimeZone(
@@ -295,7 +295,7 @@ impl DateTimeZonePatternSelectionData {
                     time_components,
                 )?;
                 let zone = ZonePatternSelectionData::new_with_skeleton(length, zone_components);
-                let glue = Self::load_glue(glue_provider, locale, length)?;
+                let glue = Self::load_glue(glue_provider, locale, length, GlueType::TimeZone)?;
                 Ok(Self::TimeZoneGlue { time, zone, glue })
             }
             NeoComponents::DateTimeZone(
@@ -315,7 +315,7 @@ impl DateTimeZonePatternSelectionData {
                     time_components,
                 )?;
                 let zone = ZonePatternSelectionData::new_with_skeleton(length, zone_components);
-                let glue = Self::load_glue(glue_provider, locale, length)?;
+                let glue = Self::load_glue(glue_provider, locale, length, GlueType::DateTimeZone)?;
                 Ok(Self::DateTimeZoneGlue {
                     date,
                     time,
@@ -330,11 +330,12 @@ impl DateTimeZonePatternSelectionData {
         glue_provider: &(impl BoundDataProvider<GluePatternV1Marker> + ?Sized),
         locale: &DataLocale,
         length: NeoSkeletonLength,
+        glue_type: GlueType,
     ) -> Result<DataPayload<GluePatternV1Marker>, DataError> {
         glue_provider
             .load_bound(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    marker_attrs::pattern_marker_attr_for(
+                    marker_attrs::pattern_marker_attr_for_glue(
                         // According to UTS 35, use the date length here: use the glue
                         // pattern "whose type matches the type of the date pattern"
                         match length {
@@ -342,7 +343,7 @@ impl DateTimeZonePatternSelectionData {
                             NeoSkeletonLength::Medium => marker_attrs::PatternLength::Medium,
                             NeoSkeletonLength::Short => marker_attrs::PatternLength::Short,
                         },
-                        None, // no hour cycle for date patterns
+                        glue_type,
                     ),
                     locale,
                 ),
@@ -490,10 +491,9 @@ impl<'a> DateTimeZonePatternDataBorrowed<'a> {
             Self::Time(_) => None,
             Self::Zone(_) => None,
             Self::DateTimeGlue { glue, .. } => Some(&glue.pattern.items),
-            // TODO: Retrieve these from data
-            Self::DateZoneGlue { .. } => Some(runtime::ZERO_ONE_TWO_SPACED_SLICE),
-            Self::TimeZoneGlue { .. } => Some(runtime::ZERO_ONE_TWO_SPACED_SLICE),
-            Self::DateTimeZoneGlue { .. } => Some(runtime::ZERO_ONE_TWO_SPACED_SLICE),
+            Self::DateZoneGlue { glue, .. } => Some(&glue.pattern.items),
+            Self::TimeZoneGlue { glue, .. } => Some(&glue.pattern.items),
+            Self::DateTimeZoneGlue { glue, .. } => Some(&glue.pattern.items),
         }
     }
 

@@ -6,8 +6,9 @@ use super::supported_cals;
 use crate::cldr_serde::ca;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
-use icu::datetime::pattern::{self, CoarseHourCycle};
+use icu::datetime::pattern;
 
+use icu::datetime::provider::neo::marker_attrs::GlueType;
 use icu::datetime::provider::neo::marker_attrs::{self, Context, Length, PatternLength};
 use icu::datetime::provider::neo::*;
 use icu::locale::{
@@ -59,11 +60,20 @@ const FULL_KEY_LENGTHS: &[&DataMarkerAttributes] = &[
     marker_attrs::SHORT_STANDALONE,
 ];
 
-/// Lengths for normal patterns (not counting hour cycle stuff)
-const NORMAL_PATTERN_KEY_LENGTHS: &[&DataMarkerAttributes] = &[
-    marker_attrs::PATTERN_LONG,
-    marker_attrs::PATTERN_MEDIUM,
-    marker_attrs::PATTERN_SHORT,
+/// Lengths for glue patterns
+const GLUE_PATTERN_KEY_LENGTHS: &[&DataMarkerAttributes] = &[
+    marker_attrs::PATTERN_LONG_DT,
+    marker_attrs::PATTERN_MEDIUM_DT,
+    marker_attrs::PATTERN_SHORT_DT,
+    marker_attrs::PATTERN_LONG_DZ,
+    marker_attrs::PATTERN_MEDIUM_DZ,
+    marker_attrs::PATTERN_SHORT_DZ,
+    marker_attrs::PATTERN_LONG_TZ,
+    marker_attrs::PATTERN_MEDIUM_TZ,
+    marker_attrs::PATTERN_SHORT_TZ,
+    marker_attrs::PATTERN_LONG_DTZ,
+    marker_attrs::PATTERN_MEDIUM_DTZ,
+    marker_attrs::PATTERN_SHORT_DTZ,
 ];
 
 impl SourceDataProvider {
@@ -153,24 +163,21 @@ impl SourceDataProvider {
         &self,
         req: DataRequest,
         calendar: Value,
-        conversion: impl FnOnce(
-            &ca::Dates,
-            PatternLength,
-            Option<CoarseHourCycle>,
-        ) -> Result<M::Yokeable, DataError>,
+        conversion: impl FnOnce(&ca::Dates, PatternLength, GlueType) -> Result<M::Yokeable, DataError>,
     ) -> Result<DataResponse<M>, DataError>
     where
         Self: IterableDataProviderCached<M>,
     {
         self.load_neo_key(req, &calendar, |id, data| {
-            let Some((length, hc)) = marker_attrs::pattern_marker_attr_info(id.marker_attributes)
+            let Some((length, glue_type)) =
+                marker_attrs::pattern_marker_attr_info_for_glue(id.marker_attributes)
             else {
                 panic!(
                     "Found unexpected marker attributes {}",
                     id.marker_attributes.as_str()
                 )
             };
-            conversion(data, length, hc)
+            conversion(data, length, glue_type)
         })
     }
 
@@ -588,14 +595,33 @@ fn apply_numeric_overrides(lp: &ca::LengthPattern, pattern: &mut pattern::runtim
 fn datetimepattern_convert(
     data: &ca::Dates,
     length: PatternLength,
-    _hc: Option<CoarseHourCycle>,
+    glue_type: GlueType,
 ) -> Result<GluePatternV1<'static>, DataError> {
-    let pattern = data.datetime_formats.get_pattern(length);
+    let mut pattern_anchor = None;
+    let pattern = match glue_type {
+        GlueType::DateTime => data.datetime_formats.get_pattern(length).get_pattern(),
+        GlueType::DateZone => {
+            // TODO: Use proper appendItem here
+            "{1} {2}"
+        }
+        GlueType::TimeZone => {
+            // TODO: Use proper appendItem here
+            "{0} {2}"
+        }
+        GlueType::DateTimeZone => {
+            let pattern = pattern_anchor.insert(
+                data.datetime_formats
+                    .get_pattern(length)
+                    .get_pattern()
+                    .to_string(),
+            );
+            // TODO: Use proper appendItem here
+            pattern.push_str(" {2}");
+            pattern
+        }
+    };
 
-    let pattern = pattern
-        .get_pattern()
-        .parse()
-        .expect("failed to parse pattern");
+    let pattern = pattern.parse().expect("failed to parse pattern");
     Ok(GluePatternV1 { pattern })
 }
 
@@ -811,6 +837,6 @@ impl_symbols_datagen!(
 impl_pattern_datagen!(
     GluePatternV1Marker,
     "gregory",
-    NORMAL_PATTERN_KEY_LENGTHS,
+    GLUE_PATTERN_KEY_LENGTHS,
     datetimepattern_convert
 );
