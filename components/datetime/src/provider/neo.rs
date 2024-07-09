@@ -46,6 +46,8 @@ pub mod marker_attrs {
     pub const PATTERN_MEDIUM: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("m");
     pub const PATTERN_SHORT: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("s");
 
+    // TODO: The 12-hour and 24-hour DataMarkerAttributes can probably be deleted
+
     pub const PATTERN_LONG12: &DataMarkerAttributes =
         DataMarkerAttributes::from_str_or_panic("l12");
     pub const PATTERN_MEDIUM12: &DataMarkerAttributes =
