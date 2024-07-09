@@ -1788,7 +1788,7 @@ impl_zone_marker!(
 impl_zoneddatetime_marker!(
     NeoYearMonthDayHourMinuteSecondTimeZoneGenericShortMarker,
     description = "locale-dependent date and time fields with a time zone",
-    expectation = "3:47:50 PM May 17, 2024 GMT",
+    expectation = "May 17, 2024, 3:47:50 PM GMT",
     date = NeoAutoDateMarker,
     time = NeoAutoTimeMarker,
     zone = NeoTimeZoneGenericShortMarker,
