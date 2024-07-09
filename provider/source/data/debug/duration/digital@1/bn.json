@@ -1,0 +1,6 @@
+{
+  "separator": ":",
+  "hms_hour_padding": 1,
+  "hm_hour_padding": 1,
+  "minute_padding": 1
+}

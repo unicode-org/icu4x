@@ -1466,6 +1466,23 @@ displaynames/variants@1, zh-HK, 2311B, 5a7434f5d9429164
 displaynames/variants@1, zh-Hant, 2320B, eb896ef02b8254b
 displaynames/variants@1, zh-MO, 2311B, -> zh-HK
 displaynames/variants@1, zu, 2916B, ede929b5c378882b
+duration/digital@1, <lookup>, 96B, 15 identifiers
+duration/digital@1, <total>, 165B, 5 unique payloads
+duration/digital@1, af, 33B, f5c49b384674e8d2
+duration/digital@1, be, 33B, -> af
+duration/digital@1, da, 33B, e78c7e5c94bf7686
+duration/digital@1, es-CL, 33B, 52f28ce288cd2e23
+duration/digital@1, fi, 33B, -> da
+duration/digital@1, ia, 33B, -> af
+duration/digital@1, id, 33B, -> da
+duration/digital@1, lt, 33B, -> af
+duration/digital@1, mn, 33B, b770af24a3c3b6f5
+duration/digital@1, si, 33B, -> da
+duration/digital@1, sl, 33B, -> da
+duration/digital@1, sr, 33B, -> da
+duration/digital@1, sr-Latn, 33B, -> da
+duration/digital@1, su, 33B, -> da
+duration/digital@1, und, 33B, 13d5f325d77078cf
 percent/essentials@1, <lookup>, 267B, 59 identifiers
 percent/essentials@1, <total>, 1035B, 9 unique payloads
 percent/essentials@1, ar, 117B, 8ebf290af62091f
