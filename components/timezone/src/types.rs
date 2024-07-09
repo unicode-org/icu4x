@@ -4,11 +4,14 @@
 
 use crate::error::InvalidOffsetError;
 use core::str::FromStr;
+use ixdtf::parsers::records::UTCOffsetRecord;
 use tinystr::{tinystr, TinyAsciiStr};
 use zerovec::ule::{AsULE, ULE};
 use zerovec::{ZeroSlice, ZeroVec};
 
-/// The GMT offset in seconds for a timezone
+/// The GMT offset in seconds for a timezone.
+///
+/// Supports offsets up to 18 hours ahead or behind UTC.
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub struct GmtOffset(i32);
 
@@ -40,6 +43,34 @@ impl GmtOffset {
 
     pub(crate) const fn utc_plus_1() -> Self {
         Self(3600)
+    }
+
+    /// Converts a [`UTCOffsetRecord`] to a [`GmtOffset`], discarding nanoseconds.
+    ///
+    /// ✨ *Enabled with the `ixdtf` Cargo feature.*
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::timezone::GmtOffset;
+    /// use ixdtf::parsers::IxdtfParser;
+    ///
+    /// let ixdtf_str = "2024-03-02T08:48:00-05:00[America/New_York]";
+    /// let ixdtf_result = IxdtfParser::from_str(ixdtf_str).parse().unwrap();
+    ///
+    /// let expected = GmtOffset::try_from_offset_seconds(-5 * 3600).unwrap();
+    /// let actual = GmtOffset::try_from_ixdtf(ixdtf_result.offset.unwrap()).unwrap();
+    ///
+    /// assert_eq!(expected, actual);
+    /// ```
+    #[cfg(feature = "ixdtf")]
+    pub fn try_from_ixdtf(record: UTCOffsetRecord) -> Result<Self, InvalidOffsetError> {
+        Self::try_from_offset_seconds(
+            record.sign as i32
+                * (record.second as i32
+                    + (60 * record.minute as i32)
+                    + (3600 * record.hour as i32)),
+        )
     }
 
     /// Parse a [`GmtOffset`] from bytes.
