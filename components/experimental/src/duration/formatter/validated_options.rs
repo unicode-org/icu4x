@@ -59,10 +59,17 @@ pub struct ValidatedDurationFormatterOptions {
     fractional_digits: FractionalDigits,
 }
 
-/// Error type for [DurationFormatterOptions] validation.
+/// Error type for [`DurationFormatterOptions`] validation.
 #[non_exhaustive]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum DurationFormatterOptionsError {
-    InvalidFractionalDigits,
+    /// Returned when a unit field is set to [`FieldDisplay::Always`] and the style is set to [`FieldStyle::Fractional`].
+    DisplayAlwaysFractional,
+    /// Returned when a unit field is set to [`FieldStyle::Fractional`] and the previous style is not [`FieldStyle::Fractional`].
+    PreviousNotFractional,
+    /// Returned when a previous style is set to [`FieldStyle::Numeric`] or [`FieldStyle::TwoDigit`] and the current style is not
+    /// [`FieldStyle::Fractional`], [`FieldStyle::Numeric`], or [`FieldStyle::TwoDigit`].
+    PreviousNumeric,
 }
 
 impl ValidatedDurationFormatterOptions {
@@ -139,7 +146,7 @@ impl ValidatedDurationFormatterOptions {
             // 7. If display is "always" and style is "fractional", then
             if *visibility == Some(FieldDisplay::Always) && *style == Some(FieldStyle::Fractional) {
                 // a. Throw a RangeError exception.
-                return Err(DurationFormatterOptionsError::InvalidFractionalDigits);
+                return Err(DurationFormatterOptionsError::DisplayAlwaysFractional);
             }
 
             // 8. If prevStyle is "fractional", then
@@ -147,7 +154,7 @@ impl ValidatedDurationFormatterOptions {
                 // a. If style is not "fractional", then
                 if *style != Some(FieldStyle::Fractional) {
                     // i. Throw a RangeError exception.
-                    return Err(DurationFormatterOptionsError::InvalidFractionalDigits);
+                    return Err(DurationFormatterOptionsError::PreviousNotFractional);
                 }
             }
 
@@ -159,7 +166,7 @@ impl ValidatedDurationFormatterOptions {
                     Some(FieldStyle::Fractional | FieldStyle::Numeric | FieldStyle::TwoDigit)
                 ) {
                     // i. Throw a RangeError exception.
-                    return Err(DurationFormatterOptionsError::InvalidFractionalDigits);
+                    return Err(DurationFormatterOptionsError::PreviousNumeric);
                 }
                 // b. If unit is "minutes" or "seconds", then
                 if unit == Unit::Minute || unit == Unit::Second {
