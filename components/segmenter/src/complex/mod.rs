@@ -41,17 +41,13 @@ pub(crate) struct ComplexPayloads {
 }
 
 #[cfg(feature = "lstm")]
-const MY_LSTM: &DataMarkerAttributes =
-    DataMarkerAttributes::from_str_or_panic("Burmese_codepoints_exclusive_model4_heavy");
+const MY_LSTM: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("Burmese");
 #[cfg(feature = "lstm")]
-const KM_LSTM: &DataMarkerAttributes =
-    DataMarkerAttributes::from_str_or_panic("Khmer_codepoints_exclusive_model4_heavy");
+const KM_LSTM: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("Khmer");
 #[cfg(feature = "lstm")]
-const LO_LSTM: &DataMarkerAttributes =
-    DataMarkerAttributes::from_str_or_panic("Lao_codepoints_exclusive_model4_heavy");
+const LO_LSTM: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("Lao");
 #[cfg(feature = "lstm")]
-const TH_LSTM: &DataMarkerAttributes =
-    DataMarkerAttributes::from_str_or_panic("Thai_codepoints_exclusive_model4_heavy");
+const TH_LSTM: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("Thai");
 
 const MY_DICT: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("burmesedict");
 const KM_DICT: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("khmerdict");
@@ -341,6 +337,7 @@ fn try_load<M: DataMarker, P: DataProvider<M> + ?Sized>(
         metadata: {
             let mut m = DataRequestMetadata::default();
             m.silent = true;
+            m.attributes_prefix_match = true;
             m
         },
     }) {
