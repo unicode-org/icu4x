@@ -32,7 +32,7 @@ all-features = true
 [dependencies]
 
 # ICU components
-icu = { workspace = true, default-features = false, features = ["datagen"] }
+icu = { workspace = true, features = ["datagen"] }
 
 # ICU infrastructure
 calendrical_calculations = { workspace = true }
@@ -77,7 +77,7 @@ icu_provider_export = { workspace = true, features = ["fs_exporter", "baked_expo
 icu_provider = { workspace = true, features = ["deserialize_postcard_1"] }
 icu_segmenter = { path = "../../components/segmenter", features = ["lstm"] }
 simple_logger = { workspace = true }
-icu = { path = "../../components/icu", features = ["experimental"] }
+icu = { path = "../../components/icu", default-features = false, features = ["experimental"] }
 
 [features]
 default = ["use_wasm", "networking"]
