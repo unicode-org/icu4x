@@ -5,8 +5,8 @@
 `icu_provider_source` defines [`SourceDataProvider`], the authorative ICU4X [`DataProvider`] that produces data from
 CLDR and ICU sources.
 
-As the name suggests, [`SourceDataProvider`] is mainly intended as a source for the `icu_datagen` crate,
-which transforms the data into a more efficient format.
+[`SourceDataProvider`] is mainly intended as a source for the `icu_provider_export` crate,
+which can be used to transform the data into a more efficient format.
 
 ## Cargo features
 

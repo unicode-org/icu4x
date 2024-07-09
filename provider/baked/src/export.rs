@@ -543,6 +543,8 @@ impl DataExporter for BakedExporter {
             .parse::<TokenStream>()
             .unwrap();
 
+            self.dependencies.insert("icu_provider_baked");
+
             let search = if !needs_fallback {
                 quote! {
                     let metadata = Default::default();
