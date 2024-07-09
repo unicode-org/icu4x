@@ -14,7 +14,7 @@ pub mod ffi {
 
     use crate::calendar::ffi::ICU4XCalendar;
     use crate::date::ffi::{ICU4XDate, ICU4XIsoDate, ICU4XIsoWeekday};
-    use crate::errors::ffi::ICU4XError;
+    use crate::errors::ffi::ICU4XCalendarError;
     use crate::time::ffi::ICU4XTime;
 
     #[cfg(feature = "icu_calendar")]
@@ -37,7 +37,7 @@ pub mod ffi {
             minute: u8,
             second: u8,
             nanosecond: u32,
-        ) -> Result<Box<ICU4XIsoDateTime>, ICU4XError> {
+        ) -> Result<Box<ICU4XIsoDateTime>, ICU4XCalendarError> {
             let mut dt = DateTime::try_new_iso_datetime(year, month, day, hour, minute, second)?;
             dt.time.nanosecond = nanosecond.try_into()?;
             Ok(Box::new(ICU4XIsoDateTime(dt)))
@@ -134,6 +134,13 @@ pub mod ffi {
             self.0.time.nanosecond.into()
         }
 
+        /// Returns the 1-indexed day in the year for this date
+        #[diplomat::rust_link(icu::calendar::Date::day_of_year_info, FnInStruct)]
+        #[diplomat::attr(supports = accessors, getter)]
+        pub fn day_of_year(&self) -> u16 {
+            self.0.date.day_of_year_info().day_of_year
+        }
+
         /// Returns the 1-indexed day in the month for this date
         #[diplomat::rust_link(icu::calendar::Date::day_of_month, FnInStruct)]
         #[diplomat::attr(supports = accessors, getter)]
@@ -173,8 +180,8 @@ pub mod ffi {
         pub fn week_of_year(
             &self,
             calculator: &ICU4XWeekCalculator,
-        ) -> Result<crate::week::ffi::ICU4XWeekOf, ICU4XError> {
-            Ok(self.0.date.week_of_year(&calculator.0)?.into())
+        ) -> crate::week::ffi::ICU4XWeekOf {
+            self.0.date.week_of_year(&calculator.0).into()
         }
 
         /// Returns 1-indexed number of the month of this date in its year
@@ -240,7 +247,7 @@ pub mod ffi {
             second: u8,
             nanosecond: u32,
             calendar: &ICU4XCalendar,
-        ) -> Result<Box<ICU4XDateTime>, ICU4XError> {
+        ) -> Result<Box<ICU4XDateTime>, ICU4XCalendarError> {
             let cal = calendar.0.clone();
             let mut dt = DateTime::try_new_iso_datetime(year, month, day, hour, minute, second)?;
             dt.time.nanosecond = nanosecond.try_into()?;
@@ -260,9 +267,13 @@ pub mod ffi {
             second: u8,
             nanosecond: u32,
             calendar: &ICU4XCalendar,
-        ) -> Result<Box<ICU4XDateTime>, ICU4XError> {
-            let era = TinyAsciiStr::from_bytes(era_code)?.into();
-            let month = TinyAsciiStr::from_bytes(month_code)?.into();
+        ) -> Result<Box<ICU4XDateTime>, ICU4XCalendarError> {
+            let era = TinyAsciiStr::try_from_utf8(era_code)
+                .map_err(|_| ICU4XCalendarError::UnknownEra)?
+                .into();
+            let month = TinyAsciiStr::try_from_utf8(month_code)
+                .map_err(|_| ICU4XCalendarError::UnknownMonthCode)?
+                .into();
             let cal = calendar.0.clone();
             let hour = hour.try_into()?;
             let minute = minute.try_into()?;
@@ -337,6 +348,13 @@ pub mod ffi {
             self.0.time.nanosecond.into()
         }
 
+        /// Returns the 1-indexed day in the year for this date
+        #[diplomat::rust_link(icu::calendar::Date::day_of_year_info, FnInStruct)]
+        #[diplomat::attr(supports = accessors, getter)]
+        pub fn day_of_year(&self) -> u16 {
+            self.0.date.day_of_year_info().day_of_year
+        }
+
         /// Returns the 1-indexed day in the month for this date
         #[diplomat::rust_link(icu::calendar::Date::day_of_month, FnInStruct)]
         #[diplomat::attr(supports = accessors, getter)]
@@ -376,8 +394,8 @@ pub mod ffi {
         pub fn week_of_year(
             &self,
             calculator: &ICU4XWeekCalculator,
-        ) -> Result<crate::week::ffi::ICU4XWeekOf, ICU4XError> {
-            Ok(self.0.date.week_of_year(&calculator.0)?.into())
+        ) -> crate::week::ffi::ICU4XWeekOf {
+            self.0.date.week_of_year(&calculator.0).into()
         }
 
         /// Returns 1-indexed number of the month of this date in its year
@@ -395,13 +413,9 @@ pub mod ffi {
         /// like "M01", "M02", but can be more complicated for lunar calendars.
         #[diplomat::rust_link(icu::calendar::Date::month, FnInStruct)]
         #[diplomat::attr(supports = accessors, getter)]
-        pub fn month_code(
-            &self,
-            write: &mut diplomat_runtime::DiplomatWriteable,
-        ) -> Result<(), ICU4XError> {
+        pub fn month_code(&self, write: &mut diplomat_runtime::DiplomatWrite) {
             let code = self.0.date.month().code;
-            write.write_str(&code.0)?;
-            Ok(())
+            let _infallible = write.write_str(&code.0);
         }
 
         /// Returns the year number in the current era for this date
@@ -414,13 +428,9 @@ pub mod ffi {
         /// Returns the era for this date,
         #[diplomat::rust_link(icu::calendar::Date::year, FnInStruct)]
         #[diplomat::attr(supports = accessors, getter)]
-        pub fn era(
-            &self,
-            write: &mut diplomat_runtime::DiplomatWriteable,
-        ) -> Result<(), ICU4XError> {
+        pub fn era(&self, write: &mut diplomat_runtime::DiplomatWrite) {
             let era = self.0.date.year().era;
-            write.write_str(&era.0)?;
-            Ok(())
+            let _infallible = write.write_str(&era.0);
         }
 
         /// Returns the number of months in the year represented by this date

@@ -2,8 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#![warn(missing_docs)]
-
 //! Formatting basic decimal numbers.
 //!
 //! This module is published as its own crate ([`icu_decimal`](https://docs.rs/icu_decimal/latest/icu_decimal/))
@@ -19,7 +17,7 @@
 //! ```
 //! use fixed_decimal::FixedDecimal;
 //! use icu::decimal::FixedDecimalFormatter;
-//! use icu::locid::locale;
+//! use icu::locale::locale;
 //! use writeable::assert_writeable_eq;
 //!
 //! let fdf = FixedDecimalFormatter::try_new(
@@ -38,7 +36,7 @@
 //! ```
 //! use fixed_decimal::FixedDecimal;
 //! use icu::decimal::FixedDecimalFormatter;
-//! use icu::locid::Locale;
+//! use icu::locale::Locale;
 //! use writeable::assert_writeable_eq;
 //!
 //! let fdf =
@@ -58,7 +56,7 @@
 //! ```
 //! use fixed_decimal::FixedDecimal;
 //! use icu::decimal::FixedDecimalFormatter;
-//! use icu::locid::locale;
+//! use icu::locale::locale;
 //! use writeable::assert_writeable_eq;
 //!
 //! let fdf = FixedDecimalFormatter::try_new(
@@ -92,17 +90,12 @@
 
 extern crate alloc;
 
-mod error;
 mod format;
 mod grouper;
 pub mod options;
 pub mod provider;
 
-pub use error::DecimalError;
 pub use format::FormattedFixedDecimal;
-
-#[doc(no_inline)]
-pub use DecimalError as Error;
 
 use alloc::string::String;
 use fixed_decimal::FixedDecimal;
@@ -128,9 +121,8 @@ pub struct FixedDecimalFormatter {
 
 impl FixedDecimalFormatter {
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: include,
-        options: options::FixedDecimalFormatterOptions,
-        error: DecimalError,
+
+        (locale, options: options::FixedDecimalFormatterOptions) -> error: DataError,
         /// Creates a new [`FixedDecimalFormatter`] from compiled data and an options bag.
         ///
         /// ✨ *Enabled with the `compiled_data` Cargo feature.*
@@ -143,13 +135,13 @@ impl FixedDecimalFormatter {
         provider: &D,
         locale: &DataLocale,
         options: options::FixedDecimalFormatterOptions,
-    ) -> Result<Self, DecimalError> {
+    ) -> Result<Self, DataError> {
         let symbols = provider
             .load(DataRequest {
-                locale,
-                metadata: Default::default(),
+                id: DataIdentifierBorrowed::for_locale(locale),
+                ..Default::default()
             })?
-            .take_payload()?;
+            .payload;
         Ok(Self { options, symbols })
     }
 

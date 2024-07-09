@@ -1,76 +1,64 @@
 #ifndef ICU4XCanonicalComposition_HPP
 #define ICU4XCanonicalComposition_HPP
+
+#include "ICU4XCanonicalComposition.d.hpp"
+
+#include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
-#include <algorithm>
 #include <memory>
-#include <variant>
 #include <optional>
 #include "diplomat_runtime.hpp"
-
-#include "ICU4XCanonicalComposition.h"
-
-class ICU4XDataProvider;
-class ICU4XCanonicalComposition;
-#include "ICU4XError.hpp"
-
-/**
- * A destruction policy for using ICU4XCanonicalComposition with std::unique_ptr.
- */
-struct ICU4XCanonicalCompositionDeleter {
-  void operator()(capi::ICU4XCanonicalComposition* l) const noexcept {
-    capi::ICU4XCanonicalComposition_destroy(l);
-  }
-};
-
-/**
- * The raw canonical composition operation.
- * 
- * Callers should generally use ICU4XComposingNormalizer unless they specifically need raw composition operations
- * 
- * See the [Rust documentation for `CanonicalComposition`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalComposition.html) for more information.
- */
-class ICU4XCanonicalComposition {
- public:
-
-  /**
-   * Construct a new ICU4XCanonicalComposition instance for NFC
-   * 
-   * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalComposition.html#method.new) for more information.
-   */
-  static diplomat::result<ICU4XCanonicalComposition, ICU4XError> create(const ICU4XDataProvider& provider);
-
-  /**
-   * Performs canonical composition (including Hangul) on a pair of characters
-   * or returns NUL if these characters don’t compose. Composition exclusions are taken into account.
-   * 
-   * See the [Rust documentation for `compose`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalComposition.html#method.compose) for more information.
-   */
-  char32_t compose(char32_t starter, char32_t second) const;
-  inline const capi::ICU4XCanonicalComposition* AsFFI() const { return this->inner.get(); }
-  inline capi::ICU4XCanonicalComposition* AsFFIMut() { return this->inner.get(); }
-  inline explicit ICU4XCanonicalComposition(capi::ICU4XCanonicalComposition* i) : inner(i) {}
-  ICU4XCanonicalComposition() = default;
-  ICU4XCanonicalComposition(ICU4XCanonicalComposition&&) noexcept = default;
-  ICU4XCanonicalComposition& operator=(ICU4XCanonicalComposition&& other) noexcept = default;
- private:
-  std::unique_ptr<capi::ICU4XCanonicalComposition, ICU4XCanonicalCompositionDeleter> inner;
-};
-
+#include "ICU4XDataError.hpp"
 #include "ICU4XDataProvider.hpp"
 
-inline diplomat::result<ICU4XCanonicalComposition, ICU4XError> ICU4XCanonicalComposition::create(const ICU4XDataProvider& provider) {
-  auto diplomat_result_raw_out_value = capi::ICU4XCanonicalComposition_create(provider.AsFFI());
-  diplomat::result<ICU4XCanonicalComposition, ICU4XError> diplomat_result_out_value;
-  if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCanonicalComposition>(ICU4XCanonicalComposition(diplomat_result_raw_out_value.ok));
-  } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
-  }
-  return diplomat_result_out_value;
+
+namespace capi {
+    extern "C" {
+    
+    typedef struct ICU4XCanonicalComposition_create_result {union {ICU4XCanonicalComposition* ok; ICU4XDataError err;}; bool is_ok;} ICU4XCanonicalComposition_create_result;
+    ICU4XCanonicalComposition_create_result ICU4XCanonicalComposition_create(const ICU4XDataProvider* provider);
+    
+    char32_t ICU4XCanonicalComposition_compose(const ICU4XCanonicalComposition* self, char32_t starter, char32_t second);
+    
+    
+    void ICU4XCanonicalComposition_destroy(ICU4XCanonicalComposition* self);
+    
+    } // extern "C"
 }
+
+inline diplomat::result<std::unique_ptr<ICU4XCanonicalComposition>, ICU4XDataError> ICU4XCanonicalComposition::create(const ICU4XDataProvider& provider) {
+  auto result = capi::ICU4XCanonicalComposition_create(provider.AsFFI());
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XCanonicalComposition>, ICU4XDataError>(diplomat::Ok<std::unique_ptr<ICU4XCanonicalComposition>>(std::unique_ptr<ICU4XCanonicalComposition>(ICU4XCanonicalComposition::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XCanonicalComposition>, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
+}
+
 inline char32_t ICU4XCanonicalComposition::compose(char32_t starter, char32_t second) const {
-  return capi::ICU4XCanonicalComposition_compose(this->inner.get(), starter, second);
+  auto result = capi::ICU4XCanonicalComposition_compose(this->AsFFI(),
+    starter,
+    second);
+  return result;
 }
-#endif
+
+inline const capi::ICU4XCanonicalComposition* ICU4XCanonicalComposition::AsFFI() const {
+  return reinterpret_cast<const capi::ICU4XCanonicalComposition*>(this);
+}
+
+inline capi::ICU4XCanonicalComposition* ICU4XCanonicalComposition::AsFFI() {
+  return reinterpret_cast<capi::ICU4XCanonicalComposition*>(this);
+}
+
+inline const ICU4XCanonicalComposition* ICU4XCanonicalComposition::FromFFI(const capi::ICU4XCanonicalComposition* ptr) {
+  return reinterpret_cast<const ICU4XCanonicalComposition*>(ptr);
+}
+
+inline ICU4XCanonicalComposition* ICU4XCanonicalComposition::FromFFI(capi::ICU4XCanonicalComposition* ptr) {
+  return reinterpret_cast<ICU4XCanonicalComposition*>(ptr);
+}
+
+inline void ICU4XCanonicalComposition::operator delete(void* ptr) {
+  capi::ICU4XCanonicalComposition_destroy(reinterpret_cast<capi::ICU4XCanonicalComposition*>(ptr));
+}
+
+
+#endif // ICU4XCanonicalComposition_HPP

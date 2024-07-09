@@ -1,106 +1,88 @@
 #ifndef ICU4XWeekCalculator_HPP
 #define ICU4XWeekCalculator_HPP
+
+#include "ICU4XWeekCalculator.d.hpp"
+
+#include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
-#include <algorithm>
 #include <memory>
-#include <variant>
 #include <optional>
 #include "diplomat_runtime.hpp"
-
-#include "ICU4XWeekCalculator.h"
-
-class ICU4XDataProvider;
-class ICU4XLocale;
-class ICU4XWeekCalculator;
-#include "ICU4XError.hpp"
-#include "ICU4XIsoWeekday.hpp"
-struct ICU4XWeekendContainsDay;
-
-/**
- * A destruction policy for using ICU4XWeekCalculator with std::unique_ptr.
- */
-struct ICU4XWeekCalculatorDeleter {
-  void operator()(capi::ICU4XWeekCalculator* l) const noexcept {
-    capi::ICU4XWeekCalculator_destroy(l);
-  }
-};
-
-/**
- * A Week calculator, useful to be passed in to `week_of_year()` on Date and DateTime types
- * 
- * See the [Rust documentation for `WeekCalculator`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html) for more information.
- */
-class ICU4XWeekCalculator {
- public:
-
-  /**
-   * Creates a new [`ICU4XWeekCalculator`] from locale data.
-   * 
-   * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#method.try_new) for more information.
-   */
-  static diplomat::result<ICU4XWeekCalculator, ICU4XError> create(const ICU4XDataProvider& provider, const ICU4XLocale& locale);
-
-  /**
-   * Additional information: [1](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#structfield.first_weekday), [2](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#structfield.min_week_days)
-   */
-  static ICU4XWeekCalculator create_from_first_day_of_week_and_min_week_days(ICU4XIsoWeekday first_weekday, uint8_t min_week_days);
-
-  /**
-   * Returns the weekday that starts the week for this object's locale
-   * 
-   * See the [Rust documentation for `first_weekday`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#structfield.first_weekday) for more information.
-   */
-  ICU4XIsoWeekday first_weekday() const;
-
-  /**
-   * The minimum number of days overlapping a year required for a week to be
-   * considered part of that year
-   * 
-   * See the [Rust documentation for `min_week_days`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#structfield.min_week_days) for more information.
-   */
-  uint8_t min_week_days() const;
-
-  /**
-   * See the [Rust documentation for `weekend`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#method.weekend) for more information.
-   */
-  ICU4XWeekendContainsDay weekend() const;
-  inline const capi::ICU4XWeekCalculator* AsFFI() const { return this->inner.get(); }
-  inline capi::ICU4XWeekCalculator* AsFFIMut() { return this->inner.get(); }
-  inline explicit ICU4XWeekCalculator(capi::ICU4XWeekCalculator* i) : inner(i) {}
-  ICU4XWeekCalculator() = default;
-  ICU4XWeekCalculator(ICU4XWeekCalculator&&) noexcept = default;
-  ICU4XWeekCalculator& operator=(ICU4XWeekCalculator&& other) noexcept = default;
- private:
-  std::unique_ptr<capi::ICU4XWeekCalculator, ICU4XWeekCalculatorDeleter> inner;
-};
-
+#include "ICU4XDataError.hpp"
 #include "ICU4XDataProvider.hpp"
+#include "ICU4XIsoWeekday.hpp"
 #include "ICU4XLocale.hpp"
 #include "ICU4XWeekendContainsDay.hpp"
 
-inline diplomat::result<ICU4XWeekCalculator, ICU4XError> ICU4XWeekCalculator::create(const ICU4XDataProvider& provider, const ICU4XLocale& locale) {
-  auto diplomat_result_raw_out_value = capi::ICU4XWeekCalculator_create(provider.AsFFI(), locale.AsFFI());
-  diplomat::result<ICU4XWeekCalculator, ICU4XError> diplomat_result_out_value;
-  if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XWeekCalculator>(ICU4XWeekCalculator(diplomat_result_raw_out_value.ok));
-  } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
-  }
-  return diplomat_result_out_value;
+
+namespace capi {
+    extern "C" {
+    
+    typedef struct ICU4XWeekCalculator_create_result {union {ICU4XWeekCalculator* ok; ICU4XDataError err;}; bool is_ok;} ICU4XWeekCalculator_create_result;
+    ICU4XWeekCalculator_create_result ICU4XWeekCalculator_create(const ICU4XDataProvider* provider, const ICU4XLocale* locale);
+    
+    ICU4XWeekCalculator* ICU4XWeekCalculator_create_from_first_day_of_week_and_min_week_days(ICU4XIsoWeekday first_weekday, uint8_t min_week_days);
+    
+    ICU4XIsoWeekday ICU4XWeekCalculator_first_weekday(const ICU4XWeekCalculator* self);
+    
+    uint8_t ICU4XWeekCalculator_min_week_days(const ICU4XWeekCalculator* self);
+    
+    ICU4XWeekendContainsDay ICU4XWeekCalculator_weekend(const ICU4XWeekCalculator* self);
+    
+    
+    void ICU4XWeekCalculator_destroy(ICU4XWeekCalculator* self);
+    
+    } // extern "C"
 }
-inline ICU4XWeekCalculator ICU4XWeekCalculator::create_from_first_day_of_week_and_min_week_days(ICU4XIsoWeekday first_weekday, uint8_t min_week_days) {
-  return ICU4XWeekCalculator(capi::ICU4XWeekCalculator_create_from_first_day_of_week_and_min_week_days(static_cast<capi::ICU4XIsoWeekday>(first_weekday), min_week_days));
+
+inline diplomat::result<std::unique_ptr<ICU4XWeekCalculator>, ICU4XDataError> ICU4XWeekCalculator::create(const ICU4XDataProvider& provider, const ICU4XLocale& locale) {
+  auto result = capi::ICU4XWeekCalculator_create(provider.AsFFI(),
+    locale.AsFFI());
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XWeekCalculator>, ICU4XDataError>(diplomat::Ok<std::unique_ptr<ICU4XWeekCalculator>>(std::unique_ptr<ICU4XWeekCalculator>(ICU4XWeekCalculator::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XWeekCalculator>, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
+
+inline std::unique_ptr<ICU4XWeekCalculator> ICU4XWeekCalculator::create_from_first_day_of_week_and_min_week_days(ICU4XIsoWeekday first_weekday, uint8_t min_week_days) {
+  auto result = capi::ICU4XWeekCalculator_create_from_first_day_of_week_and_min_week_days(first_weekday.AsFFI(),
+    min_week_days);
+  return std::unique_ptr<ICU4XWeekCalculator>(ICU4XWeekCalculator::FromFFI(result));
+}
+
 inline ICU4XIsoWeekday ICU4XWeekCalculator::first_weekday() const {
-  return static_cast<ICU4XIsoWeekday>(capi::ICU4XWeekCalculator_first_weekday(this->inner.get()));
+  auto result = capi::ICU4XWeekCalculator_first_weekday(this->AsFFI());
+  return ICU4XIsoWeekday::FromFFI(result);
 }
+
 inline uint8_t ICU4XWeekCalculator::min_week_days() const {
-  return capi::ICU4XWeekCalculator_min_week_days(this->inner.get());
+  auto result = capi::ICU4XWeekCalculator_min_week_days(this->AsFFI());
+  return result;
 }
+
 inline ICU4XWeekendContainsDay ICU4XWeekCalculator::weekend() const {
-  capi::ICU4XWeekendContainsDay diplomat_raw_struct_out_value = capi::ICU4XWeekCalculator_weekend(this->inner.get());
-  return ICU4XWeekendContainsDay{ .monday = std::move(diplomat_raw_struct_out_value.monday), .tuesday = std::move(diplomat_raw_struct_out_value.tuesday), .wednesday = std::move(diplomat_raw_struct_out_value.wednesday), .thursday = std::move(diplomat_raw_struct_out_value.thursday), .friday = std::move(diplomat_raw_struct_out_value.friday), .saturday = std::move(diplomat_raw_struct_out_value.saturday), .sunday = std::move(diplomat_raw_struct_out_value.sunday) };
+  auto result = capi::ICU4XWeekCalculator_weekend(this->AsFFI());
+  return ICU4XWeekendContainsDay::FromFFI(result);
 }
-#endif
+
+inline const capi::ICU4XWeekCalculator* ICU4XWeekCalculator::AsFFI() const {
+  return reinterpret_cast<const capi::ICU4XWeekCalculator*>(this);
+}
+
+inline capi::ICU4XWeekCalculator* ICU4XWeekCalculator::AsFFI() {
+  return reinterpret_cast<capi::ICU4XWeekCalculator*>(this);
+}
+
+inline const ICU4XWeekCalculator* ICU4XWeekCalculator::FromFFI(const capi::ICU4XWeekCalculator* ptr) {
+  return reinterpret_cast<const ICU4XWeekCalculator*>(ptr);
+}
+
+inline ICU4XWeekCalculator* ICU4XWeekCalculator::FromFFI(capi::ICU4XWeekCalculator* ptr) {
+  return reinterpret_cast<ICU4XWeekCalculator*>(ptr);
+}
+
+inline void ICU4XWeekCalculator::operator delete(void* ptr) {
+  capi::ICU4XWeekCalculator_destroy(reinterpret_cast<capi::ICU4XWeekCalculator*>(ptr));
+}
+
+
+#endif // ICU4XWeekCalculator_HPP

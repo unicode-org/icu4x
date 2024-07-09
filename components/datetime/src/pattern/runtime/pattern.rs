@@ -116,7 +116,7 @@ impl<'data> PatternBorrowed<'data> {
         metadata: PatternMetadata::DEFAULT,
     };
 
-    pub fn to_pattern(&self) -> Pattern<'data> {
+    pub fn as_pattern(&self) -> Pattern<'data> {
         Pattern {
             items: self.items.as_zerovec(),
             metadata: self.metadata,
@@ -188,12 +188,20 @@ impl databake::Bake for PatternMetadata {
     }
 }
 
+#[cfg(feature = "datagen")]
+impl databake::BakeSize for PatternMetadata {
+    fn borrows_size(&self) -> usize {
+        0
+    }
+}
+
 #[test]
 #[cfg(feature = "datagen")]
 fn databake() {
     databake::test_bake!(
         PatternMetadata,
-        const: crate::pattern::runtime::PatternMetadata::from_time_granularity(
+        const,
+        crate::pattern::runtime::PatternMetadata::from_time_granularity(
             crate::pattern::TimeGranularity::Hours
         ),
         icu_datetime,

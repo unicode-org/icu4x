@@ -1,25 +1,37 @@
 #ifndef ICU4XListLength_HPP
 #define ICU4XListLength_HPP
+
+#include "ICU4XListLength.d.hpp"
+
+#include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
-#include <algorithm>
 #include <memory>
-#include <variant>
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-#include "ICU4XListLength.h"
+
+namespace capi {
+    extern "C" {
+    
+    
+    } // extern "C"
+}
 
 
+inline capi::ICU4XListLength ICU4XListLength::AsFFI() const {
+  return static_cast<capi::ICU4XListLength>(value);
+}
 
-/**
- * See the [Rust documentation for `ListLength`](https://docs.rs/icu/latest/icu/list/enum.ListLength.html) for more information.
- */
-enum struct ICU4XListLength {
-  Wide = 0,
-  Short = 1,
-  Narrow = 2,
-};
-
-#endif
+inline ICU4XListLength ICU4XListLength::FromFFI(capi::ICU4XListLength c_enum) {
+  switch (c_enum) {
+    case capi::ICU4XListLength_Wide:
+    case capi::ICU4XListLength_Short:
+    case capi::ICU4XListLength_Narrow:
+      return static_cast<ICU4XListLength::Value>(c_enum);
+    default:
+      abort();
+  }
+}
+#endif // ICU4XListLength_HPP

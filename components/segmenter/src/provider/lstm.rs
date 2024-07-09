@@ -85,6 +85,13 @@ macro_rules! lstm_matrix {
                 }
             }
         }
+
+        #[cfg(feature = "datagen")]
+        impl databake::BakeSize for $name<'_> {
+            fn borrows_size(&self) -> usize {
+                self.data.borrows_size()
+            }
+        }
     };
 }
 
@@ -318,6 +325,23 @@ impl databake::Bake for LstmDataFloat32<'_> {
     }
 }
 
+#[cfg(feature = "datagen")]
+impl databake::BakeSize for LstmDataFloat32<'_> {
+    fn borrows_size(&self) -> usize {
+        self.model.borrows_size()
+            + self.dic.borrows_size()
+            + self.embedding.borrows_size()
+            + self.fw_w.borrows_size()
+            + self.fw_u.borrows_size()
+            + self.fw_b.borrows_size()
+            + self.bw_w.borrows_size()
+            + self.bw_u.borrows_size()
+            + self.bw_b.borrows_size()
+            + self.time_w.borrows_size()
+            + self.time_b.borrows_size()
+    }
+}
+
 /// The data to power the LSTM segmentation model.
 ///
 /// This data enum is extensible: more backends may be added in the future.
@@ -349,10 +373,4 @@ pub enum LstmDataV1<'data> {
     // new variants should go BELOW existing ones
     // Serde serializes based on variant name and index in the enum
     // https://docs.rs/serde/latest/serde/trait.Serializer.html#tymethod.serialize_unit_variant
-}
-
-pub(crate) struct LstmDataV1Marker;
-
-impl DataMarker for LstmDataV1Marker {
-    type Yokeable = LstmDataV1<'static>;
 }

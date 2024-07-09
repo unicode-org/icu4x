@@ -1,117 +1,80 @@
 #ifndef ICU4XAnyCalendarKind_HPP
 #define ICU4XAnyCalendarKind_HPP
+
+#include "ICU4XAnyCalendarKind.d.hpp"
+
+#include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
-#include <algorithm>
 #include <memory>
-#include <variant>
 #include <optional>
 #include "diplomat_runtime.hpp"
-
-#include "ICU4XAnyCalendarKind.h"
-
-
-
-/**
- * The various calendar types currently supported by [`ICU4XCalendar`]
- * 
- * See the [Rust documentation for `AnyCalendarKind`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendarKind.html) for more information.
- */
-enum struct ICU4XAnyCalendarKind {
-
-  /**
-   * The kind of an Iso calendar
-   */
-  Iso = 0,
-
-  /**
-   * The kind of a Gregorian calendar
-   */
-  Gregorian = 1,
-
-  /**
-   * The kind of a Buddhist calendar
-   */
-  Buddhist = 2,
-
-  /**
-   * The kind of a Japanese calendar with modern eras
-   */
-  Japanese = 3,
-
-  /**
-   * The kind of a Japanese calendar with modern and historic eras
-   */
-  JapaneseExtended = 4,
-
-  /**
-   * The kind of an Ethiopian calendar, with Amete Mihret era
-   */
-  Ethiopian = 5,
-
-  /**
-   * The kind of an Ethiopian calendar, with Amete Alem era
-   */
-  EthiopianAmeteAlem = 6,
-
-  /**
-   * The kind of a Indian calendar
-   */
-  Indian = 7,
-
-  /**
-   * The kind of a Coptic calendar
-   */
-  Coptic = 8,
-
-  /**
-   * The kind of a Dangi calendar
-   */
-  Dangi = 9,
-
-  /**
-   * The kind of a Chinese calendar
-   */
-  Chinese = 10,
-
-  /**
-   * The kind of a Hebrew calendar
-   */
-  Hebrew = 11,
-
-  /**
-   * The kind of a Islamic civil calendar
-   */
-  IslamicCivil = 12,
-
-  /**
-   * The kind of a Islamic observational calendar
-   */
-  IslamicObservational = 13,
-
-  /**
-   * The kind of a Islamic tabular calendar
-   */
-  IslamicTabular = 14,
-
-  /**
-   * The kind of a Islamic Umm al-Qura calendar
-   */
-  IslamicUmmAlQura = 15,
-
-  /**
-   * The kind of a Persian calendar
-   */
-  Persian = 16,
-
-  /**
-   * The kind of a Roc calendar
-   */
-  Roc = 17,
-};
-class ICU4XLocale;
-#include "ICU4XError.hpp"
-
 #include "ICU4XLocale.hpp"
-#endif
+
+
+namespace capi {
+    extern "C" {
+    
+    typedef struct ICU4XAnyCalendarKind_get_for_locale_result {union {ICU4XAnyCalendarKind ok; }; bool is_ok;} ICU4XAnyCalendarKind_get_for_locale_result;
+    ICU4XAnyCalendarKind_get_for_locale_result ICU4XAnyCalendarKind_get_for_locale(const ICU4XLocale* locale);
+    
+    typedef struct ICU4XAnyCalendarKind_get_for_bcp47_result {union {ICU4XAnyCalendarKind ok; }; bool is_ok;} ICU4XAnyCalendarKind_get_for_bcp47_result;
+    ICU4XAnyCalendarKind_get_for_bcp47_result ICU4XAnyCalendarKind_get_for_bcp47(const char* s_data, size_t s_len);
+    
+    void ICU4XAnyCalendarKind_bcp47(ICU4XAnyCalendarKind self, DiplomatWrite* write);
+    
+    
+    } // extern "C"
+}
+
+
+inline capi::ICU4XAnyCalendarKind ICU4XAnyCalendarKind::AsFFI() const {
+  return static_cast<capi::ICU4XAnyCalendarKind>(value);
+}
+
+inline ICU4XAnyCalendarKind ICU4XAnyCalendarKind::FromFFI(capi::ICU4XAnyCalendarKind c_enum) {
+  switch (c_enum) {
+    case capi::ICU4XAnyCalendarKind_Iso:
+    case capi::ICU4XAnyCalendarKind_Gregorian:
+    case capi::ICU4XAnyCalendarKind_Buddhist:
+    case capi::ICU4XAnyCalendarKind_Japanese:
+    case capi::ICU4XAnyCalendarKind_JapaneseExtended:
+    case capi::ICU4XAnyCalendarKind_Ethiopian:
+    case capi::ICU4XAnyCalendarKind_EthiopianAmeteAlem:
+    case capi::ICU4XAnyCalendarKind_Indian:
+    case capi::ICU4XAnyCalendarKind_Coptic:
+    case capi::ICU4XAnyCalendarKind_Dangi:
+    case capi::ICU4XAnyCalendarKind_Chinese:
+    case capi::ICU4XAnyCalendarKind_Hebrew:
+    case capi::ICU4XAnyCalendarKind_IslamicCivil:
+    case capi::ICU4XAnyCalendarKind_IslamicObservational:
+    case capi::ICU4XAnyCalendarKind_IslamicTabular:
+    case capi::ICU4XAnyCalendarKind_IslamicUmmAlQura:
+    case capi::ICU4XAnyCalendarKind_Persian:
+    case capi::ICU4XAnyCalendarKind_Roc:
+      return static_cast<ICU4XAnyCalendarKind::Value>(c_enum);
+    default:
+      abort();
+  }
+}
+
+inline std::optional<ICU4XAnyCalendarKind> ICU4XAnyCalendarKind::get_for_locale(const ICU4XLocale& locale) {
+  auto result = capi::ICU4XAnyCalendarKind_get_for_locale(locale.AsFFI());
+  return result.is_ok ? std::optional<ICU4XAnyCalendarKind>(ICU4XAnyCalendarKind::FromFFI(result.ok)) : std::nullopt;
+}
+
+inline std::optional<ICU4XAnyCalendarKind> ICU4XAnyCalendarKind::get_for_bcp47(std::string_view s) {
+  auto result = capi::ICU4XAnyCalendarKind_get_for_bcp47(s.data(),
+    s.size());
+  return result.is_ok ? std::optional<ICU4XAnyCalendarKind>(ICU4XAnyCalendarKind::FromFFI(result.ok)) : std::nullopt;
+}
+
+inline std::string ICU4XAnyCalendarKind::bcp47() {
+  std::string output;
+  capi::DiplomatWrite write = diplomat::WriteFromString(output);
+  capi::ICU4XAnyCalendarKind_bcp47(this->AsFFI(),
+    &write);
+  return output;
+}
+#endif // ICU4XAnyCalendarKind_HPP

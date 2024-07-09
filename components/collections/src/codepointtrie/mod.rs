@@ -19,7 +19,7 @@
 //! ## Querying a `CodePointTrie`
 //!
 //! ```
-//! use icu_collections::codepointtrie::planes;
+//! use icu::collections::codepointtrie::planes;
 //! let trie = planes::get_planes_trie();
 //!
 //! assert_eq!(0, trie.get32(0x41)); // 'A' as u32
@@ -49,6 +49,3 @@ pub use cptrie::CodePointTrieHeader;
 pub use cptrie::TrieType;
 pub use cptrie::TrieValue;
 pub use error::Error as CodePointTrieError;
-
-#[doc(no_inline)]
-pub use CodePointTrieError as Error;

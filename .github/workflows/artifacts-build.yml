@@ -62,29 +62,27 @@ jobs:
 
     # GCP Boilerplate for jobs in main or forked repository (needs credentials)
     - id: gcp-auth
+      if: github.ref != 'refs/heads/main' || github.repository != 'unicode-org/icu4x'
       name: "Authenticate to Google Cloud with JSON Credentials"
-      uses: google-github-actions/auth@v1
+      uses: google-github-actions/auth@v2
       with:
         credentials_json: '${{ secrets.ICU4X_GCP_SA_KEY }}'
     - id: gcp-auth-main
       if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
       name: "Authenticate to Google Cloud with Workload Identity Provider"
-      uses: google-github-actions/auth@v1
+      uses: google-github-actions/auth@v2
       with:
         workload_identity_provider: "projects/66042061814/locations/global/workloadIdentityPools/icu4x-gha-pool1/providers/icu4x-gha-provider1"
         service_account: "icu4x-main@dev-infra-273822.iam.gserviceaccount.com"
     - name: "Set up Google Cloud SDK"
-      uses: google-github-actions/setup-gcloud@v1
+      uses: google-github-actions/setup-gcloud@v2
 
     - name: Build docs
-      uses: actions-rs/cargo@v1
-      with:
-        command: doc
-        # Exclude tool and derive crates
-        args: >
-          --workspace --release --all-features --no-deps --lib 
+      run: >
+          cargo doc --workspace --release --all-features --no-deps --lib 
           --exclude icu_benchmark_macros
           --exclude icu_ffi_coverage
+          --exclude md-tests
           --exclude icu_provider_macros
           --exclude databake-derive
           --exclude yoke-derive
@@ -114,19 +112,20 @@ jobs:
 
     # GCP Boilerplate for jobs in main or forked repository (needs credentials)
     - id: gcp-auth
+      if: github.ref != 'refs/heads/main' || github.repository != 'unicode-org/icu4x'
       name: "Authenticate to Google Cloud with JSON Credentials"
-      uses: google-github-actions/auth@v1
+      uses: google-github-actions/auth@v2
       with:
         credentials_json: '${{ secrets.ICU4X_GCP_SA_KEY }}'
     - id: gcp-auth-main
       if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
       name: "Authenticate to Google Cloud with Workload Identity Provider"
-      uses: google-github-actions/auth@v1
+      uses: google-github-actions/auth@v2
       with:
         workload_identity_provider: "projects/66042061814/locations/global/workloadIdentityPools/icu4x-gha-pool1/providers/icu4x-gha-provider1"
         service_account: "icu4x-main@dev-infra-273822.iam.gserviceaccount.com"
     - name: "Set up Google Cloud SDK"
-      uses: google-github-actions/setup-gcloud@v1
+      uses: google-github-actions/setup-gcloud@v2
 
     - name: Install doxygen-awesome
       run: |
@@ -160,27 +159,21 @@ jobs:
 
     # GCP Boilerplate for jobs in main or forked repository (needs credentials)
     - id: gcp-auth
+      if: github.ref != 'refs/heads/main' || github.repository != 'unicode-org/icu4x'
       name: "Authenticate to Google Cloud with JSON Credentials"
-      uses: google-github-actions/auth@v1
+      uses: google-github-actions/auth@v2
       with:
         credentials_json: '${{ secrets.ICU4X_GCP_SA_KEY }}'
     - id: gcp-auth-main
       if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
       name: "Authenticate to Google Cloud with Workload Identity Provider"
-      uses: google-github-actions/auth@v1
+      uses: google-github-actions/auth@v2
       with:
         workload_identity_provider: "projects/66042061814/locations/global/workloadIdentityPools/icu4x-gha-pool1/providers/icu4x-gha-provider1"
         service_account: "icu4x-main@dev-infra-273822.iam.gserviceaccount.com"
     - name: "Set up Google Cloud SDK"
-      uses: google-github-actions/setup-gcloud@v1
+      uses: google-github-actions/setup-gcloud@v2
 
-    - name: Install Node.js v16.18.0
-      uses: actions/setup-node@v3
-      with:
-        node-version: 16.18.0
-        cache: 'npm'
-        cache-dependency-path: '**/package-lock.json'
-        
     - name: Build docs
       run: |
         cd ffi/npm
@@ -212,19 +205,20 @@ jobs:
 
     # GCP Boilerplate for jobs in main or forked repository (needs credentials)
     - id: gcp-auth
+      if: github.ref != 'refs/heads/main' || github.repository != 'unicode-org/icu4x'
       name: "Authenticate to Google Cloud with JSON Credentials"
-      uses: google-github-actions/auth@v1
+      uses: google-github-actions/auth@v2
       with:
         credentials_json: '${{ secrets.ICU4X_GCP_SA_KEY }}'
     - id: gcp-auth-main
       if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
       name: "Authenticate to Google Cloud with Workload Identity Provider"
-      uses: google-github-actions/auth@v1
+      uses: google-github-actions/auth@v2
       with:
         workload_identity_provider: "projects/66042061814/locations/global/workloadIdentityPools/icu4x-gha-pool1/providers/icu4x-gha-provider1"
         service_account: "icu4x-main@dev-infra-273822.iam.gserviceaccount.com"
     - name: "Set up Google Cloud SDK"
-      uses: google-github-actions/setup-gcloud@v1
+      uses: google-github-actions/setup-gcloud@v2
 
     - name: Install Dart
       uses: dart-lang/setup-dart@v1
@@ -265,19 +259,12 @@ jobs:
     # GCP Boilerplate for jobs in main repository
     - id: gcp-auth
       name: "Authenticate to Google Cloud with Workload Identity Provider"
-      uses: google-github-actions/auth@v1
+      uses: google-github-actions/auth@v2
       with:
         workload_identity_provider: "projects/66042061814/locations/global/workloadIdentityPools/icu4x-gha-pool1/providers/icu4x-gha-provider1"
         service_account: "icu4x-main@dev-infra-273822.iam.gserviceaccount.com"
     - name: "Set up Google Cloud SDK"
-      uses: google-github-actions/setup-gcloud@v1
-
-    - name: Install Node.js v16.18.0
-      uses: actions/setup-node@v3
-      with:
-        node-version: 16.18.0
-        cache: 'npm'
-        cache-dependency-path: '**/package-lock.json'
+      uses: google-github-actions/setup-gcloud@v2
 
     - name: Init packages
       run: |
@@ -313,8 +300,8 @@ jobs:
           - components/collections
           - components/datetime
           # - components/experimental
-          - components/locid
-          - components/locid_transform
+          - components/locale_core
+          - components/locale
           - components/plurals
           - components/segmenter
           - provider/blob
@@ -338,30 +325,18 @@ jobs:
     # GCP Boilerplate for jobs in main repository
     - id: gcp-auth
       name: "Authenticate to Google Cloud with Workload Identity Provider"
-      uses: google-github-actions/auth@v1
+      uses: google-github-actions/auth@v2
       with:
         workload_identity_provider: "projects/66042061814/locations/global/workloadIdentityPools/icu4x-gha-pool1/providers/icu4x-gha-provider1"
         service_account: "icu4x-main@dev-infra-273822.iam.gserviceaccount.com"
     - name: "Set up Google Cloud SDK"
-      uses: google-github-actions/setup-gcloud@v1
+      uses: google-github-actions/setup-gcloud@v2
 
     # Cargo-make boilerplate
-    - name: Get cargo-make version
-      id: cargo-make-version
-      run: |
-        echo "hash=$(cargo search cargo-make | grep '^cargo-make =' | md5sum)" >> $GITHUB_OUTPUT
-      shell: bash
-    - name: Attempt to load cached cargo-make
-      uses: actions/cache@v3
-      id: cargo-make-cache
-      with:
-        path: |
-          ~/.cargo/bin/cargo-make
-          ~/.cargo/bin/cargo-make.exe
-        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
     - name: Install cargo-make
-      if: steps.cargo-make-cache.outputs.cache-hit != 'true'
-      run: cargo +stable install cargo-make
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cargo-make@0.37.13
 
     # Actual job
 
@@ -434,30 +409,18 @@ jobs:
     # GCP Boilerplate for jobs in main repository
     - id: gcp-auth
       name: "Authenticate to Google Cloud with Workload Identity Provider"
-      uses: google-github-actions/auth@v1
+      uses: google-github-actions/auth@v2
       with:
         workload_identity_provider: "projects/66042061814/locations/global/workloadIdentityPools/icu4x-gha-pool1/providers/icu4x-gha-provider1"
         service_account: "icu4x-main@dev-infra-273822.iam.gserviceaccount.com"
     - name: "Set up Google Cloud SDK"
-      uses: google-github-actions/setup-gcloud@v1
+      uses: google-github-actions/setup-gcloud@v2
 
     # Cargo-make boilerplate
-    - name: Get cargo-make version
-      id: cargo-make-version
-      run: |
-        echo "hash=$(cargo search cargo-make | grep '^cargo-make =' | md5sum)" >> $GITHUB_OUTPUT
-      shell: bash
-    - name: Attempt to load cached cargo-make
-      uses: actions/cache@v3
-      id: cargo-make-cache
-      with:
-        path: |
-          ~/.cargo/bin/cargo-make
-          ~/.cargo/bin/cargo-make.exe
-        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
     - name: Install cargo-make
-      if: steps.cargo-make-cache.outputs.cache-hit != 'true'
-      run: cargo +stable install cargo-make
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cargo-make@0.37.13
 
     # Actual job
 
@@ -511,39 +474,20 @@ jobs:
     # GCP Boilerplate for jobs in main repository
     - id: gcp-auth
       name: "Authenticate to Google Cloud with Workload Identity Provider"
-      uses: google-github-actions/auth@v1
+      uses: google-github-actions/auth@v2
       with:
         workload_identity_provider: "projects/66042061814/locations/global/workloadIdentityPools/icu4x-gha-pool1/providers/icu4x-gha-provider1"
         service_account: "icu4x-main@dev-infra-273822.iam.gserviceaccount.com"
     - name: "Set up Google Cloud SDK"
-      uses: google-github-actions/setup-gcloud@v1
+      uses: google-github-actions/setup-gcloud@v2
 
     # Cargo-make boilerplate
-    - name: Get cargo-make version
-      id: cargo-make-version
-      run: |
-        echo "hash=$(cargo search cargo-make | grep '^cargo-make =' | md5sum)" >> $GITHUB_OUTPUT
-      shell: bash
-    - name: Attempt to load cached cargo-make
-      uses: actions/cache@v3
-      id: cargo-make-cache
-      with:
-        path: |
-          ~/.cargo/bin/cargo-make
-          ~/.cargo/bin/cargo-make.exe
-        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
     - name: Install cargo-make
-      if: steps.cargo-make-cache.outputs.cache-hit != 'true'
-      run: cargo +stable install cargo-make
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cargo-make@0.37.13
 
     # Job-specific dependencies
-    - name: Install Node.js v16.18.0
-      uses: actions/setup-node@v3
-      with:
-        node-version: 16.18.0
-        cache: 'npm'
-        cache-dependency-path: '**/package-lock.json'
-
     - name: Install npm tools
       run: |
         npm install -g wasm-opt
@@ -614,73 +558,9 @@ jobs:
           git checkout empty
           gsutil -m cp -r benchmarks/binsize/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/binsize
 
-  # Data size benchmark: track size of provider/datagen/tests/data/testdata.postcard (total data size).
-  bench-datasize:
-    # This is too expensive to run on every push, so only run it on main.
-    # When running on a PR, comment this out and set the BASELINE variable below to the baseline commit.
-    if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
-    concurrency:
-      # Allow one run at a time to include the previous run's results
-      group: bench-datasize
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-
-    # GCP Boilerplate for jobs in main repository
-    - id: gcp-auth
-      name: "Authenticate to Google Cloud with Workload Identity Provider"
-      uses: google-github-actions/auth@v1
-      with:
-        workload_identity_provider: "projects/66042061814/locations/global/workloadIdentityPools/icu4x-gha-pool1/providers/icu4x-gha-provider1"
-        service_account: "icu4x-main@dev-infra-273822.iam.gserviceaccount.com"
-    - name: "Set up Google Cloud SDK"
-      uses: google-github-actions/setup-gcloud@v1
-
-    - name: Install rustfmt
-      run: |
-        rustup component add rustfmt
-
-    - name: Setup output data directory
-      run: |
-        mkdir -p benchmarks/datasize
-
-    - name: Generate testdata
-      run: |
-        cargo run --bin make-testdata-legacy --manifest-path tools/testdata-scripts/Cargo.toml
-
-    - name: Measure size of selected data package provider/testdata/data/testdata.postcard
-      run: |
-        cargo run --package icu_benchmark_binsize  -- provider/testdata/data/testdata.postcard file | tee benchmarks/datasize/output.txt
-
-    - name:  Download previous benchmark data
-      run: |
-        mkdir -p benchmarks
-        gsutil -m cp -rn gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/datasize/* benchmarks/datasize
-
-    - name: Store benchmark result & create dashboard
-      # Use gregtatum special feature to process ndjson-formatted benchmark data
-      uses: gregtatum/github-action-benchmark@d3f06f738e9612988d575db23fae5ca0008d3d12
-      with:
-        tool: 'ndjson'
-        output-file-path: benchmarks/datasize/output.txt
-        benchmark-data-dir-path: ./benchmarks/datasize
-        # Tentative setting, optimized value to be determined
-        alert-threshold: '100%'
-        fail-on-alert: false
-        # comment-on-alert: true
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        gh-pages-branch: empty
-        # alert-comment-cc-users: '@gnrunge,@sffc,@zbraniecki,@echeran'
-
-    - name: Upload new benchmark data
-      if: success() || failure()
-      run: |
-          git checkout empty
-          gsutil -m cp -r benchmarks/datasize/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/datasize
-
   gh-pages:
     name: "Deploy to GitHub Pages"
-    needs: [rust-docs, cpp-docs, ts-docs, dart-docs, wasm-demo, bench-perf, bench-memory, bench-datasize] # bench-binsize
+    needs: [rust-docs, cpp-docs, ts-docs, dart-docs, wasm-demo, bench-perf, bench-memory] # bench-binsize
     # Run this even when one of the above jobs failed. This is so we can at least push the other artifacts.
     if: (success() || failure()) && (github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x')
     runs-on: 'ubuntu-latest'
@@ -692,68 +572,20 @@ jobs:
       # GCP Boilerplate for jobs in main repository
       - id: gcp-auth
         name: "Authenticate to Google Cloud with Workload Identity Provider"
-        uses: google-github-actions/auth@v1
+        uses: google-github-actions/auth@v2
         with:
           workload_identity_provider: "projects/66042061814/locations/global/workloadIdentityPools/icu4x-gha-pool1/providers/icu4x-gha-provider1"
           service_account: "icu4x-main@dev-infra-273822.iam.gserviceaccount.com"
       - name: "Set up Google Cloud SDK"
-        uses: google-github-actions/setup-gcloud@v1
+        uses: google-github-actions/setup-gcloud@v2
       - name: Download artifacts
         run: |
           mkdir website
           gsutil -m cp -rn gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/* website || true
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v2
         with:
           path: 'website'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1
-
-  dart-libs:
-    name: "Build Dart binaries"
-    if: false && github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ ubuntu-latest, macos-latest, windows-latest ]
-    runs-on: ${{ matrix.os }}
-
-    steps:
-    - uses: actions/checkout@v4
-
-    - name: Install Rust toolchains
-      run: |
-        rustup toolchain install stable
-    - name: Show the selected Rust toolchain
-      run: rustup show
-    - uses: dart-lang/setup-dart@v1
-      with:
-        sdk: 3.3.0-279.1.beta
-
-    - name: Setup additional linkers
-      if: matrix.os == 'ubuntu-latest'
-      run: |
-        sudo apt-get install gcc-aarch64-linux-gnu gcc-arm-linux-gnueabihf gcc-riscv64-linux-gnu gcc-i686-linux-gnu
-        echo "[target]" >> .cargo/config.toml
-        echo "aarch64-linux-android.linker=\"$ANDROID_NDK_LATEST_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android30-clang\"" >> .cargo/config.toml
-        echo "armv7-linux-androideabi.linker=\"$ANDROID_NDK_LATEST_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi30-clang\"" >> .cargo/config.toml
-        echo "i686-linux-android.linker=\"$ANDROID_NDK_LATEST_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/i686-linux-android30-clang\"" >> .cargo/config.toml
-        echo "x86_64-linux-android.linker=\"$ANDROID_NDK_LATEST_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/x86_64-linux-android30-clang\"" >> .cargo/config.toml
-        echo "riscv64-linux-android.linker=\"$ANDROID_NDK_LATEST_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/riscv64-linux-android35-clang\"" >> .cargo/config.toml
-        echo "aarch64-unknown-linux-gnu.linker=\"aarch64-linux-gnu-gcc\"" >> .cargo/config.toml
-        echo "armv7-unknown-linux-gnueabihf.linker=\"arm-linux-gnueabihf-gcc\"" >> .cargo/config.toml
-        echo "riscv64gc-unknown-linux-gnu.linker=\"riscv64-linux-gnu-gcc\"" >> .cargo/config.toml
-        
-    - name: Build
-      run: |
-        cd ffi/dart
-        dart --enable-experiment=native-assets pub get
-        cd ../..
-        dart run ffi/dart/tool/build_libs.dart bin
-
-    - name: Upload artifacts
-      uses: actions/upload-artifact@v3
-      with:
-        name: dart-${{matrix.os}}-libs
-        path: bin

@@ -2,6 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#include "ICU4XDataProvider.h"
+#include "ICU4XLocale.h"
+#include "ICU4XFixedDecimal.h"
 #include "ICU4XFixedDecimalFormatter.h"
 #include "ICU4XLogger.h"
 #include <string.h>
@@ -9,7 +12,7 @@
 
 int main() {
     ICU4XLogger_init_simple_logger();
-    diplomat_result_box_ICU4XLocale_ICU4XError locale_result = ICU4XLocale_create_from_string("bn", 2);
+    ICU4XLocale_create_from_string_result locale_result = ICU4XLocale_create_from_string("bn", 2);
     if (!locale_result.is_ok) {
         return 1;
     }
@@ -18,7 +21,7 @@ int main() {
 
     ICU4XFixedDecimal* decimal = ICU4XFixedDecimal_create_from_u64(1000007);
 
-    diplomat_result_box_ICU4XFixedDecimalFormatter_ICU4XError fdf_result =
+    ICU4XFixedDecimalFormatter_create_with_grouping_strategy_result fdf_result =
         ICU4XFixedDecimalFormatter_create_with_grouping_strategy(provider, locale, ICU4XFixedDecimalGroupingStrategy_Auto);
     if (!fdf_result.is_ok)  {
         printf("Failed to create FixedDecimalFormatter\n");
@@ -27,11 +30,11 @@ int main() {
     ICU4XFixedDecimalFormatter* fdf = fdf_result.ok;
     char output[40];
 
-    DiplomatWriteable write = diplomat_simple_writeable(output, 40);
+    DiplomatWrite write = diplomat_simple_write(output, 40);
 
-    bool success = ICU4XFixedDecimalFormatter_format(fdf, decimal, &write).is_ok;
-    if (!success) {
-        printf("Failed to write result of FixedDecimalFormatter::format to string.\n");
+    ICU4XFixedDecimalFormatter_format(fdf, decimal, &write);
+    if (write.grow_failed) {
+        printf("format overflowed the string.\n");
         return 1;
     }
     printf("Output is %s\n", output);
@@ -43,18 +46,14 @@ int main() {
     }
 
     ICU4XFixedDecimal_multiply_pow10(decimal, 2);
-    if (!success) {
-        printf("Failed to multiply FixedDecimal\n");
-        return 1;
-    }
 
     ICU4XFixedDecimal_set_sign(decimal, ICU4XFixedDecimalSign_Negative);
 
-    write = diplomat_simple_writeable(output, 40);
+    write = diplomat_simple_write(output, 40);
 
-    success = ICU4XFixedDecimalFormatter_format(fdf, decimal, &write).is_ok;
-    if (!success) {
-        printf("Failed to write result of FixedDecimalFormatter::format to string.\n");
+    ICU4XFixedDecimalFormatter_format(fdf, decimal, &write);
+    if (write.grow_failed) {
+        printf("format overflowed the string.\n");
         return 1;
     }
     printf("Output x100 and negated is %s\n", output);
@@ -67,18 +66,18 @@ int main() {
 
     ICU4XFixedDecimal_destroy(decimal);
 
-    diplomat_result_box_ICU4XFixedDecimal_ICU4XError fd_result = ICU4XFixedDecimal_create_from_string("1000007.070", 11);
+    ICU4XFixedDecimal_create_from_string_result fd_result = ICU4XFixedDecimal_create_from_string("1000007.070", 11);
     if (!fd_result.is_ok) {
         printf("Failed to create FixedDecimal from string.\n");
         return 1;
     }
     decimal = fd_result.ok;
 
-    write = diplomat_simple_writeable(output, 40);
+    write = diplomat_simple_write(output, 40);
 
-    success = ICU4XFixedDecimalFormatter_format(fdf, decimal, &write).is_ok;
-    if (!success) {
-        printf("Failed to write result of FixedDecimalFormatter::format to string.\n");
+    ICU4XFixedDecimalFormatter_format(fdf, decimal, &write);
+    if (write.grow_failed) {
+        printf("format overflowed the string.\n");
         return 1;
     }
     printf("Output is %s\n", output);

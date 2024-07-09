@@ -5,13 +5,13 @@
 [package]
 name = "icu_provider_fs"
 description = "ICU4X data provider that reads from structured data files"
-license = "Unicode-3.0"
 
 authors.workspace = true
 categories.workspace = true
 edition.workspace = true
 homepage.workspace = true
 include.workspace = true
+license.workspace = true
 repository.workspace = true
 rust-version.workspace = true
 version.workspace = true
@@ -34,9 +34,9 @@ serde_json = { workspace = true, features = ["std"], optional = true }
 
 [dev-dependencies]
 icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
-icu_locid = { path = "../../components/locid", features = ["serde"] }
-icu_provider = { path = "../../provider/core", features = ["deserialize_json", "deserialize_bincode_1", "deserialize_postcard_1", "datagen"] }
-icu_datagen = { path = "../../provider/datagen", features = ["networking"] }
+icu_locale_core = { path = "../../components/locale_core", default-features = false, features = ["serde"] }
+icu_provider = { path = "../../provider/core", default-features = false, features = ["deserialize_json", "deserialize_bincode_1", "deserialize_postcard_1", "export"] }
+icu_provider_export = { path = "../../provider/export", default-features = false }
 writeable = { path = "../../utils/writeable" }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
@@ -50,7 +50,7 @@ export = [
     "dep:log",
     "dep:postcard",
     "dep:serde_json",
-    "icu_provider/datagen",
+    "icu_provider/export",
     "icu_provider/deserialize_bincode_1",
     "icu_provider/deserialize_json",
     "icu_provider/deserialize_postcard_1",

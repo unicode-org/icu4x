@@ -6,10 +6,10 @@
 use crate::provider::CaseMapV1Marker;
 use crate::CaseMapper;
 use alloc::string::String;
-use icu_locid::LanguageIdentifier;
+use icu_locale_core::LanguageIdentifier;
 use icu_properties::maps::CodePointMapData;
 use icu_properties::provider::GeneralCategoryV1Marker;
-use icu_properties::{GeneralCategory, GeneralCategoryGroup, PropertiesError};
+use icu_properties::{GeneralCategory, GeneralCategoryGroup};
 use icu_provider::prelude::*;
 use writeable::Writeable;
 
@@ -19,9 +19,9 @@ use writeable::Writeable;
 /// # Examples
 ///
 /// ```rust
-/// use icu_casemap::titlecase::{TitlecaseOptions, TrailingCase};
-/// use icu_casemap::TitlecaseMapper;
-/// use icu_locid::langid;
+/// use icu::casemap::titlecase::{TitlecaseOptions, TrailingCase};
+/// use icu::casemap::TitlecaseMapper;
+/// use icu::locale::langid;
 ///
 /// let cm = TitlecaseMapper::new();
 /// let root = langid!("und");
@@ -64,9 +64,9 @@ pub enum TrailingCase {
 /// # Examples
 ///
 /// ```rust
-/// use icu_casemap::titlecase::{LeadingAdjustment, TitlecaseOptions};
-/// use icu_casemap::TitlecaseMapper;
-/// use icu_locid::langid;
+/// use icu::casemap::titlecase::{LeadingAdjustment, TitlecaseOptions};
+/// use icu::casemap::TitlecaseMapper;
+/// use icu::locale::langid;
 ///
 /// let cm = TitlecaseMapper::new();
 /// let root = langid!("und");
@@ -173,8 +173,8 @@ pub struct TitlecaseOptions {
 /// Basic casemapping behavior:
 ///
 /// ```rust
-/// use icu_casemap::TitlecaseMapper;
-/// use icu_locid::langid;
+/// use icu::casemap::TitlecaseMapper;
+/// use icu::locale::langid;
 ///
 /// let cm = TitlecaseMapper::new();
 /// let root = langid!("und");
@@ -204,6 +204,13 @@ pub struct TitlecaseMapper<CM> {
     gc: CodePointMapData<GeneralCategory>,
 }
 
+#[cfg(feature = "compiled_data")]
+impl Default for TitlecaseMapper<CaseMapper> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl TitlecaseMapper<CaseMapper> {
     /// A constructor which creates a [`TitlecaseMapper`] using compiled data
     ///
@@ -218,10 +225,9 @@ impl TitlecaseMapper<CaseMapper> {
         }
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: DataError,
-    #[cfg(skip)]
+    icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,
     functions: [
-        new,
+        new: skip,
         try_new_with_any_provider,
         try_new_with_buffer_provider,
         try_new_unstable,
@@ -234,22 +240,16 @@ impl TitlecaseMapper<CaseMapper> {
         P: DataProvider<CaseMapV1Marker> + DataProvider<GeneralCategoryV1Marker> + ?Sized,
     {
         let cm = CaseMapper::try_new_unstable(provider)?;
-        let gc = icu_properties::maps::load_general_category(provider).map_err(|e| {
-            let PropertiesError::PropDataLoad(e) = e else {
-                unreachable!()
-            };
-            e
-        })?;
+        let gc = icu_properties::maps::load_general_category(provider)?;
         Ok(Self { cm, gc })
     }
 }
 
 // We use Borrow, not AsRef, since we want the blanket impl on T
 impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
-    icu_provider::gen_any_buffer_data_constructors!(locale: skip, casemapper: CM, error: DataError,
-    #[cfg(skip)]
+    icu_provider::gen_any_buffer_data_constructors!((casemapper: CM) -> error: DataError,
     functions: [
-        new_with_mapper,
+        new_with_mapper: skip,
         try_new_with_mapper_with_any_provider,
         try_new_with_mapper_with_buffer_provider,
         try_new_with_mapper_unstable,
@@ -276,12 +276,7 @@ impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
     where
         P: DataProvider<CaseMapV1Marker> + DataProvider<GeneralCategoryV1Marker> + ?Sized,
     {
-        let gc = icu_properties::maps::load_general_category(provider).map_err(|e| {
-            let PropertiesError::PropDataLoad(e) = e else {
-                unreachable!()
-            };
-            e
-        })?;
+        let gc = icu_properties::maps::load_general_category(provider)?;
         Ok(Self { cm: casemapper, gc })
     }
 
@@ -340,8 +335,8 @@ impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
     /// # Examples
     ///
     /// ```rust
-    /// use icu_casemap::TitlecaseMapper;
-    /// use icu_locid::langid;
+    /// use icu::casemap::TitlecaseMapper;
+    /// use icu::locale::langid;
     ///
     /// let cm = TitlecaseMapper::new();
     /// let root = langid!("und");
@@ -369,9 +364,9 @@ impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
     /// Leading adjustment behaviors:
     ///
     /// ```rust
-    /// use icu_casemap::titlecase::{LeadingAdjustment, TitlecaseOptions};
-    /// use icu_casemap::TitlecaseMapper;
-    /// use icu_locid::langid;
+    /// use icu::casemap::titlecase::{LeadingAdjustment, TitlecaseOptions};
+    /// use icu::casemap::TitlecaseMapper;
+    /// use icu::locale::langid;
     ///
     /// let cm = TitlecaseMapper::new();
     /// let root = langid!("und");
@@ -409,9 +404,9 @@ impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
     /// Tail casing behaviors:
     ///
     /// ```rust
-    /// use icu_casemap::titlecase::{TitlecaseOptions, TrailingCase};
-    /// use icu_casemap::TitlecaseMapper;
-    /// use icu_locid::langid;
+    /// use icu::casemap::titlecase::{TitlecaseOptions, TrailingCase};
+    /// use icu::casemap::TitlecaseMapper;
+    /// use icu::locale::langid;
     ///
     /// let cm = TitlecaseMapper::new();
     /// let root = langid!("und");

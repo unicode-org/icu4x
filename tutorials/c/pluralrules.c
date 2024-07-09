@@ -2,20 +2,23 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#include "ICU4XDataProvider.h"
+#include "ICU4XLocale.h"
 #include "ICU4XPluralRules.h"
+#include "ICU4XPluralOperands.h"
 #include "ICU4XLogger.h"
 #include <string.h>
 #include <stdio.h>
 
 int main() {
     ICU4XLogger_init_simple_logger();
-    diplomat_result_box_ICU4XLocale_ICU4XError locale_result = ICU4XLocale_create_from_string("ar", 2);
+    ICU4XLocale_create_from_string_result locale_result = ICU4XLocale_create_from_string("ar", 2);
     if (!locale_result.is_ok) {
         return 1;
     }
     ICU4XLocale* locale = locale_result.ok;
     ICU4XDataProvider* provider = ICU4XDataProvider_create_compiled();
-    diplomat_result_box_ICU4XPluralRules_ICU4XError plural_result = ICU4XPluralRules_create_cardinal(provider, locale);
+    ICU4XPluralRules_create_cardinal_result plural_result = ICU4XPluralRules_create_cardinal(provider, locale);
     if (!plural_result.is_ok) {
         printf("Failed to create PluralRules\n");
         return 1;
@@ -30,7 +33,7 @@ int main() {
     printf("Plural Category many  (should be true): %s\n", categories.many  ? "true" : "false");
     printf("Plural Category other (should be true): %s\n", categories.other ? "true" : "false");
 
-    diplomat_result_box_ICU4XPluralOperands_ICU4XError op1_result = ICU4XPluralOperands_create_from_string("3", 1);
+    ICU4XPluralOperands_create_from_string_result op1_result = ICU4XPluralOperands_create_from_string("3", 1);
 
     if (!op1_result.is_ok) {
         printf("Failed to create PluralOperands from string\n");
@@ -41,7 +44,7 @@ int main() {
 
     printf("Plural Category %d (should be %d)\n", (int)cat1, (int)ICU4XPluralCategory_Few);
 
-    diplomat_result_box_ICU4XPluralOperands_ICU4XError op2_result = ICU4XPluralOperands_create_from_string("1011.0", 6);
+    ICU4XPluralOperands_create_from_string_result op2_result = ICU4XPluralOperands_create_from_string("1011.0", 6);
 
     if (!op2_result.is_ok) {
         printf("Failed to create PluralOperands from string\n");

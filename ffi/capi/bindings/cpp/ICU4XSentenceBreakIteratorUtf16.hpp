@@ -1,51 +1,52 @@
 #ifndef ICU4XSentenceBreakIteratorUtf16_HPP
 #define ICU4XSentenceBreakIteratorUtf16_HPP
+
+#include "ICU4XSentenceBreakIteratorUtf16.d.hpp"
+
+#include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
-#include <algorithm>
 #include <memory>
-#include <variant>
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-#include "ICU4XSentenceBreakIteratorUtf16.h"
 
-
-/**
- * A destruction policy for using ICU4XSentenceBreakIteratorUtf16 with std::unique_ptr.
- */
-struct ICU4XSentenceBreakIteratorUtf16Deleter {
-  void operator()(capi::ICU4XSentenceBreakIteratorUtf16* l) const noexcept {
-    capi::ICU4XSentenceBreakIteratorUtf16_destroy(l);
-  }
-};
-
-/**
- * See the [Rust documentation for `SentenceBreakIterator`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceBreakIterator.html) for more information.
- */
-class ICU4XSentenceBreakIteratorUtf16 {
- public:
-
-  /**
-   * Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
-   * out of range of a 32-bit signed integer.
-   * 
-   * See the [Rust documentation for `next`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceBreakIterator.html#method.next) for more information.
-   */
-  int32_t next();
-  inline const capi::ICU4XSentenceBreakIteratorUtf16* AsFFI() const { return this->inner.get(); }
-  inline capi::ICU4XSentenceBreakIteratorUtf16* AsFFIMut() { return this->inner.get(); }
-  inline explicit ICU4XSentenceBreakIteratorUtf16(capi::ICU4XSentenceBreakIteratorUtf16* i) : inner(i) {}
-  ICU4XSentenceBreakIteratorUtf16() = default;
-  ICU4XSentenceBreakIteratorUtf16(ICU4XSentenceBreakIteratorUtf16&&) noexcept = default;
-  ICU4XSentenceBreakIteratorUtf16& operator=(ICU4XSentenceBreakIteratorUtf16&& other) noexcept = default;
- private:
-  std::unique_ptr<capi::ICU4XSentenceBreakIteratorUtf16, ICU4XSentenceBreakIteratorUtf16Deleter> inner;
-};
-
+namespace capi {
+    extern "C" {
+    
+    int32_t ICU4XSentenceBreakIteratorUtf16_next(ICU4XSentenceBreakIteratorUtf16* self);
+    
+    
+    void ICU4XSentenceBreakIteratorUtf16_destroy(ICU4XSentenceBreakIteratorUtf16* self);
+    
+    } // extern "C"
+}
 
 inline int32_t ICU4XSentenceBreakIteratorUtf16::next() {
-  return capi::ICU4XSentenceBreakIteratorUtf16_next(this->inner.get());
+  auto result = capi::ICU4XSentenceBreakIteratorUtf16_next(this->AsFFI());
+  return result;
 }
-#endif
+
+inline const capi::ICU4XSentenceBreakIteratorUtf16* ICU4XSentenceBreakIteratorUtf16::AsFFI() const {
+  return reinterpret_cast<const capi::ICU4XSentenceBreakIteratorUtf16*>(this);
+}
+
+inline capi::ICU4XSentenceBreakIteratorUtf16* ICU4XSentenceBreakIteratorUtf16::AsFFI() {
+  return reinterpret_cast<capi::ICU4XSentenceBreakIteratorUtf16*>(this);
+}
+
+inline const ICU4XSentenceBreakIteratorUtf16* ICU4XSentenceBreakIteratorUtf16::FromFFI(const capi::ICU4XSentenceBreakIteratorUtf16* ptr) {
+  return reinterpret_cast<const ICU4XSentenceBreakIteratorUtf16*>(ptr);
+}
+
+inline ICU4XSentenceBreakIteratorUtf16* ICU4XSentenceBreakIteratorUtf16::FromFFI(capi::ICU4XSentenceBreakIteratorUtf16* ptr) {
+  return reinterpret_cast<ICU4XSentenceBreakIteratorUtf16*>(ptr);
+}
+
+inline void ICU4XSentenceBreakIteratorUtf16::operator delete(void* ptr) {
+  capi::ICU4XSentenceBreakIteratorUtf16_destroy(reinterpret_cast<capi::ICU4XSentenceBreakIteratorUtf16*>(ptr));
+}
+
+
+#endif // ICU4XSentenceBreakIteratorUtf16_HPP

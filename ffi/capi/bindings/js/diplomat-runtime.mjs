@@ -8,15 +8,18 @@ export function readString16(wasm, ptr, len) {
   return String.fromCharCode.apply(null, buf)
 }
 
-export function withWriteable(wasm, callback) {
-  const writeable = wasm.diplomat_buffer_writeable_create(0);
+export function withDiplomatWrite(wasm, callback) {
+  const write = wasm.diplomat_buffer_write_create(0);
   try {
-    callback(writeable);
-    const outStringPtr = wasm.diplomat_buffer_writeable_get_bytes(writeable);
-    const outStringLen = wasm.diplomat_buffer_writeable_len(writeable);
+    callback(write);
+    const outStringPtr = wasm.diplomat_buffer_write_get_bytes(write);
+    if (outStringPtr == null) {
+      throw FFIError("Out of memory");
+    }
+    const outStringLen = wasm.diplomat_buffer_write_len(write);
     return readString8(wasm, outStringPtr, outStringLen);
   } finally {
-    wasm.diplomat_buffer_writeable_destroy(writeable);
+    wasm.diplomat_buffer_write_destroy(write);
   }
 }
 
@@ -93,8 +96,8 @@ export class DiplomatBuf {
     const byteLength = string.length * 2;
     const ptr = wasm.diplomat_alloc(byteLength, 2);
 
-    const destination = new Uint16Array(wasm.memory.buffer, ptr, byteLength);
-    for (var i; i < string.length; i++) {
+    const destination = new Uint16Array(wasm.memory.buffer, ptr, string.length);
+    for (let i = 0; i < string.length; i++) {
       destination[i] = string.charCodeAt(i);
     }
 

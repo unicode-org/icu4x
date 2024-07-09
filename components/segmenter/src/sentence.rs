@@ -7,8 +7,8 @@ use icu_provider::prelude::*;
 
 use crate::indices::{Latin1Indices, Utf16Indices};
 use crate::iterator_helpers::derive_usize_iterator_with_type;
+use crate::provider::*;
 use crate::rule_segmenter::*;
-use crate::{provider::*, SegmenterError};
 use utf8_iter::Utf8CharIndices;
 
 /// Implements the [`Iterator`] trait over the sentence boundaries of the given string.
@@ -59,7 +59,7 @@ pub type SentenceBreakIteratorUtf16<'l, 's> = SentenceBreakIterator<'l, 's, Rule
 /// Segment a string:
 ///
 /// ```rust
-/// use icu_segmenter::SentenceSegmenter;
+/// use icu::segmenter::SentenceSegmenter;
 /// let segmenter = SentenceSegmenter::new();
 ///
 /// let breakpoints: Vec<usize> =
@@ -70,7 +70,7 @@ pub type SentenceBreakIteratorUtf16<'l, 's> = SentenceBreakIterator<'l, 's, Rule
 /// Segment a Latin1 byte string:
 ///
 /// ```rust
-/// use icu_segmenter::SentenceSegmenter;
+/// use icu::segmenter::SentenceSegmenter;
 /// let segmenter = SentenceSegmenter::new();
 ///
 /// let breakpoints: Vec<usize> =
@@ -83,7 +83,7 @@ pub type SentenceBreakIteratorUtf16<'l, 's> = SentenceBreakIterator<'l, 's, Rule
 /// length of the segmented text in code units.
 ///
 /// ```rust
-/// # use icu_segmenter::SentenceSegmenter;
+/// # use icu::segmenter::SentenceSegmenter;
 /// # let segmenter = SentenceSegmenter::new();
 /// use itertools::Itertools;
 /// let text = "Ceci tuera cela. Le livre tuera l’édifice.";
@@ -99,7 +99,7 @@ pub type SentenceBreakIteratorUtf16<'l, 's> = SentenceBreakIterator<'l, 's, Rule
 /// ```
 #[derive(Debug)]
 pub struct SentenceSegmenter {
-    payload: DataPayload<SentenceBreakDataV1Marker>,
+    payload: DataPayload<SentenceBreakDataV2Marker>,
 }
 
 #[cfg(feature = "compiled_data")]
@@ -119,15 +119,14 @@ impl SentenceSegmenter {
     pub fn new() -> Self {
         Self {
             payload: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_SEGMENTER_SENTENCE_V1,
+                crate::provider::Baked::SINGLETON_SENTENCE_BREAK_DATA_V2_MARKER,
             ),
         }
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: SegmenterError,
-        #[cfg(skip)]
+    icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,
         functions: [
-            new,
+            new: skip,
             try_new_with_any_provider,
             try_new_with_buffer_provider,
             try_new_unstable,
@@ -136,11 +135,11 @@ impl SentenceSegmenter {
     );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    pub fn try_new_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
+    pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: DataProvider<SentenceBreakDataV1Marker> + ?Sized,
+        D: DataProvider<SentenceBreakDataV2Marker> + ?Sized,
     {
-        let payload = provider.load(Default::default())?.take_payload()?;
+        let payload = provider.load(Default::default())?.payload;
         Ok(Self { payload })
     }
 

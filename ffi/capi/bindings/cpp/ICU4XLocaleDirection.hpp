@@ -1,25 +1,37 @@
 #ifndef ICU4XLocaleDirection_HPP
 #define ICU4XLocaleDirection_HPP
+
+#include "ICU4XLocaleDirection.d.hpp"
+
+#include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
-#include <algorithm>
 #include <memory>
-#include <variant>
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-#include "ICU4XLocaleDirection.h"
+
+namespace capi {
+    extern "C" {
+    
+    
+    } // extern "C"
+}
 
 
+inline capi::ICU4XLocaleDirection ICU4XLocaleDirection::AsFFI() const {
+  return static_cast<capi::ICU4XLocaleDirection>(value);
+}
 
-/**
- * See the [Rust documentation for `Direction`](https://docs.rs/icu/latest/icu/locid_transform/enum.Direction.html) for more information.
- */
-enum struct ICU4XLocaleDirection {
-  LeftToRight = 0,
-  RightToLeft = 1,
-  Unknown = 2,
-};
-
-#endif
+inline ICU4XLocaleDirection ICU4XLocaleDirection::FromFFI(capi::ICU4XLocaleDirection c_enum) {
+  switch (c_enum) {
+    case capi::ICU4XLocaleDirection_LeftToRight:
+    case capi::ICU4XLocaleDirection_RightToLeft:
+    case capi::ICU4XLocaleDirection_Unknown:
+      return static_cast<ICU4XLocaleDirection::Value>(c_enum);
+    default:
+      abort();
+  }
+}
+#endif // ICU4XLocaleDirection_HPP

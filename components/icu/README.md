@@ -14,7 +14,7 @@ together in one place.
 It does not bring any unique functionality, but rather,
 it re-exports the relevant crates as modules.
 The exported crate corresponding to each module is also
-available in a stand-alone manner, i.e. `icu::list` as `icu_list`.
+available in a stand-alone manner, i.e. `icu::list` as `icu::list`.
 
 ## Data Management
 
@@ -29,7 +29,7 @@ Compiled data is exposed through idiomatic Rust constructors like `new` or `try_
 
 ```rust
 use icu::datetime::DateTimeFormatter;
-use icu::locid::locale;
+use icu::locale::locale;
 
 let dtf = DateTimeFormatter::try_new(
     &locale!("es-US").into(),
@@ -52,7 +52,8 @@ special constructors:
 
 ```rust
 use icu::datetime::DateTimeFormatter;
-use icu::locid::locale;
+use icu::locale::locale;
+use icu::locale::fallback::LocaleFallbacker;
 use icu_provider_adapters::fallback::LocaleFallbackProvider;
 use icu_provider_blob::BlobDataProvider;
 
@@ -61,9 +62,10 @@ let data: Box<[u8]> = todo!();
 let provider = BlobDataProvider::try_new_from_blob(data)
     .expect("data should be valid");
 
-let provider =
-    LocaleFallbackProvider::try_new_with_buffer_provider(provider)
+let fallbacker = LocaleFallbacker::try_new_with_buffer_provider(&provider)
         .expect("provider should include fallback data");
+
+let provider = LocaleFallbackProvider::new(provider, fallbacker);
 
 let dtf = DateTimeFormatter::try_new_with_buffer_provider(
     &provider,
@@ -114,18 +116,15 @@ The following Cargo features are only available on the individual crates, but no
 
 ## Experimental modules
 
-Experimental, unstable functionality can be found in the `icu_experimental` crate. The modules in that crate
+Experimental, unstable functionality can be found in the `icu::experimental` crate. The modules in that crate
 are on track to be eventually stabilized into this crate.
 
 
 [CLDR]: http://cldr.unicode.org/
 [`DataProvider`]: icu_provider::DataProvider
-[`DataPayload`]: icu_provider::DataPayload
 [`FsDataProvider`]: https://docs.rs/icu_provider_fs/latest/icu_provider_fs/struct.FsDataProvider.html
 [`BlobDataProvider`]: https://docs.rs/icu_provider_blob/latest/icu_provider_blob/struct.BlobDataProvider.html
 [`icu_provider_adapters`]: https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/
-[`icu_datagen`]: https://docs.rs/icu_datagen/latest/icu_datagen/
-[`icu4x-datagen`]: https://docs.rs/icu_datagen/latest/icu_datagen/
 [data management tutorial]: https://github.com/unicode-org/icu4x/blob/main/tutorials/data_provider.md#loading-additional-data-at-runtime
 
 <!-- cargo-rdme end -->

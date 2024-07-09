@@ -18,7 +18,6 @@ pub use helpers::*;
 mod test {
     use super::reference::Skeleton;
     use super::*;
-    use icu_locid::Locale;
     use icu_provider::prelude::*;
 
     use crate::{
@@ -34,30 +33,23 @@ mod test {
     use core::str::FromStr;
     use litemap::LiteMap;
 
-    use ::serde::{
-        ser::{self, SerializeSeq},
-        Serialize,
-    };
-
     fn get_data_payload() -> (
         DataPayload<GregorianDateLengthsV1Marker>,
         DataPayload<DateSkeletonPatternsV1Marker>,
     ) {
-        let locale = "en-u-ca-gregory".parse::<Locale>().unwrap().into();
+        let locale = "en-u-ca-gregory".parse().unwrap();
         let req = DataRequest {
-            locale: &locale,
-            metadata: Default::default(),
+            id: DataIdentifierBorrowed::for_locale(&locale),
+            ..Default::default()
         };
         let patterns = crate::provider::Baked
             .load(req)
             .expect("Failed to load payload")
-            .take_payload()
-            .expect("Failed to retrieve payload");
+            .payload;
         let skeletons = crate::provider::Baked
             .load(req)
             .expect("Failed to load payload")
-            .take_payload()
-            .expect("Failed to retrieve payload");
+            .payload;
         (patterns, skeletons)
     }
 
@@ -377,25 +369,6 @@ mod test {
             }
             best => panic!("Unexpected {best:?}"),
         };
-    }
-
-    /// Skeletons are represented in bincode as a vec of field, but bincode shouldn't be completely
-    /// trusted, test that the bincode gets validated correctly.
-    struct TestInvalidSkeleton(Vec<Field>);
-
-    #[cfg(feature = "serde")]
-    impl Serialize for TestInvalidSkeleton {
-        fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-        where
-            S: ser::Serializer,
-        {
-            let fields = &self.0;
-            let mut seq = serializer.serialize_seq(Some(fields.len()))?;
-            for item in fields.iter() {
-                seq.serialize_element(item)?;
-            }
-            seq.end()
-        }
     }
 
     #[cfg(feature = "datagen")]

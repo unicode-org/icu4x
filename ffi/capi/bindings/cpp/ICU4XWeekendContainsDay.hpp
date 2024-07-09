@@ -1,33 +1,48 @@
 #ifndef ICU4XWeekendContainsDay_HPP
 #define ICU4XWeekendContainsDay_HPP
+
+#include "ICU4XWeekendContainsDay.d.hpp"
+
+#include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
-#include <algorithm>
 #include <memory>
-#include <variant>
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-#include "ICU4XWeekendContainsDay.h"
+
+namespace capi {
+    extern "C" {
+    
+    
+    } // extern "C"
+}
 
 
+inline capi::ICU4XWeekendContainsDay ICU4XWeekendContainsDay::AsFFI() const {
+  return capi::ICU4XWeekendContainsDay {
+    .monday = monday,
+    .tuesday = tuesday,
+    .wednesday = wednesday,
+    .thursday = thursday,
+    .friday = friday,
+    .saturday = saturday,
+    .sunday = sunday,
+  };
+}
 
-/**
- * Documents which days of the week are considered to be a part of the weekend
- * 
- * See the [Rust documentation for `weekend`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#method.weekend) for more information.
- */
-struct ICU4XWeekendContainsDay {
- public:
-  bool monday;
-  bool tuesday;
-  bool wednesday;
-  bool thursday;
-  bool friday;
-  bool saturday;
-  bool sunday;
-};
+inline ICU4XWeekendContainsDay ICU4XWeekendContainsDay::FromFFI(capi::ICU4XWeekendContainsDay c_struct) {
+  return ICU4XWeekendContainsDay {
+    .monday = c_struct.monday,
+    .tuesday = c_struct.tuesday,
+    .wednesday = c_struct.wednesday,
+    .thursday = c_struct.thursday,
+    .friday = c_struct.friday,
+    .saturday = c_struct.saturday,
+    .sunday = c_struct.sunday,
+  };
+}
 
 
-#endif
+#endif // ICU4XWeekendContainsDay_HPP

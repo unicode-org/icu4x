@@ -15,7 +15,9 @@ macro_rules! call_method {
                 .$unstable(&icu_provider_adapters::empty::EmptyDataProvider::new()),
             #[cfg(feature = "buffer_provider")]
             $crate::provider::ICU4XDataProviderInner::Buffer(buffer_provider) => $self.0.$unstable(
-                &icu_provider::AsDeserializingBufferProvider::as_deserializing(buffer_provider),
+                &icu_provider::buf::AsDeserializingBufferProvider::as_deserializing(
+                    buffer_provider,
+                ),
             ),
             #[cfg(feature = "compiled_data")]
             $crate::provider::ICU4XDataProviderInner::Compiled => $self.0.$compiled(),
@@ -26,7 +28,7 @@ macro_rules! call_method {
 #[diplomat::bridge]
 pub mod ffi {
     use crate::errors::ffi::ICU4XError;
-    use crate::locale::ffi::ICU4XLocale;
+    use crate::locale_core::ffi::ICU4XLocale;
     use crate::provider::ffi::ICU4XDataProvider;
     use crate::timezone::ffi::ICU4XCustomTimeZone;
     use alloc::boxed::Box;
@@ -282,10 +284,9 @@ pub mod ffi {
         pub fn format_custom_time_zone(
             &self,
             value: &ICU4XCustomTimeZone,
-            write: &mut diplomat_runtime::DiplomatWriteable,
-        ) -> Result<(), ICU4XError> {
-            self.0.format(&value.0).write_to(write)?;
-            Ok(())
+            write: &mut diplomat_runtime::DiplomatWrite,
+        ) {
+            let _infallible = self.0.format(&value.0).write_to(write);
         }
 
         /// Formats a [`ICU4XCustomTimeZone`] to a string, performing no fallback
@@ -293,10 +294,17 @@ pub mod ffi {
         pub fn format_custom_time_zone_no_fallback(
             &self,
             value: &ICU4XCustomTimeZone,
-            write: &mut diplomat_runtime::DiplomatWriteable,
+            write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), ICU4XError> {
-            self.0.format(&value.0).write_no_fallback(write)??;
-            Ok(())
+            match self.0.format(&value.0).write_no_fallback(write) {
+                Ok(Ok(())) => Ok(()),
+                // TODO: Use narrow error type here
+                Ok(Err(_e)) => Err(ICU4XError::UnknownError),
+                Err(core::fmt::Error) => {
+                    debug_assert!(false, "unreachable");
+                    Ok(())
+                }
+            }
         }
     }
 }

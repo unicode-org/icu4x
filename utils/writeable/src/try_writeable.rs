@@ -4,7 +4,7 @@
 
 use super::*;
 use crate::parts_write_adapter::CoreWriteAsPartsWrite;
-use core::cmp::Ordering;
+use core::{cmp::Ordering, convert::Infallible};
 
 /// A writeable object that can fail while writing.
 ///
@@ -184,9 +184,13 @@ pub trait TryWriteable {
     /// # use std::borrow::Cow;
     /// # use writeable::TryWriteable;
     /// // use the best-effort string
-    /// let r1: Cow<str> = Ok::<&str, u8>("ok").try_write_to_string().unwrap_or_else(|(_, s)| s);
+    /// let r1: Cow<str> = Ok::<&str, u8>("ok")
+    ///     .try_write_to_string()
+    ///     .unwrap_or_else(|(_, s)| s);
     /// // propagate the error
-    /// let r2: Result<Cow<str>, u8> = Ok::<&str, u8>("ok").try_write_to_string().map_err(|(e, _)| e);
+    /// let r2: Result<Cow<str>, u8> = Ok::<&str, u8>("ok")
+    ///     .try_write_to_string()
+    ///     .map_err(|(e, _)| e);
     /// ```
     fn try_write_to_string(&self) -> Result<Cow<str>, (Self::Error, Cow<str>)> {
         let hint = self.writeable_length_hint();
@@ -338,6 +342,109 @@ where
             Ok(t) => t.writeable_cmp_bytes(other),
             Err(e) => e.writeable_cmp_bytes(other),
         }
+    }
+}
+
+/// A wrapper around [`TryWriteable`] that implements [`Writeable`]
+/// if [`TryWriteable::Error`] is [`Infallible`].
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(transparent)]
+#[allow(clippy::exhaustive_structs)] // transparent newtype
+pub struct TryWriteableInfallibleAsWriteable<T>(pub T);
+
+impl<T> Writeable for TryWriteableInfallibleAsWriteable<T>
+where
+    T: TryWriteable<Error = Infallible>,
+{
+    #[inline]
+    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+        match self.0.try_write_to(sink) {
+            Ok(Ok(())) => Ok(()),
+            Ok(Err(infallible)) => match infallible {},
+            Err(e) => Err(e),
+        }
+    }
+
+    #[inline]
+    fn write_to_parts<S: PartsWrite + ?Sized>(&self, sink: &mut S) -> fmt::Result {
+        match self.0.try_write_to_parts(sink) {
+            Ok(Ok(())) => Ok(()),
+            Ok(Err(infallible)) => match infallible {},
+            Err(e) => Err(e),
+        }
+    }
+
+    #[inline]
+    fn writeable_length_hint(&self) -> LengthHint {
+        self.0.writeable_length_hint()
+    }
+
+    #[inline]
+    fn write_to_string(&self) -> Cow<str> {
+        match self.0.try_write_to_string() {
+            Ok(s) => s,
+            Err((infallible, _)) => match infallible {},
+        }
+    }
+
+    #[inline]
+    fn writeable_cmp_bytes(&self, other: &[u8]) -> core::cmp::Ordering {
+        self.0.writeable_cmp_bytes(other)
+    }
+}
+
+impl<T> fmt::Display for TryWriteableInfallibleAsWriteable<T>
+where
+    T: TryWriteable<Error = Infallible>,
+{
+    #[inline]
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        self.write_to(f)
+    }
+}
+
+/// A wrapper around [`Writeable`] that implements [`TryWriteable`]
+/// with [`TryWriteable::Error`] set to [`Infallible`].
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(transparent)]
+#[allow(clippy::exhaustive_structs)] // transparent newtype
+pub struct WriteableAsTryWriteableInfallible<T>(pub T);
+
+impl<T> TryWriteable for WriteableAsTryWriteableInfallible<T>
+where
+    T: Writeable,
+{
+    type Error = Infallible;
+
+    #[inline]
+    fn try_write_to<W: fmt::Write + ?Sized>(
+        &self,
+        sink: &mut W,
+    ) -> Result<Result<(), Infallible>, fmt::Error> {
+        self.0.write_to(sink).map(Ok)
+    }
+
+    #[inline]
+    fn try_write_to_parts<S: PartsWrite + ?Sized>(
+        &self,
+        sink: &mut S,
+    ) -> Result<Result<(), Infallible>, fmt::Error> {
+        self.0.write_to_parts(sink).map(Ok)
+    }
+
+    #[inline]
+    fn writeable_length_hint(&self) -> LengthHint {
+        self.0.writeable_length_hint()
+    }
+
+    #[inline]
+    fn try_write_to_string(&self) -> Result<Cow<str>, (Infallible, Cow<str>)> {
+        Ok(self.0.write_to_string())
+    }
+
+    #[inline]
+    fn writeable_cmp_bytes(&self, other: &[u8]) -> core::cmp::Ordering {
+        self.0.writeable_cmp_bytes(other)
     }
 }
 

@@ -47,26 +47,24 @@ mod tests;
 /// - `Apply #[derive(Yokeable, ZeroFrom)]`. The `ZeroFrom` derive can
 ///    be customized with `#[zerofrom(clone)]` on non-ZeroFrom fields.
 ///
-/// In addition, the attribute can be used to implement `DataMarker` and/or `KeyedDataMarker`
-/// by adding symbols with optional key strings:
+/// In addition, the attribute can be used to implement `DynamicDataMarker` and/or `DataMarker`
+/// by adding symbols with optional marker path strings:
 ///
 /// ```
 /// # // We DO NOT want to pull in the `icu` crate as a dev-dependency,
 /// # // because that will rebuild the whole tree in proc macro mode
 /// # // when using cargo test --all-features --all-targets.
 /// # pub mod icu {
-/// #   pub mod locid_transform {
+/// #   pub mod locale {
 /// #     pub mod fallback {
 /// #       pub use icu_provider::_internal::LocaleFallbackPriority;
 /// #     }
+/// #     pub use icu_provider::_internal::locale_core::*;
 /// #   }
-/// #   pub use icu_provider::_internal::locid;
 /// # }
-/// use icu::locid_transform::fallback::*;
-/// use icu::locid::extensions::unicode::key;
-/// use icu_provider::KeyedDataMarker;
-/// use icu_provider::yoke;
-/// use icu_provider::zerofrom;
+/// use icu::locale::extensions::unicode::key;
+/// use icu::locale::fallback::*;
+/// use icu_provider::prelude::*;
 /// use std::borrow::Cow;
 ///
 /// #[icu_provider::data_struct(
@@ -83,29 +81,23 @@ mod tests;
 ///     message: Cow<'data, str>,
 /// };
 ///
-/// // Note: FooV1Marker implements `DataMarker` but not `KeyedDataMarker`.
-/// // The other two implement `KeyedDataMarker`.
+/// // Note: FooV1Marker implements `DynamicDataMarker` but not `DataMarker`.
+/// // The other two implement `DataMarker`.
 ///
-/// assert_eq!(&*BarV1Marker::KEY.path(), "demo/bar@1");
+/// assert_eq!(BarV1Marker::INFO.path.as_str(), "demo/bar@1");
 /// assert_eq!(
-///     BarV1Marker::KEY.metadata().fallback_priority,
+///     BarV1Marker::INFO.fallback_config.priority,
 ///     LocaleFallbackPriority::Language
 /// );
-/// assert_eq!(BarV1Marker::KEY.metadata().extension_key, None);
+/// assert_eq!(BarV1Marker::INFO.fallback_config.extension_key, None);
 ///
-/// assert_eq!(&*BazV1Marker::KEY.path(), "demo/baz@1");
+/// assert_eq!(BazV1Marker::INFO.path.as_str(), "demo/baz@1");
 /// assert_eq!(
-///     BazV1Marker::KEY.metadata().fallback_priority,
+///     BazV1Marker::INFO.fallback_config.priority,
 ///     LocaleFallbackPriority::Region
 /// );
-/// assert_eq!(
-///     BazV1Marker::KEY.metadata().extension_key,
-///     Some(key!("ca"))
-/// );
+/// assert_eq!(BazV1Marker::INFO.fallback_config.extension_key, Some(key!("ca")));
 /// ```
-///
-/// If the `#[databake(path = ...)]` attribute is present on the data struct, this will also
-/// implement it on the markers.
 pub fn data_struct(attr: TokenStream, item: TokenStream) -> TokenStream {
     TokenStream::from(data_struct_impl(
         parse_macro_input!(attr as DataStructArgs),
@@ -125,7 +117,7 @@ impl Parse for DataStructArgs {
 }
 struct DataStructArg {
     marker_name: Path,
-    key_lit: Option<LitStr>,
+    path_lit: Option<LitStr>,
     fallback_by: Option<LitStr>,
     extension_key: Option<LitStr>,
     fallback_supplement: Option<LitStr>,
@@ -136,7 +128,7 @@ impl DataStructArg {
     fn new(marker_name: Path) -> Self {
         Self {
             marker_name,
-            key_lit: None,
+            path_lit: None,
             fallback_by: None,
             extension_key: None,
             fallback_supplement: None,
@@ -169,7 +161,7 @@ impl Parse for DataStructArg {
             let content;
             let paren = parenthesized!(content in input);
             let mut marker_name: Option<Path> = None;
-            let mut key_lit: Option<LitStr> = None;
+            let mut path_lit: Option<LitStr> = None;
             let mut fallback_by: Option<LitStr> = None;
             let mut extension_key: Option<LitStr> = None;
             let mut fallback_supplement: Option<LitStr> = None;
@@ -211,7 +203,7 @@ impl Parse for DataStructArg {
                         }
                     }
                     DataStructMarkerArg::Lit(lit) => {
-                        at_most_one_option(&mut key_lit, lit, "literal key", input.span())?;
+                        at_most_one_option(&mut path_lit, lit, "literal path", input.span())?;
                     }
                     DataStructMarkerArg::Singleton => {
                         singleton = true;
@@ -229,7 +221,7 @@ impl Parse for DataStructArg {
 
             Ok(Self {
                 marker_name,
-                key_lit,
+                path_lit,
                 fallback_by,
                 extension_key,
                 fallback_supplement,
@@ -241,7 +233,7 @@ impl Parse for DataStructArg {
             if lookahead.peek(Token![=]) {
                 let _t: Token![=] = input.parse()?;
                 let lit: LitStr = input.parse()?;
-                this.key_lit = Some(lit);
+                this.path_lit = Some(lit);
                 Ok(this)
             } else {
                 Ok(this)
@@ -309,31 +301,19 @@ fn data_struct_impl(attr: DataStructArgs, input: DeriveInput) -> TokenStream2 {
         .to_compile_error();
     }
 
-    let bake_derive = input
-        .attrs
-        .iter()
-        .find(|a| a.path().is_ident("databake"))
-        .map(|a| {
-            quote! {
-                #[derive(databake::Bake)]
-                #a
-            }
-        })
-        .unwrap_or_else(|| quote! {});
-
     let mut result = TokenStream2::new();
 
     for single_attr in attr.args {
         let DataStructArg {
             marker_name,
-            key_lit,
+            path_lit,
             fallback_by,
             extension_key,
             fallback_supplement,
             singleton,
         } = single_attr;
 
-        let docs = if let Some(ref key_lit) = key_lit {
+        let docs = if let Some(ref path_lit) = path_lit {
             let fallback_by_docs_str = match fallback_by {
                 Some(ref fallback_by) => fallback_by.value(),
                 None => "language (default)".to_string(),
@@ -342,22 +322,21 @@ fn data_struct_impl(attr: DataStructArgs, input: DeriveInput) -> TokenStream2 {
                 Some(ref extension_key) => extension_key.value(),
                 None => "none (default)".to_string(),
             };
-            format!("Marker type for [`{}`]: \"{}\"\n\n- Fallback priority: {}\n- Extension keyword: {}", name, key_lit.value(), fallback_by_docs_str, extension_key_docs_str)
+            format!("Marker type for [`{}`]: \"{}\"\n\n- Fallback priority: {}\n- Extension keyword: {}", name, path_lit.value(), fallback_by_docs_str, extension_key_docs_str)
         } else {
             format!("Marker type for [`{name}`]")
         };
 
         result.extend(quote!(
             #[doc = #docs]
-            #bake_derive
             pub struct #marker_name;
-            impl icu_provider::DataMarker for #marker_name {
+            impl icu_provider::DynamicDataMarker for #marker_name {
                 type Yokeable = #name_with_lt;
             }
         ));
 
-        if let Some(key_lit) = key_lit {
-            let key_str = key_lit.value();
+        if let Some(path_lit) = path_lit {
+            let path_str = path_lit.value();
             let fallback_by_expr = if let Some(fallback_by_lit) = fallback_by {
                 match fallback_by_lit.value().as_str() {
                     "region" => {
@@ -374,8 +353,8 @@ fn data_struct_impl(attr: DataStructArgs, input: DeriveInput) -> TokenStream2 {
             } else {
                 quote! {icu_provider::_internal::LocaleFallbackPriority::const_default()}
             };
-            let extension_key_expr = if let Some(extension_key_lit) = extension_key {
-                quote! {Some(icu_provider::_internal::locid::extensions::unicode::key!(#extension_key_lit))}
+            let extension_key_expr = if let Some(extension_path_lit) = extension_key {
+                quote! {Some(icu_provider::_internal::locale_core::extensions::unicode::key!(#extension_path_lit))}
             } else {
                 quote! {None}
             };
@@ -392,13 +371,15 @@ fn data_struct_impl(attr: DataStructArgs, input: DeriveInput) -> TokenStream2 {
                 quote! {None}
             };
             result.extend(quote!(
-                impl icu_provider::KeyedDataMarker for #marker_name {
-                    const KEY: icu_provider::DataKey = icu_provider::data_key!(#key_str, icu_provider::DataKeyMetadata::construct_internal(
-                        #fallback_by_expr,
-                        #extension_key_expr,
-                        #fallback_supplement_expr,
-                        #singleton,
-                    ));
+                impl icu_provider::DataMarker for #marker_name {
+                    const INFO: icu_provider::DataMarkerInfo = {
+                        let mut info = icu_provider::DataMarkerInfo::from_path(icu_provider::marker::data_marker_path!(#path_str));
+                        info.is_singleton = #singleton;
+                        info.fallback_config.priority = #fallback_by_expr;
+                        info.fallback_config.extension_key = #extension_key_expr;
+                        info.fallback_config.fallback_supplement = #fallback_supplement_expr;
+                        info
+                    };
                 }
             ));
         }

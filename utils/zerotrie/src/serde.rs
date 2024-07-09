@@ -112,9 +112,13 @@ where
                 .map(|trie| trie.convert_store())
         } else {
             // Note: `impl Deserialize for &[u8]` uses visit_borrowed_bytes
-            <&[u8]>::deserialize(deserializer)
-                .map(ZeroTrieSimpleAscii::from_store)
-                .map(|x| x.convert_store())
+            let (flags, trie_bytes) = <(u8, &[u8])>::deserialize(deserializer)?;
+            let store = Store::from(trie_bytes);
+            let zerotrie = match flags {
+                Self::FLAGS => ZeroTrieSimpleAscii::from_store(store),
+                _ => return Err(D::Error::custom("invalid ZeroTrie tag")),
+            };
+            Ok(zerotrie)
         }
     }
 }
@@ -131,8 +135,8 @@ where
             let lm = self.to_litemap();
             lm.serialize(serializer)
         } else {
-            let bytes = self.as_bytes();
-            bytes.serialize(serializer)
+            // Note: `impl Serialize for ByteStr` uses `serialize_bytes`
+            (Self::FLAGS, ByteStr::from_bytes(self.as_bytes())).serialize(serializer)
         }
     }
 }
@@ -157,9 +161,13 @@ where
                 .map(|trie| trie.convert_store())
         } else {
             // Note: `impl Deserialize for &[u8]` uses visit_borrowed_bytes
-            <&[u8]>::deserialize(deserializer)
-                .map(ZeroAsciiIgnoreCaseTrie::from_store)
-                .map(|x| x.convert_store())
+            let (flags, trie_bytes) = <(u8, &[u8])>::deserialize(deserializer)?;
+            let store = Store::from(trie_bytes);
+            let zerotrie = match flags {
+                Self::FLAGS => ZeroAsciiIgnoreCaseTrie::from_store(store),
+                _ => return Err(D::Error::custom("invalid ZeroTrie tag")),
+            };
+            Ok(zerotrie)
         }
     }
 }
@@ -176,8 +184,8 @@ where
             let lm = self.to_litemap();
             lm.serialize(serializer)
         } else {
-            let bytes = self.as_bytes();
-            bytes.serialize(serializer)
+            // Note: `impl Serialize for ByteStr` uses `serialize_bytes`
+            (Self::FLAGS, ByteStr::from_bytes(self.as_bytes())).serialize(serializer)
         }
     }
 }
@@ -198,9 +206,13 @@ where
                 .map(|trie| trie.convert_store())
         } else {
             // Note: `impl Deserialize for &[u8]` uses visit_borrowed_bytes
-            <&[u8]>::deserialize(deserializer)
-                .map(ZeroTriePerfectHash::from_store)
-                .map(|x| x.convert_store())
+            let (flags, trie_bytes) = <(u8, &[u8])>::deserialize(deserializer)?;
+            let store = Store::from(trie_bytes);
+            let zerotrie = match flags {
+                Self::FLAGS => ZeroTriePerfectHash::from_store(store),
+                _ => return Err(D::Error::custom("invalid ZeroTrie tag")),
+            };
+            Ok(zerotrie)
         }
     }
 }
@@ -221,8 +233,8 @@ where
                 .collect::<LiteMap<_, _>>();
             lm.serialize(serializer)
         } else {
-            let bytes = self.as_bytes();
-            bytes.serialize(serializer)
+            // Note: `impl Serialize for ByteStr` uses `serialize_bytes`
+            (Self::FLAGS, ByteStr::from_bytes(self.as_bytes())).serialize(serializer)
         }
     }
 }
@@ -243,9 +255,13 @@ where
                 .map(|trie| trie.convert_store())
         } else {
             // Note: `impl Deserialize for &[u8]` uses visit_borrowed_bytes
-            <&[u8]>::deserialize(deserializer)
-                .map(ZeroTrieExtendedCapacity::from_store)
-                .map(|x| x.convert_store())
+            let (flags, trie_bytes) = <(u8, &[u8])>::deserialize(deserializer)?;
+            let store = Store::from(trie_bytes);
+            let zerotrie = match flags {
+                Self::FLAGS => ZeroTrieExtendedCapacity::from_store(store),
+                _ => return Err(D::Error::custom("invalid ZeroTrie tag")),
+            };
+            Ok(zerotrie)
         }
     }
 }
@@ -266,20 +282,10 @@ where
                 .collect::<LiteMap<_, _>>();
             lm.serialize(serializer)
         } else {
-            let bytes = self.as_bytes();
-            bytes.serialize(serializer)
+            // Note: `impl Serialize for ByteStr` uses `serialize_bytes`
+            (Self::FLAGS, ByteStr::from_bytes(self.as_bytes())).serialize(serializer)
         }
     }
-}
-
-mod tags {
-    const USE_PHF: u8 = 0x1;
-    const BINARY_SPANS: u8 = 0x2;
-    const EXTENDED: u8 = 0x4;
-
-    pub(crate) const SIMPLE_ASCII: u8 = 0;
-    pub(crate) const PERFECT_HASH: u8 = USE_PHF | BINARY_SPANS;
-    pub(crate) const EXTENDED_CAPACITY: u8 = USE_PHF | BINARY_SPANS | EXTENDED;
 }
 
 impl<'de, 'data, Store> Deserialize<'de> for ZeroTrie<Store>
@@ -304,9 +310,13 @@ where
                 .ok_or(D::Error::custom("expected at least 1 byte for ZeroTrie"))?;
             let store = Store::from(trie_bytes);
             let zerotrie = match *tag {
-                tags::SIMPLE_ASCII => ZeroTrieSimpleAscii::from_store(store).into_zerotrie(),
-                tags::PERFECT_HASH => ZeroTriePerfectHash::from_store(store).into_zerotrie(),
-                tags::EXTENDED_CAPACITY => {
+                ZeroTrieSimpleAscii::<u8>::FLAGS => {
+                    ZeroTrieSimpleAscii::from_store(store).into_zerotrie()
+                }
+                ZeroTriePerfectHash::<u8>::FLAGS => {
+                    ZeroTriePerfectHash::from_store(store).into_zerotrie()
+                }
+                ZeroTrieExtendedCapacity::<u8>::FLAGS => {
                     ZeroTrieExtendedCapacity::from_store(store).into_zerotrie()
                 }
                 _ => return Err(D::Error::custom("invalid ZeroTrie tag")),
@@ -333,14 +343,16 @@ where
             lm.serialize(serializer)
         } else {
             let (tag, bytes) = match &self.0 {
-                ZeroTrieFlavor::SimpleAscii(t) => (tags::SIMPLE_ASCII, t.as_bytes()),
-                ZeroTrieFlavor::PerfectHash(t) => (tags::PERFECT_HASH, t.as_bytes()),
-                ZeroTrieFlavor::ExtendedCapacity(t) => (tags::EXTENDED_CAPACITY, t.as_bytes()),
+                ZeroTrieFlavor::SimpleAscii(t) => (ZeroTrieSimpleAscii::<u8>::FLAGS, t.as_bytes()),
+                ZeroTrieFlavor::PerfectHash(t) => (ZeroTriePerfectHash::<u8>::FLAGS, t.as_bytes()),
+                ZeroTrieFlavor::ExtendedCapacity(t) => {
+                    (ZeroTrieExtendedCapacity::<u8>::FLAGS, t.as_bytes())
+                }
             };
             let mut all_in_one_vec = Vec::with_capacity(bytes.len() + 1);
             all_in_one_vec.push(tag);
             all_in_one_vec.extend(bytes);
-            all_in_one_vec.serialize(serializer)
+            serializer.serialize_bytes(&all_in_one_vec)
         }
     }
 }
@@ -367,12 +379,49 @@ mod tests {
         let original = ZeroTrieSimpleAsciiCow { trie };
         let json_str = serde_json::to_string(&original).unwrap();
         let bincode_bytes = bincode::serialize(&original).unwrap();
+        let rmp_bytes = rmp_serde::to_vec(&original).unwrap();
 
         assert_eq!(json_str, testdata::basic::JSON_STR_ASCII);
-        assert_eq!(bincode_bytes, testdata::basic::BINCODE_BYTES_ASCII);
+        assert_eq!(&bincode_bytes[0..9], &[0, 26, 0, 0, 0, 0, 0, 0, 0]);
+        assert_eq!(&bincode_bytes[9..], testdata::basic::BINCODE_BYTES_ASCII);
+        assert_eq!(&rmp_bytes[0..5], &[145, 146, 0, 196, 26]);
+        assert_eq!(&rmp_bytes[5..], testdata::basic::BINCODE_BYTES_ASCII);
 
         let json_recovered: ZeroTrieSimpleAsciiCow = serde_json::from_str(&json_str).unwrap();
         let bincode_recovered: ZeroTrieSimpleAsciiCow =
+            bincode::deserialize(&bincode_bytes).unwrap();
+        let rmp_recovered: ZeroTrieSimpleAsciiCow = rmp_serde::from_slice(&rmp_bytes).unwrap();
+
+        assert_eq!(original.trie, json_recovered.trie);
+        assert_eq!(original.trie, bincode_recovered.trie);
+        assert_eq!(original.trie, rmp_recovered.trie);
+
+        assert!(matches!(json_recovered.trie.take_store(), Cow::Owned(_)));
+        assert!(matches!(
+            bincode_recovered.trie.take_store(),
+            Cow::Borrowed(_)
+        ));
+    }
+
+    #[derive(Serialize, Deserialize)]
+    pub struct ZeroAsciiIgnoreCaseTrieCow<'a> {
+        #[serde(borrow)]
+        trie: ZeroAsciiIgnoreCaseTrie<Cow<'a, [u8]>>,
+    }
+
+    #[test]
+    pub fn test_serde_asciiignorecase_cow() {
+        let trie = ZeroAsciiIgnoreCaseTrie::from_store(Cow::from(testdata::basic::TRIE_ASCII));
+        let original = ZeroAsciiIgnoreCaseTrieCow { trie };
+        let json_str = serde_json::to_string(&original).unwrap();
+        let bincode_bytes = bincode::serialize(&original).unwrap();
+
+        assert_eq!(json_str, testdata::basic::JSON_STR_ASCII);
+        assert_eq!(&bincode_bytes[0..9], &[8, 26, 0, 0, 0, 0, 0, 0, 0]);
+        assert_eq!(&bincode_bytes[9..], testdata::basic::BINCODE_BYTES_ASCII);
+
+        let json_recovered: ZeroAsciiIgnoreCaseTrieCow = serde_json::from_str(&json_str).unwrap();
+        let bincode_recovered: ZeroAsciiIgnoreCaseTrieCow =
             bincode::deserialize(&bincode_bytes).unwrap();
 
         assert_eq!(original.trie, json_recovered.trie);
@@ -399,7 +448,8 @@ mod tests {
         let bincode_bytes = bincode::serialize(&original).unwrap();
 
         assert_eq!(json_str, testdata::basic::JSON_STR_ASCII);
-        assert_eq!(bincode_bytes, testdata::basic::BINCODE_BYTES_ASCII);
+        assert_eq!(&bincode_bytes[0..9], &[3, 26, 0, 0, 0, 0, 0, 0, 0]);
+        assert_eq!(&bincode_bytes[9..], testdata::basic::BINCODE_BYTES_ASCII);
 
         let json_recovered: ZeroTriePerfectHashCow = serde_json::from_str(&json_str).unwrap();
         let bincode_recovered: ZeroTriePerfectHashCow =
@@ -423,7 +473,8 @@ mod tests {
         let bincode_bytes = bincode::serialize(&original).unwrap();
 
         assert_eq!(json_str, testdata::basic::JSON_STR_UNICODE);
-        assert_eq!(bincode_bytes, testdata::basic::BINCODE_BYTES_UNICODE);
+        assert_eq!(&bincode_bytes[0..9], &[3, 39, 0, 0, 0, 0, 0, 0, 0]);
+        assert_eq!(&bincode_bytes[9..], testdata::basic::BINCODE_BYTES_UNICODE);
 
         let json_recovered: ZeroTriePerfectHashCow = serde_json::from_str(&json_str).unwrap();
         let bincode_recovered: ZeroTriePerfectHashCow =
@@ -447,7 +498,8 @@ mod tests {
         let bincode_bytes = bincode::serialize(&original).unwrap();
 
         assert_eq!(json_str, testdata::basic::JSON_STR_BINARY);
-        assert_eq!(bincode_bytes, testdata::basic::BINCODE_BYTES_BINARY);
+        assert_eq!(&bincode_bytes[0..9], &[3, 26, 0, 0, 0, 0, 0, 0, 0]);
+        assert_eq!(&bincode_bytes[9..], testdata::basic::BINCODE_BYTES_BINARY);
 
         let json_recovered: ZeroTriePerfectHashCow = serde_json::from_str(&json_str).unwrap();
         let bincode_recovered: ZeroTriePerfectHashCow =
@@ -478,12 +530,8 @@ mod tests {
         let bincode_bytes = bincode::serialize(&original).unwrap();
 
         assert_eq!(json_str, testdata::basic::JSON_STR_ASCII);
-        // Note: ZeroTrie adds an extra byte to the start of the trie bytes
         assert_eq!(&bincode_bytes[0..9], &[27, 0, 0, 0, 0, 0, 0, 0, 0]);
-        assert_eq!(
-            &bincode_bytes[9..],
-            &testdata::basic::BINCODE_BYTES_ASCII[8..]
-        );
+        assert_eq!(&bincode_bytes[9..], testdata::basic::BINCODE_BYTES_ASCII);
 
         let json_recovered: ZeroTrieAnyCow = serde_json::from_str(&json_str).unwrap();
         let bincode_recovered: ZeroTrieAnyCow = bincode::deserialize(&bincode_bytes).unwrap();
@@ -507,12 +555,8 @@ mod tests {
         let bincode_bytes = bincode::serialize(&original).unwrap();
 
         assert_eq!(json_str, testdata::basic::JSON_STR_UNICODE);
-        // Note: ZeroTrie adds an extra byte to the start of the trie bytes
         assert_eq!(&bincode_bytes[0..9], &[40, 0, 0, 0, 0, 0, 0, 0, 3]);
-        assert_eq!(
-            &bincode_bytes[9..],
-            &testdata::basic::BINCODE_BYTES_UNICODE[8..]
-        );
+        assert_eq!(&bincode_bytes[9..], testdata::basic::BINCODE_BYTES_UNICODE);
 
         let json_recovered: ZeroTrieAnyCow = serde_json::from_str(&json_str).unwrap();
         let bincode_recovered: ZeroTrieAnyCow = bincode::deserialize(&bincode_bytes).unwrap();
@@ -549,7 +593,8 @@ mod tests_zerovec {
         let bincode_bytes = bincode::serialize(&original).unwrap();
 
         assert_eq!(json_str, testdata::basic::JSON_STR_ASCII);
-        assert_eq!(bincode_bytes, testdata::basic::BINCODE_BYTES_ASCII);
+        assert_eq!(&bincode_bytes[0..9], &[0, 26, 0, 0, 0, 0, 0, 0, 0]);
+        assert_eq!(&bincode_bytes[9..], testdata::basic::BINCODE_BYTES_ASCII);
 
         let json_recovered: ZeroTrieSimpleAsciiZeroVec = serde_json::from_str(&json_str).unwrap();
         let bincode_recovered: ZeroTrieSimpleAsciiZeroVec =
@@ -577,7 +622,8 @@ mod tests_zerovec {
         let bincode_bytes = bincode::serialize(&original).unwrap();
 
         assert_eq!(json_str, testdata::basic::JSON_STR_ASCII);
-        assert_eq!(bincode_bytes, testdata::basic::BINCODE_BYTES_ASCII);
+        assert_eq!(&bincode_bytes[0..9], &[3, 26, 0, 0, 0, 0, 0, 0, 0]);
+        assert_eq!(&bincode_bytes[9..], testdata::basic::BINCODE_BYTES_ASCII);
 
         let json_recovered: ZeroTriePerfectHashZeroVec = serde_json::from_str(&json_str).unwrap();
         let bincode_recovered: ZeroTriePerfectHashZeroVec =

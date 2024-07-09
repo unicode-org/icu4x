@@ -1,46 +1,48 @@
 #ifndef ICU4XDateFormatter_H
 #define ICU4XDateFormatter_H
+
 #include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
 #include "diplomat_runtime.h"
 
-#ifdef __cplusplus
-namespace capi {
-#endif
+#include "ICU4XDataProvider.d.h"
+#include "ICU4XDate.d.h"
+#include "ICU4XDateLength.d.h"
+#include "ICU4XDateTime.d.h"
+#include "ICU4XError.d.h"
+#include "ICU4XIsoDate.d.h"
+#include "ICU4XIsoDateTime.d.h"
+#include "ICU4XLocale.d.h"
 
-typedef struct ICU4XDateFormatter ICU4XDateFormatter;
-#ifdef __cplusplus
-} // namespace capi
-#endif
-#include "ICU4XDataProvider.h"
-#include "ICU4XLocale.h"
-#include "ICU4XDateLength.h"
-#include "diplomat_result_box_ICU4XDateFormatter_ICU4XError.h"
-#include "ICU4XDate.h"
-#include "diplomat_result_void_ICU4XError.h"
-#include "ICU4XIsoDate.h"
-#include "ICU4XDateTime.h"
-#include "ICU4XIsoDateTime.h"
-#ifdef __cplusplus
-namespace capi {
-extern "C" {
-#endif
+#include "ICU4XDateFormatter.d.h"
 
-diplomat_result_box_ICU4XDateFormatter_ICU4XError ICU4XDateFormatter_create_with_length(const ICU4XDataProvider* provider, const ICU4XLocale* locale, ICU4XDateLength date_length);
 
-diplomat_result_void_ICU4XError ICU4XDateFormatter_format_date(const ICU4XDateFormatter* self, const ICU4XDate* value, DiplomatWriteable* write);
 
-diplomat_result_void_ICU4XError ICU4XDateFormatter_format_iso_date(const ICU4XDateFormatter* self, const ICU4XIsoDate* value, DiplomatWriteable* write);
 
-diplomat_result_void_ICU4XError ICU4XDateFormatter_format_datetime(const ICU4XDateFormatter* self, const ICU4XDateTime* value, DiplomatWriteable* write);
 
-diplomat_result_void_ICU4XError ICU4XDateFormatter_format_iso_datetime(const ICU4XDateFormatter* self, const ICU4XIsoDateTime* value, DiplomatWriteable* write);
+
+typedef struct ICU4XDateFormatter_create_with_length_result {union {ICU4XDateFormatter* ok; ICU4XError err;}; bool is_ok;} ICU4XDateFormatter_create_with_length_result;
+ICU4XDateFormatter_create_with_length_result ICU4XDateFormatter_create_with_length(const ICU4XDataProvider* provider, const ICU4XLocale* locale, ICU4XDateLength date_length);
+
+typedef struct ICU4XDateFormatter_format_date_result {union { ICU4XError err;}; bool is_ok;} ICU4XDateFormatter_format_date_result;
+ICU4XDateFormatter_format_date_result ICU4XDateFormatter_format_date(const ICU4XDateFormatter* self, const ICU4XDate* value, DiplomatWrite* write);
+
+typedef struct ICU4XDateFormatter_format_iso_date_result {union { ICU4XError err;}; bool is_ok;} ICU4XDateFormatter_format_iso_date_result;
+ICU4XDateFormatter_format_iso_date_result ICU4XDateFormatter_format_iso_date(const ICU4XDateFormatter* self, const ICU4XIsoDate* value, DiplomatWrite* write);
+
+typedef struct ICU4XDateFormatter_format_datetime_result {union { ICU4XError err;}; bool is_ok;} ICU4XDateFormatter_format_datetime_result;
+ICU4XDateFormatter_format_datetime_result ICU4XDateFormatter_format_datetime(const ICU4XDateFormatter* self, const ICU4XDateTime* value, DiplomatWrite* write);
+
+typedef struct ICU4XDateFormatter_format_iso_datetime_result {union { ICU4XError err;}; bool is_ok;} ICU4XDateFormatter_format_iso_datetime_result;
+ICU4XDateFormatter_format_iso_datetime_result ICU4XDateFormatter_format_iso_datetime(const ICU4XDateFormatter* self, const ICU4XIsoDateTime* value, DiplomatWrite* write);
+
+
 void ICU4XDateFormatter_destroy(ICU4XDateFormatter* self);
 
-#ifdef __cplusplus
-} // extern "C"
-} // namespace capi
-#endif
-#endif
+
+
+
+
+#endif // ICU4XDateFormatter_H

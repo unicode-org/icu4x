@@ -1,0 +1,12 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+[package]
+name = "tutorial_harfbuzz"
+edition = "2021"
+publish = false
+
+[dependencies]
+icu_harfbuzz = { version = "0.2.0", features = ["compiled_data"] }
+harfbuzz = { version = "0.6.0" }

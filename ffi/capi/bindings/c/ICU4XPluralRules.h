@@ -1,41 +1,41 @@
 #ifndef ICU4XPluralRules_H
 #define ICU4XPluralRules_H
+
 #include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
 #include "diplomat_runtime.h"
 
-#ifdef __cplusplus
-namespace capi {
-#endif
+#include "ICU4XDataError.d.h"
+#include "ICU4XDataProvider.d.h"
+#include "ICU4XLocale.d.h"
+#include "ICU4XPluralCategories.d.h"
+#include "ICU4XPluralCategory.d.h"
+#include "ICU4XPluralOperands.d.h"
 
-typedef struct ICU4XPluralRules ICU4XPluralRules;
-#ifdef __cplusplus
-} // namespace capi
-#endif
-#include "ICU4XDataProvider.h"
-#include "ICU4XLocale.h"
-#include "diplomat_result_box_ICU4XPluralRules_ICU4XError.h"
-#include "ICU4XPluralOperands.h"
-#include "ICU4XPluralCategory.h"
-#include "ICU4XPluralCategories.h"
-#ifdef __cplusplus
-namespace capi {
-extern "C" {
-#endif
+#include "ICU4XPluralRules.d.h"
 
-diplomat_result_box_ICU4XPluralRules_ICU4XError ICU4XPluralRules_create_cardinal(const ICU4XDataProvider* provider, const ICU4XLocale* locale);
 
-diplomat_result_box_ICU4XPluralRules_ICU4XError ICU4XPluralRules_create_ordinal(const ICU4XDataProvider* provider, const ICU4XLocale* locale);
+
+
+
+
+typedef struct ICU4XPluralRules_create_cardinal_result {union {ICU4XPluralRules* ok; ICU4XDataError err;}; bool is_ok;} ICU4XPluralRules_create_cardinal_result;
+ICU4XPluralRules_create_cardinal_result ICU4XPluralRules_create_cardinal(const ICU4XDataProvider* provider, const ICU4XLocale* locale);
+
+typedef struct ICU4XPluralRules_create_ordinal_result {union {ICU4XPluralRules* ok; ICU4XDataError err;}; bool is_ok;} ICU4XPluralRules_create_ordinal_result;
+ICU4XPluralRules_create_ordinal_result ICU4XPluralRules_create_ordinal(const ICU4XDataProvider* provider, const ICU4XLocale* locale);
 
 ICU4XPluralCategory ICU4XPluralRules_category_for(const ICU4XPluralRules* self, const ICU4XPluralOperands* op);
 
 ICU4XPluralCategories ICU4XPluralRules_categories(const ICU4XPluralRules* self);
+
+
 void ICU4XPluralRules_destroy(ICU4XPluralRules* self);
 
-#ifdef __cplusplus
-} // extern "C"
-} // namespace capi
-#endif
-#endif
+
+
+
+
+#endif // ICU4XPluralRules_H

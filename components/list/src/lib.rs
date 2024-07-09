@@ -13,7 +13,7 @@
 //!
 //! ```
 //! # use icu::list::{ListFormatter, ListLength};
-//! # use icu::locid::locale;
+//! # use icu::locale::locale;
 //! # use writeable::*;
 //! #
 //! let list_formatter = ListFormatter::try_new_and_with_length(
@@ -38,7 +38,7 @@
 //!
 //! ```
 //! # use icu::list::{ListFormatter, ListLength};
-//! # use icu::locid::locale;
+//! # use icu::locale::locale;
 //! # use writeable::*;
 //! #
 //! let list_formatter = ListFormatter::try_new_or_with_length(
@@ -55,7 +55,7 @@
 //!
 //! ```
 //! # use icu::list::{ListFormatter, ListLength};
-//! # use icu::locid::locale;
+//! # use icu::locale::locale;
 //! # use writeable::*;
 //! #
 //! let list_formatter = ListFormatter::try_new_unit_with_length(
@@ -89,7 +89,6 @@
 
 extern crate alloc;
 
-mod error;
 mod lazy_automaton;
 mod list_formatter;
 mod patterns;
@@ -97,11 +96,6 @@ mod patterns;
 pub mod provider;
 
 pub use list_formatter::*;
-
-pub use error::ListError;
-
-#[doc(no_inline)]
-pub use ListError as Error;
 
 /// Represents the style of a list. See the
 /// [CLDR spec](https://unicode.org/reports/tr35/tr35-general.html#ListPatterns)

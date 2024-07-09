@@ -64,12 +64,12 @@ pub(super) struct LstmSegmenter<'l> {
     timew_fw: MatrixZero<'l, 2>,
     timew_bw: MatrixZero<'l, 2>,
     time_b: MatrixZero<'l, 1>,
-    grapheme: Option<&'l RuleBreakDataV1<'l>>,
+    grapheme: Option<&'l RuleBreakDataV2<'l>>,
 }
 
 impl<'l> LstmSegmenter<'l> {
     /// Returns `Err` if grapheme data is required but not present
-    pub(super) fn new(lstm: &'l LstmDataV1<'l>, grapheme: &'l RuleBreakDataV1<'l>) -> Self {
+    pub(super) fn new(lstm: &'l LstmDataV1<'l>, grapheme: &'l RuleBreakDataV2<'l>) -> Self {
         let LstmDataV1::Float32(lstm) = lstm;
         let time_w = MatrixZero::from(&lstm.time_w);
         #[allow(clippy::unwrap_used)] // shape (2, 4, hunits)
@@ -320,7 +320,6 @@ fn compute_hc<'a>(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_locid::locale;
     use icu_provider::prelude::*;
     use serde::Deserialize;
 
@@ -347,17 +346,19 @@ mod tests {
 
     #[test]
     fn segment_file_by_lstm() {
-        let lstm: DataPayload<LstmForWordLineAutoV1Marker> = crate::provider::Baked
+        let lstm: DataResponse<LstmForWordLineAutoV1Marker> = crate::provider::Baked
             .load(DataRequest {
-                locale: &locale!("th").into(),
-                metadata: Default::default(),
+                id: DataIdentifierBorrowed::for_marker_attributes(
+                    DataMarkerAttributes::from_str_or_panic(
+                        "Thai_codepoints_exclusive_model4_heavy",
+                    ),
+                ),
+                ..Default::default()
             })
-            .unwrap()
-            .take_payload()
             .unwrap();
         let lstm = LstmSegmenter::new(
-            lstm.get(),
-            crate::provider::Baked::SINGLETON_SEGMENTER_GRAPHEME_V1,
+            lstm.payload.get(),
+            crate::provider::Baked::SINGLETON_GRAPHEME_CLUSTER_BREAK_DATA_V2_MARKER,
         );
 
         // Importing the test data

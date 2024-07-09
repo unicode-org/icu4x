@@ -4,7 +4,7 @@
 
 #[diplomat::bridge]
 pub mod ffi {
-    use crate::errors::ffi::ICU4XError;
+    use crate::errors::ffi::ICU4XDataError;
     use crate::provider::ffi::ICU4XDataProvider;
     use alloc::boxed::Box;
     use icu_timezone::MetazoneCalculator;
@@ -23,7 +23,7 @@ pub mod ffi {
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
         pub fn create(
             provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XMetazoneCalculator>, ICU4XError> {
+        ) -> Result<Box<ICU4XMetazoneCalculator>, ICU4XDataError> {
             Ok(Box::new(ICU4XMetazoneCalculator(call_constructor!(
                 MetazoneCalculator::new [r => Ok(r)],
                 MetazoneCalculator::try_new_with_any_provider,

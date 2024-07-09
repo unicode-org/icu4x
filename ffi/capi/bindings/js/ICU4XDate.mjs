@@ -1,7 +1,7 @@
 import wasm from "./diplomat-wasm.mjs"
 import * as diplomatRuntime from "./diplomat-runtime.mjs"
 import { ICU4XCalendar } from "./ICU4XCalendar.mjs"
-import { ICU4XError_js_to_rust, ICU4XError_rust_to_js } from "./ICU4XError.mjs"
+import { ICU4XCalendarError_js_to_rust, ICU4XCalendarError_rust_to_js } from "./ICU4XCalendarError.mjs"
 import { ICU4XIsoDate } from "./ICU4XIsoDate.mjs"
 import { ICU4XIsoWeekday_js_to_rust, ICU4XIsoWeekday_rust_to_js } from "./ICU4XIsoWeekday.mjs"
 import { ICU4XWeekOf } from "./ICU4XWeekOf.mjs"
@@ -31,7 +31,7 @@ export class ICU4XDate {
         wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
         return ok_value;
       } else {
-        const throw_value = ICU4XError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
+        const throw_value = ICU4XCalendarError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
         wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
         throw new diplomatRuntime.FFIError(throw_value);
       }
@@ -50,7 +50,7 @@ export class ICU4XDate {
         wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
         return ok_value;
       } else {
-        const throw_value = ICU4XError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
+        const throw_value = ICU4XCalendarError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
         wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
         throw new diplomatRuntime.FFIError(throw_value);
       }
@@ -68,6 +68,10 @@ export class ICU4XDate {
     return new ICU4XIsoDate(wasm.ICU4XDate_to_iso(this.underlying), true, []);
   }
 
+  day_of_year() {
+    return wasm.ICU4XDate_day_of_year(this.underlying);
+  }
+
   day_of_month() {
     return wasm.ICU4XDate_day_of_month(this.underlying);
   }
@@ -82,18 +86,11 @@ export class ICU4XDate {
 
   week_of_year(arg_calculator) {
     return (() => {
-      const diplomat_receive_buffer = wasm.diplomat_alloc(9, 4);
+      const diplomat_receive_buffer = wasm.diplomat_alloc(8, 4);
       wasm.ICU4XDate_week_of_year(diplomat_receive_buffer, this.underlying, arg_calculator.underlying);
-      const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 8);
-      if (is_ok) {
-        const ok_value = new ICU4XWeekOf(diplomat_receive_buffer);
-        wasm.diplomat_free(diplomat_receive_buffer, 9, 4);
-        return ok_value;
-      } else {
-        const throw_value = ICU4XError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
-        wasm.diplomat_free(diplomat_receive_buffer, 9, 4);
-        throw new diplomatRuntime.FFIError(throw_value);
-      }
+      const out = new ICU4XWeekOf(diplomat_receive_buffer);
+      wasm.diplomat_free(diplomat_receive_buffer, 8, 4);
+      return out;
     })();
   }
 
@@ -102,21 +99,8 @@ export class ICU4XDate {
   }
 
   month_code() {
-    return diplomatRuntime.withWriteable(wasm, (writeable) => {
-      return (() => {
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        wasm.ICU4XDate_month_code(diplomat_receive_buffer, this.underlying, writeable);
-        const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
-        if (is_ok) {
-          const ok_value = {};
-          wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-          return ok_value;
-        } else {
-          const throw_value = ICU4XError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
-          wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-          throw new diplomatRuntime.FFIError(throw_value);
-        }
-      })();
+    return diplomatRuntime.withDiplomatWrite(wasm, (write) => {
+      return wasm.ICU4XDate_month_code(this.underlying, write);
     });
   }
 
@@ -125,21 +109,8 @@ export class ICU4XDate {
   }
 
   era() {
-    return diplomatRuntime.withWriteable(wasm, (writeable) => {
-      return (() => {
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        wasm.ICU4XDate_era(diplomat_receive_buffer, this.underlying, writeable);
-        const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
-        if (is_ok) {
-          const ok_value = {};
-          wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-          return ok_value;
-        } else {
-          const throw_value = ICU4XError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
-          wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-          throw new diplomatRuntime.FFIError(throw_value);
-        }
-      })();
+    return diplomatRuntime.withDiplomatWrite(wasm, (write) => {
+      return wasm.ICU4XDate_era(this.underlying, write);
     });
   }
 

@@ -7,9 +7,6 @@ use core::fmt;
 use displaydoc::Display;
 use zerovec::ule::{AsULE, ZeroVecError, ULE};
 
-#[cfg(doc)]
-use crate::fields::{Hour, Weekday};
-
 /// An error relating to the length of a field within a date pattern.
 #[derive(Display, Debug, PartialEq, Copy, Clone)]
 #[non_exhaustive]
@@ -47,8 +44,8 @@ pub enum FieldLength {
     Wide,
     /// Narrow / Long / Full  (spellout) format.
     Narrow,
-    /// Meaning is field-dependent, for patterns that are 6 characters long. Ex: a [`Weekday`] pattern like
-    /// `EEEEEE` means "Short", but `jjjjjj` or `CCCCCC` for [`Hour`] may mean
+    /// Meaning is field-dependent, for patterns that are 6 characters long. Ex: a [`Weekday`](super::Weekday) pattern like
+    /// `EEEEEE` means "Short", but `jjjjjj` or `CCCCCC` for [`Hour`](super::Hour) may mean
     /// "Numeric hour (2 digits, zero pad if needed), narrow dayPeriod if used". See the
     /// [LDML documentation in UTS 35](https://unicode.org/reports/tr35/tr35-dates.html#Date_Format_Patterns)
     /// for more details.
@@ -57,6 +54,8 @@ pub enum FieldLength {
     Fixed(u8),
     /// FieldLength::One (numeric), but overridden with a different numbering system
     NumericOverride(FieldNumericOverrides),
+    /// A time zone field with non-standard rules.
+    TimeZoneFallbackOverride(TimeZoneFallbackOverride),
 }
 
 /// First index used for numeric overrides in compact FieldLength representation
@@ -64,6 +63,12 @@ pub enum FieldLength {
 /// Currently 17 due to decision in <https://unicode-org.atlassian.net/browse/CLDR-17217>,
 /// may become 16 if the `> 16` is updated to a ` >= 16`
 const FIRST_NUMERIC_OVERRIDE: u8 = 17;
+/// Last index used for numeric overrides
+const LAST_NUMERIC_OVERRIDE: u8 = 31;
+/// First index used for time zone fallback overrides
+const FIRST_TIME_ZONE_FALLBACK_OVERRIDE: u8 = 32;
+/// Last index used for time zone fallback overrides
+const LAST_TIME_ZONE_FALLBACK_OVERRIDE: u8 = 40;
 /// First index used for fixed size formats in compact FieldLength representation
 const FIRST_FIXED: u8 = 128;
 
@@ -79,7 +84,10 @@ impl FieldLength {
             FieldLength::Six => 6,
             FieldLength::NumericOverride(o) => FIRST_NUMERIC_OVERRIDE
                 .saturating_add(*o as u8)
-                .min(FIRST_FIXED - 1),
+                .min(LAST_NUMERIC_OVERRIDE),
+            FieldLength::TimeZoneFallbackOverride(o) => FIRST_TIME_ZONE_FALLBACK_OVERRIDE
+                .saturating_add(*o as u8)
+                .min(LAST_TIME_ZONE_FALLBACK_OVERRIDE),
             FieldLength::Fixed(p) => FIRST_FIXED.saturating_add(*p), /* truncate to at most 127 digits to avoid overflow */
         }
     }
@@ -93,16 +101,18 @@ impl FieldLength {
             4 => Self::Wide,
             5 => Self::Narrow,
             6 => Self::Six,
-            idx => {
-                if idx < FIRST_NUMERIC_OVERRIDE {
-                    return Err(LengthError::InvalidLength);
-                }
-                if idx < FIRST_FIXED {
-                    Self::NumericOverride((idx - FIRST_NUMERIC_OVERRIDE).try_into()?)
-                } else {
-                    Self::Fixed(idx - FIRST_FIXED)
-                }
+            idx if (FIRST_NUMERIC_OVERRIDE..=LAST_NUMERIC_OVERRIDE).contains(&idx) => {
+                Self::NumericOverride((idx - FIRST_NUMERIC_OVERRIDE).try_into()?)
             }
+            idx if (FIRST_TIME_ZONE_FALLBACK_OVERRIDE..=LAST_TIME_ZONE_FALLBACK_OVERRIDE)
+                .contains(&idx) =>
+            {
+                Self::TimeZoneFallbackOverride(
+                    (idx - FIRST_TIME_ZONE_FALLBACK_OVERRIDE).try_into()?,
+                )
+            }
+            idx if idx >= FIRST_FIXED => Self::Fixed(idx - FIRST_FIXED),
+            _ => return Err(LengthError::InvalidLength),
         })
     }
 
@@ -117,6 +127,9 @@ impl FieldLength {
             FieldLength::Narrow => 5,
             FieldLength::Six => 6,
             FieldLength::NumericOverride(o) => FIRST_NUMERIC_OVERRIDE as usize + o as usize,
+            FieldLength::TimeZoneFallbackOverride(o) => {
+                FIRST_TIME_ZONE_FALLBACK_OVERRIDE as usize + o as usize
+            }
             FieldLength::Fixed(p) => p as usize,
         }
     }
@@ -231,3 +244,44 @@ impl fmt::Display for FieldNumericOverrides {
         self.as_str().fmt(f)
     }
 }
+
+/// Time zone fallback overrides to support configurations not found
+/// in the CLDR datetime field symbol table.
+#[derive(Debug, Eq, PartialEq, Clone, Copy, Ord, PartialOrd)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_datetime::fields),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[non_exhaustive]
+pub enum TimeZoneFallbackOverride {
+    /// The short form of this time zone field,
+    /// but fall back directly to GMT.
+    ShortOrGmt = 0,
+}
+
+impl TryFrom<u8> for TimeZoneFallbackOverride {
+    type Error = LengthError;
+    fn try_from(other: u8) -> Result<Self, LengthError> {
+        Ok(match other {
+            0 => Self::ShortOrGmt,
+            _ => return Err(LengthError::InvalidLength),
+        })
+    }
+}
+
+// impl TimeZoneFallbackOverride {
+//     /// Convert this to the corresponding string code
+//     pub fn as_str(self) -> &'static str {
+//         match self {
+//             Self::ShortOrGmt => "ShortOrGmt",
+//         }
+//     }
+// }
+
+// impl fmt::Display for TimeZoneFallbackOverride {
+//     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+//         self.as_str().fmt(f)
+//     }
+// }

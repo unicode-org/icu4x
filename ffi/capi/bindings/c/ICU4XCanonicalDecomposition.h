@@ -1,34 +1,33 @@
 #ifndef ICU4XCanonicalDecomposition_H
 #define ICU4XCanonicalDecomposition_H
+
 #include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
 #include "diplomat_runtime.h"
 
-#ifdef __cplusplus
-namespace capi {
-#endif
+#include "ICU4XDataError.d.h"
+#include "ICU4XDataProvider.d.h"
+#include "ICU4XDecomposed.d.h"
 
-typedef struct ICU4XCanonicalDecomposition ICU4XCanonicalDecomposition;
-#ifdef __cplusplus
-} // namespace capi
-#endif
-#include "ICU4XDataProvider.h"
-#include "diplomat_result_box_ICU4XCanonicalDecomposition_ICU4XError.h"
-#include "ICU4XDecomposed.h"
-#ifdef __cplusplus
-namespace capi {
-extern "C" {
-#endif
+#include "ICU4XCanonicalDecomposition.d.h"
 
-diplomat_result_box_ICU4XCanonicalDecomposition_ICU4XError ICU4XCanonicalDecomposition_create(const ICU4XDataProvider* provider);
+
+
+
+
+
+typedef struct ICU4XCanonicalDecomposition_create_result {union {ICU4XCanonicalDecomposition* ok; ICU4XDataError err;}; bool is_ok;} ICU4XCanonicalDecomposition_create_result;
+ICU4XCanonicalDecomposition_create_result ICU4XCanonicalDecomposition_create(const ICU4XDataProvider* provider);
 
 ICU4XDecomposed ICU4XCanonicalDecomposition_decompose(const ICU4XCanonicalDecomposition* self, char32_t c);
+
+
 void ICU4XCanonicalDecomposition_destroy(ICU4XCanonicalDecomposition* self);
 
-#ifdef __cplusplus
-} // extern "C"
-} // namespace capi
-#endif
-#endif
+
+
+
+
+#endif // ICU4XCanonicalDecomposition_H

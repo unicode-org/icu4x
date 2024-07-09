@@ -237,7 +237,7 @@ impl<Store> ZeroTrieExtendedCapacity<Store> {
 }
 
 macro_rules! impl_zerotrie_subtype {
-    ($name:ident, $iter_ty:ty, $iter_fn:path, $cnv_fn:path) => {
+    ($name:ident, $iter_element:ty, $iter_fn:path, $iter_ty:ty, $cnv_fn:path) => {
         impl<Store> $name<Store> {
             /// Create a trie directly from a store.
             ///
@@ -370,7 +370,8 @@ macro_rules! impl_zerotrie_subtype {
             /// assert_eq!(it.next(), None);
             /// ```
             #[inline]
-            pub fn iter(&self) -> impl Iterator<Item = ($iter_ty, usize)> + '_ {
+            #[allow(clippy::type_complexity)]
+            pub fn iter(&self) -> $iter_ty {
                  $iter_fn(self.as_bytes())
             }
         }
@@ -455,7 +456,7 @@ macro_rules! impl_zerotrie_subtype {
             ///     .collect();
             /// assert_eq!(trie.as_bytes(), recovered_trie.as_bytes());
             /// ```
-            pub fn to_btreemap(&self) -> BTreeMap<$iter_ty, usize> {
+            pub fn to_btreemap(&self) -> BTreeMap<$iter_element, usize> {
                 self.iter().collect()
             }
             #[allow(dead_code)] // not needed for ZeroAsciiIgnoreCaseTrie
@@ -464,7 +465,7 @@ macro_rules! impl_zerotrie_subtype {
             }
         }
         #[cfg(feature = "alloc")]
-        impl<Store> From<&$name<Store>> for BTreeMap<$iter_ty, usize>
+        impl<Store> From<&$name<Store>> for BTreeMap<$iter_element, usize>
         where
             Store: AsRef<[u8]> + ?Sized,
         {
@@ -515,7 +516,7 @@ macro_rules! impl_zerotrie_subtype {
             ///     .collect();
             /// assert_eq!(trie.as_bytes(), recovered_trie.as_bytes());
             /// ```
-            pub fn to_litemap(&self) -> LiteMap<$iter_ty, usize> {
+            pub fn to_litemap(&self) -> LiteMap<$iter_element, usize> {
                 self.iter().collect()
             }
             #[allow(dead_code)] // not needed for ZeroAsciiIgnoreCaseTrie
@@ -524,7 +525,7 @@ macro_rules! impl_zerotrie_subtype {
             }
         }
         #[cfg(feature = "litemap")]
-        impl<Store> From<&$name<Store>> for LiteMap<$iter_ty, usize>
+        impl<Store> From<&$name<Store>> for LiteMap<$iter_element, usize>
         where
             Store: AsRef<[u8]> + ?Sized,
         {
@@ -624,28 +625,37 @@ fn string_to_box_u8(input: String) -> Box<[u8]> {
     input.into_boxed_str().into_boxed_bytes()
 }
 
+#[doc(hidden)] // subject to change
+#[cfg(feature = "alloc")]
+pub type ZeroTrieStringIterator<'a> =
+    core::iter::Map<reader::ZeroTrieIterator<'a>, fn((Vec<u8>, usize)) -> (String, usize)>;
+
 impl_zerotrie_subtype!(
     ZeroTrieSimpleAscii,
     String,
     reader::get_iter_ascii_or_panic,
+    ZeroTrieStringIterator,
     string_to_box_u8
 );
 impl_zerotrie_subtype!(
     ZeroAsciiIgnoreCaseTrie,
     String,
     reader::get_iter_ascii_or_panic,
+    ZeroTrieStringIterator,
     string_to_box_u8
 );
 impl_zerotrie_subtype!(
     ZeroTriePerfectHash,
     Vec<u8>,
     reader::get_iter_phf,
+    reader::ZeroTrieIterator<'_>,
     Vec::into_boxed_slice
 );
 impl_zerotrie_subtype!(
     ZeroTrieExtendedCapacity,
     Vec<u8>,
     reader::get_iter_phf,
+    reader::ZeroTrieIterator<'_>,
     Vec::into_boxed_slice
 );
 
@@ -798,6 +808,16 @@ where
         use databake::*;
         let inner = impl_dispatch!(&self, bake(env));
         quote! { #inner.into_zerotrie() }
+    }
+}
+
+#[cfg(feature = "databake")]
+impl<Store> databake::BakeSize for ZeroTrie<Store>
+where
+    Store: databake::BakeSize,
+{
+    fn borrows_size(&self) -> usize {
+        impl_dispatch!(&self, borrows_size())
     }
 }
 

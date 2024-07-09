@@ -24,9 +24,9 @@ impl From<GroupingStrategy> for FixedDecimalFormatterOptions {
 /// # Examples
 ///
 /// ```
-/// use icu_decimal::options;
-/// use icu_decimal::FixedDecimalFormatter;
-/// use icu_locid::Locale;
+/// use icu::decimal::options;
+/// use icu::decimal::FixedDecimalFormatter;
+/// use icu::locale::Locale;
 /// use writeable::assert_writeable_eq;
 ///
 /// let locale = Locale::UND;

@@ -1,28 +1,40 @@
 #ifndef ICU4XCollatorStrength_HPP
 #define ICU4XCollatorStrength_HPP
+
+#include "ICU4XCollatorStrength.d.hpp"
+
+#include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
-#include <algorithm>
 #include <memory>
-#include <variant>
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-#include "ICU4XCollatorStrength.h"
+
+namespace capi {
+    extern "C" {
+    
+    
+    } // extern "C"
+}
 
 
+inline capi::ICU4XCollatorStrength ICU4XCollatorStrength::AsFFI() const {
+  return static_cast<capi::ICU4XCollatorStrength>(value);
+}
 
-/**
- * See the [Rust documentation for `Strength`](https://docs.rs/icu/latest/icu/collator/enum.Strength.html) for more information.
- */
-enum struct ICU4XCollatorStrength {
-  Auto = 0,
-  Primary = 1,
-  Secondary = 2,
-  Tertiary = 3,
-  Quaternary = 4,
-  Identical = 5,
-};
-
-#endif
+inline ICU4XCollatorStrength ICU4XCollatorStrength::FromFFI(capi::ICU4XCollatorStrength c_enum) {
+  switch (c_enum) {
+    case capi::ICU4XCollatorStrength_Auto:
+    case capi::ICU4XCollatorStrength_Primary:
+    case capi::ICU4XCollatorStrength_Secondary:
+    case capi::ICU4XCollatorStrength_Tertiary:
+    case capi::ICU4XCollatorStrength_Quaternary:
+    case capi::ICU4XCollatorStrength_Identical:
+      return static_cast<ICU4XCollatorStrength::Value>(c_enum);
+    default:
+      abort();
+  }
+}
+#endif // ICU4XCollatorStrength_HPP

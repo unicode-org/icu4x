@@ -19,27 +19,14 @@ jobs:
 
       ## Coverage steps
 
-      - name: Get grcov version
-        id: grcov-version
-        run: |
-          echo "hash=$(cargo search grcov | grep '^grcov =' | md5sum)" >> $GITHUB_OUTPUT
-        shell: bash
-      - name: Attempt to load cached grcov
-        uses: actions/cache@v3
-        id: grcov-cache
-        with:
-          path: |
-            ~/.cargo/bin/grcov
-            ~/.cargo/bin/grcov.exe
-          key: ${{ runner.os }}-make-${{ steps.grcov-version.outputs.hash }}
       - name: Install grcov
-        if: steps.grcov-cache.outputs.cache-hit != 'true'
-        run: |
-          cargo +stable install grcov
+        uses: taiki-e/install-action@v2
+        with:
+          tool: grcov
   
       - uses:                   actions-rs/toolchain@v1
         with:
-          toolchain:            nightly-2022-12-26
+          toolchain:            nightly-2023-08-08
           override:             true
 
       - run: cargo test --all-features --no-fail-fast
@@ -60,6 +47,8 @@ jobs:
 
       - name:                   Push grcov results to Codecov via GitHub Action
         uses:                   codecov/codecov-action@v3
+        # TODO(#2701): Update and re-enable this job.
+        if: false
         with:
           file:                 ${{ steps.coverage.outputs.report }}
           fail_ci_if_error:     true

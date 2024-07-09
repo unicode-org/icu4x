@@ -26,11 +26,11 @@ final class ComposingNormalizer implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `new_nfc`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html#method.new_nfc) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   factory ComposingNormalizer.nfc(DataProvider provider) {
     final result = _ICU4XComposingNormalizer_create_nfc(provider._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     return ComposingNormalizer._fromFfi(result.union.ok, []);
   }
@@ -39,11 +39,11 @@ final class ComposingNormalizer implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `new_nfkc`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html#method.new_nfkc) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   factory ComposingNormalizer.nfkc(DataProvider provider) {
     final result = _ICU4XComposingNormalizer_create_nfkc(provider._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     return ComposingNormalizer._fromFfi(result.union.ok, []);
   }
@@ -54,18 +54,13 @@ final class ComposingNormalizer implements ffi.Finalizable {
   /// to the WHATWG Encoding Standard.
   ///
   /// See the [Rust documentation for `normalize_utf8`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html#method.normalize_utf8) for more information.
-  ///
-  /// Throws [Error] on failure.
   String normalize(String s) {
     final temp = ffi2.Arena();
     final sView = s.utf8View;
-    final writeable = _Writeable();
-    final result = _ICU4XComposingNormalizer_normalize(_ffi, sView.allocIn(temp), sView.length, writeable._ffi);
+    final write = _Write();
+    _ICU4XComposingNormalizer_normalize(_ffi, sView.allocIn(temp), sView.length, write._ffi);
     temp.releaseAll();
-    if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
-    }
-    return writeable.finalize();
+    return write.finalize();
   }
 
   /// Check if a string is normalized
@@ -110,9 +105,9 @@ external _ResultOpaqueInt32 _ICU4XComposingNormalizer_create_nfc(ffi.Pointer<ffi
 external _ResultOpaqueInt32 _ICU4XComposingNormalizer_create_nfkc(ffi.Pointer<ffi.Opaque> provider);
 
 @meta.ResourceIdentifier('ICU4XComposingNormalizer_normalize')
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XComposingNormalizer_normalize')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XComposingNormalizer_normalize')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _ICU4XComposingNormalizer_normalize(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> sData, int sLength, ffi.Pointer<ffi.Opaque> writeable);
+external void _ICU4XComposingNormalizer_normalize(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> sData, int sLength, ffi.Pointer<ffi.Opaque> write);
 
 @meta.ResourceIdentifier('ICU4XComposingNormalizer_is_normalized')
 @ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XComposingNormalizer_is_normalized')

@@ -1,60 +1,55 @@
 #ifndef ICU4XLocaleFallbackerWithConfig_HPP
 #define ICU4XLocaleFallbackerWithConfig_HPP
+
+#include "ICU4XLocaleFallbackerWithConfig.d.hpp"
+
+#include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
-#include <algorithm>
 #include <memory>
-#include <variant>
 #include <optional>
 #include "diplomat_runtime.hpp"
-
-#include "ICU4XLocaleFallbackerWithConfig.h"
-
-class ICU4XLocale;
-class ICU4XLocaleFallbackIterator;
-
-/**
- * A destruction policy for using ICU4XLocaleFallbackerWithConfig with std::unique_ptr.
- */
-struct ICU4XLocaleFallbackerWithConfigDeleter {
-  void operator()(capi::ICU4XLocaleFallbackerWithConfig* l) const noexcept {
-    capi::ICU4XLocaleFallbackerWithConfig_destroy(l);
-  }
-};
-
-/**
- * An object that runs the ICU4X locale fallback algorithm with specific configurations.
- * 
- * See the [Rust documentation for `LocaleFallbacker`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbacker.html) for more information.
- * 
- * See the [Rust documentation for `LocaleFallbackerWithConfig`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbackerWithConfig.html) for more information.
- */
-class ICU4XLocaleFallbackerWithConfig {
- public:
-
-  /**
-   * Creates an iterator from a locale with each step of fallback.
-   * 
-   * See the [Rust documentation for `fallback_for`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbacker.html#method.fallback_for) for more information.
-   * 
-   * Lifetimes: `this` must live at least as long as the output.
-   */
-  ICU4XLocaleFallbackIterator fallback_for_locale(const ICU4XLocale& locale) const;
-  inline const capi::ICU4XLocaleFallbackerWithConfig* AsFFI() const { return this->inner.get(); }
-  inline capi::ICU4XLocaleFallbackerWithConfig* AsFFIMut() { return this->inner.get(); }
-  inline explicit ICU4XLocaleFallbackerWithConfig(capi::ICU4XLocaleFallbackerWithConfig* i) : inner(i) {}
-  ICU4XLocaleFallbackerWithConfig() = default;
-  ICU4XLocaleFallbackerWithConfig(ICU4XLocaleFallbackerWithConfig&&) noexcept = default;
-  ICU4XLocaleFallbackerWithConfig& operator=(ICU4XLocaleFallbackerWithConfig&& other) noexcept = default;
- private:
-  std::unique_ptr<capi::ICU4XLocaleFallbackerWithConfig, ICU4XLocaleFallbackerWithConfigDeleter> inner;
-};
-
 #include "ICU4XLocale.hpp"
 #include "ICU4XLocaleFallbackIterator.hpp"
 
-inline ICU4XLocaleFallbackIterator ICU4XLocaleFallbackerWithConfig::fallback_for_locale(const ICU4XLocale& locale) const {
-  return ICU4XLocaleFallbackIterator(capi::ICU4XLocaleFallbackerWithConfig_fallback_for_locale(this->inner.get(), locale.AsFFI()));
+
+namespace capi {
+    extern "C" {
+    
+    ICU4XLocaleFallbackIterator* ICU4XLocaleFallbackerWithConfig_fallback_for_locale(const ICU4XLocaleFallbackerWithConfig* self, const ICU4XLocale* locale);
+    
+    
+    void ICU4XLocaleFallbackerWithConfig_destroy(ICU4XLocaleFallbackerWithConfig* self);
+    
+    } // extern "C"
 }
-#endif
+
+inline std::unique_ptr<ICU4XLocaleFallbackIterator> ICU4XLocaleFallbackerWithConfig::fallback_for_locale(const ICU4XLocale& locale) const {
+  auto result = capi::ICU4XLocaleFallbackerWithConfig_fallback_for_locale(this->AsFFI(),
+    locale.AsFFI());
+  return std::unique_ptr<ICU4XLocaleFallbackIterator>(ICU4XLocaleFallbackIterator::FromFFI(result));
+}
+
+inline const capi::ICU4XLocaleFallbackerWithConfig* ICU4XLocaleFallbackerWithConfig::AsFFI() const {
+  return reinterpret_cast<const capi::ICU4XLocaleFallbackerWithConfig*>(this);
+}
+
+inline capi::ICU4XLocaleFallbackerWithConfig* ICU4XLocaleFallbackerWithConfig::AsFFI() {
+  return reinterpret_cast<capi::ICU4XLocaleFallbackerWithConfig*>(this);
+}
+
+inline const ICU4XLocaleFallbackerWithConfig* ICU4XLocaleFallbackerWithConfig::FromFFI(const capi::ICU4XLocaleFallbackerWithConfig* ptr) {
+  return reinterpret_cast<const ICU4XLocaleFallbackerWithConfig*>(ptr);
+}
+
+inline ICU4XLocaleFallbackerWithConfig* ICU4XLocaleFallbackerWithConfig::FromFFI(capi::ICU4XLocaleFallbackerWithConfig* ptr) {
+  return reinterpret_cast<ICU4XLocaleFallbackerWithConfig*>(ptr);
+}
+
+inline void ICU4XLocaleFallbackerWithConfig::operator delete(void* ptr) {
+  capi::ICU4XLocaleFallbackerWithConfig_destroy(reinterpret_cast<capi::ICU4XLocaleFallbackerWithConfig*>(ptr));
+}
+
+
+#endif // ICU4XLocaleFallbackerWithConfig_HPP

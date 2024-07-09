@@ -1,25 +1,37 @@
 #ifndef ICU4XLineBreakWordOption_HPP
 #define ICU4XLineBreakWordOption_HPP
+
+#include "ICU4XLineBreakWordOption.d.hpp"
+
+#include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
-#include <algorithm>
 #include <memory>
-#include <variant>
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-#include "ICU4XLineBreakWordOption.h"
+
+namespace capi {
+    extern "C" {
+    
+    
+    } // extern "C"
+}
 
 
+inline capi::ICU4XLineBreakWordOption ICU4XLineBreakWordOption::AsFFI() const {
+  return static_cast<capi::ICU4XLineBreakWordOption>(value);
+}
 
-/**
- * See the [Rust documentation for `LineBreakWordOption`](https://docs.rs/icu/latest/icu/segmenter/enum.LineBreakWordOption.html) for more information.
- */
-enum struct ICU4XLineBreakWordOption {
-  Normal = 0,
-  BreakAll = 1,
-  KeepAll = 2,
-};
-
-#endif
+inline ICU4XLineBreakWordOption ICU4XLineBreakWordOption::FromFFI(capi::ICU4XLineBreakWordOption c_enum) {
+  switch (c_enum) {
+    case capi::ICU4XLineBreakWordOption_Normal:
+    case capi::ICU4XLineBreakWordOption_BreakAll:
+    case capi::ICU4XLineBreakWordOption_KeepAll:
+      return static_cast<ICU4XLineBreakWordOption::Value>(c_enum);
+    default:
+      abort();
+  }
+}
+#endif // ICU4XLineBreakWordOption_HPP

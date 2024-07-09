@@ -1,40 +1,39 @@
 #ifndef ICU4XComposingNormalizer_H
 #define ICU4XComposingNormalizer_H
+
 #include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
 #include "diplomat_runtime.h"
 
-#ifdef __cplusplus
-namespace capi {
-#endif
+#include "ICU4XDataError.d.h"
+#include "ICU4XDataProvider.d.h"
 
-typedef struct ICU4XComposingNormalizer ICU4XComposingNormalizer;
-#ifdef __cplusplus
-} // namespace capi
-#endif
-#include "ICU4XDataProvider.h"
-#include "diplomat_result_box_ICU4XComposingNormalizer_ICU4XError.h"
-#include "diplomat_result_void_ICU4XError.h"
-#ifdef __cplusplus
-namespace capi {
-extern "C" {
-#endif
+#include "ICU4XComposingNormalizer.d.h"
 
-diplomat_result_box_ICU4XComposingNormalizer_ICU4XError ICU4XComposingNormalizer_create_nfc(const ICU4XDataProvider* provider);
 
-diplomat_result_box_ICU4XComposingNormalizer_ICU4XError ICU4XComposingNormalizer_create_nfkc(const ICU4XDataProvider* provider);
 
-diplomat_result_void_ICU4XError ICU4XComposingNormalizer_normalize(const ICU4XComposingNormalizer* self, const char* s_data, size_t s_len, DiplomatWriteable* write);
+
+
+
+typedef struct ICU4XComposingNormalizer_create_nfc_result {union {ICU4XComposingNormalizer* ok; ICU4XDataError err;}; bool is_ok;} ICU4XComposingNormalizer_create_nfc_result;
+ICU4XComposingNormalizer_create_nfc_result ICU4XComposingNormalizer_create_nfc(const ICU4XDataProvider* provider);
+
+typedef struct ICU4XComposingNormalizer_create_nfkc_result {union {ICU4XComposingNormalizer* ok; ICU4XDataError err;}; bool is_ok;} ICU4XComposingNormalizer_create_nfkc_result;
+ICU4XComposingNormalizer_create_nfkc_result ICU4XComposingNormalizer_create_nfkc(const ICU4XDataProvider* provider);
+
+void ICU4XComposingNormalizer_normalize(const ICU4XComposingNormalizer* self, const char* s_data, size_t s_len, DiplomatWrite* write);
 
 bool ICU4XComposingNormalizer_is_normalized(const ICU4XComposingNormalizer* self, const char* s_data, size_t s_len);
 
 size_t ICU4XComposingNormalizer_is_normalized_up_to(const ICU4XComposingNormalizer* self, const char* s_data, size_t s_len);
+
+
 void ICU4XComposingNormalizer_destroy(ICU4XComposingNormalizer* self);
 
-#ifdef __cplusplus
-} // extern "C"
-} // namespace capi
-#endif
-#endif
+
+
+
+
+#endif // ICU4XComposingNormalizer_H

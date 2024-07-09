@@ -1,25 +1,37 @@
 #ifndef ICU4XWeekRelativeUnit_HPP
 #define ICU4XWeekRelativeUnit_HPP
+
+#include "ICU4XWeekRelativeUnit.d.hpp"
+
+#include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
-#include <algorithm>
 #include <memory>
-#include <variant>
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-#include "ICU4XWeekRelativeUnit.h"
+
+namespace capi {
+    extern "C" {
+    
+    
+    } // extern "C"
+}
 
 
+inline capi::ICU4XWeekRelativeUnit ICU4XWeekRelativeUnit::AsFFI() const {
+  return static_cast<capi::ICU4XWeekRelativeUnit>(value);
+}
 
-/**
- * See the [Rust documentation for `RelativeUnit`](https://docs.rs/icu/latest/icu/calendar/week/enum.RelativeUnit.html) for more information.
- */
-enum struct ICU4XWeekRelativeUnit {
-  Previous = 0,
-  Current = 1,
-  Next = 2,
-};
-
-#endif
+inline ICU4XWeekRelativeUnit ICU4XWeekRelativeUnit::FromFFI(capi::ICU4XWeekRelativeUnit c_enum) {
+  switch (c_enum) {
+    case capi::ICU4XWeekRelativeUnit_Previous:
+    case capi::ICU4XWeekRelativeUnit_Current:
+    case capi::ICU4XWeekRelativeUnit_Next:
+      return static_cast<ICU4XWeekRelativeUnit::Value>(c_enum);
+    default:
+      abort();
+  }
+}
+#endif // ICU4XWeekRelativeUnit_HPP

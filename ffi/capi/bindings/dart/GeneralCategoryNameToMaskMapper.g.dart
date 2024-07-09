@@ -4,7 +4,7 @@ part of 'lib.g.dart';
 
 /// A type capable of looking up General Category mask values from a string name.
 ///
-/// See the [Rust documentation for `get_name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.GeneralCategoryGroup.html#method.get_name_to_enum_mapper) for more information.
+/// See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.GeneralCategoryGroup.html#method.name_to_enum_mapper) for more information.
 ///
 /// See the [Rust documentation for `PropertyValueNameToEnumMapper`](https://docs.rs/icu/latest/icu/properties/names/struct.PropertyValueNameToEnumMapper.html) for more information.
 final class GeneralCategoryNameToMaskMapper implements ffi.Finalizable {
@@ -48,13 +48,13 @@ final class GeneralCategoryNameToMaskMapper implements ffi.Finalizable {
     return result;
   }
 
-  /// See the [Rust documentation for `get_name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.GeneralCategoryGroup.html#method.get_name_to_enum_mapper) for more information.
+  /// See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.GeneralCategoryGroup.html#method.name_to_enum_mapper) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   factory GeneralCategoryNameToMaskMapper(DataProvider provider) {
     final result = _ICU4XGeneralCategoryNameToMaskMapper_load(provider._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     return GeneralCategoryNameToMaskMapper._fromFfi(result.union.ok, []);
   }

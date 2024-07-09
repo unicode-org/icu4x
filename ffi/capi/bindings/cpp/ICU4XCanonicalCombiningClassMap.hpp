@@ -1,83 +1,71 @@
 #ifndef ICU4XCanonicalCombiningClassMap_HPP
 #define ICU4XCanonicalCombiningClassMap_HPP
+
+#include "ICU4XCanonicalCombiningClassMap.d.hpp"
+
+#include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
-#include <algorithm>
 #include <memory>
-#include <variant>
 #include <optional>
 #include "diplomat_runtime.hpp"
-
-#include "ICU4XCanonicalCombiningClassMap.h"
-
-class ICU4XDataProvider;
-class ICU4XCanonicalCombiningClassMap;
-#include "ICU4XError.hpp"
-
-/**
- * A destruction policy for using ICU4XCanonicalCombiningClassMap with std::unique_ptr.
- */
-struct ICU4XCanonicalCombiningClassMapDeleter {
-  void operator()(capi::ICU4XCanonicalCombiningClassMap* l) const noexcept {
-    capi::ICU4XCanonicalCombiningClassMap_destroy(l);
-  }
-};
-
-/**
- * Lookup of the Canonical_Combining_Class Unicode property
- * 
- * See the [Rust documentation for `CanonicalCombiningClassMap`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html) for more information.
- */
-class ICU4XCanonicalCombiningClassMap {
- public:
-
-  /**
-   * Construct a new ICU4XCanonicalCombiningClassMap instance for NFC
-   * 
-   * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html#method.new) for more information.
-   */
-  static diplomat::result<ICU4XCanonicalCombiningClassMap, ICU4XError> create(const ICU4XDataProvider& provider);
-
-  /**
-   * See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html#method.get) for more information.
-   * 
-   * Additional information: [1](https://docs.rs/icu/latest/icu/properties/properties/struct.CanonicalCombiningClass.html)
-   */
-  uint8_t get(char32_t ch) const;
-
-  /**
-   * See the [Rust documentation for `get32`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html#method.get32) for more information.
-   * 
-   * Additional information: [1](https://docs.rs/icu/latest/icu/properties/properties/struct.CanonicalCombiningClass.html)
-   */
-  uint8_t get32(uint32_t ch) const;
-  inline const capi::ICU4XCanonicalCombiningClassMap* AsFFI() const { return this->inner.get(); }
-  inline capi::ICU4XCanonicalCombiningClassMap* AsFFIMut() { return this->inner.get(); }
-  inline explicit ICU4XCanonicalCombiningClassMap(capi::ICU4XCanonicalCombiningClassMap* i) : inner(i) {}
-  ICU4XCanonicalCombiningClassMap() = default;
-  ICU4XCanonicalCombiningClassMap(ICU4XCanonicalCombiningClassMap&&) noexcept = default;
-  ICU4XCanonicalCombiningClassMap& operator=(ICU4XCanonicalCombiningClassMap&& other) noexcept = default;
- private:
-  std::unique_ptr<capi::ICU4XCanonicalCombiningClassMap, ICU4XCanonicalCombiningClassMapDeleter> inner;
-};
-
+#include "ICU4XDataError.hpp"
 #include "ICU4XDataProvider.hpp"
 
-inline diplomat::result<ICU4XCanonicalCombiningClassMap, ICU4XError> ICU4XCanonicalCombiningClassMap::create(const ICU4XDataProvider& provider) {
-  auto diplomat_result_raw_out_value = capi::ICU4XCanonicalCombiningClassMap_create(provider.AsFFI());
-  diplomat::result<ICU4XCanonicalCombiningClassMap, ICU4XError> diplomat_result_out_value;
-  if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCanonicalCombiningClassMap>(ICU4XCanonicalCombiningClassMap(diplomat_result_raw_out_value.ok));
-  } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
-  }
-  return diplomat_result_out_value;
+
+namespace capi {
+    extern "C" {
+    
+    typedef struct ICU4XCanonicalCombiningClassMap_create_result {union {ICU4XCanonicalCombiningClassMap* ok; ICU4XDataError err;}; bool is_ok;} ICU4XCanonicalCombiningClassMap_create_result;
+    ICU4XCanonicalCombiningClassMap_create_result ICU4XCanonicalCombiningClassMap_create(const ICU4XDataProvider* provider);
+    
+    uint8_t ICU4XCanonicalCombiningClassMap_get(const ICU4XCanonicalCombiningClassMap* self, char32_t ch);
+    
+    uint8_t ICU4XCanonicalCombiningClassMap_get32(const ICU4XCanonicalCombiningClassMap* self, uint32_t ch);
+    
+    
+    void ICU4XCanonicalCombiningClassMap_destroy(ICU4XCanonicalCombiningClassMap* self);
+    
+    } // extern "C"
 }
+
+inline diplomat::result<std::unique_ptr<ICU4XCanonicalCombiningClassMap>, ICU4XDataError> ICU4XCanonicalCombiningClassMap::create(const ICU4XDataProvider& provider) {
+  auto result = capi::ICU4XCanonicalCombiningClassMap_create(provider.AsFFI());
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XCanonicalCombiningClassMap>, ICU4XDataError>(diplomat::Ok<std::unique_ptr<ICU4XCanonicalCombiningClassMap>>(std::unique_ptr<ICU4XCanonicalCombiningClassMap>(ICU4XCanonicalCombiningClassMap::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XCanonicalCombiningClassMap>, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
+}
+
 inline uint8_t ICU4XCanonicalCombiningClassMap::get(char32_t ch) const {
-  return capi::ICU4XCanonicalCombiningClassMap_get(this->inner.get(), ch);
+  auto result = capi::ICU4XCanonicalCombiningClassMap_get(this->AsFFI(),
+    ch);
+  return result;
 }
+
 inline uint8_t ICU4XCanonicalCombiningClassMap::get32(uint32_t ch) const {
-  return capi::ICU4XCanonicalCombiningClassMap_get32(this->inner.get(), ch);
+  auto result = capi::ICU4XCanonicalCombiningClassMap_get32(this->AsFFI(),
+    ch);
+  return result;
 }
-#endif
+
+inline const capi::ICU4XCanonicalCombiningClassMap* ICU4XCanonicalCombiningClassMap::AsFFI() const {
+  return reinterpret_cast<const capi::ICU4XCanonicalCombiningClassMap*>(this);
+}
+
+inline capi::ICU4XCanonicalCombiningClassMap* ICU4XCanonicalCombiningClassMap::AsFFI() {
+  return reinterpret_cast<capi::ICU4XCanonicalCombiningClassMap*>(this);
+}
+
+inline const ICU4XCanonicalCombiningClassMap* ICU4XCanonicalCombiningClassMap::FromFFI(const capi::ICU4XCanonicalCombiningClassMap* ptr) {
+  return reinterpret_cast<const ICU4XCanonicalCombiningClassMap*>(ptr);
+}
+
+inline ICU4XCanonicalCombiningClassMap* ICU4XCanonicalCombiningClassMap::FromFFI(capi::ICU4XCanonicalCombiningClassMap* ptr) {
+  return reinterpret_cast<ICU4XCanonicalCombiningClassMap*>(ptr);
+}
+
+inline void ICU4XCanonicalCombiningClassMap::operator delete(void* ptr) {
+  capi::ICU4XCanonicalCombiningClassMap_destroy(reinterpret_cast<capi::ICU4XCanonicalCombiningClassMap*>(ptr));
+}
+
+
+#endif // ICU4XCanonicalCombiningClassMap_HPP

@@ -2,33 +2,16 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::error::DataError;
-use crate::key::DataKey;
-use crate::marker::{DataMarker, KeyedDataMarker};
-use crate::request::DataRequest;
-use crate::response::DataResponse;
+use alloc::{boxed::Box, collections::BTreeSet};
+use core::marker::PhantomData;
+use yoke::Yokeable;
 
-/// A data provider that loads data for a specific data type.
-///
-/// Unlike [`DataProvider`], there may be multiple keys corresponding to the same data type.
-/// This is often the case when returning `dyn` trait objects such as [`AnyMarker`].
-///
-/// [`AnyMarker`]: crate::any::AnyMarker
-pub trait DynamicDataProvider<M>
-where
-    M: DataMarker,
-{
-    /// Query the provider for data, returning the result.
-    ///
-    /// Returns [`Ok`] if the request successfully loaded data. If data failed to load, returns an
-    /// Error with more information.
-    fn load_data(&self, key: DataKey, req: DataRequest) -> Result<DataResponse<M>, DataError>;
-}
+use crate::prelude::*;
 
-/// A data provider that loads data for a specific [`DataKey`].
+/// A data provider that loads data for a specific [`DataMarkerInfo`].
 pub trait DataProvider<M>
 where
-    M: KeyedDataMarker,
+    M: DataMarker,
 {
     /// Query the provider for data, returning the result.
     ///
@@ -37,13 +20,318 @@ where
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError>;
 }
 
-impl<M, P> DynamicDataProvider<M> for alloc::boxed::Box<P>
+impl<'a, M, P> DataProvider<M> for &'a P
 where
     M: DataMarker,
+    P: DataProvider<M> + ?Sized,
+{
+    #[inline]
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+        (*self).load(req)
+    }
+}
+
+impl<M, P> DataProvider<M> for Box<P>
+where
+    M: DataMarker,
+    P: DataProvider<M> + ?Sized,
+{
+    #[inline]
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+        (**self).load(req)
+    }
+}
+
+impl<M, P> DataProvider<M> for alloc::rc::Rc<P>
+where
+    M: DataMarker,
+    P: DataProvider<M> + ?Sized,
+{
+    #[inline]
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+        (**self).load(req)
+    }
+}
+
+/// A [`DataProvider`] that can iterate over all supported [`DataIdentifierCow`]s.
+///
+/// The provider is not allowed to return `Ok` for requests that were not returned by `iter_ids`,
+/// and must not fail with a [`DataErrorKind::IdentifierNotFound`] for requests that were returned.
+pub trait IterableDataProvider<M: DataMarker>: DataProvider<M> {
+    /// Returns a set of [`DataIdentifierCow`].
+    fn iter_ids(&self) -> Result<BTreeSet<DataIdentifierCow>, DataError>;
+}
+
+#[cfg(target_has_atomic = "ptr")]
+impl<M, P> DataProvider<M> for alloc::sync::Arc<P>
+where
+    M: DataMarker,
+    P: DataProvider<M> + ?Sized,
+{
+    #[inline]
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+        (**self).load(req)
+    }
+}
+
+/// A data provider that can determine whether it can load a particular data identifier,
+/// potentially cheaper than actually performing the load.
+pub trait DryDataProvider<M: DataMarker>: DataProvider<M> {
+    /// This method goes through the motions of [`load`], but only returns the metadata.
+    ///
+    /// If `dry_load` returns an error, [`load`] must return the same error, but
+    /// not vice-versa. Concretely, [`load`] could return deserialization or I/O errors
+    /// that `dry_load` cannot predict.
+    ///
+    /// [`load`]: DataProvider::load
+    fn dry_load(&self, req: DataRequest) -> Result<DataResponseMetadata, DataError>;
+}
+
+/// A data provider that loads data for a specific data type.
+///
+/// Unlike [`DataProvider`], there may be multiple markers corresponding to the same data type.
+/// This is often the case when returning `dyn` trait objects such as [`AnyMarker`].
+///
+/// [`AnyMarker`]: crate::any::AnyMarker
+pub trait DynamicDataProvider<M>
+where
+    M: DynamicDataMarker,
+{
+    /// Query the provider for data, returning the result.
+    ///
+    /// Returns [`Ok`] if the request successfully loaded data. If data failed to load, returns an
+    /// Error with more information.
+    fn load_data(
+        &self,
+        marker: DataMarkerInfo,
+        req: DataRequest,
+    ) -> Result<DataResponse<M>, DataError>;
+}
+
+/// A dynanmic data provider that can determine whether it can load a particular data identifier,
+/// potentially cheaper than actually performing the load.
+pub trait DynamicDryDataProvider<M: DynamicDataMarker>: DynamicDataProvider<M> {
+    /// This method goes through the motions of [`load_data`], but only returns the metadata.
+    ///
+    /// If `dry_load_data` returns an error, [`load_data`] must return the same error, but
+    /// not vice-versa. Concretely, [`load_data`] could return deserialization or I/O errors
+    /// that `dry_load_data` cannot predict.
+    ///
+    /// [`load_data`]: DynamicDataProvider::load_data
+    fn dry_load_data(
+        &self,
+        marker: DataMarkerInfo,
+        req: DataRequest,
+    ) -> Result<DataResponseMetadata, DataError>;
+}
+
+impl<'a, M, P> DynamicDataProvider<M> for &'a P
+where
+    M: DynamicDataMarker,
     P: DynamicDataProvider<M> + ?Sized,
 {
-    fn load_data(&self, key: DataKey, req: DataRequest) -> Result<DataResponse<M>, DataError> {
-        (**self).load_data(key, req)
+    #[inline]
+    fn load_data(
+        &self,
+        marker: DataMarkerInfo,
+        req: DataRequest,
+    ) -> Result<DataResponse<M>, DataError> {
+        (*self).load_data(marker, req)
+    }
+}
+
+impl<M, P> DynamicDataProvider<M> for Box<P>
+where
+    M: DynamicDataMarker,
+    P: DynamicDataProvider<M> + ?Sized,
+{
+    #[inline]
+    fn load_data(
+        &self,
+        marker: DataMarkerInfo,
+        req: DataRequest,
+    ) -> Result<DataResponse<M>, DataError> {
+        (**self).load_data(marker, req)
+    }
+}
+
+impl<M, P> DynamicDataProvider<M> for alloc::rc::Rc<P>
+where
+    M: DynamicDataMarker,
+    P: DynamicDataProvider<M> + ?Sized,
+{
+    #[inline]
+    fn load_data(
+        &self,
+        marker: DataMarkerInfo,
+        req: DataRequest,
+    ) -> Result<DataResponse<M>, DataError> {
+        (**self).load_data(marker, req)
+    }
+}
+
+#[cfg(target_has_atomic = "ptr")]
+impl<M, P> DynamicDataProvider<M> for alloc::sync::Arc<P>
+where
+    M: DynamicDataMarker,
+    P: DynamicDataProvider<M> + ?Sized,
+{
+    #[inline]
+    fn load_data(
+        &self,
+        marker: DataMarkerInfo,
+        req: DataRequest,
+    ) -> Result<DataResponse<M>, DataError> {
+        (**self).load_data(marker, req)
+    }
+}
+
+/// A [`DynamicDataProvider`] that can iterate over all supported [`DataIdentifierCow`]s for a certain marker.
+///
+/// The provider is not allowed to return `Ok` for requests that were not returned by `iter_ids`,
+/// and must not fail with a [`DataErrorKind::IdentifierNotFound`] for requests that were returned.
+pub trait IterableDynamicDataProvider<M: DynamicDataMarker>: DynamicDataProvider<M> {
+    /// Given a [`DataMarkerInfo`], returns a set of [`DataIdentifierCow`].
+    fn iter_ids_for_marker(
+        &self,
+        marker: DataMarkerInfo,
+    ) -> Result<BTreeSet<DataIdentifierCow>, DataError>;
+}
+
+impl<M, P> IterableDynamicDataProvider<M> for Box<P>
+where
+    M: DynamicDataMarker,
+    P: IterableDynamicDataProvider<M> + ?Sized,
+{
+    fn iter_ids_for_marker(
+        &self,
+        marker: DataMarkerInfo,
+    ) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
+        (**self).iter_ids_for_marker(marker)
+    }
+}
+
+/// A data provider that loads data for a specific data type.
+///
+/// Unlike [`DataProvider`], the provider is bound to a specific marker ahead of time.
+///
+/// This crate provides [`DataProviderWithMarker`] which implements this trait on a single provider
+/// with a single marker. However, this trait can also be implemented on providers that fork between
+/// multiple markers that all return the same data type. For example, it can abstract over many
+/// calendar systems in the datetime formatter.
+///
+/// [`AnyMarker`]: crate::any::AnyMarker
+pub trait BoundDataProvider<M>
+where
+    M: DynamicDataMarker,
+{
+    /// Query the provider for data, returning the result.
+    ///
+    /// Returns [`Ok`] if the request successfully loaded data. If data failed to load, returns an
+    /// Error with more information.
+    fn load_bound(&self, req: DataRequest) -> Result<DataResponse<M>, DataError>;
+    /// Returns the [`DataMarkerInfo`] that this provider uses for loading data.
+    fn bound_marker(&self) -> DataMarkerInfo;
+}
+
+impl<'a, M, P> BoundDataProvider<M> for &'a P
+where
+    M: DynamicDataMarker,
+    P: BoundDataProvider<M> + ?Sized,
+{
+    #[inline]
+    fn load_bound(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+        (*self).load_bound(req)
+    }
+    #[inline]
+    fn bound_marker(&self) -> DataMarkerInfo {
+        (*self).bound_marker()
+    }
+}
+
+impl<M, P> BoundDataProvider<M> for Box<P>
+where
+    M: DynamicDataMarker,
+    P: BoundDataProvider<M> + ?Sized,
+{
+    #[inline]
+    fn load_bound(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+        (**self).load_bound(req)
+    }
+    #[inline]
+    fn bound_marker(&self) -> DataMarkerInfo {
+        (**self).bound_marker()
+    }
+}
+
+impl<M, P> BoundDataProvider<M> for alloc::rc::Rc<P>
+where
+    M: DynamicDataMarker,
+    P: BoundDataProvider<M> + ?Sized,
+{
+    #[inline]
+    fn load_bound(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+        (**self).load_bound(req)
+    }
+    #[inline]
+    fn bound_marker(&self) -> DataMarkerInfo {
+        (**self).bound_marker()
+    }
+}
+
+#[cfg(target_has_atomic = "ptr")]
+impl<M, P> BoundDataProvider<M> for alloc::sync::Arc<P>
+where
+    M: DynamicDataMarker,
+    P: BoundDataProvider<M> + ?Sized,
+{
+    #[inline]
+    fn load_bound(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+        (**self).load_bound(req)
+    }
+    #[inline]
+    fn bound_marker(&self) -> DataMarkerInfo {
+        (**self).bound_marker()
+    }
+}
+
+/// A [`DataProvider`] associated with a specific marker.
+///
+/// Implements [`BoundDataProvider`].
+#[derive(Debug)]
+pub struct DataProviderWithMarker<M, P> {
+    inner: P,
+    _marker: PhantomData<M>,
+}
+
+impl<M, P> DataProviderWithMarker<M, P>
+where
+    M: DataMarker,
+    P: DataProvider<M>,
+{
+    /// Creates a [`DataProviderWithMarker`] from a [`DataProvider`] with a [`DataMarker`].
+    pub const fn new(inner: P) -> Self {
+        Self {
+            inner,
+            _marker: PhantomData,
+        }
+    }
+}
+
+impl<M, M0, Y, P> BoundDataProvider<M0> for DataProviderWithMarker<M, P>
+where
+    M: DataMarker<Yokeable = Y>,
+    M0: DynamicDataMarker<Yokeable = Y>,
+    Y: for<'a> Yokeable<'a>,
+    P: DataProvider<M>,
+{
+    #[inline]
+    fn load_bound(&self, req: DataRequest) -> Result<DataResponse<M0>, DataError> {
+        self.inner.load(req).map(DataResponse::cast)
+    }
+    #[inline]
+    fn bound_marker(&self) -> DataMarkerInfo {
+        M::INFO
     }
 }
 
@@ -52,7 +340,6 @@ mod test {
 
     use super::*;
     use crate::hello_world::*;
-    use crate::prelude::*;
     use alloc::borrow::Cow;
     use alloc::string::String;
     use core::fmt::Debug;
@@ -62,7 +349,8 @@ mod test {
     // JSON string. It also exercises most of the data provider code paths.
 
     /// Key for HelloAlt, used for testing mismatched types
-    const HELLO_ALT_KEY: DataKey = crate::data_key!("core/helloalt@1");
+    const HELLO_ALT_KEY: DataMarkerInfo =
+        DataMarkerInfo::from_path(crate::marker::data_marker_path!("core/helloalt1@1"));
 
     /// A data struct serialization-compatible with HelloWorldV1 used for testing mismatched types
     #[derive(
@@ -76,12 +364,12 @@ mod test {
     /// Marker type for [`HelloAlt`].
     struct HelloAltMarker {}
 
-    impl DataMarker for HelloAltMarker {
+    impl DynamicDataMarker for HelloAltMarker {
         type Yokeable = HelloAlt;
     }
 
-    impl KeyedDataMarker for HelloAltMarker {
-        const KEY: DataKey = HELLO_ALT_KEY;
+    impl DataMarker for HelloAltMarker {
+        const INFO: DataMarkerInfo = HELLO_ALT_KEY;
     }
 
     #[derive(Deserialize, Debug, Clone, Default, PartialEq)]
@@ -103,12 +391,12 @@ mod test {
         fn load(&self, _: DataRequest) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
             Ok(DataResponse {
                 metadata: DataResponseMetadata::default(),
-                payload: Some(DataPayload::from_owned(self.hello_v1.clone())),
+                payload: DataPayload::from_owned(self.hello_v1.clone()),
             })
         }
     }
 
-    crate::impl_dynamic_data_provider!(DataWarehouse, [HelloWorldV1Marker,], AnyMarker);
+    crate::dynutil::impl_dynamic_data_provider!(DataWarehouse, [HelloWorldV1Marker,], AnyMarker);
 
     /// A DataProvider that supports both key::HELLO_WORLD_V1 and HELLO_ALT.
     #[derive(Debug)]
@@ -126,7 +414,7 @@ mod test {
         fn load(&self, _: DataRequest) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
             Ok(DataResponse {
                 metadata: DataResponseMetadata::default(),
-                payload: Some(DataPayload::from_owned(self.data.hello_v1.clone())),
+                payload: DataPayload::from_owned(self.data.hello_v1.clone()),
             })
         }
     }
@@ -135,12 +423,12 @@ mod test {
         fn load(&self, _: DataRequest) -> Result<DataResponse<HelloAltMarker>, DataError> {
             Ok(DataResponse {
                 metadata: DataResponseMetadata::default(),
-                payload: Some(DataPayload::from_owned(self.data.hello_alt.clone())),
+                payload: DataPayload::from_owned(self.data.hello_alt.clone()),
             })
         }
     }
 
-    crate::impl_dynamic_data_provider!(
+    crate::dynutil::impl_dynamic_data_provider!(
         DataProvider2,
         [HelloWorldV1Marker, HelloAltMarker,],
         AnyMarker
@@ -166,13 +454,13 @@ mod test {
     fn get_payload_v1<P: DataProvider<HelloWorldV1Marker> + ?Sized>(
         provider: &P,
     ) -> Result<DataPayload<HelloWorldV1Marker>, DataError> {
-        provider.load(Default::default())?.take_payload()
+        provider.load(Default::default()).map(|r| r.payload)
     }
 
     fn get_payload_alt<P: DataProvider<HelloAltMarker> + ?Sized>(
         provider: &P,
     ) -> Result<DataPayload<HelloAltMarker>, DataError> {
-        provider.load(Default::default())?.take_payload()
+        provider.load(Default::default()).map(|r| r.payload)
     }
 
     #[test]
@@ -189,6 +477,7 @@ mod test {
 
     #[test]
     fn test_warehouse_owned_dyn_erased() {
+        use crate::any::*;
         let warehouse = get_warehouse(DATA);
         let hello_data = get_payload_v1(&warehouse.as_any_provider().as_downcasting()).unwrap();
         assert!(matches!(
@@ -219,7 +508,7 @@ mod test {
         assert!(matches!(
             response,
             Err(DataError {
-                kind: DataErrorKind::MissingDataKey,
+                kind: DataErrorKind::MarkerNotFound,
                 ..
             })
         ));
@@ -296,7 +585,7 @@ mod test {
         assert!(matches!(
             response,
             Err(DataError {
-                kind: DataErrorKind::MismatchedType(_),
+                kind: DataErrorKind::Downcast(_),
                 ..
             })
         ));
@@ -306,10 +595,8 @@ mod test {
     where
         P: DataProvider<HelloWorldV1Marker> + DataProvider<HelloAltMarker> + ?Sized,
     {
-        let v1: DataPayload<HelloWorldV1Marker> =
-            d.load(Default::default()).unwrap().take_payload().unwrap();
-        let v2: DataPayload<HelloAltMarker> =
-            d.load(Default::default()).unwrap().take_payload().unwrap();
+        let v1: DataPayload<HelloWorldV1Marker> = d.load(Default::default()).unwrap().payload;
+        let v2: DataPayload<HelloAltMarker> = d.load(Default::default()).unwrap().payload;
         if v1.get().message == v2.get().message {
             panic!()
         }

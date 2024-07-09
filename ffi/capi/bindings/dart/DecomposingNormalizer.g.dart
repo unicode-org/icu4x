@@ -26,11 +26,11 @@ final class DecomposingNormalizer implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `new_nfd`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.new_nfd) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   factory DecomposingNormalizer.nfd(DataProvider provider) {
     final result = _ICU4XDecomposingNormalizer_create_nfd(provider._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     return DecomposingNormalizer._fromFfi(result.union.ok, []);
   }
@@ -39,11 +39,11 @@ final class DecomposingNormalizer implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `new_nfkd`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.new_nfkd) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   factory DecomposingNormalizer.nfkd(DataProvider provider) {
     final result = _ICU4XDecomposingNormalizer_create_nfkd(provider._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     return DecomposingNormalizer._fromFfi(result.union.ok, []);
   }
@@ -54,18 +54,13 @@ final class DecomposingNormalizer implements ffi.Finalizable {
   /// to the WHATWG Encoding Standard.
   ///
   /// See the [Rust documentation for `normalize_utf8`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.normalize_utf8) for more information.
-  ///
-  /// Throws [Error] on failure.
   String normalize(String s) {
     final temp = ffi2.Arena();
     final sView = s.utf8View;
-    final writeable = _Writeable();
-    final result = _ICU4XDecomposingNormalizer_normalize(_ffi, sView.allocIn(temp), sView.length, writeable._ffi);
+    final write = _Write();
+    _ICU4XDecomposingNormalizer_normalize(_ffi, sView.allocIn(temp), sView.length, write._ffi);
     temp.releaseAll();
-    if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
-    }
-    return writeable.finalize();
+    return write.finalize();
   }
 
   /// Check if a string is normalized
@@ -110,9 +105,9 @@ external _ResultOpaqueInt32 _ICU4XDecomposingNormalizer_create_nfd(ffi.Pointer<f
 external _ResultOpaqueInt32 _ICU4XDecomposingNormalizer_create_nfkd(ffi.Pointer<ffi.Opaque> provider);
 
 @meta.ResourceIdentifier('ICU4XDecomposingNormalizer_normalize')
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDecomposingNormalizer_normalize')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDecomposingNormalizer_normalize')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _ICU4XDecomposingNormalizer_normalize(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> sData, int sLength, ffi.Pointer<ffi.Opaque> writeable);
+external void _ICU4XDecomposingNormalizer_normalize(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> sData, int sLength, ffi.Pointer<ffi.Opaque> write);
 
 @meta.ResourceIdentifier('ICU4XDecomposingNormalizer_is_normalized')
 @ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XDecomposingNormalizer_is_normalized')

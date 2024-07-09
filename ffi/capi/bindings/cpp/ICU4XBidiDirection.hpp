@@ -1,21 +1,37 @@
 #ifndef ICU4XBidiDirection_HPP
 #define ICU4XBidiDirection_HPP
+
+#include "ICU4XBidiDirection.d.hpp"
+
+#include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
-#include <algorithm>
 #include <memory>
-#include <variant>
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-#include "ICU4XBidiDirection.h"
+
+namespace capi {
+    extern "C" {
+    
+    
+    } // extern "C"
+}
 
 
-enum struct ICU4XBidiDirection {
-  Ltr = 0,
-  Rtl = 1,
-  Mixed = 2,
-};
+inline capi::ICU4XBidiDirection ICU4XBidiDirection::AsFFI() const {
+  return static_cast<capi::ICU4XBidiDirection>(value);
+}
 
-#endif
+inline ICU4XBidiDirection ICU4XBidiDirection::FromFFI(capi::ICU4XBidiDirection c_enum) {
+  switch (c_enum) {
+    case capi::ICU4XBidiDirection_Ltr:
+    case capi::ICU4XBidiDirection_Rtl:
+    case capi::ICU4XBidiDirection_Mixed:
+      return static_cast<ICU4XBidiDirection::Value>(c_enum);
+    default:
+      abort();
+  }
+}
+#endif // ICU4XBidiDirection_HPP

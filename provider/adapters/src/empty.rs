@@ -6,6 +6,7 @@
 //!
 //! Use [`EmptyDataProvider`] as a stand-in for a provider that always fails.
 
+use alloc::collections::BTreeSet;
 use icu_provider::prelude::*;
 
 /// A data provider that always returns an error.
@@ -22,9 +23,9 @@ use icu_provider::prelude::*;
 /// let provider = EmptyDataProvider::new();
 ///
 /// assert!(matches!(
-///     provider.load_any(HelloWorldV1Marker::KEY, Default::default()),
+///     provider.load_any(HelloWorldV1Marker::INFO, Default::default()),
 ///     Err(DataError {
-///         kind: DataErrorKind::MissingDataKey,
+///         kind: DataErrorKind::MarkerNotFound,
 ///         ..
 ///     })
 /// ));
@@ -41,10 +42,10 @@ impl Default for EmptyDataProvider {
 }
 
 impl EmptyDataProvider {
-    /// Creates a data provider that always returns [`DataErrorKind::MissingDataKey`].
+    /// Creates a data provider that always returns [`DataErrorKind::MarkerNotFound`].
     pub fn new() -> Self {
         Self {
-            error_kind: DataErrorKind::MissingDataKey,
+            error_kind: DataErrorKind::MarkerNotFound,
         }
     }
 
@@ -55,58 +56,54 @@ impl EmptyDataProvider {
 }
 
 impl AnyProvider for EmptyDataProvider {
-    fn load_any(&self, key: DataKey, base_req: DataRequest) -> Result<AnyResponse, DataError> {
-        Err(self.error_kind.with_req(key, base_req))
-    }
-}
-
-impl BufferProvider for EmptyDataProvider {
-    fn load_buffer(
+    fn load_any(
         &self,
-        key: DataKey,
+        marker: DataMarkerInfo,
         base_req: DataRequest,
-    ) -> Result<DataResponse<BufferMarker>, DataError> {
-        Err(self.error_kind.with_req(key, base_req))
+    ) -> Result<AnyResponse, DataError> {
+        Err(self.error_kind.with_req(marker, base_req))
     }
 }
 
 impl<M> DynamicDataProvider<M> for EmptyDataProvider
 where
-    M: DataMarker,
+    M: DynamicDataMarker,
 {
-    fn load_data(&self, key: DataKey, base_req: DataRequest) -> Result<DataResponse<M>, DataError> {
-        Err(self.error_kind.with_req(key, base_req))
+    fn load_data(
+        &self,
+        marker: DataMarkerInfo,
+        base_req: DataRequest,
+    ) -> Result<DataResponse<M>, DataError> {
+        Err(self.error_kind.with_req(marker, base_req))
     }
 }
 
 impl<M> DataProvider<M> for EmptyDataProvider
 where
-    M: KeyedDataMarker,
+    M: DataMarker,
 {
     fn load(&self, base_req: DataRequest) -> Result<DataResponse<M>, DataError> {
-        Err(self.error_kind.with_req(M::KEY, base_req))
+        Err(self.error_kind.with_req(M::INFO, base_req))
     }
 }
 
-#[cfg(feature = "datagen")]
-impl<M> icu_provider::datagen::IterableDataProvider<M> for EmptyDataProvider
-where
-    M: KeyedDataMarker,
-{
-    fn supported_locales(&self) -> Result<alloc::vec::Vec<DataLocale>, DataError> {
-        Ok(vec![])
-    }
-}
-
-#[cfg(feature = "datagen")]
-impl<M> icu_provider::datagen::IterableDynamicDataProvider<M> for EmptyDataProvider
+impl<M> IterableDataProvider<M> for EmptyDataProvider
 where
     M: DataMarker,
 {
-    fn supported_locales_for_key(
+    fn iter_ids(&self) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
+        Ok(Default::default())
+    }
+}
+
+impl<M> IterableDynamicDataProvider<M> for EmptyDataProvider
+where
+    M: DynamicDataMarker,
+{
+    fn iter_ids_for_marker(
         &self,
-        _: DataKey,
-    ) -> Result<alloc::vec::Vec<DataLocale>, DataError> {
-        Ok(vec![])
+        _: DataMarkerInfo,
+    ) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
+        Ok(Default::default())
     }
 }

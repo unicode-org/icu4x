@@ -38,14 +38,14 @@
 
 use crate::calendar_arithmetic::PrecomputedDataSource;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
+use crate::error::DateError;
 use crate::provider::islamic::{
     IslamicCacheV1, IslamicObservationalCacheV1Marker, IslamicUmmAlQuraCacheV1Marker,
     PackedIslamicYearInfo,
 };
-use crate::AnyCalendarKind;
-use crate::AsCalendar;
 use crate::Iso;
-use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime, Time};
+use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, Time};
+use crate::{AsCalendar, RangeError};
 use calendrical_calculations::islamic::{
     IslamicBasedMarker, ObservationalIslamicMarker, SaudiIslamicMarker,
 };
@@ -122,15 +122,14 @@ impl IslamicObservational {
     pub const fn new() -> Self {
         Self {
             data: Some(DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_CALENDAR_ISLAMICOBSERVATIONALCACHE_V1,
+                crate::provider::Baked::SINGLETON_ISLAMIC_OBSERVATIONAL_CACHE_V1_MARKER,
             )),
         }
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: CalendarError,
-        #[cfg(skip)]
+    icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,
         functions: [
-            new,
+            new: skip,
             try_new_with_any_provider,
             try_new_with_buffer_provider,
             try_new_unstable,
@@ -140,9 +139,9 @@ impl IslamicObservational {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<D: DataProvider<IslamicObservationalCacheV1Marker> + ?Sized>(
         provider: &D,
-    ) -> Result<Self, CalendarError> {
+    ) -> Result<Self, DataError> {
         Ok(Self {
-            data: Some(provider.load(Default::default())?.take_payload()?),
+            data: Some(provider.load(Default::default())?.payload),
         })
     }
 
@@ -157,12 +156,6 @@ impl IslamicCivil {
     pub fn new() -> Self {
         Self
     }
-
-    /// Construct a new [`IslamicCivil`] (deprecated: we will not add precomputation to this calendar)
-    #[deprecated = "Precomputation not needed for this calendar"]
-    pub fn new_always_calculating() -> Self {
-        Self
-    }
 }
 
 impl IslamicUmmAlQura {
@@ -175,15 +168,14 @@ impl IslamicUmmAlQura {
     pub const fn new() -> Self {
         Self {
             data: Some(DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_CALENDAR_ISLAMICUMMALQURACACHE_V1,
+                crate::provider::Baked::SINGLETON_ISLAMIC_UMM_AL_QURA_CACHE_V1_MARKER,
             )),
         }
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: CalendarError,
-        #[cfg(skip)]
+    icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,
         functions: [
-            new,
+            new: skip,
             try_new_with_any_provider,
             try_new_with_buffer_provider,
             try_new_unstable,
@@ -193,9 +185,9 @@ impl IslamicUmmAlQura {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<D: DataProvider<IslamicUmmAlQuraCacheV1Marker> + ?Sized>(
         provider: &D,
-    ) -> Result<Self, CalendarError> {
+    ) -> Result<Self, DataError> {
         Ok(Self {
-            data: Some(provider.load(Default::default())?.take_payload()?),
+            data: Some(provider.load(Default::default())?.payload),
         })
     }
 
@@ -210,42 +202,91 @@ impl IslamicTabular {
     pub fn new() -> Self {
         Self
     }
+}
 
-    /// Construct a new [`IslamicTabular`] (deprecated: we will not add precomputation to this calendar)
-    #[deprecated = "Precomputation not needed for this calendar"]
-    pub fn new_always_calculating() -> Self {
-        Self
+/// Compact representation of the length of an Islamic year.
+#[derive(Copy, Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
+enum IslamicYearLength {
+    /// Long (355-day) Islamic year
+    L355,
+    /// Short (354-day) Islamic year
+    L354,
+    /// Unexpectedly Short (353-day) Islamic year
+    ///
+    /// It is probably a bug when this year length is returned. See:
+    /// <https://github.com/unicode-org/icu4x/issues/4930>
+    L353,
+}
+
+impl Default for IslamicYearLength {
+    fn default() -> Self {
+        Self::L354
+    }
+}
+
+impl IslamicYearLength {
+    fn try_from_int(value: i64) -> Option<Self> {
+        match value {
+            355 => Some(Self::L355),
+            354 => Some(Self::L354),
+            353 => Some(Self::L353),
+            _ => None,
+        }
+    }
+    fn to_int(self) -> u16 {
+        match self {
+            Self::L355 => 355,
+            Self::L354 => 354,
+            Self::L353 => 353,
+        }
     }
 }
 
 #[derive(Copy, Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
 pub(crate) struct IslamicYearInfo {
     packed_data: PackedIslamicYearInfo,
-    /// Is the previous year 355 days (short = 354)
-    prev_year_long: bool,
+    prev_year_length: IslamicYearLength,
 }
 
 impl IslamicYearInfo {
     pub(crate) const LONG_YEAR_LEN: u16 = 355;
     const SHORT_YEAR_LEN: u16 = 354;
-    pub(crate) fn new(prev_year_long: bool, packed_data: PackedIslamicYearInfo) -> Self {
-        Self {
-            prev_year_long,
-            packed_data,
-        }
+    pub(crate) fn new(
+        prev_packed: PackedIslamicYearInfo,
+        this_packed: PackedIslamicYearInfo,
+        extended_year: i32,
+    ) -> (Self, i32) {
+        let days_in_year = prev_packed.days_in_year();
+        let days_in_year = match IslamicYearLength::try_from_int(days_in_year as i64) {
+            Some(x) => x,
+            None => {
+                debug_assert!(false, "Found wrong year length for Islamic year {extended_year}: Expected 355, 354, or 353, got {days_in_year}");
+                Default::default()
+            }
+        };
+        let year_info = Self {
+            prev_year_length: days_in_year,
+            packed_data: this_packed,
+        };
+        (year_info, extended_year)
     }
 
     fn compute<IB: IslamicBasedMarker>(extended_year: i32) -> Self {
         let ny = IB::fixed_from_islamic(extended_year, 1, 1);
         let packed_data = PackedIslamicYearInfo::compute_with_ny::<IB>(extended_year, ny);
         let prev_ny = IB::fixed_from_islamic(extended_year - 1, 1, 1);
-        let diff = u16::try_from(ny - prev_ny).unwrap_or(0);
-        debug_assert!(
-            diff == Self::SHORT_YEAR_LEN || diff == Self::LONG_YEAR_LEN,
-            "Found wrong year length for Islamic year {}: Expected 355 or 354, got {diff}",
-            extended_year - 1
-        );
-        Self::new(diff == Self::LONG_YEAR_LEN, packed_data)
+        let rd_diff = ny - prev_ny;
+        let rd_diff = match IslamicYearLength::try_from_int(rd_diff) {
+            Some(x) => x,
+            None => {
+                debug_assert!(false, "({}) Found wrong year length for Islamic year {extended_year}: Expected 355, 354, or 353, got {rd_diff}", IB::DEBUG_NAME);
+                Default::default()
+            }
+        };
+        Self {
+            prev_year_length: rd_diff,
+            packed_data,
+        }
     }
     /// Get the new year R.D. given the extended year that this yearinfo is for    
     fn new_year<IB: IslamicBasedMarker>(self, extended_year: i32) -> RataDie {
@@ -266,11 +307,7 @@ impl IslamicYearInfo {
 
     #[inline]
     fn days_in_prev_year(self) -> u16 {
-        if self.prev_year_long {
-            Self::LONG_YEAR_LEN
-        } else {
-            Self::SHORT_YEAR_LEN
-        }
+        self.prev_year_length.to_int()
     }
 }
 
@@ -394,27 +431,25 @@ impl Calendar for IslamicObservational {
         year: i32,
         month_code: types::MonthCode,
         day: u8,
-    ) -> Result<Self::DateInner, CalendarError> {
+    ) -> Result<Self::DateInner, DateError> {
         let year = if era.0 == tinystr!(16, "islamic") || era.0 == tinystr!(16, "ah") {
             year
         } else {
-            return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
+            return Err(DateError::UnknownEra(era));
         };
         let month = if let Some((ordinal, false)) = month_code.parsed() {
             ordinal
         } else {
-            return Err(CalendarError::UnknownMonthCode(
-                month_code.0,
-                self.debug_name(),
-            ));
+            return Err(DateError::UnknownMonthCode(month_code));
         };
-        ArithmeticDate::new_from_ordinals_with_info(
-            year,
-            month,
-            day,
-            self.precomputed_data().load_or_compute_info(year),
-        )
-        .map(IslamicDateInner)
+        Ok(IslamicDateInner(
+            ArithmeticDate::new_from_ordinals_with_info(
+                year,
+                month,
+                day,
+                self.precomputed_data().load_or_compute_info(year),
+            )?,
+        ))
     }
 
     fn date_from_iso(&self, iso: Date<crate::Iso>) -> Self::DateInner {
@@ -498,8 +533,8 @@ impl Calendar for IslamicObservational {
         }
     }
 
-    fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
-        Some(AnyCalendarKind::IslamicObservational)
+    fn any_calendar_kind(&self) -> Option<crate::AnyCalendarKind> {
+        Some(crate::any_calendar::IntoAnyCalendar::kind(self))
     }
 }
 
@@ -543,7 +578,7 @@ impl<A: AsCalendar<Calendar = IslamicObservational>> Date<A> {
         month: u8,
         day: u8,
         calendar: A,
-    ) -> Result<Date<A>, CalendarError> {
+    ) -> Result<Date<A>, RangeError> {
         let year_info = calendar
             .as_calendar()
             .precomputed_data()
@@ -583,7 +618,7 @@ impl<A: AsCalendar<Calendar = IslamicObservational>> DateTime<A> {
         minute: u8,
         second: u8,
         calendar: A,
-    ) -> Result<DateTime<A>, CalendarError> {
+    ) -> Result<DateTime<A>, DateError> {
         Ok(DateTime {
             date: Date::try_new_observational_islamic_date(year, month, day, calendar)?,
             time: Time::try_new(hour, minute, second, 0)?,
@@ -630,31 +665,29 @@ impl Calendar for IslamicUmmAlQura {
         year: i32,
         month_code: types::MonthCode,
         day: u8,
-    ) -> Result<Self::DateInner, CalendarError> {
+    ) -> Result<Self::DateInner, DateError> {
         let year = if era.0 == tinystr!(16, "islamic-umalqura")
             || era.0 == tinystr!(16, "islamic")
             || era.0 == tinystr!(16, "ah")
         {
             year
         } else {
-            return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
+            return Err(DateError::UnknownEra(era));
         };
 
         let month = if let Some((ordinal, false)) = month_code.parsed() {
             ordinal
         } else {
-            return Err(CalendarError::UnknownMonthCode(
-                month_code.0,
-                self.debug_name(),
-            ));
+            return Err(DateError::UnknownMonthCode(month_code));
         };
-        ArithmeticDate::new_from_ordinals_with_info(
-            year,
-            month,
-            day,
-            self.precomputed_data().load_or_compute_info(year),
-        )
-        .map(IslamicUmmAlQuraDateInner)
+        Ok(IslamicUmmAlQuraDateInner(
+            ArithmeticDate::new_from_ordinals_with_info(
+                year,
+                month,
+                day,
+                self.precomputed_data().load_or_compute_info(year),
+            )?,
+        ))
     }
 
     fn date_from_iso(&self, iso: Date<Iso>) -> Self::DateInner {
@@ -733,8 +766,8 @@ impl Calendar for IslamicUmmAlQura {
         }
     }
 
-    fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
-        Some(AnyCalendarKind::IslamicUmmAlQura)
+    fn any_calendar_kind(&self) -> Option<crate::AnyCalendarKind> {
+        Some(crate::any_calendar::IntoAnyCalendar::kind(self))
     }
 }
 
@@ -777,14 +810,17 @@ impl<A: AsCalendar<Calendar = IslamicUmmAlQura>> Date<A> {
         month: u8,
         day: u8,
         calendar: A,
-    ) -> Result<Date<A>, CalendarError> {
+    ) -> Result<Date<A>, RangeError> {
         let year_info = calendar
             .as_calendar()
             .precomputed_data()
             .load_or_compute_info(year);
-        ArithmeticDate::new_from_ordinals_with_info(year, month, day, year_info)
-            .map(IslamicUmmAlQuraDateInner)
-            .map(|inner| Date::from_raw(inner, calendar))
+        Ok(Date::from_raw(
+            IslamicUmmAlQuraDateInner(ArithmeticDate::new_from_ordinals_with_info(
+                year, month, day, year_info,
+            )?),
+            calendar,
+        ))
     }
 }
 
@@ -816,7 +852,7 @@ impl<A: AsCalendar<Calendar = IslamicUmmAlQura>> DateTime<A> {
         minute: u8,
         second: u8,
         calendar: A,
-    ) -> Result<DateTime<A>, CalendarError> {
+    ) -> Result<DateTime<A>, DateError> {
         Ok(DateTime {
             date: Date::try_new_ummalqura_date(year, month, day, calendar)?,
             time: Time::try_new(hour, minute, second, 0)?,
@@ -848,9 +884,9 @@ impl CalendarArithmetic for IslamicCivil {
 
     fn days_in_provided_year(year: i32, _data: ()) -> u16 {
         if Self::is_leap_year(year, ()) {
-            355
+            IslamicYearInfo::LONG_YEAR_LEN
         } else {
-            354
+            IslamicYearInfo::SHORT_YEAR_LEN
         }
     }
 
@@ -876,7 +912,7 @@ impl Calendar for IslamicCivil {
         year: i32,
         month_code: types::MonthCode,
         day: u8,
-    ) -> Result<Self::DateInner, CalendarError> {
+    ) -> Result<Self::DateInner, DateError> {
         let year = if era.0 == tinystr!(16, "islamic-civil")
             || era.0 == tinystr!(16, "islamicc")
             || era.0 == tinystr!(16, "islamic")
@@ -885,7 +921,7 @@ impl Calendar for IslamicCivil {
             // TODO: Check name and alias
             year
         } else {
-            return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
+            return Err(DateError::UnknownEra(era));
         };
 
         ArithmeticDate::new_from_codes(self, year, month_code, day).map(IslamicCivilDateInner)
@@ -963,8 +999,9 @@ impl Calendar for IslamicCivil {
             next_year: Self::year_as_islamic(next_year),
         }
     }
-    fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
-        Some(AnyCalendarKind::IslamicCivil)
+
+    fn any_calendar_kind(&self) -> Option<crate::AnyCalendarKind> {
+        Some(crate::any_calendar::IntoAnyCalendar::kind(self))
     }
 }
 
@@ -1008,7 +1045,7 @@ impl<A: AsCalendar<Calendar = IslamicCivil>> Date<A> {
     /// use icu::calendar::islamic::IslamicCivil;
     /// use icu::calendar::Date;
     ///
-    /// let islamic = IslamicCivil::new_always_calculating();
+    /// let islamic = IslamicCivil::new();
     ///
     /// let date_islamic =
     ///     Date::try_new_islamic_civil_date_with_calendar(1392, 4, 25, islamic)
@@ -1023,7 +1060,7 @@ impl<A: AsCalendar<Calendar = IslamicCivil>> Date<A> {
         month: u8,
         day: u8,
         calendar: A,
-    ) -> Result<Date<A>, CalendarError> {
+    ) -> Result<Date<A>, RangeError> {
         ArithmeticDate::new_from_ordinals(year, month, day)
             .map(IslamicCivilDateInner)
             .map(|inner| Date::from_raw(inner, calendar))
@@ -1037,7 +1074,7 @@ impl<A: AsCalendar<Calendar = IslamicCivil>> DateTime<A> {
     /// use icu::calendar::islamic::IslamicCivil;
     /// use icu::calendar::DateTime;
     ///
-    /// let islamic = IslamicCivil::new_always_calculating();
+    /// let islamic = IslamicCivil::new();
     ///
     /// let datetime_islamic =
     ///     DateTime::try_new_islamic_civil_datetime_with_calendar(
@@ -1060,7 +1097,7 @@ impl<A: AsCalendar<Calendar = IslamicCivil>> DateTime<A> {
         minute: u8,
         second: u8,
         calendar: A,
-    ) -> Result<DateTime<A>, CalendarError> {
+    ) -> Result<DateTime<A>, DateError> {
         Ok(DateTime {
             date: Date::try_new_islamic_civil_date_with_calendar(year, month, day, calendar)?,
             time: Time::try_new(hour, minute, second, 0)?,
@@ -1092,9 +1129,9 @@ impl CalendarArithmetic for IslamicTabular {
 
     fn days_in_provided_year(year: i32, _data: ()) -> u16 {
         if Self::is_leap_year(year, ()) {
-            355
+            IslamicYearInfo::LONG_YEAR_LEN
         } else {
-            354
+            IslamicYearInfo::SHORT_YEAR_LEN
         }
     }
 
@@ -1120,14 +1157,14 @@ impl Calendar for IslamicTabular {
         year: i32,
         month_code: types::MonthCode,
         day: u8,
-    ) -> Result<Self::DateInner, CalendarError> {
+    ) -> Result<Self::DateInner, DateError> {
         let year = if era.0 == tinystr!(16, "islamic-tbla")
             || era.0 == tinystr!(16, "islamic")
             || era.0 == tinystr!(16, "ah")
         {
             year
         } else {
-            return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
+            return Err(DateError::UnknownEra(era));
         };
 
         ArithmeticDate::new_from_codes(self, year, month_code, day).map(IslamicTabularDateInner)
@@ -1205,8 +1242,9 @@ impl Calendar for IslamicTabular {
             next_year: Self::year_as_islamic(next_year),
         }
     }
-    fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
-        Some(AnyCalendarKind::IslamicTabular)
+
+    fn any_calendar_kind(&self) -> Option<crate::AnyCalendarKind> {
+        Some(crate::any_calendar::IntoAnyCalendar::kind(self))
     }
 }
 
@@ -1250,7 +1288,7 @@ impl<A: AsCalendar<Calendar = IslamicTabular>> Date<A> {
     /// use icu::calendar::islamic::IslamicTabular;
     /// use icu::calendar::Date;
     ///
-    /// let islamic = IslamicTabular::new_always_calculating();
+    /// let islamic = IslamicTabular::new();
     ///
     /// let date_islamic =
     ///     Date::try_new_islamic_tabular_date_with_calendar(1392, 4, 25, islamic)
@@ -1265,7 +1303,7 @@ impl<A: AsCalendar<Calendar = IslamicTabular>> Date<A> {
         month: u8,
         day: u8,
         calendar: A,
-    ) -> Result<Date<A>, CalendarError> {
+    ) -> Result<Date<A>, RangeError> {
         ArithmeticDate::new_from_ordinals(year, month, day)
             .map(IslamicTabularDateInner)
             .map(|inner| Date::from_raw(inner, calendar))
@@ -1279,7 +1317,7 @@ impl<A: AsCalendar<Calendar = IslamicTabular>> DateTime<A> {
     /// use icu::calendar::islamic::IslamicTabular;
     /// use icu::calendar::DateTime;
     ///
-    /// let islamic = IslamicTabular::new_always_calculating();
+    /// let islamic = IslamicTabular::new();
     ///
     /// let datetime_islamic =
     ///     DateTime::try_new_islamic_tabular_datetime_with_calendar(
@@ -1302,7 +1340,7 @@ impl<A: AsCalendar<Calendar = IslamicTabular>> DateTime<A> {
         minute: u8,
         second: u8,
         calendar: A,
-    ) -> Result<DateTime<A>, CalendarError> {
+    ) -> Result<DateTime<A>, DateError> {
         Ok(DateTime {
             date: Date::try_new_islamic_tabular_date_with_calendar(year, month, day, calendar)?,
             time: Time::try_new(hour, minute, second, 0)?,
@@ -2111,7 +2149,7 @@ mod test {
         }
     }
 
-    #[ignore]
+    #[ignore] // slow
     #[test]
     fn test_days_in_provided_year_observational() {
         let calendar = IslamicObservational::new();
@@ -2141,7 +2179,7 @@ mod test {
         );
     }
 
-    #[ignore]
+    #[ignore] // slow
     #[test]
     fn test_days_in_provided_year_ummalqura() {
         let calendar = IslamicUmmAlQura::new();
@@ -2175,5 +2213,18 @@ mod test {
         assert_eq!(islamic.day_of_month().0, 30);
         assert_eq!(islamic.month().ordinal, 4);
         assert_eq!(islamic.year().number, 1432);
+    }
+
+    #[test]
+    fn test_regression_4914() {
+        // https://github.com/unicode-org/icu4x/issues/4914
+        let cal = IslamicUmmAlQura::new_always_calculating();
+        let era = "ah".parse().unwrap();
+        let year = -6823;
+        let month_code = "M01".parse().unwrap();
+        let dt = cal.date_from_codes(era, year, month_code, 1).unwrap();
+        assert_eq!(dt.0.day, 1);
+        assert_eq!(dt.0.month, 1);
+        assert_eq!(dt.0.year, -6823);
     }
 }

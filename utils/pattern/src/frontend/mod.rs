@@ -6,21 +6,19 @@
 mod databake;
 #[cfg(feature = "serde")]
 mod serde;
-
-use core::{
-    fmt::{self, Write},
-    marker::PhantomData,
-};
-
-use writeable::{PartsWrite, Writeable};
-
 use crate::common::*;
 use crate::Error;
-
+use crate::PatternOrUtf8Error;
 #[cfg(feature = "alloc")]
 use crate::{Parser, ParserOptions};
 #[cfg(feature = "alloc")]
 use alloc::{borrow::ToOwned, str::FromStr, string::String};
+use core::{
+    convert::Infallible,
+    fmt::{self, Write},
+    marker::PhantomData,
+};
+use writeable::{adapters::TryWriteableInfallibleAsWriteable, PartsWrite, TryWriteable, Writeable};
 
 /// A string pattern with placeholders.
 ///
@@ -44,6 +42,38 @@ use alloc::{borrow::ToOwned, str::FromStr, string::String};
 /// - `&str` for a fully borrowed pattern
 /// - `String` for a fully owned pattern
 /// - `Cow<str>` for an owned-or-borrowed pattern
+///
+/// # Format to Parts
+///
+/// [`Pattern`] supports interpolating with [writeable::Part]s, annotations for whether the
+/// substring was a placeholder or a literal.
+///
+/// By default, the substrings are annotated with [`PATTERN_LITERAL_PART`] and
+/// [`PATTERN_PLACEHOLDER_PART`]. This can be customized with [`PlaceholderValueProvider`].
+///
+/// # Examples
+///
+/// Interpolating a [`SinglePlaceholder`] pattern with parts:
+///
+/// ```
+/// use core::str::FromStr;
+/// use icu_pattern::Pattern;
+/// use icu_pattern::SinglePlaceholder;
+/// use writeable::assert_writeable_parts_eq;
+///
+/// let pattern =
+///     Pattern::<SinglePlaceholder, _>::from_str("Hello, {0}!").unwrap();
+///
+/// assert_writeable_parts_eq!(
+///     pattern.interpolate(["Alice"]),
+///     "Hello, Alice!",
+///     [
+///         (0, 7, icu_pattern::PATTERN_LITERAL_PART),
+///         (7, 12, icu_pattern::PATTERN_PLACEHOLDER_PART),
+///         (12, 13, icu_pattern::PATTERN_LITERAL_PART),
+///     ]
+/// );
+/// ```
 ///
 /// [`SinglePlaceholder`]: crate::SinglePlaceholder
 #[derive(Debug, Clone, PartialEq)]
@@ -70,18 +100,20 @@ impl<Backend, Store> Pattern<Backend, Store> {
     /// such as by calling [`Pattern::take_store()`]. If the store is not valid,
     /// unexpected behavior may occur.
     ///
-    /// To parse a pattern string, use [`Self::try_from_str()`].
+    /// To parse a pattern string, use [`FromStr::from_str`].
     ///
     /// # Examples
     ///
     /// ```
+    /// use core::str::FromStr;
     /// use icu_pattern::Pattern;
     /// use icu_pattern::SinglePlaceholder;
     /// use writeable::assert_writeable_eq;
     ///
     /// // Create a pattern from a valid string:
-    /// let allocated_pattern: Pattern<SinglePlaceholder, String> =
-    ///     Pattern::try_from_str("{0} days").expect("valid pattern");
+    /// let allocated_pattern =
+    ///     Pattern::<SinglePlaceholder, String>::from_str("{0} days")
+    ///         .expect("valid pattern");
     ///
     /// // Transform the store and create a new Pattern. This is valid because
     /// // we call `.take_store()` and `.from_store_unchecked()` on patterns
@@ -107,7 +139,7 @@ where
 {
     /// Creates a pattern from a serialized backing store.
     ///
-    /// To parse a pattern string, use [`Self::try_from_str()`].
+    /// To parse a pattern string, use [`FromStr::from_str`].
     ///
     /// # Examples
     ///
@@ -125,6 +157,33 @@ where
     /// ```
     pub fn try_from_store(store: Store) -> Result<Self, Error> {
         B::validate_store(store.as_ref())?;
+        Ok(Self {
+            _backend: PhantomData,
+            store,
+        })
+    }
+}
+
+impl<'a, B> Pattern<B, &'a B::Store>
+where
+    B: PatternBackend,
+{
+    /// Creates a pattern from its store encoded as UTF-8.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_pattern::Pattern;
+    /// use icu_pattern::SinglePlaceholder;
+    ///
+    /// Pattern::<SinglePlaceholder, _>::try_from_utf8_store(b"\x01 days")
+    ///     .expect("single placeholder pattern");
+    /// ```
+    pub fn try_from_utf8_store(
+        code_units: &'a [u8],
+    ) -> Result<Self, PatternOrUtf8Error<B::StoreFromBytesError>> {
+        let store = B::try_store_from_utf8(code_units).map_err(PatternOrUtf8Error::Utf8)?;
+        B::validate_store(store).map_err(PatternOrUtf8Error::Pattern)?;
         Ok(Self {
             _backend: PhantomData,
             store,
@@ -162,8 +221,7 @@ where
     /// ```
     pub fn try_from_items<'a, I>(items: I) -> Result<Self, Error>
     where
-        B: 'a,
-        I: Iterator<Item = PatternItemCow<'a, B::PlaceholderKey>>,
+        I: Iterator<Item = PatternItemCow<'a, B::PlaceholderKeyCow<'a>>>,
     {
         let store = B::try_from_items(items.map(Ok))?;
         #[cfg(debug_assertions)]
@@ -181,13 +239,14 @@ where
 }
 
 #[cfg(feature = "alloc")]
-impl<B> Pattern<B, <B::Store as ToOwned>::Owned>
+impl<'a, B> FromStr for Pattern<B, <B::Store as ToOwned>::Owned>
 where
     B: PatternBackend,
-    B::PlaceholderKey: FromStr,
+    B::PlaceholderKeyCow<'a>: FromStr,
     B::Store: ToOwned,
-    <B::PlaceholderKey as FromStr>::Err: fmt::Debug,
+    <B::PlaceholderKeyCow<'a> as FromStr>::Err: fmt::Debug,
 {
+    type Err = Error;
     /// Creates a pattern by parsing a syntax string.
     ///
     /// To construct from a serialized pattern string, use [`Self::try_from_store()`].
@@ -197,18 +256,19 @@ where
     /// # Examples
     ///
     /// ```
+    /// use core::str::FromStr;
     /// use icu_pattern::Pattern;
     /// use icu_pattern::SinglePlaceholder;
     ///
     /// // Create a pattern from a valid string:
-    /// Pattern::<SinglePlaceholder, _>::try_from_str("{0} days")
+    /// Pattern::<SinglePlaceholder, _>::from_str("{0} days")
     ///     .expect("valid pattern");
     ///
     /// // Error on an invalid pattern:
-    /// Pattern::<SinglePlaceholder, _>::try_from_str("{0 days")
+    /// Pattern::<SinglePlaceholder, _>::from_str("{0 days")
     ///     .expect_err("mismatched braces");
     /// ```
-    pub fn try_from_str(pattern: &str) -> Result<Self, Error> {
+    fn from_str(pattern: &str) -> Result<Self, Self::Err> {
         let parser = Parser::new(
             pattern,
             ParserOptions {
@@ -230,35 +290,24 @@ where
     }
 }
 
-#[cfg(feature = "alloc")]
-impl<B> FromStr for Pattern<B, <B::Store as ToOwned>::Owned>
-where
-    B: PatternBackend,
-    B::PlaceholderKey: FromStr,
-    B::Store: ToOwned,
-    <B::PlaceholderKey as FromStr>::Err: fmt::Debug,
-{
-    type Err = Error;
-    fn from_str(pattern: &str) -> Result<Self, Self::Err> {
-        Self::try_from_str(pattern)
-    }
-}
-
 impl<B, Store> Pattern<B, Store>
 where
     B: PatternBackend,
     Store: AsRef<B::Store> + ?Sized,
 {
     /// Returns an iterator over the [`PatternItem`]s in this pattern.
-    pub fn iter(&self) -> impl Iterator<Item = PatternItem<B::PlaceholderKey>> + '_ {
+    pub fn iter(&self) -> impl Iterator<Item = PatternItem<B::PlaceholderKey<'_>>> + '_ {
         B::iter_items(self.store.as_ref())
     }
 
-    /// Returns a [`Writeable`] that interpolates items from the given replacement provider
+    /// Returns a [`TryWriteable`] that interpolates items from the given replacement provider
     /// into this pattern string.
-    pub fn interpolate<'a, P>(&'a self, value_provider: P) -> impl Writeable + fmt::Display + 'a
+    pub fn try_interpolate<'a, P>(
+        &'a self,
+        value_provider: P,
+    ) -> impl TryWriteable<Error = B::Error<'a>> + fmt::Display + 'a
     where
-        P: PlaceholderValueProvider<B::PlaceholderKey> + 'a,
+        P: PlaceholderValueProvider<B::PlaceholderKey<'a>, Error = B::Error<'a>> + 'a,
     {
         WriteablePattern::<B, P> {
             store: self.store.as_ref(),
@@ -267,69 +316,53 @@ where
     }
 
     #[cfg(feature = "alloc")]
+    /// Interpolates the pattern directly to a string, returning the string or an error.
+    ///
+    /// In addition to the error, the lossy fallback string is returned in the failure case.
+    ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
+    pub fn try_interpolate_to_string<'a, P>(
+        &'a self,
+        value_provider: P,
+    ) -> Result<String, (B::Error<'a>, String)>
+    where
+        P: PlaceholderValueProvider<B::PlaceholderKey<'a>, Error = B::Error<'a>> + 'a,
+    {
+        self.try_interpolate(value_provider)
+            .try_write_to_string()
+            .map(|s| s.into_owned())
+            .map_err(|(e, s)| (e, s.into_owned()))
+    }
+}
+
+impl<B, Store> Pattern<B, Store>
+where
+    for<'b> B: PatternBackend<Error<'b> = Infallible>,
+    Store: AsRef<B::Store> + ?Sized,
+{
+    /// Returns a [`Writeable`] that interpolates items from the given replacement provider
+    /// into this pattern string.
+    pub fn interpolate<'a, P>(&'a self, value_provider: P) -> impl Writeable + fmt::Display + 'a
+    where
+        P: PlaceholderValueProvider<B::PlaceholderKey<'a>, Error = B::Error<'a>> + 'a,
+    {
+        TryWriteableInfallibleAsWriteable(WriteablePattern::<B, P> {
+            store: self.store.as_ref(),
+            value_provider,
+        })
+    }
+
+    #[cfg(feature = "alloc")]
     /// Interpolates the pattern directly to a string.
     ///
     /// ✨ *Enabled with the `alloc` Cargo feature.*
-    pub fn interpolate_to_string<P>(&self, value_provider: P) -> String
+    pub fn interpolate_to_string<'a, P>(&'a self, value_provider: P) -> String
     where
-        P: PlaceholderValueProvider<B::PlaceholderKey>,
+        P: PlaceholderValueProvider<B::PlaceholderKey<'a>, Error = B::Error<'a>> + 'a,
     {
         self.interpolate(value_provider)
             .write_to_string()
             .into_owned()
-    }
-
-    /// Interpolates items with [writeable::Part]s.
-    ///
-    /// Two parts are used:
-    ///
-    /// 1. `literal_part` for [`PatternItem::Literal`]
-    /// 2. `element_part` for [`PatternItem::Placeholder`]
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu_pattern::Pattern;
-    /// use icu_pattern::SinglePlaceholder;
-    /// use writeable::assert_writeable_parts_eq;
-    ///
-    /// let pattern =
-    ///     Pattern::<SinglePlaceholder, _>::try_from_str("Hello, {0}!").unwrap();
-    ///
-    /// const LITERAL_PART: writeable::Part = writeable::Part {
-    ///     category: "demo",
-    ///     value: "literal",
-    /// };
-    /// const ELEMENT_PART: writeable::Part = writeable::Part {
-    ///     category: "demo",
-    ///     value: "element",
-    /// };
-    ///
-    /// assert_writeable_parts_eq!(
-    ///     pattern.interpolate_with_parts(["Alice"], LITERAL_PART, ELEMENT_PART),
-    ///     "Hello, Alice!",
-    ///     [
-    ///         (0, 7, LITERAL_PART),
-    ///         (7, 12, ELEMENT_PART),
-    ///         (12, 13, LITERAL_PART),
-    ///     ]
-    /// );
-    /// ```
-    pub fn interpolate_with_parts<'a, P>(
-        &'a self,
-        value_provider: P,
-        literal_part: writeable::Part,
-        placeholder_value_part: writeable::Part,
-    ) -> impl Writeable + fmt::Display + 'a
-    where
-        P: PlaceholderValueProvider<B::PlaceholderKey> + 'a,
-    {
-        WriteablePatternWithParts::<B, P> {
-            store: self.store.as_ref(),
-            value_provider,
-            literal_part,
-            element_part: placeholder_value_part,
-        }
     }
 }
 
@@ -338,23 +371,35 @@ struct WriteablePattern<'a, B: PatternBackend, P> {
     value_provider: P,
 }
 
-impl<B, P> Writeable for WriteablePattern<'_, B, P>
+impl<'a, B, P> TryWriteable for WriteablePattern<'a, B, P>
 where
     B: PatternBackend,
-    P: PlaceholderValueProvider<B::PlaceholderKey>,
+    P: PlaceholderValueProvider<B::PlaceholderKey<'a>, Error = B::Error<'a>>,
 {
-    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+    type Error = B::Error<'a>;
+
+    fn try_write_to_parts<S: PartsWrite + ?Sized>(
+        &self,
+        sink: &mut S,
+    ) -> Result<Result<(), Self::Error>, fmt::Error> {
+        let mut error = None;
         let it = B::iter_items(self.store);
         #[cfg(debug_assertions)]
         let (size_hint, mut actual_len) = (it.size_hint(), 0);
         for item in it {
             match item {
                 PatternItem::Literal(s) => {
-                    sink.write_str(s)?;
+                    sink.with_part(P::LITERAL_PART, |sink| sink.write_str(s))?;
                 }
                 PatternItem::Placeholder(key) => {
-                    let element_writeable = self.value_provider.value_for(key);
-                    element_writeable.write_to(sink)?;
+                    let (element_writeable, part) = self.value_provider.value_for(key);
+                    sink.with_part(part, |sink| {
+                        if let Err(e) = element_writeable.try_write_to_parts(sink)? {
+                            // Keep the first error if there was one
+                            error.get_or_insert(e);
+                        }
+                        Ok(())
+                    })?;
                 }
             }
             #[cfg(debug_assertions)]
@@ -369,56 +414,29 @@ where
                 debug_assert!(actual_len <= max_len);
             }
         }
-        Ok(())
-    }
-}
-
-impl<B, P> fmt::Display for WriteablePattern<'_, B, P>
-where
-    B: PatternBackend,
-    P: PlaceholderValueProvider<B::PlaceholderKey>,
-{
-    #[inline]
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        self.write_to(f)
-    }
-}
-
-struct WriteablePatternWithParts<'a, B: PatternBackend, P> {
-    store: &'a B::Store,
-    value_provider: P,
-    literal_part: writeable::Part,
-    element_part: writeable::Part,
-}
-
-impl<B, P> Writeable for WriteablePatternWithParts<'_, B, P>
-where
-    B: PatternBackend,
-    P: PlaceholderValueProvider<B::PlaceholderKey>,
-{
-    fn write_to_parts<S: PartsWrite + ?Sized>(&self, sink: &mut S) -> fmt::Result {
-        for item in B::iter_items(self.store) {
-            match item {
-                PatternItem::Literal(s) => {
-                    sink.with_part(self.literal_part, |w| w.write_str(s))?;
-                }
-                PatternItem::Placeholder(key) => {
-                    let element_writeable = self.value_provider.value_for(key);
-                    sink.with_part(self.element_part, |w| element_writeable.write_to_parts(w))?;
-                }
-            }
+        if let Some(e) = error {
+            Ok(Err(e))
+        } else {
+            Ok(Ok(()))
         }
-        Ok(())
     }
 }
 
-impl<B, P> fmt::Display for WriteablePatternWithParts<'_, B, P>
+impl<'a, B, P> fmt::Display for WriteablePattern<'a, B, P>
 where
     B: PatternBackend,
-    P: PlaceholderValueProvider<B::PlaceholderKey>,
+    P: PlaceholderValueProvider<B::PlaceholderKey<'a>, Error = B::Error<'a>>,
 {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        self.write_to(f)
+        // Discard the TryWriteable error (lossy mode)
+        self.try_write_to(f).map(|_| ())
     }
+}
+
+#[test]
+fn test_try_from_str_inference() {
+    use crate::SinglePlaceholder;
+    let _: Pattern<SinglePlaceholder, String> = Pattern::from_str("{0} days").unwrap();
+    let _ = Pattern::<SinglePlaceholder, String>::from_str("{0} days").unwrap();
 }

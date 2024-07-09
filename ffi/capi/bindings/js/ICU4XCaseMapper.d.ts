@@ -1,8 +1,8 @@
 import { char } from "./diplomat-runtime"
 import { FFIError } from "./diplomat-runtime"
 import { ICU4XCodePointSetBuilder } from "./ICU4XCodePointSetBuilder";
+import { ICU4XDataError } from "./ICU4XDataError";
 import { ICU4XDataProvider } from "./ICU4XDataProvider";
-import { ICU4XError } from "./ICU4XError";
 import { ICU4XLocale } from "./ICU4XLocale";
 import { ICU4XTitlecaseOptionsV1 } from "./ICU4XTitlecaseOptionsV1";
 
@@ -17,7 +17,7 @@ export class ICU4XCaseMapper {
    * Construct a new ICU4XCaseMapper instance
 
    * See the {@link https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.new Rust documentation for `new`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
+   * @throws {@link FFIError}<{@link ICU4XDataError}>
    */
   static create(provider: ICU4XDataProvider): ICU4XCaseMapper | never;
 
@@ -26,18 +26,16 @@ export class ICU4XCaseMapper {
    * Returns the full lowercase mapping of the given string
 
    * See the {@link https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.lowercase Rust documentation for `lowercase`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  lowercase(s: string, locale: ICU4XLocale): string | never;
+  lowercase(s: string, locale: ICU4XLocale): string;
 
   /**
 
    * Returns the full uppercase mapping of the given string
 
    * See the {@link https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.uppercase Rust documentation for `uppercase`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  uppercase(s: string, locale: ICU4XLocale): string | never;
+  uppercase(s: string, locale: ICU4XLocale): string;
 
   /**
 
@@ -46,27 +44,24 @@ export class ICU4XCaseMapper {
    * The `v1` refers to the version of the options struct, which may change as we add more options
 
    * See the {@link https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.titlecase_segment_with_only_case_data Rust documentation for `titlecase_segment_with_only_case_data`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  titlecase_segment_with_only_case_data_v1(s: string, locale: ICU4XLocale, options: ICU4XTitlecaseOptionsV1): string | never;
+  titlecase_segment_with_only_case_data_v1(s: string, locale: ICU4XLocale, options: ICU4XTitlecaseOptionsV1): string;
 
   /**
 
    * Case-folds the characters in the given string
 
    * See the {@link https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.fold Rust documentation for `fold`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  fold(s: string): string | never;
+  fold(s: string): string;
 
   /**
 
    * Case-folds the characters in the given string using Turkic (T) mappings for dotted/dotless I.
 
    * See the {@link https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.fold_turkic Rust documentation for `fold_turkic`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  fold_turkic(s: string): string | never;
+  fold_turkic(s: string): string;
 
   /**
 

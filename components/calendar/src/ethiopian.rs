@@ -32,10 +32,10 @@
 //! assert_eq!(datetime_ethiopian.time.second.number(), 0);
 //! ```
 
-use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
+use crate::error::DateError;
 use crate::iso::Iso;
-use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime, Time};
+use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, RangeError, Time};
 use calendrical_calculations::helpers::I32CastError;
 use calendrical_calculations::rata_die::RataDie;
 use tinystr::tinystr;
@@ -107,7 +107,7 @@ impl CalendarArithmetic for Ethiopian {
     }
 
     fn is_leap_year(year: i32, _data: ()) -> bool {
-        year % 4 == 3
+        year.rem_euclid(4) == 3
     }
 
     fn last_month_day_in_year(year: i32, _data: ()) -> (u8, u8) {
@@ -135,21 +135,31 @@ impl Calendar for Ethiopian {
         year: i32,
         month_code: types::MonthCode,
         day: u8,
-    ) -> Result<Self::DateInner, CalendarError> {
+    ) -> Result<Self::DateInner, DateError> {
         let year = if era.0 == tinystr!(16, "incar") {
             if year <= 0 {
-                return Err(CalendarError::OutOfRange);
+                return Err(DateError::Range {
+                    field: "year",
+                    value: year,
+                    min: 1,
+                    max: i32::MAX,
+                });
             }
             year
         } else if era.0 == tinystr!(16, "pre-incar") {
             if year <= 0 {
-                return Err(CalendarError::OutOfRange);
+                return Err(DateError::Range {
+                    field: "year",
+                    value: year,
+                    min: 1,
+                    max: i32::MAX,
+                });
             }
             1 - year
         } else if era.0 == tinystr!(16, "mundi") {
             year - AMETE_ALEM_OFFSET
         } else {
-            return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
+            return Err(DateError::UnknownEra(era));
         };
 
         ArithmeticDate::new_from_codes(self, year, month_code, day).map(EthiopianDateInner)
@@ -228,12 +238,8 @@ impl Calendar for Ethiopian {
         "Ethiopian"
     }
 
-    fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
-        if self.0 {
-            Some(AnyCalendarKind::EthiopianAmeteAlem)
-        } else {
-            Some(AnyCalendarKind::Ethiopian)
-        }
+    fn any_calendar_kind(&self) -> Option<crate::AnyCalendarKind> {
+        Some(crate::any_calendar::IntoAnyCalendar::kind(self))
     }
 }
 
@@ -340,7 +346,7 @@ impl Date<Ethiopian> {
         mut year: i32,
         month: u8,
         day: u8,
-    ) -> Result<Date<Ethiopian>, CalendarError> {
+    ) -> Result<Date<Ethiopian>, RangeError> {
         if era_style == EthiopianEraStyle::AmeteAlem {
             year -= AMETE_ALEM_OFFSET;
         }
@@ -387,7 +393,7 @@ impl DateTime<Ethiopian> {
         hour: u8,
         minute: u8,
         second: u8,
-    ) -> Result<DateTime<Ethiopian>, CalendarError> {
+    ) -> Result<DateTime<Ethiopian>, DateError> {
         Ok(DateTime {
             date: Date::try_new_ethiopian_date(era_style, year, month, day)?,
             time: Time::try_new(hour, minute, second, 0)?,

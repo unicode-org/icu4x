@@ -1,8 +1,8 @@
 import wasm from "./diplomat-wasm.mjs"
 import * as diplomatRuntime from "./diplomat-runtime.mjs"
-import { CodePointRangeIterator } from "./CodePointRangeIterator.mjs"
+import { ICU4XCodePointRangeIterator } from "./ICU4XCodePointRangeIterator.mjs"
 import { ICU4XCodePointSetData } from "./ICU4XCodePointSetData.mjs"
-import { ICU4XError_js_to_rust, ICU4XError_rust_to_js } from "./ICU4XError.mjs"
+import { ICU4XDataError_js_to_rust, ICU4XDataError_rust_to_js } from "./ICU4XDataError.mjs"
 
 const ICU4XCodePointMapData16_box_destroy_registry = new FinalizationRegistry(underlying => {
   wasm.ICU4XCodePointMapData16_destroy(underlying);
@@ -27,11 +27,11 @@ export class ICU4XCodePointMapData16 {
   }
 
   iter_ranges_for_value(arg_value) {
-    return new CodePointRangeIterator(wasm.ICU4XCodePointMapData16_iter_ranges_for_value(this.underlying, arg_value), true, [this]);
+    return new ICU4XCodePointRangeIterator(wasm.ICU4XCodePointMapData16_iter_ranges_for_value(this.underlying, arg_value), true, [this]);
   }
 
   iter_ranges_for_value_complemented(arg_value) {
-    return new CodePointRangeIterator(wasm.ICU4XCodePointMapData16_iter_ranges_for_value_complemented(this.underlying, arg_value), true, [this]);
+    return new ICU4XCodePointRangeIterator(wasm.ICU4XCodePointMapData16_iter_ranges_for_value_complemented(this.underlying, arg_value), true, [this]);
   }
 
   get_set_for_value(arg_value) {
@@ -48,7 +48,7 @@ export class ICU4XCodePointMapData16 {
         wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
         return ok_value;
       } else {
-        const throw_value = ICU4XError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
+        const throw_value = ICU4XDataError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
         wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
         throw new diplomatRuntime.FFIError(throw_value);
       }

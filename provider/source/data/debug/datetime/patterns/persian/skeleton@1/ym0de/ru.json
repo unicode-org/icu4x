@@ -1,0 +1,12 @@
+{
+  "index_info": {
+    "has_long": true,
+    "has_medium": true,
+    "has_plurals": false
+  },
+  "patterns": [
+    "EEEE, d MMMM y г. G",
+    "E, d MMM y г. G",
+    "E, d.M.y G"
+  ]
+}

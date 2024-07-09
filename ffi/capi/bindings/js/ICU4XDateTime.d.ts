@@ -1,8 +1,8 @@
 import { u8, u16, i32, u32 } from "./diplomat-runtime"
 import { FFIError } from "./diplomat-runtime"
 import { ICU4XCalendar } from "./ICU4XCalendar";
+import { ICU4XCalendarError } from "./ICU4XCalendarError";
 import { ICU4XDate } from "./ICU4XDate";
-import { ICU4XError } from "./ICU4XError";
 import { ICU4XIsoDateTime } from "./ICU4XIsoDateTime";
 import { ICU4XIsoWeekday } from "./ICU4XIsoWeekday";
 import { ICU4XTime } from "./ICU4XTime";
@@ -22,7 +22,7 @@ export class ICU4XDateTime {
    * Creates a new {@link ICU4XDateTime `ICU4XDateTime`} representing the ISO date and time given but in a given calendar
 
    * See the {@link https://docs.rs/icu/latest/icu/struct.DateTime.html#method.new_from_iso Rust documentation for `new_from_iso`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
+   * @throws {@link FFIError}<{@link ICU4XCalendarError}>
    */
   static create_from_iso_in_calendar(year: i32, month: u8, day: u8, hour: u8, minute: u8, second: u8, nanosecond: u32, calendar: ICU4XCalendar): ICU4XDateTime | never;
 
@@ -31,7 +31,7 @@ export class ICU4XDateTime {
    * Creates a new {@link ICU4XDateTime `ICU4XDateTime`} from the given codes, which are interpreted in the given calendar system
 
    * See the {@link https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.try_new_from_codes Rust documentation for `try_new_from_codes`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
+   * @throws {@link FFIError}<{@link ICU4XCalendarError}>
    */
   static create_from_codes_in_calendar(era_code: string, year: i32, month_code: string, day: u8, hour: u8, minute: u8, second: u8, nanosecond: u32, calendar: ICU4XCalendar): ICU4XDateTime | never;
 
@@ -109,6 +109,14 @@ export class ICU4XDateTime {
 
   /**
 
+   * Returns the 1-indexed day in the year for this date
+
+   * See the {@link https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_year_info Rust documentation for `day_of_year_info`} for more information.
+   */
+  day_of_year(): u16;
+
+  /**
+
    * Returns the 1-indexed day in the month for this date
 
    * See the {@link https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_month Rust documentation for `day_of_month`} for more information.
@@ -138,9 +146,8 @@ export class ICU4XDateTime {
    * Returns the week number in this year, using week data
 
    * See the {@link https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.week_of_year Rust documentation for `week_of_year`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  week_of_year(calculator: ICU4XWeekCalculator): ICU4XWeekOf | never;
+  week_of_year(calculator: ICU4XWeekCalculator): ICU4XWeekOf;
 
   /**
 
@@ -157,9 +164,8 @@ export class ICU4XDateTime {
    * Returns the month code for this date. Typically something like "M01", "M02", but can be more complicated for lunar calendars.
 
    * See the {@link https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.month Rust documentation for `month`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  month_code(): string | never;
+  month_code(): string;
 
   /**
 
@@ -174,9 +180,8 @@ export class ICU4XDateTime {
    * Returns the era for this date,
 
    * See the {@link https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year Rust documentation for `year`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  era(): string | never;
+  era(): string;
 
   /**
 

@@ -4,14 +4,14 @@
 
 #[diplomat::bridge]
 pub mod ffi {
-    use crate::errors::ffi::ICU4XError;
-    use crate::locale::ffi::ICU4XLocale;
+    use crate::errors::ffi::{ICU4XDataError, ICU4XLocaleParseError};
+    use crate::locale_core::ffi::ICU4XLocale;
     use crate::provider::ffi::ICU4XDataProvider;
     use alloc::boxed::Box;
     #[allow(unused_imports)] // feature-specific
     use icu_experimental::displaynames::{DisplayNamesOptions, Fallback, LanguageDisplay};
     use icu_experimental::displaynames::{LocaleDisplayNamesFormatter, RegionDisplayNames};
-    use icu_locid::subtags::Region;
+    use icu_locale_core::subtags::Region;
     use writeable::Writeable;
 
     #[diplomat::opaque]
@@ -65,7 +65,7 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
             options: ICU4XDisplayNamesOptionsV1,
-        ) -> Result<Box<ICU4XLocaleDisplayNamesFormatter>, ICU4XError> {
+        ) -> Result<Box<ICU4XLocaleDisplayNamesFormatter>, ICU4XDataError> {
             let locale = locale.to_datalocale();
             let options = DisplayNamesOptions::from(options);
 
@@ -83,13 +83,8 @@ pub mod ffi {
 
         /// Returns the locale-specific display name of a locale.
         #[diplomat::rust_link(icu::displaynames::LocaleDisplayNamesFormatter::of, FnInStruct)]
-        pub fn of(
-            &self,
-            locale: &ICU4XLocale,
-            write: &mut DiplomatWriteable,
-        ) -> Result<(), ICU4XError> {
-            self.0.of(&locale.0).write_to(write)?;
-            Ok(())
+        pub fn of(&self, locale: &ICU4XLocale, write: &mut DiplomatWrite) {
+            let _infallible = self.0.of(&locale.0).write_to(write);
         }
     }
 
@@ -100,7 +95,7 @@ pub mod ffi {
         pub fn create(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
-        ) -> Result<Box<ICU4XRegionDisplayNames>, ICU4XError> {
+        ) -> Result<Box<ICU4XRegionDisplayNames>, ICU4XDataError> {
             let locale = locale.to_datalocale();
             Ok(Box::new(ICU4XRegionDisplayNames(call_constructor!(
                 RegionDisplayNames::try_new,
@@ -119,12 +114,13 @@ pub mod ffi {
         pub fn of(
             &self,
             region: &DiplomatStr,
-            write: &mut DiplomatWriteable,
-        ) -> Result<(), ICU4XError> {
-            self.0
-                .of(Region::try_from_bytes(region)?)
+            write: &mut DiplomatWrite,
+        ) -> Result<(), ICU4XLocaleParseError> {
+            let _infallible = self
+                .0
+                .of(Region::try_from_utf8(region)?)
                 .unwrap_or("")
-                .write_to(write)?;
+                .write_to(write);
             Ok(())
         }
     }

@@ -6,7 +6,7 @@
 //!
 //! For more information, see the tutorial [cargo.md](../../cargo.md).
 
-use icu::locid::locale;
+use icu::locale::locale;
 use icu::plurals::PluralCategory;
 use icu::plurals::PluralRules;
 
@@ -18,7 +18,7 @@ impl_data_provider!(BakedProvider);
 fn main() {
     let rules = PluralRules::try_new_cardinal_unstable(&BakedProvider, &locale!("ru").into())
         .expect("locale 'ru' should be present in the baked data");
-    let result = rules.category_for(&3.into());
+    let result = rules.category_for(3);
     assert_eq!(result, PluralCategory::Few);
     println!("{:?}", result);
 }

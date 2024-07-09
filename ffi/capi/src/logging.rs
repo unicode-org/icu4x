@@ -20,16 +20,5 @@ pub mod ffi {
         pub fn init_simple_logger() -> bool {
             simple_logger::init().is_ok()
         }
-
-        /// Deprecated: since ICU4X 1.4, this now happens automatically if the `log` feature is enabled.
-        #[cfg(target_arch = "wasm32")]
-        pub fn init_console_logger() -> bool {
-            false
-        }
     }
 }
-
-// semver?
-#[no_mangle]
-#[cfg(target_arch = "wasm32")]
-pub unsafe extern "C" fn icu4x_init() {}

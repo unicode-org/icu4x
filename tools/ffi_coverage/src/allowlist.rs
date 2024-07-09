@@ -15,6 +15,7 @@ lazy_static::lazy_static! {
         "AsMut",
         "AsRef",
         "Bake",
+        "BakeSize",
         "Borrow",
         "BorrowMut",
         "Clone",
@@ -61,29 +62,32 @@ lazy_static::lazy_static! {
         "IsCovariant",
 
         // provider stuff not relevant to FFI
+        "DynamicDataMarker",
         "DataMarker",
-        "KeyedDataMarker",
         "AsDowncastingAnyProvider",
         "AsDeserializingBufferProvider",
         "AsDynamicDataProviderAnyMarkerWrap",
         "IterableDynamicDataProvider",
         "IterableDataProvider",
-        "DataConverter",
-        "Filterable",
         "ForkByErrorPredicate",
 
-        // The four main data provider traits should be covered if the enum or struct
+        // The main data provider traits should be covered if the enum or struct
         // implementing them is covered
         "DataProvider",
         "DynamicDataProvider",
         "BufferProvider",
         "AnyProvider",
 
+        // We might expose these if someone asks for it
+        "DryDataProvider",
+        "DynamicDryDataProvider",
+
         // internal trait, all methods replicated on Date
         "Calendar",
         // Rust-specific conversion trait
         "AsCalendar",
         "IntoAnyCalendar",
+        "NeoGetField",
     ].into_iter().collect();
 
     pub static ref IGNORED_ASSOCIATED_ITEMS: HashMap<&'static str, &'static [&'static str]> = [
@@ -171,9 +175,11 @@ lazy_static::lazy_static! {
         "icu::calendar::DateTime::try_new_roc_datetime",
         "icu::calendar::DateTime::try_new_ummalqura_datetime",
 
-        // This is formatting internals, we do not expect people
-        // to implement custom formatters over FFI
-        "icu::calendar::Date::day_of_year_info",
+        // Calendar structs mostly for internal use but which might expose
+        // useful information to clients.
+        "icu::calendar::types::FormattableMonth",
+        "icu::calendar::types::FormattableYear",
+        "icu::calendar::types::DayOfYearInfo",
 
         // Punted post 1.0: not strongly needed yet and don't want to lock in a solution
         // Potential solutions:
@@ -196,11 +202,15 @@ lazy_static::lazy_static! {
 
         // experimental
         "icu::datetime::neo",
+        "icu::datetime::neo_marker",
         "icu::datetime::neo_pattern",
         "icu::datetime::neo_skeleton",
         "icu::datetime::options::components",
         "icu::datetime::options::preferences",
         "icu::datetime::DateTimeFormatter::try_new_experimental",
+        "icu::datetime::DateTimeWriteError",
+        "icu::datetime::LoadError",
+        "icu::datetime::SingleLoadError",
         "icu::datetime::FormattedDateTimePattern",
         "icu::datetime::TypedDateTimeNames",
         "icu::datetime::TypedDateTimeFormatter::try_new_experimental",
@@ -219,14 +229,14 @@ lazy_static::lazy_static! {
         "icu::list::parts",
 
         // Not planned until someone needs them
-        "icu::locid::extensions",
-        "icu::locid::subtags",
+        "icu::locale::extensions",
+        "icu::locale::subtags",
 
         // TODO-2.0: decide later when we have figured out prefs/ctors and have APIs using this
-        "icu::locid::LanguageIdentifier",
+        "icu::locale::LanguageIdentifier",
 
-        // experimental
-        "icu::normalizer::ComposingNormalizer::new_uts46_without_ignored_and_disallowed",
+        // Doesn't make sense to expose through `icu_normalizer`
+        "icu::normalizer::uts46::Uts46Mapper",
 
         // Do not want for 2.0: we need DiplomatWriteable16
         "icu::normalizer::ComposingNormalizer::normalize_utf16",
@@ -279,15 +289,8 @@ lazy_static::lazy_static! {
         "icu_provider_adapters::any_payload::AnyPayloadProvider",
 
         // Not planned for 2.0
-        // We don't expose data keys directly over FFI, but when we do, we should add this
-        "icu::locid_transform::fallback::LocaleFallbackConfig::from_key",
-
-        // Not planned for 2.0
-        // On RequestFilterDataProvider, filter_by_langid needs callbacks, and
-        // filter_by_langid_allowlist_strict needs input iterators.
-        // require_langid is not very useful by itself.
-        "icu_provider_adapters::filter::Filterable",
-        "icu_provider_adapters::filter::RequestFilterDataProvider",
+        // FilterDataProvider::with_filter needs callbacks.
+        "icu_provider_adapters::filter::FilterDataProvider",
 
         // Not planned for 2.0
         // ForkByErrorProvider is the abstract forking provider; we expose the concrete
@@ -298,8 +301,8 @@ lazy_static::lazy_static! {
         // Not planned for 2.0 but would be nice to return 'static refs
         // with Diplomat support.
         // Borrowed <-> owned converters
-        "icu::locid_transform::fallback::LocaleFallbacker::as_borrowed",
-        "icu::locid_transform::fallback::LocaleFallbackerBorrowed::static_to_owned",
+        "icu::locale::fallback::LocaleFallbacker::as_borrowed",
+        "icu::locale::fallback::LocaleFallbackerBorrowed::static_to_owned",
         "icu::properties::bidi_data::BidiAuxiliaryProperties::as_borrowed",
         "icu::properties::bidi_data::BidiAuxiliaryPropertiesBorrowed::static_to_owned",
         "icu::properties::maps::CodePointMapData::as_borrowed",
@@ -324,6 +327,9 @@ lazy_static::lazy_static! {
         // and markers and newtypes
         // =========================
 
+        // Datagen
+        "icu::markers_for_bin",
+
         // Provider modules
         // We could potentially expose them later, but it's hard to expose them
         // uniformly especially for complex types
@@ -333,7 +339,7 @@ lazy_static::lazy_static! {
         "icu::datetime::provider",
         "icu::decimal::provider",
         "icu::list::provider",
-        "icu::locid_transform::provider",
+        "icu::locale::provider",
         "icu::normalizer::provider",
         "icu::plurals::provider",
         "icu::properties::provider",
@@ -349,7 +355,7 @@ lazy_static::lazy_static! {
         "icu::calendar::any_calendar::AnyCalendar",
         "icu::calendar::any_calendar::AnyCalendarKind",
         "icu::casemap::titlecase::TitlecaseMapper",
-        "icu::calendar::types::Time::midnight",
+        "icu::calendar::types::Time",
 
 
         // TODO-2.0 these errors will have changed
@@ -361,8 +367,8 @@ lazy_static::lazy_static! {
         "icu::datetime::Error",
         "icu::decimal::Error",
         "icu::list::Error",
-        "icu::locid_transform::Error",
-        "icu::locid::Error",
+        "icu::locale::Error",
+        "icu::locale::Error",
         "icu::normalizer::Error",
         "icu::plurals::Error",
         "icu::properties::Error",
@@ -411,7 +417,17 @@ lazy_static::lazy_static! {
 
         // FFI largely deals with primitives rather than Rust's nice wrapper types
         // (which are hard to do in a zero-cost way over FFI)
-        "icu::calendar::types",
+        "icu::calendar::types::MonthCode",
+        "icu::calendar::types::DayOfMonth",
+        "icu::calendar::types::WeekOfMonth",
+        "icu::calendar::types::WeekOfYear",
+        "icu::calendar::types::DayOfWeekInMonth",
+        "icu::calendar::types::IsoHour",
+        "icu::calendar::types::IsoMinute",
+        "icu::calendar::types::IsoSecond",
+        "icu::calendar::types::NanoSecond",
+        "icu::calendar::types::IsoWeekday",
+        "icu::calendar::types::Era",
 
         // Rusty input trait
         "icu::datetime::input",
@@ -420,9 +436,9 @@ lazy_static::lazy_static! {
         // allocations over FFI, so not worth it.
         "icu::plurals::PluralCategory::all",
 
-        // locid comparison iteration
-        "icu::locid::Locale::strict_cmp_iter",
-        "icu::locid::SubtagOrderingResult",
+        // locale_core comparison iteration
+        "icu::locale::Locale::strict_cmp_iter",
+        "icu::locale::SubtagOrderingResult",
 
         // Some of the provider adapter types are Rust-specific and not relevant to FFI
         "icu_provider_adapters::either::EitherProvider",
@@ -434,21 +450,24 @@ lazy_static::lazy_static! {
 
         // The polymorphic ICU4XDataProvider type makes the MultiFork providers less relevant.
         "icu_provider_adapters::fork::MultiForkByErrorProvider",
-        "icu_provider_adapters::fork::MultiForkByKeyProvider",
+        "icu_provider_adapters::fork::MultiForkByMarkerProvider",
+
+        // Specialized constructor for separately constructed instances
+        "icu::timezone::TimeZoneIdMapperWithFastCanonicalization::try_new_with_mapper",
 
         // macros
-        "icu::locid::langid",
-        "icu::locid::locale",
-        "icu::locid::extensions::other::subtag",
-        "icu::locid::extensions::private::subtag",
-        "icu::locid::extensions::transform::key",
-        "icu::locid::extensions::unicode::attribute",
-        "icu::locid::extensions::unicode::key",
-        "icu::locid::extensions::unicode::value",
-        "icu::locid::subtags::language",
-        "icu::locid::subtags::region",
-        "icu::locid::subtags::script",
-        "icu::locid::subtags::variant",
+        "icu::locale::langid",
+        "icu::locale::locale",
+        "icu::locale::extensions::other::subtag",
+        "icu::locale::extensions::private::subtag",
+        "icu::locale::extensions::transform::key",
+        "icu::locale::extensions::unicode::attribute",
+        "icu::locale::extensions::unicode::key",
+        "icu::locale::extensions::unicode::value",
+        "icu::locale::subtags::language",
+        "icu::locale::subtags::region",
+        "icu::locale::subtags::script",
+        "icu::locale::subtags::variant",
         "icu_provider_adapters::make_forking_provider",
 
         // assoc types

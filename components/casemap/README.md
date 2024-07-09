@@ -10,8 +10,8 @@ and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latte
 ## Examples
 
 ```rust
-use icu_casemap::CaseMapper;
-use icu_locid::langid;
+use icu::casemap::CaseMapper;
+use icu::locale::langid;
 
 let cm = CaseMapper::new();
 

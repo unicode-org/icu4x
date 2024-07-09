@@ -26,11 +26,11 @@ final class Calendar implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `new_for_locale`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.new_for_locale) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   factory Calendar.forLocale(DataProvider provider, Locale locale) {
     final result = _ICU4XCalendar_create_for_locale(provider._ffi, locale._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     return Calendar._fromFfi(result.union.ok, []);
   }
@@ -39,11 +39,11 @@ final class Calendar implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.new) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   factory Calendar.forKind(DataProvider provider, AnyCalendarKind kind) {
     final result = _ICU4XCalendar_create_for_kind(provider._ffi, kind.index);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     return Calendar._fromFfi(result.union.ok, []);
   }

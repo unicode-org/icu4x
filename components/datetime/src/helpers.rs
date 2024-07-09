@@ -28,6 +28,7 @@ macro_rules! size_test {
         macro_rules! $id {
             () => {
                 concat!(
+                    "\n",
                     "📏 This item has a stack size of <b>",
                     stringify!($pinned),
                     " bytes</b> on the stable toolchain and <b>",
@@ -37,7 +38,7 @@ macro_rules! size_test {
             };
         }
         #[test]
-        #[cfg_attr(not(icu4x_run_size_tests), ignore)]
+        #[cfg_attr(not(icu4x_run_size_tests), ignore)] // Doesn't work on arbitrary Rust versions
         fn $id() {
             let size = core::mem::size_of::<$ty>();
             let success = match option_env!("CI_TOOLCHAIN") {
@@ -66,7 +67,7 @@ macro_rules! size_test {
             };
         }
         #[test]
-        #[cfg_attr(not(icu4x_run_size_tests), ignore)]
+        #[cfg_attr(not(icu4x_run_size_tests), ignore)] // Doesn't work on arbitrary Rust versions
         fn $id() {
             let size = core::mem::size_of::<$ty>();
             let expected = $size;

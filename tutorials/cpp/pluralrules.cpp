@@ -7,31 +7,31 @@
 
 #include <iostream>
 
-const std::string_view path = "../../provider/datagen/tests/data/json/";
+const std::string_view path = "../../provider/source/data/debug/";
 
 int main() {
     ICU4XLogger::init_simple_logger();
-    ICU4XLocale locale = ICU4XLocale::create_from_string("ar").ok().value();
-    std::cout << "Running test for locale " << locale.to_string().ok().value() << std::endl;
-    ICU4XDataProvider dp = ICU4XDataProvider::create_fs(path).ok().value();
-    ICU4XPluralRules pr = ICU4XPluralRules::create_cardinal(dp, locale).ok().value();
+    std::unique_ptr<ICU4XLocale> locale = ICU4XLocale::create_from_string("ar").ok().value();
+    std::cout << "Running test for locale " << locale->to_string() << std::endl;
+    std::unique_ptr<ICU4XDataProvider> dp = ICU4XDataProvider::create_fs(path).ok().value();
+    std::unique_ptr<ICU4XPluralRules> pr = ICU4XPluralRules::create_cardinal(*dp.get(), *locale.get()).ok().value();
 
-    ICU4XPluralOperands op = ICU4XPluralOperands::create_from_string("3").ok().value();
-    ICU4XPluralCategory cat = pr.category_for(op);
+    std::unique_ptr<ICU4XPluralOperands> op = ICU4XPluralOperands::create_from_string("3").ok().value();
+    ICU4XPluralCategory cat = pr->category_for(*op.get());
 
     std::cout << "Category is " << static_cast<int32_t>(cat)
-                                << " (should be " << static_cast<int32_t>(ICU4XPluralCategory::Few) << ")"
+                                << " (should be " << static_cast<int32_t>(ICU4XPluralCategory::Value::Few) << ")"
                                 << std::endl;
-    if (cat != ICU4XPluralCategory::Few) {
+    if (cat != ICU4XPluralCategory::Value::Few) {
         return 1;
     }
 
     op = ICU4XPluralOperands::create_from_string("1011.0").ok().value();
-    cat = pr.category_for(op);
+    cat = pr->category_for(*op.get());
     std::cout << "Category is " << static_cast<int32_t>(cat)
-                                << " (should be " << static_cast<int32_t>(ICU4XPluralCategory::Many) << ")"
+                                << " (should be " << static_cast<int32_t>(ICU4XPluralCategory::Value::Many) << ")"
                                 << std::endl;
-    if (cat != ICU4XPluralCategory::Many) {
+    if (cat != ICU4XPluralCategory::Value::Many) {
         return 1;
     }
     return 0;

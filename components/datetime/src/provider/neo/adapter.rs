@@ -6,39 +6,29 @@ use crate::provider::calendar::*;
 use crate::provider::neo::*;
 use alloc::vec;
 use icu_calendar::types::MonthCode;
-use icu_locid::extensions::private::{subtag, Subtag};
 use icu_provider::prelude::*;
 
-mod subtag_consts {
+mod key_attr_consts {
     use super::*;
-    pub const STADLN_ABBR: Subtag = subtag!("3s");
-    pub const STADLN_WIDE: Subtag = subtag!("4s");
-    pub const STADLN_NARW: Subtag = subtag!("5s");
-    pub const STADLN_SHRT: Subtag = subtag!("6s");
-    pub const FORMAT_ABBR: Subtag = subtag!("3");
-    pub const FORMAT_WIDE: Subtag = subtag!("4");
-    pub const FORMAT_NARW: Subtag = subtag!("5");
-    pub const FORMAT_SHRT: Subtag = subtag!("6");
-}
 
-fn single_aux_subtag<M: KeyedDataMarker>(locale: &DataLocale) -> Result<Subtag, DataError> {
-    let Some(aux) = locale.get_aux() else {
-        return Err(DataError::custom("Expected a single aux key")
-            .with_key(M::KEY)
-            .with_debug_context(locale));
-    };
-    let mut iter = aux.iter();
-    let Some(subtag) = iter.next() else {
-        return Err(DataError::custom("Expected a single aux key")
-            .with_key(M::KEY)
-            .with_debug_context(locale));
-    };
-    if iter.next().is_some() {
-        return Err(DataError::custom("Expected a single aux key")
-            .with_key(M::KEY)
-            .with_debug_context(locale));
-    }
-    Ok(subtag)
+    pub const STADLN_ABBR: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("3s");
+    pub const STADLN_WIDE: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("4s");
+    pub const STADLN_NARW: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("5s");
+    pub const STADLN_SHRT: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("6s");
+    pub const FORMAT_ABBR: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("3");
+    pub const FORMAT_WIDE: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("4");
+    pub const FORMAT_NARW: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("5");
+    pub const FORMAT_SHRT: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("6");
+
+    /// Used for matching
+    pub const STADLN_ABBR_STR: &str = STADLN_ABBR.as_str();
+    pub const STADLN_WIDE_STR: &str = STADLN_WIDE.as_str();
+    pub const STADLN_NARW_STR: &str = STADLN_NARW.as_str();
+    pub const STADLN_SHRT_STR: &str = STADLN_SHRT.as_str();
+    pub const FORMAT_ABBR_STR: &str = FORMAT_ABBR.as_str();
+    pub const FORMAT_WIDE_STR: &str = FORMAT_WIDE.as_str();
+    pub const FORMAT_NARW_STR: &str = FORMAT_NARW.as_str();
+    pub const FORMAT_SHRT_STR: &str = FORMAT_SHRT.as_str();
 }
 
 fn month_symbols_map_project_cloned<M, P>(
@@ -46,35 +36,34 @@ fn month_symbols_map_project_cloned<M, P>(
     req: DataRequest,
 ) -> Result<DataResponse<P>, DataError>
 where
-    M: KeyedDataMarker<Yokeable = DateSymbolsV1<'static>>,
-    P: KeyedDataMarker<Yokeable = MonthNamesV1<'static>>,
+    M: DataMarker<Yokeable = DateSymbolsV1<'static>>,
+    P: DataMarker<Yokeable = MonthNamesV1<'static>>,
 {
-    let subtag = single_aux_subtag::<M>(req.locale)?;
     let new_payload = payload.try_map_project_cloned(|payload, _| {
-        use subtag_consts::*;
-        let result = match subtag {
-            STADLN_ABBR => payload.months.stand_alone_abbreviated(),
-            STADLN_WIDE => payload.months.stand_alone_wide(),
-            STADLN_NARW => payload.months.stand_alone_narrow(),
+        use key_attr_consts::*;
+        let result = match req.id.marker_attributes.as_str() {
+            STADLN_ABBR_STR => payload.months.stand_alone_abbreviated(),
+            STADLN_WIDE_STR => payload.months.stand_alone_wide(),
+            STADLN_NARW_STR => payload.months.stand_alone_narrow(),
             _ => None,
         };
         if let Some(result) = result {
             return Ok(result.into());
         }
-        let result = match subtag {
-            STADLN_ABBR | FORMAT_ABBR => &payload.months.format.abbreviated,
-            STADLN_WIDE | FORMAT_WIDE => &payload.months.format.wide,
-            STADLN_NARW | FORMAT_NARW => &payload.months.format.narrow,
+        let result = match req.id.marker_attributes.as_str() {
+            STADLN_ABBR_STR | FORMAT_ABBR_STR => &payload.months.format.abbreviated,
+            STADLN_WIDE_STR | FORMAT_WIDE_STR => &payload.months.format.wide,
+            STADLN_NARW_STR | FORMAT_NARW_STR => &payload.months.format.narrow,
             _ => {
-                return Err(DataError::custom("Unknown aux key")
-                    .with_key(M::KEY)
-                    .with_display_context(&subtag))
+                return Err(DataError::custom("Unknown marker attribute")
+                    .with_marker(M::INFO)
+                    .with_display_context(req.id.marker_attributes.as_str()))
             }
         };
         Ok(result.into())
     })?;
     Ok(DataResponse {
-        payload: Some(new_payload),
+        payload: new_payload,
         metadata: Default::default(),
     })
 }
@@ -84,45 +73,44 @@ fn weekday_symbols_map_project_cloned<M, P>(
     req: DataRequest,
 ) -> Result<DataResponse<P>, DataError>
 where
-    M: KeyedDataMarker<Yokeable = DateSymbolsV1<'static>>,
-    P: KeyedDataMarker<Yokeable = LinearNamesV1<'static>>,
+    M: DataMarker<Yokeable = DateSymbolsV1<'static>>,
+    P: DataMarker<Yokeable = LinearNamesV1<'static>>,
 {
-    let subtag = single_aux_subtag::<M>(req.locale)?;
     let new_payload = payload.try_map_project_cloned(|payload, _| {
-        use subtag_consts::*;
-        let result = match subtag {
-            STADLN_ABBR => payload.weekdays.stand_alone_abbreviated(),
-            STADLN_WIDE => payload.weekdays.stand_alone_wide(),
-            STADLN_NARW => payload.weekdays.stand_alone_narrow(),
-            STADLN_SHRT => payload.weekdays.stand_alone_short(),
+        use key_attr_consts::*;
+        let result = match req.id.marker_attributes.as_str() {
+            STADLN_ABBR_STR => payload.weekdays.stand_alone_abbreviated(),
+            STADLN_WIDE_STR => payload.weekdays.stand_alone_wide(),
+            STADLN_NARW_STR => payload.weekdays.stand_alone_narrow(),
+            STADLN_SHRT_STR => payload.weekdays.stand_alone_short(),
             _ => None,
         };
         if let Some(result) = result {
             return Ok(result.into());
         }
-        let result = match subtag {
-            STADLN_SHRT | FORMAT_SHRT => payload.weekdays.format.short.as_ref(),
+        let result = match req.id.marker_attributes.as_str() {
+            STADLN_SHRT_STR | FORMAT_SHRT_STR => payload.weekdays.format.short.as_ref(),
             _ => None,
         };
         if let Some(result) = result {
             return Ok(result.into());
         }
-        let result = match subtag {
-            STADLN_ABBR | FORMAT_ABBR | STADLN_SHRT | FORMAT_SHRT => {
+        let result = match req.id.marker_attributes.as_str() {
+            STADLN_ABBR_STR | FORMAT_ABBR_STR | STADLN_SHRT_STR | FORMAT_SHRT_STR => {
                 &payload.weekdays.format.abbreviated
             }
-            STADLN_WIDE | FORMAT_WIDE => &payload.weekdays.format.wide,
-            STADLN_NARW | FORMAT_NARW => &payload.weekdays.format.narrow,
+            STADLN_WIDE_STR | FORMAT_WIDE_STR => &payload.weekdays.format.wide,
+            STADLN_NARW_STR | FORMAT_NARW_STR => &payload.weekdays.format.narrow,
             _ => {
-                return Err(DataError::custom("Unknown aux key")
-                    .with_key(M::KEY)
-                    .with_display_context(&subtag))
+                return Err(DataError::custom("Unknown marker attribute")
+                    .with_marker(M::INFO)
+                    .with_display_context(req.id.marker_attributes.as_str()))
             }
         };
         Ok(result.into())
     })?;
     Ok(DataResponse {
-        payload: Some(new_payload),
+        payload: new_payload,
         metadata: Default::default(),
     })
 }
@@ -132,26 +120,25 @@ fn era_symbols_map_project_cloned<M, P>(
     req: DataRequest,
 ) -> Result<DataResponse<P>, DataError>
 where
-    M: KeyedDataMarker<Yokeable = DateSymbolsV1<'static>>,
-    P: KeyedDataMarker<Yokeable = YearNamesV1<'static>>,
+    M: DataMarker<Yokeable = DateSymbolsV1<'static>>,
+    P: DataMarker<Yokeable = YearNamesV1<'static>>,
 {
-    let subtag = single_aux_subtag::<M>(req.locale)?;
     let new_payload = payload.try_map_project_cloned(|payload, _| {
-        use subtag_consts::*;
-        let result = match subtag {
-            FORMAT_ABBR => &payload.eras.abbr,
-            FORMAT_WIDE => &payload.eras.names,
-            FORMAT_NARW => &payload.eras.narrow,
+        use key_attr_consts::*;
+        let result = match req.id.marker_attributes.as_str() {
+            FORMAT_ABBR_STR => &payload.eras.abbr,
+            FORMAT_WIDE_STR => &payload.eras.names,
+            FORMAT_NARW_STR => &payload.eras.narrow,
             _ => {
-                return Err(DataError::custom("Unknown aux key")
-                    .with_key(M::KEY)
-                    .with_display_context(&subtag))
+                return Err(DataError::custom("Unknown marker attribute")
+                    .with_marker(M::INFO)
+                    .with_display_context(req.id.marker_attributes.as_str()))
             }
         };
         Ok(YearNamesV1::Eras(result.clone()))
     })?;
     Ok(DataResponse {
-        payload: Some(new_payload),
+        payload: new_payload,
         metadata: Default::default(),
     })
 }
@@ -161,35 +148,34 @@ fn dayperiod_symbols_map_project_cloned<M, P>(
     req: DataRequest,
 ) -> Result<DataResponse<P>, DataError>
 where
-    M: KeyedDataMarker<Yokeable = TimeSymbolsV1<'static>>,
-    P: KeyedDataMarker<Yokeable = LinearNamesV1<'static>>,
+    M: DataMarker<Yokeable = TimeSymbolsV1<'static>>,
+    P: DataMarker<Yokeable = LinearNamesV1<'static>>,
 {
-    let subtag = single_aux_subtag::<M>(req.locale)?;
     let new_payload = payload.try_map_project_cloned(|payload, _| {
-        use subtag_consts::*;
-        let result = match subtag {
-            STADLN_ABBR => payload.day_periods.stand_alone_abbreviated(),
-            STADLN_WIDE => payload.day_periods.stand_alone_wide(),
-            STADLN_NARW => payload.day_periods.stand_alone_narrow(),
+        use key_attr_consts::*;
+        let result = match req.id.marker_attributes.as_str() {
+            STADLN_ABBR_STR => payload.day_periods.stand_alone_abbreviated(),
+            STADLN_WIDE_STR => payload.day_periods.stand_alone_wide(),
+            STADLN_NARW_STR => payload.day_periods.stand_alone_narrow(),
             _ => None,
         };
         if let Some(result) = result {
             return Ok(result.into());
         }
-        let result = match subtag {
-            STADLN_ABBR | FORMAT_ABBR => &payload.day_periods.format.abbreviated,
-            STADLN_WIDE | FORMAT_WIDE => &payload.day_periods.format.wide,
-            STADLN_NARW | FORMAT_NARW => &payload.day_periods.format.narrow,
+        let result = match req.id.marker_attributes.as_str() {
+            STADLN_ABBR_STR | FORMAT_ABBR_STR => &payload.day_periods.format.abbreviated,
+            STADLN_WIDE_STR | FORMAT_WIDE_STR => &payload.day_periods.format.wide,
+            STADLN_NARW_STR | FORMAT_NARW_STR => &payload.day_periods.format.narrow,
             _ => {
-                return Err(DataError::custom("Unknown aux key")
-                    .with_key(M::KEY)
-                    .with_display_context(&subtag))
+                return Err(DataError::custom("Unknown marker attribute")
+                    .with_marker(M::INFO)
+                    .with_display_context(req.id.marker_attributes.as_str()))
             }
         };
         Ok(result.into())
     })?;
     Ok(DataResponse {
-        payload: Some(new_payload),
+        payload: new_payload,
         metadata: Default::default(),
     })
 }
@@ -469,26 +455,27 @@ impl_data_provider_adapter!(
 #[cfg(feature = "compiled_data")]
 mod tests {
     use super::*;
-    use icu_locid::locale;
+    use icu_locale_core::langid;
 
     #[test]
     fn test_adapter_months_numeric() {
         let symbols: DataPayload<GregorianDateSymbolsV1Marker> = crate::provider::Baked
             .load(DataRequest {
-                locale: &locale!("en").into(),
-                metadata: Default::default(),
+                id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
+                ..Default::default()
             })
             .unwrap()
-            .take_payload()
-            .unwrap();
+            .payload;
         let neo_month_abbreviated: DataPayload<GregorianMonthNamesV1Marker> = symbols
             .load(DataRequest {
-                locale: &"en-x-3".parse().unwrap(),
-                metadata: Default::default(),
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::from_str_or_panic("3"),
+                    &"en".parse().unwrap(),
+                ),
+                ..Default::default()
             })
             .unwrap()
-            .take_payload()
-            .unwrap();
+            .payload;
 
         assert_eq!(
             format!("{neo_month_abbreviated:?}"),
@@ -500,20 +487,21 @@ mod tests {
     fn test_adapter_months_map() {
         let symbols: DataPayload<HebrewDateSymbolsV1Marker> = crate::provider::Baked
             .load(DataRequest {
-                locale: &locale!("en").into(),
-                metadata: Default::default(),
+                id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
+                ..Default::default()
             })
             .unwrap()
-            .take_payload()
-            .unwrap();
+            .payload;
         let neo_month_abbreviated: DataPayload<HebrewMonthNamesV1Marker> = symbols
             .load(DataRequest {
-                locale: &"en-x-3".parse().unwrap(),
-                metadata: Default::default(),
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::from_str_or_panic("3"),
+                    &"en".parse().unwrap(),
+                ),
+                ..Default::default()
             })
             .unwrap()
-            .take_payload()
-            .unwrap();
+            .payload;
 
         assert_eq!(
             format!("{neo_month_abbreviated:?}"),
@@ -525,20 +513,21 @@ mod tests {
     fn test_adapter_weekdays_abbreviated() {
         let symbols: DataPayload<HebrewDateSymbolsV1Marker> = crate::provider::Baked
             .load(DataRequest {
-                locale: &locale!("en").into(),
-                metadata: Default::default(),
+                id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
+                ..Default::default()
             })
             .unwrap()
-            .take_payload()
-            .unwrap();
+            .payload;
         let neo_weekdays_abbreviated: DataPayload<WeekdayNamesV1Marker> = symbols
             .load(DataRequest {
-                locale: &"en-x-3".parse().unwrap(),
-                metadata: Default::default(),
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::from_str_or_panic("3"),
+                    &"en".parse().unwrap(),
+                ),
+                ..Default::default()
             })
             .unwrap()
-            .take_payload()
-            .unwrap();
+            .payload;
 
         assert_eq!(
             format!("{neo_weekdays_abbreviated:?}"),
@@ -550,20 +539,21 @@ mod tests {
     fn test_adapter_weekdays_short() {
         let symbols: DataPayload<HebrewDateSymbolsV1Marker> = crate::provider::Baked
             .load(DataRequest {
-                locale: &locale!("en").into(),
-                metadata: Default::default(),
+                id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
+                ..Default::default()
             })
             .unwrap()
-            .take_payload()
-            .unwrap();
+            .payload;
         let neo_weekdays_short: DataPayload<WeekdayNamesV1Marker> = symbols
             .load(DataRequest {
-                locale: &"en-x-6s".parse().unwrap(),
-                metadata: Default::default(),
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::from_str_or_panic("6s"),
+                    &"en".parse().unwrap(),
+                ),
+                ..Default::default()
             })
             .unwrap()
-            .take_payload()
-            .unwrap();
+            .payload;
 
         assert_eq!(
             format!("{neo_weekdays_short:?}"),
@@ -575,20 +565,21 @@ mod tests {
     fn test_adapter_eras() {
         let symbols: DataPayload<GregorianDateSymbolsV1Marker> = crate::provider::Baked
             .load(DataRequest {
-                locale: &locale!("en").into(),
-                metadata: Default::default(),
+                id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
+                ..Default::default()
             })
             .unwrap()
-            .take_payload()
-            .unwrap();
+            .payload;
         let neo_eras_wide: DataPayload<GregorianYearNamesV1Marker> = symbols
             .load(DataRequest {
-                locale: &"en-x-4".parse().unwrap(),
-                metadata: Default::default(),
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::from_str_or_panic("4"),
+                    &"en".parse().unwrap(),
+                ),
+                ..Default::default()
             })
             .unwrap()
-            .take_payload()
-            .unwrap();
+            .payload;
 
         assert_eq!(
             format!("{neo_eras_wide:?}"),
@@ -600,20 +591,21 @@ mod tests {
     fn test_adapter_dayperiods() {
         let symbols: DataPayload<TimeSymbolsV1Marker> = crate::provider::Baked
             .load(DataRequest {
-                locale: &locale!("en").into(),
-                metadata: Default::default(),
+                id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
+                ..Default::default()
             })
             .unwrap()
-            .take_payload()
-            .unwrap();
+            .payload;
         let neo_dayperiods_abbreviated: DataPayload<DayPeriodNamesV1Marker> = symbols
             .load(DataRequest {
-                locale: &"en-x-3s".parse().unwrap(),
-                metadata: Default::default(),
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::from_str_or_panic("3s"),
+                    &"en".parse().unwrap(),
+                ),
+                ..Default::default()
             })
             .unwrap()
-            .take_payload()
-            .unwrap();
+            .payload;
 
         assert_eq!(
             format!("{neo_dayperiods_abbreviated:?}"),

@@ -9,8 +9,7 @@
 //! use icu::calendar::{chinese::Chinese, Date, Iso};
 //!
 //! let iso_date = Date::try_new_iso_date(2023, 6, 23).unwrap();
-//! let chinese_date =
-//!     Date::new_from_iso(iso_date, Chinese::new());
+//! let chinese_date = Date::new_from_iso(iso_date, Chinese::new());
 //!
 //! assert_eq!(chinese_date.year().number, 4660);
 //! assert_eq!(chinese_date.year().related_iso, Some(2023));
@@ -21,9 +20,10 @@
 
 use crate::{
     calendar_arithmetic::{ArithmeticDate, CalendarArithmetic, PrecomputedDataSource},
+    error::DateError,
     provider::chinese_based::{ChineseBasedCacheV1, PackedChineseBasedYearInfo},
     types::{FormattableMonth, MonthCode},
-    Calendar, CalendarError, Iso,
+    Calendar, Iso,
 };
 
 use calendrical_calculations::chinese_based::{self, ChineseBased, YearBounds};
@@ -106,7 +106,10 @@ fn compute_packed_with_yb<CB: ChineseBased>(
     let ny_offset = if let Ok(ny_offset) = u8::try_from(ny_offset) {
         ny_offset
     } else {
-        debug_assert!(false, "Expected small new years offset, got {ny_offset}");
+        debug_assert!(
+            false,
+            "Expected small new years offset, got {ny_offset} in ISO year {related_iso}"
+        );
         0
     };
     PackedChineseBasedYearInfo::new(month_lengths, leap_month, ny_offset)
@@ -340,20 +343,32 @@ impl<C: ChineseBasedWithDataLoading + CalendarArithmetic<YearInfo = ChineseBased
         month: u8,
         day: u8,
         year_info: ChineseBasedYearInfo,
-    ) -> Result<ArithmeticDate<C>, CalendarError> {
+    ) -> Result<ArithmeticDate<C>, DateError> {
         let max_month = Self::months_in_year_with_info(year_info);
         if !(1..=max_month).contains(&month) {
-            return Err(CalendarError::Overflow {
+            return Err(DateError::Range {
                 field: "month",
-                max: max_month as usize,
+                value: month as i32,
+                min: 1,
+                max: max_month as i32,
+            });
+        }
+        if month == 0 {
+            return Err(DateError::Range {
+                field: "month",
+                value: 0,
+                min: 1,
+                max: 12,
             });
         }
 
         let max_day = year_info.days_in_month(month);
         if day > max_day {
-            return Err(CalendarError::Overflow {
+            return Err(DateError::Range {
                 field: "day",
-                max: max_day as usize,
+                value: day as i32,
+                min: 1,
+                max: max_day as i32,
             });
         }
 

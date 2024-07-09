@@ -1,0 +1,234 @@
+{
+  "prefixes": [
+    [
+      {
+        "Binary": 1
+      },
+      "kibi{0}"
+    ],
+    [
+      {
+        "Binary": 2
+      },
+      "mébi{0}"
+    ],
+    [
+      {
+        "Binary": 3
+      },
+      "gibi{0}"
+    ],
+    [
+      {
+        "Binary": 4
+      },
+      "tébi{0}"
+    ],
+    [
+      {
+        "Binary": 5
+      },
+      "pébi{0}"
+    ],
+    [
+      {
+        "Binary": 6
+      },
+      "exbi{0}"
+    ],
+    [
+      {
+        "Binary": 7
+      },
+      "zébi{0}"
+    ],
+    [
+      {
+        "Binary": 8
+      },
+      "yobi{0}"
+    ],
+    [
+      {
+        "Decimal": -30
+      },
+      "quecto{0}"
+    ],
+    [
+      {
+        "Decimal": -27
+      },
+      "ronto{0}"
+    ],
+    [
+      {
+        "Decimal": -24
+      },
+      "yocto{0}"
+    ],
+    [
+      {
+        "Decimal": -21
+      },
+      "zepto{0}"
+    ],
+    [
+      {
+        "Decimal": -18
+      },
+      "atto{0}"
+    ],
+    [
+      {
+        "Decimal": -15
+      },
+      "femto{0}"
+    ],
+    [
+      {
+        "Decimal": -12
+      },
+      "pico{0}"
+    ],
+    [
+      {
+        "Decimal": -9
+      },
+      "nano{0}"
+    ],
+    [
+      {
+        "Decimal": -6
+      },
+      "micro{0}"
+    ],
+    [
+      {
+        "Decimal": -3
+      },
+      "milli{0}"
+    ],
+    [
+      {
+        "Decimal": -2
+      },
+      "centi{0}"
+    ],
+    [
+      {
+        "Decimal": -1
+      },
+      "déci{0}"
+    ],
+    [
+      {
+        "Decimal": 1
+      },
+      "déca{0}"
+    ],
+    [
+      {
+        "Decimal": 2
+      },
+      "hecto{0}"
+    ],
+    [
+      {
+        "Decimal": 3
+      },
+      "kilo{0}"
+    ],
+    [
+      {
+        "Decimal": 6
+      },
+      "méga{0}"
+    ],
+    [
+      {
+        "Decimal": 9
+      },
+      "giga{0}"
+    ],
+    [
+      {
+        "Decimal": 12
+      },
+      "téra{0}"
+    ],
+    [
+      {
+        "Decimal": 15
+      },
+      "péta{0}"
+    ],
+    [
+      {
+        "Decimal": 18
+      },
+      "exa{0}"
+    ],
+    [
+      {
+        "Decimal": 21
+      },
+      "zetta{0}"
+    ],
+    [
+      {
+        "Decimal": 24
+      },
+      "yotta{0}"
+    ],
+    [
+      {
+        "Decimal": 27
+      },
+      "ronna{0}"
+    ],
+    [
+      {
+        "Decimal": 30
+      },
+      "quetta{0}"
+    ],
+    [
+      {
+        "Power": {
+          "power": "Two",
+          "count": "One"
+        }
+      },
+      "{0} carré"
+    ],
+    [
+      {
+        "Power": {
+          "power": "Two",
+          "count": "Other"
+        }
+      },
+      "{0} carrés"
+    ],
+    [
+      {
+        "Power": {
+          "power": "Three",
+          "count": "One"
+        }
+      },
+      "{0} cube"
+    ],
+    [
+      {
+        "Power": {
+          "power": "Three",
+          "count": "Other"
+        }
+      },
+      "{0} cubes"
+    ]
+  ],
+  "per": "{0} par {1}",
+  "times": "{0}-{1}"
+}

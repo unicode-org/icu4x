@@ -4,7 +4,7 @@
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
-use icu_locid::langid;
+use icu_locale_core::langid;
 use icu_provider::hello_world::HelloWorldV1Marker;
 use icu_provider::prelude::*;
 use icu_provider_fs::FsDataProvider;
@@ -13,15 +13,14 @@ fn overview_bench(c: &mut Criterion) {
     // End-to-end JSON test
     c.bench_function("json/overview", |b| {
         b.iter(|| {
-            let provider = FsDataProvider::try_new("./tests/data/json")
+            let provider = FsDataProvider::try_new("./tests/data/json".into())
                 .expect("Loading file from testdata directory");
-            let _: DataPayload<HelloWorldV1Marker> = black_box(&provider)
+            let _: DataResponse<HelloWorldV1Marker> = black_box(&provider)
                 .as_deserializing()
                 .load(DataRequest {
-                    locale: &langid!("ru").into(),
-                    metadata: Default::default(),
+                    id: DataIdentifierBorrowed::for_locale(&langid!("ru").into()),
+                    ..Default::default()
                 })
-                .and_then(DataResponse::take_payload)
                 .expect("Loading was successful");
         });
     });
@@ -36,31 +35,29 @@ fn overview_bench(c: &mut Criterion) {
 
 #[cfg(feature = "bench")]
 fn json_bench(c: &mut Criterion) {
-    let provider =
-        FsDataProvider::try_new("./tests/data/json").expect("Loading file from testdata directory");
+    let provider = FsDataProvider::try_new("./tests/data/json".into())
+        .expect("Loading file from testdata directory");
 
     c.bench_function("json/generic", |b| {
         b.iter(|| {
-            let _: DataPayload<HelloWorldV1Marker> = black_box(&provider)
+            let _: DataResponse<HelloWorldV1Marker> = black_box(&provider)
                 .as_deserializing()
                 .load(DataRequest {
-                    locale: &langid!("ru").into(),
-                    metadata: Default::default(),
+                    id: DataIdentifierBorrowed::for_locale(&langid!("ru").into()),
+                    ..Default::default()
                 })
-                .and_then(DataResponse::take_payload)
                 .expect("Loading was successful");
         });
     });
 
     c.bench_function("json/erased_serde", |b| {
         b.iter(|| {
-            let _: DataPayload<HelloWorldV1Marker> = black_box(&provider as &dyn BufferProvider)
+            let _: DataResponse<HelloWorldV1Marker> = black_box(&provider as &dyn BufferProvider)
                 .as_deserializing()
                 .load(DataRequest {
-                    locale: &langid!("ru").into(),
-                    metadata: Default::default(),
+                    id: DataIdentifierBorrowed::for_locale(&langid!("ru").into()),
+                    ..Default::default()
                 })
-                .and_then(DataResponse::take_payload)
                 .expect("Loading was successful");
         });
     });
@@ -68,32 +65,29 @@ fn json_bench(c: &mut Criterion) {
 
 #[cfg(feature = "bench")]
 fn bincode_bench(c: &mut Criterion) {
-    let provider = FsDataProvider::try_new("./tests/data/bincode")
+    let provider = FsDataProvider::try_new("./tests/data/bincode".into())
         .expect("Loading file from testdata directory");
 
     c.bench_function("bincode/generic", |b| {
         b.iter(|| {
-            let _: DataPayload<HelloWorldV1Marker> = black_box(&provider)
+            let _: DataResponse<HelloWorldV1Marker> = black_box(&provider)
                 .as_deserializing()
                 .load(DataRequest {
-                    locale: &langid!("ru").into(),
-                    metadata: Default::default(),
+                    id: DataIdentifierBorrowed::for_locale(&langid!("ru").into()),
+                    ..Default::default()
                 })
-                .and_then(DataResponse::take_payload)
                 .expect("Loading was successful");
         });
     });
 
     c.bench_function("bincode/erased_serde", |b| {
         b.iter(|| {
-            let _: DataPayload<HelloWorldV1Marker> = black_box(&provider as &dyn BufferProvider)
+            let _: DataResponse<HelloWorldV1Marker> = black_box(&provider as &dyn BufferProvider)
                 .as_deserializing()
                 .load(DataRequest {
-                    locale: &langid!("ru").into(),
-                    metadata: Default::default(),
+                    id: DataIdentifierBorrowed::for_locale(&langid!("ru").into()),
+                    ..Default::default()
                 })
-                .expect("The data should be valid")
-                .take_payload()
                 .expect("Loading was successful");
         });
     });
@@ -101,32 +95,29 @@ fn bincode_bench(c: &mut Criterion) {
 
 #[cfg(feature = "bench")]
 fn postcard_bench(c: &mut Criterion) {
-    let provider = FsDataProvider::try_new("./tests/data/postcard")
+    let provider = FsDataProvider::try_new("./tests/data/postcard".into())
         .expect("Loading file from testdata directory");
 
     c.bench_function("postcard/generic", |b| {
         b.iter(|| {
-            let _: DataPayload<HelloWorldV1Marker> = black_box(&provider)
+            let _: DataResponse<HelloWorldV1Marker> = black_box(&provider)
                 .as_deserializing()
                 .load(DataRequest {
-                    locale: &langid!("ru").into(),
-                    metadata: Default::default(),
+                    id: DataIdentifierBorrowed::for_locale(&langid!("ru").into()),
+                    ..Default::default()
                 })
-                .expect("The data should be valid")
-                .take_payload()
                 .expect("Loading was successful");
         });
     });
 
     c.bench_function("postcard/erased_serde", |b| {
         b.iter(|| {
-            let _: DataPayload<HelloWorldV1Marker> = black_box(&provider as &dyn BufferProvider)
+            let _: DataResponse<HelloWorldV1Marker> = black_box(&provider as &dyn BufferProvider)
                 .as_deserializing()
                 .load(DataRequest {
-                    locale: &langid!("ru").into(),
-                    metadata: Default::default(),
+                    id: DataIdentifierBorrowed::for_locale(&langid!("ru").into()),
+                    ..Default::default()
                 })
-                .and_then(DataResponse::take_payload)
                 .expect("Loading was successful");
         });
     });

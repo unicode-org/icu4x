@@ -1,154 +1,101 @@
 #ifndef ICU4XWordSegmenter_HPP
 #define ICU4XWordSegmenter_HPP
+
+#include "ICU4XWordSegmenter.d.hpp"
+
+#include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
-#include <algorithm>
 #include <memory>
-#include <variant>
 #include <optional>
 #include "diplomat_runtime.hpp"
-
-#include "ICU4XWordSegmenter.h"
-
-class ICU4XDataProvider;
-class ICU4XWordSegmenter;
-#include "ICU4XError.hpp"
-class ICU4XWordBreakIteratorUtf8;
-class ICU4XWordBreakIteratorUtf16;
-class ICU4XWordBreakIteratorLatin1;
-
-/**
- * A destruction policy for using ICU4XWordSegmenter with std::unique_ptr.
- */
-struct ICU4XWordSegmenterDeleter {
-  void operator()(capi::ICU4XWordSegmenter* l) const noexcept {
-    capi::ICU4XWordSegmenter_destroy(l);
-  }
-};
-
-/**
- * An ICU4X word-break segmenter, capable of finding word breakpoints in strings.
- * 
- * See the [Rust documentation for `WordSegmenter`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html) for more information.
- */
-class ICU4XWordSegmenter {
- public:
-
-  /**
-   * Construct an [`ICU4XWordSegmenter`] with automatically selecting the best available LSTM
-   * or dictionary payload data.
-   * 
-   * Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
-   * Khmer, Lao, and Thai.
-   * 
-   * See the [Rust documentation for `new_auto`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.new_auto) for more information.
-   */
-  static diplomat::result<ICU4XWordSegmenter, ICU4XError> create_auto(const ICU4XDataProvider& provider);
-
-  /**
-   * Construct an [`ICU4XWordSegmenter`] with LSTM payload data for Burmese, Khmer, Lao, and
-   * Thai.
-   * 
-   * Warning: [`ICU4XWordSegmenter`] created by this function doesn't handle Chinese or
-   * Japanese.
-   * 
-   * See the [Rust documentation for `new_lstm`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.new_lstm) for more information.
-   */
-  static diplomat::result<ICU4XWordSegmenter, ICU4XError> create_lstm(const ICU4XDataProvider& provider);
-
-  /**
-   * Construct an [`ICU4XWordSegmenter`] with dictionary payload data for Chinese, Japanese,
-   * Burmese, Khmer, Lao, and Thai.
-   * 
-   * See the [Rust documentation for `new_dictionary`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.new_dictionary) for more information.
-   */
-  static diplomat::result<ICU4XWordSegmenter, ICU4XError> create_dictionary(const ICU4XDataProvider& provider);
-
-  /**
-   * Segments a string.
-   * 
-   * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
-   * to the WHATWG Encoding Standard.
-   * 
-   * See the [Rust documentation for `segment_utf8`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.segment_utf8) for more information.
-   * 
-   * Lifetimes: `this`, `input` must live at least as long as the output.
-   */
-  ICU4XWordBreakIteratorUtf8 segment_utf8(const std::string_view input) const;
-
-  /**
-   * Segments a string.
-   * 
-   * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
-   * to the WHATWG Encoding Standard.
-   * 
-   * See the [Rust documentation for `segment_utf16`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.segment_utf16) for more information.
-   * 
-   * Lifetimes: `this`, `input` must live at least as long as the output.
-   */
-  ICU4XWordBreakIteratorUtf16 segment_utf16(const std::u16string_view input) const;
-
-  /**
-   * Segments a Latin-1 string.
-   * 
-   * See the [Rust documentation for `segment_latin1`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.segment_latin1) for more information.
-   * 
-   * Lifetimes: `this`, `input` must live at least as long as the output.
-   */
-  ICU4XWordBreakIteratorLatin1 segment_latin1(const diplomat::span<const uint8_t> input) const;
-  inline const capi::ICU4XWordSegmenter* AsFFI() const { return this->inner.get(); }
-  inline capi::ICU4XWordSegmenter* AsFFIMut() { return this->inner.get(); }
-  inline explicit ICU4XWordSegmenter(capi::ICU4XWordSegmenter* i) : inner(i) {}
-  ICU4XWordSegmenter() = default;
-  ICU4XWordSegmenter(ICU4XWordSegmenter&&) noexcept = default;
-  ICU4XWordSegmenter& operator=(ICU4XWordSegmenter&& other) noexcept = default;
- private:
-  std::unique_ptr<capi::ICU4XWordSegmenter, ICU4XWordSegmenterDeleter> inner;
-};
-
+#include "ICU4XDataError.hpp"
 #include "ICU4XDataProvider.hpp"
-#include "ICU4XWordBreakIteratorUtf8.hpp"
-#include "ICU4XWordBreakIteratorUtf16.hpp"
 #include "ICU4XWordBreakIteratorLatin1.hpp"
+#include "ICU4XWordBreakIteratorUtf16.hpp"
+#include "ICU4XWordBreakIteratorUtf8.hpp"
 
-inline diplomat::result<ICU4XWordSegmenter, ICU4XError> ICU4XWordSegmenter::create_auto(const ICU4XDataProvider& provider) {
-  auto diplomat_result_raw_out_value = capi::ICU4XWordSegmenter_create_auto(provider.AsFFI());
-  diplomat::result<ICU4XWordSegmenter, ICU4XError> diplomat_result_out_value;
-  if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XWordSegmenter>(ICU4XWordSegmenter(diplomat_result_raw_out_value.ok));
-  } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
-  }
-  return diplomat_result_out_value;
+
+namespace capi {
+    extern "C" {
+    
+    typedef struct ICU4XWordSegmenter_create_auto_result {union {ICU4XWordSegmenter* ok; ICU4XDataError err;}; bool is_ok;} ICU4XWordSegmenter_create_auto_result;
+    ICU4XWordSegmenter_create_auto_result ICU4XWordSegmenter_create_auto(const ICU4XDataProvider* provider);
+    
+    typedef struct ICU4XWordSegmenter_create_lstm_result {union {ICU4XWordSegmenter* ok; ICU4XDataError err;}; bool is_ok;} ICU4XWordSegmenter_create_lstm_result;
+    ICU4XWordSegmenter_create_lstm_result ICU4XWordSegmenter_create_lstm(const ICU4XDataProvider* provider);
+    
+    typedef struct ICU4XWordSegmenter_create_dictionary_result {union {ICU4XWordSegmenter* ok; ICU4XDataError err;}; bool is_ok;} ICU4XWordSegmenter_create_dictionary_result;
+    ICU4XWordSegmenter_create_dictionary_result ICU4XWordSegmenter_create_dictionary(const ICU4XDataProvider* provider);
+    
+    ICU4XWordBreakIteratorUtf8* ICU4XWordSegmenter_segment_utf8(const ICU4XWordSegmenter* self, const char* input_data, size_t input_len);
+    
+    ICU4XWordBreakIteratorUtf16* ICU4XWordSegmenter_segment_utf16(const ICU4XWordSegmenter* self, const char16_t* input_data, size_t input_len);
+    
+    ICU4XWordBreakIteratorLatin1* ICU4XWordSegmenter_segment_latin1(const ICU4XWordSegmenter* self, const uint8_t* input_data, size_t input_len);
+    
+    
+    void ICU4XWordSegmenter_destroy(ICU4XWordSegmenter* self);
+    
+    } // extern "C"
 }
-inline diplomat::result<ICU4XWordSegmenter, ICU4XError> ICU4XWordSegmenter::create_lstm(const ICU4XDataProvider& provider) {
-  auto diplomat_result_raw_out_value = capi::ICU4XWordSegmenter_create_lstm(provider.AsFFI());
-  diplomat::result<ICU4XWordSegmenter, ICU4XError> diplomat_result_out_value;
-  if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XWordSegmenter>(ICU4XWordSegmenter(diplomat_result_raw_out_value.ok));
-  } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
-  }
-  return diplomat_result_out_value;
+
+inline diplomat::result<std::unique_ptr<ICU4XWordSegmenter>, ICU4XDataError> ICU4XWordSegmenter::create_auto(const ICU4XDataProvider& provider) {
+  auto result = capi::ICU4XWordSegmenter_create_auto(provider.AsFFI());
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XWordSegmenter>, ICU4XDataError>(diplomat::Ok<std::unique_ptr<ICU4XWordSegmenter>>(std::unique_ptr<ICU4XWordSegmenter>(ICU4XWordSegmenter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XWordSegmenter>, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
-inline diplomat::result<ICU4XWordSegmenter, ICU4XError> ICU4XWordSegmenter::create_dictionary(const ICU4XDataProvider& provider) {
-  auto diplomat_result_raw_out_value = capi::ICU4XWordSegmenter_create_dictionary(provider.AsFFI());
-  diplomat::result<ICU4XWordSegmenter, ICU4XError> diplomat_result_out_value;
-  if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XWordSegmenter>(ICU4XWordSegmenter(diplomat_result_raw_out_value.ok));
-  } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
-  }
-  return diplomat_result_out_value;
+
+inline diplomat::result<std::unique_ptr<ICU4XWordSegmenter>, ICU4XDataError> ICU4XWordSegmenter::create_lstm(const ICU4XDataProvider& provider) {
+  auto result = capi::ICU4XWordSegmenter_create_lstm(provider.AsFFI());
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XWordSegmenter>, ICU4XDataError>(diplomat::Ok<std::unique_ptr<ICU4XWordSegmenter>>(std::unique_ptr<ICU4XWordSegmenter>(ICU4XWordSegmenter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XWordSegmenter>, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
-inline ICU4XWordBreakIteratorUtf8 ICU4XWordSegmenter::segment_utf8(const std::string_view input) const {
-  return ICU4XWordBreakIteratorUtf8(capi::ICU4XWordSegmenter_segment_utf8(this->inner.get(), input.data(), input.size()));
+
+inline diplomat::result<std::unique_ptr<ICU4XWordSegmenter>, ICU4XDataError> ICU4XWordSegmenter::create_dictionary(const ICU4XDataProvider& provider) {
+  auto result = capi::ICU4XWordSegmenter_create_dictionary(provider.AsFFI());
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XWordSegmenter>, ICU4XDataError>(diplomat::Ok<std::unique_ptr<ICU4XWordSegmenter>>(std::unique_ptr<ICU4XWordSegmenter>(ICU4XWordSegmenter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XWordSegmenter>, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
-inline ICU4XWordBreakIteratorUtf16 ICU4XWordSegmenter::segment_utf16(const std::u16string_view input) const {
-  return ICU4XWordBreakIteratorUtf16(capi::ICU4XWordSegmenter_segment_utf16(this->inner.get(), input.data(), input.size()));
+
+inline std::unique_ptr<ICU4XWordBreakIteratorUtf8> ICU4XWordSegmenter::segment_utf8(std::string_view input) const {
+  auto result = capi::ICU4XWordSegmenter_segment_utf8(this->AsFFI(),
+    input.data(),
+    input.size());
+  return std::unique_ptr<ICU4XWordBreakIteratorUtf8>(ICU4XWordBreakIteratorUtf8::FromFFI(result));
 }
-inline ICU4XWordBreakIteratorLatin1 ICU4XWordSegmenter::segment_latin1(const diplomat::span<const uint8_t> input) const {
-  return ICU4XWordBreakIteratorLatin1(capi::ICU4XWordSegmenter_segment_latin1(this->inner.get(), input.data(), input.size()));
+
+inline std::unique_ptr<ICU4XWordBreakIteratorUtf16> ICU4XWordSegmenter::segment_utf16(std::u16string_view input) const {
+  auto result = capi::ICU4XWordSegmenter_segment_utf16(this->AsFFI(),
+    input.data(),
+    input.size());
+  return std::unique_ptr<ICU4XWordBreakIteratorUtf16>(ICU4XWordBreakIteratorUtf16::FromFFI(result));
 }
-#endif
+
+inline std::unique_ptr<ICU4XWordBreakIteratorLatin1> ICU4XWordSegmenter::segment_latin1(diplomat::span<const uint8_t> input) const {
+  auto result = capi::ICU4XWordSegmenter_segment_latin1(this->AsFFI(),
+    input.data(),
+    input.size());
+  return std::unique_ptr<ICU4XWordBreakIteratorLatin1>(ICU4XWordBreakIteratorLatin1::FromFFI(result));
+}
+
+inline const capi::ICU4XWordSegmenter* ICU4XWordSegmenter::AsFFI() const {
+  return reinterpret_cast<const capi::ICU4XWordSegmenter*>(this);
+}
+
+inline capi::ICU4XWordSegmenter* ICU4XWordSegmenter::AsFFI() {
+  return reinterpret_cast<capi::ICU4XWordSegmenter*>(this);
+}
+
+inline const ICU4XWordSegmenter* ICU4XWordSegmenter::FromFFI(const capi::ICU4XWordSegmenter* ptr) {
+  return reinterpret_cast<const ICU4XWordSegmenter*>(ptr);
+}
+
+inline ICU4XWordSegmenter* ICU4XWordSegmenter::FromFFI(capi::ICU4XWordSegmenter* ptr) {
+  return reinterpret_cast<ICU4XWordSegmenter*>(ptr);
+}
+
+inline void ICU4XWordSegmenter::operator delete(void* ptr) {
+  capi::ICU4XWordSegmenter_destroy(reinterpret_cast<capi::ICU4XWordSegmenter*>(ptr));
+}
+
+
+#endif // ICU4XWordSegmenter_HPP

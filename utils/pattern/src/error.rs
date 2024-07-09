@@ -4,13 +4,21 @@
 
 use displaydoc::Display;
 
-#[derive(Debug, Display)]
+#[derive(Debug, Display, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum PatternError {
     #[displaydoc("Syntax error in pattern string or invalid serialized pattern")]
     InvalidPattern,
     #[displaydoc("A placeholder is invalid or out of range for the pattern type")]
     InvalidPlaceholder,
+}
+
+/// Error type for [`crate::Pattern::try_from_utf8_store`].
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[non_exhaustive]
+pub enum PatternOrUtf8Error<E> {
+    Pattern(PatternError),
+    Utf8(E),
 }
 
 #[cfg(feature = "std")]

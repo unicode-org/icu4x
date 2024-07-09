@@ -1,43 +1,39 @@
 #ifndef ICU4XCollator_H
 #define ICU4XCollator_H
+
 #include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
 #include "diplomat_runtime.h"
 
-#ifdef __cplusplus
-namespace capi {
-#endif
+#include "ICU4XCollatorOptionsV1.d.h"
+#include "ICU4XCollatorResolvedOptionsV1.d.h"
+#include "ICU4XDataError.d.h"
+#include "ICU4XDataProvider.d.h"
+#include "ICU4XLocale.d.h"
 
-typedef struct ICU4XCollator ICU4XCollator;
-#ifdef __cplusplus
-} // namespace capi
-#endif
-#include "ICU4XDataProvider.h"
-#include "ICU4XLocale.h"
-#include "ICU4XCollatorOptionsV1.h"
-#include "diplomat_result_box_ICU4XCollator_ICU4XError.h"
-#include "ICU4XOrdering.h"
-#include "ICU4XCollatorResolvedOptionsV1.h"
-#ifdef __cplusplus
-namespace capi {
-extern "C" {
-#endif
+#include "ICU4XCollator.d.h"
 
-diplomat_result_box_ICU4XCollator_ICU4XError ICU4XCollator_create_v1(const ICU4XDataProvider* provider, const ICU4XLocale* locale, ICU4XCollatorOptionsV1 options);
 
-ICU4XOrdering ICU4XCollator_compare(const ICU4XCollator* self, const char* left_data, size_t left_len, const char* right_data, size_t right_len);
 
-ICU4XOrdering ICU4XCollator_compare_valid_utf8(const ICU4XCollator* self, const char* left_data, size_t left_len, const char* right_data, size_t right_len);
 
-ICU4XOrdering ICU4XCollator_compare_utf16(const ICU4XCollator* self, const char16_t* left_data, size_t left_len, const char16_t* right_data, size_t right_len);
+
+
+typedef struct ICU4XCollator_create_v1_result {union {ICU4XCollator* ok; ICU4XDataError err;}; bool is_ok;} ICU4XCollator_create_v1_result;
+ICU4XCollator_create_v1_result ICU4XCollator_create_v1(const ICU4XDataProvider* provider, const ICU4XLocale* locale, ICU4XCollatorOptionsV1 options);
+
+int8_t ICU4XCollator_compare_utf16_(const ICU4XCollator* self, const char16_t* left_data, size_t left_len, const char16_t* right_data, size_t right_len);
+
+int8_t ICU4XCollator_compare_(const ICU4XCollator* self, const char* left_data, size_t left_len, const char* right_data, size_t right_len);
 
 ICU4XCollatorResolvedOptionsV1 ICU4XCollator_resolved_options(const ICU4XCollator* self);
+
+
 void ICU4XCollator_destroy(ICU4XCollator* self);
 
-#ifdef __cplusplus
-} // extern "C"
-} // namespace capi
-#endif
-#endif
+
+
+
+
+#endif // ICU4XCollator_H

@@ -1,25 +1,37 @@
 #ifndef ICU4XCollatorBackwardSecondLevel_HPP
 #define ICU4XCollatorBackwardSecondLevel_HPP
+
+#include "ICU4XCollatorBackwardSecondLevel.d.hpp"
+
+#include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
-#include <algorithm>
 #include <memory>
-#include <variant>
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-#include "ICU4XCollatorBackwardSecondLevel.h"
+
+namespace capi {
+    extern "C" {
+    
+    
+    } // extern "C"
+}
 
 
+inline capi::ICU4XCollatorBackwardSecondLevel ICU4XCollatorBackwardSecondLevel::AsFFI() const {
+  return static_cast<capi::ICU4XCollatorBackwardSecondLevel>(value);
+}
 
-/**
- * See the [Rust documentation for `BackwardSecondLevel`](https://docs.rs/icu/latest/icu/collator/enum.BackwardSecondLevel.html) for more information.
- */
-enum struct ICU4XCollatorBackwardSecondLevel {
-  Auto = 0,
-  Off = 1,
-  On = 2,
-};
-
-#endif
+inline ICU4XCollatorBackwardSecondLevel ICU4XCollatorBackwardSecondLevel::FromFFI(capi::ICU4XCollatorBackwardSecondLevel c_enum) {
+  switch (c_enum) {
+    case capi::ICU4XCollatorBackwardSecondLevel_Auto:
+    case capi::ICU4XCollatorBackwardSecondLevel_Off:
+    case capi::ICU4XCollatorBackwardSecondLevel_On:
+      return static_cast<ICU4XCollatorBackwardSecondLevel::Value>(c_enum);
+    default:
+      abort();
+  }
+}
+#endif // ICU4XCollatorBackwardSecondLevel_HPP

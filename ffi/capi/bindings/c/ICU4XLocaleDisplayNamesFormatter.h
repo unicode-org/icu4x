@@ -1,36 +1,34 @@
 #ifndef ICU4XLocaleDisplayNamesFormatter_H
 #define ICU4XLocaleDisplayNamesFormatter_H
+
 #include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
 #include "diplomat_runtime.h"
 
-#ifdef __cplusplus
-namespace capi {
-#endif
+#include "ICU4XDataError.d.h"
+#include "ICU4XDataProvider.d.h"
+#include "ICU4XDisplayNamesOptionsV1.d.h"
+#include "ICU4XLocale.d.h"
 
-typedef struct ICU4XLocaleDisplayNamesFormatter ICU4XLocaleDisplayNamesFormatter;
-#ifdef __cplusplus
-} // namespace capi
-#endif
-#include "ICU4XDataProvider.h"
-#include "ICU4XLocale.h"
-#include "ICU4XDisplayNamesOptionsV1.h"
-#include "diplomat_result_box_ICU4XLocaleDisplayNamesFormatter_ICU4XError.h"
-#include "diplomat_result_void_ICU4XError.h"
-#ifdef __cplusplus
-namespace capi {
-extern "C" {
-#endif
+#include "ICU4XLocaleDisplayNamesFormatter.d.h"
 
-diplomat_result_box_ICU4XLocaleDisplayNamesFormatter_ICU4XError ICU4XLocaleDisplayNamesFormatter_create(const ICU4XDataProvider* provider, const ICU4XLocale* locale, ICU4XDisplayNamesOptionsV1 options);
 
-diplomat_result_void_ICU4XError ICU4XLocaleDisplayNamesFormatter_of(const ICU4XLocaleDisplayNamesFormatter* self, const ICU4XLocale* locale, DiplomatWriteable* write);
+
+
+
+
+typedef struct ICU4XLocaleDisplayNamesFormatter_create_result {union {ICU4XLocaleDisplayNamesFormatter* ok; ICU4XDataError err;}; bool is_ok;} ICU4XLocaleDisplayNamesFormatter_create_result;
+ICU4XLocaleDisplayNamesFormatter_create_result ICU4XLocaleDisplayNamesFormatter_create(const ICU4XDataProvider* provider, const ICU4XLocale* locale, ICU4XDisplayNamesOptionsV1 options);
+
+void ICU4XLocaleDisplayNamesFormatter_of(const ICU4XLocaleDisplayNamesFormatter* self, const ICU4XLocale* locale, DiplomatWrite* write);
+
+
 void ICU4XLocaleDisplayNamesFormatter_destroy(ICU4XLocaleDisplayNamesFormatter* self);
 
-#ifdef __cplusplus
-} // extern "C"
-} // namespace capi
-#endif
-#endif
+
+
+
+
+#endif // ICU4XLocaleDisplayNamesFormatter_H

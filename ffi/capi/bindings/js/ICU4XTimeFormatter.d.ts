@@ -29,25 +29,22 @@ export class ICU4XTimeFormatter {
    * Formats a {@link ICU4XTime `ICU4XTime`} to a string.
 
    * See the {@link https://docs.rs/icu/latest/icu/datetime/struct.TimeFormatter.html#method.format Rust documentation for `format`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  format_time(value: ICU4XTime): string | never;
+  format_time(value: ICU4XTime): string;
 
   /**
 
    * Formats a {@link ICU4XDateTime `ICU4XDateTime`} to a string.
 
    * See the {@link https://docs.rs/icu/latest/icu/datetime/struct.TimeFormatter.html#method.format Rust documentation for `format`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  format_datetime(value: ICU4XDateTime): string | never;
+  format_datetime(value: ICU4XDateTime): string;
 
   /**
 
    * Formats a {@link ICU4XIsoDateTime `ICU4XIsoDateTime`} to a string.
 
    * See the {@link https://docs.rs/icu/latest/icu/datetime/struct.TimeFormatter.html#method.format Rust documentation for `format`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  format_iso_datetime(value: ICU4XIsoDateTime): string | never;
+  format_iso_datetime(value: ICU4XIsoDateTime): string;
 }

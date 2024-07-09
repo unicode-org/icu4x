@@ -1,24 +1,36 @@
 #ifndef ICU4XTransformResult_HPP
 #define ICU4XTransformResult_HPP
+
+#include "ICU4XTransformResult.d.hpp"
+
+#include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
-#include <algorithm>
 #include <memory>
-#include <variant>
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-#include "ICU4XTransformResult.h"
+
+namespace capi {
+    extern "C" {
+    
+    
+    } // extern "C"
+}
 
 
+inline capi::ICU4XTransformResult ICU4XTransformResult::AsFFI() const {
+  return static_cast<capi::ICU4XTransformResult>(value);
+}
 
-/**
- * See the [Rust documentation for `TransformResult`](https://docs.rs/icu/latest/icu/locid_transform/enum.TransformResult.html) for more information.
- */
-enum struct ICU4XTransformResult {
-  Modified = 0,
-  Unmodified = 1,
-};
-
-#endif
+inline ICU4XTransformResult ICU4XTransformResult::FromFFI(capi::ICU4XTransformResult c_enum) {
+  switch (c_enum) {
+    case capi::ICU4XTransformResult_Modified:
+    case capi::ICU4XTransformResult_Unmodified:
+      return static_cast<ICU4XTransformResult::Value>(c_enum);
+    default:
+      abort();
+  }
+}
+#endif // ICU4XTransformResult_HPP

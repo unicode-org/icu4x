@@ -3,7 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::any_calendar::AnyCalendarKind;
-use crate::{types, CalendarError, Date, DateDuration, DateDurationUnit, Iso};
+use crate::error::DateError;
+use crate::{types, Date, DateDuration, DateDurationUnit, Iso};
 use core::fmt;
 
 /// A calendar implementation
@@ -26,7 +27,7 @@ pub trait Calendar {
         year: i32,
         month_code: types::MonthCode,
         day: u8,
-    ) -> Result<Self::DateInner, CalendarError>;
+    ) -> Result<Self::DateInner, DateError>;
     /// Construct the date from an ISO date
     fn date_from_iso(&self, iso: Date<Iso>) -> Self::DateInner;
     /// Obtain an ISO date from this date
@@ -88,7 +89,7 @@ pub trait Calendar {
     fn day_of_year_info(&self, date: &Self::DateInner) -> types::DayOfYearInfo;
 
     /// The [`AnyCalendarKind`] corresponding to this calendar,
-    /// if one exists. Implementors outside of `icu_calendar` should return `None`
+    /// if one exists. Implementors outside of `icu::calendar` should return `None`
     fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
         None
     }

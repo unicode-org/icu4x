@@ -12,6 +12,7 @@
 use alloc::borrow::Cow;
 use alloc::format;
 use alloc::string::ToString;
+use core::str::FromStr;
 use icu_provider::prelude::*;
 use zerovec::ZeroMap;
 
@@ -122,19 +123,17 @@ pub struct SingularSubPattern<'data> {
     pub index: u8,
 }
 
-impl<'data> SingularSubPattern<'data> {
-    /// Construct a singular sub pattern from a pattern
-    pub fn try_from_str(value: &str) -> Result<Self, DataError> {
-        let (pattern, index) = if let Some(index) = value.find("{0}") {
+impl FromStr for SingularSubPattern<'_> {
+    type Err = DataError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let (pattern, index) = if let Some(index) = s.find("{0}") {
             if index >= 255 {
                 return Err(DataError::custom("Placeholder index too large to store."));
             }
-            (
-                format!("{}{}", &value[..index], &value[index + 3..]),
-                index as u8,
-            )
+            (format!("{}{}", &s[..index], &s[index + 3..]), index as u8)
         } else {
-            (value.to_string(), 255u8)
+            (s.to_string(), 255u8)
         };
         Ok(Self {
             pattern: Cow::Owned(pattern),
@@ -145,6 +144,6 @@ impl<'data> SingularSubPattern<'data> {
 
 pub(crate) struct ErasedRelativeTimeFormatV1Marker;
 
-impl DataMarker for ErasedRelativeTimeFormatV1Marker {
+impl DynamicDataMarker for ErasedRelativeTimeFormatV1Marker {
     type Yokeable = RelativeTimePatternDataV1<'static>;
 }

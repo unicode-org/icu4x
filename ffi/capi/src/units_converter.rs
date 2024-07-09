@@ -4,8 +4,9 @@
 
 #[diplomat::bridge]
 pub mod ffi {
-    use crate::{errors::ffi::ICU4XError, provider::ffi::ICU4XDataProvider};
+    use crate::{errors::ffi::ICU4XDataError, provider::ffi::ICU4XDataProvider};
     use alloc::boxed::Box;
+    use diplomat_runtime::DiplomatStr;
     use icu_experimental::units::converter::UnitsConverter;
     use icu_experimental::units::converter_factory::ConverterFactory;
     use icu_experimental::units::measureunit::MeasureUnit;
@@ -27,7 +28,7 @@ pub mod ffi {
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
         pub fn create(
             provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XUnitsConverterFactory>, ICU4XError> {
+        ) -> Result<Box<ICU4XUnitsConverterFactory>, ICU4XDataError> {
             Ok(Box::new(ICU4XUnitsConverterFactory(call_constructor!(
                 ConverterFactory::new [r => Ok(r)],
                 ConverterFactory::try_new_with_any_provider,
@@ -48,7 +49,8 @@ pub mod ffi {
             from: &ICU4XMeasureUnit,
             to: &ICU4XMeasureUnit,
         ) -> Option<Box<ICU4XUnitsConverter>> {
-            Some(ICU4XUnitsConverter(self.0.converter(&from.0, &to.0)?).into())
+            let converter: Option<UnitsConverter<f64>> = self.0.converter(&from.0, &to.0);
+            Some(ICU4XUnitsConverter(converter?).into())
         }
 
         /// Creates a parser to parse the CLDR unit identifier (e.g. `meter-per-square-second`) and get the [`ICU4XMeasureUnit`].
@@ -68,19 +70,18 @@ pub mod ffi {
     pub struct ICU4XMeasureUnitParser<'a>(pub MeasureUnitParser<'a>);
 
     impl<'a> ICU4XMeasureUnitParser<'a> {
-        /// Parses the CLDR unit identifier (e.g. `meter-per-square-second`) and returns the corresponding [`ICU4XMeasureUnit`].
-        /// Returns an error if the unit identifier is not valid.
+        /// Parses the CLDR unit identifier (e.g. `meter-per-square-second`) and returns the corresponding [`ICU4XMeasureUnit`],
+        /// if the identifier is valid.
         #[diplomat::rust_link(
             icu::experimental::units::measureunit::MeasureUnitParser::parse,
             FnInStruct
         )]
-        pub fn parse_measure_unit(
-            &self,
-            unit_id: &str,
-        ) -> Result<Box<ICU4XMeasureUnit>, ICU4XError> {
-            Ok(Box::new(ICU4XMeasureUnit(
-                self.0.try_from_identifier(unit_id)?,
-            )))
+        pub fn parse(&self, unit_id: &DiplomatStr) -> Option<Box<ICU4XMeasureUnit>> {
+            self.0
+                .try_from_utf8(unit_id)
+                .ok()
+                .map(ICU4XMeasureUnit)
+                .map(Box::new)
         }
     }
 
@@ -97,19 +98,18 @@ pub mod ffi {
     ///
     /// You can create an instance of this object using [`ICU4XUnitsConverterFactory`] by calling the `converter` method.
     #[diplomat::rust_link(icu::experimental::units::converter::UnitsConverter, Struct)]
-    pub struct ICU4XUnitsConverter(pub UnitsConverter);
-
+    pub struct ICU4XUnitsConverter(pub UnitsConverter<f64>);
     impl ICU4XUnitsConverter {
         /// Converts the input value in float from the input unit to the output unit (that have been used to create this converter).
         /// NOTE:
         ///   The conversion using floating-point operations is not as accurate as the conversion using ratios.
         #[diplomat::rust_link(
-            icu::experimental::units::converter::UnitsConverter::convert_f64,
+            icu::experimental::units::converter::UnitsConverter::convert,
             FnInStruct
         )]
         #[diplomat::attr(dart, rename = "convert_double")]
         pub fn convert_f64(&self, value: f64) -> f64 {
-            self.0.convert_f64(value)
+            self.0.convert(&value)
         }
 
         /// Clones the current [`ICU4XUnitsConverter`] object.

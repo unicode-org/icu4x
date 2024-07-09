@@ -8,7 +8,7 @@ The most basic Cargo.toml to get you off the ground is the following:
 
 ```toml
 [dependencies]
-icu = "1.3"
+icu = "1.5"
 ```
 
 In your main.rs, you can use all stable ICU4X components for the recommended set of locales, which get compiled into the library.
@@ -21,7 +21,7 @@ If you wish to use custom compiled data for ICU4X, no changes to Cargo.toml are 
 datagen output during your build:
 
 ```command
-icu4x-datagen --format mod --keys all --locales ru --out baked_data
+icu4x-datagen --format mod --markers all --locales ru --out baked_data
 ICU4X_DATA_DIR=$(pwd)/baked_data cargo build --release
 ```
 
@@ -33,7 +33,7 @@ Experimental modules are published in a separate `icu_experimental` crate:
 
 ```toml
 [dependencies]
-icu = "1.4"
+icu = "1.5"
 icu_experimental = "0"
 ```
 
@@ -47,8 +47,8 @@ If you wish to generate your own data in blob format and pass it into ICU4X, ena
 
 ```toml
 [dependencies]
-icu = { version = "1.3", features = ["serde"] }
-icu_provider_blob = "1.3"
+icu = { version = "1.5", features = ["serde"] }
+icu_provider_blob = "1.5"
 ```
 
 To learn about building ICU4X data, including whether to check in the data blob file to your repository, see [data_management.md](./data_management.md).
@@ -61,7 +61,7 @@ If you wish to share ICU4X objects between threads, you must enable the `"sync"`
 
 ```toml
 [dependencies]
-icu = { version = "1.3", features = ["sync"] }
+icu = { version = "1.5", features = ["sync"] }
 ```
 
 You can now use most ICU4X types when `Send + Sync` are required, such as when sharing across threads.
@@ -74,17 +74,17 @@ If you wish to use data generation in a `build.rs` script, you need to manually 
 
 ```toml
 [dependencies]
-icu = { version = "1.3", default-features = false } # turn off compiled_data
-icu_provider = "1.3" # for databake
+icu = { version = "1.5", default-features = false } # turn off compiled_data
+icu_provider = "1.5" # for databake
 zerovec = "0.9" # for databake
 
 # for build.rs:
 [build-dependencies]
-icu = "1.3"
-icu_datagen = "1.3"
+icu = "1.5"
+icu_datagen = "1.5"
 ```
 
-This example has an additional section for auto-generating the data in build.rs. In your build.rs, invoke the ICU4X Datagen API with the set of keys you require. Don't worry; if using databake, you will get a compiler error if you don't specify enough keys.
+This example has an additional section for auto-generating the data in build.rs. In your build.rs, invoke the ICU4X Datagen API with the set of markers you require. Don't worry; if using databake, you will get a compiler error if you don't specify enough markers.
 
 The build.rs approach has several downsides and should only be used if Cargo is the only build system you can use, and you cannot check in your data:
 * The build script with the whole of `icu_datagen` in it is slow to build

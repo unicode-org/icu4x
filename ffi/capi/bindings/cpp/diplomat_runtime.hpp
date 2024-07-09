@@ -15,12 +15,12 @@
 
 namespace diplomat {
 
-extern "C" inline void Flush(capi::DiplomatWriteable* w) {
+extern "C" inline void Flush(capi::DiplomatWrite* w) {
   std::string* string = reinterpret_cast<std::string*>(w->context);
   string->resize(w->len);
 };
 
-extern "C" inline bool Grow(capi::DiplomatWriteable* w, uintptr_t requested) {
+extern "C" inline bool Grow(capi::DiplomatWrite* w, uintptr_t requested) {
   std::string* string = reinterpret_cast<std::string*>(w->context);
   string->resize(requested);
   w->cap = string->length();
@@ -28,27 +28,29 @@ extern "C" inline bool Grow(capi::DiplomatWriteable* w, uintptr_t requested) {
   return true;
 };
 
-inline capi::DiplomatWriteable WriteableFromString(std::string& string) {
-  capi::DiplomatWriteable w;
+inline capi::DiplomatWrite WriteFromString(std::string& string) {
+  capi::DiplomatWrite w;
   w.context = &string;
   w.buf = &string[0];
   w.len = string.length();
   // Same as length, since C++ strings are not supposed
   // to be written to past their len; you resize *first*
   w.cap = string.length();
+  // Will never become true, as Grow is infallible.
+  w.grow_failed = false;
   w.flush = Flush;
   w.grow = Grow;
   return w;
 };
 
-template<typename T> struct WriteableTrait {
-  // static inline capi::DiplomatWriteable Construct(T& t);
+template<typename T> struct WriteTrait {
+  // static inline capi::DiplomatWrite Construct(T& t);
 };
 
 
-template<> struct WriteableTrait<std::string> {
-  static inline capi::DiplomatWriteable Construct(std::string& t) {
-    return diplomat::WriteableFromString(t);
+template<> struct WriteTrait<std::string> {
+  static inline capi::DiplomatWrite Construct(std::string& t) {
+    return diplomat::WriteFromString(t);
   }
 };
 
@@ -131,6 +133,7 @@ public:
   }
 };
 
+class Utf8Error {};
 
 // Use custom std::span on C++17, otherwise use std::span
 #if __cplusplus >= 202002L

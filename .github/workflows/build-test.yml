@@ -57,13 +57,15 @@ jobs:
 
     # Cargo-make boilerplate
     - name: Install cargo-make
-      uses: taiki-e/install-action@cargo-make
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cargo-make@0.37.13
 
     # Job-specific dependencies
-    - name: Install cargo-binstall 
-      uses: taiki-e/install-action@cargo-binstall
     - name: Install cargo-all-features
-      run: cargo-binstall -y cargo-all-features
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cargo-all-features@1.10.0
 
     # No toolchain boilerplate as this runs on MSRV
 
@@ -84,7 +86,9 @@ jobs:
 
     # Cargo-make boilerplate
     - name: Install cargo-make
-      uses: taiki-e/install-action@cargo-make
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cargo-make@0.37.13
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
@@ -105,7 +109,9 @@ jobs:
 
     # Cargo-make boilerplate
     - name: Install cargo-make
-      uses: taiki-e/install-action@cargo-make
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cargo-make@0.37.13
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
@@ -126,7 +132,9 @@ jobs:
 
     # Cargo-make boilerplate
     - name: Install cargo-make
-      uses: taiki-e/install-action@cargo-make
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cargo-make@0.37.13
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
@@ -144,14 +152,16 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix: 
-        behavior: [local, cratesio]
+        behavior: [local] # reenable cratesio for 2.0
       fail-fast: false
     steps:
     - uses: actions/checkout@v4
 
     # Cargo-make boilerplate
     - name: Install cargo-make
-      uses: taiki-e/install-action@cargo-make
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cargo-make@0.37.13
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
@@ -160,11 +170,8 @@ jobs:
       run: rustup show
 
     # Job-specific dependencies
-    - name: Attempt to load download cache
-      uses: actions/cache@v3
-      with:
-        key: download-cache
-        path: /tmp/icu4x-source-cache
+    - name: Install harfbuzz
+      run: sudo apt install libharfbuzz-dev
 
     # Actual job
     - name: Run `cargo make ci-job-test-tutorials-${{ matrix.behavior }}`
@@ -183,7 +190,9 @@ jobs:
 
     # Cargo-make boilerplate
     - name: Install cargo-make
-      uses: taiki-e/install-action@cargo-make
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cargo-make@0.37.13
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
@@ -192,51 +201,12 @@ jobs:
       run: rustup show
 
     # Job-specific dependencies
-    - name: Attempt to load download cache
-      uses: actions/cache@v3
-      with:
-        key: download-cache
-        path: /tmp/icu4x-source-cache
     - name: Install rustfmt
       run: rustup component add rustfmt
 
     # Actual job
     - name: Run `cargo make ci-job-testdata`
       run: cargo make ci-job-testdata
-
-
-  # ci-job-testdata-legacy
-  testdata-legacy:
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v4
-
-    # Cargo-make boilerplate
-    - name: Install cargo-make
-      uses: taiki-e/install-action@cargo-make
-
-    # Toolchain boilerplate
-    - name: Potentially override rust version with nightly
-      run: cargo make set-ci-toolchain
-    - name: Show the selected Rust toolchain
-      run: rustup show
-
-    # Job-specific dependencies
-    - name: Attempt to load download cache
-      uses: actions/cache@v3
-      with:
-        key: download-cache
-        path: /tmp/icu4x-source-cache
-    - name: Install cargo-binstall 
-      uses: taiki-e/install-action@cargo-binstall
-    - name: Install cargo-all-features
-      run: cargo-binstall -y cargo-all-features
-
-    # Actual job
-    - name: Run `cargo make ci-job-testdata-legacy`
-      run: cargo make ci-job-testdata-legacy
-
 
   # ci-job-full-datagen
   full-datagen:
@@ -246,7 +216,9 @@ jobs:
 
     # Cargo-make boilerplate
     - name: Install cargo-make
-      uses: taiki-e/install-action@cargo-make
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cargo-make@0.37.13
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
@@ -255,11 +227,6 @@ jobs:
       run: rustup show
 
     # Job-specific dependencies
-    - name: Attempt to load download cache
-      uses: actions/cache@v3
-      with:
-        key: download-cache
-        path: /tmp/icu4x-source-cache
     - name: Install rustfmt
       run: rustup component add rustfmt
 
@@ -270,21 +237,16 @@ jobs:
 
   # ci-job-test-c
   test-c:
-    runs-on: ubuntu-latest
-    container:
-      image: rust:bookworm
+    runs-on: ubuntu-24.04 # Includes LLVM 16,17,18
 
     steps:
     - uses: actions/checkout@v4
     
-    # Software setup/installation for the container
-    - name: Install Rust toolchains
-      run: |
-        rustup toolchain install stable
-
     # Cargo-make boilerplate
     - name: Install cargo-make
-      uses: taiki-e/install-action@cargo-make
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cargo-make@0.37.13
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
@@ -292,33 +254,11 @@ jobs:
     - name: Show the selected Rust toolchain
       run: rustup show
 
-    # Job-specific dependencies
-    - name: Run apt-get update
-      run: |
-        apt-get update
-    - name: Install LLVM 16
-      run: |
-        apt-get install -y clang-16 lld-16 llvm-16-dev libc++-16-dev
-    - name: Install LLVM 16 nightly
-      run: |
-        rustup install nightly-2023-08-08
-    - name: Install GCC 11
-      run: |
-        apt-get install -y gcc-11 g++-11
-    - name: Install jq
-      run: |
-        apt-get install -y jq
-    - name: Attempt to load download cache
-      uses: actions/cache@v3
-      with:
-        key: download-cache
-        path: /tmp/icu4x-source-cache
-
     # Actual job
     - name: Run `cargo make ci-job-test-c`
       run: cargo make ci-job-test-c
       env:
-        CXX: "g++-11"
+        CXX: "g++-13"
     - name: Test C++ with clang
       run: cargo make test-cpp
       env:
@@ -327,44 +267,22 @@ jobs:
 
   # ci-job-test-js
   test-js:
-    runs-on: ubuntu-latest
-    container:
-      image: rust:bookworm
+    runs-on: ubuntu-24.04 # Includes LLVM 16,17,18
 
     steps:
     - uses: actions/checkout@v4
     
-    # Software setup/installation for the container
-    - name: Install Rust toolchains
-      run: |
-        rustup toolchain install stable
-
     # Cargo-make boilerplate
     - name: Install cargo-make
-      uses: taiki-e/install-action@cargo-make
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cargo-make@0.37.13
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
       run: cargo make set-ci-toolchain
     - name: Show the selected Rust toolchain
       run: rustup show
-
-    # Job-specific dependencies
-    - name: Install Node.js v16.18.0
-      uses: actions/setup-node@v3
-      with:
-        node-version: 16.18.0
-        cache: 'npm'
-        cache-dependency-path: '**/package-lock.json'
-    - name: Run apt-get update
-      run: |
-        apt-get update
-    - name: Install lld-15
-      run: |
-        apt-get install -y lld-15
-    - name: Install jq
-      run: |
-        apt-get install -y jq
 
     # Actual job
     - name: Run `cargo make ci-job-test-js`
@@ -385,7 +303,9 @@ jobs:
 
     # Cargo-make boilerplate
     - name: Install cargo-make
-      uses: taiki-e/install-action@cargo-make
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cargo-make@0.37.13
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
@@ -411,7 +331,9 @@ jobs:
 
     # Cargo-make boilerplate
     - name: Install cargo-make
-      uses: taiki-e/install-action@cargo-make
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cargo-make@0.37.13
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
@@ -432,7 +354,9 @@ jobs:
 
     # Cargo-make boilerplate
     - name: Install cargo-make
-      uses: taiki-e/install-action@cargo-make
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cargo-make@0.37.13
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
@@ -454,7 +378,9 @@ jobs:
 
     # Cargo-make boilerplate
     - name: Install cargo-make
-      uses: taiki-e/install-action@cargo-make
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cargo-make@0.37.13
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
@@ -464,18 +390,20 @@ jobs:
 
     # Job-specific dependencies
     - name: Attempt to load cached GN Third-Party Tools
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       id: gn-third-party-tools-cache
       with:
         path: |
           tutorials/gn/third_party_tools
-        key: ${{ runner.os }}-${{ hashFiles('tools/make/gn.toml', 'tutorials/gn/Cargo.lock') }}
+        key: gn-third-party-${{ runner.os }}-${{ hashFiles('tools/make/gn.toml', 'tutorials/gn/Cargo.lock') }}
     - name: Install GN Third-Party Tools
       if: steps.gn-third-party-tools-cache.outputs.cache-hit != 'true'
       run: cargo make gn-install
 
     - name: Install cargo-rdme
-      uses: taiki-e/install-action@cargo-rdme
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cargo-rdme@1.4.2
 
     # Actual job
     - name: Run `cargo make ci-job-gn`
@@ -490,7 +418,9 @@ jobs:
 
     # Cargo-make boilerplate
     - name: Install cargo-make
-      uses: taiki-e/install-action@cargo-make
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cargo-make@0.37.13
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
@@ -515,7 +445,9 @@ jobs:
 
     # Cargo-make boilerplate
     - name: Install cargo-make
-      uses: taiki-e/install-action@cargo-make
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cargo-make@0.37.13
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
@@ -525,7 +457,9 @@ jobs:
 
     # Job-specific dependencies
     - name: Install cargo-rdme
-      uses: taiki-e/install-action@cargo-rdme
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cargo-rdme@1.4.2
 
     # Actual job
     - name: Tidy
@@ -543,7 +477,9 @@ jobs:
 
     # Cargo-make boilerplate
     - name: Install cargo-make
-      uses: taiki-e/install-action@cargo-make
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cargo-make@0.37.13
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
@@ -569,7 +505,9 @@ jobs:
 
     # Cargo-make boilerplate
     - name: Install cargo-make
-      uses: taiki-e/install-action@cargo-make
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cargo-make@0.37.13
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
@@ -584,7 +522,7 @@ jobs:
 
   # Notify on slack  
   notify-slack:
-    needs: [msrv, test, testdata, testdata-legacy, test-docs, full-datagen, test-c, test-js, test-dart, nostd, diplomat, gn, fmt, tidy, clippy, doc]
+    needs: [msrv, test, testdata, test-docs, full-datagen, test-c, test-js, test-dart, nostd, diplomat, gn, fmt, tidy, clippy, doc]
     if: ${{ always() && contains(needs.*.result, 'failure') && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref_name == 'main')) }}
     runs-on: ubuntu-latest
     steps:

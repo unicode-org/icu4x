@@ -10,6 +10,7 @@ use crate as icu_provider;
 
 use crate::prelude::*;
 use alloc::borrow::Cow;
+use alloc::collections::BTreeSet;
 use alloc::string::String;
 use core::fmt::Debug;
 use writeable::Writeable;
@@ -20,11 +21,11 @@ use zerofrom::*;
 #[derive(Debug, PartialEq, Clone, Yokeable, ZeroFrom)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(
-    any(feature = "deserialize_json", feature = "datagen"),
+    any(feature = "deserialize_json", feature = "export"),
     derive(serde::Serialize)
 )]
-#[cfg_attr(feature = "datagen", derive(databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_provider::hello_world))]
+#[cfg_attr(feature = "export", derive(databake::Bake))]
+#[cfg_attr(feature = "export", databake(path = icu_provider::hello_world))]
 pub struct HelloWorldV1<'data> {
     /// The translation of "Hello World".
     #[cfg_attr(feature = "serde", serde(borrow))]
@@ -40,17 +41,16 @@ impl Default for HelloWorldV1<'_> {
 }
 
 /// Marker type for [`HelloWorldV1`].
-#[cfg_attr(feature = "datagen", derive(Default, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_provider::hello_world))]
 #[derive(Debug)]
 pub struct HelloWorldV1Marker;
 
-impl DataMarker for HelloWorldV1Marker {
+impl DynamicDataMarker for HelloWorldV1Marker {
     type Yokeable = HelloWorldV1<'static>;
 }
 
-impl KeyedDataMarker for HelloWorldV1Marker {
-    const KEY: DataKey = icu_provider::data_key!("core/helloworld@1");
+impl DataMarker for HelloWorldV1Marker {
+    const INFO: icu_provider::DataMarkerInfo =
+        DataMarkerInfo::from_path(icu_provider::marker::data_marker_path!("core/helloworld@1"));
 }
 
 /// A data provider returning Hello World strings in different languages.
@@ -60,21 +60,19 @@ impl KeyedDataMarker for HelloWorldV1Marker {
 /// # Examples
 ///
 /// ```
-/// use icu_locid::locale;
+/// use icu_locale_core::langid;
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
 ///
-/// let german_hello_world: DataPayload<HelloWorldV1Marker> =
+/// let german_hello_world: DataResponse<HelloWorldV1Marker> =
 ///     HelloWorldProvider
 ///         .load(DataRequest {
-///             locale: &locale!("de").into(),
-///             metadata: Default::default(),
+///             id: DataIdentifierBorrowed::for_locale(&langid!("de").into()),
+///             ..Default::default()
 ///         })
-///         .expect("Loading should succeed")
-///         .take_payload()
-///         .expect("Data should be present");
+///         .expect("Loading should succeed");
 ///
-/// assert_eq!("Hallo Welt", german_hello_world.get().message);
+/// assert_eq!("Hallo Welt", german_hello_world.payload.get().message);
 /// ```
 ///
 /// Load the reverse string using an auxiliary key:
@@ -82,18 +80,17 @@ impl KeyedDataMarker for HelloWorldV1Marker {
 /// ```
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
+/// use icu_locale_core::langid;
 ///
-/// let reverse_hello_world: DataPayload<HelloWorldV1Marker> =
+/// let reverse_hello_world: DataResponse<HelloWorldV1Marker> =
 ///     HelloWorldProvider
 ///         .load(DataRequest {
-///             locale: &"en-x-reverse".parse().unwrap(),
-///             metadata: Default::default(),
+///             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(DataMarkerAttributes::from_str_or_panic("reverse"), &langid!("en").into()),
+///             ..Default::default()
 ///         })
-///         .expect("Loading should succeed")
-///         .take_payload()
-///         .expect("Data should be present");
+///         .expect("Loading should succeed");
 ///
-/// assert_eq!("Olleh Dlrow", reverse_hello_world.get().message);
+/// assert_eq!("Olleh Dlrow", reverse_hello_world.payload.get().message);
 /// ```
 #[derive(Debug, PartialEq, Default)]
 pub struct HelloWorldProvider;
@@ -101,34 +98,40 @@ pub struct HelloWorldProvider;
 impl HelloWorldProvider {
     // Data from https://en.wiktionary.org/wiki/Hello_World#Translations
     // Keep this sorted!
-    const DATA: &'static [(&'static str, &'static str)] = &[
-        ("bn", "ওহে বিশ্ব"),
-        ("cs", "Ahoj světe"),
-        ("de", "Hallo Welt"),
-        ("de-AT", "Servus Welt"),
-        ("el", "Καλημέρα κόσμε"),
-        ("en", "Hello World"),
-        ("en-001", "Hello from 🗺️"),            // WORLD
-        ("en-002", "Hello from 🌍"),           // AFRICA
-        ("en-019", "Hello from 🌎"),           // AMERICAS
-        ("en-142", "Hello from 🌏"),           // ASIA
-        ("en-GB", "Hello from 🇬🇧"),            // GREAT BRITAIN
-        ("en-GB-u-sd-gbeng", "Hello from 🏴󠁧󠁢󠁥󠁮󠁧󠁿"), // ENGLAND
-        ("en-x-reverse", "Olleh Dlrow"),
-        ("eo", "Saluton, Mondo"),
-        ("fa", "سلام دنیا‎"),
-        ("fi", "hei maailma"),
-        ("is", "Halló, heimur"),
-        ("ja", "こんにちは世界"),
-        ("ja-x-reverse", "界世はちにんこ"),
-        ("la", "Ave, munde"),
-        ("pt", "Olá, mundo"),
-        ("ro", "Salut, lume"),
-        ("ru", "Привет, мир"),
-        ("sr", "Поздрав свете"),
-        ("sr-Latn", "Pozdrav svete"),
-        ("vi", "Xin chào thế giới"),
-        ("zh", "你好世界"),
+    const DATA: &'static [(&'static str, &'static str, &'static str)] = &[
+        ("bn", "", "ওহে বিশ্ব"),
+        ("cs", "", "Ahoj světe"),
+        ("de", "", "Hallo Welt"),
+        ("de-AT", "", "Servus Welt"),
+        ("el", "", "Καλημέρα κόσμε"),
+        ("en", "", "Hello World"),
+        // WORLD
+        ("en-001", "", "Hello from 🗺️"),
+        // AFRICA
+        ("en-002", "", "Hello from 🌍"),
+        // AMERICAS
+        ("en-019", "", "Hello from 🌎"),
+        // ASIA
+        ("en-142", "", "Hello from 🌏"),
+        // GREAT BRITAIN
+        ("en-GB", "", "Hello from 🇬🇧"),
+        // ENGLAND
+        ("en-GB-u-sd-gbeng", "", "Hello from 🏴󠁧󠁢󠁥󠁮󠁧󠁿"),
+        ("en", "reverse", "Olleh Dlrow"),
+        ("eo", "", "Saluton, Mondo"),
+        ("fa", "", "سلام دنیا‎"),
+        ("fi", "", "hei maailma"),
+        ("is", "", "Halló, heimur"),
+        ("ja", "", "こんにちは世界"),
+        ("ja", "reverse", "界世はちにんこ"),
+        ("la", "", "Ave, munde"),
+        ("pt", "", "Olá, mundo"),
+        ("ro", "", "Salut, lume"),
+        ("ru", "", "Привет, мир"),
+        ("sr", "", "Поздрав свете"),
+        ("sr-Latn", "", "Pozdrav svete"),
+        ("vi", "", "Xin chào thế giới"),
+        ("zh", "", "你好世界"),
     ];
 
     /// Converts this provider into a [`BufferProvider`] that uses JSON serialization.
@@ -142,13 +145,25 @@ impl DataProvider<HelloWorldV1Marker> for HelloWorldProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
         #[allow(clippy::indexing_slicing)] // binary_search
         let data = Self::DATA
-            .binary_search_by(|(k, _)| req.locale.strict_cmp(k.as_bytes()).reverse())
-            .map(|i| Self::DATA[i].1)
-            .map_err(|_| DataErrorKind::MissingLocale.with_req(HelloWorldV1Marker::KEY, req))?;
+            .iter()
+            .find(|(l, a, _)| {
+                req.id.locale.strict_cmp(l.as_bytes()).is_eq()
+                    && *a == req.id.marker_attributes.as_str()
+            })
+            .map(|(_, _, v)| v)
+            .ok_or_else(|| {
+                DataErrorKind::IdentifierNotFound.with_req(HelloWorldV1Marker::INFO, req)
+            })?;
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: Some(DataPayload::from_static_str(data)),
+            payload: DataPayload::from_static_str(data),
         })
+    }
+}
+
+impl DryDataProvider<HelloWorldV1Marker> for HelloWorldProvider {
+    fn dry_load(&self, req: DataRequest) -> Result<DataResponseMetadata, DataError> {
+        self.load(req).map(|r| r.metadata)
     }
 }
 
@@ -161,9 +176,11 @@ impl DataPayload<HelloWorldV1Marker> {
     }
 }
 
-// AnyProvider support.
-#[cfg(not(feature = "datagen"))]
-icu_provider::impl_dynamic_data_provider!(HelloWorldProvider, [HelloWorldV1Marker,], AnyMarker);
+icu_provider::dynutil::impl_dynamic_data_provider!(
+    HelloWorldProvider,
+    [HelloWorldV1Marker,],
+    AnyMarker
+);
 
 #[cfg(feature = "deserialize_json")]
 /// A data provider returning Hello World strings in different languages as JSON blobs.
@@ -173,59 +190,64 @@ icu_provider::impl_dynamic_data_provider!(HelloWorldProvider, [HelloWorldV1Marke
 /// # Examples
 ///
 /// ```
-/// use icu_locid::locale;
+/// use icu_locale_core::langid;
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
 ///
 /// let german_hello_world = HelloWorldProvider
 ///     .into_json_provider()
-///     .load_buffer(HelloWorldV1Marker::KEY, DataRequest {
-///         locale: &locale!("de").into(),
-///         metadata: Default::default(),
+///     .load_data(HelloWorldV1Marker::INFO, DataRequest {
+///         id: DataIdentifierBorrowed::for_locale(&langid!("de").into()),
+///         ..Default::default()
 ///     })
-///     .expect("Loading should succeed")
-///     .take_payload()
-///     .expect("Data should be present");
+///     .expect("Loading should succeed");
 ///
-/// assert_eq!(german_hello_world.get(), br#"{"message":"Hallo Welt"}"#);
+/// assert_eq!(german_hello_world.payload.get(), br#"{"message":"Hallo Welt"}"#);
 #[derive(Debug)]
 pub struct HelloWorldJsonProvider;
 
 #[cfg(feature = "deserialize_json")]
-impl BufferProvider for HelloWorldJsonProvider {
-    fn load_buffer(
+impl DynamicDataProvider<BufferMarker> for HelloWorldJsonProvider {
+    fn load_data(
         &self,
-        key: DataKey,
+        marker: DataMarkerInfo,
         req: DataRequest,
     ) -> Result<DataResponse<BufferMarker>, DataError> {
-        key.match_key(HelloWorldV1Marker::KEY)?;
+        marker.match_marker(HelloWorldV1Marker::INFO)?;
         let result = HelloWorldProvider.load(req)?;
-        let (mut metadata, old_payload) =
-            DataResponse::<HelloWorldV1Marker>::take_metadata_and_payload(result)?;
-        metadata.buffer_format = Some(icu_provider::buf::BufferFormat::Json);
-        #[allow(clippy::unwrap_used)] // HelloWorldV1::serialize is infallible
         Ok(DataResponse {
-            metadata,
-            payload: Some(DataPayload::from_owned_buffer(
-                serde_json::to_string(old_payload.get())
+            metadata: DataResponseMetadata {
+                buffer_format: Some(icu_provider::buf::BufferFormat::Json),
+                ..result.metadata
+            },
+            #[allow(clippy::unwrap_used)] // HelloWorldV1::serialize is infallible
+            payload: DataPayload::from_owned_buffer(
+                serde_json::to_string(result.payload.get())
                     .unwrap()
                     .into_bytes()
                     .into_boxed_slice(),
-            )),
+            ),
         })
     }
 }
 
-#[cfg(feature = "datagen")]
-impl icu_provider::datagen::IterableDataProvider<HelloWorldV1Marker> for HelloWorldProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        #[allow(clippy::unwrap_used)] // datagen
-        Ok(Self::DATA.iter().map(|(s, _)| s.parse().unwrap()).collect())
+impl IterableDataProvider<HelloWorldV1Marker> for HelloWorldProvider {
+    fn iter_ids(&self) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
+        #[allow(clippy::unwrap_used)] // hello-world
+        Ok(Self::DATA
+            .iter()
+            .map(|(l, a, _)| {
+                DataIdentifierCow::from_borrowed_and_owned(
+                    DataMarkerAttributes::from_str_or_panic(a),
+                    l.parse().unwrap(),
+                )
+            })
+            .collect())
     }
 }
 
-#[cfg(feature = "datagen")]
-icu_provider::make_exportable_provider!(HelloWorldProvider, [HelloWorldV1Marker,]);
+#[cfg(feature = "export")]
+icu_provider::export::make_exportable_provider!(HelloWorldProvider, [HelloWorldV1Marker,]);
 
 /// A type that formats localized "hello world" strings.
 ///
@@ -234,7 +256,7 @@ icu_provider::make_exportable_provider!(HelloWorldProvider, [HelloWorldV1Marker,
 /// # Examples
 ///
 /// ```
-/// use icu_locid::locale;
+/// use icu_locale_core::locale;
 /// use icu_provider::hello_world::{HelloWorldFormatter, HelloWorldProvider};
 /// use writeable::assert_writeable_eq;
 ///
@@ -267,10 +289,9 @@ impl HelloWorldFormatter {
         Self::try_new_unstable(&HelloWorldProvider, locale)
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(locale: include, options: skip, error: DataError,
-        #[cfg(skip)]
+    icu_provider::gen_any_buffer_data_constructors!((locale) -> error: DataError,
         functions: [
-            try_new,
+            try_new: skip,
             try_new_with_any_provider,
             try_new_with_buffer_provider,
             try_new_unstable,
@@ -284,10 +305,10 @@ impl HelloWorldFormatter {
     {
         let data = provider
             .load(DataRequest {
-                locale,
-                metadata: Default::default(),
+                id: crate::request::DataIdentifierBorrowed::for_locale(locale),
+                ..Default::default()
             })?
-            .take_payload()?;
+            .payload;
         Ok(Self { data })
     }
 
@@ -321,42 +342,48 @@ impl<'l> Writeable for FormattedHelloWorld<'l> {
 
 writeable::impl_display_with_writeable!(FormattedHelloWorld<'_>);
 
-#[cfg(feature = "datagen")]
+#[cfg(feature = "export")]
 #[test]
 fn test_iter() {
-    use crate::datagen::IterableDataProvider;
-    use icu_locid::locale;
+    use crate::IterableDataProvider;
+    use icu_locale_core::locale;
 
     assert_eq!(
-        HelloWorldProvider.supported_locales().unwrap(),
-        vec![
-            locale!("bn").into(),
-            locale!("cs").into(),
-            locale!("de").into(),
-            locale!("de-AT").into(),
-            locale!("el").into(),
-            locale!("en").into(),
-            locale!("en-001").into(),
-            locale!("en-002").into(),
-            locale!("en-019").into(),
-            locale!("en-142").into(),
-            locale!("en-GB").into(),
-            locale!("en-GB-u-sd-gbeng").into(),
-            "en-x-reverse".parse().unwrap(),
-            locale!("eo").into(),
-            locale!("fa").into(),
-            locale!("fi").into(),
-            locale!("is").into(),
-            locale!("ja").into(),
-            "ja-x-reverse".parse().unwrap(),
-            locale!("la").into(),
-            locale!("pt").into(),
-            locale!("ro").into(),
-            locale!("ru").into(),
-            locale!("sr").into(),
-            locale!("sr-Latn").into(),
-            locale!("vi").into(),
-            locale!("zh").into()
-        ]
+        HelloWorldProvider.iter_ids().unwrap(),
+        BTreeSet::from_iter([
+            DataIdentifierCow::from_locale(locale!("bn").into()),
+            DataIdentifierCow::from_locale(locale!("cs").into()),
+            DataIdentifierCow::from_locale(locale!("de").into()),
+            DataIdentifierCow::from_locale(locale!("de-AT").into()),
+            DataIdentifierCow::from_locale(locale!("el").into()),
+            DataIdentifierCow::from_locale(locale!("en").into()),
+            DataIdentifierCow::from_locale(locale!("en-001").into()),
+            DataIdentifierCow::from_locale(locale!("en-002").into()),
+            DataIdentifierCow::from_locale(locale!("en-019").into()),
+            DataIdentifierCow::from_locale(locale!("en-142").into()),
+            DataIdentifierCow::from_locale(locale!("en-GB").into()),
+            DataIdentifierCow::from_locale(locale!("en-GB-u-sd-gbeng").into()),
+            DataIdentifierCow::from_borrowed_and_owned(
+                DataMarkerAttributes::from_str_or_panic("reverse"),
+                locale!("en").into()
+            ),
+            DataIdentifierCow::from_locale(locale!("eo").into()),
+            DataIdentifierCow::from_locale(locale!("fa").into()),
+            DataIdentifierCow::from_locale(locale!("fi").into()),
+            DataIdentifierCow::from_locale(locale!("is").into()),
+            DataIdentifierCow::from_locale(locale!("ja").into()),
+            DataIdentifierCow::from_borrowed_and_owned(
+                DataMarkerAttributes::from_str_or_panic("reverse"),
+                locale!("ja").into()
+            ),
+            DataIdentifierCow::from_locale(locale!("la").into()),
+            DataIdentifierCow::from_locale(locale!("pt").into()),
+            DataIdentifierCow::from_locale(locale!("ro").into()),
+            DataIdentifierCow::from_locale(locale!("ru").into()),
+            DataIdentifierCow::from_locale(locale!("sr").into()),
+            DataIdentifierCow::from_locale(locale!("sr-Latn").into()),
+            DataIdentifierCow::from_locale(locale!("vi").into()),
+            DataIdentifierCow::from_locale(locale!("zh").into()),
+        ])
     );
 }

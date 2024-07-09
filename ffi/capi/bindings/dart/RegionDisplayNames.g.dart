@@ -26,11 +26,11 @@ final class RegionDisplayNames implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/displaynames/struct.RegionDisplayNames.html#method.try_new) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   factory RegionDisplayNames(DataProvider provider, Locale locale) {
     final result = _ICU4XRegionDisplayNames_create(provider._ffi, locale._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     return RegionDisplayNames._fromFfi(result.union.ok, []);
   }
@@ -41,17 +41,17 @@ final class RegionDisplayNames implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `of`](https://docs.rs/icu/latest/icu/displaynames/struct.RegionDisplayNames.html#method.of) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [LocaleParseError] on failure.
   String of(String region) {
     final temp = ffi2.Arena();
     final regionView = region.utf8View;
-    final writeable = _Writeable();
-    final result = _ICU4XRegionDisplayNames_of(_ffi, regionView.allocIn(temp), regionView.length, writeable._ffi);
+    final write = _Write();
+    final result = _ICU4XRegionDisplayNames_of(_ffi, regionView.allocIn(temp), regionView.length, write._ffi);
     temp.releaseAll();
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw LocaleParseError.values[result.union.err];
     }
-    return writeable.finalize();
+    return write.finalize();
   }
 }
 
@@ -68,4 +68,4 @@ external _ResultOpaqueInt32 _ICU4XRegionDisplayNames_create(ffi.Pointer<ffi.Opaq
 @meta.ResourceIdentifier('ICU4XRegionDisplayNames_of')
 @ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XRegionDisplayNames_of')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _ICU4XRegionDisplayNames_of(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> regionData, int regionLength, ffi.Pointer<ffi.Opaque> writeable);
+external _ResultVoidInt32 _ICU4XRegionDisplayNames_of(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> regionData, int regionLength, ffi.Pointer<ffi.Opaque> write);

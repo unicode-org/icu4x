@@ -29,11 +29,11 @@ final class DateTime implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `new_from_iso`](https://docs.rs/icu/latest/icu/struct.DateTime.html#method.new_from_iso) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [CalendarError] on failure.
   factory DateTime.fromIsoInCalendar(int year, int month, int day, int hour, int minute, int second, int nanosecond, Calendar calendar) {
     final result = _ICU4XDateTime_create_from_iso_in_calendar(year, month, day, hour, minute, second, nanosecond, calendar._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw CalendarError.values[result.union.err];
     }
     return DateTime._fromFfi(result.union.ok, []);
   }
@@ -42,7 +42,7 @@ final class DateTime implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `try_new_from_codes`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.try_new_from_codes) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [CalendarError] on failure.
   factory DateTime.fromCodesInCalendar(String eraCode, int year, String monthCode, int day, int hour, int minute, int second, int nanosecond, Calendar calendar) {
     final temp = ffi2.Arena();
     final eraCodeView = eraCode.utf8View;
@@ -50,7 +50,7 @@ final class DateTime implements ffi.Finalizable {
     final result = _ICU4XDateTime_create_from_codes_in_calendar(eraCodeView.allocIn(temp), eraCodeView.length, year, monthCodeView.allocIn(temp), monthCodeView.length, day, hour, minute, second, nanosecond, calendar._ffi);
     temp.releaseAll();
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw CalendarError.values[result.union.err];
     }
     return DateTime._fromFfi(result.union.ok, []);
   }
@@ -127,6 +127,14 @@ final class DateTime implements ffi.Finalizable {
     return result;
   }
 
+  /// Returns the 1-indexed day in the year for this date
+  ///
+  /// See the [Rust documentation for `day_of_year_info`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_year_info) for more information.
+  int get dayOfYear {
+    final result = _ICU4XDateTime_day_of_year(_ffi);
+    return result;
+  }
+
   /// Returns the 1-indexed day in the month for this date
   ///
   /// See the [Rust documentation for `day_of_month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_month) for more information.
@@ -157,14 +165,9 @@ final class DateTime implements ffi.Finalizable {
   /// Returns the week number in this year, using week data
   ///
   /// See the [Rust documentation for `week_of_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.week_of_year) for more information.
-  ///
-  /// Throws [Error] on failure.
   WeekOf weekOfYear(WeekCalculator calculator) {
     final result = _ICU4XDateTime_week_of_year(_ffi, calculator._ffi);
-    if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
-    }
-    return WeekOf._fromFfi(result.union.ok);
+    return WeekOf._fromFfi(result);
   }
 
   /// Returns 1-indexed number of the month of this date in its year
@@ -183,15 +186,10 @@ final class DateTime implements ffi.Finalizable {
   /// like "M01", "M02", but can be more complicated for lunar calendars.
   ///
   /// See the [Rust documentation for `month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.month) for more information.
-  ///
-  /// Throws [Error] on failure.
   String get monthCode {
-    final writeable = _Writeable();
-    final result = _ICU4XDateTime_month_code(_ffi, writeable._ffi);
-    if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
-    }
-    return writeable.finalize();
+    final write = _Write();
+    _ICU4XDateTime_month_code(_ffi, write._ffi);
+    return write.finalize();
   }
 
   /// Returns the year number in the current era for this date
@@ -205,15 +203,10 @@ final class DateTime implements ffi.Finalizable {
   /// Returns the era for this date,
   ///
   /// See the [Rust documentation for `year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year) for more information.
-  ///
-  /// Throws [Error] on failure.
   String get era {
-    final writeable = _Writeable();
-    final result = _ICU4XDateTime_era(_ffi, writeable._ffi);
-    if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
-    }
-    return writeable.finalize();
+    final write = _Write();
+    _ICU4XDateTime_era(_ffi, write._ffi);
+    return write.finalize();
   }
 
   /// Returns the number of months in the year represented by this date
@@ -309,6 +302,11 @@ external int _ICU4XDateTime_second(ffi.Pointer<ffi.Opaque> self);
 // ignore: non_constant_identifier_names
 external int _ICU4XDateTime_nanosecond(ffi.Pointer<ffi.Opaque> self);
 
+@meta.ResourceIdentifier('ICU4XDateTime_day_of_year')
+@ffi.Native<ffi.Uint16 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDateTime_day_of_year')
+// ignore: non_constant_identifier_names
+external int _ICU4XDateTime_day_of_year(ffi.Pointer<ffi.Opaque> self);
+
 @meta.ResourceIdentifier('ICU4XDateTime_day_of_month')
 @ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDateTime_day_of_month')
 // ignore: non_constant_identifier_names
@@ -325,9 +323,9 @@ external int _ICU4XDateTime_day_of_week(ffi.Pointer<ffi.Opaque> self);
 external int _ICU4XDateTime_week_of_month(ffi.Pointer<ffi.Opaque> self, int firstWeekday);
 
 @meta.ResourceIdentifier('ICU4XDateTime_week_of_year')
-@ffi.Native<_ResultWeekOfFfiInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDateTime_week_of_year')
+@ffi.Native<_WeekOfFfi Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDateTime_week_of_year')
 // ignore: non_constant_identifier_names
-external _ResultWeekOfFfiInt32 _ICU4XDateTime_week_of_year(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> calculator);
+external _WeekOfFfi _ICU4XDateTime_week_of_year(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> calculator);
 
 @meta.ResourceIdentifier('ICU4XDateTime_ordinal_month')
 @ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDateTime_ordinal_month')
@@ -335,9 +333,9 @@ external _ResultWeekOfFfiInt32 _ICU4XDateTime_week_of_year(ffi.Pointer<ffi.Opaqu
 external int _ICU4XDateTime_ordinal_month(ffi.Pointer<ffi.Opaque> self);
 
 @meta.ResourceIdentifier('ICU4XDateTime_month_code')
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDateTime_month_code')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDateTime_month_code')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _ICU4XDateTime_month_code(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> writeable);
+external void _ICU4XDateTime_month_code(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> write);
 
 @meta.ResourceIdentifier('ICU4XDateTime_year_in_era')
 @ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDateTime_year_in_era')
@@ -345,9 +343,9 @@ external _ResultVoidInt32 _ICU4XDateTime_month_code(ffi.Pointer<ffi.Opaque> self
 external int _ICU4XDateTime_year_in_era(ffi.Pointer<ffi.Opaque> self);
 
 @meta.ResourceIdentifier('ICU4XDateTime_era')
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDateTime_era')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDateTime_era')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _ICU4XDateTime_era(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> writeable);
+external void _ICU4XDateTime_era(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> write);
 
 @meta.ResourceIdentifier('ICU4XDateTime_months_in_year')
 @ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDateTime_months_in_year')

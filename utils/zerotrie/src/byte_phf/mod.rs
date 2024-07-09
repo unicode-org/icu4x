@@ -59,14 +59,16 @@ mod cached_owned;
 pub use cached_owned::PerfectByteHashMapCacheOwned;
 
 /// The cutoff for the fast version of [`f1`].
-const P_FAST_MAX: u8 = 11;
+#[cfg(feature = "alloc")] // used in the builder code
+const P_FAST_MAX: u8 = 95;
 
 /// The cutoff for the fast version of [`f2`].
 const Q_FAST_MAX: u8 = 95;
 
 /// The maximum allowable value of `p`. This could be raised if found to be necessary.
+/// Values exceeding P_FAST_MAX could use a different `p` algorithm by modifying [`f1`].
 #[cfg(feature = "alloc")] // used in the builder code
-const P_REAL_MAX: u8 = 15;
+const P_REAL_MAX: u8 = P_FAST_MAX;
 
 /// The maximum allowable value of `q`. This could be raised if found to be necessary.
 #[cfg(feature = "alloc")] // used in the builder code
@@ -79,13 +81,11 @@ const Q_REAL_MAX: u8 = 127;
 /// The argument `n` is used only for taking the modulus so that the return value is
 /// in the range `[0, n)`.
 ///
-/// Invariant: n > 0
-///
 /// # Examples
 ///
 /// ```
 /// use zerotrie::_internal::f1;
-/// const N: usize = 10;
+/// const N: u8 = 10;
 ///
 /// // With p = 0:
 /// assert_eq!(0, f1(0, 0, N));
@@ -108,24 +108,17 @@ const Q_REAL_MAX: u8 = 127;
 /// assert_eq!(7, f1(19, 1, N));
 /// ```
 #[inline]
-pub fn f1(byte: u8, p: u8, n: usize) -> usize {
-    let n = if n > 0 {
-        n
+pub fn f1(byte: u8, p: u8, n: u8) -> u8 {
+    if n == 0 {
+        byte
+    } else if p == 0 {
+        byte % n
     } else {
-        debug_assert!(false, "unreachable by invariant");
-        1
-    };
-    if p == 0 {
-        byte as usize % n
-    } else {
-        let mut result = byte ^ p ^ byte.wrapping_shr(p as u32);
-        // In almost all cases, the PHF works with the above constant-time operation.
-        // However, to crack a few difficult cases, we fall back to the linear-time
-        // operation shown below.
-        for _ in P_FAST_MAX..p {
-            result = result ^ (result << 1) ^ (result >> 1);
-        }
-        result as usize % n
+        // `p` always uses the below constant-time operation. If needed, we
+        // could add some other operation here with `p > P_FAST_MAX` to solve
+        // difficult cases if the need arises.
+        let result = byte ^ p ^ byte.wrapping_shr(p as u32);
+        result % n
     }
 }
 
@@ -136,13 +129,11 @@ pub fn f1(byte: u8, p: u8, n: usize) -> usize {
 /// The argument `n` is used only for taking the modulus so that the return value is
 /// in the range `[0, n)`.
 ///
-/// Invariant: n > 0
-///
 /// # Examples
 ///
 /// ```
 /// use zerotrie::_internal::f2;
-/// const N: usize = 10;
+/// const N: u8 = 10;
 ///
 /// // With q = 0:
 /// assert_eq!(0, f2(0, 0, N));
@@ -165,13 +156,10 @@ pub fn f1(byte: u8, p: u8, n: usize) -> usize {
 /// assert_eq!(8, f2(19, 1, N));
 /// ```
 #[inline]
-pub fn f2(byte: u8, q: u8, n: usize) -> usize {
-    let n = if n > 0 {
-        n
-    } else {
-        debug_assert!(false, "unreachable by invariant");
-        1
-    };
+pub fn f2(byte: u8, q: u8, n: u8) -> u8 {
+    if n == 0 {
+        return byte;
+    }
     let mut result = byte ^ q;
     // In almost all cases, the PHF works with the above constant-time operation.
     // However, to crack a few difficult cases, we fall back to the linear-time
@@ -179,7 +167,7 @@ pub fn f2(byte: u8, q: u8, n: usize) -> usize {
     for _ in Q_FAST_MAX..q {
         result = result ^ (result << 1) ^ (result >> 1);
     }
-    result as usize % n
+    result % n
 }
 
 /// A constant-time map from bytes to unique indices.
@@ -207,14 +195,16 @@ where
     pub fn get(&self, key: u8) -> Option<usize> {
         let (p, buffer) = self.0.as_ref().split_first()?;
         // Note: there are N buckets followed by N keys
-        let n = buffer.len() / 2;
-        if n == 0 {
+        let n_usize = buffer.len() / 2;
+        if n_usize == 0 {
             return None;
         }
-        let (qq, eks) = buffer.debug_split_at(n);
+        let n = n_usize as u8;
+        let (qq, eks) = buffer.debug_split_at(n_usize);
         debug_assert_eq!(qq.len(), eks.len());
-        let q = debug_unwrap!(qq.get(f1(key, *p, n)), return None);
-        let l2 = f2(key, *q, n);
+        let l1 = f1(key, *p, n) as usize;
+        let q = debug_unwrap!(qq.get(l1), return None);
+        let l2 = f2(key, *q, n) as usize;
         let ek = debug_unwrap!(eks.get(l2), return None);
         if *ek == key {
             Some(l2)
@@ -357,6 +347,24 @@ mod tests {
         std::println!("fastq/slowq: {count_fastq}/{count_slowq}");
         // Assert that 99% of cases resolve to the fast hash
         assert!(count_fastq >= count_slowq * 100);
+    }
+
+    #[test]
+    fn test_hard_cases() {
+        let keys = [
+            0u8, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
+            24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45,
+            46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67,
+            68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89,
+            90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108,
+            109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125,
+            126, 195, 196,
+        ];
+
+        let computed = PerfectByteHashMap::try_new(&keys).unwrap();
+        let (p, qmax) = computed.p_qmax().unwrap();
+        assert_eq!(p, 69);
+        assert_eq!(qmax, 67);
     }
 
     #[test]

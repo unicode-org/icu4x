@@ -1,5 +1,3 @@
-import { FFIError } from "./diplomat-runtime"
-import { ICU4XError } from "./ICU4XError";
 import { ICU4XLocale } from "./ICU4XLocale";
 
 /**

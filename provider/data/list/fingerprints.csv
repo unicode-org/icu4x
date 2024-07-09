@@ -1,0 +1,386 @@
+list/and@2, <lookup>, 663B, 135 identifiers
+list/and@2, <total>, 176692B, 118 unique payloads
+list/and@2, af, 1378B, 177f30fc0537cd07
+list/and@2, am, 1423B, 14751ee07af8ce24
+list/and@2, ar, 1380B, 82ed6c556b40aa1e
+list/and@2, as, 1404B, bc3470bb91f75d48
+list/and@2, ast, 1374B, e99c3aea63449dd0
+list/and@2, az, 1380B, 5e3bb9ec62923fae
+list/and@2, be, 1380B, cb1ace7c262d0af6
+list/and@2, bg, 1378B, 11f53c4c05e744f9
+list/and@2, blo, 1376B, 26282dbec0594fb7
+list/and@2, bn, 1404B, 19758d48131799f1
+list/and@2, br, 1376B, 60707fab8cf67422
+list/and@2, brx, 1425B, 5b409e2618450b25
+list/and@2, bs, 1374B, 58b0dcc30cdabe1d
+list/and@2, bs-Cyrl, 1380B, 3ed8301e7e2208a0
+list/and@2, ca, 1374B, -> bs
+list/and@2, ceb, 1378B, 4996bba9ce38c40a
+list/and@2, chr, 1386B, 1fb3b5daca1d8f3c
+list/and@2, cs, 1376B, cd02d57985d9daf5
+list/and@2, cv, 1400B, 90a2d808574c65a3
+list/and@2, cy, 1386B, afed7de64aa16506
+list/and@2, da, 1380B, 32914f71c9d587ff
+list/and@2, de, 1386B, a0118012fae3e0a1
+list/and@2, doi, 1407B, 1b95db885132a257
+list/and@2, dsb, 1374B, 3bb37689fa2614f8
+list/and@2, el, 1392B, 35c2f2f0277a33c8
+list/and@2, en, 1378B, d5c0db9263bf647e
+list/and@2, en-001, 1380B, b8523b7cd574b5b
+list/and@2, en-CA, 1380B, -> en-001
+list/and@2, en-IN, 1384B, 61f7e3861df4623e
+list/and@2, es, 7392B, d4359196e97c8a45
+list/and@2, et, 1376B, 56305a514cbe7bfd
+list/and@2, eu, 1380B, acd4c590f11d8805
+list/and@2, fa, 1412B, 7ce7cadd70af8d4c
+list/and@2, ff-Adlm, 1400B, 639b78d4c2615975
+list/and@2, fi, 1380B, 699dc4fca2b8cc87
+list/and@2, fil, 1378B, a5e76c3001991194
+list/and@2, fo, 1376B, 910d968200796314
+list/and@2, fr, 1376B, e7d22c80fdb46995
+list/and@2, fy, 1380B, d28356d40bb45872
+list/and@2, ga, 1384B, 6e2000cf0446bf80
+list/and@2, gd, 1382B, 3a34122013e286c
+list/and@2, gl, 1374B, fbc347f90f14c92e
+list/and@2, gu, 1404B, 5d7e493095be3841
+list/and@2, ha, 1383B, 9f66b694b10f5d0a
+list/and@2, he, 7896B, 7ef1549e6d5f667
+list/and@2, hi, 1405B, 9d7018b5adc50de1
+list/and@2, hi-Latn, 1385B, 2a3d8f306a5951e
+list/and@2, hr, 1374B, -> bs
+list/and@2, hsb, 1374B, -> dsb
+list/and@2, hu, 1386B, 2d9cd0be1a35b1be
+list/and@2, hy, 1376B, 44e29c6af4bb82b4
+list/and@2, ia, 1372B, bb65c82b6b92a243
+list/and@2, id, 1382B, e91badb6ad3b91ae
+list/and@2, ig, 1381B, 23164709b3073afd
+list/and@2, is, 1376B, 634be5555fa0bcd8
+list/and@2, it, 1374B, -> gl
+list/and@2, ja, 1380B, 63f62f90d59a7cc5
+list/and@2, jv, 1382B, f8fd0c4c53b3458f
+list/and@2, ka, 1404B, f8dcb31444960d6c
+list/and@2, kea, 1374B, -> bs
+list/and@2, kgp, 1380B, 2b82c6ba7d085436
+list/and@2, kk, 1392B, 11dff1bc1a9c23a5
+list/and@2, km, 1406B, 1e7b5872cf0f03ee
+list/and@2, kn, 1430B, 850a0d7dd9720d19
+list/and@2, ko, 1386B, 253c8bd716ad988e
+list/and@2, kok, 1371B, c69682cca46dba03
+list/and@2, ks, 1416B, 65acbf4a1b18ae0d
+list/and@2, ks-Deva, 1407B, 6fa43478ae4c9ca
+list/and@2, ku, 1380B, e576f662ae2f915b
+list/and@2, kxv, 1401B, 8ad1923ebc7df4e8
+list/and@2, ky, 1416B, b86135704910c894
+list/and@2, lb, 1392B, 498bd9acbf3a33af
+list/and@2, lo, 1404B, 8ff6a9e2f5601bcf
+list/and@2, lt, 1380B, 46bba9842e4a4c02
+list/and@2, lv, 1380B, 478f376df4fc13a6
+list/and@2, mai, 1407B, 9d7d1b4c5f2fe05e
+list/and@2, mi, 1371B, -> kok
+list/and@2, mk, 1380B, -> bs-Cyrl
+list/and@2, ml, 1461B, ebcb5addd42f25fe
+list/and@2, mni, 1458B, 43d80f3868995b85
+list/and@2, mr, 1422B, 8c16634d4887534a
+list/and@2, ms, 1380B, d0a87c39de59a6ce
+list/and@2, mt, 1377B, a582ab86e5f8fd9d
+list/and@2, my, 1458B, 5eefbe853aab729d
+list/and@2, ne, 1377B, e94f80ad32969347
+list/and@2, nl, 1374B, 16b33eb92acc99c2
+list/and@2, no, 1380B, -> da
+list/and@2, or, 1389B, ac05a328c94dbffa
+list/and@2, pa, 1404B, 9b4eb77302ac0b91
+list/and@2, pcm, 1380B, 3e459e98eaae3b33
+list/and@2, pl, 1374B, -> bs
+list/and@2, ps, 1401B, 8c789bce94751d29
+list/and@2, pt, 1372B, -> ia
+list/and@2, rm, 1374B, -> gl
+list/and@2, ro, 1380B, 28a7bb709415b740
+list/and@2, ru, 1376B, 6da70da3b8a81c68
+list/and@2, sa, 1425B, f34a7c9f4fc77f86
+list/and@2, sah, 1428B, a9c1b13116f870d5
+list/and@2, sc, 1374B, -> gl
+list/and@2, sd, 1380B, 1c7860ac0de63ee4
+list/and@2, si, 1407B, 98beb0a0883f6fdb
+list/and@2, sk, 1377B, 9e48117d81da968c
+list/and@2, sl, 1380B, 648a182016ff2887
+list/and@2, so, 1376B, 31d8e33376d8e407
+list/and@2, sq, 1386B, ee34c4e2eb521181
+list/and@2, sr, 1380B, -> bs-Cyrl
+list/and@2, sr-Latn, 1374B, -> bs
+list/and@2, su, 1407B, f71496632930aba0
+list/and@2, sv, 1380B, ba7f92fde5aaf857
+list/and@2, sw, 1378B, c2d9a66b9140f627
+list/and@2, syr, 1380B, cc45ef7002f5f7f2
+list/and@2, ta, 1494B, b1fa8d8352b5e7ae
+list/and@2, te, 1428B, 49d5ff89a2e6c9
+list/and@2, th, 1407B, 294a0ede8a0d2015
+list/and@2, ti, 1410B, e216051da14b60fb
+list/and@2, tk, 1376B, fed2547089754d14
+list/and@2, to, 1392B, b377523816206332
+list/and@2, tr, 1376B, 1215513b46817e60
+list/and@2, tt, 1404B, c50a7526dc58c855
+list/and@2, ug, 1389B, 35c139f801b2bcb9
+list/and@2, uk, 1376B, a1a55eeb21d183d5
+list/and@2, und, 1368B, 924e2d2be2336604
+list/and@2, ur, 1404B, b153327e261b3730
+list/and@2, uz, 1376B, 79487c123a9a09c1
+list/and@2, vec, 1373B, a210d8057c121705
+list/and@2, vi, 1380B, f003e25560fff4
+list/and@2, xnr, 1423B, e9842f47a7acdc11
+list/and@2, yrl, 1388B, f22af065ee4bf781
+list/and@2, yue, 1380B, daf7cc40f308f624
+list/and@2, yue-Hans, 1380B, -> yue
+list/and@2, zh, 1380B, 9f266195fc94673c
+list/and@2, zh-HK, 1380B, 13320f3318004eea
+list/and@2, zh-Hant, 1380B, 24c8fd6c3ed6f2cc
+list/and@2, zh-MO, 1380B, -> zh-HK
+list/and@2, zu, 1378B, f280d533aa349025
+list/or@2, <lookup>, 587B, 119 identifiers
+list/or@2, <total>, 141356B, 95 unique payloads
+list/or@2, af, 1380B, 8912e928094584a4
+list/or@2, am, 1443B, 76f0c5245302d4b1
+list/or@2, ar, 1416B, 5806d35693c39ceb
+list/or@2, as, 1404B, 4058e73723db4377
+list/or@2, ast, 1374B, 35cea0d8ac5956e2
+list/or@2, az, 1403B, 206176eb0c755f1d
+list/or@2, be, 1392B, 7413ab06c8f547a6
+list/or@2, bg, 1404B, 3ea21a1724b77445
+list/or@2, blo, 1386B, 92ed5e3ca39cd5ab
+list/or@2, bn, 1407B, b5a6ed26ff506478
+list/or@2, br, 1380B, 688a41194836d6eb
+list/or@2, bs, 1386B, a8e1945fae979592
+list/or@2, ca, 1374B, -> ast
+list/or@2, ceb, 1377B, c6a68505ae96b455
+list/or@2, chr, 1443B, e5eb1763cbe304e
+list/or@2, cs, 1392B, 85b283db66ddafec
+list/or@2, cv, 1380B, 3870edeeb0775467
+list/or@2, cy, 1386B, 536f109d8b544993
+list/or@2, da, 1390B, 5f9ae8420d2c49ea
+list/or@2, de, 1392B, 55fbf73736ca2d66
+list/or@2, dsb, 1386B, 6c6336f4f9cfbf48
+list/or@2, el, 1380B, 6f18e7275f46fb03
+list/or@2, en-001, 1380B, 8fea1d255f87e636
+list/or@2, en-CA, 1380B, -> en-001
+list/or@2, es, 9150B, 111d925abff3030a
+list/or@2, et, 1392B, 7c1d760a85bea3f
+list/or@2, eu, 1386B, 71a1b47bd8e71860
+list/or@2, fa, 1422B, 72d328acc87911c4
+list/or@2, ff-Adlm, 1533B, 3c239c8c3d3af4e9
+list/or@2, fi, 1386B, 8defbfe947f6aa3a
+list/or@2, fil, 1377B, -> ceb
+list/or@2, fo, 1395B, 6e596363e6fd504b
+list/or@2, fr, 1380B, ef0beb53438de196
+list/or@2, ga, 1386B, 65212518e4f362a7
+list/or@2, gd, 1380B, 316af7a227d124c8
+list/or@2, gl, 1380B, -> fr
+list/or@2, gu, 1441B, 46f547086f6f3673
+list/or@2, ha, 1380B, 330dc648f5a5516f
+list/or@2, he, 1392B, 6ff819fff927e117
+list/or@2, hi, 1404B, a86a8884d81ba740
+list/or@2, hi-Latn, 1386B, 84534ad85af5ee2
+list/or@2, hr, 1386B, -> bs
+list/or@2, hsb, 1386B, -> dsb
+list/or@2, hu, 1392B, 8fad01ae3fcfae0a
+list/or@2, hy, 1404B, 546e2434d409694d
+list/or@2, ia, 1374B, -> ast
+list/or@2, id, 1395B, 6ab9d387e8b146c7
+list/or@2, is, 1392B, c46fc8df48a0e6bc
+list/or@2, it, 1374B, -> ast
+list/or@2, ja, 1425B, de30e5aa548f8dec
+list/or@2, jv, 1401B, 6a2593ed262f02b1
+list/or@2, ka, 1404B, 176a8219b3ab31bf
+list/or@2, kea, 1374B, -> ast
+list/or@2, kgp, 1428B, a05d872969a8e207
+list/or@2, kk, 1440B, ba986f8b0b644940
+list/or@2, km, 1386B, f9587d310b612b32
+list/or@2, kn, 1443B, 6ada73cff13c990
+list/or@2, ko, 1404B, 9aba832eeae91361
+list/or@2, kok, 1407B, 2d323e9cbbb50325
+list/or@2, ku, 1380B, e4438503bcb24722
+list/or@2, kxv, 1416B, 1245b15510b0fc19
+list/or@2, ky, 1392B, b641ad2eb7fe688d
+list/or@2, lo, 1422B, ef3057ba2604950d
+list/or@2, lt, 1380B, 2a413806b3d95c7d
+list/or@2, lv, 1386B, 60002dab14038bc4
+list/or@2, mi, 1407B, 2279a38f38276d5b
+list/or@2, mk, 1404B, -> bg
+list/or@2, ml, 1551B, c6edd447f2b8500
+list/or@2, mn, 1485B, 1cda0695da5042c3
+list/or@2, mr, 1459B, fa44875bfc7b708c
+list/or@2, ms, 1395B, -> id
+list/or@2, my, 1536B, 778cebb7f20baf03
+list/or@2, ne, 1407B, -> kok
+list/or@2, nl, 1380B, -> af
+list/or@2, no, 1398B, a19d158c68fc4a6c
+list/or@2, or, 1476B, 8ef9acb0940bb5f8
+list/or@2, pa, 1424B, db379f7d5b770516
+list/or@2, pcm, 1387B, e183a7de42f1d80a
+list/or@2, pl, 1386B, 39cd2b6655c3c3d4
+list/or@2, ps, 1389B, 2ed16fe0acb0f188
+list/or@2, pt, 1380B, -> fr
+list/or@2, qu, 1395B, d2bcb75e881984a7
+list/or@2, rm, 1374B, 23a7a2cb78c1f0c2
+list/or@2, ro, 1386B, e088bb808f3d8929
+list/or@2, ru, 1404B, -> bg
+list/or@2, sc, 1374B, -> ast
+list/or@2, sd, 1395B, 38dfa0a77ff28f2a
+list/or@2, si, 1407B, 8976780f17304463
+list/or@2, sk, 1398B, 3c9965d043acea23
+list/or@2, sl, 1386B, 3f1140a98c000197
+list/or@2, so, 1386B, 10da7628678313d7
+list/or@2, sq, 1386B, a1c99ea17f56a192
+list/or@2, sr, 1404B, -> bg
+list/or@2, sr-Latn, 1386B, -> bs
+list/or@2, sv, 1398B, -> no
+list/or@2, sw, 1382B, 825e487e45de0b9d
+list/or@2, syr, 1416B, cffa599302047890
+list/or@2, ta, 1476B, 2e2bd1ee0529e032
+list/or@2, te, 1440B, b4555f255351c67c
+list/or@2, th, 1436B, c4e45f8366d47ee5
+list/or@2, ti, 1416B, 7ec4708f134d7837
+list/or@2, tk, 1404B, b0d2708e76640c4a
+list/or@2, to, 1389B, 2293a14a7c957e1b
+list/or@2, tr, 1392B, b191a110ef6202d6
+list/or@2, uk, 1404B, cd65bf4ae6e7d4c8
+list/or@2, und, 1383B, cc5700af8e3ffef8
+list/or@2, ur, 1404B, 237881f70c9375e6
+list/or@2, uz, 1392B, dd252e2955372bdb
+list/or@2, vec, 1377B, -> ceb
+list/or@2, vi, 1404B, 153e66c6507cc057
+list/or@2, xh, 1391B, 43055230d5c46da2
+list/or@2, xnr, 1404B, -> hi
+list/or@2, yo, 1428B, 3dce423c7525031c
+list/or@2, yo-BJ, 1425B, 644c10020b9f768b
+list/or@2, yrl, 1374B, -> rm
+list/or@2, yue, 1392B, 34a6b378f2e22e73
+list/or@2, yue-Hans, 1392B, -> yue
+list/or@2, zh, 1380B, 2e2b9ef825abc769
+list/or@2, zh-Hant, 1380B, -> zh
+list/unit@2, <lookup>, 594B, 126 identifiers
+list/unit@2, <total>, 122527B, 80 unique payloads
+list/unit@2, af, 1380B, d28356d40bb45872
+list/unit@2, am, 1386B, 8dcf442ea8ed6356
+list/unit@2, ar, 1392B, e14608e5cd3e4ce0
+list/unit@2, as, 1364B, a8ec4c1b87c10d93
+list/unit@2, ast, 1374B, e99c3aea63449dd0
+list/unit@2, be, 1356B, 375096409d6f0946
+list/unit@2, bg, 1376B, 265af9d5161141f4
+list/unit@2, blo, 1376B, 2ddaebc8fd468b9
+list/unit@2, brx, 1425B, 5b409e2618450b25
+list/unit@2, bs, 1374B, 58b0dcc30cdabe1d
+list/unit@2, bs-Cyrl, 1380B, 3ed8301e7e2208a0
+list/unit@2, ca, 1374B, -> bs
+list/unit@2, ceb, 1364B, -> as
+list/unit@2, chr, 1364B, -> as
+list/unit@2, cs, 1370B, a606e2914b597a70
+list/unit@2, cv, 1356B, -> be
+list/unit@2, da, 1380B, 32914f71c9d587ff
+list/unit@2, de, 1377B, 88ac208f771140cb
+list/unit@2, doi, 1407B, 1b95db885132a257
+list/unit@2, dsb, 1371B, 99ffd40ccfab19d6
+list/unit@2, el, 1364B, -> as
+list/unit@2, en, 1364B, -> as
+list/unit@2, es, 4376B, c87ae0db0636d63
+list/unit@2, es-DO, 6385B, 39788744ae60629
+list/unit@2, es-PY, 5380B, 1bf33f76dd40e0b0
+list/unit@2, es-US, 5380B, -> es-PY
+list/unit@2, et, 1364B, -> as
+list/unit@2, eu, 1386B, b46a29e76c01f0ac
+list/unit@2, fa, 1394B, bf7a6b4acbdca1ce
+list/unit@2, ff-Adlm, 1380B, a915927ec590bcf
+list/unit@2, fi, 1368B, 5ebe9dd4223a68d1
+list/unit@2, fil, 1364B, -> as
+list/unit@2, fo, 1366B, a62b4e305f75c1b1
+list/unit@2, fr, 1372B, a0505c62ffabb87a
+list/unit@2, fy, 1370B, f426ea466dbb2244
+list/unit@2, ga, 1372B, 3eaea6e0edbe7d9
+list/unit@2, gd, 1380B, 2baa05868b954e5e
+list/unit@2, gl, 1370B, 9aebc9ebe365d42b
+list/unit@2, gu, 1377B, b9de0f93b13837da
+list/unit@2, he, 1366B, 76e20d95ce23083d
+list/unit@2, hi, 1379B, f172cff9d7baf9c3
+list/unit@2, hi-Latn, 1375B, 31e2ac91d711cc71
+list/unit@2, hr, 1368B, 19a1f47c4a70645b
+list/unit@2, hsb, 1371B, -> dsb
+list/unit@2, hu, 1386B, 2d9cd0be1a35b1be
+list/unit@2, hy, 1370B, 6c9b501fa0541401
+list/unit@2, ia, 1364B, -> as
+list/unit@2, ig, 1383B, 50a9adc7b4c6a28b
+list/unit@2, is, 1378B, 6e3f7c2064cf079a
+list/unit@2, it, 1368B, 5fa739ce28987955
+list/unit@2, ja, 1352B, 5d679b8a8d264625
+list/unit@2, jv, 1364B, -> as
+list/unit@2, kea, 1370B, 37d6d34c32e75245
+list/unit@2, kgp, 1376B, e24ecc3b00e68f0d
+list/unit@2, kk, 1356B, -> be
+list/unit@2, km, 1356B, -> be
+list/unit@2, kn, 1367B, 2cb11ac2b35a34ad
+list/unit@2, ko, 1356B, -> be
+list/unit@2, kok, 1364B, -> as
+list/unit@2, ks, 1416B, 65acbf4a1b18ae0d
+list/unit@2, ks-Deva, 1407B, 6fa43478ae4c9ca
+list/unit@2, ku, 1372B, e805f0ffad369693
+list/unit@2, kxv, 1364B, -> as
+list/unit@2, ky, 1364B, -> as
+list/unit@2, lb, 1364B, -> as
+list/unit@2, lo, 1364B, -> as
+list/unit@2, lt, 1362B, bd60ee39ff6c5f41
+list/unit@2, lv, 1372B, fe102e31b56895bb
+list/unit@2, mai, 1407B, 9d7d1b4c5f2fe05e
+list/unit@2, mi, 1364B, -> as
+list/unit@2, mk, 1380B, -> bs-Cyrl
+list/unit@2, ml, 1365B, f986f4b361ed7d92
+list/unit@2, mn, 1356B, -> be
+list/unit@2, mni, 1458B, 43d80f3868995b85
+list/unit@2, mr, 1364B, -> as
+list/unit@2, ms, 1370B, c22e8ca50f17f821
+list/unit@2, mt, 1374B, b5768c3cf6ab2be0
+list/unit@2, my, 1452B, 98a6cfcd9842ecab
+list/unit@2, ne, 1357B, e5817d6b83385ea0
+list/unit@2, nl, 1372B, ad668c721c0bc675
+list/unit@2, nn, 1364B, -> as
+list/unit@2, no, 1372B, a2d30287718b13df
+list/unit@2, or, 1364B, -> as
+list/unit@2, pa, 1364B, -> as
+list/unit@2, pcm, 1364B, -> as
+list/unit@2, pl, 1374B, -> bs
+list/unit@2, ps, 1370B, 4b3e17ded11d6483
+list/unit@2, pt, 1368B, -> it
+list/unit@2, pt-PT, 1374B, fbc347f90f14c92e
+list/unit@2, rm, 1368B, -> it
+list/unit@2, ro, 1371B, a7f7ca3d0ea8b619
+list/unit@2, ru, 1356B, -> be
+list/unit@2, sa, 1425B, f34a7c9f4fc77f86
+list/unit@2, sah, 1428B, a9c1b13116f870d5
+list/unit@2, sc, 1368B, -> it
+list/unit@2, si, 1407B, 98beb0a0883f6fdb
+list/unit@2, sl, 1380B, 648a182016ff2887
+list/unit@2, so, 1371B, a44cf38ba21358a0
+list/unit@2, sq, 1374B, -> pt-PT
+list/unit@2, sr, 1380B, -> bs-Cyrl
+list/unit@2, sr-Latn, 1374B, -> bs
+list/unit@2, su, 1407B, f71496632930aba0
+list/unit@2, sv, 1364B, -> as
+list/unit@2, sw, 1380B, 306477c695c8cea1
+list/unit@2, syr, 1380B, cc45ef7002f5f7f2
+list/unit@2, ta, 1364B, -> as
+list/unit@2, th, 1386B, 3634af6f27539959
+list/unit@2, ti, 1389B, 51e44db4390c0322
+list/unit@2, tk, 1364B, -> as
+list/unit@2, to, 1390B, 647c23b950566c92
+list/unit@2, tr, 1356B, -> be
+list/unit@2, tt, 1404B, c50a7526dc58c855
+list/unit@2, ug, 1389B, 35c139f801b2bcb9
+list/unit@2, uk, 1380B, cb1ace7c262d0af6
+list/unit@2, und, 1368B, 924e2d2be2336604
+list/unit@2, ur, 1409B, b92dbfa5baac3d9c
+list/unit@2, uz, 1356B, -> be
+list/unit@2, vec, 1368B, -> it
+list/unit@2, vi, 1364B, -> as
+list/unit@2, xnr, 1366B, 5f6f58501e522c14
+list/unit@2, yrl, 1384B, fcc6d6177fc86427
+list/unit@2, yue, 1352B, -> ja
+list/unit@2, yue-Hans, 1352B, -> ja
+list/unit@2, zh, 1344B, 16c295fb252e0c3
+list/unit@2, zh-Hant, 1352B, -> ja
+list/unit@2, zu, 1367B, 6202988c3f3e90c9

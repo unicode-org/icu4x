@@ -7,8 +7,8 @@ use core::fmt;
 
 use core::str::FromStr;
 
-use crate::Error;
 use crate::FixedDecimal;
+use crate::ParseError;
 
 /// A struct containing a [`FixedDecimal`] significand together with an exponent, representing a
 /// number written in compact notation (such as 1.2M).
@@ -22,7 +22,7 @@ use crate::FixedDecimal;
 #[derive(Debug, Clone, PartialEq)]
 pub struct CompactDecimal {
     significand: FixedDecimal,
-    exponent: i16,
+    exponent: u8,
 }
 
 impl CompactDecimal {
@@ -30,7 +30,7 @@ impl CompactDecimal {
     pub fn from_significand_and_exponent(significand: FixedDecimal, exponent: u8) -> Self {
         Self {
             significand,
-            exponent: exponent.into(),
+            exponent,
         }
     }
 
@@ -74,7 +74,7 @@ impl CompactDecimal {
     /// assert_eq!(CompactDecimal::from_str("+1.20c6").unwrap().exponent(), 6);
     /// assert_eq!(CompactDecimal::from_str("1729").unwrap().exponent(), 0);
     /// ```
-    pub fn exponent(&self) -> i16 {
+    pub fn exponent(&self) -> u8 {
         self.exponent
     }
 }
@@ -117,7 +117,7 @@ impl writeable::Writeable for CompactDecimal {
 writeable::impl_display_with_writeable!(CompactDecimal);
 
 impl FromStr for CompactDecimal {
-    type Err = Error;
+    type Err = ParseError;
     fn from_str(input_str: &str) -> Result<Self, Self::Err> {
         Self::try_from(input_str.as_bytes())
     }
@@ -125,30 +125,31 @@ impl FromStr for CompactDecimal {
 
 /// The deprecated letter e is not accepted as a synonym for c.
 impl TryFrom<&[u8]> for CompactDecimal {
-    type Error = Error;
+    type Error = ParseError;
     fn try_from(input_str: &[u8]) -> Result<Self, Self::Error> {
         if input_str.iter().any(|&c| c == b'e' || c == b'E') {
-            return Err(Error::Syntax);
+            return Err(ParseError::Syntax);
         }
         let mut parts = input_str.split(|&c| c == b'c');
-        let significand = FixedDecimal::try_from(parts.next().ok_or(Error::Syntax)?)?;
+        let significand = FixedDecimal::try_from(parts.next().ok_or(ParseError::Syntax)?)?;
         match parts.next() {
             None => Ok(CompactDecimal {
                 significand,
                 exponent: 0,
             }),
             Some(exponent_str) => {
-                let exponent_str = core::str::from_utf8(exponent_str).map_err(|_| Error::Syntax)?;
+                let exponent_str =
+                    core::str::from_utf8(exponent_str).map_err(|_| ParseError::Syntax)?;
                 if parts.next().is_some() {
-                    return Err(Error::Syntax);
+                    return Err(ParseError::Syntax);
                 }
                 if exponent_str.is_empty()
                     || exponent_str.bytes().next() == Some(b'0')
                     || !exponent_str.bytes().all(|c| c.is_ascii_digit())
                 {
-                    return Err(Error::Syntax);
+                    return Err(ParseError::Syntax);
                 }
-                let exponent = exponent_str.parse().map_err(|_| Error::Limit)?;
+                let exponent = exponent_str.parse().map_err(|_| ParseError::Limit)?;
                 Ok(CompactDecimal {
                     significand,
                     exponent,
@@ -163,16 +164,16 @@ fn test_compact_syntax_error() {
     #[derive(Debug)]
     struct TestCase {
         pub input_str: &'static str,
-        pub expected_err: Option<Error>,
+        pub expected_err: Option<ParseError>,
     }
     let cases = [
         TestCase {
             input_str: "-123e4",
-            expected_err: Some(Error::Syntax),
+            expected_err: Some(ParseError::Syntax),
         },
         TestCase {
             input_str: "-123c",
-            expected_err: Some(Error::Syntax),
+            expected_err: Some(ParseError::Syntax),
         },
         TestCase {
             input_str: "1c10",
@@ -180,27 +181,27 @@ fn test_compact_syntax_error() {
         },
         TestCase {
             input_str: "1E1c1",
-            expected_err: Some(Error::Syntax),
+            expected_err: Some(ParseError::Syntax),
         },
         TestCase {
             input_str: "1e1c1",
-            expected_err: Some(Error::Syntax),
+            expected_err: Some(ParseError::Syntax),
         },
         TestCase {
             input_str: "1c1e1",
-            expected_err: Some(Error::Syntax),
+            expected_err: Some(ParseError::Syntax),
         },
         TestCase {
             input_str: "1c1E1",
-            expected_err: Some(Error::Syntax),
+            expected_err: Some(ParseError::Syntax),
         },
         TestCase {
             input_str: "-1c01",
-            expected_err: Some(Error::Syntax),
+            expected_err: Some(ParseError::Syntax),
         },
         TestCase {
             input_str: "-1c-1",
-            expected_err: Some(Error::Syntax),
+            expected_err: Some(ParseError::Syntax),
         },
         TestCase {
             input_str: "-1c1",

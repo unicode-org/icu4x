@@ -20,12 +20,13 @@ touch Cargo.toml
 [package]
 name = "unused"
 version = "0.0.0"
+resolver = "2"
 
 [lib]
 path = "unused"
 
 [dependencies]
-icu_capi = { version = "1.4", default-features = false }
+icu_capi = { version = "1.4", default-features = false, features = [] }
 ```
 
 Some of the keys are required by the parser, but won't be used by us. 
@@ -39,10 +40,17 @@ Some of the keys are required by the parser, but won't be used by us.
 - `default_components` \[default\] activate all stable ICU4X components. For smaller builds, this can be disabled, and components can be added with features like `icu_list`.
 - `buffer_provider` for working with blob data providers (`ICU4XDataProvider::create_from_byte_slice()`)
 
-You can now set features using the `--features icu_capi/<feature>` syntax to build the library:
+You can now set features by updating the `features` key in `Cargo.toml`:
+
+```toml
+icu_capi = { version = "1.4", default-features = false, features = ["default", "buffer_provider"] }
+
+```
+
+You can now build a `staticlib` with the following command:
 
 ```shell
-cargo rustc --release -p icu_capi --crate-type staticlib --features icu_capi/default,icu_capi/buffer_provider
+cargo rustc --release -p icu_capi --crate-type staticlib
 ```
 
 - Be sure to pass `--release` to get an optimized build
@@ -111,8 +119,15 @@ C++ versions beyond C++17 are supported, as are other C++ compilers.
 
 Users wishing to use ICU4X on a `no_std` platform will need to provide an allocator and a panic hook in order to build a linkable library. The `icu_capi` crate can provide a looping panic handler, and a `malloc`-backed allocator, under the `looping_panic_handler` and `libc_alloc` features, respectively.
 
+```toml
+icu_capi = { version = "1.4", default-features = false, features = ["default_components", "buffer_provider", "looping_panic_handler", "libc_alloc"] }
+
 ```
-cargo rustc --release -p icu_capi --crate-type staticlib --features icu_capi/default_components,icu_capi/buffer_provider,icu_capi/looping_panic_handler,icu_capi/libc_alloc
+
+This can be built the same way, with an explicitly specified `--target` (in this case, `thumbv7em-none-eabi`, but it can be any `no_std` target)
+
+```shell
+cargo rustc --release -p icu_capi --crate-type staticlib --target thumbv7em-none-eabi
 ```
 
 ## Tips

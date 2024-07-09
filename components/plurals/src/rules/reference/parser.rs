@@ -14,7 +14,7 @@ use displaydoc::Display;
 #[derive(Display, Debug, PartialEq, Eq, Copy, Clone)]
 #[allow(clippy::enum_variant_names)]
 #[non_exhaustive]
-pub enum ParserError {
+pub enum ParseError {
     #[displaydoc("expected 'AND' condition")]
     ExpectedAndCondition,
     #[displaydoc("expected relation")]
@@ -32,7 +32,7 @@ pub enum ParserError {
 }
 
 #[cfg(feature = "std")]
-impl std::error::Error for ParserError {}
+impl std::error::Error for ParseError {}
 
 /// Unicode Plural Rule parser converts an
 /// input string into a Rule [`AST`].
@@ -65,7 +65,7 @@ impl std::error::Error for ParserError {}
 /// [`Samples`]: super::ast::Samples
 /// [`Condition`]:  super::ast::Condition
 /// [`parse_condition`]: parse_condition()
-pub fn parse(input: &[u8]) -> Result<ast::Rule, ParserError> {
+pub fn parse(input: &[u8]) -> Result<ast::Rule, ParseError> {
     let parser = Parser::new(input);
     parser.parse()
 }
@@ -89,7 +89,7 @@ pub fn parse(input: &[u8]) -> Result<ast::Rule, ParserError> {
 /// [`test_condition`]: super::test_condition
 /// [`PluralOperands`]: crate::PluralOperands
 /// [`PluralCategory`]: crate::PluralCategory
-pub fn parse_condition(input: &[u8]) -> Result<ast::Condition, ParserError> {
+pub fn parse_condition(input: &[u8]) -> Result<ast::Condition, ParseError> {
     let parser = Parser::new(input);
     parser.parse_condition()
 }
@@ -105,22 +105,22 @@ impl<'p> Parser<'p> {
         }
     }
 
-    pub fn parse(mut self) -> Result<ast::Rule, ParserError> {
+    pub fn parse(mut self) -> Result<ast::Rule, ParseError> {
         self.get_rule()
     }
 
-    pub fn parse_condition(mut self) -> Result<ast::Condition, ParserError> {
+    pub fn parse_condition(mut self) -> Result<ast::Condition, ParseError> {
         self.get_condition()
     }
 
-    fn get_rule(&mut self) -> Result<ast::Rule, ParserError> {
+    fn get_rule(&mut self) -> Result<ast::Rule, ParseError> {
         Ok(ast::Rule {
             condition: self.get_condition()?,
             samples: self.get_samples()?,
         })
     }
 
-    fn get_condition(&mut self) -> Result<ast::Condition, ParserError> {
+    fn get_condition(&mut self) -> Result<ast::Condition, ParseError> {
         let mut result = vec![];
 
         if let Some(cond) = self.get_and_condition()? {
@@ -133,14 +133,14 @@ impl<'p> Parser<'p> {
             if let Some(cond) = self.get_and_condition()? {
                 result.push(cond);
             } else {
-                return Err(ParserError::ExpectedAndCondition);
+                return Err(ParseError::ExpectedAndCondition);
             }
         }
         // If lexer is not done, error?
         Ok(ast::Condition(result))
     }
 
-    fn get_and_condition(&mut self) -> Result<Option<ast::AndCondition>, ParserError> {
+    fn get_and_condition(&mut self) -> Result<Option<ast::AndCondition>, ParseError> {
         if let Some(relation) = self.get_relation()? {
             let mut rel = vec![relation];
 
@@ -148,7 +148,7 @@ impl<'p> Parser<'p> {
                 if let Some(relation) = self.get_relation()? {
                     rel.push(relation);
                 } else {
-                    return Err(ParserError::ExpectedRelation);
+                    return Err(ParseError::ExpectedRelation);
                 }
             }
             Ok(Some(ast::AndCondition(rel)))
@@ -157,11 +157,11 @@ impl<'p> Parser<'p> {
         }
     }
 
-    fn get_relation(&mut self) -> Result<Option<ast::Relation>, ParserError> {
+    fn get_relation(&mut self) -> Result<Option<ast::Relation>, ParseError> {
         if let Some(expression) = self.get_expression()? {
             let operator = match self.lexer.next() {
                 Some(Token::Operator(op)) => op,
-                _ => return Err(ParserError::ExpectedOperator),
+                _ => return Err(ParseError::ExpectedOperator),
             };
             let range_list = self.get_range_list()?;
             Ok(Some(ast::Relation {
@@ -174,12 +174,12 @@ impl<'p> Parser<'p> {
         }
     }
 
-    fn get_expression(&mut self) -> Result<Option<ast::Expression>, ParserError> {
+    fn get_expression(&mut self) -> Result<Option<ast::Expression>, ParseError> {
         let operand = match self.lexer.peek() {
             Some(Token::E) => ast::Operand::E,
             Some(Token::Operand(op)) => *op,
             Some(Token::At) | None => return Ok(None),
-            _ => return Err(ParserError::ExpectedOperand),
+            _ => return Err(ParseError::ExpectedOperand),
         };
         self.lexer.next();
         let modulus = if self.take_if(Token::Modulo) {
@@ -190,7 +190,7 @@ impl<'p> Parser<'p> {
         Ok(Some(ast::Expression { operand, modulus }))
     }
 
-    fn get_range_list(&mut self) -> Result<ast::RangeList, ParserError> {
+    fn get_range_list(&mut self) -> Result<ast::RangeList, ParseError> {
         let mut range_list = Vec::with_capacity(1);
         loop {
             range_list.push(self.get_range_list_item()?);
@@ -210,7 +210,7 @@ impl<'p> Parser<'p> {
         }
     }
 
-    fn get_range_list_item(&mut self) -> Result<ast::RangeListItem, ParserError> {
+    fn get_range_list_item(&mut self) -> Result<ast::RangeListItem, ParseError> {
         let value = self.get_value()?;
         if self.take_if(Token::DotDot) {
             let value2 = self.get_value()?;
@@ -220,15 +220,15 @@ impl<'p> Parser<'p> {
         }
     }
 
-    fn get_value(&mut self) -> Result<ast::Value, ParserError> {
+    fn get_value(&mut self) -> Result<ast::Value, ParseError> {
         match self.lexer.next() {
             Some(Token::Number(v)) => Ok(ast::Value(v as u64)),
             Some(Token::Zero) => Ok(ast::Value(0)),
-            _ => Err(ParserError::ExpectedValue),
+            _ => Err(ParseError::ExpectedValue),
         }
     }
 
-    fn get_samples(&mut self) -> Result<Option<ast::Samples>, ParserError> {
+    fn get_samples(&mut self) -> Result<Option<ast::Samples>, ParseError> {
         let mut integer = None;
         let mut decimal = None;
 
@@ -236,7 +236,7 @@ impl<'p> Parser<'p> {
             match self.lexer.next() {
                 Some(Token::Integer) => integer = Some(self.get_sample_list()?),
                 Some(Token::Decimal) => decimal = Some(self.get_sample_list()?),
-                _ => return Err(ParserError::ExpectedSampleType),
+                _ => return Err(ParseError::ExpectedSampleType),
             };
         }
         if integer.is_some() || decimal.is_some() {
@@ -246,7 +246,7 @@ impl<'p> Parser<'p> {
         }
     }
 
-    fn get_sample_list(&mut self) -> Result<ast::SampleList, ParserError> {
+    fn get_sample_list(&mut self) -> Result<ast::SampleList, ParseError> {
         let mut ranges = vec![self.get_sample_range()?];
         let mut ellipsis = false;
 
@@ -263,7 +263,7 @@ impl<'p> Parser<'p> {
         })
     }
 
-    fn get_sample_range(&mut self) -> Result<ast::SampleRange, ParserError> {
+    fn get_sample_range(&mut self) -> Result<ast::SampleRange, ParseError> {
         let lower_val = self.get_decimal_value()?;
         let upper_val = if self.take_if(Token::Tilde) {
             Some(self.get_decimal_value()?)
@@ -276,7 +276,7 @@ impl<'p> Parser<'p> {
         })
     }
 
-    fn get_decimal_value(&mut self) -> Result<ast::DecimalValue, ParserError> {
+    fn get_decimal_value(&mut self) -> Result<ast::DecimalValue, ParseError> {
         let mut s = String::new();
         loop {
             match self.lexer.peek() {
@@ -314,13 +314,13 @@ impl<'p> Parser<'p> {
                     s.push_str(&v.to_string());
                 }
                 _ => {
-                    return Err(ParserError::ExpectedValue);
+                    return Err(ParseError::ExpectedValue);
                 }
             }
             self.lexer.next();
         }
         if s.is_empty() {
-            Err(ParserError::ExpectedValue)
+            Err(ParseError::ExpectedValue)
         } else {
             Ok(ast::DecimalValue(s))
         }

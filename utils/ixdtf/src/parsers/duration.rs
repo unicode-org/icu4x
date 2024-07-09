@@ -12,7 +12,7 @@ use crate::{
             is_month_designator, is_second_designator, is_sign, is_time_designator,
             is_week_designator, is_year_designator,
         },
-        records::{DateDurationRecord, DurationFraction, DurationParseRecord, TimeDurationRecord},
+        records::{DateDurationRecord, DurationParseRecord, TimeDurationRecord},
         time::parse_fraction,
         Cursor,
     },
@@ -35,30 +35,19 @@ pub(crate) fn parse_duration(cursor: &mut Cursor) -> ParserResult<DurationParseR
     );
 
     let date = if cursor.check_or(false, is_time_designator) {
-        DateDurationRecord::default()
+        None
     } else {
-        parse_date_duration(cursor)?
+        Some(parse_date_duration(cursor)?)
     };
 
-    let time = if cursor.check_or(false, is_time_designator) {
-        cursor.advance();
-        parse_time_duration(cursor)?
-    } else {
-        TimeDurationRecord::default()
-    };
+    let time = parse_time_duration(cursor)?;
 
     cursor.close()?;
 
     Ok(DurationParseRecord {
         sign: sign.into(),
-        years: date.years,
-        months: date.months,
-        weeks: date.weeks,
-        days: date.days,
-        hours: time.hours,
-        minutes: time.minutes,
-        seconds: time.seconds,
-        fraction: time.fraction,
+        date,
+        time,
     })
 }
 
@@ -73,12 +62,11 @@ enum DateUnit {
 
 pub(crate) fn parse_date_duration(cursor: &mut Cursor) -> ParserResult<DateDurationRecord> {
     let mut date = DateDurationRecord::default();
-
     let mut previous_unit = DateUnit::None;
 
     while cursor.check_or(false, |ch| ch.is_ascii_digit()) {
         let mut value: u32 = 0;
-        while cursor.check_or(false, |c| c.is_ascii_digit()) {
+        while cursor.check_or(false, |ch| ch.is_ascii_digit()) {
             let digit = cursor
                 .next_digit()?
                 .ok_or_else(|| ParserError::abrupt_end("DateDuration"))?;
@@ -132,16 +120,20 @@ enum TimeUnit {
     Second,
 }
 
-pub(crate) fn parse_time_duration(cursor: &mut Cursor) -> ParserResult<TimeDurationRecord> {
-    let mut time = TimeDurationRecord::default();
+pub(crate) fn parse_time_duration(cursor: &mut Cursor) -> ParserResult<Option<TimeDurationRecord>> {
+    if !cursor.check_or(false, is_time_designator) {
+        return Ok(None);
+    };
 
+    cursor.advance();
     assert_syntax!(
-        cursor.check_or(false, |ch| ch.is_ascii_digit()),
+        cursor.check_or(false, |c| c.is_ascii_digit()),
         TimeDurationDesignator,
     );
 
+    let mut time: (u32, u32, u32, Option<u32>) = (0, 0, 0, None);
     let mut previous_unit = TimeUnit::None;
-    while cursor.check_or(false, |ch| ch.is_ascii_digit()) {
+    while cursor.check_or(false, |c| c.is_ascii_digit()) {
         let mut value: u32 = 0;
         while cursor.check_or(false, |c| c.is_ascii_digit()) {
             let digit = cursor
@@ -160,21 +152,19 @@ pub(crate) fn parse_time_duration(cursor: &mut Cursor) -> ParserResult<TimeDurat
                 if previous_unit > TimeUnit::Hour {
                     return Err(ParserError::TimeDurationPartOrder);
                 }
-                time.hours = value;
+                time.0 = value;
                 if let Some(fraction) = fraction {
-                    // Safety: Max fraction * 3600 is within u64 -> see test maximum_duration_fraction
-                    time.fraction = Some(DurationFraction::Hours(3600 * u64::from(fraction)));
-                }
+                    time.3 = Some(fraction);
+                };
                 previous_unit = TimeUnit::Hour;
             }
             Some(ch) if is_minute_designator(ch) => {
                 if previous_unit > TimeUnit::Minute {
                     return Err(ParserError::TimeDurationPartOrder);
                 }
-                time.minutes = value;
+                time.1 = value;
                 if let Some(fraction) = fraction {
-                    // Safety: Max fraction * 60 is within u64 -> see test maximum_duration_fraction
-                    time.fraction = Some(DurationFraction::Minutes(60 * u64::from(fraction)));
+                    time.3 = Some(fraction);
                 }
                 previous_unit = TimeUnit::Minute;
             }
@@ -182,9 +172,9 @@ pub(crate) fn parse_time_duration(cursor: &mut Cursor) -> ParserResult<TimeDurat
                 if previous_unit > TimeUnit::Second {
                     return Err(ParserError::TimeDurationPartOrder);
                 }
-                time.seconds = value;
+                time.2 = value;
                 if let Some(fraction) = fraction {
-                    time.fraction = Some(DurationFraction::Seconds(fraction));
+                    time.3 = Some(fraction);
                 }
                 previous_unit = TimeUnit::Second;
             }
@@ -197,5 +187,24 @@ pub(crate) fn parse_time_duration(cursor: &mut Cursor) -> ParserResult<TimeDurat
         }
     }
 
-    Ok(time)
+    match previous_unit {
+        // Safety: Max fraction * 3600 is within u64 -> see test maximum_duration_fraction
+        TimeUnit::Hour => Ok(Some(TimeDurationRecord::Hours {
+            hours: time.0,
+            fraction: time.3.map(|f| 3600 * u64::from(f)).unwrap_or(0),
+        })),
+        // Safety: Max fraction * 60 is within u64 -> see test maximum_duration_fraction
+        TimeUnit::Minute => Ok(Some(TimeDurationRecord::Minutes {
+            hours: time.0,
+            minutes: time.1,
+            fraction: time.3.map(|f| 60 * u64::from(f)).unwrap_or(0),
+        })),
+        TimeUnit::Second => Ok(Some(TimeDurationRecord::Seconds {
+            hours: time.0,
+            minutes: time.1,
+            seconds: time.2,
+            fraction: time.3.unwrap_or(0),
+        })),
+        TimeUnit::None => Err(ParserError::abrupt_end("TimeDUrationDesignator")),
+    }
 }

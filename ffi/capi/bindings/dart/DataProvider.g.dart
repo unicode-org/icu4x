@@ -39,14 +39,14 @@ final class DataProvider implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `BlobDataProvider`](https://docs.rs/icu_provider_blob/latest/icu_provider_blob/struct.BlobDataProvider.html) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   factory DataProvider.fromByteSlice(ByteBuffer blob) {
     final temp = ffi2.Arena();
     final blobView = blob;
     final result = _ICU4XDataProvider_create_from_byte_slice(blobView.allocIn(temp), blobView.length);
     temp.releaseAll();
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     return DataProvider._fromFfi(result.union.ok, []);
   }
@@ -68,56 +68,39 @@ final class DataProvider implements ffi.Finalizable {
   /// both providers originate from the same constructor, such as `create_from_byte_slice`
   /// or `create_fs`. If the condition is not upheld, a runtime error occurs.
   ///
-  /// See the [Rust documentation for `ForkByKeyProvider`](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fork/type.ForkByKeyProvider.html) for more information.
+  /// See the [Rust documentation for `ForkByMarkerProvider`](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fork/type.ForkByMarkerProvider.html) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   void forkByKey(DataProvider other) {
     final result = _ICU4XDataProvider_fork_by_key(_ffi, other._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     
   }
 
   /// Same as `fork_by_key` but forks by locale instead of key.
   ///
-  /// See the [Rust documentation for `MissingLocalePredicate`](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fork/predicates/struct.MissingLocalePredicate.html) for more information.
+  /// See the [Rust documentation for `IdentifierNotFoundPredicate`](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fork/predicates/struct.IdentifierNotFoundPredicate.html) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   void forkByLocale(DataProvider other) {
     final result = _ICU4XDataProvider_fork_by_locale(_ffi, other._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     
   }
 
-  /// Enables locale fallbacking for data requests made to this provider.
-  ///
-  /// Note that the test provider (from `create_test`) already has fallbacking enabled.
-  ///
-  /// See the [Rust documentation for `try_new`](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html#method.try_new) for more information.
+  /// See the [Rust documentation for `new`](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html#method.new) for more information.
   ///
   /// Additional information: [1](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html)
   ///
-  /// Throws [Error] on failure.
-  void enableLocaleFallback() {
-    final result = _ICU4XDataProvider_enable_locale_fallback(_ffi);
-    if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
-    }
-    
-  }
-
-  /// See the [Rust documentation for `new_with_fallbacker`](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html#method.new_with_fallbacker) for more information.
-  ///
-  /// Additional information: [1](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html)
-  ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   void enableLocaleFallbackWith(LocaleFallbacker fallbacker) {
     final result = _ICU4XDataProvider_enable_locale_fallback_with(_ffi, fallbacker._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     
   }
@@ -152,11 +135,6 @@ external _ResultVoidInt32 _ICU4XDataProvider_fork_by_key(ffi.Pointer<ffi.Opaque>
 @ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDataProvider_fork_by_locale')
 // ignore: non_constant_identifier_names
 external _ResultVoidInt32 _ICU4XDataProvider_fork_by_locale(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> other);
-
-@meta.ResourceIdentifier('ICU4XDataProvider_enable_locale_fallback')
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDataProvider_enable_locale_fallback')
-// ignore: non_constant_identifier_names
-external _ResultVoidInt32 _ICU4XDataProvider_enable_locale_fallback(ffi.Pointer<ffi.Opaque> self);
 
 @meta.ResourceIdentifier('ICU4XDataProvider_enable_locale_fallback_with')
 @ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDataProvider_enable_locale_fallback_with')

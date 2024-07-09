@@ -15,7 +15,7 @@ pub mod ffi {
     use unicode_bidi::Level;
     use unicode_bidi::Paragraph;
 
-    use crate::errors::ffi::ICU4XError;
+    use crate::errors::ffi::ICU4XDataError;
     use crate::provider::ffi::ICU4XDataProvider;
 
     pub enum ICU4XBidiDirection {
@@ -34,12 +34,41 @@ pub mod ffi {
         /// Creates a new [`ICU4XBidi`] from locale data.
         #[diplomat::rust_link(icu::properties::bidi::BidiClassAdapter::new, FnInStruct)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
-        pub fn create(provider: &ICU4XDataProvider) -> Result<Box<ICU4XBidi>, ICU4XError> {
+        pub fn create(provider: &ICU4XDataProvider) -> Result<Box<ICU4XBidi>, ICU4XDataError> {
             Ok(Box::new(ICU4XBidi(call_constructor_unstable!(
                 maps::bidi_class [m => Ok(m.static_to_owned())],
                 maps::load_bidi_class,
                 provider,
             )?)))
+        }
+
+        /// Use the data loaded in this object to process a string and calculate bidi information
+        ///
+        /// Takes in a Level for the default level, if it is an invalid value it will default to LTR
+        ///
+        /// Returns nothing if `text` is invalid UTF-8.
+        #[diplomat::rust_link(unicode_bidi::BidiInfo::new_with_data_source, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::properties::bidi::BidiClassAdapter::bidi_class,
+            FnInStruct,
+            hidden
+        )]
+        #[diplomat::attr(dart, disable)]
+        pub fn for_text<'text>(
+            &self,
+            text: &'text DiplomatStr,
+            default_level: u8,
+        ) -> Option<Box<ICU4XBidiInfo<'text>>> {
+            let text = core::str::from_utf8(text).ok()?;
+
+            let data = self.0.as_borrowed();
+            let adapter = BidiClassAdapter::new(data);
+
+            Some(Box::new(ICU4XBidiInfo(BidiInfo::new_with_data_source(
+                &adapter,
+                text,
+                Level::new(default_level).ok(),
+            ))))
         }
 
         /// Use the data loaded in this object to process a string and calculate bidi information
@@ -51,13 +80,14 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        pub fn for_text<'text>(
+        #[diplomat::attr(not(dart), disable)]
+        #[diplomat::attr(*, rename = "for_text")]
+        #[diplomat::skip_if_ast]
+        pub fn for_text_valid_utf8<'text>(
             &self,
-            text: &'text DiplomatStr,
+            text: &'text str,
             default_level: u8,
         ) -> Box<ICU4XBidiInfo<'text>> {
-            #[allow(clippy::unwrap_used)] // #2520
-            let text = core::str::from_utf8(text).unwrap();
             let data = self.0.as_borrowed();
             let adapter = BidiClassAdapter::new(data);
 
@@ -67,6 +97,7 @@ pub mod ffi {
                 Level::new(default_level).ok(),
             )))
         }
+
         /// Utility function for producing reorderings given a list of levels
         ///
         /// Produces a map saying which visual index maps to which source index.
@@ -192,20 +223,18 @@ pub mod ffi {
 
     impl<'info> ICU4XBidiParagraph<'info> {
         /// Given a paragraph index `n` within the surrounding text, this sets this
-        /// object to the paragraph at that index. Returns `ICU4XError::OutOfBoundsError` when out of bounds.
+        /// object to the paragraph at that index. Returns nothing when out of bounds.
         ///
         /// This is equivalent to calling `paragraph_at()` on `ICU4XBidiInfo` but doesn't
         /// create a new object
-        pub fn set_paragraph_in_text(&mut self, n: usize) -> Result<(), ICU4XError> {
-            let para = self
-                .0
-                .info
-                .paragraphs
-                .get(n)
-                .ok_or(ICU4XError::OutOfBoundsError)?;
+        pub fn set_paragraph_in_text(&mut self, n: usize) -> bool {
+            let Some(para) = self.0.info.paragraphs.get(n) else {
+                return false;
+            };
             self.0 = Paragraph::new(self.0.info, para);
-            Ok(())
+            true
         }
+
         #[diplomat::rust_link(unicode_bidi::Paragraph::level_at, FnInStruct)]
         #[diplomat::attr(supports = accessors, getter)]
         /// The primary direction of this paragraph
@@ -239,10 +268,10 @@ pub mod ffi {
             &self,
             range_start: usize,
             range_end: usize,
-            out: &mut DiplomatWriteable,
-        ) -> Result<(), ICU4XError> {
+            out: &mut DiplomatWrite,
+        ) -> Option<()> {
             if range_start < self.range_start() || range_end > self.range_end() {
-                return Err(ICU4XError::OutOfBoundsError);
+                return None;
             }
 
             let info = self.0.info;
@@ -250,7 +279,9 @@ pub mod ffi {
 
             let reordered = info.reorder_line(para, range_start..range_end);
 
-            Ok(out.write_str(&reordered)?)
+            let _infallible = out.write_str(&reordered);
+
+            Some(())
         }
 
         /// Get the BIDI level at a particular byte index in this paragraph.

@@ -1,41 +1,41 @@
 #ifndef ICU4XLocaleExpander_H
 #define ICU4XLocaleExpander_H
+
 #include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
 #include "diplomat_runtime.h"
 
-#ifdef __cplusplus
-namespace capi {
-#endif
+#include "ICU4XDataProvider.d.h"
+#include "ICU4XError.d.h"
+#include "ICU4XLocale.d.h"
+#include "ICU4XTransformResult.d.h"
 
-typedef struct ICU4XLocaleExpander ICU4XLocaleExpander;
-#ifdef __cplusplus
-} // namespace capi
-#endif
-#include "ICU4XDataProvider.h"
-#include "diplomat_result_box_ICU4XLocaleExpander_ICU4XError.h"
-#include "ICU4XLocale.h"
-#include "ICU4XTransformResult.h"
-#ifdef __cplusplus
-namespace capi {
-extern "C" {
-#endif
+#include "ICU4XLocaleExpander.d.h"
 
-diplomat_result_box_ICU4XLocaleExpander_ICU4XError ICU4XLocaleExpander_create(const ICU4XDataProvider* provider);
 
-diplomat_result_box_ICU4XLocaleExpander_ICU4XError ICU4XLocaleExpander_create_extended(const ICU4XDataProvider* provider);
+
+
+
+
+typedef struct ICU4XLocaleExpander_create_result {union {ICU4XLocaleExpander* ok; ICU4XError err;}; bool is_ok;} ICU4XLocaleExpander_create_result;
+ICU4XLocaleExpander_create_result ICU4XLocaleExpander_create(const ICU4XDataProvider* provider);
+
+typedef struct ICU4XLocaleExpander_create_extended_result {union {ICU4XLocaleExpander* ok; ICU4XError err;}; bool is_ok;} ICU4XLocaleExpander_create_extended_result;
+ICU4XLocaleExpander_create_extended_result ICU4XLocaleExpander_create_extended(const ICU4XDataProvider* provider);
 
 ICU4XTransformResult ICU4XLocaleExpander_maximize(const ICU4XLocaleExpander* self, ICU4XLocale* locale);
 
 ICU4XTransformResult ICU4XLocaleExpander_minimize(const ICU4XLocaleExpander* self, ICU4XLocale* locale);
 
 ICU4XTransformResult ICU4XLocaleExpander_minimize_favor_script(const ICU4XLocaleExpander* self, ICU4XLocale* locale);
+
+
 void ICU4XLocaleExpander_destroy(ICU4XLocaleExpander* self);
 
-#ifdef __cplusplus
-} // extern "C"
-} // namespace capi
-#endif
-#endif
+
+
+
+
+#endif // ICU4XLocaleExpander_H

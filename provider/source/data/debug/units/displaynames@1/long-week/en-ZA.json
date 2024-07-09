@@ -1,0 +1,6 @@
+{
+  "patterns": {
+    "One": "{0} week",
+    "Other": "{0} weeks"
+  }
+}

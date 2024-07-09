@@ -18,7 +18,7 @@
 use crate::ListLength;
 use alloc::borrow::Cow;
 use icu_provider::prelude::*;
-use icu_provider::DataMarker;
+use icu_provider::DynamicDataMarker;
 
 mod serde_dfa;
 pub use serde_dfa::SerdeDFA;
@@ -35,24 +35,25 @@ pub use serde_dfa::SerdeDFA;
 pub struct Baked;
 
 #[cfg(feature = "compiled_data")]
+#[allow(unused_imports)]
 const _: () = {
+    use icu_list_data::*;
     pub mod icu {
         pub use crate as list;
-        #[allow(unused_imports)] // baked data may or may not need this
-        pub use icu_locid_transform as locid_transform;
+        pub use icu_list_data::icu_locale as locale;
     }
-    icu_list_data::make_provider!(Baked);
-    icu_list_data::impl_list_and_v1!(Baked);
-    icu_list_data::impl_list_or_v1!(Baked);
-    icu_list_data::impl_list_unit_v1!(Baked);
+    make_provider!(Baked);
+    impl_and_list_v2_marker!(Baked);
+    impl_or_list_v2_marker!(Baked);
+    impl_unit_list_v2_marker!(Baked);
 };
 
 #[cfg(feature = "datagen")]
-/// The latest minimum set of keys required by this component.
-pub const KEYS: &[DataKey] = &[
-    AndListV1Marker::KEY,
-    OrListV1Marker::KEY,
-    UnitListV1Marker::KEY,
+/// The latest minimum set of markers required by this component.
+pub const MARKERS: &[DataMarkerInfo] = &[
+    AndListV2Marker::INFO,
+    OrListV2Marker::INFO,
+    UnitListV2Marker::INFO,
 ];
 
 /// Symbols and metadata required for [`ListFormatter`](crate::ListFormatter).
@@ -63,9 +64,9 @@ pub const KEYS: &[DataKey] = &[
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(
-    AndListV1Marker = "list/and@1",
-    OrListV1Marker = "list/or@1",
-    UnitListV1Marker = "list/unit@1"
+    AndListV2Marker = "list/and@2",
+    OrListV2Marker = "list/or@2",
+    UnitListV2Marker = "list/unit@2"
 )]
 #[derive(Clone, Debug, PartialEq)]
 #[cfg_attr(
@@ -73,7 +74,7 @@ pub const KEYS: &[DataKey] = &[
     derive(serde::Serialize, databake::Bake),
     databake(path = icu_list::provider),
 )]
-pub struct ListFormatterPatternsV1<'data>(
+pub struct ListFormatterPatternsV2<'data>(
     #[cfg_attr(feature = "datagen", serde(with = "deduplicating_array"))]
     /// The patterns in the order start, middle, end, pair, short_start, short_middle,
     /// short_end, short_pair, narrow_start, narrow_middle, narrow_end, narrow_pair,
@@ -81,7 +82,7 @@ pub struct ListFormatterPatternsV1<'data>(
 );
 
 #[cfg(feature = "serde")]
-impl<'de> serde::Deserialize<'de> for ListFormatterPatternsV1<'de> {
+impl<'de> serde::Deserialize<'de> for ListFormatterPatternsV2<'de> {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: serde::de::Deserializer<'de>,
@@ -94,19 +95,19 @@ impl<'de> serde::Deserialize<'de> for ListFormatterPatternsV1<'de> {
                 ));
         }
 
-        Ok(ListFormatterPatternsV1(deduplicating_array::deserialize(
+        Ok(ListFormatterPatternsV2(deduplicating_array::deserialize(
             deserializer,
         )?))
     }
 }
 
-pub(crate) struct ErasedListV1Marker;
+pub(crate) struct ErasedListV2Marker;
 
-impl DataMarker for ErasedListV1Marker {
-    type Yokeable = ListFormatterPatternsV1<'static>;
+impl DynamicDataMarker for ErasedListV2Marker {
+    type Yokeable = ListFormatterPatternsV2<'static>;
 }
 
-impl<'data> ListFormatterPatternsV1<'data> {
+impl<'data> ListFormatterPatternsV2<'data> {
     pub(crate) fn start(&self, style: ListLength) -> &ConditionalListJoinerPattern<'data> {
         #![allow(clippy::indexing_slicing)] // style as usize < 3
         &self.0[4 * (style as usize)]
@@ -282,12 +283,20 @@ impl databake::Bake for ListJoinerPattern<'_> {
     }
 }
 
+#[cfg(feature = "datagen")]
+impl databake::BakeSize for ListJoinerPattern<'_> {
+    fn borrows_size(&self) -> usize {
+        self.string.borrows_size()
+    }
+}
+
 #[cfg(all(test, feature = "datagen"))]
 #[test]
 fn databake() {
     databake::test_bake!(
         ListJoinerPattern,
-        const: crate::provider::ListJoinerPattern::from_parts(", ", 2u8),
+        const,
+        crate::provider::ListJoinerPattern::from_parts(", ", 2u8),
         icu_list
     );
 }

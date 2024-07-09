@@ -1,35 +1,35 @@
 #ifndef ICU4XRegionDisplayNames_H
 #define ICU4XRegionDisplayNames_H
+
 #include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
 #include "diplomat_runtime.h"
 
-#ifdef __cplusplus
-namespace capi {
-#endif
+#include "ICU4XDataError.d.h"
+#include "ICU4XDataProvider.d.h"
+#include "ICU4XLocale.d.h"
+#include "ICU4XLocaleParseError.d.h"
 
-typedef struct ICU4XRegionDisplayNames ICU4XRegionDisplayNames;
-#ifdef __cplusplus
-} // namespace capi
-#endif
-#include "ICU4XDataProvider.h"
-#include "ICU4XLocale.h"
-#include "diplomat_result_box_ICU4XRegionDisplayNames_ICU4XError.h"
-#include "diplomat_result_void_ICU4XError.h"
-#ifdef __cplusplus
-namespace capi {
-extern "C" {
-#endif
+#include "ICU4XRegionDisplayNames.d.h"
 
-diplomat_result_box_ICU4XRegionDisplayNames_ICU4XError ICU4XRegionDisplayNames_create(const ICU4XDataProvider* provider, const ICU4XLocale* locale);
 
-diplomat_result_void_ICU4XError ICU4XRegionDisplayNames_of(const ICU4XRegionDisplayNames* self, const char* region_data, size_t region_len, DiplomatWriteable* write);
+
+
+
+
+typedef struct ICU4XRegionDisplayNames_create_result {union {ICU4XRegionDisplayNames* ok; ICU4XDataError err;}; bool is_ok;} ICU4XRegionDisplayNames_create_result;
+ICU4XRegionDisplayNames_create_result ICU4XRegionDisplayNames_create(const ICU4XDataProvider* provider, const ICU4XLocale* locale);
+
+typedef struct ICU4XRegionDisplayNames_of_result {union { ICU4XLocaleParseError err;}; bool is_ok;} ICU4XRegionDisplayNames_of_result;
+ICU4XRegionDisplayNames_of_result ICU4XRegionDisplayNames_of(const ICU4XRegionDisplayNames* self, const char* region_data, size_t region_len, DiplomatWrite* write);
+
+
 void ICU4XRegionDisplayNames_destroy(ICU4XRegionDisplayNames* self);
 
-#ifdef __cplusplus
-} // extern "C"
-} // namespace capi
-#endif
-#endif
+
+
+
+
+#endif // ICU4XRegionDisplayNames_H

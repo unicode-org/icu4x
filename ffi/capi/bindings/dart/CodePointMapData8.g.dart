@@ -95,99 +95,110 @@ final class CodePointMapData8 implements ffi.Finalizable {
 
   /// See the [Rust documentation for `general_category`](https://docs.rs/icu/latest/icu/properties/maps/fn.general_category.html) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   factory CodePointMapData8.generalCategory(DataProvider provider) {
     final result = _ICU4XCodePointMapData8_load_general_category(provider._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     return CodePointMapData8._fromFfi(result.union.ok, []);
   }
 
   /// See the [Rust documentation for `bidi_class`](https://docs.rs/icu/latest/icu/properties/maps/fn.bidi_class.html) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   factory CodePointMapData8.bidiClass(DataProvider provider) {
     final result = _ICU4XCodePointMapData8_load_bidi_class(provider._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     return CodePointMapData8._fromFfi(result.union.ok, []);
   }
 
   /// See the [Rust documentation for `east_asian_width`](https://docs.rs/icu/latest/icu/properties/maps/fn.east_asian_width.html) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   factory CodePointMapData8.eastAsianWidth(DataProvider provider) {
     final result = _ICU4XCodePointMapData8_load_east_asian_width(provider._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
+    }
+    return CodePointMapData8._fromFfi(result.union.ok, []);
+  }
+
+  /// See the [Rust documentation for `hangul_syllable_type`](https://docs.rs/icu/latest/icu/properties/maps/fn.hangul_syllable_type.html) for more information.
+  ///
+  /// Throws [DataError] on failure.
+  factory CodePointMapData8.hangulSyllableType(DataProvider provider) {
+    final result = _ICU4XCodePointMapData8_load_hangul_syllable_type(provider._ffi);
+    if (!result.isOk) {
+      throw DataError.values[result.union.err];
     }
     return CodePointMapData8._fromFfi(result.union.ok, []);
   }
 
   /// See the [Rust documentation for `indic_syllabic_category`](https://docs.rs/icu/latest/icu/properties/maps/fn.indic_syllabic_category.html) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   factory CodePointMapData8.indicSyllabicCategory(DataProvider provider) {
     final result = _ICU4XCodePointMapData8_load_indic_syllabic_category(provider._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     return CodePointMapData8._fromFfi(result.union.ok, []);
   }
 
   /// See the [Rust documentation for `line_break`](https://docs.rs/icu/latest/icu/properties/maps/fn.line_break.html) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   factory CodePointMapData8.lineBreak(DataProvider provider) {
     final result = _ICU4XCodePointMapData8_load_line_break(provider._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     return CodePointMapData8._fromFfi(result.union.ok, []);
   }
 
   /// See the [Rust documentation for `grapheme_cluster_break`](https://docs.rs/icu/latest/icu/properties/maps/fn.grapheme_cluster_break.html) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   static CodePointMapData8 tryGraphemeClusterBreak(DataProvider provider) {
     final result = _ICU4XCodePointMapData8_try_grapheme_cluster_break(provider._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     return CodePointMapData8._fromFfi(result.union.ok, []);
   }
 
   /// See the [Rust documentation for `word_break`](https://docs.rs/icu/latest/icu/properties/maps/fn.word_break.html) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   factory CodePointMapData8.wordBreak(DataProvider provider) {
     final result = _ICU4XCodePointMapData8_load_word_break(provider._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     return CodePointMapData8._fromFfi(result.union.ok, []);
   }
 
   /// See the [Rust documentation for `sentence_break`](https://docs.rs/icu/latest/icu/properties/maps/fn.sentence_break.html) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   factory CodePointMapData8.sentenceBreak(DataProvider provider) {
     final result = _ICU4XCodePointMapData8_load_sentence_break(provider._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     return CodePointMapData8._fromFfi(result.union.ok, []);
   }
 
   /// See the [Rust documentation for `joining_type`](https://docs.rs/icu/latest/icu/properties/maps/fn.joining_type.html) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   factory CodePointMapData8.joiningType(DataProvider provider) {
     final result = _ICU4XCodePointMapData8_load_joining_type(provider._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     return CodePointMapData8._fromFfi(result.union.ok, []);
   }
@@ -242,6 +253,11 @@ external _ResultOpaqueInt32 _ICU4XCodePointMapData8_load_bidi_class(ffi.Pointer<
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointMapData8_load_east_asian_width')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XCodePointMapData8_load_east_asian_width(ffi.Pointer<ffi.Opaque> provider);
+
+@meta.ResourceIdentifier('ICU4XCodePointMapData8_load_hangul_syllable_type')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointMapData8_load_hangul_syllable_type')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _ICU4XCodePointMapData8_load_hangul_syllable_type(ffi.Pointer<ffi.Opaque> provider);
 
 @meta.ResourceIdentifier('ICU4XCodePointMapData8_load_indic_syllabic_category')
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointMapData8_load_indic_syllabic_category')

@@ -20,6 +20,8 @@ use litemap::LiteMap;
 use num_traits::Pow;
 use num_traits::{One, Zero};
 use zerovec::ZeroSlice;
+
+use super::convertible::Convertible;
 /// ConverterFactory is a factory for creating a converter.
 pub struct ConverterFactory {
     /// Contains the necessary data for the conversion factory.
@@ -37,12 +39,9 @@ impl From<Sign> for num_bigint::Sign {
 
 impl ConverterFactory {
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: skip,
-        options: skip,
-        error: DataError,
-        #[cfg(skip)]
+        () -> error: DataError,
         functions: [
-            new,
+            new: skip,
             try_new_with_any_provider,
             try_new_with_buffer_provider,
             try_new_unstable,
@@ -58,7 +57,9 @@ impl ConverterFactory {
     #[cfg(feature = "compiled_data")]
     pub const fn new() -> Self {
         Self {
-            payload: DataPayload::from_static_ref(crate::provider::Baked::SINGLETON_UNITS_INFO_V1),
+            payload: DataPayload::from_static_ref(
+                crate::provider::Baked::SINGLETON_UNITS_INFO_V1_MARKER,
+            ),
         }
     }
 
@@ -67,7 +68,7 @@ impl ConverterFactory {
     where
         D: ?Sized + DataProvider<provider::UnitsInfoV1Marker>,
     {
-        let payload = provider.load(DataRequest::default())?.take_payload()?;
+        let payload = provider.load(DataRequest::default())?.payload;
 
         Ok(Self { payload })
     }
@@ -272,11 +273,11 @@ impl ConverterFactory {
     /// NOTE:
     ///    This converter does not support conversions between mixed units,
     ///    such as, from "meter" to "foot-and-inch".
-    pub fn converter(
+    pub fn converter<T: Convertible>(
         &self,
         input_unit: &MeasureUnit,
         output_unit: &MeasureUnit,
-    ) -> Option<UnitsConverter> {
+    ) -> Option<UnitsConverter<T>> {
         let is_reciprocal = self.is_reciprocal(input_unit, output_unit)?;
 
         // Determine the sign of the powers of the units from root to unit2.
@@ -302,11 +303,8 @@ impl ConverterFactory {
             return None;
         }
 
-        let conversion_rate_f64 = conversion_rate.to_f64()?;
-        let proportional = ProportionalConverter {
-            conversion_rate,
-            conversion_rate_f64,
-        };
+        let conversion_rate = T::from_ratio_bigint(conversion_rate.get_ratio())?;
+        let proportional = ProportionalConverter { conversion_rate };
 
         if is_reciprocal {
             Some(UnitsConverter(UnitsConverterInner::Reciprocal(
@@ -317,12 +315,11 @@ impl ConverterFactory {
                 proportional,
             )))
         } else {
-            let offset_f64 = offset.to_f64()?;
+            let offset = T::from_ratio_bigint(offset.get_ratio())?;
             Some(UnitsConverter(UnitsConverterInner::Offset(
                 OffsetConverter {
                     proportional,
                     offset,
-                    offset_f64,
                 },
             )))
         }

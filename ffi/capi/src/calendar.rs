@@ -10,8 +10,8 @@ pub mod ffi {
     use core::fmt::Write;
     use icu_calendar::{AnyCalendar, AnyCalendarKind};
 
-    use crate::errors::ffi::ICU4XError;
-    use crate::locale::ffi::ICU4XLocale;
+    use crate::errors::ffi::ICU4XDataError;
+    use crate::locale_core::ffi::ICU4XLocale;
     use crate::provider::ffi::ICU4XDataProvider;
 
     /// The various calendar types currently supported by [`ICU4XCalendar`]
@@ -88,12 +88,9 @@ pub mod ffi {
         #[diplomat::rust_link(icu::calendar::AnyCalendarKind::as_bcp47_string, FnInEnum)]
         #[diplomat::rust_link(icu::calendar::AnyCalendarKind::as_bcp47_value, FnInEnum, hidden)]
         #[diplomat::attr(supports = accessors, getter)]
-        pub fn bcp47(
-            self,
-            write: &mut diplomat_runtime::DiplomatWriteable,
-        ) -> Result<(), ICU4XError> {
+        pub fn bcp47(self, write: &mut diplomat_runtime::DiplomatWrite) {
             let kind = AnyCalendarKind::from(self);
-            Ok(write.write_str(kind.as_bcp47_string())?)
+            let _infallible = write.write_str(kind.as_bcp47_string());
         }
     }
 
@@ -109,7 +106,7 @@ pub mod ffi {
         pub fn create_for_locale(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
-        ) -> Result<Box<ICU4XCalendar>, ICU4XError> {
+        ) -> Result<Box<ICU4XCalendar>, ICU4XDataError> {
             let locale = locale.to_datalocale();
 
             Ok(Box::new(ICU4XCalendar(Arc::new(call_constructor!(
@@ -127,7 +124,7 @@ pub mod ffi {
         pub fn create_for_kind(
             provider: &ICU4XDataProvider,
             kind: ICU4XAnyCalendarKind,
-        ) -> Result<Box<ICU4XCalendar>, ICU4XError> {
+        ) -> Result<Box<ICU4XCalendar>, ICU4XDataError> {
             Ok(Box::new(ICU4XCalendar(Arc::new(call_constructor!(
                 AnyCalendar::new [r => Ok(r)],
                 AnyCalendar::try_new_with_any_provider,

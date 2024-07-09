@@ -17,7 +17,6 @@ pub use symbols::*;
 size_test!(DateLengthsV1, date_lengths_v1_size, 224);
 
 /// Pattern data for dates.
-///
 #[doc = date_lengths_v1_size!()]
 ///
 /// <div class="stab unstable">
@@ -59,14 +58,13 @@ pub struct DateLengthsV1<'data> {
 
 pub(crate) struct ErasedDateLengthsV1Marker;
 
-impl DataMarker for ErasedDateLengthsV1Marker {
+impl DynamicDataMarker for ErasedDateLengthsV1Marker {
     type Yokeable = DateLengthsV1<'static>;
 }
 
 size_test!(TimeLengthsV1, time_lengths_v1_size, 264);
 
 /// Pattern data for times.
-///
 #[doc = time_lengths_v1_size!()]
 ///
 /// <div class="stab unstable">
@@ -181,7 +179,7 @@ pub mod patterns {
     /// `DataPayload<PatternPluralsV1>`.
     pub(crate) struct PatternPluralsFromPatternsV1Marker;
 
-    impl DataMarker for PatternPluralsFromPatternsV1Marker {
+    impl DynamicDataMarker for PatternPluralsFromPatternsV1Marker {
         type Yokeable = PatternPluralsV1<'static>;
     }
 
@@ -207,7 +205,7 @@ pub mod patterns {
     /// `DataPayload<GenericLengthPatternsV1>`.
     pub(crate) struct GenericPatternV1Marker;
 
-    impl DataMarker for GenericPatternV1Marker {
+    impl DynamicDataMarker for GenericPatternV1Marker {
         type Yokeable = GenericPatternV1<'static>;
     }
 

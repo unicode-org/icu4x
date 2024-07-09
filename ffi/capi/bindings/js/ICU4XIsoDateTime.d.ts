@@ -1,8 +1,8 @@
 import { u8, u16, i32, u32 } from "./diplomat-runtime"
 import { FFIError } from "./diplomat-runtime"
 import { ICU4XCalendar } from "./ICU4XCalendar";
+import { ICU4XCalendarError } from "./ICU4XCalendarError";
 import { ICU4XDateTime } from "./ICU4XDateTime";
-import { ICU4XError } from "./ICU4XError";
 import { ICU4XIsoDate } from "./ICU4XIsoDate";
 import { ICU4XIsoWeekday } from "./ICU4XIsoWeekday";
 import { ICU4XTime } from "./ICU4XTime";
@@ -22,7 +22,7 @@ export class ICU4XIsoDateTime {
    * Creates a new {@link ICU4XIsoDateTime `ICU4XIsoDateTime`} from the specified date and time.
 
    * See the {@link https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.try_new_iso_datetime Rust documentation for `try_new_iso_datetime`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
+   * @throws {@link FFIError}<{@link ICU4XCalendarError}>
    */
   static create(year: i32, month: u8, day: u8, hour: u8, minute: u8, second: u8, nanosecond: u32): ICU4XIsoDateTime | never;
 
@@ -124,6 +124,14 @@ export class ICU4XIsoDateTime {
 
   /**
 
+   * Returns the 1-indexed day in the year for this date
+
+   * See the {@link https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_year_info Rust documentation for `day_of_year_info`} for more information.
+   */
+  day_of_year(): u16;
+
+  /**
+
    * Returns the 1-indexed day in the month for this date
 
    * See the {@link https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_month Rust documentation for `day_of_month`} for more information.
@@ -153,9 +161,8 @@ export class ICU4XIsoDateTime {
    * Returns the week number in this year, using week data
 
    * See the {@link https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.week_of_year Rust documentation for `week_of_year`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  week_of_year(calculator: ICU4XWeekCalculator): ICU4XWeekOf | never;
+  week_of_year(calculator: ICU4XWeekCalculator): ICU4XWeekOf;
 
   /**
 

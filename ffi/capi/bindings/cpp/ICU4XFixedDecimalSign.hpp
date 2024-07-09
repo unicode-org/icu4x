@@ -1,39 +1,37 @@
 #ifndef ICU4XFixedDecimalSign_HPP
 #define ICU4XFixedDecimalSign_HPP
+
+#include "ICU4XFixedDecimalSign.d.hpp"
+
+#include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
-#include <algorithm>
 #include <memory>
-#include <variant>
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-#include "ICU4XFixedDecimalSign.h"
+
+namespace capi {
+    extern "C" {
+    
+    
+    } // extern "C"
+}
 
 
+inline capi::ICU4XFixedDecimalSign ICU4XFixedDecimalSign::AsFFI() const {
+  return static_cast<capi::ICU4XFixedDecimalSign>(value);
+}
 
-/**
- * The sign of a FixedDecimal, as shown in formatting.
- * 
- * See the [Rust documentation for `Sign`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.Sign.html) for more information.
- */
-enum struct ICU4XFixedDecimalSign {
-
-  /**
-   * No sign (implicitly positive, e.g., 1729).
-   */
-  None = 0,
-
-  /**
-   * A negative sign, e.g., -1729.
-   */
-  Negative = 1,
-
-  /**
-   * An explicit positive sign, e.g., +1729.
-   */
-  Positive = 2,
-};
-
-#endif
+inline ICU4XFixedDecimalSign ICU4XFixedDecimalSign::FromFFI(capi::ICU4XFixedDecimalSign c_enum) {
+  switch (c_enum) {
+    case capi::ICU4XFixedDecimalSign_None:
+    case capi::ICU4XFixedDecimalSign_Negative:
+    case capi::ICU4XFixedDecimalSign_Positive:
+      return static_cast<ICU4XFixedDecimalSign::Value>(c_enum);
+    default:
+      abort();
+  }
+}
+#endif // ICU4XFixedDecimalSign_HPP
