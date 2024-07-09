@@ -66,7 +66,7 @@ pub enum DurationFormatterOptionsError {
     /// Returned when a unit field is set to [`FieldDisplay::Always`] and the style is set to [`FieldStyle::Fractional`].
     DisplayAlwaysFractional,
     /// Returned when a unit field is set to [`FieldStyle::Fractional`] and the previous style is not [`FieldStyle::Fractional`].
-    PreviousNotFractional,
+    PreviousFractional,
     /// Returned when a previous style is set to [`FieldStyle::Numeric`] or [`FieldStyle::TwoDigit`] and the current style is not
     /// [`FieldStyle::Fractional`], [`FieldStyle::Numeric`], or [`FieldStyle::TwoDigit`].
     PreviousNumeric,
@@ -154,7 +154,7 @@ impl ValidatedDurationFormatterOptions {
                 // a. If style is not "fractional", then
                 if *style != Some(FieldStyle::Fractional) {
                     // i. Throw a RangeError exception.
-                    return Err(DurationFormatterOptionsError::PreviousNotFractional);
+                    return Err(DurationFormatterOptionsError::PreviousFractional);
                 }
             }
 
