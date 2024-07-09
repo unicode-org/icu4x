@@ -475,86 +475,11 @@ impl<'data> LinearNamesV1<'data> {
     }
 }
 
-size_test!(DatePatternV1, date_pattern_v1_size, 32);
-
-/// The default per-length patterns associated with dates
-///
-/// This uses a data marker attribute for length. The value can be "f", "l", "m", "s" for
-/// "full", "long", "medium", or "short".
-#[doc = date_pattern_v1_size!()]
-///
-/// <div class="stab unstable">
-/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
-/// to be stable, their Rust representation might not be. Use with caution.
-/// </div>
-#[icu_provider::data_struct(
-    // date patterns
-    marker(BuddhistDatePatternV1Marker, "datetime/patterns/buddhist/date@1"),
-    marker(ChineseDatePatternV1Marker, "datetime/patterns/chinese/date@1"),
-    marker(CopticDatePatternV1Marker, "datetime/patterns/coptic/date@1"),
-    marker(DangiDatePatternV1Marker, "datetime/patterns/dangi/date@1"),
-    marker(EthiopianDatePatternV1Marker, "datetime/patterns/ethiopic/date@1"),
-    marker(GregorianDatePatternV1Marker, "datetime/patterns/gregory/date@1"),
-    marker(HebrewDatePatternV1Marker, "datetime/patterns/hebrew/date@1"),
-    marker(IndianDatePatternV1Marker, "datetime/patterns/indian/date@1"),
-    marker(IslamicDatePatternV1Marker, "datetime/patterns/islamic/date@1"),
-    marker(JapaneseDatePatternV1Marker, "datetime/patterns/japanese/date@1"),
-    marker(JapaneseExtendedDatePatternV1Marker, "datetime/patterns/japanext/date@1"),
-    marker(PersianDatePatternV1Marker, "datetime/patterns/persian/date@1"),
-    marker(RocDatePatternV1Marker, "datetime/patterns/roc/date@1")
-)]
-#[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_datetime::provider::neo),
-)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[yoke(prove_covariance_manually)]
-pub struct DatePatternV1<'data> {
-    /// The pattern
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub pattern: runtime::Pattern<'data>,
-}
-
 // TODO: We may need to support plural forms here. Something like
 // pub enum NeoPatternPlurals<'data> {
 //     SingleDate(runtime::Pattern<'data>),
 //     WeekPlurals(ZeroMap<'data, PluralCategory, runtime::PatternULE>),
 // }
-
-size_test!(TimePatternV1, time_pattern_v1_size, 32);
-
-/// The default per-length patterns associated with times
-///
-/// This uses an data marker attribute for length. See [`DatePatternV1`] for more information on the scheme.
-///
-/// It also uses the attribute to track hour cycles; the data for the default hour cycle will
-/// use a regular length attribute (e.g. `f` for full), and the non-default
-/// one will tack on a `h` or `k` depending on whether it is H11H12 or H23H24
-/// (`fk` for full, non-default, 23/24 hours)
-#[doc = time_pattern_v1_size!()]
-///
-/// <div class="stab unstable">
-/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
-/// to be stable, their Rust representation might not be. Use with caution.
-/// </div>
-#[icu_provider::data_struct(marker(TimePatternV1Marker, "datetime/patterns/time@1"))]
-#[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_datetime::provider::neo),
-)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[yoke(prove_covariance_manually)]
-pub struct TimePatternV1<'data> {
-    /// The pattern
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub pattern: runtime::Pattern<'data>,
-}
 
 size_test!(GluePatternV1, date_time_pattern_v1_size, 24);
 
@@ -742,14 +667,7 @@ impl DynamicDataMarker for MonthNamesV1Marker {
     type Yokeable = MonthNamesV1<'static>;
 }
 
-/// Calendar-agnostic date pattern data marker
-#[derive(Debug)]
-pub struct DatePatternV1Marker;
-impl DynamicDataMarker for DatePatternV1Marker {
-    type Yokeable = DatePatternV1<'static>;
-}
-
-/// Calendar-agnostic date skeleta data marker
+/// Calendar-agnostic date/time skeleta data marker
 #[derive(Debug)]
 pub struct SkeletaV1Marker;
 impl DynamicDataMarker for SkeletaV1Marker {

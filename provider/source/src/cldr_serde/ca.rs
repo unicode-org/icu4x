@@ -190,17 +190,6 @@ pub(crate) struct DateTimeFormats {
     pub(crate) available_formats: AvailableFormats,
 }
 
-impl LengthPatterns {
-    pub(crate) fn get_pattern(&self, length: PatternLength) -> &LengthPattern {
-        match length {
-            PatternLength::Full => &self.full,
-            PatternLength::Long => &self.long,
-            PatternLength::Medium => &self.medium,
-            PatternLength::Short => &self.short,
-        }
-    }
-}
-
 impl DateTimeFormats {
     pub(crate) fn get_pattern(&self, length: PatternLength) -> &LengthPattern {
         match length {

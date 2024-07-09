@@ -21,11 +21,7 @@ pub(crate) enum DatePatternSelectionData {
         skeleton: NeoDateSkeleton,
         payload: DataPayload<SkeletaV1Marker>,
     },
-    #[allow(dead_code)] // TODO(#4478)
-    OptionalEra {
-        with_era: DataPayload<DatePatternV1Marker>,
-        without_era: DataPayload<DatePatternV1Marker>,
-    },
+    // TODO(#4478): add support for optional eras
 }
 
 #[derive(Debug, Copy, Clone)]
@@ -145,8 +141,6 @@ impl DatePatternSelectionData {
             DatePatternSelectionData::SkeletonDate { skeleton, payload } => {
                 payload.get().get_pattern(skeleton.length).items
             }
-            // Assumption: with_era has all the fields of without_era
-            DatePatternSelectionData::OptionalEra { with_era, .. } => &with_era.get().pattern.items,
         };
         items.iter()
     }
@@ -157,7 +151,6 @@ impl DatePatternSelectionData {
             DatePatternSelectionData::SkeletonDate { skeleton, payload } => {
                 DatePatternDataBorrowed::Resolved(payload.get().get_pattern(skeleton.length))
             }
-            DatePatternSelectionData::OptionalEra { .. } => unimplemented!("#4478"),
         }
     }
 }

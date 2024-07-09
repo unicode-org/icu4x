@@ -8,9 +8,6 @@ use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use icu::datetime::pattern::{self, CoarseHourCycle};
 
-use icu::datetime::provider::calendar::{
-    patterns::GenericLengthPatternsV1, DateSkeletonPatternsV1,
-};
 use icu::datetime::provider::neo::marker_attrs::{self, Context, Length, PatternLength};
 use icu::datetime::provider::neo::*;
 use icu::locale::{
@@ -543,6 +540,7 @@ fn months_convert(
 }
 
 /// Given a lengthpattern, apply any numeric overrides it may have to `pattern`
+#[allow(dead_code)] // TODO: Implement numeric overrides in neo patterns
 fn apply_numeric_overrides(lp: &ca::LengthPattern, pattern: &mut pattern::runtime::Pattern) {
     use icu::datetime::fields::{self, FieldLength, FieldNumericOverrides::*, FieldSymbol};
     let ca::LengthPattern::WithNumberingSystems {
@@ -588,22 +586,6 @@ fn apply_numeric_overrides(lp: &ca::LengthPattern, pattern: &mut pattern::runtim
     })
 }
 
-fn datepattern_convert(
-    data: &ca::Dates,
-    length: PatternLength,
-    _hc: Option<CoarseHourCycle>,
-) -> Result<DatePatternV1<'static>, DataError> {
-    let length_pattern = data.date_formats.get_pattern(length);
-
-    let mut pattern = length_pattern
-        .get_pattern()
-        .parse()
-        .expect("failed to parse pattern");
-
-    apply_numeric_overrides(length_pattern, &mut pattern);
-    Ok(DatePatternV1 { pattern })
-}
-
 fn datetimepattern_convert(
     data: &ca::Dates,
     length: PatternLength,
@@ -616,124 +598,6 @@ fn datetimepattern_convert(
         .parse()
         .expect("failed to parse pattern");
     Ok(GluePatternV1 { pattern })
-}
-
-fn timepattern_convert(
-    data: &ca::Dates,
-    length: PatternLength,
-    hc: Option<CoarseHourCycle>,
-) -> Result<TimePatternV1<'static>, DataError> {
-    let pattern = data.time_formats.get_pattern(length);
-
-    let pattern_str = pattern.get_pattern();
-    let pattern = pattern_str.parse().expect("failed to parse pattern");
-    // We only get an hc if we're generating the non-default hc, so we know we must replace it in the pattern
-    let pattern: pattern::runtime::Pattern = if let Some(hc) = hc {
-        let length_combinations_v1 = GenericLengthPatternsV1::from(&data.datetime_formats);
-        let skeletons_v1 = DateSkeletonPatternsV1::from(data);
-        let pattern =
-            hc.apply_on_pattern(&length_combinations_v1, &skeletons_v1, pattern_str, pattern);
-        let pattern = pattern
-            .as_ref()
-            .expect("Failed to apply a coarse hour cycle to a full pattern.");
-        pattern.into()
-    } else {
-        (&pattern).into()
-    };
-    Ok(TimePatternV1 { pattern })
-}
-
-/// Looks at the hour cycle in `time_pattern`, and return the subtag related to the *opposite* hour cycle; i.e. the
-/// non-default one
-fn nondefault_subtag(
-    time_pattern: &ca::LengthPattern,
-    subtag12: &'static DataMarkerAttributes,
-    subtag24: &'static DataMarkerAttributes,
-) -> &'static DataMarkerAttributes {
-    let pattern = time_pattern.get_pattern();
-
-    let pattern = pattern
-        .parse()
-        .expect("Failed to create a Pattern from bytes.");
-
-    let hc = CoarseHourCycle::determine(&pattern)
-        .expect("Could not find preferred hour cycle in locale");
-    match hc {
-        // this must invert the hour cycle since we're getting the nondefault one
-        CoarseHourCycle::H11H12 => subtag24,
-        CoarseHourCycle::H23H24 => subtag12,
-    }
-}
-
-// Time patterns have a manual implementation since they have custom supported_locales logic below
-impl DataProvider<TimePatternV1Marker> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<TimePatternV1Marker>, DataError> {
-        self.load_neo_patterns_marker::<TimePatternV1Marker>(
-            req,
-            value!("gregory"),
-            timepattern_convert,
-        )
-    }
-}
-
-// Potential future optimization: if we split out aux subtags from supported_locales into a separate
-// method that eagerly generates all aux subtags (even if unused) and expects load() to figure out if the aux
-// subtag actually should be produced (by returning a special error), then this code is no longer necessary
-// and we can use a union of the H12/H24 key lengths arrays, instead checking for preferred hc
-// in timepattern_convert
-impl IterableDataProviderCached<TimePatternV1Marker> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-        let calendar = value!("gregory");
-
-        let cldr_cal = supported_cals()
-            .get(&calendar)
-            .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?;
-
-        Ok(self
-            .cldr()?
-            .dates(cldr_cal)
-            .list_langs()?
-            .flat_map(|lid| {
-                let data = self
-                    .load_calendar_dates(&lid, &calendar)
-                    .expect("list_langs returned a language that couldn't be loaded");
-                let tp = &data.time_formats;
-
-                let keylengths = [
-                    marker_attrs::PATTERN_FULL,
-                    marker_attrs::PATTERN_LONG,
-                    marker_attrs::PATTERN_MEDIUM,
-                    marker_attrs::PATTERN_SHORT,
-                    nondefault_subtag(
-                        &tp.full,
-                        marker_attrs::PATTERN_FULL12,
-                        marker_attrs::PATTERN_FULL24,
-                    ),
-                    nondefault_subtag(
-                        &tp.long,
-                        marker_attrs::PATTERN_LONG12,
-                        marker_attrs::PATTERN_LONG24,
-                    ),
-                    nondefault_subtag(
-                        &tp.medium,
-                        marker_attrs::PATTERN_MEDIUM12,
-                        marker_attrs::PATTERN_MEDIUM24,
-                    ),
-                    nondefault_subtag(
-                        &tp.short,
-                        marker_attrs::PATTERN_SHORT12,
-                        marker_attrs::PATTERN_SHORT24,
-                    ),
-                ];
-                keylengths.into_iter().map(move |length| {
-                    DataIdentifierCow::from_borrowed_and_owned(
-                        length,
-                        DataLocale::from(lid.clone()),
-                    )
-                })
-            })
-            .collect())
-    }
 }
 
 macro_rules! impl_symbols_datagen {
@@ -950,84 +814,4 @@ impl_pattern_datagen!(
     "gregory",
     NORMAL_PATTERN_KEY_LENGTHS,
     datetimepattern_convert
-);
-
-// Date patterns
-impl_pattern_datagen!(
-    BuddhistDatePatternV1Marker,
-    "buddhist",
-    NORMAL_PATTERN_KEY_LENGTHS,
-    datepattern_convert
-);
-impl_pattern_datagen!(
-    ChineseDatePatternV1Marker,
-    "chinese",
-    NORMAL_PATTERN_KEY_LENGTHS,
-    datepattern_convert
-);
-impl_pattern_datagen!(
-    CopticDatePatternV1Marker,
-    "coptic",
-    NORMAL_PATTERN_KEY_LENGTHS,
-    datepattern_convert
-);
-impl_pattern_datagen!(
-    DangiDatePatternV1Marker,
-    "dangi",
-    NORMAL_PATTERN_KEY_LENGTHS,
-    datepattern_convert
-);
-impl_pattern_datagen!(
-    EthiopianDatePatternV1Marker,
-    "ethiopic",
-    NORMAL_PATTERN_KEY_LENGTHS,
-    datepattern_convert
-);
-impl_pattern_datagen!(
-    GregorianDatePatternV1Marker,
-    "gregory",
-    NORMAL_PATTERN_KEY_LENGTHS,
-    datepattern_convert
-);
-impl_pattern_datagen!(
-    HebrewDatePatternV1Marker,
-    "hebrew",
-    NORMAL_PATTERN_KEY_LENGTHS,
-    datepattern_convert
-);
-impl_pattern_datagen!(
-    IndianDatePatternV1Marker,
-    "indian",
-    NORMAL_PATTERN_KEY_LENGTHS,
-    datepattern_convert
-);
-impl_pattern_datagen!(
-    IslamicDatePatternV1Marker,
-    "islamic",
-    NORMAL_PATTERN_KEY_LENGTHS,
-    datepattern_convert
-);
-impl_pattern_datagen!(
-    JapaneseDatePatternV1Marker,
-    "japanese",
-    NORMAL_PATTERN_KEY_LENGTHS,
-    datepattern_convert
-);
-impl_pattern_datagen!(
-    JapaneseExtendedDatePatternV1Marker,
-    "japanext",
-    NORMAL_PATTERN_KEY_LENGTHS,
-    datepattern_convert
-);
-impl_pattern_datagen!(
-    PersianDatePatternV1Marker,
-    "persian",
-    NORMAL_PATTERN_KEY_LENGTHS,
-    datepattern_convert
-);
-impl_pattern_datagen!(
-    RocDatePatternV1Marker,
-    "roc",
-    NORMAL_PATTERN_KEY_LENGTHS,
-    datepattern_convert
 );
