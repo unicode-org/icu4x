@@ -311,7 +311,7 @@ fn auxkey_bench_for_version(c: &mut Criterion, blob: &[u8], version_id: &str) {
         b.iter(|| BlobDataProvider::try_new_from_blob(black_box(blob).into()).unwrap());
     });
 
-    let provider = LocaleFallbackProvider::new_with_fallbacker(
+    let provider = LocaleFallbackProvider::new(
         BlobDataProvider::try_new_from_blob(black_box(blob).into()).unwrap(),
         LocaleFallbacker::new().static_to_owned(),
     );

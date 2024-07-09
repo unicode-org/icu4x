@@ -5,8 +5,8 @@
 //! A data provider wrapper that performs locale fallback.
 
 use crate::helpers::result_is_err_missing_locale;
-use icu_locale::provider::*;
-use icu_locale::LocaleFallbacker;
+#[doc(no_inline)]
+pub use icu_locale::LocaleFallbacker;
 use icu_provider::prelude::*;
 use icu_provider::DryDataProvider;
 use icu_provider::DynamicDryDataProvider;
@@ -20,13 +20,9 @@ use icu_provider::DynamicDryDataProvider;
 /// use icu_locale::langid;
 /// use icu_provider::prelude::*;
 /// use icu_provider::hello_world::*;
-/// # let provider = HelloWorldProvider;
-/// # struct LocaleFallbackProvider;
-/// # impl LocaleFallbackProvider {
-/// #   fn try_new_unstable(provider: HelloWorldProvider) -> Result<icu_provider_adapters::fallback::LocaleFallbackProvider<HelloWorldProvider>, ()> {
-/// #     Ok(icu_provider_adapters::fallback::LocaleFallbackProvider::new_with_fallbacker(provider, icu_locale::LocaleFallbacker::new().static_to_owned()))
-/// #   }
-/// # }
+/// use icu_provider_adapters::fallback::LocaleFallbackProvider;
+///
+/// let provider = HelloWorldProvider;
 ///
 /// let id = DataIdentifierCow::from_locale(langid!("ja-JP").into());
 ///
@@ -37,8 +33,7 @@ use icu_provider::DynamicDryDataProvider;
 /// }).expect_err("No fallback");
 ///
 /// // But if we wrap the provider in a fallback provider...
-/// let provider = LocaleFallbackProvider::try_new_unstable(provider)
-///     .expect("Fallback data present");
+/// let provider = LocaleFallbackProvider::new(provider, icu_locale::LocaleFallbacker::new().static_to_owned());
 ///
 /// // ...then we can load "ja-JP" based on "ja" data
 /// let response =
@@ -62,67 +57,11 @@ pub struct LocaleFallbackProvider<P> {
     fallbacker: LocaleFallbacker,
 }
 
-impl<P> LocaleFallbackProvider<P>
-where
-    P: DataProvider<LocaleFallbackLikelySubtagsV1Marker>
-        + DataProvider<LocaleFallbackParentsV1Marker>
-        + DataProvider<CollationFallbackSupplementV1Marker>,
-{
-    /// Create a [`LocaleFallbackProvider`] by wrapping another data provider and then loading
-    /// fallback data from it.
-    ///
-    /// If the data provider being wrapped does not contain fallback data, use
-    /// [`LocaleFallbackProvider::new_with_fallbacker`].
-    pub fn try_new_unstable(provider: P) -> Result<Self, DataError> {
-        let fallbacker = LocaleFallbacker::try_new_unstable(&provider)?;
-        Ok(Self {
-            inner: provider,
-            fallbacker,
-        })
-    }
-}
-
-impl<P> LocaleFallbackProvider<P>
-where
-    P: AnyProvider,
-{
-    /// Create a [`LocaleFallbackProvider`] by wrapping another data provider and then loading
-    /// fallback data from it.
-    ///
-    /// If the data provider being wrapped does not contain fallback data, use
-    /// [`LocaleFallbackProvider::new_with_fallbacker`].
-    pub fn try_new_with_any_provider(provider: P) -> Result<Self, DataError> {
-        let fallbacker = LocaleFallbacker::try_new_with_any_provider(&provider)?;
-        Ok(Self {
-            inner: provider,
-            fallbacker,
-        })
-    }
-}
-
-#[cfg(feature = "serde")]
-impl<P> LocaleFallbackProvider<P>
-where
-    P: BufferProvider,
-{
-    /// Create a [`LocaleFallbackProvider`] by wrapping another data provider and then loading
-    /// fallback data from it.
-    ///
-    /// If the data provider being wrapped does not contain fallback data, use
-    /// [`LocaleFallbackProvider::new_with_fallbacker`].
-    pub fn try_new_with_buffer_provider(provider: P) -> Result<Self, DataError> {
-        let fallbacker = LocaleFallbacker::try_new_with_buffer_provider(&provider)?;
-        Ok(Self {
-            inner: provider,
-            fallbacker,
-        })
-    }
-}
-
 impl<P> LocaleFallbackProvider<P> {
-    /// Wrap a provider with an arbitrary fallback engine.
+    /// Wraps a provider with a provider performing fallback under the given fallbacker.
     ///
-    /// This relaxes the requirement that the wrapped provider contains its own fallback data.
+    /// If the underlying provider contains deduplicated data, it is important to use the
+    /// same fallback data that `ExportDriver` used.
     ///
     /// # Examples
     ///
@@ -147,7 +86,7 @@ impl<P> LocaleFallbackProvider<P> {
     /// // `HelloWorldProvider` does not contain fallback data,
     /// // but we can construct a fallbacker with `icu_locale`'s
     /// // compiled data.
-    /// let provider = LocaleFallbackProvider::new_with_fallbacker(
+    /// let provider = LocaleFallbackProvider::new(
     ///     provider,
     ///     LocaleFallbacker::new().static_to_owned(),
     /// );
@@ -162,7 +101,7 @@ impl<P> LocaleFallbackProvider<P> {
     ///
     /// assert_eq!("Hallo Welt", german_hello_world.payload.get().message);
     /// ```
-    pub fn new_with_fallbacker(provider: P, fallbacker: LocaleFallbacker) -> Self {
+    pub fn new(provider: P, fallbacker: LocaleFallbacker) -> Self {
         Self {
             inner: provider,
             fallbacker,
@@ -340,10 +279,8 @@ fn dry_test() {
         }
     }
 
-    let provider = LocaleFallbackProvider::new_with_fallbacker(
-        TestProvider,
-        LocaleFallbacker::new().static_to_owned(),
-    );
+    let provider =
+        LocaleFallbackProvider::new(TestProvider, LocaleFallbacker::new().static_to_owned());
 
     assert_eq!(
         provider

@@ -92,24 +92,7 @@ final class DataProvider implements ffi.Finalizable {
     
   }
 
-  /// Enables locale fallbacking for data requests made to this provider.
-  ///
-  /// Note that the test provider (from `create_test`) already has fallbacking enabled.
-  ///
-  /// See the [Rust documentation for `try_new`](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html#method.try_new) for more information.
-  ///
-  /// Additional information: [1](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html)
-  ///
-  /// Throws [DataError] on failure.
-  void enableLocaleFallback() {
-    final result = _ICU4XDataProvider_enable_locale_fallback(_ffi);
-    if (!result.isOk) {
-      throw DataError.values[result.union.err];
-    }
-    
-  }
-
-  /// See the [Rust documentation for `new_with_fallbacker`](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html#method.new_with_fallbacker) for more information.
+  /// See the [Rust documentation for `new`](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html#method.new) for more information.
   ///
   /// Additional information: [1](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html)
   ///
@@ -152,11 +135,6 @@ external _ResultVoidInt32 _ICU4XDataProvider_fork_by_key(ffi.Pointer<ffi.Opaque>
 @ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDataProvider_fork_by_locale')
 // ignore: non_constant_identifier_names
 external _ResultVoidInt32 _ICU4XDataProvider_fork_by_locale(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> other);
-
-@meta.ResourceIdentifier('ICU4XDataProvider_enable_locale_fallback')
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDataProvider_enable_locale_fallback')
-// ignore: non_constant_identifier_names
-external _ResultVoidInt32 _ICU4XDataProvider_enable_locale_fallback(ffi.Pointer<ffi.Opaque> self);
 
 @meta.ResourceIdentifier('ICU4XDataProvider_enable_locale_fallback_with')
 @ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDataProvider_enable_locale_fallback_with')

@@ -33,9 +33,6 @@ namespace capi {
     typedef struct ICU4XDataProvider_fork_by_locale_result {union { ICU4XDataError err;}; bool is_ok;} ICU4XDataProvider_fork_by_locale_result;
     ICU4XDataProvider_fork_by_locale_result ICU4XDataProvider_fork_by_locale(ICU4XDataProvider* self, ICU4XDataProvider* other);
     
-    typedef struct ICU4XDataProvider_enable_locale_fallback_result {union { ICU4XDataError err;}; bool is_ok;} ICU4XDataProvider_enable_locale_fallback_result;
-    ICU4XDataProvider_enable_locale_fallback_result ICU4XDataProvider_enable_locale_fallback(ICU4XDataProvider* self);
-    
     typedef struct ICU4XDataProvider_enable_locale_fallback_with_result {union { ICU4XDataError err;}; bool is_ok;} ICU4XDataProvider_enable_locale_fallback_with_result;
     ICU4XDataProvider_enable_locale_fallback_with_result ICU4XDataProvider_enable_locale_fallback_with(ICU4XDataProvider* self, const ICU4XLocaleFallbacker* fallbacker);
     
@@ -76,11 +73,6 @@ inline diplomat::result<std::monostate, ICU4XDataError> ICU4XDataProvider::fork_
 inline diplomat::result<std::monostate, ICU4XDataError> ICU4XDataProvider::fork_by_locale(ICU4XDataProvider& other) {
   auto result = capi::ICU4XDataProvider_fork_by_locale(this->AsFFI(),
     other.AsFFI());
-  return result.is_ok ? diplomat::result<std::monostate, ICU4XDataError>(diplomat::Ok<std::monostate>()) : diplomat::result<std::monostate, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
-}
-
-inline diplomat::result<std::monostate, ICU4XDataError> ICU4XDataProvider::enable_locale_fallback() {
-  auto result = capi::ICU4XDataProvider_enable_locale_fallback(this->AsFFI());
   return result.is_ok ? diplomat::result<std::monostate, ICU4XDataError>(diplomat::Ok<std::monostate>()) : diplomat::result<std::monostate, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
 

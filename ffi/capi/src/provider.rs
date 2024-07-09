@@ -176,39 +176,8 @@ pub mod ffi {
             Ok(())
         }
 
-        /// Enables locale fallbacking for data requests made to this provider.
-        ///
-        /// Note that the test provider (from `create_test`) already has fallbacking enabled.
         #[diplomat::rust_link(
-            icu_provider_adapters::fallback::LocaleFallbackProvider::try_new,
-            FnInStruct
-        )]
-        #[diplomat::rust_link(
-            icu_provider_adapters::fallback::LocaleFallbackProvider,
-            Struct,
-            compact
-        )]
-        pub fn enable_locale_fallback(&mut self) -> Result<(), ICU4XDataError> {
-            use ICU4XDataProviderInner::*;
-            *self = match core::mem::replace(&mut self.0, Destroyed) {
-                Destroyed => Err(icu_provider::DataError::custom(
-                    "This provider has been destroyed",
-                ))?,
-                #[cfg(feature = "compiled_data")]
-                Compiled => Err(icu_provider::DataError::custom(
-                    "The compiled provider cannot be modified",
-                ))?,
-                Empty => Err(icu_provider::DataErrorKind::MarkerNotFound.into_error())?,
-                #[cfg(feature = "buffer_provider")]
-                Buffer(inner) => convert_buffer_provider(
-                    LocaleFallbackProvider::try_new_with_buffer_provider(inner)?,
-                ),
-            };
-            Ok(())
-        }
-
-        #[diplomat::rust_link(
-            icu_provider_adapters::fallback::LocaleFallbackProvider::new_with_fallbacker,
+            icu_provider_adapters::fallback::LocaleFallbackProvider::new,
             FnInStruct
         )]
         #[diplomat::rust_link(
@@ -233,9 +202,10 @@ pub mod ffi {
                 ))?,
                 Empty => Err(icu_provider::DataErrorKind::MarkerNotFound.into_error())?,
                 #[cfg(feature = "buffer_provider")]
-                Buffer(inner) => convert_buffer_provider(
-                    LocaleFallbackProvider::new_with_fallbacker(inner, fallbacker.0.clone()),
-                ),
+                Buffer(inner) => convert_buffer_provider(LocaleFallbackProvider::new(
+                    inner,
+                    fallbacker.0.clone(),
+                )),
             };
             Ok(())
         }
