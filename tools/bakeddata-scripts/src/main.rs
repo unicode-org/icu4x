@@ -86,7 +86,7 @@ fn main() {
             .unwrap()
             .into_iter()
             .map(LocaleFamily::with_descendants),
-        DeduplicationStrategy::Maximal.into(),
+        DeduplicationStrategy::RetainBaseLanguages.into(),
         LocaleFallbacker::try_new_unstable(&source).unwrap(),
     )
     .with_recommended_segmenter_models();

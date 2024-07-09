@@ -472,8 +472,7 @@ fn main() -> eyre::Result<()> {
             Format::Dir | Format::Blob | Format::Blob2 => DeduplicationStrategy::None,
             Format::Mod if cli.no_internal_fallback && cli.deduplication.is_none() =>
                 eyre::bail!("--no-internal-fallback requires an explicit --deduplication value. Baked exporter would default to maximal deduplication, which might not be intended"),
-            // TODO(2.0): Default to RetainBaseLanguages here
-            Format::Mod => DeduplicationStrategy::Maximal,
+            Format::Mod => DeduplicationStrategy::RetainBaseLanguages,
         }
     };
 

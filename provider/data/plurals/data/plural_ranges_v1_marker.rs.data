@@ -4,7 +4,7 @@
 /// `icu`'s `_unstable` constructors.
 ///
 /// Using this implementation will embed the following data in the binary's data segment:
-/// * 130B for the lookup data structure (25 data identifiers)
+/// * 631B for the lookup data structure (156 data identifiers)
 /// * 524B[^1] for the actual data (10 unique structs)
 ///
 /// [^1]: these numbers can be smaller in practice due to linker deduplication
@@ -17,12 +17,18 @@ macro_rules! __impl_plural_ranges_v1_marker {
         #[clippy::msrv = "1.70"]
         impl $provider {
             const DATA_PLURAL_RANGES_V1_MARKER: icu_provider_baked::zerotrie::Data<icu::plurals::provider::PluralRangesV1Marker> = icu_provider_baked::zerotrie::Data {
-                trie: icu_provider_baked::zerotrie::ZeroTrieSimpleAscii { store: b"\xD0abcefhiklmnoprsu\x06\x08\n\x16\x1C\x1E \"$&(*-/;\xC2fr\x01\x80\x81g\x80a\x80\xC4nstu\x01\x02\x03\x80\x80\x80\x80\xC2ai\x01\x82\x80e\x83a\x80a\x84v\x85k\x86o\x80r\x82cm\x80o\x87\xC4dilv\x01\x02\x03\x82\x80\x88\x80\xC2nr\x02d\x89\x80" },
+                trie: icu_provider_baked::zerotrie::ZeroTrieSimpleAscii { store: b"\xE1zabcdefghijklmnopqrstuvwxyz\0\0\0\0\0\0\0\0\0\0\0\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x112HVh\x81\x8D\xA3\xB5\xBB\xFA\x0E,=CWYf\xA4\xBF\xD5\xE0\xE2\xE9\xFA\xC5fmrsz\x01\x02\x03\x06\x80\x81\x82\x81t\x81\x81\xC7eghlnrs\x01\x04\x06\x08\t\x0C\x81\x80c\x81o\x81o\x81\x81\x81x\x81\x81-Cyrl\x81\xC6aehsvy\x01\x03\x05\x08\t\x80b\x81r\x81\x81w\x81\x81\x81\xC4aeos\x01\x02\x04\x81\x81i\x81b\x81\xC6lnostu\x01\x02\x03\x04\x05\x81\x80\x81\x80\x80\x80\xC6afiory\x01\x07\n\x0B\x0C\x83-Adlm\x81\x80l\x81\x81\x81\x81\xC4adlu\x01\x02\x03\x81\x81\x81\x81\xC7aeirsuy\x01\x02\x03\x04\x06\x07\x81\x84\x81\x81b\x81\x81\x81\xC6adegst\x01\x02\x03\x04\x05\x80\x81\x81\x81\x81\x81\xC2av\x01\x81\x81\xCBaegkmnosuxy\x01\x03\x05\x06\x07\x08\x0B\x12\x13(\x85a\x81p\x81\x81\x81\x81\x81k\x81\x81-Deva\x81\x81v\x81-\xC3DOT\x04\x08eva\x81rya\x81elu\x81\x81\xC6bimotv\x01\x03\x05\x06\x07\x81j\x81o\x81\x81\x81\x86\xC9aiklnrsty\x02\x03\x04\x05\x08\t\n\x0Bi\x81\x81\x87\x81\x81i\x81\x81\x81\x81\x81\xC5deloq\x02\x03\x04\x05s\x81\x81\x81\x80o\x81\xC2cr\x01\x81\x83\xC6aclrst\x01\x03\x04\x06\x07\x81m\x80\x81g\x81\x81\x81u\x81\xC4amou\x02\x03\x04j\x81\x81\x88\x81\xCEacdikloqruvwyz\x07\x08\x0F\x10\x11\x12\x13\x14\x1B\x1C\x1D\x1E \x81\xC2ht\x01\x81\x81\x81\x83-Deva\x81\x80\x81\x89\x81\x81\x81-Latn\x81\x81\x80\x81r\x81l\x81\xC9aeghikort\x01\x02\x03\x04\x05\x06\x07\x08\x81\x81\x81\x81\x81\x81\x81\x81\x81\xC5gknrz\x01\x02\x04\x05\x81\x81d\x81\x80\x81-Cyrl\x81\xC3eim\x02\x03c\x81\x81w\x81o\x81\xC2hn\x01\x81r\x81\xC3oru\x01\x03\x81l\x81e\x81-Hans\x81\xC3ahu\x01\x08\x81\x81-Hant\x81\x81" },
                 values: &[
                     icu::plurals::provider::PluralRangesV1 {
                         ranges: unsafe {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") })
+                        },
+                    },
+                    icu::plurals::provider::PluralRangesV1 {
+                        ranges: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::ZeroVec::new())
                         },
                     },
                     icu::plurals::provider::PluralRangesV1 {
@@ -71,12 +77,6 @@ macro_rules! __impl_plural_ranges_v1_marker {
                         ranges: unsafe {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02\"2B") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x04\x04\x04\x04") })
-                        },
-                    },
-                    icu::plurals::provider::PluralRangesV1 {
-                        ranges: unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::ZeroVec::new())
                         },
                     },
                 ],

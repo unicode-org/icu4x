@@ -1,28 +1,44 @@
-collator/data@1, <lookup>, 705B, 101 identifiers
+collator/data@1, <lookup>, 979B, 178 identifiers
 collator/data@1, <total>, 1073428B, 89 unique payloads
 collator/data@1, af, 1416B, 6cfbf331f81f0e7c
+collator/data@1, am, 126916B, a0ea0e0eecc34e27
 collator/data@1, ar, 8392B, fce742b37324adbe
 collator/data@1, ar-u-co-compat, 2016B, e7b7e3fda37b8565
 collator/data@1, as, 1664B, fecf788918cf6eb1
+collator/data@1, ast, 126916B, -> am
 collator/data@1, az, 1948B, e21b67c398f6cff6
 collator/data@1, be, 1700B, 33037c50e110575b
+collator/data@1, bg, 126916B, -> am
+collator/data@1, bgc, 126916B, -> am
+collator/data@1, bho, 126916B, -> am
+collator/data@1, blo, 126916B, -> am
 collator/data@1, bn, 1432B, 4b0a44d6a365bcd1
 collator/data@1, bn-u-co-trad, 11208B, 1d78781818d5ec49
 collator/data@1, br, 1236B, fb236d90974aa569
+collator/data@1, brx, 126916B, -> am
 collator/data@1, bs, 1894B, 20686a7999a1b37c
 collator/data@1, bs-Cyrl, 1388B, d4d3ed781cac6b11
+collator/data@1, ca, 126916B, -> am
 collator/data@1, ceb, 1216B, f4b69509fc410230
+collator/data@1, chr, 126916B, -> am
 collator/data@1, cs, 1296B, b038366936c51e5e
+collator/data@1, csw, 126916B, -> am
+collator/data@1, cv, 126916B, -> am
 collator/data@1, cy, 1428B, b1af7f9fd78ee6f5
 collator/data@1, da, 2124B, 3b082567c769a834
+collator/data@1, de, 126916B, -> am
 collator/data@1, de-AT-u-co-phonebk, 1580B, d86c66118ade07f2
 collator/data@1, de-u-co-phonebk, 1282B, 51be2ca58ff917fe
+collator/data@1, doi, 126916B, -> am
 collator/data@1, dsb, 1676B, fe44db49428c33dd
+collator/data@1, el, 126916B, -> am
+collator/data@1, en, 126916B, -> am
 collator/data@1, en-US-posix, 1668B, 6089779a1d6973d6
 collator/data@1, eo, 1316B, 3aeee382d9e46f4a
 collator/data@1, es, 1192B, 53d5d15868ead10a
 collator/data@1, es-u-co-trad, 1258B, 7f0603bad1cbb60d
 collator/data@1, et, 1320B, 5e19a22070e94bec
+collator/data@1, eu, 126916B, -> am
 collator/data@1, fa, 2202B, 99e0b362c4b74bcb
 collator/data@1, fa-AF, 2328B, bf9dff00fe5fbf
 collator/data@1, ff-Adlm, 3540B, 5326597443c62235
@@ -30,19 +46,31 @@ collator/data@1, fi, 2706B, 3c52f76378d335e1
 collator/data@1, fi-u-co-trad, 2146B, ab00dc6120011f48
 collator/data@1, fil, 1216B, -> ceb
 collator/data@1, fo, 2164B, 1ad108e7e50ad44f
+collator/data@1, fr, 126916B, -> am
 collator/data@1, fy, 1164B, e1318fcb059be296
+collator/data@1, ga, 126916B, -> am
+collator/data@1, gd, 126916B, -> am
 collator/data@1, gl, 1192B, -> es
 collator/data@1, gu, 1472B, 51f571782f47fcad
 collator/data@1, ha, 2116B, 3e0247b3ad4efe8e
+collator/data@1, he, 126916B, -> am
 collator/data@1, hi, 1456B, 2d309d6f7abfaf02
 collator/data@1, hr, 1894B, -> bs
 collator/data@1, hsb, 1632B, 2882715f426a3bb7
 collator/data@1, hu, 2064B, 34a23579cc18bedc
 collator/data@1, hy, 1416B, e23d9d278f44d314
+collator/data@1, ia, 126916B, -> am
+collator/data@1, id, 126916B, -> am
+collator/data@1, ie, 126916B, -> am
 collator/data@1, ig, 1504B, e8f160f68816f50d
 collator/data@1, is, 1896B, 248dfc0508a19951
+collator/data@1, it, 126916B, -> am
 collator/data@1, ja, 84670B, c47ef2a97531a2ff
 collator/data@1, ja-u-co-unihan, 10198B, 653804a2e2c7ed83
+collator/data@1, jv, 126916B, -> am
+collator/data@1, ka, 126916B, -> am
+collator/data@1, kea, 126916B, -> am
+collator/data@1, kgp, 126916B, -> am
 collator/data@1, kk, 1796B, 71b991eca427b26e
 collator/data@1, km, 2790B, 53b0b52ff87037cf
 collator/data@1, kn, 1520B, c4d1817a4862d407
@@ -50,50 +78,98 @@ collator/data@1, kn-u-co-trad, 11506B, 9985545791d4129a
 collator/data@1, ko, 221084B, db4043e79fb80541
 collator/data@1, ko-u-co-unihan, 3536B, 6fdf0480332ae7fb
 collator/data@1, kok, 1472B, 7c053ed453aff0d5
+collator/data@1, ks, 126916B, -> am
+collator/data@1, ks-Deva, 126916B, -> am
 collator/data@1, ku, 1348B, 6b681052289bf5e4
+collator/data@1, kxv, 126916B, -> am
+collator/data@1, kxv-Deva, 126916B, -> am
+collator/data@1, kxv-Orya, 126916B, -> am
+collator/data@1, kxv-Telu, 126916B, -> am
 collator/data@1, ky, 1428B, d20218d1e790879d
+collator/data@1, lb, 126916B, -> am
+collator/data@1, lij, 126916B, -> am
+collator/data@1, lmo, 126916B, -> am
+collator/data@1, lo, 126916B, -> am
 collator/data@1, lt, 1396B, 82703d62d78882e5
 collator/data@1, lv, 1504B, 6bef1938172eb89e
+collator/data@1, mai, 126916B, -> am
+collator/data@1, mi, 126916B, -> am
 collator/data@1, mk, 1464B, db700441e827bbff
 collator/data@1, ml, 1900B, 3e2036d20762a83e
+collator/data@1, mn, 126916B, -> am
+collator/data@1, mni, 126916B, -> am
 collator/data@1, mr, 1488B, b4533f286aed71b5
+collator/data@1, ms, 126916B, -> am
 collator/data@1, mt, 1524B, 97a156088aaba07
 collator/data@1, my, 20396B, 5e8cbcc1cf6a7899
+collator/data@1, nds, 126916B, -> am
+collator/data@1, ne, 126916B, -> am
+collator/data@1, nl, 126916B, -> am
 collator/data@1, no, 2164B, 3e9ef18cb5dedda0
+collator/data@1, nqo, 126916B, -> am
+collator/data@1, oc, 126916B, -> am
 collator/data@1, or, 1596B, e02213164e57d936
 collator/data@1, pa, 1724B, 664189ea648e7727
+collator/data@1, pcm, 126916B, -> am
 collator/data@1, pl, 1648B, 9de80886d8ba3987
+collator/data@1, prg, 126916B, -> am
 collator/data@1, ps, 2328B, -> fa-AF
+collator/data@1, pt, 126916B, -> am
+collator/data@1, qu, 126916B, -> am
+collator/data@1, raj, 126916B, -> am
+collator/data@1, rm, 126916B, -> am
 collator/data@1, ro, 1312B, 44a088a04b3a54c9
+collator/data@1, ru, 126916B, -> am
+collator/data@1, sa, 126916B, -> am
+collator/data@1, sah, 126916B, -> am
+collator/data@1, sat, 126916B, -> am
+collator/data@1, sc, 126916B, -> am
+collator/data@1, sd, 126916B, -> am
+collator/data@1, sd-Deva, 126916B, -> am
 collator/data@1, si, 1428B, 332b793f8a15b5a9
 collator/data@1, si-u-co-dict, 1440B, 8a37b05aab93a835
 collator/data@1, sk, 1348B, 64c4c4ac9bb23bb7
 collator/data@1, sl, 1516B, 30d7855da01eb415
+collator/data@1, so, 126916B, -> am
 collator/data@1, sq, 1524B, a38be47b3de5b88b
 collator/data@1, sr, 1388B, -> bs-Cyrl
 collator/data@1, sr-Latn, 1894B, -> bs
+collator/data@1, su, 126916B, -> am
 collator/data@1, sv, 2154B, 49b966ea801bb7cb
 collator/data@1, sv-u-co-trad, 2154B, 5f03651ba7df4f14
+collator/data@1, sw, 126916B, -> am
+collator/data@1, syr, 126916B, -> am
+collator/data@1, szl, 126916B, -> am
 collator/data@1, ta, 1766B, 277dbb2a43984100
 collator/data@1, te, 1480B, ef7cdafa27853cb5
+collator/data@1, tg, 126916B, -> am
 collator/data@1, th, 1574B, cde7f22f6db5fc85
+collator/data@1, ti, 126916B, -> am
 collator/data@1, tk, 1376B, 455ad39089c28c3a
 collator/data@1, to, 1716B, 85e73ca2a6a39b21
 collator/data@1, tr, 1548B, 951f3bb88f3af29f
+collator/data@1, tt, 126916B, -> am
 collator/data@1, ug, 1900B, 21f8e31105057da3
 collator/data@1, uk, 1960B, 469c293e431c5df0
-collator/data@1, und, 126916B, a0ea0e0eecc34e27
+collator/data@1, und, 126916B, -> am
 collator/data@1, und-u-co-emoji, 30910B, dcbee2da280323a3
 collator/data@1, und-u-co-eor, 6268B, 2ffd8090484e7a41
 collator/data@1, ur, 2572B, 900fdd74bc2b94c2
 collator/data@1, uz, 1380B, e9aa28a392b2ba2e
+collator/data@1, vec, 126916B, -> am
 collator/data@1, vi, 1536B, 8288f55eb14fa9b2
 collator/data@1, vi-u-co-trad, 1874B, 98249069c1f82225
+collator/data@1, vmw, 126916B, -> am
 collator/data@1, wo, 1528B, aa4e5fbe46d6c143
+collator/data@1, xh, 126916B, -> am
+collator/data@1, xnr, 126916B, -> am
 collator/data@1, yo, 1274B, cb19ae0dbe6f9e36
+collator/data@1, yrl, 126916B, -> am
+collator/data@1, yue-Hans, 126916B, -> am
 collator/data@1, yue-u-co-stroke, 174942B, 59801172e6fa4dca
 collator/data@1, yue-u-co-unihan, 4352B, 5d3a3feb443aac0
 collator/data@1, yue-u-co-zhuyin, 129206B, 380c1a1e12ce0f49
+collator/data@1, za, 126916B, -> am
 collator/data@1, zh, 104866B, 277343ee315024d4
 collator/data@1, zh-Hant-u-co-stroke, 174942B, -> yue-u-co-stroke
 collator/data@1, zh-Hant-u-co-unihan, 4352B, -> yue-u-co-unihan
@@ -101,43 +177,208 @@ collator/data@1, zh-Hant-u-co-zhuyin, 129206B, -> yue-u-co-zhuyin
 collator/data@1, zh-u-co-stroke, 174942B, -> yue-u-co-stroke
 collator/data@1, zh-u-co-unihan, 4352B, -> yue-u-co-unihan
 collator/data@1, zh-u-co-zhuyin, 129206B, -> yue-u-co-zhuyin
-collator/dia@1, <lookup>, 41B, 2 identifiers
+collator/data@1, zu, 126916B, -> am
+collator/dia@1, <lookup>, 606B, 151 identifiers
 collator/dia@1, <total>, 364B, 2 unique payloads
-collator/dia@1, und, 182B, 8ace760351a33687
+collator/dia@1, af, 182B, 8ace760351a33687
+collator/dia@1, am, 182B, -> af
+collator/dia@1, ar, 182B, -> af
+collator/dia@1, as, 182B, -> af
+collator/dia@1, ast, 182B, -> af
+collator/dia@1, az, 182B, -> af
+collator/dia@1, be, 182B, -> af
+collator/dia@1, bg, 182B, -> af
+collator/dia@1, bgc, 182B, -> af
+collator/dia@1, bho, 182B, -> af
+collator/dia@1, blo, 182B, -> af
+collator/dia@1, bn, 182B, -> af
+collator/dia@1, br, 182B, -> af
+collator/dia@1, brx, 182B, -> af
+collator/dia@1, bs, 182B, -> af
+collator/dia@1, ca, 182B, -> af
+collator/dia@1, ceb, 182B, -> af
+collator/dia@1, chr, 182B, -> af
+collator/dia@1, cs, 182B, -> af
+collator/dia@1, csw, 182B, -> af
+collator/dia@1, cv, 182B, -> af
+collator/dia@1, cy, 182B, -> af
+collator/dia@1, da, 182B, -> af
+collator/dia@1, de, 182B, -> af
+collator/dia@1, doi, 182B, -> af
+collator/dia@1, dsb, 182B, -> af
+collator/dia@1, el, 182B, -> af
+collator/dia@1, en, 182B, -> af
+collator/dia@1, eo, 182B, -> af
+collator/dia@1, es, 182B, -> af
+collator/dia@1, et, 182B, -> af
+collator/dia@1, eu, 182B, -> af
+collator/dia@1, fa, 182B, -> af
+collator/dia@1, ff-Adlm, 182B, -> af
+collator/dia@1, fi, 182B, -> af
+collator/dia@1, fil, 182B, -> af
+collator/dia@1, fo, 182B, -> af
+collator/dia@1, fr, 182B, -> af
+collator/dia@1, fy, 182B, -> af
+collator/dia@1, ga, 182B, -> af
+collator/dia@1, gd, 182B, -> af
+collator/dia@1, gl, 182B, -> af
+collator/dia@1, gu, 182B, -> af
+collator/dia@1, ha, 182B, -> af
+collator/dia@1, he, 182B, -> af
+collator/dia@1, hi, 182B, -> af
+collator/dia@1, hr, 182B, -> af
+collator/dia@1, hsb, 182B, -> af
+collator/dia@1, hu, 182B, -> af
+collator/dia@1, hy, 182B, -> af
+collator/dia@1, ia, 182B, -> af
+collator/dia@1, id, 182B, -> af
+collator/dia@1, ie, 182B, -> af
+collator/dia@1, ig, 182B, -> af
+collator/dia@1, is, 182B, -> af
+collator/dia@1, it, 182B, -> af
+collator/dia@1, ja, 182B, -> af
+collator/dia@1, jv, 182B, -> af
+collator/dia@1, ka, 182B, -> af
+collator/dia@1, kea, 182B, -> af
+collator/dia@1, kgp, 182B, -> af
+collator/dia@1, kk, 182B, -> af
+collator/dia@1, km, 182B, -> af
+collator/dia@1, kn, 182B, -> af
+collator/dia@1, ko, 182B, -> af
+collator/dia@1, kok, 182B, -> af
+collator/dia@1, ks, 182B, -> af
+collator/dia@1, ks-Deva, 182B, -> af
+collator/dia@1, ku, 182B, -> af
+collator/dia@1, kxv, 182B, -> af
+collator/dia@1, kxv-Deva, 182B, -> af
+collator/dia@1, kxv-Orya, 182B, -> af
+collator/dia@1, kxv-Telu, 182B, -> af
+collator/dia@1, ky, 182B, -> af
+collator/dia@1, lb, 182B, -> af
+collator/dia@1, lij, 182B, -> af
+collator/dia@1, lmo, 182B, -> af
+collator/dia@1, lo, 182B, -> af
+collator/dia@1, lt, 182B, -> af
+collator/dia@1, lv, 182B, -> af
+collator/dia@1, mai, 182B, -> af
+collator/dia@1, mi, 182B, -> af
+collator/dia@1, mk, 182B, -> af
+collator/dia@1, ml, 182B, -> af
+collator/dia@1, mn, 182B, -> af
+collator/dia@1, mni, 182B, -> af
+collator/dia@1, mr, 182B, -> af
+collator/dia@1, ms, 182B, -> af
+collator/dia@1, mt, 182B, -> af
+collator/dia@1, my, 182B, -> af
+collator/dia@1, nds, 182B, -> af
+collator/dia@1, ne, 182B, -> af
+collator/dia@1, nl, 182B, -> af
+collator/dia@1, no, 182B, -> af
+collator/dia@1, nqo, 182B, -> af
+collator/dia@1, oc, 182B, -> af
+collator/dia@1, or, 182B, -> af
+collator/dia@1, pa, 182B, -> af
+collator/dia@1, pcm, 182B, -> af
+collator/dia@1, pl, 182B, -> af
+collator/dia@1, prg, 182B, -> af
+collator/dia@1, ps, 182B, -> af
+collator/dia@1, pt, 182B, -> af
+collator/dia@1, qu, 182B, -> af
+collator/dia@1, raj, 182B, -> af
+collator/dia@1, rm, 182B, -> af
+collator/dia@1, ro, 182B, -> af
+collator/dia@1, ru, 182B, -> af
+collator/dia@1, sa, 182B, -> af
+collator/dia@1, sah, 182B, -> af
+collator/dia@1, sat, 182B, -> af
+collator/dia@1, sc, 182B, -> af
+collator/dia@1, sd, 182B, -> af
+collator/dia@1, sd-Deva, 182B, -> af
+collator/dia@1, si, 182B, -> af
+collator/dia@1, sk, 182B, -> af
+collator/dia@1, sl, 182B, -> af
+collator/dia@1, so, 182B, -> af
+collator/dia@1, sq, 182B, -> af
+collator/dia@1, sr, 182B, -> af
+collator/dia@1, su, 182B, -> af
+collator/dia@1, sv, 182B, -> af
+collator/dia@1, sw, 182B, -> af
+collator/dia@1, syr, 182B, -> af
+collator/dia@1, szl, 182B, -> af
+collator/dia@1, ta, 182B, -> af
+collator/dia@1, te, 182B, -> af
+collator/dia@1, tg, 182B, -> af
+collator/dia@1, th, 182B, -> af
+collator/dia@1, ti, 182B, -> af
+collator/dia@1, tk, 182B, -> af
+collator/dia@1, to, 182B, -> af
+collator/dia@1, tr, 182B, -> af
+collator/dia@1, tt, 182B, -> af
+collator/dia@1, ug, 182B, -> af
+collator/dia@1, uk, 182B, -> af
+collator/dia@1, und, 182B, -> af
+collator/dia@1, ur, 182B, -> af
+collator/dia@1, uz, 182B, -> af
+collator/dia@1, vec, 182B, -> af
 collator/dia@1, vi, 182B, 6b057eec42bee512
+collator/dia@1, vmw, 182B, -> af
+collator/dia@1, wo, 182B, -> af
+collator/dia@1, xh, 182B, -> af
+collator/dia@1, xnr, 182B, -> af
+collator/dia@1, yo, 182B, -> af
+collator/dia@1, yrl, 182B, -> af
+collator/dia@1, yue-Hans, 182B, -> af
+collator/dia@1, za, 182B, -> af
+collator/dia@1, zh, 182B, -> af
+collator/dia@1, zu, 182B, -> af
 collator/jamo@1, <singleton>, 1048B, 8554e65df2b9cfbb
-collator/meta@1, <lookup>, 410B, 88 identifiers
+collator/meta@1, <lookup>, 669B, 157 identifiers
 collator/meta@1, <total>, 36B, 9 unique payloads
 collator/meta@1, af, 4B, 9aab82d56f3b362e
 collator/meta@1, am, 4B, d1dcef7af54c8272
 collator/meta@1, ar, 4B, 9208c26164ee7a99
 collator/meta@1, as, 4B, -> ar
+collator/meta@1, ast, 4B, 667dd5401e6fd800
 collator/meta@1, az, 4B, -> ar
 collator/meta@1, be, 4B, -> ar
 collator/meta@1, bg, 4B, -> am
+collator/meta@1, bgc, 4B, -> ast
+collator/meta@1, bho, 4B, -> ast
+collator/meta@1, blo, 4B, -> ast
 collator/meta@1, bn, 4B, -> ar
 collator/meta@1, br, 4B, -> af
+collator/meta@1, brx, 4B, -> ast
 collator/meta@1, bs, 4B, -> ar
+collator/meta@1, ca, 4B, -> ast
 collator/meta@1, ceb, 4B, -> af
 collator/meta@1, chr, 4B, -> am
 collator/meta@1, cs, 4B, -> af
+collator/meta@1, csw, 4B, -> ast
+collator/meta@1, cv, 4B, -> ast
 collator/meta@1, cy, 4B, -> af
 collator/meta@1, da, 4B, b4d85e6a550ed91b
+collator/meta@1, de, 4B, -> ast
 collator/meta@1, de-AT-u-co-phonebk, 4B, -> af
 collator/meta@1, de-u-co-phonebk, 4B, -> af
+collator/meta@1, doi, 4B, -> ast
 collator/meta@1, dsb, 4B, -> af
 collator/meta@1, el, 4B, -> am
+collator/meta@1, en, 4B, -> ast
 collator/meta@1, en-US-posix, 4B, -> af
 collator/meta@1, eo, 4B, -> af
 collator/meta@1, es, 4B, -> af
 collator/meta@1, et, 4B, -> af
+collator/meta@1, eu, 4B, -> ast
 collator/meta@1, fa, 4B, -> ar
 collator/meta@1, ff-Adlm, 4B, -> af
 collator/meta@1, fi, 4B, -> af
 collator/meta@1, fil, 4B, -> af
 collator/meta@1, fo, 4B, -> af
+collator/meta@1, fr, 4B, -> ast
 collator/meta@1, fr-CA, 4B, 2c69cf3bc26fbfd3
 collator/meta@1, fy, 4B, -> af
+collator/meta@1, ga, 4B, -> ast
+collator/meta@1, gd, 4B, -> ast
 collator/meta@1, gl, 4B, -> af
 collator/meta@1, gu, 4B, -> ar
 collator/meta@1, ha, 4B, -> af
@@ -147,55 +388,109 @@ collator/meta@1, hr, 4B, -> ar
 collator/meta@1, hsb, 4B, -> af
 collator/meta@1, hu, 4B, -> af
 collator/meta@1, hy, 4B, -> ar
+collator/meta@1, ia, 4B, -> ast
+collator/meta@1, id, 4B, -> ast
+collator/meta@1, ie, 4B, -> ast
 collator/meta@1, ig, 4B, -> af
 collator/meta@1, is, 4B, -> af
+collator/meta@1, it, 4B, -> ast
 collator/meta@1, ja, 4B, -> ar
+collator/meta@1, jv, 4B, -> ast
 collator/meta@1, ka, 4B, -> am
+collator/meta@1, kea, 4B, -> ast
+collator/meta@1, kgp, 4B, -> ast
 collator/meta@1, kk, 4B, -> ar
 collator/meta@1, km, 4B, -> ar
 collator/meta@1, kn, 4B, -> ar
 collator/meta@1, ko, 4B, -> ar
 collator/meta@1, kok, 4B, -> ar
+collator/meta@1, ks, 4B, -> ast
+collator/meta@1, ks-Deva, 4B, -> ast
 collator/meta@1, ku, 4B, -> ar
+collator/meta@1, kxv, 4B, -> ast
+collator/meta@1, kxv-Deva, 4B, -> ast
+collator/meta@1, kxv-Orya, 4B, -> ast
+collator/meta@1, kxv-Telu, 4B, -> ast
 collator/meta@1, ky, 4B, -> ar
+collator/meta@1, lb, 4B, -> ast
+collator/meta@1, lij, 4B, -> ast
+collator/meta@1, lmo, 4B, -> ast
 collator/meta@1, lo, 4B, -> am
 collator/meta@1, lt, 4B, 9192ca409e9005c3
 collator/meta@1, lv, 4B, -> af
+collator/meta@1, mai, 4B, -> ast
+collator/meta@1, mi, 4B, -> ast
 collator/meta@1, mk, 4B, -> ar
 collator/meta@1, ml, 4B, -> ar
 collator/meta@1, mn, 4B, -> am
+collator/meta@1, mni, 4B, -> ast
 collator/meta@1, mr, 4B, -> ar
+collator/meta@1, ms, 4B, -> ast
 collator/meta@1, mt, 4B, -> da
 collator/meta@1, my, 4B, -> ar
+collator/meta@1, nds, 4B, -> ast
 collator/meta@1, ne, 4B, -> am
+collator/meta@1, nl, 4B, -> ast
 collator/meta@1, no, 4B, -> af
+collator/meta@1, nqo, 4B, -> ast
+collator/meta@1, oc, 4B, -> ast
 collator/meta@1, or, 4B, -> ar
 collator/meta@1, pa, 4B, -> ar
+collator/meta@1, pcm, 4B, -> ast
 collator/meta@1, pl, 4B, -> af
+collator/meta@1, prg, 4B, -> ast
 collator/meta@1, ps, 4B, -> ar
+collator/meta@1, pt, 4B, -> ast
+collator/meta@1, qu, 4B, -> ast
+collator/meta@1, raj, 4B, -> ast
+collator/meta@1, rm, 4B, -> ast
 collator/meta@1, ro, 4B, -> af
 collator/meta@1, ru, 4B, -> am
+collator/meta@1, sa, 4B, -> ast
+collator/meta@1, sah, 4B, -> ast
+collator/meta@1, sat, 4B, -> ast
+collator/meta@1, sc, 4B, -> ast
+collator/meta@1, sd, 4B, -> ast
+collator/meta@1, sd-Deva, 4B, -> ast
 collator/meta@1, si, 4B, -> ar
 collator/meta@1, sk, 4B, -> af
 collator/meta@1, sl, 4B, -> af
+collator/meta@1, so, 4B, -> ast
 collator/meta@1, sq, 4B, -> af
 collator/meta@1, sr, 4B, -> ar
+collator/meta@1, su, 4B, -> ast
 collator/meta@1, sv, 4B, -> af
+collator/meta@1, sw, 4B, -> ast
+collator/meta@1, syr, 4B, -> ast
+collator/meta@1, szl, 4B, -> ast
 collator/meta@1, ta, 4B, -> ar
 collator/meta@1, te, 4B, -> ar
+collator/meta@1, tg, 4B, -> ast
 collator/meta@1, th, 4B, 7366aaaa2233984c
+collator/meta@1, ti, 4B, -> ast
 collator/meta@1, tk, 4B, -> af
 collator/meta@1, to, 4B, -> af
 collator/meta@1, tr, 4B, -> af
+collator/meta@1, tt, 4B, -> ast
 collator/meta@1, ug, 4B, -> ar
 collator/meta@1, uk, 4B, -> ar
-collator/meta@1, und, 4B, 667dd5401e6fd800
+collator/meta@1, und, 4B, -> ast
+collator/meta@1, und-u-co-emoji, 4B, -> ast
+collator/meta@1, und-u-co-eor, 4B, -> ast
 collator/meta@1, ur, 4B, -> ar
 collator/meta@1, uz, 4B, -> af
+collator/meta@1, vec, 4B, -> ast
 collator/meta@1, vi, 4B, ed0e600a85b6c191
+collator/meta@1, vmw, 4B, -> ast
 collator/meta@1, wo, 4B, -> af
+collator/meta@1, xh, 4B, -> ast
+collator/meta@1, xnr, 4B, -> ast
 collator/meta@1, yo, 4B, -> af
+collator/meta@1, yrl, 4B, -> ast
+collator/meta@1, yue-Hans, 4B, -> ast
+collator/meta@1, za, 4B, -> ast
 collator/meta@1, zh, 4B, -> ar
+collator/meta@1, zu, 4B, -> ast
 collator/prim@1, <singleton>, 40B, 792009c72825eaba
 collator/reord@1, <lookup>, 349B, 56 identifiers
 collator/reord@1, <total>, 9464B, 30 unique payloads
