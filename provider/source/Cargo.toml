@@ -32,7 +32,7 @@ all-features = true
 [dependencies]
 
 # ICU components
-icu = { workspace = true, features = ["datagen"] }
+icu = { workspace = true, default-features = false, features = ["datagen"] }
 
 # ICU infrastructure
 calendrical_calculations = { workspace = true }
