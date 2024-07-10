@@ -23,7 +23,9 @@ pub(crate) mod internal {
     /// Converts the number to format into the operands representation.
     pub fn to_icu4x_operands(n: f64, _opts: Options) -> PluralOperands {
         dbg!("n={}", n);
-        (&FixedDecimal::try_from_f64(n, fixed_decimal::FloatPrecision::Floating).unwrap()).into()
+        FixedDecimal::try_from_f64(n, fixed_decimal::FloatPrecision::Floating)
+            .map(|f| (&f).into())
+            .unwrap_or_default()
     }
 
     /// Expresses the [`PluralCategory`] as a `str`.
