@@ -19,7 +19,10 @@
 /// Re-export tools so that macros can access it without needing a dependency.
 #[cfg(feature = "benchmark_memory")]
 pub use dhat;
-#[cfg(feature = "rust_global_allocator")]
+#[cfg(all(
+    feature = "rust_global_allocator",
+    any(target_os = "linux", target_os = "macos", target_arch = "wasm32")
+))]
 pub use dlmalloc;
 
 #[macro_export]
