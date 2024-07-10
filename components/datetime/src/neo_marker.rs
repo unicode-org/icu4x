@@ -29,9 +29,9 @@ pub(crate) mod private {
 }
 
 /// A type that can be converted into a specific calendar system.
-pub trait ConvertCalendar: Sized {
+pub trait ConvertCalendar {
     /// The converted type. This can be the same as the receiver type.
-    type Converted<'a>;
+    type Converted<'a>: Sized;
     /// Converts `self` to the specified [`AnyCalendar`].
     fn to_calendar<'a>(&self, calendar: &'a AnyCalendar) -> Self::Converted<'a>;
 }
@@ -576,13 +576,8 @@ pub trait HasZoneComponent {
 
 // TODO: Add WeekCalculator and FixedDecimalFormatter optional bindings here
 
-/// A trait associating types implementing various other traits
-/// required for date formatting in a specific calendar.
-pub trait TypedDateMarkers<C>: private::Sealed {
-    /// Marker for loading date skeleton patterns.
-    type DateSkeletonPatternsV1Marker: DataMarker<Yokeable = PackedSkeletonDataV1<'static>>;
-    /// Marker for associating input with the specific calendar.
-    type TypedInputMarker: Into<Option<NeoTypedInput<C>>>;
+/// A trait associating types for input to the format function for date formatting.
+pub trait DateInputMarkers: private::Sealed {
     /// Marker for resolving the year input field.
     type YearInput: Into<Option<FormattableYear>>;
     /// Marker for resolving the month input field.
@@ -595,6 +590,15 @@ pub trait TypedDateMarkers<C>: private::Sealed {
     type DayOfYearInput: Into<Option<DayOfYearInfo>>;
     /// Marker for resolving the any-calendar-kind input field.
     type AnyCalendarKindInput: Into<Option<AnyCalendarKind>>;
+}
+
+/// A trait associating types implementing various other traits
+/// required for date formatting in a specific calendar.
+pub trait TypedDateMarkers<C>: private::Sealed {
+    /// Marker for associating input with the specific calendar.
+    type TypedInputMarker: Into<Option<NeoTypedInput<C>>>;
+    /// Marker for loading date skeleton patterns.
+    type DateSkeletonPatternsV1Marker: DataMarker<Yokeable = PackedSkeletonDataV1<'static>>;
     /// Marker for loading year names.
     type YearNamesV1Marker: DataMarker<Yokeable = YearNamesV1<'static>>;
     /// Marker for loading month names.
@@ -608,18 +612,6 @@ pub trait TypedDateMarkers<C>: private::Sealed {
 pub trait DateMarkers: private::Sealed {
     /// Cross-calendar data markers for date skeleta.
     type Skel: CalMarkers<SkeletaV1Marker>;
-    /// Marker for resolving the year input field.
-    type YearInput: Into<Option<FormattableYear>>;
-    /// Marker for resolving the month input field.
-    type MonthInput: Into<Option<FormattableMonth>>;
-    /// Marker for resolving the day-of-month input field.
-    type DayOfMonthInput: Into<Option<DayOfMonth>>;
-    /// Marker for resolving the day-of-week input field.
-    type DayOfWeekInput: Into<Option<IsoWeekday>>;
-    /// Marker for resolving the day-of-year input field.
-    type DayOfYearInput: Into<Option<DayOfYearInfo>>;
-    /// Marker for resolving the any-calendar-kind input field.
-    type AnyCalendarKindInput: Into<Option<AnyCalendarKind>>;
     /// Cross-calendar data markers for year names.
     type Year: CalMarkers<YearNamesV1Marker>;
     /// Cross-calendar data markers for month names.
@@ -668,7 +660,7 @@ pub trait ZoneMarkers: private::Sealed {
 /// required for datetime formatting in a specific calendar.
 pub trait TypedDateTimeMarkers<C>: private::Sealed + DateTimeNamesMarker {
     /// Associated types for date formatting.
-    type D: TypedDateMarkers<C>;
+    type D: TypedDateMarkers<C> + DateInputMarkers;
     /// Associated types for time formatting.
     type T: TimeMarkers;
     /// Associated types for time zone formatting.
@@ -681,7 +673,7 @@ pub trait TypedDateTimeMarkers<C>: private::Sealed + DateTimeNamesMarker {
 /// required for datetime formatting in any calendar.
 pub trait DateTimeMarkers: private::Sealed + DateTimeNamesMarker {
     /// Associated types for date formatting.
-    type D: DateMarkers;
+    type D: DateMarkers + DateInputMarkers;
     /// Associated types for time formatting.
     type T: TimeMarkers;
     /// Associated types for time zone formatting.
@@ -697,15 +689,18 @@ pub enum NeoNeverMarker {}
 
 impl private::Sealed for NeoNeverMarker {}
 
-impl<C> TypedDateMarkers<C> for NeoNeverMarker {
-    type DateSkeletonPatternsV1Marker = NeverMarker<PackedSkeletonDataV1<'static>>;
-    type TypedInputMarker = NeverField;
+impl DateInputMarkers for NeoNeverMarker {
     type YearInput = NeverField;
     type MonthInput = NeverField;
     type DayOfMonthInput = NeverField;
     type DayOfWeekInput = NeverField;
     type DayOfYearInput = NeverField;
     type AnyCalendarKindInput = NeverField;
+}
+
+impl<C> TypedDateMarkers<C> for NeoNeverMarker {
+    type TypedInputMarker = NeverField;
+    type DateSkeletonPatternsV1Marker = NeverMarker<PackedSkeletonDataV1<'static>>;
     type YearNamesV1Marker = NeverMarker<YearNamesV1<'static>>;
     type MonthNamesV1Marker = NeverMarker<MonthNamesV1<'static>>;
     type WeekdayNamesV1Marker = NeverMarker<LinearNamesV1<'static>>;
@@ -713,12 +708,6 @@ impl<C> TypedDateMarkers<C> for NeoNeverMarker {
 
 impl DateMarkers for NeoNeverMarker {
     type Skel = NoDataCalMarkers;
-    type YearInput = NeverField;
-    type MonthInput = NeverField;
-    type DayOfMonthInput = NeverField;
-    type DayOfWeekInput = NeverField;
-    type DayOfYearInput = NeverField;
-    type AnyCalendarKindInput = NeverField;
     type Year = NoDataCalMarkers;
     type Month = NoDataCalMarkers;
     type WeekdayNamesV1Marker = NeverMarker<LinearNamesV1<'static>>;
@@ -774,7 +763,7 @@ where
 
 impl<C, D> TypedDateTimeMarkers<C> for DateTimeCombo<D, NeoNeverMarker, NeoNeverMarker>
 where
-    D: TypedDateMarkers<C> + DateTimeNamesMarker,
+    D: TypedDateMarkers<C> + DateInputMarkers + DateTimeNamesMarker,
 {
     type D = D;
     type T = NeoNeverMarker;
@@ -791,7 +780,7 @@ where
 
 impl<D> DateTimeMarkers for DateTimeCombo<D, NeoNeverMarker, NeoNeverMarker>
 where
-    D: DateMarkers + DateTimeNamesMarker,
+    D: DateMarkers + DateInputMarkers + DateTimeNamesMarker,
 {
     type D = D;
     type T = NeoNeverMarker;
@@ -861,7 +850,7 @@ where
 
 impl<C, D, T> TypedDateTimeMarkers<C> for DateTimeCombo<D, T, NeoNeverMarker>
 where
-    D: TypedDateMarkers<C> + DateTimeNamesMarker,
+    D: TypedDateMarkers<C> + DateInputMarkers + DateTimeNamesMarker,
     T: TimeMarkers + DateTimeNamesMarker,
 {
     type D = D;
@@ -880,7 +869,7 @@ where
 
 impl<D, T> DateTimeMarkers for DateTimeCombo<D, T, NeoNeverMarker>
 where
-    D: DateMarkers + DateTimeNamesMarker,
+    D: DateMarkers + DateInputMarkers + DateTimeNamesMarker,
     T: TimeMarkers + DateTimeNamesMarker,
 {
     type D = D;
@@ -909,7 +898,7 @@ where
 
 impl<C, D, T, Z> TypedDateTimeMarkers<C> for DateTimeCombo<D, T, Z>
 where
-    D: TypedDateMarkers<C> + DateTimeNamesMarker,
+    D: TypedDateMarkers<C> + DateInputMarkers + DateTimeNamesMarker,
     T: TimeMarkers + DateTimeNamesMarker,
     Z: ZoneMarkers + DateTimeNamesMarker,
 {
@@ -933,7 +922,7 @@ where
 
 impl<D, T, Z> DateTimeMarkers for DateTimeCombo<D, T, Z>
 where
-    D: DateMarkers + DateTimeNamesMarker,
+    D: DateMarkers + DateInputMarkers + DateTimeNamesMarker,
     T: TimeMarkers + DateTimeNamesMarker,
     Z: ZoneMarkers + DateTimeNamesMarker,
 {
@@ -1192,27 +1181,23 @@ macro_rules! impl_date_marker {
         impl HasDateComponents for $type {
             const COMPONENTS: NeoDateComponents = $components;
         }
-        impl<C: CldrCalendar> TypedDateMarkers<C> for $type {
-            type DateSkeletonPatternsV1Marker = datetime_marker_helper!(@dates/typed, $dates_yesno);
-            type TypedInputMarker = datetime_marker_helper!(@input/typed, yes);
+        impl DateInputMarkers for $type {
             type YearInput = datetime_marker_helper!(@input/year, $year_yesno);
             type MonthInput = datetime_marker_helper!(@input/month, $month_yesno);
             type DayOfMonthInput = datetime_marker_helper!(@input/day_of_month, $day_of_month_yesno);
             type DayOfWeekInput = datetime_marker_helper!(@input/day_of_week, $day_of_week_yesno);
             type DayOfYearInput = datetime_marker_helper!(@input/day_of_year, $day_of_year_yesno);
             type AnyCalendarKindInput = datetime_marker_helper!(@input/any_calendar_kind, $any_calendar_kind_yesno);
+        }
+        impl<C: CldrCalendar> TypedDateMarkers<C> for $type {
+            type TypedInputMarker = datetime_marker_helper!(@input/typed, yes);
+            type DateSkeletonPatternsV1Marker = datetime_marker_helper!(@dates/typed, $dates_yesno);
             type YearNamesV1Marker = datetime_marker_helper!(@years/typed, $years_yesno);
             type MonthNamesV1Marker = datetime_marker_helper!(@months/typed, $months_yesno);
             type WeekdayNamesV1Marker = datetime_marker_helper!(@weekdays, $weekdays_yesno);
         }
         impl DateMarkers for $type {
             type Skel = datetime_marker_helper!(@calmarkers, $dates_yesno);
-            type YearInput = datetime_marker_helper!(@input/year, $year_yesno);
-            type MonthInput = datetime_marker_helper!(@input/month, $month_yesno);
-            type DayOfMonthInput = datetime_marker_helper!(@input/day_of_month, $day_of_month_yesno);
-            type DayOfWeekInput = datetime_marker_helper!(@input/day_of_week, $day_of_week_yesno);
-            type DayOfYearInput = datetime_marker_helper!(@input/day_of_year, $day_of_year_yesno);
-            type AnyCalendarKindInput = datetime_marker_helper!(@input/any_calendar_kind, $any_calendar_kind_yesno);
             type Year = datetime_marker_helper!(@calmarkers, $years_yesno);
             type Month = datetime_marker_helper!(@calmarkers, $months_yesno);
             type WeekdayNamesV1Marker = datetime_marker_helper!(@weekdays, $weekdays_yesno);
@@ -1761,15 +1746,18 @@ impl DateTimeNamesMarker for NeoDateComponents {
     type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short, no);
 }
 
-impl<C: CldrCalendar> TypedDateMarkers<C> for NeoDateComponents {
-    type DateSkeletonPatternsV1Marker = datetime_marker_helper!(@dates/typed, yes);
-    type TypedInputMarker = datetime_marker_helper!(@input/typed, yes);
+impl DateInputMarkers for NeoDateComponents {
     type YearInput = datetime_marker_helper!(@input/year, yes);
     type MonthInput = datetime_marker_helper!(@input/month, yes);
     type DayOfMonthInput = datetime_marker_helper!(@input/day_of_month, yes);
     type DayOfWeekInput = datetime_marker_helper!(@input/day_of_week, yes);
     type DayOfYearInput = datetime_marker_helper!(@input/day_of_year, yes);
     type AnyCalendarKindInput = datetime_marker_helper!(@input/any_calendar_kind, yes);
+}
+
+impl<C: CldrCalendar> TypedDateMarkers<C> for NeoDateComponents {
+    type TypedInputMarker = datetime_marker_helper!(@input/typed, yes);
+    type DateSkeletonPatternsV1Marker = datetime_marker_helper!(@dates/typed, yes);
     type YearNamesV1Marker = datetime_marker_helper!(@years/typed, yes);
     type MonthNamesV1Marker = datetime_marker_helper!(@months/typed, yes);
     type WeekdayNamesV1Marker = datetime_marker_helper!(@weekdays, yes);
@@ -1777,12 +1765,6 @@ impl<C: CldrCalendar> TypedDateMarkers<C> for NeoDateComponents {
 
 impl DateMarkers for NeoDateComponents {
     type Skel = datetime_marker_helper!(@calmarkers, yes);
-    type YearInput = datetime_marker_helper!(@input/year, yes);
-    type MonthInput = datetime_marker_helper!(@input/month, yes);
-    type DayOfMonthInput = datetime_marker_helper!(@input/day_of_month, yes);
-    type DayOfWeekInput = datetime_marker_helper!(@input/day_of_week, yes);
-    type DayOfYearInput = datetime_marker_helper!(@input/day_of_year, yes);
-    type AnyCalendarKindInput = datetime_marker_helper!(@input/any_calendar_kind, yes);
     type Year = datetime_marker_helper!(@calmarkers, yes);
     type Month = datetime_marker_helper!(@calmarkers, yes);
     type WeekdayNamesV1Marker = datetime_marker_helper!(@weekdays, yes);

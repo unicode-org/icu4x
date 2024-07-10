@@ -12,7 +12,7 @@ use crate::input::DateInput;
 use crate::input::ExtractedDateTimeInput;
 use crate::input::IsoTimeInput;
 use crate::neo_marker::{
-    NeoGetField, TimeMarkers, TypedDateMarkers, TypedDateTimeMarkers, ZoneMarkers,
+    DateInputMarkers, NeoGetField, TimeMarkers, TypedDateMarkers, TypedDateTimeMarkers, ZoneMarkers
 };
 use crate::neo_pattern::{DateTimePattern, DateTimePatternBorrowed};
 use crate::neo_skeleton::NeoDateTimeComponents;
@@ -2064,19 +2064,19 @@ impl<'a, C: CldrCalendar, R: TypedDateTimeMarkers<C>> DateTimePatternFormatter<'
     where
         I: ?Sized
             + NeoGetField<<R::D as TypedDateMarkers<C>>::TypedInputMarker>
-            + NeoGetField<<R::D as TypedDateMarkers<C>>::YearInput>
-            + NeoGetField<<R::D as TypedDateMarkers<C>>::MonthInput>
-            + NeoGetField<<R::D as TypedDateMarkers<C>>::DayOfMonthInput>
-            + NeoGetField<<R::D as TypedDateMarkers<C>>::DayOfWeekInput>
-            + NeoGetField<<R::D as TypedDateMarkers<C>>::DayOfYearInput>
-            + NeoGetField<<R::D as TypedDateMarkers<C>>::AnyCalendarKindInput>
+            + NeoGetField<<R::D as DateInputMarkers>::YearInput>
+            + NeoGetField<<R::D as DateInputMarkers>::MonthInput>
+            + NeoGetField<<R::D as DateInputMarkers>::DayOfMonthInput>
+            + NeoGetField<<R::D as DateInputMarkers>::DayOfWeekInput>
+            + NeoGetField<<R::D as DateInputMarkers>::DayOfYearInput>
+            + NeoGetField<<R::D as DateInputMarkers>::AnyCalendarKindInput>
             + NeoGetField<<R::T as TimeMarkers>::HourInput>
             + NeoGetField<<R::T as TimeMarkers>::MinuteInput>
             + NeoGetField<<R::T as TimeMarkers>::SecondInput>
             + NeoGetField<<R::T as TimeMarkers>::NanoSecondInput>
             + NeoGetField<<R::Z as ZoneMarkers>::TimeZoneInput>,
     {
-        let datetime = ExtractedDateTimeInput::extract_from_typed_neo_input::<C, R::D, R::T, R::Z, I>(
+        let datetime = ExtractedDateTimeInput::extract_from_neo_input::<R::D, R::T, R::Z, I>(
             datetime,
         );
         FormattedDateTimePattern {
