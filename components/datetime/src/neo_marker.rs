@@ -545,31 +545,31 @@ impl From<NeverField> for Option<CustomTimeZone> {
 }
 
 /// A trait associating [`NeoComponents`].
-pub trait HasComponents {
+pub trait HasConstComponents {
     /// The associated components.
     const COMPONENTS: NeoComponents;
 }
 
 /// A trait associating [`NeoDateComponents`].
-pub trait HasDateComponents {
+pub trait HasConstDateComponents {
     /// The associated components.
     const COMPONENTS: NeoDateComponents;
 }
 
 /// A trait associating [`HasDayComponents`].
-pub trait HasDayComponents {
+pub trait HasConstDayComponents {
     /// The associated components.
     const COMPONENTS: NeoDayComponents;
 }
 
 /// A trait associating [`NeoTimeComponents`].
-pub trait HasTimeComponents {
+pub trait HasConstTimeComponents {
     /// The associated components.
     const COMPONENTS: NeoTimeComponents;
 }
 
 /// A trait associating [`NeoTimeZoneSkeleton`].
-pub trait HasZoneComponent {
+pub trait HasConstZoneComponent {
     /// The associated component.
     const COMPONENT: NeoTimeZoneSkeleton;
 }
@@ -771,9 +771,9 @@ where
     type GluePatternV1Marker = NeverMarker<GluePatternV1<'static>>;
 }
 
-impl<D> HasComponents for DateTimeCombo<D, NeoNeverMarker, NeoNeverMarker>
+impl<D> HasConstComponents for DateTimeCombo<D, NeoNeverMarker, NeoNeverMarker>
 where
-    D: HasDateComponents,
+    D: HasConstDateComponents,
 {
     const COMPONENTS: NeoComponents = NeoComponents::Date(D::COMPONENTS);
 }
@@ -814,9 +814,9 @@ where
     type GluePatternV1Marker = NeverMarker<GluePatternV1<'static>>;
 }
 
-impl<T> HasComponents for DateTimeCombo<NeoNeverMarker, T, NeoNeverMarker>
+impl<T> HasConstComponents for DateTimeCombo<NeoNeverMarker, T, NeoNeverMarker>
 where
-    T: HasTimeComponents,
+    T: HasConstTimeComponents,
 {
     const COMPONENTS: NeoComponents = NeoComponents::Time(T::COMPONENTS);
 }
@@ -859,10 +859,10 @@ where
     type GluePatternV1Marker = GluePatternV1Marker;
 }
 
-impl<D, T> HasComponents for DateTimeCombo<D, T, NeoNeverMarker>
+impl<D, T> HasConstComponents for DateTimeCombo<D, T, NeoNeverMarker>
 where
-    D: HasDayComponents,
-    T: HasTimeComponents,
+    D: HasConstDayComponents,
+    T: HasConstTimeComponents,
 {
     const COMPONENTS: NeoComponents = NeoComponents::DateTime(D::COMPONENTS, T::COMPONENTS);
 }
@@ -908,11 +908,11 @@ where
     type GluePatternV1Marker = GluePatternV1Marker;
 }
 
-impl<D, T, Z> HasComponents for DateTimeCombo<D, T, Z>
+impl<D, T, Z> HasConstComponents for DateTimeCombo<D, T, Z>
 where
-    D: HasDayComponents,
-    T: HasTimeComponents,
-    Z: HasZoneComponent,
+    D: HasConstDayComponents,
+    T: HasConstTimeComponents,
+    Z: HasConstZoneComponent,
 {
     const COMPONENTS: NeoComponents = NeoComponents::DateTimeZone(
         NeoDateTimeComponents::DateTime(D::COMPONENTS, T::COMPONENTS),
@@ -1178,7 +1178,7 @@ macro_rules! impl_date_marker {
             type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long, no);
             type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short, no);
         }
-        impl HasDateComponents for $type {
+        impl HasConstDateComponents for $type {
             const COMPONENTS: NeoDateComponents = $components;
         }
         impl DateInputMarkers for $type {
@@ -1214,7 +1214,7 @@ macro_rules! impl_date_marker {
             type Z = NeoNeverMarker;
             type GluePatternV1Marker = datetime_marker_helper!(@glue, no);
         }
-        impl HasComponents for $type {
+        impl HasConstComponents for $type {
             const COMPONENTS: NeoComponents = NeoComponents::Date($components);
         }
     };
@@ -1253,7 +1253,7 @@ macro_rules! impl_day_marker {
             input_day_of_year = $day_of_year_yesno,
             input_any_calendar_kind = $any_calendar_kind_yesno,
         );
-        impl HasDayComponents for $type {
+        impl HasConstDayComponents for $type {
             const COMPONENTS: NeoDayComponents = $components;
         }
     };
@@ -1338,7 +1338,7 @@ macro_rules! impl_time_marker {
             type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long, no);
             type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short, no);
         }
-        impl HasTimeComponents for $type {
+        impl HasConstTimeComponents for $type {
             const COMPONENTS: NeoTimeComponents = $components;
         }
         impl TimeMarkers for $type {
@@ -1361,7 +1361,7 @@ macro_rules! impl_time_marker {
             type Z = NeoNeverMarker;
             type GluePatternV1Marker = datetime_marker_helper!(@glue, no);
         }
-        impl HasComponents for $type {
+        impl HasConstComponents for $type {
             const COMPONENTS: NeoComponents = NeoComponents::Time($components);
         }
     };
@@ -1447,7 +1447,7 @@ macro_rules! impl_zone_marker {
             type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long, $zone_specific_long_yesno);
             type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short, $zone_specific_short_yesno);
         }
-        impl HasZoneComponent for $type {
+        impl HasConstZoneComponent for $type {
             const COMPONENT: NeoTimeZoneSkeleton = $components;
         }
         impl ZoneMarkers for $type {
@@ -1471,7 +1471,7 @@ macro_rules! impl_zone_marker {
             type Z = Self;
             type GluePatternV1Marker = datetime_marker_helper!(@glue, no);
         }
-        impl HasComponents for $type {
+        impl HasConstComponents for $type {
             const COMPONENTS: NeoComponents = NeoComponents::Zone($components);
         }
     };
