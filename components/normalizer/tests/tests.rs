@@ -1618,13 +1618,45 @@ fn test_is_normalized_up_to() {
         assert!(nfkc.is_normalized(&normalized));
     };
 
-    // todo: UTF16 tests?
+    // Check a string of UTF-16 code units is normalized up to where is_normalized_up_to reports
+    let check_utf16 = |input: &[u16]| {
+        // Check nfd
+        let up_to = nfd.is_normalized_utf16_up_to(input);
+        let (head, tail) = input.split_at(up_to);
+        let mut normalized = head.to_vec();
+        let _ = nfd.normalize_utf16_to(tail, &mut normalized);
+        assert!(nfd.is_normalized_utf16(&normalized));
+
+        // Check nfkd
+        let up_to = nfkd.is_normalized_utf16_up_to(input);
+        let (head, tail) = input.split_at(up_to);
+        let mut normalized = head.to_vec();
+        let _ = nfkd.normalize_utf16_to(tail, &mut normalized);
+        assert!(nfkd.is_normalized_utf16(&normalized));
+
+        // Check nfc
+        let up_to = nfc.is_normalized_utf16_up_to(input);
+        let (head, tail) = input.split_at(up_to);
+        let mut normalized = head.to_vec();
+        let _ = nfc.normalize_utf16_to(tail, &mut normalized);
+        assert!(nfc.is_normalized_utf16(&normalized));
+
+        // Check nfkc
+        let up_to = nfkc.is_normalized_utf16_up_to(input);
+        let (head, tail) = input.split_at(up_to);
+        let mut normalized = head.to_vec();
+        let _ = nfkc.normalize_utf16_to(tail, &mut normalized);
+        assert!(nfkc.is_normalized_utf16(&normalized));
+    };
 
     let aaa = "aaa";
     check_str(aaa);
 
     let aaa_utf8 = aaa.as_bytes();
     check_utf8(aaa_utf8);
+
+    let aaa_utf16: Vec<u16> = aaa.encode_utf16().collect();
+    check_utf16(&aaa_utf16);
 
     assert!(nfd.is_normalized_up_to(aaa) == aaa.len());
     assert!(nfkd.is_normalized_up_to(aaa) == aaa.len());
@@ -1634,12 +1666,19 @@ fn test_is_normalized_up_to() {
     assert!(nfkd.is_normalized_utf8_up_to(aaa_utf8) == aaa_utf8.len());
     assert!(nfc.is_normalized_utf8_up_to(aaa_utf8) == aaa_utf8.len());
     assert!(nfkc.is_normalized_utf8_up_to(aaa_utf8) == aaa_utf8.len());
+    assert!(nfd.is_normalized_utf16_up_to(&aaa_utf16) == aaa_utf16.len());
+    assert!(nfkd.is_normalized_utf16_up_to(&aaa_utf16) == aaa_utf16.len());
+    assert!(nfc.is_normalized_utf16_up_to(&aaa_utf16) == aaa_utf16.len());
+    assert!(nfkc.is_normalized_utf16_up_to(&aaa_utf16) == aaa_utf16.len());
 
     let note = "a𝅗\u{1D165}a";
     check_str(note);
 
     let note_utf8 = note.as_bytes();
     check_utf8(note_utf8);
+
+    let note_utf16: Vec<u16> = note.encode_utf16().collect();
+    check_utf16(&note_utf16);
 
     assert!(nfd.is_normalized_up_to(note) == note.len());
     assert!(nfkd.is_normalized_up_to(note) == note.len());
@@ -1649,12 +1688,19 @@ fn test_is_normalized_up_to() {
     assert!(nfkd.is_normalized_utf8_up_to(note_utf8) == note_utf8.len());
     assert!(nfc.is_normalized_utf8_up_to(note_utf8) == note_utf8.len());
     assert!(nfkc.is_normalized_utf8_up_to(note_utf8) == note_utf8.len());
+    assert!(nfd.is_normalized_utf16_up_to(&note_utf16) == note_utf16.len());
+    assert!(nfkd.is_normalized_utf16_up_to(&note_utf16) == note_utf16.len());
+    assert!(nfc.is_normalized_utf16_up_to(&note_utf16) == note_utf16.len());
+    assert!(nfkc.is_normalized_utf16_up_to(&note_utf16) == note_utf16.len());
 
     let umlaut = "aäa";
     check_str(umlaut);
 
     let umlaut_utf8 = umlaut.as_bytes();
     check_utf8(umlaut_utf8);
+
+    let umlaut_utf16: Vec<u16> = umlaut.encode_utf16().collect();
+    check_utf16(&umlaut_utf16);
 
     assert_eq!(nfd.is_normalized_up_to(umlaut), 1);
     assert_eq!(nfkd.is_normalized_up_to(umlaut), 1);
@@ -1664,12 +1710,19 @@ fn test_is_normalized_up_to() {
     assert_eq!(nfkd.is_normalized_utf8_up_to(umlaut_utf8), 1);
     assert_eq!(nfc.is_normalized_utf8_up_to(umlaut_utf8), 4);
     assert_eq!(nfkc.is_normalized_utf8_up_to(umlaut_utf8), 4);
+    assert_eq!(nfd.is_normalized_utf16_up_to(&umlaut_utf16), 1);
+    assert_eq!(nfkd.is_normalized_utf16_up_to(&umlaut_utf16), 1);
+    assert_eq!(nfc.is_normalized_utf16_up_to(&umlaut_utf16), 3);
+    assert_eq!(nfkc.is_normalized_utf16_up_to(&umlaut_utf16), 3);
 
     let fraction = "a½a";
     check_str(fraction);
 
     let fraction_utf8 = fraction.as_bytes();
     check_utf8(fraction_utf8);
+
+    let fraction_utf16: Vec<u16> = fraction.encode_utf16().collect();
+    check_utf16(&fraction_utf16);
 
     assert_eq!(nfd.is_normalized_up_to(fraction), 4);
     assert_eq!(nfkd.is_normalized_up_to(fraction), 1);
@@ -1679,12 +1732,19 @@ fn test_is_normalized_up_to() {
     assert_eq!(nfkd.is_normalized_utf8_up_to(fraction_utf8), 1);
     assert_eq!(nfc.is_normalized_utf8_up_to(fraction_utf8), 4);
     assert_eq!(nfkc.is_normalized_utf8_up_to(fraction_utf8), 1);
+    assert_eq!(nfd.is_normalized_utf16_up_to(&fraction_utf16), 3);
+    assert_eq!(nfkd.is_normalized_utf16_up_to(&fraction_utf16), 1);
+    assert_eq!(nfc.is_normalized_utf16_up_to(&fraction_utf16), 3);
+    assert_eq!(nfkc.is_normalized_utf16_up_to(&fraction_utf16), 1);
 
     let reversed_vietnamese = "e\u{0302}\u{0323}";
     check_str(reversed_vietnamese);
 
     let reversed_vietnamese_utf8 = reversed_vietnamese.as_bytes();
     check_utf8(reversed_vietnamese_utf8);
+
+    let reversed_vietnamese_utf16: Vec<u16> = reversed_vietnamese.encode_utf16().collect();
+    check_utf16(&reversed_vietnamese_utf16);
 
     assert_eq!(nfd.is_normalized_up_to(reversed_vietnamese), 1);
     assert_eq!(nfkd.is_normalized_up_to(reversed_vietnamese), 1);
@@ -1694,12 +1754,25 @@ fn test_is_normalized_up_to() {
     assert_eq!(nfkd.is_normalized_utf8_up_to(reversed_vietnamese_utf8), 1);
     assert_eq!(nfc.is_normalized_utf8_up_to(reversed_vietnamese_utf8), 0);
     assert_eq!(nfkc.is_normalized_utf8_up_to(reversed_vietnamese_utf8), 0);
+    assert_eq!(nfd.is_normalized_utf16_up_to(&reversed_vietnamese_utf16), 1);
+    assert_eq!(
+        nfkd.is_normalized_utf16_up_to(&reversed_vietnamese_utf16),
+        1
+    );
+    assert_eq!(nfc.is_normalized_utf16_up_to(&reversed_vietnamese_utf16), 0);
+    assert_eq!(
+        nfkc.is_normalized_utf16_up_to(&reversed_vietnamese_utf16),
+        0
+    );
 
     let truncated_vietnamese = "e\u{0302}";
     check_str(truncated_vietnamese);
 
     let truncated_vietnamese_utf8 = truncated_vietnamese.as_bytes();
     check_utf8(truncated_vietnamese_utf8);
+
+    let truncated_vietnamese_utf16: Vec<u16> = truncated_vietnamese.encode_utf16().collect();
+    check_utf16(&truncated_vietnamese_utf16);
 
     assert_eq!(nfd.is_normalized_up_to(truncated_vietnamese), 3);
     assert_eq!(nfkd.is_normalized_up_to(truncated_vietnamese), 3);
@@ -1709,4 +1782,20 @@ fn test_is_normalized_up_to() {
     assert_eq!(nfkd.is_normalized_utf8_up_to(truncated_vietnamese_utf8), 3);
     assert_eq!(nfc.is_normalized_utf8_up_to(truncated_vietnamese_utf8), 0);
     assert_eq!(nfkc.is_normalized_utf8_up_to(truncated_vietnamese_utf8), 0);
+    assert_eq!(
+        nfd.is_normalized_utf16_up_to(&truncated_vietnamese_utf16),
+        2
+    );
+    assert_eq!(
+        nfkd.is_normalized_utf16_up_to(&truncated_vietnamese_utf16),
+        2
+    );
+    assert_eq!(
+        nfc.is_normalized_utf16_up_to(&truncated_vietnamese_utf16),
+        0
+    );
+    assert_eq!(
+        nfkc.is_normalized_utf16_up_to(&truncated_vietnamese_utf16),
+        0
+    );
 }
