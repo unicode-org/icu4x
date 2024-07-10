@@ -32,70 +32,48 @@ impl DataProvider<UnitsDisplayNameV1Marker> for SourceDataProvider {
             self.cldr()?.units().read_and_parse(&langid, "units.json")?;
         let units_format_data = &units_format_data.main.value.units;
 
-        fn add_unit_to_map_with_name(
-            map: &mut BTreeMap<Count, String>,
-            count: Count,
-            unit: Option<&str>,
-        ) {
+        let mut patterns = BTreeMap::new();
+
+        let unit_patterns = match length {
+            "long" => &units_format_data.long,
+            "short" => &units_format_data.short,
+            "narrow" => &units_format_data.narrow,
+            _ => {
+                return Err(DataErrorKind::IdentifierNotFound
+                    .into_error()
+                    .with_debug_context(length))
+            }
+        }
+        .iter()
+        // get the units which match the key after the `-` in the attribute
+        // For exmple,
+        //          if the unit is meter, the key `length-meter` will match.
+        //          if the unit is millisecond, the key `duration-millisecond` will match.
+        .find_map(|(key, patterns)| {
+            key.split_once('-')
+                .map(|(_, rest)| rest)
+                .filter(|&rest| rest == unit)
+                .map(|_| patterns)
+        })
+        .ok_or_else(|| DataErrorKind::InvalidRequest.into_error())?;
+
+        for (count, unit) in [
+            (Count::One, unit_patterns.one.as_deref()),
+            (Count::Two, unit_patterns.two.as_deref()),
+            (Count::Few, unit_patterns.few.as_deref()),
+            (Count::Many, unit_patterns.many.as_deref()),
+            (Count::Other, unit_patterns.other.as_deref()),
+        ] {
             if let Some(unit) = unit {
-                map.insert(count, unit.to_string());
+                patterns.insert(count, unit.to_string());
             }
         }
 
-        fn populate_units_map(
-            unit_length_map: &BTreeMap<String, Patterns>,
-            unit: &str,
-        ) -> Result<BTreeMap<Count, String>, DataError> {
-            let mut result = BTreeMap::new();
-            // TODO(younies): this should be coming from the aux key or from the main key.
-            let legth_key = "length-".to_string() + unit;
-            let duration_key = "duration-".to_string() + unit;
-
-            let unit_length_map = match (
-                unit_length_map.get(&legth_key),
-                unit_length_map.get(&duration_key),
-            ) {
-                (Some(length), None) => length,
-                (None, Some(length)) => length,
-                _ => {
-                    return Err(DataErrorKind::IdentifierNotFound
-                        .into_error()
-                        .with_debug_context(unit))
-                }
-            };
-
-            add_unit_to_map_with_name(&mut result, Count::One, unit_length_map.one.as_deref());
-            add_unit_to_map_with_name(&mut result, Count::Two, unit_length_map.two.as_deref());
-            add_unit_to_map_with_name(&mut result, Count::Few, unit_length_map.few.as_deref());
-            add_unit_to_map_with_name(&mut result, Count::Many, unit_length_map.many.as_deref());
-            add_unit_to_map_with_name(&mut result, Count::Other, unit_length_map.other.as_deref());
-
-            Ok(result)
-        }
-
-        let result = UnitsDisplayNameV1 {
-            patterns: ZeroMap::from_iter(
-                populate_units_map(
-                    match length {
-                        "long" => &units_format_data.long,
-                        "short" => &units_format_data.short,
-                        "narrow" => &units_format_data.narrow,
-                        _ => {
-                            return Err(DataErrorKind::IdentifierNotFound
-                                .into_error()
-                                .with_debug_context(length))
-                        }
-                    },
-                    unit,
-                )?
-                .iter()
-                .map(|(k, v)| (k, v.as_str())),
-            ),
-        };
-
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(result),
+            payload: DataPayload::from_owned(UnitsDisplayNameV1 {
+                patterns: ZeroMap::from_iter(patterns.iter().map(|(k, v)| (k, v.as_str()))),
+            }),
         })
     }
 }
@@ -126,10 +104,16 @@ impl crate::IterableDataProviderCached<UnitsDisplayNameV1Marker> for SourceDataP
         ) -> Result<(), DataError> {
             let quantities = length_patterns
                 .keys()
-                // TODO: remove this filter once we are supporting all the units categories.
-                // NOTE:
-                //  if this filter is removed, we have to add a filter to remove all the prefixes.
+                .filter(|&key| {
+                    !key.starts_with(|c: char| c.is_ascii_digit())
+                        && !["per", "times", "power"]
+                            .iter()
+                            .any(|&prefix| key.starts_with(prefix))
+                })
                 .filter_map(|key| {
+                    // In order to reduce the number of units in the test data,
+                    // we only test the length-* and duration-* units.
+                    #[cfg(test)]
                     if let Some(rest) = key.strip_prefix("length-") {
                         Some(rest)
                     } else if let Some(rest) = key.strip_prefix("duration-") {
@@ -137,6 +121,8 @@ impl crate::IterableDataProviderCached<UnitsDisplayNameV1Marker> for SourceDataP
                     } else {
                         None
                     }
+                    #[cfg(not(test))]
+                    key.split_once('-').map(|(_, rest)| rest)
                 });
 
             for truncated_quantity in quantities {
