@@ -5,8 +5,6 @@
 // An example program making use of a number of ICU components
 // in a pseudo-real-world application of Textual User Interface.
 
-#![no_main] // https://github.com/unicode-org/icu4x/issues/395
-
 use icu::calendar::{DateTime, Gregorian};
 use icu::datetime::time_zone::TimeZoneFormatterOptions;
 use icu::datetime::{DateTimeFormatterOptions, TypedZonedDateTimeFormatter};
@@ -22,7 +20,7 @@ macro_rules! println {
 }
 
 #[no_mangle]
-fn main(_argc: isize, _argv: *const *const u8) -> isize {
+fn main() {
     let args: Vec<String> = env::args().collect();
 
     let locale = args
@@ -83,6 +81,4 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
             _ => println!("Note: You have {email_count} unread emails."),
         }
     }
-
-    0
 }
