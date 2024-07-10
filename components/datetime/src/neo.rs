@@ -10,10 +10,11 @@ use crate::format::datetime::try_write_pattern_items;
 use crate::format::datetime::DateTimeWriteError;
 use crate::format::neo::*;
 use crate::input::ExtractedDateTimeInput;
+use crate::neo_marker::HasComponents;
 use crate::neo_marker::{
     ConvertCalendar, DateMarkers, DateTimeMarkers, IsAnyCalendarKind, IsRuntimeComponents,
-    NeoFormatterMarker, NeoGetField, TimeMarkers, TypedDateMarkers, TypedDateTimeMarkers,
-    TypedNeoFormatterMarker, ZoneMarkers,
+    NeoGetField, TimeMarkers, TypedDateMarkers, TypedDateTimeMarkers,
+    ZoneMarkers,
 };
 use crate::neo_pattern::DateTimePattern;
 use crate::neo_skeleton::{NeoComponents, NeoSkeletonLength};
@@ -175,7 +176,7 @@ pub struct TypedNeoFormatter<C: CldrCalendar, R: DateTimeNamesMarker> {
     _calendar: PhantomData<C>,
 }
 
-impl<C: CldrCalendar, R: TypedNeoFormatterMarker<C>> TypedNeoFormatter<C, R> {
+impl<C: CldrCalendar, R: TypedDateTimeMarkers<C> + HasComponents> TypedNeoFormatter<C, R> {
     /// Creates a new [`TypedNeoFormatter`] from compiled data with
     /// datetime components specified at build time.
     ///
@@ -603,7 +604,7 @@ pub struct NeoFormatter<R: DateTimeNamesMarker> {
     calendar: AnyCalendar,
 }
 
-impl<R: NeoFormatterMarker> NeoFormatter<R> {
+impl<R: DateTimeMarkers + HasComponents> NeoFormatter<R> {
     /// Creates a new [`NeoFormatter`] from compiled data with
     /// datetime components specified at build time.
     ///

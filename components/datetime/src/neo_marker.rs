@@ -743,20 +743,6 @@ impl ZoneMarkers for NeoNeverMarker {
     type SpecificShortV1Marker = NeverMarker<tz::MzSpecificShortV1<'static>>;
 }
 
-/// A trait associating constants and types implementing various other traits
-/// required for datetime formatting in a specific calendar with
-/// specific components.
-pub trait TypedNeoFormatterMarker<C>: TypedDateTimeMarkers<C> + HasComponents {}
-
-impl<T, C> TypedNeoFormatterMarker<C> for T where T: TypedDateTimeMarkers<C> + HasComponents {}
-
-/// A trait associating constants and types implementing various other traits
-/// required for datetime formatting in any calendar with
-/// specific components.
-pub trait NeoFormatterMarker: DateTimeMarkers + HasComponents {}
-
-impl<T> NeoFormatterMarker for T where T: DateTimeMarkers + HasComponents {}
-
 /// A struct that supports formatting both a date and a time.
 ///
 /// It should be composed from types implementing [`HasDayComponents`]
