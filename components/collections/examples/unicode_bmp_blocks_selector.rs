@@ -58,11 +58,6 @@ impl<'data> BmpBlockSelector<'data> {
     }
 }
 
-fn print(_input: &str) {
-    #[cfg(debug_assertions)]
-    println!("{_input}");
-}
-
 icu_benchmark_macros::bench!(
     fn main() {
         let selector = BmpBlockSelector::new();
@@ -75,9 +70,9 @@ icu_benchmark_macros::bench!(
             result.push((ch, selector.select(ch)));
         }
 
-        print("\n====== Unicode BMP Block Selector example ============");
+        println!("\n====== Unicode BMP Block Selector example ============");
         for (ch, block) in result {
-            print(&format!("{ch}: {block:#?}"));
+            println!("{ch}: {block:#?}");
         }
     }
 );

@@ -47,7 +47,6 @@ icu_benchmark_macros::bench!(
         };
         let _output = filter_input(input);
 
-        #[cfg(debug_assertions)]
         println!("\nInput: {input}\nOutput: {_output}");
     }
 );

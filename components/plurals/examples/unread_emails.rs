@@ -12,25 +12,16 @@ use icu_plurals::{PluralCategory, PluralRules};
 
 const VALUES: &[usize] = &[0, 2, 25, 1, 3, 2, 4, 10, 7, 0];
 
-fn print(_input: &str, _value: Option<usize>) {
-    #[cfg(debug_assertions)]
-    if let Some(value) = _value {
-        println!("{}", _input.replace("{}", &value.to_string()));
-    } else {
-        println!("{_input}");
-    }
-}
-
 icu_benchmark_macros::bench!(
     fn main() {
-        print("\n====== Unread Emails (en) example ============", None);
+        println!("\n====== Unread Emails (en) example ============");
         let pr = PluralRules::try_new_cardinal(&locale!("en").into())
             .expect("Failed to create a PluralRules instance.");
 
         for value in VALUES {
             match pr.category_for(*value) {
-                PluralCategory::One => print("You have one unread email.", None),
-                _ => print("You have {} unread emails.", Some(*value)),
+                PluralCategory::One => println!("You have one unread email."),
+                _ => println!("You have {value} unread emails."),
             }
         }
     }

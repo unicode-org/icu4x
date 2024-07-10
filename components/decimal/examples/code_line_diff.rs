@@ -28,7 +28,6 @@ icu_benchmark_macros::bench!(
             let added = fdf.format_to_string(&added.into());
             assert!(!removed.is_empty());
             assert!(!added.is_empty());
-            #[cfg(debug_assertions)]
             println!("Added/Removed: {added}/{removed}",);
         }
     }

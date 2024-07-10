@@ -34,7 +34,6 @@ icu_benchmark_macros::bench!(
         };
         let _output = syntactically_canonicalize_locales(input);
 
-        #[cfg(debug_assertions)]
         println!("\nInput: {input}\nOutput: {_output}");
     }
 );

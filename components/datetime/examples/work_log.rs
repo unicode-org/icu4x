@@ -24,15 +24,6 @@ const DATES_ISO: &[(i32, u8, u8, u8, u8, u8)] = &[
     (2033, 5, 17, 20, 33, 20),
 ];
 
-fn print(_input: &str, _value: Option<usize>) {
-    #[cfg(debug_assertions)]
-    if let Some(value) = _value {
-        println!("{}", _input.replace("{}", &value.to_string()));
-    } else {
-        println!("{_input}");
-    }
-}
-
 icu_benchmark_macros::bench!(
     fn main() {
         let dates = DATES_ISO
@@ -51,7 +42,7 @@ icu_benchmark_macros::bench!(
             TypedDateTimeFormatter::<Gregorian>::try_new(&locale!("en").into(), options.into())
                 .expect("Failed to create TypedDateTimeFormatter instance.");
         {
-            print("\n====== Work Log (en) example ============", None);
+            println!("\n====== Work Log (en) example ============");
 
             for (idx, date) in dates.iter().enumerate() {
                 let fdt = dtf.format(date);
