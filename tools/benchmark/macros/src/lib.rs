@@ -34,9 +34,10 @@ macro_rules! println {
         {
             struct Sink;
             impl std::fmt::Write for Sink {
-                fn write_str(&mut self, _s: &str) -> Result<(), std::fmt::Error> { Ok(()) }
-                fn write_char(&mut self, _c: char) -> Result<(), std::fmt::Error> { Ok(()) }
-                fn write_fmt(&mut self, _args: std::fmt::Arguments<'_>) -> Result<(), std::fmt::Error> { Ok(()) }
+                fn write_str(&mut self, s: &str) -> Result<(), std::fmt::Error> { 
+                    std::hint::black_box(s);
+                    Ok(()) 
+                }
             }
 
             $(
