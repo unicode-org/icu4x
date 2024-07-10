@@ -65,8 +65,10 @@ pub struct ValidatedDurationFormatterOptions {
 pub enum DurationFormatterOptionsError {
     /// Returned when a unit field is set to [`FieldDisplay::Always`] and the style is set to [`FieldStyle::Fractional`].
     DisplayAlwaysFractional,
+
     /// Returned when a previous unit's style is [`FieldStyle::Fractional`], but the following unit's style is not [`FieldStyle::Fractional`].
     PreviousFractional,
+
     /// Returned when a previous unit's style is set to [`FieldStyle::Numeric`] or [`FieldStyle::TwoDigit`] and the following unit's style is not
     /// [`FieldStyle::Fractional`], [`FieldStyle::Numeric`], or [`FieldStyle::TwoDigit`].
     PreviousNumeric,
