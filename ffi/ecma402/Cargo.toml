@@ -21,6 +21,7 @@ all-features = true
 
 [dependencies]
 ecma402_traits = "4"
+fixed_decimal = { workspace = true, features = ["ryu"] }
 icu = { workspace = true, features = ["std", "compiled_data"] }
 icu_provider = { workspace = true }
 writeable = { workspace = true }

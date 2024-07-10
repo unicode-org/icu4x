@@ -9,16 +9,8 @@ use icu::plurals as ipr;
 pub(crate) mod internal {
     use ecma402_traits::pluralrules::options::Type;
     use ecma402_traits::pluralrules::Options;
+    use fixed_decimal::FixedDecimal;
     use icu::plurals::{PluralCategory, PluralOperands, PluralRuleType};
-    use std::cmp::{max, min};
-
-    // The difference between `first` and `second`, clamped on the bottom by zero.
-    fn clamp_diff(first: usize, second: usize) -> usize {
-        match first > second {
-            true => first - second,
-            false => 0,
-        }
-    }
 
     /// Converts the trait style option to an equivalent ICU4X type.
     pub fn to_icu4x_type(style: &Type) -> PluralRuleType {
@@ -28,89 +20,10 @@ pub(crate) mod internal {
         }
     }
 
-    /// Formats `n` as a string representation of fixed decimal, based on the supplied options.
-    // TODO: Push this implementation into FixedDecimal.
-    // See: https://github.com/unicode-org/icu4x/issues/340
-    pub fn fixed_format(n: f64, opts: &Options) -> String {
-        // n = 1234.5
-
-        // 1234.5 -> "1234"
-        // -1234.5 -> "1234"
-        let int_part = format!("{}", n.abs().floor());
-
-        // 5 -> ""
-        // 0.4 -> "4"
-        // 0.43 -> "43"
-        let raw_frac_part = format!("{}", n.fract()); // 0.5
-        let frac_part = if n.fract() == 0.0 {
-            ""
-        } else {
-            #[allow(clippy::indexing_slicing)] // fract output shape
-            &raw_frac_part[2..]
-        };
-
-        dbg!("--> frac={}, fracf={}", &frac_part, &raw_frac_part);
-        dbg!("int_part='{}'; frac_part='{}'", &int_part, &frac_part);
-        dbg!("opts={:?}", opts);
-
-        // Limit the min and max display digits first by individual field.
-        let display_integer_digits = max(int_part.len(), opts.minimum_integer_digits as usize);
-        let display_fraction_digits = max(
-            min(frac_part.len(), opts.maximum_fraction_digits as usize),
-            opts.minimum_fraction_digits as usize,
-        );
-        let total_significant_digits = max(
-            opts.minimum_significant_digits as usize,
-            min(
-                opts.maximum_significant_digits as usize,
-                frac_part.len() + int_part.len(),
-            ),
-        );
-
-        let significant_digits_in_fraction = clamp_diff(total_significant_digits, int_part.len());
-        dbg!(
-            "did={}; dfd={}; sd={}; rsd={}",
-            display_integer_digits,
-            display_fraction_digits,
-            total_significant_digits,
-            significant_digits_in_fraction
-        );
-
-        // Integer fragment.
-        let leading_zeros = clamp_diff(display_integer_digits, int_part.len());
-        let trailing_zeros_in_int_part = clamp_diff(int_part.len(), total_significant_digits);
-        let i = std::iter::repeat('0')
-            .take(leading_zeros)
-            .chain(int_part.chars().take(total_significant_digits))
-            .chain(std::iter::repeat('0').take(trailing_zeros_in_int_part));
-
-        // Decimal dot is printed only if decimals will follow.
-        let dd = match display_fraction_digits == 0 {
-            true => "",
-            false => ".",
-        }
-        .chars();
-
-        // Fractional fragment.
-        let f = frac_part
-            .chars()
-            // At most the number of significant digits.
-            .take(significant_digits_in_fraction)
-            // Fill the rest with zeros.
-            .chain(std::iter::repeat('0'))
-            // Take at most the number of fraction digits we're required to display.
-            .take(display_fraction_digits);
-        // "001234.500"
-        let nstr = i.chain(dd).chain(f).collect::<String>();
-        dbg!("nstr={}", &nstr);
-        nstr
-    }
-
     /// Converts the number to format into the operands representation.
-    pub fn to_icu4x_operands(n: f64, opts: Options) -> PluralOperands {
+    pub fn to_icu4x_operands(n: f64, _opts: Options) -> PluralOperands {
         dbg!("n={}", n);
-        let _nstr = fixed_format(n, &opts);
-        todo!()
+        (&FixedDecimal::try_from_f64(n, fixed_decimal::FloatPrecision::Floating).unwrap()).into()
     }
 
     /// Expresses the [`PluralCategory`] as a `str`.
@@ -122,71 +35,6 @@ pub(crate) mod internal {
             PluralCategory::Other => "other",
             PluralCategory::Two => "two",
             PluralCategory::Zero => "zero",
-        }
-    }
-
-    #[cfg(test)]
-    mod testing {
-        use super::*;
-        use ecma402_traits::pluralrules::options::Type;
-        use icu::plurals::rules::RawPluralOperands;
-
-        fn opt(
-            minimum_integer_digits: u8,
-            minimum_fraction_digits: u8,
-            maximum_fraction_digits: u8,
-            minimum_significant_digits: u8,
-            maximum_significant_digits: u8,
-        ) -> Options {
-            Options {
-                in_type: Type::Cardinal,
-                minimum_integer_digits,
-                minimum_fraction_digits,
-                maximum_fraction_digits,
-                minimum_significant_digits,
-                maximum_significant_digits,
-            }
-        }
-
-        #[test]
-        fn string_conversion() {
-            #[derive(Debug)]
-            struct TestCase {
-                n: f64,
-                opts: Options,
-                expected: &'static str,
-            }
-            let tests = [
-                TestCase {
-                    n: 0.0,
-                    opts: opt(3, 2, 3, 3, 4),
-                    expected: "000.00",
-                },
-                TestCase {
-                    n: 1.5,
-                    opts: opt(3, 2, 3, 3, 4),
-                    expected: "001.50",
-                },
-                TestCase {
-                    n: 1.5,
-                    opts: opt(5, 5, 8, 3, 4),
-                    expected: "00001.50000",
-                },
-                TestCase {
-                    n: 123456.5,
-                    opts: opt(5, 5, 8, 3, 4),
-                    expected: "123400.00000",
-                },
-                TestCase {
-                    n: 123456.5432112345,
-                    opts: opt(5, 5, 8, 3, 4),
-                    expected: "123400.00000000",
-                },
-            ];
-            for test in tests {
-                let actual = fixed_format(test.n, &test.opts);
-                assert_eq!(test.expected, actual.as_str(), "test: {:?}", &test);
-            }
         }
     }
 }
