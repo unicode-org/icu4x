@@ -5,6 +5,7 @@
 // This example illustrates a very simple type implementing Writeable.
 
 #![no_main] // https://github.com/unicode-org/icu4x/issues/395
+icu_benchmark_macros::instrument!();
 
 use std::fmt;
 use writeable::*;
@@ -45,18 +46,16 @@ impl<V: Writeable> fmt::Display for WriteableMessage<V> {
     }
 }
 
-icu_benchmark_macros::bench!(
-    fn main() {
-        let (string, parts) =
-            writeable::_internal::writeable_to_parts_for_test(&WriteableMessage("world"));
+fn main() {
+    let (string, parts) =
+        writeable::_internal::writeable_to_parts_for_test(&WriteableMessage("world"));
 
-        assert_eq!(string, "Hello world 😅");
+    assert_eq!(string, "Hello world 😅");
 
-        // Print the greeting only
-        let (start, end, _) = parts
-            .into_iter()
-            .find(|(_, _, part)| part == &GREETING)
-            .unwrap();
-        println!("{}", &string[start..end]);
-    }
-);
+    // Print the greeting only
+    let (start, end, _) = parts
+        .into_iter()
+        .find(|(_, _, part)| part == &GREETING)
+        .unwrap();
+    println!("{}", &string[start..end]);
+}

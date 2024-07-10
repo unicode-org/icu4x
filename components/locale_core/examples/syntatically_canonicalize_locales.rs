@@ -6,6 +6,8 @@
 // makes them syntatically canonical and serializes the list back into a comma separated list.
 
 #![no_main] // https://github.com/unicode-org/icu4x/issues/395
+icu_benchmark_macros::instrument!();
+use icu_benchmark_macros::println;
 
 use std::env;
 
@@ -23,20 +25,18 @@ fn syntactically_canonicalize_locales(input: &str) -> String {
     canonical_locales.join(", ")
 }
 
-icu_benchmark_macros::bench!(
-    fn main() {
-        let args: Vec<String> = env::args().collect();
+fn main() {
+    let args: Vec<String> = env::args().collect();
 
-        let input = if let Some(input) = args.get(1) {
-            input.as_str()
-        } else {
-            DEFAULT_INPUT
-        };
-        let _output = syntactically_canonicalize_locales(input);
+    let input = if let Some(input) = args.get(1) {
+        input.as_str()
+    } else {
+        DEFAULT_INPUT
+    };
+    let _output = syntactically_canonicalize_locales(input);
 
-        println!("\nInput: {input}\nOutput: {_output}");
-    }
-);
+    println!("\nInput: {input}\nOutput: {_output}");
+}
 
 #[cfg(test)]
 mod tests {

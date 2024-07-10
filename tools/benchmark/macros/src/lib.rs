@@ -26,8 +26,28 @@ pub use dhat;
 pub use dlmalloc;
 
 #[macro_export]
-macro_rules! println_noop {
-    ($($arg:tt)*) => {{}};
+macro_rules! println {
+    ($lit:literal $(, $arg:expr)* $(,)?) => {{
+        /// For binary size benchmarks we don't want to include `std::fmt::Write` machinery,
+        /// which `println!` pulls in, but we do want to actually evaluate the arguments.
+        #[cfg(not(debug_assertions))]
+        {
+            struct Sink;
+            impl std::fmt::Write for Sink {
+                fn write_str(&mut self, _s: &str) -> Result<(), std::fmt::Error> { Ok(()) }
+                fn write_char(&mut self, _c: char) -> Result<(), std::fmt::Error> { Ok(()) }
+                fn write_fmt(&mut self, _args: std::fmt::Arguments<'_>) -> Result<(), std::fmt::Error> { Ok(()) }
+            }
+
+            $(
+                let _infallible = writeable::Writeable::write_to(&$arg, &mut Sink);
+            )*
+        }
+        #[cfg(debug_assertions)]
+        {
+            std::println!($lit, $($arg,)*);
+        }
+    }};
 }
 
 // If no features or all features are present, do nothing
@@ -36,60 +56,57 @@ macro_rules! println_noop {
     all(feature = "benchmark_memory", feature = "rust_global_allocator"),
 ))]
 #[macro_export]
-macro_rules! bench {
-    (fn main() $main:block) => {
-        #[cfg(not(debug_assertions))]
-        use $crate::println_noop as println;
-        #[cfg_attr(not(debug_assertions), allow(unused_variables))]
-        #[no_mangle]
-        fn main(_argc: isize, _argv: *const *const u8) -> isize {
-            let () = $main;
-            0
-        }
+macro_rules! instrument {
+    () => {
+        const _: () = {
+            #[no_mangle]
+            fn main(_argc: isize, _argv: *const *const u8) -> isize {
+                self::main();
+                0
+            }
+        };
     };
 }
 
 // Enable DHat if the "benchmark_memory" feature is present alone
 #[cfg(all(feature = "benchmark_memory", not(feature = "rust_global_allocator")))]
 #[macro_export]
-macro_rules! bench {
-    (fn main() $main:block) => {
+macro_rules! instrument {
+    () => {
         use $crate::dhat;
-        #[cfg(not(debug_assertions))]
-        use $crate::println_noop as println;
         // Use the dhat global allocator to instrument memory usage.
         #[global_allocator]
         static ALLOCATOR: dhat::Alloc = dhat::Alloc;
 
-        #[cfg_attr(not(debug_assertions), allow(unused_variables))]
-        #[no_mangle]
-        fn main(_argc: isize, _argv: *const *const u8) -> isize {
-            // The dhat instance will be alive for the life of the main function, and when dropped,
-            // it will output heap usage information.
-            let _profiler = dhat::Profiler::new_heap();
-            let () = $main;
-            0
-        }
+        const _: () = {
+            #[no_mangle]
+            fn main(_argc: isize, _argv: *const *const u8) -> isize {
+                // The dhat instance will be alive for the life of the main function, and when dropped,
+                // it will output heap usage information.
+                let _profiler = $crate::dhat::Profiler::new_heap();
+                self::main();
+                0
+            }
+        };
     };
 }
 
 // Enable Dlmalloc if the "rust_global_allocator" feature is present alone
 #[cfg(all(feature = "rust_global_allocator", not(feature = "benchmark_memory")))]
 #[macro_export]
-macro_rules! bench {
-    (fn main() $main:block) => {
+macro_rules! instrument {
+    () => {
         use $crate::dlmalloc::GlobalDlmalloc;
-        #[cfg(not(debug_assertions))]
-        use $crate::println_noop as println;
         // Use Dlmalloc to remove the system allocator dependency
         #[global_allocator]
         static ALLOCATOR: GlobalDlmalloc = GlobalDlmalloc;
 
-        #[cfg_attr(not(debug_assertions), allow(unused_variables))]
-        #[no_mangle]
-        fn main(_argc: isize, _argv: *const *const u8) -> isize {
-            let () = $main;
-            0
-        }
+        const _: () = {
+            #[no_mangle]
+            fn main(_argc: isize, _argv: *const *const u8) -> isize {
+                self::main();
+                0
+            }
+        };
     };
 }

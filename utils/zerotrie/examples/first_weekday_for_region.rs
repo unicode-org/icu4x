@@ -4,8 +4,9 @@
 
 // This example demonstrates the use of ZeroTrieSimpleAscii to look up data based on a region code.
 
-#![no_main] // https://github.com/unicode-org/icu4x/issues/395
 #![allow(dead_code)]
+#![no_main] // https://github.com/unicode-org/icu4x/issues/395
+icu_benchmark_macros::instrument!();
 
 use zerotrie::ZeroTriePerfectHash;
 use zerotrie::ZeroTrieSimpleAscii;
@@ -209,12 +210,10 @@ fn black_box<T>(dummy: T) -> T {
     }
 }
 
-icu_benchmark_macros::bench!(
-    fn main() {
-        // Un-comment to re-generate the bytes (printed to the terminal)
-        // let trie_phf = DATA.iter().copied().collect::<ZeroTriePerfectHash<Vec<_>>>();
-        // assert_eq!(trie_phf.as_bytes(), TRIE_PHF.as_bytes());
+fn main() {
+    // Un-comment to re-generate the bytes (printed to the terminal)
+    // let trie_phf = DATA.iter().copied().collect::<ZeroTriePerfectHash<Vec<_>>>();
+    // assert_eq!(trie_phf.as_bytes(), TRIE_PHF.as_bytes());
 
-        assert_eq!(black_box(TRIE_PHF).get(b"MV"), Some(weekday::FRI));
-    }
-);
+    assert_eq!(black_box(TRIE_PHF).get(b"MV"), Some(weekday::FRI));
+}

@@ -13,6 +13,8 @@
 // compared to real Unicode block selection.
 
 #![no_main] // https://github.com/unicode-org/icu4x/issues/395
+icu_benchmark_macros::instrument!();
+use icu_benchmark_macros::println;
 
 use icu_collections::codepointinvlist::{CodePointInversionList, CodePointInversionListBuilder};
 
@@ -58,21 +60,19 @@ impl<'data> BmpBlockSelector<'data> {
     }
 }
 
-icu_benchmark_macros::bench!(
-    fn main() {
-        let selector = BmpBlockSelector::new();
+fn main() {
+    let selector = BmpBlockSelector::new();
 
-        let sample = "Welcome to MyName©®, Алексей!";
+    let sample = "Welcome to MyName©®, Алексей!";
 
-        let mut result = vec![];
+    let mut result = vec![];
 
-        for ch in sample.chars() {
-            result.push((ch, selector.select(ch)));
-        }
-
-        println!("\n====== Unicode BMP Block Selector example ============");
-        for (ch, block) in result {
-            println!("{ch}: {block:#?}");
-        }
+    for ch in sample.chars() {
+        result.push((ch, selector.select(ch)));
     }
-);
+
+    println!("\n====== Unicode BMP Block Selector example ============");
+    for (ch, block) in result {
+        println!("{ch}: {block:#?}");
+    }
+}

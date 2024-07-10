@@ -6,6 +6,8 @@
 // from a work log into human readable dates and times.
 
 #![no_main] // https://github.com/unicode-org/icu4x/issues/395
+icu_benchmark_macros::instrument!();
+use icu_benchmark_macros::println;
 
 use icu_calendar::{DateTime, Gregorian};
 use icu_datetime::{options::length, TypedDateTimeFormatter};
@@ -24,30 +26,27 @@ const DATES_ISO: &[(i32, u8, u8, u8, u8, u8)] = &[
     (2033, 5, 17, 20, 33, 20),
 ];
 
-icu_benchmark_macros::bench!(
-    fn main() {
-        let dates = DATES_ISO
-            .iter()
-            .copied()
-            .map(|(y, m, d, h, min, s)| DateTime::try_new_gregorian_datetime(y, m, d, h, min, s))
-            .collect::<Result<Vec<DateTime<Gregorian>>, _>>()
-            .expect("Failed to parse dates.");
+fn main() {
+    let dates = DATES_ISO
+        .iter()
+        .copied()
+        .map(|(y, m, d, h, min, s)| DateTime::try_new_gregorian_datetime(y, m, d, h, min, s))
+        .collect::<Result<Vec<DateTime<Gregorian>>, _>>()
+        .expect("Failed to parse dates.");
 
-        let mut options = length::Bag::default();
+    let mut options = length::Bag::default();
 
-        options.date = Some(length::Date::Medium);
-        options.time = Some(length::Time::Short);
+    options.date = Some(length::Date::Medium);
+    options.time = Some(length::Time::Short);
 
-        let dtf =
-            TypedDateTimeFormatter::<Gregorian>::try_new(&locale!("en").into(), options.into())
-                .expect("Failed to create TypedDateTimeFormatter instance.");
-        {
-            println!("\n====== Work Log (en) example ============");
+    let dtf = TypedDateTimeFormatter::<Gregorian>::try_new(&locale!("en").into(), options.into())
+        .expect("Failed to create TypedDateTimeFormatter instance.");
+    {
+        println!("\n====== Work Log (en) example ============");
 
-            for (idx, date) in dates.iter().enumerate() {
-                let fdt = dtf.format(date);
-                println!("{idx}) {fdt}");
-            }
+        for (idx, date) in dates.iter().enumerate() {
+            let fdt = dtf.format(date);
+            println!("{idx}) {fdt}");
         }
     }
-);
+}

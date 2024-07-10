@@ -6,6 +6,8 @@
 // from a log into human readable dates and times.
 
 #![no_main] // https://github.com/unicode-org/icu4x/issues/395
+icu_benchmark_macros::instrument!();
+use icu_benchmark_macros::println;
 
 use icu_calendar::{Date, Iso, RangeError};
 
@@ -29,22 +31,20 @@ fn tuple_to_iso_date(date: (i32, u8, u8)) -> Result<Date<Iso>, RangeError> {
     Date::try_new_iso_date(date.0, date.1, date.2)
 }
 
-icu_benchmark_macros::bench!(
-    fn main() {
-        let dates = DATES_ISO
-            .iter()
-            .copied()
-            .map(tuple_to_iso_date)
-            .collect::<Result<Vec<Date<Iso>>, _>>()
-            .expect("Failed to parse dates.");
+fn main() {
+    let dates = DATES_ISO
+        .iter()
+        .copied()
+        .map(tuple_to_iso_date)
+        .collect::<Result<Vec<Date<Iso>>, _>>()
+        .expect("Failed to parse dates.");
 
-        for date_input in dates {
-            println!(
-                "Year: {}, Month: {}, Day: {}",
-                date_input.year().number,
-                date_input.month().ordinal,
-                date_input.day_of_month().0,
-            );
-        }
+    for date_input in dates {
+        println!(
+            "Year: {}, Month: {}, Day: {}",
+            date_input.year().number,
+            date_input.month().ordinal,
+            date_input.day_of_month().0,
+        );
     }
-);
+}

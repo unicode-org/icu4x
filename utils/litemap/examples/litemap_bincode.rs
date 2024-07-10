@@ -6,6 +6,7 @@
 // HashMap. This example demonstrates how it works with Serde.
 
 #![no_main] // https://github.com/unicode-org/icu4x/issues/395
+icu_benchmark_macros::instrument!();
 
 use litemap::LiteMap;
 
@@ -50,12 +51,10 @@ fn generate() {
     println!("{buf:?}");
 }
 
-icu_benchmark_macros::bench!(
-    fn main() {
-        // Uncomment the following line to re-generate the binary data.
-        // generate();
+fn main() {
+    // Uncomment the following line to re-generate the binary data.
+    // generate();
 
-        let map: LiteMap<&str, &str> = bincode::deserialize(&BINCODE).unwrap();
-        assert_eq!(map.get("tr"), Some(&"Turkish"));
-    }
-);
+    let map: LiteMap<&str, &str> = bincode::deserialize(&BINCODE).unwrap();
+    assert_eq!(map.get("tr"), Some(&"Turkish"));
+}
