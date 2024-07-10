@@ -16,6 +16,6 @@ mod plural;
 
 pub use generic::GenericPattern;
 #[cfg(feature = "experimental")]
-pub(crate) use generic::{ZERO_ONE_TWO_SLICE, ZERO_ONE_TWO_SPACED_SLICE};
+pub(crate) use generic::ZERO_ONE_TWO_SLICE;
 pub use pattern::{Pattern, PatternBorrowed, PatternMetadata, PatternULE};
 pub use plural::{PatternPlurals, PluralPattern};

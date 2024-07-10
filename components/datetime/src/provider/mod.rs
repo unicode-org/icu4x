@@ -99,9 +99,7 @@ const _: () = {
     #[cfg(feature = "experimental")]
     impl_day_period_names_v1_marker!(Baked);
     #[cfg(feature = "experimental")]
-    impl_date_time_pattern_v1_marker!(Baked);
-    #[cfg(feature = "experimental")]
-    impl_time_pattern_v1_marker!(Baked);
+    impl_glue_pattern_v1_marker!(Baked);
     #[cfg(feature = "experimental")]
     impl_time_neo_skeleton_patterns_v1_marker!(Baked);
 
@@ -158,32 +156,6 @@ const _: () = {
     impl_persian_month_names_v1_marker!(Baked);
     #[cfg(feature = "experimental")]
     impl_roc_month_names_v1_marker!(Baked);
-    #[cfg(feature = "experimental")]
-    impl_buddhist_date_pattern_v1_marker!(Baked);
-    #[cfg(feature = "experimental")]
-    impl_chinese_date_pattern_v1_marker!(Baked);
-    #[cfg(feature = "experimental")]
-    impl_coptic_date_pattern_v1_marker!(Baked);
-    #[cfg(feature = "experimental")]
-    impl_dangi_date_pattern_v1_marker!(Baked);
-    #[cfg(feature = "experimental")]
-    impl_ethiopian_date_pattern_v1_marker!(Baked);
-    #[cfg(feature = "experimental")]
-    impl_gregorian_date_pattern_v1_marker!(Baked);
-    #[cfg(feature = "experimental")]
-    impl_hebrew_date_pattern_v1_marker!(Baked);
-    #[cfg(feature = "experimental")]
-    impl_indian_date_pattern_v1_marker!(Baked);
-    #[cfg(feature = "experimental")]
-    impl_islamic_date_pattern_v1_marker!(Baked);
-    #[cfg(feature = "experimental")]
-    impl_japanese_date_pattern_v1_marker!(Baked);
-    #[cfg(feature = "experimental")]
-    impl_japanese_extended_date_pattern_v1_marker!(Baked);
-    #[cfg(feature = "experimental")]
-    impl_persian_date_pattern_v1_marker!(Baked);
-    #[cfg(feature = "experimental")]
-    impl_roc_date_pattern_v1_marker!(Baked);
 
     #[cfg(feature = "experimental")]
     impl_buddhist_date_neo_skeleton_patterns_v1_marker!(Baked);
@@ -258,9 +230,7 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     #[cfg(feature = "experimental")]
     neo::DayPeriodNamesV1Marker::INFO,
     #[cfg(feature = "experimental")]
-    neo::DateTimePatternV1Marker::INFO,
-    #[cfg(feature = "experimental")]
-    neo::TimePatternV1Marker::INFO,
+    neo::GluePatternV1Marker::INFO,
     #[cfg(feature = "experimental")]
     neo::TimeNeoSkeletonPatternsV1Marker::INFO,
     #[cfg(feature = "experimental")]
@@ -315,32 +285,6 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     neo::PersianMonthNamesV1Marker::INFO,
     #[cfg(feature = "experimental")]
     neo::RocMonthNamesV1Marker::INFO,
-    #[cfg(feature = "experimental")]
-    neo::BuddhistDatePatternV1Marker::INFO,
-    #[cfg(feature = "experimental")]
-    neo::ChineseDatePatternV1Marker::INFO,
-    #[cfg(feature = "experimental")]
-    neo::CopticDatePatternV1Marker::INFO,
-    #[cfg(feature = "experimental")]
-    neo::DangiDatePatternV1Marker::INFO,
-    #[cfg(feature = "experimental")]
-    neo::EthiopianDatePatternV1Marker::INFO,
-    #[cfg(feature = "experimental")]
-    neo::GregorianDatePatternV1Marker::INFO,
-    #[cfg(feature = "experimental")]
-    neo::HebrewDatePatternV1Marker::INFO,
-    #[cfg(feature = "experimental")]
-    neo::IndianDatePatternV1Marker::INFO,
-    #[cfg(feature = "experimental")]
-    neo::IslamicDatePatternV1Marker::INFO,
-    #[cfg(feature = "experimental")]
-    neo::JapaneseDatePatternV1Marker::INFO,
-    #[cfg(feature = "experimental")]
-    neo::JapaneseExtendedDatePatternV1Marker::INFO,
-    #[cfg(feature = "experimental")]
-    neo::PersianDatePatternV1Marker::INFO,
-    #[cfg(feature = "experimental")]
-    neo::RocDatePatternV1Marker::INFO,
     #[cfg(feature = "experimental")]
     neo::BuddhistDateNeoSkeletonPatternsV1Marker::INFO,
     #[cfg(feature = "experimental")]
