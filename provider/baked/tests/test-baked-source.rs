@@ -40,3 +40,54 @@ fn load() {
         assert_eq!(baked, expected);
     }
 }
+
+#[test]
+fn prefix_match() {
+    use icu_provider::hello_world::HelloWorldV1Marker;
+    use icu_provider::prelude::*;
+
+    let id = DataIdentifierCow::from_owned(
+        DataMarkerAttributes::from_str_or_panic("reve").to_owned(),
+        "ja".parse().unwrap(),
+    );
+
+    assert!(DataProvider::<HelloWorldV1Marker>::load(
+        &Baked,
+        DataRequest {
+            id: id.as_borrowed(),
+            ..Default::default()
+        }
+    )
+    .is_err());
+
+    assert!(DataProvider::<HelloWorldV1Marker>::load(
+        &Baked,
+        DataRequest {
+            id: id.as_borrowed(),
+            metadata: {
+                let mut metadata = DataRequestMetadata::default();
+                metadata.attributes_prefix_match = true;
+                metadata
+            }
+        }
+    )
+    .is_ok());
+
+    let id = DataIdentifierCow::from_owned(
+        DataMarkerAttributes::from_str_or_panic("non-existent").to_owned(),
+        "ja".parse().unwrap(),
+    );
+
+    assert!(DataProvider::<HelloWorldV1Marker>::load(
+        &Baked,
+        DataRequest {
+            id: id.as_borrowed(),
+            metadata: {
+                let mut metadata = DataRequestMetadata::default();
+                metadata.attributes_prefix_match = true;
+                metadata
+            }
+        }
+    )
+    .is_err());
+}

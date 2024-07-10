@@ -548,7 +548,7 @@ impl DataExporter for BakedExporter {
             let search = if !needs_fallback {
                 quote! {
                     let metadata = Default::default();
-                    let Some(payload) = icu_provider_baked::DataStore::get(&Self::#data_ident, req.id) else {
+                    let Some(payload) = icu_provider_baked::DataStore::get(&Self::#data_ident, req.id, req.metadata.attributes_prefix_match) else {
                         return Err(icu_provider::DataErrorKind::IdentifierNotFound.with_req(<#marker_bake as icu_provider::DataMarker>::INFO, req))
                     };
                 }
@@ -557,7 +557,7 @@ impl DataExporter for BakedExporter {
                 quote! {
                     let mut metadata = icu_provider::DataResponseMetadata::default();
 
-                    let payload =  if let Some(payload) = icu_provider_baked::DataStore::get(&Self::#data_ident, req.id) {
+                    let payload =  if let Some(payload) = icu_provider_baked::DataStore::get(&Self::#data_ident, req.id, req.metadata.attributes_prefix_match) {
                         payload
                     } else {
                         const FALLBACKER: icu_locale::fallback::LocaleFallbackerWithConfig<'static> =
@@ -565,7 +565,7 @@ impl DataExporter for BakedExporter {
                                 .for_config(<#marker_bake as icu_provider::DataMarker>::INFO.fallback_config);
                         let mut fallback_iterator = FALLBACKER.fallback_for(req.id.locale.clone());
                         loop {
-                            if let Some(payload) = icu_provider_baked::DataStore::get(&Self::#data_ident, icu_provider::DataIdentifierBorrowed::for_marker_attributes_and_locale(req.id.marker_attributes, fallback_iterator.get())) {
+                            if let Some(payload) = icu_provider_baked::DataStore::get(&Self::#data_ident, icu_provider::DataIdentifierBorrowed::for_marker_attributes_and_locale(req.id.marker_attributes, fallback_iterator.get()), req.metadata.attributes_prefix_match) {
                                 metadata.locale = Some(fallback_iterator.take());
                                 break payload;
                             }

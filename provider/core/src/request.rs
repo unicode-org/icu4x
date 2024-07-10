@@ -39,6 +39,8 @@ pub struct DataRequest<'a> {
 pub struct DataRequestMetadata {
     /// Silent requests do not log errors. This can be used for exploratory querying, such as fallbacks.
     pub silent: bool,
+    /// Whether to allow prefix matches for the data marker attributes.
+    pub attributes_prefix_match: bool,
 }
 
 /// The borrowed version of a [`DataIdentifierCow`].
