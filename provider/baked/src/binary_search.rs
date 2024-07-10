@@ -117,9 +117,20 @@ pub(crate) fn bake(
 pub struct Data<K: BinarySearchKey, M: DataMarker>(pub &'static [(K::Type, &'static M::Yokeable)]);
 
 impl<K: BinarySearchKey, M: DataMarker> super::DataStore<M> for Data<K, M> {
-    fn get(&self, id: DataIdentifierBorrowed) -> Option<&'static M::Yokeable> {
+    fn get(
+        &self,
+        id: DataIdentifierBorrowed,
+        attributes_prefix_match: bool,
+    ) -> Option<&'static M::Yokeable> {
         self.0
             .binary_search_by(|&(k, _)| K::cmp(k, id))
+            .or_else(|e| {
+                if attributes_prefix_match {
+                    Ok(e)
+                } else {
+                    Err(e)
+                }
+            })
             .map(|i| unsafe { self.0.get_unchecked(i) }.1)
             .ok()
     }

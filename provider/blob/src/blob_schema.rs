@@ -233,16 +233,24 @@ impl<'data, LocaleVecFormat: VarZeroVecFormat> BlobSchemaV2<'data, LocaleVecForm
             .ok_or_else(|| DataError::custom("Invalid blob bytes").with_req(marker, req))?;
         let mut cursor = ZeroTrieSimpleAscii::from_store(zerotrie).into_cursor();
         let _infallible_ascii = req.id.locale.write_to(&mut cursor);
-        if !req.id.marker_attributes.is_empty() {
+        let blob_index = if !req.id.marker_attributes.is_empty() {
             let _infallible_ascii = cursor.write_char(REQUEST_SEPARATOR);
             req.id
                 .marker_attributes
                 .write_to(&mut cursor)
                 .map_err(|_| DataErrorKind::IdentifierNotFound.with_req(marker, req))?;
+            loop {
+                if let Some(v) = cursor.take_value() {
+                    break Some(v);
+                }
+                if !req.metadata.attributes_prefix_match || cursor.probe(0).is_none() {
+                    break None;
+                }
+            }
+        } else {
+            cursor.take_value()
         }
-        let blob_index = cursor
-            .take_value()
-            .ok_or_else(|| DataErrorKind::IdentifierNotFound.with_req(marker, req))?;
+        .ok_or_else(|| DataErrorKind::IdentifierNotFound.with_req(marker, req))?;
         let buffer = self
             .buffers
             .get(blob_index)
