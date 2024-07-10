@@ -27,17 +27,15 @@ pub use dlmalloc;
     not(any(feature = "benchmark_memory", feature = "rust_global_allocator")),
     all(feature = "benchmark_memory", feature = "rust_global_allocator"),
 ))]
-mod default {
-    #[macro_export]
-    macro_rules! bench {
-        (fn main() $main:block) => {
-            #[no_mangle]
-            fn main(_argc: isize, _argv: *const *const u8) -> isize {
-                let () = $main;
-                0
-            }
-        };
-    }
+#[macro_export]
+macro_rules! bench {
+    (fn main() $main:block) => {
+        #[no_mangle]
+        fn main(_argc: isize, _argv: *const *const u8) -> isize {
+            let () = $main;
+            0
+        }
+    };
 }
 
 // Enable DHat if the "benchmark_memory" feature is present alone
