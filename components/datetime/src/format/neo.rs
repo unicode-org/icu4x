@@ -12,7 +12,7 @@ use crate::input::DateInput;
 use crate::input::ExtractedDateTimeInput;
 use crate::input::IsoTimeInput;
 use crate::neo_marker::{
-    DateInputMarkers, NeoGetField, TimeMarkers, TypedDateMarkers, TypedDateTimeMarkers, ZoneMarkers
+    DateInputMarkers, DateTimeMarkers, NeoGetField, TimeMarkers, TypedDateMarkers, ZoneMarkers,
 };
 use crate::neo_pattern::{DateTimePattern, DateTimePatternBorrowed};
 use crate::neo_skeleton::NeoDateTimeComponents;
@@ -2056,7 +2056,12 @@ pub(crate) struct RawDateTimePatternFormatter<'a> {
     names: RawDateTimeNamesBorrowed<'a>,
 }
 
-impl<'a, C: CldrCalendar, R: TypedDateTimeMarkers<C>> DateTimePatternFormatter<'a, C, R> {
+impl<'a, C: CldrCalendar, R: DateTimeMarkers> DateTimePatternFormatter<'a, C, R>
+where
+    R::D: TypedDateMarkers<C> + DateInputMarkers,
+    R::T: TimeMarkers,
+    R::Z: ZoneMarkers,
+{
     /// Formats a date and time of day.
     ///
     /// For an example, see [`TypedDateTimeNames`].
@@ -2076,9 +2081,8 @@ impl<'a, C: CldrCalendar, R: TypedDateTimeMarkers<C>> DateTimePatternFormatter<'
             + NeoGetField<<R::T as TimeMarkers>::NanoSecondInput>
             + NeoGetField<<R::Z as ZoneMarkers>::TimeZoneInput>,
     {
-        let datetime = ExtractedDateTimeInput::extract_from_neo_input::<R::D, R::T, R::Z, I>(
-            datetime,
-        );
+        let datetime =
+            ExtractedDateTimeInput::extract_from_neo_input::<R::D, R::T, R::Z, I>(datetime);
         FormattedDateTimePattern {
             pattern: self.inner.pattern,
             datetime,

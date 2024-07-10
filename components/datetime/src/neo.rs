@@ -14,8 +14,7 @@ use crate::neo_marker::DateInputMarkers;
 use crate::neo_marker::HasConstComponents;
 use crate::neo_marker::{
     ConvertCalendar, DateMarkers, DateTimeMarkers, IsAnyCalendarKind, IsRuntimeComponents,
-    NeoGetField, TimeMarkers, TypedDateMarkers, TypedDateTimeMarkers,
-    ZoneMarkers,
+    NeoGetField, TimeMarkers, TypedDateMarkers, ZoneMarkers,
 };
 use crate::neo_pattern::DateTimePattern;
 use crate::neo_skeleton::{NeoComponents, NeoSkeletonLength};
@@ -177,7 +176,12 @@ pub struct TypedNeoFormatter<C: CldrCalendar, R: DateTimeNamesMarker> {
     _calendar: PhantomData<C>,
 }
 
-impl<C: CldrCalendar, R: TypedDateTimeMarkers<C> + HasConstComponents> TypedNeoFormatter<C, R> {
+impl<C: CldrCalendar, R: DateTimeMarkers + HasConstComponents> TypedNeoFormatter<C, R>
+where
+    R::D: TypedDateMarkers<C>,
+    R::T: TimeMarkers,
+    R::Z: ZoneMarkers,
+{
     /// Creates a new [`TypedNeoFormatter`] from compiled data with
     /// datetime components specified at build time.
     ///
@@ -285,7 +289,12 @@ impl<C: CldrCalendar, R: TypedDateTimeMarkers<C> + HasConstComponents> TypedNeoF
     }
 }
 
-impl<C: CldrCalendar, R: TypedDateTimeMarkers<C> + IsRuntimeComponents> TypedNeoFormatter<C, R> {
+impl<C: CldrCalendar, R: DateTimeMarkers + IsRuntimeComponents> TypedNeoFormatter<C, R>
+where
+    R::D: TypedDateMarkers<C>,
+    R::T: TimeMarkers,
+    R::Z: ZoneMarkers,
+{
     /// Creates a new [`TypedNeoFormatter`] from compiled data with
     /// datetime components specified at runtime.
     ///
@@ -448,7 +457,12 @@ impl<C: CldrCalendar, R: TypedDateTimeMarkers<C> + IsRuntimeComponents> TypedNeo
     }
 }
 
-impl<C: CldrCalendar, R: TypedDateTimeMarkers<C>> TypedNeoFormatter<C, R> {
+impl<C: CldrCalendar, R: DateTimeMarkers> TypedNeoFormatter<C, R>
+where
+    R::D: TypedDateMarkers<C>,
+    R::T: TimeMarkers,
+    R::Z: ZoneMarkers,
+{
     fn try_new_internal<P, L>(
         provider: &P,
         loader: &L,
@@ -506,7 +520,14 @@ impl<C: CldrCalendar, R: TypedDateTimeMarkers<C>> TypedNeoFormatter<C, R> {
             _calendar: PhantomData,
         })
     }
+}
 
+impl<C: CldrCalendar, R: DateTimeMarkers> TypedNeoFormatter<C, R>
+where
+    R::D: TypedDateMarkers<C> + DateInputMarkers,
+    R::T: TimeMarkers,
+    R::Z: ZoneMarkers,
+{
     /// Formats a datetime. Calendars and fields must match at compile time.
     ///
     /// # Examples
@@ -569,9 +590,8 @@ impl<C: CldrCalendar, R: TypedDateTimeMarkers<C>> TypedNeoFormatter<C, R> {
             + NeoGetField<<R::T as TimeMarkers>::NanoSecondInput>
             + NeoGetField<<R::Z as ZoneMarkers>::TimeZoneInput>,
     {
-        let datetime = ExtractedDateTimeInput::extract_from_neo_input::<R::D, R::T, R::Z, I>(
-            datetime,
-        );
+        let datetime =
+            ExtractedDateTimeInput::extract_from_neo_input::<R::D, R::T, R::Z, I>(datetime);
         FormattedNeoDateTime {
             pattern: self.selection.select(&datetime),
             datetime,
@@ -605,7 +625,12 @@ pub struct NeoFormatter<R: DateTimeNamesMarker> {
     calendar: AnyCalendar,
 }
 
-impl<R: DateTimeMarkers + HasConstComponents> NeoFormatter<R> {
+impl<R: DateTimeMarkers + HasConstComponents> NeoFormatter<R>
+where
+    R::D: DateMarkers,
+    R::T: TimeMarkers,
+    R::Z: ZoneMarkers,
+{
     /// Creates a new [`NeoFormatter`] from compiled data with
     /// datetime components specified at build time.
     ///
@@ -828,7 +853,12 @@ impl<R: DateTimeMarkers + HasConstComponents> NeoFormatter<R> {
     }
 }
 
-impl<R: DateTimeMarkers + IsRuntimeComponents> NeoFormatter<R> {
+impl<R: DateTimeMarkers + IsRuntimeComponents> NeoFormatter<R>
+where
+    R::D: DateMarkers,
+    R::T: TimeMarkers,
+    R::Z: ZoneMarkers,
+{
     /// Creates a new [`NeoFormatter`] from compiled data with
     /// datetime components specified at runtime.
     ///
@@ -1089,7 +1119,12 @@ impl<R: DateTimeMarkers + IsRuntimeComponents> NeoFormatter<R> {
     }
 }
 
-impl<R: DateTimeMarkers> NeoFormatter<R> {
+impl<R: DateTimeMarkers> NeoFormatter<R>
+where
+    R::D: DateMarkers,
+    R::T: TimeMarkers,
+    R::Z: ZoneMarkers,
+{
     fn try_new_internal<P, L>(
         provider: &P,
         loader: &L,
@@ -1197,7 +1232,14 @@ impl<R: DateTimeMarkers> NeoFormatter<R> {
             calendar,
         })
     }
+}
 
+impl<R: DateTimeMarkers> NeoFormatter<R>
+where
+    R::D: DateInputMarkers,
+    R::T: TimeMarkers,
+    R::Z: ZoneMarkers,
+{
     /// Formats a datetime, checking that the calendar system is correct.
     ///
     /// If the datetime is not in the same calendar system as the formatter,
@@ -1270,10 +1312,11 @@ impl<R: DateTimeMarkers> NeoFormatter<R> {
         if !datetime.is_any_calendar_kind(self.calendar.kind()) {
             return Err(crate::MismatchedCalendarError {
                 this_kind: self.calendar.kind(),
-                date_kind: NeoGetField::<<R::D as DateInputMarkers>::AnyCalendarKindInput>::get_field(
-                    datetime,
-                )
-                .into(),
+                date_kind:
+                    NeoGetField::<<R::D as DateInputMarkers>::AnyCalendarKindInput>::get_field(
+                        datetime,
+                    )
+                    .into(),
             });
         }
         let datetime =
@@ -1351,12 +1394,10 @@ impl<R: DateTimeMarkers> NeoFormatter<R> {
             + NeoGetField<<R::Z as ZoneMarkers>::TimeZoneInput>,
     {
         let datetime = datetime.to_calendar(&self.calendar);
-        let datetime = ExtractedDateTimeInput::extract_from_neo_input::<
-            R::D,
-            R::T,
-            R::Z,
-            I::Converted<'a>,
-        >(&datetime);
+        let datetime =
+            ExtractedDateTimeInput::extract_from_neo_input::<R::D, R::T, R::Z, I::Converted<'a>>(
+                &datetime,
+            );
         FormattedNeoDateTime {
             pattern: self.selection.select(&datetime),
             datetime,
