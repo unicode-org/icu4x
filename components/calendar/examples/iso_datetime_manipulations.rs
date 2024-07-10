@@ -7,8 +7,6 @@
 
 #![no_main] // https://github.com/unicode-org/icu4x/issues/395
 
-icu_benchmark_macros::static_setup!();
-
 use icu_calendar::{Calendar, DateError, DateTime, Iso};
 
 const DATETIMES_ISO: &[(i32, u8, u8, u8, u8, u8)] = &[
@@ -48,18 +46,15 @@ fn tuple_to_iso_datetime(date: (i32, u8, u8, u8, u8, u8)) -> Result<DateTime<Iso
     DateTime::try_new_iso_datetime(date.0, date.1, date.2, date.3, date.4, date.5)
 }
 
-#[no_mangle]
-fn main(_argc: isize, _argv: *const *const u8) -> isize {
-    icu_benchmark_macros::main_setup!();
+icu_benchmark_macros::bench!(
+    fn main() {
+        let datetimes = DATETIMES_ISO
+            .iter()
+            .copied()
+            .map(tuple_to_iso_datetime)
+            .collect::<Result<Vec<DateTime<Iso>>, _>>()
+            .expect("Failed to parse datetimes.");
 
-    let datetimes = DATETIMES_ISO
-        .iter()
-        .copied()
-        .map(tuple_to_iso_datetime)
-        .collect::<Result<Vec<DateTime<Iso>>, _>>()
-        .expect("Failed to parse datetimes.");
-
-    datetimes.iter().map(print).for_each(drop);
-
-    0
-}
+        datetimes.iter().map(print).for_each(drop);
+    }
+);

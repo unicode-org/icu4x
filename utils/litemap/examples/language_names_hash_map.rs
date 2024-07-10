@@ -9,8 +9,6 @@
 
 #![no_main] // https://github.com/unicode-org/icu4x/issues/395
 
-icu_benchmark_macros::static_setup!();
-
 use icu_locale_core::subtags::{language, Language};
 use std::collections::HashMap;
 
@@ -28,19 +26,16 @@ const DATA: [(Language, &str); 11] = [
     (language!("tr"), "Turkish"),
 ];
 
-#[no_mangle]
-fn main(_argc: isize, _argv: *const *const u8) -> isize {
-    icu_benchmark_macros::main_setup!();
+icu_benchmark_macros::bench!(
+    fn main() {
+        let mut map = HashMap::new();
+        // https://github.com/rust-lang/rust/issues/62633 was declined :(
+        for (lang, name) in DATA.iter() {
+            map.insert(lang, name).ok_or(()).unwrap_err();
+        }
 
-    let mut map = HashMap::new();
-    // https://github.com/rust-lang/rust/issues/62633 was declined :(
-    for (lang, name) in DATA.iter() {
-        map.insert(lang, name).ok_or(()).unwrap_err();
+        assert_eq!(11, map.len());
+        assert_eq!(Some(&&"Thai"), map.get(&language!("th")));
+        assert_eq!(None, map.get(&language!("de")));
     }
-
-    assert_eq!(11, map.len());
-    assert_eq!(Some(&&"Thai"), map.get(&language!("th")));
-    assert_eq!(None, map.get(&language!("de")));
-
-    0
-}
+);

@@ -10,8 +10,6 @@
 use zerotrie::ZeroTriePerfectHash;
 use zerotrie::ZeroTrieSimpleAscii;
 
-icu_benchmark_macros::static_setup!();
-
 mod weekday {
     pub const MON: usize = 1;
     pub const FRI: usize = 5;
@@ -211,17 +209,12 @@ fn black_box<T>(dummy: T) -> T {
     }
 }
 
-#[no_mangle]
-fn main(_argc: isize, _argv: *const *const u8) -> isize {
-    icu_benchmark_macros::main_setup!();
+icu_benchmark_macros::bench!(
+    fn main() {
+        // Un-comment to re-generate the bytes (printed to the terminal)
+        // let trie_phf = DATA.iter().copied().collect::<ZeroTriePerfectHash<Vec<_>>>();
+        // assert_eq!(trie_phf.as_bytes(), TRIE_PHF.as_bytes());
 
-    // Un-comment to re-generate the bytes (printed to the terminal)
-    // let trie_phf = DATA.iter().copied().collect::<ZeroTriePerfectHash<Vec<_>>>();
-    // assert_eq!(trie_phf.as_bytes(), TRIE_PHF.as_bytes());
-
-    if black_box(TRIE_PHF).get(b"MV") == Some(weekday::FRI) {
-        0
-    } else {
-        1
+        assert_eq!(black_box(TRIE_PHF).get(b"MV"), Some(weekday::FRI));
     }
-}
+);

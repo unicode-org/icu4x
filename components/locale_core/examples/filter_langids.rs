@@ -11,8 +11,6 @@
 
 #![no_main] // https://github.com/unicode-org/icu4x/issues/395
 
-icu_benchmark_macros::static_setup!();
-
 use std::env;
 
 use icu_locale_core::{subtags, LanguageIdentifier};
@@ -38,23 +36,21 @@ fn filter_input(input: &str) -> String {
     en_strs.join(", ")
 }
 
-#[no_mangle]
-fn main(_argc: isize, _argv: *const *const u8) -> isize {
-    icu_benchmark_macros::main_setup!();
-    let args: Vec<String> = env::args().collect();
+icu_benchmark_macros::bench!(
+    fn main() {
+        let args: Vec<String> = env::args().collect();
 
-    let input = if let Some(input) = args.get(1) {
-        input.as_str()
-    } else {
-        DEFAULT_INPUT
-    };
-    let _output = filter_input(input);
+        let input = if let Some(input) = args.get(1) {
+            input.as_str()
+        } else {
+            DEFAULT_INPUT
+        };
+        let _output = filter_input(input);
 
-    #[cfg(debug_assertions)]
-    println!("\nInput: {input}\nOutput: {_output}");
-
-    0
-}
+        #[cfg(debug_assertions)]
+        println!("\nInput: {input}\nOutput: {_output}");
+    }
+);
 
 #[cfg(test)]
 mod tests {

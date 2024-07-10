@@ -7,8 +7,6 @@
 
 #![no_main] // https://github.com/unicode-org/icu4x/issues/395
 
-icu_benchmark_macros::static_setup!();
-
 use litemap::LiteMap;
 
 const DATA: [(&str, &str); 11] = [
@@ -46,15 +44,12 @@ fn generate() {
     println!("{buf:?}");
 }
 
-#[no_mangle]
-fn main(_argc: isize, _argv: *const *const u8) -> isize {
-    icu_benchmark_macros::main_setup!();
+icu_benchmark_macros::bench!(
+    fn main() {
+        // Uncomment the following line to re-generate the binary data.
+        // generate();
 
-    // Uncomment the following line to re-generate the binary data.
-    // generate();
-
-    let map: LiteMap<&str, &str> = postcard::from_bytes(&POSTCARD).unwrap();
-    assert_eq!(map.get("tr"), Some(&"Turkish"));
-
-    0
-}
+        let map: LiteMap<&str, &str> = postcard::from_bytes(&POSTCARD).unwrap();
+        assert_eq!(map.get("tr"), Some(&"Turkish"));
+    }
+);

@@ -7,8 +7,6 @@
 
 #![no_main] // https://github.com/unicode-org/icu4x/issues/395
 
-icu_benchmark_macros::static_setup!();
-
 use icu_locale_core::locale;
 use icu_plurals::{PluralCategory, PluralRules};
 
@@ -23,11 +21,8 @@ fn print(_input: &str, _value: Option<usize>) {
     }
 }
 
-#[no_mangle]
-fn main(_argc: isize, _argv: *const *const u8) -> isize {
-    icu_benchmark_macros::main_setup!();
-
-    {
+icu_benchmark_macros::bench!(
+    fn main() {
         print("\n====== Elevator Floor (en) example ============", None);
         let pr = PluralRules::try_new_ordinal(&locale!("en").into())
             .expect("Failed to create a PluralRules instance.");
@@ -41,6 +36,4 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
             }
         }
     }
-
-    0
-}
+);

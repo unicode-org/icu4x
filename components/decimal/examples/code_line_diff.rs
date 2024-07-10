@@ -10,8 +10,6 @@
 use icu_decimal::FixedDecimalFormatter;
 use icu_locale_core::locale;
 
-icu_benchmark_macros::static_setup!();
-
 const LINES_REMOVED_ADDED: [(i64, i64); 5] = [
     (-50, 72),
     (0, 3750),
@@ -20,21 +18,18 @@ const LINES_REMOVED_ADDED: [(i64, i64); 5] = [
     (-5000000, 3000000),
 ];
 
-#[no_mangle]
-fn main(_argc: isize, _argv: *const *const u8) -> isize {
-    icu_benchmark_macros::main_setup!();
+icu_benchmark_macros::bench!(
+    fn main() {
+        let fdf = FixedDecimalFormatter::try_new(&locale!("bn").into(), Default::default())
+            .expect("locale should be present");
 
-    let fdf = FixedDecimalFormatter::try_new(&locale!("bn").into(), Default::default())
-        .expect("locale should be present");
-
-    for (removed, added) in LINES_REMOVED_ADDED {
-        let removed = fdf.format_to_string(&removed.into());
-        let added = fdf.format_to_string(&added.into());
-        assert!(!removed.is_empty());
-        assert!(!added.is_empty());
-        #[cfg(debug_assertions)]
-        println!("Added/Removed: {added}/{removed}",);
+        for (removed, added) in LINES_REMOVED_ADDED {
+            let removed = fdf.format_to_string(&removed.into());
+            let added = fdf.format_to_string(&added.into());
+            assert!(!removed.is_empty());
+            assert!(!added.is_empty());
+            #[cfg(debug_assertions)]
+            println!("Added/Removed: {added}/{removed}",);
+        }
     }
-
-    0
-}
+);

@@ -14,8 +14,6 @@
 
 #![no_main] // https://github.com/unicode-org/icu4x/issues/395
 
-icu_benchmark_macros::static_setup!();
-
 use icu_collections::codepointinvlist::{CodePointInversionList, CodePointInversionListBuilder};
 
 fn get_basic_latin_block() -> CodePointInversionList<'static> {
@@ -65,23 +63,21 @@ fn print(_input: &str) {
     println!("{_input}");
 }
 
-#[no_mangle]
-fn main(_argc: isize, _argv: *const *const u8) -> isize {
-    icu_benchmark_macros::main_setup!();
-    let selector = BmpBlockSelector::new();
+icu_benchmark_macros::bench!(
+    fn main() {
+        let selector = BmpBlockSelector::new();
 
-    let sample = "Welcome to MyName©®, Алексей!";
+        let sample = "Welcome to MyName©®, Алексей!";
 
-    let mut result = vec![];
+        let mut result = vec![];
 
-    for ch in sample.chars() {
-        result.push((ch, selector.select(ch)));
+        for ch in sample.chars() {
+            result.push((ch, selector.select(ch)));
+        }
+
+        print("\n====== Unicode BMP Block Selector example ============");
+        for (ch, block) in result {
+            print(&format!("{ch}: {block:#?}"));
+        }
     }
-
-    print("\n====== Unicode BMP Block Selector example ============");
-    for (ch, block) in result {
-        print(&format!("{ch}: {block:#?}"));
-    }
-
-    0
-}
+);
