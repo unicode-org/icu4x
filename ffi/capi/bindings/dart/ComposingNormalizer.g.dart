@@ -76,6 +76,42 @@ final class ComposingNormalizer implements ffi.Finalizable {
     temp.releaseAll();
     return result;
   }
+
+  /// Check if a string is normalized
+  ///
+  /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+  /// to the WHATWG Encoding Standard.
+  ///
+  /// See the [Rust documentation for `is_normalized_utf16`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html#method.is_normalized_utf16) for more information.
+  bool isNormalizedUtf16(String s) {
+    final temp = ffi2.Arena();
+    final sView = s.utf16View;
+    final result = _ICU4XComposingNormalizer_is_normalized_utf16(_ffi, sView.allocIn(temp), sView.length);
+    temp.releaseAll();
+    return result;
+  }
+
+  /// Return the index a slice of potentially-invalid UTF-8 is normalized up to
+  ///
+  /// See the [Rust documentation for `is_normalized_utf8_up_to`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html#method.is_normalized_utf8_up_to) for more information.
+  int isNormalizedUpTo(String s) {
+    final temp = ffi2.Arena();
+    final sView = s.utf8View;
+    final result = _ICU4XComposingNormalizer_is_normalized_up_to(_ffi, sView.allocIn(temp), sView.length);
+    temp.releaseAll();
+    return result;
+  }
+
+  /// Return the index a slice of potentially-invalid UTF-8 is normalized up to
+  ///
+  /// See the [Rust documentation for `is_normalized_utf16_up_to`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html#method.is_normalized_utf16_up_to) for more information.
+  int isNormalizedUtf16UpTo(String s) {
+    final temp = ffi2.Arena();
+    final sView = s.utf16View;
+    final result = _ICU4XComposingNormalizer_is_normalized_utf16_up_to(_ffi, sView.allocIn(temp), sView.length);
+    temp.releaseAll();
+    return result;
+  }
 }
 
 @meta.ResourceIdentifier('ICU4XComposingNormalizer_destroy')
@@ -102,3 +138,18 @@ external void _ICU4XComposingNormalizer_normalize(ffi.Pointer<ffi.Opaque> self, 
 @ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XComposingNormalizer_is_normalized')
 // ignore: non_constant_identifier_names
 external bool _ICU4XComposingNormalizer_is_normalized(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> sData, int sLength);
+
+@meta.ResourceIdentifier('ICU4XComposingNormalizer_is_normalized_utf16')
+@ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint16>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XComposingNormalizer_is_normalized_utf16')
+// ignore: non_constant_identifier_names
+external bool _ICU4XComposingNormalizer_is_normalized_utf16(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint16> sData, int sLength);
+
+@meta.ResourceIdentifier('ICU4XComposingNormalizer_is_normalized_up_to')
+@ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XComposingNormalizer_is_normalized_up_to')
+// ignore: non_constant_identifier_names
+external int _ICU4XComposingNormalizer_is_normalized_up_to(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> sData, int sLength);
+
+@meta.ResourceIdentifier('ICU4XComposingNormalizer_is_normalized_utf16_up_to')
+@ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint16>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XComposingNormalizer_is_normalized_utf16_up_to')
+// ignore: non_constant_identifier_names
+external int _ICU4XComposingNormalizer_is_normalized_utf16_up_to(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint16> sData, int sLength);

@@ -105,7 +105,7 @@ pub type GraphemeClusterBreakIteratorUtf16<'l, 's> =
 /// Thus, if the data supplied by the provider comprises all
 /// [grapheme cluster boundary rules][Rules] from Unicode Standard Annex #29,
 /// _Unicode Text Segmentation_, which is the case of default data
-/// (both test data and data produced by `icu_datagen`), the `segment_*`
+/// (both test data and data produced by `icu_provider_source`), the `segment_*`
 /// functions return extended grapheme cluster boundaries, as opposed to
 /// legacy grapheme cluster boundaries.  See [_Section 3, Grapheme Cluster
 /// Boundaries_][GC], and [_Table 1a, Sample Grapheme Clusters_][Sample_GC],

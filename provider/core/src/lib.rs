@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! `icu_provider` is one of the [`ICU4X`] components.
+//! `icu_provider` is one of the `ICU4X` components.
 //!
 //! Unicode's experience with ICU4X's parent projects, ICU4C and ICU4J, led the team to realize
 //! that data management is the most critical aspect of deploying internationalization, and that it requires
@@ -78,26 +78,17 @@
 //! Data structs should generally have one lifetime argument: `'data`. This lifetime allows data
 //! structs to borrow zero-copy data.
 //!
-//! ## Data generation API
-//!
-//! *This functionality is enabled with the "datagen" Cargo feature*
-//!
-//! The [`export`] module contains several APIs for data generation. See [`icu_provider_export`] for the reference
-//! data generation implementation.
-//!
-//! [`ICU4X`]: ../icu/index.html
-//! [`AnyPayloadProvider`]: ../icu_provider_adapters/any_payload/struct.AnyPayloadProvider.html
+//! [`AnyPayloadProvider`]: https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/any_payload/struct.AnyPayloadProvider.html
 //! [`HelloWorldProvider`]: hello_world::HelloWorldProvider
 //! [`AnyProvider`]: any::AnyProvider
 //! [`Yokeable`]: yoke::Yokeable
 //! [`impl_dynamic_data_provider!`]: dynutil::impl_dynamic_data_provider
-//! [`icu_provider_adapters`]: ../icu_provider_adapters/index.html
-//! [`SourceDataProvider`]: ../icu_provider_export/struct.SourceDataProvider.html
+//! [`icu_provider_adapters`]: https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/index.html
+//! [`SourceDataProvider`]: https://docs.rs/icu_provider_source/latest/icu_provider_source/struct.SourceDataProvider.html
 //! [`as_downcasting()`]: any::AsDowncastingAnyProvider::as_downcasting
 //! [`as_deserializing()`]: buf::AsDeserializingBufferProvider::as_deserializing
-//! [`FsDataProvider`]: ../icu_provider_fs/struct.FsDataProvider.html
-//! [`BlobDataProvider`]: ../icu_provider_blob/struct.BlobDataProvider.html
-//! [`icu_provider_export`]: ../icu_provider_export/index.html
+//! [`FsDataProvider`]: https://docs.rs/icu_provider_fs/latest/icu_provider_fs/struct.FsDataProvider.html
+//! [`BlobDataProvider`]: https://docs.rs/icu_provider_blob/latest/icu_provider_blob/struct.BlobDataProvider.html
 
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
 #![cfg_attr(not(any(test, feature = "std")), no_std)]

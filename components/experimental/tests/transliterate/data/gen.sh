@@ -4,7 +4,7 @@ cargo run -p icu4x-datagen --features experimental_components -- \
 --locales full \
 --deduplication none \
 --no-internal-fallback \
---cldr-root $(dirname $0)/../../../../../provider/datagen/tests/data/cldr \
+--cldr-root $(dirname $0)/../../../../../provider/source/tests/data/cldr \
 --format mod \
 --out $(dirname $0)/baked \
 --pretty \
