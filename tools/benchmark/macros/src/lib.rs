@@ -34,9 +34,9 @@ macro_rules! println {
         {
             struct Sink;
             impl std::fmt::Write for Sink {
-                fn write_str(&mut self, s: &str) -> Result<(), std::fmt::Error> { 
+                fn write_str(&mut self, s: &str) -> Result<(), std::fmt::Error> {
                     std::hint::black_box(s);
-                    Ok(()) 
+                    Ok(())
                 }
             }
 
