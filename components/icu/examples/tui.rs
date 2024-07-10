@@ -14,12 +14,6 @@ use icu::timezone::CustomTimeZone;
 use icu_collections::codepointinvlist::CodePointInversionListBuilder;
 use std::env;
 
-#[cfg(not(debug_assertions))]
-macro_rules! println {
-    ($($arg:tt)*) => {{}};
-}
-
-#[no_mangle]
 fn main() {
     let args: Vec<String> = env::args().collect();
 
