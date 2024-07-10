@@ -27,7 +27,11 @@ namespace capi {
     
     bool ICU4XComposingNormalizer_is_normalized(const ICU4XComposingNormalizer* self, const char* s_data, size_t s_len);
     
+    bool ICU4XComposingNormalizer_is_normalized_utf16(const ICU4XComposingNormalizer* self, const char16_t* s_data, size_t s_len);
+    
     size_t ICU4XComposingNormalizer_is_normalized_up_to(const ICU4XComposingNormalizer* self, const char* s_data, size_t s_len);
+    
+    size_t ICU4XComposingNormalizer_is_normalized_utf16_up_to(const ICU4XComposingNormalizer* self, const char16_t* s_data, size_t s_len);
     
     
     void ICU4XComposingNormalizer_destroy(ICU4XComposingNormalizer* self);
@@ -62,8 +66,22 @@ inline bool ICU4XComposingNormalizer::is_normalized(std::string_view s) const {
   return result;
 }
 
+inline bool ICU4XComposingNormalizer::is_normalized_utf16(std::u16string_view s) const {
+  auto result = capi::ICU4XComposingNormalizer_is_normalized_utf16(this->AsFFI(),
+    s.data(),
+    s.size());
+  return result;
+}
+
 inline size_t ICU4XComposingNormalizer::is_normalized_up_to(std::string_view s) const {
   auto result = capi::ICU4XComposingNormalizer_is_normalized_up_to(this->AsFFI(),
+    s.data(),
+    s.size());
+  return result;
+}
+
+inline size_t ICU4XComposingNormalizer::is_normalized_utf16_up_to(std::u16string_view s) const {
+  auto result = capi::ICU4XComposingNormalizer_is_normalized_utf16_up_to(this->AsFFI(),
     s.data(),
     s.size());
   return result;

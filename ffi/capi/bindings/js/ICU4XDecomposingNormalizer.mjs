@@ -66,9 +66,23 @@ export class ICU4XDecomposingNormalizer {
     return diplomat_out;
   }
 
+  is_normalized_utf16(arg_s) {
+    const buf_arg_s = diplomatRuntime.DiplomatBuf.str16(wasm, arg_s);
+    const diplomat_out = wasm.ICU4XDecomposingNormalizer_is_normalized_utf16(this.underlying, buf_arg_s.ptr, buf_arg_s.size);
+    buf_arg_s.free();
+    return diplomat_out;
+  }
+
   is_normalized_up_to(arg_s) {
     const buf_arg_s = diplomatRuntime.DiplomatBuf.str8(wasm, arg_s);
     const diplomat_out = wasm.ICU4XDecomposingNormalizer_is_normalized_up_to(this.underlying, buf_arg_s.ptr, buf_arg_s.size);
+    buf_arg_s.free();
+    return diplomat_out;
+  }
+
+  is_normalized_utf16_up_to(arg_s) {
+    const buf_arg_s = diplomatRuntime.DiplomatBuf.str16(wasm, arg_s);
+    const diplomat_out = wasm.ICU4XDecomposingNormalizer_is_normalized_utf16_up_to(this.underlying, buf_arg_s.ptr, buf_arg_s.size);
     buf_arg_s.free();
     return diplomat_out;
   }

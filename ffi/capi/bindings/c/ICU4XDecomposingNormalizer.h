@@ -27,7 +27,11 @@ void ICU4XDecomposingNormalizer_normalize(const ICU4XDecomposingNormalizer* self
 
 bool ICU4XDecomposingNormalizer_is_normalized(const ICU4XDecomposingNormalizer* self, const char* s_data, size_t s_len);
 
+bool ICU4XDecomposingNormalizer_is_normalized_utf16(const ICU4XDecomposingNormalizer* self, const char16_t* s_data, size_t s_len);
+
 size_t ICU4XDecomposingNormalizer_is_normalized_up_to(const ICU4XDecomposingNormalizer* self, const char* s_data, size_t s_len);
+
+size_t ICU4XDecomposingNormalizer_is_normalized_utf16_up_to(const ICU4XDecomposingNormalizer* self, const char16_t* s_data, size_t s_len);
 
 
 void ICU4XDecomposingNormalizer_destroy(ICU4XDecomposingNormalizer* self);
