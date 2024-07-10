@@ -27,6 +27,12 @@ void ICU4XComposingNormalizer_normalize(const ICU4XComposingNormalizer* self, co
 
 bool ICU4XComposingNormalizer_is_normalized(const ICU4XComposingNormalizer* self, const char* s_data, size_t s_len);
 
+bool ICU4XComposingNormalizer_is_normalized_utf16(const ICU4XComposingNormalizer* self, const char16_t* s_data, size_t s_len);
+
+size_t ICU4XComposingNormalizer_is_normalized_up_to(const ICU4XComposingNormalizer* self, const char* s_data, size_t s_len);
+
+size_t ICU4XComposingNormalizer_is_normalized_utf16_up_to(const ICU4XComposingNormalizer* self, const char16_t* s_data, size_t s_len);
+
 
 void ICU4XComposingNormalizer_destroy(ICU4XComposingNormalizer* self);
 
