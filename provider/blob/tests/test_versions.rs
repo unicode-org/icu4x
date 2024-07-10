@@ -59,31 +59,30 @@ fn check_hello_world(
             .unwrap()
             .payload;
         assert_eq!(blob_result, expected_result, "{:?}", id);
+    }
 
+    if test_prefix_match {
         let id = DataIdentifierCow::from_owned(
             DataMarkerAttributes::from_str_or_panic("reve").to_owned(),
             "ja".parse().unwrap(),
         );
+        assert!(blob_provider
+            .load(DataRequest {
+                id: id.as_borrowed(),
+                ..Default::default()
+            })
+            .is_err());
 
-        if test_prefix_match {
-            assert!(blob_provider
-                .load(DataRequest {
-                    id: id.as_borrowed(),
-                    ..Default::default()
-                })
-                .is_err());
-
-            assert!(blob_provider
-                .load(DataRequest {
-                    id: id.as_borrowed(),
-                    metadata: {
-                        let mut metadata = DataRequestMetadata::default();
-                        metadata.attributes_prefix_match = true;
-                        metadata
-                    }
-                })
-                .is_ok());
-        }
+        assert!(blob_provider
+            .load(DataRequest {
+                id: id.as_borrowed(),
+                metadata: {
+                    let mut metadata = DataRequestMetadata::default();
+                    metadata.attributes_prefix_match = true;
+                    metadata
+                }
+            })
+            .is_ok());
     }
 }
 

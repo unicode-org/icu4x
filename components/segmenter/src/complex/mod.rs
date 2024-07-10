@@ -41,13 +41,13 @@ pub(crate) struct ComplexPayloads {
 }
 
 #[cfg(feature = "lstm")]
-const MY_LSTM: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("Burmese");
+const MY_LSTM: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("Burmese_");
 #[cfg(feature = "lstm")]
-const KM_LSTM: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("Khmer");
+const KM_LSTM: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("Khmer_");
 #[cfg(feature = "lstm")]
-const LO_LSTM: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("Lao");
+const LO_LSTM: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("Lao_");
 #[cfg(feature = "lstm")]
-const TH_LSTM: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("Thai");
+const TH_LSTM: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("Thai_");
 
 const MY_DICT: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("burmesedict");
 const KM_DICT: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("khmerdict");

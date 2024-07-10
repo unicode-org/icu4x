@@ -72,23 +72,17 @@ impl FsDataProvider {
         if !path.exists() {
             return Err(DataErrorKind::MarkerNotFound.with_req(marker, req));
         }
-        'attr: {
-            if !req.id.marker_attributes.is_empty() {
-                if req.metadata.attributes_prefix_match {
-                    for candidate in std::fs::read_dir(&path)? {
-                        let candidate = candidate?.file_name();
-                        let Some(name) = candidate.to_str() else {
-                            continue;
-                        };
-                        if name.starts_with(req.id.marker_attributes.as_str()) {
-                            path.push(name);
-                            break 'attr;
-                        }
-                    }
-                    return Err(DataErrorKind::IdentifierNotFound.with_req(marker, req));
-                } else {
-                    path.push(req.id.marker_attributes.as_str());
-                }
+        if !req.id.marker_attributes.is_empty() {
+            if req.metadata.attributes_prefix_match {
+                path.push(
+                    std::fs::read_dir(&path)?
+                        .filter_map(|e| e.ok()?.file_name().into_string().ok())
+                        .filter(|c| c.starts_with(req.id.marker_attributes.as_str()))
+                        .min()
+                        .ok_or(DataErrorKind::IdentifierNotFound.with_req(marker, req))?,
+                );
+            } else {
+                path.push(req.id.marker_attributes.as_str());
             }
         }
         let mut path = path.into_os_string();
