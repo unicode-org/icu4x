@@ -55,7 +55,7 @@ impl<'l> Writeable for FormattedUnit<'l> {
 
 impl core::fmt::Display for FormattedUnit<'_> {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-        self.write_to(f).map_err(|_| core::fmt::Error)
+        self.write_to(f)
     }
 }
 
