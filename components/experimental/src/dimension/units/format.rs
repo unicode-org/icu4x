@@ -61,45 +61,45 @@ fn test_basic() {
     use writeable::assert_writeable_eq;
 
     use crate::dimension::units::formatter::UnitsFormatter;
-    use crate::dimension::units::options::UnitsFormatterOptions;
-    use crate::dimension::units::options::Width;
+    use crate::dimension::units::options::{UnitsFormatterOptions,Width};
 
-    let (locale, meter) = (locale!("en-US").into(), "meter");
-    let fmt = UnitsFormatter::try_new(&locale, meter, Default::default()).unwrap();
-    let value = "12345.67".parse().unwrap();
-    assert_writeable_eq!(fmt.format_fixed_decimal(&value, meter), "12,345.67 m");
+    let test_cases = [
+        (
+            locale!("en-US").into(),
+            "meter",
+            UnitsFormatterOptions::default(),
+            "12,345.67 m",
+        ),
+        (
+            locale!("en-US").into(),
+            "century",
+            UnitsFormatterOptions {
+                width: Width::Long,
+                ..Default::default()
+            },
+            "12,345.67 centuries",
+        ),
+        (
+            locale!("de-DE").into(),
+            "meter",
+            UnitsFormatterOptions::default(),
+            "12.345,67 m",
+        ),
+        (
+            locale!("ar-EG").into(),
+            "meter",
+            UnitsFormatterOptions {
+                width: Width::Long,
+                ..Default::default()
+            },
+            "١٢٬٣٤٥٫٦٧ متر",
+        ),
+    ];
 
-    let (locale, century) = (locale!("en-US").into(), "century");
-    let fmt = UnitsFormatter::try_new(
-        &locale,
-        century,
-        UnitsFormatterOptions {
-            width: Width::Long,
-            ..Default::default()
-        },
-    )
-    .unwrap();
-    let value = "12345.67".parse().unwrap();
-    let formatted_unit = fmt.format_fixed_decimal(&value, century);
-    assert_writeable_eq!(formatted_unit, "12,345.67 centuries");
-
-    let (locale, meter) = (locale!("de-DE").into(), "meter");
-    let fmt = UnitsFormatter::try_new(&locale, meter, Default::default()).unwrap();
-    let value = "12345.67".parse().unwrap();
-    let formatted_unit = fmt.format_fixed_decimal(&value, meter);
-    assert_writeable_eq!(formatted_unit, "12.345,67 m");
-
-    let (locale, meter) = (locale!("ar-EG").into(), "meter");
-    let fmt = UnitsFormatter::try_new(
-        &locale,
-        meter,
-        UnitsFormatterOptions {
-            width: Width::Long,
-            ..Default::default()
-        },
-    )
-    .unwrap();
-    let value = "12345.67".parse().unwrap();
-    let formatted_unit = fmt.format_fixed_decimal(&value, meter);
-    assert_writeable_eq!(formatted_unit, "١٢٬٣٤٥٫٦٧ متر");
+    for (locale, unit, options, expected) in test_cases {
+        let fmt = UnitsFormatter::try_new(&locale, unit, options).unwrap();
+        let value = "12345.67".parse().unwrap();
+        let formatted_unit = fmt.format_fixed_decimal(&value, unit);
+        assert_writeable_eq!(formatted_unit, expected);
+    }
 }
