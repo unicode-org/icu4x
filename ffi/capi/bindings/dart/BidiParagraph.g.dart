@@ -77,7 +77,7 @@ final class BidiParagraph implements ffi.Finalizable {
 
   /// Get the BIDI level at a particular byte index in this paragraph.
   /// This integer is conceptually a `unicode_bidi::Level`,
-  /// and can be further inspected using the static methods on ICU4XBidi.
+  /// and can be further inspected using the static methods on Bidi.
   ///
   /// Returns 0 (equivalent to `Level::ltr()`) on error
   ///

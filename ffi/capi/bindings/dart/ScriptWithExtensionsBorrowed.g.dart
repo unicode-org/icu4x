@@ -2,7 +2,7 @@
 
 part of 'lib.g.dart';
 
-/// A slightly faster ICU4XScriptWithExtensions object
+/// A slightly faster ScriptWithExtensions object
 ///
 /// See the [Rust documentation for `ScriptWithExtensionsBorrowed`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html) for more information.
 final class ScriptWithExtensionsBorrowed implements ffi.Finalizable {

@@ -22,7 +22,7 @@ final class DecomposingNormalizer implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XDecomposingNormalizer_destroy));
 
-  /// Construct a new ICU4XDecomposingNormalizer instance for NFC
+  /// Construct a new DecomposingNormalizer instance for NFC
   ///
   /// See the [Rust documentation for `new_nfd`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.new_nfd) for more information.
   ///
@@ -35,7 +35,7 @@ final class DecomposingNormalizer implements ffi.Finalizable {
     return DecomposingNormalizer._fromFfi(result.union.ok, []);
   }
 
-  /// Construct a new ICU4XDecomposingNormalizer instance for NFKC
+  /// Construct a new DecomposingNormalizer instance for NFKC
   ///
   /// See the [Rust documentation for `new_nfkd`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.new_nfkd) for more information.
   ///

@@ -22,7 +22,7 @@ final class CaseMapCloser implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XCaseMapCloser_destroy));
 
-  /// Construct a new ICU4XCaseMapper instance
+  /// Construct a new CaseMapper instance
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html#method.new) for more information.
   ///
