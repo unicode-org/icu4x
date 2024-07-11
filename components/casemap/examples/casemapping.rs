@@ -3,16 +3,13 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #![no_main] // https://github.com/unicode-org/icu4x/issues/395
-
-icu_benchmark_macros::static_setup!();
+icu_benchmark_macros::instrument!();
+use icu_benchmark_macros::println;
 
 use icu::casemap::CaseMapper;
 use icu_locale_core::langid;
 
-#[no_mangle]
-fn main(_argc: isize, _argv: *const *const u8) -> isize {
-    icu_benchmark_macros::main_setup!();
-
+fn main() {
     let cm = CaseMapper::new();
 
     println!(
@@ -23,6 +20,4 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
         r#"The lowercase of "Γειά σου Κόσμε" is "{}""#,
         cm.lowercase_to_string("Γειά σου Κόσμε", &langid!("und"))
     );
-
-    0
 }

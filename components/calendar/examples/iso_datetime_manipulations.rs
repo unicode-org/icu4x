@@ -6,10 +6,10 @@
 // from a log into human readable dates and times.
 
 #![no_main] // https://github.com/unicode-org/icu4x/issues/395
+icu_benchmark_macros::instrument!();
+use icu_benchmark_macros::println;
 
-icu_benchmark_macros::static_setup!();
-
-use icu_calendar::{Calendar, DateError, DateTime, Iso};
+use icu_calendar::{DateError, DateTime, Iso};
 
 const DATETIMES_ISO: &[(i32, u8, u8, u8, u8, u8)] = &[
     (1970, 1, 1, 3, 5, 12),
@@ -27,31 +27,11 @@ const DATETIMES_ISO: &[(i32, u8, u8, u8, u8, u8)] = &[
     (2033, 6, 10, 17, 22, 22),
 ];
 
-fn print<A: Calendar>(_datetime_input: &DateTime<A>) {
-    #[cfg(debug_assertions)]
-    {
-        let formatted_datetime = format!(
-            "Year: {}, Month: {}, Day: {}, Hour: {}, Minute: {}, Second: {}",
-            _datetime_input.date.year().number,
-            _datetime_input.date.month().ordinal,
-            _datetime_input.date.day_of_month().0,
-            u8::from(_datetime_input.time.hour),
-            u8::from(_datetime_input.time.minute),
-            u8::from(_datetime_input.time.second),
-        );
-
-        println!("{formatted_datetime}");
-    }
-}
-
 fn tuple_to_iso_datetime(date: (i32, u8, u8, u8, u8, u8)) -> Result<DateTime<Iso>, DateError> {
     DateTime::try_new_iso_datetime(date.0, date.1, date.2, date.3, date.4, date.5)
 }
 
-#[no_mangle]
-fn main(_argc: isize, _argv: *const *const u8) -> isize {
-    icu_benchmark_macros::main_setup!();
-
+fn main() {
     let datetimes = DATETIMES_ISO
         .iter()
         .copied()
@@ -59,7 +39,15 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
         .collect::<Result<Vec<DateTime<Iso>>, _>>()
         .expect("Failed to parse datetimes.");
 
-    datetimes.iter().map(print).for_each(drop);
-
-    0
+    for datetime_input in datetimes {
+        println!(
+            "Year: {}, Month: {}, Day: {}, Hour: {}, Minute: {}, Second: {}",
+            datetime_input.date.year().number,
+            datetime_input.date.month().ordinal,
+            datetime_input.date.day_of_month().0,
+            u8::from(datetime_input.time.hour),
+            u8::from(datetime_input.time.minute),
+            u8::from(datetime_input.time.second),
+        );
+    }
 }

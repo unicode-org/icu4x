@@ -6,8 +6,8 @@
 // from a work log into human readable dates and times.
 
 #![no_main] // https://github.com/unicode-org/icu4x/issues/395
-
-icu_benchmark_macros::static_setup!();
+icu_benchmark_macros::instrument!();
+use icu_benchmark_macros::println;
 
 use icu_calendar::{DateTime, Gregorian};
 use icu_datetime::{options::length, TypedDateTimeFormatter};
@@ -26,19 +26,7 @@ const DATES_ISO: &[(i32, u8, u8, u8, u8, u8)] = &[
     (2033, 5, 17, 20, 33, 20),
 ];
 
-fn print(_input: &str, _value: Option<usize>) {
-    #[cfg(debug_assertions)]
-    if let Some(value) = _value {
-        println!("{}", _input.replace("{}", &value.to_string()));
-    } else {
-        println!("{_input}");
-    }
-}
-
-#[no_mangle]
-fn main(_argc: isize, _argv: *const *const u8) -> isize {
-    icu_benchmark_macros::main_setup!();
-
+fn main() {
     let dates = DATES_ISO
         .iter()
         .copied()
@@ -54,13 +42,11 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
     let dtf = TypedDateTimeFormatter::<Gregorian>::try_new(&locale!("en").into(), options.into())
         .expect("Failed to create TypedDateTimeFormatter instance.");
     {
-        print("\n====== Work Log (en) example ============", None);
+        println!("\n====== Work Log (en) example ============");
 
         for (idx, date) in dates.iter().enumerate() {
             let fdt = dtf.format(date);
             println!("{idx}) {fdt}");
         }
     }
-
-    0
 }

@@ -6,10 +6,10 @@
 // from a log into human readable dates and times.
 
 #![no_main] // https://github.com/unicode-org/icu4x/issues/395
+icu_benchmark_macros::instrument!();
+use icu_benchmark_macros::println;
 
-icu_benchmark_macros::static_setup!();
-
-use icu_calendar::{Calendar, Date, Iso, RangeError};
+use icu_calendar::{Date, Iso, RangeError};
 
 const DATES_ISO: &[(i32, u8, u8)] = &[
     (1970, 1, 1),
@@ -27,28 +27,11 @@ const DATES_ISO: &[(i32, u8, u8)] = &[
     (2033, 6, 10),
 ];
 
-fn print<A: Calendar>(_date_input: &Date<A>) {
-    #[cfg(debug_assertions)]
-    {
-        let formatted_date = format!(
-            "Year: {}, Month: {}, Day: {}",
-            _date_input.year().number,
-            _date_input.month().ordinal,
-            _date_input.day_of_month().0,
-        );
-
-        println!("{formatted_date}");
-    }
-}
-
 fn tuple_to_iso_date(date: (i32, u8, u8)) -> Result<Date<Iso>, RangeError> {
     Date::try_new_iso_date(date.0, date.1, date.2)
 }
 
-#[no_mangle]
-fn main(_argc: isize, _argv: *const *const u8) -> isize {
-    icu_benchmark_macros::main_setup!();
-
+fn main() {
     let dates = DATES_ISO
         .iter()
         .copied()
@@ -56,7 +39,12 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
         .collect::<Result<Vec<Date<Iso>>, _>>()
         .expect("Failed to parse dates.");
 
-    dates.iter().map(print).for_each(drop);
-
-    0
+    for date_input in dates {
+        println!(
+            "Year: {}, Month: {}, Day: {}",
+            date_input.year().number,
+            date_input.month().ordinal,
+            date_input.day_of_month().0,
+        );
+    }
 }

@@ -10,8 +10,8 @@
 // For language matching, please consider algorithms such as Locale Matcher.
 
 #![no_main] // https://github.com/unicode-org/icu4x/issues/395
-
-icu_benchmark_macros::static_setup!();
+icu_benchmark_macros::instrument!();
+use icu_benchmark_macros::println;
 
 use std::env;
 
@@ -38,9 +38,7 @@ fn filter_input(input: &str) -> String {
     en_strs.join(", ")
 }
 
-#[no_mangle]
-fn main(_argc: isize, _argv: *const *const u8) -> isize {
-    icu_benchmark_macros::main_setup!();
+fn main() {
     let args: Vec<String> = env::args().collect();
 
     let input = if let Some(input) = args.get(1) {
@@ -50,10 +48,7 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
     };
     let _output = filter_input(input);
 
-    #[cfg(debug_assertions)]
     println!("\nInput: {input}\nOutput: {_output}");
-
-    0
 }
 
 #[cfg(test)]
