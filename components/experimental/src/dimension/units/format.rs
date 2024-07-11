@@ -62,8 +62,7 @@ fn test_basic() {
     use crate::dimension::units::options::UnitsFormatterOptions;
     use crate::dimension::units::options::Width;
 
-    let locale = locale!("en-US").into();
-    let meter = "meter";
+    let (locale, meter) = (locale!("en-US").into(), "meter");
     let fmt = UnitsFormatter::try_new(&locale, meter, Default::default()).unwrap();
     let value = "12345.67".parse().unwrap();
     let formatted_unit = fmt.format_fixed_decimal(&value, meter);
@@ -71,8 +70,7 @@ fn test_basic() {
     formatted_unit.write_to(&mut sink).unwrap();
     assert_eq!(sink.as_str(), "12,345.67 m");
 
-    let locale = locale!("en-US").into();
-    let century = "century";
+    let (locale, century) = (locale!("en-US").into(), "century");
     let fmt = UnitsFormatter::try_new(
         &locale,
         century,
@@ -88,8 +86,7 @@ fn test_basic() {
     formatted_unit.write_to(&mut sink).unwrap();
     assert_eq!(sink.as_str(), "12,345.67 centuries");
 
-    let locale = locale!("de-DE").into();
-    let meter = "meter";
+    let (locale, meter) = (locale!("de-DE").into(), "meter");
     let fmt = UnitsFormatter::try_new(&locale, meter, Default::default()).unwrap();
     let value = "12345.67".parse().unwrap();
     let formatted_unit = fmt.format_fixed_decimal(&value, meter);
@@ -97,8 +94,7 @@ fn test_basic() {
     formatted_unit.write_to(&mut sink).unwrap();
     assert_eq!(sink.as_str(), "12.345,67 m");
 
-    let locale = locale!("ar-EG").into();
-    let meter = "meter";
+    let (locale, meter) = (locale!("ar-EG").into(), "meter");
     let fmt = UnitsFormatter::try_new(
         &locale,
         meter,
