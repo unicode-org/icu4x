@@ -13,8 +13,8 @@ use crate::input::ExtractedDateTimeInput;
 use crate::neo_marker::DateInputMarkers;
 use crate::neo_marker::HasConstComponents;
 use crate::neo_marker::{
-    ConvertCalendar, DateMarkers, DateTimeMarkers, IsAnyCalendarKind, IsRuntimeComponents,
-    NeoGetField, TimeMarkers, TypedDateMarkers, ZoneMarkers,
+    AllInputMarkers, ConvertCalendar, DateMarkers, DateTimeMarkers, IsAnyCalendarKind,
+    IsRuntimeComponents, NeoGetField, TimeMarkers, TypedDateMarkers, ZoneMarkers,
 };
 use crate::neo_pattern::DateTimePattern;
 use crate::neo_skeleton::{NeoComponents, NeoSkeletonLength};
@@ -576,19 +576,7 @@ where
     /// ```
     pub fn format<I>(&self, datetime: &I) -> FormattedNeoDateTime
     where
-        I: ?Sized
-            + NeoGetField<<R::D as TypedDateMarkers<C>>::TypedInputMarker>
-            + NeoGetField<<R::D as DateInputMarkers>::YearInput>
-            + NeoGetField<<R::D as DateInputMarkers>::MonthInput>
-            + NeoGetField<<R::D as DateInputMarkers>::DayOfMonthInput>
-            + NeoGetField<<R::D as DateInputMarkers>::DayOfWeekInput>
-            + NeoGetField<<R::D as DateInputMarkers>::DayOfYearInput>
-            + NeoGetField<<R::D as DateInputMarkers>::AnyCalendarKindInput>
-            + NeoGetField<<R::T as TimeMarkers>::HourInput>
-            + NeoGetField<<R::T as TimeMarkers>::MinuteInput>
-            + NeoGetField<<R::T as TimeMarkers>::SecondInput>
-            + NeoGetField<<R::T as TimeMarkers>::NanoSecondInput>
-            + NeoGetField<<R::Z as ZoneMarkers>::TimeZoneInput>,
+        I: ?Sized + AllInputMarkers<R>,
     {
         let datetime =
             ExtractedDateTimeInput::extract_from_neo_input::<R::D, R::T, R::Z, I>(datetime);
@@ -1295,19 +1283,7 @@ where
         datetime: &I,
     ) -> Result<FormattedNeoDateTime, crate::MismatchedCalendarError>
     where
-        I: ?Sized
-            + IsAnyCalendarKind
-            + NeoGetField<<R::D as DateInputMarkers>::YearInput>
-            + NeoGetField<<R::D as DateInputMarkers>::MonthInput>
-            + NeoGetField<<R::D as DateInputMarkers>::DayOfMonthInput>
-            + NeoGetField<<R::D as DateInputMarkers>::DayOfWeekInput>
-            + NeoGetField<<R::D as DateInputMarkers>::DayOfYearInput>
-            + NeoGetField<<R::D as DateInputMarkers>::AnyCalendarKindInput>
-            + NeoGetField<<R::T as TimeMarkers>::HourInput>
-            + NeoGetField<<R::T as TimeMarkers>::MinuteInput>
-            + NeoGetField<<R::T as TimeMarkers>::SecondInput>
-            + NeoGetField<<R::T as TimeMarkers>::NanoSecondInput>
-            + NeoGetField<<R::Z as ZoneMarkers>::TimeZoneInput>,
+        I: ?Sized + IsAnyCalendarKind + AllInputMarkers<R>,
     {
         if !datetime.is_any_calendar_kind(self.calendar.kind()) {
             return Err(crate::MismatchedCalendarError {
@@ -1380,18 +1356,7 @@ where
     pub fn convert_and_format<'a, I>(&'a self, datetime: &I) -> FormattedNeoDateTime
     where
         I: ?Sized + ConvertCalendar,
-        I::Converted<'a>: Sized
-            + NeoGetField<<R::D as DateInputMarkers>::YearInput>
-            + NeoGetField<<R::D as DateInputMarkers>::MonthInput>
-            + NeoGetField<<R::D as DateInputMarkers>::DayOfMonthInput>
-            + NeoGetField<<R::D as DateInputMarkers>::DayOfWeekInput>
-            + NeoGetField<<R::D as DateInputMarkers>::DayOfYearInput>
-            + NeoGetField<<R::D as DateInputMarkers>::AnyCalendarKindInput>
-            + NeoGetField<<R::T as TimeMarkers>::HourInput>
-            + NeoGetField<<R::T as TimeMarkers>::MinuteInput>
-            + NeoGetField<<R::T as TimeMarkers>::SecondInput>
-            + NeoGetField<<R::T as TimeMarkers>::NanoSecondInput>
-            + NeoGetField<<R::Z as ZoneMarkers>::TimeZoneInput>,
+        I::Converted<'a>: Sized + AllInputMarkers<R>,
     {
         let datetime = datetime.to_calendar(&self.calendar);
         let datetime =

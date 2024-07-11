@@ -669,6 +669,46 @@ pub trait DateTimeMarkers: private::Sealed + DateTimeNamesMarker {
     type GluePatternV1Marker: DataMarker<Yokeable = GluePatternV1<'static>>;
 }
 
+/// Trait to consolidate input markers.
+pub trait AllInputMarkers<R: DateTimeMarkers>:
+    NeoGetField<<R::D as DateInputMarkers>::YearInput>
+    + NeoGetField<<R::D as DateInputMarkers>::MonthInput>
+    + NeoGetField<<R::D as DateInputMarkers>::DayOfMonthInput>
+    + NeoGetField<<R::D as DateInputMarkers>::DayOfWeekInput>
+    + NeoGetField<<R::D as DateInputMarkers>::DayOfYearInput>
+    + NeoGetField<<R::D as DateInputMarkers>::AnyCalendarKindInput>
+    + NeoGetField<<R::T as TimeMarkers>::HourInput>
+    + NeoGetField<<R::T as TimeMarkers>::MinuteInput>
+    + NeoGetField<<R::T as TimeMarkers>::SecondInput>
+    + NeoGetField<<R::T as TimeMarkers>::NanoSecondInput>
+    + NeoGetField<<R::Z as ZoneMarkers>::TimeZoneInput>
+where
+    R::D: DateInputMarkers,
+    R::T: TimeMarkers,
+    R::Z: ZoneMarkers,
+{
+}
+
+impl<T, R> AllInputMarkers<R> for T
+where
+    R: DateTimeMarkers,
+    R::D: DateInputMarkers,
+    R::T: TimeMarkers,
+    R::Z: ZoneMarkers,
+    T: NeoGetField<<R::D as DateInputMarkers>::YearInput>
+        + NeoGetField<<R::D as DateInputMarkers>::MonthInput>
+        + NeoGetField<<R::D as DateInputMarkers>::DayOfMonthInput>
+        + NeoGetField<<R::D as DateInputMarkers>::DayOfWeekInput>
+        + NeoGetField<<R::D as DateInputMarkers>::DayOfYearInput>
+        + NeoGetField<<R::D as DateInputMarkers>::AnyCalendarKindInput>
+        + NeoGetField<<R::T as TimeMarkers>::HourInput>
+        + NeoGetField<<R::T as TimeMarkers>::MinuteInput>
+        + NeoGetField<<R::T as TimeMarkers>::SecondInput>
+        + NeoGetField<<R::T as TimeMarkers>::NanoSecondInput>
+        + NeoGetField<<R::Z as ZoneMarkers>::TimeZoneInput>,
+{
+}
+
 /// A struct implementing traits for never loading data.
 #[derive(Debug)]
 #[allow(clippy::exhaustive_enums)] // empty marker enum
