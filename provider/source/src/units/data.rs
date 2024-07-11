@@ -123,7 +123,7 @@ impl crate::IterableDataProviderCached<UnitsDisplayNameV1Marker> for SourceDataP
                 //       In this case, we should return None.
                 //       Example: `length-meter` is a valid key, but `length` is not.
                 //                `power3` is not a valid unit.
-                key.split_once('-').map(|(_, rest)| rest)
+                key.split_once('-').map(|(_prefix, unit_name)| unit_name)
             });
 
             for truncated_quantity in quantities {
