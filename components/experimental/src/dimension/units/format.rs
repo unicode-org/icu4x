@@ -61,7 +61,7 @@ fn test_basic() {
     use writeable::assert_writeable_eq;
 
     use crate::dimension::units::formatter::UnitsFormatter;
-    use crate::dimension::units::options::{UnitsFormatterOptions,Width};
+    use crate::dimension::units::options::{UnitsFormatterOptions, Width};
 
     let test_cases = [
         (
@@ -99,7 +99,6 @@ fn test_basic() {
     for (locale, unit, options, expected) in test_cases {
         let fmt = UnitsFormatter::try_new(&locale, unit, options).unwrap();
         let value = "12345.67".parse().unwrap();
-        let formatted_unit = fmt.format_fixed_decimal(&value, unit);
-        assert_writeable_eq!(formatted_unit, expected);
+        assert_writeable_eq!(fmt.format_fixed_decimal(&value, unit), expected);
     }
 }
