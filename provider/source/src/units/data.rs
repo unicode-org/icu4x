@@ -109,6 +109,8 @@ impl crate::IterableDataProviderCached<UnitsDisplayNameV1Marker> for SourceDataP
                         && !["per", "times", "power"]
                             .iter()
                             .any(|&prefix| key.starts_with(prefix))
+                            // Each unit should be prefixed with the category and a hyphen
+                            && key.contains("-")
                 })
                 .filter_map(|key| {
                     // In order to reduce the number of units in the test data,
