@@ -508,7 +508,7 @@ pub trait HasConstDateComponents {
     const COMPONENTS: NeoDateComponents;
 }
 
-/// A trait associating [`HasDayComponents`].
+/// A trait associating [`NeoDayComponents`].
 pub trait HasConstDayComponents {
     /// The associated components.
     const COMPONENTS: NeoDayComponents;
@@ -710,8 +710,8 @@ impl ZoneMarkers for NeoNeverMarker {
 
 /// A struct that supports formatting both a date and a time.
 ///
-/// It should be composed from types implementing [`HasDayComponents`]
-/// and [`HasTimeComponents`].
+/// It should be composed from types implementing [`HasConstDayComponents`]
+/// and [`HasConstTimeComponents`].
 #[derive(Debug)]
 pub struct DateTimeCombo<D, T, Z> {
     _d: PhantomData<D>,
