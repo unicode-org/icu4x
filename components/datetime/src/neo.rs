@@ -13,7 +13,7 @@ use crate::input::ExtractedDateTimeInput;
 use crate::neo_marker::DateInputMarkers;
 use crate::neo_marker::HasConstComponents;
 use crate::neo_marker::{
-    AllInputMarkers, ConvertCalendar, DateMarkers, DateTimeMarkers, IsAnyCalendarKind,
+    AllInputMarkers, CalMarkers, ConvertCalendar, DateMarkers, DateTimeMarkers, IsAnyCalendarKind,
     IsInCalendar, IsRuntimeComponents, NeoGetField, TimeMarkers, TypedDateMarkers, ZoneMarkers,
 };
 use crate::neo_pattern::DateTimePattern;
@@ -32,15 +32,6 @@ use icu_calendar::AnyCalendar;
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_provider::prelude::*;
 use writeable::TryWriteable;
-
-#[doc(hidden)] // internal
-pub mod _internal {
-    pub use crate::calendar::CalMarkers;
-    pub use crate::calendar::FullDataCalMarkers;
-    pub use crate::calendar::NoDataCalMarkers;
-}
-
-use _internal::CalMarkers;
 
 /// Helper macro for generating any/buffer constructors in this file.
 macro_rules! gen_any_buffer_constructors_with_external_loader {
