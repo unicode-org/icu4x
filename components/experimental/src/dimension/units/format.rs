@@ -83,7 +83,7 @@ fn test_basic() {
     )
     .unwrap();
     let value = "12345.67".parse().unwrap();
-    let formatted_unit = fmt.format_fixed_decimal(&value, meter);
+    let formatted_unit = fmt.format_fixed_decimal(&value, century);
     let mut sink = String::new();
     formatted_unit.write_to(&mut sink).unwrap();
     assert_eq!(sink.as_str(), "12,345.67 centuries");
