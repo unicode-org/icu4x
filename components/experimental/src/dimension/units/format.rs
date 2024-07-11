@@ -53,35 +53,47 @@ impl<'l> Writeable for FormattedUnit<'l> {
     }
 }
 
+impl core::fmt::Display for FormattedUnit<'_> {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        self.write_to(f).map_err(|_| core::fmt::Error)
+    }
+}
+
 #[test]
 fn test_basic() {
     use icu_locale_core::locale;
-    use writeable::Writeable;
+    use writeable::assert_writeable_eq;
 
     use crate::dimension::units::formatter::UnitsFormatter;
     use crate::dimension::units::options::UnitsFormatterOptions;
     use crate::dimension::units::options::Width;
 
-    let locale = locale!("en-US").into();
-    let meter = "meter";
+    let (locale, meter) = (locale!("en-US").into(), "meter");
+    let fmt = UnitsFormatter::try_new(&locale, meter, Default::default()).unwrap();
+    let value = "12345.67".parse().unwrap();
+    assert_writeable_eq!(fmt.format_fixed_decimal(&value, meter), "12,345.67 m");
+
+    let (locale, century) = (locale!("en-US").into(), "century");
+    let fmt = UnitsFormatter::try_new(
+        &locale,
+        century,
+        UnitsFormatterOptions {
+            width: Width::Long,
+            ..Default::default()
+        },
+    )
+    .unwrap();
+    let value = "12345.67".parse().unwrap();
+    let formatted_unit = fmt.format_fixed_decimal(&value, century);
+    assert_writeable_eq!(formatted_unit, "12,345.67 centuries");
+
+    let (locale, meter) = (locale!("de-DE").into(), "meter");
     let fmt = UnitsFormatter::try_new(&locale, meter, Default::default()).unwrap();
     let value = "12345.67".parse().unwrap();
     let formatted_unit = fmt.format_fixed_decimal(&value, meter);
-    let mut sink = String::new();
-    formatted_unit.write_to(&mut sink).unwrap();
-    assert_eq!(sink.as_str(), "12,345.67 m");
+    assert_writeable_eq!(formatted_unit, "12.345,67 m");
 
-    let locale = locale!("de-DE").into();
-    let meter = "meter";
-    let fmt = UnitsFormatter::try_new(&locale, meter, Default::default()).unwrap();
-    let value = "12345.67".parse().unwrap();
-    let formatted_unit = fmt.format_fixed_decimal(&value, meter);
-    let mut sink = String::new();
-    formatted_unit.write_to(&mut sink).unwrap();
-    assert_eq!(sink.as_str(), "12.345,67 m");
-
-    let locale = locale!("ar-EG").into();
-    let meter = "meter";
+    let (locale, meter) = (locale!("ar-EG").into(), "meter");
     let fmt = UnitsFormatter::try_new(
         &locale,
         meter,
@@ -93,7 +105,5 @@ fn test_basic() {
     .unwrap();
     let value = "12345.67".parse().unwrap();
     let formatted_unit = fmt.format_fixed_decimal(&value, meter);
-    let mut sink = String::new();
-    formatted_unit.write_to(&mut sink).unwrap();
-    assert_eq!(sink.as_str(), "١٢٬٣٤٥٫٦٧ متر");
+    assert_writeable_eq!(formatted_unit, "١٢٬٣٤٥٫٦٧ متر");
 }
