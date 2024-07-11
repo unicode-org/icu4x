@@ -32,7 +32,7 @@ impl DataProvider<UnitsDisplayNameV1Marker> for SourceDataProvider {
             self.cldr()?.units().read_and_parse(&langid, "units.json")?;
         let units_format_data = &units_format_data.main.value.units;
 
-        fn add_unit_to_map_with_name(
+        fn insert_unit_with_name(
             map: &mut BTreeMap<Count, String>,
             count: Count,
             unit: Option<&str>,
@@ -64,11 +64,11 @@ impl DataProvider<UnitsDisplayNameV1Marker> for SourceDataProvider {
                 }
             };
 
-            add_unit_to_map_with_name(&mut result, Count::One, unit_length_map.one.as_deref());
-            add_unit_to_map_with_name(&mut result, Count::Two, unit_length_map.two.as_deref());
-            add_unit_to_map_with_name(&mut result, Count::Few, unit_length_map.few.as_deref());
-            add_unit_to_map_with_name(&mut result, Count::Many, unit_length_map.many.as_deref());
-            add_unit_to_map_with_name(&mut result, Count::Other, unit_length_map.other.as_deref());
+            insert_unit_with_name(&mut result, Count::One, unit_length_map.one.as_deref());
+            insert_unit_with_name(&mut result, Count::Two, unit_length_map.two.as_deref());
+            insert_unit_with_name(&mut result, Count::Few, unit_length_map.few.as_deref());
+            insert_unit_with_name(&mut result, Count::Many, unit_length_map.many.as_deref());
+            insert_unit_with_name(&mut result, Count::Other, unit_length_map.other.as_deref());
 
             Ok(result)
         }
