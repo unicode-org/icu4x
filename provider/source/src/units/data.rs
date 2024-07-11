@@ -32,8 +32,6 @@ impl DataProvider<UnitsDisplayNameV1Marker> for SourceDataProvider {
             self.cldr()?.units().read_and_parse(&langid, "units.json")?;
         let units_format_data = &units_format_data.main.value.units;
 
-        let mut patterns = BTreeMap::new();
-
         let unit_patterns = match length {
             "long" => &units_format_data.long,
             "short" => &units_format_data.short,
@@ -61,28 +59,19 @@ impl DataProvider<UnitsDisplayNameV1Marker> for SourceDataProvider {
                 .with_debug_context(length)
         })?;
 
-        for (count, unit) in [
-            (Count::One, unit_patterns.one.as_deref()),
-            (Count::Two, unit_patterns.two.as_deref()),
-            (Count::Few, unit_patterns.few.as_deref()),
-            (Count::Many, unit_patterns.many.as_deref()),
-            (Count::Other, unit_patterns.other.as_deref()),
-        ] {
-            if let Some(unit) = unit {
-                patterns.insert(count, unit);
-            }
-        }
-
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_owned(UnitsDisplayNameV1 {
-                patterns: ZeroMap::from_iter([
-                    (Count::One, unit_patterns.one.as_deref()),
-                    (Count::Two, unit_patterns.two.as_deref()),
-                    (Count::Few, unit_patterns.few.as_deref()),
-                    (Count::Many, unit_patterns.many.as_deref()),
-                    (Count::Other, unit_patterns.other.as_deref()),
-                  ].into_iter().filter_map(|(count, unit)| Some((count, unit?)))
+                patterns: ZeroMap::from_iter(
+                    [
+                        (Count::One, unit_patterns.one.as_deref()),
+                        (Count::Two, unit_patterns.two.as_deref()),
+                        (Count::Few, unit_patterns.few.as_deref()),
+                        (Count::Many, unit_patterns.many.as_deref()),
+                        (Count::Other, unit_patterns.other.as_deref()),
+                    ]
+                    .into_iter()
+                    .filter_map(|(count, pattern)| Some((count, pattern?))),
                 ),
             }),
         })
@@ -130,7 +119,7 @@ impl crate::IterableDataProviderCached<UnitsDisplayNameV1Marker> for SourceDataP
                 //       In this case, we should return None.
                 //       Example: `length-meter` is a valid key, but `length` is not.
                 //                `power3` is not a valid unit.
-                key.split_once('-').map(|(_prefix, unit_name)| unit_name)
+                key.split_once('-').map(|(_category, unit)| unit)
             });
 
             for truncated_quantity in quantities {
