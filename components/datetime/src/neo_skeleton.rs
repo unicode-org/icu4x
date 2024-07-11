@@ -799,27 +799,91 @@ pub struct NeoTimeZoneSkeleton {
     pub style: NeoTimeZoneStyle,
 }
 
+macro_rules! time_zone_style_registry {
+    ($cb:ident) => {
+        $cb! {
+            // Styles with functions and matchers
+            [
+                (non_location_short, NonLocation, Short, LowerV, One),
+                (non_location_long, NonLocation, Long, LowerV, Wide),
+            ],
+            // Styles with function only
+            [
+                (non_location, NonLocation),
+            ],
+            // Styles with matcher only
+            [
+                (NonLocation, Medium, LowerV, One),
+            ],
+        }
+    };
+}
+
+macro_rules! make_constructors {
+    (
+        [$(($fn:ident, $style:ident, $length:ident, $field_symbol:ident, $field_length:ident)),+,],
+        [$(($fn1:ident, $style1:ident)),+,],
+        [$(($style2:ident, $length2:ident, $field_symbol2:ident, $field_length2:ident)),+,],
+    ) => {
+        $(
+            impl NeoTimeZoneSkeleton {
+                pub(crate) const fn $fn() -> Self {
+                    Self {
+                        length: Some(NeoSkeletonLength::$length),
+                        style: NeoTimeZoneStyle::$style,
+                    }
+                }
+            }
+        )+
+        $(
+            impl NeoTimeZoneSkeleton {
+                pub(crate) const fn $fn1() -> Self {
+                    Self {
+                        length: None,
+                        style: NeoTimeZoneStyle::$style1,
+                    }
+                }
+            }
+        )+
+    };
+}
+
+time_zone_style_registry!(make_constructors);
+
+macro_rules! make_skeleton_to_field_match {
+    (
+        [$(($fn:ident, $style:ident, $length:ident, $field_symbol:ident, $field_length:ident)),+,],
+        [$(($fn1:ident, $style1:ident)),+,],
+        [$(($style2:ident, $length2:ident, $field_symbol2:ident, $field_length2:ident)),+,],
+    ) => {
+        fn skeleton_to_field(style: NeoTimeZoneStyle, length: NeoSkeletonLength) -> Field {
+            match (style, length) {
+                $(
+                    (NeoTimeZoneStyle::$style, NeoSkeletonLength::$length) => Field {
+                        symbol: FieldSymbol::TimeZone(fields::TimeZone::$field_symbol),
+                        length: FieldLength::$field_length,
+                    },
+                )+
+                $(
+                    (NeoTimeZoneStyle::$style2, NeoSkeletonLength::$length2) => Field {
+                        symbol: FieldSymbol::TimeZone(fields::TimeZone::$field_symbol2),
+                        length: FieldLength::$field_length2,
+                    },
+                )+
+                (_, _) => todo!()
+            }
+        }
+    };
+}
+
+time_zone_style_registry!(make_skeleton_to_field_match);
+
 impl NeoTimeZoneSkeleton {
     #[cfg(feature = "experimental")]
-    pub(crate) const fn non_location_short() -> Self {
-        Self {
-            length: Some(NeoSkeletonLength::Short),
-            style: NeoTimeZoneStyle::NonLocation,
-        }
-    }
-
-    #[cfg(feature = "experimental")]
     pub(crate) fn to_field(self, length: NeoSkeletonLength) -> Field {
-        use NeoSkeletonLength::*;
-        use NeoTimeZoneStyle::*;
+        let style = self.style;
         let length = self.length.unwrap_or(length);
-        match (self.style, length) {
-            (NonLocation, Short) => Field {
-                symbol: FieldSymbol::TimeZone(fields::TimeZone::LowerV),
-                length: FieldLength::One,
-            },
-            (_, _) => todo!(),
-        }
+        skeleton_to_field(style, length)
     }
 }
 

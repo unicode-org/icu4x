@@ -1628,10 +1628,38 @@ impl_date_marker!(
     input_any_calendar_kind = yes,
 );
 
+// TODO: Select the proper zone payloads in all of these markers below
+
 impl_zone_marker!(
     NeoTimeZoneGenericShortMarker,
     NeoTimeZoneSkeleton::non_location_short(),
     description = "a generic short time zone format",
+    expectation = "GMT",
+    zone_essentials = yes,
+    zone_exemplar_cities = yes,
+    zone_generic_long = yes,
+    zone_generic_short = yes,
+    zone_specific_long = yes,
+    zone_specific_short = yes,
+);
+
+impl_zone_marker!(
+    NeoTimeZoneGenericLongMarker,
+    NeoTimeZoneSkeleton::non_location_long(),
+    description = "a generic long time zone format",
+    expectation = "Greenwich Mean Time",
+    zone_essentials = yes,
+    zone_exemplar_cities = yes,
+    zone_generic_long = yes,
+    zone_generic_short = yes,
+    zone_specific_long = yes,
+    zone_specific_short = yes,
+);
+
+impl_zone_marker!(
+    NeoTimeZoneGenericMarker,
+    NeoTimeZoneSkeleton::non_location(),
+    description = "a generic time zone format with inherited length",
     expectation = "GMT",
     zone_essentials = yes,
     zone_exemplar_cities = yes,
