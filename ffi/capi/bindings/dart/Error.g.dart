@@ -6,7 +6,7 @@ part of 'lib.g.dart';
 ///
 /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/enum.DateTimeError.html), [2](https://docs.rs/icu/latest/icu/provider/struct.DataError.html), [3](https://docs.rs/icu/latest/icu/provider/enum.DataErrorKind.html)
 enum Error {
-  /// The error is not currently categorized as ICU4XError.
+  /// The error is not currently categorized as Error.
   /// Please file a bug
   unknownError,
 

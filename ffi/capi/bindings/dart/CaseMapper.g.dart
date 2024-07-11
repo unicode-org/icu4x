@@ -22,7 +22,7 @@ final class CaseMapper implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XCaseMapper_destroy));
 
-  /// Construct a new ICU4XCaseMapper instance
+  /// Construct a new CaseMapper instance
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.new) for more information.
   ///
@@ -106,7 +106,7 @@ final class CaseMapper implements ffi.Finalizable {
   /// In other words, this adds all characters that this casemaps to, as
   /// well as all characters that may casemap to this one.
   ///
-  /// Note that since ICU4XCodePointSetBuilder does not contain strings, this will
+  /// Note that since CodePointSetBuilder does not contain strings, this will
   /// ignore string mappings.
   ///
   /// Identical to the similarly named method on `CaseMapCloser`, use that if you

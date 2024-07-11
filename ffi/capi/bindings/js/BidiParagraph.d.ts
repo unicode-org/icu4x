@@ -1,0 +1,63 @@
+import { u8, usize } from "./diplomat-runtime"
+import { BidiDirection } from "./BidiDirection";
+
+/**
+
+ * Bidi information for a single processed paragraph
+ */
+export class BidiParagraph {
+
+  /**
+
+   * Given a paragraph index `n` within the surrounding text, this sets this object to the paragraph at that index. Returns nothing when out of bounds.
+
+   * This is equivalent to calling `paragraph_at()` on `BidiInfo` but doesn't create a new object
+   */
+  set_paragraph_in_text(n: usize): boolean;
+
+  /**
+
+   * The primary direction of this paragraph
+
+   * See the {@link https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.Paragraph.html#method.level_at Rust documentation for `level_at`} for more information.
+   */
+  direction(): BidiDirection;
+
+  /**
+
+   * The number of bytes in this paragraph
+
+   * See the {@link https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.ParagraphInfo.html#method.len Rust documentation for `len`} for more information.
+   */
+  size(): usize;
+
+  /**
+
+   * The start index of this paragraph within the source text
+   */
+  range_start(): usize;
+
+  /**
+
+   * The end index of this paragraph within the source text
+   */
+  range_end(): usize;
+
+  /**
+
+   * Reorder a line based on display order. The ranges are specified relative to the source text and must be contained within this paragraph's range.
+
+   * See the {@link https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.Paragraph.html#method.level_at Rust documentation for `level_at`} for more information.
+   */
+  reorder_line(range_start: usize, range_end: usize): string | undefined;
+
+  /**
+
+   * Get the BIDI level at a particular byte index in this paragraph. This integer is conceptually a `unicode_bidi::Level`, and can be further inspected using the static methods on Bidi.
+
+   * Returns 0 (equivalent to `Level::ltr()`) on error
+
+   * See the {@link https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.Paragraph.html#method.level_at Rust documentation for `level_at`} for more information.
+   */
+  level_at(pos: usize): u8;
+}

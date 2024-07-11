@@ -3,13 +3,14 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #[diplomat::bridge]
+#[diplomat::abi_rename = "ICU4X{0}"]
 pub mod ffi {
     use alloc::boxed::Box;
 
     #[diplomat::enum_convert(core::cmp::Ordering)]
     #[diplomat::rust_link(core::cmp::Ordering, Enum)]
     #[diplomat::attr(*, disable)]
-    pub enum ICU4XOrdering {
+    pub enum Ordering {
         Less = -1,
         Equal = 0,
         Greater = 1,

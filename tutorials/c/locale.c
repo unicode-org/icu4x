@@ -2,18 +2,18 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#include "ICU4XDataProvider.h"
-#include "ICU4XLocale.h"
-#include "ICU4XLocaleCanonicalizer.h"
-#include "ICU4XLocaleExpander.h"
-#include "ICU4XLogger.h"
+#include "DataProvider.h"
+#include "Locale.h"
+#include "LocaleCanonicalizer.h"
+#include "LocaleExpander.h"
+#include "Logger.h"
 #include <string.h>
 #include <stdio.h>
 
 /**
  * A helper for testing the locale with nice error messages.
  */
-bool test_locale(ICU4XLocale* locale, const char* message, const char* expected) {
+bool test_locale(Locale* locale, const char* message, const char* expected) {
     char output[40];
 
     // Test setters
@@ -30,7 +30,7 @@ bool test_locale(ICU4XLocale* locale, const char* message, const char* expected)
     return true;
 }
 
-ICU4XLocale* get_locale(const char* localeText) {
+Locale* get_locale(const char* localeText) {
     ICU4XLocale_create_from_string_result locale_result = ICU4XLocale_create_from_string(localeText, strlen(localeText));
     if (!locale_result.is_ok) {
         printf("Could not create locale from: %s", localeText);
@@ -51,7 +51,7 @@ int main() {
     if (!locale_result.is_ok) {
         return 1;
     }
-    ICU4XLocale* locale = locale_result.ok;
+    Locale* locale = locale_result.ok;
     ICU4XLocale_to_string(locale, &write);
     if (write.grow_failed) {
         return 1;
@@ -188,19 +188,19 @@ int main() {
     ICU4XLocale_destroy(locale);
 
     // Create a LocaleCanonicalizer and LocaleExpander.
-    ICU4XDataProvider* provider = ICU4XDataProvider_create_compiled();
+    DataProvider* provider = ICU4XDataProvider_create_compiled();
     ICU4XLocaleCanonicalizer_create_result result2 = ICU4XLocaleCanonicalizer_create(provider);
     if (!result2.is_ok) {
         printf("Could not construct Locale Canonicalizer");
         return 1;
     }
-    ICU4XLocaleCanonicalizer* lc = result2.ok;
+    LocaleCanonicalizer* lc = result2.ok;
     ICU4XLocaleExpander_create_result result3 = ICU4XLocaleExpander_create(provider);
     if (!result3.is_ok) {
         printf("Could not construct Locale Canonicalizer");
         return 1;
     }
-    ICU4XLocaleExpander* le = result3.ok;
+    LocaleExpander* le = result3.ok;
 
     // Test maximize.
     write = diplomat_simple_write(output, 40);

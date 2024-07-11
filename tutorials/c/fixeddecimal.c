@@ -2,11 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#include "ICU4XDataProvider.h"
-#include "ICU4XLocale.h"
-#include "ICU4XFixedDecimal.h"
-#include "ICU4XFixedDecimalFormatter.h"
-#include "ICU4XLogger.h"
+#include "DataProvider.h"
+#include "Locale.h"
+#include "FixedDecimal.h"
+#include "FixedDecimalFormatter.h"
+#include "Logger.h"
 #include <string.h>
 #include <stdio.h>
 
@@ -16,18 +16,18 @@ int main() {
     if (!locale_result.is_ok) {
         return 1;
     }
-    ICU4XLocale* locale = locale_result.ok;
-    ICU4XDataProvider* provider = ICU4XDataProvider_create_compiled();
+    Locale* locale = locale_result.ok;
+    DataProvider* provider = ICU4XDataProvider_create_compiled();
 
-    ICU4XFixedDecimal* decimal = ICU4XFixedDecimal_create_from_u64(1000007);
+    FixedDecimal* decimal = ICU4XFixedDecimal_create_from_u64(1000007);
 
     ICU4XFixedDecimalFormatter_create_with_grouping_strategy_result fdf_result =
-        ICU4XFixedDecimalFormatter_create_with_grouping_strategy(provider, locale, ICU4XFixedDecimalGroupingStrategy_Auto);
+        ICU4XFixedDecimalFormatter_create_with_grouping_strategy(provider, locale, FixedDecimalGroupingStrategy_Auto);
     if (!fdf_result.is_ok)  {
         printf("Failed to create FixedDecimalFormatter\n");
         return 1;
     }
-    ICU4XFixedDecimalFormatter* fdf = fdf_result.ok;
+    FixedDecimalFormatter* fdf = fdf_result.ok;
     char output[40];
 
     DiplomatWrite write = diplomat_simple_write(output, 40);
@@ -47,7 +47,7 @@ int main() {
 
     ICU4XFixedDecimal_multiply_pow10(decimal, 2);
 
-    ICU4XFixedDecimal_set_sign(decimal, ICU4XFixedDecimalSign_Negative);
+    ICU4XFixedDecimal_set_sign(decimal, FixedDecimalSign_Negative);
 
     write = diplomat_simple_write(output, 40);
 

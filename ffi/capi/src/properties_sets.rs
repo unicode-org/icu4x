@@ -3,22 +3,23 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #[diplomat::bridge]
+#[diplomat::abi_rename = "ICU4X{0}"]
 pub mod ffi {
-    use crate::provider::ffi::ICU4XDataProvider;
     use alloc::boxed::Box;
-    use icu_properties::sets;
 
-    use crate::errors::ffi::{ICU4XDataError, ICU4XError};
-    use crate::properties_iter::ffi::ICU4XCodePointRangeIterator;
+    use crate::errors::ffi::DataError;
+    use crate::errors::ffi::Error;
+    use crate::properties_iter::ffi::CodePointRangeIterator;
+    use crate::provider::ffi::DataProvider;
 
     #[diplomat::opaque]
     /// An ICU4X Unicode Set Property object, capable of querying whether a code point is contained in a set based on a Unicode property.
     #[diplomat::rust_link(icu::properties, Mod)]
     #[diplomat::rust_link(icu::properties::sets::CodePointSetData, Struct)]
     #[diplomat::rust_link(icu::properties::sets::CodePointSetDataBorrowed, Struct)]
-    pub struct ICU4XCodePointSetData(pub sets::CodePointSetData);
+    pub struct CodePointSetData(pub icu_properties::sets::CodePointSetData);
 
-    impl ICU4XCodePointSetData {
+    impl CodePointSetData {
         /// Checks whether the code point is in the set.
         #[diplomat::rust_link(
             icu::properties::sets::CodePointSetDataBorrowed::contains,
@@ -43,8 +44,8 @@ pub mod ffi {
             icu::properties::sets::CodePointSetDataBorrowed::iter_ranges,
             FnInStruct
         )]
-        pub fn iter_ranges<'a>(&'a self) -> Box<ICU4XCodePointRangeIterator<'a>> {
-            Box::new(ICU4XCodePointRangeIterator(Box::new(
+        pub fn iter_ranges<'a>(&'a self) -> Box<CodePointRangeIterator<'a>> {
+            Box::new(CodePointRangeIterator(Box::new(
                 self.0.as_borrowed().iter_ranges(),
             )))
         }
@@ -54,8 +55,8 @@ pub mod ffi {
             icu::properties::sets::CodePointSetDataBorrowed::iter_ranges_complemented,
             FnInStruct
         )]
-        pub fn iter_ranges_complemented<'a>(&'a self) -> Box<ICU4XCodePointRangeIterator<'a>> {
-            Box::new(ICU4XCodePointRangeIterator(Box::new(
+        pub fn iter_ranges_complemented<'a>(&'a self) -> Box<CodePointRangeIterator<'a>> {
+            Box::new(CodePointRangeIterator(Box::new(
                 self.0.as_borrowed().iter_ranges_complemented(),
             )))
         }
@@ -65,12 +66,12 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::load_for_general_category_group, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "for_general_category_group")]
         pub fn load_for_general_category_group(
-            provider: &ICU4XDataProvider,
+            provider: &DataProvider,
             group: u32,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::for_general_category_group [r => Ok(r)],
-                sets::load_for_general_category_group,
+        ) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::for_general_category_group [r => Ok(r)],
+                icu_properties::sets::load_for_general_category_group,
                 provider,
                 group.into(),
             )?)))
@@ -80,11 +81,11 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::load_ascii_hex_digit, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "ascii_hex_digit")]
         pub fn load_ascii_hex_digit(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::ascii_hex_digit [r => Ok(r.static_to_owned())],
-                sets::load_ascii_hex_digit,
+            provider: &DataProvider,
+        ) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::ascii_hex_digit [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_ascii_hex_digit,
                 provider
             )?)))
         }
@@ -92,12 +93,10 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::alnum, Fn)]
         #[diplomat::rust_link(icu::properties::sets::load_alnum, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "alnum")]
-        pub fn load_alnum(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::alnum [r => Ok(r.static_to_owned())],
-                sets::load_alnum,
+        pub fn load_alnum(provider: &DataProvider) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::alnum [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_alnum,
                 provider
             )?)))
         }
@@ -106,11 +105,11 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::load_alphabetic, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "alphabetic")]
         pub fn load_alphabetic(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::alphabetic [r => Ok(r.static_to_owned())],
-                sets::load_alphabetic,
+            provider: &DataProvider,
+        ) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::alphabetic [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_alphabetic,
                 provider
             )?)))
         }
@@ -119,11 +118,11 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::load_bidi_control, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "bidi_control")]
         pub fn load_bidi_control(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::bidi_control [r => Ok(r.static_to_owned())],
-                sets::load_bidi_control,
+            provider: &DataProvider,
+        ) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::bidi_control [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_bidi_control,
                 provider
             )?)))
         }
@@ -132,11 +131,11 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::load_bidi_mirrored, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "bidi_mirrored")]
         pub fn load_bidi_mirrored(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::bidi_mirrored [r => Ok(r.static_to_owned())],
-                sets::load_bidi_mirrored,
+            provider: &DataProvider,
+        ) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::bidi_mirrored [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_bidi_mirrored,
                 provider
             )?)))
         }
@@ -144,12 +143,10 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::blank, Fn)]
         #[diplomat::rust_link(icu::properties::sets::load_blank, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "blank")]
-        pub fn load_blank(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::blank [r => Ok(r.static_to_owned())],
-                sets::load_blank,
+        pub fn load_blank(provider: &DataProvider) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::blank [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_blank,
                 provider
             )?)))
         }
@@ -157,12 +154,10 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::cased, Fn)]
         #[diplomat::rust_link(icu::properties::sets::load_cased, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "cased")]
-        pub fn load_cased(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::cased [r => Ok(r.static_to_owned())],
-                sets::load_cased,
+        pub fn load_cased(provider: &DataProvider) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::cased [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_cased,
                 provider
             )?)))
         }
@@ -171,11 +166,11 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::load_case_ignorable, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "case_ignorable")]
         pub fn load_case_ignorable(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::case_ignorable [r => Ok(r.static_to_owned())],
-                sets::load_case_ignorable,
+            provider: &DataProvider,
+        ) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::case_ignorable [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_case_ignorable,
                 provider
             )?)))
         }
@@ -184,11 +179,11 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::load_full_composition_exclusion, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "full_composition_exclusion")]
         pub fn load_full_composition_exclusion(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::full_composition_exclusion [r => Ok(r.static_to_owned())],
-                sets::load_full_composition_exclusion,
+            provider: &DataProvider,
+        ) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::full_composition_exclusion [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_full_composition_exclusion,
                 provider
             )?)))
         }
@@ -197,11 +192,11 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::load_changes_when_casefolded, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "changes_when_casefolded")]
         pub fn load_changes_when_casefolded(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::changes_when_casefolded [r => Ok(r.static_to_owned())],
-                sets::load_changes_when_casefolded,
+            provider: &DataProvider,
+        ) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::changes_when_casefolded [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_changes_when_casefolded,
                 provider
             )?)))
         }
@@ -210,11 +205,11 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::load_changes_when_casemapped, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "changes_when_casemapped")]
         pub fn load_changes_when_casemapped(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::changes_when_casemapped [r => Ok(r.static_to_owned())],
-                sets::load_changes_when_casemapped,
+            provider: &DataProvider,
+        ) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::changes_when_casemapped [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_changes_when_casemapped,
                 provider
             )?)))
         }
@@ -223,11 +218,11 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::load_changes_when_nfkc_casefolded, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "changes_when_nfkc_casefolded")]
         pub fn load_changes_when_nfkc_casefolded(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::changes_when_nfkc_casefolded [r => Ok(r.static_to_owned())],
-                sets::load_changes_when_nfkc_casefolded,
+            provider: &DataProvider,
+        ) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::changes_when_nfkc_casefolded [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_changes_when_nfkc_casefolded,
                 provider
             )?)))
         }
@@ -236,11 +231,11 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::load_changes_when_lowercased, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "changes_when_lowercased")]
         pub fn load_changes_when_lowercased(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::changes_when_lowercased [r => Ok(r.static_to_owned())],
-                sets::load_changes_when_lowercased,
+            provider: &DataProvider,
+        ) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::changes_when_lowercased [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_changes_when_lowercased,
                 provider
             )?)))
         }
@@ -249,11 +244,11 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::load_changes_when_titlecased, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "changes_when_titlecased")]
         pub fn load_changes_when_titlecased(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::changes_when_titlecased [r => Ok(r.static_to_owned())],
-                sets::load_changes_when_titlecased,
+            provider: &DataProvider,
+        ) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::changes_when_titlecased [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_changes_when_titlecased,
                 provider
             )?)))
         }
@@ -262,11 +257,11 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::load_changes_when_uppercased, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "changes_when_uppercased")]
         pub fn load_changes_when_uppercased(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::changes_when_uppercased [r => Ok(r.static_to_owned())],
-                sets::load_changes_when_uppercased,
+            provider: &DataProvider,
+        ) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::changes_when_uppercased [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_changes_when_uppercased,
                 provider
             )?)))
         }
@@ -274,12 +269,10 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::dash, Fn)]
         #[diplomat::rust_link(icu::properties::sets::load_dash, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "dash")]
-        pub fn load_dash(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::dash [r => Ok(r.static_to_owned())],
-                sets::load_dash,
+        pub fn load_dash(provider: &DataProvider) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::dash [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_dash,
                 provider
             )?)))
         }
@@ -288,11 +281,11 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::load_deprecated, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "deprecated")]
         pub fn load_deprecated(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::deprecated [r => Ok(r.static_to_owned())],
-                sets::load_deprecated,
+            provider: &DataProvider,
+        ) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::deprecated [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_deprecated,
                 provider
             )?)))
         }
@@ -301,11 +294,11 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::load_default_ignorable_code_point, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "default_ignorable_code_point")]
         pub fn load_default_ignorable_code_point(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::default_ignorable_code_point [r => Ok(r.static_to_owned())],
-                sets::load_default_ignorable_code_point,
+            provider: &DataProvider,
+        ) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::default_ignorable_code_point [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_default_ignorable_code_point,
                 provider
             )?)))
         }
@@ -313,12 +306,10 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::diacritic, Fn)]
         #[diplomat::rust_link(icu::properties::sets::load_diacritic, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "diacritic")]
-        pub fn load_diacritic(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::diacritic [r => Ok(r.static_to_owned())],
-                sets::load_diacritic,
+        pub fn load_diacritic(provider: &DataProvider) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::diacritic [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_diacritic,
                 provider
             )?)))
         }
@@ -327,11 +318,11 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::load_emoji_modifier_base, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "emoji_modifier_base")]
         pub fn load_emoji_modifier_base(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::emoji_modifier_base [r => Ok(r.static_to_owned())],
-                sets::load_emoji_modifier_base,
+            provider: &DataProvider,
+        ) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::emoji_modifier_base [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_emoji_modifier_base,
                 provider
             )?)))
         }
@@ -340,11 +331,11 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::load_emoji_component, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "emoji_component")]
         pub fn load_emoji_component(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::emoji_component [r => Ok(r.static_to_owned())],
-                sets::load_emoji_component,
+            provider: &DataProvider,
+        ) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::emoji_component [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_emoji_component,
                 provider
             )?)))
         }
@@ -353,11 +344,11 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::load_emoji_modifier, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "emoji_modifier")]
         pub fn load_emoji_modifier(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::emoji_modifier [r => Ok(r.static_to_owned())],
-                sets::load_emoji_modifier,
+            provider: &DataProvider,
+        ) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::emoji_modifier [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_emoji_modifier,
                 provider
             )?)))
         }
@@ -365,12 +356,10 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::emoji, Fn)]
         #[diplomat::rust_link(icu::properties::sets::load_emoji, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "emoji")]
-        pub fn load_emoji(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::emoji [r => Ok(r.static_to_owned())],
-                sets::load_emoji,
+        pub fn load_emoji(provider: &DataProvider) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::emoji [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_emoji,
                 provider
             )?)))
         }
@@ -379,11 +368,11 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::load_emoji_presentation, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "emoji_presentation")]
         pub fn load_emoji_presentation(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::emoji_presentation [r => Ok(r.static_to_owned())],
-                sets::load_emoji_presentation,
+            provider: &DataProvider,
+        ) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::emoji_presentation [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_emoji_presentation,
                 provider
             )?)))
         }
@@ -391,12 +380,10 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::extender, Fn)]
         #[diplomat::rust_link(icu::properties::sets::load_extender, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "extender")]
-        pub fn load_extender(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::extender [r => Ok(r.static_to_owned())],
-                sets::load_extender,
+        pub fn load_extender(provider: &DataProvider) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::extender [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_extender,
                 provider
             )?)))
         }
@@ -405,11 +392,11 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::load_extended_pictographic, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "extended_pictographic")]
         pub fn load_extended_pictographic(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::extended_pictographic [r => Ok(r.static_to_owned())],
-                sets::load_extended_pictographic,
+            provider: &DataProvider,
+        ) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::extended_pictographic [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_extended_pictographic,
                 provider
             )?)))
         }
@@ -417,12 +404,10 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::graph, Fn)]
         #[diplomat::rust_link(icu::properties::sets::load_graph, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "graph")]
-        pub fn load_graph(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::graph [r => Ok(r.static_to_owned())],
-                sets::load_graph,
+        pub fn load_graph(provider: &DataProvider) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::graph [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_graph,
                 provider
             )?)))
         }
@@ -431,11 +416,11 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::load_grapheme_base, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "grapheme_base")]
         pub fn load_grapheme_base(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::grapheme_base [r => Ok(r.static_to_owned())],
-                sets::load_grapheme_base,
+            provider: &DataProvider,
+        ) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::grapheme_base [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_grapheme_base,
                 provider
             )?)))
         }
@@ -444,11 +429,11 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::load_grapheme_extend, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "grapheme_extend")]
         pub fn load_grapheme_extend(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::grapheme_extend [r => Ok(r.static_to_owned())],
-                sets::load_grapheme_extend,
+            provider: &DataProvider,
+        ) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::grapheme_extend [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_grapheme_extend,
                 provider
             )?)))
         }
@@ -457,11 +442,11 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::load_grapheme_link, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "grapheme_link")]
         pub fn load_grapheme_link(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::grapheme_link [r => Ok(r.static_to_owned())],
-                sets::load_grapheme_link,
+            provider: &DataProvider,
+        ) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::grapheme_link [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_grapheme_link,
                 provider
             )?)))
         }
@@ -469,12 +454,10 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::hex_digit, Fn)]
         #[diplomat::rust_link(icu::properties::sets::load_hex_digit, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "hex_digit")]
-        pub fn load_hex_digit(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::hex_digit [r => Ok(r.static_to_owned())],
-                sets::load_hex_digit,
+        pub fn load_hex_digit(provider: &DataProvider) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::hex_digit [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_hex_digit,
                 provider
             )?)))
         }
@@ -482,12 +465,10 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::hyphen, Fn)]
         #[diplomat::rust_link(icu::properties::sets::load_hyphen, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "hyphen")]
-        pub fn load_hyphen(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::hyphen [r => Ok(r.static_to_owned())],
-                sets::load_hyphen,
+        pub fn load_hyphen(provider: &DataProvider) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::hyphen [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_hyphen,
                 provider
             )?)))
         }
@@ -496,11 +477,11 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::load_id_continue, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "id_continue")]
         pub fn load_id_continue(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::id_continue [r => Ok(r.static_to_owned())],
-                sets::load_id_continue,
+            provider: &DataProvider,
+        ) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::id_continue [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_id_continue,
                 provider
             )?)))
         }
@@ -509,11 +490,11 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::load_ideographic, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "ideographic")]
         pub fn load_ideographic(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::ideographic [r => Ok(r.static_to_owned())],
-                sets::load_ideographic,
+            provider: &DataProvider,
+        ) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::ideographic [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_ideographic,
                 provider
             )?)))
         }
@@ -521,12 +502,10 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::id_start, Fn)]
         #[diplomat::rust_link(icu::properties::sets::load_id_start, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "id_start")]
-        pub fn load_id_start(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::id_start [r => Ok(r.static_to_owned())],
-                sets::load_id_start,
+        pub fn load_id_start(provider: &DataProvider) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::id_start [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_id_start,
                 provider
             )?)))
         }
@@ -535,11 +514,11 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::load_ids_binary_operator, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "ids_binary_operator")]
         pub fn load_ids_binary_operator(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::ids_binary_operator [r => Ok(r.static_to_owned())],
-                sets::load_ids_binary_operator,
+            provider: &DataProvider,
+        ) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::ids_binary_operator [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_ids_binary_operator,
                 provider
             )?)))
         }
@@ -548,11 +527,11 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::load_ids_trinary_operator, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "ids_trinary_operator")]
         pub fn load_ids_trinary_operator(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::ids_trinary_operator [r => Ok(r.static_to_owned())],
-                sets::load_ids_trinary_operator,
+            provider: &DataProvider,
+        ) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::ids_trinary_operator [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_ids_trinary_operator,
                 provider
             )?)))
         }
@@ -561,11 +540,11 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::load_join_control, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "join_control")]
         pub fn load_join_control(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::join_control [r => Ok(r.static_to_owned())],
-                sets::load_join_control,
+            provider: &DataProvider,
+        ) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::join_control [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_join_control,
                 provider
             )?)))
         }
@@ -574,11 +553,11 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::load_logical_order_exception, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "logical_order_exception")]
         pub fn load_logical_order_exception(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::logical_order_exception [r => Ok(r.static_to_owned())],
-                sets::load_logical_order_exception,
+            provider: &DataProvider,
+        ) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::logical_order_exception [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_logical_order_exception,
                 provider
             )?)))
         }
@@ -586,12 +565,10 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::lowercase, Fn)]
         #[diplomat::rust_link(icu::properties::sets::load_lowercase, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "lowercase")]
-        pub fn load_lowercase(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::lowercase [r => Ok(r.static_to_owned())],
-                sets::load_lowercase,
+        pub fn load_lowercase(provider: &DataProvider) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::lowercase [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_lowercase,
                 provider
             )?)))
         }
@@ -599,12 +576,10 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::math, Fn)]
         #[diplomat::rust_link(icu::properties::sets::load_math, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "math")]
-        pub fn load_math(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::math [r => Ok(r.static_to_owned())],
-                sets::load_math,
+        pub fn load_math(provider: &DataProvider) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::math [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_math,
                 provider
             )?)))
         }
@@ -613,11 +588,11 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::load_noncharacter_code_point, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "noncharacter_code_point")]
         pub fn load_noncharacter_code_point(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::noncharacter_code_point [r => Ok(r.static_to_owned())],
-                sets::load_noncharacter_code_point,
+            provider: &DataProvider,
+        ) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::noncharacter_code_point [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_noncharacter_code_point,
                 provider
             )?)))
         }
@@ -625,12 +600,10 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::nfc_inert, Fn)]
         #[diplomat::rust_link(icu::properties::sets::load_nfc_inert, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "nfc_inert")]
-        pub fn load_nfc_inert(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::nfc_inert [r => Ok(r.static_to_owned())],
-                sets::load_nfc_inert,
+        pub fn load_nfc_inert(provider: &DataProvider) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::nfc_inert [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_nfc_inert,
                 provider
             )?)))
         }
@@ -638,12 +611,10 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::nfd_inert, Fn)]
         #[diplomat::rust_link(icu::properties::sets::load_nfd_inert, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "nfd_inert")]
-        pub fn load_nfd_inert(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::nfd_inert [r => Ok(r.static_to_owned())],
-                sets::load_nfd_inert,
+        pub fn load_nfd_inert(provider: &DataProvider) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::nfd_inert [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_nfd_inert,
                 provider
             )?)))
         }
@@ -652,11 +623,11 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::load_nfkc_inert, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "nfkc_inert")]
         pub fn load_nfkc_inert(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::nfkc_inert [r => Ok(r.static_to_owned())],
-                sets::load_nfkc_inert,
+            provider: &DataProvider,
+        ) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::nfkc_inert [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_nfkc_inert,
                 provider
             )?)))
         }
@@ -665,11 +636,11 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::load_nfkd_inert, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "nfkd_inert")]
         pub fn load_nfkd_inert(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::nfkd_inert [r => Ok(r.static_to_owned())],
-                sets::load_nfkd_inert,
+            provider: &DataProvider,
+        ) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::nfkd_inert [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_nfkd_inert,
                 provider
             )?)))
         }
@@ -678,11 +649,11 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::load_pattern_syntax, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "pattern_syntax")]
         pub fn load_pattern_syntax(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::pattern_syntax [r => Ok(r.static_to_owned())],
-                sets::load_pattern_syntax,
+            provider: &DataProvider,
+        ) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::pattern_syntax [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_pattern_syntax,
                 provider
             )?)))
         }
@@ -691,11 +662,11 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::load_pattern_white_space, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "pattern_white_space")]
         pub fn load_pattern_white_space(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::pattern_white_space [r => Ok(r.static_to_owned())],
-                sets::load_pattern_white_space,
+            provider: &DataProvider,
+        ) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::pattern_white_space [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_pattern_white_space,
                 provider
             )?)))
         }
@@ -704,11 +675,11 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::load_prepended_concatenation_mark, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "prepended_concatenation_mark")]
         pub fn load_prepended_concatenation_mark(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::prepended_concatenation_mark [r => Ok(r.static_to_owned())],
-                sets::load_prepended_concatenation_mark,
+            provider: &DataProvider,
+        ) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::prepended_concatenation_mark [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_prepended_concatenation_mark,
                 provider
             )?)))
         }
@@ -716,12 +687,10 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::print, Fn)]
         #[diplomat::rust_link(icu::properties::sets::load_print, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "print")]
-        pub fn load_print(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::print [r => Ok(r.static_to_owned())],
-                sets::load_print,
+        pub fn load_print(provider: &DataProvider) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::print [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_print,
                 provider
             )?)))
         }
@@ -730,11 +699,11 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::load_quotation_mark, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "quotation_mark")]
         pub fn load_quotation_mark(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::quotation_mark [r => Ok(r.static_to_owned())],
-                sets::load_quotation_mark,
+            provider: &DataProvider,
+        ) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::quotation_mark [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_quotation_mark,
                 provider
             )?)))
         }
@@ -742,12 +711,10 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::radical, Fn)]
         #[diplomat::rust_link(icu::properties::sets::load_radical, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "radical")]
-        pub fn load_radical(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::radical [r => Ok(r.static_to_owned())],
-                sets::load_radical,
+        pub fn load_radical(provider: &DataProvider) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::radical [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_radical,
                 provider
             )?)))
         }
@@ -756,11 +723,11 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::load_regional_indicator, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "regional_indicator")]
         pub fn load_regional_indicator(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::regional_indicator [r => Ok(r.static_to_owned())],
-                sets::load_regional_indicator,
+            provider: &DataProvider,
+        ) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::regional_indicator [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_regional_indicator,
                 provider
             )?)))
         }
@@ -769,11 +736,11 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::load_soft_dotted, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "soft_dotted")]
         pub fn load_soft_dotted(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::soft_dotted [r => Ok(r.static_to_owned())],
-                sets::load_soft_dotted,
+            provider: &DataProvider,
+        ) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::soft_dotted [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_soft_dotted,
                 provider
             )?)))
         }
@@ -782,11 +749,11 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::load_segment_starter, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "segment_starter")]
         pub fn load_segment_starter(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::segment_starter [r => Ok(r.static_to_owned())],
-                sets::load_segment_starter,
+            provider: &DataProvider,
+        ) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::segment_starter [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_segment_starter,
                 provider
             )?)))
         }
@@ -795,11 +762,11 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::load_case_sensitive, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "case_sensitive")]
         pub fn load_case_sensitive(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::case_sensitive [r => Ok(r.static_to_owned())],
-                sets::load_case_sensitive,
+            provider: &DataProvider,
+        ) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::case_sensitive [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_case_sensitive,
                 provider
             )?)))
         }
@@ -808,11 +775,11 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::load_sentence_terminal, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "sentence_terminal")]
         pub fn load_sentence_terminal(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::sentence_terminal [r => Ok(r.static_to_owned())],
-                sets::load_sentence_terminal,
+            provider: &DataProvider,
+        ) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::sentence_terminal [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_sentence_terminal,
                 provider
             )?)))
         }
@@ -821,11 +788,11 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::load_terminal_punctuation, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "terminal_punctuation")]
         pub fn load_terminal_punctuation(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::terminal_punctuation [r => Ok(r.static_to_owned())],
-                sets::load_terminal_punctuation,
+            provider: &DataProvider,
+        ) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::terminal_punctuation [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_terminal_punctuation,
                 provider
             )?)))
         }
@@ -834,11 +801,11 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::load_unified_ideograph, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "unified_ideograph")]
         pub fn load_unified_ideograph(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::unified_ideograph [r => Ok(r.static_to_owned())],
-                sets::load_unified_ideograph,
+            provider: &DataProvider,
+        ) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::unified_ideograph [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_unified_ideograph,
                 provider
             )?)))
         }
@@ -846,12 +813,10 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::uppercase, Fn)]
         #[diplomat::rust_link(icu::properties::sets::load_uppercase, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "uppercase")]
-        pub fn load_uppercase(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::uppercase [r => Ok(r.static_to_owned())],
-                sets::load_uppercase,
+        pub fn load_uppercase(provider: &DataProvider) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::uppercase [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_uppercase,
                 provider
             )?)))
         }
@@ -860,11 +825,11 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::load_variation_selector, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "variation_selector")]
         pub fn load_variation_selector(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::variation_selector [r => Ok(r.static_to_owned())],
-                sets::load_variation_selector,
+            provider: &DataProvider,
+        ) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::variation_selector [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_variation_selector,
                 provider
             )?)))
         }
@@ -873,11 +838,11 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::load_white_space, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "white_space")]
         pub fn load_white_space(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::white_space [r => Ok(r.static_to_owned())],
-                sets::load_white_space,
+            provider: &DataProvider,
+        ) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::white_space [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_white_space,
                 provider
             )?)))
         }
@@ -885,12 +850,10 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::xdigit, Fn)]
         #[diplomat::rust_link(icu::properties::sets::load_xdigit, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "xdigit")]
-        pub fn load_xdigit(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::xdigit [r => Ok(r.static_to_owned())],
-                sets::load_xdigit,
+        pub fn load_xdigit(provider: &DataProvider) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::xdigit [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_xdigit,
                 provider
             )?)))
         }
@@ -899,11 +862,11 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::load_xid_continue, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "xid_continue")]
         pub fn load_xid_continue(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::xid_continue [r => Ok(r.static_to_owned())],
-                sets::load_xid_continue,
+            provider: &DataProvider,
+        ) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::xid_continue [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_xid_continue,
                 provider
             )?)))
         }
@@ -911,12 +874,10 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::xid_start, Fn)]
         #[diplomat::rust_link(icu::properties::sets::load_xid_start, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "xid_start")]
-        pub fn load_xid_start(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::xid_start [r => Ok(r.static_to_owned())],
-                sets::load_xid_start,
+        pub fn load_xid_start(provider: &DataProvider) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::xid_start [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_xid_start,
                 provider
             )?)))
         }
@@ -924,7 +885,7 @@ pub mod ffi {
         /// Loads data for a property specified as a string as long as it is one of the
         /// [ECMA-262 binary properties][ecma] (not including Any, ASCII, and Assigned pseudoproperties).
         ///
-        /// Returns `ICU4XError::PropertyUnexpectedPropertyNameError` in case the string does not
+        /// Returns `Error::PropertyUnexpectedPropertyNameError` in case the string does not
         /// match any property in the list
         ///
         /// [ecma]: https://tc39.es/ecma262/#table-binary-unicode-properties
@@ -934,12 +895,12 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::UnexpectedPropertyNameOrDataError, Enum, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "for_ecma262")]
         pub fn load_for_ecma262(
-            provider: &ICU4XDataProvider,
+            provider: &DataProvider,
             property_name: &str,
-        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
-            Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::load_for_ecma262 [r => r.map(|r| r.static_to_owned()).map_err(|icu_properties::UnexpectedPropertyNameError| icu_properties::UnexpectedPropertyNameOrDataError::UnexpectedPropertyName)],
-                sets::load_for_ecma262_unstable,
+        ) -> Result<Box<CodePointSetData>, Error> {
+            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
+                icu_properties::sets::load_for_ecma262 [r => r.map(|r| r.static_to_owned()).map_err(|icu_properties::UnexpectedPropertyNameError| icu_properties::UnexpectedPropertyNameOrDataError::UnexpectedPropertyName)],
+                icu_properties::sets::load_for_ecma262_unstable,
                 provider,
                 property_name
             )?)))
