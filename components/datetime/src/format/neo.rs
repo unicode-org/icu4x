@@ -12,7 +12,8 @@ use crate::input::DateInput;
 use crate::input::ExtractedDateTimeInput;
 use crate::input::IsoTimeInput;
 use crate::neo_marker::{
-    NeoGetField, TimeMarkers, TypedDateMarkers, TypedDateTimeMarkers, ZoneMarkers,
+    AllInputMarkers, DateInputMarkers, DateTimeMarkers, IsInCalendar, TimeMarkers,
+    TypedDateDataMarkers, ZoneMarkers,
 };
 use crate::neo_pattern::{DateTimePattern, DateTimePatternBorrowed};
 use crate::neo_skeleton::NeoDateTimeComponents;
@@ -2056,29 +2057,21 @@ pub(crate) struct RawDateTimePatternFormatter<'a> {
     names: RawDateTimeNamesBorrowed<'a>,
 }
 
-impl<'a, C: CldrCalendar, R: TypedDateTimeMarkers<C>> DateTimePatternFormatter<'a, C, R> {
+impl<'a, C: CldrCalendar, R: DateTimeMarkers> DateTimePatternFormatter<'a, C, R>
+where
+    R::D: TypedDateDataMarkers<C> + DateInputMarkers,
+    R::T: TimeMarkers,
+    R::Z: ZoneMarkers,
+{
     /// Formats a date and time of day.
     ///
     /// For an example, see [`TypedDateTimeNames`].
     pub fn format<I>(&self, datetime: &I) -> FormattedDateTimePattern<'a>
     where
-        I: ?Sized
-            + NeoGetField<<R::D as TypedDateMarkers<C>>::TypedInputMarker>
-            + NeoGetField<<R::D as TypedDateMarkers<C>>::YearInput>
-            + NeoGetField<<R::D as TypedDateMarkers<C>>::MonthInput>
-            + NeoGetField<<R::D as TypedDateMarkers<C>>::DayOfMonthInput>
-            + NeoGetField<<R::D as TypedDateMarkers<C>>::DayOfWeekInput>
-            + NeoGetField<<R::D as TypedDateMarkers<C>>::DayOfYearInput>
-            + NeoGetField<<R::D as TypedDateMarkers<C>>::AnyCalendarKindInput>
-            + NeoGetField<<R::T as TimeMarkers>::HourInput>
-            + NeoGetField<<R::T as TimeMarkers>::MinuteInput>
-            + NeoGetField<<R::T as TimeMarkers>::SecondInput>
-            + NeoGetField<<R::T as TimeMarkers>::NanoSecondInput>
-            + NeoGetField<<R::Z as ZoneMarkers>::TimeZoneInput>,
+        I: ?Sized + IsInCalendar<C> + AllInputMarkers<R>,
     {
-        let datetime = ExtractedDateTimeInput::extract_from_typed_neo_input::<C, R::D, R::T, R::Z, I>(
-            datetime,
-        );
+        let datetime =
+            ExtractedDateTimeInput::extract_from_neo_input::<R::D, R::T, R::Z, I>(datetime);
         FormattedDateTimePattern {
             pattern: self.inner.pattern,
             datetime,

@@ -8,7 +8,6 @@ use core::marker::PhantomData;
 
 use crate::{
     format::neo::*,
-    neo::_internal::*,
     neo_skeleton::*,
     provider::{neo::*, time_zones::tz},
     CldrCalendar,
@@ -24,14 +23,22 @@ use icu_calendar::{
 use icu_provider::{marker::NeverMarker, prelude::*};
 use icu_timezone::{CustomTimeZone, CustomZonedDateTime};
 
+// TODO: Figure out where to export these traits
+#[doc(inline)]
+pub use crate::calendar::CalMarkers;
+#[doc(inline)]
+pub use crate::calendar::FullDataCalMarkers;
+#[doc(inline)]
+pub use crate::calendar::NoDataCalMarkers;
+
 pub(crate) mod private {
     pub trait Sealed {}
 }
 
 /// A type that can be converted into a specific calendar system.
-pub trait ConvertCalendar: Sized {
+pub trait ConvertCalendar {
     /// The converted type. This can be the same as the receiver type.
-    type Converted<'a>;
+    type Converted<'a>: Sized;
     /// Converts `self` to the specified [`AnyCalendar`].
     fn to_calendar<'a>(&self, calendar: &'a AnyCalendar) -> Self::Converted<'a>;
 }
@@ -122,58 +129,17 @@ impl IsAnyCalendarKind for CustomTimeZone {
 }
 
 /// An input associated with a specific calendar.
-#[derive(Debug, Copy, Clone)]
-pub struct NeoTypedInput<C> {
-    /// The phantom calendar marker.
-    _calendar: PhantomData<C>,
-}
+pub trait IsInCalendar<C> {}
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<NeoTypedInput<C>> for Date<A> {
-    #[inline]
-    fn get_field(&self) -> NeoTypedInput<C> {
-        NeoTypedInput {
-            _calendar: PhantomData,
-        }
-    }
-}
+impl<C: Calendar, A: AsCalendar<Calendar = C>> IsInCalendar<C> for Date<A> {}
 
-impl<C> NeoGetField<NeoTypedInput<C>> for Time {
-    #[inline]
-    fn get_field(&self) -> NeoTypedInput<C> {
-        NeoTypedInput {
-            _calendar: PhantomData,
-        }
-    }
-}
+impl<C> IsInCalendar<C> for Time {}
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<NeoTypedInput<C>> for DateTime<A> {
-    #[inline]
-    fn get_field(&self) -> NeoTypedInput<C> {
-        NeoTypedInput {
-            _calendar: PhantomData,
-        }
-    }
-}
+impl<C: Calendar, A: AsCalendar<Calendar = C>> IsInCalendar<C> for DateTime<A> {}
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<NeoTypedInput<C>>
-    for CustomZonedDateTime<A>
-{
-    #[inline]
-    fn get_field(&self) -> NeoTypedInput<C> {
-        NeoTypedInput {
-            _calendar: PhantomData,
-        }
-    }
-}
+impl<C: Calendar, A: AsCalendar<Calendar = C>> IsInCalendar<C> for CustomZonedDateTime<A> {}
 
-impl<C> NeoGetField<NeoTypedInput<C>> for CustomTimeZone {
-    #[inline]
-    fn get_field(&self) -> NeoTypedInput<C> {
-        NeoTypedInput {
-            _calendar: PhantomData,
-        }
-    }
-}
+impl<C> IsInCalendar<C> for CustomTimeZone {}
 
 /// A type that can return a certain field `T`.
 pub trait NeoGetField<T> {
@@ -460,13 +426,6 @@ impl NeoGetField<NeverField> for CustomTimeZone {
     }
 }
 
-impl<C> From<NeverField> for Option<NeoTypedInput<C>> {
-    #[inline]
-    fn from(_: NeverField) -> Self {
-        None
-    }
-}
-
 impl From<NeverField> for Option<FormattableYear> {
     #[inline]
     fn from(_: NeverField) -> Self {
@@ -544,39 +503,41 @@ impl From<NeverField> for Option<CustomTimeZone> {
     }
 }
 
+/// A trait associating [`NeoComponents`].
+pub trait HasConstComponents {
+    /// The associated components.
+    const COMPONENTS: NeoComponents;
+}
+
 /// A trait associating [`NeoDateComponents`].
-pub trait HasDateComponents {
+pub trait HasConstDateComponents {
     /// The associated components.
     const COMPONENTS: NeoDateComponents;
 }
 
-/// A trait associating [`HasDayComponents`].
-pub trait HasDayComponents {
+/// A trait associating [`NeoDayComponents`].
+pub trait HasConstDayComponents {
     /// The associated components.
     const COMPONENTS: NeoDayComponents;
 }
 
 /// A trait associating [`NeoTimeComponents`].
-pub trait HasTimeComponents {
+pub trait HasConstTimeComponents {
     /// The associated components.
     const COMPONENTS: NeoTimeComponents;
 }
 
 /// A trait associating [`NeoTimeZoneSkeleton`].
-pub trait HasZoneComponent {
+pub trait HasConstZoneComponent {
     /// The associated component.
     const COMPONENT: NeoTimeZoneSkeleton;
 }
 
 // TODO: Add WeekCalculator and FixedDecimalFormatter optional bindings here
 
-/// A trait associating types implementing various other traits
-/// required for date formatting in a specific calendar.
-pub trait TypedDateMarkers<C>: private::Sealed {
-    /// Marker for loading date skeleton patterns.
-    type DateSkeletonPatternsV1Marker: DataMarker<Yokeable = PackedSkeletonDataV1<'static>>;
-    /// Marker for associating input with the specific calendar.
-    type TypedInputMarker: Into<Option<NeoTypedInput<C>>>;
+/// A trait associating types for date formatting in any calendar
+/// (input types only).
+pub trait DateInputMarkers: private::Sealed {
     /// Marker for resolving the year input field.
     type YearInput: Into<Option<FormattableYear>>;
     /// Marker for resolving the month input field.
@@ -589,6 +550,13 @@ pub trait TypedDateMarkers<C>: private::Sealed {
     type DayOfYearInput: Into<Option<DayOfYearInfo>>;
     /// Marker for resolving the any-calendar-kind input field.
     type AnyCalendarKindInput: Into<Option<AnyCalendarKind>>;
+}
+
+/// A trait associating types for date formatting in a specific calendar
+/// (data markers only).
+pub trait TypedDateDataMarkers<C>: private::Sealed {
+    /// Marker for loading date skeleton patterns.
+    type DateSkeletonPatternsV1Marker: DataMarker<Yokeable = PackedSkeletonDataV1<'static>>;
     /// Marker for loading year names.
     type YearNamesV1Marker: DataMarker<Yokeable = YearNamesV1<'static>>;
     /// Marker for loading month names.
@@ -597,23 +565,11 @@ pub trait TypedDateMarkers<C>: private::Sealed {
     type WeekdayNamesV1Marker: DataMarker<Yokeable = LinearNamesV1<'static>>;
 }
 
-/// A trait associating types implementing various other traits
-/// required for date formatting in any calendar.
-pub trait DateMarkers: private::Sealed {
+/// A trait associating types for date formatting in any calendar
+/// (data markers only).
+pub trait DateDataMarkers: private::Sealed {
     /// Cross-calendar data markers for date skeleta.
     type Skel: CalMarkers<SkeletaV1Marker>;
-    /// Marker for resolving the year input field.
-    type YearInput: Into<Option<FormattableYear>>;
-    /// Marker for resolving the month input field.
-    type MonthInput: Into<Option<FormattableMonth>>;
-    /// Marker for resolving the day-of-month input field.
-    type DayOfMonthInput: Into<Option<DayOfMonth>>;
-    /// Marker for resolving the day-of-week input field.
-    type DayOfWeekInput: Into<Option<IsoWeekday>>;
-    /// Marker for resolving the day-of-year input field.
-    type DayOfYearInput: Into<Option<DayOfYearInfo>>;
-    /// Marker for resolving the any-calendar-kind input field.
-    type AnyCalendarKindInput: Into<Option<AnyCalendarKind>>;
     /// Cross-calendar data markers for year names.
     type Year: CalMarkers<YearNamesV1Marker>;
     /// Cross-calendar data markers for month names.
@@ -622,8 +578,8 @@ pub trait DateMarkers: private::Sealed {
     type WeekdayNamesV1Marker: DataMarker<Yokeable = LinearNamesV1<'static>>;
 }
 
-/// A trait associating types implementing various other traits
-/// required for time formatting.
+/// A trait associating types for time formatting
+/// (input types and data markers).
 pub trait TimeMarkers: private::Sealed {
     /// Marker for resolving the day-of-month input field.
     type HourInput: Into<Option<IsoHour>>;
@@ -639,8 +595,8 @@ pub trait TimeMarkers: private::Sealed {
     type DayPeriodNamesV1Marker: DataMarker<Yokeable = LinearNamesV1<'static>>;
 }
 
-/// A trait associating types implementing various other traits
-/// required for time zone formatting.
+/// A trait associating types for time zone formatting
+/// (input types and data markers).
 pub trait ZoneMarkers: private::Sealed {
     /// Marker for resolving the time zone input field.
     type TimeZoneInput: Into<Option<CustomTimeZone>>;
@@ -659,29 +615,62 @@ pub trait ZoneMarkers: private::Sealed {
 }
 
 /// A trait associating constants and types implementing various other traits
-/// required for datetime formatting in a specific calendar.
-pub trait TypedDateTimeMarkers<C>: private::Sealed + DateTimeNamesMarker {
+/// required for datetime formatting.
+pub trait DateTimeMarkers: private::Sealed + DateTimeNamesMarker {
     /// Associated types for date formatting.
-    type D: TypedDateMarkers<C>;
+    ///
+    /// Should implement [`DateDataMarkers`], [`TypedDateDataMarkers`], and [`DateInputMarkers`].
+    type D;
     /// Associated types for time formatting.
-    type T: TimeMarkers;
+    ///
+    /// Should implement [`TimeMarkers`].
+    type T;
     /// Associated types for time zone formatting.
-    type Z: ZoneMarkers;
+    ///
+    /// Should implement [`ZoneMarkers`].
+    type Z;
     /// Marker for loading the date/time glue pattern.
     type GluePatternV1Marker: DataMarker<Yokeable = GluePatternV1<'static>>;
 }
 
-/// A trait associating constants and types implementing various other traits
-/// required for datetime formatting in any calendar.
-pub trait DateTimeMarkers: private::Sealed + DateTimeNamesMarker {
-    /// Associated types for date formatting.
-    type D: DateMarkers;
-    /// Associated types for time formatting.
-    type T: TimeMarkers;
-    /// Associated types for time zone formatting.
-    type Z: ZoneMarkers;
-    /// Marker for loading the date/time glue pattern.
-    type GluePatternV1Marker: DataMarker<Yokeable = GluePatternV1<'static>>;
+/// Trait to consolidate input markers.
+pub trait AllInputMarkers<R: DateTimeMarkers>:
+    NeoGetField<<R::D as DateInputMarkers>::YearInput>
+    + NeoGetField<<R::D as DateInputMarkers>::MonthInput>
+    + NeoGetField<<R::D as DateInputMarkers>::DayOfMonthInput>
+    + NeoGetField<<R::D as DateInputMarkers>::DayOfWeekInput>
+    + NeoGetField<<R::D as DateInputMarkers>::DayOfYearInput>
+    + NeoGetField<<R::D as DateInputMarkers>::AnyCalendarKindInput>
+    + NeoGetField<<R::T as TimeMarkers>::HourInput>
+    + NeoGetField<<R::T as TimeMarkers>::MinuteInput>
+    + NeoGetField<<R::T as TimeMarkers>::SecondInput>
+    + NeoGetField<<R::T as TimeMarkers>::NanoSecondInput>
+    + NeoGetField<<R::Z as ZoneMarkers>::TimeZoneInput>
+where
+    R::D: DateInputMarkers,
+    R::T: TimeMarkers,
+    R::Z: ZoneMarkers,
+{
+}
+
+impl<T, R> AllInputMarkers<R> for T
+where
+    R: DateTimeMarkers,
+    R::D: DateInputMarkers,
+    R::T: TimeMarkers,
+    R::Z: ZoneMarkers,
+    T: NeoGetField<<R::D as DateInputMarkers>::YearInput>
+        + NeoGetField<<R::D as DateInputMarkers>::MonthInput>
+        + NeoGetField<<R::D as DateInputMarkers>::DayOfMonthInput>
+        + NeoGetField<<R::D as DateInputMarkers>::DayOfWeekInput>
+        + NeoGetField<<R::D as DateInputMarkers>::DayOfYearInput>
+        + NeoGetField<<R::D as DateInputMarkers>::AnyCalendarKindInput>
+        + NeoGetField<<R::T as TimeMarkers>::HourInput>
+        + NeoGetField<<R::T as TimeMarkers>::MinuteInput>
+        + NeoGetField<<R::T as TimeMarkers>::SecondInput>
+        + NeoGetField<<R::T as TimeMarkers>::NanoSecondInput>
+        + NeoGetField<<R::Z as ZoneMarkers>::TimeZoneInput>,
+{
 }
 
 /// A struct implementing traits for never loading data.
@@ -691,28 +680,24 @@ pub enum NeoNeverMarker {}
 
 impl private::Sealed for NeoNeverMarker {}
 
-impl<C> TypedDateMarkers<C> for NeoNeverMarker {
-    type DateSkeletonPatternsV1Marker = NeverMarker<PackedSkeletonDataV1<'static>>;
-    type TypedInputMarker = NeverField;
+impl DateInputMarkers for NeoNeverMarker {
     type YearInput = NeverField;
     type MonthInput = NeverField;
     type DayOfMonthInput = NeverField;
     type DayOfWeekInput = NeverField;
     type DayOfYearInput = NeverField;
     type AnyCalendarKindInput = NeverField;
+}
+
+impl<C> TypedDateDataMarkers<C> for NeoNeverMarker {
+    type DateSkeletonPatternsV1Marker = NeverMarker<PackedSkeletonDataV1<'static>>;
     type YearNamesV1Marker = NeverMarker<YearNamesV1<'static>>;
     type MonthNamesV1Marker = NeverMarker<MonthNamesV1<'static>>;
     type WeekdayNamesV1Marker = NeverMarker<LinearNamesV1<'static>>;
 }
 
-impl DateMarkers for NeoNeverMarker {
+impl DateDataMarkers for NeoNeverMarker {
     type Skel = NoDataCalMarkers;
-    type YearInput = NeverField;
-    type MonthInput = NeverField;
-    type DayOfMonthInput = NeverField;
-    type DayOfWeekInput = NeverField;
-    type DayOfYearInput = NeverField;
-    type AnyCalendarKindInput = NeverField;
     type Year = NoDataCalMarkers;
     type Month = NoDataCalMarkers;
     type WeekdayNamesV1Marker = NeverMarker<LinearNamesV1<'static>>;
@@ -737,26 +722,10 @@ impl ZoneMarkers for NeoNeverMarker {
     type SpecificShortV1Marker = NeverMarker<tz::MzSpecificShortV1<'static>>;
 }
 
-/// A trait associating constants and types implementing various other traits
-/// required for datetime formatting in a specific calendar with
-/// specific components.
-pub trait TypedNeoFormatterMarker<C>: TypedDateTimeMarkers<C> {
-    /// The associated components.
-    const COMPONENTS: NeoComponents;
-}
-
-/// A trait associating constants and types implementing various other traits
-/// required for datetime formatting in any calendar with
-/// specific components.
-pub trait NeoFormatterMarker: DateTimeMarkers {
-    /// The associated components.
-    const COMPONENTS: NeoComponents;
-}
-
 /// A struct that supports formatting both a date and a time.
 ///
-/// It should be composed from types implementing [`HasDayComponents`]
-/// and [`HasTimeComponents`].
+/// It should be composed from types implementing [`HasConstDayComponents`]
+/// and [`HasConstTimeComponents`].
 #[derive(Debug)]
 pub struct DateTimeCombo<D, T, Z> {
     _d: PhantomData<D>,
@@ -782,38 +751,21 @@ where
     type ZoneSpecificShort = NeverMarker<()>;
 }
 
-impl<C, D> TypedDateTimeMarkers<C> for DateTimeCombo<D, NeoNeverMarker, NeoNeverMarker>
+impl<D> HasConstComponents for DateTimeCombo<D, NeoNeverMarker, NeoNeverMarker>
 where
-    D: TypedDateMarkers<C> + DateTimeNamesMarker,
-{
-    type D = D;
-    type T = NeoNeverMarker;
-    type Z = NeoNeverMarker;
-    type GluePatternV1Marker = NeverMarker<GluePatternV1<'static>>;
-}
-
-impl<C, D> TypedNeoFormatterMarker<C> for DateTimeCombo<D, NeoNeverMarker, NeoNeverMarker>
-where
-    D: HasDateComponents + TypedDateMarkers<C> + DateTimeNamesMarker,
+    D: HasConstDateComponents,
 {
     const COMPONENTS: NeoComponents = NeoComponents::Date(D::COMPONENTS);
 }
 
 impl<D> DateTimeMarkers for DateTimeCombo<D, NeoNeverMarker, NeoNeverMarker>
 where
-    D: DateMarkers + DateTimeNamesMarker,
+    D: DateDataMarkers + DateInputMarkers + DateTimeNamesMarker,
 {
     type D = D;
     type T = NeoNeverMarker;
     type Z = NeoNeverMarker;
     type GluePatternV1Marker = NeverMarker<GluePatternV1<'static>>;
-}
-
-impl<D> NeoFormatterMarker for DateTimeCombo<D, NeoNeverMarker, NeoNeverMarker>
-where
-    D: HasDateComponents + DateMarkers + DateTimeNamesMarker,
-{
-    const COMPONENTS: NeoComponents = NeoComponents::Date(D::COMPONENTS);
 }
 
 impl<T> DateTimeNamesMarker for DateTimeCombo<NeoNeverMarker, T, NeoNeverMarker>
@@ -832,19 +784,9 @@ where
     type ZoneSpecificShort = NeverMarker<()>;
 }
 
-impl<C, T> TypedDateTimeMarkers<C> for DateTimeCombo<NeoNeverMarker, T, NeoNeverMarker>
+impl<T> HasConstComponents for DateTimeCombo<NeoNeverMarker, T, NeoNeverMarker>
 where
-    T: TimeMarkers + DateTimeNamesMarker,
-{
-    type D = NeoNeverMarker;
-    type T = T;
-    type Z = NeoNeverMarker;
-    type GluePatternV1Marker = NeverMarker<GluePatternV1<'static>>;
-}
-
-impl<C, T> TypedNeoFormatterMarker<C> for DateTimeCombo<NeoNeverMarker, T, NeoNeverMarker>
-where
-    T: HasTimeComponents + TimeMarkers + DateTimeNamesMarker,
+    T: HasConstTimeComponents,
 {
     const COMPONENTS: NeoComponents = NeoComponents::Time(T::COMPONENTS);
 }
@@ -857,13 +799,6 @@ where
     type T = T;
     type Z = NeoNeverMarker;
     type GluePatternV1Marker = NeverMarker<GluePatternV1<'static>>;
-}
-
-impl<T> NeoFormatterMarker for DateTimeCombo<NeoNeverMarker, T, NeoNeverMarker>
-where
-    T: HasTimeComponents + TimeMarkers + DateTimeNamesMarker,
-{
-    const COMPONENTS: NeoComponents = NeoComponents::Time(T::COMPONENTS);
 }
 
 impl<D, T> DateTimeNamesMarker for DateTimeCombo<D, T, NeoNeverMarker>
@@ -883,42 +818,23 @@ where
     type ZoneSpecificShort = NeverMarker<()>;
 }
 
-impl<C, D, T> TypedDateTimeMarkers<C> for DateTimeCombo<D, T, NeoNeverMarker>
+impl<D, T> HasConstComponents for DateTimeCombo<D, T, NeoNeverMarker>
 where
-    D: TypedDateMarkers<C> + DateTimeNamesMarker,
-    T: TimeMarkers + DateTimeNamesMarker,
-{
-    type D = D;
-    type T = T;
-    type Z = NeoNeverMarker;
-    type GluePatternV1Marker = GluePatternV1Marker;
-}
-
-impl<C, D, T> TypedNeoFormatterMarker<C> for DateTimeCombo<D, T, NeoNeverMarker>
-where
-    D: HasDayComponents + TypedDateMarkers<C> + DateTimeNamesMarker,
-    T: HasTimeComponents + TimeMarkers + DateTimeNamesMarker,
+    D: HasConstDayComponents,
+    T: HasConstTimeComponents,
 {
     const COMPONENTS: NeoComponents = NeoComponents::DateTime(D::COMPONENTS, T::COMPONENTS);
 }
 
 impl<D, T> DateTimeMarkers for DateTimeCombo<D, T, NeoNeverMarker>
 where
-    D: DateMarkers + DateTimeNamesMarker,
+    D: DateDataMarkers + DateInputMarkers + DateTimeNamesMarker,
     T: TimeMarkers + DateTimeNamesMarker,
 {
     type D = D;
     type T = T;
     type Z = NeoNeverMarker;
     type GluePatternV1Marker = GluePatternV1Marker;
-}
-
-impl<D, T> NeoFormatterMarker for DateTimeCombo<D, T, NeoNeverMarker>
-where
-    D: HasDayComponents + DateMarkers + DateTimeNamesMarker,
-    T: HasTimeComponents + TimeMarkers + DateTimeNamesMarker,
-{
-    const COMPONENTS: NeoComponents = NeoComponents::DateTime(D::COMPONENTS, T::COMPONENTS);
 }
 
 impl<D, T, Z> DateTimeNamesMarker for DateTimeCombo<D, T, Z>
@@ -939,23 +855,11 @@ where
     type ZoneSpecificShort = Z::ZoneSpecificShort;
 }
 
-impl<C, D, T, Z> TypedDateTimeMarkers<C> for DateTimeCombo<D, T, Z>
+impl<D, T, Z> HasConstComponents for DateTimeCombo<D, T, Z>
 where
-    D: TypedDateMarkers<C> + DateTimeNamesMarker,
-    T: TimeMarkers + DateTimeNamesMarker,
-    Z: ZoneMarkers + DateTimeNamesMarker,
-{
-    type D = D;
-    type T = T;
-    type Z = Z;
-    type GluePatternV1Marker = GluePatternV1Marker;
-}
-
-impl<C, D, T, Z> TypedNeoFormatterMarker<C> for DateTimeCombo<D, T, Z>
-where
-    D: HasDayComponents + TypedDateMarkers<C> + DateTimeNamesMarker,
-    T: HasTimeComponents + TimeMarkers + DateTimeNamesMarker,
-    Z: HasZoneComponent + ZoneMarkers + DateTimeNamesMarker,
+    D: HasConstDayComponents,
+    T: HasConstTimeComponents,
+    Z: HasConstZoneComponent,
 {
     const COMPONENTS: NeoComponents = NeoComponents::DateTimeZone(
         NeoDateTimeComponents::DateTime(D::COMPONENTS, T::COMPONENTS),
@@ -965,7 +869,7 @@ where
 
 impl<D, T, Z> DateTimeMarkers for DateTimeCombo<D, T, Z>
 where
-    D: DateMarkers + DateTimeNamesMarker,
+    D: DateDataMarkers + DateInputMarkers + DateTimeNamesMarker,
     T: TimeMarkers + DateTimeNamesMarker,
     Z: ZoneMarkers + DateTimeNamesMarker,
 {
@@ -973,18 +877,6 @@ where
     type T = T;
     type Z = Z;
     type GluePatternV1Marker = GluePatternV1Marker;
-}
-
-impl<D, T, Z> NeoFormatterMarker for DateTimeCombo<D, T, Z>
-where
-    D: HasDayComponents + DateMarkers + DateTimeNamesMarker,
-    T: HasTimeComponents + TimeMarkers + DateTimeNamesMarker,
-    Z: HasZoneComponent + ZoneMarkers + DateTimeNamesMarker,
-{
-    const COMPONENTS: NeoComponents = NeoComponents::DateTimeZone(
-        NeoDateTimeComponents::DateTime(D::COMPONENTS, T::COMPONENTS),
-        Z::COMPONENT,
-    );
 }
 
 // TODO: Fill in the missing DateTimeCombos, like DZ and TZ
@@ -1037,9 +929,6 @@ macro_rules! datetime_marker_helper {
     };
     (@glue, no) => {
         NeverMarker<GluePatternV1<'static>>
-    };
-    (@input/typed, yes) => {
-        NeoTypedInput<C>
     };
     (@input/year, yes) => {
         FormattableYear
@@ -1233,42 +1122,28 @@ macro_rules! impl_date_marker {
             type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long, no);
             type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short, no);
         }
-        impl HasDateComponents for $type {
+        impl HasConstDateComponents for $type {
             const COMPONENTS: NeoDateComponents = $components;
         }
-        impl<C: CldrCalendar> TypedDateMarkers<C> for $type {
-            type DateSkeletonPatternsV1Marker = datetime_marker_helper!(@dates/typed, $dates_yesno);
-            type TypedInputMarker = datetime_marker_helper!(@input/typed, yes);
+        impl DateInputMarkers for $type {
             type YearInput = datetime_marker_helper!(@input/year, $year_yesno);
             type MonthInput = datetime_marker_helper!(@input/month, $month_yesno);
             type DayOfMonthInput = datetime_marker_helper!(@input/day_of_month, $day_of_month_yesno);
             type DayOfWeekInput = datetime_marker_helper!(@input/day_of_week, $day_of_week_yesno);
             type DayOfYearInput = datetime_marker_helper!(@input/day_of_year, $day_of_year_yesno);
             type AnyCalendarKindInput = datetime_marker_helper!(@input/any_calendar_kind, $any_calendar_kind_yesno);
+        }
+        impl<C: CldrCalendar> TypedDateDataMarkers<C> for $type {
+            type DateSkeletonPatternsV1Marker = datetime_marker_helper!(@dates/typed, $dates_yesno);
             type YearNamesV1Marker = datetime_marker_helper!(@years/typed, $years_yesno);
             type MonthNamesV1Marker = datetime_marker_helper!(@months/typed, $months_yesno);
             type WeekdayNamesV1Marker = datetime_marker_helper!(@weekdays, $weekdays_yesno);
         }
-        impl DateMarkers for $type {
+        impl DateDataMarkers for $type {
             type Skel = datetime_marker_helper!(@calmarkers, $dates_yesno);
-            type YearInput = datetime_marker_helper!(@input/year, $year_yesno);
-            type MonthInput = datetime_marker_helper!(@input/month, $month_yesno);
-            type DayOfMonthInput = datetime_marker_helper!(@input/day_of_month, $day_of_month_yesno);
-            type DayOfWeekInput = datetime_marker_helper!(@input/day_of_week, $day_of_week_yesno);
-            type DayOfYearInput = datetime_marker_helper!(@input/day_of_year, $day_of_year_yesno);
-            type AnyCalendarKindInput = datetime_marker_helper!(@input/any_calendar_kind, $any_calendar_kind_yesno);
             type Year = datetime_marker_helper!(@calmarkers, $years_yesno);
             type Month = datetime_marker_helper!(@calmarkers, $months_yesno);
             type WeekdayNamesV1Marker = datetime_marker_helper!(@weekdays, $weekdays_yesno);
-        }
-        impl<C: CldrCalendar> TypedDateTimeMarkers<C> for $type {
-            type D = Self;
-            type T = NeoNeverMarker;
-            type Z = NeoNeverMarker;
-            type GluePatternV1Marker = datetime_marker_helper!(@glue, no);
-        }
-        impl<C: CldrCalendar> TypedNeoFormatterMarker<C> for $type {
-            const COMPONENTS: NeoComponents = NeoComponents::Date($components);
         }
         impl DateTimeMarkers for $type {
             type D = Self;
@@ -1276,7 +1151,7 @@ macro_rules! impl_date_marker {
             type Z = NeoNeverMarker;
             type GluePatternV1Marker = datetime_marker_helper!(@glue, no);
         }
-        impl NeoFormatterMarker for $type {
+        impl HasConstComponents for $type {
             const COMPONENTS: NeoComponents = NeoComponents::Date($components);
         }
     };
@@ -1315,7 +1190,7 @@ macro_rules! impl_day_marker {
             input_day_of_year = $day_of_year_yesno,
             input_any_calendar_kind = $any_calendar_kind_yesno,
         );
-        impl HasDayComponents for $type {
+        impl HasConstDayComponents for $type {
             const COMPONENTS: NeoDayComponents = $components;
         }
     };
@@ -1400,7 +1275,7 @@ macro_rules! impl_time_marker {
             type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long, no);
             type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short, no);
         }
-        impl HasTimeComponents for $type {
+        impl HasConstTimeComponents for $type {
             const COMPONENTS: NeoTimeComponents = $components;
         }
         impl TimeMarkers for $type {
@@ -1411,22 +1286,13 @@ macro_rules! impl_time_marker {
             type SecondInput = datetime_marker_helper!(@input/second, $second_yesno);
             type NanoSecondInput = datetime_marker_helper!(@input/nanosecond, $nanosecond_yesno);
         }
-        impl<C> TypedDateTimeMarkers<C> for $type {
-            type D = NeoNeverMarker;
-            type T = Self;
-            type Z = NeoNeverMarker;
-            type GluePatternV1Marker = datetime_marker_helper!(@glue, no);
-        }
-        impl<C> TypedNeoFormatterMarker<C> for $type {
-            const COMPONENTS: NeoComponents = NeoComponents::Time($components);
-        }
         impl DateTimeMarkers for $type {
             type D = NeoNeverMarker;
             type T = Self;
             type Z = NeoNeverMarker;
             type GluePatternV1Marker = datetime_marker_helper!(@glue, no);
         }
-        impl NeoFormatterMarker for $type {
+        impl HasConstComponents for $type {
             const COMPONENTS: NeoComponents = NeoComponents::Time($components);
         }
     };
@@ -1512,7 +1378,7 @@ macro_rules! impl_zone_marker {
             type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long, $zone_specific_long_yesno);
             type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short, $zone_specific_short_yesno);
         }
-        impl HasZoneComponent for $type {
+        impl HasConstZoneComponent for $type {
             const COMPONENT: NeoTimeZoneSkeleton = $components;
         }
         impl ZoneMarkers for $type {
@@ -1524,22 +1390,13 @@ macro_rules! impl_zone_marker {
             type SpecificLongV1Marker = datetime_marker_helper!(@data/zone/specific_long, $zone_specific_long_yesno);
             type SpecificShortV1Marker = datetime_marker_helper!(@data/zone/specific_short, $zone_specific_short_yesno);
         }
-        impl<C> TypedDateTimeMarkers<C> for $type {
-            type D = NeoNeverMarker;
-            type T = NeoNeverMarker;
-            type Z = Self;
-            type GluePatternV1Marker = datetime_marker_helper!(@glue, no);
-        }
-        impl<C> TypedNeoFormatterMarker<C> for $type {
-            const COMPONENTS: NeoComponents = NeoComponents::Zone($components);
-        }
         impl DateTimeMarkers for $type {
             type D = NeoNeverMarker;
             type T = NeoNeverMarker;
             type Z = Self;
             type GluePatternV1Marker = datetime_marker_helper!(@glue, no);
         }
-        impl NeoFormatterMarker for $type {
+        impl HasConstComponents for $type {
             const COMPONENTS: NeoComponents = NeoComponents::Zone($components);
         }
     };
@@ -1814,38 +1671,27 @@ impl DateTimeNamesMarker for NeoDateComponents {
     type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short, no);
 }
 
-impl<C: CldrCalendar> TypedDateMarkers<C> for NeoDateComponents {
-    type DateSkeletonPatternsV1Marker = datetime_marker_helper!(@dates/typed, yes);
-    type TypedInputMarker = datetime_marker_helper!(@input/typed, yes);
+impl DateInputMarkers for NeoDateComponents {
     type YearInput = datetime_marker_helper!(@input/year, yes);
     type MonthInput = datetime_marker_helper!(@input/month, yes);
     type DayOfMonthInput = datetime_marker_helper!(@input/day_of_month, yes);
     type DayOfWeekInput = datetime_marker_helper!(@input/day_of_week, yes);
     type DayOfYearInput = datetime_marker_helper!(@input/day_of_year, yes);
     type AnyCalendarKindInput = datetime_marker_helper!(@input/any_calendar_kind, yes);
+}
+
+impl<C: CldrCalendar> TypedDateDataMarkers<C> for NeoDateComponents {
+    type DateSkeletonPatternsV1Marker = datetime_marker_helper!(@dates/typed, yes);
     type YearNamesV1Marker = datetime_marker_helper!(@years/typed, yes);
     type MonthNamesV1Marker = datetime_marker_helper!(@months/typed, yes);
     type WeekdayNamesV1Marker = datetime_marker_helper!(@weekdays, yes);
 }
 
-impl DateMarkers for NeoDateComponents {
+impl DateDataMarkers for NeoDateComponents {
     type Skel = datetime_marker_helper!(@calmarkers, yes);
-    type YearInput = datetime_marker_helper!(@input/year, yes);
-    type MonthInput = datetime_marker_helper!(@input/month, yes);
-    type DayOfMonthInput = datetime_marker_helper!(@input/day_of_month, yes);
-    type DayOfWeekInput = datetime_marker_helper!(@input/day_of_week, yes);
-    type DayOfYearInput = datetime_marker_helper!(@input/day_of_year, yes);
-    type AnyCalendarKindInput = datetime_marker_helper!(@input/any_calendar_kind, yes);
     type Year = datetime_marker_helper!(@calmarkers, yes);
     type Month = datetime_marker_helper!(@calmarkers, yes);
     type WeekdayNamesV1Marker = datetime_marker_helper!(@weekdays, yes);
-}
-
-impl<C: CldrCalendar> TypedDateTimeMarkers<C> for NeoDateComponents {
-    type D = Self;
-    type T = NeoNeverMarker;
-    type Z = NeoNeverMarker;
-    type GluePatternV1Marker = datetime_marker_helper!(@glue, no);
 }
 
 impl DateTimeMarkers for NeoDateComponents {
@@ -1879,13 +1725,6 @@ impl TimeMarkers for NeoTimeComponents {
     type MinuteInput = datetime_marker_helper!(@input/minute, yes);
     type SecondInput = datetime_marker_helper!(@input/second, yes);
     type NanoSecondInput = datetime_marker_helper!(@input/nanosecond, yes);
-}
-
-impl<C: CldrCalendar> TypedDateTimeMarkers<C> for NeoTimeComponents {
-    type D = NeoNeverMarker;
-    type T = Self;
-    type Z = NeoNeverMarker;
-    type GluePatternV1Marker = datetime_marker_helper!(@glue, no);
 }
 
 impl DateTimeMarkers for NeoTimeComponents {
@@ -1922,13 +1761,6 @@ impl ZoneMarkers for NeoTimeZoneSkeleton {
     type SpecificShortV1Marker = datetime_marker_helper!(@data/zone/specific_short, yes);
 }
 
-impl<C: CldrCalendar> TypedDateTimeMarkers<C> for NeoTimeZoneSkeleton {
-    type D = NeoNeverMarker;
-    type T = NeoNeverMarker;
-    type Z = Self;
-    type GluePatternV1Marker = datetime_marker_helper!(@glue, no);
-}
-
 impl DateTimeMarkers for NeoTimeZoneSkeleton {
     type D = NeoNeverMarker;
     type T = NeoNeverMarker;
@@ -1953,13 +1785,6 @@ impl DateTimeNamesMarker for NeoDateTimeComponents {
     type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short, no);
 }
 
-impl<C: CldrCalendar> TypedDateTimeMarkers<C> for NeoDateTimeComponents {
-    type D = NeoDateComponents;
-    type T = NeoTimeComponents;
-    type Z = NeoNeverMarker;
-    type GluePatternV1Marker = datetime_marker_helper!(@glue, yes);
-}
-
 impl DateTimeMarkers for NeoDateTimeComponents {
     type D = NeoDateComponents;
     type T = NeoTimeComponents;
@@ -1982,13 +1807,6 @@ impl DateTimeNamesMarker for NeoComponents {
     type ZoneGenericShort = datetime_marker_helper!(@names/zone/generic_short, yes);
     type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long, yes);
     type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short, yes);
-}
-
-impl<C: CldrCalendar> TypedDateTimeMarkers<C> for NeoComponents {
-    type D = NeoDateComponents;
-    type T = NeoTimeComponents;
-    type Z = NeoTimeZoneSkeleton;
-    type GluePatternV1Marker = datetime_marker_helper!(@glue, yes);
 }
 
 impl DateTimeMarkers for NeoComponents {
