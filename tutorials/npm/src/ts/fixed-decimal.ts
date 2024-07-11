@@ -1,42 +1,42 @@
-import { ICU4XDataProvider, ICU4XFixedDecimal, ICU4XFixedDecimalFormatter, ICU4XFixedDecimalGroupingStrategy, ICU4XLocale } from "icu4x";
+import { DataProvider, FixedDecimal, FixedDecimalFormatter, FixedDecimalGroupingStrategy, Locale } from "icu4x";
 import { Result, Ok, result, unwrap } from './index';
 
 export class FixedDecimalDemo {
     #displayFn: (formatted: string) => void;
-    #dataProvider: ICU4XDataProvider;
+    #dataProvider: DataProvider;
 
-    #locale: Result<ICU4XLocale>;
-    #groupingStrategy: ICU4XFixedDecimalGroupingStrategy;
-    #formatter: Result<ICU4XFixedDecimalFormatter>;
-    #fixedDecimal: Result<ICU4XFixedDecimal> | null;
+    #locale: Result<Locale>;
+    #groupingStrategy: FixedDecimalGroupingStrategy;
+    #formatter: Result<FixedDecimalFormatter>;
+    #fixedDecimal: Result<FixedDecimal> | null;
 
-    constructor(displayFn: (formatted: string) => void, dataProvider: ICU4XDataProvider) {
+    constructor(displayFn: (formatted: string) => void, dataProvider: DataProvider) {
         this.#displayFn = displayFn;
         this.#dataProvider = dataProvider;
 
-        this.#locale = Ok(ICU4XLocale.create_from_string("en"));
-        this.#groupingStrategy = ICU4XFixedDecimalGroupingStrategy.Auto;
+        this.#locale = Ok(Locale.create_from_string("en"));
+        this.#groupingStrategy = FixedDecimalGroupingStrategy.Auto;
         this.#fixedDecimal = null;
         this.#updateFormatter()
     }
 
     setLocale(locid: string): void {
-        this.#locale = result(() => ICU4XLocale.create_from_string(locid));
+        this.#locale = result(() => Locale.create_from_string(locid));
         this.#updateFormatter()
     }
 
     setGroupingStrategy(strategy: string): void {
-        this.#groupingStrategy = ICU4XFixedDecimalGroupingStrategy[strategy];
+        this.#groupingStrategy = FixedDecimalGroupingStrategy[strategy];
         this.#updateFormatter()
     }
 
     setFixedDecimal(digits: string): void {
-        this.#fixedDecimal = digits === "" ? null : result(() => ICU4XFixedDecimal.create_from_string(digits));
+        this.#fixedDecimal = digits === "" ? null : result(() => FixedDecimal.create_from_string(digits));
         this.#render();
     }
 
     #updateFormatter(): void {
-        this.#formatter = result(() => ICU4XFixedDecimalFormatter.create_with_grouping_strategy(
+        this.#formatter = result(() => FixedDecimalFormatter.create_with_grouping_strategy(
             this.#dataProvider,
             unwrap(this.#locale),
             this.#groupingStrategy,
@@ -55,7 +55,7 @@ export class FixedDecimalDemo {
             }
         } catch (e) {
             if (e.error_value) {
-                this.#displayFn(`ICU4X Error: ${e.error_value}`);
+                this.#displayFn(` Error: ${e.error_value}`);
             } else {
                 this.#displayFn(`Unexpected Error: ${e}`);
             }
@@ -63,7 +63,7 @@ export class FixedDecimalDemo {
     }
 }
 
-export function setup(dataProvider: ICU4XDataProvider): void {
+export function setup(dataProvider: DataProvider): void {
     const formattedDecimal = document.getElementById('fdf-formatted') as HTMLParagraphElement;
     const fixedDecimalDemo = new FixedDecimalDemo((formatted) => {
         formattedDecimal.innerText = formatted;

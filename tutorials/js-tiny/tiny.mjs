@@ -7,14 +7,14 @@
 // See <https://github.com/rust-diplomat/diplomat/issues/283>.
 delete globalThis.fetch;
 
-import {ICU4XLocale, ICU4XDataProvider, ICU4XFixedDecimalFormatter, ICU4XFixedDecimal } from './lib/index.mjs';
+import {Locale, DataProvider, FixedDecimalFormatter, FixedDecimal } from './lib/index.mjs';
 
-const locale = ICU4XLocale.create_from_string("bn");
-const provider = ICU4XDataProvider.create_compiled();
+const locale = Locale.create_from_string("bn");
+const provider = DataProvider.create_compiled();
 
-const format = ICU4XFixedDecimalFormatter.create_with_grouping_strategy(provider, locale, "Auto");
+const format = FixedDecimalFormatter.create_with_grouping_strategy(provider, locale, "Auto");
 
-const decimal = ICU4XFixedDecimal.create_from_i32(1000007);
+const decimal = FixedDecimal.create_from_i32(1000007);
 decimal.multiply_pow10(-2);
 
 const result = format.format(decimal);
