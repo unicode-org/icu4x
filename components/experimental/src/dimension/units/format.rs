@@ -11,7 +11,7 @@ use fixed_decimal::FixedDecimal;
 use icu_decimal::FixedDecimalFormatter;
 use icu_pattern::SinglePlaceholderPattern;
 use icu_plurals::PluralRules;
-use writeable::Writeable;
+use writeable::{impl_display_with_writeable, Writeable};
 
 use crate::alloc::borrow::ToOwned;
 use crate::dimension::provider::units::{Count, UnitsDisplayNameV1};
@@ -53,11 +53,7 @@ impl<'l> Writeable for FormattedUnit<'l> {
     }
 }
 
-impl core::fmt::Display for FormattedUnit<'_> {
-    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-        self.write_to(f)
-    }
-}
+impl_display_with_writeable!(FormattedUnit<'_>);
 
 #[test]
 fn test_basic() {
