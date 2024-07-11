@@ -131,7 +131,7 @@ args = ["run", "-p", "diplomat-gen", "dart"]
 description = "Produces the list of ICU APIs that are not exported through Diplomat"
 category = "ICU4X Development"
 command = "cargo"
-env = { "ICU4X_DATA_DIR" = "../stubdata" }
+env = { ICU4X_DATA_DIR = "../stubdata" }
 args = ["run", "-p=icu_ffi_coverage", "--", "ffi/capi/tests/missing_apis.txt"]
 
 [tasks.verify-diplomat-coverage]
