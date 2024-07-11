@@ -13,7 +13,7 @@ use crate::input::ExtractedDateTimeInput;
 use crate::input::IsoTimeInput;
 use crate::neo_marker::{
     AllInputMarkers, DateInputMarkers, DateTimeMarkers, IsInCalendar, TimeMarkers,
-    TypedDateMarkers, ZoneMarkers,
+    TypedDateDataMarkers, ZoneMarkers,
 };
 use crate::neo_pattern::{DateTimePattern, DateTimePatternBorrowed};
 use crate::neo_skeleton::NeoDateTimeComponents;
@@ -2059,7 +2059,7 @@ pub(crate) struct RawDateTimePatternFormatter<'a> {
 
 impl<'a, C: CldrCalendar, R: DateTimeMarkers> DateTimePatternFormatter<'a, C, R>
 where
-    R::D: TypedDateMarkers<C> + DateInputMarkers,
+    R::D: TypedDateDataMarkers<C> + DateInputMarkers,
     R::T: TimeMarkers,
     R::Z: ZoneMarkers,
 {
