@@ -122,25 +122,17 @@ impl IsAnyCalendarKind for CustomTimeZone {
 }
 
 /// An input associated with a specific calendar.
-pub trait IsInCalendar<C> {
-}
+pub trait IsInCalendar<C> {}
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> IsInCalendar<C> for Date<A> {
-}
+impl<C: Calendar, A: AsCalendar<Calendar = C>> IsInCalendar<C> for Date<A> {}
 
-impl<C> IsInCalendar<C> for Time {
-}
+impl<C> IsInCalendar<C> for Time {}
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> IsInCalendar<C> for DateTime<A> {
-}
+impl<C: Calendar, A: AsCalendar<Calendar = C>> IsInCalendar<C> for DateTime<A> {}
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> IsInCalendar<C>
-    for CustomZonedDateTime<A>
-{
-}
+impl<C: Calendar, A: AsCalendar<Calendar = C>> IsInCalendar<C> for CustomZonedDateTime<A> {}
 
-impl<C> IsInCalendar<C> for CustomTimeZone {
-}
+impl<C> IsInCalendar<C> for CustomTimeZone {}
 
 /// A type that can return a certain field `T`.
 pub trait NeoGetField<T> {
