@@ -76,7 +76,14 @@ impl DataProvider<UnitsDisplayNameV1Marker> for SourceDataProvider {
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_owned(UnitsDisplayNameV1 {
-                patterns: ZeroMap::from_iter(patterns.iter().map(|(k, v)| (k, *v))),
+                patterns: ZeroMap::from_iter([
+                    (Count::One, unit_patterns.one.as_deref()),
+                    (Count::Two, unit_patterns.two.as_deref()),
+                    (Count::Few, unit_patterns.few.as_deref()),
+                    (Count::Many, unit_patterns.many.as_deref()),
+                    (Count::Other, unit_patterns.other.as_deref()),
+                  ].into_iter().filter_map(|(count, unit)| Some((count, unit?)))
+                ),
             }),
         })
     }
