@@ -102,30 +102,25 @@ impl crate::IterableDataProviderCached<UnitsDisplayNameV1Marker> for SourceDataP
             length: &str,
             length_patterns: &BTreeMap<String, Patterns>,
         ) -> Result<(), DataError> {
-            let quantities = length_patterns
-                .keys()
-                .filter(|&key| {
-                    !key.starts_with(|c: char| c.is_ascii_digit())
-                        && !["per", "times", "power"]
-                            .iter()
-                            .any(|&prefix| key.starts_with(prefix))
-                            // Each unit should be prefixed with the category and a hyphen
-                            && key.contains("-")
-                })
-                .filter_map(|key| {
-                    // In order to reduce the number of units in the test data,
-                    // we only test the length-* and duration-* units.
-                    #[cfg(test)]
-                    if let Some(rest) = key.strip_prefix("length-") {
-                        Some(rest)
-                    } else if let Some(rest) = key.strip_prefix("duration-") {
-                        Some(rest)
-                    } else {
-                        None
-                    }
-                    #[cfg(not(test))]
-                    key.split_once('-').map(|(_, rest)| rest)
-                });
+            let quantities = length_patterns.keys().filter_map(|key| {
+                // In order to reduce the number of units in the test data,
+                // we only test the length-* and duration-* units.
+                #[cfg(test)]
+                if let Some(rest) = key.strip_prefix("length-") {
+                    Some(rest)
+                } else if let Some(rest) = key.strip_prefix("duration-") {
+                    Some(rest)
+                } else {
+                    None
+                }
+                #[cfg(not(test))]
+                // NOTE: any units should have the category as a prefix which is separated by `-`.
+                //       Therefore, if the `rest` is empty, it means the key is not for a unit.
+                //       In this case, we should return None.
+                //       Example: `length-meter` is a valid key, but `length` is not.
+                //                `power3` is not a valid unit.
+                key.split_once('-').map(|(_, rest)| rest)
+            });
 
             for truncated_quantity in quantities {
                 data_locales.insert(make_request_element(langid, truncated_quantity, length)?);
