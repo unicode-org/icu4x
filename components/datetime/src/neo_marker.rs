@@ -122,57 +122,24 @@ impl IsAnyCalendarKind for CustomTimeZone {
 }
 
 /// An input associated with a specific calendar.
-#[derive(Debug, Copy, Clone)]
-pub struct NeoTypedInput<C> {
-    /// The phantom calendar marker.
-    _calendar: PhantomData<C>,
+pub trait IsInCalendar<C> {
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<NeoTypedInput<C>> for Date<A> {
-    #[inline]
-    fn get_field(&self) -> NeoTypedInput<C> {
-        NeoTypedInput {
-            _calendar: PhantomData,
-        }
-    }
+impl<C: Calendar, A: AsCalendar<Calendar = C>> IsInCalendar<C> for Date<A> {
 }
 
-impl<C> NeoGetField<NeoTypedInput<C>> for Time {
-    #[inline]
-    fn get_field(&self) -> NeoTypedInput<C> {
-        NeoTypedInput {
-            _calendar: PhantomData,
-        }
-    }
+impl<C> IsInCalendar<C> for Time {
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<NeoTypedInput<C>> for DateTime<A> {
-    #[inline]
-    fn get_field(&self) -> NeoTypedInput<C> {
-        NeoTypedInput {
-            _calendar: PhantomData,
-        }
-    }
+impl<C: Calendar, A: AsCalendar<Calendar = C>> IsInCalendar<C> for DateTime<A> {
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<NeoTypedInput<C>>
+impl<C: Calendar, A: AsCalendar<Calendar = C>> IsInCalendar<C>
     for CustomZonedDateTime<A>
 {
-    #[inline]
-    fn get_field(&self) -> NeoTypedInput<C> {
-        NeoTypedInput {
-            _calendar: PhantomData,
-        }
-    }
 }
 
-impl<C> NeoGetField<NeoTypedInput<C>> for CustomTimeZone {
-    #[inline]
-    fn get_field(&self) -> NeoTypedInput<C> {
-        NeoTypedInput {
-            _calendar: PhantomData,
-        }
-    }
+impl<C> IsInCalendar<C> for CustomTimeZone {
 }
 
 /// A type that can return a certain field `T`.
@@ -460,13 +427,6 @@ impl NeoGetField<NeverField> for CustomTimeZone {
     }
 }
 
-impl<C> From<NeverField> for Option<NeoTypedInput<C>> {
-    #[inline]
-    fn from(_: NeverField) -> Self {
-        None
-    }
-}
-
 impl From<NeverField> for Option<FormattableYear> {
     #[inline]
     fn from(_: NeverField) -> Self {
@@ -595,8 +555,6 @@ pub trait DateInputMarkers: private::Sealed {
 /// A trait associating types implementing various other traits
 /// required for date formatting in a specific calendar.
 pub trait TypedDateMarkers<C>: private::Sealed {
-    /// Marker for associating input with the specific calendar.
-    type TypedInputMarker: Into<Option<NeoTypedInput<C>>>;
     /// Marker for loading date skeleton patterns.
     type DateSkeletonPatternsV1Marker: DataMarker<Yokeable = PackedSkeletonDataV1<'static>>;
     /// Marker for loading year names.
@@ -726,7 +684,6 @@ impl DateInputMarkers for NeoNeverMarker {
 }
 
 impl<C> TypedDateMarkers<C> for NeoNeverMarker {
-    type TypedInputMarker = NeverField;
     type DateSkeletonPatternsV1Marker = NeverMarker<PackedSkeletonDataV1<'static>>;
     type YearNamesV1Marker = NeverMarker<YearNamesV1<'static>>;
     type MonthNamesV1Marker = NeverMarker<MonthNamesV1<'static>>;
@@ -967,9 +924,6 @@ macro_rules! datetime_marker_helper {
     (@glue, no) => {
         NeverMarker<GluePatternV1<'static>>
     };
-    (@input/typed, yes) => {
-        NeoTypedInput<C>
-    };
     (@input/year, yes) => {
         FormattableYear
     };
@@ -1174,7 +1128,6 @@ macro_rules! impl_date_marker {
             type AnyCalendarKindInput = datetime_marker_helper!(@input/any_calendar_kind, $any_calendar_kind_yesno);
         }
         impl<C: CldrCalendar> TypedDateMarkers<C> for $type {
-            type TypedInputMarker = datetime_marker_helper!(@input/typed, yes);
             type DateSkeletonPatternsV1Marker = datetime_marker_helper!(@dates/typed, $dates_yesno);
             type YearNamesV1Marker = datetime_marker_helper!(@years/typed, $years_yesno);
             type MonthNamesV1Marker = datetime_marker_helper!(@months/typed, $months_yesno);
@@ -1722,7 +1675,6 @@ impl DateInputMarkers for NeoDateComponents {
 }
 
 impl<C: CldrCalendar> TypedDateMarkers<C> for NeoDateComponents {
-    type TypedInputMarker = datetime_marker_helper!(@input/typed, yes);
     type DateSkeletonPatternsV1Marker = datetime_marker_helper!(@dates/typed, yes);
     type YearNamesV1Marker = datetime_marker_helper!(@years/typed, yes);
     type MonthNamesV1Marker = datetime_marker_helper!(@months/typed, yes);

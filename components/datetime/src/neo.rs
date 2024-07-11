@@ -14,7 +14,7 @@ use crate::neo_marker::DateInputMarkers;
 use crate::neo_marker::HasConstComponents;
 use crate::neo_marker::{
     AllInputMarkers, ConvertCalendar, DateMarkers, DateTimeMarkers, IsAnyCalendarKind,
-    IsRuntimeComponents, NeoGetField, TimeMarkers, TypedDateMarkers, ZoneMarkers,
+    IsInCalendar, IsRuntimeComponents, NeoGetField, TimeMarkers, TypedDateMarkers, ZoneMarkers,
 };
 use crate::neo_pattern::DateTimePattern;
 use crate::neo_skeleton::{NeoComponents, NeoSkeletonLength};
@@ -576,7 +576,7 @@ where
     /// ```
     pub fn format<I>(&self, datetime: &I) -> FormattedNeoDateTime
     where
-        I: ?Sized + AllInputMarkers<R>,
+        I: ?Sized + IsInCalendar<C> + AllInputMarkers<R>,
     {
         let datetime =
             ExtractedDateTimeInput::extract_from_neo_input::<R::D, R::T, R::Z, I>(datetime);

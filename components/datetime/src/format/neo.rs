@@ -12,7 +12,8 @@ use crate::input::DateInput;
 use crate::input::ExtractedDateTimeInput;
 use crate::input::IsoTimeInput;
 use crate::neo_marker::{
-    DateInputMarkers, DateTimeMarkers, NeoGetField, TimeMarkers, TypedDateMarkers, ZoneMarkers,
+    AllInputMarkers, DateInputMarkers, DateTimeMarkers, IsInCalendar, TimeMarkers,
+    TypedDateMarkers, ZoneMarkers,
 };
 use crate::neo_pattern::{DateTimePattern, DateTimePatternBorrowed};
 use crate::neo_skeleton::NeoDateTimeComponents;
@@ -2067,19 +2068,7 @@ where
     /// For an example, see [`TypedDateTimeNames`].
     pub fn format<I>(&self, datetime: &I) -> FormattedDateTimePattern<'a>
     where
-        I: ?Sized
-            + NeoGetField<<R::D as TypedDateMarkers<C>>::TypedInputMarker>
-            + NeoGetField<<R::D as DateInputMarkers>::YearInput>
-            + NeoGetField<<R::D as DateInputMarkers>::MonthInput>
-            + NeoGetField<<R::D as DateInputMarkers>::DayOfMonthInput>
-            + NeoGetField<<R::D as DateInputMarkers>::DayOfWeekInput>
-            + NeoGetField<<R::D as DateInputMarkers>::DayOfYearInput>
-            + NeoGetField<<R::D as DateInputMarkers>::AnyCalendarKindInput>
-            + NeoGetField<<R::T as TimeMarkers>::HourInput>
-            + NeoGetField<<R::T as TimeMarkers>::MinuteInput>
-            + NeoGetField<<R::T as TimeMarkers>::SecondInput>
-            + NeoGetField<<R::T as TimeMarkers>::NanoSecondInput>
-            + NeoGetField<<R::Z as ZoneMarkers>::TimeZoneInput>,
+        I: ?Sized + IsInCalendar<C> + AllInputMarkers<R>,
     {
         let datetime =
             ExtractedDateTimeInput::extract_from_neo_input::<R::D, R::T, R::Z, I>(datetime);
