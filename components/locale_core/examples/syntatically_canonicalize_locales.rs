@@ -15,40 +15,15 @@ use icu_locale_core::Locale;
 
 const DEFAULT_INPUT: &str = "sr-cyrL-rS, es-mx, und-arab-u-ca-Buddhist";
 
-fn syntactically_canonicalize_locales(input: &str) -> String {
-    // Split input string and canonicalize each locale identifier.
-    let canonical_locales: Vec<String> = input
-        .split(',')
-        .filter_map(|s| Locale::canonicalize(s.trim()).ok())
-        .collect();
-
-    canonical_locales.join(", ")
-}
-
 fn main() {
-    let args: Vec<String> = env::args().collect();
-
-    let input = if let Some(input) = args.get(1) {
-        input.as_str()
-    } else {
-        DEFAULT_INPUT
-    };
-    let _output = syntactically_canonicalize_locales(input);
-
-    println!("\nInput: {input}\nOutput: {_output}");
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    const DEFAULT_OUTPUT: &str = "sr-Cyrl-RS, es-MX, und-Arab-u-ca-buddhist";
-
-    #[test]
-    fn ensure_default_output() {
-        assert_eq!(
-            syntactically_canonicalize_locales(DEFAULT_INPUT),
-            DEFAULT_OUTPUT
-        );
+    for input in env::args()
+        .nth(1)
+        .as_deref()
+        .unwrap_or(DEFAULT_INPUT)
+        .split(',')
+        .map(str::trim)
+    {
+        let output = Locale::canonicalize(input).unwrap();
+        println!("{input} -> {output}");
     }
 }

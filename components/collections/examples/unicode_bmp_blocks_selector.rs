@@ -17,18 +17,7 @@ icu_benchmark_macros::instrument!();
 use icu_benchmark_macros::println;
 
 use icu_collections::codepointinvlist::{CodePointInversionList, CodePointInversionListBuilder};
-
-fn get_basic_latin_block() -> CodePointInversionList<'static> {
-    let mut builder = CodePointInversionListBuilder::new();
-    builder.add_range('\u{0000}'..='\u{007F}');
-    builder.build()
-}
-
-fn get_latin1_supplement_block() -> CodePointInversionList<'static> {
-    let mut builder = CodePointInversionListBuilder::new();
-    builder.add_range('\u{0080}'..='\u{00FF}');
-    builder.build()
-}
+use std::ops::RangeInclusive;
 
 #[derive(Copy, Clone, Debug)]
 enum BmpBlock {
@@ -37,17 +26,26 @@ enum BmpBlock {
     Unknown,
 }
 
-struct BmpBlockSelector<'data> {
-    blocks: Vec<(BmpBlock, CodePointInversionList<'data>)>,
+const BLOCKS: [(BmpBlock, RangeInclusive<char>); 2] = [
+    (BmpBlock::Basic, '\u{0000}'..='\u{007F}'),
+    (BmpBlock::Latin1Supplement, '\u{0080}'..='\u{00FF}'),
+];
+
+struct BmpBlockSelector {
+    blocks: [(BmpBlock, CodePointInversionList<'static>); 2],
 }
 
-impl<'data> BmpBlockSelector<'data> {
-    pub fn new() -> Self {
-        let blocks = vec![
-            (BmpBlock::Basic, get_basic_latin_block()),
-            (BmpBlock::Latin1Supplement, get_latin1_supplement_block()),
-        ];
-        BmpBlockSelector { blocks }
+impl BmpBlockSelector {
+    pub fn new() -> BmpBlockSelector {
+        BmpBlockSelector {
+            blocks: BLOCKS.map(|(ch, range)| {
+                (ch, {
+                    let mut builder = CodePointInversionListBuilder::new();
+                    builder.add_range(range);
+                    builder.build()
+                })
+            }),
+        }
     }
 
     pub fn select(&self, input: char) -> BmpBlock {
@@ -65,14 +63,9 @@ fn main() {
 
     let sample = "Welcome to MyName©®, Алексей!";
 
-    let mut result = vec![];
-
-    for ch in sample.chars() {
-        result.push((ch, selector.select(ch)));
-    }
-
     println!("\n====== Unicode BMP Block Selector example ============");
-    for (ch, block) in result {
+    for ch in sample.chars() {
+        let block = selector.select(ch);
         println!("{ch}: {block:#?}");
     }
 }

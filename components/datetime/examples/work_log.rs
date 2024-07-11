@@ -27,26 +27,19 @@ const DATES_ISO: &[(i32, u8, u8, u8, u8, u8)] = &[
 ];
 
 fn main() {
-    let dates = DATES_ISO
-        .iter()
-        .copied()
-        .map(|(y, m, d, h, min, s)| DateTime::try_new_gregorian_datetime(y, m, d, h, min, s))
-        .collect::<Result<Vec<DateTime<Gregorian>>, _>>()
-        .expect("Failed to parse dates.");
-
     let mut options = length::Bag::default();
-
     options.date = Some(length::Date::Medium);
     options.time = Some(length::Time::Short);
 
     let dtf = TypedDateTimeFormatter::<Gregorian>::try_new(&locale!("en").into(), options.into())
         .expect("Failed to create TypedDateTimeFormatter instance.");
-    {
-        println!("\n====== Work Log (en) example ============");
 
-        for (idx, date) in dates.iter().enumerate() {
-            let fdt = dtf.format(date);
-            println!("{idx}) {fdt}");
-        }
+    println!("\n====== Work Log (en) example ============");
+
+    for (idx, &(year, month, day, hour, minute, second)) in DATES_ISO.iter().enumerate() {
+        let date = DateTime::try_new_gregorian_datetime(year, month, day, hour, minute, second)
+            .expect("datetime should parse");
+        let fdt = dtf.format(&date);
+        println!("{idx}) {}", fdt);
     }
 }
