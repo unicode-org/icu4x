@@ -65,7 +65,7 @@ impl DataProvider<UnitsDisplayNameV1Marker> for SourceDataProvider {
             (Count::Other, unit_patterns.other.as_deref()),
         ] {
             if let Some(unit) = unit {
-                patterns.insert(count, unit.to_string());
+                patterns.insert(count, unit);
             }
         }
 
