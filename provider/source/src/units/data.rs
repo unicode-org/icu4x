@@ -72,7 +72,7 @@ impl DataProvider<UnitsDisplayNameV1Marker> for SourceDataProvider {
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_owned(UnitsDisplayNameV1 {
-                patterns: ZeroMap::from_iter(patterns.iter().map(|(k, v)| (k, v.as_str()))),
+                patterns: ZeroMap::from_iter(patterns.iter().map(|(k, v)| (k, *v))),
             }),
         })
     }
