@@ -4,14 +4,12 @@
 
 #[diplomat::bridge]
 pub mod ffi {
-    use crate::provider::ffi::ICU4XDataProvider;
     use alloc::boxed::Box;
-    use icu_collections::codepointtrie::TrieValue;
-    use icu_properties::{maps, GeneralCategory, GeneralCategoryGroup};
 
     use crate::errors::ffi::ICU4XDataError;
     use crate::properties_iter::ffi::ICU4XCodePointRangeIterator;
     use crate::properties_sets::ffi::ICU4XCodePointSetData;
+    use crate::provider::ffi::ICU4XDataProvider;
 
     #[diplomat::opaque]
     /// An ICU4X Unicode Map Property object, capable of querying whether a code point (key) to obtain the Unicode property value, for a specific Unicode property.
@@ -25,9 +23,11 @@ pub mod ffi {
         hidden
     )]
     #[diplomat::rust_link(icu::properties::maps::CodePointMapDataBorrowed, Struct)]
-    pub struct ICU4XCodePointMapData8(maps::CodePointMapData<u8>);
+    pub struct ICU4XCodePointMapData8(icu_properties::maps::CodePointMapData<u8>);
 
-    fn convert_8<P: TrieValue>(data: maps::CodePointMapData<P>) -> Box<ICU4XCodePointMapData8> {
+    fn convert_8<P: icu_collections::codepointtrie::TrieValue>(
+        data: icu_properties::maps::CodePointMapData<P>,
+    ) -> Box<ICU4XCodePointMapData8> {
         #[allow(clippy::unwrap_used)] // infallible for the chosen properties
         Box::new(ICU4XCodePointMapData8(
             data.try_into_converted().map_err(|_| ()).unwrap(),
@@ -58,8 +58,8 @@ pub mod ffi {
         /// Nonexistent general categories will map to the empty mask
         #[diplomat::rust_link(icu::properties::GeneralCategoryGroup, Struct)]
         pub fn general_category_to_mask(gc: u8) -> u32 {
-            if let Ok(gc) = GeneralCategory::try_from(gc) {
-                let group: GeneralCategoryGroup = gc.into();
+            if let Ok(gc) = icu_properties::GeneralCategory::try_from(gc) {
+                let group: icu_properties::GeneralCategoryGroup = gc.into();
                 group.into()
             } else {
                 0
@@ -142,8 +142,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointMapData8>, ICU4XDataError> {
             Ok(convert_8(call_constructor_unstable!(
-                maps::general_category [r => Ok(r.static_to_owned())],
-                maps::load_general_category,
+                icu_properties::maps::general_category [r => Ok(r.static_to_owned())],
+                icu_properties::maps::load_general_category,
                 provider,
             )?))
         }
@@ -155,8 +155,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointMapData8>, ICU4XDataError> {
             Ok(convert_8(call_constructor_unstable!(
-                maps::bidi_class [r => Ok(r.static_to_owned())],
-                maps::load_bidi_class,
+                icu_properties::maps::bidi_class [r => Ok(r.static_to_owned())],
+                icu_properties::maps::load_bidi_class,
                 provider,
             )?))
         }
@@ -168,8 +168,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointMapData8>, ICU4XDataError> {
             Ok(convert_8(call_constructor_unstable!(
-                maps::east_asian_width [r => Ok(r.static_to_owned())],
-                maps::load_east_asian_width,
+                icu_properties::maps::east_asian_width [r => Ok(r.static_to_owned())],
+                icu_properties::maps::load_east_asian_width,
                 provider,
             )?))
         }
@@ -181,8 +181,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointMapData8>, ICU4XDataError> {
             Ok(convert_8(call_constructor_unstable!(
-                maps::hangul_syllable_type [r => Ok(r.static_to_owned())],
-                maps::load_hangul_syllable_type,
+                icu_properties::maps::hangul_syllable_type [r => Ok(r.static_to_owned())],
+                icu_properties::maps::load_hangul_syllable_type,
                 provider,
             )?))
         }
@@ -194,8 +194,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointMapData8>, ICU4XDataError> {
             Ok(convert_8(call_constructor_unstable!(
-                maps::indic_syllabic_category [r => Ok(r.static_to_owned())],
-                maps::load_indic_syllabic_category,
+                icu_properties::maps::indic_syllabic_category [r => Ok(r.static_to_owned())],
+                icu_properties::maps::load_indic_syllabic_category,
                 provider,
             )?))
         }
@@ -207,8 +207,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointMapData8>, ICU4XDataError> {
             Ok(convert_8(call_constructor_unstable!(
-                maps::line_break [r => Ok(r.static_to_owned())],
-                maps::load_line_break,
+                icu_properties::maps::line_break [r => Ok(r.static_to_owned())],
+                icu_properties::maps::load_line_break,
                 provider,
             )?))
         }
@@ -219,8 +219,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointMapData8>, ICU4XDataError> {
             Ok(convert_8(call_constructor_unstable!(
-                maps::grapheme_cluster_break [r => Ok(r.static_to_owned())],
-                maps::load_grapheme_cluster_break,
+                icu_properties::maps::grapheme_cluster_break [r => Ok(r.static_to_owned())],
+                icu_properties::maps::load_grapheme_cluster_break,
                 provider,
             )?))
         }
@@ -232,8 +232,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointMapData8>, ICU4XDataError> {
             Ok(convert_8(call_constructor_unstable!(
-                maps::word_break [r => Ok(r.static_to_owned())],
-                maps::load_word_break,
+                icu_properties::maps::word_break [r => Ok(r.static_to_owned())],
+                icu_properties::maps::load_word_break,
                 provider,
             )?))
         }
@@ -245,8 +245,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointMapData8>, ICU4XDataError> {
             Ok(convert_8(call_constructor_unstable!(
-                maps::sentence_break [r => Ok(r.static_to_owned())],
-                maps::load_sentence_break,
+                icu_properties::maps::sentence_break [r => Ok(r.static_to_owned())],
+                icu_properties::maps::load_sentence_break,
                 provider,
             )?))
         }
@@ -258,8 +258,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointMapData8>, ICU4XDataError> {
             Ok(convert_8(call_constructor_unstable!(
-                maps::joining_type [r => Ok(r.static_to_owned())],
-                maps::load_joining_type,
+                icu_properties::maps::joining_type [r => Ok(r.static_to_owned())],
+                icu_properties::maps::load_joining_type,
                 provider,
             )?))
         }
@@ -272,7 +272,7 @@ pub mod ffi {
     #[diplomat::rust_link(icu::properties, Mod)]
     #[diplomat::rust_link(icu::properties::maps::CodePointMapData, Struct)]
     #[diplomat::rust_link(icu::properties::maps::CodePointMapDataBorrowed, Struct)]
-    pub struct ICU4XCodePointMapData16(maps::CodePointMapData<u16>);
+    pub struct ICU4XCodePointMapData16(icu_properties::maps::CodePointMapData<u16>);
 
     impl ICU4XCodePointMapData16 {
         /// Gets the value for a code point.
@@ -343,8 +343,8 @@ pub mod ffi {
             #[allow(clippy::unwrap_used)] // script is a 16-bit property
             Ok(Box::new(ICU4XCodePointMapData16(
                 call_constructor_unstable!(
-                    maps::script [r => Ok(r.static_to_owned())],
-                    maps::load_script,
+                    icu_properties::maps::script [r => Ok(r.static_to_owned())],
+                    icu_properties::maps::load_script,
                     provider,
                 )?
                 .try_into_converted()

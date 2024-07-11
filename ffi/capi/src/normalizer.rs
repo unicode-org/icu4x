@@ -4,13 +4,13 @@
 
 #[diplomat::bridge]
 pub mod ffi {
-    use crate::{errors::ffi::ICU4XDataError, provider::ffi::ICU4XDataProvider};
     use alloc::boxed::Box;
-    use icu_normalizer::{ComposingNormalizer, DecomposingNormalizer};
+
+    use crate::{errors::ffi::ICU4XDataError, provider::ffi::ICU4XDataProvider};
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::normalizer::ComposingNormalizer, Struct)]
-    pub struct ICU4XComposingNormalizer(pub ComposingNormalizer);
+    pub struct ICU4XComposingNormalizer(pub icu_normalizer::ComposingNormalizer);
 
     impl ICU4XComposingNormalizer {
         /// Construct a new ICU4XComposingNormalizer instance for NFC
@@ -20,9 +20,9 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XComposingNormalizer>, ICU4XDataError> {
             Ok(Box::new(ICU4XComposingNormalizer(call_constructor!(
-                ComposingNormalizer::new_nfc [r => Ok(r)],
-                ComposingNormalizer::try_new_nfc_with_any_provider,
-                ComposingNormalizer::try_new_nfc_with_buffer_provider,
+                icu_normalizer::ComposingNormalizer::new_nfc [r => Ok(r)],
+                icu_normalizer::ComposingNormalizer::try_new_nfc_with_any_provider,
+                icu_normalizer::ComposingNormalizer::try_new_nfc_with_buffer_provider,
                 provider,
             )?)))
         }
@@ -34,9 +34,9 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XComposingNormalizer>, ICU4XDataError> {
             Ok(Box::new(ICU4XComposingNormalizer(call_constructor!(
-                ComposingNormalizer::new_nfkc [r => Ok(r)],
-                ComposingNormalizer::try_new_nfkc_with_any_provider,
-                ComposingNormalizer::try_new_nfkc_with_buffer_provider,
+                icu_normalizer::ComposingNormalizer::new_nfkc [r => Ok(r)],
+                icu_normalizer::ComposingNormalizer::try_new_nfkc_with_any_provider,
+                icu_normalizer::ComposingNormalizer::try_new_nfkc_with_buffer_provider,
                 provider,
             )?)))
         }
@@ -113,7 +113,7 @@ pub mod ffi {
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::normalizer::DecomposingNormalizer, Struct)]
-    pub struct ICU4XDecomposingNormalizer(pub DecomposingNormalizer);
+    pub struct ICU4XDecomposingNormalizer(pub icu_normalizer::DecomposingNormalizer);
 
     impl ICU4XDecomposingNormalizer {
         /// Construct a new ICU4XDecomposingNormalizer instance for NFC
@@ -123,9 +123,9 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XDecomposingNormalizer>, ICU4XDataError> {
             Ok(Box::new(ICU4XDecomposingNormalizer(call_constructor!(
-                DecomposingNormalizer::new_nfd [r => Ok(r)],
-                DecomposingNormalizer::try_new_nfd_with_any_provider,
-                DecomposingNormalizer::try_new_nfd_with_buffer_provider,
+                icu_normalizer::DecomposingNormalizer::new_nfd [r => Ok(r)],
+                icu_normalizer::DecomposingNormalizer::try_new_nfd_with_any_provider,
+                icu_normalizer::DecomposingNormalizer::try_new_nfd_with_buffer_provider,
                 provider,
             )?)))
         }
@@ -137,9 +137,9 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XDecomposingNormalizer>, ICU4XDataError> {
             Ok(Box::new(ICU4XDecomposingNormalizer(call_constructor!(
-                DecomposingNormalizer::new_nfkd [r => Ok(r)],
-                DecomposingNormalizer::try_new_nfkd_with_any_provider,
-                DecomposingNormalizer::try_new_nfkd_with_buffer_provider,
+                icu_normalizer::DecomposingNormalizer::new_nfkd [r => Ok(r)],
+                icu_normalizer::DecomposingNormalizer::try_new_nfkd_with_any_provider,
+                icu_normalizer::DecomposingNormalizer::try_new_nfkd_with_buffer_provider,
                 provider,
             )?)))
         }

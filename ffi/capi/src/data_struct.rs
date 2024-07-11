@@ -4,12 +4,11 @@
 
 #![cfg(feature = "icu_decimal")]
 
-use alloc::borrow::Cow;
-
 #[diplomat::bridge]
 pub mod ffi {
-
+    use alloc::borrow::Cow;
     use alloc::boxed::Box;
+
     use icu_provider::any::AnyPayload;
     use icu_provider::DataPayload;
 
@@ -42,7 +41,14 @@ pub mod ffi {
             min_group_size: u8,
             digits: &[DiplomatChar],
         ) -> Option<Box<ICU4XDataStruct>> {
-            use super::str_to_cow;
+            fn str_to_cow(s: &diplomat_runtime::DiplomatStr) -> Cow<'static, str> {
+                if s.is_empty() {
+                    Cow::default()
+                } else {
+                    Cow::Owned(alloc::string::String::from_utf8_lossy(s).into_owned())
+                }
+            }
+
             use icu_decimal::provider::{
                 AffixesV1, DecimalSymbolsV1, DecimalSymbolsV1Marker, GroupingSizesV1,
             };
@@ -82,13 +88,5 @@ pub mod ffi {
                 DataPayload::<DecimalSymbolsV1Marker>::from_owned(symbols).wrap_into_any_payload(),
             )))
         }
-    }
-}
-
-fn str_to_cow(s: &diplomat_runtime::DiplomatStr) -> Cow<'static, str> {
-    if s.is_empty() {
-        Cow::default()
-    } else {
-        Cow::Owned(alloc::string::String::from_utf8_lossy(s).into_owned())
     }
 }

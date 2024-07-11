@@ -5,9 +5,6 @@
 #[diplomat::bridge]
 pub mod ffi {
     use alloc::boxed::Box;
-    use icu_calendar::{DateTime, Gregorian};
-    use icu_datetime::{options::length, TypedZonedDateTimeFormatter, ZonedDateTimeFormatter};
-    use writeable::Writeable;
 
     use crate::{
         datetime::ffi::ICU4XDateTime, datetime::ffi::ICU4XIsoDateTime,
@@ -15,6 +12,8 @@ pub mod ffi {
         errors::ffi::ICU4XError, locale_core::ffi::ICU4XLocale, provider::ffi::ICU4XDataProvider,
         timezone::ffi::ICU4XCustomTimeZone, timezone_formatter::ffi::ICU4XIsoTimeZoneOptions,
     };
+
+    use writeable::Writeable;
 
     // TODO(https://github.com/rust-diplomat/diplomat/issues/248)
     #[allow(unused_imports)]
@@ -27,7 +26,9 @@ pub mod ffi {
     #[diplomat::opaque]
     /// An object capable of formatting a date time with time zone to a string.
     #[diplomat::rust_link(icu::datetime::TypedZonedDateTimeFormatter, Struct)]
-    pub struct ICU4XGregorianZonedDateTimeFormatter(pub TypedZonedDateTimeFormatter<Gregorian>);
+    pub struct ICU4XGregorianZonedDateTimeFormatter(
+        pub icu_datetime::TypedZonedDateTimeFormatter<icu_calendar::Gregorian>,
+    );
 
     impl ICU4XGregorianZonedDateTimeFormatter {
         /// Creates a new [`ICU4XGregorianZonedDateTimeFormatter`] from locale data.
@@ -46,12 +47,12 @@ pub mod ffi {
 
             Ok(Box::new(ICU4XGregorianZonedDateTimeFormatter(
                 call_constructor!(
-                    TypedZonedDateTimeFormatter::<Gregorian>::try_new,
-                    TypedZonedDateTimeFormatter::<Gregorian>::try_new_with_any_provider,
-                    TypedZonedDateTimeFormatter::<Gregorian>::try_new_with_buffer_provider,
+                    icu_datetime::TypedZonedDateTimeFormatter::<icu_calendar::Gregorian>::try_new,
+                    icu_datetime::TypedZonedDateTimeFormatter::<icu_calendar::Gregorian>::try_new_with_any_provider,
+                    icu_datetime::TypedZonedDateTimeFormatter::<icu_calendar::Gregorian>::try_new_with_buffer_provider,
                     provider,
                     &locale,
-                    length::Bag::from_date_time_style(date_length.into(), time_length.into())
+                    icu_datetime::options::length::Bag::from_date_time_style(date_length.into(), time_length.into())
                         .into(),
                     Default::default(),
                 )?,
@@ -75,12 +76,12 @@ pub mod ffi {
 
             Ok(Box::new(ICU4XGregorianZonedDateTimeFormatter(
                 call_constructor!(
-                    TypedZonedDateTimeFormatter::<Gregorian>::try_new,
-                    TypedZonedDateTimeFormatter::<Gregorian>::try_new_with_any_provider,
-                    TypedZonedDateTimeFormatter::<Gregorian>::try_new_with_buffer_provider,
+                    icu_datetime::TypedZonedDateTimeFormatter::<icu_calendar::Gregorian>::try_new,
+                    icu_datetime::TypedZonedDateTimeFormatter::<icu_calendar::Gregorian>::try_new_with_any_provider,
+                    icu_datetime::TypedZonedDateTimeFormatter::<icu_calendar::Gregorian>::try_new_with_buffer_provider,
                     provider,
                     &locale,
-                    length::Bag::from_date_time_style(date_length.into(), time_length.into())
+                    icu_datetime::options::length::Bag::from_date_time_style(date_length.into(), time_length.into())
                         .into(),
                     zone_options.into(),
                 )?,
@@ -100,7 +101,7 @@ pub mod ffi {
             time_zone: &ICU4XCustomTimeZone,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) {
-            let greg = DateTime::new_from_iso(datetime.0, Gregorian);
+            let greg = icu_calendar::DateTime::new_from_iso(datetime.0, icu_calendar::Gregorian);
             let _infallible = self.0.format(&greg, &time_zone.0).write_to(write);
         }
     }
@@ -109,7 +110,7 @@ pub mod ffi {
     /// An object capable of formatting a date time with time zone to a string.
     #[diplomat::rust_link(icu::datetime::ZonedDateTimeFormatter, Struct)]
     #[diplomat::rust_link(icu::datetime::FormattedZonedDateTime, Struct, hidden)]
-    pub struct ICU4XZonedDateTimeFormatter(pub ZonedDateTimeFormatter);
+    pub struct ICU4XZonedDateTimeFormatter(pub icu_datetime::ZonedDateTimeFormatter);
 
     impl ICU4XZonedDateTimeFormatter {
         /// Creates a new [`ICU4XZonedDateTimeFormatter`] from locale data.
@@ -127,12 +128,16 @@ pub mod ffi {
             let locale = locale.to_datalocale();
 
             Ok(Box::new(ICU4XZonedDateTimeFormatter(call_constructor!(
-                ZonedDateTimeFormatter::try_new,
-                ZonedDateTimeFormatter::try_new_with_any_provider,
-                ZonedDateTimeFormatter::try_new_with_buffer_provider,
+                icu_datetime::ZonedDateTimeFormatter::try_new,
+                icu_datetime::ZonedDateTimeFormatter::try_new_with_any_provider,
+                icu_datetime::ZonedDateTimeFormatter::try_new_with_buffer_provider,
                 provider,
                 &locale,
-                length::Bag::from_date_time_style(date_length.into(), time_length.into()).into(),
+                icu_datetime::options::length::Bag::from_date_time_style(
+                    date_length.into(),
+                    time_length.into()
+                )
+                .into(),
                 Default::default(),
             )?)))
         }
@@ -153,12 +158,16 @@ pub mod ffi {
             let locale = locale.to_datalocale();
 
             Ok(Box::new(ICU4XZonedDateTimeFormatter(call_constructor!(
-                ZonedDateTimeFormatter::try_new,
-                ZonedDateTimeFormatter::try_new_with_any_provider,
-                ZonedDateTimeFormatter::try_new_with_buffer_provider,
+                icu_datetime::ZonedDateTimeFormatter::try_new,
+                icu_datetime::ZonedDateTimeFormatter::try_new_with_any_provider,
+                icu_datetime::ZonedDateTimeFormatter::try_new_with_buffer_provider,
                 provider,
                 &locale,
-                length::Bag::from_date_time_style(date_length.into(), time_length.into()).into(),
+                icu_datetime::options::length::Bag::from_date_time_style(
+                    date_length.into(),
+                    time_length.into()
+                )
+                .into(),
                 zone_options.into(),
             )?)))
         }

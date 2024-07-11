@@ -2,8 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_datetime::time_zone::{FallbackFormat, TimeZoneFormatterOptions};
-
 macro_rules! call_method {
     ($self:ident, $compiled:ident, $unstable:ident, $provider:expr) => {
         match &$provider.0 {
@@ -27,25 +25,22 @@ macro_rules! call_method {
 
 #[diplomat::bridge]
 pub mod ffi {
+    use alloc::boxed::Box;
+
     use crate::errors::ffi::ICU4XError;
     use crate::locale_core::ffi::ICU4XLocale;
     use crate::provider::ffi::ICU4XDataProvider;
     use crate::timezone::ffi::ICU4XCustomTimeZone;
-    use alloc::boxed::Box;
-    use icu_datetime::time_zone::FallbackFormat;
-    use icu_datetime::time_zone::IsoFormat;
-    use icu_datetime::time_zone::IsoMinutes;
-    use icu_datetime::time_zone::IsoSeconds;
-    use icu_datetime::time_zone::TimeZoneFormatter;
+
     use writeable::Writeable;
 
     #[diplomat::opaque]
     /// An ICU4X TimeZoneFormatter object capable of formatting an [`ICU4XCustomTimeZone`] type (and others) as a string
     #[diplomat::rust_link(icu::datetime::time_zone::TimeZoneFormatter, Struct)]
     #[diplomat::rust_link(icu::datetime::FormattedTimeZone, Struct, hidden)]
-    pub struct ICU4XTimeZoneFormatter(pub TimeZoneFormatter);
+    pub struct ICU4XTimeZoneFormatter(pub icu_datetime::time_zone::TimeZoneFormatter);
 
-    #[diplomat::enum_convert(IsoFormat, needs_wildcard)]
+    #[diplomat::enum_convert(icu_datetime::time_zone::IsoFormat, needs_wildcard)]
     #[diplomat::rust_link(icu::datetime::time_zone::IsoFormat, Enum)]
     pub enum ICU4XIsoTimeZoneFormat {
         Basic,
@@ -54,14 +49,14 @@ pub mod ffi {
         UtcExtended,
     }
 
-    #[diplomat::enum_convert(IsoMinutes, needs_wildcard)]
+    #[diplomat::enum_convert(icu_datetime::time_zone::IsoMinutes, needs_wildcard)]
     #[diplomat::rust_link(icu::datetime::time_zone::IsoMinutes, Enum)]
     pub enum ICU4XIsoTimeZoneMinuteDisplay {
         Required,
         Optional,
     }
 
-    #[diplomat::enum_convert(IsoSeconds, needs_wildcard)]
+    #[diplomat::enum_convert(icu_datetime::time_zone::IsoSeconds, needs_wildcard)]
     #[diplomat::rust_link(icu::datetime::time_zone::IsoSeconds, Enum)]
     pub enum ICU4XIsoTimeZoneSecondDisplay {
         Optional,
@@ -89,12 +84,12 @@ pub mod ffi {
             let locale = locale.to_datalocale();
 
             Ok(Box::new(ICU4XTimeZoneFormatter(call_constructor!(
-                TimeZoneFormatter::try_new,
-                TimeZoneFormatter::try_new_with_any_provider,
-                TimeZoneFormatter::try_new_with_buffer_provider,
+                icu_datetime::time_zone::TimeZoneFormatter::try_new,
+                icu_datetime::time_zone::TimeZoneFormatter::try_new_with_any_provider,
+                icu_datetime::time_zone::TimeZoneFormatter::try_new_with_buffer_provider,
                 provider,
                 &locale,
-                FallbackFormat::LocalizedGmt.into(),
+                icu_datetime::time_zone::FallbackFormat::LocalizedGmt.into(),
             )?)))
         }
 
@@ -113,9 +108,9 @@ pub mod ffi {
             let locale = locale.to_datalocale();
 
             Ok(Box::new(ICU4XTimeZoneFormatter(call_constructor!(
-                TimeZoneFormatter::try_new,
-                TimeZoneFormatter::try_new_with_any_provider,
-                TimeZoneFormatter::try_new_with_buffer_provider,
+                icu_datetime::time_zone::TimeZoneFormatter::try_new,
+                icu_datetime::time_zone::TimeZoneFormatter::try_new_with_any_provider,
+                icu_datetime::time_zone::TimeZoneFormatter::try_new_with_buffer_provider,
                 provider,
                 &locale,
                 options.into(),
@@ -309,9 +304,9 @@ pub mod ffi {
     }
 }
 
-impl From<ffi::ICU4XIsoTimeZoneOptions> for TimeZoneFormatterOptions {
+impl From<ffi::ICU4XIsoTimeZoneOptions> for icu_datetime::time_zone::TimeZoneFormatterOptions {
     fn from(other: ffi::ICU4XIsoTimeZoneOptions) -> Self {
-        FallbackFormat::Iso8601(
+        icu_datetime::time_zone::FallbackFormat::Iso8601(
             other.format.into(),
             other.minutes.into(),
             other.seconds.into(),

@@ -4,10 +4,10 @@
 
 #[diplomat::bridge]
 pub mod ffi {
+    use alloc::boxed::Box;
+
     use crate::errors::ffi::ICU4XDataError;
     use crate::provider::ffi::ICU4XDataProvider;
-    use alloc::boxed::Box;
-    use icu_timezone::MetazoneCalculator;
 
     /// An object capable of computing the metazone from a timezone.
     ///
@@ -16,7 +16,7 @@ pub mod ffi {
     /// [`ICU4XCustomTimeZone`]: crate::timezone::ffi::ICU4XCustomTimeZone
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::timezone::MetazoneCalculator, Struct)]
-    pub struct ICU4XMetazoneCalculator(pub MetazoneCalculator);
+    pub struct ICU4XMetazoneCalculator(pub icu_timezone::MetazoneCalculator);
 
     impl ICU4XMetazoneCalculator {
         #[diplomat::rust_link(icu::timezone::MetazoneCalculator::new, FnInStruct)]
@@ -25,9 +25,9 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XMetazoneCalculator>, ICU4XDataError> {
             Ok(Box::new(ICU4XMetazoneCalculator(call_constructor!(
-                MetazoneCalculator::new [r => Ok(r)],
-                MetazoneCalculator::try_new_with_any_provider,
-                MetazoneCalculator::try_new_with_buffer_provider,
+                icu_timezone::MetazoneCalculator::new [r => Ok(r)],
+                icu_timezone::MetazoneCalculator::try_new_with_any_provider,
+                icu_timezone::MetazoneCalculator::try_new_with_buffer_provider,
                 provider,
             )?)))
         }

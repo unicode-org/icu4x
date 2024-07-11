@@ -4,19 +4,15 @@
 
 #[diplomat::bridge]
 pub mod ffi {
+    use alloc::boxed::Box;
+
     use crate::errors::ffi::ICU4XDataError;
     use crate::provider::ffi::ICU4XDataProvider;
-    use alloc::boxed::Box;
-    use core::convert::TryFrom;
-    use icu_segmenter::{
-        SentenceBreakIteratorLatin1, SentenceBreakIteratorPotentiallyIllFormedUtf8,
-        SentenceBreakIteratorUtf16, SentenceSegmenter,
-    };
 
     #[diplomat::opaque]
     /// An ICU4X sentence-break segmenter, capable of finding sentence breakpoints in strings.
     #[diplomat::rust_link(icu::segmenter::SentenceSegmenter, Struct)]
-    pub struct ICU4XSentenceSegmenter(SentenceSegmenter);
+    pub struct ICU4XSentenceSegmenter(icu_segmenter::SentenceSegmenter);
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::segmenter::SentenceBreakIterator, Struct)]
@@ -27,18 +23,22 @@ pub mod ffi {
     )]
     #[diplomat::rust_link(icu::segmenter::SentenceBreakIteratorUtf8, Typedef, hidden)]
     pub struct ICU4XSentenceBreakIteratorUtf8<'a>(
-        SentenceBreakIteratorPotentiallyIllFormedUtf8<'a, 'a>,
+        icu_segmenter::SentenceBreakIteratorPotentiallyIllFormedUtf8<'a, 'a>,
     );
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::segmenter::SentenceBreakIterator, Struct)]
     #[diplomat::rust_link(icu::segmenter::SentenceBreakIteratorUtf16, Typedef, hidden)]
-    pub struct ICU4XSentenceBreakIteratorUtf16<'a>(SentenceBreakIteratorUtf16<'a, 'a>);
+    pub struct ICU4XSentenceBreakIteratorUtf16<'a>(
+        icu_segmenter::SentenceBreakIteratorUtf16<'a, 'a>,
+    );
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::segmenter::SentenceBreakIterator, Struct)]
     #[diplomat::rust_link(icu::segmenter::SentenceBreakIteratorLatin1, Typedef, hidden)]
-    pub struct ICU4XSentenceBreakIteratorLatin1<'a>(SentenceBreakIteratorLatin1<'a, 'a>);
+    pub struct ICU4XSentenceBreakIteratorLatin1<'a>(
+        icu_segmenter::SentenceBreakIteratorLatin1<'a, 'a>,
+    );
 
     impl ICU4XSentenceSegmenter {
         /// Construct an [`ICU4XSentenceSegmenter`].
@@ -48,9 +48,9 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XSentenceSegmenter>, ICU4XDataError> {
             Ok(Box::new(ICU4XSentenceSegmenter(call_constructor!(
-                SentenceSegmenter::new [r => Ok(r)],
-                SentenceSegmenter::try_new_with_any_provider,
-                SentenceSegmenter::try_new_with_buffer_provider,
+                icu_segmenter::SentenceSegmenter::new [r => Ok(r)],
+                icu_segmenter::SentenceSegmenter::try_new_with_any_provider,
+                icu_segmenter::SentenceSegmenter::try_new_with_buffer_provider,
                 provider,
             )?)))
         }

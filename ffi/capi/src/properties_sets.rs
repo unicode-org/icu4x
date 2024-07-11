@@ -4,19 +4,19 @@
 
 #[diplomat::bridge]
 pub mod ffi {
-    use crate::provider::ffi::ICU4XDataProvider;
     use alloc::boxed::Box;
-    use icu_properties::sets;
 
-    use crate::errors::ffi::{ICU4XDataError, ICU4XError};
+    use crate::errors::ffi::ICU4XDataError;
+    use crate::errors::ffi::ICU4XError;
     use crate::properties_iter::ffi::ICU4XCodePointRangeIterator;
+    use crate::provider::ffi::ICU4XDataProvider;
 
     #[diplomat::opaque]
     /// An ICU4X Unicode Set Property object, capable of querying whether a code point is contained in a set based on a Unicode property.
     #[diplomat::rust_link(icu::properties, Mod)]
     #[diplomat::rust_link(icu::properties::sets::CodePointSetData, Struct)]
     #[diplomat::rust_link(icu::properties::sets::CodePointSetDataBorrowed, Struct)]
-    pub struct ICU4XCodePointSetData(pub sets::CodePointSetData);
+    pub struct ICU4XCodePointSetData(pub icu_properties::sets::CodePointSetData);
 
     impl ICU4XCodePointSetData {
         /// Checks whether the code point is in the set.
@@ -69,8 +69,8 @@ pub mod ffi {
             group: u32,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::for_general_category_group [r => Ok(r)],
-                sets::load_for_general_category_group,
+                icu_properties::sets::for_general_category_group [r => Ok(r)],
+                icu_properties::sets::load_for_general_category_group,
                 provider,
                 group.into(),
             )?)))
@@ -83,8 +83,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::ascii_hex_digit [r => Ok(r.static_to_owned())],
-                sets::load_ascii_hex_digit,
+                icu_properties::sets::ascii_hex_digit [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_ascii_hex_digit,
                 provider
             )?)))
         }
@@ -96,8 +96,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::alnum [r => Ok(r.static_to_owned())],
-                sets::load_alnum,
+                icu_properties::sets::alnum [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_alnum,
                 provider
             )?)))
         }
@@ -109,8 +109,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::alphabetic [r => Ok(r.static_to_owned())],
-                sets::load_alphabetic,
+                icu_properties::sets::alphabetic [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_alphabetic,
                 provider
             )?)))
         }
@@ -122,8 +122,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::bidi_control [r => Ok(r.static_to_owned())],
-                sets::load_bidi_control,
+                icu_properties::sets::bidi_control [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_bidi_control,
                 provider
             )?)))
         }
@@ -135,8 +135,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::bidi_mirrored [r => Ok(r.static_to_owned())],
-                sets::load_bidi_mirrored,
+                icu_properties::sets::bidi_mirrored [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_bidi_mirrored,
                 provider
             )?)))
         }
@@ -148,8 +148,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::blank [r => Ok(r.static_to_owned())],
-                sets::load_blank,
+                icu_properties::sets::blank [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_blank,
                 provider
             )?)))
         }
@@ -161,8 +161,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::cased [r => Ok(r.static_to_owned())],
-                sets::load_cased,
+                icu_properties::sets::cased [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_cased,
                 provider
             )?)))
         }
@@ -174,8 +174,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::case_ignorable [r => Ok(r.static_to_owned())],
-                sets::load_case_ignorable,
+                icu_properties::sets::case_ignorable [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_case_ignorable,
                 provider
             )?)))
         }
@@ -187,8 +187,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::full_composition_exclusion [r => Ok(r.static_to_owned())],
-                sets::load_full_composition_exclusion,
+                icu_properties::sets::full_composition_exclusion [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_full_composition_exclusion,
                 provider
             )?)))
         }
@@ -200,8 +200,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::changes_when_casefolded [r => Ok(r.static_to_owned())],
-                sets::load_changes_when_casefolded,
+                icu_properties::sets::changes_when_casefolded [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_changes_when_casefolded,
                 provider
             )?)))
         }
@@ -213,8 +213,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::changes_when_casemapped [r => Ok(r.static_to_owned())],
-                sets::load_changes_when_casemapped,
+                icu_properties::sets::changes_when_casemapped [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_changes_when_casemapped,
                 provider
             )?)))
         }
@@ -226,8 +226,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::changes_when_nfkc_casefolded [r => Ok(r.static_to_owned())],
-                sets::load_changes_when_nfkc_casefolded,
+                icu_properties::sets::changes_when_nfkc_casefolded [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_changes_when_nfkc_casefolded,
                 provider
             )?)))
         }
@@ -239,8 +239,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::changes_when_lowercased [r => Ok(r.static_to_owned())],
-                sets::load_changes_when_lowercased,
+                icu_properties::sets::changes_when_lowercased [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_changes_when_lowercased,
                 provider
             )?)))
         }
@@ -252,8 +252,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::changes_when_titlecased [r => Ok(r.static_to_owned())],
-                sets::load_changes_when_titlecased,
+                icu_properties::sets::changes_when_titlecased [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_changes_when_titlecased,
                 provider
             )?)))
         }
@@ -265,8 +265,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::changes_when_uppercased [r => Ok(r.static_to_owned())],
-                sets::load_changes_when_uppercased,
+                icu_properties::sets::changes_when_uppercased [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_changes_when_uppercased,
                 provider
             )?)))
         }
@@ -278,8 +278,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::dash [r => Ok(r.static_to_owned())],
-                sets::load_dash,
+                icu_properties::sets::dash [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_dash,
                 provider
             )?)))
         }
@@ -291,8 +291,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::deprecated [r => Ok(r.static_to_owned())],
-                sets::load_deprecated,
+                icu_properties::sets::deprecated [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_deprecated,
                 provider
             )?)))
         }
@@ -304,8 +304,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::default_ignorable_code_point [r => Ok(r.static_to_owned())],
-                sets::load_default_ignorable_code_point,
+                icu_properties::sets::default_ignorable_code_point [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_default_ignorable_code_point,
                 provider
             )?)))
         }
@@ -317,8 +317,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::diacritic [r => Ok(r.static_to_owned())],
-                sets::load_diacritic,
+                icu_properties::sets::diacritic [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_diacritic,
                 provider
             )?)))
         }
@@ -330,8 +330,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::emoji_modifier_base [r => Ok(r.static_to_owned())],
-                sets::load_emoji_modifier_base,
+                icu_properties::sets::emoji_modifier_base [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_emoji_modifier_base,
                 provider
             )?)))
         }
@@ -343,8 +343,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::emoji_component [r => Ok(r.static_to_owned())],
-                sets::load_emoji_component,
+                icu_properties::sets::emoji_component [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_emoji_component,
                 provider
             )?)))
         }
@@ -356,8 +356,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::emoji_modifier [r => Ok(r.static_to_owned())],
-                sets::load_emoji_modifier,
+                icu_properties::sets::emoji_modifier [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_emoji_modifier,
                 provider
             )?)))
         }
@@ -369,8 +369,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::emoji [r => Ok(r.static_to_owned())],
-                sets::load_emoji,
+                icu_properties::sets::emoji [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_emoji,
                 provider
             )?)))
         }
@@ -382,8 +382,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::emoji_presentation [r => Ok(r.static_to_owned())],
-                sets::load_emoji_presentation,
+                icu_properties::sets::emoji_presentation [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_emoji_presentation,
                 provider
             )?)))
         }
@@ -395,8 +395,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::extender [r => Ok(r.static_to_owned())],
-                sets::load_extender,
+                icu_properties::sets::extender [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_extender,
                 provider
             )?)))
         }
@@ -408,8 +408,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::extended_pictographic [r => Ok(r.static_to_owned())],
-                sets::load_extended_pictographic,
+                icu_properties::sets::extended_pictographic [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_extended_pictographic,
                 provider
             )?)))
         }
@@ -421,8 +421,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::graph [r => Ok(r.static_to_owned())],
-                sets::load_graph,
+                icu_properties::sets::graph [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_graph,
                 provider
             )?)))
         }
@@ -434,8 +434,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::grapheme_base [r => Ok(r.static_to_owned())],
-                sets::load_grapheme_base,
+                icu_properties::sets::grapheme_base [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_grapheme_base,
                 provider
             )?)))
         }
@@ -447,8 +447,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::grapheme_extend [r => Ok(r.static_to_owned())],
-                sets::load_grapheme_extend,
+                icu_properties::sets::grapheme_extend [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_grapheme_extend,
                 provider
             )?)))
         }
@@ -460,8 +460,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::grapheme_link [r => Ok(r.static_to_owned())],
-                sets::load_grapheme_link,
+                icu_properties::sets::grapheme_link [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_grapheme_link,
                 provider
             )?)))
         }
@@ -473,8 +473,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::hex_digit [r => Ok(r.static_to_owned())],
-                sets::load_hex_digit,
+                icu_properties::sets::hex_digit [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_hex_digit,
                 provider
             )?)))
         }
@@ -486,8 +486,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::hyphen [r => Ok(r.static_to_owned())],
-                sets::load_hyphen,
+                icu_properties::sets::hyphen [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_hyphen,
                 provider
             )?)))
         }
@@ -499,8 +499,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::id_continue [r => Ok(r.static_to_owned())],
-                sets::load_id_continue,
+                icu_properties::sets::id_continue [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_id_continue,
                 provider
             )?)))
         }
@@ -512,8 +512,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::ideographic [r => Ok(r.static_to_owned())],
-                sets::load_ideographic,
+                icu_properties::sets::ideographic [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_ideographic,
                 provider
             )?)))
         }
@@ -525,8 +525,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::id_start [r => Ok(r.static_to_owned())],
-                sets::load_id_start,
+                icu_properties::sets::id_start [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_id_start,
                 provider
             )?)))
         }
@@ -538,8 +538,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::ids_binary_operator [r => Ok(r.static_to_owned())],
-                sets::load_ids_binary_operator,
+                icu_properties::sets::ids_binary_operator [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_ids_binary_operator,
                 provider
             )?)))
         }
@@ -551,8 +551,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::ids_trinary_operator [r => Ok(r.static_to_owned())],
-                sets::load_ids_trinary_operator,
+                icu_properties::sets::ids_trinary_operator [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_ids_trinary_operator,
                 provider
             )?)))
         }
@@ -564,8 +564,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::join_control [r => Ok(r.static_to_owned())],
-                sets::load_join_control,
+                icu_properties::sets::join_control [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_join_control,
                 provider
             )?)))
         }
@@ -577,8 +577,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::logical_order_exception [r => Ok(r.static_to_owned())],
-                sets::load_logical_order_exception,
+                icu_properties::sets::logical_order_exception [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_logical_order_exception,
                 provider
             )?)))
         }
@@ -590,8 +590,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::lowercase [r => Ok(r.static_to_owned())],
-                sets::load_lowercase,
+                icu_properties::sets::lowercase [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_lowercase,
                 provider
             )?)))
         }
@@ -603,8 +603,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::math [r => Ok(r.static_to_owned())],
-                sets::load_math,
+                icu_properties::sets::math [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_math,
                 provider
             )?)))
         }
@@ -616,8 +616,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::noncharacter_code_point [r => Ok(r.static_to_owned())],
-                sets::load_noncharacter_code_point,
+                icu_properties::sets::noncharacter_code_point [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_noncharacter_code_point,
                 provider
             )?)))
         }
@@ -629,8 +629,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::nfc_inert [r => Ok(r.static_to_owned())],
-                sets::load_nfc_inert,
+                icu_properties::sets::nfc_inert [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_nfc_inert,
                 provider
             )?)))
         }
@@ -642,8 +642,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::nfd_inert [r => Ok(r.static_to_owned())],
-                sets::load_nfd_inert,
+                icu_properties::sets::nfd_inert [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_nfd_inert,
                 provider
             )?)))
         }
@@ -655,8 +655,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::nfkc_inert [r => Ok(r.static_to_owned())],
-                sets::load_nfkc_inert,
+                icu_properties::sets::nfkc_inert [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_nfkc_inert,
                 provider
             )?)))
         }
@@ -668,8 +668,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::nfkd_inert [r => Ok(r.static_to_owned())],
-                sets::load_nfkd_inert,
+                icu_properties::sets::nfkd_inert [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_nfkd_inert,
                 provider
             )?)))
         }
@@ -681,8 +681,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::pattern_syntax [r => Ok(r.static_to_owned())],
-                sets::load_pattern_syntax,
+                icu_properties::sets::pattern_syntax [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_pattern_syntax,
                 provider
             )?)))
         }
@@ -694,8 +694,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::pattern_white_space [r => Ok(r.static_to_owned())],
-                sets::load_pattern_white_space,
+                icu_properties::sets::pattern_white_space [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_pattern_white_space,
                 provider
             )?)))
         }
@@ -707,8 +707,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::prepended_concatenation_mark [r => Ok(r.static_to_owned())],
-                sets::load_prepended_concatenation_mark,
+                icu_properties::sets::prepended_concatenation_mark [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_prepended_concatenation_mark,
                 provider
             )?)))
         }
@@ -720,8 +720,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::print [r => Ok(r.static_to_owned())],
-                sets::load_print,
+                icu_properties::sets::print [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_print,
                 provider
             )?)))
         }
@@ -733,8 +733,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::quotation_mark [r => Ok(r.static_to_owned())],
-                sets::load_quotation_mark,
+                icu_properties::sets::quotation_mark [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_quotation_mark,
                 provider
             )?)))
         }
@@ -746,8 +746,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::radical [r => Ok(r.static_to_owned())],
-                sets::load_radical,
+                icu_properties::sets::radical [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_radical,
                 provider
             )?)))
         }
@@ -759,8 +759,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::regional_indicator [r => Ok(r.static_to_owned())],
-                sets::load_regional_indicator,
+                icu_properties::sets::regional_indicator [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_regional_indicator,
                 provider
             )?)))
         }
@@ -772,8 +772,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::soft_dotted [r => Ok(r.static_to_owned())],
-                sets::load_soft_dotted,
+                icu_properties::sets::soft_dotted [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_soft_dotted,
                 provider
             )?)))
         }
@@ -785,8 +785,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::segment_starter [r => Ok(r.static_to_owned())],
-                sets::load_segment_starter,
+                icu_properties::sets::segment_starter [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_segment_starter,
                 provider
             )?)))
         }
@@ -798,8 +798,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::case_sensitive [r => Ok(r.static_to_owned())],
-                sets::load_case_sensitive,
+                icu_properties::sets::case_sensitive [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_case_sensitive,
                 provider
             )?)))
         }
@@ -811,8 +811,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::sentence_terminal [r => Ok(r.static_to_owned())],
-                sets::load_sentence_terminal,
+                icu_properties::sets::sentence_terminal [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_sentence_terminal,
                 provider
             )?)))
         }
@@ -824,8 +824,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::terminal_punctuation [r => Ok(r.static_to_owned())],
-                sets::load_terminal_punctuation,
+                icu_properties::sets::terminal_punctuation [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_terminal_punctuation,
                 provider
             )?)))
         }
@@ -837,8 +837,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::unified_ideograph [r => Ok(r.static_to_owned())],
-                sets::load_unified_ideograph,
+                icu_properties::sets::unified_ideograph [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_unified_ideograph,
                 provider
             )?)))
         }
@@ -850,8 +850,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::uppercase [r => Ok(r.static_to_owned())],
-                sets::load_uppercase,
+                icu_properties::sets::uppercase [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_uppercase,
                 provider
             )?)))
         }
@@ -863,8 +863,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::variation_selector [r => Ok(r.static_to_owned())],
-                sets::load_variation_selector,
+                icu_properties::sets::variation_selector [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_variation_selector,
                 provider
             )?)))
         }
@@ -876,8 +876,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::white_space [r => Ok(r.static_to_owned())],
-                sets::load_white_space,
+                icu_properties::sets::white_space [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_white_space,
                 provider
             )?)))
         }
@@ -889,8 +889,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::xdigit [r => Ok(r.static_to_owned())],
-                sets::load_xdigit,
+                icu_properties::sets::xdigit [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_xdigit,
                 provider
             )?)))
         }
@@ -902,8 +902,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::xid_continue [r => Ok(r.static_to_owned())],
-                sets::load_xid_continue,
+                icu_properties::sets::xid_continue [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_xid_continue,
                 provider
             )?)))
         }
@@ -915,8 +915,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::xid_start [r => Ok(r.static_to_owned())],
-                sets::load_xid_start,
+                icu_properties::sets::xid_start [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_xid_start,
                 provider
             )?)))
         }
@@ -938,8 +938,8 @@ pub mod ffi {
             property_name: &str,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::load_for_ecma262 [r => r.map(|r| r.static_to_owned()).map_err(|icu_properties::UnexpectedPropertyNameError| icu_properties::UnexpectedPropertyNameOrDataError::UnexpectedPropertyName)],
-                sets::load_for_ecma262_unstable,
+                icu_properties::sets::load_for_ecma262 [r => r.map(|r| r.static_to_owned()).map_err(|icu_properties::UnexpectedPropertyNameError| icu_properties::UnexpectedPropertyNameOrDataError::UnexpectedPropertyName)],
+                icu_properties::sets::load_for_ecma262_unstable,
                 provider,
                 property_name
             )?)))

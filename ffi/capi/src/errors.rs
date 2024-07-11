@@ -2,9 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use self::ffi::ICU4XError;
 use ffi::*;
-use icu_provider::{DataError, DataErrorKind};
 
 #[diplomat::bridge]
 pub mod ffi {
@@ -126,39 +124,39 @@ pub mod ffi {
     }
 }
 
-impl From<DataError> for ICU4XError {
-    fn from(e: DataError) -> Self {
+impl From<icu_provider::DataError> for ICU4XError {
+    fn from(e: icu_provider::DataError) -> Self {
         match e.kind {
-            DataErrorKind::MarkerNotFound => ICU4XError::DataMissingDataMarkerError,
-            DataErrorKind::IdentifierNotFound => ICU4XError::DataMissingLocaleError,
-            DataErrorKind::InvalidRequest => ICU4XError::DataExtraneousLocaleError,
-            DataErrorKind::Downcast(..) => ICU4XError::DataMismatchedTypeError,
-            DataErrorKind::Custom => ICU4XError::DataCustomError,
+            icu_provider::DataErrorKind::MarkerNotFound => ICU4XError::DataMissingDataMarkerError,
+            icu_provider::DataErrorKind::IdentifierNotFound => ICU4XError::DataMissingLocaleError,
+            icu_provider::DataErrorKind::InvalidRequest => ICU4XError::DataExtraneousLocaleError,
+            icu_provider::DataErrorKind::Downcast(..) => ICU4XError::DataMismatchedTypeError,
+            icu_provider::DataErrorKind::Custom => ICU4XError::DataCustomError,
             #[cfg(all(
                 feature = "provider_fs",
                 not(any(target_arch = "wasm32", target_os = "none"))
             ))]
-            DataErrorKind::Io(..) => ICU4XError::DataIoError,
+            icu_provider::DataErrorKind::Io(..) => ICU4XError::DataIoError,
             _ => ICU4XError::UnknownError,
         }
     }
 }
 
-impl From<DataError> for ICU4XDataError {
-    fn from(e: DataError) -> Self {
+impl From<icu_provider::DataError> for ICU4XDataError {
+    fn from(e: icu_provider::DataError) -> Self {
         match e.kind {
-            DataErrorKind::MarkerNotFound => Self::MarkerNotFound,
-            DataErrorKind::IdentifierNotFound => Self::IdentifierNotFound,
-            DataErrorKind::InvalidRequest => Self::InvalidRequest,
-            DataErrorKind::InconsistentData(..) => Self::InconsistentData,
-            DataErrorKind::Downcast(..) => Self::Downcast,
-            DataErrorKind::Deserialize => Self::Deserialize,
-            DataErrorKind::Custom => Self::Custom,
+            icu_provider::DataErrorKind::MarkerNotFound => Self::MarkerNotFound,
+            icu_provider::DataErrorKind::IdentifierNotFound => Self::IdentifierNotFound,
+            icu_provider::DataErrorKind::InvalidRequest => Self::InvalidRequest,
+            icu_provider::DataErrorKind::InconsistentData(..) => Self::InconsistentData,
+            icu_provider::DataErrorKind::Downcast(..) => Self::Downcast,
+            icu_provider::DataErrorKind::Deserialize => Self::Deserialize,
+            icu_provider::DataErrorKind::Custom => Self::Custom,
             #[cfg(all(
                 feature = "provider_fs",
                 not(any(target_arch = "wasm32", target_os = "none"))
             ))]
-            DataErrorKind::Io(..) => Self::Io,
+            icu_provider::DataErrorKind::Io(..) => Self::Io,
             _ => Self::Unknown,
         }
     }

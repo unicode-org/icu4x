@@ -5,13 +5,6 @@
 #[diplomat::bridge]
 pub mod ffi {
     use alloc::boxed::Box;
-    use icu_decimal::{
-        options::{FixedDecimalFormatterOptions, GroupingStrategy},
-        provider::DecimalSymbolsV1Marker,
-        FixedDecimalFormatter,
-    };
-    use icu_provider_adapters::any_payload::AnyPayloadProvider;
-    use writeable::Writeable;
 
     use crate::{
         data_struct::ffi::ICU4XDataStruct, errors::ffi::ICU4XDataError,
@@ -19,11 +12,13 @@ pub mod ffi {
         provider::ffi::ICU4XDataProvider,
     };
 
+    use writeable::Writeable;
+
     #[diplomat::opaque]
     /// An ICU4X Fixed Decimal Format object, capable of formatting a [`ICU4XFixedDecimal`] as a string.
     #[diplomat::rust_link(icu::decimal::FixedDecimalFormatter, Struct)]
     #[diplomat::rust_link(icu::datetime::FormattedFixedDecimal, Struct, hidden)]
-    pub struct ICU4XFixedDecimalFormatter(pub FixedDecimalFormatter);
+    pub struct ICU4XFixedDecimalFormatter(pub icu_decimal::FixedDecimalFormatter);
 
     #[diplomat::rust_link(icu::decimal::options::GroupingStrategy, Enum)]
     pub enum ICU4XFixedDecimalGroupingStrategy {
@@ -45,17 +40,25 @@ pub mod ffi {
             let locale = locale.to_datalocale();
 
             let grouping_strategy = match grouping_strategy {
-                ICU4XFixedDecimalGroupingStrategy::Auto => GroupingStrategy::Auto,
-                ICU4XFixedDecimalGroupingStrategy::Never => GroupingStrategy::Never,
-                ICU4XFixedDecimalGroupingStrategy::Always => GroupingStrategy::Always,
-                ICU4XFixedDecimalGroupingStrategy::Min2 => GroupingStrategy::Min2,
+                ICU4XFixedDecimalGroupingStrategy::Auto => {
+                    icu_decimal::options::GroupingStrategy::Auto
+                }
+                ICU4XFixedDecimalGroupingStrategy::Never => {
+                    icu_decimal::options::GroupingStrategy::Never
+                }
+                ICU4XFixedDecimalGroupingStrategy::Always => {
+                    icu_decimal::options::GroupingStrategy::Always
+                }
+                ICU4XFixedDecimalGroupingStrategy::Min2 => {
+                    icu_decimal::options::GroupingStrategy::Min2
+                }
             };
-            let mut options = FixedDecimalFormatterOptions::default();
+            let mut options = icu_decimal::options::FixedDecimalFormatterOptions::default();
             options.grouping_strategy = grouping_strategy;
             Ok(Box::new(ICU4XFixedDecimalFormatter(call_constructor!(
-                FixedDecimalFormatter::try_new,
-                FixedDecimalFormatter::try_new_with_any_provider,
-                FixedDecimalFormatter::try_new_with_buffer_provider,
+                icu_decimal::FixedDecimalFormatter::try_new,
+                icu_decimal::FixedDecimalFormatter::try_new_with_any_provider,
+                icu_decimal::FixedDecimalFormatter::try_new_with_buffer_provider,
                 provider,
                 &locale,
                 options,
@@ -73,16 +76,26 @@ pub mod ffi {
             grouping_strategy: ICU4XFixedDecimalGroupingStrategy,
         ) -> Result<Box<ICU4XFixedDecimalFormatter>, ICU4XDataError> {
             let grouping_strategy = match grouping_strategy {
-                ICU4XFixedDecimalGroupingStrategy::Auto => GroupingStrategy::Auto,
-                ICU4XFixedDecimalGroupingStrategy::Never => GroupingStrategy::Never,
-                ICU4XFixedDecimalGroupingStrategy::Always => GroupingStrategy::Always,
-                ICU4XFixedDecimalGroupingStrategy::Min2 => GroupingStrategy::Min2,
+                ICU4XFixedDecimalGroupingStrategy::Auto => {
+                    icu_decimal::options::GroupingStrategy::Auto
+                }
+                ICU4XFixedDecimalGroupingStrategy::Never => {
+                    icu_decimal::options::GroupingStrategy::Never
+                }
+                ICU4XFixedDecimalGroupingStrategy::Always => {
+                    icu_decimal::options::GroupingStrategy::Always
+                }
+                ICU4XFixedDecimalGroupingStrategy::Min2 => {
+                    icu_decimal::options::GroupingStrategy::Min2
+                }
             };
-            let mut options = FixedDecimalFormatterOptions::default();
+            let mut options = icu_decimal::options::FixedDecimalFormatterOptions::default();
             options.grouping_strategy = grouping_strategy;
             Ok(Box::new(ICU4XFixedDecimalFormatter(
-                FixedDecimalFormatter::try_new_with_any_provider(
-                    &AnyPayloadProvider::from_any_payload::<DecimalSymbolsV1Marker>(
+                icu_decimal::FixedDecimalFormatter::try_new_with_any_provider(
+                    &icu_provider_adapters::any_payload::AnyPayloadProvider::from_any_payload::<
+                        icu_decimal::provider::DecimalSymbolsV1Marker,
+                    >(
                         // Note: This clone is free, since cloning AnyPayload is free.
                         data_struct.0.clone(),
                     ),

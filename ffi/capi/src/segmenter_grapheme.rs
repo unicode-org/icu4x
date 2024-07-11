@@ -4,20 +4,16 @@
 
 #[diplomat::bridge]
 pub mod ffi {
+    use alloc::boxed::Box;
+
     use crate::errors::ffi::ICU4XDataError;
     use crate::provider::ffi::ICU4XDataProvider;
-    use alloc::boxed::Box;
-    use core::convert::TryFrom;
-    use icu_segmenter::{
-        GraphemeClusterBreakIteratorLatin1, GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8,
-        GraphemeClusterBreakIteratorUtf16, GraphemeClusterSegmenter,
-    };
 
     #[diplomat::opaque]
     /// An ICU4X grapheme-cluster-break segmenter, capable of finding grapheme cluster breakpoints
     /// in strings.
     #[diplomat::rust_link(icu::segmenter::GraphemeClusterSegmenter, Struct)]
-    pub struct ICU4XGraphemeClusterSegmenter(GraphemeClusterSegmenter);
+    pub struct ICU4XGraphemeClusterSegmenter(icu_segmenter::GraphemeClusterSegmenter);
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::segmenter::GraphemeClusterBreakIterator, Struct)]
@@ -28,21 +24,21 @@ pub mod ffi {
     )]
     #[diplomat::rust_link(icu::segmenter::GraphemeClusterBreakIteratorUtf8, Typedef, hidden)]
     pub struct ICU4XGraphemeClusterBreakIteratorUtf8<'a>(
-        GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8<'a, 'a>,
+        icu_segmenter::GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8<'a, 'a>,
     );
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::segmenter::GraphemeClusterBreakIterator, Struct)]
     #[diplomat::rust_link(icu::segmenter::GraphemeClusterBreakIteratorUtf16, Typedef, hidden)]
     pub struct ICU4XGraphemeClusterBreakIteratorUtf16<'a>(
-        GraphemeClusterBreakIteratorUtf16<'a, 'a>,
+        icu_segmenter::GraphemeClusterBreakIteratorUtf16<'a, 'a>,
     );
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::segmenter::GraphemeClusterBreakIterator, Struct)]
     #[diplomat::rust_link(icu::segmenter::GraphemeClusterBreakIteratorLatin1, Typedef, hidden)]
     pub struct ICU4XGraphemeClusterBreakIteratorLatin1<'a>(
-        GraphemeClusterBreakIteratorLatin1<'a, 'a>,
+        icu_segmenter::GraphemeClusterBreakIteratorLatin1<'a, 'a>,
     );
 
     impl ICU4XGraphemeClusterSegmenter {
@@ -53,9 +49,9 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XGraphemeClusterSegmenter>, ICU4XDataError> {
             Ok(Box::new(ICU4XGraphemeClusterSegmenter(call_constructor!(
-                GraphemeClusterSegmenter::new [r => Ok(r)],
-                GraphemeClusterSegmenter::try_new_with_any_provider,
-                GraphemeClusterSegmenter::try_new_with_buffer_provider,
+                icu_segmenter::GraphemeClusterSegmenter::new [r => Ok(r)],
+                icu_segmenter::GraphemeClusterSegmenter::try_new_with_any_provider,
+                icu_segmenter::GraphemeClusterSegmenter::try_new_with_buffer_provider,
                 provider,
             )?)))
         }

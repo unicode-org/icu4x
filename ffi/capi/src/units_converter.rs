@@ -4,20 +4,18 @@
 
 #[diplomat::bridge]
 pub mod ffi {
-    use crate::{errors::ffi::ICU4XDataError, provider::ffi::ICU4XDataProvider};
     use alloc::boxed::Box;
-    use diplomat_runtime::DiplomatStr;
-    use icu_experimental::units::converter::UnitsConverter;
-    use icu_experimental::units::converter_factory::ConverterFactory;
-    use icu_experimental::units::measureunit::MeasureUnit;
-    use icu_experimental::units::measureunit::MeasureUnitParser;
+
+    use crate::{errors::ffi::ICU4XDataError, provider::ffi::ICU4XDataProvider};
 
     #[diplomat::opaque]
     /// An ICU4X Units Converter Factory object, capable of creating converters a [`ICU4XUnitsConverter`]
     /// for converting between two [`ICU4XMeasureUnit`]s.
     /// Also, it can parse the CLDR unit identifier (e.g. `meter-per-square-second`) and get the [`ICU4XMeasureUnit`].
     #[diplomat::rust_link(icu::experimental::units::converter_factory::ConverterFactory, Struct)]
-    pub struct ICU4XUnitsConverterFactory(pub ConverterFactory);
+    pub struct ICU4XUnitsConverterFactory(
+        pub icu_experimental::units::converter_factory::ConverterFactory,
+    );
 
     impl ICU4XUnitsConverterFactory {
         /// Construct a new [`ICU4XUnitsConverterFactory`] instance.
@@ -30,9 +28,9 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XUnitsConverterFactory>, ICU4XDataError> {
             Ok(Box::new(ICU4XUnitsConverterFactory(call_constructor!(
-                ConverterFactory::new [r => Ok(r)],
-                ConverterFactory::try_new_with_any_provider,
-                ConverterFactory::try_new_with_buffer_provider,
+                icu_experimental::units::converter_factory::ConverterFactory::new [r => Ok(r)],
+                icu_experimental::units::converter_factory::ConverterFactory::try_new_with_any_provider,
+                icu_experimental::units::converter_factory::ConverterFactory::try_new_with_buffer_provider,
                 provider,
             )?)))
         }
@@ -49,8 +47,10 @@ pub mod ffi {
             from: &ICU4XMeasureUnit,
             to: &ICU4XMeasureUnit,
         ) -> Option<Box<ICU4XUnitsConverter>> {
-            let converter: Option<UnitsConverter<f64>> = self.0.converter(&from.0, &to.0);
-            Some(ICU4XUnitsConverter(converter?).into())
+            self.0
+                .converter(&from.0, &to.0)
+                .map(ICU4XUnitsConverter)
+                .map(Box::new)
         }
 
         /// Creates a parser to parse the CLDR unit identifier (e.g. `meter-per-square-second`) and get the [`ICU4XMeasureUnit`].
@@ -67,7 +67,9 @@ pub mod ffi {
     /// An ICU4X Measurement Unit parser object which is capable of parsing the CLDR unit identifier
     /// (e.g. `meter-per-square-second`) and get the [`ICU4XMeasureUnit`].
     #[diplomat::rust_link(icu::experimental::units::measureunit::MeasureUnitParser, Struct)]
-    pub struct ICU4XMeasureUnitParser<'a>(pub MeasureUnitParser<'a>);
+    pub struct ICU4XMeasureUnitParser<'a>(
+        pub icu_experimental::units::measureunit::MeasureUnitParser<'a>,
+    );
 
     impl<'a> ICU4XMeasureUnitParser<'a> {
         /// Parses the CLDR unit identifier (e.g. `meter-per-square-second`) and returns the corresponding [`ICU4XMeasureUnit`],
@@ -91,14 +93,14 @@ pub mod ffi {
     ///
     /// You can create an instance of this object using [`ICU4XMeasureUnitParser`] by calling the `parse_measure_unit` method.
     #[diplomat::rust_link(icu::experimental::units::measureunit::MeasureUnit, Struct)]
-    pub struct ICU4XMeasureUnit(pub MeasureUnit);
+    pub struct ICU4XMeasureUnit(pub icu_experimental::units::measureunit::MeasureUnit);
 
     #[diplomat::opaque]
     /// An ICU4X Units Converter object, capable of converting between two [`ICU4XMeasureUnit`]s.
     ///
     /// You can create an instance of this object using [`ICU4XUnitsConverterFactory`] by calling the `converter` method.
     #[diplomat::rust_link(icu::experimental::units::converter::UnitsConverter, Struct)]
-    pub struct ICU4XUnitsConverter(pub UnitsConverter<f64>);
+    pub struct ICU4XUnitsConverter(pub icu_experimental::units::converter::UnitsConverter<f64>);
     impl ICU4XUnitsConverter {
         /// Converts the input value in float from the input unit to the output unit (that have been used to create this converter).
         /// NOTE:

@@ -4,18 +4,18 @@
 
 #[diplomat::bridge]
 pub mod ffi {
-    use crate::properties_sets::ffi::ICU4XCodePointSetData;
     use alloc::boxed::Box;
-    use core::mem;
-    use icu_collections::codepointinvlist::CodePointInversionListBuilder;
-    use icu_properties::sets::CodePointSetData;
+
+    use crate::properties_sets::ffi::ICU4XCodePointSetData;
 
     #[diplomat::opaque]
     #[diplomat::rust_link(
         icu::collections::codepointinvlist::CodePointInversionListBuilder,
         Struct
     )]
-    pub struct ICU4XCodePointSetBuilder(pub CodePointInversionListBuilder);
+    pub struct ICU4XCodePointSetBuilder(
+        pub icu_collections::codepointinvlist::CodePointInversionListBuilder,
+    );
 
     impl ICU4XCodePointSetBuilder {
         /// Make a new set builder containing nothing
@@ -25,7 +25,9 @@ pub mod ffi {
         )]
         #[diplomat::attr(supports = constructors, constructor)]
         pub fn create() -> Box<Self> {
-            Box::new(Self(CodePointInversionListBuilder::new()))
+            Box::new(Self(
+                icu_collections::codepointinvlist::CodePointInversionListBuilder::new(),
+            ))
         }
 
         /// Build this into a set
@@ -41,9 +43,9 @@ pub mod ffi {
             hidden
         )]
         pub fn build(&mut self) -> Box<ICU4XCodePointSetData> {
-            let inner = mem::take(&mut self.0);
+            let inner = core::mem::take(&mut self.0);
             let built = inner.build();
-            let set = CodePointSetData::from_code_point_inversion_list(built);
+            let set = icu_properties::sets::CodePointSetData::from_code_point_inversion_list(built);
             Box::new(ICU4XCodePointSetData(set))
         }
 

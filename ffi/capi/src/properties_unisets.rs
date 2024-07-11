@@ -4,19 +4,18 @@
 
 #[diplomat::bridge]
 pub mod ffi {
-    use crate::locale_core::ffi::ICU4XLocale;
-    use crate::provider::ffi::ICU4XDataProvider;
     use alloc::boxed::Box;
-    use icu_properties::{exemplar_chars, sets};
 
     use crate::errors::ffi::ICU4XDataError;
+    use crate::locale_core::ffi::ICU4XLocale;
+    use crate::provider::ffi::ICU4XDataProvider;
 
     #[diplomat::opaque]
     /// An ICU4X Unicode Set Property object, capable of querying whether a code point is contained in a set based on a Unicode property.
     #[diplomat::rust_link(icu::properties, Mod)]
     #[diplomat::rust_link(icu::properties::sets::UnicodeSetData, Struct)]
     #[diplomat::rust_link(icu::properties::sets::UnicodeSetDataBorrowed, Struct)]
-    pub struct ICU4XUnicodeSetData(pub sets::UnicodeSetData);
+    pub struct ICU4XUnicodeSetData(pub icu_properties::sets::UnicodeSetData);
 
     impl ICU4XUnicodeSetData {
         /// Checks whether the string is in the set.
@@ -53,8 +52,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XUnicodeSetData>, ICU4XDataError> {
             Ok(Box::new(ICU4XUnicodeSetData(call_constructor_unstable!(
-                sets::basic_emoji [r => Ok(r.static_to_owned())],
-                sets::load_basic_emoji,
+                icu_properties::sets::basic_emoji [r => Ok(r.static_to_owned())],
+                icu_properties::sets::load_basic_emoji,
                 provider,
             )?)))
         }
@@ -68,8 +67,8 @@ pub mod ffi {
         ) -> Result<Box<ICU4XUnicodeSetData>, ICU4XDataError> {
             let locale = locale.to_datalocale();
             Ok(Box::new(ICU4XUnicodeSetData(call_constructor_unstable!(
-                exemplar_chars::exemplars_main,
-                exemplar_chars::load_exemplars_main,
+                icu_properties::exemplar_chars::exemplars_main,
+                icu_properties::exemplar_chars::load_exemplars_main,
                 provider,
                 &locale
             )?)))
@@ -88,8 +87,8 @@ pub mod ffi {
         ) -> Result<Box<ICU4XUnicodeSetData>, ICU4XDataError> {
             let locale = locale.to_datalocale();
             Ok(Box::new(ICU4XUnicodeSetData(call_constructor_unstable!(
-                exemplar_chars::exemplars_auxiliary,
-                exemplar_chars::load_exemplars_auxiliary,
+                icu_properties::exemplar_chars::exemplars_auxiliary,
+                icu_properties::exemplar_chars::load_exemplars_auxiliary,
                 provider,
                 &locale
             )?)))
@@ -108,8 +107,8 @@ pub mod ffi {
         ) -> Result<Box<ICU4XUnicodeSetData>, ICU4XDataError> {
             let locale = locale.to_datalocale();
             Ok(Box::new(ICU4XUnicodeSetData(call_constructor_unstable!(
-                exemplar_chars::exemplars_punctuation,
-                exemplar_chars::load_exemplars_punctuation,
+                icu_properties::exemplar_chars::exemplars_punctuation,
+                icu_properties::exemplar_chars::load_exemplars_punctuation,
                 provider,
                 &locale
             )?)))
@@ -124,8 +123,8 @@ pub mod ffi {
         ) -> Result<Box<ICU4XUnicodeSetData>, ICU4XDataError> {
             let locale = locale.to_datalocale();
             Ok(Box::new(ICU4XUnicodeSetData(call_constructor_unstable!(
-                exemplar_chars::exemplars_numbers,
-                exemplar_chars::load_exemplars_numbers,
+                icu_properties::exemplar_chars::exemplars_numbers,
+                icu_properties::exemplar_chars::load_exemplars_numbers,
                 provider,
                 &locale
             )?)))
@@ -140,8 +139,8 @@ pub mod ffi {
         ) -> Result<Box<ICU4XUnicodeSetData>, ICU4XDataError> {
             let locale = locale.to_datalocale();
             Ok(Box::new(ICU4XUnicodeSetData(call_constructor_unstable!(
-                exemplar_chars::exemplars_index,
-                exemplar_chars::load_exemplars_index,
+                icu_properties::exemplar_chars::exemplars_index,
+                icu_properties::exemplar_chars::load_exemplars_index,
                 provider,
                 &locale
             )?)))

@@ -2,14 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#[allow(unused_imports)] // feature-specific
-use alloc::boxed::Box;
 use icu_provider::prelude::*;
-use icu_provider_adapters::empty::EmptyDataProvider;
-#[allow(unused_imports)] // feature-specific
-use yoke::{trait_hack::YokeTraitHack, Yokeable};
-#[allow(unused_imports)] // feature-specific
-use zerofrom::ZeroFrom;
 
 pub enum ICU4XDataProviderInner {
     Destroyed,
@@ -17,18 +10,15 @@ pub enum ICU4XDataProviderInner {
     #[cfg(feature = "compiled_data")]
     Compiled,
     #[cfg(feature = "buffer_provider")]
-    Buffer(Box<dyn BufferProvider + 'static>),
+    Buffer(alloc::boxed::Box<dyn BufferProvider + 'static>),
 }
 
 #[diplomat::bridge]
 pub mod ffi {
+    use alloc::boxed::Box;
+
     use super::ICU4XDataProviderInner;
     use crate::errors::ffi::ICU4XDataError;
-    use alloc::boxed::Box;
-    #[allow(unused_imports)] // feature-gated
-    use icu_provider_adapters::fallback::LocaleFallbackProvider;
-    #[allow(unused_imports)] // feature-gated
-    use icu_provider_adapters::fork::predicates::IdentifierNotFoundPredicate;
 
     #[diplomat::opaque]
     /// An ICU4X data provider, capable of loading ICU4X data keys from some source.
@@ -169,7 +159,7 @@ pub mod ffi {
                     icu_provider_adapters::fork::ForkByErrorProvider::new_with_predicate(
                         a,
                         b,
-                        IdentifierNotFoundPredicate,
+                        icu_provider_adapters::fork::predicates::IdentifierNotFoundPredicate,
                     ),
                 ),
             };
@@ -202,10 +192,12 @@ pub mod ffi {
                 ))?,
                 Empty => Err(icu_provider::DataErrorKind::MarkerNotFound.into_error())?,
                 #[cfg(feature = "buffer_provider")]
-                Buffer(inner) => convert_buffer_provider(LocaleFallbackProvider::new(
-                    inner,
-                    fallbacker.0.clone(),
-                )),
+                Buffer(inner) => convert_buffer_provider(
+                    icu_provider_adapters::fallback::LocaleFallbackProvider::new(
+                        inner,
+                        fallbacker.0.clone(),
+                    ),
+                ),
             };
             Ok(())
         }
@@ -217,10 +209,8 @@ macro_rules! load {
         fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
             use ICU4XDataProviderInner::*;
             match self {
-                Destroyed => Err(icu_provider::DataError::custom(
-                    "This provider has been destroyed",
-                ))?,
-                Empty => EmptyDataProvider::new().load(req),
+                Destroyed => Err(DataError::custom("This provider has been destroyed"))?,
+                Empty => icu_provider_adapters::empty::EmptyDataProvider::new().load(req),
                 #[cfg(feature = "buffer_provider")]
                 Buffer(buffer_provider) => buffer_provider.as_deserializing().load(req),
                 #[cfg(feature = "compiled_data")]
@@ -228,6 +218,27 @@ macro_rules! load {
             }
         }
     };
+}
+
+#[cfg(not(feature = "buffer_provider"))]
+impl<M> DataProvider<M> for ICU4XDataProviderInner
+where
+    M: DataMarker,
+{
+    load!();
+}
+
+#[cfg(feature = "buffer_provider")]
+impl<M> DataProvider<M> for ICU4XDataProviderInner
+where
+    M: DataMarker,
+    // Actual bound:
+    //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: Deserialize<'de>,
+    // Necessary workaround bound (see `yoke::trait_hack` docs):
+    for<'de> yoke::trait_hack::YokeTraitHack<<M::Yokeable as yoke::Yokeable<'de>>::Output>:
+        serde::Deserialize<'de>,
+{
+    load!();
 }
 
 #[macro_export]
@@ -284,24 +295,4 @@ macro_rules! call_constructor_unstable {
             $crate::provider::ICU4XDataProviderInner::Compiled => $compiled($($args,)*),
         }
     };
-}
-
-#[cfg(not(feature = "buffer_provider"))]
-impl<M> DataProvider<M> for ICU4XDataProviderInner
-where
-    M: DataMarker,
-{
-    load!();
-}
-
-#[cfg(feature = "buffer_provider")]
-impl<M> DataProvider<M> for ICU4XDataProviderInner
-where
-    M: DataMarker,
-    // Actual bound:
-    //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: Deserialize<'de>,
-    // Necessary workaround bound (see `yoke::trait_hack` docs):
-    for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: serde::Deserialize<'de>,
-{
-    load!();
 }

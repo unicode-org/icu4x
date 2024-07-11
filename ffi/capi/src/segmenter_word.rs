@@ -4,16 +4,12 @@
 
 #[diplomat::bridge]
 pub mod ffi {
+    use alloc::boxed::Box;
+
     use crate::errors::ffi::ICU4XDataError;
     use crate::provider::ffi::ICU4XDataProvider;
-    use alloc::boxed::Box;
-    use core::convert::TryFrom;
-    use icu_segmenter::{
-        WordBreakIteratorLatin1, WordBreakIteratorPotentiallyIllFormedUtf8, WordBreakIteratorUtf16,
-        WordSegmenter, WordType,
-    };
 
-    #[diplomat::enum_convert(WordType, needs_wildcard)]
+    #[diplomat::enum_convert(icu_segmenter::WordType, needs_wildcard)]
     #[diplomat::rust_link(icu::segmenter::WordType, Enum)]
     pub enum ICU4XSegmenterWordType {
         None = 0,
@@ -24,7 +20,7 @@ pub mod ffi {
     #[diplomat::opaque]
     /// An ICU4X word-break segmenter, capable of finding word breakpoints in strings.
     #[diplomat::rust_link(icu::segmenter::WordSegmenter, Struct)]
-    pub struct ICU4XWordSegmenter(WordSegmenter);
+    pub struct ICU4XWordSegmenter(icu_segmenter::WordSegmenter);
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::segmenter::WordBreakIterator, Struct)]
@@ -34,23 +30,25 @@ pub mod ffi {
         hidden
     )]
     #[diplomat::rust_link(icu::segmenter::WordBreakIteratorUtf8, Typedef, hidden)]
-    pub struct ICU4XWordBreakIteratorUtf8<'a>(WordBreakIteratorPotentiallyIllFormedUtf8<'a, 'a>);
+    pub struct ICU4XWordBreakIteratorUtf8<'a>(
+        icu_segmenter::WordBreakIteratorPotentiallyIllFormedUtf8<'a, 'a>,
+    );
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::segmenter::WordBreakIterator, Struct)]
     #[diplomat::rust_link(icu::segmenter::WordBreakIteratorUtf16, Typedef, hidden)]
-    pub struct ICU4XWordBreakIteratorUtf16<'a>(WordBreakIteratorUtf16<'a, 'a>);
+    pub struct ICU4XWordBreakIteratorUtf16<'a>(icu_segmenter::WordBreakIteratorUtf16<'a, 'a>);
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::segmenter::WordBreakIterator, Struct)]
     #[diplomat::rust_link(icu::segmenter::WordBreakIteratorLatin1, Typedef, hidden)]
-    pub struct ICU4XWordBreakIteratorLatin1<'a>(WordBreakIteratorLatin1<'a, 'a>);
+    pub struct ICU4XWordBreakIteratorLatin1<'a>(icu_segmenter::WordBreakIteratorLatin1<'a, 'a>);
 
     impl ICU4XSegmenterWordType {
         #[diplomat::rust_link(icu::segmenter::WordType::is_word_like, FnInEnum)]
         #[diplomat::attr(supports = accessors, getter)]
         pub fn is_word_like(self) -> bool {
-            WordType::from(self).is_word_like()
+            icu_segmenter::WordType::from(self).is_word_like()
         }
     }
 
@@ -66,9 +64,9 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XWordSegmenter>, ICU4XDataError> {
             Ok(Box::new(ICU4XWordSegmenter(call_constructor!(
-                WordSegmenter::new_auto [r => Ok(r)],
-                WordSegmenter::try_new_auto_with_any_provider,
-                WordSegmenter::try_new_auto_with_buffer_provider,
+                icu_segmenter::WordSegmenter::new_auto [r => Ok(r)],
+                icu_segmenter::WordSegmenter::try_new_auto_with_any_provider,
+                icu_segmenter::WordSegmenter::try_new_auto_with_buffer_provider,
                 provider
             )?)))
         }
@@ -84,9 +82,9 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XWordSegmenter>, ICU4XDataError> {
             Ok(Box::new(ICU4XWordSegmenter(call_constructor!(
-                WordSegmenter::new_lstm [r => Ok(r)],
-                WordSegmenter::try_new_lstm_with_any_provider,
-                WordSegmenter::try_new_lstm_with_buffer_provider,
+                icu_segmenter::WordSegmenter::new_lstm [r => Ok(r)],
+                icu_segmenter::WordSegmenter::try_new_lstm_with_any_provider,
+                icu_segmenter::WordSegmenter::try_new_lstm_with_buffer_provider,
                 provider,
             )?)))
         }
@@ -99,9 +97,9 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XWordSegmenter>, ICU4XDataError> {
             Ok(Box::new(ICU4XWordSegmenter(call_constructor!(
-                WordSegmenter::new_dictionary [r => Ok(r)],
-                WordSegmenter::try_new_dictionary_with_any_provider,
-                WordSegmenter::try_new_dictionary_with_buffer_provider,
+                icu_segmenter::WordSegmenter::new_dictionary [r => Ok(r)],
+                icu_segmenter::WordSegmenter::try_new_dictionary_with_any_provider,
+                icu_segmenter::WordSegmenter::try_new_dictionary_with_buffer_provider,
                 provider,
             )?)))
         }

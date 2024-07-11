@@ -4,23 +4,23 @@
 
 #[diplomat::bridge]
 pub mod ffi {
+    use alloc::boxed::Box;
+
     use crate::errors::ffi::{ICU4XDataError, ICU4XLocaleParseError};
     use crate::locale_core::ffi::ICU4XLocale;
     use crate::provider::ffi::ICU4XDataProvider;
-    use alloc::boxed::Box;
-    #[allow(unused_imports)] // feature-specific
-    use icu_experimental::displaynames::{DisplayNamesOptions, Fallback, LanguageDisplay};
-    use icu_experimental::displaynames::{LocaleDisplayNamesFormatter, RegionDisplayNames};
-    use icu_locale_core::subtags::Region;
+
     use writeable::Writeable;
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::displaynames::LocaleDisplayNamesFormatter, Struct)]
-    pub struct ICU4XLocaleDisplayNamesFormatter(pub LocaleDisplayNamesFormatter);
+    pub struct ICU4XLocaleDisplayNamesFormatter(
+        pub icu_experimental::displaynames::LocaleDisplayNamesFormatter,
+    );
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::displaynames::RegionDisplayNames, Struct)]
-    pub struct ICU4XRegionDisplayNames(pub RegionDisplayNames);
+    pub struct ICU4XRegionDisplayNames(pub icu_experimental::displaynames::RegionDisplayNames);
 
     #[diplomat::rust_link(icu::displaynames::options::DisplayNamesOptions, Struct)]
     #[diplomat::attr(dart, rename = "DisplayNamesOptions")]
@@ -44,14 +44,14 @@ pub mod ffi {
     }
 
     #[diplomat::rust_link(icu::displaynames::options::Fallback, Enum)]
-    #[diplomat::enum_convert(Fallback, needs_wildcard)]
+    #[diplomat::enum_convert(icu_experimental::displaynames::Fallback, needs_wildcard)]
     pub enum ICU4XDisplayNamesFallback {
         Code,
         None,
     }
 
     #[diplomat::rust_link(icu::displaynames::options::LanguageDisplay, Enum)]
-    #[diplomat::enum_convert(LanguageDisplay, needs_wildcard)]
+    #[diplomat::enum_convert(icu_experimental::displaynames::LanguageDisplay, needs_wildcard)]
     pub enum ICU4XLanguageDisplay {
         Dialect,
         Standard,
@@ -67,13 +67,13 @@ pub mod ffi {
             options: ICU4XDisplayNamesOptionsV1,
         ) -> Result<Box<ICU4XLocaleDisplayNamesFormatter>, ICU4XDataError> {
             let locale = locale.to_datalocale();
-            let options = DisplayNamesOptions::from(options);
+            let options = icu_experimental::displaynames::DisplayNamesOptions::from(options);
 
             Ok(Box::new(ICU4XLocaleDisplayNamesFormatter(
                 call_constructor!(
-                    LocaleDisplayNamesFormatter::try_new,
-                    LocaleDisplayNamesFormatter::try_new_with_any_provider,
-                    LocaleDisplayNamesFormatter::try_new_with_buffer_provider,
+                    icu_experimental::displaynames::LocaleDisplayNamesFormatter::try_new,
+                    icu_experimental::displaynames::LocaleDisplayNamesFormatter::try_new_with_any_provider,
+                    icu_experimental::displaynames::LocaleDisplayNamesFormatter::try_new_with_buffer_provider,
                     provider,
                     &locale,
                     options,
@@ -98,9 +98,9 @@ pub mod ffi {
         ) -> Result<Box<ICU4XRegionDisplayNames>, ICU4XDataError> {
             let locale = locale.to_datalocale();
             Ok(Box::new(ICU4XRegionDisplayNames(call_constructor!(
-                RegionDisplayNames::try_new,
-                RegionDisplayNames::try_new_with_any_provider,
-                RegionDisplayNames::try_new_with_buffer_provider,
+                icu_experimental::displaynames::RegionDisplayNames::try_new,
+                icu_experimental::displaynames::RegionDisplayNames::try_new_with_any_provider,
+                icu_experimental::displaynames::RegionDisplayNames::try_new_with_buffer_provider,
                 provider,
                 &locale,
                 Default::default()
@@ -118,7 +118,7 @@ pub mod ffi {
         ) -> Result<(), ICU4XLocaleParseError> {
             let _infallible = self
                 .0
-                .of(Region::try_from_utf8(region)?)
+                .of(icu_locale_core::subtags::Region::try_from_utf8(region)?)
                 .unwrap_or("")
                 .write_to(write);
             Ok(())
@@ -126,24 +126,27 @@ pub mod ffi {
     }
 }
 
-#[allow(unused_imports)] // feature-specific
-use icu_experimental::displaynames::{DisplayNamesOptions, Fallback, LanguageDisplay, Style};
-
-impl From<ffi::ICU4XDisplayNamesStyle> for Option<Style> {
-    fn from(style: ffi::ICU4XDisplayNamesStyle) -> Option<Style> {
+impl From<ffi::ICU4XDisplayNamesStyle> for Option<icu_experimental::displaynames::Style> {
+    fn from(style: ffi::ICU4XDisplayNamesStyle) -> Option<icu_experimental::displaynames::Style> {
         match style {
             ffi::ICU4XDisplayNamesStyle::Auto => None,
-            ffi::ICU4XDisplayNamesStyle::Narrow => Some(Style::Narrow),
-            ffi::ICU4XDisplayNamesStyle::Short => Some(Style::Short),
-            ffi::ICU4XDisplayNamesStyle::Long => Some(Style::Long),
-            ffi::ICU4XDisplayNamesStyle::Menu => Some(Style::Menu),
+            ffi::ICU4XDisplayNamesStyle::Narrow => {
+                Some(icu_experimental::displaynames::Style::Narrow)
+            }
+            ffi::ICU4XDisplayNamesStyle::Short => {
+                Some(icu_experimental::displaynames::Style::Short)
+            }
+            ffi::ICU4XDisplayNamesStyle::Long => Some(icu_experimental::displaynames::Style::Long),
+            ffi::ICU4XDisplayNamesStyle::Menu => Some(icu_experimental::displaynames::Style::Menu),
         }
     }
 }
 
-impl From<ffi::ICU4XDisplayNamesOptionsV1> for DisplayNamesOptions {
-    fn from(other: ffi::ICU4XDisplayNamesOptionsV1) -> DisplayNamesOptions {
-        let mut options = DisplayNamesOptions::default();
+impl From<ffi::ICU4XDisplayNamesOptionsV1> for icu_experimental::displaynames::DisplayNamesOptions {
+    fn from(
+        other: ffi::ICU4XDisplayNamesOptionsV1,
+    ) -> icu_experimental::displaynames::DisplayNamesOptions {
+        let mut options = icu_experimental::displaynames::DisplayNamesOptions::default();
         options.style = other.style.into();
         options.fallback = other.fallback.into();
         options.language_display = other.language_display.into();

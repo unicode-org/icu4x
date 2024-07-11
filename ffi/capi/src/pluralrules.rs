@@ -6,15 +6,13 @@
 pub mod ffi {
     use alloc::boxed::Box;
 
-    use fixed_decimal::FixedDecimal;
-    use icu_plurals::{PluralCategory, PluralOperands, PluralRules};
-
-    use crate::{locale_core::ffi::ICU4XLocale, provider::ffi::ICU4XDataProvider};
-
-    use crate::errors::ffi::{ICU4XDataError, ICU4XFixedDecimalParseError};
+    use crate::errors::ffi::ICU4XDataError;
+    use crate::errors::ffi::ICU4XFixedDecimalParseError;
+    use crate::locale_core::ffi::ICU4XLocale;
+    use crate::provider::ffi::ICU4XDataProvider;
 
     #[diplomat::rust_link(icu::plurals::PluralCategory, Enum)]
-    #[diplomat::enum_convert(PluralCategory)]
+    #[diplomat::enum_convert(icu_plurals::PluralCategory)]
     pub enum ICU4XPluralCategory {
         Zero,
         One,
@@ -30,13 +28,13 @@ pub mod ffi {
         #[diplomat::rust_link(icu::plurals::PluralCategory::get_for_cldr_string, FnInEnum)]
         #[diplomat::rust_link(icu::plurals::PluralCategory::get_for_cldr_bytes, FnInEnum)]
         pub fn get_for_cldr_string(s: &DiplomatStr) -> Option<ICU4XPluralCategory> {
-            PluralCategory::get_for_cldr_bytes(s).map(Into::into)
+            icu_plurals::PluralCategory::get_for_cldr_bytes(s).map(Into::into)
         }
     }
 
     #[diplomat::rust_link(icu::plurals::PluralRules, Struct)]
     #[diplomat::opaque]
-    pub struct ICU4XPluralRules(PluralRules);
+    pub struct ICU4XPluralRules(icu_plurals::PluralRules);
 
     impl ICU4XPluralRules {
         /// Construct an [`ICU4XPluralRules`] for the given locale, for cardinal numbers
@@ -50,9 +48,9 @@ pub mod ffi {
         ) -> Result<Box<ICU4XPluralRules>, ICU4XDataError> {
             let locale = locale.to_datalocale();
             Ok(Box::new(ICU4XPluralRules(call_constructor!(
-                PluralRules::try_new_cardinal,
-                PluralRules::try_new_cardinal_with_any_provider,
-                PluralRules::try_new_cardinal_with_buffer_provider,
+                icu_plurals::PluralRules::try_new_cardinal,
+                icu_plurals::PluralRules::try_new_cardinal_with_any_provider,
+                icu_plurals::PluralRules::try_new_cardinal_with_buffer_provider,
                 provider,
                 &locale
             )?)))
@@ -69,9 +67,9 @@ pub mod ffi {
         ) -> Result<Box<ICU4XPluralRules>, ICU4XDataError> {
             let locale = locale.to_datalocale();
             Ok(Box::new(ICU4XPluralRules(call_constructor!(
-                PluralRules::try_new_ordinal,
-                PluralRules::try_new_ordinal_with_any_provider,
-                PluralRules::try_new_ordinal_with_buffer_provider,
+                icu_plurals::PluralRules::try_new_ordinal,
+                icu_plurals::PluralRules::try_new_ordinal_with_any_provider,
+                icu_plurals::PluralRules::try_new_ordinal_with_buffer_provider,
                 provider,
                 &locale
             )?)))
@@ -102,9 +100,9 @@ pub mod ffi {
         pub fn create_from_string(
             s: &DiplomatStr,
         ) -> Result<Box<ICU4XPluralOperands>, ICU4XFixedDecimalParseError> {
-            Ok(Box::new(ICU4XPluralOperands(PluralOperands::from(
-                &FixedDecimal::try_from(s)?,
-            ))))
+            Ok(Box::new(ICU4XPluralOperands(
+                icu_plurals::PluralOperands::from(&fixed_decimal::FixedDecimal::try_from(s)?),
+            )))
         }
 
         /// Construct from a FixedDecimal
@@ -130,7 +128,7 @@ pub mod ffi {
     }
 
     impl ICU4XPluralCategories {
-        fn from_iter(i: impl Iterator<Item = PluralCategory>) -> Self {
+        fn from_iter(i: impl Iterator<Item = icu_plurals::PluralCategory>) -> Self {
             i.fold(
                 ICU4XPluralCategories {
                     zero: false,
@@ -142,12 +140,12 @@ pub mod ffi {
                 },
                 |mut categories, category| {
                     match category {
-                        PluralCategory::Zero => categories.zero = true,
-                        PluralCategory::One => categories.one = true,
-                        PluralCategory::Two => categories.two = true,
-                        PluralCategory::Few => categories.few = true,
-                        PluralCategory::Many => categories.many = true,
-                        PluralCategory::Other => categories.other = true,
+                        icu_plurals::PluralCategory::Zero => categories.zero = true,
+                        icu_plurals::PluralCategory::One => categories.one = true,
+                        icu_plurals::PluralCategory::Two => categories.two = true,
+                        icu_plurals::PluralCategory::Few => categories.few = true,
+                        icu_plurals::PluralCategory::Many => categories.many = true,
+                        icu_plurals::PluralCategory::Other => categories.other = true,
                     };
                     categories
                 },

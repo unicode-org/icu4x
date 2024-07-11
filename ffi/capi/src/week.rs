@@ -2,20 +2,17 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_calendar::week::WeekOf;
-
 #[diplomat::bridge]
 pub mod ffi {
+    use alloc::boxed::Box;
+
     use crate::date::ffi::ICU4XIsoWeekday;
     use crate::errors::ffi::ICU4XDataError;
     use crate::locale_core::ffi::ICU4XLocale;
     use crate::provider::ffi::ICU4XDataProvider;
-    use alloc::boxed::Box;
-    use icu_calendar::types::IsoWeekday;
-    use icu_calendar::week::{RelativeUnit, WeekCalculator};
 
     #[diplomat::rust_link(icu::calendar::week::RelativeUnit, Enum)]
-    #[diplomat::enum_convert(RelativeUnit)]
+    #[diplomat::enum_convert(icu_calendar::week::RelativeUnit)]
     pub enum ICU4XWeekRelativeUnit {
         Previous,
         Current,
@@ -31,7 +28,7 @@ pub mod ffi {
     /// A Week calculator, useful to be passed in to `week_of_year()` on Date and DateTime types
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::calendar::week::WeekCalculator, Struct)]
-    pub struct ICU4XWeekCalculator(pub WeekCalculator);
+    pub struct ICU4XWeekCalculator(pub icu_calendar::week::WeekCalculator);
 
     impl ICU4XWeekCalculator {
         /// Creates a new [`ICU4XWeekCalculator`] from locale data.
@@ -44,9 +41,9 @@ pub mod ffi {
             let locale = locale.to_datalocale();
 
             Ok(Box::new(ICU4XWeekCalculator(call_constructor!(
-                WeekCalculator::try_new,
-                WeekCalculator::try_new_with_any_provider,
-                WeekCalculator::try_new_with_buffer_provider,
+                icu_calendar::week::WeekCalculator::try_new,
+                icu_calendar::week::WeekCalculator::try_new_with_any_provider,
+                icu_calendar::week::WeekCalculator::try_new_with_buffer_provider,
                 provider,
                 &locale,
             )?)))
@@ -67,7 +64,7 @@ pub mod ffi {
             first_weekday: ICU4XIsoWeekday,
             min_week_days: u8,
         ) -> Box<ICU4XWeekCalculator> {
-            let mut calculator = WeekCalculator::default();
+            let mut calculator = icu_calendar::week::WeekCalculator::default();
             calculator.first_weekday = first_weekday.into();
             calculator.min_week_days = min_week_days;
             Box::new(ICU4XWeekCalculator(calculator))
@@ -93,13 +90,13 @@ pub mod ffi {
             let mut contains = ICU4XWeekendContainsDay::default();
             for day in self.0.weekend() {
                 match day {
-                    IsoWeekday::Monday => contains.monday = true,
-                    IsoWeekday::Tuesday => contains.tuesday = true,
-                    IsoWeekday::Wednesday => contains.wednesday = true,
-                    IsoWeekday::Thursday => contains.thursday = true,
-                    IsoWeekday::Friday => contains.friday = true,
-                    IsoWeekday::Saturday => contains.saturday = true,
-                    IsoWeekday::Sunday => contains.sunday = true,
+                    icu_calendar::types::IsoWeekday::Monday => contains.monday = true,
+                    icu_calendar::types::IsoWeekday::Tuesday => contains.tuesday = true,
+                    icu_calendar::types::IsoWeekday::Wednesday => contains.wednesday = true,
+                    icu_calendar::types::IsoWeekday::Thursday => contains.thursday = true,
+                    icu_calendar::types::IsoWeekday::Friday => contains.friday = true,
+                    icu_calendar::types::IsoWeekday::Saturday => contains.saturday = true,
+                    icu_calendar::types::IsoWeekday::Sunday => contains.sunday = true,
                 }
             }
             contains
@@ -120,8 +117,8 @@ pub mod ffi {
     }
 }
 
-impl From<WeekOf> for ffi::ICU4XWeekOf {
-    fn from(other: WeekOf) -> Self {
+impl From<icu_calendar::week::WeekOf> for ffi::ICU4XWeekOf {
+    fn from(other: icu_calendar::week::WeekOf) -> Self {
         ffi::ICU4XWeekOf {
             week: other.week,
             unit: other.unit.into(),

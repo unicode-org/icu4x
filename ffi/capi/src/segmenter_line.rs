@@ -2,25 +2,17 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_segmenter::LineBreakOptions;
-use icu_segmenter::LineBreakStrictness;
-use icu_segmenter::LineBreakWordOption;
-
 #[diplomat::bridge]
 pub mod ffi {
+    use alloc::boxed::Box;
+
     use crate::errors::ffi::ICU4XDataError;
     use crate::provider::ffi::ICU4XDataProvider;
-    use alloc::boxed::Box;
-    use core::convert::TryFrom;
-    use icu_segmenter::{
-        LineBreakIteratorLatin1, LineBreakIteratorPotentiallyIllFormedUtf8, LineBreakIteratorUtf16,
-        LineSegmenter,
-    };
 
     #[diplomat::opaque]
     /// An ICU4X line-break segmenter, capable of finding breakpoints in strings.
     #[diplomat::rust_link(icu::segmenter::LineSegmenter, Struct)]
-    pub struct ICU4XLineSegmenter(LineSegmenter);
+    pub struct ICU4XLineSegmenter(icu_segmenter::LineSegmenter);
 
     #[diplomat::rust_link(icu::segmenter::LineBreakStrictness, Enum)]
     pub enum ICU4XLineBreakStrictness {
@@ -53,17 +45,19 @@ pub mod ffi {
         compact
     )]
     #[diplomat::rust_link(icu::segmenter::LineBreakIteratorUtf8, Typedef, hidden)]
-    pub struct ICU4XLineBreakIteratorUtf8<'a>(LineBreakIteratorPotentiallyIllFormedUtf8<'a, 'a>);
+    pub struct ICU4XLineBreakIteratorUtf8<'a>(
+        icu_segmenter::LineBreakIteratorPotentiallyIllFormedUtf8<'a, 'a>,
+    );
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::segmenter::LineBreakIterator, Struct)]
     #[diplomat::rust_link(icu::segmenter::LineBreakIteratorUtf16, Typedef, compact)]
-    pub struct ICU4XLineBreakIteratorUtf16<'a>(LineBreakIteratorUtf16<'a, 'a>);
+    pub struct ICU4XLineBreakIteratorUtf16<'a>(icu_segmenter::LineBreakIteratorUtf16<'a, 'a>);
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::segmenter::LineBreakIterator, Struct)]
     #[diplomat::rust_link(icu::segmenter::LineBreakIteratorLatin1, Typedef, compact)]
-    pub struct ICU4XLineBreakIteratorLatin1<'a>(LineBreakIteratorLatin1<'a, 'a>);
+    pub struct ICU4XLineBreakIteratorLatin1<'a>(icu_segmenter::LineBreakIteratorLatin1<'a, 'a>);
 
     impl ICU4XLineSegmenter {
         /// Construct a [`ICU4XLineSegmenter`] with default options. It automatically loads the best
@@ -74,9 +68,9 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XLineSegmenter>, ICU4XDataError> {
             Ok(Box::new(ICU4XLineSegmenter(call_constructor!(
-                LineSegmenter::new_auto [r => Ok(r)],
-                LineSegmenter::try_new_auto_with_any_provider,
-                LineSegmenter::try_new_auto_with_buffer_provider,
+                icu_segmenter::LineSegmenter::new_auto [r => Ok(r)],
+                icu_segmenter::LineSegmenter::try_new_auto_with_any_provider,
+                icu_segmenter::LineSegmenter::try_new_auto_with_buffer_provider,
                 provider
             )?)))
         }
@@ -89,9 +83,9 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XLineSegmenter>, ICU4XDataError> {
             Ok(Box::new(ICU4XLineSegmenter(call_constructor!(
-                LineSegmenter::new_lstm [r => Ok(r)],
-                LineSegmenter::try_new_lstm_with_any_provider,
-                LineSegmenter::try_new_lstm_with_buffer_provider,
+                icu_segmenter::LineSegmenter::new_lstm [r => Ok(r)],
+                icu_segmenter::LineSegmenter::try_new_lstm_with_any_provider,
+                icu_segmenter::LineSegmenter::try_new_lstm_with_buffer_provider,
                 provider,
             )?)))
         }
@@ -104,9 +98,9 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XLineSegmenter>, ICU4XDataError> {
             Ok(Box::new(ICU4XLineSegmenter(call_constructor!(
-                LineSegmenter::new_dictionary [r => Ok(r)],
-                LineSegmenter::try_new_dictionary_with_any_provider,
-                LineSegmenter::try_new_dictionary_with_buffer_provider,
+                icu_segmenter::LineSegmenter::new_dictionary [r => Ok(r)],
+                icu_segmenter::LineSegmenter::try_new_dictionary_with_any_provider,
+                icu_segmenter::LineSegmenter::try_new_dictionary_with_buffer_provider,
                 provider,
             )?)))
         }
@@ -121,9 +115,9 @@ pub mod ffi {
             options: ICU4XLineBreakOptionsV1,
         ) -> Result<Box<ICU4XLineSegmenter>, ICU4XDataError> {
             Ok(Box::new(ICU4XLineSegmenter(call_constructor!(
-                LineSegmenter::new_auto_with_options [r => Ok(r)],
-                LineSegmenter::try_new_auto_with_options_with_any_provider,
-                LineSegmenter::try_new_auto_with_options_with_buffer_provider,
+                icu_segmenter::LineSegmenter::new_auto_with_options [r => Ok(r)],
+                icu_segmenter::LineSegmenter::try_new_auto_with_options_with_any_provider,
+                icu_segmenter::LineSegmenter::try_new_auto_with_options_with_buffer_provider,
                 provider,
                 options.into(),
             )?)))
@@ -139,9 +133,9 @@ pub mod ffi {
             options: ICU4XLineBreakOptionsV1,
         ) -> Result<Box<ICU4XLineSegmenter>, ICU4XDataError> {
             Ok(Box::new(ICU4XLineSegmenter(call_constructor!(
-                LineSegmenter::new_lstm_with_options [r => Ok(r)],
-                LineSegmenter::try_new_lstm_with_options_with_any_provider,
-                LineSegmenter::try_new_lstm_with_options_with_buffer_provider,
+                icu_segmenter::LineSegmenter::new_lstm_with_options [r => Ok(r)],
+                icu_segmenter::LineSegmenter::try_new_lstm_with_options_with_any_provider,
+                icu_segmenter::LineSegmenter::try_new_lstm_with_options_with_buffer_provider,
                 provider,
                 options.into(),
             )?)))
@@ -160,9 +154,9 @@ pub mod ffi {
             options: ICU4XLineBreakOptionsV1,
         ) -> Result<Box<ICU4XLineSegmenter>, ICU4XDataError> {
             Ok(Box::new(ICU4XLineSegmenter(call_constructor!(
-                LineSegmenter::new_dictionary_with_options [r => Ok(r)],
-                LineSegmenter::try_new_dictionary_with_options_with_any_provider,
-                LineSegmenter::try_new_dictionary_with_options_with_buffer_provider,
+                icu_segmenter::LineSegmenter::new_dictionary_with_options [r => Ok(r)],
+                icu_segmenter::LineSegmenter::try_new_dictionary_with_options_with_any_provider,
+                icu_segmenter::LineSegmenter::try_new_dictionary_with_options_with_buffer_provider,
                 provider,
                 options.into(),
             )?)))
@@ -258,7 +252,7 @@ pub mod ffi {
     }
 }
 
-impl From<ffi::ICU4XLineBreakStrictness> for LineBreakStrictness {
+impl From<ffi::ICU4XLineBreakStrictness> for icu_segmenter::LineBreakStrictness {
     fn from(other: ffi::ICU4XLineBreakStrictness) -> Self {
         match other {
             ffi::ICU4XLineBreakStrictness::Loose => Self::Loose,
@@ -269,7 +263,7 @@ impl From<ffi::ICU4XLineBreakStrictness> for LineBreakStrictness {
     }
 }
 
-impl From<ffi::ICU4XLineBreakWordOption> for LineBreakWordOption {
+impl From<ffi::ICU4XLineBreakWordOption> for icu_segmenter::LineBreakWordOption {
     fn from(other: ffi::ICU4XLineBreakWordOption) -> Self {
         match other {
             ffi::ICU4XLineBreakWordOption::Normal => Self::Normal,
@@ -279,9 +273,9 @@ impl From<ffi::ICU4XLineBreakWordOption> for LineBreakWordOption {
     }
 }
 
-impl From<ffi::ICU4XLineBreakOptionsV1> for LineBreakOptions {
+impl From<ffi::ICU4XLineBreakOptionsV1> for icu_segmenter::LineBreakOptions {
     fn from(other: ffi::ICU4XLineBreakOptionsV1) -> Self {
-        let mut options = LineBreakOptions::default();
+        let mut options = icu_segmenter::LineBreakOptions::default();
         options.strictness = other.strictness.into();
         options.word_option = other.word_option.into();
         options.ja_zh = other.ja_zh;

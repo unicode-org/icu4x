@@ -6,16 +6,16 @@ use icu_casemap::titlecase::TitlecaseOptions;
 
 #[diplomat::bridge]
 pub mod ffi {
+    use alloc::boxed::Box;
+
     use crate::{
         errors::ffi::ICU4XDataError, locale_core::ffi::ICU4XLocale,
         provider::ffi::ICU4XDataProvider,
     };
-    use alloc::boxed::Box;
-    use icu_casemap::titlecase::{LeadingAdjustment, TrailingCase};
-    use icu_casemap::{CaseMapCloser, CaseMapper, TitlecaseMapper};
+
     use writeable::Writeable;
 
-    #[diplomat::enum_convert(LeadingAdjustment, needs_wildcard)]
+    #[diplomat::enum_convert(icu_casemap::titlecase::LeadingAdjustment, needs_wildcard)]
     #[diplomat::rust_link(icu::casemap::titlecase::LeadingAdjustment, Enum)]
     pub enum ICU4XLeadingAdjustment {
         Auto,
@@ -23,7 +23,7 @@ pub mod ffi {
         ToCased,
     }
 
-    #[diplomat::enum_convert(TrailingCase, needs_wildcard)]
+    #[diplomat::enum_convert(icu_casemap::titlecase::TrailingCase, needs_wildcard)]
     #[diplomat::rust_link(icu::casemap::titlecase::TrailingCase, Enum)]
     pub enum ICU4XTrailingCase {
         Lower,
@@ -51,7 +51,7 @@ pub mod ffi {
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::casemap::CaseMapper, Struct)]
-    pub struct ICU4XCaseMapper(pub CaseMapper);
+    pub struct ICU4XCaseMapper(pub icu_casemap::CaseMapper);
 
     impl ICU4XCaseMapper {
         /// Construct a new ICU4XCaseMapper instance
@@ -61,9 +61,9 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCaseMapper>, ICU4XDataError> {
             Ok(Box::new(ICU4XCaseMapper(call_constructor!(
-                CaseMapper::new [r => Ok(r)],
-                CaseMapper::try_new_with_any_provider,
-                CaseMapper::try_new_with_buffer_provider,
+                icu_casemap::CaseMapper::new [r => Ok(r)],
+                icu_casemap::CaseMapper::try_new_with_any_provider,
+                icu_casemap::CaseMapper::try_new_with_buffer_provider,
                 provider,
             )?)))
         }
@@ -210,7 +210,7 @@ pub mod ffi {
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::casemap::CaseMapCloser, Struct)]
-    pub struct ICU4XCaseMapCloser(pub CaseMapCloser<CaseMapper>);
+    pub struct ICU4XCaseMapCloser(pub icu_casemap::CaseMapCloser<icu_casemap::CaseMapper>);
 
     impl ICU4XCaseMapCloser {
         /// Construct a new ICU4XCaseMapper instance
@@ -221,9 +221,9 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCaseMapCloser>, ICU4XDataError> {
             Ok(Box::new(ICU4XCaseMapCloser(call_constructor!(
-                CaseMapCloser::new [r => Ok(r)],
-                CaseMapCloser::try_new_with_any_provider,
-                CaseMapCloser::try_new_with_buffer_provider,
+                icu_casemap::CaseMapCloser::new [r => Ok(r)],
+                icu_casemap::CaseMapCloser::try_new_with_any_provider,
+                icu_casemap::CaseMapCloser::try_new_with_buffer_provider,
                 provider,
             )?)))
         }
@@ -260,7 +260,7 @@ pub mod ffi {
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::casemap::TitlecaseMapper, Struct)]
-    pub struct ICU4XTitlecaseMapper(pub TitlecaseMapper<CaseMapper>);
+    pub struct ICU4XTitlecaseMapper(pub icu_casemap::TitlecaseMapper<icu_casemap::CaseMapper>);
 
     impl ICU4XTitlecaseMapper {
         /// Construct a new `ICU4XTitlecaseMapper` instance
@@ -271,9 +271,9 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XTitlecaseMapper>, ICU4XDataError> {
             Ok(Box::new(ICU4XTitlecaseMapper(call_constructor!(
-                TitlecaseMapper::new [r => Ok(r)],
-                TitlecaseMapper::try_new_with_any_provider,
-                TitlecaseMapper::try_new_with_buffer_provider,
+                icu_casemap::TitlecaseMapper::new [r => Ok(r)],
+                icu_casemap::TitlecaseMapper::try_new_with_any_provider,
+                icu_casemap::TitlecaseMapper::try_new_with_buffer_provider,
                 provider,
             )?)))
         }

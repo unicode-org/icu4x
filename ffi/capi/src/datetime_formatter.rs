@@ -5,11 +5,6 @@
 #[diplomat::bridge]
 pub mod ffi {
     use alloc::boxed::Box;
-    use icu_calendar::{Date, DateTime, Gregorian};
-    use icu_datetime::{
-        options::length, DateFormatter, DateTimeFormatter, TimeFormatter, TypedDateFormatter,
-        TypedDateTimeFormatter,
-    };
 
     use crate::{
         date::ffi::{ICU4XDate, ICU4XIsoDate},
@@ -19,14 +14,15 @@ pub mod ffi {
         provider::ffi::ICU4XDataProvider,
         time::ffi::ICU4XTime,
     };
+
     use writeable::Writeable;
 
     #[diplomat::opaque]
     /// An ICU4X TimeFormatter object capable of formatting an [`ICU4XTime`] type (and others) as a string
     #[diplomat::rust_link(icu::datetime::TimeFormatter, Struct)]
-    pub struct ICU4XTimeFormatter(pub TimeFormatter);
+    pub struct ICU4XTimeFormatter(pub icu_datetime::TimeFormatter);
 
-    #[diplomat::enum_convert(length::Time, needs_wildcard)]
+    #[diplomat::enum_convert(icu_datetime::options::length::Time, needs_wildcard)]
     #[diplomat::rust_link(icu::datetime::options::length::Time, Enum)]
     pub enum ICU4XTimeLength {
         Full,
@@ -47,9 +43,9 @@ pub mod ffi {
             let locale = locale.to_datalocale();
 
             Ok(Box::new(ICU4XTimeFormatter(call_constructor!(
-                TimeFormatter::try_new_with_length,
-                TimeFormatter::try_new_with_length_with_any_provider,
-                TimeFormatter::try_new_with_length_with_buffer_provider,
+                icu_datetime::TimeFormatter::try_new_with_length,
+                icu_datetime::TimeFormatter::try_new_with_length_with_any_provider,
+                icu_datetime::TimeFormatter::try_new_with_length_with_buffer_provider,
                 provider,
                 &locale,
                 length.into()
@@ -90,9 +86,11 @@ pub mod ffi {
     /// An ICU4X TypedDateFormatter object capable of formatting a [`ICU4XIsoDateTime`] as a string,
     /// using the Gregorian Calendar.
     #[diplomat::rust_link(icu::datetime::TypedDateFormatter, Struct)]
-    pub struct ICU4XGregorianDateFormatter(pub TypedDateFormatter<Gregorian>);
+    pub struct ICU4XGregorianDateFormatter(
+        pub icu_datetime::TypedDateFormatter<icu_calendar::Gregorian>,
+    );
 
-    #[diplomat::enum_convert(length::Date, needs_wildcard)]
+    #[diplomat::enum_convert(icu_datetime::options::length::Date, needs_wildcard)]
     #[diplomat::rust_link(icu::datetime::options::length::Date, Enum)]
     pub enum ICU4XDateLength {
         Full,
@@ -113,9 +111,9 @@ pub mod ffi {
             let locale = locale.to_datalocale();
 
             Ok(Box::new(ICU4XGregorianDateFormatter(call_constructor!(
-                TypedDateFormatter::try_new_with_length,
-                TypedDateFormatter::try_new_with_length_with_any_provider,
-                TypedDateFormatter::try_new_with_length_with_buffer_provider,
+                icu_datetime::TypedDateFormatter::try_new_with_length,
+                icu_datetime::TypedDateFormatter::try_new_with_length_with_any_provider,
+                icu_datetime::TypedDateFormatter::try_new_with_length_with_buffer_provider,
                 provider,
                 &locale,
                 length.into()
@@ -134,7 +132,7 @@ pub mod ffi {
             value: &ICU4XIsoDate,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) {
-            let greg = Date::new_from_iso(value.0, Gregorian);
+            let greg = icu_calendar::Date::new_from_iso(value.0, icu_calendar::Gregorian);
             let _infallible = self.0.format(&greg).write_to(write);
         }
         /// Formats a [`ICU4XIsoDateTime`] to a string.
@@ -149,7 +147,7 @@ pub mod ffi {
             value: &ICU4XIsoDateTime,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) {
-            let greg = DateTime::new_from_iso(value.0, Gregorian);
+            let greg = icu_calendar::DateTime::new_from_iso(value.0, icu_calendar::Gregorian);
             let _infallible = self.0.format(&greg).write_to(write);
         }
     }
@@ -158,7 +156,9 @@ pub mod ffi {
     /// An ICU4X TypedDateTimeFormatter object capable of formatting a [`ICU4XIsoDateTime`] as a string,
     /// using the Gregorian Calendar.
     #[diplomat::rust_link(icu::datetime::TypedDateTimeFormatter, Struct)]
-    pub struct ICU4XGregorianDateTimeFormatter(pub TypedDateTimeFormatter<Gregorian>);
+    pub struct ICU4XGregorianDateTimeFormatter(
+        pub icu_datetime::TypedDateTimeFormatter<icu_calendar::Gregorian>,
+    );
 
     impl ICU4XGregorianDateTimeFormatter {
         /// Creates a new [`ICU4XGregorianDateFormatter`] from locale data.
@@ -172,13 +172,16 @@ pub mod ffi {
         ) -> Result<Box<ICU4XGregorianDateTimeFormatter>, ICU4XError> {
             let locale = locale.to_datalocale();
 
-            let options = length::Bag::from_date_time_style(date_length.into(), time_length.into());
+            let options = icu_datetime::options::length::Bag::from_date_time_style(
+                date_length.into(),
+                time_length.into(),
+            );
 
             Ok(Box::new(ICU4XGregorianDateTimeFormatter(
                 call_constructor!(
-                    TypedDateTimeFormatter::try_new,
-                    TypedDateTimeFormatter::try_new_with_any_provider,
-                    TypedDateTimeFormatter::try_new_with_buffer_provider,
+                    icu_datetime::TypedDateTimeFormatter::try_new,
+                    icu_datetime::TypedDateTimeFormatter::try_new_with_any_provider,
+                    icu_datetime::TypedDateTimeFormatter::try_new_with_buffer_provider,
                     provider,
                     &locale,
                     options.into()
@@ -198,7 +201,7 @@ pub mod ffi {
             value: &ICU4XIsoDateTime,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) {
-            let greg = DateTime::new_from_iso(value.0, Gregorian);
+            let greg = icu_calendar::DateTime::new_from_iso(value.0, icu_calendar::Gregorian);
             let _infallible = self.0.format(&greg).write_to(write);
         }
     }
@@ -207,7 +210,7 @@ pub mod ffi {
     /// An ICU4X DateFormatter object capable of formatting a [`ICU4XDate`] as a string,
     /// using some calendar specified at runtime in the locale.
     #[diplomat::rust_link(icu::datetime::DateFormatter, Struct)]
-    pub struct ICU4XDateFormatter(pub DateFormatter);
+    pub struct ICU4XDateFormatter(pub icu_datetime::DateFormatter);
 
     impl ICU4XDateFormatter {
         /// Creates a new [`ICU4XDateFormatter`] from locale data.
@@ -221,9 +224,9 @@ pub mod ffi {
             let locale = locale.to_datalocale();
 
             Ok(Box::new(ICU4XDateFormatter(call_constructor!(
-                DateFormatter::try_new_with_length,
-                DateFormatter::try_new_with_length_with_any_provider,
-                DateFormatter::try_new_with_length_with_buffer_provider,
+                icu_datetime::DateFormatter::try_new_with_length,
+                icu_datetime::DateFormatter::try_new_with_length_with_any_provider,
+                icu_datetime::DateFormatter::try_new_with_length_with_buffer_provider,
                 provider,
                 &locale,
                 date_length.into()
@@ -290,7 +293,7 @@ pub mod ffi {
     /// using some calendar specified at runtime in the locale.
     #[diplomat::rust_link(icu::datetime::DateTimeFormatter, Struct)]
     #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
-    pub struct ICU4XDateTimeFormatter(pub DateTimeFormatter);
+    pub struct ICU4XDateTimeFormatter(pub icu_datetime::DateTimeFormatter);
 
     impl ICU4XDateTimeFormatter {
         /// Creates a new [`ICU4XDateTimeFormatter`] from locale data.
@@ -303,12 +306,15 @@ pub mod ffi {
             time_length: ICU4XTimeLength,
         ) -> Result<Box<ICU4XDateTimeFormatter>, ICU4XError> {
             let locale = locale.to_datalocale();
-            let options = length::Bag::from_date_time_style(date_length.into(), time_length.into());
+            let options = icu_datetime::options::length::Bag::from_date_time_style(
+                date_length.into(),
+                time_length.into(),
+            );
 
             Ok(Box::new(ICU4XDateTimeFormatter(call_constructor!(
-                DateTimeFormatter::try_new,
-                DateTimeFormatter::try_new_with_any_provider,
-                DateTimeFormatter::try_new_with_buffer_provider,
+                icu_datetime::DateTimeFormatter::try_new,
+                icu_datetime::DateTimeFormatter::try_new_with_any_provider,
+                icu_datetime::DateTimeFormatter::try_new_with_buffer_provider,
                 provider,
                 &locale,
                 options.into()

@@ -4,14 +4,15 @@
 
 #[diplomat::bridge]
 pub mod ffi {
+    use alloc::boxed::Box;
+    use alloc::string::String;
+    use alloc::vec::Vec;
+
     use crate::{
         errors::ffi::ICU4XDataError, locale_core::ffi::ICU4XLocale,
         provider::ffi::ICU4XDataProvider,
     };
-    use alloc::boxed::Box;
-    use alloc::string::String;
-    use alloc::vec::Vec;
-    use icu_list::{ListFormatter, ListLength};
+
     use writeable::Writeable;
 
     /// A list of strings
@@ -55,7 +56,7 @@ pub mod ffi {
     }
 
     #[diplomat::rust_link(icu::list::ListLength, Enum)]
-    #[diplomat::enum_convert(ListLength, needs_wildcard)]
+    #[diplomat::enum_convert(icu_list::ListLength, needs_wildcard)]
     pub enum ICU4XListLength {
         Wide,
         Short,
@@ -63,7 +64,7 @@ pub mod ffi {
     }
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::list::ListFormatter, Struct)]
-    pub struct ICU4XListFormatter(pub ListFormatter);
+    pub struct ICU4XListFormatter(pub icu_list::ListFormatter);
 
     impl ICU4XListFormatter {
         /// Construct a new ICU4XListFormatter instance for And patterns
@@ -76,9 +77,9 @@ pub mod ffi {
         ) -> Result<Box<ICU4XListFormatter>, ICU4XDataError> {
             let locale = locale.to_datalocale();
             Ok(Box::new(ICU4XListFormatter(call_constructor!(
-                ListFormatter::try_new_and_with_length,
-                ListFormatter::try_new_and_with_length_with_any_provider,
-                ListFormatter::try_new_and_with_length_with_buffer_provider,
+                icu_list::ListFormatter::try_new_and_with_length,
+                icu_list::ListFormatter::try_new_and_with_length_with_any_provider,
+                icu_list::ListFormatter::try_new_and_with_length_with_buffer_provider,
                 provider,
                 &locale,
                 length.into()
@@ -94,9 +95,9 @@ pub mod ffi {
         ) -> Result<Box<ICU4XListFormatter>, ICU4XDataError> {
             let locale = locale.to_datalocale();
             Ok(Box::new(ICU4XListFormatter(call_constructor!(
-                ListFormatter::try_new_or_with_length,
-                ListFormatter::try_new_or_with_length_with_any_provider,
-                ListFormatter::try_new_or_with_length_with_buffer_provider,
+                icu_list::ListFormatter::try_new_or_with_length,
+                icu_list::ListFormatter::try_new_or_with_length_with_any_provider,
+                icu_list::ListFormatter::try_new_or_with_length_with_buffer_provider,
                 provider,
                 &locale,
                 length.into()
@@ -112,9 +113,9 @@ pub mod ffi {
         ) -> Result<Box<ICU4XListFormatter>, ICU4XDataError> {
             let locale = locale.to_datalocale();
             Ok(Box::new(ICU4XListFormatter(call_constructor!(
-                ListFormatter::try_new_unit_with_length,
-                ListFormatter::try_new_unit_with_length_with_any_provider,
-                ListFormatter::try_new_unit_with_length_with_buffer_provider,
+                icu_list::ListFormatter::try_new_unit_with_length,
+                icu_list::ListFormatter::try_new_unit_with_length_with_any_provider,
+                icu_list::ListFormatter::try_new_unit_with_length_with_buffer_provider,
                 provider,
                 &locale,
                 length.into()

@@ -4,19 +4,17 @@
 
 #[diplomat::bridge]
 pub mod ffi {
-    use crate::errors::ffi::ICU4XLocaleParseError;
     use alloc::boxed::Box;
-    use icu_locale_core::extensions::unicode::Key;
-    use icu_locale_core::subtags::{Language, Region, Script};
-    use icu_locale_core::Locale;
-    use writeable::Writeable;
 
     use crate::common::ffi::ICU4XOrdering;
+    use crate::errors::ffi::ICU4XLocaleParseError;
+
+    use writeable::Writeable;
 
     #[diplomat::opaque]
     /// An ICU4X Locale, capable of representing strings like `"en-US"`.
     #[diplomat::rust_link(icu::locale::Locale, Struct)]
-    pub struct ICU4XLocale(pub Locale);
+    pub struct ICU4XLocale(pub icu_locale_core::Locale);
 
     impl ICU4XLocale {
         /// Construct an [`ICU4XLocale`] from an locale identifier.
@@ -31,14 +29,16 @@ pub mod ffi {
         pub fn create_from_string(
             name: &DiplomatStr,
         ) -> Result<Box<ICU4XLocale>, ICU4XLocaleParseError> {
-            Ok(Box::new(ICU4XLocale(Locale::try_from_utf8(name)?)))
+            Ok(Box::new(ICU4XLocale(
+                icu_locale_core::Locale::try_from_utf8(name)?,
+            )))
         }
 
         /// Construct a default undefined [`ICU4XLocale`] "und".
         #[diplomat::rust_link(icu::locale::Locale::UND, AssociatedConstantInStruct)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "und")]
         pub fn create_und() -> Box<ICU4XLocale> {
-            Box::new(ICU4XLocale(Locale::UND))
+            Box::new(ICU4XLocale(icu_locale_core::Locale::UND))
         }
 
         /// Clones the [`ICU4XLocale`].
@@ -62,7 +62,7 @@ pub mod ffi {
             s: &DiplomatStr,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Option<()> {
-            Key::try_from_utf8(s)
+            icu_locale_core::extensions::unicode::Key::try_from_utf8(s)
                 .ok()
                 .and_then(|k| self.0.extensions.unicode.keywords.get(&k))
                 .map(|v| {
@@ -83,9 +83,9 @@ pub mod ffi {
         #[diplomat::attr(supports = accessors, setter = "language")]
         pub fn set_language(&mut self, s: &DiplomatStr) -> Result<(), ICU4XLocaleParseError> {
             self.0.id.language = if s.is_empty() {
-                Language::UND
+                icu_locale_core::subtags::Language::UND
             } else {
-                Language::try_from_utf8(s)?
+                icu_locale_core::subtags::Language::try_from_utf8(s)?
             };
             Ok(())
         }
@@ -107,7 +107,7 @@ pub mod ffi {
             self.0.id.region = if s.is_empty() {
                 None
             } else {
-                Some(Region::try_from_utf8(s)?)
+                Some(icu_locale_core::subtags::Region::try_from_utf8(s)?)
             };
             Ok(())
         }
@@ -129,7 +129,7 @@ pub mod ffi {
             self.0.id.script = if s.is_empty() {
                 None
             } else {
-                Some(Script::try_from_utf8(s)?)
+                Some(icu_locale_core::subtags::Script::try_from_utf8(s)?)
             };
             Ok(())
         }
@@ -142,7 +142,7 @@ pub mod ffi {
             s: &DiplomatStr,
             write: &mut DiplomatWrite,
         ) -> Result<(), ICU4XLocaleParseError> {
-            let _infallible = Locale::canonicalize(s)?.write_to(write);
+            let _infallible = icu_locale_core::Locale::canonicalize(s)?.write_to(write);
             Ok(())
         }
         /// Returns a string representation of [`ICU4XLocale`].

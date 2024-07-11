@@ -6,16 +6,14 @@
 pub mod ffi {
     use alloc::boxed::Box;
     use alloc::sync::Arc;
-    use core::convert::TryInto;
     use core::fmt::Write;
-
-    use icu_calendar::{AnyCalendar, DateTime, Iso, Time};
-    use tinystr::TinyAsciiStr;
 
     use crate::calendar::ffi::ICU4XCalendar;
     use crate::date::ffi::{ICU4XDate, ICU4XIsoDate, ICU4XIsoWeekday};
     use crate::errors::ffi::ICU4XCalendarError;
     use crate::time::ffi::ICU4XTime;
+
+    use tinystr::TinyAsciiStr;
 
     #[cfg(feature = "icu_calendar")]
     use crate::week::ffi::ICU4XWeekCalculator;
@@ -23,7 +21,7 @@ pub mod ffi {
     #[diplomat::opaque]
     /// An ICU4X DateTime object capable of containing a ISO-8601 date and time.
     #[diplomat::rust_link(icu::calendar::DateTime, Struct)]
-    pub struct ICU4XIsoDateTime(pub DateTime<Iso>);
+    pub struct ICU4XIsoDateTime(pub icu_calendar::DateTime<icu_calendar::Iso>);
 
     impl ICU4XIsoDateTime {
         /// Creates a new [`ICU4XIsoDateTime`] from the specified date and time.
@@ -38,7 +36,9 @@ pub mod ffi {
             second: u8,
             nanosecond: u32,
         ) -> Result<Box<ICU4XIsoDateTime>, ICU4XCalendarError> {
-            let mut dt = DateTime::try_new_iso_datetime(year, month, day, hour, minute, second)?;
+            let mut dt = icu_calendar::DateTime::try_new_iso_datetime(
+                year, month, day, hour, minute, second,
+            )?;
             dt.time.nanosecond = nanosecond.try_into()?;
             Ok(Box::new(ICU4XIsoDateTime(dt)))
         }
@@ -50,7 +50,7 @@ pub mod ffi {
             date: &ICU4XIsoDate,
             time: &ICU4XTime,
         ) -> Box<ICU4XIsoDateTime> {
-            let dt = DateTime::new(date.0, time.0);
+            let dt = icu_calendar::DateTime::new(date.0, time.0);
             Box::new(ICU4XIsoDateTime(dt))
         }
 
@@ -58,7 +58,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::calendar::DateTime::local_unix_epoch, FnInStruct)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "local_unix_epoch")]
         pub fn local_unix_epoch() -> Box<ICU4XIsoDateTime> {
-            let dt = DateTime::local_unix_epoch();
+            let dt = icu_calendar::DateTime::local_unix_epoch();
             Box::new(ICU4XIsoDateTime(dt))
         }
 
@@ -70,7 +70,7 @@ pub mod ffi {
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "from_minutes_since_local_unix_epoch")]
         pub fn create_from_minutes_since_local_unix_epoch(minutes: i32) -> Box<ICU4XIsoDateTime> {
             Box::new(ICU4XIsoDateTime(
-                DateTime::from_minutes_since_local_unix_epoch(minutes),
+                icu_calendar::DateTime::from_minutes_since_local_unix_epoch(minutes),
             ))
         }
 
@@ -230,7 +230,7 @@ pub mod ffi {
     #[diplomat::opaque]
     /// An ICU4X DateTime object capable of containing a date and time for any calendar.
     #[diplomat::rust_link(icu::calendar::DateTime, Struct)]
-    pub struct ICU4XDateTime(pub DateTime<Arc<AnyCalendar>>);
+    pub struct ICU4XDateTime(pub icu_calendar::DateTime<Arc<icu_calendar::AnyCalendar>>);
 
     impl ICU4XDateTime {
         /// Creates a new [`ICU4XDateTime`] representing the ISO date and time
@@ -249,7 +249,9 @@ pub mod ffi {
             calendar: &ICU4XCalendar,
         ) -> Result<Box<ICU4XDateTime>, ICU4XCalendarError> {
             let cal = calendar.0.clone();
-            let mut dt = DateTime::try_new_iso_datetime(year, month, day, hour, minute, second)?;
+            let mut dt = icu_calendar::DateTime::try_new_iso_datetime(
+                year, month, day, hour, minute, second,
+            )?;
             dt.time.nanosecond = nanosecond.try_into()?;
             Ok(Box::new(ICU4XDateTime(dt.to_calendar(cal))))
         }
@@ -279,21 +281,21 @@ pub mod ffi {
             let minute = minute.try_into()?;
             let second = second.try_into()?;
             let nanosecond = nanosecond.try_into()?;
-            let time = Time {
+            let time = icu_calendar::Time {
                 hour,
                 minute,
                 second,
                 nanosecond,
             };
-            Ok(Box::new(ICU4XDateTime(DateTime::try_new_from_codes(
-                era, year, month, day, time, cal,
-            )?)))
+            Ok(Box::new(ICU4XDateTime(
+                icu_calendar::DateTime::try_new_from_codes(era, year, month, day, time, cal)?,
+            )))
         }
         /// Creates a new [`ICU4XDateTime`] from an [`ICU4XDate`] and [`ICU4XTime`] object
         #[diplomat::rust_link(icu::calendar::DateTime::new, FnInStruct)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "from_date_and_time")]
         pub fn create_from_date_and_time(date: &ICU4XDate, time: &ICU4XTime) -> Box<ICU4XDateTime> {
-            let dt = DateTime::new(date.0.clone(), time.0);
+            let dt = icu_calendar::DateTime::new(date.0.clone(), time.0);
             Box::new(ICU4XDateTime(dt))
         }
 

@@ -4,14 +4,14 @@
 
 #[diplomat::bridge]
 pub mod ffi {
+    use alloc::boxed::Box;
+
     use crate::{
         errors::ffi::ICU4XDataError,
         locale::ffi::ICU4XLocaleExpander,
         locale_core::ffi::ICU4XLocale,
         provider::{ffi::ICU4XDataProvider, ICU4XDataProviderInner},
     };
-    use alloc::boxed::Box;
-    use icu_locale::{Direction, LocaleDirectionality};
 
     #[diplomat::rust_link(icu::locale::Direction, Enum)]
     pub enum ICU4XLocaleDirection {
@@ -22,7 +22,7 @@ pub mod ffi {
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::locale::LocaleDirectionality, Struct)]
-    pub struct ICU4XLocaleDirectionality(pub LocaleDirectionality);
+    pub struct ICU4XLocaleDirectionality(pub icu_locale::LocaleDirectionality);
 
     impl ICU4XLocaleDirectionality {
         /// Construct a new ICU4XLocaleDirectionality instance
@@ -32,9 +32,9 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XLocaleDirectionality>, ICU4XDataError> {
             Ok(Box::new(ICU4XLocaleDirectionality(call_constructor!(
-                LocaleDirectionality::new [r => Ok(r)],
-                LocaleDirectionality::try_new_with_any_provider,
-                LocaleDirectionality::try_new_with_buffer_provider,
+                icu_locale::LocaleDirectionality::new [r => Ok(r)],
+                icu_locale::LocaleDirectionality::try_new_with_any_provider,
+                icu_locale::LocaleDirectionality::try_new_with_buffer_provider,
                 provider,
             )?)))
         }
@@ -53,21 +53,21 @@ pub mod ffi {
                     "This provider has been destroyed",
                 ))?,
                 ICU4XDataProviderInner::Empty => {
-                    LocaleDirectionality::try_new_with_expander_unstable(
+                    icu_locale::LocaleDirectionality::try_new_with_expander_unstable(
                         &icu_provider_adapters::empty::EmptyDataProvider::new(),
                         expander.0.clone(),
                     )?
                 }
                 #[cfg(feature = "buffer_provider")]
                 ICU4XDataProviderInner::Buffer(buffer_provider) => {
-                    LocaleDirectionality::try_new_with_expander_unstable(
+                    icu_locale::LocaleDirectionality::try_new_with_expander_unstable(
                         &buffer_provider.as_deserializing(),
                         expander.0.clone(),
                     )?
                 }
                 #[cfg(feature = "compiled_data")]
                 ICU4XDataProviderInner::Compiled => {
-                    LocaleDirectionality::new_with_expander(expander.0.clone())
+                    icu_locale::LocaleDirectionality::new_with_expander(expander.0.clone())
                 }
             })))
         }
@@ -76,8 +76,8 @@ pub mod ffi {
         #[diplomat::attr(supports = indexing, indexer)]
         pub fn get(&self, locale: &ICU4XLocale) -> ICU4XLocaleDirection {
             match self.0.get(&locale.0) {
-                Some(Direction::LeftToRight) => ICU4XLocaleDirection::LeftToRight,
-                Some(Direction::RightToLeft) => ICU4XLocaleDirection::RightToLeft,
+                Some(icu_locale::Direction::LeftToRight) => ICU4XLocaleDirection::LeftToRight,
+                Some(icu_locale::Direction::RightToLeft) => ICU4XLocaleDirection::RightToLeft,
                 _ => ICU4XLocaleDirection::Unknown,
             }
         }

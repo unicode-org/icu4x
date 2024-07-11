@@ -7,18 +7,16 @@ pub mod ffi {
     use alloc::boxed::Box;
     use alloc::sync::Arc;
     use core::fmt::Write;
-    use icu_calendar::types::IsoWeekday;
-    use icu_calendar::AnyCalendar;
-    use icu_calendar::{Date, Iso};
-    use tinystr::TinyAsciiStr;
 
     use crate::calendar::ffi::ICU4XCalendar;
     use crate::errors::ffi::ICU4XCalendarError;
 
+    use tinystr::TinyAsciiStr;
+
     #[cfg(feature = "icu_calendar")]
     use crate::week::ffi::ICU4XWeekCalculator;
 
-    #[diplomat::enum_convert(IsoWeekday)]
+    #[diplomat::enum_convert(icu_calendar::types::IsoWeekday)]
     pub enum ICU4XIsoWeekday {
         Monday = 1,
         Tuesday,
@@ -32,7 +30,7 @@ pub mod ffi {
     #[diplomat::transparent_convert]
     /// An ICU4X Date object capable of containing a ISO-8601 date
     #[diplomat::rust_link(icu::calendar::Date, Struct)]
-    pub struct ICU4XIsoDate(pub Date<Iso>);
+    pub struct ICU4XIsoDate(pub icu_calendar::Date<icu_calendar::Iso>);
 
     impl ICU4XIsoDate {
         /// Creates a new [`ICU4XIsoDate`] from the specified date and time.
@@ -43,16 +41,16 @@ pub mod ffi {
             month: u8,
             day: u8,
         ) -> Result<Box<ICU4XIsoDate>, ICU4XCalendarError> {
-            Ok(Box::new(ICU4XIsoDate(Date::try_new_iso_date(
-                year, month, day,
-            )?)))
+            Ok(Box::new(ICU4XIsoDate(
+                icu_calendar::Date::try_new_iso_date(year, month, day)?,
+            )))
         }
 
         /// Creates a new [`ICU4XIsoDate`] representing January 1, 1970.
         #[diplomat::rust_link(icu::calendar::Date::unix_epoch, FnInStruct)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "for_unix_epoch")]
         pub fn create_for_unix_epoch() -> Box<ICU4XIsoDate> {
-            Box::new(ICU4XIsoDate(Date::unix_epoch()))
+            Box::new(ICU4XIsoDate(icu_calendar::Date::unix_epoch()))
         }
 
         /// Convert this date to one in a different calendar
@@ -163,7 +161,7 @@ pub mod ffi {
     #[diplomat::transparent_convert]
     /// An ICU4X Date object capable of containing a date and time for any calendar.
     #[diplomat::rust_link(icu::calendar::Date, Struct)]
-    pub struct ICU4XDate(pub Date<Arc<AnyCalendar>>);
+    pub struct ICU4XDate(pub icu_calendar::Date<Arc<icu_calendar::AnyCalendar>>);
 
     impl ICU4XDate {
         /// Creates a new [`ICU4XDate`] representing the ISO date and time
@@ -178,7 +176,7 @@ pub mod ffi {
         ) -> Result<Box<ICU4XDate>, ICU4XCalendarError> {
             let cal = calendar.0.clone();
             Ok(Box::new(ICU4XDate(
-                Date::try_new_iso_date(year, month, day)?.to_calendar(cal),
+                icu_calendar::Date::try_new_iso_date(year, month, day)?.to_calendar(cal),
             )))
         }
 
@@ -199,7 +197,7 @@ pub mod ffi {
                 .map_err(|_| ICU4XCalendarError::UnknownMonthCode)?
                 .into();
             let cal = calendar.0.clone();
-            Ok(Box::new(ICU4XDate(Date::try_new_from_codes(
+            Ok(Box::new(ICU4XDate(icu_calendar::Date::try_new_from_codes(
                 era, year, month, day, cal,
             )?)))
         }

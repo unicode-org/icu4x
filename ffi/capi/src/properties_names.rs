@@ -4,21 +4,18 @@
 
 #[diplomat::bridge]
 pub mod ffi {
-    use crate::provider::ffi::ICU4XDataProvider;
     use alloc::boxed::Box;
-    use icu_properties::{
-        names::PropertyValueNameToEnumMapper, BidiClass, EastAsianWidth, GeneralCategory,
-        GeneralCategoryGroup, GraphemeClusterBreak, HangulSyllableType, IndicSyllabicCategory,
-        LineBreak, Script, SentenceBreak, WordBreak,
-    };
 
     use crate::errors::ffi::ICU4XDataError;
+    use crate::provider::ffi::ICU4XDataProvider;
 
     /// A type capable of looking up a property value from a string name.
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::properties::names::PropertyValueNameToEnumMapper, Struct)]
     #[diplomat::rust_link(icu::properties::names::PropertyValueNameToEnumMapperBorrowed, Struct)]
-    pub struct ICU4XPropertyValueNameToEnumMapper(PropertyValueNameToEnumMapper<u16>);
+    pub struct ICU4XPropertyValueNameToEnumMapper(
+        icu_properties::names::PropertyValueNameToEnumMapper<u16>,
+    );
 
     impl ICU4XPropertyValueNameToEnumMapper {
         /// Get the property value matching the given name, using strict matching
@@ -77,8 +74,8 @@ pub mod ffi {
         ) -> Result<Box<ICU4XPropertyValueNameToEnumMapper>, ICU4XDataError> {
             Ok(Box::new(ICU4XPropertyValueNameToEnumMapper(
                 call_constructor_unstable!(
-                    GeneralCategory::name_to_enum_mapper [r => Ok(r.static_to_owned())],
-                    GeneralCategory::get_name_to_enum_mapper,
+                    icu_properties::GeneralCategory::name_to_enum_mapper [r => Ok(r.static_to_owned())],
+                    icu_properties::GeneralCategory::get_name_to_enum_mapper,
                     provider,
                 )?
                 .erase(),
@@ -97,8 +94,8 @@ pub mod ffi {
         ) -> Result<Box<ICU4XPropertyValueNameToEnumMapper>, ICU4XDataError> {
             Ok(Box::new(ICU4XPropertyValueNameToEnumMapper(
                 call_constructor_unstable!(
-                    HangulSyllableType::name_to_enum_mapper [r => Ok(r.static_to_owned())],
-                    HangulSyllableType::get_name_to_enum_mapper,
+                    icu_properties::HangulSyllableType::name_to_enum_mapper [r => Ok(r.static_to_owned())],
+                    icu_properties::HangulSyllableType::get_name_to_enum_mapper,
                     provider,
                 )?
                 .erase(),
@@ -117,8 +114,8 @@ pub mod ffi {
         ) -> Result<Box<ICU4XPropertyValueNameToEnumMapper>, ICU4XDataError> {
             Ok(Box::new(ICU4XPropertyValueNameToEnumMapper(
                 call_constructor_unstable!(
-                    EastAsianWidth::name_to_enum_mapper [r => Ok(r.static_to_owned())],
-                    EastAsianWidth::get_name_to_enum_mapper,
+                    icu_properties::EastAsianWidth::name_to_enum_mapper [r => Ok(r.static_to_owned())],
+                    icu_properties::EastAsianWidth::get_name_to_enum_mapper,
                     provider,
                 )?
                 .erase(),
@@ -137,8 +134,8 @@ pub mod ffi {
         ) -> Result<Box<ICU4XPropertyValueNameToEnumMapper>, ICU4XDataError> {
             Ok(Box::new(ICU4XPropertyValueNameToEnumMapper(
                 call_constructor_unstable!(
-                    BidiClass::name_to_enum_mapper [r => Ok(r.static_to_owned())],
-                    BidiClass::get_name_to_enum_mapper,
+                    icu_properties::BidiClass::name_to_enum_mapper [r => Ok(r.static_to_owned())],
+                    icu_properties::BidiClass::get_name_to_enum_mapper,
                     provider,
                 )?
                 .erase(),
@@ -160,8 +157,8 @@ pub mod ffi {
         ) -> Result<Box<ICU4XPropertyValueNameToEnumMapper>, ICU4XDataError> {
             Ok(Box::new(ICU4XPropertyValueNameToEnumMapper(
                 call_constructor_unstable!(
-                    IndicSyllabicCategory::name_to_enum_mapper [r => Ok(r.static_to_owned())],
-                    IndicSyllabicCategory::get_name_to_enum_mapper,
+                    icu_properties::IndicSyllabicCategory::name_to_enum_mapper [r => Ok(r.static_to_owned())],
+                    icu_properties::IndicSyllabicCategory::get_name_to_enum_mapper,
                     provider,
                 )?
                 .erase(),
@@ -180,8 +177,8 @@ pub mod ffi {
         ) -> Result<Box<ICU4XPropertyValueNameToEnumMapper>, ICU4XDataError> {
             Ok(Box::new(ICU4XPropertyValueNameToEnumMapper(
                 call_constructor_unstable!(
-                    LineBreak::name_to_enum_mapper [r => Ok(r.static_to_owned())],
-                    LineBreak::get_name_to_enum_mapper,
+                    icu_properties::LineBreak::name_to_enum_mapper [r => Ok(r.static_to_owned())],
+                    icu_properties::LineBreak::get_name_to_enum_mapper,
                     provider,
                 )?
                 .erase(),
@@ -203,8 +200,8 @@ pub mod ffi {
         ) -> Result<Box<ICU4XPropertyValueNameToEnumMapper>, ICU4XDataError> {
             Ok(Box::new(ICU4XPropertyValueNameToEnumMapper(
                 call_constructor_unstable!(
-                    GraphemeClusterBreak::name_to_enum_mapper [r => Ok(r.static_to_owned())],
-                    GraphemeClusterBreak::get_name_to_enum_mapper,
+                    icu_properties::GraphemeClusterBreak::name_to_enum_mapper [r => Ok(r.static_to_owned())],
+                    icu_properties::GraphemeClusterBreak::get_name_to_enum_mapper,
                     provider,
                 )?
                 .erase(),
@@ -223,8 +220,8 @@ pub mod ffi {
         ) -> Result<Box<ICU4XPropertyValueNameToEnumMapper>, ICU4XDataError> {
             Ok(Box::new(ICU4XPropertyValueNameToEnumMapper(
                 call_constructor_unstable!(
-                    WordBreak::name_to_enum_mapper [r => Ok(r.static_to_owned())],
-                    WordBreak::get_name_to_enum_mapper,
+                    icu_properties::WordBreak::name_to_enum_mapper [r => Ok(r.static_to_owned())],
+                    icu_properties::WordBreak::get_name_to_enum_mapper,
                     provider,
                 )?
                 .erase(),
@@ -243,8 +240,8 @@ pub mod ffi {
         ) -> Result<Box<ICU4XPropertyValueNameToEnumMapper>, ICU4XDataError> {
             Ok(Box::new(ICU4XPropertyValueNameToEnumMapper(
                 call_constructor_unstable!(
-                    SentenceBreak::name_to_enum_mapper [r => Ok(r.static_to_owned())],
-                    SentenceBreak::get_name_to_enum_mapper,
+                    icu_properties::SentenceBreak::name_to_enum_mapper [r => Ok(r.static_to_owned())],
+                    icu_properties::SentenceBreak::get_name_to_enum_mapper,
                     provider,
                 )?
                 .erase(),
@@ -259,8 +256,8 @@ pub mod ffi {
         ) -> Result<Box<ICU4XPropertyValueNameToEnumMapper>, ICU4XDataError> {
             Ok(Box::new(ICU4XPropertyValueNameToEnumMapper(
                 call_constructor_unstable!(
-                    Script::name_to_enum_mapper [r => Ok(r.static_to_owned())],
-                    Script::get_name_to_enum_mapper,
+                    icu_properties::Script::name_to_enum_mapper [r => Ok(r.static_to_owned())],
+                    icu_properties::Script::get_name_to_enum_mapper,
                     provider,
                 )?
                 .erase(),
@@ -278,7 +275,7 @@ pub mod ffi {
     )]
     #[diplomat::rust_link(icu::properties::names::PropertyValueNameToEnumMapper, Struct)]
     pub struct ICU4XGeneralCategoryNameToMaskMapper(
-        PropertyValueNameToEnumMapper<GeneralCategoryGroup>,
+        icu_properties::names::PropertyValueNameToEnumMapper<icu_properties::GeneralCategoryGroup>,
     );
 
     impl ICU4XGeneralCategoryNameToMaskMapper {
@@ -327,8 +324,8 @@ pub mod ffi {
         ) -> Result<Box<ICU4XGeneralCategoryNameToMaskMapper>, ICU4XDataError> {
             Ok(Box::new(ICU4XGeneralCategoryNameToMaskMapper(
                 call_constructor_unstable!(
-                    GeneralCategoryGroup::name_to_enum_mapper [r => Ok(r.static_to_owned())],
-                    GeneralCategoryGroup::get_name_to_enum_mapper,
+                    icu_properties::GeneralCategoryGroup::name_to_enum_mapper [r => Ok(r.static_to_owned())],
+                    icu_properties::GeneralCategoryGroup::get_name_to_enum_mapper,
                     provider,
                 )?,
             )))
