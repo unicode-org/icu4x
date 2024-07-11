@@ -5,6 +5,7 @@
 use ffi::*;
 
 #[diplomat::bridge]
+#[diplomat::abi_rename = "ICU4X{0}"]
 pub mod ffi {
     use alloc::boxed::Box;
 

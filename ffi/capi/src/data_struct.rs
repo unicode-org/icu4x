@@ -5,6 +5,7 @@
 #![cfg(feature = "icu_decimal")]
 
 #[diplomat::bridge]
+#[diplomat::abi_rename = "ICU4X{0}"]
 pub mod ffi {
     use alloc::borrow::Cow;
     use alloc::boxed::Box;
