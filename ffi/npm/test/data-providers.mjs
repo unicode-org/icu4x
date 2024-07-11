@@ -4,15 +4,15 @@
 
 import test from 'ava';
 
-import { ICU4XFixedDecimal, ICU4XLocale, ICU4XDataProvider, ICU4XFixedDecimalFormatter } from "icu4x"
+import { FixedDecimal, Locale, DataProvider, FixedDecimalFormatter } from "icu4x"
 
 test("use create_compiled to format a simple decimal", async t => {
-  const locale = ICU4XLocale.create_from_string("bn");
-  const provider = ICU4XDataProvider.create_compiled();
+  const locale = Locale.create_from_string("bn");
+  const provider = DataProvider.create_compiled();
 
-  const format = ICU4XFixedDecimalFormatter.create_with_grouping_strategy(provider, locale, "Auto");
+  const format = FixedDecimalFormatter.create_with_grouping_strategy(provider, locale, "Auto");
 
-  const decimal = ICU4XFixedDecimal.create_from_i32(1234);
+  const decimal = FixedDecimal.create_from_i32(1234);
   decimal.multiply_pow10(-2);
 
   t.is(format.format(decimal), "১২.৩৪");

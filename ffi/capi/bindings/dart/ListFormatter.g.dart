@@ -22,7 +22,7 @@ final class ListFormatter implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XListFormatter_destroy));
 
-  /// Construct a new ICU4XListFormatter instance for And patterns
+  /// Construct a new ListFormatter instance for And patterns
   ///
   /// See the [Rust documentation for `try_new_and_with_length`](https://docs.rs/icu/latest/icu/list/struct.ListFormatter.html#method.try_new_and_with_length) for more information.
   ///
@@ -35,7 +35,7 @@ final class ListFormatter implements ffi.Finalizable {
     return ListFormatter._fromFfi(result.union.ok, []);
   }
 
-  /// Construct a new ICU4XListFormatter instance for And patterns
+  /// Construct a new ListFormatter instance for And patterns
   ///
   /// See the [Rust documentation for `try_new_or_with_length`](https://docs.rs/icu/latest/icu/list/struct.ListFormatter.html#method.try_new_or_with_length) for more information.
   ///
@@ -48,7 +48,7 @@ final class ListFormatter implements ffi.Finalizable {
     return ListFormatter._fromFfi(result.union.ok, []);
   }
 
-  /// Construct a new ICU4XListFormatter instance for And patterns
+  /// Construct a new ListFormatter instance for And patterns
   ///
   /// See the [Rust documentation for `try_new_unit_with_length`](https://docs.rs/icu/latest/icu/list/struct.ListFormatter.html#method.try_new_unit_with_length) for more information.
   ///

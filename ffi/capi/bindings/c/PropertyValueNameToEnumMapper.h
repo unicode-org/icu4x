@@ -1,0 +1,61 @@
+#ifndef PropertyValueNameToEnumMapper_H
+#define PropertyValueNameToEnumMapper_H
+
+#include <stdio.h>
+#include <stdint.h>
+#include <stddef.h>
+#include <stdbool.h>
+#include "diplomat_runtime.h"
+
+#include "DataError.d.h"
+#include "DataProvider.d.h"
+
+#include "PropertyValueNameToEnumMapper.d.h"
+
+
+
+
+
+
+int16_t ICU4XPropertyValueNameToEnumMapper_get_strict(const PropertyValueNameToEnumMapper* self, const char* name_data, size_t name_len);
+
+int16_t ICU4XPropertyValueNameToEnumMapper_get_loose(const PropertyValueNameToEnumMapper* self, const char* name_data, size_t name_len);
+
+typedef struct ICU4XPropertyValueNameToEnumMapper_load_general_category_result {union {PropertyValueNameToEnumMapper* ok; DataError err;}; bool is_ok;} ICU4XPropertyValueNameToEnumMapper_load_general_category_result;
+ICU4XPropertyValueNameToEnumMapper_load_general_category_result ICU4XPropertyValueNameToEnumMapper_load_general_category(const DataProvider* provider);
+
+typedef struct ICU4XPropertyValueNameToEnumMapper_load_hangul_syllable_type_result {union {PropertyValueNameToEnumMapper* ok; DataError err;}; bool is_ok;} ICU4XPropertyValueNameToEnumMapper_load_hangul_syllable_type_result;
+ICU4XPropertyValueNameToEnumMapper_load_hangul_syllable_type_result ICU4XPropertyValueNameToEnumMapper_load_hangul_syllable_type(const DataProvider* provider);
+
+typedef struct ICU4XPropertyValueNameToEnumMapper_load_east_asian_width_result {union {PropertyValueNameToEnumMapper* ok; DataError err;}; bool is_ok;} ICU4XPropertyValueNameToEnumMapper_load_east_asian_width_result;
+ICU4XPropertyValueNameToEnumMapper_load_east_asian_width_result ICU4XPropertyValueNameToEnumMapper_load_east_asian_width(const DataProvider* provider);
+
+typedef struct ICU4XPropertyValueNameToEnumMapper_load_bidi_class_result {union {PropertyValueNameToEnumMapper* ok; DataError err;}; bool is_ok;} ICU4XPropertyValueNameToEnumMapper_load_bidi_class_result;
+ICU4XPropertyValueNameToEnumMapper_load_bidi_class_result ICU4XPropertyValueNameToEnumMapper_load_bidi_class(const DataProvider* provider);
+
+typedef struct ICU4XPropertyValueNameToEnumMapper_load_indic_syllabic_category_result {union {PropertyValueNameToEnumMapper* ok; DataError err;}; bool is_ok;} ICU4XPropertyValueNameToEnumMapper_load_indic_syllabic_category_result;
+ICU4XPropertyValueNameToEnumMapper_load_indic_syllabic_category_result ICU4XPropertyValueNameToEnumMapper_load_indic_syllabic_category(const DataProvider* provider);
+
+typedef struct ICU4XPropertyValueNameToEnumMapper_load_line_break_result {union {PropertyValueNameToEnumMapper* ok; DataError err;}; bool is_ok;} ICU4XPropertyValueNameToEnumMapper_load_line_break_result;
+ICU4XPropertyValueNameToEnumMapper_load_line_break_result ICU4XPropertyValueNameToEnumMapper_load_line_break(const DataProvider* provider);
+
+typedef struct ICU4XPropertyValueNameToEnumMapper_load_grapheme_cluster_break_result {union {PropertyValueNameToEnumMapper* ok; DataError err;}; bool is_ok;} ICU4XPropertyValueNameToEnumMapper_load_grapheme_cluster_break_result;
+ICU4XPropertyValueNameToEnumMapper_load_grapheme_cluster_break_result ICU4XPropertyValueNameToEnumMapper_load_grapheme_cluster_break(const DataProvider* provider);
+
+typedef struct ICU4XPropertyValueNameToEnumMapper_load_word_break_result {union {PropertyValueNameToEnumMapper* ok; DataError err;}; bool is_ok;} ICU4XPropertyValueNameToEnumMapper_load_word_break_result;
+ICU4XPropertyValueNameToEnumMapper_load_word_break_result ICU4XPropertyValueNameToEnumMapper_load_word_break(const DataProvider* provider);
+
+typedef struct ICU4XPropertyValueNameToEnumMapper_load_sentence_break_result {union {PropertyValueNameToEnumMapper* ok; DataError err;}; bool is_ok;} ICU4XPropertyValueNameToEnumMapper_load_sentence_break_result;
+ICU4XPropertyValueNameToEnumMapper_load_sentence_break_result ICU4XPropertyValueNameToEnumMapper_load_sentence_break(const DataProvider* provider);
+
+typedef struct ICU4XPropertyValueNameToEnumMapper_load_script_result {union {PropertyValueNameToEnumMapper* ok; DataError err;}; bool is_ok;} ICU4XPropertyValueNameToEnumMapper_load_script_result;
+ICU4XPropertyValueNameToEnumMapper_load_script_result ICU4XPropertyValueNameToEnumMapper_load_script(const DataProvider* provider);
+
+
+void ICU4XPropertyValueNameToEnumMapper_destroy(PropertyValueNameToEnumMapper* self);
+
+
+
+
+
+#endif // PropertyValueNameToEnumMapper_H

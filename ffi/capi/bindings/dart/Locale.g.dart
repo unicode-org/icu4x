@@ -168,7 +168,7 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
 
   /// Best effort locale canonicalizer that doesn't need any data
   ///
-  /// Use ICU4XLocaleCanonicalizer for better control and functionality
+  /// Use LocaleCanonicalizer for better control and functionality
   ///
   /// See the [Rust documentation for `canonicalize`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.canonicalize) for more information.
   ///

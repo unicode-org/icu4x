@@ -6,7 +6,7 @@ part of 'lib.g.dart';
 ///
 /// This can be used via `maybe_calculate_metazone()` on [`CustomTimeZone`].
 ///
-/// [`CustomTimeZone`]: crate::timezone::ffi::ICU4XCustomTimeZone
+/// [`CustomTimeZone`]: crate::timezone::ffi::CustomTimeZone
 ///
 /// See the [Rust documentation for `MetazoneCalculator`](https://docs.rs/icu/latest/icu/timezone/struct.MetazoneCalculator.html) for more information.
 final class MetazoneCalculator implements ffi.Finalizable {

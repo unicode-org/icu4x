@@ -6,8 +6,8 @@
 // from a work log into human readable dates and times.
 
 #![no_main] // https://github.com/unicode-org/icu4x/issues/395
-
-icu_benchmark_macros::static_setup!();
+icu_benchmark_macros::instrument!();
+use icu_benchmark_macros::println;
 
 use icu_calendar::{DateTime, Gregorian};
 use icu_datetime::{options::length, TypedDateTimeFormatter};
@@ -26,41 +26,20 @@ const DATES_ISO: &[(i32, u8, u8, u8, u8, u8)] = &[
     (2033, 5, 17, 20, 33, 20),
 ];
 
-fn print(_input: &str, _value: Option<usize>) {
-    #[cfg(debug_assertions)]
-    if let Some(value) = _value {
-        println!("{}", _input.replace("{}", &value.to_string()));
-    } else {
-        println!("{_input}");
-    }
-}
-
-#[no_mangle]
-fn main(_argc: isize, _argv: *const *const u8) -> isize {
-    icu_benchmark_macros::main_setup!();
-
-    let dates = DATES_ISO
-        .iter()
-        .copied()
-        .map(|(y, m, d, h, min, s)| DateTime::try_new_gregorian_datetime(y, m, d, h, min, s))
-        .collect::<Result<Vec<DateTime<Gregorian>>, _>>()
-        .expect("Failed to parse dates.");
-
+fn main() {
     let mut options = length::Bag::default();
-
     options.date = Some(length::Date::Medium);
     options.time = Some(length::Time::Short);
 
     let dtf = TypedDateTimeFormatter::<Gregorian>::try_new(&locale!("en").into(), options.into())
         .expect("Failed to create TypedDateTimeFormatter instance.");
-    {
-        print("\n====== Work Log (en) example ============", None);
 
-        for (idx, date) in dates.iter().enumerate() {
-            let fdt = dtf.format(date);
-            println!("{idx}) {fdt}");
-        }
+    println!("\n====== Work Log (en) example ============");
+
+    for (idx, &(year, month, day, hour, minute, second)) in DATES_ISO.iter().enumerate() {
+        let date = DateTime::try_new_gregorian_datetime(year, month, day, hour, minute, second)
+            .expect("datetime should parse");
+        let fdt = dtf.format(&date);
+        println!("{idx}) {}", fdt);
     }
-
-    0
 }

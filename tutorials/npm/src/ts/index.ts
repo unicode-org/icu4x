@@ -1,15 +1,15 @@
-import { FFIError, ICU4XError } from "icu4x";
+import { FFIError, Error } from "icu4x";
 
 export type Result<T> =
   | { ok: true; value: T }
-  | { ok: false; error: FFIError<ICU4XError> };
+  | { ok: false; error: FFIError<Error> };
 
 
 export function Ok<T>(value: T): Result<T> {
     return { ok: true, value };
 }
 
-export function Err<T>(error: FFIError<ICU4XError>): Result<T> {
+export function Err<T>(error: FFIError<Error>): Result<T> {
     return { ok: false, error };
 }
 

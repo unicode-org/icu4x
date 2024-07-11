@@ -4,12 +4,12 @@
 
 #![cfg(feature = "icu_decimal")]
 
-use alloc::borrow::Cow;
-
 #[diplomat::bridge]
+#[diplomat::abi_rename = "ICU4X{0}"]
 pub mod ffi {
-
+    use alloc::borrow::Cow;
     use alloc::boxed::Box;
+
     use icu_provider::any::AnyPayload;
     use icu_provider::DataPayload;
 
@@ -18,9 +18,9 @@ pub mod ffi {
     ///
     /// This can be used to construct a StructDataProvider.
     #[diplomat::attr(dart, disable)]
-    pub struct ICU4XDataStruct(pub(crate) AnyPayload);
+    pub struct DataStruct(pub(crate) AnyPayload);
 
-    impl ICU4XDataStruct {
+    impl DataStruct {
         /// Construct a new DecimalSymbolsV1 data struct.
         ///
         /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
@@ -41,8 +41,15 @@ pub mod ffi {
             secondary_group_size: u8,
             min_group_size: u8,
             digits: &[DiplomatChar],
-        ) -> Option<Box<ICU4XDataStruct>> {
-            use super::str_to_cow;
+        ) -> Option<Box<DataStruct>> {
+            fn str_to_cow(s: &diplomat_runtime::DiplomatStr) -> Cow<'static, str> {
+                if s.is_empty() {
+                    Cow::default()
+                } else {
+                    Cow::Owned(alloc::string::String::from_utf8_lossy(s).into_owned())
+                }
+            }
+
             use icu_decimal::provider::{
                 AffixesV1, DecimalSymbolsV1, DecimalSymbolsV1Marker, GroupingSizesV1,
             };
@@ -78,17 +85,9 @@ pub mod ffi {
                 digits,
             };
 
-            Some(Box::new(ICU4XDataStruct(
+            Some(Box::new(DataStruct(
                 DataPayload::<DecimalSymbolsV1Marker>::from_owned(symbols).wrap_into_any_payload(),
             )))
         }
-    }
-}
-
-fn str_to_cow(s: &diplomat_runtime::DiplomatStr) -> Cow<'static, str> {
-    if s.is_empty() {
-        Cow::default()
-    } else {
-        Cow::Owned(alloc::string::String::from_utf8_lossy(s).into_owned())
     }
 }

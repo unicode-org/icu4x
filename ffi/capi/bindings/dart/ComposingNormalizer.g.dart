@@ -22,7 +22,7 @@ final class ComposingNormalizer implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XComposingNormalizer_destroy));
 
-  /// Construct a new ICU4XComposingNormalizer instance for NFC
+  /// Construct a new ComposingNormalizer instance for NFC
   ///
   /// See the [Rust documentation for `new_nfc`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html#method.new_nfc) for more information.
   ///
@@ -35,7 +35,7 @@ final class ComposingNormalizer implements ffi.Finalizable {
     return ComposingNormalizer._fromFfi(result.union.ok, []);
   }
 
-  /// Construct a new ICU4XComposingNormalizer instance for NFKC
+  /// Construct a new ComposingNormalizer instance for NFKC
   ///
   /// See the [Rust documentation for `new_nfkc`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html#method.new_nfkc) for more information.
   ///

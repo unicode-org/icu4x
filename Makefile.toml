@@ -44,18 +44,21 @@ dependencies = [
 [tasks.check]
 description = "Check ICU4X build with no features (covered in CI via cargo make check-all-features)"
 category = "ICU4X Development"
+env = { ICU4X_DATA_DIR = "../stubdata" }
 command = "cargo"
 args = ["check", "--all-targets", "--all-features"]
 
 [tasks.check-no-features]
 description = "Check ICU4X build with no features (covered in CI via cargo make check-all-features)"
 category = "ICU4X Development"
+env = { ICU4X_DATA_DIR = "../stubdata" }
 command = "cargo"
 args = ["check", "--no-default-features"]
 
 [tasks.ci-job-msrv-check]
 description = "Run all tests for the CI 'check' job"
 category = "ICU4X Development"
+env = { ICU4X_DATA_DIR = "../stubdata" }
 script_runner = "@duckscript"
 script = '''
 exec --fail-on-error rustup install 1.70 --profile minimal
@@ -137,6 +140,7 @@ dependencies = [
 
 [tasks.ci-job-nostd]
 description = "Run all tests for the CI 'test-nostd' job"
+env = { ICU4X_DATA_DIR = "../stubdata" }
 category = "CI"
 dependencies = [
     "check-nostd",
@@ -163,6 +167,7 @@ dependencies = [
 [tasks.ci-job-msrv-features-1]
 description = "Run all tests for the CI 'msrv-features-1' job"
 category = "CI"
+env = { ICU4X_DATA_DIR = "../stubdata" }
 script_runner = "@duckscript"
 script = '''
 exec --fail-on-error rustup install 1.70 --profile minimal
@@ -172,6 +177,7 @@ exec --fail-on-error cargo +1.70 make check-all-features-chunked 1
 [tasks.ci-job-msrv-features-2]
 description = "Run all tests for the CI 'msrv-features-2' job"
 category = "CI"
+env = { ICU4X_DATA_DIR = "../stubdata" }
 script_runner = "@duckscript"
 script = '''
 exec --fail-on-error rustup install 1.70 --profile minimal
@@ -181,6 +187,7 @@ exec --fail-on-error cargo +1.70 make check-all-features-chunked 2
 [tasks.ci-job-msrv-features-3]
 description = "Run all tests for the CI 'msrv-features-3' job"
 category = "CI"
+env = { ICU4X_DATA_DIR = "../stubdata" }
 script_runner = "@duckscript"
 script = '''
 exec --fail-on-error rustup install 1.70 --profile minimal
@@ -216,6 +223,7 @@ dependencies = [
 [tasks.ci-job-clippy]
 description = "Run all tests for the CI 'clippy' job"
 category = "CI"
+env = { ICU4X_DATA_DIR = "../stubdata" }
 dependencies = [
     "clippy-all",
 ]
@@ -223,7 +231,7 @@ dependencies = [
 [tasks.ci-job-doc]
 description = "Runs rustdoc generation for the CI 'doc' job"
 category = "CI"
-env = { RUSTDOCFLAGS = "-Dwarnings" }
+env = { RUSTDOCFLAGS = "-Dwarnings", ICU4X_DATA_DIR = "../stubdata" }
 command = "cargo"
 args = ["doc", "--workspace", "--release", "--all-features", "--no-deps", "--lib"]
 
