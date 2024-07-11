@@ -535,7 +535,8 @@ pub trait HasConstZoneComponent {
 
 // TODO: Add WeekCalculator and FixedDecimalFormatter optional bindings here
 
-/// A trait associating types for input to the format function for date formatting.
+/// A trait associating types for date formatting in any calendar
+/// (input types only).
 pub trait DateInputMarkers: private::Sealed {
     /// Marker for resolving the year input field.
     type YearInput: Into<Option<FormattableYear>>;
@@ -551,8 +552,8 @@ pub trait DateInputMarkers: private::Sealed {
     type AnyCalendarKindInput: Into<Option<AnyCalendarKind>>;
 }
 
-/// A trait associating types implementing various other traits
-/// required for date formatting in a specific calendar.
+/// A trait associating types for date formatting in a specific calendar
+/// (data markers only).
 pub trait TypedDateDataMarkers<C>: private::Sealed {
     /// Marker for loading date skeleton patterns.
     type DateSkeletonPatternsV1Marker: DataMarker<Yokeable = PackedSkeletonDataV1<'static>>;
@@ -564,8 +565,8 @@ pub trait TypedDateDataMarkers<C>: private::Sealed {
     type WeekdayNamesV1Marker: DataMarker<Yokeable = LinearNamesV1<'static>>;
 }
 
-/// A trait associating types implementing various other traits
-/// required for date formatting in any calendar.
+/// A trait associating types for date formatting in any calendar
+/// (data markers only).
 pub trait DateDataMarkers: private::Sealed {
     /// Cross-calendar data markers for date skeleta.
     type Skel: CalMarkers<SkeletaV1Marker>;
@@ -577,8 +578,8 @@ pub trait DateDataMarkers: private::Sealed {
     type WeekdayNamesV1Marker: DataMarker<Yokeable = LinearNamesV1<'static>>;
 }
 
-/// A trait associating types implementing various other traits
-/// required for time formatting.
+/// A trait associating types for time formatting
+/// (input types and data markers).
 pub trait TimeMarkers: private::Sealed {
     /// Marker for resolving the day-of-month input field.
     type HourInput: Into<Option<IsoHour>>;
@@ -594,8 +595,8 @@ pub trait TimeMarkers: private::Sealed {
     type DayPeriodNamesV1Marker: DataMarker<Yokeable = LinearNamesV1<'static>>;
 }
 
-/// A trait associating types implementing various other traits
-/// required for time zone formatting.
+/// A trait associating types for time zone formatting
+/// (input types and data markers).
 pub trait ZoneMarkers: private::Sealed {
     /// Marker for resolving the time zone input field.
     type TimeZoneInput: Into<Option<CustomTimeZone>>;
@@ -617,10 +618,16 @@ pub trait ZoneMarkers: private::Sealed {
 /// required for datetime formatting.
 pub trait DateTimeMarkers: private::Sealed + DateTimeNamesMarker {
     /// Associated types for date formatting.
+    ///
+    /// Should implement [`DateDataMarkers`], [`TypedDateDataMarkers`], and [`DateInputMarkers`].
     type D;
     /// Associated types for time formatting.
+    ///
+    /// Should implement [`TimeMarkers`].
     type T;
     /// Associated types for time zone formatting.
+    ///
+    /// Should implement [`ZoneMarkers`].
     type Z;
     /// Marker for loading the date/time glue pattern.
     type GluePatternV1Marker: DataMarker<Yokeable = GluePatternV1<'static>>;
