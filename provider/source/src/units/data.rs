@@ -39,7 +39,7 @@ impl DataProvider<UnitsDisplayNameV1Marker> for SourceDataProvider {
             "short" => &units_format_data.short,
             "narrow" => &units_format_data.narrow,
             _ => {
-                return Err(DataErrorKind::IdentifierNotFound
+                return Err(DataErrorKind::InvalidRequest
                     .into_error()
                     .with_debug_context(length))
             }
@@ -55,7 +55,11 @@ impl DataProvider<UnitsDisplayNameV1Marker> for SourceDataProvider {
                 .filter(|&rest| rest == unit)
                 .map(|_| patterns)
         })
-        .ok_or_else(|| DataErrorKind::InvalidRequest.into_error())?;
+        .ok_or_else(|| {
+            DataErrorKind::InvalidRequest
+                .into_error()
+                .with_debug_context(length)
+        })?;
 
         for (count, unit) in [
             (Count::One, unit_patterns.one.as_deref()),
