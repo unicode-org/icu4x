@@ -10,13 +10,15 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
     typedef enum FixedDecimalParseError {
       FixedDecimalParseError_Unknown = 0,
       FixedDecimalParseError_Limit = 1,
       FixedDecimalParseError_Syntax = 2,
     } FixedDecimalParseError;
-}
+} // namespace capi
+} // namespace
 
 class FixedDecimalParseError {
 public:
@@ -33,8 +35,8 @@ public:
   // Prevent usage as boolean value
   explicit operator bool() const = delete;
 
-  inline capi::FixedDecimalParseError AsFFI() const;
-  inline static FixedDecimalParseError FromFFI(capi::FixedDecimalParseError c_enum);
+  inline diplomat::capi::FixedDecimalParseError AsFFI() const;
+  inline static FixedDecimalParseError FromFFI(diplomat::capi::FixedDecimalParseError c_enum);
 private:
     Value value;
 };

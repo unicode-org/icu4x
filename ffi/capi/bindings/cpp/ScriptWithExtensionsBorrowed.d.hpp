@@ -9,13 +9,17 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 
+namespace capi {typedef struct CodePointSetData CodePointSetData; }
 class CodePointSetData;
+namespace capi {typedef struct ScriptExtensionsSet ScriptExtensionsSet; }
 class ScriptExtensionsSet;
 
 
+namespace diplomat {
 namespace capi {
     typedef struct ScriptWithExtensionsBorrowed ScriptWithExtensionsBorrowed;
-}
+} // namespace capi
+} // namespace
 
 class ScriptWithExtensionsBorrowed {
 public:
@@ -28,10 +32,10 @@ public:
 
   inline std::unique_ptr<CodePointSetData> get_script_extensions_set(uint16_t script) const;
 
-  inline const capi::ScriptWithExtensionsBorrowed* AsFFI() const;
-  inline capi::ScriptWithExtensionsBorrowed* AsFFI();
-  inline static const ScriptWithExtensionsBorrowed* FromFFI(const capi::ScriptWithExtensionsBorrowed* ptr);
-  inline static ScriptWithExtensionsBorrowed* FromFFI(capi::ScriptWithExtensionsBorrowed* ptr);
+  inline const diplomat::capi::ScriptWithExtensionsBorrowed* AsFFI() const;
+  inline diplomat::capi::ScriptWithExtensionsBorrowed* AsFFI();
+  inline static const ScriptWithExtensionsBorrowed* FromFFI(const diplomat::capi::ScriptWithExtensionsBorrowed* ptr);
+  inline static ScriptWithExtensionsBorrowed* FromFFI(diplomat::capi::ScriptWithExtensionsBorrowed* ptr);
   inline static void operator delete(void* ptr);
 private:
   ScriptWithExtensionsBorrowed() = delete;

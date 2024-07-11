@@ -17,21 +17,24 @@ class IsoTimeZoneMinuteDisplay;
 class IsoTimeZoneSecondDisplay;
 
 
+namespace diplomat {
 namespace capi {
     typedef struct IsoTimeZoneOptions {
-      IsoTimeZoneFormat format;
-      IsoTimeZoneMinuteDisplay minutes;
-      IsoTimeZoneSecondDisplay seconds;
+      diplomat::capi::IsoTimeZoneFormat format;
+      diplomat::capi::IsoTimeZoneMinuteDisplay minutes;
+      diplomat::capi::IsoTimeZoneSecondDisplay seconds;
     } IsoTimeZoneOptions;
-}
+} // namespace capi
+} // namespace
+
 
 struct IsoTimeZoneOptions {
   IsoTimeZoneFormat format;
   IsoTimeZoneMinuteDisplay minutes;
   IsoTimeZoneSecondDisplay seconds;
 
-  inline capi::IsoTimeZoneOptions AsFFI() const;
-  inline static IsoTimeZoneOptions FromFFI(capi::IsoTimeZoneOptions c_struct);
+  inline diplomat::capi::IsoTimeZoneOptions AsFFI() const;
+  inline static IsoTimeZoneOptions FromFFI(diplomat::capi::IsoTimeZoneOptions c_struct);
 };
 
 

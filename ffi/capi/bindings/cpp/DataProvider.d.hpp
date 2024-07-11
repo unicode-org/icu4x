@@ -8,15 +8,17 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "DataError.d.hpp"
 
+namespace capi {typedef struct LocaleFallbacker LocaleFallbacker; }
 class LocaleFallbacker;
 class DataError;
 
 
+namespace diplomat {
 namespace capi {
     typedef struct DataProvider DataProvider;
-}
+} // namespace capi
+} // namespace
 
 class DataProvider {
 public:
@@ -35,10 +37,10 @@ public:
 
   inline diplomat::result<std::monostate, DataError> enable_locale_fallback_with(const LocaleFallbacker& fallbacker);
 
-  inline const capi::DataProvider* AsFFI() const;
-  inline capi::DataProvider* AsFFI();
-  inline static const DataProvider* FromFFI(const capi::DataProvider* ptr);
-  inline static DataProvider* FromFFI(capi::DataProvider* ptr);
+  inline const diplomat::capi::DataProvider* AsFFI() const;
+  inline diplomat::capi::DataProvider* AsFFI();
+  inline static const DataProvider* FromFFI(const diplomat::capi::DataProvider* ptr);
+  inline static DataProvider* FromFFI(diplomat::capi::DataProvider* ptr);
   inline static void operator delete(void* ptr);
 private:
   DataProvider() = delete;

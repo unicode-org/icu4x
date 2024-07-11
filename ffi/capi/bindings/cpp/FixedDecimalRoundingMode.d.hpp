@@ -10,6 +10,7 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
     typedef enum FixedDecimalRoundingMode {
       FixedDecimalRoundingMode_Ceil = 0,
@@ -22,7 +23,8 @@ namespace capi {
       FixedDecimalRoundingMode_HalfTrunc = 7,
       FixedDecimalRoundingMode_HalfEven = 8,
     } FixedDecimalRoundingMode;
-}
+} // namespace capi
+} // namespace
 
 class FixedDecimalRoundingMode {
 public:
@@ -45,8 +47,8 @@ public:
   // Prevent usage as boolean value
   explicit operator bool() const = delete;
 
-  inline capi::FixedDecimalRoundingMode AsFFI() const;
-  inline static FixedDecimalRoundingMode FromFFI(capi::FixedDecimalRoundingMode c_enum);
+  inline diplomat::capi::FixedDecimalRoundingMode AsFFI() const;
+  inline static FixedDecimalRoundingMode FromFFI(diplomat::capi::FixedDecimalRoundingMode c_enum);
 private:
     Value value;
 };

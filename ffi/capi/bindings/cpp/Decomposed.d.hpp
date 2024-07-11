@@ -10,19 +10,22 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
     typedef struct Decomposed {
       char32_t first;
       char32_t second;
     } Decomposed;
-}
+} // namespace capi
+} // namespace
+
 
 struct Decomposed {
   char32_t first;
   char32_t second;
 
-  inline capi::Decomposed AsFFI() const;
-  inline static Decomposed FromFFI(capi::Decomposed c_struct);
+  inline diplomat::capi::Decomposed AsFFI() const;
+  inline static Decomposed FromFFI(diplomat::capi::Decomposed c_struct);
 };
 
 

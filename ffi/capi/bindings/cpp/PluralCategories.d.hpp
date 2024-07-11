@@ -10,6 +10,7 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
     typedef struct PluralCategories {
       bool zero;
@@ -19,7 +20,9 @@ namespace capi {
       bool many;
       bool other;
     } PluralCategories;
-}
+} // namespace capi
+} // namespace
+
 
 struct PluralCategories {
   bool zero;
@@ -29,8 +32,8 @@ struct PluralCategories {
   bool many;
   bool other;
 
-  inline capi::PluralCategories AsFFI() const;
-  inline static PluralCategories FromFFI(capi::PluralCategories c_struct);
+  inline diplomat::capi::PluralCategories AsFFI() const;
+  inline static PluralCategories FromFFI(diplomat::capi::PluralCategories c_struct);
 };
 
 

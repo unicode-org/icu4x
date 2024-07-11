@@ -8,14 +8,15 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "LocaleParseError.d.hpp"
 
 class LocaleParseError;
 
 
+namespace diplomat {
 namespace capi {
     typedef struct Locale Locale;
-}
+} // namespace capi
+} // namespace
 
 class Locale {
 public:
@@ -52,10 +53,10 @@ public:
 
   inline int8_t total_cmp_(const Locale& other) const;
 
-  inline const capi::Locale* AsFFI() const;
-  inline capi::Locale* AsFFI();
-  inline static const Locale* FromFFI(const capi::Locale* ptr);
-  inline static Locale* FromFFI(capi::Locale* ptr);
+  inline const diplomat::capi::Locale* AsFFI() const;
+  inline diplomat::capi::Locale* AsFFI();
+  inline static const Locale* FromFFI(const diplomat::capi::Locale* ptr);
+  inline static Locale* FromFFI(diplomat::capi::Locale* ptr);
   inline static void operator delete(void* ptr);
 private:
   Locale() = delete;

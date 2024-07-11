@@ -10,11 +10,13 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
     typedef enum FixedDecimalLimitError {
       FixedDecimalLimitError_TodoZst = 0,
     } FixedDecimalLimitError;
-}
+} // namespace capi
+} // namespace
 
 class FixedDecimalLimitError {
 public:
@@ -29,8 +31,8 @@ public:
   // Prevent usage as boolean value
   explicit operator bool() const = delete;
 
-  inline capi::FixedDecimalLimitError AsFFI() const;
-  inline static FixedDecimalLimitError FromFFI(capi::FixedDecimalLimitError c_enum);
+  inline diplomat::capi::FixedDecimalLimitError AsFFI() const;
+  inline static FixedDecimalLimitError FromFFI(diplomat::capi::FixedDecimalLimitError c_enum);
 private:
     Value value;
 };

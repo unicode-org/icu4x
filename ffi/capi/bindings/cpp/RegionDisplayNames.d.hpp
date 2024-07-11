@@ -8,18 +8,20 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "DataError.d.hpp"
-#include "LocaleParseError.d.hpp"
 
+namespace capi {typedef struct DataProvider DataProvider; }
 class DataProvider;
+namespace capi {typedef struct Locale Locale; }
 class Locale;
 class DataError;
 class LocaleParseError;
 
 
+namespace diplomat {
 namespace capi {
     typedef struct RegionDisplayNames RegionDisplayNames;
-}
+} // namespace capi
+} // namespace
 
 class RegionDisplayNames {
 public:
@@ -28,10 +30,10 @@ public:
 
   inline diplomat::result<std::string, LocaleParseError> of(std::string_view region) const;
 
-  inline const capi::RegionDisplayNames* AsFFI() const;
-  inline capi::RegionDisplayNames* AsFFI();
-  inline static const RegionDisplayNames* FromFFI(const capi::RegionDisplayNames* ptr);
-  inline static RegionDisplayNames* FromFFI(capi::RegionDisplayNames* ptr);
+  inline const diplomat::capi::RegionDisplayNames* AsFFI() const;
+  inline diplomat::capi::RegionDisplayNames* AsFFI();
+  inline static const RegionDisplayNames* FromFFI(const diplomat::capi::RegionDisplayNames* ptr);
+  inline static RegionDisplayNames* FromFFI(diplomat::capi::RegionDisplayNames* ptr);
   inline static void operator delete(void* ptr);
 private:
   RegionDisplayNames() = delete;

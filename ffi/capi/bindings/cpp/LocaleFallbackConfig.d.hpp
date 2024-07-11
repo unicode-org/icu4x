@@ -15,21 +15,24 @@ class LocaleFallbackPriority;
 class LocaleFallbackSupplement;
 
 
+namespace diplomat {
 namespace capi {
     typedef struct LocaleFallbackConfig {
-      LocaleFallbackPriority priority;
+      diplomat::capi::LocaleFallbackPriority priority;
       DiplomatStringView extension_key;
-      LocaleFallbackSupplement fallback_supplement;
+      diplomat::capi::LocaleFallbackSupplement fallback_supplement;
     } LocaleFallbackConfig;
-}
+} // namespace capi
+} // namespace
+
 
 struct LocaleFallbackConfig {
   LocaleFallbackPriority priority;
   std::string_view extension_key;
   LocaleFallbackSupplement fallback_supplement;
 
-  inline capi::LocaleFallbackConfig AsFFI() const;
-  inline static LocaleFallbackConfig FromFFI(capi::LocaleFallbackConfig c_struct);
+  inline diplomat::capi::LocaleFallbackConfig AsFFI() const;
+  inline static LocaleFallbackConfig FromFFI(diplomat::capi::LocaleFallbackConfig c_struct);
 };
 
 

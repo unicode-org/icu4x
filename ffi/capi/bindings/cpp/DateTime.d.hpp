@@ -8,23 +8,27 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "CalendarError.d.hpp"
-#include "IsoWeekday.d.hpp"
-#include "WeekOf.d.hpp"
 
+namespace capi {typedef struct Calendar Calendar; }
 class Calendar;
+namespace capi {typedef struct Date Date; }
 class Date;
+namespace capi {typedef struct IsoDateTime IsoDateTime; }
 class IsoDateTime;
+namespace capi {typedef struct Time Time; }
 class Time;
+namespace capi {typedef struct WeekCalculator WeekCalculator; }
 class WeekCalculator;
 struct WeekOf;
 class CalendarError;
 class IsoWeekday;
 
 
+namespace diplomat {
 namespace capi {
     typedef struct DateTime DateTime;
-}
+} // namespace capi
+} // namespace
 
 class DateTime {
 public:
@@ -77,10 +81,10 @@ public:
 
   inline std::unique_ptr<Calendar> calendar() const;
 
-  inline const capi::DateTime* AsFFI() const;
-  inline capi::DateTime* AsFFI();
-  inline static const DateTime* FromFFI(const capi::DateTime* ptr);
-  inline static DateTime* FromFFI(capi::DateTime* ptr);
+  inline const diplomat::capi::DateTime* AsFFI() const;
+  inline diplomat::capi::DateTime* AsFFI();
+  inline static const DateTime* FromFFI(const diplomat::capi::DateTime* ptr);
+  inline static DateTime* FromFFI(diplomat::capi::DateTime* ptr);
   inline static void operator delete(void* ptr);
 private:
   DateTime() = delete;

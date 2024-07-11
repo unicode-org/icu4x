@@ -10,13 +10,15 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
     typedef enum CollatorCaseLevel {
       CollatorCaseLevel_Auto = 0,
       CollatorCaseLevel_Off = 1,
       CollatorCaseLevel_On = 2,
     } CollatorCaseLevel;
-}
+} // namespace capi
+} // namespace
 
 class CollatorCaseLevel {
 public:
@@ -33,8 +35,8 @@ public:
   // Prevent usage as boolean value
   explicit operator bool() const = delete;
 
-  inline capi::CollatorCaseLevel AsFFI() const;
-  inline static CollatorCaseLevel FromFFI(capi::CollatorCaseLevel c_enum);
+  inline diplomat::capi::CollatorCaseLevel AsFFI() const;
+  inline static CollatorCaseLevel FromFFI(diplomat::capi::CollatorCaseLevel c_enum);
 private:
     Value value;
 };

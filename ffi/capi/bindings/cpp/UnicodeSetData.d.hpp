@@ -8,16 +8,19 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "DataError.d.hpp"
 
+namespace capi {typedef struct DataProvider DataProvider; }
 class DataProvider;
+namespace capi {typedef struct Locale Locale; }
 class Locale;
 class DataError;
 
 
+namespace diplomat {
 namespace capi {
     typedef struct UnicodeSetData UnicodeSetData;
-}
+} // namespace capi
+} // namespace
 
 class UnicodeSetData {
 public:
@@ -40,10 +43,10 @@ public:
 
   inline static diplomat::result<std::unique_ptr<UnicodeSetData>, DataError> load_exemplars_index(const DataProvider& provider, const Locale& locale);
 
-  inline const capi::UnicodeSetData* AsFFI() const;
-  inline capi::UnicodeSetData* AsFFI();
-  inline static const UnicodeSetData* FromFFI(const capi::UnicodeSetData* ptr);
-  inline static UnicodeSetData* FromFFI(capi::UnicodeSetData* ptr);
+  inline const diplomat::capi::UnicodeSetData* AsFFI() const;
+  inline diplomat::capi::UnicodeSetData* AsFFI();
+  inline static const UnicodeSetData* FromFFI(const diplomat::capi::UnicodeSetData* ptr);
+  inline static UnicodeSetData* FromFFI(diplomat::capi::UnicodeSetData* ptr);
   inline static void operator delete(void* ptr);
 private:
   UnicodeSetData() = delete;

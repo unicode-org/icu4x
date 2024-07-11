@@ -8,12 +8,6 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "FixedDecimalLimitError.d.hpp"
-#include "FixedDecimalParseError.d.hpp"
-#include "FixedDecimalRoundingIncrement.d.hpp"
-#include "FixedDecimalRoundingMode.d.hpp"
-#include "FixedDecimalSign.d.hpp"
-#include "FixedDecimalSignDisplay.d.hpp"
 
 class FixedDecimalLimitError;
 class FixedDecimalParseError;
@@ -23,9 +17,11 @@ class FixedDecimalSign;
 class FixedDecimalSignDisplay;
 
 
+namespace diplomat {
 namespace capi {
     typedef struct FixedDecimal FixedDecimal;
-}
+} // namespace capi
+} // namespace
 
 class FixedDecimal {
 public:
@@ -96,10 +92,10 @@ public:
 
   inline std::string to_string() const;
 
-  inline const capi::FixedDecimal* AsFFI() const;
-  inline capi::FixedDecimal* AsFFI();
-  inline static const FixedDecimal* FromFFI(const capi::FixedDecimal* ptr);
-  inline static FixedDecimal* FromFFI(capi::FixedDecimal* ptr);
+  inline const diplomat::capi::FixedDecimal* AsFFI() const;
+  inline diplomat::capi::FixedDecimal* AsFFI();
+  inline static const FixedDecimal* FromFFI(const diplomat::capi::FixedDecimal* ptr);
+  inline static FixedDecimal* FromFFI(diplomat::capi::FixedDecimal* ptr);
   inline static void operator delete(void* ptr);
 private:
   FixedDecimal() = delete;

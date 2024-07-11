@@ -10,9 +10,11 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
     typedef struct ReorderedIndexMap ReorderedIndexMap;
-}
+} // namespace capi
+} // namespace
 
 class ReorderedIndexMap {
 public:
@@ -25,10 +27,10 @@ public:
 
   inline size_t get(size_t index) const;
 
-  inline const capi::ReorderedIndexMap* AsFFI() const;
-  inline capi::ReorderedIndexMap* AsFFI();
-  inline static const ReorderedIndexMap* FromFFI(const capi::ReorderedIndexMap* ptr);
-  inline static ReorderedIndexMap* FromFFI(capi::ReorderedIndexMap* ptr);
+  inline const diplomat::capi::ReorderedIndexMap* AsFFI() const;
+  inline diplomat::capi::ReorderedIndexMap* AsFFI();
+  inline static const ReorderedIndexMap* FromFFI(const diplomat::capi::ReorderedIndexMap* ptr);
+  inline static ReorderedIndexMap* FromFFI(diplomat::capi::ReorderedIndexMap* ptr);
   inline static void operator delete(void* ptr);
 private:
   ReorderedIndexMap() = delete;

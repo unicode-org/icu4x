@@ -10,13 +10,15 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
     typedef enum LocaleDirection {
       LocaleDirection_LeftToRight = 0,
       LocaleDirection_RightToLeft = 1,
       LocaleDirection_Unknown = 2,
     } LocaleDirection;
-}
+} // namespace capi
+} // namespace
 
 class LocaleDirection {
 public:
@@ -33,8 +35,8 @@ public:
   // Prevent usage as boolean value
   explicit operator bool() const = delete;
 
-  inline capi::LocaleDirection AsFFI() const;
-  inline static LocaleDirection FromFFI(capi::LocaleDirection c_enum);
+  inline diplomat::capi::LocaleDirection AsFFI() const;
+  inline static LocaleDirection FromFFI(diplomat::capi::LocaleDirection c_enum);
 private:
     Value value;
 };

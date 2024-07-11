@@ -14,23 +14,25 @@
 #include "LineBreakWordOption.hpp"
 
 
+namespace diplomat {
 namespace capi {
     extern "C" {
     
     
     } // extern "C"
-}
+} // namespace capi
+} // namespace
 
 
-inline capi::LineBreakOptionsV1 LineBreakOptionsV1::AsFFI() const {
-  return capi::LineBreakOptionsV1 {
+inline diplomat::capi::LineBreakOptionsV1 LineBreakOptionsV1::AsFFI() const {
+  return diplomat::capi::LineBreakOptionsV1 {
     .strictness = strictness.AsFFI(),
     .word_option = word_option.AsFFI(),
     .ja_zh = ja_zh,
   };
 }
 
-inline LineBreakOptionsV1 LineBreakOptionsV1::FromFFI(capi::LineBreakOptionsV1 c_struct) {
+inline LineBreakOptionsV1 LineBreakOptionsV1::FromFFI(diplomat::capi::LineBreakOptionsV1 c_struct) {
   return LineBreakOptionsV1 {
     .strictness = LineBreakStrictness::FromFFI(c_struct.strictness),
     .word_option = LineBreakWordOption::FromFFI(c_struct.word_option),

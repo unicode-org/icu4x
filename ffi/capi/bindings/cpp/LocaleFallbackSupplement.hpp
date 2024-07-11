@@ -12,22 +12,23 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
     extern "C" {
     
     
     } // extern "C"
+} // namespace capi
+} // namespace
+
+inline diplomat::capi::LocaleFallbackSupplement LocaleFallbackSupplement::AsFFI() const {
+  return static_cast<diplomat::capi::LocaleFallbackSupplement>(value);
 }
 
-
-inline capi::LocaleFallbackSupplement LocaleFallbackSupplement::AsFFI() const {
-  return static_cast<capi::LocaleFallbackSupplement>(value);
-}
-
-inline LocaleFallbackSupplement LocaleFallbackSupplement::FromFFI(capi::LocaleFallbackSupplement c_enum) {
+inline LocaleFallbackSupplement LocaleFallbackSupplement::FromFFI(diplomat::capi::LocaleFallbackSupplement c_enum) {
   switch (c_enum) {
-    case capi::LocaleFallbackSupplement_None:
-    case capi::LocaleFallbackSupplement_Collation:
+    case diplomat::capi::LocaleFallbackSupplement_None:
+    case diplomat::capi::LocaleFallbackSupplement_Collation:
       return static_cast<LocaleFallbackSupplement::Value>(c_enum);
     default:
       abort();

@@ -8,18 +8,20 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "DataError.d.hpp"
-#include "Error.d.hpp"
 
+namespace capi {typedef struct CodePointRangeIterator CodePointRangeIterator; }
 class CodePointRangeIterator;
+namespace capi {typedef struct DataProvider DataProvider; }
 class DataProvider;
 class DataError;
 class Error;
 
 
+namespace diplomat {
 namespace capi {
     typedef struct CodePointSetData CodePointSetData;
-}
+} // namespace capi
+} // namespace
 
 class CodePointSetData {
 public:
@@ -166,10 +168,10 @@ public:
 
   inline static diplomat::result<diplomat::result<std::unique_ptr<CodePointSetData>, Error>, diplomat::Utf8Error> load_for_ecma262(const DataProvider& provider, std::string_view property_name);
 
-  inline const capi::CodePointSetData* AsFFI() const;
-  inline capi::CodePointSetData* AsFFI();
-  inline static const CodePointSetData* FromFFI(const capi::CodePointSetData* ptr);
-  inline static CodePointSetData* FromFFI(capi::CodePointSetData* ptr);
+  inline const diplomat::capi::CodePointSetData* AsFFI() const;
+  inline diplomat::capi::CodePointSetData* AsFFI();
+  inline static const CodePointSetData* FromFFI(const diplomat::capi::CodePointSetData* ptr);
+  inline static CodePointSetData* FromFFI(diplomat::capi::CodePointSetData* ptr);
   inline static void operator delete(void* ptr);
 private:
   CodePointSetData() = delete;

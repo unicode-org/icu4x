@@ -8,15 +8,17 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "DataError.d.hpp"
 
+namespace capi {typedef struct DataProvider DataProvider; }
 class DataProvider;
 class DataError;
 
 
+namespace diplomat {
 namespace capi {
     typedef struct GeneralCategoryNameToMaskMapper GeneralCategoryNameToMaskMapper;
-}
+} // namespace capi
+} // namespace
 
 class GeneralCategoryNameToMaskMapper {
 public:
@@ -27,10 +29,10 @@ public:
 
   inline static diplomat::result<std::unique_ptr<GeneralCategoryNameToMaskMapper>, DataError> load(const DataProvider& provider);
 
-  inline const capi::GeneralCategoryNameToMaskMapper* AsFFI() const;
-  inline capi::GeneralCategoryNameToMaskMapper* AsFFI();
-  inline static const GeneralCategoryNameToMaskMapper* FromFFI(const capi::GeneralCategoryNameToMaskMapper* ptr);
-  inline static GeneralCategoryNameToMaskMapper* FromFFI(capi::GeneralCategoryNameToMaskMapper* ptr);
+  inline const diplomat::capi::GeneralCategoryNameToMaskMapper* AsFFI() const;
+  inline diplomat::capi::GeneralCategoryNameToMaskMapper* AsFFI();
+  inline static const GeneralCategoryNameToMaskMapper* FromFFI(const diplomat::capi::GeneralCategoryNameToMaskMapper* ptr);
+  inline static GeneralCategoryNameToMaskMapper* FromFFI(diplomat::capi::GeneralCategoryNameToMaskMapper* ptr);
   inline static void operator delete(void* ptr);
 private:
   GeneralCategoryNameToMaskMapper() = delete;

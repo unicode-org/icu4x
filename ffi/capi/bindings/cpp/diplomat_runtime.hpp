@@ -11,7 +11,7 @@
 #include<span>
 #endif
 
-#include "diplomat_runtime.h"
+#include "diplomat_c_runtime.hpp"
 
 namespace diplomat {
 
@@ -165,6 +165,6 @@ private:
 
 #endif // __cplusplus >= 202002L
 
-}
+} // namespace diplomat
 
 #endif

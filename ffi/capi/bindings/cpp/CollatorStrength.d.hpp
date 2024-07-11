@@ -10,6 +10,7 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
     typedef enum CollatorStrength {
       CollatorStrength_Auto = 0,
@@ -19,7 +20,8 @@ namespace capi {
       CollatorStrength_Quaternary = 4,
       CollatorStrength_Identical = 5,
     } CollatorStrength;
-}
+} // namespace capi
+} // namespace
 
 class CollatorStrength {
 public:
@@ -39,8 +41,8 @@ public:
   // Prevent usage as boolean value
   explicit operator bool() const = delete;
 
-  inline capi::CollatorStrength AsFFI() const;
-  inline static CollatorStrength FromFFI(capi::CollatorStrength c_enum);
+  inline diplomat::capi::CollatorStrength AsFFI() const;
+  inline static CollatorStrength FromFFI(diplomat::capi::CollatorStrength c_enum);
 private:
     Value value;
 };

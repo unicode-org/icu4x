@@ -12,23 +12,24 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
     extern "C" {
     
     
     } // extern "C"
+} // namespace capi
+} // namespace
+
+inline diplomat::capi::BidiDirection BidiDirection::AsFFI() const {
+  return static_cast<diplomat::capi::BidiDirection>(value);
 }
 
-
-inline capi::BidiDirection BidiDirection::AsFFI() const {
-  return static_cast<capi::BidiDirection>(value);
-}
-
-inline BidiDirection BidiDirection::FromFFI(capi::BidiDirection c_enum) {
+inline BidiDirection BidiDirection::FromFFI(diplomat::capi::BidiDirection c_enum) {
   switch (c_enum) {
-    case capi::BidiDirection_Ltr:
-    case capi::BidiDirection_Rtl:
-    case capi::BidiDirection_Mixed:
+    case diplomat::capi::BidiDirection_Ltr:
+    case diplomat::capi::BidiDirection_Rtl:
+    case diplomat::capi::BidiDirection_Mixed:
       return static_cast<BidiDirection::Value>(c_enum);
     default:
       abort();

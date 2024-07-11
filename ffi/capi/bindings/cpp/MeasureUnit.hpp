@@ -12,6 +12,7 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
     extern "C" {
     
@@ -19,26 +20,27 @@ namespace capi {
     void ICU4XMeasureUnit_destroy(MeasureUnit* self);
     
     } // extern "C"
+} // namespace capi
+} // namespace
+
+inline const diplomat::capi::MeasureUnit* MeasureUnit::AsFFI() const {
+  return reinterpret_cast<const diplomat::capi::MeasureUnit*>(this);
 }
 
-inline const capi::MeasureUnit* MeasureUnit::AsFFI() const {
-  return reinterpret_cast<const capi::MeasureUnit*>(this);
+inline diplomat::capi::MeasureUnit* MeasureUnit::AsFFI() {
+  return reinterpret_cast<diplomat::capi::MeasureUnit*>(this);
 }
 
-inline capi::MeasureUnit* MeasureUnit::AsFFI() {
-  return reinterpret_cast<capi::MeasureUnit*>(this);
-}
-
-inline const MeasureUnit* MeasureUnit::FromFFI(const capi::MeasureUnit* ptr) {
+inline const MeasureUnit* MeasureUnit::FromFFI(const diplomat::capi::MeasureUnit* ptr) {
   return reinterpret_cast<const MeasureUnit*>(ptr);
 }
 
-inline MeasureUnit* MeasureUnit::FromFFI(capi::MeasureUnit* ptr) {
+inline MeasureUnit* MeasureUnit::FromFFI(diplomat::capi::MeasureUnit* ptr) {
   return reinterpret_cast<MeasureUnit*>(ptr);
 }
 
 inline void MeasureUnit::operator delete(void* ptr) {
-  capi::ICU4XMeasureUnit_destroy(reinterpret_cast<capi::MeasureUnit*>(ptr));
+  diplomat::capi::ICU4XMeasureUnit_destroy(reinterpret_cast<diplomat::capi::MeasureUnit*>(ptr));
 }
 
 

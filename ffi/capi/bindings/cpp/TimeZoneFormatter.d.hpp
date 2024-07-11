@@ -8,19 +8,22 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "Error.d.hpp"
-#include "IsoTimeZoneOptions.d.hpp"
 
+namespace capi {typedef struct CustomTimeZone CustomTimeZone; }
 class CustomTimeZone;
+namespace capi {typedef struct DataProvider DataProvider; }
 class DataProvider;
+namespace capi {typedef struct Locale Locale; }
 class Locale;
 struct IsoTimeZoneOptions;
 class Error;
 
 
+namespace diplomat {
 namespace capi {
     typedef struct TimeZoneFormatter TimeZoneFormatter;
-}
+} // namespace capi
+} // namespace
 
 class TimeZoneFormatter {
 public:
@@ -47,10 +50,10 @@ public:
 
   inline diplomat::result<std::string, Error> format_custom_time_zone_no_fallback(const CustomTimeZone& value) const;
 
-  inline const capi::TimeZoneFormatter* AsFFI() const;
-  inline capi::TimeZoneFormatter* AsFFI();
-  inline static const TimeZoneFormatter* FromFFI(const capi::TimeZoneFormatter* ptr);
-  inline static TimeZoneFormatter* FromFFI(capi::TimeZoneFormatter* ptr);
+  inline const diplomat::capi::TimeZoneFormatter* AsFFI() const;
+  inline diplomat::capi::TimeZoneFormatter* AsFFI();
+  inline static const TimeZoneFormatter* FromFFI(const diplomat::capi::TimeZoneFormatter* ptr);
+  inline static TimeZoneFormatter* FromFFI(diplomat::capi::TimeZoneFormatter* ptr);
   inline static void operator delete(void* ptr);
 private:
   TimeZoneFormatter() = delete;

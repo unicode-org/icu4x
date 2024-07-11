@@ -10,6 +10,7 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
     typedef enum CalendarError {
       CalendarError_Unknown = 0,
@@ -17,7 +18,8 @@ namespace capi {
       CalendarError_UnknownEra = 2,
       CalendarError_UnknownMonthCode = 3,
     } CalendarError;
-}
+} // namespace capi
+} // namespace
 
 class CalendarError {
 public:
@@ -35,8 +37,8 @@ public:
   // Prevent usage as boolean value
   explicit operator bool() const = delete;
 
-  inline capi::CalendarError AsFFI() const;
-  inline static CalendarError FromFFI(capi::CalendarError c_enum);
+  inline diplomat::capi::CalendarError AsFFI() const;
+  inline static CalendarError FromFFI(diplomat::capi::CalendarError c_enum);
 private:
     Value value;
 };

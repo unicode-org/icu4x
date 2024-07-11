@@ -8,18 +8,20 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "DataError.d.hpp"
-#include "DisplayNamesOptionsV1.d.hpp"
 
+namespace capi {typedef struct DataProvider DataProvider; }
 class DataProvider;
+namespace capi {typedef struct Locale Locale; }
 class Locale;
 struct DisplayNamesOptionsV1;
 class DataError;
 
 
+namespace diplomat {
 namespace capi {
     typedef struct LocaleDisplayNamesFormatter LocaleDisplayNamesFormatter;
-}
+} // namespace capi
+} // namespace
 
 class LocaleDisplayNamesFormatter {
 public:
@@ -28,10 +30,10 @@ public:
 
   inline std::string of(const Locale& locale) const;
 
-  inline const capi::LocaleDisplayNamesFormatter* AsFFI() const;
-  inline capi::LocaleDisplayNamesFormatter* AsFFI();
-  inline static const LocaleDisplayNamesFormatter* FromFFI(const capi::LocaleDisplayNamesFormatter* ptr);
-  inline static LocaleDisplayNamesFormatter* FromFFI(capi::LocaleDisplayNamesFormatter* ptr);
+  inline const diplomat::capi::LocaleDisplayNamesFormatter* AsFFI() const;
+  inline diplomat::capi::LocaleDisplayNamesFormatter* AsFFI();
+  inline static const LocaleDisplayNamesFormatter* FromFFI(const diplomat::capi::LocaleDisplayNamesFormatter* ptr);
+  inline static LocaleDisplayNamesFormatter* FromFFI(diplomat::capi::LocaleDisplayNamesFormatter* ptr);
   inline static void operator delete(void* ptr);
 private:
   LocaleDisplayNamesFormatter() = delete;

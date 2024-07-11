@@ -8,18 +8,23 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "DataError.d.hpp"
 
+namespace capi {typedef struct DataProvider DataProvider; }
 class DataProvider;
+namespace capi {typedef struct GraphemeClusterBreakIteratorLatin1 GraphemeClusterBreakIteratorLatin1; }
 class GraphemeClusterBreakIteratorLatin1;
+namespace capi {typedef struct GraphemeClusterBreakIteratorUtf16 GraphemeClusterBreakIteratorUtf16; }
 class GraphemeClusterBreakIteratorUtf16;
+namespace capi {typedef struct GraphemeClusterBreakIteratorUtf8 GraphemeClusterBreakIteratorUtf8; }
 class GraphemeClusterBreakIteratorUtf8;
 class DataError;
 
 
+namespace diplomat {
 namespace capi {
     typedef struct GraphemeClusterSegmenter GraphemeClusterSegmenter;
-}
+} // namespace capi
+} // namespace
 
 class GraphemeClusterSegmenter {
 public:
@@ -32,10 +37,10 @@ public:
 
   inline std::unique_ptr<GraphemeClusterBreakIteratorLatin1> segment_latin1(diplomat::span<const uint8_t> input) const;
 
-  inline const capi::GraphemeClusterSegmenter* AsFFI() const;
-  inline capi::GraphemeClusterSegmenter* AsFFI();
-  inline static const GraphemeClusterSegmenter* FromFFI(const capi::GraphemeClusterSegmenter* ptr);
-  inline static GraphemeClusterSegmenter* FromFFI(capi::GraphemeClusterSegmenter* ptr);
+  inline const diplomat::capi::GraphemeClusterSegmenter* AsFFI() const;
+  inline diplomat::capi::GraphemeClusterSegmenter* AsFFI();
+  inline static const GraphemeClusterSegmenter* FromFFI(const diplomat::capi::GraphemeClusterSegmenter* ptr);
+  inline static GraphemeClusterSegmenter* FromFFI(diplomat::capi::GraphemeClusterSegmenter* ptr);
   inline static void operator delete(void* ptr);
 private:
   GraphemeClusterSegmenter() = delete;

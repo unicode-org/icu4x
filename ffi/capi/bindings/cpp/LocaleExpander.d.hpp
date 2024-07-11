@@ -8,18 +8,20 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "Error.d.hpp"
-#include "TransformResult.d.hpp"
 
+namespace capi {typedef struct DataProvider DataProvider; }
 class DataProvider;
+namespace capi {typedef struct Locale Locale; }
 class Locale;
 class Error;
 class TransformResult;
 
 
+namespace diplomat {
 namespace capi {
     typedef struct LocaleExpander LocaleExpander;
-}
+} // namespace capi
+} // namespace
 
 class LocaleExpander {
 public:
@@ -34,10 +36,10 @@ public:
 
   inline TransformResult minimize_favor_script(Locale& locale) const;
 
-  inline const capi::LocaleExpander* AsFFI() const;
-  inline capi::LocaleExpander* AsFFI();
-  inline static const LocaleExpander* FromFFI(const capi::LocaleExpander* ptr);
-  inline static LocaleExpander* FromFFI(capi::LocaleExpander* ptr);
+  inline const diplomat::capi::LocaleExpander* AsFFI() const;
+  inline diplomat::capi::LocaleExpander* AsFFI();
+  inline static const LocaleExpander* FromFFI(const diplomat::capi::LocaleExpander* ptr);
+  inline static LocaleExpander* FromFFI(diplomat::capi::LocaleExpander* ptr);
   inline static void operator delete(void* ptr);
 private:
   LocaleExpander() = delete;

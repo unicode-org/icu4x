@@ -8,20 +8,24 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "DataError.d.hpp"
-#include "FixedDecimalGroupingStrategy.d.hpp"
 
+namespace capi {typedef struct DataProvider DataProvider; }
 class DataProvider;
+namespace capi {typedef struct DataStruct DataStruct; }
 class DataStruct;
+namespace capi {typedef struct FixedDecimal FixedDecimal; }
 class FixedDecimal;
+namespace capi {typedef struct Locale Locale; }
 class Locale;
 class DataError;
 class FixedDecimalGroupingStrategy;
 
 
+namespace diplomat {
 namespace capi {
     typedef struct FixedDecimalFormatter FixedDecimalFormatter;
-}
+} // namespace capi
+} // namespace
 
 class FixedDecimalFormatter {
 public:
@@ -32,10 +36,10 @@ public:
 
   inline std::string format(const FixedDecimal& value) const;
 
-  inline const capi::FixedDecimalFormatter* AsFFI() const;
-  inline capi::FixedDecimalFormatter* AsFFI();
-  inline static const FixedDecimalFormatter* FromFFI(const capi::FixedDecimalFormatter* ptr);
-  inline static FixedDecimalFormatter* FromFFI(capi::FixedDecimalFormatter* ptr);
+  inline const diplomat::capi::FixedDecimalFormatter* AsFFI() const;
+  inline diplomat::capi::FixedDecimalFormatter* AsFFI();
+  inline static const FixedDecimalFormatter* FromFFI(const diplomat::capi::FixedDecimalFormatter* ptr);
+  inline static FixedDecimalFormatter* FromFFI(diplomat::capi::FixedDecimalFormatter* ptr);
   inline static void operator delete(void* ptr);
 private:
   FixedDecimalFormatter() = delete;

@@ -9,22 +9,25 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 
+namespace capi {typedef struct MeasureUnit MeasureUnit; }
 class MeasureUnit;
 
 
+namespace diplomat {
 namespace capi {
     typedef struct MeasureUnitParser MeasureUnitParser;
-}
+} // namespace capi
+} // namespace
 
 class MeasureUnitParser {
 public:
 
   inline std::unique_ptr<MeasureUnit> parse(std::string_view unit_id) const;
 
-  inline const capi::MeasureUnitParser* AsFFI() const;
-  inline capi::MeasureUnitParser* AsFFI();
-  inline static const MeasureUnitParser* FromFFI(const capi::MeasureUnitParser* ptr);
-  inline static MeasureUnitParser* FromFFI(capi::MeasureUnitParser* ptr);
+  inline const diplomat::capi::MeasureUnitParser* AsFFI() const;
+  inline diplomat::capi::MeasureUnitParser* AsFFI();
+  inline static const MeasureUnitParser* FromFFI(const diplomat::capi::MeasureUnitParser* ptr);
+  inline static MeasureUnitParser* FromFFI(diplomat::capi::MeasureUnitParser* ptr);
   inline static void operator delete(void* ptr);
 private:
   MeasureUnitParser() = delete;

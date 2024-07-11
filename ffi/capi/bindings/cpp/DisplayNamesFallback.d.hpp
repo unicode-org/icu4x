@@ -10,12 +10,14 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
     typedef enum DisplayNamesFallback {
       DisplayNamesFallback_Code = 0,
       DisplayNamesFallback_None = 1,
     } DisplayNamesFallback;
-}
+} // namespace capi
+} // namespace
 
 class DisplayNamesFallback {
 public:
@@ -31,8 +33,8 @@ public:
   // Prevent usage as boolean value
   explicit operator bool() const = delete;
 
-  inline capi::DisplayNamesFallback AsFFI() const;
-  inline static DisplayNamesFallback FromFFI(capi::DisplayNamesFallback c_enum);
+  inline diplomat::capi::DisplayNamesFallback AsFFI() const;
+  inline static DisplayNamesFallback FromFFI(diplomat::capi::DisplayNamesFallback c_enum);
 private:
     Value value;
 };

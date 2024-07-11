@@ -10,6 +10,7 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
     typedef enum LocaleParseError {
       LocaleParseError_Unknown = 0,
@@ -17,7 +18,8 @@ namespace capi {
       LocaleParseError_Subtag = 2,
       LocaleParseError_Extension = 3,
     } LocaleParseError;
-}
+} // namespace capi
+} // namespace
 
 class LocaleParseError {
 public:
@@ -35,8 +37,8 @@ public:
   // Prevent usage as boolean value
   explicit operator bool() const = delete;
 
-  inline capi::LocaleParseError AsFFI() const;
-  inline static LocaleParseError FromFFI(capi::LocaleParseError c_enum);
+  inline diplomat::capi::LocaleParseError AsFFI() const;
+  inline static LocaleParseError FromFFI(diplomat::capi::LocaleParseError c_enum);
 private:
     Value value;
 };

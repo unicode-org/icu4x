@@ -8,22 +8,28 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "DateLength.d.hpp"
-#include "Error.d.hpp"
 
+namespace capi {typedef struct DataProvider DataProvider; }
 class DataProvider;
+namespace capi {typedef struct Date Date; }
 class Date;
+namespace capi {typedef struct DateTime DateTime; }
 class DateTime;
+namespace capi {typedef struct IsoDate IsoDate; }
 class IsoDate;
+namespace capi {typedef struct IsoDateTime IsoDateTime; }
 class IsoDateTime;
+namespace capi {typedef struct Locale Locale; }
 class Locale;
 class DateLength;
 class Error;
 
 
+namespace diplomat {
 namespace capi {
     typedef struct DateFormatter DateFormatter;
-}
+} // namespace capi
+} // namespace
 
 class DateFormatter {
 public:
@@ -38,10 +44,10 @@ public:
 
   inline diplomat::result<std::string, Error> format_iso_datetime(const IsoDateTime& value) const;
 
-  inline const capi::DateFormatter* AsFFI() const;
-  inline capi::DateFormatter* AsFFI();
-  inline static const DateFormatter* FromFFI(const capi::DateFormatter* ptr);
-  inline static DateFormatter* FromFFI(capi::DateFormatter* ptr);
+  inline const diplomat::capi::DateFormatter* AsFFI() const;
+  inline diplomat::capi::DateFormatter* AsFFI();
+  inline static const DateFormatter* FromFFI(const diplomat::capi::DateFormatter* ptr);
+  inline static DateFormatter* FromFFI(diplomat::capi::DateFormatter* ptr);
   inline static void operator delete(void* ptr);
 private:
   DateFormatter() = delete;

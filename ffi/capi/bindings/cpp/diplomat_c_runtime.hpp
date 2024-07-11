@@ -19,7 +19,7 @@ typedef uint32_t char32_t;
 #endif
 
 
-namespace capi {
+namespace diplomat::capi {
 
 
 typedef struct DiplomatWrite {
@@ -49,6 +49,10 @@ bool diplomat_is_str(const char* buf, size_t len);
         const c_ty* data; \
         size_t len; \
     } Diplomat##name##View; \
+    typedef struct Diplomat##name##ViewMut { \
+        c_ty* data; \
+        size_t len; \
+    } Diplomat##name##ViewMut; \
     typedef struct Diplomat##name##Array { \
         const c_ty* data; \
         size_t len; \
@@ -73,6 +77,6 @@ MAKE_SLICES(String16, char16_t)
 MAKE_SLICES(Strings, DiplomatStringView)
 MAKE_SLICES(Strings16, DiplomatString16View)
 
-} // namespace capi
+} // namespace diplomat::capi
 
 #endif

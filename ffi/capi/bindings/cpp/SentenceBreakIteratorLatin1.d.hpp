@@ -10,19 +10,21 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
     typedef struct SentenceBreakIteratorLatin1 SentenceBreakIteratorLatin1;
-}
+} // namespace capi
+} // namespace
 
 class SentenceBreakIteratorLatin1 {
 public:
 
   inline int32_t next();
 
-  inline const capi::SentenceBreakIteratorLatin1* AsFFI() const;
-  inline capi::SentenceBreakIteratorLatin1* AsFFI();
-  inline static const SentenceBreakIteratorLatin1* FromFFI(const capi::SentenceBreakIteratorLatin1* ptr);
-  inline static SentenceBreakIteratorLatin1* FromFFI(capi::SentenceBreakIteratorLatin1* ptr);
+  inline const diplomat::capi::SentenceBreakIteratorLatin1* AsFFI() const;
+  inline diplomat::capi::SentenceBreakIteratorLatin1* AsFFI();
+  inline static const SentenceBreakIteratorLatin1* FromFFI(const diplomat::capi::SentenceBreakIteratorLatin1* ptr);
+  inline static SentenceBreakIteratorLatin1* FromFFI(diplomat::capi::SentenceBreakIteratorLatin1* ptr);
   inline static void operator delete(void* ptr);
 private:
   SentenceBreakIteratorLatin1() = delete;

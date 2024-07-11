@@ -8,17 +8,21 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "DataError.d.hpp"
 
+namespace capi {typedef struct CodePointRangeIterator CodePointRangeIterator; }
 class CodePointRangeIterator;
+namespace capi {typedef struct DataProvider DataProvider; }
 class DataProvider;
+namespace capi {typedef struct ScriptWithExtensionsBorrowed ScriptWithExtensionsBorrowed; }
 class ScriptWithExtensionsBorrowed;
 class DataError;
 
 
+namespace diplomat {
 namespace capi {
     typedef struct ScriptWithExtensions ScriptWithExtensions;
-}
+} // namespace capi
+} // namespace
 
 class ScriptWithExtensions {
 public:
@@ -33,10 +37,10 @@ public:
 
   inline std::unique_ptr<CodePointRangeIterator> iter_ranges_for_script(uint16_t script) const;
 
-  inline const capi::ScriptWithExtensions* AsFFI() const;
-  inline capi::ScriptWithExtensions* AsFFI();
-  inline static const ScriptWithExtensions* FromFFI(const capi::ScriptWithExtensions* ptr);
-  inline static ScriptWithExtensions* FromFFI(capi::ScriptWithExtensions* ptr);
+  inline const diplomat::capi::ScriptWithExtensions* AsFFI() const;
+  inline diplomat::capi::ScriptWithExtensions* AsFFI();
+  inline static const ScriptWithExtensions* FromFFI(const diplomat::capi::ScriptWithExtensions* ptr);
+  inline static ScriptWithExtensions* FromFFI(diplomat::capi::ScriptWithExtensions* ptr);
   inline static void operator delete(void* ptr);
 private:
   ScriptWithExtensions() = delete;

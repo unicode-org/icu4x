@@ -8,17 +8,18 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "DataError.d.hpp"
-#include "TimeZoneInvalidIdError.d.hpp"
 
+namespace capi {typedef struct DataProvider DataProvider; }
 class DataProvider;
 class DataError;
 class TimeZoneInvalidIdError;
 
 
+namespace diplomat {
 namespace capi {
     typedef struct TimeZoneIdMapper TimeZoneIdMapper;
-}
+} // namespace capi
+} // namespace
 
 class TimeZoneIdMapper {
 public:
@@ -33,10 +34,10 @@ public:
 
   inline diplomat::result<std::string, TimeZoneInvalidIdError> find_canonical_iana_from_bcp47(std::string_view value) const;
 
-  inline const capi::TimeZoneIdMapper* AsFFI() const;
-  inline capi::TimeZoneIdMapper* AsFFI();
-  inline static const TimeZoneIdMapper* FromFFI(const capi::TimeZoneIdMapper* ptr);
-  inline static TimeZoneIdMapper* FromFFI(capi::TimeZoneIdMapper* ptr);
+  inline const diplomat::capi::TimeZoneIdMapper* AsFFI() const;
+  inline diplomat::capi::TimeZoneIdMapper* AsFFI();
+  inline static const TimeZoneIdMapper* FromFFI(const diplomat::capi::TimeZoneIdMapper* ptr);
+  inline static TimeZoneIdMapper* FromFFI(diplomat::capi::TimeZoneIdMapper* ptr);
   inline static void operator delete(void* ptr);
 private:
   TimeZoneIdMapper() = delete;

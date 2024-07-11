@@ -49,6 +49,10 @@ bool diplomat_is_str(const char* buf, size_t len);
         const c_ty* data; \
         size_t len; \
     } Diplomat##name##View; \
+    typedef struct Diplomat##name##ViewMut { \
+        c_ty* data; \
+        size_t len; \
+    } Diplomat##name##ViewMut; \
     typedef struct Diplomat##name##Array { \
         const c_ty* data; \
         size_t len; \

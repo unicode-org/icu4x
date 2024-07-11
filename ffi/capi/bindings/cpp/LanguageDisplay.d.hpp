@@ -10,12 +10,14 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
     typedef enum LanguageDisplay {
       LanguageDisplay_Dialect = 0,
       LanguageDisplay_Standard = 1,
     } LanguageDisplay;
-}
+} // namespace capi
+} // namespace
 
 class LanguageDisplay {
 public:
@@ -31,8 +33,8 @@ public:
   // Prevent usage as boolean value
   explicit operator bool() const = delete;
 
-  inline capi::LanguageDisplay AsFFI() const;
-  inline static LanguageDisplay FromFFI(capi::LanguageDisplay c_enum);
+  inline diplomat::capi::LanguageDisplay AsFFI() const;
+  inline static LanguageDisplay FromFFI(diplomat::capi::LanguageDisplay c_enum);
 private:
     Value value;
 };

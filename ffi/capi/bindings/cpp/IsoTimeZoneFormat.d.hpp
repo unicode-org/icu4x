@@ -10,6 +10,7 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
     typedef enum IsoTimeZoneFormat {
       IsoTimeZoneFormat_Basic = 0,
@@ -17,7 +18,8 @@ namespace capi {
       IsoTimeZoneFormat_UtcBasic = 2,
       IsoTimeZoneFormat_UtcExtended = 3,
     } IsoTimeZoneFormat;
-}
+} // namespace capi
+} // namespace
 
 class IsoTimeZoneFormat {
 public:
@@ -35,8 +37,8 @@ public:
   // Prevent usage as boolean value
   explicit operator bool() const = delete;
 
-  inline capi::IsoTimeZoneFormat AsFFI() const;
-  inline static IsoTimeZoneFormat FromFFI(capi::IsoTimeZoneFormat c_enum);
+  inline diplomat::capi::IsoTimeZoneFormat AsFFI() const;
+  inline static IsoTimeZoneFormat FromFFI(diplomat::capi::IsoTimeZoneFormat c_enum);
 private:
     Value value;
 };

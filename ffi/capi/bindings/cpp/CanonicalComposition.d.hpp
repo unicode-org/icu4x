@@ -8,15 +8,17 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "DataError.d.hpp"
 
+namespace capi {typedef struct DataProvider DataProvider; }
 class DataProvider;
 class DataError;
 
 
+namespace diplomat {
 namespace capi {
     typedef struct CanonicalComposition CanonicalComposition;
-}
+} // namespace capi
+} // namespace
 
 class CanonicalComposition {
 public:
@@ -25,10 +27,10 @@ public:
 
   inline char32_t compose(char32_t starter, char32_t second) const;
 
-  inline const capi::CanonicalComposition* AsFFI() const;
-  inline capi::CanonicalComposition* AsFFI();
-  inline static const CanonicalComposition* FromFFI(const capi::CanonicalComposition* ptr);
-  inline static CanonicalComposition* FromFFI(capi::CanonicalComposition* ptr);
+  inline const diplomat::capi::CanonicalComposition* AsFFI() const;
+  inline diplomat::capi::CanonicalComposition* AsFFI();
+  inline static const CanonicalComposition* FromFFI(const diplomat::capi::CanonicalComposition* ptr);
+  inline static CanonicalComposition* FromFFI(diplomat::capi::CanonicalComposition* ptr);
   inline static void operator delete(void* ptr);
 private:
   CanonicalComposition() = delete;

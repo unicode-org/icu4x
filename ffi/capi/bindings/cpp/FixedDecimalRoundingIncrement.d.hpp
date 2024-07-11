@@ -10,6 +10,7 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
     typedef enum FixedDecimalRoundingIncrement {
       FixedDecimalRoundingIncrement_MultiplesOf1 = 0,
@@ -17,7 +18,8 @@ namespace capi {
       FixedDecimalRoundingIncrement_MultiplesOf5 = 2,
       FixedDecimalRoundingIncrement_MultiplesOf25 = 3,
     } FixedDecimalRoundingIncrement;
-}
+} // namespace capi
+} // namespace
 
 class FixedDecimalRoundingIncrement {
 public:
@@ -35,8 +37,8 @@ public:
   // Prevent usage as boolean value
   explicit operator bool() const = delete;
 
-  inline capi::FixedDecimalRoundingIncrement AsFFI() const;
-  inline static FixedDecimalRoundingIncrement FromFFI(capi::FixedDecimalRoundingIncrement c_enum);
+  inline diplomat::capi::FixedDecimalRoundingIncrement AsFFI() const;
+  inline static FixedDecimalRoundingIncrement FromFFI(diplomat::capi::FixedDecimalRoundingIncrement c_enum);
 private:
     Value value;
 };

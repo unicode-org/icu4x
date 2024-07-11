@@ -10,6 +10,7 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
     typedef enum IsoWeekday {
       IsoWeekday_Monday = 1,
@@ -20,7 +21,8 @@ namespace capi {
       IsoWeekday_Saturday = 6,
       IsoWeekday_Sunday = 7,
     } IsoWeekday;
-}
+} // namespace capi
+} // namespace
 
 class IsoWeekday {
 public:
@@ -41,8 +43,8 @@ public:
   // Prevent usage as boolean value
   explicit operator bool() const = delete;
 
-  inline capi::IsoWeekday AsFFI() const;
-  inline static IsoWeekday FromFFI(capi::IsoWeekday c_enum);
+  inline diplomat::capi::IsoWeekday AsFFI() const;
+  inline static IsoWeekday FromFFI(diplomat::capi::IsoWeekday c_enum);
 private:
     Value value;
 };

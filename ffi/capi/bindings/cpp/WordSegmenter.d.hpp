@@ -8,18 +8,23 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "DataError.d.hpp"
 
+namespace capi {typedef struct DataProvider DataProvider; }
 class DataProvider;
+namespace capi {typedef struct WordBreakIteratorLatin1 WordBreakIteratorLatin1; }
 class WordBreakIteratorLatin1;
+namespace capi {typedef struct WordBreakIteratorUtf16 WordBreakIteratorUtf16; }
 class WordBreakIteratorUtf16;
+namespace capi {typedef struct WordBreakIteratorUtf8 WordBreakIteratorUtf8; }
 class WordBreakIteratorUtf8;
 class DataError;
 
 
+namespace diplomat {
 namespace capi {
     typedef struct WordSegmenter WordSegmenter;
-}
+} // namespace capi
+} // namespace
 
 class WordSegmenter {
 public:
@@ -36,10 +41,10 @@ public:
 
   inline std::unique_ptr<WordBreakIteratorLatin1> segment_latin1(diplomat::span<const uint8_t> input) const;
 
-  inline const capi::WordSegmenter* AsFFI() const;
-  inline capi::WordSegmenter* AsFFI();
-  inline static const WordSegmenter* FromFFI(const capi::WordSegmenter* ptr);
-  inline static WordSegmenter* FromFFI(capi::WordSegmenter* ptr);
+  inline const diplomat::capi::WordSegmenter* AsFFI() const;
+  inline diplomat::capi::WordSegmenter* AsFFI();
+  inline static const WordSegmenter* FromFFI(const diplomat::capi::WordSegmenter* ptr);
+  inline static WordSegmenter* FromFFI(diplomat::capi::WordSegmenter* ptr);
   inline static void operator delete(void* ptr);
 private:
   WordSegmenter() = delete;

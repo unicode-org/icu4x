@@ -14,59 +14,61 @@
 #include "DataProvider.hpp"
 
 
+namespace diplomat {
 namespace capi {
     extern "C" {
     
-    uint32_t ICU4XGeneralCategoryNameToMaskMapper_get_strict(const GeneralCategoryNameToMaskMapper* self, const char* name_data, size_t name_len);
+    uint32_t ICU4XGeneralCategoryNameToMaskMapper_get_strict(const diplomat::capi::GeneralCategoryNameToMaskMapper* self, const char* name_data, size_t name_len);
     
-    uint32_t ICU4XGeneralCategoryNameToMaskMapper_get_loose(const GeneralCategoryNameToMaskMapper* self, const char* name_data, size_t name_len);
+    uint32_t ICU4XGeneralCategoryNameToMaskMapper_get_loose(const diplomat::capi::GeneralCategoryNameToMaskMapper* self, const char* name_data, size_t name_len);
     
-    typedef struct ICU4XGeneralCategoryNameToMaskMapper_load_result {union {GeneralCategoryNameToMaskMapper* ok; DataError err;}; bool is_ok;} ICU4XGeneralCategoryNameToMaskMapper_load_result;
-    ICU4XGeneralCategoryNameToMaskMapper_load_result ICU4XGeneralCategoryNameToMaskMapper_load(const DataProvider* provider);
+    typedef struct ICU4XGeneralCategoryNameToMaskMapper_load_result {union {diplomat::capi::GeneralCategoryNameToMaskMapper* ok; diplomat::capi::DataError err;}; bool is_ok;} ICU4XGeneralCategoryNameToMaskMapper_load_result;
+    ICU4XGeneralCategoryNameToMaskMapper_load_result ICU4XGeneralCategoryNameToMaskMapper_load(const diplomat::capi::DataProvider* provider);
     
     
     void ICU4XGeneralCategoryNameToMaskMapper_destroy(GeneralCategoryNameToMaskMapper* self);
     
     } // extern "C"
-}
+} // namespace capi
+} // namespace
 
 inline uint32_t GeneralCategoryNameToMaskMapper::get_strict(std::string_view name) const {
-  auto result = capi::ICU4XGeneralCategoryNameToMaskMapper_get_strict(this->AsFFI(),
+  auto result = diplomat::capi::ICU4XGeneralCategoryNameToMaskMapper_get_strict(this->AsFFI(),
     name.data(),
     name.size());
   return result;
 }
 
 inline uint32_t GeneralCategoryNameToMaskMapper::get_loose(std::string_view name) const {
-  auto result = capi::ICU4XGeneralCategoryNameToMaskMapper_get_loose(this->AsFFI(),
+  auto result = diplomat::capi::ICU4XGeneralCategoryNameToMaskMapper_get_loose(this->AsFFI(),
     name.data(),
     name.size());
   return result;
 }
 
 inline diplomat::result<std::unique_ptr<GeneralCategoryNameToMaskMapper>, DataError> GeneralCategoryNameToMaskMapper::load(const DataProvider& provider) {
-  auto result = capi::ICU4XGeneralCategoryNameToMaskMapper_load(provider.AsFFI());
+  auto result = diplomat::capi::ICU4XGeneralCategoryNameToMaskMapper_load(provider.AsFFI());
   return result.is_ok ? diplomat::result<std::unique_ptr<GeneralCategoryNameToMaskMapper>, DataError>(diplomat::Ok<std::unique_ptr<GeneralCategoryNameToMaskMapper>>(std::unique_ptr<GeneralCategoryNameToMaskMapper>(GeneralCategoryNameToMaskMapper::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<GeneralCategoryNameToMaskMapper>, DataError>(diplomat::Err<DataError>(DataError::FromFFI(result.err)));
 }
 
-inline const capi::GeneralCategoryNameToMaskMapper* GeneralCategoryNameToMaskMapper::AsFFI() const {
-  return reinterpret_cast<const capi::GeneralCategoryNameToMaskMapper*>(this);
+inline const diplomat::capi::GeneralCategoryNameToMaskMapper* GeneralCategoryNameToMaskMapper::AsFFI() const {
+  return reinterpret_cast<const diplomat::capi::GeneralCategoryNameToMaskMapper*>(this);
 }
 
-inline capi::GeneralCategoryNameToMaskMapper* GeneralCategoryNameToMaskMapper::AsFFI() {
-  return reinterpret_cast<capi::GeneralCategoryNameToMaskMapper*>(this);
+inline diplomat::capi::GeneralCategoryNameToMaskMapper* GeneralCategoryNameToMaskMapper::AsFFI() {
+  return reinterpret_cast<diplomat::capi::GeneralCategoryNameToMaskMapper*>(this);
 }
 
-inline const GeneralCategoryNameToMaskMapper* GeneralCategoryNameToMaskMapper::FromFFI(const capi::GeneralCategoryNameToMaskMapper* ptr) {
+inline const GeneralCategoryNameToMaskMapper* GeneralCategoryNameToMaskMapper::FromFFI(const diplomat::capi::GeneralCategoryNameToMaskMapper* ptr) {
   return reinterpret_cast<const GeneralCategoryNameToMaskMapper*>(ptr);
 }
 
-inline GeneralCategoryNameToMaskMapper* GeneralCategoryNameToMaskMapper::FromFFI(capi::GeneralCategoryNameToMaskMapper* ptr) {
+inline GeneralCategoryNameToMaskMapper* GeneralCategoryNameToMaskMapper::FromFFI(diplomat::capi::GeneralCategoryNameToMaskMapper* ptr) {
   return reinterpret_cast<GeneralCategoryNameToMaskMapper*>(ptr);
 }
 
 inline void GeneralCategoryNameToMaskMapper::operator delete(void* ptr) {
-  capi::ICU4XGeneralCategoryNameToMaskMapper_destroy(reinterpret_cast<capi::GeneralCategoryNameToMaskMapper*>(ptr));
+  diplomat::capi::ICU4XGeneralCategoryNameToMaskMapper_destroy(reinterpret_cast<diplomat::capi::GeneralCategoryNameToMaskMapper*>(ptr));
 }
 
 

@@ -10,13 +10,15 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
     typedef enum ListLength {
       ListLength_Wide = 0,
       ListLength_Short = 1,
       ListLength_Narrow = 2,
     } ListLength;
-}
+} // namespace capi
+} // namespace
 
 class ListLength {
 public:
@@ -33,8 +35,8 @@ public:
   // Prevent usage as boolean value
   explicit operator bool() const = delete;
 
-  inline capi::ListLength AsFFI() const;
-  inline static ListLength FromFFI(capi::ListLength c_enum);
+  inline diplomat::capi::ListLength AsFFI() const;
+  inline static ListLength FromFFI(diplomat::capi::ListLength c_enum);
 private:
     Value value;
 };

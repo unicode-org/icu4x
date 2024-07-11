@@ -8,19 +8,22 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "TimeZoneInvalidIdError.d.hpp"
-#include "TimeZoneInvalidOffsetError.d.hpp"
 
+namespace capi {typedef struct IsoDateTime IsoDateTime; }
 class IsoDateTime;
+namespace capi {typedef struct MetazoneCalculator MetazoneCalculator; }
 class MetazoneCalculator;
+namespace capi {typedef struct TimeZoneIdMapper TimeZoneIdMapper; }
 class TimeZoneIdMapper;
 class TimeZoneInvalidIdError;
 class TimeZoneInvalidOffsetError;
 
 
+namespace diplomat {
 namespace capi {
     typedef struct CustomTimeZone CustomTimeZone;
-}
+} // namespace capi
+} // namespace
 
 class CustomTimeZone {
 public:
@@ -79,10 +82,10 @@ public:
 
   inline void maybe_calculate_metazone(const MetazoneCalculator& metazone_calculator, const IsoDateTime& local_datetime);
 
-  inline const capi::CustomTimeZone* AsFFI() const;
-  inline capi::CustomTimeZone* AsFFI();
-  inline static const CustomTimeZone* FromFFI(const capi::CustomTimeZone* ptr);
-  inline static CustomTimeZone* FromFFI(capi::CustomTimeZone* ptr);
+  inline const diplomat::capi::CustomTimeZone* AsFFI() const;
+  inline diplomat::capi::CustomTimeZone* AsFFI();
+  inline static const CustomTimeZone* FromFFI(const diplomat::capi::CustomTimeZone* ptr);
+  inline static CustomTimeZone* FromFFI(diplomat::capi::CustomTimeZone* ptr);
   inline static void operator delete(void* ptr);
 private:
   CustomTimeZone() = delete;

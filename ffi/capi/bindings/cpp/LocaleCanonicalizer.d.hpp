@@ -8,18 +8,20 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "Error.d.hpp"
-#include "TransformResult.d.hpp"
 
+namespace capi {typedef struct DataProvider DataProvider; }
 class DataProvider;
+namespace capi {typedef struct Locale Locale; }
 class Locale;
 class Error;
 class TransformResult;
 
 
+namespace diplomat {
 namespace capi {
     typedef struct LocaleCanonicalizer LocaleCanonicalizer;
-}
+} // namespace capi
+} // namespace
 
 class LocaleCanonicalizer {
 public:
@@ -30,10 +32,10 @@ public:
 
   inline TransformResult canonicalize(Locale& locale) const;
 
-  inline const capi::LocaleCanonicalizer* AsFFI() const;
-  inline capi::LocaleCanonicalizer* AsFFI();
-  inline static const LocaleCanonicalizer* FromFFI(const capi::LocaleCanonicalizer* ptr);
-  inline static LocaleCanonicalizer* FromFFI(capi::LocaleCanonicalizer* ptr);
+  inline const diplomat::capi::LocaleCanonicalizer* AsFFI() const;
+  inline diplomat::capi::LocaleCanonicalizer* AsFFI();
+  inline static const LocaleCanonicalizer* FromFFI(const diplomat::capi::LocaleCanonicalizer* ptr);
+  inline static LocaleCanonicalizer* FromFFI(diplomat::capi::LocaleCanonicalizer* ptr);
   inline static void operator delete(void* ptr);
 private:
   LocaleCanonicalizer() = delete;

@@ -8,15 +8,17 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "DataError.d.hpp"
 
+namespace capi {typedef struct DataProvider DataProvider; }
 class DataProvider;
 class DataError;
 
 
+namespace diplomat {
 namespace capi {
     typedef struct ComposingNormalizer ComposingNormalizer;
-}
+} // namespace capi
+} // namespace
 
 class ComposingNormalizer {
 public:
@@ -35,10 +37,10 @@ public:
 
   inline size_t is_normalized_utf16_up_to(std::u16string_view s) const;
 
-  inline const capi::ComposingNormalizer* AsFFI() const;
-  inline capi::ComposingNormalizer* AsFFI();
-  inline static const ComposingNormalizer* FromFFI(const capi::ComposingNormalizer* ptr);
-  inline static ComposingNormalizer* FromFFI(capi::ComposingNormalizer* ptr);
+  inline const diplomat::capi::ComposingNormalizer* AsFFI() const;
+  inline diplomat::capi::ComposingNormalizer* AsFFI();
+  inline static const ComposingNormalizer* FromFFI(const diplomat::capi::ComposingNormalizer* ptr);
+  inline static ComposingNormalizer* FromFFI(diplomat::capi::ComposingNormalizer* ptr);
   inline static void operator delete(void* ptr);
 private:
   ComposingNormalizer() = delete;

@@ -10,13 +10,15 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
     typedef enum SegmenterWordType {
       SegmenterWordType_None = 0,
       SegmenterWordType_Number = 1,
       SegmenterWordType_Letter = 2,
     } SegmenterWordType;
-}
+} // namespace capi
+} // namespace
 
 class SegmenterWordType {
 public:
@@ -35,8 +37,8 @@ public:
 
   inline bool is_word_like();
 
-  inline capi::SegmenterWordType AsFFI() const;
-  inline static SegmenterWordType FromFFI(capi::SegmenterWordType c_enum);
+  inline diplomat::capi::SegmenterWordType AsFFI() const;
+  inline static SegmenterWordType FromFFI(diplomat::capi::SegmenterWordType c_enum);
 private:
     Value value;
 };

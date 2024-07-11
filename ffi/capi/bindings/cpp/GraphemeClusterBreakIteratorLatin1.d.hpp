@@ -10,19 +10,21 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
     typedef struct GraphemeClusterBreakIteratorLatin1 GraphemeClusterBreakIteratorLatin1;
-}
+} // namespace capi
+} // namespace
 
 class GraphemeClusterBreakIteratorLatin1 {
 public:
 
   inline int32_t next();
 
-  inline const capi::GraphemeClusterBreakIteratorLatin1* AsFFI() const;
-  inline capi::GraphemeClusterBreakIteratorLatin1* AsFFI();
-  inline static const GraphemeClusterBreakIteratorLatin1* FromFFI(const capi::GraphemeClusterBreakIteratorLatin1* ptr);
-  inline static GraphemeClusterBreakIteratorLatin1* FromFFI(capi::GraphemeClusterBreakIteratorLatin1* ptr);
+  inline const diplomat::capi::GraphemeClusterBreakIteratorLatin1* AsFFI() const;
+  inline diplomat::capi::GraphemeClusterBreakIteratorLatin1* AsFFI();
+  inline static const GraphemeClusterBreakIteratorLatin1* FromFFI(const diplomat::capi::GraphemeClusterBreakIteratorLatin1* ptr);
+  inline static GraphemeClusterBreakIteratorLatin1* FromFFI(diplomat::capi::GraphemeClusterBreakIteratorLatin1* ptr);
   inline static void operator delete(void* ptr);
 private:
   GraphemeClusterBreakIteratorLatin1() = delete;

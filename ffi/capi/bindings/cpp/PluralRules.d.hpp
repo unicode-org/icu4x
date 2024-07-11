@@ -8,21 +8,23 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "DataError.d.hpp"
-#include "PluralCategories.d.hpp"
-#include "PluralCategory.d.hpp"
 
+namespace capi {typedef struct DataProvider DataProvider; }
 class DataProvider;
+namespace capi {typedef struct Locale Locale; }
 class Locale;
+namespace capi {typedef struct PluralOperands PluralOperands; }
 class PluralOperands;
 struct PluralCategories;
 class DataError;
 class PluralCategory;
 
 
+namespace diplomat {
 namespace capi {
     typedef struct PluralRules PluralRules;
-}
+} // namespace capi
+} // namespace
 
 class PluralRules {
 public:
@@ -35,10 +37,10 @@ public:
 
   inline PluralCategories categories() const;
 
-  inline const capi::PluralRules* AsFFI() const;
-  inline capi::PluralRules* AsFFI();
-  inline static const PluralRules* FromFFI(const capi::PluralRules* ptr);
-  inline static PluralRules* FromFFI(capi::PluralRules* ptr);
+  inline const diplomat::capi::PluralRules* AsFFI() const;
+  inline diplomat::capi::PluralRules* AsFFI();
+  inline static const PluralRules* FromFFI(const diplomat::capi::PluralRules* ptr);
+  inline static PluralRules* FromFFI(diplomat::capi::PluralRules* ptr);
   inline static void operator delete(void* ptr);
 private:
   PluralRules() = delete;

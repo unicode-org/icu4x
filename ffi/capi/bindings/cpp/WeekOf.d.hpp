@@ -13,19 +13,22 @@
 class WeekRelativeUnit;
 
 
+namespace diplomat {
 namespace capi {
     typedef struct WeekOf {
       uint16_t week;
-      WeekRelativeUnit unit;
+      diplomat::capi::WeekRelativeUnit unit;
     } WeekOf;
-}
+} // namespace capi
+} // namespace
+
 
 struct WeekOf {
   uint16_t week;
   WeekRelativeUnit unit;
 
-  inline capi::WeekOf AsFFI() const;
-  inline static WeekOf FromFFI(capi::WeekOf c_struct);
+  inline diplomat::capi::WeekOf AsFFI() const;
+  inline static WeekOf FromFFI(diplomat::capi::WeekOf c_struct);
 };
 
 

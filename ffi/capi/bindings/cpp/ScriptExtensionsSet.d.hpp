@@ -10,9 +10,11 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
     typedef struct ScriptExtensionsSet ScriptExtensionsSet;
-}
+} // namespace capi
+} // namespace
 
 class ScriptExtensionsSet {
 public:
@@ -23,10 +25,10 @@ public:
 
   inline std::optional<uint16_t> script_at(size_t index) const;
 
-  inline const capi::ScriptExtensionsSet* AsFFI() const;
-  inline capi::ScriptExtensionsSet* AsFFI();
-  inline static const ScriptExtensionsSet* FromFFI(const capi::ScriptExtensionsSet* ptr);
-  inline static ScriptExtensionsSet* FromFFI(capi::ScriptExtensionsSet* ptr);
+  inline const diplomat::capi::ScriptExtensionsSet* AsFFI() const;
+  inline diplomat::capi::ScriptExtensionsSet* AsFFI();
+  inline static const ScriptExtensionsSet* FromFFI(const diplomat::capi::ScriptExtensionsSet* ptr);
+  inline static ScriptExtensionsSet* FromFFI(diplomat::capi::ScriptExtensionsSet* ptr);
   inline static void operator delete(void* ptr);
 private:
   ScriptExtensionsSet() = delete;

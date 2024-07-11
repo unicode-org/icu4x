@@ -9,12 +9,15 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 
+namespace capi {typedef struct CodePointSetData CodePointSetData; }
 class CodePointSetData;
 
 
+namespace diplomat {
 namespace capi {
     typedef struct CodePointSetBuilder CodePointSetBuilder;
-}
+} // namespace capi
+} // namespace
 
 class CodePointSetBuilder {
 public:
@@ -51,10 +54,10 @@ public:
 
   inline void complement_set(const CodePointSetData& data);
 
-  inline const capi::CodePointSetBuilder* AsFFI() const;
-  inline capi::CodePointSetBuilder* AsFFI();
-  inline static const CodePointSetBuilder* FromFFI(const capi::CodePointSetBuilder* ptr);
-  inline static CodePointSetBuilder* FromFFI(capi::CodePointSetBuilder* ptr);
+  inline const diplomat::capi::CodePointSetBuilder* AsFFI() const;
+  inline diplomat::capi::CodePointSetBuilder* AsFFI();
+  inline static const CodePointSetBuilder* FromFFI(const diplomat::capi::CodePointSetBuilder* ptr);
+  inline static CodePointSetBuilder* FromFFI(diplomat::capi::CodePointSetBuilder* ptr);
   inline static void operator delete(void* ptr);
 private:
   CodePointSetBuilder() = delete;

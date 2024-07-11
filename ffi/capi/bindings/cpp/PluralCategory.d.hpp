@@ -10,6 +10,7 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
     typedef enum PluralCategory {
       PluralCategory_Zero = 0,
@@ -19,7 +20,8 @@ namespace capi {
       PluralCategory_Many = 4,
       PluralCategory_Other = 5,
     } PluralCategory;
-}
+} // namespace capi
+} // namespace
 
 class PluralCategory {
 public:
@@ -41,8 +43,8 @@ public:
 
   inline static std::optional<PluralCategory> get_for_cldr_string(std::string_view s);
 
-  inline capi::PluralCategory AsFFI() const;
-  inline static PluralCategory FromFFI(capi::PluralCategory c_enum);
+  inline diplomat::capi::PluralCategory AsFFI() const;
+  inline static PluralCategory FromFFI(diplomat::capi::PluralCategory c_enum);
 private:
     Value value;
 };

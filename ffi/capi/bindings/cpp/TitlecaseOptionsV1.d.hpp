@@ -15,12 +15,15 @@ class LeadingAdjustment;
 class TrailingCase;
 
 
+namespace diplomat {
 namespace capi {
     typedef struct TitlecaseOptionsV1 {
-      LeadingAdjustment leading_adjustment;
-      TrailingCase trailing_case;
+      diplomat::capi::LeadingAdjustment leading_adjustment;
+      diplomat::capi::TrailingCase trailing_case;
     } TitlecaseOptionsV1;
-}
+} // namespace capi
+} // namespace
+
 
 struct TitlecaseOptionsV1 {
   LeadingAdjustment leading_adjustment;
@@ -28,8 +31,8 @@ struct TitlecaseOptionsV1 {
 
   inline static TitlecaseOptionsV1 default_options();
 
-  inline capi::TitlecaseOptionsV1 AsFFI() const;
-  inline static TitlecaseOptionsV1 FromFFI(capi::TitlecaseOptionsV1 c_struct);
+  inline diplomat::capi::TitlecaseOptionsV1 AsFFI() const;
+  inline static TitlecaseOptionsV1 FromFFI(diplomat::capi::TitlecaseOptionsV1 c_struct);
 };
 
 

@@ -12,22 +12,23 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
     extern "C" {
     
     
     } // extern "C"
+} // namespace capi
+} // namespace
+
+inline diplomat::capi::TrailingCase TrailingCase::AsFFI() const {
+  return static_cast<diplomat::capi::TrailingCase>(value);
 }
 
-
-inline capi::TrailingCase TrailingCase::AsFFI() const {
-  return static_cast<capi::TrailingCase>(value);
-}
-
-inline TrailingCase TrailingCase::FromFFI(capi::TrailingCase c_enum) {
+inline TrailingCase TrailingCase::FromFFI(diplomat::capi::TrailingCase c_enum) {
   switch (c_enum) {
-    case capi::TrailingCase_Lower:
-    case capi::TrailingCase_Unchanged:
+    case diplomat::capi::TrailingCase_Lower:
+    case diplomat::capi::TrailingCase_Unchanged:
       return static_cast<TrailingCase::Value>(c_enum);
     default:
       abort();

@@ -8,14 +8,14 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "DateLength.d.hpp"
-#include "Error.d.hpp"
-#include "IsoTimeZoneOptions.d.hpp"
-#include "TimeLength.d.hpp"
 
+namespace capi {typedef struct CustomTimeZone CustomTimeZone; }
 class CustomTimeZone;
+namespace capi {typedef struct DataProvider DataProvider; }
 class DataProvider;
+namespace capi {typedef struct IsoDateTime IsoDateTime; }
 class IsoDateTime;
+namespace capi {typedef struct Locale Locale; }
 class Locale;
 struct IsoTimeZoneOptions;
 class DateLength;
@@ -23,9 +23,11 @@ class Error;
 class TimeLength;
 
 
+namespace diplomat {
 namespace capi {
     typedef struct GregorianZonedDateTimeFormatter GregorianZonedDateTimeFormatter;
-}
+} // namespace capi
+} // namespace
 
 class GregorianZonedDateTimeFormatter {
 public:
@@ -36,10 +38,10 @@ public:
 
   inline std::string format_iso_datetime_with_custom_time_zone(const IsoDateTime& datetime, const CustomTimeZone& time_zone) const;
 
-  inline const capi::GregorianZonedDateTimeFormatter* AsFFI() const;
-  inline capi::GregorianZonedDateTimeFormatter* AsFFI();
-  inline static const GregorianZonedDateTimeFormatter* FromFFI(const capi::GregorianZonedDateTimeFormatter* ptr);
-  inline static GregorianZonedDateTimeFormatter* FromFFI(capi::GregorianZonedDateTimeFormatter* ptr);
+  inline const diplomat::capi::GregorianZonedDateTimeFormatter* AsFFI() const;
+  inline diplomat::capi::GregorianZonedDateTimeFormatter* AsFFI();
+  inline static const GregorianZonedDateTimeFormatter* FromFFI(const diplomat::capi::GregorianZonedDateTimeFormatter* ptr);
+  inline static GregorianZonedDateTimeFormatter* FromFFI(diplomat::capi::GregorianZonedDateTimeFormatter* ptr);
   inline static void operator delete(void* ptr);
 private:
   GregorianZonedDateTimeFormatter() = delete;

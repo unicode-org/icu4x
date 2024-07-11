@@ -10,12 +10,14 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
     typedef enum TransformResult {
       TransformResult_Modified = 0,
       TransformResult_Unmodified = 1,
     } TransformResult;
-}
+} // namespace capi
+} // namespace
 
 class TransformResult {
 public:
@@ -31,8 +33,8 @@ public:
   // Prevent usage as boolean value
   explicit operator bool() const = delete;
 
-  inline capi::TransformResult AsFFI() const;
-  inline static TransformResult FromFFI(capi::TransformResult c_enum);
+  inline diplomat::capi::TransformResult AsFFI() const;
+  inline static TransformResult FromFFI(diplomat::capi::TransformResult c_enum);
 private:
     Value value;
 };

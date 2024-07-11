@@ -8,15 +8,17 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "FixedDecimalParseError.d.hpp"
 
+namespace capi {typedef struct FixedDecimal FixedDecimal; }
 class FixedDecimal;
 class FixedDecimalParseError;
 
 
+namespace diplomat {
 namespace capi {
     typedef struct PluralOperands PluralOperands;
-}
+} // namespace capi
+} // namespace
 
 class PluralOperands {
 public:
@@ -25,10 +27,10 @@ public:
 
   inline static std::unique_ptr<PluralOperands> create_from_fixed_decimal(const FixedDecimal& x);
 
-  inline const capi::PluralOperands* AsFFI() const;
-  inline capi::PluralOperands* AsFFI();
-  inline static const PluralOperands* FromFFI(const capi::PluralOperands* ptr);
-  inline static PluralOperands* FromFFI(capi::PluralOperands* ptr);
+  inline const diplomat::capi::PluralOperands* AsFFI() const;
+  inline diplomat::capi::PluralOperands* AsFFI();
+  inline static const PluralOperands* FromFFI(const diplomat::capi::PluralOperands* ptr);
+  inline static PluralOperands* FromFFI(diplomat::capi::PluralOperands* ptr);
   inline static void operator delete(void* ptr);
 private:
   PluralOperands() = delete;

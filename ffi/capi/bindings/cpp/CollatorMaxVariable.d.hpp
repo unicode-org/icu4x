@@ -10,6 +10,7 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
     typedef enum CollatorMaxVariable {
       CollatorMaxVariable_Auto = 0,
@@ -18,7 +19,8 @@ namespace capi {
       CollatorMaxVariable_Symbol = 3,
       CollatorMaxVariable_Currency = 4,
     } CollatorMaxVariable;
-}
+} // namespace capi
+} // namespace
 
 class CollatorMaxVariable {
 public:
@@ -37,8 +39,8 @@ public:
   // Prevent usage as boolean value
   explicit operator bool() const = delete;
 
-  inline capi::CollatorMaxVariable AsFFI() const;
-  inline static CollatorMaxVariable FromFFI(capi::CollatorMaxVariable c_enum);
+  inline diplomat::capi::CollatorMaxVariable AsFFI() const;
+  inline static CollatorMaxVariable FromFFI(diplomat::capi::CollatorMaxVariable c_enum);
 private:
     Value value;
 };

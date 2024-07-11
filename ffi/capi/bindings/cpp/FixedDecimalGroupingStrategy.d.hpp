@@ -10,6 +10,7 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
     typedef enum FixedDecimalGroupingStrategy {
       FixedDecimalGroupingStrategy_Auto = 0,
@@ -17,7 +18,8 @@ namespace capi {
       FixedDecimalGroupingStrategy_Always = 2,
       FixedDecimalGroupingStrategy_Min2 = 3,
     } FixedDecimalGroupingStrategy;
-}
+} // namespace capi
+} // namespace
 
 class FixedDecimalGroupingStrategy {
 public:
@@ -35,8 +37,8 @@ public:
   // Prevent usage as boolean value
   explicit operator bool() const = delete;
 
-  inline capi::FixedDecimalGroupingStrategy AsFFI() const;
-  inline static FixedDecimalGroupingStrategy FromFFI(capi::FixedDecimalGroupingStrategy c_enum);
+  inline diplomat::capi::FixedDecimalGroupingStrategy AsFFI() const;
+  inline static FixedDecimalGroupingStrategy FromFFI(diplomat::capi::FixedDecimalGroupingStrategy c_enum);
 private:
     Value value;
 };
