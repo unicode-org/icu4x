@@ -6,18 +6,18 @@
 pub mod ffi {
     use alloc::boxed::Box;
 
-    use crate::properties_sets::ffi::ICU4XCodePointSetData;
+    use crate::properties_sets::ffi::CodePointSetData;
 
     #[diplomat::opaque]
     #[diplomat::rust_link(
         icu::collections::codepointinvlist::CodePointInversionListBuilder,
         Struct
     )]
-    pub struct ICU4XCodePointSetBuilder(
+    pub struct CodePointSetBuilder(
         pub icu_collections::codepointinvlist::CodePointInversionListBuilder,
     );
 
-    impl ICU4XCodePointSetBuilder {
+    impl CodePointSetBuilder {
         /// Make a new set builder containing nothing
         #[diplomat::rust_link(
             icu::collections::codepointinvlist::CodePointInversionListBuilder::new,
@@ -42,11 +42,11 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        pub fn build(&mut self) -> Box<ICU4XCodePointSetData> {
+        pub fn build(&mut self) -> Box<CodePointSetData> {
             let inner = core::mem::take(&mut self.0);
             let built = inner.build();
             let set = icu_properties::sets::CodePointSetData::from_code_point_inversion_list(built);
-            Box::new(ICU4XCodePointSetData(set))
+            Box::new(CodePointSetData(set))
         }
 
         /// Complements this set
@@ -113,7 +113,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        pub fn add_set(&mut self, data: &ICU4XCodePointSetData) {
+        pub fn add_set(&mut self, data: &CodePointSetData) {
             // This is a ZeroFrom and always cheap for a CPIL, may be expensive
             // for other impls. In the future we can make this builder support multiple impls
             // if we ever add them
@@ -154,7 +154,7 @@ pub mod ffi {
             icu::collections::codepointinvlist::CodePointInversionListBuilder::remove_set,
             FnInStruct
         )]
-        pub fn remove_set(&mut self, data: &ICU4XCodePointSetData) {
+        pub fn remove_set(&mut self, data: &CodePointSetData) {
             // (see comment in add_set)
             let list = data.0.to_code_point_inversion_list();
             self.0.remove_set(&list);
@@ -193,7 +193,7 @@ pub mod ffi {
             icu::collections::codepointinvlist::CodePointInversionListBuilder::retain_set,
             FnInStruct
         )]
-        pub fn retain_set(&mut self, data: &ICU4XCodePointSetData) {
+        pub fn retain_set(&mut self, data: &CodePointSetData) {
             // (see comment in add_set)
             let list = data.0.to_code_point_inversion_list();
             self.0.retain_set(&list);
@@ -238,7 +238,7 @@ pub mod ffi {
             icu::collections::codepointinvlist::CodePointInversionListBuilder::complement_set,
             FnInStruct
         )]
-        pub fn complement_set(&mut self, data: &ICU4XCodePointSetData) {
+        pub fn complement_set(&mut self, data: &CodePointSetData) {
             // (see comment in add_set)
             let list = data.0.to_code_point_inversion_list();
             self.0.complement_set(&list);

@@ -17,9 +17,9 @@ pub mod ffi {
     ///
     /// This can be used to construct a StructDataProvider.
     #[diplomat::attr(dart, disable)]
-    pub struct ICU4XDataStruct(pub(crate) AnyPayload);
+    pub struct DataStruct(pub(crate) AnyPayload);
 
-    impl ICU4XDataStruct {
+    impl DataStruct {
         /// Construct a new DecimalSymbolsV1 data struct.
         ///
         /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
@@ -40,7 +40,7 @@ pub mod ffi {
             secondary_group_size: u8,
             min_group_size: u8,
             digits: &[DiplomatChar],
-        ) -> Option<Box<ICU4XDataStruct>> {
+        ) -> Option<Box<DataStruct>> {
             fn str_to_cow(s: &diplomat_runtime::DiplomatStr) -> Cow<'static, str> {
                 if s.is_empty() {
                     Cow::default()
@@ -84,7 +84,7 @@ pub mod ffi {
                 digits,
             };
 
-            Some(Box::new(ICU4XDataStruct(
+            Some(Box::new(DataStruct(
                 DataPayload::<DecimalSymbolsV1Marker>::from_owned(symbols).wrap_into_any_payload(),
             )))
         }

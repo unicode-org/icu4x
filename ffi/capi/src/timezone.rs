@@ -7,14 +7,14 @@ pub mod ffi {
     use alloc::boxed::Box;
     use core::fmt::Write;
 
-    use crate::errors::ffi::ICU4XTimeZoneInvalidIdError;
-    use crate::errors::ffi::ICU4XTimeZoneInvalidOffsetError;
+    use crate::errors::ffi::TimeZoneInvalidIdError;
+    use crate::errors::ffi::TimeZoneInvalidOffsetError;
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::timezone::CustomTimeZone, Struct)]
-    pub struct ICU4XCustomTimeZone(pub icu_timezone::CustomTimeZone);
+    pub struct CustomTimeZone(pub icu_timezone::CustomTimeZone);
 
-    impl ICU4XCustomTimeZone {
+    impl CustomTimeZone {
         /// Creates a time zone from an offset string.
         #[diplomat::rust_link(icu::timezone::CustomTimeZone::try_from_str, FnInStruct)]
         #[diplomat::rust_link(icu::timezone::CustomTimeZone::try_from_utf8, FnInStruct, hidden)]
@@ -25,8 +25,8 @@ pub mod ffi {
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "from_string")]
         pub fn create_from_string(
             s: &DiplomatStr,
-        ) -> Result<Box<ICU4XCustomTimeZone>, ICU4XTimeZoneInvalidOffsetError> {
-            Ok(Box::new(ICU4XCustomTimeZone::from(
+        ) -> Result<Box<CustomTimeZone>, TimeZoneInvalidOffsetError> {
+            Ok(Box::new(CustomTimeZone::from(
                 icu_timezone::CustomTimeZone::try_from_utf8(s)?,
             )))
         }
@@ -34,7 +34,7 @@ pub mod ffi {
         /// Creates a time zone with no information.
         #[diplomat::rust_link(icu::timezone::CustomTimeZone::new_empty, FnInStruct)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "empty")]
-        pub fn create_empty() -> Box<ICU4XCustomTimeZone> {
+        pub fn create_empty() -> Box<CustomTimeZone> {
             Box::new(icu_timezone::CustomTimeZone::new_empty().into())
         }
 
@@ -42,21 +42,21 @@ pub mod ffi {
         #[diplomat::rust_link(icu::timezone::CustomTimeZone::utc, FnInStruct)]
         #[diplomat::rust_link(icu::timezone::GmtOffset::utc, FnInStruct, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "utc")]
-        pub fn create_utc() -> Box<ICU4XCustomTimeZone> {
+        pub fn create_utc() -> Box<CustomTimeZone> {
             Box::new(icu_timezone::CustomTimeZone::utc().into())
         }
 
         /// Creates a time zone for GMT (London winter time).
         #[diplomat::rust_link(icu::timezone::CustomTimeZone::gmt, FnInStruct)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "gmt")]
-        pub fn create_gmt() -> Box<ICU4XCustomTimeZone> {
+        pub fn create_gmt() -> Box<CustomTimeZone> {
             Box::new(icu_timezone::CustomTimeZone::gmt().into())
         }
 
         /// Creates a time zone for BST (London summer time).
         #[diplomat::rust_link(icu::timezone::CustomTimeZone::bst, FnInStruct)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "bst")]
-        pub fn create_bst() -> Box<ICU4XCustomTimeZone> {
+        pub fn create_bst() -> Box<CustomTimeZone> {
             Box::new(icu_timezone::CustomTimeZone::bst().into())
         }
 
@@ -74,7 +74,7 @@ pub mod ffi {
         pub fn try_set_gmt_offset_seconds(
             &mut self,
             offset_seconds: i32,
-        ) -> Result<(), ICU4XTimeZoneInvalidOffsetError> {
+        ) -> Result<(), TimeZoneInvalidOffsetError> {
             self.0.gmt_offset = Some(icu_timezone::GmtOffset::try_from_offset_seconds(
                 offset_seconds,
             )?);
@@ -151,10 +151,10 @@ pub mod ffi {
         pub fn try_set_time_zone_id(
             &mut self,
             id: &DiplomatStr,
-        ) -> Result<(), ICU4XTimeZoneInvalidIdError> {
+        ) -> Result<(), TimeZoneInvalidIdError> {
             self.0.time_zone_id = Some(icu_timezone::TimeZoneBcp47Id(
                 tinystr::TinyAsciiStr::try_from_utf8(id)
-                    .map_err(|_| ICU4XTimeZoneInvalidIdError::TodoZst)?,
+                    .map_err(|_| TimeZoneInvalidIdError::TodoZst)?,
             ));
             Ok(())
         }
@@ -165,15 +165,15 @@ pub mod ffi {
         /// Errors if the string is not a valid BCP-47 time zone ID.
         pub fn try_set_iana_time_zone_id(
             &mut self,
-            mapper: &crate::timezone_mapper::ffi::ICU4XTimeZoneIdMapper,
+            mapper: &crate::timezone_mapper::ffi::TimeZoneIdMapper,
             id: &DiplomatStr,
-        ) -> Result<(), ICU4XTimeZoneInvalidIdError> {
+        ) -> Result<(), TimeZoneInvalidIdError> {
             self.0.time_zone_id = Some(
                 mapper
                     .0
                     .as_borrowed()
                     .iana_bytes_to_bcp47(id)
-                    .ok_or(ICU4XTimeZoneInvalidIdError::TodoZst)?,
+                    .ok_or(TimeZoneInvalidIdError::TodoZst)?,
             );
             Ok(())
         }
@@ -205,10 +205,10 @@ pub mod ffi {
         pub fn try_set_metazone_id(
             &mut self,
             id: &DiplomatStr,
-        ) -> Result<(), ICU4XTimeZoneInvalidIdError> {
+        ) -> Result<(), TimeZoneInvalidIdError> {
             self.0.metazone_id = Some(icu_timezone::MetazoneId(
                 tinystr::TinyAsciiStr::try_from_utf8(id)
-                    .map_err(|_| ICU4XTimeZoneInvalidIdError::TodoZst)?,
+                    .map_err(|_| TimeZoneInvalidIdError::TodoZst)?,
             ));
             Ok(())
         }
@@ -308,8 +308,8 @@ pub mod ffi {
         #[cfg(feature = "icu_timezone")]
         pub fn maybe_calculate_metazone(
             &mut self,
-            metazone_calculator: &crate::metazone_calculator::ffi::ICU4XMetazoneCalculator,
-            local_datetime: &crate::datetime::ffi::ICU4XIsoDateTime,
+            metazone_calculator: &crate::metazone_calculator::ffi::MetazoneCalculator,
+            local_datetime: &crate::datetime::ffi::IsoDateTime,
         ) {
             self.0
                 .maybe_calculate_metazone(&metazone_calculator.0, &local_datetime.0);
@@ -317,14 +317,14 @@ pub mod ffi {
     }
 }
 
-impl From<icu_timezone::CustomTimeZone> for ffi::ICU4XCustomTimeZone {
+impl From<icu_timezone::CustomTimeZone> for ffi::CustomTimeZone {
     fn from(other: icu_timezone::CustomTimeZone) -> Self {
         Self(other)
     }
 }
 
-impl From<ffi::ICU4XCustomTimeZone> for icu_timezone::CustomTimeZone {
-    fn from(other: ffi::ICU4XCustomTimeZone) -> Self {
+impl From<ffi::CustomTimeZone> for icu_timezone::CustomTimeZone {
+    fn from(other: ffi::CustomTimeZone) -> Self {
         other.0
     }
 }

@@ -8,9 +8,9 @@ pub mod ffi {
 
     #[diplomat::opaque]
     /// An object allowing control over the logging used
-    pub struct ICU4XLogger;
+    pub struct Logger;
 
-    impl ICU4XLogger {
+    impl Logger {
         /// Initialize the logger using `simple_logger`
         ///
         /// Requires the `simple_logger` Cargo feature.

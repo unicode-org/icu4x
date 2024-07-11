@@ -8,30 +8,27 @@ pub mod ffi {
     use alloc::string::String;
     use alloc::vec::Vec;
 
-    use crate::{
-        errors::ffi::ICU4XDataError, locale_core::ffi::ICU4XLocale,
-        provider::ffi::ICU4XDataProvider,
-    };
+    use crate::{errors::ffi::DataError, locale_core::ffi::Locale, provider::ffi::DataProvider};
 
     use writeable::Writeable;
 
     /// A list of strings
     #[diplomat::opaque]
     #[diplomat::attr(*, disable)]
-    pub struct ICU4XList(pub Vec<String>);
+    pub struct List(pub Vec<String>);
 
-    impl ICU4XList {
+    impl List {
         /// Create a new list of strings
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
-        pub fn create() -> Box<ICU4XList> {
-            Box::new(ICU4XList(Vec::new()))
+        pub fn create() -> Box<List> {
+            Box::new(List(Vec::new()))
         }
 
         /// Create a new list of strings with preallocated space to hold
         /// at least `capacity` elements
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "with_capacity")]
-        pub fn create_with_capacity(capacity: usize) -> Box<ICU4XList> {
-            Box::new(ICU4XList(Vec::with_capacity(capacity)))
+        pub fn create_with_capacity(capacity: usize) -> Box<List> {
+            Box::new(List(Vec::with_capacity(capacity)))
         }
 
         /// Push a string to the list
@@ -57,26 +54,26 @@ pub mod ffi {
 
     #[diplomat::rust_link(icu::list::ListLength, Enum)]
     #[diplomat::enum_convert(icu_list::ListLength, needs_wildcard)]
-    pub enum ICU4XListLength {
+    pub enum ListLength {
         Wide,
         Short,
         Narrow,
     }
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::list::ListFormatter, Struct)]
-    pub struct ICU4XListFormatter(pub icu_list::ListFormatter);
+    pub struct ListFormatter(pub icu_list::ListFormatter);
 
-    impl ICU4XListFormatter {
-        /// Construct a new ICU4XListFormatter instance for And patterns
+    impl ListFormatter {
+        /// Construct a new ListFormatter instance for And patterns
         #[diplomat::rust_link(icu::list::ListFormatter::try_new_and_with_length, FnInStruct)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "and_with_length")]
         pub fn create_and_with_length(
-            provider: &ICU4XDataProvider,
-            locale: &ICU4XLocale,
-            length: ICU4XListLength,
-        ) -> Result<Box<ICU4XListFormatter>, ICU4XDataError> {
+            provider: &DataProvider,
+            locale: &Locale,
+            length: ListLength,
+        ) -> Result<Box<ListFormatter>, DataError> {
             let locale = locale.to_datalocale();
-            Ok(Box::new(ICU4XListFormatter(call_constructor!(
+            Ok(Box::new(ListFormatter(call_constructor!(
                 icu_list::ListFormatter::try_new_and_with_length,
                 icu_list::ListFormatter::try_new_and_with_length_with_any_provider,
                 icu_list::ListFormatter::try_new_and_with_length_with_buffer_provider,
@@ -85,16 +82,16 @@ pub mod ffi {
                 length.into()
             )?)))
         }
-        /// Construct a new ICU4XListFormatter instance for And patterns
+        /// Construct a new ListFormatter instance for And patterns
         #[diplomat::rust_link(icu::list::ListFormatter::try_new_or_with_length, FnInStruct)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "or_with_length")]
         pub fn create_or_with_length(
-            provider: &ICU4XDataProvider,
-            locale: &ICU4XLocale,
-            length: ICU4XListLength,
-        ) -> Result<Box<ICU4XListFormatter>, ICU4XDataError> {
+            provider: &DataProvider,
+            locale: &Locale,
+            length: ListLength,
+        ) -> Result<Box<ListFormatter>, DataError> {
             let locale = locale.to_datalocale();
-            Ok(Box::new(ICU4XListFormatter(call_constructor!(
+            Ok(Box::new(ListFormatter(call_constructor!(
                 icu_list::ListFormatter::try_new_or_with_length,
                 icu_list::ListFormatter::try_new_or_with_length_with_any_provider,
                 icu_list::ListFormatter::try_new_or_with_length_with_buffer_provider,
@@ -103,16 +100,16 @@ pub mod ffi {
                 length.into()
             )?)))
         }
-        /// Construct a new ICU4XListFormatter instance for And patterns
+        /// Construct a new ListFormatter instance for And patterns
         #[diplomat::rust_link(icu::list::ListFormatter::try_new_unit_with_length, FnInStruct)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "unit_with_length")]
         pub fn create_unit_with_length(
-            provider: &ICU4XDataProvider,
-            locale: &ICU4XLocale,
-            length: ICU4XListLength,
-        ) -> Result<Box<ICU4XListFormatter>, ICU4XDataError> {
+            provider: &DataProvider,
+            locale: &Locale,
+            length: ListLength,
+        ) -> Result<Box<ListFormatter>, DataError> {
             let locale = locale.to_datalocale();
-            Ok(Box::new(ICU4XListFormatter(call_constructor!(
+            Ok(Box::new(ListFormatter(call_constructor!(
                 icu_list::ListFormatter::try_new_unit_with_length,
                 icu_list::ListFormatter::try_new_unit_with_length_with_any_provider,
                 icu_list::ListFormatter::try_new_unit_with_length_with_buffer_provider,
@@ -126,7 +123,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::list::ListFormatter::format_to_string, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::list::FormattedList, Struct, hidden)]
         #[diplomat::attr(*, disable)]
-        pub fn format(&self, list: &ICU4XList, write: &mut DiplomatWrite) {
+        pub fn format(&self, list: &List, write: &mut DiplomatWrite) {
             let _infallible = self.0.format(list.0.iter()).write_to(write);
         }
 

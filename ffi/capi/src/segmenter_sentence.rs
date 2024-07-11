@@ -6,13 +6,13 @@
 pub mod ffi {
     use alloc::boxed::Box;
 
-    use crate::errors::ffi::ICU4XDataError;
-    use crate::provider::ffi::ICU4XDataProvider;
+    use crate::errors::ffi::DataError;
+    use crate::provider::ffi::DataProvider;
 
     #[diplomat::opaque]
     /// An ICU4X sentence-break segmenter, capable of finding sentence breakpoints in strings.
     #[diplomat::rust_link(icu::segmenter::SentenceSegmenter, Struct)]
-    pub struct ICU4XSentenceSegmenter(icu_segmenter::SentenceSegmenter);
+    pub struct SentenceSegmenter(icu_segmenter::SentenceSegmenter);
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::segmenter::SentenceBreakIterator, Struct)]
@@ -22,32 +22,26 @@ pub mod ffi {
         hidden
     )]
     #[diplomat::rust_link(icu::segmenter::SentenceBreakIteratorUtf8, Typedef, hidden)]
-    pub struct ICU4XSentenceBreakIteratorUtf8<'a>(
+    pub struct SentenceBreakIteratorUtf8<'a>(
         icu_segmenter::SentenceBreakIteratorPotentiallyIllFormedUtf8<'a, 'a>,
     );
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::segmenter::SentenceBreakIterator, Struct)]
     #[diplomat::rust_link(icu::segmenter::SentenceBreakIteratorUtf16, Typedef, hidden)]
-    pub struct ICU4XSentenceBreakIteratorUtf16<'a>(
-        icu_segmenter::SentenceBreakIteratorUtf16<'a, 'a>,
-    );
+    pub struct SentenceBreakIteratorUtf16<'a>(icu_segmenter::SentenceBreakIteratorUtf16<'a, 'a>);
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::segmenter::SentenceBreakIterator, Struct)]
     #[diplomat::rust_link(icu::segmenter::SentenceBreakIteratorLatin1, Typedef, hidden)]
-    pub struct ICU4XSentenceBreakIteratorLatin1<'a>(
-        icu_segmenter::SentenceBreakIteratorLatin1<'a, 'a>,
-    );
+    pub struct SentenceBreakIteratorLatin1<'a>(icu_segmenter::SentenceBreakIteratorLatin1<'a, 'a>);
 
-    impl ICU4XSentenceSegmenter {
-        /// Construct an [`ICU4XSentenceSegmenter`].
+    impl SentenceSegmenter {
+        /// Construct an [`SentenceSegmenter`].
         #[diplomat::rust_link(icu::segmenter::SentenceSegmenter::new, FnInStruct)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
-        pub fn create(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XSentenceSegmenter>, ICU4XDataError> {
-            Ok(Box::new(ICU4XSentenceSegmenter(call_constructor!(
+        pub fn create(provider: &DataProvider) -> Result<Box<SentenceSegmenter>, DataError> {
+            Ok(Box::new(SentenceSegmenter(call_constructor!(
                 icu_segmenter::SentenceSegmenter::new [r => Ok(r)],
                 icu_segmenter::SentenceSegmenter::try_new_with_any_provider,
                 icu_segmenter::SentenceSegmenter::try_new_with_buffer_provider,
@@ -65,8 +59,8 @@ pub mod ffi {
         pub fn segment_utf8<'a>(
             &'a self,
             input: &'a DiplomatStr,
-        ) -> Box<ICU4XSentenceBreakIteratorUtf8<'a>> {
-            Box::new(ICU4XSentenceBreakIteratorUtf8(self.0.segment_utf8(input)))
+        ) -> Box<SentenceBreakIteratorUtf8<'a>> {
+            Box::new(SentenceBreakIteratorUtf8(self.0.segment_utf8(input)))
         }
 
         /// Segments a string.
@@ -78,8 +72,8 @@ pub mod ffi {
         pub fn segment_utf16<'a>(
             &'a self,
             input: &'a DiplomatStr16,
-        ) -> Box<ICU4XSentenceBreakIteratorUtf16<'a>> {
-            Box::new(ICU4XSentenceBreakIteratorUtf16(self.0.segment_utf16(input)))
+        ) -> Box<SentenceBreakIteratorUtf16<'a>> {
+            Box::new(SentenceBreakIteratorUtf16(self.0.segment_utf16(input)))
         }
 
         /// Segments a Latin-1 string.
@@ -88,14 +82,12 @@ pub mod ffi {
         pub fn segment_latin1<'a>(
             &'a self,
             input: &'a [u8],
-        ) -> Box<ICU4XSentenceBreakIteratorLatin1<'a>> {
-            Box::new(ICU4XSentenceBreakIteratorLatin1(
-                self.0.segment_latin1(input),
-            ))
+        ) -> Box<SentenceBreakIteratorLatin1<'a>> {
+            Box::new(SentenceBreakIteratorLatin1(self.0.segment_latin1(input)))
         }
     }
 
-    impl<'a> ICU4XSentenceBreakIteratorUtf8<'a> {
+    impl<'a> SentenceBreakIteratorUtf8<'a> {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
         #[diplomat::rust_link(icu::segmenter::SentenceBreakIterator::next, FnInStruct)]
@@ -112,7 +104,7 @@ pub mod ffi {
         }
     }
 
-    impl<'a> ICU4XSentenceBreakIteratorUtf16<'a> {
+    impl<'a> SentenceBreakIteratorUtf16<'a> {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
         #[diplomat::rust_link(icu::segmenter::SentenceBreakIterator::next, FnInStruct)]
@@ -129,7 +121,7 @@ pub mod ffi {
         }
     }
 
-    impl<'a> ICU4XSentenceBreakIteratorLatin1<'a> {
+    impl<'a> SentenceBreakIteratorLatin1<'a> {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
         #[diplomat::rust_link(icu::segmenter::SentenceBreakIterator::next, FnInStruct)]

@@ -6,15 +6,15 @@
 pub mod ffi {
     use alloc::boxed::Box;
 
-    use crate::errors::ffi::ICU4XCalendarError;
+    use crate::errors::ffi::CalendarError;
 
     #[diplomat::opaque]
     /// An ICU4X Time object representing a time in terms of hour, minute, second, nanosecond
     #[diplomat::rust_link(icu::calendar::Time, Struct)]
-    pub struct ICU4XTime(pub icu_calendar::Time);
+    pub struct Time(pub icu_calendar::Time);
 
-    impl ICU4XTime {
-        /// Creates a new [`ICU4XTime`] given field values
+    impl Time {
+        /// Creates a new [`Time`] given field values
         #[diplomat::rust_link(icu::calendar::Time::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::calendar::Time::new, FnInStruct, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
@@ -23,7 +23,7 @@ pub mod ffi {
             minute: u8,
             second: u8,
             nanosecond: u32,
-        ) -> Result<Box<ICU4XTime>, ICU4XCalendarError> {
+        ) -> Result<Box<Time>, CalendarError> {
             let hour = hour.try_into()?;
             let minute = minute.try_into()?;
             let second = second.try_into()?;
@@ -34,15 +34,15 @@ pub mod ffi {
                 second,
                 nanosecond,
             };
-            Ok(Box::new(ICU4XTime(time)))
+            Ok(Box::new(Time(time)))
         }
 
-        /// Creates a new [`ICU4XTime`] representing midnight (00:00.000).
+        /// Creates a new [`Time`] representing midnight (00:00.000).
         #[diplomat::rust_link(icu::calendar::Time::midnight, FnInStruct)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "midnight")]
-        pub fn create_midnight() -> Result<Box<ICU4XTime>, ICU4XCalendarError> {
+        pub fn create_midnight() -> Result<Box<Time>, CalendarError> {
             let time = icu_calendar::Time::midnight();
-            Ok(Box::new(ICU4XTime(time)))
+            Ok(Box::new(Time(time)))
         }
 
         /// Returns the hour in this time

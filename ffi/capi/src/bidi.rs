@@ -8,10 +8,10 @@ pub mod ffi {
     use alloc::vec::Vec;
     use core::fmt::Write;
 
-    use crate::errors::ffi::ICU4XDataError;
-    use crate::provider::ffi::ICU4XDataProvider;
+    use crate::errors::ffi::DataError;
+    use crate::provider::ffi::DataProvider;
 
-    pub enum ICU4XBidiDirection {
+    pub enum BidiDirection {
         Ltr,
         Rtl,
         Mixed,
@@ -21,14 +21,14 @@ pub mod ffi {
     /// An ICU4X Bidi object, containing loaded bidi data
     #[diplomat::rust_link(icu::properties::bidi::BidiClassAdapter, Struct)]
     // #[diplomat::rust_link(icu::properties::maps::load_bidi_class, Struct)]
-    pub struct ICU4XBidi(pub icu_properties::maps::CodePointMapData<icu_properties::BidiClass>);
+    pub struct Bidi(pub icu_properties::maps::CodePointMapData<icu_properties::BidiClass>);
 
-    impl ICU4XBidi {
-        /// Creates a new [`ICU4XBidi`] from locale data.
+    impl Bidi {
+        /// Creates a new [`Bidi`] from locale data.
         #[diplomat::rust_link(icu::properties::bidi::BidiClassAdapter::new, FnInStruct)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
-        pub fn create(provider: &ICU4XDataProvider) -> Result<Box<ICU4XBidi>, ICU4XDataError> {
-            Ok(Box::new(ICU4XBidi(call_constructor_unstable!(
+        pub fn create(provider: &DataProvider) -> Result<Box<Bidi>, DataError> {
+            Ok(Box::new(Bidi(call_constructor_unstable!(
                 icu_properties::maps::bidi_class [m => Ok(m.static_to_owned())],
                 icu_properties::maps::load_bidi_class,
                 provider,
@@ -51,13 +51,13 @@ pub mod ffi {
             &self,
             text: &'text DiplomatStr,
             default_level: u8,
-        ) -> Option<Box<ICU4XBidiInfo<'text>>> {
+        ) -> Option<Box<BidiInfo<'text>>> {
             let text = core::str::from_utf8(text).ok()?;
 
             let data = self.0.as_borrowed();
             let adapter = icu_properties::bidi::BidiClassAdapter::new(data);
 
-            Some(Box::new(ICU4XBidiInfo(
+            Some(Box::new(BidiInfo(
                 unicode_bidi::BidiInfo::new_with_data_source(
                     &adapter,
                     text,
@@ -82,11 +82,11 @@ pub mod ffi {
             &self,
             text: &'text str,
             default_level: u8,
-        ) -> Box<ICU4XBidiInfo<'text>> {
+        ) -> Box<BidiInfo<'text>> {
             let data = self.0.as_borrowed();
             let adapter = icu_properties::bidi::BidiClassAdapter::new(data);
 
-            Box::new(ICU4XBidiInfo(unicode_bidi::BidiInfo::new_with_data_source(
+            Box::new(BidiInfo(unicode_bidi::BidiInfo::new_with_data_source(
                 &adapter,
                 text,
                 unicode_bidi::Level::new(default_level).ok(),
@@ -102,11 +102,11 @@ pub mod ffi {
         /// Failure to follow this invariant may lead to incorrect results,
         /// but is still safe.
         #[diplomat::rust_link(unicode_bidi::BidiInfo::reorder_visual, FnInStruct)]
-        pub fn reorder_visual(&self, levels: &[u8]) -> Box<ICU4XReorderedIndexMap> {
+        pub fn reorder_visual(&self, levels: &[u8]) -> Box<ReorderedIndexMap> {
             let levels = unicode_bidi::Level::from_slice_unchecked(levels);
-            Box::new(ICU4XReorderedIndexMap(
-                unicode_bidi::BidiInfo::reorder_visual(levels),
-            ))
+            Box::new(ReorderedIndexMap(unicode_bidi::BidiInfo::reorder_visual(
+                levels,
+            )))
         }
 
         /// Check if a Level returned by level_at is an RTL level.
@@ -146,11 +146,11 @@ pub mod ffi {
     ///
     /// `map[visualIndex] = sourceIndex`
     ///
-    /// Produced by `reorder_visual()` on [`ICU4XBidi`].
+    /// Produced by `reorder_visual()` on [`Bidi`].
     #[diplomat::opaque]
-    pub struct ICU4XReorderedIndexMap(pub Vec<usize>);
+    pub struct ReorderedIndexMap(pub Vec<usize>);
 
-    impl ICU4XReorderedIndexMap {
+    impl ReorderedIndexMap {
         /// Get this as a slice/array of indices
         #[diplomat::attr(supports = accessors, getter)]
         pub fn as_slice<'a>(&'a self) -> &'a [usize] {
@@ -178,12 +178,12 @@ pub mod ffi {
         }
     }
 
-    /// An object containing bidi information for a given string, produced by `for_text()` on `ICU4XBidi`
+    /// An object containing bidi information for a given string, produced by `for_text()` on `Bidi`
     #[diplomat::rust_link(unicode_bidi::BidiInfo, Struct)]
     #[diplomat::opaque]
-    pub struct ICU4XBidiInfo<'text>(pub unicode_bidi::BidiInfo<'text>);
+    pub struct BidiInfo<'text>(pub unicode_bidi::BidiInfo<'text>);
 
-    impl<'text> ICU4XBidiInfo<'text> {
+    impl<'text> BidiInfo<'text> {
         /// The number of paragraphs contained here
         #[diplomat::attr(supports = accessors, getter)]
         pub fn paragraph_count(&self) -> usize {
@@ -191,11 +191,11 @@ pub mod ffi {
         }
 
         /// Get the nth paragraph, returning `None` if out of bounds
-        pub fn paragraph_at(&'text self, n: usize) -> Option<Box<ICU4XBidiParagraph<'text>>> {
+        pub fn paragraph_at(&'text self, n: usize) -> Option<Box<BidiParagraph<'text>>> {
             self.0
                 .paragraphs
                 .get(n)
-                .map(|p| Box::new(ICU4XBidiParagraph(unicode_bidi::Paragraph::new(&self.0, p))))
+                .map(|p| Box::new(BidiParagraph(unicode_bidi::Paragraph::new(&self.0, p))))
         }
 
         /// The number of bytes in this full text
@@ -206,7 +206,7 @@ pub mod ffi {
 
         /// Get the BIDI level at a particular byte index in the full text.
         /// This integer is conceptually a `unicode_bidi::Level`,
-        /// and can be further inspected using the static methods on ICU4XBidi.
+        /// and can be further inspected using the static methods on Bidi.
         ///
         /// Returns 0 (equivalent to `Level::ltr()`) on error
         pub fn level_at(&self, pos: usize) -> u8 {
@@ -220,13 +220,13 @@ pub mod ffi {
 
     /// Bidi information for a single processed paragraph
     #[diplomat::opaque]
-    pub struct ICU4XBidiParagraph<'info>(pub unicode_bidi::Paragraph<'info, 'info>);
+    pub struct BidiParagraph<'info>(pub unicode_bidi::Paragraph<'info, 'info>);
 
-    impl<'info> ICU4XBidiParagraph<'info> {
+    impl<'info> BidiParagraph<'info> {
         /// Given a paragraph index `n` within the surrounding text, this sets this
         /// object to the paragraph at that index. Returns nothing when out of bounds.
         ///
-        /// This is equivalent to calling `paragraph_at()` on `ICU4XBidiInfo` but doesn't
+        /// This is equivalent to calling `paragraph_at()` on `BidiInfo` but doesn't
         /// create a new object
         pub fn set_paragraph_in_text(&mut self, n: usize) -> bool {
             let Some(para) = self.0.info.paragraphs.get(n) else {
@@ -239,7 +239,7 @@ pub mod ffi {
         #[diplomat::rust_link(unicode_bidi::Paragraph::level_at, FnInStruct)]
         #[diplomat::attr(supports = accessors, getter)]
         /// The primary direction of this paragraph
-        pub fn direction(&self) -> ICU4XBidiDirection {
+        pub fn direction(&self) -> BidiDirection {
             self.0.direction().into()
         }
 
@@ -287,7 +287,7 @@ pub mod ffi {
 
         /// Get the BIDI level at a particular byte index in this paragraph.
         /// This integer is conceptually a `unicode_bidi::Level`,
-        /// and can be further inspected using the static methods on ICU4XBidi.
+        /// and can be further inspected using the static methods on Bidi.
         ///
         /// Returns 0 (equivalent to `Level::ltr()`) on error
         #[diplomat::rust_link(unicode_bidi::Paragraph::level_at, FnInStruct)]
@@ -303,7 +303,7 @@ pub mod ffi {
 
 use unicode_bidi::Direction;
 
-impl From<Direction> for ffi::ICU4XBidiDirection {
+impl From<Direction> for ffi::BidiDirection {
     fn from(other: Direction) -> Self {
         match other {
             Direction::Ltr => Self::Ltr,

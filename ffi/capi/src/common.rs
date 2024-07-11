@@ -9,7 +9,7 @@ pub mod ffi {
     #[diplomat::enum_convert(core::cmp::Ordering)]
     #[diplomat::rust_link(core::cmp::Ordering, Enum)]
     #[diplomat::attr(*, disable)]
-    pub enum ICU4XOrdering {
+    pub enum Ordering {
         Less = -1,
         Equal = 0,
         Greater = 1,
