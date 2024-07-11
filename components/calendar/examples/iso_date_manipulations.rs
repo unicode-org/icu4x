@@ -9,7 +9,7 @@
 icu_benchmark_macros::instrument!();
 use icu_benchmark_macros::println;
 
-use icu_calendar::{Date, Iso, RangeError};
+use icu_calendar::Date;
 
 const DATES_ISO: &[(i32, u8, u8)] = &[
     (1970, 1, 1),
@@ -27,24 +27,14 @@ const DATES_ISO: &[(i32, u8, u8)] = &[
     (2033, 6, 10),
 ];
 
-fn tuple_to_iso_date(date: (i32, u8, u8)) -> Result<Date<Iso>, RangeError> {
-    Date::try_new_iso_date(date.0, date.1, date.2)
-}
-
 fn main() {
-    let dates = DATES_ISO
-        .iter()
-        .copied()
-        .map(tuple_to_iso_date)
-        .collect::<Result<Vec<Date<Iso>>, _>>()
-        .expect("Failed to parse dates.");
-
-    for date_input in dates {
+    for &(year, month, day) in DATES_ISO {
+        let date = Date::try_new_iso_date(year, month, day).expect("date should parse");
         println!(
             "Year: {}, Month: {}, Day: {}",
-            date_input.year().number,
-            date_input.month().ordinal,
-            date_input.day_of_month().0,
+            date.year().number,
+            date.month().ordinal,
+            date.day_of_month().0,
         );
     }
 }

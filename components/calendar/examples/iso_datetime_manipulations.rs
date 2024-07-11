@@ -9,7 +9,7 @@
 icu_benchmark_macros::instrument!();
 use icu_benchmark_macros::println;
 
-use icu_calendar::{DateError, DateTime, Iso};
+use icu_calendar::DateTime;
 
 const DATETIMES_ISO: &[(i32, u8, u8, u8, u8, u8)] = &[
     (1970, 1, 1, 3, 5, 12),
@@ -27,27 +27,18 @@ const DATETIMES_ISO: &[(i32, u8, u8, u8, u8, u8)] = &[
     (2033, 6, 10, 17, 22, 22),
 ];
 
-fn tuple_to_iso_datetime(date: (i32, u8, u8, u8, u8, u8)) -> Result<DateTime<Iso>, DateError> {
-    DateTime::try_new_iso_datetime(date.0, date.1, date.2, date.3, date.4, date.5)
-}
-
 fn main() {
-    let datetimes = DATETIMES_ISO
-        .iter()
-        .copied()
-        .map(tuple_to_iso_datetime)
-        .collect::<Result<Vec<DateTime<Iso>>, _>>()
-        .expect("Failed to parse datetimes.");
-
-    for datetime_input in datetimes {
+    for &(year, month, day, hour, minute, second) in DATETIMES_ISO {
+        let datetime = DateTime::try_new_iso_datetime(year, month, day, hour, minute, second)
+            .expect("datetime should parse");
         println!(
             "Year: {}, Month: {}, Day: {}, Hour: {}, Minute: {}, Second: {}",
-            datetime_input.date.year().number,
-            datetime_input.date.month().ordinal,
-            datetime_input.date.day_of_month().0,
-            u8::from(datetime_input.time.hour),
-            u8::from(datetime_input.time.minute),
-            u8::from(datetime_input.time.second),
+            datetime.date.year().number,
+            datetime.date.month().ordinal,
+            datetime.date.day_of_month().0,
+            u8::from(datetime.time.hour),
+            u8::from(datetime.time.minute),
+            u8::from(datetime.time.second),
         );
     }
 }

@@ -16,49 +16,27 @@ use icu_benchmark_macros::println;
 use std::env;
 
 use icu_locale_core::{subtags, LanguageIdentifier};
-use writeable::Writeable;
 
 const DEFAULT_INPUT: &str =
     "de, en-us, zh-hant, sr-cyrl, fr-ca, es-cl, pl, en-latn-us, ca-valencia, und-arab";
 
-fn filter_input(input: &str) -> String {
-    // 1. Parse the input string into a list of language identifiers.
-    let langids = input.split(',').filter_map(|s| s.trim().parse().ok());
-
-    // 2. Filter for LanguageIdentifiers with Language subtag `en`.
-    let en_lang: subtags::Language = "en".parse().expect("Failed to parse language subtag.");
-
-    let en_langids = langids.filter(|langid: &LanguageIdentifier| langid.language == en_lang);
-
-    // 3. Serialize the output.
-    let en_strs: Vec<String> = en_langids
-        .map(|langid| langid.write_to_string().into_owned())
-        .collect();
-
-    en_strs.join(", ")
-}
-
 fn main() {
-    let args: Vec<String> = env::args().collect();
-
-    let input = if let Some(input) = args.get(1) {
-        input.as_str()
-    } else {
-        DEFAULT_INPUT
-    };
-    let _output = filter_input(input);
-
-    println!("\nInput: {input}\nOutput: {_output}");
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    const DEFAULT_OUTPUT: &str = "en-US, en-Latn-US";
-
-    #[test]
-    fn ensure_default_output() {
-        assert_eq!(filter_input(DEFAULT_INPUT), DEFAULT_OUTPUT);
+    for input in env::args()
+        .nth(1)
+        .as_deref()
+        .unwrap_or(DEFAULT_INPUT)
+        .split(',')
+        .map(str::trim)
+    {
+        // 1. Parse the input string into a language identifier.
+        let Ok(langid) = LanguageIdentifier::try_from_str(input) else {
+            continue;
+        };
+        // 2. Filter for LanguageIdentifiers with Language subtag `en`.
+        if langid.language == subtags::language!("en") {
+            println!("✅ {}", langid)
+        } else {
+            println!("❌ {}", langid)
+        }
     }
 }

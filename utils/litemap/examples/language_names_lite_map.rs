@@ -28,13 +28,9 @@ const DATA: [(Language, &str); 11] = [
 ];
 
 fn main() {
-    let mut map = LiteMap::new_vec();
-    // https://github.com/rust-lang/rust/issues/62633 was declined :(
-    for (lang, name) in DATA.iter() {
-        map.try_append(lang, name).ok_or(()).unwrap_err();
-    }
+    let map = LiteMap::<Language, &str>::from_iter(DATA);
 
-    assert_eq!(11, map.len());
-    assert_eq!(Some(&&"Thai"), map.get(&language!("th")));
-    assert_eq!(None, map.get(&language!("de")));
+    assert!(map.len() == 11);
+    assert!(map.get(&language!("th")) == Some(&"Thai"));
+    assert!(map.get(&language!("de")).is_none());
 }
