@@ -47,28 +47,28 @@ impl DataProvider<UnitsDisplayNameV1Marker> for SourceDataProvider {
             unit: &str,
         ) -> Result<BTreeMap<Count, String>, DataError> {
             let mut result = BTreeMap::new();
-            // TODO(younies): this should be coming from the aux key or from the main key.
-            let legth_key = "length-".to_string() + unit;
-            let duration_key = "duration-".to_string() + unit;
-
-            let unit_length_map = match (
-                unit_length_map.get(&legth_key),
-                unit_length_map.get(&duration_key),
-            ) {
-                (Some(length), None) => length,
-                (None, Some(length)) => length,
-                _ => {
-                    return Err(DataErrorKind::IdentifierNotFound
+            let patterns = unit_length_map
+                .iter()
+                .find_map(|(key, patterns)| {
+                    key.split_once('-').and_then(|(_category, key_unit)| {
+                        if key_unit == unit {
+                            Some(patterns)
+                        } else {
+                            None
+                        }
+                    })
+                })
+                .ok_or_else(|| {
+                    DataErrorKind::InvalidRequest
                         .into_error()
-                        .with_debug_context(unit))
-                }
-            };
+                        .with_debug_context(unit)
+                })?;
 
-            add_unit_to_map_with_name(&mut result, Count::One, unit_length_map.one.as_deref());
-            add_unit_to_map_with_name(&mut result, Count::Two, unit_length_map.two.as_deref());
-            add_unit_to_map_with_name(&mut result, Count::Few, unit_length_map.few.as_deref());
-            add_unit_to_map_with_name(&mut result, Count::Many, unit_length_map.many.as_deref());
-            add_unit_to_map_with_name(&mut result, Count::Other, unit_length_map.other.as_deref());
+            add_unit_to_map_with_name(&mut result, Count::One, patterns.one.as_deref());
+            add_unit_to_map_with_name(&mut result, Count::Two, patterns.two.as_deref());
+            add_unit_to_map_with_name(&mut result, Count::Few, patterns.few.as_deref());
+            add_unit_to_map_with_name(&mut result, Count::Many, patterns.many.as_deref());
+            add_unit_to_map_with_name(&mut result, Count::Other, patterns.other.as_deref());
 
             Ok(result)
         }
@@ -131,15 +131,13 @@ impl crate::IterableDataProviderCached<UnitsDisplayNameV1Marker> for SourceDataP
                 //  if this filter is removed, we have to add a filter to remove all the prefixes.
                 .filter_map(|key| {
                     #[cfg(test)]
-                    return key.split_once('-').and_then(|(_category, unit)| {
-                        if [
-                            "meter", "foot", "kilogram", "pound", "hour", "minute", "second",
-                        ].contains(&unit) {
-                            Some(unit)
-                        } else {
-                            None
-                        }
-                    });
+                    return key
+                        .split_once('-')
+                        .and_then(|(_category, unit)| match unit {
+                            "meter" | "foot" | "kilogram" | "pound" | "hour" | "minute"
+                            | "second" => Some(unit),
+                            _ => None,
+                        });
                     #[cfg(not(test))]
                     if let Some(rest) = key.strip_prefix("length-") {
                         Some(rest)
