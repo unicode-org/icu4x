@@ -1324,6 +1324,7 @@ macro_rules! impl_zone_marker {
         #[doc = concat!("use icu::datetime::neo_marker::", stringify!($type), ";")]
         /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
         /// use icu::locale::locale;
+        /// use tinystr::tinystr;
         /// use writeable::assert_try_writeable_eq;
         ///
         #[doc = concat!("let fmt = NeoFormatter::<", stringify!($type), ">::try_new(")]
@@ -1331,7 +1332,14 @@ macro_rules! impl_zone_marker {
         ///     NeoSkeletonLength::Medium,
         /// )
         /// .unwrap();
-        /// let zone = CustomTimeZone::gmt();
+        ///
+        /// // Time zone for America/Chicago in the summer
+        /// let zone = CustomTimeZone::from_parts(
+        ///     -40, // offset eighths of hour
+        ///     tinystr!(8, "uschi"), // time zone ID
+        ///     tinystr!(4, "amce"), // metazone ID
+        ///     tinystr!(2, "dt"), // zone variant: daylight time
+        /// );
         ///
         /// assert_try_writeable_eq!(
         ///     fmt.convert_and_format(&zone),
@@ -1349,6 +1357,7 @@ macro_rules! impl_zone_marker {
         #[doc = concat!("use icu::datetime::neo_marker::", stringify!($type), ";")]
         /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
         /// use icu::locale::locale;
+        /// use tinystr::tinystr;
         /// use writeable::assert_try_writeable_eq;
         ///
         #[doc = concat!("let fmt = TypedNeoFormatter::<Gregorian, ", stringify!($type), ">::try_new(")]
@@ -1356,7 +1365,14 @@ macro_rules! impl_zone_marker {
         ///     NeoSkeletonLength::Medium,
         /// )
         /// .unwrap();
-        /// let zone = CustomTimeZone::gmt();
+        ///
+        /// // Time zone for America/Chicago in the summer
+        /// let zone = CustomTimeZone::from_parts(
+        ///     -40, // offset eighths of hour
+        ///     tinystr!(8, "uschi"), // time zone ID
+        ///     tinystr!(4, "amce"), // metazone ID
+        ///     tinystr!(2, "dt"), // zone variant: daylight time
+        /// );
         ///
         /// assert_try_writeable_eq!(
         ///     fmt.format(&zone),
@@ -1632,13 +1648,11 @@ impl_date_marker!(
 
 // TODO: Select the proper zone payloads in all of these markers below
 
-// TODO: Use an example time zone that illustrates the differences better
-
 impl_zone_marker!(
     NeoTimeZoneSpecificMarker,
     NeoTimeZoneSkeleton::specific(),
     description = "a specific time zone format with inherited length",
-    expectation = "GMT",
+    expectation = "CDT",
     zone_essentials = yes,
     zone_exemplar_cities = yes,
     zone_generic_long = yes,
@@ -1651,7 +1665,7 @@ impl_zone_marker!(
     NeoTimeZoneSpecificShortMarker,
     NeoTimeZoneSkeleton::specific_short(),
     description = "a short specific time zone format",
-    expectation = "GMT",
+    expectation = "CDT",
     zone_essentials = yes,
     zone_exemplar_cities = yes,
     zone_generic_long = yes,
@@ -1664,7 +1678,7 @@ impl_zone_marker!(
     NeoTimeZoneSpecificLongMarker,
     NeoTimeZoneSkeleton::specific_long(),
     description = "a long specific time zone format",
-    expectation = "Greenwich Mean Time",
+    expectation = "Central Daylight Time",
     zone_essentials = yes,
     zone_exemplar_cities = yes,
     zone_generic_long = yes,
@@ -1677,7 +1691,7 @@ impl_zone_marker!(
     NeoTimeZoneGmtMarker,
     NeoTimeZoneSkeleton::gmt(),
     description = "a GMT-offset time zone format with inherited length",
-    expectation = "GMT", // TODO
+    expectation = "GMT-05:00", // TODO: Implement short localized GMT
     zone_essentials = yes,
     zone_exemplar_cities = yes,
     zone_generic_long = yes,
@@ -1690,7 +1704,7 @@ impl_zone_marker!(
     NeoTimeZoneGmtShortMarker,
     NeoTimeZoneSkeleton::gmt_short(),
     description = "a GMT-offset short time zone format",
-    expectation = "GMT", // TODO
+    expectation = "GMT-05:00", // TODO: Implement short localized GMT
     zone_essentials = yes,
     zone_exemplar_cities = yes,
     zone_generic_long = yes,
@@ -1703,7 +1717,7 @@ impl_zone_marker!(
     NeoTimeZoneGmtLongMarker,
     NeoTimeZoneSkeleton::gmt_long(),
     description = "a GMT-offset long time zone format",
-    expectation = "GMT", // TODO: Illustrate this with an actual offset zone
+    expectation = "GMT-05:00",
     zone_essentials = yes,
     zone_exemplar_cities = yes,
     zone_generic_long = yes,
@@ -1716,7 +1730,7 @@ impl_zone_marker!(
     NeoTimeZoneGenericMarker,
     NeoTimeZoneSkeleton::generic(),
     description = "a generic time zone format with inherited length",
-    expectation = "GMT",
+    expectation = "CT",
     zone_essentials = yes,
     zone_exemplar_cities = yes,
     zone_generic_long = yes,
@@ -1729,7 +1743,7 @@ impl_zone_marker!(
     NeoTimeZoneGenericShortMarker,
     NeoTimeZoneSkeleton::generic_short(),
     description = "a generic short time zone format",
-    expectation = "GMT",
+    expectation = "CT",
     zone_essentials = yes,
     zone_exemplar_cities = yes,
     zone_generic_long = yes,
@@ -1742,7 +1756,7 @@ impl_zone_marker!(
     NeoTimeZoneGenericLongMarker,
     NeoTimeZoneSkeleton::generic_long(),
     description = "a generic long time zone format",
-    expectation = "Greenwich Mean Time",
+    expectation = "Central Time",
     zone_essentials = yes,
     zone_exemplar_cities = yes,
     zone_generic_long = yes,
@@ -1755,7 +1769,7 @@ impl_zone_marker!(
     NeoTimeZoneLocationMarker,
     NeoTimeZoneSkeleton::location(),
     description = "a location time zone format",
-    expectation = "London Time",
+    expectation = "Chicago Time",
     zone_essentials = yes,
     zone_exemplar_cities = yes,
     zone_generic_long = yes,
