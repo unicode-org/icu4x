@@ -14,7 +14,7 @@ struct CodePointRangeIteratorResult;
 
 namespace diplomat {
 namespace capi {
-    typedef struct CodePointRangeIterator CodePointRangeIterator;
+    struct CodePointRangeIterator;
 } // namespace capi
 } // namespace
 

@@ -12,10 +12,10 @@
 
 namespace diplomat {
 namespace capi {
-    typedef enum LocaleFallbackSupplement {
+    enum LocaleFallbackSupplement {
       LocaleFallbackSupplement_None = 0,
       LocaleFallbackSupplement_Collation = 1,
-    } LocaleFallbackSupplement;
+    };
 } // namespace capi
 } // namespace
 

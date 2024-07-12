@@ -9,15 +9,15 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-namespace capi {typedef struct CodePointSetData CodePointSetData; }
+namespace diplomat::capi { struct CodePointSetData; }
 class CodePointSetData;
-namespace capi {typedef struct ScriptExtensionsSet ScriptExtensionsSet; }
+namespace diplomat::capi { struct ScriptExtensionsSet; }
 class ScriptExtensionsSet;
 
 
 namespace diplomat {
 namespace capi {
-    typedef struct ScriptWithExtensionsBorrowed ScriptWithExtensionsBorrowed;
+    struct ScriptWithExtensionsBorrowed;
 } // namespace capi
 } // namespace
 

@@ -12,10 +12,10 @@
 
 namespace diplomat {
 namespace capi {
-    typedef enum LanguageDisplay {
+    enum LanguageDisplay {
       LanguageDisplay_Dialect = 0,
       LanguageDisplay_Standard = 1,
-    } LanguageDisplay;
+    };
 } // namespace capi
 } // namespace
 

@@ -9,14 +9,14 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-namespace capi {typedef struct FixedDecimal FixedDecimal; }
+namespace diplomat::capi { struct FixedDecimal; }
 class FixedDecimal;
 class FixedDecimalParseError;
 
 
 namespace diplomat {
 namespace capi {
-    typedef struct PluralOperands PluralOperands;
+    struct PluralOperands;
 } // namespace capi
 } // namespace
 

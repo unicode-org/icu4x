@@ -12,12 +12,12 @@
 
 namespace diplomat {
 namespace capi {
-    typedef enum LineBreakStrictness {
+    enum LineBreakStrictness {
       LineBreakStrictness_Loose = 0,
       LineBreakStrictness_Normal = 1,
       LineBreakStrictness_Strict = 2,
       LineBreakStrictness_Anywhere = 3,
-    } LineBreakStrictness;
+    };
 } // namespace capi
 } // namespace
 

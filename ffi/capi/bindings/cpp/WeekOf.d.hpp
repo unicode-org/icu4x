@@ -15,10 +15,10 @@ class WeekRelativeUnit;
 
 namespace diplomat {
 namespace capi {
-    typedef struct WeekOf {
+    struct WeekOf {
       uint16_t week;
       diplomat::capi::WeekRelativeUnit unit;
-    } WeekOf;
+    };
 } // namespace capi
 } // namespace
 

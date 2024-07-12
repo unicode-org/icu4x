@@ -12,11 +12,11 @@
 
 namespace diplomat {
 namespace capi {
-    typedef struct CodePointRangeIteratorResult {
+    struct CodePointRangeIteratorResult {
       uint32_t start;
       uint32_t end;
       bool done;
-    } CodePointRangeIteratorResult;
+    };
 } // namespace capi
 } // namespace
 

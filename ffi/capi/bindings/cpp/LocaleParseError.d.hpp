@@ -12,12 +12,12 @@
 
 namespace diplomat {
 namespace capi {
-    typedef enum LocaleParseError {
+    enum LocaleParseError {
       LocaleParseError_Unknown = 0,
       LocaleParseError_Language = 1,
       LocaleParseError_Subtag = 2,
       LocaleParseError_Extension = 3,
-    } LocaleParseError;
+    };
 } // namespace capi
 } // namespace
 

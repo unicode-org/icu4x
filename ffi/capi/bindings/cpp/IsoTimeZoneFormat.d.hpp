@@ -12,12 +12,12 @@
 
 namespace diplomat {
 namespace capi {
-    typedef enum IsoTimeZoneFormat {
+    enum IsoTimeZoneFormat {
       IsoTimeZoneFormat_Basic = 0,
       IsoTimeZoneFormat_Extended = 1,
       IsoTimeZoneFormat_UtcBasic = 2,
       IsoTimeZoneFormat_UtcExtended = 3,
-    } IsoTimeZoneFormat;
+    };
 } // namespace capi
 } // namespace
 

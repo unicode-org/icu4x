@@ -9,11 +9,11 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-namespace capi {typedef struct DataProvider DataProvider; }
+namespace diplomat::capi { struct DataProvider; }
 class DataProvider;
-namespace capi {typedef struct IsoDateTime IsoDateTime; }
+namespace diplomat::capi { struct IsoDateTime; }
 class IsoDateTime;
-namespace capi {typedef struct Locale Locale; }
+namespace diplomat::capi { struct Locale; }
 class Locale;
 class DateLength;
 class Error;
@@ -22,7 +22,7 @@ class TimeLength;
 
 namespace diplomat {
 namespace capi {
-    typedef struct GregorianDateTimeFormatter GregorianDateTimeFormatter;
+    struct GregorianDateTimeFormatter;
 } // namespace capi
 } // namespace
 

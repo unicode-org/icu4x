@@ -19,11 +19,11 @@ class IsoTimeZoneSecondDisplay;
 
 namespace diplomat {
 namespace capi {
-    typedef struct IsoTimeZoneOptions {
+    struct IsoTimeZoneOptions {
       diplomat::capi::IsoTimeZoneFormat format;
       diplomat::capi::IsoTimeZoneMinuteDisplay minutes;
       diplomat::capi::IsoTimeZoneSecondDisplay seconds;
-    } IsoTimeZoneOptions;
+    };
 } // namespace capi
 } // namespace
 

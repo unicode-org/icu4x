@@ -16,5 +16,4 @@ typedef struct ListFormatter ListFormatter;
 
 
 
-
 #endif // ListFormatter_D_H

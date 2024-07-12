@@ -14,7 +14,7 @@ class SegmenterWordType;
 
 namespace diplomat {
 namespace capi {
-    typedef struct WordBreakIteratorUtf8 WordBreakIteratorUtf8;
+    struct WordBreakIteratorUtf8;
 } // namespace capi
 } // namespace
 

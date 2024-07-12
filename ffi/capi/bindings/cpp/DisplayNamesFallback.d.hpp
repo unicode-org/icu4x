@@ -12,10 +12,10 @@
 
 namespace diplomat {
 namespace capi {
-    typedef enum DisplayNamesFallback {
+    enum DisplayNamesFallback {
       DisplayNamesFallback_Code = 0,
       DisplayNamesFallback_None = 1,
-    } DisplayNamesFallback;
+    };
 } // namespace capi
 } // namespace
 

@@ -16,5 +16,4 @@ typedef struct PluralRules PluralRules;
 
 
 
-
 #endif // PluralRules_D_H

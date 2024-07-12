@@ -12,11 +12,11 @@
 
 namespace diplomat {
 namespace capi {
-    typedef enum LocaleFallbackPriority {
+    enum LocaleFallbackPriority {
       LocaleFallbackPriority_Language = 0,
       LocaleFallbackPriority_Region = 1,
       LocaleFallbackPriority_Collation = 2,
-    } LocaleFallbackPriority;
+    };
 } // namespace capi
 } // namespace
 

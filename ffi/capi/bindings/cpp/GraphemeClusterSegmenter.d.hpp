@@ -9,20 +9,20 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-namespace capi {typedef struct DataProvider DataProvider; }
+namespace diplomat::capi { struct DataProvider; }
 class DataProvider;
-namespace capi {typedef struct GraphemeClusterBreakIteratorLatin1 GraphemeClusterBreakIteratorLatin1; }
+namespace diplomat::capi { struct GraphemeClusterBreakIteratorLatin1; }
 class GraphemeClusterBreakIteratorLatin1;
-namespace capi {typedef struct GraphemeClusterBreakIteratorUtf16 GraphemeClusterBreakIteratorUtf16; }
+namespace diplomat::capi { struct GraphemeClusterBreakIteratorUtf16; }
 class GraphemeClusterBreakIteratorUtf16;
-namespace capi {typedef struct GraphemeClusterBreakIteratorUtf8 GraphemeClusterBreakIteratorUtf8; }
+namespace diplomat::capi { struct GraphemeClusterBreakIteratorUtf8; }
 class GraphemeClusterBreakIteratorUtf8;
 class DataError;
 
 
 namespace diplomat {
 namespace capi {
-    typedef struct GraphemeClusterSegmenter GraphemeClusterSegmenter;
+    struct GraphemeClusterSegmenter;
 } // namespace capi
 } // namespace
 

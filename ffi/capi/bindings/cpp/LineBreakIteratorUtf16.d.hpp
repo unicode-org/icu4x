@@ -12,7 +12,7 @@
 
 namespace diplomat {
 namespace capi {
-    typedef struct LineBreakIteratorUtf16 LineBreakIteratorUtf16;
+    struct LineBreakIteratorUtf16;
 } // namespace capi
 } // namespace
 

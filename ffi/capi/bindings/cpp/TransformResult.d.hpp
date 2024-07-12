@@ -12,10 +12,10 @@
 
 namespace diplomat {
 namespace capi {
-    typedef enum TransformResult {
+    enum TransformResult {
       TransformResult_Modified = 0,
       TransformResult_Unmodified = 1,
-    } TransformResult;
+    };
 } // namespace capi
 } // namespace
 

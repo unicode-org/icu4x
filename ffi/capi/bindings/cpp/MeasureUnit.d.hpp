@@ -12,7 +12,7 @@
 
 namespace diplomat {
 namespace capi {
-    typedef struct MeasureUnit MeasureUnit;
+    struct MeasureUnit;
 } // namespace capi
 } // namespace
 

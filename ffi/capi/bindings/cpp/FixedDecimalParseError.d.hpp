@@ -12,11 +12,11 @@
 
 namespace diplomat {
 namespace capi {
-    typedef enum FixedDecimalParseError {
+    enum FixedDecimalParseError {
       FixedDecimalParseError_Unknown = 0,
       FixedDecimalParseError_Limit = 1,
       FixedDecimalParseError_Syntax = 2,
-    } FixedDecimalParseError;
+    };
 } // namespace capi
 } // namespace
 

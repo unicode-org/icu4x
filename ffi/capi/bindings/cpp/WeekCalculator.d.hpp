@@ -9,9 +9,9 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-namespace capi {typedef struct DataProvider DataProvider; }
+namespace diplomat::capi { struct DataProvider; }
 class DataProvider;
-namespace capi {typedef struct Locale Locale; }
+namespace diplomat::capi { struct Locale; }
 class Locale;
 struct WeekendContainsDay;
 class DataError;
@@ -20,7 +20,7 @@ class IsoWeekday;
 
 namespace diplomat {
 namespace capi {
-    typedef struct WeekCalculator WeekCalculator;
+    struct WeekCalculator;
 } // namespace capi
 } // namespace
 

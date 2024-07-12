@@ -16,5 +16,4 @@ typedef struct LineBreakIteratorLatin1 LineBreakIteratorLatin1;
 
 
 
-
 #endif // LineBreakIteratorLatin1_D_H

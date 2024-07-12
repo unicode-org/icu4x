@@ -16,5 +16,4 @@ typedef struct CodePointRangeIterator CodePointRangeIterator;
 
 
 
-
 #endif // CodePointRangeIterator_D_H

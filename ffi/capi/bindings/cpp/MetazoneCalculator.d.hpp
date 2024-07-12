@@ -9,14 +9,14 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-namespace capi {typedef struct DataProvider DataProvider; }
+namespace diplomat::capi { struct DataProvider; }
 class DataProvider;
 class DataError;
 
 
 namespace diplomat {
 namespace capi {
-    typedef struct MetazoneCalculator MetazoneCalculator;
+    struct MetazoneCalculator;
 } // namespace capi
 } // namespace
 

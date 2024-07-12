@@ -12,13 +12,13 @@
 
 namespace diplomat {
 namespace capi {
-    typedef enum CollatorMaxVariable {
+    enum CollatorMaxVariable {
       CollatorMaxVariable_Auto = 0,
       CollatorMaxVariable_Space = 1,
       CollatorMaxVariable_Punctuation = 2,
       CollatorMaxVariable_Symbol = 3,
       CollatorMaxVariable_Currency = 4,
-    } CollatorMaxVariable;
+    };
 } // namespace capi
 } // namespace
 

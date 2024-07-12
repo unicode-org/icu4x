@@ -9,13 +9,13 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-namespace capi {typedef struct MeasureUnit MeasureUnit; }
+namespace diplomat::capi { struct MeasureUnit; }
 class MeasureUnit;
 
 
 namespace diplomat {
 namespace capi {
-    typedef struct MeasureUnitParser MeasureUnitParser;
+    struct MeasureUnitParser;
 } // namespace capi
 } // namespace
 

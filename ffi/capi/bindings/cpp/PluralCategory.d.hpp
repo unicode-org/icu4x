@@ -12,14 +12,14 @@
 
 namespace diplomat {
 namespace capi {
-    typedef enum PluralCategory {
+    enum PluralCategory {
       PluralCategory_Zero = 0,
       PluralCategory_One = 1,
       PluralCategory_Two = 2,
       PluralCategory_Few = 3,
       PluralCategory_Many = 4,
       PluralCategory_Other = 5,
-    } PluralCategory;
+    };
 } // namespace capi
 } // namespace
 

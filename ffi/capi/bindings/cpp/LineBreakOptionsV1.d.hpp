@@ -17,11 +17,11 @@ class LineBreakWordOption;
 
 namespace diplomat {
 namespace capi {
-    typedef struct LineBreakOptionsV1 {
+    struct LineBreakOptionsV1 {
       diplomat::capi::LineBreakStrictness strictness;
       diplomat::capi::LineBreakWordOption word_option;
       bool ja_zh;
-    } LineBreakOptionsV1;
+    };
 } // namespace capi
 } // namespace
 

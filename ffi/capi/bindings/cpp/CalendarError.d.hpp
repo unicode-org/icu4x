@@ -12,12 +12,12 @@
 
 namespace diplomat {
 namespace capi {
-    typedef enum CalendarError {
+    enum CalendarError {
       CalendarError_Unknown = 0,
       CalendarError_OutOfRange = 1,
       CalendarError_UnknownEra = 2,
       CalendarError_UnknownMonthCode = 3,
-    } CalendarError;
+    };
 } // namespace capi
 } // namespace
 

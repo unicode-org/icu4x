@@ -9,11 +9,11 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-namespace capi {typedef struct DataProvider DataProvider; }
+namespace diplomat::capi { struct DataProvider; }
 class DataProvider;
-namespace capi {typedef struct Locale Locale; }
+namespace diplomat::capi { struct Locale; }
 class Locale;
-namespace capi {typedef struct LocaleExpander LocaleExpander; }
+namespace diplomat::capi { struct LocaleExpander; }
 class LocaleExpander;
 class DataError;
 class LocaleDirection;
@@ -21,7 +21,7 @@ class LocaleDirection;
 
 namespace diplomat {
 namespace capi {
-    typedef struct LocaleDirectionality LocaleDirectionality;
+    struct LocaleDirectionality;
 } // namespace capi
 } // namespace
 

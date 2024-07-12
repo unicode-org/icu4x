@@ -12,11 +12,11 @@
 
 namespace diplomat {
 namespace capi {
-    typedef enum WeekRelativeUnit {
+    enum WeekRelativeUnit {
       WeekRelativeUnit_Previous = 0,
       WeekRelativeUnit_Current = 1,
       WeekRelativeUnit_Next = 2,
-    } WeekRelativeUnit;
+    };
 } // namespace capi
 } // namespace
 

@@ -12,7 +12,7 @@
 
 namespace diplomat {
 namespace capi {
-    typedef struct ScriptExtensionsSet ScriptExtensionsSet;
+    struct ScriptExtensionsSet;
 } // namespace capi
 } // namespace
 

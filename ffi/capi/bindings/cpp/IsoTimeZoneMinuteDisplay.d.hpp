@@ -12,10 +12,10 @@
 
 namespace diplomat {
 namespace capi {
-    typedef enum IsoTimeZoneMinuteDisplay {
+    enum IsoTimeZoneMinuteDisplay {
       IsoTimeZoneMinuteDisplay_Required = 0,
       IsoTimeZoneMinuteDisplay_Optional = 1,
-    } IsoTimeZoneMinuteDisplay;
+    };
 } // namespace capi
 } // namespace
 

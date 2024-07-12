@@ -12,11 +12,11 @@
 
 namespace diplomat {
 namespace capi {
-    typedef enum SegmenterWordType {
+    enum SegmenterWordType {
       SegmenterWordType_None = 0,
       SegmenterWordType_Number = 1,
       SegmenterWordType_Letter = 2,
-    } SegmenterWordType;
+    };
 } // namespace capi
 } // namespace
 

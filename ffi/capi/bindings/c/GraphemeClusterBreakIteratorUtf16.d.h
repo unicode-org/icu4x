@@ -16,5 +16,4 @@ typedef struct GraphemeClusterBreakIteratorUtf16 GraphemeClusterBreakIteratorUtf
 
 
 
-
 #endif // GraphemeClusterBreakIteratorUtf16_D_H

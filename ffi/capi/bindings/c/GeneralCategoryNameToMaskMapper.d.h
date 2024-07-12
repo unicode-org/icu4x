@@ -16,5 +16,4 @@ typedef struct GeneralCategoryNameToMaskMapper GeneralCategoryNameToMaskMapper;
 
 
 
-
 #endif // GeneralCategoryNameToMaskMapper_D_H

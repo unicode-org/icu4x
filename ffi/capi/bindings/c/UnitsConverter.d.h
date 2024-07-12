@@ -16,5 +16,4 @@ typedef struct UnitsConverter UnitsConverter;
 
 
 
-
 #endif // UnitsConverter_D_H

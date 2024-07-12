@@ -12,9 +12,9 @@
 
 namespace diplomat {
 namespace capi {
-    typedef enum TimeZoneInvalidOffsetError {
+    enum TimeZoneInvalidOffsetError {
       TimeZoneInvalidOffsetError_TodoZst = 0,
-    } TimeZoneInvalidOffsetError;
+    };
 } // namespace capi
 } // namespace
 

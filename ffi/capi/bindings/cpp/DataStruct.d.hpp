@@ -12,7 +12,7 @@
 
 namespace diplomat {
 namespace capi {
-    typedef struct DataStruct DataStruct;
+    struct DataStruct;
 } // namespace capi
 } // namespace
 

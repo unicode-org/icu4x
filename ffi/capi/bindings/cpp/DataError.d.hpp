@@ -12,7 +12,7 @@
 
 namespace diplomat {
 namespace capi {
-    typedef enum DataError {
+    enum DataError {
       DataError_Unknown = 0,
       DataError_MarkerNotFound = 1,
       DataError_IdentifierNotFound = 2,
@@ -22,7 +22,7 @@ namespace capi {
       DataError_Deserialize = 6,
       DataError_Custom = 7,
       DataError_Io = 8,
-    } DataError;
+    };
 } // namespace capi
 } // namespace
 

@@ -12,11 +12,11 @@
 
 namespace diplomat {
 namespace capi {
-    typedef enum FixedDecimalSign {
+    enum FixedDecimalSign {
       FixedDecimalSign_None = 0,
       FixedDecimalSign_Negative = 1,
       FixedDecimalSign_Positive = 2,
-    } FixedDecimalSign;
+    };
 } // namespace capi
 } // namespace
 

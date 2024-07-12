@@ -9,9 +9,9 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-namespace capi {typedef struct CodePointRangeIterator CodePointRangeIterator; }
+namespace diplomat::capi { struct CodePointRangeIterator; }
 class CodePointRangeIterator;
-namespace capi {typedef struct DataProvider DataProvider; }
+namespace diplomat::capi { struct DataProvider; }
 class DataProvider;
 class DataError;
 class Error;
@@ -19,7 +19,7 @@ class Error;
 
 namespace diplomat {
 namespace capi {
-    typedef struct CodePointSetData CodePointSetData;
+    struct CodePointSetData;
 } // namespace capi
 } // namespace
 

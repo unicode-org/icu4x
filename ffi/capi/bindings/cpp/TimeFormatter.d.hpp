@@ -9,15 +9,15 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-namespace capi {typedef struct DataProvider DataProvider; }
+namespace diplomat::capi { struct DataProvider; }
 class DataProvider;
-namespace capi {typedef struct DateTime DateTime; }
+namespace diplomat::capi { struct DateTime; }
 class DateTime;
-namespace capi {typedef struct IsoDateTime IsoDateTime; }
+namespace diplomat::capi { struct IsoDateTime; }
 class IsoDateTime;
-namespace capi {typedef struct Locale Locale; }
+namespace diplomat::capi { struct Locale; }
 class Locale;
-namespace capi {typedef struct Time Time; }
+namespace diplomat::capi { struct Time; }
 class Time;
 class Error;
 class TimeLength;
@@ -25,7 +25,7 @@ class TimeLength;
 
 namespace diplomat {
 namespace capi {
-    typedef struct TimeFormatter TimeFormatter;
+    struct TimeFormatter;
 } // namespace capi
 } // namespace
 

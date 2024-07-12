@@ -16,5 +16,4 @@ typedef struct GregorianDateFormatter GregorianDateFormatter;
 
 
 
-
 #endif // GregorianDateFormatter_D_H

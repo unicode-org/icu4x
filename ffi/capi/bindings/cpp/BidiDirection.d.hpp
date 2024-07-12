@@ -12,11 +12,11 @@
 
 namespace diplomat {
 namespace capi {
-    typedef enum BidiDirection {
+    enum BidiDirection {
       BidiDirection_Ltr = 0,
       BidiDirection_Rtl = 1,
       BidiDirection_Mixed = 2,
-    } BidiDirection;
+    };
 } // namespace capi
 } // namespace
 

@@ -19,7 +19,7 @@ class FixedDecimalSignDisplay;
 
 namespace diplomat {
 namespace capi {
-    typedef struct FixedDecimal FixedDecimal;
+    struct FixedDecimal;
 } // namespace capi
 } // namespace
 

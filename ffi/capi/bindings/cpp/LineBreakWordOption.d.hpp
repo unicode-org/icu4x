@@ -12,11 +12,11 @@
 
 namespace diplomat {
 namespace capi {
-    typedef enum LineBreakWordOption {
+    enum LineBreakWordOption {
       LineBreakWordOption_Normal = 0,
       LineBreakWordOption_BreakAll = 1,
       LineBreakWordOption_KeepAll = 2,
-    } LineBreakWordOption;
+    };
 } // namespace capi
 } // namespace
 

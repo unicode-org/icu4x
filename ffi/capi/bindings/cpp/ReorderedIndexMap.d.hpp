@@ -12,7 +12,7 @@
 
 namespace diplomat {
 namespace capi {
-    typedef struct ReorderedIndexMap ReorderedIndexMap;
+    struct ReorderedIndexMap;
 } // namespace capi
 } // namespace
 

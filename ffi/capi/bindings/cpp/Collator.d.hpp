@@ -9,9 +9,9 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-namespace capi {typedef struct DataProvider DataProvider; }
+namespace diplomat::capi { struct DataProvider; }
 class DataProvider;
-namespace capi {typedef struct Locale Locale; }
+namespace diplomat::capi { struct Locale; }
 class Locale;
 struct CollatorOptionsV1;
 struct CollatorResolvedOptionsV1;
@@ -20,7 +20,7 @@ class DataError;
 
 namespace diplomat {
 namespace capi {
-    typedef struct Collator Collator;
+    struct Collator;
 } // namespace capi
 } // namespace
 

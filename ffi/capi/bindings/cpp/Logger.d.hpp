@@ -12,7 +12,7 @@
 
 namespace diplomat {
 namespace capi {
-    typedef struct Logger Logger;
+    struct Logger;
 } // namespace capi
 } // namespace
 

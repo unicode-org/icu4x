@@ -9,7 +9,7 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-namespace capi {typedef struct DataProvider DataProvider; }
+namespace diplomat::capi { struct DataProvider; }
 class DataProvider;
 struct Decomposed;
 class DataError;
@@ -17,7 +17,7 @@ class DataError;
 
 namespace diplomat {
 namespace capi {
-    typedef struct CanonicalDecomposition CanonicalDecomposition;
+    struct CanonicalDecomposition;
 } // namespace capi
 } // namespace
 

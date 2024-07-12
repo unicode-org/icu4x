@@ -14,7 +14,7 @@ class LocaleParseError;
 
 namespace diplomat {
 namespace capi {
-    typedef struct Locale Locale;
+    struct Locale;
 } // namespace capi
 } // namespace
 

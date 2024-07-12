@@ -12,11 +12,11 @@
 
 namespace diplomat {
 namespace capi {
-    typedef enum ListLength {
+    enum ListLength {
       ListLength_Wide = 0,
       ListLength_Short = 1,
       ListLength_Narrow = 2,
-    } ListLength;
+    };
 } // namespace capi
 } // namespace
 

@@ -9,11 +9,11 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-namespace capi {typedef struct CustomTimeZone CustomTimeZone; }
+namespace diplomat::capi { struct CustomTimeZone; }
 class CustomTimeZone;
-namespace capi {typedef struct DataProvider DataProvider; }
+namespace diplomat::capi { struct DataProvider; }
 class DataProvider;
-namespace capi {typedef struct Locale Locale; }
+namespace diplomat::capi { struct Locale; }
 class Locale;
 struct IsoTimeZoneOptions;
 class Error;
@@ -21,7 +21,7 @@ class Error;
 
 namespace diplomat {
 namespace capi {
-    typedef struct TimeZoneFormatter TimeZoneFormatter;
+    struct TimeZoneFormatter;
 } // namespace capi
 } // namespace
 

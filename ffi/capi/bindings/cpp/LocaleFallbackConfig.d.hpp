@@ -17,11 +17,11 @@ class LocaleFallbackSupplement;
 
 namespace diplomat {
 namespace capi {
-    typedef struct LocaleFallbackConfig {
+    struct LocaleFallbackConfig {
       diplomat::capi::LocaleFallbackPriority priority;
       DiplomatStringView extension_key;
       diplomat::capi::LocaleFallbackSupplement fallback_supplement;
-    } LocaleFallbackConfig;
+    };
 } // namespace capi
 } // namespace
 

@@ -16,5 +16,4 @@ typedef struct TimeZoneFormatter TimeZoneFormatter;
 
 
 
-
 #endif // TimeZoneFormatter_D_H

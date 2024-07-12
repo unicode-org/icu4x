@@ -9,13 +9,13 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-namespace capi {typedef struct DataProvider DataProvider; }
+namespace diplomat::capi { struct DataProvider; }
 class DataProvider;
-namespace capi {typedef struct DataStruct DataStruct; }
+namespace diplomat::capi { struct DataStruct; }
 class DataStruct;
-namespace capi {typedef struct FixedDecimal FixedDecimal; }
+namespace diplomat::capi { struct FixedDecimal; }
 class FixedDecimal;
-namespace capi {typedef struct Locale Locale; }
+namespace diplomat::capi { struct Locale; }
 class Locale;
 class DataError;
 class FixedDecimalGroupingStrategy;
@@ -23,7 +23,7 @@ class FixedDecimalGroupingStrategy;
 
 namespace diplomat {
 namespace capi {
-    typedef struct FixedDecimalFormatter FixedDecimalFormatter;
+    struct FixedDecimalFormatter;
 } // namespace capi
 } // namespace
 

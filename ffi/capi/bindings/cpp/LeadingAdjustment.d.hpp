@@ -12,11 +12,11 @@
 
 namespace diplomat {
 namespace capi {
-    typedef enum LeadingAdjustment {
+    enum LeadingAdjustment {
       LeadingAdjustment_Auto = 0,
       LeadingAdjustment_None = 1,
       LeadingAdjustment_ToCased = 2,
-    } LeadingAdjustment;
+    };
 } // namespace capi
 } // namespace
 

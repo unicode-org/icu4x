@@ -19,11 +19,11 @@ class LanguageDisplay;
 
 namespace diplomat {
 namespace capi {
-    typedef struct DisplayNamesOptionsV1 {
+    struct DisplayNamesOptionsV1 {
       diplomat::capi::DisplayNamesStyle style;
       diplomat::capi::DisplayNamesFallback fallback;
       diplomat::capi::LanguageDisplay language_display;
-    } DisplayNamesOptionsV1;
+    };
 } // namespace capi
 } // namespace
 

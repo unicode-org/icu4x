@@ -16,5 +16,4 @@ typedef struct WeekCalculator WeekCalculator;
 
 
 
-
 #endif // WeekCalculator_D_H

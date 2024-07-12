@@ -12,9 +12,9 @@
 
 namespace diplomat {
 namespace capi {
-    typedef enum FixedDecimalLimitError {
+    enum FixedDecimalLimitError {
       FixedDecimalLimitError_TodoZst = 0,
-    } FixedDecimalLimitError;
+    };
 } // namespace capi
 } // namespace
 

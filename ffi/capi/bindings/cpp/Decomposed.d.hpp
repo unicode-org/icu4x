@@ -12,10 +12,10 @@
 
 namespace diplomat {
 namespace capi {
-    typedef struct Decomposed {
+    struct Decomposed {
       char32_t first;
       char32_t second;
-    } Decomposed;
+    };
 } // namespace capi
 } // namespace
 

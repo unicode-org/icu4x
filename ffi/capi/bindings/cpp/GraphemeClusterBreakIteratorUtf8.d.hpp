@@ -12,7 +12,7 @@
 
 namespace diplomat {
 namespace capi {
-    typedef struct GraphemeClusterBreakIteratorUtf8 GraphemeClusterBreakIteratorUtf8;
+    struct GraphemeClusterBreakIteratorUtf8;
 } // namespace capi
 } // namespace
 

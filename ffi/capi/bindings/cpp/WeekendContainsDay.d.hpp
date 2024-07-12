@@ -12,7 +12,7 @@
 
 namespace diplomat {
 namespace capi {
-    typedef struct WeekendContainsDay {
+    struct WeekendContainsDay {
       bool monday;
       bool tuesday;
       bool wednesday;
@@ -20,7 +20,7 @@ namespace capi {
       bool friday;
       bool saturday;
       bool sunday;
-    } WeekendContainsDay;
+    };
 } // namespace capi
 } // namespace
 

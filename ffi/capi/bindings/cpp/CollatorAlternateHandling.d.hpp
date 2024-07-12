@@ -12,11 +12,11 @@
 
 namespace diplomat {
 namespace capi {
-    typedef enum CollatorAlternateHandling {
+    enum CollatorAlternateHandling {
       CollatorAlternateHandling_Auto = 0,
       CollatorAlternateHandling_NonIgnorable = 1,
       CollatorAlternateHandling_Shifted = 2,
-    } CollatorAlternateHandling;
+    };
 } // namespace capi
 } // namespace
 

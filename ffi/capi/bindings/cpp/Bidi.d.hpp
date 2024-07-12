@@ -9,18 +9,18 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-namespace capi {typedef struct BidiInfo BidiInfo; }
+namespace diplomat::capi { struct BidiInfo; }
 class BidiInfo;
-namespace capi {typedef struct DataProvider DataProvider; }
+namespace diplomat::capi { struct DataProvider; }
 class DataProvider;
-namespace capi {typedef struct ReorderedIndexMap ReorderedIndexMap; }
+namespace diplomat::capi { struct ReorderedIndexMap; }
 class ReorderedIndexMap;
 class DataError;
 
 
 namespace diplomat {
 namespace capi {
-    typedef struct Bidi Bidi;
+    struct Bidi;
 } // namespace capi
 } // namespace
 

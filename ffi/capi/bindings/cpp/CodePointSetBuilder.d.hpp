@@ -9,13 +9,13 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-namespace capi {typedef struct CodePointSetData CodePointSetData; }
+namespace diplomat::capi { struct CodePointSetData; }
 class CodePointSetData;
 
 
 namespace diplomat {
 namespace capi {
-    typedef struct CodePointSetBuilder CodePointSetBuilder;
+    struct CodePointSetBuilder;
 } // namespace capi
 } // namespace
 

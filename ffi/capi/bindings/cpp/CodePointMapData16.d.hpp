@@ -9,18 +9,18 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-namespace capi {typedef struct CodePointRangeIterator CodePointRangeIterator; }
+namespace diplomat::capi { struct CodePointRangeIterator; }
 class CodePointRangeIterator;
-namespace capi {typedef struct CodePointSetData CodePointSetData; }
+namespace diplomat::capi { struct CodePointSetData; }
 class CodePointSetData;
-namespace capi {typedef struct DataProvider DataProvider; }
+namespace diplomat::capi { struct DataProvider; }
 class DataProvider;
 class DataError;
 
 
 namespace diplomat {
 namespace capi {
-    typedef struct CodePointMapData16 CodePointMapData16;
+    struct CodePointMapData16;
 } // namespace capi
 } // namespace
 

@@ -9,15 +9,15 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-namespace capi {typedef struct Locale Locale; }
+namespace diplomat::capi { struct Locale; }
 class Locale;
-namespace capi {typedef struct LocaleFallbackIterator LocaleFallbackIterator; }
+namespace diplomat::capi { struct LocaleFallbackIterator; }
 class LocaleFallbackIterator;
 
 
 namespace diplomat {
 namespace capi {
-    typedef struct LocaleFallbackerWithConfig LocaleFallbackerWithConfig;
+    struct LocaleFallbackerWithConfig;
 } // namespace capi
 } // namespace
 

@@ -17,10 +17,10 @@ class TrailingCase;
 
 namespace diplomat {
 namespace capi {
-    typedef struct TitlecaseOptionsV1 {
+    struct TitlecaseOptionsV1 {
       diplomat::capi::LeadingAdjustment leading_adjustment;
       diplomat::capi::TrailingCase trailing_case;
-    } TitlecaseOptionsV1;
+    };
 } // namespace capi
 } // namespace
 

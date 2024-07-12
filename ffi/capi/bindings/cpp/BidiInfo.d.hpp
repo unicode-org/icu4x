@@ -9,13 +9,13 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-namespace capi {typedef struct BidiParagraph BidiParagraph; }
+namespace diplomat::capi { struct BidiParagraph; }
 class BidiParagraph;
 
 
 namespace diplomat {
 namespace capi {
-    typedef struct BidiInfo BidiInfo;
+    struct BidiInfo;
 } // namespace capi
 } // namespace
 

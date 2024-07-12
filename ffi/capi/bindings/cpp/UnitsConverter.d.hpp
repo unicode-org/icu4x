@@ -12,7 +12,7 @@
 
 namespace diplomat {
 namespace capi {
-    typedef struct UnitsConverter UnitsConverter;
+    struct UnitsConverter;
 } // namespace capi
 } // namespace
 

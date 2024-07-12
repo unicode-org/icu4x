@@ -12,11 +12,11 @@
 
 namespace diplomat {
 namespace capi {
-    typedef enum CollatorCaseLevel {
+    enum CollatorCaseLevel {
       CollatorCaseLevel_Auto = 0,
       CollatorCaseLevel_Off = 1,
       CollatorCaseLevel_On = 2,
-    } CollatorCaseLevel;
+    };
 } // namespace capi
 } // namespace
 

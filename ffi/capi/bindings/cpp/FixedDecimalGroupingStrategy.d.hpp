@@ -12,12 +12,12 @@
 
 namespace diplomat {
 namespace capi {
-    typedef enum FixedDecimalGroupingStrategy {
+    enum FixedDecimalGroupingStrategy {
       FixedDecimalGroupingStrategy_Auto = 0,
       FixedDecimalGroupingStrategy_Never = 1,
       FixedDecimalGroupingStrategy_Always = 2,
       FixedDecimalGroupingStrategy_Min2 = 3,
-    } FixedDecimalGroupingStrategy;
+    };
 } // namespace capi
 } // namespace
 

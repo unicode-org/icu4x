@@ -12,7 +12,7 @@
 
 namespace diplomat {
 namespace capi {
-    typedef enum IsoWeekday {
+    enum IsoWeekday {
       IsoWeekday_Monday = 1,
       IsoWeekday_Tuesday = 2,
       IsoWeekday_Wednesday = 3,
@@ -20,7 +20,7 @@ namespace capi {
       IsoWeekday_Friday = 5,
       IsoWeekday_Saturday = 6,
       IsoWeekday_Sunday = 7,
-    } IsoWeekday;
+    };
 } // namespace capi
 } // namespace
 

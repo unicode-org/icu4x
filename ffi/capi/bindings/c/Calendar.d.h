@@ -16,5 +16,4 @@ typedef struct Calendar Calendar;
 
 
 
-
 #endif // Calendar_D_H

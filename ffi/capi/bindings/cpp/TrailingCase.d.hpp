@@ -12,10 +12,10 @@
 
 namespace diplomat {
 namespace capi {
-    typedef enum TrailingCase {
+    enum TrailingCase {
       TrailingCase_Lower = 0,
       TrailingCase_Unchanged = 1,
-    } TrailingCase;
+    };
 } // namespace capi
 } // namespace
 

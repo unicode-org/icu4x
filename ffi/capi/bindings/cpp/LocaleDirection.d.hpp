@@ -12,11 +12,11 @@
 
 namespace diplomat {
 namespace capi {
-    typedef enum LocaleDirection {
+    enum LocaleDirection {
       LocaleDirection_LeftToRight = 0,
       LocaleDirection_RightToLeft = 1,
       LocaleDirection_Unknown = 2,
-    } LocaleDirection;
+    };
 } // namespace capi
 } // namespace
 

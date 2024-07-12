@@ -9,20 +9,20 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-namespace capi {typedef struct DataProvider DataProvider; }
+namespace diplomat::capi { struct DataProvider; }
 class DataProvider;
-namespace capi {typedef struct MeasureUnit MeasureUnit; }
+namespace diplomat::capi { struct MeasureUnit; }
 class MeasureUnit;
-namespace capi {typedef struct MeasureUnitParser MeasureUnitParser; }
+namespace diplomat::capi { struct MeasureUnitParser; }
 class MeasureUnitParser;
-namespace capi {typedef struct UnitsConverter UnitsConverter; }
+namespace diplomat::capi { struct UnitsConverter; }
 class UnitsConverter;
 class DataError;
 
 
 namespace diplomat {
 namespace capi {
-    typedef struct UnitsConverterFactory UnitsConverterFactory;
+    struct UnitsConverterFactory;
 } // namespace capi
 } // namespace
 

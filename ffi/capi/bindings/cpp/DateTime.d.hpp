@@ -9,15 +9,15 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-namespace capi {typedef struct Calendar Calendar; }
+namespace diplomat::capi { struct Calendar; }
 class Calendar;
-namespace capi {typedef struct Date Date; }
+namespace diplomat::capi { struct Date; }
 class Date;
-namespace capi {typedef struct IsoDateTime IsoDateTime; }
+namespace diplomat::capi { struct IsoDateTime; }
 class IsoDateTime;
-namespace capi {typedef struct Time Time; }
+namespace diplomat::capi { struct Time; }
 class Time;
-namespace capi {typedef struct WeekCalculator WeekCalculator; }
+namespace diplomat::capi { struct WeekCalculator; }
 class WeekCalculator;
 struct WeekOf;
 class CalendarError;
@@ -26,7 +26,7 @@ class IsoWeekday;
 
 namespace diplomat {
 namespace capi {
-    typedef struct DateTime DateTime;
+    struct DateTime;
 } // namespace capi
 } // namespace
 

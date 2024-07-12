@@ -9,16 +9,16 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-namespace capi {typedef struct CodePointSetBuilder CodePointSetBuilder; }
+namespace diplomat::capi { struct CodePointSetBuilder; }
 class CodePointSetBuilder;
-namespace capi {typedef struct DataProvider DataProvider; }
+namespace diplomat::capi { struct DataProvider; }
 class DataProvider;
 class DataError;
 
 
 namespace diplomat {
 namespace capi {
-    typedef struct CaseMapCloser CaseMapCloser;
+    struct CaseMapCloser;
 } // namespace capi
 } // namespace
 

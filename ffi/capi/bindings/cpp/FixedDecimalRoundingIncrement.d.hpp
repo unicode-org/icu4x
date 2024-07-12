@@ -12,12 +12,12 @@
 
 namespace diplomat {
 namespace capi {
-    typedef enum FixedDecimalRoundingIncrement {
+    enum FixedDecimalRoundingIncrement {
       FixedDecimalRoundingIncrement_MultiplesOf1 = 0,
       FixedDecimalRoundingIncrement_MultiplesOf2 = 1,
       FixedDecimalRoundingIncrement_MultiplesOf5 = 2,
       FixedDecimalRoundingIncrement_MultiplesOf25 = 3,
-    } FixedDecimalRoundingIncrement;
+    };
 } // namespace capi
 } // namespace
 

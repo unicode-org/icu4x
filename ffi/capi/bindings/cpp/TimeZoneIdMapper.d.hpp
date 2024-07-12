@@ -9,7 +9,7 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-namespace capi {typedef struct DataProvider DataProvider; }
+namespace diplomat::capi { struct DataProvider; }
 class DataProvider;
 class DataError;
 class TimeZoneInvalidIdError;
@@ -17,7 +17,7 @@ class TimeZoneInvalidIdError;
 
 namespace diplomat {
 namespace capi {
-    typedef struct TimeZoneIdMapper TimeZoneIdMapper;
+    struct TimeZoneIdMapper;
 } // namespace capi
 } // namespace
 

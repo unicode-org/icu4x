@@ -9,13 +9,13 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-namespace capi {typedef struct DataProvider DataProvider; }
+namespace diplomat::capi { struct DataProvider; }
 class DataProvider;
-namespace capi {typedef struct LineBreakIteratorLatin1 LineBreakIteratorLatin1; }
+namespace diplomat::capi { struct LineBreakIteratorLatin1; }
 class LineBreakIteratorLatin1;
-namespace capi {typedef struct LineBreakIteratorUtf16 LineBreakIteratorUtf16; }
+namespace diplomat::capi { struct LineBreakIteratorUtf16; }
 class LineBreakIteratorUtf16;
-namespace capi {typedef struct LineBreakIteratorUtf8 LineBreakIteratorUtf8; }
+namespace diplomat::capi { struct LineBreakIteratorUtf8; }
 class LineBreakIteratorUtf8;
 struct LineBreakOptionsV1;
 class DataError;
@@ -23,7 +23,7 @@ class DataError;
 
 namespace diplomat {
 namespace capi {
-    typedef struct LineSegmenter LineSegmenter;
+    struct LineSegmenter;
 } // namespace capi
 } // namespace
 

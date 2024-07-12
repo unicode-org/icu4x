@@ -16,5 +16,4 @@ typedef struct ReorderedIndexMap ReorderedIndexMap;
 
 
 
-
 #endif // ReorderedIndexMap_D_H

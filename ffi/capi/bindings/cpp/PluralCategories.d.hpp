@@ -12,14 +12,14 @@
 
 namespace diplomat {
 namespace capi {
-    typedef struct PluralCategories {
+    struct PluralCategories {
       bool zero;
       bool one;
       bool two;
       bool few;
       bool many;
       bool other;
-    } PluralCategories;
+    };
 } // namespace capi
 } // namespace
 

@@ -12,11 +12,11 @@
 
 namespace diplomat {
 namespace capi {
-    typedef enum CollatorNumeric {
+    enum CollatorNumeric {
       CollatorNumeric_Auto = 0,
       CollatorNumeric_Off = 1,
       CollatorNumeric_On = 2,
-    } CollatorNumeric;
+    };
 } // namespace capi
 } // namespace
 

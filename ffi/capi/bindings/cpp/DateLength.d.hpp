@@ -12,12 +12,12 @@
 
 namespace diplomat {
 namespace capi {
-    typedef enum DateLength {
+    enum DateLength {
       DateLength_Full = 0,
       DateLength_Long = 1,
       DateLength_Medium = 2,
       DateLength_Short = 3,
-    } DateLength;
+    };
 } // namespace capi
 } // namespace
 

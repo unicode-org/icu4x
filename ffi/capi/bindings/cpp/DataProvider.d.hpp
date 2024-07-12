@@ -9,14 +9,14 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-namespace capi {typedef struct LocaleFallbacker LocaleFallbacker; }
+namespace diplomat::capi { struct LocaleFallbacker; }
 class LocaleFallbacker;
 class DataError;
 
 
 namespace diplomat {
 namespace capi {
-    typedef struct DataProvider DataProvider;
+    struct DataProvider;
 } // namespace capi
 } // namespace
 

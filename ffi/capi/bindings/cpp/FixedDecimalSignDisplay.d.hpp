@@ -12,13 +12,13 @@
 
 namespace diplomat {
 namespace capi {
-    typedef enum FixedDecimalSignDisplay {
+    enum FixedDecimalSignDisplay {
       FixedDecimalSignDisplay_Auto = 0,
       FixedDecimalSignDisplay_Never = 1,
       FixedDecimalSignDisplay_Always = 2,
       FixedDecimalSignDisplay_ExceptZero = 3,
       FixedDecimalSignDisplay_Negative = 4,
-    } FixedDecimalSignDisplay;
+    };
 } // namespace capi
 } // namespace
 

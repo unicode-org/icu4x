@@ -27,7 +27,7 @@ class CollatorStrength;
 
 namespace diplomat {
 namespace capi {
-    typedef struct CollatorOptionsV1 {
+    struct CollatorOptionsV1 {
       diplomat::capi::CollatorStrength strength;
       diplomat::capi::CollatorAlternateHandling alternate_handling;
       diplomat::capi::CollatorCaseFirst case_first;
@@ -35,7 +35,7 @@ namespace capi {
       diplomat::capi::CollatorCaseLevel case_level;
       diplomat::capi::CollatorNumeric numeric;
       diplomat::capi::CollatorBackwardSecondLevel backward_second_level;
-    } CollatorOptionsV1;
+    };
 } // namespace capi
 } // namespace
 

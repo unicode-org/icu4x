@@ -9,20 +9,20 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-namespace capi {typedef struct DataProvider DataProvider; }
+namespace diplomat::capi { struct DataProvider; }
 class DataProvider;
-namespace capi {typedef struct WordBreakIteratorLatin1 WordBreakIteratorLatin1; }
+namespace diplomat::capi { struct WordBreakIteratorLatin1; }
 class WordBreakIteratorLatin1;
-namespace capi {typedef struct WordBreakIteratorUtf16 WordBreakIteratorUtf16; }
+namespace diplomat::capi { struct WordBreakIteratorUtf16; }
 class WordBreakIteratorUtf16;
-namespace capi {typedef struct WordBreakIteratorUtf8 WordBreakIteratorUtf8; }
+namespace diplomat::capi { struct WordBreakIteratorUtf8; }
 class WordBreakIteratorUtf8;
 class DataError;
 
 
 namespace diplomat {
 namespace capi {
-    typedef struct WordSegmenter WordSegmenter;
+    struct WordSegmenter;
 } // namespace capi
 } // namespace
 

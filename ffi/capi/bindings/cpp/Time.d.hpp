@@ -14,7 +14,7 @@ class CalendarError;
 
 namespace diplomat {
 namespace capi {
-    typedef struct Time Time;
+    struct Time;
 } // namespace capi
 } // namespace
 

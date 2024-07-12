@@ -14,7 +14,7 @@ class BidiDirection;
 
 namespace diplomat {
 namespace capi {
-    typedef struct BidiParagraph BidiParagraph;
+    struct BidiParagraph;
 } // namespace capi
 } // namespace
 

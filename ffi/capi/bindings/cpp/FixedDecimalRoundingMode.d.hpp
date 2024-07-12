@@ -12,7 +12,7 @@
 
 namespace diplomat {
 namespace capi {
-    typedef enum FixedDecimalRoundingMode {
+    enum FixedDecimalRoundingMode {
       FixedDecimalRoundingMode_Ceil = 0,
       FixedDecimalRoundingMode_Expand = 1,
       FixedDecimalRoundingMode_Floor = 2,
@@ -22,7 +22,7 @@ namespace capi {
       FixedDecimalRoundingMode_HalfFloor = 6,
       FixedDecimalRoundingMode_HalfTrunc = 7,
       FixedDecimalRoundingMode_HalfEven = 8,
-    } FixedDecimalRoundingMode;
+    };
 } // namespace capi
 } // namespace
 

@@ -16,5 +16,4 @@ typedef struct WordBreakIteratorLatin1 WordBreakIteratorLatin1;
 
 
 
-
 #endif // WordBreakIteratorLatin1_D_H
