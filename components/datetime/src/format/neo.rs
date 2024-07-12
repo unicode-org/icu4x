@@ -2083,7 +2083,6 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                 }
                 FieldSymbol::TimeZone(_) => {
                     debug_assert!(false, "handled above");
-                    ()
                 }
 
                 ///// Numeric symbols /////

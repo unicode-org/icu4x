@@ -946,7 +946,7 @@ where
         let Some(formatter) = f0.take().or_else(|| f1.take()).or_else(|| f2.take()) else {
             break Err(());
         };
-        match formatter.format(w, &zone_input, payloads)? {
+        match formatter.format(w, zone_input, payloads)? {
             Ok(()) => break Ok(()),
             Err(FormatTimeZoneError::MissingInputField(_)) => {
                 // The time zone input doesn't have the fields for this formatter.
