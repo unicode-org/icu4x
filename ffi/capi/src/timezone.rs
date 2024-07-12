@@ -85,10 +85,7 @@ pub mod ffi {
 
         /// Sets the `gmt_offset` field from offset eighths of an hour.
         #[diplomat::rust_link(icu::timezone::GmtOffset::from_offset_eighths_of_hour, FnInStruct)]
-        pub fn set_gmt_offset_eighths_of_hour(
-            &mut self,
-            offset_eighths_of_hour: i8,
-        ) {
+        pub fn set_gmt_offset_eighths_of_hour(&mut self, offset_eighths_of_hour: i8) {
             self.0.gmt_offset = Some(icu_timezone::GmtOffset::from_offset_eighths_of_hour(
                 offset_eighths_of_hour,
             ));
