@@ -1420,9 +1420,7 @@ impl FormatTimeZone for Bcp47IdFormat {
                 sink.write_str(&bcp47_id)?;
                 Ok(())
             }
-            None => {
-                Err(FormatTimeZoneError::MissingInputField("time_zone_id"))
-            }
+            None => Err(FormatTimeZoneError::MissingInputField("time_zone_id")),
         })
     }
 }

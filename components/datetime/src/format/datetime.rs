@@ -19,11 +19,11 @@ use crate::provider::date_time::{
     MonthPlaceholderValue, TimeSymbols, ZoneSymbols,
 };
 use crate::time_zone::{
-    ExemplarCityFormat, FallbackTimeZoneFormatterUnit, FormatTimeZone, FormatTimeZoneError,
-    GenericLocationFormat, GenericNonLocationLongFormat, GenericNonLocationShortFormat,
-    Iso8601Format, LocalizedGmtFormat, SpecificNonLocationLongFormat,
-    SpecificNonLocationShortFormat, TimeZoneDataPayloadsBorrowed, TimeZoneFormatterUnit,
-    Bcp47IdFormat,
+    Bcp47IdFormat, ExemplarCityFormat, FallbackTimeZoneFormatterUnit, FormatTimeZone,
+    FormatTimeZoneError, GenericLocationFormat, GenericNonLocationLongFormat,
+    GenericNonLocationShortFormat, Iso8601Format, LocalizedGmtFormat,
+    SpecificNonLocationLongFormat, SpecificNonLocationShortFormat, TimeZoneDataPayloadsBorrowed,
+    TimeZoneFormatterUnit,
 };
 
 use core::fmt::{self, Write};
@@ -914,10 +914,14 @@ fn select_zone_units(time_zone: ResolvedNeoTimeZoneSkeleton) -> [Option<TimeZone
             formatters.0 = Some(TimeZoneFormatterUnit::Bcp47Id(Bcp47IdFormat {}))
         }
         ResolvedNeoTimeZoneSkeleton::IsoBasic => {
-            formatters.2 = Some(TimeZoneFormatterUnit::WithFallback(FallbackTimeZoneFormatterUnit::Iso8601(Iso8601Format::basic())))
+            formatters.2 = Some(TimeZoneFormatterUnit::WithFallback(
+                FallbackTimeZoneFormatterUnit::Iso8601(Iso8601Format::basic()),
+            ))
         }
         ResolvedNeoTimeZoneSkeleton::IsoExtended => {
-            formatters.2 = Some(TimeZoneFormatterUnit::WithFallback(FallbackTimeZoneFormatterUnit::Iso8601(Iso8601Format::extended())))
+            formatters.2 = Some(TimeZoneFormatterUnit::WithFallback(
+                FallbackTimeZoneFormatterUnit::Iso8601(Iso8601Format::extended()),
+            ))
         }
     };
     // TODO:
