@@ -6,7 +6,7 @@
 
 use crate::{
     error::DateTimeError,
-    fields::{FieldSymbol, TimeZone},
+    fields::{FieldLength, FieldSymbol, TimeZone},
     format::time_zone::FormattedTimeZone,
     input::{ExtractedTimeZoneInput, TimeZoneInput},
     pattern::{PatternError, PatternItem},
@@ -22,6 +22,35 @@ use icu_timezone::TimeZoneBcp47Id;
 use smallvec::SmallVec;
 use tinystr::tinystr;
 use writeable::{adapters::CoreWriteAsPartsWrite, Part, Writeable};
+
+/// All time zone styles that this crate can format
+#[derive(Debug, Copy, Clone)]
+pub(crate) enum ResolvedNeoTimeZoneSkeleton {
+    City,
+    Location,
+    GenericShort,
+    GenericLong,
+    SpecificShort,
+    SpecificLong,
+    GmtShort,
+    GmtLong,
+    IsoBasic,
+    IsoExtended,
+    Bcp47Id,
+}
+
+impl ResolvedNeoTimeZoneSkeleton {
+    pub(crate) fn from_field(
+        field_symbol: TimeZone,
+        field_length: FieldLength,
+    ) -> Option<Self> {
+        crate::tz_registry::field_to_resolved(field_symbol, field_length)
+    }
+    #[cfg(feature = "experimental")]
+    pub(crate) fn to_field(self) -> fields::Field {
+        crate::tz_registry::resolved_to_field(self)
+    }
+}
 
 /// Loads a resource into its destination if the destination has not already been filled.
 fn load<D, P>(

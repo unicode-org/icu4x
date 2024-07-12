@@ -16,7 +16,7 @@ use crate::neo_marker::{
     TypedDateDataMarkers, ZoneMarkers,
 };
 use crate::neo_pattern::{DateTimePattern, DateTimePatternBorrowed};
-use crate::neo_skeleton::{NeoDateTimeComponents, ResolvedNeoTimeZoneSkeleton};
+use crate::neo_skeleton::NeoDateTimeComponents;
 use crate::pattern::PatternItem;
 use crate::provider::date_time::{
     DateSymbols, GetSymbolForDayPeriodError, GetSymbolForEraError, GetSymbolForMonthError,
@@ -25,6 +25,7 @@ use crate::provider::date_time::{
 use crate::provider::neo::*;
 use crate::provider::time_zones::tz;
 use crate::time_zone::TimeZoneDataPayloadsBorrowed;
+use crate::time_zone::ResolvedNeoTimeZoneSkeleton;
 use core::fmt;
 use core::marker::PhantomData;
 use icu_calendar::provider::WeekDataV2Marker;

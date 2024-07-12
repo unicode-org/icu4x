@@ -4,7 +4,7 @@
 
 use crate::fields::{self, Field, FieldLength, FieldSymbol, Second, Week, Year};
 use crate::input::{DateInput, ExtractedDateTimeInput, ExtractedTimeZoneInput, IsoTimeInput};
-use crate::neo_skeleton::ResolvedNeoTimeZoneSkeleton;
+use crate::time_zone::ResolvedNeoTimeZoneSkeleton;
 use crate::pattern::runtime::{PatternBorrowed, PatternMetadata};
 use crate::pattern::{
     runtime::{Pattern, PatternPlurals},

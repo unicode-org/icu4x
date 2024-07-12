@@ -7,10 +7,11 @@ use crate::input::ExtractedDateTimeInput;
 use crate::neo_pattern::DateTimePattern;
 use crate::neo_skeleton::{
     NeoComponents, NeoDateComponents, NeoDateSkeleton, NeoDateTimeComponents, NeoSkeletonLength,
-    NeoTimeComponents, NeoTimeSkeleton, NeoTimeZoneSkeleton, ResolvedNeoTimeZoneSkeleton,
+    NeoTimeComponents, NeoTimeSkeleton, NeoTimeZoneSkeleton,
 };
 use crate::pattern::runtime::PatternMetadata;
 use crate::pattern::{runtime, GenericPatternItem, PatternItem};
+use crate::time_zone::ResolvedNeoTimeZoneSkeleton;
 use crate::provider::neo::*;
 use icu_provider::prelude::*;
 use marker_attrs::GlueType;

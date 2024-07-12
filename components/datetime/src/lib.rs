@@ -158,6 +158,7 @@ pub(crate) mod raw;
 #[cfg(any(feature = "datagen", feature = "experimental"))]
 pub mod skeleton;
 pub mod time_zone;
+mod tz_registry;
 mod zoned_datetime;
 
 pub use any::{DateFormatter, DateTimeFormatter, ZonedDateTimeFormatter};
