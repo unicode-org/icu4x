@@ -44,7 +44,7 @@ impl GmtOffset {
     /// use icu::timezone::GmtOffset;
     ///
     /// assert_eq!(
-    ///     GmtOffset::try_from_str("-6").unwrap(),
+    ///     GmtOffset::try_from_str("-0600").unwrap(),
     ///     GmtOffset::from_offset_eighths_of_hour(-6 * 8),
     /// );
     /// ```
