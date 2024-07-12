@@ -65,14 +65,14 @@ fn test_basic() {
 
     let test_cases = [
         (
-            locale!("en-US").into(),
+            locale!("en-US"),
             "meter",
             "12345.67",
             UnitsFormatterOptions::default(),
             "12,345.67 m",
         ),
         (
-            locale!("en-US").into(),
+            locale!("en-US"),
             "century",
             "12345.67",
             UnitsFormatterOptions {
@@ -82,14 +82,14 @@ fn test_basic() {
             "12,345.67 centuries",
         ),
         (
-            locale!("de-DE").into(),
+            locale!("de-DE"),
             "meter",
             "12345.67",
             UnitsFormatterOptions::default(),
             "12.345,67 m",
         ),
         (
-            locale!("ar-EG").into(),
+            locale!("ar-EG"),
             "meter",
             "12345.67",
             UnitsFormatterOptions {
@@ -101,7 +101,7 @@ fn test_basic() {
     ];
 
     for (locale, unit, value, options, expected) in test_cases {
-        let fmt = UnitsFormatter::try_new(&locale, unit, options).unwrap();
+        let fmt = UnitsFormatter::try_new(&locale.into(), unit, options).unwrap();
         let value = value.parse().unwrap();
         assert_writeable_eq!(fmt.format_fixed_decimal(&value, unit), expected);
     }
