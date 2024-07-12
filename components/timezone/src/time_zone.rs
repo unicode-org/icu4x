@@ -78,10 +78,12 @@ impl CustomTimeZone {
         zone_variant: TinyAsciiStr<2>,
     ) -> Self {
         Self {
-            gmt_offset: Some(GmtOffset::from_offset_eighths_of_hour(offset_eighths_of_hour)),
+            gmt_offset: Some(GmtOffset::from_offset_eighths_of_hour(
+                offset_eighths_of_hour,
+            )),
             time_zone_id: Some(TimeZoneBcp47Id(time_zone_id)),
             metazone_id: Some(MetazoneId(metazone_id)),
-            zone_variant: Some(ZoneVariant(zone_variant))
+            zone_variant: Some(ZoneVariant(zone_variant)),
         }
     }
 

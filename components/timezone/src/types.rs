@@ -34,15 +34,15 @@ impl GmtOffset {
     }
 
     /// Creates a [`GmtOffset`] from eighths of an hour.
-    /// 
+    ///
     /// This is chosen because eighths of an hour cover all current time zones
     /// and all values of i8 are within range of this type.
-    /// 
+    ///
     /// # Examples
-    /// 
+    ///
     /// ```
     /// use icu::timezone::GmtOffset;
-    /// 
+    ///
     /// assert_eq!(
     ///     GmtOffset::try_from_str("-6").unwrap(),
     ///     GmtOffset::from_offset_eighths_of_hour(-6 * 8),
