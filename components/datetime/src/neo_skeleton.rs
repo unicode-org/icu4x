@@ -821,6 +821,9 @@ pub(crate) enum ResolvedNeoTimeZoneSkeleton {
     SpecificLong,
     GmtShort,
     GmtLong,
+    IsoBasic,
+    IsoExtended,
+    Bcp47Id,
 }
 
 macro_rules! time_zone_style_registry {
@@ -862,10 +865,16 @@ macro_rules! time_zone_style_registry {
             [
                 (GenericShort, LowerZ, TwoDigit), // 'zz'
                 (GenericShort, LowerZ, Abbreviated), // 'zzz'
+                (IsoBasic, UpperZ, TwoDigit), // 'ZZ'
+                (IsoBasic, UpperZ, Abbreviated), // 'ZZZ'
+                (GmtShort, UpperZ, Wide), // 'ZZZZ'
             ],
             // Styles that can appear in patterns but have no API
             [
+                (Bcp47Id, UpperV, One), // 'V'
                 (City, UpperV, Abbreviated), // 'VVV'
+                (IsoBasic, UpperZ, One), // 'Z'
+                (IsoExtended, UpperZ, Narrow), // 'ZZZZZ'
             ],
         }
     };

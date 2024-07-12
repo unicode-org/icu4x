@@ -948,6 +948,37 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     ///     names.with_pattern(&pattern).format(&CustomTimeZone::bst()),
     ///     "Your time zone is: GMT+01:00",
     /// );
+    ///
+    /// // Now try `V`:
+    /// let pattern_str = "'Your time zone is:' V";
+    /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
+    ///
+    /// assert_try_writeable_eq!(
+    ///     names.with_pattern(&pattern).format(&CustomTimeZone::gmt()),
+    ///     "Your time zone is: gblon",
+    /// );
+    ///
+    /// // Now try `Z`:
+    /// let pattern_str = "'Your time zone is:' Z";
+    /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
+    ///
+    /// assert_try_writeable_eq!(
+    ///     names.with_pattern(&pattern).format(&CustomTimeZone::gmt()),
+    ///     "Your time zone is: +0000",
+    /// );
+    ///
+    /// // Now try `ZZZZZ`:
+    /// let pattern_str = "'Your time zone is:' ZZZZZ";
+    /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
+    ///
+    /// assert_try_writeable_eq!(
+    ///     names.with_pattern(&pattern).format(&CustomTimeZone::gmt()),
+    ///     "Your time zone is: Z",
+    /// );
+    /// assert_try_writeable_eq!(
+    ///     names.with_pattern(&pattern).format(&CustomTimeZone::bst()),
+    ///     "Your time zone is: +01:00",
+    /// );
     /// ```
     #[cfg(feature = "compiled_data")]
     pub fn include_time_zone_essentials(&mut self) -> Result<&mut Self, SingleLoadError>
@@ -2013,7 +2044,10 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                             )?;
                         }
                         ResolvedNeoTimeZoneSkeleton::GmtShort
-                        | ResolvedNeoTimeZoneSkeleton::GmtLong => {
+                        | ResolvedNeoTimeZoneSkeleton::GmtLong
+                        | ResolvedNeoTimeZoneSkeleton::IsoBasic
+                        | ResolvedNeoTimeZoneSkeleton::IsoExtended
+                        | ResolvedNeoTimeZoneSkeleton::Bcp47Id => {
                             // all data needed for this is in time zone essentials
                         }
                     };

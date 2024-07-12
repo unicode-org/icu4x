@@ -23,6 +23,7 @@ use crate::time_zone::{
     GenericLocationFormat, GenericNonLocationLongFormat, GenericNonLocationShortFormat,
     Iso8601Format, LocalizedGmtFormat, SpecificNonLocationLongFormat,
     SpecificNonLocationShortFormat, TimeZoneDataPayloadsBorrowed, TimeZoneFormatterUnit,
+    Bcp47IdFormat,
 };
 
 use core::fmt::{self, Write};
@@ -908,12 +909,21 @@ fn select_zone_units(time_zone: ResolvedNeoTimeZoneSkeleton) -> [Option<TimeZone
         // `OOOO`, `ZZZZ`
         ResolvedNeoTimeZoneSkeleton::GmtLong => {
             // no-op
-        } // TODO:
-          // `V` "uslax"
-          // `VV` "America/Los_Angeles"
-          // Generic Partial Location: "Pacific Time (Los Angeles)"
-          // All `x` and `X` formats
+        }
+        ResolvedNeoTimeZoneSkeleton::Bcp47Id => {
+            formatters.0 = Some(TimeZoneFormatterUnit::Bcp47Id(Bcp47IdFormat {}))
+        }
+        ResolvedNeoTimeZoneSkeleton::IsoBasic => {
+            formatters.2 = Some(TimeZoneFormatterUnit::WithFallback(FallbackTimeZoneFormatterUnit::Iso8601(Iso8601Format::basic())))
+        }
+        ResolvedNeoTimeZoneSkeleton::IsoExtended => {
+            formatters.2 = Some(TimeZoneFormatterUnit::WithFallback(FallbackTimeZoneFormatterUnit::Iso8601(Iso8601Format::extended())))
+        }
     };
+    // TODO:
+    // `VV` "America/Los_Angeles"
+    // Generic Partial Location: "Pacific Time (Los Angeles)"
+    // All `x` and `X` formats
     [formatters.0, formatters.1, formatters.2]
 }
 
