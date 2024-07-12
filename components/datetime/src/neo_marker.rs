@@ -1300,6 +1300,7 @@ macro_rules! impl_time_marker {
 
 macro_rules! impl_zone_marker {
     (
+        $(#[$attr:meta])*
         $type:ident,
         $components:expr,
         description = $description:literal,
@@ -1362,6 +1363,7 @@ macro_rules! impl_zone_marker {
         #[doc = concat!("    \"", $expectation, "\"")]
         /// );
         /// ```
+        $(#[$attr])*
         #[derive(Debug)]
         #[allow(clippy::exhaustive_enums)] // empty enum
         pub enum $type {}
@@ -1630,9 +1632,102 @@ impl_date_marker!(
 
 // TODO: Select the proper zone payloads in all of these markers below
 
+// TODO: Use an example time zone that illustrates the differences better
+
+impl_zone_marker!(
+    NeoTimeZoneSpecificMarker,
+    NeoTimeZoneSkeleton::specific(),
+    description = "a specific time zone format with inherited length",
+    expectation = "GMT",
+    zone_essentials = yes,
+    zone_exemplar_cities = yes,
+    zone_generic_long = yes,
+    zone_generic_short = yes,
+    zone_specific_long = yes,
+    zone_specific_short = yes,
+);
+
+impl_zone_marker!(
+    NeoTimeZoneSpecificShortMarker,
+    NeoTimeZoneSkeleton::specific_short(),
+    description = "a short specific time zone format",
+    expectation = "GMT",
+    zone_essentials = yes,
+    zone_exemplar_cities = yes,
+    zone_generic_long = yes,
+    zone_generic_short = yes,
+    zone_specific_long = yes,
+    zone_specific_short = yes,
+);
+
+impl_zone_marker!(
+    NeoTimeZoneSpecificLongMarker,
+    NeoTimeZoneSkeleton::specific_long(),
+    description = "a long specific time zone format",
+    expectation = "Greenwich Mean Time",
+    zone_essentials = yes,
+    zone_exemplar_cities = yes,
+    zone_generic_long = yes,
+    zone_generic_short = yes,
+    zone_specific_long = yes,
+    zone_specific_short = yes,
+);
+
+impl_zone_marker!(
+    NeoTimeZoneGmtMarker,
+    NeoTimeZoneSkeleton::gmt(),
+    description = "a GMT-offset time zone format with inherited length",
+    expectation = "GMT",
+    zone_essentials = yes,
+    zone_exemplar_cities = yes,
+    zone_generic_long = yes,
+    zone_generic_short = yes,
+    zone_specific_long = yes,
+    zone_specific_short = yes,
+);
+
+impl_zone_marker!(
+    NeoTimeZoneGmtShortMarker,
+    NeoTimeZoneSkeleton::gmt_short(),
+    description = "a GMT-offset short time zone format",
+    expectation = "GMT",
+    zone_essentials = yes,
+    zone_exemplar_cities = yes,
+    zone_generic_long = yes,
+    zone_generic_short = yes,
+    zone_specific_long = yes,
+    zone_specific_short = yes,
+);
+
+impl_zone_marker!(
+    NeoTimeZoneGmtLongMarker,
+    NeoTimeZoneSkeleton::gmt_long(),
+    description = "a GMT-offset long time zone format",
+    expectation = "Greenwich Mean Time",
+    zone_essentials = yes,
+    zone_exemplar_cities = yes,
+    zone_generic_long = yes,
+    zone_generic_short = yes,
+    zone_specific_long = yes,
+    zone_specific_short = yes,
+);
+
+impl_zone_marker!(
+    NeoTimeZoneGenericMarker,
+    NeoTimeZoneSkeleton::generic(),
+    description = "a generic time zone format with inherited length",
+    expectation = "GMT",
+    zone_essentials = yes,
+    zone_exemplar_cities = yes,
+    zone_generic_long = yes,
+    zone_generic_short = yes,
+    zone_specific_long = yes,
+    zone_specific_short = yes,
+);
+
 impl_zone_marker!(
     NeoTimeZoneGenericShortMarker,
-    NeoTimeZoneSkeleton::non_location_short(),
+    NeoTimeZoneSkeleton::generic_short(),
     description = "a generic short time zone format",
     expectation = "GMT",
     zone_essentials = yes,
@@ -1645,7 +1740,7 @@ impl_zone_marker!(
 
 impl_zone_marker!(
     NeoTimeZoneGenericLongMarker,
-    NeoTimeZoneSkeleton::non_location_long(),
+    NeoTimeZoneSkeleton::generic_long(),
     description = "a generic long time zone format",
     expectation = "Greenwich Mean Time",
     zone_essentials = yes,
@@ -1657,10 +1752,10 @@ impl_zone_marker!(
 );
 
 impl_zone_marker!(
-    NeoTimeZoneGenericMarker,
-    NeoTimeZoneSkeleton::non_location(),
-    description = "a generic time zone format with inherited length",
-    expectation = "GMT",
+    NeoTimeZoneLocationMarker,
+    NeoTimeZoneSkeleton::location(),
+    description = "a location time zone format",
+    expectation = "London Time",
     zone_essentials = yes,
     zone_exemplar_cities = yes,
     zone_generic_long = yes,
