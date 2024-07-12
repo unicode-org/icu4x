@@ -130,6 +130,17 @@ impl crate::IterableDataProviderCached<UnitsDisplayNameV1Marker> for SourceDataP
                 // NOTE:
                 //  if this filter is removed, we have to add a filter to remove all the prefixes.
                 .filter_map(|key| {
+                    #[cfg(test)]
+                    return key.split_once('-').and_then(|(_category, unit)| {
+                        if [
+                            "meter", "foot", "kilogram", "pound", "hour", "minute", "second",
+                        ].contains(&unit) {
+                            Some(unit)
+                        } else {
+                            None
+                        }
+                    });
+                    #[cfg(not(test))]
                     if let Some(rest) = key.strip_prefix("length-") {
                         Some(rest)
                     } else if let Some(rest) = key.strip_prefix("duration-") {

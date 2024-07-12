@@ -1,7 +1,0 @@
-{
-  "patterns": {
-    "One": "{0} milja",
-    "Few": "{0} milje",
-    "Other": "{0} milja"
-  }
-}

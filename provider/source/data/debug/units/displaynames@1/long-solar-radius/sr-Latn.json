@@ -1,7 +1,0 @@
-{
-  "patterns": {
-    "One": "{0} sunčev poluprečnik",
-    "Few": "{0} sunčeva poluprečnika",
-    "Other": "{0} sunčevih poluprečnika"
-  }
-}
