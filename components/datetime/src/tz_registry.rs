@@ -5,7 +5,7 @@
 use crate::fields::{self, FieldLength};
 #[cfg(feature = "experimental")]
 use crate::fields::{Field, FieldSymbol};
-#[cfg(feature = "experimental")]
+#[cfg(any(feature = "datagen", feature = "experimental"))]
 use crate::neo_skeleton::{NeoSkeletonLength, NeoTimeZoneSkeleton, NeoTimeZoneStyle};
 use crate::time_zone::ResolvedNeoTimeZoneSkeleton;
 
@@ -147,7 +147,7 @@ macro_rules! make_resolved_to_field_match {
 #[cfg(feature = "experimental")]
 time_zone_style_registry!(make_resolved_to_field_match);
 
-#[cfg(feature = "experimental")]
+#[cfg(any(feature = "datagen", feature = "experimental"))]
 macro_rules! make_skeleton_to_resolved_match {
     (
         [$(($fn:ident, $style:ident, $length:ident, $resolved:ident, $field_symbol:ident, $field_length:ident)),+,],
@@ -170,7 +170,7 @@ macro_rules! make_skeleton_to_resolved_match {
     };
 }
 
-#[cfg(feature = "experimental")]
+#[cfg(any(feature = "datagen", feature = "experimental"))]
 time_zone_style_registry!(make_skeleton_to_resolved_match);
 
 macro_rules! make_field_to_skeleton_match {
