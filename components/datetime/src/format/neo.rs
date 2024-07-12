@@ -1996,7 +1996,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                             )?;
                         }
                         // 'VVV..VVVV' (note: `V..VV` are for identifiers only)
-                        ResolvedNeoTimeZoneSkeleton::Location => {
+                        ResolvedNeoTimeZoneSkeleton::City | ResolvedNeoTimeZoneSkeleton::Location => {
                             self.load_time_zone_exemplar_city_names(
                                 exemplar_cities_provider,
                                 locale,

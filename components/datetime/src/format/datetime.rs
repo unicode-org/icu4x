@@ -885,11 +885,11 @@ fn select_zone_units(time_zone: ResolvedNeoTimeZoneSkeleton) -> [Option<TimeZone
                 GenericNonLocationLongFormat {},
             ));
         }
-        // TODO: Not supported yet: 'VVV'
-        // (fields::TimeZone::UpperV, FieldLength::Abbreviated) => {
-        //     formatters.0 =
-        //         Some(TimeZoneFormatterUnit::ExemplarCity(ExemplarCityFormat {}));
-        // }
+        // 'VVV'
+        ResolvedNeoTimeZoneSkeleton::City => {
+            formatters.0 =
+                Some(TimeZoneFormatterUnit::ExemplarCity(ExemplarCityFormat {}));
+        }
         // 'VVVV'
         ResolvedNeoTimeZoneSkeleton::Location => {
             formatters.0 = Some(TimeZoneFormatterUnit::GenericLocation(

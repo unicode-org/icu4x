@@ -801,6 +801,7 @@ pub struct NeoTimeZoneSkeleton {
 
 #[derive(Debug, Copy, Clone)]
 pub(crate) enum ResolvedNeoTimeZoneSkeleton {
+    City,
     Location,
     GenericShort,
     GenericLong,
@@ -850,6 +851,10 @@ macro_rules! time_zone_style_registry {
                 (GenericShort, LowerZ, TwoDigit), // 'zz'
                 (GenericShort, LowerZ, Abbreviated), // 'zzz'
             ],
+            // Styles that can appear in patterns but have no API
+            [
+                (City, UpperV, Abbreviated), // 'VVV'
+            ],
         }
     };
 }
@@ -861,6 +866,7 @@ macro_rules! make_constructors {
         [$(($fn1:ident, $style1:ident)),+,],
         [$(($style2:ident, $length2:ident, $resolved2:ident)),+,],
         [$(($resolved3:ident, $field_symbol3:ident, $field_length3:ident)),+,],
+        [$(($resolved4:ident, $field_symbol4:ident, $field_length4:ident)),+,],
     ) => {
         $(
             impl NeoTimeZoneSkeleton {
@@ -904,6 +910,7 @@ macro_rules! make_resolved_to_field_match {
         [$(($fn1:ident, $resolved1:ident)),+,],
         [$(($style2:ident, $length2:ident, $resolved2:ident)),+,],
         [$(($resolved3:ident, $field_symbol3:ident, $field_length3:ident)),+,],
+        [$(($resolved4:ident, $field_symbol4:ident, $field_length4:ident)),+,],
     ) => {
         fn resolved_to_field(resolved: ResolvedNeoTimeZoneSkeleton) -> Field {
             match resolved {
@@ -917,6 +924,12 @@ macro_rules! make_resolved_to_field_match {
                     ResolvedNeoTimeZoneSkeleton::$resolved0 => Field {
                         symbol: FieldSymbol::TimeZone(fields::TimeZone::$field_symbol0),
                         length: FieldLength::$field_length0,
+                    },
+                )+
+                $(
+                    ResolvedNeoTimeZoneSkeleton::$resolved4 => Field {
+                        symbol: FieldSymbol::TimeZone(fields::TimeZone::$field_symbol4),
+                        length: FieldLength::$field_length4,
                     },
                 )+
             }
@@ -933,6 +946,7 @@ macro_rules! make_skeleton_to_resolved_match {
         [$(($fn1:ident, $resolved1:ident)),+,],
         [$(($style2:ident, $length2:ident, $resolved2:ident)),+,],
         [$(($resolved3:ident, $field_symbol3:ident, $field_length3:ident)),+,],
+        [$(($resolved4:ident, $field_symbol4:ident, $field_length4:ident)),+,],
     ) => {
         fn skeleton_to_resolved(style: NeoTimeZoneStyle, length: NeoSkeletonLength) -> ResolvedNeoTimeZoneSkeleton {
             match (style, length) {
@@ -956,6 +970,7 @@ macro_rules! make_field_to_skeleton_match {
         [$(($fn1:ident, $resolved1:ident)),+,],
         [$(($style2:ident, $length2:ident, $resolved2:ident)),+,],
         [$(($resolved3:ident, $field_symbol3:ident, $field_length3:ident)),+,],
+        [$(($resolved4:ident, $field_symbol4:ident, $field_length4:ident)),+,],
     ) => {
         fn field_to_resolved(field_symbol: fields::TimeZone, field_length: fields::FieldLength) -> Option<ResolvedNeoTimeZoneSkeleton> {
             match (field_symbol, field_length) {
@@ -967,6 +982,9 @@ macro_rules! make_field_to_skeleton_match {
                 )+
                 $(
                     (fields::TimeZone::$field_symbol3, FieldLength::$field_length3) => Some(ResolvedNeoTimeZoneSkeleton::$resolved3),
+                )+
+                $(
+                    (fields::TimeZone::$field_symbol4, FieldLength::$field_length4) => Some(ResolvedNeoTimeZoneSkeleton::$resolved4),
                 )+
                 (_, _) => None,
             }
