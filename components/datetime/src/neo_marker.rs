@@ -1677,7 +1677,7 @@ impl_zone_marker!(
     NeoTimeZoneGmtMarker,
     NeoTimeZoneSkeleton::gmt(),
     description = "a GMT-offset time zone format with inherited length",
-    expectation = "GMT",
+    expectation = "GMT", // TODO
     zone_essentials = yes,
     zone_exemplar_cities = yes,
     zone_generic_long = yes,
@@ -1690,7 +1690,7 @@ impl_zone_marker!(
     NeoTimeZoneGmtShortMarker,
     NeoTimeZoneSkeleton::gmt_short(),
     description = "a GMT-offset short time zone format",
-    expectation = "GMT",
+    expectation = "GMT", // TODO
     zone_essentials = yes,
     zone_exemplar_cities = yes,
     zone_generic_long = yes,
@@ -1703,7 +1703,7 @@ impl_zone_marker!(
     NeoTimeZoneGmtLongMarker,
     NeoTimeZoneSkeleton::gmt_long(),
     description = "a GMT-offset long time zone format",
-    expectation = "Greenwich Mean Time",
+    expectation = "GMT", // TODO: Illustrate this with an actual offset zone
     zone_essentials = yes,
     zone_exemplar_cities = yes,
     zone_generic_long = yes,

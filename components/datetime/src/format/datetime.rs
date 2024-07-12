@@ -873,11 +873,14 @@ where
                     (fields::TimeZone::UpperO | fields::TimeZone::UpperZ, FieldLength::Wide) => {
                         // no-op
                     }
+                    // `O`
+                    (fields::TimeZone::UpperO, FieldLength::One) => {
+                        // TODO: For now, use the long format. This should be GMT-8
+                    }
                     // TODO:
                     // `V` "uslax"
                     // `VV` "America/Los_Angeles"
                     // Generic Partial Location: "Pacific Time (Los Angeles)"
-                    // `O` "GMT-8"
                     // All `x` and `X` formats
                     _ => {
                         // Cause these to fail by unsetting the fallback formats

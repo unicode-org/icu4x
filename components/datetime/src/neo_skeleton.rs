@@ -923,6 +923,7 @@ macro_rules! make_skeleton_to_resolved_match {
                 $(
                     (NeoTimeZoneStyle::$style2, NeoSkeletonLength::$length2) => ResolvedNeoTimeZoneSkeleton::$resolved2,
                 )+
+                // TODO: This should be exhaustive
                 (_, _) => todo!()
             }
         }
