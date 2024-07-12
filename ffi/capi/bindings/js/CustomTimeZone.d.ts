@@ -1,4 +1,4 @@
-import { i32 } from "./diplomat-runtime"
+import { i8, i32 } from "./diplomat-runtime"
 import { FFIError } from "./diplomat-runtime"
 import { IsoDateTime } from "./IsoDateTime";
 import { MetazoneCalculator } from "./MetazoneCalculator";
@@ -65,6 +65,14 @@ export class CustomTimeZone {
    * @throws {@link FFIError}<{@link TimeZoneInvalidOffsetError}>
    */
   try_set_gmt_offset_seconds(offset_seconds: i32): void | never;
+
+  /**
+
+   * Sets the `gmt_offset` field from offset eighths of an hour.
+
+   * See the {@link https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html#method.from_offset_eighths_of_hour Rust documentation for `from_offset_eighths_of_hour`} for more information.
+   */
+  set_gmt_offset_eighths_of_hour(offset_eighths_of_hour: i8): void;
 
   /**
 

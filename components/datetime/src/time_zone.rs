@@ -6,7 +6,7 @@
 
 use crate::{
     error::DateTimeError,
-    fields::{FieldSymbol, TimeZone},
+    fields::{FieldLength, FieldSymbol, TimeZone},
     format::time_zone::FormattedTimeZone,
     input::{ExtractedTimeZoneInput, TimeZoneInput},
     pattern::{PatternError, PatternItem},
@@ -22,6 +22,32 @@ use icu_timezone::TimeZoneBcp47Id;
 use smallvec::SmallVec;
 use tinystr::tinystr;
 use writeable::{adapters::CoreWriteAsPartsWrite, Part, Writeable};
+
+/// All time zone styles that this crate can format
+#[derive(Debug, Copy, Clone)]
+pub(crate) enum ResolvedNeoTimeZoneSkeleton {
+    City,
+    Location,
+    GenericShort,
+    GenericLong,
+    SpecificShort,
+    SpecificLong,
+    GmtShort,
+    GmtLong,
+    IsoBasic,
+    IsoExtended,
+    Bcp47Id,
+}
+
+impl ResolvedNeoTimeZoneSkeleton {
+    pub(crate) fn from_field(field_symbol: TimeZone, field_length: FieldLength) -> Option<Self> {
+        crate::tz_registry::field_to_resolved(field_symbol, field_length)
+    }
+    #[cfg(feature = "experimental")]
+    pub(crate) fn to_field(self) -> crate::fields::Field {
+        crate::tz_registry::resolved_to_field(self)
+    }
+}
 
 /// Loads a resource into its destination if the destination has not already been filled.
 fn load<D, P>(
@@ -870,8 +896,20 @@ pub(super) struct Iso8601Format {
 
 impl Iso8601Format {
     pub(crate) fn default_for_fallback() -> Self {
+        Self::basic()
+    }
+    // 'Z'
+    pub(crate) fn basic() -> Self {
         Self {
             format: IsoFormat::Basic,
+            minutes: IsoMinutes::Required,
+            seconds: IsoSeconds::Optional,
+        }
+    }
+    // 'ZZZZZ'
+    pub(crate) fn extended() -> Self {
+        Self {
+            format: IsoFormat::UtcExtended,
             minutes: IsoMinutes::Required,
             seconds: IsoSeconds::Optional,
         }
@@ -882,6 +920,10 @@ impl Iso8601Format {
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub(super) struct ExemplarCityFormat {}
 
+// It is only used for pattern in special case and not public to users.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub(super) struct Bcp47IdFormat {}
+
 // An enum for time zone format unit.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub(super) enum TimeZoneFormatterUnit {
@@ -891,6 +933,7 @@ pub(super) enum TimeZoneFormatterUnit {
     SpecificNonLocationShort(SpecificNonLocationShortFormat),
     GenericLocation(GenericLocationFormat),
     ExemplarCity(ExemplarCityFormat),
+    Bcp47Id(Bcp47IdFormat),
     WithFallback(FallbackTimeZoneFormatterUnit),
 }
 
@@ -986,6 +1029,7 @@ impl FormatTimeZone for TimeZoneFormatterUnit {
             Self::GenericLocation(unit) => unit.format(sink, time_zone, data_payloads),
             Self::WithFallback(unit) => unit.format(sink, time_zone, data_payloads),
             Self::ExemplarCity(unit) => unit.format(sink, time_zone, data_payloads),
+            Self::Bcp47Id(unit) => unit.format(sink, time_zone, data_payloads),
         }
     }
 }
@@ -1297,10 +1341,20 @@ impl FormatTimeZoneWithFallback for Iso8601Format {
         gmt_offset: GmtOffset,
         _data_payloads: TimeZoneDataPayloadsBorrowed,
     ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
+        self.format_infallible(sink, gmt_offset).map(|()| Ok(()))
+    }
+}
+
+impl Iso8601Format {
+    pub(crate) fn format_infallible<W: writeable::PartsWrite + ?Sized>(
+        &self,
+        sink: &mut W,
+        gmt_offset: GmtOffset,
+    ) -> Result<(), fmt::Error> {
         if gmt_offset.is_zero()
             && matches!(self.format, IsoFormat::UtcBasic | IsoFormat::UtcExtended)
         {
-            sink.write_char('Z')?;
+            return sink.write_char('Z');
         }
 
         let extended_format = matches!(self.format, IsoFormat::Extended | IsoFormat::UtcExtended);
@@ -1325,7 +1379,7 @@ impl FormatTimeZoneWithFallback for Iso8601Format {
             format_offset_seconds(sink, gmt_offset)?;
         }
 
-        Ok(Ok(()))
+        Ok(())
     }
 }
 
@@ -1376,6 +1430,23 @@ impl FormatTimeZone for ExemplarCityFormat {
                     .unwrap_or(&Cow::Borrowed("Unknown"));
                 Ok(sink.write_str(formatted_unknown_city)?)
             }
+        })
+    }
+}
+
+impl FormatTimeZone for Bcp47IdFormat {
+    fn format<W: writeable::PartsWrite + ?Sized>(
+        &self,
+        sink: &mut W,
+        time_zone: &ExtractedTimeZoneInput,
+        _data_payloads: TimeZoneDataPayloadsBorrowed,
+    ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
+        Ok(match time_zone.time_zone_id() {
+            Some(bcp47_id) => {
+                sink.write_str(&bcp47_id)?;
+                Ok(())
+            }
+            None => Err(FormatTimeZoneError::MissingInputField("time_zone_id")),
         })
     }
 }

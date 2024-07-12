@@ -4,10 +4,10 @@
 
 //! Temporary module for neo datetime skeletons (Semantic Skeleta)
 
-#[cfg(feature = "experimental")]
-use crate::fields::{self, Field, FieldLength, FieldSymbol};
 use crate::options::components;
 use crate::options::length;
+#[cfg(feature = "experimental")]
+use crate::time_zone::ResolvedNeoTimeZoneSkeleton;
 use crate::DateTimeFormatterOptions;
 use icu_provider::DataMarkerAttributes;
 
@@ -759,7 +759,13 @@ impl From<NeoTimeZoneSkeleton> for NeoComponents {
     }
 }
 
-/// Specification of the time zone display style
+/// Specification of the time zone display style.
+///
+/// Time zone names contribute a lot of data size. For resource-constrained
+/// environments, the following formats require the least amount of data:
+///
+/// - [`NeoTimeZoneStyle::SpecificNonLocation`] + [`NeoSkeletonLength::Short`]
+/// - [`NeoTimeZoneStyle::Offset`]
 #[derive(Debug, Copy, Clone, Default)]
 #[non_exhaustive]
 pub enum NeoTimeZoneStyle {
@@ -774,10 +780,16 @@ pub enum NeoTimeZoneStyle {
     #[default]
     Default,
     /// The location format, e.g., “Los Angeles time”.
+    ///
+    /// When unavailable, falls back to [`NeoTimeZoneStyle::Offset`].
     Location,
     /// The generic non-location format, e.g., “Pacific Time”.
+    ///
+    /// When unavailable, falls back to [`NeoTimeZoneStyle::Location`].
     NonLocation,
     /// The specific non-location format, e.g., “Pacific Daylight Time”.
+    ///
+    /// When unavailable, falls back to [`NeoTimeZoneStyle::Offset`].
     SpecificNonLocation,
     /// The offset from UTC format, e.g., “GMT−8”.
     Offset,
@@ -799,27 +811,10 @@ pub struct NeoTimeZoneSkeleton {
     pub style: NeoTimeZoneStyle,
 }
 
+#[cfg(feature = "experimental")]
 impl NeoTimeZoneSkeleton {
-    #[cfg(feature = "experimental")]
-    pub(crate) const fn non_location_short() -> Self {
-        Self {
-            length: Some(NeoSkeletonLength::Short),
-            style: NeoTimeZoneStyle::NonLocation,
-        }
-    }
-
-    #[cfg(feature = "experimental")]
-    pub(crate) fn to_field(self, length: NeoSkeletonLength) -> Field {
-        use NeoSkeletonLength::*;
-        use NeoTimeZoneStyle::*;
-        let length = self.length.unwrap_or(length);
-        match (self.style, length) {
-            (NonLocation, Short) => Field {
-                symbol: FieldSymbol::TimeZone(fields::TimeZone::LowerV),
-                length: FieldLength::One,
-            },
-            (_, _) => todo!(),
-        }
+    pub(crate) fn resolve(self, length: NeoSkeletonLength) -> ResolvedNeoTimeZoneSkeleton {
+        crate::tz_registry::skeleton_to_resolved(self.style, self.length.unwrap_or(length))
     }
 }
 

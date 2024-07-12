@@ -1300,6 +1300,7 @@ macro_rules! impl_time_marker {
 
 macro_rules! impl_zone_marker {
     (
+        $(#[$attr:meta])*
         $type:ident,
         $components:expr,
         description = $description:literal,
@@ -1323,6 +1324,7 @@ macro_rules! impl_zone_marker {
         #[doc = concat!("use icu::datetime::neo_marker::", stringify!($type), ";")]
         /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
         /// use icu::locale::locale;
+        /// use tinystr::tinystr;
         /// use writeable::assert_try_writeable_eq;
         ///
         #[doc = concat!("let fmt = NeoFormatter::<", stringify!($type), ">::try_new(")]
@@ -1330,7 +1332,14 @@ macro_rules! impl_zone_marker {
         ///     NeoSkeletonLength::Medium,
         /// )
         /// .unwrap();
-        /// let zone = CustomTimeZone::gmt();
+        ///
+        /// // Time zone for America/Chicago in the summer
+        /// let zone = CustomTimeZone::from_parts(
+        ///     -40, // offset eighths of hour
+        ///     tinystr!(8, "uschi"), // time zone ID
+        ///     tinystr!(4, "amce"), // metazone ID
+        ///     tinystr!(2, "dt"), // zone variant: daylight time
+        /// );
         ///
         /// assert_try_writeable_eq!(
         ///     fmt.convert_and_format(&zone),
@@ -1348,6 +1357,7 @@ macro_rules! impl_zone_marker {
         #[doc = concat!("use icu::datetime::neo_marker::", stringify!($type), ";")]
         /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
         /// use icu::locale::locale;
+        /// use tinystr::tinystr;
         /// use writeable::assert_try_writeable_eq;
         ///
         #[doc = concat!("let fmt = TypedNeoFormatter::<Gregorian, ", stringify!($type), ">::try_new(")]
@@ -1355,13 +1365,21 @@ macro_rules! impl_zone_marker {
         ///     NeoSkeletonLength::Medium,
         /// )
         /// .unwrap();
-        /// let zone = CustomTimeZone::gmt();
+        ///
+        /// // Time zone for America/Chicago in the summer
+        /// let zone = CustomTimeZone::from_parts(
+        ///     -40, // offset eighths of hour
+        ///     tinystr!(8, "uschi"), // time zone ID
+        ///     tinystr!(4, "amce"), // metazone ID
+        ///     tinystr!(2, "dt"), // zone variant: daylight time
+        /// );
         ///
         /// assert_try_writeable_eq!(
         ///     fmt.format(&zone),
         #[doc = concat!("    \"", $expectation, "\"")]
         /// );
         /// ```
+        $(#[$attr])*
         #[derive(Debug)]
         #[allow(clippy::exhaustive_enums)] // empty enum
         pub enum $type {}
@@ -1629,16 +1647,197 @@ impl_date_marker!(
 );
 
 impl_zone_marker!(
+    NeoTimeZoneSpecificMarker,
+    NeoTimeZoneSkeleton::specific(),
+    description = "a specific time zone format with inherited length",
+    expectation = "CDT",
+    zone_essentials = yes,
+    zone_exemplar_cities = no,
+    zone_generic_long = no,
+    zone_generic_short = no,
+    zone_specific_long = no,
+    zone_specific_short = yes,
+);
+
+impl_zone_marker!(
+    /// When a display name is unavailable, falls back to the GMT offset format:
+    ///
+    /// ```
+    /// use icu::calendar::{Date, Time};
+    /// use icu::timezone::{CustomTimeZone, CustomZonedDateTime};
+    /// use icu::calendar::Gregorian;
+    /// use icu::datetime::neo::TypedNeoFormatter;
+    /// use icu::datetime::neo_marker::NeoTimeZoneSpecificShortMarker;
+    /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
+    /// use icu::locale::locale;
+    /// use tinystr::tinystr;
+    /// use writeable::assert_try_writeable_eq;
+    ///
+    /// let fmt = TypedNeoFormatter::<Gregorian, NeoTimeZoneSpecificShortMarker>::try_new(
+    ///     &locale!("en").into(),
+    ///     NeoSkeletonLength::Medium,
+    /// )
+    /// .unwrap();
+    ///
+    /// // Time zone for America/Sao_Paulo year-round
+    /// let zone = CustomTimeZone::from_parts(
+    ///     -24, // offset eighths of hour
+    ///     tinystr!(8, "brsao"), // time zone ID
+    ///     tinystr!(4, "bras"), // metazone ID
+    ///     tinystr!(2, "st"), // zone variant: standard time
+    /// );
+    ///
+    /// assert_try_writeable_eq!(
+    ///     fmt.format(&zone),
+    ///     "GMT-03:00"
+    /// );
+    /// ```
+    NeoTimeZoneSpecificShortMarker,
+    NeoTimeZoneSkeleton::specific_short(),
+    description = "a short specific time zone format",
+    expectation = "CDT",
+    zone_essentials = yes,
+    zone_exemplar_cities = no,
+    zone_generic_long = no,
+    zone_generic_short = no,
+    zone_specific_long = no,
+    zone_specific_short = yes,
+);
+
+impl_zone_marker!(
+    NeoTimeZoneSpecificLongMarker,
+    NeoTimeZoneSkeleton::specific_long(),
+    description = "a long specific time zone format",
+    expectation = "Central Daylight Time",
+    zone_essentials = yes,
+    zone_exemplar_cities = no,
+    zone_generic_long = no,
+    zone_generic_short = no,
+    zone_specific_long = yes,
+    zone_specific_short = no,
+);
+
+impl_zone_marker!(
+    NeoTimeZoneGmtMarker,
+    NeoTimeZoneSkeleton::gmt(),
+    description = "a GMT-offset time zone format with inherited length",
+    expectation = "GMT-05:00", // TODO: Implement short localized GMT
+    zone_essentials = yes,
+    zone_exemplar_cities = no,
+    zone_generic_long = no,
+    zone_generic_short = no,
+    zone_specific_long = no,
+    zone_specific_short = no,
+);
+
+impl_zone_marker!(
+    NeoTimeZoneGmtShortMarker,
+    NeoTimeZoneSkeleton::gmt_short(),
+    description = "a GMT-offset short time zone format",
+    expectation = "GMT-05:00", // TODO: Implement short localized GMT
+    zone_essentials = yes,
+    zone_exemplar_cities = no,
+    zone_generic_long = no,
+    zone_generic_short = no,
+    zone_specific_long = no,
+    zone_specific_short = no,
+);
+
+impl_zone_marker!(
+    NeoTimeZoneGmtLongMarker,
+    NeoTimeZoneSkeleton::gmt_long(),
+    description = "a GMT-offset long time zone format",
+    expectation = "GMT-05:00",
+    zone_essentials = yes,
+    zone_exemplar_cities = no,
+    zone_generic_long = no,
+    zone_generic_short = no,
+    zone_specific_long = no,
+    zone_specific_short = no,
+);
+
+impl_zone_marker!(
+    NeoTimeZoneGenericMarker,
+    NeoTimeZoneSkeleton::generic(),
+    description = "a generic time zone format with inherited length",
+    expectation = "CT",
+    zone_essentials = yes,
+    zone_exemplar_cities = yes,
+    zone_generic_long = no,
+    zone_generic_short = yes,
+    zone_specific_long = no,
+    zone_specific_short = no,
+);
+
+impl_zone_marker!(
+    /// When a display name is unavailable, falls back to the location format:
+    ///
+    /// ```
+    /// use icu::calendar::{Date, Time};
+    /// use icu::timezone::{CustomTimeZone, CustomZonedDateTime};
+    /// use icu::calendar::Gregorian;
+    /// use icu::datetime::neo::TypedNeoFormatter;
+    /// use icu::datetime::neo_marker::NeoTimeZoneGenericShortMarker;
+    /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
+    /// use icu::locale::locale;
+    /// use tinystr::tinystr;
+    /// use writeable::assert_try_writeable_eq;
+    ///
+    /// let fmt = TypedNeoFormatter::<Gregorian, NeoTimeZoneGenericShortMarker>::try_new(
+    ///     &locale!("en").into(),
+    ///     NeoSkeletonLength::Medium,
+    /// )
+    /// .unwrap();
+    ///
+    /// // Time zone for America/Sao_Paulo year-round
+    /// let zone = CustomTimeZone::from_parts(
+    ///     -24, // offset eighths of hour
+    ///     tinystr!(8, "brsao"), // time zone ID
+    ///     tinystr!(4, "bras"), // metazone ID
+    ///     tinystr!(2, "st"), // zone variant: standard time
+    /// );
+    ///
+    /// assert_try_writeable_eq!(
+    ///     fmt.format(&zone),
+    ///     "Sao Paulo Time"
+    /// );
+    /// ```
     NeoTimeZoneGenericShortMarker,
-    NeoTimeZoneSkeleton::non_location_short(),
+    NeoTimeZoneSkeleton::generic_short(),
     description = "a generic short time zone format",
-    expectation = "GMT",
+    expectation = "CT",
+    zone_essentials = yes,
+    zone_exemplar_cities = yes,
+    zone_generic_long = no,
+    zone_generic_short = yes,
+    zone_specific_long = no,
+    zone_specific_short = no,
+);
+
+impl_zone_marker!(
+    NeoTimeZoneGenericLongMarker,
+    NeoTimeZoneSkeleton::generic_long(),
+    description = "a generic long time zone format",
+    expectation = "Central Time",
     zone_essentials = yes,
     zone_exemplar_cities = yes,
     zone_generic_long = yes,
-    zone_generic_short = yes,
-    zone_specific_long = yes,
-    zone_specific_short = yes,
+    zone_generic_short = no,
+    zone_specific_long = no,
+    zone_specific_short = no,
+);
+
+impl_zone_marker!(
+    NeoTimeZoneLocationMarker,
+    NeoTimeZoneSkeleton::location(),
+    description = "a location time zone format",
+    expectation = "Chicago Time",
+    zone_essentials = yes,
+    zone_exemplar_cities = yes,
+    zone_generic_long = no,
+    zone_generic_short = no,
+    zone_specific_long = no,
+    zone_specific_short = no,
 );
 
 // TODO: Type aliases like this are excessive; make a curated set
