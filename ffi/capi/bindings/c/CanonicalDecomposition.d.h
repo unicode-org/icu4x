@@ -16,5 +16,4 @@ typedef struct CanonicalDecomposition CanonicalDecomposition;
 
 
 
-
 #endif // CanonicalDecomposition_D_H

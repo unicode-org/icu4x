@@ -16,5 +16,4 @@ typedef struct ScriptExtensionsSet ScriptExtensionsSet;
 
 
 
-
 #endif // ScriptExtensionsSet_D_H

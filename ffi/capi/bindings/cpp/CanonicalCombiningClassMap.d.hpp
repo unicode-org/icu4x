@@ -8,15 +8,17 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "DataError.d.hpp"
 
+namespace diplomat::capi { struct DataProvider; }
 class DataProvider;
 class DataError;
 
 
+namespace diplomat {
 namespace capi {
-    typedef struct CanonicalCombiningClassMap CanonicalCombiningClassMap;
-}
+    struct CanonicalCombiningClassMap;
+} // namespace capi
+} // namespace
 
 class CanonicalCombiningClassMap {
 public:
@@ -27,10 +29,10 @@ public:
 
   inline uint8_t get32(uint32_t ch) const;
 
-  inline const capi::CanonicalCombiningClassMap* AsFFI() const;
-  inline capi::CanonicalCombiningClassMap* AsFFI();
-  inline static const CanonicalCombiningClassMap* FromFFI(const capi::CanonicalCombiningClassMap* ptr);
-  inline static CanonicalCombiningClassMap* FromFFI(capi::CanonicalCombiningClassMap* ptr);
+  inline const diplomat::capi::CanonicalCombiningClassMap* AsFFI() const;
+  inline diplomat::capi::CanonicalCombiningClassMap* AsFFI();
+  inline static const CanonicalCombiningClassMap* FromFFI(const diplomat::capi::CanonicalCombiningClassMap* ptr);
+  inline static CanonicalCombiningClassMap* FromFFI(diplomat::capi::CanonicalCombiningClassMap* ptr);
   inline static void operator delete(void* ptr);
 private:
   CanonicalCombiningClassMap() = delete;

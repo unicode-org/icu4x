@@ -16,5 +16,4 @@ typedef struct UnicodeSetData UnicodeSetData;
 
 
 
-
 #endif // UnicodeSetData_D_H

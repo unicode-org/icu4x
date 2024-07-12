@@ -12,16 +12,18 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
     extern "C" {
     
     
     } // extern "C"
-}
+} // namespace capi
+} // namespace
 
 
-inline capi::PluralCategories PluralCategories::AsFFI() const {
-  return capi::PluralCategories {
+inline diplomat::capi::PluralCategories PluralCategories::AsFFI() const {
+  return diplomat::capi::PluralCategories {
     .zero = zero,
     .one = one,
     .two = two,
@@ -31,7 +33,7 @@ inline capi::PluralCategories PluralCategories::AsFFI() const {
   };
 }
 
-inline PluralCategories PluralCategories::FromFFI(capi::PluralCategories c_struct) {
+inline PluralCategories PluralCategories::FromFFI(diplomat::capi::PluralCategories c_struct) {
   return PluralCategories {
     .zero = c_struct.zero,
     .one = c_struct.one,

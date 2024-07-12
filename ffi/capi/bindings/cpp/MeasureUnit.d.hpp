@@ -10,17 +10,19 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
-    typedef struct MeasureUnit MeasureUnit;
-}
+    struct MeasureUnit;
+} // namespace capi
+} // namespace
 
 class MeasureUnit {
 public:
 
-  inline const capi::MeasureUnit* AsFFI() const;
-  inline capi::MeasureUnit* AsFFI();
-  inline static const MeasureUnit* FromFFI(const capi::MeasureUnit* ptr);
-  inline static MeasureUnit* FromFFI(capi::MeasureUnit* ptr);
+  inline const diplomat::capi::MeasureUnit* AsFFI() const;
+  inline diplomat::capi::MeasureUnit* AsFFI();
+  inline static const MeasureUnit* FromFFI(const diplomat::capi::MeasureUnit* ptr);
+  inline static MeasureUnit* FromFFI(diplomat::capi::MeasureUnit* ptr);
   inline static void operator delete(void* ptr);
 private:
   MeasureUnit() = delete;

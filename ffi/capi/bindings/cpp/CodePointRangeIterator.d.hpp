@@ -8,24 +8,25 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "CodePointRangeIteratorResult.d.hpp"
 
 struct CodePointRangeIteratorResult;
 
 
+namespace diplomat {
 namespace capi {
-    typedef struct CodePointRangeIterator CodePointRangeIterator;
-}
+    struct CodePointRangeIterator;
+} // namespace capi
+} // namespace
 
 class CodePointRangeIterator {
 public:
 
   inline CodePointRangeIteratorResult next();
 
-  inline const capi::CodePointRangeIterator* AsFFI() const;
-  inline capi::CodePointRangeIterator* AsFFI();
-  inline static const CodePointRangeIterator* FromFFI(const capi::CodePointRangeIterator* ptr);
-  inline static CodePointRangeIterator* FromFFI(capi::CodePointRangeIterator* ptr);
+  inline const diplomat::capi::CodePointRangeIterator* AsFFI() const;
+  inline diplomat::capi::CodePointRangeIterator* AsFFI();
+  inline static const CodePointRangeIterator* FromFFI(const diplomat::capi::CodePointRangeIterator* ptr);
+  inline static CodePointRangeIterator* FromFFI(diplomat::capi::CodePointRangeIterator* ptr);
   inline static void operator delete(void* ptr);
 private:
   CodePointRangeIterator() = delete;

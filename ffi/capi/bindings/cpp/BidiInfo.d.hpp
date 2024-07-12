@@ -9,12 +9,15 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 
+namespace diplomat::capi { struct BidiParagraph; }
 class BidiParagraph;
 
 
+namespace diplomat {
 namespace capi {
-    typedef struct BidiInfo BidiInfo;
-}
+    struct BidiInfo;
+} // namespace capi
+} // namespace
 
 class BidiInfo {
 public:
@@ -27,10 +30,10 @@ public:
 
   inline uint8_t level_at(size_t pos) const;
 
-  inline const capi::BidiInfo* AsFFI() const;
-  inline capi::BidiInfo* AsFFI();
-  inline static const BidiInfo* FromFFI(const capi::BidiInfo* ptr);
-  inline static BidiInfo* FromFFI(capi::BidiInfo* ptr);
+  inline const diplomat::capi::BidiInfo* AsFFI() const;
+  inline diplomat::capi::BidiInfo* AsFFI();
+  inline static const BidiInfo* FromFFI(const diplomat::capi::BidiInfo* ptr);
+  inline static BidiInfo* FromFFI(diplomat::capi::BidiInfo* ptr);
   inline static void operator delete(void* ptr);
 private:
   BidiInfo() = delete;

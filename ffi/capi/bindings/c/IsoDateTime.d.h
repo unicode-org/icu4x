@@ -16,5 +16,4 @@ typedef struct IsoDateTime IsoDateTime;
 
 
 
-
 #endif // IsoDateTime_D_H

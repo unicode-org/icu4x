@@ -16,5 +16,4 @@ typedef struct MetazoneCalculator MetazoneCalculator;
 
 
 
-
 #endif // MetazoneCalculator_D_H

@@ -10,13 +10,15 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
-    typedef enum BidiDirection {
+    enum BidiDirection {
       BidiDirection_Ltr = 0,
       BidiDirection_Rtl = 1,
       BidiDirection_Mixed = 2,
-    } BidiDirection;
-}
+    };
+} // namespace capi
+} // namespace
 
 class BidiDirection {
 public:
@@ -33,8 +35,8 @@ public:
   // Prevent usage as boolean value
   explicit operator bool() const = delete;
 
-  inline capi::BidiDirection AsFFI() const;
-  inline static BidiDirection FromFFI(capi::BidiDirection c_enum);
+  inline diplomat::capi::BidiDirection AsFFI() const;
+  inline static BidiDirection FromFFI(diplomat::capi::BidiDirection c_enum);
 private:
     Value value;
 };

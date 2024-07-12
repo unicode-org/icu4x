@@ -8,17 +8,18 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "DataError.d.hpp"
-#include "TimeZoneInvalidIdError.d.hpp"
 
+namespace diplomat::capi { struct DataProvider; }
 class DataProvider;
 class DataError;
 class TimeZoneInvalidIdError;
 
 
+namespace diplomat {
 namespace capi {
-    typedef struct TimeZoneIdMapperWithFastCanonicalization TimeZoneIdMapperWithFastCanonicalization;
-}
+    struct TimeZoneIdMapperWithFastCanonicalization;
+} // namespace capi
+} // namespace
 
 class TimeZoneIdMapperWithFastCanonicalization {
 public:
@@ -29,10 +30,10 @@ public:
 
   inline diplomat::result<std::string, TimeZoneInvalidIdError> canonical_iana_from_bcp47(std::string_view value) const;
 
-  inline const capi::TimeZoneIdMapperWithFastCanonicalization* AsFFI() const;
-  inline capi::TimeZoneIdMapperWithFastCanonicalization* AsFFI();
-  inline static const TimeZoneIdMapperWithFastCanonicalization* FromFFI(const capi::TimeZoneIdMapperWithFastCanonicalization* ptr);
-  inline static TimeZoneIdMapperWithFastCanonicalization* FromFFI(capi::TimeZoneIdMapperWithFastCanonicalization* ptr);
+  inline const diplomat::capi::TimeZoneIdMapperWithFastCanonicalization* AsFFI() const;
+  inline diplomat::capi::TimeZoneIdMapperWithFastCanonicalization* AsFFI();
+  inline static const TimeZoneIdMapperWithFastCanonicalization* FromFFI(const diplomat::capi::TimeZoneIdMapperWithFastCanonicalization* ptr);
+  inline static TimeZoneIdMapperWithFastCanonicalization* FromFFI(diplomat::capi::TimeZoneIdMapperWithFastCanonicalization* ptr);
   inline static void operator delete(void* ptr);
 private:
   TimeZoneIdMapperWithFastCanonicalization() = delete;

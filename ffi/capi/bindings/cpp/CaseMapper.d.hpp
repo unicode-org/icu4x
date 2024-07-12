@@ -8,19 +8,22 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "DataError.d.hpp"
-#include "TitlecaseOptionsV1.d.hpp"
 
+namespace diplomat::capi { struct CodePointSetBuilder; }
 class CodePointSetBuilder;
+namespace diplomat::capi { struct DataProvider; }
 class DataProvider;
+namespace diplomat::capi { struct Locale; }
 class Locale;
 struct TitlecaseOptionsV1;
 class DataError;
 
 
+namespace diplomat {
 namespace capi {
-    typedef struct CaseMapper CaseMapper;
-}
+    struct CaseMapper;
+} // namespace capi
+} // namespace
 
 class CaseMapper {
 public:
@@ -49,10 +52,10 @@ public:
 
   inline char32_t simple_fold_turkic(char32_t ch) const;
 
-  inline const capi::CaseMapper* AsFFI() const;
-  inline capi::CaseMapper* AsFFI();
-  inline static const CaseMapper* FromFFI(const capi::CaseMapper* ptr);
-  inline static CaseMapper* FromFFI(capi::CaseMapper* ptr);
+  inline const diplomat::capi::CaseMapper* AsFFI() const;
+  inline diplomat::capi::CaseMapper* AsFFI();
+  inline static const CaseMapper* FromFFI(const diplomat::capi::CaseMapper* ptr);
+  inline static CaseMapper* FromFFI(diplomat::capi::CaseMapper* ptr);
   inline static void operator delete(void* ptr);
 private:
   CaseMapper() = delete;

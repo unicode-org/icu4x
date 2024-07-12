@@ -16,5 +16,4 @@ typedef struct LocaleDisplayNamesFormatter LocaleDisplayNamesFormatter;
 
 
 
-
 #endif // LocaleDisplayNamesFormatter_D_H

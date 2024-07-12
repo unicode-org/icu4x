@@ -8,18 +8,20 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "DataError.d.hpp"
-#include "TitlecaseOptionsV1.d.hpp"
 
+namespace diplomat::capi { struct DataProvider; }
 class DataProvider;
+namespace diplomat::capi { struct Locale; }
 class Locale;
 struct TitlecaseOptionsV1;
 class DataError;
 
 
+namespace diplomat {
 namespace capi {
-    typedef struct TitlecaseMapper TitlecaseMapper;
-}
+    struct TitlecaseMapper;
+} // namespace capi
+} // namespace
 
 class TitlecaseMapper {
 public:
@@ -28,10 +30,10 @@ public:
 
   inline diplomat::result<std::string, diplomat::Utf8Error> titlecase_segment_v1(std::string_view s, const Locale& locale, TitlecaseOptionsV1 options) const;
 
-  inline const capi::TitlecaseMapper* AsFFI() const;
-  inline capi::TitlecaseMapper* AsFFI();
-  inline static const TitlecaseMapper* FromFFI(const capi::TitlecaseMapper* ptr);
-  inline static TitlecaseMapper* FromFFI(capi::TitlecaseMapper* ptr);
+  inline const diplomat::capi::TitlecaseMapper* AsFFI() const;
+  inline diplomat::capi::TitlecaseMapper* AsFFI();
+  inline static const TitlecaseMapper* FromFFI(const diplomat::capi::TitlecaseMapper* ptr);
+  inline static TitlecaseMapper* FromFFI(diplomat::capi::TitlecaseMapper* ptr);
   inline static void operator delete(void* ptr);
 private:
   TitlecaseMapper() = delete;

@@ -16,5 +16,4 @@ typedef struct CodePointSetBuilder CodePointSetBuilder;
 
 
 
-
 #endif // CodePointSetBuilder_D_H

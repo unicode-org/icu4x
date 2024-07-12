@@ -16,5 +16,4 @@ typedef struct PropertyValueNameToEnumMapper PropertyValueNameToEnumMapper;
 
 
 
-
 #endif // PropertyValueNameToEnumMapper_D_H

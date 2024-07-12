@@ -8,14 +8,15 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "CalendarError.d.hpp"
 
 class CalendarError;
 
 
+namespace diplomat {
 namespace capi {
-    typedef struct Time Time;
-}
+    struct Time;
+} // namespace capi
+} // namespace
 
 class Time {
 public:
@@ -32,10 +33,10 @@ public:
 
   inline uint32_t nanosecond() const;
 
-  inline const capi::Time* AsFFI() const;
-  inline capi::Time* AsFFI();
-  inline static const Time* FromFFI(const capi::Time* ptr);
-  inline static Time* FromFFI(capi::Time* ptr);
+  inline const diplomat::capi::Time* AsFFI() const;
+  inline diplomat::capi::Time* AsFFI();
+  inline static const Time* FromFFI(const diplomat::capi::Time* ptr);
+  inline static Time* FromFFI(diplomat::capi::Time* ptr);
   inline static void operator delete(void* ptr);
 private:
   Time() = delete;

@@ -8,15 +8,17 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "DataError.d.hpp"
 
+namespace diplomat::capi { struct DataProvider; }
 class DataProvider;
 class DataError;
 
 
+namespace diplomat {
 namespace capi {
-    typedef struct PropertyValueNameToEnumMapper PropertyValueNameToEnumMapper;
-}
+    struct PropertyValueNameToEnumMapper;
+} // namespace capi
+} // namespace
 
 class PropertyValueNameToEnumMapper {
 public:
@@ -45,10 +47,10 @@ public:
 
   inline static diplomat::result<std::unique_ptr<PropertyValueNameToEnumMapper>, DataError> load_script(const DataProvider& provider);
 
-  inline const capi::PropertyValueNameToEnumMapper* AsFFI() const;
-  inline capi::PropertyValueNameToEnumMapper* AsFFI();
-  inline static const PropertyValueNameToEnumMapper* FromFFI(const capi::PropertyValueNameToEnumMapper* ptr);
-  inline static PropertyValueNameToEnumMapper* FromFFI(capi::PropertyValueNameToEnumMapper* ptr);
+  inline const diplomat::capi::PropertyValueNameToEnumMapper* AsFFI() const;
+  inline diplomat::capi::PropertyValueNameToEnumMapper* AsFFI();
+  inline static const PropertyValueNameToEnumMapper* FromFFI(const diplomat::capi::PropertyValueNameToEnumMapper* ptr);
+  inline static PropertyValueNameToEnumMapper* FromFFI(diplomat::capi::PropertyValueNameToEnumMapper* ptr);
   inline static void operator delete(void* ptr);
 private:
   PropertyValueNameToEnumMapper() = delete;

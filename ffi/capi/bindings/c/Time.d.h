@@ -16,5 +16,4 @@ typedef struct Time Time;
 
 
 
-
 #endif // Time_D_H

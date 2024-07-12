@@ -16,5 +16,4 @@ typedef struct LocaleDirectionality LocaleDirectionality;
 
 
 
-
 #endif // LocaleDirectionality_D_H

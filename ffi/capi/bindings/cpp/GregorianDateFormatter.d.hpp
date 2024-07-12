@@ -8,20 +8,24 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "DateLength.d.hpp"
-#include "Error.d.hpp"
 
+namespace diplomat::capi { struct DataProvider; }
 class DataProvider;
+namespace diplomat::capi { struct IsoDate; }
 class IsoDate;
+namespace diplomat::capi { struct IsoDateTime; }
 class IsoDateTime;
+namespace diplomat::capi { struct Locale; }
 class Locale;
 class DateLength;
 class Error;
 
 
+namespace diplomat {
 namespace capi {
-    typedef struct GregorianDateFormatter GregorianDateFormatter;
-}
+    struct GregorianDateFormatter;
+} // namespace capi
+} // namespace
 
 class GregorianDateFormatter {
 public:
@@ -32,10 +36,10 @@ public:
 
   inline std::string format_iso_datetime(const IsoDateTime& value) const;
 
-  inline const capi::GregorianDateFormatter* AsFFI() const;
-  inline capi::GregorianDateFormatter* AsFFI();
-  inline static const GregorianDateFormatter* FromFFI(const capi::GregorianDateFormatter* ptr);
-  inline static GregorianDateFormatter* FromFFI(capi::GregorianDateFormatter* ptr);
+  inline const diplomat::capi::GregorianDateFormatter* AsFFI() const;
+  inline diplomat::capi::GregorianDateFormatter* AsFFI();
+  inline static const GregorianDateFormatter* FromFFI(const diplomat::capi::GregorianDateFormatter* ptr);
+  inline static GregorianDateFormatter* FromFFI(diplomat::capi::GregorianDateFormatter* ptr);
   inline static void operator delete(void* ptr);
 private:
   GregorianDateFormatter() = delete;

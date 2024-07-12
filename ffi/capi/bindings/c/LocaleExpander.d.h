@@ -16,5 +16,4 @@ typedef struct LocaleExpander LocaleExpander;
 
 
 
-
 #endif // LocaleExpander_D_H

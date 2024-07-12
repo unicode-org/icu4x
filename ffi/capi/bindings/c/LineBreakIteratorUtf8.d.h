@@ -16,5 +16,4 @@ typedef struct LineBreakIteratorUtf8 LineBreakIteratorUtf8;
 
 
 
-
 #endif // LineBreakIteratorUtf8_D_H

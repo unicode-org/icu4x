@@ -8,15 +8,17 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "DataError.d.hpp"
 
+namespace diplomat::capi { struct DataProvider; }
 class DataProvider;
 class DataError;
 
 
+namespace diplomat {
 namespace capi {
-    typedef struct DecomposingNormalizer DecomposingNormalizer;
-}
+    struct DecomposingNormalizer;
+} // namespace capi
+} // namespace
 
 class DecomposingNormalizer {
 public:
@@ -35,10 +37,10 @@ public:
 
   inline size_t is_normalized_utf16_up_to(std::u16string_view s) const;
 
-  inline const capi::DecomposingNormalizer* AsFFI() const;
-  inline capi::DecomposingNormalizer* AsFFI();
-  inline static const DecomposingNormalizer* FromFFI(const capi::DecomposingNormalizer* ptr);
-  inline static DecomposingNormalizer* FromFFI(capi::DecomposingNormalizer* ptr);
+  inline const diplomat::capi::DecomposingNormalizer* AsFFI() const;
+  inline diplomat::capi::DecomposingNormalizer* AsFFI();
+  inline static const DecomposingNormalizer* FromFFI(const diplomat::capi::DecomposingNormalizer* ptr);
+  inline static DecomposingNormalizer* FromFFI(diplomat::capi::DecomposingNormalizer* ptr);
   inline static void operator delete(void* ptr);
 private:
   DecomposingNormalizer() = delete;

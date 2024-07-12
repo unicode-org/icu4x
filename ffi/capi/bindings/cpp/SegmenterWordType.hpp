@@ -12,25 +12,26 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
     extern "C" {
     
-    bool ICU4XSegmenterWordType_is_word_like(SegmenterWordType self);
+    bool ICU4XSegmenterWordType_is_word_like(diplomat::capi::SegmenterWordType self);
     
     
     } // extern "C"
+} // namespace capi
+} // namespace
+
+inline diplomat::capi::SegmenterWordType SegmenterWordType::AsFFI() const {
+  return static_cast<diplomat::capi::SegmenterWordType>(value);
 }
 
-
-inline capi::SegmenterWordType SegmenterWordType::AsFFI() const {
-  return static_cast<capi::SegmenterWordType>(value);
-}
-
-inline SegmenterWordType SegmenterWordType::FromFFI(capi::SegmenterWordType c_enum) {
+inline SegmenterWordType SegmenterWordType::FromFFI(diplomat::capi::SegmenterWordType c_enum) {
   switch (c_enum) {
-    case capi::SegmenterWordType_None:
-    case capi::SegmenterWordType_Number:
-    case capi::SegmenterWordType_Letter:
+    case diplomat::capi::SegmenterWordType_None:
+    case diplomat::capi::SegmenterWordType_Number:
+    case diplomat::capi::SegmenterWordType_Letter:
       return static_cast<SegmenterWordType::Value>(c_enum);
     default:
       abort();
@@ -38,7 +39,7 @@ inline SegmenterWordType SegmenterWordType::FromFFI(capi::SegmenterWordType c_en
 }
 
 inline bool SegmenterWordType::is_word_like() {
-  auto result = capi::ICU4XSegmenterWordType_is_word_like(this->AsFFI());
+  auto result = diplomat::capi::ICU4XSegmenterWordType_is_word_like(this->AsFFI());
   return result;
 }
 #endif // SegmenterWordType_HPP

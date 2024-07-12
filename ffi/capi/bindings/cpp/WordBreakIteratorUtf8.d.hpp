@@ -8,14 +8,15 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "SegmenterWordType.d.hpp"
 
 class SegmenterWordType;
 
 
+namespace diplomat {
 namespace capi {
-    typedef struct WordBreakIteratorUtf8 WordBreakIteratorUtf8;
-}
+    struct WordBreakIteratorUtf8;
+} // namespace capi
+} // namespace
 
 class WordBreakIteratorUtf8 {
 public:
@@ -26,10 +27,10 @@ public:
 
   inline bool is_word_like() const;
 
-  inline const capi::WordBreakIteratorUtf8* AsFFI() const;
-  inline capi::WordBreakIteratorUtf8* AsFFI();
-  inline static const WordBreakIteratorUtf8* FromFFI(const capi::WordBreakIteratorUtf8* ptr);
-  inline static WordBreakIteratorUtf8* FromFFI(capi::WordBreakIteratorUtf8* ptr);
+  inline const diplomat::capi::WordBreakIteratorUtf8* AsFFI() const;
+  inline diplomat::capi::WordBreakIteratorUtf8* AsFFI();
+  inline static const WordBreakIteratorUtf8* FromFFI(const diplomat::capi::WordBreakIteratorUtf8* ptr);
+  inline static WordBreakIteratorUtf8* FromFFI(diplomat::capi::WordBreakIteratorUtf8* ptr);
   inline static void operator delete(void* ptr);
 private:
   WordBreakIteratorUtf8() = delete;

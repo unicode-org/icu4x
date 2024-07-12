@@ -10,11 +10,13 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
-    typedef enum TimeZoneInvalidIdError {
+    enum TimeZoneInvalidIdError {
       TimeZoneInvalidIdError_TodoZst = 0,
-    } TimeZoneInvalidIdError;
-}
+    };
+} // namespace capi
+} // namespace
 
 class TimeZoneInvalidIdError {
 public:
@@ -29,8 +31,8 @@ public:
   // Prevent usage as boolean value
   explicit operator bool() const = delete;
 
-  inline capi::TimeZoneInvalidIdError AsFFI() const;
-  inline static TimeZoneInvalidIdError FromFFI(capi::TimeZoneInvalidIdError c_enum);
+  inline diplomat::capi::TimeZoneInvalidIdError AsFFI() const;
+  inline static TimeZoneInvalidIdError FromFFI(diplomat::capi::TimeZoneInvalidIdError c_enum);
 private:
     Value value;
 };

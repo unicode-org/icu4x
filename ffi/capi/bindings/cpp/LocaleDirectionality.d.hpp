@@ -8,19 +8,22 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "DataError.d.hpp"
-#include "LocaleDirection.d.hpp"
 
+namespace diplomat::capi { struct DataProvider; }
 class DataProvider;
+namespace diplomat::capi { struct Locale; }
 class Locale;
+namespace diplomat::capi { struct LocaleExpander; }
 class LocaleExpander;
 class DataError;
 class LocaleDirection;
 
 
+namespace diplomat {
 namespace capi {
-    typedef struct LocaleDirectionality LocaleDirectionality;
-}
+    struct LocaleDirectionality;
+} // namespace capi
+} // namespace
 
 class LocaleDirectionality {
 public:
@@ -35,10 +38,10 @@ public:
 
   inline bool is_right_to_left(const Locale& locale) const;
 
-  inline const capi::LocaleDirectionality* AsFFI() const;
-  inline capi::LocaleDirectionality* AsFFI();
-  inline static const LocaleDirectionality* FromFFI(const capi::LocaleDirectionality* ptr);
-  inline static LocaleDirectionality* FromFFI(capi::LocaleDirectionality* ptr);
+  inline const diplomat::capi::LocaleDirectionality* AsFFI() const;
+  inline diplomat::capi::LocaleDirectionality* AsFFI();
+  inline static const LocaleDirectionality* FromFFI(const diplomat::capi::LocaleDirectionality* ptr);
+  inline static LocaleDirectionality* FromFFI(diplomat::capi::LocaleDirectionality* ptr);
   inline static void operator delete(void* ptr);
 private:
   LocaleDirectionality() = delete;

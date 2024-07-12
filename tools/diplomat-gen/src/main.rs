@@ -28,6 +28,5 @@ fn main() -> std::io::Result<()> {
         &Default::default(),
         None,
         false,
-        None,
     )
 }

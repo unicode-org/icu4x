@@ -10,12 +10,14 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
-    typedef enum TrailingCase {
+    enum TrailingCase {
       TrailingCase_Lower = 0,
       TrailingCase_Unchanged = 1,
-    } TrailingCase;
-}
+    };
+} // namespace capi
+} // namespace
 
 class TrailingCase {
 public:
@@ -31,8 +33,8 @@ public:
   // Prevent usage as boolean value
   explicit operator bool() const = delete;
 
-  inline capi::TrailingCase AsFFI() const;
-  inline static TrailingCase FromFFI(capi::TrailingCase c_enum);
+  inline diplomat::capi::TrailingCase AsFFI() const;
+  inline static TrailingCase FromFFI(diplomat::capi::TrailingCase c_enum);
 private:
     Value value;
 };

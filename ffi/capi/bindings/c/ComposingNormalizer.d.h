@@ -16,5 +16,4 @@ typedef struct ComposingNormalizer ComposingNormalizer;
 
 
 
-
 #endif // ComposingNormalizer_D_H

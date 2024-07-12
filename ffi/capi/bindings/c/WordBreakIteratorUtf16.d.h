@@ -16,5 +16,4 @@ typedef struct WordBreakIteratorUtf16 WordBreakIteratorUtf16;
 
 
 
-
 #endif // WordBreakIteratorUtf16_D_H

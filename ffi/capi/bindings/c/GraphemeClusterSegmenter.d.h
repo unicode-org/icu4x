@@ -16,5 +16,4 @@ typedef struct GraphemeClusterSegmenter GraphemeClusterSegmenter;
 
 
 
-
 #endif // GraphemeClusterSegmenter_D_H

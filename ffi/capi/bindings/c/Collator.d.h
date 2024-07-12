@@ -16,5 +16,4 @@ typedef struct Collator Collator;
 
 
 
-
 #endif // Collator_D_H

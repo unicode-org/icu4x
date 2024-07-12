@@ -10,8 +10,9 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
-    typedef struct WeekendContainsDay {
+    struct WeekendContainsDay {
       bool monday;
       bool tuesday;
       bool wednesday;
@@ -19,8 +20,10 @@ namespace capi {
       bool friday;
       bool saturday;
       bool sunday;
-    } WeekendContainsDay;
-}
+    };
+} // namespace capi
+} // namespace
+
 
 struct WeekendContainsDay {
   bool monday;
@@ -31,8 +34,8 @@ struct WeekendContainsDay {
   bool saturday;
   bool sunday;
 
-  inline capi::WeekendContainsDay AsFFI() const;
-  inline static WeekendContainsDay FromFFI(capi::WeekendContainsDay c_struct);
+  inline diplomat::capi::WeekendContainsDay AsFFI() const;
+  inline static WeekendContainsDay FromFFI(diplomat::capi::WeekendContainsDay c_struct);
 };
 
 

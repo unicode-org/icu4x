@@ -16,5 +16,4 @@ typedef struct ScriptWithExtensionsBorrowed ScriptWithExtensionsBorrowed;
 
 
 
-
 #endif // ScriptWithExtensionsBorrowed_D_H

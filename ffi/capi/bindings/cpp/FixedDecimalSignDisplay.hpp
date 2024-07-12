@@ -12,25 +12,26 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
     extern "C" {
     
     
     } // extern "C"
+} // namespace capi
+} // namespace
+
+inline diplomat::capi::FixedDecimalSignDisplay FixedDecimalSignDisplay::AsFFI() const {
+  return static_cast<diplomat::capi::FixedDecimalSignDisplay>(value);
 }
 
-
-inline capi::FixedDecimalSignDisplay FixedDecimalSignDisplay::AsFFI() const {
-  return static_cast<capi::FixedDecimalSignDisplay>(value);
-}
-
-inline FixedDecimalSignDisplay FixedDecimalSignDisplay::FromFFI(capi::FixedDecimalSignDisplay c_enum) {
+inline FixedDecimalSignDisplay FixedDecimalSignDisplay::FromFFI(diplomat::capi::FixedDecimalSignDisplay c_enum) {
   switch (c_enum) {
-    case capi::FixedDecimalSignDisplay_Auto:
-    case capi::FixedDecimalSignDisplay_Never:
-    case capi::FixedDecimalSignDisplay_Always:
-    case capi::FixedDecimalSignDisplay_ExceptZero:
-    case capi::FixedDecimalSignDisplay_Negative:
+    case diplomat::capi::FixedDecimalSignDisplay_Auto:
+    case diplomat::capi::FixedDecimalSignDisplay_Never:
+    case diplomat::capi::FixedDecimalSignDisplay_Always:
+    case diplomat::capi::FixedDecimalSignDisplay_ExceptZero:
+    case diplomat::capi::FixedDecimalSignDisplay_Negative:
       return static_cast<FixedDecimalSignDisplay::Value>(c_enum);
     default:
       abort();

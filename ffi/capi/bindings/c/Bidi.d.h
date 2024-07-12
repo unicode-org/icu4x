@@ -16,5 +16,4 @@ typedef struct Bidi Bidi;
 
 
 
-
 #endif // Bidi_D_H

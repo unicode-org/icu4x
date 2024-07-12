@@ -15,23 +15,25 @@
 #include "LanguageDisplay.hpp"
 
 
+namespace diplomat {
 namespace capi {
     extern "C" {
     
     
     } // extern "C"
-}
+} // namespace capi
+} // namespace
 
 
-inline capi::DisplayNamesOptionsV1 DisplayNamesOptionsV1::AsFFI() const {
-  return capi::DisplayNamesOptionsV1 {
+inline diplomat::capi::DisplayNamesOptionsV1 DisplayNamesOptionsV1::AsFFI() const {
+  return diplomat::capi::DisplayNamesOptionsV1 {
     .style = style.AsFFI(),
     .fallback = fallback.AsFFI(),
     .language_display = language_display.AsFFI(),
   };
 }
 
-inline DisplayNamesOptionsV1 DisplayNamesOptionsV1::FromFFI(capi::DisplayNamesOptionsV1 c_struct) {
+inline DisplayNamesOptionsV1 DisplayNamesOptionsV1::FromFFI(diplomat::capi::DisplayNamesOptionsV1 c_struct) {
   return DisplayNamesOptionsV1 {
     .style = DisplayNamesStyle::FromFFI(c_struct.style),
     .fallback = DisplayNamesFallback::FromFFI(c_struct.fallback),

@@ -14,41 +14,43 @@
 #include "LocaleFallbackIterator.hpp"
 
 
+namespace diplomat {
 namespace capi {
     extern "C" {
     
-    LocaleFallbackIterator* ICU4XLocaleFallbackerWithConfig_fallback_for_locale(const LocaleFallbackerWithConfig* self, const Locale* locale);
+    diplomat::capi::LocaleFallbackIterator* ICU4XLocaleFallbackerWithConfig_fallback_for_locale(const diplomat::capi::LocaleFallbackerWithConfig* self, const diplomat::capi::Locale* locale);
     
     
     void ICU4XLocaleFallbackerWithConfig_destroy(LocaleFallbackerWithConfig* self);
     
     } // extern "C"
-}
+} // namespace capi
+} // namespace
 
 inline std::unique_ptr<LocaleFallbackIterator> LocaleFallbackerWithConfig::fallback_for_locale(const Locale& locale) const {
-  auto result = capi::ICU4XLocaleFallbackerWithConfig_fallback_for_locale(this->AsFFI(),
+  auto result = diplomat::capi::ICU4XLocaleFallbackerWithConfig_fallback_for_locale(this->AsFFI(),
     locale.AsFFI());
   return std::unique_ptr<LocaleFallbackIterator>(LocaleFallbackIterator::FromFFI(result));
 }
 
-inline const capi::LocaleFallbackerWithConfig* LocaleFallbackerWithConfig::AsFFI() const {
-  return reinterpret_cast<const capi::LocaleFallbackerWithConfig*>(this);
+inline const diplomat::capi::LocaleFallbackerWithConfig* LocaleFallbackerWithConfig::AsFFI() const {
+  return reinterpret_cast<const diplomat::capi::LocaleFallbackerWithConfig*>(this);
 }
 
-inline capi::LocaleFallbackerWithConfig* LocaleFallbackerWithConfig::AsFFI() {
-  return reinterpret_cast<capi::LocaleFallbackerWithConfig*>(this);
+inline diplomat::capi::LocaleFallbackerWithConfig* LocaleFallbackerWithConfig::AsFFI() {
+  return reinterpret_cast<diplomat::capi::LocaleFallbackerWithConfig*>(this);
 }
 
-inline const LocaleFallbackerWithConfig* LocaleFallbackerWithConfig::FromFFI(const capi::LocaleFallbackerWithConfig* ptr) {
+inline const LocaleFallbackerWithConfig* LocaleFallbackerWithConfig::FromFFI(const diplomat::capi::LocaleFallbackerWithConfig* ptr) {
   return reinterpret_cast<const LocaleFallbackerWithConfig*>(ptr);
 }
 
-inline LocaleFallbackerWithConfig* LocaleFallbackerWithConfig::FromFFI(capi::LocaleFallbackerWithConfig* ptr) {
+inline LocaleFallbackerWithConfig* LocaleFallbackerWithConfig::FromFFI(diplomat::capi::LocaleFallbackerWithConfig* ptr) {
   return reinterpret_cast<LocaleFallbackerWithConfig*>(ptr);
 }
 
 inline void LocaleFallbackerWithConfig::operator delete(void* ptr) {
-  capi::ICU4XLocaleFallbackerWithConfig_destroy(reinterpret_cast<capi::LocaleFallbackerWithConfig*>(ptr));
+  diplomat::capi::ICU4XLocaleFallbackerWithConfig_destroy(reinterpret_cast<diplomat::capi::LocaleFallbackerWithConfig*>(ptr));
 }
 
 
