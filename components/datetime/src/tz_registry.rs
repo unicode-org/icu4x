@@ -2,11 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#[cfg(feature = "experimental")]
-use crate::neo_skeleton::{NeoTimeZoneStyle, NeoSkeletonLength, NeoTimeZoneSkeleton};
+use crate::fields::{self, FieldLength};
 #[cfg(feature = "experimental")]
 use crate::fields::{Field, FieldSymbol};
-use crate::fields::{self, FieldLength};
+#[cfg(feature = "experimental")]
+use crate::neo_skeleton::{NeoSkeletonLength, NeoTimeZoneSkeleton, NeoTimeZoneStyle};
 use crate::time_zone::ResolvedNeoTimeZoneSkeleton;
 
 macro_rules! time_zone_style_registry {

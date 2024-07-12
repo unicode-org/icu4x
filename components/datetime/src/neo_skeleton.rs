@@ -6,8 +6,8 @@
 
 use crate::options::components;
 use crate::options::length;
-use crate::DateTimeFormatterOptions;
 use crate::time_zone::ResolvedNeoTimeZoneSkeleton;
+use crate::DateTimeFormatterOptions;
 use icu_provider::DataMarkerAttributes;
 
 /// A specification for the length of a date or component of a date.

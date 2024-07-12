@@ -24,8 +24,8 @@ use crate::provider::date_time::{
 };
 use crate::provider::neo::*;
 use crate::provider::time_zones::tz;
-use crate::time_zone::TimeZoneDataPayloadsBorrowed;
 use crate::time_zone::ResolvedNeoTimeZoneSkeleton;
+use crate::time_zone::TimeZoneDataPayloadsBorrowed;
 use core::fmt;
 use core::marker::PhantomData;
 use icu_calendar::provider::WeekDataV2Marker;

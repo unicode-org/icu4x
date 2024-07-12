@@ -4,7 +4,6 @@
 
 use crate::fields::{self, Field, FieldLength, FieldSymbol, Second, Week, Year};
 use crate::input::{DateInput, ExtractedDateTimeInput, ExtractedTimeZoneInput, IsoTimeInput};
-use crate::time_zone::ResolvedNeoTimeZoneSkeleton;
 use crate::pattern::runtime::{PatternBorrowed, PatternMetadata};
 use crate::pattern::{
     runtime::{Pattern, PatternPlurals},
@@ -18,6 +17,7 @@ use crate::provider::date_time::{
     DateSymbols, GetSymbolForEraError, GetSymbolForMonthError, GetSymbolForWeekdayError,
     MonthPlaceholderValue, TimeSymbols, ZoneSymbols,
 };
+use crate::time_zone::ResolvedNeoTimeZoneSkeleton;
 use crate::time_zone::{
     Bcp47IdFormat, ExemplarCityFormat, FallbackTimeZoneFormatterUnit, FormatTimeZone,
     FormatTimeZoneError, GenericLocationFormat, GenericNonLocationLongFormat,
