@@ -23,12 +23,13 @@ pub enum ZeroVecError {
     ///
     /// [`ULE`]: crate::ule::ULE
     ParseError { ty: &'static str },
-    /// The byte buffer was not in the appropriate format for VarZeroVec.
+    /// The byte buffer was not in the appropriate format for VarZeroVec
+    /// or some other ZeroVec type with layout invariants.
     ///
     /// [`ULE`] impls should not return errors of this variant.
     ///
     /// [`ULE`]: crate::ule::ULE
-    VarZeroVecFormatError,
+    ZeroVecInternalFormatError,
 }
 
 impl fmt::Display for ZeroVecError {
@@ -40,7 +41,7 @@ impl fmt::Display for ZeroVecError {
             ZeroVecError::ParseError { ty } => {
                 write!(f, "Could not parse bytes to slice of type {ty}")
             }
-            ZeroVecError::VarZeroVecFormatError => {
+            ZeroVecError::ZeroVecInternalFormatError => {
                 write!(f, "Invalid format for VarZeroVec buffer")
             }
         }
