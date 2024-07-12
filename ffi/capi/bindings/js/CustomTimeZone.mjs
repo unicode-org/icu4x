@@ -70,6 +70,10 @@ export class CustomTimeZone {
     })();
   }
 
+  set_gmt_offset_eighths_of_hour(arg_offset_eighths_of_hour) {
+    wasm.ICU4XCustomTimeZone_set_gmt_offset_eighths_of_hour(this.underlying, arg_offset_eighths_of_hour);
+  }
+
   clear_gmt_offset() {
     wasm.ICU4XCustomTimeZone_clear_gmt_offset(this.underlying);
   }

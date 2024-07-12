@@ -35,6 +35,8 @@ namespace capi {
     typedef struct ICU4XCustomTimeZone_try_set_gmt_offset_seconds_result {union { diplomat::capi::TimeZoneInvalidOffsetError err;}; bool is_ok;} ICU4XCustomTimeZone_try_set_gmt_offset_seconds_result;
     ICU4XCustomTimeZone_try_set_gmt_offset_seconds_result ICU4XCustomTimeZone_try_set_gmt_offset_seconds(diplomat::capi::CustomTimeZone* self, int32_t offset_seconds);
     
+    void ICU4XCustomTimeZone_set_gmt_offset_eighths_of_hour(diplomat::capi::CustomTimeZone* self, int8_t offset_eighths_of_hour);
+    
     void ICU4XCustomTimeZone_clear_gmt_offset(diplomat::capi::CustomTimeZone* self);
     
     typedef struct ICU4XCustomTimeZone_gmt_offset_seconds_result {union {int32_t ok; }; bool is_ok;} ICU4XCustomTimeZone_gmt_offset_seconds_result;
@@ -128,6 +130,11 @@ inline diplomat::result<std::monostate, TimeZoneInvalidOffsetError> CustomTimeZo
   auto result = diplomat::capi::ICU4XCustomTimeZone_try_set_gmt_offset_seconds(this->AsFFI(),
     offset_seconds);
   return result.is_ok ? diplomat::result<std::monostate, TimeZoneInvalidOffsetError>(diplomat::Ok<std::monostate>()) : diplomat::result<std::monostate, TimeZoneInvalidOffsetError>(diplomat::Err<TimeZoneInvalidOffsetError>(TimeZoneInvalidOffsetError::FromFFI(result.err)));
+}
+
+inline void CustomTimeZone::set_gmt_offset_eighths_of_hour(int8_t offset_eighths_of_hour) {
+  diplomat::capi::ICU4XCustomTimeZone_set_gmt_offset_eighths_of_hour(this->AsFFI(),
+    offset_eighths_of_hour);
 }
 
 inline void CustomTimeZone::clear_gmt_offset() {

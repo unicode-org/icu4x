@@ -9,7 +9,7 @@ use crate::metazone::MetazoneCalculator;
 use crate::{GmtOffset, ZoneVariant};
 use core::str::FromStr;
 use icu_calendar::{DateTime, Iso};
-use tinystr::tinystr;
+use tinystr::{tinystr, TinyAsciiStr};
 
 /// A utility type that can hold time zone information.
 ///
@@ -67,6 +67,23 @@ impl CustomTimeZone {
             time_zone_id: None,
             metazone_id: None,
             zone_variant: None,
+        }
+    }
+
+    /// Creates a time zone infallibly from raw parts.
+    pub const fn from_parts(
+        offset_eighths_of_hour: i8,
+        time_zone_id: TinyAsciiStr<8>,
+        metazone_id: TinyAsciiStr<4>,
+        zone_variant: TinyAsciiStr<2>,
+    ) -> Self {
+        Self {
+            gmt_offset: Some(GmtOffset::from_offset_eighths_of_hour(
+                offset_eighths_of_hour,
+            )),
+            time_zone_id: Some(TimeZoneBcp47Id(time_zone_id)),
+            metazone_id: Some(MetazoneId(metazone_id)),
+            zone_variant: Some(ZoneVariant(zone_variant)),
         }
     }
 

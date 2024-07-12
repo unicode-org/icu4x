@@ -40,6 +40,8 @@ public:
 
   inline diplomat::result<std::monostate, TimeZoneInvalidOffsetError> try_set_gmt_offset_seconds(int32_t offset_seconds);
 
+  inline void set_gmt_offset_eighths_of_hour(int8_t offset_eighths_of_hour);
+
   inline void clear_gmt_offset();
 
   inline std::optional<int32_t> gmt_offset_seconds() const;

@@ -642,7 +642,7 @@
           }
         ],
         "fallback_formats": ["LocalizedGmt"],
-        "expected": ["Z+00:00"]
+        "expected": ["Z"]
       },
       {
         "patterns": [
@@ -696,7 +696,7 @@
           }
         ],
         "fallback_formats": ["LocalizedGmt"],
-        "expected": ["Z+00"]
+        "expected": ["Z"]
       },
       {
         "patterns": [
@@ -729,7 +729,7 @@
           }
         ],
         "fallback_formats": ["LocalizedGmt"],
-        "expected": ["Z+0000"]
+        "expected": ["Z"]
       },
       {
         "patterns": [
@@ -763,7 +763,7 @@
           }
         ],
         "fallback_formats": ["LocalizedGmt"],
-        "expected": ["Z+00:00"]
+        "expected": ["Z"]
       },
       {
         "patterns": [

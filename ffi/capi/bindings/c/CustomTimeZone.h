@@ -34,6 +34,8 @@ CustomTimeZone* ICU4XCustomTimeZone_create_bst();
 typedef struct ICU4XCustomTimeZone_try_set_gmt_offset_seconds_result {union { TimeZoneInvalidOffsetError err;}; bool is_ok;} ICU4XCustomTimeZone_try_set_gmt_offset_seconds_result;
 ICU4XCustomTimeZone_try_set_gmt_offset_seconds_result ICU4XCustomTimeZone_try_set_gmt_offset_seconds(CustomTimeZone* self, int32_t offset_seconds);
 
+void ICU4XCustomTimeZone_set_gmt_offset_eighths_of_hour(CustomTimeZone* self, int8_t offset_eighths_of_hour);
+
 void ICU4XCustomTimeZone_clear_gmt_offset(CustomTimeZone* self);
 
 typedef struct ICU4XCustomTimeZone_gmt_offset_seconds_result {union {int32_t ok; }; bool is_ok;} ICU4XCustomTimeZone_gmt_offset_seconds_result;

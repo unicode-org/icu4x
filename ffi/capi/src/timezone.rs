@@ -20,6 +20,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::timezone::CustomTimeZone::try_from_str, FnInStruct)]
         #[diplomat::rust_link(icu::timezone::CustomTimeZone::try_from_utf8, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::timezone::CustomTimeZone::from_str, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::timezone::CustomTimeZone::from_parts, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::timezone::GmtOffset::try_from_str, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::timezone::GmtOffset::try_from_utf8, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::timezone::GmtOffset::from_str, FnInStruct, hidden)]
@@ -80,6 +81,14 @@ pub mod ffi {
                 offset_seconds,
             )?);
             Ok(())
+        }
+
+        /// Sets the `gmt_offset` field from offset eighths of an hour.
+        #[diplomat::rust_link(icu::timezone::GmtOffset::from_offset_eighths_of_hour, FnInStruct)]
+        pub fn set_gmt_offset_eighths_of_hour(&mut self, offset_eighths_of_hour: i8) {
+            self.0.gmt_offset = Some(icu_timezone::GmtOffset::from_offset_eighths_of_hour(
+                offset_eighths_of_hour,
+            ));
         }
 
         /// Clears the `gmt_offset` field.
