@@ -6,6 +6,7 @@
 
 use crate::options::components;
 use crate::options::length;
+#[cfg(feature = "experimental")]
 use crate::time_zone::ResolvedNeoTimeZoneSkeleton;
 use crate::DateTimeFormatterOptions;
 use icu_provider::DataMarkerAttributes;
@@ -810,6 +811,7 @@ pub struct NeoTimeZoneSkeleton {
     pub style: NeoTimeZoneStyle,
 }
 
+#[cfg(feature = "experimental")]
 impl NeoTimeZoneSkeleton {
     pub(crate) fn resolve(self, length: NeoSkeletonLength) -> ResolvedNeoTimeZoneSkeleton {
         crate::tz_registry::skeleton_to_resolved(self.style, self.length.unwrap_or(length))
