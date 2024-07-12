@@ -1646,18 +1646,16 @@ impl_date_marker!(
     input_any_calendar_kind = yes,
 );
 
-// TODO: Select the proper zone payloads in all of these markers below
-
 impl_zone_marker!(
     NeoTimeZoneSpecificMarker,
     NeoTimeZoneSkeleton::specific(),
     description = "a specific time zone format with inherited length",
     expectation = "CDT",
     zone_essentials = yes,
-    zone_exemplar_cities = yes,
-    zone_generic_long = yes,
-    zone_generic_short = yes,
-    zone_specific_long = yes,
+    zone_exemplar_cities = no,
+    zone_generic_long = no,
+    zone_generic_short = no,
+    zone_specific_long = no,
     zone_specific_short = yes,
 );
 
@@ -1699,10 +1697,10 @@ impl_zone_marker!(
     description = "a short specific time zone format",
     expectation = "CDT",
     zone_essentials = yes,
-    zone_exemplar_cities = yes,
-    zone_generic_long = yes,
-    zone_generic_short = yes,
-    zone_specific_long = yes,
+    zone_exemplar_cities = no,
+    zone_generic_long = no,
+    zone_generic_short = no,
+    zone_specific_long = no,
     zone_specific_short = yes,
 );
 
@@ -1712,11 +1710,11 @@ impl_zone_marker!(
     description = "a long specific time zone format",
     expectation = "Central Daylight Time",
     zone_essentials = yes,
-    zone_exemplar_cities = yes,
-    zone_generic_long = yes,
-    zone_generic_short = yes,
+    zone_exemplar_cities = no,
+    zone_generic_long = no,
+    zone_generic_short = no,
     zone_specific_long = yes,
-    zone_specific_short = yes,
+    zone_specific_short = no,
 );
 
 impl_zone_marker!(
@@ -1725,11 +1723,11 @@ impl_zone_marker!(
     description = "a GMT-offset time zone format with inherited length",
     expectation = "GMT-05:00", // TODO: Implement short localized GMT
     zone_essentials = yes,
-    zone_exemplar_cities = yes,
-    zone_generic_long = yes,
-    zone_generic_short = yes,
-    zone_specific_long = yes,
-    zone_specific_short = yes,
+    zone_exemplar_cities = no,
+    zone_generic_long = no,
+    zone_generic_short = no,
+    zone_specific_long = no,
+    zone_specific_short = no,
 );
 
 impl_zone_marker!(
@@ -1738,11 +1736,11 @@ impl_zone_marker!(
     description = "a GMT-offset short time zone format",
     expectation = "GMT-05:00", // TODO: Implement short localized GMT
     zone_essentials = yes,
-    zone_exemplar_cities = yes,
-    zone_generic_long = yes,
-    zone_generic_short = yes,
-    zone_specific_long = yes,
-    zone_specific_short = yes,
+    zone_exemplar_cities = no,
+    zone_generic_long = no,
+    zone_generic_short = no,
+    zone_specific_long = no,
+    zone_specific_short = no,
 );
 
 impl_zone_marker!(
@@ -1751,11 +1749,11 @@ impl_zone_marker!(
     description = "a GMT-offset long time zone format",
     expectation = "GMT-05:00",
     zone_essentials = yes,
-    zone_exemplar_cities = yes,
-    zone_generic_long = yes,
-    zone_generic_short = yes,
-    zone_specific_long = yes,
-    zone_specific_short = yes,
+    zone_exemplar_cities = no,
+    zone_generic_long = no,
+    zone_generic_short = no,
+    zone_specific_long = no,
+    zone_specific_short = no,
 );
 
 impl_zone_marker!(
@@ -1765,10 +1763,10 @@ impl_zone_marker!(
     expectation = "CT",
     zone_essentials = yes,
     zone_exemplar_cities = yes,
-    zone_generic_long = yes,
+    zone_generic_long = no,
     zone_generic_short = yes,
-    zone_specific_long = yes,
-    zone_specific_short = yes,
+    zone_specific_long = no,
+    zone_specific_short = no,
 );
 
 impl_zone_marker!(
@@ -1810,10 +1808,10 @@ impl_zone_marker!(
     expectation = "CT",
     zone_essentials = yes,
     zone_exemplar_cities = yes,
-    zone_generic_long = yes,
+    zone_generic_long = no,
     zone_generic_short = yes,
-    zone_specific_long = yes,
-    zone_specific_short = yes,
+    zone_specific_long = no,
+    zone_specific_short = no,
 );
 
 impl_zone_marker!(
@@ -1824,9 +1822,9 @@ impl_zone_marker!(
     zone_essentials = yes,
     zone_exemplar_cities = yes,
     zone_generic_long = yes,
-    zone_generic_short = yes,
-    zone_specific_long = yes,
-    zone_specific_short = yes,
+    zone_generic_short = no,
+    zone_specific_long = no,
+    zone_specific_short = no,
 );
 
 impl_zone_marker!(
@@ -1836,10 +1834,10 @@ impl_zone_marker!(
     expectation = "Chicago Time",
     zone_essentials = yes,
     zone_exemplar_cities = yes,
-    zone_generic_long = yes,
-    zone_generic_short = yes,
-    zone_specific_long = yes,
-    zone_specific_short = yes,
+    zone_generic_long = no,
+    zone_generic_short = no,
+    zone_specific_long = no,
+    zone_specific_short = no,
 );
 
 // TODO: Type aliases like this are excessive; make a curated set
