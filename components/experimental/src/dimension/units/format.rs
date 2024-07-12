@@ -43,7 +43,13 @@ impl<'l> Writeable for FormattedUnit<'l> {
             // As per Unicode TR 35:
             //      https://www.unicode.org/reports/tr35/tr35-55/tr35.html#Multiple_Inheritance
             // If the pattern is not found for the associated `Count`, fall back to the `Count::Other` pattern.
-            .or_else(|| self.display_name.patterns.get(&Count::Other))
+            .or_else(|| {
+                if count != Count::Other {
+                    self.display_name.patterns.get(&Count::Other)
+                } else {
+                    None
+                }
+            })
             .unwrap_or_else(|| unit_pattern.insert("{0} ".to_owned() + self.unit));
 
         // TODO: once the patterns are implemented to be used in the data side, we do not need this.
