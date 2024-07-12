@@ -1662,6 +1662,38 @@ impl_zone_marker!(
 );
 
 impl_zone_marker!(
+    /// When a display name is unavailable, falls back to the GMT offset format:
+    ///
+    /// ```
+    /// use icu::calendar::{Date, Time};
+    /// use icu::timezone::{CustomTimeZone, CustomZonedDateTime};
+    /// use icu::calendar::Gregorian;
+    /// use icu::datetime::neo::TypedNeoFormatter;
+    /// use icu::datetime::neo_marker::NeoTimeZoneSpecificShortMarker;
+    /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
+    /// use icu::locale::locale;
+    /// use tinystr::tinystr;
+    /// use writeable::assert_try_writeable_eq;
+    ///
+    /// let fmt = TypedNeoFormatter::<Gregorian, NeoTimeZoneSpecificShortMarker>::try_new(
+    ///     &locale!("en").into(),
+    ///     NeoSkeletonLength::Medium,
+    /// )
+    /// .unwrap();
+    ///
+    /// // Time zone for America/Sao_Paulo year-round
+    /// let zone = CustomTimeZone::from_parts(
+    ///     -24, // offset eighths of hour
+    ///     tinystr!(8, "brsao"), // time zone ID
+    ///     tinystr!(4, "bras"), // metazone ID
+    ///     tinystr!(2, "st"), // zone variant: standard time
+    /// );
+    ///
+    /// assert_try_writeable_eq!(
+    ///     fmt.format(&zone),
+    ///     "GMT-03:00"
+    /// );
+    /// ```
     NeoTimeZoneSpecificShortMarker,
     NeoTimeZoneSkeleton::specific_short(),
     description = "a short specific time zone format",
@@ -1740,6 +1772,38 @@ impl_zone_marker!(
 );
 
 impl_zone_marker!(
+    /// When a display name is unavailable, falls back to the location format:
+    ///
+    /// ```
+    /// use icu::calendar::{Date, Time};
+    /// use icu::timezone::{CustomTimeZone, CustomZonedDateTime};
+    /// use icu::calendar::Gregorian;
+    /// use icu::datetime::neo::TypedNeoFormatter;
+    /// use icu::datetime::neo_marker::NeoTimeZoneGenericShortMarker;
+    /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
+    /// use icu::locale::locale;
+    /// use tinystr::tinystr;
+    /// use writeable::assert_try_writeable_eq;
+    ///
+    /// let fmt = TypedNeoFormatter::<Gregorian, NeoTimeZoneGenericShortMarker>::try_new(
+    ///     &locale!("en").into(),
+    ///     NeoSkeletonLength::Medium,
+    /// )
+    /// .unwrap();
+    ///
+    /// // Time zone for America/Sao_Paulo year-round
+    /// let zone = CustomTimeZone::from_parts(
+    ///     -24, // offset eighths of hour
+    ///     tinystr!(8, "brsao"), // time zone ID
+    ///     tinystr!(4, "bras"), // metazone ID
+    ///     tinystr!(2, "st"), // zone variant: standard time
+    /// );
+    ///
+    /// assert_try_writeable_eq!(
+    ///     fmt.format(&zone),
+    ///     "Sao Paulo Time"
+    /// );
+    /// ```
     NeoTimeZoneGenericShortMarker,
     NeoTimeZoneSkeleton::generic_short(),
     description = "a generic short time zone format",

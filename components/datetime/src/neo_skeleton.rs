@@ -759,7 +759,13 @@ impl From<NeoTimeZoneSkeleton> for NeoComponents {
     }
 }
 
-/// Specification of the time zone display style
+/// Specification of the time zone display style.
+///
+/// Time zone names contribute a lot of data size. For resource-constrained
+/// environments, the following formats require the least amount of data:
+///
+/// - [`NeoTimeZoneStyle::SpecificNonLocation`] + [`NeoSkeletonLength::Short`]
+/// - [`NeoTimeZoneStyle::Offset`]
 #[derive(Debug, Copy, Clone, Default)]
 #[non_exhaustive]
 pub enum NeoTimeZoneStyle {
@@ -774,10 +780,16 @@ pub enum NeoTimeZoneStyle {
     #[default]
     Default,
     /// The location format, e.g., “Los Angeles time”.
+    ///
+    /// When unavailable, falls back to [`NeoTimeZoneStyle::Offset`].
     Location,
     /// The generic non-location format, e.g., “Pacific Time”.
+    ///
+    /// When unavailable, falls back to [`NeoTimeZoneStyle::Location`].
     NonLocation,
     /// The specific non-location format, e.g., “Pacific Daylight Time”.
+    ///
+    /// When unavailable, falls back to [`NeoTimeZoneStyle::Offset`].
     SpecificNonLocation,
     /// The offset from UTC format, e.g., “GMT−8”.
     Offset,
@@ -820,8 +832,8 @@ macro_rules! time_zone_style_registry {
                 (specific_long, SpecificNonLocation, Long, SpecificLong, LowerZ, Wide), // 'zzzz'
                 (gmt_short, Offset, Short, GmtShort, UpperO, One), // 'O'
                 (gmt_long, Offset, Long, GmtLong, UpperO, Wide), // 'OOOO'
-                (generic_short, NonLocation, Short, GenericShort, LowerV, One),
-                (generic_long, NonLocation, Long, GenericLong, LowerV, Wide),
+                (generic_short, NonLocation, Short, GenericShort, LowerV, One), // 'v'
+                (generic_long, NonLocation, Long, GenericLong, LowerV, Wide), // 'vvvv'
             ],
             // Styles with None-length, functions, and matchers
             [

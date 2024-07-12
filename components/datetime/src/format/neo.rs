@@ -1965,7 +1965,6 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                 FieldForDataLoading::Field(field) => field,
                 FieldForDataLoading::TimeZone(time_zone) => {
                     self.load_time_zone_essentials(zone_essentials_provider, locale)?;
-                    // TODO: Load fallback names, too
                     match time_zone {
                         // `z..zzz`
                         ResolvedNeoTimeZoneSkeleton::SpecificShort => {
@@ -1987,6 +1986,11 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                                 mz_generic_short_provider,
                                 locale,
                             )?;
+                            // For fallback:
+                            self.load_time_zone_exemplar_city_names(
+                                exemplar_cities_provider,
+                                locale,
+                            )?;
                         }
                         // 'vvvv'
                         ResolvedNeoTimeZoneSkeleton::GenericLong => {
@@ -1994,9 +1998,15 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                                 mz_generic_long_provider,
                                 locale,
                             )?;
+                            // For fallback:
+                            self.load_time_zone_exemplar_city_names(
+                                exemplar_cities_provider,
+                                locale,
+                            )?;
                         }
                         // 'VVV..VVVV' (note: `V..VV` are for identifiers only)
-                        ResolvedNeoTimeZoneSkeleton::City | ResolvedNeoTimeZoneSkeleton::Location => {
+                        ResolvedNeoTimeZoneSkeleton::City
+                        | ResolvedNeoTimeZoneSkeleton::Location => {
                             self.load_time_zone_exemplar_city_names(
                                 exemplar_cities_provider,
                                 locale,

@@ -878,17 +878,22 @@ fn select_zone_units(time_zone: ResolvedNeoTimeZoneSkeleton) -> [Option<TimeZone
             formatters.0 = Some(TimeZoneFormatterUnit::GenericNonLocationShort(
                 GenericNonLocationShortFormat {},
             ));
+            formatters.1 = Some(TimeZoneFormatterUnit::GenericLocation(
+                GenericLocationFormat {},
+            ));
         }
         // 'vvvv'
         ResolvedNeoTimeZoneSkeleton::GenericLong => {
             formatters.0 = Some(TimeZoneFormatterUnit::GenericNonLocationLong(
                 GenericNonLocationLongFormat {},
             ));
+            formatters.1 = Some(TimeZoneFormatterUnit::GenericLocation(
+                GenericLocationFormat {},
+            ));
         }
         // 'VVV'
         ResolvedNeoTimeZoneSkeleton::City => {
-            formatters.0 =
-                Some(TimeZoneFormatterUnit::ExemplarCity(ExemplarCityFormat {}));
+            formatters.0 = Some(TimeZoneFormatterUnit::ExemplarCity(ExemplarCityFormat {}));
         }
         // 'VVVV'
         ResolvedNeoTimeZoneSkeleton::Location => {
