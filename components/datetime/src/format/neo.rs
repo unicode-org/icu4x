@@ -16,9 +16,7 @@ use crate::neo_marker::{
     TypedDateDataMarkers, ZoneMarkers,
 };
 use crate::neo_pattern::{DateTimePattern, DateTimePatternBorrowed};
-use crate::neo_skeleton::{
-    NeoDateTimeComponents, ResolvedNeoTimeZoneSkeleton,
-};
+use crate::neo_skeleton::{NeoDateTimeComponents, ResolvedNeoTimeZoneSkeleton};
 use crate::pattern::PatternItem;
 use crate::provider::date_time::{
     DateSymbols, GetSymbolForDayPeriodError, GetSymbolForEraError, GetSymbolForMonthError,
@@ -1952,10 +1950,15 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                 FieldForDataLoading::Field(Field {
                     symbol: FieldSymbol::TimeZone(field_symbol),
                     length,
-                }) => FieldForDataLoading::TimeZone(ResolvedNeoTimeZoneSkeleton::from_field(
-                    field_symbol,
-                    length,
-                )),
+                }) => {
+                    match ResolvedNeoTimeZoneSkeleton::from_field(field_symbol, length) {
+                        Some(time_zone) => FieldForDataLoading::TimeZone(time_zone),
+                        None => {
+                            // Unknown time zone field: ignore for data loading
+                            continue;
+                        }
+                    }
+                }
                 _ => item,
             };
             let field = match item {
@@ -1999,7 +2002,8 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                                 locale,
                             )?;
                         }
-                        ResolvedNeoTimeZoneSkeleton::GmtShort | ResolvedNeoTimeZoneSkeleton::GmtLong => {
+                        ResolvedNeoTimeZoneSkeleton::GmtShort
+                        | ResolvedNeoTimeZoneSkeleton::GmtLong => {
                             // all data needed for this is in time zone essentials
                         }
                     };
