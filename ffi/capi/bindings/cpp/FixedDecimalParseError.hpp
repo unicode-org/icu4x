@@ -12,23 +12,24 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
     extern "C" {
     
     
     } // extern "C"
+} // namespace capi
+} // namespace
+
+inline diplomat::capi::FixedDecimalParseError FixedDecimalParseError::AsFFI() const {
+  return static_cast<diplomat::capi::FixedDecimalParseError>(value);
 }
 
-
-inline capi::FixedDecimalParseError FixedDecimalParseError::AsFFI() const {
-  return static_cast<capi::FixedDecimalParseError>(value);
-}
-
-inline FixedDecimalParseError FixedDecimalParseError::FromFFI(capi::FixedDecimalParseError c_enum) {
+inline FixedDecimalParseError FixedDecimalParseError::FromFFI(diplomat::capi::FixedDecimalParseError c_enum) {
   switch (c_enum) {
-    case capi::FixedDecimalParseError_Unknown:
-    case capi::FixedDecimalParseError_Limit:
-    case capi::FixedDecimalParseError_Syntax:
+    case diplomat::capi::FixedDecimalParseError_Unknown:
+    case diplomat::capi::FixedDecimalParseError_Limit:
+    case diplomat::capi::FixedDecimalParseError_Syntax:
       return static_cast<FixedDecimalParseError::Value>(c_enum);
     default:
       abort();

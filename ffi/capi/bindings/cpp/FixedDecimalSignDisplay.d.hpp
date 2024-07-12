@@ -10,15 +10,17 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
-    typedef enum FixedDecimalSignDisplay {
+    enum FixedDecimalSignDisplay {
       FixedDecimalSignDisplay_Auto = 0,
       FixedDecimalSignDisplay_Never = 1,
       FixedDecimalSignDisplay_Always = 2,
       FixedDecimalSignDisplay_ExceptZero = 3,
       FixedDecimalSignDisplay_Negative = 4,
-    } FixedDecimalSignDisplay;
-}
+    };
+} // namespace capi
+} // namespace
 
 class FixedDecimalSignDisplay {
 public:
@@ -37,8 +39,8 @@ public:
   // Prevent usage as boolean value
   explicit operator bool() const = delete;
 
-  inline capi::FixedDecimalSignDisplay AsFFI() const;
-  inline static FixedDecimalSignDisplay FromFFI(capi::FixedDecimalSignDisplay c_enum);
+  inline diplomat::capi::FixedDecimalSignDisplay AsFFI() const;
+  inline static FixedDecimalSignDisplay FromFFI(diplomat::capi::FixedDecimalSignDisplay c_enum);
 private:
     Value value;
 };

@@ -10,19 +10,21 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
-    typedef struct DataStruct DataStruct;
-}
+    struct DataStruct;
+} // namespace capi
+} // namespace
 
 class DataStruct {
 public:
 
   inline static std::unique_ptr<DataStruct> create_decimal_symbols_v1(std::string_view plus_sign_prefix, std::string_view plus_sign_suffix, std::string_view minus_sign_prefix, std::string_view minus_sign_suffix, std::string_view decimal_separator, std::string_view grouping_separator, uint8_t primary_group_size, uint8_t secondary_group_size, uint8_t min_group_size, diplomat::span<const char32_t> digits);
 
-  inline const capi::DataStruct* AsFFI() const;
-  inline capi::DataStruct* AsFFI();
-  inline static const DataStruct* FromFFI(const capi::DataStruct* ptr);
-  inline static DataStruct* FromFFI(capi::DataStruct* ptr);
+  inline const diplomat::capi::DataStruct* AsFFI() const;
+  inline diplomat::capi::DataStruct* AsFFI();
+  inline static const DataStruct* FromFFI(const diplomat::capi::DataStruct* ptr);
+  inline static DataStruct* FromFFI(diplomat::capi::DataStruct* ptr);
   inline static void operator delete(void* ptr);
 private:
   DataStruct() = delete;

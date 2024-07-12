@@ -8,20 +8,21 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "CollatorOptionsV1.d.hpp"
-#include "CollatorResolvedOptionsV1.d.hpp"
-#include "DataError.d.hpp"
 
+namespace diplomat::capi { struct DataProvider; }
 class DataProvider;
+namespace diplomat::capi { struct Locale; }
 class Locale;
 struct CollatorOptionsV1;
 struct CollatorResolvedOptionsV1;
 class DataError;
 
 
+namespace diplomat {
 namespace capi {
-    typedef struct Collator Collator;
-}
+    struct Collator;
+} // namespace capi
+} // namespace
 
 class Collator {
 public:
@@ -34,10 +35,10 @@ public:
 
   inline CollatorResolvedOptionsV1 resolved_options() const;
 
-  inline const capi::Collator* AsFFI() const;
-  inline capi::Collator* AsFFI();
-  inline static const Collator* FromFFI(const capi::Collator* ptr);
-  inline static Collator* FromFFI(capi::Collator* ptr);
+  inline const diplomat::capi::Collator* AsFFI() const;
+  inline diplomat::capi::Collator* AsFFI();
+  inline static const Collator* FromFFI(const diplomat::capi::Collator* ptr);
+  inline static Collator* FromFFI(diplomat::capi::Collator* ptr);
   inline static void operator delete(void* ptr);
 private:
   Collator() = delete;

@@ -12,24 +12,25 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
     extern "C" {
     
     
     } // extern "C"
+} // namespace capi
+} // namespace
+
+inline diplomat::capi::CalendarError CalendarError::AsFFI() const {
+  return static_cast<diplomat::capi::CalendarError>(value);
 }
 
-
-inline capi::CalendarError CalendarError::AsFFI() const {
-  return static_cast<capi::CalendarError>(value);
-}
-
-inline CalendarError CalendarError::FromFFI(capi::CalendarError c_enum) {
+inline CalendarError CalendarError::FromFFI(diplomat::capi::CalendarError c_enum) {
   switch (c_enum) {
-    case capi::CalendarError_Unknown:
-    case capi::CalendarError_OutOfRange:
-    case capi::CalendarError_UnknownEra:
-    case capi::CalendarError_UnknownMonthCode:
+    case diplomat::capi::CalendarError_Unknown:
+    case diplomat::capi::CalendarError_OutOfRange:
+    case diplomat::capi::CalendarError_UnknownEra:
+    case diplomat::capi::CalendarError_UnknownMonthCode:
       return static_cast<CalendarError::Value>(c_enum);
     default:
       abort();

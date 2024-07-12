@@ -15,23 +15,25 @@
 #include "IsoTimeZoneSecondDisplay.hpp"
 
 
+namespace diplomat {
 namespace capi {
     extern "C" {
     
     
     } // extern "C"
-}
+} // namespace capi
+} // namespace
 
 
-inline capi::IsoTimeZoneOptions IsoTimeZoneOptions::AsFFI() const {
-  return capi::IsoTimeZoneOptions {
+inline diplomat::capi::IsoTimeZoneOptions IsoTimeZoneOptions::AsFFI() const {
+  return diplomat::capi::IsoTimeZoneOptions {
     .format = format.AsFFI(),
     .minutes = minutes.AsFFI(),
     .seconds = seconds.AsFFI(),
   };
 }
 
-inline IsoTimeZoneOptions IsoTimeZoneOptions::FromFFI(capi::IsoTimeZoneOptions c_struct) {
+inline IsoTimeZoneOptions IsoTimeZoneOptions::FromFFI(diplomat::capi::IsoTimeZoneOptions c_struct) {
   return IsoTimeZoneOptions {
     .format = IsoTimeZoneFormat::FromFFI(c_struct.format),
     .minutes = IsoTimeZoneMinuteDisplay::FromFFI(c_struct.minutes),

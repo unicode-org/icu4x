@@ -12,16 +12,18 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
     extern "C" {
     
     
     } // extern "C"
-}
+} // namespace capi
+} // namespace
 
 
-inline capi::WeekendContainsDay WeekendContainsDay::AsFFI() const {
-  return capi::WeekendContainsDay {
+inline diplomat::capi::WeekendContainsDay WeekendContainsDay::AsFFI() const {
+  return diplomat::capi::WeekendContainsDay {
     .monday = monday,
     .tuesday = tuesday,
     .wednesday = wednesday,
@@ -32,7 +34,7 @@ inline capi::WeekendContainsDay WeekendContainsDay::AsFFI() const {
   };
 }
 
-inline WeekendContainsDay WeekendContainsDay::FromFFI(capi::WeekendContainsDay c_struct) {
+inline WeekendContainsDay WeekendContainsDay::FromFFI(diplomat::capi::WeekendContainsDay c_struct) {
   return WeekendContainsDay {
     .monday = c_struct.monday,
     .tuesday = c_struct.tuesday,

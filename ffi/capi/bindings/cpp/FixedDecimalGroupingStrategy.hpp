@@ -12,24 +12,25 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
     extern "C" {
     
     
     } // extern "C"
+} // namespace capi
+} // namespace
+
+inline diplomat::capi::FixedDecimalGroupingStrategy FixedDecimalGroupingStrategy::AsFFI() const {
+  return static_cast<diplomat::capi::FixedDecimalGroupingStrategy>(value);
 }
 
-
-inline capi::FixedDecimalGroupingStrategy FixedDecimalGroupingStrategy::AsFFI() const {
-  return static_cast<capi::FixedDecimalGroupingStrategy>(value);
-}
-
-inline FixedDecimalGroupingStrategy FixedDecimalGroupingStrategy::FromFFI(capi::FixedDecimalGroupingStrategy c_enum) {
+inline FixedDecimalGroupingStrategy FixedDecimalGroupingStrategy::FromFFI(diplomat::capi::FixedDecimalGroupingStrategy c_enum) {
   switch (c_enum) {
-    case capi::FixedDecimalGroupingStrategy_Auto:
-    case capi::FixedDecimalGroupingStrategy_Never:
-    case capi::FixedDecimalGroupingStrategy_Always:
-    case capi::FixedDecimalGroupingStrategy_Min2:
+    case diplomat::capi::FixedDecimalGroupingStrategy_Auto:
+    case diplomat::capi::FixedDecimalGroupingStrategy_Never:
+    case diplomat::capi::FixedDecimalGroupingStrategy_Always:
+    case diplomat::capi::FixedDecimalGroupingStrategy_Min2:
       return static_cast<FixedDecimalGroupingStrategy::Value>(c_enum);
     default:
       abort();

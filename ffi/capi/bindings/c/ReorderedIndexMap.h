@@ -15,7 +15,7 @@
 
 
 
-DiplomatUsizeView ICU4XReorderedIndexMap_as_slice(const ReorderedIndexMap* self);
+diplomat::capi::DiplomatUsizeView ICU4XReorderedIndexMap_as_slice(const ReorderedIndexMap* self);
 
 size_t ICU4XReorderedIndexMap_len(const ReorderedIndexMap* self);
 

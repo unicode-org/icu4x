@@ -12,23 +12,24 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
     extern "C" {
     
     
     } // extern "C"
+} // namespace capi
+} // namespace
+
+inline diplomat::capi::CollatorNumeric CollatorNumeric::AsFFI() const {
+  return static_cast<diplomat::capi::CollatorNumeric>(value);
 }
 
-
-inline capi::CollatorNumeric CollatorNumeric::AsFFI() const {
-  return static_cast<capi::CollatorNumeric>(value);
-}
-
-inline CollatorNumeric CollatorNumeric::FromFFI(capi::CollatorNumeric c_enum) {
+inline CollatorNumeric CollatorNumeric::FromFFI(diplomat::capi::CollatorNumeric c_enum) {
   switch (c_enum) {
-    case capi::CollatorNumeric_Auto:
-    case capi::CollatorNumeric_Off:
-    case capi::CollatorNumeric_On:
+    case diplomat::capi::CollatorNumeric_Auto:
+    case diplomat::capi::CollatorNumeric_Off:
+    case diplomat::capi::CollatorNumeric_On:
       return static_cast<CollatorNumeric::Value>(c_enum);
     default:
       abort();

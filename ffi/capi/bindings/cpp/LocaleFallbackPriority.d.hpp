@@ -10,13 +10,15 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
-    typedef enum LocaleFallbackPriority {
+    enum LocaleFallbackPriority {
       LocaleFallbackPriority_Language = 0,
       LocaleFallbackPriority_Region = 1,
       LocaleFallbackPriority_Collation = 2,
-    } LocaleFallbackPriority;
-}
+    };
+} // namespace capi
+} // namespace
 
 class LocaleFallbackPriority {
 public:
@@ -33,8 +35,8 @@ public:
   // Prevent usage as boolean value
   explicit operator bool() const = delete;
 
-  inline capi::LocaleFallbackPriority AsFFI() const;
-  inline static LocaleFallbackPriority FromFFI(capi::LocaleFallbackPriority c_enum);
+  inline diplomat::capi::LocaleFallbackPriority AsFFI() const;
+  inline static LocaleFallbackPriority FromFFI(diplomat::capi::LocaleFallbackPriority c_enum);
 private:
     Value value;
 };

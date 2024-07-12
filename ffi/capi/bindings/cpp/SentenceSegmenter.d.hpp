@@ -8,18 +8,23 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "DataError.d.hpp"
 
+namespace diplomat::capi { struct DataProvider; }
 class DataProvider;
+namespace diplomat::capi { struct SentenceBreakIteratorLatin1; }
 class SentenceBreakIteratorLatin1;
+namespace diplomat::capi { struct SentenceBreakIteratorUtf16; }
 class SentenceBreakIteratorUtf16;
+namespace diplomat::capi { struct SentenceBreakIteratorUtf8; }
 class SentenceBreakIteratorUtf8;
 class DataError;
 
 
+namespace diplomat {
 namespace capi {
-    typedef struct SentenceSegmenter SentenceSegmenter;
-}
+    struct SentenceSegmenter;
+} // namespace capi
+} // namespace
 
 class SentenceSegmenter {
 public:
@@ -32,10 +37,10 @@ public:
 
   inline std::unique_ptr<SentenceBreakIteratorLatin1> segment_latin1(diplomat::span<const uint8_t> input) const;
 
-  inline const capi::SentenceSegmenter* AsFFI() const;
-  inline capi::SentenceSegmenter* AsFFI();
-  inline static const SentenceSegmenter* FromFFI(const capi::SentenceSegmenter* ptr);
-  inline static SentenceSegmenter* FromFFI(capi::SentenceSegmenter* ptr);
+  inline const diplomat::capi::SentenceSegmenter* AsFFI() const;
+  inline diplomat::capi::SentenceSegmenter* AsFFI();
+  inline static const SentenceSegmenter* FromFFI(const diplomat::capi::SentenceSegmenter* ptr);
+  inline static SentenceSegmenter* FromFFI(diplomat::capi::SentenceSegmenter* ptr);
   inline static void operator delete(void* ptr);
 private:
   SentenceSegmenter() = delete;

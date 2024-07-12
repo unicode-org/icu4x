@@ -10,14 +10,16 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
-    typedef enum DateLength {
+    enum DateLength {
       DateLength_Full = 0,
       DateLength_Long = 1,
       DateLength_Medium = 2,
       DateLength_Short = 3,
-    } DateLength;
-}
+    };
+} // namespace capi
+} // namespace
 
 class DateLength {
 public:
@@ -35,8 +37,8 @@ public:
   // Prevent usage as boolean value
   explicit operator bool() const = delete;
 
-  inline capi::DateLength AsFFI() const;
-  inline static DateLength FromFFI(capi::DateLength c_enum);
+  inline diplomat::capi::DateLength AsFFI() const;
+  inline static DateLength FromFFI(diplomat::capi::DateLength c_enum);
 private:
     Value value;
 };

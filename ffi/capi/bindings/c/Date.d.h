@@ -16,5 +16,4 @@ typedef struct Date Date;
 
 
 
-
 #endif // Date_D_H

@@ -10,12 +10,14 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
-    typedef enum LocaleFallbackSupplement {
+    enum LocaleFallbackSupplement {
       LocaleFallbackSupplement_None = 0,
       LocaleFallbackSupplement_Collation = 1,
-    } LocaleFallbackSupplement;
-}
+    };
+} // namespace capi
+} // namespace
 
 class LocaleFallbackSupplement {
 public:
@@ -31,8 +33,8 @@ public:
   // Prevent usage as boolean value
   explicit operator bool() const = delete;
 
-  inline capi::LocaleFallbackSupplement AsFFI() const;
-  inline static LocaleFallbackSupplement FromFFI(capi::LocaleFallbackSupplement c_enum);
+  inline diplomat::capi::LocaleFallbackSupplement AsFFI() const;
+  inline static LocaleFallbackSupplement FromFFI(diplomat::capi::LocaleFallbackSupplement c_enum);
 private:
     Value value;
 };

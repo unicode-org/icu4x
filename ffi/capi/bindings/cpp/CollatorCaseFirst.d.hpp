@@ -10,14 +10,16 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
-    typedef enum CollatorCaseFirst {
+    enum CollatorCaseFirst {
       CollatorCaseFirst_Auto = 0,
       CollatorCaseFirst_Off = 1,
       CollatorCaseFirst_LowerFirst = 2,
       CollatorCaseFirst_UpperFirst = 3,
-    } CollatorCaseFirst;
-}
+    };
+} // namespace capi
+} // namespace
 
 class CollatorCaseFirst {
 public:
@@ -35,8 +37,8 @@ public:
   // Prevent usage as boolean value
   explicit operator bool() const = delete;
 
-  inline capi::CollatorCaseFirst AsFFI() const;
-  inline static CollatorCaseFirst FromFFI(capi::CollatorCaseFirst c_enum);
+  inline diplomat::capi::CollatorCaseFirst AsFFI() const;
+  inline static CollatorCaseFirst FromFFI(diplomat::capi::CollatorCaseFirst c_enum);
 private:
     Value value;
 };

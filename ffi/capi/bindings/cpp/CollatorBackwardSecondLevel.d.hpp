@@ -10,13 +10,15 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
-    typedef enum CollatorBackwardSecondLevel {
+    enum CollatorBackwardSecondLevel {
       CollatorBackwardSecondLevel_Auto = 0,
       CollatorBackwardSecondLevel_Off = 1,
       CollatorBackwardSecondLevel_On = 2,
-    } CollatorBackwardSecondLevel;
-}
+    };
+} // namespace capi
+} // namespace
 
 class CollatorBackwardSecondLevel {
 public:
@@ -33,8 +35,8 @@ public:
   // Prevent usage as boolean value
   explicit operator bool() const = delete;
 
-  inline capi::CollatorBackwardSecondLevel AsFFI() const;
-  inline static CollatorBackwardSecondLevel FromFFI(capi::CollatorBackwardSecondLevel c_enum);
+  inline diplomat::capi::CollatorBackwardSecondLevel AsFFI() const;
+  inline static CollatorBackwardSecondLevel FromFFI(diplomat::capi::CollatorBackwardSecondLevel c_enum);
 private:
     Value value;
 };

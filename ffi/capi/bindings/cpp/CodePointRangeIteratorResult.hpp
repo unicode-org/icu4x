@@ -12,23 +12,25 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
     extern "C" {
     
     
     } // extern "C"
-}
+} // namespace capi
+} // namespace
 
 
-inline capi::CodePointRangeIteratorResult CodePointRangeIteratorResult::AsFFI() const {
-  return capi::CodePointRangeIteratorResult {
+inline diplomat::capi::CodePointRangeIteratorResult CodePointRangeIteratorResult::AsFFI() const {
+  return diplomat::capi::CodePointRangeIteratorResult {
     .start = start,
     .end = end,
     .done = done,
   };
 }
 
-inline CodePointRangeIteratorResult CodePointRangeIteratorResult::FromFFI(capi::CodePointRangeIteratorResult c_struct) {
+inline CodePointRangeIteratorResult CodePointRangeIteratorResult::FromFFI(diplomat::capi::CodePointRangeIteratorResult c_struct) {
   return CodePointRangeIteratorResult {
     .start = c_struct.start,
     .end = c_struct.end,

@@ -8,17 +8,21 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "DataError.d.hpp"
 
+namespace diplomat::capi { struct BidiInfo; }
 class BidiInfo;
+namespace diplomat::capi { struct DataProvider; }
 class DataProvider;
+namespace diplomat::capi { struct ReorderedIndexMap; }
 class ReorderedIndexMap;
 class DataError;
 
 
+namespace diplomat {
 namespace capi {
-    typedef struct Bidi Bidi;
-}
+    struct Bidi;
+} // namespace capi
+} // namespace
 
 class Bidi {
 public:
@@ -37,10 +41,10 @@ public:
 
   inline static uint8_t level_ltr();
 
-  inline const capi::Bidi* AsFFI() const;
-  inline capi::Bidi* AsFFI();
-  inline static const Bidi* FromFFI(const capi::Bidi* ptr);
-  inline static Bidi* FromFFI(capi::Bidi* ptr);
+  inline const diplomat::capi::Bidi* AsFFI() const;
+  inline diplomat::capi::Bidi* AsFFI();
+  inline static const Bidi* FromFFI(const diplomat::capi::Bidi* ptr);
+  inline static Bidi* FromFFI(diplomat::capi::Bidi* ptr);
   inline static void operator delete(void* ptr);
 private:
   Bidi() = delete;

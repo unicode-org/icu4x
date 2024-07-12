@@ -16,5 +16,4 @@ typedef struct MeasureUnitParser MeasureUnitParser;
 
 
 
-
 #endif // MeasureUnitParser_D_H

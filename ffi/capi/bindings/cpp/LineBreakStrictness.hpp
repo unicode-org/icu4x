@@ -12,24 +12,25 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
     extern "C" {
     
     
     } // extern "C"
+} // namespace capi
+} // namespace
+
+inline diplomat::capi::LineBreakStrictness LineBreakStrictness::AsFFI() const {
+  return static_cast<diplomat::capi::LineBreakStrictness>(value);
 }
 
-
-inline capi::LineBreakStrictness LineBreakStrictness::AsFFI() const {
-  return static_cast<capi::LineBreakStrictness>(value);
-}
-
-inline LineBreakStrictness LineBreakStrictness::FromFFI(capi::LineBreakStrictness c_enum) {
+inline LineBreakStrictness LineBreakStrictness::FromFFI(diplomat::capi::LineBreakStrictness c_enum) {
   switch (c_enum) {
-    case capi::LineBreakStrictness_Loose:
-    case capi::LineBreakStrictness_Normal:
-    case capi::LineBreakStrictness_Strict:
-    case capi::LineBreakStrictness_Anywhere:
+    case diplomat::capi::LineBreakStrictness_Loose:
+    case diplomat::capi::LineBreakStrictness_Normal:
+    case diplomat::capi::LineBreakStrictness_Strict:
+    case diplomat::capi::LineBreakStrictness_Anywhere:
       return static_cast<LineBreakStrictness::Value>(c_enum);
     default:
       abort();

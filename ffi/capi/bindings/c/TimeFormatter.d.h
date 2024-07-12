@@ -16,5 +16,4 @@ typedef struct TimeFormatter TimeFormatter;
 
 
 
-
 #endif // TimeFormatter_D_H

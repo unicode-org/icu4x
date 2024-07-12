@@ -16,5 +16,4 @@ typedef struct CodePointMapData8 CodePointMapData8;
 
 
 
-
 #endif // CodePointMapData8_D_H

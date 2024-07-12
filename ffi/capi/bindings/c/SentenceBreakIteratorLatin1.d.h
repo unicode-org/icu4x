@@ -16,5 +16,4 @@ typedef struct SentenceBreakIteratorLatin1 SentenceBreakIteratorLatin1;
 
 
 
-
 #endif // SentenceBreakIteratorLatin1_D_H

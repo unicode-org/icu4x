@@ -8,20 +8,21 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "DataError.d.hpp"
-#include "LocaleFallbackConfig.d.hpp"
-#include "LocaleParseError.d.hpp"
 
+namespace diplomat::capi { struct DataProvider; }
 class DataProvider;
+namespace diplomat::capi { struct LocaleFallbackerWithConfig; }
 class LocaleFallbackerWithConfig;
 struct LocaleFallbackConfig;
 class DataError;
 class LocaleParseError;
 
 
+namespace diplomat {
 namespace capi {
-    typedef struct LocaleFallbacker LocaleFallbacker;
-}
+    struct LocaleFallbacker;
+} // namespace capi
+} // namespace
 
 class LocaleFallbacker {
 public:
@@ -32,10 +33,10 @@ public:
 
   inline diplomat::result<std::unique_ptr<LocaleFallbackerWithConfig>, LocaleParseError> for_config(LocaleFallbackConfig config) const;
 
-  inline const capi::LocaleFallbacker* AsFFI() const;
-  inline capi::LocaleFallbacker* AsFFI();
-  inline static const LocaleFallbacker* FromFFI(const capi::LocaleFallbacker* ptr);
-  inline static LocaleFallbacker* FromFFI(capi::LocaleFallbacker* ptr);
+  inline const diplomat::capi::LocaleFallbacker* AsFFI() const;
+  inline diplomat::capi::LocaleFallbacker* AsFFI();
+  inline static const LocaleFallbacker* FromFFI(const diplomat::capi::LocaleFallbacker* ptr);
+  inline static LocaleFallbacker* FromFFI(diplomat::capi::LocaleFallbacker* ptr);
   inline static void operator delete(void* ptr);
 private:
   LocaleFallbacker() = delete;

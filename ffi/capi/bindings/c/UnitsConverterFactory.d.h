@@ -16,5 +16,4 @@ typedef struct UnitsConverterFactory UnitsConverterFactory;
 
 
 
-
 #endif // UnitsConverterFactory_D_H

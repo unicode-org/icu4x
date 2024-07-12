@@ -12,23 +12,24 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
     extern "C" {
     
     
     } // extern "C"
+} // namespace capi
+} // namespace
+
+inline diplomat::capi::WeekRelativeUnit WeekRelativeUnit::AsFFI() const {
+  return static_cast<diplomat::capi::WeekRelativeUnit>(value);
 }
 
-
-inline capi::WeekRelativeUnit WeekRelativeUnit::AsFFI() const {
-  return static_cast<capi::WeekRelativeUnit>(value);
-}
-
-inline WeekRelativeUnit WeekRelativeUnit::FromFFI(capi::WeekRelativeUnit c_enum) {
+inline WeekRelativeUnit WeekRelativeUnit::FromFFI(diplomat::capi::WeekRelativeUnit c_enum) {
   switch (c_enum) {
-    case capi::WeekRelativeUnit_Previous:
-    case capi::WeekRelativeUnit_Current:
-    case capi::WeekRelativeUnit_Next:
+    case diplomat::capi::WeekRelativeUnit_Previous:
+    case diplomat::capi::WeekRelativeUnit_Current:
+    case diplomat::capi::WeekRelativeUnit_Next:
       return static_cast<WeekRelativeUnit::Value>(c_enum);
     default:
       abort();

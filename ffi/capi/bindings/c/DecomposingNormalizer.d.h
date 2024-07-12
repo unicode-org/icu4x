@@ -16,5 +16,4 @@ typedef struct DecomposingNormalizer DecomposingNormalizer;
 
 
 
-
 #endif // DecomposingNormalizer_D_H

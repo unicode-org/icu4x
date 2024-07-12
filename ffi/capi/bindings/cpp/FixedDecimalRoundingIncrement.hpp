@@ -12,24 +12,25 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
     extern "C" {
     
     
     } // extern "C"
+} // namespace capi
+} // namespace
+
+inline diplomat::capi::FixedDecimalRoundingIncrement FixedDecimalRoundingIncrement::AsFFI() const {
+  return static_cast<diplomat::capi::FixedDecimalRoundingIncrement>(value);
 }
 
-
-inline capi::FixedDecimalRoundingIncrement FixedDecimalRoundingIncrement::AsFFI() const {
-  return static_cast<capi::FixedDecimalRoundingIncrement>(value);
-}
-
-inline FixedDecimalRoundingIncrement FixedDecimalRoundingIncrement::FromFFI(capi::FixedDecimalRoundingIncrement c_enum) {
+inline FixedDecimalRoundingIncrement FixedDecimalRoundingIncrement::FromFFI(diplomat::capi::FixedDecimalRoundingIncrement c_enum) {
   switch (c_enum) {
-    case capi::FixedDecimalRoundingIncrement_MultiplesOf1:
-    case capi::FixedDecimalRoundingIncrement_MultiplesOf2:
-    case capi::FixedDecimalRoundingIncrement_MultiplesOf5:
-    case capi::FixedDecimalRoundingIncrement_MultiplesOf25:
+    case diplomat::capi::FixedDecimalRoundingIncrement_MultiplesOf1:
+    case diplomat::capi::FixedDecimalRoundingIncrement_MultiplesOf2:
+    case diplomat::capi::FixedDecimalRoundingIncrement_MultiplesOf5:
+    case diplomat::capi::FixedDecimalRoundingIncrement_MultiplesOf25:
       return static_cast<FixedDecimalRoundingIncrement::Value>(c_enum);
     default:
       abort();

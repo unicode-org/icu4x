@@ -16,5 +16,4 @@ typedef struct LocaleFallbackerWithConfig LocaleFallbackerWithConfig;
 
 
 
-
 #endif // LocaleFallbackerWithConfig_D_H

@@ -17,21 +17,24 @@ class DisplayNamesStyle;
 class LanguageDisplay;
 
 
+namespace diplomat {
 namespace capi {
-    typedef struct DisplayNamesOptionsV1 {
-      DisplayNamesStyle style;
-      DisplayNamesFallback fallback;
-      LanguageDisplay language_display;
-    } DisplayNamesOptionsV1;
-}
+    struct DisplayNamesOptionsV1 {
+      diplomat::capi::DisplayNamesStyle style;
+      diplomat::capi::DisplayNamesFallback fallback;
+      diplomat::capi::LanguageDisplay language_display;
+    };
+} // namespace capi
+} // namespace
+
 
 struct DisplayNamesOptionsV1 {
   DisplayNamesStyle style;
   DisplayNamesFallback fallback;
   LanguageDisplay language_display;
 
-  inline capi::DisplayNamesOptionsV1 AsFFI() const;
-  inline static DisplayNamesOptionsV1 FromFFI(capi::DisplayNamesOptionsV1 c_struct);
+  inline diplomat::capi::DisplayNamesOptionsV1 AsFFI() const;
+  inline static DisplayNamesOptionsV1 FromFFI(diplomat::capi::DisplayNamesOptionsV1 c_struct);
 };
 
 

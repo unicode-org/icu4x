@@ -16,5 +16,4 @@ typedef struct CaseMapCloser CaseMapCloser;
 
 
 
-
 #endif // CaseMapCloser_D_H

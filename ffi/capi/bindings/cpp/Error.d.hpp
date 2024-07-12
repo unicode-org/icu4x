@@ -10,8 +10,9 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
-    typedef enum Error {
+    enum Error {
       Error_UnknownError = 0,
       Error_DataMissingDataMarkerError = 256,
       Error_DataMissingLocaleError = 258,
@@ -32,8 +33,9 @@ namespace capi {
       Error_DateTimeMissingMonthSymbolError = 2054,
       Error_DateTimeFixedDecimalError = 2055,
       Error_DateTimeMismatchedCalendarError = 2056,
-    } Error;
-}
+    };
+} // namespace capi
+} // namespace
 
 class Error {
 public:
@@ -67,8 +69,8 @@ public:
   // Prevent usage as boolean value
   explicit operator bool() const = delete;
 
-  inline capi::Error AsFFI() const;
-  inline static Error FromFFI(capi::Error c_enum);
+  inline diplomat::capi::Error AsFFI() const;
+  inline static Error FromFFI(diplomat::capi::Error c_enum);
 private:
     Value value;
 };

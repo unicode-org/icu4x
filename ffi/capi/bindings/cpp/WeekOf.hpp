@@ -13,22 +13,24 @@
 #include "WeekRelativeUnit.hpp"
 
 
+namespace diplomat {
 namespace capi {
     extern "C" {
     
     
     } // extern "C"
-}
+} // namespace capi
+} // namespace
 
 
-inline capi::WeekOf WeekOf::AsFFI() const {
-  return capi::WeekOf {
+inline diplomat::capi::WeekOf WeekOf::AsFFI() const {
+  return diplomat::capi::WeekOf {
     .week = week,
     .unit = unit.AsFFI(),
   };
 }
 
-inline WeekOf WeekOf::FromFFI(capi::WeekOf c_struct) {
+inline WeekOf WeekOf::FromFFI(diplomat::capi::WeekOf c_struct) {
   return WeekOf {
     .week = c_struct.week,
     .unit = WeekRelativeUnit::FromFFI(c_struct.unit),

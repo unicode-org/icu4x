@@ -10,15 +10,17 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
-    typedef enum DisplayNamesStyle {
+    enum DisplayNamesStyle {
       DisplayNamesStyle_Auto = 0,
       DisplayNamesStyle_Narrow = 1,
       DisplayNamesStyle_Short = 2,
       DisplayNamesStyle_Long = 3,
       DisplayNamesStyle_Menu = 4,
-    } DisplayNamesStyle;
-}
+    };
+} // namespace capi
+} // namespace
 
 class DisplayNamesStyle {
 public:
@@ -37,8 +39,8 @@ public:
   // Prevent usage as boolean value
   explicit operator bool() const = delete;
 
-  inline capi::DisplayNamesStyle AsFFI() const;
-  inline static DisplayNamesStyle FromFFI(capi::DisplayNamesStyle c_enum);
+  inline diplomat::capi::DisplayNamesStyle AsFFI() const;
+  inline static DisplayNamesStyle FromFFI(diplomat::capi::DisplayNamesStyle c_enum);
 private:
     Value value;
 };

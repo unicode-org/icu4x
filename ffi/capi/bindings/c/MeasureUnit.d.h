@@ -16,5 +16,4 @@ typedef struct MeasureUnit MeasureUnit;
 
 
 
-
 #endif // MeasureUnit_D_H

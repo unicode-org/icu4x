@@ -12,25 +12,26 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
     extern "C" {
     
     
     } // extern "C"
+} // namespace capi
+} // namespace
+
+inline diplomat::capi::CollatorMaxVariable CollatorMaxVariable::AsFFI() const {
+  return static_cast<diplomat::capi::CollatorMaxVariable>(value);
 }
 
-
-inline capi::CollatorMaxVariable CollatorMaxVariable::AsFFI() const {
-  return static_cast<capi::CollatorMaxVariable>(value);
-}
-
-inline CollatorMaxVariable CollatorMaxVariable::FromFFI(capi::CollatorMaxVariable c_enum) {
+inline CollatorMaxVariable CollatorMaxVariable::FromFFI(diplomat::capi::CollatorMaxVariable c_enum) {
   switch (c_enum) {
-    case capi::CollatorMaxVariable_Auto:
-    case capi::CollatorMaxVariable_Space:
-    case capi::CollatorMaxVariable_Punctuation:
-    case capi::CollatorMaxVariable_Symbol:
-    case capi::CollatorMaxVariable_Currency:
+    case diplomat::capi::CollatorMaxVariable_Auto:
+    case diplomat::capi::CollatorMaxVariable_Space:
+    case diplomat::capi::CollatorMaxVariable_Punctuation:
+    case diplomat::capi::CollatorMaxVariable_Symbol:
+    case diplomat::capi::CollatorMaxVariable_Currency:
       return static_cast<CollatorMaxVariable::Value>(c_enum);
     default:
       abort();

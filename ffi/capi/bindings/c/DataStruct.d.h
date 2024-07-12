@@ -16,5 +16,4 @@ typedef struct DataStruct DataStruct;
 
 
 
-
 #endif // DataStruct_D_H

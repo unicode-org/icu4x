@@ -12,23 +12,24 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
     extern "C" {
     
     
     } // extern "C"
+} // namespace capi
+} // namespace
+
+inline diplomat::capi::CollatorAlternateHandling CollatorAlternateHandling::AsFFI() const {
+  return static_cast<diplomat::capi::CollatorAlternateHandling>(value);
 }
 
-
-inline capi::CollatorAlternateHandling CollatorAlternateHandling::AsFFI() const {
-  return static_cast<capi::CollatorAlternateHandling>(value);
-}
-
-inline CollatorAlternateHandling CollatorAlternateHandling::FromFFI(capi::CollatorAlternateHandling c_enum) {
+inline CollatorAlternateHandling CollatorAlternateHandling::FromFFI(diplomat::capi::CollatorAlternateHandling c_enum) {
   switch (c_enum) {
-    case capi::CollatorAlternateHandling_Auto:
-    case capi::CollatorAlternateHandling_NonIgnorable:
-    case capi::CollatorAlternateHandling_Shifted:
+    case diplomat::capi::CollatorAlternateHandling_Auto:
+    case diplomat::capi::CollatorAlternateHandling_NonIgnorable:
+    case diplomat::capi::CollatorAlternateHandling_Shifted:
       return static_cast<CollatorAlternateHandling::Value>(c_enum);
     default:
       abort();

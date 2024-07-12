@@ -8,17 +8,18 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "DataError.d.hpp"
-#include "Decomposed.d.hpp"
 
+namespace diplomat::capi { struct DataProvider; }
 class DataProvider;
 struct Decomposed;
 class DataError;
 
 
+namespace diplomat {
 namespace capi {
-    typedef struct CanonicalDecomposition CanonicalDecomposition;
-}
+    struct CanonicalDecomposition;
+} // namespace capi
+} // namespace
 
 class CanonicalDecomposition {
 public:
@@ -27,10 +28,10 @@ public:
 
   inline Decomposed decompose(char32_t c) const;
 
-  inline const capi::CanonicalDecomposition* AsFFI() const;
-  inline capi::CanonicalDecomposition* AsFFI();
-  inline static const CanonicalDecomposition* FromFFI(const capi::CanonicalDecomposition* ptr);
-  inline static CanonicalDecomposition* FromFFI(capi::CanonicalDecomposition* ptr);
+  inline const diplomat::capi::CanonicalDecomposition* AsFFI() const;
+  inline diplomat::capi::CanonicalDecomposition* AsFFI();
+  inline static const CanonicalDecomposition* FromFFI(const diplomat::capi::CanonicalDecomposition* ptr);
+  inline static CanonicalDecomposition* FromFFI(diplomat::capi::CanonicalDecomposition* ptr);
   inline static void operator delete(void* ptr);
 private:
   CanonicalDecomposition() = delete;
