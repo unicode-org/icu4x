@@ -1297,6 +1297,16 @@ impl FormatTimeZoneWithFallback for Iso8601Format {
         gmt_offset: GmtOffset,
         _data_payloads: TimeZoneDataPayloadsBorrowed,
     ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
+        self.format_infallible(sink, gmt_offset).map(|()| Ok(()))
+    }
+}
+
+impl Iso8601Format {
+    pub(crate) fn format_infallible<W: writeable::PartsWrite + ?Sized>(
+        &self,
+        sink: &mut W,
+        gmt_offset: GmtOffset,
+    ) -> Result<(), fmt::Error> {
         if gmt_offset.is_zero()
             && matches!(self.format, IsoFormat::UtcBasic | IsoFormat::UtcExtended)
         {
@@ -1325,7 +1335,7 @@ impl FormatTimeZoneWithFallback for Iso8601Format {
             format_offset_seconds(sink, gmt_offset)?;
         }
 
-        Ok(Ok(()))
+        Ok(())
     }
 }
 
