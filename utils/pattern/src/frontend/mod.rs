@@ -6,6 +6,9 @@
 mod databake;
 #[cfg(feature = "serde")]
 mod serde;
+#[cfg(feature = "zerovec")]
+mod zerovec;
+
 use crate::common::*;
 use crate::Error;
 use crate::PatternOrUtf8Error;
@@ -83,6 +86,7 @@ use writeable::{adapters::TryWriteableInfallibleAsWriteable, PartsWrite, TryWrit
     derive(zerofrom::ZeroFrom),
     zerofrom(may_borrow(Store))
 )]
+#[repr(transparent)]
 pub struct Pattern<Backend, Store: ?Sized> {
     _backend: PhantomData<Backend>,
     store: Store,
@@ -164,11 +168,32 @@ where
     }
 }
 
-impl<'a, B> Pattern<B, &'a B::Store>
+impl<B> Pattern<B, B::Store>
 where
     B: PatternBackend,
 {
-    /// Creates a pattern from its store encoded as UTF-8.
+    /// Creates a borrowed DST pattern from a borrowed store.
+    #[inline]
+    pub fn try_from_borrowed_store<'a>(store: &'a B::Store) -> Result<&'a Self, Error> {
+        B::validate_store(store)?;
+        Ok(Self::from_borrowed_store_unchecked(store))
+    }
+
+    /// Creates a borrowed DST pattern from a borrowed store.
+    ///
+    /// The store is expected to come from a valid `Pattern` with this `Backend`,
+    /// such as by calling [`Pattern::take_store()`]. If the store is not valid,
+    /// unexpected behavior may occur.
+    #[inline]
+    pub const fn from_borrowed_store_unchecked<'a>(store: &'a B::Store) -> &'a Self {
+        // Safety: `Pattern<B, B::Store>` is transparent over `B::Store`
+        unsafe { &*(store as *const B::Store as *const Pattern<B, B::Store>) }
+    }
+
+    /// Creates a pattern from its store encoded as bytes.
+    ///
+    /// The bytes are checked to be a valid store in their entirety,
+    /// and the same reference is returned.
     ///
     /// # Examples
     ///
@@ -176,18 +201,36 @@ where
     /// use icu_pattern::Pattern;
     /// use icu_pattern::SinglePlaceholder;
     ///
-    /// Pattern::<SinglePlaceholder, _>::try_from_utf8_store(b"\x01 days")
+    /// Pattern::<SinglePlaceholder, _>::try_from_bytes_store(b"\x01 days")
     ///     .expect("single placeholder pattern");
     /// ```
-    pub fn try_from_utf8_store(
-        code_units: &'a [u8],
-    ) -> Result<Self, PatternOrUtf8Error<B::StoreFromBytesError>> {
-        let store = B::try_store_from_utf8(code_units).map_err(PatternOrUtf8Error::Utf8)?;
-        B::validate_store(store).map_err(PatternOrUtf8Error::Pattern)?;
-        Ok(Self {
-            _backend: PhantomData,
-            store,
-        })
+    #[inline]
+    pub fn try_from_bytes_store<'a>(
+        store: &'a [u8],
+    ) -> Result<&'a Self, PatternOrUtf8Error<B::StoreFromBytesError>> {
+        match B::validate_store_bytes(store) {
+            Ok(()) => (),
+            Err(e) => {
+                return Err(PatternOrUtf8Error::Utf8(e));
+            }
+        }
+        // Safety: B::validate_store_bytes just succeeded
+        let store = unsafe { B::store_from_bytes(store) };
+        Self::try_from_borrowed_store(store).map_err(PatternOrUtf8Error::Pattern)
+    }
+
+    /// Creates a pattern from its store encoded as bytes.
+    ///
+    /// The same reference is returned.
+    ///
+    /// # Safety
+    ///
+    /// The bytes *must* be successfully convertible via [`Self::try_from_bytes_store`].
+    #[inline]
+    pub unsafe fn from_bytes_store_unchecked<'a>(store: &'a [u8]) -> &'a Self {
+        // Safety: by this function invariant, we can call `B::store_from_bytes`, an unsafe fn
+        let store = B::store_from_bytes(store);
+        Self::from_borrowed_store_unchecked(store)
     }
 }
 
