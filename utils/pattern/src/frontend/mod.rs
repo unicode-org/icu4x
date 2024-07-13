@@ -174,7 +174,7 @@ where
 {
     /// Creates a borrowed DST pattern from a borrowed store.
     #[inline]
-    pub fn try_from_borrowed_store<'a>(store: &'a B::Store) -> Result<&'a Self, Error> {
+    pub fn try_from_borrowed_store(store: &B::Store) -> Result<&Self, Error> {
         B::validate_store(store)?;
         Ok(Self::from_borrowed_store_unchecked(store))
     }
@@ -185,7 +185,7 @@ where
     /// such as by calling [`Pattern::take_store()`]. If the store is not valid,
     /// unexpected behavior may occur.
     #[inline]
-    pub const fn from_borrowed_store_unchecked<'a>(store: &'a B::Store) -> &'a Self {
+    pub const fn from_borrowed_store_unchecked(store: &B::Store) -> &Self {
         // Safety: `Pattern<B, B::Store>` is transparent over `B::Store`
         unsafe { &*(store as *const B::Store as *const Pattern<B, B::Store>) }
     }
@@ -205,9 +205,9 @@ where
     ///     .expect("single placeholder pattern");
     /// ```
     #[inline]
-    pub fn try_from_bytes_store<'a>(
-        store: &'a [u8],
-    ) -> Result<&'a Self, PatternOrUtf8Error<B::StoreFromBytesError>> {
+    pub fn try_from_bytes_store(
+        store: &[u8],
+    ) -> Result<&Self, PatternOrUtf8Error<B::StoreFromBytesError>> {
         match B::validate_store_bytes(store) {
             Ok(()) => (),
             Err(e) => {
@@ -227,7 +227,7 @@ where
     ///
     /// The bytes *must* be successfully convertible via [`Self::try_from_bytes_store`].
     #[inline]
-    pub unsafe fn from_bytes_store_unchecked<'a>(store: &'a [u8]) -> &'a Self {
+    pub unsafe fn from_bytes_store_unchecked(store: &[u8]) -> &Self {
         // Safety: by this function invariant, we can call `B::store_from_bytes`, an unsafe fn
         let store = B::store_from_bytes(store);
         Self::from_borrowed_store_unchecked(store)
