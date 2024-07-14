@@ -38,7 +38,7 @@ impl DataProvider<DigitalDurationDataV1Marker> for SourceDataProvider {
 
         // Find hour padding for hm
         let mut hm = hm.pat.as_str();
-        let hour_padding_hm = strip_padded_character(&mut hm, 'h');
+        let hm_hour_padding = strip_padded_character(&mut hm, 'h');
         let (hm_separator, _) = hm
             .split_once(|c| c == 'm')
             .ok_or_else(|| DataError::custom("Missing separator in hm pattern"))?;
@@ -52,7 +52,7 @@ impl DataProvider<DigitalDurationDataV1Marker> for SourceDataProvider {
 
         // Find hour padding for hms
         let mut hms = hms.pat.as_str();
-        let hour_padding_hms = strip_padded_character(&mut hms, 'h');
+        let hms_hour_padding = strip_padded_character(&mut hms, 'h');
         let (hms_separator, _) = hms
             .split_once(|c| c == 'm')
             .ok_or_else(|| DataError::custom("Missing separator in hms pattern"))?;
@@ -69,8 +69,8 @@ impl DataProvider<DigitalDurationDataV1Marker> for SourceDataProvider {
 
         let result = DigitalDurationDataV1 {
             separator: Cow::Owned(hm_separator.to_string()),
-            hms_hour_padding: hour_padding_hm,
-            hm_hour_padding: hour_padding_hm,
+            hms_hour_padding,
+            hm_hour_padding,
             minute_padding,
         };
 
