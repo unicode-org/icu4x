@@ -8,10 +8,6 @@
 //! Provider structs for digital data.
 
 use alloc::borrow::Cow;
-use alloc::string::{String, ToString};
-use core::str::FromStr;
-
-use displaydoc::Display;
 use icu_provider::prelude::*;
 
 #[icu_provider::data_struct(DigitalDurationDataV1Marker = "duration/digital@1")]
@@ -29,36 +25,15 @@ pub struct DigitalDurationDataV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub separator: Cow<str, 'data>,
 
-    /// The number of digits to pad the hour field with.
-    pub hour_padding: u8,
-}
+    /// The number of digits to pad hours when hour, minutes and seconds must be displayed.
+    /// Calculated from the hms pattern.
+    pub hms_hour_padding: u8,
 
-/// Unknown time pattern: {0}
-#[derive(Debug, Display)]
-pub struct UnknownPatternError(String);
+    /// The number of digits to pad hours when only hour and minutes must be displayed.
+    /// Calculated from the hm pattern.
+    pub hm_hour_padding: u8,
 
-impl<'data> FromStr for DigitalDurationDataV1<'data> {
-    type Err = UnknownPatternError;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match s {
-            "hh:mm:ss" => Ok(DigitalDurationDataV1 {
-                separator: ":".into(),
-                hour_padding: 2,
-            }),
-            "h:mm:ss" => Ok(DigitalDurationDataV1 {
-                separator: ":".into(),
-                hour_padding: 1,
-            }),
-            "h.mm.ss" => Ok(DigitalDurationDataV1 {
-                separator: ".".into(),
-                hour_padding: 1,
-            }),
-            "h,mm,ss" => Ok(DigitalDurationDataV1 {
-                separator: ",".into(),
-                hour_padding: 1,
-            }),
-            _ => Err(UnknownPatternError(s.to_string())),
-        }
-    }
+    /// The number of digits to pad minutes when only minutes and seconds must be displayed.
+    /// Calculated from the ms pattern.
+    pub minute_padding: u8,
 }
