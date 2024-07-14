@@ -986,7 +986,7 @@ impl FixedDecimal {
     /// Zero-pad the number on the left to a particular position,
     /// returning the result.
     ///
-    /// Negative numbers have no effect.
+    /// Negative position numbers have no effect.
     ///
     /// Also see [`FixedDecimal::with_max_position()`].
     ///
@@ -1012,7 +1012,7 @@ impl FixedDecimal {
 
     /// Zero-pad the number on the left to a particular position.
     ///
-    /// Negative numbers have no effect.
+    /// Negative position numbers have no effect.
     ///
     /// Also see [`FixedDecimal::set_max_position()`].
     ///
@@ -1053,7 +1053,7 @@ impl FixedDecimal {
     /// Zero-pad the number on the right to a particular (negative) position. Will truncate
     /// trailing zeros if necessary, but will not truncate other digits, returning the result.
     ///
-    /// Positive numbers have no effect.
+    /// Positive position numbers have no effect.
     ///
     /// Also see [`FixedDecimal::trunced()`].
     ///
@@ -1082,7 +1082,7 @@ impl FixedDecimal {
     /// Zero-pad the number on the right to a particular (negative) position. Will truncate
     /// trailing zeros if necessary, but will not truncate other digits.
     ///
-    /// Positive numbers have no effect.
+    /// Positive position numbers have no effect.
     ///
     /// Also see [`FixedDecimal::trunc()`].
     ///
