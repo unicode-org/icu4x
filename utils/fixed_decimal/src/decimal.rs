@@ -266,6 +266,7 @@ pub enum RoundingMode {
 ///
 /// ```
 /// use fixed_decimal::{FixedDecimal, RoundingIncrement, RoundingMode};
+/// use writeable::assert_writeable_eq;
 /// # use std::str::FromStr;
 /// let dec = FixedDecimal::from_str("-7.266").unwrap();
 /// let mode = RoundingMode::Expand;
@@ -285,13 +286,12 @@ pub enum RoundingMode {
 /// ];
 ///
 /// for (increment, expected) in increments {
-///     assert_eq!(
+///     assert_writeable_eq!(
 ///         dec.clone().rounded_with_mode_and_increment(
 ///             -2,
 ///             mode,
 ///             increment
-///         )
-///         .to_string(),
+///         ),
 ///         expected
 ///     );
 /// }
