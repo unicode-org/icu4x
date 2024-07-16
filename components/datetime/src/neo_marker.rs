@@ -3,6 +3,72 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 //! Temporary module for neo formatter markers.
+//!
+//! # Examples
+//!
+//! ## Time Zone Formatting
+//!
+//! Here, we configure a [`NeoFormatter`] to format with generic non-location short,
+//! which falls back to GMT when unavailable (see [`NeoTimeZoneGenericShortMarker`]).
+//!
+//! ```
+//! use icu::calendar::DateTime;
+//! use icu::timezone::{CustomTimeZone, MetazoneCalculator, TimeZoneIdMapper};
+//! use icu::datetime::neo::TypedNeoFormatter;
+//! use icu::datetime::neo_marker::NeoTimeZoneGenericShortMarker;
+//! use icu::datetime::NeverCalendar;
+//! use icu::locale::locale;
+//! use tinystr::tinystr;
+//! use writeable::assert_try_writeable_eq;
+//!
+//! // Set up the time zone. Note: the inputs here are
+//! //   1. The GMT offset
+//! //   2. The IANA time zone ID
+//! //   3. A datetime (for metazone resolution)
+//! //   4. Note: we do not need the zone variant because of `load_generic_*()`
+//!
+//! // Set up the Metazone calculator, time zone ID mapper,
+//! // and the DateTime to use in calculation
+//! let mzc = MetazoneCalculator::new();
+//! let mapper = TimeZoneIdMapper::new();
+//! let datetime = DateTime::try_new_iso_datetime(2022, 8, 29, 0, 0, 0)
+//!     .unwrap();
+//!
+//! // Set up the formatter
+//! let mut tzf = TypedNeoFormatter::<NeverCalendar, NeoTimeZoneGenericShortMarker>::try_new(
+//!     &locale!("en").into(),
+//!     // Length does not matter here: it is specified in the type parameter
+//!     Default::default(),
+//! )
+//! .unwrap();
+//!
+//! // "uschi" - has metazone symbol data for generic_non_location_short
+//! let mut time_zone = "-0600".parse::<CustomTimeZone>().unwrap();
+//! time_zone.time_zone_id = mapper.as_borrowed().iana_to_bcp47("America/Chicago");
+//! time_zone.maybe_calculate_metazone(&mzc, &datetime);
+//! assert_try_writeable_eq!(
+//!     tzf.format(&time_zone),
+//!     "CT"
+//! );
+//!
+//! // "ushnl" - has time zone override symbol data for generic_non_location_short
+//! let mut time_zone = "-1000".parse::<CustomTimeZone>().unwrap();
+//! time_zone.time_zone_id = Some(tinystr!(8, "ushnl").into());
+//! time_zone.maybe_calculate_metazone(&mzc, &datetime);
+//! assert_try_writeable_eq!(
+//!     tzf.format(&time_zone),
+//!     "HST"
+//! );
+//!
+//! // GMT with offset - used when metazone is not available
+//! let mut time_zone = "+0530".parse::<CustomTimeZone>().unwrap();
+//! assert_try_writeable_eq!(
+//!     tzf.format(&time_zone),
+//!     "GMT+05:30"
+//! );
+//!
+//! # Ok::<(), icu::datetime::DateTimeError>(())
+//! ```
 
 use core::marker::PhantomData;
 
