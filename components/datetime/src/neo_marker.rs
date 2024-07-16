@@ -1057,7 +1057,7 @@ macro_rules! impl_date_marker {
         input_day_of_year = $day_of_year_yesno:ident,
         input_any_calendar_kind = $any_calendar_kind_yesno:ident,
     ) => {
-        #[doc = concat!("Marker for ", $description, ": ", $expectation)]
+        #[doc = concat!("**“", $expectation, "**” ⇒ ", $description)]
         ///
         /// # Examples
         ///
@@ -1209,7 +1209,7 @@ macro_rules! impl_time_marker {
         input_second = $second_yesno:ident,
         input_nanosecond = $nanosecond_yesno:ident,
     ) => {
-        #[doc = concat!("Marker for ", $description, ": ", $expectation)]
+        #[doc = concat!("**“", $expectation, "**” ⇒ ", $description)]
         ///
         /// # Examples
         ///
@@ -1312,7 +1312,7 @@ macro_rules! impl_zone_marker {
         zone_specific_long = $zone_specific_long_yesno:ident,
         zone_specific_short = $zone_specific_short_yesno:ident,
     ) => {
-        #[doc = concat!("Marker for ", $description, ": ", $expectation)]
+        #[doc = concat!("**“", $expectation, "**” ⇒ ", $description)]
         ///
         /// # Examples
         ///
@@ -1558,7 +1558,7 @@ macro_rules! impl_zoneddatetime_marker {
 impl_day_marker!(
     NeoYearMonthDayMarker,
     NeoDayComponents::YearMonthDay,
-    description = "a Year/Month/Day format",
+    description = "year, month, and day (era elided when possible)",
     expectation = "May 17, 2024",
     years = yes,
     months = yes,
@@ -1575,7 +1575,7 @@ impl_day_marker!(
 impl_day_marker!(
     NeoEraYearMonthMarker,
     NeoDayComponents::EraYearMonthDay,
-    description = "an Era/Year/Month/Day format",
+    description = "year, month, and day (era always displayed)",
     expectation = "May 17, 2024 AD",
     years = yes,
     months = yes,
@@ -1632,7 +1632,7 @@ impl_datetime_marker!(
 impl_date_marker!(
     NeoYearMonthMarker,
     NeoDateComponents::YearMonth,
-    description = "a Year/Month format",
+    description = "year and month (era elided when possible)",
     expectation = "May 2024",
     years = yes,
     months = yes,
@@ -1649,7 +1649,7 @@ impl_date_marker!(
 impl_zone_marker!(
     NeoTimeZoneSpecificMarker,
     NeoTimeZoneSkeleton::specific(),
-    description = "a specific time zone format with inherited length",
+    description = "specific time zone with inherited length, or GMT offset if unavailable",
     expectation = "CDT",
     zone_essentials = yes,
     zone_exemplar_cities = no,
@@ -1694,7 +1694,7 @@ impl_zone_marker!(
     /// ```
     NeoTimeZoneSpecificShortMarker,
     NeoTimeZoneSkeleton::specific_short(),
-    description = "a short specific time zone format",
+    description = "specific time zone, short if possible, or GMT offset if unavailable",
     expectation = "CDT",
     zone_essentials = yes,
     zone_exemplar_cities = no,
@@ -1707,7 +1707,7 @@ impl_zone_marker!(
 impl_zone_marker!(
     NeoTimeZoneSpecificLongMarker,
     NeoTimeZoneSkeleton::specific_long(),
-    description = "a long specific time zone format",
+    description = "specific time zone, long if possible, or GMT offset if unavailable",
     expectation = "Central Daylight Time",
     zone_essentials = yes,
     zone_exemplar_cities = no,
@@ -1720,7 +1720,7 @@ impl_zone_marker!(
 impl_zone_marker!(
     NeoTimeZoneGmtMarker,
     NeoTimeZoneSkeleton::gmt(),
-    description = "a GMT-offset time zone format with inherited length",
+    description = "GMT offset with inherited length",
     expectation = "GMT-05:00", // TODO: Implement short localized GMT
     zone_essentials = yes,
     zone_exemplar_cities = no,
@@ -1733,7 +1733,7 @@ impl_zone_marker!(
 impl_zone_marker!(
     NeoTimeZoneGmtShortMarker,
     NeoTimeZoneSkeleton::gmt_short(),
-    description = "a GMT-offset short time zone format",
+    description = "GMT offset, short if possible",
     expectation = "GMT-05:00", // TODO: Implement short localized GMT
     zone_essentials = yes,
     zone_exemplar_cities = no,
@@ -1746,7 +1746,7 @@ impl_zone_marker!(
 impl_zone_marker!(
     NeoTimeZoneGmtLongMarker,
     NeoTimeZoneSkeleton::gmt_long(),
-    description = "a GMT-offset long time zone format",
+    description = "GMT offset, long if possible",
     expectation = "GMT-05:00",
     zone_essentials = yes,
     zone_exemplar_cities = no,
@@ -1759,7 +1759,7 @@ impl_zone_marker!(
 impl_zone_marker!(
     NeoTimeZoneGenericMarker,
     NeoTimeZoneSkeleton::generic(),
-    description = "a generic time zone format with inherited length",
+    description = "generic time zone with inherited length, or location if unavailable",
     expectation = "CT",
     zone_essentials = yes,
     zone_exemplar_cities = yes,
@@ -1804,7 +1804,7 @@ impl_zone_marker!(
     /// ```
     NeoTimeZoneGenericShortMarker,
     NeoTimeZoneSkeleton::generic_short(),
-    description = "a generic short time zone format",
+    description = "generic time zone, short if possible, or location if unavailable",
     expectation = "CT",
     zone_essentials = yes,
     zone_exemplar_cities = yes,
@@ -1817,7 +1817,7 @@ impl_zone_marker!(
 impl_zone_marker!(
     NeoTimeZoneGenericLongMarker,
     NeoTimeZoneSkeleton::generic_long(),
-    description = "a generic long time zone format",
+    description = "generic time zone, long if possible, or location if unavailable",
     expectation = "Central Time",
     zone_essentials = yes,
     zone_exemplar_cities = yes,
@@ -1830,7 +1830,7 @@ impl_zone_marker!(
 impl_zone_marker!(
     NeoTimeZoneLocationMarker,
     NeoTimeZoneSkeleton::location(),
-    description = "a location time zone format",
+    description = "location time zone",
     expectation = "Chicago Time",
     zone_essentials = yes,
     zone_exemplar_cities = yes,
