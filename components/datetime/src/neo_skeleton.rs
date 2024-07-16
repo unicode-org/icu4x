@@ -6,6 +6,8 @@
 
 use crate::options::components;
 use crate::options::length;
+use crate::time_zone::IsoMinutes;
+use crate::time_zone::IsoSeconds;
 #[cfg(feature = "experimental")]
 use crate::time_zone::ResolvedNeoTimeZoneSkeleton;
 use crate::DateTimeFormatterOptions;
@@ -759,6 +761,17 @@ impl From<NeoTimeZoneSkeleton> for NeoComponents {
     }
 }
 
+/// Specification of an offset time zone display style.
+pub enum OffsetTimeZoneStyle {
+    /// The localized GMT offset format, e.g., “GMT−8”.
+    ShortLocalizedGmt,
+    /// The ISO-8601-style offset format, e.g., “-0800”.
+    ///
+    /// Use [`NeoSkeletonLength::Long`] to opt-in to the Unicode variant
+    /// that includes time separators, e.g., “-08:00”.
+    Iso8601(IsoMinutes, IsoSeconds),
+}
+
 /// Specification of the time zone display style.
 ///
 /// Time zone names contribute a lot of data size. For resource-constrained
@@ -791,8 +804,8 @@ pub enum NeoTimeZoneStyle {
     ///
     /// When unavailable, falls back to [`NeoTimeZoneStyle::Offset`].
     SpecificNonLocation,
-    /// The offset from UTC format, e.g., “GMT−8”.
-    Offset,
+    /// The format showing an offset in hours, minutes, and/or seconds from UTC.
+    Offset(OffsetTimeZoneStyle),
 }
 
 /// A skeleton for formatting a time zone.
