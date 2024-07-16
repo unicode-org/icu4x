@@ -1,0 +1,6 @@
+{
+  "patterns": {
+    "One": "{0}kg",
+    "Other": "{0}kg"
+  }
+}

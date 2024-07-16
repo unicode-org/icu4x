@@ -1,7 +1,0 @@
-{
-  "patterns": {
-    "One": "{0} decimetar",
-    "Few": "{0} decimetra",
-    "Other": "{0} decimetara"
-  }
-}
