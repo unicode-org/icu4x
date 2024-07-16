@@ -1,7 +1,0 @@
-{
-  "patterns": {
-    "One": "{0} kv",
-    "Few": "{0} kv",
-    "Other": "{0} kv"
-  }
-}
