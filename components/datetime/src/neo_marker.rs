@@ -1428,7 +1428,7 @@ macro_rules! impl_datetime_marker {
         date = $date:path,
         time = $time:path,
     ) => {
-        #[doc = concat!("Marker for ", $description, ": ", $expectation)]
+        #[doc = concat!("**“", $expectation, "**” ⇒ ", $description)]
         ///
         /// # Examples
         ///
@@ -1491,7 +1491,7 @@ macro_rules! impl_zoneddatetime_marker {
         time = $time:path,
         zone = $zone:path,
     ) => {
-        #[doc = concat!("Marker for ", $description, ": ", $expectation)]
+        #[doc = concat!("**“", $expectation, "**” ⇒ ", $description)]
         ///
         /// # Examples
         ///
