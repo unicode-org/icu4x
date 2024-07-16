@@ -116,8 +116,8 @@ impl crate::IterableDataProviderCached<UnitsDisplayNameV1Marker> for SourceDataP
                     });
                 #[cfg(not(test))]
                 // NOTE: any units should have the category as a prefix which is separated by `-`.
-                //       Therefore, if the `rest` is empty, it means the key is not for a unit.
-                //       In this case, we should return None.
+                //       Therefore, if the key does not contain `-`, it is not a valid unit.
+                //       In this case, the result of `key.split_once('-')` will be None.
                 //       Example: `length-meter` is a valid key, but `length` is not.
                 //                `power3` is not a valid unit.
                 key.split_once('-').map(|(_category, unit)| unit)
