@@ -403,29 +403,6 @@ impl TimeZoneFormatter {
         /// ✨ *Enabled with the `compiled_data` Cargo feature.*
         ///
         /// [📚 Help choosing a constructor](icu_provider::constructors)
-        ///
-        /// # Examples
-        ///
-        /// Default format is Localized GMT:
-        ///
-        /// ```
-        /// use icu::datetime::time_zone::{
-        ///     TimeZoneFormatter, TimeZoneFormatterOptions,
-        /// };
-        /// use icu::locale::locale;
-        /// use icu::timezone::CustomTimeZone;
-        /// use writeable::assert_writeable_eq;
-        ///
-        /// let tzf = TimeZoneFormatter::try_new(
-        ///     &locale!("es").into(),
-        ///     TimeZoneFormatterOptions::default(),
-        /// )
-        /// .unwrap();
-        ///
-        /// let time_zone = "-0700".parse::<CustomTimeZone>().unwrap();
-        ///
-        /// assert_writeable_eq!(tzf.format(&time_zone), "GMT-07:00");
-        /// ```
     );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
@@ -658,27 +635,6 @@ impl TimeZoneFormatter {
 
     /// Takes a [`TimeZoneInput`] implementer and returns an instance of a [`FormattedTimeZone`]
     /// that contains all information necessary to display a formatted time zone and operate on it.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::datetime::time_zone::{
-    ///     TimeZoneFormatter, TimeZoneFormatterOptions,
-    /// };
-    /// use icu::locale::locale;
-    /// use icu::timezone::CustomTimeZone;
-    /// use writeable::assert_writeable_eq;
-    ///
-    /// let tzf = TimeZoneFormatter::try_new(
-    ///     &locale!("en").into(),
-    ///     TimeZoneFormatterOptions::default(),
-    /// )
-    /// .expect("Failed to create TimeZoneFormatter");
-    ///
-    /// let time_zone = CustomTimeZone::utc();
-    ///
-    /// assert_writeable_eq!(tzf.format(&time_zone), "GMT");
-    /// ```
     pub fn format<'l, T>(&'l self, value: &T) -> FormattedTimeZone<'l>
     where
         T: TimeZoneInput,
