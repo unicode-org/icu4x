@@ -70,6 +70,9 @@
 //! # Ok::<(), icu::datetime::DateTimeError>(())
 //! ```
 
+#[cfg(doc)]
+use crate::neo::NeoFormatter;
+
 use core::marker::PhantomData;
 
 use crate::{
