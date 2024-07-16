@@ -8,18 +8,19 @@ import 'dart:io';
 Future<void> main(List<String> args) async {
   if (args.isEmpty) {
     print(
-        'Usage: ${Platform.script.pathSegments.last} <out_dir> <target:${Target.values}> (<link mode: ${LinkMode.values}>)');
+        'Usage: ${Platform.script.pathSegments.last} <out_dir> <target:${Target.values}> <link mode: ${LinkMode.values}> <cargo features>');
     exit(1);
   }
   final out = Uri.file(args[0]).toFilePath();
   final target = Target.values.firstWhere((t) => t.toString() == args[1]);
-  final linkMode = LinkMode.values.firstWhere(
-      (l) => l.toString() == (args.elementAtOrNull(2) ?? 'dynamic'));
+  final linkMode = LinkMode.values.firstWhere((l) => l.toString() == args[2]);
+  final cargoFeatures = args[3].isNotEmpty ? args[3] : 'default_compnents';
 
-  await buildLib(target, linkMode, out);
+  await buildLib(target, linkMode, cargoFeatures, out);
 }
 
-Future<void> buildLib(Target target, LinkMode linkMode, String outName) async {
+Future<void> buildLib(
+    Target target, LinkMode linkMode, String features, String outName) async {
   var root = Platform.script.toFilePath().split('ffi')[0];
   root = root.substring(0, root.length - 1); // trim trailing slash
 
@@ -56,9 +57,9 @@ Future<void> buildLib(Target target, LinkMode linkMode, String outName) async {
     '--config=profile.release.codegen-units=1',
     '--no-default-features',
     if (!isNoStd)
-      '--features=default_components,compiled_data,buffer_provider,logging,simple_logger',
+      '--features=icu_experimental,compiled_data,buffer_provider,logging,simple_logger,$features',
     if (isNoStd)
-      '--features=default_components,compiled_data,buffer_provider,libc-alloc,panic-handler',
+      '--features=icu_experimental,compiled_data,buffer_provider,libc-alloc,panic-handler,$features',
     if (isNoStd) '-Zbuild-std=core,alloc',
     if (isNoStd) '-Zbuild-std-features=panic_immediate_abort',
     '--target=$rustTarget',
