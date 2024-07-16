@@ -106,14 +106,15 @@ impl crate::IterableDataProviderCached<UnitsDisplayNameV1Marker> for SourceDataP
                 // In order to reduce the number of units in the test data,
                 // we only test the length-* and duration-* units.
                 #[cfg(test)]
-                    return key
-                        .split_once('-')
-                        .and_then(|(_category, unit)| match unit {
-                            "meter" | "foot" | "kilogram" | "pound" | "hour" | "minute"
-                            | "second" => Some(unit),
-                            _ => None,
-                        });
-                    #[cfg(not(test))]
+                return key
+                    .split_once('-')
+                    .and_then(|(_category, unit)| match unit {
+                        "meter" | "foot" | "kilogram" | "pound" | "hour" | "minute" | "second" => {
+                            Some(unit)
+                        }
+                        _ => None,
+                    });
+                #[cfg(not(test))]
                 // NOTE: any units should have the category as a prefix which is separated by `-`.
                 //       Therefore, if the `rest` is empty, it means the key is not for a unit.
                 //       In this case, we should return None.
