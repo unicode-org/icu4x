@@ -16,5 +16,4 @@ typedef struct SentenceSegmenter SentenceSegmenter;
 
 
 
-
 #endif // SentenceSegmenter_D_H

@@ -14,8 +14,10 @@ components/collections/           @echeran
 components/datetime/              @zbraniecki @nordzilla
 components/decimal/               @sffc
 components/experimental/src/compactdecimal/      @eggrobin
+components/experimental/src/dimension/           @younies
 components/experimental/src/displaynames/        @sffc @snktd
 components/experimental/src/relativetime/        @pdogr
+components/experimental/src/units/               @younies
 components/list/                  @robertbastian
 components/locale/                @dminor @zbraniecki
 components/locale_core/           @zbraniecki @nciric
@@ -40,7 +42,7 @@ tools/make/                       @Manishearth @sffc
 utils/bies/                @sffc
 utils/databake                    @robertbastian @Manishearth
 utils/deduplicating_array         @robertbastian
-utils/fixed_decimal/              @sffc
+utils/fixed_decimal/              @sffc @younies
 utils/litemap/                    @Manishearth @sffc
 utils/pattern/                    @zbraniecki
 utils/tinystr                     @zbraniecki @sffc

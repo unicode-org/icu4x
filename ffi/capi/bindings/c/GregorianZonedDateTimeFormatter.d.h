@@ -16,5 +16,4 @@ typedef struct GregorianZonedDateTimeFormatter GregorianZonedDateTimeFormatter;
 
 
 
-
 #endif // GregorianZonedDateTimeFormatter_D_H

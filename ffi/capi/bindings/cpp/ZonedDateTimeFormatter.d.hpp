@@ -8,15 +8,16 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "DateLength.d.hpp"
-#include "Error.d.hpp"
-#include "IsoTimeZoneOptions.d.hpp"
-#include "TimeLength.d.hpp"
 
+namespace diplomat::capi { struct CustomTimeZone; }
 class CustomTimeZone;
+namespace diplomat::capi { struct DataProvider; }
 class DataProvider;
+namespace diplomat::capi { struct DateTime; }
 class DateTime;
+namespace diplomat::capi { struct IsoDateTime; }
 class IsoDateTime;
+namespace diplomat::capi { struct Locale; }
 class Locale;
 struct IsoTimeZoneOptions;
 class DateLength;
@@ -24,9 +25,11 @@ class Error;
 class TimeLength;
 
 
+namespace diplomat {
 namespace capi {
-    typedef struct ZonedDateTimeFormatter ZonedDateTimeFormatter;
-}
+    struct ZonedDateTimeFormatter;
+} // namespace capi
+} // namespace
 
 class ZonedDateTimeFormatter {
 public:
@@ -39,10 +42,10 @@ public:
 
   inline diplomat::result<std::string, Error> format_iso_datetime_with_custom_time_zone(const IsoDateTime& datetime, const CustomTimeZone& time_zone) const;
 
-  inline const capi::ZonedDateTimeFormatter* AsFFI() const;
-  inline capi::ZonedDateTimeFormatter* AsFFI();
-  inline static const ZonedDateTimeFormatter* FromFFI(const capi::ZonedDateTimeFormatter* ptr);
-  inline static ZonedDateTimeFormatter* FromFFI(capi::ZonedDateTimeFormatter* ptr);
+  inline const diplomat::capi::ZonedDateTimeFormatter* AsFFI() const;
+  inline diplomat::capi::ZonedDateTimeFormatter* AsFFI();
+  inline static const ZonedDateTimeFormatter* FromFFI(const diplomat::capi::ZonedDateTimeFormatter* ptr);
+  inline static ZonedDateTimeFormatter* FromFFI(diplomat::capi::ZonedDateTimeFormatter* ptr);
   inline static void operator delete(void* ptr);
 private:
   ZonedDateTimeFormatter() = delete;

@@ -10,12 +10,14 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
-    typedef enum IsoTimeZoneSecondDisplay {
+    enum IsoTimeZoneSecondDisplay {
       IsoTimeZoneSecondDisplay_Optional = 0,
       IsoTimeZoneSecondDisplay_Never = 1,
-    } IsoTimeZoneSecondDisplay;
-}
+    };
+} // namespace capi
+} // namespace
 
 class IsoTimeZoneSecondDisplay {
 public:
@@ -31,8 +33,8 @@ public:
   // Prevent usage as boolean value
   explicit operator bool() const = delete;
 
-  inline capi::IsoTimeZoneSecondDisplay AsFFI() const;
-  inline static IsoTimeZoneSecondDisplay FromFFI(capi::IsoTimeZoneSecondDisplay c_enum);
+  inline diplomat::capi::IsoTimeZoneSecondDisplay AsFFI() const;
+  inline static IsoTimeZoneSecondDisplay FromFFI(diplomat::capi::IsoTimeZoneSecondDisplay c_enum);
 private:
     Value value;
 };

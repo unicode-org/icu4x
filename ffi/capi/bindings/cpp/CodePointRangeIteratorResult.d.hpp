@@ -10,21 +10,24 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
-    typedef struct CodePointRangeIteratorResult {
+    struct CodePointRangeIteratorResult {
       uint32_t start;
       uint32_t end;
       bool done;
-    } CodePointRangeIteratorResult;
-}
+    };
+} // namespace capi
+} // namespace
+
 
 struct CodePointRangeIteratorResult {
   uint32_t start;
   uint32_t end;
   bool done;
 
-  inline capi::CodePointRangeIteratorResult AsFFI() const;
-  inline static CodePointRangeIteratorResult FromFFI(capi::CodePointRangeIteratorResult c_struct);
+  inline diplomat::capi::CodePointRangeIteratorResult AsFFI() const;
+  inline static CodePointRangeIteratorResult FromFFI(diplomat::capi::CodePointRangeIteratorResult c_struct);
 };
 
 

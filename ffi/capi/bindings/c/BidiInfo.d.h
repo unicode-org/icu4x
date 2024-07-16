@@ -16,5 +16,4 @@ typedef struct BidiInfo BidiInfo;
 
 
 
-
 #endif // BidiInfo_D_H

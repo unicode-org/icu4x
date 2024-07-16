@@ -12,27 +12,28 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
     extern "C" {
     
     
     } // extern "C"
+} // namespace capi
+} // namespace
+
+inline diplomat::capi::IsoWeekday IsoWeekday::AsFFI() const {
+  return static_cast<diplomat::capi::IsoWeekday>(value);
 }
 
-
-inline capi::IsoWeekday IsoWeekday::AsFFI() const {
-  return static_cast<capi::IsoWeekday>(value);
-}
-
-inline IsoWeekday IsoWeekday::FromFFI(capi::IsoWeekday c_enum) {
+inline IsoWeekday IsoWeekday::FromFFI(diplomat::capi::IsoWeekday c_enum) {
   switch (c_enum) {
-    case capi::IsoWeekday_Monday:
-    case capi::IsoWeekday_Tuesday:
-    case capi::IsoWeekday_Wednesday:
-    case capi::IsoWeekday_Thursday:
-    case capi::IsoWeekday_Friday:
-    case capi::IsoWeekday_Saturday:
-    case capi::IsoWeekday_Sunday:
+    case diplomat::capi::IsoWeekday_Monday:
+    case diplomat::capi::IsoWeekday_Tuesday:
+    case diplomat::capi::IsoWeekday_Wednesday:
+    case diplomat::capi::IsoWeekday_Thursday:
+    case diplomat::capi::IsoWeekday_Friday:
+    case diplomat::capi::IsoWeekday_Saturday:
+    case diplomat::capi::IsoWeekday_Sunday:
       return static_cast<IsoWeekday::Value>(c_enum);
     default:
       abort();

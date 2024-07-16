@@ -8,18 +8,20 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "AnyCalendarKind.d.hpp"
-#include "DataError.d.hpp"
 
+namespace diplomat::capi { struct DataProvider; }
 class DataProvider;
+namespace diplomat::capi { struct Locale; }
 class Locale;
 class AnyCalendarKind;
 class DataError;
 
 
+namespace diplomat {
 namespace capi {
-    typedef struct Calendar Calendar;
-}
+    struct Calendar;
+} // namespace capi
+} // namespace
 
 class Calendar {
 public:
@@ -30,10 +32,10 @@ public:
 
   inline AnyCalendarKind kind() const;
 
-  inline const capi::Calendar* AsFFI() const;
-  inline capi::Calendar* AsFFI();
-  inline static const Calendar* FromFFI(const capi::Calendar* ptr);
-  inline static Calendar* FromFFI(capi::Calendar* ptr);
+  inline const diplomat::capi::Calendar* AsFFI() const;
+  inline diplomat::capi::Calendar* AsFFI();
+  inline static const Calendar* FromFFI(const diplomat::capi::Calendar* ptr);
+  inline static Calendar* FromFFI(diplomat::capi::Calendar* ptr);
   inline static void operator delete(void* ptr);
 private:
   Calendar() = delete;

@@ -12,23 +12,24 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
     extern "C" {
     
     
     } // extern "C"
+} // namespace capi
+} // namespace
+
+inline diplomat::capi::CollatorCaseLevel CollatorCaseLevel::AsFFI() const {
+  return static_cast<diplomat::capi::CollatorCaseLevel>(value);
 }
 
-
-inline capi::CollatorCaseLevel CollatorCaseLevel::AsFFI() const {
-  return static_cast<capi::CollatorCaseLevel>(value);
-}
-
-inline CollatorCaseLevel CollatorCaseLevel::FromFFI(capi::CollatorCaseLevel c_enum) {
+inline CollatorCaseLevel CollatorCaseLevel::FromFFI(diplomat::capi::CollatorCaseLevel c_enum) {
   switch (c_enum) {
-    case capi::CollatorCaseLevel_Auto:
-    case capi::CollatorCaseLevel_Off:
-    case capi::CollatorCaseLevel_On:
+    case diplomat::capi::CollatorCaseLevel_Auto:
+    case diplomat::capi::CollatorCaseLevel_Off:
+    case diplomat::capi::CollatorCaseLevel_On:
       return static_cast<CollatorCaseLevel::Value>(c_enum);
     default:
       abort();

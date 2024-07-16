@@ -16,5 +16,4 @@ typedef struct LocaleCanonicalizer LocaleCanonicalizer;
 
 
 
-
 #endif // LocaleCanonicalizer_D_H

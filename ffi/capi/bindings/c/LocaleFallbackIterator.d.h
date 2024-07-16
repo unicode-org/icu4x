@@ -16,5 +16,4 @@ typedef struct LocaleFallbackIterator LocaleFallbackIterator;
 
 
 
-
 #endif // LocaleFallbackIterator_D_H

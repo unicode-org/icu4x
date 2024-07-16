@@ -16,5 +16,4 @@ typedef struct Logger Logger;
 
 
 
-
 #endif // Logger_D_H

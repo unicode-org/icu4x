@@ -8,17 +8,21 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "DataError.d.hpp"
 
+namespace diplomat::capi { struct CodePointRangeIterator; }
 class CodePointRangeIterator;
+namespace diplomat::capi { struct CodePointSetData; }
 class CodePointSetData;
+namespace diplomat::capi { struct DataProvider; }
 class DataProvider;
 class DataError;
 
 
+namespace diplomat {
 namespace capi {
-    typedef struct CodePointMapData8 CodePointMapData8;
-}
+    struct CodePointMapData8;
+} // namespace capi
+} // namespace
 
 class CodePointMapData8 {
 public:
@@ -57,10 +61,10 @@ public:
 
   inline static diplomat::result<std::unique_ptr<CodePointMapData8>, DataError> load_joining_type(const DataProvider& provider);
 
-  inline const capi::CodePointMapData8* AsFFI() const;
-  inline capi::CodePointMapData8* AsFFI();
-  inline static const CodePointMapData8* FromFFI(const capi::CodePointMapData8* ptr);
-  inline static CodePointMapData8* FromFFI(capi::CodePointMapData8* ptr);
+  inline const diplomat::capi::CodePointMapData8* AsFFI() const;
+  inline diplomat::capi::CodePointMapData8* AsFFI();
+  inline static const CodePointMapData8* FromFFI(const diplomat::capi::CodePointMapData8* ptr);
+  inline static CodePointMapData8* FromFFI(diplomat::capi::CodePointMapData8* ptr);
   inline static void operator delete(void* ptr);
 private:
   CodePointMapData8() = delete;

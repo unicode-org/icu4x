@@ -8,18 +8,23 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "DataError.d.hpp"
 
+namespace diplomat::capi { struct DataProvider; }
 class DataProvider;
+namespace diplomat::capi { struct MeasureUnit; }
 class MeasureUnit;
+namespace diplomat::capi { struct MeasureUnitParser; }
 class MeasureUnitParser;
+namespace diplomat::capi { struct UnitsConverter; }
 class UnitsConverter;
 class DataError;
 
 
+namespace diplomat {
 namespace capi {
-    typedef struct UnitsConverterFactory UnitsConverterFactory;
-}
+    struct UnitsConverterFactory;
+} // namespace capi
+} // namespace
 
 class UnitsConverterFactory {
 public:
@@ -30,10 +35,10 @@ public:
 
   inline std::unique_ptr<MeasureUnitParser> parser() const;
 
-  inline const capi::UnitsConverterFactory* AsFFI() const;
-  inline capi::UnitsConverterFactory* AsFFI();
-  inline static const UnitsConverterFactory* FromFFI(const capi::UnitsConverterFactory* ptr);
-  inline static UnitsConverterFactory* FromFFI(capi::UnitsConverterFactory* ptr);
+  inline const diplomat::capi::UnitsConverterFactory* AsFFI() const;
+  inline diplomat::capi::UnitsConverterFactory* AsFFI();
+  inline static const UnitsConverterFactory* FromFFI(const diplomat::capi::UnitsConverterFactory* ptr);
+  inline static UnitsConverterFactory* FromFFI(diplomat::capi::UnitsConverterFactory* ptr);
   inline static void operator delete(void* ptr);
 private:
   UnitsConverterFactory() = delete;

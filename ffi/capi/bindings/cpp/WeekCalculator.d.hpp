@@ -8,20 +8,21 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "DataError.d.hpp"
-#include "IsoWeekday.d.hpp"
-#include "WeekendContainsDay.d.hpp"
 
+namespace diplomat::capi { struct DataProvider; }
 class DataProvider;
+namespace diplomat::capi { struct Locale; }
 class Locale;
 struct WeekendContainsDay;
 class DataError;
 class IsoWeekday;
 
 
+namespace diplomat {
 namespace capi {
-    typedef struct WeekCalculator WeekCalculator;
-}
+    struct WeekCalculator;
+} // namespace capi
+} // namespace
 
 class WeekCalculator {
 public:
@@ -36,10 +37,10 @@ public:
 
   inline WeekendContainsDay weekend() const;
 
-  inline const capi::WeekCalculator* AsFFI() const;
-  inline capi::WeekCalculator* AsFFI();
-  inline static const WeekCalculator* FromFFI(const capi::WeekCalculator* ptr);
-  inline static WeekCalculator* FromFFI(capi::WeekCalculator* ptr);
+  inline const diplomat::capi::WeekCalculator* AsFFI() const;
+  inline diplomat::capi::WeekCalculator* AsFFI();
+  inline static const WeekCalculator* FromFFI(const diplomat::capi::WeekCalculator* ptr);
+  inline static WeekCalculator* FromFFI(diplomat::capi::WeekCalculator* ptr);
   inline static void operator delete(void* ptr);
 private:
   WeekCalculator() = delete;

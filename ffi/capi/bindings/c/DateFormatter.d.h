@@ -16,5 +16,4 @@ typedef struct DateFormatter DateFormatter;
 
 
 
-
 #endif // DateFormatter_D_H

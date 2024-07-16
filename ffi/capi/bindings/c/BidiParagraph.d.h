@@ -16,5 +16,4 @@ typedef struct BidiParagraph BidiParagraph;
 
 
 
-
 #endif // BidiParagraph_D_H

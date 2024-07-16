@@ -16,5 +16,4 @@ typedef struct TitlecaseMapper TitlecaseMapper;
 
 
 
-
 #endif // TitlecaseMapper_D_H

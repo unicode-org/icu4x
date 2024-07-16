@@ -10,13 +10,15 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
-    typedef enum CollatorAlternateHandling {
+    enum CollatorAlternateHandling {
       CollatorAlternateHandling_Auto = 0,
       CollatorAlternateHandling_NonIgnorable = 1,
       CollatorAlternateHandling_Shifted = 2,
-    } CollatorAlternateHandling;
-}
+    };
+} // namespace capi
+} // namespace
 
 class CollatorAlternateHandling {
 public:
@@ -33,8 +35,8 @@ public:
   // Prevent usage as boolean value
   explicit operator bool() const = delete;
 
-  inline capi::CollatorAlternateHandling AsFFI() const;
-  inline static CollatorAlternateHandling FromFFI(capi::CollatorAlternateHandling c_enum);
+  inline diplomat::capi::CollatorAlternateHandling AsFFI() const;
+  inline static CollatorAlternateHandling FromFFI(diplomat::capi::CollatorAlternateHandling c_enum);
 private:
     Value value;
 };

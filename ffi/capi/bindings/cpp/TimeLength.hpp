@@ -12,24 +12,25 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
     extern "C" {
     
     
     } // extern "C"
+} // namespace capi
+} // namespace
+
+inline diplomat::capi::TimeLength TimeLength::AsFFI() const {
+  return static_cast<diplomat::capi::TimeLength>(value);
 }
 
-
-inline capi::TimeLength TimeLength::AsFFI() const {
-  return static_cast<capi::TimeLength>(value);
-}
-
-inline TimeLength TimeLength::FromFFI(capi::TimeLength c_enum) {
+inline TimeLength TimeLength::FromFFI(diplomat::capi::TimeLength c_enum) {
   switch (c_enum) {
-    case capi::TimeLength_Full:
-    case capi::TimeLength_Long:
-    case capi::TimeLength_Medium:
-    case capi::TimeLength_Short:
+    case diplomat::capi::TimeLength_Full:
+    case diplomat::capi::TimeLength_Long:
+    case diplomat::capi::TimeLength_Medium:
+    case diplomat::capi::TimeLength_Short:
       return static_cast<TimeLength::Value>(c_enum);
     default:
       abort();

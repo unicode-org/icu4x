@@ -16,5 +16,4 @@ typedef struct CanonicalCombiningClassMap CanonicalCombiningClassMap;
 
 
 
-
 #endif // CanonicalCombiningClassMap_D_H

@@ -16,5 +16,4 @@ typedef struct CanonicalComposition CanonicalComposition;
 
 
 
-
 #endif // CanonicalComposition_D_H

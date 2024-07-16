@@ -10,13 +10,15 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
-    typedef enum WeekRelativeUnit {
+    enum WeekRelativeUnit {
       WeekRelativeUnit_Previous = 0,
       WeekRelativeUnit_Current = 1,
       WeekRelativeUnit_Next = 2,
-    } WeekRelativeUnit;
-}
+    };
+} // namespace capi
+} // namespace
 
 class WeekRelativeUnit {
 public:
@@ -33,8 +35,8 @@ public:
   // Prevent usage as boolean value
   explicit operator bool() const = delete;
 
-  inline capi::WeekRelativeUnit AsFFI() const;
-  inline static WeekRelativeUnit FromFFI(capi::WeekRelativeUnit c_enum);
+  inline diplomat::capi::WeekRelativeUnit AsFFI() const;
+  inline static WeekRelativeUnit FromFFI(diplomat::capi::WeekRelativeUnit c_enum);
 private:
     Value value;
 };

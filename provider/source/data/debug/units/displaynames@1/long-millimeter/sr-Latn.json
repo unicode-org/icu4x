@@ -1,7 +1,0 @@
-{
-  "patterns": {
-    "One": "{0} milimetar",
-    "Few": "{0} milimetra",
-    "Other": "{0} milimetara"
-  }
-}

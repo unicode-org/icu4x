@@ -16,5 +16,4 @@ typedef struct CodePointSetData CodePointSetData;
 
 
 
-
 #endif // CodePointSetData_D_H

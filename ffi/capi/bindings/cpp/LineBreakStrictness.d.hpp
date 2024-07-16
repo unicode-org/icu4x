@@ -10,14 +10,16 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
-    typedef enum LineBreakStrictness {
+    enum LineBreakStrictness {
       LineBreakStrictness_Loose = 0,
       LineBreakStrictness_Normal = 1,
       LineBreakStrictness_Strict = 2,
       LineBreakStrictness_Anywhere = 3,
-    } LineBreakStrictness;
-}
+    };
+} // namespace capi
+} // namespace
 
 class LineBreakStrictness {
 public:
@@ -35,8 +37,8 @@ public:
   // Prevent usage as boolean value
   explicit operator bool() const = delete;
 
-  inline capi::LineBreakStrictness AsFFI() const;
-  inline static LineBreakStrictness FromFFI(capi::LineBreakStrictness c_enum);
+  inline diplomat::capi::LineBreakStrictness AsFFI() const;
+  inline static LineBreakStrictness FromFFI(diplomat::capi::LineBreakStrictness c_enum);
 private:
     Value value;
 };

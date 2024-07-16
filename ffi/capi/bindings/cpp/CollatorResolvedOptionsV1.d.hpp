@@ -25,17 +25,20 @@ class CollatorNumeric;
 class CollatorStrength;
 
 
+namespace diplomat {
 namespace capi {
-    typedef struct CollatorResolvedOptionsV1 {
-      CollatorStrength strength;
-      CollatorAlternateHandling alternate_handling;
-      CollatorCaseFirst case_first;
-      CollatorMaxVariable max_variable;
-      CollatorCaseLevel case_level;
-      CollatorNumeric numeric;
-      CollatorBackwardSecondLevel backward_second_level;
-    } CollatorResolvedOptionsV1;
-}
+    struct CollatorResolvedOptionsV1 {
+      diplomat::capi::CollatorStrength strength;
+      diplomat::capi::CollatorAlternateHandling alternate_handling;
+      diplomat::capi::CollatorCaseFirst case_first;
+      diplomat::capi::CollatorMaxVariable max_variable;
+      diplomat::capi::CollatorCaseLevel case_level;
+      diplomat::capi::CollatorNumeric numeric;
+      diplomat::capi::CollatorBackwardSecondLevel backward_second_level;
+    };
+} // namespace capi
+} // namespace
+
 
 struct CollatorResolvedOptionsV1 {
   CollatorStrength strength;
@@ -46,8 +49,8 @@ struct CollatorResolvedOptionsV1 {
   CollatorNumeric numeric;
   CollatorBackwardSecondLevel backward_second_level;
 
-  inline capi::CollatorResolvedOptionsV1 AsFFI() const;
-  inline static CollatorResolvedOptionsV1 FromFFI(capi::CollatorResolvedOptionsV1 c_struct);
+  inline diplomat::capi::CollatorResolvedOptionsV1 AsFFI() const;
+  inline static CollatorResolvedOptionsV1 FromFFI(diplomat::capi::CollatorResolvedOptionsV1 c_struct);
 };
 
 

@@ -10,9 +10,11 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
-    typedef struct UnitsConverter UnitsConverter;
-}
+    struct UnitsConverter;
+} // namespace capi
+} // namespace
 
 class UnitsConverter {
 public:
@@ -21,10 +23,10 @@ public:
 
   inline std::unique_ptr<UnitsConverter> clone() const;
 
-  inline const capi::UnitsConverter* AsFFI() const;
-  inline capi::UnitsConverter* AsFFI();
-  inline static const UnitsConverter* FromFFI(const capi::UnitsConverter* ptr);
-  inline static UnitsConverter* FromFFI(capi::UnitsConverter* ptr);
+  inline const diplomat::capi::UnitsConverter* AsFFI() const;
+  inline diplomat::capi::UnitsConverter* AsFFI();
+  inline static const UnitsConverter* FromFFI(const diplomat::capi::UnitsConverter* ptr);
+  inline static UnitsConverter* FromFFI(diplomat::capi::UnitsConverter* ptr);
   inline static void operator delete(void* ptr);
 private:
   UnitsConverter() = delete;

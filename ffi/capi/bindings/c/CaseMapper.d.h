@@ -16,5 +16,4 @@ typedef struct CaseMapper CaseMapper;
 
 
 
-
 #endif // CaseMapper_D_H

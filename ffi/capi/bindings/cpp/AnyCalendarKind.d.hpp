@@ -9,11 +9,13 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 
+namespace diplomat::capi { struct Locale; }
 class Locale;
 
 
+namespace diplomat {
 namespace capi {
-    typedef enum AnyCalendarKind {
+    enum AnyCalendarKind {
       AnyCalendarKind_Iso = 0,
       AnyCalendarKind_Gregorian = 1,
       AnyCalendarKind_Buddhist = 2,
@@ -32,8 +34,9 @@ namespace capi {
       AnyCalendarKind_IslamicUmmAlQura = 15,
       AnyCalendarKind_Persian = 16,
       AnyCalendarKind_Roc = 17,
-    } AnyCalendarKind;
-}
+    };
+} // namespace capi
+} // namespace
 
 class AnyCalendarKind {
 public:
@@ -71,8 +74,8 @@ public:
 
   inline std::string bcp47();
 
-  inline capi::AnyCalendarKind AsFFI() const;
-  inline static AnyCalendarKind FromFFI(capi::AnyCalendarKind c_enum);
+  inline diplomat::capi::AnyCalendarKind AsFFI() const;
+  inline static AnyCalendarKind FromFFI(diplomat::capi::AnyCalendarKind c_enum);
 private:
     Value value;
 };

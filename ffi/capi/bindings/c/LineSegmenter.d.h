@@ -16,5 +16,4 @@ typedef struct LineSegmenter LineSegmenter;
 
 
 
-
 #endif // LineSegmenter_D_H

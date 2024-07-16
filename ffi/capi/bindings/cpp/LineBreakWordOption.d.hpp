@@ -10,13 +10,15 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
-    typedef enum LineBreakWordOption {
+    enum LineBreakWordOption {
       LineBreakWordOption_Normal = 0,
       LineBreakWordOption_BreakAll = 1,
       LineBreakWordOption_KeepAll = 2,
-    } LineBreakWordOption;
-}
+    };
+} // namespace capi
+} // namespace
 
 class LineBreakWordOption {
 public:
@@ -33,8 +35,8 @@ public:
   // Prevent usage as boolean value
   explicit operator bool() const = delete;
 
-  inline capi::LineBreakWordOption AsFFI() const;
-  inline static LineBreakWordOption FromFFI(capi::LineBreakWordOption c_enum);
+  inline diplomat::capi::LineBreakWordOption AsFFI() const;
+  inline static LineBreakWordOption FromFFI(diplomat::capi::LineBreakWordOption c_enum);
 private:
     Value value;
 };

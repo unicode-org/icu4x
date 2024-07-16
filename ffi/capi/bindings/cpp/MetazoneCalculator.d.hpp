@@ -8,25 +8,27 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "DataError.d.hpp"
 
+namespace diplomat::capi { struct DataProvider; }
 class DataProvider;
 class DataError;
 
 
+namespace diplomat {
 namespace capi {
-    typedef struct MetazoneCalculator MetazoneCalculator;
-}
+    struct MetazoneCalculator;
+} // namespace capi
+} // namespace
 
 class MetazoneCalculator {
 public:
 
   inline static diplomat::result<std::unique_ptr<MetazoneCalculator>, DataError> create(const DataProvider& provider);
 
-  inline const capi::MetazoneCalculator* AsFFI() const;
-  inline capi::MetazoneCalculator* AsFFI();
-  inline static const MetazoneCalculator* FromFFI(const capi::MetazoneCalculator* ptr);
-  inline static MetazoneCalculator* FromFFI(capi::MetazoneCalculator* ptr);
+  inline const diplomat::capi::MetazoneCalculator* AsFFI() const;
+  inline diplomat::capi::MetazoneCalculator* AsFFI();
+  inline static const MetazoneCalculator* FromFFI(const diplomat::capi::MetazoneCalculator* ptr);
+  inline static MetazoneCalculator* FromFFI(diplomat::capi::MetazoneCalculator* ptr);
   inline static void operator delete(void* ptr);
 private:
   MetazoneCalculator() = delete;

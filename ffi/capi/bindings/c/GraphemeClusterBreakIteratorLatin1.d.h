@@ -16,5 +16,4 @@ typedef struct GraphemeClusterBreakIteratorLatin1 GraphemeClusterBreakIteratorLa
 
 
 
-
 #endif // GraphemeClusterBreakIteratorLatin1_D_H

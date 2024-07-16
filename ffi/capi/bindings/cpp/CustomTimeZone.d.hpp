@@ -8,19 +8,22 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "TimeZoneInvalidIdError.d.hpp"
-#include "TimeZoneInvalidOffsetError.d.hpp"
 
+namespace diplomat::capi { struct IsoDateTime; }
 class IsoDateTime;
+namespace diplomat::capi { struct MetazoneCalculator; }
 class MetazoneCalculator;
+namespace diplomat::capi { struct TimeZoneIdMapper; }
 class TimeZoneIdMapper;
 class TimeZoneInvalidIdError;
 class TimeZoneInvalidOffsetError;
 
 
+namespace diplomat {
 namespace capi {
-    typedef struct CustomTimeZone CustomTimeZone;
-}
+    struct CustomTimeZone;
+} // namespace capi
+} // namespace
 
 class CustomTimeZone {
 public:
@@ -36,6 +39,8 @@ public:
   inline static std::unique_ptr<CustomTimeZone> create_bst();
 
   inline diplomat::result<std::monostate, TimeZoneInvalidOffsetError> try_set_gmt_offset_seconds(int32_t offset_seconds);
+
+  inline void set_gmt_offset_eighths_of_hour(int8_t offset_eighths_of_hour);
 
   inline void clear_gmt_offset();
 
@@ -79,10 +84,10 @@ public:
 
   inline void maybe_calculate_metazone(const MetazoneCalculator& metazone_calculator, const IsoDateTime& local_datetime);
 
-  inline const capi::CustomTimeZone* AsFFI() const;
-  inline capi::CustomTimeZone* AsFFI();
-  inline static const CustomTimeZone* FromFFI(const capi::CustomTimeZone* ptr);
-  inline static CustomTimeZone* FromFFI(capi::CustomTimeZone* ptr);
+  inline const diplomat::capi::CustomTimeZone* AsFFI() const;
+  inline diplomat::capi::CustomTimeZone* AsFFI();
+  inline static const CustomTimeZone* FromFFI(const diplomat::capi::CustomTimeZone* ptr);
+  inline static CustomTimeZone* FromFFI(diplomat::capi::CustomTimeZone* ptr);
   inline static void operator delete(void* ptr);
 private:
   CustomTimeZone() = delete;

@@ -10,13 +10,15 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
-    typedef enum CollatorNumeric {
+    enum CollatorNumeric {
       CollatorNumeric_Auto = 0,
       CollatorNumeric_Off = 1,
       CollatorNumeric_On = 2,
-    } CollatorNumeric;
-}
+    };
+} // namespace capi
+} // namespace
 
 class CollatorNumeric {
 public:
@@ -33,8 +35,8 @@ public:
   // Prevent usage as boolean value
   explicit operator bool() const = delete;
 
-  inline capi::CollatorNumeric AsFFI() const;
-  inline static CollatorNumeric FromFFI(capi::CollatorNumeric c_enum);
+  inline diplomat::capi::CollatorNumeric AsFFI() const;
+  inline static CollatorNumeric FromFFI(diplomat::capi::CollatorNumeric c_enum);
 private:
     Value value;
 };

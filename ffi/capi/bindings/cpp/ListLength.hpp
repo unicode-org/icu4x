@@ -12,23 +12,24 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
     extern "C" {
     
     
     } // extern "C"
+} // namespace capi
+} // namespace
+
+inline diplomat::capi::ListLength ListLength::AsFFI() const {
+  return static_cast<diplomat::capi::ListLength>(value);
 }
 
-
-inline capi::ListLength ListLength::AsFFI() const {
-  return static_cast<capi::ListLength>(value);
-}
-
-inline ListLength ListLength::FromFFI(capi::ListLength c_enum) {
+inline ListLength ListLength::FromFFI(diplomat::capi::ListLength c_enum) {
   switch (c_enum) {
-    case capi::ListLength_Wide:
-    case capi::ListLength_Short:
-    case capi::ListLength_Narrow:
+    case diplomat::capi::ListLength_Wide:
+    case diplomat::capi::ListLength_Short:
+    case diplomat::capi::ListLength_Narrow:
       return static_cast<ListLength::Value>(c_enum);
     default:
       abort();

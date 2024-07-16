@@ -87,6 +87,13 @@ final class CustomTimeZone implements ffi.Finalizable {
     
   }
 
+  /// Sets the `gmt_offset` field from offset eighths of an hour.
+  ///
+  /// See the [Rust documentation for `from_offset_eighths_of_hour`](https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html#method.from_offset_eighths_of_hour) for more information.
+  void setGmtOffsetEighthsOfHour(int offsetEighthsOfHour) {
+    _ICU4XCustomTimeZone_set_gmt_offset_eighths_of_hour(_ffi, offsetEighthsOfHour);
+  }
+
   /// Clears the `gmt_offset` field.
   ///
   /// See the [Rust documentation for `offset_seconds`](https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html#method.offset_seconds) for more information.
@@ -404,6 +411,11 @@ external ffi.Pointer<ffi.Opaque> _ICU4XCustomTimeZone_create_bst();
 @ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Int32)>(isLeaf: true, symbol: 'ICU4XCustomTimeZone_try_set_gmt_offset_seconds')
 // ignore: non_constant_identifier_names
 external _ResultVoidInt32 _ICU4XCustomTimeZone_try_set_gmt_offset_seconds(ffi.Pointer<ffi.Opaque> self, int offsetSeconds);
+
+@meta.ResourceIdentifier('ICU4XCustomTimeZone_set_gmt_offset_eighths_of_hour')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int8)>(isLeaf: true, symbol: 'ICU4XCustomTimeZone_set_gmt_offset_eighths_of_hour')
+// ignore: non_constant_identifier_names
+external void _ICU4XCustomTimeZone_set_gmt_offset_eighths_of_hour(ffi.Pointer<ffi.Opaque> self, int offsetEighthsOfHour);
 
 @meta.ResourceIdentifier('ICU4XCustomTimeZone_clear_gmt_offset')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCustomTimeZone_clear_gmt_offset')

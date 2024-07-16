@@ -8,18 +8,20 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "DataError.d.hpp"
-#include "ListLength.d.hpp"
 
+namespace diplomat::capi { struct DataProvider; }
 class DataProvider;
+namespace diplomat::capi { struct Locale; }
 class Locale;
 class DataError;
 class ListLength;
 
 
+namespace diplomat {
 namespace capi {
-    typedef struct ListFormatter ListFormatter;
-}
+    struct ListFormatter;
+} // namespace capi
+} // namespace
 
 class ListFormatter {
 public:
@@ -36,10 +38,10 @@ public:
 
   inline std::string format_utf16(diplomat::span<const std::u16string_view> list) const;
 
-  inline const capi::ListFormatter* AsFFI() const;
-  inline capi::ListFormatter* AsFFI();
-  inline static const ListFormatter* FromFFI(const capi::ListFormatter* ptr);
-  inline static ListFormatter* FromFFI(capi::ListFormatter* ptr);
+  inline const diplomat::capi::ListFormatter* AsFFI() const;
+  inline diplomat::capi::ListFormatter* AsFFI();
+  inline static const ListFormatter* FromFFI(const diplomat::capi::ListFormatter* ptr);
+  inline static ListFormatter* FromFFI(diplomat::capi::ListFormatter* ptr);
   inline static void operator delete(void* ptr);
 private:
   ListFormatter() = delete;

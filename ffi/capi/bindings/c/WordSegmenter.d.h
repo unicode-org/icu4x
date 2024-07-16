@@ -16,5 +16,4 @@ typedef struct WordSegmenter WordSegmenter;
 
 
 
-
 #endif // WordSegmenter_D_H

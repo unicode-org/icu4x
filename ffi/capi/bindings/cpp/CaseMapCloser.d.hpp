@@ -8,16 +8,19 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "DataError.d.hpp"
 
+namespace diplomat::capi { struct CodePointSetBuilder; }
 class CodePointSetBuilder;
+namespace diplomat::capi { struct DataProvider; }
 class DataProvider;
 class DataError;
 
 
+namespace diplomat {
 namespace capi {
-    typedef struct CaseMapCloser CaseMapCloser;
-}
+    struct CaseMapCloser;
+} // namespace capi
+} // namespace
 
 class CaseMapCloser {
 public:
@@ -28,10 +31,10 @@ public:
 
   inline bool add_string_case_closure_to(std::string_view s, CodePointSetBuilder& builder) const;
 
-  inline const capi::CaseMapCloser* AsFFI() const;
-  inline capi::CaseMapCloser* AsFFI();
-  inline static const CaseMapCloser* FromFFI(const capi::CaseMapCloser* ptr);
-  inline static CaseMapCloser* FromFFI(capi::CaseMapCloser* ptr);
+  inline const diplomat::capi::CaseMapCloser* AsFFI() const;
+  inline diplomat::capi::CaseMapCloser* AsFFI();
+  inline static const CaseMapCloser* FromFFI(const diplomat::capi::CaseMapCloser* ptr);
+  inline static CaseMapCloser* FromFFI(diplomat::capi::CaseMapCloser* ptr);
   inline static void operator delete(void* ptr);
 private:
   CaseMapCloser() = delete;

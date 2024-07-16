@@ -12,29 +12,30 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
     extern "C" {
     
     
     } // extern "C"
+} // namespace capi
+} // namespace
+
+inline diplomat::capi::DataError DataError::AsFFI() const {
+  return static_cast<diplomat::capi::DataError>(value);
 }
 
-
-inline capi::DataError DataError::AsFFI() const {
-  return static_cast<capi::DataError>(value);
-}
-
-inline DataError DataError::FromFFI(capi::DataError c_enum) {
+inline DataError DataError::FromFFI(diplomat::capi::DataError c_enum) {
   switch (c_enum) {
-    case capi::DataError_Unknown:
-    case capi::DataError_MarkerNotFound:
-    case capi::DataError_IdentifierNotFound:
-    case capi::DataError_InvalidRequest:
-    case capi::DataError_InconsistentData:
-    case capi::DataError_Downcast:
-    case capi::DataError_Deserialize:
-    case capi::DataError_Custom:
-    case capi::DataError_Io:
+    case diplomat::capi::DataError_Unknown:
+    case diplomat::capi::DataError_MarkerNotFound:
+    case diplomat::capi::DataError_IdentifierNotFound:
+    case diplomat::capi::DataError_InvalidRequest:
+    case diplomat::capi::DataError_InconsistentData:
+    case diplomat::capi::DataError_Downcast:
+    case diplomat::capi::DataError_Deserialize:
+    case diplomat::capi::DataError_Custom:
+    case diplomat::capi::DataError_Io:
       return static_cast<DataError::Value>(c_enum);
     default:
       abort();

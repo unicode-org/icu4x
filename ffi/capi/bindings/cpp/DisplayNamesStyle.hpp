@@ -12,25 +12,26 @@
 #include "diplomat_runtime.hpp"
 
 
+namespace diplomat {
 namespace capi {
     extern "C" {
     
     
     } // extern "C"
+} // namespace capi
+} // namespace
+
+inline diplomat::capi::DisplayNamesStyle DisplayNamesStyle::AsFFI() const {
+  return static_cast<diplomat::capi::DisplayNamesStyle>(value);
 }
 
-
-inline capi::DisplayNamesStyle DisplayNamesStyle::AsFFI() const {
-  return static_cast<capi::DisplayNamesStyle>(value);
-}
-
-inline DisplayNamesStyle DisplayNamesStyle::FromFFI(capi::DisplayNamesStyle c_enum) {
+inline DisplayNamesStyle DisplayNamesStyle::FromFFI(diplomat::capi::DisplayNamesStyle c_enum) {
   switch (c_enum) {
-    case capi::DisplayNamesStyle_Auto:
-    case capi::DisplayNamesStyle_Narrow:
-    case capi::DisplayNamesStyle_Short:
-    case capi::DisplayNamesStyle_Long:
-    case capi::DisplayNamesStyle_Menu:
+    case diplomat::capi::DisplayNamesStyle_Auto:
+    case diplomat::capi::DisplayNamesStyle_Narrow:
+    case diplomat::capi::DisplayNamesStyle_Short:
+    case diplomat::capi::DisplayNamesStyle_Long:
+    case diplomat::capi::DisplayNamesStyle_Menu:
       return static_cast<DisplayNamesStyle::Value>(c_enum);
     default:
       abort();

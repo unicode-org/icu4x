@@ -1,7 +1,0 @@
-{
-  "patterns": {
-    "One": "{0} astronomska jedinica",
-    "Few": "{0} astronomske jedinice",
-    "Other": "{0} astronomskih jedinica"
-  }
-}

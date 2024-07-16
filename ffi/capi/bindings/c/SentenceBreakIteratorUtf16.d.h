@@ -16,5 +16,4 @@ typedef struct SentenceBreakIteratorUtf16 SentenceBreakIteratorUtf16;
 
 
 
-
 #endif // SentenceBreakIteratorUtf16_D_H

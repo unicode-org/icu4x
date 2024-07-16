@@ -19,16 +19,18 @@
 #include "CollatorStrength.hpp"
 
 
+namespace diplomat {
 namespace capi {
     extern "C" {
     
     
     } // extern "C"
-}
+} // namespace capi
+} // namespace
 
 
-inline capi::CollatorResolvedOptionsV1 CollatorResolvedOptionsV1::AsFFI() const {
-  return capi::CollatorResolvedOptionsV1 {
+inline diplomat::capi::CollatorResolvedOptionsV1 CollatorResolvedOptionsV1::AsFFI() const {
+  return diplomat::capi::CollatorResolvedOptionsV1 {
     .strength = strength.AsFFI(),
     .alternate_handling = alternate_handling.AsFFI(),
     .case_first = case_first.AsFFI(),
@@ -39,7 +41,7 @@ inline capi::CollatorResolvedOptionsV1 CollatorResolvedOptionsV1::AsFFI() const 
   };
 }
 
-inline CollatorResolvedOptionsV1 CollatorResolvedOptionsV1::FromFFI(capi::CollatorResolvedOptionsV1 c_struct) {
+inline CollatorResolvedOptionsV1 CollatorResolvedOptionsV1::FromFFI(diplomat::capi::CollatorResolvedOptionsV1 c_struct) {
   return CollatorResolvedOptionsV1 {
     .strength = CollatorStrength::FromFFI(c_struct.strength),
     .alternate_handling = CollatorAlternateHandling::FromFFI(c_struct.alternate_handling),

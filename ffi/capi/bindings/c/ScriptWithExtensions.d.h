@@ -16,5 +16,4 @@ typedef struct ScriptWithExtensions ScriptWithExtensions;
 
 
 
-
 #endif // ScriptWithExtensions_D_H

@@ -16,5 +16,4 @@ typedef struct PluralOperands PluralOperands;
 
 
 
-
 #endif // PluralOperands_D_H
