@@ -17,10 +17,13 @@ use icu_provider::DataMarkerAttributes;
 /// [`crate::options::length::Date`], this has only three levels, with no
 /// `Full`; this is because `Full` corresponds to additional components,
 /// rather than to making the components wider than in `Long`.
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, Default)]
 #[non_exhaustive]
 pub enum NeoSkeletonLength {
     /// A long date, typically spelled-out, as in “January 1, 2000”.
+    ///
+    /// This is the default due to being the most unambiguous format.
+    #[default]
     Long,
     /// A medium-sized date; typically abbreviated, as in “Jan. 1, 2000”.
     Medium,
