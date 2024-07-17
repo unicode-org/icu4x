@@ -146,7 +146,8 @@ pub mod ffi {
         ///
         /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
         /// to the WHATWG Encoding Standard.
-        #[diplomat::rust_link(icu::collator::Collator::compare, FnInStruct)]
+        #[diplomat::rust_link(icu::collator::Collator::compare_utf8, FnInStruct)]
+        #[diplomat::rust_link(icu::collator::Collator::compare, FnInStruct, hidden)]
         #[diplomat::attr(any(dart, js), disable)]
         pub fn compare(&self, left: &DiplomatStr, right: &DiplomatStr) -> core::cmp::Ordering {
             self.0.compare_utf8(left, right)
