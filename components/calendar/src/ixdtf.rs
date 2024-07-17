@@ -49,6 +49,7 @@ impl TryFrom<TimeRecord> for Time {
 }
 
 impl AnyCalendar {
+    #[cfg(feature = "compiled_data")]
     fn try_from_ixdtf_record(ixdtf_record: &IxdtfParseRecord) -> Result<Self, FromIxdtfError> {
         let calendar_id = ixdtf_record.calendar.unwrap_or(b"iso");
         let calendar_kind = crate::AnyCalendarKind::get_for_bcp47_bytes(calendar_id)
@@ -62,6 +63,8 @@ impl Date<Iso> {
     /// Creates a [`Date`] in the ISO-8601 calendar from an IXDTF syntax string.
     ///
     /// Ignores any calendar annotations in the string.
+    ///
+    /// ✨ *Enabled with the `ixdtf` Cargo feature.*
     ///
     /// # Examples
     ///
@@ -84,6 +87,8 @@ impl Date<Iso> {
     /// Creates a [`Date`] in the ISO-8601 calendar from an IXDTF syntax string.
     ///
     /// See [`Self::try_iso_from_str()`].
+    ///
+    /// ✨ *Enabled with the `ixdtf` Cargo feature.*
     pub fn try_iso_from_utf8(ixdtf_str: &[u8]) -> Result<Self, FromIxdtfError> {
         let ixdtf_record = IxdtfParser::from_utf8(ixdtf_str).parse()?;
         Self::try_from_ixdtf_record(&ixdtf_record)
@@ -106,6 +111,8 @@ impl FromStr for Date<Iso> {
 impl Date<AnyCalendar> {
     /// Creates a [`Date`] in any calendar from an IXDTF syntax string with compiled data.
     ///
+    /// ✨ *Enabled with the `compiled_data` and `ixdtf` Cargo features.*
+    ///
     /// # Examples
     ///
     /// ```
@@ -127,7 +134,10 @@ impl Date<AnyCalendar> {
 
     /// Creates a [`Date`] in any calendar from an IXDTF syntax string with compiled data.
     ///
+    /// ✨ *Enabled with the `compiled_data` and `ixdtf` Cargo features.*
+    ///
     /// See [`Self::try_from_str()`].
+    #[cfg(feature = "compiled_data")]
     pub fn try_from_utf8(ixdtf_str: &[u8]) -> Result<Self, FromIxdtfError> {
         let ixdtf_record = IxdtfParser::from_utf8(ixdtf_str).parse()?;
         let iso_date = Date::<Iso>::try_from_ixdtf_record(&ixdtf_record)?;
@@ -137,6 +147,7 @@ impl Date<AnyCalendar> {
     }
 }
 
+#[cfg(feature = "compiled_data")]
 impl FromStr for Date<AnyCalendar> {
     type Err = FromIxdtfError;
     fn from_str(ixdtf_str: &str) -> Result<Self, Self::Err> {
@@ -148,6 +159,8 @@ impl Time {
     /// Creates a [`Time`] from an IXDTF syntax string of a time.
     ///
     /// Does not support parsing an IXDTF string with a date and time; for that, use [`DateTime`].
+    ///
+    /// ✨ *Enabled with the `ixdtf` Cargo feature.*
     ///
     /// # Examples
     ///
@@ -166,6 +179,8 @@ impl Time {
     }
 
     /// Creates a [`Time`] in the ISO-8601 calendar from an IXDTF syntax string.
+    ///
+    /// ✨ *Enabled with the `ixdtf` Cargo feature.*
     ///
     /// See [`Self::try_from_str()`].
     pub fn try_from_utf8(ixdtf_str: &[u8]) -> Result<Self, FromIxdtfError> {
@@ -192,6 +207,8 @@ impl DateTime<Iso> {
     ///
     /// Ignores any calendar annotations in the string.
     ///
+    /// ✨ *Enabled with the `ixdtf` Cargo feature.*
+    ///
     /// # Examples
     ///
     /// ```
@@ -217,6 +234,8 @@ impl DateTime<Iso> {
 
     /// Creates a [`DateTime`] in the ISO-8601 calendar from an IXDTF syntax string.
     ///
+    /// ✨ *Enabled with the `ixdtf` Cargo feature.*
+    ///
     /// See [`Self::try_iso_from_str()`].
     pub fn try_iso_from_utf8(ixdtf_str: &[u8]) -> Result<Self, FromIxdtfError> {
         let ixdtf_record = IxdtfParser::from_utf8(ixdtf_str).parse()?;
@@ -239,6 +258,8 @@ impl FromStr for DateTime<Iso> {
 
 impl DateTime<AnyCalendar> {
     /// Creates a [`DateTime`] in any calendar from an IXDTF syntax string with compiled data.
+    ///
+    /// ✨ *Enabled with the `compiled_data` and `ixdtf` Cargo features.*
     ///
     /// # Examples
     ///
@@ -267,6 +288,9 @@ impl DateTime<AnyCalendar> {
     /// Creates a [`DateTime`] in any calendar from an IXDTF syntax string with compiled data.
     ///
     /// See [`Self::try_from_str()`].
+    ///
+    /// ✨ *Enabled with the `compiled_data` and `ixdtf` Cargo features.*
+    #[cfg(feature = "compiled_data")]
     pub fn try_from_utf8(ixdtf_str: &[u8]) -> Result<Self, FromIxdtfError> {
         let ixdtf_record = IxdtfParser::from_utf8(ixdtf_str).parse()?;
         let iso_datetime = DateTime::<Iso>::try_from_ixdtf_record(&ixdtf_record)?;
@@ -276,6 +300,7 @@ impl DateTime<AnyCalendar> {
     }
 }
 
+#[cfg(feature = "compiled_data")]
 impl FromStr for DateTime<AnyCalendar> {
     type Err = FromIxdtfError;
     fn from_str(ixdtf_str: &str) -> Result<Self, Self::Err> {
