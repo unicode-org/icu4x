@@ -11,13 +11,13 @@
 
 int main() {
     Logger::init_simple_logger();
-    std::unique_ptr<Locale> locale = Locale::create_from_string("bn").ok().value();
+    std::unique_ptr<Locale> locale = Locale::from_string("bn").ok().value();
     std::cout << "Running test for locale " << locale->to_string() << std::endl;
-    std::unique_ptr<DataProvider> dp = DataProvider::create_compiled();
+    std::unique_ptr<DataProvider> dp = DataProvider::compiled();
     std::unique_ptr<FixedDecimalFormatter> fdf = FixedDecimalFormatter::create_with_grouping_strategy(
         *dp.get(), *locale.get(), FixedDecimalGroupingStrategy::Auto).ok().value();
 
-    std::unique_ptr<FixedDecimal> decimal = FixedDecimal::create_from_u64(1000007);
+    std::unique_ptr<FixedDecimal> decimal = FixedDecimal::from(1000007);
     std::string out = fdf->format(*decimal.get());
     std::cout << "Formatted value is " << out << std::endl;
     if (out != "১০,০০,০০৭") {
@@ -34,7 +34,7 @@ int main() {
         return 1;
     }
 
-    decimal = FixedDecimal::create_from_f64_with_floating_precision(100.01).ok().value();
+    decimal = FixedDecimal::from_double_with_floating_precision(100.01).ok().value();
     out = fdf->format(*decimal.get());
     std::cout << "Formatted float value is " << out << std::endl;
     if (out != "১০০.০১") {
@@ -66,7 +66,7 @@ int main() {
         return 1;
     }
 
-    decimal = FixedDecimal::create_from_f64_with_lower_magnitude(100.0006, -2).ok().value();
+    decimal = FixedDecimal::from_double_with_lower_magnitude(100.0006, -2).ok().value();
     out = fdf->format(*decimal.get());
     std::cout << "Formatted float value from precision 2 is " << out << std::endl;
     if (out != "১০০.০০") {
@@ -74,7 +74,7 @@ int main() {
         return 1;
     }
 
-    decimal = FixedDecimal::create_from_f64_with_significant_digits(100.0006, 5).ok().value();
+    decimal = FixedDecimal::from_double_with_significant_digits(100.0006, 5).ok().value();
     out = fdf->format(*decimal.get());
     std::cout << "Formatted float value with 5 digits is " << out << std::endl;
     if (out != "১০০.০০") {
@@ -88,14 +88,14 @@ int main() {
 
     fdf = FixedDecimalFormatter::create_with_decimal_symbols_v1(*data.get(), FixedDecimalGroupingStrategy::Auto).ok().value();
 
-    decimal = FixedDecimal::create_from_f64_with_floating_precision(123456.8901).ok().value();
+    decimal = FixedDecimal::from_double_with_floating_precision(123456.8901).ok().value();
     out = fdf->format(*decimal.get());
     std::cout << "Formatted float value for custom numeric system is " << out << std::endl;
     if (out != "bcdefg/ijab") {
         std::cout << "Output does not match expected output" << std::endl;
         return 1;
     }
-    decimal = FixedDecimal::create_from_f64_with_floating_precision(123451234567.8901).ok().value();
+    decimal = FixedDecimal::from_double_with_floating_precision(123451234567.8901).ok().value();
     out = fdf->format(*decimal.get());
     std::cout << "Formatted float value for custom numeric system is " << out << std::endl;
     if (out != "bc_de_fb_cd_efgh/ijab") {
@@ -103,12 +103,12 @@ int main() {
         return 1;
     }
 
-    locale = Locale::create_from_string("th-u-nu-thai").ok().value();
+    locale = Locale::from_string("th-u-nu-thai").ok().value();
     std::cout << "Running test for locale " << locale->to_string() << std::endl;
     fdf = FixedDecimalFormatter::create_with_grouping_strategy(
         *dp.get(), *locale.get(), FixedDecimalGroupingStrategy::Auto).ok().value();
 
-    decimal = FixedDecimal::create_from_f64_with_floating_precision(123456.8901).ok().value();
+    decimal = FixedDecimal::from_double_with_floating_precision(123456.8901).ok().value();
     out = fdf->format(*decimal.get());
     std::cout << "Formatted value is " << out << std::endl;
     if (out != "๑๒๓,๔๕๖.๘๙๐๑") {

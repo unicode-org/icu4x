@@ -26,11 +26,11 @@
 typedef struct icu4x_IsoDateTime_create_mv1_result {union {IsoDateTime* ok; CalendarError err;}; bool is_ok;} icu4x_IsoDateTime_create_mv1_result;
 icu4x_IsoDateTime_create_mv1_result icu4x_IsoDateTime_create_mv1(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond);
 
-IsoDateTime* icu4x_IsoDateTime_crate_from_date_and_time_mv1(const IsoDate* date, const Time* time);
+IsoDateTime* icu4x_IsoDateTime_from_date_and_time_mv1(const IsoDate* date, const Time* time);
 
 IsoDateTime* icu4x_IsoDateTime_local_unix_epoch_mv1();
 
-IsoDateTime* icu4x_IsoDateTime_create_from_minutes_since_local_unix_epoch_mv1(int32_t minutes);
+IsoDateTime* icu4x_IsoDateTime_from_minutes_since_local_unix_epoch_mv1(int32_t minutes);
 
 IsoDate* icu4x_IsoDateTime_date_mv1(const IsoDateTime* self);
 

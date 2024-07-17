@@ -18,15 +18,15 @@ namespace diplomat {
 namespace capi {
     extern "C" {
     
-    diplomat::capi::DataProvider* icu4x_DataProvider_create_compiled_mv1();
+    diplomat::capi::DataProvider* icu4x_DataProvider_compiled_mv1();
     
-    typedef struct icu4x_DataProvider_create_fs_mv1_result {union {diplomat::capi::DataProvider* ok; diplomat::capi::DataError err;}; bool is_ok;} icu4x_DataProvider_create_fs_mv1_result;
-    icu4x_DataProvider_create_fs_mv1_result icu4x_DataProvider_create_fs_mv1(const char* path_data, size_t path_len);
+    typedef struct icu4x_DataProvider_from_fs_mv1_result {union {diplomat::capi::DataProvider* ok; diplomat::capi::DataError err;}; bool is_ok;} icu4x_DataProvider_from_fs_mv1_result;
+    icu4x_DataProvider_from_fs_mv1_result icu4x_DataProvider_from_fs_mv1(const char* path_data, size_t path_len);
     
-    typedef struct icu4x_DataProvider_create_from_byte_slice_mv1_result {union {diplomat::capi::DataProvider* ok; diplomat::capi::DataError err;}; bool is_ok;} icu4x_DataProvider_create_from_byte_slice_mv1_result;
-    icu4x_DataProvider_create_from_byte_slice_mv1_result icu4x_DataProvider_create_from_byte_slice_mv1(const uint8_t* blob_data, size_t blob_len);
+    typedef struct icu4x_DataProvider_from_byte_slice_mv1_result {union {diplomat::capi::DataProvider* ok; diplomat::capi::DataError err;}; bool is_ok;} icu4x_DataProvider_from_byte_slice_mv1_result;
+    icu4x_DataProvider_from_byte_slice_mv1_result icu4x_DataProvider_from_byte_slice_mv1(const uint8_t* blob_data, size_t blob_len);
     
-    diplomat::capi::DataProvider* icu4x_DataProvider_create_empty_mv1();
+    diplomat::capi::DataProvider* icu4x_DataProvider_empty_mv1();
     
     typedef struct icu4x_DataProvider_fork_by_key_mv1_result {union { diplomat::capi::DataError err;}; bool is_ok;} icu4x_DataProvider_fork_by_key_mv1_result;
     icu4x_DataProvider_fork_by_key_mv1_result icu4x_DataProvider_fork_by_key_mv1(diplomat::capi::DataProvider* self, diplomat::capi::DataProvider* other);
@@ -44,25 +44,25 @@ namespace capi {
 } // namespace capi
 } // namespace
 
-inline std::unique_ptr<DataProvider> DataProvider::create_compiled() {
-  auto result = diplomat::capi::icu4x_DataProvider_create_compiled_mv1();
+inline std::unique_ptr<DataProvider> DataProvider::compiled() {
+  auto result = diplomat::capi::icu4x_DataProvider_compiled_mv1();
   return std::unique_ptr<DataProvider>(DataProvider::FromFFI(result));
 }
 
-inline diplomat::result<std::unique_ptr<DataProvider>, DataError> DataProvider::create_fs(std::string_view path) {
-  auto result = diplomat::capi::icu4x_DataProvider_create_fs_mv1(path.data(),
+inline diplomat::result<std::unique_ptr<DataProvider>, DataError> DataProvider::from_fs(std::string_view path) {
+  auto result = diplomat::capi::icu4x_DataProvider_from_fs_mv1(path.data(),
     path.size());
   return result.is_ok ? diplomat::result<std::unique_ptr<DataProvider>, DataError>(diplomat::Ok<std::unique_ptr<DataProvider>>(std::unique_ptr<DataProvider>(DataProvider::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<DataProvider>, DataError>(diplomat::Err<DataError>(DataError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::unique_ptr<DataProvider>, DataError> DataProvider::create_from_byte_slice(diplomat::span<const uint8_t> blob) {
-  auto result = diplomat::capi::icu4x_DataProvider_create_from_byte_slice_mv1(blob.data(),
+inline diplomat::result<std::unique_ptr<DataProvider>, DataError> DataProvider::from_byte_slice(diplomat::span<const uint8_t> blob) {
+  auto result = diplomat::capi::icu4x_DataProvider_from_byte_slice_mv1(blob.data(),
     blob.size());
   return result.is_ok ? diplomat::result<std::unique_ptr<DataProvider>, DataError>(diplomat::Ok<std::unique_ptr<DataProvider>>(std::unique_ptr<DataProvider>(DataProvider::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<DataProvider>, DataError>(diplomat::Err<DataError>(DataError::FromFFI(result.err)));
 }
 
-inline std::unique_ptr<DataProvider> DataProvider::create_empty() {
-  auto result = diplomat::capi::icu4x_DataProvider_create_empty_mv1();
+inline std::unique_ptr<DataProvider> DataProvider::empty() {
+  auto result = diplomat::capi::icu4x_DataProvider_empty_mv1();
   return std::unique_ptr<DataProvider>(DataProvider::FromFFI(result));
 }
 

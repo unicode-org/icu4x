@@ -24,8 +24,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::timezone::GmtOffset::try_from_str, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::timezone::GmtOffset::try_from_utf8, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::timezone::GmtOffset::from_str, FnInStruct, hidden)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "from_string")]
-        pub fn create_from_string(
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor)]
+        pub fn from_string(
             s: &DiplomatStr,
         ) -> Result<Box<CustomTimeZone>, TimeZoneInvalidOffsetError> {
             Ok(Box::new(CustomTimeZone::from(
@@ -35,30 +35,30 @@ pub mod ffi {
 
         /// Creates a time zone with no information.
         #[diplomat::rust_link(icu::timezone::CustomTimeZone::new_empty, FnInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "empty")]
-        pub fn create_empty() -> Box<CustomTimeZone> {
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor)]
+        pub fn empty() -> Box<CustomTimeZone> {
             Box::new(icu_timezone::CustomTimeZone::new_empty().into())
         }
 
         /// Creates a time zone for UTC (Coordinated Universal Time).
         #[diplomat::rust_link(icu::timezone::CustomTimeZone::utc, FnInStruct)]
         #[diplomat::rust_link(icu::timezone::GmtOffset::utc, FnInStruct, hidden)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "utc")]
-        pub fn create_utc() -> Box<CustomTimeZone> {
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor)]
+        pub fn utc() -> Box<CustomTimeZone> {
             Box::new(icu_timezone::CustomTimeZone::utc().into())
         }
 
         /// Creates a time zone for GMT (London winter time).
         #[diplomat::rust_link(icu::timezone::CustomTimeZone::gmt, FnInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "gmt")]
-        pub fn create_gmt() -> Box<CustomTimeZone> {
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor)]
+        pub fn gmt() -> Box<CustomTimeZone> {
             Box::new(icu_timezone::CustomTimeZone::gmt().into())
         }
 
         /// Creates a time zone for BST (London summer time).
         #[diplomat::rust_link(icu::timezone::CustomTimeZone::bst, FnInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "bst")]
-        pub fn create_bst() -> Box<CustomTimeZone> {
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor)]
+        pub fn bst() -> Box<CustomTimeZone> {
             Box::new(icu_timezone::CustomTimeZone::bst().into())
         }
 

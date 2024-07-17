@@ -58,8 +58,8 @@ export class IsoDate {
         }
     }
 
-    static createForUnixEpoch() {
-        const result = wasm.icu4x_IsoDate_create_for_unix_epoch_mv1();
+    static unixEpoch() {
+        const result = wasm.icu4x_IsoDate_unix_epoch_mv1();
     
         try {
     

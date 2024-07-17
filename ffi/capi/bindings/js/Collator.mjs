@@ -36,7 +36,7 @@ export class Collator {
     }
 
 
-    static create(provider, locale, options) {
+    static createV1(provider, locale, options) {
         
         let slice_cleanup_callbacks = [];
         

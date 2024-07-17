@@ -29,7 +29,7 @@ public:
 
   inline static diplomat::result<std::unique_ptr<WeekCalculator>, DataError> create(const DataProvider& provider, const Locale& locale);
 
-  inline static std::unique_ptr<WeekCalculator> create_from_first_day_of_week_and_min_week_days(IsoWeekday first_weekday, uint8_t min_week_days);
+  inline static std::unique_ptr<WeekCalculator> from_first_day_of_week_and_min_week_days(IsoWeekday first_weekday, uint8_t min_week_days);
 
   inline IsoWeekday first_weekday() const;
 

@@ -21,11 +21,11 @@
 
 
 
-typedef struct icu4x_Date_create_from_iso_in_calendar_mv1_result {union {Date* ok; CalendarError err;}; bool is_ok;} icu4x_Date_create_from_iso_in_calendar_mv1_result;
-icu4x_Date_create_from_iso_in_calendar_mv1_result icu4x_Date_create_from_iso_in_calendar_mv1(int32_t year, uint8_t month, uint8_t day, const Calendar* calendar);
+typedef struct icu4x_Date_from_iso_in_calendar_mv1_result {union {Date* ok; CalendarError err;}; bool is_ok;} icu4x_Date_from_iso_in_calendar_mv1_result;
+icu4x_Date_from_iso_in_calendar_mv1_result icu4x_Date_from_iso_in_calendar_mv1(int32_t year, uint8_t month, uint8_t day, const Calendar* calendar);
 
-typedef struct icu4x_Date_create_from_codes_in_calendar_mv1_result {union {Date* ok; CalendarError err;}; bool is_ok;} icu4x_Date_create_from_codes_in_calendar_mv1_result;
-icu4x_Date_create_from_codes_in_calendar_mv1_result icu4x_Date_create_from_codes_in_calendar_mv1(const char* era_code_data, size_t era_code_len, int32_t year, const char* month_code_data, size_t month_code_len, uint8_t day, const Calendar* calendar);
+typedef struct icu4x_Date_from_codes_in_calendar_mv1_result {union {Date* ok; CalendarError err;}; bool is_ok;} icu4x_Date_from_codes_in_calendar_mv1_result;
+icu4x_Date_from_codes_in_calendar_mv1_result icu4x_Date_from_codes_in_calendar_mv1(const char* era_code_data, size_t era_code_len, int32_t year, const char* month_code_data, size_t month_code_len, uint8_t day, const Calendar* calendar);
 
 Date* icu4x_Date_to_calendar_mv1(const Date* self, const Calendar* calendar);
 

@@ -60,8 +60,8 @@ export class IsoDateTime {
         }
     }
 
-    static crateFromDateAndTime(date, time) {
-        const result = wasm.icu4x_IsoDateTime_crate_from_date_and_time_mv1(date.ffiValue, time.ffiValue);
+    static fromDateAndTime(date, time) {
+        const result = wasm.icu4x_IsoDateTime_from_date_and_time_mv1(date.ffiValue, time.ffiValue);
     
         try {
     
@@ -82,8 +82,8 @@ export class IsoDateTime {
         }
     }
 
-    static createFromMinutesSinceLocalUnixEpoch(minutes) {
-        const result = wasm.icu4x_IsoDateTime_create_from_minutes_since_local_unix_epoch_mv1(minutes);
+    static fromMinutesSinceLocalUnixEpoch(minutes) {
+        const result = wasm.icu4x_IsoDateTime_from_minutes_since_local_unix_epoch_mv1(minutes);
     
         try {
     

@@ -41,10 +41,10 @@ export class DateTime {
     }
 
 
-    static createFromIsoInCalendar(year, month, day, hour, minute, second, nanosecond, calendar) {
+    static fromIsoInCalendar(year, month, day, hour, minute, second, nanosecond, calendar) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_DateTime_create_from_iso_in_calendar_mv1(diplomat_receive_buffer, year, month, day, hour, minute, second, nanosecond, calendar.ffiValue);
+        const result = wasm.icu4x_DateTime_from_iso_in_calendar_mv1(diplomat_receive_buffer, year, month, day, hour, minute, second, nanosecond, calendar.ffiValue);
     
         try {
     
@@ -60,14 +60,14 @@ export class DateTime {
         }
     }
 
-    static createFromCodesInCalendar(eraCode, year, monthCode, day, hour, minute, second, nanosecond, calendar) {
+    static fromCodesInCalendar(eraCode, year, monthCode, day, hour, minute, second, nanosecond, calendar) {
         
         const eraCodeSlice = diplomatRuntime.DiplomatBuf.str8(wasm, eraCode);
         
         const monthCodeSlice = diplomatRuntime.DiplomatBuf.str8(wasm, monthCode);
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_DateTime_create_from_codes_in_calendar_mv1(diplomat_receive_buffer, eraCodeSlice.ptr, eraCodeSlice.size, year, monthCodeSlice.ptr, monthCodeSlice.size, day, hour, minute, second, nanosecond, calendar.ffiValue);
+        const result = wasm.icu4x_DateTime_from_codes_in_calendar_mv1(diplomat_receive_buffer, eraCodeSlice.ptr, eraCodeSlice.size, year, monthCodeSlice.ptr, monthCodeSlice.size, day, hour, minute, second, nanosecond, calendar.ffiValue);
     
         try {
     
@@ -87,8 +87,8 @@ export class DateTime {
         }
     }
 
-    static createFromDateAndTime(date, time) {
-        const result = wasm.icu4x_DateTime_create_from_date_and_time_mv1(date.ffiValue, time.ffiValue);
+    static fromDateAndTime(date, time) {
+        const result = wasm.icu4x_DateTime_from_date_and_time_mv1(date.ffiValue, time.ffiValue);
     
         try {
     

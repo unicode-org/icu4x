@@ -21,16 +21,16 @@ namespace diplomat {
 namespace capi {
     extern "C" {
     
-    typedef struct icu4x_CustomTimeZone_create_from_string_mv1_result {union {diplomat::capi::CustomTimeZone* ok; diplomat::capi::TimeZoneInvalidOffsetError err;}; bool is_ok;} icu4x_CustomTimeZone_create_from_string_mv1_result;
-    icu4x_CustomTimeZone_create_from_string_mv1_result icu4x_CustomTimeZone_create_from_string_mv1(const char* s_data, size_t s_len);
+    typedef struct icu4x_CustomTimeZone_from_string_mv1_result {union {diplomat::capi::CustomTimeZone* ok; diplomat::capi::TimeZoneInvalidOffsetError err;}; bool is_ok;} icu4x_CustomTimeZone_from_string_mv1_result;
+    icu4x_CustomTimeZone_from_string_mv1_result icu4x_CustomTimeZone_from_string_mv1(const char* s_data, size_t s_len);
     
-    diplomat::capi::CustomTimeZone* icu4x_CustomTimeZone_create_empty_mv1();
+    diplomat::capi::CustomTimeZone* icu4x_CustomTimeZone_empty_mv1();
     
-    diplomat::capi::CustomTimeZone* icu4x_CustomTimeZone_create_utc_mv1();
+    diplomat::capi::CustomTimeZone* icu4x_CustomTimeZone_utc_mv1();
     
-    diplomat::capi::CustomTimeZone* icu4x_CustomTimeZone_create_gmt_mv1();
+    diplomat::capi::CustomTimeZone* icu4x_CustomTimeZone_gmt_mv1();
     
-    diplomat::capi::CustomTimeZone* icu4x_CustomTimeZone_create_bst_mv1();
+    diplomat::capi::CustomTimeZone* icu4x_CustomTimeZone_bst_mv1();
     
     typedef struct icu4x_CustomTimeZone_try_set_gmt_offset_seconds_mv1_result {union { diplomat::capi::TimeZoneInvalidOffsetError err;}; bool is_ok;} icu4x_CustomTimeZone_try_set_gmt_offset_seconds_mv1_result;
     icu4x_CustomTimeZone_try_set_gmt_offset_seconds_mv1_result icu4x_CustomTimeZone_try_set_gmt_offset_seconds_mv1(diplomat::capi::CustomTimeZone* self, int32_t offset_seconds);
@@ -100,29 +100,29 @@ namespace capi {
 } // namespace capi
 } // namespace
 
-inline diplomat::result<std::unique_ptr<CustomTimeZone>, TimeZoneInvalidOffsetError> CustomTimeZone::create_from_string(std::string_view s) {
-  auto result = diplomat::capi::icu4x_CustomTimeZone_create_from_string_mv1(s.data(),
+inline diplomat::result<std::unique_ptr<CustomTimeZone>, TimeZoneInvalidOffsetError> CustomTimeZone::from_string(std::string_view s) {
+  auto result = diplomat::capi::icu4x_CustomTimeZone_from_string_mv1(s.data(),
     s.size());
   return result.is_ok ? diplomat::result<std::unique_ptr<CustomTimeZone>, TimeZoneInvalidOffsetError>(diplomat::Ok<std::unique_ptr<CustomTimeZone>>(std::unique_ptr<CustomTimeZone>(CustomTimeZone::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<CustomTimeZone>, TimeZoneInvalidOffsetError>(diplomat::Err<TimeZoneInvalidOffsetError>(TimeZoneInvalidOffsetError::FromFFI(result.err)));
 }
 
-inline std::unique_ptr<CustomTimeZone> CustomTimeZone::create_empty() {
-  auto result = diplomat::capi::icu4x_CustomTimeZone_create_empty_mv1();
+inline std::unique_ptr<CustomTimeZone> CustomTimeZone::empty() {
+  auto result = diplomat::capi::icu4x_CustomTimeZone_empty_mv1();
   return std::unique_ptr<CustomTimeZone>(CustomTimeZone::FromFFI(result));
 }
 
-inline std::unique_ptr<CustomTimeZone> CustomTimeZone::create_utc() {
-  auto result = diplomat::capi::icu4x_CustomTimeZone_create_utc_mv1();
+inline std::unique_ptr<CustomTimeZone> CustomTimeZone::utc() {
+  auto result = diplomat::capi::icu4x_CustomTimeZone_utc_mv1();
   return std::unique_ptr<CustomTimeZone>(CustomTimeZone::FromFFI(result));
 }
 
-inline std::unique_ptr<CustomTimeZone> CustomTimeZone::create_gmt() {
-  auto result = diplomat::capi::icu4x_CustomTimeZone_create_gmt_mv1();
+inline std::unique_ptr<CustomTimeZone> CustomTimeZone::gmt() {
+  auto result = diplomat::capi::icu4x_CustomTimeZone_gmt_mv1();
   return std::unique_ptr<CustomTimeZone>(CustomTimeZone::FromFFI(result));
 }
 
-inline std::unique_ptr<CustomTimeZone> CustomTimeZone::create_bst() {
-  auto result = diplomat::capi::icu4x_CustomTimeZone_create_bst_mv1();
+inline std::unique_ptr<CustomTimeZone> CustomTimeZone::bst() {
+  auto result = diplomat::capi::icu4x_CustomTimeZone_bst_mv1();
   return std::unique_ptr<CustomTimeZone>(CustomTimeZone::FromFFI(result));
 }
 

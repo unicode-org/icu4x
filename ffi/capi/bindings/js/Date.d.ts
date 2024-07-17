@@ -17,9 +17,9 @@ export class Date {
     get ffiValue(): pointer;
 
 
-    static createFromIsoInCalendar(year: number, month: number, day: number, calendar: Calendar): Date;
+    static fromIsoInCalendar(year: number, month: number, day: number, calendar: Calendar): Date;
 
-    static createFromCodesInCalendar(eraCode: string, year: number, monthCode: string, day: number, calendar: Calendar): Date;
+    static fromCodesInCalendar(eraCode: string, year: number, monthCode: string, day: number, calendar: Calendar): Date;
 
     toCalendar(calendar: Calendar): Date;
 

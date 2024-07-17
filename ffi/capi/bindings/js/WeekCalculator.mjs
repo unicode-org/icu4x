@@ -57,8 +57,8 @@ export class WeekCalculator {
         }
     }
 
-    static createFromFirstDayOfWeekAndMinWeekDays(firstWeekday, minWeekDays) {
-        const result = wasm.icu4x_WeekCalculator_create_from_first_day_of_week_and_min_week_days_mv1(firstWeekday.ffiValue, minWeekDays);
+    static fromFirstDayOfWeekAndMinWeekDays(firstWeekday, minWeekDays) {
+        const result = wasm.icu4x_WeekCalculator_from_first_day_of_week_and_min_week_days_mv1(firstWeekday.ffiValue, minWeekDays);
     
         try {
     

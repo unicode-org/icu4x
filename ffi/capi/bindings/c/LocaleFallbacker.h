@@ -23,7 +23,7 @@
 typedef struct icu4x_LocaleFallbacker_create_mv1_result {union {LocaleFallbacker* ok; DataError err;}; bool is_ok;} icu4x_LocaleFallbacker_create_mv1_result;
 icu4x_LocaleFallbacker_create_mv1_result icu4x_LocaleFallbacker_create_mv1(const DataProvider* provider);
 
-LocaleFallbacker* icu4x_LocaleFallbacker_create_without_data_mv1();
+LocaleFallbacker* icu4x_LocaleFallbacker_without_data_mv1();
 
 typedef struct icu4x_LocaleFallbacker_for_config_mv1_result {union {LocaleFallbackerWithConfig* ok; LocaleParseError err;}; bool is_ok;} icu4x_LocaleFallbacker_for_config_mv1_result;
 icu4x_LocaleFallbacker_for_config_mv1_result icu4x_LocaleFallbacker_for_config_mv1(const LocaleFallbacker* self, LocaleFallbackConfig config);

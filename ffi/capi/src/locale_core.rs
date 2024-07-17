@@ -25,8 +25,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::locale::Locale::try_from_str, FnInStruct)]
         #[diplomat::rust_link(icu::locale::Locale::try_from_utf8, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::locale::Locale::from_str, FnInStruct, hidden)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "from_string")]
-        pub fn create_from_string(name: &DiplomatStr) -> Result<Box<Locale>, LocaleParseError> {
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor)]
+        pub fn from_string(name: &DiplomatStr) -> Result<Box<Locale>, LocaleParseError> {
             Ok(Box::new(Locale(icu_locale_core::Locale::try_from_utf8(
                 name,
             )?)))
@@ -34,8 +34,8 @@ pub mod ffi {
 
         /// Construct a default undefined [`Locale`] "und".
         #[diplomat::rust_link(icu::locale::Locale::UND, AssociatedConstantInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "und")]
-        pub fn create_und() -> Box<Locale> {
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor)]
+        pub fn und() -> Box<Locale> {
             Box::new(Locale(icu_locale_core::Locale::UND))
         }
 

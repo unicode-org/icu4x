@@ -19,7 +19,7 @@ export class IsoDate {
 
     static create(year: number, month: number, day: number): IsoDate;
 
-    static createForUnixEpoch(): IsoDate;
+    static unixEpoch(): IsoDate;
 
     toCalendar(calendar: Calendar): Date;
 

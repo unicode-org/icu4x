@@ -24,13 +24,13 @@ namespace diplomat {
 namespace capi {
     extern "C" {
     
-    typedef struct icu4x_DateTime_create_from_iso_in_calendar_mv1_result {union {diplomat::capi::DateTime* ok; diplomat::capi::CalendarError err;}; bool is_ok;} icu4x_DateTime_create_from_iso_in_calendar_mv1_result;
-    icu4x_DateTime_create_from_iso_in_calendar_mv1_result icu4x_DateTime_create_from_iso_in_calendar_mv1(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond, const diplomat::capi::Calendar* calendar);
+    typedef struct icu4x_DateTime_from_iso_in_calendar_mv1_result {union {diplomat::capi::DateTime* ok; diplomat::capi::CalendarError err;}; bool is_ok;} icu4x_DateTime_from_iso_in_calendar_mv1_result;
+    icu4x_DateTime_from_iso_in_calendar_mv1_result icu4x_DateTime_from_iso_in_calendar_mv1(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond, const diplomat::capi::Calendar* calendar);
     
-    typedef struct icu4x_DateTime_create_from_codes_in_calendar_mv1_result {union {diplomat::capi::DateTime* ok; diplomat::capi::CalendarError err;}; bool is_ok;} icu4x_DateTime_create_from_codes_in_calendar_mv1_result;
-    icu4x_DateTime_create_from_codes_in_calendar_mv1_result icu4x_DateTime_create_from_codes_in_calendar_mv1(const char* era_code_data, size_t era_code_len, int32_t year, const char* month_code_data, size_t month_code_len, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond, const diplomat::capi::Calendar* calendar);
+    typedef struct icu4x_DateTime_from_codes_in_calendar_mv1_result {union {diplomat::capi::DateTime* ok; diplomat::capi::CalendarError err;}; bool is_ok;} icu4x_DateTime_from_codes_in_calendar_mv1_result;
+    icu4x_DateTime_from_codes_in_calendar_mv1_result icu4x_DateTime_from_codes_in_calendar_mv1(const char* era_code_data, size_t era_code_len, int32_t year, const char* month_code_data, size_t month_code_len, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond, const diplomat::capi::Calendar* calendar);
     
-    diplomat::capi::DateTime* icu4x_DateTime_create_from_date_and_time_mv1(const diplomat::capi::Date* date, const diplomat::capi::Time* time);
+    diplomat::capi::DateTime* icu4x_DateTime_from_date_and_time_mv1(const diplomat::capi::Date* date, const diplomat::capi::Time* time);
     
     diplomat::capi::Date* icu4x_DateTime_date_mv1(const diplomat::capi::DateTime* self);
     
@@ -81,8 +81,8 @@ namespace capi {
 } // namespace capi
 } // namespace
 
-inline diplomat::result<std::unique_ptr<DateTime>, CalendarError> DateTime::create_from_iso_in_calendar(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond, const Calendar& calendar) {
-  auto result = diplomat::capi::icu4x_DateTime_create_from_iso_in_calendar_mv1(year,
+inline diplomat::result<std::unique_ptr<DateTime>, CalendarError> DateTime::from_iso_in_calendar(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond, const Calendar& calendar) {
+  auto result = diplomat::capi::icu4x_DateTime_from_iso_in_calendar_mv1(year,
     month,
     day,
     hour,
@@ -93,8 +93,8 @@ inline diplomat::result<std::unique_ptr<DateTime>, CalendarError> DateTime::crea
   return result.is_ok ? diplomat::result<std::unique_ptr<DateTime>, CalendarError>(diplomat::Ok<std::unique_ptr<DateTime>>(std::unique_ptr<DateTime>(DateTime::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<DateTime>, CalendarError>(diplomat::Err<CalendarError>(CalendarError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::unique_ptr<DateTime>, CalendarError> DateTime::create_from_codes_in_calendar(std::string_view era_code, int32_t year, std::string_view month_code, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond, const Calendar& calendar) {
-  auto result = diplomat::capi::icu4x_DateTime_create_from_codes_in_calendar_mv1(era_code.data(),
+inline diplomat::result<std::unique_ptr<DateTime>, CalendarError> DateTime::from_codes_in_calendar(std::string_view era_code, int32_t year, std::string_view month_code, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond, const Calendar& calendar) {
+  auto result = diplomat::capi::icu4x_DateTime_from_codes_in_calendar_mv1(era_code.data(),
     era_code.size(),
     year,
     month_code.data(),
@@ -108,8 +108,8 @@ inline diplomat::result<std::unique_ptr<DateTime>, CalendarError> DateTime::crea
   return result.is_ok ? diplomat::result<std::unique_ptr<DateTime>, CalendarError>(diplomat::Ok<std::unique_ptr<DateTime>>(std::unique_ptr<DateTime>(DateTime::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<DateTime>, CalendarError>(diplomat::Err<CalendarError>(CalendarError::FromFFI(result.err)));
 }
 
-inline std::unique_ptr<DateTime> DateTime::create_from_date_and_time(const Date& date, const Time& time) {
-  auto result = diplomat::capi::icu4x_DateTime_create_from_date_and_time_mv1(date.AsFFI(),
+inline std::unique_ptr<DateTime> DateTime::from_date_and_time(const Date& date, const Time& time) {
+  auto result = diplomat::capi::icu4x_DateTime_from_date_and_time_mv1(date.AsFFI(),
     time.AsFFI());
   return std::unique_ptr<DateTime>(DateTime::FromFFI(result));
 }

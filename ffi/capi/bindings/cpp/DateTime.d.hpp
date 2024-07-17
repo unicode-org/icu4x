@@ -33,11 +33,11 @@ namespace capi {
 class DateTime {
 public:
 
-  inline static diplomat::result<std::unique_ptr<DateTime>, CalendarError> create_from_iso_in_calendar(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond, const Calendar& calendar);
+  inline static diplomat::result<std::unique_ptr<DateTime>, CalendarError> from_iso_in_calendar(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond, const Calendar& calendar);
 
-  inline static diplomat::result<std::unique_ptr<DateTime>, CalendarError> create_from_codes_in_calendar(std::string_view era_code, int32_t year, std::string_view month_code, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond, const Calendar& calendar);
+  inline static diplomat::result<std::unique_ptr<DateTime>, CalendarError> from_codes_in_calendar(std::string_view era_code, int32_t year, std::string_view month_code, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond, const Calendar& calendar);
 
-  inline static std::unique_ptr<DateTime> create_from_date_and_time(const Date& date, const Time& time);
+  inline static std::unique_ptr<DateTime> from_date_and_time(const Date& date, const Time& time);
 
   inline std::unique_ptr<Date> date() const;
 

@@ -21,8 +21,8 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    DataProvider* provider = icu4x_DataProvider_create_compiled_mv1();
-    FixedDecimal* decimal = icu4x_FixedDecimal_create_from_u64_mv1(1000007);
+    DataProvider* provider = icu4x_DataProvider_compiled_mv1();
+    FixedDecimal* decimal = icu4x_FixedDecimal_from_uint64_mv1(1000007);
     icu4x_FixedDecimal_round_mv1(decimal, 0);
 
     icu4x_FixedDecimalFormatter_create_with_grouping_strategy_mv1_result fdf_result =

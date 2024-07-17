@@ -53,10 +53,10 @@ export class Time {
         }
     }
 
-    static createMidnight() {
+    static midnight() {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_Time_create_midnight_mv1(diplomat_receive_buffer);
+        const result = wasm.icu4x_Time_midnight_mv1(diplomat_receive_buffer);
     
         try {
     

@@ -89,8 +89,8 @@ pub mod ffi {
             icu::locale::fallback::LocaleFallbacker::new_without_data,
             FnInStruct
         )]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "without_data")]
-        pub fn create_without_data() -> Box<LocaleFallbacker> {
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor)]
+        pub fn without_data() -> Box<LocaleFallbacker> {
             Box::new(LocaleFallbacker(
                 icu_locale::LocaleFallbacker::new_without_data(),
             ))

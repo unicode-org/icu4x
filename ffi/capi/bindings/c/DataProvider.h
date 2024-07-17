@@ -17,15 +17,15 @@
 
 
 
-DataProvider* icu4x_DataProvider_create_compiled_mv1();
+DataProvider* icu4x_DataProvider_compiled_mv1();
 
-typedef struct icu4x_DataProvider_create_fs_mv1_result {union {DataProvider* ok; DataError err;}; bool is_ok;} icu4x_DataProvider_create_fs_mv1_result;
-icu4x_DataProvider_create_fs_mv1_result icu4x_DataProvider_create_fs_mv1(const char* path_data, size_t path_len);
+typedef struct icu4x_DataProvider_from_fs_mv1_result {union {DataProvider* ok; DataError err;}; bool is_ok;} icu4x_DataProvider_from_fs_mv1_result;
+icu4x_DataProvider_from_fs_mv1_result icu4x_DataProvider_from_fs_mv1(const char* path_data, size_t path_len);
 
-typedef struct icu4x_DataProvider_create_from_byte_slice_mv1_result {union {DataProvider* ok; DataError err;}; bool is_ok;} icu4x_DataProvider_create_from_byte_slice_mv1_result;
-icu4x_DataProvider_create_from_byte_slice_mv1_result icu4x_DataProvider_create_from_byte_slice_mv1(const uint8_t* blob_data, size_t blob_len);
+typedef struct icu4x_DataProvider_from_byte_slice_mv1_result {union {DataProvider* ok; DataError err;}; bool is_ok;} icu4x_DataProvider_from_byte_slice_mv1_result;
+icu4x_DataProvider_from_byte_slice_mv1_result icu4x_DataProvider_from_byte_slice_mv1(const uint8_t* blob_data, size_t blob_len);
 
-DataProvider* icu4x_DataProvider_create_empty_mv1();
+DataProvider* icu4x_DataProvider_empty_mv1();
 
 typedef struct icu4x_DataProvider_fork_by_key_mv1_result {union { DataError err;}; bool is_ok;} icu4x_DataProvider_fork_by_key_mv1_result;
 icu4x_DataProvider_fork_by_key_mv1_result icu4x_DataProvider_fork_by_key_mv1(DataProvider* self, DataProvider* other);

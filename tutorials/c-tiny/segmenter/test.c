@@ -9,7 +9,7 @@
 #include <stdio.h>
 
 int main(int argc, char *argv[]) {
-    DataProvider* provider = icu4x_DataProvider_create_compiled_mv1();
+    DataProvider* provider = icu4x_DataProvider_compiled_mv1();
 
     icu4x_LineSegmenter_create_auto_mv1_result segmenter_result = icu4x_LineSegmenter_create_auto_mv1(provider);
     if (!segmenter_result.is_ok)  {

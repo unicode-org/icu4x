@@ -46,15 +46,15 @@ pub mod ffi {
 
         /// Creates a new [`IsoDateTime`] from an [`IsoDate`] and [`Time`] object
         #[diplomat::rust_link(icu::calendar::DateTime::new, FnInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "from_date_and_time")]
-        pub fn crate_from_date_and_time(date: &IsoDate, time: &Time) -> Box<IsoDateTime> {
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor)]
+        pub fn from_date_and_time(date: &IsoDate, time: &Time) -> Box<IsoDateTime> {
             let dt = icu_calendar::DateTime::new(date.0, time.0);
             Box::new(IsoDateTime(dt))
         }
 
         /// Creates a new [`IsoDateTime`] of midnight on January 1, 1970
         #[diplomat::rust_link(icu::calendar::DateTime::local_unix_epoch, FnInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "local_unix_epoch")]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor)]
         pub fn local_unix_epoch() -> Box<IsoDateTime> {
             let dt = icu_calendar::DateTime::local_unix_epoch();
             Box::new(IsoDateTime(dt))
@@ -65,8 +65,8 @@ pub mod ffi {
             icu::calendar::DateTime::from_minutes_since_local_unix_epoch,
             FnInStruct
         )]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "from_minutes_since_local_unix_epoch")]
-        pub fn create_from_minutes_since_local_unix_epoch(minutes: i32) -> Box<IsoDateTime> {
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor)]
+        pub fn from_minutes_since_local_unix_epoch(minutes: i32) -> Box<IsoDateTime> {
             Box::new(IsoDateTime(
                 icu_calendar::DateTime::from_minutes_since_local_unix_epoch(minutes),
             ))
@@ -231,9 +231,9 @@ pub mod ffi {
         /// Creates a new [`DateTime`] representing the ISO date and time
         /// given but in a given calendar
         #[diplomat::rust_link(icu::DateTime::new_from_iso, FnInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "from_iso_in_calendar")]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor)]
         #[allow(clippy::too_many_arguments)]
-        pub fn create_from_iso_in_calendar(
+        pub fn from_iso_in_calendar(
             year: i32,
             month: u8,
             day: u8,
@@ -252,9 +252,9 @@ pub mod ffi {
         }
         /// Creates a new [`DateTime`] from the given codes, which are interpreted in the given calendar system
         #[diplomat::rust_link(icu::calendar::DateTime::try_new_from_codes, FnInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "from_codes_in_calendar")]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor)]
         #[allow(clippy::too_many_arguments)]
-        pub fn create_from_codes_in_calendar(
+        pub fn from_codes_in_calendar(
             era_code: &DiplomatStr,
             year: i32,
             month_code: &DiplomatStr,
@@ -288,8 +288,8 @@ pub mod ffi {
         }
         /// Creates a new [`DateTime`] from an [`Date`] and [`Time`] object
         #[diplomat::rust_link(icu::calendar::DateTime::new, FnInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "from_date_and_time")]
-        pub fn create_from_date_and_time(date: &Date, time: &Time) -> Box<DateTime> {
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor)]
+        pub fn from_date_and_time(date: &Date, time: &Time) -> Box<DateTime> {
             let dt = icu_calendar::DateTime::new(date.0.clone(), time.0);
             Box::new(DateTime(dt))
         }

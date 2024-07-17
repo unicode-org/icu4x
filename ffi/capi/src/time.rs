@@ -40,8 +40,8 @@ pub mod ffi {
 
         /// Creates a new [`Time`] representing midnight (00:00.000).
         #[diplomat::rust_link(icu::calendar::Time::midnight, FnInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "midnight")]
-        pub fn create_midnight() -> Result<Box<Time>, CalendarError> {
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor)]
+        pub fn midnight() -> Result<Box<Time>, CalendarError> {
             let time = icu_calendar::Time::midnight();
             Ok(Box::new(Time(time)))
         }

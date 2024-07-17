@@ -108,7 +108,6 @@ pub mod ffi {
         /// Construct a new Collator instance.
         #[diplomat::rust_link(icu::collator::Collator::try_new, FnInStruct)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
-        #[diplomat::attr(js, rename = "create")]
         pub fn create_v1(
             provider: &DataProvider,
             locale: &Locale,
