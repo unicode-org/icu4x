@@ -201,7 +201,7 @@ fn test_basic() {
         .payload;
 
     let units_us_short = us_locale_short_meter.get().to_owned();
-    let short = units_us_short.patterns.get(&Count::One).unwrap();
+    let short = units_us_short.patterns.get(&Count::Other).unwrap();
     assert_eq!(short, "{0} m");
 
     let ar_eg_locale: DataPayload<UnitsDisplayNameV1Marker> = provider
@@ -231,6 +231,6 @@ fn test_basic() {
         .payload;
 
     let fr_units = fr_locale.get().to_owned();
-    let short = fr_units.patterns.get(&Count::One).unwrap();
+    let short = fr_units.patterns.get(&Count::Other).unwrap();
     assert_eq!(short, "{0} m");
 }
