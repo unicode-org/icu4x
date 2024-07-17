@@ -71,7 +71,15 @@ impl DataProvider<UnitsDisplayNameV1Marker> for SourceDataProvider {
                         (Count::Other, unit_patterns.other.as_deref()),
                     ]
                     .into_iter()
-                    .filter_map(|(count, pattern)| Some((count, pattern?))),
+                    .filter_map(|(count, pattern)| match (count, pattern) {
+                        (Count::Other, Some(p)) => Some((count, p)),
+                        // As per Unicode TR 35:
+                        //      https://www.unicode.org/reports/tr35/tr35-55/tr35.html#Multiple_Inheritance
+                        // If the pattern is not found for the associated `Count`, fall back to the `Count::Other` pattern.
+                        // Therefore, we filter out any patterns that are the same as the `Count::Other` pattern.
+                        (_, p) if p == unit_patterns.other.as_deref() => None,
+                        _ => Some((count, pattern?)),
+                    }),
                 ),
             }),
         })
@@ -193,7 +201,7 @@ fn test_basic() {
         .payload;
 
     let units_us_short = us_locale_short_meter.get().to_owned();
-    let short = units_us_short.patterns.get(&Count::One).unwrap();
+    let short = units_us_short.patterns.get(&Count::Other).unwrap();
     assert_eq!(short, "{0} m");
 
     let ar_eg_locale: DataPayload<UnitsDisplayNameV1Marker> = provider
@@ -223,6 +231,6 @@ fn test_basic() {
         .payload;
 
     let fr_units = fr_locale.get().to_owned();
-    let short = fr_units.patterns.get(&Count::One).unwrap();
+    let short = fr_units.patterns.get(&Count::Other).unwrap();
     assert_eq!(short, "{0} m");
 }
