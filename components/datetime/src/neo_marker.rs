@@ -391,6 +391,13 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<CustomTimeZone>
 #[allow(clippy::exhaustive_structs)] // empty marker struct
 pub struct NeverField;
 
+impl From<()> for NeverField {
+    #[inline]
+    fn from(_: ()) -> Self {
+        NeverField
+    }
+}
+
 impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<NeverField> for Date<A> {
     #[inline]
     fn get_field(&self) -> NeverField {
@@ -772,7 +779,7 @@ where
 
 impl<D> DateTimeMarkers for DateTimeCombo<D, NeoNeverMarker, NeoNeverMarker>
 where
-    D: DateDataMarkers + DateInputMarkers + DateTimeNamesMarker,
+    D: DateTimeMarkers,
 {
     type D = D;
     type T = NeoNeverMarker;
@@ -806,13 +813,47 @@ where
 
 impl<T> DateTimeMarkers for DateTimeCombo<NeoNeverMarker, T, NeoNeverMarker>
 where
-    T: TimeMarkers + DateTimeNamesMarker,
+    T: DateTimeMarkers,
 {
     type D = NeoNeverMarker;
     type T = T;
     type Z = NeoNeverMarker;
     type LengthOption = NeoSkeletonLength; // always needed for time
     type GluePatternV1Marker = NeverMarker<GluePatternV1<'static>>;
+}
+
+impl<Z> DateTimeNamesMarker for DateTimeCombo<NeoNeverMarker, NeoNeverMarker, Z>
+where
+    Z: DateTimeNamesMarker,
+{
+    type YearNames = NeverMarker<()>;
+    type MonthNames = NeverMarker<()>;
+    type WeekdayNames = NeverMarker<()>;
+    type DayPeriodNames = NeverMarker<()>;
+    type ZoneEssentials = Z::ZoneEssentials;
+    type ZoneExemplarCities = Z::ZoneExemplarCities;
+    type ZoneGenericLong = Z::ZoneGenericLong;
+    type ZoneGenericShort = Z::ZoneGenericShort;
+    type ZoneSpecificLong = Z::ZoneSpecificLong;
+    type ZoneSpecificShort = Z::ZoneSpecificShort;
+}
+
+impl<Z> HasConstComponents for DateTimeCombo<NeoNeverMarker, NeoNeverMarker, Z>
+where
+    Z: HasConstZoneComponent,
+{
+    const COMPONENTS: NeoComponents = NeoComponents::Zone(Z::COMPONENT);
+}
+
+impl<Z> DateTimeMarkers for DateTimeCombo<NeoNeverMarker, NeoNeverMarker, Z>
+where
+    Z: DateTimeMarkers,
+{
+    type D = NeoNeverMarker;
+    type T = NeoNeverMarker;
+    type Z = Z;
+    type LengthOption = Z::LengthOption; // no date or time: inherit from zone
+    type GluePatternV1Marker = GluePatternV1Marker;
 }
 
 impl<D, T> DateTimeNamesMarker for DateTimeCombo<D, T, NeoNeverMarker>
@@ -842,8 +883,8 @@ where
 
 impl<D, T> DateTimeMarkers for DateTimeCombo<D, T, NeoNeverMarker>
 where
-    D: DateDataMarkers + DateInputMarkers + DateTimeNamesMarker,
-    T: TimeMarkers + DateTimeNamesMarker,
+    D: DateTimeMarkers,
+    T: DateTimeMarkers,
 {
     type D = D;
     type T = T;
@@ -884,14 +925,14 @@ where
 
 impl<D, T, Z> DateTimeMarkers for DateTimeCombo<D, T, Z>
 where
-    D: DateDataMarkers + DateInputMarkers + DateTimeNamesMarker,
-    T: TimeMarkers + DateTimeNamesMarker,
-    Z: ZoneMarkers + DateTimeNamesMarker,
+    D: DateTimeMarkers,
+    T: DateTimeMarkers,
+    Z: DateTimeMarkers,
 {
     type D = D;
     type T = T;
     type Z = Z;
-    type LengthOption = Z::LengthOption; // optional for zone
+    type LengthOption = NeoSkeletonLength; // always needed for date/time
     type GluePatternV1Marker = GluePatternV1Marker;
 }
 
@@ -1059,6 +1100,16 @@ macro_rules! datetime_marker_helper {
     };
     (@names/zone/$any:ident, no) => {
         NeverMarker<()>
+    };
+}
+
+/// Generates the options argument passed into the docs test constructor
+macro_rules! length_option_helper {
+    (yes) => {
+        stringify!(NeoSkeletonLength::Medium)
+    };
+    (no) => {
+        stringify!(())
     };
 }
 
@@ -1354,7 +1405,7 @@ macro_rules! impl_zone_marker {
         ///
         #[doc = concat!("let fmt = NeoFormatter::<", stringify!($type), ">::try_new(")]
         ///     &locale!("en").into(),
-        ///     NeoSkeletonLength::Medium,
+        #[doc = concat!("    ", length_option_helper!($option_length_yesno), ",")]
         /// )
         /// .unwrap();
         ///
@@ -1387,7 +1438,7 @@ macro_rules! impl_zone_marker {
         ///
         #[doc = concat!("let fmt = TypedNeoFormatter::<Gregorian, ", stringify!($type), ">::try_new(")]
         ///     &locale!("en").into(),
-        ///     NeoSkeletonLength::Medium,
+        #[doc = concat!("    ", length_option_helper!($option_length_yesno), ",")]
         /// )
         /// .unwrap();
         ///
@@ -1703,7 +1754,7 @@ impl_zone_marker!(
     ///
     /// let fmt = TypedNeoFormatter::<Gregorian, NeoTimeZoneSpecificShortMarker>::try_new(
     ///     &locale!("en").into(),
-    ///     NeoSkeletonLength::Medium,
+    ///     (),
     /// )
     /// .unwrap();
     ///
@@ -1819,7 +1870,7 @@ impl_zone_marker!(
     ///
     /// let fmt = TypedNeoFormatter::<Gregorian, NeoTimeZoneGenericShortMarker>::try_new(
     ///     &locale!("en").into(),
-    ///     NeoSkeletonLength::Medium,
+    ///     (),
     /// )
     /// .unwrap();
     ///

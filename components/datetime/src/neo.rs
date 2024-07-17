@@ -36,7 +36,7 @@ use writeable::TryWriteable;
 
 /// Helper macro for generating any/buffer constructors in this file.
 macro_rules! gen_any_buffer_constructors_with_external_loader {
-    ($compiled_fn:ident, $any_fn:ident, $buffer_fn:ident, $internal_fn:ident, $($arg:ident: $ty:path),+) => {
+    ($compiled_fn:ident, $any_fn:ident, $buffer_fn:ident, $internal_fn:ident, $($arg:ident: $ty:ty),+) => {
         #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::$compiled_fn)]
         pub fn $any_fn<P>(
             provider: &P,
@@ -71,7 +71,7 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
             )
         }
     };
-    (R, $compiled_fn:ident, $any_fn:ident, $buffer_fn:ident, $internal_fn:ident, $($arg:ident: $ty:path),+) => {
+    (R, $compiled_fn:ident, $any_fn:ident, $buffer_fn:ident, $internal_fn:ident, $($arg:ident: $ty:ty),+) => {
         #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::$compiled_fn)]
         pub fn $any_fn<P>(
             provider: &P,
@@ -86,7 +86,7 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
                 &ExternalLoaderAny(provider),
                 locale,
                 R::COMPONENTS,
-                $($arg),+
+                $($arg.into()),+
             )
         }
         #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER, Self::$compiled_fn)]
@@ -104,11 +104,11 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
                 &ExternalLoaderBuffer(provider),
                 locale,
                 R::COMPONENTS,
-                $($arg),+
+                $($arg.into()),+
             )
         }
     };
-    (S: $skel:path | $compts:path, $compiled_fn:ident, $any_fn:ident, $buffer_fn:ident, $internal_fn:ident, $($arg:ident: $ty:path),+) => {
+    (S: $skel:path | $compts:path, $compiled_fn:ident, $any_fn:ident, $buffer_fn:ident, $internal_fn:ident, $($arg:ident: $ty:ty),+) => {
         #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::$compiled_fn)]
         pub fn $any_fn<S, P>(
             provider: &P,
@@ -184,6 +184,19 @@ where
     }
 }
 
+impl<R> From<()> for NeoOptions<R>
+where
+    R: DateTimeMarkers,
+    R::LengthOption: From<()>,
+{
+    #[inline]
+    fn from(value: ()) -> Self {
+        NeoOptions {
+            length: value.into(),
+        }
+    }
+}
+
 size_test!(TypedNeoFormatter<icu_calendar::Gregorian, crate::neo_marker::NeoYearMonthDayMarker>, typed_neo_year_month_day_formatter_size, 504);
 
 /// [`TypedNeoFormatter`] is a formatter capable of formatting dates and/or times from
@@ -245,7 +258,10 @@ where
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
-    pub fn try_new(locale: &DataLocale, options: NeoOptions<R>) -> Result<Self, LoadError>
+    pub fn try_new(
+        locale: &DataLocale,
+        options: impl Into<NeoOptions<R>>,
+    ) -> Result<Self, LoadError>
     where
         crate::provider::Baked: Sized
             // Date formatting markers
@@ -268,7 +284,7 @@ where
             &ExternalLoaderCompiledData,
             locale,
             R::COMPONENTS,
-            options,
+            options.into(),
         )
     }
 
@@ -278,14 +294,14 @@ where
         try_new_with_any_provider,
         try_new_with_buffer_provider,
         try_new_internal,
-        options: NeoOptions<R>
+        options: impl Into<NeoOptions<R>>
     );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<P>(
         provider: &P,
         locale: &DataLocale,
-        options: NeoOptions<R>,
+        options: impl Into<NeoOptions<R>>,
     ) -> Result<Self, LoadError>
     where
         P: ?Sized
@@ -313,7 +329,7 @@ where
             &ExternalLoaderUnstable(provider),
             locale,
             R::COMPONENTS,
-            options,
+            options.into(),
         )
     }
 }
@@ -411,7 +427,7 @@ where
     pub fn try_new_with_components(
         locale: &DataLocale,
         components: R,
-        options: NeoOptions<R>,
+        options: impl Into<NeoOptions<R>>,
     ) -> Result<Self, LoadError>
     where
         crate::provider::Baked: Sized
@@ -435,7 +451,7 @@ where
             &ExternalLoaderCompiledData,
             locale,
             components.into(),
-            options,
+            options.into(),
         )
     }
 
@@ -445,7 +461,7 @@ where
         try_new_with_components_with_buffer_provider,
         try_new_internal,
         components: R,
-        options: NeoOptions<R>
+        options: impl Into<NeoOptions<R>>
     );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
@@ -453,7 +469,7 @@ where
         provider: &P,
         locale: &DataLocale,
         components: R,
-        options: NeoOptions<R>,
+        options: impl Into<NeoOptions<R>>,
     ) -> Result<Self, LoadError>
     where
         P: ?Sized
@@ -481,7 +497,7 @@ where
             &ExternalLoaderUnstable(provider),
             locale,
             components.into(),
-            options,
+            options.into(),
         )
     }
 }
@@ -694,7 +710,7 @@ where
     /// [`AnyCalendarKind`]: icu_calendar::AnyCalendarKind
     #[inline(never)]
     #[cfg(feature = "compiled_data")]
-    pub fn try_new(locale: &DataLocale, options: NeoOptions<R>) -> Result<Self, LoadError>
+    pub fn try_new(locale: &DataLocale, options: impl Into<NeoOptions<R>>) -> Result<Self, LoadError>
     where
         crate::provider::Baked: Sized
     // Date formatting markers
@@ -765,7 +781,7 @@ where
             &ExternalLoaderCompiledData,
             locale,
             R::COMPONENTS,
-            options,
+            options.into(),
         )
     }
 
@@ -775,14 +791,14 @@ where
         try_new_with_any_provider,
         try_new_with_buffer_provider,
         try_new_internal,
-        options: NeoOptions<R>
+        options: impl Into<NeoOptions<R>>
     );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<P>(
         provider: &P,
         locale: &DataLocale,
-        options: NeoOptions<R>,
+        options: impl Into<NeoOptions<R>>,
     ) -> Result<Self, LoadError>
     where
         P: ?Sized
@@ -865,7 +881,7 @@ where
             &ExternalLoaderUnstable(provider),
             locale,
             R::COMPONENTS,
-            options,
+            options.into(),
         )
     }
 }
@@ -959,7 +975,7 @@ where
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
-    pub fn try_new_with_components(locale: &DataLocale, components: R, options: NeoOptions<R>) -> Result<Self, LoadError>
+    pub fn try_new_with_components(locale: &DataLocale, components: R, options: impl Into<NeoOptions<R>>) -> Result<Self, LoadError>
     where
     crate::provider::Baked: Sized
     // Date formatting markers
@@ -1030,7 +1046,7 @@ where
             &ExternalLoaderCompiledData,
             locale,
             components.into(),
-            options,
+            options.into(),
         )
     }
 
@@ -1040,7 +1056,7 @@ where
         try_new_with_components_with_buffer_provider,
         try_new_internal,
         components: R,
-        options: NeoOptions<R>
+        options: impl Into<NeoOptions<R>>
     );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
@@ -1048,7 +1064,7 @@ where
         provider: &P,
         locale: &DataLocale,
         components: R,
-        options: NeoOptions<R>,
+        options: impl Into<NeoOptions<R>>,
     ) -> Result<Self, LoadError>
     where
         P: ?Sized
@@ -1131,7 +1147,7 @@ where
             &ExternalLoaderUnstable(provider),
             locale,
             components.into(),
-            options,
+            options.into(),
         )
     }
 }
