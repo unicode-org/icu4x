@@ -17,7 +17,8 @@ use icu_provider::DataMarkerAttributes;
 /// [`crate::options::length::Date`], this has only three levels, with no
 /// `Full`; this is because `Full` corresponds to additional components,
 /// rather than to making the components wider than in `Long`.
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[non_exhaustive]
 pub enum NeoSkeletonLength {
     /// A long date, typically spelled-out, as in “January 1, 2000”.
@@ -75,6 +76,7 @@ impl NeoSkeletonLength {
 /// Only sets that yield “sensible” dates are allowed: this type cannot
 /// describe a date such as “some Tuesday in 2023”.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[non_exhaustive]
 pub enum NeoDayComponents {
     /// The day of the month, as in
@@ -334,6 +336,7 @@ impl NeoDayComponents {
 /// Only sets that yield “sensible” dates are allowed: this type cannot describe
 /// a date such as “August, Anno Domini”.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[non_exhaustive]
 pub enum NeoDateComponents {
     /// A date that specifies a single day. See [`NeoDayComponents`].
@@ -468,6 +471,7 @@ impl NeoDateComponents {
 /// Only sets that yield “sensible” time are allowed: this type cannot describe
 /// a time such as “am, 5 minutes, 25 milliseconds”.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[non_exhaustive]
 pub enum NeoTimeComponents {
     /// An hour (12-hour or 24-hour chosen by locale), as in
@@ -674,7 +678,8 @@ impl NeoTimeComponents {
 }
 
 /// A specification of components for parts of a datetime.
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[non_exhaustive]
 pub enum NeoDateTimeComponents {
     /// Components for parts of a date.
@@ -698,7 +703,8 @@ impl From<NeoTimeComponents> for NeoDateTimeComponents {
 }
 
 /// A specification of components for parts of a datetime and/or time zone.
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[non_exhaustive]
 pub enum NeoComponents {
     /// Components for parts of a date.
@@ -748,7 +754,8 @@ impl From<NeoTimeZoneSkeleton> for NeoComponents {
 ///
 /// - [`NeoTimeZoneStyle::SpecificNonLocation`] + [`NeoSkeletonLength::Short`]
 /// - [`NeoTimeZoneStyle::Offset`]
-#[derive(Debug, Copy, Clone, Default)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, Default)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[non_exhaustive]
 pub enum NeoTimeZoneStyle {
     /// The location format, e.g., “Los Angeles time” or specific non-location
@@ -778,7 +785,8 @@ pub enum NeoTimeZoneStyle {
 }
 
 /// A skeleton for formatting a time zone.
-#[derive(Debug, Copy, Clone, Default)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, Default)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[non_exhaustive]
 pub struct NeoTimeZoneSkeleton {
     /// The length of the time zone format, _i.e._, with
@@ -898,7 +906,8 @@ impl NeoDateTimeSkeleton {
 }
 
 /// A skeleton for formatting parts of a date, time, and optional time zone.
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[non_exhaustive]
 pub struct NeoSkeleton {
     /// Desired formatting length.
