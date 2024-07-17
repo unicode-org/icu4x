@@ -29,7 +29,7 @@ pub mod ffi {
     }
 
     #[diplomat::rust_link(icu::casemap::titlecase::TitlecaseOptions, Struct)]
-    #[diplomat::attr(dart, rename = "TitlecaseOptions")]
+    #[diplomat::attr(any(dart, js), rename = "TitlecaseOptions")]
     pub struct TitlecaseOptionsV1 {
         pub leading_adjustment: LeadingAdjustment,
         pub trailing_case: TrailingCase,
@@ -92,7 +92,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        #[diplomat::attr(dart, rename = "titlecaseSegmentWithOnlyCaseData")]
+        #[diplomat::attr(any(dart, js), rename = "titlecaseSegmentWithOnlyCaseData")]
         pub fn titlecase_segment_with_only_case_data_v1(
             &self,
             s: &str,
@@ -279,7 +279,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        #[diplomat::attr(dart, rename = "titlecaseSegment")]
+        #[diplomat::attr(any(dart, js), rename = "titlecaseSegment")]
         pub fn titlecase_segment_v1(
             &self,
             s: &str,

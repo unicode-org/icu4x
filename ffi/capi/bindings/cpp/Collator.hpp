@@ -24,9 +24,9 @@ namespace capi {
     typedef struct ICU4XCollator_create_v1_result {union {diplomat::capi::Collator* ok; diplomat::capi::DataError err;}; bool is_ok;} ICU4XCollator_create_v1_result;
     ICU4XCollator_create_v1_result ICU4XCollator_create_v1(const diplomat::capi::DataProvider* provider, const diplomat::capi::Locale* locale, diplomat::capi::CollatorOptionsV1 options);
     
-    int8_t ICU4XCollator_compare_utf16_(const diplomat::capi::Collator* self, const char16_t* left_data, size_t left_len, const char16_t* right_data, size_t right_len);
+    int8_t ICU4XCollator_compare_utf16(const diplomat::capi::Collator* self, const char16_t* left_data, size_t left_len, const char16_t* right_data, size_t right_len);
     
-    int8_t ICU4XCollator_compare_(const diplomat::capi::Collator* self, const char* left_data, size_t left_len, const char* right_data, size_t right_len);
+    int8_t ICU4XCollator_compare(const diplomat::capi::Collator* self, const char* left_data, size_t left_len, const char* right_data, size_t right_len);
     
     diplomat::capi::CollatorResolvedOptionsV1 ICU4XCollator_resolved_options(const diplomat::capi::Collator* self);
     
@@ -45,7 +45,7 @@ inline diplomat::result<std::unique_ptr<Collator>, DataError> Collator::create_v
 }
 
 inline int8_t Collator::compare16(std::u16string_view left, std::u16string_view right) const {
-  auto result = diplomat::capi::ICU4XCollator_compare_utf16_(this->AsFFI(),
+  auto result = diplomat::capi::ICU4XCollator_compare_utf16(this->AsFFI(),
     left.data(),
     left.size(),
     right.data(),
@@ -54,7 +54,7 @@ inline int8_t Collator::compare16(std::u16string_view left, std::u16string_view 
 }
 
 inline int8_t Collator::compare(std::string_view left, std::string_view right) const {
-  auto result = diplomat::capi::ICU4XCollator_compare_(this->AsFFI(),
+  auto result = diplomat::capi::ICU4XCollator_compare(this->AsFFI(),
     left.data(),
     left.size(),
     right.data(),

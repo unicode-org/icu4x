@@ -49,7 +49,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        #[diplomat::attr(dart, disable)]
+        #[diplomat::attr(any(dart, js), disable)]
         pub fn get32(&self, cp: u32) -> u8 {
             self.get(cp)
         }
@@ -283,7 +283,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        #[diplomat::attr(dart, disable)]
+        #[diplomat::attr(any(dart, js), disable)]
         pub fn get32(&self, cp: u32) -> u16 {
             self.get(cp)
         }

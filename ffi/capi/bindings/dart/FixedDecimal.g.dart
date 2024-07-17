@@ -68,7 +68,7 @@ final class FixedDecimal implements ffi.Finalizable {
   /// See the [Rust documentation for `FloatPrecision`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.FloatPrecision.html) for more information.
   ///
   /// Throws [FixedDecimalLimitError] on failure.
-  factory FixedDecimal.fromDoubleWithDoublePrecision(double f) {
+  factory FixedDecimal.fromDoubleWithFloatingPrecision(double f) {
     final result = _ICU4XFixedDecimal_create_from_f64_with_floating_precision(f);
     if (!result.isOk) {
       throw FixedDecimalLimitError.values[result.union.err];

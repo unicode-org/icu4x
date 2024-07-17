@@ -16,7 +16,7 @@ namespace diplomat {
 namespace capi {
     extern "C" {
     
-    DiplomatUsizeView ICU4XReorderedIndexMap_as_slice(const diplomat::capi::ReorderedIndexMap* self);
+    diplomat::capi::DiplomatUsizeView ICU4XReorderedIndexMap_as_slice(const diplomat::capi::ReorderedIndexMap* self);
     
     size_t ICU4XReorderedIndexMap_len(const diplomat::capi::ReorderedIndexMap* self);
     

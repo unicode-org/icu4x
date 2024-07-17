@@ -7,15 +7,15 @@
 // See <https://github.com/rust-diplomat/diplomat/issues/283>.
 delete globalThis.fetch;
 
-import {Locale, DataProvider, FixedDecimalFormatter, FixedDecimal } from './lib/index.mjs';
+import {Locale, DataProvider, FixedDecimalFormatter, FixedDecimal, FixedDecimalGroupingStrategy } from './lib/index.mjs';
 
-const locale = Locale.create_from_string("bn");
-const provider = DataProvider.create_compiled();
+const locale = Locale.createFromString("bn");
+const provider = DataProvider.createCompiled();
 
-const format = FixedDecimalFormatter.create_with_grouping_strategy(provider, locale, "Auto");
+const format = FixedDecimalFormatter.createWithGroupingStrategy(provider, locale, FixedDecimalGroupingStrategy.Auto);
 
-const decimal = FixedDecimal.create_from_i32(1000007);
-decimal.multiply_pow10(-2);
+const decimal = FixedDecimal.fromInteger(1000007);
+decimal.multiplyPow10(-2);
 
 const result = format.format(decimal);
 console.log("Output is", result);

@@ -7,7 +7,6 @@
 pub mod ffi {
     use alloc::boxed::Box;
 
-    use crate::common::ffi::Ordering;
     use crate::errors::ffi::LocaleParseError;
 
     use writeable::Writeable;
@@ -162,28 +161,13 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::locale::Locale::strict_cmp, FnInStruct)]
-        #[diplomat::attr(*, disable)]
-        pub fn strict_cmp(&self, other: &DiplomatStr) -> Ordering {
-            self.0.strict_cmp(other).into()
-        }
-
-        #[diplomat::rust_link(icu::locale::Locale::strict_cmp, FnInStruct)]
-        #[diplomat::skip_if_ast]
-        #[diplomat::attr(dart, rename = "compareToString")]
-        pub fn strict_cmp_(&self, other: &DiplomatStr) -> core::cmp::Ordering {
+        pub fn compare_to_string(&self, other: &DiplomatStr) -> core::cmp::Ordering {
             self.0.strict_cmp(other)
         }
 
         #[diplomat::rust_link(icu::locale::Locale::total_cmp, FnInStruct)]
-        #[diplomat::attr(*, disable)]
-        pub fn total_cmp(&self, other: &Self) -> Ordering {
-            self.0.total_cmp(&other.0).into()
-        }
-
-        #[diplomat::rust_link(icu::locale::Locale::total_cmp, FnInStruct)]
-        #[diplomat::skip_if_ast]
         #[diplomat::attr(supports = comparators, comparison)]
-        pub fn total_cmp_(&self, other: &Self) -> core::cmp::Ordering {
+        pub fn compare_to(&self, other: &Self) -> core::cmp::Ordering {
             self.0.total_cmp(&other.0)
         }
     }

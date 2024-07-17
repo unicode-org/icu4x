@@ -4,29 +4,29 @@
 
 import test from 'ava';
 
-import { FixedDecimal, Locale, DataProvider, FixedDecimalFormatter } from "icu4x"
+import { FixedDecimal, Locale, DataProvider, FixedDecimalFormatter, FixedDecimalSign, FixedDecimalGroupingStrategy } from 'icu4x';
 
-const locale = Locale.create_from_string("bn");
-const provider = DataProvider.create_compiled();
-const format = FixedDecimalFormatter.create_with_grouping_strategy(provider, locale, "Auto");
+const locale = Locale.createFromString('bn');
+const provider = DataProvider.createCompiled();
+const format = FixedDecimalFormatter.createWithGroupingStrategy(provider, locale, FixedDecimalGroupingStrategy.Auto);
 
-test("format a simple decimal", t => {
-  const decimal = FixedDecimal.create_from_i32(1234);
-  decimal.multiply_pow10(-2);
+test('format a simple decimal', t => {
+  const decimal = FixedDecimal.fromInteger(1234);
+  decimal.multiplyPow10(-2);
 
-  t.is(format.format(decimal), "১২.৩৪");
+  t.is(format.format(decimal), '১২.৩৪');
 });
 
-test("format a long decimal", t => {
-  const decimal = FixedDecimal.create_from_i32(1000007);
+test('format a long decimal', t => {
+  const decimal = FixedDecimal.fromInteger(1000007);
 
-  t.is(format.format(decimal), "১০,০০,০০৭");
+  t.is(format.format(decimal), '১০,০০,০০৭');
 });
 
-test("format a negated, scaled decimal", t => {
-  const decimal = FixedDecimal.create_from_i32(1000007);
-  decimal.multiply_pow10(2);
-  decimal.set_sign("Negative");
+test('format a negated, scaled decimal', t => {
+  const decimal = FixedDecimal.fromInteger(1000007);
+  decimal.multiplyPow10(2);
+  decimal.sign = FixedDecimalSign.Negative;
 
-  t.is(format.format(decimal), "-১০,০০,০০,৭০০");
+  t.is(format.format(decimal), '-১০,০০,০০,৭০০');
 });

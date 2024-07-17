@@ -208,14 +208,14 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
   int compareToString(String other) {
     final temp = ffi2.Arena();
     final otherView = other.utf8View;
-    final result = _ICU4XLocale_strict_cmp_(_ffi, otherView.allocIn(temp), otherView.length);
+    final result = _ICU4XLocale_compare_to_string(_ffi, otherView.allocIn(temp), otherView.length);
     temp.releaseAll();
     return result;
   }
 
   /// See the [Rust documentation for `total_cmp`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.total_cmp) for more information.
   int compareTo(Locale other) {
-    final result = _ICU4XLocale_total_cmp_(_ffi, other._ffi);
+    final result = _ICU4XLocale_compare_to(_ffi, other._ffi);
     return result;
   }
 
@@ -300,12 +300,12 @@ external void _ICU4XLocale_to_string(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<f
 // ignore: non_constant_identifier_names
 external bool _ICU4XLocale_normalizing_eq(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> otherData, int otherLength);
 
-@meta.ResourceIdentifier('ICU4XLocale_strict_cmp_')
-@ffi.Native<ffi.Int8 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XLocale_strict_cmp_')
+@meta.ResourceIdentifier('ICU4XLocale_compare_to_string')
+@ffi.Native<ffi.Int8 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XLocale_compare_to_string')
 // ignore: non_constant_identifier_names
-external int _ICU4XLocale_strict_cmp_(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> otherData, int otherLength);
+external int _ICU4XLocale_compare_to_string(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> otherData, int otherLength);
 
-@meta.ResourceIdentifier('ICU4XLocale_total_cmp_')
-@ffi.Native<ffi.Int8 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocale_total_cmp_')
+@meta.ResourceIdentifier('ICU4XLocale_compare_to')
+@ffi.Native<ffi.Int8 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocale_compare_to')
 // ignore: non_constant_identifier_names
-external int _ICU4XLocale_total_cmp_(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> other);
+external int _ICU4XLocale_compare_to(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> other);
