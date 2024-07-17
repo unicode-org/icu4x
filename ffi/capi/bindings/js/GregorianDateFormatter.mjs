@@ -16,7 +16,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 */
 
 const GregorianDateFormatter_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.ICU4XGregorianDateFormatter_destroy(ptr);
+    wasm.icu4x_GregorianDateFormatter_destroy_mv1(ptr);
 });
 export class GregorianDateFormatter {
     // Internal ptr reference:
@@ -43,7 +43,7 @@ export class GregorianDateFormatter {
     static createWithLength(provider, locale, length) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XGregorianDateFormatter_create_with_length(diplomat_receive_buffer, provider.ffiValue, locale.ffiValue, length.ffiValue);
+        const result = wasm.icu4x_GregorianDateFormatter_create_with_length_mv1(diplomat_receive_buffer, provider.ffiValue, locale.ffiValue, length.ffiValue);
     
         try {
     
@@ -62,7 +62,7 @@ export class GregorianDateFormatter {
     formatIsoDate(value) {
         
         const write = wasm.diplomat_buffer_write_create(0);
-        wasm.ICU4XGregorianDateFormatter_format_iso_date(this.ffiValue, value.ffiValue, write);
+        wasm.icu4x_GregorianDateFormatter_format_iso_date_mv1(this.ffiValue, value.ffiValue, write);
     
         try {
     
@@ -77,7 +77,7 @@ export class GregorianDateFormatter {
     formatIsoDatetime(value) {
         
         const write = wasm.diplomat_buffer_write_create(0);
-        wasm.ICU4XGregorianDateFormatter_format_iso_datetime(this.ffiValue, value.ffiValue, write);
+        wasm.icu4x_GregorianDateFormatter_format_iso_datetime_mv1(this.ffiValue, value.ffiValue, write);
     
         try {
     

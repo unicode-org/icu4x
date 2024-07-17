@@ -10,7 +10,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 */
 
 const BidiInfo_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.ICU4XBidiInfo_destroy(ptr);
+    wasm.icu4x_BidiInfo_destroy_mv1(ptr);
 });
 export class BidiInfo {
     // Internal ptr reference:
@@ -40,7 +40,7 @@ export class BidiInfo {
 
 
     get paragraphCount() {
-        const result = wasm.ICU4XBidiInfo_paragraph_count(this.ffiValue);
+        const result = wasm.icu4x_BidiInfo_paragraph_count_mv1(this.ffiValue);
     
         try {
     
@@ -54,7 +54,7 @@ export class BidiInfo {
         
         // This lifetime edge depends on lifetimes 'text
         let textEdges = [this];
-        const result = wasm.ICU4XBidiInfo_paragraph_at(this.ffiValue, n);
+        const result = wasm.icu4x_BidiInfo_paragraph_at_mv1(this.ffiValue, n);
     
         try {
     
@@ -65,7 +65,7 @@ export class BidiInfo {
     }
 
     get size() {
-        const result = wasm.ICU4XBidiInfo_size(this.ffiValue);
+        const result = wasm.icu4x_BidiInfo_size_mv1(this.ffiValue);
     
         try {
     
@@ -76,7 +76,7 @@ export class BidiInfo {
     }
 
     levelAt(pos) {
-        const result = wasm.ICU4XBidiInfo_level_at(this.ffiValue, pos);
+        const result = wasm.icu4x_BidiInfo_level_at_mv1(this.ffiValue, pos);
     
         try {
     

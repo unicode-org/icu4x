@@ -20,7 +20,7 @@ final class TitlecaseMapper implements ffi.Finalizable {
     }
   }
 
-  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XTitlecaseMapper_destroy));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_TitlecaseMapper_destroy_mv1));
 
   /// Construct a new `TitlecaseMapper` instance
   ///
@@ -28,7 +28,7 @@ final class TitlecaseMapper implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory TitlecaseMapper(DataProvider provider) {
-    final result = _ICU4XTitlecaseMapper_create(provider._ffi);
+    final result = _icu4x_TitlecaseMapper_create_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -44,23 +44,23 @@ final class TitlecaseMapper implements ffi.Finalizable {
     final temp = ffi2.Arena();
     final sView = s.utf8View;
     final write = _Write();
-    _ICU4XTitlecaseMapper_titlecase_segment_v1(_ffi, sView.allocIn(temp), sView.length, locale._ffi, options._toFfi(temp), write._ffi);
+    _icu4x_TitlecaseMapper_titlecase_segment_v1_mv1(_ffi, sView.allocIn(temp), sView.length, locale._ffi, options._toFfi(temp), write._ffi);
     temp.releaseAll();
     return write.finalize();
   }
 }
 
-@meta.ResourceIdentifier('ICU4XTitlecaseMapper_destroy')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XTitlecaseMapper_destroy')
+@meta.ResourceIdentifier('icu4x_TitlecaseMapper_destroy_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_TitlecaseMapper_destroy_mv1')
 // ignore: non_constant_identifier_names
-external void _ICU4XTitlecaseMapper_destroy(ffi.Pointer<ffi.Void> self);
+external void _icu4x_TitlecaseMapper_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('ICU4XTitlecaseMapper_create')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XTitlecaseMapper_create')
+@meta.ResourceIdentifier('icu4x_TitlecaseMapper_create_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TitlecaseMapper_create_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XTitlecaseMapper_create(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_TitlecaseMapper_create_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XTitlecaseMapper_titlecase_segment_v1')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>, _TitlecaseOptionsFfi, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XTitlecaseMapper_titlecase_segment_v1')
+@meta.ResourceIdentifier('icu4x_TitlecaseMapper_titlecase_segment_v1_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>, _TitlecaseOptionsFfi, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TitlecaseMapper_titlecase_segment_v1_mv1')
 // ignore: non_constant_identifier_names
-external void _ICU4XTitlecaseMapper_titlecase_segment_v1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> sData, int sLength, ffi.Pointer<ffi.Opaque> locale, _TitlecaseOptionsFfi options, ffi.Pointer<ffi.Opaque> write);
+external void _icu4x_TitlecaseMapper_titlecase_segment_v1_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> sData, int sLength, ffi.Pointer<ffi.Opaque> locale, _TitlecaseOptionsFfi options, ffi.Pointer<ffi.Opaque> write);

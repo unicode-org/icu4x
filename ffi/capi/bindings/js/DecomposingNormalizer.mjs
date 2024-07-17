@@ -9,7 +9,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 */
 
 const DecomposingNormalizer_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.ICU4XDecomposingNormalizer_destroy(ptr);
+    wasm.icu4x_DecomposingNormalizer_destroy_mv1(ptr);
 });
 export class DecomposingNormalizer {
     // Internal ptr reference:
@@ -36,7 +36,7 @@ export class DecomposingNormalizer {
     static createNfd(provider) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XDecomposingNormalizer_create_nfd(diplomat_receive_buffer, provider.ffiValue);
+        const result = wasm.icu4x_DecomposingNormalizer_create_nfd_mv1(diplomat_receive_buffer, provider.ffiValue);
     
         try {
     
@@ -55,7 +55,7 @@ export class DecomposingNormalizer {
     static createNfkd(provider) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XDecomposingNormalizer_create_nfkd(diplomat_receive_buffer, provider.ffiValue);
+        const result = wasm.icu4x_DecomposingNormalizer_create_nfkd_mv1(diplomat_receive_buffer, provider.ffiValue);
     
         try {
     
@@ -76,7 +76,7 @@ export class DecomposingNormalizer {
         const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
         
         const write = wasm.diplomat_buffer_write_create(0);
-        wasm.ICU4XDecomposingNormalizer_normalize(this.ffiValue, sSlice.ptr, sSlice.size, write);
+        wasm.icu4x_DecomposingNormalizer_normalize_mv1(this.ffiValue, sSlice.ptr, sSlice.size, write);
     
         try {
     
@@ -93,7 +93,7 @@ export class DecomposingNormalizer {
     isNormalized(s) {
         
         const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
-        const result = wasm.ICU4XDecomposingNormalizer_is_normalized(this.ffiValue, sSlice.ptr, sSlice.size);
+        const result = wasm.icu4x_DecomposingNormalizer_is_normalized_mv1(this.ffiValue, sSlice.ptr, sSlice.size);
     
         try {
     
@@ -108,7 +108,7 @@ export class DecomposingNormalizer {
     isNormalizedUtf16(s) {
         
         const sSlice = diplomatRuntime.DiplomatBuf.str16(wasm, s);
-        const result = wasm.ICU4XDecomposingNormalizer_is_normalized_utf16(this.ffiValue, sSlice.ptr, sSlice.size);
+        const result = wasm.icu4x_DecomposingNormalizer_is_normalized_utf16_mv1(this.ffiValue, sSlice.ptr, sSlice.size);
     
         try {
     
@@ -123,7 +123,7 @@ export class DecomposingNormalizer {
     isNormalizedUpTo(s) {
         
         const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
-        const result = wasm.ICU4XDecomposingNormalizer_is_normalized_up_to(this.ffiValue, sSlice.ptr, sSlice.size);
+        const result = wasm.icu4x_DecomposingNormalizer_is_normalized_up_to_mv1(this.ffiValue, sSlice.ptr, sSlice.size);
     
         try {
     
@@ -138,7 +138,7 @@ export class DecomposingNormalizer {
     isNormalizedUtf16UpTo(s) {
         
         const sSlice = diplomatRuntime.DiplomatBuf.str16(wasm, s);
-        const result = wasm.ICU4XDecomposingNormalizer_is_normalized_utf16_up_to(this.ffiValue, sSlice.ptr, sSlice.size);
+        const result = wasm.icu4x_DecomposingNormalizer_is_normalized_utf16_up_to_mv1(this.ffiValue, sSlice.ptr, sSlice.size);
     
         try {
     

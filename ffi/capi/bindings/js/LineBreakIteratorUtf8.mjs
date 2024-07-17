@@ -9,7 +9,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 */
 
 const LineBreakIteratorUtf8_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.ICU4XLineBreakIteratorUtf8_destroy(ptr);
+    wasm.icu4x_LineBreakIteratorUtf8_destroy_mv1(ptr);
 });
 export class LineBreakIteratorUtf8 {
     // Internal ptr reference:
@@ -39,7 +39,7 @@ export class LineBreakIteratorUtf8 {
 
 
     next() {
-        const result = wasm.ICU4XLineBreakIteratorUtf8_next(this.ffiValue);
+        const result = wasm.icu4x_LineBreakIteratorUtf8_next_mv1(this.ffiValue);
     
         try {
     

@@ -25,27 +25,27 @@ namespace diplomat {
 namespace capi {
     extern "C" {
     
-    typedef struct ICU4XZonedDateTimeFormatter_create_with_lengths_result {union {diplomat::capi::ZonedDateTimeFormatter* ok; diplomat::capi::Error err;}; bool is_ok;} ICU4XZonedDateTimeFormatter_create_with_lengths_result;
-    ICU4XZonedDateTimeFormatter_create_with_lengths_result ICU4XZonedDateTimeFormatter_create_with_lengths(const diplomat::capi::DataProvider* provider, const diplomat::capi::Locale* locale, diplomat::capi::DateLength date_length, diplomat::capi::TimeLength time_length);
+    typedef struct icu4x_ZonedDateTimeFormatter_create_with_lengths_mv1_result {union {diplomat::capi::ZonedDateTimeFormatter* ok; diplomat::capi::Error err;}; bool is_ok;} icu4x_ZonedDateTimeFormatter_create_with_lengths_mv1_result;
+    icu4x_ZonedDateTimeFormatter_create_with_lengths_mv1_result icu4x_ZonedDateTimeFormatter_create_with_lengths_mv1(const diplomat::capi::DataProvider* provider, const diplomat::capi::Locale* locale, diplomat::capi::DateLength date_length, diplomat::capi::TimeLength time_length);
     
-    typedef struct ICU4XZonedDateTimeFormatter_create_with_lengths_and_iso_8601_time_zone_fallback_result {union {diplomat::capi::ZonedDateTimeFormatter* ok; diplomat::capi::Error err;}; bool is_ok;} ICU4XZonedDateTimeFormatter_create_with_lengths_and_iso_8601_time_zone_fallback_result;
-    ICU4XZonedDateTimeFormatter_create_with_lengths_and_iso_8601_time_zone_fallback_result ICU4XZonedDateTimeFormatter_create_with_lengths_and_iso_8601_time_zone_fallback(const diplomat::capi::DataProvider* provider, const diplomat::capi::Locale* locale, diplomat::capi::DateLength date_length, diplomat::capi::TimeLength time_length, diplomat::capi::IsoTimeZoneOptions zone_options);
+    typedef struct icu4x_ZonedDateTimeFormatter_create_with_lengths_and_iso_8601_time_zone_fallback_mv1_result {union {diplomat::capi::ZonedDateTimeFormatter* ok; diplomat::capi::Error err;}; bool is_ok;} icu4x_ZonedDateTimeFormatter_create_with_lengths_and_iso_8601_time_zone_fallback_mv1_result;
+    icu4x_ZonedDateTimeFormatter_create_with_lengths_and_iso_8601_time_zone_fallback_mv1_result icu4x_ZonedDateTimeFormatter_create_with_lengths_and_iso_8601_time_zone_fallback_mv1(const diplomat::capi::DataProvider* provider, const diplomat::capi::Locale* locale, diplomat::capi::DateLength date_length, diplomat::capi::TimeLength time_length, diplomat::capi::IsoTimeZoneOptions zone_options);
     
-    typedef struct ICU4XZonedDateTimeFormatter_format_datetime_with_custom_time_zone_result {union { diplomat::capi::Error err;}; bool is_ok;} ICU4XZonedDateTimeFormatter_format_datetime_with_custom_time_zone_result;
-    ICU4XZonedDateTimeFormatter_format_datetime_with_custom_time_zone_result ICU4XZonedDateTimeFormatter_format_datetime_with_custom_time_zone(const diplomat::capi::ZonedDateTimeFormatter* self, const diplomat::capi::DateTime* datetime, const diplomat::capi::CustomTimeZone* time_zone, diplomat::capi::DiplomatWrite* write);
+    typedef struct icu4x_ZonedDateTimeFormatter_format_datetime_with_custom_time_zone_mv1_result {union { diplomat::capi::Error err;}; bool is_ok;} icu4x_ZonedDateTimeFormatter_format_datetime_with_custom_time_zone_mv1_result;
+    icu4x_ZonedDateTimeFormatter_format_datetime_with_custom_time_zone_mv1_result icu4x_ZonedDateTimeFormatter_format_datetime_with_custom_time_zone_mv1(const diplomat::capi::ZonedDateTimeFormatter* self, const diplomat::capi::DateTime* datetime, const diplomat::capi::CustomTimeZone* time_zone, diplomat::capi::DiplomatWrite* write);
     
-    typedef struct ICU4XZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_result {union { diplomat::capi::Error err;}; bool is_ok;} ICU4XZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_result;
-    ICU4XZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_result ICU4XZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone(const diplomat::capi::ZonedDateTimeFormatter* self, const diplomat::capi::IsoDateTime* datetime, const diplomat::capi::CustomTimeZone* time_zone, diplomat::capi::DiplomatWrite* write);
+    typedef struct icu4x_ZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1_result {union { diplomat::capi::Error err;}; bool is_ok;} icu4x_ZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1_result;
+    icu4x_ZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1_result icu4x_ZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1(const diplomat::capi::ZonedDateTimeFormatter* self, const diplomat::capi::IsoDateTime* datetime, const diplomat::capi::CustomTimeZone* time_zone, diplomat::capi::DiplomatWrite* write);
     
     
-    void ICU4XZonedDateTimeFormatter_destroy(ZonedDateTimeFormatter* self);
+    void icu4x_ZonedDateTimeFormatter_destroy_mv1(ZonedDateTimeFormatter* self);
     
     } // extern "C"
 } // namespace capi
 } // namespace
 
 inline diplomat::result<std::unique_ptr<ZonedDateTimeFormatter>, Error> ZonedDateTimeFormatter::create_with_lengths(const DataProvider& provider, const Locale& locale, DateLength date_length, TimeLength time_length) {
-  auto result = diplomat::capi::ICU4XZonedDateTimeFormatter_create_with_lengths(provider.AsFFI(),
+  auto result = diplomat::capi::icu4x_ZonedDateTimeFormatter_create_with_lengths_mv1(provider.AsFFI(),
     locale.AsFFI(),
     date_length.AsFFI(),
     time_length.AsFFI());
@@ -53,7 +53,7 @@ inline diplomat::result<std::unique_ptr<ZonedDateTimeFormatter>, Error> ZonedDat
 }
 
 inline diplomat::result<std::unique_ptr<ZonedDateTimeFormatter>, Error> ZonedDateTimeFormatter::create_with_lengths_and_iso_8601_time_zone_fallback(const DataProvider& provider, const Locale& locale, DateLength date_length, TimeLength time_length, IsoTimeZoneOptions zone_options) {
-  auto result = diplomat::capi::ICU4XZonedDateTimeFormatter_create_with_lengths_and_iso_8601_time_zone_fallback(provider.AsFFI(),
+  auto result = diplomat::capi::icu4x_ZonedDateTimeFormatter_create_with_lengths_and_iso_8601_time_zone_fallback_mv1(provider.AsFFI(),
     locale.AsFFI(),
     date_length.AsFFI(),
     time_length.AsFFI(),
@@ -64,7 +64,7 @@ inline diplomat::result<std::unique_ptr<ZonedDateTimeFormatter>, Error> ZonedDat
 inline diplomat::result<std::string, Error> ZonedDateTimeFormatter::format_datetime_with_custom_time_zone(const DateTime& datetime, const CustomTimeZone& time_zone) const {
   std::string output;
   diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
-  auto result = diplomat::capi::ICU4XZonedDateTimeFormatter_format_datetime_with_custom_time_zone(this->AsFFI(),
+  auto result = diplomat::capi::icu4x_ZonedDateTimeFormatter_format_datetime_with_custom_time_zone_mv1(this->AsFFI(),
     datetime.AsFFI(),
     time_zone.AsFFI(),
     &write);
@@ -74,7 +74,7 @@ inline diplomat::result<std::string, Error> ZonedDateTimeFormatter::format_datet
 inline diplomat::result<std::string, Error> ZonedDateTimeFormatter::format_iso_datetime_with_custom_time_zone(const IsoDateTime& datetime, const CustomTimeZone& time_zone) const {
   std::string output;
   diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
-  auto result = diplomat::capi::ICU4XZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone(this->AsFFI(),
+  auto result = diplomat::capi::icu4x_ZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1(this->AsFFI(),
     datetime.AsFFI(),
     time_zone.AsFFI(),
     &write);
@@ -98,7 +98,7 @@ inline ZonedDateTimeFormatter* ZonedDateTimeFormatter::FromFFI(diplomat::capi::Z
 }
 
 inline void ZonedDateTimeFormatter::operator delete(void* ptr) {
-  diplomat::capi::ICU4XZonedDateTimeFormatter_destroy(reinterpret_cast<diplomat::capi::ZonedDateTimeFormatter*>(ptr));
+  diplomat::capi::icu4x_ZonedDateTimeFormatter_destroy_mv1(reinterpret_cast<diplomat::capi::ZonedDateTimeFormatter*>(ptr));
 }
 
 

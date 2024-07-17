@@ -16,33 +16,33 @@ namespace diplomat {
 namespace capi {
     extern "C" {
     
-    bool ICU4XScriptExtensionsSet_contains(const diplomat::capi::ScriptExtensionsSet* self, uint16_t script);
+    bool icu4x_ScriptExtensionsSet_contains_mv1(const diplomat::capi::ScriptExtensionsSet* self, uint16_t script);
     
-    size_t ICU4XScriptExtensionsSet_count(const diplomat::capi::ScriptExtensionsSet* self);
+    size_t icu4x_ScriptExtensionsSet_count_mv1(const diplomat::capi::ScriptExtensionsSet* self);
     
-    typedef struct ICU4XScriptExtensionsSet_script_at_result {union {uint16_t ok; }; bool is_ok;} ICU4XScriptExtensionsSet_script_at_result;
-    ICU4XScriptExtensionsSet_script_at_result ICU4XScriptExtensionsSet_script_at(const diplomat::capi::ScriptExtensionsSet* self, size_t index);
+    typedef struct icu4x_ScriptExtensionsSet_script_at_mv1_result {union {uint16_t ok; }; bool is_ok;} icu4x_ScriptExtensionsSet_script_at_mv1_result;
+    icu4x_ScriptExtensionsSet_script_at_mv1_result icu4x_ScriptExtensionsSet_script_at_mv1(const diplomat::capi::ScriptExtensionsSet* self, size_t index);
     
     
-    void ICU4XScriptExtensionsSet_destroy(ScriptExtensionsSet* self);
+    void icu4x_ScriptExtensionsSet_destroy_mv1(ScriptExtensionsSet* self);
     
     } // extern "C"
 } // namespace capi
 } // namespace
 
 inline bool ScriptExtensionsSet::contains(uint16_t script) const {
-  auto result = diplomat::capi::ICU4XScriptExtensionsSet_contains(this->AsFFI(),
+  auto result = diplomat::capi::icu4x_ScriptExtensionsSet_contains_mv1(this->AsFFI(),
     script);
   return result;
 }
 
 inline size_t ScriptExtensionsSet::count() const {
-  auto result = diplomat::capi::ICU4XScriptExtensionsSet_count(this->AsFFI());
+  auto result = diplomat::capi::icu4x_ScriptExtensionsSet_count_mv1(this->AsFFI());
   return result;
 }
 
 inline std::optional<uint16_t> ScriptExtensionsSet::script_at(size_t index) const {
-  auto result = diplomat::capi::ICU4XScriptExtensionsSet_script_at(this->AsFFI(),
+  auto result = diplomat::capi::icu4x_ScriptExtensionsSet_script_at_mv1(this->AsFFI(),
     index);
   return result.is_ok ? std::optional<uint16_t>(result.ok) : std::nullopt;
 }
@@ -64,7 +64,7 @@ inline ScriptExtensionsSet* ScriptExtensionsSet::FromFFI(diplomat::capi::ScriptE
 }
 
 inline void ScriptExtensionsSet::operator delete(void* ptr) {
-  diplomat::capi::ICU4XScriptExtensionsSet_destroy(reinterpret_cast<diplomat::capi::ScriptExtensionsSet*>(ptr));
+  diplomat::capi::icu4x_ScriptExtensionsSet_destroy_mv1(reinterpret_cast<diplomat::capi::ScriptExtensionsSet*>(ptr));
 }
 
 

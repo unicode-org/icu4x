@@ -13,7 +13,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 */
 
 const GeneralCategoryNameToMaskMapper_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.ICU4XGeneralCategoryNameToMaskMapper_destroy(ptr);
+    wasm.icu4x_GeneralCategoryNameToMaskMapper_destroy_mv1(ptr);
 });
 export class GeneralCategoryNameToMaskMapper {
     // Internal ptr reference:
@@ -40,7 +40,7 @@ export class GeneralCategoryNameToMaskMapper {
     getStrict(name) {
         
         const nameSlice = diplomatRuntime.DiplomatBuf.str8(wasm, name);
-        const result = wasm.ICU4XGeneralCategoryNameToMaskMapper_get_strict(this.ffiValue, nameSlice.ptr, nameSlice.size);
+        const result = wasm.icu4x_GeneralCategoryNameToMaskMapper_get_strict_mv1(this.ffiValue, nameSlice.ptr, nameSlice.size);
     
         try {
     
@@ -55,7 +55,7 @@ export class GeneralCategoryNameToMaskMapper {
     getLoose(name) {
         
         const nameSlice = diplomatRuntime.DiplomatBuf.str8(wasm, name);
-        const result = wasm.ICU4XGeneralCategoryNameToMaskMapper_get_loose(this.ffiValue, nameSlice.ptr, nameSlice.size);
+        const result = wasm.icu4x_GeneralCategoryNameToMaskMapper_get_loose_mv1(this.ffiValue, nameSlice.ptr, nameSlice.size);
     
         try {
     
@@ -70,7 +70,7 @@ export class GeneralCategoryNameToMaskMapper {
     static load(provider) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XGeneralCategoryNameToMaskMapper_load(diplomat_receive_buffer, provider.ffiValue);
+        const result = wasm.icu4x_GeneralCategoryNameToMaskMapper_load_mv1(diplomat_receive_buffer, provider.ffiValue);
     
         try {
     

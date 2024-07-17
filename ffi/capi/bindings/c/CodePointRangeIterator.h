@@ -16,10 +16,10 @@
 
 
 
-CodePointRangeIteratorResult ICU4XCodePointRangeIterator_next(CodePointRangeIterator* self);
+CodePointRangeIteratorResult icu4x_CodePointRangeIterator_next_mv1(CodePointRangeIterator* self);
 
 
-void ICU4XCodePointRangeIterator_destroy(CodePointRangeIterator* self);
+void icu4x_CodePointRangeIterator_destroy_mv1(CodePointRangeIterator* self);
 
 
 

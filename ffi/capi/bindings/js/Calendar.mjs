@@ -11,7 +11,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 */
 
 const Calendar_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.ICU4XCalendar_destroy(ptr);
+    wasm.icu4x_Calendar_destroy_mv1(ptr);
 });
 export class Calendar {
     // Internal ptr reference:
@@ -38,7 +38,7 @@ export class Calendar {
     static createForLocale(provider, locale) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XCalendar_create_for_locale(diplomat_receive_buffer, provider.ffiValue, locale.ffiValue);
+        const result = wasm.icu4x_Calendar_create_for_locale_mv1(diplomat_receive_buffer, provider.ffiValue, locale.ffiValue);
     
         try {
     
@@ -57,7 +57,7 @@ export class Calendar {
     static createForKind(provider, kind) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XCalendar_create_for_kind(diplomat_receive_buffer, provider.ffiValue, kind.ffiValue);
+        const result = wasm.icu4x_Calendar_create_for_kind_mv1(diplomat_receive_buffer, provider.ffiValue, kind.ffiValue);
     
         try {
     
@@ -74,7 +74,7 @@ export class Calendar {
     }
 
     get kind() {
-        const result = wasm.ICU4XCalendar_kind(this.ffiValue);
+        const result = wasm.icu4x_Calendar_kind_mv1(this.ffiValue);
     
         try {
     

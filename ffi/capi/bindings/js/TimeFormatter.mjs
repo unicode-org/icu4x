@@ -16,7 +16,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 */
 
 const TimeFormatter_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.ICU4XTimeFormatter_destroy(ptr);
+    wasm.icu4x_TimeFormatter_destroy_mv1(ptr);
 });
 export class TimeFormatter {
     // Internal ptr reference:
@@ -43,7 +43,7 @@ export class TimeFormatter {
     static createWithLength(provider, locale, length) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XTimeFormatter_create_with_length(diplomat_receive_buffer, provider.ffiValue, locale.ffiValue, length.ffiValue);
+        const result = wasm.icu4x_TimeFormatter_create_with_length_mv1(diplomat_receive_buffer, provider.ffiValue, locale.ffiValue, length.ffiValue);
     
         try {
     
@@ -62,7 +62,7 @@ export class TimeFormatter {
     formatTime(value) {
         
         const write = wasm.diplomat_buffer_write_create(0);
-        wasm.ICU4XTimeFormatter_format_time(this.ffiValue, value.ffiValue, write);
+        wasm.icu4x_TimeFormatter_format_time_mv1(this.ffiValue, value.ffiValue, write);
     
         try {
     
@@ -77,7 +77,7 @@ export class TimeFormatter {
     formatDatetime(value) {
         
         const write = wasm.diplomat_buffer_write_create(0);
-        wasm.ICU4XTimeFormatter_format_datetime(this.ffiValue, value.ffiValue, write);
+        wasm.icu4x_TimeFormatter_format_datetime_mv1(this.ffiValue, value.ffiValue, write);
     
         try {
     
@@ -92,7 +92,7 @@ export class TimeFormatter {
     formatIsoDatetime(value) {
         
         const write = wasm.diplomat_buffer_write_create(0);
-        wasm.ICU4XTimeFormatter_format_iso_datetime(this.ffiValue, value.ffiValue, write);
+        wasm.icu4x_TimeFormatter_format_iso_datetime_mv1(this.ffiValue, value.ffiValue, write);
     
         try {
     

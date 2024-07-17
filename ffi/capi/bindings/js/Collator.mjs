@@ -12,7 +12,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 */
 
 const Collator_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.ICU4XCollator_destroy(ptr);
+    wasm.icu4x_Collator_destroy_mv1(ptr);
 });
 export class Collator {
     // Internal ptr reference:
@@ -41,7 +41,7 @@ export class Collator {
         let slice_cleanup_callbacks = [];
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XCollator_create_v1(diplomat_receive_buffer, provider.ffiValue, locale.ffiValue, ...options._intoFFI(slice_cleanup_callbacks, {}));
+        const result = wasm.icu4x_Collator_create_v1_mv1(diplomat_receive_buffer, provider.ffiValue, locale.ffiValue, ...options._intoFFI(slice_cleanup_callbacks, {}));
     
         try {
     
@@ -66,7 +66,7 @@ export class Collator {
         const leftSlice = diplomatRuntime.DiplomatBuf.str16(wasm, left);
         
         const rightSlice = diplomatRuntime.DiplomatBuf.str16(wasm, right);
-        const result = wasm.ICU4XCollator_compare_utf16(this.ffiValue, leftSlice.ptr, leftSlice.size, rightSlice.ptr, rightSlice.size);
+        const result = wasm.icu4x_Collator_compare_utf16_mv1(this.ffiValue, leftSlice.ptr, leftSlice.size, rightSlice.ptr, rightSlice.size);
     
         try {
     
@@ -83,7 +83,7 @@ export class Collator {
     get resolvedOptions() {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(28, 4);
-        const result = wasm.ICU4XCollator_resolved_options(diplomat_receive_buffer, this.ffiValue);
+        const result = wasm.icu4x_Collator_resolved_options_mv1(diplomat_receive_buffer, this.ffiValue);
     
         try {
     

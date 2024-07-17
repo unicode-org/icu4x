@@ -16,14 +16,14 @@
 
 
 
-int32_t ICU4XWordBreakIteratorLatin1_next(WordBreakIteratorLatin1* self);
+int32_t icu4x_WordBreakIteratorLatin1_next_mv1(WordBreakIteratorLatin1* self);
 
-SegmenterWordType ICU4XWordBreakIteratorLatin1_word_type(const WordBreakIteratorLatin1* self);
+SegmenterWordType icu4x_WordBreakIteratorLatin1_word_type_mv1(const WordBreakIteratorLatin1* self);
 
-bool ICU4XWordBreakIteratorLatin1_is_word_like(const WordBreakIteratorLatin1* self);
+bool icu4x_WordBreakIteratorLatin1_is_word_like_mv1(const WordBreakIteratorLatin1* self);
 
 
-void ICU4XWordBreakIteratorLatin1_destroy(WordBreakIteratorLatin1* self);
+void icu4x_WordBreakIteratorLatin1_destroy_mv1(WordBreakIteratorLatin1* self);
 
 
 

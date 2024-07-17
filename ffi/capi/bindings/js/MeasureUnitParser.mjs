@@ -11,7 +11,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 */
 
 const MeasureUnitParser_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.ICU4XMeasureUnitParser_destroy(ptr);
+    wasm.icu4x_MeasureUnitParser_destroy_mv1(ptr);
 });
 export class MeasureUnitParser {
     // Internal ptr reference:
@@ -43,7 +43,7 @@ export class MeasureUnitParser {
     parse(unitId) {
         
         const unitIdSlice = diplomatRuntime.DiplomatBuf.str8(wasm, unitId);
-        const result = wasm.ICU4XMeasureUnitParser_parse(this.ffiValue, unitIdSlice.ptr, unitIdSlice.size);
+        const result = wasm.icu4x_MeasureUnitParser_parse_mv1(this.ffiValue, unitIdSlice.ptr, unitIdSlice.size);
     
         try {
     

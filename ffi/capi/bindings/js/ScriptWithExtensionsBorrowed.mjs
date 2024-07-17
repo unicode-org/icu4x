@@ -11,7 +11,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 */
 
 const ScriptWithExtensionsBorrowed_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.ICU4XScriptWithExtensionsBorrowed_destroy(ptr);
+    wasm.icu4x_ScriptWithExtensionsBorrowed_destroy_mv1(ptr);
 });
 export class ScriptWithExtensionsBorrowed {
     // Internal ptr reference:
@@ -41,7 +41,7 @@ export class ScriptWithExtensionsBorrowed {
 
 
     getScriptVal(codePoint) {
-        const result = wasm.ICU4XScriptWithExtensionsBorrowed_get_script_val(this.ffiValue, codePoint);
+        const result = wasm.icu4x_ScriptWithExtensionsBorrowed_get_script_val_mv1(this.ffiValue, codePoint);
     
         try {
     
@@ -55,7 +55,7 @@ export class ScriptWithExtensionsBorrowed {
         
         // This lifetime edge depends on lifetimes 'a
         let aEdges = [this];
-        const result = wasm.ICU4XScriptWithExtensionsBorrowed_get_script_extensions_val(this.ffiValue, codePoint);
+        const result = wasm.icu4x_ScriptWithExtensionsBorrowed_get_script_extensions_val_mv1(this.ffiValue, codePoint);
     
         try {
     
@@ -66,7 +66,7 @@ export class ScriptWithExtensionsBorrowed {
     }
 
     hasScript(codePoint, script) {
-        const result = wasm.ICU4XScriptWithExtensionsBorrowed_has_script(this.ffiValue, codePoint, script);
+        const result = wasm.icu4x_ScriptWithExtensionsBorrowed_has_script_mv1(this.ffiValue, codePoint, script);
     
         try {
     
@@ -77,7 +77,7 @@ export class ScriptWithExtensionsBorrowed {
     }
 
     getScriptExtensionsSet(script) {
-        const result = wasm.ICU4XScriptWithExtensionsBorrowed_get_script_extensions_set(this.ffiValue, script);
+        const result = wasm.icu4x_ScriptWithExtensionsBorrowed_get_script_extensions_set_mv1(this.ffiValue, script);
     
         try {
     

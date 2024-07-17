@@ -7,7 +7,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 */
 
 const GraphemeClusterBreakIteratorLatin1_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.ICU4XGraphemeClusterBreakIteratorLatin1_destroy(ptr);
+    wasm.icu4x_GraphemeClusterBreakIteratorLatin1_destroy_mv1(ptr);
 });
 export class GraphemeClusterBreakIteratorLatin1 {
     // Internal ptr reference:
@@ -37,7 +37,7 @@ export class GraphemeClusterBreakIteratorLatin1 {
 
 
     next() {
-        const result = wasm.ICU4XGraphemeClusterBreakIteratorLatin1_next(this.ffiValue);
+        const result = wasm.icu4x_GraphemeClusterBreakIteratorLatin1_next_mv1(this.ffiValue);
     
         try {
     

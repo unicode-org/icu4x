@@ -11,7 +11,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 */
 
 const RegionDisplayNames_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.ICU4XRegionDisplayNames_destroy(ptr);
+    wasm.icu4x_RegionDisplayNames_destroy_mv1(ptr);
 });
 export class RegionDisplayNames {
     // Internal ptr reference:
@@ -38,7 +38,7 @@ export class RegionDisplayNames {
     static create(provider, locale) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XRegionDisplayNames_create(diplomat_receive_buffer, provider.ffiValue, locale.ffiValue);
+        const result = wasm.icu4x_RegionDisplayNames_create_mv1(diplomat_receive_buffer, provider.ffiValue, locale.ffiValue);
     
         try {
     
@@ -61,7 +61,7 @@ export class RegionDisplayNames {
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
         
         const write = wasm.diplomat_buffer_write_create(0);
-        const result = wasm.ICU4XRegionDisplayNames_of(diplomat_receive_buffer, this.ffiValue, regionSlice.ptr, regionSlice.size, write);
+        const result = wasm.icu4x_RegionDisplayNames_of_mv1(diplomat_receive_buffer, this.ffiValue, regionSlice.ptr, regionSlice.size, write);
     
         try {
     

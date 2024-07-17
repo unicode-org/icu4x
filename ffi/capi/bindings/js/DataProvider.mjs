@@ -11,7 +11,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 */
 
 const DataProvider_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.ICU4XDataProvider_destroy(ptr);
+    wasm.icu4x_DataProvider_destroy_mv1(ptr);
 });
 export class DataProvider {
     // Internal ptr reference:
@@ -36,7 +36,7 @@ export class DataProvider {
 
 
     static createCompiled() {
-        const result = wasm.ICU4XDataProvider_create_compiled();
+        const result = wasm.icu4x_DataProvider_create_compiled_mv1();
     
         try {
     
@@ -51,7 +51,7 @@ export class DataProvider {
         const blobSlice = diplomatRuntime.DiplomatBuf.slice(wasm, blob, "u8");
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XDataProvider_create_from_byte_slice(diplomat_receive_buffer, blobSlice.ptr, blobSlice.size);
+        const result = wasm.icu4x_DataProvider_create_from_byte_slice_mv1(diplomat_receive_buffer, blobSlice.ptr, blobSlice.size);
     
         try {
     
@@ -70,7 +70,7 @@ export class DataProvider {
     }
 
     static createEmpty() {
-        const result = wasm.ICU4XDataProvider_create_empty();
+        const result = wasm.icu4x_DataProvider_create_empty_mv1();
     
         try {
     
@@ -83,7 +83,7 @@ export class DataProvider {
     forkByKey(other) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XDataProvider_fork_by_key(diplomat_receive_buffer, this.ffiValue, other.ffiValue);
+        const result = wasm.icu4x_DataProvider_fork_by_key_mv1(diplomat_receive_buffer, this.ffiValue, other.ffiValue);
     
         try {
     
@@ -102,7 +102,7 @@ export class DataProvider {
     forkByLocale(other) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XDataProvider_fork_by_locale(diplomat_receive_buffer, this.ffiValue, other.ffiValue);
+        const result = wasm.icu4x_DataProvider_fork_by_locale_mv1(diplomat_receive_buffer, this.ffiValue, other.ffiValue);
     
         try {
     
@@ -121,7 +121,7 @@ export class DataProvider {
     enableLocaleFallbackWith(fallbacker) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XDataProvider_enable_locale_fallback_with(diplomat_receive_buffer, this.ffiValue, fallbacker.ffiValue);
+        const result = wasm.icu4x_DataProvider_enable_locale_fallback_with_mv1(diplomat_receive_buffer, this.ffiValue, fallbacker.ffiValue);
     
         try {
     

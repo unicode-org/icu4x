@@ -93,7 +93,7 @@ export class AnyCalendarKind {
     static getForLocale(locale) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XAnyCalendarKind_get_for_locale(diplomat_receive_buffer, locale.ffiValue);
+        const result = wasm.icu4x_AnyCalendarKind_get_for_locale_mv1(diplomat_receive_buffer, locale.ffiValue);
     
         try {
     
@@ -113,7 +113,7 @@ export class AnyCalendarKind {
         const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XAnyCalendarKind_get_for_bcp47(diplomat_receive_buffer, sSlice.ptr, sSlice.size);
+        const result = wasm.icu4x_AnyCalendarKind_get_for_bcp47_mv1(diplomat_receive_buffer, sSlice.ptr, sSlice.size);
     
         try {
     
@@ -133,7 +133,7 @@ export class AnyCalendarKind {
     get bcp47() {
         
         const write = wasm.diplomat_buffer_write_create(0);
-        wasm.ICU4XAnyCalendarKind_bcp47(this.ffiValue, write);
+        wasm.icu4x_AnyCalendarKind_bcp47_mv1(this.ffiValue, write);
     
         try {
     

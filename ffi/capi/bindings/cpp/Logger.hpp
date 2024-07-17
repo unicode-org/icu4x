@@ -16,17 +16,17 @@ namespace diplomat {
 namespace capi {
     extern "C" {
     
-    bool ICU4XLogger_init_simple_logger();
+    bool icu4x_Logger_init_simple_logger_mv1();
     
     
-    void ICU4XLogger_destroy(Logger* self);
+    void icu4x_Logger_destroy_mv1(Logger* self);
     
     } // extern "C"
 } // namespace capi
 } // namespace
 
 inline bool Logger::init_simple_logger() {
-  auto result = diplomat::capi::ICU4XLogger_init_simple_logger();
+  auto result = diplomat::capi::icu4x_Logger_init_simple_logger_mv1();
   return result;
 }
 
@@ -47,7 +47,7 @@ inline Logger* Logger::FromFFI(diplomat::capi::Logger* ptr) {
 }
 
 inline void Logger::operator delete(void* ptr) {
-  diplomat::capi::ICU4XLogger_destroy(reinterpret_cast<diplomat::capi::Logger*>(ptr));
+  diplomat::capi::icu4x_Logger_destroy_mv1(reinterpret_cast<diplomat::capi::Logger*>(ptr));
 }
 
 

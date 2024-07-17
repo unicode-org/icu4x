@@ -10,7 +10,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 */
 
 const LocaleFallbackIterator_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.ICU4XLocaleFallbackIterator_destroy(ptr);
+    wasm.icu4x_LocaleFallbackIterator_destroy_mv1(ptr);
 });
 export class LocaleFallbackIterator {
     // Internal ptr reference:
@@ -40,7 +40,7 @@ export class LocaleFallbackIterator {
 
 
     next() {
-        const result = wasm.ICU4XLocaleFallbackIterator_next(this.ffiValue);
+        const result = wasm.icu4x_LocaleFallbackIterator_next_mv1(this.ffiValue);
     
         try {
     

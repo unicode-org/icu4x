@@ -17,11 +17,11 @@
 
 
 
-typedef struct ICU4XMetazoneCalculator_create_result {union {MetazoneCalculator* ok; DataError err;}; bool is_ok;} ICU4XMetazoneCalculator_create_result;
-ICU4XMetazoneCalculator_create_result ICU4XMetazoneCalculator_create(const DataProvider* provider);
+typedef struct icu4x_MetazoneCalculator_create_mv1_result {union {MetazoneCalculator* ok; DataError err;}; bool is_ok;} icu4x_MetazoneCalculator_create_mv1_result;
+icu4x_MetazoneCalculator_create_mv1_result icu4x_MetazoneCalculator_create_mv1(const DataProvider* provider);
 
 
-void ICU4XMetazoneCalculator_destroy(MetazoneCalculator* self);
+void icu4x_MetazoneCalculator_destroy_mv1(MetazoneCalculator* self);
 
 
 

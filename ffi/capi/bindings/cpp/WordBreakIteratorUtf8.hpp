@@ -17,31 +17,31 @@ namespace diplomat {
 namespace capi {
     extern "C" {
     
-    int32_t ICU4XWordBreakIteratorUtf8_next(diplomat::capi::WordBreakIteratorUtf8* self);
+    int32_t icu4x_WordBreakIteratorUtf8_next_mv1(diplomat::capi::WordBreakIteratorUtf8* self);
     
-    diplomat::capi::SegmenterWordType ICU4XWordBreakIteratorUtf8_word_type(const diplomat::capi::WordBreakIteratorUtf8* self);
+    diplomat::capi::SegmenterWordType icu4x_WordBreakIteratorUtf8_word_type_mv1(const diplomat::capi::WordBreakIteratorUtf8* self);
     
-    bool ICU4XWordBreakIteratorUtf8_is_word_like(const diplomat::capi::WordBreakIteratorUtf8* self);
+    bool icu4x_WordBreakIteratorUtf8_is_word_like_mv1(const diplomat::capi::WordBreakIteratorUtf8* self);
     
     
-    void ICU4XWordBreakIteratorUtf8_destroy(WordBreakIteratorUtf8* self);
+    void icu4x_WordBreakIteratorUtf8_destroy_mv1(WordBreakIteratorUtf8* self);
     
     } // extern "C"
 } // namespace capi
 } // namespace
 
 inline int32_t WordBreakIteratorUtf8::next() {
-  auto result = diplomat::capi::ICU4XWordBreakIteratorUtf8_next(this->AsFFI());
+  auto result = diplomat::capi::icu4x_WordBreakIteratorUtf8_next_mv1(this->AsFFI());
   return result;
 }
 
 inline SegmenterWordType WordBreakIteratorUtf8::word_type() const {
-  auto result = diplomat::capi::ICU4XWordBreakIteratorUtf8_word_type(this->AsFFI());
+  auto result = diplomat::capi::icu4x_WordBreakIteratorUtf8_word_type_mv1(this->AsFFI());
   return SegmenterWordType::FromFFI(result);
 }
 
 inline bool WordBreakIteratorUtf8::is_word_like() const {
-  auto result = diplomat::capi::ICU4XWordBreakIteratorUtf8_is_word_like(this->AsFFI());
+  auto result = diplomat::capi::icu4x_WordBreakIteratorUtf8_is_word_like_mv1(this->AsFFI());
   return result;
 }
 
@@ -62,7 +62,7 @@ inline WordBreakIteratorUtf8* WordBreakIteratorUtf8::FromFFI(diplomat::capi::Wor
 }
 
 inline void WordBreakIteratorUtf8::operator delete(void* ptr) {
-  diplomat::capi::ICU4XWordBreakIteratorUtf8_destroy(reinterpret_cast<diplomat::capi::WordBreakIteratorUtf8*>(ptr));
+  diplomat::capi::icu4x_WordBreakIteratorUtf8_destroy_mv1(reinterpret_cast<diplomat::capi::WordBreakIteratorUtf8*>(ptr));
 }
 
 

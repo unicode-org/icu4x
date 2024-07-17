@@ -20,20 +20,20 @@ namespace diplomat {
 namespace capi {
     extern "C" {
     
-    typedef struct ICU4XLocaleDisplayNamesFormatter_create_result {union {diplomat::capi::LocaleDisplayNamesFormatter* ok; diplomat::capi::DataError err;}; bool is_ok;} ICU4XLocaleDisplayNamesFormatter_create_result;
-    ICU4XLocaleDisplayNamesFormatter_create_result ICU4XLocaleDisplayNamesFormatter_create(const diplomat::capi::DataProvider* provider, const diplomat::capi::Locale* locale, diplomat::capi::DisplayNamesOptionsV1 options);
+    typedef struct icu4x_LocaleDisplayNamesFormatter_create_mv1_result {union {diplomat::capi::LocaleDisplayNamesFormatter* ok; diplomat::capi::DataError err;}; bool is_ok;} icu4x_LocaleDisplayNamesFormatter_create_mv1_result;
+    icu4x_LocaleDisplayNamesFormatter_create_mv1_result icu4x_LocaleDisplayNamesFormatter_create_mv1(const diplomat::capi::DataProvider* provider, const diplomat::capi::Locale* locale, diplomat::capi::DisplayNamesOptionsV1 options);
     
-    void ICU4XLocaleDisplayNamesFormatter_of(const diplomat::capi::LocaleDisplayNamesFormatter* self, const diplomat::capi::Locale* locale, diplomat::capi::DiplomatWrite* write);
+    void icu4x_LocaleDisplayNamesFormatter_of_mv1(const diplomat::capi::LocaleDisplayNamesFormatter* self, const diplomat::capi::Locale* locale, diplomat::capi::DiplomatWrite* write);
     
     
-    void ICU4XLocaleDisplayNamesFormatter_destroy(LocaleDisplayNamesFormatter* self);
+    void icu4x_LocaleDisplayNamesFormatter_destroy_mv1(LocaleDisplayNamesFormatter* self);
     
     } // extern "C"
 } // namespace capi
 } // namespace
 
 inline diplomat::result<std::unique_ptr<LocaleDisplayNamesFormatter>, DataError> LocaleDisplayNamesFormatter::create(const DataProvider& provider, const Locale& locale, DisplayNamesOptionsV1 options) {
-  auto result = diplomat::capi::ICU4XLocaleDisplayNamesFormatter_create(provider.AsFFI(),
+  auto result = diplomat::capi::icu4x_LocaleDisplayNamesFormatter_create_mv1(provider.AsFFI(),
     locale.AsFFI(),
     options.AsFFI());
   return result.is_ok ? diplomat::result<std::unique_ptr<LocaleDisplayNamesFormatter>, DataError>(diplomat::Ok<std::unique_ptr<LocaleDisplayNamesFormatter>>(std::unique_ptr<LocaleDisplayNamesFormatter>(LocaleDisplayNamesFormatter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<LocaleDisplayNamesFormatter>, DataError>(diplomat::Err<DataError>(DataError::FromFFI(result.err)));
@@ -42,7 +42,7 @@ inline diplomat::result<std::unique_ptr<LocaleDisplayNamesFormatter>, DataError>
 inline std::string LocaleDisplayNamesFormatter::of(const Locale& locale) const {
   std::string output;
   diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
-  diplomat::capi::ICU4XLocaleDisplayNamesFormatter_of(this->AsFFI(),
+  diplomat::capi::icu4x_LocaleDisplayNamesFormatter_of_mv1(this->AsFFI(),
     locale.AsFFI(),
     &write);
   return output;
@@ -65,7 +65,7 @@ inline LocaleDisplayNamesFormatter* LocaleDisplayNamesFormatter::FromFFI(diploma
 }
 
 inline void LocaleDisplayNamesFormatter::operator delete(void* ptr) {
-  diplomat::capi::ICU4XLocaleDisplayNamesFormatter_destroy(reinterpret_cast<diplomat::capi::LocaleDisplayNamesFormatter*>(ptr));
+  diplomat::capi::icu4x_LocaleDisplayNamesFormatter_destroy_mv1(reinterpret_cast<diplomat::capi::LocaleDisplayNamesFormatter*>(ptr));
 }
 
 

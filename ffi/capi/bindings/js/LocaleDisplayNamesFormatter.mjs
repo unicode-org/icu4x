@@ -11,7 +11,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 */
 
 const LocaleDisplayNamesFormatter_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.ICU4XLocaleDisplayNamesFormatter_destroy(ptr);
+    wasm.icu4x_LocaleDisplayNamesFormatter_destroy_mv1(ptr);
 });
 export class LocaleDisplayNamesFormatter {
     // Internal ptr reference:
@@ -40,7 +40,7 @@ export class LocaleDisplayNamesFormatter {
         let slice_cleanup_callbacks = [];
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XLocaleDisplayNamesFormatter_create(diplomat_receive_buffer, provider.ffiValue, locale.ffiValue, ...options._intoFFI(slice_cleanup_callbacks, {}));
+        const result = wasm.icu4x_LocaleDisplayNamesFormatter_create_mv1(diplomat_receive_buffer, provider.ffiValue, locale.ffiValue, ...options._intoFFI(slice_cleanup_callbacks, {}));
     
         try {
     
@@ -63,7 +63,7 @@ export class LocaleDisplayNamesFormatter {
     of(locale) {
         
         const write = wasm.diplomat_buffer_write_create(0);
-        wasm.ICU4XLocaleDisplayNamesFormatter_of(this.ffiValue, locale.ffiValue, write);
+        wasm.icu4x_LocaleDisplayNamesFormatter_of_mv1(this.ffiValue, locale.ffiValue, write);
     
         try {
     

@@ -22,43 +22,43 @@ namespace diplomat {
 namespace capi {
     extern "C" {
     
-    typedef struct ICU4XPluralRules_create_cardinal_result {union {diplomat::capi::PluralRules* ok; diplomat::capi::DataError err;}; bool is_ok;} ICU4XPluralRules_create_cardinal_result;
-    ICU4XPluralRules_create_cardinal_result ICU4XPluralRules_create_cardinal(const diplomat::capi::DataProvider* provider, const diplomat::capi::Locale* locale);
+    typedef struct icu4x_PluralRules_create_cardinal_mv1_result {union {diplomat::capi::PluralRules* ok; diplomat::capi::DataError err;}; bool is_ok;} icu4x_PluralRules_create_cardinal_mv1_result;
+    icu4x_PluralRules_create_cardinal_mv1_result icu4x_PluralRules_create_cardinal_mv1(const diplomat::capi::DataProvider* provider, const diplomat::capi::Locale* locale);
     
-    typedef struct ICU4XPluralRules_create_ordinal_result {union {diplomat::capi::PluralRules* ok; diplomat::capi::DataError err;}; bool is_ok;} ICU4XPluralRules_create_ordinal_result;
-    ICU4XPluralRules_create_ordinal_result ICU4XPluralRules_create_ordinal(const diplomat::capi::DataProvider* provider, const diplomat::capi::Locale* locale);
+    typedef struct icu4x_PluralRules_create_ordinal_mv1_result {union {diplomat::capi::PluralRules* ok; diplomat::capi::DataError err;}; bool is_ok;} icu4x_PluralRules_create_ordinal_mv1_result;
+    icu4x_PluralRules_create_ordinal_mv1_result icu4x_PluralRules_create_ordinal_mv1(const diplomat::capi::DataProvider* provider, const diplomat::capi::Locale* locale);
     
-    diplomat::capi::PluralCategory ICU4XPluralRules_category_for(const diplomat::capi::PluralRules* self, const diplomat::capi::PluralOperands* op);
+    diplomat::capi::PluralCategory icu4x_PluralRules_category_for_mv1(const diplomat::capi::PluralRules* self, const diplomat::capi::PluralOperands* op);
     
-    diplomat::capi::PluralCategories ICU4XPluralRules_categories(const diplomat::capi::PluralRules* self);
+    diplomat::capi::PluralCategories icu4x_PluralRules_categories_mv1(const diplomat::capi::PluralRules* self);
     
     
-    void ICU4XPluralRules_destroy(PluralRules* self);
+    void icu4x_PluralRules_destroy_mv1(PluralRules* self);
     
     } // extern "C"
 } // namespace capi
 } // namespace
 
 inline diplomat::result<std::unique_ptr<PluralRules>, DataError> PluralRules::create_cardinal(const DataProvider& provider, const Locale& locale) {
-  auto result = diplomat::capi::ICU4XPluralRules_create_cardinal(provider.AsFFI(),
+  auto result = diplomat::capi::icu4x_PluralRules_create_cardinal_mv1(provider.AsFFI(),
     locale.AsFFI());
   return result.is_ok ? diplomat::result<std::unique_ptr<PluralRules>, DataError>(diplomat::Ok<std::unique_ptr<PluralRules>>(std::unique_ptr<PluralRules>(PluralRules::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<PluralRules>, DataError>(diplomat::Err<DataError>(DataError::FromFFI(result.err)));
 }
 
 inline diplomat::result<std::unique_ptr<PluralRules>, DataError> PluralRules::create_ordinal(const DataProvider& provider, const Locale& locale) {
-  auto result = diplomat::capi::ICU4XPluralRules_create_ordinal(provider.AsFFI(),
+  auto result = diplomat::capi::icu4x_PluralRules_create_ordinal_mv1(provider.AsFFI(),
     locale.AsFFI());
   return result.is_ok ? diplomat::result<std::unique_ptr<PluralRules>, DataError>(diplomat::Ok<std::unique_ptr<PluralRules>>(std::unique_ptr<PluralRules>(PluralRules::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<PluralRules>, DataError>(diplomat::Err<DataError>(DataError::FromFFI(result.err)));
 }
 
 inline PluralCategory PluralRules::category_for(const PluralOperands& op) const {
-  auto result = diplomat::capi::ICU4XPluralRules_category_for(this->AsFFI(),
+  auto result = diplomat::capi::icu4x_PluralRules_category_for_mv1(this->AsFFI(),
     op.AsFFI());
   return PluralCategory::FromFFI(result);
 }
 
 inline PluralCategories PluralRules::categories() const {
-  auto result = diplomat::capi::ICU4XPluralRules_categories(this->AsFFI());
+  auto result = diplomat::capi::icu4x_PluralRules_categories_mv1(this->AsFFI());
   return PluralCategories::FromFFI(result);
 }
 
@@ -79,7 +79,7 @@ inline PluralRules* PluralRules::FromFFI(diplomat::capi::PluralRules* ptr) {
 }
 
 inline void PluralRules::operator delete(void* ptr) {
-  diplomat::capi::ICU4XPluralRules_destroy(reinterpret_cast<diplomat::capi::PluralRules*>(ptr));
+  diplomat::capi::icu4x_PluralRules_destroy_mv1(reinterpret_cast<diplomat::capi::PluralRules*>(ptr));
 }
 
 

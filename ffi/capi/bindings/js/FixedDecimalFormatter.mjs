@@ -14,7 +14,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 */
 
 const FixedDecimalFormatter_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.ICU4XFixedDecimalFormatter_destroy(ptr);
+    wasm.icu4x_FixedDecimalFormatter_destroy_mv1(ptr);
 });
 export class FixedDecimalFormatter {
     // Internal ptr reference:
@@ -41,7 +41,7 @@ export class FixedDecimalFormatter {
     static createWithGroupingStrategy(provider, locale, groupingStrategy) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XFixedDecimalFormatter_create_with_grouping_strategy(diplomat_receive_buffer, provider.ffiValue, locale.ffiValue, groupingStrategy.ffiValue);
+        const result = wasm.icu4x_FixedDecimalFormatter_create_with_grouping_strategy_mv1(diplomat_receive_buffer, provider.ffiValue, locale.ffiValue, groupingStrategy.ffiValue);
     
         try {
     
@@ -60,7 +60,7 @@ export class FixedDecimalFormatter {
     format(value) {
         
         const write = wasm.diplomat_buffer_write_create(0);
-        wasm.ICU4XFixedDecimalFormatter_format(this.ffiValue, value.ffiValue, write);
+        wasm.icu4x_FixedDecimalFormatter_format_mv1(this.ffiValue, value.ffiValue, write);
     
         try {
     

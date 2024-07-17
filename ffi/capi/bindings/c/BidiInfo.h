@@ -16,16 +16,16 @@
 
 
 
-size_t ICU4XBidiInfo_paragraph_count(const BidiInfo* self);
+size_t icu4x_BidiInfo_paragraph_count_mv1(const BidiInfo* self);
 
-BidiParagraph* ICU4XBidiInfo_paragraph_at(const BidiInfo* self, size_t n);
+BidiParagraph* icu4x_BidiInfo_paragraph_at_mv1(const BidiInfo* self, size_t n);
 
-size_t ICU4XBidiInfo_size(const BidiInfo* self);
+size_t icu4x_BidiInfo_size_mv1(const BidiInfo* self);
 
-uint8_t ICU4XBidiInfo_level_at(const BidiInfo* self, size_t pos);
+uint8_t icu4x_BidiInfo_level_at_mv1(const BidiInfo* self, size_t pos);
 
 
-void ICU4XBidiInfo_destroy(BidiInfo* self);
+void icu4x_BidiInfo_destroy_mv1(BidiInfo* self);
 
 
 

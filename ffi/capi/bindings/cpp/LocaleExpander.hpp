@@ -20,49 +20,49 @@ namespace diplomat {
 namespace capi {
     extern "C" {
     
-    typedef struct ICU4XLocaleExpander_create_result {union {diplomat::capi::LocaleExpander* ok; diplomat::capi::Error err;}; bool is_ok;} ICU4XLocaleExpander_create_result;
-    ICU4XLocaleExpander_create_result ICU4XLocaleExpander_create(const diplomat::capi::DataProvider* provider);
+    typedef struct icu4x_LocaleExpander_create_mv1_result {union {diplomat::capi::LocaleExpander* ok; diplomat::capi::Error err;}; bool is_ok;} icu4x_LocaleExpander_create_mv1_result;
+    icu4x_LocaleExpander_create_mv1_result icu4x_LocaleExpander_create_mv1(const diplomat::capi::DataProvider* provider);
     
-    typedef struct ICU4XLocaleExpander_create_extended_result {union {diplomat::capi::LocaleExpander* ok; diplomat::capi::Error err;}; bool is_ok;} ICU4XLocaleExpander_create_extended_result;
-    ICU4XLocaleExpander_create_extended_result ICU4XLocaleExpander_create_extended(const diplomat::capi::DataProvider* provider);
+    typedef struct icu4x_LocaleExpander_create_extended_mv1_result {union {diplomat::capi::LocaleExpander* ok; diplomat::capi::Error err;}; bool is_ok;} icu4x_LocaleExpander_create_extended_mv1_result;
+    icu4x_LocaleExpander_create_extended_mv1_result icu4x_LocaleExpander_create_extended_mv1(const diplomat::capi::DataProvider* provider);
     
-    diplomat::capi::TransformResult ICU4XLocaleExpander_maximize(const diplomat::capi::LocaleExpander* self, diplomat::capi::Locale* locale);
+    diplomat::capi::TransformResult icu4x_LocaleExpander_maximize_mv1(const diplomat::capi::LocaleExpander* self, diplomat::capi::Locale* locale);
     
-    diplomat::capi::TransformResult ICU4XLocaleExpander_minimize(const diplomat::capi::LocaleExpander* self, diplomat::capi::Locale* locale);
+    diplomat::capi::TransformResult icu4x_LocaleExpander_minimize_mv1(const diplomat::capi::LocaleExpander* self, diplomat::capi::Locale* locale);
     
-    diplomat::capi::TransformResult ICU4XLocaleExpander_minimize_favor_script(const diplomat::capi::LocaleExpander* self, diplomat::capi::Locale* locale);
+    diplomat::capi::TransformResult icu4x_LocaleExpander_minimize_favor_script_mv1(const diplomat::capi::LocaleExpander* self, diplomat::capi::Locale* locale);
     
     
-    void ICU4XLocaleExpander_destroy(LocaleExpander* self);
+    void icu4x_LocaleExpander_destroy_mv1(LocaleExpander* self);
     
     } // extern "C"
 } // namespace capi
 } // namespace
 
 inline diplomat::result<std::unique_ptr<LocaleExpander>, Error> LocaleExpander::create(const DataProvider& provider) {
-  auto result = diplomat::capi::ICU4XLocaleExpander_create(provider.AsFFI());
+  auto result = diplomat::capi::icu4x_LocaleExpander_create_mv1(provider.AsFFI());
   return result.is_ok ? diplomat::result<std::unique_ptr<LocaleExpander>, Error>(diplomat::Ok<std::unique_ptr<LocaleExpander>>(std::unique_ptr<LocaleExpander>(LocaleExpander::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<LocaleExpander>, Error>(diplomat::Err<Error>(Error::FromFFI(result.err)));
 }
 
 inline diplomat::result<std::unique_ptr<LocaleExpander>, Error> LocaleExpander::create_extended(const DataProvider& provider) {
-  auto result = diplomat::capi::ICU4XLocaleExpander_create_extended(provider.AsFFI());
+  auto result = diplomat::capi::icu4x_LocaleExpander_create_extended_mv1(provider.AsFFI());
   return result.is_ok ? diplomat::result<std::unique_ptr<LocaleExpander>, Error>(diplomat::Ok<std::unique_ptr<LocaleExpander>>(std::unique_ptr<LocaleExpander>(LocaleExpander::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<LocaleExpander>, Error>(diplomat::Err<Error>(Error::FromFFI(result.err)));
 }
 
 inline TransformResult LocaleExpander::maximize(Locale& locale) const {
-  auto result = diplomat::capi::ICU4XLocaleExpander_maximize(this->AsFFI(),
+  auto result = diplomat::capi::icu4x_LocaleExpander_maximize_mv1(this->AsFFI(),
     locale.AsFFI());
   return TransformResult::FromFFI(result);
 }
 
 inline TransformResult LocaleExpander::minimize(Locale& locale) const {
-  auto result = diplomat::capi::ICU4XLocaleExpander_minimize(this->AsFFI(),
+  auto result = diplomat::capi::icu4x_LocaleExpander_minimize_mv1(this->AsFFI(),
     locale.AsFFI());
   return TransformResult::FromFFI(result);
 }
 
 inline TransformResult LocaleExpander::minimize_favor_script(Locale& locale) const {
-  auto result = diplomat::capi::ICU4XLocaleExpander_minimize_favor_script(this->AsFFI(),
+  auto result = diplomat::capi::icu4x_LocaleExpander_minimize_favor_script_mv1(this->AsFFI(),
     locale.AsFFI());
   return TransformResult::FromFFI(result);
 }
@@ -84,7 +84,7 @@ inline LocaleExpander* LocaleExpander::FromFFI(diplomat::capi::LocaleExpander* p
 }
 
 inline void LocaleExpander::operator delete(void* ptr) {
-  diplomat::capi::ICU4XLocaleExpander_destroy(reinterpret_cast<diplomat::capi::LocaleExpander*>(ptr));
+  diplomat::capi::icu4x_LocaleExpander_destroy_mv1(reinterpret_cast<diplomat::capi::LocaleExpander*>(ptr));
 }
 
 

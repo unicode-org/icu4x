@@ -18,15 +18,15 @@
 
 
 
-typedef struct ICU4XCaseMapCloser_create_result {union {CaseMapCloser* ok; DataError err;}; bool is_ok;} ICU4XCaseMapCloser_create_result;
-ICU4XCaseMapCloser_create_result ICU4XCaseMapCloser_create(const DataProvider* provider);
+typedef struct icu4x_CaseMapCloser_create_mv1_result {union {CaseMapCloser* ok; DataError err;}; bool is_ok;} icu4x_CaseMapCloser_create_mv1_result;
+icu4x_CaseMapCloser_create_mv1_result icu4x_CaseMapCloser_create_mv1(const DataProvider* provider);
 
-void ICU4XCaseMapCloser_add_case_closure_to(const CaseMapCloser* self, char32_t c, CodePointSetBuilder* builder);
+void icu4x_CaseMapCloser_add_case_closure_to_mv1(const CaseMapCloser* self, char32_t c, CodePointSetBuilder* builder);
 
-bool ICU4XCaseMapCloser_add_string_case_closure_to(const CaseMapCloser* self, const char* s_data, size_t s_len, CodePointSetBuilder* builder);
+bool icu4x_CaseMapCloser_add_string_case_closure_to_mv1(const CaseMapCloser* self, const char* s_data, size_t s_len, CodePointSetBuilder* builder);
 
 
-void ICU4XCaseMapCloser_destroy(CaseMapCloser* self);
+void icu4x_CaseMapCloser_destroy_mv1(CaseMapCloser* self);
 
 
 

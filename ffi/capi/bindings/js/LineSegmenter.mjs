@@ -13,7 +13,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 */
 
 const LineSegmenter_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.ICU4XLineSegmenter_destroy(ptr);
+    wasm.icu4x_LineSegmenter_destroy_mv1(ptr);
 });
 export class LineSegmenter {
     // Internal ptr reference:
@@ -40,7 +40,7 @@ export class LineSegmenter {
     static createAuto(provider) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XLineSegmenter_create_auto(diplomat_receive_buffer, provider.ffiValue);
+        const result = wasm.icu4x_LineSegmenter_create_auto_mv1(diplomat_receive_buffer, provider.ffiValue);
     
         try {
     
@@ -59,7 +59,7 @@ export class LineSegmenter {
     static createLstm(provider) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XLineSegmenter_create_lstm(diplomat_receive_buffer, provider.ffiValue);
+        const result = wasm.icu4x_LineSegmenter_create_lstm_mv1(diplomat_receive_buffer, provider.ffiValue);
     
         try {
     
@@ -78,7 +78,7 @@ export class LineSegmenter {
     static createDictionary(provider) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XLineSegmenter_create_dictionary(diplomat_receive_buffer, provider.ffiValue);
+        const result = wasm.icu4x_LineSegmenter_create_dictionary_mv1(diplomat_receive_buffer, provider.ffiValue);
     
         try {
     
@@ -99,7 +99,7 @@ export class LineSegmenter {
         let slice_cleanup_callbacks = [];
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XLineSegmenter_create_auto_with_options_v1(diplomat_receive_buffer, provider.ffiValue, ...options._intoFFI(slice_cleanup_callbacks, {}));
+        const result = wasm.icu4x_LineSegmenter_create_auto_with_options_v1_mv1(diplomat_receive_buffer, provider.ffiValue, ...options._intoFFI(slice_cleanup_callbacks, {}));
     
         try {
     
@@ -124,7 +124,7 @@ export class LineSegmenter {
         let slice_cleanup_callbacks = [];
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XLineSegmenter_create_lstm_with_options_v1(diplomat_receive_buffer, provider.ffiValue, ...options._intoFFI(slice_cleanup_callbacks, {}));
+        const result = wasm.icu4x_LineSegmenter_create_lstm_with_options_v1_mv1(diplomat_receive_buffer, provider.ffiValue, ...options._intoFFI(slice_cleanup_callbacks, {}));
     
         try {
     
@@ -149,7 +149,7 @@ export class LineSegmenter {
         let slice_cleanup_callbacks = [];
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XLineSegmenter_create_dictionary_with_options_v1(diplomat_receive_buffer, provider.ffiValue, ...options._intoFFI(slice_cleanup_callbacks, {}));
+        const result = wasm.icu4x_LineSegmenter_create_dictionary_with_options_v1_mv1(diplomat_receive_buffer, provider.ffiValue, ...options._intoFFI(slice_cleanup_callbacks, {}));
     
         try {
     
@@ -175,7 +175,7 @@ export class LineSegmenter {
         
         // This lifetime edge depends on lifetimes 'a
         let aEdges = [this, inputSlice];
-        const result = wasm.ICU4XLineSegmenter_segment_utf16(this.ffiValue, inputSlice.ptr, inputSlice.size);
+        const result = wasm.icu4x_LineSegmenter_segment_utf16_mv1(this.ffiValue, inputSlice.ptr, inputSlice.size);
     
         try {
     

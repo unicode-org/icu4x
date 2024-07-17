@@ -15,7 +15,7 @@
 
 
 
-bool ICU4XSegmenterWordType_is_word_like(SegmenterWordType self);
+bool icu4x_SegmenterWordType_is_word_like_mv1(SegmenterWordType self);
 
 
 

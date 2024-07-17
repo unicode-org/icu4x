@@ -10,7 +10,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 */
 
 const Locale_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.ICU4XLocale_destroy(ptr);
+    wasm.icu4x_Locale_destroy_mv1(ptr);
 });
 export class Locale {
     // Internal ptr reference:
@@ -39,7 +39,7 @@ export class Locale {
         const nameSlice = diplomatRuntime.DiplomatBuf.str8(wasm, name);
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XLocale_create_from_string(diplomat_receive_buffer, nameSlice.ptr, nameSlice.size);
+        const result = wasm.icu4x_Locale_create_from_string_mv1(diplomat_receive_buffer, nameSlice.ptr, nameSlice.size);
     
         try {
     
@@ -58,7 +58,7 @@ export class Locale {
     }
 
     static createUnd() {
-        const result = wasm.ICU4XLocale_create_und();
+        const result = wasm.icu4x_Locale_create_und_mv1();
     
         try {
     
@@ -69,7 +69,7 @@ export class Locale {
     }
 
     clone() {
-        const result = wasm.ICU4XLocale_clone(this.ffiValue);
+        const result = wasm.icu4x_Locale_clone_mv1(this.ffiValue);
     
         try {
     
@@ -82,7 +82,7 @@ export class Locale {
     get basename() {
         
         const write = wasm.diplomat_buffer_write_create(0);
-        wasm.ICU4XLocale_basename(this.ffiValue, write);
+        wasm.icu4x_Locale_basename_mv1(this.ffiValue, write);
     
         try {
     
@@ -99,7 +99,7 @@ export class Locale {
         const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
         
         const write = wasm.diplomat_buffer_write_create(0);
-        const result = wasm.ICU4XLocale_get_unicode_extension(this.ffiValue, sSlice.ptr, sSlice.size, write);
+        const result = wasm.icu4x_Locale_get_unicode_extension_mv1(this.ffiValue, sSlice.ptr, sSlice.size, write);
     
         try {
     
@@ -116,7 +116,7 @@ export class Locale {
     get language() {
         
         const write = wasm.diplomat_buffer_write_create(0);
-        wasm.ICU4XLocale_language(this.ffiValue, write);
+        wasm.icu4x_Locale_language_mv1(this.ffiValue, write);
     
         try {
     
@@ -133,7 +133,7 @@ export class Locale {
         const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XLocale_set_language(diplomat_receive_buffer, this.ffiValue, sSlice.ptr, sSlice.size);
+        const result = wasm.icu4x_Locale_set_language_mv1(diplomat_receive_buffer, this.ffiValue, sSlice.ptr, sSlice.size);
     
         try {
     
@@ -154,7 +154,7 @@ export class Locale {
     get region() {
         
         const write = wasm.diplomat_buffer_write_create(0);
-        const result = wasm.ICU4XLocale_region(this.ffiValue, write);
+        const result = wasm.icu4x_Locale_region_mv1(this.ffiValue, write);
     
         try {
     
@@ -171,7 +171,7 @@ export class Locale {
         const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XLocale_set_region(diplomat_receive_buffer, this.ffiValue, sSlice.ptr, sSlice.size);
+        const result = wasm.icu4x_Locale_set_region_mv1(diplomat_receive_buffer, this.ffiValue, sSlice.ptr, sSlice.size);
     
         try {
     
@@ -192,7 +192,7 @@ export class Locale {
     get script() {
         
         const write = wasm.diplomat_buffer_write_create(0);
-        const result = wasm.ICU4XLocale_script(this.ffiValue, write);
+        const result = wasm.icu4x_Locale_script_mv1(this.ffiValue, write);
     
         try {
     
@@ -209,7 +209,7 @@ export class Locale {
         const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XLocale_set_script(diplomat_receive_buffer, this.ffiValue, sSlice.ptr, sSlice.size);
+        const result = wasm.icu4x_Locale_set_script_mv1(diplomat_receive_buffer, this.ffiValue, sSlice.ptr, sSlice.size);
     
         try {
     
@@ -234,7 +234,7 @@ export class Locale {
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
         
         const write = wasm.diplomat_buffer_write_create(0);
-        const result = wasm.ICU4XLocale_canonicalize(diplomat_receive_buffer, sSlice.ptr, sSlice.size, write);
+        const result = wasm.icu4x_Locale_canonicalize_mv1(diplomat_receive_buffer, sSlice.ptr, sSlice.size, write);
     
         try {
     
@@ -257,7 +257,7 @@ export class Locale {
     toString() {
         
         const write = wasm.diplomat_buffer_write_create(0);
-        wasm.ICU4XLocale_to_string(this.ffiValue, write);
+        wasm.icu4x_Locale_to_string_mv1(this.ffiValue, write);
     
         try {
     
@@ -272,7 +272,7 @@ export class Locale {
     normalizingEq(other) {
         
         const otherSlice = diplomatRuntime.DiplomatBuf.str8(wasm, other);
-        const result = wasm.ICU4XLocale_normalizing_eq(this.ffiValue, otherSlice.ptr, otherSlice.size);
+        const result = wasm.icu4x_Locale_normalizing_eq_mv1(this.ffiValue, otherSlice.ptr, otherSlice.size);
     
         try {
     
@@ -287,7 +287,7 @@ export class Locale {
     compareToString(other) {
         
         const otherSlice = diplomatRuntime.DiplomatBuf.str8(wasm, other);
-        const result = wasm.ICU4XLocale_compare_to_string(this.ffiValue, otherSlice.ptr, otherSlice.size);
+        const result = wasm.icu4x_Locale_compare_to_string_mv1(this.ffiValue, otherSlice.ptr, otherSlice.size);
     
         try {
     
@@ -300,7 +300,7 @@ export class Locale {
     }
 
     compareTo(other) {
-        const result = wasm.ICU4XLocale_compare_to(this.ffiValue, other.ffiValue);
+        const result = wasm.icu4x_Locale_compare_to_mv1(this.ffiValue, other.ffiValue);
     
         try {
     

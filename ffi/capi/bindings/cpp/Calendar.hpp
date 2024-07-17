@@ -20,35 +20,35 @@ namespace diplomat {
 namespace capi {
     extern "C" {
     
-    typedef struct ICU4XCalendar_create_for_locale_result {union {diplomat::capi::Calendar* ok; diplomat::capi::DataError err;}; bool is_ok;} ICU4XCalendar_create_for_locale_result;
-    ICU4XCalendar_create_for_locale_result ICU4XCalendar_create_for_locale(const diplomat::capi::DataProvider* provider, const diplomat::capi::Locale* locale);
+    typedef struct icu4x_Calendar_create_for_locale_mv1_result {union {diplomat::capi::Calendar* ok; diplomat::capi::DataError err;}; bool is_ok;} icu4x_Calendar_create_for_locale_mv1_result;
+    icu4x_Calendar_create_for_locale_mv1_result icu4x_Calendar_create_for_locale_mv1(const diplomat::capi::DataProvider* provider, const diplomat::capi::Locale* locale);
     
-    typedef struct ICU4XCalendar_create_for_kind_result {union {diplomat::capi::Calendar* ok; diplomat::capi::DataError err;}; bool is_ok;} ICU4XCalendar_create_for_kind_result;
-    ICU4XCalendar_create_for_kind_result ICU4XCalendar_create_for_kind(const diplomat::capi::DataProvider* provider, diplomat::capi::AnyCalendarKind kind);
+    typedef struct icu4x_Calendar_create_for_kind_mv1_result {union {diplomat::capi::Calendar* ok; diplomat::capi::DataError err;}; bool is_ok;} icu4x_Calendar_create_for_kind_mv1_result;
+    icu4x_Calendar_create_for_kind_mv1_result icu4x_Calendar_create_for_kind_mv1(const diplomat::capi::DataProvider* provider, diplomat::capi::AnyCalendarKind kind);
     
-    diplomat::capi::AnyCalendarKind ICU4XCalendar_kind(const diplomat::capi::Calendar* self);
+    diplomat::capi::AnyCalendarKind icu4x_Calendar_kind_mv1(const diplomat::capi::Calendar* self);
     
     
-    void ICU4XCalendar_destroy(Calendar* self);
+    void icu4x_Calendar_destroy_mv1(Calendar* self);
     
     } // extern "C"
 } // namespace capi
 } // namespace
 
 inline diplomat::result<std::unique_ptr<Calendar>, DataError> Calendar::create_for_locale(const DataProvider& provider, const Locale& locale) {
-  auto result = diplomat::capi::ICU4XCalendar_create_for_locale(provider.AsFFI(),
+  auto result = diplomat::capi::icu4x_Calendar_create_for_locale_mv1(provider.AsFFI(),
     locale.AsFFI());
   return result.is_ok ? diplomat::result<std::unique_ptr<Calendar>, DataError>(diplomat::Ok<std::unique_ptr<Calendar>>(std::unique_ptr<Calendar>(Calendar::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<Calendar>, DataError>(diplomat::Err<DataError>(DataError::FromFFI(result.err)));
 }
 
 inline diplomat::result<std::unique_ptr<Calendar>, DataError> Calendar::create_for_kind(const DataProvider& provider, AnyCalendarKind kind) {
-  auto result = diplomat::capi::ICU4XCalendar_create_for_kind(provider.AsFFI(),
+  auto result = diplomat::capi::icu4x_Calendar_create_for_kind_mv1(provider.AsFFI(),
     kind.AsFFI());
   return result.is_ok ? diplomat::result<std::unique_ptr<Calendar>, DataError>(diplomat::Ok<std::unique_ptr<Calendar>>(std::unique_ptr<Calendar>(Calendar::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<Calendar>, DataError>(diplomat::Err<DataError>(DataError::FromFFI(result.err)));
 }
 
 inline AnyCalendarKind Calendar::kind() const {
-  auto result = diplomat::capi::ICU4XCalendar_kind(this->AsFFI());
+  auto result = diplomat::capi::icu4x_Calendar_kind_mv1(this->AsFFI());
   return AnyCalendarKind::FromFFI(result);
 }
 
@@ -69,7 +69,7 @@ inline Calendar* Calendar::FromFFI(diplomat::capi::Calendar* ptr) {
 }
 
 inline void Calendar::operator delete(void* ptr) {
-  diplomat::capi::ICU4XCalendar_destroy(reinterpret_cast<diplomat::capi::Calendar*>(ptr));
+  diplomat::capi::icu4x_Calendar_destroy_mv1(reinterpret_cast<diplomat::capi::Calendar*>(ptr));
 }
 
 

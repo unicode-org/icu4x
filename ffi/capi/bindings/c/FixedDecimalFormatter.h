@@ -21,16 +21,16 @@
 
 
 
-typedef struct ICU4XFixedDecimalFormatter_create_with_grouping_strategy_result {union {FixedDecimalFormatter* ok; DataError err;}; bool is_ok;} ICU4XFixedDecimalFormatter_create_with_grouping_strategy_result;
-ICU4XFixedDecimalFormatter_create_with_grouping_strategy_result ICU4XFixedDecimalFormatter_create_with_grouping_strategy(const DataProvider* provider, const Locale* locale, FixedDecimalGroupingStrategy grouping_strategy);
+typedef struct icu4x_FixedDecimalFormatter_create_with_grouping_strategy_mv1_result {union {FixedDecimalFormatter* ok; DataError err;}; bool is_ok;} icu4x_FixedDecimalFormatter_create_with_grouping_strategy_mv1_result;
+icu4x_FixedDecimalFormatter_create_with_grouping_strategy_mv1_result icu4x_FixedDecimalFormatter_create_with_grouping_strategy_mv1(const DataProvider* provider, const Locale* locale, FixedDecimalGroupingStrategy grouping_strategy);
 
-typedef struct ICU4XFixedDecimalFormatter_create_with_decimal_symbols_v1_result {union {FixedDecimalFormatter* ok; DataError err;}; bool is_ok;} ICU4XFixedDecimalFormatter_create_with_decimal_symbols_v1_result;
-ICU4XFixedDecimalFormatter_create_with_decimal_symbols_v1_result ICU4XFixedDecimalFormatter_create_with_decimal_symbols_v1(const DataStruct* data_struct, FixedDecimalGroupingStrategy grouping_strategy);
+typedef struct icu4x_FixedDecimalFormatter_create_with_decimal_symbols_v1_mv1_result {union {FixedDecimalFormatter* ok; DataError err;}; bool is_ok;} icu4x_FixedDecimalFormatter_create_with_decimal_symbols_v1_mv1_result;
+icu4x_FixedDecimalFormatter_create_with_decimal_symbols_v1_mv1_result icu4x_FixedDecimalFormatter_create_with_decimal_symbols_v1_mv1(const DataStruct* data_struct, FixedDecimalGroupingStrategy grouping_strategy);
 
-void ICU4XFixedDecimalFormatter_format(const FixedDecimalFormatter* self, const FixedDecimal* value, DiplomatWrite* write);
+void icu4x_FixedDecimalFormatter_format_mv1(const FixedDecimalFormatter* self, const FixedDecimal* value, DiplomatWrite* write);
 
 
-void ICU4XFixedDecimalFormatter_destroy(FixedDecimalFormatter* self);
+void icu4x_FixedDecimalFormatter_destroy_mv1(FixedDecimalFormatter* self);
 
 
 
