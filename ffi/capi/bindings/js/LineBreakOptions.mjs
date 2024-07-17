@@ -7,7 +7,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 /** See the [Rust documentation for `LineBreakOptions`](https://docs.rs/icu/latest/icu/segmenter/struct.LineBreakOptions.html) for more information.
 */
-export class LineBreakOptionsV1 {
+export class LineBreakOptions {
     #strictness;
     get strictness()  {
         return this.#strictness;

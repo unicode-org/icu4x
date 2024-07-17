@@ -19,11 +19,7 @@ export class ListFormatter {
 
     static createUnitWithLength(provider: DataProvider, locale: Locale, length: ListLength): ListFormatter;
 
-    formatValidUtf8(list: Array<String>): string;
-
-    formatUtf8(list: Array<String>): string;
-
-    formatUtf16(list: Array<String>): string;
+    format(list: Array<String>): string;
 
     
 

@@ -52,17 +52,6 @@ export class CodePointSetData {
         }
     }
 
-    contains32(cp) {
-        const result = wasm.ICU4XCodePointSetData_contains32(this.ffiValue, cp);
-    
-        try {
-    
-            return result;
-        } finally {
-        
-        }
-    }
-
     iterRanges() {
         
         // This lifetime edge depends on lifetimes 'a

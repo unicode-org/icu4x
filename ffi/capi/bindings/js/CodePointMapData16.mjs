@@ -54,17 +54,6 @@ export class CodePointMapData16 {
         }
     }
 
-    get32(cp) {
-        const result = wasm.ICU4XCodePointMapData16_get32(this.ffiValue, cp);
-    
-        try {
-    
-            return result;
-        } finally {
-        
-        }
-    }
-
     iterRangesForValue(value) {
         
         // This lifetime edge depends on lifetimes 'a

@@ -7,20 +7,20 @@ import test from 'ava';
 import { FixedDecimal, FixedDecimalSign } from 'icu4x';
 
 test('convert a simple decimal to a string', t => {
-  const decimal = FixedDecimal.createFromI64(1234n);
+  const decimal = FixedDecimal.fromBigInt(1234n);
 
   t.is(decimal.toString(), '1234');
 });
 
 test('multiply a decimal by a power of 10', t => {
-  const decimal = FixedDecimal.createFromI32(1234);
+  const decimal = FixedDecimal.fromInteger(1234);
   decimal.multiplyPow10(-2);
 
   t.is(decimal.toString(), '12.34');
 });
 
 test('negate a decimal', t => {
-  const decimal = FixedDecimal.createFromI32(1234);
+  const decimal = FixedDecimal.fromInteger(1234);
   decimal.sign = FixedDecimalSign.Negative;
 
   t.is(decimal.toString(), '-1234');

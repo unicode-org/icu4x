@@ -17,7 +17,7 @@ export class Bidi {
 
     static create(provider: DataProvider): Bidi;
 
-    forText(text: string, defaultLevel: number): BidiInfo | null;
+    forText(text: string, defaultLevel: number): BidiInfo;
 
     reorderVisual(levels: Array<number>): ReorderedIndexMap;
 

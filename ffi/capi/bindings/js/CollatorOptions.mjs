@@ -10,44 +10,58 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** See the [Rust documentation for `ResolvedCollatorOptions`](https://docs.rs/icu/latest/icu/collator/struct.ResolvedCollatorOptions.html) for more information.
+/** See the [Rust documentation for `CollatorOptions`](https://docs.rs/icu/latest/icu/collator/struct.CollatorOptions.html) for more information.
 */
-export class CollatorResolvedOptionsV1 {
+export class CollatorOptions {
     #strength;
     get strength()  {
         return this.#strength;
     }
-    
+    set strength(value) {
+        this.#strength = value;
+    }
     #alternateHandling;
     get alternateHandling()  {
         return this.#alternateHandling;
     }
-    
+    set alternateHandling(value) {
+        this.#alternateHandling = value;
+    }
     #caseFirst;
     get caseFirst()  {
         return this.#caseFirst;
     }
-    
+    set caseFirst(value) {
+        this.#caseFirst = value;
+    }
     #maxVariable;
     get maxVariable()  {
         return this.#maxVariable;
     }
-    
+    set maxVariable(value) {
+        this.#maxVariable = value;
+    }
     #caseLevel;
     get caseLevel()  {
         return this.#caseLevel;
     }
-    
+    set caseLevel(value) {
+        this.#caseLevel = value;
+    }
     #numeric;
     get numeric()  {
         return this.#numeric;
     }
-    
+    set numeric(value) {
+        this.#numeric = value;
+    }
     #backwardSecondLevel;
     get backwardSecondLevel()  {
         return this.#backwardSecondLevel;
     }
-    
+    set backwardSecondLevel(value) {
+        this.#backwardSecondLevel = value;
+    }
 
     // Return this struct in FFI function friendly format.
     // Returns an array that can be expanded with spread syntax (...)
@@ -81,10 +95,6 @@ export class CollatorResolvedOptionsV1 {
         this.#backwardSecondLevel = CollatorBackwardSecondLevel[Array.from(CollatorBackwardSecondLevel.values.keys())[backwardSecondLevelDeref]];
 
         return this;
-    }
-    // This is an out struct. You need to call other methods to be able to get this struct.
-    constructor(ptr) {
-        this._fromFFI(ptr);
     }
     
 

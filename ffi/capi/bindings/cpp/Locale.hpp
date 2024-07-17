@@ -53,9 +53,9 @@ namespace capi {
     
     bool ICU4XLocale_normalizing_eq(const diplomat::capi::Locale* self, const char* other_data, size_t other_len);
     
-    int8_t ICU4XLocale_strict_cmp_(const diplomat::capi::Locale* self, const char* other_data, size_t other_len);
+    int8_t ICU4XLocale_compare_to_string(const diplomat::capi::Locale* self, const char* other_data, size_t other_len);
     
-    int8_t ICU4XLocale_total_cmp_(const diplomat::capi::Locale* self, const diplomat::capi::Locale* other);
+    int8_t ICU4XLocale_compare_to(const diplomat::capi::Locale* self, const diplomat::capi::Locale* other);
     
     
     void ICU4XLocale_destroy(Locale* self);
@@ -167,15 +167,15 @@ inline bool Locale::normalizing_eq(std::string_view other) const {
   return result;
 }
 
-inline int8_t Locale::strict_cmp_(std::string_view other) const {
-  auto result = diplomat::capi::ICU4XLocale_strict_cmp_(this->AsFFI(),
+inline int8_t Locale::compare_to_string(std::string_view other) const {
+  auto result = diplomat::capi::ICU4XLocale_compare_to_string(this->AsFFI(),
     other.data(),
     other.size());
   return result;
 }
 
-inline int8_t Locale::total_cmp_(const Locale& other) const {
-  auto result = diplomat::capi::ICU4XLocale_total_cmp_(this->AsFFI(),
+inline int8_t Locale::compare_to(const Locale& other) const {
+  auto result = diplomat::capi::ICU4XLocale_compare_to(this->AsFFI(),
     other.AsFFI());
   return result;
 }

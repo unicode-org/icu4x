@@ -7,7 +7,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 /** See the [Rust documentation for `TitlecaseOptions`](https://docs.rs/icu/latest/icu/casemap/titlecase/struct.TitlecaseOptions.html) for more information.
 */
-export class TitlecaseOptionsV1 {
+export class TitlecaseOptions {
     #leadingAdjustment;
     get leadingAdjustment()  {
         return this.#leadingAdjustment;
@@ -53,7 +53,7 @@ export class TitlecaseOptionsV1 {
     
         try {
     
-            return new TitlecaseOptionsV1()._fromFFI(diplomat_receive_buffer);
+            return new TitlecaseOptions()._fromFFI(diplomat_receive_buffer);
         } finally {
         
             wasm.diplomat_free(diplomat_receive_buffer, 8, 4);

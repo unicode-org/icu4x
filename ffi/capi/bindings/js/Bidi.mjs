@@ -62,11 +62,11 @@ export class Bidi {
         
         // This lifetime edge depends on lifetimes 'text
         let textEdges = [textSlice];
-        const result = wasm.ICU4XBidi_for_text(this.ffiValue, textSlice.ptr, textSlice.size, defaultLevel);
+        const result = wasm.ICU4XBidi_for_text_valid_utf8(this.ffiValue, textSlice.ptr, textSlice.size, defaultLevel);
     
         try {
     
-            return result == 0 ? null : new BidiInfo(result, [], textEdges);
+            return new BidiInfo(result, [], textEdges);
         } finally {
         
             textSlice.garbageCollect();

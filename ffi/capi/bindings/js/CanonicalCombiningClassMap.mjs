@@ -65,17 +65,6 @@ export class CanonicalCombiningClassMap {
         }
     }
 
-    get32(ch) {
-        const result = wasm.ICU4XCanonicalCombiningClassMap_get32(this.ffiValue, ch);
-    
-        try {
-    
-            return result;
-        } finally {
-        
-        }
-    }
-
     
 
 }

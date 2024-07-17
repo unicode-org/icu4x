@@ -3,7 +3,7 @@ import { CodePointSetBuilder } from "./CodePointSetBuilder.mjs"
 import { DataError } from "./DataError.mjs"
 import { DataProvider } from "./DataProvider.mjs"
 import { Locale } from "./Locale.mjs"
-import { TitlecaseOptionsV1 } from "./TitlecaseOptionsV1.mjs"
+import { TitlecaseOptions } from "./TitlecaseOptions.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
@@ -93,7 +93,7 @@ export class CaseMapper {
         }
     }
 
-    titlecaseSegmentWithOnlyCaseDataV1(s, locale, options) {
+    titlecaseSegmentWithOnlyCaseData(s, locale, options) {
         
         const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
         

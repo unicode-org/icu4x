@@ -46,29 +46,6 @@ export class DataProvider {
         }
     }
 
-    static createFs(path) {
-        
-        const pathSlice = diplomatRuntime.DiplomatBuf.str8(wasm, path);
-        
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XDataProvider_create_fs(diplomat_receive_buffer, pathSlice.ptr, pathSlice.size);
-    
-        try {
-    
-            if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
-            }
-            return new DataProvider(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), []);
-        } finally {
-        
-            pathSlice.free();
-        
-            wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        
-        }
-    }
-
     static createFromByteSlice(blob) {
         
         const blobSlice = diplomatRuntime.DiplomatBuf.slice(wasm, blob, "u8");

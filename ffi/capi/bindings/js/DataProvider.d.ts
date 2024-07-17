@@ -15,8 +15,6 @@ export class DataProvider {
 
     static createCompiled(): DataProvider;
 
-    static createFs(path: string): DataProvider;
-
     static createFromByteSlice(blob: Uint8Array): DataProvider;
 
     static createEmpty(): DataProvider;

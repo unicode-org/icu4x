@@ -40,9 +40,9 @@ export class Locale {
 
     normalizingEq(other: string): boolean;
 
-    strictCmp(other: string): number;
+    compareToString(other: string): number;
 
-    totalCmp(other: Locale): number;
+    compareTo(other: Locale): number;
 
     
 

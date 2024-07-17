@@ -66,17 +66,6 @@ export class UnicodeSetData {
         }
     }
 
-    contains32(cp) {
-        const result = wasm.ICU4XUnicodeSetData_contains32(this.ffiValue, cp);
-    
-        try {
-    
-            return result;
-        } finally {
-        
-        }
-    }
-
     static loadBasicEmoji(provider) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);

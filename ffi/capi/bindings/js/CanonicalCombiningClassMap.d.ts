@@ -17,8 +17,6 @@ export class CanonicalCombiningClassMap {
 
     get(ch: char): number;
 
-    get32(ch: number): number;
-
     
 
 }

@@ -2,7 +2,7 @@
 import type { CodePointSetBuilder } from "./CodePointSetBuilder"
 import type { DataProvider } from "./DataProvider"
 import type { Locale } from "./Locale"
-import type { TitlecaseOptionsV1 } from "./TitlecaseOptionsV1"
+import type { TitlecaseOptions } from "./TitlecaseOptions"
 import type { pointer, char } from "./diplomat-runtime.d.ts";
 
 
@@ -20,7 +20,7 @@ export class CaseMapper {
 
     uppercase(s: string, locale: Locale): string;
 
-    titlecaseSegmentWithOnlyCaseDataV1(s: string, locale: Locale, options: TitlecaseOptionsV1): string;
+    titlecaseSegmentWithOnlyCaseData(s: string, locale: Locale, options: TitlecaseOptions): string;
 
     fold(s: string): string;
 

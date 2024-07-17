@@ -2,21 +2,21 @@
 export { char } from './diplomat-runtime';
 
 
-export { TitlecaseOptionsV1 } from "./TitlecaseOptionsV1"
+export { TitlecaseOptions } from "./TitlecaseOptions"
 
-export { CollatorOptionsV1 } from "./CollatorOptionsV1"
+export { CollatorOptions } from "./CollatorOptions"
 
-export { DisplayNamesOptionsV1 } from "./DisplayNamesOptionsV1"
+export { DisplayNamesOptions } from "./DisplayNamesOptions"
 
 export { LocaleFallbackConfig } from "./LocaleFallbackConfig"
 
-export { LineBreakOptionsV1 } from "./LineBreakOptionsV1"
+export { LineBreakOptions } from "./LineBreakOptions"
 
 export { IsoTimeZoneOptions } from "./IsoTimeZoneOptions"
 
 export { WeekendContainsDay } from "./WeekendContainsDay"
 
-export { CollatorResolvedOptionsV1 } from "./CollatorResolvedOptionsV1"
+export { ResolvedCollatorOptions } from "./ResolvedCollatorOptions"
 
 export { Decomposed } from "./Decomposed"
 
@@ -45,8 +45,6 @@ export { TitlecaseMapper } from "./TitlecaseMapper"
 export { Collator } from "./Collator"
 
 export { CodePointSetBuilder } from "./CodePointSetBuilder"
-
-export { DataStruct } from "./DataStruct"
 
 export { Date } from "./Date"
 

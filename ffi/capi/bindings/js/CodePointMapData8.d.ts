@@ -23,8 +23,6 @@ export class CodePointMapData8 {
 
     get(cp: char): number;
 
-    get32(cp: number): number;
-
     static generalCategoryToMask(gc: number): number;
 
     iterRangesForValue(value: number): CodePointRangeIterator;

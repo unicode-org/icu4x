@@ -20,8 +20,6 @@ export class CodePointSetData {
 
     contains(cp: char): boolean;
 
-    contains32(cp: number): boolean;
-
     iterRanges(): CodePointRangeIterator;
 
     iterRangesComplemented(): CodePointRangeIterator;

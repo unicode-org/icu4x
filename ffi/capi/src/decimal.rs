@@ -66,7 +66,7 @@ pub mod ffi {
         ///
         /// The contents of the data struct will be consumed: if you wish to use the struct again it will have to be reconstructed.
         /// Passing a consumed struct to this method will return an error.
-        #[diplomat::attr(dart, disable)]
+        #[diplomat::attr(any(dart, js), disable)]
         pub fn create_with_decimal_symbols_v1(
             data_struct: &DataStruct,
             grouping_strategy: FixedDecimalGroupingStrategy,

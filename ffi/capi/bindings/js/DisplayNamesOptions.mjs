@@ -8,7 +8,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 /** See the [Rust documentation for `DisplayNamesOptions`](https://docs.rs/icu/latest/icu/displaynames/options/struct.DisplayNamesOptions.html) for more information.
 */
-export class DisplayNamesOptionsV1 {
+export class DisplayNamesOptions {
     #style;
     get style()  {
         return this.#style;

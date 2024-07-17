@@ -22,8 +22,6 @@ export class UnicodeSetData {
 
     containsChar(cp: char): boolean;
 
-    contains32(cp: number): boolean;
-
     static loadBasicEmoji(provider: DataProvider): UnicodeSetData;
 
     static loadExemplarsMain(provider: DataProvider, locale: Locale): UnicodeSetData;

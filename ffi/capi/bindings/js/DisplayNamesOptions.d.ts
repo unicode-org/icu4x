@@ -7,7 +7,7 @@ import type { pointer, char } from "./diplomat-runtime.d.ts";
 
 /** See the [Rust documentation for `DisplayNamesOptions`](https://docs.rs/icu/latest/icu/displaynames/options/struct.DisplayNamesOptions.html) for more information.
 */
-export class DisplayNamesOptionsV1 {
+export class DisplayNamesOptions {
     #style;
     get style() : DisplayNamesStyle;
     set style(value: DisplayNamesStyle); 

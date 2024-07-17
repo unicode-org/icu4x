@@ -23,8 +23,6 @@ export class CodePointMapData16 {
 
     get(cp: char): number;
 
-    get32(cp: number): number;
-
     iterRangesForValue(value: number): CodePointRangeIterator;
 
     iterRangesForValueComplemented(value: number): CodePointRangeIterator;

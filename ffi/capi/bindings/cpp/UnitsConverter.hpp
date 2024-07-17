@@ -27,7 +27,7 @@ namespace capi {
 } // namespace capi
 } // namespace
 
-inline double UnitsConverter::convert_f64(double value) const {
+inline double UnitsConverter::convert_double(double value) const {
   auto result = diplomat::capi::ICU4XUnitsConverter_convert_f64(this->AsFFI(),
     value);
   return result;

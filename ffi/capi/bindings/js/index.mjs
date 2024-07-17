@@ -1,20 +1,20 @@
 
 
-export { TitlecaseOptionsV1 } from "./TitlecaseOptionsV1.mjs"
+export { TitlecaseOptions } from "./TitlecaseOptions.mjs"
 
-export { CollatorOptionsV1 } from "./CollatorOptionsV1.mjs"
+export { CollatorOptions } from "./CollatorOptions.mjs"
 
-export { DisplayNamesOptionsV1 } from "./DisplayNamesOptionsV1.mjs"
+export { DisplayNamesOptions } from "./DisplayNamesOptions.mjs"
 
 export { LocaleFallbackConfig } from "./LocaleFallbackConfig.mjs"
 
-export { LineBreakOptionsV1 } from "./LineBreakOptionsV1.mjs"
+export { LineBreakOptions } from "./LineBreakOptions.mjs"
 
 export { IsoTimeZoneOptions } from "./IsoTimeZoneOptions.mjs"
 
 export { WeekendContainsDay } from "./WeekendContainsDay.mjs"
 
-export { CollatorResolvedOptionsV1 } from "./CollatorResolvedOptionsV1.mjs"
+export { ResolvedCollatorOptions } from "./ResolvedCollatorOptions.mjs"
 
 export { Decomposed } from "./Decomposed.mjs"
 
@@ -43,8 +43,6 @@ export { TitlecaseMapper } from "./TitlecaseMapper.mjs"
 export { Collator } from "./Collator.mjs"
 
 export { CodePointSetBuilder } from "./CodePointSetBuilder.mjs"
-
-export { DataStruct } from "./DataStruct.mjs"
 
 export { Date } from "./Date.mjs"
 

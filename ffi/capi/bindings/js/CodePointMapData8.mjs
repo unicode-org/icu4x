@@ -54,17 +54,6 @@ export class CodePointMapData8 {
         }
     }
 
-    get32(cp) {
-        const result = wasm.ICU4XCodePointMapData8_get32(this.ffiValue, cp);
-    
-        try {
-    
-            return result;
-        } finally {
-        
-        }
-    }
-
     static generalCategoryToMask(gc) {
         const result = wasm.ICU4XCodePointMapData8_general_category_to_mask(gc);
     

@@ -14,23 +14,17 @@ export class FixedDecimal {
     get ffiValue(): pointer;
 
 
-    static createFromI32(v: number): FixedDecimal;
+    static fromInteger(v: number): FixedDecimal;
 
-    static createFromU32(v: number): FixedDecimal;
+    static fromBigInt(v: bigint): FixedDecimal;
 
-    static createFromI64(v: bigint): FixedDecimal;
+    static fromNumberWithLowerMagnitude(f: number, magnitude: number): FixedDecimal;
 
-    static createFromU64(v: bigint): FixedDecimal;
+    static fromNumberWithSignificantDigits(f: number, digits: number): FixedDecimal;
 
-    static createFromF64WithIntegerPrecision(f: number): FixedDecimal;
+    static fromNumberWithFloatingPrecision(f: number): FixedDecimal;
 
-    static createFromF64WithLowerMagnitude(f: number, magnitude: number): FixedDecimal;
-
-    static createFromF64WithSignificantDigits(f: number, digits: number): FixedDecimal;
-
-    static createFromF64WithFloatingPrecision(f: number): FixedDecimal;
-
-    static createFromString(v: string): FixedDecimal;
+    static fromString(v: string): FixedDecimal;
 
     digitAt(magnitude: number): number;
 

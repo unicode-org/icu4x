@@ -6,7 +6,7 @@ import type { pointer, char } from "./diplomat-runtime.d.ts";
 
 /** See the [Rust documentation for `LineBreakOptions`](https://docs.rs/icu/latest/icu/segmenter/struct.LineBreakOptions.html) for more information.
 */
-export class LineBreakOptionsV1 {
+export class LineBreakOptions {
     #strictness;
     get strictness() : LineBreakStrictness;
     set strictness(value: LineBreakStrictness); 

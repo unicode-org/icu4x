@@ -284,10 +284,10 @@ export class Locale {
         }
     }
 
-    strictCmp(other) {
+    compareToString(other) {
         
         const otherSlice = diplomatRuntime.DiplomatBuf.str8(wasm, other);
-        const result = wasm.ICU4XLocale_strict_cmp_(this.ffiValue, otherSlice.ptr, otherSlice.size);
+        const result = wasm.ICU4XLocale_compare_to_string(this.ffiValue, otherSlice.ptr, otherSlice.size);
     
         try {
     
@@ -299,8 +299,8 @@ export class Locale {
         }
     }
 
-    totalCmp(other) {
-        const result = wasm.ICU4XLocale_total_cmp_(this.ffiValue, other.ffiValue);
+    compareTo(other) {
+        const result = wasm.ICU4XLocale_compare_to(this.ffiValue, other.ffiValue);
     
         try {
     

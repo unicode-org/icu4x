@@ -12,7 +12,7 @@ test('use createCompiled to format a simple decimal', async t => {
 
   const format = FixedDecimalFormatter.createWithGroupingStrategy(provider, locale, FixedDecimalGroupingStrategy.Auto);
 
-  const decimal = FixedDecimal.createFromI32(1234);
+  const decimal = FixedDecimal.fromInteger(1234);
   decimal.multiplyPow10(-2);
 
   t.is(format.format(decimal), '১২.৩৪');

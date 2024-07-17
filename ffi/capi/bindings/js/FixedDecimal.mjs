@@ -37,7 +37,7 @@ export class FixedDecimal {
     }
 
 
-    static createFromI32(v) {
+    static fromInteger(v) {
         const result = wasm.ICU4XFixedDecimal_create_from_i32(v);
     
         try {
@@ -48,18 +48,7 @@ export class FixedDecimal {
         }
     }
 
-    static createFromU32(v) {
-        const result = wasm.ICU4XFixedDecimal_create_from_u32(v);
-    
-        try {
-    
-            return new FixedDecimal(result, []);
-        } finally {
-        
-        }
-    }
-
-    static createFromI64(v) {
+    static fromBigInt(v) {
         const result = wasm.ICU4XFixedDecimal_create_from_i64(v);
     
         try {
@@ -70,37 +59,7 @@ export class FixedDecimal {
         }
     }
 
-    static createFromU64(v) {
-        const result = wasm.ICU4XFixedDecimal_create_from_u64(v);
-    
-        try {
-    
-            return new FixedDecimal(result, []);
-        } finally {
-        
-        }
-    }
-
-    static createFromF64WithIntegerPrecision(f) {
-        
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XFixedDecimal_create_from_f64_with_integer_precision(diplomat_receive_buffer, f);
-    
-        try {
-    
-            if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = FixedDecimalLimitError[Array.from(FixedDecimalLimitError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)]];
-                throw new Error('FixedDecimalLimitError: ' + cause.value, { cause });
-            }
-            return new FixedDecimal(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), []);
-        } finally {
-        
-            wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        
-        }
-    }
-
-    static createFromF64WithLowerMagnitude(f, magnitude) {
+    static fromNumberWithLowerMagnitude(f, magnitude) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
         const result = wasm.ICU4XFixedDecimal_create_from_f64_with_lower_magnitude(diplomat_receive_buffer, f, magnitude);
@@ -119,7 +78,7 @@ export class FixedDecimal {
         }
     }
 
-    static createFromF64WithSignificantDigits(f, digits) {
+    static fromNumberWithSignificantDigits(f, digits) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
         const result = wasm.ICU4XFixedDecimal_create_from_f64_with_significant_digits(diplomat_receive_buffer, f, digits);
@@ -138,7 +97,7 @@ export class FixedDecimal {
         }
     }
 
-    static createFromF64WithFloatingPrecision(f) {
+    static fromNumberWithFloatingPrecision(f) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
         const result = wasm.ICU4XFixedDecimal_create_from_f64_with_floating_precision(diplomat_receive_buffer, f);
@@ -157,7 +116,7 @@ export class FixedDecimal {
         }
     }
 
-    static createFromString(v) {
+    static fromString(v) {
         
         const vSlice = diplomatRuntime.DiplomatBuf.str8(wasm, v);
         

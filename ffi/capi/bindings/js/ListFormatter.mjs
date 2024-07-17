@@ -92,45 +92,7 @@ export class ListFormatter {
         }
     }
 
-    formatValidUtf8(list) {
-        
-        const listSlice = diplomatRuntime.DiplomatBuf.str8(wasm, list);
-        
-        const write = wasm.diplomat_buffer_write_create(0);
-        wasm.ICU4XListFormatter_format_valid_utf8(this.ffiValue, listSlice.ptr, listSlice.size, write);
-    
-        try {
-    
-            return diplomatRuntime.readString8(wasm, wasm.diplomat_buffer_write_get_bytes(write), wasm.diplomat_buffer_write_len(write));
-        } finally {
-        
-            listSlice.free();
-        
-            wasm.diplomat_buffer_write_destroy(write);
-        
-        }
-    }
-
-    formatUtf8(list) {
-        
-        const listSlice = diplomatRuntime.DiplomatBuf.str8(wasm, list);
-        
-        const write = wasm.diplomat_buffer_write_create(0);
-        wasm.ICU4XListFormatter_format_utf8(this.ffiValue, listSlice.ptr, listSlice.size, write);
-    
-        try {
-    
-            return diplomatRuntime.readString8(wasm, wasm.diplomat_buffer_write_get_bytes(write), wasm.diplomat_buffer_write_len(write));
-        } finally {
-        
-            listSlice.free();
-        
-            wasm.diplomat_buffer_write_destroy(write);
-        
-        }
-    }
-
-    formatUtf16(list) {
+    format(list) {
         
         const listSlice = diplomatRuntime.DiplomatBuf.str16(wasm, list);
         

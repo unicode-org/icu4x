@@ -35,7 +35,7 @@ export class UnitsConverter {
     }
 
 
-    convertF64(value) {
+    convert(value) {
         const result = wasm.ICU4XUnitsConverter_convert_f64(this.ffiValue, value);
     
         try {
