@@ -158,19 +158,6 @@ pub struct NeoOptions<R: DateTimeMarkers> {
     pub length: R::LengthOption,
 }
 
-impl<R> Default for NeoOptions<R>
-where
-    R: DateTimeMarkers,
-    R::LengthOption: Default,
-{
-    #[inline]
-    fn default() -> NeoOptions<R> {
-        NeoOptions {
-            length: Default::default(),
-        }
-    }
-}
-
 impl<R> From<NeoSkeletonLength> for NeoOptions<R>
 where
     R: DateTimeMarkers,
