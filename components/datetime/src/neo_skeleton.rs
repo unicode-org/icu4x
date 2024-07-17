@@ -6,6 +6,7 @@
 
 use crate::options::components;
 use crate::options::length;
+#[cfg(feature = "experimental")]
 use crate::raw::neo::MaybeLength;
 #[cfg(feature = "experimental")]
 use crate::time_zone::ResolvedNeoTimeZoneSkeleton;
