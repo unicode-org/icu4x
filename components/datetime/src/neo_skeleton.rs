@@ -487,34 +487,16 @@ impl NeoDateComponents {
 /// a time such as “am, 5 minutes, 25 milliseconds”.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 #[non_exhaustive]
-pub enum NeoTimeComponents {
-    /// An hour (12-hour or 24-hour chosen by locale), as in
+pub enum NeoTimeFieldSet {
+    /// An hour with possible day period, as in
     /// "4 pm" or "16h"
     Hour,
-    /// An hour and minute (12-hour or 24-hour chosen by locale), as in
+    /// An hour and minute with possible day period, as in
     /// "4:03 pm" or "16:03"
     HourMinute,
-    /// An hour, minute, and second (12-hour or 24-hour chosen by locale), as in
+    /// An hour, minute, and second with possible day period, as in
     /// "4:03:51 pm" or "16:03:51"
     HourMinuteSecond,
-    /// An hour with a 12-hour clock and day period, as in
-    /// "4 in the afternoon"
-    DayPeriodHour12,
-    /// An hour with a 12-hour clock, as in
-    /// "4 pm"
-    Hour12,
-    /// An hour and minute with a 12-hour clock and a day period, as in
-    /// "4:03 in the afternoon"
-    DayPeriodHour12Minute,
-    /// An hour and minute with a 12-hour clock, as in
-    /// "4:03 pm"
-    Hour12Minute,
-    /// An hour, minute, and second with a 12-hour clock and day period, as in
-    /// "4:03:51 in the afternoon"
-    DayPeriodHour12MinuteSecond,
-    /// An hour, minute, and second with a 12-hour clock, as in
-    /// "4:03:51 pm"
-    Hour12MinuteSecond,
     /// An hour with a 24-hour clock, as in
     /// "16h"
     Hour24,
@@ -532,6 +514,28 @@ pub enum NeoTimeComponents {
     ///
     /// [UTS 35]: <https://www.unicode.org/reports/tr35/tr35-dates.html#dateFormats>
     Auto,
+}
+
+/// A specification of the hour cycle in time formatting.
+///
+/// This allows developers to force 12-hour time. To force 24-hour time,
+/// use a different [`NeoTimeFieldSet`].
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, Default)]
+#[non_exhaustive]
+pub enum NeoDayPeriodStyle {
+    /// Select the day period style based on locale preferences.
+    #[default]
+    DefaultForLocale,
+    /// Force display as a 12-hour clock with AM/PM designators, as in
+    /// "4:03 pm"
+    AmPm,
+    /// Force display as a 12-hour clock with AM/PM designators, as in
+    /// "4:03 pm"
+    ///
+    /// 00:00:00 and 12:00:00 will be displayed with localized strings,
+    /// such as "noon" or "midnight"
+    AmPmNoonMidnight,
+    // TODO: Add flexible day period
 }
 
 impl NeoTimeComponents {
