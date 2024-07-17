@@ -202,9 +202,3 @@ export class DiplomatBuf {
 }
 
 const DiplomatBufferFinalizer = new FinalizationRegistry(free => free());
-export class FFIError extends Error {
-	constructor(error_value) {
-	super('Error over FFI');
-	this.error_value = error_value; // (2)
-	}
-}

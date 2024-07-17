@@ -16,6 +16,7 @@ fn main() -> std::io::Result<()> {
         match lang.as_str() {
             "cpp" => "cpp2",
             "c" => "c2",
+            "js" => "js2",
             l => l,
         },
         &{
