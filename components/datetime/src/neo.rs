@@ -147,6 +147,43 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
     };
 }
 
+/// Options bag for datetime formatting.
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[non_exhaustive]
+pub struct NeoOptions<R: DateTimeMarkers> {
+    /// The desired length of the formatted string,
+    /// if required for the chosen field set.
+    ///
+    /// See [`NeoSkeletonLength`].
+    pub length: R::LengthOption,
+}
+
+impl<R> Default for NeoOptions<R>
+where
+    R: DateTimeMarkers,
+    R::LengthOption: Default,
+{
+    #[inline]
+    fn default() -> NeoOptions<R> {
+        NeoOptions {
+            length: Default::default(),
+        }
+    }
+}
+
+impl<R> From<NeoSkeletonLength> for NeoOptions<R>
+where
+    R: DateTimeMarkers,
+    R::LengthOption: From<NeoSkeletonLength>,
+{
+    #[inline]
+    fn from(value: NeoSkeletonLength) -> Self {
+        NeoOptions {
+            length: value.into(),
+        }
+    }
+}
+
 size_test!(TypedNeoFormatter<icu_calendar::Gregorian, crate::neo_marker::NeoYearMonthDayMarker>, typed_neo_year_month_day_formatter_size, 504);
 
 /// [`TypedNeoFormatter`] is a formatter capable of formatting dates and/or times from
@@ -208,7 +245,7 @@ where
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
-    pub fn try_new(locale: &DataLocale, length: NeoSkeletonLength) -> Result<Self, LoadError>
+    pub fn try_new(locale: &DataLocale, options: NeoOptions<R>) -> Result<Self, LoadError>
     where
         crate::provider::Baked: Sized
             // Date formatting markers
@@ -231,7 +268,7 @@ where
             &ExternalLoaderCompiledData,
             locale,
             R::COMPONENTS,
-            length,
+            options,
         )
     }
 
@@ -241,14 +278,14 @@ where
         try_new_with_any_provider,
         try_new_with_buffer_provider,
         try_new_internal,
-        length: NeoSkeletonLength
+        options: NeoOptions<R>
     );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<P>(
         provider: &P,
         locale: &DataLocale,
-        length: NeoSkeletonLength,
+        options: NeoOptions<R>,
     ) -> Result<Self, LoadError>
     where
         P: ?Sized
@@ -276,7 +313,7 @@ where
             &ExternalLoaderUnstable(provider),
             locale,
             R::COMPONENTS,
-            length,
+            options,
         )
     }
 }
@@ -374,7 +411,7 @@ where
     pub fn try_new_with_components(
         locale: &DataLocale,
         components: R,
-        length: NeoSkeletonLength,
+        options: NeoOptions<R>,
     ) -> Result<Self, LoadError>
     where
         crate::provider::Baked: Sized
@@ -398,7 +435,7 @@ where
             &ExternalLoaderCompiledData,
             locale,
             components.into(),
-            length,
+            options,
         )
     }
 
@@ -408,7 +445,7 @@ where
         try_new_with_components_with_buffer_provider,
         try_new_internal,
         components: R,
-        length: NeoSkeletonLength
+        options: NeoOptions<R>
     );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
@@ -416,7 +453,7 @@ where
         provider: &P,
         locale: &DataLocale,
         components: R,
-        length: NeoSkeletonLength,
+        options: NeoOptions<R>,
     ) -> Result<Self, LoadError>
     where
         P: ?Sized
@@ -444,7 +481,7 @@ where
             &ExternalLoaderUnstable(provider),
             locale,
             components.into(),
-            length,
+            options,
         )
     }
 }
@@ -460,7 +497,7 @@ where
         loader: &L,
         locale: &DataLocale,
         components: NeoComponents,
-        length: NeoSkeletonLength,
+        options: NeoOptions<R>,
     ) -> Result<Self, LoadError>
     where
         P: ?Sized
@@ -485,7 +522,7 @@ where
             &<R::T as TimeMarkers>::TimeSkeletonPatternsV1Marker::bind(provider),
             &R::GluePatternV1Marker::bind(provider),
             locale,
-            length.into(),
+            options.length.into(),
             components,
         )
         .map_err(LoadError::Data)?;
@@ -657,7 +694,7 @@ where
     /// [`AnyCalendarKind`]: icu_calendar::AnyCalendarKind
     #[inline(never)]
     #[cfg(feature = "compiled_data")]
-    pub fn try_new(locale: &DataLocale, length: NeoSkeletonLength) -> Result<Self, LoadError>
+    pub fn try_new(locale: &DataLocale, options: NeoOptions<R>) -> Result<Self, LoadError>
     where
         crate::provider::Baked: Sized
     // Date formatting markers
@@ -728,7 +765,7 @@ where
             &ExternalLoaderCompiledData,
             locale,
             R::COMPONENTS,
-            length,
+            options,
         )
     }
 
@@ -738,14 +775,14 @@ where
         try_new_with_any_provider,
         try_new_with_buffer_provider,
         try_new_internal,
-        length: NeoSkeletonLength
+        options: NeoOptions<R>
     );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<P>(
         provider: &P,
         locale: &DataLocale,
-        length: NeoSkeletonLength,
+        options: NeoOptions<R>,
     ) -> Result<Self, LoadError>
     where
         P: ?Sized
@@ -828,7 +865,7 @@ where
             &ExternalLoaderUnstable(provider),
             locale,
             R::COMPONENTS,
-            length,
+            options,
         )
     }
 }
@@ -922,7 +959,7 @@ where
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
-    pub fn try_new_with_components(locale: &DataLocale, components: R, length: NeoSkeletonLength) -> Result<Self, LoadError>
+    pub fn try_new_with_components(locale: &DataLocale, components: R, options: NeoOptions<R>) -> Result<Self, LoadError>
     where
     crate::provider::Baked: Sized
     // Date formatting markers
@@ -993,7 +1030,7 @@ where
             &ExternalLoaderCompiledData,
             locale,
             components.into(),
-            length,
+            options,
         )
     }
 
@@ -1003,7 +1040,7 @@ where
         try_new_with_components_with_buffer_provider,
         try_new_internal,
         components: R,
-        length: NeoSkeletonLength
+        options: NeoOptions<R>
     );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
@@ -1011,7 +1048,7 @@ where
         provider: &P,
         locale: &DataLocale,
         components: R,
-        length: NeoSkeletonLength,
+        options: NeoOptions<R>,
     ) -> Result<Self, LoadError>
     where
         P: ?Sized
@@ -1094,7 +1131,7 @@ where
             &ExternalLoaderUnstable(provider),
             locale,
             components.into(),
-            length,
+            options,
         )
     }
 }
@@ -1110,7 +1147,7 @@ where
         loader: &L,
         locale: &DataLocale,
         components: NeoComponents,
-        length: NeoSkeletonLength,
+        options: NeoOptions<R>,
     ) -> Result<Self, LoadError>
     where
         P: ?Sized
@@ -1185,7 +1222,7 @@ where
             &<R::T as TimeMarkers>::TimeSkeletonPatternsV1Marker::bind(provider),
             &R::GluePatternV1Marker::bind(provider),
             locale,
-            length.into(),
+            options.length.into(),
             components,
         )
         .map_err(LoadError::Data)?;

@@ -815,7 +815,10 @@ pub struct NeoTimeZoneSkeleton {
 #[cfg(feature = "experimental")]
 impl NeoTimeZoneSkeleton {
     pub(crate) fn resolve(self, length: MaybeLength) -> ResolvedNeoTimeZoneSkeleton {
-        crate::tz_registry::skeleton_to_resolved(self.style, self.length.unwrap_or_else(|| length.get::<Self>()))
+        crate::tz_registry::skeleton_to_resolved(
+            self.style,
+            self.length.unwrap_or_else(|| length.get::<Self>()),
+        )
     }
 }
 

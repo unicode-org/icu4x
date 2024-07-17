@@ -503,6 +503,13 @@ impl From<NeverField> for Option<CustomTimeZone> {
     }
 }
 
+impl From<NeverField> for Option<NeoSkeletonLength> {
+    #[inline]
+    fn from(_: NeverField) -> Self {
+        None
+    }
+}
+
 /// A trait associating [`NeoComponents`].
 pub trait HasConstComponents {
     /// The associated components.
@@ -598,6 +605,8 @@ pub trait TimeMarkers: private::Sealed {
 /// A trait associating types for time zone formatting
 /// (input types and data markers).
 pub trait ZoneMarkers: private::Sealed {
+    /// Type of the length option in the constructor.
+    type LengthOption: Into<Option<NeoSkeletonLength>>;
     /// Marker for resolving the time zone input field.
     type TimeZoneInput: Into<Option<CustomTimeZone>>;
     /// Marker for loading core time zone data.
@@ -629,6 +638,8 @@ pub trait DateTimeMarkers: private::Sealed + DateTimeNamesMarker {
     ///
     /// Should implement [`ZoneMarkers`].
     type Z;
+    /// Type of the length option in the constructor.
+    type LengthOption: Into<Option<NeoSkeletonLength>>;
     /// Marker for loading the date/time glue pattern.
     type GluePatternV1Marker: DataMarker<Yokeable = GluePatternV1<'static>>;
 }
@@ -713,6 +724,7 @@ impl TimeMarkers for NeoNeverMarker {
 }
 
 impl ZoneMarkers for NeoNeverMarker {
+    type LengthOption = NeverField;
     type TimeZoneInput = NeverField;
     type EssentialsV1Marker = NeverMarker<tz::EssentialsV1<'static>>;
     type ExemplarCitiesV1Marker = NeverMarker<tz::ExemplarCitiesV1<'static>>;
@@ -765,6 +777,7 @@ where
     type D = D;
     type T = NeoNeverMarker;
     type Z = NeoNeverMarker;
+    type LengthOption = NeoSkeletonLength; // always needed for date
     type GluePatternV1Marker = NeverMarker<GluePatternV1<'static>>;
 }
 
@@ -798,6 +811,7 @@ where
     type D = NeoNeverMarker;
     type T = T;
     type Z = NeoNeverMarker;
+    type LengthOption = NeoSkeletonLength; // always needed for time
     type GluePatternV1Marker = NeverMarker<GluePatternV1<'static>>;
 }
 
@@ -834,6 +848,7 @@ where
     type D = D;
     type T = T;
     type Z = NeoNeverMarker;
+    type LengthOption = NeoSkeletonLength; // always needed for date/time
     type GluePatternV1Marker = GluePatternV1Marker;
 }
 
@@ -876,6 +891,7 @@ where
     type D = D;
     type T = T;
     type Z = Z;
+    type LengthOption = Z::LengthOption; // optional for zone
     type GluePatternV1Marker = GluePatternV1Marker;
 }
 
@@ -929,6 +945,12 @@ macro_rules! datetime_marker_helper {
     };
     (@glue, no) => {
         NeverMarker<GluePatternV1<'static>>
+    };
+    (@option/length, yes) => {
+        NeoSkeletonLength
+    };
+    (@option/length, no) => {
+        NeverField
     };
     (@input/year, yes) => {
         FormattableYear
@@ -1149,6 +1171,7 @@ macro_rules! impl_date_marker {
             type D = Self;
             type T = NeoNeverMarker;
             type Z = NeoNeverMarker;
+            type LengthOption = datetime_marker_helper!(@option/length, yes);
             type GluePatternV1Marker = datetime_marker_helper!(@glue, no);
         }
         impl HasConstComponents for $type {
@@ -1290,6 +1313,7 @@ macro_rules! impl_time_marker {
             type D = NeoNeverMarker;
             type T = Self;
             type Z = NeoNeverMarker;
+            type LengthOption = datetime_marker_helper!(@option/length, yes);
             type GluePatternV1Marker = datetime_marker_helper!(@glue, no);
         }
         impl HasConstComponents for $type {
@@ -1305,6 +1329,7 @@ macro_rules! impl_zone_marker {
         $components:expr,
         description = $description:literal,
         expectation = $expectation:literal,
+        needs_length_option = $option_length_yesno:ident,
         zone_essentials = $zone_essentials_yesno:ident,
         zone_exemplar_cities = $zone_exemplar_cities_yesno:ident,
         zone_generic_long = $zone_generic_long_yesno:ident,
@@ -1400,6 +1425,7 @@ macro_rules! impl_zone_marker {
             const COMPONENT: NeoTimeZoneSkeleton = $components;
         }
         impl ZoneMarkers for $type {
+            type LengthOption = datetime_marker_helper!(@option/length, $option_length_yesno);
             type TimeZoneInput = datetime_marker_helper!(@input/timezone, yes);
             type EssentialsV1Marker = datetime_marker_helper!(@data/zone/essentials, $zone_essentials_yesno);
             type ExemplarCitiesV1Marker = datetime_marker_helper!(@data/zone/exemplar_cities, $zone_exemplar_cities_yesno);
@@ -1412,6 +1438,7 @@ macro_rules! impl_zone_marker {
             type D = NeoNeverMarker;
             type T = NeoNeverMarker;
             type Z = Self;
+            type LengthOption = datetime_marker_helper!(@option/length, $option_length_yesno);
             type GluePatternV1Marker = datetime_marker_helper!(@glue, no);
         }
         impl HasConstComponents for $type {
@@ -1651,6 +1678,7 @@ impl_zone_marker!(
     NeoTimeZoneSkeleton::specific(),
     description = "a specific time zone format with inherited length",
     expectation = "CDT",
+    needs_length_option = yes,
     zone_essentials = yes,
     zone_exemplar_cities = no,
     zone_generic_long = no,
@@ -1696,6 +1724,7 @@ impl_zone_marker!(
     NeoTimeZoneSkeleton::specific_short(),
     description = "a short specific time zone format",
     expectation = "CDT",
+    needs_length_option = no,
     zone_essentials = yes,
     zone_exemplar_cities = no,
     zone_generic_long = no,
@@ -1709,6 +1738,7 @@ impl_zone_marker!(
     NeoTimeZoneSkeleton::specific_long(),
     description = "a long specific time zone format",
     expectation = "Central Daylight Time",
+    needs_length_option = no,
     zone_essentials = yes,
     zone_exemplar_cities = no,
     zone_generic_long = no,
@@ -1722,6 +1752,7 @@ impl_zone_marker!(
     NeoTimeZoneSkeleton::gmt(),
     description = "a GMT-offset time zone format with inherited length",
     expectation = "GMT-05:00", // TODO: Implement short localized GMT
+    needs_length_option = yes,
     zone_essentials = yes,
     zone_exemplar_cities = no,
     zone_generic_long = no,
@@ -1735,6 +1766,7 @@ impl_zone_marker!(
     NeoTimeZoneSkeleton::gmt_short(),
     description = "a GMT-offset short time zone format",
     expectation = "GMT-05:00", // TODO: Implement short localized GMT
+    needs_length_option = no,
     zone_essentials = yes,
     zone_exemplar_cities = no,
     zone_generic_long = no,
@@ -1748,6 +1780,7 @@ impl_zone_marker!(
     NeoTimeZoneSkeleton::gmt_long(),
     description = "a GMT-offset long time zone format",
     expectation = "GMT-05:00",
+    needs_length_option = no,
     zone_essentials = yes,
     zone_exemplar_cities = no,
     zone_generic_long = no,
@@ -1761,6 +1794,7 @@ impl_zone_marker!(
     NeoTimeZoneSkeleton::generic(),
     description = "a generic time zone format with inherited length",
     expectation = "CT",
+    needs_length_option = yes,
     zone_essentials = yes,
     zone_exemplar_cities = yes,
     zone_generic_long = no,
@@ -1806,6 +1840,7 @@ impl_zone_marker!(
     NeoTimeZoneSkeleton::generic_short(),
     description = "a generic short time zone format",
     expectation = "CT",
+    needs_length_option = no,
     zone_essentials = yes,
     zone_exemplar_cities = yes,
     zone_generic_long = no,
@@ -1819,6 +1854,7 @@ impl_zone_marker!(
     NeoTimeZoneSkeleton::generic_long(),
     description = "a generic long time zone format",
     expectation = "Central Time",
+    needs_length_option = no,
     zone_essentials = yes,
     zone_exemplar_cities = yes,
     zone_generic_long = yes,
@@ -1832,6 +1868,7 @@ impl_zone_marker!(
     NeoTimeZoneSkeleton::location(),
     description = "a location time zone format",
     expectation = "Chicago Time",
+    needs_length_option = no,
     zone_essentials = yes,
     zone_exemplar_cities = yes,
     zone_generic_long = no,
@@ -1897,6 +1934,7 @@ impl DateTimeMarkers for NeoDateComponents {
     type D = Self;
     type T = NeoNeverMarker;
     type Z = NeoNeverMarker;
+    type LengthOption = datetime_marker_helper!(@option/length, yes);
     type GluePatternV1Marker = datetime_marker_helper!(@glue, no);
 }
 
@@ -1930,6 +1968,7 @@ impl DateTimeMarkers for NeoTimeComponents {
     type D = NeoNeverMarker;
     type T = Self;
     type Z = NeoNeverMarker;
+    type LengthOption = datetime_marker_helper!(@option/length, yes);
     type GluePatternV1Marker = datetime_marker_helper!(@glue, no);
 }
 
@@ -1951,6 +1990,7 @@ impl DateTimeNamesMarker for NeoTimeZoneSkeleton {
 }
 
 impl ZoneMarkers for NeoTimeZoneSkeleton {
+    type LengthOption = datetime_marker_helper!(@option/length, yes);
     type TimeZoneInput = datetime_marker_helper!(@input/timezone, yes);
     type EssentialsV1Marker = datetime_marker_helper!(@data/zone/essentials, yes);
     type ExemplarCitiesV1Marker = datetime_marker_helper!(@data/zone/exemplar_cities, yes);
@@ -1964,6 +2004,7 @@ impl DateTimeMarkers for NeoTimeZoneSkeleton {
     type D = NeoNeverMarker;
     type T = NeoNeverMarker;
     type Z = Self;
+    type LengthOption = datetime_marker_helper!(@option/length, yes);
     type GluePatternV1Marker = datetime_marker_helper!(@glue, no);
 }
 
@@ -1988,6 +2029,7 @@ impl DateTimeMarkers for NeoDateTimeComponents {
     type D = NeoDateComponents;
     type T = NeoTimeComponents;
     type Z = NeoNeverMarker;
+    type LengthOption = datetime_marker_helper!(@option/length, yes);
     type GluePatternV1Marker = datetime_marker_helper!(@glue, yes);
 }
 
@@ -2012,5 +2054,6 @@ impl DateTimeMarkers for NeoComponents {
     type D = NeoDateComponents;
     type T = NeoTimeComponents;
     type Z = NeoTimeZoneSkeleton;
+    type LengthOption = datetime_marker_helper!(@option/length, yes);
     type GluePatternV1Marker = datetime_marker_helper!(@glue, yes);
 }

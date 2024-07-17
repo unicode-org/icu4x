@@ -21,19 +21,16 @@ use zerovec::ZeroSlice;
 #[derive(Debug, Copy, Clone)]
 pub(crate) struct MaybeLength(Option<NeoSkeletonLength>);
 
-impl From<NeoSkeletonLength> for MaybeLength {
-    #[inline]
-    fn from(value: NeoSkeletonLength) -> Self {
-        Self(Some(value))
-    }
-}
-
 impl MaybeLength {
     pub(crate) fn get<TypeForError>(self) -> NeoSkeletonLength {
         match self.0 {
             Some(length) => length,
             None => {
-                debug_assert!(false, "expected length: in {}", core::any::type_name::<TypeForError>());
+                debug_assert!(
+                    false,
+                    "expected length: in {}",
+                    core::any::type_name::<TypeForError>()
+                );
                 NeoSkeletonLength::Long
             }
         }
@@ -153,7 +150,10 @@ impl DatePatternSelectionData {
             .payload
             .cast();
         Ok(Self::SkeletonDate {
-            skeleton: NeoDateSkeleton { length: length.get::<Self>(), components },
+            skeleton: NeoDateSkeleton {
+                length: length.get::<Self>(),
+                components,
+            },
             payload,
         })
     }
@@ -201,7 +201,10 @@ impl TimePatternSelectionData {
             .payload
             .cast();
         Ok(Self::SkeletonTime {
-            skeleton: NeoTimeSkeleton { length: length.get::<Self>(), components },
+            skeleton: NeoTimeSkeleton {
+                length: length.get::<Self>(),
+                components,
+            },
             payload,
         })
     }
@@ -232,10 +235,7 @@ impl TimePatternSelectionData {
 }
 
 impl ZonePatternSelectionData {
-    pub(crate) fn new_with_skeleton(
-        length: MaybeLength,
-        components: NeoTimeZoneSkeleton,
-    ) -> Self {
+    pub(crate) fn new_with_skeleton(length: MaybeLength, components: NeoTimeZoneSkeleton) -> Self {
         let time_zone = components.resolve(length);
         let pattern_item = PatternItem::Field(time_zone.to_field());
         Self::SinglePatternItem(time_zone, pattern_item.to_unaligned())
@@ -263,9 +263,10 @@ impl DateTimeZonePatternSelectionData {
         time_provider: &(impl BoundDataProvider<SkeletaV1Marker> + ?Sized),
         glue_provider: &(impl BoundDataProvider<GluePatternV1Marker> + ?Sized),
         locale: &DataLocale,
-        length: MaybeLength,
+        length: Option<NeoSkeletonLength>,
         components: NeoComponents,
     ) -> Result<Self, DataError> {
+        let length = MaybeLength(length);
         match components {
             NeoComponents::Date(components) => {
                 let selection = DatePatternSelectionData::try_new_with_skeleton(
