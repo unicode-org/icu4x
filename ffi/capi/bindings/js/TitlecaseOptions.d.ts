@@ -7,10 +7,8 @@ import type { pointer, char } from "./diplomat-runtime.d.ts";
 /** See the [Rust documentation for `TitlecaseOptions`](https://docs.rs/icu/latest/icu/casemap/titlecase/struct.TitlecaseOptions.html) for more information.
 */
 export class TitlecaseOptions {
-    #leadingAdjustment;
     get leadingAdjustment() : LeadingAdjustment;
     set leadingAdjustment(value: LeadingAdjustment); 
-    #trailingCase;
     get trailingCase() : TrailingCase;
     set trailingCase(value: TrailingCase); 
 

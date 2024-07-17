@@ -7,25 +7,18 @@ import type { pointer, char } from "./diplomat-runtime.d.ts";
 *See the [Rust documentation for `weekend`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#method.weekend) for more information.
 */
 export class WeekendContainsDay {
-    #monday;
     get monday() : boolean;
     set monday(value: boolean); 
-    #tuesday;
     get tuesday() : boolean;
     set tuesday(value: boolean); 
-    #wednesday;
     get wednesday() : boolean;
     set wednesday(value: boolean); 
-    #thursday;
     get thursday() : boolean;
     set thursday(value: boolean); 
-    #friday;
     get friday() : boolean;
     set friday(value: boolean); 
-    #saturday;
     get saturday() : boolean;
     set saturday(value: boolean); 
-    #sunday;
     get sunday() : boolean;
     set sunday(value: boolean); 
 

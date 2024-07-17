@@ -8,13 +8,10 @@ import type { pointer, char } from "./diplomat-runtime.d.ts";
 /** See the [Rust documentation for `DisplayNamesOptions`](https://docs.rs/icu/latest/icu/displaynames/options/struct.DisplayNamesOptions.html) for more information.
 */
 export class DisplayNamesOptions {
-    #style;
     get style() : DisplayNamesStyle;
     set style(value: DisplayNamesStyle); 
-    #fallback;
     get fallback() : DisplayNamesFallback;
     set fallback(value: DisplayNamesFallback); 
-    #languageDisplay;
     get languageDisplay() : LanguageDisplay;
     set languageDisplay(value: LanguageDisplay); 
 

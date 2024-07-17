@@ -9,13 +9,10 @@ import type { pointer, char } from "./diplomat-runtime.d.ts";
 *See the [Rust documentation for `LocaleFallbackConfig`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbackConfig.html) for more information.
 */
 export class LocaleFallbackConfig {
-    #priority;
     get priority() : LocaleFallbackPriority;
     set priority(value: LocaleFallbackPriority); 
-    #extensionKey;
     get extensionKey() : string;
     set extensionKey(value: string); 
-    #fallbackSupplement;
     get fallbackSupplement() : LocaleFallbackSupplement;
     set fallbackSupplement(value: LocaleFallbackSupplement); 
 

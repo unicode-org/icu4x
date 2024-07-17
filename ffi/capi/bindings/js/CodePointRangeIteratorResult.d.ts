@@ -11,13 +11,10 @@ import type { pointer, char } from "./diplomat-runtime.d.ts";
 *values if and only if `done=false`.
 */
 export class CodePointRangeIteratorResult {
-    #start;
     get start() : number;
     
-    #end;
     get end() : number;
     
-    #done;
     get done() : boolean;
     
 

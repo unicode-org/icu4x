@@ -9,10 +9,8 @@ import type { pointer, char } from "./diplomat-runtime.d.ts";
 *See the [Rust documentation for `Decomposed`](https://docs.rs/icu/latest/icu/normalizer/properties/enum.Decomposed.html) for more information.
 */
 export class Decomposed {
-    #first;
     get first() : char;
     
-    #second;
     get second() : char;
     
 

@@ -7,13 +7,10 @@ import type { pointer, char } from "./diplomat-runtime.d.ts";
 /** See the [Rust documentation for `LineBreakOptions`](https://docs.rs/icu/latest/icu/segmenter/struct.LineBreakOptions.html) for more information.
 */
 export class LineBreakOptions {
-    #strictness;
     get strictness() : LineBreakStrictness;
     set strictness(value: LineBreakStrictness); 
-    #wordOption;
     get wordOption() : LineBreakWordOption;
     set wordOption(value: LineBreakWordOption); 
-    #jaZh;
     get jaZh() : boolean;
     set jaZh(value: boolean); 
 

@@ -6,10 +6,8 @@ import type { pointer, char } from "./diplomat-runtime.d.ts";
 /** See the [Rust documentation for `WeekOf`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekOf.html) for more information.
 */
 export class WeekOf {
-    #week;
     get week() : number;
     
-    #unit;
     get unit() : WeekRelativeUnit;
     
 

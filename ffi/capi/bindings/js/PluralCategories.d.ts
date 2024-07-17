@@ -2,22 +2,16 @@
 import type { pointer, char } from "./diplomat-runtime.d.ts";
 
 export class PluralCategories {
-    #zero;
     get zero() : boolean;
     
-    #one;
     get one() : boolean;
     
-    #two;
     get two() : boolean;
     
-    #few;
     get few() : boolean;
     
-    #many;
     get many() : boolean;
     
-    #other;
     get other() : boolean;
     
 
