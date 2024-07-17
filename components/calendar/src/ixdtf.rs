@@ -73,7 +73,8 @@ impl Date<Iso> {
 impl AnyCalendar {
     fn try_from_ixdtf_record(ixdtf_record: &IxdtfParseRecord) -> Result<Self, FromIxdtfError> {
         let calendar_id = ixdtf_record.calendar.unwrap_or(b"iso");
-        let calendar_kind = crate::AnyCalendarKind::get_for_bcp47_bytes(calendar_id).ok_or(FromIxdtfError::UnknownCalendar)?;
+        let calendar_kind = crate::AnyCalendarKind::get_for_bcp47_bytes(calendar_id)
+            .ok_or(FromIxdtfError::UnknownCalendar)?;
         let calendar = AnyCalendar::new(calendar_kind);
         Ok(calendar)
     }
