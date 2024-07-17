@@ -485,7 +485,7 @@ where
             &<R::T as TimeMarkers>::TimeSkeletonPatternsV1Marker::bind(provider),
             &R::GluePatternV1Marker::bind(provider),
             locale,
-            length,
+            length.into(),
             components,
         )
         .map_err(LoadError::Data)?;
@@ -1185,7 +1185,7 @@ where
             &<R::T as TimeMarkers>::TimeSkeletonPatternsV1Marker::bind(provider),
             &R::GluePatternV1Marker::bind(provider),
             locale,
-            length,
+            length.into(),
             components,
         )
         .map_err(LoadError::Data)?;
