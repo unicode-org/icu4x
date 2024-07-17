@@ -356,7 +356,6 @@ pub enum NeoDateComponents {
     /// The year and week of the year, as in
     /// “52nd week of 1999”.
     YearWeek,
-
     // TODO(#501): Consider adding support for Quarter and YearQuarter.
 }
 
