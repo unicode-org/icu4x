@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_datetime::options;
+use icu_datetime::{neo_skeleton::NeoSkeleton, options};
 use icu_datetime::options::DateTimeFormatterOptions;
 use serde::{Deserialize, Serialize};
 
@@ -25,12 +25,12 @@ pub struct TestInput {
 pub enum TestOptions {
     #[serde(rename = "length")]
     Length(options::length::Bag),
-    #[serde(rename = "components")]
+    #[serde(rename = "semanticSkeleton")]
     #[cfg(feature = "experimental")]
-    Components(options::components::Bag),
-    #[serde(rename = "components")]
+    SemanticSkeleton(NeoSkeleton),
+    #[serde(rename = "semanticSkeleton")]
     #[cfg(not(feature = "experimental"))]
-    Components(serde_json::Value),
+    SemanticSkeleton(serde_json::Value),
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
