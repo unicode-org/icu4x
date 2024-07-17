@@ -612,8 +612,6 @@ pub trait TimeMarkers: private::Sealed {
 /// A trait associating types for time zone formatting
 /// (input types and data markers).
 pub trait ZoneMarkers: private::Sealed {
-    /// Type of the length option in the constructor.
-    type LengthOption: Into<Option<NeoSkeletonLength>>;
     /// Marker for resolving the time zone input field.
     type TimeZoneInput: Into<Option<CustomTimeZone>>;
     /// Marker for loading core time zone data.
@@ -731,7 +729,6 @@ impl TimeMarkers for NeoNeverMarker {
 }
 
 impl ZoneMarkers for NeoNeverMarker {
-    type LengthOption = NeverField;
     type TimeZoneInput = NeverField;
     type EssentialsV1Marker = NeverMarker<tz::EssentialsV1<'static>>;
     type ExemplarCitiesV1Marker = NeverMarker<tz::ExemplarCitiesV1<'static>>;
@@ -1476,7 +1473,6 @@ macro_rules! impl_zone_marker {
             const COMPONENT: NeoTimeZoneSkeleton = $components;
         }
         impl ZoneMarkers for $type {
-            type LengthOption = datetime_marker_helper!(@option/length, $option_length_yesno);
             type TimeZoneInput = datetime_marker_helper!(@input/timezone, yes);
             type EssentialsV1Marker = datetime_marker_helper!(@data/zone/essentials, $zone_essentials_yesno);
             type ExemplarCitiesV1Marker = datetime_marker_helper!(@data/zone/exemplar_cities, $zone_exemplar_cities_yesno);
@@ -2041,7 +2037,6 @@ impl DateTimeNamesMarker for NeoTimeZoneSkeleton {
 }
 
 impl ZoneMarkers for NeoTimeZoneSkeleton {
-    type LengthOption = datetime_marker_helper!(@option/length, yes);
     type TimeZoneInput = datetime_marker_helper!(@input/timezone, yes);
     type EssentialsV1Marker = datetime_marker_helper!(@data/zone/essentials, yes);
     type ExemplarCitiesV1Marker = datetime_marker_helper!(@data/zone/exemplar_cities, yes);
