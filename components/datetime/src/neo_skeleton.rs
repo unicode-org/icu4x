@@ -719,16 +719,20 @@ impl From<NeoTimeComponents> for NeoDateTimeComponents {
 #[derive(Debug, Copy, Clone)]
 #[non_exhaustive]
 pub enum NeoComponents {
-    /// Components for parts of a date.
+    /// Components for a date.
     Date(NeoDateComponents),
-    /// Components for parts of a time.
+    /// Components for a time.
     Time(NeoTimeComponents),
-    /// Components for a time zone by itself.
+    /// Components for a time zone.
     Zone(NeoTimeZoneSkeleton),
-    /// Components for parts of a date and time together.
+    /// Components for a date and a time together.
     DateTime(NeoDayComponents, NeoTimeComponents),
-    /// Components for a date/time with a time zone.
-    DateTimeZone(NeoDateTimeComponents, NeoTimeZoneSkeleton),
+    /// Components for a date and a time zone together.
+    DateZone(NeoDateComponents, NeoTimeZoneSkeleton),
+    /// Components for a time and a time zone together.
+    TimeZone(NeoTimeComponents, NeoTimeZoneSkeleton),
+    /// Components for a date, a time, and a time zone together.
+    DateTimeZone(NeoDayComponents, NeoTimeComponents, NeoTimeZoneSkeleton),
 }
 
 impl From<NeoDateComponents> for NeoComponents {
