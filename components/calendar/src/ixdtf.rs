@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::{Date, Iso, RangeError};
+use crate::{AnyCalendar, Date, Iso, RangeError};
 use ixdtf::parsers::records::DateRecord;
 use ixdtf::parsers::IxdtfParser;
 use ixdtf::ParserError;
@@ -16,6 +16,8 @@ pub enum FromIxdtfError {
     Range(RangeError),
     /// The IXDTF is missing fields required for parsing into the chosen type.
     Missing,
+    /// The IXDTF specifies a calendar unknown to `icu_calendar`.
+    UnknownCalendar,
 }
 
 impl From<RangeError> for FromIxdtfError {
@@ -40,12 +42,14 @@ impl TryFrom<DateRecord> for Date<Iso> {
 impl Date<Iso> {
     /// Creates a [`Date`] in the ISO-8601 calendar from an IXDTF syntax string.
     ///
+    /// Ignores any calendar annotations in the string.
+    ///
     /// # Examples
     ///
     /// ```
     /// use icu::calendar::Date;
     ///
-    /// let date = Date::try_from_str("2024-07-17").unwrap();
+    /// let date = Date::try_iso_from_str("2024-07-17").unwrap();
     ///
     /// assert_eq!(date.year().number, 2024);
     /// assert_eq!(
@@ -54,10 +58,40 @@ impl Date<Iso> {
     /// );
     /// assert_eq!(date.day_of_month().0, 17);
     /// ```
-    pub fn try_from_str(ixdtf_str: &str) -> Result<Self, FromIxdtfError> {
+    pub fn try_iso_from_str(ixdtf_str: &str) -> Result<Self, FromIxdtfError> {
         let ixdtf_result = IxdtfParser::from_str(ixdtf_str).parse()?;
         let date_record = ixdtf_result.date.ok_or(FromIxdtfError::Missing)?;
         let date = Self::try_from(date_record)?;
+        Ok(date)
+    }
+}
+
+impl Date<AnyCalendar> {
+    /// Creates a [`Date`] in any calendar from an IXDTF syntax string using compiled data.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::Date;
+    ///
+    /// let date = Date::try_from_str("2024-07-17[u-ca=hebrew]").unwrap();
+    ///
+    /// assert_eq!(date.year().number, 5784);
+    /// assert_eq!(
+    ///     date.month().code,
+    ///     icu::calendar::types::MonthCode(tinystr::tinystr!(4, "M10"))
+    /// );
+    /// assert_eq!(date.day_of_month().0, 11);
+    /// ```
+    #[cfg(feature = "compiled_data")]
+    pub fn try_from_str(ixdtf_str: &str) -> Result<Self, FromIxdtfError> {
+        let ixdtf_result = IxdtfParser::from_str(ixdtf_str).parse()?;
+        let date_record = ixdtf_result.date.ok_or(FromIxdtfError::Missing)?;
+        let iso_date = Date::<Iso>::try_from(date_record)?;
+        let calendar_id = ixdtf_result.calendar.unwrap_or(b"iso");
+        let calendar_kind = crate::AnyCalendarKind::get_for_bcp47_bytes(calendar_id).ok_or(FromIxdtfError::UnknownCalendar)?;
+        let calendar = AnyCalendar::new(calendar_kind);
+        let date = iso_date.to_any().to_calendar(calendar);
         Ok(date)
     }
 }
