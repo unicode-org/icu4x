@@ -71,7 +71,7 @@ impl NeoSkeletonLength {
 }
 
 /// A specification for a set of parts of a date that specifies a single day (as
-/// opposed to a whole month, week, or quarter).
+/// opposed to a whole month or a week).
 /// Only sets that yield “sensible” dates are allowed: this type cannot
 /// describe a date such as “some Tuesday in 2023”.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
@@ -332,7 +332,7 @@ impl NeoDayComponents {
 
 /// A specification for a set of parts of a date.
 /// Only sets that yield “sensible” dates are allowed: this type cannot describe
-/// a date such as “fourth quarter, Anno Domini”.
+/// a date such as “August, Anno Domini”.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 #[non_exhaustive]
 pub enum NeoDateComponents {
@@ -356,12 +356,7 @@ pub enum NeoDateComponents {
     /// The year and week of the year, as in
     /// “52nd week of 1999”.
     YearWeek,
-    /// The quarter of the year, as in
-    /// “1st quarter”.
-    Quarter,
-    /// The year and quarter of the year, as in
-    /// “1st quarter of 2000”.
-    YearQuarter,
+    // TODO(#501): Consider adding support for Quarter and YearQuarter.
 }
 
 impl NeoDateComponents {
@@ -384,8 +379,6 @@ impl NeoDateComponents {
         Self::Year,
         Self::EraYear,
         Self::YearWeek,
-        Self::Quarter,
-        Self::YearQuarter,
     ];
 
     const MONTH: &'static DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("m0");
@@ -396,9 +389,6 @@ impl NeoDateComponents {
     const YEAR: &'static DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("y");
     const ERA_YEAR: &'static DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("gy");
     const YEAR_WEEK: &'static DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("y0w");
-    const QUARTER: &'static DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("q");
-    const YEAR_QUARTER: &'static DataMarkerAttributes =
-        DataMarkerAttributes::from_str_or_panic("yq");
 
     // For matching
     const MONTH_STR: &'static str = Self::MONTH.as_str();
@@ -407,8 +397,6 @@ impl NeoDateComponents {
     const YEAR_STR: &'static str = Self::YEAR.as_str();
     const ERA_YEAR_STR: &'static str = Self::ERA_YEAR.as_str();
     const YEAR_WEEK_STR: &'static str = Self::YEAR_WEEK.as_str();
-    const QUARTER_STR: &'static str = Self::QUARTER.as_str();
-    const YEAR_QUARTER_STR: &'static str = Self::YEAR_QUARTER.as_str();
 
     /// Returns a stable string identifying this set of components.
     ///
@@ -422,8 +410,6 @@ impl NeoDateComponents {
             Self::Year => Self::YEAR,
             Self::EraYear => Self::ERA_YEAR,
             Self::YearWeek => Self::YEAR_WEEK,
-            Self::Quarter => Self::QUARTER,
-            Self::YearQuarter => Self::YEAR_QUARTER,
         }
     }
 
@@ -438,8 +424,6 @@ impl NeoDateComponents {
             Self::YEAR_STR => Some(Self::Year),
             Self::ERA_YEAR_STR => Some(Self::EraYear),
             Self::YEAR_WEEK_STR => Some(Self::YearWeek),
-            Self::QUARTER_STR => Some(Self::Quarter),
-            Self::YEAR_QUARTER_STR => Some(Self::YearQuarter),
             _ => NeoDayComponents::from_id_str(id_str).map(Self::Day),
         }
     }
@@ -476,8 +460,6 @@ impl NeoDateComponents {
                 week: Some(length.to_components_week_of_year()),
                 ..Default::default()
             }),
-            Self::Quarter => todo!(),
-            Self::YearQuarter => todo!(),
         }
     }
 }

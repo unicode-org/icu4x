@@ -166,10 +166,6 @@ impl SourceDataProvider {
             .flat_map(|langid| {
                 NeoDateComponents::VALUES
                     .iter()
-                    .filter(|neo_components| {
-                        !matches!(neo_components, NeoDateComponents::Quarter)
-                            && !matches!(neo_components, NeoDateComponents::YearQuarter)
-                    })
                     .copied()
                     .map(NeoDateComponents::id_str)
                     .map(move |attrs| {
