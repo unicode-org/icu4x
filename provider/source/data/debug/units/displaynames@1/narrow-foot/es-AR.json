@@ -1,6 +1,5 @@
 {
   "patterns": {
-    "One": "{0}ft",
     "Other": "{0}ft"
   }
 }
