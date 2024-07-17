@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::{AnyCalendar, Date, Iso, RangeError};
-use ixdtf::parsers::records::DateRecord;
+use ixdtf::parsers::records::{DateRecord, IxdtfParseRecord};
 use ixdtf::parsers::IxdtfParser;
 use ixdtf::ParserError;
 
@@ -59,10 +59,23 @@ impl Date<Iso> {
     /// assert_eq!(date.day_of_month().0, 17);
     /// ```
     pub fn try_iso_from_str(ixdtf_str: &str) -> Result<Self, FromIxdtfError> {
-        let ixdtf_result = IxdtfParser::from_str(ixdtf_str).parse()?;
-        let date_record = ixdtf_result.date.ok_or(FromIxdtfError::Missing)?;
+        let ixdtf_record = IxdtfParser::from_str(ixdtf_str).parse()?;
+        Self::try_from_ixdtf_record(&ixdtf_record)
+    }
+
+    fn try_from_ixdtf_record(ixdtf_record: &IxdtfParseRecord) -> Result<Self, FromIxdtfError> {
+        let date_record = ixdtf_record.date.ok_or(FromIxdtfError::Missing)?;
         let date = Self::try_from(date_record)?;
         Ok(date)
+    }
+}
+
+impl AnyCalendar {
+    fn try_from_ixdtf_record(ixdtf_record: &IxdtfParseRecord) -> Result<Self, FromIxdtfError> {
+        let calendar_id = ixdtf_record.calendar.unwrap_or(b"iso");
+        let calendar_kind = crate::AnyCalendarKind::get_for_bcp47_bytes(calendar_id).ok_or(FromIxdtfError::UnknownCalendar)?;
+        let calendar = AnyCalendar::new(calendar_kind);
+        Ok(calendar)
     }
 }
 
@@ -85,12 +98,9 @@ impl Date<AnyCalendar> {
     /// ```
     #[cfg(feature = "compiled_data")]
     pub fn try_from_str(ixdtf_str: &str) -> Result<Self, FromIxdtfError> {
-        let ixdtf_result = IxdtfParser::from_str(ixdtf_str).parse()?;
-        let date_record = ixdtf_result.date.ok_or(FromIxdtfError::Missing)?;
-        let iso_date = Date::<Iso>::try_from(date_record)?;
-        let calendar_id = ixdtf_result.calendar.unwrap_or(b"iso");
-        let calendar_kind = crate::AnyCalendarKind::get_for_bcp47_bytes(calendar_id).ok_or(FromIxdtfError::UnknownCalendar)?;
-        let calendar = AnyCalendar::new(calendar_kind);
+        let ixdtf_record = IxdtfParser::from_str(ixdtf_str).parse()?;
+        let iso_date = Date::<Iso>::try_from_ixdtf_record(&ixdtf_record)?;
+        let calendar = AnyCalendar::try_from_ixdtf_record(&ixdtf_record)?;
         let date = iso_date.to_any().to_calendar(calendar);
         Ok(date)
     }
