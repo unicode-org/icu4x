@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use core::str::FromStr;
+
 use crate::{AnyCalendar, Date, DateTime, Iso, RangeError, Time};
 use ixdtf::parsers::records::{DateRecord, IxdtfParseRecord, TimeRecord};
 use ixdtf::parsers::IxdtfParser;
@@ -94,6 +96,13 @@ impl Date<Iso> {
     }
 }
 
+impl FromStr for Date<Iso> {
+    type Err = FromIxdtfError;
+    fn from_str(ixdtf_str: &str) -> Result<Self, Self::Err> {
+        Self::try_iso_from_str(ixdtf_str)
+    }
+}
+
 impl Date<AnyCalendar> {
     /// Creates a [`Date`] in any calendar from an IXDTF syntax string with compiled data.
     ///
@@ -125,6 +134,13 @@ impl Date<AnyCalendar> {
         let calendar = AnyCalendar::try_from_ixdtf_record(&ixdtf_record)?;
         let date = iso_date.to_any().to_calendar(calendar);
         Ok(date)
+    }
+}
+
+impl FromStr for Date<AnyCalendar> {
+    type Err = FromIxdtfError;
+    fn from_str(ixdtf_str: &str) -> Result<Self, Self::Err> {
+        Self::try_from_str(ixdtf_str)
     }
 }
 
@@ -161,6 +177,13 @@ impl Time {
         let time_record = ixdtf_record.time.ok_or(FromIxdtfError::Missing)?;
         let date = Self::try_from(time_record)?;
         Ok(date)
+    }
+}
+
+impl FromStr for Time {
+    type Err = FromIxdtfError;
+    fn from_str(ixdtf_str: &str) -> Result<Self, Self::Err> {
+        Self::try_from_str(ixdtf_str)
     }
 }
 
@@ -207,6 +230,13 @@ impl DateTime<Iso> {
     }
 }
 
+impl FromStr for DateTime<Iso> {
+    type Err = FromIxdtfError;
+    fn from_str(ixdtf_str: &str) -> Result<Self, Self::Err> {
+        Self::try_iso_from_str(ixdtf_str)
+    }
+}
+
 impl DateTime<AnyCalendar> {
     /// Creates a [`DateTime`] in any calendar from an IXDTF syntax string with compiled data.
     ///
@@ -243,5 +273,12 @@ impl DateTime<AnyCalendar> {
         let calendar = AnyCalendar::try_from_ixdtf_record(&ixdtf_record)?;
         let datetime = iso_datetime.to_any().to_calendar(calendar);
         Ok(datetime)
+    }
+}
+
+impl FromStr for DateTime<AnyCalendar> {
+    type Err = FromIxdtfError;
+    fn from_str(ixdtf_str: &str) -> Result<Self, Self::Err> {
+        Self::try_from_str(ixdtf_str)
     }
 }
