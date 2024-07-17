@@ -14,7 +14,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 */
 
 const WeekCalculator_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.ICU4XWeekCalculator_destroy(ptr);
+    wasm.icu4x_WeekCalculator_destroy_mv1(ptr);
 });
 export class WeekCalculator {
     // Internal ptr reference:
@@ -41,7 +41,7 @@ export class WeekCalculator {
     static create(provider, locale) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XWeekCalculator_create(diplomat_receive_buffer, provider.ffiValue, locale.ffiValue);
+        const result = wasm.icu4x_WeekCalculator_create_mv1(diplomat_receive_buffer, provider.ffiValue, locale.ffiValue);
     
         try {
     
@@ -58,7 +58,7 @@ export class WeekCalculator {
     }
 
     static createFromFirstDayOfWeekAndMinWeekDays(firstWeekday, minWeekDays) {
-        const result = wasm.ICU4XWeekCalculator_create_from_first_day_of_week_and_min_week_days(firstWeekday.ffiValue, minWeekDays);
+        const result = wasm.icu4x_WeekCalculator_create_from_first_day_of_week_and_min_week_days_mv1(firstWeekday.ffiValue, minWeekDays);
     
         try {
     
@@ -69,7 +69,7 @@ export class WeekCalculator {
     }
 
     get firstWeekday() {
-        const result = wasm.ICU4XWeekCalculator_first_weekday(this.ffiValue);
+        const result = wasm.icu4x_WeekCalculator_first_weekday_mv1(this.ffiValue);
     
         try {
     
@@ -80,7 +80,7 @@ export class WeekCalculator {
     }
 
     get minWeekDays() {
-        const result = wasm.ICU4XWeekCalculator_min_week_days(this.ffiValue);
+        const result = wasm.icu4x_WeekCalculator_min_week_days_mv1(this.ffiValue);
     
         try {
     
@@ -93,7 +93,7 @@ export class WeekCalculator {
     get weekend() {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(7, 1);
-        const result = wasm.ICU4XWeekCalculator_weekend(diplomat_receive_buffer, this.ffiValue);
+        const result = wasm.icu4x_WeekCalculator_weekend_mv1(diplomat_receive_buffer, this.ffiValue);
     
         try {
     

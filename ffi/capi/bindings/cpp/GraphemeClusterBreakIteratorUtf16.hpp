@@ -16,17 +16,17 @@ namespace diplomat {
 namespace capi {
     extern "C" {
     
-    int32_t ICU4XGraphemeClusterBreakIteratorUtf16_next(diplomat::capi::GraphemeClusterBreakIteratorUtf16* self);
+    int32_t icu4x_GraphemeClusterBreakIteratorUtf16_next_mv1(diplomat::capi::GraphemeClusterBreakIteratorUtf16* self);
     
     
-    void ICU4XGraphemeClusterBreakIteratorUtf16_destroy(GraphemeClusterBreakIteratorUtf16* self);
+    void icu4x_GraphemeClusterBreakIteratorUtf16_destroy_mv1(GraphemeClusterBreakIteratorUtf16* self);
     
     } // extern "C"
 } // namespace capi
 } // namespace
 
 inline int32_t GraphemeClusterBreakIteratorUtf16::next() {
-  auto result = diplomat::capi::ICU4XGraphemeClusterBreakIteratorUtf16_next(this->AsFFI());
+  auto result = diplomat::capi::icu4x_GraphemeClusterBreakIteratorUtf16_next_mv1(this->AsFFI());
   return result;
 }
 
@@ -47,7 +47,7 @@ inline GraphemeClusterBreakIteratorUtf16* GraphemeClusterBreakIteratorUtf16::Fro
 }
 
 inline void GraphemeClusterBreakIteratorUtf16::operator delete(void* ptr) {
-  diplomat::capi::ICU4XGraphemeClusterBreakIteratorUtf16_destroy(reinterpret_cast<diplomat::capi::GraphemeClusterBreakIteratorUtf16*>(ptr));
+  diplomat::capi::icu4x_GraphemeClusterBreakIteratorUtf16_destroy_mv1(reinterpret_cast<diplomat::capi::GraphemeClusterBreakIteratorUtf16*>(ptr));
 }
 
 

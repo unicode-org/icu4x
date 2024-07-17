@@ -13,7 +13,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 */
 
 const Bidi_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.ICU4XBidi_destroy(ptr);
+    wasm.icu4x_Bidi_destroy_mv1(ptr);
 });
 export class Bidi {
     // Internal ptr reference:
@@ -40,7 +40,7 @@ export class Bidi {
     static create(provider) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XBidi_create(diplomat_receive_buffer, provider.ffiValue);
+        const result = wasm.icu4x_Bidi_create_mv1(diplomat_receive_buffer, provider.ffiValue);
     
         try {
     
@@ -62,7 +62,7 @@ export class Bidi {
         
         // This lifetime edge depends on lifetimes 'text
         let textEdges = [textSlice];
-        const result = wasm.ICU4XBidi_for_text_valid_utf8(this.ffiValue, textSlice.ptr, textSlice.size, defaultLevel);
+        const result = wasm.icu4x_Bidi_for_text_valid_utf8_mv1(this.ffiValue, textSlice.ptr, textSlice.size, defaultLevel);
     
         try {
     
@@ -77,7 +77,7 @@ export class Bidi {
     reorderVisual(levels) {
         
         const levelsSlice = diplomatRuntime.DiplomatBuf.slice(wasm, levels, "u8");
-        const result = wasm.ICU4XBidi_reorder_visual(this.ffiValue, levelsSlice.ptr, levelsSlice.size);
+        const result = wasm.icu4x_Bidi_reorder_visual_mv1(this.ffiValue, levelsSlice.ptr, levelsSlice.size);
     
         try {
     
@@ -90,7 +90,7 @@ export class Bidi {
     }
 
     static levelIsRtl(level) {
-        const result = wasm.ICU4XBidi_level_is_rtl(level);
+        const result = wasm.icu4x_Bidi_level_is_rtl_mv1(level);
     
         try {
     
@@ -101,7 +101,7 @@ export class Bidi {
     }
 
     static levelIsLtr(level) {
-        const result = wasm.ICU4XBidi_level_is_ltr(level);
+        const result = wasm.icu4x_Bidi_level_is_ltr_mv1(level);
     
         try {
     
@@ -112,7 +112,7 @@ export class Bidi {
     }
 
     static levelRtl() {
-        const result = wasm.ICU4XBidi_level_rtl();
+        const result = wasm.icu4x_Bidi_level_rtl_mv1();
     
         try {
     
@@ -123,7 +123,7 @@ export class Bidi {
     }
 
     static levelLtr() {
-        const result = wasm.ICU4XBidi_level_ltr();
+        const result = wasm.icu4x_Bidi_level_ltr_mv1();
     
         try {
     

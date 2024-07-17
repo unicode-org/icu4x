@@ -21,13 +21,13 @@
 
 
 
-typedef struct ICU4XGregorianDateTimeFormatter_create_with_lengths_result {union {GregorianDateTimeFormatter* ok; Error err;}; bool is_ok;} ICU4XGregorianDateTimeFormatter_create_with_lengths_result;
-ICU4XGregorianDateTimeFormatter_create_with_lengths_result ICU4XGregorianDateTimeFormatter_create_with_lengths(const DataProvider* provider, const Locale* locale, DateLength date_length, TimeLength time_length);
+typedef struct icu4x_GregorianDateTimeFormatter_create_with_lengths_mv1_result {union {GregorianDateTimeFormatter* ok; Error err;}; bool is_ok;} icu4x_GregorianDateTimeFormatter_create_with_lengths_mv1_result;
+icu4x_GregorianDateTimeFormatter_create_with_lengths_mv1_result icu4x_GregorianDateTimeFormatter_create_with_lengths_mv1(const DataProvider* provider, const Locale* locale, DateLength date_length, TimeLength time_length);
 
-void ICU4XGregorianDateTimeFormatter_format_iso_datetime(const GregorianDateTimeFormatter* self, const IsoDateTime* value, DiplomatWrite* write);
+void icu4x_GregorianDateTimeFormatter_format_iso_datetime_mv1(const GregorianDateTimeFormatter* self, const IsoDateTime* value, DiplomatWrite* write);
 
 
-void ICU4XGregorianDateTimeFormatter_destroy(GregorianDateTimeFormatter* self);
+void icu4x_GregorianDateTimeFormatter_destroy_mv1(GregorianDateTimeFormatter* self);
 
 
 

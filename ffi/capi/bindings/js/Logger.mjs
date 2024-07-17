@@ -7,7 +7,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 */
 
 const Logger_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.ICU4XLogger_destroy(ptr);
+    wasm.icu4x_Logger_destroy_mv1(ptr);
 });
 export class Logger {
     // Internal ptr reference:
@@ -32,7 +32,7 @@ export class Logger {
 
 
     static initSimpleLogger() {
-        const result = wasm.ICU4XLogger_init_simple_logger();
+        const result = wasm.icu4x_Logger_init_simple_logger_mv1();
     
         try {
     

@@ -16,7 +16,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 */
 
 const UnicodeSetData_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.ICU4XUnicodeSetData_destroy(ptr);
+    wasm.icu4x_UnicodeSetData_destroy_mv1(ptr);
 });
 export class UnicodeSetData {
     // Internal ptr reference:
@@ -43,7 +43,7 @@ export class UnicodeSetData {
     contains(s) {
         
         const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
-        const result = wasm.ICU4XUnicodeSetData_contains(this.ffiValue, sSlice.ptr, sSlice.size);
+        const result = wasm.icu4x_UnicodeSetData_contains_mv1(this.ffiValue, sSlice.ptr, sSlice.size);
     
         try {
     
@@ -56,7 +56,7 @@ export class UnicodeSetData {
     }
 
     containsChar(cp) {
-        const result = wasm.ICU4XUnicodeSetData_contains_char(this.ffiValue, diplomatRuntime.extractCodePoint(cp, 'cp'));
+        const result = wasm.icu4x_UnicodeSetData_contains_char_mv1(this.ffiValue, diplomatRuntime.extractCodePoint(cp, 'cp'));
     
         try {
     
@@ -69,7 +69,7 @@ export class UnicodeSetData {
     static loadBasicEmoji(provider) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XUnicodeSetData_load_basic_emoji(diplomat_receive_buffer, provider.ffiValue);
+        const result = wasm.icu4x_UnicodeSetData_load_basic_emoji_mv1(diplomat_receive_buffer, provider.ffiValue);
     
         try {
     
@@ -88,7 +88,7 @@ export class UnicodeSetData {
     static loadExemplarsMain(provider, locale) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XUnicodeSetData_load_exemplars_main(diplomat_receive_buffer, provider.ffiValue, locale.ffiValue);
+        const result = wasm.icu4x_UnicodeSetData_load_exemplars_main_mv1(diplomat_receive_buffer, provider.ffiValue, locale.ffiValue);
     
         try {
     
@@ -107,7 +107,7 @@ export class UnicodeSetData {
     static loadExemplarsAuxiliary(provider, locale) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XUnicodeSetData_load_exemplars_auxiliary(diplomat_receive_buffer, provider.ffiValue, locale.ffiValue);
+        const result = wasm.icu4x_UnicodeSetData_load_exemplars_auxiliary_mv1(diplomat_receive_buffer, provider.ffiValue, locale.ffiValue);
     
         try {
     
@@ -126,7 +126,7 @@ export class UnicodeSetData {
     static loadExemplarsPunctuation(provider, locale) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XUnicodeSetData_load_exemplars_punctuation(diplomat_receive_buffer, provider.ffiValue, locale.ffiValue);
+        const result = wasm.icu4x_UnicodeSetData_load_exemplars_punctuation_mv1(diplomat_receive_buffer, provider.ffiValue, locale.ffiValue);
     
         try {
     
@@ -145,7 +145,7 @@ export class UnicodeSetData {
     static loadExemplarsNumbers(provider, locale) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XUnicodeSetData_load_exemplars_numbers(diplomat_receive_buffer, provider.ffiValue, locale.ffiValue);
+        const result = wasm.icu4x_UnicodeSetData_load_exemplars_numbers_mv1(diplomat_receive_buffer, provider.ffiValue, locale.ffiValue);
     
         try {
     
@@ -164,7 +164,7 @@ export class UnicodeSetData {
     static loadExemplarsIndex(provider, locale) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XUnicodeSetData_load_exemplars_index(diplomat_receive_buffer, provider.ffiValue, locale.ffiValue);
+        const result = wasm.icu4x_UnicodeSetData_load_exemplars_index_mv1(diplomat_receive_buffer, provider.ffiValue, locale.ffiValue);
     
         try {
     

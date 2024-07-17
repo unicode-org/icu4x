@@ -9,7 +9,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 */
 
 const CodePointRangeIterator_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.ICU4XCodePointRangeIterator_destroy(ptr);
+    wasm.icu4x_CodePointRangeIterator_destroy_mv1(ptr);
 });
 export class CodePointRangeIterator {
     // Internal ptr reference:
@@ -41,7 +41,7 @@ export class CodePointRangeIterator {
     next() {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(9, 4);
-        const result = wasm.ICU4XCodePointRangeIterator_next(diplomat_receive_buffer, this.ffiValue);
+        const result = wasm.icu4x_CodePointRangeIterator_next_mv1(diplomat_receive_buffer, this.ffiValue);
     
         try {
     

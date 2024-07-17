@@ -20,16 +20,16 @@
 
 
 
-typedef struct ICU4XLocaleFallbacker_create_result {union {LocaleFallbacker* ok; DataError err;}; bool is_ok;} ICU4XLocaleFallbacker_create_result;
-ICU4XLocaleFallbacker_create_result ICU4XLocaleFallbacker_create(const DataProvider* provider);
+typedef struct icu4x_LocaleFallbacker_create_mv1_result {union {LocaleFallbacker* ok; DataError err;}; bool is_ok;} icu4x_LocaleFallbacker_create_mv1_result;
+icu4x_LocaleFallbacker_create_mv1_result icu4x_LocaleFallbacker_create_mv1(const DataProvider* provider);
 
-LocaleFallbacker* ICU4XLocaleFallbacker_create_without_data();
+LocaleFallbacker* icu4x_LocaleFallbacker_create_without_data_mv1();
 
-typedef struct ICU4XLocaleFallbacker_for_config_result {union {LocaleFallbackerWithConfig* ok; LocaleParseError err;}; bool is_ok;} ICU4XLocaleFallbacker_for_config_result;
-ICU4XLocaleFallbacker_for_config_result ICU4XLocaleFallbacker_for_config(const LocaleFallbacker* self, LocaleFallbackConfig config);
+typedef struct icu4x_LocaleFallbacker_for_config_mv1_result {union {LocaleFallbackerWithConfig* ok; LocaleParseError err;}; bool is_ok;} icu4x_LocaleFallbacker_for_config_mv1_result;
+icu4x_LocaleFallbacker_for_config_mv1_result icu4x_LocaleFallbacker_for_config_mv1(const LocaleFallbacker* self, LocaleFallbackConfig config);
 
 
-void ICU4XLocaleFallbacker_destroy(LocaleFallbacker* self);
+void icu4x_LocaleFallbacker_destroy_mv1(LocaleFallbacker* self);
 
 
 

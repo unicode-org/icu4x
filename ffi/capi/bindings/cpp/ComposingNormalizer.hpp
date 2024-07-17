@@ -18,43 +18,43 @@ namespace diplomat {
 namespace capi {
     extern "C" {
     
-    typedef struct ICU4XComposingNormalizer_create_nfc_result {union {diplomat::capi::ComposingNormalizer* ok; diplomat::capi::DataError err;}; bool is_ok;} ICU4XComposingNormalizer_create_nfc_result;
-    ICU4XComposingNormalizer_create_nfc_result ICU4XComposingNormalizer_create_nfc(const diplomat::capi::DataProvider* provider);
+    typedef struct icu4x_ComposingNormalizer_create_nfc_mv1_result {union {diplomat::capi::ComposingNormalizer* ok; diplomat::capi::DataError err;}; bool is_ok;} icu4x_ComposingNormalizer_create_nfc_mv1_result;
+    icu4x_ComposingNormalizer_create_nfc_mv1_result icu4x_ComposingNormalizer_create_nfc_mv1(const diplomat::capi::DataProvider* provider);
     
-    typedef struct ICU4XComposingNormalizer_create_nfkc_result {union {diplomat::capi::ComposingNormalizer* ok; diplomat::capi::DataError err;}; bool is_ok;} ICU4XComposingNormalizer_create_nfkc_result;
-    ICU4XComposingNormalizer_create_nfkc_result ICU4XComposingNormalizer_create_nfkc(const diplomat::capi::DataProvider* provider);
+    typedef struct icu4x_ComposingNormalizer_create_nfkc_mv1_result {union {diplomat::capi::ComposingNormalizer* ok; diplomat::capi::DataError err;}; bool is_ok;} icu4x_ComposingNormalizer_create_nfkc_mv1_result;
+    icu4x_ComposingNormalizer_create_nfkc_mv1_result icu4x_ComposingNormalizer_create_nfkc_mv1(const diplomat::capi::DataProvider* provider);
     
-    void ICU4XComposingNormalizer_normalize(const diplomat::capi::ComposingNormalizer* self, const char* s_data, size_t s_len, diplomat::capi::DiplomatWrite* write);
+    void icu4x_ComposingNormalizer_normalize_mv1(const diplomat::capi::ComposingNormalizer* self, const char* s_data, size_t s_len, diplomat::capi::DiplomatWrite* write);
     
-    bool ICU4XComposingNormalizer_is_normalized(const diplomat::capi::ComposingNormalizer* self, const char* s_data, size_t s_len);
+    bool icu4x_ComposingNormalizer_is_normalized_mv1(const diplomat::capi::ComposingNormalizer* self, const char* s_data, size_t s_len);
     
-    bool ICU4XComposingNormalizer_is_normalized_utf16(const diplomat::capi::ComposingNormalizer* self, const char16_t* s_data, size_t s_len);
+    bool icu4x_ComposingNormalizer_is_normalized_utf16_mv1(const diplomat::capi::ComposingNormalizer* self, const char16_t* s_data, size_t s_len);
     
-    size_t ICU4XComposingNormalizer_is_normalized_up_to(const diplomat::capi::ComposingNormalizer* self, const char* s_data, size_t s_len);
+    size_t icu4x_ComposingNormalizer_is_normalized_up_to_mv1(const diplomat::capi::ComposingNormalizer* self, const char* s_data, size_t s_len);
     
-    size_t ICU4XComposingNormalizer_is_normalized_utf16_up_to(const diplomat::capi::ComposingNormalizer* self, const char16_t* s_data, size_t s_len);
+    size_t icu4x_ComposingNormalizer_is_normalized_utf16_up_to_mv1(const diplomat::capi::ComposingNormalizer* self, const char16_t* s_data, size_t s_len);
     
     
-    void ICU4XComposingNormalizer_destroy(ComposingNormalizer* self);
+    void icu4x_ComposingNormalizer_destroy_mv1(ComposingNormalizer* self);
     
     } // extern "C"
 } // namespace capi
 } // namespace
 
 inline diplomat::result<std::unique_ptr<ComposingNormalizer>, DataError> ComposingNormalizer::create_nfc(const DataProvider& provider) {
-  auto result = diplomat::capi::ICU4XComposingNormalizer_create_nfc(provider.AsFFI());
+  auto result = diplomat::capi::icu4x_ComposingNormalizer_create_nfc_mv1(provider.AsFFI());
   return result.is_ok ? diplomat::result<std::unique_ptr<ComposingNormalizer>, DataError>(diplomat::Ok<std::unique_ptr<ComposingNormalizer>>(std::unique_ptr<ComposingNormalizer>(ComposingNormalizer::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ComposingNormalizer>, DataError>(diplomat::Err<DataError>(DataError::FromFFI(result.err)));
 }
 
 inline diplomat::result<std::unique_ptr<ComposingNormalizer>, DataError> ComposingNormalizer::create_nfkc(const DataProvider& provider) {
-  auto result = diplomat::capi::ICU4XComposingNormalizer_create_nfkc(provider.AsFFI());
+  auto result = diplomat::capi::icu4x_ComposingNormalizer_create_nfkc_mv1(provider.AsFFI());
   return result.is_ok ? diplomat::result<std::unique_ptr<ComposingNormalizer>, DataError>(diplomat::Ok<std::unique_ptr<ComposingNormalizer>>(std::unique_ptr<ComposingNormalizer>(ComposingNormalizer::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ComposingNormalizer>, DataError>(diplomat::Err<DataError>(DataError::FromFFI(result.err)));
 }
 
 inline std::string ComposingNormalizer::normalize(std::string_view s) const {
   std::string output;
   diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
-  diplomat::capi::ICU4XComposingNormalizer_normalize(this->AsFFI(),
+  diplomat::capi::icu4x_ComposingNormalizer_normalize_mv1(this->AsFFI(),
     s.data(),
     s.size(),
     &write);
@@ -62,28 +62,28 @@ inline std::string ComposingNormalizer::normalize(std::string_view s) const {
 }
 
 inline bool ComposingNormalizer::is_normalized(std::string_view s) const {
-  auto result = diplomat::capi::ICU4XComposingNormalizer_is_normalized(this->AsFFI(),
+  auto result = diplomat::capi::icu4x_ComposingNormalizer_is_normalized_mv1(this->AsFFI(),
     s.data(),
     s.size());
   return result;
 }
 
 inline bool ComposingNormalizer::is_normalized_utf16(std::u16string_view s) const {
-  auto result = diplomat::capi::ICU4XComposingNormalizer_is_normalized_utf16(this->AsFFI(),
+  auto result = diplomat::capi::icu4x_ComposingNormalizer_is_normalized_utf16_mv1(this->AsFFI(),
     s.data(),
     s.size());
   return result;
 }
 
 inline size_t ComposingNormalizer::is_normalized_up_to(std::string_view s) const {
-  auto result = diplomat::capi::ICU4XComposingNormalizer_is_normalized_up_to(this->AsFFI(),
+  auto result = diplomat::capi::icu4x_ComposingNormalizer_is_normalized_up_to_mv1(this->AsFFI(),
     s.data(),
     s.size());
   return result;
 }
 
 inline size_t ComposingNormalizer::is_normalized_utf16_up_to(std::u16string_view s) const {
-  auto result = diplomat::capi::ICU4XComposingNormalizer_is_normalized_utf16_up_to(this->AsFFI(),
+  auto result = diplomat::capi::icu4x_ComposingNormalizer_is_normalized_utf16_up_to_mv1(this->AsFFI(),
     s.data(),
     s.size());
   return result;
@@ -106,7 +106,7 @@ inline ComposingNormalizer* ComposingNormalizer::FromFFI(diplomat::capi::Composi
 }
 
 inline void ComposingNormalizer::operator delete(void* ptr) {
-  diplomat::capi::ICU4XComposingNormalizer_destroy(reinterpret_cast<diplomat::capi::ComposingNormalizer*>(ptr));
+  diplomat::capi::icu4x_ComposingNormalizer_destroy_mv1(reinterpret_cast<diplomat::capi::ComposingNormalizer*>(ptr));
 }
 
 

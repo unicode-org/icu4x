@@ -49,7 +49,7 @@ export class TitlecaseOptions {
     static defaultOptions() {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(8, 4);
-        const result = wasm.ICU4XTitlecaseOptionsV1_default_options(diplomat_receive_buffer);
+        const result = wasm.icu4x_TitlecaseOptionsV1_default_options_mv1(diplomat_receive_buffer);
     
         try {
     

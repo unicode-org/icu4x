@@ -14,7 +14,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 */
 
 const CanonicalDecomposition_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.ICU4XCanonicalDecomposition_destroy(ptr);
+    wasm.icu4x_CanonicalDecomposition_destroy_mv1(ptr);
 });
 export class CanonicalDecomposition {
     // Internal ptr reference:
@@ -41,7 +41,7 @@ export class CanonicalDecomposition {
     static create(provider) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XCanonicalDecomposition_create(diplomat_receive_buffer, provider.ffiValue);
+        const result = wasm.icu4x_CanonicalDecomposition_create_mv1(diplomat_receive_buffer, provider.ffiValue);
     
         try {
     
@@ -60,7 +60,7 @@ export class CanonicalDecomposition {
     decompose(c) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(8, 4);
-        const result = wasm.ICU4XCanonicalDecomposition_decompose(diplomat_receive_buffer, this.ffiValue, diplomatRuntime.extractCodePoint(c, 'c'));
+        const result = wasm.icu4x_CanonicalDecomposition_decompose_mv1(diplomat_receive_buffer, this.ffiValue, diplomatRuntime.extractCodePoint(c, 'c'));
     
         try {
     

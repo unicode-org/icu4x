@@ -18,7 +18,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 */
 
 const DateFormatter_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.ICU4XDateFormatter_destroy(ptr);
+    wasm.icu4x_DateFormatter_destroy_mv1(ptr);
 });
 export class DateFormatter {
     // Internal ptr reference:
@@ -45,7 +45,7 @@ export class DateFormatter {
     static createWithLength(provider, locale, dateLength) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XDateFormatter_create_with_length(diplomat_receive_buffer, provider.ffiValue, locale.ffiValue, dateLength.ffiValue);
+        const result = wasm.icu4x_DateFormatter_create_with_length_mv1(diplomat_receive_buffer, provider.ffiValue, locale.ffiValue, dateLength.ffiValue);
     
         try {
     
@@ -66,7 +66,7 @@ export class DateFormatter {
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
         
         const write = wasm.diplomat_buffer_write_create(0);
-        const result = wasm.ICU4XDateFormatter_format_date(diplomat_receive_buffer, this.ffiValue, value.ffiValue, write);
+        const result = wasm.icu4x_DateFormatter_format_date_mv1(diplomat_receive_buffer, this.ffiValue, value.ffiValue, write);
     
         try {
     
@@ -89,7 +89,7 @@ export class DateFormatter {
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
         
         const write = wasm.diplomat_buffer_write_create(0);
-        const result = wasm.ICU4XDateFormatter_format_iso_date(diplomat_receive_buffer, this.ffiValue, value.ffiValue, write);
+        const result = wasm.icu4x_DateFormatter_format_iso_date_mv1(diplomat_receive_buffer, this.ffiValue, value.ffiValue, write);
     
         try {
     
@@ -112,7 +112,7 @@ export class DateFormatter {
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
         
         const write = wasm.diplomat_buffer_write_create(0);
-        const result = wasm.ICU4XDateFormatter_format_datetime(diplomat_receive_buffer, this.ffiValue, value.ffiValue, write);
+        const result = wasm.icu4x_DateFormatter_format_datetime_mv1(diplomat_receive_buffer, this.ffiValue, value.ffiValue, write);
     
         try {
     
@@ -135,7 +135,7 @@ export class DateFormatter {
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
         
         const write = wasm.diplomat_buffer_write_create(0);
-        const result = wasm.ICU4XDateFormatter_format_iso_datetime(diplomat_receive_buffer, this.ffiValue, value.ffiValue, write);
+        const result = wasm.icu4x_DateFormatter_format_iso_datetime_mv1(diplomat_receive_buffer, this.ffiValue, value.ffiValue, write);
     
         try {
     

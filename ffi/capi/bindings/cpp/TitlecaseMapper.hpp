@@ -20,20 +20,20 @@ namespace diplomat {
 namespace capi {
     extern "C" {
     
-    typedef struct ICU4XTitlecaseMapper_create_result {union {diplomat::capi::TitlecaseMapper* ok; diplomat::capi::DataError err;}; bool is_ok;} ICU4XTitlecaseMapper_create_result;
-    ICU4XTitlecaseMapper_create_result ICU4XTitlecaseMapper_create(const diplomat::capi::DataProvider* provider);
+    typedef struct icu4x_TitlecaseMapper_create_mv1_result {union {diplomat::capi::TitlecaseMapper* ok; diplomat::capi::DataError err;}; bool is_ok;} icu4x_TitlecaseMapper_create_mv1_result;
+    icu4x_TitlecaseMapper_create_mv1_result icu4x_TitlecaseMapper_create_mv1(const diplomat::capi::DataProvider* provider);
     
-    void ICU4XTitlecaseMapper_titlecase_segment_v1(const diplomat::capi::TitlecaseMapper* self, const char* s_data, size_t s_len, const diplomat::capi::Locale* locale, diplomat::capi::TitlecaseOptionsV1 options, diplomat::capi::DiplomatWrite* write);
+    void icu4x_TitlecaseMapper_titlecase_segment_v1_mv1(const diplomat::capi::TitlecaseMapper* self, const char* s_data, size_t s_len, const diplomat::capi::Locale* locale, diplomat::capi::TitlecaseOptionsV1 options, diplomat::capi::DiplomatWrite* write);
     
     
-    void ICU4XTitlecaseMapper_destroy(TitlecaseMapper* self);
+    void icu4x_TitlecaseMapper_destroy_mv1(TitlecaseMapper* self);
     
     } // extern "C"
 } // namespace capi
 } // namespace
 
 inline diplomat::result<std::unique_ptr<TitlecaseMapper>, DataError> TitlecaseMapper::create(const DataProvider& provider) {
-  auto result = diplomat::capi::ICU4XTitlecaseMapper_create(provider.AsFFI());
+  auto result = diplomat::capi::icu4x_TitlecaseMapper_create_mv1(provider.AsFFI());
   return result.is_ok ? diplomat::result<std::unique_ptr<TitlecaseMapper>, DataError>(diplomat::Ok<std::unique_ptr<TitlecaseMapper>>(std::unique_ptr<TitlecaseMapper>(TitlecaseMapper::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<TitlecaseMapper>, DataError>(diplomat::Err<DataError>(DataError::FromFFI(result.err)));
 }
 
@@ -43,7 +43,7 @@ inline diplomat::result<std::string, diplomat::Utf8Error> TitlecaseMapper::title
   }
   std::string output;
   diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
-  diplomat::capi::ICU4XTitlecaseMapper_titlecase_segment_v1(this->AsFFI(),
+  diplomat::capi::icu4x_TitlecaseMapper_titlecase_segment_v1_mv1(this->AsFFI(),
     s.data(),
     s.size(),
     locale.AsFFI(),
@@ -69,7 +69,7 @@ inline TitlecaseMapper* TitlecaseMapper::FromFFI(diplomat::capi::TitlecaseMapper
 }
 
 inline void TitlecaseMapper::operator delete(void* ptr) {
-  diplomat::capi::ICU4XTitlecaseMapper_destroy(reinterpret_cast<diplomat::capi::TitlecaseMapper*>(ptr));
+  diplomat::capi::icu4x_TitlecaseMapper_destroy_mv1(reinterpret_cast<diplomat::capi::TitlecaseMapper*>(ptr));
 }
 
 

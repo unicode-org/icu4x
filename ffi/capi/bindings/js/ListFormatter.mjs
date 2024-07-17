@@ -11,7 +11,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 */
 
 const ListFormatter_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.ICU4XListFormatter_destroy(ptr);
+    wasm.icu4x_ListFormatter_destroy_mv1(ptr);
 });
 export class ListFormatter {
     // Internal ptr reference:
@@ -38,7 +38,7 @@ export class ListFormatter {
     static createAndWithLength(provider, locale, length) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XListFormatter_create_and_with_length(diplomat_receive_buffer, provider.ffiValue, locale.ffiValue, length.ffiValue);
+        const result = wasm.icu4x_ListFormatter_create_and_with_length_mv1(diplomat_receive_buffer, provider.ffiValue, locale.ffiValue, length.ffiValue);
     
         try {
     
@@ -57,7 +57,7 @@ export class ListFormatter {
     static createOrWithLength(provider, locale, length) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XListFormatter_create_or_with_length(diplomat_receive_buffer, provider.ffiValue, locale.ffiValue, length.ffiValue);
+        const result = wasm.icu4x_ListFormatter_create_or_with_length_mv1(diplomat_receive_buffer, provider.ffiValue, locale.ffiValue, length.ffiValue);
     
         try {
     
@@ -76,7 +76,7 @@ export class ListFormatter {
     static createUnitWithLength(provider, locale, length) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XListFormatter_create_unit_with_length(diplomat_receive_buffer, provider.ffiValue, locale.ffiValue, length.ffiValue);
+        const result = wasm.icu4x_ListFormatter_create_unit_with_length_mv1(diplomat_receive_buffer, provider.ffiValue, locale.ffiValue, length.ffiValue);
     
         try {
     
@@ -97,7 +97,7 @@ export class ListFormatter {
         const listSlice = diplomatRuntime.DiplomatBuf.str16(wasm, list);
         
         const write = wasm.diplomat_buffer_write_create(0);
-        wasm.ICU4XListFormatter_format_utf16(this.ffiValue, listSlice.ptr, listSlice.size, write);
+        wasm.icu4x_ListFormatter_format_utf16_mv1(this.ffiValue, listSlice.ptr, listSlice.size, write);
     
         try {
     

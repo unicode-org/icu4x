@@ -18,18 +18,18 @@ namespace diplomat {
 namespace capi {
     extern "C" {
     
-    typedef struct ICU4XMetazoneCalculator_create_result {union {diplomat::capi::MetazoneCalculator* ok; diplomat::capi::DataError err;}; bool is_ok;} ICU4XMetazoneCalculator_create_result;
-    ICU4XMetazoneCalculator_create_result ICU4XMetazoneCalculator_create(const diplomat::capi::DataProvider* provider);
+    typedef struct icu4x_MetazoneCalculator_create_mv1_result {union {diplomat::capi::MetazoneCalculator* ok; diplomat::capi::DataError err;}; bool is_ok;} icu4x_MetazoneCalculator_create_mv1_result;
+    icu4x_MetazoneCalculator_create_mv1_result icu4x_MetazoneCalculator_create_mv1(const diplomat::capi::DataProvider* provider);
     
     
-    void ICU4XMetazoneCalculator_destroy(MetazoneCalculator* self);
+    void icu4x_MetazoneCalculator_destroy_mv1(MetazoneCalculator* self);
     
     } // extern "C"
 } // namespace capi
 } // namespace
 
 inline diplomat::result<std::unique_ptr<MetazoneCalculator>, DataError> MetazoneCalculator::create(const DataProvider& provider) {
-  auto result = diplomat::capi::ICU4XMetazoneCalculator_create(provider.AsFFI());
+  auto result = diplomat::capi::icu4x_MetazoneCalculator_create_mv1(provider.AsFFI());
   return result.is_ok ? diplomat::result<std::unique_ptr<MetazoneCalculator>, DataError>(diplomat::Ok<std::unique_ptr<MetazoneCalculator>>(std::unique_ptr<MetazoneCalculator>(MetazoneCalculator::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<MetazoneCalculator>, DataError>(diplomat::Err<DataError>(DataError::FromFFI(result.err)));
 }
 
@@ -50,7 +50,7 @@ inline MetazoneCalculator* MetazoneCalculator::FromFFI(diplomat::capi::MetazoneC
 }
 
 inline void MetazoneCalculator::operator delete(void* ptr) {
-  diplomat::capi::ICU4XMetazoneCalculator_destroy(reinterpret_cast<diplomat::capi::MetazoneCalculator*>(ptr));
+  diplomat::capi::icu4x_MetazoneCalculator_destroy_mv1(reinterpret_cast<diplomat::capi::MetazoneCalculator*>(ptr));
 }
 
 

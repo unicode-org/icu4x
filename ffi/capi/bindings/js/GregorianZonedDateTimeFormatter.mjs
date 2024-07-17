@@ -17,7 +17,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 */
 
 const GregorianZonedDateTimeFormatter_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.ICU4XGregorianZonedDateTimeFormatter_destroy(ptr);
+    wasm.icu4x_GregorianZonedDateTimeFormatter_destroy_mv1(ptr);
 });
 export class GregorianZonedDateTimeFormatter {
     // Internal ptr reference:
@@ -44,7 +44,7 @@ export class GregorianZonedDateTimeFormatter {
     static createWithLengths(provider, locale, dateLength, timeLength) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XGregorianZonedDateTimeFormatter_create_with_lengths(diplomat_receive_buffer, provider.ffiValue, locale.ffiValue, dateLength.ffiValue, timeLength.ffiValue);
+        const result = wasm.icu4x_GregorianZonedDateTimeFormatter_create_with_lengths_mv1(diplomat_receive_buffer, provider.ffiValue, locale.ffiValue, dateLength.ffiValue, timeLength.ffiValue);
     
         try {
     
@@ -65,7 +65,7 @@ export class GregorianZonedDateTimeFormatter {
         let slice_cleanup_callbacks = [];
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XGregorianZonedDateTimeFormatter_create_with_lengths_and_iso_8601_time_zone_fallback(diplomat_receive_buffer, provider.ffiValue, locale.ffiValue, dateLength.ffiValue, timeLength.ffiValue, ...zoneOptions._intoFFI(slice_cleanup_callbacks, {}));
+        const result = wasm.icu4x_GregorianZonedDateTimeFormatter_create_with_lengths_and_iso_8601_time_zone_fallback_mv1(diplomat_receive_buffer, provider.ffiValue, locale.ffiValue, dateLength.ffiValue, timeLength.ffiValue, ...zoneOptions._intoFFI(slice_cleanup_callbacks, {}));
     
         try {
     
@@ -88,7 +88,7 @@ export class GregorianZonedDateTimeFormatter {
     formatIsoDatetimeWithCustomTimeZone(datetime, timeZone) {
         
         const write = wasm.diplomat_buffer_write_create(0);
-        wasm.ICU4XGregorianZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone(this.ffiValue, datetime.ffiValue, timeZone.ffiValue, write);
+        wasm.icu4x_GregorianZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1(this.ffiValue, datetime.ffiValue, timeZone.ffiValue, write);
     
         try {
     

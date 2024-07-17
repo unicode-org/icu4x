@@ -21,44 +21,44 @@
 
 
 
-typedef struct ICU4XDate_create_from_iso_in_calendar_result {union {Date* ok; CalendarError err;}; bool is_ok;} ICU4XDate_create_from_iso_in_calendar_result;
-ICU4XDate_create_from_iso_in_calendar_result ICU4XDate_create_from_iso_in_calendar(int32_t year, uint8_t month, uint8_t day, const Calendar* calendar);
+typedef struct icu4x_Date_create_from_iso_in_calendar_mv1_result {union {Date* ok; CalendarError err;}; bool is_ok;} icu4x_Date_create_from_iso_in_calendar_mv1_result;
+icu4x_Date_create_from_iso_in_calendar_mv1_result icu4x_Date_create_from_iso_in_calendar_mv1(int32_t year, uint8_t month, uint8_t day, const Calendar* calendar);
 
-typedef struct ICU4XDate_create_from_codes_in_calendar_result {union {Date* ok; CalendarError err;}; bool is_ok;} ICU4XDate_create_from_codes_in_calendar_result;
-ICU4XDate_create_from_codes_in_calendar_result ICU4XDate_create_from_codes_in_calendar(const char* era_code_data, size_t era_code_len, int32_t year, const char* month_code_data, size_t month_code_len, uint8_t day, const Calendar* calendar);
+typedef struct icu4x_Date_create_from_codes_in_calendar_mv1_result {union {Date* ok; CalendarError err;}; bool is_ok;} icu4x_Date_create_from_codes_in_calendar_mv1_result;
+icu4x_Date_create_from_codes_in_calendar_mv1_result icu4x_Date_create_from_codes_in_calendar_mv1(const char* era_code_data, size_t era_code_len, int32_t year, const char* month_code_data, size_t month_code_len, uint8_t day, const Calendar* calendar);
 
-Date* ICU4XDate_to_calendar(const Date* self, const Calendar* calendar);
+Date* icu4x_Date_to_calendar_mv1(const Date* self, const Calendar* calendar);
 
-IsoDate* ICU4XDate_to_iso(const Date* self);
+IsoDate* icu4x_Date_to_iso_mv1(const Date* self);
 
-uint16_t ICU4XDate_day_of_year(const Date* self);
+uint16_t icu4x_Date_day_of_year_mv1(const Date* self);
 
-uint32_t ICU4XDate_day_of_month(const Date* self);
+uint32_t icu4x_Date_day_of_month_mv1(const Date* self);
 
-IsoWeekday ICU4XDate_day_of_week(const Date* self);
+IsoWeekday icu4x_Date_day_of_week_mv1(const Date* self);
 
-uint32_t ICU4XDate_week_of_month(const Date* self, IsoWeekday first_weekday);
+uint32_t icu4x_Date_week_of_month_mv1(const Date* self, IsoWeekday first_weekday);
 
-WeekOf ICU4XDate_week_of_year(const Date* self, const WeekCalculator* calculator);
+WeekOf icu4x_Date_week_of_year_mv1(const Date* self, const WeekCalculator* calculator);
 
-uint32_t ICU4XDate_ordinal_month(const Date* self);
+uint32_t icu4x_Date_ordinal_month_mv1(const Date* self);
 
-void ICU4XDate_month_code(const Date* self, DiplomatWrite* write);
+void icu4x_Date_month_code_mv1(const Date* self, DiplomatWrite* write);
 
-int32_t ICU4XDate_year_in_era(const Date* self);
+int32_t icu4x_Date_year_in_era_mv1(const Date* self);
 
-void ICU4XDate_era(const Date* self, DiplomatWrite* write);
+void icu4x_Date_era_mv1(const Date* self, DiplomatWrite* write);
 
-uint8_t ICU4XDate_months_in_year(const Date* self);
+uint8_t icu4x_Date_months_in_year_mv1(const Date* self);
 
-uint8_t ICU4XDate_days_in_month(const Date* self);
+uint8_t icu4x_Date_days_in_month_mv1(const Date* self);
 
-uint16_t ICU4XDate_days_in_year(const Date* self);
+uint16_t icu4x_Date_days_in_year_mv1(const Date* self);
 
-Calendar* ICU4XDate_calendar(const Date* self);
+Calendar* icu4x_Date_calendar_mv1(const Date* self);
 
 
-void ICU4XDate_destroy(Date* self);
+void icu4x_Date_destroy_mv1(Date* self);
 
 
 

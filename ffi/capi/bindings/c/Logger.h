@@ -15,10 +15,10 @@
 
 
 
-bool ICU4XLogger_init_simple_logger();
+bool icu4x_Logger_init_simple_logger_mv1();
 
 
-void ICU4XLogger_destroy(Logger* self);
+void icu4x_Logger_destroy_mv1(Logger* self);
 
 
 

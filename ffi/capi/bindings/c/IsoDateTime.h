@@ -23,57 +23,57 @@
 
 
 
-typedef struct ICU4XIsoDateTime_create_result {union {IsoDateTime* ok; CalendarError err;}; bool is_ok;} ICU4XIsoDateTime_create_result;
-ICU4XIsoDateTime_create_result ICU4XIsoDateTime_create(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond);
+typedef struct icu4x_IsoDateTime_create_mv1_result {union {IsoDateTime* ok; CalendarError err;}; bool is_ok;} icu4x_IsoDateTime_create_mv1_result;
+icu4x_IsoDateTime_create_mv1_result icu4x_IsoDateTime_create_mv1(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond);
 
-IsoDateTime* ICU4XIsoDateTime_crate_from_date_and_time(const IsoDate* date, const Time* time);
+IsoDateTime* icu4x_IsoDateTime_crate_from_date_and_time_mv1(const IsoDate* date, const Time* time);
 
-IsoDateTime* ICU4XIsoDateTime_local_unix_epoch();
+IsoDateTime* icu4x_IsoDateTime_local_unix_epoch_mv1();
 
-IsoDateTime* ICU4XIsoDateTime_create_from_minutes_since_local_unix_epoch(int32_t minutes);
+IsoDateTime* icu4x_IsoDateTime_create_from_minutes_since_local_unix_epoch_mv1(int32_t minutes);
 
-IsoDate* ICU4XIsoDateTime_date(const IsoDateTime* self);
+IsoDate* icu4x_IsoDateTime_date_mv1(const IsoDateTime* self);
 
-Time* ICU4XIsoDateTime_time(const IsoDateTime* self);
+Time* icu4x_IsoDateTime_time_mv1(const IsoDateTime* self);
 
-DateTime* ICU4XIsoDateTime_to_any(const IsoDateTime* self);
+DateTime* icu4x_IsoDateTime_to_any_mv1(const IsoDateTime* self);
 
-int32_t ICU4XIsoDateTime_minutes_since_local_unix_epoch(const IsoDateTime* self);
+int32_t icu4x_IsoDateTime_minutes_since_local_unix_epoch_mv1(const IsoDateTime* self);
 
-DateTime* ICU4XIsoDateTime_to_calendar(const IsoDateTime* self, const Calendar* calendar);
+DateTime* icu4x_IsoDateTime_to_calendar_mv1(const IsoDateTime* self, const Calendar* calendar);
 
-uint8_t ICU4XIsoDateTime_hour(const IsoDateTime* self);
+uint8_t icu4x_IsoDateTime_hour_mv1(const IsoDateTime* self);
 
-uint8_t ICU4XIsoDateTime_minute(const IsoDateTime* self);
+uint8_t icu4x_IsoDateTime_minute_mv1(const IsoDateTime* self);
 
-uint8_t ICU4XIsoDateTime_second(const IsoDateTime* self);
+uint8_t icu4x_IsoDateTime_second_mv1(const IsoDateTime* self);
 
-uint32_t ICU4XIsoDateTime_nanosecond(const IsoDateTime* self);
+uint32_t icu4x_IsoDateTime_nanosecond_mv1(const IsoDateTime* self);
 
-uint16_t ICU4XIsoDateTime_day_of_year(const IsoDateTime* self);
+uint16_t icu4x_IsoDateTime_day_of_year_mv1(const IsoDateTime* self);
 
-uint32_t ICU4XIsoDateTime_day_of_month(const IsoDateTime* self);
+uint32_t icu4x_IsoDateTime_day_of_month_mv1(const IsoDateTime* self);
 
-IsoWeekday ICU4XIsoDateTime_day_of_week(const IsoDateTime* self);
+IsoWeekday icu4x_IsoDateTime_day_of_week_mv1(const IsoDateTime* self);
 
-uint32_t ICU4XIsoDateTime_week_of_month(const IsoDateTime* self, IsoWeekday first_weekday);
+uint32_t icu4x_IsoDateTime_week_of_month_mv1(const IsoDateTime* self, IsoWeekday first_weekday);
 
-WeekOf ICU4XIsoDateTime_week_of_year(const IsoDateTime* self, const WeekCalculator* calculator);
+WeekOf icu4x_IsoDateTime_week_of_year_mv1(const IsoDateTime* self, const WeekCalculator* calculator);
 
-uint32_t ICU4XIsoDateTime_month(const IsoDateTime* self);
+uint32_t icu4x_IsoDateTime_month_mv1(const IsoDateTime* self);
 
-int32_t ICU4XIsoDateTime_year(const IsoDateTime* self);
+int32_t icu4x_IsoDateTime_year_mv1(const IsoDateTime* self);
 
-bool ICU4XIsoDateTime_is_in_leap_year(const IsoDateTime* self);
+bool icu4x_IsoDateTime_is_in_leap_year_mv1(const IsoDateTime* self);
 
-uint8_t ICU4XIsoDateTime_months_in_year(const IsoDateTime* self);
+uint8_t icu4x_IsoDateTime_months_in_year_mv1(const IsoDateTime* self);
 
-uint8_t ICU4XIsoDateTime_days_in_month(const IsoDateTime* self);
+uint8_t icu4x_IsoDateTime_days_in_month_mv1(const IsoDateTime* self);
 
-uint16_t ICU4XIsoDateTime_days_in_year(const IsoDateTime* self);
+uint16_t icu4x_IsoDateTime_days_in_year_mv1(const IsoDateTime* self);
 
 
-void ICU4XIsoDateTime_destroy(IsoDateTime* self);
+void icu4x_IsoDateTime_destroy_mv1(IsoDateTime* self);
 
 
 

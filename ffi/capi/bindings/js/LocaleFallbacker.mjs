@@ -14,7 +14,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 */
 
 const LocaleFallbacker_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.ICU4XLocaleFallbacker_destroy(ptr);
+    wasm.icu4x_LocaleFallbacker_destroy_mv1(ptr);
 });
 export class LocaleFallbacker {
     // Internal ptr reference:
@@ -41,7 +41,7 @@ export class LocaleFallbacker {
     static create(provider) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XLocaleFallbacker_create(diplomat_receive_buffer, provider.ffiValue);
+        const result = wasm.icu4x_LocaleFallbacker_create_mv1(diplomat_receive_buffer, provider.ffiValue);
     
         try {
     
@@ -58,7 +58,7 @@ export class LocaleFallbacker {
     }
 
     static createWithoutData() {
-        const result = wasm.ICU4XLocaleFallbacker_create_without_data();
+        const result = wasm.icu4x_LocaleFallbacker_create_without_data_mv1();
     
         try {
     
@@ -76,7 +76,7 @@ export class LocaleFallbacker {
         
         // This lifetime edge depends on lifetimes 'a
         let aEdges = [this];
-        const result = wasm.ICU4XLocaleFallbacker_for_config(diplomat_receive_buffer, this.ffiValue, ...config._intoFFI(slice_cleanup_callbacks, {}));
+        const result = wasm.icu4x_LocaleFallbacker_for_config_mv1(diplomat_receive_buffer, this.ffiValue, ...config._intoFFI(slice_cleanup_callbacks, {}));
     
         try {
     

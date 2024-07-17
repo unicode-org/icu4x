@@ -15,10 +15,10 @@
 
 
 
-int32_t ICU4XGraphemeClusterBreakIteratorLatin1_next(GraphemeClusterBreakIteratorLatin1* self);
+int32_t icu4x_GraphemeClusterBreakIteratorLatin1_next_mv1(GraphemeClusterBreakIteratorLatin1* self);
 
 
-void ICU4XGraphemeClusterBreakIteratorLatin1_destroy(GraphemeClusterBreakIteratorLatin1* self);
+void icu4x_GraphemeClusterBreakIteratorLatin1_destroy_mv1(GraphemeClusterBreakIteratorLatin1* self);
 
 
 

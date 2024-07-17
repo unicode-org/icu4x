@@ -15,7 +15,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 */
 
 const TimeZoneIdMapper_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.ICU4XTimeZoneIdMapper_destroy(ptr);
+    wasm.icu4x_TimeZoneIdMapper_destroy_mv1(ptr);
 });
 export class TimeZoneIdMapper {
     // Internal ptr reference:
@@ -42,7 +42,7 @@ export class TimeZoneIdMapper {
     static create(provider) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XTimeZoneIdMapper_create(diplomat_receive_buffer, provider.ffiValue);
+        const result = wasm.icu4x_TimeZoneIdMapper_create_mv1(diplomat_receive_buffer, provider.ffiValue);
     
         try {
     
@@ -65,7 +65,7 @@ export class TimeZoneIdMapper {
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
         
         const write = wasm.diplomat_buffer_write_create(0);
-        const result = wasm.ICU4XTimeZoneIdMapper_iana_to_bcp47(diplomat_receive_buffer, this.ffiValue, valueSlice.ptr, valueSlice.size, write);
+        const result = wasm.icu4x_TimeZoneIdMapper_iana_to_bcp47_mv1(diplomat_receive_buffer, this.ffiValue, valueSlice.ptr, valueSlice.size, write);
     
         try {
     
@@ -92,7 +92,7 @@ export class TimeZoneIdMapper {
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
         
         const write = wasm.diplomat_buffer_write_create(0);
-        const result = wasm.ICU4XTimeZoneIdMapper_normalize_iana(diplomat_receive_buffer, this.ffiValue, valueSlice.ptr, valueSlice.size, write);
+        const result = wasm.icu4x_TimeZoneIdMapper_normalize_iana_mv1(diplomat_receive_buffer, this.ffiValue, valueSlice.ptr, valueSlice.size, write);
     
         try {
     
@@ -119,7 +119,7 @@ export class TimeZoneIdMapper {
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
         
         const write = wasm.diplomat_buffer_write_create(0);
-        const result = wasm.ICU4XTimeZoneIdMapper_canonicalize_iana(diplomat_receive_buffer, this.ffiValue, valueSlice.ptr, valueSlice.size, write);
+        const result = wasm.icu4x_TimeZoneIdMapper_canonicalize_iana_mv1(diplomat_receive_buffer, this.ffiValue, valueSlice.ptr, valueSlice.size, write);
     
         try {
     
@@ -146,7 +146,7 @@ export class TimeZoneIdMapper {
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
         
         const write = wasm.diplomat_buffer_write_create(0);
-        const result = wasm.ICU4XTimeZoneIdMapper_find_canonical_iana_from_bcp47(diplomat_receive_buffer, this.ffiValue, valueSlice.ptr, valueSlice.size, write);
+        const result = wasm.icu4x_TimeZoneIdMapper_find_canonical_iana_from_bcp47_mv1(diplomat_receive_buffer, this.ffiValue, valueSlice.ptr, valueSlice.size, write);
     
         try {
     

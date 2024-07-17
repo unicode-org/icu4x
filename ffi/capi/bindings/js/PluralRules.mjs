@@ -13,7 +13,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 */
 
 const PluralRules_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.ICU4XPluralRules_destroy(ptr);
+    wasm.icu4x_PluralRules_destroy_mv1(ptr);
 });
 export class PluralRules {
     // Internal ptr reference:
@@ -40,7 +40,7 @@ export class PluralRules {
     static createCardinal(provider, locale) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XPluralRules_create_cardinal(diplomat_receive_buffer, provider.ffiValue, locale.ffiValue);
+        const result = wasm.icu4x_PluralRules_create_cardinal_mv1(diplomat_receive_buffer, provider.ffiValue, locale.ffiValue);
     
         try {
     
@@ -59,7 +59,7 @@ export class PluralRules {
     static createOrdinal(provider, locale) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XPluralRules_create_ordinal(diplomat_receive_buffer, provider.ffiValue, locale.ffiValue);
+        const result = wasm.icu4x_PluralRules_create_ordinal_mv1(diplomat_receive_buffer, provider.ffiValue, locale.ffiValue);
     
         try {
     
@@ -76,7 +76,7 @@ export class PluralRules {
     }
 
     categoryFor(op) {
-        const result = wasm.ICU4XPluralRules_category_for(this.ffiValue, op.ffiValue);
+        const result = wasm.icu4x_PluralRules_category_for_mv1(this.ffiValue, op.ffiValue);
     
         try {
     
@@ -89,7 +89,7 @@ export class PluralRules {
     get categories() {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(6, 1);
-        const result = wasm.ICU4XPluralRules_categories(diplomat_receive_buffer, this.ffiValue);
+        const result = wasm.icu4x_PluralRules_categories_mv1(diplomat_receive_buffer, this.ffiValue);
     
         try {
     

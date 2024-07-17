@@ -13,7 +13,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 */
 
 const PropertyValueNameToEnumMapper_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.ICU4XPropertyValueNameToEnumMapper_destroy(ptr);
+    wasm.icu4x_PropertyValueNameToEnumMapper_destroy_mv1(ptr);
 });
 export class PropertyValueNameToEnumMapper {
     // Internal ptr reference:
@@ -40,7 +40,7 @@ export class PropertyValueNameToEnumMapper {
     getStrict(name) {
         
         const nameSlice = diplomatRuntime.DiplomatBuf.str8(wasm, name);
-        const result = wasm.ICU4XPropertyValueNameToEnumMapper_get_strict(this.ffiValue, nameSlice.ptr, nameSlice.size);
+        const result = wasm.icu4x_PropertyValueNameToEnumMapper_get_strict_mv1(this.ffiValue, nameSlice.ptr, nameSlice.size);
     
         try {
     
@@ -55,7 +55,7 @@ export class PropertyValueNameToEnumMapper {
     getLoose(name) {
         
         const nameSlice = diplomatRuntime.DiplomatBuf.str8(wasm, name);
-        const result = wasm.ICU4XPropertyValueNameToEnumMapper_get_loose(this.ffiValue, nameSlice.ptr, nameSlice.size);
+        const result = wasm.icu4x_PropertyValueNameToEnumMapper_get_loose_mv1(this.ffiValue, nameSlice.ptr, nameSlice.size);
     
         try {
     
@@ -70,7 +70,7 @@ export class PropertyValueNameToEnumMapper {
     static loadGeneralCategory(provider) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XPropertyValueNameToEnumMapper_load_general_category(diplomat_receive_buffer, provider.ffiValue);
+        const result = wasm.icu4x_PropertyValueNameToEnumMapper_load_general_category_mv1(diplomat_receive_buffer, provider.ffiValue);
     
         try {
     
@@ -89,7 +89,7 @@ export class PropertyValueNameToEnumMapper {
     static loadHangulSyllableType(provider) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XPropertyValueNameToEnumMapper_load_hangul_syllable_type(diplomat_receive_buffer, provider.ffiValue);
+        const result = wasm.icu4x_PropertyValueNameToEnumMapper_load_hangul_syllable_type_mv1(diplomat_receive_buffer, provider.ffiValue);
     
         try {
     
@@ -108,7 +108,7 @@ export class PropertyValueNameToEnumMapper {
     static loadEastAsianWidth(provider) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XPropertyValueNameToEnumMapper_load_east_asian_width(diplomat_receive_buffer, provider.ffiValue);
+        const result = wasm.icu4x_PropertyValueNameToEnumMapper_load_east_asian_width_mv1(diplomat_receive_buffer, provider.ffiValue);
     
         try {
     
@@ -127,7 +127,7 @@ export class PropertyValueNameToEnumMapper {
     static loadBidiClass(provider) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XPropertyValueNameToEnumMapper_load_bidi_class(diplomat_receive_buffer, provider.ffiValue);
+        const result = wasm.icu4x_PropertyValueNameToEnumMapper_load_bidi_class_mv1(diplomat_receive_buffer, provider.ffiValue);
     
         try {
     
@@ -146,7 +146,7 @@ export class PropertyValueNameToEnumMapper {
     static loadIndicSyllabicCategory(provider) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XPropertyValueNameToEnumMapper_load_indic_syllabic_category(diplomat_receive_buffer, provider.ffiValue);
+        const result = wasm.icu4x_PropertyValueNameToEnumMapper_load_indic_syllabic_category_mv1(diplomat_receive_buffer, provider.ffiValue);
     
         try {
     
@@ -165,7 +165,7 @@ export class PropertyValueNameToEnumMapper {
     static loadLineBreak(provider) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XPropertyValueNameToEnumMapper_load_line_break(diplomat_receive_buffer, provider.ffiValue);
+        const result = wasm.icu4x_PropertyValueNameToEnumMapper_load_line_break_mv1(diplomat_receive_buffer, provider.ffiValue);
     
         try {
     
@@ -184,7 +184,7 @@ export class PropertyValueNameToEnumMapper {
     static loadGraphemeClusterBreak(provider) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XPropertyValueNameToEnumMapper_load_grapheme_cluster_break(diplomat_receive_buffer, provider.ffiValue);
+        const result = wasm.icu4x_PropertyValueNameToEnumMapper_load_grapheme_cluster_break_mv1(diplomat_receive_buffer, provider.ffiValue);
     
         try {
     
@@ -203,7 +203,7 @@ export class PropertyValueNameToEnumMapper {
     static loadWordBreak(provider) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XPropertyValueNameToEnumMapper_load_word_break(diplomat_receive_buffer, provider.ffiValue);
+        const result = wasm.icu4x_PropertyValueNameToEnumMapper_load_word_break_mv1(diplomat_receive_buffer, provider.ffiValue);
     
         try {
     
@@ -222,7 +222,7 @@ export class PropertyValueNameToEnumMapper {
     static loadSentenceBreak(provider) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XPropertyValueNameToEnumMapper_load_sentence_break(diplomat_receive_buffer, provider.ffiValue);
+        const result = wasm.icu4x_PropertyValueNameToEnumMapper_load_sentence_break_mv1(diplomat_receive_buffer, provider.ffiValue);
     
         try {
     
@@ -241,7 +241,7 @@ export class PropertyValueNameToEnumMapper {
     static loadScript(provider) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XPropertyValueNameToEnumMapper_load_script(diplomat_receive_buffer, provider.ffiValue);
+        const result = wasm.icu4x_PropertyValueNameToEnumMapper_load_script_mv1(diplomat_receive_buffer, provider.ffiValue);
     
         try {
     

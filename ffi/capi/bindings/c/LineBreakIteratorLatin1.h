@@ -15,10 +15,10 @@
 
 
 
-int32_t ICU4XLineBreakIteratorLatin1_next(LineBreakIteratorLatin1* self);
+int32_t icu4x_LineBreakIteratorLatin1_next_mv1(LineBreakIteratorLatin1* self);
 
 
-void ICU4XLineBreakIteratorLatin1_destroy(LineBreakIteratorLatin1* self);
+void icu4x_LineBreakIteratorLatin1_destroy_mv1(LineBreakIteratorLatin1* self);
 
 
 

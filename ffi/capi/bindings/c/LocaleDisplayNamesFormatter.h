@@ -19,13 +19,13 @@
 
 
 
-typedef struct ICU4XLocaleDisplayNamesFormatter_create_result {union {LocaleDisplayNamesFormatter* ok; DataError err;}; bool is_ok;} ICU4XLocaleDisplayNamesFormatter_create_result;
-ICU4XLocaleDisplayNamesFormatter_create_result ICU4XLocaleDisplayNamesFormatter_create(const DataProvider* provider, const Locale* locale, DisplayNamesOptionsV1 options);
+typedef struct icu4x_LocaleDisplayNamesFormatter_create_mv1_result {union {LocaleDisplayNamesFormatter* ok; DataError err;}; bool is_ok;} icu4x_LocaleDisplayNamesFormatter_create_mv1_result;
+icu4x_LocaleDisplayNamesFormatter_create_mv1_result icu4x_LocaleDisplayNamesFormatter_create_mv1(const DataProvider* provider, const Locale* locale, DisplayNamesOptionsV1 options);
 
-void ICU4XLocaleDisplayNamesFormatter_of(const LocaleDisplayNamesFormatter* self, const Locale* locale, DiplomatWrite* write);
+void icu4x_LocaleDisplayNamesFormatter_of_mv1(const LocaleDisplayNamesFormatter* self, const Locale* locale, DiplomatWrite* write);
 
 
-void ICU4XLocaleDisplayNamesFormatter_destroy(LocaleDisplayNamesFormatter* self);
+void icu4x_LocaleDisplayNamesFormatter_destroy_mv1(LocaleDisplayNamesFormatter* self);
 
 
 

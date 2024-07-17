@@ -43,7 +43,7 @@ export class SegmenterWordType {
 
 
     get isWordLike() {
-        const result = wasm.ICU4XSegmenterWordType_is_word_like(this.ffiValue);
+        const result = wasm.icu4x_SegmenterWordType_is_word_like_mv1(this.ffiValue);
     
         try {
     

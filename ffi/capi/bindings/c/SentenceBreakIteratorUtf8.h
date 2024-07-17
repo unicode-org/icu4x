@@ -15,10 +15,10 @@
 
 
 
-int32_t ICU4XSentenceBreakIteratorUtf8_next(SentenceBreakIteratorUtf8* self);
+int32_t icu4x_SentenceBreakIteratorUtf8_next_mv1(SentenceBreakIteratorUtf8* self);
 
 
-void ICU4XSentenceBreakIteratorUtf8_destroy(SentenceBreakIteratorUtf8* self);
+void icu4x_SentenceBreakIteratorUtf8_destroy_mv1(SentenceBreakIteratorUtf8* self);
 
 
 

@@ -10,7 +10,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 */
 
 const CaseMapCloser_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.ICU4XCaseMapCloser_destroy(ptr);
+    wasm.icu4x_CaseMapCloser_destroy_mv1(ptr);
 });
 export class CaseMapCloser {
     // Internal ptr reference:
@@ -37,7 +37,7 @@ export class CaseMapCloser {
     static create(provider) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XCaseMapCloser_create(diplomat_receive_buffer, provider.ffiValue);
+        const result = wasm.icu4x_CaseMapCloser_create_mv1(diplomat_receive_buffer, provider.ffiValue);
     
         try {
     
@@ -54,7 +54,7 @@ export class CaseMapCloser {
     }
 
     addCaseClosureTo(c, builder) {
-        wasm.ICU4XCaseMapCloser_add_case_closure_to(this.ffiValue, diplomatRuntime.extractCodePoint(c, 'c'), builder.ffiValue);
+        wasm.icu4x_CaseMapCloser_add_case_closure_to_mv1(this.ffiValue, diplomatRuntime.extractCodePoint(c, 'c'), builder.ffiValue);
     
         try {
     
@@ -66,7 +66,7 @@ export class CaseMapCloser {
     addStringCaseClosureTo(s, builder) {
         
         const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
-        const result = wasm.ICU4XCaseMapCloser_add_string_case_closure_to(this.ffiValue, sSlice.ptr, sSlice.size, builder.ffiValue);
+        const result = wasm.icu4x_CaseMapCloser_add_string_case_closure_to_mv1(this.ffiValue, sSlice.ptr, sSlice.size, builder.ffiValue);
     
         try {
     

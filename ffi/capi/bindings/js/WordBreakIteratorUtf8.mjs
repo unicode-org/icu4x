@@ -8,7 +8,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 */
 
 const WordBreakIteratorUtf8_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.ICU4XWordBreakIteratorUtf8_destroy(ptr);
+    wasm.icu4x_WordBreakIteratorUtf8_destroy_mv1(ptr);
 });
 export class WordBreakIteratorUtf8 {
     // Internal ptr reference:
@@ -38,7 +38,7 @@ export class WordBreakIteratorUtf8 {
 
 
     next() {
-        const result = wasm.ICU4XWordBreakIteratorUtf8_next(this.ffiValue);
+        const result = wasm.icu4x_WordBreakIteratorUtf8_next_mv1(this.ffiValue);
     
         try {
     
@@ -49,7 +49,7 @@ export class WordBreakIteratorUtf8 {
     }
 
     get wordType() {
-        const result = wasm.ICU4XWordBreakIteratorUtf8_word_type(this.ffiValue);
+        const result = wasm.icu4x_WordBreakIteratorUtf8_word_type_mv1(this.ffiValue);
     
         try {
     
@@ -60,7 +60,7 @@ export class WordBreakIteratorUtf8 {
     }
 
     get isWordLike() {
-        const result = wasm.ICU4XWordBreakIteratorUtf8_is_word_like(this.ffiValue);
+        const result = wasm.icu4x_WordBreakIteratorUtf8_is_word_like_mv1(this.ffiValue);
     
         try {
     

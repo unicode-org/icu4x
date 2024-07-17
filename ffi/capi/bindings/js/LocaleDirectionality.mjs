@@ -12,7 +12,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 */
 
 const LocaleDirectionality_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.ICU4XLocaleDirectionality_destroy(ptr);
+    wasm.icu4x_LocaleDirectionality_destroy_mv1(ptr);
 });
 export class LocaleDirectionality {
     // Internal ptr reference:
@@ -39,7 +39,7 @@ export class LocaleDirectionality {
     static create(provider) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XLocaleDirectionality_create(diplomat_receive_buffer, provider.ffiValue);
+        const result = wasm.icu4x_LocaleDirectionality_create_mv1(diplomat_receive_buffer, provider.ffiValue);
     
         try {
     
@@ -58,7 +58,7 @@ export class LocaleDirectionality {
     static createWithExpander(provider, expander) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XLocaleDirectionality_create_with_expander(diplomat_receive_buffer, provider.ffiValue, expander.ffiValue);
+        const result = wasm.icu4x_LocaleDirectionality_create_with_expander_mv1(diplomat_receive_buffer, provider.ffiValue, expander.ffiValue);
     
         try {
     
@@ -75,7 +75,7 @@ export class LocaleDirectionality {
     }
 
     get(locale) {
-        const result = wasm.ICU4XLocaleDirectionality_get(this.ffiValue, locale.ffiValue);
+        const result = wasm.icu4x_LocaleDirectionality_get_mv1(this.ffiValue, locale.ffiValue);
     
         try {
     
@@ -86,7 +86,7 @@ export class LocaleDirectionality {
     }
 
     isLeftToRight(locale) {
-        const result = wasm.ICU4XLocaleDirectionality_is_left_to_right(this.ffiValue, locale.ffiValue);
+        const result = wasm.icu4x_LocaleDirectionality_is_left_to_right_mv1(this.ffiValue, locale.ffiValue);
     
         try {
     
@@ -97,7 +97,7 @@ export class LocaleDirectionality {
     }
 
     isRightToLeft(locale) {
-        const result = wasm.ICU4XLocaleDirectionality_is_right_to_left(this.ffiValue, locale.ffiValue);
+        const result = wasm.icu4x_LocaleDirectionality_is_right_to_left_mv1(this.ffiValue, locale.ffiValue);
     
         try {
     

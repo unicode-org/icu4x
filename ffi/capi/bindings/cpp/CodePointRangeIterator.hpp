@@ -17,17 +17,17 @@ namespace diplomat {
 namespace capi {
     extern "C" {
     
-    diplomat::capi::CodePointRangeIteratorResult ICU4XCodePointRangeIterator_next(diplomat::capi::CodePointRangeIterator* self);
+    diplomat::capi::CodePointRangeIteratorResult icu4x_CodePointRangeIterator_next_mv1(diplomat::capi::CodePointRangeIterator* self);
     
     
-    void ICU4XCodePointRangeIterator_destroy(CodePointRangeIterator* self);
+    void icu4x_CodePointRangeIterator_destroy_mv1(CodePointRangeIterator* self);
     
     } // extern "C"
 } // namespace capi
 } // namespace
 
 inline CodePointRangeIteratorResult CodePointRangeIterator::next() {
-  auto result = diplomat::capi::ICU4XCodePointRangeIterator_next(this->AsFFI());
+  auto result = diplomat::capi::icu4x_CodePointRangeIterator_next_mv1(this->AsFFI());
   return CodePointRangeIteratorResult::FromFFI(result);
 }
 
@@ -48,7 +48,7 @@ inline CodePointRangeIterator* CodePointRangeIterator::FromFFI(diplomat::capi::C
 }
 
 inline void CodePointRangeIterator::operator delete(void* ptr) {
-  diplomat::capi::ICU4XCodePointRangeIterator_destroy(reinterpret_cast<diplomat::capi::CodePointRangeIterator*>(ptr));
+  diplomat::capi::icu4x_CodePointRangeIterator_destroy_mv1(reinterpret_cast<diplomat::capi::CodePointRangeIterator*>(ptr));
 }
 
 

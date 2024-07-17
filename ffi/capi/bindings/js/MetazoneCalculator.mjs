@@ -15,7 +15,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 */
 
 const MetazoneCalculator_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.ICU4XMetazoneCalculator_destroy(ptr);
+    wasm.icu4x_MetazoneCalculator_destroy_mv1(ptr);
 });
 export class MetazoneCalculator {
     // Internal ptr reference:
@@ -42,7 +42,7 @@ export class MetazoneCalculator {
     static create(provider) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XMetazoneCalculator_create(diplomat_receive_buffer, provider.ffiValue);
+        const result = wasm.icu4x_MetazoneCalculator_create_mv1(diplomat_receive_buffer, provider.ffiValue);
     
         try {
     

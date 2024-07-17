@@ -19,20 +19,20 @@
 
 
 
-typedef struct ICU4XLocaleExpander_create_result {union {LocaleExpander* ok; Error err;}; bool is_ok;} ICU4XLocaleExpander_create_result;
-ICU4XLocaleExpander_create_result ICU4XLocaleExpander_create(const DataProvider* provider);
+typedef struct icu4x_LocaleExpander_create_mv1_result {union {LocaleExpander* ok; Error err;}; bool is_ok;} icu4x_LocaleExpander_create_mv1_result;
+icu4x_LocaleExpander_create_mv1_result icu4x_LocaleExpander_create_mv1(const DataProvider* provider);
 
-typedef struct ICU4XLocaleExpander_create_extended_result {union {LocaleExpander* ok; Error err;}; bool is_ok;} ICU4XLocaleExpander_create_extended_result;
-ICU4XLocaleExpander_create_extended_result ICU4XLocaleExpander_create_extended(const DataProvider* provider);
+typedef struct icu4x_LocaleExpander_create_extended_mv1_result {union {LocaleExpander* ok; Error err;}; bool is_ok;} icu4x_LocaleExpander_create_extended_mv1_result;
+icu4x_LocaleExpander_create_extended_mv1_result icu4x_LocaleExpander_create_extended_mv1(const DataProvider* provider);
 
-TransformResult ICU4XLocaleExpander_maximize(const LocaleExpander* self, Locale* locale);
+TransformResult icu4x_LocaleExpander_maximize_mv1(const LocaleExpander* self, Locale* locale);
 
-TransformResult ICU4XLocaleExpander_minimize(const LocaleExpander* self, Locale* locale);
+TransformResult icu4x_LocaleExpander_minimize_mv1(const LocaleExpander* self, Locale* locale);
 
-TransformResult ICU4XLocaleExpander_minimize_favor_script(const LocaleExpander* self, Locale* locale);
+TransformResult icu4x_LocaleExpander_minimize_favor_script_mv1(const LocaleExpander* self, Locale* locale);
 
 
-void ICU4XLocaleExpander_destroy(LocaleExpander* self);
+void icu4x_LocaleExpander_destroy_mv1(LocaleExpander* self);
 
 
 

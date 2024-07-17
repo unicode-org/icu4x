@@ -16,17 +16,17 @@ namespace diplomat {
 namespace capi {
     extern "C" {
     
-    int32_t ICU4XLineBreakIteratorLatin1_next(diplomat::capi::LineBreakIteratorLatin1* self);
+    int32_t icu4x_LineBreakIteratorLatin1_next_mv1(diplomat::capi::LineBreakIteratorLatin1* self);
     
     
-    void ICU4XLineBreakIteratorLatin1_destroy(LineBreakIteratorLatin1* self);
+    void icu4x_LineBreakIteratorLatin1_destroy_mv1(LineBreakIteratorLatin1* self);
     
     } // extern "C"
 } // namespace capi
 } // namespace
 
 inline int32_t LineBreakIteratorLatin1::next() {
-  auto result = diplomat::capi::ICU4XLineBreakIteratorLatin1_next(this->AsFFI());
+  auto result = diplomat::capi::icu4x_LineBreakIteratorLatin1_next_mv1(this->AsFFI());
   return result;
 }
 
@@ -47,7 +47,7 @@ inline LineBreakIteratorLatin1* LineBreakIteratorLatin1::FromFFI(diplomat::capi:
 }
 
 inline void LineBreakIteratorLatin1::operator delete(void* ptr) {
-  diplomat::capi::ICU4XLineBreakIteratorLatin1_destroy(reinterpret_cast<diplomat::capi::LineBreakIteratorLatin1*>(ptr));
+  diplomat::capi::icu4x_LineBreakIteratorLatin1_destroy_mv1(reinterpret_cast<diplomat::capi::LineBreakIteratorLatin1*>(ptr));
 }
 
 

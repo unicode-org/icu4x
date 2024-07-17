@@ -22,20 +22,20 @@ namespace diplomat {
 namespace capi {
     extern "C" {
     
-    typedef struct ICU4XGregorianDateTimeFormatter_create_with_lengths_result {union {diplomat::capi::GregorianDateTimeFormatter* ok; diplomat::capi::Error err;}; bool is_ok;} ICU4XGregorianDateTimeFormatter_create_with_lengths_result;
-    ICU4XGregorianDateTimeFormatter_create_with_lengths_result ICU4XGregorianDateTimeFormatter_create_with_lengths(const diplomat::capi::DataProvider* provider, const diplomat::capi::Locale* locale, diplomat::capi::DateLength date_length, diplomat::capi::TimeLength time_length);
+    typedef struct icu4x_GregorianDateTimeFormatter_create_with_lengths_mv1_result {union {diplomat::capi::GregorianDateTimeFormatter* ok; diplomat::capi::Error err;}; bool is_ok;} icu4x_GregorianDateTimeFormatter_create_with_lengths_mv1_result;
+    icu4x_GregorianDateTimeFormatter_create_with_lengths_mv1_result icu4x_GregorianDateTimeFormatter_create_with_lengths_mv1(const diplomat::capi::DataProvider* provider, const diplomat::capi::Locale* locale, diplomat::capi::DateLength date_length, diplomat::capi::TimeLength time_length);
     
-    void ICU4XGregorianDateTimeFormatter_format_iso_datetime(const diplomat::capi::GregorianDateTimeFormatter* self, const diplomat::capi::IsoDateTime* value, diplomat::capi::DiplomatWrite* write);
+    void icu4x_GregorianDateTimeFormatter_format_iso_datetime_mv1(const diplomat::capi::GregorianDateTimeFormatter* self, const diplomat::capi::IsoDateTime* value, diplomat::capi::DiplomatWrite* write);
     
     
-    void ICU4XGregorianDateTimeFormatter_destroy(GregorianDateTimeFormatter* self);
+    void icu4x_GregorianDateTimeFormatter_destroy_mv1(GregorianDateTimeFormatter* self);
     
     } // extern "C"
 } // namespace capi
 } // namespace
 
 inline diplomat::result<std::unique_ptr<GregorianDateTimeFormatter>, Error> GregorianDateTimeFormatter::create_with_lengths(const DataProvider& provider, const Locale& locale, DateLength date_length, TimeLength time_length) {
-  auto result = diplomat::capi::ICU4XGregorianDateTimeFormatter_create_with_lengths(provider.AsFFI(),
+  auto result = diplomat::capi::icu4x_GregorianDateTimeFormatter_create_with_lengths_mv1(provider.AsFFI(),
     locale.AsFFI(),
     date_length.AsFFI(),
     time_length.AsFFI());
@@ -45,7 +45,7 @@ inline diplomat::result<std::unique_ptr<GregorianDateTimeFormatter>, Error> Greg
 inline std::string GregorianDateTimeFormatter::format_iso_datetime(const IsoDateTime& value) const {
   std::string output;
   diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
-  diplomat::capi::ICU4XGregorianDateTimeFormatter_format_iso_datetime(this->AsFFI(),
+  diplomat::capi::icu4x_GregorianDateTimeFormatter_format_iso_datetime_mv1(this->AsFFI(),
     value.AsFFI(),
     &write);
   return output;
@@ -68,7 +68,7 @@ inline GregorianDateTimeFormatter* GregorianDateTimeFormatter::FromFFI(diplomat:
 }
 
 inline void GregorianDateTimeFormatter::operator delete(void* ptr) {
-  diplomat::capi::ICU4XGregorianDateTimeFormatter_destroy(reinterpret_cast<diplomat::capi::GregorianDateTimeFormatter*>(ptr));
+  diplomat::capi::icu4x_GregorianDateTimeFormatter_destroy_mv1(reinterpret_cast<diplomat::capi::GregorianDateTimeFormatter*>(ptr));
 }
 
 
