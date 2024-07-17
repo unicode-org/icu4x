@@ -131,6 +131,8 @@ pub mod hebrew;
 pub mod indian;
 pub mod islamic;
 pub mod iso;
+#[cfg(feature = "ixdtf")]
+mod ixdtf;
 pub mod japanese;
 pub mod julian;
 pub mod persian;

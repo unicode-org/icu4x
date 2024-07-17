@@ -965,6 +965,7 @@ dependencies = [
  "icu_calendar_data",
  "icu_locale_core",
  "icu_provider",
+ "ixdtf",
  "serde",
  "serde_json",
  "simple_logger",
