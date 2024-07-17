@@ -56,7 +56,7 @@ pub mod ffi {
             Struct,
             compact
         )]
-        #[diplomat::attr(dart, disable)]
+        #[diplomat::attr(any(dart, js), disable)]
         pub fn get32(&self, ch: u32) -> u8 {
             self.0.get32(ch).0
         }

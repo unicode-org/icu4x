@@ -17,10 +17,10 @@ int main() {
   auto from = parser->parse("meter");
   auto to = parser->parse("foot");
   auto converter = converter_factory->converter(*from.get(), *to.get());
-  auto result = converter->convert_f64(1.0);
+  auto result = converter->convert_double(1.0);
 
   auto converter_cloned = converter->clone();
-  auto result_cloned = converter_cloned->convert_f64(1.0);
+  auto result_cloned = converter_cloned->convert_double(1.0);
 
   if (std::abs(result - 3.28084) > 0.00001 &&
       std::abs(result_cloned - 3.28084) > 0.00001) {

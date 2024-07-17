@@ -56,7 +56,7 @@ pub mod ffi {
         /// to the WHATWG Encoding Standard.
         #[diplomat::rust_link(icu::segmenter::SentenceSegmenter::segment_utf8, FnInStruct)]
         #[diplomat::rust_link(icu::segmenter::SentenceSegmenter::segment_str, FnInStruct, hidden)]
-        #[diplomat::attr(dart, disable)]
+        #[diplomat::attr(any(dart, js), disable)]
         pub fn segment_utf8<'a>(
             &'a self,
             input: &'a DiplomatStr,
@@ -69,7 +69,7 @@ pub mod ffi {
         /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
         /// to the WHATWG Encoding Standard.
         #[diplomat::rust_link(icu::segmenter::SentenceSegmenter::segment_utf16, FnInStruct)]
-        #[diplomat::attr(dart, rename = "segment")]
+        #[diplomat::attr(any(dart, js), rename = "segment")]
         pub fn segment_utf16<'a>(
             &'a self,
             input: &'a DiplomatStr16,
@@ -79,7 +79,7 @@ pub mod ffi {
 
         /// Segments a Latin-1 string.
         #[diplomat::rust_link(icu::segmenter::SentenceSegmenter::segment_latin1, FnInStruct)]
-        #[diplomat::attr(dart, disable)]
+        #[diplomat::attr(any(dart, js), disable)]
         pub fn segment_latin1<'a>(
             &'a self,
             input: &'a [u8],

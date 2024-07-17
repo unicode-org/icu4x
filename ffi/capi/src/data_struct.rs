@@ -17,7 +17,7 @@ pub mod ffi {
     /// A generic data struct to be used by ICU4X
     ///
     /// This can be used to construct a StructDataProvider.
-    #[diplomat::attr(dart, disable)]
+    #[diplomat::attr(any(dart, js), disable)]
     pub struct DataStruct(pub(crate) AnyPayload);
 
     impl DataStruct {

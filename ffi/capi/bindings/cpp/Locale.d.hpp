@@ -49,9 +49,9 @@ public:
 
   inline bool normalizing_eq(std::string_view other) const;
 
-  inline int8_t strict_cmp_(std::string_view other) const;
+  inline int8_t compare_to_string(std::string_view other) const;
 
-  inline int8_t total_cmp_(const Locale& other) const;
+  inline int8_t compare_to(const Locale& other) const;
 
   inline const diplomat::capi::Locale* AsFFI() const;
   inline diplomat::capi::Locale* AsFFI();

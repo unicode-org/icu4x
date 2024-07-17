@@ -52,9 +52,9 @@ void ICU4XLocale_to_string(const Locale* self, DiplomatWrite* write);
 
 bool ICU4XLocale_normalizing_eq(const Locale* self, const char* other_data, size_t other_len);
 
-int8_t ICU4XLocale_strict_cmp_(const Locale* self, const char* other_data, size_t other_len);
+int8_t ICU4XLocale_compare_to_string(const Locale* self, const char* other_data, size_t other_len);
 
-int8_t ICU4XLocale_total_cmp_(const Locale* self, const Locale* other);
+int8_t ICU4XLocale_compare_to(const Locale* self, const Locale* other);
 
 
 void ICU4XLocale_destroy(Locale* self);

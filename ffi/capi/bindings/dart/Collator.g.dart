@@ -47,7 +47,7 @@ final class Collator implements ffi.Finalizable {
     final temp = ffi2.Arena();
     final leftView = left.utf16View;
     final rightView = right.utf16View;
-    final result = _ICU4XCollator_compare_utf16_(_ffi, leftView.allocIn(temp), leftView.length, rightView.allocIn(temp), rightView.length);
+    final result = _ICU4XCollator_compare_utf16(_ffi, leftView.allocIn(temp), leftView.length, rightView.allocIn(temp), rightView.length);
     temp.releaseAll();
     return result;
   }
@@ -73,10 +73,10 @@ external void _ICU4XCollator_destroy(ffi.Pointer<ffi.Void> self);
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XCollator_create_v1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, _CollatorOptionsFfi options);
 
-@meta.ResourceIdentifier('ICU4XCollator_compare_utf16_')
-@ffi.Native<ffi.Int8 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint16>, ffi.Size, ffi.Pointer<ffi.Uint16>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XCollator_compare_utf16_')
+@meta.ResourceIdentifier('ICU4XCollator_compare_utf16')
+@ffi.Native<ffi.Int8 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint16>, ffi.Size, ffi.Pointer<ffi.Uint16>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XCollator_compare_utf16')
 // ignore: non_constant_identifier_names
-external int _ICU4XCollator_compare_utf16_(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint16> leftData, int leftLength, ffi.Pointer<ffi.Uint16> rightData, int rightLength);
+external int _ICU4XCollator_compare_utf16(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint16> leftData, int leftLength, ffi.Pointer<ffi.Uint16> rightData, int rightLength);
 
 @meta.ResourceIdentifier('ICU4XCollator_resolved_options')
 @ffi.Native<_ResolvedCollatorOptionsFfi Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCollator_resolved_options')

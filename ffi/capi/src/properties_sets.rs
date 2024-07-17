@@ -34,7 +34,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        #[diplomat::attr(dart, disable)]
+        #[diplomat::attr(any(dart, js), disable)]
         pub fn contains32(&self, cp: u32) -> bool {
             self.contains(cp)
         }
