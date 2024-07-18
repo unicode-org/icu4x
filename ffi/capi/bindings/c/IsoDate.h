@@ -10,6 +10,7 @@
 #include "Calendar.d.h"
 #include "CalendarError.d.h"
 #include "Date.d.h"
+#include "FromIxdtfError.d.h"
 #include "IsoWeekday.d.h"
 #include "WeekCalculator.d.h"
 #include "WeekOf.d.h"
@@ -23,6 +24,9 @@
 
 typedef struct icu4x_IsoDate_create_mv1_result {union {IsoDate* ok; CalendarError err;}; bool is_ok;} icu4x_IsoDate_create_mv1_result;
 icu4x_IsoDate_create_mv1_result icu4x_IsoDate_create_mv1(int32_t year, uint8_t month, uint8_t day);
+
+typedef struct icu4x_IsoDate_create_from_string_mv1_result {union {IsoDate* ok; FromIxdtfError err;}; bool is_ok;} icu4x_IsoDate_create_from_string_mv1_result;
+icu4x_IsoDate_create_from_string_mv1_result icu4x_IsoDate_create_from_string_mv1(const char* v_data, size_t v_len);
 
 IsoDate* icu4x_IsoDate_create_for_unix_epoch_mv1();
 

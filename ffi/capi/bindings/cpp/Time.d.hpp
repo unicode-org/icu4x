@@ -10,6 +10,7 @@
 #include "diplomat_runtime.hpp"
 
 class CalendarError;
+class FromIxdtfError;
 
 
 namespace diplomat {
@@ -22,6 +23,8 @@ class Time {
 public:
 
   inline static diplomat::result<std::unique_ptr<Time>, CalendarError> create(uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond);
+
+  inline static diplomat::result<std::unique_ptr<Time>, FromIxdtfError> create_from_string(std::string_view v);
 
   inline static diplomat::result<std::unique_ptr<Time>, CalendarError> create_midnight();
 

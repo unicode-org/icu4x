@@ -55,6 +55,22 @@ final class Date implements ffi.Finalizable {
     return Date._fromFfi(result.union.ok, []);
   }
 
+  /// Creates a new [`Date`] from an IXDTF string.
+  ///
+  /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu_calendar/latest/icu_calendar/struct.Date.html#method.try_from_str) for more information.
+  ///
+  /// Throws [FromIxdtfError] on failure.
+  factory Date.fromString(String v) {
+    final temp = ffi2.Arena();
+    final vView = v.utf8View;
+    final result = _icu4x_Date_create_from_string_mv1(vView.allocIn(temp), vView.length);
+    temp.releaseAll();
+    if (!result.isOk) {
+      throw FromIxdtfError.values[result.union.err];
+    }
+    return Date._fromFfi(result.union.ok, []);
+  }
+
   /// Convert this date to one in a different calendar
   ///
   /// See the [Rust documentation for `to_calendar`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.to_calendar) for more information.
@@ -202,6 +218,11 @@ external _ResultOpaqueInt32 _icu4x_Date_create_from_iso_in_calendar_mv1(int year
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Int32, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Uint8, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_create_from_codes_in_calendar_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_Date_create_from_codes_in_calendar_mv1(ffi.Pointer<ffi.Uint8> eraCodeData, int eraCodeLength, int year, ffi.Pointer<ffi.Uint8> monthCodeData, int monthCodeLength, int day, ffi.Pointer<ffi.Opaque> calendar);
+
+@meta.ResourceIdentifier('icu4x_Date_create_from_string_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'icu4x_Date_create_from_string_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_Date_create_from_string_mv1(ffi.Pointer<ffi.Uint8> vData, int vLength);
 
 @meta.ResourceIdentifier('icu4x_Date_to_calendar_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_to_calendar_mv1')

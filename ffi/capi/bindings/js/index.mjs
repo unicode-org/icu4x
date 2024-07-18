@@ -228,6 +228,8 @@ export { FixedDecimalLimitError } from "./FixedDecimalLimitError.mjs"
 
 export { FixedDecimalParseError } from "./FixedDecimalParseError.mjs"
 
+export { FromIxdtfError } from "./FromIxdtfError.mjs"
+
 export { LocaleParseError } from "./LocaleParseError.mjs"
 
 export { TimeZoneInvalidIdError } from "./TimeZoneInvalidIdError.mjs"

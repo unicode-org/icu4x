@@ -230,6 +230,8 @@ export { FixedDecimalLimitError } from "./FixedDecimalLimitError"
 
 export { FixedDecimalParseError } from "./FixedDecimalParseError"
 
+export { FromIxdtfError } from "./FromIxdtfError"
+
 export { LocaleParseError } from "./LocaleParseError"
 
 export { TimeZoneInvalidIdError } from "./TimeZoneInvalidIdError"

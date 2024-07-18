@@ -11,6 +11,7 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 #include "CalendarError.hpp"
+#include "FromIxdtfError.hpp"
 
 
 namespace diplomat {
@@ -19,6 +20,9 @@ namespace capi {
     
     typedef struct icu4x_Time_create_mv1_result {union {diplomat::capi::Time* ok; diplomat::capi::CalendarError err;}; bool is_ok;} icu4x_Time_create_mv1_result;
     icu4x_Time_create_mv1_result icu4x_Time_create_mv1(uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond);
+    
+    typedef struct icu4x_Time_create_from_string_mv1_result {union {diplomat::capi::Time* ok; diplomat::capi::FromIxdtfError err;}; bool is_ok;} icu4x_Time_create_from_string_mv1_result;
+    icu4x_Time_create_from_string_mv1_result icu4x_Time_create_from_string_mv1(const char* v_data, size_t v_len);
     
     typedef struct icu4x_Time_create_midnight_mv1_result {union {diplomat::capi::Time* ok; diplomat::capi::CalendarError err;}; bool is_ok;} icu4x_Time_create_midnight_mv1_result;
     icu4x_Time_create_midnight_mv1_result icu4x_Time_create_midnight_mv1();
@@ -44,6 +48,12 @@ inline diplomat::result<std::unique_ptr<Time>, CalendarError> Time::create(uint8
     second,
     nanosecond);
   return result.is_ok ? diplomat::result<std::unique_ptr<Time>, CalendarError>(diplomat::Ok<std::unique_ptr<Time>>(std::unique_ptr<Time>(Time::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<Time>, CalendarError>(diplomat::Err<CalendarError>(CalendarError::FromFFI(result.err)));
+}
+
+inline diplomat::result<std::unique_ptr<Time>, FromIxdtfError> Time::create_from_string(std::string_view v) {
+  auto result = diplomat::capi::icu4x_Time_create_from_string_mv1(v.data(),
+    v.size());
+  return result.is_ok ? diplomat::result<std::unique_ptr<Time>, FromIxdtfError>(diplomat::Ok<std::unique_ptr<Time>>(std::unique_ptr<Time>(Time::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<Time>, FromIxdtfError>(diplomat::Err<FromIxdtfError>(FromIxdtfError::FromFFI(result.err)));
 }
 
 inline diplomat::result<std::unique_ptr<Time>, CalendarError> Time::create_midnight() {

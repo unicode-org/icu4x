@@ -21,6 +21,8 @@ export class Date {
 
     static createFromCodesInCalendar(eraCode: string, year: number, monthCode: string, day: number, calendar: Calendar): Date;
 
+    static createFromString(v: string): Date;
+
     toCalendar(calendar: Calendar): Date;
 
     toIso(): IsoDate;

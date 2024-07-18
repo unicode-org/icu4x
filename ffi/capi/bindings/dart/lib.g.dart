@@ -59,6 +59,7 @@ part 'FixedDecimalRoundingIncrement.g.dart';
 part 'FixedDecimalRoundingMode.g.dart';
 part 'FixedDecimalSign.g.dart';
 part 'FixedDecimalSignDisplay.g.dart';
+part 'FromIxdtfError.g.dart';
 part 'GeneralCategoryNameToMaskMapper.g.dart';
 part 'GraphemeClusterBreakIteratorLatin1.g.dart';
 part 'GraphemeClusterBreakIteratorUtf16.g.dart';

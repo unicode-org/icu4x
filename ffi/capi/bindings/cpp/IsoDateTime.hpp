@@ -13,6 +13,7 @@
 #include "Calendar.hpp"
 #include "CalendarError.hpp"
 #include "DateTime.hpp"
+#include "FromIxdtfError.hpp"
 #include "IsoDate.hpp"
 #include "IsoWeekday.hpp"
 #include "Time.hpp"
@@ -28,6 +29,9 @@ namespace capi {
     icu4x_IsoDateTime_create_mv1_result icu4x_IsoDateTime_create_mv1(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond);
     
     diplomat::capi::IsoDateTime* icu4x_IsoDateTime_crate_from_date_and_time_mv1(const diplomat::capi::IsoDate* date, const diplomat::capi::Time* time);
+    
+    typedef struct icu4x_IsoDateTime_create_from_string_mv1_result {union {diplomat::capi::IsoDateTime* ok; diplomat::capi::FromIxdtfError err;}; bool is_ok;} icu4x_IsoDateTime_create_from_string_mv1_result;
+    icu4x_IsoDateTime_create_from_string_mv1_result icu4x_IsoDateTime_create_from_string_mv1(const char* v_data, size_t v_len);
     
     diplomat::capi::IsoDateTime* icu4x_IsoDateTime_local_unix_epoch_mv1();
     
@@ -95,6 +99,12 @@ inline std::unique_ptr<IsoDateTime> IsoDateTime::crate_from_date_and_time(const 
   auto result = diplomat::capi::icu4x_IsoDateTime_crate_from_date_and_time_mv1(date.AsFFI(),
     time.AsFFI());
   return std::unique_ptr<IsoDateTime>(IsoDateTime::FromFFI(result));
+}
+
+inline diplomat::result<std::unique_ptr<IsoDateTime>, FromIxdtfError> IsoDateTime::create_from_string(std::string_view v) {
+  auto result = diplomat::capi::icu4x_IsoDateTime_create_from_string_mv1(v.data(),
+    v.size());
+  return result.is_ok ? diplomat::result<std::unique_ptr<IsoDateTime>, FromIxdtfError>(diplomat::Ok<std::unique_ptr<IsoDateTime>>(std::unique_ptr<IsoDateTime>(IsoDateTime::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<IsoDateTime>, FromIxdtfError>(diplomat::Err<FromIxdtfError>(FromIxdtfError::FromFFI(result.err)));
 }
 
 inline std::unique_ptr<IsoDateTime> IsoDateTime::local_unix_epoch() {
