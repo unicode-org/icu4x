@@ -19,7 +19,7 @@ pub enum FromIxdtfError {
     Range(RangeError),
     /// The IXDTF is missing fields required for parsing into the chosen type.
     Missing,
-    /// The IXDTF specifies a calendar unknown to `icu_calendar`.
+    /// The IXDTF specifies an unknown calendar.
     UnknownCalendar,
 }
 
