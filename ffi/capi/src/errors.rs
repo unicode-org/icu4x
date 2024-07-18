@@ -71,8 +71,7 @@ pub mod ffi {
 
     #[derive(Debug, PartialEq, Eq)]
     #[repr(C)]
-    #[diplomat::rust_link(icu::calendar::RangeError, Struct, compact)]
-    #[diplomat::rust_link(icu::calendar::DateError, Enum, compact)]
+    #[diplomat::rust_link(icu::calendar::FromIxdtfError, Struct, compact)]
     #[cfg(any(
         feature = "icu_datetime",
         feature = "icu_timezone",
