@@ -32,6 +32,8 @@ public:
 
   inline static diplomat::result<std::unique_ptr<IsoDate>, CalendarError> create(int32_t year, uint8_t month, uint8_t day);
 
+  inline static diplomat::result<std::unique_ptr<IsoDate>, FromIxdtfError> create_from_string(std::string_view v);
+
   inline static std::unique_ptr<IsoDate> unix_epoch();
 
   inline std::unique_ptr<Date> to_calendar(const Calendar& calendar) const;

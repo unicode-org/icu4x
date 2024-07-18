@@ -26,6 +26,9 @@ namespace capi {
     typedef struct icu4x_IsoDate_create_mv1_result {union {diplomat::capi::IsoDate* ok; diplomat::capi::CalendarError err;}; bool is_ok;} icu4x_IsoDate_create_mv1_result;
     icu4x_IsoDate_create_mv1_result icu4x_IsoDate_create_mv1(int32_t year, uint8_t month, uint8_t day);
     
+    typedef struct icu4x_IsoDate_create_from_string_mv1_result {union {diplomat::capi::IsoDate* ok; diplomat::capi::FromIxdtfError err;}; bool is_ok;} icu4x_IsoDate_create_from_string_mv1_result;
+    icu4x_IsoDate_create_from_string_mv1_result icu4x_IsoDate_create_from_string_mv1(const char* v_data, size_t v_len);
+    
     diplomat::capi::IsoDate* icu4x_IsoDate_unix_epoch_mv1();
     
     diplomat::capi::Date* icu4x_IsoDate_to_calendar_mv1(const diplomat::capi::IsoDate* self, const diplomat::capi::Calendar* calendar);
@@ -66,6 +69,12 @@ inline diplomat::result<std::unique_ptr<IsoDate>, CalendarError> IsoDate::create
     month,
     day);
   return result.is_ok ? diplomat::result<std::unique_ptr<IsoDate>, CalendarError>(diplomat::Ok<std::unique_ptr<IsoDate>>(std::unique_ptr<IsoDate>(IsoDate::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<IsoDate>, CalendarError>(diplomat::Err<CalendarError>(CalendarError::FromFFI(result.err)));
+}
+
+inline diplomat::result<std::unique_ptr<IsoDate>, FromIxdtfError> IsoDate::create_from_string(std::string_view v) {
+  auto result = diplomat::capi::icu4x_IsoDate_create_from_string_mv1(v.data(),
+    v.size());
+  return result.is_ok ? diplomat::result<std::unique_ptr<IsoDate>, FromIxdtfError>(diplomat::Ok<std::unique_ptr<IsoDate>>(std::unique_ptr<IsoDate>(IsoDate::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<IsoDate>, FromIxdtfError>(diplomat::Err<FromIxdtfError>(FromIxdtfError::FromFFI(result.err)));
 }
 
 inline std::unique_ptr<IsoDate> IsoDate::unix_epoch() {

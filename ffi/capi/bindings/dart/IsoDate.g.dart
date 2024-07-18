@@ -177,6 +177,11 @@ external void _icu4x_IsoDate_destroy_mv1(ffi.Pointer<ffi.Void> self);
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_IsoDate_create_mv1(int year, int month, int day);
 
+@meta.ResourceIdentifier('icu4x_IsoDate_create_from_string_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'icu4x_IsoDate_create_from_string_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_IsoDate_create_from_string_mv1(ffi.Pointer<ffi.Uint8> vData, int vLength);
+
 @meta.ResourceIdentifier('icu4x_IsoDate_unix_epoch_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_IsoDate_unix_epoch_mv1')
 // ignore: non_constant_identifier_names
