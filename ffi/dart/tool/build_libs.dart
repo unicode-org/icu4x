@@ -57,9 +57,9 @@ Future<void> buildLib(
     '--config=profile.release.codegen-units=1',
     '--no-default-features',
     if (!isNoStd)
-      '--features=icu_experimental,compiled_data,buffer_provider,logging,simple_logger,$features',
+      '--features=compiled_data,buffer_provider,logging,simple_logger,$features',
     if (isNoStd)
-      '--features=icu_experimental,compiled_data,buffer_provider,libc-alloc,panic-handler,$features',
+      '--features=compiled_data,buffer_provider,libc-alloc,panic-handler,$features',
     if (isNoStd) '-Zbuild-std=core,alloc',
     if (isNoStd) '-Zbuild-std-features=panic_immediate_abort',
     '--target=$rustTarget',
