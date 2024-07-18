@@ -8,7 +8,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 */
 
 const BidiParagraph_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.ICU4XBidiParagraph_destroy(ptr);
+    wasm.icu4x_BidiParagraph_destroy_mv1(ptr);
 });
 export class BidiParagraph {
     // Internal ptr reference:
@@ -38,7 +38,7 @@ export class BidiParagraph {
 
 
     setParagraphInText(n) {
-        const result = wasm.ICU4XBidiParagraph_set_paragraph_in_text(this.ffiValue, n);
+        const result = wasm.icu4x_BidiParagraph_set_paragraph_in_text_mv1(this.ffiValue, n);
     
         try {
     
@@ -49,7 +49,7 @@ export class BidiParagraph {
     }
 
     get direction() {
-        const result = wasm.ICU4XBidiParagraph_direction(this.ffiValue);
+        const result = wasm.icu4x_BidiParagraph_direction_mv1(this.ffiValue);
     
         try {
     
@@ -60,7 +60,7 @@ export class BidiParagraph {
     }
 
     get size() {
-        const result = wasm.ICU4XBidiParagraph_size(this.ffiValue);
+        const result = wasm.icu4x_BidiParagraph_size_mv1(this.ffiValue);
     
         try {
     
@@ -71,7 +71,7 @@ export class BidiParagraph {
     }
 
     get rangeStart() {
-        const result = wasm.ICU4XBidiParagraph_range_start(this.ffiValue);
+        const result = wasm.icu4x_BidiParagraph_range_start_mv1(this.ffiValue);
     
         try {
     
@@ -82,7 +82,7 @@ export class BidiParagraph {
     }
 
     get rangeEnd() {
-        const result = wasm.ICU4XBidiParagraph_range_end(this.ffiValue);
+        const result = wasm.icu4x_BidiParagraph_range_end_mv1(this.ffiValue);
     
         try {
     
@@ -95,7 +95,7 @@ export class BidiParagraph {
     reorderLine(rangeStart, rangeEnd) {
         
         const write = wasm.diplomat_buffer_write_create(0);
-        const result = wasm.ICU4XBidiParagraph_reorder_line(this.ffiValue, rangeStart, rangeEnd, write);
+        const result = wasm.icu4x_BidiParagraph_reorder_line_mv1(this.ffiValue, rangeStart, rangeEnd, write);
     
         try {
     
@@ -108,7 +108,7 @@ export class BidiParagraph {
     }
 
     levelAt(pos) {
-        const result = wasm.ICU4XBidiParagraph_level_at(this.ffiValue, pos);
+        const result = wasm.icu4x_BidiParagraph_level_at_mv1(this.ffiValue, pos);
     
         try {
     

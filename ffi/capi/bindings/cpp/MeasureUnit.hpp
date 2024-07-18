@@ -17,7 +17,7 @@ namespace capi {
     extern "C" {
     
     
-    void ICU4XMeasureUnit_destroy(MeasureUnit* self);
+    void icu4x_MeasureUnit_destroy_mv1(MeasureUnit* self);
     
     } // extern "C"
 } // namespace capi
@@ -40,7 +40,7 @@ inline MeasureUnit* MeasureUnit::FromFFI(diplomat::capi::MeasureUnit* ptr) {
 }
 
 inline void MeasureUnit::operator delete(void* ptr) {
-  diplomat::capi::ICU4XMeasureUnit_destroy(reinterpret_cast<diplomat::capi::MeasureUnit*>(ptr));
+  diplomat::capi::icu4x_MeasureUnit_destroy_mv1(reinterpret_cast<diplomat::capi::MeasureUnit*>(ptr));
 }
 
 

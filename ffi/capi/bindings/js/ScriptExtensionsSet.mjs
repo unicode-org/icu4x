@@ -9,7 +9,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 */
 
 const ScriptExtensionsSet_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.ICU4XScriptExtensionsSet_destroy(ptr);
+    wasm.icu4x_ScriptExtensionsSet_destroy_mv1(ptr);
 });
 export class ScriptExtensionsSet {
     // Internal ptr reference:
@@ -39,7 +39,7 @@ export class ScriptExtensionsSet {
 
 
     contains(script) {
-        const result = wasm.ICU4XScriptExtensionsSet_contains(this.ffiValue, script);
+        const result = wasm.icu4x_ScriptExtensionsSet_contains_mv1(this.ffiValue, script);
     
         try {
     
@@ -50,7 +50,7 @@ export class ScriptExtensionsSet {
     }
 
     get count() {
-        const result = wasm.ICU4XScriptExtensionsSet_count(this.ffiValue);
+        const result = wasm.icu4x_ScriptExtensionsSet_count_mv1(this.ffiValue);
     
         try {
     
@@ -63,7 +63,7 @@ export class ScriptExtensionsSet {
     scriptAt(index) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(3, 2);
-        const result = wasm.ICU4XScriptExtensionsSet_script_at(diplomat_receive_buffer, this.ffiValue, index);
+        const result = wasm.icu4x_ScriptExtensionsSet_script_at_mv1(diplomat_receive_buffer, this.ffiValue, index);
     
         try {
     

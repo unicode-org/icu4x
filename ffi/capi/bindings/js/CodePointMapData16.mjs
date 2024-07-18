@@ -19,7 +19,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 */
 
 const CodePointMapData16_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.ICU4XCodePointMapData16_destroy(ptr);
+    wasm.icu4x_CodePointMapData16_destroy_mv1(ptr);
 });
 export class CodePointMapData16 {
     // Internal ptr reference:
@@ -44,7 +44,7 @@ export class CodePointMapData16 {
 
 
     get(cp) {
-        const result = wasm.ICU4XCodePointMapData16_get(this.ffiValue, diplomatRuntime.extractCodePoint(cp, 'cp'));
+        const result = wasm.icu4x_CodePointMapData16_get_mv1(this.ffiValue, diplomatRuntime.extractCodePoint(cp, 'cp'));
     
         try {
     
@@ -58,7 +58,7 @@ export class CodePointMapData16 {
         
         // This lifetime edge depends on lifetimes 'a
         let aEdges = [this];
-        const result = wasm.ICU4XCodePointMapData16_iter_ranges_for_value(this.ffiValue, value);
+        const result = wasm.icu4x_CodePointMapData16_iter_ranges_for_value_mv1(this.ffiValue, value);
     
         try {
     
@@ -72,7 +72,7 @@ export class CodePointMapData16 {
         
         // This lifetime edge depends on lifetimes 'a
         let aEdges = [this];
-        const result = wasm.ICU4XCodePointMapData16_iter_ranges_for_value_complemented(this.ffiValue, value);
+        const result = wasm.icu4x_CodePointMapData16_iter_ranges_for_value_complemented_mv1(this.ffiValue, value);
     
         try {
     
@@ -83,7 +83,7 @@ export class CodePointMapData16 {
     }
 
     getSetForValue(value) {
-        const result = wasm.ICU4XCodePointMapData16_get_set_for_value(this.ffiValue, value);
+        const result = wasm.icu4x_CodePointMapData16_get_set_for_value_mv1(this.ffiValue, value);
     
         try {
     
@@ -96,7 +96,7 @@ export class CodePointMapData16 {
     static loadScript(provider) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XCodePointMapData16_load_script(diplomat_receive_buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointMapData16_load_script_mv1(diplomat_receive_buffer, provider.ffiValue);
     
         try {
     

@@ -24,25 +24,25 @@ final class ReorderedIndexMap implements ffi.Finalizable {
     }
   }
 
-  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XReorderedIndexMap_destroy));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_ReorderedIndexMap_destroy_mv1));
 
   /// Get this as a slice/array of indices
   core.List<int> get asSlice {
     // This lifetime edge depends on lifetimes: 'a
     core.List<Object> aEdges = [this];
-    final result = _ICU4XReorderedIndexMap_as_slice(_ffi);
+    final result = _icu4x_ReorderedIndexMap_as_slice_mv1(_ffi);
     return result._toDart(aEdges);
   }
 
   /// The length of this map
   int get length {
-    final result = _ICU4XReorderedIndexMap_len(_ffi);
+    final result = _icu4x_ReorderedIndexMap_len_mv1(_ffi);
     return result;
   }
 
   /// Whether this map is empty
   bool get isEmpty {
-    final result = _ICU4XReorderedIndexMap_is_empty(_ffi);
+    final result = _icu4x_ReorderedIndexMap_is_empty_mv1(_ffi);
     return result;
   }
 
@@ -50,32 +50,32 @@ final class ReorderedIndexMap implements ffi.Finalizable {
   /// (note that 0 is also a valid in-bounds value, please use `len()`
   /// to avoid out-of-bounds)
   int operator [](int index) {
-    final result = _ICU4XReorderedIndexMap_get(_ffi, index);
+    final result = _icu4x_ReorderedIndexMap_get_mv1(_ffi, index);
     return result;
   }
 }
 
-@meta.ResourceIdentifier('ICU4XReorderedIndexMap_destroy')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XReorderedIndexMap_destroy')
+@meta.ResourceIdentifier('icu4x_ReorderedIndexMap_destroy_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_ReorderedIndexMap_destroy_mv1')
 // ignore: non_constant_identifier_names
-external void _ICU4XReorderedIndexMap_destroy(ffi.Pointer<ffi.Void> self);
+external void _icu4x_ReorderedIndexMap_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('ICU4XReorderedIndexMap_as_slice')
-@ffi.Native<_SliceUsize Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XReorderedIndexMap_as_slice')
+@meta.ResourceIdentifier('icu4x_ReorderedIndexMap_as_slice_mv1')
+@ffi.Native<_SliceUsize Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ReorderedIndexMap_as_slice_mv1')
 // ignore: non_constant_identifier_names
-external _SliceUsize _ICU4XReorderedIndexMap_as_slice(ffi.Pointer<ffi.Opaque> self);
+external _SliceUsize _icu4x_ReorderedIndexMap_as_slice_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('ICU4XReorderedIndexMap_len')
-@ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XReorderedIndexMap_len')
+@meta.ResourceIdentifier('icu4x_ReorderedIndexMap_len_mv1')
+@ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ReorderedIndexMap_len_mv1')
 // ignore: non_constant_identifier_names
-external int _ICU4XReorderedIndexMap_len(ffi.Pointer<ffi.Opaque> self);
+external int _icu4x_ReorderedIndexMap_len_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('ICU4XReorderedIndexMap_is_empty')
-@ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XReorderedIndexMap_is_empty')
+@meta.ResourceIdentifier('icu4x_ReorderedIndexMap_is_empty_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ReorderedIndexMap_is_empty_mv1')
 // ignore: non_constant_identifier_names
-external bool _ICU4XReorderedIndexMap_is_empty(ffi.Pointer<ffi.Opaque> self);
+external bool _icu4x_ReorderedIndexMap_is_empty_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('ICU4XReorderedIndexMap_get')
-@ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XReorderedIndexMap_get')
+@meta.ResourceIdentifier('icu4x_ReorderedIndexMap_get_mv1')
+@ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>, ffi.Size)>(isLeaf: true, symbol: 'icu4x_ReorderedIndexMap_get_mv1')
 // ignore: non_constant_identifier_names
-external int _ICU4XReorderedIndexMap_get(ffi.Pointer<ffi.Opaque> self, int index);
+external int _icu4x_ReorderedIndexMap_get_mv1(ffi.Pointer<ffi.Opaque> self, int index);

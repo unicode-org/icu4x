@@ -20,15 +20,15 @@
 
 
 
-typedef struct ICU4XUnitsConverterFactory_create_result {union {UnitsConverterFactory* ok; DataError err;}; bool is_ok;} ICU4XUnitsConverterFactory_create_result;
-ICU4XUnitsConverterFactory_create_result ICU4XUnitsConverterFactory_create(const DataProvider* provider);
+typedef struct icu4x_UnitsConverterFactory_create_mv1_result {union {UnitsConverterFactory* ok; DataError err;}; bool is_ok;} icu4x_UnitsConverterFactory_create_mv1_result;
+icu4x_UnitsConverterFactory_create_mv1_result icu4x_UnitsConverterFactory_create_mv1(const DataProvider* provider);
 
-UnitsConverter* ICU4XUnitsConverterFactory_converter(const UnitsConverterFactory* self, const MeasureUnit* from, const MeasureUnit* to);
+UnitsConverter* icu4x_UnitsConverterFactory_converter_mv1(const UnitsConverterFactory* self, const MeasureUnit* from, const MeasureUnit* to);
 
-MeasureUnitParser* ICU4XUnitsConverterFactory_parser(const UnitsConverterFactory* self);
+MeasureUnitParser* icu4x_UnitsConverterFactory_parser_mv1(const UnitsConverterFactory* self);
 
 
-void ICU4XUnitsConverterFactory_destroy(UnitsConverterFactory* self);
+void icu4x_UnitsConverterFactory_destroy_mv1(UnitsConverterFactory* self);
 
 
 

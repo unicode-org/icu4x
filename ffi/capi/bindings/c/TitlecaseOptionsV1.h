@@ -15,7 +15,7 @@
 
 
 
-TitlecaseOptionsV1 ICU4XTitlecaseOptionsV1_default_options();
+TitlecaseOptionsV1 icu4x_TitlecaseOptionsV1_default_options_mv1();
 
 
 

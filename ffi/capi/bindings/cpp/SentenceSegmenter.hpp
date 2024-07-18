@@ -21,43 +21,43 @@ namespace diplomat {
 namespace capi {
     extern "C" {
     
-    typedef struct ICU4XSentenceSegmenter_create_result {union {diplomat::capi::SentenceSegmenter* ok; diplomat::capi::DataError err;}; bool is_ok;} ICU4XSentenceSegmenter_create_result;
-    ICU4XSentenceSegmenter_create_result ICU4XSentenceSegmenter_create(const diplomat::capi::DataProvider* provider);
+    typedef struct icu4x_SentenceSegmenter_create_mv1_result {union {diplomat::capi::SentenceSegmenter* ok; diplomat::capi::DataError err;}; bool is_ok;} icu4x_SentenceSegmenter_create_mv1_result;
+    icu4x_SentenceSegmenter_create_mv1_result icu4x_SentenceSegmenter_create_mv1(const diplomat::capi::DataProvider* provider);
     
-    diplomat::capi::SentenceBreakIteratorUtf8* ICU4XSentenceSegmenter_segment_utf8(const diplomat::capi::SentenceSegmenter* self, const char* input_data, size_t input_len);
+    diplomat::capi::SentenceBreakIteratorUtf8* icu4x_SentenceSegmenter_segment_utf8_mv1(const diplomat::capi::SentenceSegmenter* self, const char* input_data, size_t input_len);
     
-    diplomat::capi::SentenceBreakIteratorUtf16* ICU4XSentenceSegmenter_segment_utf16(const diplomat::capi::SentenceSegmenter* self, const char16_t* input_data, size_t input_len);
+    diplomat::capi::SentenceBreakIteratorUtf16* icu4x_SentenceSegmenter_segment_utf16_mv1(const diplomat::capi::SentenceSegmenter* self, const char16_t* input_data, size_t input_len);
     
-    diplomat::capi::SentenceBreakIteratorLatin1* ICU4XSentenceSegmenter_segment_latin1(const diplomat::capi::SentenceSegmenter* self, const uint8_t* input_data, size_t input_len);
+    diplomat::capi::SentenceBreakIteratorLatin1* icu4x_SentenceSegmenter_segment_latin1_mv1(const diplomat::capi::SentenceSegmenter* self, const uint8_t* input_data, size_t input_len);
     
     
-    void ICU4XSentenceSegmenter_destroy(SentenceSegmenter* self);
+    void icu4x_SentenceSegmenter_destroy_mv1(SentenceSegmenter* self);
     
     } // extern "C"
 } // namespace capi
 } // namespace
 
 inline diplomat::result<std::unique_ptr<SentenceSegmenter>, DataError> SentenceSegmenter::create(const DataProvider& provider) {
-  auto result = diplomat::capi::ICU4XSentenceSegmenter_create(provider.AsFFI());
+  auto result = diplomat::capi::icu4x_SentenceSegmenter_create_mv1(provider.AsFFI());
   return result.is_ok ? diplomat::result<std::unique_ptr<SentenceSegmenter>, DataError>(diplomat::Ok<std::unique_ptr<SentenceSegmenter>>(std::unique_ptr<SentenceSegmenter>(SentenceSegmenter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<SentenceSegmenter>, DataError>(diplomat::Err<DataError>(DataError::FromFFI(result.err)));
 }
 
 inline std::unique_ptr<SentenceBreakIteratorUtf8> SentenceSegmenter::segment_utf8(std::string_view input) const {
-  auto result = diplomat::capi::ICU4XSentenceSegmenter_segment_utf8(this->AsFFI(),
+  auto result = diplomat::capi::icu4x_SentenceSegmenter_segment_utf8_mv1(this->AsFFI(),
     input.data(),
     input.size());
   return std::unique_ptr<SentenceBreakIteratorUtf8>(SentenceBreakIteratorUtf8::FromFFI(result));
 }
 
 inline std::unique_ptr<SentenceBreakIteratorUtf16> SentenceSegmenter::segment_utf16(std::u16string_view input) const {
-  auto result = diplomat::capi::ICU4XSentenceSegmenter_segment_utf16(this->AsFFI(),
+  auto result = diplomat::capi::icu4x_SentenceSegmenter_segment_utf16_mv1(this->AsFFI(),
     input.data(),
     input.size());
   return std::unique_ptr<SentenceBreakIteratorUtf16>(SentenceBreakIteratorUtf16::FromFFI(result));
 }
 
 inline std::unique_ptr<SentenceBreakIteratorLatin1> SentenceSegmenter::segment_latin1(diplomat::span<const uint8_t> input) const {
-  auto result = diplomat::capi::ICU4XSentenceSegmenter_segment_latin1(this->AsFFI(),
+  auto result = diplomat::capi::icu4x_SentenceSegmenter_segment_latin1_mv1(this->AsFFI(),
     input.data(),
     input.size());
   return std::unique_ptr<SentenceBreakIteratorLatin1>(SentenceBreakIteratorLatin1::FromFFI(result));
@@ -80,7 +80,7 @@ inline SentenceSegmenter* SentenceSegmenter::FromFFI(diplomat::capi::SentenceSeg
 }
 
 inline void SentenceSegmenter::operator delete(void* ptr) {
-  diplomat::capi::ICU4XSentenceSegmenter_destroy(reinterpret_cast<diplomat::capi::SentenceSegmenter*>(ptr));
+  diplomat::capi::icu4x_SentenceSegmenter_destroy_mv1(reinterpret_cast<diplomat::capi::SentenceSegmenter*>(ptr));
 }
 
 

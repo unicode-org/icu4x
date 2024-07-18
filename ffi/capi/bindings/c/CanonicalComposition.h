@@ -17,13 +17,13 @@
 
 
 
-typedef struct ICU4XCanonicalComposition_create_result {union {CanonicalComposition* ok; DataError err;}; bool is_ok;} ICU4XCanonicalComposition_create_result;
-ICU4XCanonicalComposition_create_result ICU4XCanonicalComposition_create(const DataProvider* provider);
+typedef struct icu4x_CanonicalComposition_create_mv1_result {union {CanonicalComposition* ok; DataError err;}; bool is_ok;} icu4x_CanonicalComposition_create_mv1_result;
+icu4x_CanonicalComposition_create_mv1_result icu4x_CanonicalComposition_create_mv1(const DataProvider* provider);
 
-char32_t ICU4XCanonicalComposition_compose(const CanonicalComposition* self, char32_t starter, char32_t second);
+char32_t icu4x_CanonicalComposition_compose_mv1(const CanonicalComposition* self, char32_t starter, char32_t second);
 
 
-void ICU4XCanonicalComposition_destroy(CanonicalComposition* self);
+void icu4x_CanonicalComposition_destroy_mv1(CanonicalComposition* self);
 
 
 

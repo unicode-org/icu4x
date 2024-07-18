@@ -7,7 +7,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 */
 
 const SentenceBreakIteratorLatin1_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.ICU4XSentenceBreakIteratorLatin1_destroy(ptr);
+    wasm.icu4x_SentenceBreakIteratorLatin1_destroy_mv1(ptr);
 });
 export class SentenceBreakIteratorLatin1 {
     // Internal ptr reference:
@@ -37,7 +37,7 @@ export class SentenceBreakIteratorLatin1 {
 
 
     next() {
-        const result = wasm.ICU4XSentenceBreakIteratorLatin1_next(this.ffiValue);
+        const result = wasm.icu4x_SentenceBreakIteratorLatin1_next_mv1(this.ffiValue);
     
         try {
     

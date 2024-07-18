@@ -16,7 +16,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 */
 
 const UnitsConverterFactory_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.ICU4XUnitsConverterFactory_destroy(ptr);
+    wasm.icu4x_UnitsConverterFactory_destroy_mv1(ptr);
 });
 export class UnitsConverterFactory {
     // Internal ptr reference:
@@ -43,7 +43,7 @@ export class UnitsConverterFactory {
     static create(provider) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XUnitsConverterFactory_create(diplomat_receive_buffer, provider.ffiValue);
+        const result = wasm.icu4x_UnitsConverterFactory_create_mv1(diplomat_receive_buffer, provider.ffiValue);
     
         try {
     
@@ -60,7 +60,7 @@ export class UnitsConverterFactory {
     }
 
     converter(from, to) {
-        const result = wasm.ICU4XUnitsConverterFactory_converter(this.ffiValue, from.ffiValue, to.ffiValue);
+        const result = wasm.icu4x_UnitsConverterFactory_converter_mv1(this.ffiValue, from.ffiValue, to.ffiValue);
     
         try {
     
@@ -74,7 +74,7 @@ export class UnitsConverterFactory {
         
         // This lifetime edge depends on lifetimes 'a
         let aEdges = [this];
-        const result = wasm.ICU4XUnitsConverterFactory_parser(this.ffiValue);
+        const result = wasm.icu4x_UnitsConverterFactory_parser_mv1(this.ffiValue);
     
         try {
     

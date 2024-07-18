@@ -10,7 +10,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 */
 
 const Time_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.ICU4XTime_destroy(ptr);
+    wasm.icu4x_Time_destroy_mv1(ptr);
 });
 export class Time {
     // Internal ptr reference:
@@ -37,7 +37,7 @@ export class Time {
     static create(hour, minute, second, nanosecond) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XTime_create(diplomat_receive_buffer, hour, minute, second, nanosecond);
+        const result = wasm.icu4x_Time_create_mv1(diplomat_receive_buffer, hour, minute, second, nanosecond);
     
         try {
     
@@ -56,7 +56,7 @@ export class Time {
     static createMidnight() {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XTime_create_midnight(diplomat_receive_buffer);
+        const result = wasm.icu4x_Time_create_midnight_mv1(diplomat_receive_buffer);
     
         try {
     
@@ -73,7 +73,7 @@ export class Time {
     }
 
     get hour() {
-        const result = wasm.ICU4XTime_hour(this.ffiValue);
+        const result = wasm.icu4x_Time_hour_mv1(this.ffiValue);
     
         try {
     
@@ -84,7 +84,7 @@ export class Time {
     }
 
     get minute() {
-        const result = wasm.ICU4XTime_minute(this.ffiValue);
+        const result = wasm.icu4x_Time_minute_mv1(this.ffiValue);
     
         try {
     
@@ -95,7 +95,7 @@ export class Time {
     }
 
     get second() {
-        const result = wasm.ICU4XTime_second(this.ffiValue);
+        const result = wasm.icu4x_Time_second_mv1(this.ffiValue);
     
         try {
     
@@ -106,7 +106,7 @@ export class Time {
     }
 
     get nanosecond() {
-        const result = wasm.ICU4XTime_nanosecond(this.ffiValue);
+        const result = wasm.icu4x_Time_nanosecond_mv1(this.ffiValue);
     
         try {
     

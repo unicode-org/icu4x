@@ -19,16 +19,16 @@
 
 
 
-typedef struct ICU4XCalendar_create_for_locale_result {union {Calendar* ok; DataError err;}; bool is_ok;} ICU4XCalendar_create_for_locale_result;
-ICU4XCalendar_create_for_locale_result ICU4XCalendar_create_for_locale(const DataProvider* provider, const Locale* locale);
+typedef struct icu4x_Calendar_create_for_locale_mv1_result {union {Calendar* ok; DataError err;}; bool is_ok;} icu4x_Calendar_create_for_locale_mv1_result;
+icu4x_Calendar_create_for_locale_mv1_result icu4x_Calendar_create_for_locale_mv1(const DataProvider* provider, const Locale* locale);
 
-typedef struct ICU4XCalendar_create_for_kind_result {union {Calendar* ok; DataError err;}; bool is_ok;} ICU4XCalendar_create_for_kind_result;
-ICU4XCalendar_create_for_kind_result ICU4XCalendar_create_for_kind(const DataProvider* provider, AnyCalendarKind kind);
+typedef struct icu4x_Calendar_create_for_kind_mv1_result {union {Calendar* ok; DataError err;}; bool is_ok;} icu4x_Calendar_create_for_kind_mv1_result;
+icu4x_Calendar_create_for_kind_mv1_result icu4x_Calendar_create_for_kind_mv1(const DataProvider* provider, AnyCalendarKind kind);
 
-AnyCalendarKind ICU4XCalendar_kind(const Calendar* self);
+AnyCalendarKind icu4x_Calendar_kind_mv1(const Calendar* self);
 
 
-void ICU4XCalendar_destroy(Calendar* self);
+void icu4x_Calendar_destroy_mv1(Calendar* self);
 
 
 

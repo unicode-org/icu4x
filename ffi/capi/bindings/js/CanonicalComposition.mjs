@@ -13,7 +13,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 */
 
 const CanonicalComposition_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.ICU4XCanonicalComposition_destroy(ptr);
+    wasm.icu4x_CanonicalComposition_destroy_mv1(ptr);
 });
 export class CanonicalComposition {
     // Internal ptr reference:
@@ -40,7 +40,7 @@ export class CanonicalComposition {
     static create(provider) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XCanonicalComposition_create(diplomat_receive_buffer, provider.ffiValue);
+        const result = wasm.icu4x_CanonicalComposition_create_mv1(diplomat_receive_buffer, provider.ffiValue);
     
         try {
     
@@ -57,7 +57,7 @@ export class CanonicalComposition {
     }
 
     compose(starter, second) {
-        const result = wasm.ICU4XCanonicalComposition_compose(this.ffiValue, diplomatRuntime.extractCodePoint(starter, 'starter'), diplomatRuntime.extractCodePoint(second, 'second'));
+        const result = wasm.icu4x_CanonicalComposition_compose_mv1(this.ffiValue, diplomatRuntime.extractCodePoint(starter, 'starter'), diplomatRuntime.extractCodePoint(second, 'second'));
     
         try {
     

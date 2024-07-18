@@ -19,16 +19,16 @@
 
 
 
-typedef struct ICU4XLocaleCanonicalizer_create_result {union {LocaleCanonicalizer* ok; Error err;}; bool is_ok;} ICU4XLocaleCanonicalizer_create_result;
-ICU4XLocaleCanonicalizer_create_result ICU4XLocaleCanonicalizer_create(const DataProvider* provider);
+typedef struct icu4x_LocaleCanonicalizer_create_mv1_result {union {LocaleCanonicalizer* ok; Error err;}; bool is_ok;} icu4x_LocaleCanonicalizer_create_mv1_result;
+icu4x_LocaleCanonicalizer_create_mv1_result icu4x_LocaleCanonicalizer_create_mv1(const DataProvider* provider);
 
-typedef struct ICU4XLocaleCanonicalizer_create_extended_result {union {LocaleCanonicalizer* ok; Error err;}; bool is_ok;} ICU4XLocaleCanonicalizer_create_extended_result;
-ICU4XLocaleCanonicalizer_create_extended_result ICU4XLocaleCanonicalizer_create_extended(const DataProvider* provider);
+typedef struct icu4x_LocaleCanonicalizer_create_extended_mv1_result {union {LocaleCanonicalizer* ok; Error err;}; bool is_ok;} icu4x_LocaleCanonicalizer_create_extended_mv1_result;
+icu4x_LocaleCanonicalizer_create_extended_mv1_result icu4x_LocaleCanonicalizer_create_extended_mv1(const DataProvider* provider);
 
-TransformResult ICU4XLocaleCanonicalizer_canonicalize(const LocaleCanonicalizer* self, Locale* locale);
+TransformResult icu4x_LocaleCanonicalizer_canonicalize_mv1(const LocaleCanonicalizer* self, Locale* locale);
 
 
-void ICU4XLocaleCanonicalizer_destroy(LocaleCanonicalizer* self);
+void icu4x_LocaleCanonicalizer_destroy_mv1(LocaleCanonicalizer* self);
 
 
 

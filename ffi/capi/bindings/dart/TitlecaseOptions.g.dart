@@ -34,7 +34,7 @@ final class TitlecaseOptions {
 
   /// See the [Rust documentation for `default`](https://docs.rs/icu/latest/icu/casemap/titlecase/struct.TitlecaseOptions.html#method.default) for more information.
   factory TitlecaseOptions({LeadingAdjustment? leadingAdjustment, TrailingCase? trailingCase}) {
-    final result = _ICU4XTitlecaseOptionsV1_default_options();
+    final result = _icu4x_TitlecaseOptionsV1_default_options_mv1();
     final dart = TitlecaseOptions._fromFfi(result);
     if (leadingAdjustment != null) {
       dart.leadingAdjustment = leadingAdjustment;
@@ -58,7 +58,7 @@ final class TitlecaseOptions {
       ]);
 }
 
-@meta.ResourceIdentifier('ICU4XTitlecaseOptionsV1_default_options')
-@ffi.Native<_TitlecaseOptionsFfi Function()>(isLeaf: true, symbol: 'ICU4XTitlecaseOptionsV1_default_options')
+@meta.ResourceIdentifier('icu4x_TitlecaseOptionsV1_default_options_mv1')
+@ffi.Native<_TitlecaseOptionsFfi Function()>(isLeaf: true, symbol: 'icu4x_TitlecaseOptionsV1_default_options_mv1')
 // ignore: non_constant_identifier_names
-external _TitlecaseOptionsFfi _ICU4XTitlecaseOptionsV1_default_options();
+external _TitlecaseOptionsFfi _icu4x_TitlecaseOptionsV1_default_options_mv1();

@@ -22,22 +22,22 @@ namespace diplomat {
 namespace capi {
     extern "C" {
     
-    typedef struct ICU4XGregorianDateFormatter_create_with_length_result {union {diplomat::capi::GregorianDateFormatter* ok; diplomat::capi::Error err;}; bool is_ok;} ICU4XGregorianDateFormatter_create_with_length_result;
-    ICU4XGregorianDateFormatter_create_with_length_result ICU4XGregorianDateFormatter_create_with_length(const diplomat::capi::DataProvider* provider, const diplomat::capi::Locale* locale, diplomat::capi::DateLength length);
+    typedef struct icu4x_GregorianDateFormatter_create_with_length_mv1_result {union {diplomat::capi::GregorianDateFormatter* ok; diplomat::capi::Error err;}; bool is_ok;} icu4x_GregorianDateFormatter_create_with_length_mv1_result;
+    icu4x_GregorianDateFormatter_create_with_length_mv1_result icu4x_GregorianDateFormatter_create_with_length_mv1(const diplomat::capi::DataProvider* provider, const diplomat::capi::Locale* locale, diplomat::capi::DateLength length);
     
-    void ICU4XGregorianDateFormatter_format_iso_date(const diplomat::capi::GregorianDateFormatter* self, const diplomat::capi::IsoDate* value, diplomat::capi::DiplomatWrite* write);
+    void icu4x_GregorianDateFormatter_format_iso_date_mv1(const diplomat::capi::GregorianDateFormatter* self, const diplomat::capi::IsoDate* value, diplomat::capi::DiplomatWrite* write);
     
-    void ICU4XGregorianDateFormatter_format_iso_datetime(const diplomat::capi::GregorianDateFormatter* self, const diplomat::capi::IsoDateTime* value, diplomat::capi::DiplomatWrite* write);
+    void icu4x_GregorianDateFormatter_format_iso_datetime_mv1(const diplomat::capi::GregorianDateFormatter* self, const diplomat::capi::IsoDateTime* value, diplomat::capi::DiplomatWrite* write);
     
     
-    void ICU4XGregorianDateFormatter_destroy(GregorianDateFormatter* self);
+    void icu4x_GregorianDateFormatter_destroy_mv1(GregorianDateFormatter* self);
     
     } // extern "C"
 } // namespace capi
 } // namespace
 
 inline diplomat::result<std::unique_ptr<GregorianDateFormatter>, Error> GregorianDateFormatter::create_with_length(const DataProvider& provider, const Locale& locale, DateLength length) {
-  auto result = diplomat::capi::ICU4XGregorianDateFormatter_create_with_length(provider.AsFFI(),
+  auto result = diplomat::capi::icu4x_GregorianDateFormatter_create_with_length_mv1(provider.AsFFI(),
     locale.AsFFI(),
     length.AsFFI());
   return result.is_ok ? diplomat::result<std::unique_ptr<GregorianDateFormatter>, Error>(diplomat::Ok<std::unique_ptr<GregorianDateFormatter>>(std::unique_ptr<GregorianDateFormatter>(GregorianDateFormatter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<GregorianDateFormatter>, Error>(diplomat::Err<Error>(Error::FromFFI(result.err)));
@@ -46,7 +46,7 @@ inline diplomat::result<std::unique_ptr<GregorianDateFormatter>, Error> Gregoria
 inline std::string GregorianDateFormatter::format_iso_date(const IsoDate& value) const {
   std::string output;
   diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
-  diplomat::capi::ICU4XGregorianDateFormatter_format_iso_date(this->AsFFI(),
+  diplomat::capi::icu4x_GregorianDateFormatter_format_iso_date_mv1(this->AsFFI(),
     value.AsFFI(),
     &write);
   return output;
@@ -55,7 +55,7 @@ inline std::string GregorianDateFormatter::format_iso_date(const IsoDate& value)
 inline std::string GregorianDateFormatter::format_iso_datetime(const IsoDateTime& value) const {
   std::string output;
   diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
-  diplomat::capi::ICU4XGregorianDateFormatter_format_iso_datetime(this->AsFFI(),
+  diplomat::capi::icu4x_GregorianDateFormatter_format_iso_datetime_mv1(this->AsFFI(),
     value.AsFFI(),
     &write);
   return output;
@@ -78,7 +78,7 @@ inline GregorianDateFormatter* GregorianDateFormatter::FromFFI(diplomat::capi::G
 }
 
 inline void GregorianDateFormatter::operator delete(void* ptr) {
-  diplomat::capi::ICU4XGregorianDateFormatter_destroy(reinterpret_cast<diplomat::capi::GregorianDateFormatter*>(ptr));
+  diplomat::capi::icu4x_GregorianDateFormatter_destroy_mv1(reinterpret_cast<diplomat::capi::GregorianDateFormatter*>(ptr));
 }
 
 

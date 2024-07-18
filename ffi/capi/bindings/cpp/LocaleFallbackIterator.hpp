@@ -17,17 +17,17 @@ namespace diplomat {
 namespace capi {
     extern "C" {
     
-    diplomat::capi::Locale* ICU4XLocaleFallbackIterator_next(diplomat::capi::LocaleFallbackIterator* self);
+    diplomat::capi::Locale* icu4x_LocaleFallbackIterator_next_mv1(diplomat::capi::LocaleFallbackIterator* self);
     
     
-    void ICU4XLocaleFallbackIterator_destroy(LocaleFallbackIterator* self);
+    void icu4x_LocaleFallbackIterator_destroy_mv1(LocaleFallbackIterator* self);
     
     } // extern "C"
 } // namespace capi
 } // namespace
 
 inline std::unique_ptr<Locale> LocaleFallbackIterator::next() {
-  auto result = diplomat::capi::ICU4XLocaleFallbackIterator_next(this->AsFFI());
+  auto result = diplomat::capi::icu4x_LocaleFallbackIterator_next_mv1(this->AsFFI());
   return std::unique_ptr<Locale>(Locale::FromFFI(result));
 }
 
@@ -48,7 +48,7 @@ inline LocaleFallbackIterator* LocaleFallbackIterator::FromFFI(diplomat::capi::L
 }
 
 inline void LocaleFallbackIterator::operator delete(void* ptr) {
-  diplomat::capi::ICU4XLocaleFallbackIterator_destroy(reinterpret_cast<diplomat::capi::LocaleFallbackIterator*>(ptr));
+  diplomat::capi::icu4x_LocaleFallbackIterator_destroy_mv1(reinterpret_cast<diplomat::capi::LocaleFallbackIterator*>(ptr));
 }
 
 

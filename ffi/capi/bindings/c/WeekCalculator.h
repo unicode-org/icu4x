@@ -20,19 +20,19 @@
 
 
 
-typedef struct ICU4XWeekCalculator_create_result {union {WeekCalculator* ok; DataError err;}; bool is_ok;} ICU4XWeekCalculator_create_result;
-ICU4XWeekCalculator_create_result ICU4XWeekCalculator_create(const DataProvider* provider, const Locale* locale);
+typedef struct icu4x_WeekCalculator_create_mv1_result {union {WeekCalculator* ok; DataError err;}; bool is_ok;} icu4x_WeekCalculator_create_mv1_result;
+icu4x_WeekCalculator_create_mv1_result icu4x_WeekCalculator_create_mv1(const DataProvider* provider, const Locale* locale);
 
-WeekCalculator* ICU4XWeekCalculator_create_from_first_day_of_week_and_min_week_days(IsoWeekday first_weekday, uint8_t min_week_days);
+WeekCalculator* icu4x_WeekCalculator_create_from_first_day_of_week_and_min_week_days_mv1(IsoWeekday first_weekday, uint8_t min_week_days);
 
-IsoWeekday ICU4XWeekCalculator_first_weekday(const WeekCalculator* self);
+IsoWeekday icu4x_WeekCalculator_first_weekday_mv1(const WeekCalculator* self);
 
-uint8_t ICU4XWeekCalculator_min_week_days(const WeekCalculator* self);
+uint8_t icu4x_WeekCalculator_min_week_days_mv1(const WeekCalculator* self);
 
-WeekendContainsDay ICU4XWeekCalculator_weekend(const WeekCalculator* self);
+WeekendContainsDay icu4x_WeekCalculator_weekend_mv1(const WeekCalculator* self);
 
 
-void ICU4XWeekCalculator_destroy(WeekCalculator* self);
+void icu4x_WeekCalculator_destroy_mv1(WeekCalculator* self);
 
 
 

@@ -12,7 +12,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 */
 
 const CaseMapper_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.ICU4XCaseMapper_destroy(ptr);
+    wasm.icu4x_CaseMapper_destroy_mv1(ptr);
 });
 export class CaseMapper {
     // Internal ptr reference:
@@ -39,7 +39,7 @@ export class CaseMapper {
     static create(provider) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XCaseMapper_create(diplomat_receive_buffer, provider.ffiValue);
+        const result = wasm.icu4x_CaseMapper_create_mv1(diplomat_receive_buffer, provider.ffiValue);
     
         try {
     
@@ -60,7 +60,7 @@ export class CaseMapper {
         const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
         
         const write = wasm.diplomat_buffer_write_create(0);
-        wasm.ICU4XCaseMapper_lowercase(this.ffiValue, sSlice.ptr, sSlice.size, locale.ffiValue, write);
+        wasm.icu4x_CaseMapper_lowercase_mv1(this.ffiValue, sSlice.ptr, sSlice.size, locale.ffiValue, write);
     
         try {
     
@@ -79,7 +79,7 @@ export class CaseMapper {
         const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
         
         const write = wasm.diplomat_buffer_write_create(0);
-        wasm.ICU4XCaseMapper_uppercase(this.ffiValue, sSlice.ptr, sSlice.size, locale.ffiValue, write);
+        wasm.icu4x_CaseMapper_uppercase_mv1(this.ffiValue, sSlice.ptr, sSlice.size, locale.ffiValue, write);
     
         try {
     
@@ -100,7 +100,7 @@ export class CaseMapper {
         let slice_cleanup_callbacks = [];
         
         const write = wasm.diplomat_buffer_write_create(0);
-        wasm.ICU4XCaseMapper_titlecase_segment_with_only_case_data_v1(this.ffiValue, sSlice.ptr, sSlice.size, locale.ffiValue, ...options._intoFFI(slice_cleanup_callbacks, {}), write);
+        wasm.icu4x_CaseMapper_titlecase_segment_with_only_case_data_v1_mv1(this.ffiValue, sSlice.ptr, sSlice.size, locale.ffiValue, ...options._intoFFI(slice_cleanup_callbacks, {}), write);
     
         try {
     
@@ -123,7 +123,7 @@ export class CaseMapper {
         const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
         
         const write = wasm.diplomat_buffer_write_create(0);
-        wasm.ICU4XCaseMapper_fold(this.ffiValue, sSlice.ptr, sSlice.size, write);
+        wasm.icu4x_CaseMapper_fold_mv1(this.ffiValue, sSlice.ptr, sSlice.size, write);
     
         try {
     
@@ -142,7 +142,7 @@ export class CaseMapper {
         const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
         
         const write = wasm.diplomat_buffer_write_create(0);
-        wasm.ICU4XCaseMapper_fold_turkic(this.ffiValue, sSlice.ptr, sSlice.size, write);
+        wasm.icu4x_CaseMapper_fold_turkic_mv1(this.ffiValue, sSlice.ptr, sSlice.size, write);
     
         try {
     
@@ -157,7 +157,7 @@ export class CaseMapper {
     }
 
     addCaseClosureTo(c, builder) {
-        wasm.ICU4XCaseMapper_add_case_closure_to(this.ffiValue, diplomatRuntime.extractCodePoint(c, 'c'), builder.ffiValue);
+        wasm.icu4x_CaseMapper_add_case_closure_to_mv1(this.ffiValue, diplomatRuntime.extractCodePoint(c, 'c'), builder.ffiValue);
     
         try {
     
@@ -167,7 +167,7 @@ export class CaseMapper {
     }
 
     simpleLowercase(ch) {
-        const result = wasm.ICU4XCaseMapper_simple_lowercase(this.ffiValue, diplomatRuntime.extractCodePoint(ch, 'ch'));
+        const result = wasm.icu4x_CaseMapper_simple_lowercase_mv1(this.ffiValue, diplomatRuntime.extractCodePoint(ch, 'ch'));
     
         try {
     
@@ -178,7 +178,7 @@ export class CaseMapper {
     }
 
     simpleUppercase(ch) {
-        const result = wasm.ICU4XCaseMapper_simple_uppercase(this.ffiValue, diplomatRuntime.extractCodePoint(ch, 'ch'));
+        const result = wasm.icu4x_CaseMapper_simple_uppercase_mv1(this.ffiValue, diplomatRuntime.extractCodePoint(ch, 'ch'));
     
         try {
     
@@ -189,7 +189,7 @@ export class CaseMapper {
     }
 
     simpleTitlecase(ch) {
-        const result = wasm.ICU4XCaseMapper_simple_titlecase(this.ffiValue, diplomatRuntime.extractCodePoint(ch, 'ch'));
+        const result = wasm.icu4x_CaseMapper_simple_titlecase_mv1(this.ffiValue, diplomatRuntime.extractCodePoint(ch, 'ch'));
     
         try {
     
@@ -200,7 +200,7 @@ export class CaseMapper {
     }
 
     simpleFold(ch) {
-        const result = wasm.ICU4XCaseMapper_simple_fold(this.ffiValue, diplomatRuntime.extractCodePoint(ch, 'ch'));
+        const result = wasm.icu4x_CaseMapper_simple_fold_mv1(this.ffiValue, diplomatRuntime.extractCodePoint(ch, 'ch'));
     
         try {
     
@@ -211,7 +211,7 @@ export class CaseMapper {
     }
 
     simpleFoldTurkic(ch) {
-        const result = wasm.ICU4XCaseMapper_simple_fold_turkic(this.ffiValue, diplomatRuntime.extractCodePoint(ch, 'ch'));
+        const result = wasm.icu4x_CaseMapper_simple_fold_turkic_mv1(this.ffiValue, diplomatRuntime.extractCodePoint(ch, 'ch'));
     
         try {
     

@@ -15,7 +15,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 */
 
 const TimeZoneIdMapperWithFastCanonicalization_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.ICU4XTimeZoneIdMapperWithFastCanonicalization_destroy(ptr);
+    wasm.icu4x_TimeZoneIdMapperWithFastCanonicalization_destroy_mv1(ptr);
 });
 export class TimeZoneIdMapperWithFastCanonicalization {
     // Internal ptr reference:
@@ -42,7 +42,7 @@ export class TimeZoneIdMapperWithFastCanonicalization {
     static create(provider) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XTimeZoneIdMapperWithFastCanonicalization_create(diplomat_receive_buffer, provider.ffiValue);
+        const result = wasm.icu4x_TimeZoneIdMapperWithFastCanonicalization_create_mv1(diplomat_receive_buffer, provider.ffiValue);
     
         try {
     
@@ -65,7 +65,7 @@ export class TimeZoneIdMapperWithFastCanonicalization {
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
         
         const write = wasm.diplomat_buffer_write_create(0);
-        const result = wasm.ICU4XTimeZoneIdMapperWithFastCanonicalization_canonicalize_iana(diplomat_receive_buffer, this.ffiValue, valueSlice.ptr, valueSlice.size, write);
+        const result = wasm.icu4x_TimeZoneIdMapperWithFastCanonicalization_canonicalize_iana_mv1(diplomat_receive_buffer, this.ffiValue, valueSlice.ptr, valueSlice.size, write);
     
         try {
     
@@ -92,7 +92,7 @@ export class TimeZoneIdMapperWithFastCanonicalization {
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
         
         const write = wasm.diplomat_buffer_write_create(0);
-        const result = wasm.ICU4XTimeZoneIdMapperWithFastCanonicalization_canonical_iana_from_bcp47(diplomat_receive_buffer, this.ffiValue, valueSlice.ptr, valueSlice.size, write);
+        const result = wasm.icu4x_TimeZoneIdMapperWithFastCanonicalization_canonical_iana_from_bcp47_mv1(diplomat_receive_buffer, this.ffiValue, valueSlice.ptr, valueSlice.size, write);
     
         try {
     

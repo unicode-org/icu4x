@@ -18,25 +18,25 @@ namespace diplomat {
 namespace capi {
     extern "C" {
     
-    typedef struct ICU4XCanonicalComposition_create_result {union {diplomat::capi::CanonicalComposition* ok; diplomat::capi::DataError err;}; bool is_ok;} ICU4XCanonicalComposition_create_result;
-    ICU4XCanonicalComposition_create_result ICU4XCanonicalComposition_create(const diplomat::capi::DataProvider* provider);
+    typedef struct icu4x_CanonicalComposition_create_mv1_result {union {diplomat::capi::CanonicalComposition* ok; diplomat::capi::DataError err;}; bool is_ok;} icu4x_CanonicalComposition_create_mv1_result;
+    icu4x_CanonicalComposition_create_mv1_result icu4x_CanonicalComposition_create_mv1(const diplomat::capi::DataProvider* provider);
     
-    char32_t ICU4XCanonicalComposition_compose(const diplomat::capi::CanonicalComposition* self, char32_t starter, char32_t second);
+    char32_t icu4x_CanonicalComposition_compose_mv1(const diplomat::capi::CanonicalComposition* self, char32_t starter, char32_t second);
     
     
-    void ICU4XCanonicalComposition_destroy(CanonicalComposition* self);
+    void icu4x_CanonicalComposition_destroy_mv1(CanonicalComposition* self);
     
     } // extern "C"
 } // namespace capi
 } // namespace
 
 inline diplomat::result<std::unique_ptr<CanonicalComposition>, DataError> CanonicalComposition::create(const DataProvider& provider) {
-  auto result = diplomat::capi::ICU4XCanonicalComposition_create(provider.AsFFI());
+  auto result = diplomat::capi::icu4x_CanonicalComposition_create_mv1(provider.AsFFI());
   return result.is_ok ? diplomat::result<std::unique_ptr<CanonicalComposition>, DataError>(diplomat::Ok<std::unique_ptr<CanonicalComposition>>(std::unique_ptr<CanonicalComposition>(CanonicalComposition::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<CanonicalComposition>, DataError>(diplomat::Err<DataError>(DataError::FromFFI(result.err)));
 }
 
 inline char32_t CanonicalComposition::compose(char32_t starter, char32_t second) const {
-  auto result = diplomat::capi::ICU4XCanonicalComposition_compose(this->AsFFI(),
+  auto result = diplomat::capi::icu4x_CanonicalComposition_compose_mv1(this->AsFFI(),
     starter,
     second);
   return result;
@@ -59,7 +59,7 @@ inline CanonicalComposition* CanonicalComposition::FromFFI(diplomat::capi::Canon
 }
 
 inline void CanonicalComposition::operator delete(void* ptr) {
-  diplomat::capi::ICU4XCanonicalComposition_destroy(reinterpret_cast<diplomat::capi::CanonicalComposition*>(ptr));
+  diplomat::capi::icu4x_CanonicalComposition_destroy_mv1(reinterpret_cast<diplomat::capi::CanonicalComposition*>(ptr));
 }
 
 

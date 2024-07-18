@@ -16,17 +16,17 @@ namespace diplomat {
 namespace capi {
     extern "C" {
     
-    int32_t ICU4XSentenceBreakIteratorUtf16_next(diplomat::capi::SentenceBreakIteratorUtf16* self);
+    int32_t icu4x_SentenceBreakIteratorUtf16_next_mv1(diplomat::capi::SentenceBreakIteratorUtf16* self);
     
     
-    void ICU4XSentenceBreakIteratorUtf16_destroy(SentenceBreakIteratorUtf16* self);
+    void icu4x_SentenceBreakIteratorUtf16_destroy_mv1(SentenceBreakIteratorUtf16* self);
     
     } // extern "C"
 } // namespace capi
 } // namespace
 
 inline int32_t SentenceBreakIteratorUtf16::next() {
-  auto result = diplomat::capi::ICU4XSentenceBreakIteratorUtf16_next(this->AsFFI());
+  auto result = diplomat::capi::icu4x_SentenceBreakIteratorUtf16_next_mv1(this->AsFFI());
   return result;
 }
 
@@ -47,7 +47,7 @@ inline SentenceBreakIteratorUtf16* SentenceBreakIteratorUtf16::FromFFI(diplomat:
 }
 
 inline void SentenceBreakIteratorUtf16::operator delete(void* ptr) {
-  diplomat::capi::ICU4XSentenceBreakIteratorUtf16_destroy(reinterpret_cast<diplomat::capi::SentenceBreakIteratorUtf16*>(ptr));
+  diplomat::capi::icu4x_SentenceBreakIteratorUtf16_destroy_mv1(reinterpret_cast<diplomat::capi::SentenceBreakIteratorUtf16*>(ptr));
 }
 
 

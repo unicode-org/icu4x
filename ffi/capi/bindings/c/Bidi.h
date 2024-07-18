@@ -19,23 +19,23 @@
 
 
 
-typedef struct ICU4XBidi_create_result {union {Bidi* ok; DataError err;}; bool is_ok;} ICU4XBidi_create_result;
-ICU4XBidi_create_result ICU4XBidi_create(const DataProvider* provider);
+typedef struct icu4x_Bidi_create_mv1_result {union {Bidi* ok; DataError err;}; bool is_ok;} icu4x_Bidi_create_mv1_result;
+icu4x_Bidi_create_mv1_result icu4x_Bidi_create_mv1(const DataProvider* provider);
 
-BidiInfo* ICU4XBidi_for_text(const Bidi* self, const char* text_data, size_t text_len, uint8_t default_level);
+BidiInfo* icu4x_Bidi_for_text_mv1(const Bidi* self, const char* text_data, size_t text_len, uint8_t default_level);
 
-ReorderedIndexMap* ICU4XBidi_reorder_visual(const Bidi* self, const uint8_t* levels_data, size_t levels_len);
+ReorderedIndexMap* icu4x_Bidi_reorder_visual_mv1(const Bidi* self, const uint8_t* levels_data, size_t levels_len);
 
-bool ICU4XBidi_level_is_rtl(uint8_t level);
+bool icu4x_Bidi_level_is_rtl_mv1(uint8_t level);
 
-bool ICU4XBidi_level_is_ltr(uint8_t level);
+bool icu4x_Bidi_level_is_ltr_mv1(uint8_t level);
 
-uint8_t ICU4XBidi_level_rtl();
+uint8_t icu4x_Bidi_level_rtl_mv1();
 
-uint8_t ICU4XBidi_level_ltr();
+uint8_t icu4x_Bidi_level_ltr_mv1();
 
 
-void ICU4XBidi_destroy(Bidi* self);
+void icu4x_Bidi_destroy_mv1(Bidi* self);
 
 
 

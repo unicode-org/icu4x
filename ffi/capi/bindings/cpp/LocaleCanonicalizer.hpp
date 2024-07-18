@@ -20,33 +20,33 @@ namespace diplomat {
 namespace capi {
     extern "C" {
     
-    typedef struct ICU4XLocaleCanonicalizer_create_result {union {diplomat::capi::LocaleCanonicalizer* ok; diplomat::capi::Error err;}; bool is_ok;} ICU4XLocaleCanonicalizer_create_result;
-    ICU4XLocaleCanonicalizer_create_result ICU4XLocaleCanonicalizer_create(const diplomat::capi::DataProvider* provider);
+    typedef struct icu4x_LocaleCanonicalizer_create_mv1_result {union {diplomat::capi::LocaleCanonicalizer* ok; diplomat::capi::Error err;}; bool is_ok;} icu4x_LocaleCanonicalizer_create_mv1_result;
+    icu4x_LocaleCanonicalizer_create_mv1_result icu4x_LocaleCanonicalizer_create_mv1(const diplomat::capi::DataProvider* provider);
     
-    typedef struct ICU4XLocaleCanonicalizer_create_extended_result {union {diplomat::capi::LocaleCanonicalizer* ok; diplomat::capi::Error err;}; bool is_ok;} ICU4XLocaleCanonicalizer_create_extended_result;
-    ICU4XLocaleCanonicalizer_create_extended_result ICU4XLocaleCanonicalizer_create_extended(const diplomat::capi::DataProvider* provider);
+    typedef struct icu4x_LocaleCanonicalizer_create_extended_mv1_result {union {diplomat::capi::LocaleCanonicalizer* ok; diplomat::capi::Error err;}; bool is_ok;} icu4x_LocaleCanonicalizer_create_extended_mv1_result;
+    icu4x_LocaleCanonicalizer_create_extended_mv1_result icu4x_LocaleCanonicalizer_create_extended_mv1(const diplomat::capi::DataProvider* provider);
     
-    diplomat::capi::TransformResult ICU4XLocaleCanonicalizer_canonicalize(const diplomat::capi::LocaleCanonicalizer* self, diplomat::capi::Locale* locale);
+    diplomat::capi::TransformResult icu4x_LocaleCanonicalizer_canonicalize_mv1(const diplomat::capi::LocaleCanonicalizer* self, diplomat::capi::Locale* locale);
     
     
-    void ICU4XLocaleCanonicalizer_destroy(LocaleCanonicalizer* self);
+    void icu4x_LocaleCanonicalizer_destroy_mv1(LocaleCanonicalizer* self);
     
     } // extern "C"
 } // namespace capi
 } // namespace
 
 inline diplomat::result<std::unique_ptr<LocaleCanonicalizer>, Error> LocaleCanonicalizer::create(const DataProvider& provider) {
-  auto result = diplomat::capi::ICU4XLocaleCanonicalizer_create(provider.AsFFI());
+  auto result = diplomat::capi::icu4x_LocaleCanonicalizer_create_mv1(provider.AsFFI());
   return result.is_ok ? diplomat::result<std::unique_ptr<LocaleCanonicalizer>, Error>(diplomat::Ok<std::unique_ptr<LocaleCanonicalizer>>(std::unique_ptr<LocaleCanonicalizer>(LocaleCanonicalizer::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<LocaleCanonicalizer>, Error>(diplomat::Err<Error>(Error::FromFFI(result.err)));
 }
 
 inline diplomat::result<std::unique_ptr<LocaleCanonicalizer>, Error> LocaleCanonicalizer::create_extended(const DataProvider& provider) {
-  auto result = diplomat::capi::ICU4XLocaleCanonicalizer_create_extended(provider.AsFFI());
+  auto result = diplomat::capi::icu4x_LocaleCanonicalizer_create_extended_mv1(provider.AsFFI());
   return result.is_ok ? diplomat::result<std::unique_ptr<LocaleCanonicalizer>, Error>(diplomat::Ok<std::unique_ptr<LocaleCanonicalizer>>(std::unique_ptr<LocaleCanonicalizer>(LocaleCanonicalizer::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<LocaleCanonicalizer>, Error>(diplomat::Err<Error>(Error::FromFFI(result.err)));
 }
 
 inline TransformResult LocaleCanonicalizer::canonicalize(Locale& locale) const {
-  auto result = diplomat::capi::ICU4XLocaleCanonicalizer_canonicalize(this->AsFFI(),
+  auto result = diplomat::capi::icu4x_LocaleCanonicalizer_canonicalize_mv1(this->AsFFI(),
     locale.AsFFI());
   return TransformResult::FromFFI(result);
 }
@@ -68,7 +68,7 @@ inline LocaleCanonicalizer* LocaleCanonicalizer::FromFFI(diplomat::capi::LocaleC
 }
 
 inline void LocaleCanonicalizer::operator delete(void* ptr) {
-  diplomat::capi::ICU4XLocaleCanonicalizer_destroy(reinterpret_cast<diplomat::capi::LocaleCanonicalizer*>(ptr));
+  diplomat::capi::icu4x_LocaleCanonicalizer_destroy_mv1(reinterpret_cast<diplomat::capi::LocaleCanonicalizer*>(ptr));
 }
 
 

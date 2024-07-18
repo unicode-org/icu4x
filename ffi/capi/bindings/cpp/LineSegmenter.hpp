@@ -22,86 +22,86 @@ namespace diplomat {
 namespace capi {
     extern "C" {
     
-    typedef struct ICU4XLineSegmenter_create_auto_result {union {diplomat::capi::LineSegmenter* ok; diplomat::capi::DataError err;}; bool is_ok;} ICU4XLineSegmenter_create_auto_result;
-    ICU4XLineSegmenter_create_auto_result ICU4XLineSegmenter_create_auto(const diplomat::capi::DataProvider* provider);
+    typedef struct icu4x_LineSegmenter_create_auto_mv1_result {union {diplomat::capi::LineSegmenter* ok; diplomat::capi::DataError err;}; bool is_ok;} icu4x_LineSegmenter_create_auto_mv1_result;
+    icu4x_LineSegmenter_create_auto_mv1_result icu4x_LineSegmenter_create_auto_mv1(const diplomat::capi::DataProvider* provider);
     
-    typedef struct ICU4XLineSegmenter_create_lstm_result {union {diplomat::capi::LineSegmenter* ok; diplomat::capi::DataError err;}; bool is_ok;} ICU4XLineSegmenter_create_lstm_result;
-    ICU4XLineSegmenter_create_lstm_result ICU4XLineSegmenter_create_lstm(const diplomat::capi::DataProvider* provider);
+    typedef struct icu4x_LineSegmenter_create_lstm_mv1_result {union {diplomat::capi::LineSegmenter* ok; diplomat::capi::DataError err;}; bool is_ok;} icu4x_LineSegmenter_create_lstm_mv1_result;
+    icu4x_LineSegmenter_create_lstm_mv1_result icu4x_LineSegmenter_create_lstm_mv1(const diplomat::capi::DataProvider* provider);
     
-    typedef struct ICU4XLineSegmenter_create_dictionary_result {union {diplomat::capi::LineSegmenter* ok; diplomat::capi::DataError err;}; bool is_ok;} ICU4XLineSegmenter_create_dictionary_result;
-    ICU4XLineSegmenter_create_dictionary_result ICU4XLineSegmenter_create_dictionary(const diplomat::capi::DataProvider* provider);
+    typedef struct icu4x_LineSegmenter_create_dictionary_mv1_result {union {diplomat::capi::LineSegmenter* ok; diplomat::capi::DataError err;}; bool is_ok;} icu4x_LineSegmenter_create_dictionary_mv1_result;
+    icu4x_LineSegmenter_create_dictionary_mv1_result icu4x_LineSegmenter_create_dictionary_mv1(const diplomat::capi::DataProvider* provider);
     
-    typedef struct ICU4XLineSegmenter_create_auto_with_options_v1_result {union {diplomat::capi::LineSegmenter* ok; diplomat::capi::DataError err;}; bool is_ok;} ICU4XLineSegmenter_create_auto_with_options_v1_result;
-    ICU4XLineSegmenter_create_auto_with_options_v1_result ICU4XLineSegmenter_create_auto_with_options_v1(const diplomat::capi::DataProvider* provider, diplomat::capi::LineBreakOptionsV1 options);
+    typedef struct icu4x_LineSegmenter_create_auto_with_options_v1_mv1_result {union {diplomat::capi::LineSegmenter* ok; diplomat::capi::DataError err;}; bool is_ok;} icu4x_LineSegmenter_create_auto_with_options_v1_mv1_result;
+    icu4x_LineSegmenter_create_auto_with_options_v1_mv1_result icu4x_LineSegmenter_create_auto_with_options_v1_mv1(const diplomat::capi::DataProvider* provider, diplomat::capi::LineBreakOptionsV1 options);
     
-    typedef struct ICU4XLineSegmenter_create_lstm_with_options_v1_result {union {diplomat::capi::LineSegmenter* ok; diplomat::capi::DataError err;}; bool is_ok;} ICU4XLineSegmenter_create_lstm_with_options_v1_result;
-    ICU4XLineSegmenter_create_lstm_with_options_v1_result ICU4XLineSegmenter_create_lstm_with_options_v1(const diplomat::capi::DataProvider* provider, diplomat::capi::LineBreakOptionsV1 options);
+    typedef struct icu4x_LineSegmenter_create_lstm_with_options_v1_mv1_result {union {diplomat::capi::LineSegmenter* ok; diplomat::capi::DataError err;}; bool is_ok;} icu4x_LineSegmenter_create_lstm_with_options_v1_mv1_result;
+    icu4x_LineSegmenter_create_lstm_with_options_v1_mv1_result icu4x_LineSegmenter_create_lstm_with_options_v1_mv1(const diplomat::capi::DataProvider* provider, diplomat::capi::LineBreakOptionsV1 options);
     
-    typedef struct ICU4XLineSegmenter_create_dictionary_with_options_v1_result {union {diplomat::capi::LineSegmenter* ok; diplomat::capi::DataError err;}; bool is_ok;} ICU4XLineSegmenter_create_dictionary_with_options_v1_result;
-    ICU4XLineSegmenter_create_dictionary_with_options_v1_result ICU4XLineSegmenter_create_dictionary_with_options_v1(const diplomat::capi::DataProvider* provider, diplomat::capi::LineBreakOptionsV1 options);
+    typedef struct icu4x_LineSegmenter_create_dictionary_with_options_v1_mv1_result {union {diplomat::capi::LineSegmenter* ok; diplomat::capi::DataError err;}; bool is_ok;} icu4x_LineSegmenter_create_dictionary_with_options_v1_mv1_result;
+    icu4x_LineSegmenter_create_dictionary_with_options_v1_mv1_result icu4x_LineSegmenter_create_dictionary_with_options_v1_mv1(const diplomat::capi::DataProvider* provider, diplomat::capi::LineBreakOptionsV1 options);
     
-    diplomat::capi::LineBreakIteratorUtf8* ICU4XLineSegmenter_segment_utf8(const diplomat::capi::LineSegmenter* self, const char* input_data, size_t input_len);
+    diplomat::capi::LineBreakIteratorUtf8* icu4x_LineSegmenter_segment_utf8_mv1(const diplomat::capi::LineSegmenter* self, const char* input_data, size_t input_len);
     
-    diplomat::capi::LineBreakIteratorUtf16* ICU4XLineSegmenter_segment_utf16(const diplomat::capi::LineSegmenter* self, const char16_t* input_data, size_t input_len);
+    diplomat::capi::LineBreakIteratorUtf16* icu4x_LineSegmenter_segment_utf16_mv1(const diplomat::capi::LineSegmenter* self, const char16_t* input_data, size_t input_len);
     
-    diplomat::capi::LineBreakIteratorLatin1* ICU4XLineSegmenter_segment_latin1(const diplomat::capi::LineSegmenter* self, const uint8_t* input_data, size_t input_len);
+    diplomat::capi::LineBreakIteratorLatin1* icu4x_LineSegmenter_segment_latin1_mv1(const diplomat::capi::LineSegmenter* self, const uint8_t* input_data, size_t input_len);
     
     
-    void ICU4XLineSegmenter_destroy(LineSegmenter* self);
+    void icu4x_LineSegmenter_destroy_mv1(LineSegmenter* self);
     
     } // extern "C"
 } // namespace capi
 } // namespace
 
 inline diplomat::result<std::unique_ptr<LineSegmenter>, DataError> LineSegmenter::create_auto(const DataProvider& provider) {
-  auto result = diplomat::capi::ICU4XLineSegmenter_create_auto(provider.AsFFI());
+  auto result = diplomat::capi::icu4x_LineSegmenter_create_auto_mv1(provider.AsFFI());
   return result.is_ok ? diplomat::result<std::unique_ptr<LineSegmenter>, DataError>(diplomat::Ok<std::unique_ptr<LineSegmenter>>(std::unique_ptr<LineSegmenter>(LineSegmenter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<LineSegmenter>, DataError>(diplomat::Err<DataError>(DataError::FromFFI(result.err)));
 }
 
 inline diplomat::result<std::unique_ptr<LineSegmenter>, DataError> LineSegmenter::create_lstm(const DataProvider& provider) {
-  auto result = diplomat::capi::ICU4XLineSegmenter_create_lstm(provider.AsFFI());
+  auto result = diplomat::capi::icu4x_LineSegmenter_create_lstm_mv1(provider.AsFFI());
   return result.is_ok ? diplomat::result<std::unique_ptr<LineSegmenter>, DataError>(diplomat::Ok<std::unique_ptr<LineSegmenter>>(std::unique_ptr<LineSegmenter>(LineSegmenter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<LineSegmenter>, DataError>(diplomat::Err<DataError>(DataError::FromFFI(result.err)));
 }
 
 inline diplomat::result<std::unique_ptr<LineSegmenter>, DataError> LineSegmenter::create_dictionary(const DataProvider& provider) {
-  auto result = diplomat::capi::ICU4XLineSegmenter_create_dictionary(provider.AsFFI());
+  auto result = diplomat::capi::icu4x_LineSegmenter_create_dictionary_mv1(provider.AsFFI());
   return result.is_ok ? diplomat::result<std::unique_ptr<LineSegmenter>, DataError>(diplomat::Ok<std::unique_ptr<LineSegmenter>>(std::unique_ptr<LineSegmenter>(LineSegmenter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<LineSegmenter>, DataError>(diplomat::Err<DataError>(DataError::FromFFI(result.err)));
 }
 
 inline diplomat::result<std::unique_ptr<LineSegmenter>, DataError> LineSegmenter::create_auto_with_options_v1(const DataProvider& provider, LineBreakOptionsV1 options) {
-  auto result = diplomat::capi::ICU4XLineSegmenter_create_auto_with_options_v1(provider.AsFFI(),
+  auto result = diplomat::capi::icu4x_LineSegmenter_create_auto_with_options_v1_mv1(provider.AsFFI(),
     options.AsFFI());
   return result.is_ok ? diplomat::result<std::unique_ptr<LineSegmenter>, DataError>(diplomat::Ok<std::unique_ptr<LineSegmenter>>(std::unique_ptr<LineSegmenter>(LineSegmenter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<LineSegmenter>, DataError>(diplomat::Err<DataError>(DataError::FromFFI(result.err)));
 }
 
 inline diplomat::result<std::unique_ptr<LineSegmenter>, DataError> LineSegmenter::create_lstm_with_options_v1(const DataProvider& provider, LineBreakOptionsV1 options) {
-  auto result = diplomat::capi::ICU4XLineSegmenter_create_lstm_with_options_v1(provider.AsFFI(),
+  auto result = diplomat::capi::icu4x_LineSegmenter_create_lstm_with_options_v1_mv1(provider.AsFFI(),
     options.AsFFI());
   return result.is_ok ? diplomat::result<std::unique_ptr<LineSegmenter>, DataError>(diplomat::Ok<std::unique_ptr<LineSegmenter>>(std::unique_ptr<LineSegmenter>(LineSegmenter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<LineSegmenter>, DataError>(diplomat::Err<DataError>(DataError::FromFFI(result.err)));
 }
 
 inline diplomat::result<std::unique_ptr<LineSegmenter>, DataError> LineSegmenter::create_dictionary_with_options_v1(const DataProvider& provider, LineBreakOptionsV1 options) {
-  auto result = diplomat::capi::ICU4XLineSegmenter_create_dictionary_with_options_v1(provider.AsFFI(),
+  auto result = diplomat::capi::icu4x_LineSegmenter_create_dictionary_with_options_v1_mv1(provider.AsFFI(),
     options.AsFFI());
   return result.is_ok ? diplomat::result<std::unique_ptr<LineSegmenter>, DataError>(diplomat::Ok<std::unique_ptr<LineSegmenter>>(std::unique_ptr<LineSegmenter>(LineSegmenter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<LineSegmenter>, DataError>(diplomat::Err<DataError>(DataError::FromFFI(result.err)));
 }
 
 inline std::unique_ptr<LineBreakIteratorUtf8> LineSegmenter::segment_utf8(std::string_view input) const {
-  auto result = diplomat::capi::ICU4XLineSegmenter_segment_utf8(this->AsFFI(),
+  auto result = diplomat::capi::icu4x_LineSegmenter_segment_utf8_mv1(this->AsFFI(),
     input.data(),
     input.size());
   return std::unique_ptr<LineBreakIteratorUtf8>(LineBreakIteratorUtf8::FromFFI(result));
 }
 
 inline std::unique_ptr<LineBreakIteratorUtf16> LineSegmenter::segment_utf16(std::u16string_view input) const {
-  auto result = diplomat::capi::ICU4XLineSegmenter_segment_utf16(this->AsFFI(),
+  auto result = diplomat::capi::icu4x_LineSegmenter_segment_utf16_mv1(this->AsFFI(),
     input.data(),
     input.size());
   return std::unique_ptr<LineBreakIteratorUtf16>(LineBreakIteratorUtf16::FromFFI(result));
 }
 
 inline std::unique_ptr<LineBreakIteratorLatin1> LineSegmenter::segment_latin1(diplomat::span<const uint8_t> input) const {
-  auto result = diplomat::capi::ICU4XLineSegmenter_segment_latin1(this->AsFFI(),
+  auto result = diplomat::capi::icu4x_LineSegmenter_segment_latin1_mv1(this->AsFFI(),
     input.data(),
     input.size());
   return std::unique_ptr<LineBreakIteratorLatin1>(LineBreakIteratorLatin1::FromFFI(result));
@@ -124,7 +124,7 @@ inline LineSegmenter* LineSegmenter::FromFFI(diplomat::capi::LineSegmenter* ptr)
 }
 
 inline void LineSegmenter::operator delete(void* ptr) {
-  diplomat::capi::ICU4XLineSegmenter_destroy(reinterpret_cast<diplomat::capi::LineSegmenter*>(ptr));
+  diplomat::capi::icu4x_LineSegmenter_destroy_mv1(reinterpret_cast<diplomat::capi::LineSegmenter*>(ptr));
 }
 
 

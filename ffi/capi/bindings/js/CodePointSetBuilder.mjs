@@ -8,7 +8,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 */
 
 const CodePointSetBuilder_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.ICU4XCodePointSetBuilder_destroy(ptr);
+    wasm.icu4x_CodePointSetBuilder_destroy_mv1(ptr);
 });
 export class CodePointSetBuilder {
     // Internal ptr reference:
@@ -33,7 +33,7 @@ export class CodePointSetBuilder {
 
 
     static create() {
-        const result = wasm.ICU4XCodePointSetBuilder_create();
+        const result = wasm.icu4x_CodePointSetBuilder_create_mv1();
     
         try {
     
@@ -44,7 +44,7 @@ export class CodePointSetBuilder {
     }
 
     build() {
-        const result = wasm.ICU4XCodePointSetBuilder_build(this.ffiValue);
+        const result = wasm.icu4x_CodePointSetBuilder_build_mv1(this.ffiValue);
     
         try {
     
@@ -55,7 +55,7 @@ export class CodePointSetBuilder {
     }
 
     complement() {
-        wasm.ICU4XCodePointSetBuilder_complement(this.ffiValue);
+        wasm.icu4x_CodePointSetBuilder_complement_mv1(this.ffiValue);
     
         try {
     
@@ -65,7 +65,7 @@ export class CodePointSetBuilder {
     }
 
     get isEmpty() {
-        const result = wasm.ICU4XCodePointSetBuilder_is_empty(this.ffiValue);
+        const result = wasm.icu4x_CodePointSetBuilder_is_empty_mv1(this.ffiValue);
     
         try {
     
@@ -76,7 +76,7 @@ export class CodePointSetBuilder {
     }
 
     addChar(ch) {
-        wasm.ICU4XCodePointSetBuilder_add_char(this.ffiValue, diplomatRuntime.extractCodePoint(ch, 'ch'));
+        wasm.icu4x_CodePointSetBuilder_add_char_mv1(this.ffiValue, diplomatRuntime.extractCodePoint(ch, 'ch'));
     
         try {
     
@@ -86,7 +86,7 @@ export class CodePointSetBuilder {
     }
 
     addInclusiveRange(start, end) {
-        wasm.ICU4XCodePointSetBuilder_add_inclusive_range(this.ffiValue, diplomatRuntime.extractCodePoint(start, 'start'), diplomatRuntime.extractCodePoint(end, 'end'));
+        wasm.icu4x_CodePointSetBuilder_add_inclusive_range_mv1(this.ffiValue, diplomatRuntime.extractCodePoint(start, 'start'), diplomatRuntime.extractCodePoint(end, 'end'));
     
         try {
     
@@ -96,7 +96,7 @@ export class CodePointSetBuilder {
     }
 
     addSet(data) {
-        wasm.ICU4XCodePointSetBuilder_add_set(this.ffiValue, data.ffiValue);
+        wasm.icu4x_CodePointSetBuilder_add_set_mv1(this.ffiValue, data.ffiValue);
     
         try {
     
@@ -106,7 +106,7 @@ export class CodePointSetBuilder {
     }
 
     removeChar(ch) {
-        wasm.ICU4XCodePointSetBuilder_remove_char(this.ffiValue, diplomatRuntime.extractCodePoint(ch, 'ch'));
+        wasm.icu4x_CodePointSetBuilder_remove_char_mv1(this.ffiValue, diplomatRuntime.extractCodePoint(ch, 'ch'));
     
         try {
     
@@ -116,7 +116,7 @@ export class CodePointSetBuilder {
     }
 
     removeInclusiveRange(start, end) {
-        wasm.ICU4XCodePointSetBuilder_remove_inclusive_range(this.ffiValue, diplomatRuntime.extractCodePoint(start, 'start'), diplomatRuntime.extractCodePoint(end, 'end'));
+        wasm.icu4x_CodePointSetBuilder_remove_inclusive_range_mv1(this.ffiValue, diplomatRuntime.extractCodePoint(start, 'start'), diplomatRuntime.extractCodePoint(end, 'end'));
     
         try {
     
@@ -126,7 +126,7 @@ export class CodePointSetBuilder {
     }
 
     removeSet(data) {
-        wasm.ICU4XCodePointSetBuilder_remove_set(this.ffiValue, data.ffiValue);
+        wasm.icu4x_CodePointSetBuilder_remove_set_mv1(this.ffiValue, data.ffiValue);
     
         try {
     
@@ -136,7 +136,7 @@ export class CodePointSetBuilder {
     }
 
     retainChar(ch) {
-        wasm.ICU4XCodePointSetBuilder_retain_char(this.ffiValue, diplomatRuntime.extractCodePoint(ch, 'ch'));
+        wasm.icu4x_CodePointSetBuilder_retain_char_mv1(this.ffiValue, diplomatRuntime.extractCodePoint(ch, 'ch'));
     
         try {
     
@@ -146,7 +146,7 @@ export class CodePointSetBuilder {
     }
 
     retainInclusiveRange(start, end) {
-        wasm.ICU4XCodePointSetBuilder_retain_inclusive_range(this.ffiValue, diplomatRuntime.extractCodePoint(start, 'start'), diplomatRuntime.extractCodePoint(end, 'end'));
+        wasm.icu4x_CodePointSetBuilder_retain_inclusive_range_mv1(this.ffiValue, diplomatRuntime.extractCodePoint(start, 'start'), diplomatRuntime.extractCodePoint(end, 'end'));
     
         try {
     
@@ -156,7 +156,7 @@ export class CodePointSetBuilder {
     }
 
     retainSet(data) {
-        wasm.ICU4XCodePointSetBuilder_retain_set(this.ffiValue, data.ffiValue);
+        wasm.icu4x_CodePointSetBuilder_retain_set_mv1(this.ffiValue, data.ffiValue);
     
         try {
     
@@ -166,7 +166,7 @@ export class CodePointSetBuilder {
     }
 
     complementChar(ch) {
-        wasm.ICU4XCodePointSetBuilder_complement_char(this.ffiValue, diplomatRuntime.extractCodePoint(ch, 'ch'));
+        wasm.icu4x_CodePointSetBuilder_complement_char_mv1(this.ffiValue, diplomatRuntime.extractCodePoint(ch, 'ch'));
     
         try {
     
@@ -176,7 +176,7 @@ export class CodePointSetBuilder {
     }
 
     complementInclusiveRange(start, end) {
-        wasm.ICU4XCodePointSetBuilder_complement_inclusive_range(this.ffiValue, diplomatRuntime.extractCodePoint(start, 'start'), diplomatRuntime.extractCodePoint(end, 'end'));
+        wasm.icu4x_CodePointSetBuilder_complement_inclusive_range_mv1(this.ffiValue, diplomatRuntime.extractCodePoint(start, 'start'), diplomatRuntime.extractCodePoint(end, 'end'));
     
         try {
     
@@ -186,7 +186,7 @@ export class CodePointSetBuilder {
     }
 
     complementSet(data) {
-        wasm.ICU4XCodePointSetBuilder_complement_set(this.ffiValue, data.ffiValue);
+        wasm.icu4x_CodePointSetBuilder_complement_set_mv1(this.ffiValue, data.ffiValue);
     
         try {
     

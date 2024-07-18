@@ -13,7 +13,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 */
 
 const LocaleCanonicalizer_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.ICU4XLocaleCanonicalizer_destroy(ptr);
+    wasm.icu4x_LocaleCanonicalizer_destroy_mv1(ptr);
 });
 export class LocaleCanonicalizer {
     // Internal ptr reference:
@@ -40,7 +40,7 @@ export class LocaleCanonicalizer {
     static create(provider) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XLocaleCanonicalizer_create(diplomat_receive_buffer, provider.ffiValue);
+        const result = wasm.icu4x_LocaleCanonicalizer_create_mv1(diplomat_receive_buffer, provider.ffiValue);
     
         try {
     
@@ -59,7 +59,7 @@ export class LocaleCanonicalizer {
     static createExtended(provider) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XLocaleCanonicalizer_create_extended(diplomat_receive_buffer, provider.ffiValue);
+        const result = wasm.icu4x_LocaleCanonicalizer_create_extended_mv1(diplomat_receive_buffer, provider.ffiValue);
     
         try {
     
@@ -76,7 +76,7 @@ export class LocaleCanonicalizer {
     }
 
     canonicalize(locale) {
-        const result = wasm.ICU4XLocaleCanonicalizer_canonicalize(this.ffiValue, locale.ffiValue);
+        const result = wasm.icu4x_LocaleCanonicalizer_canonicalize_mv1(this.ffiValue, locale.ffiValue);
     
         try {
     

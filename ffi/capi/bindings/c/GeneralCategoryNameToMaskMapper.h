@@ -17,15 +17,15 @@
 
 
 
-uint32_t ICU4XGeneralCategoryNameToMaskMapper_get_strict(const GeneralCategoryNameToMaskMapper* self, const char* name_data, size_t name_len);
+uint32_t icu4x_GeneralCategoryNameToMaskMapper_get_strict_mv1(const GeneralCategoryNameToMaskMapper* self, const char* name_data, size_t name_len);
 
-uint32_t ICU4XGeneralCategoryNameToMaskMapper_get_loose(const GeneralCategoryNameToMaskMapper* self, const char* name_data, size_t name_len);
+uint32_t icu4x_GeneralCategoryNameToMaskMapper_get_loose_mv1(const GeneralCategoryNameToMaskMapper* self, const char* name_data, size_t name_len);
 
-typedef struct ICU4XGeneralCategoryNameToMaskMapper_load_result {union {GeneralCategoryNameToMaskMapper* ok; DataError err;}; bool is_ok;} ICU4XGeneralCategoryNameToMaskMapper_load_result;
-ICU4XGeneralCategoryNameToMaskMapper_load_result ICU4XGeneralCategoryNameToMaskMapper_load(const DataProvider* provider);
+typedef struct icu4x_GeneralCategoryNameToMaskMapper_load_mv1_result {union {GeneralCategoryNameToMaskMapper* ok; DataError err;}; bool is_ok;} icu4x_GeneralCategoryNameToMaskMapper_load_mv1_result;
+icu4x_GeneralCategoryNameToMaskMapper_load_mv1_result icu4x_GeneralCategoryNameToMaskMapper_load_mv1(const DataProvider* provider);
 
 
-void ICU4XGeneralCategoryNameToMaskMapper_destroy(GeneralCategoryNameToMaskMapper* self);
+void icu4x_GeneralCategoryNameToMaskMapper_destroy_mv1(GeneralCategoryNameToMaskMapper* self);
 
 
 

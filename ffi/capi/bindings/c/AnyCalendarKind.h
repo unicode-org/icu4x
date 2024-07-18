@@ -16,13 +16,13 @@
 
 
 
-typedef struct ICU4XAnyCalendarKind_get_for_locale_result {union {AnyCalendarKind ok; }; bool is_ok;} ICU4XAnyCalendarKind_get_for_locale_result;
-ICU4XAnyCalendarKind_get_for_locale_result ICU4XAnyCalendarKind_get_for_locale(const Locale* locale);
+typedef struct icu4x_AnyCalendarKind_get_for_locale_mv1_result {union {AnyCalendarKind ok; }; bool is_ok;} icu4x_AnyCalendarKind_get_for_locale_mv1_result;
+icu4x_AnyCalendarKind_get_for_locale_mv1_result icu4x_AnyCalendarKind_get_for_locale_mv1(const Locale* locale);
 
-typedef struct ICU4XAnyCalendarKind_get_for_bcp47_result {union {AnyCalendarKind ok; }; bool is_ok;} ICU4XAnyCalendarKind_get_for_bcp47_result;
-ICU4XAnyCalendarKind_get_for_bcp47_result ICU4XAnyCalendarKind_get_for_bcp47(const char* s_data, size_t s_len);
+typedef struct icu4x_AnyCalendarKind_get_for_bcp47_mv1_result {union {AnyCalendarKind ok; }; bool is_ok;} icu4x_AnyCalendarKind_get_for_bcp47_mv1_result;
+icu4x_AnyCalendarKind_get_for_bcp47_mv1_result icu4x_AnyCalendarKind_get_for_bcp47_mv1(const char* s_data, size_t s_len);
 
-void ICU4XAnyCalendarKind_bcp47(AnyCalendarKind self, DiplomatWrite* write);
+void icu4x_AnyCalendarKind_bcp47_mv1(AnyCalendarKind self, DiplomatWrite* write);
 
 
 

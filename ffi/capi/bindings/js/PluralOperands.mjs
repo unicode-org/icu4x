@@ -9,7 +9,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 */
 
 const PluralOperands_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.ICU4XPluralOperands_destroy(ptr);
+    wasm.icu4x_PluralOperands_destroy_mv1(ptr);
 });
 export class PluralOperands {
     // Internal ptr reference:
@@ -38,7 +38,7 @@ export class PluralOperands {
         const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XPluralOperands_create_from_string(diplomat_receive_buffer, sSlice.ptr, sSlice.size);
+        const result = wasm.icu4x_PluralOperands_create_from_string_mv1(diplomat_receive_buffer, sSlice.ptr, sSlice.size);
     
         try {
     
@@ -57,7 +57,7 @@ export class PluralOperands {
     }
 
     static createFromFixedDecimal(x) {
-        const result = wasm.ICU4XPluralOperands_create_from_fixed_decimal(x.ffiValue);
+        const result = wasm.icu4x_PluralOperands_create_from_fixed_decimal_mv1(x.ffiValue);
     
         try {
     

@@ -13,7 +13,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 */
 
 const GraphemeClusterSegmenter_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.ICU4XGraphemeClusterSegmenter_destroy(ptr);
+    wasm.icu4x_GraphemeClusterSegmenter_destroy_mv1(ptr);
 });
 export class GraphemeClusterSegmenter {
     // Internal ptr reference:
@@ -40,7 +40,7 @@ export class GraphemeClusterSegmenter {
     static create(provider) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XGraphemeClusterSegmenter_create(diplomat_receive_buffer, provider.ffiValue);
+        const result = wasm.icu4x_GraphemeClusterSegmenter_create_mv1(diplomat_receive_buffer, provider.ffiValue);
     
         try {
     
@@ -62,7 +62,7 @@ export class GraphemeClusterSegmenter {
         
         // This lifetime edge depends on lifetimes 'a
         let aEdges = [this, inputSlice];
-        const result = wasm.ICU4XGraphemeClusterSegmenter_segment_utf16(this.ffiValue, inputSlice.ptr, inputSlice.size);
+        const result = wasm.icu4x_GraphemeClusterSegmenter_segment_utf16_mv1(this.ffiValue, inputSlice.ptr, inputSlice.size);
     
         try {
     

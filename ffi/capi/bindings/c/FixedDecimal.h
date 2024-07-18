@@ -21,80 +21,80 @@
 
 
 
-FixedDecimal* ICU4XFixedDecimal_create_from_i32(int32_t v);
+FixedDecimal* icu4x_FixedDecimal_create_from_i32_mv1(int32_t v);
 
-FixedDecimal* ICU4XFixedDecimal_create_from_u32(uint32_t v);
+FixedDecimal* icu4x_FixedDecimal_create_from_u32_mv1(uint32_t v);
 
-FixedDecimal* ICU4XFixedDecimal_create_from_i64(int64_t v);
+FixedDecimal* icu4x_FixedDecimal_create_from_i64_mv1(int64_t v);
 
-FixedDecimal* ICU4XFixedDecimal_create_from_u64(uint64_t v);
+FixedDecimal* icu4x_FixedDecimal_create_from_u64_mv1(uint64_t v);
 
-typedef struct ICU4XFixedDecimal_create_from_f64_with_integer_precision_result {union {FixedDecimal* ok; FixedDecimalLimitError err;}; bool is_ok;} ICU4XFixedDecimal_create_from_f64_with_integer_precision_result;
-ICU4XFixedDecimal_create_from_f64_with_integer_precision_result ICU4XFixedDecimal_create_from_f64_with_integer_precision(double f);
+typedef struct icu4x_FixedDecimal_create_from_f64_with_integer_precision_mv1_result {union {FixedDecimal* ok; FixedDecimalLimitError err;}; bool is_ok;} icu4x_FixedDecimal_create_from_f64_with_integer_precision_mv1_result;
+icu4x_FixedDecimal_create_from_f64_with_integer_precision_mv1_result icu4x_FixedDecimal_create_from_f64_with_integer_precision_mv1(double f);
 
-typedef struct ICU4XFixedDecimal_create_from_f64_with_lower_magnitude_result {union {FixedDecimal* ok; FixedDecimalLimitError err;}; bool is_ok;} ICU4XFixedDecimal_create_from_f64_with_lower_magnitude_result;
-ICU4XFixedDecimal_create_from_f64_with_lower_magnitude_result ICU4XFixedDecimal_create_from_f64_with_lower_magnitude(double f, int16_t magnitude);
+typedef struct icu4x_FixedDecimal_create_from_f64_with_lower_magnitude_mv1_result {union {FixedDecimal* ok; FixedDecimalLimitError err;}; bool is_ok;} icu4x_FixedDecimal_create_from_f64_with_lower_magnitude_mv1_result;
+icu4x_FixedDecimal_create_from_f64_with_lower_magnitude_mv1_result icu4x_FixedDecimal_create_from_f64_with_lower_magnitude_mv1(double f, int16_t magnitude);
 
-typedef struct ICU4XFixedDecimal_create_from_f64_with_significant_digits_result {union {FixedDecimal* ok; FixedDecimalLimitError err;}; bool is_ok;} ICU4XFixedDecimal_create_from_f64_with_significant_digits_result;
-ICU4XFixedDecimal_create_from_f64_with_significant_digits_result ICU4XFixedDecimal_create_from_f64_with_significant_digits(double f, uint8_t digits);
+typedef struct icu4x_FixedDecimal_create_from_f64_with_significant_digits_mv1_result {union {FixedDecimal* ok; FixedDecimalLimitError err;}; bool is_ok;} icu4x_FixedDecimal_create_from_f64_with_significant_digits_mv1_result;
+icu4x_FixedDecimal_create_from_f64_with_significant_digits_mv1_result icu4x_FixedDecimal_create_from_f64_with_significant_digits_mv1(double f, uint8_t digits);
 
-typedef struct ICU4XFixedDecimal_create_from_f64_with_floating_precision_result {union {FixedDecimal* ok; FixedDecimalLimitError err;}; bool is_ok;} ICU4XFixedDecimal_create_from_f64_with_floating_precision_result;
-ICU4XFixedDecimal_create_from_f64_with_floating_precision_result ICU4XFixedDecimal_create_from_f64_with_floating_precision(double f);
+typedef struct icu4x_FixedDecimal_create_from_f64_with_floating_precision_mv1_result {union {FixedDecimal* ok; FixedDecimalLimitError err;}; bool is_ok;} icu4x_FixedDecimal_create_from_f64_with_floating_precision_mv1_result;
+icu4x_FixedDecimal_create_from_f64_with_floating_precision_mv1_result icu4x_FixedDecimal_create_from_f64_with_floating_precision_mv1(double f);
 
-typedef struct ICU4XFixedDecimal_create_from_string_result {union {FixedDecimal* ok; FixedDecimalParseError err;}; bool is_ok;} ICU4XFixedDecimal_create_from_string_result;
-ICU4XFixedDecimal_create_from_string_result ICU4XFixedDecimal_create_from_string(const char* v_data, size_t v_len);
+typedef struct icu4x_FixedDecimal_create_from_string_mv1_result {union {FixedDecimal* ok; FixedDecimalParseError err;}; bool is_ok;} icu4x_FixedDecimal_create_from_string_mv1_result;
+icu4x_FixedDecimal_create_from_string_mv1_result icu4x_FixedDecimal_create_from_string_mv1(const char* v_data, size_t v_len);
 
-uint8_t ICU4XFixedDecimal_digit_at(const FixedDecimal* self, int16_t magnitude);
+uint8_t icu4x_FixedDecimal_digit_at_mv1(const FixedDecimal* self, int16_t magnitude);
 
-int16_t ICU4XFixedDecimal_magnitude_start(const FixedDecimal* self);
+int16_t icu4x_FixedDecimal_magnitude_start_mv1(const FixedDecimal* self);
 
-int16_t ICU4XFixedDecimal_magnitude_end(const FixedDecimal* self);
+int16_t icu4x_FixedDecimal_magnitude_end_mv1(const FixedDecimal* self);
 
-int16_t ICU4XFixedDecimal_nonzero_magnitude_start(const FixedDecimal* self);
+int16_t icu4x_FixedDecimal_nonzero_magnitude_start_mv1(const FixedDecimal* self);
 
-int16_t ICU4XFixedDecimal_nonzero_magnitude_end(const FixedDecimal* self);
+int16_t icu4x_FixedDecimal_nonzero_magnitude_end_mv1(const FixedDecimal* self);
 
-bool ICU4XFixedDecimal_is_zero(const FixedDecimal* self);
+bool icu4x_FixedDecimal_is_zero_mv1(const FixedDecimal* self);
 
-void ICU4XFixedDecimal_multiply_pow10(FixedDecimal* self, int16_t power);
+void icu4x_FixedDecimal_multiply_pow10_mv1(FixedDecimal* self, int16_t power);
 
-FixedDecimalSign ICU4XFixedDecimal_sign(const FixedDecimal* self);
+FixedDecimalSign icu4x_FixedDecimal_sign_mv1(const FixedDecimal* self);
 
-void ICU4XFixedDecimal_set_sign(FixedDecimal* self, FixedDecimalSign sign);
+void icu4x_FixedDecimal_set_sign_mv1(FixedDecimal* self, FixedDecimalSign sign);
 
-void ICU4XFixedDecimal_apply_sign_display(FixedDecimal* self, FixedDecimalSignDisplay sign_display);
+void icu4x_FixedDecimal_apply_sign_display_mv1(FixedDecimal* self, FixedDecimalSignDisplay sign_display);
 
-void ICU4XFixedDecimal_trim_start(FixedDecimal* self);
+void icu4x_FixedDecimal_trim_start_mv1(FixedDecimal* self);
 
-void ICU4XFixedDecimal_trim_end(FixedDecimal* self);
+void icu4x_FixedDecimal_trim_end_mv1(FixedDecimal* self);
 
-void ICU4XFixedDecimal_pad_start(FixedDecimal* self, int16_t position);
+void icu4x_FixedDecimal_pad_start_mv1(FixedDecimal* self, int16_t position);
 
-void ICU4XFixedDecimal_pad_end(FixedDecimal* self, int16_t position);
+void icu4x_FixedDecimal_pad_end_mv1(FixedDecimal* self, int16_t position);
 
-void ICU4XFixedDecimal_set_max_position(FixedDecimal* self, int16_t position);
+void icu4x_FixedDecimal_set_max_position_mv1(FixedDecimal* self, int16_t position);
 
-void ICU4XFixedDecimal_round(FixedDecimal* self, int16_t position);
+void icu4x_FixedDecimal_round_mv1(FixedDecimal* self, int16_t position);
 
-void ICU4XFixedDecimal_ceil(FixedDecimal* self, int16_t position);
+void icu4x_FixedDecimal_ceil_mv1(FixedDecimal* self, int16_t position);
 
-void ICU4XFixedDecimal_expand(FixedDecimal* self, int16_t position);
+void icu4x_FixedDecimal_expand_mv1(FixedDecimal* self, int16_t position);
 
-void ICU4XFixedDecimal_floor(FixedDecimal* self, int16_t position);
+void icu4x_FixedDecimal_floor_mv1(FixedDecimal* self, int16_t position);
 
-void ICU4XFixedDecimal_trunc(FixedDecimal* self, int16_t position);
+void icu4x_FixedDecimal_trunc_mv1(FixedDecimal* self, int16_t position);
 
-void ICU4XFixedDecimal_round_with_mode(FixedDecimal* self, int16_t position, FixedDecimalRoundingMode mode);
+void icu4x_FixedDecimal_round_with_mode_mv1(FixedDecimal* self, int16_t position, FixedDecimalRoundingMode mode);
 
-void ICU4XFixedDecimal_round_with_mode_and_increment(FixedDecimal* self, int16_t position, FixedDecimalRoundingMode mode, FixedDecimalRoundingIncrement increment);
+void icu4x_FixedDecimal_round_with_mode_and_increment_mv1(FixedDecimal* self, int16_t position, FixedDecimalRoundingMode mode, FixedDecimalRoundingIncrement increment);
 
-typedef struct ICU4XFixedDecimal_concatenate_end_result { bool is_ok;} ICU4XFixedDecimal_concatenate_end_result;
-ICU4XFixedDecimal_concatenate_end_result ICU4XFixedDecimal_concatenate_end(FixedDecimal* self, FixedDecimal* other);
+typedef struct icu4x_FixedDecimal_concatenate_end_mv1_result { bool is_ok;} icu4x_FixedDecimal_concatenate_end_mv1_result;
+icu4x_FixedDecimal_concatenate_end_mv1_result icu4x_FixedDecimal_concatenate_end_mv1(FixedDecimal* self, FixedDecimal* other);
 
-void ICU4XFixedDecimal_to_string(const FixedDecimal* self, DiplomatWrite* write);
+void icu4x_FixedDecimal_to_string_mv1(const FixedDecimal* self, DiplomatWrite* write);
 
 
-void ICU4XFixedDecimal_destroy(FixedDecimal* self);
+void icu4x_FixedDecimal_destroy_mv1(FixedDecimal* self);
 
 
 

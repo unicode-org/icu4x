@@ -19,14 +19,14 @@
 
 
 
-typedef struct ICU4XRegionDisplayNames_create_result {union {RegionDisplayNames* ok; DataError err;}; bool is_ok;} ICU4XRegionDisplayNames_create_result;
-ICU4XRegionDisplayNames_create_result ICU4XRegionDisplayNames_create(const DataProvider* provider, const Locale* locale);
+typedef struct icu4x_RegionDisplayNames_create_mv1_result {union {RegionDisplayNames* ok; DataError err;}; bool is_ok;} icu4x_RegionDisplayNames_create_mv1_result;
+icu4x_RegionDisplayNames_create_mv1_result icu4x_RegionDisplayNames_create_mv1(const DataProvider* provider, const Locale* locale);
 
-typedef struct ICU4XRegionDisplayNames_of_result {union { LocaleParseError err;}; bool is_ok;} ICU4XRegionDisplayNames_of_result;
-ICU4XRegionDisplayNames_of_result ICU4XRegionDisplayNames_of(const RegionDisplayNames* self, const char* region_data, size_t region_len, DiplomatWrite* write);
+typedef struct icu4x_RegionDisplayNames_of_mv1_result {union { LocaleParseError err;}; bool is_ok;} icu4x_RegionDisplayNames_of_mv1_result;
+icu4x_RegionDisplayNames_of_mv1_result icu4x_RegionDisplayNames_of_mv1(const RegionDisplayNames* self, const char* region_data, size_t region_len, DiplomatWrite* write);
 
 
-void ICU4XRegionDisplayNames_destroy(RegionDisplayNames* self);
+void icu4x_RegionDisplayNames_destroy_mv1(RegionDisplayNames* self);
 
 
 

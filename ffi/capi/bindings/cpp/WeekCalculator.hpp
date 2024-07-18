@@ -21,48 +21,48 @@ namespace diplomat {
 namespace capi {
     extern "C" {
     
-    typedef struct ICU4XWeekCalculator_create_result {union {diplomat::capi::WeekCalculator* ok; diplomat::capi::DataError err;}; bool is_ok;} ICU4XWeekCalculator_create_result;
-    ICU4XWeekCalculator_create_result ICU4XWeekCalculator_create(const diplomat::capi::DataProvider* provider, const diplomat::capi::Locale* locale);
+    typedef struct icu4x_WeekCalculator_create_mv1_result {union {diplomat::capi::WeekCalculator* ok; diplomat::capi::DataError err;}; bool is_ok;} icu4x_WeekCalculator_create_mv1_result;
+    icu4x_WeekCalculator_create_mv1_result icu4x_WeekCalculator_create_mv1(const diplomat::capi::DataProvider* provider, const diplomat::capi::Locale* locale);
     
-    diplomat::capi::WeekCalculator* ICU4XWeekCalculator_create_from_first_day_of_week_and_min_week_days(diplomat::capi::IsoWeekday first_weekday, uint8_t min_week_days);
+    diplomat::capi::WeekCalculator* icu4x_WeekCalculator_create_from_first_day_of_week_and_min_week_days_mv1(diplomat::capi::IsoWeekday first_weekday, uint8_t min_week_days);
     
-    diplomat::capi::IsoWeekday ICU4XWeekCalculator_first_weekday(const diplomat::capi::WeekCalculator* self);
+    diplomat::capi::IsoWeekday icu4x_WeekCalculator_first_weekday_mv1(const diplomat::capi::WeekCalculator* self);
     
-    uint8_t ICU4XWeekCalculator_min_week_days(const diplomat::capi::WeekCalculator* self);
+    uint8_t icu4x_WeekCalculator_min_week_days_mv1(const diplomat::capi::WeekCalculator* self);
     
-    diplomat::capi::WeekendContainsDay ICU4XWeekCalculator_weekend(const diplomat::capi::WeekCalculator* self);
+    diplomat::capi::WeekendContainsDay icu4x_WeekCalculator_weekend_mv1(const diplomat::capi::WeekCalculator* self);
     
     
-    void ICU4XWeekCalculator_destroy(WeekCalculator* self);
+    void icu4x_WeekCalculator_destroy_mv1(WeekCalculator* self);
     
     } // extern "C"
 } // namespace capi
 } // namespace
 
 inline diplomat::result<std::unique_ptr<WeekCalculator>, DataError> WeekCalculator::create(const DataProvider& provider, const Locale& locale) {
-  auto result = diplomat::capi::ICU4XWeekCalculator_create(provider.AsFFI(),
+  auto result = diplomat::capi::icu4x_WeekCalculator_create_mv1(provider.AsFFI(),
     locale.AsFFI());
   return result.is_ok ? diplomat::result<std::unique_ptr<WeekCalculator>, DataError>(diplomat::Ok<std::unique_ptr<WeekCalculator>>(std::unique_ptr<WeekCalculator>(WeekCalculator::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<WeekCalculator>, DataError>(diplomat::Err<DataError>(DataError::FromFFI(result.err)));
 }
 
 inline std::unique_ptr<WeekCalculator> WeekCalculator::create_from_first_day_of_week_and_min_week_days(IsoWeekday first_weekday, uint8_t min_week_days) {
-  auto result = diplomat::capi::ICU4XWeekCalculator_create_from_first_day_of_week_and_min_week_days(first_weekday.AsFFI(),
+  auto result = diplomat::capi::icu4x_WeekCalculator_create_from_first_day_of_week_and_min_week_days_mv1(first_weekday.AsFFI(),
     min_week_days);
   return std::unique_ptr<WeekCalculator>(WeekCalculator::FromFFI(result));
 }
 
 inline IsoWeekday WeekCalculator::first_weekday() const {
-  auto result = diplomat::capi::ICU4XWeekCalculator_first_weekday(this->AsFFI());
+  auto result = diplomat::capi::icu4x_WeekCalculator_first_weekday_mv1(this->AsFFI());
   return IsoWeekday::FromFFI(result);
 }
 
 inline uint8_t WeekCalculator::min_week_days() const {
-  auto result = diplomat::capi::ICU4XWeekCalculator_min_week_days(this->AsFFI());
+  auto result = diplomat::capi::icu4x_WeekCalculator_min_week_days_mv1(this->AsFFI());
   return result;
 }
 
 inline WeekendContainsDay WeekCalculator::weekend() const {
-  auto result = diplomat::capi::ICU4XWeekCalculator_weekend(this->AsFFI());
+  auto result = diplomat::capi::icu4x_WeekCalculator_weekend_mv1(this->AsFFI());
   return WeekendContainsDay::FromFFI(result);
 }
 
@@ -83,7 +83,7 @@ inline WeekCalculator* WeekCalculator::FromFFI(diplomat::capi::WeekCalculator* p
 }
 
 inline void WeekCalculator::operator delete(void* ptr) {
-  diplomat::capi::ICU4XWeekCalculator_destroy(reinterpret_cast<diplomat::capi::WeekCalculator*>(ptr));
+  diplomat::capi::icu4x_WeekCalculator_destroy_mv1(reinterpret_cast<diplomat::capi::WeekCalculator*>(ptr));
 }
 
 

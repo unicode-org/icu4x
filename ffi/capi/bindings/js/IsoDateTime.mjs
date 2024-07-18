@@ -17,7 +17,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 */
 
 const IsoDateTime_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.ICU4XIsoDateTime_destroy(ptr);
+    wasm.icu4x_IsoDateTime_destroy_mv1(ptr);
 });
 export class IsoDateTime {
     // Internal ptr reference:
@@ -44,7 +44,7 @@ export class IsoDateTime {
     static create(year, month, day, hour, minute, second, nanosecond) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XIsoDateTime_create(diplomat_receive_buffer, year, month, day, hour, minute, second, nanosecond);
+        const result = wasm.icu4x_IsoDateTime_create_mv1(diplomat_receive_buffer, year, month, day, hour, minute, second, nanosecond);
     
         try {
     
@@ -61,7 +61,7 @@ export class IsoDateTime {
     }
 
     static crateFromDateAndTime(date, time) {
-        const result = wasm.ICU4XIsoDateTime_crate_from_date_and_time(date.ffiValue, time.ffiValue);
+        const result = wasm.icu4x_IsoDateTime_crate_from_date_and_time_mv1(date.ffiValue, time.ffiValue);
     
         try {
     
@@ -72,7 +72,7 @@ export class IsoDateTime {
     }
 
     static localUnixEpoch() {
-        const result = wasm.ICU4XIsoDateTime_local_unix_epoch();
+        const result = wasm.icu4x_IsoDateTime_local_unix_epoch_mv1();
     
         try {
     
@@ -83,7 +83,7 @@ export class IsoDateTime {
     }
 
     static createFromMinutesSinceLocalUnixEpoch(minutes) {
-        const result = wasm.ICU4XIsoDateTime_create_from_minutes_since_local_unix_epoch(minutes);
+        const result = wasm.icu4x_IsoDateTime_create_from_minutes_since_local_unix_epoch_mv1(minutes);
     
         try {
     
@@ -94,7 +94,7 @@ export class IsoDateTime {
     }
 
     get date() {
-        const result = wasm.ICU4XIsoDateTime_date(this.ffiValue);
+        const result = wasm.icu4x_IsoDateTime_date_mv1(this.ffiValue);
     
         try {
     
@@ -105,7 +105,7 @@ export class IsoDateTime {
     }
 
     get time() {
-        const result = wasm.ICU4XIsoDateTime_time(this.ffiValue);
+        const result = wasm.icu4x_IsoDateTime_time_mv1(this.ffiValue);
     
         try {
     
@@ -116,7 +116,7 @@ export class IsoDateTime {
     }
 
     toAny() {
-        const result = wasm.ICU4XIsoDateTime_to_any(this.ffiValue);
+        const result = wasm.icu4x_IsoDateTime_to_any_mv1(this.ffiValue);
     
         try {
     
@@ -127,7 +127,7 @@ export class IsoDateTime {
     }
 
     get minutesSinceLocalUnixEpoch() {
-        const result = wasm.ICU4XIsoDateTime_minutes_since_local_unix_epoch(this.ffiValue);
+        const result = wasm.icu4x_IsoDateTime_minutes_since_local_unix_epoch_mv1(this.ffiValue);
     
         try {
     
@@ -138,7 +138,7 @@ export class IsoDateTime {
     }
 
     toCalendar(calendar) {
-        const result = wasm.ICU4XIsoDateTime_to_calendar(this.ffiValue, calendar.ffiValue);
+        const result = wasm.icu4x_IsoDateTime_to_calendar_mv1(this.ffiValue, calendar.ffiValue);
     
         try {
     
@@ -149,7 +149,7 @@ export class IsoDateTime {
     }
 
     get hour() {
-        const result = wasm.ICU4XIsoDateTime_hour(this.ffiValue);
+        const result = wasm.icu4x_IsoDateTime_hour_mv1(this.ffiValue);
     
         try {
     
@@ -160,7 +160,7 @@ export class IsoDateTime {
     }
 
     get minute() {
-        const result = wasm.ICU4XIsoDateTime_minute(this.ffiValue);
+        const result = wasm.icu4x_IsoDateTime_minute_mv1(this.ffiValue);
     
         try {
     
@@ -171,7 +171,7 @@ export class IsoDateTime {
     }
 
     get second() {
-        const result = wasm.ICU4XIsoDateTime_second(this.ffiValue);
+        const result = wasm.icu4x_IsoDateTime_second_mv1(this.ffiValue);
     
         try {
     
@@ -182,7 +182,7 @@ export class IsoDateTime {
     }
 
     get nanosecond() {
-        const result = wasm.ICU4XIsoDateTime_nanosecond(this.ffiValue);
+        const result = wasm.icu4x_IsoDateTime_nanosecond_mv1(this.ffiValue);
     
         try {
     
@@ -193,7 +193,7 @@ export class IsoDateTime {
     }
 
     get dayOfYear() {
-        const result = wasm.ICU4XIsoDateTime_day_of_year(this.ffiValue);
+        const result = wasm.icu4x_IsoDateTime_day_of_year_mv1(this.ffiValue);
     
         try {
     
@@ -204,7 +204,7 @@ export class IsoDateTime {
     }
 
     get dayOfMonth() {
-        const result = wasm.ICU4XIsoDateTime_day_of_month(this.ffiValue);
+        const result = wasm.icu4x_IsoDateTime_day_of_month_mv1(this.ffiValue);
     
         try {
     
@@ -215,7 +215,7 @@ export class IsoDateTime {
     }
 
     get dayOfWeek() {
-        const result = wasm.ICU4XIsoDateTime_day_of_week(this.ffiValue);
+        const result = wasm.icu4x_IsoDateTime_day_of_week_mv1(this.ffiValue);
     
         try {
     
@@ -226,7 +226,7 @@ export class IsoDateTime {
     }
 
     weekOfMonth(firstWeekday) {
-        const result = wasm.ICU4XIsoDateTime_week_of_month(this.ffiValue, firstWeekday.ffiValue);
+        const result = wasm.icu4x_IsoDateTime_week_of_month_mv1(this.ffiValue, firstWeekday.ffiValue);
     
         try {
     
@@ -239,7 +239,7 @@ export class IsoDateTime {
     weekOfYear(calculator) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(8, 4);
-        const result = wasm.ICU4XIsoDateTime_week_of_year(diplomat_receive_buffer, this.ffiValue, calculator.ffiValue);
+        const result = wasm.icu4x_IsoDateTime_week_of_year_mv1(diplomat_receive_buffer, this.ffiValue, calculator.ffiValue);
     
         try {
     
@@ -252,7 +252,7 @@ export class IsoDateTime {
     }
 
     get month() {
-        const result = wasm.ICU4XIsoDateTime_month(this.ffiValue);
+        const result = wasm.icu4x_IsoDateTime_month_mv1(this.ffiValue);
     
         try {
     
@@ -263,7 +263,7 @@ export class IsoDateTime {
     }
 
     get year() {
-        const result = wasm.ICU4XIsoDateTime_year(this.ffiValue);
+        const result = wasm.icu4x_IsoDateTime_year_mv1(this.ffiValue);
     
         try {
     
@@ -274,7 +274,7 @@ export class IsoDateTime {
     }
 
     get isInLeapYear() {
-        const result = wasm.ICU4XIsoDateTime_is_in_leap_year(this.ffiValue);
+        const result = wasm.icu4x_IsoDateTime_is_in_leap_year_mv1(this.ffiValue);
     
         try {
     
@@ -285,7 +285,7 @@ export class IsoDateTime {
     }
 
     get monthsInYear() {
-        const result = wasm.ICU4XIsoDateTime_months_in_year(this.ffiValue);
+        const result = wasm.icu4x_IsoDateTime_months_in_year_mv1(this.ffiValue);
     
         try {
     
@@ -296,7 +296,7 @@ export class IsoDateTime {
     }
 
     get daysInMonth() {
-        const result = wasm.ICU4XIsoDateTime_days_in_month(this.ffiValue);
+        const result = wasm.icu4x_IsoDateTime_days_in_month_mv1(this.ffiValue);
     
         try {
     
@@ -307,7 +307,7 @@ export class IsoDateTime {
     }
 
     get daysInYear() {
-        const result = wasm.ICU4XIsoDateTime_days_in_year(this.ffiValue);
+        const result = wasm.icu4x_IsoDateTime_days_in_year_mv1(this.ffiValue);
     
         try {
     
