@@ -15,15 +15,15 @@
 
 
 
-bool ICU4XScriptExtensionsSet_contains(const ScriptExtensionsSet* self, uint16_t script);
+bool icu4x_ScriptExtensionsSet_contains_mv1(const ScriptExtensionsSet* self, uint16_t script);
 
-size_t ICU4XScriptExtensionsSet_count(const ScriptExtensionsSet* self);
+size_t icu4x_ScriptExtensionsSet_count_mv1(const ScriptExtensionsSet* self);
 
-typedef struct ICU4XScriptExtensionsSet_script_at_result {union {uint16_t ok; }; bool is_ok;} ICU4XScriptExtensionsSet_script_at_result;
-ICU4XScriptExtensionsSet_script_at_result ICU4XScriptExtensionsSet_script_at(const ScriptExtensionsSet* self, size_t index);
+typedef struct icu4x_ScriptExtensionsSet_script_at_mv1_result {union {uint16_t ok; }; bool is_ok;} icu4x_ScriptExtensionsSet_script_at_mv1_result;
+icu4x_ScriptExtensionsSet_script_at_mv1_result icu4x_ScriptExtensionsSet_script_at_mv1(const ScriptExtensionsSet* self, size_t index);
 
 
-void ICU4XScriptExtensionsSet_destroy(ScriptExtensionsSet* self);
+void icu4x_ScriptExtensionsSet_destroy_mv1(ScriptExtensionsSet* self);
 
 
 

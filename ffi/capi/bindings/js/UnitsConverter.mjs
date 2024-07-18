@@ -11,7 +11,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 */
 
 const UnitsConverter_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.ICU4XUnitsConverter_destroy(ptr);
+    wasm.icu4x_UnitsConverter_destroy_mv1(ptr);
 });
 export class UnitsConverter {
     // Internal ptr reference:
@@ -36,7 +36,7 @@ export class UnitsConverter {
 
 
     convert(value) {
-        const result = wasm.ICU4XUnitsConverter_convert_f64(this.ffiValue, value);
+        const result = wasm.icu4x_UnitsConverter_convert_f64_mv1(this.ffiValue, value);
     
         try {
     
@@ -47,7 +47,7 @@ export class UnitsConverter {
     }
 
     clone() {
-        const result = wasm.ICU4XUnitsConverter_clone(this.ffiValue);
+        const result = wasm.icu4x_UnitsConverter_clone_mv1(this.ffiValue);
     
         try {
     

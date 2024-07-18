@@ -12,7 +12,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 */
 
 const WordSegmenter_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.ICU4XWordSegmenter_destroy(ptr);
+    wasm.icu4x_WordSegmenter_destroy_mv1(ptr);
 });
 export class WordSegmenter {
     // Internal ptr reference:
@@ -39,7 +39,7 @@ export class WordSegmenter {
     static createAuto(provider) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XWordSegmenter_create_auto(diplomat_receive_buffer, provider.ffiValue);
+        const result = wasm.icu4x_WordSegmenter_create_auto_mv1(diplomat_receive_buffer, provider.ffiValue);
     
         try {
     
@@ -58,7 +58,7 @@ export class WordSegmenter {
     static createLstm(provider) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XWordSegmenter_create_lstm(diplomat_receive_buffer, provider.ffiValue);
+        const result = wasm.icu4x_WordSegmenter_create_lstm_mv1(diplomat_receive_buffer, provider.ffiValue);
     
         try {
     
@@ -77,7 +77,7 @@ export class WordSegmenter {
     static createDictionary(provider) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XWordSegmenter_create_dictionary(diplomat_receive_buffer, provider.ffiValue);
+        const result = wasm.icu4x_WordSegmenter_create_dictionary_mv1(diplomat_receive_buffer, provider.ffiValue);
     
         try {
     
@@ -99,7 +99,7 @@ export class WordSegmenter {
         
         // This lifetime edge depends on lifetimes 'a
         let aEdges = [this, inputSlice];
-        const result = wasm.ICU4XWordSegmenter_segment_utf16(this.ffiValue, inputSlice.ptr, inputSlice.size);
+        const result = wasm.icu4x_WordSegmenter_segment_utf16_mv1(this.ffiValue, inputSlice.ptr, inputSlice.size);
     
         try {
     

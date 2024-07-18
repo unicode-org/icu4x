@@ -15,10 +15,10 @@
 
 
 
-int32_t ICU4XLineBreakIteratorUtf16_next(LineBreakIteratorUtf16* self);
+int32_t icu4x_LineBreakIteratorUtf16_next_mv1(LineBreakIteratorUtf16* self);
 
 
-void ICU4XLineBreakIteratorUtf16_destroy(LineBreakIteratorUtf16* self);
+void icu4x_LineBreakIteratorUtf16_destroy_mv1(LineBreakIteratorUtf16* self);
 
 
 

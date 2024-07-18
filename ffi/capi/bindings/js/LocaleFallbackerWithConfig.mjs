@@ -13,7 +13,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 */
 
 const LocaleFallbackerWithConfig_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.ICU4XLocaleFallbackerWithConfig_destroy(ptr);
+    wasm.icu4x_LocaleFallbackerWithConfig_destroy_mv1(ptr);
 });
 export class LocaleFallbackerWithConfig {
     // Internal ptr reference:
@@ -46,7 +46,7 @@ export class LocaleFallbackerWithConfig {
         
         // This lifetime edge depends on lifetimes 'a, 'b
         let aEdges = [this];
-        const result = wasm.ICU4XLocaleFallbackerWithConfig_fallback_for_locale(this.ffiValue, locale.ffiValue);
+        const result = wasm.icu4x_LocaleFallbackerWithConfig_fallback_for_locale_mv1(this.ffiValue, locale.ffiValue);
     
         try {
     

@@ -12,7 +12,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 */
 
 const SentenceSegmenter_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.ICU4XSentenceSegmenter_destroy(ptr);
+    wasm.icu4x_SentenceSegmenter_destroy_mv1(ptr);
 });
 export class SentenceSegmenter {
     // Internal ptr reference:
@@ -39,7 +39,7 @@ export class SentenceSegmenter {
     static create(provider) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XSentenceSegmenter_create(diplomat_receive_buffer, provider.ffiValue);
+        const result = wasm.icu4x_SentenceSegmenter_create_mv1(diplomat_receive_buffer, provider.ffiValue);
     
         try {
     
@@ -61,7 +61,7 @@ export class SentenceSegmenter {
         
         // This lifetime edge depends on lifetimes 'a
         let aEdges = [this, inputSlice];
-        const result = wasm.ICU4XSentenceSegmenter_segment_utf16(this.ffiValue, inputSlice.ptr, inputSlice.size);
+        const result = wasm.icu4x_SentenceSegmenter_segment_utf16_mv1(this.ffiValue, inputSlice.ptr, inputSlice.size);
     
         try {
     

@@ -21,50 +21,50 @@ namespace diplomat {
 namespace capi {
     extern "C" {
     
-    typedef struct ICU4XLocaleDirectionality_create_result {union {diplomat::capi::LocaleDirectionality* ok; diplomat::capi::DataError err;}; bool is_ok;} ICU4XLocaleDirectionality_create_result;
-    ICU4XLocaleDirectionality_create_result ICU4XLocaleDirectionality_create(const diplomat::capi::DataProvider* provider);
+    typedef struct icu4x_LocaleDirectionality_create_mv1_result {union {diplomat::capi::LocaleDirectionality* ok; diplomat::capi::DataError err;}; bool is_ok;} icu4x_LocaleDirectionality_create_mv1_result;
+    icu4x_LocaleDirectionality_create_mv1_result icu4x_LocaleDirectionality_create_mv1(const diplomat::capi::DataProvider* provider);
     
-    typedef struct ICU4XLocaleDirectionality_create_with_expander_result {union {diplomat::capi::LocaleDirectionality* ok; diplomat::capi::DataError err;}; bool is_ok;} ICU4XLocaleDirectionality_create_with_expander_result;
-    ICU4XLocaleDirectionality_create_with_expander_result ICU4XLocaleDirectionality_create_with_expander(const diplomat::capi::DataProvider* provider, const diplomat::capi::LocaleExpander* expander);
+    typedef struct icu4x_LocaleDirectionality_create_with_expander_mv1_result {union {diplomat::capi::LocaleDirectionality* ok; diplomat::capi::DataError err;}; bool is_ok;} icu4x_LocaleDirectionality_create_with_expander_mv1_result;
+    icu4x_LocaleDirectionality_create_with_expander_mv1_result icu4x_LocaleDirectionality_create_with_expander_mv1(const diplomat::capi::DataProvider* provider, const diplomat::capi::LocaleExpander* expander);
     
-    diplomat::capi::LocaleDirection ICU4XLocaleDirectionality_get(const diplomat::capi::LocaleDirectionality* self, const diplomat::capi::Locale* locale);
+    diplomat::capi::LocaleDirection icu4x_LocaleDirectionality_get_mv1(const diplomat::capi::LocaleDirectionality* self, const diplomat::capi::Locale* locale);
     
-    bool ICU4XLocaleDirectionality_is_left_to_right(const diplomat::capi::LocaleDirectionality* self, const diplomat::capi::Locale* locale);
+    bool icu4x_LocaleDirectionality_is_left_to_right_mv1(const diplomat::capi::LocaleDirectionality* self, const diplomat::capi::Locale* locale);
     
-    bool ICU4XLocaleDirectionality_is_right_to_left(const diplomat::capi::LocaleDirectionality* self, const diplomat::capi::Locale* locale);
+    bool icu4x_LocaleDirectionality_is_right_to_left_mv1(const diplomat::capi::LocaleDirectionality* self, const diplomat::capi::Locale* locale);
     
     
-    void ICU4XLocaleDirectionality_destroy(LocaleDirectionality* self);
+    void icu4x_LocaleDirectionality_destroy_mv1(LocaleDirectionality* self);
     
     } // extern "C"
 } // namespace capi
 } // namespace
 
 inline diplomat::result<std::unique_ptr<LocaleDirectionality>, DataError> LocaleDirectionality::create(const DataProvider& provider) {
-  auto result = diplomat::capi::ICU4XLocaleDirectionality_create(provider.AsFFI());
+  auto result = diplomat::capi::icu4x_LocaleDirectionality_create_mv1(provider.AsFFI());
   return result.is_ok ? diplomat::result<std::unique_ptr<LocaleDirectionality>, DataError>(diplomat::Ok<std::unique_ptr<LocaleDirectionality>>(std::unique_ptr<LocaleDirectionality>(LocaleDirectionality::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<LocaleDirectionality>, DataError>(diplomat::Err<DataError>(DataError::FromFFI(result.err)));
 }
 
 inline diplomat::result<std::unique_ptr<LocaleDirectionality>, DataError> LocaleDirectionality::create_with_expander(const DataProvider& provider, const LocaleExpander& expander) {
-  auto result = diplomat::capi::ICU4XLocaleDirectionality_create_with_expander(provider.AsFFI(),
+  auto result = diplomat::capi::icu4x_LocaleDirectionality_create_with_expander_mv1(provider.AsFFI(),
     expander.AsFFI());
   return result.is_ok ? diplomat::result<std::unique_ptr<LocaleDirectionality>, DataError>(diplomat::Ok<std::unique_ptr<LocaleDirectionality>>(std::unique_ptr<LocaleDirectionality>(LocaleDirectionality::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<LocaleDirectionality>, DataError>(diplomat::Err<DataError>(DataError::FromFFI(result.err)));
 }
 
 inline LocaleDirection LocaleDirectionality::get(const Locale& locale) const {
-  auto result = diplomat::capi::ICU4XLocaleDirectionality_get(this->AsFFI(),
+  auto result = diplomat::capi::icu4x_LocaleDirectionality_get_mv1(this->AsFFI(),
     locale.AsFFI());
   return LocaleDirection::FromFFI(result);
 }
 
 inline bool LocaleDirectionality::is_left_to_right(const Locale& locale) const {
-  auto result = diplomat::capi::ICU4XLocaleDirectionality_is_left_to_right(this->AsFFI(),
+  auto result = diplomat::capi::icu4x_LocaleDirectionality_is_left_to_right_mv1(this->AsFFI(),
     locale.AsFFI());
   return result;
 }
 
 inline bool LocaleDirectionality::is_right_to_left(const Locale& locale) const {
-  auto result = diplomat::capi::ICU4XLocaleDirectionality_is_right_to_left(this->AsFFI(),
+  auto result = diplomat::capi::icu4x_LocaleDirectionality_is_right_to_left_mv1(this->AsFFI(),
     locale.AsFFI());
   return result;
 }
@@ -86,7 +86,7 @@ inline LocaleDirectionality* LocaleDirectionality::FromFFI(diplomat::capi::Local
 }
 
 inline void LocaleDirectionality::operator delete(void* ptr) {
-  diplomat::capi::ICU4XLocaleDirectionality_destroy(reinterpret_cast<diplomat::capi::LocaleDirectionality*>(ptr));
+  diplomat::capi::icu4x_LocaleDirectionality_destroy_mv1(reinterpret_cast<diplomat::capi::LocaleDirectionality*>(ptr));
 }
 
 

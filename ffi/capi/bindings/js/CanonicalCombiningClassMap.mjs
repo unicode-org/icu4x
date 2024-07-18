@@ -11,7 +11,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 */
 
 const CanonicalCombiningClassMap_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.ICU4XCanonicalCombiningClassMap_destroy(ptr);
+    wasm.icu4x_CanonicalCombiningClassMap_destroy_mv1(ptr);
 });
 export class CanonicalCombiningClassMap {
     // Internal ptr reference:
@@ -38,7 +38,7 @@ export class CanonicalCombiningClassMap {
     static create(provider) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XCanonicalCombiningClassMap_create(diplomat_receive_buffer, provider.ffiValue);
+        const result = wasm.icu4x_CanonicalCombiningClassMap_create_mv1(diplomat_receive_buffer, provider.ffiValue);
     
         try {
     
@@ -55,7 +55,7 @@ export class CanonicalCombiningClassMap {
     }
 
     get(ch) {
-        const result = wasm.ICU4XCanonicalCombiningClassMap_get(this.ffiValue, diplomatRuntime.extractCodePoint(ch, 'ch'));
+        const result = wasm.icu4x_CanonicalCombiningClassMap_get_mv1(this.ffiValue, diplomatRuntime.extractCodePoint(ch, 'ch'));
     
         try {
     

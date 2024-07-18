@@ -11,7 +11,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 */
 
 const ReorderedIndexMap_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.ICU4XReorderedIndexMap_destroy(ptr);
+    wasm.icu4x_ReorderedIndexMap_destroy_mv1(ptr);
 });
 export class ReorderedIndexMap {
     // Internal ptr reference:
@@ -41,7 +41,7 @@ export class ReorderedIndexMap {
         
         // This lifetime edge depends on lifetimes 'a
         let aEdges = [this];
-        const result = wasm.ICU4XReorderedIndexMap_as_slice(diplomat_receive_buffer, this.ffiValue);
+        const result = wasm.icu4x_ReorderedIndexMap_as_slice_mv1(diplomat_receive_buffer, this.ffiValue);
     
         try {
     
@@ -54,7 +54,7 @@ export class ReorderedIndexMap {
     }
 
     get length() {
-        const result = wasm.ICU4XReorderedIndexMap_len(this.ffiValue);
+        const result = wasm.icu4x_ReorderedIndexMap_len_mv1(this.ffiValue);
     
         try {
     
@@ -65,7 +65,7 @@ export class ReorderedIndexMap {
     }
 
     get isEmpty() {
-        const result = wasm.ICU4XReorderedIndexMap_is_empty(this.ffiValue);
+        const result = wasm.icu4x_ReorderedIndexMap_is_empty_mv1(this.ffiValue);
     
         try {
     
@@ -76,7 +76,7 @@ export class ReorderedIndexMap {
     }
 
     get(index) {
-        const result = wasm.ICU4XReorderedIndexMap_get(this.ffiValue, index);
+        const result = wasm.icu4x_ReorderedIndexMap_get_mv1(this.ffiValue, index);
     
         try {
     

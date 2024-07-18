@@ -18,7 +18,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 */
 
 const ZonedDateTimeFormatter_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.ICU4XZonedDateTimeFormatter_destroy(ptr);
+    wasm.icu4x_ZonedDateTimeFormatter_destroy_mv1(ptr);
 });
 export class ZonedDateTimeFormatter {
     // Internal ptr reference:
@@ -45,7 +45,7 @@ export class ZonedDateTimeFormatter {
     static createWithLengths(provider, locale, dateLength, timeLength) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XZonedDateTimeFormatter_create_with_lengths(diplomat_receive_buffer, provider.ffiValue, locale.ffiValue, dateLength.ffiValue, timeLength.ffiValue);
+        const result = wasm.icu4x_ZonedDateTimeFormatter_create_with_lengths_mv1(diplomat_receive_buffer, provider.ffiValue, locale.ffiValue, dateLength.ffiValue, timeLength.ffiValue);
     
         try {
     
@@ -66,7 +66,7 @@ export class ZonedDateTimeFormatter {
         let slice_cleanup_callbacks = [];
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XZonedDateTimeFormatter_create_with_lengths_and_iso_8601_time_zone_fallback(diplomat_receive_buffer, provider.ffiValue, locale.ffiValue, dateLength.ffiValue, timeLength.ffiValue, ...zoneOptions._intoFFI(slice_cleanup_callbacks, {}));
+        const result = wasm.icu4x_ZonedDateTimeFormatter_create_with_lengths_and_iso_8601_time_zone_fallback_mv1(diplomat_receive_buffer, provider.ffiValue, locale.ffiValue, dateLength.ffiValue, timeLength.ffiValue, ...zoneOptions._intoFFI(slice_cleanup_callbacks, {}));
     
         try {
     
@@ -91,7 +91,7 @@ export class ZonedDateTimeFormatter {
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
         
         const write = wasm.diplomat_buffer_write_create(0);
-        const result = wasm.ICU4XZonedDateTimeFormatter_format_datetime_with_custom_time_zone(diplomat_receive_buffer, this.ffiValue, datetime.ffiValue, timeZone.ffiValue, write);
+        const result = wasm.icu4x_ZonedDateTimeFormatter_format_datetime_with_custom_time_zone_mv1(diplomat_receive_buffer, this.ffiValue, datetime.ffiValue, timeZone.ffiValue, write);
     
         try {
     
@@ -114,7 +114,7 @@ export class ZonedDateTimeFormatter {
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
         
         const write = wasm.diplomat_buffer_write_create(0);
-        const result = wasm.ICU4XZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone(diplomat_receive_buffer, this.ffiValue, datetime.ffiValue, timeZone.ffiValue, write);
+        const result = wasm.icu4x_ZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1(diplomat_receive_buffer, this.ffiValue, datetime.ffiValue, timeZone.ffiValue, write);
     
         try {
     

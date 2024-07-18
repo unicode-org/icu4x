@@ -12,7 +12,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 */
 
 const MeasureUnit_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.ICU4XMeasureUnit_destroy(ptr);
+    wasm.icu4x_MeasureUnit_destroy_mv1(ptr);
 });
 export class MeasureUnit {
     // Internal ptr reference:

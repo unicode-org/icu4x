@@ -17,13 +17,13 @@ namespace diplomat {
 namespace capi {
     extern "C" {
     
-    typedef struct ICU4XAnyCalendarKind_get_for_locale_result {union {diplomat::capi::AnyCalendarKind ok; }; bool is_ok;} ICU4XAnyCalendarKind_get_for_locale_result;
-    ICU4XAnyCalendarKind_get_for_locale_result ICU4XAnyCalendarKind_get_for_locale(const diplomat::capi::Locale* locale);
+    typedef struct icu4x_AnyCalendarKind_get_for_locale_mv1_result {union {diplomat::capi::AnyCalendarKind ok; }; bool is_ok;} icu4x_AnyCalendarKind_get_for_locale_mv1_result;
+    icu4x_AnyCalendarKind_get_for_locale_mv1_result icu4x_AnyCalendarKind_get_for_locale_mv1(const diplomat::capi::Locale* locale);
     
-    typedef struct ICU4XAnyCalendarKind_get_for_bcp47_result {union {diplomat::capi::AnyCalendarKind ok; }; bool is_ok;} ICU4XAnyCalendarKind_get_for_bcp47_result;
-    ICU4XAnyCalendarKind_get_for_bcp47_result ICU4XAnyCalendarKind_get_for_bcp47(const char* s_data, size_t s_len);
+    typedef struct icu4x_AnyCalendarKind_get_for_bcp47_mv1_result {union {diplomat::capi::AnyCalendarKind ok; }; bool is_ok;} icu4x_AnyCalendarKind_get_for_bcp47_mv1_result;
+    icu4x_AnyCalendarKind_get_for_bcp47_mv1_result icu4x_AnyCalendarKind_get_for_bcp47_mv1(const char* s_data, size_t s_len);
     
-    void ICU4XAnyCalendarKind_bcp47(diplomat::capi::AnyCalendarKind self, diplomat::capi::DiplomatWrite* write);
+    void icu4x_AnyCalendarKind_bcp47_mv1(diplomat::capi::AnyCalendarKind self, diplomat::capi::DiplomatWrite* write);
     
     
     } // extern "C"
@@ -61,12 +61,12 @@ inline AnyCalendarKind AnyCalendarKind::FromFFI(diplomat::capi::AnyCalendarKind 
 }
 
 inline std::optional<AnyCalendarKind> AnyCalendarKind::get_for_locale(const Locale& locale) {
-  auto result = diplomat::capi::ICU4XAnyCalendarKind_get_for_locale(locale.AsFFI());
+  auto result = diplomat::capi::icu4x_AnyCalendarKind_get_for_locale_mv1(locale.AsFFI());
   return result.is_ok ? std::optional<AnyCalendarKind>(AnyCalendarKind::FromFFI(result.ok)) : std::nullopt;
 }
 
 inline std::optional<AnyCalendarKind> AnyCalendarKind::get_for_bcp47(std::string_view s) {
-  auto result = diplomat::capi::ICU4XAnyCalendarKind_get_for_bcp47(s.data(),
+  auto result = diplomat::capi::icu4x_AnyCalendarKind_get_for_bcp47_mv1(s.data(),
     s.size());
   return result.is_ok ? std::optional<AnyCalendarKind>(AnyCalendarKind::FromFFI(result.ok)) : std::nullopt;
 }
@@ -74,7 +74,7 @@ inline std::optional<AnyCalendarKind> AnyCalendarKind::get_for_bcp47(std::string
 inline std::string AnyCalendarKind::bcp47() {
   std::string output;
   diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
-  diplomat::capi::ICU4XAnyCalendarKind_bcp47(this->AsFFI(),
+  diplomat::capi::icu4x_AnyCalendarKind_bcp47_mv1(this->AsFFI(),
     &write);
   return output;
 }

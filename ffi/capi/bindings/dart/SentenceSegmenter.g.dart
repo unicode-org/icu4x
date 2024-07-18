@@ -22,7 +22,7 @@ final class SentenceSegmenter implements ffi.Finalizable {
     }
   }
 
-  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XSentenceSegmenter_destroy));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_SentenceSegmenter_destroy_mv1));
 
   /// Construct an [`SentenceSegmenter`].
   ///
@@ -30,7 +30,7 @@ final class SentenceSegmenter implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory SentenceSegmenter(DataProvider provider) {
-    final result = _ICU4XSentenceSegmenter_create(provider._ffi);
+    final result = _icu4x_SentenceSegmenter_create_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -48,22 +48,22 @@ final class SentenceSegmenter implements ffi.Finalizable {
     final inputArena = _FinalizedArena();
     // This lifetime edge depends on lifetimes: 'a
     core.List<Object> aEdges = [this, inputArena];
-    final result = _ICU4XSentenceSegmenter_segment_utf16(_ffi, inputView.allocIn(inputArena.arena), inputView.length);
+    final result = _icu4x_SentenceSegmenter_segment_utf16_mv1(_ffi, inputView.allocIn(inputArena.arena), inputView.length);
     return SentenceBreakIteratorUtf16._fromFfi(result, [], aEdges);
   }
 }
 
-@meta.ResourceIdentifier('ICU4XSentenceSegmenter_destroy')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XSentenceSegmenter_destroy')
+@meta.ResourceIdentifier('icu4x_SentenceSegmenter_destroy_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_SentenceSegmenter_destroy_mv1')
 // ignore: non_constant_identifier_names
-external void _ICU4XSentenceSegmenter_destroy(ffi.Pointer<ffi.Void> self);
+external void _icu4x_SentenceSegmenter_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('ICU4XSentenceSegmenter_create')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XSentenceSegmenter_create')
+@meta.ResourceIdentifier('icu4x_SentenceSegmenter_create_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_SentenceSegmenter_create_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XSentenceSegmenter_create(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_SentenceSegmenter_create_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XSentenceSegmenter_segment_utf16')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint16>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XSentenceSegmenter_segment_utf16')
+@meta.ResourceIdentifier('icu4x_SentenceSegmenter_segment_utf16_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint16>, ffi.Size)>(isLeaf: true, symbol: 'icu4x_SentenceSegmenter_segment_utf16_mv1')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _ICU4XSentenceSegmenter_segment_utf16(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint16> inputData, int inputLength);
+external ffi.Pointer<ffi.Opaque> _icu4x_SentenceSegmenter_segment_utf16_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint16> inputData, int inputLength);

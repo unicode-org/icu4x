@@ -56,7 +56,7 @@ export class PluralCategory {
         const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XPluralCategory_get_for_cldr_string(diplomat_receive_buffer, sSlice.ptr, sSlice.size);
+        const result = wasm.icu4x_PluralCategory_get_for_cldr_string_mv1(diplomat_receive_buffer, sSlice.ptr, sSlice.size);
     
         try {
     

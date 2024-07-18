@@ -11,7 +11,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 */
 
 const TitlecaseMapper_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.ICU4XTitlecaseMapper_destroy(ptr);
+    wasm.icu4x_TitlecaseMapper_destroy_mv1(ptr);
 });
 export class TitlecaseMapper {
     // Internal ptr reference:
@@ -38,7 +38,7 @@ export class TitlecaseMapper {
     static create(provider) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XTitlecaseMapper_create(diplomat_receive_buffer, provider.ffiValue);
+        const result = wasm.icu4x_TitlecaseMapper_create_mv1(diplomat_receive_buffer, provider.ffiValue);
     
         try {
     
@@ -61,7 +61,7 @@ export class TitlecaseMapper {
         let slice_cleanup_callbacks = [];
         
         const write = wasm.diplomat_buffer_write_create(0);
-        wasm.ICU4XTitlecaseMapper_titlecase_segment_v1(this.ffiValue, sSlice.ptr, sSlice.size, locale.ffiValue, ...options._intoFFI(slice_cleanup_callbacks, {}), write);
+        wasm.icu4x_TitlecaseMapper_titlecase_segment_v1_mv1(this.ffiValue, sSlice.ptr, sSlice.size, locale.ffiValue, ...options._intoFFI(slice_cleanup_callbacks, {}), write);
     
         try {
     

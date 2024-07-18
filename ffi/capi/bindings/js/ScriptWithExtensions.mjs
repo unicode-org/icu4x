@@ -13,7 +13,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 */
 
 const ScriptWithExtensions_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.ICU4XScriptWithExtensions_destroy(ptr);
+    wasm.icu4x_ScriptWithExtensions_destroy_mv1(ptr);
 });
 export class ScriptWithExtensions {
     // Internal ptr reference:
@@ -40,7 +40,7 @@ export class ScriptWithExtensions {
     static create(provider) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XScriptWithExtensions_create(diplomat_receive_buffer, provider.ffiValue);
+        const result = wasm.icu4x_ScriptWithExtensions_create_mv1(diplomat_receive_buffer, provider.ffiValue);
     
         try {
     
@@ -57,7 +57,7 @@ export class ScriptWithExtensions {
     }
 
     getScriptVal(codePoint) {
-        const result = wasm.ICU4XScriptWithExtensions_get_script_val(this.ffiValue, codePoint);
+        const result = wasm.icu4x_ScriptWithExtensions_get_script_val_mv1(this.ffiValue, codePoint);
     
         try {
     
@@ -68,7 +68,7 @@ export class ScriptWithExtensions {
     }
 
     hasScript(codePoint, script) {
-        const result = wasm.ICU4XScriptWithExtensions_has_script(this.ffiValue, codePoint, script);
+        const result = wasm.icu4x_ScriptWithExtensions_has_script_mv1(this.ffiValue, codePoint, script);
     
         try {
     
@@ -82,7 +82,7 @@ export class ScriptWithExtensions {
         
         // This lifetime edge depends on lifetimes 'a
         let aEdges = [this];
-        const result = wasm.ICU4XScriptWithExtensions_as_borrowed(this.ffiValue);
+        const result = wasm.icu4x_ScriptWithExtensions_as_borrowed_mv1(this.ffiValue);
     
         try {
     
@@ -96,7 +96,7 @@ export class ScriptWithExtensions {
         
         // This lifetime edge depends on lifetimes 'a
         let aEdges = [this];
-        const result = wasm.ICU4XScriptWithExtensions_iter_ranges_for_script(this.ffiValue, script);
+        const result = wasm.icu4x_ScriptWithExtensions_iter_ranges_for_script_mv1(this.ffiValue, script);
     
         try {
     

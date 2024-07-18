@@ -20,17 +20,17 @@
 
 
 
-typedef struct ICU4XGraphemeClusterSegmenter_create_result {union {GraphemeClusterSegmenter* ok; DataError err;}; bool is_ok;} ICU4XGraphemeClusterSegmenter_create_result;
-ICU4XGraphemeClusterSegmenter_create_result ICU4XGraphemeClusterSegmenter_create(const DataProvider* provider);
+typedef struct icu4x_GraphemeClusterSegmenter_create_mv1_result {union {GraphemeClusterSegmenter* ok; DataError err;}; bool is_ok;} icu4x_GraphemeClusterSegmenter_create_mv1_result;
+icu4x_GraphemeClusterSegmenter_create_mv1_result icu4x_GraphemeClusterSegmenter_create_mv1(const DataProvider* provider);
 
-GraphemeClusterBreakIteratorUtf8* ICU4XGraphemeClusterSegmenter_segment_utf8(const GraphemeClusterSegmenter* self, const char* input_data, size_t input_len);
+GraphemeClusterBreakIteratorUtf8* icu4x_GraphemeClusterSegmenter_segment_utf8_mv1(const GraphemeClusterSegmenter* self, const char* input_data, size_t input_len);
 
-GraphemeClusterBreakIteratorUtf16* ICU4XGraphemeClusterSegmenter_segment_utf16(const GraphemeClusterSegmenter* self, const char16_t* input_data, size_t input_len);
+GraphemeClusterBreakIteratorUtf16* icu4x_GraphemeClusterSegmenter_segment_utf16_mv1(const GraphemeClusterSegmenter* self, const char16_t* input_data, size_t input_len);
 
-GraphemeClusterBreakIteratorLatin1* ICU4XGraphemeClusterSegmenter_segment_latin1(const GraphemeClusterSegmenter* self, const uint8_t* input_data, size_t input_len);
+GraphemeClusterBreakIteratorLatin1* icu4x_GraphemeClusterSegmenter_segment_latin1_mv1(const GraphemeClusterSegmenter* self, const uint8_t* input_data, size_t input_len);
 
 
-void ICU4XGraphemeClusterSegmenter_destroy(GraphemeClusterSegmenter* self);
+void icu4x_GraphemeClusterSegmenter_destroy_mv1(GraphemeClusterSegmenter* self);
 
 
 

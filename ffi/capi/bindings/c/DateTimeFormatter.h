@@ -22,17 +22,17 @@
 
 
 
-typedef struct ICU4XDateTimeFormatter_create_with_lengths_result {union {DateTimeFormatter* ok; Error err;}; bool is_ok;} ICU4XDateTimeFormatter_create_with_lengths_result;
-ICU4XDateTimeFormatter_create_with_lengths_result ICU4XDateTimeFormatter_create_with_lengths(const DataProvider* provider, const Locale* locale, DateLength date_length, TimeLength time_length);
+typedef struct icu4x_DateTimeFormatter_create_with_lengths_mv1_result {union {DateTimeFormatter* ok; Error err;}; bool is_ok;} icu4x_DateTimeFormatter_create_with_lengths_mv1_result;
+icu4x_DateTimeFormatter_create_with_lengths_mv1_result icu4x_DateTimeFormatter_create_with_lengths_mv1(const DataProvider* provider, const Locale* locale, DateLength date_length, TimeLength time_length);
 
-typedef struct ICU4XDateTimeFormatter_format_datetime_result {union { Error err;}; bool is_ok;} ICU4XDateTimeFormatter_format_datetime_result;
-ICU4XDateTimeFormatter_format_datetime_result ICU4XDateTimeFormatter_format_datetime(const DateTimeFormatter* self, const DateTime* value, DiplomatWrite* write);
+typedef struct icu4x_DateTimeFormatter_format_datetime_mv1_result {union { Error err;}; bool is_ok;} icu4x_DateTimeFormatter_format_datetime_mv1_result;
+icu4x_DateTimeFormatter_format_datetime_mv1_result icu4x_DateTimeFormatter_format_datetime_mv1(const DateTimeFormatter* self, const DateTime* value, DiplomatWrite* write);
 
-typedef struct ICU4XDateTimeFormatter_format_iso_datetime_result {union { Error err;}; bool is_ok;} ICU4XDateTimeFormatter_format_iso_datetime_result;
-ICU4XDateTimeFormatter_format_iso_datetime_result ICU4XDateTimeFormatter_format_iso_datetime(const DateTimeFormatter* self, const IsoDateTime* value, DiplomatWrite* write);
+typedef struct icu4x_DateTimeFormatter_format_iso_datetime_mv1_result {union { Error err;}; bool is_ok;} icu4x_DateTimeFormatter_format_iso_datetime_mv1_result;
+icu4x_DateTimeFormatter_format_iso_datetime_mv1_result icu4x_DateTimeFormatter_format_iso_datetime_mv1(const DateTimeFormatter* self, const IsoDateTime* value, DiplomatWrite* write);
 
 
-void ICU4XDateTimeFormatter_destroy(DateTimeFormatter* self);
+void icu4x_DateTimeFormatter_destroy_mv1(DateTimeFormatter* self);
 
 
 

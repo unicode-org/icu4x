@@ -20,7 +20,7 @@ final class ComposingNormalizer implements ffi.Finalizable {
     }
   }
 
-  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XComposingNormalizer_destroy));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_ComposingNormalizer_destroy_mv1));
 
   /// Construct a new ComposingNormalizer instance for NFC
   ///
@@ -28,7 +28,7 @@ final class ComposingNormalizer implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory ComposingNormalizer.nfc(DataProvider provider) {
-    final result = _ICU4XComposingNormalizer_create_nfc(provider._ffi);
+    final result = _icu4x_ComposingNormalizer_create_nfc_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -41,7 +41,7 @@ final class ComposingNormalizer implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory ComposingNormalizer.nfkc(DataProvider provider) {
-    final result = _ICU4XComposingNormalizer_create_nfkc(provider._ffi);
+    final result = _icu4x_ComposingNormalizer_create_nfkc_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -58,7 +58,7 @@ final class ComposingNormalizer implements ffi.Finalizable {
     final temp = ffi2.Arena();
     final sView = s.utf8View;
     final write = _Write();
-    _ICU4XComposingNormalizer_normalize(_ffi, sView.allocIn(temp), sView.length, write._ffi);
+    _icu4x_ComposingNormalizer_normalize_mv1(_ffi, sView.allocIn(temp), sView.length, write._ffi);
     temp.releaseAll();
     return write.finalize();
   }
@@ -72,7 +72,7 @@ final class ComposingNormalizer implements ffi.Finalizable {
   bool isNormalized(String s) {
     final temp = ffi2.Arena();
     final sView = s.utf8View;
-    final result = _ICU4XComposingNormalizer_is_normalized(_ffi, sView.allocIn(temp), sView.length);
+    final result = _icu4x_ComposingNormalizer_is_normalized_mv1(_ffi, sView.allocIn(temp), sView.length);
     temp.releaseAll();
     return result;
   }
@@ -86,7 +86,7 @@ final class ComposingNormalizer implements ffi.Finalizable {
   bool isNormalizedUtf16(String s) {
     final temp = ffi2.Arena();
     final sView = s.utf16View;
-    final result = _ICU4XComposingNormalizer_is_normalized_utf16(_ffi, sView.allocIn(temp), sView.length);
+    final result = _icu4x_ComposingNormalizer_is_normalized_utf16_mv1(_ffi, sView.allocIn(temp), sView.length);
     temp.releaseAll();
     return result;
   }
@@ -97,7 +97,7 @@ final class ComposingNormalizer implements ffi.Finalizable {
   int isNormalizedUpTo(String s) {
     final temp = ffi2.Arena();
     final sView = s.utf8View;
-    final result = _ICU4XComposingNormalizer_is_normalized_up_to(_ffi, sView.allocIn(temp), sView.length);
+    final result = _icu4x_ComposingNormalizer_is_normalized_up_to_mv1(_ffi, sView.allocIn(temp), sView.length);
     temp.releaseAll();
     return result;
   }
@@ -108,48 +108,48 @@ final class ComposingNormalizer implements ffi.Finalizable {
   int isNormalizedUtf16UpTo(String s) {
     final temp = ffi2.Arena();
     final sView = s.utf16View;
-    final result = _ICU4XComposingNormalizer_is_normalized_utf16_up_to(_ffi, sView.allocIn(temp), sView.length);
+    final result = _icu4x_ComposingNormalizer_is_normalized_utf16_up_to_mv1(_ffi, sView.allocIn(temp), sView.length);
     temp.releaseAll();
     return result;
   }
 }
 
-@meta.ResourceIdentifier('ICU4XComposingNormalizer_destroy')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XComposingNormalizer_destroy')
+@meta.ResourceIdentifier('icu4x_ComposingNormalizer_destroy_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_ComposingNormalizer_destroy_mv1')
 // ignore: non_constant_identifier_names
-external void _ICU4XComposingNormalizer_destroy(ffi.Pointer<ffi.Void> self);
+external void _icu4x_ComposingNormalizer_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('ICU4XComposingNormalizer_create_nfc')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XComposingNormalizer_create_nfc')
+@meta.ResourceIdentifier('icu4x_ComposingNormalizer_create_nfc_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ComposingNormalizer_create_nfc_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XComposingNormalizer_create_nfc(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_ComposingNormalizer_create_nfc_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XComposingNormalizer_create_nfkc')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XComposingNormalizer_create_nfkc')
+@meta.ResourceIdentifier('icu4x_ComposingNormalizer_create_nfkc_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ComposingNormalizer_create_nfkc_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XComposingNormalizer_create_nfkc(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_ComposingNormalizer_create_nfkc_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XComposingNormalizer_normalize')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XComposingNormalizer_normalize')
+@meta.ResourceIdentifier('icu4x_ComposingNormalizer_normalize_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ComposingNormalizer_normalize_mv1')
 // ignore: non_constant_identifier_names
-external void _ICU4XComposingNormalizer_normalize(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> sData, int sLength, ffi.Pointer<ffi.Opaque> write);
+external void _icu4x_ComposingNormalizer_normalize_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> sData, int sLength, ffi.Pointer<ffi.Opaque> write);
 
-@meta.ResourceIdentifier('ICU4XComposingNormalizer_is_normalized')
-@ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XComposingNormalizer_is_normalized')
+@meta.ResourceIdentifier('icu4x_ComposingNormalizer_is_normalized_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'icu4x_ComposingNormalizer_is_normalized_mv1')
 // ignore: non_constant_identifier_names
-external bool _ICU4XComposingNormalizer_is_normalized(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> sData, int sLength);
+external bool _icu4x_ComposingNormalizer_is_normalized_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> sData, int sLength);
 
-@meta.ResourceIdentifier('ICU4XComposingNormalizer_is_normalized_utf16')
-@ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint16>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XComposingNormalizer_is_normalized_utf16')
+@meta.ResourceIdentifier('icu4x_ComposingNormalizer_is_normalized_utf16_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint16>, ffi.Size)>(isLeaf: true, symbol: 'icu4x_ComposingNormalizer_is_normalized_utf16_mv1')
 // ignore: non_constant_identifier_names
-external bool _ICU4XComposingNormalizer_is_normalized_utf16(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint16> sData, int sLength);
+external bool _icu4x_ComposingNormalizer_is_normalized_utf16_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint16> sData, int sLength);
 
-@meta.ResourceIdentifier('ICU4XComposingNormalizer_is_normalized_up_to')
-@ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XComposingNormalizer_is_normalized_up_to')
+@meta.ResourceIdentifier('icu4x_ComposingNormalizer_is_normalized_up_to_mv1')
+@ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'icu4x_ComposingNormalizer_is_normalized_up_to_mv1')
 // ignore: non_constant_identifier_names
-external int _ICU4XComposingNormalizer_is_normalized_up_to(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> sData, int sLength);
+external int _icu4x_ComposingNormalizer_is_normalized_up_to_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> sData, int sLength);
 
-@meta.ResourceIdentifier('ICU4XComposingNormalizer_is_normalized_utf16_up_to')
-@ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint16>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XComposingNormalizer_is_normalized_utf16_up_to')
+@meta.ResourceIdentifier('icu4x_ComposingNormalizer_is_normalized_utf16_up_to_mv1')
+@ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint16>, ffi.Size)>(isLeaf: true, symbol: 'icu4x_ComposingNormalizer_is_normalized_utf16_up_to_mv1')
 // ignore: non_constant_identifier_names
-external int _ICU4XComposingNormalizer_is_normalized_utf16_up_to(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint16> sData, int sLength);
+external int _icu4x_ComposingNormalizer_is_normalized_utf16_up_to_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint16> sData, int sLength);

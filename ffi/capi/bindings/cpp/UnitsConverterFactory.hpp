@@ -21,34 +21,34 @@ namespace diplomat {
 namespace capi {
     extern "C" {
     
-    typedef struct ICU4XUnitsConverterFactory_create_result {union {diplomat::capi::UnitsConverterFactory* ok; diplomat::capi::DataError err;}; bool is_ok;} ICU4XUnitsConverterFactory_create_result;
-    ICU4XUnitsConverterFactory_create_result ICU4XUnitsConverterFactory_create(const diplomat::capi::DataProvider* provider);
+    typedef struct icu4x_UnitsConverterFactory_create_mv1_result {union {diplomat::capi::UnitsConverterFactory* ok; diplomat::capi::DataError err;}; bool is_ok;} icu4x_UnitsConverterFactory_create_mv1_result;
+    icu4x_UnitsConverterFactory_create_mv1_result icu4x_UnitsConverterFactory_create_mv1(const diplomat::capi::DataProvider* provider);
     
-    diplomat::capi::UnitsConverter* ICU4XUnitsConverterFactory_converter(const diplomat::capi::UnitsConverterFactory* self, const diplomat::capi::MeasureUnit* from, const diplomat::capi::MeasureUnit* to);
+    diplomat::capi::UnitsConverter* icu4x_UnitsConverterFactory_converter_mv1(const diplomat::capi::UnitsConverterFactory* self, const diplomat::capi::MeasureUnit* from, const diplomat::capi::MeasureUnit* to);
     
-    diplomat::capi::MeasureUnitParser* ICU4XUnitsConverterFactory_parser(const diplomat::capi::UnitsConverterFactory* self);
+    diplomat::capi::MeasureUnitParser* icu4x_UnitsConverterFactory_parser_mv1(const diplomat::capi::UnitsConverterFactory* self);
     
     
-    void ICU4XUnitsConverterFactory_destroy(UnitsConverterFactory* self);
+    void icu4x_UnitsConverterFactory_destroy_mv1(UnitsConverterFactory* self);
     
     } // extern "C"
 } // namespace capi
 } // namespace
 
 inline diplomat::result<std::unique_ptr<UnitsConverterFactory>, DataError> UnitsConverterFactory::create(const DataProvider& provider) {
-  auto result = diplomat::capi::ICU4XUnitsConverterFactory_create(provider.AsFFI());
+  auto result = diplomat::capi::icu4x_UnitsConverterFactory_create_mv1(provider.AsFFI());
   return result.is_ok ? diplomat::result<std::unique_ptr<UnitsConverterFactory>, DataError>(diplomat::Ok<std::unique_ptr<UnitsConverterFactory>>(std::unique_ptr<UnitsConverterFactory>(UnitsConverterFactory::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<UnitsConverterFactory>, DataError>(diplomat::Err<DataError>(DataError::FromFFI(result.err)));
 }
 
 inline std::unique_ptr<UnitsConverter> UnitsConverterFactory::converter(const MeasureUnit& from, const MeasureUnit& to) const {
-  auto result = diplomat::capi::ICU4XUnitsConverterFactory_converter(this->AsFFI(),
+  auto result = diplomat::capi::icu4x_UnitsConverterFactory_converter_mv1(this->AsFFI(),
     from.AsFFI(),
     to.AsFFI());
   return std::unique_ptr<UnitsConverter>(UnitsConverter::FromFFI(result));
 }
 
 inline std::unique_ptr<MeasureUnitParser> UnitsConverterFactory::parser() const {
-  auto result = diplomat::capi::ICU4XUnitsConverterFactory_parser(this->AsFFI());
+  auto result = diplomat::capi::icu4x_UnitsConverterFactory_parser_mv1(this->AsFFI());
   return std::unique_ptr<MeasureUnitParser>(MeasureUnitParser::FromFFI(result));
 }
 
@@ -69,7 +69,7 @@ inline UnitsConverterFactory* UnitsConverterFactory::FromFFI(diplomat::capi::Uni
 }
 
 inline void UnitsConverterFactory::operator delete(void* ptr) {
-  diplomat::capi::ICU4XUnitsConverterFactory_destroy(reinterpret_cast<diplomat::capi::UnitsConverterFactory*>(ptr));
+  diplomat::capi::icu4x_UnitsConverterFactory_destroy_mv1(reinterpret_cast<diplomat::capi::UnitsConverterFactory*>(ptr));
 }
 
 

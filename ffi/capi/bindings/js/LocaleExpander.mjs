@@ -13,7 +13,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 */
 
 const LocaleExpander_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.ICU4XLocaleExpander_destroy(ptr);
+    wasm.icu4x_LocaleExpander_destroy_mv1(ptr);
 });
 export class LocaleExpander {
     // Internal ptr reference:
@@ -40,7 +40,7 @@ export class LocaleExpander {
     static create(provider) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XLocaleExpander_create(diplomat_receive_buffer, provider.ffiValue);
+        const result = wasm.icu4x_LocaleExpander_create_mv1(diplomat_receive_buffer, provider.ffiValue);
     
         try {
     
@@ -59,7 +59,7 @@ export class LocaleExpander {
     static createExtended(provider) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XLocaleExpander_create_extended(diplomat_receive_buffer, provider.ffiValue);
+        const result = wasm.icu4x_LocaleExpander_create_extended_mv1(diplomat_receive_buffer, provider.ffiValue);
     
         try {
     
@@ -76,7 +76,7 @@ export class LocaleExpander {
     }
 
     maximize(locale) {
-        const result = wasm.ICU4XLocaleExpander_maximize(this.ffiValue, locale.ffiValue);
+        const result = wasm.icu4x_LocaleExpander_maximize_mv1(this.ffiValue, locale.ffiValue);
     
         try {
     
@@ -87,7 +87,7 @@ export class LocaleExpander {
     }
 
     minimize(locale) {
-        const result = wasm.ICU4XLocaleExpander_minimize(this.ffiValue, locale.ffiValue);
+        const result = wasm.icu4x_LocaleExpander_minimize_mv1(this.ffiValue, locale.ffiValue);
     
         try {
     
@@ -98,7 +98,7 @@ export class LocaleExpander {
     }
 
     minimizeFavorScript(locale) {
-        const result = wasm.ICU4XLocaleExpander_minimize_favor_script(this.ffiValue, locale.ffiValue);
+        const result = wasm.icu4x_LocaleExpander_minimize_favor_script_mv1(this.ffiValue, locale.ffiValue);
     
         try {
     

@@ -12,7 +12,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 */
 
 const CustomTimeZone_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.ICU4XCustomTimeZone_destroy(ptr);
+    wasm.icu4x_CustomTimeZone_destroy_mv1(ptr);
 });
 export class CustomTimeZone {
     // Internal ptr reference:
@@ -41,7 +41,7 @@ export class CustomTimeZone {
         const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XCustomTimeZone_create_from_string(diplomat_receive_buffer, sSlice.ptr, sSlice.size);
+        const result = wasm.icu4x_CustomTimeZone_create_from_string_mv1(diplomat_receive_buffer, sSlice.ptr, sSlice.size);
     
         try {
     
@@ -60,7 +60,7 @@ export class CustomTimeZone {
     }
 
     static createEmpty() {
-        const result = wasm.ICU4XCustomTimeZone_create_empty();
+        const result = wasm.icu4x_CustomTimeZone_create_empty_mv1();
     
         try {
     
@@ -71,7 +71,7 @@ export class CustomTimeZone {
     }
 
     static createUtc() {
-        const result = wasm.ICU4XCustomTimeZone_create_utc();
+        const result = wasm.icu4x_CustomTimeZone_create_utc_mv1();
     
         try {
     
@@ -82,7 +82,7 @@ export class CustomTimeZone {
     }
 
     static createGmt() {
-        const result = wasm.ICU4XCustomTimeZone_create_gmt();
+        const result = wasm.icu4x_CustomTimeZone_create_gmt_mv1();
     
         try {
     
@@ -93,7 +93,7 @@ export class CustomTimeZone {
     }
 
     static createBst() {
-        const result = wasm.ICU4XCustomTimeZone_create_bst();
+        const result = wasm.icu4x_CustomTimeZone_create_bst_mv1();
     
         try {
     
@@ -106,7 +106,7 @@ export class CustomTimeZone {
     trySetGmtOffsetSeconds(offsetSeconds) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XCustomTimeZone_try_set_gmt_offset_seconds(diplomat_receive_buffer, this.ffiValue, offsetSeconds);
+        const result = wasm.icu4x_CustomTimeZone_try_set_gmt_offset_seconds_mv1(diplomat_receive_buffer, this.ffiValue, offsetSeconds);
     
         try {
     
@@ -123,7 +123,7 @@ export class CustomTimeZone {
     }
 
     setGmtOffsetEighthsOfHour(offsetEighthsOfHour) {
-        wasm.ICU4XCustomTimeZone_set_gmt_offset_eighths_of_hour(this.ffiValue, offsetEighthsOfHour);
+        wasm.icu4x_CustomTimeZone_set_gmt_offset_eighths_of_hour_mv1(this.ffiValue, offsetEighthsOfHour);
     
         try {
     
@@ -133,7 +133,7 @@ export class CustomTimeZone {
     }
 
     clearGmtOffset() {
-        wasm.ICU4XCustomTimeZone_clear_gmt_offset(this.ffiValue);
+        wasm.icu4x_CustomTimeZone_clear_gmt_offset_mv1(this.ffiValue);
     
         try {
     
@@ -145,7 +145,7 @@ export class CustomTimeZone {
     get gmtOffsetSeconds() {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XCustomTimeZone_gmt_offset_seconds(diplomat_receive_buffer, this.ffiValue);
+        const result = wasm.icu4x_CustomTimeZone_gmt_offset_seconds_mv1(diplomat_receive_buffer, this.ffiValue);
     
         try {
     
@@ -163,7 +163,7 @@ export class CustomTimeZone {
     get isGmtOffsetPositive() {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(2, 1);
-        const result = wasm.ICU4XCustomTimeZone_is_gmt_offset_positive(diplomat_receive_buffer, this.ffiValue);
+        const result = wasm.icu4x_CustomTimeZone_is_gmt_offset_positive_mv1(diplomat_receive_buffer, this.ffiValue);
     
         try {
     
@@ -181,7 +181,7 @@ export class CustomTimeZone {
     get isGmtOffsetZero() {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(2, 1);
-        const result = wasm.ICU4XCustomTimeZone_is_gmt_offset_zero(diplomat_receive_buffer, this.ffiValue);
+        const result = wasm.icu4x_CustomTimeZone_is_gmt_offset_zero_mv1(diplomat_receive_buffer, this.ffiValue);
     
         try {
     
@@ -199,7 +199,7 @@ export class CustomTimeZone {
     get gmtOffsetHasMinutes() {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(2, 1);
-        const result = wasm.ICU4XCustomTimeZone_gmt_offset_has_minutes(diplomat_receive_buffer, this.ffiValue);
+        const result = wasm.icu4x_CustomTimeZone_gmt_offset_has_minutes_mv1(diplomat_receive_buffer, this.ffiValue);
     
         try {
     
@@ -217,7 +217,7 @@ export class CustomTimeZone {
     get gmtOffsetHasSeconds() {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(2, 1);
-        const result = wasm.ICU4XCustomTimeZone_gmt_offset_has_seconds(diplomat_receive_buffer, this.ffiValue);
+        const result = wasm.icu4x_CustomTimeZone_gmt_offset_has_seconds_mv1(diplomat_receive_buffer, this.ffiValue);
     
         try {
     
@@ -237,7 +237,7 @@ export class CustomTimeZone {
         const idSlice = diplomatRuntime.DiplomatBuf.str8(wasm, id);
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XCustomTimeZone_try_set_time_zone_id(diplomat_receive_buffer, this.ffiValue, idSlice.ptr, idSlice.size);
+        const result = wasm.icu4x_CustomTimeZone_try_set_time_zone_id_mv1(diplomat_receive_buffer, this.ffiValue, idSlice.ptr, idSlice.size);
     
         try {
     
@@ -260,7 +260,7 @@ export class CustomTimeZone {
         const idSlice = diplomatRuntime.DiplomatBuf.str8(wasm, id);
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XCustomTimeZone_try_set_iana_time_zone_id(diplomat_receive_buffer, this.ffiValue, mapper.ffiValue, idSlice.ptr, idSlice.size);
+        const result = wasm.icu4x_CustomTimeZone_try_set_iana_time_zone_id_mv1(diplomat_receive_buffer, this.ffiValue, mapper.ffiValue, idSlice.ptr, idSlice.size);
     
         try {
     
@@ -279,7 +279,7 @@ export class CustomTimeZone {
     }
 
     clearTimeZoneId() {
-        wasm.ICU4XCustomTimeZone_clear_time_zone_id(this.ffiValue);
+        wasm.icu4x_CustomTimeZone_clear_time_zone_id_mv1(this.ffiValue);
     
         try {
     
@@ -291,7 +291,7 @@ export class CustomTimeZone {
     get timeZoneId() {
         
         const write = wasm.diplomat_buffer_write_create(0);
-        const result = wasm.ICU4XCustomTimeZone_time_zone_id(this.ffiValue, write);
+        const result = wasm.icu4x_CustomTimeZone_time_zone_id_mv1(this.ffiValue, write);
     
         try {
     
@@ -308,7 +308,7 @@ export class CustomTimeZone {
         const idSlice = diplomatRuntime.DiplomatBuf.str8(wasm, id);
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.ICU4XCustomTimeZone_try_set_metazone_id(diplomat_receive_buffer, this.ffiValue, idSlice.ptr, idSlice.size);
+        const result = wasm.icu4x_CustomTimeZone_try_set_metazone_id_mv1(diplomat_receive_buffer, this.ffiValue, idSlice.ptr, idSlice.size);
     
         try {
     
@@ -327,7 +327,7 @@ export class CustomTimeZone {
     }
 
     clearMetazoneId() {
-        wasm.ICU4XCustomTimeZone_clear_metazone_id(this.ffiValue);
+        wasm.icu4x_CustomTimeZone_clear_metazone_id_mv1(this.ffiValue);
     
         try {
     
@@ -339,7 +339,7 @@ export class CustomTimeZone {
     get metazoneId() {
         
         const write = wasm.diplomat_buffer_write_create(0);
-        const result = wasm.ICU4XCustomTimeZone_metazone_id(this.ffiValue, write);
+        const result = wasm.icu4x_CustomTimeZone_metazone_id_mv1(this.ffiValue, write);
     
         try {
     
@@ -354,7 +354,7 @@ export class CustomTimeZone {
     trySetZoneVariant(id) {
         
         const idSlice = diplomatRuntime.DiplomatBuf.str8(wasm, id);
-        const result = wasm.ICU4XCustomTimeZone_try_set_zone_variant(this.ffiValue, idSlice.ptr, idSlice.size);
+        const result = wasm.icu4x_CustomTimeZone_try_set_zone_variant_mv1(this.ffiValue, idSlice.ptr, idSlice.size);
     
         try {
     
@@ -367,7 +367,7 @@ export class CustomTimeZone {
     }
 
     clearZoneVariant() {
-        wasm.ICU4XCustomTimeZone_clear_zone_variant(this.ffiValue);
+        wasm.icu4x_CustomTimeZone_clear_zone_variant_mv1(this.ffiValue);
     
         try {
     
@@ -379,7 +379,7 @@ export class CustomTimeZone {
     get zoneVariant() {
         
         const write = wasm.diplomat_buffer_write_create(0);
-        const result = wasm.ICU4XCustomTimeZone_zone_variant(this.ffiValue, write);
+        const result = wasm.icu4x_CustomTimeZone_zone_variant_mv1(this.ffiValue, write);
     
         try {
     
@@ -392,7 +392,7 @@ export class CustomTimeZone {
     }
 
     setStandardTime() {
-        wasm.ICU4XCustomTimeZone_set_standard_time(this.ffiValue);
+        wasm.icu4x_CustomTimeZone_set_standard_time_mv1(this.ffiValue);
     
         try {
     
@@ -402,7 +402,7 @@ export class CustomTimeZone {
     }
 
     setDaylightTime() {
-        wasm.ICU4XCustomTimeZone_set_daylight_time(this.ffiValue);
+        wasm.icu4x_CustomTimeZone_set_daylight_time_mv1(this.ffiValue);
     
         try {
     
@@ -414,7 +414,7 @@ export class CustomTimeZone {
     get isStandardTime() {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(2, 1);
-        const result = wasm.ICU4XCustomTimeZone_is_standard_time(diplomat_receive_buffer, this.ffiValue);
+        const result = wasm.icu4x_CustomTimeZone_is_standard_time_mv1(diplomat_receive_buffer, this.ffiValue);
     
         try {
     
@@ -432,7 +432,7 @@ export class CustomTimeZone {
     get isDaylightTime() {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(2, 1);
-        const result = wasm.ICU4XCustomTimeZone_is_daylight_time(diplomat_receive_buffer, this.ffiValue);
+        const result = wasm.icu4x_CustomTimeZone_is_daylight_time_mv1(diplomat_receive_buffer, this.ffiValue);
     
         try {
     
@@ -448,7 +448,7 @@ export class CustomTimeZone {
     }
 
     maybeCalculateMetazone(metazoneCalculator, localDatetime) {
-        wasm.ICU4XCustomTimeZone_maybe_calculate_metazone(this.ffiValue, metazoneCalculator.ffiValue, localDatetime.ffiValue);
+        wasm.icu4x_CustomTimeZone_maybe_calculate_metazone_mv1(this.ffiValue, metazoneCalculator.ffiValue, localDatetime.ffiValue);
     
         try {
     

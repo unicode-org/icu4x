@@ -18,26 +18,26 @@ namespace diplomat {
 namespace capi {
     extern "C" {
     
-    typedef struct ICU4XPluralOperands_create_from_string_result {union {diplomat::capi::PluralOperands* ok; diplomat::capi::FixedDecimalParseError err;}; bool is_ok;} ICU4XPluralOperands_create_from_string_result;
-    ICU4XPluralOperands_create_from_string_result ICU4XPluralOperands_create_from_string(const char* s_data, size_t s_len);
+    typedef struct icu4x_PluralOperands_create_from_string_mv1_result {union {diplomat::capi::PluralOperands* ok; diplomat::capi::FixedDecimalParseError err;}; bool is_ok;} icu4x_PluralOperands_create_from_string_mv1_result;
+    icu4x_PluralOperands_create_from_string_mv1_result icu4x_PluralOperands_create_from_string_mv1(const char* s_data, size_t s_len);
     
-    diplomat::capi::PluralOperands* ICU4XPluralOperands_create_from_fixed_decimal(const diplomat::capi::FixedDecimal* x);
+    diplomat::capi::PluralOperands* icu4x_PluralOperands_create_from_fixed_decimal_mv1(const diplomat::capi::FixedDecimal* x);
     
     
-    void ICU4XPluralOperands_destroy(PluralOperands* self);
+    void icu4x_PluralOperands_destroy_mv1(PluralOperands* self);
     
     } // extern "C"
 } // namespace capi
 } // namespace
 
 inline diplomat::result<std::unique_ptr<PluralOperands>, FixedDecimalParseError> PluralOperands::create_from_string(std::string_view s) {
-  auto result = diplomat::capi::ICU4XPluralOperands_create_from_string(s.data(),
+  auto result = diplomat::capi::icu4x_PluralOperands_create_from_string_mv1(s.data(),
     s.size());
   return result.is_ok ? diplomat::result<std::unique_ptr<PluralOperands>, FixedDecimalParseError>(diplomat::Ok<std::unique_ptr<PluralOperands>>(std::unique_ptr<PluralOperands>(PluralOperands::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<PluralOperands>, FixedDecimalParseError>(diplomat::Err<FixedDecimalParseError>(FixedDecimalParseError::FromFFI(result.err)));
 }
 
 inline std::unique_ptr<PluralOperands> PluralOperands::create_from_fixed_decimal(const FixedDecimal& x) {
-  auto result = diplomat::capi::ICU4XPluralOperands_create_from_fixed_decimal(x.AsFFI());
+  auto result = diplomat::capi::icu4x_PluralOperands_create_from_fixed_decimal_mv1(x.AsFFI());
   return std::unique_ptr<PluralOperands>(PluralOperands::FromFFI(result));
 }
 
@@ -58,7 +58,7 @@ inline PluralOperands* PluralOperands::FromFFI(diplomat::capi::PluralOperands* p
 }
 
 inline void PluralOperands::operator delete(void* ptr) {
-  diplomat::capi::ICU4XPluralOperands_destroy(reinterpret_cast<diplomat::capi::PluralOperands*>(ptr));
+  diplomat::capi::icu4x_PluralOperands_destroy_mv1(reinterpret_cast<diplomat::capi::PluralOperands*>(ptr));
 }
 
 

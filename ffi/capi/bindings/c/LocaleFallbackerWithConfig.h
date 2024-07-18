@@ -17,10 +17,10 @@
 
 
 
-LocaleFallbackIterator* ICU4XLocaleFallbackerWithConfig_fallback_for_locale(const LocaleFallbackerWithConfig* self, const Locale* locale);
+LocaleFallbackIterator* icu4x_LocaleFallbackerWithConfig_fallback_for_locale_mv1(const LocaleFallbackerWithConfig* self, const Locale* locale);
 
 
-void ICU4XLocaleFallbackerWithConfig_destroy(LocaleFallbackerWithConfig* self);
+void icu4x_LocaleFallbackerWithConfig_destroy_mv1(LocaleFallbackerWithConfig* self);
 
 
 

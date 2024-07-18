@@ -17,58 +17,58 @@ namespace diplomat {
 namespace capi {
     extern "C" {
     
-    bool ICU4XBidiParagraph_set_paragraph_in_text(diplomat::capi::BidiParagraph* self, size_t n);
+    bool icu4x_BidiParagraph_set_paragraph_in_text_mv1(diplomat::capi::BidiParagraph* self, size_t n);
     
-    diplomat::capi::BidiDirection ICU4XBidiParagraph_direction(const diplomat::capi::BidiParagraph* self);
+    diplomat::capi::BidiDirection icu4x_BidiParagraph_direction_mv1(const diplomat::capi::BidiParagraph* self);
     
-    size_t ICU4XBidiParagraph_size(const diplomat::capi::BidiParagraph* self);
+    size_t icu4x_BidiParagraph_size_mv1(const diplomat::capi::BidiParagraph* self);
     
-    size_t ICU4XBidiParagraph_range_start(const diplomat::capi::BidiParagraph* self);
+    size_t icu4x_BidiParagraph_range_start_mv1(const diplomat::capi::BidiParagraph* self);
     
-    size_t ICU4XBidiParagraph_range_end(const diplomat::capi::BidiParagraph* self);
+    size_t icu4x_BidiParagraph_range_end_mv1(const diplomat::capi::BidiParagraph* self);
     
-    typedef struct ICU4XBidiParagraph_reorder_line_result { bool is_ok;} ICU4XBidiParagraph_reorder_line_result;
-    ICU4XBidiParagraph_reorder_line_result ICU4XBidiParagraph_reorder_line(const diplomat::capi::BidiParagraph* self, size_t range_start, size_t range_end, diplomat::capi::DiplomatWrite* write);
+    typedef struct icu4x_BidiParagraph_reorder_line_mv1_result { bool is_ok;} icu4x_BidiParagraph_reorder_line_mv1_result;
+    icu4x_BidiParagraph_reorder_line_mv1_result icu4x_BidiParagraph_reorder_line_mv1(const diplomat::capi::BidiParagraph* self, size_t range_start, size_t range_end, diplomat::capi::DiplomatWrite* write);
     
-    uint8_t ICU4XBidiParagraph_level_at(const diplomat::capi::BidiParagraph* self, size_t pos);
+    uint8_t icu4x_BidiParagraph_level_at_mv1(const diplomat::capi::BidiParagraph* self, size_t pos);
     
     
-    void ICU4XBidiParagraph_destroy(BidiParagraph* self);
+    void icu4x_BidiParagraph_destroy_mv1(BidiParagraph* self);
     
     } // extern "C"
 } // namespace capi
 } // namespace
 
 inline bool BidiParagraph::set_paragraph_in_text(size_t n) {
-  auto result = diplomat::capi::ICU4XBidiParagraph_set_paragraph_in_text(this->AsFFI(),
+  auto result = diplomat::capi::icu4x_BidiParagraph_set_paragraph_in_text_mv1(this->AsFFI(),
     n);
   return result;
 }
 
 inline BidiDirection BidiParagraph::direction() const {
-  auto result = diplomat::capi::ICU4XBidiParagraph_direction(this->AsFFI());
+  auto result = diplomat::capi::icu4x_BidiParagraph_direction_mv1(this->AsFFI());
   return BidiDirection::FromFFI(result);
 }
 
 inline size_t BidiParagraph::size() const {
-  auto result = diplomat::capi::ICU4XBidiParagraph_size(this->AsFFI());
+  auto result = diplomat::capi::icu4x_BidiParagraph_size_mv1(this->AsFFI());
   return result;
 }
 
 inline size_t BidiParagraph::range_start() const {
-  auto result = diplomat::capi::ICU4XBidiParagraph_range_start(this->AsFFI());
+  auto result = diplomat::capi::icu4x_BidiParagraph_range_start_mv1(this->AsFFI());
   return result;
 }
 
 inline size_t BidiParagraph::range_end() const {
-  auto result = diplomat::capi::ICU4XBidiParagraph_range_end(this->AsFFI());
+  auto result = diplomat::capi::icu4x_BidiParagraph_range_end_mv1(this->AsFFI());
   return result;
 }
 
 inline std::optional<std::string> BidiParagraph::reorder_line(size_t range_start, size_t range_end) const {
   std::string output;
   diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
-  auto result = diplomat::capi::ICU4XBidiParagraph_reorder_line(this->AsFFI(),
+  auto result = diplomat::capi::icu4x_BidiParagraph_reorder_line_mv1(this->AsFFI(),
     range_start,
     range_end,
     &write);
@@ -76,7 +76,7 @@ inline std::optional<std::string> BidiParagraph::reorder_line(size_t range_start
 }
 
 inline uint8_t BidiParagraph::level_at(size_t pos) const {
-  auto result = diplomat::capi::ICU4XBidiParagraph_level_at(this->AsFFI(),
+  auto result = diplomat::capi::icu4x_BidiParagraph_level_at_mv1(this->AsFFI(),
     pos);
   return result;
 }
@@ -98,7 +98,7 @@ inline BidiParagraph* BidiParagraph::FromFFI(diplomat::capi::BidiParagraph* ptr)
 }
 
 inline void BidiParagraph::operator delete(void* ptr) {
-  diplomat::capi::ICU4XBidiParagraph_destroy(reinterpret_cast<diplomat::capi::BidiParagraph*>(ptr));
+  diplomat::capi::icu4x_BidiParagraph_destroy_mv1(reinterpret_cast<diplomat::capi::BidiParagraph*>(ptr));
 }
 
 

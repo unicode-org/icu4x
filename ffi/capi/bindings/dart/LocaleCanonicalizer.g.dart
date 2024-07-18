@@ -22,7 +22,7 @@ final class LocaleCanonicalizer implements ffi.Finalizable {
     }
   }
 
-  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XLocaleCanonicalizer_destroy));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_LocaleCanonicalizer_destroy_mv1));
 
   /// Create a new [`LocaleCanonicalizer`].
   ///
@@ -30,7 +30,7 @@ final class LocaleCanonicalizer implements ffi.Finalizable {
   ///
   /// Throws [Error] on failure.
   factory LocaleCanonicalizer(DataProvider provider) {
-    final result = _ICU4XLocaleCanonicalizer_create(provider._ffi);
+    final result = _icu4x_LocaleCanonicalizer_create_mv1(provider._ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
     }
@@ -43,7 +43,7 @@ final class LocaleCanonicalizer implements ffi.Finalizable {
   ///
   /// Throws [Error] on failure.
   factory LocaleCanonicalizer.extended(DataProvider provider) {
-    final result = _ICU4XLocaleCanonicalizer_create_extended(provider._ffi);
+    final result = _icu4x_LocaleCanonicalizer_create_extended_mv1(provider._ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
     }
@@ -52,27 +52,27 @@ final class LocaleCanonicalizer implements ffi.Finalizable {
 
   /// See the [Rust documentation for `canonicalize`](https://docs.rs/icu/latest/icu/locale/struct.LocaleCanonicalizer.html#method.canonicalize) for more information.
   TransformResult canonicalize(Locale locale) {
-    final result = _ICU4XLocaleCanonicalizer_canonicalize(_ffi, locale._ffi);
+    final result = _icu4x_LocaleCanonicalizer_canonicalize_mv1(_ffi, locale._ffi);
     return TransformResult.values[result];
   }
 }
 
-@meta.ResourceIdentifier('ICU4XLocaleCanonicalizer_destroy')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XLocaleCanonicalizer_destroy')
+@meta.ResourceIdentifier('icu4x_LocaleCanonicalizer_destroy_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_LocaleCanonicalizer_destroy_mv1')
 // ignore: non_constant_identifier_names
-external void _ICU4XLocaleCanonicalizer_destroy(ffi.Pointer<ffi.Void> self);
+external void _icu4x_LocaleCanonicalizer_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('ICU4XLocaleCanonicalizer_create')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocaleCanonicalizer_create')
+@meta.ResourceIdentifier('icu4x_LocaleCanonicalizer_create_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleCanonicalizer_create_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XLocaleCanonicalizer_create(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_LocaleCanonicalizer_create_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XLocaleCanonicalizer_create_extended')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocaleCanonicalizer_create_extended')
+@meta.ResourceIdentifier('icu4x_LocaleCanonicalizer_create_extended_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleCanonicalizer_create_extended_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XLocaleCanonicalizer_create_extended(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_LocaleCanonicalizer_create_extended_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XLocaleCanonicalizer_canonicalize')
-@ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocaleCanonicalizer_canonicalize')
+@meta.ResourceIdentifier('icu4x_LocaleCanonicalizer_canonicalize_mv1')
+@ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleCanonicalizer_canonicalize_mv1')
 // ignore: non_constant_identifier_names
-external int _ICU4XLocaleCanonicalizer_canonicalize(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> locale);
+external int _icu4x_LocaleCanonicalizer_canonicalize_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> locale);
