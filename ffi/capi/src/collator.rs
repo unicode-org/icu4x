@@ -131,6 +131,18 @@ pub mod ffi {
         ///
         /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
         /// to the WHATWG Encoding Standard.
+        #[diplomat::rust_link(icu::collator::Collator::compare_utf8, FnInStruct)]
+        #[diplomat::rust_link(icu::collator::Collator::compare, FnInStruct, hidden)]
+        #[diplomat::attr(not(supports = utf8_strings), disable)]
+        #[diplomat::attr(supports = utf8_strings, rename = "compare")]
+        pub fn compare_utf8(&self, left: &DiplomatStr, right: &DiplomatStr) -> core::cmp::Ordering {
+            self.0.compare_utf8(left, right)
+        }
+
+        /// Compare two strings.
+        ///
+        /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+        /// to the WHATWG Encoding Standard.
         #[diplomat::rust_link(icu::collator::Collator::compare_utf16, FnInStruct)]
         #[diplomat::attr(not(supports = utf8_strings), rename = "compare")]
         #[diplomat::attr(supports = utf8_strings, rename = "compare16")]
@@ -140,17 +152,6 @@ pub mod ffi {
             right: &DiplomatStr16,
         ) -> core::cmp::Ordering {
             self.0.compare_utf16(left, right)
-        }
-
-        /// Compare two strings.
-        ///
-        /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
-        /// to the WHATWG Encoding Standard.
-        #[diplomat::rust_link(icu::collator::Collator::compare_utf8, FnInStruct)]
-        #[diplomat::rust_link(icu::collator::Collator::compare, FnInStruct, hidden)]
-        #[diplomat::attr(not(supports = utf8_strings), disable)]
-        pub fn compare(&self, left: &DiplomatStr, right: &DiplomatStr) -> core::cmp::Ordering {
-            self.0.compare_utf8(left, right)
         }
 
         /// The resolved options showing how the default options, the requested options,
