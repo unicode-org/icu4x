@@ -5,7 +5,7 @@
 use core::str::FromStr;
 
 use crate::{AnyCalendar, Date, DateTime, Iso, RangeError, Time};
-use ixdtf::parsers::records::{DateRecord, IxdtfParseRecord, TimeRecord};
+use ixdtf::parsers::records::IxdtfParseRecord;
 use ixdtf::parsers::IxdtfParser;
 use ixdtf::ParserError;
 
@@ -32,20 +32,6 @@ impl From<RangeError> for FromIxdtfError {
 impl From<ParserError> for FromIxdtfError {
     fn from(value: ParserError) -> Self {
         Self::Ixdtf(value)
-    }
-}
-
-impl TryFrom<DateRecord> for Date<Iso> {
-    type Error = RangeError;
-    fn try_from(value: DateRecord) -> Result<Self, Self::Error> {
-        Self::try_new_iso_date(value.year, value.month, value.day)
-    }
-}
-
-impl TryFrom<TimeRecord> for Time {
-    type Error = RangeError;
-    fn try_from(value: TimeRecord) -> Result<Self, Self::Error> {
-        Self::try_new(value.hour, value.minute, value.second, value.nanosecond)
     }
 }
 
@@ -97,7 +83,7 @@ impl Date<Iso> {
 
     fn try_from_ixdtf_record(ixdtf_record: &IxdtfParseRecord) -> Result<Self, FromIxdtfError> {
         let date_record = ixdtf_record.date.ok_or(FromIxdtfError::MissingFields)?;
-        let date = Self::try_from(date_record)?;
+        let date = Self::try_new_iso_date(date_record.year, date_record.month, date_record.day)?;
         Ok(date)
     }
 }
@@ -191,8 +177,8 @@ impl Time {
 
     fn try_from_ixdtf_record(ixdtf_record: &IxdtfParseRecord) -> Result<Self, FromIxdtfError> {
         let time_record = ixdtf_record.time.ok_or(FromIxdtfError::MissingFields)?;
-        let date = Self::try_from(time_record)?;
-        Ok(date)
+        let time = Self::try_new(time_record.hour, time_record.minute, time_record.second, time_record.nanosecond)?;
+        Ok(time)
     }
 }
 
