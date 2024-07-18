@@ -56,10 +56,10 @@ pub mod ffi {
         #[diplomat::rust_link(icu_calendar::DateTime::try_iso_from_str, FnInStruct)]
         #[diplomat::rust_link(icu_calendar::DateTime::try_iso_from_utf8, FnInStruct, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "from_string")]
-        pub fn create_from_string(
-            v: &DiplomatStr,
-        ) -> Result<Box<IsoDateTime>, FromIxdtfError> {
-            Ok(Box::new(IsoDateTime(icu_calendar::DateTime::try_iso_from_utf8(v)?)))
+        pub fn create_from_string(v: &DiplomatStr) -> Result<Box<IsoDateTime>, FromIxdtfError> {
+            Ok(Box::new(IsoDateTime(
+                icu_calendar::DateTime::try_iso_from_utf8(v)?,
+            )))
         }
 
         /// Creates a new [`IsoDateTime`] of midnight on January 1, 1970
@@ -308,10 +308,10 @@ pub mod ffi {
         #[diplomat::rust_link(icu_calendar::DateTime::try_from_str, FnInStruct)]
         #[diplomat::rust_link(icu_calendar::DateTime::try_from_utf8, FnInStruct, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "from_string")]
-        pub fn create_from_string(
-            v: &DiplomatStr,
-        ) -> Result<Box<DateTime>, FromIxdtfError> {
-            Ok(Box::new(DateTime(icu_calendar::DateTime::try_from_utf8(v)?.wrap_calendar_in_arc())))
+        pub fn create_from_string(v: &DiplomatStr) -> Result<Box<DateTime>, FromIxdtfError> {
+            Ok(Box::new(DateTime(
+                icu_calendar::DateTime::try_from_utf8(v)?.wrap_calendar_in_arc(),
+            )))
         }
 
         /// Gets a copy of the date contained in this object

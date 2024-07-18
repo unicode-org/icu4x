@@ -47,9 +47,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu_calendar::Date::try_iso_from_str, FnInStruct)]
         #[diplomat::rust_link(icu_calendar::Date::try_iso_from_utf8, FnInStruct, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "from_string")]
-        pub fn create_from_string(
-            v: &DiplomatStr,
-        ) -> Result<Box<IsoDate>, FromIxdtfError> {
+        pub fn create_from_string(v: &DiplomatStr) -> Result<Box<IsoDate>, FromIxdtfError> {
             Ok(Box::new(IsoDate(icu_calendar::Date::try_iso_from_utf8(v)?)))
         }
 
@@ -210,10 +208,10 @@ pub mod ffi {
         #[diplomat::rust_link(icu_calendar::Date::try_from_str, FnInStruct)]
         #[diplomat::rust_link(icu_calendar::Date::try_from_utf8, FnInStruct, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "from_string")]
-        pub fn create_from_string(
-            v: &DiplomatStr,
-        ) -> Result<Box<Date>, FromIxdtfError> {
-            Ok(Box::new(Date(icu_calendar::Date::try_from_utf8(v)?.wrap_calendar_in_arc())))
+        pub fn create_from_string(v: &DiplomatStr) -> Result<Box<Date>, FromIxdtfError> {
+            Ok(Box::new(Date(
+                icu_calendar::Date::try_from_utf8(v)?.wrap_calendar_in_arc(),
+            )))
         }
 
         /// Convert this date to one in a different calendar
