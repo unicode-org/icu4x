@@ -40,7 +40,8 @@ pub mod ffi {
         )]
         #[diplomat::rust_link(
             icu::normalizer::properties::CanonicalCombiningClassMap::get32,
-            FnInStruct, hidden
+            FnInStruct,
+            hidden
         )]
         #[diplomat::rust_link(
             icu::properties::properties::CanonicalCombiningClass,
