@@ -53,8 +53,8 @@ pub mod ffi {
         }
 
         /// Creates a new [`IsoDateTime`] from an IXDTF string.
-        #[diplomat::rust_link(icu_calendar::DateTime::try_iso_from_str, FnInStruct)]
-        #[diplomat::rust_link(icu_calendar::DateTime::try_iso_from_utf8, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::calendar::DateTime::try_iso_from_str, FnInStruct)]
+        #[diplomat::rust_link(icu::calendar::DateTime::try_iso_from_utf8, FnInStruct, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "from_string")]
         pub fn create_from_string(v: &DiplomatStr) -> Result<Box<IsoDateTime>, FromIxdtfError> {
             Ok(Box::new(IsoDateTime(
@@ -305,8 +305,8 @@ pub mod ffi {
         }
 
         /// Creates a new [`DateTime`] from an IXDTF string.
-        #[diplomat::rust_link(icu_calendar::DateTime::try_from_str, FnInStruct)]
-        #[diplomat::rust_link(icu_calendar::DateTime::try_from_utf8, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::calendar::DateTime::try_from_str, FnInStruct)]
+        #[diplomat::rust_link(icu::calendar::DateTime::try_from_utf8, FnInStruct, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "from_string")]
         #[cfg(feature = "compiled_data")]
         pub fn create_from_string(v: &DiplomatStr) -> Result<Box<DateTime>, FromIxdtfError> {
