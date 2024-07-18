@@ -57,8 +57,8 @@ export class LocaleFallbacker {
         }
     }
 
-    static createWithoutData() {
-        const result = wasm.icu4x_LocaleFallbacker_create_without_data_mv1();
+    static withoutData() {
+        const result = wasm.icu4x_LocaleFallbacker_without_data_mv1();
     
         try {
     

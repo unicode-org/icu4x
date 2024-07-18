@@ -32,7 +32,7 @@ static bool test_string(std::string_view actualString,
 
 int main() {
   Logger::init_simple_logger();
-  std::unique_ptr<Locale> locale = Locale::create_from_string("es-ES").ok().value();
+  std::unique_ptr<Locale> locale = Locale::from_string("es-ES").ok().value();
   if (!test_locale(*locale.get(), "es-ES", "Created a locale")) {
     return 1;
   }
@@ -88,7 +88,7 @@ int main() {
     return 1;
   }
 
-  locale = Locale::create_from_string("en-US-u-hc-h12").ok().value();
+  locale = Locale::from_string("en-US-u-hc-h12").ok().value();
   if (!test_string(locale->get_unicode_extension("hc").value(), "h12",
                    "The unicode extension can be accessed")) {
     return 1;
@@ -98,7 +98,7 @@ int main() {
     return 1;
   }
 
-  locale = Locale::create_und();
+  locale = Locale::und();
   if (!test_locale(*locale.get(), "und", "Created an undefined locale")) {
     return 1;
   }

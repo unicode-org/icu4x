@@ -28,7 +28,7 @@ namespace capi {
     
     int8_t icu4x_Collator_compare_mv1(const diplomat::capi::Collator* self, const char* left_data, size_t left_len, const char* right_data, size_t right_len);
     
-    diplomat::capi::CollatorResolvedOptionsV1 icu4x_Collator_resolved_options_mv1(const diplomat::capi::Collator* self);
+    diplomat::capi::CollatorResolvedOptionsV1 icu4x_Collator_resolved_options_v1_mv1(const diplomat::capi::Collator* self);
     
     
     void icu4x_Collator_destroy_mv1(Collator* self);
@@ -62,8 +62,8 @@ inline int8_t Collator::compare(std::string_view left, std::string_view right) c
   return result;
 }
 
-inline CollatorResolvedOptionsV1 Collator::resolved_options() const {
-  auto result = diplomat::capi::icu4x_Collator_resolved_options_mv1(this->AsFFI());
+inline CollatorResolvedOptionsV1 Collator::resolved_options_v1() const {
+  auto result = diplomat::capi::icu4x_Collator_resolved_options_v1_mv1(this->AsFFI());
   return CollatorResolvedOptionsV1::FromFFI(result);
 }
 

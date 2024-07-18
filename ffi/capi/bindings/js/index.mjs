@@ -14,7 +14,7 @@ export { IsoTimeZoneOptions } from "./IsoTimeZoneOptions.mjs"
 
 export { WeekendContainsDay } from "./WeekendContainsDay.mjs"
 
-export { ResolvedCollatorOptions } from "./ResolvedCollatorOptions.mjs"
+export { CollatorResolvedOptions } from "./CollatorResolvedOptions.mjs"
 
 export { Decomposed } from "./Decomposed.mjs"
 

@@ -40,10 +40,10 @@ export class Date {
     }
 
 
-    static createFromIsoInCalendar(year, month, day, calendar) {
+    static fromIsoInCalendar(year, month, day, calendar) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_Date_create_from_iso_in_calendar_mv1(diplomat_receive_buffer, year, month, day, calendar.ffiValue);
+        const result = wasm.icu4x_Date_from_iso_in_calendar_mv1(diplomat_receive_buffer, year, month, day, calendar.ffiValue);
     
         try {
     
@@ -59,14 +59,14 @@ export class Date {
         }
     }
 
-    static createFromCodesInCalendar(eraCode, year, monthCode, day, calendar) {
+    static fromCodesInCalendar(eraCode, year, monthCode, day, calendar) {
         
         const eraCodeSlice = diplomatRuntime.DiplomatBuf.str8(wasm, eraCode);
         
         const monthCodeSlice = diplomatRuntime.DiplomatBuf.str8(wasm, monthCode);
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_Date_create_from_codes_in_calendar_mv1(diplomat_receive_buffer, eraCodeSlice.ptr, eraCodeSlice.size, year, monthCodeSlice.ptr, monthCodeSlice.size, day, calendar.ffiValue);
+        const result = wasm.icu4x_Date_from_codes_in_calendar_mv1(diplomat_receive_buffer, eraCodeSlice.ptr, eraCodeSlice.size, year, monthCodeSlice.ptr, monthCodeSlice.size, day, calendar.ffiValue);
     
         try {
     

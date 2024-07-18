@@ -12,14 +12,14 @@
 
 int main() {
     icu4x_Logger_init_simple_logger_mv1();
-    icu4x_Locale_create_from_string_mv1_result locale_result = icu4x_Locale_create_from_string_mv1("bn", 2);
+    icu4x_Locale_from_string_mv1_result locale_result = icu4x_Locale_from_string_mv1("bn", 2);
     if (!locale_result.is_ok) {
         return 1;
     }
     Locale* locale = locale_result.ok;
-    DataProvider* provider = icu4x_DataProvider_create_compiled_mv1();
+    DataProvider* provider = icu4x_DataProvider_compiled_mv1();
 
-    FixedDecimal* decimal = icu4x_FixedDecimal_create_from_u64_mv1(1000007);
+    FixedDecimal* decimal = icu4x_FixedDecimal_from_uint64_mv1(1000007);
 
     icu4x_FixedDecimalFormatter_create_with_grouping_strategy_mv1_result fdf_result =
         icu4x_FixedDecimalFormatter_create_with_grouping_strategy_mv1(provider, locale, FixedDecimalGroupingStrategy_Auto);
@@ -66,7 +66,7 @@ int main() {
 
     icu4x_FixedDecimal_destroy_mv1(decimal);
 
-    icu4x_FixedDecimal_create_from_string_mv1_result fd_result = icu4x_FixedDecimal_create_from_string_mv1("1000007.070", 11);
+    icu4x_FixedDecimal_from_string_mv1_result fd_result = icu4x_FixedDecimal_from_string_mv1("1000007.070", 11);
     if (!fd_result.is_ok) {
         printf("Failed to create FixedDecimal from string.\n");
         return 1;

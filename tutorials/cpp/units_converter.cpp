@@ -11,7 +11,7 @@
 #include <iostream>
 
 int main() {
-  auto dp = DataProvider::create_compiled();
+  auto dp = DataProvider::compiled();
   auto converter_factory = UnitsConverterFactory::create(*dp.get()).ok().value();
   auto parser = converter_factory->parser();
   auto from = parser->parse("meter");

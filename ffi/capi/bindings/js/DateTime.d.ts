@@ -19,11 +19,11 @@ export class DateTime {
     get ffiValue(): pointer;
 
 
-    static createFromIsoInCalendar(year: number, month: number, day: number, hour: number, minute: number, second: number, nanosecond: number, calendar: Calendar): DateTime;
+    static fromIsoInCalendar(year: number, month: number, day: number, hour: number, minute: number, second: number, nanosecond: number, calendar: Calendar): DateTime;
 
-    static createFromCodesInCalendar(eraCode: string, year: number, monthCode: string, day: number, hour: number, minute: number, second: number, nanosecond: number, calendar: Calendar): DateTime;
+    static fromCodesInCalendar(eraCode: string, year: number, monthCode: string, day: number, hour: number, minute: number, second: number, nanosecond: number, calendar: Calendar): DateTime;
 
-    static createFromDateAndTime(date: Date, time: Time): DateTime;
+    static fromDateAndTime(date: Date, time: Time): DateTime;
 
     static createFromString(v: string): DateTime;
 

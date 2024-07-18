@@ -20,16 +20,16 @@
 
 
 
-typedef struct icu4x_CustomTimeZone_create_from_string_mv1_result {union {CustomTimeZone* ok; TimeZoneInvalidOffsetError err;}; bool is_ok;} icu4x_CustomTimeZone_create_from_string_mv1_result;
-icu4x_CustomTimeZone_create_from_string_mv1_result icu4x_CustomTimeZone_create_from_string_mv1(const char* s_data, size_t s_len);
+typedef struct icu4x_CustomTimeZone_from_string_mv1_result {union {CustomTimeZone* ok; TimeZoneInvalidOffsetError err;}; bool is_ok;} icu4x_CustomTimeZone_from_string_mv1_result;
+icu4x_CustomTimeZone_from_string_mv1_result icu4x_CustomTimeZone_from_string_mv1(const char* s_data, size_t s_len);
 
-CustomTimeZone* icu4x_CustomTimeZone_create_empty_mv1();
+CustomTimeZone* icu4x_CustomTimeZone_empty_mv1();
 
-CustomTimeZone* icu4x_CustomTimeZone_create_utc_mv1();
+CustomTimeZone* icu4x_CustomTimeZone_utc_mv1();
 
-CustomTimeZone* icu4x_CustomTimeZone_create_gmt_mv1();
+CustomTimeZone* icu4x_CustomTimeZone_gmt_mv1();
 
-CustomTimeZone* icu4x_CustomTimeZone_create_bst_mv1();
+CustomTimeZone* icu4x_CustomTimeZone_bst_mv1();
 
 typedef struct icu4x_CustomTimeZone_try_set_gmt_offset_seconds_mv1_result {union { TimeZoneInvalidOffsetError err;}; bool is_ok;} icu4x_CustomTimeZone_try_set_gmt_offset_seconds_mv1_result;
 icu4x_CustomTimeZone_try_set_gmt_offset_seconds_mv1_result icu4x_CustomTimeZone_try_set_gmt_offset_seconds_mv1(CustomTimeZone* self, int32_t offset_seconds);

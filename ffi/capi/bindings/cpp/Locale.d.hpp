@@ -21,9 +21,9 @@ namespace capi {
 class Locale {
 public:
 
-  inline static diplomat::result<std::unique_ptr<Locale>, LocaleParseError> create_from_string(std::string_view name);
+  inline static diplomat::result<std::unique_ptr<Locale>, LocaleParseError> from_string(std::string_view name);
 
-  inline static std::unique_ptr<Locale> create_und();
+  inline static std::unique_ptr<Locale> und();
 
   inline std::unique_ptr<Locale> clone() const;
 

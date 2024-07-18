@@ -17,10 +17,10 @@ namespace diplomat {
 namespace capi {
     extern "C" {
     
-    typedef struct icu4x_Locale_create_from_string_mv1_result {union {diplomat::capi::Locale* ok; diplomat::capi::LocaleParseError err;}; bool is_ok;} icu4x_Locale_create_from_string_mv1_result;
-    icu4x_Locale_create_from_string_mv1_result icu4x_Locale_create_from_string_mv1(const char* name_data, size_t name_len);
+    typedef struct icu4x_Locale_from_string_mv1_result {union {diplomat::capi::Locale* ok; diplomat::capi::LocaleParseError err;}; bool is_ok;} icu4x_Locale_from_string_mv1_result;
+    icu4x_Locale_from_string_mv1_result icu4x_Locale_from_string_mv1(const char* name_data, size_t name_len);
     
-    diplomat::capi::Locale* icu4x_Locale_create_und_mv1();
+    diplomat::capi::Locale* icu4x_Locale_und_mv1();
     
     diplomat::capi::Locale* icu4x_Locale_clone_mv1(const diplomat::capi::Locale* self);
     
@@ -64,14 +64,14 @@ namespace capi {
 } // namespace capi
 } // namespace
 
-inline diplomat::result<std::unique_ptr<Locale>, LocaleParseError> Locale::create_from_string(std::string_view name) {
-  auto result = diplomat::capi::icu4x_Locale_create_from_string_mv1(name.data(),
+inline diplomat::result<std::unique_ptr<Locale>, LocaleParseError> Locale::from_string(std::string_view name) {
+  auto result = diplomat::capi::icu4x_Locale_from_string_mv1(name.data(),
     name.size());
   return result.is_ok ? diplomat::result<std::unique_ptr<Locale>, LocaleParseError>(diplomat::Ok<std::unique_ptr<Locale>>(std::unique_ptr<Locale>(Locale::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<Locale>, LocaleParseError>(diplomat::Err<LocaleParseError>(LocaleParseError::FromFFI(result.err)));
 }
 
-inline std::unique_ptr<Locale> Locale::create_und() {
-  auto result = diplomat::capi::icu4x_Locale_create_und_mv1();
+inline std::unique_ptr<Locale> Locale::und() {
+  auto result = diplomat::capi::icu4x_Locale_und_mv1();
   return std::unique_ptr<Locale>(Locale::FromFFI(result));
 }
 

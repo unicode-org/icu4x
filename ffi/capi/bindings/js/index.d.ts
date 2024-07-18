@@ -16,7 +16,7 @@ export { IsoTimeZoneOptions } from "./IsoTimeZoneOptions"
 
 export { WeekendContainsDay } from "./WeekendContainsDay"
 
-export { ResolvedCollatorOptions } from "./ResolvedCollatorOptions"
+export { CollatorResolvedOptions } from "./CollatorResolvedOptions"
 
 export { Decomposed } from "./Decomposed"
 

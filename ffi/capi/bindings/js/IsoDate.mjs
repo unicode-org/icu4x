@@ -59,31 +59,8 @@ export class IsoDate {
         }
     }
 
-    static createFromString(v) {
-        
-        const vSlice = diplomatRuntime.DiplomatBuf.str8(wasm, v);
-        
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_IsoDate_create_from_string_mv1(diplomat_receive_buffer, vSlice.ptr, vSlice.size);
-    
-        try {
-    
-            if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = FromIxdtfError[Array.from(FromIxdtfError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)]];
-                throw new Error('FromIxdtfError: ' + cause.value, { cause });
-            }
-            return new IsoDate(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), []);
-        } finally {
-        
-            vSlice.free();
-        
-            wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        
-        }
-    }
-
-    static createForUnixEpoch() {
-        const result = wasm.icu4x_IsoDate_create_for_unix_epoch_mv1();
+    static unixEpoch() {
+        const result = wasm.icu4x_IsoDate_unix_epoch_mv1();
     
         try {
     

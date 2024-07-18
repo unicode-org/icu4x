@@ -13,11 +13,11 @@ export class DataProvider {
     get ffiValue(): pointer;
 
 
-    static createCompiled(): DataProvider;
+    static compiled(): DataProvider;
 
-    static createFromByteSlice(blob: Uint8Array): DataProvider;
+    static fromByteSlice(blob: Uint8Array): DataProvider;
 
-    static createEmpty(): DataProvider;
+    static empty(): DataProvider;
 
     forkByKey(other: DataProvider): void;
 

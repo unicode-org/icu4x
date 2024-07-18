@@ -28,14 +28,14 @@ namespace capi {
     typedef struct icu4x_IsoDateTime_create_mv1_result {union {diplomat::capi::IsoDateTime* ok; diplomat::capi::CalendarError err;}; bool is_ok;} icu4x_IsoDateTime_create_mv1_result;
     icu4x_IsoDateTime_create_mv1_result icu4x_IsoDateTime_create_mv1(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond);
     
-    diplomat::capi::IsoDateTime* icu4x_IsoDateTime_crate_from_date_and_time_mv1(const diplomat::capi::IsoDate* date, const diplomat::capi::Time* time);
+    diplomat::capi::IsoDateTime* icu4x_IsoDateTime_from_date_and_time_mv1(const diplomat::capi::IsoDate* date, const diplomat::capi::Time* time);
     
     typedef struct icu4x_IsoDateTime_create_from_string_mv1_result {union {diplomat::capi::IsoDateTime* ok; diplomat::capi::FromIxdtfError err;}; bool is_ok;} icu4x_IsoDateTime_create_from_string_mv1_result;
     icu4x_IsoDateTime_create_from_string_mv1_result icu4x_IsoDateTime_create_from_string_mv1(const char* v_data, size_t v_len);
     
     diplomat::capi::IsoDateTime* icu4x_IsoDateTime_local_unix_epoch_mv1();
     
-    diplomat::capi::IsoDateTime* icu4x_IsoDateTime_create_from_minutes_since_local_unix_epoch_mv1(int32_t minutes);
+    diplomat::capi::IsoDateTime* icu4x_IsoDateTime_from_minutes_since_local_unix_epoch_mv1(int32_t minutes);
     
     diplomat::capi::IsoDate* icu4x_IsoDateTime_date_mv1(const diplomat::capi::IsoDateTime* self);
     
@@ -95,8 +95,8 @@ inline diplomat::result<std::unique_ptr<IsoDateTime>, CalendarError> IsoDateTime
   return result.is_ok ? diplomat::result<std::unique_ptr<IsoDateTime>, CalendarError>(diplomat::Ok<std::unique_ptr<IsoDateTime>>(std::unique_ptr<IsoDateTime>(IsoDateTime::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<IsoDateTime>, CalendarError>(diplomat::Err<CalendarError>(CalendarError::FromFFI(result.err)));
 }
 
-inline std::unique_ptr<IsoDateTime> IsoDateTime::crate_from_date_and_time(const IsoDate& date, const Time& time) {
-  auto result = diplomat::capi::icu4x_IsoDateTime_crate_from_date_and_time_mv1(date.AsFFI(),
+inline std::unique_ptr<IsoDateTime> IsoDateTime::from_date_and_time(const IsoDate& date, const Time& time) {
+  auto result = diplomat::capi::icu4x_IsoDateTime_from_date_and_time_mv1(date.AsFFI(),
     time.AsFFI());
   return std::unique_ptr<IsoDateTime>(IsoDateTime::FromFFI(result));
 }
@@ -112,8 +112,8 @@ inline std::unique_ptr<IsoDateTime> IsoDateTime::local_unix_epoch() {
   return std::unique_ptr<IsoDateTime>(IsoDateTime::FromFFI(result));
 }
 
-inline std::unique_ptr<IsoDateTime> IsoDateTime::create_from_minutes_since_local_unix_epoch(int32_t minutes) {
-  auto result = diplomat::capi::icu4x_IsoDateTime_create_from_minutes_since_local_unix_epoch_mv1(minutes);
+inline std::unique_ptr<IsoDateTime> IsoDateTime::from_minutes_since_local_unix_epoch(int32_t minutes) {
+  auto result = diplomat::capi::icu4x_IsoDateTime_from_minutes_since_local_unix_epoch_mv1(minutes);
   return std::unique_ptr<IsoDateTime>(IsoDateTime::FromFFI(result));
 }
 

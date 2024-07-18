@@ -15,14 +15,14 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    Locale* locale = icu4x_Locale_create_und_mv1();
+    Locale* locale = icu4x_Locale_und_mv1();
     if (!icu4x_Locale_set_language_mv1(locale, argv[1], strlen(argv[1])).is_ok) {
         printf("Invalid language tag \"%s\"\n", argv[1]);
         return 1;
     }
 
-    DataProvider* provider = icu4x_DataProvider_create_compiled_mv1();
-    FixedDecimal* decimal = icu4x_FixedDecimal_create_from_u64_mv1(1000007);
+    DataProvider* provider = icu4x_DataProvider_compiled_mv1();
+    FixedDecimal* decimal = icu4x_FixedDecimal_from_uint64_mv1(1000007);
     icu4x_FixedDecimal_round_mv1(decimal, 0);
 
     icu4x_FixedDecimalFormatter_create_with_grouping_strategy_mv1_result fdf_result =
