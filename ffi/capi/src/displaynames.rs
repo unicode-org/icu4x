@@ -62,7 +62,8 @@ pub mod ffi {
         /// Creates a new `LocaleDisplayNamesFormatter` from locale data and an options bag.
         #[diplomat::rust_link(icu::displaynames::LocaleDisplayNamesFormatter::try_new, FnInStruct)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
-        pub fn create(
+        #[diplomat::attr(any(dart, js), rename = "create")]
+        pub fn create_v1(
             provider: &DataProvider,
             locale: &Locale,
             options: DisplayNamesOptionsV1,

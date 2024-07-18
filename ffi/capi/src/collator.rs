@@ -31,7 +31,7 @@ pub mod ffi {
     // `ResolvedCollatorOptions` makes more sense as English.
     #[diplomat::rust_link(icu::collator::ResolvedCollatorOptions, Struct)]
     #[diplomat::out]
-    #[diplomat::attr(any(dart, js), rename = "ResolvedCollatorOptions")]
+    #[diplomat::attr(any(dart, js), rename = "CollatorResolvedOptions")]
     pub struct CollatorResolvedOptionsV1 {
         pub strength: CollatorStrength,
         pub alternate_handling: CollatorAlternateHandling,
@@ -108,6 +108,7 @@ pub mod ffi {
         /// Construct a new Collator instance.
         #[diplomat::rust_link(icu::collator::Collator::try_new, FnInStruct)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
+        #[diplomat::attr(any(dart, js), rename = "create")]
         pub fn create_v1(
             provider: &DataProvider,
             locale: &Locale,
@@ -157,7 +158,8 @@ pub mod ffi {
         /// will have `Auto` as the value.
         #[diplomat::rust_link(icu::collator::Collator::resolved_options, FnInStruct)]
         #[diplomat::attr(supports = accessors, getter)]
-        pub fn resolved_options(&self) -> CollatorResolvedOptionsV1 {
+        #[diplomat::attr(any(dart, js), rename = "resolved_options")]
+        pub fn resolved_options_v1(&self) -> CollatorResolvedOptionsV1 {
             self.0.resolved_options().into()
         }
     }

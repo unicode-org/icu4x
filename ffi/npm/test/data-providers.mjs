@@ -7,8 +7,8 @@ import test from 'ava';
 import { FixedDecimal, Locale, DataProvider, FixedDecimalFormatter, FixedDecimalGroupingStrategy } from 'icu4x';
 
 test('use createCompiled to format a simple decimal', async t => {
-  const locale = Locale.createFromString('bn');
-  const provider = DataProvider.createCompiled();
+  const locale = Locale.fromString('bn');
+  const provider = DataProvider.compiled();
 
   const format = FixedDecimalFormatter.createWithGroupingStrategy(provider, locale, FixedDecimalGroupingStrategy.Auto);
 

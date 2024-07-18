@@ -19,8 +19,8 @@
 
 
 
-typedef struct icu4x_LocaleDisplayNamesFormatter_create_mv1_result {union {LocaleDisplayNamesFormatter* ok; DataError err;}; bool is_ok;} icu4x_LocaleDisplayNamesFormatter_create_mv1_result;
-icu4x_LocaleDisplayNamesFormatter_create_mv1_result icu4x_LocaleDisplayNamesFormatter_create_mv1(const DataProvider* provider, const Locale* locale, DisplayNamesOptionsV1 options);
+typedef struct icu4x_LocaleDisplayNamesFormatter_create_v1_mv1_result {union {LocaleDisplayNamesFormatter* ok; DataError err;}; bool is_ok;} icu4x_LocaleDisplayNamesFormatter_create_v1_mv1_result;
+icu4x_LocaleDisplayNamesFormatter_create_v1_mv1_result icu4x_LocaleDisplayNamesFormatter_create_v1_mv1(const DataProvider* provider, const Locale* locale, DisplayNamesOptionsV1 options);
 
 void icu4x_LocaleDisplayNamesFormatter_of_mv1(const LocaleDisplayNamesFormatter* self, const Locale* locale, DiplomatWrite* write);
 

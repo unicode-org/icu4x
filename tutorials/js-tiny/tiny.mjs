@@ -9,8 +9,8 @@ delete globalThis.fetch;
 
 import {Locale, DataProvider, FixedDecimalFormatter, FixedDecimal, FixedDecimalGroupingStrategy } from './lib/index.mjs';
 
-const locale = Locale.createFromString("bn");
-const provider = DataProvider.createCompiled();
+const locale = Locale.fromString("bn");
+const provider = DataProvider.compiled();
 
 const format = FixedDecimalFormatter.createWithGroupingStrategy(provider, locale, FixedDecimalGroupingStrategy.Auto);
 

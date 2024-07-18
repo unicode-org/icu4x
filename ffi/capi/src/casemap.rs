@@ -38,8 +38,8 @@ pub mod ffi {
     impl TitlecaseOptionsV1 {
         #[diplomat::rust_link(icu::casemap::titlecase::TitlecaseOptions::default, FnInStruct)]
         #[diplomat::attr(supports = constructors, constructor)]
-        pub fn default_options() -> TitlecaseOptionsV1 {
-            // named default_options to avoid keyword clashes
+        #[diplomat::attr(any(cpp, js), rename = "default_options")]
+        pub fn default() -> TitlecaseOptionsV1 {
             Self {
                 leading_adjustment: LeadingAdjustment::Auto,
                 trailing_case: TrailingCase::Lower,
@@ -92,7 +92,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        #[diplomat::attr(any(dart, js), rename = "titlecaseSegmentWithOnlyCaseData")]
+        #[diplomat::attr(any(dart, js), rename = "titlecase_segment_with_only_case_data")]
         pub fn titlecase_segment_with_only_case_data_v1(
             &self,
             s: &str,
@@ -279,7 +279,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        #[diplomat::attr(any(dart, js), rename = "titlecaseSegment")]
+        #[diplomat::attr(any(dart, js), rename = "titlecase_segment")]
         pub fn titlecase_segment_v1(
             &self,
             s: &str,

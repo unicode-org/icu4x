@@ -20,8 +20,8 @@ namespace diplomat {
 namespace capi {
     extern "C" {
     
-    typedef struct icu4x_LocaleDisplayNamesFormatter_create_mv1_result {union {diplomat::capi::LocaleDisplayNamesFormatter* ok; diplomat::capi::DataError err;}; bool is_ok;} icu4x_LocaleDisplayNamesFormatter_create_mv1_result;
-    icu4x_LocaleDisplayNamesFormatter_create_mv1_result icu4x_LocaleDisplayNamesFormatter_create_mv1(const diplomat::capi::DataProvider* provider, const diplomat::capi::Locale* locale, diplomat::capi::DisplayNamesOptionsV1 options);
+    typedef struct icu4x_LocaleDisplayNamesFormatter_create_v1_mv1_result {union {diplomat::capi::LocaleDisplayNamesFormatter* ok; diplomat::capi::DataError err;}; bool is_ok;} icu4x_LocaleDisplayNamesFormatter_create_v1_mv1_result;
+    icu4x_LocaleDisplayNamesFormatter_create_v1_mv1_result icu4x_LocaleDisplayNamesFormatter_create_v1_mv1(const diplomat::capi::DataProvider* provider, const diplomat::capi::Locale* locale, diplomat::capi::DisplayNamesOptionsV1 options);
     
     void icu4x_LocaleDisplayNamesFormatter_of_mv1(const diplomat::capi::LocaleDisplayNamesFormatter* self, const diplomat::capi::Locale* locale, diplomat::capi::DiplomatWrite* write);
     
@@ -32,8 +32,8 @@ namespace capi {
 } // namespace capi
 } // namespace
 
-inline diplomat::result<std::unique_ptr<LocaleDisplayNamesFormatter>, DataError> LocaleDisplayNamesFormatter::create(const DataProvider& provider, const Locale& locale, DisplayNamesOptionsV1 options) {
-  auto result = diplomat::capi::icu4x_LocaleDisplayNamesFormatter_create_mv1(provider.AsFFI(),
+inline diplomat::result<std::unique_ptr<LocaleDisplayNamesFormatter>, DataError> LocaleDisplayNamesFormatter::create_v1(const DataProvider& provider, const Locale& locale, DisplayNamesOptionsV1 options) {
+  auto result = diplomat::capi::icu4x_LocaleDisplayNamesFormatter_create_v1_mv1(provider.AsFFI(),
     locale.AsFFI(),
     options.AsFFI());
   return result.is_ok ? diplomat::result<std::unique_ptr<LocaleDisplayNamesFormatter>, DataError>(diplomat::Ok<std::unique_ptr<LocaleDisplayNamesFormatter>>(std::unique_ptr<LocaleDisplayNamesFormatter>(LocaleDisplayNamesFormatter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<LocaleDisplayNamesFormatter>, DataError>(diplomat::Err<DataError>(DataError::FromFFI(result.err)));
