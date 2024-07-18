@@ -14,7 +14,7 @@ Future<void> main(List<String> args) async {
   final out = Uri.file(args[0]).toFilePath();
   final target = Target.values.firstWhere((t) => t.toString() == args[1]);
   final linkMode = LinkMode.values.firstWhere((l) => l.toString() == args[2]);
-  final cargoFeatures = args[3].isNotEmpty ? args[3] : 'default_compnents';
+  final cargoFeatures = args.elementAtOrNull(3) ?? 'default_compnents';
 
   await buildLib(target, linkMode, cargoFeatures, out);
 }
