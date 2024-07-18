@@ -1,5 +1,13 @@
 {
-  "pattern": [
+  "positive_pattern": [
+    {
+      "Placeholder": "Singleton"
+    },
+    {
+      "Literal": "‎%‎"
+    }
+  ],
+  "negative_pattern": [
     {
       "Placeholder": "Singleton"
     },

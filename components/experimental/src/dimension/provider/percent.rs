@@ -33,5 +33,10 @@ pub use crate::provider::Baked;
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct PercentEssentialsV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub pattern: SinglePlaceholderPattern<Cow<'data, str>>,
+    /// Represents the standard pattern for positive numbers.
+    pub positive_pattern: SinglePlaceholderPattern<Cow<'data, str>>,
+
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    /// Represents the standard pattern for negative numbers.
+    pub negative_pattern: SinglePlaceholderPattern<Cow<'data, str>>,
 }

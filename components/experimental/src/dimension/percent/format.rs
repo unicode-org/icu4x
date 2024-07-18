@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use fixed_decimal::FixedDecimal;
+use fixed_decimal::{FixedDecimal, Sign};
 
 use writeable::Writeable;
 
@@ -18,10 +18,21 @@ impl<'l> Writeable for FormattedPercent<'l> {
     where
         W: core::fmt::Write + ?Sized,
     {
-        self.essential
-            .pattern
-            .interpolate([self.value])
-            .write_to(sink)?;
+        match self.value.sign() {
+            Sign::Negative => {
+                let value = self.value.clone().with_sign(Sign::None);
+                self.essential
+                    .negative_pattern
+                    .interpolate([value])
+                    .write_to(sink)?;
+            }
+            _ => {
+                self.essential
+                    .positive_pattern
+                    .interpolate([self.value])
+                    .write_to(sink)?;
+            }
+        }
 
         Ok(())
     }
@@ -98,5 +109,23 @@ mod tests {
         let mut sink = String::new();
         formatted_percent.write_to(&mut sink).unwrap();
         assert_eq!(sink.as_str(), "%12345.67");
+    }
+
+    #[test]
+    pub fn test_blo() {
+        let locale = locale!("blo").into();
+        let fmt = PercentFormatter::try_new(&locale).unwrap();
+
+        let positive_val = "12345.67".parse().unwrap();
+        let formatted_percent = fmt.format_percent(&positive_val);
+        let mut sink = String::new();
+        formatted_percent.write_to(&mut sink).unwrap();
+        assert_eq!(sink.as_str(), "%\u{a0}12345.67");
+
+        let negative_val = "-12345.67".parse().unwrap();
+        let formatted_percent = fmt.format_percent(&negative_val);
+        let mut sink = String::new();
+        formatted_percent.write_to(&mut sink).unwrap();
+        assert_eq!(sink.as_str(), "%\u{a0}-12345.67");
     }
 }
