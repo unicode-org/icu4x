@@ -19,7 +19,7 @@ void main(List<String> args) async {
 
   final path = '${config.outDir.path}/icu4x';
 
-  await buildLib(target, linkMode, 'default_components,icu_experimental', path);
+  await buildLib(target, linkMode, 'default_components,experimental_components', path);
 
   await BuildOutput(
     assets: [
