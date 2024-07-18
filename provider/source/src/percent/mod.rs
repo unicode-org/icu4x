@@ -75,9 +75,9 @@ fn extract_percent_essentials<'data>(
 
     // If the standard_pattern includes a `;` character,
     // there is both a positive and negative pattern to consider.
-    match standard_pattern.contains(";") {
+    match standard_pattern.contains(';') {
         true => {
-            let mut patterns = standard_pattern.split(";");
+            let mut patterns = standard_pattern.split(';');
             let positive_pattern = patterns
                 .next()
                 .ok_or_else(|| DataError::custom("Could not parse positive pattern."))?;
@@ -101,8 +101,8 @@ fn create_pattern<'a>(
     percent_sign: &str,
 ) -> Result<Pattern<SinglePlaceholder, Cow<'a, str>>, DataError> {
     // While all locales use the `%`, some include non-breaking spaces.
-    // Hence using the literal `%` here.
-    let percent_sign_index = pattern.find("%").unwrap();
+    // Hence using the literal `%` char here.
+    let percent_sign_index = pattern.find('%').unwrap();
     let first_num_index = pattern.find(['0', '#']).unwrap();
     let last_num_index = pattern.rfind(['0', '#']).unwrap();
 
