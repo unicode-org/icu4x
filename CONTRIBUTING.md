@@ -79,6 +79,7 @@ There are various files that auto-generated across the ICU4X repository.  Here a
 need to run in order to recreate them.  These files may be run in more comprehensive tests such as those included in `cargo make ci-job-test` or `cargo make ci-all`.
 
 - `cargo make testdata` - regenerates all test data in the `provider/testdata` directory.
+- `cargo make bakeddata experimental` - regenerates baked data in the `provider/data/experimental` directory.
 - `cargo make generate-readmes` - generates README files according to Rust docs. Output files must be committed in git for check to pass.
 - `cargo make diplomat-gen` - recreates the Diplomat generated files in the `ffi/capi` directory.
 
