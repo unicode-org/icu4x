@@ -18,7 +18,7 @@ pub enum FromIxdtfError {
     /// Value is out of range of the `icu_calendar` type.
     Range(RangeError),
     /// The IXDTF is missing fields required for parsing into the chosen type.
-    Missing,
+    MissingFields,
     /// The IXDTF specifies an unknown calendar.
     UnknownCalendar,
 }
@@ -96,7 +96,7 @@ impl Date<Iso> {
     }
 
     fn try_from_ixdtf_record(ixdtf_record: &IxdtfParseRecord) -> Result<Self, FromIxdtfError> {
-        let date_record = ixdtf_record.date.ok_or(FromIxdtfError::Missing)?;
+        let date_record = ixdtf_record.date.ok_or(FromIxdtfError::MissingFields)?;
         let date = Self::try_from(date_record)?;
         Ok(date)
     }
@@ -190,7 +190,7 @@ impl Time {
     }
 
     fn try_from_ixdtf_record(ixdtf_record: &IxdtfParseRecord) -> Result<Self, FromIxdtfError> {
-        let time_record = ixdtf_record.time.ok_or(FromIxdtfError::Missing)?;
+        let time_record = ixdtf_record.time.ok_or(FromIxdtfError::MissingFields)?;
         let date = Self::try_from(time_record)?;
         Ok(date)
     }

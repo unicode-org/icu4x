@@ -228,7 +228,7 @@ impl From<icu_calendar::FromIxdtfError> for FromIxdtfError {
     fn from(e: icu_calendar::FromIxdtfError) -> Self {
         match e {
             icu_calendar::FromIxdtfError::Ixdtf(_) => Self::InvalidSyntax,
-            icu_calendar::FromIxdtfError::Missing => Self::MissingFields,
+            icu_calendar::FromIxdtfError::MissingFields => Self::MissingFields,
             icu_calendar::FromIxdtfError::Range(_) => Self::OutOfRange,
             icu_calendar::FromIxdtfError::UnknownCalendar => Self::UnknownCalendar,
             _ => Self::Unknown,
