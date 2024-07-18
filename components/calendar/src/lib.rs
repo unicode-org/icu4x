@@ -166,5 +166,5 @@ pub use gregorian::Gregorian;
 #[doc(no_inline)]
 pub use iso::Iso;
 #[cfg(feature = "ixdtf")]
-pub use ixdtf::FromIxdtfError;
+pub use crate::ixdtf::FromIxdtfError;
 pub use types::Time;
