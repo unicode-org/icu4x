@@ -11,6 +11,7 @@ use ixdtf::ParserError;
 
 /// An error returned from parsing an IXDTF string to an `icu_calendar` type.
 #[derive(Debug)]
+#[non_exhaustive]
 pub enum FromIxdtfError {
     /// Syntax error in the IXDTF string.
     Ixdtf(ParserError),
