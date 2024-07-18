@@ -43,7 +43,7 @@ final class Time implements ffi.Finalizable {
   ///
   /// Throws [CalendarError] on failure.
   factory Time.midnight() {
-    final result = _icu4x_Time_create_midnight_mv1();
+    final result = _icu4x_Time_midnight_mv1();
     if (!result.isOk) {
       throw CalendarError.values[result.union.err];
     }
@@ -93,10 +93,10 @@ external void _icu4x_Time_destroy_mv1(ffi.Pointer<ffi.Void> self);
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_Time_create_mv1(int hour, int minute, int second, int nanosecond);
 
-@meta.ResourceIdentifier('icu4x_Time_create_midnight_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function()>(isLeaf: true, symbol: 'icu4x_Time_create_midnight_mv1')
+@meta.ResourceIdentifier('icu4x_Time_midnight_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function()>(isLeaf: true, symbol: 'icu4x_Time_midnight_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_Time_create_midnight_mv1();
+external _ResultOpaqueInt32 _icu4x_Time_midnight_mv1();
 
 @meta.ResourceIdentifier('icu4x_Time_hour_mv1')
 @ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Time_hour_mv1')

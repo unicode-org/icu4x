@@ -12,14 +12,14 @@
 
 int main() {
   Logger::init_simple_logger();
-  std::unique_ptr<DataProvider> dp = DataProvider::create_compiled();
+  std::unique_ptr<DataProvider> dp = DataProvider::compiled();
 
   // test 01 - basic collation example, default CollatorOptions
 
   std::string_view manna{ "manna" };
   std::string_view manana{ "mañana" };
 
-  std::unique_ptr<Locale> locale = Locale::create_from_string("en").ok().value();
+  std::unique_ptr<Locale> locale = Locale::from_string("en").ok().value();
   CollatorOptionsV1 options = CollatorOptionsV1();
   auto foo = CollatorStrength();
   std::unique_ptr<Collator> collator = Collator::create_v1(*dp.get(), *locale.get(), options).ok().value();
@@ -30,7 +30,7 @@ int main() {
     return 1;
   }
 
-  locale = Locale::create_from_string("es").ok().value();
+  locale = Locale::from_string("es").ok().value();
   collator = Collator::create_v1(*dp.get(), *locale.get(), options).ok().value();
   actual = collator->compare(manna, manana);
 
@@ -44,7 +44,7 @@ int main() {
   std::string_view as{ "as" };
   std::string_view graveAs{ "às" };
 
-  locale = Locale::create_from_string("en").ok().value();
+  locale = Locale::from_string("en").ok().value();
   options.strength = CollatorStrength::Primary;
   collator = Collator::create_v1(*dp.get(), *locale.get(), options).ok().value();
   actual = collator->compare(as, graveAs);

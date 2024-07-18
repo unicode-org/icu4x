@@ -45,8 +45,8 @@ pub mod ffi {
 
         /// Creates a new [`IsoDate`] representing January 1, 1970.
         #[diplomat::rust_link(icu::calendar::Date::unix_epoch, FnInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "for_unix_epoch")]
-        pub fn create_for_unix_epoch() -> Box<IsoDate> {
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor)]
+        pub fn unix_epoch() -> Box<IsoDate> {
             Box::new(IsoDate(icu_calendar::Date::unix_epoch()))
         }
 
@@ -161,8 +161,8 @@ pub mod ffi {
         /// Creates a new [`Date`] representing the ISO date and time
         /// given but in a given calendar
         #[diplomat::rust_link(icu::calendar::Date::new_from_iso, FnInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "from_iso_in_calendar")]
-        pub fn create_from_iso_in_calendar(
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor)]
+        pub fn from_iso_in_calendar(
             year: i32,
             month: u8,
             day: u8,
@@ -176,8 +176,8 @@ pub mod ffi {
 
         /// Creates a new [`Date`] from the given codes, which are interpreted in the given calendar system
         #[diplomat::rust_link(icu::calendar::Date::try_new_from_codes, FnInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "from_codes_in_calendar")]
-        pub fn create_from_codes_in_calendar(
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor)]
+        pub fn from_codes_in_calendar(
             era_code: &DiplomatStr,
             year: i32,
             month_code: &DiplomatStr,

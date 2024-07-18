@@ -13,15 +13,15 @@ export class CustomTimeZone {
     get ffiValue(): pointer;
 
 
-    static createFromString(s: string): CustomTimeZone;
+    static fromString(s: string): CustomTimeZone;
 
-    static createEmpty(): CustomTimeZone;
+    static empty(): CustomTimeZone;
 
-    static createUtc(): CustomTimeZone;
+    static utc(): CustomTimeZone;
 
-    static createGmt(): CustomTimeZone;
+    static gmt(): CustomTimeZone;
 
-    static createBst(): CustomTimeZone;
+    static bst(): CustomTimeZone;
 
     trySetGmtOffsetSeconds(offsetSeconds: number): void;
 

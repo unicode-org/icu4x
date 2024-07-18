@@ -2,7 +2,7 @@
 
 part of 'lib.g.dart';
 
-final class _ResolvedCollatorOptionsFfi extends ffi.Struct {
+final class _CollatorResolvedOptionsFfi extends ffi.Struct {
   @ffi.Int32()
   external int strength;
   @ffi.Int32()
@@ -20,7 +20,7 @@ final class _ResolvedCollatorOptionsFfi extends ffi.Struct {
 }
 
 /// See the [Rust documentation for `ResolvedCollatorOptions`](https://docs.rs/icu/latest/icu/collator/struct.ResolvedCollatorOptions.html) for more information.
-final class ResolvedCollatorOptions {
+final class CollatorResolvedOptions {
   final CollatorStrength strength;
   final CollatorAlternateHandling alternateHandling;
   final CollatorCaseFirst caseFirst;
@@ -35,7 +35,7 @@ final class ResolvedCollatorOptions {
   // This method does not attempt to handle any dependencies between lifetimes, the caller
   // should handle this when constructing edge arrays.
   // ignore: unused_element
-  ResolvedCollatorOptions._fromFfi(_ResolvedCollatorOptionsFfi ffi) :
+  CollatorResolvedOptions._fromFfi(_CollatorResolvedOptionsFfi ffi) :
     strength = CollatorStrength.values[ffi.strength],
     alternateHandling = CollatorAlternateHandling.values[ffi.alternateHandling],
     caseFirst = CollatorCaseFirst.values[ffi.caseFirst],
@@ -45,8 +45,8 @@ final class ResolvedCollatorOptions {
     backwardSecondLevel = CollatorBackwardSecondLevel.values[ffi.backwardSecondLevel];
 
   // ignore: unused_element
-  _ResolvedCollatorOptionsFfi _toFfi(ffi.Allocator temp) {
-    final struct = ffi.Struct.create<_ResolvedCollatorOptionsFfi>();
+  _CollatorResolvedOptionsFfi _toFfi(ffi.Allocator temp) {
+    final struct = ffi.Struct.create<_CollatorResolvedOptionsFfi>();
     struct.strength = strength.index;
     struct.alternateHandling = alternateHandling.index;
     struct.caseFirst = caseFirst.index;
@@ -59,7 +59,7 @@ final class ResolvedCollatorOptions {
 
   @override
   bool operator ==(Object other) =>
-      other is ResolvedCollatorOptions &&
+      other is CollatorResolvedOptions &&
       other.strength == strength &&
       other.alternateHandling == alternateHandling &&
       other.caseFirst == caseFirst &&

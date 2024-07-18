@@ -41,7 +41,7 @@ final class LocaleFallbacker implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `new_without_data`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbacker.html#method.new_without_data) for more information.
   factory LocaleFallbacker.withoutData() {
-    final result = _icu4x_LocaleFallbacker_create_without_data_mv1();
+    final result = _icu4x_LocaleFallbacker_without_data_mv1();
     return LocaleFallbacker._fromFfi(result, []);
   }
 
@@ -73,10 +73,10 @@ external void _icu4x_LocaleFallbacker_destroy_mv1(ffi.Pointer<ffi.Void> self);
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_LocaleFallbacker_create_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('icu4x_LocaleFallbacker_create_without_data_mv1')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_LocaleFallbacker_create_without_data_mv1')
+@meta.ResourceIdentifier('icu4x_LocaleFallbacker_without_data_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_LocaleFallbacker_without_data_mv1')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _icu4x_LocaleFallbacker_create_without_data_mv1();
+external ffi.Pointer<ffi.Opaque> _icu4x_LocaleFallbacker_without_data_mv1();
 
 @meta.ResourceIdentifier('icu4x_LocaleFallbacker_for_config_mv1')
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, _LocaleFallbackConfigFfi)>(isLeaf: true, symbol: 'icu4x_LocaleFallbacker_for_config_mv1')

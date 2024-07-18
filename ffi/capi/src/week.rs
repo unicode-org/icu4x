@@ -60,8 +60,8 @@ pub mod ffi {
             StructField,
             compact
         )]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "from_first_day_of_week_and_min_week_days")]
-        pub fn create_from_first_day_of_week_and_min_week_days(
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor)]
+        pub fn from_first_day_of_week_and_min_week_days(
             first_weekday: IsoWeekday,
             min_week_days: u8,
         ) -> Box<WeekCalculator> {

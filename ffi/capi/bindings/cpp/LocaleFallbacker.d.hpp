@@ -29,7 +29,7 @@ public:
 
   inline static diplomat::result<std::unique_ptr<LocaleFallbacker>, DataError> create(const DataProvider& provider);
 
-  inline static std::unique_ptr<LocaleFallbacker> create_without_data();
+  inline static std::unique_ptr<LocaleFallbacker> without_data();
 
   inline diplomat::result<std::unique_ptr<LocaleFallbackerWithConfig>, LocaleParseError> for_config(LocaleFallbackConfig config) const;
 

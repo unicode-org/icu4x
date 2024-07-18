@@ -17,7 +17,7 @@ export class LocaleFallbacker {
 
     static create(provider: DataProvider): LocaleFallbacker;
 
-    static createWithoutData(): LocaleFallbacker;
+    static withoutData(): LocaleFallbacker;
 
     forConfig(config: LocaleFallbackConfig): LocaleFallbackerWithConfig;
 

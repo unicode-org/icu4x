@@ -18,7 +18,7 @@ export class WeekCalculator {
 
     static create(provider: DataProvider, locale: Locale): WeekCalculator;
 
-    static createFromFirstDayOfWeekAndMinWeekDays(firstWeekday: IsoWeekday, minWeekDays: number): WeekCalculator;
+    static fromFirstDayOfWeekAndMinWeekDays(firstWeekday: IsoWeekday, minWeekDays: number): WeekCalculator;
 
     get firstWeekday(): IsoWeekday;
 

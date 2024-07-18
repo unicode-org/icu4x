@@ -33,7 +33,7 @@ public:
 
   inline int8_t compare(std::string_view left, std::string_view right) const;
 
-  inline CollatorResolvedOptionsV1 resolved_options() const;
+  inline CollatorResolvedOptionsV1 resolved_options_v1() const;
 
   inline const diplomat::capi::Collator* AsFFI() const;
   inline diplomat::capi::Collator* AsFFI();

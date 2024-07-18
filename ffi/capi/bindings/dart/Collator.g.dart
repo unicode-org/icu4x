@@ -57,9 +57,9 @@ final class Collator implements ffi.Finalizable {
   /// will have `Auto` as the value.
   ///
   /// See the [Rust documentation for `resolved_options`](https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.resolved_options) for more information.
-  ResolvedCollatorOptions get resolvedOptions {
-    final result = _icu4x_Collator_resolved_options_mv1(_ffi);
-    return ResolvedCollatorOptions._fromFfi(result);
+  CollatorResolvedOptions get resolvedOptions {
+    final result = _icu4x_Collator_resolved_options_v1_mv1(_ffi);
+    return CollatorResolvedOptions._fromFfi(result);
   }
 }
 
@@ -78,7 +78,7 @@ external _ResultOpaqueInt32 _icu4x_Collator_create_v1_mv1(ffi.Pointer<ffi.Opaque
 // ignore: non_constant_identifier_names
 external int _icu4x_Collator_compare_utf16_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint16> leftData, int leftLength, ffi.Pointer<ffi.Uint16> rightData, int rightLength);
 
-@meta.ResourceIdentifier('icu4x_Collator_resolved_options_mv1')
-@ffi.Native<_ResolvedCollatorOptionsFfi Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Collator_resolved_options_mv1')
+@meta.ResourceIdentifier('icu4x_Collator_resolved_options_v1_mv1')
+@ffi.Native<_CollatorResolvedOptionsFfi Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Collator_resolved_options_v1_mv1')
 // ignore: non_constant_identifier_names
-external _ResolvedCollatorOptionsFfi _icu4x_Collator_resolved_options_mv1(ffi.Pointer<ffi.Opaque> self);
+external _CollatorResolvedOptionsFfi _icu4x_Collator_resolved_options_v1_mv1(ffi.Pointer<ffi.Opaque> self);

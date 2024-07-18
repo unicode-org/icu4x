@@ -23,9 +23,9 @@ namespace capi {
 class PluralOperands {
 public:
 
-  inline static diplomat::result<std::unique_ptr<PluralOperands>, FixedDecimalParseError> create_from_string(std::string_view s);
+  inline static diplomat::result<std::unique_ptr<PluralOperands>, FixedDecimalParseError> from_string(std::string_view s);
 
-  inline static std::unique_ptr<PluralOperands> create_from_fixed_decimal(const FixedDecimal& x);
+  inline static std::unique_ptr<PluralOperands> from_fixed_decimal(const FixedDecimal& x);
 
   inline const diplomat::capi::PluralOperands* AsFFI() const;
   inline diplomat::capi::PluralOperands* AsFFI();

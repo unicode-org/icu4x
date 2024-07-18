@@ -11,9 +11,9 @@ export class PluralOperands {
     get ffiValue(): pointer;
 
 
-    static createFromString(s: string): PluralOperands;
+    static fromString(s: string): PluralOperands;
 
-    static createFromFixedDecimal(x: FixedDecimal): PluralOperands;
+    static fromFixedDecimal(x: FixedDecimal): PluralOperands;
 
     
 

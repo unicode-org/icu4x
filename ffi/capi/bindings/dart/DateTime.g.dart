@@ -31,7 +31,7 @@ final class DateTime implements ffi.Finalizable {
   ///
   /// Throws [CalendarError] on failure.
   factory DateTime.fromIsoInCalendar(int year, int month, int day, int hour, int minute, int second, int nanosecond, Calendar calendar) {
-    final result = _icu4x_DateTime_create_from_iso_in_calendar_mv1(year, month, day, hour, minute, second, nanosecond, calendar._ffi);
+    final result = _icu4x_DateTime_from_iso_in_calendar_mv1(year, month, day, hour, minute, second, nanosecond, calendar._ffi);
     if (!result.isOk) {
       throw CalendarError.values[result.union.err];
     }
@@ -47,7 +47,7 @@ final class DateTime implements ffi.Finalizable {
     final temp = ffi2.Arena();
     final eraCodeView = eraCode.utf8View;
     final monthCodeView = monthCode.utf8View;
-    final result = _icu4x_DateTime_create_from_codes_in_calendar_mv1(eraCodeView.allocIn(temp), eraCodeView.length, year, monthCodeView.allocIn(temp), monthCodeView.length, day, hour, minute, second, nanosecond, calendar._ffi);
+    final result = _icu4x_DateTime_from_codes_in_calendar_mv1(eraCodeView.allocIn(temp), eraCodeView.length, year, monthCodeView.allocIn(temp), monthCodeView.length, day, hour, minute, second, nanosecond, calendar._ffi);
     temp.releaseAll();
     if (!result.isOk) {
       throw CalendarError.values[result.union.err];
@@ -59,7 +59,7 @@ final class DateTime implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.new) for more information.
   factory DateTime.fromDateAndTime(Date date, Time time) {
-    final result = _icu4x_DateTime_create_from_date_and_time_mv1(date._ffi, time._ffi);
+    final result = _icu4x_DateTime_from_date_and_time_mv1(date._ffi, time._ffi);
     return DateTime._fromFfi(result, []);
   }
 
@@ -247,20 +247,20 @@ final class DateTime implements ffi.Finalizable {
 // ignore: non_constant_identifier_names
 external void _icu4x_DateTime_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('icu4x_DateTime_create_from_iso_in_calendar_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Int32, ffi.Uint8, ffi.Uint8, ffi.Uint8, ffi.Uint8, ffi.Uint8, ffi.Uint32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_DateTime_create_from_iso_in_calendar_mv1')
+@meta.ResourceIdentifier('icu4x_DateTime_from_iso_in_calendar_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Int32, ffi.Uint8, ffi.Uint8, ffi.Uint8, ffi.Uint8, ffi.Uint8, ffi.Uint32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_DateTime_from_iso_in_calendar_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_DateTime_create_from_iso_in_calendar_mv1(int year, int month, int day, int hour, int minute, int second, int nanosecond, ffi.Pointer<ffi.Opaque> calendar);
+external _ResultOpaqueInt32 _icu4x_DateTime_from_iso_in_calendar_mv1(int year, int month, int day, int hour, int minute, int second, int nanosecond, ffi.Pointer<ffi.Opaque> calendar);
 
-@meta.ResourceIdentifier('icu4x_DateTime_create_from_codes_in_calendar_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Int32, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Uint8, ffi.Uint8, ffi.Uint8, ffi.Uint8, ffi.Uint32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_DateTime_create_from_codes_in_calendar_mv1')
+@meta.ResourceIdentifier('icu4x_DateTime_from_codes_in_calendar_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Int32, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Uint8, ffi.Uint8, ffi.Uint8, ffi.Uint8, ffi.Uint32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_DateTime_from_codes_in_calendar_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_DateTime_create_from_codes_in_calendar_mv1(ffi.Pointer<ffi.Uint8> eraCodeData, int eraCodeLength, int year, ffi.Pointer<ffi.Uint8> monthCodeData, int monthCodeLength, int day, int hour, int minute, int second, int nanosecond, ffi.Pointer<ffi.Opaque> calendar);
+external _ResultOpaqueInt32 _icu4x_DateTime_from_codes_in_calendar_mv1(ffi.Pointer<ffi.Uint8> eraCodeData, int eraCodeLength, int year, ffi.Pointer<ffi.Uint8> monthCodeData, int monthCodeLength, int day, int hour, int minute, int second, int nanosecond, ffi.Pointer<ffi.Opaque> calendar);
 
-@meta.ResourceIdentifier('icu4x_DateTime_create_from_date_and_time_mv1')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_DateTime_create_from_date_and_time_mv1')
+@meta.ResourceIdentifier('icu4x_DateTime_from_date_and_time_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_DateTime_from_date_and_time_mv1')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _icu4x_DateTime_create_from_date_and_time_mv1(ffi.Pointer<ffi.Opaque> date, ffi.Pointer<ffi.Opaque> time);
+external ffi.Pointer<ffi.Opaque> _icu4x_DateTime_from_date_and_time_mv1(ffi.Pointer<ffi.Opaque> date, ffi.Pointer<ffi.Opaque> time);
 
 @meta.ResourceIdentifier('icu4x_DateTime_date_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_DateTime_date_mv1')

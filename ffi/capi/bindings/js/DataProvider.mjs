@@ -35,8 +35,8 @@ export class DataProvider {
     }
 
 
-    static createCompiled() {
-        const result = wasm.icu4x_DataProvider_create_compiled_mv1();
+    static compiled() {
+        const result = wasm.icu4x_DataProvider_compiled_mv1();
     
         try {
     
@@ -46,12 +46,12 @@ export class DataProvider {
         }
     }
 
-    static createFromByteSlice(blob) {
+    static fromByteSlice(blob) {
         
         const blobSlice = diplomatRuntime.DiplomatBuf.slice(wasm, blob, "u8");
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_DataProvider_create_from_byte_slice_mv1(diplomat_receive_buffer, blobSlice.ptr, blobSlice.size);
+        const result = wasm.icu4x_DataProvider_from_byte_slice_mv1(diplomat_receive_buffer, blobSlice.ptr, blobSlice.size);
     
         try {
     
@@ -69,8 +69,8 @@ export class DataProvider {
         }
     }
 
-    static createEmpty() {
-        const result = wasm.icu4x_DataProvider_create_empty_mv1();
+    static empty() {
+        const result = wasm.icu4x_DataProvider_empty_mv1();
     
         try {
     

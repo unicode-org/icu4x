@@ -14,7 +14,7 @@ export class Time {
 
     static create(hour: number, minute: number, second: number, nanosecond: number): Time;
 
-    static createMidnight(): Time;
+    static midnight(): Time;
 
     get hour(): number;
 

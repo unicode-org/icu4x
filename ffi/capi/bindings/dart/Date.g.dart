@@ -31,7 +31,7 @@ final class Date implements ffi.Finalizable {
   ///
   /// Throws [CalendarError] on failure.
   factory Date.fromIsoInCalendar(int year, int month, int day, Calendar calendar) {
-    final result = _icu4x_Date_create_from_iso_in_calendar_mv1(year, month, day, calendar._ffi);
+    final result = _icu4x_Date_from_iso_in_calendar_mv1(year, month, day, calendar._ffi);
     if (!result.isOk) {
       throw CalendarError.values[result.union.err];
     }
@@ -47,7 +47,7 @@ final class Date implements ffi.Finalizable {
     final temp = ffi2.Arena();
     final eraCodeView = eraCode.utf8View;
     final monthCodeView = monthCode.utf8View;
-    final result = _icu4x_Date_create_from_codes_in_calendar_mv1(eraCodeView.allocIn(temp), eraCodeView.length, year, monthCodeView.allocIn(temp), monthCodeView.length, day, calendar._ffi);
+    final result = _icu4x_Date_from_codes_in_calendar_mv1(eraCodeView.allocIn(temp), eraCodeView.length, year, monthCodeView.allocIn(temp), monthCodeView.length, day, calendar._ffi);
     temp.releaseAll();
     if (!result.isOk) {
       throw CalendarError.values[result.union.err];
@@ -193,15 +193,15 @@ final class Date implements ffi.Finalizable {
 // ignore: non_constant_identifier_names
 external void _icu4x_Date_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('icu4x_Date_create_from_iso_in_calendar_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Int32, ffi.Uint8, ffi.Uint8, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_create_from_iso_in_calendar_mv1')
+@meta.ResourceIdentifier('icu4x_Date_from_iso_in_calendar_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Int32, ffi.Uint8, ffi.Uint8, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_from_iso_in_calendar_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_Date_create_from_iso_in_calendar_mv1(int year, int month, int day, ffi.Pointer<ffi.Opaque> calendar);
+external _ResultOpaqueInt32 _icu4x_Date_from_iso_in_calendar_mv1(int year, int month, int day, ffi.Pointer<ffi.Opaque> calendar);
 
-@meta.ResourceIdentifier('icu4x_Date_create_from_codes_in_calendar_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Int32, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Uint8, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_create_from_codes_in_calendar_mv1')
+@meta.ResourceIdentifier('icu4x_Date_from_codes_in_calendar_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Int32, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Uint8, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_from_codes_in_calendar_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_Date_create_from_codes_in_calendar_mv1(ffi.Pointer<ffi.Uint8> eraCodeData, int eraCodeLength, int year, ffi.Pointer<ffi.Uint8> monthCodeData, int monthCodeLength, int day, ffi.Pointer<ffi.Opaque> calendar);
+external _ResultOpaqueInt32 _icu4x_Date_from_codes_in_calendar_mv1(ffi.Pointer<ffi.Uint8> eraCodeData, int eraCodeLength, int year, ffi.Pointer<ffi.Uint8> monthCodeData, int monthCodeLength, int day, ffi.Pointer<ffi.Opaque> calendar);
 
 @meta.ResourceIdentifier('icu4x_Date_to_calendar_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_to_calendar_mv1')

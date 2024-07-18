@@ -12,12 +12,12 @@
 
 int main() {
     icu4x_Logger_init_simple_logger_mv1();
-    icu4x_Locale_create_from_string_mv1_result locale_result = icu4x_Locale_create_from_string_mv1("ar", 2);
+    icu4x_Locale_from_string_mv1_result locale_result = icu4x_Locale_from_string_mv1("ar", 2);
     if (!locale_result.is_ok) {
         return 1;
     }
     Locale* locale = locale_result.ok;
-    DataProvider* provider = icu4x_DataProvider_create_compiled_mv1();
+    DataProvider* provider = icu4x_DataProvider_compiled_mv1();
     icu4x_PluralRules_create_cardinal_mv1_result plural_result = icu4x_PluralRules_create_cardinal_mv1(provider, locale);
     if (!plural_result.is_ok) {
         printf("Failed to create PluralRules\n");
@@ -33,7 +33,7 @@ int main() {
     printf("Plural Category many  (should be true): %s\n", categories.many  ? "true" : "false");
     printf("Plural Category other (should be true): %s\n", categories.other ? "true" : "false");
 
-    icu4x_PluralOperands_create_from_string_mv1_result op1_result = icu4x_PluralOperands_create_from_string_mv1("3", 1);
+    icu4x_PluralOperands_from_string_mv1_result op1_result = icu4x_PluralOperands_from_string_mv1("3", 1);
 
     if (!op1_result.is_ok) {
         printf("Failed to create PluralOperands from string\n");
@@ -44,7 +44,7 @@ int main() {
 
     printf("Plural Category %d (should be %d)\n", (int)cat1, (int)PluralCategory_Few);
 
-    icu4x_PluralOperands_create_from_string_mv1_result op2_result = icu4x_PluralOperands_create_from_string_mv1("1011.0", 6);
+    icu4x_PluralOperands_from_string_mv1_result op2_result = icu4x_PluralOperands_from_string_mv1("1011.0", 6);
 
     if (!op2_result.is_ok) {
         printf("Failed to create PluralOperands from string\n");
