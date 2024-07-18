@@ -37,7 +37,7 @@ export class FixedDecimal {
     }
 
 
-    static fromInteger(v) {
+    static fromNumber(v) {
         const result = wasm.icu4x_FixedDecimal_from_int32_mv1(v);
     
         try {

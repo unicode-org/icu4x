@@ -32,7 +32,7 @@ final class UnitsConverter implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `convert`](https://docs.rs/icu/latest/icu/experimental/units/converter/struct.UnitsConverter.html#method.convert) for more information.
   double convertDouble(double value) {
-    final result = _icu4x_UnitsConverter_convert_f64_mv1(_ffi, value);
+    final result = _icu4x_UnitsConverter_convert_double_mv1(_ffi, value);
     return result;
   }
 
@@ -50,10 +50,10 @@ final class UnitsConverter implements ffi.Finalizable {
 // ignore: non_constant_identifier_names
 external void _icu4x_UnitsConverter_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('icu4x_UnitsConverter_convert_f64_mv1')
-@ffi.Native<ffi.Double Function(ffi.Pointer<ffi.Opaque>, ffi.Double)>(isLeaf: true, symbol: 'icu4x_UnitsConverter_convert_f64_mv1')
+@meta.ResourceIdentifier('icu4x_UnitsConverter_convert_double_mv1')
+@ffi.Native<ffi.Double Function(ffi.Pointer<ffi.Opaque>, ffi.Double)>(isLeaf: true, symbol: 'icu4x_UnitsConverter_convert_double_mv1')
 // ignore: non_constant_identifier_names
-external double _icu4x_UnitsConverter_convert_f64_mv1(ffi.Pointer<ffi.Opaque> self, double value);
+external double _icu4x_UnitsConverter_convert_double_mv1(ffi.Pointer<ffi.Opaque> self, double value);
 
 @meta.ResourceIdentifier('icu4x_UnitsConverter_clone_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_UnitsConverter_clone_mv1')

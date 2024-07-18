@@ -38,20 +38,14 @@ pub mod ffi {
     impl CodePointMapData8 {
         /// Gets the value for a code point.
         #[diplomat::rust_link(icu::properties::maps::CodePointMapDataBorrowed::get, FnInStruct)]
-        #[diplomat::attr(supports = indexing, indexer)]
-        pub fn get(&self, cp: DiplomatChar) -> u8 {
-            self.0.as_borrowed().get32(cp)
-        }
-
-        /// Gets the value for a code point (specified as a 32 bit integer, in UTF-32)
         #[diplomat::rust_link(
             icu::properties::maps::CodePointMapDataBorrowed::get32,
             FnInStruct,
             hidden
         )]
-        #[diplomat::attr(any(dart, js), disable)]
-        pub fn get32(&self, cp: u32) -> u8 {
-            self.get(cp)
+        #[diplomat::attr(supports = indexing, indexer)]
+        pub fn get(&self, cp: DiplomatChar) -> u8 {
+            self.0.as_borrowed().get32(cp)
         }
 
         /// Converts a general category to its corresponding mask value
@@ -272,20 +266,14 @@ pub mod ffi {
     impl CodePointMapData16 {
         /// Gets the value for a code point.
         #[diplomat::rust_link(icu::properties::maps::CodePointMapDataBorrowed::get, FnInStruct)]
-        #[diplomat::attr(supports = indexing, indexer)]
-        pub fn get(&self, cp: DiplomatChar) -> u16 {
-            self.0.as_borrowed().get32(cp)
-        }
-
-        /// Gets the value for a code point (specified as a 32 bit integer, in UTF-32)
         #[diplomat::rust_link(
             icu::properties::maps::CodePointMapDataBorrowed::get32,
             FnInStruct,
             hidden
         )]
-        #[diplomat::attr(any(dart, js), disable)]
-        pub fn get32(&self, cp: u32) -> u16 {
-            self.get(cp)
+        #[diplomat::attr(supports = indexing, indexer)]
+        pub fn get(&self, cp: DiplomatChar) -> u16 {
+            self.0.as_borrowed().get32(cp)
         }
 
         /// Produces an iterator over ranges of code points that map to `value`

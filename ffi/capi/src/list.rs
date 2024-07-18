@@ -81,15 +81,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::list::ListFormatter::format, FnInStruct)]
         #[diplomat::rust_link(icu::list::ListFormatter::format_to_string, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::list::FormattedList, Struct, hidden)]
-        #[diplomat::attr(any(dart, js), disable)]
-        pub fn format_valid_utf8(&self, list: &[&str], write: &mut DiplomatWrite) {
-            let _infallible = self.0.format(list.iter()).write_to(write);
-        }
-
-        #[diplomat::rust_link(icu::list::ListFormatter::format, FnInStruct)]
-        #[diplomat::rust_link(icu::list::ListFormatter::format_to_string, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::list::FormattedList, Struct, hidden)]
-        #[diplomat::attr(any(dart, js), disable)]
+        #[diplomat::attr(not(supports = utf8_strings), disable)]
+        #[diplomat::attr(*, rename = "format")]
         pub fn format_utf8(&self, list: &[&DiplomatStr], write: &mut DiplomatWrite) {
             let _infallible = self
                 .0
@@ -105,7 +98,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::list::ListFormatter::format, FnInStruct)]
         #[diplomat::rust_link(icu::list::ListFormatter::format_to_string, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::list::FormattedList, Struct, hidden)]
-        #[diplomat::attr(any(dart, js), rename = "format")]
+        #[diplomat::attr(not(supports = utf8_strings), rename = "format")]
+        #[diplomat::attr(supports = utf8_strings, rename = "format16")]
         pub fn format_utf16(&self, list: &[&DiplomatStr16], write: &mut DiplomatWrite) {
             let _infallible = self
                 .0

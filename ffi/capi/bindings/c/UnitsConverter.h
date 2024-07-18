@@ -15,7 +15,7 @@
 
 
 
-double icu4x_UnitsConverter_convert_f64_mv1(const UnitsConverter* self, double value);
+double icu4x_UnitsConverter_convert_double_mv1(const UnitsConverter* self, double value);
 
 UnitsConverter* icu4x_UnitsConverter_clone_mv1(const UnitsConverter* self);
 

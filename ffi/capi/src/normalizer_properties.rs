@@ -39,25 +39,16 @@ pub mod ffi {
             FnInStruct
         )]
         #[diplomat::rust_link(
+            icu::normalizer::properties::CanonicalCombiningClassMap::get32,
+            FnInStruct, hidden
+        )]
+        #[diplomat::rust_link(
             icu::properties::properties::CanonicalCombiningClass,
             Struct,
             compact
         )]
         #[diplomat::attr(supports = indexing, indexer)]
         pub fn get(&self, ch: DiplomatChar) -> u8 {
-            self.0.get32(ch).0
-        }
-        #[diplomat::rust_link(
-            icu::normalizer::properties::CanonicalCombiningClassMap::get32,
-            FnInStruct
-        )]
-        #[diplomat::rust_link(
-            icu::properties::properties::CanonicalCombiningClass,
-            Struct,
-            compact
-        )]
-        #[diplomat::attr(any(dart, js), disable)]
-        pub fn get32(&self, ch: u32) -> u8 {
             self.0.get32(ch).0
         }
     }

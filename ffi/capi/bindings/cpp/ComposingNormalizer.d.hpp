@@ -31,11 +31,11 @@ public:
 
   inline bool is_normalized(std::string_view s) const;
 
-  inline bool is_normalized_utf16(std::u16string_view s) const;
+  inline bool is_normalized16(std::u16string_view s) const;
 
   inline size_t is_normalized_up_to(std::string_view s) const;
 
-  inline size_t is_normalized_utf16_up_to(std::u16string_view s) const;
+  inline size_t is_normalized16_up_to(std::u16string_view s) const;
 
   inline const diplomat::capi::ComposingNormalizer* AsFFI() const;
   inline diplomat::capi::ComposingNormalizer* AsFFI();

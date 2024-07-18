@@ -22,8 +22,6 @@ namespace capi {
     
     bool icu4x_CodePointSetData_contains_mv1(const diplomat::capi::CodePointSetData* self, char32_t cp);
     
-    bool icu4x_CodePointSetData_contains32_mv1(const diplomat::capi::CodePointSetData* self, uint32_t cp);
-    
     diplomat::capi::CodePointRangeIterator* icu4x_CodePointSetData_iter_ranges_mv1(const diplomat::capi::CodePointSetData* self);
     
     diplomat::capi::CodePointRangeIterator* icu4x_CodePointSetData_iter_ranges_complemented_mv1(const diplomat::capi::CodePointSetData* self);
@@ -238,12 +236,6 @@ namespace capi {
 
 inline bool CodePointSetData::contains(char32_t cp) const {
   auto result = diplomat::capi::icu4x_CodePointSetData_contains_mv1(this->AsFFI(),
-    cp);
-  return result;
-}
-
-inline bool CodePointSetData::contains32(uint32_t cp) const {
-  auto result = diplomat::capi::icu4x_CodePointSetData_contains32_mv1(this->AsFFI(),
     cp);
   return result;
 }

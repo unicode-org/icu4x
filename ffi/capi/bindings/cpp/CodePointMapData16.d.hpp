@@ -29,8 +29,6 @@ public:
 
   inline uint16_t get(char32_t cp) const;
 
-  inline uint16_t get32(uint32_t cp) const;
-
   inline std::unique_ptr<CodePointRangeIterator> iter_ranges_for_value(uint16_t value) const;
 
   inline std::unique_ptr<CodePointRangeIterator> iter_ranges_for_value_complemented(uint16_t value) const;

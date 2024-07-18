@@ -28,8 +28,6 @@ public:
 
   inline bool contains(char32_t cp) const;
 
-  inline bool contains32(uint32_t cp) const;
-
   inline std::unique_ptr<CodePointRangeIterator> iter_ranges() const;
 
   inline std::unique_ptr<CodePointRangeIterator> iter_ranges_complemented() const;
