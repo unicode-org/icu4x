@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use std::borrow::Cow;
 use std::collections::HashSet;
 
 use crate::cldr_serde;
@@ -9,6 +10,9 @@ use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 
 use icu::experimental::dimension::provider::percent::*;
+use icu_pattern::Pattern;
+use icu_pattern::SinglePlaceholder;
+use icu_pattern::SinglePlaceholderPattern;
 use icu_provider::prelude::*;
 use icu_provider::DataProvider;
 use tinystr::tinystr;
@@ -93,22 +97,27 @@ fn extract_percent_essentials<'data>(
         &standard_pattern[percent_sign_index + 1..]
     };
 
-    Ok(PercentEssentialsV1 {
-        standard: standard_pattern.to_owned().into(),
-        percent_sign_symbol: symbols.percent_sign.to_owned().into(),
-        percent_symbol_index: percent_sign_index as u8,
-        number_index: first_num_index as u8,
-        percent_sign_affixes: PercentAffixesV1 {
-            prefix: percent_prefix.to_owned().into(),
-            suffix: percent_suffix.to_owned().into(),
-        },
-    })
+    let percent_symbol =
+        String::new() + percent_prefix + symbols.percent_sign.to_owned().as_str() + percent_suffix;
+
+    // Example: "#,##0%", "#,##0 %", "%#,##0", "% #,##0"
+    let pattern = match percent_sign_index > first_num_index {
+        true => "{0}".to_owned() + &percent_symbol,
+        false => percent_symbol + "{0}",
+    }
+    .parse::<SinglePlaceholderPattern<_>>()
+    .map_err(|e| DataError::custom("Could not parse pattern").with_display_context(&e))?;
+
+    let pattern: Pattern<SinglePlaceholder, Cow<'_, str>> =
+        Pattern::from_store_unchecked(Cow::Owned(pattern.take_store()));
+    Ok(PercentEssentialsV1 { pattern })
 }
 
 #[test]
 fn test_basic() {
     use icu::experimental::dimension::provider::percent::*;
     use icu::locale::langid;
+    use writeable::assert_writeable_eq;
 
     let provider = SourceDataProvider::new_testing();
 
@@ -119,19 +128,10 @@ fn test_basic() {
         })
         .unwrap();
 
-    assert_eq!(
-        en.payload.get().to_owned(),
-        PercentEssentialsV1 {
-            standard: "#,##0%".into(),
-            percent_sign_symbol: "%".into(),
-            percent_symbol_index: 5,
-            number_index: 0,
-            percent_sign_affixes: PercentAffixesV1 {
-                prefix: "".into(),
-                suffix: "".into(),
-            },
-        }
-    );
+    // en Should resemble "#,##0%"
+    let en_pattern = en.payload.get().to_owned().pattern;
+    assert_writeable_eq!(en_pattern.interpolate(["123"]), "123%");
+    assert_eq!(en.payload.get().to_owned().pattern.take_store(), "\u{1}%");
 
     let fr: DataResponse<PercentEssentialsV1Marker> = provider
         .load(DataRequest {
@@ -140,19 +140,10 @@ fn test_basic() {
         })
         .unwrap();
 
-    assert_eq!(
-        fr.payload.get().to_owned(),
-        PercentEssentialsV1 {
-            standard: "#,##0\u{a0}%".into(),
-            percent_sign_symbol: "%".into(),
-            percent_symbol_index: 7,
-            number_index: 0,
-            percent_sign_affixes: PercentAffixesV1 {
-                prefix: "\u{a0}".into(),
-                suffix: "".into(),
-            },
-        }
-    );
+    // fr Should resemble "#,##0 %"
+    let fr_pattern = fr.payload.get().to_owned().pattern;
+    assert_writeable_eq!(fr_pattern.interpolate(["234"]), "234\u{a0}%");
+    assert_eq!(fr_pattern.take_store(), "\u{1}\u{a0}%");
 
     let tr: DataResponse<PercentEssentialsV1Marker> = provider
         .load(DataRequest {
@@ -161,19 +152,10 @@ fn test_basic() {
         })
         .unwrap();
 
-    assert_eq!(
-        tr.payload.get().to_owned(),
-        PercentEssentialsV1 {
-            standard: "%#,##0".into(),
-            percent_sign_symbol: "%".into(),
-            percent_symbol_index: 0,
-            number_index: 1,
-            percent_sign_affixes: PercentAffixesV1 {
-                prefix: "".into(),
-                suffix: "".into(),
-            },
-        }
-    );
+    // tr Should resemble "%#,##0"
+    let tr_pattern = tr.payload.get().to_owned().pattern;
+    assert_writeable_eq!(tr_pattern.interpolate(["345"]), "%345");
+    assert_eq!(tr_pattern.take_store(), "\u{2}%");
 
     let ar_eg: DataResponse<PercentEssentialsV1Marker> = provider
         .load(DataRequest {
@@ -182,8 +164,8 @@ fn test_basic() {
         })
         .unwrap();
 
-    assert_eq!(
-        ar_eg.payload.get().to_owned().percent_sign_symbol,
-        "\u{200e}%\u{200e}" // "٪؜"
-    );
+    // ar_eg Should resemble "#,##0‎%‎"
+    let ar_eg_pattern = ar_eg.payload.get().to_owned().pattern;
+    assert_writeable_eq!(ar_eg_pattern.interpolate(["456"]), "456\u{200e}%\u{200e}");
+    assert_eq!(ar_eg_pattern.take_store(), "\u{1}\u{200e}%\u{200e}");
 }

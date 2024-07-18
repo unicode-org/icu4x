@@ -18,27 +18,11 @@ impl<'l> Writeable for FormattedPercent<'l> {
     where
         W: core::fmt::Write + ?Sized,
     {
-        // Construct the percent sign value.
-        let percent_sign_value = format!(
-            "{}{}{}",
-            self.essential.percent_sign_affixes.prefix,
-            self.essential.percent_sign_symbol,
-            self.essential.percent_sign_affixes.suffix
-        );
+        self.essential
+            .pattern
+            .interpolate([self.value])
+            .write_to(sink)?;
 
-        // Determine order of the number and percent sign.
-        let formatted = match self.essential.number_index < self.essential.percent_symbol_index {
-            true => {
-                let number = self.value.to_string();
-                format!("{}{}", number, percent_sign_value)
-            }
-            false => {
-                let number = self.value.to_string();
-                format!("{}{}", percent_sign_value, number)
-            }
-        };
-
-        formatted.write_to(sink)?;
         Ok(())
     }
 }

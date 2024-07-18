@@ -53,7 +53,7 @@ impl PercentFormatter {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<D>(provider: &D, locale: &DataLocale) -> Result<Self, DataError>
     where
-        D: ?Sized + DataProvider<super::super::provider::percent::PercentEssentialsV1Marker>, // + DataProvider<icu_decimal::provider::DecimalSymbolsV1Marker>,
+        D: ?Sized + DataProvider<super::super::provider::percent::PercentEssentialsV1Marker>,
     {
         let essential = provider
             .load(DataRequest {
