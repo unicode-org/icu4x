@@ -68,7 +68,7 @@ default_components = ["icu_calendar", "icu_casemap", "icu_collator", "icu_dateti
                       "icu_segmenter", "icu_timezone"]
 experimental_components = ["dep:icu_experimental"]
 
-icu_calendar = ["dep:icu_calendar"]
+icu_calendar = ["dep:icu_calendar", "dep:ixdtf"]
 icu_casemap = ["dep:icu_casemap"]
 icu_collator = ["dep:icu_collator"]
 # icu_collections = ["dep:icu_collections"] # Not useful on its own: use icu_properties
@@ -119,6 +119,7 @@ diplomat-runtime = { workspace = true }
 
 # Optional ICU4X components and their dependent utils
 fixed_decimal = { workspace = true, features = ["ryu"] , optional = true}
+ixdtf = { workspace = true, optional = true }
 icu_calendar = { workspace = true, features = ["ixdtf"], optional = true }
 icu_casemap = { workspace = true, optional = true }
 icu_collator = { workspace = true, optional = true }
