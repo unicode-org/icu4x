@@ -65,7 +65,7 @@ final class DateTime implements ffi.Finalizable {
 
   /// Creates a new [`DateTime`] from an IXDTF string.
   ///
-  /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu_calendar/latest/icu_calendar/struct.DateTime.html#method.try_from_str) for more information.
+  /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.try_from_str) for more information.
   ///
   /// Throws [FromIxdtfError] on failure.
   factory DateTime.fromString(String v) {

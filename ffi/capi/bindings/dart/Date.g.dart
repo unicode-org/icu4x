@@ -57,7 +57,7 @@ final class Date implements ffi.Finalizable {
 
   /// Creates a new [`Date`] from an IXDTF string.
   ///
-  /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu_calendar/latest/icu_calendar/struct.Date.html#method.try_from_str) for more information.
+  /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.try_from_str) for more information.
   ///
   /// Throws [FromIxdtfError] on failure.
   factory Date.fromString(String v) {

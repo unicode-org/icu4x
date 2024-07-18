@@ -47,7 +47,7 @@ final class IsoDateTime implements ffi.Finalizable {
 
   /// Creates a new [`IsoDateTime`] from an IXDTF string.
   ///
-  /// See the [Rust documentation for `try_iso_from_str`](https://docs.rs/icu_calendar/latest/icu_calendar/struct.DateTime.html#method.try_iso_from_str) for more information.
+  /// See the [Rust documentation for `try_iso_from_str`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.try_iso_from_str) for more information.
   ///
   /// Throws [FromIxdtfError] on failure.
   factory IsoDateTime.fromString(String v) {

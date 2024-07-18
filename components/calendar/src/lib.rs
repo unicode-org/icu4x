@@ -153,6 +153,8 @@ pub mod week {
     pub use week_of::MIN_UNIT_DAYS;
 }
 
+#[cfg(feature = "ixdtf")]
+pub use crate::ixdtf::FromIxdtfError;
 #[doc(no_inline)]
 pub use any_calendar::{AnyCalendar, AnyCalendarKind};
 pub use calendar::Calendar;
@@ -165,6 +167,4 @@ pub use error::{DateError, RangeError};
 pub use gregorian::Gregorian;
 #[doc(no_inline)]
 pub use iso::Iso;
-#[cfg(feature = "ixdtf")]
-pub use crate::ixdtf::FromIxdtfError;
 pub use types::Time;
