@@ -1466,67 +1466,55 @@ displaynames/variants@1, zh-HK, 2311B, 5a7434f5d9429164
 displaynames/variants@1, zh-Hant, 2320B, eb896ef02b8254b
 displaynames/variants@1, zh-MO, 2311B, -> zh-HK
 displaynames/variants@1, zu, 2916B, ede929b5c378882b
-percent/essentials@1, <lookup>, 267B, 59 identifiers
-percent/essentials@1, <total>, 1035B, 9 unique payloads
-percent/essentials@1, ar, 117B, 8ebf290af62091f
-percent/essentials@1, ar-SA, 112B, ecd0b989802662bd
-percent/essentials@1, ar-SO, 112B, -> ar-SA
-percent/essentials@1, as, 114B, b4a6277fe6669d66
-percent/essentials@1, be, 115B, 54dc1327d49df2d7
-percent/essentials@1, blo, 123B, 32bdbf88ad60f974
-percent/essentials@1, bn, 114B, -> as
-percent/essentials@1, br, 115B, -> be
-percent/essentials@1, brx, 114B, -> as
-percent/essentials@1, ca, 115B, -> be
-percent/essentials@1, cs, 115B, -> be
-percent/essentials@1, cv, 115B, -> be
-percent/essentials@1, da, 115B, -> be
-percent/essentials@1, de, 115B, -> be
-percent/essentials@1, de-CH, 111B, 9db4866484555169
-percent/essentials@1, de-LI, 111B, -> de-CH
-percent/essentials@1, dsb, 115B, -> be
-percent/essentials@1, en-AT, 115B, -> be
-percent/essentials@1, en-DE, 115B, -> be
-percent/essentials@1, en-DK, 115B, -> be
-percent/essentials@1, en-FI, 115B, -> be
-percent/essentials@1, en-IN, 114B, -> as
-percent/essentials@1, en-SE, 115B, -> be
-percent/essentials@1, es, 115B, -> be
-percent/essentials@1, es-419, 111B, -> de-CH
-percent/essentials@1, eu, 115B, 6b84ba314c244989
-percent/essentials@1, fi, 115B, -> be
-percent/essentials@1, fo, 115B, -> be
-percent/essentials@1, fr, 115B, -> be
-percent/essentials@1, fr-CH, 111B, -> de-CH
-percent/essentials@1, gl, 115B, -> be
-percent/essentials@1, gu, 114B, -> as
-percent/essentials@1, hi, 114B, -> as
-percent/essentials@1, hr, 115B, -> be
-percent/essentials@1, hsb, 115B, -> be
-percent/essentials@1, ku, 111B, 9bd8c79ed3eb8cb2
-percent/essentials@1, lb, 115B, -> be
-percent/essentials@1, lt, 115B, -> be
-percent/essentials@1, mk, 115B, -> be
-percent/essentials@1, nds, 115B, -> be
-percent/essentials@1, no, 115B, -> be
-percent/essentials@1, oc, 117B, cae723fba37be8aa
-percent/essentials@1, pa, 114B, -> as
-percent/essentials@1, qu, 115B, -> be
-percent/essentials@1, rm, 115B, -> be
-percent/essentials@1, ro, 115B, -> be
-percent/essentials@1, ru, 115B, -> be
-percent/essentials@1, sa, 114B, -> as
-percent/essentials@1, sk, 115B, -> be
-percent/essentials@1, sl, 115B, -> be
-percent/essentials@1, sv, 115B, -> be
-percent/essentials@1, ta, 114B, -> as
-percent/essentials@1, ta-MY, 111B, -> de-CH
-percent/essentials@1, ta-SG, 111B, -> de-CH
-percent/essentials@1, tk, 115B, -> be
-percent/essentials@1, tr, 111B, -> ku
-percent/essentials@1, tt, 115B, -> be
-percent/essentials@1, und, 111B, -> de-CH
-percent/essentials@1, xnr, 114B, -> as
+percent/essentials@1, <lookup>, 223B, 47 identifiers
+percent/essentials@1, <total>, 196B, 7 unique payloads
+percent/essentials@1, ar, 32B, 28743cb08b551e
+percent/essentials@1, ar-SA, 27B, c6509c8f67d750e3
+percent/essentials@1, ar-SO, 27B, -> ar-SA
+percent/essentials@1, be, 28B, 724f814c28d5e983
+percent/essentials@1, blo, 28B, eeeff67091513441
+percent/essentials@1, br, 28B, -> be
+percent/essentials@1, ca, 28B, -> be
+percent/essentials@1, cs, 28B, -> be
+percent/essentials@1, cv, 28B, -> be
+percent/essentials@1, da, 28B, -> be
+percent/essentials@1, de, 28B, -> be
+percent/essentials@1, de-CH, 26B, f0bf0835ad1a498c
+percent/essentials@1, de-LI, 26B, -> de-CH
+percent/essentials@1, dsb, 28B, -> be
+percent/essentials@1, en-AT, 28B, -> be
+percent/essentials@1, en-DE, 28B, -> be
+percent/essentials@1, en-DK, 28B, -> be
+percent/essentials@1, en-FI, 28B, -> be
+percent/essentials@1, en-SE, 28B, -> be
+percent/essentials@1, es, 28B, -> be
+percent/essentials@1, es-419, 26B, -> de-CH
+percent/essentials@1, eu, 28B, -> blo
+percent/essentials@1, fi, 28B, -> be
+percent/essentials@1, fo, 28B, -> be
+percent/essentials@1, fr, 28B, -> be
+percent/essentials@1, fr-CH, 26B, -> de-CH
+percent/essentials@1, gl, 28B, -> be
+percent/essentials@1, hr, 28B, -> be
+percent/essentials@1, hsb, 28B, -> be
+percent/essentials@1, ku, 26B, 27ad0996542e8feb
+percent/essentials@1, lb, 28B, -> be
+percent/essentials@1, lt, 28B, -> be
+percent/essentials@1, mk, 28B, -> be
+percent/essentials@1, nds, 28B, -> be
+percent/essentials@1, no, 28B, -> be
+percent/essentials@1, oc, 29B, 652344d776ac724a
+percent/essentials@1, qu, 28B, -> be
+percent/essentials@1, rm, 28B, -> be
+percent/essentials@1, ro, 28B, -> be
+percent/essentials@1, ru, 28B, -> be
+percent/essentials@1, sk, 28B, -> be
+percent/essentials@1, sl, 28B, -> be
+percent/essentials@1, sv, 28B, -> be
+percent/essentials@1, tk, 28B, -> be
+percent/essentials@1, tr, 26B, -> ku
+percent/essentials@1, tt, 28B, -> be
+percent/essentials@1, und, 26B, -> de-CH
 personnames/personnames@1, <lookup>, 652B, 131 identifiers
 personnames/personnames@1, <total>, 313398B, 127 unique payloads
 personnames/personnames@1, af, 2123B, 5acdc79f93e47b40
